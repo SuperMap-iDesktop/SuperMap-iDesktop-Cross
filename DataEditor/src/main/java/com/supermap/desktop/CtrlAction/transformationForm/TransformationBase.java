@@ -25,6 +25,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author XiaJT
@@ -37,6 +39,7 @@ public class TransformationBase implements IFormMap {
 	private transient EventListenerList eventListenerList = new EventListenerList();
 	private ArrayList<Layer> activeLayersList = new ArrayList<Layer>();
 	private int isShowPopupMenu = 0;
+	private List<String> lastSelectedGeometry = new ArrayList<>();
 
 	@Override
 	public String getText() {
@@ -62,7 +65,6 @@ public class TransformationBase implements IFormMap {
 		LayersComponentManager layersComponentManager = UICommonToolkit.getLayersManager();
 		layersComponentManager.setMap(null);
 	}
-
 
 
 	@Override
@@ -318,5 +320,16 @@ public class TransformationBase implements IFormMap {
 				|| nodeDataType == NodeDataType.THEME_RANGE_ITEM || nodeDataType == NodeDataType.LAYER_GROUP
 				|| nodeDataType == NodeDataType.DATASET_IMAGE_COLLECTION || nodeDataType == NodeDataType.DATASET_GRID_COLLECTION
 				|| nodeDataType == NodeDataType.THEME_CUSTOM;
+	}
+
+	public void setSelectedGeoCompoundTags(String... selectedGeoCompoundTags) {
+		lastSelectedGeometry.clear();
+		if (selectedGeoCompoundTags != null) {
+			Collections.addAll(lastSelectedGeometry, selectedGeoCompoundTags);
+		}
+	}
+
+	public List<String> getLastSelectedGeometry() {
+		return lastSelectedGeometry;
 	}
 }

@@ -1,6 +1,8 @@
 package com.supermap.desktop.utilities;
 
 import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
+import com.supermap.data.EngineType;
 import com.supermap.data.ErrorInfo;
 import com.supermap.data.Toolkit;
 import com.supermap.data.Workspace;
@@ -563,6 +565,17 @@ public class WorkspaceUtilities {
 	public static Workspace copyWorkspace(Workspace workspace, Workspace copyWorkspace) {
 		copyWorkspace.setCaption(workspace.getCaption());
 		copyWorkspace.setDescription(workspace.getDescription());
+
+		RepeatDatasourceDeal repeatDatasourceDeal = new RepeatDatasourceDeal(workspace.getDatasources(), copyWorkspace.getDatasources());
+		java.util.List<Datasource> datasourceBOnly = repeatDatasourceDeal.getDatasourceBOnly();
+		for (int i = datasourceBOnly.size() - 1; i >= 0; i--) {
+			copyWorkspace.getDatasources().close(datasourceBOnly.get(i).getAlias());
+		}
+		java.util.List<Datasource> datasourceAOnly = repeatDatasourceDeal.getDatasourceAOnly();
+		for (Datasource datasource : datasourceAOnly) {
+			copyWorkspace.getDatasources().open(datasource.getConnectionInfo());
+		}
+
 		copyWorkspace.getMaps().clear();
 		copyWorkspace.getScenes().clear();
 		copyWorkspace.getLayouts().clear();
@@ -639,3 +652,44 @@ public class WorkspaceUtilities {
 
 }
 
+class RepeatDatasourceDeal {
+	private java.util.List<Datasource> datasourceAOnly = new ArrayList<>();
+	private java.util.List<Datasource> datasourceBOnly = new ArrayList<>();
+
+	RepeatDatasourceDeal(Datasources datasourcesA, Datasources datasourcesB) {
+		for (int i = 0; i < datasourcesA.getCount(); i++) {
+			Datasource datasource = datasourcesA.get(i);
+			// 只考虑不为内存且不为udb的数据源
+			if (!":memory:".equalsIgnoreCase(datasource.getConnectionInfo().getServer()) && datasource.isOpened()
+					&& datasource.getEngineType() != EngineType.UDB) {
+				datasourceAOnly.add(datasource);
+			}
+		}
+		for (int i = 0; i < datasourcesB.getCount(); i++) {
+			Datasource datasource = datasourcesB.get(i);
+			// 只考虑不为内存且不为udb的数据源
+			if (!":memory:".equalsIgnoreCase(datasource.getConnectionInfo().getServer()) && datasource.isOpened() && datasource.getEngineType() != EngineType.UDB) {
+				datasourceBOnly.add(datasource);
+			}
+		}
+
+		for (int i = datasourceAOnly.size() - 1; i >= 0; i--) {
+			Datasource datasourceA = datasourceAOnly.get(i);
+			for (int j = datasourceBOnly.size() - 1; j >= 0; j--) {
+				Datasource datasourceB = datasourceBOnly.get(j);
+				if (datasourceA.toString().equalsIgnoreCase(datasourceB.toString())) {
+					datasourceAOnly.remove(datasourceA);
+					datasourceBOnly.remove(datasourceB);
+				}
+			}
+		}
+	}
+
+	java.util.List<Datasource> getDatasourceAOnly() {
+		return datasourceAOnly;
+	}
+
+	java.util.List<Datasource> getDatasourceBOnly() {
+		return datasourceBOnly;
+	}
+}

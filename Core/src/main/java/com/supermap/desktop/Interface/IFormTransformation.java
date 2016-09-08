@@ -3,7 +3,9 @@ package com.supermap.desktop.Interface;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.mapping.Map;
+import com.supermap.ui.Action;
 
+import javax.swing.*;
 import java.util.List;
 
 /**
@@ -19,4 +21,12 @@ public interface IFormTransformation extends IForm {
 	void startAddPoint();
 
 	boolean isAddPointing();
+
+	JTable getTable();
+
+	void centerOriginal();
+
+	void deleteTableSelectedRow();
+
+	void setAction(Action action);
 }

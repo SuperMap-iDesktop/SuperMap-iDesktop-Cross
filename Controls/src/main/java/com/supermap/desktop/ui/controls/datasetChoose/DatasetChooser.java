@@ -8,13 +8,13 @@ import com.supermap.data.Maps;
 import com.supermap.data.Scenes;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DatasetTypeComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
+import com.supermap.desktop.ui.controls.TextFieldSearch;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.button.SmButton;
@@ -65,11 +65,10 @@ public class DatasetChooser extends SmDialog {
 
 	private JLabel labelPath = new JLabel("String_FormDatasetBrowse_ToolStripLabelPath");
 	private JLabel labelScense = new JLabel("String_FormDatasetBrowse_ToolStripLabelDisplayType");
-	private JLabel labelSearch = new JLabel();
 
 	private JPanel panelTable = new JPanel();
 
-	private JTextField textFieldSearch;
+	private JTextField textFieldSearch = new TextFieldSearch();
 	private JTextField textFieldPath = new JTextField();
 
 	private WorkspaceTree workspaceTree;
@@ -211,7 +210,6 @@ public class DatasetChooser extends SmDialog {
 		JSeparator separatorT = new JSeparator();
 		separatorT.setOrientation(SwingConstants.VERTICAL);
 		toolBar.add(separatorT);
-		this.textFieldSearch = new JTextField();
 		toolBar.add(this.textFieldSearch);
 		this.textFieldSearch.setColumns(10);
 		this.textFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
@@ -231,7 +229,6 @@ public class DatasetChooser extends SmDialog {
 			}
 		});
 		//@formatter:off
-		toolBar.add(this.labelSearch);
 
 		JScrollPane scrollPaneTable = new JScrollPane();
 		GroupLayout gl_panelTable = new GroupLayout(panelTable);
@@ -338,7 +335,6 @@ public class DatasetChooser extends SmDialog {
 		this.labelScense.setText(CoreProperties.getString("String_FormDatasetBrowse_ToolStripLabelDisplayType"));
 		this.buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 		this.buttonInvertSelect.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
-		this.labelSearch.setIcon(ControlsResources.getIcon("/controlsresources/SortType/Image_FindFiles.png"));
 		this.buttonOk.setText(CommonProperties.getString("String_Button_OK"));
 		this.buttonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
 		this.buttonSelectAll.setToolTipText(CommonProperties.getString("String_ToolBar_SelectAll"));

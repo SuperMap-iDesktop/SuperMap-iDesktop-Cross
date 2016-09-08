@@ -397,6 +397,7 @@ public class JDialogSpatialQuery extends SmDialog {
 		checkBoxSelectedAll.setSelected(false);
 		panelDescribe.setMinimumSize(new Dimension(20, 120));
 		compTitledPaneSearchResult = new CompTitledPane(checkBoxSaveResult, panelSearchResult);
+		textAreaDescribe.setEditable(false);
 		textAreaDescribe.setLineWrap(true);
 		this.setSize(new Dimension(800, 600));
 		this.setLocationRelativeTo(null);
