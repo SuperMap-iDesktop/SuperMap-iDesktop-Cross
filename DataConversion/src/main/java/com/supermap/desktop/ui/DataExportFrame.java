@@ -232,7 +232,7 @@ public class DataExportFrame extends SmDialog {
 		bg.add(this.radioButtonOK);
 		bg.add(this.radioButtonNO);
 		//@formatter:off
-		
+
 		//labelCompression textFieldCompression
 		//labelRecordFile
 		//fileChooser
@@ -307,7 +307,7 @@ public class DataExportFrame extends SmDialog {
 		);
 		gl_panelCommon.setAutoCreateContainerGaps(true);
 		gl_panelCommon.setAutoCreateGaps(true);
-		
+
 		this.radioButtonNO.setSelected(true);
 		this.fileChooser.getEditor().setEnabled(false);
 		this.fileChooser.getButton().setEnabled(false);
@@ -593,14 +593,12 @@ public class DataExportFrame extends SmDialog {
 			if (c == comboBoxFileType) {
 				String item = (String) comboBoxFileType.getSelectedItem();
 				FileType fileType = DatasetUtil.getFileType(item);
-				ArrayList<ExportFileInfo> tempFileInfos = new ArrayList<ExportFileInfo>();
 				int[] rows = table.getSelectedRows();
 				if (0 < rows.length) {
 					for (int i = 0; i < rows.length; i++) {
 						ExportFileInfo tempExport = model.getTagValueAt(rows[i]);
 						ExportFunction.initExportSetting(tempExport, fileType.name());
 						tempExport.setTargetFileType(fileType);
-						tempFileInfos.add(tempExport);
 					}
 				}
 				ExportFunction.refreshPanelForCombobox(ExportFunction.getRightPanelState(fileType.name()), frame);
