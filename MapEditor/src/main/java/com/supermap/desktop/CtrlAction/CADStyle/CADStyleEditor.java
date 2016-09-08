@@ -103,7 +103,7 @@ public class CADStyleEditor extends AbstractEditor {
         boolean editable = isEditable(environment.getMap());
         Recordset recordset = getActiveRecordset(environment.getMap());
         if (null != recordset && !recordset.getDataset().getType().equals(DatasetType.CAD)) {
-            // 若选中的记录集所在的数据集不为CAD数据集，直接屏蔽掉
+            // 若选中的记录集所在的数据集不为（CAD/文本）数据集，直接屏蔽掉
             return false;
         }
         if (null != cadStyleContainer && editable == false) {

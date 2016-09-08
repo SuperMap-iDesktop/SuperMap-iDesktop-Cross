@@ -2,6 +2,7 @@ package com.supermap.desktop.framemenus;
 
 import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
@@ -25,7 +26,6 @@ public class CtrlActionDatasourcesRefresh extends CtrlAction {
 
 	@Override
 	public void run() {
-		boolean isReopened = false; // 是否重新打开过数据源
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
 
 		for (int i = workspace.getDatasources().getCount() - 1; i >= 0; i--) {

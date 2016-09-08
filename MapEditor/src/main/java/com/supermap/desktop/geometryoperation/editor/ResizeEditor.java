@@ -21,9 +21,9 @@ import java.text.MessageFormat;
 /**
  * Created by xie on 2016/8/23.
  */
-public class ResiezeEditor extends AbstractEditor {
+public class ResizeEditor extends AbstractEditor {
 
-    private static final String TAG_OFFSET = "Tag_offsetTracking";
+    private static final String TAG_RESIZE = "Tag_resizeTracking";
     private static final Action MAPCONTROL_ACTION = Action.SELECT;
     private static final TrackMode MAPCONTROL_TRACKMODE = TrackMode.TRACK;
 
@@ -43,7 +43,6 @@ public class ResiezeEditor extends AbstractEditor {
 
         public void mouseClicked(EditEnvironment environment, MouseEvent e) {
             if (SwingUtilities.isRightMouseButton(e)) {
-                MapUtilities.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
                 environment.stopEditor();
             }
         }
@@ -146,7 +145,7 @@ public class ResiezeEditor extends AbstractEditor {
         OffsetEditModel editModel = (OffsetEditModel) environment.getEditModel();
 
         try {
-            int trackingIndex = environment.getMap().getTrackingLayer().indexOf(TAG_OFFSET);
+            int trackingIndex = environment.getMap().getTrackingLayer().indexOf(TAG_RESIZE);
 
             if (trackingIndex < 0) {
 
@@ -189,7 +188,7 @@ public class ResiezeEditor extends AbstractEditor {
                 for (Selection selection : selections) {
                     selection.clear();
                 }
-                MapUtilities.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
+                MapUtilities.clearTrackingObjects(environment.getMap(), TAG_RESIZE);
                 TabularUtilities.refreshTabularForm(recordset.getDataset());
 
                 environment.getMap().refresh();
@@ -257,12 +256,12 @@ public class ResiezeEditor extends AbstractEditor {
                 Point2D newPointCenter = tempGeometry.getBounds().getCenter();
                 Geometry resultGeometry = tempGeometry;
 
-                MapUtilities.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
+                MapUtilities.clearTrackingObjects(environment.getMap(), TAG_RESIZE);
 
                 resultGeometry.setStyle(getTrackingStyle());
                 //由于缩放后中心点发生变化，用offset方法来重新设置中心点
                 resultGeometry.offset(pointCenter.getX() - newPointCenter.getX(), pointCenter.getY() - newPointCenter.getY());
-                environment.getMap().getTrackingLayer().add(resultGeometry, TAG_OFFSET);
+                environment.getMap().getTrackingLayer().add(resultGeometry, TAG_RESIZE);
                 environment.getMap().refreshTrackingLayer();
                 resultGeometry.dispose();
                 tempGeometry.dispose();
@@ -304,7 +303,11 @@ public class ResiezeEditor extends AbstractEditor {
     private void clear(EditEnvironment environment) {
         OffsetEditModel editModel = (OffsetEditModel) environment.getEditModel();
         editModel.clear();
-        MapUtilities.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
+        MapUtilities.clearTrackingObjects(environment.getMap(), TAG_RESIZE);
+        TrackMode trackMode = environment.getMapControl().getTrackMode();
+        environment.getMapControl().setTrackMode(TrackMode.TRACK);
+        environment.getMap().refreshTrackingLayer();
+        environment.getMapControl().setTrackMode(trackMode);
     }
 
     private class OffsetEditModel implements IEditModel {
