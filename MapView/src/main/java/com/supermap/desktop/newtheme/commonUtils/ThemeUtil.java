@@ -9,8 +9,7 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.ThemeCustom;
+import com.supermap.mapping.*;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -337,4 +336,226 @@ public class ThemeUtil {
         }
     }
 
+    public static Layer arrayNewThemeLayer(Map map, Layer datasetLayer, Theme theme) {
+        Layer themeLayer = null;
+        try {
+            int start = 0;
+            int end = 0;
+            LayerGroup layerGroup = datasetLayer.getParentGroup();
+            if (layerGroup != null) {
+                int index = layerGroup.indexOf(datasetLayer);
+                start = index;
+
+                for (int i = index - 1; i >= 0 && layerGroup.get(i).getDataset() == datasetLayer.getDataset(); i--) {
+                    start = i;
+                }
+                end = index;
+                for (int i = index + 1; i <= layerGroup.getCount() - 1 && layerGroup.get(i).getDataset() == datasetLayer.getDataset(); i++) {
+                    end = i;
+                }
+                themeLayer = insertThemeLayer(map, datasetLayer, theme, start, end);
+            } else {
+                int index = map.getLayers().indexOf(datasetLayer.getName());
+                start = index;
+                for (int i = index - 1; i >= 0 && map.getLayers().get(i).getDataset() == datasetLayer.getDataset(); i--) {
+                    start = i;
+                }
+                end = index;
+                for (int i = index + 1; i <= map.getLayers().getCount() - 1 && map.getLayers().get(i).getDataset() == datasetLayer.getDataset(); i++) {
+                    end = i;
+                }
+                themeLayer = insertThemeLayer(map, datasetLayer, theme, start, end);
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        return themeLayer;
+    }
+
+    private static Layer insertThemeLayer(Map map, Layer datasetLayer, Theme theme, int start, int end) {
+        Layer themeLayer = null;
+        try {
+            LayerGroup layerGroup = datasetLayer.getParentGroup();
+            Dataset dataset = datasetLayer.getDataset();
+            ThemeType currentThemeType = theme.getType();
+            if (layerGroup != null) {
+                if (start >= layerGroup.getCount()) {
+                    themeLayer = map.getLayers().add(dataset, theme, false);
+                    layerGroup.insert(start, themeLayer);
+                } else {
+                    for (int i = start; i <= end; i++) {
+                        if (layerGroup.get(i).getDataset() != dataset || isRightPosition(layerGroup.get(i), currentThemeType, dataset)) {
+                            themeLayer = map.getLayers().add(dataset, theme, false);
+                            layerGroup.insert(i, themeLayer);
+                            break;
+                        } else if (i == end) {
+                            themeLayer = map.getLayers().add(dataset, theme, false);
+                            layerGroup.insert(end + 1, themeLayer);
+                        } else {
+                            //避免有遗漏的情况，用else结尾。
+                        }
+                    }
+                }
+            } else {
+                if (start >= map.getLayers().getCount()) {
+                    themeLayer = map.getLayers().add(dataset, theme, true);
+                    map.getLayers().moveTo(0, start);
+                    //layers的insert方法会导致桌面崩溃故暂时绕一下
+//                    themeLayer = map.getLayers().insert(start, dataset, theme);
+                } else {
+                    for (int i = start; i <= end; i++) {
+                        if (map.getLayers().get(i).getDataset() != dataset || isRightPosition(map.getLayers().get(i), currentThemeType, dataset)) {
+//                            themeLayer = map.getLayers().insert(i, dataset, theme);
+                            themeLayer = map.getLayers().add(dataset, theme, true);
+                            map.getLayers().moveTo(0, i);
+                            break;
+                        } else if (i == end) {
+//                            themeLayer = map.getLayers().insert(end + 1, dataset, theme);
+                            themeLayer = map.getLayers().add(dataset, theme, true);
+                            map.getLayers().moveTo(0, end + 1);
+                        } else {
+                            //避免有遗漏的情况，用else结尾。s
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        return themeLayer;
+    }
+
+    private static Boolean isRightPosition(Layer currentLayer, ThemeType themeType, Dataset dataset) {
+        Boolean isRight = false;
+        try {
+            if (dataset.getType() == DatasetType.POINT || dataset.getType() == DatasetType.POINT3D) {
+                isRight = isRightPositionOnPointLayer(currentLayer, themeType, dataset);
+            } else if (dataset instanceof DatasetVector) {
+                isRight = isRightPositionOnOtherLayer(currentLayer, themeType, dataset);
+            } else if (dataset instanceof DatasetGrid || dataset instanceof DatasetImage) {
+                isRight = isRightPositionOnGridLayer(currentLayer, themeType, dataset);
+            } else {
+                //避免有遗漏的情况，用else结尾。
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        return isRight;
+    }
+
+    private static Boolean isRightPositionOnPointLayer(Layer currentLayer, ThemeType themeType, Dataset dataset) {
+        Boolean isRight = false;
+        try {
+            if (dataset.getType() == DatasetType.POINT || dataset.getType() == DatasetType.POINT3D) {
+                if (themeType == ThemeType.LABEL) {
+                    isRight = true;
+                } else if (themeType == ThemeType.RANGE) {
+                    if (currentLayer.getTheme() == null || currentLayer.getTheme().getType() != ThemeType.LABEL) {
+                        isRight = true;
+                    }
+                } else if (themeType == ThemeType.UNIQUE) {
+                    if (currentLayer.getTheme() == null || (currentLayer.getTheme().getType() != ThemeType.LABEL && currentLayer.getTheme().getType() != ThemeType.RANGE)) {
+                        isRight = true;
+                    }
+                } else if (currentLayer.getTheme() != null && currentLayer.getTheme().getType() != ThemeType.LABEL &&
+                        currentLayer.getTheme().getType() != ThemeType.RANGE && currentLayer.getTheme().getType() != ThemeType.UNIQUE) {
+                    if (themeType == ThemeType.GRADUATEDSYMBOL) {
+                        isRight = true;
+                    } else if (themeType == ThemeType.GRAPH && currentLayer.getTheme().getType() != ThemeType.GRADUATEDSYMBOL) {
+                        isRight = true;
+                    } else if (themeType == ThemeType.DOTDENSITY && currentLayer.getTheme().getType() != ThemeType.GRADUATEDSYMBOL &&
+                            currentLayer.getTheme().getType() != ThemeType.GRAPH) {
+                        isRight = true;
+                    } else if (themeType == ThemeType.CUSTOM && currentLayer.getTheme().getType() != ThemeType.GRADUATEDSYMBOL &&
+                            currentLayer.getTheme().getType() != ThemeType.GRAPH && currentLayer.getTheme().getType() != ThemeType.DOTDENSITY) {
+                        isRight = true;
+                    } else {
+                        //避免有遗漏的情况，用else结尾。
+                    }
+                } else {
+                    //避免有遗漏的情况，用else结尾。
+                }
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        return isRight;
+    }
+
+    private static Boolean isRightPositionOnGridLayer(Layer currentLayer, ThemeType themeType, Dataset dataset) {
+        Boolean isRight = false;
+        try {
+            if (dataset.getType() == DatasetType.GRID || dataset.getType() == DatasetType.IMAGE) {
+                if (themeType == ThemeType.GRIDRANGE) {
+                    isRight = true;
+                } else if (themeType == ThemeType.GRIDUNIQUE) {
+                    if (currentLayer.getTheme() == null || currentLayer.getTheme().getType() != ThemeType.GRIDRANGE) {
+                        isRight = true;
+                    }
+                } else {
+                    //避免有遗漏的情况，用else结尾。
+                }
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        return isRight;
+    }
+
+    private static Boolean isRightPositionOnOtherLayer(Layer currentLayer, ThemeType themeType, Dataset dataset) {
+        Boolean isRight = false;
+        try {
+            if (dataset instanceof DatasetVector && dataset.getType() != DatasetType.POINT && dataset.getType() != DatasetType.POINT3D) {
+                if (themeType == ThemeType.LABEL) {
+                    isRight = true;
+                } else if (themeType == ThemeType.GRADUATEDSYMBOL) {
+                    if (currentLayer.getTheme() == null || currentLayer.getTheme().getType() != ThemeType.LABEL) {
+                        isRight = true;
+                    }
+                } else if (themeType == ThemeType.GRAPH) {
+                    if (currentLayer.getTheme() == null ||
+                            (currentLayer.getTheme().getType() != ThemeType.LABEL && currentLayer.getTheme().getType() != ThemeType.GRADUATEDSYMBOL)) {
+                        isRight = true;
+                    }
+                } else if (themeType == ThemeType.DOTDENSITY) {
+                    if (currentLayer.getTheme() == null ||
+                            (currentLayer.getTheme().getType() != ThemeType.LABEL &&
+                                    currentLayer.getTheme().getType() != ThemeType.GRADUATEDSYMBOL &&
+                                    currentLayer.getTheme().getType() != ThemeType.GRAPH)) {
+                        isRight = true;
+                    }
+                } else if (themeType == ThemeType.RANGE) {
+                    if (currentLayer.getTheme() == null ||
+                            (currentLayer.getTheme().getType() != ThemeType.LABEL &&
+                                    currentLayer.getTheme().getType() != ThemeType.GRADUATEDSYMBOL &&
+                                    currentLayer.getTheme().getType() != ThemeType.GRAPH &&
+                                    currentLayer.getTheme().getType() != ThemeType.DOTDENSITY)) {
+                        isRight = true;
+                    }
+                } else if (themeType == ThemeType.UNIQUE) {
+                    if (currentLayer.getTheme() == null ||
+                            (currentLayer.getTheme().getType() != ThemeType.LABEL &&
+                                    currentLayer.getTheme().getType() != ThemeType.GRADUATEDSYMBOL &&
+                                    currentLayer.getTheme().getType() != ThemeType.GRAPH &&
+                                    currentLayer.getTheme().getType() != ThemeType.DOTDENSITY &&
+                                    currentLayer.getTheme().getType() != ThemeType.RANGE)) {
+                        isRight = true;
+                    }
+                } else {
+                    if (currentLayer.getTheme() == null ||
+                            (currentLayer.getTheme().getType() != ThemeType.LABEL &&
+                                    currentLayer.getTheme().getType() != ThemeType.GRADUATEDSYMBOL &&
+                                    currentLayer.getTheme().getType() != ThemeType.GRAPH &&
+                                    currentLayer.getTheme().getType() != ThemeType.DOTDENSITY &&
+                                    currentLayer.getTheme().getType() != ThemeType.RANGE &&
+                                    currentLayer.getTheme().getType() != ThemeType.UNIQUE)) {
+                        isRight = true;
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        return isRight;
+    }
 }

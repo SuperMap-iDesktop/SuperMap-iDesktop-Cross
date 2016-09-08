@@ -159,6 +159,7 @@ public class ThemeGuideFactory {
         });
     }
 
+
     /**
      * 获取MapControl
      *
@@ -178,16 +179,17 @@ public class ThemeGuideFactory {
     /**
      * 初始化专题图
      *
-     * @param dataset 目标数据集
-     * @param layer   源图层
+     * @param layer 源图层
      * @return 专题图图层
      */
-    private static Layer initCurrentTheme(Dataset dataset, Layer layer, Theme theme) {
+    private static Layer initCurrentTheme(Layer layer, Theme theme) {
         Layer result = null;
         if (null != getMapControl()) {
-            result = getMapControl().getMap().getLayers().add(dataset, theme, true);
-            int count = getMapControl().getMap().getLayers().indexOf(layer.getName());
-            getMapControl().getMap().getLayers().moveTo(0, count - 1);
+
+            result = ThemeUtil.arrayNewThemeLayer(getMapControl().getMap(), layer, theme);
+            UICommonToolkit.getLayersManager().getLayersTree().reload();
+            int selectRow = getMapControl().getMap().getLayers().indexOf(result.getName());
+            UICommonToolkit.getLayersManager().getLayersTree().setSelectionInterval(selectRow, selectRow);
             if (null != layer) {
                 // 复制关联表信息到新图层中
                 for (int i = 0; i < layer.getDisplayFilter().getJoinItems().getCount(); i++) {
@@ -195,9 +197,7 @@ public class ThemeGuideFactory {
                 }
             }
             ((ThemeMainContainer) getDockbarThemeContainer().getComponent()).unregistActionListener();
-            UICommonToolkit.getLayersManager().getLayersTree().reload();
-            UICommonToolkit.getLayersManager().getLayersTree().setSelectionRow(count - 1);
-            getMapControl().getMap().refresh();
+//            getMapControl().getMap().refresh();
         }
         return result;
     }
@@ -222,7 +222,7 @@ public class ThemeGuideFactory {
                     textStyle.setLineColor(Color.GRAY);
                 }
                 success = true;
-                Layer themeUniqueLayer = initCurrentTheme((DatasetVector) getDataset(), layer, themeUnique);
+                Layer themeUniqueLayer = initCurrentTheme(layer, themeUnique);
                 ThemeChangePanel themeUniqueContainer = new ThemeUniqueContainer(themeUniqueLayer, true);
                 setDockbarActive(themeUniqueLayer, themeUniqueContainer);
             } else {
@@ -259,7 +259,7 @@ public class ThemeGuideFactory {
                     GeoStyle textStyle = themeRange.getItem(i).getStyle();
                     textStyle.setLineColor(Color.GRAY);
                 }
-                Layer themeRangeLayer = initCurrentTheme((DatasetVector) getDataset(), layer, themeRange);
+                Layer themeRangeLayer = initCurrentTheme(layer, themeRange);
                 ThemeChangePanel themeRangeContainer = new ThemeRangeContainer(themeRangeLayer, true);
                 setDockbarActive(themeRangeLayer, themeRangeContainer);
             } else {
@@ -280,7 +280,7 @@ public class ThemeGuideFactory {
             ThemeLabel themeLabel = new ThemeLabel();
             themeLabel.setLabelExpression(expression);
             themeLabel.setMaxLabelLength(8);
-            Layer themeLabelUniformLayer = initCurrentTheme((DatasetVector) getDataset(), layer, themeLabel);
+            Layer themeLabelUniformLayer = initCurrentTheme(layer, themeLabel);
             ThemeChangePanel themeLabelUniformContainer = new ThemeLabelUniformContainer(themeLabelUniformLayer);
             setDockbarActive(themeLabelUniformLayer, themeLabelUniformContainer);
         }
@@ -299,7 +299,7 @@ public class ThemeGuideFactory {
                 themeLabel.setMaxLabelLength(8);
                 themeLabel.setNumericPrecision(1);
                 themeLabel.setLabelExpression(expression);
-                Layer themeLabelRangeLayer = initCurrentTheme((DatasetVector) getDataset(), layer, themeLabel);
+                Layer themeLabelRangeLayer = initCurrentTheme(layer, themeLabel);
                 ThemeChangePanel themeLabelRangeContainer = new ThemeLabelRangeContainer(themeLabelRangeLayer, true);
                 setDockbarActive(themeLabelRangeLayer, themeLabelRangeContainer);
                 success = true;
@@ -341,7 +341,7 @@ public class ThemeGuideFactory {
             themeLabel.setUniformMixedStyle(textStyle);
             themeLabel.setLabelExpression(expression);
             themeLabel.setMaxLabelLength(8);
-            Layer themeLabelComplicatedLayer = initCurrentTheme((DatasetVector) getDataset(), layer, themeLabel);
+            Layer themeLabelComplicatedLayer = initCurrentTheme(layer, themeLabel);
             ThemeChangePanel themeLabelComplicatedContainer = new ThemeLabelComplicatedContainer(themeLabelComplicatedLayer);
             setDockbarActive(themeLabelComplicatedLayer, themeLabelComplicatedContainer);
         }
@@ -364,7 +364,7 @@ public class ThemeGuideFactory {
                 }
                 if (null != themeUnique) {
                     success = true;
-                    Layer themeGridUniqueLayer = initCurrentTheme((DatasetGrid) getDataset(), null, themeUnique);
+                    Layer themeGridUniqueLayer = initCurrentTheme(null, themeUnique);
                     ThemeChangePanel themeUniqueContainer = new ThemeGridUniqueContainer(themeGridUniqueLayer, true);
                     setDockbarActive(themeGridUniqueLayer, themeUniqueContainer);
                 } else {
@@ -395,7 +395,7 @@ public class ThemeGuideFactory {
 
                 if (null != themeRange) {
                     success = true;
-                    Layer themeGridRangeLayer = initCurrentTheme(getDataset(), null, themeRange);
+                    Layer themeGridRangeLayer = initCurrentTheme(null, themeRange);
                     ThemeChangePanel themeGridRangeContainer = new ThemeGridRangeContainer(themeGridRangeLayer, true);
                     setDockbarActive(themeGridRangeLayer, themeGridRangeContainer);
                 } else {
@@ -446,7 +446,7 @@ public class ThemeGuideFactory {
             themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
             themeGraph.setBarWidth(themeGraph.getMaxGraphSize() / 10);
             themeGraph.setAxesDisplayed(false);
-            Layer themeGraphLayer = initCurrentTheme(datasetVector, layer, themeGraph);
+            Layer themeGraphLayer = initCurrentTheme(layer, themeGraph);
             ThemeChangePanel themeGraphContainer = new ThemeGraphContainer(themeGraphLayer, true);
             setDockbarActive(themeGraphLayer, themeGraphContainer);
         }
@@ -470,7 +470,7 @@ public class ThemeGuideFactory {
             }
             successed = true;
             themeGraduated.setExpression(expression);
-            Layer themeGraduatedLayer = initCurrentTheme(getDataset(), layer, themeGraduated);
+            Layer themeGraduatedLayer = initCurrentTheme(layer, themeGraduated);
             ThemeChangePanel themeGraduatedContainer = new ThemeGraduatedSymbolContainer(themeGraduatedLayer);
             setDockbarActive(themeGraduatedLayer, themeGraduatedContainer);
         }
@@ -497,7 +497,7 @@ public class ThemeGuideFactory {
             themeDotDensity.setStyle(geoStyle);
             double maxValue = getMaxValue((DatasetVector) getDataset(), "SmID", layer.getDisplayFilter().getJoinItems());
             themeDotDensity.setValue(maxValue / 1000);
-            Layer themeDotDensityLayer = initCurrentTheme(getDataset(), layer, themeDotDensity);
+            Layer themeDotDensityLayer = initCurrentTheme(layer, themeDotDensity);
             ThemeChangePanel themeDotDensityContainer = new ThemeDotDensityContainer(themeDotDensityLayer);
             setDockbarActive(themeDotDensityLayer, themeDotDensityContainer);
         }
@@ -515,7 +515,7 @@ public class ThemeGuideFactory {
         if (null != getDataset()) {
             ThemeCustom themeCustom = new ThemeCustom();
             successed = true;
-            Layer themeCustomLayer = initCurrentTheme(getDataset(), layer, themeCustom);
+            Layer themeCustomLayer = initCurrentTheme(layer, themeCustom);
             ThemeChangePanel themeCustomContainer = new ThemeCustomContainer(themeCustomLayer);
             setDockbarActive(themeCustomLayer, themeCustomContainer);
         }
