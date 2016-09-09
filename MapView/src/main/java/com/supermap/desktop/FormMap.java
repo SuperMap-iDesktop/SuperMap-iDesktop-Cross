@@ -50,6 +50,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
+import com.supermap.desktop.ui.controls.scrollPanel.SmMapControlScrollPanel;
 import com.supermap.desktop.utilities.ActionUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.LogUtilities;
@@ -154,7 +155,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	JScrollPane jScrollPaneChildWindow = null;
 	private LayersTree layersTree = null;
 	private transient EventListenerList eventListenerList = new EventListenerList();
-	private ArrayList<Layer> activeLayersList = new ArrayList<Layer>();
+	private ArrayList<Layer> activeLayersList = new ArrayList<>();
 	private SmComboBox scaleBox;
 	private SmTextField pointXField;
 	private SmTextField pointYField;
@@ -529,6 +530,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		initGloableSetting();
 	}
 
+
 	private void initGloableSetting() {
 		int selectedIndex = GlobalParameters.getPositiveSelect();
 		SelectionMode selectionMode = SelectionMode.CONTAIN_INNER_POINT;
@@ -592,10 +594,12 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 	}
 
+	private Dimension newSize;
+
 	private void initComponents() {
 		this.mapControl = new MapControl();
 		this.mapControl.setWaitCursorEnabled(false);
-		this.jScrollPaneChildWindow = new JScrollPane(mapControl);
+		jScrollPaneChildWindow = new SmMapControlScrollPanel(mapControl);
 		this.layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 		this.scaleBox = (SmComboBox) getStatusbar().getComponent(SCALE);
 		this.scaleBox.setEditable(true);
@@ -1606,4 +1610,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	public void setLengthUnit(LengthUnit lengthUnit) {
 		this.lengthUnit = lengthUnit;
 	}
+
 }
+

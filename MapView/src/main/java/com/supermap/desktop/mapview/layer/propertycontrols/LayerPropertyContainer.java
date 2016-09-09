@@ -13,7 +13,19 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.LayerUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerCaptionChangedEvent;
+import com.supermap.mapping.LayerCaptionChangedListener;
+import com.supermap.mapping.LayerEditableChangedEvent;
+import com.supermap.mapping.LayerEditableChangedListener;
+import com.supermap.mapping.LayerSelectableChangedEvent;
+import com.supermap.mapping.LayerSelectableChangedListener;
+import com.supermap.mapping.LayerSnapableChangedEvent;
+import com.supermap.mapping.LayerSnapableChangedListener;
+import com.supermap.mapping.LayerVisibleChangedEvent;
+import com.supermap.mapping.LayerVisibleChangedListener;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -273,7 +285,6 @@ public class LayerPropertyContainer extends JPanel {
 			Application.getActiveApplication().getOutput().output(e2);
 		} finally {
 			setResetFlag(true);
-			UICommonToolkit.getLayersManager().getLayersTree().updateUI();
 		}
 	}
 

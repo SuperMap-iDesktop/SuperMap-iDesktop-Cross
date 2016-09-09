@@ -745,6 +745,7 @@ public class GlobalParameters {
 		initIsShowDataInNewWindow();
 		initIsShowFormClosingInfo();
 		initAutoCloseEmptyWindow();
+		initMapRefreshDelayWhileResize();
 		initCloseMemoryDatasourceNotify();
 		initWorkspaceCloseNotify();
 		initWorkspaceRecovery();
@@ -797,6 +798,27 @@ public class GlobalParameters {
 	}
 
 	//endregion
+
+	//region 地图大小改变时的刷新延迟
+	private static int MapRefreshDelayWhileResize = 800;
+
+	private static void initMapRefreshDelayWhileResize() {
+		String value = getValue("_startup_dataWindow", "MapRefreshDelayWhileResize");
+		if (value != null) {
+			int result = Integer.valueOf(value);
+			setMapRefreshDelayWhileResize(result);
+		}
+	}
+
+	public static int getMapRefreshDelayWhileResize() {
+		return MapRefreshDelayWhileResize;
+	}
+
+	public static void setMapRefreshDelayWhileResize(int mapRefreshDelayWhileResize) {
+		MapRefreshDelayWhileResize = mapRefreshDelayWhileResize;
+	}
+	//endregion
+
 	//region 关闭窗口提示保存
 	private static void initIsShowFormClosingInfo() {
 		String value = getValue("_startup_dataWindow", "showCloseInfoForm");
@@ -1044,6 +1066,7 @@ public class GlobalParameters {
 			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_dataWindowComment")));
 			Element dataWindow = emptyDocument.createElement("dataWindow");
 			dataWindow.setAttribute("autoCloseEmptyWindow", String.valueOf(isAutoCloseEmptyWindow));
+			dataWindow.setAttribute("MapRefreshDelayWhileResize", String.valueOf(MapRefreshDelayWhileResize));
 			dataWindow.setAttribute("autoNewWindow", String.valueOf(isShowDataInNewWindow));
 			dataWindow.setAttribute("showCloseInfoForm", String.valueOf(isShowFormClosingInfo));
 			startup.appendChild(dataWindow);
