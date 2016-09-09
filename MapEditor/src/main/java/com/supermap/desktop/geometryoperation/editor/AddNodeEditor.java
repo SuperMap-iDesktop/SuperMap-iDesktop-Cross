@@ -15,7 +15,9 @@ public class AddNodeEditor extends AbstractEditor {
 
 		@Override
 		public void actionChanged(EditEnvironment environment, ActionChangedEvent e) {
-			if (e.getOldAction() == Action.VERTEXADD) {
+
+			// 组件的节点编辑会在添加点之后更改 Action 为编辑
+			if (e.getOldAction() == Action.VERTEXADD && e.getNewAction() != Action.VERTEXEDIT) {
 
 				// @formatter:off
 				// 组件在很多情况下会自动结束编辑状态，比如右键，比如框选一堆对象，
@@ -51,7 +53,7 @@ public class AddNodeEditor extends AbstractEditor {
 		return environment.getEditProperties().getSelectedGeometryCount() == 1
 				&& environment.getEditProperties().getEditableSelectedGeometryCount() == 1
 				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOLINE, GeometryType.GEOLINE3D,
-						GeometryType.GEOREGION);
+				GeometryType.GEOREGION);
 	}
 
 	@Override
