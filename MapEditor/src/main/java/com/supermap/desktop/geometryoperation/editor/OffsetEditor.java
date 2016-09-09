@@ -299,11 +299,13 @@ public class OffsetEditor extends AbstractEditor {
     private void clear(EditEnvironment environment) {
         OffsetEditModel editModel = (OffsetEditModel) environment.getEditModel();
         editModel.clear();
-        MapUtilities.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
-        TrackMode trackMode = environment.getMapControl().getTrackMode();
-        environment.getMapControl().setTrackMode(TrackMode.TRACK);
-        environment.getMap().refreshTrackingLayer();
-        environment.getMapControl().setTrackMode(trackMode);
+        if (environment.getMap().getTrackingLayer().indexOf(TAG_OFFSET) >= 0) {
+            MapUtilities.clearTrackingObjects(environment.getMap(), TAG_OFFSET);
+            TrackMode trackMode = environment.getMapControl().getTrackMode();
+            environment.getMapControl().setTrackMode(TrackMode.TRACK);
+            environment.getMap().refreshTrackingLayer();
+            environment.getMapControl().setTrackMode(trackMode);
+        }
     }
 
     private class OffsetEditModel implements IEditModel {

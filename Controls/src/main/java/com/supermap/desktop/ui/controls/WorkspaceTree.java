@@ -2130,10 +2130,6 @@ public class WorkspaceTree extends JTree implements IDisposable {
                                     // 关闭当前工作空间
                                     WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(file.getAbsolutePath());
                                     WorkspaceUtilities.openWorkspace(connectionInfo, false);
-                                } else if (datasourceType == getFileType(file)) {
-                                    // 打开udb型数据源
-                                    DatasourceOpenFileUtilties.resetReadOnlyProperties();
-                                    DatasourceOpenFileUtilties.openDatasourceFile(file, false);
                                 } else {
                                     // 打开文件型数据源
                                     DatasourceOpenFileUtilties.resetReadOnlyProperties();
