@@ -244,7 +244,6 @@ public class LayerPropertyContainer extends JPanel {
 
 			@Override
 			public void mapClosed(MapClosedEvent arg0) {
-				// TODO 没清空图层属性面板中的元素，其中监听器未移除可能有隐患
 				unregisterEvents();
 				if (null != formMap) {
 					formMap.getMapControl().getMap().removeMapClosedListener(this);
@@ -290,7 +289,6 @@ public class LayerPropertyContainer extends JPanel {
 
 	private void buttonApplyClicked() {
 		try {
-
 			setResetFlag(false);
 			for (AbstractLayerPropertyControl abstractLayerPropertyControl : this.propertyControls) {
 				abstractLayerPropertyControl.apply();
