@@ -426,8 +426,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				}
 			});
 
-			// 刷新地图。如果选中对象时，更改编辑状态，理应要刷新地图显示。
-			FormMap.this.mapControl.getMap().refresh();
+			// 刷新地图。如果选中对象时，更改编辑状态，理应要刷新地图显示
+			FormMap.this.mapControl.getMap().refreshTrackingLayer();
 		}
 	};
 
@@ -435,9 +435,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 		@Override
 		public void selectableChanged(LayerSelectableChangedEvent arg0) {
-
-			// 刷新地图。如果选中对象时，更改可选择状态，理应要刷新地图显示。
-			FormMap.this.mapControl.getMap().refresh();
+			// 刷新地图。如果选中对象时，更改可选择状态，理应要刷新地图显示
+			FormMap.this.mapControl.getMap().refreshTrackingLayer();
 		}
 	};
 

@@ -79,6 +79,7 @@ public class LayerRelocateDatasetPropertyModel extends LayerPropertyModel {
 		return super.equals(basePropertyModel) && this.layerRelocateDataset == basePropertyModel.getDataset();
 	}
 
+
 	private void checkPropertyEnabled() {
 		try {
 			if (getLayers() != null && getFormMap() != null && getFormMap().getMapControl() != null && getFormMap().getMapControl().getMap() != null

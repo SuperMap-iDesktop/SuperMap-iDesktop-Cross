@@ -104,9 +104,11 @@ public abstract class AbstractLayerPropertyControl extends JPanel implements ILa
 
 		try {
 			LayerPropertyContainer.setResetFlag(false);
-			getLayerPropertyModel().setProperties(getModifiedLayerPropertyModel());
-			getLayerPropertyModel().apply();
-			getLayerPropertyModel().refresh();
+			if (!getLayerPropertyModel().equals(getModifiedLayerPropertyModel())) {
+				getLayerPropertyModel().setProperties(getModifiedLayerPropertyModel());
+				getLayerPropertyModel().apply();
+				getLayerPropertyModel().refresh();
+			}
 			this.isChanged = false;
 		} catch (Exception e) {
 			result = false;
