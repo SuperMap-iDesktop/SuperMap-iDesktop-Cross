@@ -800,7 +800,7 @@ public class GlobalParameters {
 	//endregion
 
 	//region 地图大小改变时的刷新延迟
-	private static int MapRefreshDelayWhileResize = 800;
+	private static int MapRefreshDelayWhileResize = 0;
 
 	private static void initMapRefreshDelayWhileResize() {
 		String value = getValue("_startup_dataWindow", "MapRefreshDelayWhileResize");
