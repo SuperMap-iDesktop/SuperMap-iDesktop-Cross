@@ -276,10 +276,10 @@ public class GlobalParameters {
 	/**
 	 * 获取或设置一个值，指示是否生成运行日志，初始值为false。
 	 */
-	private static boolean outputToLog = false;
+	private static boolean outputToLog = true;
 
 	/**
-	 * 是否输出log日志 默认为false
+	 * 是否输出log日志 默认为true
 	 *
 	 * @return 是否输出
 	 */
@@ -615,14 +615,14 @@ public class GlobalParameters {
 		boolean booleanValue;
 
 		// 日志是否输出
-		String value = getValue("_startup_log", "outputToLog");
-		if (value != null) {
-			booleanValue = Boolean.valueOf(value);
-			setOutputToLog(booleanValue);
-		}
+//		String value = getValue("_startup_log", "outputToLog");
+//		if (value != null) {
+//			booleanValue = Boolean.valueOf(value);
+//			setOutputToLog(booleanValue);
+//		}
 
 		// 操作日志
-		value = getValue("_startup_InfoType", "Information");
+		String value = getValue("_startup_InfoType", "Information");
 		if (value != null) {
 			booleanValue = Boolean.valueOf(value);
 			setLogInformation(booleanValue);
@@ -1090,7 +1090,7 @@ public class GlobalParameters {
 			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_logComment")));
 			Element log = emptyDocument.createElement("log");
 			log.setAttribute("logFolder", logFolder);
-			log.setAttribute("outputToLog", String.valueOf(outputToLog));
+//			log.setAttribute("outputToLog", String.valueOf(outputToLog));
 			startup.appendChild(log);
 
 			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_InfoTypeComment")));
