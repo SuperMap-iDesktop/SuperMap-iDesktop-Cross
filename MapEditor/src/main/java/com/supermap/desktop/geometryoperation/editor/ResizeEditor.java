@@ -303,11 +303,13 @@ public class ResizeEditor extends AbstractEditor {
     private void clear(EditEnvironment environment) {
         OffsetEditModel editModel = (OffsetEditModel) environment.getEditModel();
         editModel.clear();
-        MapUtilities.clearTrackingObjects(environment.getMap(), TAG_RESIZE);
-        TrackMode trackMode = environment.getMapControl().getTrackMode();
-        environment.getMapControl().setTrackMode(TrackMode.TRACK);
-        environment.getMap().refreshTrackingLayer();
-        environment.getMapControl().setTrackMode(trackMode);
+        if (environment.getMap().getTrackingLayer().indexOf(TAG_RESIZE) >= 0) {
+            MapUtilities.clearTrackingObjects(environment.getMap(), TAG_RESIZE);
+            TrackMode trackMode = environment.getMapControl().getTrackMode();
+            environment.getMapControl().setTrackMode(TrackMode.TRACK);
+            environment.getMap().refreshTrackingLayer();
+            environment.getMapControl().setTrackMode(trackMode);
+        }
     }
 
     private class OffsetEditModel implements IEditModel {

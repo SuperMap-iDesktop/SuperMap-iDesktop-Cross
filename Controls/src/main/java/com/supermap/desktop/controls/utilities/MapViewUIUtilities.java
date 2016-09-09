@@ -1,6 +1,11 @@
 package com.supermap.desktop.controls.utilities;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Recordset;
+import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IForm;
@@ -67,15 +72,15 @@ public class MapViewUIUtilities {
         }
 
         SortUIUtilities.sortList(datasets);
-        MapUtilities.setDynamic(datasets, map);
         // 添加到地图
         for (Dataset dataset : datasets) {
             if (dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
                 MapUtilities.addDatasetToMap(map, dataset, addToHead);
             }
         }
-        // 更新地图属性面板
-        Application.getActiveApplication().resetActiveForm();
+	    MapUtilities.setDynamic(datasets, map);
+	    // 更新地图属性面板
+	    Application.getActiveApplication().resetActiveForm();
         map.refresh();
         UICommonToolkit.getLayersManager().setMap(map);
     }

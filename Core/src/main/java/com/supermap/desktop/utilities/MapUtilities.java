@@ -275,40 +275,10 @@ public class MapUtilities {
 		return layers;
 	}
 
-	// 有点问题，不是根图层时返回空字符串
-	// /**
-	// * 获取可用的图层的标题
-	// *
-	// * @param map
-	// * 地图
-	// * @param parent
-	// * 所在的分组，如果是根图层，则为null
-	// * @param caption
-	// * 指定的图层标题
-	// * @return
-	// */
-	// public static String getAvailableLayerCaption(Map map, LayerGroup parent, String caption) {
-	// String layerCaption = "";
-	//
-	// try {
-	// if (parent == null) {
-	// layerCaption = map.getLayers().getAvailableCaption(caption);
-	// }
-	// } catch (Exception ex) {
-	// Application.getActiveApplication().getOutput().output(ex);
-	// }
-	//
-	// return layerCaption;
-	// }
 	public static void setDynamic(Dataset[] datasets, Map map) {
 
-		if (map.getLayers().getCount() == 0 && datasets.length == 1) {
-			// 打开新地图时，如果只有一个数据集添加上来，不需要设置动态投影
-			return;
-		} else {
-			// 其他情况下都需要判断是否设置动态投影
-			resetDynamic(datasets, map);
-		}
+		// 其他情况下都需要判断是否设置动态投影
+		resetDynamic(datasets, map);
 	}
 
 	private static boolean resetDynamic(Dataset[] datasets, Map map) {
@@ -448,7 +418,7 @@ public class MapUtilities {
 		if (newAvailableMapName == null || newAvailableMapName.length() <= 0) {
 			flag = false;
 		} else {
-			ArrayList<String> allMapNames = new ArrayList<String>();
+			ArrayList<String> allMapNames = new ArrayList<>();
 			int mapsCount = Application.getActiveApplication().getWorkspace().getMaps().getCount();
 			for (int index = 0; index < mapsCount; index++) {
 				allMapNames.add(Application.getActiveApplication().getWorkspace().getMaps().get(index).toLowerCase());
