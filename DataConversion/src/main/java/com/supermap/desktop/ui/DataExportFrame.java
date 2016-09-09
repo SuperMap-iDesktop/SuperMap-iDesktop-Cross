@@ -712,7 +712,8 @@ public class DataExportFrame extends SmDialog {
         } else {
             FormProgressTotal formProgress = new FormProgressTotal();
             formProgress.setTitle(DataConversionProperties.getString("String_FormExport_FormText"));
-            formProgress.doWork(new DataExportCallable(exports, table, radioButtonOK.isSelected()));
+            java.util.List exportFileInfos = model.getExports();
+            formProgress.doWork(new DataExportCallable(exportFileInfos, table, radioButtonOK.isSelected()));
             if (checkboxIsClose.isSelected()) {
                 dispose();
             }
