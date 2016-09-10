@@ -22,7 +22,11 @@ public class FrameActivator implements BundleActivator {
 			Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.Frame", bundleContext.getBundle());
 		} catch (Exception e) {
 			UICommonToolkit.showMessageDialog(FrameProperties.getString("PermissionCheckFailed"));
-			System.exit(0);
+//			Class<?> clazz = Class.forName("java.lang.Shutdown");
+//			Field field = clazz.getDeclaredField("state");
+//			field.setAccessible(true);
+//			field.setInt(clazz, 2);
+			System.exit(-1);
 		}
 
 		LogUtilities.outPut(CoreProperties.getString("String_DesktopStartFinished"));
