@@ -855,16 +855,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private void initScaleComboBox() {
 		try {
 			if (!isResetComboBox) {
-				this.scaleBox.removeAllItems();
-
-				this.scaleBox.addItem(ScaleModel.SCALE_5000);
-				this.scaleBox.addItem(ScaleModel.SCALE_10000);
-				this.scaleBox.addItem(ScaleModel.SCALE_25000);
-				this.scaleBox.addItem(ScaleModel.SCALE_50000);
-				this.scaleBox.addItem(ScaleModel.SCALE_100000);
-				this.scaleBox.addItem(ScaleModel.SCALE_250000);
-				this.scaleBox.addItem(ScaleModel.SCALE_500000);
-				this.scaleBox.addItem(ScaleModel.SCALE_1000000);
+				initScaleBoxItem();
 				isResetComboBox = true;
 			}
 			String scale = new ScaleModel(mapControl.getMap().getScale()).toString();
@@ -876,6 +867,42 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 
+	}
+
+	private void initScaleBoxItem() {
+		this.scaleBox.removeAllItems();
+
+		double[] visibleScales = getMapControl().getMap().getVisibleScales();
+		if (!getMapControl().getMap().isVisibleScalesEnabled() || visibleScales.length <= 0) {
+			this.scaleBox.addItem(ScaleModel.SCALE_5000);
+			this.scaleBox.addItem(ScaleModel.SCALE_10000);
+			this.scaleBox.addItem(ScaleModel.SCALE_25000);
+			this.scaleBox.addItem(ScaleModel.SCALE_50000);
+			this.scaleBox.addItem(ScaleModel.SCALE_100000);
+			this.scaleBox.addItem(ScaleModel.SCALE_250000);
+			this.scaleBox.addItem(ScaleModel.SCALE_500000);
+			this.scaleBox.addItem(ScaleModel.SCALE_1000000);
+		} else {
+			for (double visibleScale : visibleScales) {
+				try {
+					this.scaleBox.addItem(new ScaleModel(visibleScale).getScaleCaption());
+				} catch (InvalidScaleException e) {
+					// ignore
+				}
+			}
+		}
+	}
+
+	@Override
+	public void setVisibleScalesEnabled(boolean isVisibleScalesEnabled) {
+		getMapControl().getMap().setVisibleScalesEnabled(isVisibleScalesEnabled);
+		initScaleBoxItem();
+	}
+
+	@Override
+	public void setVisibleScales(double[] scales) {
+		getMapControl().getMap().setVisibleScales(scales);
+		initScaleBoxItem();
 	}
 
 	private void initCenter() {
@@ -1477,7 +1504,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	 */
 	public void setSelectedGeometryProperty() {
 		// 取出所有有选择对象的图层的选择集
-
 		if (this.mapControl != null && this.mapControl.getMap() != null) {
 			Selection[] selections = this.mapControl.getMap().findSelection(true);
 			if (selections.length > 0) {

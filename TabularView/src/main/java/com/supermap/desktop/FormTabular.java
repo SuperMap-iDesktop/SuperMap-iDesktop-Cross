@@ -29,7 +29,11 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Time;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -492,6 +496,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		booleanEditorControl.addItem("True");
 		booleanEditorControl.addItem("False");
 		DefaultCellEditor booleanEditor = new DefaultCellEditor(booleanEditorControl);
+		booleanEditor.setClickCountToStart(2);
 		this.jTableTabular.setDefaultEditor(Boolean.class, booleanEditor);
 
 		this.jTableTabular.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());

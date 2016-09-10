@@ -332,4 +332,14 @@ public class TransformationBase implements IFormMap {
 	public List<String> getLastSelectedGeometry() {
 		return lastSelectedGeometry;
 	}
+
+	@Override
+	public void setVisibleScales(double[] scales) {
+		getMapControl().getMap().setVisibleScales(scales);
+	}
+
+	@Override
+	public void setVisibleScalesEnabled(boolean isVisibleScalesEnabled) {
+		getMapControl().getMap().setVisibleScalesEnabled(isVisibleScalesEnabled);
+	}
 }

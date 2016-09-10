@@ -1,7 +1,11 @@
 package com.supermap.desktop.CtrlAction.Edit;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IBaseItem;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormLayout;
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.implement.CtrlAction;
 
 public class CtrlActionUndo extends CtrlAction {
@@ -17,7 +21,9 @@ public class CtrlActionUndo extends CtrlAction {
 			if (form != null) {
 				if (form instanceof IFormMap) {
 					((IFormMap) form).getMapControl().undo();
-					((IFormMap) form).setSelectedGeometryProperty();
+					if (Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
+						((IFormMap) form).setSelectedGeometryProperty();
+					}
 					((IFormMap) form).getMapControl().getMap().refresh();
 				} else if (form instanceof IFormScene) {
 					// TODO 目前场景并不支持编辑，后续版本根据组件支持情况再行实现

@@ -7,6 +7,8 @@ import com.supermap.ui.MapControl;
 
 public interface IFormMap extends IForm {
 
+	void setVisibleScales(double[] scales);
+
 	/**
 	 * 获取地图窗口中的 MapControl 控件。
 	 * 
@@ -48,4 +50,6 @@ public interface IFormMap extends IForm {
 	int getSelectedCount();
 
 	void removeLayers(Layer[] activeLayers);
+
+	void setVisibleScalesEnabled(boolean isVisibleScalesEnabled);
 }

@@ -4,6 +4,8 @@ import com.supermap.data.GeoRegion;
 import com.supermap.data.Point2D;
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.ScaleModel;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.exception.InvalidScaleException;
@@ -18,7 +20,11 @@ import com.supermap.mapping.MapDrawnListener;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
@@ -209,10 +215,15 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	@Override
 	public void apply() {
 		Map activeMap = getMap();
-
-		activeMap.setVisibleScalesEnabled(isVisibleScalesEnabled);
+		IForm activeForm = Application.getActiveApplication().getActiveForm();
+		if (activeForm != null && activeForm instanceof IFormMap) {
+			((IFormMap) activeForm).setVisibleScalesEnabled(isVisibleScalesEnabled);
+		}
 		if (isVisibleScalesChanged()) {
-			activeMap.setVisibleScales(visibleScales);
+			// 没有事件，只能开接口
+			if (activeForm != null && activeForm instanceof IFormMap) {
+				((IFormMap) activeForm).setVisibleScales(visibleScales);
+			}
 		}
 		activeMap.setClipRegionEnabled(this.isClipRegionEnabled);
 		if (activeMap.getClipRegion() != this.clipRegion) {
