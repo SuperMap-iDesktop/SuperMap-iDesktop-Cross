@@ -1,8 +1,10 @@
 package com.supermap.desktop.ui;
 
+import com.supermap.data.Charset;
 import com.supermap.data.Datasource;
 import com.supermap.data.SpatialIndexInfo;
 import com.supermap.data.SpatialIndexType;
+import com.supermap.data.conversion.ImportDataInfos;
 import com.supermap.data.conversion.ImportSettingSHP;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
@@ -10,7 +12,6 @@ import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.util.CommonComboBoxModel;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
@@ -91,7 +92,6 @@ public class ImportPanelSHP extends AbstractImportPanel {
 				TitledBorder.TOP, null, null));
 		this.panelDatapath.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panelDatapath"), TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
-		this.comboBoxCharset.setModel(new CommonComboBoxModel());
 		this.comboBoxCharset.setAutoscrolls(true);
 		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_comboboxitem_null"),
 				DataConversionProperties.getString("string_comboboxitem_add"), DataConversionProperties.getString("string_comboboxitem_cover")}));
@@ -139,6 +139,11 @@ public class ImportPanelSHP extends AbstractImportPanel {
 		ImportInfoUtil.setDataSource(panels, fileInfos, fileInfo, comboBoxDatasource);
 		// 设置fileInfo
 		this.importsetting = (ImportSettingSHP) ImportInfoUtil.setFileInfo(datasource, fileInfos, fileInfo, textFieldFilePath, importsetting, textFieldResultSet);
+		ImportDataInfos dataInfos = importsetting.getTargetDataInfos("");
+		if (importsetting.getTargetDataInfos("").getCount() > 0) {
+			Charset chartset = dataInfos.get(0).getSourceCharset();
+			importsetting.setSourceFileCharset(chartset);
+		}
 		// 设置结果数据集
 		ImportInfoUtil.setDatasetName(textFieldResultSet, importsetting);
 		// 设置编码类型

@@ -47,15 +47,7 @@ public class DataImportCallable extends UpdateProgressCallable {
                 if (importSetting instanceof ImportSettingWOR) {
                     Workspace workspace = Application.getActiveApplication().getWorkspace();
                     ((ImportSettingWOR) importSetting).setTargetWorkspace(workspace);
-                    ((ImportSettingWOR) importSetting).setTargetDatasource(importSetting.getTargetDatasource());
-                }
-                Boolean isNeedGetCharset = (importSetting instanceof ImportSettingSHP) | (importSetting instanceof ImportSettingTAB) | (importSetting instanceof ImportSettingMIF);
-                if (isNeedGetCharset) {
-                    ImportDataInfos dataInfos = importSetting.getTargetDataInfos("");
-                    if (importSetting.getTargetDataInfos("").getCount() > 0) {
-                        Charset chartset = dataInfos.get(0).getSourceCharset();
-                        importSetting.setSourceFileCharset(chartset);
-                    }
+                    importSetting.setTargetDatasource(importSetting.getTargetDatasource());
                 }
                 importSettings.add(importSetting);
                 PercentProgress percentProgress = new PercentProgress(i);

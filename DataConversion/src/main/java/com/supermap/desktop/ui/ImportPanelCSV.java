@@ -8,7 +8,6 @@ import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.util.CommonComboBoxModel;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
@@ -89,7 +88,6 @@ public class ImportPanelCSV extends AbstractImportPanel {
 				new TitledBorder(null, DataConversionProperties.getString("string_border_panelTransform"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		this.panelFileInfo.setBorder(
 				new TitledBorder(null, DataConversionProperties.getString("string_border_panelDatapath"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		this.comboBoxCharset.setModel(new CommonComboBoxModel());
 		this.comboBoxCharset.setAutoscrolls(true);
 		this.comboBoxImportMode.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_comboboxitem_null"),
 				DataConversionProperties.getString("string_comboboxitem_add"), DataConversionProperties.getString("string_comboboxitem_cover")}));
@@ -123,7 +121,10 @@ public class ImportPanelCSV extends AbstractImportPanel {
 		// 设置fileInfo
 		this.importsetting = (ImportSettingCSV) ImportInfoUtil.setFileInfo(datasource, fileInfos, fileInfo, textFieldFilePath, importsetting,
 				textFieldResultSet);
-		// 设置结果数据集名称
+        if (null != importsetting.getSourceFileCharset()) {
+            comboBoxCharset.setSelectCharset(importsetting.getSourceFileCharset().name());
+        }
+        // 设置结果数据集名称
 		ImportInfoUtil.setDatasetName(textFieldResultSet, importsetting);
 		// 设置导入模式
 		ImportInfoUtil.setImportMode(panels, importsetting, comboBoxImportMode);
