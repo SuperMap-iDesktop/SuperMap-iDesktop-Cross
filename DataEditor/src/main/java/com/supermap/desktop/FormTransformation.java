@@ -1006,5 +1006,17 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	public void setText(String text) {
 
 	}
+
+	@Override
+	public void setVisibleScales(double[] scales) {
+		getMapControl().getMap().setVisibleScales(scales);
+		// TODO: 2016/9/10 下拉框刷新
+	}
+
+	@Override
+	public void setVisibleScalesEnabled(boolean isVisibleScalesEnabled) {
+		getMapControl().getMap().setVisibleScalesEnabled(isVisibleScalesEnabled);
+		// TODO: 2016/9/10 下拉框刷新
+	}
 	//endregion
 }
