@@ -755,6 +755,15 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
         private void setMinFontHeight() {
             if (!textFieldMinFontHeight.getText().isEmpty()) {
                 String minFontHeight = textFieldMinFontHeight.getText();
+                String maxFontHeight = textFieldMaxFontHeight.getText();
+                if (StringUtilities.isNumber(minFontHeight) && StringUtilities.isNumber(maxFontHeight)) {
+                    if (Integer.parseInt(minFontHeight) > Integer.parseInt(maxFontHeight)) {
+                        textFieldMinFontHeight.setForeground(Color.red);
+                        return;
+                    } else {
+                        textFieldMinFontHeight.setForeground(Color.black);
+                    }
+                }
                 if (StringUtilities.isNumber(minFontHeight) && minFontHeight.length() <= 8) {
                     int minTextHeight = Integer.parseInt(minFontHeight);
                     themeLabel.setMinTextHeight(minTextHeight);
@@ -770,7 +779,16 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
          */
         private void setMaxFontHeight() {
             if (!textFieldMaxFontHeight.getText().isEmpty()) {
+                String minFontHeight = textFieldMinFontHeight.getText();
                 String maxFontHeight = textFieldMaxFontHeight.getText();
+                if (StringUtilities.isNumber(minFontHeight) && StringUtilities.isNumber(maxFontHeight)) {
+                    if (Integer.parseInt(minFontHeight) > Integer.parseInt(maxFontHeight)) {
+                        textFieldMaxFontHeight.setForeground(Color.red);
+                        return;
+                    } else {
+                        textFieldMaxFontHeight.setForeground(Color.black);
+                    }
+                }
                 if (StringUtilities.isNumber(maxFontHeight) && maxFontHeight.length() <= 8) {
                     int maxTextHeight = Integer.parseInt(maxFontHeight);
                     themeLabel.setMaxTextHeight(maxTextHeight);
