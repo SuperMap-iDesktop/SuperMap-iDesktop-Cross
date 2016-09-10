@@ -10,7 +10,6 @@ import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.util.CommonComboBoxModel;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
@@ -89,7 +88,7 @@ public class ImportPanelE00 extends AbstractImportPanel {
 				TitledBorder.TOP, null, null));
 		this.panelDatapath.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panelDatapath"), TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
-		this.comboBoxCharset.setModel(new CommonComboBoxModel());
+		importsetting.getSourceFileCharset();
 		this.comboBoxCharset.setAutoscrolls(true);
 		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(
 				new String[]{
@@ -143,6 +142,9 @@ public class ImportPanelE00 extends AbstractImportPanel {
 		this.importsetting = (ImportSettingE00) ImportInfoUtil.setFileInfo(datasource,
 				fileInfos, fileInfo, textFieldFilePath, importsetting,
 				textFieldResultSet);
+		if (null != importsetting.getSourceFileCharset()) {
+			comboBoxCharset.setSelectCharset(importsetting.getSourceFileCharset().name());
+		}
 		// 设置目标数据源
 		ImportInfoUtil.setDataSource(panels, fileInfos, fileInfo, comboBoxDatasource);
 		// 设置结果数据集名称
