@@ -10,6 +10,7 @@ import com.supermap.data.GeoText3D;
 import com.supermap.data.Geometry;
 import com.supermap.data.Geometry3D;
 import com.supermap.data.Point2D;
+import com.supermap.data.PrjCoordSys;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
@@ -285,7 +286,8 @@ public class MapUtilities {
 		// 设置动态投影
 		boolean dynamicHasReset = false;
 		for (Dataset dataset : datasets) {
-			if (!map.isDynamicProjection() && !dataset.getPrjCoordSys().getType().equals(map.getPrjCoordSys().getType())) {
+			if (!map.isDynamicProjection() && !isSameProjection(dataset.getPrjCoordSys(), map.getPrjCoordSys())) {
+
 				if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(CoreProperties.getString("String_DiffrentCoordSys"),
 						CoreProperties.getString("String_TitleCoordSys"))) {
 					map.setDynamicProjection(true);
@@ -298,6 +300,22 @@ public class MapUtilities {
 			}
 		}
 		return dynamicHasReset;
+	}
+
+	private static boolean isSameProjection(PrjCoordSys prjCoordSys, PrjCoordSys prjCoordSys1) {
+		if (prjCoordSys.getType() != prjCoordSys1.getType()) {
+			return false;
+		}
+		if (prjCoordSys.getGeoCoordSys() == prjCoordSys1.getGeoCoordSys()) {
+			return true;
+		}
+		if (prjCoordSys.getGeoCoordSys() == null || prjCoordSys1.getGeoCoordSys() == null) {
+			return false;
+		}
+		if (prjCoordSys.getGeoCoordSys().getType() != prjCoordSys1.getGeoCoordSys().getType()) {
+			return false;
+		}
+		return true;
 	}
 
 	/**

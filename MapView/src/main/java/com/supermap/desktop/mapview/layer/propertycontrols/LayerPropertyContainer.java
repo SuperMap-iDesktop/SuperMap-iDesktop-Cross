@@ -284,6 +284,7 @@ public class LayerPropertyContainer extends JPanel {
 			Application.getActiveApplication().getOutput().output(e2);
 		} finally {
 			setResetFlag(true);
+			UICommonToolkit.getLayersManager().getLayersTree().updateUI();
 		}
 	}
 
