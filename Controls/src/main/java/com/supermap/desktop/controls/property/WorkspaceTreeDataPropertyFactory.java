@@ -1,9 +1,22 @@
 package com.supermap.desktop.controls.property;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetImage;
+import com.supermap.data.DatasetImageCollection;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IProperty;
-import com.supermap.desktop.controls.property.dataset.*;
+import com.supermap.desktop.controls.property.dataset.DatasetPrjCoordSysHandle;
+import com.supermap.desktop.controls.property.dataset.DatasetPropertyControl;
+import com.supermap.desktop.controls.property.dataset.GridPropertyControl;
+import com.supermap.desktop.controls.property.dataset.ImageCollectionPropertyControl;
+import com.supermap.desktop.controls.property.dataset.ImagePropertyControl;
+import com.supermap.desktop.controls.property.dataset.RecordsetPropertyControl;
+import com.supermap.desktop.controls.property.dataset.VectorPropertyControl;
 import com.supermap.desktop.controls.property.datasource.DatasourcePrjCoordSysHandle;
 import com.supermap.desktop.controls.property.datasource.DatasourcePropertyControl;
 import com.supermap.desktop.controls.property.workspace.WorkspacePropertyControl;
@@ -41,26 +54,8 @@ public class WorkspaceTreeDataPropertyFactory {
 					properties.add(getDatasourcePropertyControl((Datasource) data.getData()));
 					properties.add(getPrjCoordSysPropertyControl(new DatasourcePrjCoordSysHandle((Datasource) data.getData()), covert));
 				} else if (NodeDataTypeUtilities.isNodeDataset(data.getType()) && data.getData() instanceof Dataset) {
-					properties.add(getDatasetPropertyControl((Dataset) data.getData()));
-					if (data.getType() == NodeDataType.DATASET_VECTOR) {
-						properties.add(getVectorPropertyControl((DatasetVector) data.getData()));
-						properties.add(getRecordsetPropertyControl((DatasetVector) data.getData()));
-					} else if (data.getType() == NodeDataType.DATASET_GRID) {
-						properties.add(getGridPropertyControl((DatasetGrid) data.getData()));
-					} else if (data.getType() == NodeDataType.DATASET_IMAGE_COLLECTION) {
-						properties.add(getImageCollectionPropertyControl((DatasetImageCollection) data.getData()));
-					} else if (data.getType() == NodeDataType.DATASET_IMAGE) {
-						Dataset dataset = (Dataset) data.getData();
-
-						// 过滤掉 WMS 以及 WCS的影像数据集属性
-						if (dataset.getType() != DatasetType.WMS && dataset.getType() != DatasetType.WCS) {
-							properties.add(getImagePropertyControl((DatasetImage) data.getData()));
-						}
-					}
-					boolean covert = !((Dataset) data.getData()).isReadOnly();
-					if (!DatasetType.TABULAR.equals(((Dataset) data.getData()).getType())) {
-						properties.add(getPrjCoordSysPropertyControl(new DatasetPrjCoordSysHandle((Dataset) data.getData()), covert));
-					}
+					Dataset dataset = (Dataset) data.getData();
+					properties = getDatasetProperties(dataset);
 				}
 			}
 		} catch (Exception e) {
@@ -69,6 +64,32 @@ public class WorkspaceTreeDataPropertyFactory {
 		return properties.toArray(new AbstractPropertyControl[properties.size()]);
 	}
 
+	public static ArrayList<IProperty> getDatasetProperties(Dataset dataset) {
+		ArrayList<IProperty> propertiesTemp = new ArrayList<>();
+
+		propertiesTemp.add(getDatasetPropertyControl(dataset));
+		if (dataset instanceof DatasetVector) {
+			DatasetVector datasetVector = (DatasetVector) dataset;
+			propertiesTemp.add(getVectorPropertyControl(datasetVector));
+			propertiesTemp.add(getRecordsetPropertyControl(datasetVector));
+
+		} else if (dataset instanceof DatasetGrid) {
+			propertiesTemp.add(getGridPropertyControl((DatasetGrid) dataset));
+		} else if (dataset instanceof DatasetImageCollection) {
+			propertiesTemp.add(getImageCollectionPropertyControl((DatasetImageCollection) dataset));
+		} else if (dataset instanceof DatasetImage) {
+
+			// 过滤掉 WMS 以及 WCS的影像数据集属性
+			if (dataset.getType() != DatasetType.WMS && dataset.getType() != DatasetType.WCS) {
+				propertiesTemp.add(getImagePropertyControl((DatasetImage) dataset));
+			}
+		}
+		boolean covert = !dataset.isReadOnly();
+		if (!DatasetType.TABULAR.equals(dataset.getType())) {
+			propertiesTemp.add(getPrjCoordSysPropertyControl(new DatasetPrjCoordSysHandle(dataset), covert));
+		}
+		return propertiesTemp;
+	}
 
 	private static WorkspacePropertyControl getWorkspacePropertyControl(Workspace workspace) {
 		if (workspacePropertyControl == null) {
