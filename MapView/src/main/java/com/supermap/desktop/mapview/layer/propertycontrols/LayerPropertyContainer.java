@@ -13,7 +13,19 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.LayerUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerCaptionChangedEvent;
+import com.supermap.mapping.LayerCaptionChangedListener;
+import com.supermap.mapping.LayerEditableChangedEvent;
+import com.supermap.mapping.LayerEditableChangedListener;
+import com.supermap.mapping.LayerSelectableChangedEvent;
+import com.supermap.mapping.LayerSelectableChangedListener;
+import com.supermap.mapping.LayerSnapableChangedEvent;
+import com.supermap.mapping.LayerSnapableChangedListener;
+import com.supermap.mapping.LayerVisibleChangedEvent;
+import com.supermap.mapping.LayerVisibleChangedListener;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -232,7 +244,6 @@ public class LayerPropertyContainer extends JPanel {
 
 			@Override
 			public void mapClosed(MapClosedEvent arg0) {
-				// TODO 没清空图层属性面板中的元素，其中监听器未移除可能有隐患
 				unregisterEvents();
 				if (null != formMap) {
 					formMap.getMapControl().getMap().removeMapClosedListener(this);
@@ -279,7 +290,6 @@ public class LayerPropertyContainer extends JPanel {
 
 	private void buttonApplyClicked() {
 		try {
-
 			setResetFlag(false);
 			for (AbstractLayerPropertyControl abstractLayerPropertyControl : this.propertyControls) {
 				abstractLayerPropertyControl.apply();

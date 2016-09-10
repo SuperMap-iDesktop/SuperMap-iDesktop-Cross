@@ -2,10 +2,12 @@ package com.supermap.desktop.ui.controls;
 
 import com.supermap.data.DatasetImage;
 import com.supermap.data.DatasetType;
+import com.supermap.desktop.CommonToolkit;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.net.URL;
 
 /**
  * 影像数据集节点装饰器
@@ -24,8 +26,10 @@ class DatasetImageNodeDecorator implements TreeNodeDecorator {
 					IMAGEICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 			Graphics graphics = bufferedImage.getGraphics();
 			if(type.equals(DatasetType.IMAGE)){
+				String path = CommonToolkit.DatasetImageWrap.getImageIconPath(type);
+				URL url = DatasetImageNodeDecorator.class.getResource(path);
 				graphics.drawImage(
-						InternalImageIconFactory.DT_IMAGE.getImage(), 0, 0, label);
+						new ImageIcon(url).getImage(), 0, 0, label);
 			}else if(type.equals(DatasetType.WCS)){
 				graphics.drawImage(
 						InternalImageIconFactory.DT_WCS.getImage(), 0, 0, label);

@@ -50,7 +50,7 @@ public class CursorUtilities {
 	 *
 	 * @param component
 	 */
-	public static void setWaitCursor(JComponent component) {
+	public static void setWaitCursor(Component component) {
 		component.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 	}
 
@@ -59,11 +59,11 @@ public class CursorUtilities {
 	 *
 	 * @param component
 	 */
-	public static void setDefaultCursor(JComponent component) {
+	public static void setDefaultCursor(Component component) {
 		component.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 
-	public static void setHandCursor(JComponent component) {
+	public static void setHandCursor(Component component) {
 		component.setCursor(new Cursor(Cursor.HAND_CURSOR));
 	}
 

@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>LayoutView</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -34,10 +35,16 @@
 
     <build>
         <plugins>
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-compiler-plugin</artifactId>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-Activator>com.supermap.desktop.layoutview.LayoutViewActivator</Bundle-Activator>
+                        <Require-Bundle>${project.groupId}.Core,${project.groupId}.Controls</Require-Bundle>
+                    </instructions>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

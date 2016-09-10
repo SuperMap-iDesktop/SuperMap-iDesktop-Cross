@@ -1,12 +1,29 @@
 package com.supermap.desktop.utilities;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoStyle3D;
+import com.supermap.data.GeoText;
+import com.supermap.data.GeoText3D;
+import com.supermap.data.Geometry;
+import com.supermap.data.Geometry3D;
+import com.supermap.data.Point2D;
+import com.supermap.data.PrjCoordSys;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerGroup;
+import com.supermap.mapping.LayerSettingVector;
+import com.supermap.mapping.Layers;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -259,47 +276,18 @@ public class MapUtilities {
 		return layers;
 	}
 
-	// 有点问题，不是根图层时返回空字符串
-	// /**
-	// * 获取可用的图层的标题
-	// *
-	// * @param map
-	// * 地图
-	// * @param parent
-	// * 所在的分组，如果是根图层，则为null
-	// * @param caption
-	// * 指定的图层标题
-	// * @return
-	// */
-	// public static String getAvailableLayerCaption(Map map, LayerGroup parent, String caption) {
-	// String layerCaption = "";
-	//
-	// try {
-	// if (parent == null) {
-	// layerCaption = map.getLayers().getAvailableCaption(caption);
-	// }
-	// } catch (Exception ex) {
-	// Application.getActiveApplication().getOutput().output(ex);
-	// }
-	//
-	// return layerCaption;
-	// }
 	public static void setDynamic(Dataset[] datasets, Map map) {
 
-		if (map.getLayers().getCount() == 0 && datasets.length == 1) {
-			// 打开新地图时，如果只有一个数据集添加上来，不需要设置动态投影
-			return;
-		} else {
-			// 其他情况下都需要判断是否设置动态投影
-			resetDynamic(datasets, map);
-		}
+		// 其他情况下都需要判断是否设置动态投影
+		resetDynamic(datasets, map);
 	}
 
 	private static boolean resetDynamic(Dataset[] datasets, Map map) {
 		// 设置动态投影
 		boolean dynamicHasReset = false;
 		for (Dataset dataset : datasets) {
-			if (!map.isDynamicProjection() && !dataset.getPrjCoordSys().getType().equals(map.getPrjCoordSys().getType())) {
+			if (!map.isDynamicProjection() && !isSameProjection(dataset.getPrjCoordSys(), map.getPrjCoordSys())) {
+
 				if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(CoreProperties.getString("String_DiffrentCoordSys"),
 						CoreProperties.getString("String_TitleCoordSys"))) {
 					map.setDynamicProjection(true);
@@ -312,6 +300,22 @@ public class MapUtilities {
 			}
 		}
 		return dynamicHasReset;
+	}
+
+	private static boolean isSameProjection(PrjCoordSys prjCoordSys, PrjCoordSys prjCoordSys1) {
+		if (prjCoordSys.getType() != prjCoordSys1.getType()) {
+			return false;
+		}
+		if (prjCoordSys.getGeoCoordSys() == prjCoordSys1.getGeoCoordSys()) {
+			return true;
+		}
+		if (prjCoordSys.getGeoCoordSys() == null || prjCoordSys1.getGeoCoordSys() == null) {
+			return false;
+		}
+		if (prjCoordSys.getGeoCoordSys().getType() != prjCoordSys1.getGeoCoordSys().getType()) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -432,7 +436,7 @@ public class MapUtilities {
 		if (newAvailableMapName == null || newAvailableMapName.length() <= 0) {
 			flag = false;
 		} else {
-			ArrayList<String> allMapNames = new ArrayList<String>();
+			ArrayList<String> allMapNames = new ArrayList<>();
 			int mapsCount = Application.getActiveApplication().getWorkspace().getMaps().getCount();
 			for (int index = 0; index < mapsCount; index++) {
 				allMapNames.add(Application.getActiveApplication().getWorkspace().getMaps().get(index).toLowerCase());
@@ -440,7 +444,7 @@ public class MapUtilities {
 			int formManagerCount = Application.getActiveApplication().getMainFrame().getFormManager().getCount();
 			for (int index = 0; index < formManagerCount; index++) {
 				IForm form = Application.getActiveApplication().getMainFrame().getFormManager().get(index);
-				if (form instanceof IFormMap && !form.getText().equalsIgnoreCase(oldAvailableMapName)) {
+				if (form.getWindowType() == WindowType.MAP && !form.getText().equalsIgnoreCase(oldAvailableMapName)) {
 					allMapNames.add(form.getText().toLowerCase());
 				}
 			}
@@ -474,7 +478,7 @@ public class MapUtilities {
 		int formManagerCount = Application.getActiveApplication().getMainFrame().getFormManager().getCount();
 		for (int index = 0; index < formManagerCount; index++) {
 			IForm form = Application.getActiveApplication().getMainFrame().getFormManager().get(index);
-			if (form instanceof IFormMap) {
+			if (form.getWindowType() == WindowType.MAP) {
 				// 对于新窗口，不能用地图名字作为窗口标题，地图名和窗口标题可能会不一样，直接使用窗口标题
 				if (isNewWindow) {
 					allMapNames.add(form.getText().toLowerCase());
@@ -577,4 +581,6 @@ public class MapUtilities {
 		}
 		return geometry;
 	}
+
+
 }

@@ -1,13 +1,20 @@
 Manifest-Version: 1.0
+Bnd-LastModified: 1473388096960
+Build-Jdk: 1.7.0_80
+Built-By: Administrator
+Bundle-Activator: com.supermap.desktop.datatopology.DataTopologyActivato
+ r
 Bundle-ManifestVersion: 2
 Bundle-Name: DataTopology
-Bundle-SymbolicName: DataTopology
+Bundle-SymbolicName: com.supermap.idesktop.cross.DataTopology
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: com.supermap.desktop.datatopology.DataTopologyActivator
-Import-Package: org.osgi.framework;version="1.3.0"
-Bundle-ActivationPolicy: lazy
-Require-Bundle: Core;bundle-version="1.0.0",
- Controls;bundle-version="1.0.0"
-Export-Package: com.supermap.desktop.datatopology,
- com.supermap.desktop.datatopologyresources,
- com.supermap.desktop.datatopologyresources.Topo
+Created-By: Apache Maven Bundle Plugin
+Embed-Dependency: *;scope=compile|system
+Embed-Directory: lib
+Embed-Transitive: true
+Import-Package: org.osgi.framework;version="[1.8,2)",org.osgi.util.track
+ er;version="[1.5,2)"
+Originally-Created-By: Apache Maven Bundle Plugin
+Require-Bundle: com.supermap.idesktop.cross.Core,com.supermap.idesktop.c
+ ross.Controls
+Tool: Bnd-3.2.0.201605172007

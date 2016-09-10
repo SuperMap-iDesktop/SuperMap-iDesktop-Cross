@@ -54,7 +54,9 @@ public class LayerRelocateDatasetPropertyModel extends LayerPropertyModel {
 			if (layer.getDataset() == null) {
 				isNeedReload = true;
 			}
-			layer.setDataset(this.layerRelocateDataset);
+			if (layer.getDataset() != layerRelocateDataset) {
+				layer.setDataset(this.layerRelocateDataset);
+			}
 		}
 		if(isNeedReload){
 			getFormMap().setActiveLayers(getFormMap().getActiveLayers());
@@ -78,6 +80,7 @@ public class LayerRelocateDatasetPropertyModel extends LayerPropertyModel {
 
 		return super.equals(basePropertyModel) && this.layerRelocateDataset == basePropertyModel.getDataset();
 	}
+
 
 	private void checkPropertyEnabled() {
 		try {

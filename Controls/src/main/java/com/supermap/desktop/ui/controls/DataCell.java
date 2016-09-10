@@ -6,8 +6,10 @@ import com.supermap.data.Datasource;
 import com.supermap.data.EngineType;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.utilities.ControlsResources;
+import com.supermap.desktop.ui.controls.toolTip.MapToolTip;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +24,7 @@ public class DataCell extends JPanel {
 	private String dataName;
 	private Object data;
 	private final Color selectColor = new Color(185, 214, 255);
+	private MapToolTip toolTip;
 
 	public DataCell() {
 		// 公共类型
@@ -45,11 +48,18 @@ public class DataCell extends JPanel {
 	 * @param datasource
 	 */
 	public void initDatasourceType(Datasource datasource) {
-		setData(datasource);
-		this.dataName = datasource.getAlias();
-		String datasouceImagepath = CommonToolkit.DatasourceImageWrap.getImageIconPath(datasource.getEngineType());
-		URL url = ControlsResources.getResourceURL(datasouceImagepath);
-		init(url, this.dataName);
+		if (datasource != null) {
+			try {
+				this.dataName = datasource.getAlias();
+				setData(datasource);
+				String datasouceImagepath = CommonToolkit.DatasourceImageWrap.getImageIconPath(datasource.getEngineType());
+				URL url = ControlsResources.getResourceURL(datasouceImagepath);
+				init(url, this.dataName);
+			} catch (Exception e) {
+				// ignore
+			}
+		}
+
 	}
 
 	/**
@@ -82,12 +92,36 @@ public class DataCell extends JPanel {
 	}
 
 	public void initLayer(Layer layer) {
+		if (layer.isDisposed()) {
+			return;
+		}
 		Dataset dataset = layer.getDataset();
 		String datasetImagePath = CommonToolkit.DatasetImageWrap.getImageIconPath(dataset.getType());
 		URL url = ControlsResources.getResourceURL(datasetImagePath);
 		dataName = layer.getCaption();
 		init(url, dataName);
 	}
+
+	private void initMap(Map map) {
+		data = map;
+		dataName = map.getName();
+		URL url = ControlsResources.getResourceURL("/controlsresources/controlsImage/Image_Map_Normal.png");
+//		setToolTipText(dataName);
+		init(url, dataName);
+	}
+
+	@Override
+	public JToolTip createToolTip() {
+		if (data != null && data instanceof Map) {
+			if (toolTip == null) {
+				toolTip = new MapToolTip((Map) data);
+				toolTip.setComponent(this);
+			}
+			return toolTip;
+		}
+		return super.createToolTip();
+	}
+
 
 	/**
 	 * 根据数据集类型和数据集名称创建
@@ -126,6 +160,11 @@ public class DataCell extends JPanel {
 		init(icon, name);
 	}
 
+	private void initString(String name) {
+		this.dataName = name;
+		init(((URL) null), dataName);
+	}
+
 	private void init(ImageIcon icon, String name) {
 		this.dataName = name;
 		this.imageLabel = new JLabel(dataName, icon, JLabel.LEADING);
@@ -138,7 +177,7 @@ public class DataCell extends JPanel {
 			tempIcon = new ImageIcon(url);
 			this.imageLabel = new JLabel(dataName, tempIcon, JLabel.LEADING);
 		} else {
-			this.imageLabel = new JLabel();
+			this.imageLabel = new JLabel(dataName);
 		}
 		initComponents();
 	}
@@ -146,6 +185,7 @@ public class DataCell extends JPanel {
 	private void initComponents() {
 		this.setSize(300, 15);
 		this.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
+		setToolTipText(dataName);
 		this.add(this.imageLabel);
 	}
 
@@ -208,44 +248,48 @@ public class DataCell extends JPanel {
 		for (Object object : objects) {
 			if (object instanceof Datasource) {
 				this.initDatasourceType(((Datasource) object));
-				break;
+				return;
 			} else if (object instanceof Dataset) {
 				this.initDatasetType(((Dataset) object));
-				break;
+				return;
 			} else if (object instanceof EngineType) {
 				if (name != null) {
 					this.initDatasourceType(((EngineType) object), name);
-					break;
+					return;
 				} else {
 					engineType = ((EngineType) object);
 				}
 			} else if (object instanceof DatasetType) {
 				if (name != null) {
 					this.initDatasetType(((DatasetType) object), name);
-					break;
+					return;
 				} else {
 					datasetType = ((DatasetType) object);
 				}
 			} else if (object instanceof ImageIcon) {
 				if (name != null) {
 					this.initDataImage(((ImageIcon) object), name);
-					break;
+					return;
 				} else {
 					icon = ((ImageIcon) object);
 				}
 			} else if (object instanceof Layer) {
 				initLayer(((Layer) object));
+				return;
+			} else if (object instanceof Map) {
+				initMap((Map) object);
+				return;
 			} else if (object instanceof String) {
 				String str = (String) object;
 				if (engineType != null) {
 					this.initDatasourceType(engineType, str);
-					break;
+					return;
 				} else if (datasetType != null) {
 					this.initDatasetType(datasetType, str);
-					break;
+					return;
 				} else if (icon != null) {
 					this.initDataImage(icon, str);
-					break;
+					return;
 				} else {
 					name = str;
 				}
@@ -255,7 +299,11 @@ public class DataCell extends JPanel {
 		}
 		if (datasetType != null && name == null) {
 			initDatasetType(datasetType, DatasetTypeUtilities.toString(datasetType));
+		} else if (datasetType == null && name != null) {
+			initString(name);
 		}
 	}
+
+
 	// endregion
 }

@@ -20,7 +20,7 @@ public class TableDatasourceCellRender extends DefaultTableCellRenderer {
 		if (value == null) {
 			result = new JLabel();
 		} else if (!(value instanceof Datasource)) {
-			result = new JLabel(String.valueOf(value));
+			result = new DataCell(String.valueOf(value));
 		} else {
 			result = new DataCell(((Datasource) value));
 		}

@@ -2,6 +2,7 @@ package com.supermap.desktop.newtheme.commonPanel;
 
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.enums.TextStyleType;
+import com.supermap.desktop.newtheme.themeLabel.ThemeLabelAdvancePanel;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.textStyle.ITextStyle;
 import com.supermap.desktop.ui.controls.textStyle.ResetTextStyleUtil;
@@ -79,6 +80,9 @@ public class TextStyleContainer extends ThemeChangePanel {
 	public void refreshMapAndLayer() {
 		this.themeLayer = MapUtilities.findLayerByName(map, layerName);
 		if (null != theme && theme instanceof ThemeLabel && this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {
+			if (null != ThemeLabelAdvancePanel.stringAlignment) {
+				((ThemeLabel) theme).getUniformStyle().setStringAlignment(ThemeLabelAdvancePanel.stringAlignment);
+			}
 			((ThemeLabel) this.themeLayer.getTheme()).setUniformStyle(((ThemeLabel) theme).getUniformStyle());
 			this.map.refresh();
 			return;

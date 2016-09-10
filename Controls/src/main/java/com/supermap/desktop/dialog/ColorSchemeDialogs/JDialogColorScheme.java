@@ -18,14 +18,32 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -459,7 +477,7 @@ public class JDialogColorScheme extends SmDialog {
 		colorSchemeEditorDialog.setExitNames(names);
 		if (colorSchemeEditorDialog.showDialog() == DialogResult.OK) {
 			isModified = true;
-			tableColorScheme.setColorSchemeAtRow(selectedRow, colorSchemeEditorDialog.getColorScheme());
+			tableColorScheme.getColorScheme(selectedRow).copy(colorSchemeEditorDialog.getColorScheme());
 			tableColorScheme.setRowSelectionInterval(selectedRow, selectedRow);
 		}
 		colorSchemeEditorDialog.dispose();

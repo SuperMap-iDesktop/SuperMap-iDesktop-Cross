@@ -1,8 +1,19 @@
 package com.supermap.desktop.utilities;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasets;
+import com.supermap.data.Datasource;
+import com.supermap.data.PrjCoordSysType;
+import com.supermap.data.StatisticMode;
+import com.supermap.data.Tolerance;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.Layers;
@@ -40,7 +51,7 @@ public class DatasetUtilities {
 
 	/**
 	 * 获取数据集的默认容限
-	 * 
+	 *
 	 * @param dataset
 	 * @return
 	 */
@@ -158,26 +169,30 @@ public class DatasetUtilities {
 		return false;
 	}
 
-	public static void removeLayerGroupDataset(LayerGroup layerGroup, Dataset dataset) {
+	public static boolean removeLayerGroupDataset(LayerGroup layerGroup, Dataset dataset) {
+		boolean result = false;
 		for (int i = layerGroup.getCount(); i > 0; i--) {
 			Layer layer = layerGroup.get(i - 1);
 			if (layer instanceof LayerGroup) {
-				removeLayerGroupDataset((LayerGroup) layer, dataset);
+				result = result || removeLayerGroupDataset((LayerGroup) layer, dataset);
 			} else if (layer.getDataset() == dataset) {
-				layerGroup.remove(layer);
+				result = result || layerGroup.remove(layer);
 			}
 		}
+		return result;
 	}
 
-	public static void removeByDataset(Layers layers, Dataset closeDataset) {
+	public static boolean removeByDataset(Layers layers, Dataset closeDataset) {
+		boolean result = false;
 		for (int i = layers.getCount() - 1; i >= 0; i--) {
 			Layer layer = layers.get(i);
 			if (layer instanceof LayerGroup) {
-				removeLayerGroupDataset((LayerGroup) layer, closeDataset);
+				result = result || removeLayerGroupDataset((LayerGroup) layer, closeDataset);
 			} else if (layer.getDataset() == closeDataset) {
-				layers.remove(i);
+				result = result || layers.remove(i);
 			}
 		}
+		return result;
 	}
 
 	/**
@@ -187,21 +202,23 @@ public class DatasetUtilities {
 	 * @param closeDatasets 关闭的数据集集合
 	 * @return
 	 */
-	public static void removeByDatasets(Layers layers, Dataset... closeDatasets) {
+	public static boolean removeByDatasets(Layers layers, Dataset... closeDatasets) {
+		boolean result = false;
 		for (Dataset datasetTemp : closeDatasets) {
 			try {
 				// layer移除之后可能关闭窗口，做个判断
 				if (layers.getCount() <= 0) {
-					return;
+					return result;
 				}
 			} catch (Exception e) {
-				return;
+				return result;
 			}
 			if (datasetTemp.getType() == DatasetType.NETWORK || datasetTemp.getType() == DatasetType.NETWORK3D) {
-				removeByDataset(layers, ((DatasetVector) datasetTemp).getChildDataset());
+				result = result || removeByDataset(layers, ((DatasetVector) datasetTemp).getChildDataset());
 			}
-			removeByDataset(layers, datasetTemp);
+			result = result || removeByDataset(layers, datasetTemp);
 		}
+		return result;
 	}
 
 	/**
@@ -235,8 +252,7 @@ public class DatasetUtilities {
 						((IFormMap) form).removeActiveLayersByDatasets(closeDataset);
 						Map map = ((IFormMap) form).getMapControl().getMap();
 						Layers layers = map.getLayers();
-						removeByDatasets(layers, closeDataset);
-						if (Application.getActiveApplication().getMainFrame().getFormManager().isContain(((IFormMap) form))) {
+						if (removeByDatasets(layers, closeDataset) && Application.getActiveApplication().getMainFrame().getFormManager().isContain(((IFormMap) form))) {
 							map.refresh();
 						}
 					} else if (form instanceof IFormScene) {
@@ -357,8 +373,8 @@ public class DatasetUtilities {
 	/**
 	 * 根据已有的数据源和即将创建的数据集，获取指定前缀字符串的唯一数据集名
 	 *
-	 * @param datasource      保存数据集的数据源
-	 * @param datasetName     指定的数据集名称
+	 * @param datasource  保存数据集的数据源
+	 * @param datasetName 指定的数据集名称
 	 * @return 可用数据集名称
 	 */
 	public static String getAvailableDatasetName(Datasource datasource, String datasetName, String[] newDatasetNames) {

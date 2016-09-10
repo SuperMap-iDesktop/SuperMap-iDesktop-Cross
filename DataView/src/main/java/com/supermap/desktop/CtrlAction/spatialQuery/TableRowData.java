@@ -1,9 +1,14 @@
 package com.supermap.desktop.CtrlAction.spatialQuery;
 
+import com.supermap.data.CursorType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
 import com.supermap.data.SpatialQueryMode;
+import com.supermap.desktop.Application;
 import com.supermap.mapping.Layer;
 
 /**
@@ -133,4 +138,29 @@ public class TableRowData {
 	}
 
 
+	public boolean isQueryEnable() {
+		return selected && spatialQueryMode != null && (isShowInTabular || isShowInMap || isShowInScene || (isSave() && resultDatasource != null && resultDataset != null));
+	}
+
+	public Recordset queryRecordset(Recordset searchingFeatures) {
+		QueryParameter queryParameter = new QueryParameter();
+		Recordset query = null;
+		try {
+			queryParameter.setHasGeometry(true);
+			queryParameter.setCursorType(CursorType.DYNAMIC);
+			queryParameter.setSpatialQueryObject(searchingFeatures);
+			queryParameter.setSpatialQueryMode(spatialQueryMode);
+			queryParameter.setAttributeFilter(sql);
+			query = ((DatasetVector) layer.getDataset()).query(queryParameter);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			queryParameter.dispose();
+		}
+		return query;
+	}
+
+	public Layer getLayer() {
+		return layer;
+	}
 }

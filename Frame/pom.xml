@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>Frame</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -34,10 +35,26 @@
 
     <build>
         <plugins>
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-compiler-plugin</artifactId>-->
-    <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <buildDirectory>${project.basedir}/../bundles/require_bundles/</buildDirectory>
+                    <instructions>
+                        <Bundle-Activator>com.supermap.desktop.frame.FrameActivator</Bundle-Activator>
+                        <Require-Bundle>${project.groupId}.Core,${project.groupId}.Controls</Require-Bundle>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+
+                    <!--jar 生成到指定的路径-->
+                    <outputDirectory>${project.basedir}/../bundles/require_bundles/</outputDirectory>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

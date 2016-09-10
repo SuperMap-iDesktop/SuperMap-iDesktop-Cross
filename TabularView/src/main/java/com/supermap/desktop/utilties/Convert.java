@@ -87,7 +87,9 @@ public class Convert {
     public static Date toDateTime(Object srcValue) {
         Date result = null;
         try {
-            if (srcValue instanceof Date) {
+            if (null == srcValue) {
+                result = new Date();
+            } else if (srcValue instanceof Date) {
                 result = (Date) srcValue;
             } else if ("null".equals(srcValue.toString())) {
                 result = null;

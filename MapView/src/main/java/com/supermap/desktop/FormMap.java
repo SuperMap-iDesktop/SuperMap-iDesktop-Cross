@@ -50,6 +50,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
+import com.supermap.desktop.ui.controls.scrollPanel.SmMapControlScrollPanel;
 import com.supermap.desktop.utilities.ActionUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.LogUtilities;
@@ -142,14 +143,19 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		@Override
 		public void layerRemoved(LayerRemovedEvent layerRemovedEvent) {
 			if (GlobalParameters.isAutoCloseEmptyWindow() && mapControl.getMap().getLayers().getCount() == 0) {
-				FormMap.this.close();
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						FormMap.this.close();
+					}
+				});
 			}
 		}
 	};
 	JScrollPane jScrollPaneChildWindow = null;
 	private LayersTree layersTree = null;
 	private transient EventListenerList eventListenerList = new EventListenerList();
-	private ArrayList<Layer> activeLayersList = new ArrayList<Layer>();
+	private ArrayList<Layer> activeLayersList = new ArrayList<>();
 	private SmComboBox scaleBox;
 	private SmTextField pointXField;
 	private SmTextField pointYField;
@@ -323,7 +329,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			mapControl_mouseMove(e);
+			updatePrjCoorSysPlace(e);
 		}
 
 		@Override
@@ -420,8 +426,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				}
 			});
 
-			// 刷新地图。如果选中对象时，更改编辑状态，理应要刷新地图显示。
-			FormMap.this.mapControl.getMap().refresh();
+			// 刷新地图。如果选中对象时，更改编辑状态，理应要刷新地图显示
+			FormMap.this.mapControl.getMap().refreshTrackingLayer();
 		}
 	};
 
@@ -429,9 +435,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 		@Override
 		public void selectableChanged(LayerSelectableChangedEvent arg0) {
-
-			// 刷新地图。如果选中对象时，更改可选择状态，理应要刷新地图显示。
-			FormMap.this.mapControl.getMap().refresh();
+			// 刷新地图。如果选中对象时，更改可选择状态，理应要刷新地图显示
+			FormMap.this.mapControl.getMap().refreshTrackingLayer();
 		}
 	};
 
@@ -524,6 +529,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		initGloableSetting();
 	}
 
+
 	private void initGloableSetting() {
 		int selectedIndex = GlobalParameters.getPositiveSelect();
 		SelectionMode selectionMode = SelectionMode.CONTAIN_INNER_POINT;
@@ -587,10 +593,12 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 	}
 
+	private Dimension newSize;
+
 	private void initComponents() {
 		this.mapControl = new MapControl();
 		this.mapControl.setWaitCursorEnabled(false);
-		this.jScrollPaneChildWindow = new JScrollPane(mapControl);
+		jScrollPaneChildWindow = new SmMapControlScrollPanel(mapControl);
 		this.layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 		this.scaleBox = (SmComboBox) getStatusbar().getComponent(SCALE);
 		this.scaleBox.setEditable(true);
@@ -732,7 +740,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	 *
 	 * @param e
 	 */
-	protected void mapControl_mouseMove(MouseEvent e) {
+	protected void updatePrjCoorSysPlace(MouseEvent e) {
 		try {
 			final DecimalFormat format = new DecimalFormat("######0.000000");
 			PrjCoordSysType coordSysType = this.getMapControl().getMap().getPrjCoordSys().getType();
@@ -800,7 +808,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	private String getFormatCoordinates(double point) {
 		// 度
-
 		double pointTemp = point;
 		int angles = (int) pointTemp;
 		pointTemp = Math.abs(pointTemp);
@@ -818,7 +825,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	/**
-	 * @param e
 	 */
 	protected void scaleBox_ItemChange() {
 		String scaleString = (String) scaleBox.getSelectedItem();
@@ -849,16 +855,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private void initScaleComboBox() {
 		try {
 			if (!isResetComboBox) {
-				this.scaleBox.removeAllItems();
-
-				this.scaleBox.addItem(ScaleModel.SCALE_5000);
-				this.scaleBox.addItem(ScaleModel.SCALE_10000);
-				this.scaleBox.addItem(ScaleModel.SCALE_25000);
-				this.scaleBox.addItem(ScaleModel.SCALE_50000);
-				this.scaleBox.addItem(ScaleModel.SCALE_100000);
-				this.scaleBox.addItem(ScaleModel.SCALE_250000);
-				this.scaleBox.addItem(ScaleModel.SCALE_500000);
-				this.scaleBox.addItem(ScaleModel.SCALE_1000000);
+				initScaleBoxItem();
 				isResetComboBox = true;
 			}
 			String scale = new ScaleModel(mapControl.getMap().getScale()).toString();
@@ -870,6 +867,42 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 
+	}
+
+	private void initScaleBoxItem() {
+		this.scaleBox.removeAllItems();
+
+		double[] visibleScales = getMapControl().getMap().getVisibleScales();
+		if (!getMapControl().getMap().isVisibleScalesEnabled() || visibleScales.length <= 0) {
+			this.scaleBox.addItem(ScaleModel.SCALE_5000);
+			this.scaleBox.addItem(ScaleModel.SCALE_10000);
+			this.scaleBox.addItem(ScaleModel.SCALE_25000);
+			this.scaleBox.addItem(ScaleModel.SCALE_50000);
+			this.scaleBox.addItem(ScaleModel.SCALE_100000);
+			this.scaleBox.addItem(ScaleModel.SCALE_250000);
+			this.scaleBox.addItem(ScaleModel.SCALE_500000);
+			this.scaleBox.addItem(ScaleModel.SCALE_1000000);
+		} else {
+			for (double visibleScale : visibleScales) {
+				try {
+					this.scaleBox.addItem(new ScaleModel(visibleScale).getScaleCaption());
+				} catch (InvalidScaleException e) {
+					// ignore
+				}
+			}
+		}
+	}
+
+	@Override
+	public void setVisibleScalesEnabled(boolean isVisibleScalesEnabled) {
+		getMapControl().getMap().setVisibleScalesEnabled(isVisibleScalesEnabled);
+		initScaleBoxItem();
+	}
+
+	@Override
+	public void setVisibleScales(double[] scales) {
+		getMapControl().getMap().setVisibleScales(scales);
+		initScaleBoxItem();
 	}
 
 	private void initCenter() {
@@ -1457,7 +1490,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		Map map = this.getMapControl().getMap();
 		map.open(mapName);
 		registerEvents();
-		this.mapControl.getMap().setMaxVisibleVertex(GlobalParameters.getMaxVisibleVertex());
 		map.refresh();
 		UICommonToolkit.getLayersManager().setMap(map);
 	}
@@ -1472,7 +1504,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	 */
 	public void setSelectedGeometryProperty() {
 		// 取出所有有选择对象的图层的选择集
-
 		if (this.mapControl != null && this.mapControl.getMap() != null) {
 			Selection[] selections = this.mapControl.getMap().findSelection(true);
 			if (selections.length > 0) {
@@ -1604,4 +1635,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	public void setLengthUnit(LengthUnit lengthUnit) {
 		this.lengthUnit = lengthUnit;
 	}
+
 }
+

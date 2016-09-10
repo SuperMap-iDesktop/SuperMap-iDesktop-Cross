@@ -26,7 +26,7 @@ import javax.swing.*;
 public abstract class AbstractLayerPropertyControl extends JPanel implements ILayerProperty {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -104,9 +104,11 @@ public abstract class AbstractLayerPropertyControl extends JPanel implements ILa
 
 		try {
 			LayerPropertyContainer.setResetFlag(false);
+//			if (!getLayerPropertyModel().equals(getModifiedLayerPropertyModel())) { //关闭自动应用 -> 直接在图层管理器中修改图层状态 -> 自动应用 ->未生效 X
 			getLayerPropertyModel().setProperties(getModifiedLayerPropertyModel());
 			getLayerPropertyModel().apply();
 			getLayerPropertyModel().refresh();
+//			}
 			this.isChanged = false;
 		} catch (Exception e) {
 			result = false;
@@ -170,7 +172,7 @@ public abstract class AbstractLayerPropertyControl extends JPanel implements ILa
 
 	/**
 	 * 当属性可用状态发生改变时，设置对应控件的可用状态
-	 * 
+	 *
 	 * @param propertyName
 	 * @param enabled
 	 */

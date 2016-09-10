@@ -2,16 +2,31 @@ package com.supermap.desktop.Interface;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
+import com.supermap.mapping.Map;
+import com.supermap.ui.Action;
+
+import javax.swing.*;
+import java.util.List;
 
 /**
  * @author XiaJT
  */
 public interface IFormTransformation extends IForm {
-	void setTransformationDataset(Dataset transformationDataset);
+	void addTransformationDataset(Dataset transformationDataset, Datasource resultDatasource, String resultDatasetName);
 
-	void addReferenceDataset(Dataset referenceDataset);
+	void addTransformationMap(Map map);
 
-	void setResultDataSource(Datasource resultDatasource);
+	void addReferenceObjects(List<Object> listObjects);
 
-	void setResultDatasetName(String resultDatasetName);
+	void startAddPoint();
+
+	boolean isAddPointing();
+
+	JTable getTable();
+
+	void centerOriginal();
+
+	void deleteTableSelectedRow();
+
+	void setAction(Action action);
 }

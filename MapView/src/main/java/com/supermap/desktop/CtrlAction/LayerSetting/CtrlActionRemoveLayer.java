@@ -1,7 +1,6 @@
 package com.supermap.desktop.CtrlAction.LayerSetting;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
@@ -23,7 +22,7 @@ public class CtrlActionRemoveLayer extends CtrlAction {
 	@Override
 	public void run() {
 		try {
-			FormMap formMap = (FormMap) Application.getActiveApplication().getActiveForm();
+			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 			formMap.removeLayers(formMap.getActiveLayers());
 			LayersTree tree = UICommonToolkit.getLayersManager().getLayersTree();
 			tree.setSelectionRow(0);

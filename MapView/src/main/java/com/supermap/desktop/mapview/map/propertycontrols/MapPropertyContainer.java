@@ -1,6 +1,7 @@
 package com.supermap.desktop.mapview.map.propertycontrols;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
@@ -10,7 +11,11 @@ import com.supermap.desktop.mapview.layer.propertycontrols.ChangedListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
+import com.supermap.mapping.MapOpenedEvent;
+import com.supermap.mapping.MapOpenedListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -210,5 +215,16 @@ public class MapPropertyContainer extends JPanel {
 			}
 		}
 		this.buttonApply.setEnabled(false);
+	}
+
+	@Override
+	public void setVisible(boolean aFlag) {
+		super.setVisible(aFlag);
+		if (aFlag) {
+			IForm activeForm = Application.getActiveApplication().getActiveForm();
+			if (activeForm instanceof IFormMap) {
+				setFormMap((IFormMap) activeForm);
+			}
+		}
 	}
 }

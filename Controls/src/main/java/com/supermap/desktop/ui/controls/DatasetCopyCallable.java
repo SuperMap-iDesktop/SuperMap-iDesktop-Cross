@@ -1,6 +1,12 @@
 package com.supermap.desktop.ui.controls;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
+import com.supermap.data.EngineType;
+import com.supermap.data.SteppedEvent;
+import com.supermap.data.SteppedListener;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -228,14 +234,13 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 		@Override
 		public void stepped(SteppedEvent arg0) {
 			try {
-				int totalPercent = (100 * this.i + arg0.getPercent()) / count;
+				int totalPercent = (100 * (this.i - 1) + arg0.getPercent()) / count;
 				updateProgressTotal(arg0.getPercent(), arg0.getMessage(), totalPercent,
 						MessageFormat.format(ControlsProperties.getString("String_DatasetCopy_Info"), datasetName));
 			} catch (CancellationException e) {
 				arg0.setCancel(true);
 				this.isCancel = true;
 			}
-
 		}
 
 	}

@@ -18,17 +18,22 @@ public class FrameActivator implements BundleActivator {
 	@Override
 	public void start(BundleContext bundleContext) throws Exception {
 		System.out.println("Hello SuperMap === Frame!!");
-		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.Frame", bundleContext.getBundle());
+		try {
+			Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.Frame", bundleContext.getBundle());
+		} catch (Exception e) {
+			UICommonToolkit.showMessageDialog(FrameProperties.getString("PermissionCheckFailed"));
+//			Class<?> clazz = Class.forName("java.lang.Shutdown");
+//			Field field = clazz.getDeclaredField("state");
+//			field.setAccessible(true);
+//			field.setInt(clazz, 2);
+			System.exit(-1);
+		}
 
 		LogUtilities.outPut(CoreProperties.getString("String_DesktopStartFinished"));
-		if (Application.getActiveApplication().getWorkspace() == null) {
-			UICommonToolkit.showMessageDialog(FrameProperties.getString("PermissionCheckFailed"));
-			System.exit(0);
-		} else {
-			MainFrame mainFrame = new MainFrame();
-			Application.getActiveApplication().setMainFrame(mainFrame);
-			mainFrame.loadUI();
-		}
+		MainFrame mainFrame = new MainFrame();
+		Application.getActiveApplication().setMainFrame(mainFrame);
+		mainFrame.loadUI();
+
 	}
 
 	/*

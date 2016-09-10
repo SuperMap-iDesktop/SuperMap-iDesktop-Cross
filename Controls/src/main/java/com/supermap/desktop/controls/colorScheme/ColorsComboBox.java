@@ -192,7 +192,9 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 		panelShow.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				popupMenuColorScheme.show(ColorsComboBox.this, 0, ColorsComboBox.this.getHeight());
+				if (panelShow.isEnabled()) {
+					popupMenuColorScheme.show(ColorsComboBox.this, 0, ColorsComboBox.this.getHeight());
+				}
 			}
 		});
 
@@ -390,6 +392,13 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 		panelShow.getParent().validate();
 		panelShow.getParent().repaint();
 //		panelShow.repaint();
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		this.panelShow.setEnabled(enabled);
+		this.buttonPopup.setEnabled(enabled);
 	}
 
 	private class MyAWTEventListener implements AWTEventListener {

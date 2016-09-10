@@ -14,7 +14,7 @@ import com.supermap.data.WorkspaceSavedEvent;
 import com.supermap.data.WorkspaceSavedListener;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -42,18 +43,22 @@ public class WorkspaceTempSave {
 	private static WorkspaceTempSave workspaceTempSave = null;
 	private Timer timer;
 	private TimerTask task;
-	private int period = 60000; // 1 min
+	private final int period = 600000; // 10 min
 	private String defaultName = "tempWorkspace";
 	private File autoSaveWorkspaceConfigFile;
 	private FileLock fileLock;
 	private RandomAccessFile randomAccessFile;
 	private Workspace workspace;
-	private int saveCount = 60;
-	private int currentCount = 0;
+	private int symbolSaveCount = 30;// 30min
+	private long nextSaveSymbolTime = 0;
+	// 手动保存(另存)的时候会保存一次;
+	// 工作空间关闭的时候会重置符号库计数，下次保存的时候会保存符号库
+	// 工作空间打开会保存一次
 	private WorkspaceOpenedListener workspaceOpenedListener = new WorkspaceOpenedListener() {
 		@Override
 		public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
-			currentCount = 0;
+			nextSaveSymbolTime = 0;
+			autoSave(true);
 		}
 	};
 	private WorkspaceClosingListener workspaceClosingListener = new WorkspaceClosingListener() {
@@ -61,7 +66,7 @@ public class WorkspaceTempSave {
 		public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
 			// 工作空间关闭可能是要打开当前保存的工作空间，所以先关闭一次
 			closeTempWorkspace();
-			workspaceClosingEvent.getWorkspace().removeClosingListener(workspaceClosingListener);
+			nextSaveSymbolTime = 0;
 		}
 	};
 
@@ -120,7 +125,7 @@ public class WorkspaceTempSave {
 		}
 		timer = new Timer("WorkspaceTempSave", true);
 		addListeners();
-		timer.schedule(task, period / 6, period);
+		timer.schedule(task, 60000, period);
 	}
 
 	private void addListeners() {
@@ -215,17 +220,15 @@ public class WorkspaceTempSave {
 				}
 
 				workspace = WorkspaceUtilities.copyWorkspace(activeWorkspace, workspace);
-				if (GlobalParameters.isSaveSymbol() && (currentCount == 0 || currentCount >= saveCount)) {
-					currentCount = 1;
-					copySymbolLibrary(activeWorkspace);
-				} else {
-					currentCount++;
-				}
 				boolean saveSuccess;
 				if (workspaceConnectionInfo != null) {
 					saveSuccess = workspace.saveAs(workspaceConnectionInfo);
 				} else {
 					saveSuccess = workspace.save();
+				}
+				//GlobalParameters.isSaveSymbol() &&
+				if (System.currentTimeMillis() >= nextSaveSymbolTime) {
+					saveSymbolLibrary(activeWorkspace);
 				}
 				if (saveSuccess) {
 					if (!saveToFile(activeWorkspace, workspace)) {
@@ -234,6 +237,18 @@ public class WorkspaceTempSave {
 				} else {
 					LogUtilities.outPut("workspace autoSave failed");
 				}
+			}
+		}
+		if (isIgnoreModified) {
+			// 无视改动时要更改保存时间
+			Class<TimerTask> clazz = TimerTask.class;
+			try {
+				Field field = clazz.getDeclaredField("nextExecutionTime");
+				field.setAccessible(true);
+				// 修改之后刷新时间
+				field.setLong(task, System.currentTimeMillis() + period);
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(e);
 			}
 		}
 	}
@@ -268,9 +283,9 @@ public class WorkspaceTempSave {
 		Element datasourcesNode = document.createElement("Datasources");
 		Datasources datasources = activeWorkspace.getDatasources();
 		for (int i = 0; i < datasources.getCount(); i++) {
-			if (datasources.get(i).getEngineType() == EngineType.UDB && !datasources.get(i).isReadOnly() && datasources.get(i).isOpened()) {
+			if (datasources.get(i).getEngineType() == EngineType.UDB && datasources.get(i).isOpened() && !DatasourceUtilities.isMemoryDatasource(datasources.get(i))) {
 				Element datasource = document.createElement("Datasource");
-				byte[] bytes = null;
+				byte[] bytes;
 				try {
 					bytes = datasources.get(i).getConnectionInfo().toXML().getBytes("UTF-8");
 				} catch (UnsupportedEncodingException e) {
@@ -345,32 +360,30 @@ public class WorkspaceTempSave {
 		return false;
 	}
 
-	private void copySymbolLibrary(Workspace currentWorkspace) {
-		String tempFolder = FileUtilities.getTempFolder() + "CrossSymbolCopyFile";
+	public void restart() {
+		exit();
+		start();
+	}
+
+	private void saveSymbolLibrary(Workspace currentWorkspace) {
+		String server = workspace.getConnectionInfo().getServer();
+//		Application.getActiveApplication().getOutput().output(server);
+		String tempFolder = server.substring(0, server.length() - 5);
+
 		String markerSymbolFilePath = tempFolder + ".sym";
 		currentWorkspace.getResources().getMarkerLibrary().toFile(markerSymbolFilePath);
-		workspace.getResources().getMarkerLibrary().fromFile(markerSymbolFilePath);
-		if (new File(markerSymbolFilePath).exists()) {
-			new File(markerSymbolFilePath).delete();
-		}
 
 		String lineSymbolFilePath = tempFolder + ".lsl";
 		currentWorkspace.getResources().getLineLibrary().toFile(lineSymbolFilePath);
-		workspace.getResources().getLineLibrary().fromFile(lineSymbolFilePath);
-		if (new File(lineSymbolFilePath).exists()) {
-			new File(lineSymbolFilePath).delete();
-		}
 
 		String fillSymbolFilePath = tempFolder + ".bru";
 		currentWorkspace.getResources().getFillLibrary().toFile(fillSymbolFilePath);
-		workspace.getResources().getFillLibrary().fromFile(fillSymbolFilePath);
-		if (new File(fillSymbolFilePath).exists()) {
-			new File(fillSymbolFilePath).delete();
-		}
+		nextSaveSymbolTime = System.currentTimeMillis() + symbolSaveCount * 60000;
 	}
 
-	public void setSaveCount(int saveCount) {
-		this.saveCount = saveCount;
+
+	public void setSymbolSaveCount(int symbolSaveCount) {
+		this.symbolSaveCount = symbolSaveCount;
 	}
 
 	public static WorkspaceTempSave getInstance() {

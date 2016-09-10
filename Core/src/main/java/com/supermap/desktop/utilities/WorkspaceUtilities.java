@@ -19,6 +19,7 @@ import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop._XMLTag;
 import com.supermap.desktop.enums.OpenWorkspaceResult;
+import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.SaveWorkspaceEvent;
 import com.supermap.desktop.event.SaveWorkspaceListener;
 import com.supermap.desktop.implement.SmMenu;
@@ -38,7 +39,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -567,26 +567,14 @@ public class WorkspaceUtilities {
 		copyWorkspace.setDescription(workspace.getDescription());
 
 		RepeatDatasourceDeal repeatDatasourceDeal = new RepeatDatasourceDeal(workspace.getDatasources(), copyWorkspace.getDatasources());
-		List<Datasource> datasourceBOnly = repeatDatasourceDeal.getDatasourceBOnly();
+		java.util.List<Datasource> datasourceBOnly = repeatDatasourceDeal.getDatasourceBOnly();
 		for (int i = datasourceBOnly.size() - 1; i >= 0; i--) {
 			copyWorkspace.getDatasources().close(datasourceBOnly.get(i).getAlias());
 		}
-		List<Datasource> datasourceAOnly = repeatDatasourceDeal.getDatasourceAOnly();
+		java.util.List<Datasource> datasourceAOnly = repeatDatasourceDeal.getDatasourceAOnly();
 		for (Datasource datasource : datasourceAOnly) {
 			copyWorkspace.getDatasources().open(datasource.getConnectionInfo());
 		}
-
-//		copyWorkspace.getDatasources().closeAll();
-//		for (int i = 0; i < workspace.getDatasources().getCount(); i++) {
-//			Datasource datasource = workspace.getDatasources().get(i);
-//			if (!":memory:".equalsIgnoreCase(datasource.getConnectionInfo().getServer()) && (datasource.isReadOnly() || datasource.getEngineType() != EngineType.UDB)) {
-//				try {
-//					copyWorkspace.getDatasources().open(datasource.getConnectionInfo());
-//				} catch (Exception e) {
-//					// ignore
-//				}
-//			}
-//		}
 
 		copyWorkspace.getMaps().clear();
 		copyWorkspace.getScenes().clear();
@@ -595,13 +583,15 @@ public class WorkspaceUtilities {
 		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 		for (int i = 0; i < formManager.getCount(); i++) {
 			IForm iForm = formManager.get(i);
-			if (iForm instanceof IFormMap) {
+			WindowType windowType = iForm.getWindowType();
+			if (windowType == WindowType.MAP) {
 				copyWorkspace.getMaps().add(iForm.getText(), ((IFormMap) iForm).getMapControl().getMap().toXML());
-			} else if (iForm instanceof IFormScene) {
+			} else if (windowType == WindowType.SCENE) {
 				copyWorkspace.getScenes().add(iForm.getText(), ((IFormScene) iForm).getSceneControl().getScene().toXML());
-			} else if (iForm instanceof IFormLayout) {
+			} else if (windowType == WindowType.LAYOUT) {
 				copyWorkspace.getLayouts().add(iForm.getText(), ((IFormLayout) iForm).getMapLayoutControl().getMapLayout().toXML());
 			}
+
 		}
 
 		for (int i = 0; i < workspace.getMaps().getCount(); i++) {
@@ -628,7 +618,6 @@ public class WorkspaceUtilities {
 		}
 
 
-
 		return copyWorkspace;
 	}
 
@@ -636,41 +625,50 @@ public class WorkspaceUtilities {
 		if (StringUtilities.isNullOrEmpty(workSpaceFilePath)) {
 			return true;
 		}
-		String end = workSpaceFilePath.substring(workSpaceFilePath.length() - 5, workSpaceFilePath.length());
 		if (!FileUtilities.delete(workSpaceFilePath)) {
 			return false;
 		}
-		if (end.equalsIgnoreCase(".sxwu")) {
-			String prefix = workSpaceFilePath.substring(0, workSpaceFilePath.length() - 4);
-			boolean deleteBru = FileUtilities.delete(prefix + "bru");
-			boolean deleteLsl = FileUtilities.delete(prefix + "lsl");
-			boolean deleteSym = FileUtilities.delete(prefix + "sym");
-			// 不加变量直接写在条件里会导致前面的删除失败时，后面的就不进行操作了
-			if (!deleteBru || !deleteLsl || !deleteSym) {
-				return false;
-			}
-		}
+		deleteSymbolLibrary(workSpaceFilePath);
 		return true;
+	}
+
+	private static void deleteSymbolLibrary(String workspaceServer) {
+		String tempFolder = workspaceServer.substring(0, workspaceServer.length() - 4);
+		String markerSymbolFilePath = tempFolder + "sym";
+		if (new File(markerSymbolFilePath).exists()) {
+			new File(markerSymbolFilePath).delete();
+		}
+
+		String lineSymbolFilePath = tempFolder + "lsl";
+		if (new File(lineSymbolFilePath).exists()) {
+			new File(lineSymbolFilePath).delete();
+		}
+
+		String fillSymbolFilePath = tempFolder + "bru";
+		if (new File(fillSymbolFilePath).exists()) {
+			new File(fillSymbolFilePath).delete();
+		}
 	}
 
 }
 
 class RepeatDatasourceDeal {
-	private List<Datasource> datasourceAOnly = new ArrayList<>();
-	private List<Datasource> datasourceBOnly = new ArrayList<>();
+	private java.util.List<Datasource> datasourceAOnly = new ArrayList<>();
+	private java.util.List<Datasource> datasourceBOnly = new ArrayList<>();
 
 	RepeatDatasourceDeal(Datasources datasourcesA, Datasources datasourcesB) {
 		for (int i = 0; i < datasourcesA.getCount(); i++) {
 			Datasource datasource = datasourcesA.get(i);
-			// 只考虑不为内存和非只读数据源的情况
-			if (!":memory:".equalsIgnoreCase(datasource.getConnectionInfo().getServer()) && datasource.isOpened() && (datasource.isReadOnly() || datasource.getEngineType() != EngineType.UDB)) {
+			// 只考虑不为内存且不为udb的数据源
+			if (!":memory:".equalsIgnoreCase(datasource.getConnectionInfo().getServer()) && datasource.isOpened()
+					&& datasource.getEngineType() != EngineType.UDB) {
 				datasourceAOnly.add(datasource);
 			}
 		}
 		for (int i = 0; i < datasourcesB.getCount(); i++) {
 			Datasource datasource = datasourcesB.get(i);
-			// 只考虑不为内存和非只读数据源的情况
-			if (!":memory:".equalsIgnoreCase(datasource.getConnectionInfo().getServer()) && datasource.isOpened() && (datasource.isReadOnly() || datasource.getEngineType() != EngineType.UDB)) {
+			// 只考虑不为内存且不为udb的数据源
+			if (!":memory:".equalsIgnoreCase(datasource.getConnectionInfo().getServer()) && datasource.isOpened() && datasource.getEngineType() != EngineType.UDB) {
 				datasourceBOnly.add(datasource);
 			}
 		}
@@ -687,11 +685,11 @@ class RepeatDatasourceDeal {
 		}
 	}
 
-	List<Datasource> getDatasourceAOnly() {
+	java.util.List<Datasource> getDatasourceAOnly() {
 		return datasourceAOnly;
 	}
 
-	List<Datasource> getDatasourceBOnly() {
+	java.util.List<Datasource> getDatasourceBOnly() {
 		return datasourceBOnly;
 	}
 }

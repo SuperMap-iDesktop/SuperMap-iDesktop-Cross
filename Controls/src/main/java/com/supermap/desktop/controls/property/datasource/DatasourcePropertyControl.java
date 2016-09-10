@@ -24,9 +24,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.metal.MetalBorders;
 import javax.swing.table.DefaultTableModel;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DatasourcePropertyControl extends AbstractPropertyControl {
@@ -39,6 +41,7 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 	private static final int DEFAULT_COLUMN_WIDTH = 130;
 
 	private String TOTAL = "Total";
+	private String OTHERS = "Others";
 
 	private JLabel labelServer;
 	private JLabel labelDatasourceType;
@@ -62,6 +65,7 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 
 	private HashMap<DatasetType, Integer> statisticMap;
 	private HashMap<DatasetType, String> strDatasetTypeMap;
+	private ArrayList<DatasetType> excludeDatasets;
 
 	private transient DocumentListener textFieldDescriptionDocumentListener = new DocumentListener() {
 
@@ -102,6 +106,7 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 		super(ControlsProperties.getString("String_DatasourceProperty"));
 		this.statisticMap = new HashMap<DatasetType, Integer>();
 		this.strDatasetTypeMap = new HashMap<DatasetType, String>();
+		initializeExcludes();
 		initializeComponents();
 		initializeResources();
 		setDatasource(datasource);
@@ -131,6 +136,16 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 	@Override
 	public PropertyType getPropertyType() {
 		return PropertyType.DATASOURCE;
+	}
+
+	private void initializeExcludes() {
+		this.excludeDatasets = new ArrayList<>();
+		this.excludeDatasets.add(DatasetType.TEXTURE);
+		this.excludeDatasets.add(DatasetType.VOLUME);
+		this.excludeDatasets.add(DatasetType.POINTEPS);
+		this.excludeDatasets.add(DatasetType.LINEEPS);
+		this.excludeDatasets.add(DatasetType.REGIONEPS);
+		this.excludeDatasets.add(DatasetType.TEXTEPS);
 	}
 
 	private void initializeComponents() {
@@ -260,26 +275,30 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 		statistic();
 
 		DefaultTableModel tableModel = (DefaultTableModel) this.table.getModel();
+
+		// clear tableModel
 		while (tableModel.getRowCount() > 0) {
 			tableModel.removeRow(tableModel.getRowCount() - 1);
 		}
-		//  TODO 屏蔽texture
+		//  屏蔽texture
 		int count = datasource.getDatasets().getCount();
+		int excludeCount = 0;
 		for (int i = 0; i < datasource.getDatasets().getCount(); i++) {
 			DatasetType type = datasource.getDatasets().get(i).getType();
-			if (type == DatasetType.TEXTURE || type == DatasetType.VOLUME) {
-				count--;
+			if (this.excludeDatasets.contains(type)) {
+				excludeCount++;
 			}
 		}
 		tableModel.addRow(new Object[]{TOTAL, count});
 		com.supermap.data.Enum[] enums = DatasetType.getEnums(DatasetType.class);
 		for (int i = 0; i < enums.length; i++) {
 			DatasetType datasetType = (DatasetType) enums[i];
-			// TODO 暂时排除 Texture 数据集
-			if (datasetType != DatasetType.TEXTURE && datasetType != DatasetType.VOLUME) {
+			// 排除掉 exclude 的数据集类型
+			if (!excludeDatasets.contains(datasetType)) {
 				tableModel.addRow(new Object[]{this.strDatasetTypeMap.get(datasetType), this.statisticMap.get(datasetType)});
 			}
 		}
+		tableModel.addRow(new Object[]{OTHERS, excludeCount});
 	}
 
 	private void fillStatisticMap() {
@@ -347,6 +366,7 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 		this.buttonApply.setText(CommonProperties.getString("String_Button_Apply"));
 		this.buttonReset.setText(CommonProperties.getString("String_Button_Reset"));
 		TOTAL = CommonProperties.getString(CommonProperties.Total);
+		OTHERS = CoreProperties.getString(CoreProperties.Other);
 	}
 
 	private void buttonChangePasswordClicked() {

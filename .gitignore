@@ -23,6 +23,7 @@ Makefile
 *.iws
 bin/
 bundles/idesktop_bundles/
+bundles/require_bundles/
 bundles/bundle_cache/
 release/bin/
 release/bundles/

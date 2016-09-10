@@ -23,12 +23,22 @@ SuperMap iDesktop Cross 产品所使用的 JDK 版本为 **JDK 1.7.0_80** 即 **
 
 	后文以 JAVA_HOME 代指 JDK根目录。
 
+# 开发工具 #
 
-# Eclipse #
+SuperMap iDesktop Cross 产品是基于 Java 语言的桌面 GIS 平台，产品源代码使用 **Maven** 进行项目管理，同时支持 **IntelliJ IDEA**、**elcipse** 等多种主流 Java 开发平台。
 
-## 获取 ##
+## IntelliJ IDEA（推荐） ##
 
-SuperMap iDesktop Cross 产品是基于 Java 语言的桌面 GIS 平台，建议使用 **Eclipse for RCP and RAP Developers** 进行开发。请前往 [Eclipse 官方网站](http://www.eclipse.org/downloads/packages/ "Eclipse 官方网站") 获取 Eclipse Linux版本，然后安装至任意目录，举例说明，命令如下：
+IntelliJ IDEA 拥有极其丰富且人性化的开发调试工具，并自带 **Maven** 项目管理工具，推荐使用 IntelliJ IDEA 作为项目开发工具。请前往 [IntelliJ IDEA 官方网站](https://www.jetbrains.com/idea/ "IntelliJ IDEA 官方网站") 获取 **IntelliJ IDEA**，然后安装至任意目录。
+> 注意：
+> 
+>     最新版本 IntelliJ IDEA 需要 JDK 1.8 及以上版本支持。如果需要最新版本 IntelliJ IDEA，请同时安装 JDK 1.8 及以上版本。
+
+## Eclipse ##
+
+### 获取 ###
+
+请前往 [Eclipse 官方网站](http://www.eclipse.org/downloads/packages/ "Eclipse 官方网站") 获取 Eclipse Linux版本，然后安装至任意目录。建议使用 **Eclipse for RCP and RAP Developers** 进行开发。举例说明，命令如下：
 
 	$ tar zxvf eclipse-rcp-mars-linux.tar.gz
 
@@ -36,7 +46,7 @@ SuperMap iDesktop Cross 产品是基于 Java 语言的桌面 GIS 平台，建议
 > 
 >     最新版本 Eclipse 也许需要 JDK 1.8 及以上版本支持。如果需要最新版本 Eclipse，请同时安装 JDK 1.8 及以上版本。
 
-## 配置 ##
+### 配置 ###
 
 查看当前目录，进入解压过后的 eclipse 目录，打开 **eclipse.ini** 文件。在文件头，添加如下指令：
 
@@ -130,15 +140,21 @@ SuperMap iDesktop Cross 分支说明：
 
 # 运行程序 #
 
-1. 拷贝 `OBJECTS_HOME/Bin/` 或者 `OBJECTS_HOME/Bin_x64/` 下所有文件至 `CROSS_HOME/Bin/` 目录下，如果 `CROSS_HOME` 没有这个目录，自行新建。
-2. 拷贝 `OBJECTS_HOME/Bin/` 或者 `OBJECTS_HOME/Bin_x64/` 下所有 jar 文件至 `CROSS_HOME/Core/lib/` 目录下。
-3. 打开 Eclipse，选择一个新的 Eclipse 工作环境；
-4. 导入项目。依次选择 **File – Import – General – Exitsting Project into Workspace – Browse**，在弹出的文件窗口选中 **CROSS_HOME**， 点击 **Finish** 导入项目；
-5. 配置 Installed JREs。依次选择 **Window - Preferences - Java - Installed JREs**，点击界面右侧 **Add**，弹出向导界面，依次点击 **Standard VM - Next - Directory**，选中 `JDK 1.7.0_80` 安装目录根目录，点击 **Finish**，勾选刚添加的 **JDK 1.7.0_80**，点击 OK 完成配置。
-6. 编辑 OSGI 运行配置文件并运行。
-	- 展开 `iDesktop` 工程；
-	- 右键选择 **iDesktop Frame Configuration.launch**，点击 **Run As - Run Configurations**，在弹出的配置界面左侧，选中 **OSGI Framework - iDesktop Frame Configuration**，在右侧详细配置界面上，选择 **Environment** 选项卡，点击 **New** 按钮新建启动环境变量，**Name** 填写 `LD_LIBRARY_PATH`，**Value** 填写 `CROSS_HOME/Bin`，配置完毕点击 **Apply**，关闭界面；
-	- 右键选择 **iDesktop Frame Configuration.launch**，点击 **Run As - iDesktop Frame Configuration**，程序即可运行。
+## IntelliJ IDEA ##
+
+1. 拷贝 `OBJECTS_HOME/Bin/` 或者 `OBJECTS_HOME/Bin_x64/` 下所有文件至 `CROSS_HOME/Bin/` 目录下，如果 `CROSS_HOME` 目录不存在，自行新建。
+2. 进入 `CROSS_HOME` 目录，双击 **SuperMap iDesktop Cross.ipr** 启动 IntelliJ IDEA，加载项目；
+3. 查看 IntelliJ IDEA 右边侧边栏，打开 Maven Projects 管理面板，展开 **iDesktop.cross - Lifecycle**，双击 **install** 安装依赖，等待完成；
+4. 查看 IntelliJ IDEA 顶部工具条，选中 **iDesktop Startup Linux** 启动项，点击其后的 **Run（Shift + F10）/Debug（Shift + F9**）即可运行 SuperMap iDesktop Cross。
+
+## Eclipse ##
+
+1. 拷贝 `OBJECTS_HOME/Bin/` 或者 `OBJECTS_HOME/Bin_x64/` 下所有文件至 `CROSS_HOME/Bin/` 目录下，如果 `CROSS_HOME` 目录不存在，自行新建。
+2. 打开 Eclipse，选择一个新的 Eclipse 工作环境；
+3. 导入项目。依次选择 **File - Import - Maven - Exitsting Maven Projects Next - Browse**，在弹出的文件窗口选中 **CROSS_HOME**， 点击 **Finish** 导入项目；
+4. 配置 Installed JREs。依次选择 **Window - Preferences - Java - Installed JREs**，点击界面右侧 **Add**，弹出向导界面，依次点击 **Standard VM - Next - Directory**，选中 `JDK 1.7.0_80` 安装目录根目录，点击 **Finish**，勾选刚添加的 **JDK 1.7.0_80**，点击 OK 完成配置。
+5. 右键选中 `idesktop.cross`并单击打开右键菜单，依次选择 **Run As - Maven install** 安装依赖，等待完成；
+6. 展开 `idesktop.cross`，右键选中并单击 `Startup-Eclipse-Linux.launch` 打开右键菜单，依次选择 **Run As - Startup-Eclipse** 即可运行 SuperMap iDesktop Cross。
 
 > 注意：
 >
@@ -146,41 +162,14 @@ SuperMap iDesktop Cross 分支说明：
 
 # 扩展开发 #
 
+> 本部分内容以 IntelliJ IDEA 为例，eclipse 等其他 IDE 除新建项目等操作略有不同之外，项目组织和 pom 文件配置等均一致。
+
 ## 新建项目 ##
 
-### 新建 ###
-
-依次点击 **File – New - Project**，打开 **New Project** 窗口。选择 **Plug-in Development** 目录下的 **Plug-in Project**，点击 **Next** 输入工程名称 `MyPlugin`, 其中** OSGI framework** 选择 **Equinox** ,点击 **Next**。**Execution Environment** 设置为 `JavaSE-1.7`，最后点击 **Finish** 按钮即可。
-
-### 配置插件加载优先级 ###
-
-- 展开 `iDesktop` 工程；
-- 右键选择 **iDesktop Frame Configuration.launch**，点击 **Run As - Run Configurations**，在弹出的配置界面左侧，选中 **OSGI Framework - iDesktop Frame Configuration**，在右侧详细配置界面上，选择 **Bundles** 选项卡，找到 `MyPlugin`，勾选，然后设置 **Start Level**，数值越大优先级越低，一般默认即可。
-
-
-## 依赖 ##
-
-### 工程依赖 ###
-
-添加对 `Core` 和 `Controls` 两个工程的依赖。
-
-    Core 和 Controls 工程是整个项目的核心工程。
-	Core 依赖并导出 SuperMap iObjects Java 以及其他第三方库的类库。
-	Controls 依赖 Core，这两个工程共同构建了整个 Cross 项目的核心架构。
-	扩展开发自己的插件，必须依赖 Core 和 Controls 工程。
-
-- 在新建的项目上右键，依次点击 **Bulid Path - Configure Bulid Path**，弹出操作界面；
-- 选择 **Libraries** 选项卡，选中 **Plug-in Dependencies**，依次点击 **Remove - Apply**，移除该依赖；
-- 选择 **Projects** 选项卡，点击 **Add**，在弹出操作界面上选择 `Core` 和 `Controls` 工程，依次点击 OK - Apply；
-- 完成添加，关闭界面。
-
-### OSGI 依赖 ###
-
-    上文的 Eclipse 工程依赖仅是配置 Eclipse 的开发调试环境。
-	而 OSGI 规范实现的程序，不同的 Bundle 间相互依赖有独特的规则。详情请参见互联网相关资料。
-
-- 双击打开新建工程的 **MANIFEST.MF** 文件，打开配置窗口；
-- 选择 Dependencies 选项卡，点击 **Required Plug-ins** 页面的 **Add** 按钮，添加 `Core` 和 `Controls` 工程。
+- 选中 `SuperMap-iDesktop-Cross` 根节点并右键单击打开右键菜单，依次选择 **New - Module** 打开新建向导界面；
+- 选中左边栏 **Maven**，点击 **Next** 进入下一步；
+- 输入任意 ArtifactId，此处输入 MyPlugin，其他参数默认即可，点击 **Next** 进入下一步；
+- 在 **Content root** 后添加 **"\MyPlugin"**,点击 **Finish** 完成创建。
 
 ## 插件注册 ##
 
@@ -196,3 +185,32 @@ SuperMap iDesktop Cross 分支说明：
 		System.out.println("MyPlugin Start.");
 	}
 注册成功！接下来就可以随心所欲的进行开发了！
+
+## 工程配置 ##
+
+- 展开 `SuperMap-iDesktop-Cross` 根节点；
+- 打开文件 `module-pom-template.xml`，这是扩展开发插件的 pom 配置模板文件，其中由 `**` 包围的配置项为必填自定义配置；
+- 展开 `MyPlugin` 工程，打开 `pom.xml` 文件，参照模板文件进行配置；
+- 查看 IntelliJ IDEA 右边侧边栏，打开 Maven Projects 管理面板，依次展开 **MyPlugin - Plugins - bundle**，双击 **bundle:manifest** 生成 manifest 文件，等待完成。
+
+>注意：
+>
+>模板提供 pom 配置信息只是最小核心配置，为必备配置。其余更为详细丰富的 pom 工程配置按需求自行完成。
+>
+>manifest 文件内有 OSGI 插件运行所需的元数据信息，如有 OSGI 依赖的变动，需在运行前执行最后一步重新生成。
+
+## 依赖说明 ##
+
+### 工程依赖 ###
+
+ `Core` 和 `Controls` 作为项目的核心库，是所有插件的必填依赖。
+
+    Core 和 Controls 工程是整个项目的核心工程。
+	Core 依赖并导出 SuperMap iObjects Java 以及其他第三方库的类库。
+	Controls 依赖 Core，这两个工程共同构建了整个 Cross 项目的核心架构。
+	扩展开发自己的插件，必须依赖 Core 和 Controls 工程。
+
+### OSGI 依赖 ###
+
+	本项目基于 OSGI R4 规范的框架 Felix 进行实现，不同的 Bundle 间相互依赖有独特的规则。
+	本程序已在工程的 Maven 配置中做了详尽的配置。详情请参见互联网相关资料。

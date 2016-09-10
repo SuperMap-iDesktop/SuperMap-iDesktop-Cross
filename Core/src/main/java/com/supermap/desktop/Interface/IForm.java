@@ -106,4 +106,5 @@ public interface IForm {
 
 	boolean isClosed();
 
+
 }

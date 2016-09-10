@@ -1,6 +1,7 @@
 package com.supermap.desktop.controls.utilities;
 
 import com.supermap.data.*;
+import com.supermap.data.Toolkit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogConfirm;
@@ -296,19 +297,33 @@ public class DatasourceOpenFileUtilties {
 							private boolean abstractIsRightPassword(final DatasourceConnectionInfo connectionInfo, String password) {
 								connectionInfo.setPassword(password);
 								Datasource datasource = null;
+								boolean result = true;
 
 								try {
+									Toolkit.clearErrors();
 									datasource = workspace.getDatasources().open(connectionInfo);
 								} catch (Exception e) {
-									// 密码错误 不处理
+									ErrorInfo[] errorInfos = Toolkit.getLastErrors(1);
+
+									// 首先判断一下是不是已知的错误，目前已知的就是密码错误
+									for (int i = 0; i < errorInfos.length; i++) {
+										if (errorInfos[i].getMarker().equals(CoreProperties.getString("String_UGS_PASSWORD"))
+												|| errorInfos[i].getMarker().equals(CoreProperties.getString("String_UGS_PASSWORDError"))) {
+											result = false;
+											break;
+										}
+									}
+
+									// 如果密码正确却打开失败了，输出错误信息
+									if (result) {
+										Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_OpenDatasourceFailed"), connectionInfo.getAlias()));
+									}
 								}
-								if (datasource == null) {
-									return false;
-								} else {
+								if (datasource != null) {
 									UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
 									DatasourceUtilities.addDatasourceToRecentFile(datasource);
-									return true;
 								}
+								return result;
 							}
 						};
 

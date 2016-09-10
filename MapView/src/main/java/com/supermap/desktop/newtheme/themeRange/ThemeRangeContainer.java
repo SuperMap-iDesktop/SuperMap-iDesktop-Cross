@@ -1,6 +1,12 @@
 package com.supermap.desktop.newtheme.themeRange;
 
-import com.supermap.data.*;
+import com.supermap.data.ColorGradientType;
+import com.supermap.data.Colors;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
@@ -14,11 +20,21 @@ import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.newtheme.commonUtils.ThemeItemLabelDecorator;
 import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.InternalImageIconFactory;
+import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
+import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.MathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.RangeMode;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeRange;
+import com.supermap.mapping.ThemeRangeItem;
+import com.supermap.mapping.ThemeType;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -28,7 +44,12 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -36,8 +57,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 /**
  * 分段专题图
- * @author xie
  *
+ * @author xie
  */
 public class ThemeRangeContainer extends ThemeChangePanel {
 
@@ -423,20 +444,19 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 颜色方案改变时刷新颜色
 	 */
 	private void refreshColor() {
-		if (this.comboBoxColorStyle != null) {
-			int colorCount = ((Colors) this.comboBoxColorStyle.getSelectedItem()).getCount();
-			Colors colors = (Colors) this.comboBoxColorStyle.getSelectedItem();
-			int themeRangeCount = this.themeRange.getCount();
-			if (themeRangeCount > 0) {
-				float ratio = (1f * colorCount) / (1f * themeRangeCount);
-				setGeoStyleColor(this.themeRange.getItem(0).getStyle(), colors.get(0));
-				setGeoStyleColor(this.themeRange.getItem(themeRangeCount - 1).getStyle(), colors.get(colorCount - 1));
-				for (int i = 1; i < themeRangeCount - 1; i++) {
-					int colorIndex = Math.round(i * ratio);
-					if (colorIndex == colorCount) {
-						colorIndex--;
-					}
-					setGeoStyleColor(this.themeRange.getItem(i).getStyle(), colors.get(colorIndex));
+		if (comboBoxColorStyle != null) {
+			Colors colors = comboBoxColorStyle.getSelectedItem();
+
+			Color[] colors1 = new Color[colors.getCount()];
+			for (int i = 0; i < colors.getCount(); i++) {
+				colors1[i] = colors.get(i);
+			}
+			int rangeCount = themeRange.getCount();
+
+			colors = Colors.makeGradient(rangeCount, colors1);
+			if (rangeCount > 0) {
+				for (int i = 0; i < rangeCount; i++) {
+					setGeoStyleColor(this.themeRange.getItem(i).getStyle(), colors.get(i));
 				}
 			}
 		}

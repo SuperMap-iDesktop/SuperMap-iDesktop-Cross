@@ -6,8 +6,8 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.ui.controls.DataCell;
-import com.supermap.desktop.ui.controls.DatasetChooser;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 
 import javax.swing.*;

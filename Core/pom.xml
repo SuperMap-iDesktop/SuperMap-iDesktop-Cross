@@ -14,7 +14,7 @@
     <!--Packaging = jar 会定义默认的 goal 来打包（maven-jar-plugin），本程序需要自定义打包过程，
     方法一：设置 Packaging = bundle，本程序采用这种方式。
     方法二：使用 maven-bundle-plugin 的 manifest goal，配合 maven-dependency-plugin、maven-resources-plugin 等实现。-->
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
 
     <!--<repositories>-->
     <!--<repository>-->
@@ -207,91 +207,56 @@
     </dependencies>
 
     <build>
-        <resources>
-        <resource>
-            <directory>src/main/resources</directory>
-            <filtering>false</filtering>
-        </resource>
-        <resource>
-            <directory>src/main/java</directory>
-            <includes>
-                <include>**/*.png</include>
-                <include>**/*.gif</include>
-                <include>**/*.xml</include>
-            </includes>
-            <filtering>false</filtering>
-        </resource>
-    </resources>
         <plugins>
-            <!--maven-bundle-plugin 把 bundle 视为可用 classes 的集合，如果有在 src/main/resources/ 之外的
-                  非 Java 资源文件，需要自行处理拷贝打包的问题-->
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>3.2.0</version>
-                <extensions>true</extensions>
-
-                <!--Packaging = bundle，无需再进行 goal 的绑定。
-                如果 Packaging = jar，则需要绑定 goal 进行 Manifest 文件的生成-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>bundle-package</id>-->
-                        <!--<phase>package</phase>-->
-                        <!--<inherited>true</inherited>-->
-                        <!--<goals>-->
-                            <!--<goal>bundle</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
                 <configuration>
-                    <!--指定 manifest 文件的生成路径，默认为 ${project.build.outputDirectory}/META-INF-->
-                    <!--<manifestLocation>${project.build.outputDirectory}/META-INF</manifestLocation>-->
                     <instructions>
-                        <Manifest-Version>1.0</Manifest-Version>
-
-                        <!--OSGI R4规范这个值只能是2-->
-                        <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
-                        <Bundle-Name>Core</Bundle-Name>
-                        <Bundle-SymbolicName>Core</Bundle-SymbolicName>
-                        <Bundle-Version>${bundle.version}</Bundle-Version>
                         <Bundle-Activator>com.supermap.desktop.core.CoreActivator</Bundle-Activator>
-
-                        <!--打包的资源文件，默认打包 maven 资源目录，也就是 src/main/resources/ 里的内容。
-                        该配置与 maven-resources-plugin 冲突，并且没有 maven-resources-plugin 灵活，同时配置以 maven-resources-plugin 为准。
-                        建议使用 maven-resources-plugin，也就是 <Resources></Resources> 配置项。-->
-                        <Include-Resource>{maven-resources}</Include-Resource>
-
-                        <!--1. Requre-Bundle 为导入整个 Bundle，Import-Package 为导入指定的包，Import-Package更为灵活。
-                              2. Import-Package 默认为 *，也就是导入所有引用的包，包括配置的依赖，但这些依赖并非 bundle，不能 Import。-->
-                        <!--<Require-Bundle></Require-Bundle>-->
-                        <Import-Package>
-                            org.osgi.framework,
-                            org.osgi.util.tracker
-                        </Import-Package>
-
-                        <!--Export-Package 和 Private-Package 会将所配置的包以内联（inline）的形式打到包里。-->
-                        <!--<Export-Package></Export-Package>-->
-
-                        <!--BND 的 exported 配置，功能与 Exported-Pakcage 一致，只是不处理依赖包的内联（inline），
-                        通常与 Embed-Dependency 搭配使用，避免因为 Exported-Package 的依赖内联，导致与 Embed-Dependency
-                        的相同包重复。-->
-                        <!--由于 Export-Package 会导致被导出的包内联，因此如果 Controls 导出了 Core 里的某些内容，
-                        则会导致 Core 的 inline，产生重复，因此使用 exportcontents + Embed-Dependency 来进行更为灵活的处理。-->
-                        <_exportcontents>
-                            Aladdin,
-                            com.alibaba.*,
+                        <Export-Package>
+                            {local-packages},
+                            Aladdin,com.alibaba.*,
                             com.supermap.*,
                             org.apache.*,
                             org.jdesktop.*
-                        </_exportcontents>
-
-                        <!--Private-Package 默认为源码里 exported 之外的所有包。exported 的优先级高于 private，如果有相同的配置，则 exported 生效-->
-                        <!--<Private-Package></Private-Package>-->
-                        <Embed-Dependency>*;scope=compile|system</Embed-Dependency>
-
-                        <!--指定 Embed 依赖相对包的根目录的路径-->
-                        <Embed-Directory>lib</Embed-Directory>
+                        </Export-Package>
                     </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+
+                    <!--jar 生成到指定的路径-->
+                    <outputDirectory>${project.basedir}/../bundles/require_bundles/</outputDirectory>
+                </configuration>
+            </plugin>
+
+            <!--依赖处理-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+
+                    <!--provided 的依赖不打包-->
+                    <excludeScope>provided</excludeScope>
+
+                    <!--默认输出到 target/classes/lib-->
+                    <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+                    <overWriteIfNewer>true</overWriteIfNewer>
+                    <overWriteReleases>false</overWriteReleases>
+                    <overWriteSnapshots>false</overWriteSnapshots>
                 </configuration>
             </plugin>
         </plugins>

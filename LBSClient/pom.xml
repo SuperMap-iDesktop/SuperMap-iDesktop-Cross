@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>idesktop.cross</artifactId>
@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>LBSClient</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
@@ -101,10 +102,41 @@
 
     <build>
         <plugins>
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-compiler-plugin</artifactId>-->
-            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Bundle-Activator>com.supermap.desktop.lbsclient.LBSClientActivator</Bundle-Activator>
+                        <Require-Bundle>${project.groupId}.Core,${project.groupId}.Controls</Require-Bundle>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <!--依赖处理-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+
+                    <!--provided 的依赖不打包-->
+                    <includeScope>runtime</includeScope>
+
+                    <!--默认输出到 target/classes/lib-->
+                    <outputDirectory>${project.build.outputDirectory}/lib</outputDirectory>
+                    <overWriteIfNewer>true</overWriteIfNewer>
+                    <overWriteReleases>false</overWriteReleases>
+                    <overWriteSnapshots>false</overWriteSnapshots>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

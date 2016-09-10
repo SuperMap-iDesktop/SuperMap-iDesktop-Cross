@@ -101,7 +101,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	/**
 	 * 初始化单值专题图
 	 *
-	 * @param dataset
+	 * @param datasetGrid
 	 * @return
 	 */
 	private Map initCurrentTheme(DatasetGrid datasetGrid) {
@@ -123,10 +123,6 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		initPanelProperty();
-		if (isNewTheme) {
-			refreshColor();
-			refreshAtOnce();
-		}
 	}
 
 	/**
@@ -153,6 +149,10 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.panelProperty.add(this.comboBoxColorStyle,    new GridBagConstraintsHelper(1, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
 		this.panelProperty.add(this.toolBar,               new GridBagConstraintsHelper(0, 5, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,10,5,5).setWeight(100, 0));
 		this.panelProperty.add(this.scrollPane,            new GridBagConstraintsHelper(0, 6, 2, 1).setAnchor(GridBagConstraints.NORTH).setInsets(0,10,5,10).setWeight(100, 3).setFill(GridBagConstraints.BOTH));
+		if (isNewTheme) {
+			refreshColor();
+			refreshAtOnce();
+		}
 		getTable();
 		this.tableRangeInfo.setRowSelectionInterval(0, 0);
 		
@@ -279,19 +279,18 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 	 */
 	private void refreshColor() {
 		if (comboBoxColorStyle != null) {
-			int colorCount = ((Colors) comboBoxColorStyle.getSelectedItem()).getCount();
-			Colors colors = (Colors) comboBoxColorStyle.getSelectedItem();
-			int themeRangeCount = themeGridRange.getCount();
-			if (themeRangeCount > 0) {
-				float ratio = (1f * colorCount) / (1f * themeRangeCount);
-				themeGridRange.getItem(0).setColor(colors.get(0));
-				themeGridRange.getItem(themeRangeCount - 1).setColor(colors.get(colorCount - 1));
-				for (int i = 1; i < themeRangeCount - 1; i++) {
-					int colorIndex = Math.round(i * ratio);
-					if (colorIndex == colorCount) {
-						colorIndex--;
-					}
-					themeGridRange.getItem(i).setColor(colors.get(colorIndex));
+			Colors colors = comboBoxColorStyle.getSelectedItem();
+
+			Color[] colors1 = new Color[colors.getCount()];
+			for (int i = 0; i < colors.getCount(); i++) {
+				colors1[i] = colors.get(i);
+			}
+			int rangeCount = themeGridRange.getCount();
+
+			colors = Colors.makeGradient(rangeCount, colors1);
+			if (rangeCount > 0) {
+				for (int i = 0; i < rangeCount; i++) {
+					themeGridRange.getItem(i).setColor(colors.get(i));
 				}
 			}
 		}
