@@ -32,6 +32,7 @@ public class SpatialAnalystActivator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		SpatialAnalystActivator.setContext(null);
+		System.out.println("Goodbye SuperMap === SpatialAnalyst!!");
 	}
 
 	public static void setContext(BundleContext context){
