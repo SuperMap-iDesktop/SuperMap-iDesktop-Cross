@@ -11,6 +11,8 @@ import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
+import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.*;
@@ -50,10 +52,10 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
     private JCheckBox checkBoxOptimizeMutilineAlignment = new JCheckBox();// 避让后多行文本对齐
     // panelFontHeight
     private JLabel labelMaxFontHeight = new JLabel();
-    private JTextField textFieldMaxFontHeight = new JTextField();// 最大文本高度
+    private SmTextFieldLegit textFieldMaxFontHeight = new SmTextFieldLegit();// 最大文本高度
     private JLabel labelMaxFontHeightUnity = new JLabel();
     private JLabel labelMinFontHeight = new JLabel();
-    private JTextField textFieldMinFontHeight = new JTextField();// 最小文本高度
+    private SmTextFieldLegit textFieldMinFontHeight = new SmTextFieldLegit();// 最小文本高度
     private JLabel labelMinFontHeightUnity = new JLabel();
     // panelFontWide
     // private JLabel labelMaxFontWidth = new JLabel();
@@ -303,6 +305,36 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
         } else {
             this.textFieldMaxFontHeight.setText("0");
         }
+        textFieldMaxFontHeight.setSmTextFieldLegit(new ISmTextFieldLegit() {
+            @Override
+            public boolean isTextFieldValueLegit(String textFieldValue) {
+                if (!StringUtilities.isNullOrEmpty(textFieldValue)) {
+                    String minFontHeight = textFieldMinFontHeight.getText();
+                    if (StringUtilities.isNumber(minFontHeight) && StringUtilities.isNumber(textFieldValue)) {
+                        if (Integer.parseInt(minFontHeight) > Integer.parseInt(textFieldValue) && Integer.parseInt(textFieldValue) != 0 && Integer.parseInt(minFontHeight) != 0) {
+                            return false;
+                        } else {
+                            if (StringUtilities.isNumber(textFieldValue) && textFieldValue.length() <= 8) {
+                                int maxTextHeight = Integer.parseInt(textFieldValue);
+                                themeLabel.setMaxTextHeight(maxTextHeight);
+                            }
+                            return true;
+                        }
+                    }
+                } else {
+                    themeLabel.setMaxTextHeight(0);
+                }
+                return false;
+            }
+
+            @Override
+            public String getLegitValue(String currentValue, String backUpValue) {
+                if (StringUtilities.isNullOrEmpty(currentValue)) {
+                    return "0";
+                }
+                return currentValue;
+            }
+        });
     }
 
     /**
@@ -314,6 +346,36 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
         } else {
             this.textFieldMinFontHeight.setText("0");
         }
+        textFieldMinFontHeight.setSmTextFieldLegit(new ISmTextFieldLegit() {
+            @Override
+            public boolean isTextFieldValueLegit(String textFieldValue) {
+                if (!StringUtilities.isNullOrEmpty(textFieldValue)) {
+                    String maxFontHeight = textFieldMaxFontHeight.getText();
+                    if (StringUtilities.isNumber(maxFontHeight) && StringUtilities.isNumber(textFieldValue)) {
+                        if (Integer.parseInt(textFieldValue) > Integer.parseInt(maxFontHeight) && Integer.parseInt(textFieldValue) != 0 && Integer.parseInt(maxFontHeight) != 0) {
+                            return false;
+                        } else {
+                            if (StringUtilities.isNumber(textFieldValue) && textFieldValue.length() <= 8) {
+                                int minTextHeight = Integer.parseInt(textFieldValue);
+                                themeLabel.setMinTextHeight(minTextHeight);
+                            }
+                            return true;
+                        }
+                    }
+                } else {
+                    themeLabel.setMinTextHeight(0);
+                }
+                return false;
+            }
+
+            @Override
+            public String getLegitValue(String currentValue, String backUpValue) {
+                if (StringUtilities.isNullOrEmpty(currentValue)) {
+                    return "0";
+                }
+                return currentValue;
+            }
+        });
     }
 
     /**
@@ -594,6 +656,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
                 return;
             }
             if (overLengthMode.equals(MapViewProperties.getString("String_OverLengthLabelMode_Omit"))) {
+                themeLabel.setSplitSeparator('\0');
                 themeLabel.setOverLengthMode(OverLengthLabelMode.OMIT);
                 spinnerFontCount.setEnabled(true);
                 comboBoxSplitSeparator.setEnabled(false);
@@ -712,13 +775,14 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
             } else if (e.getSource() == textFieldVertical) {
                 // 设置垂直方向上文本避让的缓冲范围
                 setExtentInflation();
-            } else if (e.getSource() == textFieldMaxFontHeight) {
-                // 设置最大文高度
-                setMaxFontHeight();
-            } else if (e.getSource() == textFieldMinFontHeight) {
-                // 设置最小文本高度
-                setMinFontHeight();
             }
+//            else if (e.getSource() == textFieldMaxFontHeight) {
+//                // 设置最大文高度
+//                setMaxFontHeight();
+//            } else if (e.getSource() == textFieldMinFontHeight) {
+//                // 设置最小文本高度
+//                setMinFontHeight();
+//            }
             // else if (e.getSource() == textFieldMaxFontWidth) {
             // // 设置最大文本宽度
             // setMaxFontWidth();
@@ -761,57 +825,6 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
         // }
         // }
 
-        /**
-         * 设置最小文本高度
-         */
-        private void setMinFontHeight() {
-            if (!textFieldMinFontHeight.getText().isEmpty()) {
-                String minFontHeight = textFieldMinFontHeight.getText();
-                String maxFontHeight = textFieldMaxFontHeight.getText();
-                if (StringUtilities.isNumber(minFontHeight) && StringUtilities.isNumber(maxFontHeight) && Integer.parseInt(maxFontHeight) != 0 && Integer.parseInt(minFontHeight) != 0) {
-                    if (Integer.parseInt(minFontHeight) > Integer.parseInt(maxFontHeight)) {
-                        textFieldMinFontHeight.setForeground(Color.red);
-                        return;
-                    } else {
-                        textFieldMaxFontHeight.setForeground(Color.black);
-                        textFieldMinFontHeight.setForeground(Color.black);
-                    }
-                }
-                if (StringUtilities.isNumber(minFontHeight) && minFontHeight.length() <= 8) {
-                    int minTextHeight = Integer.parseInt(minFontHeight);
-                    themeLabel.setMinTextHeight(minTextHeight);
-                }
-            } else {
-                textFieldMinFontHeight.setText("0");
-                themeLabel.setMinTextHeight(0);
-            }
-        }
-
-        /**
-         * 设置最大文高度
-         */
-        private void setMaxFontHeight() {
-            if (!textFieldMaxFontHeight.getText().isEmpty()) {
-                String minFontHeight = textFieldMinFontHeight.getText();
-                String maxFontHeight = textFieldMaxFontHeight.getText();
-                if (StringUtilities.isNumber(minFontHeight) && StringUtilities.isNumber(maxFontHeight)) {
-                    if (Integer.parseInt(minFontHeight) > Integer.parseInt(maxFontHeight) && Integer.parseInt(maxFontHeight) != 0 && Integer.parseInt(minFontHeight) != 0) {
-                        textFieldMaxFontHeight.setForeground(Color.red);
-                        return;
-                    } else {
-                        textFieldMaxFontHeight.setForeground(Color.black);
-                        textFieldMinFontHeight.setForeground(Color.black);
-                    }
-                }
-                if (StringUtilities.isNumber(maxFontHeight) && maxFontHeight.length() <= 8) {
-                    int maxTextHeight = Integer.parseInt(maxFontHeight);
-                    themeLabel.setMaxTextHeight(maxTextHeight);
-                }
-            } else {
-                textFieldMaxFontHeight.setText("0");
-                themeLabel.setMaxTextHeight(0);
-            }
-        }
 
         /**
          * 设置水平方向上文本避让的缓冲范围

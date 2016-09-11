@@ -826,9 +826,13 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
                     rangeMode = RangeMode.CUSTOMINTERVAL;
                     double defaultRangeCount = 0;
                     if (themeLabel.getCount() > 2) {
-                        defaultRangeCount = Double.valueOf(new DecimalFormat("0").format(themeLabel.getItem(1).getEnd() - themeLabel.getItem(1).getStart()));
+                        if (StringUtilities.isNumber(new DecimalFormat("0").format(themeLabel.getItem(1).getEnd() - themeLabel.getItem(1).getStart()))) {
+                            defaultRangeCount = Double.valueOf(new DecimalFormat("0").format(themeLabel.getItem(1).getEnd() - themeLabel.getItem(1).getStart()));
+                        }
                     } else {
-                        defaultRangeCount = Double.valueOf(new DecimalFormat("0").format(themeLabel.getItem(0).getEnd()));
+                        if (StringUtilities.isNumber(new DecimalFormat("0").format(themeLabel.getItem(1).getEnd() - themeLabel.getItem(1).getStart()))) {
+                            defaultRangeCount = Double.valueOf(new DecimalFormat("0").format(themeLabel.getItem(0).getEnd()));
+                        }
                     }
                     spinnerRangeLength.setValue(defaultRangeCount);
                     comboBoxRangeCount.setEnabled(false);
