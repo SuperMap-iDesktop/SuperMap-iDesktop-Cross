@@ -34,5 +34,6 @@ public class NetServicesActivator implements BundleActivator {
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
 		setContext(null);
+		System.out.println("Goodbye SuperMap === NetServices!!");
 	}
 }

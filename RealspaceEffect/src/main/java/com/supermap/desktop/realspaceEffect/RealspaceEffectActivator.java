@@ -30,6 +30,7 @@ public class RealspaceEffectActivator implements BundleActivator {
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
 		RealspaceEffectActivator.CONTEXT = null;
+		System.out.println("Goodbye SuperMap === RealspaceEffect!!");
 	}
 
 }

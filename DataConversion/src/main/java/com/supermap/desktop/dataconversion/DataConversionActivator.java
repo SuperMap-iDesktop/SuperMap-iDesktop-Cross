@@ -39,6 +39,7 @@ public class DataConversionActivator implements BundleActivator {
 
 	public static void setContext(BundleContext context) {
 		DataConversionActivator.context = context;
+		System.out.println("Goodbye SuperMap === DataConversion!!");
 	}
 
 }

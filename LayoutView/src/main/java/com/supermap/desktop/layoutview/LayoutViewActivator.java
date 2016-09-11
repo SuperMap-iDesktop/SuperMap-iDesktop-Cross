@@ -99,6 +99,7 @@ public class LayoutViewActivator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		LayoutViewActivator.setContext(null);
+		System.out.println("Goodbye SuperMap === LayoutView!!");
 	}
 
 	public static void setContext(BundleContext context){
