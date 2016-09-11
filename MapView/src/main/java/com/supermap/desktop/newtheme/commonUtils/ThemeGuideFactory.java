@@ -188,8 +188,10 @@ public class ThemeGuideFactory {
 
             result = ThemeUtil.arrayNewThemeLayer(getMapControl().getMap(), layer, theme);
             UICommonToolkit.getLayersManager().getLayersTree().reload();
-            int selectRow = getMapControl().getMap().getLayers().indexOf(result.getName());
-            UICommonToolkit.getLayersManager().getLayersTree().setSelectionInterval(selectRow, selectRow);
+            if (null != result) {
+                int selectRow = getMapControl().getMap().getLayers().indexOf(result.getName());
+                UICommonToolkit.getLayersManager().getLayersTree().setSelectionInterval(selectRow, selectRow);
+            }
             if (null != layer) {
                 // 复制关联表信息到新图层中
                 for (int i = 0; i < layer.getDisplayFilter().getJoinItems().getCount(); i++) {
@@ -364,7 +366,7 @@ public class ThemeGuideFactory {
                 }
                 if (null != themeUnique) {
                     success = true;
-                    Layer themeGridUniqueLayer = initCurrentTheme(null, themeUnique);
+                    Layer themeGridUniqueLayer = initCurrentTheme(getActiveLayer(), themeUnique);
                     ThemeChangePanel themeUniqueContainer = new ThemeGridUniqueContainer(themeGridUniqueLayer, true);
                     setDockbarActive(themeGridUniqueLayer, themeUniqueContainer);
                 } else {
@@ -395,7 +397,7 @@ public class ThemeGuideFactory {
 
                 if (null != themeRange) {
                     success = true;
-                    Layer themeGridRangeLayer = initCurrentTheme(null, themeRange);
+                    Layer themeGridRangeLayer = initCurrentTheme(getActiveLayer(), themeRange);
                     ThemeChangePanel themeGridRangeContainer = new ThemeGridRangeContainer(themeGridRangeLayer, true);
                     setDockbarActive(themeGridRangeLayer, themeGridRangeContainer);
                 } else {
@@ -677,8 +679,7 @@ public class ThemeGuideFactory {
         layerPropertyChange(themeContainer);
     }
 
-    private static Dataset getDataset() {
-        Dataset dataset = null;
+    private static Layer getActiveLayer() {
         IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
         Layer layer = null;
         if (0 < formMap.getActiveLayers().length) {
@@ -686,8 +687,11 @@ public class ThemeGuideFactory {
         } else {
             layer = formMap.getMapControl().getMap().getLayers().get(0);
         }
-        dataset = layer.getDataset();
-        return dataset;
+        return layer;
+    }
+
+    private static Dataset getDataset() {
+        return getActiveLayer().getDataset();
     }
 
     /**

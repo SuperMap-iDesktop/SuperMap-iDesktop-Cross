@@ -89,11 +89,13 @@ public class TextStyleContainer extends ThemeChangePanel {
         }
         if (null != theme && theme instanceof ThemeLabel && textStyleType != LABELCOMPLICATEDITEMS && textStyleType != LABELCOMPLICATEDDEFUALT
                 && !this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {
+            for (int i = 0; i < ((ThemeLabel) this.themeLayer.getTheme()).getCount(); i++) {
+                if (null != ThemeLabelAdvancePanel.stringAlignment) {
+                    ((ThemeLabel) this.themeLayer.getTheme()).getItem(i).getStyle().setStringAlignment(ThemeLabelAdvancePanel.stringAlignment);
+                }
+            }
             for (int i = 0; i < this.selectRow.length; i++) {
-//                if (null != ThemeLabelAdvancePanel.stringAlignment) {
-//                    ((ThemeLabel) theme).getItem(i).getStyle().setStringAlignment(ThemeLabelAdvancePanel.stringAlignment);
-//                }
-                ((ThemeLabel) this.themeLayer.getTheme()).getItem(this.selectRow[i]).setStyle(((ThemeLabel) theme).getItem(i).getStyle());
+                ((ThemeLabel) this.themeLayer.getTheme()).getItem(this.selectRow[i]).setStyle(((ThemeLabel) theme).getItem(selectRow[i]).getStyle());
             }
             this.map.refresh();
             return;
