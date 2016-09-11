@@ -1,5 +1,6 @@
 package com.supermap.desktop.CtrlAction;
 
+import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
@@ -7,6 +8,7 @@ import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.Interface.IPropertyManager;
 import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
+import com.supermap.desktop.controls.property.dataset.RecordsetPropertyControl;
 import com.supermap.desktop.implement.CtrlAction;
 
 import javax.swing.*;
@@ -22,10 +24,18 @@ public class CtrlActionTabularProperty extends CtrlAction {
 
 	@Override
 	public void run() {
-		ArrayList<IProperty> properties = WorkspaceTreeDataPropertyFactory.getDatasetProperties(((IFormTabular) Application.getActiveApplication().getActiveForm()).getRecordset().getDataset());
+		DatasetVector dataset = ((IFormTabular) Application.getActiveApplication().getActiveForm()).getRecordset().getDataset();
+
+		ArrayList<IProperty> properties = WorkspaceTreeDataPropertyFactory.getDatasetProperties(dataset);
 		IPropertyManager propertyManager = Application.getActiveApplication().getMainFrame().getPropertyManager();
 		propertyManager.setProperty(properties.toArray(new IProperty[properties.size()]));
 		JDialog dialogPropertyContainer = (JDialog) Application.getActiveApplication().getMainFrame().getPropertyManager();
+		for (IProperty property : properties) {
+			if (property instanceof RecordsetPropertyControl) {
+				propertyManager.setSelectedProperty(property);
+				break;
+			}
+		}
 		dialogPropertyContainer.setVisible(true);
 	}
 

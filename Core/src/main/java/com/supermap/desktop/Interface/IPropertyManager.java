@@ -35,4 +35,16 @@ public interface IPropertyManager {
 	boolean isUsable();
 
 	PropertyType getPropertyType();
+
+	int getPropertyCount();
+
+	IProperty getPropertyByIndex(int index);
+
+	void setSelectedProperty(int index);
+
+	void setSelectedProperty(IProperty property);
+
+	int getPropertyIndex(IProperty property);
+
+	IProperty getCurrentProperty();
 }

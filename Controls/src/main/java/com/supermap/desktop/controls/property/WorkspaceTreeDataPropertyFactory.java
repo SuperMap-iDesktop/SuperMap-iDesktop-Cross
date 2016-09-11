@@ -172,7 +172,7 @@ public class WorkspaceTreeDataPropertyFactory {
 	}
 
 
-	private static RecordsetPropertyControl getRecordsetPropertyControl(DatasetVector datasetVector) {
+	public static RecordsetPropertyControl getRecordsetPropertyControl(DatasetVector datasetVector) {
 		if (recordsetPropertyControl == null) {
 			recordsetPropertyControl = new RecordsetPropertyControl(datasetVector);
 		} else {
