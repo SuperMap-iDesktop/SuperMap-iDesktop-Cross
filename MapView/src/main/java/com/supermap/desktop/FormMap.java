@@ -642,6 +642,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			this.mapControl.getMap().getLayers().addLayerSelectableChangedListener(this.layerSelectableChangedListener);
 
 			// 比例尺下拉框添加选择事件
+			this.scaleBox.removeItemListener(this.itemListener);
 			this.scaleBox.addItemListener(this.itemListener);
 			this.pointXField.addKeyListener(this.keyAdapter);
 			this.pointXField.addFocusListener(this.pointFocusListener);
@@ -870,10 +871,12 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	private void initScaleBoxItem() {
+		scaleBox.removeItemListener(itemListener);
 		this.scaleBox.removeAllItems();
 
 		double[] visibleScales = getMapControl().getMap().getVisibleScales();
 		if (!getMapControl().getMap().isVisibleScalesEnabled() || visibleScales.length <= 0) {
+
 			this.scaleBox.addItem(ScaleModel.SCALE_5000);
 			this.scaleBox.addItem(ScaleModel.SCALE_10000);
 			this.scaleBox.addItem(ScaleModel.SCALE_25000);
@@ -891,6 +894,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				}
 			}
 		}
+		scaleBox.addItemListener(itemListener);
 	}
 
 	@Override
@@ -961,7 +965,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				}
 			}
 
-			this.layersTree.setSelectionPaths(paths.toArray(new TreePath[paths.size()]));
+//			this.layersTree.setSelectionPaths(paths.toArray(new TreePath[paths.size()]));
 		} else {
 			this.layersTree.clearSelection();
 			this.activeLayersList.clear();

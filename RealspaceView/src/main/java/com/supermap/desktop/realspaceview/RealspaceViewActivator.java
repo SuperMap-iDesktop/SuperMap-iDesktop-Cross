@@ -102,6 +102,7 @@ public class RealspaceViewActivator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		RealspaceViewActivator.setContext(null);
+		System.out.println("Goodbye SuperMap === RealspaceView!!");
 	}
 	
 	private static void setContext(BundleContext context) {

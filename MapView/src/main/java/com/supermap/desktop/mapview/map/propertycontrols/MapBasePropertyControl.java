@@ -344,7 +344,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 		this.isMarkerAngleFixed = map.isMarkerAngleFixed();
 		this.isLineAntialias = map.isLineAntialias();
 		this.isTextAngleFixed = map.isTextAngleFixed();
-		this.isLineAntialias = map.isLineAntialias();
+		this.isTextAntialias = map.isTextAntialias();
 		this.isTextOrientationFixed = map.isTextOrientationFixed();
 		this.mapOverlapDisplayedOptions = copyMapOverLapDisplayedOpitions(map.getOverlapDisplayedOptions());
 	}

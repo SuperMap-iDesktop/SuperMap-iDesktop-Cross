@@ -3,6 +3,7 @@ package com.supermap.desktop.mapview.layer.propertymodel;
 import com.supermap.data.Dataset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.mapping.Layer;
 
 public class LayerRelocateDatasetPropertyModel extends LayerPropertyModel {
@@ -49,16 +50,23 @@ public class LayerRelocateDatasetPropertyModel extends LayerPropertyModel {
 
 	@Override
 	protected void apply(Layer layer) {
-		boolean isNeedReload = false;
+		boolean isEmpty = false;
+		boolean isThemeLayer = false;
 		if(layer != null && this.layerRelocateDataset != null ) {
 			if (layer.getDataset() == null) {
-				isNeedReload = true;
+				isEmpty = true;
+			}
+			if (layer.getTheme() != null) {
+				isThemeLayer = true;
 			}
 			if (layer.getDataset() != layerRelocateDataset) {
 				layer.setDataset(this.layerRelocateDataset);
 			}
 		}
-		if(isNeedReload){
+		if (isThemeLayer) {
+			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(layer);
+		}
+		if (isEmpty) {
 			getFormMap().setActiveLayers(getFormMap().getActiveLayers());
 		}
 	}

@@ -34,6 +34,7 @@ public class RealspaceEditorActivator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		RealspaceEditorActivator.setContext(null);
+		System.out.println("Goodbye SuperMap === RealspaceEditor!!");
 	}
 
 	private static void setContext(BundleContext bundleContext) {

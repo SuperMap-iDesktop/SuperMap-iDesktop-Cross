@@ -1,11 +1,15 @@
 package com.supermap.desktop;
 
+import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldType;
 import com.supermap.data.QueryParameter;
 import com.supermap.data.Recordset;
 import com.supermap.data.StatisticMode;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormTabular;
+import com.supermap.desktop.Interface.IProperty;
+import com.supermap.desktop.Interface.IPropertyManager;
+import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.SmStatusbar;
@@ -219,6 +223,19 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		if (PropertyType.isGeometryPropertyType(Application.getActiveApplication().getMainFrame().getPropertyManager().getPropertyType())) {
 			Application.getActiveApplication().getMainFrame().getPropertyManager().setProperty(null);
 		}
+//		setProperty();
+	}
+
+	private void setProperty() {
+		if (Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
+			if (getRecordset() != null) {
+
+				DatasetVector dataset = getRecordset().getDataset();
+				IProperty propertie = dataset == null ? null : WorkspaceTreeDataPropertyFactory.getRecordsetPropertyControl(dataset);
+				IPropertyManager propertyManager = Application.getActiveApplication().getMainFrame().getPropertyManager();
+				propertyManager.setProperty(new IProperty[]{propertie});
+			}
+		}
 	}
 
 	private void unRegisterEvents() {
@@ -323,9 +340,9 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-			if (isSelected){
+			if (isSelected) {
 				this.setBackground(COLOR_SYSTEM_SELECTED);
-			}else{
+			} else {
 				this.setBackground(Color.white);
 			}
 			if (value == null) {
@@ -407,9 +424,9 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-			if(isSelected){
+			if (isSelected) {
 				this.setBackground(COLOR_SYSTEM_SELECTED);
-			}else{
+			} else {
 				this.setBackground(Color.white);
 			}
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
@@ -436,6 +453,9 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 	@Override
 	public Recordset getRecordset() {
+		if (tabularTableModel == null) {
+			return null;
+		}
 		return this.tabularTableModel.getRecordset();
 	}
 
@@ -513,6 +533,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		this.jTableTabular.setRowHeight(FormTabular.PREFER_ROW_HEIGHT);
 		this.jTableTabular.updateUI();
 		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
+//		setProperty();
 	}
 
 	private void checkStatisticsResultState(int[] beforeSelectedColumn) {

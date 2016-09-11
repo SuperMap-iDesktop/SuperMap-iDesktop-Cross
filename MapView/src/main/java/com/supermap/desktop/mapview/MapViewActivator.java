@@ -99,6 +99,7 @@ public class MapViewActivator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		setContext(null);
+		System.out.println("Goodbye SuperMap === MapView!!");
 	}
 
 }

@@ -38,6 +38,7 @@ public class LayoutEditorActivator implements BundleActivator {
 
 	private static void setContext(BundleContext bundleContext) {
 		LayoutEditorActivator.CONTEXT = bundleContext;
+		System.out.println("Goodbye SuperMap === LayoutEditor!!");
 	}
 
 }

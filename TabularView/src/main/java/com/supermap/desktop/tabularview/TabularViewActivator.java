@@ -130,6 +130,7 @@ public class TabularViewActivator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		TabularViewActivator.setContext(null);
+		System.out.println("Goodbye SuperMap === Tabular!!");
 	}
 
 	public static void setContext(BundleContext context) {

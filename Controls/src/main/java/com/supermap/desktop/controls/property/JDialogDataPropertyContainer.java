@@ -143,4 +143,48 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 			return null;
 		}
 	}
+
+	@Override
+	public int getPropertyCount() {
+		return tabbledPane.getTabCount();
+	}
+
+	@Override
+	public IProperty getPropertyByIndex(int index) {
+		if (index < 0 || index > getPropertyCount()) {
+			throw new IndexOutOfBoundsException(String.valueOf(index));
+		}
+		return ((IProperty) tabbledPane.getTabComponentAt(index));
+	}
+
+	@Override
+	public void setSelectedProperty(int index) {
+		if (index < 0 || index > getPropertyCount()) {
+			throw new IndexOutOfBoundsException(String.valueOf(index));
+		}
+		tabbledPane.setSelectedIndex(index);
+	}
+
+	@Override
+	public void setSelectedProperty(IProperty property) {
+		int propertyIndex = getPropertyIndex(property);
+		if (propertyIndex != -1) {
+			setSelectedProperty(propertyIndex);
+		}
+	}
+
+	@Override
+	public int getPropertyIndex(IProperty property) {
+		for (int i = 0; i < getPropertyCount(); i++) {
+			if (tabbledPane.getComponentAt(i) == property) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	@Override
+	public IProperty getCurrentProperty() {
+		return currentProperty;
+	}
 }

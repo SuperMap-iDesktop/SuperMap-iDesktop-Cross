@@ -13,32 +13,7 @@ import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.CursorUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerAddedEvent;
-import com.supermap.mapping.LayerAddedListener;
-import com.supermap.mapping.LayerGroup;
-import com.supermap.mapping.LayerGroupAddedEvent;
-import com.supermap.mapping.LayerGroupAddedListener;
-import com.supermap.mapping.LayerGroupRemovedEvent;
-import com.supermap.mapping.LayerGroupRemovedListener;
-import com.supermap.mapping.LayerRemovedEvent;
-import com.supermap.mapping.LayerRemovedListener;
-import com.supermap.mapping.LayerSettingImage;
-import com.supermap.mapping.LayerSettingVector;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeGraph;
-import com.supermap.mapping.ThemeGraphItem;
-import com.supermap.mapping.ThemeGridRange;
-import com.supermap.mapping.ThemeGridRangeItem;
-import com.supermap.mapping.ThemeGridUnique;
-import com.supermap.mapping.ThemeGridUniqueItem;
-import com.supermap.mapping.ThemeLabel;
-import com.supermap.mapping.ThemeLabelItem;
-import com.supermap.mapping.ThemeRange;
-import com.supermap.mapping.ThemeRangeItem;
-import com.supermap.mapping.ThemeUnique;
-import com.supermap.mapping.ThemeUniqueItem;
+import com.supermap.mapping.*;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -49,16 +24,7 @@ import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceAdapter;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -399,38 +365,40 @@ public class LayersTree extends JTree {
 		DefaultMutableTreeNode result = null;
 
 		Dataset dataset = layer.getDataset();
-		if (dataset == null) {
-			// 分组图层节点的构建
-			if (layer instanceof LayerGroup) {
-				result = getGroupNodeByLayer(layer);
-			} else {
-				result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER));
-			}
-		} else {
+
 			Theme theme = layer.getTheme();
 			if (theme == null) {
-				if (dataset.getType().equals(DatasetType.IMAGE)) {
-					result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER_IMAGE));
-				} else if (dataset.getType().equals(DatasetType.GRID)) {
-					result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER_GRID));
-				} else if (dataset.getType().equals(DatasetType.GRIDCOLLECTION)) {
-					result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.DATASET_GRID_COLLECTION));
-				} else if (dataset.getType().equals(DatasetType.IMAGECOLLECTION)) {
-					result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.DATASET_IMAGE_COLLECTION));
-				} else {
-					if (dataset.getType().equals(DatasetType.WMS)) {
-						result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER_WMS));
-						LayerSettingImage layerSettingImage = (LayerSettingImage) layer.getAdditionalSetting();
-						String[] visibleSubLayers = layerSettingImage.getVisibleSubLayers();
-						for (int i = 0; i < visibleSubLayers.length; i++) {
-							DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(new TreeNodeData(visibleSubLayers[i], NodeDataType.WMSSUB_LAYER));
-							result.add(childNode);
-						}
-					}
-					if (result == null) {
+				if (dataset == null) {
+					// 分组图层节点的构建
+					if (layer instanceof LayerGroup) {
+						result = getGroupNodeByLayer(layer);
+					} else {
 						result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER));
 					}
+				} else {
+					if (dataset.getType().equals(DatasetType.IMAGE)) {
+						result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER_IMAGE));
+					} else if (dataset.getType().equals(DatasetType.GRID)) {
+						result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER_GRID));
+					} else if (dataset.getType().equals(DatasetType.GRIDCOLLECTION)) {
+						result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.DATASET_GRID_COLLECTION));
+					} else if (dataset.getType().equals(DatasetType.IMAGECOLLECTION)) {
+						result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.DATASET_IMAGE_COLLECTION));
+					} else {
+						if (dataset.getType().equals(DatasetType.WMS)) {
+							result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER_WMS));
+							LayerSettingImage layerSettingImage = (LayerSettingImage) layer.getAdditionalSetting();
+							String[] visibleSubLayers = layerSettingImage.getVisibleSubLayers();
+							for (int i = 0; i < visibleSubLayers.length; i++) {
+								DefaultMutableTreeNode childNode = new DefaultMutableTreeNode(new TreeNodeData(visibleSubLayers[i], NodeDataType.WMSSUB_LAYER));
+								result.add(childNode);
+							}
+						}
+						if (result == null) {
+							result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER));
+						}
 
+					}
 				}
 			} else {
 				int type = theme.getType().value();
@@ -480,59 +448,67 @@ public class LayersTree extends JTree {
 						break;
 				}
 			}
-		}
 
 		return result;
 	}
 
 	private void setCaseGridRange(Layer layer, DefaultMutableTreeNode result, Theme theme) {
-		ThemeGridRange gridRange = (ThemeGridRange) theme;
-		for (int i = 0; i < gridRange.getCount(); i++) {
-			ThemeGridRangeItem gridRangeItem = gridRange.getItem(i);
-			TreeNodeData itemData = new TreeNodeData(gridRangeItem, NodeDataType.THEME_GRID_RANGE_ITEM, layer);
-			result.add(new DefaultMutableTreeNode(itemData));
+		if (layer.getDataset() != null) {
+			ThemeGridRange gridRange = (ThemeGridRange) theme;
+			for (int i = 0; i < gridRange.getCount(); i++) {
+				ThemeGridRangeItem gridRangeItem = gridRange.getItem(i);
+				TreeNodeData itemData = new TreeNodeData(gridRangeItem, NodeDataType.THEME_GRID_RANGE_ITEM, layer);
+				result.add(new DefaultMutableTreeNode(itemData));
+			}
 		}
 	}
 
 	private void setCaseGridUnique(Layer layer, DefaultMutableTreeNode result, Theme theme) {
-		ThemeGridUnique gridUnique = (ThemeGridUnique) theme;
-		for (int i = 0; i < gridUnique.getCount(); i++) {
-			ThemeGridUniqueItem gridUniqueItem = gridUnique.getItem(i);
-			TreeNodeData itemData = new TreeNodeData(gridUniqueItem, NodeDataType.THEME_GRID_UNIQUE_ITEM, layer);
-			result.add(new DefaultMutableTreeNode(itemData));
+		if (layer.getDataset() != null) {
+			ThemeGridUnique gridUnique = (ThemeGridUnique) theme;
+			for (int i = 0; i < gridUnique.getCount(); i++) {
+				ThemeGridUniqueItem gridUniqueItem = gridUnique.getItem(i);
+				TreeNodeData itemData = new TreeNodeData(gridUniqueItem, NodeDataType.THEME_GRID_UNIQUE_ITEM, layer);
+				result.add(new DefaultMutableTreeNode(itemData));
+			}
 		}
 	}
 
 	private void setCaseLabel(Layer layer, DefaultMutableTreeNode result, Theme theme) {
-		ThemeLabel themeLabel = (ThemeLabel) theme;
+		if (layer.getDataset() != null) {
+			ThemeLabel themeLabel = (ThemeLabel) theme;
+			for (int i = 0; i < themeLabel.getCount(); i++) {
+				ThemeLabelItem labelItem = themeLabel.getItem(i);
+				TreeNodeData itemData = new TreeNodeData(labelItem, NodeDataType.THEME_LABEL_ITEM, layer);
 
-		for (int i = 0; i < themeLabel.getCount(); i++) {
-			ThemeLabelItem labelItem = themeLabel.getItem(i);
-			TreeNodeData itemData = new TreeNodeData(labelItem, NodeDataType.THEME_LABEL_ITEM, layer);
-
-			result.add(new DefaultMutableTreeNode(itemData));
+				result.add(new DefaultMutableTreeNode(itemData));
+			}
 		}
+
 	}
 
 	private void setCaseGraph(Layer layer, DefaultMutableTreeNode result, Theme theme) {
-		ThemeGraph graph = (ThemeGraph) theme;
+		if (layer.getDataset() != null) {
+			ThemeGraph graph = (ThemeGraph) theme;
+			for (int i = 0; i < graph.getCount(); i++) {
+				ThemeGraphItem graphItem = graph.getItem(i);
+				TreeNodeData itemData = new TreeNodeData(graphItem, NodeDataType.THEME_GRAPH_ITEM, layer);
 
-		for (int i = 0; i < graph.getCount(); i++) {
-			ThemeGraphItem graphItem = graph.getItem(i);
-			TreeNodeData itemData = new TreeNodeData(graphItem, NodeDataType.THEME_GRAPH_ITEM, layer);
-
-			result.add(new DefaultMutableTreeNode(itemData));
+				result.add(new DefaultMutableTreeNode(itemData));
+			}
 		}
 	}
 
 	private DefaultMutableTreeNode setCaseRange(Layer layer, Theme theme) {
 		DefaultMutableTreeNode result;
 		result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.THEME_RANGE));
-		ThemeRange range = (ThemeRange) theme;
-		for (int i = 0; i < range.getCount(); i++) {
-			ThemeRangeItem rangeItem = range.getItem(i);
-			TreeNodeData itemData = new TreeNodeData(rangeItem, NodeDataType.THEME_RANGE_ITEM, layer);
-			result.add(new DefaultMutableTreeNode(itemData));
+		if (layer.getDataset() != null) {
+			ThemeRange range = (ThemeRange) theme;
+			for (int i = 0; i < range.getCount(); i++) {
+				ThemeRangeItem rangeItem = range.getItem(i);
+				TreeNodeData itemData = new TreeNodeData(rangeItem, NodeDataType.THEME_RANGE_ITEM, layer);
+				result.add(new DefaultMutableTreeNode(itemData));
+			}
 		}
 		return result;
 	}
@@ -540,12 +516,14 @@ public class LayersTree extends JTree {
 	private DefaultMutableTreeNode setCaseUnique(Layer layer, Theme theme) {
 		DefaultMutableTreeNode result;
 		result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.THEME_UNIQUE));
-		ThemeUnique themeUnique = (ThemeUnique) theme;
-		for (int i = 0; i < themeUnique.getCount(); i++) {
-			ThemeUniqueItem uniqueItem = themeUnique.getItem(i);
-			TreeNodeData itemData = new TreeNodeData(uniqueItem, NodeDataType.THEME_UNIQUE_ITEM, layer);
-			result.add(new DefaultMutableTreeNode(itemData));
+		if (layer.getDataset() != null) {
+			ThemeUnique themeUnique = (ThemeUnique) theme;
+			for (int i = 0; i < themeUnique.getCount(); i++) {
+				ThemeUniqueItem uniqueItem = themeUnique.getItem(i);
+				TreeNodeData itemData = new TreeNodeData(uniqueItem, NodeDataType.THEME_UNIQUE_ITEM, layer);
+				result.add(new DefaultMutableTreeNode(itemData));
 
+			}
 		}
 		return result;
 	}

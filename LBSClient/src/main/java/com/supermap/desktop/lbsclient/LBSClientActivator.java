@@ -84,6 +84,7 @@ public class LBSClientActivator implements BundleActivator {
 	 */
 	public void stop(BundleContext bundleContext) throws Exception {
 		LBSClientActivator.context = null;
+		System.out.println("Goodbye SuperMap === LBSClient!!");
 	}
 
 }
