@@ -17,262 +17,265 @@ import java.awt.*;
 import java.text.DecimalFormat;
 
 public class TextStyleContainer extends ThemeChangePanel {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private transient Theme theme;
-	private transient MixedTextStyle mixedTextStyle;
-	private transient Map map;
-	private transient TextStyle textStyle;
-	private transient Layer themeLayer;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private transient Theme theme;
+    private transient MixedTextStyle mixedTextStyle;
+    private transient Map map;
+    private transient TextStyle textStyle;
+    private transient Layer themeLayer;
 
-	private int textStyleType = -1;
-	private final int GRAPHTEXTFORMAT = 0;// 统计图标注风格
-	private final int GRAPHAXISTEXT = 1;// 统计图坐标轴风格
-	private final int LABELCOMPLICATEDDEFUALT = 2;// 标签复合风格默认文本风格
-	private final int LABELCOMPLICATEDITEMS = 3;// 标签复合风格分段风格风格
+    private int textStyleType = -1;
+    private final int GRAPHTEXTFORMAT = 0;// 统计图标注风格
+    private final int GRAPHAXISTEXT = 1;// 统计图坐标轴风格
+    private final int LABELCOMPLICATEDDEFUALT = 2;// 标签复合风格默认文本风格
+    private final int LABELCOMPLICATEDITEMS = 3;// 标签复合风格分段风格风格
 
-	private String layerName;
-	private int[] selectRow;
-	private boolean isUniformStyle;
-	private boolean isRefreshAtOnce;
-	private ITextStyle textStylePanel;
-	private transient TextStyleChangeListener textStyleChangeListener;
-	private transient LocalMapDrawnListener mapDrawnListener = new LocalMapDrawnListener();
+    private String layerName;
+    private int[] selectRow;
+    private boolean isUniformStyle;
+    private boolean isRefreshAtOnce;
+    private ITextStyle textStylePanel;
+    private transient TextStyleChangeListener textStyleChangeListener;
+    private transient LocalMapDrawnListener mapDrawnListener = new LocalMapDrawnListener();
 
-	public TextStyleContainer(TextStyle textStyle, Map map, Layer themeLabelLayer) {
-		this.textStyle = textStyle.clone();
-		this.map = map;
-		this.themeLayer = themeLabelLayer;
-		this.layerName = themeLabelLayer.getName();
-		initComponents();
-		registActionListener();
-	}
+    public TextStyleContainer(TextStyle textStyle, Map map, Layer themeLabelLayer) {
+        this.textStyle = textStyle.clone();
+        this.map = map;
+        this.themeLayer = themeLabelLayer;
+        this.layerName = themeLabelLayer.getName();
+        initComponents();
+        registActionListener();
+    }
 
-	private void initComponents() {
-		this.textStylePanel = new TextBasicPanel();
-		this.textStylePanel.setTextStyle(this.textStyle);
-		this.textStylePanel.setOutLineWidth(true);
-		this.textStylePanel.setProperty(false);
-		this.textStylePanel.setUnityVisible(true);
-		this.textStylePanel.initTextBasicPanel();
-		this.textStylePanel.initCheckBoxState();
-		this.textStylePanel.enabled(true);
-		this.setLayout(new GridBagLayout());
-		//@formatter:off
-		JPanel panelContent = new JPanel();
-		this.add(panelContent,new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
-		panelContent.setLayout(new GridBagLayout());
-		panelContent.add(this.textStylePanel.getBasicsetPanel(), new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(2, 0).setInsets(2, 10, 2, 10).setFill(GridBagConstraints.HORIZONTAL));
-		panelContent.add(this.textStylePanel.getEffectPanel(),   new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(2, 0).setInsets(2, 10, 2, 10).setFill(GridBagConstraints.HORIZONTAL));
-		//@formatter:on
-	}
+    private void initComponents() {
+        this.textStylePanel = new TextBasicPanel();
+        this.textStylePanel.setTextStyle(this.textStyle);
+        this.textStylePanel.setOutLineWidth(true);
+        this.textStylePanel.setProperty(false);
+        this.textStylePanel.setUnityVisible(true);
+        this.textStylePanel.initTextBasicPanel();
+        this.textStylePanel.initCheckBoxState();
+        this.textStylePanel.enabled(true);
+        this.setLayout(new GridBagLayout());
+        //@formatter:off
+        JPanel panelContent = new JPanel();
+        this.add(panelContent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
+        panelContent.setLayout(new GridBagLayout());
+        panelContent.add(this.textStylePanel.getBasicsetPanel(), new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(2, 0).setInsets(2, 10, 2, 10).setFill(GridBagConstraints.HORIZONTAL));
+        panelContent.add(this.textStylePanel.getEffectPanel(), new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(2, 0).setInsets(2, 10, 2, 10).setFill(GridBagConstraints.HORIZONTAL));
+        //@formatter:on
+    }
 
-	private void refreshMapAtOnce() {
-		firePropertyChange("ThemeChange", null, null);
-		if (isRefreshAtOnce && null != map) {
-			refreshMapAndLayer();
-		}
-	}
+    private void refreshMapAtOnce() {
+        firePropertyChange("ThemeChange", null, null);
+        if (isRefreshAtOnce && null != map) {
+            refreshMapAndLayer();
+        }
+    }
 
-	@Override
-	public void refreshMapAndLayer() {
-		this.themeLayer = MapUtilities.findLayerByName(map, layerName);
-		if (null != theme && theme instanceof ThemeLabel && this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {
-			if (null != ThemeLabelAdvancePanel.stringAlignment) {
-				((ThemeLabel) theme).getUniformStyle().setStringAlignment(ThemeLabelAdvancePanel.stringAlignment);
-			}
-			((ThemeLabel) this.themeLayer.getTheme()).setUniformStyle(((ThemeLabel) theme).getUniformStyle());
-			this.map.refresh();
-			return;
-		}
-		if (null != theme && theme instanceof ThemeLabel && textStyleType != LABELCOMPLICATEDITEMS && textStyleType != LABELCOMPLICATEDDEFUALT
-				&& !this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {
-			for (int i = 0; i < this.selectRow.length; i++) {
-				((ThemeLabel) this.themeLayer.getTheme()).getItem(this.selectRow[i]).setStyle(((ThemeLabel) theme).getItem(i).getStyle());
-			}
-			this.map.refresh();
-			return;
-		}
-		if (null != theme && theme instanceof ThemeGraph && textStyleType == GRAPHTEXTFORMAT) {
-			((ThemeGraph) this.themeLayer.getTheme()).setGraphTextStyle(((ThemeGraph) theme).getGraphTextStyle());
-			this.map.refresh();
-			return;
-		}
-		if (null != theme && theme instanceof ThemeGraph && textStyleType == GRAPHAXISTEXT) {
-			((ThemeGraph) this.themeLayer.getTheme()).setAxesTextStyle(((ThemeGraph) theme).getAxesTextStyle());
-			this.map.refresh();
-			return;
-		}
-		if (textStyleType == LABELCOMPLICATEDDEFUALT) {
-			((ThemeLabel) this.themeLayer.getTheme()).getUniformMixedStyle().setDefaultStyle(mixedTextStyle.getDefaultStyle());
-			this.map.refresh();
-			return;
-		}
-		if (textStyleType == LABELCOMPLICATEDITEMS) {
-			((ThemeLabel) this.themeLayer.getTheme()).getUniformMixedStyle().setStyles(mixedTextStyle.getStyles());
-			this.map.refresh();
-			return;
-		}
+    @Override
+    public void refreshMapAndLayer() {
+        this.themeLayer = MapUtilities.findLayerByName(map, layerName);
+        if (null != theme && theme instanceof ThemeLabel && this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {
+            if (null != ThemeLabelAdvancePanel.stringAlignment) {
+                ((ThemeLabel) theme).getUniformStyle().setStringAlignment(ThemeLabelAdvancePanel.stringAlignment);
+            }
+            ((ThemeLabel) this.themeLayer.getTheme()).setUniformStyle(((ThemeLabel) theme).getUniformStyle());
+            this.map.refresh();
+            return;
+        }
+        if (null != theme && theme instanceof ThemeLabel && textStyleType != LABELCOMPLICATEDITEMS && textStyleType != LABELCOMPLICATEDDEFUALT
+                && !this.isUniformStyle && this.themeLayer.getTheme() instanceof ThemeLabel) {
+            for (int i = 0; i < this.selectRow.length; i++) {
+//                if (null != ThemeLabelAdvancePanel.stringAlignment) {
+//                    ((ThemeLabel) theme).getItem(i).getStyle().setStringAlignment(ThemeLabelAdvancePanel.stringAlignment);
+//                }
+                ((ThemeLabel) this.themeLayer.getTheme()).getItem(this.selectRow[i]).setStyle(((ThemeLabel) theme).getItem(i).getStyle());
+            }
+            this.map.refresh();
+            return;
+        }
+        if (null != theme && theme instanceof ThemeGraph && textStyleType == GRAPHTEXTFORMAT) {
+            ((ThemeGraph) this.themeLayer.getTheme()).setGraphTextStyle(((ThemeGraph) theme).getGraphTextStyle());
+            this.map.refresh();
+            return;
+        }
+        if (null != theme && theme instanceof ThemeGraph && textStyleType == GRAPHAXISTEXT) {
+            ((ThemeGraph) this.themeLayer.getTheme()).setAxesTextStyle(((ThemeGraph) theme).getAxesTextStyle());
+            this.map.refresh();
+            return;
+        }
+        if (textStyleType == LABELCOMPLICATEDDEFUALT) {
+            ((ThemeLabel) this.themeLayer.getTheme()).getUniformMixedStyle().setDefaultStyle(mixedTextStyle.getDefaultStyle());
+            this.map.refresh();
+            return;
+        }
+        if (textStyleType == LABELCOMPLICATEDITEMS) {
+            ((ThemeLabel) this.themeLayer.getTheme()).getUniformMixedStyle().setStyles(mixedTextStyle.getStyles());
+            this.map.refresh();
+            return;
+        }
 
-	}
+    }
 
-	@Override
-	public void registActionListener() {
-		this.textStyleChangeListener = new TextStyleChangeListener() {
+    @Override
+    public void registActionListener() {
+        this.textStyleChangeListener = new TextStyleChangeListener() {
 
-			@Override
-			public void modify(TextStyleType newValue) {
-				if (newValue.equals(TextStyleType.FIXEDSIZE)) {
-					textStyle.setSizeFixed((boolean) textStylePanel.getResultMap().get(newValue));
-					textStyle.setFontHeight((double) textStylePanel.getResultMap().get(TextStyleType.FONTHEIGHT));
-				}
-				if (null != theme && theme instanceof ThemeLabel && isUniformStyle) {
-					resetFontHeightWhileFixedSize(newValue, ((ThemeLabel) theme).getUniformStyle());
-					ResetTextStyleUtil.resetTextStyle(newValue, ((ThemeLabel) theme).getUniformStyle(), textStylePanel.getResultMap().get(newValue));
-					refreshMapAtOnce();
-					return;
-				}
-				if (textStyleType != LABELCOMPLICATEDITEMS && textStyleType != LABELCOMPLICATEDDEFUALT && !isUniformStyle && null != theme
-						&& theme instanceof ThemeLabel) {
-					// 分段标签专题图设置段风格
-					for (int i = 0; i < selectRow.length; i++) {
-						resetFontHeightWhileFixedSize(newValue, ((ThemeLabel) theme).getItem(selectRow[i]).getStyle());
-						ResetTextStyleUtil.resetTextStyle(newValue, ((ThemeLabel) theme).getItem(selectRow[i]).getStyle(),
-								textStylePanel.getResultMap().get(newValue));
-					}
-					refreshMapAtOnce();
-					return;
-				}
-				if (null != theme && theme instanceof ThemeGraph && textStyleType == GRAPHTEXTFORMAT) {
-					// 统计专题图设置标注风格
-					resetFontHeightWhileFixedSize(newValue, ((ThemeGraph) theme).getGraphTextStyle());
-					ResetTextStyleUtil.resetTextStyle(newValue, ((ThemeGraph) theme).getGraphTextStyle(), textStylePanel.getResultMap().get(newValue));
-					refreshMapAtOnce();
-					return;
-				}
-				if (null != theme && theme instanceof ThemeGraph && textStyleType == GRAPHAXISTEXT) {
-					// 统计专题图设置坐标轴风格
-					resetFontHeightWhileFixedSize(newValue, ((ThemeGraph) theme).getAxesTextStyle());
-					ResetTextStyleUtil.resetTextStyle(newValue, ((ThemeGraph) theme).getAxesTextStyle(), textStylePanel.getResultMap().get(newValue));
-					refreshMapAtOnce();
-					return;
-				}
-				if (textStyleType == LABELCOMPLICATEDDEFUALT) {
-					// 复合标签专题图设置默认风格
-					resetFontHeightWhileFixedSize(newValue, mixedTextStyle.getDefaultStyle());
-					ResetTextStyleUtil.resetTextStyle(newValue, mixedTextStyle.getDefaultStyle(), textStylePanel.getResultMap().get(newValue));
-					refreshMapAtOnce();
-					return;
-				}
-				if (textStyleType == LABELCOMPLICATEDITEMS) {
-					// 复合标签专题图设置分段风格
-					resetMixedTextStyles(newValue);
-					refreshMapAtOnce();
-					return;
-				}
-			}
+            @Override
+            public void modify(TextStyleType newValue) {
+                if (newValue.equals(TextStyleType.FIXEDSIZE)) {
+                    textStyle.setSizeFixed((boolean) textStylePanel.getResultMap().get(newValue));
+                    textStyle.setFontHeight((double) textStylePanel.getResultMap().get(TextStyleType.FONTHEIGHT));
+                }
+                if (null != theme && theme instanceof ThemeLabel && isUniformStyle) {
+                    resetFontHeightWhileFixedSize(newValue, ((ThemeLabel) theme).getUniformStyle());
+                    ResetTextStyleUtil.resetTextStyle(newValue, ((ThemeLabel) theme).getUniformStyle(), textStylePanel.getResultMap().get(newValue));
+                    refreshMapAtOnce();
+                    return;
+                }
+                if (textStyleType != LABELCOMPLICATEDITEMS && textStyleType != LABELCOMPLICATEDDEFUALT && !isUniformStyle && null != theme
+                        && theme instanceof ThemeLabel) {
+                    // 分段标签专题图设置段风格
+                    for (int i = 0; i < selectRow.length; i++) {
+                        resetFontHeightWhileFixedSize(newValue, ((ThemeLabel) theme).getItem(selectRow[i]).getStyle());
+                        ResetTextStyleUtil.resetTextStyle(newValue, ((ThemeLabel) theme).getItem(selectRow[i]).getStyle(),
+                                textStylePanel.getResultMap().get(newValue));
+                    }
+                    refreshMapAtOnce();
+                    return;
+                }
+                if (null != theme && theme instanceof ThemeGraph && textStyleType == GRAPHTEXTFORMAT) {
+                    // 统计专题图设置标注风格
+                    resetFontHeightWhileFixedSize(newValue, ((ThemeGraph) theme).getGraphTextStyle());
+                    ResetTextStyleUtil.resetTextStyle(newValue, ((ThemeGraph) theme).getGraphTextStyle(), textStylePanel.getResultMap().get(newValue));
+                    refreshMapAtOnce();
+                    return;
+                }
+                if (null != theme && theme instanceof ThemeGraph && textStyleType == GRAPHAXISTEXT) {
+                    // 统计专题图设置坐标轴风格
+                    resetFontHeightWhileFixedSize(newValue, ((ThemeGraph) theme).getAxesTextStyle());
+                    ResetTextStyleUtil.resetTextStyle(newValue, ((ThemeGraph) theme).getAxesTextStyle(), textStylePanel.getResultMap().get(newValue));
+                    refreshMapAtOnce();
+                    return;
+                }
+                if (textStyleType == LABELCOMPLICATEDDEFUALT) {
+                    // 复合标签专题图设置默认风格
+                    resetFontHeightWhileFixedSize(newValue, mixedTextStyle.getDefaultStyle());
+                    ResetTextStyleUtil.resetTextStyle(newValue, mixedTextStyle.getDefaultStyle(), textStylePanel.getResultMap().get(newValue));
+                    refreshMapAtOnce();
+                    return;
+                }
+                if (textStyleType == LABELCOMPLICATEDITEMS) {
+                    // 复合标签专题图设置分段风格
+                    resetMixedTextStyles(newValue);
+                    refreshMapAtOnce();
+                    return;
+                }
+            }
 
-		};
-		unregistActionListener();
-		this.textStylePanel.addTextStyleChangeListener(textStyleChangeListener);
-		this.map.addDrawnListener(this.mapDrawnListener);
-	}
+        };
+        unregistActionListener();
+        this.textStylePanel.addTextStyleChangeListener(textStyleChangeListener);
+        this.map.addDrawnListener(this.mapDrawnListener);
+    }
 
-	private void resetFontHeightWhileFixedSize(TextStyleType newValue, TextStyle textStyle) {
-		if (newValue.equals(TextStyleType.FIXEDSIZE)) {
-			ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, textStyle, textStylePanel.getResultMap().get(TextStyleType.FONTHEIGHT));
-		}
-	}
+    private void resetFontHeightWhileFixedSize(TextStyleType newValue, TextStyle textStyle) {
+        if (newValue.equals(TextStyleType.FIXEDSIZE)) {
+            ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, textStyle, textStylePanel.getResultMap().get(TextStyleType.FONTHEIGHT));
+        }
+    }
 
-	private void resetMixedTextStyles(TextStyleType newValue) {
-		for (int i = 0; i < selectRow.length; i++) {
-			resetFontHeightWhileFixedSize(newValue, mixedTextStyle.getStyles()[selectRow[i]]);
-			ResetTextStyleUtil.resetTextStyle(newValue, mixedTextStyle.getStyles()[selectRow[i]], textStylePanel.getResultMap().get(newValue));
-		}
-	}
+    private void resetMixedTextStyles(TextStyleType newValue) {
+        for (int i = 0; i < selectRow.length; i++) {
+            resetFontHeightWhileFixedSize(newValue, mixedTextStyle.getStyles()[selectRow[i]]);
+            ResetTextStyleUtil.resetTextStyle(newValue, mixedTextStyle.getStyles()[selectRow[i]], textStylePanel.getResultMap().get(newValue));
+        }
+    }
 
-	class LocalMapDrawnListener implements MapDrawnListener {
+    class LocalMapDrawnListener implements MapDrawnListener {
 
-		@Override
-		public void mapDrawn(MapDrawnEvent mapDrawnEvent) {
-			changeFontSizeWithMapObject();
-		}
-	}
+        @Override
+        public void mapDrawn(MapDrawnEvent mapDrawnEvent) {
+            changeFontSizeWithMapObject();
+        }
+    }
 
-	private void changeFontSizeWithMapObject() {
+    private void changeFontSizeWithMapObject() {
 
-		try {
-			// 非固定文本大小
+        try {
+            // 非固定文本大小
 
-			if (!textStyle.isSizeFixed()) {
-				// 非固定时，地图中显示的字体在屏幕中显示的大小肯定发生了变化，所以需要重新计算现在的字体大小
-				// 字体信息从现在的TextStyle属性中获取，经过计算后显示其字号大小
-				Double size = FontUtilities.mapHeightToFontSize(textStyle.getFontHeight(), map, textStyle.isSizeFixed());
-				DecimalFormat decimalFormat = new DecimalFormat("0.0");
-				String numeric = "0.00";
-				if (Double.compare(size, size.intValue()) > 0) {
-					((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTSIZE)).setText(decimalFormat.format(size));
-				} else {
-					decimalFormat = new DecimalFormat("0");
-					((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTSIZE)).setText(decimalFormat.format(size));
-				}
-				if (((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT)).getFocusTraversalKeysEnabled()) {
-					((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT)).setText(new DecimalFormat(numeric).format(size / 0.283));
-				}
-			} else {
-				// 字体是固定大小时，字体显示的大小不发生变化，不需要更新任何控件内容
+            if (!textStyle.isSizeFixed()) {
+                // 非固定时，地图中显示的字体在屏幕中显示的大小肯定发生了变化，所以需要重新计算现在的字体大小
+                // 字体信息从现在的TextStyle属性中获取，经过计算后显示其字号大小
+                Double size = FontUtilities.mapHeightToFontSize(textStyle.getFontHeight(), map, textStyle.isSizeFixed());
+                DecimalFormat decimalFormat = new DecimalFormat("0.0");
+                String numeric = "0.00";
+                if (Double.compare(size, size.intValue()) > 0) {
+                    ((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTSIZE)).setText(decimalFormat.format(size));
+                } else {
+                    decimalFormat = new DecimalFormat("0");
+                    ((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTSIZE)).setText(decimalFormat.format(size));
+                }
+                if (((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT)).getFocusTraversalKeysEnabled()) {
+                    ((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT)).setText(new DecimalFormat(numeric).format(size / 0.283));
+                }
+            } else {
+                // 字体是固定大小时，字体显示的大小不发生变化，不需要更新任何控件内容
 
-			}
-		} catch (Exception e) {
+            }
+        } catch (Exception e) {
 
-		}
-	}
+        }
+    }
 
-	@Override
-	public void unregistActionListener() {
-		this.textStylePanel.removeTextStyleChangeListener(this.textStyleChangeListener);
-	}
+    @Override
+    public void unregistActionListener() {
+        this.textStylePanel.removeTextStyleChangeListener(this.textStyleChangeListener);
+    }
 
-	public void setTextStyleType(int textStyleType) {
-		this.textStyleType = textStyleType;
-	}
+    public void setTextStyleType(int textStyleType) {
+        this.textStyleType = textStyleType;
+    }
 
-	@Override
-	public Layer getCurrentLayer() {
-		return themeLayer;
-	}
+    @Override
+    public Layer getCurrentLayer() {
+        return themeLayer;
+    }
 
-	@Override
-	public void setCurrentLayer(Layer layer) {
-		this.themeLayer = layer;
-	}
+    @Override
+    public void setCurrentLayer(Layer layer) {
+        this.themeLayer = layer;
+    }
 
-	public void setTheme(Theme theme) {
-		this.theme = theme;
-	}
+    public void setTheme(Theme theme) {
+        this.theme = theme;
+    }
 
-	public void setSelectRow(int[] selectRow) {
-		this.selectRow = selectRow;
-	}
+    public void setSelectRow(int[] selectRow) {
+        this.selectRow = selectRow;
+    }
 
-	@Override
-	public Theme getCurrentTheme() {
-		return this.theme;
-	}
+    @Override
+    public Theme getCurrentTheme() {
+        return this.theme;
+    }
 
-	@Override
-	public void setRefreshAtOnce(boolean isRefreshAtOnce) {
-		this.isRefreshAtOnce = isRefreshAtOnce;
-	}
+    @Override
+    public void setRefreshAtOnce(boolean isRefreshAtOnce) {
+        this.isRefreshAtOnce = isRefreshAtOnce;
+    }
 
-	public void setUniformStyle(boolean isUniformStyle) {
-		this.isUniformStyle = isUniformStyle;
-	}
+    public void setUniformStyle(boolean isUniformStyle) {
+        this.isUniformStyle = isUniformStyle;
+    }
 
-	public void setMixedTextStyle(MixedTextStyle mixedTextStyle) {
-		this.mixedTextStyle = mixedTextStyle;
-	}
+    public void setMixedTextStyle(MixedTextStyle mixedTextStyle) {
+        this.mixedTextStyle = mixedTextStyle;
+    }
 
 }
