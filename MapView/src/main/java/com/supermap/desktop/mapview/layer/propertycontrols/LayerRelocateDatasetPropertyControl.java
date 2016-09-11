@@ -28,6 +28,8 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 	private DatasourceComboBox comboBoxDatasource;
 	private DatasetComboBox comboBoxDataset;
 
+	private boolean itemListenerLock = false;
+
 	 private WorkspaceClosingListener workspaceClosingListener = new WorkspaceClosingListener() {
 		@Override
 		public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
@@ -231,11 +233,16 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
+			if (itemListenerLock) {
+				return;
+			}
+			itemListenerLock = true;
 			if (e.getSource() == comboBoxDatasource) {
 				comboBoxDatasourceSelectedItemChanged(e);
 			} else if (e.getSource() == comboBoxDataset) {
 				comboBoxDatasetSelectedItemChanged(e);
 			}
+			itemListenerLock = false;
 		}
 	}
 

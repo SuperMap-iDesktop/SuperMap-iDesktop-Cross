@@ -7,7 +7,6 @@ import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.util.CommonComboBoxModel;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
@@ -97,7 +96,6 @@ public class ImportPanelMapGIS extends AbstractImportPanel {
 		this.panelDatapath.setBorder(new TitledBorder(null,
 				DataConversionProperties.getString("string_border_panelDatapath"),
 				TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		this.comboBoxCharset.setModel(new CommonComboBoxModel());
 		this.comboBoxCharset.setAutoscrolls(true);
 		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(
 				new String[]{
@@ -155,7 +153,10 @@ public class ImportPanelMapGIS extends AbstractImportPanel {
 		this.importsetting = (ImportSettingMAPGIS) ImportInfoUtil.setFileInfo(datasource,
 				fileInfos, fileInfo, textFieldFilePath, importsetting,
 				textFieldResultSet);
-		// 设置目标数据集名称
+        if (null != importsetting.getSourceFileCharset()) {
+            comboBoxCharset.setSelectCharset(importsetting.getSourceFileCharset().name());
+        }
+        // 设置目标数据集名称
 		ImportInfoUtil.setDatasetName(textFieldResultSet, importsetting);
 		// 设置编码类型
 		ImportInfoUtil.setCodingType(panels, importsetting, comboBoxCodingType);

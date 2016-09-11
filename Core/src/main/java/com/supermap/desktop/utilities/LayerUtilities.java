@@ -22,6 +22,9 @@ public class LayerUtilities {
 	public static Rectangle2D getLayerBounds(Map map, Layer layer) {
 		Rectangle2D rectangle2D = Rectangle2D.getEMPTY();
 		try {
+			if (layer.getDataset() == null) {
+				return null;
+			}
 			// 有过滤条件的情况要区分对待 added by zengwh 2012-1-6
 			Recordset recordset = null;
 			if ("".equals(layer.getDisplayFilter().getAttributeFilter())) {

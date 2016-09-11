@@ -6,7 +6,6 @@ import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.util.CommonComboBoxModel;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.ImportInfoUtil;
 
@@ -85,7 +84,6 @@ public class ImportPanelGRID extends AbstractImportPanel {
 				TitledBorder.TOP, null, null));
 		this.panelDatapath.setBorder(new TitledBorder(null, DataConversionProperties.getString("string_border_panelDatapath"), TitledBorder.LEADING,
 				TitledBorder.TOP, null, null));
-		this.comboBoxCharset.setModel(new CommonComboBoxModel());
 		this.comboBoxCharset.setAutoscrolls(true);
 		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(
 				new String[]{
@@ -133,7 +131,10 @@ public class ImportPanelGRID extends AbstractImportPanel {
 
 		Datasource datasource = CommonFunction.getDatasource();
 		this.comboBoxDatasource.setSelectedDatasource(datasource);
-		// 设置目标数据源
+        if (null != importsetting.getSourceFileCharset()) {
+            comboBoxCharset.setSelectCharset(importsetting.getSourceFileCharset().name());
+        }
+        // 设置目标数据源
 		ImportInfoUtil.setDataSource(panels, fileInfos, null, comboBoxDatasource);
 		// 设置编码类型
 		ImportInfoUtil.setCodingType(panels, importsetting, comboBoxCodingType);

@@ -11,6 +11,7 @@ import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.*;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.utilities.CharsetUtilities;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -166,6 +167,7 @@ public class ImportInfoUtil {
                 textField.setText(fileInfo.getFilePath());
             }
             resultSetting = fileInfo.getImportSetting();
+            resultSetting.setSourceFilePath(fileInfo.getFilePath());
             String fileName = fileInfo.getFileName();
             if (fileName.lastIndexOf(".") > 0) {
                 String resultSetName = fileName.substring(0, fileName.lastIndexOf("."));
@@ -186,12 +188,12 @@ public class ImportInfoUtil {
                         textFieldResultSet.setText(resultSetName);
                     }
                 }
-            } else {
-                for (int i = 0; i < fileInfos.size(); i++) {
-                    ImportFileInfo tempFileInfo = fileInfos.get(i);
-                    ImportSetting tempSetting = tempFileInfo.getImportSetting();
-                    tempSetting.setTargetDatasource(datasource);
-                }
+            }
+            for (int i = 0; i < fileInfos.size(); i++) {
+                ImportFileInfo tempFileInfo = fileInfos.get(i);
+                ImportSetting tempSetting = tempFileInfo.getImportSetting();
+                tempSetting.setTargetDatasource(datasource);
+                tempSetting.setSourceFilePath(tempFileInfo.getFilePath());
             }
 
         }
@@ -623,8 +625,9 @@ public class ImportInfoUtil {
     private void comboBoxCharsetChange(JComboBox<Object> comboBoxCharset, ImportSetting importsetting, ArrayList<JPanel> panels) {
 
         int type = comboBoxCharset.getSelectedIndex();
+        String text = comboBoxCharset.getSelectedItem().toString();
         if (null != importsetting) {
-            setCharInfo(type, importsetting);
+            importsetting.setSourceFileCharset(CharsetUtilities.valueOf(text));
         } else if (null != panels) {
             for (int i = 0; i < panels.size(); i++) {
                 JPanel tempJPanel = panels.get(i);
@@ -774,37 +777,37 @@ public class ImportInfoUtil {
                 importsetting.setSourceFileCharset(Charset.BALTIC);
                 break;
             case 17:
-                importsetting.setSourceFileCharset(Charset.JOHAB);
+                importsetting.setSourceFileCharset(Charset.GREEK);
                 break;
             case 18:
-                importsetting.setSourceFileCharset(Charset.HANGEUL);
+                importsetting.setSourceFileCharset(Charset.JOHAB);
                 break;
             case 19:
-                importsetting.setSourceFileCharset(Charset.EASTEUROPE);
+                importsetting.setSourceFileCharset(Charset.HANGEUL);
                 break;
             case 20:
-                importsetting.setSourceFileCharset(Charset.RUSSIAN);
+                importsetting.setSourceFileCharset(Charset.EASTEUROPE);
                 break;
             case 21:
-                importsetting.setSourceFileCharset(Charset.SYMBOL);
+                importsetting.setSourceFileCharset(Charset.RUSSIAN);
                 break;
             case 22:
-                importsetting.setSourceFileCharset(Charset.KOREAN);
+                importsetting.setSourceFileCharset(Charset.SYMBOL);
                 break;
             case 23:
-                importsetting.setSourceFileCharset(Charset.SHIFTJIS);
+                importsetting.setSourceFileCharset(Charset.KOREAN);
                 break;
             case 24:
-                importsetting.setSourceFileCharset(Charset.THAI);
+                importsetting.setSourceFileCharset(Charset.SHIFTJIS);
                 break;
             case 25:
-                importsetting.setSourceFileCharset(Charset.TURKISH);
+                importsetting.setSourceFileCharset(Charset.THAI);
                 break;
             case 26:
-                importsetting.setSourceFileCharset(Charset.HEBREW);
+                importsetting.setSourceFileCharset(Charset.TURKISH);
                 break;
             case 27:
-                importsetting.setSourceFileCharset(Charset.GREEK);
+                importsetting.setSourceFileCharset(Charset.HEBREW);
                 break;
             case 28:
                 importsetting.setSourceFileCharset(Charset.VIETNAMESE);
