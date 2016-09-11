@@ -182,6 +182,7 @@ public class ImportPanelMapInfo extends AbstractImportPanel {
         if (importsetting.getTargetDataInfos("").getCount() > 0) {
             Charset chartset = dataInfos.get(0).getSourceCharset();
             comboBoxCharset.setSelectCharset(chartset.name());
+            importsetting.setSourceFileCharset(chartset);
         }
         // 设置目标数据集名称
         ImportInfoUtil.setDatasetName(textFieldResultSet, importsetting);

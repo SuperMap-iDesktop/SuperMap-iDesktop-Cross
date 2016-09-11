@@ -1273,7 +1273,11 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 
     private void resetFieldForTwoField(FieldType fieldType, int[] selectRows) {
         if (!updateExpression.equals(textAreaOperationEQ.getText())) {
-            updateModeQuery();
+            if (null != UpdateColumnUtilties.getBasicMathMethodStr(textAreaOperationEQ.getText()) && fieldType.equals(FieldType.BOOLEAN)) {
+                updateForExpression(comboBoxUpdateField.getSelectedItem().toString(), selectRows, textAreaOperationEQ.getText(), new Object());
+            } else {
+                updateModeQuery();
+            }
         } else if (fieldType.equals(FieldType.TEXT) || fieldType.equals(FieldType.WTEXT) || fieldType.equals(FieldType.CHAR)) {
             // 文本型
             resetFieldForTwoField(selectRows, true, fieldType);
@@ -1390,7 +1394,11 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     private void resetFieldForOneField(FieldType fieldType, int[] selectRows) {
         if (!updateExpression.equals(textAreaOperationEQ.getText())) {
             // 如果输入的表达式与预期的表达式不相同则通过sql表达式获取结果
-            updateModeQuery();
+            if (null != UpdateColumnUtilties.getBasicMathMethodStr(textAreaOperationEQ.getText()) && fieldType.equals(FieldType.BOOLEAN)) {
+                updateForExpression(comboBoxUpdateField.getSelectedItem().toString(), selectRows, textAreaOperationEQ.getText(), new Object());
+            } else {
+                updateModeQuery();
+            }
         } else if (fieldType.equals(FieldType.TEXT) || fieldType.equals(FieldType.WTEXT) || fieldType.equals(FieldType.CHAR)) {
             // 文本型
             resetFieldForOneField(selectRows, true, fieldType);
@@ -1490,11 +1498,11 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             if (StringUtilities.isNullOrEmptyString(expression)) {
                 // 表达式为空
                 newValue = 0;
-                updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
+                updateUnitySetValue(selectRows, updateField, newValue);
             } else if (!StringUtilities.isNullOrEmpty(expression) && StringUtilities.isNumber(expression)) {
                 // 表达式不为空，且为数值型
                 newValue = Convert.toInteger(expression);
-                updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
+                updateUnitySetValue(selectRows, updateField, newValue);
             } else if (!StringUtilities.isNullOrEmpty(expression) && !StringUtilities.isNumber(expression)) {
                 // 表达式不为空，且不为数值型
                 updateModeQuery();
@@ -1503,11 +1511,11 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             // 浮点型
             if (StringUtilities.isNullOrEmptyString(expression)) {
                 newValue = 0.0;
-                updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
+                updateUnitySetValue(selectRows, updateField, newValue);
             } else if (!StringUtilities.isNullOrEmpty(expression) && StringUtilities.isNumber(expression)) {
                 // 表达式不为空，且为数值型
                 newValue = Convert.toDouble(expression);
-                updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
+                updateUnitySetValue(selectRows, updateField, newValue);
             } else if (!StringUtilities.isNullOrEmpty(expression) && !StringUtilities.isNumber(expression)) {
                 // 表达式不为空，且不为数值型
                 updateModeQuery();
@@ -1517,10 +1525,10 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             // 字符型
             if (StringUtilities.isNullOrEmptyString(expression)) {
                 newValue = null;
-                updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
+                updateUnitySetValue(selectRows, updateField, newValue);
             } else if (expression.startsWith("\"") && expression.endsWith("\"")) {
                 newValue = expression;
-                updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
+                updateUnitySetValue(selectRows, updateField, newValue);
             } else {
                 updateModeQuery();
             }
@@ -1532,10 +1540,14 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 } else {
                     newValue = false;
                 }
+            } else if (null != UpdateColumnUtilties.getBasicMathMethodStr(expression)) {
+                updateForExpression(updateField, selectRows, expression, newValue);
+                return;
             } else {
                 updateModeQuery();
+                return;
             }
-            updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
+            updateUnitySetValue(selectRows, updateField, newValue);
         } else if (fieldType.equals(FieldType.LONGBINARY)) {
             // 二进制型,利用Files类来读取字节
             // 得到一个Path对象
@@ -1547,14 +1559,14 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 e.printStackTrace();
             }
 
-            updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
+            updateUnitySetValue(selectRows, updateField, newValue);
         } else if (fieldType.equals(FieldType.DATETIME)) {
             if (StringUtilities.isNullOrEmptyString(expression)) {
                 newValue = new Date();
             } else {
                 newValue = Convert.toDateTime(expression);
             }
-            updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
+            updateUnitySetValue(selectRows, updateField, newValue);
         } else if (fieldType.equals(FieldType.BYTE)) {
             // 字节型
             if (StringUtilities.isNullOrEmptyString(expression)) {
@@ -1564,11 +1576,62 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             } else if (Convert.toInteger(expression) >= 128 || Convert.toInteger(expression) < 0) {
                 newValue = (byte) 0;
             }
-            updateUnitySetValue(selectRows, updateField, newValue, selectColumn);
+            updateUnitySetValue(selectRows, updateField, newValue);
         }
     }
 
-    private void updateUnitySetValue(int[] selectRows, String updateField, Object newValue, int selectColumn) {
+    private void updateForExpression(String updateField, int[] selectRows, String expression, Object newValue) {
+        String basicMathMethod = UpdateColumnUtilties.getBasicMathMethodStr(expression);
+        if (expression.split(basicMathMethod).length == 2) {
+            String fieldLeft = expression.split(basicMathMethod)[0];
+            String fieldRight = expression.split(basicMathMethod)[1];
+            if (StringUtilities.isNumber(fieldLeft) && StringUtilities.isNumber(fieldRight)) {
+                newValue = UpdateColumnUtilties.getCommonMethodInfo(basicMathMethod, fieldLeft, fieldRight, FieldType.BOOLEAN);
+                Recordset recordset = tabular.getRecordset();
+                recordset.getBatch().setMaxRecordCount(1024);
+                recordset.getBatch().begin();
+                for (int i = 0; i < selectRows.length; i++) {
+                    recordset.moveTo(selectRows[i]);
+                    recordset.setFieldValue(updateField, newValue);
+                }
+                recordset.getBatch().update();
+                // 重新查询避免操作后记录集清除的异常
+                refreshTabular(selectRows);
+            } else if (!StringUtilities.isNumber(fieldLeft) && StringUtilities.isNumber(fieldRight)) {
+                Recordset recordset = tabular.getRecordset();
+                recordset.getBatch().setMaxRecordCount(1024);
+                recordset.getBatch().begin();
+                for (int i = 0; i < selectRows.length; i++) {
+                    recordset.moveTo(selectRows[i]);
+                    if (null != recordset.getFieldValue(fieldLeft)) {
+                        newValue = UpdateColumnUtilties.getCommonMethodInfo(basicMathMethod, recordset.getFieldValue(fieldLeft), fieldRight, FieldType.BOOLEAN);
+                    }
+                    recordset.setFieldValue(updateField, newValue);
+                }
+                recordset.getBatch().update();
+                // 重新查询避免操作后记录集清除的异常
+                refreshTabular(selectRows);
+            } else if (!StringUtilities.isNumber(fieldLeft) && !StringUtilities.isNumber(fieldRight)) {
+                Recordset recordset = tabular.getRecordset();
+                recordset.getBatch().setMaxRecordCount(1024);
+                recordset.getBatch().begin();
+                for (int i = 0; i < selectRows.length; i++) {
+                    recordset.moveTo(selectRows[i]);
+                    if (null != recordset.getFieldValue(fieldLeft) && null != recordset.getFieldValue(fieldRight)) {
+                        newValue = UpdateColumnUtilties.getCommonMethodInfo(basicMathMethod, recordset.getFieldValue(fieldLeft), recordset.getFieldValue(fieldRight), FieldType.BOOLEAN);
+                    }
+                    recordset.setFieldValue(updateField, newValue);
+                }
+                recordset.getBatch().update();
+                // 重新查询避免操作后记录集清除的异常
+                refreshTabular(selectRows);
+            }
+        } else {
+            return;
+        }
+    }
+
+    private void updateUnitySetValue(int[] selectRows, String updateField, Object newValue) {
         boolean beyoundMaxLength = false;
         FieldType updateFieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
         Recordset recordset = tabular.getRecordset();

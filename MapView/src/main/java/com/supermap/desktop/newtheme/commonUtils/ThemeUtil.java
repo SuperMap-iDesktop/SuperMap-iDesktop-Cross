@@ -83,7 +83,9 @@ public class ThemeUtil {
     public static boolean hasNegative(DatasetVector datasetVector, String expression) {
         boolean hasNegative = false;
         String tempExpression = expression;
-        tempExpression = tempExpression.substring(tempExpression.lastIndexOf(".") + 1, tempExpression.length());
+        if (tempExpression.contains(".")) {
+            tempExpression = tempExpression.substring(tempExpression.lastIndexOf(".") + 1, tempExpression.length());
+        }
         Recordset recordset = datasetVector.query(tempExpression + "<0", CursorType.STATIC);
         if (recordset.getRecordCount() > 0) {
             hasNegative = true;

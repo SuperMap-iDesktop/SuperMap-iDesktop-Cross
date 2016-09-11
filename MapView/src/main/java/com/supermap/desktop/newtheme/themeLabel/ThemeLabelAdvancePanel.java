@@ -465,15 +465,27 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 
     private void initComboBoxSplitSeparator() {
         this.comboBoxSplitSeparator.setModel(new DefaultComboBoxModel<Character>(new Character[]{'\0', '/', '\\', ',', ';'}));
-        this.comboBoxSplitSeparator.setEnabled(false);
         this.comboBoxSplitSeparator.setEditable(true);
+        this.comboBoxSplitSeparator.setSelectedItem(themeLabel.getSplitSeparator());
     }
 
     private void initComboBoxAlignmentStyle() {
         this.comboBoxAlignmentStyle.setModel(new DefaultComboBoxModel<String>(new String[]{ControlsProperties.getString("String_AlignLeft"),
                 ControlsProperties.getString("String_AlignCenter"), ControlsProperties.getString("String_AlignRight"),
                 ControlsProperties.getString("String_AlignDistributed")}));
-        this.comboBoxAlignmentStyle.setEnabled(false);
+        StringAlignment alignment = themeLabel.getUniformStyle().getStringAlignment();
+        if (themeLabel.getCount() > 0) {
+            alignment = themeLabel.getItem(0).getStyle().getStringAlignment();
+        }
+        if (alignment.equals(StringAlignment.LEFT)) {
+            this.comboBoxAlignmentStyle.setSelectedIndex(0);
+        } else if (alignment.equals(StringAlignment.CENTER)) {
+            this.comboBoxAlignmentStyle.setSelectedIndex(1);
+        } else if (alignment.equals(StringAlignment.RIGHT)) {
+            this.comboBoxAlignmentStyle.setSelectedIndex(2);
+        } else {
+            this.comboBoxAlignmentStyle.setSelectedIndex(3);
+        }
     }
 
     private void refreshAtOnce() {
@@ -756,11 +768,12 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
             if (!textFieldMinFontHeight.getText().isEmpty()) {
                 String minFontHeight = textFieldMinFontHeight.getText();
                 String maxFontHeight = textFieldMaxFontHeight.getText();
-                if (StringUtilities.isNumber(minFontHeight) && StringUtilities.isNumber(maxFontHeight)) {
+                if (StringUtilities.isNumber(minFontHeight) && StringUtilities.isNumber(maxFontHeight) && Integer.parseInt(maxFontHeight) != 0 && Integer.parseInt(minFontHeight) != 0) {
                     if (Integer.parseInt(minFontHeight) > Integer.parseInt(maxFontHeight)) {
                         textFieldMinFontHeight.setForeground(Color.red);
                         return;
                     } else {
+                        textFieldMaxFontHeight.setForeground(Color.black);
                         textFieldMinFontHeight.setForeground(Color.black);
                     }
                 }
@@ -782,11 +795,12 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
                 String minFontHeight = textFieldMinFontHeight.getText();
                 String maxFontHeight = textFieldMaxFontHeight.getText();
                 if (StringUtilities.isNumber(minFontHeight) && StringUtilities.isNumber(maxFontHeight)) {
-                    if (Integer.parseInt(minFontHeight) > Integer.parseInt(maxFontHeight)) {
+                    if (Integer.parseInt(minFontHeight) > Integer.parseInt(maxFontHeight) && Integer.parseInt(maxFontHeight) != 0 && Integer.parseInt(minFontHeight) != 0) {
                         textFieldMaxFontHeight.setForeground(Color.red);
                         return;
                     } else {
                         textFieldMaxFontHeight.setForeground(Color.black);
+                        textFieldMinFontHeight.setForeground(Color.black);
                     }
                 }
                 if (StringUtilities.isNumber(maxFontHeight) && maxFontHeight.length() <= 8) {

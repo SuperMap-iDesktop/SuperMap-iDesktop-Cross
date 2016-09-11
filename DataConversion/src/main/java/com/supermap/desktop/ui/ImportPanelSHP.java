@@ -143,6 +143,7 @@ public class ImportPanelSHP extends AbstractImportPanel {
         if (importsetting.getTargetDataInfos("").getCount() > 0) {
             Charset chartset = dataInfos.get(0).getSourceCharset();
             comboBoxCharset.setSelectCharset(chartset.name());
+            importsetting.setSourceFileCharset(chartset);
         }
         // 设置结果数据集
         ImportInfoUtil.setDatasetName(textFieldResultSet, importsetting);
