@@ -197,13 +197,17 @@ public class TextStyleContainer extends ThemeChangePanel {
     }
 
     private void resetFontHeightWhileFixedSize(TextStyleType newValue, TextStyle textStyle) {
-        if (newValue.equals(TextStyleType.FIXEDSIZE)) {
-            ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, textStyle, (double) textStylePanel.getResultMap().get(TextStyleType.FONTHEIGHT));
+        Object newGeoStyleProperty = textStylePanel.getResultMap().get(newValue);
+        if (!newValue.equals(TextStyleType.FIXEDSIZE)) {
+            if (newValue.equals(TextStyleType.FONTHEIGHT) && false == textStylePanel.getResultMap().get(TextStyleType.FIXEDSIZE)) {
+                ResetTextStyleUtil.resetTextStyle(newValue, textStyle, (double) newGeoStyleProperty / 100);
+            } else {
+                ResetTextStyleUtil.resetTextStyle(newValue, textStyle, (double) newGeoStyleProperty);
+            }
         }
-        if (newValue.equals(TextStyleType.FONTHEIGHT) && (boolean) textStylePanel.getResultMap().get(TextStyleType.FIXEDSIZE) == false) {
-            ResetTextStyleUtil.resetTextStyle(newValue, textStyle, (double) textStylePanel.getResultMap().get(newValue) / 10);
-        } else {
-            ResetTextStyleUtil.resetTextStyle(newValue, textStyle, textStylePanel.getResultMap().get(newValue));
+        if (newValue.equals(TextStyleType.FIXEDSIZE)) {
+            ResetTextStyleUtil.resetTextStyle(newValue, textStyle, newGeoStyleProperty);
+            ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, textStyle, textStylePanel.getResultMap().get(TextStyleType.FONTHEIGHT));
         }
     }
 

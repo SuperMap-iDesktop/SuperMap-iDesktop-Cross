@@ -74,13 +74,18 @@ public class FieldsSetDialog extends SmDialog {
             ArrayList<String> sourceFieldList = new ArrayList<String>();
             ArrayList<String> overlayAnaylstList = new ArrayList<String>();
             for (int i = 0; i < tableSourceFields.getRowCount(); i++) {
-                if ((Boolean) tableSourceFields.getValueAt(i, TABLE_COLUMN_CHECKABLE)) {
-                    sourceFieldList.add((String) tableSourceFields.getValueAt(i, TABLE_COLUMN_CAPTION));
+                for (int j = 0; j < sourceDataset.getFieldInfos().getCount(); j++) {
+                    if ((Boolean) tableSourceFields.getValueAt(i, TABLE_COLUMN_CHECKABLE) && sourceDataset.getFieldInfos().get(j).getCaption().equals(tableSourceFields.getValueAt(i, TABLE_COLUMN_CAPTION))) {
+                        sourceFieldList.add(sourceDataset.getFieldInfos().get(j).getName());
+                    }
                 }
             }
+
             for (int i = 0; i < tableOverlayAnalystFields.getRowCount(); i++) {
-                if ((Boolean) tableOverlayAnalystFields.getValueAt(i, TABLE_COLUMN_CHECKABLE)) {
-                    overlayAnaylstList.add((String) tableOverlayAnalystFields.getValueAt(i, TABLE_COLUMN_CAPTION));
+                for (int j = 0; j < overlayAnalystDataset.getFieldInfos().getCount(); j++) {
+                    if ((Boolean) tableOverlayAnalystFields.getValueAt(i, TABLE_COLUMN_CHECKABLE) && overlayAnalystDataset.getFieldInfos().get(j).getCaption().equals(tableOverlayAnalystFields.getValueAt(i, TABLE_COLUMN_CAPTION))) {
+                        overlayAnaylstList.add(overlayAnalystDataset.getFieldInfos().get(j).getName());
+                    }
                 }
             }
             sourceFields = sourceFieldList.toArray(new String[sourceFieldList.size()]);
