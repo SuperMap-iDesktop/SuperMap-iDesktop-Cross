@@ -575,6 +575,7 @@ public class DatasourceUtilities {
 
 	/**
 	 * 刷新指定的数据源，返回结果，对于打开失败的文件型数据源刷新之后会返回一个新的数据源对象
+	 *
 	 * @param datasource 要刷新的数据源
 	 * @return 刷新结果
 	 */
@@ -618,6 +619,7 @@ public class DatasourceUtilities {
 
 	/**
 	 * 判断指定的数据源是否内存数据源
+	 *
 	 * @param datasource
 	 * @return
 	 */
@@ -626,12 +628,38 @@ public class DatasourceUtilities {
 	}
 
 	/**
-	 * 判断指定的数据源是否被占用
+	 * 判断指定的数据源是否被占用，仅 windows 有用，Linux 没用
+	 *
 	 * @param datasourcePath
 	 * @return
 	 */
 	public static boolean isDatasourceOccupied(String datasourcePath) {
 		File file = new File(datasourcePath);
 		return !file.renameTo(file);
+	}
+
+	/**
+	 * 尝试打开一下数据源，并返回是否能成功打开
+	 *
+	 * @param info
+	 * @return
+	 */
+	public static boolean attemptToOpenDataosurce(DatasourceConnectionInfo info) {
+		boolean result = true;
+		Workspace workspace = null;
+
+		try {
+			workspace = new Workspace();
+			workspace.getDatasources().open(info);
+			result = workspace.getDatasources().getCount() > 0;
+		} catch (Exception e) {
+			result = false;
+		} finally {
+			if (workspace != null) {
+				workspace.close();
+				workspace.dispose();
+			}
+		}
+		return result;
 	}
 }

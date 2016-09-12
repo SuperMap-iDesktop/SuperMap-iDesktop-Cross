@@ -42,8 +42,8 @@ public class CtrlActionDatasourceMode extends CtrlAction {
 				// 重新打开之前先关闭地图
 				for (int i = 0; i < datasources.length; i++) {
 					Datasource datasource = datasources[i];
-					if (!DatasourceUtilities.isDatasourceOccupied(datasource.getConnectionInfo().getServer())) {
-						DatasourceConnectionInfo info = DatasourceUtilities.cloneInfo(datasource.getConnectionInfo());
+					DatasourceConnectionInfo info = DatasourceUtilities.cloneInfo(datasource.getConnectionInfo());
+					if (DatasourceUtilities.attemptToOpenDataosurce(info)) {
 						info.setReadOnly(isReadOnly());
 						DatasourceUtilities.closeDatasource(datasource);
 						datasources[i] = workspace.getDatasources().open(info);
