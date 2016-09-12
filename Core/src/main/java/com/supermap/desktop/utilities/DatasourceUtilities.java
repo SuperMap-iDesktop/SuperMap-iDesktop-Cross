@@ -594,18 +594,28 @@ public class DatasourceUtilities {
 				if (!isDatasourceOccupied(srcInfo.getServer())) {
 					Workspace workspace = datasource.getWorkspace();
 					DatasourceConnectionInfo info = DatasourceUtilities.cloneInfo(srcInfo);
+					boolean isReadOnlyMode = info.isReadOnly(); // 是否只读打开，如果独占打开失败，后面会尝试只读打开
 
 					datasource.close();
-					Datasource newDatasource = null;
 					try {
-						newDatasource = workspace.getDatasources().open(info);
+						result = workspace.getDatasources().open(info);
 					} catch (Exception e) {
-						Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_RefreshDatasouce_Failed"), info.getAlias()));
-					}
-					if (newDatasource != null) {
-						result = newDatasource;
-					} else {
 						result = null;
+					}
+
+					if (result == null && !isReadOnlyMode) {
+						// 如果独占打开失败，就再次尝试只读打开
+						DatasourceConnectionInfo infoReadOnly = DatasourceUtilities.cloneInfo(srcInfo);
+						infoReadOnly.setReadOnly(true);
+						try {
+							result = workspace.getDatasources().open(infoReadOnly);
+						} catch (Exception e) {
+							result = null;
+						}
+					}
+
+					if (result == null) {
+						Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_RefreshDatasouce_Failed"), info.getAlias()));
 					}
 				} else {
 					Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_RefreshDatasouce_Failed"), srcInfo.getAlias()));

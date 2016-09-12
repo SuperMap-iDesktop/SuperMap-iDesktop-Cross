@@ -43,13 +43,31 @@ public class CtrlActionDatasourceMode extends CtrlAction {
 				for (int i = 0; i < datasources.length; i++) {
 					Datasource datasource = datasources[i];
 					DatasourceConnectionInfo info = DatasourceUtilities.cloneInfo(datasource.getConnectionInfo());
-					if (DatasourceUtilities.attemptToOpenDataosurce(info)) {
-						info.setReadOnly(isReadOnly());
+
+					if (datasource.isOpened()) {
+
+						// 如果数据源已经打开，就先关闭数据源，此时数据源节点会从工作空间中删除
 						DatasourceUtilities.closeDatasource(datasource);
+						if (!DatasourceUtilities.isDatasourceOccupied(info.getServer())) {
+							info.setReadOnly(isReadOnly());
+						}
 						datasources[i] = workspace.getDatasources().open(info);
 					} else {
-						Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_DatasourceOccupied"), datasource.getAlias()));
+
+						// 如果数据源没有成功打开，工作空间中会有一个没有数据集的数据源节点，如果重新打开失败，需要保留这个节点，因此不能直接删除
+						if (DatasourceUtilities.isDatasourceOccupied(info.getServer())) {
+
+						}
 					}
+
+//					DatasourceConnectionInfo info = DatasourceUtilities.cloneInfo(datasource.getConnectionInfo());
+//					info.setReadOnly(isReadOnly());
+//					if (DatasourceUtilities.attemptToOpenDataosurce(info)) {
+//						DatasourceUtilities.closeDatasource(datasource);
+//						datasources[i] = workspace.getDatasources().open(info);
+//					} else {
+//						Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_DatasourceOccupied"), datasource.getAlias()));
+//					}
 				}
 
 				// 更改完成选中结果
