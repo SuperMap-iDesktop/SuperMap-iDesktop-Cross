@@ -777,10 +777,10 @@ public class CADStyleContainer extends JPanel {
     }
 
     private void initComponents() {
+        removePanels();
         initPanelPointComponents();
         initPanelLineComponents();
         initPanelFillComponents();
-        removePanels();
         JPanel panelText = new JPanel();
         panelText.setLayout(new GridBagLayout());
         JPanel panel = new JPanel();
