@@ -19,8 +19,9 @@ public class CommonProperties extends Properties {
 	}
 
 	public static final String Reset = "String_Button_Reset";
-
 	public static final String Apply = "String_Button_Apply";
+	public static java.lang.String down = "String_Button_down";
+	public static java.lang.String up = "String_Button_up";
 	public static final String Cancel = "String_Button_Cancel";
 	public static final String BeingCanceled = "String_Button_BeingCanceled";
 	public static final String Close = "String_Button_Close";

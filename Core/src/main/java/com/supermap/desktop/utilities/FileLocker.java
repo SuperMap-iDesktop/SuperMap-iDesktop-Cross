@@ -1,5 +1,6 @@
 package com.supermap.desktop.utilities;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -8,7 +9,7 @@ import java.nio.channels.FileLock;
 /**
  * @author XiaJT
  */
-public class FileLocker {
+public class FileLocker implements Closeable {
 
 	private File lockFile;
 	private RandomAccessFile randomAccessFile;
@@ -50,5 +51,10 @@ public class FileLocker {
 
 	public RandomAccessFile getRandomAccessFile() {
 		return randomAccessFile;
+	}
+
+	@Override
+	public void close() throws IOException {
+		release();
 	}
 }

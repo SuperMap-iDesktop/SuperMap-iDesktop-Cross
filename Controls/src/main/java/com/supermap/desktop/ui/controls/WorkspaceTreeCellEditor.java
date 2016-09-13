@@ -351,6 +351,11 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 		stopCellEditing();
 	}
 
+	@Override
+	protected boolean shouldStartEditingTimer(EventObject event) {
+		return false;
+	}
+
 	private void drawEditingIcon(Object value) {
 		if (value instanceof JLabel) {
 			editingIcon = ((JLabel) value).getIcon();

@@ -18,7 +18,7 @@ public class ToolBarContainer extends Container {
 	private ToolBarContainer(int index) {
 		super();
 		this.index = index;
-		this.setLayout(new ToolBarLayout(FlowLayout.LEADING, 0, 5));
+		this.setLayout(new ToolBarLayout(FlowLayout.LEADING, 0, 3));
 		this.addComponentListener(new ComponentAdapter() {
 			@Override
 			public void componentResized(ComponentEvent e) {

@@ -64,6 +64,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -450,9 +451,18 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	}
 
 	private void addMapControlListener() {
+		MouseListener[] mouseListeners = transformationTarget.getMapControl().getMouseListeners();
 		transformationTarget.getMapControl().addMouseListener(mapControlMouseAdapter);
+		for (MouseListener mouseListener : mouseListeners) {
+			transformationTarget.getMapControl().removeMouseListener(mouseListener);
+			transformationTarget.getMapControl().addMouseListener(mouseListener);
+		}
+		MouseListener[] mouseListeners1 = transformationReference.getMapControl().getMouseListeners();
 		transformationReference.getMapControl().addMouseListener(mapControlMouseAdapter);
-
+		for (MouseListener mouseListener : mouseListeners1) {
+			transformationReference.getMapControl().removeMouseListener(mouseListener);
+			transformationReference.getMapControl().addMouseListener(mouseListener);
+		}
 		transformationTarget.getMapControl().addMouseMotionListener(mapControlMouseAdapter);
 		transformationReference.getMapControl().addMouseMotionListener(mapControlMouseAdapter);
 
