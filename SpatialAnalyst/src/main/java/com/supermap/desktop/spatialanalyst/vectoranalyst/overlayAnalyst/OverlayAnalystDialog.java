@@ -84,7 +84,6 @@ public class OverlayAnalystDialog extends SmDialog {
     private final Color WORNINGCOLOR = Color.red;
     private final Color DEFUALTCOLOR = Color.black;
     private OverlayAnalystParameter parameter;
-    private Dataset dataset;
 
 
     private final int ALLTYPE = 0;
@@ -111,9 +110,10 @@ public class OverlayAnalystDialog extends SmDialog {
                 } else {
                     resetItemToComboBox(comboboxSourceDataset, comboboxSourceDatasource.getSelectedDatasource(), ALLTYPE);
                 }
-                if (comboboxSourceDataset.getSelectedDataset().getType().equals(DatasetType.REGION)) {
+                if (null != comboboxSourceDataset.getSelectedDataset() && comboboxSourceDataset.getSelectedDataset().getType().equals(DatasetType.REGION)) {
                     comboboxOverlayAnalystDataset.removeDataset(comboboxSourceDataset.getSelectedDataset());
                 }
+                setButtonOKEnable();
             }
         }
     };
@@ -122,9 +122,10 @@ public class OverlayAnalystDialog extends SmDialog {
         public void itemStateChanged(ItemEvent e) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 resetItemToComboBox(comboboxOverlayAnalystDataset, comboboxOverlayAnalystDatasource.getSelectedDatasource(), REGIONTYPE);
-                if (comboboxSourceDataset.getSelectedDataset().getType().equals(DatasetType.REGION)) {
+                if (null != comboboxSourceDataset.getSelectedDataset() && comboboxSourceDataset.getSelectedDataset().getType().equals(DatasetType.REGION)) {
                     comboboxOverlayAnalystDataset.removeDataset(comboboxSourceDataset.getSelectedDataset());
                 }
+                setButtonOKEnable();
             }
         }
     };
@@ -176,12 +177,15 @@ public class OverlayAnalystDialog extends SmDialog {
 
     private void listSelectionChanged() {
         int index = listOverlayAnalystType.getSelectedIndex();
+        Dataset sourceDataset = comboboxSourceDataset.getSelectedDataset();
+        Dataset overlayAanlaystDataset = comboboxOverlayAnalystDataset.getSelectedDataset();
         switch (index) {
             case CLIP_TYPE:
                 // 裁剪设置
                 resetComboboxsInfo(ALLTYPE);
-                if (null != dataset) {
-                    comboboxSourceDataset.setSelectedDataset(dataset);
+                if (null != sourceDataset && null != overlayAanlaystDataset) {
+                    comboboxSourceDataset.setSelectedDataset(sourceDataset);
+                    comboboxOverlayAnalystDataset.setSelectedDataset(overlayAanlaystDataset);
                 }
                 initTextFieldTargetDataset(clipResultDatasetName);
                 buttonFieldsSet.setEnabled(false);
@@ -190,7 +194,10 @@ public class OverlayAnalystDialog extends SmDialog {
             case UNION_TYPE:
                 // 合并设置
                 resetComboboxsInfo(REGIONTYPE);
-                dataset = comboboxSourceDataset.getSelectedDataset();
+                if (null != sourceDataset && null != overlayAanlaystDataset) {
+                    comboboxSourceDataset.setSelectedDataset(sourceDataset);
+                    comboboxOverlayAnalystDataset.setSelectedDataset(overlayAanlaystDataset);
+                }
                 initTextFieldTargetDataset(unionResultDatasetName);
                 buttonFieldsSet.setEnabled(true);
                 OVERLAYANALYSTTTYPE = OverlayAnalystType.UNION;
@@ -198,8 +205,9 @@ public class OverlayAnalystDialog extends SmDialog {
             case ERASE_TYPE:
                 // 擦除设置
                 resetComboboxsInfo(ALLTYPE);
-                if (null != dataset) {
-                    comboboxSourceDataset.setSelectedDataset(dataset);
+                if (null != sourceDataset && null != overlayAanlaystDataset) {
+                    comboboxSourceDataset.setSelectedDataset(sourceDataset);
+                    comboboxOverlayAnalystDataset.setSelectedDataset(overlayAanlaystDataset);
                 }
                 initTextFieldTargetDataset(eraseResultDatasetName);
                 buttonFieldsSet.setEnabled(false);
@@ -208,8 +216,9 @@ public class OverlayAnalystDialog extends SmDialog {
             case INTERSECT_TYPE:
                 // 求交设置
                 resetComboboxsInfo(ALLTYPE);
-                if (null != dataset) {
-                    comboboxSourceDataset.setSelectedDataset(dataset);
+                if (null != sourceDataset && null != overlayAanlaystDataset) {
+                    comboboxSourceDataset.setSelectedDataset(sourceDataset);
+                    comboboxOverlayAnalystDataset.setSelectedDataset(overlayAanlaystDataset);
                 }
                 initTextFieldTargetDataset(intersectResultDatasetName);
                 buttonFieldsSet.setEnabled(true);
@@ -218,8 +227,9 @@ public class OverlayAnalystDialog extends SmDialog {
             case IDENTITY_TYPE:
                 // 同一设置
                 resetComboboxsInfo(ALLTYPE);
-                if (null != dataset) {
-                    comboboxSourceDataset.setSelectedDataset(dataset);
+                if (null != sourceDataset && null != overlayAanlaystDataset) {
+                    comboboxSourceDataset.setSelectedDataset(sourceDataset);
+                    comboboxOverlayAnalystDataset.setSelectedDataset(overlayAanlaystDataset);
                 }
                 initTextFieldTargetDataset(identityResultDatasetName);
                 buttonFieldsSet.setEnabled(true);
@@ -228,8 +238,9 @@ public class OverlayAnalystDialog extends SmDialog {
             case XOR_TYPE:
                 // 对称差设置
                 resetComboboxsInfo(REGIONTYPE);
-                if (null != dataset) {
-                    comboboxSourceDataset.setSelectedDataset(dataset);
+                if (null != sourceDataset && null != overlayAanlaystDataset) {
+                    comboboxSourceDataset.setSelectedDataset(sourceDataset);
+                    comboboxOverlayAnalystDataset.setSelectedDataset(overlayAanlaystDataset);
                 }
                 initTextFieldTargetDataset(xORResultDatasetName);
                 buttonFieldsSet.setEnabled(true);
@@ -238,8 +249,9 @@ public class OverlayAnalystDialog extends SmDialog {
             case UPDATE_TYPE:
                 // 更新设置
                 resetComboboxsInfo(REGIONTYPE);
-                if (null != dataset) {
-                    comboboxSourceDataset.setSelectedDataset(dataset);
+                if (null != sourceDataset && null != overlayAanlaystDataset) {
+                    comboboxSourceDataset.setSelectedDataset(sourceDataset);
+                    comboboxOverlayAnalystDataset.setSelectedDataset(overlayAanlaystDataset);
                 }
                 initTextFieldTargetDataset(updateResultDatasetName);
                 buttonFieldsSet.setEnabled(false);
@@ -281,7 +293,11 @@ public class OverlayAnalystDialog extends SmDialog {
                     buttonOK.setEnabled(false);
                 } else {
                     textFieldTargetDataset.setForeground(DEFUALTCOLOR);
-                    buttonOK.setEnabled(true);
+                    if (null == comboboxSourceDataset.getSelectedDataset() || null == comboboxOverlayAnalystDataset.getSelectedDataset()) {
+                        buttonOK.setEnabled(false);
+                    } else {
+                        buttonOK.setEnabled(true);
+                    }
                 }
             }
         }
@@ -325,12 +341,12 @@ public class OverlayAnalystDialog extends SmDialog {
         if (null != comboboxOverlayAnalystDataset.getSelectedDataset()) {
             overlayAnalystDataset = comboboxOverlayAnalystDataset.getSelectedDataset();
         }
-        if (null != sourceDataset && null != overlayAnalystDataset && !sourceDataset.getDatasource().getPrjCoordSys().equals(overlayAnalystDataset.getDatasource().getPrjCoordSys())) {
+        if (null != sourceDataset && null != overlayAnalystDataset && !isSameProjection(sourceDataset.getPrjCoordSys(), overlayAnalystDataset.getPrjCoordSys())) {
             Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_PrjCoordSys_Different") + "\n" + SpatialAnalystProperties.getString("String_Parameters"));
             Application.getActiveApplication().getOutput().output(MessageFormat.format(SpatialAnalystProperties.getString("String_OverlayAnalyst_Failed"), sourceDataset.getName() + "@" + sourceDataset.getDatasource().getAlias()
                     , overlayAnalystDataset.getName() + "@" + overlayAnalystDataset.getDatasource().getAlias(), OVERLAYANALYSTTTYPE.toString()));
             return;
-        } else if (null != sourceDataset && null != overlayAnalystDataset && sourceDataset.getDatasource().getPrjCoordSys().equals(overlayAnalystDataset.getDatasource().getPrjCoordSys())) {
+        } else if (null != sourceDataset && null != overlayAnalystDataset && isSameProjection(sourceDataset.getPrjCoordSys(), overlayAnalystDataset.getPrjCoordSys())) {
             overlayAnalyst.setSourceDataset((DatasetVector) sourceDataset);
             overlayAnalyst.setOverlayAnalystDataset((DatasetVector) overlayAnalystDataset);
         }
@@ -360,14 +376,33 @@ public class OverlayAnalystDialog extends SmDialog {
         OverlayAnalystDialog.this.dispose();
     }
 
+    private boolean isSameProjection(PrjCoordSys prjCoordSys, PrjCoordSys prjCoordSys1) {
+        if (prjCoordSys.getType() != prjCoordSys1.getType()) {
+            return false;
+        }
+        if (prjCoordSys.getGeoCoordSys() == prjCoordSys1.getGeoCoordSys()) {
+            return true;
+        }
+        if (prjCoordSys.getGeoCoordSys() == null || prjCoordSys1.getGeoCoordSys() == null) {
+            return false;
+        }
+        if (prjCoordSys.getGeoCoordSys().getType() != prjCoordSys1.getGeoCoordSys().getType()) {
+            return false;
+        }
+        return true;
+    }
+
     public OverlayAnalystDialog() {
         super();
         initComponents();
         initLayout();
         initResources();
         registEvents();
-        setSize(new Dimension(500, 420));
-        setMinimumSize(new Dimension(500, 420));
+        this.componentList.add(this.buttonOK);
+        this.componentList.add(this.buttonCancel);
+        this.setFocusTraversalPolicy(policy);
+        setSize(new Dimension(560, 420));
+        setMinimumSize(new Dimension(560, 420));
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -386,7 +421,7 @@ public class OverlayAnalystDialog extends SmDialog {
             }
         });
         scrollPane.setViewportView(listOverlayAnalystType);
-        scrollPane.setPreferredSize(new Dimension(120, 300));
+        scrollPane.setMinimumSize(new Dimension(120, 300));
         JPanel panelBasicAnalyst = new JPanel();
         this.setLayout(new GridBagLayout());
         panelBasicAnalyst.setLayout(new GridBagLayout());
@@ -555,13 +590,14 @@ public class OverlayAnalystDialog extends SmDialog {
         this.labelOverlayAnalystDataset = new JLabel();
         this.comboboxOverlayAnalystDataset = new DatasetComboBox(new Dataset[0]);
         this.comboboxTargetDatasource = new DatasourceComboBox();
+        removeReadOnlyDatasource();
         this.labelTargetDatasource = new JLabel();
         this.labelTargetDataset = new JLabel();
         this.textFieldTargetDataset = new JTextField();
         this.buttonFieldsSet = new JButton();
         this.labelTolerance = new JLabel();
         NumberFormat numberInstance = NumberFormat.getNumberInstance();
-        numberInstance.setMinimumFractionDigits(20);
+        numberInstance.setMaximumFractionDigits(20);
         NumberFormatter numberFormatter = new NumberFormatter(numberInstance);
         numberFormatter.setValueClass(Double.class);
         numberFormatter.setMinimum(0.0);
@@ -580,11 +616,20 @@ public class OverlayAnalystDialog extends SmDialog {
         initTextFieldTargetDataset(clipResultDatasetName);
     }
 
+    private void removeReadOnlyDatasource() {
+        Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+        for (int i = 0; i < datasources.getCount(); i++) {
+            if (datasources.get(i).isReadOnly()) {
+                comboboxTargetDatasource.removeDataSource(datasources.get(i));
+            }
+        }
+    }
+
     private void resetComboboxsInfo(int flag) {
         //重置数据集下拉控件
         resetItemToComboBox(comboboxSourceDataset, comboboxSourceDatasource.getSelectedDatasource(), flag);
         resetItemToComboBox(comboboxOverlayAnalystDataset, comboboxOverlayAnalystDatasource.getSelectedDatasource(), REGIONTYPE);
-        if (comboboxSourceDataset.getSelectedDataset().getType().equals(DatasetType.REGION)) {
+        if (null != comboboxSourceDataset.getSelectedDataset() && comboboxSourceDataset.getSelectedDataset().getType().equals(DatasetType.REGION)) {
             comboboxOverlayAnalystDataset.removeDataset(comboboxSourceDataset.getSelectedDataset());
         }
     }
@@ -605,22 +650,29 @@ public class OverlayAnalystDialog extends SmDialog {
             if (comboboxSourceDataset.hasDataset(sourceDataset.getName())) {
                 comboboxSourceDataset.setSelectedDataset(sourceDataset);
             }
-            if (sourceDataset.getType().equals(DatasetType.REGION)) {
-                comboboxOverlayAnalystDataset.removeDataset(sourceDataset);
-            }
+        }
+        if (null != comboboxSourceDataset.getSelectedDataset() && comboboxSourceDataset.getSelectedDataset().getType().equals(DatasetType.REGION)) {
+            comboboxOverlayAnalystDataset.removeDataset(comboboxSourceDataset.getSelectedDataset());
         }
     }
 
     private void initTextFieldTargetDataset(String targetDatasetName) {
-        if (null != comboboxTargetDatasource.getSelectedDatasource() && !comboboxTargetDatasource.getSelectedDatasource().isReadOnly()) {
+        if (null != comboboxTargetDatasource.getSelectedDatasource()) {
             textFieldTargetDataset.setText(comboboxTargetDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(targetDatasetName));
-            buttonOK.setEnabled(true);
         } else {
             textFieldTargetDataset.setText("");
-            buttonOK.setEnabled(false);
         }
         if (null != comboboxSourceDataset.getSelectedDataset()) {
             resetTextFieldToleranceInfo(comboboxSourceDataset.getSelectedDataset());
+        }
+        setButtonOKEnable();
+    }
+
+    private void setButtonOKEnable() {
+        if (null == comboboxSourceDataset.getSelectedDataset() || null == comboboxOverlayAnalystDataset.getSelectedDataset() || StringUtilities.isNullOrEmpty(textFieldTargetDataset.getText())) {
+            buttonOK.setEnabled(false);
+        } else {
+            buttonOK.setEnabled(true);
         }
     }
 

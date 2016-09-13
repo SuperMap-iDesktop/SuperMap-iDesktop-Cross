@@ -583,18 +583,20 @@ public class CADStyleContainer extends JPanel {
         this.labelPointColor.setEnabled(enabled);
         this.buttonPointColor.setEnabled(enabled);
         this.labelPointRotation.setEnabled(enabled);
-        this.spinnerPointRotation.setEnabled(enabled);
         this.labelPointRotationUnity.setEnabled(enabled);
         this.labelPointOpaque.setEnabled(enabled);
-        this.spinnerPointOpaque.setEnabled(enabled);
         this.labelPointOpaqueUnity.setEnabled(enabled);
-        this.checkboxWAndH.setEnabled(enabled);
         this.labelPointWidth.setEnabled(enabled);
         this.spinnerPointWidth.setEnabled(enabled);
         this.labelPointWidthUnity.setEnabled(enabled);
         this.labelPointHeight.setEnabled(enabled);
         this.spinnerPointHeight.setEnabled(enabled);
         this.labelPointHeightUnity.setEnabled(enabled);
+        if (null != panelPointStyle.getInitializeGeoStyle() && null == panelPointStyle.getInitializeGeoStyle().getSymbolMarker()) {
+            setSymstemPointEnable(false);
+        } else {
+            setSymstemPointEnable(true);
+        }
     }
 
     private void setPanelFillEnabled(boolean enabled) {
@@ -605,8 +607,12 @@ public class CADStyleContainer extends JPanel {
         this.buttonFillBackColor.setEnabled(enabled);
         this.checkboxBackOpaque.setEnabled(enabled);
         this.labelFillOpaque.setEnabled(enabled);
-        this.spinnerFillOpaque.setEnabled(enabled);
         this.checkboxFillGradient.setEnabled(enabled);
+        if (null != panelFillStyle.getInitializeGeoStyle() && null != panelFillStyle.getInitializeGeoStyle().getSymbolFill()) {
+            setSpinnerFillOpaqueEnable(true);
+        } else {
+            setSpinnerFillOpaqueEnable(false);
+        }
     }
 
     private void setFillGradientEnabled(boolean enabled) {
@@ -777,10 +783,10 @@ public class CADStyleContainer extends JPanel {
     }
 
     private void initComponents() {
+        removePanels();
         initPanelPointComponents();
         initPanelLineComponents();
         initPanelFillComponents();
-        removePanels();
         JPanel panelText = new JPanel();
         panelText.setLayout(new GridBagLayout());
         JPanel panel = new JPanel();

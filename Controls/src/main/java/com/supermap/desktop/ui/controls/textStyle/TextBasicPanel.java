@@ -251,29 +251,30 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
     };
 
     private JFormattedTextField textfieldOutLineWidth;
-    private CaretListener textFieldFontSizeListener = new CaretListener() {
-        @Override
-        public void caretUpdate(CaretEvent e) {
-            if (isSetFontSize) {
-                String text = textFieldFontSize.getText();
-                if (!SymbolSpinnerUtilties.isLegitNumber(0.1, 72.17, text)) {
-                    textFieldFontSize.setForeground(Color.red);
-                    return;
-                } else {
-                    textFieldFontSize.setForeground(Color.black);
-                }
-                double size = Double.valueOf(text);
-                isSetFontHeight = false;
-                textFieldFontHeight.setText(new DecimalFormat(numeric).format((size / EXPERIENCE)));
-                double fontHeight = size / EXPERIENCE;
-                fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
-                if (!DoubleUtilities.equals(fontHeight, textStyle.getFontHeight(), pow) && fontHeight > 0) {
-                    textStyleTypeMap.put(TextStyleType.FONTSIZE, fontHeight);
-                    fireTextStyleChanged(TextStyleType.FONTSIZE);
-                }
-            }
-        }
-    };
+    //    private CaretListener textFieldFontSizeListener = new CaretListener() {
+//        @Override
+//        public void caretUpdate(CaretEvent e) {
+//            if (isSetFontSize) {
+//                String text = textFieldFontSize.getText();
+//                if (!SymbolSpinnerUtilties.isLegitNumber(0.1, 72.17, text)) {
+//                    textFieldFontSize.setForeground(Color.red);
+//                    return;
+//                } else {
+//                    textFieldFontSize.setForeground(Color.black);
+//                }
+//                double size = Math.round(Double.valueOf(text) * 2) / 2;
+//                textFieldFontSize.setText(String.valueOf(size));
+//                isSetFontHeight = false;
+//                textFieldFontHeight.setText(new DecimalFormat(numeric).format((size / EXPERIENCE)));
+//                double fontHeight = size / EXPERIENCE;
+//                fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
+//                if (!DoubleUtilities.equals(fontHeight, textStyle.getFontHeight(), pow) && fontHeight > 0) {
+//                    textStyleTypeMap.put(TextStyleType.FONTSIZE, fontHeight);
+//                    fireTextStyleChanged(TextStyleType.FONTSIZE);
+//                }
+//            }
+//        }
+//    };
     private CaretListener textfieldFontHeightListener = new CaretListener() {
         @Override
         public void caretUpdate(CaretEvent e) {
@@ -356,6 +357,35 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
             isSetFontHeight = true;
         }
     };
+    private FocusListener fontSizeFocusListener = new FocusListener() {
+        @Override
+        public void focusGained(FocusEvent e) {
+
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
+            if (isSetFontSize) {
+                String text = textFieldFontSize.getText();
+                if (!SymbolSpinnerUtilties.isLegitNumber(0.1, 72.17, text)) {
+                    textFieldFontSize.setForeground(Color.red);
+                    return;
+                } else {
+                    textFieldFontSize.setForeground(Color.black);
+                }
+                double size = Math.round(Double.valueOf(text) * 2) / 2;
+                textFieldFontSize.setText(String.valueOf(size));
+                isSetFontHeight = false;
+                textFieldFontHeight.setText(new DecimalFormat(numeric).format((size / EXPERIENCE)));
+                double fontHeight = size / EXPERIENCE;
+                fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
+                if (!DoubleUtilities.equals(fontHeight, textStyle.getFontHeight(), pow) && fontHeight > 0) {
+                    textStyleTypeMap.put(TextStyleType.FONTSIZE, fontHeight);
+                    fireTextStyleChanged(TextStyleType.FONTSIZE);
+                }
+            }
+        }
+    };
 
     public TextBasicPanel() {
         // Do nothing
@@ -367,7 +397,8 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.comboBoxAlign.addItemListener(this.alignItemListener);
         this.textFieldFontSize.addFocusListener(this.textFieldFontSizeFocusListener);
         this.textFieldFontHeight.addFocusListener(this.textfieldFontHeightFocusListener);
-        this.textFieldFontSize.addCaretListener(this.textFieldFontSizeListener);
+//        this.textFieldFontSize.addCaretListener(this.textFieldFontSizeListener);
+        this.textFieldFontSize.addFocusListener(this.fontSizeFocusListener);
         this.textFieldFontHeight.addCaretListener(this.textfieldFontHeightListener);
         this.textFieldFontRotationAngl.addCaretListener(this.textfieldFontRotationAnglListener);
         this.textFieldFontItalicAngl.addCaretListener(this.textFieldFontItalicAnglListener);
@@ -870,7 +901,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.comboBoxAlign.removeItemListener(this.alignItemListener);
         this.textFieldFontSize.removeFocusListener(this.textFieldFontSizeFocusListener);
         this.textFieldFontHeight.removeFocusListener(this.textfieldFontHeightFocusListener);
-        this.textFieldFontSize.removeCaretListener(this.textFieldFontSizeListener);
+//        this.textFieldFontSize.removeCaretListener(this.textFieldFontSizeListener);
         this.textFieldFontHeight.removeCaretListener(this.textfieldFontHeightListener);
         this.textFieldFontRotationAngl.removeCaretListener(this.textfieldFontRotationAnglListener);
         this.textFieldFontItalicAngl.removeCaretListener(this.textFieldFontItalicAnglListener);

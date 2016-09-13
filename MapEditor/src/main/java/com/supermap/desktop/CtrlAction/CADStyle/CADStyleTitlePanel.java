@@ -12,6 +12,7 @@ import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.GeometryUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 
 import javax.swing.*;
@@ -57,6 +58,7 @@ public class CADStyleTitlePanel extends JPanel {
             // Do nothing
         }
     };
+    private GeoStyle geoStyle;
 
     public CADStyleTitlePanel(CADStyleContainer parent, int styleType) {
         this.parent = parent;
@@ -121,25 +123,21 @@ public class CADStyleTitlePanel extends JPanel {
         }
     }
 
+    public GeoStyle getInitializeGeoStyle() {
+        return this.geoStyle;
+    }
 
-    private GeoStyle getGeoStyle() {
-        GeoStyle geoStyle = new GeoStyle();
+    private GeoStyle initializeGeoStyle() {
         if (null != recordset) {
             recordset.dispose();
         }
         recordset = MapUtilities.getActiveMap().findSelection(true)[0].toRecordset();
         if (null == recordset.getGeometry().getStyle()) {
-            return geoStyle;
+            geoStyle = recordset.getGeometry().getStyle();
         }
         recordset.moveFirst();
         while (!recordset.isEOF()) {
-            if (styleType == GEOPOINTTYPE) {
-                geoStyle = recordset.getGeometry().getStyle().clone();
-                break;
-            } else if (styleType == GEOLINETYPE) {
-                geoStyle = recordset.getGeometry().getStyle().clone();
-                break;
-            } else if (styleType == GEOREGIONTYPE) {
+            if (null != recordset.getGeometry().getStyle()) {
                 geoStyle = recordset.getGeometry().getStyle().clone();
                 break;
             } else {
@@ -150,8 +148,8 @@ public class CADStyleTitlePanel extends JPanel {
     }
 
     private void resetRecordsetGeoStyle() {
-        GeoStyle beforeGeoStyle = getGeoStyle();
-        SymbolType symbolType = null;
+        GeoStyle beforeGeoStyle = initializeGeoStyle();
+        SymbolType symbolType = SymbolType.MARKER;
         if (styleType == GEOPOINTTYPE) {
             symbolType = SymbolType.MARKER;
         } else if (styleType == GEOLINETYPE) {
@@ -220,18 +218,18 @@ public class CADStyleTitlePanel extends JPanel {
                 if (null == tempGeometry.getStyle()) {
                     geoStyle = new GeoStyle();
                 }
-                if (tempGeometry instanceof GeoPoint && styleType == GEOPOINTTYPE) {
+                if (GeometryUtilities.isPointGeometry(tempGeometry) && styleType == GEOPOINTTYPE) {
                     // 修改点符号
                     geoStyle.setMarkerSymbolID(panelSymbols.getCurrentGeoStyle().getMarkerSymbolID());
                     geoStyle.setMarkerAngle(panelSymbols.getCurrentGeoStyle().getMarkerAngle());
                     geoStyle.setMarkerSize(panelSymbols.getCurrentGeoStyle().getMarkerSize());
                 }
-                if ((tempGeometry instanceof GeoLine || tempGeometry instanceof GeoRegion) && styleType == GEOLINETYPE) {
+                if ((GeometryUtilities.isLineGeometry(tempGeometry) || GeometryUtilities.isRegionGeometry(tempGeometry)) && styleType == GEOLINETYPE) {
                     geoStyle.setLineSymbolID(panelSymbols.getCurrentGeoStyle().getLineSymbolID());
                     geoStyle.setLineColor(panelSymbols.getCurrentGeoStyle().getLineColor());
                     geoStyle.setLineWidth(panelSymbols.getCurrentGeoStyle().getLineWidth());
                 }
-                if (tempGeometry instanceof GeoRegion && styleType == GEOREGIONTYPE) {
+                if (GeometryUtilities.isRegionGeometry(tempGeometry) && styleType == GEOREGIONTYPE) {
                     geoStyle.setFillSymbolID(panelSymbols.getCurrentGeoStyle().getFillSymbolID());
                     geoStyle.setFillForeColor(panelSymbols.getCurrentGeoStyle().getFillForeColor());
                     geoStyle.setFillGradientMode(panelSymbols.getCurrentGeoStyle().getFillGradientMode());
@@ -287,8 +285,10 @@ public class CADStyleTitlePanel extends JPanel {
         this.add(jScrollPane, new GridBagConstraintsHelper(0, 0, 1, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 2));
         this.add(panelMore, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0));
         jScrollPane.setViewportView(panelSymbols);
-        GeoStyle geoStyle = getGeoStyle();
-        panelSymbols.setGeoStyle(geoStyle);
+        GeoStyle geoStyle = initializeGeoStyle();
+        if (null != geoStyle) {
+            panelSymbols.setGeoStyle(geoStyle);
+        }
         panelMore.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

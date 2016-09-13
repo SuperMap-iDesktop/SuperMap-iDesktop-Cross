@@ -14,8 +14,8 @@ import com.supermap.mapping.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 
 public class TextStyleContainer extends ThemeChangePanel {
@@ -40,22 +40,9 @@ public class TextStyleContainer extends ThemeChangePanel {
     private boolean isUniformStyle;
     private boolean isRefreshAtOnce;
     private boolean isResetFontHeight = false;
-    private boolean isMapDrawn = false;
     private ITextStyle textStylePanel;
     private transient TextStyleChangeListener textStyleChangeListener;
     private transient LocalMapDrawnListener mapDrawnListener = new LocalMapDrawnListener();
-    private FocusListener focusListener = new FocusListener() {
-        @Override
-        public void focusGained(FocusEvent e) {
-            isResetFontHeight = true;
-            isMapDrawn = false;
-        }
-
-        @Override
-        public void focusLost(FocusEvent e) {
-            isResetFontHeight = false;
-        }
-    };
 
     public TextStyleContainer(TextStyle textStyle, Map map, Layer themeLabelLayer) {
         this.textStyle = textStyle.clone();
@@ -145,9 +132,9 @@ public class TextStyleContainer extends ThemeChangePanel {
 
             @Override
             public void modify(TextStyleType newValue) {
-                if (isMapDrawn) {
-                    return;
-                }
+//                if (!isResetFontHeight) {
+//                    return;
+//                }
                 if (null != theme && theme instanceof ThemeLabel && isUniformStyle) {
                     resetFontHeightWhileFixedSize(newValue, ((ThemeLabel) theme).getUniformStyle());
                     refreshMapAtOnce();
@@ -192,18 +179,33 @@ public class TextStyleContainer extends ThemeChangePanel {
         unregistActionListener();
         this.textStylePanel.addTextStyleChangeListener(textStyleChangeListener);
         this.map.addDrawnListener(this.mapDrawnListener);
-        this.textStylePanel.getComponentsMap().get(TextStyleType.FONTSIZE).addFocusListener(this.focusListener);
-        this.textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT).addFocusListener(this.focusListener);
+        MapUtilities.getMapControl().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                isResetFontHeight = false;
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                isResetFontHeight = true;
+            }
+        });
+//        this.textStylePanel.getComponentsMap().get(TextStyleType.FONTSIZE).addFocusListener(this.focusListener);
+//        this.textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT).addFocusListener(this.focusListener);
     }
 
     private void resetFontHeightWhileFixedSize(TextStyleType newValue, TextStyle textStyle) {
-        if (newValue.equals(TextStyleType.FIXEDSIZE)) {
-            ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, textStyle, (double) textStylePanel.getResultMap().get(TextStyleType.FONTHEIGHT));
+        Object newGeoStyleProperty = textStylePanel.getResultMap().get(newValue);
+        if (!newValue.equals(TextStyleType.FIXEDSIZE)) {
+            if (newValue.equals(TextStyleType.FONTHEIGHT) && false == textStylePanel.getResultMap().get(TextStyleType.FIXEDSIZE)) {
+                ResetTextStyleUtil.resetTextStyle(newValue, textStyle, (double) newGeoStyleProperty / 100);
+            } else {
+                ResetTextStyleUtil.resetTextStyle(newValue, textStyle, (double) newGeoStyleProperty);
+            }
         }
-        if (newValue.equals(TextStyleType.FONTHEIGHT) && (boolean) textStylePanel.getResultMap().get(TextStyleType.FIXEDSIZE) == false) {
-            ResetTextStyleUtil.resetTextStyle(newValue, textStyle, (double) textStylePanel.getResultMap().get(newValue) / 10);
-        } else {
-            ResetTextStyleUtil.resetTextStyle(newValue, textStyle, textStylePanel.getResultMap().get(newValue));
+        if (newValue.equals(TextStyleType.FIXEDSIZE)) {
+            ResetTextStyleUtil.resetTextStyle(newValue, textStyle, newGeoStyleProperty);
+            ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, textStyle, textStylePanel.getResultMap().get(TextStyleType.FONTHEIGHT));
         }
     }
 
@@ -227,10 +229,7 @@ public class TextStyleContainer extends ThemeChangePanel {
 
         try {
             // 非固定文本大小
-            if (isResetFontHeight) {
-                return;
-            }
-            if (!((JCheckBox) textStylePanel.getComponentsMap().get(TextStyleType.FIXEDSIZE)).isSelected()) {
+            if (!((ThemeLabel) theme).getUniformStyle().isSizeFixed()) {
                 // 非固定时，地图中显示的字体在屏幕中显示的大小肯定发生了变化，所以需要重新计算现在的字体大小
                 // 字体信息从现在的TextStyle属性中获取，经过计算后显示其字号大小
                 Double size = FontUtilities.mapHeightToFontSize((Double) textStylePanel.getResultMap().get(TextStyleType.FONTHEIGHT), map, false);
@@ -245,7 +244,6 @@ public class TextStyleContainer extends ThemeChangePanel {
                 if (((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT)).getFocusTraversalKeysEnabled()) {
                     ((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT)).setText(new DecimalFormat(numeric).format(size / 0.283));
                 }
-                isMapDrawn = true;
             } else {
                 // 字体是固定大小时，字体显示的大小不发生变化，不需要更新任何控件内容
 
