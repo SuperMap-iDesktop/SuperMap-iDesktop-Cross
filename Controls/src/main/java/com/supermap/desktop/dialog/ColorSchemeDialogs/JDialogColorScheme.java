@@ -552,8 +552,7 @@ public class JDialogColorScheme extends SmDialog {
 
 		this.buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 		this.buttonSelectAll.setToolTipText(CommonProperties.getString(CommonProperties.selectAll));
-		this.buttonSelectInvert.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"))
-		;
+		this.buttonSelectInvert.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
 		this.buttonSelectInvert.setToolTipText(CommonProperties.getString(CommonProperties.selectInverse));
 
 		this.buttonImport.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Import.png"));

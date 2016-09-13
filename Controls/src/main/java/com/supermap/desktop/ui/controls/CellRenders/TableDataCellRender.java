@@ -6,13 +6,12 @@ import com.supermap.mapping.Map;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
-import java.util.HashMap;
 
 /**
  * @author XiaJT
  */
-public class TableMapCellRender extends DefaultTableCellRenderer {
-	private static HashMap<Map, DataCell> cache = new HashMap<>();
+public class TableDataCellRender extends DefaultTableCellRenderer {
+	private TableMapCellRender tableMapCellRender;
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -20,13 +19,9 @@ public class TableMapCellRender extends DefaultTableCellRenderer {
 		if (value == null) {
 			result = new JLabel();
 		} else if (value instanceof Map) {
-			result = cache.get(value);
-			if (result == null) {
-				result = new DataCell(value);
-				cache.put((Map) value, (DataCell) result);
-			}
+			return getTableMapCellRender().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		} else {
-			result = new JLabel(String.valueOf(value));
+			result = new DataCell(value);
 		}
 		if (isSelected) {
 			result.setBackground(table.getSelectionBackground());
@@ -34,5 +29,12 @@ public class TableMapCellRender extends DefaultTableCellRenderer {
 			result.setBackground(table.getBackground());
 		}
 		return result;
+	}
+
+	public TableMapCellRender getTableMapCellRender() {
+		if (tableMapCellRender == null) {
+			tableMapCellRender = new TableMapCellRender();
+		}
+		return tableMapCellRender;
 	}
 }
