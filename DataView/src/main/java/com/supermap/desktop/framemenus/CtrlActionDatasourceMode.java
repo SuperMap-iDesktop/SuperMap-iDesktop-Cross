@@ -43,20 +43,33 @@ public class CtrlActionDatasourceMode extends CtrlAction {
 				for (int i = 0; i < datasources.length; i++) {
 					Datasource datasource = datasources[i];
 					DatasourceConnectionInfo info = DatasourceUtilities.cloneInfo(datasource.getConnectionInfo());
+					String datasourceName = datasource.getAlias();
 
 					if (datasource.isOpened()) {
 
 						// 如果数据源已经打开，就先关闭数据源，此时数据源节点会从工作空间中删除
+						// 如果不删除，在 Java 里能使用的判断数据源是否占用的方法都无法过滤掉自己
 						DatasourceUtilities.closeDatasource(datasource);
+
 						if (!DatasourceUtilities.isDatasourceOccupied(info.getServer())) {
+
+							// 判断关闭之后的数据源是否仍然被占用，没有则更改独占/可读
 							info.setReadOnly(isReadOnly());
+						} else {
+
+							// 仍然被占用则输出打开失败的信息
+							Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_DatasourceOccupied"), datasourceName));
 						}
 						datasources[i] = workspace.getDatasources().open(info);
 					} else {
-
+						info.setReadOnly(isReadOnly());
 						// 如果数据源没有成功打开，工作空间中会有一个没有数据集的数据源节点，如果重新打开失败，需要保留这个节点，因此不能直接删除
-						if (DatasourceUtilities.isDatasourceOccupied(info.getServer())) {
-
+						// 判断更改独占/可读之后是否可以正常打开，是则重新打开
+						if (DatasourceUtilities.attemptToOpenDataosurce(info)) {
+							DatasourceUtilities.closeDatasource(datasource);
+							datasources[i] = workspace.getDatasources().open(info);
+						} else {
+							Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_DatasourceOccupied"), datasourceName));
 						}
 					}
 
