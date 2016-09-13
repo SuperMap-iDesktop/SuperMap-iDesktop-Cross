@@ -17,6 +17,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.io.File;
 import java.text.MessageFormat;
@@ -587,43 +588,65 @@ public class DatasourceUtilities {
 				&& !isMemoryDatasource(datasource)) {
 
 			// 因为被占用而打开失败的文件型数据源的 reopen 组件不支持，自行实现
-			if (!datasource.isOpened()) {
-				DatasourceConnectionInfo srcInfo = datasource.getConnectionInfo();
-
-				// 组件不提供判断占用的方法
-				if (!isDatasourceOccupied(srcInfo.getServer())) {
-					Workspace workspace = datasource.getWorkspace();
-					DatasourceConnectionInfo info = DatasourceUtilities.cloneInfo(srcInfo);
-					boolean isReadOnlyMode = info.isReadOnly(); // 是否只读打开，如果独占打开失败，后面会尝试只读打开
-
-					datasource.close();
-					try {
-						result = workspace.getDatasources().open(info);
-					} catch (Exception e) {
-						result = null;
-					}
-
-					if (result == null && !isReadOnlyMode) {
-						// 如果独占打开失败，就再次尝试只读打开
-						DatasourceConnectionInfo infoReadOnly = DatasourceUtilities.cloneInfo(srcInfo);
-						infoReadOnly.setReadOnly(true);
-						try {
-							result = workspace.getDatasources().open(infoReadOnly);
-						} catch (Exception e) {
-							result = null;
-						}
-					}
-
-					if (result == null) {
-						Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_RefreshDatasouce_Failed"), info.getAlias()));
-					}
-				} else {
-					Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_RefreshDatasouce_Failed"), srcInfo.getAlias()));
-				}
+			if (isFileType(datasource.getEngineType())) {
+				result = refreshDatasourceFile(datasource);
 			} else {
 				datasource.refresh();
 			}
 		}
+		return result;
+	}
+
+	/**
+	 * 刷新文件型数据源
+	 *
+	 * @param datasource
+	 * @return
+	 */
+	public static Datasource refreshDatasourceFile(Datasource datasource) {
+		Datasource result = datasource;
+
+		if (datasource != null && !datasource.isOpened()) {
+			DatasourceConnectionInfo srcInfo = datasource.getConnectionInfo();
+
+			// 组件不提供判断占用的方法，使用内存工作空间打开来判断是否可以成功打开工作空间
+			// 如果只读打开可以成功则表明必然是可以刷新的，否则就什么都不做，输出被占用打开失败
+			DatasourceConnectionInfo tempInfo = cloneInfo(srcInfo);
+			tempInfo.setReadOnly(true);
+			if (attemptToOpenDataosurce(tempInfo)) {
+				Workspace workspace = datasource.getWorkspace();
+				DatasourceConnectionInfo info = DatasourceUtilities.cloneInfo(srcInfo);
+				String datasourceName = datasource.getAlias();
+				boolean isReadOnlyMode = info.isReadOnly(); // 当前是否只读打开，如果独占打开失败，后面会尝试只读打开
+
+				datasource.close();
+				try {
+					result = workspace.getDatasources().open(info);
+				} catch (Exception e) {
+					result = null;
+				}
+
+				if (result == null && !isReadOnlyMode) {
+					// 如果独占打开失败，就再次尝试只读打开
+					DatasourceConnectionInfo infoReadOnly = DatasourceUtilities.cloneInfo(info);
+					infoReadOnly.setReadOnly(true);
+					try {
+						result = workspace.getDatasources().open(infoReadOnly);
+					} catch (Exception e) {
+						result = null;
+					}
+				}
+
+				if (result == null) {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_RefreshDatasouce_Failed"), datasourceName));
+				}
+			} else {
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(CoreProperties.getString("String_RefreshDatasouce_Failed"), srcInfo.getAlias()));
+			}
+		} else {
+			datasource.refresh();
+		}
+
 		return result;
 	}
 

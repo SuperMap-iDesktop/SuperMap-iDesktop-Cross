@@ -72,15 +72,6 @@ public class CtrlActionDatasourceMode extends CtrlAction {
 							Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_DatasourceOccupied"), datasourceName));
 						}
 					}
-
-//					DatasourceConnectionInfo info = DatasourceUtilities.cloneInfo(datasource.getConnectionInfo());
-//					info.setReadOnly(isReadOnly());
-//					if (DatasourceUtilities.attemptToOpenDataosurce(info)) {
-//						DatasourceUtilities.closeDatasource(datasource);
-//						datasources[i] = workspace.getDatasources().open(info);
-//					} else {
-//						Application.getActiveApplication().getOutput().output(MessageFormat.format(DataViewProperties.getString("String_DatasourceOccupied"), datasource.getAlias()));
-//					}
 				}
 
 				// 更改完成选中结果
