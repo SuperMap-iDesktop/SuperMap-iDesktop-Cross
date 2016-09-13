@@ -137,13 +137,7 @@ public class CADStyleTitlePanel extends JPanel {
         }
         recordset.moveFirst();
         while (!recordset.isEOF()) {
-            if (styleType == GEOPOINTTYPE) {
-                geoStyle = recordset.getGeometry().getStyle().clone();
-                break;
-            } else if (styleType == GEOLINETYPE) {
-                geoStyle = recordset.getGeometry().getStyle().clone();
-                break;
-            } else if (styleType == GEOREGIONTYPE) {
+            if (null != recordset.getGeometry().getStyle()) {
                 geoStyle = recordset.getGeometry().getStyle().clone();
                 break;
             } else {
@@ -155,7 +149,7 @@ public class CADStyleTitlePanel extends JPanel {
 
     private void resetRecordsetGeoStyle() {
         GeoStyle beforeGeoStyle = initializeGeoStyle();
-        SymbolType symbolType = null;
+        SymbolType symbolType = SymbolType.MARKER;
         if (styleType == GEOPOINTTYPE) {
             symbolType = SymbolType.MARKER;
         } else if (styleType == GEOLINETYPE) {
@@ -292,8 +286,9 @@ public class CADStyleTitlePanel extends JPanel {
         this.add(panelMore, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0));
         jScrollPane.setViewportView(panelSymbols);
         GeoStyle geoStyle = initializeGeoStyle();
-
-        panelSymbols.setGeoStyle(geoStyle);
+        if (null != geoStyle) {
+            panelSymbols.setGeoStyle(geoStyle);
+        }
         panelMore.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

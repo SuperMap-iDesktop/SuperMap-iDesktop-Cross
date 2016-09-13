@@ -592,7 +592,7 @@ public class CADStyleContainer extends JPanel {
         this.labelPointHeight.setEnabled(enabled);
         this.spinnerPointHeight.setEnabled(enabled);
         this.labelPointHeightUnity.setEnabled(enabled);
-        if (null == panelPointStyle.getInitializeGeoStyle().getSymbolMarker()) {
+        if (null != panelPointStyle.getInitializeGeoStyle() && null == panelPointStyle.getInitializeGeoStyle().getSymbolMarker()) {
             setSymstemPointEnable(false);
         } else {
             setSymstemPointEnable(true);
@@ -608,7 +608,7 @@ public class CADStyleContainer extends JPanel {
         this.checkboxBackOpaque.setEnabled(enabled);
         this.labelFillOpaque.setEnabled(enabled);
         this.checkboxFillGradient.setEnabled(enabled);
-        if (null != panelFillStyle.getInitializeGeoStyle().getSymbolFill()) {
+        if (null != panelFillStyle.getInitializeGeoStyle() && null != panelFillStyle.getInitializeGeoStyle().getSymbolFill()) {
             setSpinnerFillOpaqueEnable(true);
         } else {
             setSpinnerFillOpaqueEnable(false);

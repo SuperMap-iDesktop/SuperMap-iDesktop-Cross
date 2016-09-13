@@ -93,7 +93,7 @@ public class CADStyleEditor extends AbstractEditor {
 
     @Override
     public void deactivate(EditEnvironment environment) {
-        removeEvents(environment);
+//        removeEvents(environment);
     }
 
 
