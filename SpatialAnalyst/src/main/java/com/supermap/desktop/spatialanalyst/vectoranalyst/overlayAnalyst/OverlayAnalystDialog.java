@@ -421,7 +421,7 @@ public class OverlayAnalystDialog extends SmDialog {
             }
         });
         scrollPane.setViewportView(listOverlayAnalystType);
-        scrollPane.setMinimumSize(new Dimension(120, 300));
+        scrollPane.setPreferredSize(new Dimension(120, 320));
         JPanel panelBasicAnalyst = new JPanel();
         this.setLayout(new GridBagLayout());
         panelBasicAnalyst.setLayout(new GridBagLayout());

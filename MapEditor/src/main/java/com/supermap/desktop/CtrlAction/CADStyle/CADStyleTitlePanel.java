@@ -8,6 +8,7 @@ import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.*;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
+import com.supermap.desktop.enums.SymbolMarkerType;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -207,6 +208,11 @@ public class CADStyleTitlePanel extends JPanel {
             } else if (styleType == GEOPOINTTYPE) {
                 parent.setSymstemPointEnable(true);
             }
+        }
+        if (symbol instanceof SymbolMarker3D || (symbol instanceof SymbolMarker && SymbolMarkerType.getSymbolMarkerType(((SymbolMarker) symbol)).equals(SymbolMarkerType.Raster))) {
+            parent.setButtonPointColorEnable(false);
+        } else {
+            parent.setButtonPointColorEnable(true);
         }
         recordset.moveFirst();
         while (!recordset.isEOF()) {

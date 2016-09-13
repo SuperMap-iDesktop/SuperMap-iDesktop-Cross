@@ -5,6 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolMarkerSizeController;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolSpinnerUtilties;
+import com.supermap.desktop.enums.SymbolMarkerType;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -592,11 +593,27 @@ public class CADStyleContainer extends JPanel {
         this.labelPointHeight.setEnabled(enabled);
         this.spinnerPointHeight.setEnabled(enabled);
         this.labelPointHeightUnity.setEnabled(enabled);
-        if (null != panelPointStyle.getInitializeGeoStyle() && null == panelPointStyle.getInitializeGeoStyle().getSymbolMarker()) {
-            setSymstemPointEnable(false);
-        } else {
-            setSymstemPointEnable(true);
+        if (null != panelPointStyle.getInitializeGeoStyle()) {
+            int symbolID = panelPointStyle.getInitializeGeoStyle().getMarkerSymbolID();
+            Resources resources = Application.getActiveApplication().getWorkspace().getResources();
+            SymbolGroup group = resources.getMarkerLibrary().getRootGroup();
+            for (int i = 0; i < group.getCount(); i++) {
+                if (group.get(i).getID() == symbolID) {
+                    Symbol symbol = group.get(i);
+                    if (symbol instanceof SymbolMarker3D || SymbolMarkerType.getSymbolMarkerType(((SymbolMarker) symbol)).equals(SymbolMarkerType.Raster)) {
+                        setButtonPointColorEnable(false);
+                    } else {
+                        setButtonPointColorEnable(true);
+                    }
+                }
+            }
+            if (0 >= symbolID) {
+                setSymstemPointEnable(false);
+            } else {
+                setSymstemPointEnable(true);
+            }
         }
+
     }
 
     private void setPanelFillEnabled(boolean enabled) {
@@ -608,7 +625,7 @@ public class CADStyleContainer extends JPanel {
         this.checkboxBackOpaque.setEnabled(enabled);
         this.labelFillOpaque.setEnabled(enabled);
         this.checkboxFillGradient.setEnabled(enabled);
-        if (null != panelFillStyle.getInitializeGeoStyle() && null != panelFillStyle.getInitializeGeoStyle().getSymbolFill()) {
+        if (null != panelFillStyle.getInitializeGeoStyle() && 7 >= panelFillStyle.getInitializeGeoStyle().getFillSymbolID()) {
             setSpinnerFillOpaqueEnable(true);
         } else {
             setSpinnerFillOpaqueEnable(false);
@@ -916,12 +933,31 @@ public class CADStyleContainer extends JPanel {
 
     public void setSpinnerFillOpaqueEnable(boolean enable) {
         this.spinnerFillOpaque.setEnabled(enable);
+        if (false == enable) {
+            this.spinnerFillOpaque.setToolTipText(CommonProperties.getString(CommonProperties.UnSupport));
+        } else {
+            this.spinnerFillOpaque.setToolTipText("");
+        }
+    }
+
+    public void setButtonPointColorEnable(boolean enable) {
+        if (false == enable) {
+            buttonPointColor.setToolTipText(CoreProperties.getString("String_Label_ColorSettingTip"));
+        } else {
+            buttonPointColor.setToolTipText("");
+        }
+        buttonPointColor.setEnabled(enable);
     }
 
     public void setSymstemPointEnable(boolean enable) {
         this.checkboxWAndH.setEnabled(enable);
         this.spinnerPointRotation.setEnabled(enable);
         this.spinnerPointOpaque.setEnabled(enable);
+        if (false == enable) {
+            buttonPointColor.setToolTipText(ControlsProperties.getString("String_vectorSymbolCantSetOpaque"));
+        } else {
+            buttonPointColor.setToolTipText("");
+        }
     }
 
     private void initPanelPointComponents() {
