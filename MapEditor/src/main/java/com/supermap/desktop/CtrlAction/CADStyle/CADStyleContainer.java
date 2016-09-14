@@ -851,7 +851,7 @@ public class CADStyleContainer extends JPanel {
         if (null != recordset.getGeometry() && null != recordset.getGeometry().getStyle()) {
             this.buttonFillBackColor = new ColorSelectButton(recordset.getGeometry().getStyle().getFillBackColor());
             this.buttonFillForeColor = new ColorSelectButton(recordset.getGeometry().getStyle().getFillForeColor());
-            this.spinnerFillOpaque.setValue(100 - recordset.getGeometry().getStyle().getFillOpaqueRate());
+            this.spinnerFillOpaque.setValue(100.0 - recordset.getGeometry().getStyle().getFillOpaqueRate());
             this.checkboxBackOpaque.setSelected(!recordset.getGeometry().getStyle().getFillBackOpaque());
             if (recordset.getGeometry().getStyle().getFillGradientMode().equals(FillGradientMode.NONE)) {
                 this.checkboxFillGradient.setSelected(false);
@@ -970,7 +970,7 @@ public class CADStyleContainer extends JPanel {
         this.labelPointRotationUnity = new JLabel();
         this.labelPointOpaque = new JLabel();
         this.spinnerPointOpaque = new JSpinner();
-        this.spinnerPointOpaque.setModel(new SpinnerNumberModel(0, 0, 100, 1));
+        this.spinnerPointOpaque.setModel(new SpinnerNumberModel(0.0, 0.0, 100.0, 1.0));
         this.labelPointOpaqueUnity = new JLabel();
         this.labelPointWidth = new JLabel();
         this.spinnerPointWidth = new JSpinner();
@@ -985,7 +985,7 @@ public class CADStyleContainer extends JPanel {
         if (null != recordset.getGeometry() && null != recordset.getGeometry().getStyle()) {
             this.buttonPointColor = new ColorSelectButton(recordset.getGeometry().getStyle().getLineColor());
             this.spinnerPointRotation.setValue(recordset.getGeometry().getStyle().getMarkerAngle());
-            this.spinnerPointOpaque.setValue(100 - recordset.getGeometry().getStyle().getFillOpaqueRate());
+            this.spinnerPointOpaque.setValue(100.0 - recordset.getGeometry().getStyle().getFillOpaqueRate());
             this.spinnerPointWidth.setValue(recordset.getGeometry().getStyle().getMarkerSize().getWidth());
             this.spinnerPointHeight.setValue(recordset.getGeometry().getStyle().getMarkerSize().getHeight());
         }
