@@ -1,6 +1,5 @@
 package com.supermap.desktop.Action;
 
-import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
@@ -30,17 +29,14 @@ public class CtrlActionOverlayAnalyst extends CtrlAction {
     public boolean enable() {
         // 只有存在矢量数据集时才能进行叠加分析
         boolean enable = false;
+        // 只有只读和内存
         if (null != Application.getActiveApplication().getWorkspace().getDatasources() && Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
             Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
             for (int i = 0; i < datasources.getCount(); i++) {
                 Datasource tempDatasource = datasources.get(i);
-                if (!tempDatasource.isReadOnly() && null != tempDatasource.getDatasets() && tempDatasource.getDatasets().getCount() > 0) {
-                    for (int j = 0; j < tempDatasource.getDatasets().getCount(); j++) {
-                        if (tempDatasource.getDatasets().get(j) instanceof DatasetVector) {
-                            enable = true;
-                            break;
-                        }
-                    }
+                if (!tempDatasource.isReadOnly()) {
+                    enable = true;
+                    break;
                 }
             }
         }
