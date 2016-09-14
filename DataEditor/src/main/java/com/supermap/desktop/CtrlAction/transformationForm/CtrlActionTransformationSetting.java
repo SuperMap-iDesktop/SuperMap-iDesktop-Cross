@@ -7,8 +7,18 @@ import com.supermap.desktop.implement.CtrlAction;
 /**
  * @author XiaJT
  */
-public class CtrlActionTransformOutput extends CtrlAction {
-	public CtrlActionTransformOutput(IBaseItem caller, IForm formClass) {
+public class CtrlActionTransformationSetting extends CtrlAction {
+	public CtrlActionTransformationSetting(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
+	}
+
+	@Override
+	public void run() {
+		super.run();
+	}
+
+	@Override
+	public boolean enable() {
+		return super.enable();
 	}
 }
