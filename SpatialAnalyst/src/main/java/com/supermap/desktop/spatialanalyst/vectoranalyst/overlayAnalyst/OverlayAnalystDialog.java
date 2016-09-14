@@ -137,6 +137,23 @@ public class OverlayAnalystDialog extends SmDialog {
             }
         }
     };
+    private ItemListener overLayAnalystDatasetListener = new ItemListener() {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                if (null != comboboxOverlayAnalystDataset.getSelectedDataset() && comboboxSourceDataset.getSelectedDataset().equals(comboboxOverlayAnalystDataset.getSelectedDataset())) {
+                    Dataset selectedDataset = comboboxOverlayAnalystDataset.getSelectedDataset();
+                    resetTextFieldToleranceInfo(selectedDataset);
+                    if (null != comboboxSourceDatasource.getSelectedDatasource()) {
+                        // 重置源数据集选项
+                        resetItemToComboBox(comboboxSourceDataset, comboboxSourceDatasource.getSelectedDatasource(), REGIONTYPE);
+                    }
+                    // 删除叠加数据集中与源数据集选项中相同的数据集
+                    comboboxSourceDataset.removeDataset(selectedDataset);
+                }
+            }
+        }
+    };
 
     private void disposeInfo() {
         removeEvents();
@@ -266,17 +283,15 @@ public class OverlayAnalystDialog extends SmDialog {
         @Override
         public void itemStateChanged(ItemEvent e) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                if (null != comboboxSourceDataset.getSelectedDataset()) {
+                if (null != comboboxSourceDataset.getSelectedDataset() && comboboxSourceDataset.getSelectedDataset().equals(comboboxOverlayAnalystDataset.getSelectedDataset())) {
                     Dataset selectedDataset = comboboxSourceDataset.getSelectedDataset();
                     resetTextFieldToleranceInfo(selectedDataset);
                     if (null != comboboxOverlayAnalystDatasource.getSelectedDatasource()) {
                         // 重置叠加数据集选项
                         resetItemToComboBox(comboboxOverlayAnalystDataset, comboboxOverlayAnalystDatasource.getSelectedDatasource(), REGIONTYPE);
                     }
-                    if (selectedDataset.getType().equals(DatasetType.REGION)) {
-                        // 删除叠加数据集中与源数据集选项中相同的数据集
-                        comboboxOverlayAnalystDataset.removeDataset(selectedDataset);
-                    }
+                    // 删除叠加数据集中与源数据集选项中相同的数据集
+                    comboboxOverlayAnalystDataset.removeDataset(selectedDataset);
                 }
             }
         }
@@ -421,7 +436,7 @@ public class OverlayAnalystDialog extends SmDialog {
             }
         });
         scrollPane.setViewportView(listOverlayAnalystType);
-        scrollPane.setMinimumSize(new Dimension(120, 300));
+        scrollPane.setPreferredSize(new Dimension(120, 320));
         JPanel panelBasicAnalyst = new JPanel();
         this.setLayout(new GridBagLayout());
         panelBasicAnalyst.setLayout(new GridBagLayout());
@@ -471,6 +486,7 @@ public class OverlayAnalystDialog extends SmDialog {
         this.listOverlayAnalystType.addListSelectionListener(this.listSelectionListener);
         this.comboboxSourceDatasource.addItemListener(this.sourceDatasourceListener);
         this.comboboxSourceDataset.addItemListener(this.sourceDatasetItemListener);
+        this.comboboxOverlayAnalystDataset.addItemListener(this.overLayAnalystDatasetListener);
         this.comboboxOverlayAnalystDatasource.addItemListener(this.overlayAnalystDatasourceListener);
         this.comboboxTargetDatasource.addItemListener(this.targetDatasourceListener);
         this.textFieldTargetDataset.addCaretListener(this.textFieldTargetDatasetCaretListener);
@@ -590,7 +606,7 @@ public class OverlayAnalystDialog extends SmDialog {
         this.labelOverlayAnalystDataset = new JLabel();
         this.comboboxOverlayAnalystDataset = new DatasetComboBox(new Dataset[0]);
         this.comboboxTargetDatasource = new DatasourceComboBox();
-        removeReadOnlyDatasource();
+        removeReadOnlyAndMemoryDatasource();
         this.labelTargetDatasource = new JLabel();
         this.labelTargetDataset = new JLabel();
         this.textFieldTargetDataset = new JTextField();
@@ -616,7 +632,7 @@ public class OverlayAnalystDialog extends SmDialog {
         initTextFieldTargetDataset(clipResultDatasetName);
     }
 
-    private void removeReadOnlyDatasource() {
+    private void removeReadOnlyAndMemoryDatasource() {
         Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
         for (int i = 0; i < datasources.getCount(); i++) {
             if (datasources.get(i).isReadOnly()) {
