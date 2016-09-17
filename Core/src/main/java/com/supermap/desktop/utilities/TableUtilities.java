@@ -28,4 +28,16 @@ public class TableUtilities {
 			table.getCellEditor().stopCellEditing();
 		}
 	}
+
+	public static void setTableSelectedRows(JTable table, int... selectedRows) {
+		if (selectedRows.length == 0) {
+			table.clearSelection();
+		} else {
+			table.clearSelection();
+			for (int selectedRow : selectedRows) {
+				table.addRowSelectionInterval(selectedRow, selectedRow);
+			}
+		}
+
+	}
 }

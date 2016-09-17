@@ -1,7 +1,9 @@
-package com.supermap.desktop.CtrlAction.transformationForm;
+package com.supermap.desktop.CtrlAction.transformationForm.Dialogs;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
+import com.supermap.desktop.CtrlAction.transformationForm.beans.AddLayerItemBean;
+import com.supermap.desktop.CtrlAction.transformationForm.beans.FormTransformationSubFormType;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
@@ -19,6 +21,8 @@ import com.supermap.desktop.utilities.TableUtilities;
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -31,8 +35,6 @@ import java.util.ArrayList;
  * @author XiaJT
  */
 public class JDialogAddLayer extends SmDialog {
-//	private JLabel labelTargetMap = new JLabel();
-//	private JComboBox<FormTransformationSubFormType> comboBoxTargetMap = new JComboBox<>();
 
 	private JScrollPane scrollPane = new JScrollPane();
 	private JTable table = new JTable();
@@ -45,7 +47,6 @@ public class JDialogAddLayer extends SmDialog {
 	private SmButton buttonDown = new SmButton();
 	private SmButton buttonSelectedAll = new SmButton();
 	private SmButton buttonSelectedInvert = new SmButton();
-//	private SmButton buttonSetting = new SmButton();
 
 	private SmButton smButtonOk = new SmButton();
 	private SmButton smButtonCancle = new SmButton();
@@ -62,6 +63,7 @@ public class JDialogAddLayer extends SmDialog {
 	}
 
 	private void init() {
+		setTitle(DataEditorProperties.getString("String_addLayer"));
 		setSize(500, 380);
 		setLocationRelativeTo(null);
 		initComponent();
@@ -85,9 +87,9 @@ public class JDialogAddLayer extends SmDialog {
 		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
 		toolBar.add(buttonSelectedAll);
 		toolBar.add(buttonSelectedInvert);
-		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
-		toolBar.add(buttonUp);
-		toolBar.add(buttonDown);
+//		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
+//		toolBar.add(buttonUp);
+//		toolBar.add(buttonDown);
 	}
 
 	private void initTable() {
@@ -125,6 +127,12 @@ public class JDialogAddLayer extends SmDialog {
 				tableSelectionChanged();
 			}
 		});
+		table.getModel().addTableModelListener(new TableModelListener() {
+			@Override
+			public void tableChanged(TableModelEvent e) {
+				checkButtonOkState();
+			}
+		});
 		buttonDelete.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -149,13 +157,24 @@ public class JDialogAddLayer extends SmDialog {
 		buttonUp.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO: 2016/9/13
+				int[] selectedRows = table.getSelectedRows();
+				for (int i = 0; i < selectedRows.length; i++) {
+					int selectedRow = selectedRows[i];
+					tableModelAddLayer.moveRow(selectedRow, true);
+					selectedRows[i] = selectedRows[i] - 1;
+				}
+				TableUtilities.setTableSelectedRows(table, selectedRows);
 			}
 		});
 		buttonDown.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO: 2016/9/13
+				int[] selectedRows = table.getSelectedRows();
+				for (int i = selectedRows.length - 1; i >= 0; i--) {
+					tableModelAddLayer.moveRow(selectedRows[i], false);
+					selectedRows[i] = selectedRows[i] + 1;
+				}
+				TableUtilities.setTableSelectedRows(table, selectedRows);
 			}
 		});
 		scrollPane.addMouseListener(new MouseAdapter() {
@@ -181,10 +200,16 @@ public class JDialogAddLayer extends SmDialog {
 		});
 	}
 
+	private void checkButtonOkState() {
+		smButtonOk.setEnabled(table.getRowCount() > 0);
+		buttonSelectedAll.setEnabled(table.getRowCount() > 0);
+		buttonSelectedInvert.setEnabled(table.getRowCount() > 0);
+		checkButtonStates();
+	}
+
 	private void buttonOkClicked() {
 		dialogResult = DialogResult.OK;
 		dispose();
-		// TODO: 2016/9/13
 	}
 
 	public ArrayList<AddLayerItemBean> getAddItems() {
@@ -192,7 +217,14 @@ public class JDialogAddLayer extends SmDialog {
 	}
 
 	private void tableSelectionChanged() {
+		checkButtonStates();
+	}
 
+	private void checkButtonStates() {
+		int selectedRowCount = table.getSelectedRowCount();
+		buttonDelete.setEnabled(selectedRowCount > 0);
+		buttonUp.setEnabled(table.getSelectedRow() != 0 && table.getSelectedRow() != -1);
+		buttonDown.setEnabled(table.getSelectedRow() != -1 && table.getSelectedRows()[selectedRowCount - 1] != table.getRowCount() - 1);
 	}
 
 	private void initLayout() {
@@ -227,6 +259,8 @@ public class JDialogAddLayer extends SmDialog {
 		this.buttonUp.setToolTipText(CommonProperties.getString(CommonProperties.up));
 		this.buttonDown.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/moveDown.png"));
 		this.buttonDown.setToolTipText(CommonProperties.getString(CommonProperties.down));
+
+		checkButtonOkState();
 	}
 
 	private void addButtonClicked() {
@@ -337,6 +371,18 @@ public class JDialogAddLayer extends SmDialog {
 
 		protected AddLayerItemBean getRowData(Object object) {
 			return new AddLayerItemBean(object);
+		}
+
+		public void moveRow(int row, boolean isUp) {
+			if (isUp) {
+				AddLayerItemBean itemBean = datas.get(row - 1);
+				datas.set(row - 1, datas.get(row));
+				datas.set(row, itemBean);
+			} else {
+				AddLayerItemBean itemBean = datas.get(row + 1);
+				datas.set(row + 1, datas.get(row));
+				datas.set(row, itemBean);
+			}
 		}
 	}
 

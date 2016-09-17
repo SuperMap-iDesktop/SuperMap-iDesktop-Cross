@@ -1,4 +1,4 @@
-package com.supermap.desktop.CtrlAction.transformationForm;
+package com.supermap.desktop.CtrlAction.transformationForm.CtrlAction;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -10,9 +10,8 @@ import com.supermap.ui.Action;
 /**
  * @author XiaJT
  */
-public class CtrlActionTransformationZoomIn extends CtrlAction {
-
-	public CtrlActionTransformationZoomIn(IBaseItem caller, IForm formClass) {
+public class CtrlActionTransformationZoomOut extends CtrlAction {
+	public CtrlActionTransformationZoomOut(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 
@@ -20,7 +19,7 @@ public class CtrlActionTransformationZoomIn extends CtrlAction {
 	public void run() {
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
 		if (activeForm != null && activeForm instanceof IFormTransformation) {
-			((IFormTransformation) activeForm).setAction(Action.ZOOMIN);
+			((IFormTransformation) activeForm).setAction(Action.ZOOMOUT);
 		}
 	}
 

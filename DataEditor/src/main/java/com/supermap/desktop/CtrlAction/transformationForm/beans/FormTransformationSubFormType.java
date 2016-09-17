@@ -1,4 +1,4 @@
-package com.supermap.desktop.CtrlAction.transformationForm;
+package com.supermap.desktop.CtrlAction.transformationForm.beans;
 
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 

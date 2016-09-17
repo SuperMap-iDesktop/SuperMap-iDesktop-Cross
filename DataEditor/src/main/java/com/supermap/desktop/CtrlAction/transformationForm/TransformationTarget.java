@@ -2,6 +2,7 @@ package com.supermap.desktop.CtrlAction.transformationForm;
 
 import com.supermap.data.Dataset;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationAddObjectBean;
 import com.supermap.desktop.FormTransformation;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;

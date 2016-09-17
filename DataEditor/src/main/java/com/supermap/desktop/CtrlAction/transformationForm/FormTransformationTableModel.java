@@ -1,6 +1,8 @@
 package com.supermap.desktop.CtrlAction.transformationForm;
 
 import com.supermap.data.Point2D;
+import com.supermap.desktop.CtrlAction.transformationForm.beans.FormTransformationSubFormType;
+import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationTableDataBean;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 

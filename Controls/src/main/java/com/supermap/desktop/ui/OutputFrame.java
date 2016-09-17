@@ -3,8 +3,11 @@ package com.supermap.desktop.ui;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IContextMenuManager;
+import com.supermap.desktop.Interface.IDockbar;
+import com.supermap.desktop.Interface.IFormMain;
 import com.supermap.desktop.Interface.IOutput;
 import com.supermap.desktop.enums.InfoType;
+import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.utilities.LogUtilities;
 
 import javax.swing.*;
@@ -20,6 +23,7 @@ public class OutputFrame extends JScrollPane implements IOutput {
 	private static final long serialVersionUID = 1L;
 	private transient boolean isShowTime = true;
 	private JTextArea textArea = new JTextArea();
+	private SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
 
 	public JTextArea getTextArea() {
 		return this.textArea;
@@ -194,11 +198,18 @@ public class OutputFrame extends JScrollPane implements IOutput {
 		if (isOutputLog) {
 			LogUtilities.outPut(message);
 		}
+		if (!isShowing()) {
+			IFormMain formMain = Application.getActiveApplication().getMainFrame();
+			IDockbar outputDockBar = ((DockbarManager) formMain.getDockbarManager())
+					.getOutputFrame();
+			if (outputDockBar != null) {
+				outputDockBar.setVisible(true);
+			}
+		}
 		String messageTemp = message;
 		try {
 			if (isShowTime) {
-				SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
-				messageTemp = "[" + df.format(new Date()) + "] " + messageTemp;
+				messageTemp = "[" + this.df.format(new Date()) + "] " + messageTemp;
 			}
 
 			if (this.textArea.getText().length() > 0) {
