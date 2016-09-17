@@ -64,8 +64,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	private static final int STATE_BAR_CENTER_Y = 5;
 	private static final int STATE_BAR_SCALE = 7;
 
-	private Color unSelectedColor = Color.blue;
-	private Color selectedColor = Color.red;
+	private Color selectedColor = Color.blue;
+	private Color unSelectedColor = Color.red;
 
 	private static final int MARKETWIDTH = 128;
 
