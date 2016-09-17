@@ -2,17 +2,8 @@ package com.supermap.desktop;
 
 import com.supermap.data.AltitudeMode;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.utilities.AltitudeModeUtilities;
-import com.supermap.desktop.utilities.DoubleUtilities;
-import com.supermap.desktop.utilities.FileUtilities;
-import com.supermap.desktop.utilities.PathUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.desktop.utilities.XmlUtilities;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import com.supermap.desktop.utilities.*;
+import org.w3c.dom.*;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -752,7 +743,7 @@ public class GlobalParameters {
 //		initIsSaveSymbol();
 //		initSymbolSaveTime();
 //		initWorkspaceAutoSave();
-//		initWorkspaceAutoSaveTime();
+		initWorkspaceAutoSaveTime();
 	}
 
 
@@ -958,22 +949,22 @@ public class GlobalParameters {
 	//endregion
 
 	//region 自动保存工作空间时间
-//	private static int workspaceAutoSaveTime = 10;
-//
-//	private static void initWorkspaceAutoSaveTime() {
-//		String value = getValue("_startup_workspace", "workspaceAutoSaveTime");
-//		if (value != null) {
-//			setWorkspaceAutoSaveTime(Integer.valueOf(value));
-//		}
-//	}
-//
-//	public static int getWorkspaceAutoSaveTime() {
-//		return workspaceAutoSaveTime;
-//	}
-//
-//	public static void setWorkspaceAutoSaveTime(int workspaceAutoSaveTime) {
-//		GlobalParameters.workspaceAutoSaveTime = workspaceAutoSaveTime;
-//	}
+	private static int workspaceAutoSaveTime = 10;
+
+	private static void initWorkspaceAutoSaveTime() {
+		String value = getValue("_startup_workspace", "workspaceAutoSaveTime");
+		if (value != null) {
+			setWorkspaceAutoSaveTime(Integer.valueOf(value));
+		}
+	}
+
+	public static int getWorkspaceAutoSaveTime() {
+		return workspaceAutoSaveTime;
+	}
+
+	public static void setWorkspaceAutoSaveTime(int workspaceAutoSaveTime) {
+		GlobalParameters.workspaceAutoSaveTime = workspaceAutoSaveTime;
+	}
 	//endregion
 	//endregion
 
@@ -1059,7 +1050,7 @@ public class GlobalParameters {
 //			workspace.setAttribute("symbolRecovery", String.valueOf(isSaveSymbol));
 //			workspace.setAttribute("symbolRecoveryTime", String.valueOf(symbolSaveTime));
 //			workspace.setAttribute("workspaceAutoSave", String.valueOf(isWorkspaceAutoSave));
-//			workspace.setAttribute("workspaceAutoSaveTime", String.valueOf(workspaceAutoSaveTime));
+			workspace.setAttribute("workspaceAutoSaveTime", String.valueOf(workspaceAutoSaveTime));
 
 			startup.appendChild(workspace);
 

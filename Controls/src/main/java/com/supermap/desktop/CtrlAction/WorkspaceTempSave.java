@@ -1,26 +1,9 @@
 package com.supermap.desktop.CtrlAction;
 
-import com.supermap.data.Datasources;
-import com.supermap.data.EngineType;
-import com.supermap.data.Workspace;
-import com.supermap.data.WorkspaceClosingEvent;
-import com.supermap.data.WorkspaceClosingListener;
-import com.supermap.data.WorkspaceConnectionInfo;
-import com.supermap.data.WorkspaceOpenedEvent;
-import com.supermap.data.WorkspaceOpenedListener;
-import com.supermap.data.WorkspaceSavedAsEvent;
-import com.supermap.data.WorkspaceSavedAsListener;
-import com.supermap.data.WorkspaceSavedEvent;
-import com.supermap.data.WorkspaceSavedListener;
-import com.supermap.data.WorkspaceType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.utilities.DatasourceUtilities;
-import com.supermap.desktop.utilities.FileUtilities;
-import com.supermap.desktop.utilities.LogUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.desktop.utilities.WorkspaceConnectionInfoUtilities;
-import com.supermap.desktop.utilities.WorkspaceUtilities;
-import com.supermap.desktop.utilities.XmlUtilities;
+import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.utilities.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import sun.misc.BASE64Encoder;
@@ -43,7 +26,6 @@ public class WorkspaceTempSave {
 	private static WorkspaceTempSave workspaceTempSave = null;
 	private Timer timer;
 	private TimerTask task;
-	private final int period = 600000; // 10 min
 	private String defaultName = "tempWorkspace";
 	private File autoSaveWorkspaceConfigFile;
 	private FileLock fileLock;
@@ -125,7 +107,7 @@ public class WorkspaceTempSave {
 		}
 		timer = new Timer("WorkspaceTempSave", true);
 		addListeners();
-		timer.schedule(task, 60000, period);
+		timer.schedule(task, 60000, GlobalParameters.getWorkspaceAutoSaveTime() * 60000);
 	}
 
 	private void addListeners() {
@@ -241,15 +223,19 @@ public class WorkspaceTempSave {
 		}
 		if (isIgnoreModified) {
 			// 无视改动时要更改保存时间
-			Class<TimerTask> clazz = TimerTask.class;
-			try {
-				Field field = clazz.getDeclaredField("nextExecutionTime");
-				field.setAccessible(true);
-				// 修改之后刷新时间
-				field.setLong(task, System.currentTimeMillis() + period);
-			} catch (Exception e) {
-				Application.getActiveApplication().getOutput().output(e);
-			}
+			resetNextSaveTime();
+		}
+	}
+
+	private void resetNextSaveTime() {
+		Class<TimerTask> clazz = TimerTask.class;
+		try {
+			Field field = clazz.getDeclaredField("nextExecutionTime");
+			field.setAccessible(true);
+			// 修改之后刷新时间
+			field.setLong(task, System.currentTimeMillis() + GlobalParameters.getWorkspaceAutoSaveTime() * 600000);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
 		}
 	}
 
@@ -391,5 +377,20 @@ public class WorkspaceTempSave {
 			workspaceTempSave = new WorkspaceTempSave();
 		}
 		return workspaceTempSave;
+	}
+
+	public void setAutoSaveTime(int oldValue, int saveTime) {
+		if (task == null) {
+			return;
+		}
+		Class<TimerTask> clazz = TimerTask.class;
+		try {
+			Field period = clazz.getDeclaredField("period");
+			period.setAccessible(true);
+			period.set(task, saveTime * 60000);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		resetNextSaveTime();
 	}
 }
