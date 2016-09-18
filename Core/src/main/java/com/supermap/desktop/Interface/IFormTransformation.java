@@ -6,6 +6,7 @@ import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,4 +30,6 @@ public interface IFormTransformation extends IForm {
 	void deleteTableSelectedRow();
 
 	void setAction(Action action);
+
+	void addTargetObjects(ArrayList<Object> targetObject);
 }

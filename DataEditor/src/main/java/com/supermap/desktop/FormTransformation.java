@@ -1,29 +1,12 @@
 package com.supermap.desktop;
 
-import com.supermap.data.CoordSysTranslator;
-import com.supermap.data.Dataset;
-import com.supermap.data.Datasource;
-import com.supermap.data.GeoCompound;
-import com.supermap.data.GeoLine;
-import com.supermap.data.GeoPoint;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.GeoText;
-import com.supermap.data.Geometry;
-import com.supermap.data.Point2D;
-import com.supermap.data.Point2Ds;
-import com.supermap.data.PrjCoordSysType;
-import com.supermap.data.Rectangle2D;
-import com.supermap.data.Size2D;
-import com.supermap.data.SymbolMarker;
-import com.supermap.data.TextAlignment;
-import com.supermap.data.TextPart;
-import com.supermap.data.TextStyle;
-import com.supermap.desktop.CtrlAction.transformationForm.FormTransformationSubFormType;
+import com.supermap.data.*;
 import com.supermap.desktop.CtrlAction.transformationForm.FormTransformationTableModel;
-import com.supermap.desktop.CtrlAction.transformationForm.TransformationAddObjectBean;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationBase;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationReference;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationTarget;
+import com.supermap.desktop.CtrlAction.transformationForm.beans.FormTransformationSubFormType;
+import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationAddObjectBean;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTransformation;
@@ -43,12 +26,7 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
-import com.supermap.ui.ActionChangedEvent;
-import com.supermap.ui.ActionChangedListener;
-import com.supermap.ui.MapControl;
-import com.supermap.ui.TrackMode;
-import com.supermap.ui.TrackedEvent;
-import com.supermap.ui.TrackedListener;
+import com.supermap.ui.*;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -58,14 +36,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseWheelEvent;
+import java.awt.event.*;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -93,8 +64,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	private static final int STATE_BAR_CENTER_Y = 5;
 	private static final int STATE_BAR_SCALE = 7;
 
-	private Color unSelectedColor = Color.blue;
-	private Color selectedColor = Color.red;
+	private Color selectedColor = Color.blue;
+	private Color unSelectedColor = Color.red;
 
 	private static final int MARKETWIDTH = 128;
 
@@ -663,7 +634,9 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		if (getWidth() != 0) {
 			transformationTarget.addDatas(datas);
 		} else {
-			transformationObjects = new ArrayList<>();
+			if (transformationObjects == null) {
+				transformationObjects = new ArrayList<>();
+			}
 			transformationObjects.add(transformationAddObjectBean);
 		}
 	}
@@ -676,7 +649,9 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		if (getWidth() != 0) {
 			transformationTarget.addDatas(datas);
 		} else {
-			transformationObjects = new ArrayList<>();
+			if (transformationObjects == null) {
+				transformationObjects = new ArrayList<>();
+			}
 			transformationObjects.add(transformationAddObjectBean);
 		}
 	}
@@ -690,6 +665,19 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		} else {
 			transformationReference.addDatas(listObjects);
 		}
+	}
+
+	@Override
+	public void addTargetObjects(ArrayList<Object> targetObject) {
+		for (int i = 0; i < targetObject.size(); i++) {
+			Object item = targetObject.get(i);
+			if (item instanceof Map) {
+				targetObject.set(i, new TransformationAddObjectBean(((Map) item)));
+			} else if (item instanceof Dataset) {
+				targetObject.set(i, new TransformationAddObjectBean(((Dataset) item), null, null));
+			}
+		}
+		transformationTarget.addDatas(targetObject);
 	}
 
 	@Override

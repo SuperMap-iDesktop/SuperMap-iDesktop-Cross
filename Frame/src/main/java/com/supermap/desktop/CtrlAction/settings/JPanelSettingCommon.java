@@ -4,6 +4,7 @@ import com.supermap.desktop.CtrlAction.WorkspaceTempSave;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.frame.FrameProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
@@ -52,9 +53,9 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 //	 */
 //	private JCheckBox checkBoxAutoSaveWorkspace;
 
-//	private JLabel labelAutoSaveTime;
-//	private SmTextFieldLegit smTextFieldLegitAutoSaveTime;
-//	private JLabel labelAutoSaveTimeUnit;
+	private JLabel labelAutoSaveTime;
+	private SmTextFieldLegit smTextFieldLegitAutoSaveTime;
+	private JLabel labelAutoSaveTimeUnit;
 
 	/**
 	 * 工作空间崩溃恢复
@@ -85,13 +86,13 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		smTextFieldMapDelay.setPreferredSize(size);
 		smTextFieldMapDelay.setMaximumSize(size);
 //		checkBoxAutoSaveWorkspace = new JCheckBox();
-//		labelAutoSaveTime = new JLabel();
-//		smTextFieldLegitAutoSaveTime = new SmTextFieldLegit();
-//		labelAutoSaveTimeUnit = new JLabel();
+		labelAutoSaveTime = new JLabel();
+		smTextFieldLegitAutoSaveTime = new SmTextFieldLegit();
+		labelAutoSaveTimeUnit = new JLabel();
 
-//		smTextFieldLegitAutoSaveTime.setPreferredSize(size);
-//		smTextFieldLegitAutoSaveTime.setMinimumSize(size);
-//		smTextFieldLegitAutoSaveTime.setMaximumSize(size);
+		smTextFieldLegitAutoSaveTime.setPreferredSize(size);
+		smTextFieldLegitAutoSaveTime.setMinimumSize(size);
+		smTextFieldLegitAutoSaveTime.setMaximumSize(size);
 
 
 //		panelWorkspaceRecovery = new JPanel();
@@ -137,14 +138,16 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		this.add(checkBoxIsAutoCloseEmptyMap, new GridBagConstraintsHelper(0, 4, 3, 1).setWeight(1, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 		this.add(checkBoxWorkspaceRecovery, new GridBagConstraintsHelper(0, 5, 3, 1).setWeight(1, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 
-		this.add(labelMapRefreshDelayWhileResize, new GridBagConstraintsHelper(0, 6, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
-		this.add(smTextFieldMapDelay, new GridBagConstraintsHelper(1, 6, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
-		this.add(labelMapDelayUnit, new GridBagConstraintsHelper(2, 6, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+
 //		this.add(checkBoxAutoSaveWorkspace, new GridBagConstraintsHelper(0, 6, 3, 1).setWeight(1, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 //
-//		this.add(labelAutoSaveTime, new GridBagConstraintsHelper(0, 7, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
-//		this.add(smTextFieldLegitAutoSaveTime, new GridBagConstraintsHelper(1, 7, 1, 1).setWeight(0, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
-//		this.add(labelAutoSaveTimeUnit, new GridBagConstraintsHelper(2, 7, 1, 1).setWeight(1, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(labelAutoSaveTime, new GridBagConstraintsHelper(0, 7, 1, 1).setWeight(0, 0).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(smTextFieldLegitAutoSaveTime, new GridBagConstraintsHelper(1, 7, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(labelAutoSaveTimeUnit, new GridBagConstraintsHelper(2, 7, 1, 1).setWeight(1, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+
+		this.add(labelMapRefreshDelayWhileResize, new GridBagConstraintsHelper(0, 8, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(smTextFieldMapDelay, new GridBagConstraintsHelper(1, 8, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(labelMapDelayUnit, new GridBagConstraintsHelper(2, 8, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 
 		this.add(new JPanel(), new GridBagConstraintsHelper(0, 9, 3, 1).setWeight(1, 1).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 	}
@@ -181,33 +184,33 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 				return backUpValue;
 			}
 		});
-//		smTextFieldLegitAutoSaveTime.setSmTextFieldLegit(new ISmTextFieldLegit() {
-//			@Override
-//			public boolean isTextFieldValueLegit(String textFieldValue) {
-//				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
-//					return false;
-//				}
-//				try {
-//					Integer integer = Integer.valueOf(textFieldValue);
-//					if (integer <= 0) {
-//						return false;
-//					}
-//					if (integer == GlobalParameters.getWorkspaceAutoSaveTime()) {
-//						changedValues.remove(smTextFieldLegitAutoSaveTime);
-//					} else {
-//						changedValues.add(smTextFieldLegitAutoSaveTime);
-//					}
-//				} catch (Exception e) {
-//					return false;
-//				}
-//				return true;
-//			}
-//
-//			@Override
-//			public String getLegitValue(String currentValue, String backUpValue) {
-//				return backUpValue;
-//			}
-//		});
+		smTextFieldLegitAutoSaveTime.setSmTextFieldLegit(new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
+					return false;
+				}
+				try {
+					Integer integer = Integer.valueOf(textFieldValue);
+					if (integer <= 0) {
+						return false;
+					}
+					if (integer == GlobalParameters.getWorkspaceAutoSaveTime()) {
+						changedValues.remove(smTextFieldLegitAutoSaveTime);
+					} else {
+						changedValues.add(smTextFieldLegitAutoSaveTime);
+					}
+				} catch (Exception e) {
+					return false;
+				}
+				return true;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		});
 //		smTextFieldLegitSymbolSaveTime.setSmTextFieldLegit(new ISmTextFieldLegit() {
 //			@Override
 //			public boolean isTextFieldValueLegit(String textFieldValue) {
@@ -250,9 +253,8 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 				} else {
 					changedValues.add(checkBoxWorkspaceRecovery);
 				}
-//				boolean selected = checkBoxWorkspaceRecovery.isSelected();
-//				checkBoxSymbolLibraryRecovery.setEnabled(selected);
-//				smTextFieldLegitSymbolSaveTime.setEditable(selected);
+				boolean selected = checkBoxWorkspaceRecovery.isSelected();
+				smTextFieldLegitAutoSaveTime.setEditable(selected);
 
 			}
 		});
@@ -269,8 +271,8 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		labelMapRefreshDelayWhileResize.setText(FrameProperties.getString("String_MapRefreshDelay"));
 		labelMapDelayUnit.setText(CommonProperties.getString("String_ms"));
 //		checkBoxAutoSaveWorkspace.setText(FrameProperties.getString("String_AutoSaveWorkspace"));
-//		labelAutoSaveTime.setText(FrameProperties.getString("String_AutoSaveWorkspaceTime"));
-//		labelAutoSaveTimeUnit.setText(CoreProperties.getString("String_Time_Minutes"));
+		labelAutoSaveTime.setText(FrameProperties.getString("String_AutoSaveWorkspaceTime"));
+		labelAutoSaveTimeUnit.setText(CoreProperties.getString("String_Time_Minutes"));
 //		checkBoxSymbolLibraryRecovery.setText(FrameProperties.getString("String_checkBoxSymbolLibraryRecovery"));
 //		labelSymbolSaveTimeUnit.setText(CoreProperties.getString("String_Time_Minutes"));
 	}
@@ -287,7 +289,8 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		checkBoxWorkspaceRecovery.setSelected(GlobalParameters.isWorkspaceRecovery());
 		smTextFieldMapDelay.setText(String.valueOf(GlobalParameters.getMapRefreshDelayWhileResize()));
 //		checkBoxAutoSaveWorkspace.setSelected(GlobalParameters.isWorkspaceAutoSave());
-//		smTextFieldLegitAutoSaveTime.setText(String.valueOf(GlobalParameters.getWorkspaceAutoSaveTime()));
+		smTextFieldLegitAutoSaveTime.setText(String.valueOf(GlobalParameters.getWorkspaceAutoSaveTime()));
+		smTextFieldLegitAutoSaveTime.setEditable(GlobalParameters.isWorkspaceRecovery());
 //		checkBoxSymbolLibraryRecovery.setEnabled(checkBoxWorkspaceRecovery.isSelected());
 //		smTextFieldLegitSymbolSaveTime.setEnabled(checkBoxWorkspaceRecovery.isSelected());
 	}
@@ -328,6 +331,11 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 				}
 			} else if (component == smTextFieldMapDelay) {
 				GlobalParameters.setMapRefreshDelayWhileResize(Integer.valueOf(smTextFieldMapDelay.getBackUpValue()));
+			} else if (component == smTextFieldLegitAutoSaveTime) {
+				int oldValue = GlobalParameters.getWorkspaceAutoSaveTime();
+				int saveTime = Integer.valueOf(smTextFieldLegitAutoSaveTime.getBackUpValue());
+				GlobalParameters.setWorkspaceAutoSaveTime(saveTime);
+				WorkspaceTempSave.getInstance().setAutoSaveTime(oldValue, saveTime);
 			}
 //			else if (component == checkBoxSymbolLibraryRecovery) {
 //				GlobalParameters.setIsSaveSymbol(checkBoxSymbolLibraryRecovery.isSelected());

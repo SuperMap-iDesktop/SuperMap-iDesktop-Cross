@@ -1,4 +1,4 @@
-package com.supermap.desktop.CtrlAction.transformationForm;
+package com.supermap.desktop.CtrlAction.transformationForm.beans;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;

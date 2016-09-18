@@ -1,9 +1,10 @@
-package com.supermap.desktop.CtrlAction.transformationForm;
+package com.supermap.desktop.CtrlAction.transformationForm.CtrlAction;
 
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.CtrlAction.transformationForm.Dialogs.JDialogNewTransformationForm;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormTransformation;

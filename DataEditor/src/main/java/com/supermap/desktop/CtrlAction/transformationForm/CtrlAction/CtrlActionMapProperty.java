@@ -1,4 +1,4 @@
-package com.supermap.desktop.CtrlAction.transformationForm;
+package com.supermap.desktop.CtrlAction.transformationForm.CtrlAction;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;

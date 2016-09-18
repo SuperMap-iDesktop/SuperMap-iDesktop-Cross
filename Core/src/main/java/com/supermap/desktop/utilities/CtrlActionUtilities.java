@@ -66,6 +66,7 @@ public class CtrlActionUtilities {
 				ctrlAction = (ICtrlAction) constructor.newInstance(params);
 			}
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			Application.getActiveApplication().getOutput().output(ex);
 			Application.getActiveApplication().getOutput().output(xmlCommand.getPluginInfo().getBundleName() + "&" + xmlCommand.getCtrlActionClass());
 		}
