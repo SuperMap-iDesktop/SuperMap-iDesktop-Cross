@@ -7,6 +7,8 @@ import com.supermap.desktop.FormTransformation;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
@@ -80,4 +82,19 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 	}
 
 
+	public Object[] getTransformationObjects() {
+		ArrayList<Layer> layers = MapUtilities.getLayers(mapControl.getMap());
+		ArrayList<TransformationAddObjectBean> result = new ArrayList<>();
+		for (TransformationAddObjectBean transformationBeen : transformationBeens) {
+			if (transformationBeen.getDataset() != null) {
+				for (Layer layer : layers) {
+					if (layer.getDataset() == transformationBeen.getDataset()) {
+						result.add(transformationBeen);
+						break;
+					}
+				}
+			}
+		}
+		return result.toArray(new Object[result.size()]);
+	}
 }

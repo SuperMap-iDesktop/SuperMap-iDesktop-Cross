@@ -242,4 +242,19 @@ public class FormTransformationTableModel extends DefaultTableModel {
 	public Point2D getReferPoint(int row) {
 		return dataBeanList.get(row).getPointRefer();
 	}
+
+	public void setResidualX(int i, double value) {
+		dataBeanList.get(i).setResidualX(value);
+		fireTableCellUpdated(i, COLUMN_ResidualX);
+	}
+
+	public void setResidualY(int i, double value) {
+		dataBeanList.get(i).setResidualY(value);
+		fireTableCellUpdated(i, COLUMN_ResidualY);
+	}
+
+	public void setResidualTotal(int i, double value) {
+		dataBeanList.get(i).setResidualTotal(value);
+		fireTableCellUpdated(i, COLUMN_ResidualTotal);
+	}
 }

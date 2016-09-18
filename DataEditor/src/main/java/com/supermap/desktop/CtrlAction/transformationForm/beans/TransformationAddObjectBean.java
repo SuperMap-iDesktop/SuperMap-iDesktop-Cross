@@ -1,7 +1,10 @@
 package com.supermap.desktop.CtrlAction.transformationForm.beans;
 
 import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetImage;
 import com.supermap.data.Datasource;
+import com.supermap.data.TransformationResampleMode;
 import com.supermap.mapping.Map;
 
 /**
@@ -12,6 +15,10 @@ public class TransformationAddObjectBean {
 	private Map map;
 	private Datasource resultDatasource;
 	private String resultDatasetName;
+	// 是否重采样
+	private boolean isResample;
+	private TransformationResampleMode transformationResampleMode = TransformationResampleMode.BILINEAR;
+	private double cellSize;
 
 	public TransformationAddObjectBean() {
 	}
@@ -24,6 +31,11 @@ public class TransformationAddObjectBean {
 		this.dataset = dataset;
 		this.resultDatasource = resultDatasource;
 		this.resultDatasetName = resultDatasetName;
+		if (dataset instanceof DatasetImage) {
+			cellSize = dataset.getBounds().getWidth() / ((DatasetImage) dataset).getWidth();
+		} else if (dataset instanceof DatasetGrid) {
+			cellSize = dataset.getBounds().getWidth() / ((DatasetGrid) dataset).getWidth();
+		}
 	}
 
 

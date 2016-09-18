@@ -1,6 +1,26 @@
 package com.supermap.desktop;
 
-import com.supermap.data.*;
+import com.supermap.data.CoordSysTranslator;
+import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
+import com.supermap.data.GeoCompound;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoPoint;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoText;
+import com.supermap.data.Geometry;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.PrjCoordSysType;
+import com.supermap.data.Rectangle2D;
+import com.supermap.data.Size2D;
+import com.supermap.data.SymbolMarker;
+import com.supermap.data.TextAlignment;
+import com.supermap.data.TextPart;
+import com.supermap.data.TextStyle;
+import com.supermap.data.Transformation;
+import com.supermap.data.TransformationError;
+import com.supermap.data.TransformationMode;
 import com.supermap.desktop.CtrlAction.transformationForm.FormTransformationTableModel;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationBase;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationReference;
@@ -10,6 +30,7 @@ import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationAd
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTransformation;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveLayersChangedListener;
@@ -26,7 +47,12 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
-import com.supermap.ui.*;
+import com.supermap.ui.ActionChangedEvent;
+import com.supermap.ui.ActionChangedListener;
+import com.supermap.ui.MapControl;
+import com.supermap.ui.TrackMode;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackedListener;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -36,7 +62,14 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseWheelEvent;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -63,9 +96,14 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	private static final int STATE_BAR_CENTER_X = 4;
 	private static final int STATE_BAR_CENTER_Y = 5;
 	private static final int STATE_BAR_SCALE = 7;
+	private static final int STATE_BAR_Error = 9;
 
 	private Color selectedColor = Color.blue;
 	private Color unSelectedColor = Color.red;
+	private Color UnUseColor = Color.gray;
+
+	private TransformationMode transformationMode = TransformationMode.LINEAR;
+	private Transformation transformation;
 
 	private static final int MARKETWIDTH = 128;
 
@@ -153,9 +191,16 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 				MapControl source = (MapControl) trackedEvent.getSource();
 				TransformationBase form = getFormByMapControl(source);
 				addPoint(form, trackedEvent.getGeometry());
+				pointValueChanged();
 			}
 		}
 	};
+
+	private void pointValueChanged() {
+		changeTransformation(null);
+		ToolbarUIUtilities.updataToolbarsState();
+	}
+
 	private ActionChangedListener addPointActionChangeListener = new ActionChangedListener() {
 		@Override
 		public void actionChanged(ActionChangedEvent actionChangedEvent) {
@@ -195,21 +240,6 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		tablePoints.getColumnModel().getColumn(1).setMaxWidth(40);
 		((DefaultTableCellRenderer) tablePoints.getDefaultRenderer(Integer.class)).setHorizontalAlignment(SwingConstants.CENTER);
 		((JTextField) ((DefaultCellEditor) tablePoints.getDefaultEditor(Double.class)).getComponent()).setHorizontalAlignment(SwingConstants.CENTER);
-//		tablePoints.setDefaultRenderer(Integer.class, new TableCellRenderer() {
-//			@Override
-//			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-//				JLabel label = new JLabel();
-//				label.setHorizontalAlignment(SwingConstants.CENTER);
-//				if (value != null) {
-//					label.setText(String.valueOf(value));
-//				}
-//				if (isSelected) {
-//					label.setOpaque(true);
-//					label.setBackground(table.getSelectionBackground());
-//				}
-//				return label;
-//			}
-//		});
 		tablePoints.setDefaultRenderer(Double.class, new TableCellRenderer() {
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -279,6 +309,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 						initCenter(getMapControl());
 						initScale(getMapControl());
 						initPrjCoorSys(getMapControl());
+						startAddPoint();
 					}
 				});
 				splitPaneMain.removeComponentListener(this);
@@ -289,12 +320,12 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		formTransformationTableModel.addTableModelListener(new TableModelListener() {
 			@Override
 			public void tableChanged(TableModelEvent e) {
-				final int firstRow = e.getFirstRow();
-				final int lastRow = e.getLastRow();
+				int lastRow = e.getLastRow();
 				if (e.getType() == TableModelEvent.DELETE) {
 					removeTrackingObject(lastRow, transformationTarget.getMapControl().getMap());
 					removeTrackingObject(lastRow, transformationReference.getMapControl().getMap());
 				}
+				pointValueChanged();
 			}
 		});
 		tablePoints.addMouseListener(new MouseAdapter() {
@@ -920,6 +951,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		((JTextField) list.get(4)).setEditable(false);
 		((JTextField) list.get(5)).setEditable(false);
 		((JTextField) list.get(7)).setEditable(false);
+		((JTextField) list.get(9)).setEditable(false);
 		statusbar.removeAll();
 		statusbar.setLayout(new GridBagLayout());
 		// label鼠标位置:
@@ -956,6 +988,13 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		list.get(7).setMinimumSize(preferredSize);
 		statusbar.add(list.get(7), new GridBagConstraintsHelper(7, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
 				.setWeight(0, 1));
+		// label 总均方根误差:
+		statusbar.add(list.get(8), new GridBagConstraintsHelper(8, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
+		// textfield 总均方根误差
+		list.get(9).setMaximumSize(preferredSize);
+		list.get(9).setMinimumSize(preferredSize);
+		list.get(9).setPreferredSize(preferredSize);
+		statusbar.add(list.get(9), new GridBagConstraintsHelper(9, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 1));
 		return statusbar;
 	}
 
@@ -967,6 +1006,84 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	@Override
 	public void showPopupMenu() {
 		currentForceWindow.showPopupMenu();
+	}
+
+	@Override
+	public Color getSelectedColor() {
+		return selectedColor;
+	}
+
+	@Override
+	public void setSelectedColor(Color selectedColor) {
+		if (selectedColor != this.selectedColor) {
+			this.selectedColor = selectedColor;
+			// TODO: 2016/9/18 颜色改变了！
+		}
+	}
+
+	@Override
+	public Color getUnSelectedColor() {
+		return unSelectedColor;
+	}
+
+	@Override
+	public void setUnSelectedColor(Color unSelectedColor) {
+		this.unSelectedColor = unSelectedColor;
+	}
+
+	@Override
+	public Color getUnUseColor() {
+		return UnUseColor;
+	}
+
+	@Override
+	public void setUnUseColor(Color unUseColor) {
+		UnUseColor = unUseColor;
+	}
+
+	@Override
+	public TransformationMode getTransformationMode() {
+		return transformationMode;
+	}
+
+	@Override
+	public void setTransformationMode(TransformationMode transformationMode) {
+		this.transformationMode = transformationMode;
+	}
+
+	@Override
+	public Transformation getTransformation() {
+		return transformation;
+	}
+
+	@Override
+	public void setTransformation(Transformation transformation) {
+		changeTransformation(transformation);
+	}
+
+	@Override
+	public Object[] getTransformationObjects() {
+		return transformationTarget.getTransformationObjects();
+	}
+
+
+	private void changeTransformation(Transformation transformation) {
+		if (this.transformation != null) {
+			this.transformation.dispose();
+		}
+		this.transformation = transformation;
+		initStateBarError();
+	}
+
+	private void initStateBarError() {
+		if (transformation == null) {
+			((SmTextField) getStatusbar(STATE_BAR_Error)).setText("");
+		} else {
+			TransformationError error = transformation.getError();
+			((SmTextField) getStatusbar(STATE_BAR_Error)).setText(DoubleUtilities.toString(error.getTotalRMS()));
+			((SmTextField) getStatusbar(STATE_BAR_Error)).setCaretPosition(0);
+			error.dispose();
+		}
 	}
 
 	//region 不支持的方法
