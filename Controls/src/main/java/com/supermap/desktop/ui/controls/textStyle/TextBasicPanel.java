@@ -985,4 +985,5 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
     public JSpinner getSpinnerRotationAngl() {
         return spinnerRotationAngl;
     }
+
 }

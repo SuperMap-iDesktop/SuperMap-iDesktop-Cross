@@ -39,10 +39,12 @@ public class TextStyleContainer extends ThemeChangePanel {
     private int[] selectRow;
     private boolean isUniformStyle;
     private boolean isRefreshAtOnce;
-    private boolean isResetFontHeight = false;
     private ITextStyle textStylePanel;
     private transient TextStyleChangeListener textStyleChangeListener;
     private transient LocalMapDrawnListener mapDrawnListener = new LocalMapDrawnListener();
+    private boolean isResetFontHeight = false;
+    private boolean isMapDrawn = false;
+    private double fontHeight = 0.0;
 
     public TextStyleContainer(TextStyle textStyle, Map map, Layer themeLabelLayer) {
         this.textStyle = textStyle.clone();
@@ -132,9 +134,9 @@ public class TextStyleContainer extends ThemeChangePanel {
 
             @Override
             public void modify(TextStyleType newValue) {
-//                if (!isResetFontHeight) {
-//                    return;
-//                }
+                if (isMapDrawn) {
+                    return;
+                }
                 if (null != theme && theme instanceof ThemeLabel && isUniformStyle) {
                     resetFontHeightWhileFixedSize(newValue, ((ThemeLabel) theme).getUniformStyle());
                     refreshMapAtOnce();
@@ -180,32 +182,35 @@ public class TextStyleContainer extends ThemeChangePanel {
         this.textStylePanel.addTextStyleChangeListener(textStyleChangeListener);
         this.map.addDrawnListener(this.mapDrawnListener);
         MapUtilities.getMapControl().addMouseListener(new MouseAdapter() {
+
             @Override
             public void mouseEntered(MouseEvent e) {
+                isMapDrawn = true;
                 isResetFontHeight = false;
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
+                isMapDrawn = false;
                 isResetFontHeight = true;
             }
         });
-//        this.textStylePanel.getComponentsMap().get(TextStyleType.FONTSIZE).addFocusListener(this.focusListener);
-//        this.textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT).addFocusListener(this.focusListener);
     }
 
     private void resetFontHeightWhileFixedSize(TextStyleType newValue, TextStyle textStyle) {
         Object newGeoStyleProperty = textStylePanel.getResultMap().get(newValue);
         if (!newValue.equals(TextStyleType.FIXEDSIZE)) {
             if (newValue.equals(TextStyleType.FONTHEIGHT) && false == textStylePanel.getResultMap().get(TextStyleType.FIXEDSIZE)) {
+                fontHeight = (double) newGeoStyleProperty / 100;
                 ResetTextStyleUtil.resetTextStyle(newValue, textStyle, (double) newGeoStyleProperty / 100);
             } else {
-                ResetTextStyleUtil.resetTextStyle(newValue, textStyle, (double) newGeoStyleProperty);
+                ResetTextStyleUtil.resetTextStyle(newValue, textStyle, newGeoStyleProperty);
             }
         }
         if (newValue.equals(TextStyleType.FIXEDSIZE)) {
             ResetTextStyleUtil.resetTextStyle(newValue, textStyle, newGeoStyleProperty);
             ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, textStyle, textStylePanel.getResultMap().get(TextStyleType.FONTHEIGHT));
+            fontHeight = (double) textStylePanel.getResultMap().get(TextStyleType.FONTHEIGHT);
         }
     }
 
@@ -221,18 +226,21 @@ public class TextStyleContainer extends ThemeChangePanel {
         @Override
         public void mapDrawn(MapDrawnEvent mapDrawnEvent) {
             // 由于控件问题暂不支持缩放地图修改字高，字号显示大小变化
-//            changeFontSizeWithMapObject();
+            changeFontSizeWithMapObject();
         }
     }
 
     private void changeFontSizeWithMapObject() {
 
         try {
+            if (isResetFontHeight) {
+                return;
+            }
             // 非固定文本大小
             if (!((ThemeLabel) theme).getUniformStyle().isSizeFixed()) {
                 // 非固定时，地图中显示的字体在屏幕中显示的大小肯定发生了变化，所以需要重新计算现在的字体大小
                 // 字体信息从现在的TextStyle属性中获取，经过计算后显示其字号大小
-                Double size = FontUtilities.mapHeightToFontSize((Double) textStylePanel.getResultMap().get(TextStyleType.FONTHEIGHT), map, false);
+                Double size = FontUtilities.mapHeightToFontSize(fontHeight, map, false);
                 DecimalFormat decimalFormat = new DecimalFormat("0.0");
                 String numeric = "0.00";
                 if (Double.compare(size, size.intValue()) > 0) {
