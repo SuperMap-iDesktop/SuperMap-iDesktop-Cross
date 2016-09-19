@@ -200,14 +200,11 @@ public class TextStyleContainer extends ThemeChangePanel {
     private void resetFontHeightWhileFixedSize(TextStyleType newValue, TextStyle textStyle) {
         Object newGeoStyleProperty = textStylePanel.getResultMap().get(newValue);
         if (!newValue.equals(TextStyleType.FIXEDSIZE)) {
-            if (newValue.equals(TextStyleType.FONTHEIGHT) && false == textStylePanel.getResultMap().get(TextStyleType.FIXEDSIZE)) {
-                fontHeight = (double) newGeoStyleProperty / 100;
-                ResetTextStyleUtil.resetTextStyle(newValue, textStyle, (double) newGeoStyleProperty / 100);
-            } else {
-                ResetTextStyleUtil.resetTextStyle(newValue, textStyle, newGeoStyleProperty);
+            if (newValue.equals(TextStyleType.FONTHEIGHT)) {
+                fontHeight = (double) newGeoStyleProperty;
             }
-        }
-        if (newValue.equals(TextStyleType.FIXEDSIZE)) {
+            ResetTextStyleUtil.resetTextStyle(newValue, textStyle, newGeoStyleProperty);
+        } else {
             ResetTextStyleUtil.resetTextStyle(newValue, textStyle, newGeoStyleProperty);
             ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, textStyle, textStylePanel.getResultMap().get(TextStyleType.FONTHEIGHT));
             fontHeight = (double) textStylePanel.getResultMap().get(TextStyleType.FONTHEIGHT);
@@ -240,7 +237,7 @@ public class TextStyleContainer extends ThemeChangePanel {
             if (!((ThemeLabel) theme).getUniformStyle().isSizeFixed()) {
                 // 非固定时，地图中显示的字体在屏幕中显示的大小肯定发生了变化，所以需要重新计算现在的字体大小
                 // 字体信息从现在的TextStyle属性中获取，经过计算后显示其字号大小
-                Double size = FontUtilities.mapHeightToFontSize(fontHeight, map, false);
+                Double size = FontUtilities.mapHeightToFontSize(fontHeight, map, false) * 10;
                 DecimalFormat decimalFormat = new DecimalFormat("0.0");
                 String numeric = "0.00";
                 if (Double.compare(size, size.intValue()) > 0) {
