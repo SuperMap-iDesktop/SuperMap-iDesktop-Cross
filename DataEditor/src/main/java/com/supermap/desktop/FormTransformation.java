@@ -380,9 +380,6 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 					addPoint(form, point2D);
 				}
 			} else if (column == FormTransformationTableModel.COLUMN_IS_SELECTED) {
-				if ((Boolean) tablePoints.getValueAt(lastRow, column)) {
-
-				}
 			}
 		}
 		pointValueChanged();

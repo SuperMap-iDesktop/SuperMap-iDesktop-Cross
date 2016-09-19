@@ -110,6 +110,7 @@ public class FormTransformationTableModel extends DefaultTableModel {
 		if (column == COLUMN_IS_SELECTED) {
 			Boolean aBoolean = Boolean.valueOf(String.valueOf(aValue));
 			dataBeanList.get(row).setIsSelected(aBoolean);
+			fireTableCellUpdated(row, column);
 			return;
 		}
 		String value = String.valueOf(aValue);
@@ -237,6 +238,24 @@ public class FormTransformationTableModel extends DefaultTableModel {
 		return count;
 	}
 
+	public int getEnablePointCount(FormTransformationSubFormType subFormTypeByForm) {
+		int count = 0;
+		if (subFormTypeByForm == FormTransformationSubFormType.Target) {
+			for (TransformationTableDataBean bean : dataBeanList) {
+				if (bean.isSelected() && bean.getPointOriginal() != null) {
+					count++;
+				}
+			}
+		} else {
+			for (TransformationTableDataBean bean : dataBeanList) {
+				if (bean.isSelected() && bean.getPointRefer() != null) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
 		if (columnIndex == COLUMN_IS_SELECTED) {
@@ -268,5 +287,31 @@ public class FormTransformationTableModel extends DefaultTableModel {
 	public void setResidualTotal(int i, double value) {
 		dataBeanList.get(i).setResidualTotal(value);
 		fireTableCellUpdated(i, COLUMN_ResidualTotal);
+	}
+
+	public int getEnableRowCount() {
+		int count = 0;
+		for (TransformationTableDataBean transformationTableDataBean : dataBeanList) {
+			if (transformationTableDataBean.isSelected()) {
+				++count;
+			}
+		}
+		return count;
+	}
+
+	public int getEnableRow(int i) {
+		int count = -1;
+		for (int j = 0; j < getRowCount(); j++) {
+			if (count == i) {
+				return j - 1;
+			}
+			if (dataBeanList.get(j).isSelected()) {
+				count++;
+			}
+		}
+		if (count == i) {
+			return getRowCount() - 1;
+		}
+		return -1;
 	}
 }
