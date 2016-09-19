@@ -326,33 +326,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		formTransformationTableModel.addTableModelListener(new TableModelListener() {
 			@Override
 			public void tableChanged(TableModelEvent e) {
-				int lastRow = e.getLastRow();
-				if (e.getType() == TableModelEvent.DELETE) {
-					removeTrackingObject(lastRow, transformationTarget.getMapControl().getMap());
-					removeTrackingObject(lastRow, transformationReference.getMapControl().getMap());
-				} else if (e.getType() == TableModelEvent.UPDATE) {
-					int column = e.getColumn();
-					if (column == FormTransformationTableModel.COLUMN_ReferX || column == FormTransformationTableModel.COLUMN_ReferY ||
-							column == FormTransformationTableModel.COLUMN_OriginalX || column == FormTransformationTableModel.COLUMN_OriginalY) {
-						Object valueAt = tablePoints.getValueAt(lastRow, column);
-						TransformationBase form = transformationTarget;
-						if (column == FormTransformationTableModel.COLUMN_ReferX || column == FormTransformationTableModel.COLUMN_ReferY) {
-							form = transformationReference;
-						}
-						removeTrackingObject(lastRow, form.getMapControl().getMap());
-
-						if (valueAt != null) {
-							Point2D point2D;
-							if (form == transformationTarget) {
-								point2D = formTransformationTableModel.getReferPoint(lastRow);
-							} else {
-								point2D = formTransformationTableModel.getOriginalPoint(lastRow);
-							}
-							addPoint(form, point2D);
-						}
-					}
-				}
-				pointValueChanged();
+				tableValueChanged(e);
 			}
 		});
 		tablePoints.addMouseListener(new MouseAdapter() {
@@ -380,6 +354,40 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		});
 	}
 
+	private void tableValueChanged(TableModelEvent e) {
+		int lastRow = e.getLastRow();
+		if (e.getType() == TableModelEvent.DELETE) {
+			removeTrackingObject(lastRow, transformationTarget.getMapControl().getMap());
+			removeTrackingObject(lastRow, transformationReference.getMapControl().getMap());
+		} else if (e.getType() == TableModelEvent.UPDATE) {
+			int column = e.getColumn();
+			if (column == FormTransformationTableModel.COLUMN_ReferX || column == FormTransformationTableModel.COLUMN_ReferY ||
+					column == FormTransformationTableModel.COLUMN_OriginalX || column == FormTransformationTableModel.COLUMN_OriginalY) {
+				Object valueAt = tablePoints.getValueAt(lastRow, column);
+				TransformationBase form = transformationTarget;
+				if (column == FormTransformationTableModel.COLUMN_ReferX || column == FormTransformationTableModel.COLUMN_ReferY) {
+					form = transformationReference;
+				}
+				removeTrackingObject(lastRow, form.getMapControl().getMap());
+
+				if (valueAt != null) {
+					Point2D point2D;
+					if (form == transformationTarget) {
+						point2D = formTransformationTableModel.getReferPoint(lastRow);
+					} else {
+						point2D = formTransformationTableModel.getOriginalPoint(lastRow);
+					}
+					addPoint(form, point2D);
+				}
+			} else if (column == FormTransformationTableModel.COLUMN_IS_SELECTED) {
+				if ((Boolean) tablePoints.getValueAt(lastRow, column)) {
+
+				}
+			}
+		}
+		pointValueChanged();
+	}
+
 	private void tableSelectedChanged() {
 		refreshFormTrackingLayer(transformationTarget);
 		refreshFormTrackingLayer(transformationReference);
@@ -396,7 +404,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 					String tag = trackingLayer.getTag(i);
 					if (tag.equals(lastSelectedCompound)) {
 						Geometry geoCompound = trackingLayer.get(i);
-						setGeoCompoundColor(geoCompound, false);
+						setGeoCompoundColor(geoCompound, ((Boolean) tablePoints.getValueAt(getTrackingLayerNumber(tag) - 1, FormTransformationTableModel.COLUMN_IS_SELECTED)) ? unSelectedColor : UnUseColor);
 						trackingLayer.remove(i);
 						trackingLayer.add(geoCompound, tag);
 						break;
@@ -414,7 +422,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 				int index = getIndexByTag(trackingLayer, tag);
 				if (index != -1) {
 					Geometry geometry = trackingLayer.get(index);
-					setGeoCompoundColor(geometry, true);
+					setGeoCompoundColor(geometry, selectedColor);
 					trackingLayer.remove(index);
 					trackingLayer.add(geometry, tag);
 					selectedTags.add(tag);
@@ -423,7 +431,6 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			form.setSelectedGeoCompoundTags(selectedTags.toArray(new String[selectedTags.size()]));
 		}
 		form.getMapControl().getMap().refreshTrackingLayer();
-
 	}
 
 	private int getIndexByTag(TrackingLayer trackingLayer, String tag) {
@@ -802,11 +809,10 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		return TRANSFORMATION_TRACKING_LAYER_TAG + index;
 	}
 
-	private void setGeoCompoundColor(Geometry geoCompound, boolean isSelected) {
+	private void setGeoCompoundColor(Geometry geoCompound, Color currentColor) {
 		if (!(geoCompound instanceof GeoCompound)) {
 			return;
 		}
-		Color currentColor = isSelected ? selectedColor : unSelectedColor;
 		for (int i = 0; i < ((GeoCompound) geoCompound).getPartCount(); i++) {
 			Geometry part = ((GeoCompound) geoCompound).getPart(i);
 			if (part instanceof GeoPoint) {
