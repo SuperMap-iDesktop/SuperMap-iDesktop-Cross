@@ -207,6 +207,18 @@ public class FormTransformationTableModel extends DefaultTableModel {
 		fireTableRowsInserted(dataBeanList.size() - 1, dataBeanList.size() - 1);
 	}
 
+	public void removePoint(int row, FormTransformationSubFormType subFormType) {
+		if (subFormType == FormTransformationSubFormType.Target) {
+			dataBeanList.get(row).setPointOriginal(null);
+			fireTableCellUpdated(row, COLUMN_OriginalX);
+//			fireTableCellUpdated(row,COLUMN_OriginalY);
+		} else if (subFormType == FormTransformationSubFormType.Reference) {
+			dataBeanList.get(row).setPointRefer(null);
+			fireTableCellUpdated(row, COLUMN_ReferX);
+//			fireTableCellUpdated(row, COLUMN_ReferY);
+		}
+	}
+
 	public int getPointCount(FormTransformationSubFormType subFormTypeByForm) {
 		int count = 0;
 		if (subFormTypeByForm == FormTransformationSubFormType.Target) {
@@ -241,5 +253,20 @@ public class FormTransformationTableModel extends DefaultTableModel {
 
 	public Point2D getReferPoint(int row) {
 		return dataBeanList.get(row).getPointRefer();
+	}
+
+	public void setResidualX(int i, double value) {
+		dataBeanList.get(i).setResidualX(value);
+		fireTableCellUpdated(i, COLUMN_ResidualX);
+	}
+
+	public void setResidualY(int i, double value) {
+		dataBeanList.get(i).setResidualY(value);
+		fireTableCellUpdated(i, COLUMN_ResidualY);
+	}
+
+	public void setResidualTotal(int i, double value) {
+		dataBeanList.get(i).setResidualTotal(value);
+		fireTableCellUpdated(i, COLUMN_ResidualTotal);
 	}
 }

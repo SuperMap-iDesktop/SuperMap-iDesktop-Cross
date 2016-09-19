@@ -12,7 +12,7 @@ public class TransformationTableDataBean {
 	private Double ResidualX;
 	private Double ResidualY;
 	private Double ResidualTotal;
-	private boolean isSelected;
+	private boolean isSelected = true;
 
 	public Point2D getPointOriginal() {
 		return pointOriginal;

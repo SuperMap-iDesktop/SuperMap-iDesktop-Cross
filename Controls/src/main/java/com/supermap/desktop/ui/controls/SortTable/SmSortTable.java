@@ -66,6 +66,9 @@ public class SmSortTable extends JTable {
 	}
 
 	public int getSelectedModelRow() {
+		if (getSelectedRow() == -1) {
+			return -1;
+		}
 		return convertRowIndexToModel(getSelectedRow());
 	}
 

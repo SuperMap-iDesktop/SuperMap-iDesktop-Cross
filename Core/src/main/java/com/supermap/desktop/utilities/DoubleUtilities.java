@@ -65,6 +65,18 @@ public class DoubleUtilities {
 		return bd1.divide(bd2, scale, BigDecimal.ROUND_HALF_UP).doubleValue();
 	}
 
+	public static String toMaxLengthString(double d, int maxLength) {
+		if (d < 0) {
+			--maxLength;
+		}
+		int length = String.valueOf((long) d).length() + 1;
+		if (length >= maxLength) {
+			return String.valueOf((long) d);
+		} else {
+			return DoubleUtilities.toString(d, maxLength - length);
+		}
+	}
+
 	/**
 	 * 判断字符串是否为double
 	 *
