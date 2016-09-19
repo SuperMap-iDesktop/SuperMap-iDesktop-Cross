@@ -136,6 +136,10 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 				currentForceWindow.actived();
 				isChangeForceWindow = true;
 			}
+			if (e.isControlDown() && e.getButton() == 1) {
+				int selectedModelRow = tablePoints.getSelectedModelRow();
+				formTransformationTableModel.removePoint(selectedModelRow, getCurrentSubFormType());
+			}
 			if (Application.getActiveApplication().getActiveForm() != FormTransformation.this || isChangeForceWindow) {
 				Application.getActiveApplication().getMainFrame().getFormManager().resetActiveForm();
 			}
@@ -190,7 +194,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			if (trackedEvent.getSource() != null && trackedEvent.getSource() instanceof MapControl) {
 				MapControl source = (MapControl) trackedEvent.getSource();
 				TransformationBase form = getFormByMapControl(source);
-				addPoint(form, trackedEvent.getGeometry());
+				addPoint(form, trackedEvent.getGeometry().getInnerPoint());
 				pointValueChanged();
 			}
 		}
@@ -324,6 +328,27 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 				if (e.getType() == TableModelEvent.DELETE) {
 					removeTrackingObject(lastRow, transformationTarget.getMapControl().getMap());
 					removeTrackingObject(lastRow, transformationReference.getMapControl().getMap());
+				} else if (e.getType() == TableModelEvent.UPDATE) {
+					int column = e.getColumn();
+					if (column == FormTransformationTableModel.COLUMN_ReferX || column == FormTransformationTableModel.COLUMN_ReferY ||
+							column == FormTransformationTableModel.COLUMN_OriginalX || column == FormTransformationTableModel.COLUMN_OriginalY) {
+						Object valueAt = tablePoints.getValueAt(lastRow, column);
+						TransformationBase form = transformationTarget;
+						if (column == FormTransformationTableModel.COLUMN_ReferX || column == FormTransformationTableModel.COLUMN_ReferY) {
+							form = transformationReference;
+						}
+						removeTrackingObject(lastRow, form.getMapControl().getMap());
+
+						if (valueAt != null) {
+							Point2D point2D;
+							if (form == transformationTarget) {
+								point2D = formTransformationTableModel.getReferPoint(lastRow);
+							} else {
+								point2D = formTransformationTableModel.getOriginalPoint(lastRow);
+							}
+							addPoint(form, point2D);
+						}
+					}
 				}
 				pointValueChanged();
 			}
@@ -758,8 +783,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		return transformationTarget.getMapControl() == mapControl ? transformationTarget : transformationReference;
 	}
 
-	private void addPoint(TransformationBase form, Geometry geometry) {
-		Point2D point = geometry.getInnerPoint();
+	private void addPoint(TransformationBase form, Point2D point) {
 		int index = formTransformationTableModel.getPointCount(getSubFormTypeByForm(form)) + 1;
 		Geometry trackingGeometry = getTrackingGeometry(index, point);
 		TrackingLayer trackingLayer = form.getMapControl().getMap().getTrackingLayer();
@@ -768,6 +792,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		formTransformationTableModel.addPoint(getSubFormTypeByForm(form), point);
 		form.getMapControl().getMap().refreshTrackingLayer();
 		scrollPane.scrollRectToVisible(tablePoints.getCellRect(index - 1, 0, true));
+		tablePoints.clearSelection();
 		tablePoints.setRowSelectionInterval(index - 1, index - 1);
 	}
 
