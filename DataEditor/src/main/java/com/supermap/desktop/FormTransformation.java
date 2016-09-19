@@ -138,7 +138,9 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			}
 			if (e.isControlDown() && e.getButton() == 1) {
 				int selectedModelRow = tablePoints.getSelectedModelRow();
-				formTransformationTableModel.removePoint(selectedModelRow, getCurrentSubFormType());
+				if (selectedModelRow != -1) {
+					formTransformationTableModel.removePoint(selectedModelRow, getCurrentSubFormType());
+				}
 			}
 			if (Application.getActiveApplication().getActiveForm() != FormTransformation.this || isChangeForceWindow) {
 				Application.getActiveApplication().getMainFrame().getFormManager().resetActiveForm();
@@ -418,9 +420,9 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 					selectedTags.add(tag);
 				}
 			}
-			form.getMapControl().getMap().refreshTrackingLayer();
 			form.setSelectedGeoCompoundTags(selectedTags.toArray(new String[selectedTags.size()]));
 		}
+		form.getMapControl().getMap().refreshTrackingLayer();
 
 	}
 
