@@ -70,4 +70,28 @@ public class TransformationAddObjectBean {
 	public void setResultDatasetName(String resultDatasetName) {
 		this.resultDatasetName = resultDatasetName;
 	}
+
+	public boolean isResample() {
+		return isResample;
+	}
+
+	public void setResample(boolean resample) {
+		isResample = resample;
+	}
+
+	public TransformationResampleMode getTransformationResampleMode() {
+		return transformationResampleMode;
+	}
+
+	public void setTransformationResampleMode(TransformationResampleMode transformationResampleMode) {
+		this.transformationResampleMode = transformationResampleMode;
+	}
+
+	public double getCellSize() {
+		return cellSize;
+	}
+
+	public void setCellSize(double cellSize) {
+		this.cellSize = cellSize;
+	}
 }

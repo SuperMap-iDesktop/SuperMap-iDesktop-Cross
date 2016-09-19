@@ -8,7 +8,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.ui.controls.progress.FormProgress;
+import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 
 /**
  * @author XiaJT
@@ -26,8 +26,13 @@ public class CtrlActionTransform extends CtrlAction {
 			if (transformation != null) {
 				Object[] transformationObjects = ((IFormTransformation) activeForm).getTransformationObjects();
 				if (transformationObjects.length > 0 && transformationObjects[0] instanceof TransformationAddObjectBean) {
-					FormProgress formProgress = new FormProgress(DataEditorProperties.getString("String_CreateDatasetSpatialIndex"));
-					formProgress.doWork(new TransformCallable(transformation, (TransformationAddObjectBean[]) transformationObjects));
+					TransformationAddObjectBean[] transformationAddObjectBeen = new TransformationAddObjectBean[transformationObjects.length];
+					for (int i = 0; i < transformationObjects.length; i++) {
+						Object transformationObject = transformationObjects[i];
+						transformationAddObjectBeen[i] = (TransformationAddObjectBean) transformationObject;
+					}
+					FormProgressTotal formProgress = new FormProgressTotal(DataEditorProperties.getString("String_transformation"));
+					formProgress.doWork(new TransformCallable(transformation, transformationAddObjectBeen));
 				}
 			}
 		}
