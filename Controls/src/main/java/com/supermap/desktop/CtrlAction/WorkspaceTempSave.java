@@ -1,9 +1,27 @@
 package com.supermap.desktop.CtrlAction;
 
-import com.supermap.data.*;
+import com.supermap.data.Datasources;
+import com.supermap.data.EngineType;
+import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceClosingEvent;
+import com.supermap.data.WorkspaceClosingListener;
+import com.supermap.data.WorkspaceConnectionInfo;
+import com.supermap.data.WorkspaceOpenedEvent;
+import com.supermap.data.WorkspaceOpenedListener;
+import com.supermap.data.WorkspaceSavedAsEvent;
+import com.supermap.data.WorkspaceSavedAsListener;
+import com.supermap.data.WorkspaceSavedEvent;
+import com.supermap.data.WorkspaceSavedListener;
+import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.WorkspaceConnectionInfoUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import sun.misc.BASE64Encoder;
@@ -31,7 +49,7 @@ public class WorkspaceTempSave {
 	private FileLock fileLock;
 	private RandomAccessFile randomAccessFile;
 	private Workspace workspace;
-	private int symbolSaveCount = 30;// 30min
+	private int symbolSaveCount = 60;
 	private long nextSaveSymbolTime = 0;
 	// 手动保存(另存)的时候会保存一次;
 	// 工作空间关闭的时候会重置符号库计数，下次保存的时候会保存符号库
@@ -208,7 +226,6 @@ public class WorkspaceTempSave {
 				} else {
 					saveSuccess = workspace.save();
 				}
-				//GlobalParameters.isSaveSymbol() &&
 				if (System.currentTimeMillis() >= nextSaveSymbolTime) {
 					saveSymbolLibrary(activeWorkspace);
 				}
@@ -367,11 +384,6 @@ public class WorkspaceTempSave {
 		nextSaveSymbolTime = System.currentTimeMillis() + symbolSaveCount * 60000;
 	}
 
-
-	public void setSymbolSaveCount(int symbolSaveCount) {
-		this.symbolSaveCount = symbolSaveCount;
-	}
-
 	public static WorkspaceTempSave getInstance() {
 		if (workspaceTempSave == null) {
 			workspaceTempSave = new WorkspaceTempSave();
@@ -392,5 +404,12 @@ public class WorkspaceTempSave {
 			e.printStackTrace();
 		}
 		resetNextSaveTime();
+	}
+
+	public void setSymbolSaveTime(int oldValue, int saveTime) {
+		symbolSaveCount = saveTime;
+		if (nextSaveSymbolTime != 0) {
+			nextSaveSymbolTime = System.currentTimeMillis() + symbolSaveCount * 60000;
+		}
 	}
 }

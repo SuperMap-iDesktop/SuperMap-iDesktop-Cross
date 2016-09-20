@@ -61,11 +61,12 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 	 * 工作空间崩溃恢复
 	 */
 	private JCheckBox checkBoxWorkspaceRecovery;
-//	private JPanel panelWorkspaceRecovery;
+	//	private JPanel panelWorkspaceRecovery;
 //	private CompTitledPane compTitledPane;
 //	private JCheckBox checkBoxSymbolLibraryRecovery;
-//	private SmTextFieldLegit smTextFieldLegitSymbolSaveTime;
-//	private JLabel labelSymbolSaveTimeUnit;
+	private JLabel labelSymbolLibraryRecoveryTime;
+	private SmTextFieldLegit smTextFieldLegitSymbolSaveTime;
+	private JLabel labelSymbolSaveTimeUnit;
 
 	private ItemListener itemListener;
 
@@ -99,12 +100,13 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		checkBoxWorkspaceRecovery = new JCheckBox();
 //		compTitledPane = new CompTitledPane(checkBoxWorkspaceRecovery, panelWorkspaceRecovery);
 //		checkBoxSymbolLibraryRecovery = new JCheckBox();
-//		smTextFieldLegitSymbolSaveTime = new SmTextFieldLegit();
-//		labelSymbolSaveTimeUnit = new JLabel();
-//
-//		smTextFieldLegitSymbolSaveTime.setPreferredSize(size);
-//		smTextFieldLegitSymbolSaveTime.setMinimumSize(size);
-//		smTextFieldLegitSymbolSaveTime.setMaximumSize(size);
+		labelSymbolLibraryRecoveryTime = new JLabel();
+		smTextFieldLegitSymbolSaveTime = new SmTextFieldLegit();
+		labelSymbolSaveTimeUnit = new JLabel();
+
+		smTextFieldLegitSymbolSaveTime.setPreferredSize(size);
+		smTextFieldLegitSymbolSaveTime.setMinimumSize(size);
+		smTextFieldLegitSymbolSaveTime.setMaximumSize(size);
 
 		this.setBorder(BorderFactory.createTitledBorder(FrameProperties.getString("String_CaptionOperate")));
 		itemListener = new ItemListener() {
@@ -141,9 +143,13 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 
 //		this.add(checkBoxAutoSaveWorkspace, new GridBagConstraintsHelper(0, 6, 3, 1).setWeight(1, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 //
-		this.add(labelAutoSaveTime, new GridBagConstraintsHelper(0, 7, 1, 1).setWeight(0, 0).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
-		this.add(smTextFieldLegitAutoSaveTime, new GridBagConstraintsHelper(1, 7, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
-		this.add(labelAutoSaveTimeUnit, new GridBagConstraintsHelper(2, 7, 1, 1).setWeight(1, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(labelAutoSaveTime, new GridBagConstraintsHelper(0, 6, 1, 1).setWeight(0, 0).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(smTextFieldLegitAutoSaveTime, new GridBagConstraintsHelper(1, 6, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(labelAutoSaveTimeUnit, new GridBagConstraintsHelper(2, 6, 1, 1).setWeight(1, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+
+		this.add(labelSymbolLibraryRecoveryTime, new GridBagConstraintsHelper(0, 7, 1, 1).setWeight(0, 0).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(smTextFieldLegitSymbolSaveTime, new GridBagConstraintsHelper(1, 7, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(labelSymbolSaveTimeUnit, new GridBagConstraintsHelper(2, 7, 1, 1).setWeight(1, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 
 		this.add(labelMapRefreshDelayWhileResize, new GridBagConstraintsHelper(0, 8, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 		this.add(smTextFieldMapDelay, new GridBagConstraintsHelper(1, 8, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
@@ -211,33 +217,33 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 				return backUpValue;
 			}
 		});
-//		smTextFieldLegitSymbolSaveTime.setSmTextFieldLegit(new ISmTextFieldLegit() {
-//			@Override
-//			public boolean isTextFieldValueLegit(String textFieldValue) {
-//				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
-//					return false;
-//				}
-//				try {
-//					Integer integer = Integer.valueOf(textFieldValue);
-//					if (integer <= 0) {
-//						return false;
-//					}
-//					if (integer == GlobalParameters.getSymbolSaveTime()) {
-//						changedValues.remove(smTextFieldLegitSymbolSaveTime);
-//					} else {
-//						changedValues.add(smTextFieldLegitSymbolSaveTime);
-//					}
-//				} catch (Exception e) {
-//					return false;
-//				}
-//				return true;
-//			}
-//
-//			@Override
-//			public String getLegitValue(String currentValue, String backUpValue) {
-//				return backUpValue;
-//			}
-//		});
+		smTextFieldLegitSymbolSaveTime.setSmTextFieldLegit(new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
+					return false;
+				}
+				try {
+					Integer integer = Integer.valueOf(textFieldValue);
+					if (integer <= 0) {
+						return false;
+					}
+					if (integer == GlobalParameters.getSymbolSaveTime()) {
+						changedValues.remove(smTextFieldLegitSymbolSaveTime);
+					} else {
+						changedValues.add(smTextFieldLegitSymbolSaveTime);
+					}
+				} catch (Exception e) {
+					return false;
+				}
+				return true;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		});
 		checkBoxShowDataInNowWindow.addItemListener(itemListener);
 		checkBoxIsShowFormClosingInfo.addItemListener(itemListener);
 		checkBoxWorkspaceCloseNotify.addItemListener(itemListener);
@@ -255,6 +261,7 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 				}
 				boolean selected = checkBoxWorkspaceRecovery.isSelected();
 				smTextFieldLegitAutoSaveTime.setEditable(selected);
+				smTextFieldLegitSymbolSaveTime.setEditable(selected);
 
 			}
 		});
@@ -274,7 +281,8 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		labelAutoSaveTime.setText(FrameProperties.getString("String_AutoSaveWorkspaceTime"));
 		labelAutoSaveTimeUnit.setText(CoreProperties.getString("String_Time_Minutes"));
 //		checkBoxSymbolLibraryRecovery.setText(FrameProperties.getString("String_checkBoxSymbolLibraryRecovery"));
-//		labelSymbolSaveTimeUnit.setText(CoreProperties.getString("String_Time_Minutes"));
+		labelSymbolLibraryRecoveryTime.setText(FrameProperties.getString("String_SysmbolLibraryRecoveryTime"));
+		labelSymbolSaveTimeUnit.setText(CoreProperties.getString("String_Time_Minutes"));
 	}
 
 	@Override
@@ -291,6 +299,8 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 //		checkBoxAutoSaveWorkspace.setSelected(GlobalParameters.isWorkspaceAutoSave());
 		smTextFieldLegitAutoSaveTime.setText(String.valueOf(GlobalParameters.getWorkspaceAutoSaveTime()));
 		smTextFieldLegitAutoSaveTime.setEditable(GlobalParameters.isWorkspaceRecovery());
+		smTextFieldLegitSymbolSaveTime.setText(String.valueOf(GlobalParameters.getSymbolSaveTime()));
+		smTextFieldLegitSymbolSaveTime.setEditable(GlobalParameters.isWorkspaceRecovery());
 //		checkBoxSymbolLibraryRecovery.setEnabled(checkBoxWorkspaceRecovery.isSelected());
 //		smTextFieldLegitSymbolSaveTime.setEnabled(checkBoxWorkspaceRecovery.isSelected());
 	}
@@ -336,6 +346,11 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 				int saveTime = Integer.valueOf(smTextFieldLegitAutoSaveTime.getBackUpValue());
 				GlobalParameters.setWorkspaceAutoSaveTime(saveTime);
 				WorkspaceTempSave.getInstance().setAutoSaveTime(oldValue, saveTime);
+			} else if (component == smTextFieldLegitSymbolSaveTime) {
+				int oldValue = GlobalParameters.getSymbolSaveTime();
+				int saveTime = Integer.valueOf(smTextFieldLegitSymbolSaveTime.getBackUpValue());
+				GlobalParameters.setSymbolSaveTime(saveTime);
+				WorkspaceTempSave.getInstance().setSymbolSaveTime(oldValue, saveTime);
 			}
 //			else if (component == checkBoxSymbolLibraryRecovery) {
 //				GlobalParameters.setIsSaveSymbol(checkBoxSymbolLibraryRecovery.isSelected());
