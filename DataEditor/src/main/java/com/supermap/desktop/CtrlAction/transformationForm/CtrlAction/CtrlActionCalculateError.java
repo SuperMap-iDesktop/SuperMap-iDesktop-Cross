@@ -36,14 +36,14 @@ public class CtrlActionCalculateError extends CtrlAction {
 	public void run() {
 		IFormTransformation activeForm = (IFormTransformation) Application.getActiveApplication().getActiveForm();
 		TransformationMode transformationMode = activeForm.getTransformationMode();
-		JTable table = activeForm.getTable();
-		if (table.getRowCount() == 1) {
+		FormTransformationTableModel model = ((FormTransformationTableModel) activeForm.getTable().getModel());
+		if (model.getEnableRowCount() == 1) {
 			transformationMode = TransformationMode.OFFSET;
-		} else if (table.getRowCount() == 2) {
+		} else if (model.getEnableRowCount() == 2) {
 			transformationMode = TransformationMode.RECT;
-		} else if (table.getRowCount() >= 4 && table.getRowCount() < 7) {
+		} else if (model.getEnableRowCount() >= 4 && model.getEnableRowCount() < 7) {
 			transformationMode = TransformationMode.LINEAR;
-		} else if (table.getRowCount() >= 7) {
+		} else if (model.getEnableRowCount() >= 7) {
 			if (transformationMode == TransformationMode.OFFSET || transformationMode == TransformationMode.RECT) {
 				JDialogChooseMode jDialogChooseMode = new JDialogChooseMode();
 				if (jDialogChooseMode.showDialog() == DialogResult.OK) {
@@ -56,12 +56,11 @@ public class CtrlActionCalculateError extends CtrlAction {
 		}
 		Transformation transformation = new Transformation();
 		transformation.setTransformMode(transformationMode);
-		FormTransformationTableModel model = (FormTransformationTableModel) table.getModel();
 		Point2Ds targetPoint2Ds = new Point2Ds();
 		Point2Ds referPoint2Ds = new Point2Ds();
-		for (int i = 0; i < model.getRowCount(); i++) {
-			targetPoint2Ds.add(model.getOriginalPoint(i));
-			referPoint2Ds.add(model.getReferPoint(i));
+		for (int i = 0; i < model.getEnableRowCount(); i++) {
+			targetPoint2Ds.add(model.getOriginalPoint(model.getEnableRow(i)));
+			referPoint2Ds.add(model.getReferPoint(model.getEnableRow(i)));
 		}
 		transformation.setTargetControlPoints(referPoint2Ds);
 		transformation.setOriginalControlPoints(targetPoint2Ds);
@@ -69,10 +68,10 @@ public class CtrlActionCalculateError extends CtrlAction {
 		double[] residualX = error.getResidualX();
 		double[] residualY = error.getResidualY();
 		double[] residualTotle = error.getRMS();
-		for (int i = 0; i < table.getRowCount(); i++) {
-			model.setResidualX(i, residualX[i]);
-			model.setResidualY(i, residualY[i]);
-			model.setResidualTotal(i, residualTotle[i]);
+		for (int i = 0; i < model.getEnableRowCount(); i++) {
+			model.setResidualX(model.getEnableRow(i), residualX[i]);
+			model.setResidualY(model.getEnableRow(i), residualY[i]);
+			model.setResidualTotal(model.getEnableRow(i), residualTotle[i]);
 		}
 		activeForm.setTransformation(transformation);
 		error.dispose();
@@ -83,14 +82,11 @@ public class CtrlActionCalculateError extends CtrlAction {
 	public boolean enable() {
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
 		if (activeForm instanceof IFormTransformation) {
-			if (((IFormTransformation) activeForm).getTable().getRowCount() <= 0) {
-				return false;
-			}
 			FormTransformationTableModel model = (FormTransformationTableModel) ((IFormTransformation) activeForm).getTable().getModel();
-			if (model.getPointCount(FormTransformationSubFormType.Target) != model.getPointCount(FormTransformationSubFormType.Reference)) {
+			if (model.getEnableRowCount() <= 0 || model.getEnableRowCount() == 3) {
 				return false;
 			}
-			if (model.getPointCount(FormTransformationSubFormType.Target) == 3) {
+			if (model.getEnablePointCount(FormTransformationSubFormType.Target) != model.getEnablePointCount(FormTransformationSubFormType.Reference)) {
 				return false;
 			}
 		} else {
