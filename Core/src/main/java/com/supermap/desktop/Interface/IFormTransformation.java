@@ -57,4 +57,8 @@ public interface IFormTransformation extends IForm {
 	void setTransformation(Transformation transformation);
 
 	Object[] getTransformationObjects();
+
+	String toXml();
+
+	boolean fromXml();
 }

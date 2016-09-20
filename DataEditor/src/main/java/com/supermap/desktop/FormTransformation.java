@@ -1118,6 +1118,17 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		}
 	}
 
+	@Override
+	public String toXml() {
+
+		return null;
+	}
+
+	@Override
+	public boolean fromXml() {
+		return false;
+	}
+
 	//region 不支持的方法
 	@Override
 	public int getIsShowPopupMenu() {
