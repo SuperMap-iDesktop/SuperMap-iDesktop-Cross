@@ -25,8 +25,10 @@ import com.supermap.desktop.CtrlAction.transformationForm.FormTransformationTabl
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationBase;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationReference;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationTarget;
+import com.supermap.desktop.CtrlAction.transformationForm.TransformationUtilties;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.FormTransformationSubFormType;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationAddObjectBean;
+import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationTableDataBean;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTransformation;
@@ -1120,8 +1122,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	@Override
 	public String toXml() {
-
-		return null;
+		List<TransformationTableDataBean> dataList = formTransformationTableModel.getDataList();
+		return TransformationUtilties.getXmlString(transformationMode, dataList);
 	}
 
 	@Override

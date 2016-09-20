@@ -314,4 +314,8 @@ public class FormTransformationTableModel extends DefaultTableModel {
 		}
 		return -1;
 	}
+
+	public List<TransformationTableDataBean> getDataList() {
+		return dataBeanList;
+	}
 }
