@@ -268,8 +268,8 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
                 textFieldFontHeight.setText(new DecimalFormat(numeric).format((size / EXPERIENCE)));
                 fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), checkBoxFixedSize.isSelected());
                 if (!DoubleUtilities.equals(fontHeight, textStyle.getFontHeight(), pow) && fontHeight > 0) {
-                    textStyleTypeMap.put(TextStyleType.FONTSIZE, fontHeight / UNIT_CONVERSION);
-                    fireTextStyleChanged(TextStyleType.FONTSIZE);
+                    textStyleTypeMap.put(TextStyleType.FONTHEIGHT, fontHeight / UNIT_CONVERSION);
+                    fireTextStyleChanged(TextStyleType.FONTHEIGHT);
                 }
             }
         }

@@ -24,9 +24,6 @@ public class ResetTextStyleUtil {
             case ALIGNMENT:
                 textStyle.setAlignment((TextAlignment) newTextStyleValue);
                 break;
-            case FONTSIZE:
-                textStyle.setFontHeight((double) newTextStyleValue);
-                break;
             case FONTHEIGHT:
                 textStyle.setFontHeight((double) newTextStyleValue);
                 break;
