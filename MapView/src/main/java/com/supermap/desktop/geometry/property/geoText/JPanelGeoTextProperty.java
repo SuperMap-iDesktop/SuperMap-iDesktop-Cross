@@ -61,13 +61,6 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
                 if (null == newTextStyleValue || StringUtilities.isNullOrEmptyString(text)) {
                     return;
                 }
-                if (newValue.equals(TextStyleType.FIXEDSIZE)) {
-                    // 设置固定大小时不刷新预览界面，但需要设置计算出的字高
-                    textStyle.setSizeFixed((boolean) panelBasicSet.getResultMap().get(newValue));
-                    textStyle.setFontHeight((double) panelBasicSet.getResultMap().get(TextStyleType.FONTHEIGHT));
-                    fireGeoTextChanged(true);
-                    return;
-                }
                 if (!newValue.equals(TextStyleType.FIXEDSIZE)) {
                     ResetTextStyleUtil.resetTextStyle(newValue, textStyle, newTextStyleValue);
                     fireGeoTextChanged(true);
@@ -76,8 +69,12 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
                         rotation = ((GeoText) geometry).getPart(0).getRotation();
                     }
                     TextStyle tempTextStyle = textStyle.clone();
-                    tempTextStyle.setFontHeight(panelPreview.getFontHeight());
+                    tempTextStyle.setSizeFixed(true);
                     panelPreview.refresh(text, tempTextStyle, rotation);
+                } else {
+                    textStyle.setSizeFixed((boolean) panelBasicSet.getResultMap().get(newValue));
+                    textStyle.setFontHeight((double) panelBasicSet.getResultMap().get(TextStyleType.FONTHEIGHT));
+                    fireGeoTextChanged(true);
                 }
             }
         };
