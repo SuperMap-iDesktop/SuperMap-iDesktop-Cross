@@ -32,7 +32,6 @@ public class PreviewPanel extends JPanel implements IPreview {
     @Override
     public void refresh(String text, TextStyle tempTextStyle, double rotation) {
         // 地图全幅显示
-        mapControl.getMap().viewEntire();
         mapControl.setInteractionMode(InteractionMode.CUSTOMALL);
         Cursor cursor = new Cursor(Cursor.DEFAULT_CURSOR);
         MapControl.Cursors.setArrow(cursor);
@@ -44,14 +43,14 @@ public class PreviewPanel extends JPanel implements IPreview {
         geoPoint.setStyle(style);
         Geometry tempGeoText = null;
         if (geoText instanceof GeoText) {
-            sourceGeoText = (GeoText) geoText.clone();
+            sourceGeoText = geoText.clone();
             tempGeoText = getPreViewGeoText(text, rotation);
             ((GeoText) tempGeoText).setTextStyle(tempTextStyle);
             geoPoint.setX(tempGeoText.getInnerPoint().getX());
             geoPoint.setY(tempGeoText.getInnerPoint().getY());
         }
         if (geoText instanceof GeoText3D) {
-            sourceGeoText = (GeoText3D) geoText.clone();
+            sourceGeoText = geoText.clone();
             tempGeoText = getPreViewGeoText3D(text, ((GeoText3D) sourceGeoText).getPart(0).getAnchorPoint());
             ((GeoText3D) tempGeoText).setTextStyle(tempTextStyle);
             geoPoint.setX(tempGeoText.getInnerPoint().getX());
@@ -105,6 +104,8 @@ public class PreviewPanel extends JPanel implements IPreview {
     protected MapControl initPreViewMapControl() {
         if (mapControl == null) {
             mapControl = new MapControl();
+            mapControl.getMap().viewEntire();
+            mapControl.getMap().setCenter(new Point2D(0, 0));
             mapControl.getMap().setViewBounds(new Rectangle2D(new Point2D(0, 0), new Point2D(200, 200)));
             // 设置为系统默认光标
             mapControl.setAction(Action.NULL);
@@ -116,12 +117,10 @@ public class PreviewPanel extends JPanel implements IPreview {
                     rotation = ((GeoText) geoText).getPart(0).getRotation();
                 }
                 refresh(text, ((GeoText) geoText).getTextStyle(), rotation);
-                return mapControl;
             }
             if (geoText instanceof GeoText3D && ((GeoText3D) geoText).getPartCount() > 0) {
                 text = ((GeoText3D) geoText).getPart(0).getText();
                 refresh(text, ((GeoText3D) geoText).getTextStyle(), 0.0);
-                return mapControl;
             }
         }
         return mapControl;

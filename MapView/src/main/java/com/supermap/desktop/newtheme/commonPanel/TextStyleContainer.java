@@ -58,6 +58,7 @@ public class TextStyleContainer extends ThemeChangePanel {
     private void initComponents() {
         this.textStylePanel = new TextBasicPanel();
         this.textStylePanel.setTextStyle(this.textStyle);
+        this.fontHeight = this.textStyle.getFontHeight();
         this.textStylePanel.setOutLineWidth(true);
         this.textStylePanel.setProperty(false);
         this.textStylePanel.setUnityVisible(true);

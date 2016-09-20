@@ -199,7 +199,7 @@ public class ThemeGuideFactory {
                 }
             }
             ((ThemeMainContainer) getDockbarThemeContainer().getComponent()).unregistActionListener();
-//            getMapControl().getMap().refresh();
+            getMapControl().getMap().refresh();
         }
         return result;
     }

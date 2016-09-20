@@ -768,7 +768,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.comboBoxFontSize.setModel(new DefaultComboBoxModel<String>(new String[]{"1", "2", "3", "4", "5", "5.5", "6.5", "7.5", "8", "9", "10", "11",
                 "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72"}));
         this.comboBoxFontSize.setEditable(true);
-        this.comboBoxFontSize.setSelectedItem(this.textStyle.getFontHeight() * EXPERIENCE);
         this.textFieldFontSize = (JTextField) this.comboBoxFontSize.getEditor().getEditorComponent();
         this.spinnerFontHeight.setModel(new SpinnerNumberModel(0.0, 0.0, null, 1.0));
         NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerFontHeight.getEditor();
