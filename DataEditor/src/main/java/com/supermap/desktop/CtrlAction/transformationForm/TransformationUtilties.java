@@ -1,12 +1,17 @@
 package com.supermap.desktop.CtrlAction.transformationForm;
 
+import com.supermap.data.Enum;
+import com.supermap.data.Point2D;
 import com.supermap.data.TransformationMode;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationTableDataBean;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +33,7 @@ public class TransformationUtilties {
 			root.setAttribute("Description", "UGC settiong file create by SuperMap UGC 6.0");
 
 			Element mode = emptyDocument.createElement("sml:TransformationMode");
-			mode.setNodeValue(String.valueOf(transformationMode.value()));
+			mode.appendChild(emptyDocument.createTextNode(String.valueOf(transformationMode.value())));
 			root.appendChild(mode);
 			for (TransformationTableDataBean bean : beans) {
 				Element controlPoint = emptyDocument.createElement("sml:ContrlPoint");
@@ -58,4 +63,65 @@ public class TransformationUtilties {
 		return XmlUtilities.nodeToString(emptyDocument, "UTF-8");
 	}
 
+	public static TransformationMode getTransformationMode(Document document) {
+		Node root = XmlUtilities.getChildElementNodeByName(document, "SuperMapTransformation");
+		Node mode = XmlUtilities.getChildElementNodeByName(root, "sml:TransformationMode");
+		NodeList childNodes = mode.getChildNodes();
+		Integer integer = Integer.valueOf(childNodes.item(0).getNodeValue());
+		return (TransformationMode) Enum.parse(TransformationMode.class, integer);
+	}
+
+
+	public static List<TransformationTableDataBean> getTransformationTableDataBeans(Document document) {
+		ArrayList<TransformationTableDataBean> transformationTableDataBeen = new ArrayList<>();
+		Node root = XmlUtilities.getChildElementNodeByName(document, "SuperMapTransformation");
+		NodeList controlNodes = root.getChildNodes();
+		for (int i = 0; i < controlNodes.getLength(); i++) {
+			Node item = controlNodes.item(i);
+			if (item != null && item.getNodeType() == Node.ELEMENT_NODE && item.getNodeName().equalsIgnoreCase("sml:ContrlPoint")) {
+				transformationTableDataBeen.add(getTransformationTableDataBean(item));
+			}
+		}
+		return transformationTableDataBeen;
+	}
+
+	private static TransformationTableDataBean getTransformationTableDataBean(Node item) {
+		TransformationTableDataBean transformationTableDataBean = new TransformationTableDataBean();
+		if (item.getAttributes().getNamedItem("isEnable") != null) {
+			transformationTableDataBean.setSelected(Boolean.valueOf(item.getAttributes().getNamedItem("isEnable").getNodeValue()));
+		}
+		NodeList childNodes = item.getChildNodes();
+		Point2D point2DOriginal = null;
+		Point2D point2DRefer = null;
+		for (int i = 0; i < childNodes.getLength(); i++) {
+			Node node = childNodes.item(i);
+			if (node != null && node.getNodeType() == Node.ELEMENT_NODE) {
+				if (node.getNodeName().equalsIgnoreCase("sml:OriginalPointX")) {
+					if (point2DOriginal == null) {
+						point2DOriginal = new Point2D();
+					}
+					point2DOriginal.setX(Double.valueOf(node.getChildNodes().item(0).getNodeValue()));
+				} else if (node.getNodeName().equalsIgnoreCase("sml:OriginalPointY")) {
+					if (point2DOriginal == null) {
+						point2DOriginal = new Point2D();
+					}
+					point2DOriginal.setY(Double.valueOf(node.getChildNodes().item(0).getNodeValue()));
+				} else if (node.getNodeName().equalsIgnoreCase("sml:TargetPointX")) {
+					if (point2DRefer == null) {
+						point2DRefer = new Point2D();
+					}
+					point2DRefer.setX(Double.valueOf(node.getChildNodes().item(0).getNodeValue()));
+
+				} else if (node.getNodeName().equalsIgnoreCase("sml:TargetPointY")) {
+					if (point2DRefer == null) {
+						point2DRefer = new Point2D();
+					}
+					point2DRefer.setY(Double.valueOf(node.getChildNodes().item(0).getNodeValue()));
+				}
+			}
+		}
+		transformationTableDataBean.setPointOriginal(point2DOriginal);
+		transformationTableDataBean.setPointRefer(point2DRefer);
+		return transformationTableDataBean;
+	}
 }

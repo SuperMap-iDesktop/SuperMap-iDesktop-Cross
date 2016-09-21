@@ -318,4 +318,18 @@ public class FormTransformationTableModel extends DefaultTableModel {
 	public List<TransformationTableDataBean> getDataList() {
 		return dataBeanList;
 	}
+
+	public void removeAll() {
+		int size = dataBeanList.size();
+		dataBeanList.clear();
+		if (size != 0) {
+			fireTableRowsDeleted(0, size - 1);
+		}
+	}
+
+	public void add(List<TransformationTableDataBean> transformationTableDataBean) {
+		int size = dataBeanList.size();
+		dataBeanList.addAll(transformationTableDataBean);
+		fireTableRowsInserted(size, dataBeanList.size() - 1);
+	}
 }

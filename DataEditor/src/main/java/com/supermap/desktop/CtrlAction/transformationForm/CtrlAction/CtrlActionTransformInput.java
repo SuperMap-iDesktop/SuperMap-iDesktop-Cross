@@ -8,8 +8,11 @@ import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.utilities.XmlUtilities;
 
 import javax.swing.*;
+import java.io.File;
+import java.text.MessageFormat;
 
 /**
  * @author XiaJT
@@ -31,7 +34,14 @@ public class CtrlActionTransformInput extends CtrlAction {
 			}
 			SmFileChoose fileChoose = new SmFileChoose(moduleName);
 			if (fileChoose.showDefaultDialog() == JFileChooser.APPROVE_OPTION) {
-
+				File file = fileChoose.getSelectedFile();
+				try {
+					if (!((IFormTransformation) activeForm).fromXml(XmlUtilities.getDocument(file.getPath()))) {
+						Application.getActiveApplication().getOutput().output(DataEditorProperties.getString("String_ImportTransformationFileFailed"));
+					}
+				} catch (Exception e) {
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(DataEditorProperties.getString("String_ImportTransformationFileFailed"), file.getAbsolutePath()));
+				}
 			}
 		}
 	}
