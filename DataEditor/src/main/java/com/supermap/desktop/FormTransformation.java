@@ -393,7 +393,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 					form.getMapControl().getMap().getTrackingLayer().remove(getIndexByTag(form.getMapControl().getMap().getTrackingLayer(), getTag(lastRow + 1)));
 					form.getMapControl().getMap().getTrackingLayer().add(getTrackingGeometry(lastRow + 1, point2D, selectedColor), getTag(lastRow + 1));
 				} else {
-					removeTrackingObject(lastRow + 1, form.getMapControl().getMap());
+					removeTrackingObject(lastRow, form.getMapControl().getMap());
 				}
 			} else if (column == FormTransformationTableModel.COLUMN_IS_SELECTED) {
 
