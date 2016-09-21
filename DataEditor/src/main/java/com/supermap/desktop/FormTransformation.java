@@ -1066,8 +1066,33 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	@Override
 	public void setSelectedColor(Color selectedColor) {
 		if (selectedColor != this.selectedColor) {
+			boolean isChanged = false;
 			this.selectedColor = selectedColor;
-			// TODO: 2016/9/18 颜色改变了！
+			int[] selectedModelRows = tablePoints.getSelectedModelRows();
+			for (int selectedModelRow : selectedModelRows) {
+				if (formTransformationTableModel.getOriginalPoint(selectedModelRow) != null) {
+					isChanged = true;
+					changeTrackingLayerGeoColor(transformationTarget.getMapControl().getMap().getTrackingLayer(), selectedModelRow, selectedColor);
+					changeTrackingLayerGeoColor(transformationReference.getMapControl().getMap().getTrackingLayer(), selectedModelRow, selectedColor);
+				}
+			}
+			if (isChanged) {
+				transformationTarget.getMapControl().getMap().refreshTrackingLayer();
+				transformationReference.getMapControl().getMap().refreshTrackingLayer();
+			}
+		}
+	}
+
+	private void changeTrackingLayerGeoColor(TrackingLayer trackingLayer, int index, Color selectedColor) {
+		String tag = getTag(index + 1);
+		for (int i = 0; i < trackingLayer.getCount(); i++) {
+			if (trackingLayer.getTag(i).equals(tag)) {
+				Geometry geometry = trackingLayer.get(i);
+				setGeoCompoundColor(geometry, selectedColor);
+				trackingLayer.remove(i);
+				trackingLayer.add(geometry, tag);
+				return;
+			}
 		}
 	}
 
@@ -1078,7 +1103,22 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	@Override
 	public void setUnSelectedColor(Color unSelectedColor) {
-		this.unSelectedColor = unSelectedColor;
+		if (this.unSelectedColor != unSelectedColor) {
+			boolean isChanged = false;
+			this.unSelectedColor = unSelectedColor;
+			for (int i = 0; i < formTransformationTableModel.getRowCount(); i++) {
+				if (((Boolean) formTransformationTableModel.getValueAt(i, 0)) && !tablePoints.isRowSelected(i)) {
+					isChanged = true;
+					changeTrackingLayerGeoColor(transformationTarget.getMapControl().getMap().getTrackingLayer(), i, unSelectedColor);
+					changeTrackingLayerGeoColor(transformationReference.getMapControl().getMap().getTrackingLayer(), i, unSelectedColor);
+				}
+			}
+			if (isChanged) {
+				transformationTarget.getMapControl().getMap().refreshTrackingLayer();
+				transformationReference.getMapControl().getMap().refreshTrackingLayer();
+			}
+		}
+
 	}
 
 	@Override
@@ -1088,7 +1128,21 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	@Override
 	public void setUnUseColor(Color unUseColor) {
-		UnUseColor = unUseColor;
+		if (UnUseColor != unUseColor) {
+			boolean isChanged = false;
+			UnUseColor = unUseColor;
+			for (int i = 0; i < formTransformationTableModel.getRowCount(); i++) {
+				if (!((Boolean) formTransformationTableModel.getValueAt(i, 0)) && !tablePoints.isRowSelected(i)) {
+					isChanged = true;
+					changeTrackingLayerGeoColor(transformationTarget.getMapControl().getMap().getTrackingLayer(), i, UnUseColor);
+					changeTrackingLayerGeoColor(transformationReference.getMapControl().getMap().getTrackingLayer(), i, UnUseColor);
+				}
+			}
+			if (isChanged) {
+				transformationTarget.getMapControl().getMap().refreshTrackingLayer();
+				transformationReference.getMapControl().getMap().refreshTrackingLayer();
+			}
+		}
 	}
 
 	@Override
