@@ -49,7 +49,6 @@ public class WorkspaceTempSave {
 	private FileLock fileLock;
 	private RandomAccessFile randomAccessFile;
 	private Workspace workspace;
-	private int symbolSaveCount = 60;
 	private long nextSaveSymbolTime = 0;
 	// 手动保存(另存)的时候会保存一次;
 	// 工作空间关闭的时候会重置符号库计数，下次保存的时候会保存符号库
@@ -369,19 +368,16 @@ public class WorkspaceTempSave {
 	}
 
 	private void saveSymbolLibrary(Workspace currentWorkspace) {
+		nextSaveSymbolTime = System.currentTimeMillis() + GlobalParameters.getSymbolSaveTime() * 60000;
 		String server = workspace.getConnectionInfo().getServer();
-//		Application.getActiveApplication().getOutput().output(server);
 		String tempFolder = server.substring(0, server.length() - 5);
 
 		String markerSymbolFilePath = tempFolder + ".sym";
 		currentWorkspace.getResources().getMarkerLibrary().toFile(markerSymbolFilePath);
-
 		String lineSymbolFilePath = tempFolder + ".lsl";
 		currentWorkspace.getResources().getLineLibrary().toFile(lineSymbolFilePath);
-
 		String fillSymbolFilePath = tempFolder + ".bru";
 		currentWorkspace.getResources().getFillLibrary().toFile(fillSymbolFilePath);
-		nextSaveSymbolTime = System.currentTimeMillis() + symbolSaveCount * 60000;
 	}
 
 	public static WorkspaceTempSave getInstance() {
@@ -407,9 +403,8 @@ public class WorkspaceTempSave {
 	}
 
 	public void setSymbolSaveTime(int oldValue, int saveTime) {
-		symbolSaveCount = saveTime;
 		if (nextSaveSymbolTime != 0) {
-			nextSaveSymbolTime = System.currentTimeMillis() + symbolSaveCount * 60000;
+			nextSaveSymbolTime = System.currentTimeMillis() + saveTime * 60000;
 		}
 	}
 }

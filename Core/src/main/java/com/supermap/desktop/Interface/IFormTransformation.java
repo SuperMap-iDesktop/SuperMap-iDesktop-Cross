@@ -6,6 +6,7 @@ import com.supermap.data.Transformation;
 import com.supermap.data.TransformationMode;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
+import org.w3c.dom.Document;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,5 +61,5 @@ public interface IFormTransformation extends IForm {
 
 	String toXml();
 
-	boolean fromXml();
+	boolean fromXml(Document document);
 }

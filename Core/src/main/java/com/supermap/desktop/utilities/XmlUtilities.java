@@ -20,7 +20,14 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 
 public class XmlUtilities {
 	private XmlUtilities() {
@@ -230,7 +237,7 @@ public class XmlUtilities {
 		if (nodeList != null && nodeList.getLength() > 0) {
 			for (int i = 0; i < nodeList.getLength(); i++) {
 				Node item = nodeList.item(i);
-				if (item != null && node.getNodeType() == Node.ELEMENT_NODE && name.equalsIgnoreCase(item.getNodeName())) {
+				if (item != null && (node.getNodeType() == Node.ELEMENT_NODE || node.getNodeType() == Node.DOCUMENT_NODE) && name.equalsIgnoreCase(item.getNodeName())) {
 					return item;
 				}
 			}
