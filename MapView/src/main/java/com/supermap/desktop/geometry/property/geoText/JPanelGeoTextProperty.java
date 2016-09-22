@@ -69,11 +69,8 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
                         rotation = ((GeoText) geometry).getPart(0).getRotation();
                     }
                     TextStyle tempTextStyle = textStyle.clone();
-                    tempTextStyle.setSizeFixed(true);
                     panelPreview.refresh(text, tempTextStyle, rotation);
                 } else {
-                    textStyle.setSizeFixed((boolean) panelBasicSet.getResultMap().get(newValue));
-                    textStyle.setFontHeight((double) panelBasicSet.getResultMap().get(TextStyleType.FONTHEIGHT));
                     fireGeoTextChanged(true);
                 }
             }
@@ -208,8 +205,13 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
         recordset.moveLast();
         Geometry geometry = recordset.getGeometry().clone();
         // 设置子对象参数
+        TextStyle tempTextStyle = textStyle.clone();
+        if (null != panelBasicSet.getResultMap().get(TextStyleType.FIXEDSIZE)) {
+            tempTextStyle.setSizeFixed((boolean) panelBasicSet.getResultMap().get(TextStyleType.FIXEDSIZE));
+            tempTextStyle.setFontHeight((double) panelBasicSet.getResultMap().get(TextStyleType.FONTHEIGHT));
+        }
         if (geometry instanceof GeoText && checkboxApplyForTextPart.isSelected()) {
-            ((GeoText) geometry).setTextStyle(textStyle);
+            ((GeoText) geometry).setTextStyle(tempTextStyle);
             if (null != panelTextPart.getResultMap().get(TextPartType.ROTATION)) {
                 for (int i = 0; i < ((GeoText) geometry).getPartCount(); i++) {
                     ((GeoText) geometry).getPart(i).setRotation(((TextPart) panelTextPart.getTextPartInfo().get(i)).getRotation());
@@ -218,7 +220,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
             }
         }
         if (geometry instanceof GeoText && !checkboxApplyForTextPart.isSelected()) {
-            ((GeoText) geometry).setTextStyle(textStyle);
+            ((GeoText) geometry).setTextStyle(tempTextStyle);
             if (null != panelTextPart.getResultMap().get(TextPartType.ROTATION)) {
                 for (int i = 0; i < ((GeoText) geometry).getPartCount(); i++) {
                     ((GeoText) geometry).getPart(i).setRotation((double) panelTextPart.getResultMap().get(TextPartType.ROTATION));
@@ -226,7 +228,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
             }
         }
         if (geometry instanceof GeoText3D && checkboxApplyForTextPart.isSelected()) {
-            ((GeoText3D) geometry).setTextStyle(textStyle);
+            ((GeoText3D) geometry).setTextStyle(tempTextStyle);
             TextPart3D textPart = ((GeoText3D) geometry).getPart((int) panelTextPart.getResultMap().get(TextPartType.INFO));
             if (null != panelTextPart.getResultMap().get(TextPartType.TEXT)) {
                 textPart.setText((String) panelTextPart.getResultMap().get(TextPartType.TEXT));
@@ -236,6 +238,7 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
         recordset.setGeometry(geometry);
         panelTextPart.resetGeometry(geometry);
         recordset.update();
+        tempTextStyle.dispose();
         MapUtilities.getActiveMap().refresh();
     }
 

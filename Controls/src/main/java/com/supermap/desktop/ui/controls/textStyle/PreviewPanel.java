@@ -2,6 +2,8 @@ package com.supermap.desktop.ui.controls.textStyle;
 
 import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.utilities.FontUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.ui.Action;
 import com.supermap.ui.InteractionMode;
 import com.supermap.ui.MapControl;
@@ -32,6 +34,10 @@ public class PreviewPanel extends JPanel implements IPreview {
     @Override
     public void refresh(String text, TextStyle tempTextStyle, double rotation) {
         // 地图全幅显示
+        double newFontHeight = FontUtilities.mapHeightToFontSize(tempTextStyle.getFontHeight(), MapUtilities.getActiveMap(), tempTextStyle.isSizeFixed()) * 10;
+        if (!tempTextStyle.isSizeFixed()) {
+            tempTextStyle.setFontHeight(newFontHeight);
+        }
         mapControl.setInteractionMode(InteractionMode.CUSTOMALL);
         Cursor cursor = new Cursor(Cursor.DEFAULT_CURSOR);
         MapControl.Cursors.setArrow(cursor);
