@@ -1,17 +1,6 @@
 package com.supermap.desktop.ui.controls.textStyle;
 
-import com.supermap.data.GeoPoint;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.GeoText;
-import com.supermap.data.GeoText3D;
-import com.supermap.data.Geometry;
-import com.supermap.data.Point2D;
-import com.supermap.data.Point3D;
-import com.supermap.data.Rectangle2D;
-import com.supermap.data.Size2D;
-import com.supermap.data.TextPart;
-import com.supermap.data.TextPart3D;
-import com.supermap.data.TextStyle;
+import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.utilities.FontUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
@@ -45,10 +34,10 @@ public class PreviewPanel extends JPanel implements IPreview {
     @Override
     public void refresh(String text, TextStyle tempTextStyle, double rotation) {
         // 地图全幅显示
-	    double newFontHeight = FontUtilities.mapHeightToFontSize(tempTextStyle.getFontHeight(), MapUtilities.getActiveMap(), tempTextStyle.isSizeFixed()) * 10;
-	    if (!tempTextStyle.isSizeFixed()) {
-		    tempTextStyle.setFontHeight(newFontHeight);
-	    }
+        double newFontHeight = FontUtilities.mapHeightToFontSize(tempTextStyle.getFontHeight(), MapUtilities.getActiveMap(), tempTextStyle.isSizeFixed()) * 10;
+        if (!tempTextStyle.isSizeFixed()) {
+            tempTextStyle.setFontHeight(newFontHeight);
+        }
         mapControl.setInteractionMode(InteractionMode.CUSTOMALL);
         Cursor cursor = new Cursor(Cursor.DEFAULT_CURSOR);
         MapControl.Cursors.setArrow(cursor);

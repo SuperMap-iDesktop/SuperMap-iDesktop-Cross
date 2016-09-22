@@ -1,0 +1,197 @@
+package com.supermap.desktop.CtrlAction.CADStyle;
+
+import com.supermap.data.*;
+import com.supermap.desktop.enums.TextStyleType;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.textStyle.ITextStyle;
+import com.supermap.desktop.ui.controls.textStyle.ResetTextStyleUtil;
+import com.supermap.desktop.ui.controls.textStyle.TextBasicPanel;
+import com.supermap.desktop.ui.controls.textStyle.TextStyleChangeListener;
+import com.supermap.desktop.utilities.MapUtilities;
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import java.awt.*;
+
+/**
+ * 文本风格对话框
+ *
+ * @author xie 2016-6-3
+ */
+public class TextStyleContainer extends JPanel {
+
+    private static final long serialVersionUID = 1L;
+
+    private transient ITextStyle textBasicPanel;
+    private TextStyle tempTextStyle = new TextStyle();// 用于预览的TextStyle
+    private Double rotation = 0.0;
+    private transient TextStyleChangeListener textStyleChangeListener;
+    private EditHistory editHistory;
+    private JScrollPane scrollPane;
+    private static JPanel panelTextInfo;
+    private CADStyleContainer parent;
+
+    public TextStyleContainer() {
+        super();
+        this.setLayout(new GridBagLayout());
+        this.scrollPane = new JScrollPane();
+        this.panelTextInfo = new JPanel();
+        this.scrollPane.setBorder(new LineBorder(Color.lightGray));
+        this.add(this.scrollPane, new GridBagConstraintsHelper(0, 0, 2, 1).setWeight(100, 75).setInsets(5).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+        this.scrollPane.setViewportView(this.panelTextInfo);
+    }
+
+    /**
+     * 资源化
+     */
+
+    public void init(CADStyleContainer parent) {
+        this.parent = parent;
+        tempTextStyle = getGeoText();
+        if (null != tempTextStyle) {
+            // 不为文本类型时，全部灰选
+            initMainPanel();
+            registEvents();
+        } else {
+            enabled(false);
+        }
+    }
+
+    public TextStyle getGeoText() {
+        TextStyle textStyle = null;
+        Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+        if (null == recordset) {
+            return null;
+        }
+        recordset.moveFirst();
+        while (!recordset.isEOF()) {
+            Geometry tempGeoMetry = recordset.getGeometry();
+            if (tempGeoMetry instanceof GeoText || tempGeoMetry instanceof GeoText3D) {
+                if (tempGeoMetry instanceof GeoText) {
+                    textStyle = ((GeoText) tempGeoMetry).getTextStyle();
+                    rotation = ((GeoText) tempGeoMetry).getPart(0).getRotation();
+                } else if (tempGeoMetry instanceof GeoText3D) {
+                    textStyle = ((GeoText3D) tempGeoMetry).getTextStyle();
+                }
+                break;
+            }
+            recordset.moveNext();
+        }
+        recordset.dispose();
+        return textStyle;
+    }
+
+    private void removePanels() {
+        if (null != panelTextInfo) {
+            remove(panelTextInfo);
+        }
+        for (int i = getComponents().length - 1; i >= 0; i--) {
+            if (getComponent(i) instanceof JPanel) {
+                remove(getComponent(i));
+            }
+        }
+    }
+
+    private void initMainPanel() {
+        this.textBasicPanel = new TextBasicPanel();
+        initTextBasicPanel();
+        removePanels();
+        JPanel panelText = new JPanel();
+        panelText.setLayout(new GridBagLayout());
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        panel.setBorder(new LineBorder(Color.gray));
+        panel.add(panelText, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
+        panelText.add(textBasicPanel.getBasicsetPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 10, 0, 10).setWeight(1, 1));
+        panelText.add(textBasicPanel.getEffectPanel(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 10, 0, 10).setWeight(1, 1));
+        this.scrollPane.setViewportView(panel);
+    }
+
+    public void initTextBasicPanel() {
+        this.textBasicPanel.setTextStyle(tempTextStyle);
+        this.textBasicPanel.setTextStyleSet(true);
+        this.textBasicPanel.initTextBasicPanel();
+        this.textBasicPanel.initCheckBoxState();
+        this.textBasicPanel.enabled(true);
+        this.textBasicPanel.getSpinnerRotationAngl().setValue(rotation);
+    }
+
+    public void registEvents() {
+        this.textStyleChangeListener = new TextStyleChangeListener() {
+
+            @Override
+            public void modify(TextStyleType newValue) {
+                updateGeometries(newValue);
+                parent.setModify(true);
+            }
+        };
+
+        removeEvents();
+        this.textBasicPanel.addTextStyleChangeListener(this.textStyleChangeListener);
+    }
+
+    private void updateGeometries(TextStyleType newValue) {
+        editHistory = MapUtilities.getMapControl().getEditHistory();
+        Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+        if (null == recordset) {
+            return;
+        }
+        recordset.moveFirst();
+        while (!recordset.isEOF()) {
+            editHistory.add(EditType.MODIFY, recordset, true);
+            recordset.edit();
+            Geometry tempGeometry = recordset.getGeometry();
+            Object newGeoStyleProperty = textBasicPanel.getResultMap().get(newValue);
+            if (tempGeometry instanceof GeoText && !newValue.equals(TextStyleType.FIXEDSIZE)) {
+                if (newValue.equals(TextStyleType.ROTATION)) {
+                    for (int i = 0; i < ((GeoText) tempGeometry).getPartCount(); i++) {
+                        ((GeoText) tempGeometry).getPart(i).setRotation((Double) newGeoStyleProperty);
+                    }
+                } else {
+                    ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
+                }
+            }
+            if (tempGeometry instanceof GeoText && newValue.equals(TextStyleType.FIXEDSIZE)) {
+                ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
+                ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, ((GeoText) tempGeometry).getTextStyle(),
+                        textBasicPanel.getResultMap().get(TextStyleType.FONTHEIGHT));
+            }
+            if (tempGeometry instanceof GeoText3D && !newValue.equals(TextStyleType.FIXEDSIZE)) {
+                if (newValue.equals(TextStyleType.ROTATION)) {
+                    for (int i = 0; i < ((GeoText3D) tempGeometry).getPartCount(); i++) {
+                        ((GeoText3D) tempGeometry).getPart(i).setX((Double) newGeoStyleProperty);
+                        ((GeoText3D) tempGeometry).getPart(i).setY((Double) newGeoStyleProperty);
+                        ((GeoText3D) tempGeometry).getPart(i).setZ((Double) newGeoStyleProperty);
+                    }
+                } else {
+                    ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText3D) tempGeometry).getTextStyle(), newGeoStyleProperty);
+                }
+            }
+            if (tempGeometry instanceof GeoText3D && newValue.equals(TextStyleType.FIXEDSIZE)) {
+                ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText3D) tempGeometry).getTextStyle(), newGeoStyleProperty);
+                ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, ((GeoText3D) tempGeometry).getTextStyle(),
+                        textBasicPanel.getResultMap().get(TextStyleType.FONTHEIGHT));
+            }
+            recordset.setGeometry(tempGeometry);
+            tempGeometry.dispose();
+            recordset.update();
+            recordset.moveNext();
+        }
+        editHistory.batchEnd();
+        recordset.dispose();
+        MapUtilities.getActiveMap().refresh();
+    }
+
+    public void enabled(boolean enabled) {
+        if (null != textBasicPanel) {
+            this.textBasicPanel.enabled(enabled);
+        }
+    }
+
+    ;
+
+    private void removeEvents() {
+        this.textBasicPanel.removeTextStyleChangeListener(this.textStyleChangeListener);
+    }
+
+}
