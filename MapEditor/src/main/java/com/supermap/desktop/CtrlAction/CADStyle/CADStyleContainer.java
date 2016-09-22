@@ -1,6 +1,17 @@
 package com.supermap.desktop.CtrlAction.CADStyle;
 
-import com.supermap.data.*;
+import com.supermap.data.EditHistory;
+import com.supermap.data.EditType;
+import com.supermap.data.FillGradientMode;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Geometry;
+import com.supermap.data.Recordset;
+import com.supermap.data.Resources;
+import com.supermap.data.Size2D;
+import com.supermap.data.Symbol;
+import com.supermap.data.SymbolGroup;
+import com.supermap.data.SymbolMarker;
+import com.supermap.data.SymbolMarker3D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolMarkerSizeController;
@@ -17,9 +28,8 @@ import com.supermap.desktop.utilities.MapUtilities;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -88,9 +98,10 @@ public class CADStyleContainer extends JPanel {
     private JPanel panelFill;
     private JPanel panelPoint;
     private JPanel panelLine;
-    private EditHistory editHistory;
+	private JPanel panelParent;
+	private TextStyleContainer panelText;
+	private EditHistory editHistory;
 
-    private Recordset recordset;
     private String lineWidth;
     private int fillOqaue;
 
@@ -109,7 +120,6 @@ public class CADStyleContainer extends JPanel {
     private JTextField textFieldLineWidth;
     private SymbolMarkerSizeController symbolMarkerSizeController;
     private boolean isSizeListenersEnable = true;
-    private boolean isDisposed;
 
     private final String[] stringPointSizes = new String[]{"1.1", "1.3", "1.5", "1.7", "1.9", "2.1", "2.3", "1.5", "3", "4", "5", "6", "7", "8", "9", "10", "15", "10"};
     private final String[] stringLineWidths = new String[]{"1.1", "1.3", "1.5", "1.7", "1.9", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
@@ -118,44 +128,52 @@ public class CADStyleContainer extends JPanel {
     private PropertyChangeListener propertyListener = new PropertyChangeListener() {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
+	        Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+	        if (null == recordset) {
+		        return;
+	        }
             Color currentColor = ((ColorSelectButton) evt.getSource()).getColor();
             try {
-                if (!isDisposed) {
-                    Object newSize = null;
-                    recordset.moveFirst();
-                    while (!recordset.isEOF()) {
-                        editHistory.add(EditType.MODIFY, recordset, true);
-                        recordset.edit();
-                        Geometry tempGeometry = recordset.getGeometry();
-                        GeoStyle geoStyle = new GeoStyle();
-                        if (null != geoStyle) {
-                            geoStyle = tempGeometry.getStyle();
-                        }
-                        if (evt.getSource().equals(buttonPointColor)) {
-                            // 修改点颜色
-                            geoStyle.setLineColor(currentColor);
-                        } else if (evt.getSource().equals(buttonLineColor)) {
-                            // 修改线颜色
-                            geoStyle.setLineColor(currentColor);
-                        } else if (evt.getSource().equals(buttonFillForeColor)) {
-                            // 修改面的前景色
-                            geoStyle.setFillForeColor(currentColor);
-                        } else if (evt.getSource().equals(buttonFillBackColor)) {
-                            // 修改面的背景色
-                            geoStyle.setFillBackColor(currentColor);
-                        } else {
-                            break;
-                        }
-                        tempGeometry.setStyle(geoStyle);
-                        recordset.setGeometry(tempGeometry);
-                        tempGeometry.dispose();
-                        recordset.update();
-                        recordset.moveNext();
-                    }
+	            Object newSize = null;
+	            int count = 0;
+	            recordset.moveFirst();
+	            while (!recordset.isEOF()) {
+		            editHistory.add(EditType.MODIFY, recordset, true);
+		            recordset.edit();
+		            Geometry tempGeometry = recordset.getGeometry();
+		            GeoStyle geoStyle = new GeoStyle();
+		            if (null != geoStyle) {
+			            geoStyle = tempGeometry.getStyle();
+		            }
+		            if (evt.getSource().equals(buttonPointColor) && GeometryUtilities.isPointGeometry(tempGeometry)) {
+			            // 修改点颜色
+			            geoStyle.setLineColor(currentColor);
+			            count++;
+		            } else if (evt.getSource().equals(buttonLineColor) && (GeometryUtilities.isRegionGeometry(tempGeometry) || GeometryUtilities.isLineGeometry(tempGeometry))) {
+			            // 修改线颜色
+			            geoStyle.setLineColor(currentColor);
+			            count++;
+		            } else if (evt.getSource().equals(buttonFillForeColor)) {
+			            // 修改面的前景色
+			            geoStyle.setFillForeColor(currentColor);
+			            count++;
+		            } else if (evt.getSource().equals(buttonFillBackColor)) {
+			            // 修改面的背景色
+			            geoStyle.setFillBackColor(currentColor);
+			            count++;
+		            }
+		            tempGeometry.setStyle(geoStyle);
+		            recordset.setGeometry(tempGeometry);
+		            tempGeometry.dispose();
+		            recordset.update();
+		            recordset.moveNext();
+	            }
+	            if (count > 0) {
                     editHistory.batchEnd();
                     MapUtilities.getActiveMap().refresh();
                     modify = true;
                 }
+	            recordset.dispose();
             } catch (Exception e2) {
                 Application.getActiveApplication().getOutput().output(e2);
             }
@@ -166,93 +184,236 @@ public class CADStyleContainer extends JPanel {
         @Override
         public void itemStateChanged(ItemEvent e) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
+	            Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+	            if (null == recordset) {
+		            return;
+	            }
                 int index = comboBoxFillGradientModel.getSelectedIndex();
                 try {
-                    if (!isDisposed) {
-                        recordset.moveFirst();
-                        while (!recordset.isEOF()) {
-                            editHistory.add(EditType.MODIFY, recordset, true);
-                            recordset.edit();
-                            Geometry tempGeometry = recordset.getGeometry();
-                            GeoStyle geoStyle = new GeoStyle();
-                            if (null != geoStyle) {
-                                geoStyle = tempGeometry.getStyle();
-                            } else {
-                                break;
-                            }
-                            resetFillModel(index, geoStyle);
-                            tempGeometry.setStyle(geoStyle);
-                            recordset.setGeometry(tempGeometry);
-                            tempGeometry.dispose();
-                            recordset.update();
-                            recordset.moveNext();
+	                int count = 0;
+	                recordset.moveFirst();
+	                while (!recordset.isEOF()) {
+                        editHistory.add(EditType.MODIFY, recordset, true);
+                        recordset.edit();
+                        Geometry tempGeometry = recordset.getGeometry();
+                        GeoStyle geoStyle = new GeoStyle();
+	                    if (null != tempGeometry.getStyle()) {
+		                    geoStyle = tempGeometry.getStyle();
+	                    } else {
+                            break;
                         }
-                        editHistory.batchEnd();
-                        MapUtilities.getActiveMap().refresh();
-                        modify = true;
+	                    count = resetFillModel(index, geoStyle);
+	                    tempGeometry.setStyle(geoStyle);
+		                recordset.setGeometry(tempGeometry);
+                        tempGeometry.dispose();
+                        recordset.update();
+                        recordset.moveNext();
                     }
+	                if (count > 0) {
+		                editHistory.batchEnd();
+		                MapUtilities.getActiveMap().refresh();
+		                modify = true;
+	                }
+	                recordset.dispose();
                 } catch (Exception ex) {
-                    Application.getActiveApplication().getOutput().output(ex);
+	                Application.getActiveApplication().getOutput().output(ex);
                 }
             }
         }
     };
-    private CaretListener textFieldPointRotationCaretListener = new CaretListener() {
+	private DocumentListener textFieldPointRotationListener = new DocumentListener() {
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			rotationUpdate();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			rotationUpdate();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			rotationUpdate();
+		}
+
+		private void rotationUpdate() {
+			Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+			if (null == recordset) {
+				return;
+			}
+			try {
+				String text = textFieldPointRotation.getText();
+				if (!SymbolSpinnerUtilties.isLegitNumber(0d, 360d, text)) {
+					textFieldPointRotation.setForeground(wrongColor);
+					return;
+				} else {
+					textFieldPointRotation.setForeground(defaultColor);
+				}
+				double rotation = Double.valueOf(text);
+				int count = 0;
+				recordset.moveFirst();
+				while (!recordset.isEOF()) {
+					editHistory.add(EditType.MODIFY, recordset, true);
+					recordset.edit();
+					Geometry tempGeometry = recordset.getGeometry();
+					GeoStyle geoStyle = new GeoStyle();
+					if (null != tempGeometry.getStyle()) {
+						geoStyle = tempGeometry.getStyle();
+					}
+					if (!DoubleUtilities.equals(rotation, geoStyle.getMarkerAngle(), pow)) {
+						//设置点旋转角度
+						geoStyle.setMarkerAngle(rotation);
+						count++;
+					} else {
+						break;
+					}
+					tempGeometry.setStyle(geoStyle);
+					recordset.setGeometry(tempGeometry);
+					tempGeometry.dispose();
+					recordset.update();
+					recordset.moveNext();
+				}
+				editHistory.batchEnd();
+				MapUtilities.getActiveMap().refresh();
+				modify = true;
+				recordset.dispose();
+			} catch (Exception ex) {
+				Application.getActiveApplication().getOutput().output(ex);
+            }
+        }
+    };
+	private DocumentListener textFieldPointOpaqueListener;
+	private DocumentListener textFieldFillOpaqueListener;
+	private DocumentListener textFieldPointWidthListener;
+	private DocumentListener textFieldPointHeightListener;
+	private DocumentListener textFieldGradientOffsetXListener;
+	private DocumentListener textFieldGradientOffsetYListener;
+	private JTabbedPane panelContaints;
+	private static final int TAB_MARKER = 0;
+	private static final int TAB_LINE = 1;
+	private static final int TAB_REGION = 2;
+	private static final int TAB_TEXT = 3;
+
+	class TextFieldOpaqueCaretListener implements DocumentListener {
+		private JComponent parent;
+
+		public TextFieldOpaqueCaretListener(JComponent parent) {
+			this.parent = parent;
+		}
+
         @Override
-        public void caretUpdate(CaretEvent e) {
+        public void insertUpdate(DocumentEvent e) {
+	        fillOpaqueRateUpdate();
+        }
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			fillOpaqueRateUpdate();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			fillOpaqueRateUpdate();
+		}
+
+		public void fillOpaqueRateUpdate() {
+			Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+			if (null == recordset) {
+				return;
+			}
             try {
-                if (!isDisposed) {
-                    String text = textFieldPointRotation.getText();
-                    if (!SymbolSpinnerUtilties.isLegitNumber(0d, 360d, text)) {
-                        textFieldPointRotation.setForeground(wrongColor);
-                        return;
-                    } else {
-                        textFieldPointRotation.setForeground(defaultColor);
+	            String text = ((JFormattedTextField) parent).getText();
+	            if (!SymbolSpinnerUtilties.isLegitNumber(0, 100, text)) {
+		            parent.setForeground(wrongColor);
+		            return;
+	            } else {
+		            parent.setForeground(defaultColor);
+	            }
+	            int count = 0;
+	            int opaque = Integer.valueOf(text);
+	            recordset.moveFirst();
+	            while (!recordset.isEOF()) {
+		            editHistory.add(EditType.MODIFY, recordset, true);
+		            recordset.edit();
+		            Geometry tempGeometry = recordset.getGeometry();
+		            GeoStyle geoStyle = new GeoStyle();
+		            if (null != geoStyle) {
+			            geoStyle = tempGeometry.getStyle();
                     }
-                    recordset.moveFirst();
-                    while (!recordset.isEOF()) {
-                        editHistory.add(EditType.MODIFY, recordset, true);
-                        recordset.edit();
-                        Geometry tempGeometry = recordset.getGeometry();
-                        GeoStyle geoStyle = new GeoStyle();
-                        if (null != geoStyle) {
-                            geoStyle = tempGeometry.getStyle();
-                        }
-                        double rotation = Double.valueOf(text);
-                        if (!DoubleUtilities.equals(rotation, geoStyle.getMarkerAngle(), pow)) {
-                            //设置点旋转角度
-                            geoStyle.setMarkerAngle(rotation);
-                        } else {
-                            break;
-                        }
-                        tempGeometry.setStyle(geoStyle);
-                        recordset.setGeometry(tempGeometry);
-                        tempGeometry.dispose();
-                        recordset.update();
-                        recordset.moveNext();
-                    }
+		            if (geoStyle.getFillOpaqueRate() != opaque) {
+			            //设置点/面透明度
+			            if ((parent.equals(textFieldPointOpaque) && GeometryUtilities.isPointGeometry(tempGeometry)) ||
+					            parent.equals(textFieldFillOpaque) && GeometryUtilities.isRegionGeometry(tempGeometry)) {
+				            geoStyle.setFillOpaqueRate(100 - opaque);
+				            count++;
+			            }
+		            } else {
+			            break;
+		            }
+		            tempGeometry.setStyle(geoStyle);
+		            recordset.setGeometry(tempGeometry);
+		            tempGeometry.dispose();
+		            recordset.update();
+		            recordset.moveNext();
+	            }
+	            if (count > 0) {
                     editHistory.batchEnd();
                     MapUtilities.getActiveMap().refresh();
                     modify = true;
                 }
+	            recordset.dispose();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
         }
-    };
-    private CaretListener textFieldOpaqueCaretListener = new CaretListener() {
+	}
+
+	class TextFieldMarkerSizeLitener implements DocumentListener {
+		private JComponent parent;
+
+		public TextFieldMarkerSizeLitener(JComponent parent) {
+			this.parent = parent;
+		}
+
         @Override
-        public void caretUpdate(CaretEvent e) {
+        public void insertUpdate(DocumentEvent e) {
+	        markerSizeUpdate();
+        }
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			markerSizeUpdate();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			markerSizeUpdate();
+		}
+
+		public void markerSizeUpdate() {
+			Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+			if (null == recordset) {
+				return;
+			}
             try {
-                if (!isDisposed) {
-                    String text = ((JFormattedTextField) e.getSource()).getText();
-                    if (!SymbolSpinnerUtilties.isLegitNumber(0, 100, text)) {
-                        ((JFormattedTextField) e.getSource()).setForeground(wrongColor);
-                        return;
-                    } else {
-                        ((JFormattedTextField) e.getSource()).setForeground(defaultColor);
-                    }
-                    recordset.moveFirst();
+	            if (isSizeListenersEnable) {
+		            // 重新设置
+		            String text = ((JFormattedTextField) parent).getText();
+		            if (!SymbolSpinnerUtilties.isLegitNumber(-500d, 500d, text)) {
+			            parent.setForeground(wrongColor);
+			            return;
+		            } else {
+			            parent.setForeground(defaultColor);
+		            }
+		            setSizeControllerSize((JFormattedTextField) parent, Double.valueOf(text));
+		            int count = 0;
+		            Size2D newSize = new Size2D();
+		            double width = Double.valueOf(textFieldPointWidth.getText());
+		            double height = Double.valueOf(textFieldPointHeight.getText());
+		            newSize.setHeight(height);
+		            newSize.setWidth(width);
+		            recordset.moveFirst();
                     while (!recordset.isEOF()) {
                         editHistory.add(EditType.MODIFY, recordset, true);
                         recordset.edit();
@@ -261,59 +422,10 @@ public class CADStyleContainer extends JPanel {
                         if (null != geoStyle) {
                             geoStyle = tempGeometry.getStyle();
                         }
-                        int opaque = Integer.valueOf(text);
-                        if (geoStyle.getFillOpaqueRate() != opaque) {
-                            //设置点/面透明度
-                            geoStyle.setFillOpaqueRate(100 - opaque);
-                        } else {
-                            break;
-                        }
-                        tempGeometry.setStyle(geoStyle);
-                        recordset.setGeometry(tempGeometry);
-                        tempGeometry.dispose();
-                        recordset.update();
-                        recordset.moveNext();
-                    }
-                    editHistory.batchEnd();
-                    MapUtilities.getActiveMap().refresh();
-                    modify = true;
-                }
-            } catch (Exception ex) {
-                Application.getActiveApplication().getOutput().output(ex);
-            }
-        }
-    };
-    private CaretListener textFieldPointSizeCaretListener = new CaretListener() {
-        @Override
-        public void caretUpdate(CaretEvent e) {
-            try {
-                if (isSizeListenersEnable && e.getSource() instanceof JFormattedTextField && !isDisposed) {
-                    // 重新设置
-                    String text = ((JFormattedTextField) e.getSource()).getText();
-                    if (!SymbolSpinnerUtilties.isLegitNumber(-500d, 500d, text)) {
-                        ((JFormattedTextField) e.getSource()).setForeground(wrongColor);
-                        return;
-                    } else {
-                        ((JFormattedTextField) e.getSource()).setForeground(defaultColor);
-                    }
-                    setSizeControllerSize((JFormattedTextField) e.getSource(), Double.valueOf(text));
-                    recordset.moveFirst();
-                    while (!recordset.isEOF()) {
-                        editHistory.add(EditType.MODIFY, recordset, true);
-                        recordset.edit();
-                        Geometry tempGeometry = recordset.getGeometry();
-                        GeoStyle geoStyle = new GeoStyle();
-                        if (null != geoStyle) {
-                            geoStyle = tempGeometry.getStyle();
-                        }
-                        Size2D newSize = new Size2D();
-                        double width = Double.valueOf(textFieldPointWidth.getText());
-                        double height = Double.valueOf(textFieldPointHeight.getText());
-                        newSize.setHeight(height);
-                        newSize.setWidth(width);
                         if (!newSize.equals(geoStyle.getMarkerSize())) {
                             //设置点符号大小
                             geoStyle.setMarkerSize(newSize);
+	                        count++;
                         } else {
                             break;
                         }
@@ -323,143 +435,218 @@ public class CADStyleContainer extends JPanel {
                         recordset.update();
                         recordset.moveNext();
                     }
-                    editHistory.batchEnd();
-                    MapUtilities.getActiveMap().refresh();
-                    modify = true;
+		            if (count > 0) {
+			            editHistory.batchEnd();
+			            MapUtilities.getActiveMap().refresh();
+			            modify = true;
+		            }
+		            recordset.dispose();
                 }
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
         }
-    };
-    private CaretListener textFieldGradientOffsetCaretListener = new CaretListener() {
+	}
+
+	class TextFieldGradientOffsetCaretListener implements DocumentListener {
+		private JComponent parent;
+
+		public TextFieldGradientOffsetCaretListener(JComponent parent) {
+			this.parent = parent;
+		}
+
         @Override
-        public void caretUpdate(CaretEvent e) {
+        public void insertUpdate(DocumentEvent e) {
+	        gradientOffsetRatioUpdate();
+        }
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			gradientOffsetRatioUpdate();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			gradientOffsetRatioUpdate();
+		}
+
+		public void gradientOffsetRatioUpdate() {
+			Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+			if (null == recordset) {
+				return;
+			}
             try {
-                if (!isDisposed) {
-                    String text = ((JFormattedTextField) e.getSource()).getText();
-                    if (!SymbolSpinnerUtilties.isLegitNumber(-100d, 100d, text)) {
-                        ((JFormattedTextField) e.getSource()).setForeground(wrongColor);
-                        return;
+	            String text = ((JFormattedTextField) parent).getText();
+	            if (!SymbolSpinnerUtilties.isLegitNumber(-100d, 100d, text)) {
+		            parent.setForeground(wrongColor);
+		            return;
+	            } else {
+		            parent.setForeground(defaultColor);
+	            }
+	            int count = 0;
+	            double newOffset = Double.valueOf(text);
+	            recordset.moveFirst();
+	            while (!recordset.isEOF()) {
+		            editHistory.add(EditType.MODIFY, recordset, true);
+		            recordset.edit();
+		            Geometry tempGeometry = recordset.getGeometry();
+		            GeoStyle geoStyle = new GeoStyle();
+		            if (null != geoStyle) {
+			            geoStyle = tempGeometry.getStyle();
+		            }
+		            if (parent.equals(textFieldFillGradientOffsetX) && !DoubleUtilities.equals(newOffset, geoStyle.getFillGradientOffsetRatioX(), pow)) {
+			            // 修改水平渐变偏移量
+			            geoStyle.setFillGradientOffsetRatioX(newOffset);
+			            count++;
+		            } else if (parent.equals(textFieldFillGradientOffsetY) && !DoubleUtilities.equals(newOffset, geoStyle.getFillGradientOffsetRatioX(), pow)) {
+			            // 修改垂直渐变偏移量
+			            geoStyle.setFillGradientOffsetRatioY(newOffset);
+			            count++;
                     } else {
-                        ((JFormattedTextField) e.getSource()).setForeground(defaultColor);
-                    }
-                    recordset.moveFirst();
-                    while (!recordset.isEOF()) {
-                        editHistory.add(EditType.MODIFY, recordset, true);
-                        recordset.edit();
-                        Geometry tempGeometry = recordset.getGeometry();
-                        GeoStyle geoStyle = new GeoStyle();
-                        if (null != geoStyle) {
-                            geoStyle = tempGeometry.getStyle();
-                        }
-                        double newOffset = Double.valueOf(text);
-                        if (e.getSource().equals(textFieldFillGradientOffsetX) && !DoubleUtilities.equals(newOffset, geoStyle.getFillGradientOffsetRatioX(), pow)) {
-                            // 修改水平渐变偏移量
-                            geoStyle.setFillGradientOffsetRatioX(newOffset);
-                        } else if (e.getSource().equals(textFieldFillGradientOffsetY) && !DoubleUtilities.equals(newOffset, geoStyle.getFillGradientOffsetRatioX(), pow)) {
-                            // 修改垂直渐变偏移量
-                            geoStyle.setFillGradientOffsetRatioY(newOffset);
-                        } else {
-                            break;
-                        }
-                        tempGeometry.setStyle(geoStyle);
-                        recordset.setGeometry(tempGeometry);
-                        tempGeometry.dispose();
-                        recordset.update();
-                        recordset.moveNext();
-                    }
+			            break;
+		            }
+		            tempGeometry.setStyle(geoStyle);
+		            recordset.setGeometry(tempGeometry);
+		            tempGeometry.dispose();
+		            recordset.update();
+		            recordset.moveNext();
+	            }
+	            if (count > 0) {
                     editHistory.batchEnd();
                     MapUtilities.getActiveMap().refresh();
                     modify = true;
                 }
+	            recordset.dispose();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
         }
-    };
-    private CaretListener textFieldFillGradientAngelCaretListener = new CaretListener() {
-        @Override
-        public void caretUpdate(CaretEvent e) {
-            try {
-                if (!isDisposed) {
-                    String text = ((JFormattedTextField) e.getSource()).getText();
-                    if (!SymbolSpinnerUtilties.isLegitNumber(0d, 360d, text)) {
-                        ((JFormattedTextField) e.getSource()).setForeground(wrongColor);
-                        return;
+
+	}
+
+	;
+	private DocumentListener textFieldFillGradientAngelListener = new DocumentListener() {
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			fillGradientAngleUpdate();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			fillGradientAngleUpdate();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			fillGradientAngleUpdate();
+		}
+
+		public void fillGradientAngleUpdate() {
+			Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+			if (null == recordset) {
+				return;
+			}
+			try {
+	            String text = textFieldFillGradientAngel.getText();
+	            if (!SymbolSpinnerUtilties.isLegitNumber(0d, 360d, text)) {
+		            textFieldFillGradientAngel.setForeground(wrongColor);
+		            return;
+	            } else {
+		            textFieldFillGradientAngel.setForeground(defaultColor);
+	            }
+	            int count = 0;
+	            double newAngel = Double.valueOf(text);
+	            recordset.moveFirst();
+	            while (!recordset.isEOF()) {
+		            editHistory.add(EditType.MODIFY, recordset, true);
+		            recordset.edit();
+		            Geometry tempGeometry = recordset.getGeometry();
+		            GeoStyle geoStyle = new GeoStyle();
+		            if (null != geoStyle) {
+			            geoStyle = tempGeometry.getStyle();
+		            }
+		            if (!DoubleUtilities.equals(newAngel, geoStyle.getFillGradientAngle(), pow)) {
+			            geoStyle.setFillGradientAngle(newAngel);
+			            count++;
                     } else {
-                        ((JFormattedTextField) e.getSource()).setForeground(defaultColor);
-                    }
-                    recordset.moveFirst();
-                    while (!recordset.isEOF()) {
-                        editHistory.add(EditType.MODIFY, recordset, true);
-                        recordset.edit();
-                        Geometry tempGeometry = recordset.getGeometry();
-                        GeoStyle geoStyle = new GeoStyle();
-                        if (null != geoStyle) {
-                            geoStyle = tempGeometry.getStyle();
-                        }
-                        double newAngel = Double.valueOf(text);
-                        if (!DoubleUtilities.equals(newAngel, geoStyle.getFillGradientAngle(), pow)) {
-                            geoStyle.setFillGradientAngle(newAngel);
-                        } else {
-                            break;
-                        }
-                        double newOffset = Double.valueOf(text);
-                        tempGeometry.setStyle(geoStyle);
-                        recordset.setGeometry(tempGeometry);
-                        tempGeometry.dispose();
-                        recordset.update();
-                        recordset.moveNext();
-                    }
+			            break;
+		            }
+		            tempGeometry.setStyle(geoStyle);
+		            recordset.setGeometry(tempGeometry);
+		            tempGeometry.dispose();
+		            recordset.update();
+		            recordset.moveNext();
+	            }
+	            if (count > 0) {
                     editHistory.batchEnd();
                     MapUtilities.getActiveMap().refresh();
                     modify = true;
                 }
-            } catch (Exception ex) {
+	            recordset.dispose();
+			} catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
         }
     };
-    private CaretListener textFieldLineWidthCaretListener = new CaretListener() {
-        @Override
-        public void caretUpdate(CaretEvent e) {
-            try {
-                if (!isDisposed) {
-                    String text = ((JTextField) e.getSource()).getText();
-                    if (!SymbolSpinnerUtilties.isLegitNumber(0d, 20d, text)) {
-                        ((JTextField) e.getSource()).setForeground(wrongColor);
-                        return;
+	private DocumentListener textFieldLineWidthListener = new DocumentListener() {
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			lineWidthUpdate();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			lineWidthUpdate();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			lineWidthUpdate();
+		}
+
+		public void lineWidthUpdate() {
+			Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+			if (null == recordset) {
+				return;
+			}
+			try {
+	            String text = textFieldLineWidth.getText();
+	            if (!SymbolSpinnerUtilties.isLegitNumber(0d, 20d, text)) {
+		            textFieldLineWidth.setForeground(wrongColor);
+		            return;
+	            } else {
+		            textFieldLineWidth.setForeground(defaultColor);
+	            }
+	            int count = 0;
+	            double newLineWidth = Double.valueOf(text);
+	            recordset.moveFirst();
+	            while (!recordset.isEOF()) {
+		            editHistory.add(EditType.MODIFY, recordset, true);
+		            recordset.edit();
+		            Geometry tempGeometry = recordset.getGeometry();
+		            GeoStyle geoStyle = new GeoStyle();
+		            if (null != geoStyle) {
+			            geoStyle = tempGeometry.getStyle();
+		            }
+		            if (!DoubleUtilities.equals(newLineWidth, geoStyle.getLineWidth(), pow)) {
+			            geoStyle.setLineWidth(newLineWidth);
+			            count++;
                     } else {
-                        ((JTextField) e.getSource()).setForeground(defaultColor);
-                    }
-                    recordset.moveFirst();
-                    while (!recordset.isEOF()) {
-                        editHistory.add(EditType.MODIFY, recordset, true);
-                        recordset.edit();
-                        Geometry tempGeometry = recordset.getGeometry();
-                        GeoStyle geoStyle = new GeoStyle();
-                        if (null != geoStyle) {
-                            geoStyle = tempGeometry.getStyle();
-                        }
-                        double newLineWidth = Double.valueOf(text);
-                        if (!DoubleUtilities.equals(newLineWidth, geoStyle.getLineWidth(), pow)) {
-                            geoStyle.setLineWidth(newLineWidth);
-                        } else {
-                            break;
-                        }
-                        double newOffset = Double.valueOf(text);
-                        tempGeometry.setStyle(geoStyle);
-                        recordset.setGeometry(tempGeometry);
-                        tempGeometry.dispose();
-                        recordset.update();
-                        recordset.moveNext();
-                    }
+			            break;
+		            }
+		            tempGeometry.setStyle(geoStyle);
+		            recordset.setGeometry(tempGeometry);
+		            tempGeometry.dispose();
+		            recordset.update();
+		            recordset.moveNext();
+	            }
+	            if (count > 0) {
                     editHistory.batchEnd();
                     MapUtilities.getActiveMap().refresh();
                     modify = true;
                 }
-            } catch (Exception ex) {
+	            recordset.dispose();
+			} catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
         }
@@ -471,61 +658,79 @@ public class CADStyleContainer extends JPanel {
         }
     };
 
-    private void resetFillModel(int index, GeoStyle geoStyle) {
-        switch (index) {
-            case 0:
-                geoStyle.setFillGradientMode(FillGradientMode.LINEAR);
+	private int resetFillModel(int index, GeoStyle geoStyle) {
+		int result = 0;
+		switch (index) {
+			case 0:
+	            if (!geoStyle.getFillGradientMode().equals(FillGradientMode.LINEAR)) {
+		            geoStyle.setFillGradientMode(FillGradientMode.LINEAR);
+		            result++;
+	            }
                 break;
             case 1:
-                geoStyle.setFillGradientMode(FillGradientMode.RADIAL);
+	            if (!geoStyle.getFillGradientMode().equals(FillGradientMode.RADIAL)) {
+		            geoStyle.setFillGradientMode(FillGradientMode.RADIAL);
+		            result++;
+	            }
                 break;
             case 2:
-                geoStyle.setFillGradientMode(FillGradientMode.SQUARE);
+	            if (!geoStyle.getFillGradientMode().equals(FillGradientMode.SQUARE)) {
+		            geoStyle.setFillGradientMode(FillGradientMode.SQUARE);
+		            result++;
+	            }
                 break;
             default:
                 break;
         }
-    }
+		return result;
+	}
 
     private ActionListener actionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+	        Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+	        if (null == recordset) {
+		        return;
+	        }
             try {
-                if (!isDisposed) {
-                    recordset.moveFirst();
-                    while (!recordset.isEOF()) {
-                        editHistory.add(EditType.MODIFY, recordset, true);
-                        recordset.edit();
-                        Geometry tempGeometry = recordset.getGeometry();
-                        GeoStyle geoStyle = new GeoStyle();
-                        if (null != geoStyle) {
-                            geoStyle = tempGeometry.getStyle();
-                        }
-                        if (e.getSource().equals(checkboxBackOpaque)) {
-                            boolean isOpaque = checkboxBackOpaque.isSelected();
-                            buttonFillBackColor.setEnabled(!isOpaque);
-                            geoStyle.setFillBackOpaque(!isOpaque);
-                        } else if (e.getSource().equals(checkboxFillGradient)) {
-                            setFillGradientEnabled(checkboxFillGradient.isSelected());
-                            if (checkboxFillGradient.isSelected()) {
-                                int modelIndex = comboBoxFillGradientModel.getSelectedIndex();
-                                resetFillModel(modelIndex, geoStyle);
-                            } else {
-                                geoStyle.setFillGradientMode(FillGradientMode.NONE);
-                            }
+	            int count = 0;
+	            recordset.moveFirst();
+	            while (!recordset.isEOF()) {
+		            editHistory.add(EditType.MODIFY, recordset, true);
+		            recordset.edit();
+		            Geometry tempGeometry = recordset.getGeometry();
+		            GeoStyle geoStyle = new GeoStyle();
+		            if (null != geoStyle) {
+			            geoStyle = tempGeometry.getStyle();
+		            }
+		            if (e.getSource().equals(checkboxBackOpaque)) {
+			            boolean isOpaque = checkboxBackOpaque.isSelected();
+			            buttonFillBackColor.setEnabled(!isOpaque);
+			            geoStyle.setFillBackOpaque(!isOpaque);
+		            } else if (e.getSource().equals(checkboxFillGradient)) {
+			            setFillGradientEnabled(checkboxFillGradient.isSelected());
+			            if (checkboxFillGradient.isSelected()) {
+				            int modelIndex = comboBoxFillGradientModel.getSelectedIndex();
+				            count = resetFillModel(modelIndex, geoStyle);
                         } else {
-                            break;
-                        }
-                        tempGeometry.setStyle(geoStyle);
-                        recordset.setGeometry(tempGeometry);
-                        tempGeometry.dispose();
-                        recordset.update();
-                        recordset.moveNext();
-                    }
+				            geoStyle.setFillGradientMode(FillGradientMode.NONE);
+				            count++;
+			            }
+		            } else {
+			            break;
+		            }
+		            tempGeometry.setStyle(geoStyle);
+		            recordset.setGeometry(tempGeometry);
+		            tempGeometry.dispose();
+		            recordset.update();
+		            recordset.moveNext();
+	            }
+	            if (count > 0) {
                     editHistory.batchEnd();
                     MapUtilities.getActiveMap().refresh();
                     modify = true;
                 }
+	            recordset.dispose();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -542,16 +747,22 @@ public class CADStyleContainer extends JPanel {
         this.scrollPane.setViewportView(this.panelCADInfo);
     }
 
-    public void showDialog(Recordset recordset) {
-        if (!modify) {
-            setRecordset(recordset);
-            editHistory = MapUtilities.getMapControl().getEditHistory();
-            initComponents();
-            initResources();
-            registEvents();
-            setEnabled();
-        }
-    }
+	public void init() {
+		editHistory = MapUtilities.getMapControl().getEditHistory();
+		initComponents();
+		initResources();
+		registEvents();
+		setEnabled();
+	}
+
+	public void showDialog() {
+		if (!modify) {
+			this.scrollPane.setViewportView(panelParent);
+			enabled(false);
+			setEnabled();
+			registEvents();
+		}
+	}
 
     private void setSizeControllerSize(JFormattedTextField source, double value) {
         if (source == ((JSpinner.NumberEditor) spinnerPointHeight.getEditor()).getTextField()) {
@@ -593,27 +804,49 @@ public class CADStyleContainer extends JPanel {
         this.labelPointHeight.setEnabled(enabled);
         this.spinnerPointHeight.setEnabled(enabled);
         this.labelPointHeightUnity.setEnabled(enabled);
-        if (null != panelPointStyle.getInitializeGeoStyle()) {
-            int symbolID = panelPointStyle.getInitializeGeoStyle().getMarkerSymbolID();
-            Resources resources = Application.getActiveApplication().getWorkspace().getResources();
-            SymbolGroup group = resources.getMarkerLibrary().getRootGroup();
-            for (int i = 0; i < group.getCount(); i++) {
-                if (group.get(i).getID() == symbolID) {
-                    Symbol symbol = group.get(i);
-                    if (symbol instanceof SymbolMarker3D || SymbolMarkerType.getSymbolMarkerType(((SymbolMarker) symbol)).equals(SymbolMarkerType.Raster)) {
-                        setButtonPointColorEnable(false);
-                    } else {
-                        setButtonPointColorEnable(true);
-                    }
+	    if (true == enabled) {
+		    Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+		    boolean hasPoint = false;
+		    if (null != recordset) {
+			    recordset.moveFirst();
+			    while (!recordset.isEOF()) {
+				    if (GeometryUtilities.isPointGeometry(recordset.getGeometry())) {
+					    hasPoint = true;
+					    break;
+				    } else {
+					    recordset.moveNext();
+				    }
                 }
-            }
-            if (0 >= symbolID) {
-                setSymstemPointEnable(false);
+			    recordset.dispose();
+		    }
+		    if (hasPoint && null != panelPointStyle.getInitializeGeoStyle()) {
+			    int symbolID = panelPointStyle.getInitializeGeoStyle().getMarkerSymbolID();
+			    Resources resources = Application.getActiveApplication().getWorkspace().getResources();
+			    SymbolGroup group = resources.getMarkerLibrary().getRootGroup();
+			    for (int i = 0; i < group.getCount(); i++) {
+				    if (group.get(i).getID() == symbolID) {
+					    Symbol symbol = group.get(i);
+					    if (symbol instanceof SymbolMarker3D || SymbolMarkerType.getSymbolMarkerType(((SymbolMarker) symbol)).equals(SymbolMarkerType.Raster)) {
+						    setButtonPointColorEnable(false);
+					    } else {
+						    setButtonPointColorEnable(true);
+					    }
+				    }
+			    }
+			    if (0 >= symbolID) {
+				    setSymstemPointEnable(false);
+			    } else {
+				    setSymstemPointEnable(true);
+			    }
             } else {
-                setSymstemPointEnable(true);
-            }
+			    setButtonPointColorEnable(false);
+			    setSymstemPointEnable(false);
+		    }
+		    initPanelPointComponentsInfo();
+	    } else {
+		    setButtonPointColorEnable(false);
+		    setSymstemPointEnable(false);
         }
-
     }
 
     private void setPanelFillEnabled(boolean enabled) {
@@ -625,8 +858,28 @@ public class CADStyleContainer extends JPanel {
         this.checkboxBackOpaque.setEnabled(enabled);
         this.labelFillOpaque.setEnabled(enabled);
         this.checkboxFillGradient.setEnabled(enabled);
-        if (null != panelFillStyle.getInitializeGeoStyle() && 7 >= panelFillStyle.getInitializeGeoStyle().getFillSymbolID()) {
-            setSpinnerFillOpaqueEnable(true);
+	    if (true == enabled) {
+		    Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+		    boolean hasRegion = false;
+		    if (null != recordset) {
+			    recordset.moveFirst();
+			    while (!recordset.isEOF()) {
+				    if (GeometryUtilities.isRegionGeometry(recordset.getGeometry())) {
+					    hasRegion = true;
+					    break;
+				    } else {
+					    recordset.moveNext();
+				    }
+			    }
+			    recordset.dispose();
+		    }
+		    if (hasRegion && null != panelFillStyle.getInitializeGeoStyle() && 7 >= panelFillStyle.getInitializeGeoStyle().getFillSymbolID()) {
+			    setSpinnerFillOpaqueEnable(true);
+			    recordset.dispose();
+		    } else {
+			    setSpinnerFillOpaqueEnable(false);
+		    }
+		    initPanelFillComponentsInfo();
         } else {
             setSpinnerFillOpaqueEnable(false);
         }
@@ -653,21 +906,30 @@ public class CADStyleContainer extends JPanel {
         this.labelLineWidth.setEnabled(enabled);
         this.buttonLineColor.setEnabled(enabled);
         this.comboboxLineWidth.setEnabled(enabled);
+	    if (true == enabled) {
+		    initPanelLineComponentsInfo();
+	    }
     }
 
     public void enabled(boolean enabled) {
         setPanelPointEnabled(enabled);
         setPanelLineEnabled(enabled);
         setPanelFillEnabled(enabled);
+	    panelText.enabled(enabled);
     }
 
     public void setEnabled() {
+	    Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+	    if (null == recordset) {
+		    return;
+	    }
         recordset.moveFirst();
         boolean containsPoint = false;
         boolean containsLine = false;
         boolean containsRegion = false;
-        while (!recordset.isEOF()) {
-            if (GeometryUtilities.isPointGeometry(recordset.getGeometry())) {
+	    boolean containsText = false;
+	    while (!recordset.isEOF()) {
+		    if (GeometryUtilities.isPointGeometry(recordset.getGeometry())) {
                 setPanelPointEnabled(true);
                 containsPoint = true;
             } else if (GeometryUtilities.isLineGeometry(recordset.getGeometry())) {
@@ -678,14 +940,15 @@ public class CADStyleContainer extends JPanel {
                 setPanelFillEnabled(true);
                 containsLine = true;
                 containsRegion = true;
-            } else {
-                // 设置为空界面
-                this.scrollPane.setViewportView(panelCADInfo);
-            }
+            } else if (GeometryUtilities.isTextGeometry(recordset.getGeometry())) {
+	            this.panelText.init(this);
+	            containsText = true;
+		    }
             recordset.moveNext();
         }
-        if (!containsPoint) {
-            this.buttonPointColor.setColor(Color.gray);
+	    recordset.dispose();
+	    if (!containsPoint) {
+		    this.buttonPointColor.setColor(Color.gray);
         }
         if (!containsLine) {
             this.buttonLineColor.setColor(Color.gray);
@@ -694,6 +957,16 @@ public class CADStyleContainer extends JPanel {
             this.buttonFillForeColor.setColor(Color.gray);
             this.buttonFillBackColor.setColor(Color.gray);
         }
+	    int selectIndex = panelContaints.getSelectedIndex();
+	    if (containsPoint && selectIndex != TAB_MARKER) {
+		    panelContaints.setSelectedIndex(TAB_MARKER);
+	    } else if (containsLine && selectIndex != TAB_LINE) {
+		    panelContaints.setSelectedIndex(TAB_LINE);
+	    } else if (containsRegion && selectIndex != TAB_REGION) {
+		    panelContaints.setSelectedIndex(TAB_REGION);
+	    } else if (containsText && selectIndex != TAB_TEXT) {
+		    panelContaints.setSelectedIndex(TAB_TEXT);
+	    }
     }
 
 
@@ -707,35 +980,30 @@ public class CADStyleContainer extends JPanel {
         this.textFieldFillGradientOffsetY = ((JSpinner.NumberEditor) spinnerFillGradientOffsetY.getEditor()).getTextField();
         this.textFieldFillGradientAngel = ((JSpinner.NumberEditor) spinnerFillGradientAngel.getEditor()).getTextField();
         this.textFieldLineWidth = (JTextField) comboboxLineWidth.getEditor().getEditorComponent();
-        removeEvents();
-        this.buttonPointColor.addPropertyChangeListener("m_selectionColors", this.propertyListener);
+	    this.textFieldPointOpaqueListener = new TextFieldOpaqueCaretListener(this.textFieldPointOpaque);
+	    this.textFieldFillOpaqueListener = new TextFieldOpaqueCaretListener(this.textFieldFillOpaque);
+	    this.textFieldPointWidthListener = new TextFieldMarkerSizeLitener(this.textFieldPointWidth);
+	    this.textFieldPointHeightListener = new TextFieldMarkerSizeLitener(this.textFieldPointHeight);
+	    this.textFieldGradientOffsetXListener = new TextFieldGradientOffsetCaretListener(this.textFieldFillGradientOffsetX);
+	    this.textFieldGradientOffsetYListener = new TextFieldGradientOffsetCaretListener(this.textFieldFillGradientOffsetY);
+	    removeEvents();
+	    this.buttonPointColor.addPropertyChangeListener("m_selectionColors", this.propertyListener);
         this.buttonLineColor.addPropertyChangeListener("m_selectionColors", this.propertyListener);
         this.buttonFillForeColor.addPropertyChangeListener("m_selectionColors", this.propertyListener);
         this.buttonFillBackColor.addPropertyChangeListener("m_selectionColors", this.propertyListener);
-        this.textFieldPointRotation.addCaretListener(this.textFieldPointRotationCaretListener);
-        this.textFieldPointOpaque.addCaretListener(this.textFieldOpaqueCaretListener);
-        this.textFieldFillOpaque.addCaretListener(this.textFieldOpaqueCaretListener);
-        this.textFieldPointWidth.addCaretListener(this.textFieldPointSizeCaretListener);
-        this.textFieldPointHeight.addCaretListener(this.textFieldPointSizeCaretListener);
-        this.textFieldFillGradientOffsetX.addCaretListener(this.textFieldGradientOffsetCaretListener);
-        this.textFieldFillGradientOffsetY.addCaretListener(this.textFieldGradientOffsetCaretListener);
-        this.textFieldFillGradientAngel.addCaretListener(this.textFieldFillGradientAngelCaretListener);
-        this.textFieldLineWidth.addCaretListener(this.textFieldLineWidthCaretListener);
-        this.comboBoxFillGradientModel.addItemListener(this.itemListener);
-        this.checkboxBackOpaque.addActionListener(this.actionListener);
+	    this.textFieldPointRotation.getDocument().addDocumentListener(this.textFieldPointRotationListener);
+	    this.textFieldPointOpaque.getDocument().addDocumentListener(this.textFieldPointOpaqueListener);
+	    this.textFieldFillOpaque.getDocument().addDocumentListener(this.textFieldFillOpaqueListener);
+	    this.textFieldPointWidth.getDocument().addDocumentListener(this.textFieldPointWidthListener);
+	    this.textFieldPointHeight.getDocument().addDocumentListener(this.textFieldPointHeightListener);
+	    this.textFieldFillGradientOffsetX.getDocument().addDocumentListener(this.textFieldGradientOffsetXListener);
+	    this.textFieldFillGradientOffsetY.getDocument().addDocumentListener(this.textFieldGradientOffsetYListener);
+	    this.textFieldFillGradientAngel.getDocument().addDocumentListener(this.textFieldFillGradientAngelListener);
+	    this.textFieldLineWidth.getDocument().addDocumentListener(this.textFieldLineWidthListener);
+	    this.comboBoxFillGradientModel.addItemListener(this.itemListener);
+	    this.checkboxBackOpaque.addActionListener(this.actionListener);
         this.checkboxFillGradient.addActionListener(this.actionListener);
         this.checkboxWAndH.addActionListener(this.lockListener);
-    }
-
-    private void removePanels() {
-        if (null != panelCADInfo) {
-            remove(panelCADInfo);
-        }
-        for (int i = getComponents().length - 1; i >= 0; i--) {
-            if (getComponent(i) instanceof JPanel) {
-                remove(getComponent(i));
-            }
-        }
     }
 
     public void removeEvents() {
@@ -743,17 +1011,17 @@ public class CADStyleContainer extends JPanel {
         this.buttonLineColor.removePropertyChangeListener("m_selectionColors", this.propertyListener);
         this.buttonFillForeColor.removePropertyChangeListener("m_selectionColors", this.propertyListener);
         this.buttonFillBackColor.removePropertyChangeListener("m_selectionColors", this.propertyListener);
-        this.textFieldPointRotation.removeCaretListener(this.textFieldPointRotationCaretListener);
-        this.textFieldPointOpaque.removeCaretListener(this.textFieldOpaqueCaretListener);
-        this.textFieldFillOpaque.removeCaretListener(this.textFieldOpaqueCaretListener);
-        this.textFieldPointWidth.removeCaretListener(this.textFieldPointSizeCaretListener);
-        this.textFieldPointHeight.removeCaretListener(this.textFieldPointSizeCaretListener);
-        this.textFieldFillGradientOffsetX.removeCaretListener(this.textFieldGradientOffsetCaretListener);
-        this.textFieldFillGradientOffsetY.removeCaretListener(this.textFieldGradientOffsetCaretListener);
-        this.textFieldFillGradientAngel.removeCaretListener(this.textFieldFillGradientAngelCaretListener);
-        this.textFieldLineWidth.removeCaretListener(this.textFieldLineWidthCaretListener);
-        this.comboBoxFillGradientModel.removeItemListener(this.itemListener);
-        this.checkboxBackOpaque.removeActionListener(this.actionListener);
+	    this.textFieldPointRotation.getDocument().removeDocumentListener(this.textFieldPointRotationListener);
+	    this.textFieldPointOpaque.getDocument().removeDocumentListener(this.textFieldPointOpaqueListener);
+	    this.textFieldFillOpaque.getDocument().removeDocumentListener(this.textFieldFillOpaqueListener);
+	    this.textFieldPointWidth.getDocument().removeDocumentListener(this.textFieldPointWidthListener);
+	    this.textFieldPointHeight.getDocument().removeDocumentListener(this.textFieldPointHeightListener);
+	    this.textFieldFillGradientOffsetX.getDocument().removeDocumentListener(this.textFieldGradientOffsetXListener);
+	    this.textFieldFillGradientOffsetY.getDocument().removeDocumentListener(this.textFieldGradientOffsetYListener);
+	    this.textFieldFillGradientAngel.getDocument().removeDocumentListener(this.textFieldFillGradientAngelListener);
+	    this.textFieldLineWidth.getDocument().removeDocumentListener(this.textFieldLineWidthListener);
+	    this.comboBoxFillGradientModel.removeItemListener(this.itemListener);
+	    this.checkboxBackOpaque.removeActionListener(this.actionListener);
         this.checkboxFillGradient.removeActionListener(this.actionListener);
     }
 
@@ -790,31 +1058,26 @@ public class CADStyleContainer extends JPanel {
 
     public void setNullPanel() {
         this.modify = false;
-        removePanels();
         this.scrollPane.setViewportView(panelCADInfo);
-        if (null != recordset) {
-            recordset.close();
-            recordset.dispose();
-            isDisposed = true;
-        }
+	    this.removeEvents();
     }
 
     private void initComponents() {
-        removePanels();
         initPanelPointComponents();
         initPanelLineComponents();
         initPanelFillComponents();
-        JPanel panelText = new JPanel();
-        panelText.setLayout(new GridBagLayout());
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        panel.setBorder(new LineBorder(Color.gray));
-        panel.add(panelText, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
-        panelText.add(panelPoint, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(10, 5, 10, 5).setWeight(1, 1));
-        panelText.add(panelLine, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(0, 5, 10, 5).setWeight(1, 1));
-        panelText.add(panelFill, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(0, 5, 0, 5).setWeight(1, 1));
-        this.scrollPane.setViewportView(panel);
-        this.scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	    this.panelText = new TextStyleContainer();
+	    panelContaints = new JTabbedPane();
+	    panelParent = new JPanel();
+	    panelParent.setLayout(new GridBagLayout());
+	    panelParent.add(panelContaints, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 5, 10));
+	    panelContaints.addTab(CoreProperties.getString("String_SpatialQuery_Point"), panelPoint);
+	    panelContaints.addTab(CoreProperties.getString("String_SpatialQuery_Line"), panelLine);
+	    panelContaints.addTab(CoreProperties.getString("String_SpatialQuery_Region"), panelFill);
+	    panelContaints.addTab(CoreProperties.getString("String_SpatialQuery_Text"), panelText);
+	    this.scrollPane.setViewportView(panelParent);
+	    this.scrollPane.setBorder(null);
+	    this.scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     }
 
     private void initPanelFillComponents() {
@@ -848,35 +1111,17 @@ public class CADStyleContainer extends JPanel {
         this.symbolMarkerSizeController.setGeoStyle(new GeoStyle());
         this.spinnerFillGradientAngel.setModel(new SpinnerNumberModel(0.0, 0.0, 360.0, 1.0));
         this.labelFillGradientAngelUnity = new JLabel();
-        if (null != recordset.getGeometry() && null != recordset.getGeometry().getStyle()) {
-            this.buttonFillBackColor = new ColorSelectButton(recordset.getGeometry().getStyle().getFillBackColor());
-            this.buttonFillForeColor = new ColorSelectButton(recordset.getGeometry().getStyle().getFillForeColor());
-            this.spinnerFillOpaque.setValue(100.0 - recordset.getGeometry().getStyle().getFillOpaqueRate());
-            this.checkboxBackOpaque.setSelected(!recordset.getGeometry().getStyle().getFillBackOpaque());
-            if (recordset.getGeometry().getStyle().getFillGradientMode().equals(FillGradientMode.NONE)) {
-                this.checkboxFillGradient.setSelected(false);
-                setFillGradientEnabled(false);
-            } else {
-                this.checkboxFillGradient.setSelected(true);
-                setFillGradientEnabled(true);
-                if (recordset.getGeometry().getStyle().getFillGradientMode().equals(FillGradientMode.LINEAR)) {
-                    this.comboBoxFillGradientModel.setSelectedIndex(0);
-                } else if (recordset.getGeometry().getStyle().getFillGradientMode().equals(FillGradientMode.RADIAL)) {
-                    this.comboBoxFillGradientModel.setSelectedIndex(1);
-                } else if (recordset.getGeometry().getStyle().getFillGradientMode().equals(FillGradientMode.SQUARE)) {
-                    this.comboBoxFillGradientModel.setSelectedIndex(2);
-                }
-                this.spinnerFillGradientOffsetX.setValue(recordset.getGeometry().getStyle().getFillGradientOffsetRatioX());
-                this.spinnerFillGradientOffsetY.setValue(recordset.getGeometry().getStyle().getFillGradientOffsetRatioY());
-                this.spinnerFillGradientAngel.setValue(recordset.getGeometry().getStyle().getFillGradientAngle());
-            }
-        }
-        panelFill = new JPanel();
-        panelFill.setBorder(new TitledBorder(null, MapEditorProperties.getString("String_FillStyle"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
-        panelFill.setLayout(new GridBagLayout());
+	    this.buttonFillBackColor = new ColorSelectButton(Color.gray);
+	    this.buttonFillForeColor = new ColorSelectButton(Color.gray);
+	    initPanelFillComponentsInfo();
+	    panelFill = new JPanel();
+	    panelFill.setLayout(new GridBagLayout());
         JPanel panelFillComponents = new JPanel();
-        panelFill.add(this.panelFillStyle, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 0).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-        panelFill.add(panelFillComponents, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(5, 0, 5, 5).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+	    JPanel panelTemp = new JPanel();
+	    panelTemp.setLayout(new GridBagLayout());
+	    panelFill.add(panelTemp, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
+	    panelTemp.add(this.panelFillStyle, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(5, 5, 5, 5).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+	    panelTemp.add(panelFillComponents, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(5, 0, 5, 5).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
 
         panelFillComponents.setLayout(new GridBagLayout());
         panelFillComponents.add(this.labelFillForeColor, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 10, 5).setWeight(0, 1).setFill(GridBagConstraints.NONE));
@@ -900,8 +1145,37 @@ public class CADStyleContainer extends JPanel {
         panelFillComponents.add(this.labelFillGradientAngel, new GridBagConstraintsHelper(0, 8, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 10, 5).setWeight(0, 1).setFill(GridBagConstraints.NONE));
         panelFillComponents.add(this.spinnerFillGradientAngel, new GridBagConstraintsHelper(1, 8, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 10, 5).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
         panelFillComponents.add(this.labelFillGradientAngelUnity, new GridBagConstraintsHelper(2, 8, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 10, 5).setWeight(0, 1).setFill(GridBagConstraints.NONE));
-        setPanelFillEnabled(false);
     }
+
+	private void initPanelFillComponentsInfo() {
+		Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+		if (null != recordset && null != recordset.getGeometry() && null != recordset.getGeometry().getStyle()) {
+			this.buttonFillBackColor.setColor(recordset.getGeometry().getStyle().getFillBackColor());
+			this.buttonFillForeColor.setColor(recordset.getGeometry().getStyle().getFillForeColor());
+			this.spinnerFillOpaque.setValue(100.0 - recordset.getGeometry().getStyle().getFillOpaqueRate());
+			this.checkboxBackOpaque.setSelected(!recordset.getGeometry().getStyle().getFillBackOpaque());
+			if (recordset.getGeometry().getStyle().getFillGradientMode().equals(FillGradientMode.NONE)) {
+				this.checkboxFillGradient.setSelected(false);
+				setFillGradientEnabled(false);
+			} else {
+				this.checkboxFillGradient.setSelected(true);
+				setFillGradientEnabled(true);
+				if (recordset.getGeometry().getStyle().getFillGradientMode().equals(FillGradientMode.LINEAR)) {
+					this.comboBoxFillGradientModel.setSelectedIndex(0);
+				} else if (recordset.getGeometry().getStyle().getFillGradientMode().equals(FillGradientMode.RADIAL)) {
+					this.comboBoxFillGradientModel.setSelectedIndex(1);
+				} else if (recordset.getGeometry().getStyle().getFillGradientMode().equals(FillGradientMode.SQUARE)) {
+					this.comboBoxFillGradientModel.setSelectedIndex(2);
+				}
+				this.spinnerFillGradientOffsetX.setValue(recordset.getGeometry().getStyle().getFillGradientOffsetRatioX());
+				this.spinnerFillGradientOffsetY.setValue(recordset.getGeometry().getStyle().getFillGradientOffsetRatioY());
+				this.spinnerFillGradientAngel.setValue(recordset.getGeometry().getStyle().getFillGradientAngle());
+			}
+			recordset.dispose();
+		} else {
+			setFillGradientEnabled(false);
+		}
+	}
 
     private void initPanelLineComponents() {
         // 初始化线风格界面
@@ -911,25 +1185,33 @@ public class CADStyleContainer extends JPanel {
         this.comboboxLineWidth = new JComboBox();
         this.comboboxLineWidth.setModel(new DefaultComboBoxModel(this.stringLineWidths));
         this.comboboxLineWidth.setEditable(true);
-        if (null != recordset.getGeometry() && null != recordset.getGeometry().getStyle()) {
-            this.buttonLineColor = new ColorSelectButton(recordset.getGeometry().getStyle().getLineColor());
-            this.lineWidth = String.valueOf(recordset.getGeometry().getStyle().getLineWidth());
-            this.comboboxLineWidth.setSelectedItem(this.lineWidth);
-        }
-        panelLine = new JPanel();
-        JPanel panelLineComponents = new JPanel();
-        panelLine.setBorder(new TitledBorder(null, MapEditorProperties.getString("Stirng_LineStyle"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
+	    this.buttonLineColor = new ColorSelectButton(Color.gray);
+	    initPanelLineComponentsInfo();
+	    panelLine = new JPanel();
+	    JPanel panelLineComponents = new JPanel();
         panelLine.setLayout(new GridBagLayout());
-        panelLine.add(this.panelLineStyle, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 0).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-        panelLine.add(panelLineComponents, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(5, 0, 5, 5).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+	    JPanel panelTemp = new JPanel();
+	    panelTemp.setLayout(new GridBagLayout());
+	    panelLine.add(panelTemp, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
+	    panelTemp.add(this.panelLineStyle, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(5, 5, 5, 5).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+	    panelTemp.add(panelLineComponents, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(5, 0, 5, 5).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
 
         panelLineComponents.setLayout(new GridBagLayout());
         panelLineComponents.add(this.labelLineColor, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 10, 5).setWeight(0, 1).setFill(GridBagConstraints.NONE));
         panelLineComponents.add(this.buttonLineColor, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraintsHelper.WEST).setInsets(5, 0, 10, 5).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
         panelLineComponents.add(this.labelLineWidth, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 10, 5).setWeight(0, 1).setFill(GridBagConstraints.NONE));
         panelLineComponents.add(this.comboboxLineWidth, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 10, 5).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-        setPanelLineEnabled(false);
     }
+
+	private void initPanelLineComponentsInfo() {
+		Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+		if (null != recordset && null != recordset.getGeometry() && null != recordset.getGeometry().getStyle()) {
+			buttonLineColor.setColor(recordset.getGeometry().getStyle().getLineColor());
+			this.lineWidth = String.valueOf(recordset.getGeometry().getStyle().getLineWidth());
+			this.comboboxLineWidth.setSelectedItem(this.lineWidth);
+			recordset.dispose();
+		}
+	}
 
     public void setSpinnerFillOpaqueEnable(boolean enable) {
         this.spinnerFillOpaque.setEnabled(enable);
@@ -982,19 +1264,17 @@ public class CADStyleContainer extends JPanel {
         this.labelPointHeightUnity = new JLabel();
         this.checkboxWAndH = new JCheckBox();
         this.checkboxWAndH.setSelected(true);
-        if (null != recordset.getGeometry() && null != recordset.getGeometry().getStyle()) {
-            this.buttonPointColor = new ColorSelectButton(recordset.getGeometry().getStyle().getLineColor());
-            this.spinnerPointRotation.setValue(recordset.getGeometry().getStyle().getMarkerAngle());
-            this.spinnerPointOpaque.setValue(100.0 - recordset.getGeometry().getStyle().getFillOpaqueRate());
-            this.spinnerPointWidth.setValue(recordset.getGeometry().getStyle().getMarkerSize().getWidth());
-            this.spinnerPointHeight.setValue(recordset.getGeometry().getStyle().getMarkerSize().getHeight());
-        }
+	    this.buttonPointColor = new ColorSelectButton(Color.gray);
+	    initPanelPointComponentsInfo();
+
         panelPoint = new JPanel();
         JPanel panelPointComponents = new JPanel();
-        panelPoint.setBorder(new TitledBorder(null, MapEditorProperties.getString("String_PointStyle"), TitledBorder.LEADING, TitledBorder.TOP, null, null));
         panelPoint.setLayout(new GridBagLayout());
-        panelPoint.add(this.panelPointStyle, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 0).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-        panelPoint.add(panelPointComponents, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(5, 0, 5, 5).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+	    JPanel panelTemp = new JPanel();
+	    panelTemp.setLayout(new GridBagLayout());
+	    panelPoint.add(panelTemp, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
+	    panelTemp.add(this.panelPointStyle, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(5, 5, 5, 5).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
+	    panelTemp.add(panelPointComponents, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setInsets(5, 0, 5, 5).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
 
         panelPointComponents.setLayout(new GridBagLayout());
         panelPointComponents.add(this.labelPointColor, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 10, 5).setFill(GridBagConstraints.NONE).setWeight(0, 1));
@@ -1012,18 +1292,22 @@ public class CADStyleContainer extends JPanel {
         panelPointComponents.add(this.labelPointHeight, new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 10, 5).setFill(GridBagConstraints.NONE).setWeight(0, 1));
         panelPointComponents.add(this.spinnerPointHeight, new GridBagConstraintsHelper(1, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 10, 5).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
         panelPointComponents.add(this.labelPointHeightUnity, new GridBagConstraintsHelper(2, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 10, 5).setFill(GridBagConstraints.NONE).setWeight(0, 1));
-        setPanelPointEnabled(false);
     }
+
+	private void initPanelPointComponentsInfo() {
+		Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+		if (null != recordset && null != recordset.getGeometry() && null != recordset.getGeometry().getStyle()) {
+			buttonPointColor.setColor(recordset.getGeometry().getStyle().getLineColor());
+			this.spinnerPointRotation.setValue(recordset.getGeometry().getStyle().getMarkerAngle());
+			this.spinnerPointOpaque.setValue(100.0 - recordset.getGeometry().getStyle().getFillOpaqueRate());
+			this.spinnerPointWidth.setValue(recordset.getGeometry().getStyle().getMarkerSize().getWidth());
+			this.spinnerPointHeight.setValue(recordset.getGeometry().getStyle().getMarkerSize().getHeight());
+			recordset.dispose();
+		}
+	}
 
     public void setModify(boolean modify) {
         this.modify = modify;
     }
 
-    public void setRecordset(Recordset recordset) {
-        if (null != this.recordset) {
-            this.recordset.dispose();
-        }
-        this.recordset = recordset;
-        isDisposed = false;
-    }
 }
