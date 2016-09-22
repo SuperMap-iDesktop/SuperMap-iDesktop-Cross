@@ -373,7 +373,7 @@ public class WorkspaceTempSave {
 		String tempFolder = server.substring(0, server.length() - 5);
 
 		String markerSymbolFilePath = tempFolder + ".sym";
-		System.out.println(currentWorkspace.getResources().getMarkerLibrary().toFile(markerSymbolFilePath));
+		currentWorkspace.getResources().getMarkerLibrary().toFile(markerSymbolFilePath);
 		String lineSymbolFilePath = tempFolder + ".lsl";
 		currentWorkspace.getResources().getLineLibrary().toFile(lineSymbolFilePath);
 		String fillSymbolFilePath = tempFolder + ".bru";

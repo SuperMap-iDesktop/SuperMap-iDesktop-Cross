@@ -842,6 +842,18 @@ public class FormMap extends FormBaseChild implements IFormMap {
 					((JTextField) scaleBox.getEditor().getEditorComponent()).setText(new ScaleModel(mapControl.getMap().getScale()).toString());
 				}
 			}
+			if (scaleBox.getSelectedIndex() != -1) {
+				scaleBox.removeItemListener(itemListener);
+				final String text = ((JTextField) scaleBox.getEditor().getEditorComponent()).getText();
+				scaleBox.setSelectedIndex(-1);
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						((JTextField) scaleBox.getEditor().getEditorComponent()).setText(text);
+					}
+				});
+				scaleBox.addItemListener(itemListener);
+			}
 		} catch (InvalidScaleException ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} catch (Exception e2) {
