@@ -370,23 +370,13 @@ public class WorkspaceTempSave {
 	private void saveSymbolLibrary(Workspace currentWorkspace) {
 		nextSaveSymbolTime = System.currentTimeMillis() + GlobalParameters.getSymbolSaveTime() * 60000;
 		String server = workspace.getConnectionInfo().getServer();
-//		Application.getActiveApplication().getOutput().output(server);
 		String tempFolder = server.substring(0, server.length() - 5);
 
 		String markerSymbolFilePath = tempFolder + ".sym";
-		if (new File(markerSymbolFilePath).exists()) {
-			new File(markerSymbolFilePath).delete();
-		}
-		currentWorkspace.getResources().getMarkerLibrary().toFile(markerSymbolFilePath);
+		System.out.println(currentWorkspace.getResources().getMarkerLibrary().toFile(markerSymbolFilePath));
 		String lineSymbolFilePath = tempFolder + ".lsl";
-		if (new File(lineSymbolFilePath).exists()) {
-			new File(lineSymbolFilePath).delete();
-		}
 		currentWorkspace.getResources().getLineLibrary().toFile(lineSymbolFilePath);
 		String fillSymbolFilePath = tempFolder + ".bru";
-		if (new File(fillSymbolFilePath).exists()) {
-			new File(fillSymbolFilePath).delete();
-		}
 		currentWorkspace.getResources().getFillLibrary().toFile(fillSymbolFilePath);
 	}
 
