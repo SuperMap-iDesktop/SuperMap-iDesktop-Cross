@@ -54,6 +54,7 @@ public class CtrlActionDeleteDataset extends CtrlAction {
 							Application.getActiveApplication().getOutput().output(resultInfo);
 						}
 						Application.getActiveApplication().setActiveDatasets(null);
+
 					} finally {
 						CursorUtilities.setDefaultCursor();
 					}
