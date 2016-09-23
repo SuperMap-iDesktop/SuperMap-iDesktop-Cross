@@ -18,6 +18,8 @@ import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
 import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.GeometrySelectedListener;
 
@@ -32,6 +34,14 @@ public class CADStyleEditor extends AbstractEditor {
 
     private CADStyleContainer cadStyleContainer;
     private IDockbar dockbarCADStyleContainer;
+    private MapClosedListener mapClosedListener = new MapClosedListener() {
+        @Override
+        public void mapClosed(MapClosedEvent mapClosedEvent) {
+            if (null != cadStyleContainer) {
+                cadStyleContainer.setNullPanel();
+            }
+        }
+    };
     private GeometrySelectedListener geometrySelectChangedListener = new GeometrySelectedListener() {
         @Override
         public void geometrySelected(GeometrySelectedEvent geometrySelectedEvent) {
@@ -77,6 +87,7 @@ public class CADStyleEditor extends AbstractEditor {
 
     private void registEvents(EditEnvironment environment) {
         removeEvents(environment);
+        environment.getMap().addMapClosedListener(this.mapClosedListener);
         environment.getMapControl().addGeometrySelectedListener(this.geometrySelectChangedListener);
         Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(new ActiveFormChangedListener() {
             @Override
@@ -84,14 +95,12 @@ public class CADStyleEditor extends AbstractEditor {
                 if (null != cadStyleContainer) {
                     cadStyleContainer.setModify(false);
                 }
-                if (null == e.getNewActiveForm() && null != cadStyleContainer) {
-                    cadStyleContainer.setNullPanel();
-                }
             }
         });
     }
 
     private void removeEvents(EditEnvironment environment) {
+        environment.getMap().removeMapClosedListener(this.mapClosedListener);
         environment.getMapControl().removeGeometrySelectedListener(this.geometrySelectChangedListener);
     }
 

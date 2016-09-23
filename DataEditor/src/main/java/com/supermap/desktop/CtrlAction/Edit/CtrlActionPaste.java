@@ -2,12 +2,7 @@ package com.supermap.desktop.CtrlAction.Edit;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.*;
-import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.implement.SmStatusbar;
-import com.supermap.desktop.ui.StatusbarManager;
-
-import javax.swing.*;
 
 public class CtrlActionPaste extends CtrlAction {
 
@@ -29,9 +24,9 @@ public class CtrlActionPaste extends CtrlAction {
                     ((IFormLayout) form).getMapLayoutControl().paste();
                     ((IFormLayout) form).getMapLayoutControl().getMapLayout().refresh();
                 }
-                int count = MapViewUIUtilities.reverseSelection((IFormMap) form);
-                SmStatusbar statusbar = ((StatusbarManager) Application.getActiveApplication().getMainFrame().getStatusbarManager()).getStatusbar("com.supermap.desktop.FormMap");
-                ((JTextField) statusbar.getComponent(1)).setText(String.valueOf(count));
+//                int count = MapViewUIUtilities.reverseSelection((IFormMap) form);
+//                SmStatusbar statusbar = ((StatusbarManager) Application.getActiveApplication().getMainFrame().getStatusbarManager()).getStatusbar("com.supermap.desktop.FormMap");
+//                ((JTextField) statusbar.getComponent(1)).setText(String.valueOf(count));
             }
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex);
