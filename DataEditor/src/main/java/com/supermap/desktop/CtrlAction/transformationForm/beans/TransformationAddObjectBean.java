@@ -13,6 +13,7 @@ import com.supermap.mapping.Map;
 public class TransformationAddObjectBean {
 	private Dataset dataset;
 	private Map map;
+	private boolean isSaveAs = false;
 	private Datasource resultDatasource;
 	private String resultDatasetName;
 	// 是否重采样
@@ -29,8 +30,11 @@ public class TransformationAddObjectBean {
 
 	public TransformationAddObjectBean(Dataset dataset, Datasource resultDatasource, String resultDatasetName) {
 		this.dataset = dataset;
-		this.resultDatasource = resultDatasource;
-		this.resultDatasetName = resultDatasetName;
+		if (resultDatasetName != null) {
+			isSaveAs = true;
+			this.resultDatasource = resultDatasource;
+			this.resultDatasetName = resultDatasetName;
+		}
 		if (dataset instanceof DatasetImage) {
 			cellSize = dataset.getBounds().getWidth() / ((DatasetImage) dataset).getWidth();
 		} else if (dataset instanceof DatasetGrid) {
@@ -93,5 +97,13 @@ public class TransformationAddObjectBean {
 
 	public void setCellSize(double cellSize) {
 		this.cellSize = cellSize;
+	}
+
+	public boolean isSaveAs() {
+		return isSaveAs;
+	}
+
+	public void setSaveAs(boolean saveAs) {
+		isSaveAs = saveAs;
 	}
 }
