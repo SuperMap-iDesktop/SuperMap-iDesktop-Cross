@@ -64,7 +64,7 @@ public class FormTransformationTableModel extends DefaultTableModel {
 		Point2D point;
 		switch (column) {
 			case COLUMN_IS_SELECTED:
-				return dataBeanList.get(row).getIsSelected();
+				return dataBeanList.get(row).isSelected();
 			case COLUMN_INDEX:
 				return row + 1;
 			case COLUMN_OriginalX:

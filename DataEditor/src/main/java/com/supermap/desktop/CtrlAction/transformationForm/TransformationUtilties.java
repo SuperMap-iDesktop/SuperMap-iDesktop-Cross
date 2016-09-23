@@ -2,6 +2,8 @@ package com.supermap.desktop.CtrlAction.transformationForm;
 
 import com.supermap.data.Enum;
 import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.Transformation;
 import com.supermap.data.TransformationMode;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationTableDataBean;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -11,6 +13,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,5 +126,38 @@ public class TransformationUtilties {
 		transformationTableDataBean.setPointOriginal(point2DOriginal);
 		transformationTableDataBean.setPointRefer(point2DRefer);
 		return transformationTableDataBean;
+	}
+
+	public static Transformation getTransformation(File selectedFile) {
+		Document document = XmlUtilities.getDocument(selectedFile.getPath());
+		if (document == null) {
+			return null;
+		}
+		List<TransformationTableDataBean> transformationTableDataBeans = getTransformationTableDataBeans(document);
+		TransformationMode transformationMode = getTransformationMode(document);
+		Point2Ds target = new Point2Ds();
+		Point2Ds refer = new Point2Ds();
+		for (TransformationTableDataBean transformationTableDataBean : transformationTableDataBeans) {
+			if (transformationTableDataBean.isSelected()) {
+				if (transformationTableDataBean.getPointOriginal() == null || transformationTableDataBean.getPointRefer() == null) {
+					return null;
+				}
+				target.add(transformationTableDataBean.getPointOriginal());
+				refer.add(transformationTableDataBean.getPointRefer());
+			}
+		}
+		int count = target.getCount();
+		if (count == 0 || count == 3) {
+			return null;
+		} else if (count == 1) {
+			transformationMode = TransformationMode.OFFSET;
+		} else if (count == 2) {
+			transformationMode = TransformationMode.RECT;
+		} else if (count < 7) {
+			transformationMode = TransformationMode.LINEAR;
+		} else if (transformationMode == TransformationMode.OFFSET || transformationMode == TransformationMode.RECT) {
+			return null;
+		}
+		return new Transformation(target, refer, transformationMode);
 	}
 }

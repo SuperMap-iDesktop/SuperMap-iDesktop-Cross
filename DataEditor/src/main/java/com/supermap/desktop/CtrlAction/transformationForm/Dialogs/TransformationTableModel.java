@@ -25,6 +25,11 @@ public class TransformationTableModel extends DefaultTableModel {
 			CommonProperties.getString("String_Label_ResultDatasource"),
 			CommonProperties.getString("String_Label_ResultDataset"),
 	};
+	public static final int column_Dataset = 0;
+	public static final int column_DataSource = 1;
+	public static final int column_SaveAs = 2;
+	public static final int column_ResultDatasource = 3;
+	public static final int column_ResultDataset = 4;
 
 	@Override
 	public int getRowCount() {
@@ -46,17 +51,17 @@ public class TransformationTableModel extends DefaultTableModel {
 
 	@Override
 	public boolean isCellEditable(int row, int column) {
-		if (column == 0 || column == 1) {
+		if (column == column_Dataset || column == column_DataSource) {
 			return false;
 		}
-		if (column == 2) {
+		if (column == column_SaveAs) {
 			if (datas.get(row).getDataset().getDatasource().isReadOnly()) {
 				Application.getActiveApplication().getOutput().output(
 						MessageFormat.format(DataEditorProperties.getString("String_Transformation_DatasetReadonly"), datas.get(row).getDataset().getName()));
 			}
 			return false;
 		}
-		if (column == 3 || column == 4) {
+		if (column == column_ResultDataset || column == column_ResultDatasource) {
 			return datas.get(row).isSaveAs();
 		}
 		return super.isCellEditable(row, column);
@@ -67,37 +72,59 @@ public class TransformationTableModel extends DefaultTableModel {
 
 		TransformationAddObjectBean data = datas.get(row);
 		switch (column) {
-			case 0:
-				data.getDataset();
-			case 1:
-				data.getDataset().getDatasource();
-			case 2:
-				data.isSaveAs();
-			case 3:
-				data.getResultDatasource();
-			case 4:
-				data.getResultDatasetName();
+			case column_Dataset:
+				return data.getDataset();
+			case column_DataSource:
+				return data.getDataset().getDatasource();
+			case column_SaveAs:
+				return data.isSaveAs();
+			case column_ResultDatasource:
+				return data.getResultDatasource();
+			case column_ResultDataset:
+				return data.getResultDatasetName();
 		}
 		return super.getValueAt(row, column);
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int row, int column) {
-		if (column == 3) {
+		if (column == column_SaveAs) {
 			datas.get(row).setSaveAs((Boolean) aValue);
-		} else if (column == 4) {
+		} else if (column == column_ResultDatasource) {
 			datas.get(row).setResultDatasource((Datasource) aValue);
 			datas.get(row).setResultDatasetName(
 					datas.get(row).getResultDatasource().getDatasets().getAvailableDatasetName(datas.get(row).getResultDatasetName()));
-		} else if (column == 5) {
+		} else if (column == column_Dataset) {
 			datas.get(row).setResultDatasetName((String) aValue);
 		}
 		fireTableRowsUpdated(row, row);
-		super.setValueAt(aValue, row, column);
 	}
 
 	public void addDataset(Dataset selectedDataset, Datasource saveAsDatasources, String datasetName) {
 		datas.add(new TransformationAddObjectBean(selectedDataset, saveAsDatasources, datasetName));
 		fireTableRowsInserted(datas.size() - 2, datas.size() - 1);
+	}
+
+	public void delete(int row) {
+		datas.remove(row);
+		fireTableRowsDeleted(row, row);
+	}
+
+	@Override
+	public Class<?> getColumnClass(int columnIndex) {
+		if (columnIndex == column_Dataset) {
+			return Dataset.class;
+		} else if (columnIndex == column_DataSource || columnIndex == column_ResultDatasource) {
+			return Datasource.class;
+		} else if (columnIndex == column_SaveAs) {
+			return Boolean.class;
+		} else if (columnIndex == column_ResultDataset) {
+			return String.class;
+		}
+		return super.getColumnClass(columnIndex);
+	}
+
+	public TransformationAddObjectBean getDataAtRow(int row) {
+		return datas.get(row);
 	}
 }

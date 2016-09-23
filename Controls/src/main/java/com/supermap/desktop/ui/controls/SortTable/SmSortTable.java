@@ -1,6 +1,10 @@
 package com.supermap.desktop.ui.controls.SortTable;
 
+import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
 import com.supermap.desktop.controls.utilities.SortUIUtilities;
+import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
+import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -46,6 +50,9 @@ public class SmSortTable extends JTable {
 				}
 			}
 		});
+		this.setDefaultRenderer(Dataset.class, new TableDataCellRender());
+		this.setDefaultRenderer(Datasource.class, new TableDataCellRender());
+		this.setDefaultRenderer(Map.class, new TableDataCellRender());
 	}
 
 	public SmSortTable(TableModel tableModel) {

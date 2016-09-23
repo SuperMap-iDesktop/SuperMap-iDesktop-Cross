@@ -66,7 +66,4 @@ public class TransformationTableDataBean {
 		this.isSelected = isSelected;
 	}
 
-	public Object getIsSelected() {
-		return isSelected;
-	}
 }
