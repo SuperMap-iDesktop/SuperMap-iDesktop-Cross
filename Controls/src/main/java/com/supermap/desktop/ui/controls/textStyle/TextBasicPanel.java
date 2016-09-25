@@ -173,10 +173,10 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
                 Double height = 0.0;
                 if (isFixedSize) {
                     height = Double.parseDouble(textFieldFontHeight.getText());
-                    height /= 10;
+                    height /= UNIT_CONVERSION;
                 } else {
                     double size = Double.parseDouble(textFieldFontSize.getText());
-                    height = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), isFixedSize);
+                    height = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), isFixedSize) / UNIT_CONVERSION;
                 }
                 if (height > 0) {
                     textStyleTypeMap.put(TextStyleType.FONTHEIGHT, height);
@@ -262,15 +262,14 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
                 } else {
                     textFieldFontSize.setForeground(Color.black);
                 }
+                double fontHeight = 0.0;
                 double size = Double.valueOf(text);
-//                textFieldFontSize.setText(String.valueOf(size));
                 isSetFontHeight = false;
                 textFieldFontHeight.setText(new DecimalFormat(numeric).format((size / EXPERIENCE)));
-                double fontHeight = size / EXPERIENCE;
-                fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
+                fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), checkBoxFixedSize.isSelected());
                 if (!DoubleUtilities.equals(fontHeight, textStyle.getFontHeight(), pow) && fontHeight > 0) {
-                    textStyleTypeMap.put(TextStyleType.FONTSIZE, fontHeight);
-                    fireTextStyleChanged(TextStyleType.FONTSIZE);
+                    textStyleTypeMap.put(TextStyleType.FONTHEIGHT, fontHeight / UNIT_CONVERSION);
+                    fireTextStyleChanged(TextStyleType.FONTHEIGHT);
                 }
             }
         }
@@ -290,10 +289,9 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
                 Double size = logicalHeight * EXPERIENCE;
                 isSetFontSize = false;
                 comboBoxFontSize.setSelectedItem(new DecimalFormat("0.0").format(size));
-                double fontHeight = logicalHeight;
-                fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), textStyle.isSizeFixed());
+                double fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), checkBoxFixedSize.isSelected());
                 if (!DoubleUtilities.equals(fontHeight, textStyle.getFontHeight(), pow) && fontHeight > 0) {
-                    textStyleTypeMap.put(TextStyleType.FONTHEIGHT, fontHeight);
+                    textStyleTypeMap.put(TextStyleType.FONTHEIGHT, fontHeight / UNIT_CONVERSION);
                     fireTextStyleChanged(TextStyleType.FONTHEIGHT);
                 }
             }
@@ -770,7 +768,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.comboBoxFontSize.setModel(new DefaultComboBoxModel<String>(new String[]{"1", "2", "3", "4", "5", "5.5", "6.5", "7.5", "8", "9", "10", "11",
                 "12", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72"}));
         this.comboBoxFontSize.setEditable(true);
-        this.comboBoxFontSize.setSelectedItem(this.textStyle.getFontHeight() * EXPERIENCE);
         this.textFieldFontSize = (JTextField) this.comboBoxFontSize.getEditor().getEditorComponent();
         this.spinnerFontHeight.setModel(new SpinnerNumberModel(0.0, 0.0, null, 1.0));
         NumberEditor numberEditor = (JSpinner.NumberEditor) spinnerFontHeight.getEditor();
@@ -780,7 +777,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
             if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
                 map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
             }
-            Double oldSize = FontUtilities.mapHeightToFontSize(textStyle.getFontHeight(), map, textStyle.isSizeFixed());
+            Double oldSize = FontUtilities.mapHeightToFontSize(textStyle.getFontHeight(), map, textStyle.isSizeFixed()) * UNIT_CONVERSION;
             Double size = Math.round(oldSize * 2) / 2.0;
             DecimalFormat decimalFormat = new DecimalFormat("0.0");
             String textFieldString = "";
@@ -805,7 +802,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.textFieldFontWidth = numberEditor.getTextField();
         if (null != this.textStyle) {
             this.textFieldFontWidth.setText(new DecimalFormat(numeric).format(FontUtilities.fontWidthToMapWidth(textStyle.getFontWidth(),
-                    MapUtilities.getActiveMap(), textStyle.isSizeFixed()) / 10));
+                    MapUtilities.getActiveMap(), textStyle.isSizeFixed()) / UNIT_CONVERSION));
         }
     }
 
@@ -985,4 +982,5 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
     public JSpinner getSpinnerRotationAngl() {
         return spinnerRotationAngl;
     }
+
 }

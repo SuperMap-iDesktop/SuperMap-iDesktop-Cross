@@ -13,7 +13,7 @@ import java.awt.geom.Rectangle2D;
 public class FontUtilities {
 
 	// 经验值
-	private final static double EXPERIENCE = 2.83;
+	private final static double EXPERIENCE = 0.283;
 
 	/**
 	 * 字号大小转化为字体对象实际保存的字高。
@@ -27,7 +27,6 @@ public class FontUtilities {
 	public static double fontSizeToMapHeight(double fontSize, Object mapObject, boolean isSizeFixed) {
 		double mapHeight = 0;
 		try {
-			mapHeight = fontSize / EXPERIENCE;
 			if (isSizeFixed) {
 				mapHeight = fontSize / EXPERIENCE;
 			} else {
@@ -69,7 +68,6 @@ public class FontUtilities {
 	public static double mapHeightToFontSize(double mapHeight, Object mapObject, boolean isSizeFixed) {
 		double fontSize = 0;
 		try {
-			fontSize = mapHeight * EXPERIENCE;
 			if (isSizeFixed) {
 				fontSize = mapHeight * EXPERIENCE;
 			} else {
@@ -217,7 +215,7 @@ public class FontUtilities {
 
 	/**
 	 * 获取字符串在指定字体下的 Bounds
-	 * 
+	 *
 	 * @param str
 	 *            需要计算字符串
 	 * @param font

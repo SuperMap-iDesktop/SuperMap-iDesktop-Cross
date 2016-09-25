@@ -5,6 +5,8 @@ import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
+import com.supermap.desktop.event.ActiveFormChangedEvent;
+import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.editor.AbstractEditor;
 import com.supermap.desktop.ui.controls.Dockbar;
@@ -16,10 +18,8 @@ import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
-import com.supermap.mapping.MapClosedEvent;
-import com.supermap.mapping.MapClosedListener;
-import com.supermap.ui.GeometrySelectChangedEvent;
-import com.supermap.ui.GeometrySelectChangedListener;
+import com.supermap.ui.GeometrySelectedEvent;
+import com.supermap.ui.GeometrySelectedListener;
 
 import java.util.ArrayList;
 
@@ -32,18 +32,12 @@ public class CADStyleEditor extends AbstractEditor {
 
     private CADStyleContainer cadStyleContainer;
     private IDockbar dockbarCADStyleContainer;
-    private MapClosedListener mapClosedListener = new MapClosedListener() {
+    private GeometrySelectedListener geometrySelectChangedListener = new GeometrySelectedListener() {
         @Override
-        public void mapClosed(MapClosedEvent mapClosedEvent) {
+        public void geometrySelected(GeometrySelectedEvent geometrySelectedEvent) {
             if (null != cadStyleContainer) {
-                cadStyleContainer.setNullPanel();
+                cadStyleContainer.setModify(false);
             }
-        }
-    };
-    private GeometrySelectChangedListener geometrySelectChangedListener = new GeometrySelectChangedListener() {
-        @Override
-        public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
-            cadStyleContainer.setModify(false);
         }
     };
 
@@ -56,8 +50,8 @@ public class CADStyleEditor extends AbstractEditor {
                 dockbarCADStyleContainer.setVisible(true);
                 dockbarCADStyleContainer.active();
                 cadStyleContainer = (CADStyleContainer) dockbarCADStyleContainer.getComponent();
-                if (null != getActiveRecordset(environment.getMap())) {
-                    cadStyleContainer.showDialog(getActiveRecordset(environment.getMap()));
+                if (null != CADStyleUtilities.getActiveRecordset(environment.getMap())) {
+                    cadStyleContainer.init();
                 }
             }
             ((Dockbar) dockbarCADStyleContainer).addListener(new DockingWindowAdapter() {
@@ -66,6 +60,7 @@ public class CADStyleEditor extends AbstractEditor {
                 public void windowClosing(WindowClosingEvent evt) throws OperationAbortedException {
                     // 关闭dockbar时，关闭编辑
                     environment.stopEditor();
+
                 }
 
                 @Override
@@ -82,18 +77,27 @@ public class CADStyleEditor extends AbstractEditor {
 
     private void registEvents(EditEnvironment environment) {
         removeEvents(environment);
-        environment.getMap().addMapClosedListener(this.mapClosedListener);
-        environment.getMapControl().addGeometrySelectChangedListener(this.geometrySelectChangedListener);
+        environment.getMapControl().addGeometrySelectedListener(this.geometrySelectChangedListener);
+        Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(new ActiveFormChangedListener() {
+            @Override
+            public void activeFormChanged(ActiveFormChangedEvent e) {
+                if (null != cadStyleContainer) {
+                    cadStyleContainer.setModify(false);
+                }
+                if (null != cadStyleContainer && null == e.getNewActiveForm()) {
+                    cadStyleContainer.setNullPanel();
+                }
+            }
+        });
     }
 
     private void removeEvents(EditEnvironment environment) {
-        environment.getMap().removeMapClosedListener(this.mapClosedListener);
-        environment.getMapControl().removeGeometrySelectChangedListener(this.geometrySelectChangedListener);
+        environment.getMapControl().removeGeometrySelectedListener(this.geometrySelectChangedListener);
     }
 
     @Override
     public void deactivate(EditEnvironment environment) {
-//        removeEvents(environment);
+
     }
 
 
@@ -101,29 +105,30 @@ public class CADStyleEditor extends AbstractEditor {
     public boolean enble(EditEnvironment environment) {
 
         boolean editable = isEditable(environment.getMap());
-        Recordset recordset = getActiveRecordset(environment.getMap());
-        if (null != recordset && !recordset.getDataset().getType().equals(DatasetType.CAD)) {
-            // 若选中的记录集所在的数据集不为（CAD/文本）数据集，直接屏蔽掉
+        Recordset recordset = CADStyleUtilities.getActiveRecordset(environment.getMap());
+        // 初始化判断
+        // 若选中的记录集所在的数据集不为（CAD/文本）数据集，直接屏蔽掉
+        if (null != recordset && !recordset.getDataset().getType().equals(DatasetType.CAD) && !recordset.getDataset().getType().equals(DatasetType.TEXT)) {
             return false;
         }
         if (null != cadStyleContainer && editable == false) {
             cadStyleContainer.enabled(false);
-        } else if (null != cadStyleContainer && null != recordset) {
-            cadStyleContainer.showDialog(recordset);
+        } else if (null != cadStyleContainer && null != recordset && null != dockbarCADStyleContainer) {
+            cadStyleContainer.showDialog();
         } else if (null != cadStyleContainer && null == recordset) {
             cadStyleContainer.setNullPanel();
         }
         return ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOPOINT, GeometryType.GEOPOINT3D, GeometryType.GEOMULTIPOINT,
                 GeometryType.GEOLINE, GeometryType.GEOLINE3D, GeometryType.GEOBSPLINE, GeometryType.GEOCARDINAL, GeometryType.GEOCURVE, GeometryType.GEOLINEM, GeometryType.GEOPARAMETRICLINE, GeometryType.GEOPARAMETRICLINECOMPOUND, GeometryType.GEOARC,
                 GeometryType.GEOCHORD, GeometryType.GEOCIRCLE, GeometryType.GEOCOMPOUND, GeometryType.GEOELLIPSE, GeometryType.GEOELLIPTICARC, GeometryType.GEOPARAMETRICREGION, GeometryType.GEOPARAMETRICREGIONCOMPOUND,
-                GeometryType.GEOPIE, GeometryType.GEOPIE3D, GeometryType.GEOREGION, GeometryType.GEOREGION3D, GeometryType.GEOROUNDRECTANGLE);
+                GeometryType.GEOPIE, GeometryType.GEOPIE3D, GeometryType.GEOREGION, GeometryType.GEOREGION3D, GeometryType.GEOROUNDRECTANGLE, GeometryType.GEOTEXT, GeometryType.GEOTEXT3D);
     }
 
     private boolean isEditable(Map map) {
         try {
             ArrayList<Layer> layers = MapUtilities.getLayers(map);
             for (Layer layer : layers) {
-                Recordset recordset = getActiveRecordset(map);
+                Recordset recordset = CADStyleUtilities.getActiveRecordset(map);
                 try {
                     if (recordset != null && layer.getDataset() == recordset.getDataset() && layer.isEditable()) {
                         return true;
@@ -142,14 +147,6 @@ public class CADStyleEditor extends AbstractEditor {
             // 地图dispose没接口判断
         }
         return false;
-    }
-
-    private Recordset getActiveRecordset(Map map) {
-        Recordset recordset = null;
-        if (map.findSelection(true).length > 0) {
-            recordset = MapUtilities.getActiveMap().findSelection(true)[0].toRecordset();
-        }
-        return recordset;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.supermap.desktop.CtrlAction;
 
+import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -17,9 +18,14 @@ public class CtrlActionDatasourceClose extends CtrlAction {
 	public void run() {
 		try {
 			if (Application.getActiveApplication().getActiveDatasources().length > 0) {
-				CtrlActionDatasourceCloseSelected.close();
+				CtrlActionDatasourcesCloseAll.close(Application.getActiveApplication().getActiveDatasources());
 			} else {
-				CtrlActionDatasourcesCloseAll.close();
+				Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+				Datasource[] datasources1 = new Datasource[datasources.getCount()];
+				for (int i = 0; i < datasources1.length; i++) {
+					datasources1[i] = datasources.get(i);
+				}
+				CtrlActionDatasourcesCloseAll.close(datasources1);
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

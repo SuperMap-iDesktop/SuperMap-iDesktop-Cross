@@ -1,4 +1,4 @@
-package com.supermap.desktop.CtrlAction.TextStyle;
+package com.supermap.desktop.CtrlAction.CADStyle;
 
 import com.supermap.data.*;
 import com.supermap.desktop.enums.TextStyleType;
@@ -12,7 +12,6 @@ import com.supermap.desktop.utilities.MapUtilities;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 /**
  * 文本风格对话框
@@ -24,21 +23,16 @@ public class TextStyleContainer extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private transient ITextStyle textBasicPanel;
-
-    //    private Geometry geometry;
-    private TextStyle tempTextStyle;// 用于预览的TextStyle
-    private Double rotation;
-    private Recordset recordset;
+    private TextStyle tempTextStyle = new TextStyle();// 用于预览的TextStyle
+    private Double rotation = 0.0;
     private transient TextStyleChangeListener textStyleChangeListener;
-    private ActionListener buttonCloseListener;
-    private boolean isModify;
     private EditHistory editHistory;
     private JScrollPane scrollPane;
-    public static JPanel panelTextInfo;
+    private static JPanel panelTextInfo;
+    private CADStyleContainer parent;
 
     public TextStyleContainer() {
         super();
-        isModify = false;
         this.setLayout(new GridBagLayout());
         this.scrollPane = new JScrollPane();
         this.panelTextInfo = new JPanel();
@@ -51,36 +45,40 @@ public class TextStyleContainer extends JPanel {
      * 资源化
      */
 
-    public void showDialog(Recordset recordset) {
-        if (!isModify) {
-            if (null != this.recordset) {
-                this.recordset.dispose();
-            }
-            this.recordset = recordset;
-            this.recordset.moveFirst();
-            boolean hasGeoText = false;
-            while (!recordset.isEOF()) {
-                Geometry tempGeoMetry = recordset.getGeometry();
-                if (tempGeoMetry instanceof GeoText || tempGeoMetry instanceof GeoText3D) {
-                    if (tempGeoMetry instanceof GeoText) {
-                        tempTextStyle = ((GeoText) tempGeoMetry).getTextStyle();
-                        rotation = ((GeoText) tempGeoMetry).getPart(0).getRotation();
-                    } else if (tempGeoMetry instanceof GeoText3D) {
-                        tempTextStyle = ((GeoText3D) tempGeoMetry).getTextStyle();
-                    }
-                    hasGeoText = true;
-                    break;
-                }
-                recordset.moveNext();
-            }
-            if (!hasGeoText) {
-                // 不为文本类型时显示为空
-                this.scrollPane.setViewportView(panelTextInfo);
-                return;
-            }
+    public void init(CADStyleContainer parent) {
+        this.parent = parent;
+        tempTextStyle = getGeoText();
+        if (null != tempTextStyle) {
+            // 不为文本类型时，全部灰选
             initMainPanel();
             registEvents();
+        } else {
+            enabled(false);
         }
+    }
+
+    public TextStyle getGeoText() {
+        TextStyle textStyle = null;
+        Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+        if (null == recordset) {
+            return null;
+        }
+        recordset.moveFirst();
+        while (!recordset.isEOF()) {
+            Geometry tempGeoMetry = recordset.getGeometry();
+            if (tempGeoMetry instanceof GeoText || tempGeoMetry instanceof GeoText3D) {
+                if (tempGeoMetry instanceof GeoText) {
+                    textStyle = ((GeoText) tempGeoMetry).getTextStyle();
+                    rotation = ((GeoText) tempGeoMetry).getPart(0).getRotation();
+                } else if (tempGeoMetry instanceof GeoText3D) {
+                    textStyle = ((GeoText3D) tempGeoMetry).getTextStyle();
+                }
+                break;
+            }
+            recordset.moveNext();
+        }
+        recordset.dispose();
+        return textStyle;
     }
 
     private void removePanels() {
@@ -94,25 +92,9 @@ public class TextStyleContainer extends JPanel {
         }
     }
 
-    public void setNullPanel() {
-        this.isModify = false;
-        this.tempTextStyle = null;
-        removePanels();
-        this.scrollPane.setViewportView(panelTextInfo);
-        if (null != recordset) {
-            recordset.close();
-            recordset.dispose();
-        }
-    }
-
     private void initMainPanel() {
         this.textBasicPanel = new TextBasicPanel();
-        this.textBasicPanel.setTextStyle(tempTextStyle);
-        this.textBasicPanel.setTextStyleSet(true);
-        this.textBasicPanel.initTextBasicPanel();
-        this.textBasicPanel.initCheckBoxState();
-        this.textBasicPanel.enabled(true);
-        this.textBasicPanel.getSpinnerRotationAngl().setValue(rotation);
+        initTextBasicPanel();
         removePanels();
         JPanel panelText = new JPanel();
         panelText.setLayout(new GridBagLayout());
@@ -123,7 +105,15 @@ public class TextStyleContainer extends JPanel {
         panelText.add(textBasicPanel.getBasicsetPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 10, 0, 10).setWeight(1, 1));
         panelText.add(textBasicPanel.getEffectPanel(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setInsets(10, 10, 0, 10).setWeight(1, 1));
         this.scrollPane.setViewportView(panel);
-        repaint();
+    }
+
+    public void initTextBasicPanel() {
+        this.textBasicPanel.setTextStyle(tempTextStyle);
+        this.textBasicPanel.setTextStyleSet(true);
+        this.textBasicPanel.initTextBasicPanel();
+        this.textBasicPanel.initCheckBoxState();
+        this.textBasicPanel.enabled(true);
+        this.textBasicPanel.getSpinnerRotationAngl().setValue(rotation);
     }
 
     public void registEvents() {
@@ -131,8 +121,8 @@ public class TextStyleContainer extends JPanel {
 
             @Override
             public void modify(TextStyleType newValue) {
-                isModify = true;
                 updateGeometries(newValue);
+                parent.setModify(true);
             }
         };
 
@@ -142,7 +132,10 @@ public class TextStyleContainer extends JPanel {
 
     private void updateGeometries(TextStyleType newValue) {
         editHistory = MapUtilities.getMapControl().getEditHistory();
-        editHistory.batchBegin();
+        Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+        if (null == recordset) {
+            return;
+        }
         recordset.moveFirst();
         while (!recordset.isEOF()) {
             editHistory.add(EditType.MODIFY, recordset, true);
@@ -185,6 +178,7 @@ public class TextStyleContainer extends JPanel {
             recordset.moveNext();
         }
         editHistory.batchEnd();
+        recordset.dispose();
         MapUtilities.getActiveMap().refresh();
     }
 
@@ -200,7 +194,4 @@ public class TextStyleContainer extends JPanel {
         this.textBasicPanel.removeTextStyleChangeListener(this.textStyleChangeListener);
     }
 
-    public void setModify(boolean modify) {
-        isModify = modify;
-    }
 }

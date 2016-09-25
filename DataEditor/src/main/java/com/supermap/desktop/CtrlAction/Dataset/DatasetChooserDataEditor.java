@@ -100,6 +100,7 @@ public class DatasetChooserDataEditor {
 					String successInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupSuccess"), datasourceName,
 							datasetName);
 					Application.getActiveApplication().getOutput().output(successInfo);
+					Application.getActiveApplication().setActiveDatasets(null);
 				} else {
 					String failedInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupFailed"), datasourceName, datasetName);
 					Application.getActiveApplication().getOutput().output(failedInfo);
@@ -117,6 +118,7 @@ public class DatasetChooserDataEditor {
 					String successInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupSuccess"), datasourceName,
 							deleteDatasetName);
 					Application.getActiveApplication().getOutput().output(successInfo);
+					Application.getActiveApplication().setActiveDatasets(null);
 				} else {
 					String failedInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupFailed"), datasourceName, deleteDatasetName);
 					Application.getActiveApplication().getOutput().output(failedInfo);

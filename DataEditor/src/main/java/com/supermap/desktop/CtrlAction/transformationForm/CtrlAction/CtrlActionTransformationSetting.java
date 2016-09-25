@@ -17,7 +17,7 @@ public class CtrlActionTransformationSetting extends CtrlAction {
 
 	@Override
 	public void run() {
-		new JDialogTransformationSetting();
+		new JDialogTransformationSetting().showDialog();
 	}
 
 	@Override
