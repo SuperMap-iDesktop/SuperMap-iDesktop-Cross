@@ -82,7 +82,11 @@ public class SmSortTable extends JTable {
 	public int[] getSelectedModelRows() {
 		int[] selectedRows = getSelectedRows();
 		for (int i = 0; i < selectedRows.length; i++) {
-			selectedRows[i] = convertRowIndexToModel(selectedRows[i]);
+			try {
+				selectedRows[i] = convertRowIndexToModel(selectedRows[i]);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return selectedRows;
 	}
@@ -145,7 +149,14 @@ public class SmSortTable extends JTable {
 			if (index > maxRow) {
 				return index;
 			}
-			return super.convertRowIndexToView(index);
+			int i = 0;
+			try {
+				i = super.convertRowIndexToView(index);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			return i;
 		}
 
 		@Override

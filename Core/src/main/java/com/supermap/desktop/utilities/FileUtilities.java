@@ -1,12 +1,9 @@
 package com.supermap.desktop.utilities;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.properties.CoreProperties;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.channels.FileChannel;
 
 public class FileUtilities {
@@ -119,7 +116,12 @@ public class FileUtilities {
 		try {
 			if (!file.exists()) {
 				new File(file.getParent()).mkdirs();
-				file.createNewFile();
+				try {
+					file.createNewFile();
+				} catch (IOException e) {
+					Application.getActiveApplication().getOutput().output(CoreProperties.getString("String_CreateFileFailed"));
+					return false;
+				}
 			}
 			if (file.exists()) {
 				FileOutputStream fOutputStream = new FileOutputStream(file.getPath());

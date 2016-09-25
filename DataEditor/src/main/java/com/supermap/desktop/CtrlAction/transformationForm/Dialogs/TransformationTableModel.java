@@ -2,6 +2,7 @@ package com.supermap.desktop.CtrlAction.transformationForm.Dialogs;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
+import com.supermap.data.TransformationResampleMode;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationAddObjectBean;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
@@ -10,6 +11,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import javax.swing.table.DefaultTableModel;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -58,8 +60,9 @@ public class TransformationTableModel extends DefaultTableModel {
 			if (datas.get(row).getDataset().getDatasource().isReadOnly()) {
 				Application.getActiveApplication().getOutput().output(
 						MessageFormat.format(DataEditorProperties.getString("String_Transformation_DatasetReadonly"), datas.get(row).getDataset().getName()));
+				return false;
 			}
-			return false;
+			return true;
 		}
 		if (column == column_ResultDataset || column == column_ResultDatasource) {
 			return datas.get(row).isSaveAs();
@@ -102,7 +105,7 @@ public class TransformationTableModel extends DefaultTableModel {
 
 	public void addDataset(Dataset selectedDataset, Datasource saveAsDatasources, String datasetName) {
 		datas.add(new TransformationAddObjectBean(selectedDataset, saveAsDatasources, datasetName));
-		fireTableRowsInserted(datas.size() - 2, datas.size() - 1);
+		fireTableRowsInserted(datas.size() - 1, datas.size() - 1);
 	}
 
 	public void delete(int row) {
@@ -126,5 +129,27 @@ public class TransformationTableModel extends DefaultTableModel {
 
 	public TransformationAddObjectBean getDataAtRow(int row) {
 		return datas.get(row);
+	}
+
+	public void setResampleEnable(int selectedModelRow, boolean selected) {
+		datas.get(selectedModelRow).setResample(selected);
+	}
+
+	public void setResampleMode(int selectedModelRow, TransformationResampleMode resampleMode) {
+		datas.get(selectedModelRow).setTransformationResampleMode(resampleMode);
+	}
+
+	public void setPixel(int selectedModelRow, Double aDouble) {
+		datas.get(selectedModelRow).setCellSize(aDouble);
+	}
+
+
+	public TransformationAddObjectBean[] getDatas() {
+		return datas.toArray(new TransformationAddObjectBean[datas.size()]);
+	}
+
+	public void addDatas(TransformationAddObjectBean[] transformationAddObjectBeen) {
+		Collections.addAll(datas, transformationAddObjectBeen);
+		fireTableRowsInserted(datas.size() - transformationAddObjectBeen.length, datas.size() - 1);
 	}
 }
