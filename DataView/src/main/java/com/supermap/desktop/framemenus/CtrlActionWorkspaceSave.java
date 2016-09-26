@@ -94,7 +94,7 @@ public class CtrlActionWorkspaceSave extends CtrlAction {
 			WorkspaceType workspaceType = Application.getActiveApplication().getWorkspace().getType();
 			// 是默认类型，说明需要进行另存操作
 			if (workspaceType == WorkspaceType.DEFAULT || StringUtilities.isNullOrEmpty(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer())) {
-				dialogResult = CtrlActionWorkspaceSaveAs.saveAs(info);
+				dialogResult = CtrlActionWorkspaceSaveAs.saveAs(null);
 			} else {
 				if (!WorkspaceUtilities.isWorkspaceReadonly()) {
 					if (Application.getActiveApplication().getMainFrame().getFormManager().getCount() > 0) {

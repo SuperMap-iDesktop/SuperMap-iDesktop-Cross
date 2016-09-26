@@ -241,6 +241,7 @@ public class JDialogWorkspaceSaveAs extends SmDialog {
 	}
 
 	private void okButtonClicked() {
+		dialogResult = DialogResult.OK;
 		String workspaceFileName = "";
 		String workspacePassword = "";
 		String workspacePasswordConfirm = "";
