@@ -268,7 +268,7 @@ public class WorkspaceRecovery {
 		CursorUtilities.setWaitCursor();
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
 //		workspace.open(workspaceConnectionInfo);
-		OpenWorkspaceResult openWorkspaceResult = WorkspaceUtilities.openWorkspace(workspaceConnectionInfo, true);
+		OpenWorkspaceResult openWorkspaceResult = WorkspaceUtilities.openWorkspaceResultNotSaveRecent(workspaceConnectionInfo, true);
 		if (openWorkspaceResult == OpenWorkspaceResult.SUCCESSED && workspaceConnectionInfo.getServer().endsWith("smwu")) {// sxwu会自动读取符号库
 			String server = workspaceConnectionInfo.getServer().substring(0, workspaceConnectionInfo.getServer().length() - 5);
 			String markerSymbolFilePath = server + ".sym";

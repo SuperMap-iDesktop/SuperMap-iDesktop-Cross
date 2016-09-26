@@ -311,13 +311,13 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 						if (transformationObjects.size() > 0) {
 							transformationTarget.addDatas(transformationObjects);
 							transformationObjects.clear();
-							transformationTarget.getMapControl().getMap().viewEntire();
 						}
+						transformationTarget.getMapControl().getMap().viewEntire();
 						if (transformationReferenceObjects.size() > 0) {
 							transformationReference.addDatas(transformationReferenceObjects);
 							transformationReferenceObjects.clear();
-							transformationReference.getMapControl().getMap().setViewBounds(transformationTarget.getMapControl().getMap().getViewBounds());
 						}
+						transformationReference.getMapControl().getMap().setViewBounds(transformationTarget.getMapControl().getMap().getViewBounds());
 
 						initCenter(getMapControl());
 						initScale(getMapControl());
@@ -381,7 +381,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			int column = e.getColumn();
 			if (column == FormTransformationTableModel.COLUMN_ReferX || column == FormTransformationTableModel.COLUMN_ReferY ||
 					column == FormTransformationTableModel.COLUMN_OriginalX || column == FormTransformationTableModel.COLUMN_OriginalY) {
-				Object valueAt = tablePoints.getValueAt(lastRow, column);
+				Object valueAt = formTransformationTableModel.getValueAt(lastRow, column);
 				TransformationBase form = transformationTarget;
 				if (column == FormTransformationTableModel.COLUMN_ReferX || column == FormTransformationTableModel.COLUMN_ReferY) {
 					form = transformationReference;
@@ -759,7 +759,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			} else if (item instanceof Dataset) {
 				Datasource defaultDatasource = TransformationUtilties.getDefaultDatasource(((Dataset) item).getDatasource());
 				targetObject.set(i, new TransformationAddObjectBean((Dataset) item, defaultDatasource,
-						defaultDatasource.getDatasets().getAvailableDatasetName(((Dataset) item).getName() + "_adjust")));
+						defaultDatasource == null ? null : defaultDatasource.getDatasets().getAvailableDatasetName(((Dataset) item).getName() + "_adjust")));
 			}
 		}
 		transformationTarget.addDatas(targetObject);
@@ -815,7 +815,11 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	private void addPoint(TransformationBase form, Point2D point) {
 		TableUtilities.stopEditing(tablePoints);
 		int index = formTransformationTableModel.getFirstInsertRow(getSubFormTypeByForm(form)) + 1;
-		Geometry trackingGeometry = getTrackingGeometry(index, point, tablePoints.isRowSelected(index - 1) ? selectedColor : unSelectedColor);
+		Color color = unSelectedColor;
+		if (index != -1 && tablePoints.getRowCount() > index) {
+			color = tablePoints.isRowSelected(tablePoints.convertRowIndexToView(index - 1)) ? selectedColor : unSelectedColor;
+		}
+		Geometry trackingGeometry = getTrackingGeometry(index, point, color);
 		TrackingLayer trackingLayer = form.getMapControl().getMap().getTrackingLayer();
 		String tag = getTag(index);
 		trackingLayer.add(trackingGeometry, tag);

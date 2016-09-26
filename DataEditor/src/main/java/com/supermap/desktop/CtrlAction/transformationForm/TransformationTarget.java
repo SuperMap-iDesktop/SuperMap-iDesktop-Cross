@@ -44,7 +44,7 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 				if (TransformationUtilties.isSupportDatasetType(((Dataset) data).getType())) {
 					Datasource defaultDatasource = TransformationUtilties.getDefaultDatasource(((Dataset) data).getDatasource());
 					data = new TransformationAddObjectBean((Dataset) data, defaultDatasource,
-							defaultDatasource.getDatasets().getAvailableDatasetName(((Dataset) data).getName() + "_adjust"));
+							defaultDatasource == null ? null : defaultDatasource.getDatasets().getAvailableDatasetName(((Dataset) data).getName() + "_adjust"));
 				}
 			} else if (data instanceof Map) {
 				data = new TransformationAddObjectBean((Map) data);
