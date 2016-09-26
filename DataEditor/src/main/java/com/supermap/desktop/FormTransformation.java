@@ -308,16 +308,17 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						if (transformationReferenceObjects.size() > 0) {
-							transformationReference.addDatas(transformationReferenceObjects);
-							transformationReferenceObjects.clear();
-							transformationReference.getMapControl().getMap().viewEntire();
-						}
 						if (transformationObjects.size() > 0) {
 							transformationTarget.addDatas(transformationObjects);
 							transformationObjects.clear();
-							transformationTarget.getMapControl().getMap().setViewBounds(transformationReference.getMapControl().getMap().getViewBounds());
+							transformationTarget.getMapControl().getMap().viewEntire();
 						}
+						if (transformationReferenceObjects.size() > 0) {
+							transformationReference.addDatas(transformationReferenceObjects);
+							transformationReferenceObjects.clear();
+							transformationReference.getMapControl().getMap().setViewBounds(transformationTarget.getMapControl().getMap().getViewBounds());
+						}
+
 						initCenter(getMapControl());
 						initScale(getMapControl());
 						initPrjCoorSys(getMapControl());
