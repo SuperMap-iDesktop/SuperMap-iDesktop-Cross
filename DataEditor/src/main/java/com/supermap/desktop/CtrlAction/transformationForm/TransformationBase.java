@@ -15,6 +15,7 @@ import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
+import com.supermap.mapping.Map;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -23,6 +24,11 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +37,7 @@ import java.util.List;
 /**
  * @author XiaJT
  */
-public class TransformationBase implements IFormMap {
+public abstract class TransformationBase implements IFormMap {
 
 	private boolean isAddedListener = false;
 	// 我觉得图层选中改变应该和图层管理器相关，而和地图窗口无关
@@ -259,8 +265,35 @@ public class TransformationBase implements IFormMap {
 		if (!isAddedListener) {
 			UICommonToolkit.getLayersManager().getLayersTree().addTreeSelectionListener(this.layersTreeSelectionListener);
 			isAddedListener = true;
+			initDrag();
 		}
 	}
+
+	private void initDrag() {
+		new DropTarget(getMapControl(), DnDConstants.ACTION_COPY_OR_MOVE, new DropTargetAdapter() {
+
+			@Override
+			public void drop(DropTargetDropEvent dtde) {
+				try {
+					Object data = dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+					if (data instanceof DefaultMutableTreeNode[]) {
+						DefaultMutableTreeNode[] defaultMutableTreeNodes = (DefaultMutableTreeNode[]) data;
+						ArrayList<Object> objects = new ArrayList<>();
+						for (DefaultMutableTreeNode defaultMutableTreeNode : defaultMutableTreeNodes) {
+							if (defaultMutableTreeNode.getUserObject() instanceof TreeNodeData && (((TreeNodeData) defaultMutableTreeNode.getUserObject()).getData() instanceof Dataset || ((TreeNodeData) defaultMutableTreeNode.getUserObject()).getData() instanceof Map)) {
+								objects.add(((TreeNodeData) defaultMutableTreeNode.getUserObject()).getData());
+							}
+						}
+						addDatas(objects);
+					}
+				} catch (Exception e) {
+					Application.getActiveApplication().getOutput().output(e);
+				}
+			}
+		});
+	}
+
+	protected abstract void addDatas(List<Object> dataset);
 
 	private void removeListeners() {
 		if (isAddedListener) {

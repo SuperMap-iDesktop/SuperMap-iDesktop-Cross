@@ -7,6 +7,7 @@ import com.supermap.data.Point2D;
  */
 public class TransformationTableDataBean {
 
+	private String ID;
 	private Point2D pointOriginal;
 	private Point2D pointRefer;
 	private Double ResidualX;
@@ -66,4 +67,11 @@ public class TransformationTableDataBean {
 		this.isSelected = isSelected;
 	}
 
+	public String getID() {
+		return ID;
+	}
+
+	public void setID(String ID) {
+		this.ID = ID;
+	}
 }

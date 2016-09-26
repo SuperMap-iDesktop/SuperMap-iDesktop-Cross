@@ -19,6 +19,7 @@ public class FormTransformationTableModel extends DefaultTableModel {
 	private static final String[] columnNames = new String[]{
 			"",
 			CommonProperties.getString(CommonProperties.Index),
+			DataEditorProperties.getString("String_PointIndex"),
 			DataEditorProperties.getString("String_TransformItem_OriginalX"),
 			DataEditorProperties.getString("String_TransformItem_OriginalY"),
 			DataEditorProperties.getString("String_TransformItem_ReferX"),
@@ -30,13 +31,14 @@ public class FormTransformationTableModel extends DefaultTableModel {
 
 	public static final int COLUMN_IS_SELECTED = 0;
 	public static final int COLUMN_INDEX = 1;
-	public static final int COLUMN_OriginalX = 2;
-	public static final int COLUMN_OriginalY = 3;
-	public static final int COLUMN_ReferX = 4;
-	public static final int COLUMN_ReferY = 5;
-	public static final int COLUMN_ResidualX = 6;
-	public static final int COLUMN_ResidualY = 7;
-	public static final int COLUMN_ResidualTotal = 8;
+	public static final int COLUMN_ID = 2;
+	public static final int COLUMN_OriginalX = 3;
+	public static final int COLUMN_OriginalY = 4;
+	public static final int COLUMN_ReferX = 5;
+	public static final int COLUMN_ReferY = 6;
+	public static final int COLUMN_ResidualX = 7;
+	public static final int COLUMN_ResidualY = 8;
+	public static final int COLUMN_ResidualTotal = 9;
 
 
 	private List<TransformationTableDataBean> dataBeanList = new ArrayList<>();
@@ -67,6 +69,8 @@ public class FormTransformationTableModel extends DefaultTableModel {
 				return dataBeanList.get(row).isSelected();
 			case COLUMN_INDEX:
 				return row + 1;
+			case COLUMN_ID:
+				return dataBeanList.get(row).getID();
 			case COLUMN_OriginalX:
 				point = dataBeanList.get(row).getPointOriginal();
 				if (point != null) {
@@ -110,6 +114,11 @@ public class FormTransformationTableModel extends DefaultTableModel {
 		if (column == COLUMN_IS_SELECTED) {
 			Boolean aBoolean = Boolean.valueOf(String.valueOf(aValue));
 			dataBeanList.get(row).setIsSelected(aBoolean);
+			fireTableCellUpdated(row, column);
+			return;
+		}
+		if (column == COLUMN_ID) {
+			dataBeanList.get(row).setID((String) aValue);
 			fireTableCellUpdated(row, column);
 			return;
 		}
@@ -168,7 +177,7 @@ public class FormTransformationTableModel extends DefaultTableModel {
 		if (column == COLUMN_INDEX || column == COLUMN_ResidualX || column == COLUMN_ResidualY || column == COLUMN_ResidualTotal) {
 			return false;
 		}
-		return super.isCellEditable(row, column);
+		return true;
 	}
 
 	public void remove(int... rows) {
@@ -205,6 +214,7 @@ public class FormTransformationTableModel extends DefaultTableModel {
 			bean.setPointRefer(point);
 			dataBeanList.add(bean);
 		}
+		dataBeanList.get(dataBeanList.size() - 1).setID("Point_" + dataBeanList.size());
 		fireTableRowsInserted(dataBeanList.size() - 1, dataBeanList.size() - 1);
 	}
 
@@ -262,6 +272,8 @@ public class FormTransformationTableModel extends DefaultTableModel {
 			return Boolean.class;
 		} else if (columnIndex == COLUMN_INDEX) {
 			return Integer.class;
+		} else if (columnIndex == COLUMN_ID) {
+			return String.class;
 		}
 		return Double.class;
 	}

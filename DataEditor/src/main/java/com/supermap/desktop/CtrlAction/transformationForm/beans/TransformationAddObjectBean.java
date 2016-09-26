@@ -18,7 +18,7 @@ public class TransformationAddObjectBean {
 	private String resultDatasetName;
 	// 是否重采样
 	private boolean isResample;
-	private TransformationResampleMode transformationResampleMode = TransformationResampleMode.BILINEAR;
+	private TransformationResampleMode transformationResampleMode = TransformationResampleMode.CUBIC;
 	private double cellSize;
 
 	public TransformationAddObjectBean() {

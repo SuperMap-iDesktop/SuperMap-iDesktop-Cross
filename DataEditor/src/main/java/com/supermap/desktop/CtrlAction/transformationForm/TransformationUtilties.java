@@ -41,6 +41,7 @@ public class TransformationUtilties {
 			for (TransformationTableDataBean bean : beans) {
 				Element controlPoint = emptyDocument.createElement("sml:ContrlPoint");
 				controlPoint.setAttribute("isEnable", String.valueOf(bean.isSelected()));
+				controlPoint.setAttribute("ID", bean.getID());
 				if (bean.getPointOriginal() != null) {
 					Element originalPointX = emptyDocument.createElement("sml:OriginalPointX");
 					originalPointX.appendChild(emptyDocument.createTextNode(DoubleUtilities.toString(bean.getPointOriginal().getX(), 10)));
@@ -92,6 +93,9 @@ public class TransformationUtilties {
 		TransformationTableDataBean transformationTableDataBean = new TransformationTableDataBean();
 		if (item.getAttributes().getNamedItem("isEnable") != null) {
 			transformationTableDataBean.setSelected(Boolean.valueOf(item.getAttributes().getNamedItem("isEnable").getNodeValue()));
+		}
+		if (item.getAttributes().getNamedItem("ID") != null) {
+			transformationTableDataBean.setID(item.getAttributes().getNamedItem("ID").getNodeValue());
 		}
 		NodeList childNodes = item.getChildNodes();
 		Point2D point2DOriginal = null;

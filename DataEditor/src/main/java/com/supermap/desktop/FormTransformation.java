@@ -248,7 +248,9 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		tablePoints.getColumnModel().getColumn(0).setMaxWidth(40);
 		tablePoints.getColumnModel().getColumn(1).setMaxWidth(40);
 		((DefaultTableCellRenderer) tablePoints.getDefaultRenderer(Integer.class)).setHorizontalAlignment(SwingConstants.CENTER);
+		((DefaultTableCellRenderer) tablePoints.getDefaultRenderer(String.class)).setHorizontalAlignment(SwingConstants.CENTER);
 		((JTextField) ((DefaultCellEditor) tablePoints.getDefaultEditor(Double.class)).getComponent()).setHorizontalAlignment(SwingConstants.CENTER);
+		((JTextField) ((DefaultCellEditor) tablePoints.getDefaultEditor(String.class)).getComponent()).setHorizontalAlignment(SwingConstants.CENTER);
 		tablePoints.setDefaultRenderer(Double.class, new TableCellRenderer() {
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {

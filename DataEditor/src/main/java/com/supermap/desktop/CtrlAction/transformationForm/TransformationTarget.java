@@ -39,6 +39,11 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 		int size = transformationBeens.size();
 		ArrayList<Dataset> datasets = new ArrayList<>();
 		for (Object data : datas) {
+			if (data instanceof Dataset) {
+				data = new TransformationAddObjectBean((Dataset) data, null, null);
+			} else if (data instanceof Map) {
+				data = new TransformationAddObjectBean((Map) data);
+			}
 			if (data instanceof TransformationAddObjectBean) {
 				transformationBeens.add((TransformationAddObjectBean) data);
 				if (((TransformationAddObjectBean) data).getDataset() != null) {
