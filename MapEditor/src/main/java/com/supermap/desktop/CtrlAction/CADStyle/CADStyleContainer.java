@@ -1003,7 +1003,7 @@ public class CADStyleContainer extends JPanel {
                     if (isNew) {
                         panelContaints.setSelectedIndex(TAB_REGION);
                         uiManager.put(CoreProperties.getString("String_SpatialQuery_Region"), geoRegionStyle);
-                    } else if (uiManager.containsKey(CoreProperties.getString("String_SpatialQuery_Region"))) {
+                    } else if (!uiManager.containsKey(CoreProperties.getString("String_SpatialQuery_Region"))) {
                         uiManager.put(CoreProperties.getString("String_SpatialQuery_Region"), geoRegionStyle);
                     }
                     setPanelLineEnabled(true);
@@ -1012,7 +1012,7 @@ public class CADStyleContainer extends JPanel {
                 if (GeometryUtilities.isTextGeometry(recordset.getGeometry()) && !recordset.getGeometry().getType().equals(GeometryType.GEOTEXT3D)) {
                     geoText = recordset.getGeometry();
                     if (isNew) {
-                        panelContaints.setSelectedIndex(TAB_LINE);
+                        panelContaints.setSelectedIndex(TAB_TEXT);
                         uiManager.put(CoreProperties.getString("String_SpatialQuery_Text"), geoText);
                     } else if (!uiManager.containsKey(CoreProperties.getString("String_SpatialQuery_Text"))) {
                         uiManager.put(CoreProperties.getString("String_SpatialQuery_Text"), geoText);
