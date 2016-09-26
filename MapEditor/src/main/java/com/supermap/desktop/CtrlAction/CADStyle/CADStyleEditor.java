@@ -119,7 +119,7 @@ public class CADStyleEditor extends AbstractEditor {
     private boolean isEditable(Map map) {
         ArrayList<Recordset> recordset = CADStyleUtilities.getActiveRecordset(map);
         if (null == recordset) {
-            return false;
+            return true;
         }
         int count = recordset.size();
         try {
@@ -127,9 +127,7 @@ public class CADStyleEditor extends AbstractEditor {
             for (Layer layer : layers) {
                 try {
                     for (int i = 0; i < count; i++) {
-                        if (recordset != null && layer.getDataset() == recordset.get(i).getDataset() && layer.isEditable()) {
-                            return true;
-                        } else if (recordset == null && layer.isEditable()) {
+                        if (layer.isEditable()) {
                             return true;
                         }
                     }
