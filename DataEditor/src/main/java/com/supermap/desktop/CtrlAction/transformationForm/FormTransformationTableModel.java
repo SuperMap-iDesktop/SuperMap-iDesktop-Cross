@@ -1,9 +1,9 @@
 package com.supermap.desktop.CtrlAction.transformationForm;
 
 import com.supermap.data.Point2D;
-import com.supermap.desktop.CtrlAction.transformationForm.beans.FormTransformationSubFormType;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationTableDataBean;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
+import com.supermap.desktop.enums.FormTransformationSubFormType;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.table.DefaultTableModel;
@@ -228,6 +228,18 @@ public class FormTransformationTableModel extends DefaultTableModel {
 			fireTableCellUpdated(row, COLUMN_ReferX);
 //			fireTableCellUpdated(row, COLUMN_ReferY);
 		}
+	}
+
+	public int getFirstInsertRow(FormTransformationSubFormType subFormTypeByForm) {
+		for (int i = 0; i < dataBeanList.size(); i++) {
+			TransformationTableDataBean transformationTableDataBean = dataBeanList.get(i);
+			if (subFormTypeByForm == FormTransformationSubFormType.Target && transformationTableDataBean.getPointOriginal() == null) {
+				return i;
+			} else if (subFormTypeByForm == FormTransformationSubFormType.Reference && transformationTableDataBean.getPointRefer() == null) {
+				return i;
+			}
+		}
+		return dataBeanList.size();
 	}
 
 	public int getPointCount(FormTransformationSubFormType subFormTypeByForm) {

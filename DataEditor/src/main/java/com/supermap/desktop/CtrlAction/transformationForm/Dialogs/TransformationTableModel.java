@@ -21,17 +21,19 @@ public class TransformationTableModel extends DefaultTableModel {
 
 	private List<TransformationAddObjectBean> datas = new ArrayList<>();
 	private String[] columnNames = new String[]{
+			"",
 			CommonProperties.getString("String_ColumnHeader_SourceDataset"),
 			CommonProperties.getString("String_ColumnHeader_SourceDatasource"),
 			DataEditorProperties.getString("String_Transformation_ColumnNeedResave"),
 			CommonProperties.getString("String_Label_ResultDatasource"),
 			CommonProperties.getString("String_Label_ResultDataset"),
 	};
-	public static final int column_Dataset = 0;
-	public static final int column_DataSource = 1;
-	public static final int column_SaveAs = 2;
-	public static final int column_ResultDatasource = 3;
-	public static final int column_ResultDataset = 4;
+	public static final int COLUMN_ENABLE = 0;
+	public static final int COLUMN_DATASET = 1;
+	public static final int COLUMN_DATA_SOURCE = 2;
+	public static final int COLUMN_SAVE_AS = 3;
+	public static final int column_ResultDatasource = 4;
+	public static final int column_ResultDataset = 5;
 
 	@Override
 	public int getRowCount() {
@@ -53,10 +55,13 @@ public class TransformationTableModel extends DefaultTableModel {
 
 	@Override
 	public boolean isCellEditable(int row, int column) {
-		if (column == column_Dataset || column == column_DataSource) {
+		if (column == COLUMN_ENABLE) {
+			return true;
+		}
+		if (column == COLUMN_DATASET || column == COLUMN_DATA_SOURCE) {
 			return false;
 		}
-		if (column == column_SaveAs) {
+		if (column == COLUMN_SAVE_AS) {
 			if (datas.get(row).getDataset().getDatasource().isReadOnly()) {
 				Application.getActiveApplication().getOutput().output(
 						MessageFormat.format(DataEditorProperties.getString("String_Transformation_DatasetReadonly"), datas.get(row).getDataset().getName()));
@@ -75,11 +80,13 @@ public class TransformationTableModel extends DefaultTableModel {
 
 		TransformationAddObjectBean data = datas.get(row);
 		switch (column) {
-			case column_Dataset:
+			case COLUMN_ENABLE:
+				return data.isEnable();
+			case COLUMN_DATASET:
 				return data.getDataset();
-			case column_DataSource:
+			case COLUMN_DATA_SOURCE:
 				return data.getDataset().getDatasource();
-			case column_SaveAs:
+			case COLUMN_SAVE_AS:
 				return data.isSaveAs();
 			case column_ResultDatasource:
 				return data.getResultDatasource();
@@ -91,13 +98,15 @@ public class TransformationTableModel extends DefaultTableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int row, int column) {
-		if (column == column_SaveAs) {
+		if (column == COLUMN_ENABLE) {
+			datas.get(row).setEnable((Boolean) aValue);
+		} else if (column == COLUMN_SAVE_AS) {
 			datas.get(row).setSaveAs((Boolean) aValue);
 		} else if (column == column_ResultDatasource) {
 			datas.get(row).setResultDatasource((Datasource) aValue);
 			datas.get(row).setResultDatasetName(
 					datas.get(row).getResultDatasource().getDatasets().getAvailableDatasetName(datas.get(row).getResultDatasetName()));
-		} else if (column == column_Dataset) {
+		} else if (column == COLUMN_DATASET) {
 			datas.get(row).setResultDatasetName((String) aValue);
 		}
 		fireTableRowsUpdated(row, row);
@@ -115,11 +124,11 @@ public class TransformationTableModel extends DefaultTableModel {
 
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-		if (columnIndex == column_Dataset) {
+		if (columnIndex == COLUMN_DATASET) {
 			return Dataset.class;
-		} else if (columnIndex == column_DataSource || columnIndex == column_ResultDatasource) {
+		} else if (columnIndex == COLUMN_DATA_SOURCE || columnIndex == column_ResultDatasource) {
 			return Datasource.class;
-		} else if (columnIndex == column_SaveAs) {
+		} else if (columnIndex == COLUMN_SAVE_AS || columnIndex == COLUMN_ENABLE) {
 			return Boolean.class;
 		} else if (columnIndex == column_ResultDataset) {
 			return String.class;
@@ -144,8 +153,14 @@ public class TransformationTableModel extends DefaultTableModel {
 	}
 
 
-	public TransformationAddObjectBean[] getDatas() {
-		return datas.toArray(new TransformationAddObjectBean[datas.size()]);
+	public TransformationAddObjectBean[] getEnableDatas() {
+		ArrayList<TransformationAddObjectBean> transformationAddObjectBeens = new ArrayList<>();
+		for (TransformationAddObjectBean data : datas) {
+			if (data.isEnable()) {
+				transformationAddObjectBeens.add(data);
+			}
+		}
+		return transformationAddObjectBeens.toArray(new TransformationAddObjectBean[transformationAddObjectBeens.size()]);
 	}
 
 	public void addDatas(TransformationAddObjectBean[] transformationAddObjectBeen) {

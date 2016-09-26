@@ -1,10 +1,14 @@
 package com.supermap.desktop.CtrlAction.transformationForm;
 
+import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
 import com.supermap.data.Enum;
 import com.supermap.data.Point2D;
 import com.supermap.data.Point2Ds;
 import com.supermap.data.Transformation;
 import com.supermap.data.TransformationMode;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationTableDataBean;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
@@ -163,5 +167,49 @@ public class TransformationUtilties {
 			return null;
 		}
 		return new Transformation(target, refer, transformationMode);
+	}
+
+	public static Datasource getDefaultDatasource(Datasource datasource) {
+		if (!datasource.isReadOnly()) {
+			return datasource;
+		}
+		Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
+		if (activeDatasources.length > 0) {
+			for (Datasource activeDatasource : activeDatasources) {
+				if (datasource.isOpened() && !activeDatasource.isReadOnly()) {
+					return activeDatasource;
+				}
+			}
+		}
+		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+		for (int i = 0; i < datasources.getCount(); i++) {
+			if (datasources.get(i).isOpened() && !datasources.get(i).isReadOnly()) {
+				return datasources.get(i);
+			}
+		}
+		throw new UnsupportedOperationException("UnBelievable!");
+	}
+
+	private static final DatasetType[] supportDatasetTypes = new DatasetType[]{
+			DatasetType.POINT,
+			DatasetType.LINE,
+			DatasetType.REGION,
+			DatasetType.POINT3D,
+			DatasetType.LINE3D,
+			DatasetType.REGION3D,
+			DatasetType.TEXT,
+			DatasetType.CAD,
+			DatasetType.NETWORK,
+			DatasetType.GRID,
+			DatasetType.IMAGE
+	};
+
+	public static boolean isSupportDatasetType(DatasetType datasetType) {
+		for (DatasetType supportDatasetType : supportDatasetTypes) {
+			if (supportDatasetType == datasetType) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

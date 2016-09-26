@@ -80,9 +80,5 @@ public class TransformationReference extends TransformationBase implements ITran
 	}
 
 
-	@Override
-	public void removeActiveLayersByDatasets(Dataset... datasets) {
-
-	}
 
 }

@@ -4,6 +4,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.Transformation;
 import com.supermap.data.TransformationMode;
+import com.supermap.desktop.enums.FormTransformationSubFormType;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 import org.w3c.dom.Document;
@@ -62,4 +63,6 @@ public interface IFormTransformation extends IForm {
 	String toXml();
 
 	boolean fromXml(Document document);
+
+	FormTransformationSubFormType getCurrentSubFormType();
 }

@@ -26,7 +26,6 @@ import com.supermap.desktop.CtrlAction.transformationForm.TransformationBase;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationReference;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationTarget;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationUtilties;
-import com.supermap.desktop.CtrlAction.transformationForm.beans.FormTransformationSubFormType;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationAddObjectBean;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationTableDataBean;
 import com.supermap.desktop.Interface.IContextMenuManager;
@@ -34,6 +33,7 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
+import com.supermap.desktop.enums.FormTransformationSubFormType;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveLayersChangedListener;
 import com.supermap.desktop.exception.InvalidScaleException;
@@ -45,6 +45,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.MapControlUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.TrackingLayer;
@@ -139,7 +140,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 				currentForceWindow.actived();
 				isChangeForceWindow = true;
 			}
-			if (e.isControlDown() && e.getButton() == 1) {
+			if (e.isControlDown() && e.getButton() == 1 && isAddPointing) {
 				int selectedModelRow = tablePoints.getSelectedModelRow();
 				if (selectedModelRow != -1) {
 					formTransformationTableModel.removePoint(selectedModelRow, getCurrentSubFormType());
@@ -314,8 +315,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 						}
 						if (transformationObjects.size() > 0) {
 							transformationTarget.addDatas(transformationObjects);
-							transformationTarget.getMapControl().getMap().viewEntire();
 							transformationObjects.clear();
+							transformationTarget.getMapControl().getMap().setViewBounds(transformationReference.getMapControl().getMap().getViewBounds());
 						}
 						initCenter(getMapControl());
 						initScale(getMapControl());
@@ -395,7 +396,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 					form.getMapControl().getMap().getTrackingLayer().remove(getIndexByTag(form.getMapControl().getMap().getTrackingLayer(), getTag(lastRow + 1)));
 					form.getMapControl().getMap().getTrackingLayer().add(getTrackingGeometry(lastRow + 1, point2D, selectedColor), getTag(lastRow + 1));
 				} else {
-					removeTrackingObject(lastRow, form.getMapControl().getMap());
+					form.getMapControl().getMap().getTrackingLayer().remove(getIndexByTag(form.getMapControl().getMap().getTrackingLayer(), getTag(lastRow + 1)));
 				}
 			} else if (column == FormTransformationTableModel.COLUMN_IS_SELECTED) {
 
@@ -753,9 +754,11 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		for (int i = 0; i < targetObject.size(); i++) {
 			Object item = targetObject.get(i);
 			if (item instanceof Map) {
-				targetObject.set(i, new TransformationAddObjectBean(((Map) item)));
+				targetObject.set(i, new TransformationAddObjectBean((Map) item));
 			} else if (item instanceof Dataset) {
-				targetObject.set(i, new TransformationAddObjectBean(((Dataset) item), null, null));
+				Datasource defaultDatasource = TransformationUtilties.getDefaultDatasource(((Dataset) item).getDatasource());
+				targetObject.set(i, new TransformationAddObjectBean((Dataset) item, defaultDatasource,
+						defaultDatasource.getDatasets().getAvailableDatasetName(((Dataset) item).getName() + "_adjust")));
 			}
 		}
 		transformationTarget.addDatas(targetObject);
@@ -809,16 +812,14 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	}
 
 	private void addPoint(TransformationBase form, Point2D point) {
-		int index = formTransformationTableModel.getPointCount(getSubFormTypeByForm(form)) + 1;
-		Geometry trackingGeometry = getTrackingGeometry(index, point, unSelectedColor);
+		TableUtilities.stopEditing(tablePoints);
+		int index = formTransformationTableModel.getFirstInsertRow(getSubFormTypeByForm(form)) + 1;
+		Geometry trackingGeometry = getTrackingGeometry(index, point, tablePoints.isRowSelected(index - 1) ? selectedColor : unSelectedColor);
 		TrackingLayer trackingLayer = form.getMapControl().getMap().getTrackingLayer();
 		String tag = getTag(index);
 		trackingLayer.add(trackingGeometry, tag);
 		formTransformationTableModel.addPoint(getSubFormTypeByForm(form), point);
 		form.getMapControl().getMap().refreshTrackingLayer();
-		scrollPane.scrollRectToVisible(tablePoints.getCellRect(index - 1, 0, true));
-		tablePoints.clearSelection();
-		tablePoints.setRowSelectionInterval(index - 1, index - 1);
 	}
 
 	private String getTag(int index) {

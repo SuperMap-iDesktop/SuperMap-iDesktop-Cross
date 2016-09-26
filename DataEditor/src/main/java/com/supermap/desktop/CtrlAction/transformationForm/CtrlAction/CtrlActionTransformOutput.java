@@ -2,11 +2,11 @@ package com.supermap.desktop.CtrlAction.transformationForm.CtrlAction;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.transformationForm.FormTransformationTableModel;
-import com.supermap.desktop.CtrlAction.transformationForm.beans.FormTransformationSubFormType;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
+import com.supermap.desktop.enums.FormTransformationSubFormType;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;

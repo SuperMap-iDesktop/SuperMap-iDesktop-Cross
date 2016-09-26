@@ -11,6 +11,7 @@ import com.supermap.mapping.Map;
  * @author XiaJT
  */
 public class TransformationAddObjectBean {
+	private boolean isEnable = true;
 	private Dataset dataset;
 	private Map map;
 	private boolean isSaveAs = false;
@@ -105,5 +106,13 @@ public class TransformationAddObjectBean {
 
 	public void setSaveAs(boolean saveAs) {
 		isSaveAs = saveAs;
+	}
+
+	public boolean isEnable() {
+		return isEnable;
+	}
+
+	public void setEnable(boolean enable) {
+		isEnable = enable;
 	}
 }

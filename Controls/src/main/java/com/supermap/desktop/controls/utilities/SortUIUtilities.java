@@ -112,7 +112,7 @@ public class SortUIUtilities {
 
 	private static int getClassValue(Object o) {
 		if (o instanceof Dataset) {
-			return 0;
+			return -((Dataset) o).getType().value();
 		} else if (o instanceof Datasource) {
 			return 1;
 		} else if (o instanceof Map) {

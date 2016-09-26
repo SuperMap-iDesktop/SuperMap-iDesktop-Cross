@@ -12,9 +12,11 @@ import com.supermap.desktop.ui.LayersComponentManager;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
+import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
+import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 import com.supermap.ui.MapControl;
 
@@ -122,7 +124,10 @@ public abstract class TransformationBase implements IFormMap {
 
 	@Override
 	public void removeActiveLayersByDatasets(Dataset... datasets) {
-
+		Layers layers = getMapControl().getMap().getLayers();
+		if (DatasetUtilities.removeByDatasets(layers, datasets)) {
+			getMapControl().getMap().refresh();
+		}
 	}
 
 	@Override

@@ -1,6 +1,14 @@
 package com.supermap.desktop.CtrlAction.transformationForm.Dialogs;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetImage;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
+import com.supermap.data.Transformation;
+import com.supermap.data.TransformationMode;
+import com.supermap.data.TransformationResampleMode;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.transformationForm.CtrlAction.TransformCallable;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationUtilties;
@@ -11,7 +19,12 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.FileChooserControl;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
@@ -29,7 +42,12 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,7 +64,6 @@ public class JDialogTransformation extends SmDialog {
 	private SmButton buttonDel = new SmButton();
 
 	private JScrollPane scrollPane = new JScrollPane();
-	//	private SmSortTable table = new SmSortTable();
 	private SmSortTable table = new SmSortTable();
 	private TransformationTableModel tableModel = new TransformationTableModel();
 
@@ -107,7 +124,8 @@ public class JDialogTransformation extends SmDialog {
 		initListener();
 		initResources();
 		initComponentState();
-		table.getColumnModel().getColumn(2).setMaxWidth(50);
+		table.getColumnModel().getColumn(TransformationTableModel.COLUMN_ENABLE).setMaxWidth(50);
+		table.getColumnModel().getColumn(TransformationTableModel.COLUMN_SAVE_AS).setMaxWidth(50);
 
 	}
 
@@ -292,6 +310,7 @@ public class JDialogTransformation extends SmDialog {
 					} else {
 						setTransformation(transformation);
 						fileChooserControl.setText(selectedFile.getPath());
+						checkButtonState();
 					}
 				}
 			}
@@ -396,7 +415,7 @@ public class JDialogTransformation extends SmDialog {
 					int[] selectedModelRows = table.getSelectedModelRows();
 					if (selectedModelRows.length > 0) {
 						for (int selectedModelRow : selectedModelRows) {
-							tableModel.setValueAt(selected, selectedModelRow, TransformationTableModel.column_SaveAs);
+							tableModel.setValueAt(selected, selectedModelRow, TransformationTableModel.COLUMN_SAVE_AS);
 						}
 					}
 					comboBoxDatasources.setEnabled(selected);
@@ -432,7 +451,7 @@ public class JDialogTransformation extends SmDialog {
 	private void buttonOkClicked() {
 		TableUtilities.stopEditing(table);
 		FormProgressTotal formProgress = new FormProgressTotal(DataEditorProperties.getString("String_transformation"));
-		formProgress.doWork(new TransformCallable(transformation, tableModel.getDatas()));
+		formProgress.doWork(new TransformCallable(transformation, tableModel.getEnableDatas()));
 		if (checkBoxAutoClose.isSelected()) {
 			dispose();
 		}
@@ -445,7 +464,7 @@ public class JDialogTransformation extends SmDialog {
 		}
 		if (table.rowAtPoint(e.getPoint()) == -1) {
 			buttonAddClicked();
-		} else if (columnAtPoint == TransformationTableModel.column_Dataset || columnAtPoint == TransformationTableModel.column_DataSource) {
+		} else if (columnAtPoint == TransformationTableModel.COLUMN_DATASET || columnAtPoint == TransformationTableModel.COLUMN_DATA_SOURCE) {
 			buttonAddClicked();
 		}
 	}
@@ -456,7 +475,7 @@ public class JDialogTransformation extends SmDialog {
 		if (datasetChooser.showDialog() == DialogResult.OK) {
 			java.util.List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
 			if (selectedDatasets.size() > 0) {
-				Datasource defaultDatasource = getDefaultDatasource(selectedDatasets.get(0).getDatasource());
+				Datasource defaultDatasource = TransformationUtilties.getDefaultDatasource(selectedDatasets.get(0).getDatasource());
 				for (Dataset selectedDataset : selectedDatasets) {
 					tableModel.addDataset(selectedDataset, defaultDatasource,
 							defaultDatasource.getDatasets().getAvailableDatasetName(selectedDataset.getName() + "_adjust"));
@@ -483,26 +502,7 @@ public class JDialogTransformation extends SmDialog {
 		textFieldTransformationMode.setText(s);
 	}
 
-	private Datasource getDefaultDatasource(Datasource datasource) {
-		if (!datasource.isReadOnly()) {
-			return datasource;
-		}
-		Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
-		if (activeDatasources.length > 0) {
-			for (Datasource activeDatasource : activeDatasources) {
-				if (datasource.isOpened() && !activeDatasource.isReadOnly()) {
-					return activeDatasource;
-				}
-			}
-		}
-		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
-		for (int i = 0; i < datasources.getCount(); i++) {
-			if (datasources.get(i).isOpened() && !datasources.get(i).isReadOnly()) {
-				return datasources.get(i);
-			}
-		}
-		throw new UnsupportedOperationException("UnBelievable!");
-	}
+
 	//endregion
 
 	private void initResources() {
@@ -533,7 +533,14 @@ public class JDialogTransformation extends SmDialog {
 		if (!isListenerEnable) {
 			return;
 		}
-		buttonOk.setEnabled(table.getRowCount() > 0 && transformation != null);
+		boolean buttonOkState = false;
+		for (int i = 0; i < table.getRowCount(); i++) {
+			buttonOkState = (Boolean) table.getValueAt(i, TransformationTableModel.COLUMN_ENABLE);
+			if (buttonOkState) {
+				break;
+			}
+		}
+		buttonOk.setEnabled(buttonOkState && transformation != null);
 		buttonSelectAll.setEnabled(table.getRowCount() > 0);
 		buttonSelectInvert.setEnabled(table.getRowCount() > 0);
 		buttonDel.setEnabled(table.getSelectedRowCount() > 0);
@@ -631,8 +638,15 @@ public class JDialogTransformation extends SmDialog {
 		}
 	}
 
-	public void setBeans(TransformationAddObjectBean[] transformationAddObjectBeen) {
-		tableModel.addDatas(transformationAddObjectBeen);
+	public void addBeans(TransformationAddObjectBean[] transformationAddObjectBeen) {
+		ArrayList<TransformationAddObjectBean> transformationAddObjectBeen1 = new ArrayList<>();
+		for (TransformationAddObjectBean transformationAddObjectBean : transformationAddObjectBeen) {
+			if (TransformationUtilties.isSupportDatasetType(transformationAddObjectBean.getDataset().getType())) {
+				transformationAddObjectBeen1.add(transformationAddObjectBean);
+			}
+		}
+		tableModel.addDatas(transformationAddObjectBeen1.toArray(new TransformationAddObjectBean[transformationAddObjectBeen1.size()]));
+		checkButtonState();
 	}
 
 	public void setBeOnly() {

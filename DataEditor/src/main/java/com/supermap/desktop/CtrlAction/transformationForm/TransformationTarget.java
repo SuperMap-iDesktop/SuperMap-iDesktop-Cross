@@ -1,6 +1,7 @@
 package com.supermap.desktop.CtrlAction.transformationForm;
 
 import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationAddObjectBean;
 import com.supermap.desktop.FormTransformation;
@@ -40,7 +41,11 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 		ArrayList<Dataset> datasets = new ArrayList<>();
 		for (Object data : datas) {
 			if (data instanceof Dataset) {
-				data = new TransformationAddObjectBean((Dataset) data, null, null);
+				if (TransformationUtilties.isSupportDatasetType(((Dataset) data).getType())) {
+					Datasource defaultDatasource = TransformationUtilties.getDefaultDatasource(((Dataset) data).getDatasource());
+					data = new TransformationAddObjectBean((Dataset) data, defaultDatasource,
+							defaultDatasource.getDatasets().getAvailableDatasetName(((Dataset) data).getName() + "_adjust"));
+				}
 			} else if (data instanceof Map) {
 				data = new TransformationAddObjectBean((Map) data);
 			}
@@ -81,10 +86,6 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 	}
 
 
-	@Override
-	public void removeActiveLayersByDatasets(Dataset... datasets) {
-
-	}
 
 
 	public Object[] getTransformationObjects() {

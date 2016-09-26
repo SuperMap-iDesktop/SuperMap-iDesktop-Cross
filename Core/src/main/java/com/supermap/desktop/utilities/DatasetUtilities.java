@@ -14,6 +14,7 @@ import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.Interface.IFormTabular;
+import com.supermap.desktop.enums.WindowType;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.Layers;
@@ -249,11 +250,17 @@ public class DatasetUtilities {
 				for (int i = formNumber - 1; i >= 0; i--) {
 					IForm form = Application.getActiveApplication().getMainFrame().getFormManager().get(i);
 					if (form instanceof IFormMap) {
+
 						((IFormMap) form).removeActiveLayersByDatasets(closeDataset);
-						Map map = ((IFormMap) form).getMapControl().getMap();
-						Layers layers = map.getLayers();
-						if (removeByDatasets(layers, closeDataset) && Application.getActiveApplication().getMainFrame().getFormManager().isContain(((IFormMap) form))) {
-							map.refresh();
+						if (form.getWindowType() == WindowType.MAP) {
+
+							Map map = ((IFormMap) form).getMapControl().getMap();
+							Layers layers = map.getLayers();
+							if (removeByDatasets(layers, closeDataset) && Application.getActiveApplication().getMainFrame().getFormManager().isContain(((IFormMap) form))) {
+								map.refresh();
+							}
+						} else if (form.getWindowType() == WindowType.TRANSFORMATION) {
+							// 不需要，已经在上方处理
 						}
 					} else if (form instanceof IFormScene) {
 						Scene scene = ((IFormScene) form).getSceneControl().getScene();

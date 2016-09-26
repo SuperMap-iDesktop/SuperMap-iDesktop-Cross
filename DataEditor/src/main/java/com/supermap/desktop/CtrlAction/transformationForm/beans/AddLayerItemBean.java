@@ -1,5 +1,7 @@
 package com.supermap.desktop.CtrlAction.transformationForm.beans;
 
+import com.supermap.desktop.enums.FormTransformationSubFormType;
+
 /**
  * @author XiaJT
  */

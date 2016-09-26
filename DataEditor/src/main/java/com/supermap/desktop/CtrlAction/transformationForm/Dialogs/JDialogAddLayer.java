@@ -2,11 +2,14 @@ package com.supermap.desktop.CtrlAction.transformationForm.Dialogs;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.AddLayerItemBean;
-import com.supermap.desktop.CtrlAction.transformationForm.beans.FormTransformationSubFormType;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
+import com.supermap.desktop.enums.FormTransformationSubFormType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -57,6 +60,7 @@ public class JDialogAddLayer extends SmDialog {
 			DatasetType.GRIDCOLLECTION, DatasetType.IMAGECOLLECTION, DatasetType.PARAMETRICLINE, DatasetType.PARAMETRICREGION,
 			DatasetType.NETWORK3D
 	};
+	private FormTransformationSubFormType defaultFormType = FormTransformationSubFormType.Reference;
 
 	public JDialogAddLayer() {
 		init();
@@ -259,7 +263,10 @@ public class JDialogAddLayer extends SmDialog {
 		this.buttonUp.setToolTipText(CommonProperties.getString(CommonProperties.up));
 		this.buttonDown.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/moveDown.png"));
 		this.buttonDown.setToolTipText(CommonProperties.getString(CommonProperties.down));
-
+		IForm activeForm = Application.getActiveApplication().getActiveForm();
+		if (activeForm instanceof IFormTransformation) {
+			defaultFormType = ((IFormTransformation) activeForm).getCurrentSubFormType();
+		}
 		checkButtonOkState();
 	}
 
@@ -370,7 +377,9 @@ public class JDialogAddLayer extends SmDialog {
 		}
 
 		protected AddLayerItemBean getRowData(Object object) {
-			return new AddLayerItemBean(object);
+			AddLayerItemBean addLayerItemBean = new AddLayerItemBean(object);
+			addLayerItemBean.setType(defaultFormType);
+			return addLayerItemBean;
 		}
 
 		public void moveRow(int row, boolean isUp) {

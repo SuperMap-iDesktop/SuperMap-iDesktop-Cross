@@ -1,10 +1,21 @@
 package com.supermap.desktop.ui;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.SymbolType;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IContextMenuManager;
+import com.supermap.desktop.Interface.IFormLayout;
+import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.Interface.IProperty;
+import com.supermap.desktop.Interface.IPropertyManager;
 import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
@@ -16,7 +27,6 @@ import com.supermap.desktop.ui.controls.WorkspaceTreeTransferHandler;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.layout.MapLayout;
 import com.supermap.realspace.Scene;
-import sun.reflect.generics.tree.Tree;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -462,6 +472,9 @@ public class WorkspaceComponentManager extends JComponent {
 					Application.getActiveApplication().setActiveDatasets(null);
 					Application.getActiveApplication().setActiveDatasources(null);
 				}
+			} else {
+				Application.getActiveApplication().setActiveDatasets(null);
+				Application.getActiveApplication().setActiveDatasources(null);
 			}
 		}
 	}

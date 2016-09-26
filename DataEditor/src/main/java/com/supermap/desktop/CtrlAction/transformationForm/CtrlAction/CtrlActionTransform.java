@@ -1,6 +1,8 @@
 package com.supermap.desktop.CtrlAction.transformationForm.CtrlAction;
 
+import com.supermap.data.Datasources;
 import com.supermap.data.Transformation;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.transformationForm.Dialogs.JDialogTransformation;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationAddObjectBean;
@@ -32,8 +34,8 @@ public class CtrlActionTransform extends CtrlAction {
 						transformationAddObjectBeen[i] = (TransformationAddObjectBean) transformationObject;
 					}
 					JDialogTransformation jDialogTransformation = new JDialogTransformation();
-					jDialogTransformation.setBeans(transformationAddObjectBeen);
 					jDialogTransformation.setTransformation(transformation);
+					jDialogTransformation.addBeans(transformationAddObjectBeen);
 					jDialogTransformation.setBeOnly();
 					jDialogTransformation.showDialog();
 				}
@@ -44,8 +46,18 @@ public class CtrlActionTransform extends CtrlAction {
 	@Override
 	public boolean enable() {
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
-		if (activeForm instanceof IFormTransformation && ((IFormTransformation) activeForm).getTransformation() != null) {
-			return true;
+		if (!(activeForm instanceof IFormTransformation)) {
+			return false;
+		}
+		if (((IFormTransformation) activeForm).getTransformation() == null) {
+			return false;
+		}
+		Workspace workspace = Application.getActiveApplication().getWorkspace();
+		Datasources datasources = workspace.getDatasources();
+		for (int count = datasources.getCount() - 1; count >= 0; count--) {
+			if (datasources.get(count).isOpened() && !datasources.get(count).isReadOnly()) {
+				return true;
+			}
 		}
 		return false;
 	}

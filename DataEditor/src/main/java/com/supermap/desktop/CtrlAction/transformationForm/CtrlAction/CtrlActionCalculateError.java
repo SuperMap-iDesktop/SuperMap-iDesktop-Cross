@@ -6,23 +6,25 @@ import com.supermap.data.TransformationError;
 import com.supermap.data.TransformationMode;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.transformationForm.FormTransformationTableModel;
-import com.supermap.desktop.CtrlAction.transformationForm.beans.FormTransformationSubFormType;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
+import com.supermap.desktop.enums.FormTransformationSubFormType;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.TransformationModeUtilities;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.MessageFormat;
 
 /**
  * @author XiaJT
@@ -75,6 +77,7 @@ public class CtrlActionCalculateError extends CtrlAction {
 		}
 		activeForm.setTransformation(transformation);
 		error.dispose();
+		Application.getActiveApplication().getOutput().output(MessageFormat.format(DataEditorProperties.getString("String_calculateErrorSuccess"), TransformationModeUtilities.toString(transformationMode)));
 		ToolbarUIUtilities.updataToolbarsState();
 	}
 
