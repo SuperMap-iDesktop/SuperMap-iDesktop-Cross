@@ -477,7 +477,7 @@ public class JDialogColorScheme extends SmDialog {
 		colorSchemeEditorDialog.setExitNames(names);
 		if (colorSchemeEditorDialog.showDialog() == DialogResult.OK) {
 			isModified = true;
-			tableColorScheme.getColorScheme(selectedRow).copy(colorSchemeEditorDialog.getColorScheme());
+			tableColorScheme.setColorSchemeAtRow(selectedRow, colorSchemeEditorDialog.getColorScheme());
 			tableColorScheme.setRowSelectionInterval(selectedRow, selectedRow);
 		}
 		colorSchemeEditorDialog.dispose();

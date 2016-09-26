@@ -95,6 +95,7 @@ public class JTableColorScheme extends SortTable {
 		colorSchemeTableModel.setColorSchemeAtRow(row, colorScheme);
 	}
 
+
 	class ColorSchemeListCellRender extends DefaultTableCellRenderer {
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
