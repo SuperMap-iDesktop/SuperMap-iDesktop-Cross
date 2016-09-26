@@ -24,9 +24,6 @@ public class CtrlActionPaste extends CtrlAction {
                     ((IFormLayout) form).getMapLayoutControl().paste();
                     ((IFormLayout) form).getMapLayoutControl().getMapLayout().refresh();
                 }
-//                int count = MapViewUIUtilities.reverseSelection((IFormMap) form);
-//                SmStatusbar statusbar = ((StatusbarManager) Application.getActiveApplication().getMainFrame().getStatusbarManager()).getStatusbar("com.supermap.desktop.FormMap");
-//                ((JTextField) statusbar.getComponent(1)).setText(String.valueOf(count));
             }
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex);

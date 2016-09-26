@@ -7,10 +7,10 @@ import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilities.Convert;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.desktop.utilties.Convert;
-import com.supermap.desktop.utilties.UpdateColumnUtilties;
+import com.supermap.desktop.utilities.UpdateColumnUtilties;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;

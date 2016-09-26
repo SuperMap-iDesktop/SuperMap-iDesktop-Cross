@@ -11,13 +11,13 @@ public class CtrlActionPaste extends CtrlAction {
 	public CtrlActionPaste(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
-	
+
 	@Override
 	public void run() {
 		try {
 			IFormLayout form = (IFormLayout)Application.getActiveApplication().getActiveForm();
-			form.getMapLayoutControl().paste();	
-			form.getMapLayoutControl().getMapLayout().refresh();
+            form.getMapLayoutControl().paste();
+            form.getMapLayoutControl().getMapLayout().refresh();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -29,8 +29,8 @@ public class CtrlActionPaste extends CtrlAction {
 		try {
 			IForm form = Application.getActiveApplication().getActiveForm();
 			if (form != null && form instanceof IFormLayout) {
-				enable = ((IFormLayout)form).getMapLayoutControl().canPaste();	
-			}
+                enable = ((IFormLayout) form).getMapLayoutControl().canPaste();
+            }
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

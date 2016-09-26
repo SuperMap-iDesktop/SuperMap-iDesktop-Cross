@@ -1,10 +1,8 @@
-package com.supermap.desktop.utilties;
+package com.supermap.desktop.utilities;
 
 import com.supermap.data.FieldType;
 import com.supermap.data.Geometry;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.utilities.FieldTypeUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -352,5 +350,6 @@ public class UpdateColumnUtilties {
         }
         return desValue;
     }
+
 
 }

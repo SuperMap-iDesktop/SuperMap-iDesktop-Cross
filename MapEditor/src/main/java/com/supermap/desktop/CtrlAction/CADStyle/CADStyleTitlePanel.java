@@ -21,6 +21,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2016/8/26.
@@ -121,21 +122,24 @@ public class CADStyleTitlePanel extends JPanel {
 
     private GeoStyle getGeoStyle() {
         GeoStyle result = new GeoStyle();
-        Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
-        if (null != recordset) {
+        ArrayList<Recordset> recordsets = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+        if (null == recordsets) {
+            return result;
+        }
+        int recordsetCount = recordsets.size();
+        for (int i = 0; i < recordsetCount; i++) {
+            Recordset recordset = recordsets.get(i);
+            recordset.moveFirst();
+            while (!recordset.isEOF()) {
+                if (null != recordset.getGeometry() && null != recordset.getGeometry().getStyle()) {
+                    result = recordset.getGeometry().getStyle().clone();
+                    break;
+                } else {
+                    recordset.moveNext();
+                }
+            }
             recordset.dispose();
         }
-        recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
-        recordset.moveFirst();
-        while (!recordset.isEOF()) {
-            if (null != recordset.getGeometry().getStyle()) {
-                result = recordset.getGeometry().getStyle().clone();
-                break;
-            } else {
-                recordset.moveNext();
-            }
-        }
-        recordset.dispose();
         return result;
     }
 
@@ -155,17 +159,18 @@ public class CADStyleTitlePanel extends JPanel {
             symbolType = SymbolType.FILL;
         }
         GeoStyle beforeGeostyle = getGeoStyle();
+        final ArrayList<Recordset> tempRecordsets = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
         GeoStyle geostyle = changeGeoStyle(beforeGeostyle, symbolType, new ISymbolApply() {
             @Override
             public void apply(GeoStyle geoStyle) {
-                if (MapUtilities.getActiveMap().findSelection(true).length > 0) {
-                    resetGeoStyle(geoStyle);
+                if (null != tempRecordsets) {
+                    resetGeoStyle(geoStyle, tempRecordsets);
                 }
             }
         });
         if (geostyle != null) {
-            if (MapUtilities.getActiveMap().findSelection(true).length > 0) {
-                resetGeoStyle(geostyle);
+            if (null != tempRecordsets) {
+                resetGeoStyle(geostyle, tempRecordsets);
             }
         }
     }
@@ -208,60 +213,76 @@ public class CADStyleTitlePanel extends JPanel {
         } else {
             parent.setButtonPointColorEnable(true);
         }
-        Recordset recordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
-        recordset.moveFirst();
-        while (!recordset.isEOF()) {
-            editHistory.add(EditType.MODIFY, recordset, true);
-            if (!recordset.isReadOnly()) {
-                recordset.edit();
-                Geometry tempGeometry = recordset.getGeometry().clone();
-                GeoStyle geoStyle = new GeoStyle();
-                if (null != tempGeometry.getStyle()) {
-                    geoStyle = tempGeometry.getStyle().clone();
-                }
-                if (GeometryUtilities.isPointGeometry(tempGeometry) && styleType == GEOPOINTTYPE) {
-                    // 修改点符号
-                    geoStyle.setMarkerSymbolID(panelSymbols.getCurrentGeoStyle().getMarkerSymbolID());
-                }
-                if ((GeometryUtilities.isLineGeometry(tempGeometry) || GeometryUtilities.isRegionGeometry(tempGeometry)) && styleType == GEOLINETYPE) {
-                    geoStyle.setLineSymbolID(panelSymbols.getCurrentGeoStyle().getLineSymbolID());
-                }
-                if (GeometryUtilities.isRegionGeometry(tempGeometry) && styleType == GEOREGIONTYPE) {
-                    geoStyle.setFillSymbolID(panelSymbols.getCurrentGeoStyle().getFillSymbolID());
-                }
-                if (!GeometryUtilities.isTextGeometry(tempGeometry)) {
-                    tempGeometry.setStyle(geoStyle);
-                }
-                recordset.setGeometry(tempGeometry);
-                tempGeometry.dispose();
-                recordset.update();
-                recordset.moveNext();
-            }
+        ArrayList<Recordset> recordsets = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
+        if (null == recordsets) {
+            return;
         }
-        recordset.close();
-        recordset.dispose();
-        editHistory.batchEnd();
+        int recordsetCount = recordsets.size();
+        for (int i = 0; i < recordsetCount; i++) {
+            Recordset recordset = recordsets.get(i);
+            recordset.moveFirst();
+            while (!recordset.isEOF()) {
+                editHistory.add(EditType.MODIFY, recordset, true);
+                if (!recordset.isReadOnly()) {
+                    recordset.edit();
+                    Geometry tempGeometry = recordset.getGeometry().clone();
+                    GeoStyle geoStyle = null;
+                    if (null != tempGeometry.getStyle()) {
+                        geoStyle = tempGeometry.getStyle().clone();
+                    } else {
+                        break;
+                    }
+                    if (GeometryUtilities.isPointGeometry(tempGeometry) && styleType == GEOPOINTTYPE) {
+                        // 修改点符号
+                        geoStyle.setMarkerSymbolID(panelSymbols.getCurrentGeoStyle().getMarkerSymbolID());
+                    }
+                    if ((GeometryUtilities.isLineGeometry(tempGeometry) || GeometryUtilities.isRegionGeometry(tempGeometry)) && styleType == GEOLINETYPE) {
+                        geoStyle.setLineSymbolID(panelSymbols.getCurrentGeoStyle().getLineSymbolID());
+                    }
+                    if (GeometryUtilities.isRegionGeometry(tempGeometry) && styleType == GEOREGIONTYPE) {
+                        geoStyle.setFillSymbolID(panelSymbols.getCurrentGeoStyle().getFillSymbolID());
+                    }
+                    if (!GeometryUtilities.isTextGeometry(tempGeometry) && !tempGeometry.getType().equals(GeometryType.GEOREGION3D)
+                            && !tempGeometry.getType().equals(GeometryType.GEOLINE3D) && !tempGeometry.getType().equals(GeometryType.GEOPOINT3D)) {
+                        tempGeometry.setStyle(geoStyle);
+                    }
+                    recordset.setGeometry(tempGeometry);
+                    tempGeometry.dispose();
+                    recordset.update();
+                    recordset.moveNext();
+                }
+            }
+            recordset.close();
+            recordset.dispose();
+            editHistory.batchEnd();
+        }
         MapUtilities.getActiveMap().refresh();
     }
 
-    private void resetGeoStyle(GeoStyle newGeoStyle) {
-        Recordset tempRecordset = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
-        tempRecordset.moveFirst();
-        while (!tempRecordset.isEOF()) {
-            editHistory.add(EditType.MODIFY, tempRecordset, true);
-            if (!tempRecordset.isReadOnly()) {
-                tempRecordset.edit();
-                Geometry tempGeometry = tempRecordset.getGeometry();
-                tempGeometry.setStyle(newGeoStyle);
-                tempRecordset.setGeometry(tempGeometry);
-                tempGeometry.dispose();
-                tempRecordset.update();
-                tempRecordset.moveNext();
+    private void resetGeoStyle(GeoStyle newGeoStyle, ArrayList<Recordset> recordsets) {
+        int recordsetCount = recordsets.size();
+        for (int i = 0; i < recordsetCount; i++) {
+            Recordset tempRecordset = recordsets.get(i);
+            tempRecordset.moveFirst();
+            while (!tempRecordset.isEOF()) {
+                editHistory.add(EditType.MODIFY, tempRecordset, true);
+                if (!tempRecordset.isReadOnly()) {
+                    tempRecordset.edit();
+                    Geometry tempGeometry = tempRecordset.getGeometry();
+                    if (!GeometryUtilities.isTextGeometry(tempGeometry) && !tempGeometry.getType().equals(GeometryType.GEOREGION3D)
+                            && !tempGeometry.getType().equals(GeometryType.GEOLINE3D) && !tempGeometry.getType().equals(GeometryType.GEOPOINT3D)) {
+                        tempGeometry.setStyle(newGeoStyle);
+                    }
+                    tempRecordset.setGeometry(tempGeometry);
+                    tempGeometry.dispose();
+                    tempRecordset.update();
+                    tempRecordset.moveNext();
+                }
             }
+            editHistory.batchEnd();
+            tempRecordset.close();
+            tempRecordset.dispose();
         }
-        editHistory.batchEnd();
-        tempRecordset.close();
-        tempRecordset.dispose();
         MapUtilities.getActiveMap().refresh();
     }
 

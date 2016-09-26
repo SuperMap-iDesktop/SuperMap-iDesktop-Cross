@@ -525,7 +525,7 @@ public class ThemeGuideFactory {
     }
 
     /**
-     * 计算矢量数据集中某个字段的最大值
+     * 计算矢量数据集中某个字段的最大值,不支持多字段计算最大值
      *
      * @param datasetVector
      * @return
@@ -533,31 +533,18 @@ public class ThemeGuideFactory {
     public static double getMaxValue(DatasetVector datasetVector, String expression, JoinItems joinItems) {
 
         double maxValue = 0;
-        int fieldCount = datasetVector.getFieldCount();
-        com.supermap.data.FieldInfo tempField = null;
-        for (int i = 0; i < fieldCount; i++) {
-            if (expression.equals(datasetVector.getFieldInfos().get(i).getName())) {
-                tempField = datasetVector.getFieldInfos().get(i);
-                break;
-            }
-        }
-
-        if (null != tempField && tempField.getType().equals(FieldType.INT64)) {
+        QueryParameter parameter = new QueryParameter();
+        parameter.setAttributeFilter(expression);
+        parameter.setCursorType(CursorType.DYNAMIC);
+        parameter.setHasGeometry(true);
+        parameter.setResultFields(new String[]{expression});
+        Recordset recordset = datasetVector.query(parameter);
+        if (recordset.getFieldInfos().get(expression).getType() == FieldType.INT64) {
             // 屏蔽掉64位整形数据,组件不支持
             return maxValue;
         }
-
-        QueryParameter parameter = new QueryParameter();
-        String[] result = new String[1];
-        result[0] = expression + " as Result";
-        parameter.setHasGeometry(false);
-        parameter.setResultFields(result);
-        parameter.setAttributeFilter("1=1");
-        parameter.setCursorType(CursorType.STATIC);
-        parameter.setJoinItems(joinItems);
-        Recordset recordset = datasetVector.query(parameter);
-        if (null != recordset.getFieldInfos().get("Result") && recordset.getFieldInfos().get("Result").getType() != FieldType.TEXT) {
-            maxValue = recordset.statistic("Result", StatisticMode.MAX);
+        if (null != recordset.getFieldInfos().get(expression) && recordset.getFieldInfos().get(expression).getType() != FieldType.TEXT) {
+            maxValue = recordset.statistic(expression, StatisticMode.MAX);
         }
         return maxValue;
     }
