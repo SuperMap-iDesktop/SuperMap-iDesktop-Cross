@@ -1,8 +1,7 @@
-package com.supermap.desktop.utilties;
+package com.supermap.desktop.utilities;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.tabularview.TabularViewProperties;
-import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.properties.CoreProperties;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -79,7 +78,7 @@ public class Convert {
                 success = resultFormat.format(date);
             }
         } catch (Exception e) {
-            Application.getActiveApplication().getOutput().output(TabularViewProperties.getString("String_DateError"));
+            Application.getActiveApplication().getOutput().output(CoreProperties.getString("String_DateError"));
         }
         return success;
     }

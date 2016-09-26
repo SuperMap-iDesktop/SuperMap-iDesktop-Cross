@@ -4,6 +4,7 @@ import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.tabularview.TabularViewProperties;
+import com.supermap.desktop.utilities.Convert;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 
 import javax.swing.table.AbstractTableModel;

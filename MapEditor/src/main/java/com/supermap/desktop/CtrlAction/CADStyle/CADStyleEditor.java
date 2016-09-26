@@ -1,7 +1,6 @@
 package com.supermap.desktop.CtrlAction.CADStyle;
 
 import com.supermap.data.DatasetType;
-import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
@@ -50,8 +49,9 @@ public class CADStyleEditor extends AbstractEditor {
                 dockbarCADStyleContainer.setVisible(true);
                 dockbarCADStyleContainer.active();
                 cadStyleContainer = (CADStyleContainer) dockbarCADStyleContainer.getComponent();
-                if (null != CADStyleUtilities.getActiveRecordset(environment.getMap())) {
-                    cadStyleContainer.init();
+                ArrayList<Recordset> recordsets = CADStyleUtilities.getActiveRecordset(environment.getMap());
+                if (null != recordsets) {
+                    cadStyleContainer.init(recordsets);
                 }
             }
             ((Dockbar) dockbarCADStyleContainer).addListener(new DockingWindowAdapter() {
@@ -105,41 +105,41 @@ public class CADStyleEditor extends AbstractEditor {
     public boolean enble(EditEnvironment environment) {
 
         boolean editable = isEditable(environment.getMap());
-        Recordset recordset = CADStyleUtilities.getActiveRecordset(environment.getMap());
-        // 初始化判断
-        // 若选中的记录集所在的数据集不为（CAD/文本）数据集，直接屏蔽掉
-        if (null != recordset && !recordset.getDataset().getType().equals(DatasetType.CAD) && !recordset.getDataset().getType().equals(DatasetType.TEXT)) {
-            return false;
-        }
+        ArrayList<Recordset> recordsets = CADStyleUtilities.getActiveRecordset(environment.getMap());
         if (null != cadStyleContainer && editable == false) {
             cadStyleContainer.enabled(false);
-        } else if (null != cadStyleContainer && null != recordset && null != dockbarCADStyleContainer) {
-            cadStyleContainer.showDialog();
-        } else if (null != cadStyleContainer && null == recordset) {
+        } else if (null != cadStyleContainer && null != recordsets && null != dockbarCADStyleContainer) {
+            cadStyleContainer.showDialog(recordsets);
+        } else if (null != cadStyleContainer && null == recordsets) {
             cadStyleContainer.setNullPanel();
         }
-        return ListUtilities.isListContainAny(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOPOINT, GeometryType.GEOPOINT3D, GeometryType.GEOMULTIPOINT,
-                GeometryType.GEOLINE, GeometryType.GEOLINE3D, GeometryType.GEOBSPLINE, GeometryType.GEOCARDINAL, GeometryType.GEOCURVE, GeometryType.GEOLINEM, GeometryType.GEOPARAMETRICLINE, GeometryType.GEOPARAMETRICLINECOMPOUND, GeometryType.GEOARC,
-                GeometryType.GEOCHORD, GeometryType.GEOCIRCLE, GeometryType.GEOCOMPOUND, GeometryType.GEOELLIPSE, GeometryType.GEOELLIPTICARC, GeometryType.GEOPARAMETRICREGION, GeometryType.GEOPARAMETRICREGIONCOMPOUND,
-                GeometryType.GEOPIE, GeometryType.GEOPIE3D, GeometryType.GEOREGION, GeometryType.GEOREGION3D, GeometryType.GEOROUNDRECTANGLE, GeometryType.GEOTEXT, GeometryType.GEOTEXT3D);
+        return ListUtilities.isListContainAny(environment.getEditProperties().getSelectedDatasetTypes(), DatasetType.CAD, DatasetType.TEXT);
     }
 
     private boolean isEditable(Map map) {
+        ArrayList<Recordset> recordset = CADStyleUtilities.getActiveRecordset(map);
+        if (null == recordset) {
+            return false;
+        }
+        int count = recordset.size();
         try {
             ArrayList<Layer> layers = MapUtilities.getLayers(map);
             for (Layer layer : layers) {
-                Recordset recordset = CADStyleUtilities.getActiveRecordset(map);
                 try {
-                    if (recordset != null && layer.getDataset() == recordset.getDataset() && layer.isEditable()) {
-                        return true;
-                    } else if (recordset == null && layer.isEditable()) {
-                        return true;
+                    for (int i = 0; i < count; i++) {
+                        if (recordset != null && layer.getDataset() == recordset.get(i).getDataset() && layer.isEditable()) {
+                            return true;
+                        } else if (recordset == null && layer.isEditable()) {
+                            return true;
+                        }
                     }
                 } catch (Exception e) {
                     // ignore
                 } finally {
                     if (recordset != null) {
-                        recordset.dispose();
+                        for (int i = 0; i < count; i++) {
+                            recordset.get(i).dispose();
+                        }
                     }
                 }
             }

@@ -14,32 +14,7 @@ import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerAddedEvent;
-import com.supermap.mapping.LayerAddedListener;
-import com.supermap.mapping.LayerGroup;
-import com.supermap.mapping.LayerGroupAddedEvent;
-import com.supermap.mapping.LayerGroupAddedListener;
-import com.supermap.mapping.LayerGroupRemovedEvent;
-import com.supermap.mapping.LayerGroupRemovedListener;
-import com.supermap.mapping.LayerRemovedEvent;
-import com.supermap.mapping.LayerRemovedListener;
-import com.supermap.mapping.LayerSettingImage;
-import com.supermap.mapping.LayerSettingVector;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.Theme;
-import com.supermap.mapping.ThemeGraph;
-import com.supermap.mapping.ThemeGraphItem;
-import com.supermap.mapping.ThemeGridRange;
-import com.supermap.mapping.ThemeGridRangeItem;
-import com.supermap.mapping.ThemeGridUnique;
-import com.supermap.mapping.ThemeGridUniqueItem;
-import com.supermap.mapping.ThemeLabel;
-import com.supermap.mapping.ThemeLabelItem;
-import com.supermap.mapping.ThemeRange;
-import com.supermap.mapping.ThemeRangeItem;
-import com.supermap.mapping.ThemeUnique;
-import com.supermap.mapping.ThemeUniqueItem;
+import com.supermap.mapping.*;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -50,16 +25,7 @@ import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceAdapter;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -376,10 +342,10 @@ public class LayersTree extends JTree {
     }
 
     private DefaultTreeModel getTreeModel() {
-	    Map activeMap = MapUtilities.getActiveMap();
-	    if (activeMap != null) {
-		    currentMap = activeMap;
-	    }
+        Map activeMap = MapUtilities.getActiveMap();
+        if (activeMap != null) {
+            currentMap = activeMap;
+        }
         TreeNodeData mapData = new TreeNodeData(currentMap.getName(), NodeDataType.UNKNOWN);
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(mapData);
         if (currentMap.getWorkspace() != null) {
@@ -389,7 +355,7 @@ public class LayersTree extends JTree {
                 root.add(getNodeByLayer(layer));
             }
         }
-	    return new DefaultTreeModel(root);
+        return new DefaultTreeModel(root);
     }
 
     /**
@@ -441,7 +407,7 @@ public class LayersTree extends JTree {
             int type = theme.getType().value();
 
 				/*
-				 * 如果是1(ThemeUnique)、2(ThemeRange)、8(ThemeCustom)就使用自己的构造 以在专题图的基础上增加编辑功能 modified by gouyu 2010-12-23
+                 * 如果是1(ThemeUnique)、2(ThemeRange)、8(ThemeCustom)就使用自己的构造 以在专题图的基础上增加编辑功能 modified by gouyu 2010-12-23
 				 */
             if (type != 1 && type != 2 && type != 8) {
                 result = new DefaultMutableTreeNode(new TreeNodeData(layer, NodeDataType.LAYER_THEME));
@@ -1407,7 +1373,7 @@ public class LayersTree extends JTree {
                 // Make sure we aren't already scrolled all the way down
                 if (tree.getHeight() - treeVisibleRectangle.y != vp.getHeight()) {
                     /*
-					 * Get Y coordinate for scrolling down
+                     * Get Y coordinate for scrolling down
 					 */
                     if (vp.getHeight() - vpMousePosition.y < 30 && vp.getHeight() - vpMousePosition.y > 0) {
                         newY = treeVisibleRectangle.y + (30 + vpMousePosition.y - vp.getHeight()) * 2;
