@@ -1,7 +1,15 @@
 package com.supermap.desktop.controls.utilities;
 
-import com.supermap.data.*;
+import com.supermap.data.Datasource;
+import com.supermap.data.DatasourceConnectionInfo;
+import com.supermap.data.Datasources;
+import com.supermap.data.EngineFamilyType;
+import com.supermap.data.EngineInfo;
+import com.supermap.data.EngineType;
+import com.supermap.data.Environment;
+import com.supermap.data.ErrorInfo;
 import com.supermap.data.Toolkit;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogConfirm;
@@ -11,7 +19,11 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.LogUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -367,7 +379,7 @@ public class DatasourceOpenFileUtilties {
 	public static Datasource isDatasourceOpened(String filePath) {
 		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
 		for (int i = 0; i < datasources.getCount(); i++) {
-			if (new File(datasources.get(i).getConnectionInfo().getServer()).getAbsolutePath().equals(filePath)) {
+			if (new File(datasources.get(i).getConnectionInfo().getServer()).getAbsolutePath().equalsIgnoreCase(filePath)) {
 				return datasources.get(i);
 			}
 		}

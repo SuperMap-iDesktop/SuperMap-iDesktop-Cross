@@ -1,13 +1,23 @@
 package com.supermap.desktop.CtrlAction.Map.MapMeasure.Measure;
 
-import com.supermap.data.*;
+import com.supermap.data.GeoRegion;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoText;
+import com.supermap.data.Geometry;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.TextPart;
+import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.MeasureType;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.FontUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
-import com.supermap.ui.*;
+import com.supermap.ui.Action;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackedListener;
+import com.supermap.ui.TrackingEvent;
+import com.supermap.ui.TrackingListener;
 
 import java.awt.*;
 import java.text.MessageFormat;
@@ -76,7 +86,7 @@ public class MeasureArea extends Measure {
 					GeoText geotext = new GeoText(part);
 
 					TextStyle textStyle = geotext.getTextStyle();
-					textStyle.setFontHeight(FontUtilities.fontSizeToMapHeight(textFontHeight * 0.283,
+					textStyle.setFontHeight(FontUtilities.fontSizeToMapHeight(textFontHeight,
 							mapControl.getMap(), textStyle.isSizeFixed()));
 					mapControl.getMap().getTrackingLayer().add(geotext, textTagTitle + "FinishedMeasure");
 					outputMeasure(totleArea);

@@ -1,7 +1,15 @@
 package com.supermap.desktop.utilities;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasets;
+import com.supermap.data.Datasource;
+import com.supermap.data.DatasourceConnectionInfo;
+import com.supermap.data.EngineInfo;
+import com.supermap.data.EngineType;
+import com.supermap.data.ErrorInfo;
 import com.supermap.data.Toolkit;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -17,7 +25,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.swing.*;
-import javax.xml.crypto.Data;
 import java.awt.*;
 import java.io.File;
 import java.text.MessageFormat;
@@ -29,7 +36,6 @@ import java.util.ArrayList;
  * @author highsad
  */
 public class DatasourceUtilities {
-
 	// #region Variable
 	// private static DataTable CurrentDataTable;
 
