@@ -57,7 +57,8 @@ public class MapUtilities {
 	 * @return
 	 */
 	public static Map getActiveMap() {
-		return getMapControl().getMap();
+		MapControl mapControl = getMapControl();
+		return mapControl == null ? null : mapControl.getMap();
 	}
 
 	/**
