@@ -7,7 +7,12 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.geometry.Abstract.*;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
+import com.supermap.desktop.geometry.Abstract.ILine3DFeature;
+import com.supermap.desktop.geometry.Abstract.ILineFeature;
+import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
+import com.supermap.desktop.geometry.Abstract.IRegion3DFeature;
+import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Implements.DGeoLineM;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels.GeometryNodeVectorTableModel;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableModels.VectorTableModel;
@@ -27,7 +32,12 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -275,6 +285,9 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 		tableNodeInfo.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
+				if (!isShowing()) {
+					return;
+				}
 				int selectedRowCount = tableNodeInfo.getSelectedRowCount();
 				checkButtonState();
 				if (selectedRowCount == 1) {
