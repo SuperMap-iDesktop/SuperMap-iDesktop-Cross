@@ -83,16 +83,22 @@ public class TransformCallable extends UpdateProgressCallable {
 			try {
 				Dataset dataset = transformationAddObjectBean.getDataset();
 				if (dataset instanceof DatasetImage || dataset instanceof DatasetGrid) {
-					if (transformationAddObjectBean.getResultDatasource() != null) {
-						Dataset rectify = transformation.rectify(dataset, transformationAddObjectBean.getResultDatasource(), transformationAddObjectBean.getResultDatasource().getDatasets().getAvailableDatasetName(transformationAddObjectBean.getResultDatasetName()));//,transformationAddObjectBean.getTransformationResampleMode(), transformationAddObjectBean.getCellSize()
-						resultDatasetName = rectify != null ? rectify.getName() + "@" + rectify.getDatasource().getAlias() : null;
+					if (transformationAddObjectBean.isSaveAs()) {
+						if (transformationAddObjectBean.isResample()) {
+							Dataset rectify = transformation.rectify(dataset, transformationAddObjectBean.getResultDatasource(),
+									transformationAddObjectBean.getResultDatasource().getDatasets().getAvailableDatasetName(transformationAddObjectBean.getResultDatasetName()), transformationAddObjectBean.getTransformationResampleMode(), transformationAddObjectBean.getCellSize());
+							resultDatasetName = rectify != null ? rectify.getName() + "@" + rectify.getDatasource().getAlias() : null;
+						} else {
+							Dataset rectify = transformation.rectify(dataset, transformationAddObjectBean.getResultDatasource(), transformationAddObjectBean.getResultDatasource().getDatasets().getAvailableDatasetName(transformationAddObjectBean.getResultDatasetName()));//,transformationAddObjectBean.getTransformationResampleMode(), transformationAddObjectBean.getCellSize()
+							resultDatasetName = rectify != null ? rectify.getName() + "@" + rectify.getDatasource().getAlias() : null;
+						}
 					} else {
 						transformation.rectify(dataset);
 						resultDatasetName = null;
 					}
 				} else {
-					if (transformationAddObjectBean.getResultDatasource() != null) {
-						DatasetVector transform = transformation.transform(((DatasetVector) dataset), transformationAddObjectBean.getResultDatasource(), transformationAddObjectBean.getResultDatasetName());
+					if (transformationAddObjectBean.isSaveAs()) {
+						DatasetVector transform = transformation.transform(((DatasetVector) dataset), transformationAddObjectBean.getResultDatasource(), transformationAddObjectBean.getResultDatasource().getDatasets().getAvailableDatasetName(transformationAddObjectBean.getResultDatasetName()));
 						resultDatasetName = transform != null ? transform.getName() + "@" + transform.getDatasource().getAlias() : null;
 					} else {
 						transformation.transform(((DatasetVector) dataset));

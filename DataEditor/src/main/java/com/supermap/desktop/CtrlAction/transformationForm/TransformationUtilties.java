@@ -187,7 +187,7 @@ public class TransformationUtilties {
 				return datasources.get(i);
 			}
 		}
-		throw new UnsupportedOperationException("UnBelievable!");
+		return null;
 	}
 
 	private static final DatasetType[] supportDatasetTypes = new DatasetType[]{

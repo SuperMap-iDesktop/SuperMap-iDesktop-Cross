@@ -106,15 +106,28 @@ public class TransformationTableModel extends DefaultTableModel {
 			datas.get(row).setResultDatasource((Datasource) aValue);
 			datas.get(row).setResultDatasetName(
 					datas.get(row).getResultDatasource().getDatasets().getAvailableDatasetName(datas.get(row).getResultDatasetName()));
-		} else if (column == COLUMN_DATASET) {
-			datas.get(row).setResultDatasetName((String) aValue);
+		} else if (column == column_ResultDataset) {
+			datas.get(row).setResultDatasetName(datas.get(row).getResultDatasource().getDatasets().getAvailableDatasetName((String) aValue));
 		}
 		fireTableRowsUpdated(row, row);
 	}
 
-	public void addDataset(Dataset selectedDataset, Datasource saveAsDatasources, String datasetName) {
-		datas.add(new TransformationAddObjectBean(selectedDataset, saveAsDatasources, datasetName));
-		fireTableRowsInserted(datas.size() - 1, datas.size() - 1);
+	public boolean addDataset(Dataset selectedDataset, Datasource saveAsDatasources, String datasetName) {
+		if (!isDatasetAdded(selectedDataset)) {
+			datas.add(new TransformationAddObjectBean(selectedDataset, saveAsDatasources, datasetName));
+			fireTableRowsInserted(datas.size() - 1, datas.size() - 1);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean isDatasetAdded(Dataset selectedDataset) {
+		for (TransformationAddObjectBean data : datas) {
+			if (data.getDataset() == selectedDataset) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public void delete(int row) {

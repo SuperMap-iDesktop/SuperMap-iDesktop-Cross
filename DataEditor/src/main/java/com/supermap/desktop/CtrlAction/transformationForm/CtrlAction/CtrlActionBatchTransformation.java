@@ -33,8 +33,12 @@ public class CtrlActionBatchTransformation extends CtrlAction {
 			Datasource defaultDatasource = TransformationUtilties.getDefaultDatasource(activeDatasets[0].getDatasource());
 			for (Dataset activeDataset : activeDatasets) {
 				if (TransformationUtilties.isSupportDatasetType(activeDataset.getType())) {
+					String datasetName = null;
+					if (defaultDatasource != null) {
+						datasetName = defaultDatasource.getDatasets().getAvailableDatasetName(activeDataset.getName() + "_adjust");
+					}
 					transformationAddObjectBeen.add(new TransformationAddObjectBean(activeDataset, defaultDatasource,
-							defaultDatasource.getDatasets().getAvailableDatasetName(activeDataset.getName() + "_adjust")));
+							datasetName));
 				}
 			}
 		} else {
@@ -45,9 +49,12 @@ public class CtrlActionBatchTransformation extends CtrlAction {
 					Datasets datasets = activeDatasource.getDatasets();
 					for (int i = 0; i < datasets.getCount(); i++) {
 						Dataset activeDataset = datasets.get(i);
+						String datasetName = null;
+						if (defaultDatasource != null) {
+							datasetName = defaultDatasource.getDatasets().getAvailableDatasetName(activeDataset.getName() + "_adjust");
+						}
 						if (TransformationUtilties.isSupportDatasetType(activeDataset.getType())) {
-							transformationAddObjectBeen.add(new TransformationAddObjectBean(activeDataset, defaultDatasource,
-									defaultDatasource.getDatasets().getAvailableDatasetName(activeDataset.getName() + "_adjust")));
+							transformationAddObjectBeen.add(new TransformationAddObjectBean(activeDataset, defaultDatasource, datasetName));
 						}
 					}
 				}

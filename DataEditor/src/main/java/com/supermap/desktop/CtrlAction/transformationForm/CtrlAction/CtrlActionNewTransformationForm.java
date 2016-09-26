@@ -33,13 +33,29 @@ public class CtrlActionNewTransformationForm extends CtrlAction {
 
 	@Override
 	public boolean enable() {
+		boolean isHasDataset = false;
 		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
 		for (int i = 0; i < datasources.getCount(); i++) {
 			Datasource datasource = datasources.get(i);
-			if (datasource.getDatasets().getCount() > 0 && !datasource.isReadOnly()) {
-				return true;
+			if (datasource.getDatasets().getCount() > 0) {
+				isHasDataset = true;
+				break;
 			}
 		}
-		return false;
+		if (!isHasDataset) {
+			return false;
+		}
+		boolean isHasOpenedDatasource = false;
+		for (int i = 0; i < datasources.getCount(); i++) {
+			Datasource datasource = datasources.get(i);
+			if (datasource.isOpened() && !datasource.isReadOnly()) {
+				isHasOpenedDatasource = true;
+				break;
+			}
+		}
+		if (!isHasOpenedDatasource) {
+			return false;
+		}
+		return true;
 	}
 }

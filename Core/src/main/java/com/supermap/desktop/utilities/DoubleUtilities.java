@@ -21,6 +21,9 @@ public class DoubleUtilities {
 	 * @return 不为科学计数法的string
 	 */
 	public static String toString(double value) {
+		if (Double.isNaN(value)) {
+			return "NaN";
+		}
 		BigDecimal bigDecimal = new BigDecimal(value);
 		return bigDecimal.toString();
 	}

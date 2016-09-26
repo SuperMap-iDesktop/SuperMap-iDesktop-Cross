@@ -415,9 +415,12 @@ public class JDialogTransformation extends SmDialog {
 					int[] selectedModelRows = table.getSelectedModelRows();
 					if (selectedModelRows.length > 0) {
 						for (int selectedModelRow : selectedModelRows) {
-							tableModel.setValueAt(selected, selectedModelRow, TransformationTableModel.COLUMN_SAVE_AS);
+							if (tableModel.isCellEditable(selectedModelRow, TransformationTableModel.COLUMN_SAVE_AS)) {
+								tableModel.setValueAt(selected, selectedModelRow, TransformationTableModel.COLUMN_SAVE_AS);
+							}
 						}
 					}
+					checkIsSaveState();
 					comboBoxDatasources.setEnabled(selected);
 					isListenerEnable = true;
 				}
@@ -431,7 +434,9 @@ public class JDialogTransformation extends SmDialog {
 					int[] selectedModelRows = table.getSelectedModelRows();
 					if (selectedModelRows.length > 0) {
 						for (int selectedModelRow : selectedModelRows) {
-							tableModel.setValueAt(selectedItem, selectedModelRow, TransformationTableModel.column_ResultDatasource);
+							if (tableModel.isCellEditable(selectedModelRow, TransformationTableModel.column_ResultDatasource)) {
+								tableModel.setValueAt(selectedItem, selectedModelRow, TransformationTableModel.column_ResultDatasource);
+							}
 						}
 					}
 				}
@@ -476,11 +481,14 @@ public class JDialogTransformation extends SmDialog {
 			java.util.List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
 			if (selectedDatasets.size() > 0) {
 				Datasource defaultDatasource = TransformationUtilties.getDefaultDatasource(selectedDatasets.get(0).getDatasource());
+				int count = 0;
 				for (Dataset selectedDataset : selectedDatasets) {
-					tableModel.addDataset(selectedDataset, defaultDatasource,
-							defaultDatasource.getDatasets().getAvailableDatasetName(selectedDataset.getName() + "_adjust"));
+					if (tableModel.addDataset(selectedDataset, defaultDatasource,
+							defaultDatasource == null ? null : defaultDatasource.getDatasets().getAvailableDatasetName(selectedDataset.getName() + "_adjust"))) {
+						++count;
+					}
 				}
-				table.setRowSelectionInterval(table.getRowCount() - selectedDatasets.size(), table.getRowCount() - 1);
+				table.setRowSelectionInterval(table.getRowCount() - count, table.getRowCount() - 1);
 			}
 		}
 		datasetChooser.dispose();
@@ -522,10 +530,13 @@ public class JDialogTransformation extends SmDialog {
 	}
 
 	private void initComponentState() {
-		checkButtonState();
+		isListenerEnable = false;
 		textFieldTransformationMode.setEditable(false);
 		checkBoxAutoClose.setSelected(true);
 		fileChooserControl.getEditor().setEditable(false);
+		checkBoxResample.setSelected(false);
+		isListenerEnable = true;
+		checkButtonState();
 		this.setTitle(DataEditorProperties.getString("String_FormBatchTransformation"));
 	}
 
@@ -545,7 +556,6 @@ public class JDialogTransformation extends SmDialog {
 		buttonSelectInvert.setEnabled(table.getRowCount() > 0);
 		buttonDel.setEnabled(table.getSelectedRowCount() > 0);
 		comboBoxDatasources.setEnabled(table.getSelectedRowCount() > 0);
-		checkResampleState();
 		checkIsSaveState();
 	}
 
@@ -583,6 +593,7 @@ public class JDialogTransformation extends SmDialog {
 			}
 			isListenerEnable = true;
 		}
+		checkResampleState();
 	}
 
 	private void checkResampleState() {
@@ -590,7 +601,7 @@ public class JDialogTransformation extends SmDialog {
 		ArrayList<TransformationAddObjectBean> beans = new ArrayList<>();
 		for (int selectedModelRow : selectedModelRows) {
 			TransformationAddObjectBean dataAtRow = tableModel.getDataAtRow(selectedModelRow);
-			if (dataAtRow.getDataset() instanceof DatasetGrid || dataAtRow.getDataset() instanceof DatasetImage) {
+			if (dataAtRow.isSaveAs() && (dataAtRow.getDataset() instanceof DatasetGrid || dataAtRow.getDataset() instanceof DatasetImage)) {
 				beans.add(dataAtRow);
 			}
 		}
@@ -640,13 +651,34 @@ public class JDialogTransformation extends SmDialog {
 
 	public void addBeans(TransformationAddObjectBean[] transformationAddObjectBeen) {
 		ArrayList<TransformationAddObjectBean> transformationAddObjectBeen1 = new ArrayList<>();
+		ArrayList<Dataset> addedDataset = new ArrayList<>();
 		for (TransformationAddObjectBean transformationAddObjectBean : transformationAddObjectBeen) {
 			if (TransformationUtilties.isSupportDatasetType(transformationAddObjectBean.getDataset().getType())) {
+				if (addedDataset.contains(transformationAddObjectBean.getDataset()) || tableModel.isDatasetAdded(transformationAddObjectBean.getDataset())) {
+					continue;
+				}
+				if (isNeedResetDatasource(transformationAddObjectBean)) {
+					Datasource defaultDatasource = TransformationUtilties.getDefaultDatasource(transformationAddObjectBean.getDataset().getDatasource());
+					transformationAddObjectBean.setResultDatasource(defaultDatasource);
+					transformationAddObjectBean.setResultDatasetName(defaultDatasource == null ? null : defaultDatasource.getDatasets().getAvailableDatasetName(transformationAddObjectBean.getResultDatasetName()));
+				}
+				addedDataset.add(transformationAddObjectBean.getDataset());
 				transformationAddObjectBeen1.add(transformationAddObjectBean);
 			}
 		}
 		tableModel.addDatas(transformationAddObjectBeen1.toArray(new TransformationAddObjectBean[transformationAddObjectBeen1.size()]));
 		checkButtonState();
+	}
+
+	private boolean isNeedResetDatasource(TransformationAddObjectBean transformationAddObjectBean) {
+		boolean opened;
+		try {
+			opened = transformationAddObjectBean.getResultDatasource().isOpened();
+		} catch (Exception e) {
+			return true;
+		}
+		return !opened;
+
 	}
 
 	public void setBeOnly() {

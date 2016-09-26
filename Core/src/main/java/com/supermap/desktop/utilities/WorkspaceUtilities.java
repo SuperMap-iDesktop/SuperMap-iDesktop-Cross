@@ -123,6 +123,14 @@ public class WorkspaceUtilities {
 	 * @return 打开工作空间的结果
 	 */
 	public static OpenWorkspaceResult openWorkspace(WorkspaceConnectionInfo info, boolean first) {
+		return getOpenWorkspaceResult(info, first, true);
+	}
+
+	public static OpenWorkspaceResult openWorkspaceResultNotSaveRecent(WorkspaceConnectionInfo info, boolean first) {
+		return getOpenWorkspaceResult(info, first, false);
+	}
+
+	private static OpenWorkspaceResult getOpenWorkspaceResult(WorkspaceConnectionInfo info, boolean first, boolean isSaveToRecent) {
 		OpenWorkspaceResult result = OpenWorkspaceResult.FAILED_PASSWORD_WRONG;
 		try {
 			// 打开新的工作空间之前需要先关闭当前工作空间
@@ -237,7 +245,7 @@ public class WorkspaceUtilities {
 				}
 
 				if ((info.getType() == WorkspaceType.SMW || info.getType() == WorkspaceType.SMWU || info.getType() == WorkspaceType.SXWU || info.getType() == WorkspaceType.SXW)
-						&& result == OpenWorkspaceResult.SUCCESSED) {
+						&& result == OpenWorkspaceResult.SUCCESSED && isSaveToRecent) {
 					// 如果是文件型工作空间并且打开成功了，则需要添加到最近文件列表中
 					addWorkspaceFileToRecentFile(info.getServer());
 				}
