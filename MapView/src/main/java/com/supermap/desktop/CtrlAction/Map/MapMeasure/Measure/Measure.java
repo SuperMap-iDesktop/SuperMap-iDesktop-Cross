@@ -10,11 +10,22 @@ import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
-import com.supermap.ui.*;
+import com.supermap.ui.ActionChangedEvent;
+import com.supermap.ui.ActionChangedListener;
+import com.supermap.ui.MapControl;
+import com.supermap.ui.TrackMode;
+import com.supermap.ui.TrackedListener;
+import com.supermap.ui.TrackingListener;
+import com.supermap.ui.UndoneListener;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -32,7 +43,8 @@ public abstract class Measure implements IMeasureAble {
 	 */
 	protected static int assistantLineInterval = 50;
 
-	protected static double textFontHeight = 45;
+	protected static double textFontHeight = 1.5;
+
 
 	// 辅助线相关参数
 	protected static int lineSymbolID = 2;

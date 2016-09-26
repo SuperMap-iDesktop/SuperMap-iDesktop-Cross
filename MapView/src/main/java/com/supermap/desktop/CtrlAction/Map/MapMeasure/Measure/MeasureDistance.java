@@ -1,6 +1,21 @@
 package com.supermap.desktop.CtrlAction.Map.MapMeasure.Measure;
 
-import com.supermap.data.*;
+import com.supermap.data.GeoCompound;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoRegion;
+import com.supermap.data.GeoSpheroid;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoText;
+import com.supermap.data.Geometrist;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.PrjCoordSysType;
+import com.supermap.data.Rectangle2D;
+import com.supermap.data.TextAlignment;
+import com.supermap.data.TextPart;
+import com.supermap.data.TextStyle;
+import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.enums.MeasureType;
@@ -8,7 +23,11 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.FontUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.mapping.TrackingLayer;
-import com.supermap.ui.*;
+import com.supermap.ui.Action;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackedListener;
+import com.supermap.ui.TrackingEvent;
+import com.supermap.ui.TrackingListener;
 
 import java.awt.*;
 import java.text.MessageFormat;
@@ -245,7 +264,7 @@ public class MeasureDistance extends Measure {
 				GeoText geotext = new GeoText(part);
 
 				TextStyle textStyle = geotext.getTextStyle();
-				textStyle.setFontHeight(FontUtilities.fontSizeToMapHeight(textFontHeight * 0.283,
+				textStyle.setFontHeight(FontUtilities.fontSizeToMapHeight(textFontHeight,
 						mapControl.getMap(), textStyle.isSizeFixed()));
 				textStyle.setAlignment(TextAlignment.BOTTOMLEFT);
 				if (isDrawing) {
