@@ -488,7 +488,9 @@ public class JDialogTransformation extends SmDialog {
 						++count;
 					}
 				}
-				table.setRowSelectionInterval(table.getRowCount() - count, table.getRowCount() - 1);
+				if (count != 0) {
+					table.setRowSelectionInterval(table.getRowCount() - count, table.getRowCount() - 1);
+				}
 			}
 		}
 		datasetChooser.dispose();
