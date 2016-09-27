@@ -1019,7 +1019,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		this.mapControl = null;
 		this.layersTree = null;
 		try {
-			Method method = InternalHandle.class.getDeclaredMethod("clearHandle", null);
+			Method method = InternalHandle.class.getDeclaredMethod("clearHandle");
 			method.setAccessible(true);
 			method.invoke(layers);
 			method.setAccessible(false);

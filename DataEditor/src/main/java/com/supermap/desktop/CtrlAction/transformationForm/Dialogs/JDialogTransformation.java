@@ -279,9 +279,12 @@ public class JDialogTransformation extends SmDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int[] selectedModelRows = table.getSelectedModelRows();
+				if (selectedModelRows.length == 0) {
+					return;
+				}
 				Arrays.sort(selectedModelRows);
 				for (int i = selectedModelRows.length - 1; i >= 0; i--) {
-					tableModel.delete(i);
+					tableModel.delete(selectedModelRows[i]);
 				}
 				int row = selectedModelRows[0];
 				if (tableModel.getRowCount() <= row) {
@@ -382,6 +385,9 @@ public class JDialogTransformation extends SmDialog {
 		textFieldPixel.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
+				if (!isListenerEnable) {
+					return true;
+				}
 				if (StringUtilities.isNullOrEmpty(textFieldValue)) {
 					setPixel(0d);
 					return true;
