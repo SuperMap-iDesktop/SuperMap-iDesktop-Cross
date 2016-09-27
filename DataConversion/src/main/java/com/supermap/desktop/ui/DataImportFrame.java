@@ -46,6 +46,13 @@ public class DataImportFrame extends SmDialog {
 		this.componentList.add(this.buttonClose);
 		this.setFocusTraversalPolicy(this.policy);
 		this.getRootPane().setDefaultButton(this.buttonClose);
+
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowOpened(WindowEvent e) {
+				splitPane.setDividerLocation(0.3);
+			}
+		});
 	}
 
 	public DataImportFrame(JDialog owner, boolean modal) {
@@ -53,6 +60,7 @@ public class DataImportFrame extends SmDialog {
 	}
 
 	private static final long serialVersionUID = 1L;
+	private JSplitPane splitPane;
 	private JPanel contentPane;
 	private JTable table;
 	private ArrayList<ImportFileInfo> fileInfos;
@@ -146,12 +154,11 @@ public class DataImportFrame extends SmDialog {
 		this.toolBar.setFloatable(false);
 		this.scrollPane = new JScrollPane();
 		initToolBar();
-		//@formatter:off
 		this.panelFiles.setLayout(new GridBagLayout());
-		this.panelFiles.add(this.toolBar,           new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(0, 0));
-		this.panelFiles.add(this.scrollPane,        new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0,5,5,5).setWeight(3, 3).setFill(GridBagConstraints.BOTH));
-		this.panelFiles.add(this.checkBoxAutoClose, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,5,5,5).setWeight(0, 0));
-		//@formatter:on
+		this.panelFiles.add(this.toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(0, 0));
+		this.panelFiles.add(this.scrollPane, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 5, 5, 5).setWeight(3, 3).setFill(GridBagConstraints.BOTH));
+		this.panelFiles.add(this.checkBoxAutoClose, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setWeight(0, 0));
+
 		// 为scrollPane和table添加事件响应
 		this.table = new JTable();
 		this.fileInfos = new ArrayList<ImportFileInfo>();
@@ -294,11 +301,15 @@ public class DataImportFrame extends SmDialog {
 	}
 
 	private void initContentPane() {
-		//@formatter:off
-		this.contentPane.setLayout(new GridBagLayout());
-		this.contentPane.add(this.panelFiles,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
-		this.contentPane.add(this.panelImportInfo, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		//@formatter:on
+		this.splitPane = new JSplitPane();
+		this.splitPane.setContinuousLayout(true);
+		this.splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+		this.splitPane.setLeftComponent(this.panelFiles);
+		this.splitPane.setRightComponent(this.panelImportInfo);
+		this.splitPane.setBorder(null);
+
+		this.contentPane.setLayout(new BorderLayout());
+		this.contentPane.add(this.splitPane, BorderLayout.CENTER);
 	}
 
 	public void initResources() {

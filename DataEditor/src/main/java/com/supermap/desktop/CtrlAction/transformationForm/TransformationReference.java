@@ -72,12 +72,6 @@ public class TransformationReference extends TransformationBase implements ITran
 		}
 	}
 
-
-	@Override
-	public void clean() {
-
-	}
-
 	@Override
 	public boolean isClosed() {
 		return false;

@@ -95,9 +95,7 @@ public class CommonFunction {
 	 * 设置JTable的中的数据显示
 	 *
 	 * @param dataImportFrame
-	 * @param fileInfos
 	 * @param panels
-	 * @param table
 	 * @param model
 	 */
 	public static void setTableInfo(DataImportFrame dataImportFrame, List<JPanel> panels, FileInfoModel model) {
@@ -160,7 +158,6 @@ public class CommonFunction {
 	 * @param files
 	 * @param dataImportFrame
 	 * @param panels
-	 * @param table
 	 * @param model
 	 * @param fileFilter
 	 */
@@ -227,10 +224,8 @@ public class CommonFunction {
 	/**
 	 * 只选择一条数据时的刷新方法
 	 *
-	 * @param contentPane
 	 * @param fileInfos
 	 * @param panels
-	 * @param table
 	 * @param lblDataimportType
 	 */
 	public static void refreshPanelSingal(JPanel panelImportInfo, List<ImportFileInfo> fileInfos, List<JPanel> panels, JLabel lblDataimportType) {

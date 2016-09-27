@@ -2,6 +2,7 @@ package com.supermap.desktop.CtrlAction.transformationForm;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.Maps;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
@@ -87,7 +88,8 @@ public abstract class TransformationBase implements IFormMap {
 
 	@Override
 	public void clean() {
-
+		getMapControl().getMap().close();
+		getMapControl().dispose();
 	}
 
 	@Override
@@ -285,8 +287,15 @@ public abstract class TransformationBase implements IFormMap {
 						DefaultMutableTreeNode[] defaultMutableTreeNodes = (DefaultMutableTreeNode[]) data;
 						ArrayList<Object> objects = new ArrayList<>();
 						for (DefaultMutableTreeNode defaultMutableTreeNode : defaultMutableTreeNodes) {
-							if (defaultMutableTreeNode.getUserObject() instanceof TreeNodeData && (((TreeNodeData) defaultMutableTreeNode.getUserObject()).getData() instanceof Dataset || ((TreeNodeData) defaultMutableTreeNode.getUserObject()).getData() instanceof Map)) {
-								objects.add(((TreeNodeData) defaultMutableTreeNode.getUserObject()).getData());
+							if (defaultMutableTreeNode.getUserObject() instanceof TreeNodeData) {
+								if (((TreeNodeData) defaultMutableTreeNode.getUserObject()).getData() instanceof Dataset) {
+									objects.add(((TreeNodeData) defaultMutableTreeNode.getUserObject()).getData());
+								} else if (((TreeNodeData) ((DefaultMutableTreeNode) defaultMutableTreeNode.getParent()).getUserObject()).getData() instanceof Maps) {
+									Map map = new Map();
+									map.setWorkspace(Application.getActiveApplication().getWorkspace());
+									map.open(((String) ((TreeNodeData) defaultMutableTreeNode.getUserObject()).getData()));
+									objects.add(map);
+								}
 							}
 						}
 						addDatas(objects);
