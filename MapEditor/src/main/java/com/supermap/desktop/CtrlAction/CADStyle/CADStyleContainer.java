@@ -17,13 +17,12 @@ import com.supermap.desktop.utilities.MapUtilities;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -128,13 +127,6 @@ public class CADStyleContainer extends JPanel {
     private static final int TAB_TEXT = 3;
     private HashMap<String, Object> uiManager = new HashMap<String, Object>();
 
-    private DocumentListener textFieldPointOpaqueListener;
-    private DocumentListener textFieldFillOpaqueListener;
-    private DocumentListener textFieldPointWidthListener;
-    private DocumentListener textFieldPointHeightListener;
-    private DocumentListener textFieldGradientOffsetXListener;
-    private DocumentListener textFieldGradientOffsetYListener;
-
     private PropertyChangeListener propertyListener = new PropertyChangeListener() {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
@@ -146,6 +138,7 @@ public class CADStyleContainer extends JPanel {
                 }
                 int recordsetCount = recordsets.size();
                 int count = 0;
+                editHistory = MapUtilities.getMapControl().getEditHistory();
                 for (int i = 0; i < recordsetCount; i++) {
                     Recordset recordset = recordsets.get(i);
                     recordset.moveFirst();
@@ -209,6 +202,7 @@ public class CADStyleContainer extends JPanel {
                     }
                     int recordsetCount = recordsets.size();
                     int count = 0;
+                    editHistory = MapUtilities.getMapControl().getEditHistory();
                     for (int i = 0; i < recordsetCount; i++) {
                         Recordset recordset = recordsets.get(i);
                         recordset.moveFirst();
@@ -245,20 +239,13 @@ public class CADStyleContainer extends JPanel {
             }
         }
     };
-    private DocumentListener textFieldPointRotationListener = new DocumentListener() {
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            rotationUpdate();
-        }
 
+    private ChangeListener pointRotationListener = new ChangeListener() {
         @Override
-        public void removeUpdate(DocumentEvent e) {
-            rotationUpdate();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            rotationUpdate();
+        public void stateChanged(ChangeEvent e) {
+            if (isResetPointRotation) {
+                rotationUpdate();
+            }
         }
 
         private void rotationUpdate() {
@@ -277,6 +264,7 @@ public class CADStyleContainer extends JPanel {
                 }
                 int recordsetCount = recordsets.size();
                 int count = 0;
+                editHistory = MapUtilities.getMapControl().getEditHistory();
                 for (int i = 0; i < recordsetCount; i++) {
                     Recordset recordset = recordsets.get(i);
                     recordset.moveFirst();
@@ -317,33 +305,18 @@ public class CADStyleContainer extends JPanel {
             }
         }
     };
-
-    class TextFieldOpaqueCaretListener implements DocumentListener {
-        private JComponent parent;
-
-        public TextFieldOpaqueCaretListener(JComponent parent) {
-            this.parent = parent;
-        }
-
+    private ChangeListener opaqueListener = new ChangeListener() {
         @Override
-        public void insertUpdate(DocumentEvent e) {
-            fillOpaqueRateUpdate();
+        public void stateChanged(ChangeEvent e) {
+            if ((e.getSource().equals(spinnerPointOpaque) && isResetPointOpaque) || (e.getSource().equals(spinnerFillOpaque) && isResetFillOpaque)) {
+                fillOpaqueRateUpdate(e);
+            }
         }
 
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            fillOpaqueRateUpdate();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            fillOpaqueRateUpdate();
-        }
-
-        public void fillOpaqueRateUpdate() {
-
+        public void fillOpaqueRateUpdate(ChangeEvent e) {
             try {
-                String text = ((JFormattedTextField) parent).getText();
+                JTextField parent = ((JSpinner.NumberEditor) ((JSpinner) e.getSource()).getEditor()).getTextField();
+                String text = parent.getText();
                 if (!SymbolSpinnerUtilties.isLegitNumber(0, 100, text)) {
                     parent.setForeground(wrongColor);
                     return;
@@ -351,12 +324,13 @@ public class CADStyleContainer extends JPanel {
                     parent.setForeground(defaultColor);
                 }
                 int opaque = Integer.valueOf(text);
-                int count = 0;
                 ArrayList<Recordset> recordsets = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
                 if (null == recordsets) {
                     return;
                 }
                 int recordsetCount = recordsets.size();
+                int count = 0;
+                editHistory = MapUtilities.getMapControl().getEditHistory();
                 for (int i = 0; i < recordsetCount; i++) {
                     Recordset recordset = recordsets.get(i);
                     recordset.moveFirst();
@@ -399,33 +373,19 @@ public class CADStyleContainer extends JPanel {
                 Application.getActiveApplication().getOutput().output(ex);
             }
         }
-    }
-
-    class TextFieldMarkerSizeLitener implements DocumentListener {
-        private JComponent parent;
-
-        public TextFieldMarkerSizeLitener(JComponent parent) {
-            this.parent = parent;
-        }
-
+    };
+    private CaretListener pointSizeListener = new CaretListener() {
         @Override
-        public void insertUpdate(DocumentEvent e) {
-            markerSizeUpdate();
+        public void caretUpdate(CaretEvent e) {
+            if (isResetPointSize) {
+                markerSizeUpdate(e);
+            }
         }
 
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            markerSizeUpdate();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            markerSizeUpdate();
-        }
-
-        public void markerSizeUpdate() {
+        private void markerSizeUpdate(CaretEvent e) {
             try {
-                String text = ((JFormattedTextField) parent).getText();
+                JFormattedTextField parent = (JFormattedTextField) e.getSource();
+                String text = parent.getText();
                 if (isSizeListenersEnable) {
                     // 重新设置
                     if (!SymbolSpinnerUtilties.isLegitNumber(-500d, 500d, text)) {
@@ -434,7 +394,7 @@ public class CADStyleContainer extends JPanel {
                     } else {
                         parent.setForeground(defaultColor);
                     }
-                    setSizeControllerSize((JFormattedTextField) parent, Double.valueOf(text));
+                    setSizeControllerSize(parent, Double.valueOf(text));
                     int count = 0;
                     Size2D newSize = new Size2D();
                     double width = Double.valueOf(textFieldPointWidth.getText());
@@ -446,6 +406,7 @@ public class CADStyleContainer extends JPanel {
                         return;
                     }
                     int recordsetCount = recordsets.size();
+                    editHistory = MapUtilities.getMapControl().getEditHistory();
                     for (int i = 0; i < recordsetCount; i++) {
                         Recordset recordset = recordsets.get(i);
                         recordset.moveFirst();
@@ -486,46 +447,33 @@ public class CADStyleContainer extends JPanel {
                 Application.getActiveApplication().getOutput().output(ex);
             }
         }
-    }
-
-    class TextFieldGradientOffsetCaretListener implements DocumentListener {
-        private JComponent parent;
-
-        public TextFieldGradientOffsetCaretListener(JComponent parent) {
-            this.parent = parent;
-        }
-
+    };
+    private ChangeListener fillGradientOffsetListener = new ChangeListener() {
         @Override
-        public void insertUpdate(DocumentEvent e) {
-            gradientOffsetRatioUpdate();
+        public void stateChanged(ChangeEvent e) {
+            if ((e.getSource().equals(spinnerFillGradientOffsetX) && isResetFillGradientOffsetX) || (e.getSource().equals(spinnerFillGradientOffsetY) && isResetFillGradientOffsetY)) {
+                gradientOffsetRatioUpdate(e);
+            }
         }
 
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            gradientOffsetRatioUpdate();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            gradientOffsetRatioUpdate();
-        }
-
-        public void gradientOffsetRatioUpdate() {
+        private void gradientOffsetRatioUpdate(ChangeEvent e) {
             try {
-                String text = ((JFormattedTextField) parent).getText();
+                JTextField parent = ((JSpinner.NumberEditor) ((JSpinner) e.getSource()).getEditor()).getTextField();
+                String text = parent.getText();
                 if (!SymbolSpinnerUtilties.isLegitNumber(-100d, 100d, text)) {
                     parent.setForeground(wrongColor);
                     return;
                 } else {
                     parent.setForeground(defaultColor);
                 }
-                int count = 0;
                 double newOffset = Double.valueOf(text);
                 ArrayList<Recordset> recordsets = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
                 if (null == recordsets) {
                     return;
                 }
                 int recordsetCount = recordsets.size();
+                int count = 0;
+                editHistory = MapUtilities.getMapControl().getEditHistory();
                 for (int i = 0; i < recordsetCount; i++) {
                     Recordset recordset = recordsets.get(i);
                     recordset.moveFirst();
@@ -570,26 +518,23 @@ public class CADStyleContainer extends JPanel {
             }
         }
 
-    }
+    };
 
-    ;
-    private DocumentListener textFieldFillGradientAngelListener = new DocumentListener() {
+    private ActionListener lockListener = new ActionListener() {
         @Override
-        public void insertUpdate(DocumentEvent e) {
-            fillGradientAngleUpdate();
+        public void actionPerformed(ActionEvent e) {
+            symbolMarkerSizeController.setLockSelected(checkboxWAndH.isSelected());
+        }
+    };
+    private ChangeListener fillGradientAngelListener = new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            if (isResetFillGradientAngel) {
+                fillGradientAngleUpdate();
+            }
         }
 
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            fillGradientAngleUpdate();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            fillGradientAngleUpdate();
-        }
-
-        public void fillGradientAngleUpdate() {
+        private void fillGradientAngleUpdate() {
             try {
                 String text = textFieldFillGradientAngel.getText();
                 if (!SymbolSpinnerUtilties.isLegitNumber(0d, 360d, text)) {
@@ -605,6 +550,7 @@ public class CADStyleContainer extends JPanel {
                 }
                 int recordsetCount = recordsets.size();
                 int count = 0;
+                editHistory = MapUtilities.getMapControl().getEditHistory();
                 for (int i = 0; i < recordsetCount; i++) {
                     Recordset recordset = recordsets.get(i);
                     recordset.moveFirst();
@@ -644,23 +590,15 @@ public class CADStyleContainer extends JPanel {
             }
         }
     };
-    private DocumentListener textFieldLineWidthListener = new DocumentListener() {
+    private ItemListener lineWidthListener = new ItemListener() {
         @Override
-        public void insertUpdate(DocumentEvent e) {
-            lineWidthUpdate();
+        public void itemStateChanged(ItemEvent e) {
+            if (e.getStateChange() == ItemEvent.SELECTED && isResetLineWidth) {
+                lineWidthUpdate();
+            }
         }
 
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            lineWidthUpdate();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            lineWidthUpdate();
-        }
-
-        public void lineWidthUpdate() {
+        private void lineWidthUpdate() {
             try {
                 String text = textFieldLineWidth.getText();
                 if (!SymbolSpinnerUtilties.isLegitNumber(0d, 20d, text)) {
@@ -676,6 +614,7 @@ public class CADStyleContainer extends JPanel {
                 }
                 int recordsetCount = recordsets.size();
                 int count = 0;
+                editHistory = MapUtilities.getMapControl().getEditHistory();
                 for (int i = 0; i < recordsetCount; i++) {
                     Recordset recordset = recordsets.get(i);
                     recordset.moveFirst();
@@ -715,10 +654,59 @@ public class CADStyleContainer extends JPanel {
             }
         }
     };
-    private ActionListener lockListener = new ActionListener() {
+    private boolean isResetFillOpaque;
+    private boolean isResetPointSize;
+    private boolean isResetFillGradientAngel;
+    private boolean isResetFillGradientOffsetX;
+    private boolean isResetFillGradientOffsetY;
+    private boolean isResetPointOpaque;
+    private boolean isResetPointRotation;
+    private boolean isResetLineWidth;
+    private FocusListener focusListener = new FocusListener() {
         @Override
-        public void actionPerformed(ActionEvent e) {
-            symbolMarkerSizeController.setLockSelected(checkboxWAndH.isSelected());
+        public void focusGained(FocusEvent e) {
+            if (e.getSource().equals(textFieldFillOpaque)) {
+                isResetFillOpaque = true;
+            } else if (e.getSource().equals(textFieldPointHeight)) {
+                isResetPointSize = true;
+            } else if (e.getSource().equals(textFieldPointWidth)) {
+                isResetPointSize = true;
+            } else if (e.getSource().equals(textFieldFillGradientAngel)) {
+                isResetFillGradientAngel = true;
+            } else if (e.getSource().equals(textFieldFillGradientOffsetX)) {
+                isResetFillGradientOffsetX = true;
+            } else if (e.getSource().equals(textFieldFillGradientOffsetY)) {
+                isResetFillGradientOffsetY = true;
+            } else if (e.getSource().equals(textFieldPointOpaque)) {
+                isResetPointOpaque = true;
+            } else if (e.getSource().equals(textFieldPointRotation)) {
+                isResetPointRotation = true;
+            } else if (e.getSource().equals(textFieldLineWidth)) {
+                isResetLineWidth = true;
+            }
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
+            if (e.getSource().equals(textFieldFillOpaque)) {
+                isResetFillOpaque = false;
+            } else if (e.getSource().equals(textFieldPointHeight)) {
+                isResetPointSize = false;
+            } else if (e.getSource().equals(textFieldPointWidth)) {
+                isResetPointSize = false;
+            } else if (e.getSource().equals(textFieldFillGradientAngel)) {
+                isResetFillGradientAngel = false;
+            } else if (e.getSource().equals(textFieldFillGradientOffsetX)) {
+                isResetFillGradientOffsetX = false;
+            } else if (e.getSource().equals(textFieldFillGradientOffsetY)) {
+                isResetFillGradientOffsetY = false;
+            } else if (e.getSource().equals(textFieldPointOpaque)) {
+                isResetPointOpaque = false;
+            } else if (e.getSource().equals(textFieldPointRotation)) {
+                isResetPointRotation = false;
+            } else if (e.getSource().equals(textFieldLineWidth)) {
+                isResetLineWidth = false;
+            }
         }
     };
 
@@ -755,6 +743,7 @@ public class CADStyleContainer extends JPanel {
                 }
                 int recordsetCount = recordsets.size();
                 int count = 0;
+                editHistory = MapUtilities.getMapControl().getEditHistory();
                 for (int i = 0; i < recordsetCount; i++) {
                     Recordset recordset = recordsets.get(i);
                     recordset.moveFirst();
@@ -819,7 +808,6 @@ public class CADStyleContainer extends JPanel {
 
     public void init(ArrayList<Recordset> recordsets) {
         isNew = true;
-        editHistory = MapUtilities.getMapControl().getEditHistory();
         initComponents();
         initResources();
         registEvents();
@@ -837,9 +825,9 @@ public class CADStyleContainer extends JPanel {
     }
 
     private void setSizeControllerSize(JFormattedTextField source, double value) {
-        if (source == ((JSpinner.NumberEditor) spinnerPointHeight.getEditor()).getTextField()) {
+        if (source == textFieldPointHeight) {
             symbolMarkerSizeController.setSymbolShowHeight(value);
-        } else if (source == ((JSpinner.NumberEditor) spinnerPointWidth.getEditor()).getTextField()) {
+        } else if (source == textFieldPointWidth) {
             symbolMarkerSizeController.setSymbolShowWidth(value);
         }
         loadSizeFormSymbolMarkerSizeController(source);
@@ -1049,26 +1037,32 @@ public class CADStyleContainer extends JPanel {
         this.textFieldFillGradientOffsetY = ((JSpinner.NumberEditor) spinnerFillGradientOffsetY.getEditor()).getTextField();
         this.textFieldFillGradientAngel = ((JSpinner.NumberEditor) spinnerFillGradientAngel.getEditor()).getTextField();
         this.textFieldLineWidth = (JTextField) comboboxLineWidth.getEditor().getEditorComponent();
-        this.textFieldPointOpaqueListener = new TextFieldOpaqueCaretListener(this.textFieldPointOpaque);
-        this.textFieldFillOpaqueListener = new TextFieldOpaqueCaretListener(this.textFieldFillOpaque);
-        this.textFieldPointWidthListener = new TextFieldMarkerSizeLitener(this.textFieldPointWidth);
-        this.textFieldPointHeightListener = new TextFieldMarkerSizeLitener(this.textFieldPointHeight);
-        this.textFieldGradientOffsetXListener = new TextFieldGradientOffsetCaretListener(this.textFieldFillGradientOffsetX);
-        this.textFieldGradientOffsetYListener = new TextFieldGradientOffsetCaretListener(this.textFieldFillGradientOffsetY);
         removeEvents();
         this.buttonPointColor.addPropertyChangeListener("m_selectionColors", this.propertyListener);
         this.buttonLineColor.addPropertyChangeListener("m_selectionColors", this.propertyListener);
         this.buttonFillForeColor.addPropertyChangeListener("m_selectionColors", this.propertyListener);
         this.buttonFillBackColor.addPropertyChangeListener("m_selectionColors", this.propertyListener);
-        this.textFieldPointRotation.getDocument().addDocumentListener(this.textFieldPointRotationListener);
-        this.textFieldPointOpaque.getDocument().addDocumentListener(this.textFieldPointOpaqueListener);
-        this.textFieldFillOpaque.getDocument().addDocumentListener(this.textFieldFillOpaqueListener);
-        this.textFieldPointWidth.getDocument().addDocumentListener(this.textFieldPointWidthListener);
-        this.textFieldPointHeight.getDocument().addDocumentListener(this.textFieldPointHeightListener);
-        this.textFieldFillGradientOffsetX.getDocument().addDocumentListener(this.textFieldGradientOffsetXListener);
-        this.textFieldFillGradientOffsetY.getDocument().addDocumentListener(this.textFieldGradientOffsetYListener);
-        this.textFieldFillGradientAngel.getDocument().addDocumentListener(this.textFieldFillGradientAngelListener);
-        this.textFieldLineWidth.getDocument().addDocumentListener(this.textFieldLineWidthListener);
+        this.textFieldPointRotation.addFocusListener(this.focusListener);
+        this.textFieldPointOpaque.addFocusListener(this.focusListener);
+        this.textFieldFillOpaque.addFocusListener(this.focusListener);
+        this.textFieldPointWidth.addFocusListener(this.focusListener);
+        this.textFieldPointHeight.addFocusListener(this.focusListener);
+        this.textFieldFillGradientOffsetX.addFocusListener(this.focusListener);
+        this.textFieldFillGradientOffsetY.addFocusListener(this.focusListener);
+        this.textFieldFillGradientAngel.addFocusListener(this.focusListener);
+        this.textFieldLineWidth.addFocusListener(this.focusListener);
+        this.comboBoxFillGradientModel.addFocusListener(this.focusListener);
+        this.checkboxBackOpaque.addFocusListener(this.focusListener);
+        this.checkboxFillGradient.addFocusListener(this.focusListener);
+        this.spinnerPointRotation.addChangeListener(this.pointRotationListener);
+        this.spinnerPointOpaque.addChangeListener(this.opaqueListener);
+        this.spinnerFillOpaque.addChangeListener(this.opaqueListener);
+        this.textFieldPointWidth.addCaretListener(this.pointSizeListener);
+        this.textFieldPointHeight.addCaretListener(this.pointSizeListener);
+        this.spinnerFillGradientOffsetX.addChangeListener(this.fillGradientOffsetListener);
+        this.spinnerFillGradientOffsetY.addChangeListener(this.fillGradientOffsetListener);
+        this.spinnerFillGradientAngel.addChangeListener(this.fillGradientAngelListener);
+        this.comboboxLineWidth.addItemListener(this.lineWidthListener);
         this.comboBoxFillGradientModel.addItemListener(this.itemListener);
         this.checkboxBackOpaque.addActionListener(this.actionListener);
         this.checkboxFillGradient.addActionListener(this.actionListener);
@@ -1080,18 +1074,28 @@ public class CADStyleContainer extends JPanel {
         this.buttonLineColor.removePropertyChangeListener("m_selectionColors", this.propertyListener);
         this.buttonFillForeColor.removePropertyChangeListener("m_selectionColors", this.propertyListener);
         this.buttonFillBackColor.removePropertyChangeListener("m_selectionColors", this.propertyListener);
-        this.textFieldPointRotation.getDocument().removeDocumentListener(this.textFieldPointRotationListener);
-        this.textFieldPointOpaque.getDocument().removeDocumentListener(this.textFieldPointOpaqueListener);
-        this.textFieldFillOpaque.getDocument().removeDocumentListener(this.textFieldFillOpaqueListener);
-        this.textFieldPointWidth.getDocument().removeDocumentListener(this.textFieldPointWidthListener);
-        this.textFieldPointHeight.getDocument().removeDocumentListener(this.textFieldPointHeightListener);
-        this.textFieldFillGradientOffsetX.getDocument().removeDocumentListener(this.textFieldGradientOffsetXListener);
-        this.textFieldFillGradientOffsetY.getDocument().removeDocumentListener(this.textFieldGradientOffsetYListener);
-        this.textFieldFillGradientAngel.getDocument().removeDocumentListener(this.textFieldFillGradientAngelListener);
-        this.textFieldLineWidth.getDocument().removeDocumentListener(this.textFieldLineWidthListener);
+        this.textFieldPointRotation.removeFocusListener(this.focusListener);
+        this.textFieldPointOpaque.removeFocusListener(this.focusListener);
+        this.textFieldFillOpaque.removeFocusListener(this.focusListener);
+        this.textFieldPointWidth.removeFocusListener(this.focusListener);
+        this.textFieldPointHeight.removeFocusListener(this.focusListener);
+        this.textFieldFillGradientOffsetX.removeFocusListener(this.focusListener);
+        this.textFieldFillGradientOffsetY.removeFocusListener(this.focusListener);
+        this.textFieldFillGradientAngel.removeFocusListener(this.focusListener);
+        this.textFieldLineWidth.removeFocusListener(this.focusListener);
+        this.spinnerPointRotation.removeChangeListener(this.pointRotationListener);
+        this.spinnerPointOpaque.removeChangeListener(this.opaqueListener);
+        this.spinnerFillOpaque.removeChangeListener(this.opaqueListener);
+        this.textFieldPointWidth.removeCaretListener(this.pointSizeListener);
+        this.textFieldPointHeight.removeCaretListener(this.pointSizeListener);
+        this.spinnerFillGradientOffsetX.removeChangeListener(this.fillGradientOffsetListener);
+        this.spinnerFillGradientOffsetY.removeChangeListener(this.fillGradientOffsetListener);
+        this.spinnerFillGradientAngel.removeChangeListener(this.fillGradientAngelListener);
+        this.comboboxLineWidth.addItemListener(this.lineWidthListener);
         this.comboBoxFillGradientModel.removeItemListener(this.itemListener);
         this.checkboxBackOpaque.removeActionListener(this.actionListener);
         this.checkboxFillGradient.removeActionListener(this.actionListener);
+        this.checkboxWAndH.removeActionListener(this.lockListener);
     }
 
     private void initResources() {

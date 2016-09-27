@@ -220,15 +220,17 @@ public class ImportPanelD extends AbstractImportPanel {
 		}
 	}
 
-	private void setImporttingAs3D(boolean isSaveH,ImportSetting importsetting){
+	private void setImporttingAs3D(boolean isSaveH, ImportSetting importsetting) {
 		if (importsetting instanceof ImportSettingDWG) {
 			((ImportSettingDWG) importsetting).setImporttingAs3D(isSaveH);
 		}
 		if (importsetting instanceof ImportSettingDXF) {
 			((ImportSettingDXF) importsetting).setImporttingAs3D(isSaveH);
 		}
-	};
-	
+	}
+
+	;
+
 	@Override
 	void initComponents() {
 
@@ -290,13 +292,13 @@ public class ImportPanelD extends AbstractImportPanel {
 		//@formatter:off
 		JPanel panelFileInfo = new JPanel();
 		panelFileInfo.setLayout(new GridBagLayout());
-		panelFileInfo.add(this.labelFilePath,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,10,10,5).setWeight(10, 1));
-		panelFileInfo.add(this.textFieldFilePath,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,0,10,5).setWeight(70, 1));
-		panelFileInfo.add(this.buttonProperty,      new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,0,10,5).setWeight(20, 1));
+		panelFileInfo.add(this.labelFilePath,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,10,10,5).setWeight(0, 1));
+		panelFileInfo.add(this.textFieldFilePath,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,0,10,5).setWeight(1, 1));
+		panelFileInfo.add(this.buttonProperty,      new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,0,10,5).setWeight(0, 1));
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup().addComponent(this.panelResultSetting,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
 				   .addComponent(this.panelTransform,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
-				   .addComponent(panelFileInfo,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE));
+				   .addComponent(panelFileInfo,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE));
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(this.panelResultSetting,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
 				   .addContainerGap().addComponent(this.panelTransform, GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
 				   .addContainerGap().addComponent(panelFileInfo, GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
@@ -543,8 +545,8 @@ public class ImportPanelD extends AbstractImportPanel {
 			public void actionPerformed(ActionEvent e) {
 				boolean isSaveH = checkboxHeight.isSelected();
 				if (isSaveH) {
-					setImporttingAs3D(isSaveH,importsetting);
-				}else {
+					setImporttingAs3D(isSaveH, importsetting);
+				} else {
 					for (int i = 0; i < panels.size(); i++) {
 						ImportPanelD tempJPanel = (ImportPanelD) panels.get(i);
 						tempJPanel.getChckbxHeight().setSelected(isSaveH);

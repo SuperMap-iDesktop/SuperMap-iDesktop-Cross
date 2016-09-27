@@ -4,6 +4,7 @@ import com.supermap.data.Datasource;
 import com.supermap.data.conversion.ImportSetting;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
@@ -28,6 +29,7 @@ public class ImportPanelSCV extends AbstractImportPanel {
 	private SmButton buttonProperty;
 	private JCheckBox checkboxFieldIndex;
 	private JCheckBox checkboxSpatialIndex;
+	private transient CharsetComboBox comboBoxCharset;
 	private JComboBox<Object> comboBoxImportModel;
 	private JComboBox<Object> comboBoxCodingType;
 	private transient DatasourceComboBox comboBoxDatasource;
@@ -107,6 +109,7 @@ public class ImportPanelSCV extends AbstractImportPanel {
 		this.comboBoxCodingType.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_comboboxitem_nullcoding"),
 				DataConversionProperties.getString("string_comboboxitem_byte"), DataConversionProperties.getString("string_comboboxitem_int16"),
 				DataConversionProperties.getString("string_comboboxitem_int24"), DataConversionProperties.getString("string_comboboxitem_int32")}));
+		this.comboBoxCharset.setAutoscrolls(true);
 	}
 
 	@Override
@@ -129,8 +132,12 @@ public class ImportPanelSCV extends AbstractImportPanel {
 		this.textFieldFilePath = new JTextField();
 		this.textFieldFilePath.setEditable(false);
 		this.buttonProperty = new SmButton();
+		this.comboBoxCharset = new CharsetComboBox();
 		Datasource datasource = CommonFunction.getDatasource();
 		this.comboBoxDatasource.setSelectedDatasource(datasource);
+		if (null != importsetting && null != importsetting.getSourceFileCharset()) {
+			comboBoxCharset.setSelectCharset(importsetting.getSourceFileCharset().name());
+		}
 
 		// 设置目标数据源
 		ImportInfoUtil.setDataSource(panels, fileInfos, fileInfo, comboBoxDatasource);
@@ -143,6 +150,9 @@ public class ImportPanelSCV extends AbstractImportPanel {
 
 		ImportInfoUtil.setCodingType(panels, importsetting, comboBoxCodingType);
 
+		// 设置源文件字符集
+		ImportInfoUtil.setCharset(panels, importsetting, comboBoxCharset);
+
 		initPanelResultSet();
 
 		initPanelTransform();
@@ -152,44 +162,38 @@ public class ImportPanelSCV extends AbstractImportPanel {
 	}
 
 	private void initPanelSCV() {
-		//@formatter:off
 		GroupLayout groupLayout = new GroupLayout(this);
 		JPanel panelFilePath = new JPanel();
 		panelFilePath.setLayout(new GridBagLayout());
-		panelFilePath.add(this.labelFilepath,       new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,10,10,5).setWeight(10, 1));
-		panelFilePath.add(this.textFieldFilePath,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,0,10,5).setWeight(70, 1));
-		panelFilePath.add(this.buttonProperty,      new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5,0,10,5).setWeight(20, 1));
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup().addComponent(this.panelResultSet,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
-				.addComponent(this.panelTransform,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
-				.addComponent(panelFilePath,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE));
-		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(this.panelResultSet,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE).addPreferredGap(ComponentPlacement.RELATED)
-				.addComponent(this.panelTransform, GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
+		panelFilePath.add(this.labelFilepath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5, 10, 10, 5).setWeight(0, 1));
+		panelFilePath.add(this.textFieldFilePath, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5, 0, 10, 5).setWeight(1, 1));
+		panelFilePath.add(this.buttonProperty, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.HORIZONTAL).setInsets(5, 0, 10, 5).setWeight(0, 1));
+		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup().addComponent(this.panelResultSet, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+				.addComponent(this.panelTransform, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+				.addComponent(panelFilePath, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE));
+		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(this.panelResultSet, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).addPreferredGap(ComponentPlacement.RELATED)
+				.addComponent(this.panelTransform, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addPreferredGap(ComponentPlacement.RELATED)
-				.addComponent(panelFilePath, GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
+				.addComponent(panelFilePath, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
 		this.setLayout(groupLayout);
-		//@formatter:on
 	}
 
 	private void initPanelTransform() {
-		//@formatter:off
 		this.panelTransform.setLayout(new GridBagLayout());
-		this.panelTransform.add(this.labelImportModel,          new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 10, 5));
-		this.panelTransform.add(this.comboBoxImportModel,       new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(90, 1).setInsets(10, 0, 10, 20).setIpad(110, 0));
-		//@formatter:on
+		this.panelTransform.add(this.labelImportModel, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 10, 5));
+		this.panelTransform.add(this.comboBoxImportModel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(90, 1).setInsets(10, 0, 10, 20).setIpad(110, 0));
 	}
 
 	private void initPanelResultSet() {
-		//@formatter:off
 		this.panelResultSet.setLayout(new GridBagLayout());
-		this.panelResultSet.add(this.labelDatasource,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
-		this.panelResultSet.add(this.comboBoxDatasource,   new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelResultSet.add(this.labelDataset,         new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 5, 5));
-		this.panelResultSet.add(this.textFieldResultSet,   new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelResultSet.add(this.labelCodingType,      new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 5));
-		this.panelResultSet.add(this.comboBoxCodingType,   new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
-		this.panelResultSet.add(this.checkboxFieldIndex,   new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 0, 10, 5));
+		this.panelResultSet.add(this.labelDatasource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 10, 5, 5));
+		this.panelResultSet.add(this.comboBoxDatasource, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelResultSet.add(this.labelDataset, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(10, 0, 5, 5));
+		this.panelResultSet.add(this.textFieldResultSet, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(10, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelResultSet.add(this.labelCodingType, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 10, 10, 5));
+		this.panelResultSet.add(this.comboBoxCodingType, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 0, 10, 20).setFill(GridBagConstraints.HORIZONTAL));
+		this.panelResultSet.add(this.checkboxFieldIndex, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(10, 1).setInsets(0, 0, 10, 5));
 		this.panelResultSet.add(this.checkboxSpatialIndex, new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(40, 1).setInsets(0, 0, 10, 10));
-		//@formatter:on
 	}
 
 	public JCheckBox getChckbxFieldIndex() {
@@ -202,6 +206,10 @@ public class ImportPanelSCV extends AbstractImportPanel {
 
 	public JComboBox<Object> getComboBox() {
 		return comboBoxImportModel;
+	}
+
+	public CharsetComboBox getComboBoxCharset() {
+		return comboBoxCharset;
 	}
 
 	public JComboBox<Object> getComboBoxCodingType() {
