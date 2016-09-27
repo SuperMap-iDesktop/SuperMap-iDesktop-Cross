@@ -78,8 +78,12 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 			for (Map map : maps) {
 				Layers layers = mapControl.getMap().getLayers();
 				LayerGroup layerGroup = layers.addGroup(map.getName());
+				ArrayList<Layer> layerArrayList = new ArrayList<>();
 				for (int i = 0; i < map.getLayers().getCount(); i++) {
-					layerGroup.add(map.getLayers().get(i));
+					layerArrayList.add(map.getLayers().get(i));
+				}
+				for (Layer layer : layerArrayList) {
+					layerGroup.add(layer);
 				}
 			}
 		}
@@ -102,8 +106,10 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 		return mapControl;
 	}
 
-
-
+	@Override
+	protected void setMapControl(MapControl mapControl) {
+		this.mapControl = mapControl;
+	}
 
 	public Object[] getTransformationObjects() {
 		ArrayList<Layer> layers = MapUtilities.getLayers(mapControl.getMap());

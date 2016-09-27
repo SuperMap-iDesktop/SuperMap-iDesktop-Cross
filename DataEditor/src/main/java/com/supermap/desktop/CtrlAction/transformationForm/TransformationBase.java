@@ -89,8 +89,12 @@ public abstract class TransformationBase implements IFormMap {
 	@Override
 	public void clean() {
 		getMapControl().getMap().close();
+		getMapControl().delete();
 		getMapControl().dispose();
+		setMapControl(null);
 	}
+
+	protected abstract void setMapControl(MapControl mapControl);
 
 	@Override
 	public boolean isClosed() {

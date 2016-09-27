@@ -118,9 +118,15 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		geoPoint.setStyle(geoStyle);
 		TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
 		int geoCount = trackingLayer.getCount();
+
+		for (int i = 0; i < trackingLayer.getCount(); i++) {
+			if (trackingLayer.getTag(i).equals(trackingObjectName + "point")) {
+				geoCount++;
+			}
+		}
 		int pointCount = 1;
 		if (0 != geoCount) {
-			pointCount = 1 + geoCount / 2;
+			pointCount = 1 + geoCount;
 		}
 		// 在跟踪层上画点
 		Point2D point2DNumber = mapControl.getMap().pixelToMap(e.getPoint());

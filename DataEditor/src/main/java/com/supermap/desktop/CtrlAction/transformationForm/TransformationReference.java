@@ -10,6 +10,7 @@ import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.enums.FormTransformationSubFormType;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
@@ -61,8 +62,12 @@ public class TransformationReference extends TransformationBase implements ITran
 			Layers layers = mapControl.getMap().getLayers();
 			for (Map map : maps) {
 				LayerGroup layerGroup = layers.addGroup(map.getName());
-				for (int j = 0; j < map.getLayers().getCount(); j++) {
-					layerGroup.add(map.getLayers().get(j));
+				ArrayList<Layer> layerArrayList = new ArrayList<>();
+				for (int i = 0; i < map.getLayers().getCount(); i++) {
+					layerArrayList.add(map.getLayers().get(i));
+				}
+				for (Layer layer : layerArrayList) {
+					layerGroup.add(layer);
 				}
 			}
 		}
@@ -82,6 +87,8 @@ public class TransformationReference extends TransformationBase implements ITran
 		return mapControl;
 	}
 
-
-
+	@Override
+	protected void setMapControl(MapControl mapControl) {
+		this.mapControl = mapControl;
+	}
 }
