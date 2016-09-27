@@ -1,6 +1,13 @@
 package com.supermap.desktop.dialog.symbolDialogs;
 
-import com.supermap.data.*;
+import com.supermap.data.FillGradientMode;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.Symbol;
+import com.supermap.data.SymbolLibrary;
+import com.supermap.data.SymbolType;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbolsFill;
 import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.SymbolSelectedChangedListener;
@@ -419,7 +426,7 @@ public class SymbolDialogFill extends SymbolDialog {
 	protected void prepareForShowDialogHook() {
 		buttonColorSelectorFore.setColor(currentGeoStyle.getFillForeColor());
 		buttonColorSelectorBack.setColor(currentGeoStyle.getFillBackColor());
-		checkBoxBackOpaque.setSelected(currentGeoStyle.getFillBackOpaque());
+		checkBoxBackOpaque.setSelected(!currentGeoStyle.getFillBackOpaque());
 		buttonLineType.setIcon(getLineIcon());
 		spinnerOpaque.setValue(Double.valueOf(getUnOpaqueRate(currentGeoStyle.getFillOpaqueRate())));//不转Double，linux抛异常
 		checkBoxFill.setSelected(currentGeoStyle.getFillGradientMode() != FillGradientMode.NONE);
