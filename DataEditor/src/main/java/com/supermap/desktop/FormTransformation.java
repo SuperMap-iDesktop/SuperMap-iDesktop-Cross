@@ -247,7 +247,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		tablePoints = new SmSortTable();
 		tablePoints.setModel(formTransformationTableModel);
 		tablePoints.getColumnModel().getColumn(0).setMaxWidth(40);
-		tablePoints.getColumnModel().getColumn(1).setMaxWidth(40);
+		tablePoints.getColumnModel().getColumn(1).setMaxWidth(60);
 		((DefaultTableCellRenderer) tablePoints.getDefaultRenderer(Integer.class)).setHorizontalAlignment(SwingConstants.CENTER);
 		((DefaultTableCellRenderer) tablePoints.getDefaultRenderer(String.class)).setHorizontalAlignment(SwingConstants.CENTER);
 		((JTextField) ((DefaultCellEditor) tablePoints.getDefaultEditor(Double.class)).getComponent()).setHorizontalAlignment(SwingConstants.CENTER);

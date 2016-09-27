@@ -35,7 +35,7 @@ public class CtrlActionTransformOutput extends CtrlAction {
 						, moduleName, "SaveOne");
 			}
 			SmFileChoose fileChoose = new SmFileChoose(moduleName);
-			fileChoose.setSelectedFile(new File(DataEditorProperties.getString("String_TransformationFileFilter")));
+			fileChoose.setSelectedFile(new File(DataEditorProperties.getString("String_TransformationFileName")));
 			if (fileChoose.showDefaultDialog() == JFileChooser.APPROVE_OPTION) {
 				File file = new File(fileChoose.getFilePath());
 				String value = ((IFormTransformation) activeForm).toXml();

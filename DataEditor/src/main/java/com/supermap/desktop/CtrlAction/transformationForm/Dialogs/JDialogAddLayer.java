@@ -347,10 +347,7 @@ public class JDialogAddLayer extends SmDialog {
 		public int addDatas(Object... objects) {
 			int count = 0;
 			for (Object object : objects) {
-				if (!isContain(object)) {
-					datas.add(getRowData(object));
-					count++;
-				}
+				datas.add(getRowData(object));
 			}
 			fireTableRowsInserted(datas.size() - count, datas.size() - 1);
 			return count;

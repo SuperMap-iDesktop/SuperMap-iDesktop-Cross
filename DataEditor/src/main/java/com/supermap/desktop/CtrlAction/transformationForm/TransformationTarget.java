@@ -5,9 +5,13 @@ import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationAddObjectBean;
 import com.supermap.desktop.FormTransformation;
+import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
+import com.supermap.desktop.enums.FormTransformationSubFormType;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
@@ -38,7 +42,9 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 	@Override
 	public void addDatas(List<Object> datas) {
 		int size = transformationBeens.size();
+		boolean isModified = false;
 		ArrayList<Dataset> datasets = new ArrayList<>();
+		ArrayList<Map> maps = new ArrayList<>();
 		for (Object data : datas) {
 			if (data instanceof Dataset) {
 				if (TransformationUtilties.isSupportDatasetType(((Dataset) data).getType())) {
@@ -54,17 +60,34 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 				if (((TransformationAddObjectBean) data).getDataset() != null) {
 					datasets.add(((TransformationAddObjectBean) data).getDataset());
 				} else if (((TransformationAddObjectBean) data).getMap() != null) {
-					Map map = ((TransformationAddObjectBean) data).getMap();
-					Layers layers = mapControl.getMap().getLayers();
-					LayerGroup layerGroup = layers.addGroup(map.getName());
-					for (int i = 0; i < map.getLayers().getCount(); i++) {
-						layerGroup.add(map.getLayers().get(i));
-					}
+					maps.add(((TransformationAddObjectBean) data).getMap());
+
 				}
 			}
 		}
-		MapViewUIUtilities.addDatasetsToMap(mapControl.getMap(), datasets.toArray(new Dataset[datasets.size()]), true);
-		if (size == 0 && size != transformationBeens.size()) {
+		if (mapControl.getMap().getLayers().getCount() == 0 && maps.size() == 1) {
+			isModified = true;
+			mapControl.getMap().open(maps.get(0).getName());
+			mapControl.getMap().setName(DataEditorProperties.getString("String_Transfernation_TargetLayer"));
+			IForm activeForm = Application.getActiveApplication().getActiveForm();
+			if (activeForm instanceof IFormTransformation && ((IFormTransformation) activeForm).getCurrentSubFormType() == FormTransformationSubFormType.Target) {
+				UICommonToolkit.getLayersManager().setMap(mapControl.getMap());
+			}
+		} else if (maps.size() > 0) {
+			isModified = true;
+			for (Map map : maps) {
+				Layers layers = mapControl.getMap().getLayers();
+				LayerGroup layerGroup = layers.addGroup(map.getName());
+				for (int i = 0; i < map.getLayers().getCount(); i++) {
+					layerGroup.add(map.getLayers().get(i));
+				}
+			}
+		}
+		if (datasets.size() > 0) {
+			isModified = true;
+			MapViewUIUtilities.addDatasetsToMap(mapControl.getMap(), datasets.toArray(new Dataset[datasets.size()]), true);
+		}
+		if (size == 0 && isModified) {
 			mapControl.getMap().viewEntire();
 		}
 	}

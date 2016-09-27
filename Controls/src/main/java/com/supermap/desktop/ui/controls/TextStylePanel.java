@@ -1,7 +1,15 @@
 package com.supermap.desktop.ui.controls;
 
 import com.supermap.data.Enum;
-import com.supermap.data.*;
+import com.supermap.data.GeoPoint;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoText;
+import com.supermap.data.Point2D;
+import com.supermap.data.Rectangle2D;
+import com.supermap.data.Size2D;
+import com.supermap.data.TextAlignment;
+import com.supermap.data.TextPart;
+import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.layout.MapLayout;
@@ -20,7 +28,14 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -1551,9 +1566,14 @@ public class TextStylePanel extends JPanel {
 			Cursor cursor = new Cursor(Cursor.DEFAULT_CURSOR);
 			MapControl.Cursors.setArrow(cursor);
 
-			mapControl.getMap().getTrackingLayer().clear();
-			mapControl.getMap().getTrackingLayer().add(getPreGeoPoint(geoText.getInnerPoint()), "GeoPoint");
-			mapControl.getMap().getTrackingLayer().add(geoText, "GeoText");
+			Map map = mapControl.getMap();
+			for (int i = map.getTrackingLayer().getCount() - 1; i >= 0; i--) {
+				if (map.getTrackingLayer().getTag(i).startsWith("TextStyle")) {
+					map.getTrackingLayer().remove(i);
+				}
+			}
+			map.getTrackingLayer().add(getPreGeoPoint(geoText.getInnerPoint()), "TextStyleGeoPoint");
+			map.getTrackingLayer().add(geoText, "TextStyleGeoText");
 			mapControl.getMap().refreshTrackingLayer();
 		}
 		return mapControl;
@@ -1743,9 +1763,13 @@ public class TextStylePanel extends JPanel {
 
 		geoText.setTextStyle(textStyle);
 		Map map = mapControl.getMap();
-		map.getTrackingLayer().clear();
-		map.getTrackingLayer().add(getPreGeoPoint(geoText.getInnerPoint()), "GeoPoint");
-		map.getTrackingLayer().add(geoText, "GeoText");
+		for (int i = map.getTrackingLayer().getCount() - 1; i >= 0; i--) {
+			if (map.getTrackingLayer().getTag(i).startsWith("TextStyle")) {
+				map.getTrackingLayer().remove(i);
+			}
+		}
+		map.getTrackingLayer().add(getPreGeoPoint(geoText.getInnerPoint()), "TextStyleGeoPoint");
+		map.getTrackingLayer().add(geoText, "TextStyleGeoText");
 		map.setCenter(geoText.getInnerPoint());
 		map.refresh();
 	}

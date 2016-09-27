@@ -1,6 +1,19 @@
 package com.supermap.desktop.Action;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetImage;
+import com.supermap.data.Datasource;
+import com.supermap.data.GeoPoint;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoText;
+import com.supermap.data.PixelFormat;
+import com.supermap.data.Point2D;
+import com.supermap.data.Rectangle2D;
+import com.supermap.data.Size2D;
+import com.supermap.data.TextAlignment;
+import com.supermap.data.TextPart;
+import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
@@ -11,7 +24,11 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
+import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
 
@@ -31,6 +48,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	private IFormMap formMap;
 	private final DecimalFormat format = new DecimalFormat("######0.000000");
 	public static HashMap<MapControl, ArrayList<Integer>> queryArrayMap = new HashMap<>();
+	private static final String trackingObjectName = "QueryGridValue";
 
 	private void hideTransparentBackground() {
 		// 允许弹出右键菜单
@@ -48,8 +66,13 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 				if (TransparentBackground.queryGridMap.containsKey(mapControl)) {
 					hideTransparentBackground();
 				}
-				mapControl.getMap().getTrackingLayer().clear();
-				mapControl.getMap().refresh();
+				TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
+				for (int count = trackingLayer.getCount() - 1; count >= 0; count--) {
+					if (trackingLayer.getTag(count).startsWith(trackingObjectName)) {
+						trackingLayer.remove(count);
+					}
+				}
+				mapControl.getMap().refreshTrackingLayer();
 				mapControl.removeKeyListener(keyAdapter);
 			}
 		}
@@ -111,8 +134,8 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		textStyleNumber.setAlignment(TextAlignment.TOPLEFT);
 		geoTextNumber.setTextStyle(textStyleNumber);
 
-		trackingLayer.add(geoPoint, "point");
-		trackingLayer.add(geoTextNumber, "pointCount");
+		trackingLayer.add(geoPoint, trackingObjectName + "point");
+		trackingLayer.add(geoTextNumber, trackingObjectName + "pointCount");
 		Application
 				.getActiveApplication()
 				.getOutput()

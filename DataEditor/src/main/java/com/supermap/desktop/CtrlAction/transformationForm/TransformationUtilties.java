@@ -166,7 +166,9 @@ public class TransformationUtilties {
 		} else if (transformationMode == TransformationMode.OFFSET || transformationMode == TransformationMode.RECT) {
 			return null;
 		}
-		return new Transformation(target, refer, transformationMode);
+		Transformation transformation = new Transformation(target, refer, transformationMode);
+		transformation.getError().dispose();
+		return transformation;
 	}
 
 	public static Datasource getDefaultDatasource(Datasource datasource) {

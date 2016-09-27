@@ -585,7 +585,7 @@ public class JDialogTransformation extends SmDialog {
 			} else {
 				checkBoxIsSaveAs.setSelectedEx(null);
 			}
-			comboBoxDatasources.setEnabled(checkBoxResample.isSelected());
+			comboBoxDatasources.setEnabled(checkBoxIsSaveAs.isSelected());
 			if (isDatasourceSame) {
 				comboBoxDatasources.setSelectedItem(beans.get(0).getResultDatasource());
 			} else {

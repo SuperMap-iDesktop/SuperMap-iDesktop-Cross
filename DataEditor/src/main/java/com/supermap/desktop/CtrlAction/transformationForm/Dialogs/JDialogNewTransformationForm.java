@@ -4,6 +4,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
+import com.supermap.data.TransformationMode;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.JComboBoxUIUtilities;
@@ -11,13 +12,19 @@ import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.DatasetComboBox;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooseMode;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
+import com.supermap.desktop.utilities.TransformationModeUtilities;
 import com.supermap.mapping.Map;
 
 import javax.swing.*;
@@ -25,7 +32,12 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +69,14 @@ public class JDialogNewTransformationForm extends SmDialog {
 	private JLabel labelResultDataset = new JLabel();
 	private SmTextFieldLegit textFieldResultDatasetName = new SmTextFieldLegit();
 
+	private JLabel labelTransformationMode = new JLabel();
+
+	private JComboBox<TransformationMode> comboBoxTransformationMode = new JComboBox<>(new TransformationMode[]{
+			TransformationMode.OFFSET,
+			TransformationMode.RECT,
+			TransformationMode.LINEAR,
+			TransformationMode.SQUARE
+	});
 	private JPanel panelButton = new JPanel();
 	private SmButton smButtonOK = new SmButton();
 	private SmButton smButtonCancel = new SmButton();
@@ -158,8 +178,18 @@ public class JDialogNewTransformationForm extends SmDialog {
 		panelResultDatasetMain = new CompTitledPane(checkBoxSaveAsDataset, panelResultDataset);
 		panelTransformationLayer.setBorder(new TitledBorder(DataEditorProperties.getString("String_Transfernation_TargetLayer")));
 		panelReferenceLayer.setBorder(new TitledBorder(DataEditorProperties.getString("String_Transfernation_ReferLayer")));
+		comboBoxTransformationMode.setRenderer(new ListCellRenderer<TransformationMode>() {
+			@Override
+			public Component getListCellRendererComponent(JList<? extends TransformationMode> list, TransformationMode value, int index, boolean isSelected, boolean cellHasFocus) {
+				JLabel result = new JLabel();
+				result.setText(TransformationModeUtilities.toString(value));
+				result.setOpaque(true);
+				result.setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
+				return result;
+			}
+		});
 		scrollPane = new JScrollPane(tableReferenceLayers);
-		this.setSize(new Dimension(400, 550));
+		this.setSize(new Dimension(400, 600));
 		this.setLocationRelativeTo(null);
 	}
 
@@ -189,10 +219,16 @@ public class JDialogNewTransformationForm extends SmDialog {
 		panelButton.add(smButtonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setWeight(0, 0).setInsets(0, 5, 0, 0));
 
 		this.setLayout(new GridBagLayout());
-		this.add(panelTransformationLayer, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setInsets(10, 10, 0, 10));
-		this.add(panelReferenceLayer, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(5, 10, 0, 10));
-		this.add(panelResultDatasetMain, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setInsets(5, 10, 0, 10));
-		this.add(panelButton, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setInsets(5, 10, 10, 10));
+		this.add(panelTransformationLayer, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setInsets(10, 10, 0, 10));
+
+
+		this.add(panelReferenceLayer, new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(5, 10, 0, 10));
+
+		this.add(labelTransformationMode, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(5, 20, 0, 0));
+		this.add(comboBoxTransformationMode, new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 20));
+
+		this.add(panelResultDatasetMain, new GridBagConstraintsHelper(0, 4, 2, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setInsets(5, 10, 0, 10));
+		this.add(panelButton, new GridBagConstraintsHelper(0, 5, 2, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setInsets(5, 10, 10, 10));
 	}
 
 	private void initResources() {
@@ -201,6 +237,7 @@ public class JDialogNewTransformationForm extends SmDialog {
 		labelResultDatasource.setText(ControlsProperties.getString("String_Label_ResultDatasource"));
 		labelTransformationDataset.setText(ControlsProperties.getString("String_Label_ResultDataset"));
 //		labelReferenceDataset.setText(ControlsProperties.getString("String_Label_ResultDataset"));
+		labelTransformationMode.setText(DataEditorProperties.getString("String_TransformationMode"));
 		labelResultDataset.setText(ControlsProperties.getString("String_Label_ResultDataset"));
 		checkBoxSaveAsDataset.setText(DataEditorProperties.getString("String_Transfernation_Resave"));
 		smButtonOK.setText(CommonProperties.getString(CommonProperties.OK));
@@ -299,7 +336,20 @@ public class JDialogNewTransformationForm extends SmDialog {
 		} else {
 			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
 			if (activeDatasources.length > 0) {
-				currentDatasource = activeDatasources[0];
+				for (Datasource activeDatasource : activeDatasources) {
+					if (activeDatasource.isOpened() && activeDatasource.getDatasets().getCount() > 0) {
+						currentDatasource = activeDatasource;
+						break;
+					}
+				}
+			}
+			Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+			for (int i = 0; i < datasources.getCount(); i++) {
+				Datasource activeDatasource = datasources.get(i);
+				if (activeDatasource.isOpened() && activeDatasource.getDatasets().getCount() > 0) {
+					currentDatasource = activeDatasource;
+					break;
+				}
 			}
 		}
 		comboBoxTransformationDatasource.setSelectedIndex(-1);
@@ -314,7 +364,6 @@ public class JDialogNewTransformationForm extends SmDialog {
 				comboBoxTransformationDatasource.setSelectedIndex(0);
 			}
 		}
-
 		checkBoxSaveAsDataset.setSelected(true);
 		textFieldResultDatasetName.setText(getUniqueDatasetName("Result_adjust"));
 	}
