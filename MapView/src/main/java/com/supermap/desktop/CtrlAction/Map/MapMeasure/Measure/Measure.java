@@ -36,7 +36,7 @@ import java.util.EventObject;
 public abstract class Measure implements IMeasureAble {
 
 
-	protected static final String TRAKCING_OBJECT_NAME = "MapMeasureTrackingObjectName";
+	public static final String TRAKCING_OBJECT_NAME = "MapMeasureTrackingObjectName";
 	// 距离量算相关参数
 	/**
 	 * 辅助线距离量算线的距离，以像素为单位
@@ -513,10 +513,15 @@ public abstract class Measure implements IMeasureAble {
 		@Override
 		public void keyPressed(KeyEvent e) {
 			if (!e.isConsumed() && e.getKeyChar() == KeyEvent.VK_ESCAPE && !isEditing()) {
-				if (mapControl.getMap().getTrackingLayer().getCount() > 0) {
+				TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
+				if (trackingLayer.getCount() > 0) {
 					e.consume();
 				}
-				mapControl.getMap().getTrackingLayer().clear();
+				for (int i = trackingLayer.getCount() - 1; i >= 0; i--) {
+					if (trackingLayer.getTag(i).startsWith(TRAKCING_OBJECT_NAME)) {
+						trackingLayer.remove(i);
+					}
+				}
 				refreshTrackingLayer();
 				mapControl.removeKeyListener(this);
 			}

@@ -3,9 +3,13 @@ package com.supermap.desktop.CtrlAction.transformationForm;
 import com.supermap.data.Dataset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormTransformation;
+import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
+import com.supermap.desktop.enums.FormTransformationSubFormType;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
@@ -45,10 +49,15 @@ public class TransformationReference extends TransformationBase implements ITran
 				datasets.add((Dataset) listObject);
 			}
 		}
-		if (maps.size() == 1) {
+		if (mapControl.getMap().getLayers().getCount() == 0 && maps.size() == 1) {
 			mapControl.getMap().open(maps.get(0).getName());
 			mapControl.getMap().setName(DataEditorProperties.getString("String_Transfernation_ReferLayer"));
-		} else if (maps.size() > 1) {
+			IForm activeForm = Application.getActiveApplication().getActiveForm();
+			if (activeForm instanceof IFormTransformation && ((IFormTransformation) activeForm).getCurrentSubFormType() == FormTransformationSubFormType.Reference) {
+				UICommonToolkit.getLayersManager().setMap(mapControl.getMap());
+			}
+
+		} else if (maps.size() >= 1) {
 			Layers layers = mapControl.getMap().getLayers();
 			for (Map map : maps) {
 				LayerGroup layerGroup = layers.addGroup(map.getName());

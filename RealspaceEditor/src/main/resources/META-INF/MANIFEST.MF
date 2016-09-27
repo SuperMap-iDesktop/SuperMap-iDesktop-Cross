@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1473388106130
+Bnd-LastModified: 1474948684841
 Build-Jdk: 1.7.0_80
 Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.realspaceEditor.RealspaceEditorAc
