@@ -54,9 +54,7 @@ public class BindUtilties {
             }
 
         });
-        formManager.addActiveFormChangedListener(activeFormChangeListener);
-        Application.getActiveApplication().setActiveForm(formMap);
-        Application.getActiveApplication().getMainFrame().getToolbarManager().update();
+//        formManager.addActiveFormChangedListener(activeFormChangeListener);
     }
 
     public static void openTabular(Dataset dataset, Recordset recordset) {

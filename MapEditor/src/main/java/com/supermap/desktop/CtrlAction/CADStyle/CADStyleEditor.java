@@ -17,6 +17,8 @@ import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.MapDrawingEvent;
+import com.supermap.mapping.MapDrawingListener;
 import com.supermap.ui.GeometrySelectedEvent;
 import com.supermap.ui.GeometrySelectedListener;
 
@@ -36,6 +38,14 @@ public class CADStyleEditor extends AbstractEditor {
         public void geometrySelected(GeometrySelectedEvent geometrySelectedEvent) {
             if (null != cadStyleContainer) {
                 cadStyleContainer.setModify(false);
+            }
+        }
+    };
+    private MapDrawingListener mapDrawingListener = new MapDrawingListener() {
+        @Override
+        public void mapDrawing(MapDrawingEvent mapDrawingEvent) {
+            if (null != cadStyleContainer) {
+                cadStyleContainer.setModify(true);
             }
         }
     };
@@ -78,6 +88,7 @@ public class CADStyleEditor extends AbstractEditor {
     private void registEvents(EditEnvironment environment) {
         removeEvents(environment);
         environment.getMapControl().addGeometrySelectedListener(this.geometrySelectChangedListener);
+        environment.getMapControl().getMap().addDrawingListener(this.mapDrawingListener);
         Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(new ActiveFormChangedListener() {
             @Override
             public void activeFormChanged(ActiveFormChangedEvent e) {
@@ -93,6 +104,7 @@ public class CADStyleEditor extends AbstractEditor {
 
     private void removeEvents(EditEnvironment environment) {
         environment.getMapControl().removeGeometrySelectedListener(this.geometrySelectChangedListener);
+        environment.getMapControl().getMap().removeDrawingListener(this.mapDrawingListener);
     }
 
     @Override
