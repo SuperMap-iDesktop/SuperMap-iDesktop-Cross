@@ -121,10 +121,10 @@ public class ImportPanelCSV extends AbstractImportPanel {
 		// 设置fileInfo
 		this.importsetting = (ImportSettingCSV) ImportInfoUtil.setFileInfo(datasource, fileInfos, fileInfo, textFieldFilePath, importsetting,
 				textFieldResultSet);
-        if (null != importsetting.getSourceFileCharset()) {
-            comboBoxCharset.setSelectCharset(importsetting.getSourceFileCharset().name());
-        }
-        // 设置结果数据集名称
+		if (null != importsetting && null != importsetting.getSourceFileCharset()) {
+			comboBoxCharset.setSelectCharset(importsetting.getSourceFileCharset().name());
+		}
+		// 设置结果数据集名称
 		ImportInfoUtil.setDatasetName(textFieldResultSet, importsetting);
 		// 设置导入模式
 		ImportInfoUtil.setImportMode(panels, importsetting, comboBoxImportMode);
@@ -147,7 +147,7 @@ public class ImportPanelCSV extends AbstractImportPanel {
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup().addComponent(this.panelResultSetting,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
 				.addComponent(this.panelTransformParam,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE)
-				.addComponent(this.panelFileInfo,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE));
+				.addComponent(this.panelFileInfo,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE,Short.MAX_VALUE));
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup().addComponent(this.panelResultSetting,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
 				.addContainerGap().addComponent(this.panelTransformParam, GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
 				.addContainerGap().addComponent(this.panelFileInfo, GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
