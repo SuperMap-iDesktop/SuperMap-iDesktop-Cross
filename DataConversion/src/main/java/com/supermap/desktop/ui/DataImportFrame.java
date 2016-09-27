@@ -46,6 +46,13 @@ public class DataImportFrame extends SmDialog {
 		this.componentList.add(this.buttonClose);
 		this.setFocusTraversalPolicy(this.policy);
 		this.getRootPane().setDefaultButton(this.buttonClose);
+
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowOpened(WindowEvent e) {
+				splitPane.setDividerLocation(0.3);
+			}
+		});
 	}
 
 	public DataImportFrame(JDialog owner, boolean modal) {
@@ -53,6 +60,7 @@ public class DataImportFrame extends SmDialog {
 	}
 
 	private static final long serialVersionUID = 1L;
+	private JSplitPane splitPane;
 	private JPanel contentPane;
 	private JTable table;
 	private ArrayList<ImportFileInfo> fileInfos;
@@ -294,11 +302,15 @@ public class DataImportFrame extends SmDialog {
 	}
 
 	private void initContentPane() {
-		//@formatter:off
-		this.contentPane.setLayout(new GridBagLayout());
-		this.contentPane.add(this.panelFiles,      new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
-		this.contentPane.add(this.panelImportInfo, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		//@formatter:on
+		this.splitPane = new JSplitPane();
+		this.splitPane.setContinuousLayout(true);
+		this.splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
+		this.splitPane.setLeftComponent(this.panelFiles);
+		this.splitPane.setRightComponent(this.panelImportInfo);
+		this.splitPane.setBorder(null);
+
+		this.contentPane.setLayout(new BorderLayout());
+		this.contentPane.add(this.splitPane, BorderLayout.CENTER);
 	}
 
 	public void initResources() {
