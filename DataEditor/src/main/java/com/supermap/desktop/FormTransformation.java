@@ -41,6 +41,7 @@ import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.implement.SmTextField;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.FormBaseChild;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -370,6 +371,9 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		});
 	}
 
+	private void removeListeners() {
+		removeMapControlListener();
+	}
 	private void tableValueChanged(TableModelEvent e) {
 		int lastRow = e.getLastRow();
 		if (e.getType() == TableModelEvent.DELETE) {
@@ -505,6 +509,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	}
 
 	private void addMapControlListener() {
+		removeMapControlListener();
 		MouseListener[] mouseListeners = transformationTarget.getMapControl().getMouseListeners();
 		transformationTarget.getMapControl().addMouseListener(mapControlMouseAdapter);
 		for (MouseListener mouseListener : mouseListeners) {
@@ -522,6 +527,16 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 		transformationTarget.getMapControl().addMouseWheelListener(mapControlMouseAdapter);
 		transformationReference.getMapControl().addMouseWheelListener(mapControlMouseAdapter);
+	}
+
+	private void removeMapControlListener() {
+		transformationTarget.getMapControl().removeMouseListener(mapControlMouseAdapter);
+		transformationReference.getMapControl().removeMouseListener(mapControlMouseAdapter);
+		transformationTarget.getMapControl().removeMouseMotionListener(mapControlMouseAdapter);
+		transformationReference.getMapControl().removeMouseMotionListener(mapControlMouseAdapter);
+
+		transformationTarget.getMapControl().removeMouseWheelListener(mapControlMouseAdapter);
+		transformationReference.getMapControl().removeMouseWheelListener(mapControlMouseAdapter);
 	}
 
 	private void updatePrjCoorSysPlace(MouseEvent e) {
@@ -694,7 +709,6 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	@Override
 	public void windowShown() {
 
-
 	}
 
 	@Override
@@ -704,6 +718,10 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	@Override
 	public void clean() {
+		removeListeners();
+		if (UICommonToolkit.getLayersManager().getLayersTree().getMap() == this.getMapControl().getMap()) {
+			UICommonToolkit.getLayersManager().getLayersTree().setMap(null);
+		}
 		transformationTarget.clean();
 		transformationReference.clean();
 	}

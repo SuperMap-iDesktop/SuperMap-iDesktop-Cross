@@ -12,8 +12,6 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.mapping.Map;
-import com.supermap.mapping.MapClosedEvent;
-import com.supermap.mapping.MapClosedListener;
 import com.supermap.mapping.MapOpenedEvent;
 import com.supermap.mapping.MapOpenedListener;
 
@@ -56,16 +54,16 @@ public class MapPropertyContainer extends JPanel {
 			setMap(arg0.getMap());
 		}
 	};
-	
-	private MapClosedListener mapClosedListener = new MapClosedListener() {
-		@Override
-		public void mapClosed(MapClosedEvent arg0) {
-			if (null != MapPropertyContainer.this.formMap && null != MapPropertyContainer.this.formMap.getMapControl()) {
-				MapPropertyContainer.this.formMap.getMapControl().getMap().removeMapOpenedListener(mapOpenedListener);
-				MapPropertyContainer.this.formMap.getMapControl().getMap().removeMapClosedListener(this);
-			}
-		}
-	};;
+
+//	private MapClosedListener mapClosedListener = new MapClosedListener() {
+//		@Override
+//		public void mapClosed(MapClosedEvent arg0) {
+//			if (null != MapPropertyContainer.this.formMap && null != MapPropertyContainer.this.formMap.getMapControl()) {
+//				MapPropertyContainer.this.formMap.getMapControl().getMap().removeMapOpenedListener(mapOpenedListener);
+//				MapPropertyContainer.this.formMap.getMapControl().getMap().removeMapClosedListener(this);
+//			}
+//		}
+//	};;
 
 	/**
 	 * Create the panel.
@@ -132,8 +130,9 @@ public class MapPropertyContainer extends JPanel {
 		} else {
 			setMap(this.formMap.getMapControl().getMap());
 			this.formMap.getMapControl().getMap().addMapOpenedListener(this.mapOpenedListener);
-			this.formMap.getMapControl().getMap().removeMapClosedListener(mapClosedListener);
-			this.formMap.getMapControl().getMap().addMapClosedListener(mapClosedListener);
+			// 没有closing事件,closed事件没用
+//			this.formMap.getMapControl().getMap().removeMapClosedListener(mapClosedListener);
+//			this.formMap.getMapControl().getMap().addMapClosedListener(mapClosedListener);
 		}
 	}
 

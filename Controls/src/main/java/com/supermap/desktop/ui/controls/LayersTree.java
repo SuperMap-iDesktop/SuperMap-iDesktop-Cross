@@ -1075,7 +1075,7 @@ public class LayersTree extends JTree {
 			java.util.List<GeoStyle> geoStyleList = new ArrayList<>();
 			for (TreePath selection : selections) {
 				Layer layerSelected = (Layer) ((TreeNodeData) ((DefaultMutableTreeNode) selection.getLastPathComponent()).getUserObject()).getData();
-				if (layerSelected.getTheme() == null) {
+				if (layerSelected.getTheme() == null && layerSelected.getAdditionalSetting() != null) {
 					geoStyleList.add(((LayerSettingVector) layerSelected.getAdditionalSetting()).getStyle());
 				}
 			}
