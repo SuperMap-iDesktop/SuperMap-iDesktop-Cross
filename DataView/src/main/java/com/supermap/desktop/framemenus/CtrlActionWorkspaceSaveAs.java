@@ -52,7 +52,7 @@ public class CtrlActionWorkspaceSaveAs extends CtrlAction {
 				JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
 				JDialogWorkspaceSaveAs dialog = new JDialogWorkspaceSaveAs(parent, true, JDialogWorkspaceSaveAs.saveAsFile);
 				dialogResult = dialog.showDialog();
-				if (dialogResult == DialogResult.OK || dialogResult == DialogResult.APPLY) {
+				if (dialogResult == DialogResult.OK) {
 					if (info != null) {
 						UICommonToolkit.getWorkspaceManager().getWorkspaceTree().updateUI();
 					} else {
