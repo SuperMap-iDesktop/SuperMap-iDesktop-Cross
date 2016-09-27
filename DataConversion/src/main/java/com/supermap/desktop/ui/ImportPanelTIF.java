@@ -86,6 +86,9 @@ public class ImportPanelTIF extends AbstractImportPanel {
 			case 1:
 				setMultiBand(tempsetting);
 				break;
+			case 2:
+				setCompositeBand(tempsetting);
+				break;
 			default:
 				Application.getActiveApplication().getOutput().output(DataConversionProperties.getString("string_exception_importmode"));
 				break;
@@ -110,6 +113,15 @@ public class ImportPanelTIF extends AbstractImportPanel {
 		}
 	}
 
+	private void setCompositeBand(ImportSetting tempsetting) {
+		if (tempsetting instanceof ImportSettingTIF) {
+			((ImportSettingTIF) tempsetting).setMultiBandImportMode(MultiBandImportMode.COMPOSITE);
+		}
+		if (tempsetting instanceof ImportSettingMrSID) {
+			((ImportSettingMrSID) tempsetting).setMultiBandImportMode(MultiBandImportMode.COMPOSITE);
+		}
+	}
+
 	@Override
 	void initResource() {
 		this.labelFilePath.setText(DataConversionProperties.getString("string_label_lblDataPath"));
@@ -131,8 +143,8 @@ public class ImportPanelTIF extends AbstractImportPanel {
 		this.comboBoxCharset.setAutoscrolls(true);
 		this.comboBoxImportModel.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_comboboxitem_null"),
 				DataConversionProperties.getString("string_comboboxitem_add"), DataConversionProperties.getString("string_comboboxitem_cover")}));
-		this.comboBoxSaveImport.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_comboboxitem_mssave"),
-				DataConversionProperties.getString("string_comboboxitem_msave")}));
+		this.comboBoxSaveImport.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_singleBand"),
+				DataConversionProperties.getString("string_multiBand"), DataConversionProperties.getString("string_compositeBand")}));
 		this.comboBoxCodingType.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_comboboxitem_nullcoding"),
 				"DCT", "PNG", "LZW"}));
 		this.comboBoxCodingType.setSelectedIndex(1);
