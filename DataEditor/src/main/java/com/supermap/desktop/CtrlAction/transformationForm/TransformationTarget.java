@@ -92,12 +92,6 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 		}
 	}
 
-
-	@Override
-	public void clean() {
-
-	}
-
 	@Override
 	public boolean isClosed() {
 		return false;
