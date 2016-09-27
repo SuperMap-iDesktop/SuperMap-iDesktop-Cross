@@ -175,9 +175,9 @@ public class DatasetUtilities {
 		for (int i = layerGroup.getCount(); i > 0; i--) {
 			Layer layer = layerGroup.get(i - 1);
 			if (layer instanceof LayerGroup) {
-				result = result || removeLayerGroupDataset((LayerGroup) layer, dataset);
+				result = removeLayerGroupDataset((LayerGroup) layer, dataset) || result;
 			} else if (layer.getDataset() == dataset) {
-				result = result || layerGroup.remove(layer);
+				result = layerGroup.remove(layer) || result;
 			}
 		}
 		return result;
@@ -188,9 +188,9 @@ public class DatasetUtilities {
 		for (int i = layers.getCount() - 1; i >= 0; i--) {
 			Layer layer = layers.get(i);
 			if (layer instanceof LayerGroup) {
-				result = result || removeLayerGroupDataset((LayerGroup) layer, closeDataset);
+				result = removeLayerGroupDataset((LayerGroup) layer, closeDataset) || result;
 			} else if (layer.getDataset() == closeDataset) {
-				result = result || layers.remove(i);
+				result = layers.remove(i) || result;
 			}
 		}
 		return result;
@@ -215,9 +215,9 @@ public class DatasetUtilities {
 				return result;
 			}
 			if (datasetTemp.getType() == DatasetType.NETWORK || datasetTemp.getType() == DatasetType.NETWORK3D) {
-				result = result || removeByDataset(layers, ((DatasetVector) datasetTemp).getChildDataset());
+				result = removeByDataset(layers, ((DatasetVector) datasetTemp).getChildDataset()) || result;
 			}
-			result = result || removeByDataset(layers, datasetTemp);
+			result = removeByDataset(layers, datasetTemp) || result;
 		}
 		return result;
 	}
