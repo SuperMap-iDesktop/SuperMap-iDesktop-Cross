@@ -39,6 +39,7 @@ public class TransformationReference extends TransformationBase implements ITran
 
 	@Override
 	public void addDatas(List<Object> datas) {
+		boolean isRefreshMap = false;
 		boolean isViewEntire = mapControl.getMap().getLayers().getCount() == 0;
 		ArrayList<Dataset> datasets = new ArrayList<>();
 		ArrayList<Map> maps = new ArrayList<>();
@@ -51,6 +52,7 @@ public class TransformationReference extends TransformationBase implements ITran
 			}
 		}
 		if (mapControl.getMap().getLayers().getCount() == 0 && maps.size() == 1) {
+			addedMaps.add(maps.get(0));
 			mapControl.getMap().open(maps.get(0).getName());
 			mapControl.getMap().setName(DataEditorProperties.getString("String_Transfernation_ReferLayer"));
 			IForm activeForm = Application.getActiveApplication().getActiveForm();
@@ -59,8 +61,10 @@ public class TransformationReference extends TransformationBase implements ITran
 			}
 
 		} else if (maps.size() >= 1) {
+			isRefreshMap = true;
 			Layers layers = mapControl.getMap().getLayers();
 			for (Map map : maps) {
+				addedMaps.add(map);
 				LayerGroup layerGroup = layers.addGroup(map.getName());
 				ArrayList<Layer> layerArrayList = new ArrayList<>();
 				for (int i = 0; i < map.getLayers().getCount(); i++) {
@@ -71,10 +75,22 @@ public class TransformationReference extends TransformationBase implements ITran
 				}
 			}
 		}
-		MapViewUIUtilities.addDatasetsToMap(mapControl.getMap(), datasets.toArray(new Dataset[datasets.size()]), true);
+		if (datasets.size() > 0) {
+			MapViewUIUtilities.addDatasetsToMap(mapControl.getMap(), datasets.toArray(new Dataset[datasets.size()]), true);
+			isRefreshMap = false;
+		}
 		if (isViewEntire) {
 			mapControl.getMap().viewEntire();
+		} else if (isRefreshMap) {
+			mapControl.getMap().refresh();
 		}
+	}
+
+	@Override
+	protected void cleanHook() {
+//		for (Map addedMap : addedMaps) {
+//			addedMap.close();
+//		}
 	}
 
 	@Override
