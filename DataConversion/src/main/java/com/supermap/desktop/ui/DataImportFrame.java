@@ -154,12 +154,11 @@ public class DataImportFrame extends SmDialog {
 		this.toolBar.setFloatable(false);
 		this.scrollPane = new JScrollPane();
 		initToolBar();
-		//@formatter:off
 		this.panelFiles.setLayout(new GridBagLayout());
-		this.panelFiles.add(this.toolBar,           new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(0, 0));
-		this.panelFiles.add(this.scrollPane,        new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0,5,5,5).setWeight(3, 3).setFill(GridBagConstraints.BOTH));
-		this.panelFiles.add(this.checkBoxAutoClose, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,5,5,5).setWeight(0, 0));
-		//@formatter:on
+		this.panelFiles.add(this.toolBar, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5).setWeight(0, 0));
+		this.panelFiles.add(this.scrollPane, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 5, 5, 5).setWeight(3, 3).setFill(GridBagConstraints.BOTH));
+		this.panelFiles.add(this.checkBoxAutoClose, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setWeight(0, 0));
+
 		// 为scrollPane和table添加事件响应
 		this.table = new JTable();
 		this.fileInfos = new ArrayList<ImportFileInfo>();

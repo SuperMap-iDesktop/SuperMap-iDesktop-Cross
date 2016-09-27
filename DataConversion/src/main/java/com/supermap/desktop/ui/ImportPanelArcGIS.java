@@ -146,9 +146,9 @@ public class ImportPanelArcGIS extends AbstractImportPanel {
         this.comboBoxDatasource.setSelectedDatasource(datasource);
         this.importsetting = ImportInfoUtil.setFileInfo(datasource, fileInfos, fileInfo, textFieldFilePath, importsetting,
                 textFieldResultSet);
-        if (null != importsetting.getSourceFileCharset()) {
-            comboBoxCharset.setSelectCharset(importsetting.getSourceFileCharset().name());
-        }
+
+        // 设置字符集类型
+        ImportInfoUtil.setCharset(panels, importsetting, comboBoxCharset);
         // 设置目标数据源
         ImportInfoUtil.setDataSource(panels, fileInfos, fileInfo, comboBoxDatasource);
         // 设置结果数据集名称
