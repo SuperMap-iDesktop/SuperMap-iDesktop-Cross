@@ -410,7 +410,7 @@ public class MapUtilities {
 				for (String mapName : mapNames) {
 					IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 					for (int i = formManager.getCount() - 1; i >= 0; i--) {
-						if (formManager.get(i) instanceof IFormMap && formManager.get(i).getText().equals(mapName)) {
+						if (formManager.get(i).getWindowType() == WindowType.MAP && formManager.get(i).getText().equals(mapName)) {
 							formManager.close(formManager.get(i));
 						}
 					}

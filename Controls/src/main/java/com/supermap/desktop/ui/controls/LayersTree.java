@@ -709,8 +709,8 @@ public class LayersTree extends JTree {
 		if (currentMap.getWorkspace() != null) {
 			currentMap.getLayers().removeLayerAddedListener(getLayerAddedListener());
 			currentMap.getLayers().removeLayerRemovedListener(getLayerRemovedListener());
-			currentMap.getLayers().addLayerGroupAddedListener(getLayerGroupAddedListener());
-			currentMap.getLayers().addLayerGroupRemovedListener(getLayerGroupRemovedListener());
+			currentMap.getLayers().removeLayerGroupAddedListener(getLayerGroupAddedListener());
+			currentMap.getLayers().removeLayerGroupRemovedListener(getLayerGroupRemovedListener());
 
 			removeKeyListener(keyAdapter);
 			removeMouseListener(mouseAdapter);

@@ -30,6 +30,7 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 	private FormTransformation formTransformation;
 	private MapControl mapControl;
 	private ArrayList<TransformationAddObjectBean> transformationBeens;
+	private ArrayList<Map> addedMaps = new ArrayList<>();
 
 	public TransformationTarget(FormTransformation formTransformation) {
 		transformationBeens = new ArrayList<>();
@@ -41,8 +42,9 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 
 	@Override
 	public void addDatas(List<Object> datas) {
-		int size = transformationBeens.size();
+		boolean isViewEntire = mapControl.getMap().getLayers().getCount() == 0;
 		boolean isModified = false;
+		boolean isNeedRefresh = false;
 		ArrayList<Dataset> datasets = new ArrayList<>();
 		ArrayList<Map> maps = new ArrayList<>();
 		for (Object data : datas) {
@@ -67,6 +69,8 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 		}
 		if (mapControl.getMap().getLayers().getCount() == 0 && maps.size() == 1) {
 			isModified = true;
+			isNeedRefresh = true;
+			addedMaps.add(maps.get(0));
 			mapControl.getMap().open(maps.get(0).getName());
 			mapControl.getMap().setName(DataEditorProperties.getString("String_Transfernation_TargetLayer"));
 			IForm activeForm = Application.getActiveApplication().getActiveForm();
@@ -75,6 +79,7 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 			}
 		} else if (maps.size() > 0) {
 			isModified = true;
+			isNeedRefresh = true;
 			for (Map map : maps) {
 				Layers layers = mapControl.getMap().getLayers();
 				LayerGroup layerGroup = layers.addGroup(map.getName());
@@ -85,15 +90,26 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 				for (Layer layer : layerArrayList) {
 					layerGroup.add(layer);
 				}
+				addedMaps.add(map);
 			}
 		}
 		if (datasets.size() > 0) {
 			isModified = true;
+			isNeedRefresh = false;
 			MapViewUIUtilities.addDatasetsToMap(mapControl.getMap(), datasets.toArray(new Dataset[datasets.size()]), true);
 		}
-		if (size == 0 && isModified) {
+		if (isViewEntire && isModified) {
 			mapControl.getMap().viewEntire();
+		} else if (isNeedRefresh) {
+			mapControl.getMap().refresh();
 		}
+	}
+
+	@Override
+	protected void cleanHook() {
+//		for (Map addedMap : addedMaps) {
+//			addedMap.close();
+//		}
 	}
 
 	@Override
