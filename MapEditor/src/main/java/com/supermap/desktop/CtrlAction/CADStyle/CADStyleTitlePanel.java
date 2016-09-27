@@ -60,7 +60,6 @@ public class CADStyleTitlePanel extends JPanel {
     public CADStyleTitlePanel(CADStyleContainer parent, int styleType) {
         this.parent = parent;
         this.styleType = styleType;
-        this.editHistory = new EditHistory();
         this.COLOR_SYSTEM_DEFAULT = getBackground();
         initComponents();
         initResources();
@@ -218,6 +217,7 @@ public class CADStyleTitlePanel extends JPanel {
             return;
         }
         int recordsetCount = recordsets.size();
+        editHistory = MapUtilities.getMapControl().getEditHistory();
         for (int i = 0; i < recordsetCount; i++) {
             Recordset recordset = recordsets.get(i);
             recordset.moveFirst();
@@ -261,6 +261,7 @@ public class CADStyleTitlePanel extends JPanel {
 
     private void resetGeoStyle(GeoStyle newGeoStyle, ArrayList<Recordset> recordsets) {
         int recordsetCount = recordsets.size();
+        editHistory = MapUtilities.getMapControl().getEditHistory();
         for (int i = 0; i < recordsetCount; i++) {
             Recordset tempRecordset = recordsets.get(i);
             tempRecordset.moveFirst();
