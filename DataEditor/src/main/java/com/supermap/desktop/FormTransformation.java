@@ -931,8 +931,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	@Override
 	public void centerOriginal() {
-		if (tablePoints.getSelectedRow() != -1) {
-			int selectedRow = tablePoints.getSelectedRow();
+		if (tablePoints.getSelectedModelRow() != -1) {
+			int selectedRow = tablePoints.getSelectedModelRow();
 			Point2D originalPoint = formTransformationTableModel.getOriginalPoint(selectedRow);
 			if (originalPoint != null && !transformationTarget.getMapControl().getMap().getViewBounds().contains(originalPoint)) {
 				transformationTarget.getMapControl().getMap().setCenter(originalPoint);
