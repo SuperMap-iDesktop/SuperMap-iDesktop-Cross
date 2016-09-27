@@ -37,6 +37,8 @@ public class CtrlActionCut extends CtrlAction {
 			IForm form = Application.getActiveApplication().getActiveForm();
 			if (form != null) {
 				if (form instanceof IFormMap) {
+					form = form;
+					((IFormMap) form).getMapControl();
 					enable = ((IFormMap) form).getMapControl().canCut();
 				} else if (form instanceof IFormScene) {
 					// TODO 目前场景并不支持编辑，后续版本根据组件支持情况再行实现
