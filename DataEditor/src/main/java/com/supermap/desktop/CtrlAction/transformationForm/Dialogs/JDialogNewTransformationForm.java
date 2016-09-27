@@ -188,6 +188,7 @@ public class JDialogNewTransformationForm extends SmDialog {
 				return result;
 			}
 		});
+		comboBoxTransformationMode.setSelectedItem(TransformationMode.LINEAR);
 		scrollPane = new JScrollPane(tableReferenceLayers);
 		this.setSize(new Dimension(400, 600));
 		this.setLocationRelativeTo(null);
@@ -407,6 +408,10 @@ public class JDialogNewTransformationForm extends SmDialog {
 
 	public List<Object> getReferenceObjects() {
 		return referenceLayersTableModel.getDataList();
+	}
+
+	public TransformationMode getTransformationMode() {
+		return (TransformationMode) comboBoxTransformationMode.getSelectedItem();
 	}
 
 	private class ReferenceLayersTableModel extends DefaultTableModel {

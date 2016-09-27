@@ -27,6 +27,7 @@ public class CtrlActionNewTransformationForm extends CtrlAction {
 			IFormTransformation iFormTransformation = (IFormTransformation) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.TRANSFORMATION, "");
 			iFormTransformation.addReferenceObjects(jDialogNewTransformationForm.getReferenceObjects());
 			iFormTransformation.addTransformationDataset(jDialogNewTransformationForm.getTransformationDataset(), jDialogNewTransformationForm.getResultDatasource(), jDialogNewTransformationForm.getResultDatasetName());
+			iFormTransformation.setTransformationMode(jDialogNewTransformationForm.getTransformationMode());
 		}
 		jDialogNewTransformationForm.dispose();
 	}
