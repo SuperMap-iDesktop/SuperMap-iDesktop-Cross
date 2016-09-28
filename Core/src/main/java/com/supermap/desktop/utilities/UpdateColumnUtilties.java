@@ -296,17 +296,25 @@ public class UpdateColumnUtilties {
     }
 
     public static Object getCommonMethodInfo(String method, Object value, Object value1, FieldType fieldType) {
-        Double fieldValue = 0.0;
+        double fieldValue = 0;
         try {
-            fieldValue = Convert.toDouble(value);
+            if (isIntegerType(fieldType)) {
+                fieldValue = Convert.toInteger(value.toString());
+            } else {
+                fieldValue = Convert.toDouble(value);
+            }
         } catch (Exception e) {
-            fieldValue = 0.0;
+            fieldValue = 0;
         }
-        Double param = 0.0;
+        double param = 0;
         try {
-            param = Convert.toDouble(value1);
+            if (isIntegerType(fieldType)) {
+                param = Convert.toInteger(value1.toString());
+            } else {
+                param = Convert.toDouble(value1);
+            }
         } catch (Exception e) {
-            param = 0.0;
+            param = 0;
         }
         Object desValue = null;
         if ("+".equals(method)) {
