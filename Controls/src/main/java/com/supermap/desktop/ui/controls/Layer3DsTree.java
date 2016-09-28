@@ -898,7 +898,12 @@ public class Layer3DsTree extends JTree {
             count++;
             ((DefaultTreeModel) getModel()).removeNodeFromParent(draggedNode);
             ((DefaultTreeModel) getModel()).insertNodeInto(draggedNode, treeNodeLayer3Ds, tempTargetRow);
-            nowScene.getLayers().moveTo(currentIndex, tempTargetRow);
+            try {
+                //由于计算问题暂时先这样处理
+                nowScene.getLayers().moveTo(currentIndex, tempTargetRow);
+            } catch (Exception e) {
+
+            }
         }
         if (isUp) {
             lowerCount++;
