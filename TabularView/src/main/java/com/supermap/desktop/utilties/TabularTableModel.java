@@ -1,7 +1,11 @@
 package com.supermap.desktop.utilties;
 
-import com.supermap.data.*;
-import com.supermap.desktop.Application;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfos;
+import com.supermap.data.FieldType;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.utilities.Convert;
@@ -318,7 +322,6 @@ public class TabularTableModel extends AbstractTableModel {
     }
 
     public void deadException(Exception e) {
-        Application.getActiveApplication().getOutput().output(e);
         // do nothing
     }
 }
