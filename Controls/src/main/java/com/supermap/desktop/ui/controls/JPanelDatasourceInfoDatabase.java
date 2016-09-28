@@ -16,13 +16,13 @@ import java.util.List;
 
 /**
  * 打开数据库型数据源
- * 
+ *
  * @author XiaJT
  */
 public class JPanelDatasourceInfoDatabase extends JPanel {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	public static final int INPUT_NOT_COMPLITED = 0;
@@ -265,7 +265,7 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 
 	/**
 	 * 根据引擎类型设置jTextFieldDatasourceAlias
-	 * 
+	 *
 	 * @param engineType
 	 */
 	private void setjTextFieldDatasourceAlias(EngineType engineType) {
@@ -276,7 +276,7 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 
 	/**
 	 * 设置引擎类型时修改组件信息
-	 * 
+	 *
 	 * @param engineType 引擎类型
 	 */
 	public void setDatasourceType(EngineType engineType) {
@@ -359,7 +359,7 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 
 	/**
 	 * 加载数据源到工作空间
-	 * 
+	 *
 	 * @return
 	 */
 	public int loadDatasource() {
