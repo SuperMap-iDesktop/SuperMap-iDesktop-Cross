@@ -513,7 +513,8 @@ public abstract class Measure implements IMeasureAble {
 	private final KeyAdapter escClearKeyAdapt = new KeyAdapter() {
 		@Override
 		public void keyPressed(KeyEvent e) {
-			if (!e.isConsumed() && e.getKeyChar() == KeyEvent.VK_ESCAPE && !isEditing()) {
+			if (!e.isConsumed() && e.getKeyChar() == KeyEvent.VK_ESCAPE && !isEditing() && e.getSource() instanceof MapControl) {
+				MapControl mapControl = (MapControl) e.getSource();
 				TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
 				if (trackingLayer.getCount() > 0) {
 					e.consume();
@@ -523,7 +524,7 @@ public abstract class Measure implements IMeasureAble {
 						trackingLayer.remove(i);
 					}
 				}
-				refreshTrackingLayer();
+				mapControl.getMap().refreshTrackingLayer();
 				mapControl.removeKeyListener(this);
 			}
 		}
