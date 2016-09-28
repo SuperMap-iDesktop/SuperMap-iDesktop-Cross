@@ -90,8 +90,9 @@ public class ColorSelectButton extends JButton {
     }
 
     public void setColor(Color color) {
-        panelColorDisplay.setBackground(color);
-        panelColorDisplay.updateUI();
+	    this.color = color;
+	    panelColorDisplay.setBackground(color);
+	    panelColorDisplay.updateUI();
     }
 
     /**

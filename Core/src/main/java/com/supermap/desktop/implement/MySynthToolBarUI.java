@@ -127,10 +127,10 @@ public class MySynthToolBarUI extends SynthToolBarUI {
 		return new Point(p.x + dockingPosition.x, p.y + dockingPosition.y);
 	}
 
-	@Override
-	protected DragWindow createDragWindow(JToolBar toolbar) {
-		DragWindow dragWindow = super.createDragWindow(toolbar);
-		dragWindow.setOpacity(0.8f);
-		return dragWindow;
-	}
+//	@Override
+//	protected DragWindow createDragWindow(JToolBar toolbar) {
+//		DragWindow dragWindow = super.createDragWindow(toolbar);
+//		dragWindow.setOpacity(0.8f);
+//		return dragWindow;
+//	}
 }

@@ -1178,8 +1178,10 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	@Override
 	public void setTransformationMode(TransformationMode transformationMode) {
-		this.transformationMode = transformationMode;
-		changeTransformation(null);
+		if (transformationMode != this.transformationMode) {
+			this.transformationMode = transformationMode;
+			changeTransformation(null);
+		}
 	}
 
 	@Override
