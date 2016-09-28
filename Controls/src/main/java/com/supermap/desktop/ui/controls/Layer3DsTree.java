@@ -883,34 +883,33 @@ public class Layer3DsTree extends JTree {
         SortUIUtilities.sortList(integers);
         int count = 0; // 记录有多少图层移动到本图层之前
         int lowerCount = 0;// 记录有多少图层本来在目标图层之前
-
-        for (int i = selectionRows.length - 1; i >= 0; i--) {
-            int currentIndex = integers[i] - 1;
-            int tempTargetRow = treeNodeLayer3Ds.getIndex(dropTargetNode);
-            if (currentIndex >= tempTargetRow) {
-                currentIndex += count;
-            } else {
-                if (i != selectionRows.length - 1) {
-                    tempTargetRow -= lowerCount;
+        try {
+            for (int i = selectionRows.length - 1; i >= 0; i--) {
+                int currentIndex = integers[i] - 1;
+                int tempTargetRow = treeNodeLayer3Ds.getIndex(dropTargetNode);
+                if (currentIndex >= tempTargetRow) {
+                    currentIndex += count;
+                } else {
+                    if (i != selectionRows.length - 1) {
+                        tempTargetRow -= lowerCount;
+                    }
+                    lowerCount++;
                 }
+                count++;
+                ((DefaultTreeModel) getModel()).removeNodeFromParent(draggedNode);
+                ((DefaultTreeModel) getModel()).insertNodeInto(draggedNode, treeNodeLayer3Ds, tempTargetRow);
+                nowScene.getLayers().moveTo(currentIndex, tempTargetRow);
+
+            }
+            if (isUp) {
                 lowerCount++;
             }
-            count++;
-            ((DefaultTreeModel) getModel()).removeNodeFromParent(draggedNode);
-            ((DefaultTreeModel) getModel()).insertNodeInto(draggedNode, treeNodeLayer3Ds, tempTargetRow);
-            try {
-                //由于计算问题暂时先这样处理
-                nowScene.getLayers().moveTo(currentIndex, tempTargetRow);
-            } catch (Exception e) {
-
-            }
+            setSelectionInterval(dropTargetNodeIndex - lowerCount + 1, dropTargetNodeIndex + selectionRows.length - lowerCount);
+            nowScene.refresh();
+            dropTargetNodeIndex = -1;
+        } catch (Exception e) {
+            //由于计算问题暂时先这样处理 nowScene.getLayers().moveTo(currentIndex, tempTargetRow);
         }
-        if (isUp) {
-            lowerCount++;
-        }
-        setSelectionInterval(dropTargetNodeIndex - lowerCount + 1, dropTargetNodeIndex + selectionRows.length - lowerCount);
-        nowScene.refresh();
-        dropTargetNodeIndex = -1;
     }
 
     /**
