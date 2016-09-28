@@ -117,7 +117,7 @@ public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 		geoStyle.setMarkerSize(new Size2D(3, 3));
 		geoPoint.setStyle(geoStyle);
 		TrackingLayer trackingLayer = mapControl.getMap().getTrackingLayer();
-		int geoCount = trackingLayer.getCount();
+		int geoCount = 0;
 
 		for (int i = 0; i < trackingLayer.getCount(); i++) {
 			if (trackingLayer.getTag(i).equals(trackingObjectName + "point")) {

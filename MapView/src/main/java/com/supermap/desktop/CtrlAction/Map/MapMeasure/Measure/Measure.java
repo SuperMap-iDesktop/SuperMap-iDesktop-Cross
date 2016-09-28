@@ -36,7 +36,7 @@ import java.util.EventObject;
 public abstract class Measure implements IMeasureAble {
 
 
-	public static final String TRAKCING_OBJECT_NAME = "MapMeasureTrackingObjectName";
+	public static final String TRAKCING_OBJECT_NAME = "MapMeasureTrackingObject";
 	// 距离量算相关参数
 	/**
 	 * 辅助线距离量算线的距离，以像素为单位
@@ -99,7 +99,7 @@ public abstract class Measure implements IMeasureAble {
 	 * 存放已添加的tags
 	 */
 	protected java.util.List<String> addedTags = new ArrayList<>();
-	protected String textTagTitle;
+	protected String textTagTitle = TRAKCING_OBJECT_NAME;
 	/**
 	 * 防止在编辑时把整个屏幕清除了
 	 */
@@ -458,6 +458,7 @@ public abstract class Measure implements IMeasureAble {
 					trackingLayer.remove(i);
 				}
 			}
+			mapControl.getMap().refreshTrackingLayer();
 		}
 	}
 
