@@ -39,7 +39,7 @@ import java.util.ArrayList;
 public class MeasureDistance extends Measure {
 
 
-	private static final String measureLineTag = "measureLineTag";
+	private static final String measureLineTag = TRAKCING_OBJECT_NAME + "MeasureLineTag";
 	/**
 	 * 显示总长度的编辑框相对鼠标向右偏移的像素值
 	 */
@@ -52,7 +52,7 @@ public class MeasureDistance extends Measure {
 
 
 	public MeasureDistance() {
-		textTagTitle = "DistanceText";
+		textTagTitle += "DistanceText";
 		trackingListener = new TrackingListener() {
 			@Override
 			public void tracking(TrackingEvent trackingEvent) {
@@ -155,7 +155,7 @@ public class MeasureDistance extends Measure {
 						geoStyle.setFillSymbolID(1);
 						geoStyle.setLineColor(Color.BLUE);
 						e.getGeometry().setStyle(geoStyle);
-						mapControl.getMap().getTrackingLayer().add(e.getGeometry(), measureLineTag);
+						mapControl.getMap().getTrackingLayer().add(e.getGeometry(), TRAKCING_OBJECT_NAME + measureLineTag);
 
 						String unitString = getLengthUnit().toString();
 

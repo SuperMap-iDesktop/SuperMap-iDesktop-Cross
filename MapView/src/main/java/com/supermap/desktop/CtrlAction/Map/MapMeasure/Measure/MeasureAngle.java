@@ -36,7 +36,7 @@ import java.util.Stack;
  * Created by Administrator on 2016/1/28.
  */
 public class MeasureAngle extends Measure {
-	private static final String measureAngleTag = "measureAngleTag";
+	private static final String measureAngleTag = TRAKCING_OBJECT_NAME + "measureAngleTag";
 	private AngleUnit beforeUnit;
 	private ArrayList<Double> angleList;
 	private int beforePointsCount;
@@ -66,7 +66,7 @@ public class MeasureAngle extends Measure {
 	};
 
 	public MeasureAngle() {
-		textTagTitle = "AngleText";
+		textTagTitle += "AngleText";
 		angleList = new ArrayList<Double>();
 		stackAzimuth = new Stack<>();
 		trackingListener = new TrackingListener() {

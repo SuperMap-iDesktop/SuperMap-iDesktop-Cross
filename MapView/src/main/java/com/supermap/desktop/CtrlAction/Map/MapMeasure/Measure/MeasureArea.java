@@ -26,10 +26,10 @@ import java.text.MessageFormat;
  * Created by Administrator on 2016/1/28.
  */
 public class MeasureArea extends Measure {
-	private static final String measureAreaTag = "measureAreaTag";
+	private static final String measureAreaTag = TRAKCING_OBJECT_NAME + "measureAreaTag";
 
 	public MeasureArea() {
-		textTagTitle = "AreaText";
+		textTagTitle += "AreaText";
 		trackingListener = new TrackingListener() {
 			@Override
 			public void tracking(TrackingEvent e) {
