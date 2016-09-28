@@ -24,6 +24,7 @@ import com.supermap.mapping.LayerSnapableChangedEvent;
 import com.supermap.mapping.LayerSnapableChangedListener;
 import com.supermap.mapping.LayerVisibleChangedEvent;
 import com.supermap.mapping.LayerVisibleChangedListener;
+import com.supermap.mapping.Map;
 import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
 
@@ -56,6 +57,16 @@ public class LayerPropertyContainer extends JPanel {
 	// 因此，先用一个静态字段来让子面板们在更改的时候设置状态
 	// @formatter:on
 	private static boolean NEED_RESET = true;
+	private MapClosedListener mapClosedListener = new MapClosedListener() {
+		@Override
+		public void mapClosed(MapClosedEvent arg0) {
+			unregisterEvents(arg0.getMap());
+			if (null != formMap) {
+				formMap.removeActiveLayersChangedListener(activeLayersChangedListener);
+			}
+		}
+	};
+
 
 	public static void setResetFlag(boolean needReset) {
 		NEED_RESET = needReset;
@@ -240,26 +251,25 @@ public class LayerPropertyContainer extends JPanel {
 		this.formMap.getMapControl().getMap().getLayers().addLayerVisibleChangedListener(this.layerVisibleChangedListener);
 		this.formMap.getMapControl().getMap().getLayers().addLayerSelectableChangedListener(this.layerSelectableChangedListener);
 		this.formMap.getMapControl().getMap().getLayers().addLayerSnapableChangedListener(this.layerSnapableChangedListener);
-		this.formMap.getMapControl().getMap().addMapClosedListener(new MapClosedListener() {
-
-			@Override
-			public void mapClosed(MapClosedEvent arg0) {
-				unregisterEvents();
-				if (null != formMap) {
-					formMap.getMapControl().getMap().removeMapClosedListener(this);
-				}
-			}
-		});
+		this.formMap.getMapControl().getMap().addMapClosedListener(mapClosedListener);
 	}
 
 	private void unregisterEvents() {
-		if (null != this.formMap) {
+		if (null != this.formMap && null != this.formMap.getMapControl()) {
 			this.formMap.removeActiveLayersChangedListener(this.activeLayersChangedListener);
-			this.formMap.getMapControl().getMap().getLayers().removeLayerCaptionChangedListener(this.layerCaptionChangedListener);
-			this.formMap.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(this.layerEditableChangedListener);
-			this.formMap.getMapControl().getMap().getLayers().removeLayerVisibleChangedListener(this.layerVisibleChangedListener);
-			this.formMap.getMapControl().getMap().getLayers().removeLayerSelectableChangedListener(this.layerSelectableChangedListener);
-			this.formMap.getMapControl().getMap().getLayers().removeLayerSnapableChangedListener(this.layerSnapableChangedListener);
+			unregisterEvents(this.formMap.getMapControl().getMap());
+		}
+	}
+
+	private void unregisterEvents(Map map) {
+		if (map != null) {
+			map.getLayers().removeLayerCaptionChangedListener(this.layerCaptionChangedListener);
+			map.getLayers().removeLayerEditableChangedListener(this.layerEditableChangedListener);
+			map.getLayers().removeLayerVisibleChangedListener(this.layerVisibleChangedListener);
+			map.getLayers().removeLayerSelectableChangedListener(this.layerSelectableChangedListener);
+			map.getLayers().removeLayerSnapableChangedListener(this.layerSnapableChangedListener);
+			map.removeMapClosedListener(mapClosedListener);
+
 		}
 	}
 
