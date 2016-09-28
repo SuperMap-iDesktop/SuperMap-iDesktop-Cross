@@ -92,7 +92,10 @@ public abstract class TransformationBase implements IFormMap {
 		getMapControl().delete();
 		getMapControl().dispose();
 		setMapControl(null);
+		cleanHook();
 	}
+
+	protected abstract void cleanHook();
 
 	protected abstract void setMapControl(MapControl mapControl);
 

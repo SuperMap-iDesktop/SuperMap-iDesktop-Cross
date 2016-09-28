@@ -673,6 +673,9 @@ public class ImportInfoUtil {
                 if (tempJPanel instanceof ImportPanelLIDAR) {
                     ((ImportPanelLIDAR) tempJPanel).getComboBoxCharset().setSelectedIndex(type);
                 }
+                if (tempJPanel instanceof ImportPanelSCV) {
+                    ((ImportPanelSCV) tempJPanel).getComboBoxCharset().setSelectedIndex(type);
+                }
             }
         }
 
