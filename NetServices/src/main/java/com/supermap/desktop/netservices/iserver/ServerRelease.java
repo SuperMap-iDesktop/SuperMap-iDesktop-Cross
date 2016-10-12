@@ -2,7 +2,12 @@ package com.supermap.desktop.netservices.iserver;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
+import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceConnectionInfo;
+import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.FileSize;
 import com.supermap.desktop.core.compress.CompressEvent;
@@ -28,6 +33,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.io.File;
 import java.io.IOException;
@@ -190,8 +196,12 @@ public class ServerRelease {
 				if (StringUtilities.isNullOrEmpty(token)) {
 					return false;
 				}
-
-				closeCurrentFileWorkspace();
+				SwingUtilities.invokeAndWait(new Runnable() {
+					@Override
+					public void run() {
+						closeCurrentFileWorkspace();
+					}
+				});
 				if (this.hostType == HostType.REMOTE
 						&& (this.connectionInfo.getType() == WorkspaceType.DEFAULT || this.connectionInfo.getType() == WorkspaceType.SMW
 								|| this.connectionInfo.getType() == WorkspaceType.SMWU || this.connectionInfo.getType() == WorkspaceType.SXW || this.connectionInfo

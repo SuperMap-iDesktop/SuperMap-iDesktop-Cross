@@ -153,7 +153,7 @@ public class ImportPanelMapGIS extends AbstractImportPanel {
 		this.importsetting = (ImportSettingMAPGIS) ImportInfoUtil.setFileInfo(datasource,
 				fileInfos, fileInfo, textFieldFilePath, importsetting,
 				textFieldResultSet);
-		if (null != importsetting.getSourceFileCharset()) {
+		if (importsetting != null && null != importsetting.getSourceFileCharset()) {
 			comboBoxCharset.setSelectCharset(importsetting.getSourceFileCharset().name());
 		}
 		// 设置目标数据集名称

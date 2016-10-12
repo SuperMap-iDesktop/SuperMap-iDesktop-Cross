@@ -204,7 +204,7 @@ public class ImportPanelTIF extends AbstractImportPanel {
 		if (importsetting instanceof ImportSettingMrSID) {
 			this.fileChooserc.setEnabled(false);
 		}
-		if (null != importsetting.getSourceFileCharset()) {
+		if (importsetting != null && null != importsetting.getSourceFileCharset()) {
 			comboBoxCharset.setSelectCharset(importsetting.getSourceFileCharset().name());
 		}
 		// 设置结果数据集名称

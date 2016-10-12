@@ -130,7 +130,7 @@ public class ImportPanelSIT extends AbstractImportPanel {
 		// 设置fileInfo
 		this.importsetting = (ImportSettingSIT) ImportInfoUtil.setFileInfo(datasource, fileInfos, fileInfo, textFieldFilePath, importsetting,
 				textFieldResultSet);
-		if (null != importsetting.getSourceFileCharset()) {
+		if (importsetting != null && null != importsetting.getSourceFileCharset()) {
 			comboBoxCharset.setSelectCharset(importsetting.getSourceFileCharset().name());
 		}
 		// 设置结果数据集名称

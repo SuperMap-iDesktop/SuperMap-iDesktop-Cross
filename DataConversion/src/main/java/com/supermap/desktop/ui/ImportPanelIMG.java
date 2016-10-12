@@ -173,7 +173,7 @@ public class ImportPanelIMG extends AbstractImportPanel {
 		this.importsetting = (ImportSettingIMG) ImportInfoUtil.setFileInfo(datasource,
 				fileInfos, fileInfo, textFieldFilePath, importsetting,
 				textFieldResultSet);
-		if (null != importsetting.getSourceFileCharset()) {
+		if (null != importsetting && null != importsetting.getSourceFileCharset()) {
 			comboBoxCharset.setSelectCharset(importsetting.getSourceFileCharset().name());
 		}
 		// 设置数据集结果数据集名称
