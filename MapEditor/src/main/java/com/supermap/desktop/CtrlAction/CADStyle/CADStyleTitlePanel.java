@@ -41,6 +41,7 @@ public class CADStyleTitlePanel extends JPanel {
     private JPanelSymbols panelSymbols;
     private JScrollPane jScrollPane;
     private GeoStyle geoStyle;
+    private ArrayList<Recordset> tempRecordsets;
 
     private SymbolSelectedChangedListener panelSymbolsListener = new SymbolSelectedChangedListener() {
 
@@ -158,16 +159,17 @@ public class CADStyleTitlePanel extends JPanel {
             symbolType = SymbolType.FILL;
         }
         GeoStyle beforeGeostyle = getGeoStyle();
-        final ArrayList<Recordset> tempRecordsets = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
         GeoStyle geostyle = changeGeoStyle(beforeGeostyle, symbolType, new ISymbolApply() {
             @Override
             public void apply(GeoStyle geoStyle) {
+                tempRecordsets = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
                 if (null != tempRecordsets) {
                     resetGeoStyle(geoStyle, tempRecordsets);
                 }
             }
         });
         if (geostyle != null) {
+            tempRecordsets = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
             if (null != tempRecordsets) {
                 resetGeoStyle(geostyle, tempRecordsets);
             }

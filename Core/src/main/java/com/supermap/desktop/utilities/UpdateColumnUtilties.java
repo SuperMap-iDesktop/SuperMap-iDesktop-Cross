@@ -297,52 +297,80 @@ public class UpdateColumnUtilties {
 
     public static Object getCommonMethodInfo(String method, Object value, Object value1, FieldType fieldType) {
         double fieldValue = 0;
+        int fieldValue1 = 0;
         try {
             if (isIntegerType(fieldType)) {
-                fieldValue = Convert.toInteger(value.toString());
+                fieldValue1 = Convert.toInteger(value.toString());
             } else {
-                fieldValue = Convert.toDouble(value);
+                fieldValue = Convert.toDouble(value.toString());
             }
         } catch (Exception e) {
             fieldValue = 0;
+            fieldValue1 = 0;
         }
         double param = 0;
+        int param1 = 0;
         try {
             if (isIntegerType(fieldType)) {
-                param = Convert.toInteger(value1.toString());
+                param1 = Convert.toInteger(value1.toString());
             } else {
-                param = Convert.toDouble(value1);
+                param = Convert.toDouble(value1.toString());
             }
         } catch (Exception e) {
             param = 0;
+            param1 = 0;
         }
         Object desValue = null;
-        if ("+".equals(method)) {
-            desValue = fieldValue + param;
-        } else if ("-".equals(method)) {
-            desValue = fieldValue - param;
-        } else if ("*".equals(method)) {
-            desValue = fieldValue * param;
-        } else if ("/".equals(method)) {
-            desValue = fieldValue / param;
-        } else if ("%".equals(method)) {
-            desValue = fieldValue % param;
-        } else if (">".equals(method)) {
-            desValue = fieldValue > param;
-        } else if (">=".equals(method)) {
-            desValue = fieldValue >= param;
-        } else if ("<".equals(method)) {
-            desValue = fieldValue < param;
-        } else if ("<=".equals(method)) {
-            desValue = fieldValue <= param;
-        } else if ("==".equals(method)) {
-            desValue = (fieldValue - param == 0);
-        } else if ("!=".equals(method)) {
-            desValue = (fieldValue - param != 0);
-        }
         if (isIntegerType(fieldType)) {
-            desValue = Convert.toInteger(desValue.toString());
-        } else if (fieldType.equals(FieldType.BOOLEAN)) {
+            if ("+".equals(method)) {
+                desValue = fieldValue1 + param1;
+            } else if ("-".equals(method)) {
+                desValue = fieldValue1 - param1;
+            } else if ("*".equals(method)) {
+                desValue = fieldValue1 * param1;
+            } else if ("/".equals(method)) {
+                desValue = fieldValue1 / param1;
+            } else if ("%".equals(method)) {
+                desValue = fieldValue1 % param1;
+            } else if (">".equals(method)) {
+                desValue = fieldValue1 > param1;
+            } else if (">=".equals(method)) {
+                desValue = fieldValue1 >= param1;
+            } else if ("<".equals(method)) {
+                desValue = fieldValue1 < param1;
+            } else if ("<=".equals(method)) {
+                desValue = fieldValue1 <= param1;
+            } else if ("==".equals(method)) {
+                desValue = (fieldValue1 - param1 == 0);
+            } else if ("!=".equals(method)) {
+                desValue = (fieldValue1 - param1 != 0);
+            }
+        } else {
+            if ("+".equals(method)) {
+                desValue = fieldValue + param;
+            } else if ("-".equals(method)) {
+                desValue = fieldValue - param;
+            } else if ("*".equals(method)) {
+                desValue = fieldValue * param;
+            } else if ("/".equals(method)) {
+                desValue = fieldValue / param;
+            } else if ("%".equals(method)) {
+                desValue = fieldValue % param;
+            } else if (">".equals(method)) {
+                desValue = fieldValue > param;
+            } else if (">=".equals(method)) {
+                desValue = fieldValue >= param;
+            } else if ("<".equals(method)) {
+                desValue = fieldValue < param;
+            } else if ("<=".equals(method)) {
+                desValue = fieldValue <= param;
+            } else if ("==".equals(method)) {
+                desValue = (fieldValue - param == 0);
+            } else if ("!=".equals(method)) {
+                desValue = (fieldValue - param != 0);
+            }
+        }
+        if (fieldType.equals(FieldType.BOOLEAN)) {
             if (desValue instanceof Boolean) {
                 return desValue;
             }

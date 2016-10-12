@@ -86,25 +86,26 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
                 if (null == newTextPartValue || StringUtilities.isNullOrEmptyString(text)) {
                     return;
                 }
+                TextStyle tempTextStyle = textStyle.clone();
                 boolean isApply = checkboxApplyForTextPart.isSelected();
                 if (newValue.equals(TextPartType.INFO)) {
-                    panelPreview.refresh(text, textStyle, newRotation);
+                    panelPreview.refresh(text, tempTextStyle, newRotation);
                     return;
                 }
 
                 if (newValue.equals(TextPartType.ROTATION) && geometry instanceof GeoText) {
                     newRotation = (double) newTextPartValue;
-                    panelPreview.refresh(text, textStyle, (double) newTextPartValue);
+                    panelPreview.refresh(text, tempTextStyle, (double) newTextPartValue);
                     fireGeoTextChanged(true);
                     return;
                 }
                 if (newValue.equals(TextPartType.TEXT) && geometry instanceof GeoText && isApply) {
-                    panelPreview.refresh(text, textStyle, newRotation);
+                    panelPreview.refresh(text, tempTextStyle, newRotation);
                     fireGeoTextChanged(true);
                     return;
                 }
                 if (newValue.equals(TextPartType.TEXT) && geometry instanceof GeoText3D && isApply) {
-                    panelPreview.refresh(text, textStyle, 0.0);
+                    panelPreview.refresh(text, tempTextStyle, 0.0);
                     fireGeoTextChanged(true);
                     return;
                 }
