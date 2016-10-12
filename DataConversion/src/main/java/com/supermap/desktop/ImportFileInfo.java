@@ -9,7 +9,7 @@ public class ImportFileInfo {
     private String fileName = "";
     // 导入文件类型
     private String fileType = "";
-    // 导入状体
+    // 导入状态
     private String state = "";
     // 导入设置信息类
     private ImportSetting importSetting = null;

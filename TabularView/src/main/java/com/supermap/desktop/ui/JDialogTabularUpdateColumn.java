@@ -24,10 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 更新列主界面
@@ -1086,14 +1083,16 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     private void updateModeQuery() {
         try {
             QueryParameter parameter = new QueryParameter();
-            parameter.setAttributeFilter(textAreaOperationEQ.getText());
+            String queryFields = textAreaOperationEQ.getText();
+            String[] queryFieldNames = getQueryFieldNames(queryFields);
+            parameter.setAttributeFilter(queryFields);
             parameter.setCursorType(CursorType.STATIC);
             parameter.setHasGeometry(true);
-            parameter.setResultFields(new String[]{textAreaOperationEQ.getText()});
+            parameter.setResultFields(queryFieldNames);
             Recordset result = tabular.getRecordset().getDataset().query(parameter);
             boolean selectAllColumn = radioButtonUpdateColumn.isSelected();
             FieldType fieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
-            if (null != result && null != result.getFieldInfos().get(textAreaOperationEQ.getText())) {
+            if (null != result && null != result.getFieldInfos().get(queryFields)) {
                 if (selectAllColumn) {
                     // 更新选中列
                     int[] selectRows = new int[tabular.getjTableTabular().getRowCount()];
@@ -1110,6 +1109,31 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex);
         }
+    }
+
+    private String[] getQueryFieldNames(String queryFields) {
+        int bracketsCount = 0;
+        java.util.List<String> fieldNames = new ArrayList<>();
+        char[] fieldNamesChars = queryFields.toCharArray();
+        StringBuilder builderFieldName = new StringBuilder();
+        for (char fieldNamesChar : fieldNamesChars) {
+            if (fieldNamesChar == ',' && bracketsCount == 0 && builderFieldName.length() > 0) {
+                fieldNames.add(builderFieldName.toString());
+                builderFieldName.setLength(0);
+            } else {
+                builderFieldName.append(fieldNamesChar);
+                if (fieldNamesChar == '(') {
+                    bracketsCount++;
+                } else if (fieldNamesChar == ')' && bracketsCount > 0) {
+                    bracketsCount--;
+                }
+            }
+        }
+        if (builderFieldName.length() > 0) {
+            fieldNames.add(builderFieldName.toString());
+            builderFieldName.setLength(0);
+        }
+        return fieldNames.toArray(new String[fieldNames.size()]);
     }
 
     private void resetFieldForModeExpression(FieldType fieldType, int[] selectRows, Recordset resultSet, String resultField) {

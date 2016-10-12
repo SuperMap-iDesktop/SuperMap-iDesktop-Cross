@@ -11,11 +11,10 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -23,14 +22,8 @@ import java.util.ArrayList;
  * 字段选择器
  */
 public class FieldsSetDialog extends SmDialog {
-    //    private JLabel labelSourceFields;//数据源的字段
     private JTable tableSourceFields;
-    //    private JLabel labelOverlayAnalystFields;//叠加分析的字段
     private JTable tableOverlayAnalystFields;
-    private JButton buttonSourceFieldsSelectAll;//全选
-    private JButton buttonSourceFieldsSelectReverse;//反选
-    private JButton buttonOverlayAnalystSelectAll;
-    private JButton buttonOverlayAnalystSelectReverse;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JScrollPane scrollpaneSourceFields;
@@ -40,34 +33,8 @@ public class FieldsSetDialog extends SmDialog {
     private String[] overlayAnalystFields;
     private static final int TABLE_COLUMN_CHECKABLE = 0;
     private static final int TABLE_COLUMN_CAPTION = 1;
-    private static final Color COLOR_SYSTEM_SELECTED = new Color(185, 214, 244);
-    private static final Color COLOR_SYSTEM_NOT_SELECTED = new Color(230, 230, 230);
 
     private DatasetVector sourceDataset, overlayAnalystDataset;
-    private ActionListener buttonSourceFieldsSelectAllListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            selectAll(tableSourceFields);
-        }
-    };
-    private ActionListener buttonSourceFieldsSelectReverseListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            selectReverse(tableSourceFields);
-        }
-    };
-    private ActionListener buttonOverlayAnalystSelectAllListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            selectAll(tableOverlayAnalystFields);
-        }
-    };
-    private ActionListener buttonOverlayAnalystSelectReverseListener = new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            selectReverse(tableOverlayAnalystFields);
-        }
-    };
     private ActionListener buttonOKListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -127,16 +94,12 @@ public class FieldsSetDialog extends SmDialog {
 
     private void selectReverse(JTable table) {
         for (int i = 0; i < table.getRowCount(); i++) {
-            table.setValueAt(!((Boolean) table.getValueAt(i, TABLE_COLUMN_CHECKABLE)), i, TABLE_COLUMN_CHECKABLE);
+            table.setValueAt(new Boolean(false), i, TABLE_COLUMN_CHECKABLE);
         }
     }
 
     private void registEvents() {
         removeEvents();
-        this.buttonSourceFieldsSelectAll.addActionListener(this.buttonSourceFieldsSelectAllListener);
-        this.buttonSourceFieldsSelectReverse.addActionListener(this.buttonSourceFieldsSelectReverseListener);
-        this.buttonOverlayAnalystSelectAll.addActionListener(this.buttonOverlayAnalystSelectAllListener);
-        this.buttonOverlayAnalystSelectReverse.addActionListener(this.buttonOverlayAnalystSelectReverseListener);
         this.buttonOK.addActionListener(this.buttonOKListener);
         this.buttonCancel.addActionListener(this.buttonCancelListener);
         this.addWindowListener(new WindowAdapter() {
@@ -153,10 +116,6 @@ public class FieldsSetDialog extends SmDialog {
     }
 
     private void removeEvents() {
-        this.buttonSourceFieldsSelectAll.removeActionListener(this.buttonSourceFieldsSelectAllListener);
-        this.buttonSourceFieldsSelectReverse.removeActionListener(this.buttonSourceFieldsSelectReverseListener);
-        this.buttonOverlayAnalystSelectAll.removeActionListener(this.buttonOverlayAnalystSelectAllListener);
-        this.buttonOverlayAnalystSelectReverse.removeActionListener(this.buttonOverlayAnalystSelectReverseListener);
         this.buttonOK.removeActionListener(this.buttonOKListener);
         this.buttonCancel.removeActionListener(this.buttonCancelListener);
     }
@@ -168,13 +127,9 @@ public class FieldsSetDialog extends SmDialog {
         scrollpaneOverlayAnalystFields = new JScrollPane();
         panelSourceFields.setLayout(new GridBagLayout());
         panelSourceFields.add(scrollpaneSourceFields, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        panelSourceFields.add(this.buttonSourceFieldsSelectAll, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setWeight(0, 0));
-        panelSourceFields.add(this.buttonSourceFieldsSelectReverse, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setWeight(0, 0));
         scrollpaneSourceFields.setViewportView(tableSourceFields);
         panelOverlayAnalystFields.setLayout(new GridBagLayout());
         panelOverlayAnalystFields.add(scrollpaneOverlayAnalystFields, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        panelOverlayAnalystFields.add(this.buttonOverlayAnalystSelectAll, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setWeight(0, 0));
-        panelOverlayAnalystFields.add(this.buttonOverlayAnalystSelectReverse, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setWeight(0, 0));
         scrollpaneOverlayAnalystFields.setViewportView(tableOverlayAnalystFields);
 
         panelSourceFields.setBorder(new TitledBorder(ControlsProperties.getString("String_Label_SourceDatasetFields")));
@@ -190,10 +145,6 @@ public class FieldsSetDialog extends SmDialog {
     }
 
     private void initResources() {
-        this.buttonSourceFieldsSelectAll.setText(ControlsProperties.getString("String_SelectAll"));
-        this.buttonSourceFieldsSelectReverse.setText(ControlsProperties.getString("String_SelectReverse"));
-        this.buttonOverlayAnalystSelectAll.setText(ControlsProperties.getString("String_SelectAll"));
-        this.buttonOverlayAnalystSelectReverse.setText(ControlsProperties.getString("String_SelectReverse"));
         this.setTitle(ControlsProperties.getString("String_Form_FieldsSetting"));
     }
 
@@ -202,10 +153,6 @@ public class FieldsSetDialog extends SmDialog {
         initTable(tableSourceFields, sourceDataset);
         this.tableOverlayAnalystFields = new JTable();
         initTable(tableOverlayAnalystFields, overlayAnalystDataset);
-        this.buttonSourceFieldsSelectAll = new JButton();
-        this.buttonSourceFieldsSelectReverse = new JButton();
-        this.buttonOverlayAnalystSelectAll = new JButton();
-        this.buttonOverlayAnalystSelectReverse = new JButton();
         this.buttonOK = ComponentFactory.createButtonOK();
         this.buttonCancel = ComponentFactory.createButtonCancel();
     }
@@ -217,25 +164,8 @@ public class FieldsSetDialog extends SmDialog {
                 count++;
             }
         }
-        DefaultTableModel defaultTableModel = new DefaultTableModel(new Object[count][2], tableTitle) {
-
-
-            public Class getColumnClass(int column) {
-                if (TABLE_COLUMN_CHECKABLE == column) {
-                    return Boolean.class;
-                }
-                return tableTitle[column].getClass();
-            }
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                if (TABLE_COLUMN_CHECKABLE == columnIndex) {
-                    return true;
-                }
-                return false;
-            }
-        };
-        table.setModel(defaultTableModel);
+        CheckTableModle checkTableModle = new CheckTableModle(new Object[count][2], tableTitle);
+        table.setModel(checkTableModle);
         int length = 0;
         for (int i = 0; i < dataset.getFieldInfos().getCount(); i++) {
             if (!dataset.getFieldInfos().get(i).isSystemField()) {
@@ -245,6 +175,85 @@ public class FieldsSetDialog extends SmDialog {
             }
         }
         table.getColumn(table.getModel().getColumnName(TABLE_COLUMN_CHECKABLE)).setMaxWidth(40);
+        table.getTableHeader().setDefaultRenderer(new CheckHeaderCellRenderer(table));
+    }
+
+
+    class CheckHeaderCellRenderer implements TableCellRenderer {
+        CheckTableModle tableModel;
+        JTableHeader tableHeader;
+        final JCheckBox checkBox;
+
+        public CheckHeaderCellRenderer(JTable table) {
+            this.tableModel = (CheckTableModle) table.getModel();
+            this.tableHeader = table.getTableHeader();
+            checkBox = new JCheckBox(tableModel.getColumnName(0));
+            checkBox.setSelected(false);
+            tableHeader.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() > 0) {
+                        //获得选中列
+                        int selectColumn = tableHeader.columnAtPoint(e.getPoint());
+                        if (selectColumn == 0) {
+                            boolean value = !checkBox.isSelected();
+                            checkBox.setSelected(value);
+                            tableModel.selectAllOrNull(value);
+                            tableHeader.repaint();
+                        }
+                    }
+                }
+            });
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                                       boolean isSelected, boolean hasFocus, int row, int column) {
+            String valueStr = (String) value;
+            JLabel label = new JLabel(valueStr);
+            label.setHorizontalAlignment(SwingConstants.CENTER); // 表头标签居左边
+            checkBox.setHorizontalAlignment(SwingConstants.CENTER);// 表头checkBox居中
+            checkBox.setBorderPainted(true);
+            JComponent component = (column == 0) ? checkBox : label;
+
+            component.setForeground(tableHeader.getForeground());
+            component.setBackground(tableHeader.getBackground());
+            component.setFont(tableHeader.getFont());
+            component.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+
+            return component;
+        }
+
+    }
+
+    class CheckTableModle extends DefaultTableModel {
+
+        public CheckTableModle(Object[][] data, Object[] columnNames) {
+            super(data, columnNames);
+        }
+
+        // /**
+        // * 根据类型返回显示控件
+        // * 布尔类型返回显示checkbox
+        // */
+        @Override
+        public Class getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            if (TABLE_COLUMN_CHECKABLE == columnIndex) {
+                return true;
+            }
+            return false;
+        }
+
+        public void selectAllOrNull(boolean value) {
+            for (int i = 0; i < getRowCount(); i++) {
+                this.setValueAt(value, i, 0);
+            }
+        }
+
     }
 
     public String[] getSourceFields() {
