@@ -31,6 +31,7 @@ public class TransformationReference extends TransformationBase implements ITran
 	public TransformationReference(FormTransformation formTransformation) {
 		this.formTransformation = formTransformation;
 		this.mapControl = new MapControl();
+		this.mapControl.setWaitCursorEnabled(false);
 		mapControl.getMap().setWorkspace(Application.getActiveApplication().getWorkspace());
 		mapControl.getMap().setName(DataEditorProperties.getString("String_Transfernation_ReferLayer"));
 		this.addedMaps = new ArrayList<>();

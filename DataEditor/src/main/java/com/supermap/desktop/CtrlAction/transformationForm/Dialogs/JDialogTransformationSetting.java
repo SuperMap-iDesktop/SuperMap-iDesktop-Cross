@@ -11,6 +11,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.TransformationModeUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -59,15 +60,7 @@ public class JDialogTransformationSetting extends SmDialog {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends TransformationMode> list, TransformationMode value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel result = new JLabel();
-				if (value == TransformationMode.OFFSET) {
-					result.setText(DataEditorProperties.getString("String_TransformationModeOFFSET"));
-				} else if (value == TransformationMode.RECT) {
-					result.setText(DataEditorProperties.getString("String_TransformationModeRECT"));
-				} else if (value == TransformationMode.LINEAR) {
-					result.setText(DataEditorProperties.getString("String_TransformationModeLINEAR"));
-				} else if (value == TransformationMode.SQUARE) {
-					result.setText(DataEditorProperties.getString("String_TransformationModeSQUARE"));
-				}
+				result.setText(TransformationModeUtilities.toString(value));
 				result.setOpaque(true);
 				result.setBackground(isSelected ? list.getSelectionBackground() : list.getBackground());
 				return result;
