@@ -891,8 +891,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		transformationTarget.getMapControl().removeActionChangedListener(addPointActionChangeListener);
 		transformationReference.getMapControl().removeActionChangedListener(addPointActionChangeListener);
 		if (addPointDraggedListener != null) {
-			transformationTarget.getMapControl().addMouseMotionListener(addPointDraggedListener);
-			transformationReference.getMapControl().addMouseMotionListener(addPointDraggedListener);
+			transformationTarget.getMapControl().removeMouseMotionListener(addPointDraggedListener);
+			transformationReference.getMapControl().removeMouseMotionListener(addPointDraggedListener);
 		}
 	}
 
