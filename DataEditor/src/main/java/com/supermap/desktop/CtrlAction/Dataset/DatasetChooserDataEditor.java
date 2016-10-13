@@ -23,140 +23,150 @@ import java.text.MessageFormat;
 import java.util.List;
 
 public class DatasetChooserDataEditor {
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
-	private boolean DIALOG_TYPE_COPY = false;
-	private boolean DIALOG_TYPE_DELETE = false;
-	private int COLUMN_INDEX_SOURCEDATASET = 0;
-	private int COLUMN_INDEX_SOURCEDATASOURCE = 1;
-	private int COLUMN_INDEX_TARGETDATASOURCE = 2;
-	private int COLUMN_INDEX_TARGETDATASET = 3;
-	private int COLUMN_INDEX_CODINGTYPE = 4;
-	private int COLUMN_INDEX_CHARSET = 5;
-	private MutiTable datasetCopyTable;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 1L;
+    private boolean DIALOG_TYPE_COPY = false;
+    private boolean DIALOG_TYPE_DELETE = false;
+    private int COLUMN_INDEX_SOURCEDATASET = 0;
+    private int COLUMN_INDEX_SOURCEDATASOURCE = 1;
+    private int COLUMN_INDEX_TARGETDATASOURCE = 2;
+    private int COLUMN_INDEX_TARGETDATASET = 3;
+    private int COLUMN_INDEX_CODINGTYPE = 4;
+    private int COLUMN_INDEX_CHARSET = 5;
+    private MutiTable datasetCopyTable;
 
-	DatasetChooser datasetChooser;
+    DatasetChooser datasetChooser;
 
-	public DatasetChooserDataEditor(JDialog owner, Datasource datasource, final MutiTable datasetCopyTable, boolean DIALOG_TYPE_COPY) {
-		this.datasetCopyTable = datasetCopyTable;
-		this.DIALOG_TYPE_COPY = DIALOG_TYPE_COPY;
-		datasetChooser = new DatasetChooser(owner) {
-			@Override
-			protected boolean isSupportDatasource(Datasource datasource) {
-				return CtrlActionCopyDataset.isSupportEngineType(datasource.getEngineType()) && super.isSupportDatasource(datasource);
-			}
-		};
-		if (datasetChooser.showDialog() == DialogResult.OK) {
-			addInfoToMainTable();
-		}
-	}
+    public DatasetChooserDataEditor(JDialog owner, Datasource datasource, final MutiTable datasetCopyTable, boolean DIALOG_TYPE_COPY) {
+        this.datasetCopyTable = datasetCopyTable;
+        this.DIALOG_TYPE_COPY = DIALOG_TYPE_COPY;
+        datasetChooser = new DatasetChooser(owner) {
+            @Override
+            protected boolean isSupportDatasource(Datasource datasource) {
+                return CtrlActionCopyDataset.isSupportEngineType(datasource.getEngineType()) && super.isSupportDatasource(datasource);
+            }
+        };
+        initSelectDatasource();
+        if (datasetChooser.showDialog() == DialogResult.OK) {
+            addInfoToMainTable();
+        }
+    }
 
-	public DatasetChooserDataEditor(JFrame owner, Datasource datasource, boolean DIALOG_TYPE_DELETE) {
-		this.DIALOG_TYPE_DELETE = DIALOG_TYPE_DELETE;
-		datasetChooser = new DatasetChooser() {
-			@Override
-			protected boolean isSupportDatasource(Datasource datasource) {
-				return !datasource.isReadOnly() && super.isSupportDatasource(datasource);
-			}
-		};
-		if (datasetChooser.showDialog() == DialogResult.OK) {
-			DeleteThread thread = new DeleteThread();
-			datasetChooser.dispose();
-			thread.run();
-		}
-		datasetChooser.dispose();
-	}
+    private void initSelectDatasource() {
+        if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0) {
+            this.datasetChooser.getWorkspaceTree().setSelectedDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
+        } else if (null != Application.getActiveApplication().getWorkspace().getDatasources()) {
+            this.datasetChooser.getWorkspaceTree().setSelectedDatasource(Application.getActiveApplication().getWorkspace().getDatasources().get(0));
+        }
+    }
 
-	class DeleteThread extends Thread {
+    public DatasetChooserDataEditor(JFrame owner, Datasource datasource, boolean DIALOG_TYPE_DELETE) {
+        this.DIALOG_TYPE_DELETE = DIALOG_TYPE_DELETE;
+        datasetChooser = new DatasetChooser() {
+            @Override
+            protected boolean isSupportDatasource(Datasource datasource) {
+                return !datasource.isReadOnly() && super.isSupportDatasource(datasource);
+            }
+        };
+        initSelectDatasource();
+        if (datasetChooser.showDialog() == DialogResult.OK) {
+            DeleteThread thread = new DeleteThread();
+            datasetChooser.dispose();
+            thread.run();
+        }
+        datasetChooser.dispose();
+    }
 
-		@Override
-		public void run() {
-			try {
-				CursorUtilities.setWaitCursor();
-				deleteFromDatasource();
-			} finally {
-				CursorUtilities.setDefaultCursor();
-			}
-		}
-	}
+    class DeleteThread extends Thread {
 
-	private void deleteFromDatasource() {
-		List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
-		int count = selectedDatasets.size();
-		Datasource datasource = selectedDatasets.get(0).getDatasource();
-		String datasourceName = datasource.getAlias();
-		if (1 == count) {
-			String datasetName = selectedDatasets.get(0).getName();
+        @Override
+        public void run() {
+            try {
+                CursorUtilities.setWaitCursor();
+                deleteFromDatasource();
+            } finally {
+                CursorUtilities.setDefaultCursor();
+            }
+        }
+    }
 
-			if (JOptionPane.OK_OPTION == UICommonToolkit
-					.showConfirmDialog(MessageFormat.format(DataEditorProperties.getString("String_DelectOneDataset"), datasourceName, datasetName))) {
+    private void deleteFromDatasource() {
+        List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
+        int count = selectedDatasets.size();
+        Datasource datasource = selectedDatasets.get(0).getDatasource();
+        String datasourceName = datasource.getAlias();
+        if (1 == count) {
+            String datasetName = selectedDatasets.get(0).getName();
 
-				Dataset deleteDataset = datasource.getDatasets().get(datasetName);
-				boolean result = datasource.getDatasets().delete(deleteDataset.getName());
-				if (result) {
-					deleteDataset = null;
-					String successInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupSuccess"), datasourceName,
-							datasetName);
-					Application.getActiveApplication().getOutput().output(successInfo);
-					Application.getActiveApplication().setActiveDatasets(null);
-				} else {
-					String failedInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupFailed"), datasourceName, datasetName);
-					Application.getActiveApplication().getOutput().output(failedInfo);
-				}
-			}
-		} else if (JOptionPane.OK_OPTION == UICommonToolkit
-				.showConfirmDialog(MessageFormat.format(DataEditorProperties.getString("String_DelectMoreDataset"), count))) {
-			// 删除选中的多条数据
-			for (int i = selectedDatasets.size() - 1; i >= 0; i--) {
-				Dataset deleteDataset = selectedDatasets.get(i);
-				String deleteDatasetName = deleteDataset.getName();
-				boolean result = deleteDataset.getDatasource().getDatasets().delete(deleteDatasetName);
-				if (result) {
-					deleteDataset = null;
-					String successInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupSuccess"), datasourceName,
-							deleteDatasetName);
-					Application.getActiveApplication().getOutput().output(successInfo);
-					Application.getActiveApplication().setActiveDatasets(null);
-				} else {
-					String failedInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupFailed"), datasourceName, deleteDatasetName);
-					Application.getActiveApplication().getOutput().output(failedInfo);
-				}
-			}
-		}
-	}
+            if (JOptionPane.OK_OPTION == UICommonToolkit
+                    .showConfirmDialog(MessageFormat.format(DataEditorProperties.getString("String_DelectOneDataset"), datasourceName, datasetName))) {
 
-	private void addInfoToMainTable() {
-		try {
-			List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
-			int rowCount = datasetCopyTable.getRowCount();
-			for (Dataset dataset : selectedDatasets) {
-				Object[] temp = new Object[6];
-				DataCell datasetCell = new DataCell();
-				datasetCell.initDatasetType(dataset);
-				temp[COLUMN_INDEX_SOURCEDATASET] = datasetCell;
-				Datasource datasource = dataset.getDatasource();
-				DataCell datasourceCell = new DataCell();
-				datasourceCell.initDatasourceType(datasource);
-				DataCell datasoureCell = datasourceCell;
-				temp[COLUMN_INDEX_SOURCEDATASOURCE] = datasoureCell;
-				temp[COLUMN_INDEX_TARGETDATASOURCE] = datasoureCell;
-				temp[COLUMN_INDEX_TARGETDATASET] = datasource.getDatasets().getAvailableDatasetName(dataset.getName());
-				temp[COLUMN_INDEX_CODINGTYPE] = CommonToolkit.EncodeTypeWrap.findName(dataset.getEncodeType());
-				if (dataset instanceof DatasetVector) {
-					temp[COLUMN_INDEX_CHARSET] = CharsetUtilities.toString(((DatasetVector) dataset).getCharset());
-				} else {
-					temp[COLUMN_INDEX_CHARSET] = CharsetUtilities.toString(null);
-				}
-				datasetCopyTable.addRow(temp);
-			}
-			if (rowCount < datasetCopyTable.getRowCount()) {
-				datasetCopyTable.setRowSelectionInterval(rowCount, datasetCopyTable.getRowCount() - 1);
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-	}
+                Dataset deleteDataset = datasource.getDatasets().get(datasetName);
+                boolean result = datasource.getDatasets().delete(deleteDataset.getName());
+                if (result) {
+                    deleteDataset = null;
+                    String successInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupSuccess"), datasourceName,
+                            datasetName);
+                    Application.getActiveApplication().getOutput().output(successInfo);
+                    Application.getActiveApplication().setActiveDatasets(null);
+                } else {
+                    String failedInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupFailed"), datasourceName, datasetName);
+                    Application.getActiveApplication().getOutput().output(failedInfo);
+                }
+            }
+        } else if (JOptionPane.OK_OPTION == UICommonToolkit
+                .showConfirmDialog(MessageFormat.format(DataEditorProperties.getString("String_DelectMoreDataset"), count))) {
+            // 删除选中的多条数据
+            for (int i = selectedDatasets.size() - 1; i >= 0; i--) {
+                Dataset deleteDataset = selectedDatasets.get(i);
+                String deleteDatasetName = deleteDataset.getName();
+                boolean result = deleteDataset.getDatasource().getDatasets().delete(deleteDatasetName);
+                if (result) {
+                    deleteDataset = null;
+                    String successInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupSuccess"), datasourceName,
+                            deleteDatasetName);
+                    Application.getActiveApplication().getOutput().output(successInfo);
+                    Application.getActiveApplication().setActiveDatasets(null);
+                } else {
+                    String failedInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupFailed"), datasourceName, deleteDatasetName);
+                    Application.getActiveApplication().getOutput().output(failedInfo);
+                }
+            }
+        }
+    }
+
+    private void addInfoToMainTable() {
+        try {
+            List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
+            int rowCount = datasetCopyTable.getRowCount();
+            for (Dataset dataset : selectedDatasets) {
+                Object[] temp = new Object[6];
+                DataCell datasetCell = new DataCell();
+                datasetCell.initDatasetType(dataset);
+                temp[COLUMN_INDEX_SOURCEDATASET] = datasetCell;
+                Datasource datasource = dataset.getDatasource();
+                DataCell datasourceCell = new DataCell();
+                datasourceCell.initDatasourceType(datasource);
+                DataCell datasoureCell = datasourceCell;
+                temp[COLUMN_INDEX_SOURCEDATASOURCE] = datasoureCell;
+                temp[COLUMN_INDEX_TARGETDATASOURCE] = datasoureCell;
+                temp[COLUMN_INDEX_TARGETDATASET] = datasource.getDatasets().getAvailableDatasetName(dataset.getName());
+                temp[COLUMN_INDEX_CODINGTYPE] = CommonToolkit.EncodeTypeWrap.findName(dataset.getEncodeType());
+                if (dataset instanceof DatasetVector) {
+                    temp[COLUMN_INDEX_CHARSET] = CharsetUtilities.toString(((DatasetVector) dataset).getCharset());
+                } else {
+                    temp[COLUMN_INDEX_CHARSET] = CharsetUtilities.toString(null);
+                }
+                datasetCopyTable.addRow(temp);
+            }
+            if (rowCount < datasetCopyTable.getRowCount()) {
+                datasetCopyTable.setRowSelectionInterval(rowCount, datasetCopyTable.getRowCount() - 1);
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+    }
 
 }

@@ -109,13 +109,13 @@ public class Convert {
         return 0.0;
     }
 
+
     public static int toInteger(Object expression) {
-        if (!StringUtilities.isNullOrEmptyString(expression) && StringUtilities.isNumeric(expression.toString()) && expression.toString().length() < 10) {
+        if (!StringUtilities.isNullOrEmptyString(expression) && StringUtilities.isNumber(expression.toString()) && expression.toString().length() < 10) {
             return Integer.parseInt(expression.toString());
         }
         if (!StringUtilities.isNullOrEmptyString(expression) && expression.toString().contains(".")) {
-            double temp = Math.round(Double.parseDouble(expression.toString()));
-            String tempStr = String.valueOf(temp);
+            String tempStr = expression.toString();
             expression = tempStr.substring(0, tempStr.indexOf("."));
             return Integer.parseInt(expression.toString());
         }
