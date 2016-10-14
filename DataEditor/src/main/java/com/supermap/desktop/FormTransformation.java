@@ -850,6 +850,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			transformationReference.getMapControl().setTrackMode(TrackMode.TRACK);
 			transformationTarget.getMapControl().setAction(Action.CREATEPOINT);
 			transformationReference.getMapControl().setAction(Action.CREATEPOINT);
+			transformationTarget.getMapControl().setWaitCursorEnabled(false);
+			transformationReference.getMapControl().setWaitCursorEnabled(false);
 			initAddPointListeners();
 		}
 	}
@@ -859,6 +861,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		transformationReference.getMapControl().setTrackMode(TrackMode.EDIT);
 		transformationTarget.getMapControl().setAction(Action.SELECT2);
 		transformationReference.getMapControl().setAction(Action.SELECT2);
+		transformationTarget.getMapControl().setWaitCursorEnabled(true);
+		transformationReference.getMapControl().setWaitCursorEnabled(true);
 		removeAddPointListeners();
 		isAddPointing = false;
 	}

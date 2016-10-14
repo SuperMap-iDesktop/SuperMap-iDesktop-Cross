@@ -36,7 +36,6 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 		transformationBeens = new ArrayList<>();
 		this.formTransformation = formTransformation;
 		this.mapControl = new MapControl();
-		this.mapControl.setWaitCursorEnabled(false);
 		this.mapControl.getMap().setWorkspace(Application.getActiveApplication().getWorkspace());
 		this.mapControl.getMap().setName(DataEditorProperties.getString("String_Transfernation_TargetLayer"));
 	}

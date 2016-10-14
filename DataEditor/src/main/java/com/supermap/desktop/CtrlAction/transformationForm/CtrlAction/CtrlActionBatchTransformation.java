@@ -16,6 +16,7 @@ import com.supermap.desktop.implement.CtrlAction;
 import java.util.ArrayList;
 
 /**
+ * 批量配准
  * @author XiaJT
  */
 public class CtrlActionBatchTransformation extends CtrlAction {
