@@ -35,11 +35,11 @@ public class DataConversionActivator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		setContext(null);
+		System.out.println("Goodbye SuperMap === DataConversion!!");
 	}
 
 	public static void setContext(BundleContext context) {
 		DataConversionActivator.context = context;
-		System.out.println("Goodbye SuperMap === DataConversion!!");
 	}
 
 }
