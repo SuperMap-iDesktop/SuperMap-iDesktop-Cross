@@ -234,10 +234,10 @@ public class GlobalParameters {
 	private static String desktopTitle = "";
 
 	public static String getDesktopTitle() {
-		if (StringUtilities.isNullOrEmpty(desktopTitle)) {
+//		if (StringUtilities.isNullOrEmpty(desktopTitle)) {
 			return CoreProperties.getString("String_MessageBox_Title");
-		}
-		return desktopTitle;
+//		}
+//		return desktopTitle;
 	}
 
 	public static void setDesktopTitle(String title) {
