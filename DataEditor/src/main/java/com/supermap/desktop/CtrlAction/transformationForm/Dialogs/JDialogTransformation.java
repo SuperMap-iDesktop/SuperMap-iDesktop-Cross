@@ -124,7 +124,6 @@ public class JDialogTransformation extends SmDialog {
 		initListener();
 		initResources();
 		initComponentState();
-		table.getColumnModel().getColumn(TransformationTableModel.COLUMN_ENABLE).setMaxWidth(50);
 		table.getColumnModel().getColumn(TransformationTableModel.COLUMN_SAVE_AS).setMaxWidth(50);
 
 	}
@@ -552,14 +551,7 @@ public class JDialogTransformation extends SmDialog {
 		if (!isListenerEnable) {
 			return;
 		}
-		boolean buttonOkState = false;
-		for (int i = 0; i < table.getRowCount(); i++) {
-			buttonOkState = (Boolean) table.getValueAt(i, TransformationTableModel.COLUMN_ENABLE);
-			if (buttonOkState) {
-				break;
-			}
-		}
-		buttonOk.setEnabled(buttonOkState && transformation != null);
+		buttonOk.setEnabled(table.getRowCount() > 0 && transformation != null);
 		buttonSelectAll.setEnabled(table.getRowCount() > 0);
 		buttonSelectInvert.setEnabled(table.getRowCount() > 0);
 		buttonDel.setEnabled(table.getSelectedRowCount() > 0);

@@ -786,35 +786,35 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	}
 
 
-	@Override
-	public void addTransformationDataset(Dataset transformationDataset, Datasource resultDatasource, String resultDatasetName) {
-		TransformationAddObjectBean transformationAddObjectBean = new TransformationAddObjectBean(transformationDataset, resultDatasource, resultDatasetName);
-		ArrayList<Object> datas = new ArrayList<>();
-		datas.add(transformationAddObjectBean);
-		if (getWidth() != 0) {
-			transformationTarget.addDatas(datas);
-		} else {
-			if (transformationObjects == null) {
-				transformationObjects = new ArrayList<>();
-			}
-			transformationObjects.add(transformationAddObjectBean);
-		}
-	}
+//	@Override
+//	public void addTransformationDataset(Dataset transformationDataset, Datasource resultDatasource, String resultDatasetName) {
+//		TransformationAddObjectBean transformationAddObjectBean = new TransformationAddObjectBean(transformationDataset, resultDatasource, resultDatasetName);
+//		ArrayList<Object> datas = new ArrayList<>();
+//		datas.add(transformationAddObjectBean);
+//		if (getWidth() != 0) {
+//			transformationTarget.addDatas(datas);
+//		} else {
+//			if (transformationObjects == null) {
+//				transformationObjects = new ArrayList<>();
+//			}
+//			transformationObjects.add(transformationAddObjectBean);
+//		}
+//	}
 
-	@Override
-	public void addTransformationMap(Map map) {
-		TransformationAddObjectBean transformationAddObjectBean = new TransformationAddObjectBean(map);
-		ArrayList<Object> datas = new ArrayList<>();
-		datas.add(transformationAddObjectBean);
-		if (getWidth() != 0) {
-			transformationTarget.addDatas(datas);
-		} else {
-			if (transformationObjects == null) {
-				transformationObjects = new ArrayList<>();
-			}
-			transformationObjects.add(transformationAddObjectBean);
-		}
-	}
+//	@Override
+//	public void addTransformationMap(Map map) {
+//		TransformationAddObjectBean transformationAddObjectBean = new TransformationAddObjectBean(map);
+//		ArrayList<Object> datas = new ArrayList<>();
+//		datas.add(transformationAddObjectBean);
+//		if (getWidth() != 0) {
+//			transformationTarget.addDatas(datas);
+//		} else {
+//			if (transformationObjects == null) {
+//				transformationObjects = new ArrayList<>();
+//			}
+//			transformationObjects.add(transformationAddObjectBean);
+//		}
+//	}
 
 	@Override
 	public void addReferenceObjects(List<Object> listObjects) {
@@ -828,7 +828,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	}
 
 	@Override
-	public void addTargetObjects(ArrayList<Object> targetObject) {
+	public void addTargetObjects(List<Object> targetObject) {
 		for (int i = 0; i < targetObject.size(); i++) {
 			Object item = targetObject.get(i);
 			if (item instanceof Map) {
@@ -839,7 +839,14 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 						defaultDatasource == null ? null : defaultDatasource.getDatasets().getAvailableDatasetName(((Dataset) item).getName() + "_adjust")));
 			}
 		}
-		transformationTarget.addDatas(targetObject);
+		if (getWidth() != 0) {
+			transformationTarget.addDatas(targetObject);
+		} else {
+			if (transformationObjects == null) {
+				transformationObjects = new ArrayList<>();
+			}
+			transformationObjects.addAll(targetObject);
+		}
 	}
 
 	@Override

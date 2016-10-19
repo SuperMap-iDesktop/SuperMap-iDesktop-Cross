@@ -4,13 +4,14 @@ import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.CtrlAction.transformationForm.Dialogs.JDialogNewTransformationForm;
+import com.supermap.desktop.CtrlAction.transformationForm.Dialogs.NewTransformations.JDialogNewTransformation;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilities.XmlUtilities;
 
 /**
  * @author XiaJT
@@ -22,11 +23,15 @@ public class CtrlActionNewTransformationForm extends CtrlAction {
 
 	@Override
 	public void run() {
-		JDialogNewTransformationForm jDialogNewTransformationForm = new JDialogNewTransformationForm();
+		JDialogNewTransformation jDialogNewTransformationForm = new JDialogNewTransformation();
 		if (jDialogNewTransformationForm.showDialog() == DialogResult.OK) {
 			IFormTransformation iFormTransformation = (IFormTransformation) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.TRANSFORMATION, "");
 			iFormTransformation.addReferenceObjects(jDialogNewTransformationForm.getReferenceObjects());
-			iFormTransformation.addTransformationDataset(jDialogNewTransformationForm.getTransformationDataset(), jDialogNewTransformationForm.getResultDatasource(), jDialogNewTransformationForm.getResultDatasetName());
+			iFormTransformation.addTargetObjects(jDialogNewTransformationForm.getTargetObjects());
+			if (jDialogNewTransformationForm.isSelectTransformationFile()) {
+				iFormTransformation.fromXml(XmlUtilities.getDocument(jDialogNewTransformationForm.getSelectTransformationFilePath()));
+
+			}
 			iFormTransformation.setTransformationMode(jDialogNewTransformationForm.getTransformationMode());
 		}
 		jDialogNewTransformationForm.dispose();
