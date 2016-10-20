@@ -34,11 +34,11 @@ public class LayoutEditorActivator implements BundleActivator {
 	@Override
 	public void stop(BundleContext bundleContext) throws Exception {
 		LayoutEditorActivator.setContext(null);
+		System.out.println("Goodbye SuperMap === LayoutEditor!!");
 	}
 
 	private static void setContext(BundleContext bundleContext) {
 		LayoutEditorActivator.CONTEXT = bundleContext;
-		System.out.println("Goodbye SuperMap === LayoutEditor!!");
 	}
 
 }

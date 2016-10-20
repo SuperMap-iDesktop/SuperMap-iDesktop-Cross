@@ -5,8 +5,10 @@ import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationTa
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.enums.FormTransformationSubFormType;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.ui.MapControl;
 
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -222,11 +224,9 @@ public class FormTransformationTableModel extends DefaultTableModel {
 		if (subFormType == FormTransformationSubFormType.Target) {
 			dataBeanList.get(row).setPointOriginal(null);
 			fireTableCellUpdated(row, COLUMN_OriginalX);
-//			fireTableCellUpdated(row,COLUMN_OriginalY);
 		} else if (subFormType == FormTransformationSubFormType.Reference) {
 			dataBeanList.get(row).setPointRefer(null);
 			fireTableCellUpdated(row, COLUMN_ReferX);
-//			fireTableCellUpdated(row, COLUMN_ReferY);
 		}
 	}
 
@@ -355,5 +355,51 @@ public class FormTransformationTableModel extends DefaultTableModel {
 		int size = dataBeanList.size();
 		dataBeanList.addAll(transformationTableDataBean);
 		fireTableRowsInserted(size, dataBeanList.size() - 1);
+	}
+
+	public int getNearestPoint(Point currentPoint, FormTransformationSubFormType subFormType, MapControl mapControl) {
+		if (subFormType == FormTransformationSubFormType.Target) {
+			for (int i = 0; i < dataBeanList.size(); i++) {
+				TransformationTableDataBean transformationTableDataBean = dataBeanList.get(i);
+				Point2D pointOriginal = transformationTableDataBean.getPointOriginal();
+				if (pointOriginal != null) {
+					Point point1 = mapControl.getMap().mapToPixel(pointOriginal);
+					if (isNearestPoint(currentPoint, point1)) {
+						return i;
+					}
+				}
+			}
+		} else {
+			for (int i = 0; i < dataBeanList.size(); i++) {
+				TransformationTableDataBean transformationTableDataBean = dataBeanList.get(i);
+				Point2D pointRefer = transformationTableDataBean.getPointRefer();
+				if (pointRefer != null) {
+					Point point1 = mapControl.getMap().mapToPixel(pointRefer);
+					if (isNearestPoint(currentPoint, point1)) {
+						return i;
+					}
+				}
+			}
+		}
+		return -1;
+	}
+
+	private boolean isNearestPoint(Point currentPoint, Point point) {
+		if (currentPoint == null || point == null) {
+			return false;
+		}
+		return Math.abs(currentPoint.getX() - point.getX()) + Math.abs(currentPoint.getY() - point.getY()) < 4;
+	}
+
+	public void setPoint(Point2D point2D, int row, FormTransformationSubFormType dragFormType) {
+		if (dragFormType == FormTransformationSubFormType.Reference) {
+			dataBeanList.get(row).setPointRefer(point2D);
+			fireTableCellUpdated(row, COLUMN_ReferX);
+			fireTableRowsUpdated(row, row);
+		} else {
+			dataBeanList.get(row).setPointOriginal(point2D);
+			fireTableCellUpdated(row, COLUMN_OriginalX);
+			fireTableRowsUpdated(row, row);
+		}
 	}
 }

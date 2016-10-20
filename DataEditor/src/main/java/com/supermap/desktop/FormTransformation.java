@@ -74,6 +74,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -110,7 +111,9 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	private TransformationMode transformationMode = TransformationMode.LINEAR;
 	private Transformation transformation;
 
-	private static final int MARKETWIDTH = 128;
+//	private Cursor createPointCursor;
+
+	private static final int MARKET_WIDTH = 128;
 
 	private MouseAdapter mapControlMouseAdapter = new MouseAdapter() {
 		@Override
@@ -129,6 +132,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		public void mouseReleased(MouseEvent e) {
 			initCenter(getMapControl());
 			initScale(getMapControl());
+			isDragPointPress = false;
 		}
 
 		@Override
@@ -199,17 +203,56 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		@Override
 		public void tracked(TrackedEvent trackedEvent) {
 			if (trackedEvent.getSource() != null && trackedEvent.getSource() instanceof MapControl) {
-				MapControl source = (MapControl) trackedEvent.getSource();
-				TransformationBase form = getFormByMapControl(source);
-				addPoint(form, trackedEvent.getGeometry().getInnerPoint());
-				pointValueChanged();
+				MapControl mapControl = (MapControl) trackedEvent.getSource();
+				TransformationBase form = getFormByMapControl(mapControl);
+				FormTransformationSubFormType subFormTypeByForm = getSubFormTypeByForm(form);
+				// 如果点存在，则执行拖拽操作，否则直接添加
+				int nearestPointRowIndex = formTransformationTableModel.getNearestPoint(mapControl.getMap().mapToPixel(trackedEvent.getGeometry().getInnerPoint()), subFormTypeByForm, mapControl);
+				if (nearestPointRowIndex == -1) {
+					addPoint(form, trackedEvent.getGeometry().getInnerPoint());
+					pointValueChanged();
+				} else {
+					isDragPointPress = true;
+					dragRow = nearestPointRowIndex;
+					tablePoints.setRowSelectionInterval(nearestPointRowIndex, nearestPointRowIndex);
+					dragFormType = subFormTypeByForm;
+//					if (createPointCursor == null) {
+//						createPointCursor = MapControl.Cursors.getCreatePoint();
+//					}
+//					MapControl.Cursors.setCreatePoint(MapControl.Cursors.getPan());
+				}
+			}
+		}
+	};
+
+
+	private MouseMotionListener addPointDraggedListener = new MouseMotionListener() {
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			MapControl mapControl = (MapControl) e.getSource();
+			if (isDragPointPress && getSubFormTypeByForm(getFormByMapControl(mapControl)) == dragFormType
+					&& e.getPoint().getX() >= 0 && e.getPoint().getY() >= 0 && e.getPoint().getX() <= mapControl.getWidth() && e.getPoint().getY() <= mapControl.getHeight()) {
+				formTransformationTableModel.setPoint(mapControl.getMap().pixelToMap(e.getPoint()), dragRow, dragFormType);
+			}
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			MapControl mapControl = (MapControl) e.getSource();
+			FormTransformationSubFormType subFormType = FormTransformationSubFormType.Reference;
+			if (mapControl == transformationTarget.getMapControl()) {
+				subFormType = FormTransformationSubFormType.Target;
+			}
+			int rowIndex = formTransformationTableModel.getNearestPoint(e.getPoint(), subFormType, mapControl);
+			if (rowIndex != -1) {
+				mapControl.setCursor(MapControl.Cursors.getPan());
 			}
 		}
 	};
 
 	private void pointValueChanged() {
 		changeTransformation(null);
-		ToolbarUIUtilities.updataToolbarsState();
 	}
 
 	private ActionChangedListener addPointActionChangeListener = new ActionChangedListener() {
@@ -374,8 +417,12 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	private void removeListeners() {
 		removeMapControlListener();
 	}
+
 	private void tableValueChanged(TableModelEvent e) {
 		int lastRow = e.getLastRow();
+		if (e.getColumn() == -1) {
+			return;
+		}
 		if (e.getType() == TableModelEvent.DELETE) {
 			for (int i = e.getLastRow(); i >= e.getFirstRow(); i--) {
 				removeTrackingObject(i, transformationTarget.getMapControl().getMap());
@@ -398,10 +445,15 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 					} else {
 						point2D = formTransformationTableModel.getReferPoint(lastRow);
 					}
-					form.getMapControl().getMap().getTrackingLayer().remove(getIndexByTag(form.getMapControl().getMap().getTrackingLayer(), getTag(lastRow + 1)));
+					int indexByTag = getIndexByTag(form.getMapControl().getMap().getTrackingLayer(), getTag(lastRow + 1));
+					if (indexByTag != -1) {
+						form.getMapControl().getMap().getTrackingLayer().remove(indexByTag);
+					}
 					form.getMapControl().getMap().getTrackingLayer().add(getTrackingGeometry(lastRow + 1, point2D, selectedColor), getTag(lastRow + 1));
+					form.getMapControl().getMap().refreshTrackingLayer();
 				} else {
 					form.getMapControl().getMap().getTrackingLayer().remove(getIndexByTag(form.getMapControl().getMap().getTrackingLayer(), getTag(lastRow + 1)));
+					form.getMapControl().getMap().refreshTrackingLayer();
 				}
 			} else if (column == FormTransformationTableModel.COLUMN_IS_SELECTED) {
 
@@ -455,6 +507,13 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		form.getMapControl().getMap().refreshTrackingLayer();
 	}
 
+	/**
+	 * 根据tag获取跟踪层对象序号
+	 *
+	 * @param trackingLayer 跟踪层
+	 * @param tag           需要查找的tag
+	 * @return 如果不存在返回-1
+	 */
 	private int getIndexByTag(TrackingLayer trackingLayer, String tag) {
 		for (int i = trackingLayer.getCount() - 1; i >= 0; i--) {
 			if (trackingLayer.getTag(i).equals(tag)) {
@@ -727,35 +786,35 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	}
 
 
-	@Override
-	public void addTransformationDataset(Dataset transformationDataset, Datasource resultDatasource, String resultDatasetName) {
-		TransformationAddObjectBean transformationAddObjectBean = new TransformationAddObjectBean(transformationDataset, resultDatasource, resultDatasetName);
-		ArrayList<Object> datas = new ArrayList<>();
-		datas.add(transformationAddObjectBean);
-		if (getWidth() != 0) {
-			transformationTarget.addDatas(datas);
-		} else {
-			if (transformationObjects == null) {
-				transformationObjects = new ArrayList<>();
-			}
-			transformationObjects.add(transformationAddObjectBean);
-		}
-	}
+//	@Override
+//	public void addTransformationDataset(Dataset transformationDataset, Datasource resultDatasource, String resultDatasetName) {
+//		TransformationAddObjectBean transformationAddObjectBean = new TransformationAddObjectBean(transformationDataset, resultDatasource, resultDatasetName);
+//		ArrayList<Object> datas = new ArrayList<>();
+//		datas.add(transformationAddObjectBean);
+//		if (getWidth() != 0) {
+//			transformationTarget.addDatas(datas);
+//		} else {
+//			if (transformationObjects == null) {
+//				transformationObjects = new ArrayList<>();
+//			}
+//			transformationObjects.add(transformationAddObjectBean);
+//		}
+//	}
 
-	@Override
-	public void addTransformationMap(Map map) {
-		TransformationAddObjectBean transformationAddObjectBean = new TransformationAddObjectBean(map);
-		ArrayList<Object> datas = new ArrayList<>();
-		datas.add(transformationAddObjectBean);
-		if (getWidth() != 0) {
-			transformationTarget.addDatas(datas);
-		} else {
-			if (transformationObjects == null) {
-				transformationObjects = new ArrayList<>();
-			}
-			transformationObjects.add(transformationAddObjectBean);
-		}
-	}
+//	@Override
+//	public void addTransformationMap(Map map) {
+//		TransformationAddObjectBean transformationAddObjectBean = new TransformationAddObjectBean(map);
+//		ArrayList<Object> datas = new ArrayList<>();
+//		datas.add(transformationAddObjectBean);
+//		if (getWidth() != 0) {
+//			transformationTarget.addDatas(datas);
+//		} else {
+//			if (transformationObjects == null) {
+//				transformationObjects = new ArrayList<>();
+//			}
+//			transformationObjects.add(transformationAddObjectBean);
+//		}
+//	}
 
 	@Override
 	public void addReferenceObjects(List<Object> listObjects) {
@@ -769,7 +828,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	}
 
 	@Override
-	public void addTargetObjects(ArrayList<Object> targetObject) {
+	public void addTargetObjects(List<Object> targetObject) {
 		for (int i = 0; i < targetObject.size(); i++) {
 			Object item = targetObject.get(i);
 			if (item instanceof Map) {
@@ -780,7 +839,14 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 						defaultDatasource == null ? null : defaultDatasource.getDatasets().getAvailableDatasetName(((Dataset) item).getName() + "_adjust")));
 			}
 		}
-		transformationTarget.addDatas(targetObject);
+		if (getWidth() != 0) {
+			transformationTarget.addDatas(targetObject);
+		} else {
+			if (transformationObjects == null) {
+				transformationObjects = new ArrayList<>();
+			}
+			transformationObjects.addAll(targetObject);
+		}
 	}
 
 	@Override
@@ -791,6 +857,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			transformationReference.getMapControl().setTrackMode(TrackMode.TRACK);
 			transformationTarget.getMapControl().setAction(Action.CREATEPOINT);
 			transformationReference.getMapControl().setAction(Action.CREATEPOINT);
+			transformationTarget.getMapControl().setWaitCursorEnabled(false);
+			transformationReference.getMapControl().setWaitCursorEnabled(false);
 			initAddPointListeners();
 		}
 	}
@@ -800,6 +868,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		transformationReference.getMapControl().setTrackMode(TrackMode.EDIT);
 		transformationTarget.getMapControl().setAction(Action.SELECT2);
 		transformationReference.getMapControl().setAction(Action.SELECT2);
+		transformationTarget.getMapControl().setWaitCursorEnabled(true);
+		transformationReference.getMapControl().setWaitCursorEnabled(true);
 		removeAddPointListeners();
 		isAddPointing = false;
 	}
@@ -812,11 +882,18 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		return form == transformationTarget ? FormTransformationSubFormType.Target : FormTransformationSubFormType.Reference;
 	}
 
+	private boolean isDragPointPress = false;
+	private int dragRow = -1;
+	private FormTransformationSubFormType dragFormType = null;
+
+
 	private void initAddPointListeners() {
 		transformationTarget.getMapControl().addTrackedListener(addPointTrackedListener);
 		transformationReference.getMapControl().addTrackedListener(addPointTrackedListener);
 		transformationTarget.getMapControl().addActionChangedListener(addPointActionChangeListener);
 		transformationReference.getMapControl().addActionChangedListener(addPointActionChangeListener);
+		transformationTarget.getMapControl().addMouseMotionListener(addPointDraggedListener);
+		transformationReference.getMapControl().addMouseMotionListener(addPointDraggedListener);
 	}
 
 	private void removeAddPointListeners() {
@@ -824,6 +901,10 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		transformationReference.getMapControl().removeTrackedListener(addPointTrackedListener);
 		transformationTarget.getMapControl().removeActionChangedListener(addPointActionChangeListener);
 		transformationReference.getMapControl().removeActionChangedListener(addPointActionChangeListener);
+		if (addPointDraggedListener != null) {
+			transformationTarget.getMapControl().removeMouseMotionListener(addPointDraggedListener);
+			transformationReference.getMapControl().removeMouseMotionListener(addPointDraggedListener);
+		}
 	}
 
 	private TransformationBase getFormByMapControl(MapControl mapControl) {
@@ -887,14 +968,14 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	private SymbolMarker getCrossMarket(Color color) {
 		SymbolMarker sm = new SymbolMarker();
 
-		Rectangle2D rect = new Rectangle2D(0, 0, MARKETWIDTH, MARKETWIDTH);
+		Rectangle2D rect = new Rectangle2D(0, 0, MARKET_WIDTH, MARKET_WIDTH);
 		GeoCompound compound = new GeoCompound();
 		try {
 			int start = 0;
-			int end = MARKETWIDTH - start;
+			int end = MARKET_WIDTH - start;
 			Point2Ds pnts = new Point2Ds();
-			pnts.add(new Point2D(start, MARKETWIDTH / 2));
-			pnts.add(new Point2D(end, MARKETWIDTH / 2));
+			pnts.add(new Point2D(start, MARKET_WIDTH / 2));
+			pnts.add(new Point2D(end, MARKET_WIDTH / 2));
 			GeoLine line = new GeoLine(pnts);
 			GeoStyle lineStyle = new GeoStyle();
 			lineStyle.setLineColor(color);
@@ -903,8 +984,8 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			compound.addPart(line);
 
 			pnts = new Point2Ds();
-			pnts.add(new Point2D(MARKETWIDTH / 2, start));
-			pnts.add(new Point2D(MARKETWIDTH / 2, end));
+			pnts.add(new Point2D(MARKET_WIDTH / 2, start));
+			pnts.add(new Point2D(MARKET_WIDTH / 2, end));
 			line = new GeoLine(pnts);
 			line.setStyle(lineStyle);
 			compound.addPart(line);

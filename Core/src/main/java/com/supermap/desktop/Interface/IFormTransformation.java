@@ -1,26 +1,19 @@
 package com.supermap.desktop.Interface;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.Datasource;
 import com.supermap.data.Transformation;
 import com.supermap.data.TransformationMode;
 import com.supermap.desktop.enums.FormTransformationSubFormType;
-import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 import org.w3c.dom.Document;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author XiaJT
  */
 public interface IFormTransformation extends IForm {
-	void addTransformationDataset(Dataset transformationDataset, Datasource resultDatasource, String resultDatasetName);
-
-	void addTransformationMap(Map map);
 
 	void addReferenceObjects(List<Object> listObjects);
 
@@ -36,7 +29,7 @@ public interface IFormTransformation extends IForm {
 
 	void setAction(Action action);
 
-	void addTargetObjects(ArrayList<Object> targetObject);
+	void addTargetObjects(List<Object> targetObject);
 
 	Color getSelectedColor();
 
