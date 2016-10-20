@@ -1,72 +1,13 @@
 package com.supermap.desktop.util;
 
 import com.supermap.data.Datasource;
-import com.supermap.data.conversion.ImportSetting;
-import com.supermap.data.conversion.ImportSettingBIL;
-import com.supermap.data.conversion.ImportSettingBIP;
-import com.supermap.data.conversion.ImportSettingBMP;
-import com.supermap.data.conversion.ImportSettingBSQ;
-import com.supermap.data.conversion.ImportSettingCSV;
-import com.supermap.data.conversion.ImportSettingCoverage;
-import com.supermap.data.conversion.ImportSettingDBF;
-import com.supermap.data.conversion.ImportSettingDWG;
-import com.supermap.data.conversion.ImportSettingDXF;
-import com.supermap.data.conversion.ImportSettingE00;
-import com.supermap.data.conversion.ImportSettingGBDEM;
-import com.supermap.data.conversion.ImportSettingGIF;
-import com.supermap.data.conversion.ImportSettingGRD;
-import com.supermap.data.conversion.ImportSettingIMG;
-import com.supermap.data.conversion.ImportSettingJPG;
-import com.supermap.data.conversion.ImportSettingKML;
-import com.supermap.data.conversion.ImportSettingKMZ;
-import com.supermap.data.conversion.ImportSettingLIDAR;
-import com.supermap.data.conversion.ImportSettingMAPGIS;
-import com.supermap.data.conversion.ImportSettingMIF;
-import com.supermap.data.conversion.ImportSettingModel3DS;
-import com.supermap.data.conversion.ImportSettingModelDXF;
-import com.supermap.data.conversion.ImportSettingModelOSG;
-import com.supermap.data.conversion.ImportSettingModelX;
-import com.supermap.data.conversion.ImportSettingMrSID;
-import com.supermap.data.conversion.ImportSettingPNG;
-import com.supermap.data.conversion.ImportSettingRAW;
-import com.supermap.data.conversion.ImportSettingSCV;
-import com.supermap.data.conversion.ImportSettingSHP;
-import com.supermap.data.conversion.ImportSettingSIT;
-import com.supermap.data.conversion.ImportSettingTAB;
-import com.supermap.data.conversion.ImportSettingTEMSClutter;
-import com.supermap.data.conversion.ImportSettingTIF;
-import com.supermap.data.conversion.ImportSettingUSGSDEM;
-import com.supermap.data.conversion.ImportSettingVCT;
-import com.supermap.data.conversion.ImportSettingWOR;
-import com.supermap.data.conversion.MultiBandImportMode;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FileTypeLocale;
 import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.DataImportFrame;
-import com.supermap.desktop.ui.ImportPanelArcGIS;
-import com.supermap.desktop.ui.ImportPanelCSV;
-import com.supermap.desktop.ui.ImportPanelD;
-import com.supermap.desktop.ui.ImportPanelE00;
-import com.supermap.desktop.ui.ImportPanelEXCEL;
-import com.supermap.desktop.ui.ImportPanelGJB;
-import com.supermap.desktop.ui.ImportPanelGRID;
-import com.supermap.desktop.ui.ImportPanelIMG;
-import com.supermap.desktop.ui.ImportPanelKML;
-import com.supermap.desktop.ui.ImportPanelLIDAR;
-import com.supermap.desktop.ui.ImportPanelMapGIS;
-import com.supermap.desktop.ui.ImportPanelMapInfo;
-import com.supermap.desktop.ui.ImportPanelModel;
-import com.supermap.desktop.ui.ImportPanelPI;
-import com.supermap.desktop.ui.ImportPanelSCV;
-import com.supermap.desktop.ui.ImportPanelSHP;
-import com.supermap.desktop.ui.ImportPanelSIT;
-import com.supermap.desktop.ui.ImportPanelTIF;
-import com.supermap.desktop.ui.ImportPanelVECTOR;
-import com.supermap.desktop.ui.ImportPanelVandG;
-import com.supermap.desktop.ui.ImportPanelWOR;
-import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.*;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
@@ -113,7 +54,7 @@ public class CommonFunction {
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[8], "kml", "kmz"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[9], "dem", "bil", "raw", "bsq", "bip", "sid", "b"),
 						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[10], "txt"),
-						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[11], "vct"));
+						SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[11], "dgn", "vct"));
 				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
 						DataConversionProperties.getString("String_FileType"), "CommonFunction", "OpenMany");
 			} else {

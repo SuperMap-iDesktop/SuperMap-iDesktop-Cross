@@ -84,7 +84,6 @@ public class DataImportFrame extends SmDialog {
 
 	private DropTarget dropTargetTemper;
 
-	private int count;
 	private String fileTypeInfo;
 
 	private transient CommonButtonAction buttonAction = new CommonButtonAction();

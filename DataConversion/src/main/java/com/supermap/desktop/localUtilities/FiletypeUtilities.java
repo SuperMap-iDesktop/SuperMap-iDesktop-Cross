@@ -1,14 +1,16 @@
-package com.supermap.desktop.util;
+package com.supermap.desktop.localUtilities;
 
 import com.supermap.desktop.FileTypeLocale;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 
 /**
- * @author Administrator 文件类型设置工具类
+ * Created by xie on 2016/10/14.
+ * 文件类型转换工具类
+ * 将文件类型对应为自己设定的文件类型
  */
-public class FileTypeUtil {
-    private FileTypeUtil() {
-        super();
+public class FiletypeUtilities {
+    private FiletypeUtilities() {
+        // 工具类不提供公共的构造函数
     }
 
     public static String getParseFile(String filePath, String fileFilter) {
@@ -66,9 +68,18 @@ public class FileTypeUtil {
         }
         if (filePath.equalsIgnoreCase(FileTypeLocale.BIL_STRING) || filePath.equalsIgnoreCase(FileTypeLocale.RAW_STRING)
                 || filePath.equalsIgnoreCase(FileTypeLocale.BSQ_STRING) || filePath.equalsIgnoreCase(FileTypeLocale.BIP_STRING)
-                || filePath.equalsIgnoreCase(FileTypeLocale.SID_STRING) || filePath.equalsIgnoreCase(FileTypeLocale.B_STRING)) {
+                || filePath.equalsIgnoreCase(FileTypeLocale.B_STRING)) {
             fileType = DataConversionProperties.getString("String_FormImport_GRID");
             // 栅格文件(*.bil,*.raw,*.bsq,*.bip,*.sid,*.b)
+        }
+        if (filePath.equalsIgnoreCase(FileTypeLocale.SID_STRING)) {
+            fileType = "SID";
+        }
+        if (filePath.equalsIgnoreCase(FileTypeLocale.VCT_STRING)) {
+            fileType = DataConversionProperties.getString("String_FormImport_VCT");
+        }
+        if (filePath.equalsIgnoreCase(FileTypeLocale.DGN_STRING)) {
+            fileType = "DGN";
         }
         if (filePath.equalsIgnoreCase(FileTypeLocale.DEM_STRING)) {
             fileType = DataConversionProperties.getString("String_FormImport_ArcGIS");
@@ -80,10 +91,6 @@ public class FileTypeUtil {
         if (fileFilter.equalsIgnoreCase(DataConversionProperties.getString("string_filetype_3ds"))) {
             fileType = DataConversionProperties.getString("String_FormImport_FilterModel");
             // 三维dxf文件（.ModelDXF）
-        }
-        if (fileFilter.equalsIgnoreCase(DataConversionProperties.getString("string_filetype_vct"))) {
-            fileType = DataConversionProperties.getString("String_FormImport_VCT");
-            // vct文件
         }
         return fileType;
     }
