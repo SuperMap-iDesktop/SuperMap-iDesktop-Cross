@@ -241,7 +241,6 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 				arg0.setCancel(true);
 				this.isCancel = true;
 			}
-
 		}
 
 	}
