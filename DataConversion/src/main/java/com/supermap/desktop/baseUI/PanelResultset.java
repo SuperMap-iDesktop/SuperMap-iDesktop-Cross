@@ -166,6 +166,10 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
                 } else if (importSetting instanceof ImportSettingECW) {
                     ((ImportSettingECW) importSetting).setImportingAsGrid(true);
                 }
+            } else if (datasetType.equals(DataConversionProperties.getString("String_datasetType2D"))) {
+                ((ImportSettingLIDAR) importSetting).setImportingAs3D(false);
+            } else if (datasetType.equals(DataConversionProperties.getString("String_datasetType3D"))) {
+                ((ImportSettingLIDAR) importSetting).setImportingAs3D(true);
             }
         }
     };
@@ -354,46 +358,46 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
                 importSetting instanceof ImportSettingSHP || importSetting instanceof ImportSettingE00 ||
                 importSetting instanceof ImportSettingDBF || importSetting instanceof ImportSettingBIL ||
                 importSetting instanceof ImportSettingBSQ || importSetting instanceof ImportSettingBIP ||
-                importSetting instanceof ImportSettingTEMSClutter || importSetting instanceof ImportSettingLIDAR ||
-                importSetting instanceof ImportSettingVCT || importSetting instanceof ImportSettingRAW ||
-                importSetting instanceof ImportSettingGJB) {
+                importSetting instanceof ImportSettingTEMSClutter || importSetting instanceof ImportSettingVCT ||
+                importSetting instanceof ImportSettingRAW || importSetting instanceof ImportSettingGJB) {
             this.comboBoxDatasetType = new DatasetComboBox();
             if (importSetting instanceof ImportSettingSIT) {
                 initComboboxEncodeType(true);
             } else {
                 initComboboxEncodeType(false);
             }
-            setDefaultLayout();
+            initDefaultLayout();
             if (importSetting instanceof ImportSettingSHP) {
-                this.remove(this.labelDatasetType);
-                this.remove(this.comboBoxDatasetType);
-                this.add(this.checkBoxFieldIndex, new GridBagConstraintsHelper(0, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+                this.add(this.checkBoxFieldIndex, new GridBagConstraintsHelper(0, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
                 this.add(this.checkBoxSpatialIndex, new GridBagConstraintsHelper(4, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
             } else if (importSetting instanceof ImportSettingE00 || importSetting instanceof ImportSettingGJB) {
-                this.remove(this.labelDatasetType);
-                this.remove(this.comboBoxDatasetType);
-                this.remove(this.checkBoxFieldIndex);
-                this.add(this.checkBoxSpatialIndex, new GridBagConstraintsHelper(0, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+                this.add(this.checkBoxSpatialIndex, new GridBagConstraintsHelper(0, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
                 if (importSetting instanceof ImportSettingGJB) {
                     this.labelDatasetName.setEnabled(false);
                     this.textFieldDatasetName.setEnabled(false);
                 }
-            } else {
-                this.remove(this.labelDatasetType);
-                this.remove(this.comboBoxDatasetType);
-                this.remove(this.checkBoxFieldIndex);
-                this.remove(this.checkBoxSpatialIndex);
             }
             this.textFieldDatasetName.setPreferredSize(PackageInfo.defaultSize);
             this.comboBoxImportMode.setPreferredSize(PackageInfo.defaultSize);
             this.comboBoxDatasource.setPreferredSize(PackageInfo.defaultSize);
             this.comboBoxEncodeType.setPreferredSize(PackageInfo.defaultSize);
+        } else if (importSetting instanceof ImportSettingLIDAR) {
+            initComboboxEncodeType(false);
+            this.comboBoxDatasetType = new DatasetComboBox(new String[]{DataConversionProperties.getString("String_datasetType2D"), DataConversionProperties.getString("String_datasetType3D")});
+            initDefaultLayout();
+            if (((ImportSettingLIDAR) importSetting).isImportingAs3D()) {
+                this.comboBoxDatasetType.setSelectedIndex(1);
+            } else {
+                this.comboBoxDatasetType.setSelectedIndex(0);
+            }
+            this.add(this.labelDatasetType, new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 20).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+            this.add(this.comboBoxDatasetType, new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            this.add(this.checkBoxSpatialIndex, new GridBagConstraintsHelper(4, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         }
         this.comboBoxEncodeType.setEditable(true);
         ((JTextField) this.comboBoxEncodeType.getEditor().getEditorComponent()).setEditable(false);
         this.comboBoxImportMode.setEditable(true);
         ((JTextField) this.comboBoxImportMode.getEditor().getEditorComponent()).setEditable(false);
-
     }
 
     private void initTargetDatasetTypeForVector() {
@@ -441,6 +445,14 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
     }
 
     private void setDefaultLayout() {
+        initDefaultLayout();
+        this.add(this.labelDatasetType, new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 20).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(this.comboBoxDatasetType, new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.add(this.checkBoxFieldIndex, new GridBagConstraintsHelper(4, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(this.checkBoxSpatialIndex, new GridBagConstraintsHelper(6, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+    }
+
+    private void initDefaultLayout() {
         this.removeAll();
         this.add(this.labelDatasource, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 20).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(this.comboBoxDatasource, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
@@ -451,11 +463,6 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
         this.add(this.comboBoxEncodeType, new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
         this.add(this.labelImportMode, new GridBagConstraintsHelper(4, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(this.comboBoxImportMode, new GridBagConstraintsHelper(6, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
-
-        this.add(this.labelDatasetType, new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 20).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(this.comboBoxDatasetType, new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
-        this.add(this.checkBoxFieldIndex, new GridBagConstraintsHelper(4, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(this.checkBoxSpatialIndex, new GridBagConstraintsHelper(6, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
     }
 
     private void initComboboxEncodeType(boolean isGrid) {

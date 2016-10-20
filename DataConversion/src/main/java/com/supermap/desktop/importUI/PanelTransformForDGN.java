@@ -49,7 +49,7 @@ public class PanelTransformForDGN extends PanelTransform {
     public void initLayerout() {
         this.removeAll();
         this.setLayout(new GridBagLayout());
-        this.add(this.checkBoxImportCellAsPoint, new GridBagConstraintsHelper(0, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 20).setFill(GridBagConstraints.NONE).setWeight(1, 0));
+        this.add(this.checkBoxImportCellAsPoint, new GridBagConstraintsHelper(0, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 20).setFill(GridBagConstraints.NONE).setWeight(1, 0));
         this.add(this.checkBoxImportByLayer, new GridBagConstraintsHelper(4, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(1, 0).setIpad(82, 0));
     }
 
