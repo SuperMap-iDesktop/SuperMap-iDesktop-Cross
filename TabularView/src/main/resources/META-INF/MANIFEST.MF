@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1474948686309
+Bnd-LastModified: 1476943976759
 Build-Jdk: 1.7.0_80
-Built-By: Administrator
+Built-By: highsad
 Bundle-Activator: com.supermap.desktop.tabularview.TabularViewActivator
 Bundle-ManifestVersion: 2
 Bundle-Name: TabularView
