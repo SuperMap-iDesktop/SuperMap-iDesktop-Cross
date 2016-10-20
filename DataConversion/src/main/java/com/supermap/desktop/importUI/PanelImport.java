@@ -33,6 +33,9 @@ public class PanelImport extends JPanel implements IPanelImport {
         this.owner = owner;
         this.importInfo = importInfo;
         this.importSetting = importInfo.getImportSetting();
+        if (null == importSetting) {
+            return;
+        }
         initComponents();
         initLayerout();
     }

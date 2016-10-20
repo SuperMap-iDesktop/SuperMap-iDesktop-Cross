@@ -258,12 +258,10 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             this.textFieldDatasetName.setText(importSetting.getTargetDatasetName());
         } else {
             String textInfo = FileUtilities.getFileAlias(this.importSetting.getSourceFilePath());
-            if (null != textInfo) {
-                String availableName = this.comboBoxDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(textInfo);
-                this.textFieldDatasetName.setText(availableName);
-                this.textFieldDatasetName.setToolTipText(availableName);
-                this.importSetting.setTargetDatasetName(availableName);
-            }
+            String availableName = this.comboBoxDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(textInfo);
+            this.textFieldDatasetName.setText(availableName);
+            this.textFieldDatasetName.setToolTipText(availableName);
+            this.importSetting.setTargetDatasetName(availableName);
         }
     }
 

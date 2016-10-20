@@ -24,6 +24,7 @@ import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -136,7 +137,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         for (File file : files) {
             ImportInfo importInfo = new ImportInfo();
             String fileType = FileUtilities.getFileType(file.getPath());
-            if (!".xlsx".equalsIgnoreCase(fileType)) {
+            if (!".xlsx".equalsIgnoreCase(fileType) && !StringUtilities.isNullOrEmpty(fileType)) {
                 //导入信息参数设置
                 importInfo.setFileName(file.getName());
                 String filetype = FiletypeUtilities.getParseFile(fileType, fileFilter);
@@ -145,11 +146,13 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 
                 IImportSettingFactory importSettingFactory = new ImportSettingFactory();
                 ImportSetting importSetting = importSettingFactory.createImportSetting(file.getPath(), fileFilter);
-                importInfo.setImportSetting(importSetting);
-                IImportPanelFactory importPanelFactory = new ImportPanelFactory();
-                IPanelImport panelImport = importPanelFactory.createPanelImport(DataImportDialog.this, importInfo);
-                panelImports.add(panelImport);
-                model.addRow(importInfo);
+                if (null != importSetting) {
+                    importInfo.setImportSetting(importSetting);
+                    IImportPanelFactory importPanelFactory = new ImportPanelFactory();
+                    IPanelImport panelImport = importPanelFactory.createPanelImport(DataImportDialog.this, importInfo);
+                    panelImports.add(panelImport);
+                    model.addRow(importInfo);
+                }
             }
         }
         if (panelImports.size() > 0) {
@@ -161,15 +164,10 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 
     private MouseListener mouseListener = new MouseAdapter() {
         @Override
-        public void mouseReleased(MouseEvent e) {
+        public void mouseClicked(MouseEvent e) {
             if (table.getSelectedRows().length == 1) {
                 replaceImportInfo(table.getSelectedRow());
-            }
-        }
-
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            if (2 == e.getClickCount()) {
+            } else if (2 == e.getClickCount()) {
                 addImportInfo();
             }
         }
@@ -177,11 +175,15 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 
     private void replaceImportInfo(int selectRow) {
         IPanelImport panelImport = panelImports.get(selectRow);
-        String fileType = FileUtilities.getFileType(panelImport.getImportInfo().getImportSetting().getSourceFilePath());
-        labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), fileType.substring(1, fileType.length()).toUpperCase()));
-        initComboBoxColumns();
-        ImportUtilities.replace(panelImportInfo, (JPanel) panelImport);
-        setButtonState();
+        if (null != panelImport.getImportInfo().getImportSetting()) {
+            String fileType = FileUtilities.getFileType(panelImport.getImportInfo().getImportSetting().getSourceFilePath());
+            if (!StringUtilities.isNullOrEmpty(fileType)) {
+                labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), fileType.substring(1, fileType.length()).toUpperCase()));
+            }
+            initComboBoxColumns();
+            ImportUtilities.replace(panelImportInfo, (JPanel) panelImport);
+            setButtonState();
+        }
     }
 
     private ActionListener deleteListener = new ActionListener() {
@@ -258,8 +260,8 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                     }
                 }
                 int[] selectRows = table.getSelectedRows();
-                if (0 == selectRows.length) {
-                    //没有选中项
+                if (table.getRowCount() == 0) {
+                    //没有要导入的项时
                     labelTitle.setText(DataConversionProperties.getString("string_label_importData"));
                     CommonFunction.replace(panelImportInfo, panelParams);
                     setButtonState();
@@ -502,19 +504,16 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
      */
     @SuppressWarnings("unchecked")
     public void initComboBoxColumns() {
-        TableTooltipCellRenderer tooltipCellRenderer = TableTooltipCellRenderer.getInstance();
-        this.table.getColumn(DataConversionProperties.getString("string_tabletitle_filetype")).setCellRenderer(tooltipCellRenderer);
-        this.table.getColumn(DataConversionProperties.getString("string_tabletitle_data")).setCellRenderer(tooltipCellRenderer);
         TableRowCellEditor rowEditor = new TableRowCellEditor(this.table);
         for (int i = 0; i < this.panelImports.size(); i++) {
             final ImportInfo tempFileInfo = this.panelImports.get(i).getImportInfo();
+            if (null == tempFileInfo.getImportSetting()) {
+                return;
+            }
             this.steppedComboBox = new SteppedComboBox(new String[]{});
             this.steppedComboBox.removeAllItems();
             String filePath = tempFileInfo.getImportSetting().getSourceFilePath();
             String fileType = FileUtilities.getFileType(filePath);
-            if (null == fileType) {
-                return;
-            }
             if (fileType.equalsIgnoreCase(FileTypeLocale.DXF_STRING)) {
                 this.steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_CAD"));
                 this.steppedComboBox.addItem(DataConversionProperties.getString("String_FormImport_FilterModel"));
@@ -588,7 +587,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                     tempFileInfo.setImportSetting(newImportSetting);
                     IPanelImport panelImport = importPanelFactory.createPanelImport(DataImportDialog.this, tempFileInfo);
                     String fileType = FileUtilities.getFileType(filePath);
-                    if (null != fileType) {
+                    if (!StringUtilities.isNullOrEmpty(fileType)) {
                         labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), fileType.substring(1, fileType.length()).toUpperCase()));
                     }
                     int selectRow = table.getSelectedRow();
@@ -634,7 +633,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         }
 
         private void initComponent() {
-            this.setSize(150, 100);
+            this.setPreferredSize(new Dimension(160, 90));
             JScrollPane pane = new JScrollPane();
             this.setLayout(new GridBagLayout());
             this.add(pane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
@@ -670,6 +669,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                         if (panelImports.size() > 0) {
                             table.setRowSelectionInterval(table.getRowCount() - 1, table.getRowCount() - 1);
                             labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), "GJB"));
+                            initComboBoxColumns();
                             ImportUtilities.replace(panelImportInfo, (JPanel) panelImport);
                             setButtonState();
                         }

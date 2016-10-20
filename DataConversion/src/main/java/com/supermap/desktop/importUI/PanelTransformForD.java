@@ -246,13 +246,13 @@ public class PanelTransformForD extends PanelTransform {
         this.add(panelCheckBox, new GridBagConstraintsHelper(0, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(0).setFill(GridBagConstraints.BOTH));
 
         panelCheckBox.setLayout(new GridBagLayout());
-        panelCheckBox.add(this.checkBoxMergeLayer, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 0, 5, 20));
+        panelCheckBox.add(this.checkBoxMergeLayer, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 5, 5, 20));
         panelCheckBox.add(this.checkBoxImportInvisibleLayer, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 0, 5, 20));
         panelCheckBox.add(this.checkBoxSaveHeight, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 0, 5, 10));
-        panelCheckBox.add(this.checkBoxImportSymbol, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 0, 5, 20));
+        panelCheckBox.add(this.checkBoxImportSymbol, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 5, 5, 20));
         panelCheckBox.add(this.checkBoxImportProperty, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 0, 5, 20));
         panelCheckBox.add(this.checkBoxKeepingParametricPart, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 0, 5, 10));
-        panelCheckBox.add(this.checkBoxExtendsData, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 0, 5, 20));
+        panelCheckBox.add(this.checkBoxExtendsData, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 5, 5, 20));
         panelCheckBox.add(this.checkBoxImportingXRecord, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 0, 5, 20));
         panelCheckBox.add(this.checkBoxSaveWPLineWidth, new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 0, 5, 10));
     }

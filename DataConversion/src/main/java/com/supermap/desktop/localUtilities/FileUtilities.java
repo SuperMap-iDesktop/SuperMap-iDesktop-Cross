@@ -28,7 +28,7 @@ public class FileUtilities {
      * @return
      */
     public static String getFileType(String filePath) {
-        return isFilePath(filePath) ? filePath.substring(filePath.lastIndexOf("."), filePath.length()) : null;
+        return isFilePath(filePath) && filePath.contains(".") ? filePath.substring(filePath.lastIndexOf("."), filePath.length()) : "";
     }
 
     public static String getFileAlias(String filePath) {
@@ -36,7 +36,7 @@ public class FileUtilities {
         if (null == fileName || !fileName.contains(".")) {
             return null;
         }
-        return null != fileName ? fileName.substring(0, fileName.lastIndexOf(".")) : null;
+        return null != fileName ? fileName.substring(0, fileName.lastIndexOf(".")) : "";
     }
 
     private static boolean isFilePath(String filePath) {
