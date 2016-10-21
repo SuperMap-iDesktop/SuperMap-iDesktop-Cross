@@ -34,8 +34,7 @@ public class JDialogNewTransformation extends SmDialog {
 	private GridBagConstraintsHelper centerConstraints;
 
 	public JDialogNewTransformation() {
-		this.setSize(500, 400);
-		this.setTitle(DataEditorProperties.getString("String_TransfernationPreSetTitle"));
+		this.setSize(600, 450);
 		init();
 		this.setLocationRelativeTo(null);
 	}
@@ -70,6 +69,7 @@ public class JDialogNewTransformation extends SmDialog {
 				if (state == 1) {
 					panelCenter.removeAll();
 					panelCenter.add(panelChooseOriginal, centerConstraints);
+					setTitle(panelChooseOriginal.getPanelTitle());
 					panelCenter.revalidate();
 					panelChooseOriginal.setButtonNext(buttonNext);
 					panelCenter.repaint();
@@ -77,6 +77,7 @@ public class JDialogNewTransformation extends SmDialog {
 				} else if (state == 2) {
 					panelCenter.removeAll();
 					panelCenter.add(panelChooseRefer, centerConstraints);
+					setTitle(panelChooseRefer.getPanelTitle());
 					panelCenter.revalidate();
 					panelCenter.repaint();
 					panelChooseRefer.setButtonNext(buttonNext);
@@ -91,12 +92,14 @@ public class JDialogNewTransformation extends SmDialog {
 				if (state == 0) {
 					panelCenter.removeAll();
 					panelCenter.add(panelChooseRefer, centerConstraints);
+					setTitle(panelChooseRefer.getPanelTitle());
 					panelCenter.revalidate();
 					panelCenter.repaint();
 					buttonPre.setVisible(true);
 				} else if (state == 1) {
 					panelCenter.removeAll();
 					panelCenter.add(panelChooseTransformationFile, centerConstraints);
+					setTitle(panelChooseTransformationFile.getPanelTitle());
 					panelCenter.revalidate();
 					panelCenter.repaint();
 					buttonNext.setText(DataEditorProperties.getString("String_Finish"));
@@ -126,6 +129,7 @@ public class JDialogNewTransformation extends SmDialog {
 	}
 
 	private void initComponentStates() {
+		setTitle(panelChooseOriginal.getPanelTitle());
 		buttonPre.setVisible(false);
 		panelChooseOriginal.setButtonNext(buttonNext);
 	}

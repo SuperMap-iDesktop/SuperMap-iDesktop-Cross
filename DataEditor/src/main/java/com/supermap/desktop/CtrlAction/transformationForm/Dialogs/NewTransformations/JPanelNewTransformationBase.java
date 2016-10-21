@@ -19,7 +19,7 @@ public abstract class JPanelNewTransformationBase extends JPanel {
 	public JPanelNewTransformationBase() {
 		textArea.setEditable(false);
 		textArea.setOpaque(false);
-		labelTitle.setText(getPanelTitle());
+//		labelTitle.setText(getPanelTitle());
 		textArea.setText(getDescribeText());
 		initLayout();
 	}

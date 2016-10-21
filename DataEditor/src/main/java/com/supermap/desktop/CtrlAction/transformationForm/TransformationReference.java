@@ -25,12 +25,11 @@ import java.util.List;
 public class TransformationReference extends TransformationBase implements ITransformation, IFormMap {
 
 	private FormTransformation formTransformation;
-	private MapControl mapControl;
 	private ArrayList<Map> addedMaps;
 
 	public TransformationReference(FormTransformation formTransformation) {
+		super();
 		this.formTransformation = formTransformation;
-		this.mapControl = new MapControl();
 		mapControl.getMap().setWorkspace(Application.getActiveApplication().getWorkspace());
 		mapControl.getMap().setName(DataEditorProperties.getString("String_Transfernation_ReferLayer"));
 		this.addedMaps = new ArrayList<>();
@@ -103,8 +102,4 @@ public class TransformationReference extends TransformationBase implements ITran
 		return mapControl;
 	}
 
-	@Override
-	protected void setMapControl(MapControl mapControl) {
-		this.mapControl = mapControl;
-	}
 }

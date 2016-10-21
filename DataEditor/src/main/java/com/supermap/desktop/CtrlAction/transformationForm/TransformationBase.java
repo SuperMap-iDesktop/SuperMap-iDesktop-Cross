@@ -41,7 +41,7 @@ import java.util.List;
  * @author XiaJT
  */
 public abstract class TransformationBase implements IFormMap {
-
+	protected MapControl mapControl = new MapControl();
 	private boolean isAddedListener = false;
 	// 我觉得图层选中改变应该和图层管理器相关，而和地图窗口无关
 	private transient LayersTreeSelectionListener layersTreeSelectionListener = new LayersTreeSelectionListener();
@@ -49,6 +49,11 @@ public abstract class TransformationBase implements IFormMap {
 	private ArrayList<Layer> activeLayersList = new ArrayList<Layer>();
 	private int isShowPopupMenu = 0;
 	private List<String> lastSelectedGeometry = new ArrayList<>();
+
+
+	public TransformationBase() {
+		initDrag();
+	}
 
 	@Override
 	public String getText() {
@@ -97,7 +102,11 @@ public abstract class TransformationBase implements IFormMap {
 
 	protected abstract void cleanHook();
 
-	protected abstract void setMapControl(MapControl mapControl);
+	protected void setMapControl(MapControl mapControl) {
+		this.mapControl = mapControl;
+	}
+
+	;
 
 	@Override
 	public boolean isClosed() {
@@ -106,7 +115,7 @@ public abstract class TransformationBase implements IFormMap {
 
 	@Override
 	public MapControl getMapControl() {
-		return null;
+		return mapControl;
 	}
 
 	@Override
@@ -279,7 +288,6 @@ public abstract class TransformationBase implements IFormMap {
 		if (!isAddedListener) {
 			UICommonToolkit.getLayersManager().getLayersTree().addTreeSelectionListener(this.layersTreeSelectionListener);
 			isAddedListener = true;
-			initDrag();
 		}
 	}
 

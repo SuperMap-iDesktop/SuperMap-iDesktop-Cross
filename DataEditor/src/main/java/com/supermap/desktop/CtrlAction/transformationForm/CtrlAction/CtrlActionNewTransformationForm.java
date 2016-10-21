@@ -30,9 +30,9 @@ public class CtrlActionNewTransformationForm extends CtrlAction {
 			iFormTransformation.addTargetObjects(jDialogNewTransformationForm.getTargetObjects());
 			if (jDialogNewTransformationForm.isSelectTransformationFile()) {
 				iFormTransformation.fromXml(XmlUtilities.getDocument(jDialogNewTransformationForm.getSelectTransformationFilePath()));
-
+			} else {
+				iFormTransformation.setTransformationMode(jDialogNewTransformationForm.getTransformationMode());
 			}
-			iFormTransformation.setTransformationMode(jDialogNewTransformationForm.getTransformationMode());
 		}
 		jDialogNewTransformationForm.dispose();
 	}
