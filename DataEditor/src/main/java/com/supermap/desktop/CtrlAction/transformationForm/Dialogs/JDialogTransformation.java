@@ -16,6 +16,7 @@ import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationAd
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
@@ -62,6 +63,7 @@ public class JDialogTransformation extends SmDialog {
 	private SmButton buttonSelectAll = new SmButton();
 	private SmButton buttonSelectInvert = new SmButton();
 	private SmButton buttonDel = new SmButton();
+	private SmButton buttonSetting = new SmButton();
 
 	private JScrollPane scrollPane = new JScrollPane();
 	private SmSortTable table = new SmSortTable();
@@ -198,11 +200,11 @@ public class JDialogTransformation extends SmDialog {
 
 		this.add(scrollPane, new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
 
-		this.add(panelProperties, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0.5, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 0));
+		this.add(panelProperties, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0.5, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(10, 10, 0, 0));
 		this.add(titledPanelResample, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(0.5, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 5, 0, 10));
 
-		this.add(panelSetting, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0.5, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 0));
-		this.add(new JPanel(), new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(0.5, 0).setAnchor(GridBagConstraints.CENTER));
+//		this.add(panelSetting, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0.5, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 0));
+//		this.add(new JPanel(), new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(0.5, 0).setAnchor(GridBagConstraints.CENTER));
 
 		this.add(panelButtons, new GridBagConstraintsHelper(0, 4, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 0, 0));
 	}
@@ -215,6 +217,8 @@ public class JDialogTransformation extends SmDialog {
 		toolBar.add(buttonSelectInvert);
 		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
 		toolBar.add(buttonDel);
+		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
+		toolBar.add(buttonSetting);
 	}
 
 	private void initPanelProperties() {
@@ -233,13 +237,13 @@ public class JDialogTransformation extends SmDialog {
 		panelResample.add(labelResampleMode, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setInsets(2, 10, 0, 0));
 		panelResample.add(comboBoxResampleMode, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setInsets(2, 5, 0, 10).setFill(GridBagConstraints.HORIZONTAL));
 
-		panelResample.add(labelPixel, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setInsets(5, 10, 0, 0));
-		panelResample.add(textFieldPixel, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 1).setInsets(5, 5, 0, 10).setFill(GridBagConstraints.HORIZONTAL));
+		panelResample.add(labelPixel, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setInsets(5, 10, 10, 0));
+		panelResample.add(textFieldPixel, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 1).setInsets(5, 5, 10, 10).setFill(GridBagConstraints.HORIZONTAL));
 
 	}
 
 	private void initPanelSetting() {
-		panelSetting.setBorder(BorderFactory.createTitledBorder(CommonProperties.getString("String_ToolBar_SetBatch")));
+//		panelSetting.setBorder(BorderFactory.createTitledBorder(CommonProperties.getString("String_ToolBar_SetBatch")));
 		panelSetting.setLayout(new GridBagLayout());
 		panelSetting.add(checkBoxIsSaveAs, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setInsets(10, 5, 0, 0));
 		panelSetting.add(comboBoxDatasources, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setInsets(10, 5, 0, 10).setFill(GridBagConstraints.HORIZONTAL));
@@ -414,36 +418,50 @@ public class JDialogTransformation extends SmDialog {
 		checkBoxIsSaveAs.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				if (isListenerEnable) {
-					isListenerEnable = false;
+				comboBoxDatasources.setEnabled(checkBoxIsSaveAs.isSelected());
+			}
+		});
+//		comboBoxDatasources.addItemListener(new ItemListener() {
+//			@Override
+//			public void itemStateChanged(ItemEvent e) {
+//				if (isListenerEnable && e.getStateChange() == ItemEvent.SELECTED) {
+//					Datasource selectedItem = (Datasource) comboBoxDatasources.getSelectedItem();
+//					int[] selectedModelRows = table.getSelectedModelRows();
+//					if (selectedModelRows.length > 0) {
+//						for (int selectedModelRow : selectedModelRows) {
+//							if (tableModel.isCellEditable(selectedModelRow, TransformationTableModel.column_ResultDatasource)) {
+//								tableModel.setValueAt(selectedItem, selectedModelRow, TransformationTableModel.column_ResultDatasource);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		});
+		buttonSetting.addActionListener(new ActionListener() {
+			private JDialogSetting jDialogSetting = new JDialogSetting();
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				jDialogSetting.initData();
+				if (jDialogSetting.showDialog() == DialogResult.OK) {
 					boolean selected = checkBoxIsSaveAs.isSelected();
+					Datasource selectedItem = null;
+					if (selected) {
+						selectedItem = (Datasource) comboBoxDatasources.getSelectedItem();
+					}
 					int[] selectedModelRows = table.getSelectedModelRows();
 					if (selectedModelRows.length > 0) {
 						for (int selectedModelRow : selectedModelRows) {
 							if (tableModel.isCellEditable(selectedModelRow, TransformationTableModel.COLUMN_SAVE_AS)) {
 								tableModel.setValueAt(selected, selectedModelRow, TransformationTableModel.COLUMN_SAVE_AS);
+								if (selectedItem != null && tableModel.isCellEditable(selectedModelRow, TransformationTableModel.column_ResultDatasource)) {
+									tableModel.setValueAt(selectedItem, selectedModelRow, TransformationTableModel.column_ResultDatasource);
+								}
 							}
 						}
 					}
-					checkIsSaveState();
+					checkResampleState();
 					comboBoxDatasources.setEnabled(selected);
-					isListenerEnable = true;
-				}
-			}
-		});
-		comboBoxDatasources.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (isListenerEnable && e.getStateChange() == ItemEvent.SELECTED) {
-					Datasource selectedItem = (Datasource) comboBoxDatasources.getSelectedItem();
-					int[] selectedModelRows = table.getSelectedModelRows();
-					if (selectedModelRows.length > 0) {
-						for (int selectedModelRow : selectedModelRows) {
-							if (tableModel.isCellEditable(selectedModelRow, TransformationTableModel.column_ResultDatasource)) {
-								tableModel.setValueAt(selectedItem, selectedModelRow, TransformationTableModel.column_ResultDatasource);
-							}
-						}
-					}
 				}
 			}
 		});
@@ -534,6 +552,7 @@ public class JDialogTransformation extends SmDialog {
 		buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 		buttonSelectInvert.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
 		buttonDel.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
+		buttonSetting.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Setting.PNG"));
 	}
 
 	private void initComponentState() {
@@ -686,5 +705,49 @@ public class JDialogTransformation extends SmDialog {
 		fileChooserControl.setVisible(false);
 		this.setTitle(DataEditorProperties.getString("String_transformation"));
 		panelProperties.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 1));
+	}
+
+	private class JDialogSetting extends SmDialog {
+
+		private JPanel panelButton = new JPanel();
+		private SmButton smButtonOk = new SmButton();
+		private SmButton smButtonCancle = new SmButton();
+
+		public JDialogSetting() {
+			this.setTitle(CoreProperties.getString("String_toolStripButtonAdvanced"));
+			panelButton.setLayout(new GridBagLayout());
+			panelButton.add(smButtonOk, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST));
+			panelButton.add(smButtonCancle, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.EAST));
+
+			this.setLayout(new GridBagLayout());
+			this.add(panelSetting, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH).setInsets(10, 10, 0, 10));
+			this.add(new JPanel(), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
+			this.add(panelButton, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 10, 10));
+			smButtonOk.setText(CommonProperties.getString(CommonProperties.OK));
+			smButtonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));
+			smButtonOk.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					dialogResult = DialogResult.OK;
+					dispose();
+				}
+			});
+
+			smButtonCancle.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					dialogResult = DialogResult.CANCEL;
+					dispose();
+				}
+			});
+			pack();
+			this.setLocationRelativeTo(null);
+		}
+
+		public void initData() {
+			dialogResult = DialogResult.APPLY;
+			pack();
+			this.setLocationRelativeTo(null);
+		}
 	}
 }

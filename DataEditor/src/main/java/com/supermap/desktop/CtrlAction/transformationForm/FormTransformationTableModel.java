@@ -388,7 +388,7 @@ public class FormTransformationTableModel extends DefaultTableModel {
 		if (currentPoint == null || point == null) {
 			return false;
 		}
-		return Math.abs(currentPoint.getX() - point.getX()) + Math.abs(currentPoint.getY() - point.getY()) < 4;
+		return Math.abs(currentPoint.getX() - point.getX()) + Math.abs(currentPoint.getY() - point.getY()) < 10;
 	}
 
 	public void setPoint(Point2D point2D, int row, FormTransformationSubFormType dragFormType) {

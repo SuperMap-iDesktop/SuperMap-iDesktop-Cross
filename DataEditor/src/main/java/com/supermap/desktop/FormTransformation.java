@@ -49,6 +49,8 @@ import com.supermap.desktop.utilities.MapControlUtilities;
 import com.supermap.desktop.utilities.TableUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.SnapSetting;
+import com.supermap.mapping.SnappedElement;
 import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
 import com.supermap.ui.ActionChangedEvent;
@@ -80,6 +82,18 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.supermap.mapping.SnapMode.LINE_WITH_FIXED_ANGLE;
+import static com.supermap.mapping.SnapMode.LINE_WITH_FIXED_LENGTH;
+import static com.supermap.mapping.SnapMode.LINE_WITH_HORIZONTAL;
+import static com.supermap.mapping.SnapMode.LINE_WITH_PARALLEL;
+import static com.supermap.mapping.SnapMode.LINE_WITH_PERPENDICULAR;
+import static com.supermap.mapping.SnapMode.LINE_WITH_VERTICAL;
+import static com.supermap.mapping.SnapMode.POINT_ON_ENDPOINT;
+import static com.supermap.mapping.SnapMode.POINT_ON_EXTENSION;
+import static com.supermap.mapping.SnapMode.POINT_ON_LINE;
+import static com.supermap.mapping.SnapMode.POINT_ON_MIDPOINT;
+import static com.supermap.mapping.SnapMode.POINT_ON_POINT;
 
 /**
  * @author XiaJT
@@ -184,6 +198,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
+			updatePrjCoorSysPlace(e);
 			initCenter(getMapControl());
 		}
 
@@ -228,12 +243,31 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	private MouseMotionListener addPointDraggedListener = new MouseMotionListener() {
 
+		private SnapSetting snapSetting;
+		private SnapSetting emptySnapSetting;
+
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			MapControl mapControl = (MapControl) e.getSource();
+			if (snapSetting != null) {
+				mapControl.setSnapSetting(snapSetting);
+				snapSetting = null;
+			}
 			if (isDragPointPress && getSubFormTypeByForm(getFormByMapControl(mapControl)) == dragFormType
 					&& e.getPoint().getX() >= 0 && e.getPoint().getY() >= 0 && e.getPoint().getX() <= mapControl.getWidth() && e.getPoint().getY() <= mapControl.getHeight()) {
-				formTransformationTableModel.setPoint(mapControl.getMap().pixelToMap(e.getPoint()), dragRow, dragFormType);
+				Point2D point2D;
+				SnappedElement[] snappedElements = mapControl.getSnappedElements();
+				if (snappedElements != null && snappedElements.length > 0) {
+					Point2D[] snappedPoints = snappedElements[0].getSnappedPoints();
+					if (snappedPoints.length == 3) {
+						point2D = snappedPoints[2];
+					} else {
+						point2D = snappedPoints[0];
+					}
+				} else {
+					point2D = mapControl.getMap().pixelToMap(e.getPoint());
+				}
+				formTransformationTableModel.setPoint(point2D, dragRow, dragFormType);
 			}
 		}
 
@@ -247,6 +281,29 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 			int rowIndex = formTransformationTableModel.getNearestPoint(e.getPoint(), subFormType, mapControl);
 			if (rowIndex != -1) {
 				mapControl.setCursor(MapControl.Cursors.getPan());
+				if (snapSetting == null) {
+					snapSetting = new SnapSetting(mapControl.getSnapSetting());
+				}
+				if (emptySnapSetting == null) {
+					emptySnapSetting = new SnapSetting();
+					emptySnapSetting.set(POINT_ON_ENDPOINT, false);
+					emptySnapSetting.set(POINT_ON_POINT, false);
+					emptySnapSetting.set(POINT_ON_LINE, false);
+					emptySnapSetting.set(POINT_ON_MIDPOINT, false);
+					emptySnapSetting.set(POINT_ON_EXTENSION, false);
+					emptySnapSetting.set(LINE_WITH_FIXED_ANGLE, false);
+					emptySnapSetting.set(LINE_WITH_FIXED_LENGTH, false);
+					emptySnapSetting.set(LINE_WITH_HORIZONTAL, false);
+					emptySnapSetting.set(LINE_WITH_VERTICAL, false);
+					emptySnapSetting.set(LINE_WITH_PARALLEL, false);
+					emptySnapSetting.set(LINE_WITH_PERPENDICULAR, false);
+				}
+				mapControl.setSnapSetting(emptySnapSetting);
+			} else {
+				if (snapSetting != null) {
+					mapControl.setSnapSetting(snapSetting);
+					snapSetting = null;
+				}
 			}
 		}
 	};
@@ -360,9 +417,10 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 						if (transformationReferenceObjects.size() > 0) {
 							transformationReference.addDatas(transformationReferenceObjects);
 							transformationReferenceObjects.clear();
+						} else {
+							transformationReference.getMapControl().getMap().setViewBounds(transformationTarget.getMapControl().getMap().getViewBounds());
 						}
-						transformationReference.getMapControl().getMap().setViewBounds(transformationTarget.getMapControl().getMap().getViewBounds());
-
+						transformationReference.getMapControl().requestFocus();
 						initCenter(getMapControl());
 						initScale(getMapControl());
 						initPrjCoorSys(getMapControl());
@@ -947,9 +1005,6 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	//region 获取跟踪层添加对象
 	private Geometry getTrackingGeometry(int index, Point2D point, Color color) {
 		GeoCompound geoCompound = new GeoCompound();
-		if (point == null) {
-			System.out.println(1);
-		}
 		GeoPoint geoPoint = new GeoPoint(point);
 		geoPoint.setStyle(getPointStyle(color));
 		GeoText geoText = marketLabel(index, point, color);
@@ -1332,7 +1387,46 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		}
 		transformationTarget.getMapControl().getMap().refreshTrackingLayer();
 		transformationReference.getMapControl().getMap().refreshTrackingLayer();
-		pointValueChanged();
+		int pointCount = formTransformationTableModel.getEnablePointCount(FormTransformationSubFormType.Reference);
+		boolean isPointCountEnable = false;
+		if (transformationMode == TransformationMode.OFFSET) {
+			isPointCountEnable = pointCount == 1;
+		} else if (transformationMode == TransformationMode.RECT) {
+			isPointCountEnable = pointCount == 2;
+		} else if (transformationMode == TransformationMode.LINEAR) {
+			isPointCountEnable = pointCount >= 4;
+		} else {
+			isPointCountEnable = pointCount >= 7;
+		}
+		if (isPointCountEnable && formTransformationTableModel.getEnablePointCount(FormTransformationSubFormType.Target) == pointCount) {
+			try {
+				Transformation transformation = new Transformation();
+				Point2Ds targetPoint2Ds = new Point2Ds();
+				Point2Ds referPoint2Ds = new Point2Ds();
+				for (int i = 0; i < formTransformationTableModel.getEnableRowCount(); i++) {
+					targetPoint2Ds.add(formTransformationTableModel.getOriginalPoint(formTransformationTableModel.getEnableRow(i)));
+					referPoint2Ds.add(formTransformationTableModel.getReferPoint(formTransformationTableModel.getEnableRow(i)));
+				}
+				transformation.setTargetControlPoints(referPoint2Ds);
+				transformation.setOriginalControlPoints(targetPoint2Ds);
+				transformation.setTransformMode(TransformationMode.LINEAR);
+				TransformationError error = transformation.getError();
+				double[] residualX = error.getResidualX();
+				double[] residualY = error.getResidualY();
+				double[] residualTotle = error.getRMS();
+				for (int i = 0; i < formTransformationTableModel.getEnableRowCount(); i++) {
+					formTransformationTableModel.setResidualX(formTransformationTableModel.getEnableRow(i), residualX[i]);
+					formTransformationTableModel.setResidualY(formTransformationTableModel.getEnableRow(i), residualY[i]);
+					formTransformationTableModel.setResidualTotal(formTransformationTableModel.getEnableRow(i), residualTotle[i]);
+				}
+				this.setTransformation(transformation);
+				error.dispose();
+			} catch (Exception e) {
+				// ignore
+			}
+		} else {
+			pointValueChanged();
+		}
 		return true;
 	}
 

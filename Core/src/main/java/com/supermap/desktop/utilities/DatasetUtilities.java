@@ -286,8 +286,6 @@ public class DatasetUtilities {
 						for (int j = 0; j < closeDataset.length; j++) {
 							if (closeDataset[j] == dataset) {
 								Application.getActiveApplication().getMainFrame().getFormManager().close(form);
-								i--;
-								formNumber--;
 								break;
 							}
 						}

@@ -152,7 +152,7 @@ public class JPanelChooseRefer extends JPanelNewTransformationBase {
 				}
 				Arrays.sort(selectedModelRows);
 				for (int i = selectedModelRows.length - 1; i >= 0; i--) {
-					tableModel.removeRow(selectedModelRows[i]);
+					tableModel.removeDataAt(selectedModelRows[i]);
 				}
 				int row = selectedModelRows[0];
 				if (tableModel.getRowCount() <= row) {

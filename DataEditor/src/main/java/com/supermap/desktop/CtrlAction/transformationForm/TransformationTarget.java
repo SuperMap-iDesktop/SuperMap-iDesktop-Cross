@@ -17,7 +17,6 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
-import com.supermap.ui.MapControl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,14 +27,13 @@ import java.util.List;
 public class TransformationTarget extends TransformationBase implements ITransformation, IFormMap {
 
 	private FormTransformation formTransformation;
-	private MapControl mapControl;
 	private ArrayList<TransformationAddObjectBean> transformationBeens;
 	private ArrayList<Map> addedMaps = new ArrayList<>();
 
 	public TransformationTarget(FormTransformation formTransformation) {
+		super();
 		transformationBeens = new ArrayList<>();
 		this.formTransformation = formTransformation;
-		this.mapControl = new MapControl();
 		this.mapControl.getMap().setWorkspace(Application.getActiveApplication().getWorkspace());
 		this.mapControl.getMap().setName(DataEditorProperties.getString("String_Transfernation_TargetLayer"));
 	}
@@ -117,15 +115,6 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 		return false;
 	}
 
-	@Override
-	public MapControl getMapControl() {
-		return mapControl;
-	}
-
-	@Override
-	protected void setMapControl(MapControl mapControl) {
-		this.mapControl = mapControl;
-	}
 
 	public Object[] getTransformationObjects() {
 		ArrayList<Layer> layers = MapUtilities.getLayers(mapControl.getMap());

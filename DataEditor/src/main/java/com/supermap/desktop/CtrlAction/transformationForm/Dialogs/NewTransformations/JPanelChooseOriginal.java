@@ -15,7 +15,6 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooseMode;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.TableUtilities;
@@ -217,7 +216,7 @@ public class JPanelChooseOriginal extends JPanelNewTransformationBase {
 	}
 
 	private void buttonAddClicked() {
-		DatasetChooser datasetChooser = new DatasetChooser(DatasetChooseMode.DATASET, DatasetChooseMode.MAP);
+		DatasetChooser datasetChooser = new DatasetChooser();
 		datasetChooser.setSupportDatasetTypes(supportDatasetTypes);
 		if (datasetChooser.showDialog() == DialogResult.OK) {
 			java.util.List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
