@@ -1423,8 +1423,6 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 				error.dispose();
 			} catch (Exception e) {
 				// ignore
-			} finally {
-				transformation.dispose();
 			}
 		} else {
 			pointValueChanged();
