@@ -163,12 +163,12 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 
 	private DefaultListModel<Object> getListItemForOpenWebDatasource() {
 		DefaultListModel<Object> listModel = new DefaultListModel<Object>();
-		DataCell ogcDataCell = new DataCell(InternalImageIconFactory.DATASOURCE_OGC, ControlsProperties.getString("String_OGC"));
-		DataCell iServerRestDataCell = new DataCell(InternalImageIconFactory.DATASOURCE_ISERVERREST, ControlsProperties.getString("String_iServerRest"));
-		DataCell superMapCloudDataCell = new DataCell(InternalImageIconFactory.DATASOURCE_SUPERMAPCLOUD, ControlsProperties.getString("String_SuperMapCloud"));
-		DataCell googleMapsDataCell = new DataCell(InternalImageIconFactory.DATASOURCE_GOOGLEMAPS, ControlsProperties.getString("String_GoogleMaps"));
-		DataCell baiduMapDataCell = new DataCell(InternalImageIconFactory.DATASOURCE_BAIDUMAPS, ControlsProperties.getString("String_BaiduMap"));
-		DataCell openStreetMapsdCell = new DataCell(InternalImageIconFactory.DATASOURCE_DEFAULT, ControlsProperties.getString("String_OpenStreetMaps"));
+		DataCell ogcDataCell = new DataCell(EngineType.OGC, ControlsProperties.getString("String_OGC"));
+		DataCell iServerRestDataCell = new DataCell(EngineType.ISERVERREST, ControlsProperties.getString("String_iServerRest"));
+		DataCell superMapCloudDataCell = new DataCell(EngineType.SUPERMAPCLOUD, ControlsProperties.getString("String_SuperMapCloud"));
+		DataCell googleMapsDataCell = new DataCell(EngineType.GOOGLEMAPS, ControlsProperties.getString("String_GoogleMaps"));
+		DataCell baiduMapDataCell = new DataCell(EngineType.BAIDUMAPS, ControlsProperties.getString("String_BaiduMap"));
+		DataCell openStreetMapsdCell = new DataCell(EngineType.OPENSTREETMAPS, ControlsProperties.getString("String_OpenStreetMaps"));
 		listModel.addElement(ogcDataCell);
 		listModel.addElement(iServerRestDataCell);
 		listModel.addElement(superMapCloudDataCell);

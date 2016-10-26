@@ -26,6 +26,9 @@ public class CtrlActionNewTransformationForm extends CtrlAction {
 		JDialogNewTransformation jDialogNewTransformationForm = new JDialogNewTransformation();
 		if (jDialogNewTransformationForm.showDialog() == DialogResult.OK) {
 			IFormTransformation iFormTransformation = (IFormTransformation) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.TRANSFORMATION, "");
+			iFormTransformation.setSelectedColor(jDialogNewTransformationForm.getSelectedColor());
+			iFormTransformation.setUnSelectedColor(jDialogNewTransformationForm.getUnSelectedColor());
+			iFormTransformation.setUnUseColor(jDialogNewTransformationForm.getUnUseColor());
 			iFormTransformation.addReferenceObjects(jDialogNewTransformationForm.getReferenceObjects());
 			iFormTransformation.addTargetObjects(jDialogNewTransformationForm.getTargetObjects());
 			if (jDialogNewTransformationForm.isSelectTransformationFile()) {

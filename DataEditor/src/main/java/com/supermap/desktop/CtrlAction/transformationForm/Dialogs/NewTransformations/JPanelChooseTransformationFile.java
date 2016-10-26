@@ -5,6 +5,7 @@ import com.supermap.desktop.CtrlAction.transformationForm.TransformationUtilties
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.ColorSelectButton;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
@@ -31,8 +32,14 @@ public class JPanelChooseTransformationFile extends JPanelNewTransformationBase 
 	private JLabel labelTransformationMode;
 	private JComboBox<TransformationMode> comboBox;
 
-	@Override
+	private JLabel labelSelectedColor;
+	private ColorSelectButton buttonSelectedColor;
+	private JLabel labelUnSelectedColor;
+	private ColorSelectButton buttonUnSelectedColor;
+	private JLabel labelUnUseColor;
+	private ColorSelectButton buttonUnUseColor;
 
+	@Override
 	protected String getPanelTitle() {
 		return DataEditorProperties.getString("String_ChooseTransformationFile");
 	}
@@ -80,6 +87,15 @@ public class JPanelChooseTransformationFile extends JPanelNewTransformationBase 
 				return result;
 			}
 		});
+		labelSelectedColor = new JLabel();
+		buttonSelectedColor = new ColorSelectButton(Color.blue);
+		labelUnSelectedColor = new JLabel();
+		buttonUnSelectedColor = new ColorSelectButton(Color.red);
+		labelUnUseColor = new JLabel();
+		buttonUnUseColor = new ColorSelectButton(Color.GRAY);
+		labelSelectedColor.setText(DataEditorProperties.getString("String_SelectedColor"));
+		labelUnSelectedColor.setText(DataEditorProperties.getString("String_UnSelectedColor"));
+		labelUnUseColor.setText(DataEditorProperties.getString("String_UnUseColor"));
 	}
 
 	private void initLayouts() {
@@ -87,9 +103,19 @@ public class JPanelChooseTransformationFile extends JPanelNewTransformationBase 
 		panelCenter.add(labelTransformationFile, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(40, 10, 0, 0));
 		panelCenter.add(fileChooserControl, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(40, 5, 0, 10));
 
-		panelCenter.add(labelTransformationMode, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 10, 0));
-		panelCenter.add(comboBox, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 10, 10));
-		panelCenter.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
+		panelCenter.add(labelTransformationMode, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0));
+		panelCenter.add(comboBox, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelCenter.add(labelSelectedColor, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0));
+		panelCenter.add(buttonSelectedColor, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelCenter.add(labelUnSelectedColor, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0));
+		panelCenter.add(buttonUnSelectedColor, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelCenter.add(labelUnUseColor, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0));
+		panelCenter.add(buttonUnUseColor, new GridBagConstraintsHelper(1, 4, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelCenter.add(new JPanel(), new GridBagConstraintsHelper(0, 5, 2, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
 
 	}
 
@@ -140,5 +166,17 @@ public class JPanelChooseTransformationFile extends JPanelNewTransformationBase 
 
 	public String getSelectedTransformationFilePath() {
 		return fileChooserControl.getEditor().getText();
+	}
+
+	public Color getSelectedColor() {
+		return buttonSelectedColor.getColor();
+	}
+
+	public Color getUnSelectedColor() {
+		return buttonUnSelectedColor.getColor();
+	}
+
+	public Color getUnUseColor() {
+		return buttonUnUseColor.getColor();
 	}
 }

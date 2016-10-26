@@ -478,15 +478,16 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	private void tableValueChanged(TableModelEvent e) {
 		int lastRow = e.getLastRow();
-		if (e.getColumn() == -1) {
-			return;
-		}
+
 		if (e.getType() == TableModelEvent.DELETE) {
 			for (int i = e.getLastRow(); i >= e.getFirstRow(); i--) {
 				removeTrackingObject(i, transformationTarget.getMapControl().getMap());
 				removeTrackingObject(i, transformationReference.getMapControl().getMap());
 			}
 		} else if (e.getType() == TableModelEvent.UPDATE) {
+			if (e.getColumn() == -1) {
+				return;
+			}
 			int column = e.getColumn();
 			if (column == FormTransformationTableModel.COLUMN_ReferX || column == FormTransformationTableModel.COLUMN_ReferY ||
 					column == FormTransformationTableModel.COLUMN_OriginalX || column == FormTransformationTableModel.COLUMN_OriginalY) {
@@ -527,7 +528,6 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	private void refreshFormTrackingLayer(TransformationBase form) {
 		TrackingLayer trackingLayer = form.getMapControl().getMap().getTrackingLayer();
-
 		// 清除当前选中
 		List<String> lastSelectedCompounds = form.getLastSelectedGeometry();
 		if (lastSelectedCompounds.size() > 0) {
@@ -536,9 +536,12 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 					String tag = trackingLayer.getTag(i);
 					if (tag.equals(lastSelectedCompound)) {
 						Geometry geoCompound = trackingLayer.get(i);
-						setGeoCompoundColor(geoCompound, ((Boolean) tablePoints.getValueAt(getTrackingLayerNumber(tag) - 1, FormTransformationTableModel.COLUMN_IS_SELECTED)) ? unSelectedColor : UnUseColor);
-						trackingLayer.remove(i);
-						trackingLayer.add(geoCompound, tag);
+						int row = getTrackingLayerNumber(tag) - 1;
+						if (tablePoints.getRowCount() > row) {
+							setGeoCompoundColor(geoCompound, ((Boolean) tablePoints.getValueAt(row, FormTransformationTableModel.COLUMN_IS_SELECTED)) ? unSelectedColor : UnUseColor);
+							trackingLayer.remove(i);
+							trackingLayer.add(geoCompound, tag);
+						}
 						break;
 					}
 				}
