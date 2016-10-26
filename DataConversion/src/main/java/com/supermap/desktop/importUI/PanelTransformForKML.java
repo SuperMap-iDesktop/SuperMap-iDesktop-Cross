@@ -46,6 +46,7 @@ public class PanelTransformForKML extends PanelTransform {
     public PanelTransformForKML(ArrayList<PanelImport> panelImports, int layoutType) {
         super(panelImports, layoutType);
         this.panelImports = panelImports;
+        initLayerout();
         registEvents();
     }
 

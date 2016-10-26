@@ -96,7 +96,7 @@ public class PanelTransformFactory implements IPanelTransformFactory {
             result = new PanelTransformForImage(panelImports, layoutType);
         } else if (isVectorTypes(panelImports)) {
             //是否为矢量数据集集合
-
+            result = new PanelTransformForVector(panelImports, layoutType);
         } else {
             //是否为矢量和栅格数据集集合
             result = null;

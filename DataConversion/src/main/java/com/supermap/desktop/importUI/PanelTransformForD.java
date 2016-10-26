@@ -24,20 +24,21 @@ import java.util.ArrayList;
  */
 public class PanelTransformForD extends PanelTransform {
 
-    private ArrayList<PanelImport> panelImports;
-    private JLabel labelCurveSegment;
-    private JTextField textFieldCurveSegment;
+    public ArrayList<PanelImport> panelImports;
+    protected JLabel labelCurveSegment;
+    protected JTextField textFieldCurveSegment;
     private JButton buttonFontset;
+    protected JPanel panelCheckBox;
 
-    private JCheckBox checkBoxExtendsData;//导入扩展数据
-    private JCheckBox checkBoxImportingXRecord;//导入扩展记录
-    private JCheckBox checkBoxSaveHeight;//保留对象高度
-    private JCheckBox checkBoxImportInvisibleLayer;//导入不可见图层
-    private JCheckBox checkBoxSaveWPLineWidth;//保留多义线宽度
-    private JCheckBox checkBoxMergeLayer;//合并图层
-    private JCheckBox checkBoxImportProperty;//导入块属性
-    private JCheckBox checkBoxKeepingParametricPart;//保留参数化对象
-    private JCheckBox checkBoxImportSymbol;//导入符号块
+    protected JCheckBox checkBoxExtendsData;//导入扩展数据
+    protected JCheckBox checkBoxImportingXRecord;//导入扩展记录
+    protected JCheckBox checkBoxSaveHeight;//保留对象高度
+    protected JCheckBox checkBoxImportInvisibleLayer;//导入不可见图层
+    protected JCheckBox checkBoxSaveWPLineWidth;//保留多义线宽度
+    protected JCheckBox checkBoxMergeLayer;//合并图层
+    protected JCheckBox checkBoxImportProperty;//导入块属性
+    protected JCheckBox checkBoxKeepingParametricPart;//保留参数化对象
+    protected JCheckBox checkBoxImportSymbol;//导入符号块
     private DocumentListener curveSegmentListener = new DocumentListener() {
         @Override
         public void insertUpdate(DocumentEvent e) {
@@ -235,11 +236,13 @@ public class PanelTransformForD extends PanelTransform {
     public PanelTransformForD(ArrayList<PanelImport> panelImports, int layoutType) {
         super(panelImports, layoutType);
         this.panelImports = panelImports;
+        initLayerout();
         registEvents();
     }
 
     @Override
     public void initComponents() {
+        this.panelCheckBox = new JPanel();
         this.labelCurveSegment = new JLabel();
         this.textFieldCurveSegment = new JTextField();
         initTextFieldCurveSegment();
@@ -309,7 +312,6 @@ public class PanelTransformForD extends PanelTransform {
 
     @Override
     public void initLayerout() {
-        JPanel panelCheckBox = new JPanel();
         this.setLayout(new GridBagLayout());
         this.add(this.labelCurveSegment, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(this.textFieldCurveSegment, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 90).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));

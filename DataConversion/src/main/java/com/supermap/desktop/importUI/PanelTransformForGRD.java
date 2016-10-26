@@ -73,6 +73,7 @@ public class PanelTransformForGRD extends PanelTransform {
     public PanelTransformForGRD(ArrayList<PanelImport> panelImports, int layoutType) {
         super(panelImports, layoutType);
         this.panelImports = panelImports;
+        initLayerout();
         registEvents();
     }
 

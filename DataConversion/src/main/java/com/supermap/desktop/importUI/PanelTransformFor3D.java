@@ -121,6 +121,7 @@ public class PanelTransformFor3D extends PanelTransform {
     public PanelTransformFor3D(ArrayList<PanelImport> panelImports, int layoutType) {
         super(panelImports, layoutType);
         this.panelImports = panelImports;
+        initLayerout();
         registEvents();
     }
 

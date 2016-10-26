@@ -75,6 +75,7 @@ public class PanelTransformForMicrosoft extends PanelTransform {
     public PanelTransformForMicrosoft(ArrayList<PanelImport> panelImports, int layoutType) {
         super(panelImports, layoutType);
         this.panelImports = panelImports;
+        initLayerout();
         registEvents();
     }
     @Override

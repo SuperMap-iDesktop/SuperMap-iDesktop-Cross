@@ -103,12 +103,24 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
     private ItemListener datasetTypeListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
+            String datasetType = comboBoxDatasetType.getSelectItem().toString();
             if (null != panelImports) {
                 for (PanelImport tempPanelImport : panelImports) {
-                    tempPanelImport.getResultset().getComboBoxDatasetType().setSelectedItem(comboBoxDatasetType.getSelectedItem());
+                    if (datasetType.equalsIgnoreCase(CommonProperties.getString("String_DatasetType_CAD"))) {
+                        tempPanelImport.getResultset().getComboBoxDatasetType().setSelectedIndex(0);
+                    } else if (datasetType.equalsIgnoreCase(DataConversionProperties.getString("string_comboboxitem_sample"))) {
+                        tempPanelImport.getResultset().getComboBoxDatasetType().setSelectedIndex(1);
+                    } else if (datasetType.equalsIgnoreCase(DataConversionProperties.getString("string_comboboxitem_image"))) {
+                        tempPanelImport.getResultset().getComboBoxDatasetType().setSelectedIndex(0);
+                    } else if (datasetType.equalsIgnoreCase(DataConversionProperties.getString("string_comboboxitem_grid"))) {
+                        tempPanelImport.getResultset().getComboBoxDatasetType().setSelectedIndex(1);
+                    } else if (datasetType.equals(DataConversionProperties.getString("String_datasetType2D"))) {
+                        tempPanelImport.getResultset().getComboBoxDatasetType().setSelectedIndex(0);
+                    } else if (datasetType.equals(DataConversionProperties.getString("String_datasetType3D"))) {
+                        tempPanelImport.getResultset().getComboBoxDatasetType().setSelectedIndex(1);
+                    }
                 }
             } else {
-                String datasetType = comboBoxDatasetType.getSelectItem().toString();
                 if (datasetType.equals(CommonProperties.getString("String_DatasetType_CAD"))) {
                     if (importSetting instanceof ImportSettingTAB) {
                         ((ImportSettingTAB) importSetting).setImportingAsCAD(true);
@@ -288,6 +300,8 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             this.add(this.comboBoxDatasetType, new GridBagConstraintsHelper(6, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             this.comboBoxDatasource.setPreferredSize(PackageInfo.defaultSize);
             this.comboBoxEncodeType.setPreferredSize(PackageInfo.defaultSize);
+            initComboboxEncodeType(true);
+            this.comboBoxEncodeType.insertItemAt("SGL", 2);
         } else if (layeroutType == PackageInfo.GRID_AND_VERTICAL_TYPE) {
             this.add(this.labelDatasource, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 20).setFill(GridBagConstraints.NONE).setWeight(0, 0));
             this.add(this.comboBoxDatasource, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
@@ -417,13 +431,13 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
                 importSetting instanceof ImportSettingIMG || importSetting instanceof ImportSettingTIF ||
                 importSetting instanceof ImportSettingGIF || importSetting instanceof ImportSettingMrSID
                 || importSetting instanceof ImportSettingECW) {
-            initComboboxEncodeType(true);
+            if (importSetting instanceof ImportSettingECW) {
+                this.comboBoxEncodeType.setModel(new DefaultComboBoxModel(new String[]{DataConversionProperties.getString("string_comboboxitem_nullcoding")}));
+            } else {
+                initComboboxEncodeType(true);
+            }
             if (importSetting instanceof ImportSettingJP2) {
                 this.comboBoxEncodeType.insertItemAt("SGL", 2);
-            }
-            if (importSetting instanceof ImportSettingECW) {
-                this.comboBoxEncodeType.removeAll();
-                this.comboBoxEncodeType.addItem(DataConversionProperties.getString("string_comboboxitem_nullcoding"));
             }
             this.comboBoxDatasetType = new DatasetComboBox(new String[]{DataConversionProperties.getString("string_comboboxitem_image"), DataConversionProperties.getString("string_comboboxitem_grid")});
             setDefaultLayout();

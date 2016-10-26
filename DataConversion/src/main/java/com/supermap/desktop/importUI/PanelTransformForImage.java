@@ -28,6 +28,9 @@ import java.util.ArrayList;
  * 多选时栅格数据集参数转换设置界面
  */
 public class PanelTransformForImage extends PanelTransform {
+    private static final int SAME_TYPE = 4;
+    private static final int GRID_TYPE = 1;
+    private static final Dimension defaultSize = new Dimension(36, 21);
     private JLabel labelBandImportModel;
     private JComboBox comboBoxBandImportModel;
     private JLabel labelPrjFile;
@@ -192,6 +195,11 @@ public class PanelTransformForImage extends PanelTransform {
     public PanelTransformForImage(ArrayList<PanelImport> panelImports, int layoutType) {
         super(panelImports, layoutType);
         this.panelImports = panelImports;
+        if (layoutType == SAME_TYPE) {
+            initLayerout();
+        } else if (layoutType == GRID_TYPE) {
+            initGridLayout();
+        }
         registEvents();
     }
 
@@ -304,6 +312,42 @@ public class PanelTransformForImage extends PanelTransform {
         this.add(this.comboBoxBandImportModel, new GridBagConstraintsHelper(6, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
         this.add(this.labelPrjFile, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 14).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(this.chooserControlPrjFile, new GridBagConstraintsHelper(2, 1, 6, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.passwordField.setEnabled(false);
+        if (isComboBoxBandImportModelEnabled()) {
+            initComboBoxBandImportModel();
+            this.comboBoxBandImportModel.setEnabled(true);
+        } else {
+            this.comboBoxBandImportModel.setEnabled(false);
+        }
+        if (isChooserControlPrjFileEnabled()) {
+            this.chooserControlPrjFile.setEnabled(true);
+        } else {
+            this.chooserControlPrjFile.setEnabled(false);
+        }
+    }
+
+    private boolean isChooserControlPrjFileEnabled() {
+        //bmp,png,gif,jpk,jpg,jp2,jpeg
+        int count = 0;
+        for (PanelImport tempPanelImport : panelImports) {
+            FileType tempFiletype = tempPanelImport.getImportInfo().getImportSetting().getSourceFileType();
+            if (tempFiletype.equals(FileType.TIF) || tempFiletype.equals(FileType.BMP) || tempFiletype.equals(FileType.PNG)
+                    || tempFiletype.equals(FileType.GIF) || tempFiletype.equals(FileType.JP2) || tempFiletype.equals(FileType.JPG)) {
+                count++;
+            }
+        }
+        return count == panelImports.size();
+    }
+
+    private boolean isComboBoxBandImportModelEnabled() {
+        int count = 0;
+        for (PanelImport tempPanelImport : panelImports) {
+            FileType tempFiletype = tempPanelImport.getImportInfo().getImportSetting().getSourceFileType();
+            if (tempFiletype.equals(FileType.TIF) || tempFiletype.equals(FileType.IMG) || tempFiletype.equals(FileType.MrSID) || tempFiletype.equals(FileType.ECW)) {
+                count++;
+            }
+        }
+        return count == panelImports.size();
     }
 
     @Override
@@ -312,8 +356,9 @@ public class PanelTransformForImage extends PanelTransform {
         this.setLayout(new GridBagLayout());
         if (importSetting instanceof ImportSettingSIT) {
             this.add(this.labelPassWord, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 15).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-            this.add(this.passwordField, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 90).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            this.add(this.passwordField, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 120).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             this.add(new JPanel(), new GridBagConstraintsHelper(4, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            this.passwordField.setPreferredSize(defaultSize);
         } else if (importSetting instanceof ImportSettingTIF) {
             JPanel panelBandModel = new JPanel();
             panelBandModel.setLayout(new GridBagLayout());
@@ -373,4 +418,5 @@ public class PanelTransformForImage extends PanelTransform {
     public JPasswordField getPasswordField() {
         return passwordField;
     }
+
 }

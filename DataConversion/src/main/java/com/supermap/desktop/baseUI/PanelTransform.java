@@ -26,11 +26,6 @@ public class PanelTransform extends JPanel implements IImportSetttingTransform {
         this.layoutType = layoutType;
         this.importSetting = panelImports.get(panelImports.size() - 1).getImportInfo().getImportSetting();
         initComponents();
-        if (layoutType == PackageInfo.SAME_TYPE) {
-            initLayerout();
-        } else if (layoutType == PackageInfo.GRID_TYPE) {
-            initGridLayout();
-        }
         initResources();
     }
 

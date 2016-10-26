@@ -54,6 +54,7 @@ public class PanelTransformForDGN extends PanelTransform {
     public PanelTransformForDGN(ArrayList<PanelImport> panelImports, int layoutType) {
         super(panelImports, layoutType);
         this.panelImports = panelImports;
+        initLayerout();
         registEvents();
     }
 
