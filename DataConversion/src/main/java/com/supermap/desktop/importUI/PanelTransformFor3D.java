@@ -16,12 +16,14 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2016/10/11.
  * 三维模型(osgb,osg,3ds,.x,.dxf,.obj,.ifc,.fbx,.dae)导入参数设置界面
  */
 public class PanelTransformFor3D extends PanelTransform {
+    private ArrayList<PanelImport> panelImports;
     private JLabel labelRotationType;
     private JComboBox comboBoxRotationType;//旋转模式
     private JCheckBox checkBoxSplitForMore;//拆分为多个子对象
@@ -53,34 +55,49 @@ public class PanelTransformFor3D extends PanelTransform {
     private DocumentListener documentListener = new DocumentListener() {
         @Override
         public void insertUpdate(DocumentEvent e) {
-            updatePosition();
+            updatePosition(e);
         }
 
-        private void updatePosition() {
+        private void updatePosition(DocumentEvent e) {
             String point3DX = textFieldPositionX.getText();
             String point3DY = textFieldPositionY.getText();
             String point3dZ = textFieldPositionZ.getText();
-            if (!StringUtilities.isNullOrEmpty(point3DX) && StringUtilities.isNumber(point3DX) &&
-                    !StringUtilities.isNullOrEmpty(point3DY) && StringUtilities.isNumber(point3DY) &&
-                    !StringUtilities.isNullOrEmpty(point3dZ) && StringUtilities.isNumber(point3dZ)) {
-                Point3D newPoint3D = new Point3D(Double.parseDouble(point3DX), Double.parseDouble(point3DY), Double.parseDouble(point3dZ));
-                if (importSetting instanceof ImportSettingModelOSG) {
-                    ((ImportSettingModelOSG) importSetting).setPosition(newPoint3D);
+            if (null != panelImports && e.getDocument().equals(textFieldPositionX.getDocument())) {
+                for (PanelImport tempPanelImport : panelImports) {
+                    ((PanelTransformFor3D) tempPanelImport.getTransform()).getTextFieldPositionX().setText(textFieldPositionX.getText());
                 }
-                if (importSetting instanceof ImportSettingModelX) {
-                    ((ImportSettingModelX) importSetting).setPosition(newPoint3D);
+            } else if (null != panelImports && e.getDocument().equals(textFieldPositionY.getDocument())) {
+                for (PanelImport tempPanelImport : panelImports) {
+                    ((PanelTransformFor3D) tempPanelImport.getTransform()).getTextFieldPositionY().setText(textFieldPositionY.getText());
                 }
-                if (importSetting instanceof ImportSettingModel3DS) {
-                    ((ImportSettingModel3DS) importSetting).setPosition(newPoint3D);
+            } else if (null != panelImports && e.getDocument().equals(textFieldPositionZ.getDocument())) {
+                for (PanelImport tempPanelImport : panelImports) {
+                    ((PanelTransformFor3D) tempPanelImport.getTransform()).getTextFieldPositionZ().setText(textFieldPositionZ.getText());
                 }
-                if (importSetting instanceof ImportSettingModelDXF) {
-                    ((ImportSettingModelDXF) importSetting).setPosition(newPoint3D);
-                }
-                if (importSetting instanceof ImportSettingModelFBX) {
-                    ((ImportSettingModelFBX) importSetting).setPosition(newPoint3D);
-                }
-                if (importSetting instanceof ImportSettingModelFLT) {
-                    ((ImportSettingModelFLT) importSetting).setPosition(newPoint3D);
+            } else {
+                if (!StringUtilities.isNullOrEmpty(point3DX) && StringUtilities.isNumber(point3DX) &&
+                        !StringUtilities.isNullOrEmpty(point3DY) && StringUtilities.isNumber(point3DY) &&
+                        !StringUtilities.isNullOrEmpty(point3dZ) && StringUtilities.isNumber(point3dZ)) {
+                    Point3D newPoint3D = new Point3D(Double.parseDouble(point3DX), Double.parseDouble(point3DY), Double.parseDouble(point3dZ));
+
+                    if (importSetting instanceof ImportSettingModelOSG) {
+                        ((ImportSettingModelOSG) importSetting).setPosition(newPoint3D);
+                    }
+                    if (importSetting instanceof ImportSettingModelX) {
+                        ((ImportSettingModelX) importSetting).setPosition(newPoint3D);
+                    }
+                    if (importSetting instanceof ImportSettingModel3DS) {
+                        ((ImportSettingModel3DS) importSetting).setPosition(newPoint3D);
+                    }
+                    if (importSetting instanceof ImportSettingModelDXF) {
+                        ((ImportSettingModelDXF) importSetting).setPosition(newPoint3D);
+                    }
+                    if (importSetting instanceof ImportSettingModelFBX) {
+                        ((ImportSettingModelFBX) importSetting).setPosition(newPoint3D);
+                    }
+                    if (importSetting instanceof ImportSettingModelFLT) {
+                        ((ImportSettingModelFLT) importSetting).setPosition(newPoint3D);
+                    }
                 }
             }
         }
@@ -98,6 +115,12 @@ public class PanelTransformFor3D extends PanelTransform {
 
     public PanelTransformFor3D(ImportSetting importSetting) {
         super(importSetting);
+        registEvents();
+    }
+
+    public PanelTransformFor3D(ArrayList<PanelImport> panelImports, int layoutType) {
+        super(panelImports, layoutType);
+        this.panelImports = panelImports;
         registEvents();
     }
 
@@ -215,5 +238,17 @@ public class PanelTransformFor3D extends PanelTransform {
         this.radioButtonImportPrjFile.setText(DataConversionProperties.getString("string_importPrjFile"));
         this.radioButtonPrjSet.setText(ControlsProperties.getString("String_SetProjection_Caption"));
         this.buttonPrjSet.setText(ControlsProperties.getString("String_Button_Setting"));
+    }
+
+    public JTextField getTextFieldPositionX() {
+        return textFieldPositionX;
+    }
+
+    public JTextField getTextFieldPositionY() {
+        return textFieldPositionY;
+    }
+
+    public JTextField getTextFieldPositionZ() {
+        return textFieldPositionZ;
     }
 }

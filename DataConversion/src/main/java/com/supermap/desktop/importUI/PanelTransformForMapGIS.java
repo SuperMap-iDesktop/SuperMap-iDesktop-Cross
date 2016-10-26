@@ -17,12 +17,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2016/9/30.
  * wat,wal,wap,wan转化参数设置界面
  */
-public class PanelTransformMapGIS extends PanelTransform {
+public class PanelTransformForMapGIS extends PanelTransform {
+    private ArrayList<PanelImport> panelImports;
     private JLabel labelColorIndex;
     private FileChooserControl fileChooserColorIndex;
     private ActionListener fileChooserColorIndexListener = new ActionListener() {
@@ -40,16 +42,27 @@ public class PanelTransformMapGIS extends PanelTransform {
                 fileChooserColorIndex.getEditor().setText(file.getAbsolutePath());
                 // 设置颜色索引文件
                 String colorFile = fileChooserColorIndex.getEditor().getText();
-
-                if (ImportInfoUtil.isExtendsFile(colorFile)) {
-                    ((ImportSettingMAPGIS) importSetting).setColorIndexFilePath(colorFile);
+                if (null != panelImports) {
+                    for (PanelImport tempPanelImport : panelImports) {
+                        ((PanelTransformForMapGIS) tempPanelImport.getTransform()).getFileChooserColorIndex().getEditor().setText(colorFile);
+                    }
+                } else {
+                    if (ImportInfoUtil.isExtendsFile(colorFile)) {
+                        ((ImportSettingMAPGIS) importSetting).setColorIndexFilePath(colorFile);
+                    }
                 }
             }
         }
     };
 
-    public PanelTransformMapGIS(ImportSetting importSetting) {
+    public PanelTransformForMapGIS(ImportSetting importSetting) {
         super(importSetting);
+        registEvents();
+    }
+
+    public PanelTransformForMapGIS(ArrayList<PanelImport> panelImports, int layoutType) {
+        super(panelImports, layoutType);
+        this.panelImports = panelImports;
         registEvents();
     }
 
@@ -57,7 +70,7 @@ public class PanelTransformMapGIS extends PanelTransform {
     public void initComponents() {
         this.labelColorIndex = new JLabel();
         this.fileChooserColorIndex = new FileChooserControl();
-        if (StringUtilities.isNullOrEmpty(((ImportSettingMAPGIS) importSetting).getColorIndexFilePath())) {
+        if (!StringUtilities.isNullOrEmpty(((ImportSettingMAPGIS) importSetting).getColorIndexFilePath())) {
             fileChooserColorIndex.getEditor().setText(((ImportSettingMAPGIS) importSetting).getColorIndexFilePath());
         }
     }
@@ -84,5 +97,9 @@ public class PanelTransformMapGIS extends PanelTransform {
     public void initResources() {
         this.setBorder(new TitledBorder(DataConversionProperties.getString("string_border_panelTransform")));
         this.labelColorIndex.setText(DataConversionProperties.getString("string_label_lblColorFile"));
+    }
+
+    public FileChooserControl getFileChooserColorIndex() {
+        return fileChooserColorIndex;
     }
 }

@@ -12,26 +12,40 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2016/9/30.
  * kml,kmz文件的转换参数设置界面
  */
-public class PanelTransformKML extends PanelTransform {
-    JCheckBox checkBoxImportInvisible;
+public class PanelTransformForKML extends PanelTransform {
+    private ArrayList<PanelImport> panelImports;
+    private JCheckBox checkBoxImportInvisible;
     private ItemListener importInvisibleListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
-            if (importSetting instanceof ImportSettingKML) {
-                ((ImportSettingKML) importSetting).setUnvisibleObjectIgnored(checkBoxImportInvisible.isSelected());
-            } else if (importSetting instanceof ImportSettingKMZ) {
-                ((ImportSettingKMZ) importSetting).setUnvisibleObjectIgnored(checkBoxImportInvisible.isSelected());
+            if (null != panelImports) {
+                for (PanelImport tempPanelImport : panelImports) {
+                    ((PanelTransformForKML) tempPanelImport.getTransform()).getCheckBoxImportInvisible().setSelected(checkBoxImportInvisible.isSelected());
+                }
+            } else {
+                if (importSetting instanceof ImportSettingKML) {
+                    ((ImportSettingKML) importSetting).setUnvisibleObjectIgnored(checkBoxImportInvisible.isSelected());
+                } else if (importSetting instanceof ImportSettingKMZ) {
+                    ((ImportSettingKMZ) importSetting).setUnvisibleObjectIgnored(checkBoxImportInvisible.isSelected());
+                }
             }
         }
     };
 
-    public PanelTransformKML(ImportSetting importSetting) {
+    public PanelTransformForKML(ImportSetting importSetting) {
         super(importSetting);
+        registEvents();
+    }
+
+    public PanelTransformForKML(ArrayList<PanelImport> panelImports, int layoutType) {
+        super(panelImports, layoutType);
+        this.panelImports = panelImports;
         registEvents();
     }
 
@@ -66,5 +80,9 @@ public class PanelTransformKML extends PanelTransform {
     public void initResources() {
         this.setBorder(new TitledBorder(DataConversionProperties.getString("string_border_panelTransform")));
         this.checkBoxImportInvisible.setText(DataConversionProperties.getString("string_checkbox_chckbxImport"));
+    }
+
+    public JCheckBox getCheckBoxImportInvisible() {
+        return checkBoxImportInvisible;
     }
 }

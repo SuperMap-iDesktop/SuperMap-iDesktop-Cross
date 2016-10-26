@@ -1,6 +1,9 @@
 package com.supermap.desktop.Interface;
 
 import com.supermap.data.conversion.ImportSetting;
+import com.supermap.desktop.importUI.PanelImport;
+
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2016/10/13.
@@ -14,4 +17,8 @@ public interface IPanelTransformFactory {
      * @return
      */
     IImportSetttingTransform createPanelTransform(ImportSetting importSetting);
+
+    IImportSetttingTransform createPanelTransform(ArrayList<PanelImport> panelImports);
+
+    int getImportSettingsType(ArrayList<PanelImport> panelImports);
 }

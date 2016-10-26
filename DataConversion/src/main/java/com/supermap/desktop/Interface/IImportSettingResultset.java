@@ -1,9 +1,9 @@
 package com.supermap.desktop.Interface;
 
-import com.supermap.data.DatasetType;
-import com.supermap.data.Datasource;
-import com.supermap.data.EncodeType;
-import com.supermap.data.conversion.ImportMode;
+import com.supermap.desktop.ui.controls.DatasetComboBox;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
+
+import javax.swing.*;
 
 /**
  * Created by xie on 2016/9/29.
@@ -12,91 +12,51 @@ import com.supermap.data.conversion.ImportMode;
 public interface IImportSettingResultset extends IPanelModel {
 
     /**
-     * 获取目标数据源
+     * 获取目标数据源控件
      *
      * @return
      */
-    Datasource getTargetDatasouce();
-
+    DatasourceComboBox getComboBoxDatasource();
     /**
-     * 获取数据集名称
+     * 获取数据集名称控件
      *
      * @return
      */
-    String getTargetDatasetName();
-
+    JTextField getTextFieldDatasetName();
     /**
-     * 获取编码类型
+     * 获取编码类型控件
      *
      * @return
      */
-    EncodeType getEncodeType();
-
+    JComboBox getComboBoxEncodeType();
     /**
-     * 获取导入模式，
+     * 获取导入模式控件
      *
      * @return
      */
-    ImportMode getImportMode();
-
+    JComboBox getComboBoxImportMode();
     /**
-     * 获取数据集类型，非父类方法
+     * 获取数据集类型控件，非父类方法
      * 只有特殊的数据类型导入时需要设置（tab等）
      *
      * @return
      */
-    DatasetType getDatasetType();
-
+    DatasetComboBox getComboBoxDatasetType();
     /**
-     * 是否创建字段索引，非父类方法
+     * 是否创建字段索引控件，非父类方法
      * 只有特殊的数据类型导入后为矢量数据集
      * 此时才需要创建字段索引（tab等）
      *
      * @return
      */
-    boolean getFieldIndex();
-
+    JCheckBox getCheckBoxFieldIndex();
     /**
-     * 是否创建空间索引，非父类方法
+     * 是否创建空间索引控件，非父类方法
      * 只有特殊的数据类型导入后为矢量数据集
      * 此时才需要创建字段索引（tab等）
      *
      * @return
      */
-    boolean getSpatialIndex();
+    JCheckBox getCheckBoxSpatialIndex();
 
-    /**
-     * 实例化类时是否需要编码类型控件
-     *
-     * @param visible
-     */
-    void needEncodeType(boolean visible);
-
-    /**
-     * 实例化类时是否需要数据集类型控件
-     *
-     * @param visible
-     */
-    void needDatasetType(boolean visible);
-
-    /**
-     * 实例化类时是否需要创建字段索引控件
-     *
-     * @param visible
-     */
-    void needFieldIndex(boolean visible);
-
-    /**
-     * 实例化类时是否需要创建空间索引控件
-     *
-     * @param visible
-     */
-    void needSpatialIndex(boolean visible);
-
-//    /**
-//     * 获取ImportSetting
-//     *
-//     * @return
-//     */
-//    ImportSetting getImportSetting();
 }

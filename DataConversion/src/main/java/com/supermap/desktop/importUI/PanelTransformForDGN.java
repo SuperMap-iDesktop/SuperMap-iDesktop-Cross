@@ -11,29 +11,49 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2016/10/14.
  * dgn类型参数转换界面
  */
 public class PanelTransformForDGN extends PanelTransform {
+    private ArrayList<PanelImport> panelImports;
     private JCheckBox checkBoxImportCellAsPoint;
     private JCheckBox checkBoxImportByLayer;
     private ItemListener importCellAsPointListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
-            ((ImportSettingDGN) importSetting).setImportingCellAsPoint(checkBoxImportCellAsPoint.isSelected());
+            if (null != panelImports) {
+                for (PanelImport tempPanelImport : panelImports) {
+                    ((PanelTransformForDGN) tempPanelImport.getTransform()).getCheckBoxImportCellAsPoint().setSelected(checkBoxImportCellAsPoint.isSelected());
+                }
+            } else {
+                ((ImportSettingDGN) importSetting).setImportingCellAsPoint(checkBoxImportCellAsPoint.isSelected());
+            }
         }
     };
     private ItemListener importByLayerListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
-            ((ImportSettingDGN) importSetting).setImportingByLayer(checkBoxImportByLayer.isSelected());
+            if (null != panelImports) {
+                for (PanelImport tempPanelImport : panelImports) {
+                    ((PanelTransformForDGN) tempPanelImport.getTransform()).getCheckBoxImportByLayer().setSelected(checkBoxImportByLayer.isSelected());
+                }
+            } else {
+                ((ImportSettingDGN) importSetting).setImportingByLayer(checkBoxImportByLayer.isSelected());
+            }
         }
     };
 
     public PanelTransformForDGN(ImportSetting importSetting) {
         super(importSetting);
+        registEvents();
+    }
+
+    public PanelTransformForDGN(ArrayList<PanelImport> panelImports, int layoutType) {
+        super(panelImports, layoutType);
+        this.panelImports = panelImports;
         registEvents();
     }
 
@@ -71,5 +91,13 @@ public class PanelTransformForDGN extends PanelTransform {
         this.setBorder(new TitledBorder(DataConversionProperties.getString("string_border_panelTransform")));
         this.checkBoxImportCellAsPoint.setText(DataConversionProperties.getString("String_importCellAsPoint"));
         this.checkBoxImportByLayer.setText(DataConversionProperties.getString("string_checkbox_chckbxMergeLayer"));
+    }
+
+    public JCheckBox getCheckBoxImportCellAsPoint() {
+        return checkBoxImportCellAsPoint;
+    }
+
+    public JCheckBox getCheckBoxImportByLayer() {
+        return checkBoxImportByLayer;
     }
 }

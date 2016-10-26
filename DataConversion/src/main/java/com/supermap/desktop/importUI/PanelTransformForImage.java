@@ -20,10 +20,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2016/10/11.
  * bmp,png,gif,sit,tif,tiff,sid,ecw,img,jpk,jpg,jp2,jpeg等图像文件的转换参数设置界面
+ * 多选时栅格数据集参数转换设置界面
  */
 public class PanelTransformForImage extends PanelTransform {
     private JLabel labelBandImportModel;
@@ -35,10 +37,15 @@ public class PanelTransformForImage extends PanelTransform {
     private final int SINGLEBAND = 0;
     private final int MULTIBAND = 1;
     private final int COMPOSITE = 2;
+    public ArrayList<PanelImport> panelImports;
     private ItemListener multiBandImportModeListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
-            if (importSetting instanceof ImportSettingIMG && null != ((ImportSettingIMG) importSetting).getMultiBandImportMode()) {
+            if (null != panelImports) {
+                for (PanelImport panelImport : panelImports) {
+                    ((PanelTransformForImage) panelImport.getTransform()).getComboBoxBandImportModel().setSelectedItem(comboBoxBandImportModel.getSelectedItem());
+                }
+            } else if (importSetting instanceof ImportSettingIMG && null != ((ImportSettingIMG) importSetting).getMultiBandImportMode()) {
                 int index = comboBoxBandImportModel.getSelectedIndex();
                 switch (index) {
                     case SINGLEBAND:
@@ -113,7 +120,13 @@ public class PanelTransformForImage extends PanelTransform {
         private void updatePassword() {
             String password = String.valueOf(passwordField.getPassword());
             if (!StringUtilities.isNullOrEmpty(password)) {
-                ((ImportSettingSIT) importSetting).setPassword(password);
+                if (null != panelImports) {
+                    for (PanelImport panelImport : panelImports) {
+                        ((PanelTransformForImage) panelImport.getTransform()).getPasswordField().setText(password);
+                    }
+                } else {
+                    ((ImportSettingSIT) importSetting).setPassword(password);
+                }
             }
         }
 
@@ -151,23 +164,34 @@ public class PanelTransformForImage extends PanelTransform {
         }
 
         private void setWorldFilePath(String worldFile) {
-            if (importSetting instanceof ImportSettingBMP) {
-                ((ImportSettingBMP) importSetting).setWorldFilePath(worldFile);
-            }
-            if (importSetting instanceof ImportSettingJPG) {
-                ((ImportSettingJPG) importSetting).setWorldFilePath(worldFile);
-            }
-            if (importSetting instanceof ImportSettingPNG) {
-                ((ImportSettingPNG) importSetting).setWorldFilePath(worldFile);
-            }
-            if (importSetting instanceof ImportSettingGIF) {
-                ((ImportSettingGIF) importSetting).setWorldFilePath(worldFile);
+            if (null != panelImports) {
+                for (PanelImport panelImport : panelImports) {
+                    ((PanelTransformForImage) panelImport.getTransform()).getChooserControlPrjFile().getEditor().setText(worldFile);
+                }
+            } else {
+                if (importSetting instanceof ImportSettingBMP) {
+                    ((ImportSettingBMP) importSetting).setWorldFilePath(worldFile);
+                }
+                if (importSetting instanceof ImportSettingJPG) {
+                    ((ImportSettingJPG) importSetting).setWorldFilePath(worldFile);
+                }
+                if (importSetting instanceof ImportSettingPNG) {
+                    ((ImportSettingPNG) importSetting).setWorldFilePath(worldFile);
+                }
+                if (importSetting instanceof ImportSettingGIF) {
+                    ((ImportSettingGIF) importSetting).setWorldFilePath(worldFile);
+                }
             }
         }
     };
 
     public PanelTransformForImage(ImportSetting importSetting) {
         super(importSetting);
+    }
+
+    public PanelTransformForImage(ArrayList<PanelImport> panelImports, int layoutType) {
+        super(panelImports, layoutType);
+        this.panelImports = panelImports;
         registEvents();
     }
 
@@ -175,13 +199,19 @@ public class PanelTransformForImage extends PanelTransform {
     public void initComponents() {
         this.labelBandImportModel = new JLabel();
         this.comboBoxBandImportModel = new JComboBox();
-        initComboBoxBandImportModel();
+        if (null != importSetting) {
+            initComboBoxBandImportModel();
+        }
         this.labelPrjFile = new JLabel();
         this.chooserControlPrjFile = new FileChooserControl();
-        initChooserControlPrjFile();
+        if (null != importSetting) {
+            initChooserControlPrjFile();
+        }
         this.labelPassWord = new JLabel();
         this.passwordField = new JPasswordField();
-        initPassWord();
+        if (null != importSetting) {
+            initPassWord();
+        }
     }
 
     private void initPassWord() {
@@ -265,23 +295,44 @@ public class PanelTransformForImage extends PanelTransform {
     }
 
     @Override
+    public void initGridLayout() {
+        this.setLayout(new GridBagLayout());
+
+        this.add(this.labelPassWord, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 14).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(this.passwordField, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setIpad(80, 0));
+        this.add(this.labelBandImportModel, new GridBagConstraintsHelper(4, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 6).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(this.comboBoxBandImportModel, new GridBagConstraintsHelper(6, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.add(this.labelPrjFile, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 14).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(this.chooserControlPrjFile, new GridBagConstraintsHelper(2, 1, 6, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+    }
+
+    @Override
     public void initLayerout() {
         this.removeAll();
         this.setLayout(new GridBagLayout());
-        if (importSetting instanceof ImportSettingJP2) {
-            return;
-        }
         if (importSetting instanceof ImportSettingSIT) {
             this.add(this.labelPassWord, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 15).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-            this.add(this.passwordField, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            this.add(this.passwordField, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 90).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            this.add(new JPanel(), new GridBagConstraintsHelper(4, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
         } else if (importSetting instanceof ImportSettingTIF) {
-            this.add(this.labelBandImportModel, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-            this.add(this.comboBoxBandImportModel, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
-            this.add(this.labelPrjFile, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-            this.add(this.chooserControlPrjFile, new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            JPanel panelBandModel = new JPanel();
+            panelBandModel.setLayout(new GridBagLayout());
+            panelBandModel.add(this.labelBandImportModel, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+            panelBandModel.add(this.comboBoxBandImportModel, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 170).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            panelBandModel.add(new JPanel(), new GridBagConstraintsHelper(4, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+
+            JPanel panelPrjFile = new JPanel();
+            panelPrjFile.setLayout(new GridBagLayout());
+            this.setLayout(new GridBagLayout());
+            panelPrjFile.add(this.labelPrjFile, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+            panelPrjFile.add(this.chooserControlPrjFile, new GridBagConstraintsHelper(2, 0, 6, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+
+            this.add(panelBandModel, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            this.add(panelPrjFile, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
         } else if (importSetting instanceof ImportSettingIMG || importSetting instanceof ImportSettingMrSID || importSetting instanceof ImportSettingECW) {
             this.add(this.labelBandImportModel, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-            this.add(this.comboBoxBandImportModel, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            this.add(this.comboBoxBandImportModel, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 176).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            this.add(new JPanel(), new GridBagConstraintsHelper(4, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
         } else {
             this.add(this.labelPrjFile, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
             this.add(this.chooserControlPrjFile, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
@@ -305,12 +356,21 @@ public class PanelTransformForImage extends PanelTransform {
 
     @Override
     public void initResources() {
-        if (importSetting instanceof ImportSettingJP2) {
-            return;
-        }
         this.setBorder(new TitledBorder(DataConversionProperties.getString("string_border_panelTransform")));
         this.labelPassWord.setText(DataConversionProperties.getString("string_label_lblPassword") + "       ");
         this.labelPrjFile.setText(DataConversionProperties.getString("String_FormExport_LabelWorldFile"));
         this.labelBandImportModel.setText(DataConversionProperties.getString("string_label_lblSaveImport"));
+    }
+
+    public JComboBox getComboBoxBandImportModel() {
+        return comboBoxBandImportModel;
+    }
+
+    public FileChooserControl getChooserControlPrjFile() {
+        return chooserControlPrjFile;
+    }
+
+    public JPasswordField getPasswordField() {
+        return passwordField;
     }
 }
