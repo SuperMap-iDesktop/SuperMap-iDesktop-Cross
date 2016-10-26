@@ -10,39 +10,54 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2016/10/11.
  * raw,.b,bin,bip,bil,bsq,dem等栅格文件的导入参数设置界面
  */
 public class PanelTransformForGrid extends PanelTransform {
+    private ArrayList<PanelImport> panelImports;
     private JCheckBox checkBoxBuildImgPyramid;
     private ItemListener buildImgPyramidListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
-            if (importSetting instanceof ImportSettingRAW) {
-                ((ImportSettingRAW) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
-            }
-            if (importSetting instanceof ImportSettingTEMSClutter) {
-                ((ImportSettingTEMSClutter) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
-            }
-            if (importSetting instanceof ImportSettingBIP) {
-                ((ImportSettingBIP) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
-            }
-            if (importSetting instanceof ImportSettingBSQ) {
-                ((ImportSettingBSQ) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
-            }
-            if (importSetting instanceof ImportSettingGBDEM) {
-                ((ImportSettingGBDEM) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
-            }
-            if (importSetting instanceof ImportSettingUSGSDEM) {
-                ((ImportSettingUSGSDEM) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
+            if (null != panelImports) {
+                for (PanelImport tempPanelImport : panelImports) {
+                    ((PanelTransformForGrid) tempPanelImport.getTransform()).getCheckBoxBuildImgPyramid().setSelected(checkBoxBuildImgPyramid.isSelected());
+                }
+            } else {
+                if (importSetting instanceof ImportSettingRAW) {
+                    ((ImportSettingRAW) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
+                }
+                if (importSetting instanceof ImportSettingTEMSClutter) {
+                    ((ImportSettingTEMSClutter) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
+                }
+                if (importSetting instanceof ImportSettingBIP) {
+                    ((ImportSettingBIP) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
+                }
+                if (importSetting instanceof ImportSettingBSQ) {
+                    ((ImportSettingBSQ) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
+                }
+                if (importSetting instanceof ImportSettingGBDEM) {
+                    ((ImportSettingGBDEM) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
+                }
+                if (importSetting instanceof ImportSettingUSGSDEM) {
+                    ((ImportSettingUSGSDEM) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
+                }
             }
         }
     };
 
     public PanelTransformForGrid(ImportSetting importSetting) {
         super(importSetting);
+        registEvents();
+    }
+
+    public PanelTransformForGrid(ArrayList<PanelImport> panelImports, int layoutType) {
+        super(panelImports, layoutType);
+        this.panelImports = panelImports;
+        initLayerout();
         registEvents();
     }
 
@@ -91,5 +106,9 @@ public class PanelTransformForGrid extends PanelTransform {
     public void initResources() {
         this.setBorder(new TitledBorder(DataConversionProperties.getString("string_border_panelTransform")));
         this.checkBoxBuildImgPyramid.setText(DataConversionProperties.getString("string_checkbox_chckbxImageInfo"));
+    }
+
+    public JCheckBox getCheckBoxBuildImgPyramid() {
+        return checkBoxBuildImgPyramid;
     }
 }

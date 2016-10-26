@@ -10,6 +10,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2016/9/30.
@@ -17,42 +18,62 @@ import java.awt.event.ItemListener;
  * tab,mif参数设置界面
  */
 public class PanelTransformForGRD extends PanelTransform {
+    private ArrayList<PanelImport> panelImports;
     private JCheckBox checkBoxPyramidBuild;// 创建影像金字塔
     private JCheckBox checkBoxAttributeIgnored;//忽略属性信息
     private ItemListener checkBoxPyramidBuildListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
-            if (importSetting instanceof ImportSettingGRD) {
-                ((ImportSettingGRD) importSetting).setPyramidBuilt(checkBoxPyramidBuild.isSelected());
-            }
-            if (importSetting instanceof ImportSettingGBDEM) {
-                ((ImportSettingGBDEM) importSetting).setPyramidBuilt(checkBoxPyramidBuild.isSelected());
+            if (null != panelImports) {
+                for (PanelImport tempPanelImport : panelImports) {
+                    ((PanelTransformForGRD) tempPanelImport.getTransform()).getCheckBoxPyramidBuild().setSelected(checkBoxPyramidBuild.isSelected());
+                }
+            } else {
+                if (importSetting instanceof ImportSettingGRD) {
+                    ((ImportSettingGRD) importSetting).setPyramidBuilt(checkBoxPyramidBuild.isSelected());
+                }
+                if (importSetting instanceof ImportSettingGBDEM) {
+                    ((ImportSettingGBDEM) importSetting).setPyramidBuilt(checkBoxPyramidBuild.isSelected());
+                }
             }
         }
     };
     private ItemListener checkBoxAttributeIgnoredListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
-            if (importSetting instanceof ImportSettingSHP) {
-                ((ImportSettingSHP) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
-            }
-            if (importSetting instanceof ImportSettingE00) {
-                ((ImportSettingE00) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
-            }
-            if (importSetting instanceof ImportSettingLIDAR) {
-                ((ImportSettingLIDAR) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
-            }
-            if (importSetting instanceof ImportSettingTAB) {
-                ((ImportSettingTAB) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
-            }
-            if (importSetting instanceof ImportSettingMIF) {
-                ((ImportSettingMIF) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
+            if (null != panelImports) {
+                for (PanelImport tempPanelImport : panelImports) {
+                    ((PanelTransformForGRD) tempPanelImport.getTransform()).getCheckBoxAttributeIgnored().setSelected(checkBoxAttributeIgnored.isSelected());
+                }
+            } else {
+                if (importSetting instanceof ImportSettingSHP) {
+                    ((ImportSettingSHP) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
+                }
+                if (importSetting instanceof ImportSettingE00) {
+                    ((ImportSettingE00) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
+                }
+                if (importSetting instanceof ImportSettingLIDAR) {
+                    ((ImportSettingLIDAR) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
+                }
+                if (importSetting instanceof ImportSettingTAB) {
+                    ((ImportSettingTAB) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
+                }
+                if (importSetting instanceof ImportSettingMIF) {
+                    ((ImportSettingMIF) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
+                }
             }
         }
     };
 
     public PanelTransformForGRD(ImportSetting importSetting) {
         super(importSetting);
+        registEvents();
+    }
+
+    public PanelTransformForGRD(ArrayList<PanelImport> panelImports, int layoutType) {
+        super(panelImports, layoutType);
+        this.panelImports = panelImports;
+        initLayerout();
         registEvents();
     }
 
@@ -141,5 +162,13 @@ public class PanelTransformForGRD extends PanelTransform {
             this.setBorder(new TitledBorder(DataConversionProperties.getString("string_border_panelTransform")));
             this.checkBoxAttributeIgnored.setText(DataConversionProperties.getString("string_checkbox_chckIngoreProperty"));
         }
+    }
+
+    public JCheckBox getCheckBoxPyramidBuild() {
+        return checkBoxPyramidBuild;
+    }
+
+    public JCheckBox getCheckBoxAttributeIgnored() {
+        return checkBoxAttributeIgnored;
     }
 }

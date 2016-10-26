@@ -5,6 +5,7 @@ import com.supermap.data.conversion.*;
 import com.supermap.desktop.Interface.IImportSettingSourceInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.importUI.ImportFilePropertiesDialog;
+import com.supermap.desktop.importUI.PanelImport;
 import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.CharsetUtilities;
@@ -16,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2016/9/29.
@@ -31,6 +33,8 @@ public class PanelSourceInfo extends JPanel implements IImportSettingSourceInfo 
     private CharsetComboBox comboBoxCharset;
     private ImportSetting importSetting;
     private JDialog owner;
+    private ArrayList<PanelImport> panelImports;
+    private int layoutType;
 
     private ActionListener propertyListener = new ActionListener() {
         @Override
@@ -42,9 +46,14 @@ public class PanelSourceInfo extends JPanel implements IImportSettingSourceInfo 
     private ItemListener charsetListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
-
-            Charset newCharset = CharsetUtilities.valueOf(comboBoxCharset.getSelectedItem().toString());
-            importSetting.setSourceFileCharset(newCharset);
+            if (null != panelImports) {
+                for (PanelImport tempPanelImport : panelImports) {
+                    tempPanelImport.getSourceInfo().getComboBoxCharset().setSelectedItem(comboBoxCharset.getSelectedItem());
+                }
+            } else if (null != importSetting) {
+                Charset newCharset = CharsetUtilities.valueOf(comboBoxCharset.getSelectedItem().toString());
+                importSetting.setSourceFileCharset(newCharset);
+            }
         }
     };
 
@@ -57,7 +66,39 @@ public class PanelSourceInfo extends JPanel implements IImportSettingSourceInfo 
         registEvents();
     }
 
-    @Override
+    public PanelSourceInfo(ArrayList<PanelImport> panelImports, int layoutType) {
+        if (layoutType == PackageInfo.GRID_AND_VERTICAL_TYPE) {
+            return;
+        }
+        this.panelImports = panelImports;
+        this.layoutType = layoutType;
+        this.importSetting = panelImports.get(panelImports.size() - 1).getImportInfo().getImportSetting();
+        initComponents();
+        if (layoutType == PackageInfo.SAME_TYPE) {
+            initLayerout();
+        } else if (layoutType == PackageInfo.GRID_TYPE) {
+            initLayerout();
+        } else if (layoutType == PackageInfo.VERTICAL_TYPE) {
+            initVerticalLayout();
+        }
+
+        initResources();
+        registEvents();
+    }
+
+    private void initVerticalLayout() {
+        this.setLayout(new GridBagLayout());
+
+        this.add(this.labelCharset, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(this.comboBoxCharset, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 110).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.add(new JPanel(), new GridBagConstraintsHelper(4, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.comboBoxCharset.setPreferredSize(PackageInfo.defaultSize);
+        this.comboBoxCharset.setEditable(true);
+        ((JTextField) this.comboBoxCharset.getEditor().getEditorComponent()).setEditable(false);
+        this.setBorder(new TitledBorder(DataConversionProperties.getString("string_border_panelDatapath")));
+    }
+
+
     public void initComponents() {
         this.labelSourceFilePath = new JLabel();
         this.textFieldSourceFilePath = new JTextField();
@@ -74,21 +115,28 @@ public class PanelSourceInfo extends JPanel implements IImportSettingSourceInfo 
             Charset chartset = dataInfos.get(0).getSourceCharset();
             comboBoxCharset.setSelectCharset(chartset.name());
             importSetting.setSourceFileCharset(chartset);
-        }
-        if (importSetting != null && null != importSetting.getSourceFileCharset()) {
+        } else if (importSetting != null && null != importSetting.getSourceFileCharset()) {
             comboBoxCharset.setSelectCharset(importSetting.getSourceFileCharset().name());
         }
     }
 
     @Override
     public void initLayerout() {
+        JPanel panelSourceFilePath = new JPanel();
+        panelSourceFilePath.setLayout(new GridBagLayout());
         this.setLayout(new GridBagLayout());
-        this.add(this.labelSourceFilePath, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(this.textFieldSourceFilePath, new GridBagConstraintsHelper(2, 0, 5, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
-        this.add(this.buttonProperty, new GridBagConstraintsHelper(7, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        panelSourceFilePath.add(this.labelSourceFilePath, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 22).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        panelSourceFilePath.add(this.textFieldSourceFilePath, new GridBagConstraintsHelper(2, 0, 5, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        panelSourceFilePath.add(this.buttonProperty, new GridBagConstraintsHelper(7, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
 
-        this.add(this.labelCharset, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(this.comboBoxCharset, new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(0, 0).setIpad(18, 0));
+        JPanel panelCharset = new JPanel();
+        panelCharset.setLayout(new GridBagLayout());
+        panelCharset.add(this.labelCharset, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        panelCharset.add(this.comboBoxCharset, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 120).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        panelCharset.add(new JPanel(), new GridBagConstraintsHelper(4, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.add(panelSourceFilePath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.add(panelCharset, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.comboBoxCharset.setPreferredSize(PackageInfo.defaultSize);
         this.comboBoxCharset.setEditable(true);
         ((JTextField) this.comboBoxCharset.getEditor().getEditorComponent()).setEditable(false);
         if (importSetting instanceof ImportSettingDXF || importSetting instanceof ImportSettingDWG) {
@@ -119,17 +167,16 @@ public class PanelSourceInfo extends JPanel implements IImportSettingSourceInfo 
         this.buttonProperty.setText(DataConversionProperties.getString("String_ImportSettingPanel_ButtonProperty"));
     }
 
-    @Override
-    public Charset getCharset() {
-        return charset;
-    }
-
-    @Override
     public void needCharset(boolean visible) {
         this.labelCharset.setVisible(visible);
         this.comboBoxCharset.setVisible(visible);
         if (visible) {
             this.setBorder(new TitledBorder(DataConversionProperties.getString("string_border_panelDatapath")));
         }
+    }
+
+    @Override
+    public CharsetComboBox getComboBoxCharset() {
+        return comboBoxCharset;
     }
 }

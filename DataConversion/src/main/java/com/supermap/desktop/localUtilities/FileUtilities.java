@@ -46,6 +46,17 @@ public class FileUtilities {
         return matcher.matches();
     }
 
+    private static boolean isSameFile(String... filePaths) {
+        boolean isSame = true;
+        String tempPath = filePaths[0];
+        for (String filePath : filePaths) {
+            if (!filePath.equals(tempPath)) {
+                isSame = false;
+            }
+        }
+        return isSame;
+    }
+
     /**
      * 创建导入的文件选择器
      *

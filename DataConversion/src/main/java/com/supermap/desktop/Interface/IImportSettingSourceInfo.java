@@ -1,7 +1,7 @@
 package com.supermap.desktop.Interface;
 
 
-import com.supermap.data.Charset;
+import com.supermap.desktop.ui.controls.CharsetComboBox;
 
 /**
  * Created by xie on 2016/9/29.
@@ -9,23 +9,10 @@ import com.supermap.data.Charset;
  */
 public interface IImportSettingSourceInfo extends IPanelModel {
     /**
-     * 获取字符集类型
+     * 获取字符集类型控件
      *
      * @return
      */
-    Charset getCharset();
+    CharsetComboBox getComboBoxCharset();
 
-    /**
-     * 实例化类时是否需要创建字符集控件
-     *
-     * @param visible
-     */
-    void needCharset(boolean visible);
-
-//    /**
-//     * 获取ImportSetting
-//     *
-//     * @return
-//     */
-//    ImportSetting getImportSetting();
 }

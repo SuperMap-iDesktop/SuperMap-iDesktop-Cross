@@ -66,9 +66,15 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
     private JCheckBox checkBoxAutoClose;
     private JToolBar toolBar;
     private JScrollPane scrollPane;
-    private ArrayList<IPanelImport> panelImports;
+    private ArrayList<PanelImport> panelImports;
     private SteppedComboBox steppedComboBox;
     private DropTarget dropTargetTemper;
+    private PanelImport panelImportTemp;
+
+    private final int GRID_TYPE = 1;
+    private final int VERTICAL_TYPE = 2;
+    private final int GRID_AND_VERTICAL_TYPE = 3;
+    private final int SAME_TYPE = 4;
 
     private ActionListener addFileListener = new ActionListener() {
         @Override
@@ -81,31 +87,37 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         public void keyPressed(KeyEvent e) {
             if ((e.isControlDown() == true) && (e.getKeyCode() == KeyEvent.VK_A) && (1 <= table.getRowCount())) {
                 // 键盘点击ctrl+A,全选
-
+                replaceImportInfos(panelImports);
+                return;
             }
             if (e.getKeyCode() == KeyEvent.VK_DELETE) {
                 // 键盘点击delete,删除
                 deleteImportInfo();
+                return;
             }
 
         }
 
         @Override
         public void keyReleased(KeyEvent e) {
-            if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN) {
-                // 键盘点击up/down刷新右边界面
-                replaceImportInfo(table.getSelectedRow());
-            }
             if ((e.isShiftDown() == true) && (e.getKeyCode() == KeyEvent.VK_UP) || ((e.isShiftDown() == true) && (e.getKeyCode() == KeyEvent.VK_DOWN))) {
                 // 键盘点击shift+up/down刷新右边界面
-
+                replaceImportInfos();
+                return;
+            } else if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN) {
+                // 键盘点击up/down刷新右边界面
+                relesePanelImportTemp();
+                replaceImportInfo(table.getSelectedRow());
+                return;
             }
         }
     };
+
     private ActionListener closeListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             removeEvents();
+            panelImportsDispose();
             dispose();
         }
     };
@@ -149,7 +161,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                 if (null != importSetting) {
                     importInfo.setImportSetting(importSetting);
                     IImportPanelFactory importPanelFactory = new ImportPanelFactory();
-                    IPanelImport panelImport = importPanelFactory.createPanelImport(DataImportDialog.this, importInfo);
+                    PanelImport panelImport = (PanelImport) importPanelFactory.createPanelImport(DataImportDialog.this, importInfo);
                     panelImports.add(panelImport);
                     model.addRow(importInfo);
                 }
@@ -164,14 +176,57 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 
     private MouseListener mouseListener = new MouseAdapter() {
         @Override
-        public void mouseClicked(MouseEvent e) {
-            if (table.getSelectedRows().length == 1) {
-                replaceImportInfo(table.getSelectedRow());
-            } else if (2 == e.getClickCount()) {
+        public void mouseReleased(MouseEvent e) {
+            if (2 == e.getClickCount()) {
                 addImportInfo();
+                return;
+            } else if (table.getSelectedRows().length == 1) {
+                relesePanelImportTemp();
+                replaceImportInfo(table.getSelectedRow());
+            } else if (table.getSelectedRows().length > 1) {
+                replaceImportInfos();
             }
         }
     };
+
+    private void relesePanelImportTemp() {
+        if (null != panelImportTemp) {
+            panelImportTemp.dispose();
+            panelImportTemp = null;
+        }
+    }
+
+    private void replaceImportInfos() {
+        ArrayList<PanelImport> tempPanelImports = new ArrayList<PanelImport>();
+        int[] selectRows = table.getSelectedRows();
+        int size = selectRows.length;
+        for (int i = 0; i < size; i++) {
+            tempPanelImports.add(panelImports.get(selectRows[i]));
+        }
+        replaceImportInfos(tempPanelImports);
+    }
+
+    private void replaceImportInfos(ArrayList<PanelImport> panelImports) {
+        ArrayList<PanelImport> tempPanelImports = panelImports;
+        IImportPanelFactory importPanelFactory = new ImportPanelFactory();
+        panelImportTemp = (PanelImport) importPanelFactory.createPanelImport(tempPanelImports);
+        int panelImportType = panelImportTemp.getPanelImportType();
+        if (panelImportType == SAME_TYPE) {
+            String fileType = FileUtilities.getFileType(panelImports.get(0).getImportInfo().getImportSetting().getSourceFilePath());
+            if (!StringUtilities.isNullOrEmpty(fileType)) {
+                labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), fileType.substring(1, fileType.length()).toUpperCase()));
+            }
+        } else if (panelImportType == VERTICAL_TYPE) {
+            labelTitle.setText(DataConversionProperties.getString("String_FormImportVector_Text"));
+        } else if (panelImportType == GRID_TYPE) {
+            labelTitle.setText(DataConversionProperties.getString("String_FormImportRaster_Text"));
+        } else {
+            labelTitle.setText(DataConversionProperties.getString("String_FormImportMix_Text"));
+        }
+        ImportUtilities.replace(panelImportInfo, panelImportTemp);
+        importPanelFactory = null;
+        tempPanelImports = null;
+    }
 
     private void replaceImportInfo(int selectRow) {
         IPanelImport panelImport = panelImports.get(selectRow);
@@ -295,11 +350,19 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                 Application.getActiveApplication().getOutput().output(ex);
             } finally {
                 if (checkBoxAutoClose.isSelected()) {
+                    panelImportsDispose();
                     dispose();
                 }
             }
         }
     };
+
+    private void panelImportsDispose() {
+        for (IPanelImport panelImportTemp : panelImports) {
+            panelImportTemp = null;
+        }
+        panelImports = null;
+    }
 
     public DataImportDialog() {
         super();
@@ -325,7 +388,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 
     @Override
     public void initComponents() {
-        this.panelImports = new ArrayList<IPanelImport>();
+        this.panelImports = new ArrayList<PanelImport>();
         this.splitPane = new JSplitPane();
         this.contentPane = new JPanel();
         this.table = new JTable();
@@ -431,6 +494,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 
             @Override
             public void windowClosing(WindowEvent e) {
+                panelImportsDispose();
                 removeEvents();
             }
         });
@@ -585,7 +649,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                     String filePath = tempFileInfo.getImportSetting().getSourceFilePath();
                     newImportSetting.setSourceFilePath(filePath);
                     tempFileInfo.setImportSetting(newImportSetting);
-                    IPanelImport panelImport = importPanelFactory.createPanelImport(DataImportDialog.this, tempFileInfo);
+                    PanelImport panelImport = (PanelImport) importPanelFactory.createPanelImport(DataImportDialog.this, tempFileInfo);
                     String fileType = FileUtilities.getFileType(filePath);
                     if (!StringUtilities.isNullOrEmpty(fileType)) {
                         labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), fileType.substring(1, fileType.length()).toUpperCase()));
@@ -663,14 +727,14 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                         importInfo.setFileName(directories);
                         importInfo.setState(DataConversionProperties.getString("string_change"));
                         IImportPanelFactory importPanelFactory = new ImportPanelFactory();
-                        IPanelImport panelImport = importPanelFactory.createPanelImport(DataImportDialog.this, importInfo);
+                        PanelImport panelImport = (PanelImport) importPanelFactory.createPanelImport(DataImportDialog.this, importInfo);
                         panelImports.add(panelImport);
                         model.addRow(importInfo);
                         if (panelImports.size() > 0) {
                             table.setRowSelectionInterval(table.getRowCount() - 1, table.getRowCount() - 1);
                             labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), "GJB"));
                             initComboBoxColumns();
-                            ImportUtilities.replace(panelImportInfo, (JPanel) panelImport);
+                            ImportUtilities.replace(panelImportInfo, panelImport);
                             setButtonState();
                         }
                     }

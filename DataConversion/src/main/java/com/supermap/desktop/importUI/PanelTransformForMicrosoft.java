@@ -14,12 +14,14 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2016/10/11.
  * 导入csv,xlsx
  */
-public class PanelTransformMicrosoft extends PanelTransform {
+public class PanelTransformForMicrosoft extends PanelTransform {
+    private ArrayList<PanelImport> panelImports;
     private JLabel labelSeparator;
     private JTextField textFieldSeparator;
     private JCheckBox checkBoxFristRowAsField;
@@ -42,22 +44,40 @@ public class PanelTransformMicrosoft extends PanelTransform {
 
         private void updateSeparator() {
             if (!StringUtilities.isNullOrEmpty(textFieldSeparator.getText())) {
-                ((ImportSettingCSV) importSetting).setSeparator(textFieldSeparator.getText());
+                if (null != panelImports) {
+                    for (PanelImport tempPanelImport : panelImports) {
+                        ((PanelTransformForMicrosoft) tempPanelImport.getTransform()).getTextFieldSeparator().setText(textFieldSeparator.getText());
+                    }
+                } else {
+                    ((ImportSettingCSV) importSetting).setSeparator(textFieldSeparator.getText());
+                }
             }
         }
     };
     private ItemListener itemListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
-            ((ImportSettingCSV) importSetting).setFirstRowIsField(checkBoxFristRowAsField.isSelected());
+            if (null != panelImports) {
+                for (PanelImport tempPanelImport : panelImports) {
+                    ((PanelTransformForMicrosoft) tempPanelImport.getTransform()).getCheckBoxFristRowAsField().setSelected(checkBoxFristRowAsField.isSelected());
+                }
+            } else {
+                ((ImportSettingCSV) importSetting).setFirstRowIsField(checkBoxFristRowAsField.isSelected());
+            }
         }
     };
 
-    public PanelTransformMicrosoft(ImportSetting importSetting) {
+    public PanelTransformForMicrosoft(ImportSetting importSetting) {
         super(importSetting);
         registEvents();
     }
 
+    public PanelTransformForMicrosoft(ArrayList<PanelImport> panelImports, int layoutType) {
+        super(panelImports, layoutType);
+        this.panelImports = panelImports;
+        initLayerout();
+        registEvents();
+    }
     @Override
     public void initComponents() {
         this.checkBoxFristRowAsField = new JCheckBox();
@@ -70,7 +90,7 @@ public class PanelTransformMicrosoft extends PanelTransform {
     public void initLayerout() {
         this.setLayout(new GridBagLayout());
         this.add(this.labelSeparator, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 45).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(this.textFieldSeparator, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setIpad(20, 0));
+        this.add(this.textFieldSeparator, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setIpad(30, 0));
         this.add(this.checkBoxFristRowAsField, new GridBagConstraintsHelper(4, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(this.labelEmpty, new GridBagConstraintsHelper(6, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
 
@@ -95,5 +115,13 @@ public class PanelTransformMicrosoft extends PanelTransform {
         this.labelSeparator.setText(DataConversionProperties.getString("String_Label_Separator"));
         this.textFieldSeparator.setText(",");
         this.checkBoxFristRowAsField.setText(DataConversionProperties.getString("String_ImportSettingPanel_Checkbox_FirstRowisField"));
+    }
+
+    public JTextField getTextFieldSeparator() {
+        return textFieldSeparator;
+    }
+
+    public JCheckBox getCheckBoxFristRowAsField() {
+        return checkBoxFristRowAsField;
     }
 }
