@@ -11,7 +11,6 @@ public class CtrlActionDatasourceClose extends CtrlAction {
 
 	public CtrlActionDatasourceClose(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

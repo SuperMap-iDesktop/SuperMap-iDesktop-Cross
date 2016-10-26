@@ -7,7 +7,7 @@ import java.net.URL;
 
 public final class InternalImageIconFactory {
 
-	// Define icons for dataset
+	// Define icons for EngineType
 	public final static ImageIcon DT_POINT = createIconFromFile("Image_Dataset_Point_Normal.png");
 
 	public final static ImageIcon DT_LINE = createIconFromFile("Image_Dataset_Line_Normal.png");

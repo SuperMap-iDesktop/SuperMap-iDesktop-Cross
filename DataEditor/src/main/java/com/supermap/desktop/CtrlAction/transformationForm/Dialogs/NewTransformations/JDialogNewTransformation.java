@@ -153,4 +153,16 @@ public class JDialogNewTransformation extends SmDialog {
 	public String getSelectTransformationFilePath() {
 		return panelChooseTransformationFile.getSelectedTransformationFilePath();
 	}
+
+	public Color getSelectedColor() {
+		return panelChooseTransformationFile.getSelectedColor();
+	}
+
+	public Color getUnSelectedColor() {
+		return panelChooseTransformationFile.getUnSelectedColor();
+	}
+
+	public Color getUnUseColor() {
+		return panelChooseTransformationFile.getUnUseColor();
+	}
 }

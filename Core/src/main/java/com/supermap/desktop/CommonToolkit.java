@@ -1,7 +1,18 @@
 package com.supermap.desktop;
 
-import com.supermap.data.*;
-import com.supermap.desktop.Interface.*;
+import com.supermap.data.Charset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.EncodeType;
+import com.supermap.data.EngineInfo;
+import com.supermap.data.EngineType;
+import com.supermap.data.StatisticMode;
+import com.supermap.data.Tolerance;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormLBSControl;
+import com.supermap.desktop.Interface.IFormLayout;
+import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
@@ -4694,9 +4705,8 @@ public class CommonToolkit {
 			datasourceImage = new HashMap<EngineType, String>();
 			String fileParentPath = "/controlsresources/WorkspaceManager/Datasource/";
 			datasourceImage.put(EngineType.DB2, fileParentPath + "Image_DatasourceDB2_Normal.png");
-			datasourceImage.put(EngineType.GOOGLEMAPS, fileParentPath + "Image_DatasourceGoogleMaps_Normal.png");
 			datasourceImage.put(EngineType.IMAGEPLUGINS, fileParentPath + "Image_DatasourceImagePlugins_Normal.png");
-			datasourceImage.put(EngineType.OGC, fileParentPath + "Image_DatasourceOGC_Normal.png");
+			datasourceImage.put(EngineType.OGC, fileParentPath + "Image_OGC.png");
 			datasourceImage.put(EngineType.ORACLEPLUS, fileParentPath + "Image_DatasourceOraclePlus_Normal.png");
 			datasourceImage.put(EngineType.ORACLESPATIAL, fileParentPath + "Image_DatasourceOracleSpatial_Normal.png");
 			datasourceImage.put(EngineType.POSTGRESQL, fileParentPath + "Image_DatasourcePostgreSQL_Normal.png");
@@ -4705,6 +4715,11 @@ public class CommonToolkit {
 			datasourceImage.put(EngineType.DM, fileParentPath + "Image_Datasource_DMPlus_Normal.png");
 			datasourceImage.put(EngineType.KINGBASE, fileParentPath + "Image_Datasource_Kingbase_Normal.png");
 			datasourceImage.put(EngineType.MYSQL, fileParentPath + "Image_MySQL.png");
+			datasourceImage.put(EngineType.BAIDUMAPS, fileParentPath + "Image_Baidu.png");
+			datasourceImage.put(EngineType.ISERVERREST, fileParentPath + "Image_IServerRest.png");
+			datasourceImage.put(EngineType.SUPERMAPCLOUD, fileParentPath + "Image_SuperMapCloud.png");
+			datasourceImage.put(EngineType.GOOGLEMAPS, fileParentPath + "Image_GoogleMaps.png");
+			datasourceImage.put(EngineType.OPENSTREETMAPS, fileParentPath + "Image_OpenStreetMaps.png");
 			datasourceImage.put(null, fileParentPath + "Image_Datasources_Normal.png");
 		}
 
