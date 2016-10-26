@@ -12,6 +12,9 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationTableDataBean;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerGroup;
+import com.supermap.mapping.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -213,5 +216,41 @@ public class TransformationUtilties {
 			}
 		}
 		return false;
+	}
+
+	public static List<Object> getMapDatasets(Map map) {
+		List<Object> resultDataset = new ArrayList<>();
+		int count = map.getLayers().getCount();
+		for (int i = 0; i < count; i++) {
+			Layer layer = map.getLayers().get(i);
+			if (layer instanceof LayerGroup) {
+				for (Object o : geLayerGroupDatasets((LayerGroup) layer)) {
+					if (!resultDataset.contains(o)) {
+						resultDataset.add(o);
+					}
+				}
+			} else if (layer.getDataset() != null && !resultDataset.contains(layer.getDataset())) {
+				resultDataset.add(layer.getDataset());
+			}
+		}
+		return resultDataset;
+	}
+
+	private static List<Object> geLayerGroupDatasets(LayerGroup layerGroup) {
+		List<Object> objects = new ArrayList<>();
+		for (int i = 0; i < layerGroup.getCount(); i++) {
+			Layer layer = layerGroup.get(i);
+			if (layer instanceof LayerGroup) {
+				List<Object> datasets = geLayerGroupDatasets(layerGroup);
+				for (Object dataset : datasets) {
+					if (!objects.contains(dataset)) {
+						objects.add(dataset);
+					}
+				}
+			} else if (layer.getDataset() != null && !objects.contains(layer.getDataset())) {
+				objects.add(layer.getDataset());
+			}
+		}
+		return objects;
 	}
 }

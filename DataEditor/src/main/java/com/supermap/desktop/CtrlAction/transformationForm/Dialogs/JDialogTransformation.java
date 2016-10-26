@@ -30,12 +30,14 @@ import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooseMode;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.TableUtilities;
+import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -498,17 +500,34 @@ public class JDialogTransformation extends SmDialog {
 	}
 
 	private void buttonAddClicked() {
-		DatasetChooser datasetChooser = new DatasetChooser();
+		DatasetChooser datasetChooser = new DatasetChooser(DatasetChooseMode.DATASET, DatasetChooseMode.MAP);
 		datasetChooser.setSupportDatasetTypes(supportDatasetTypes);
 		if (datasetChooser.showDialog() == DialogResult.OK) {
-			java.util.List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
+			java.util.List<Object> selectedDatasets = datasetChooser.getSelectedObjects();
 			if (selectedDatasets.size() > 0) {
-				Datasource defaultDatasource = TransformationUtilties.getDefaultDatasource(selectedDatasets.get(0).getDatasource());
+				Datasource defaultDatasource = null;
 				int count = 0;
-				for (Dataset selectedDataset : selectedDatasets) {
-					if (tableModel.addDataset(selectedDataset, defaultDatasource,
-							defaultDatasource == null ? null : defaultDatasource.getDatasets().getAvailableDatasetName(selectedDataset.getName() + "_adjust"))) {
-						++count;
+				for (int i = selectedDatasets.size() - 1; i >= 0; i--) {
+					Object selectedDataset = selectedDatasets.get(i);
+					if (selectedDataset instanceof Map) {
+						selectedDatasets.remove(selectedDataset);
+						java.util.List<Object> mapDatasets = TransformationUtilties.getMapDatasets((Map) selectedDataset);
+						for (Object mapDataset : mapDatasets) {
+							if (!selectedDatasets.contains(mapDataset)) {
+								selectedDatasets.add(mapDataset);
+							}
+						}
+					}
+				}
+				for (Object selectedDataset : selectedDatasets) {
+					if (selectedDataset instanceof Dataset) {
+						if (defaultDatasource == null) {
+							defaultDatasource = TransformationUtilties.getDefaultDatasource(((Dataset) selectedDataset).getDatasource());
+						}
+						if (tableModel.addDataset((Dataset) selectedDataset, defaultDatasource,
+								defaultDatasource == null ? null : defaultDatasource.getDatasets().getAvailableDatasetName(((Dataset) selectedDataset).getName() + "_adjust"))) {
+							++count;
+						}
 					}
 				}
 				if (count != 0) {
