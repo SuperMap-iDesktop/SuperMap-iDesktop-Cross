@@ -19,7 +19,7 @@ public class CtrlActionOverlayAnalyst extends CtrlAction {
     @Override
     public void run() {
         try {
-            OverlayAnalystDialog overlayAnalystDialog = new OverlayAnalystDialog();
+            new OverlayAnalystDialog();
         } catch (Exception e) {
             Application.getActiveApplication().getOutput().output(e);
         }

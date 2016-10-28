@@ -1,6 +1,6 @@
 package com.supermap.desktop.action;
 
-import com.supermap.desktop.ImportFileInfo;
+import com.supermap.desktop.iml.ImportFileInfo;
 import com.supermap.desktop.ui.DataImportFrame;
 import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.FileInfoModel;

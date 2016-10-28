@@ -314,7 +314,7 @@ public class PanelTransformForD extends PanelTransform {
     public void initLayerout() {
         this.setLayout(new GridBagLayout());
         this.add(this.labelCurveSegment, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(this.textFieldCurveSegment, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 90).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.add(this.textFieldCurveSegment, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 120).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
         this.add(new JPanel(), new GridBagConstraintsHelper(4, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
 
         this.add(panelCheckBox, new GridBagConstraintsHelper(0, 1, 8, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(0).setFill(GridBagConstraints.BOTH));
@@ -365,7 +365,7 @@ public class PanelTransformForD extends PanelTransform {
         this.setBorder(new TitledBorder(DataConversionProperties.getString("string_border_panelTransform")));
         this.labelCurveSegment.setText(DataConversionProperties.getString("string_label_lblCurve"));
         this.checkBoxExtendsData.setText(DataConversionProperties.getString("string_checkbox_chckbxExtendsData"));//导入扩展数据
-        this.checkBoxImportingXRecord.setText(DataConversionProperties.getString("string_checkbox_chckbxExtendsData"));//导入扩展记录
+        this.checkBoxImportingXRecord.setText(DataConversionProperties.getString("String_ImportExtendsRecord"));//导入扩展记录
         this.checkBoxSaveHeight.setText(DataConversionProperties.getString("string_checkbox_chckbxHeight"));//保留对象高度
         this.checkBoxImportInvisibleLayer.setText(DataConversionProperties.getString("string_checkbox_chckbxImportLayer"));//导入不可见图层
         this.checkBoxSaveWPLineWidth.setText(DataConversionProperties.getString("string_checkbox_chckbxLineWidth"));//保留多义线宽度

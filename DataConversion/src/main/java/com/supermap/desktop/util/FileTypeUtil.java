@@ -1,7 +1,7 @@
 package com.supermap.desktop.util;
 
-import com.supermap.desktop.FileTypeLocale;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.iml.FileTypeLocale;
 
 /**
  * @author Administrator 文件类型设置工具类

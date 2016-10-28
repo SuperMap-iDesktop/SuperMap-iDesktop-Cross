@@ -65,7 +65,9 @@ public class DatasourceUtilities {
     // private static EngineType[] databaseEngineTypes;
     // private static EngineType[] webEngineTypes;
     // #endregion
-    private static EngineType[] webEngineTypes = {EngineType.OGC, EngineType.ISERVERREST, EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS, EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS, EngineType.OPENSTREETMAPS};
+    private static EngineType[] webEngineTypes = {
+            EngineType.OGC, EngineType.ISERVERREST, EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS, EngineType.BAIDUMAPS,
+            EngineType.OPENSTREETMAPS, EngineType.MAPWORLD};
 
     /**
      * 是否为web型数据源

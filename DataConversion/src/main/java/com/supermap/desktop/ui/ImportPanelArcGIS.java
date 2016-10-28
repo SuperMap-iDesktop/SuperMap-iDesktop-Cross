@@ -2,8 +2,8 @@ package com.supermap.desktop.ui;
 
 import com.supermap.data.Datasource;
 import com.supermap.data.conversion.*;
-import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.iml.ImportFileInfo;
 import com.supermap.desktop.ui.controls.CharsetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;

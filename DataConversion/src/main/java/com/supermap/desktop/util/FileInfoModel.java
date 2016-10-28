@@ -1,7 +1,7 @@
 package com.supermap.desktop.util;
 
-import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.iml.ImportFileInfo;
 
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;

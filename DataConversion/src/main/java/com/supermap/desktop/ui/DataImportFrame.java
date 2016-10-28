@@ -2,10 +2,10 @@ package com.supermap.desktop.ui;
 
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.FileTypeLocale;
-import com.supermap.desktop.ImportFileInfo;
 import com.supermap.desktop.action.CommonMouseListener;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.iml.FileTypeLocale;
+import com.supermap.desktop.iml.ImportFileInfo;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;

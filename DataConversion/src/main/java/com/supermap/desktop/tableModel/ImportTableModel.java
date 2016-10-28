@@ -40,12 +40,12 @@ public class ImportTableModel extends AbstractTableModel {
 
     public void addRow(ImportInfo fileInfo) {
         this.importInfos.add(fileInfo);
-        fireTableRowsInserted(0, getRowCount());
+        fireTableRowsInserted(COLUMN_FILENAME, getRowCount());
     }
 
     public void removeRow(int i) {
         importInfos.remove(i);
-        fireTableRowsDeleted(0, getRowCount());
+        fireTableRowsDeleted(COLUMN_FILENAME, getRowCount());
     }
 
     public void removeRows(int[] rows) {
@@ -55,13 +55,13 @@ public class ImportTableModel extends AbstractTableModel {
                 removeInfo.add(importInfos.get(rows[i]));
             }
             importInfos.removeAll(removeInfo);
-            fireTableRowsDeleted(0, getRowCount());
+            fireTableRowsDeleted(COLUMN_FILENAME, getRowCount());
         }
     }
 
     public void updateRows(List<ImportInfo> tempFileInfos) {
         this.importInfos = (ArrayList<ImportInfo>) tempFileInfos;
-        fireTableRowsUpdated(0, getRowCount());
+        fireTableRowsUpdated(COLUMN_FILENAME, getRowCount());
     }
 
     @Override
@@ -76,7 +76,7 @@ public class ImportTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == 1) {
+        if (columnIndex == COLUMN_FILETYPE) {
             return true;
         }
         return false;

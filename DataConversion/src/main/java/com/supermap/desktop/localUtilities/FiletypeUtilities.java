@@ -1,7 +1,7 @@
 package com.supermap.desktop.localUtilities;
 
-import com.supermap.desktop.FileTypeLocale;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.iml.FileTypeLocale;
 
 /**
  * Created by xie on 2016/10/14.
