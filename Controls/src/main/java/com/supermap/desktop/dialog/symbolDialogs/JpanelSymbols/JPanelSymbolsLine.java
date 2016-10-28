@@ -1,5 +1,7 @@
 package com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols;
 
+import com.supermap.data.SymbolType;
+
 /**
  * @author XiaJt
  */
@@ -30,4 +32,8 @@ public class JPanelSymbolsLine extends JPanelSymbols {
         return geoStyle.getLineSymbolID();
     }
 
+	@Override
+	protected SymbolType getSymbolType() {
+		return SymbolType.LINE;
+	}
 }

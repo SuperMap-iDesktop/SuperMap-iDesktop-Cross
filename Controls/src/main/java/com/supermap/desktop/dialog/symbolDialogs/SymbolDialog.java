@@ -1,6 +1,12 @@
 package com.supermap.desktop.dialog.symbolDialogs;
 
-import com.supermap.data.*;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Resources;
+import com.supermap.data.Symbol;
+import com.supermap.data.SymbolGroup;
+import com.supermap.data.SymbolGroups;
+import com.supermap.data.SymbolLibrary;
+import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbols;
@@ -472,6 +478,7 @@ public abstract class SymbolDialog extends SmDialog {
 	public void dispose() {
 		isDisposed = true;
 		super.dispose();
+		panelSymbols.dispose();
 		panelPreview.dispose();
 	}
 

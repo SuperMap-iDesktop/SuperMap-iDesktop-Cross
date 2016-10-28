@@ -975,7 +975,7 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	private void addPoint(TransformationBase form, Point2D point) {
 		TableUtilities.stopEditing(tablePoints);
 		int index = formTransformationTableModel.getFirstInsertRow(getSubFormTypeByForm(form)) + 1;
-		Color color = unSelectedColor;
+		Color color = index - 1 < tablePoints.getRowCount() && tablePoints.isRowSelected(tablePoints.convertRowIndexToView(index - 1)) ? selectedColor : unSelectedColor;
 		if (index != -1 && tablePoints.getRowCount() > index) {
 			color = tablePoints.isRowSelected(tablePoints.convertRowIndexToView(index - 1)) ? selectedColor : unSelectedColor;
 		}

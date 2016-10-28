@@ -4,8 +4,12 @@ import com.supermap.data.GeoStyle;
 import com.supermap.data.Resources;
 import com.supermap.data.Symbol;
 import com.supermap.data.SymbolGroup;
+import com.supermap.data.SymbolType;
 import com.supermap.desktop.dialog.symbolDialogs.WrapLayout;
+import com.supermap.desktop.event.SymbolChangedEvent;
+import com.supermap.desktop.event.SymbolChangedListener;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.SymbolUtilties;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,6 +70,16 @@ public abstract class JPanelSymbols extends JPanel {
 			JPanelSymbols.this.requestFocus();
 		}
 	};
+	private SymbolChangedListener symbolChangedListener = new SymbolChangedListener() {
+		@Override
+		public void symbolChanged(SymbolChangedEvent symbolChangedEvent) {
+			if (symbolChangedEvent.getParentSymbolGroup() == symbolGroup && symbolChangedEvent.getSymbolType() == getSymbolType()) {
+				setSymbolGroup(resources, symbolGroup);
+			}
+		}
+	};
+
+	protected abstract SymbolType getSymbolType();
 
 	public JPanelSymbols() {
 		this.setBackground(Color.WHITE);
@@ -76,7 +90,7 @@ public abstract class JPanelSymbols extends JPanel {
 	}
 
 	public void setSymbolGroup(Resources resources, final SymbolGroup symbolGroup) {
-		if (symbolGroup == null || this.symbolGroup == symbolGroup) {
+		if (symbolGroup == null) {
 			return;
 		}
 		this.resources = resources;
@@ -100,6 +114,7 @@ public abstract class JPanelSymbols extends JPanel {
 		this.addKeyListener(keyAdapter);
 		this.removeMouseListener(mouseAdapter1);
 		this.addMouseListener(mouseAdapter1);
+		SymbolUtilties.addSymbolChangedListener(symbolChangedListener);
 	}
 
 	private void setSelectedSymbolPanel(SymbolPanel symbolPanel) {
@@ -183,6 +198,7 @@ public abstract class JPanelSymbols extends JPanel {
 	public GeoStyle getCurrentGeoStyle() {
 		return geoStyle;
 	}
+
 	/**
 	 * 初始化的时候使用
 	 */
@@ -227,6 +243,10 @@ public abstract class JPanelSymbols extends JPanel {
 					|| ((SymbolPanel) this.getComponent(i)).getSymbolName().toLowerCase().contains(searchString.toLowerCase())
 					|| String.valueOf(((SymbolPanel) this.getComponent(i)).getSymbolID()).toLowerCase().contains(searchString.toLowerCase()));
 		}
+	}
+
+	public void dispose() {
+		SymbolUtilties.removeSymbolChangedListener(symbolChangedListener);
 	}
 
 }
