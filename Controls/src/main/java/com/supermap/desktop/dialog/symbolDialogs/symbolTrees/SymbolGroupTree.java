@@ -15,6 +15,8 @@ import java.awt.*;
  */
 public class SymbolGroupTree extends JTree {
 
+	private boolean isEditable = true;
+
 	public SymbolGroupTree(SymbolGroup symbolGroup) {
 		this.setRootVisible(true);
 		this.setShowsRootHandles(true);
@@ -49,7 +51,7 @@ public class SymbolGroupTree extends JTree {
 
 	@Override
 	public boolean isEditable() {
-		return true;
+		return isEditable;
 	}
 
 	public void setSelectedSymbolGroup(SymbolGroup currentSymbolGroup) {
@@ -76,5 +78,10 @@ public class SymbolGroupTree extends JTree {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void setEditable(boolean editable) {
+		isEditable = editable;
 	}
 }

@@ -594,6 +594,7 @@ public class JDialogTransformation extends SmDialog {
 		buttonSelectInvert.setEnabled(table.getRowCount() > 0);
 		buttonDel.setEnabled(table.getSelectedRowCount() > 0);
 		comboBoxDatasources.setEnabled(table.getSelectedRowCount() > 0);
+		buttonSetting.setEnabled(table.getSelectedRowCount() > 0);
 		checkIsSaveState();
 	}
 

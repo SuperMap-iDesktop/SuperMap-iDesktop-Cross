@@ -1,6 +1,7 @@
 package com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols;
 
 import com.supermap.data.GeoStyle;
+import com.supermap.data.SymbolType;
 
 /**
  * @author XiaJt
@@ -42,4 +43,9 @@ public class JPanelSymbolsPoint extends JPanelSymbols {
     protected void changeGeoStyleId(int symbolID) {
         this.geoStyle.setMarkerSymbolID(symbolID);
     }
+
+	@Override
+	protected SymbolType getSymbolType() {
+		return SymbolType.MARKER;
+	}
 }

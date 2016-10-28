@@ -39,7 +39,7 @@ public class JTreeUIUtilities {
 
 	private static void expandAll(JTree tree, TreePath parent, boolean expand) {
 		TreeNode node = (TreeNode) parent.getLastPathComponent();
-		if (node.getChildCount() >= 0) {
+		if (node.getChildCount() > 0) {
 			for (Enumeration e = node.children(); e.hasMoreElements(); ) {
 				TreeNode n = (TreeNode) e.nextElement();
 				TreePath path = parent.pathByAddingChild(n);

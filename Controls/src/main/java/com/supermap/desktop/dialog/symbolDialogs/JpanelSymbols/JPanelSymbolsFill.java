@@ -1,5 +1,7 @@
 package com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols;
 
+import com.supermap.data.SymbolType;
+
 /**
  * @author XiaJt
  */
@@ -29,4 +31,9 @@ public class JPanelSymbolsFill extends JPanelSymbols {
     public int getCurrentSymbolId() {
         return geoStyle.getFillSymbolID();
     }
+
+	@Override
+	protected SymbolType getSymbolType() {
+		return SymbolType.FILL;
+	}
 }
