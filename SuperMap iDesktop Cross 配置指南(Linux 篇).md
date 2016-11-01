@@ -4,7 +4,7 @@
 
 ## 获取 ##
 
-SuperMap iDesktop Cross 产品所使用的 JDK 版本为 **JDK 1.7.0_80** 即 **Java SE Development Kit 7u80**，请前往 [Java 官方网站](http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html "Java 官方网站") 获取指定 JDK。请根据您操作系统来选择下载对应的包，本文 Ubuntu 操作系统为例，这里下载 **Linux x64 - jdk-7u80-linux-x64.tar.gz**。
+SuperMap iDesktop Cross 产品所使用的 JDK 版本为 **JDK 1.7.0_80** 即 **Java SE Development Kit 7u80**，请前往 [Java 官方网站](http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html "Java 官方网站") 获取指定 JDK。请根据您操作系统来选择下载对应的包，本文以 Ubuntu 操作系统为例，此处下载的是 **Linux x64 - jdk-7u80-linux-x64.tar.gz**。
 
 ## 安装 ##
 
