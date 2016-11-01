@@ -423,22 +423,14 @@ public class JDialogTransformation extends SmDialog {
 				comboBoxDatasources.setEnabled(checkBoxIsSaveAs.isSelected());
 			}
 		});
-//		comboBoxDatasources.addItemListener(new ItemListener() {
-//			@Override
-//			public void itemStateChanged(ItemEvent e) {
-//				if (isListenerEnable && e.getStateChange() == ItemEvent.SELECTED) {
-//					Datasource selectedItem = (Datasource) comboBoxDatasources.getSelectedItem();
-//					int[] selectedModelRows = table.getSelectedModelRows();
-//					if (selectedModelRows.length > 0) {
-//						for (int selectedModelRow : selectedModelRows) {
-//							if (tableModel.isCellEditable(selectedModelRow, TransformationTableModel.column_ResultDatasource)) {
-//								tableModel.setValueAt(selectedItem, selectedModelRow, TransformationTableModel.column_ResultDatasource);
-//							}
-//						}
-//					}
-//				}
-//			}
-//		});
+		comboBoxDatasources.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (comboBoxDatasources.getSelectedItem() != null && (checkBoxIsSaveAs.isSelectedEx() == null || !checkBoxIsSaveAs.isSelectedEx())) {
+					checkBoxIsSaveAs.setSelected(true);
+				}
+			}
+		});
 		buttonSetting.addActionListener(new ActionListener() {
 			private JDialogSetting jDialogSetting = new JDialogSetting();
 
@@ -506,6 +498,7 @@ public class JDialogTransformation extends SmDialog {
 			java.util.List<Object> selectedDatasets = datasetChooser.getSelectedObjects();
 			if (selectedDatasets.size() > 0) {
 				Datasource defaultDatasource = null;
+				Datasource usableDatasource;
 				int count = 0;
 				for (int i = selectedDatasets.size() - 1; i >= 0; i--) {
 					Object selectedDataset = selectedDatasets.get(i);
@@ -524,6 +517,8 @@ public class JDialogTransformation extends SmDialog {
 						if (defaultDatasource == null) {
 							defaultDatasource = TransformationUtilties.getDefaultDatasource(((Dataset) selectedDataset).getDatasource());
 						}
+						Datasource datasource = ((Dataset) selectedDataset).getDatasource();
+						usableDatasource = datasource.isReadOnly() ? defaultDatasource : datasource;
 						if (tableModel.addDataset((Dataset) selectedDataset, defaultDatasource,
 								defaultDatasource == null ? null : defaultDatasource.getDatasets().getAvailableDatasetName(((Dataset) selectedDataset).getName() + "_adjust"))) {
 							++count;
@@ -768,6 +763,7 @@ public class JDialogTransformation extends SmDialog {
 			dialogResult = DialogResult.APPLY;
 			pack();
 			this.setLocationRelativeTo(null);
+			buttonOk.requestFocus();
 		}
 	}
 }

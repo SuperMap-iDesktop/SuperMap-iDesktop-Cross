@@ -261,6 +261,7 @@ public class JPanelChooseOriginal extends JPanelNewTransformationBase {
 			java.util.List<Object> selectedDatasets = datasetChooser.getSelectedObjects();
 			if (selectedDatasets.size() > 0) {
 				Datasource defaultDatasource = null;
+				Datasource usableDatasource;
 				int count = 0;
 				for (int i = selectedDatasets.size() - 1; i >= 0; i--) {
 					Object selectedDataset = selectedDatasets.get(i);
@@ -279,8 +280,10 @@ public class JPanelChooseOriginal extends JPanelNewTransformationBase {
 						if (defaultDatasource == null) {
 							defaultDatasource = TransformationUtilties.getDefaultDatasource(((Dataset) selectedDataset).getDatasource());
 						}
-						if (tableModel.addDataset((Dataset) selectedDataset, defaultDatasource,
-								defaultDatasource == null ? null : defaultDatasource.getDatasets().getAvailableDatasetName(((Dataset) selectedDataset).getName() + "_adjust"))) {
+						Datasource datasource = ((Dataset) selectedDataset).getDatasource();
+						usableDatasource = datasource.isReadOnly() ? defaultDatasource : datasource;
+						if (tableModel.addDataset((Dataset) selectedDataset, usableDatasource,
+								defaultDatasource == null ? "" : defaultDatasource.getDatasets().getAvailableDatasetName(((Dataset) selectedDataset).getName() + "_adjust"))) {
 							++count;
 						}
 					}
@@ -370,6 +373,14 @@ public class JPanelChooseOriginal extends JPanelNewTransformationBase {
 				}
 			};
 			comboBoxDatasources.setRenderer(renderer);
+			comboBoxDatasources.addItemListener(new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					if (comboBoxDatasources.getSelectedItem() != null && (checkBox.isSelectedEx() == null || !checkBox.isSelectedEx())) {
+						checkBox.setSelected(true);
+					}
+				}
+			});
 			checkBox.addItemListener(new ItemListener() {
 				@Override
 				public void itemStateChanged(ItemEvent e) {
@@ -441,6 +452,7 @@ public class JPanelChooseOriginal extends JPanelNewTransformationBase {
 			}
 			this.pack();
 			this.setLocationRelativeTo(null);
+			buttonOk.requestFocus();
 		}
 	}
 }
