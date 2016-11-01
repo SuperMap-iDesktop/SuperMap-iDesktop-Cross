@@ -359,7 +359,6 @@ public class DataExportFrame extends SmDialog {
 
         JToolBar toolBar = new JToolBar();
         toolBar.setForeground(UIManager.getColor("Button.light"));
-        toolBar.setBackground(UIManager.getColor("Button.light"));
         toolBar.setFloatable(false);
 
         this.scrollPane = new JScrollPane();

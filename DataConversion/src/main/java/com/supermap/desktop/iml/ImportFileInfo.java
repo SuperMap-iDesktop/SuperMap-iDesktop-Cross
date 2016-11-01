@@ -1,4 +1,4 @@
-package com.supermap.desktop;
+package com.supermap.desktop.iml;
 
 import com.supermap.data.conversion.ImportSetting;
 

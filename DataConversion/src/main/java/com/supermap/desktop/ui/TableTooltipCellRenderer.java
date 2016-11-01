@@ -8,7 +8,6 @@ public class TableTooltipCellRenderer extends JLabel implements TableCellRendere
 	private static TableTooltipCellRenderer tooltipCellRenderer;
 
 	private TableTooltipCellRenderer() {
-
 	}
 
 	@Override
@@ -21,8 +20,8 @@ public class TableTooltipCellRenderer extends JLabel implements TableCellRendere
 		}
 		if (isSelected) {
 			this.setOpaque(true);
-			this.setBackground(new Color(36, 124, 255));
-		} else {
+            this.setBackground(new Color(51, 153, 255));
+        } else {
 			this.setOpaque(true);
 			this.setBackground(Color.white);
 		}

@@ -9,7 +9,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.ExportFileInfo;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
-import com.supermap.desktop.popupmenus.CtrlActionDataExport;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.CommonListCellRenderer;
@@ -22,6 +21,7 @@ import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.util.DatasetUtil;
 import com.supermap.desktop.util.ExportFunction;
 import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -148,8 +148,8 @@ public class DataSetChooserExPort extends JDialog {
 			for (int j = 0; j < childDatasourceTreeNode.getChildCount(); j++) {
 				childDatasourceTreeNode.removeAllChildren();
 			}
-			if (!CtrlActionDataExport.isSupportEngineType(((Datasource) ((TreeNodeData) childDatasourceTreeNode.getUserObject()).getData()).getEngineType())) {
-				childDatasourceTreeNode.removeFromParent();
+            if (DatasourceUtilities.isWebDatasource(((Datasource) ((TreeNodeData) childDatasourceTreeNode.getUserObject()).getData()).getEngineType())) {
+                childDatasourceTreeNode.removeFromParent();
 			}
 		}
 		workspaceTree.updateUI();
@@ -306,8 +306,8 @@ public class DataSetChooserExPort extends JDialog {
 	/**
 	 * 联合查询的具体实现
 	 *
-	 * @param arrayListForSearch
-	 */
+     * @param
+     */
 	private void searchForContent() {
 		try {
 

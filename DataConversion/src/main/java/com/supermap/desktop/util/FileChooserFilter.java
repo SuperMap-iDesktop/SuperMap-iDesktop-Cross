@@ -1,6 +1,6 @@
 package com.supermap.desktop.util;
 
-import com.supermap.desktop.FileTypeLocale;
+import com.supermap.desktop.iml.FileTypeLocale;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;

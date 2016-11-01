@@ -4,18 +4,18 @@
 
 ## 获取 ##
 
-SuperMap iDesktop Cross 产品所使用的 JDK 版本为 **JDK 1.7.0_80** 即 **Java SE Development Kit 7u80**，请前往 [Java 官方网站](http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html "Java 官方网站") 获取指定 JDK。请根据您操作系统来选择下载对应的包，本文 Ubuntu 操作系统为例，这里下载 **Linux x64 - jdk-7u80-linux-x64.tar.gz**。
+SuperMap iDesktop Cross 产品所使用的 JDK 版本为 **JDK 1.7.0_80** 即 **Java SE Development Kit 7u80**，请前往 [Java 官方网站](http://www.oracle.com/technetwork/java/javase/downloads/java-archive-downloads-javase7-521261.html "Java 官方网站") 获取指定 JDK。请根据您操作系统来选择下载对应的包，本文以 Ubuntu 操作系统为例，此处下载的是 **Linux x64 - jdk-7u80-linux-x64.tar.gz**。
 
 ## 安装 ##
 
 1. 打开终端，将当前工作路径更改为您想要安装的路径，举例如下：
 
-	    $ cd Documents/java/
+       $ cd Documents/java/
 
 2. 移动下载好的 tar.gz文件包至当前工作路径；
 3. 解压并安装，命令如下：
 
-		$ tar zxvf jdk-7u80-linux-x64.tar.gz
+   	$ tar zxvf jdk-7u80-linux-x64.tar.gz
 
 4. 删除 tar.gz文件包。
 
@@ -25,13 +25,13 @@ SuperMap iDesktop Cross 产品所使用的 JDK 版本为 **JDK 1.7.0_80** 即 **
 
 # 开发工具 #
 
-SuperMap iDesktop Cross 产品是基于 Java 语言的桌面 GIS 平台，产品源代码使用 **Maven** 进行项目管理，同时支持 **IntelliJ IDEA**、**elcipse** 等多种主流 Java 开发平台。
+SuperMap iDesktop Cross 产品是基于 Java 语言的桌面 GIS 平台，产品源代码使用 **Maven** 进行项目管理，同时支持 **IntelliJ IDEA**、**eclipse** 等多种主流 Java 开发平台。
 
 ## IntelliJ IDEA（推荐） ##
 
 IntelliJ IDEA 拥有极其丰富且人性化的开发调试工具，并自带 **Maven** 项目管理工具，推荐使用 IntelliJ IDEA 作为项目开发工具。请前往 [IntelliJ IDEA 官方网站](https://www.jetbrains.com/idea/ "IntelliJ IDEA 官方网站") 获取 **IntelliJ IDEA**，然后安装至任意目录。
 > 注意：
-> 
+>
 >     最新版本 IntelliJ IDEA 需要 JDK 1.8 及以上版本支持。如果需要最新版本 IntelliJ IDEA，请同时安装 JDK 1.8 及以上版本。
 
 ## Eclipse ##
@@ -43,7 +43,7 @@ IntelliJ IDEA 拥有极其丰富且人性化的开发调试工具，并自带 **
 	$ tar zxvf eclipse-rcp-mars-linux.tar.gz
 
 > 注意：
-> 
+>
 >     最新版本 Eclipse 也许需要 JDK 1.8 及以上版本支持。如果需要最新版本 Eclipse，请同时安装 JDK 1.8 及以上版本。
 
 ### 配置 ###
@@ -52,21 +52,21 @@ IntelliJ IDEA 拥有极其丰富且人性化的开发调试工具，并自带 **
 
 	-vm
 	JAVA_HOME/jre/bin
-	
+
 保存文件，关闭，然后启动 eclipse。
 
 # SuperMap iObjects Java #
 
 ## 获取 ##
 
-SuperMap iDesktop Cross 产品是基于 SuperMap iObejcts Java 的二次开发产品，开发以及运行本产品的基本前提是购买并配置了 SuperMap iObjects Java 的许可。
+SuperMap iDesktop Cross 产品是基于 SuperMap iObjects Java 的二次开发产品，开发以及运行本产品的基本前提是购买并配置了 SuperMap iObjects Java 的许可。
 > 注意：
-> 
+>
 > 1. SuperMap iDesktop Cross 开源并免费，SuperMap iObjects Java 是收费产品，该产品可以一定时间的免费试用，之后如有需要请前往 [SuperMap 官方网站](http://www.supermap.com/ "SuperMap 官方网站") 咨询购买；
 > 2. 外部用户扩展开发，请使用 Tag 以及与之版本相对应的 SuperMap iObjects Java 产品。否则程序可能无法运行。
 
-请前往 [SuperMap 官方网站](http://www.supermap.com/ "SuperMap 官方网站") 获取需要的 SuperMap iObjects Java 组件产品，并安装至任意目录。这里下载 SuperMap iObjects Java 8C SP1 Rumtime for Linux。安装命令如下：
-	
+请前往 [SuperMap 官方网站](http://www.supermap.com/ "SuperMap 官方网站") 获取需要的 SuperMap iObjects Java 组件产品，并安装至任意目录。这里下载 SuperMap iObjects Java 8C SP1 Rumtime for Linux。安装命令示例如下：
+​	
 	$ tar zxvf SMO_Java_801_RumTime_13228_53527_64_x64_linux_gcc_CHS.tar.gz
 
 	后文以 **OBJECTS_HOME** 代指组件产品根目录，请根据您机器操作系统是 32位还是 64位来选择对应的 Java 组件。
@@ -131,9 +131,9 @@ SuperMap iDesktop Cross 分支说明：
 	
 	注意：tag版本是当前仓库的快照版本，无法做修改提交，因此如果需要提交到当前仓库，请执行以下命令替代步骤3。
 		 命令：$ git checkout tags/<tag_name> -b <branch_name>	
-
+	
 	后文以 **CROSS_HOME** 代指项目根目录。
-
+	
 	如果 CROSS_HOME 右下角有锁，当前用户没有读写权限，请切换为 root 用户进行操作，
 	或打开终端，进入 CROSS_HOME 同级目录，使用以下命令更改读写权限：
 	$ sudo chmod -R 777 SuperMap-iDesktop-Cross/
@@ -176,14 +176,14 @@ SuperMap iDesktop Cross 分支说明：
 新建的工程 `MyPlugin` 的初始化状态需要注册为 SuperMap iDesktop Cross 的插件，才能正确运行。查看工程代码，找到并打开 **Activator.java** 文件，进行以下修改。
 
     public void start(BundleContext bundleContext) throws Exception {
-		Activator.context = bundleContext;
-
-		// 注册 SuperMap iDesktop Cross 插件
-		Application.getActiveApplication().getPluginManager().addPlugin("MyPlugin", bundleContext.getBundle());
-
-		// 插件注册成功
-		System.out.println("MyPlugin Start.");
-	}
+    	Activator.context = bundleContext;
+    
+    	// 注册 SuperMap iDesktop Cross 插件
+    	Application.getActiveApplication().getPluginManager().addPlugin("MyPlugin", bundleContext.getBundle());
+    
+    	// 插件注册成功
+    	System.out.println("MyPlugin Start.");
+    }
 注册成功！接下来就可以随心所欲的进行开发了！
 
 ## 工程配置 ##
@@ -206,9 +206,9 @@ SuperMap iDesktop Cross 分支说明：
  `Core` 和 `Controls` 作为项目的核心库，是所有插件的必填依赖。
 
     Core 和 Controls 工程是整个项目的核心工程。
-	Core 依赖并导出 SuperMap iObjects Java 以及其他第三方库的类库。
-	Controls 依赖 Core，这两个工程共同构建了整个 Cross 项目的核心架构。
-	扩展开发自己的插件，必须依赖 Core 和 Controls 工程。
+    Core 依赖并导出 SuperMap iObjects Java 以及其他第三方库的类库。
+    Controls 依赖 Core，这两个工程共同构建了整个 Cross 项目的核心架构。
+    扩展开发自己的插件，必须依赖 Core 和 Controls 工程。
 
 ### OSGI 依赖 ###
 

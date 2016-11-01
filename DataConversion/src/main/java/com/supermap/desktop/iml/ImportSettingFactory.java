@@ -2,7 +2,6 @@ package com.supermap.desktop.iml;
 
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.FileTypeLocale;
 import com.supermap.desktop.Interface.IImportSettingFactory;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.localUtilities.FileUtilities;

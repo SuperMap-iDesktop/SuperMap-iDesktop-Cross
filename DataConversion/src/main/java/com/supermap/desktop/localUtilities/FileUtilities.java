@@ -1,7 +1,7 @@
 package com.supermap.desktop.localUtilities;
 
-import com.supermap.desktop.FileTypeLocale;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.iml.FileTypeLocale;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
@@ -19,7 +19,7 @@ public class FileUtilities {
         // 工具类不提供公共的构造函数
     }
 
-    private static String LastFileFilter = "";// 上一次打开的保留的文件过滤节点
+    public static String LastFileFilter = "";// 上一次打开的保留的文件过滤节点
 
     /**
      * 获取文件类型，默认以最后一个“.”作为分隔
@@ -107,7 +107,6 @@ public class FileUtilities {
                 }
             }
         }
-        LastFileFilter = fileChoose.getFileFilter().getDescription();
         return fileChoose;
     }
 }
