@@ -519,7 +519,7 @@ public class JDialogTransformation extends SmDialog {
 						}
 						Datasource datasource = ((Dataset) selectedDataset).getDatasource();
 						usableDatasource = datasource.isReadOnly() ? defaultDatasource : datasource;
-						if (tableModel.addDataset((Dataset) selectedDataset, defaultDatasource,
+						if (tableModel.addDataset((Dataset) selectedDataset, usableDatasource,
 								defaultDatasource == null ? null : defaultDatasource.getDatasets().getAvailableDatasetName(((Dataset) selectedDataset).getName() + "_adjust"))) {
 							++count;
 						}
