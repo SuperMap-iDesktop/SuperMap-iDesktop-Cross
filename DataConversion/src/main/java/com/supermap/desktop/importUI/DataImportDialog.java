@@ -13,12 +13,10 @@ import com.supermap.desktop.localUtilities.FileUtilities;
 import com.supermap.desktop.localUtilities.FiletypeUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.tableModel.ImportTableModel;
-import com.supermap.desktop.ui.TableTooltipCellRenderer;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.util.CommonFunction;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -247,37 +245,39 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 
     private void deleteImportInfo() {
         try {
-            // 执行删除
-            int[] selectedRow = table.getSelectedRows();
-            if (!panelImports.isEmpty()) {
-                ArrayList<JPanel> removePanel = new ArrayList<JPanel>();
-                if (selectedRow.length < table.getRowCount()) {
-                    for (int i = 0; i < selectedRow.length; i++) {
-                        removePanel.add((JPanel) panelImports.get(selectedRow[i]));
+            if (null != table.getSelectedRows() && table.getSelectedRows().length != 0) {
+                // 执行删除
+                int[] selectedRow = table.getSelectedRows();
+                if (!panelImports.isEmpty()) {
+                    ArrayList<JPanel> removePanel = new ArrayList<JPanel>();
+                    if (selectedRow.length < table.getRowCount()) {
+                        for (int i = 0; i < selectedRow.length; i++) {
+                            removePanel.add((JPanel) panelImports.get(selectedRow[i]));
+                        }
+                        model.removeRows(selectedRow);
+                        panelImports.removeAll(removePanel);
+                    } else {
+                        int[] tempRow = new int[table.getRowCount()];
+                        for (int i = 0; i < table.getRowCount(); i++) {
+                            tempRow[i] = i;
+                        }
+                        model.removeRows(tempRow);
+                        panelImports.removeAll(panelImports);
                     }
-                    model.removeRows(selectedRow);
-                    panelImports.removeAll(removePanel);
+                }
+                // 如果表中没有数据，右边部分显示为默认界面。
+                if (panelImports.isEmpty()) {
+                    labelTitle.setText(DataConversionProperties.getString("string_label_importData"));
+                    CommonUtilities.replace(panelImportInfo, panelParams);
+                    setButtonState();
                 } else {
-                    int[] tempRow = new int[table.getRowCount()];
-                    for (int i = 0; i < table.getRowCount(); i++) {
-                        tempRow[i] = i;
+                    if (selectedRow[0] != table.getRowCount()) {
+                        table.setRowSelectionInterval(selectedRow[0], selectedRow[0]);
+                    } else {
+                        table.setRowSelectionInterval(selectedRow[0] - 1, selectedRow[0] - 1);
                     }
-                    model.removeRows(tempRow);
-                    panelImports.removeAll(panelImports);
+                    replaceImportInfo(table.getSelectedRow());
                 }
-            }
-            // 如果表中没有数据，右边部分显示为默认界面。
-            if (panelImports.isEmpty()) {
-                labelTitle.setText(DataConversionProperties.getString("string_label_importData"));
-                CommonUtilities.replace(panelImportInfo, panelParams);
-                setButtonState();
-            } else {
-                if (selectedRow[0] != table.getRowCount()) {
-                    table.setRowSelectionInterval(selectedRow[0], selectedRow[0]);
-                } else {
-                    table.setRowSelectionInterval(selectedRow[0] - 1, selectedRow[0] - 1);
-                }
-                replaceImportInfo(table.getSelectedRow());
             }
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex);
@@ -304,7 +304,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                 if (table.getRowCount() == 0) {
                     //没有要导入的项时
                     labelTitle.setText(DataConversionProperties.getString("string_label_importData"));
-                    CommonFunction.replace(panelImportInfo, panelParams);
+                    CommonUtilities.replace(panelImportInfo, panelParams);
                     setButtonState();
                 } else if (1 == selectRows.length) {
                     replaceImportInfo(table.getSelectedRow());
@@ -362,7 +362,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         this.componentList.add(this.buttonImport);
         this.componentList.add(this.buttonClose);
         this.setFocusTraversalPolicy(this.policy);
-        this.getRootPane().setDefaultButton(this.buttonClose);
+        this.getRootPane().setDefaultButton(this.buttonImport);
         this.setLocationRelativeTo(null);
         this.setBounds(600, 260, 864, 486);
     }
