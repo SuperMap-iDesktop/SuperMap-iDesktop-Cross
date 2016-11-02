@@ -1,7 +1,10 @@
 package com.supermap.desktop.ui.controls.prjcoordsys;
 
 import com.supermap.data.Enum;
-import com.supermap.data.*;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.PrjCoordSysType;
+import com.supermap.data.ProjectionType;
+import com.supermap.data.Unit;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.properties.CommonProperties;
@@ -196,7 +199,7 @@ public class JDialogUserDefinePrjProjection extends SmDialog {
 
 	private void initComponents() {
 
-		setSize(500, 550);
+		setSize(550, 600);
 		setLocationRelativeTo(null);
 		textFieldScaleFactor.setPreferredSize(new Dimension(50, 23));
 		textFieldFalseNorthing.setPreferredSize(new Dimension(50, 23));
