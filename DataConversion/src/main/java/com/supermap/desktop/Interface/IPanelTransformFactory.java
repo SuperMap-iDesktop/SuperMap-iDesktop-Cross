@@ -21,4 +21,5 @@ public interface IPanelTransformFactory {
     IImportSetttingTransform createPanelTransform(ArrayList<PanelImport> panelImports);
 
     int getImportSettingsType(ArrayList<PanelImport> panelImports);
+
 }

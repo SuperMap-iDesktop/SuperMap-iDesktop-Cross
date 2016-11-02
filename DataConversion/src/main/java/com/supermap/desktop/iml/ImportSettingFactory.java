@@ -28,10 +28,18 @@ public class ImportSettingFactory implements IImportSettingFactory {
             importSetting = new ImportSettingVCT();
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.DBF_STRING)) {
             importSetting = new ImportSettingDBF();
-        } else if (fileType.equalsIgnoreCase(FileTypeLocale.GRD_STRING) || fileType.equalsIgnoreCase(FileTypeLocale.TXT_STRING)
+        } else if (fileType.equalsIgnoreCase(FileTypeLocale.GRD_STRING)
                 || fileType.equalsIgnoreCase(FileTypeLocale.DEM_STRING)) {
             //.dem类型的文件默认导入为GRD
             importSetting = new ImportSettingGRD();
+        }
+        if (fileType.equalsIgnoreCase(FileTypeLocale.TXT_STRING)) {
+            if (fileFilter.equalsIgnoreCase(DataConversionProperties.getString("string_filetype_lidar"))) {
+                // 雷达文件
+                importSetting = new ImportSettingLIDAR();
+            } else {
+                importSetting = new ImportSettingGRD();
+            }
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.SHP_STRING)) {
             importSetting = new ImportSettingSHP();
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.TAB_STRING)) {
@@ -101,9 +109,6 @@ public class ImportSettingFactory implements IImportSettingFactory {
             importSetting = new ImportSettingDGN();
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.FBX_STRING)) {
             importSetting = new ImportSettingModelFBX();
-        } else if (fileFilter.equalsIgnoreCase(DataConversionProperties.getString("string_filetype_lidar"))) {
-            // 雷达文件
-            importSetting = new ImportSettingLIDAR();
         }
         if (null != importSetting) {
             //初始化设置

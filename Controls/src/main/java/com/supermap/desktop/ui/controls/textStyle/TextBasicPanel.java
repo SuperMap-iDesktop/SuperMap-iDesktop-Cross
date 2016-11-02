@@ -286,7 +286,8 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
                     textFieldFontHeight.setForeground(Color.black);
                 }
                 double logicalHeight = Double.parseDouble(text);
-                Double size = logicalHeight * EXPERIENCE;
+                Double oldSize = logicalHeight * EXPERIENCE;
+                double size = Math.round(oldSize * 2) / 2.0;
                 isSetFontSize = false;
                 comboBoxFontSize.setSelectedItem(new DecimalFormat("0.0").format(size));
                 double fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), checkBoxFixedSize.isSelected());

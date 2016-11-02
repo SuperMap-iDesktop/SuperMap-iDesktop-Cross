@@ -5,6 +5,7 @@ import com.supermap.desktop.Interface.IImportSetttingTransform;
 import com.supermap.desktop.Interface.IPanelTransformFactory;
 import com.supermap.desktop.baseUI.PanelTransform;
 import com.supermap.desktop.importUI.*;
+import com.supermap.desktop.localUtilities.FiletypeUtilities;
 
 import java.util.ArrayList;
 
@@ -21,17 +22,6 @@ public class PanelTransformFactory implements IPanelTransformFactory {
     public PanelTransformFactory() {
         //工具类没有公共构造方法
     }
-
-    // 栅格类型文件
-    private static final FileType[] gridValue = {FileType.BMP, FileType.SIT, FileType.GRD, FileType.RAW,
-            FileType.CSV, FileType.BIL, FileType.IMG, FileType.TIF, FileType.PNG, FileType.JPG, FileType.JP2,
-            FileType.GIF, FileType.GBDEM, FileType.USGSDEM, FileType.BSQ, FileType.BIP, FileType.BIL,
-            FileType.MrSID, FileType.ECW, FileType.TEMSClutter};
-    // 矢量文件
-    private static final FileType[] vectorValue = {FileType.WOR, FileType.SCV, FileType.DXF, FileType.SHP,
-            FileType.E00, FileType.MIF, FileType.TAB, FileType.MAPGIS, FileType.ModelOSG, FileType.Model3DS,
-            FileType.ModelDXF, FileType.ModelX, FileType.KML, FileType.KMZ, FileType.DWG, FileType.VCT, FileType.DBF,
-            FileType.GJB5068, FileType.DGN};
 
     @Override
     public IImportSetttingTransform createPanelTransform(ImportSetting importSetting) {
@@ -158,7 +148,7 @@ public class PanelTransformFactory implements IPanelTransformFactory {
     private boolean isVectorTypes(ArrayList<PanelImport> panelImports) {
         int count = 0;
         for (PanelImport tempPanelImport : panelImports) {
-            for (FileType tempFileType : vectorValue) {
+            for (FileType tempFileType : FiletypeUtilities.getVectorValue()) {
                 if (tempPanelImport.getImportInfo().getImportSetting().getSourceFileType().equals(tempFileType)) {
                     count++;
                 }
@@ -171,7 +161,7 @@ public class PanelTransformFactory implements IPanelTransformFactory {
     private boolean isGridTypes(ArrayList<PanelImport> panelImports) {
         int count = 0;
         for (PanelImport tempPanelImport : panelImports) {
-            for (FileType tempFileType : gridValue) {
+            for (FileType tempFileType : FiletypeUtilities.getGridValue()) {
                 if (tempPanelImport.getImportInfo().getImportSetting().getSourceFileType().equals(tempFileType)) {
                     count++;
                 }

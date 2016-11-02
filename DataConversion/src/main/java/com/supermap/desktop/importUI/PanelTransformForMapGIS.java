@@ -4,11 +4,11 @@ import com.supermap.data.conversion.ImportSetting;
 import com.supermap.data.conversion.ImportSettingMAPGIS;
 import com.supermap.desktop.baseUI.PanelTransform;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.localUtilities.CommonUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.util.ImportInfoUtil;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -47,7 +47,7 @@ public class PanelTransformForMapGIS extends PanelTransform {
                         ((PanelTransformForMapGIS) tempPanelImport.getTransform()).getFileChooserColorIndex().getEditor().setText(colorFile);
                     }
                 } else {
-                    if (ImportInfoUtil.isExtendsFile(colorFile)) {
+                    if (CommonUtilities.isExtendsFile(colorFile)) {
                         ((ImportSettingMAPGIS) importSetting).setColorIndexFilePath(colorFile);
                     }
                 }

@@ -1,4 +1,4 @@
-package com.supermap.desktop.ui;
+package com.supermap.desktop.iml;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;

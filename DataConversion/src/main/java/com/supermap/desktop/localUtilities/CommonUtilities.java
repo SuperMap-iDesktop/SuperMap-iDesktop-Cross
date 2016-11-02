@@ -5,6 +5,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -87,7 +88,7 @@ public class CommonUtilities {
      * @return
      */
     public static String getDatasetName(String fileType) {
-        String resultFileType = fileType;
+        String resultFileType = "";
         String tempFileType = "String_FileType" + fileType;
         if (tempFileType.contains(resultFileType)) {
             boolean isVisibleName = true;
@@ -102,5 +103,19 @@ public class CommonUtilities {
             }
         }
         return resultFileType;
+    }
+
+    /**
+     * 判断文件是否存在
+     *
+     * @param filePath
+     * @return
+     */
+    public static boolean isExtendsFile(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            return true;
+        }
+        return false;
     }
 }

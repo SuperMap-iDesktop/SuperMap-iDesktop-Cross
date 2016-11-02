@@ -7,8 +7,8 @@ import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.exportUI.DataExportDialog;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.ui.DataExportFrame;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 
 import javax.swing.*;
@@ -29,12 +29,9 @@ public class CtrlActionDataExport extends CtrlAction {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
                 Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-                DataExportFrame dataImportFrame = new DataExportFrame(datasets, parent, true);
-                dataImportFrame.setVisible(true);
-//                DataExportDialog dataExportDialog = new DataExportDialog(datasets);
-//                dataExportDialog.setVisible(true);
+                DataExportDialog dataExportDialog = new DataExportDialog(datasets);
+                dataExportDialog.setVisible(true);
             }
         });
     }

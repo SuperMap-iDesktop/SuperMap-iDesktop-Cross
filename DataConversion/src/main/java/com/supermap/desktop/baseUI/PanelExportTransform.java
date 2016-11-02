@@ -1,9 +1,10 @@
 package com.supermap.desktop.baseUI;
 
-import com.supermap.data.conversion.ExportSetting;
 import com.supermap.desktop.Interface.IPanelModel;
+import com.supermap.desktop.iml.ExportFileInfo;
 
 import javax.swing.*;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2016/10/26.
@@ -11,10 +12,20 @@ import javax.swing.*;
  */
 public class PanelExportTransform extends JPanel implements IPanelModel {
 
-    private ExportSetting exportSetting;
+    public ExportFileInfo exportsFileInfo;
+    public ArrayList<PanelExportTransform> panels;
+    public int layoutType;
 
-    public PanelExportTransform(ExportSetting exportSetting) {
-        this.exportSetting = exportSetting;
+    public PanelExportTransform(ExportFileInfo exportsFileInfo) {
+        this.exportsFileInfo = exportsFileInfo;
+        initComponents();
+        initLayerout();
+        initResources();
+    }
+
+    public PanelExportTransform(ArrayList<PanelExportTransform> panels, int layoutType) {
+        this.panels = panels;
+        this.layoutType = layoutType;
         initComponents();
         initLayerout();
         initResources();
@@ -40,11 +51,15 @@ public class PanelExportTransform extends JPanel implements IPanelModel {
 
     }
 
+    public void setUnEnabled() {
+
+    }
+
     public void initResources() {
 
     }
 
-    public ExportSetting getExportSetting() {
-        return exportSetting;
+    public ExportFileInfo getExportsFileInfo() {
+        return exportsFileInfo;
     }
 }

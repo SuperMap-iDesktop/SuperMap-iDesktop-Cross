@@ -36,26 +36,13 @@ public class FileTypeLocale {
             "shp", "tab", "mif", "kml", "kmz", "wat", "wal", "wap", "wan",
             "csv", "bmp", "jpg", "jpeg", "jp2", "jpk", "png", "gif", "img", "raw", "sit",
             "tif", "tiff", "b", "wor", "osgb", "bip", "bil", "bsq", "sid", "dem",
-            "e00", "3ds", "x", "vct", "dbf", "gjb", "dgn"};
+            "e00", "3ds", "x", "vct", "dbf", "gjb", "dgn", "ecw"};
     // linux系统匹配的文件类型
     private static final String[] extensionsNewForLinux = {"grd", "txt",
             "shp", "tab", "mif", "kml", "kmz", "csv", "bmp", "jpg", "jpeg", "jp2", "jpk", "ecw",
             "png", "gif", "img", "raw", "sit", "tif", "tiff",
-            "bip", "bil", "bsq", "dem", "e00", "wor", "vct",
+            "bip", "bil", "bsq", "dem", "e00", "wor", "vct", "ecw",
             "3ds"};
-    // 栅格类型文件
-    private static final String[] gridValue = {".bmp", ".sit", ".grd", ".raw",
-            ".txt", ".csv", ".bil", ".img", ".tif", ".tiff", ".bmp", ".png",
-            ".jpg", ".jpeg", "jp2", "jpk", ".gif", ".dem", ".raw", ".bsq", ".bip", ".sid", "ecw",
-            ".b"};
-    // 矢量文件
-    private static final String[] vectorValue = {".wor", ".scv", ".dxf", ".shp",
-            ".e00", ".mif", ".tab", ".wal", ".wan", ".wat", ".wap", ".xlsx",
-            ".osgb", ".3ds", ".x", ".kml", ".kmz", ".dwg", ".vct", ".dbf", ".gjb", ".dgn"};
-    // MapGIS类型文件
-    private static final String[] mapGisValue = {".wal", ".wan", ".wat", ".wap"};
-    // grd类型文件
-    private static final String[] grdValue = {".grd", ".txt", ".dem"};
 
     public static String[] getDescriptionnew() {
         return descriptionNew;
@@ -73,21 +60,6 @@ public class FileTypeLocale {
         return extensionsNewForLinux;
     }
 
-    public static String[] getGridvalue() {
-        return gridValue;
-    }
-
-    public static String[] getVectorvalue() {
-        return vectorValue;
-    }
-
-    public static String[] getMapgisvalue() {
-        return mapGisValue;
-    }
-
-    public static String[] getGrdvalue() {
-        return grdValue;
-    }
 
     // 导入文件格式
     public static final String DXF_STRING = ".dxf";

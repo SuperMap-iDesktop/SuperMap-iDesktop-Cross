@@ -3,11 +3,11 @@ package com.supermap.desktop.importUI;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.baseUI.PanelTransform;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.localUtilities.CommonUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.util.ImportInfoUtil;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -160,7 +160,7 @@ public class PanelTransformForImage extends PanelTransform {
                 // 设置坐标参考文件
                 String worldFile = chooserControlPrjFile.getEditor().getText();
 
-                if (ImportInfoUtil.isExtendsFile(worldFile)) {
+                if (CommonUtilities.isExtendsFile(worldFile)) {
                     setWorldFilePath(worldFile);
                 }
             }

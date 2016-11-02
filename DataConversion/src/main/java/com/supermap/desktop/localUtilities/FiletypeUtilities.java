@@ -1,5 +1,6 @@
 package com.supermap.desktop.localUtilities;
 
+import com.supermap.data.conversion.FileType;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.FileTypeLocale;
 
@@ -13,6 +14,16 @@ public class FiletypeUtilities {
         // 工具类不提供公共的构造函数
     }
 
+    // 栅格类型文件
+    private static final FileType[] gridValue = {FileType.BMP, FileType.SIT, FileType.GRD, FileType.RAW,
+            FileType.CSV, FileType.BIL, FileType.IMG, FileType.TIF, FileType.PNG, FileType.JPG, FileType.JP2,
+            FileType.GIF, FileType.GBDEM, FileType.USGSDEM, FileType.BSQ, FileType.BIP, FileType.BIL,
+            FileType.MrSID, FileType.ECW, FileType.TEMSClutter};
+    // 矢量文件
+    private static final FileType[] vectorValue = {FileType.WOR, FileType.SCV, FileType.DXF, FileType.SHP,
+            FileType.E00, FileType.MIF, FileType.TAB, FileType.MAPGIS, FileType.ModelOSG, FileType.Model3DS,
+            FileType.ModelDXF, FileType.ModelX, FileType.KML, FileType.KMZ, FileType.DWG, FileType.VCT, FileType.DBF,
+            FileType.GJB5068, FileType.DGN};
     public static String getParseFile(String filePath, String fileFilter) {
         String fileType = "";
         if (filePath.equalsIgnoreCase(FileTypeLocale.DBF_STRING)) {
@@ -80,4 +91,120 @@ public class FiletypeUtilities {
         }
         return fileType;
     }
+
+    /**
+     * 根据别名查找fileType
+     *
+     * @param alias
+     * @return
+     */
+    public static FileType getFileType(String alias) {
+        FileType result = null;
+        if (alias.equals(DataConversionProperties.getString("String_FileTypeDWG"))) {
+            result = FileType.DWG;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeDXF"))) {
+            result = FileType.DXF;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeVCT"))) {
+            result = FileType.VCT;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeBMP"))) {
+            result = FileType.BMP;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeGIF"))) {
+            result = FileType.GIF;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeJPG"))) {
+            result = FileType.JPG;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypePNG"))) {
+            result = FileType.PNG;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeSIT"))) {
+            result = FileType.SIT;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeTIF"))) {
+            result = FileType.TIF;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeIMG"))) {
+            result = FileType.IMG;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeSCV"))) {
+            result = FileType.SCV;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeOSGB"))) {
+            result = FileType.ModelOSG;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeModel3DS"))) {
+            result = FileType.Model3DS;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeModelDXF"))) {
+            result = FileType.ModelDXF;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeModelFBX"))) {
+            result = FileType.ModelFBX;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeModelFLT"))) {
+            result = FileType.ModelOpenFlight;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeModelX"))) {
+            result = FileType.ModelX;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeKML"))) {
+            result = FileType.KML;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeKMZ"))) {
+            result = FileType.KMZ;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeSHP"))) {
+            result = FileType.SHP;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeGRD"))) {
+            result = FileType.GRD;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeE00"))) {
+            result = FileType.E00;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeCSV"))) {
+            result = FileType.CSV;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeTAB"))) {
+            result = FileType.TAB;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeMIF"))) {
+            result = FileType.MIF;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeWOR"))) {
+            result = FileType.WOR;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeUSGSDEM"))) {
+            result = FileType.USGSDEM;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeGBDEM"))) {
+            result = FileType.GBDEM;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeBIL"))) {
+            result = FileType.BIL;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeRAM"))) {
+            result = FileType.RAW;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeBSQ"))) {
+            result = FileType.BSQ;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeBIP"))) {
+            result = FileType.BIP;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeSID"))) {
+            result = FileType.MrSID;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeTEMSClutter"))) {
+            result = FileType.TEMSClutter;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeLIDAR"))) {
+            result = FileType.LIDAR;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeDBF"))) {
+            result = FileType.DBF;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeTEMSBuildingVector"))) {
+            result = FileType.TEMSBuildingVector;
+        } else if (alias.equals(DataConversionProperties.getString("String_FileTypeTEMSVector"))) {
+            result = FileType.TEMSVector;
+        }
+
+        return result;
+    }
+
+    public static FileType[] getGridValue() {
+        return gridValue;
+    }
+
+    public static FileType[] getVectorValue() {
+        return vectorValue;
+    }
+
+    public static boolean isGridType(FileType fileType) {
+        for (FileType gridType : gridValue) {
+            if (gridType.equals(fileType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isVectorType(FileType fileType) {
+        for (FileType vectorType : vectorValue) {
+            if (vectorType.equals(fileType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
