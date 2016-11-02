@@ -18,6 +18,7 @@ public class TableDataCellRender extends DefaultTableCellRenderer {
 		Component result;
 		if (value == null) {
 			result = new JLabel();
+			((JLabel) result).setOpaque(true);
 		} else if (value instanceof Map) {
 			return getTableMapCellRender().getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 		} else {

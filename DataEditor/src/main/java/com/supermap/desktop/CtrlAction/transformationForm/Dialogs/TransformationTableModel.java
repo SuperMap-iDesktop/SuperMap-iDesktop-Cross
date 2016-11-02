@@ -82,9 +82,9 @@ public class TransformationTableModel extends DefaultTableModel {
 			case COLUMN_SAVE_AS:
 				return data.isSaveAs();
 			case column_ResultDatasource:
-				return data.getResultDatasource();
+				return !data.isSaveAs() ? null : data.getResultDatasource();
 			case column_ResultDataset:
-				return data.getResultDatasetName();
+				return !data.isSaveAs() ? "" : data.getResultDatasetName();
 		}
 		return super.getValueAt(row, column);
 	}
