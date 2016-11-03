@@ -114,4 +114,10 @@ public class DoubleUtilities {
 		Double d = new Double(value);
 		return d.intValue();
 	}
+
+	public static String getFormatString(double value) {
+		DecimalFormat decimalFormat = new DecimalFormat("#,###.#######");
+		String format = decimalFormat.format(value);
+		return format;
+	}
 }
