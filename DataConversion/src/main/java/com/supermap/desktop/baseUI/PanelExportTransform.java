@@ -23,6 +23,14 @@ public class PanelExportTransform extends JPanel implements IPanelModel {
         initResources();
     }
 
+    public void dispose() {
+        if (null != exportsFileInfo) {
+            exportsFileInfo = null;
+        }
+        if (null != panels) {
+            panels = null;
+        }
+    }
     public PanelExportTransform(ArrayList<PanelExportTransform> panels, int layoutType) {
         this.panels = panels;
         this.layoutType = layoutType;
