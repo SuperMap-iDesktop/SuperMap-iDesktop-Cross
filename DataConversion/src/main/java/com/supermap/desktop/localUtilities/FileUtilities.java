@@ -7,8 +7,7 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.filechooser.FileFilter;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.File;
 
 /**
  * Created by xie on 2016/10/14.
@@ -40,10 +39,15 @@ public class FileUtilities {
     }
 
     private static boolean isFilePath(String filePath) {
-        String regex = "[a-zA-Z]:(?:[/\\\\][^/\\\\:*?\"<>|]{1,255})+";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(filePath);
-        return matcher.matches();
+        boolean isFile = true;
+        try {
+            if (!new File(filePath).exists()) {
+                isFile = false;
+            }
+        } catch (Exception e) {
+            isFile = false;
+        }
+        return isFile;
     }
 
     private static boolean isSameFile(String... filePaths) {
