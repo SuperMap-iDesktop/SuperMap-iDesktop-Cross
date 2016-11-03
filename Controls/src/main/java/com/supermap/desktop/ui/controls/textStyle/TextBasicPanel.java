@@ -840,8 +840,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
                 textFieldString = decimalFormat.format(size);
                 this.textFieldFontSize.setText(textFieldString);
             }
-            double height = Double.parseDouble(textFieldString);
-            this.textFieldFontHeight.setText(new DecimalFormat(numeric).format(height / EXPERIENCE));
+            this.textFieldFontHeight.setText(new DecimalFormat(numeric).format(size / EXPERIENCE));
         }
     }
 
