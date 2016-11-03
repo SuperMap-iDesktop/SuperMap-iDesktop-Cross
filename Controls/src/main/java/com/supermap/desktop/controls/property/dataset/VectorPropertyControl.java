@@ -1,6 +1,10 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import com.supermap.data.*;
+import com.supermap.data.Charset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.EngineType;
+import com.supermap.data.SpatialIndexType;
+import com.supermap.data.Tolerance;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
@@ -8,7 +12,6 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
-import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxCharset;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
@@ -33,7 +36,6 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	private static final int DEFAULT_LABEL_WIDTH = 100;
 	private static final int DEFAULT_COMPONENT_WIDTH = 150;
 
-	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 
 	private JLabel labelRecordCount;
@@ -334,7 +336,6 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void registerEvents() {
-		caretPositionListener.registerComponent(textFieldNodeSnap, textFieldDangle, textFieldGrain, textFieldExtend, textFieldSmallPolygon);
 		this.comboBoxCharset.addItemListener(this.itemListener);
 		this.checkBoxIsReadOnly.addItemListener(this.itemListener);
 		this.checkBoxIsFileCache.addItemListener(this.itemListener);
@@ -351,7 +352,6 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void unregisterEvents() {
-		caretPositionListener.unRegisterComponent(textFieldNodeSnap, textFieldDangle, textFieldGrain, textFieldExtend, textFieldSmallPolygon);
 		this.comboBoxCharset.removeItemListener(this.itemListener);
 		this.checkBoxIsReadOnly.removeItemListener(this.itemListener);
 		this.checkBoxIsFileCache.removeItemListener(this.itemListener);

@@ -2,7 +2,6 @@ package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
-import com.supermap.desktop.ui.controls.CaretPositionListener;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -17,7 +16,6 @@ public class PanelResultSet extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 	private JCheckBox checkBoxUnionBuffer;
 	private JCheckBox checkBoxRemainAttributes;
@@ -95,7 +93,6 @@ public class PanelResultSet extends JPanel {
 		numberFormatter.setValueClass(Long.class);
 		this.textFieldSemicircleLineSegment = new SMFormattedTextField(numberFormatter);
 		this.textFieldSemicircleLineSegment.setText(TEXT_VALUE);
-		caretPositionListener.registerComponent(textFieldSemicircleLineSegment);
 		this.textFieldSemicircleLineSegment.addKeyListener(new KeyAdapter() {
 
 			@Override

@@ -2,14 +2,19 @@ package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
 import com.supermap.analyst.spatialanalyst.BufferAnalystParameter;
 import com.supermap.analyst.spatialanalyst.BufferEndType;
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.DatasetVectorInfo;
+import com.supermap.data.Datasource;
+import com.supermap.data.Recordset;
+import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
@@ -38,7 +43,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 	private JPanel panelBufferRadius;
 	private JLabel labelUnit;
@@ -371,7 +375,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	}
 
 	private void registerEvent() {
-		caretPositionListener.registerComponent(textFieldNumeric);
 		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(new LocalItemListener());
 		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(new LocalItemListener());
 		this.panelBufferData.getCheckBoxGeometrySelect().addItemListener(new LocalItemListener());

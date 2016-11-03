@@ -5,7 +5,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.ButtonColorSelector;
-import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.MapColorModeUtilities;
 import com.supermap.mapping.Map;
@@ -15,7 +14,13 @@ import com.supermap.mapping.MapOverlapDisplayedOptions;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
@@ -68,7 +73,6 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 	private boolean isTextOrientationFixed = false;
 	private transient MapOverlapDisplayedOptions mapOverlapDisplayedOptions = null;
 
-	private transient CaretPositionListener caretPositionListener;
 	private FocusAdapter focusAdapter = new FocusAdapter() {
 
 		@Override
@@ -163,7 +167,6 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 
 	@Override
 	protected void initializeComponents() {
-		this.caretPositionListener = new CaretPositionListener();
 
 		this.labelMapName = new JLabel("MapName:");
 		this.labelAngle = new JLabel("MapAngle:");
@@ -365,7 +368,6 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 	protected void registerEvents() {
 
 		super.registerEvents();
-		this.caretPositionListener.registerComponent(textFieldMinVisibleTextSize, textFieldMaxVisibleTextSize, textFieldMaxVisibleVertex, textFieldAngle);
 		this.textFieldAngle.addPropertyChangeListener(this.propertyChangeListener);
 		this.textFieldAngle.addFocusListener(this.focusAdapter);
 		this.comboBoxColorMode.addItemListener(this.itemListener);
@@ -386,7 +388,6 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 	@Override
 	protected void unregisterEvents() {
 		super.unregisterEvents();
-		this.caretPositionListener.unRegisterComponent(textFieldMinVisibleTextSize, textFieldMaxVisibleTextSize, textFieldMaxVisibleVertex, textFieldAngle);
 		this.textFieldAngle.removePropertyChangeListener(this.propertyChangeListener);
 		this.textFieldAngle.removeFocusListener(this.focusAdapter);
 		this.comboBoxColorMode.removeItemListener(this.itemListener);

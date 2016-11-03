@@ -13,7 +13,6 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
-import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.ColorsUtilities;
@@ -44,7 +43,6 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	private static final int DEFAULT_LABEL_WIDTH = 80;
 	private static final int DEFUALT_COMPONENT_WIDTH = 150;
 
-	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 
 	private JLabel labelPixelFormat;
@@ -361,7 +359,6 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void registerEvents() {
-		caretPositionListener.registerComponent(textFieldNoValue);
 		this.textFieldNoValue.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.propertyChangeListener);
 		this.textFieldNoValue.getDocument().addDocumentListener(this.documentListener);
 		this.buttonSetClipRegion.addActionListener(this.actionListener);
@@ -373,7 +370,6 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void unregisterEvents() {
-		caretPositionListener.unRegisterComponent(textFieldNoValue);
 		this.textFieldNoValue.removePropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.propertyChangeListener);
 		this.textFieldNoValue.getDocument().removeDocumentListener(this.documentListener);
 		this.buttonSetClipRegion.removeActionListener(this.actionListener);

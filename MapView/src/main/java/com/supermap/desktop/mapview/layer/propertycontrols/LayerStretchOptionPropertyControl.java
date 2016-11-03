@@ -7,7 +7,6 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.StateChangeEvent;
 import com.supermap.desktop.ui.StateChangeListener;
 import com.supermap.desktop.ui.TristateCheckBox;
-import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.utilities.ImageStretchTypeUtilities;
 import com.supermap.mapping.ImageStretchType;
 
@@ -26,7 +25,6 @@ public class LayerStretchOptionPropertyControl extends AbstractLayerPropertyCont
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 	private JLabel labelStretchType; // 拉伸方式
 	private JComboBox<String> comboBoxStretchType; // 拉伸方式
@@ -151,7 +149,6 @@ public class LayerStretchOptionPropertyControl extends AbstractLayerPropertyCont
 
 	@Override
 	protected void registerEvents() {
-		caretPositionListener.registerComponent(textFieldSdDeviationStretchFactor, textFieldGaussionStretchRatioFactor);
 
 		this.comboBoxStretchType.addItemListener(this.comboBoxItemListener);
 
@@ -162,7 +159,6 @@ public class LayerStretchOptionPropertyControl extends AbstractLayerPropertyCont
 
 	@Override
 	protected void unregisterEvents() {
-		caretPositionListener.unRegisterComponent(textFieldSdDeviationStretchFactor, textFieldGaussionStretchRatioFactor);
 
 		this.comboBoxStretchType.removeItemListener(this.comboBoxItemListener);
 		this.textFieldSdDeviationStretchFactor.removeKeyListener(keyAdapter);

@@ -1,24 +1,42 @@
 package com.supermap.desktop.ui;
 
+import com.supermap.desktop.ui.controls.CaretPositionListener;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.NumberFormatter;
+import java.text.NumberFormat;
 import java.text.ParseException;
 
 public class SMFormattedTextField extends JFormattedTextField implements DocumentListener {
 
 	private static final long serialVersionUID = 1L;
 
+	public SMFormattedTextField() {
+		super(DoubleUtilities.getDoubleFormatInstance());
+		init();
+	}
+
 	public SMFormattedTextField(AbstractFormatter formatter) {
 		super(formatter);
+		init();
+	}
+
+	private void init() {
+		getCaretPositionListener().registerComponent(this);
 		getDocument().addDocumentListener(this);
+	}
+
+	private CaretPositionListener getCaretPositionListener() {
+		return new CaretPositionListener();
 	}
 
 	public SMFormattedTextField(java.text.Format format) {
 		super(format);
-		getDocument().addDocumentListener(this);
+		init();
 	}
 
 	@Override
@@ -61,11 +79,20 @@ public class SMFormattedTextField extends JFormattedTextField implements Documen
 		Object lastValue = getValue();
 
 		try {
- 			if (!StringUtilities.isNullOrEmpty(getText()) && StringUtilities.isNumber(getText())) {
+			if (!StringUtilities.isNullOrEmpty(getText()) && StringUtilities.isNumber(getText())) {
 				commitEdit();
 			}
 		} catch (ParseException e1) {
 			setValue(lastValue);
 		}
 	}
+
+	public boolean setMaximumFractionDigits(int digits) {
+		if (getFormatter() instanceof NumberFormatter && ((NumberFormatter) getFormatter()).getFormat() instanceof NumberFormat) {
+			((NumberFormat) ((NumberFormatter) getFormatter()).getFormat()).setMaximumFractionDigits(digits);
+			return true;
+		}
+		return false;
+	}
+
 }

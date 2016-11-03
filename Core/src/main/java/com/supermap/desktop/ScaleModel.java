@@ -13,14 +13,14 @@ public class ScaleModel {
 	public static final String SEPARATOR = ":";
 	public static final String NUMERATORCAPTION = "1";
 
-	public static final String SCALE_5000 = "1:5000";
-	public static final String SCALE_10000 = "1:10000";
-	public static final String SCALE_25000 = "1:25000";
-	public static final String SCALE_50000 = "1:50000";
-	public static final String SCALE_100000 = "1:100000";
-	public static final String SCALE_250000 = "1:250000";
-	public static final String SCALE_500000 = "1:500000";
-	public static final String SCALE_1000000 = "1:1000000";
+	public static final String SCALE_5000 = "1:5,000";
+	public static final String SCALE_10000 = "1:10,000";
+	public static final String SCALE_25000 = "1:25,000";
+	public static final String SCALE_50000 = "1:50,000";
+	public static final String SCALE_100000 = "1:100,000";
+	public static final String SCALE_250000 = "1:250,000";
+	public static final String SCALE_500000 = "1:500,000";
+	public static final String SCALE_1000000 = "1:1,000,000";
 
 	private static final String NONE_SCALE_CAPTION = "NONE";
 	private static final String SCALECAPTION_FORMATTER = "1:{0}";
@@ -73,9 +73,9 @@ public class ScaleModel {
 	}
 
 	private void parse(double scale) throws InvalidScaleException {
-		this.scaleDenominator = DoubleUtilities.div(1.0, scale, 10);
+		this.scaleDenominator = DoubleUtilities.div(1.0, scale, 8);
 //		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, BigDecimal.valueOf(this.scaleDenominator).toPlainString());
-		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, DoubleUtilities.toString(scaleDenominator, 9));
+		this.scaleCaption = MessageFormat.format(SCALECAPTION_FORMATTER, DoubleUtilities.getFormatString(scaleDenominator));
 	}
 
 	private void parse(String[] scaleCaption) throws InvalidScaleException {
@@ -95,7 +95,7 @@ public class ScaleModel {
 		}
 
 		try {
-			this.scaleDenominator = Double.parseDouble(scaleDenominatorCaption);
+			this.scaleDenominator = DoubleUtilities.stringToValue(scaleDenominatorCaption);
 		} catch (Exception e) {
 			this.scaleDenominator = INVALID_SCALE;
 			throw new InvalidScaleException();
@@ -160,8 +160,6 @@ public class ScaleModel {
 
 	}
 
-	;
-
 	@Override
 	public String toString() {
 		return this.scaleCaption;
@@ -190,8 +188,8 @@ public class ScaleModel {
 				return false;
 			}
 			try {
-				Double aDouble = Double.valueOf(scaleString);
-				if (aDouble >= MAX_SCALE_VALUE || aDouble <= MIN_SCALE_VALUE) {
+				Double aDouble = DoubleUtilities.stringToValue(scaleString);
+				if (aDouble == null || aDouble >= MAX_SCALE_VALUE || aDouble <= MIN_SCALE_VALUE) {
 					return false;
 				}
 			} catch (NumberFormatException e) {

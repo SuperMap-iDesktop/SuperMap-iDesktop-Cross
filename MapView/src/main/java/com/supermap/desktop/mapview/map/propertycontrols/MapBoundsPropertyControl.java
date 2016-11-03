@@ -10,7 +10,6 @@ import com.supermap.desktop.ScaleModel;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.ScaleEditor;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.mapping.Map;
@@ -95,7 +94,6 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	private double mapViewR = 0.0;
 	private double mapViewB = 0.0;
 
-	private transient CaretPositionListener caretPositionListener;
 
 	public OperationType operationType = OperationType.NONE;
 
@@ -261,7 +259,6 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 	@Override
 	protected void initializeComponents() {
-		this.caretPositionListener = new CaretPositionListener();
 
 		this.labelScale = new JLabel("CurrentScale:");
 		this.scaleEditor = new ScaleEditor(ScaleModel.NONE_SCALE);
@@ -498,8 +495,6 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	@Override
 	protected void registerEvents() {
 		super.registerEvents();
-		this.caretPositionListener.registerComponent(textFieldCenterX, textFieldCenterY, textFieldCurrentViewLeft, textFieldCurrentViewTop,
-				textFieldCurrentViewRight, textFieldCurrentViewBottom);
 		this.scaleEditor.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.scaleEditorValueChangeListener);
 		this.checkBoxIsVisibleScalesEnabled.addItemListener(this.checkBoxItemListener);
 		this.checkBoxIsClipRegionEnabled.addItemListener(this.checkBoxItemListener);
@@ -524,8 +519,6 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	@Override
 	protected void unregisterEvents() {
 		super.unregisterEvents();
-		this.caretPositionListener.unRegisterComponent(textFieldCenterX, textFieldCenterY, textFieldCurrentViewLeft, textFieldCurrentViewTop,
-				textFieldCurrentViewRight, textFieldCurrentViewBottom);
 		this.scaleEditor.removePropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.scaleEditorValueChangeListener);
 		this.checkBoxIsVisibleScalesEnabled.removeItemListener(this.checkBoxItemListener);
 		this.checkBoxIsClipRegionEnabled.removeItemListener(this.checkBoxItemListener);

@@ -2,8 +2,12 @@ package com.supermap.desktop.utilities;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 public class DoubleUtilities {
+
+	private static int MaxDigits = 8;
 
 	private DoubleUtilities() {
 		// 默认私有构造器
@@ -16,8 +20,7 @@ public class DoubleUtilities {
 	/**
 	 * double直接转换为string
 	 *
-	 * @param value
-	 *            要转换的double值
+	 * @param value 要转换的double值
 	 * @return 不为科学计数法的string
 	 */
 	public static String toString(double value) {
@@ -31,10 +34,8 @@ public class DoubleUtilities {
 	/**
 	 * 获得指定精度的double值
 	 *
-	 * @param value
-	 *            数值
-	 * @param bit
-	 *            位数
+	 * @param value 数值
+	 * @param bit   位数
 	 * @return 对应的String
 	 */
 	public static String toString(double value, int bit) {
@@ -55,8 +56,7 @@ public class DoubleUtilities {
 	 *
 	 * @param d1
 	 * @param d2
-	 * @param scale
-	 *            四舍五入 小数点位数
+	 * @param scale 四舍五入 小数点位数
 	 * @return
 	 */
 	public static double div(double d1, double d2, int scale) {
@@ -83,8 +83,7 @@ public class DoubleUtilities {
 	/**
 	 * 判断字符串是否为double
 	 *
-	 * @param s
-	 *            需要判断的字符串
+	 * @param s 需要判断的字符串
 	 * @return true->是double
 	 */
 	public static boolean isDouble(String s) {
@@ -102,8 +101,7 @@ public class DoubleUtilities {
 	/**
 	 * 判断字符串是否为double而且不以d结尾
 	 *
-	 * @param s
-	 *            需要判断的字符串
+	 * @param s 需要判断的字符串
 	 * @return true->是double
 	 */
 	public static boolean isDoubleWithoutD(String s) {
@@ -116,8 +114,22 @@ public class DoubleUtilities {
 	}
 
 	public static String getFormatString(double value) {
-		DecimalFormat decimalFormat = new DecimalFormat("#,###.#######");
-		String format = decimalFormat.format(value);
-		return format;
+		return getDoubleFormatInstance().format(value);
+	}
+
+	public static NumberFormat getDoubleFormatInstance() {
+		NumberFormat instance = NumberFormat.getInstance();
+		instance.setMaximumFractionDigits(MaxDigits);
+		return instance;
+	}
+
+	public static Double stringToValue(String scaleString) {
+		Double value = null;
+		try {
+			value = Double.valueOf(String.valueOf(getDoubleFormatInstance().parse(scaleString)));
+		} catch (ParseException e) {
+			// ignore
+		}
+		return value;
 	}
 }

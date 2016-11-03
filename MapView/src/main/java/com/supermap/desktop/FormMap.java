@@ -589,7 +589,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 		if (list.get(8) != null) {
 			statusbar.add(list.get(8), new GridBagConstraintsHelper(8, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1));
+					.setWeight(0, 1).setIpad(50, 0));
 		}
 	}
 
