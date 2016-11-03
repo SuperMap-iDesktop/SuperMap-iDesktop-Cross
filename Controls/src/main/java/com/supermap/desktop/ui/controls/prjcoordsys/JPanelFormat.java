@@ -5,7 +5,6 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
-import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -28,7 +27,7 @@ public class JPanelFormat extends JPanel {
 
 	private JLabel labelAngle = new JLabel();
 	private SmTextFieldLegit smTextFieldAngle = new SmTextFieldLegit();
-	private SmButton buttonExchange = new SmButton();
+	private JButton buttonExchange = new JButton();
 
 	private SmTextFieldLegit smTextFieldA = new SmTextFieldLegit();
 	private SmTextFieldLegit smTextFieldM = new SmTextFieldLegit();
@@ -61,8 +60,13 @@ public class JPanelFormat extends JPanel {
 		smTextFieldAngle.setHorizontalAlignment(SwingConstants.RIGHT);
 		Color borderColor = new Color(171, 173, 179);
 		smTextFieldA.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 0, borderColor));
+		Dimension textFieldSize = new Dimension(32, 23);
+		smTextFieldA.setPreferredSize(textFieldSize);
 		smTextFieldM.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, borderColor));
+		smTextFieldM.setPreferredSize(textFieldSize);
 		smTextFieldS.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 0, borderColor));
+		smTextFieldS.setPreferredSize(textFieldSize);
+
 		labelA.setText(CommonProperties.getString("String_AngleSign_Degree"));
 		labelA.setOpaque(true);
 		Color background = smTextFieldA.getBackground();
@@ -85,6 +89,12 @@ public class JPanelFormat extends JPanel {
 		labelAngle.setText(CommonProperties.getString("String_AngleUnit_Degree"));
 		labelAngle.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, borderColor));
 		smTextFieldAngle.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 0, borderColor));
+
+		Dimension maximumSize = new Dimension(20, 20);
+		buttonExchange.setMaximumSize(maximumSize);
+		buttonExchange.setMinimumSize(maximumSize);
+		buttonExchange.setPreferredSize(maximumSize);
+
 	}
 
 	private void initComponents() {
@@ -101,21 +111,24 @@ public class JPanelFormat extends JPanel {
 	private void initLayout() {
 		this.removeAll();
 		lock = true;
-		initValue();
+		smTextFieldA.setText("0");
+		smTextFieldM.setText("0");
+		smTextFieldS.setText("0");
 		if (mode == angle) {
-			this.add(smTextFieldAngle, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
-			this.add(labelAngle, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+			this.add(smTextFieldAngle, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
+			this.add(labelAngle, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.VERTICAL).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
 		} else {
-			this.add(smTextFieldA, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setIpad(20, 0));
-			this.add(labelA, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 0));
-			this.add(smTextFieldM, new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 0).setIpad(20, 0));
-			this.add(labelM, new GridBagConstraintsHelper(4, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 0));
-			this.add(smTextFieldS, new GridBagConstraintsHelper(5, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 0));
-			this.add(labelS, new GridBagConstraintsHelper(6, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 0));
+			this.add(smTextFieldA, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setIpad(0, 0));
+			this.add(labelA, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.VERTICAL).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 0));
+			this.add(smTextFieldM, new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 0).setIpad(0, 0));
+			this.add(labelM, new GridBagConstraintsHelper(4, 0, 1, 1).setFill(GridBagConstraints.VERTICAL).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 0));
+			this.add(smTextFieldS, new GridBagConstraintsHelper(5, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 0));
+			this.add(labelS, new GridBagConstraintsHelper(6, 0, 1, 1).setFill(GridBagConstraints.VERTICAL).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 0));
 		}
-		this.add(buttonExchange, new GridBagConstraintsHelper(10, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 5).setIpad(-20, 0));
+		this.add(buttonExchange, new GridBagConstraintsHelper(10, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 5));//.setIpad(-20, 0)
 		this.revalidate();
 		this.repaint();
+		initValue();
 		lock = false;
 	}
 
@@ -230,7 +243,6 @@ public class JPanelFormat extends JPanel {
 				return false;
 			}
 		}
-		firePropertyChange("GeoCoordSysType", "", "");
 		return true;
 	}
 
