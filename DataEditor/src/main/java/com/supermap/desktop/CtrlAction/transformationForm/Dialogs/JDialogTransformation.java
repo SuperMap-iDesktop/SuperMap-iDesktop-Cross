@@ -448,9 +448,9 @@ public class JDialogTransformation extends SmDialog {
 						for (int selectedModelRow : selectedModelRows) {
 							if (tableModel.getValueAt(selectedModelRow, TransformationTableModel.COLUMN_SAVE_AS) != selected && tableModel.isCellEditable(selectedModelRow, TransformationTableModel.COLUMN_SAVE_AS)) {
 								tableModel.setValueAt(selected, selectedModelRow, TransformationTableModel.COLUMN_SAVE_AS);
-								if (selectedItem != null && tableModel.isCellEditable(selectedModelRow, TransformationTableModel.column_ResultDatasource)) {
-									tableModel.setValueAt(selectedItem, selectedModelRow, TransformationTableModel.column_ResultDatasource);
-								}
+							}
+							if ((Boolean) tableModel.getValueAt(selectedModelRow, TransformationTableModel.COLUMN_SAVE_AS) && selectedItem != null && tableModel.isCellEditable(selectedModelRow, TransformationTableModel.column_ResultDatasource)) {
+								tableModel.setValueAt(selectedItem, selectedModelRow, TransformationTableModel.column_ResultDatasource);
 							}
 						}
 					}
