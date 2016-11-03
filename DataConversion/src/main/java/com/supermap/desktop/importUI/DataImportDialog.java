@@ -85,6 +85,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
             }
             if (e.getKeyCode() == KeyEvent.VK_DELETE) {
                 // 键盘点击delete,删除
+                relesePanelImportTemp();
                 deleteImportInfo();
                 return;
             }

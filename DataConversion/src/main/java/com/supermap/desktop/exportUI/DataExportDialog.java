@@ -151,6 +151,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             }
             if (e.getKeyCode() == KeyEvent.VK_DELETE) {
                 // 键盘点击delete,删除
+                relesePanelExportTemp();
                 deleteExportInfo();
                 return;
             }
@@ -165,6 +166,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                 return;
             } else if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN) {
                 // 键盘点击up/down刷新右边界面
+                relesePanelExportTemp();
                 CommonUtilities.replace(panelExportInfo, panelExports.get(tableExport.getSelectedRow()));
                 return;
             }
@@ -179,6 +181,13 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             tempPanels.add(panelExports.get(selectRows[i]));
         }
         replaceExportInfos(tempPanels);
+    }
+
+    private void relesePanelExportTemp() {
+        if (null != panelExportsTemp) {
+            panelExportsTemp.dispose();
+            panelExportsTemp = null;
+        }
     }
 
     private void replaceExportInfos(ArrayList<PanelExportTransform> tempPanels) {
@@ -199,6 +208,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                 }
             } else if (tableExport.getSelectedRows().length == 1) {
                 //刷新右边界面
+                relesePanelExportTemp();
                 CommonUtilities.replace(panelExportInfo, panelExports.get(tableExport.getSelectedRow()));
             } else if (tableExport.getSelectedRows().length > 1) {
                 //刷新右边界面
@@ -450,6 +460,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                         String fileName = tableExport.getValueAt(row, COLUMN_FILENAME).toString();
                         filePath = getFilePath(filePath, exportsFileInfo, fileName);
                         newExportSetting.setTargetFilePath(filePath);
+                        newExportSetting.setTargetFileType(fileType);
                         exportsFileInfo.setExportSetting(newExportSetting);
                         replaceExportPanel(exportsFileInfo);
                     }
