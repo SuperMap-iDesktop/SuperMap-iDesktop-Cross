@@ -14,7 +14,6 @@ import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.StateChangeEvent;
 import com.supermap.desktop.ui.StateChangeListener;
 import com.supermap.desktop.ui.TristateCheckBox;
-import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SQLExpressionDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
@@ -27,7 +26,12 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
@@ -45,7 +49,6 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 	private TristateCheckBox checkBoxIsCompleteLineSymbolDisplayed; // 显示完整线型
 	private TristateCheckBox checkBoxIsCrossroadOptimized; // 十字路口优化
@@ -295,7 +298,6 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	@Override
 	protected void registerEvents() {
-		caretPositionListener.registerComponent(textFieldMinVisibleGeometrySize);
 		this.checkBoxIsCompleteLineSymbolDisplayed.addStateChangeListener(this.checkBoxStateChangeListener);
 		this.checkBoxIsCrossroadOptimized.addStateChangeListener(this.checkBoxStateChangeListener);
 		this.checkBoxIsSymbolScalable.addStateChangeListener(this.checkBoxStateChangeListener);
@@ -320,7 +322,6 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 
 	@Override
 	protected void unregisterEvents() {
-		caretPositionListener.unRegisterComponent(textFieldMinVisibleGeometrySize);
 		this.checkBoxIsCompleteLineSymbolDisplayed.removeStateChangeListener(this.checkBoxStateChangeListener);
 		this.checkBoxIsCrossroadOptimized.removeStateChangeListener(this.checkBoxStateChangeListener);
 		this.checkBoxIsSymbolScalable.removeStateChangeListener(this.checkBoxStateChangeListener);

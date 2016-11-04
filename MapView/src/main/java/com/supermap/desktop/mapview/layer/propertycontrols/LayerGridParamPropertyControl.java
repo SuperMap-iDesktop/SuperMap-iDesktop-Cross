@@ -6,9 +6,12 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerGridParamPropertyModel;
-import com.supermap.desktop.ui.*;
+import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.SMSpinner;
+import com.supermap.desktop.ui.StateChangeEvent;
+import com.supermap.desktop.ui.StateChangeListener;
+import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.ButtonColorSelector;
-import com.supermap.desktop.ui.controls.CaretPositionListener;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -28,7 +31,6 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final String PROPERTY_VALUE = "value";
-	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 	private JLabel labelBrightness;
 	private SMSpinner spinnerBrightness;
@@ -185,7 +187,6 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 
 	@Override
 	protected void registerEvents() {
-		caretPositionListener.registerComponent(textFieldSpecialValue);
 		this.spinnerBrightness.addChangeListener(this.spinnerValueChangeListener);
 		this.spinnerContrast.addChangeListener(this.spinnerValueChangeListener);
 		this.textFieldSpecialValue.addPropertyChangeListener(PROPERTY_VALUE, this.propertyChangeListener);
@@ -196,7 +197,6 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 
 	@Override
 	protected void unregisterEvents() {
-		caretPositionListener.unRegisterComponent(textFieldSpecialValue);
 		this.spinnerBrightness.removeChangeListener(this.spinnerValueChangeListener);
 		this.spinnerContrast.removeChangeListener(this.spinnerValueChangeListener);
 		this.textFieldSpecialValue.removePropertyChangeListener(PROPERTY_VALUE, this.propertyChangeListener);

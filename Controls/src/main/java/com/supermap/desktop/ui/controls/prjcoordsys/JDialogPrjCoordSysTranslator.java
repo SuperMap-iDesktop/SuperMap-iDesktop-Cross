@@ -6,7 +6,6 @@ import com.supermap.data.PrjCoordSys;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
-import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
@@ -26,7 +25,6 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 	private JLabel labelMethod;
 	private JComboBox<String> comboBoxMethod;
@@ -265,8 +263,6 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 
 	private void registerEvents() {
 		unregisterEvents();
-		caretPositionListener.registerComponent(textFieldScaleDifference, textFieldRotationX, textFieldRotationY, textFieldRotationZ, textFieldTranslateX,
-				textFieldTranslateY, textFieldTranslateZ);
 		this.comboBoxMethod.addItemListener(this.itemListener);
 		this.buttonSetPrj.addActionListener(this.actionListener);
 		this.buttonOk.addActionListener(this.actionListener);
@@ -274,8 +270,6 @@ public class JDialogPrjCoordSysTranslator extends SmDialog {
 	}
 
 	private void unregisterEvents() {
-		caretPositionListener.unRegisterComponent(textFieldScaleDifference, textFieldRotationX, textFieldRotationY, textFieldRotationZ, textFieldTranslateX,
-				textFieldTranslateY, textFieldTranslateZ);
 		this.comboBoxMethod.removeItemListener(this.itemListener);
 		this.buttonSetPrj.removeActionListener(this.actionListener);
 		this.buttonOk.removeActionListener(this.actionListener);

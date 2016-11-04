@@ -2,14 +2,19 @@ package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
 import com.supermap.analyst.spatialanalyst.BufferAnalystParameter;
 import com.supermap.analyst.spatialanalyst.BufferEndType;
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.DatasetVectorInfo;
+import com.supermap.data.Datasource;
+import com.supermap.data.Recordset;
+import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
@@ -23,7 +28,12 @@ import javax.swing.text.NumberFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -34,7 +44,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 
 	private JPanel panelBasic;
@@ -436,7 +445,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 	}
 
 	private void registerEvent() {
-		caretPositionListener.registerComponent(textFieldNumericLeft, textFieldNumericRight);
 		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(new LocalItemListener());
 		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(new LocalItemListener());
 		this.panelBufferData.getCheckBoxGeometrySelect().addItemListener(new LocalItemListener());

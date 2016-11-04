@@ -11,7 +11,6 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
-import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.PixelFormatUtilities;
@@ -37,7 +36,6 @@ public class ImagePropertyControl extends AbstractPropertyControl {
 	private static final int DEFAULT_LABEL_WIDTH = 80;
 	private static final int DEFUALT_COMPONENT_WIDTH = 150;
 	private static final int COLUMN_INDEX_WIDTH = 80;
-	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 	private JLabel labelBandCount;
 	private JTextField textFieldBandCount;
@@ -279,7 +277,6 @@ public class ImagePropertyControl extends AbstractPropertyControl {
 	}
 
 	private void registerEvents() {
-		this.caretPositionListener.registerComponent(textFieldNoValue);
 		this.textFieldNoValue.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.propertyChangeListener);
 		this.buttonSetClipRegion.addActionListener(this.actionListener);
 		this.buttonClearClipRegion.addActionListener(this.actionListener);
@@ -288,7 +285,6 @@ public class ImagePropertyControl extends AbstractPropertyControl {
 	}
 
 	private void unregisterEvents() {
-		this.caretPositionListener.unRegisterComponent(textFieldNoValue);
 		this.textFieldNoValue.removePropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.propertyChangeListener);
 		this.buttonSetClipRegion.removeActionListener(this.actionListener);
 		this.buttonClearClipRegion.removeActionListener(this.actionListener);

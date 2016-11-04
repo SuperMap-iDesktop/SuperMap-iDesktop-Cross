@@ -1,7 +1,10 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import com.supermap.data.*;
+import com.supermap.data.DatasetVector;
 import com.supermap.data.Enum;
+import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldInfos;
+import com.supermap.data.FieldType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
@@ -11,7 +14,6 @@ import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -45,7 +47,6 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final int COLUMN_INDEX_WIDTH = 80;
-	private transient CaretPositionListener caretPositionListener = new CaretPositionListener();
 
 	private JTable tableRecordset;
 	private SmButton buttonAdd;
@@ -231,7 +232,6 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void registerEvents() {
-		caretPositionListener.registerComponent(intEditorControl);
 		this.buttonAdd.addActionListener(this.actionListener);
 		this.buttonDelete.addActionListener(this.actionListener);
 		this.buttonReset.addActionListener(this.actionListener);
@@ -242,7 +242,6 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void unregisterEvents() {
-		caretPositionListener.unRegisterComponent(intEditorControl);
 		this.buttonAdd.removeActionListener(this.actionListener);
 		this.buttonDelete.removeActionListener(this.actionListener);
 		this.buttonReset.removeActionListener(this.actionListener);

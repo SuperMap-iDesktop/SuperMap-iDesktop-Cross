@@ -4,16 +4,15 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.ScaleModel;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.exception.InvalidScaleException;
+import com.supermap.desktop.ui.SMFormattedTextField;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalBorders;
-import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.NumberFormat;
 import java.text.ParseException;
 
 public class ScaleEditor extends JPanel {
@@ -26,7 +25,7 @@ public class ScaleEditor extends JPanel {
 
 
 	private JTextField textFieldFirstPart;
-	private JFormattedTextField textFieldSecondPart;
+	private SMFormattedTextField textFieldSecondPart;
 	private transient ScaleModel scaleModel;
 
 	private transient PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
@@ -104,10 +103,7 @@ public class ScaleEditor extends JPanel {
 		this.textFieldFirstPart.setText(ScaleModel.FIRST_PART);
 		this.textFieldFirstPart.setBorder(null);
 
-		NumberFormatter numberFormatter = new NumberFormatter(NumberFormat.getNumberInstance());
-		numberFormatter.setValueClass(Double.class);
-		numberFormatter.setMinimum(1.0);
-		this.textFieldSecondPart = new JFormattedTextField(numberFormatter);
+		this.textFieldSecondPart = new SMFormattedTextField();
 		this.textFieldSecondPart.setBorder(null);
 
 		setBorder(MetalBorders.getTextFieldBorder());
@@ -118,7 +114,6 @@ public class ScaleEditor extends JPanel {
 
 	private void registerEvents() {
 
-		this.textFieldSecondPart.addMouseListener(new CaretPositionListener());
 		this.textFieldSecondPart.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.propertyChangeListener);
 		this.textFieldSecondPart.addKeyListener(this.keyPressedListener);
 	}
@@ -126,10 +121,10 @@ public class ScaleEditor extends JPanel {
 	private void valueChange(PropertyChangeEvent e) {
 		try {
 			ScaleModel oldModel = this.scaleModel;
-			if (ScaleModel.isLegitScaleString(1 / (Double) e.getNewValue())) {
+			if (ScaleModel.isLegitScaleString(1 / Double.valueOf(String.valueOf(e.getNewValue())))) {
 				//输入值判断
-				this.scaleModel = new ScaleModel(1 / (Double) e.getNewValue());
-			}else {
+				this.scaleModel = new ScaleModel(1 / Double.valueOf(String.valueOf(e.getNewValue())));
+			} else {
 				this.scaleModel = oldModel;
 			}
 			firePropertyChange(ControlDefaultValues.PROPERTYNAME_VALUE, oldModel, this.scaleModel);
