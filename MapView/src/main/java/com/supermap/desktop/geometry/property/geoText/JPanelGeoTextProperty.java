@@ -58,6 +58,10 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
             public void modify(TextStyleType newValue) {
                 Object newTextStyleValue = panelBasicSet.getResultMap().get(newValue);
                 String text = ((JTextArea) panelTextPart.getComponentsMap().get(TextPartType.TEXT)).getText();
+                if ("Null".equals(newTextStyleValue)) {
+                    fireGeoTextChanged(true);
+                    return;
+                }
                 if (null == newTextStyleValue || StringUtilities.isNullOrEmptyString(text)) {
                     return;
                 }

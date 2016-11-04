@@ -200,6 +200,9 @@ public class TextStyleContainer extends ThemeChangePanel {
 
     private void resetFontHeightWhileFixedSize(TextStyleType newValue, TextStyle textStyle) {
         Object newGeoStyleProperty = textStylePanel.getResultMap().get(newValue);
+        if ("Null".equals(newGeoStyleProperty)) {
+            return;
+        }
         if (!newValue.equals(TextStyleType.FIXEDSIZE)) {
             if (newValue.equals(TextStyleType.FONTHEIGHT)) {
                 fontHeight = (double) newGeoStyleProperty;

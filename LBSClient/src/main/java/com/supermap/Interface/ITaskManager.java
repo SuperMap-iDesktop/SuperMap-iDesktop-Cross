@@ -16,9 +16,9 @@ public interface ITaskManager {
 
 	/**
 	 * 任务是否可用
-	 * 
-	 * @param enable
-	 * @return
+	 *
+     * @param
+     * @return
 	 */
 	boolean isEnable();
 

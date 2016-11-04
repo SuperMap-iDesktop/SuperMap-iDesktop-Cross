@@ -206,7 +206,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                 } else if (selectColumn != COLUMN_FILENAME && selectColumn != COLUMN_ISOVERWRITE && selectColumn != COLUMN_EXPORTTYPE) {
                     addExportInfo();
                 }
-            } else if (tableExport.getSelectedRows().length == 1) {
+            } else if (tableExport.getSelectedRows().length == 1 && tableExport.getRowCount() > 0) {
                 //刷新右边界面
                 relesePanelExportTemp();
                 CommonUtilities.replace(panelExportInfo, panelExports.get(tableExport.getSelectedRow()));
@@ -274,6 +274,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                     filePath = getFilePath(filePath, fileInfo, fileName);
                     tempExportSetting.setTargetFilePath(filePath);
                 }
+                tableExport.getCellEditor().stopCellEditing();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
