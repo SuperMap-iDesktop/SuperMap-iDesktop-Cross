@@ -5,6 +5,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.Datasets;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.implement.MyComboBoxUI;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
@@ -34,6 +35,7 @@ public class DatasetComboBox extends JComboBox<Object> {
         this.setBorder(BorderFactory.createEtchedBorder(1));
         ListCellRenderer<Object> renderer = new CommonListCellRenderer();
         setRenderer(renderer);
+        setUI(new MyComboBoxUI());
     }
 
     /**
@@ -46,6 +48,7 @@ public class DatasetComboBox extends JComboBox<Object> {
         this.setBorder(BorderFactory.createEtchedBorder(1));
         ListCellRenderer<Object> renderer = new CommonListCellRenderer();
         setRenderer(renderer);
+        setUI(new MyComboBoxUI());
     }
 
     /**
@@ -59,6 +62,7 @@ public class DatasetComboBox extends JComboBox<Object> {
         this.setBorder(BorderFactory.createEtchedBorder(1));
         ListCellRenderer<Object> renderer = new CommonListCellRenderer();
         setRenderer(renderer);
+        setUI(new MyComboBoxUI());
     }
 
     /**
@@ -69,6 +73,7 @@ public class DatasetComboBox extends JComboBox<Object> {
         this.setBorder(BorderFactory.createEtchedBorder(1));
         ListCellRenderer<Object> renderer = new CommonListCellRenderer();
         setRenderer(renderer);
+        setUI(new MyComboBoxUI());
     }
 
     /**
@@ -82,6 +87,7 @@ public class DatasetComboBox extends JComboBox<Object> {
         this.setBorder(BorderFactory.createEtchedBorder(1));
         ListCellRenderer<Object> renderer = new CommonListCellRenderer();
         setRenderer(renderer);
+        setUI(new MyComboBoxUI());
     }
 
     /**

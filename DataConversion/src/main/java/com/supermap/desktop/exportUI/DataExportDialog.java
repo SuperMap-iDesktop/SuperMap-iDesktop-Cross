@@ -206,7 +206,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                 } else if (selectColumn != COLUMN_FILENAME && selectColumn != COLUMN_ISOVERWRITE && selectColumn != COLUMN_EXPORTTYPE) {
                     addExportInfo();
                 }
-            } else if (tableExport.getSelectedRows().length == 1 && tableExport.getRowCount() > 0) {
+            } else if (tableExport.getSelectedRows().length == 1) {
                 //刷新右边界面
                 relesePanelExportTemp();
                 CommonUtilities.replace(panelExportInfo, panelExports.get(tableExport.getSelectedRow()));
@@ -244,6 +244,9 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                 this.tableExport.setRowSelectionInterval(tableExport.getRowCount() - 1, tableExport.getRowCount() - 1);
             }
             setButtonState();
+        }
+        if (tableExport.getRowCount() == 0) {
+            tableExport.clearSelection();
         }
     }
 
@@ -483,7 +486,9 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     private void initToolbar() {
         this.toolBar.setFloatable(false);
         this.toolBar.add(this.buttonAddDataset);
+        this.toolBar.addSeparator();
         this.toolBar.add(this.buttonDelete);
+        this.toolBar.addSeparator();
         this.toolBar.add(this.buttonSelectAll);
         this.toolBar.add(this.buttonInvertSelect);
         this.toolBar.add(this.buttonExportsSet);

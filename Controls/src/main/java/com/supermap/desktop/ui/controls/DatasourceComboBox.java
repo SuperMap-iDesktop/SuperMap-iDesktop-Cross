@@ -3,6 +3,7 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.implement.MyComboBoxUI;
 
 import javax.swing.*;
 
@@ -22,6 +23,7 @@ public class DatasourceComboBox extends JComboBox<Object> {
         this.setBorder(BorderFactory.createEtchedBorder(1));
         ListCellRenderer<Object> renderer = new CommonListCellRenderer();
         setRenderer(renderer);
+        this.setUI(new MyComboBoxUI());
     }
 
     /**
@@ -34,6 +36,7 @@ public class DatasourceComboBox extends JComboBox<Object> {
         this.setBorder(BorderFactory.createEtchedBorder(1));
         ListCellRenderer<Object> renderer = new CommonListCellRenderer();
         setRenderer(renderer);
+        this.setUI(new MyComboBoxUI());
     }
 
     /**
@@ -46,6 +49,7 @@ public class DatasourceComboBox extends JComboBox<Object> {
         this.setBorder(BorderFactory.createEtchedBorder(1));
         ListCellRenderer<Object> renderer = new CommonListCellRenderer();
         setRenderer(renderer);
+        this.setUI(new MyComboBoxUI());
     }
 
     /**
@@ -170,4 +174,5 @@ public class DatasourceComboBox extends JComboBox<Object> {
         }
         return result;
     }
+
 }

@@ -208,6 +208,7 @@ public class PanelExportTransformForVector extends PanelExportTransform {
         this.textAreaExpression = new JTextArea();
         this.textAreaExpression.setBorder(new LineBorder(Color.gray));
         this.textAreaExpression.setLineWrap(true);
+        this.textAreaExpression.setColumns(5);
         this.buttonExpression = new JButton();
         initComboboxCADVersion();
         setUnEnabled();
@@ -354,7 +355,7 @@ public class PanelExportTransformForVector extends PanelExportTransform {
         panelContent.add(this.labelCADVersion, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 20).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         panelContent.add(this.comboBoxCADVersion, new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
         panelContent.add(this.labelExpression, new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 0).setFill(GridBagConstraints.HORIZONTAL).setWeight(0, 0));
-        panelContent.add(this.textAreaExpression, new GridBagConstraintsHelper(0, 5, 2, 3).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setIpad(0, 120));
+        panelContent.add(this.textAreaExpression, new GridBagConstraintsHelper(0, 5, 2, 3).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setIpad(0, 80));
         panelContent.add(this.buttonExpression, new GridBagConstraintsHelper(1, 8, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.NONE).setWeight(0, 0));
     }
 

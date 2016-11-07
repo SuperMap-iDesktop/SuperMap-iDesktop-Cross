@@ -264,6 +264,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                         }
                         model.removeRows(tempRow);
                         panelImports.removeAll(panelImports);
+                        table.clearSelection();
                     }
                 }
                 // 如果表中没有数据，右边部分显示为默认界面。
@@ -423,7 +424,9 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         this.toolBar.add(this.buttonAddFile);
         this.toolBar.add(this.buttonAddDir);
         this.buttonDelete.setEnabled(false);
+        this.toolBar.addSeparator();
         this.toolBar.add(this.buttonDelete);
+        this.toolBar.addSeparator();
         this.buttonSelectAll.setEnabled(false);
         this.toolBar.add(this.buttonSelectAll);
         this.toolBar.add(this.buttonInvertSelect);
