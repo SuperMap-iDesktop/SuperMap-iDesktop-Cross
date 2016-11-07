@@ -272,7 +272,7 @@ public class PanelExportTransformForGrid extends PanelExportTransform {
         JPanel panelContent = new JPanel();
         panelContent.setLayout(new GridBagLayout());
         this.setLayout(new GridBagLayout());
-        this.add(panelContent, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
+        this.add(panelContent, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setIpad(37, 0));
 
         panelContent.add(this.labelCompressionRatio, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 20).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         panelContent.add(this.textFieldCompressionRatio, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 5).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));

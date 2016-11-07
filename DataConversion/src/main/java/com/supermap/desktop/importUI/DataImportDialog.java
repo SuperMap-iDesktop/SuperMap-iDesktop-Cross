@@ -366,7 +366,9 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         this.setFocusTraversalPolicy(this.policy);
         this.getRootPane().setDefaultButton(this.buttonImport);
         this.setLocationRelativeTo(null);
-        this.setBounds(600, 260, 864, 486);
+        this.setSize(new Dimension(864, 486));
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(Math.abs(screenSize.width - 864) / 2, Math.abs(screenSize.height - 486) / 2);
     }
 
     private void initDrag() {

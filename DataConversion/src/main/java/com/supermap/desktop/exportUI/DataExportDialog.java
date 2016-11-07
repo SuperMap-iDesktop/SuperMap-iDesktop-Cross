@@ -50,7 +50,6 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     private MutiTable tableExport;
     private JToolBar toolBar;
     private JScrollPane scrollPane;
-    private JSplitPane splitPane;
     private JPanel contentPane;
     private Dataset[] datasets;
     public static final int COLUMN_DATASET = 0;
@@ -250,17 +249,6 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         }
     }
 
-    private WindowListener windowListener = new WindowAdapter() {
-        @Override
-        public void windowOpened(WindowEvent e) {
-            splitPane.setDividerLocation(0.7);
-        }
-
-        @Override
-        public void windowClosing(WindowEvent e) {
-            removeEvents();
-        }
-    };
     private TableModelListener tableModelListener = new TableModelListener() {
         @Override
         public void tableChanged(TableModelEvent e) {
@@ -335,7 +323,9 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             addTableInfo(datasets);
         }
         initToolbar();
-        this.setBounds(600, 260, 800, 450);
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setSize(new Dimension(800, 450));
+        this.setLocation(Math.abs(screenSize.width - 800) / 2, Math.abs(screenSize.height - 450) / 2);
     }
 
     private void initTableTheme() {
@@ -519,14 +509,10 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     }
 
     private void initPanelContentLayerout() {
-        this.splitPane = new JSplitPane();
-        this.splitPane.setContinuousLayout(true);
-        this.splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-        this.splitPane.setLeftComponent(this.panelExport);
-        this.splitPane.setRightComponent(this.panelExportInfo);
-        this.splitPane.setBorder(null);
-        this.contentPane.setLayout(new BorderLayout());
-        this.contentPane.add(this.splitPane, BorderLayout.CENTER);
+        this.contentPane.setLayout(new GridBagLayout());
+        this.contentPane.add(this.panelExport, new GridBagConstraintsHelper(0, 0, 5, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(5).setWeight(5, 1));
+        this.contentPane.add(this.panelExportInfo, new GridBagConstraintsHelper(5, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(5, 0, 0, 5).setWeight(0, 1));
+        this.panelExportInfo.setPreferredSize(new Dimension(160, 90));
     }
 
     private void initPanelExportInfoLayout() {
@@ -541,7 +527,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         }
         panel.setLayout(new GridBagLayout());
         panel.add(panelContent, new GridBagConstraintsHelper(0, 0).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        this.panelExportInfo.add((Component) panel, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setWeight(1, 1));
+        this.panelExportInfo.add((Component) panel, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraintsHelper.BOTH).setWeight(0, 1));
         this.panelExportInfo.add(this.buttonExport, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5, 0, 5, 10).setWeight(1, 0));
         this.panelExportInfo.add(this.buttonClose, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5, 0, 5, 5).setWeight(0, 0));
     }
@@ -568,7 +554,6 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         this.tableExport.addKeyListener(this.exportKeyListener);
         this.tableExport.addMouseListener(this.exportMouseListener);
         this.scrollPane.addMouseListener(this.exportMouseListener);
-        this.addWindowListener(this.windowListener);
     }
 
     @Override
