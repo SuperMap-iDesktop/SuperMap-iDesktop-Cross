@@ -116,12 +116,12 @@ public class PanelTransformFor3D extends PanelTransform {
 
         @Override
         public void removeUpdate(DocumentEvent e) {
-
+            updatePosition(e);
         }
 
         @Override
         public void changedUpdate(DocumentEvent e) {
-
+            updatePosition(e);
         }
     };
     private ActionListener prjsetListener = new ActionListener() {
