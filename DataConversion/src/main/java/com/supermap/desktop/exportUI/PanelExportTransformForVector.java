@@ -236,13 +236,18 @@ public class PanelExportTransformForVector extends PanelExportTransform {
 
     private Object selectSameCharsetItem(ArrayList<PanelExportTransform> panels) {
         Object result = "";
-        String temp = ((PanelExportTransformForVector) panels.get(0)).getCharsetComboBox().getSelectedItem().toString();
+        String temp = "";
+        if (panels.get(0) instanceof PanelExportTransformForVector) {
+            temp = ((PanelExportTransformForVector) panels.get(0)).getCharsetComboBox().getSelectedItem().toString();
+        }
         boolean isSame = true;
         for (PanelExportTransform tempPanel : panels) {
-            String tempObject = ((PanelExportTransformForVector) tempPanel).getCharsetComboBox().getSelectedItem().toString();
-            if (!temp.equals(tempObject)) {
-                isSame = false;
-                break;
+            if (tempPanel instanceof PanelExportTransformForVector) {
+                String tempObject = ((PanelExportTransformForVector) tempPanel).getCharsetComboBox().getSelectedItem().toString();
+                if (!temp.equals(tempObject)) {
+                    isSame = false;
+                    break;
+                }
             }
         }
         if (isSame) {
@@ -253,13 +258,18 @@ public class PanelExportTransformForVector extends PanelExportTransform {
 
     private Object selectSameItem(ArrayList<PanelExportTransform> panels) {
         Object result = "";
-        String temp = ((PanelExportTransformForVector) panels.get(0)).getComboBoxCADVersion().getSelectedItem().toString();
+        String temp = "";
+        if (panels.get(0) instanceof PanelExportTransformForVector) {
+            temp = ((PanelExportTransformForVector) panels.get(0)).getComboBoxCADVersion().getSelectedItem().toString();
+        }
         boolean isSame = true;
         for (PanelExportTransform tempPanel : panels) {
-            String tempObject = ((PanelExportTransformForVector) tempPanel).getComboBoxCADVersion().getSelectedItem().toString();
-            if (!temp.equals(tempObject)) {
-                isSame = false;
-                break;
+            if (tempPanel instanceof PanelExportTransformForVector) {
+                String tempObject = ((PanelExportTransformForVector) tempPanel).getComboBoxCADVersion().getSelectedItem().toString();
+                if (!temp.equals(tempObject)) {
+                    isSame = false;
+                    break;
+                }
             }
         }
         if (isSame) {
@@ -292,10 +302,12 @@ public class PanelExportTransformForVector extends PanelExportTransform {
         int selectCount = 0;
         int unSelectCount = 0;
         for (PanelExportTransform tempPanel : panels) {
-            if (((PanelExportTransformForVector) tempPanel).getCheckBoxExportExternalData().isSelected()) {
-                selectCount++;
-            } else if (!((PanelExportTransformForVector) tempPanel).getCheckBoxExportExternalData().isSelected()) {
-                unSelectCount++;
+            if (tempPanel instanceof PanelExportTransformForVector) {
+                if (((PanelExportTransformForVector) tempPanel).getCheckBoxExportExternalData().isSelected()) {
+                    selectCount++;
+                } else if (!((PanelExportTransformForVector) tempPanel).getCheckBoxExportExternalData().isSelected()) {
+                    unSelectCount++;
+                }
             }
         }
         if (selectCount == panels.size()) {
@@ -317,10 +329,6 @@ public class PanelExportTransformForVector extends PanelExportTransform {
 
 
     private void initComponentsState(ExportSetting tempExportSetting) {
-//        DatasetType datasetType = ((Dataset) tempExportSetting.getSourceData()).getType();
-//        if (datasetType.equals(DatasetType.POINT) || datasetType.equals(DatasetType.POINT3D)) {
-//            this.checkBoxExportPointAsWKT.setEnabled(true);
-//        }
         if (tempExportSetting instanceof ExportSettingDWG || tempExportSetting instanceof ExportSettingDXF) {
             this.checkBoxExportExternalData.setEnabled(true);
             this.checkBoxExportExternalRecord.setEnabled(true);

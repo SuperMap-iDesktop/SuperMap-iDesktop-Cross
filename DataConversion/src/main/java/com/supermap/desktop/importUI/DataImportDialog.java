@@ -384,6 +384,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         this.contentPane = new JPanel();
         this.table = new JTable();
         this.model = new ImportTableModel();
+        this.table.getTableHeader().setReorderingAllowed(false);
         this.table.setModel(this.model);
         this.table.setRowHeight(23);
         this.buttonAddFile = new JButton();

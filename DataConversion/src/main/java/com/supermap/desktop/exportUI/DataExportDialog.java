@@ -54,19 +54,19 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     private Dataset[] datasets;
     public static final int COLUMN_DATASET = 0;
     public static final int COLUMN_EXPORTTYPE = 1;
-    public static final int COLUMN_ISOVERWRITE = 2;
-    public static final int COLUMN_STATE = 3;
-    public static final int COLUMN_FILENAME = 4;
-    public static final int COLUMN_FILEPATH = 5;
+    public static final int COLUMN_FILENAME = 2;
+    public static final int COLUMN_FILEPATH = 3;
+    public static final int COLUMN_ISOVERWRITE = 4;
+    public static final int COLUMN_STATE = 5;
     private ArrayList<PanelExportTransform> panelExports;
     private PanelExportTransform panelExportsTemp;
 
     private String[] title = {DataConversionProperties.getString("String_Dataset"),
             DataConversionProperties.getString("string_outputtype"),
-            DataConversionProperties.getString("string_coverage"),
-            DataConversionProperties.getString("string_tabletitle_state"),
             DataConversionProperties.getString("string_tabletitle_filename"),
-            DataConversionProperties.getString("string_directory")};
+            DataConversionProperties.getString("string_directory"),
+            DataConversionProperties.getString("string_coverage"),
+            DataConversionProperties.getString("string_tabletitle_state")};
 
     private ArrayList<ExportFileInfo> exportsFileInfos;
 
@@ -84,6 +84,11 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     private SteppedComboBox steppedComboBox;
     private TableColumn exportTypeColumn;
     private ItemListener itemListener;
+    private TableColumn datasetColumn;
+    private TableColumn overwriteColumn;
+    private TableColumn stateColumn;
+    private TableColumn fileNameColumn;
+    private TableColumn filePathColumn;
 
     private void addExportInfo() {
         DatasetChooserDataExport datasetChooser = new DatasetChooserDataExport(DataExportDialog.this, tableExport);
@@ -200,9 +205,10 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         public void mouseReleased(MouseEvent e) {
             if (2 == e.getClickCount()) {
                 int selectColumn = tableExport.getSelectedColumn();
-                if (e.getSource().equals(tableExport) && selectColumn == COLUMN_FILEPATH) {
+                TableColumn tempColumn = tableExport.getColumn(tableExport.getModel().getColumnName(selectColumn));
+                if (e.getSource().equals(tableExport) && tempColumn.equals(filePathColumn)) {
                     setExportPath();
-                } else if (selectColumn != COLUMN_FILENAME && selectColumn != COLUMN_ISOVERWRITE && selectColumn != COLUMN_EXPORTTYPE) {
+                } else if (!tempColumn.equals(fileNameColumn) && !tempColumn.equals(overwriteColumn) && !tempColumn.equals(exportTypeColumn)) {
                     addExportInfo();
                 }
             } else if (tableExport.getSelectedRows().length == 1) {
@@ -255,17 +261,18 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             try {
                 int column = e.getColumn();
                 int row = e.getFirstRow();
-                String filePath = tableExport.getValueAt(row, COLUMN_FILEPATH).toString();
-                String fileName = tableExport.getValueAt(row, COLUMN_FILENAME).toString();
                 ExportFileInfo fileInfo = panelExports.get(row).getExportsFileInfo();
                 ExportSetting tempExportSetting = fileInfo.getExportSetting();
                 if (column == COLUMN_ISOVERWRITE && tableExport.getValueAt(row, column) instanceof Boolean) {
                     tempExportSetting.setOverwrite((Boolean) tableExport.getValueAt(row, column));
+//                    tableExport.getCellEditor().stopCellEditing();
                 } else if (column == COLUMN_FILENAME || column == COLUMN_FILEPATH) {
+                    String filePath = tableExport.getValueAt(row, COLUMN_FILEPATH).toString();
+                    String fileName = tableExport.getValueAt(row, COLUMN_FILENAME).toString();
                     filePath = getFilePath(filePath, fileInfo, fileName);
                     tempExportSetting.setTargetFilePath(filePath);
+//                    tableExport.getCellEditor().stopCellEditing();
                 }
-                tableExport.getCellEditor().stopCellEditing();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -298,6 +305,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         this.panelExport = new JPanel();
         this.exportsFileInfos = new ArrayList<>();
         this.tableExport = new MutiTable();
+        this.tableExport.getTableHeader().setReorderingAllowed(false);
         this.panelExportInfo = new JPanel();
         this.scrollPane = new JScrollPane();
         this.toolBar = new JToolBar();
@@ -329,12 +337,12 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     }
 
     private void initTableTheme() {
-        TableColumn datasetColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_DATASET));
+        this.datasetColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_DATASET));
         this.exportTypeColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_EXPORTTYPE));
-        TableColumn overwriteColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_ISOVERWRITE));
-        TableColumn stateColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_STATE));
-        TableColumn fileNameColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_FILENAME));
-        TableColumn filePathColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_FILEPATH));
+        this.overwriteColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_ISOVERWRITE));
+        this.stateColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_STATE));
+        this.fileNameColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_FILENAME));
+        this.filePathColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_FILEPATH));
         stateColumn.setMaxWidth(40);
         overwriteColumn.setMaxWidth(40);
         this.exportTypeColumn.setMinWidth(120);
