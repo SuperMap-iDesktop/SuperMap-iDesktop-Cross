@@ -89,6 +89,29 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     private TableColumn stateColumn;
     private TableColumn fileNameColumn;
     private TableColumn filePathColumn;
+    private JSplitPane splitPane;
+    private WindowListener windowListener = new WindowAdapter() {
+        @Override
+        public void windowOpened(WindowEvent e) {
+            splitPane.setDividerLocation(0.70);
+            splitPane.setResizeWeight(0.70);
+        }
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            panelExportsDispose();
+            removeEvents();
+        }
+
+    };
+
+    private void panelExportsDispose() {
+        for (PanelExportTransform panelImportTemp : panelExports) {
+            panelImportTemp = null;
+        }
+
+        panelExports = null;
+    }
 
     private void addExportInfo() {
         DatasetChooserDataExport datasetChooser = new DatasetChooserDataExport(DataExportDialog.this, tableExport);
@@ -517,10 +540,11 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     }
 
     private void initPanelContentLayerout() {
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, this.panelExport, this.panelExportInfo);
+        splitPane.setContinuousLayout(true);
+        splitPane.setBorder(null);
         this.contentPane.setLayout(new GridBagLayout());
-        this.contentPane.add(this.panelExport, new GridBagConstraintsHelper(0, 0, 5, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(5).setWeight(5, 1));
-        this.contentPane.add(this.panelExportInfo, new GridBagConstraintsHelper(5, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(5, 0, 0, 5).setWeight(0, 1));
-        this.panelExportInfo.setPreferredSize(new Dimension(160, 90));
+        this.contentPane.add(splitPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5).setWeight(1, 1));
     }
 
     private void initPanelExportInfoLayout() {
@@ -562,11 +586,22 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         this.tableExport.addKeyListener(this.exportKeyListener);
         this.tableExport.addMouseListener(this.exportMouseListener);
         this.scrollPane.addMouseListener(this.exportMouseListener);
+        this.addWindowListener(this.windowListener);
     }
 
     @Override
     public void removeEvents() {
+        this.buttonAddDataset.removeActionListener(this.addDatasetListener);
+        this.buttonSelectAll.removeActionListener(this.selectAllListener);
+        this.buttonDelete.removeActionListener(this.deleteListener);
+        this.buttonInvertSelect.removeActionListener(this.invertSelectListener);
+        this.buttonExport.removeActionListener(this.exportListener);
+        this.buttonClose.removeActionListener(this.closeListener);
+        this.tableExport.getModel().removeTableModelListener(this.tableModelListener);
 
+        this.tableExport.removeKeyListener(this.exportKeyListener);
+        this.tableExport.removeMouseListener(this.exportMouseListener);
+        this.scrollPane.removeMouseListener(this.exportMouseListener);
     }
 
     private void initResources() {

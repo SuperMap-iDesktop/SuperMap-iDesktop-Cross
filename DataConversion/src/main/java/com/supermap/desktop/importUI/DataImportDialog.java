@@ -485,6 +485,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
             @Override
             public void windowOpened(WindowEvent e) {
                 splitPane.setDividerLocation(0.35);
+                splitPane.setResizeWeight(0.35);
             }
 
             @Override
