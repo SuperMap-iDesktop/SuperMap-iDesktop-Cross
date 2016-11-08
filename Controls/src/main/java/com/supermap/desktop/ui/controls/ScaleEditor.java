@@ -32,6 +32,7 @@ public class ScaleEditor extends JPanel {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			valueChange(evt);
+//			System.out.println(1);
 		}
 	};
 	// 响应 enter 键，提交编辑
