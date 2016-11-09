@@ -10,6 +10,7 @@ import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.FileTypeLocale;
 import com.supermap.desktop.localUtilities.FileUtilities;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -38,7 +39,7 @@ public class PanelTransformFor3D extends PanelTransform {
     private ArrayList<PanelImport> panelImports;
     private JLabel labelRotationType;
     private JComboBox comboBoxRotationType;//旋转模式
-    private JCheckBox checkBoxSplitForMore;//拆分为多个子对象
+    private TristateCheckBox checkBoxSplitForMore;//拆分为多个子对象
     private JRadioButton radioButtonPrjSet;//投影设置
     private JButton buttonPrjSet;
     private JRadioButton radioButtonImportPrjFile;//导入投影文件
@@ -50,6 +51,12 @@ public class PanelTransformFor3D extends PanelTransform {
     private JLabel labelPositionZ;
     private JTextField textFieldPositionZ;//z坐标
     private JTextArea textAreaPrjInfo;//投影信息显示
+    private final int POSITIONX = 0;
+    private final int POSITIONY = 1;
+    private final int POSITIONZ = 2;
+    private final int PRJINFO = 3;
+    private final int PRJFILEPATH = 4;
+
     private ItemListener radioListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
@@ -138,13 +145,13 @@ public class PanelTransformFor3D extends PanelTransform {
                 // 修改
                 PrjCoordSys newPrjCoordSys = dialogPrjCoordSysSettings.getPrjCoordSys();
                 String prjCoorSysInfo = PrjCoordSysUtilities.getDescription(newPrjCoordSys);
+                textAreaPrjInfo.setText(prjCoorSysInfo);
                 if (null != panelImports) {
                     for (PanelImport tempPanelImport : panelImports) {
                         ((PanelTransformFor3D) tempPanelImport.getTransform()).getTextAreaPrjInfo().setText(prjCoorSysInfo);
                     }
                 } else {
                     importSetting.setTargetPrjCoordSys(newPrjCoordSys);
-                    textAreaPrjInfo.setText(prjCoorSysInfo);
                 }
 
             }
@@ -179,7 +186,7 @@ public class PanelTransformFor3D extends PanelTransform {
     private void setPrjCoordSys(String filePath) {
         PrjCoordSys newPrjCoorSys = new PrjCoordSys();
         String fileType = FileUtilities.getFileType(filePath);
-        boolean isPrjFile = false;
+        boolean isPrjFile;
         if (fileType.equalsIgnoreCase(FileTypeLocale.PRJ_STRING)) {
             isPrjFile = newPrjCoorSys.fromFile(filePath, PrjFileType.ESRI);
         } else {
@@ -187,6 +194,8 @@ public class PanelTransformFor3D extends PanelTransform {
         }
         if (isPrjFile) {
             String prjCoorSysInfo = PrjCoordSysUtilities.getDescription(newPrjCoorSys);
+            fileChooserControlImportPrjFile.getEditor().setText(filePath);
+            textAreaPrjInfo.setText(prjCoorSysInfo);
             if (null != panelImports) {
                 for (PanelImport panelImport : panelImports) {
                     ((PanelTransformFor3D) panelImport.getTransform()).getFileChooserControlImportPrjFile().getEditor().setText(filePath);
@@ -194,8 +203,6 @@ public class PanelTransformFor3D extends PanelTransform {
                 }
             } else {
                 importSetting.setTargetPrjCoordSys(newPrjCoorSys);
-                fileChooserControlImportPrjFile.getEditor().setText(filePath);
-                textAreaPrjInfo.setText(prjCoorSysInfo);
             }
         }
     }
@@ -217,7 +224,8 @@ public class PanelTransformFor3D extends PanelTransform {
     public void initComponents() {
         this.labelRotationType = new JLabel();
         this.comboBoxRotationType = new JComboBox();
-        this.checkBoxSplitForMore = new JCheckBox();
+        this.checkBoxSplitForMore = new TristateCheckBox();
+        this.checkBoxSplitForMore.setSelected(false);
         this.radioButtonPrjSet = new JRadioButton();
         this.buttonPrjSet = new JButton();
         this.radioButtonImportPrjFile = new JRadioButton();
@@ -302,6 +310,67 @@ public class PanelTransformFor3D extends PanelTransform {
         this.comboBoxRotationType.setEnabled(false);
         this.radioButtonPrjSet.setSelected(true);
         this.fileChooserControlImportPrjFile.setEnabled(false);
+        setSplitForMore();
+        setImportPrjFilePath();
+        setPositionInfo();
+    }
+
+    private void setPositionInfo() {
+        if (null != panelImports) {
+            this.textFieldPositionX.setText(getText(POSITIONX));
+            this.textFieldPositionY.setText(getText(POSITIONY));
+            this.textFieldPositionZ.setText(getText(POSITIONZ));
+            this.textAreaPrjInfo.setText(getText(PRJINFO));
+        }
+    }
+
+    private void setSplitForMore() {
+        if (null != panelImports) {
+            this.checkBoxSplitForMore.setSelectedEx(externalDataSelectAll());
+        }
+    }
+
+    private Boolean externalDataSelectAll() {
+        Boolean result = null;
+        int selectCount = 0;
+        int unSelectCount = 0;
+        for (PanelImport tempPanel : panelImports) {
+            boolean select = ((PanelTransformFor3D) tempPanel.getTransform()).getCheckBoxSplitForMore().isSelected();
+            if (select) {
+                selectCount++;
+            } else if (!select) {
+                unSelectCount++;
+            }
+        }
+        if (selectCount == panelImports.size()) {
+            result = true;
+        } else if (unSelectCount == panelImports.size()) {
+            result = false;
+        }
+        return result;
+    }
+
+    private void setImportPrjFilePath() {
+        if (null != panelImports) {
+            this.fileChooserControlImportPrjFile.getEditor().setText(getText(PRJFILEPATH));
+        }
+    }
+
+    public String getText(int type) {
+        String result = "";
+        String temp = getInfo(panelImports.get(0), type);
+        boolean isSame = true;
+        for (PanelImport tempPanel : panelImports) {
+            String tempObject = getInfo(tempPanel, type);
+            if (!temp.equals(tempObject)) {
+                isSame = false;
+                break;
+            }
+        }
+        if (isSame) {
+            result = temp;
+        }
+        return result;
     }
 
     @Override
@@ -349,7 +418,35 @@ public class PanelTransformFor3D extends PanelTransform {
         return textAreaPrjInfo;
     }
 
+    public TristateCheckBox getCheckBoxSplitForMore() {
+        return checkBoxSplitForMore;
+    }
+
     public FileChooserControl getFileChooserControlImportPrjFile() {
         return fileChooserControlImportPrjFile;
+    }
+
+    public String getInfo(PanelImport tempPanel, int type) {
+        String result = "";
+        switch (type) {
+            case POSITIONX:
+                result = ((PanelTransformFor3D) tempPanel.getTransform()).getTextFieldPositionX().getText();
+                break;
+            case POSITIONY:
+                result = ((PanelTransformFor3D) tempPanel.getTransform()).getTextFieldPositionY().getText();
+                break;
+            case POSITIONZ:
+                result = ((PanelTransformFor3D) tempPanel.getTransform()).getTextFieldPositionZ().getText();
+                break;
+            case PRJINFO:
+                result = ((PanelTransformFor3D) tempPanel.getTransform()).getTextAreaPrjInfo().getText();
+                break;
+            case PRJFILEPATH:
+                result = ((PanelTransformFor3D) tempPanel.getTransform()).getFileChooserControlImportPrjFile().getEditor().getText();
+                break;
+            default:
+                break;
+        }
+        return result;
     }
 }

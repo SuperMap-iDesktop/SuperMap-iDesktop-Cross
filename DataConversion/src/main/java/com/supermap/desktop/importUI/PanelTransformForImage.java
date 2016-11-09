@@ -30,7 +30,7 @@ import java.util.ArrayList;
 public class PanelTransformForImage extends PanelTransform {
     private static final int SAME_TYPE = 4;
     private static final int GRID_TYPE = 1;
-    private static final Dimension defaultSize = new Dimension(36, 21);
+    private static final Dimension defaultSize = new Dimension(36, 23);
     private JLabel labelBandImportModel;
     private JComboBox comboBoxBandImportModel;
     private JLabel labelPrjFile;
@@ -190,6 +190,7 @@ public class PanelTransformForImage extends PanelTransform {
 
     public PanelTransformForImage(ImportSetting importSetting) {
         super(importSetting);
+        registEvents();
     }
 
     public PanelTransformForImage(ArrayList<PanelImport> panelImports, int layoutType) {
@@ -200,6 +201,7 @@ public class PanelTransformForImage extends PanelTransform {
         } else if (layoutType == GRID_TYPE) {
             initGridLayout();
         }
+
         registEvents();
     }
 
@@ -316,14 +318,69 @@ public class PanelTransformForImage extends PanelTransform {
         if (isComboBoxBandImportModelEnabled()) {
             initComboBoxBandImportModel();
             this.comboBoxBandImportModel.setEnabled(true);
+            setBandImportModel();
         } else {
             this.comboBoxBandImportModel.setEnabled(false);
         }
         if (isChooserControlPrjFileEnabled()) {
             this.chooserControlPrjFile.setEnabled(true);
+            setPrjText();
         } else {
             this.chooserControlPrjFile.setEnabled(false);
         }
+    }
+
+    private void setPrjText() {
+        if (null != panelImports) {
+            this.chooserControlPrjFile.getEditor().setText(getPrjFilePath());
+        }
+    }
+
+    private void setBandImportModel() {
+        if (null != panelImports) {
+            this.comboBoxBandImportModel.setSelectedItem(selectedItem());
+        }
+    }
+
+    private String getPrjFilePath() {
+        String result = "";
+        String temp = ((PanelTransformForImage) panelImports.get(0).getTransform()).getChooserControlPrjFile().getEditor().getText();
+        boolean isSame = true;
+        for (PanelImport tempPanel : panelImports) {
+            String tempObject = ((PanelTransformForImage) tempPanel.getTransform()).getChooserControlPrjFile().getEditor().getText();
+            if (!temp.equals(tempObject)) {
+                isSame = false;
+                break;
+            }
+        }
+        if (isSame) {
+            result = temp;
+        }
+        return result;
+    }
+
+    private Object selectedItem() {
+        Object result = null;
+        String temp = "";
+        Object info = ((PanelTransformForImage) panelImports.get(0).getTransform()).getComboBoxBandImportModel().getSelectedItem();
+        if (null != info) {
+            temp = info.toString();
+        } else {
+            result = temp;
+            return result;
+        }
+        boolean isSame = true;
+        for (PanelImport tempPanel : panelImports) {
+            String tempObject = ((PanelTransformForImage) tempPanel.getTransform()).getComboBoxBandImportModel().getSelectedItem().toString();
+            if (!temp.equals(tempObject)) {
+                isSame = false;
+                break;
+            }
+        }
+        if (isSame) {
+            result = temp;
+        }
+        return result;
     }
 
     private boolean isChooserControlPrjFileEnabled() {
@@ -359,6 +416,7 @@ public class PanelTransformForImage extends PanelTransform {
             this.add(this.passwordField, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 120).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             this.add(new JPanel(), new GridBagConstraintsHelper(4, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             this.passwordField.setPreferredSize(defaultSize);
+            setPasswordField();
         } else if (importSetting instanceof ImportSettingTIF) {
             JPanel panelBandModel = new JPanel();
             panelBandModel.setLayout(new GridBagLayout());
@@ -374,14 +432,41 @@ public class PanelTransformForImage extends PanelTransform {
 
             this.add(panelBandModel, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             this.add(panelPrjFile, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            setBandImportModel();
+            setPrjText();
         } else if (importSetting instanceof ImportSettingIMG || importSetting instanceof ImportSettingMrSID || importSetting instanceof ImportSettingECW) {
             this.add(this.labelBandImportModel, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
             this.add(this.comboBoxBandImportModel, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 176).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             this.add(new JPanel(), new GridBagConstraintsHelper(4, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            setBandImportModel();
         } else {
             this.add(this.labelPrjFile, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
             this.add(this.chooserControlPrjFile, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            setPrjText();
         }
+    }
+
+    private void setPasswordField() {
+        if (null != panelImports) {
+            this.passwordField.setText(getSamePassword());
+        }
+    }
+
+    private String getSamePassword() {
+        String result = "";
+        String temp = ((PanelTransformForImage) panelImports.get(0).getTransform()).getPasswordField().getText();
+        boolean isSame = true;
+        for (PanelImport tempPanel : panelImports) {
+            String tempObject = ((PanelTransformForImage) tempPanel.getTransform()).getPasswordField().getText();
+            if (!temp.equals(tempObject)) {
+                isSame = false;
+                break;
+            }
+        }
+        if (isSame) {
+            result = temp;
+        }
+        return result;
     }
 
     @Override

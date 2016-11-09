@@ -5,6 +5,7 @@ import com.supermap.data.conversion.ImportSettingKML;
 import com.supermap.data.conversion.ImportSettingKMZ;
 import com.supermap.desktop.baseUI.PanelTransform;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -20,7 +21,7 @@ import java.util.ArrayList;
  */
 public class PanelTransformForKML extends PanelTransform {
     private ArrayList<PanelImport> panelImports;
-    private JCheckBox checkBoxImportInvisible;
+    private TristateCheckBox checkBoxImportInvisible;
     private ItemListener importInvisibleListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
@@ -52,18 +53,43 @@ public class PanelTransformForKML extends PanelTransform {
 
     @Override
     public void initComponents() {
-        this.checkBoxImportInvisible = new JCheckBox();
-        if (importSetting instanceof ImportSettingKML) {
-            this.checkBoxImportInvisible.setSelected(!((ImportSettingKML) importSetting).isUnvisibleObjectIgnored());
-        } else if (importSetting instanceof ImportSettingKMZ) {
-            this.checkBoxImportInvisible.setSelected(!((ImportSettingKMZ) importSetting).isUnvisibleObjectIgnored());
+        this.checkBoxImportInvisible = new TristateCheckBox();
+        if (null == panelImports) {
+            if (importSetting instanceof ImportSettingKML) {
+                this.checkBoxImportInvisible.setSelected(!((ImportSettingKML) importSetting).isUnvisibleObjectIgnored());
+            } else if (importSetting instanceof ImportSettingKMZ) {
+                this.checkBoxImportInvisible.setSelected(!((ImportSettingKMZ) importSetting).isUnvisibleObjectIgnored());
+            }
         }
+    }
+
+    private Boolean externalDataSelectAll() {
+        Boolean result = null;
+        int selectCount = 0;
+        int unSelectCount = 0;
+        for (PanelImport tempPanel : panelImports) {
+            boolean select = ((PanelTransformForKML) tempPanel.getTransform()).getCheckBoxImportInvisible().isSelected();
+            if (select) {
+                selectCount++;
+            } else if (!select) {
+                unSelectCount++;
+            }
+        }
+        if (selectCount == panelImports.size()) {
+            result = true;
+        } else if (unSelectCount == panelImports.size()) {
+            result = false;
+        }
+        return result;
     }
 
     @Override
     public void initLayerout() {
         this.setLayout(new GridBagLayout());
         this.add(this.checkBoxImportInvisible, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(1, 0));
+        if (null != panelImports) {
+            this.checkBoxImportInvisible.setSelectedEx(externalDataSelectAll());
+        }
     }
 
     @Override

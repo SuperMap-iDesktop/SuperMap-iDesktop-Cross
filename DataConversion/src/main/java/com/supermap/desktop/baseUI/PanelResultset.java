@@ -1,6 +1,5 @@
 package com.supermap.desktop.baseUI;
 
-import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.EncodeType;
 import com.supermap.data.conversion.*;
@@ -12,6 +11,9 @@ import com.supermap.desktop.importUI.PanelImport;
 import com.supermap.desktop.importUI.PanelTransformForImage;
 import com.supermap.desktop.localUtilities.FileUtilities;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.StateChangeEvent;
+import com.supermap.desktop.ui.StateChangeListener;
+import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -45,12 +47,18 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
     private JComboBox comboBoxImportMode;
     private JLabel labelDatasetType;
     private DatasetComboBox comboBoxDatasetType;
-    private JCheckBox checkBoxFieldIndex;
-    private JCheckBox checkBoxSpatialIndex;
+    private TristateCheckBox checkBoxFieldIndex;
+    private TristateCheckBox checkBoxSpatialIndex;
     private ImportInfo importInfo;
     private ImportSetting importSetting;
     private ArrayList<PanelImport> panelImports;
     private int layeroutType;
+    private final static int DATASOURCE_TYPE = 0;
+    private final static int DATASET_TYPE = 1;
+    private final static int IMPORTMODE_TYPE = 2;
+    private final static int ENCODE_TYPE = 3;
+    private final static int SPATIALINDEX_TYPE = 4;
+    private final static int FIELDINDEX_TYPE = 5;
 
     private ItemListener datasourceListener = new ItemListener() {
         @Override
@@ -228,31 +236,29 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             }
         }
     };
-    private ItemListener fieldIndexListener = new ItemListener() {
+    private StateChangeListener fieldIndexListener = new StateChangeListener() {
+
         @Override
-        public void itemStateChanged(ItemEvent e) {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                if (null != panelImports) {
-                    for (PanelImport tempPanelImport : panelImports) {
-                        tempPanelImport.getResultset().getCheckBoxFieldIndex().setSelected(checkBoxFieldIndex.isSelected());
-                    }
-                } else {
-                    importInfo.setFieldIndex(checkBoxFieldIndex.isSelected());
+        public void stateChange(StateChangeEvent e) {
+            if (null != panelImports) {
+                for (PanelImport tempPanelImport : panelImports) {
+                    tempPanelImport.getResultset().getCheckBoxFieldIndex().setSelected(checkBoxFieldIndex.isSelected());
                 }
+            } else {
+                importInfo.setFieldIndex(checkBoxFieldIndex.isSelected());
             }
         }
     };
-    private ItemListener spatialIndexListener = new ItemListener() {
+    private StateChangeListener spatialIndexListener = new StateChangeListener() {
+
         @Override
-        public void itemStateChanged(ItemEvent e) {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                if (null != panelImports) {
-                    for (PanelImport tempPanelImport : panelImports) {
-                        tempPanelImport.getResultset().getCheckBoxSpatialIndex().setSelected(checkBoxSpatialIndex.isSelected());
-                    }
-                } else {
-                    importInfo.setSpatialIndex(checkBoxSpatialIndex.isSelected());
+        public void stateChange(StateChangeEvent e) {
+            if (null != panelImports) {
+                for (PanelImport tempPanelImport : panelImports) {
+                    tempPanelImport.getResultset().getCheckBoxSpatialIndex().setSelected(checkBoxSpatialIndex.isSelected());
                 }
+            } else {
+                importInfo.setSpatialIndex(checkBoxSpatialIndex.isSelected());
             }
         }
     };
@@ -286,6 +292,7 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             }
         }
     };
+    private JPanel panelCheckBox;
 
     public PanelResultset(PanelImport owner, ImportInfo importInfo) {
         this.owner = owner;
@@ -327,8 +334,7 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             initDefaultLayout();
             this.remove(labelDatasetName);
             this.remove(textFieldDatasetName);
-            this.comboBoxDatasetType = new DatasetComboBox(new Dataset[]{});
-            this.comboBoxDatasetType.setEnabled(false);
+            this.comboBoxDatasetType = new DatasetComboBox(new String[]{DataConversionProperties.getString("string_comboboxitem_image"), DataConversionProperties.getString("string_comboboxitem_grid")});
             this.add(this.labelDatasetType, new GridBagConstraintsHelper(4, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
             this.add(this.comboBoxDatasetType, new GridBagConstraintsHelper(6, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             this.comboBoxDatasource.setPreferredSize(PackageInfo.defaultSize);
@@ -343,6 +349,9 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             this.add(this.comboBoxImportMode, new GridBagConstraintsHelper(6, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
         }
         setDefaultSize();
+        initDatasetType();
+        initEncodeType();
+        initCheckboxState();
     }
 
     @Override
@@ -360,12 +369,20 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
         this.comboBoxImportMode = new JComboBox();
         initImportMode();
         this.labelDatasetType = new JLabel();
-        this.checkBoxFieldIndex = new JCheckBox();
-        this.checkBoxSpatialIndex = new JCheckBox();
+        this.checkBoxFieldIndex = new TristateCheckBox();
+        this.checkBoxSpatialIndex = new TristateCheckBox();
+        this.checkBoxSpatialIndex.setSelected(false);
+        this.checkBoxFieldIndex.setSelected(false);
         this.comboBoxEncodeType.setEditable(true);
         ((JTextField) this.comboBoxEncodeType.getEditor().getEditorComponent()).setEditable(false);
         this.comboBoxImportMode.setEditable(true);
         ((JTextField) this.comboBoxImportMode.getEditor().getEditorComponent()).setEditable(false);
+    }
+
+    private void initEncodeType() {
+        if (null != panelImports) {
+            this.comboBoxEncodeType.setSelectedItem(selectedItem(ENCODE_TYPE));
+        }
     }
 
     private void initImportMode() {
@@ -374,7 +391,10 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
                 DataConversionProperties.getString("String_FormImport_Append"),
                 DataConversionProperties.getString("String_FormImport_OverWrite")
         }));
-        if (null != importSetting.getImportMode()) {
+        if (null != panelImports) {
+            this.comboBoxImportMode.setSelectedItem(selectedItem(IMPORTMODE_TYPE));
+            return;
+        } else if (null != importSetting.getImportMode()) {
             ImportMode mode = importSetting.getImportMode();
             if (mode.equals(ImportMode.NONE)) {
                 this.comboBoxImportMode.setSelectedIndex(0);
@@ -383,36 +403,115 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             } else {
                 this.comboBoxImportMode.setSelectedIndex(2);
             }
+            return;
         } else {
             this.importSetting.setImportMode(ImportMode.NONE);
+            return;
         }
     }
 
     private void initDatasetName() {
-        if (!StringUtilities.isNullOrEmpty(importSetting.getTargetDatasetName())) {
+        if (layeroutType == 4 && hasSameName()) {
             this.textFieldDatasetName.setText(importSetting.getTargetDatasetName());
-        } else {
+        } else if (!StringUtilities.isNullOrEmpty(importSetting.getTargetDatasetName()) && panelImports == null) {
+            this.textFieldDatasetName.setText(importSetting.getTargetDatasetName());
+        } else if (StringUtilities.isNullOrEmpty(importSetting.getTargetDatasetName()) && panelImports == null) {
             String textInfo = FileUtilities.getFileAlias(this.importSetting.getSourceFilePath());
             String availableName = this.comboBoxDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(textInfo);
             this.textFieldDatasetName.setText(availableName);
-            this.textFieldDatasetName.setToolTipText(availableName);
             this.importSetting.setTargetDatasetName(availableName);
         }
     }
 
-    private void initDatasource() {
-        if (null != this.importSetting.getTargetDatasource()) {
-            this.comboBoxDatasource.setSelectedDatasource(this.importSetting.getTargetDatasource());
-        } else {
-            Datasource targetDatasource = null;
-            if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length >= 0) {
-                targetDatasource = Application.getActiveApplication().getActiveDatasources()[0];
-                this.comboBoxDatasource.setSelectedDatasource(targetDatasource);
-            }
-            if (null != targetDatasource) {
-                this.importSetting.setTargetDatasource(targetDatasource);
+    private boolean hasSameName() {
+        String temp = panelImports.get(0).getImportInfo().getImportSetting().getTargetDatasetName();
+        boolean isSame = true;
+        for (PanelImport tempPanel : panelImports) {
+            String tempObject = tempPanel.getImportInfo().getImportSetting().getTargetDatasetName();
+            if (!temp.equals(tempObject)) {
+                isSame = false;
+                break;
             }
         }
+        return isSame;
+    }
+
+    private void initDatasource() {
+        if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length >= 0 && null == panelImports) {
+            Datasource targetDatasource = Application.getActiveApplication().getActiveDatasources()[0];
+            this.importSetting.setTargetDatasource(targetDatasource);
+            this.comboBoxDatasource.setSelectedDatasource(targetDatasource);
+        } else {
+            this.comboBoxDatasource.setSelectedItem(selectedItem(DATASOURCE_TYPE));
+        }
+    }
+
+    private Boolean externalDataSelectAll(int type) {
+        Boolean result = null;
+        int selectCount = 0;
+        int unSelectCount = 0;
+        for (PanelImport tempPanel : panelImports) {
+            boolean select = getCheckbox(tempPanel, type).isSelected();
+            if (select) {
+                selectCount++;
+            } else if (!select) {
+                unSelectCount++;
+            }
+        }
+        if (selectCount == panelImports.size()) {
+            result = true;
+        } else if (unSelectCount == panelImports.size()) {
+            result = false;
+        }
+        return result;
+    }
+
+    private JCheckBox getCheckbox(PanelImport panelImport, int type) {
+        JCheckBox result = null;
+        if (type == SPATIALINDEX_TYPE) {
+            result = panelImport.getResultset().getCheckBoxSpatialIndex();
+        } else if (type == FIELDINDEX_TYPE) {
+            result = panelImport.getResultset().getCheckBoxFieldIndex();
+        }
+        return result;
+    }
+
+    private Object selectedItem(int type) {
+        Object result = null;
+        String temp = "";
+        Object info = getCombobox(panelImports.get(0).getResultset(), type).getSelectedItem();
+        if (null != info) {
+            temp = info.toString();
+        } else {
+            result = temp;
+            return result;
+        }
+        boolean isSame = true;
+        for (PanelImport tempPanel : panelImports) {
+            String tempObject = getCombobox(tempPanel.getResultset(), type).getSelectedItem().toString();
+            if (!temp.equals(tempObject)) {
+                isSame = false;
+                break;
+            }
+        }
+        if (isSame) {
+            result = temp;
+        }
+        return result;
+    }
+
+    private JComboBox getCombobox(IImportSettingResultset tempPanel, int type) {
+        JComboBox result = null;
+        if (type == DATASOURCE_TYPE) {
+            result = tempPanel.getComboBoxDatasource();
+        } else if (type == DATASET_TYPE) {
+            result = tempPanel.getComboBoxDatasetType();
+        } else if (type == ENCODE_TYPE) {
+            result = tempPanel.getComboBoxEncodeType();
+        } else if (type == IMPORTMODE_TYPE) {
+            result = tempPanel.getComboBoxImportMode();
+        }
+        return result;
     }
 
     @Override
@@ -451,7 +550,6 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             this.add(this.comboBoxDatasetType, new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             this.add(this.labelImportMode, new GridBagConstraintsHelper(4, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
             this.add(this.comboBoxImportMode, new GridBagConstraintsHelper(6, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
-            this.comboBoxDatasetType.setEnabled(false);
             setDefaultSize();
         } else if (importSetting instanceof ImportSettingTAB || importSetting instanceof ImportSettingMIF
                 || importSetting instanceof ImportSettingDWG || importSetting instanceof ImportSettingDXF
@@ -460,8 +558,10 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             initComboboxEncodeType(false);
             setDefaultImportSettingEncode();
             this.comboBoxDatasetType = new DatasetComboBox(new String[]{CommonProperties.getString("String_DatasetType_CAD"), DataConversionProperties.getString("string_comboboxitem_sample")});
+            this.comboBoxDatasetType.setEditable(false);
             setDefaultLayout();
             initTargetDatasetTypeForVector();
+            setFullsize();
         } else if (importSetting instanceof ImportSettingJPG || importSetting instanceof ImportSettingJP2 ||
                 importSetting instanceof ImportSettingPNG || importSetting instanceof ImportSettingBMP ||
                 importSetting instanceof ImportSettingIMG || importSetting instanceof ImportSettingTIF ||
@@ -478,8 +578,8 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             setDefaultImportSettingEncode();
             this.comboBoxDatasetType = new DatasetComboBox(new String[]{DataConversionProperties.getString("string_comboboxitem_image"), DataConversionProperties.getString("string_comboboxitem_grid")});
             setDefaultLayout();
-            this.remove(this.checkBoxFieldIndex);
-            this.remove(this.checkBoxSpatialIndex);
+            panelCheckBox.remove(this.checkBoxFieldIndex);
+            panelCheckBox.remove(this.checkBoxSpatialIndex);
             initTargetDatasetTypeForImage();
             setDefaultSize();
         } else if (importSetting instanceof ImportSettingSIT || importSetting instanceof ImportSettingGRD ||
@@ -524,6 +624,28 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             this.add(this.comboBoxDatasetType, new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             this.add(this.checkBoxSpatialIndex, new GridBagConstraintsHelper(4, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
             setDefaultSize();
+        }
+        initDatasetType();
+        initEncodeType();
+        initCheckboxState();
+    }
+
+    private void setFullsize() {
+        setDefaultSize();
+        this.checkBoxSpatialIndex.setPreferredSize(PackageInfo.defaultSize);
+        this.checkBoxFieldIndex.setPreferredSize(PackageInfo.defaultSize);
+    }
+
+    private void initCheckboxState() {
+        if (null != panelImports) {
+            this.checkBoxSpatialIndex.setSelectedEx(externalDataSelectAll(SPATIALINDEX_TYPE));
+            this.checkBoxFieldIndex.setSelectedEx(externalDataSelectAll(FIELDINDEX_TYPE));
+        }
+    }
+
+    private void initDatasetType() {
+        if (null != panelImports && null != this.comboBoxDatasetType) {
+            this.comboBoxDatasetType.setSelectedItem(selectedItem(DATASET_TYPE));
         }
     }
 
@@ -583,10 +705,14 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
 
     private void setDefaultLayout() {
         initDefaultLayout();
+        this.panelCheckBox = new JPanel();
+        this.panelCheckBox.setLayout(new GridBagLayout());
+        this.panelCheckBox.add(this.checkBoxFieldIndex, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.panelCheckBox.add(this.checkBoxSpatialIndex, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+
         this.add(this.labelDatasetType, new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 20).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(this.comboBoxDatasetType, new GridBagConstraintsHelper(2, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
-        this.add(this.checkBoxFieldIndex, new GridBagConstraintsHelper(4, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(this.checkBoxSpatialIndex, new GridBagConstraintsHelper(6, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(this.panelCheckBox, new GridBagConstraintsHelper(4, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
     }
 
     private void initDefaultLayout() {
@@ -623,8 +749,8 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
         if (null != this.comboBoxDatasetType) {
             this.comboBoxDatasetType.addItemListener(this.datasetTypeListener);
         }
-        this.checkBoxFieldIndex.addItemListener(this.fieldIndexListener);
-        this.checkBoxSpatialIndex.addItemListener(this.spatialIndexListener);
+        this.checkBoxFieldIndex.addStateChangeListener(this.fieldIndexListener);
+        this.checkBoxSpatialIndex.addStateChangeListener(this.spatialIndexListener);
     }
 
     @Override
@@ -636,8 +762,8 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
         if (null != this.comboBoxDatasetType) {
             this.comboBoxDatasetType.removeItemListener(this.datasetTypeListener);
         }
-        this.checkBoxFieldIndex.removeItemListener(this.fieldIndexListener);
-        this.checkBoxSpatialIndex.removeItemListener(this.spatialIndexListener);
+        this.checkBoxFieldIndex.removeStateChangeListener(this.fieldIndexListener);
+        this.checkBoxSpatialIndex.removeStateChangeListener(this.spatialIndexListener);
     }
 
     private void initResources() {

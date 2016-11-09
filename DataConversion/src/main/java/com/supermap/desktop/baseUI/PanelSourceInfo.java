@@ -108,15 +108,35 @@ public class PanelSourceInfo extends JPanel implements IImportSettingSourceInfo 
         this.labelCharset = new JLabel();
         this.comboBoxCharset = new CharsetComboBox();
         // 设置字符集默认选中项
-        if (importSetting != null && (importSetting instanceof ImportSettingTAB || importSetting instanceof ImportSettingMIF)
+        if (null == panelImports && (importSetting instanceof ImportSettingTAB || importSetting instanceof ImportSettingMIF)
                 && importSetting.getTargetDataInfos("").getCount() > 0) {
             ImportDataInfos dataInfos = importSetting.getTargetDataInfos("");
             Charset chartset = dataInfos.get(0).getSourceCharset();
             comboBoxCharset.setSelectCharset(chartset.name());
             importSetting.setSourceFileCharset(chartset);
-        } else if (importSetting != null && null != importSetting.getSourceFileCharset()) {
+        } else if (null == panelImports && null != importSetting.getSourceFileCharset()) {
             comboBoxCharset.setSelectCharset(importSetting.getSourceFileCharset().name());
+        } else if (null != panelImports) {
+            comboBoxCharset.setSelectedItem(selectedItem());
         }
+    }
+
+    private Object selectedItem() {
+        Object result = null;
+        String temp = panelImports.get(0).getSourceInfo().getComboBoxCharset().getSelectedItem().toString();
+
+        boolean isSame = true;
+        for (PanelImport tempPanel : panelImports) {
+            String tempObject = tempPanel.getSourceInfo().getComboBoxCharset().getSelectedItem().toString();
+            if (!temp.equals(tempObject)) {
+                isSame = false;
+                break;
+            }
+        }
+        if (isSame) {
+            result = temp;
+        }
+        return result;
     }
 
     @Override

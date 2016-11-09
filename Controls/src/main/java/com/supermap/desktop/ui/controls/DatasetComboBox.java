@@ -186,7 +186,12 @@ public class DatasetComboBox extends JComboBox<Object> {
     private static JPanel[] initDatasetComboBoxItem(String[] datasetTypes) {
         DataCell[] result = new DataCell[datasetTypes.length];
         for (int i = 0; i < datasetTypes.length; i++) {
-            String filePath = CommonToolkit.DatasetImageWrap.getImageIconPath(datasetTypes[i]);
+            String filePath = "";
+            if (datasetTypes[i].equals(CommonProperties.getString("String_DatasetType_Simple"))) {
+                filePath = "/controlsresources/WorkspaceManager/Dataset/Image_SimpleDataset_Normal.png";
+            } else {
+                filePath = CommonToolkit.DatasetImageWrap.getImageIconPath(datasetTypes[i]);
+            }
             result[i] = new DataCell();
             result[i].initDataType(filePath, datasetTypes[i]);
         }
