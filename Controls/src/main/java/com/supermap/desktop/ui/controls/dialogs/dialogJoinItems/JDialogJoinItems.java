@@ -13,7 +13,7 @@ import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasetCellRender;
+import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -261,7 +261,7 @@ public class JDialogJoinItems extends SmDialog {
 		joinItemsTable.getColumnModel().getColumn(COLUMN_EXPRESSION).setPreferredWidth(tableWeight[5]);
 
 		// 外接表
-		joinItemsTable.getColumnModel().getColumn(COLUMN_TABLE).setCellRenderer(new TableDatasetCellRender());
+		joinItemsTable.getColumnModel().getColumn(COLUMN_TABLE).setCellRenderer(new TableDataCellRender());
 		this.columnTableCellEditor.setClickCountToStart(2);
 		joinItemsTable.getColumnModel().getColumn(COLUMN_TABLE).setCellEditor(this.columnTableCellEditor);
 		this.columnFieldCelleEditor.setClickCountToStart(2);

@@ -35,7 +35,7 @@ public class JDialogGeometryToSymbol extends SmDialog {
 		super();
 		init();
 		this.setTitle(MapEditorProperties.getString("String_GeometryToSymbol"));
-		this.setSize(300, 200);
+		this.setSize(300, 150);
 		this.setLocationRelativeTo(null);
 	}
 

@@ -9,9 +9,12 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasetTypeCellRender;
-import com.supermap.desktop.ui.controls.CellRenders.TableDatasourceCellRender;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
+import com.supermap.desktop.ui.controls.DatasetComboBox;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.component.ComboBoxCellEditor;
 import com.supermap.desktop.utilities.CharsetUtilities;
@@ -83,8 +86,8 @@ public class JDialogDatasetNew extends SmDialog {
 		this.table.setModel(newDatasetTableModel);
 
 
-		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_TARGET_DATASOURCE).setCellRenderer(new TableDatasourceCellRender());
-		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DatasetType).setCellRenderer(new TableDatasetTypeCellRender());
+		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_TARGET_DATASOURCE).setCellRenderer(new TableDataCellRender());
+		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DatasetType).setCellRenderer(new TableDataCellRender());
 
 
 		this.table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_EncodeType).setCellEditor(new EncodingTypeCellEditor());

@@ -304,6 +304,12 @@ public class DataCell extends JPanel {
 		}
 	}
 
-
-	// endregion
+	@Override
+	public void setForeground(Color fg) {
+		super.setForeground(fg);
+		if (imageLabel != null) {
+			imageLabel.setForeground(fg);
+		}
+	}
+// endregion
 }

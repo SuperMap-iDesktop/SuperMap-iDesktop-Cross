@@ -26,6 +26,7 @@ public class TableDataCellRender extends DefaultTableCellRenderer {
 		}
 		if (isSelected) {
 			result.setBackground(table.getSelectionBackground());
+			result.setForeground(table.getSelectionForeground());
 		} else {
 			result.setBackground(table.getBackground());
 		}
