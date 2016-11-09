@@ -62,7 +62,26 @@ public class CompTitledPane extends JPanel {
         rect.height -= insets.top + insets.bottom;
         panel.setBounds(rect);
     }
+
+	@Override
+	public Dimension getMinimumSize() {
+		Dimension minimumSize = super.getMinimumSize();
+		return new Dimension((int) minimumSize.getWidth(), (int) (minimumSize.getHeight() - component.getPreferredSize().getHeight()));
+	}
+
+	@Override
+	public Dimension getMaximumSize() {
+		Dimension minimumSize = super.getMaximumSize();
+		return new Dimension((int) minimumSize.getWidth(), (int) (minimumSize.getHeight() - component.getPreferredSize().getHeight()));
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		Dimension minimumSize = super.getPreferredSize();
+		return new Dimension((int) minimumSize.getWidth(), (int) (minimumSize.getHeight() - component.getPreferredSize().getHeight()));
+	}
 }
+
 
 /**
  * 自定义的TitledBorder，可以在将标题栏存放控件
@@ -230,5 +249,6 @@ class CompTitledBorder extends TitledBorder {
         }
         return compR;
     }
+
 
 }

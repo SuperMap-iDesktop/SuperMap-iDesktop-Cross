@@ -12,6 +12,7 @@ import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.ScaleEditor;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.mapping.Map;
 import com.supermap.mapping.MapDrawnEvent;
 import com.supermap.mapping.MapDrawnListener;
@@ -102,6 +103,8 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	private JPopupMenuBounds popupMenuCustomBounds = new JPopupMenuBounds(JPopupMenuBounds.CUSTOM_BOUNDS, Rectangle2D.getEMPTY());
 
 	public static ScaleEnabledContainer container = new ScaleEnabledContainer();
+
+	public Component currentListenerComponent = null;
 
 	private transient PropertyChangeListener boundsPropertyChangeListener = new PropertyChangeListener() {
 
@@ -495,7 +498,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	@Override
 	protected void registerEvents() {
 		super.registerEvents();
-		this.scaleEditor.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.scaleEditorValueChangeListener);
+		this.scaleEditor.addPropertyChangeListener(ControlDefaultValues.SCALE_PROPERTY_VALUE, this.scaleEditorValueChangeListener);
 		this.checkBoxIsVisibleScalesEnabled.addItemListener(this.checkBoxItemListener);
 		this.checkBoxIsClipRegionEnabled.addItemListener(this.checkBoxItemListener);
 		this.checkBoxIsViewBoundsLocked.addItemListener(this.checkBoxItemListener);
@@ -720,9 +723,11 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 	private void scaleEditorValueChange() {
 		try {
+			currentListenerComponent = scaleEditor;
 			this.operationType = OperationType.SCALE;
 			this.scale = scaleEditor.getScale();
 			verify();
+			currentListenerComponent = null;
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
 		}
@@ -772,7 +777,9 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 			this.currentViewR = getMap().getViewBounds().getRight();
 			this.currentViewB = getMap().getViewBounds().getBottom();
 
-			this.scaleEditor.setScale(this.scale);
+			if (!DoubleUtilities.equals(scaleEditor.getScale(), scale, 6)) {
+				this.scaleEditor.setScale(this.scale);
+			}
 			this.textFieldCenterX.setValue(this.centerX);
 			this.textFieldCenterY.setValue(this.centerY);
 			this.textFieldCurrentViewLeft.setValue(this.currentViewL);
