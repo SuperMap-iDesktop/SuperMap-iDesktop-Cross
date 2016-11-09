@@ -30,9 +30,9 @@ public class PanelTransformForKML extends PanelTransform {
                 }
             } else {
                 if (importSetting instanceof ImportSettingKML) {
-                    ((ImportSettingKML) importSetting).setUnvisibleObjectIgnored(checkBoxImportInvisible.isSelected());
+                    ((ImportSettingKML) importSetting).setUnvisibleObjectIgnored(!checkBoxImportInvisible.isSelected());
                 } else if (importSetting instanceof ImportSettingKMZ) {
-                    ((ImportSettingKMZ) importSetting).setUnvisibleObjectIgnored(checkBoxImportInvisible.isSelected());
+                    ((ImportSettingKMZ) importSetting).setUnvisibleObjectIgnored(!checkBoxImportInvisible.isSelected());
                 }
             }
         }
@@ -54,9 +54,9 @@ public class PanelTransformForKML extends PanelTransform {
     public void initComponents() {
         this.checkBoxImportInvisible = new JCheckBox();
         if (importSetting instanceof ImportSettingKML) {
-            this.checkBoxImportInvisible.setSelected(((ImportSettingKML) importSetting).isUnvisibleObjectIgnored());
+            this.checkBoxImportInvisible.setSelected(!((ImportSettingKML) importSetting).isUnvisibleObjectIgnored());
         } else if (importSetting instanceof ImportSettingKMZ) {
-            this.checkBoxImportInvisible.setSelected(((ImportSettingKMZ) importSetting).isUnvisibleObjectIgnored());
+            this.checkBoxImportInvisible.setSelected(!((ImportSettingKMZ) importSetting).isUnvisibleObjectIgnored());
         }
     }
 

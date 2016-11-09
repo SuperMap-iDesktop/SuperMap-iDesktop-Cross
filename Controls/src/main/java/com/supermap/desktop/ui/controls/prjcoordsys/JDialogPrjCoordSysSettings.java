@@ -773,7 +773,7 @@ public class JDialogPrjCoordSysSettings extends SmDialog {
 	/**
 	 * 确认并选择指定的投影。只有当前投影是叶子节点也就是具体的投影时，才提示是否应用。
 	 *
-	 * @param selectedDefine
+	 * @param
 	 */
 	private void confirmSelected() {
 		if (this.currentPrjDefine != null && this.currentPrjDefine.size() == 0) {

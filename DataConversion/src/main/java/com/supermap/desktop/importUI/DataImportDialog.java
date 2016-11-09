@@ -264,6 +264,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                         }
                         model.removeRows(tempRow);
                         panelImports.removeAll(panelImports);
+                        table.clearSelection();
                     }
                 }
                 // 如果表中没有数据，右边部分显示为默认界面。
@@ -365,7 +366,9 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         this.setFocusTraversalPolicy(this.policy);
         this.getRootPane().setDefaultButton(this.buttonImport);
         this.setLocationRelativeTo(null);
-        this.setBounds(600, 260, 864, 486);
+        this.setSize(new Dimension(864, 486));
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        this.setLocation(Math.abs(screenSize.width - 864) / 2, Math.abs(screenSize.height - 486) / 2);
     }
 
     private void initDrag() {
@@ -381,6 +384,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         this.contentPane = new JPanel();
         this.table = new JTable();
         this.model = new ImportTableModel();
+        this.table.getTableHeader().setReorderingAllowed(false);
         this.table.setModel(this.model);
         this.table.setRowHeight(23);
         this.buttonAddFile = new JButton();
@@ -423,7 +427,9 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         this.toolBar.add(this.buttonAddFile);
         this.toolBar.add(this.buttonAddDir);
         this.buttonDelete.setEnabled(false);
+        this.toolBar.addSeparator();
         this.toolBar.add(this.buttonDelete);
+        this.toolBar.addSeparator();
         this.buttonSelectAll.setEnabled(false);
         this.toolBar.add(this.buttonSelectAll);
         this.toolBar.add(this.buttonInvertSelect);
@@ -479,6 +485,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
             @Override
             public void windowOpened(WindowEvent e) {
                 splitPane.setDividerLocation(0.35);
+                splitPane.setResizeWeight(0.35);
             }
 
             @Override

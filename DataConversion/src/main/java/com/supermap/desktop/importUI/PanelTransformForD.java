@@ -185,10 +185,10 @@ public class PanelTransformForD extends PanelTransform {
                 }
             } else {
                 if (importSetting instanceof ImportSettingDXF) {
-                    ((ImportSettingDXF) importSetting).setImportingByLayer(checkBoxMergeLayer.isSelected());
+                    ((ImportSettingDXF) importSetting).setImportingByLayer(!checkBoxMergeLayer.isSelected());
                 }
                 if (importSetting instanceof ImportSettingDWG) {
-                    ((ImportSettingDWG) importSetting).setImportingByLayer(checkBoxMergeLayer.isSelected());
+                    ((ImportSettingDWG) importSetting).setImportingByLayer(!checkBoxMergeLayer.isSelected());
                 }
             }
         }
@@ -265,13 +265,13 @@ public class PanelTransformForD extends PanelTransform {
         if (importSetting instanceof ImportSettingDXF) {
             ((ImportSettingDXF) importSetting).setBlockAttributeIgnored(false);
             ((ImportSettingDXF) importSetting).setImportingBlockAsPoint(true);
-            ((ImportSettingDXF) importSetting).setImportingByLayer(true);
+            ((ImportSettingDXF) importSetting).setImportingByLayer(false);
             ((ImportSettingDXF) importSetting).setLWPLineWidthIgnored(true);
         }
         if (importSetting instanceof ImportSettingDWG) {
             ((ImportSettingDWG) importSetting).setBlockAttributeIgnored(false);
             ((ImportSettingDWG) importSetting).setImportingBlockAsPoint(true);
-            ((ImportSettingDWG) importSetting).setImportingByLayer(true);
+            ((ImportSettingDWG) importSetting).setImportingByLayer(false);
             ((ImportSettingDWG) importSetting).setLWPLineWidthIgnored(true);
         }
     }
@@ -284,7 +284,7 @@ public class PanelTransformForD extends PanelTransform {
             this.checkBoxImportProperty.setSelected(((ImportSettingDXF) importSetting).isBlockAttributeIgnored());
             this.checkBoxImportSymbol.setSelected(((ImportSettingDXF) importSetting).isImportingBlockAsPoint());
             this.checkBoxKeepingParametricPart.setSelected(((ImportSettingDXF) importSetting).isKeepingParametricPart());
-            this.checkBoxMergeLayer.setSelected(((ImportSettingDXF) importSetting).isImportingByLayer());
+            this.checkBoxMergeLayer.setSelected(!((ImportSettingDXF) importSetting).isImportingByLayer());
             this.checkBoxSaveHeight.setSelected(((ImportSettingDXF) importSetting).isImporttingAs3D());
             this.checkBoxSaveWPLineWidth.setSelected(((ImportSettingDXF) importSetting).isLWPLineWidthIgnored());
         }
@@ -295,7 +295,7 @@ public class PanelTransformForD extends PanelTransform {
             this.checkBoxImportProperty.setSelected(((ImportSettingDWG) importSetting).isBlockAttributeIgnored());
             this.checkBoxImportSymbol.setSelected(((ImportSettingDWG) importSetting).isImportingBlockAsPoint());
             this.checkBoxKeepingParametricPart.setSelected(((ImportSettingDWG) importSetting).isKeepingParametricPart());
-            this.checkBoxMergeLayer.setSelected(((ImportSettingDWG) importSetting).isImportingByLayer());
+            this.checkBoxMergeLayer.setSelected(!((ImportSettingDWG) importSetting).isImportingByLayer());
             this.checkBoxSaveHeight.setSelected(((ImportSettingDWG) importSetting).isImporttingAs3D());
             this.checkBoxSaveWPLineWidth.setSelected(((ImportSettingDWG) importSetting).isLWPLineWidthIgnored());
         }

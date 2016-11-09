@@ -1,12 +1,21 @@
 package com.supermap.desktop.importUI;
 
 import com.supermap.data.Point3D;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.PrjFileType;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.baseUI.PanelTransform;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.iml.FileTypeLocale;
+import com.supermap.desktop.localUtilities.FileUtilities;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
+import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -14,8 +23,11 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -104,14 +116,90 @@ public class PanelTransformFor3D extends PanelTransform {
 
         @Override
         public void removeUpdate(DocumentEvent e) {
-
+            updatePosition(e);
         }
 
         @Override
         public void changedUpdate(DocumentEvent e) {
-
+            updatePosition(e);
         }
     };
+    private ActionListener prjsetListener = new ActionListener() {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JDialogPrjCoordSysSettings dialogPrjCoordSysSettings = new JDialogPrjCoordSysSettings();
+            PrjCoordSys prjCoordSys = importSetting.getSourcePrjCoordSys();
+            if (prjCoordSys != null) {
+                dialogPrjCoordSysSettings.setPrjCoordSys(prjCoordSys);
+            }
+
+            if (dialogPrjCoordSysSettings.showDialog() == DialogResult.OK) {
+                // 修改
+                PrjCoordSys newPrjCoordSys = dialogPrjCoordSysSettings.getPrjCoordSys();
+                String prjCoorSysInfo = PrjCoordSysUtilities.getDescription(newPrjCoordSys);
+                if (null != panelImports) {
+                    for (PanelImport tempPanelImport : panelImports) {
+                        ((PanelTransformFor3D) tempPanelImport.getTransform()).getTextAreaPrjInfo().setText(prjCoorSysInfo);
+                    }
+                } else {
+                    importSetting.setTargetPrjCoordSys(newPrjCoordSys);
+                    textAreaPrjInfo.setText(prjCoorSysInfo);
+                }
+
+            }
+        }
+    };
+    private ActionListener importPrjFileListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (!SmFileChoose.isModuleExist("ImportPrjFile")) {
+                String fileFilters = SmFileChoose.bulidFileFilters(
+                        SmFileChoose.createFileFilter(DataConversionProperties.getString("String_ImportPrjFiles"), "prj", "xml"),
+                        SmFileChoose.createFileFilter(DataConversionProperties.getString("String_ImportPrjFileShape"), "prj"),
+                        SmFileChoose.createFileFilter(DataConversionProperties.getString("String_ImportPrjFileXml"), "xml"));
+                SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
+                        DataConversionProperties.getString("string_importPrjFile"), "ImportPrjFile", "OpenMany");
+            }
+
+            SmFileChoose fileChooser = new SmFileChoose("ImportPrjFile");
+
+            int state = fileChooser.showDefaultDialog();
+            File file = fileChooser.getSelectedFile();
+            if (state == JFileChooser.APPROVE_OPTION && null != file) {
+                String filePath = file.getAbsolutePath();
+                // 设置投影信息
+                if (!StringUtilities.isNullOrEmpty(filePath)) {
+                    setPrjCoordSys(filePath);
+                }
+            }
+        }
+    };
+
+    private void setPrjCoordSys(String filePath) {
+        PrjCoordSys newPrjCoorSys = new PrjCoordSys();
+        String fileType = FileUtilities.getFileType(filePath);
+        boolean isPrjFile = false;
+        if (fileType.equalsIgnoreCase(FileTypeLocale.PRJ_STRING)) {
+            isPrjFile = newPrjCoorSys.fromFile(filePath, PrjFileType.ESRI);
+        } else {
+            isPrjFile = newPrjCoorSys.fromFile(filePath, PrjFileType.SUPERMAP);
+        }
+        if (isPrjFile) {
+            String prjCoorSysInfo = PrjCoordSysUtilities.getDescription(newPrjCoorSys);
+            if (null != panelImports) {
+                for (PanelImport panelImport : panelImports) {
+                    ((PanelTransformFor3D) panelImport.getTransform()).getFileChooserControlImportPrjFile().getEditor().setText(filePath);
+                    ((PanelTransformFor3D) panelImport.getTransform()).getTextAreaPrjInfo().setText(prjCoorSysInfo);
+                }
+            } else {
+                importSetting.setTargetPrjCoordSys(newPrjCoorSys);
+                fileChooserControlImportPrjFile.getEditor().setText(filePath);
+                textAreaPrjInfo.setText(prjCoorSysInfo);
+            }
+        }
+    }
+
 
     public PanelTransformFor3D(ImportSetting importSetting) {
         super(importSetting);
@@ -187,6 +275,7 @@ public class PanelTransformFor3D extends PanelTransform {
 
     @Override
     public void initLayerout() {
+        JScrollPane scrollPane = new JScrollPane();
         this.setLayout(new GridBagLayout());
         this.add(this.labelRotationType, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(this.comboBoxRotationType, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 30).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
@@ -208,7 +297,8 @@ public class PanelTransformFor3D extends PanelTransform {
         panelModel.add(this.textFieldPositionZ, new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
 
         this.add(panelModel, new GridBagConstraintsHelper(0, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 0, 20).setFill(GridBagConstraints.BOTH).setWeight(0, 0));
-        this.add(this.textAreaPrjInfo, new GridBagConstraintsHelper(4, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 0, 10).setFill(GridBagConstraints.BOTH).setWeight(0, 0));
+        this.add(scrollPane, new GridBagConstraintsHelper(4, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 0, 10).setFill(GridBagConstraints.BOTH).setWeight(0, 0));
+        scrollPane.setViewportView(this.textAreaPrjInfo);
         this.comboBoxRotationType.setEnabled(false);
         this.radioButtonPrjSet.setSelected(true);
         this.fileChooserControlImportPrjFile.setEnabled(false);
@@ -222,6 +312,8 @@ public class PanelTransformFor3D extends PanelTransform {
         this.textFieldPositionX.getDocument().addDocumentListener(this.documentListener);
         this.textFieldPositionY.getDocument().addDocumentListener(this.documentListener);
         this.textFieldPositionZ.getDocument().addDocumentListener(this.documentListener);
+        this.buttonPrjSet.addActionListener(this.prjsetListener);
+        this.fileChooserControlImportPrjFile.getButton().addActionListener(this.importPrjFileListener);
     }
 
     @Override
@@ -251,5 +343,13 @@ public class PanelTransformFor3D extends PanelTransform {
 
     public JTextField getTextFieldPositionZ() {
         return textFieldPositionZ;
+    }
+
+    public JTextArea getTextAreaPrjInfo() {
+        return textAreaPrjInfo;
+    }
+
+    public FileChooserControl getFileChooserControlImportPrjFile() {
+        return fileChooserControlImportPrjFile;
     }
 }

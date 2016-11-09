@@ -45,6 +45,9 @@ public class PanelTransformForGrid extends PanelTransform {
                 if (importSetting instanceof ImportSettingUSGSDEM) {
                     ((ImportSettingUSGSDEM) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
                 }
+                if (importSetting instanceof ImportSettingBIL) {
+                    ((ImportSettingBIL) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
+                }
             }
         }
     };

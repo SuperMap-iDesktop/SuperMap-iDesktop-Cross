@@ -25,7 +25,6 @@ import java.util.ArrayList;
  */
 public class PanelSourceInfo extends JPanel implements IImportSettingSourceInfo {
 
-    private Charset charset;
     private JLabel labelSourceFilePath;
     private JTextField textFieldSourceFilePath;
     private JButton buttonProperty;

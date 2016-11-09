@@ -110,4 +110,6 @@ public class FileTypeLocale {
     public static final String VCT_STRING = ".vct";
     public static final String GJB_STRING = ".gjb";
     public static final String FBX_STRING = ".fbx";
+    public static final String PRJ_STRING = ".prj";
+    public static final String XML_STRING = ".xml";
 }

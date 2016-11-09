@@ -20,6 +20,7 @@ import com.supermap.desktop.utilities.CharsetUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -205,6 +206,9 @@ public class PanelExportTransformForVector extends PanelExportTransform {
         this.comboBoxCADVersion = new JComboBox<>();
         this.labelExpression = new JLabel();
         this.textAreaExpression = new JTextArea();
+        this.textAreaExpression.setBorder(new LineBorder(Color.gray));
+        this.textAreaExpression.setLineWrap(true);
+        this.textAreaExpression.setColumns(5);
         this.buttonExpression = new JButton();
         initComboboxCADVersion();
         setUnEnabled();
@@ -232,13 +236,18 @@ public class PanelExportTransformForVector extends PanelExportTransform {
 
     private Object selectSameCharsetItem(ArrayList<PanelExportTransform> panels) {
         Object result = "";
-        String temp = ((PanelExportTransformForVector) panels.get(0)).getCharsetComboBox().getSelectedItem().toString();
+        String temp = "";
+        if (panels.get(0) instanceof PanelExportTransformForVector) {
+            temp = ((PanelExportTransformForVector) panels.get(0)).getCharsetComboBox().getSelectedItem().toString();
+        }
         boolean isSame = true;
         for (PanelExportTransform tempPanel : panels) {
-            String tempObject = ((PanelExportTransformForVector) tempPanel).getCharsetComboBox().getSelectedItem().toString();
-            if (!temp.equals(tempObject)) {
-                isSame = false;
-                break;
+            if (tempPanel instanceof PanelExportTransformForVector) {
+                String tempObject = ((PanelExportTransformForVector) tempPanel).getCharsetComboBox().getSelectedItem().toString();
+                if (!temp.equals(tempObject)) {
+                    isSame = false;
+                    break;
+                }
             }
         }
         if (isSame) {
@@ -249,13 +258,18 @@ public class PanelExportTransformForVector extends PanelExportTransform {
 
     private Object selectSameItem(ArrayList<PanelExportTransform> panels) {
         Object result = "";
-        String temp = ((PanelExportTransformForVector) panels.get(0)).getComboBoxCADVersion().getSelectedItem().toString();
+        String temp = "";
+        if (panels.get(0) instanceof PanelExportTransformForVector) {
+            temp = ((PanelExportTransformForVector) panels.get(0)).getComboBoxCADVersion().getSelectedItem().toString();
+        }
         boolean isSame = true;
         for (PanelExportTransform tempPanel : panels) {
-            String tempObject = ((PanelExportTransformForVector) tempPanel).getComboBoxCADVersion().getSelectedItem().toString();
-            if (!temp.equals(tempObject)) {
-                isSame = false;
-                break;
+            if (tempPanel instanceof PanelExportTransformForVector) {
+                String tempObject = ((PanelExportTransformForVector) tempPanel).getComboBoxCADVersion().getSelectedItem().toString();
+                if (!temp.equals(tempObject)) {
+                    isSame = false;
+                    break;
+                }
             }
         }
         if (isSame) {
@@ -288,10 +302,12 @@ public class PanelExportTransformForVector extends PanelExportTransform {
         int selectCount = 0;
         int unSelectCount = 0;
         for (PanelExportTransform tempPanel : panels) {
-            if (((PanelExportTransformForVector) tempPanel).getCheckBoxExportExternalData().isSelected()) {
-                selectCount++;
-            } else if (!((PanelExportTransformForVector) tempPanel).getCheckBoxExportExternalData().isSelected()) {
-                unSelectCount++;
+            if (tempPanel instanceof PanelExportTransformForVector) {
+                if (((PanelExportTransformForVector) tempPanel).getCheckBoxExportExternalData().isSelected()) {
+                    selectCount++;
+                } else if (!((PanelExportTransformForVector) tempPanel).getCheckBoxExportExternalData().isSelected()) {
+                    unSelectCount++;
+                }
             }
         }
         if (selectCount == panels.size()) {
@@ -313,10 +329,6 @@ public class PanelExportTransformForVector extends PanelExportTransform {
 
 
     private void initComponentsState(ExportSetting tempExportSetting) {
-//        DatasetType datasetType = ((Dataset) tempExportSetting.getSourceData()).getType();
-//        if (datasetType.equals(DatasetType.POINT) || datasetType.equals(DatasetType.POINT3D)) {
-//            this.checkBoxExportPointAsWKT.setEnabled(true);
-//        }
         if (tempExportSetting instanceof ExportSettingDWG || tempExportSetting instanceof ExportSettingDXF) {
             this.checkBoxExportExternalData.setEnabled(true);
             this.checkBoxExportExternalRecord.setEnabled(true);
@@ -351,7 +363,7 @@ public class PanelExportTransformForVector extends PanelExportTransform {
         panelContent.add(this.labelCADVersion, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 20).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         panelContent.add(this.comboBoxCADVersion, new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
         panelContent.add(this.labelExpression, new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 0).setFill(GridBagConstraints.HORIZONTAL).setWeight(0, 0));
-        panelContent.add(this.textAreaExpression, new GridBagConstraintsHelper(0, 5, 2, 3).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setIpad(0, 120));
+        panelContent.add(this.textAreaExpression, new GridBagConstraintsHelper(0, 5, 2, 3).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setIpad(0, 80));
         panelContent.add(this.buttonExpression, new GridBagConstraintsHelper(1, 8, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.NONE).setWeight(0, 0));
     }
 

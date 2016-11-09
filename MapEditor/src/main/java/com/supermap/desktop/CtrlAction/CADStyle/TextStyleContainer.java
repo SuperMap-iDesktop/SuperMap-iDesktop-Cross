@@ -147,6 +147,9 @@ public class TextStyleContainer extends JPanel {
                 recordset.edit();
                 Geometry tempGeometry = recordset.getGeometry();
                 Object newGeoStyleProperty = textBasicPanel.getResultMap().get(newValue);
+                if ("Null".equals(newGeoStyleProperty)) {
+                    return;
+                }
                 if (tempGeometry instanceof GeoText && !newValue.equals(TextStyleType.FIXEDSIZE)) {
                     if (newValue.equals(TextStyleType.ROTATION)) {
                         for (int j = 0; j < ((GeoText) tempGeometry).getPartCount(); j++) {

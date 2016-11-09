@@ -1,6 +1,9 @@
 package com.supermap.desktop.iml;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasources;
+import com.supermap.data.SpatialIndexType;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
@@ -26,6 +29,8 @@ public class ImportCallable extends UpdateProgressCallable {
     private ArrayList<ImportInfo> fileInfos;
     private JTable table;
     private ImportSetting importSetting;
+    private SpatialIndexType[] spatialIndexTypes = {SpatialIndexType.MULTI_LEVEL_GRID, SpatialIndexType.NONE, SpatialIndexType.QTREE,
+            SpatialIndexType.RTREE, SpatialIndexType.TILE};
 
     public ImportCallable(List<ImportInfo> fileInfos, JTable table) {
         this.fileInfos = (ArrayList<ImportInfo>) fileInfos;
@@ -163,13 +168,12 @@ public class ImportCallable extends UpdateProgressCallable {
                                 ((DatasetVector) dataset).buildFieldIndex(new String[]{fieldName}, indexName);
                             }
 
-                        } else if (isBuildSpatialIndex && sucessSetting.getSourceFileType() != FileType.DBF) {
-                            SpatialIndexInfo spatialIndexInfo = new SpatialIndexInfo();
-
-                            // 设置空间索引信息对象的信息
-                            spatialIndexInfo.setGridCenter(dataset.getBounds().getCenter());
-                            spatialIndexInfo.setType(SpatialIndexType.RTREE);
-                            ((DatasetVector) dataset).buildSpatialIndex(spatialIndexInfo);
+                        }
+                        if (isBuildSpatialIndex && sucessSetting.getSourceFileType() != FileType.DBF) {
+                            SpatialIndexType spatialIndexType = getSupportSpatialIndexType((DatasetVector) dataset);
+                            if (null != spatialIndexType) {
+                                ((DatasetVector) dataset).buildSpatialIndex(spatialIndexType);
+                            }
                         }
                     }
                     Application.getActiveApplication().getOutput().output(MessageFormat.format(successImportInfo, sucessSetting.getSourceFilePath(), "->", targetDatasetName, sucessSetting
@@ -181,6 +185,17 @@ public class ImportCallable extends UpdateProgressCallable {
             fileInfos.get(i).setState(DataConversionProperties.getString("String_FormImport_NotSucceed"));
             Application.getActiveApplication().getOutput().output(MessageFormat.format(failImportInfo, failImportSettings[0].getSourceFilePath(), "->", ""));
         }
+    }
+
+    private SpatialIndexType getSupportSpatialIndexType(DatasetVector dataset) {
+        SpatialIndexType result = null;
+        for (SpatialIndexType tempType : spatialIndexTypes) {
+            if (dataset.isSpatialIndexTypeSupported(tempType)) {
+                result = tempType;
+                break;
+            }
+        }
+        return result;
     }
 
 }
