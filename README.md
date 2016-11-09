@@ -160,7 +160,7 @@ A：git上代码分为2个分支：master和develop。其中master分支为主�
 
 Q：linux系统界面中的字体显示为方块
 
-A:这是linux中文字体缺失导致的。在文件夹 /jre/jre/bin/fonts/fallback 下放置一个中文字体即可正常显示。
+A:这是linux中文字体缺失导致的。在文件夹 /jre/jre/lib/fonts/fallback 下放置一个中文字体即可正常显示。
 
 Q：地图中字体显示异常
 
