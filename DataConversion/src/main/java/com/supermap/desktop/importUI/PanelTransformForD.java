@@ -1,10 +1,12 @@
 package com.supermap.desktop.importUI;
 
+import com.supermap.data.conversion.FileType;
 import com.supermap.data.conversion.ImportSetting;
 import com.supermap.data.conversion.ImportSettingDWG;
 import com.supermap.data.conversion.ImportSettingDXF;
 import com.supermap.desktop.baseUI.PanelTransform;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.Convert;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -30,15 +32,25 @@ public class PanelTransformForD extends PanelTransform {
     private JButton buttonFontset;
     protected JPanel panelCheckBox;
 
-    protected JCheckBox checkBoxExtendsData;//导入扩展数据
-    protected JCheckBox checkBoxImportingXRecord;//导入扩展记录
-    protected JCheckBox checkBoxSaveHeight;//保留对象高度
-    protected JCheckBox checkBoxImportInvisibleLayer;//导入不可见图层
-    protected JCheckBox checkBoxSaveWPLineWidth;//保留多义线宽度
-    protected JCheckBox checkBoxMergeLayer;//合并图层
-    protected JCheckBox checkBoxImportProperty;//导入块属性
-    protected JCheckBox checkBoxKeepingParametricPart;//保留参数化对象
-    protected JCheckBox checkBoxImportSymbol;//导入符号块
+    protected TristateCheckBox checkBoxExtendsData;//导入扩展数据
+    protected TristateCheckBox checkBoxImportingXRecord;//导入扩展记录
+    protected TristateCheckBox checkBoxSaveHeight;//保留对象高度
+    protected TristateCheckBox checkBoxImportInvisibleLayer;//导入不可见图层
+    protected TristateCheckBox checkBoxSaveWPLineWidth;//保留多义线宽度
+    protected TristateCheckBox checkBoxMergeLayer;//合并图层
+    protected TristateCheckBox checkBoxImportProperty;//导入块属性
+    protected TristateCheckBox checkBoxKeepingParametricPart;//保留参数化对象
+    protected TristateCheckBox checkBoxImportSymbol;//导入符号块
+    protected final int EXTENDSDATA = 0;
+    protected final int IMPORTINGXRECORD = 1;
+    protected final int SAVEHEIGHT = 2;
+    protected final int IMPORTINVISIBLELAYER = 3;
+    protected final int SAVEWPLINEWIDTH = 4;
+    protected final int MERGELAYER = 5;
+    protected final int IMPORTPROPERTY = 6;
+    protected final int KEEPINGPARAMETRICPART = 7;
+    protected final int IMPORTSYMBOL = 8;
+
     private DocumentListener curveSegmentListener = new DocumentListener() {
         @Override
         public void insertUpdate(DocumentEvent e) {
@@ -181,7 +193,11 @@ public class PanelTransformForD extends PanelTransform {
         public void itemStateChanged(ItemEvent e) {
             if (null != panelImports) {
                 for (PanelImport tempPanelImport : panelImports) {
-                    ((PanelTransformForD) tempPanelImport.getTransform()).getCheckBoxMergeLayer().setSelected(checkBoxMergeLayer.isSelected());
+                    if (tempPanelImport.getTransform() instanceof PanelTransformForD) {
+                        ((PanelTransformForD) tempPanelImport.getTransform()).getCheckBoxMergeLayer().setSelected(checkBoxMergeLayer.isSelected());
+                    } else if (tempPanelImport.getTransform() instanceof PanelTransformForDGN) {
+                        ((PanelTransformForDGN) tempPanelImport.getTransform()).getCheckBoxImportByLayer().setSelected(checkBoxMergeLayer.isSelected());
+                    }
                 }
             } else {
                 if (importSetting instanceof ImportSettingDXF) {
@@ -245,17 +261,18 @@ public class PanelTransformForD extends PanelTransform {
         this.panelCheckBox = new JPanel();
         this.labelCurveSegment = new JLabel();
         this.textFieldCurveSegment = new JTextField();
+        this.textFieldCurveSegment.setPreferredSize(new Dimension(26, 23));
         initTextFieldCurveSegment();
         this.buttonFontset = new JButton();
-        this.checkBoxExtendsData = new JCheckBox();
-        this.checkBoxImportingXRecord = new JCheckBox();
-        this.checkBoxSaveHeight = new JCheckBox();
-        this.checkBoxImportInvisibleLayer = new JCheckBox();
-        this.checkBoxSaveWPLineWidth = new JCheckBox();
-        this.checkBoxMergeLayer = new JCheckBox();
-        this.checkBoxImportProperty = new JCheckBox();
-        this.checkBoxKeepingParametricPart = new JCheckBox();
-        this.checkBoxImportSymbol = new JCheckBox();
+        this.checkBoxExtendsData = new TristateCheckBox();
+        this.checkBoxImportingXRecord = new TristateCheckBox();
+        this.checkBoxSaveHeight = new TristateCheckBox();
+        this.checkBoxImportInvisibleLayer = new TristateCheckBox();
+        this.checkBoxSaveWPLineWidth = new TristateCheckBox();
+        this.checkBoxMergeLayer = new TristateCheckBox();
+        this.checkBoxImportProperty = new TristateCheckBox();
+        this.checkBoxKeepingParametricPart = new TristateCheckBox();
+        this.checkBoxImportSymbol = new TristateCheckBox();
         initImportSetting();
         initCheckbox();
     }
@@ -329,6 +346,95 @@ public class PanelTransformForD extends PanelTransform {
         panelCheckBox.add(this.checkBoxExtendsData, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 5, 5, 20));
         panelCheckBox.add(this.checkBoxImportingXRecord, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 0, 5, 20));
         panelCheckBox.add(this.checkBoxSaveWPLineWidth, new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(30, 1).setInsets(0, 0, 5, 10));
+        setCheckBoxState();
+        setCurveSegment();
+    }
+
+    private void setCurveSegment() {
+        if (null != panelImports && isCheckboxForDEnabled()) {
+            this.textFieldCurveSegment.setText(getCurveSegment());
+        }
+    }
+
+    private void setCheckBoxState() {
+        if (null != panelImports && isCheckboxForDEnabled()) {
+            this.checkBoxMergeLayer.setSelectedEx(externalDataSelectAll(MERGELAYER));
+            this.checkBoxImportInvisibleLayer.setSelectedEx(externalDataSelectAll(IMPORTINVISIBLELAYER));
+            this.checkBoxSaveHeight.setSelectedEx(externalDataSelectAll(SAVEHEIGHT));
+            this.checkBoxImportSymbol.setSelectedEx(externalDataSelectAll(IMPORTSYMBOL));
+            this.checkBoxImportProperty.setSelectedEx(externalDataSelectAll(IMPORTPROPERTY));
+            this.checkBoxKeepingParametricPart.setSelectedEx(externalDataSelectAll(KEEPINGPARAMETRICPART));
+            this.checkBoxExtendsData.setSelectedEx(externalDataSelectAll(EXTENDSDATA));
+            this.checkBoxImportingXRecord.setSelectedEx(externalDataSelectAll(IMPORTINGXRECORD));
+            this.checkBoxSaveWPLineWidth.setSelectedEx(externalDataSelectAll(SAVEWPLINEWIDTH));
+        }
+    }
+
+    public boolean isCheckboxForDEnabled() {
+        int count = 0;
+        for (PanelImport tempPanelImport : panelImports) {
+            FileType tempFiletype = tempPanelImport.getImportInfo().getImportSetting().getSourceFileType();
+            if (tempFiletype.equals(FileType.DXF) || tempFiletype.equals(FileType.DWG)) {
+                count++;
+            }
+        }
+        return count == panelImports.size();
+    }
+
+    private Boolean externalDataSelectAll(int type) {
+        Boolean result = null;
+        int selectCount = 0;
+        int unSelectCount = 0;
+        for (PanelImport tempPanel : panelImports) {
+            boolean select = getCheckboxState(tempPanel, type);
+            if (select) {
+                selectCount++;
+            } else if (!select) {
+                unSelectCount++;
+            }
+        }
+        if (selectCount == panelImports.size()) {
+            result = true;
+        } else if (unSelectCount == panelImports.size()) {
+            result = false;
+        }
+        return result;
+    }
+
+    private boolean getCheckboxState(PanelImport tempPanel, int type) {
+        boolean result = false;
+        switch (type) {
+            case EXTENDSDATA:
+                result = ((PanelTransformForD) tempPanel.getTransform()).getCheckBoxExtendsData().isSelected();
+                break;
+            case IMPORTINGXRECORD:
+                result = ((PanelTransformForD) tempPanel.getTransform()).getCheckBoxImportingXRecord().isSelected();
+                break;
+            case SAVEHEIGHT:
+                result = ((PanelTransformForD) tempPanel.getTransform()).getCheckBoxSaveHeight().isSelected();
+                break;
+            case IMPORTINVISIBLELAYER:
+                result = ((PanelTransformForD) tempPanel.getTransform()).getCheckBoxImportInvisibleLayer().isSelected();
+                break;
+            case SAVEWPLINEWIDTH:
+                result = ((PanelTransformForD) tempPanel.getTransform()).getCheckBoxSaveWPLineWidth().isSelected();
+                break;
+            case MERGELAYER:
+                result = ((PanelTransformForD) tempPanel.getTransform()).getCheckBoxMergeLayer().isSelected();
+                break;
+            case IMPORTPROPERTY:
+                result = ((PanelTransformForD) tempPanel.getTransform()).getCheckBoxImportProperty().isSelected();
+                break;
+            case KEEPINGPARAMETRICPART:
+                result = ((PanelTransformForD) tempPanel.getTransform()).getCheckBoxKeepingParametricPart().isSelected();
+                break;
+            case IMPORTSYMBOL:
+                result = ((PanelTransformForD) tempPanel.getTransform()).getCheckBoxImportSymbol().isSelected();
+                break;
+            default:
+                break;
+        }
+        return result;
     }
 
     @Override
@@ -413,5 +519,22 @@ public class PanelTransformForD extends PanelTransform {
 
     public JCheckBox getCheckBoxImportSymbol() {
         return checkBoxImportSymbol;
+    }
+
+    public String getCurveSegment() {
+        String result = "";
+        String temp = ((PanelTransformForD) panelImports.get(0).getTransform()).getTextFieldCurveSegment().getText();
+        boolean isSame = true;
+        for (PanelImport tempPanel : panelImports) {
+            String tempObject = ((PanelTransformForD) tempPanel.getTransform()).getTextFieldCurveSegment().getText();
+            if (!temp.equals(tempObject)) {
+                isSame = false;
+                break;
+            }
+        }
+        if (isSame) {
+            result = temp;
+        }
+        return result;
     }
 }

@@ -1,18 +1,7 @@
 package com.supermap.desktop;
 
-import com.supermap.data.Charset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.EncodeType;
-import com.supermap.data.EngineInfo;
-import com.supermap.data.EngineType;
-import com.supermap.data.StatisticMode;
-import com.supermap.data.Tolerance;
-import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormLBSControl;
-import com.supermap.desktop.Interface.IFormLayout;
-import com.supermap.desktop.Interface.IFormScene;
-import com.supermap.desktop.Interface.IFormTabular;
+import com.supermap.data.*;
+import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
@@ -4647,7 +4636,7 @@ public class CommonToolkit {
 			datasetImage.put(DatasetType.WCS, fileParentPath + "Image_DatasetWCS_Normal.png");
 			datasetImage.put(DatasetType.WMS, fileParentPath + "Image_DatasetWMS_Normal.png");
 			datasetImage.put(DatasetType.TEXTURE, fileParentPath + "Image_DataseSimpleDataset_Normal.png");
-			// datasetImage.put(DatasetType.LINKTABLE)
+
 			String filePathTopo = fileParentPath + "TopologyDatasetRelations/Image_TopologyDatasetRelations_Normal.png";
 			datasetImage.put(DatasetType.TOPOLOGY, filePathTopo);
 		}
@@ -4682,8 +4671,8 @@ public class CommonToolkit {
 		/**
 		 * 根据数据集中文名得到数据集图标所在的相对路径
 		 *
-		 * @param datasetName
-		 * @return
+         * @param datasetTypeName
+         * @return
 		 */
 		public static String getImageIconPath(String datasetTypeName) {
 			DatasetType type = DatasetTypeWrap.findType(datasetTypeName);

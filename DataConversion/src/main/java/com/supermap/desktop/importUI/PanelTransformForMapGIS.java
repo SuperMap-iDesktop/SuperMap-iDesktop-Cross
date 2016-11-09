@@ -36,6 +36,10 @@ public class PanelTransformForMapGIS extends PanelTransform {
                         DataConversionProperties.getString("String_Import"), "ImportMapGIS", "OpenMany");
             }
             SmFileChoose fileChooser = new SmFileChoose("ImportMapGIS");
+            String filePath = fileChooserColorIndex.getEditor().getText();
+            if (!StringUtilities.isNullOrEmpty(filePath)) {
+                fileChooser.setSelectedFile(new File(filePath));
+            }
             int state = fileChooser.showDefaultDialog();
             File file = fileChooser.getSelectedFile();
             if (state == JFileChooser.APPROVE_OPTION && null != file) {
@@ -71,8 +75,9 @@ public class PanelTransformForMapGIS extends PanelTransform {
     public void initComponents() {
         this.labelColorIndex = new JLabel();
         this.fileChooserColorIndex = new FileChooserControl();
-        if (!StringUtilities.isNullOrEmpty(((ImportSettingMAPGIS) importSetting).getColorIndexFilePath())) {
-            fileChooserColorIndex.getEditor().setText(((ImportSettingMAPGIS) importSetting).getColorIndexFilePath());
+        String filePath = ((ImportSettingMAPGIS) importSetting).getColorIndexFilePath();
+        if (!StringUtilities.isNullOrEmpty(filePath)) {
+            fileChooserColorIndex.getEditor().setText(new File(filePath).getAbsolutePath());
         }
     }
 
@@ -81,6 +86,13 @@ public class PanelTransformForMapGIS extends PanelTransform {
         this.setLayout(new GridBagLayout());
         this.add(this.labelColorIndex, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(this.fileChooserColorIndex, new GridBagConstraintsHelper(1, 0, 5, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        setColorIndexText();
+    }
+
+    private void setColorIndexText() {
+        if (null != panelImports) {
+            this.fileChooserColorIndex.getEditor().setText(getColorIndex());
+        }
     }
 
     @Override
@@ -102,5 +114,22 @@ public class PanelTransformForMapGIS extends PanelTransform {
 
     public FileChooserControl getFileChooserColorIndex() {
         return fileChooserColorIndex;
+    }
+
+    public String getColorIndex() {
+        String result = "";
+        String temp = ((PanelTransformForMapGIS) panelImports.get(0).getTransform()).getFileChooserColorIndex().getEditor().getText();
+        boolean isSame = true;
+        for (PanelImport tempPanel : panelImports) {
+            String tempObject = ((PanelTransformForMapGIS) tempPanel.getTransform()).getFileChooserColorIndex().getEditor().getText();
+            if (!temp.equals(tempObject)) {
+                isSame = false;
+                break;
+            }
+        }
+        if (isSame) {
+            result = temp;
+        }
+        return result;
     }
 }

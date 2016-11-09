@@ -44,7 +44,7 @@ public class PanelExportTransformForGrid extends PanelExportTransform {
             if (!SmFileChoose.isModuleExist("DataExportFrame")) {
                 String fileFilters = SmFileChoose.createFileFilter(DataConversionProperties.getString("string_filetype_tfw"), "tfw");
                 SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-                        DataConversionProperties.getString("String_Export"), "DataExportFrame", "OpenOne");
+                        DataConversionProperties.getString("String_Export"), "DataExportFrame", "SaveOne");
             }
 
             SmFileChoose fileChooserc = new SmFileChoose("DataExportFrame");

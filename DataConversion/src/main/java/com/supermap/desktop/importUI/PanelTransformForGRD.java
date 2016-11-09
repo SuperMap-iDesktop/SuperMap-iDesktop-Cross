@@ -3,6 +3,7 @@ package com.supermap.desktop.importUI;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.baseUI.PanelTransform;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -19,8 +20,11 @@ import java.util.ArrayList;
  */
 public class PanelTransformForGRD extends PanelTransform {
     private ArrayList<PanelImport> panelImports;
-    private JCheckBox checkBoxPyramidBuild;// 创建影像金字塔
-    private JCheckBox checkBoxAttributeIgnored;//忽略属性信息
+    private TristateCheckBox checkBoxPyramidBuild;// 创建影像金字塔
+    private TristateCheckBox checkBoxAttributeIgnored;//忽略属性信息
+    private final int PYRAMIDBUILD = 0;
+    private final int ATTRIBUTEIGNORED = 1;
+
     private ItemListener checkBoxPyramidBuildListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
@@ -82,38 +86,42 @@ public class PanelTransformForGRD extends PanelTransform {
         if (importSetting instanceof ImportSettingDBF) {
             return;
         } else if (importSetting instanceof ImportSettingGRD || importSetting instanceof ImportSettingGBDEM) {
-            this.checkBoxPyramidBuild = new JCheckBox();
+            this.checkBoxPyramidBuild = new TristateCheckBox();
             initCheckBoxPyramindBuild();
         } else {
-            this.checkBoxAttributeIgnored = new JCheckBox();
+            this.checkBoxAttributeIgnored = new TristateCheckBox();
             initCheckBoxAttributeIgenored();
         }
     }
 
     private void initCheckBoxAttributeIgenored() {
-        if (importSetting instanceof ImportSettingSHP) {
-            checkBoxAttributeIgnored.setSelected(((ImportSettingSHP) importSetting).isAttributeIgnored());
-        }
-        if (importSetting instanceof ImportSettingE00) {
-            checkBoxAttributeIgnored.setSelected(((ImportSettingE00) importSetting).isAttributeIgnored());
-        }
-        if (importSetting instanceof ImportSettingLIDAR) {
-            checkBoxAttributeIgnored.setSelected(((ImportSettingLIDAR) importSetting).isAttributeIgnored());
-        }
-        if (importSetting instanceof ImportSettingTAB) {
-            checkBoxAttributeIgnored.setSelected(((ImportSettingTAB) importSetting).isAttributeIgnored());
-        }
-        if (importSetting instanceof ImportSettingMIF) {
-            checkBoxAttributeIgnored.setSelected(((ImportSettingMIF) importSetting).isAttributeIgnored());
+        if (null == panelImports) {
+            if (importSetting instanceof ImportSettingSHP) {
+                checkBoxAttributeIgnored.setSelected(((ImportSettingSHP) importSetting).isAttributeIgnored());
+            }
+            if (importSetting instanceof ImportSettingE00) {
+                checkBoxAttributeIgnored.setSelected(((ImportSettingE00) importSetting).isAttributeIgnored());
+            }
+            if (importSetting instanceof ImportSettingLIDAR) {
+                checkBoxAttributeIgnored.setSelected(((ImportSettingLIDAR) importSetting).isAttributeIgnored());
+            }
+            if (importSetting instanceof ImportSettingTAB) {
+                checkBoxAttributeIgnored.setSelected(((ImportSettingTAB) importSetting).isAttributeIgnored());
+            }
+            if (importSetting instanceof ImportSettingMIF) {
+                checkBoxAttributeIgnored.setSelected(((ImportSettingMIF) importSetting).isAttributeIgnored());
+            }
         }
     }
 
     private void initCheckBoxPyramindBuild() {
-        if (importSetting instanceof ImportSettingGRD) {
-            checkBoxPyramidBuild.setSelected(((ImportSettingGRD) importSetting).isPyramidBuilt());
-        }
-        if (importSetting instanceof ImportSettingGBDEM) {
-            checkBoxPyramidBuild.setSelected(((ImportSettingGBDEM) importSetting).isPyramidBuilt());
+        if (null == panelImports) {
+            if (importSetting instanceof ImportSettingGRD) {
+                checkBoxPyramidBuild.setSelected(((ImportSettingGRD) importSetting).isPyramidBuilt());
+            }
+            if (importSetting instanceof ImportSettingGBDEM) {
+                checkBoxPyramidBuild.setSelected(((ImportSettingGBDEM) importSetting).isPyramidBuilt());
+            }
         }
     }
 
@@ -124,9 +132,46 @@ public class PanelTransformForGRD extends PanelTransform {
             return;
         } else if (importSetting instanceof ImportSettingGRD || importSetting instanceof ImportSettingGBDEM) {
             this.add(this.checkBoxPyramidBuild, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            if (null != panelImports) {
+                this.checkBoxPyramidBuild.setSelectedEx(externalDataSelectAll(PYRAMIDBUILD));
+            }
         } else {
             this.add(this.checkBoxAttributeIgnored, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            if (null != panelImports) {
+                this.checkBoxAttributeIgnored.setSelectedEx(externalDataSelectAll(ATTRIBUTEIGNORED));
+            }
         }
+    }
+
+    private Boolean externalDataSelectAll(int type) {
+        Boolean result = null;
+        int selectCount = 0;
+        int unSelectCount = 0;
+        for (PanelImport tempPanel : panelImports) {
+            boolean select = getCheckboxState(tempPanel, type);
+            if (select) {
+                selectCount++;
+            } else if (!select) {
+                unSelectCount++;
+
+            }
+        }
+        if (selectCount == panelImports.size()) {
+            result = true;
+        } else if (unSelectCount == panelImports.size()) {
+            result = false;
+        }
+        return result;
+    }
+
+    private boolean getCheckboxState(PanelImport panelImport, int type) {
+        boolean result = false;
+        if (type == PYRAMIDBUILD) {
+            result = ((PanelTransformForGRD) panelImport.getTransform()).getCheckBoxPyramidBuild().isSelected();
+        } else if (type == ATTRIBUTEIGNORED) {
+            result = ((PanelTransformForGRD) panelImport.getTransform()).getCheckBoxAttributeIgnored().isSelected();
+        }
+        return result;
     }
 
     @Override

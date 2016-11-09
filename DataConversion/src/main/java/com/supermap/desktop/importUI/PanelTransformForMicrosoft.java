@@ -4,6 +4,7 @@ import com.supermap.data.conversion.ImportSetting;
 import com.supermap.data.conversion.ImportSettingCSV;
 import com.supermap.desktop.baseUI.PanelTransform;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -24,7 +25,7 @@ public class PanelTransformForMicrosoft extends PanelTransform {
     private ArrayList<PanelImport> panelImports;
     private JLabel labelSeparator;
     private JTextField textFieldSeparator;
-    private JCheckBox checkBoxFristRowAsField;
+    private TristateCheckBox checkBoxFristRowAsField;
     private JLabel labelEmpty;
     private DocumentListener separatorListener = new DocumentListener() {
         @Override
@@ -78,9 +79,11 @@ public class PanelTransformForMicrosoft extends PanelTransform {
         initLayerout();
         registEvents();
     }
+
     @Override
     public void initComponents() {
-        this.checkBoxFristRowAsField = new JCheckBox();
+        this.checkBoxFristRowAsField = new TristateCheckBox();
+        this.checkBoxFristRowAsField.setSelected(false);
         this.labelSeparator = new JLabel();
         this.textFieldSeparator = new JTextField();
         this.labelEmpty = new JLabel();
@@ -93,7 +96,41 @@ public class PanelTransformForMicrosoft extends PanelTransform {
         this.add(this.textFieldSeparator, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setIpad(30, 0));
         this.add(this.checkBoxFristRowAsField, new GridBagConstraintsHelper(4, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(this.labelEmpty, new GridBagConstraintsHelper(6, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.textFieldSeparator.setPreferredSize(new Dimension(18, 23));
+        setFristRowAsField();
+        setSeparator();
+    }
 
+    private void setSeparator() {
+        if (null != panelImports) {
+            this.textFieldSeparator.setText(getSameSeparator());
+        }
+    }
+
+    private void setFristRowAsField() {
+        if (null != panelImports) {
+            this.checkBoxFristRowAsField.setSelectedEx(externalDataSelectAll());
+        }
+    }
+
+    private Boolean externalDataSelectAll() {
+        Boolean result = null;
+        int selectCount = 0;
+        int unSelectCount = 0;
+        for (PanelImport tempPanel : panelImports) {
+            boolean select = ((PanelTransformForMicrosoft) tempPanel.getTransform()).getCheckBoxFristRowAsField().isSelected();
+            if (select) {
+                selectCount++;
+            } else if (!select) {
+                unSelectCount++;
+            }
+        }
+        if (selectCount == panelImports.size()) {
+            result = true;
+        } else if (unSelectCount == panelImports.size()) {
+            result = false;
+        }
+        return result;
     }
 
     @Override
@@ -123,5 +160,22 @@ public class PanelTransformForMicrosoft extends PanelTransform {
 
     public JCheckBox getCheckBoxFristRowAsField() {
         return checkBoxFristRowAsField;
+    }
+
+    public String getSameSeparator() {
+        String result = "";
+        String temp = ((PanelTransformForMicrosoft) panelImports.get(0).getTransform()).getTextFieldSeparator().getText();
+        boolean isSame = true;
+        for (PanelImport tempPanel : panelImports) {
+            String tempObject = ((PanelTransformForMicrosoft) tempPanel.getTransform()).getTextFieldSeparator().getText();
+            if (!temp.equals(tempObject)) {
+                isSame = false;
+                break;
+            }
+        }
+        if (isSame) {
+            result = temp;
+        }
+        return result;
     }
 }
