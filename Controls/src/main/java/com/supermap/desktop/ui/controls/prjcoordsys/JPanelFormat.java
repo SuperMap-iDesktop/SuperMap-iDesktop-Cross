@@ -1,5 +1,6 @@
 package com.supermap.desktop.ui.controls.prjcoordsys;
 
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -54,10 +55,10 @@ public class JPanelFormat extends JPanel {
 	}
 
 	private void initResources() {
-		smTextFieldA.setHorizontalAlignment(SwingConstants.RIGHT);
-		smTextFieldM.setHorizontalAlignment(SwingConstants.RIGHT);
-		smTextFieldS.setHorizontalAlignment(SwingConstants.RIGHT);
-		smTextFieldAngle.setHorizontalAlignment(SwingConstants.RIGHT);
+		smTextFieldA.setHorizontalAlignment(SwingConstants.LEFT);
+		smTextFieldM.setHorizontalAlignment(SwingConstants.LEFT);
+		smTextFieldS.setHorizontalAlignment(SwingConstants.LEFT);
+		smTextFieldAngle.setHorizontalAlignment(SwingConstants.LEFT);
 		Color borderColor = new Color(171, 173, 179);
 		smTextFieldA.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 0, borderColor));
 		Dimension textFieldSize = new Dimension(32, 23);
@@ -94,6 +95,7 @@ public class JPanelFormat extends JPanel {
 		buttonExchange.setMaximumSize(maximumSize);
 		buttonExchange.setMinimumSize(maximumSize);
 		buttonExchange.setPreferredSize(maximumSize);
+		buttonExchange.setToolTipText(ControlsProperties.getString("String_Button_Conversion"));
 
 	}
 

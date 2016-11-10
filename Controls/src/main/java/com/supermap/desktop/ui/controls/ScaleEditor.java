@@ -32,7 +32,6 @@ public class ScaleEditor extends JPanel {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			valueChange(evt);
-//			System.out.println(1);
 		}
 	};
 	// 响应 enter 键，提交编辑
@@ -128,7 +127,7 @@ public class ScaleEditor extends JPanel {
 			} else {
 				this.scaleModel = oldModel;
 			}
-			firePropertyChange(ControlDefaultValues.PROPERTYNAME_VALUE, oldModel, this.scaleModel);
+			firePropertyChange(ControlDefaultValues.SCALE_PROPERTY_VALUE, oldModel, this.scaleModel);
 		} catch (Exception e1) {
 			Application.getActiveApplication().getOutput().output(e1);
 		}
@@ -137,5 +136,9 @@ public class ScaleEditor extends JPanel {
 	@Override
 	public String toString() {
 		return this.scaleModel.getScaleCaption();
+	}
+
+	public void addValueChangedListener() {
+
 	}
 }

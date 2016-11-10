@@ -120,6 +120,7 @@ public class DoubleUtilities {
 	public static NumberFormat getDoubleFormatInstance() {
 		NumberFormat instance = NumberFormat.getInstance();
 		instance.setMaximumFractionDigits(MaxDigits);
+		instance.setMinimumIntegerDigits(0);
 		return instance;
 	}
 

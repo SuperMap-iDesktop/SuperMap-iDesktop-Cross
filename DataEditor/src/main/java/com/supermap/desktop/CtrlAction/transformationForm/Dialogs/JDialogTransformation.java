@@ -118,7 +118,7 @@ public class JDialogTransformation extends SmDialog {
 
 	public JDialogTransformation() {
 		init();
-		this.setSize(600, 500);
+		this.setSize(600, 400);
 		this.setLocationRelativeTo(null);
 	}
 
@@ -188,14 +188,6 @@ public class JDialogTransformation extends SmDialog {
 		initPanelResample();
 		initPanelSetting();
 		initPanelButtons();
-		Dimension size = new Dimension(500, 120);
-
-		panelProperties.setPreferredSize(size);
-		panelProperties.setMaximumSize(size);
-		panelProperties.setMinimumSize(size);
-		titledPanelResample.setPreferredSize(size);
-		titledPanelResample.setMaximumSize(size);
-		titledPanelResample.setMinimumSize(size);
 
 		this.setLayout(new GridBagLayout());
 		this.add(toolBar, new GridBagConstraintsHelper(0, 0, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 10));
@@ -226,21 +218,25 @@ public class JDialogTransformation extends SmDialog {
 	private void initPanelProperties() {
 		panelProperties.setBorder(BorderFactory.createTitledBorder(CommonProperties.getString("String_FormEdgeCount_Text")));
 		panelProperties.setLayout(new GridBagLayout());
-		panelProperties.add(labelTransformationFile, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setInsets(10, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
-		panelProperties.add(fileChooserControl, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setInsets(10, 5, 0, 10).setFill(GridBagConstraints.HORIZONTAL));
+		panelProperties.add(labelTransformationFile, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setInsets(10, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelProperties.add(fileChooserControl, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setInsets(10, 5, 0, 10).setFill(GridBagConstraints.HORIZONTAL));
 
-		panelProperties.add(labelTransformationMode, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
-		panelProperties.add(textFieldTransformationMode, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 1).setInsets(5, 5, 0, 10).setFill(GridBagConstraints.HORIZONTAL));
+		panelProperties.add(labelTransformationMode, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelProperties.add(textFieldTransformationMode, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setInsets(5, 5, 0, 10).setFill(GridBagConstraints.HORIZONTAL));
+
+		panelProperties.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 1));
 
 	}
 
 	private void initPanelResample() {
 		panelResample.setLayout(new GridBagLayout());
-		panelResample.add(labelResampleMode, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setInsets(2, 10, 0, 0));
-		panelResample.add(comboBoxResampleMode, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setInsets(2, 5, 0, 10).setFill(GridBagConstraints.HORIZONTAL));
+		panelResample.add(labelResampleMode, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setInsets(2, 10, 0, 0));
+		panelResample.add(comboBoxResampleMode, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setInsets(2, 5, 0, 10).setFill(GridBagConstraints.HORIZONTAL));
 
-		panelResample.add(labelPixel, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setInsets(5, 10, 10, 0));
-		panelResample.add(textFieldPixel, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 1).setInsets(5, 5, 10, 10).setFill(GridBagConstraints.HORIZONTAL));
+		panelResample.add(labelPixel, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setInsets(5, 10, 10, 0));
+		panelResample.add(textFieldPixel, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setInsets(5, 5, 10, 10).setFill(GridBagConstraints.HORIZONTAL));
+
+		panelResample.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 1));
 
 	}
 
@@ -719,7 +715,6 @@ public class JDialogTransformation extends SmDialog {
 		labelTransformationFile.setVisible(false);
 		fileChooserControl.setVisible(false);
 		this.setTitle(DataEditorProperties.getString("String_transformation"));
-		panelProperties.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 1));
 	}
 
 	private class JDialogSetting extends SmDialog {
