@@ -165,7 +165,6 @@ public class DockableComponentWrapper implements Dockable {
      * @param src
      * @param id
      * @param desc
-     * @param resizable
      */
     private DockableComponentWrapper(Component src, String id, String desc) {
         dragSrc = src;

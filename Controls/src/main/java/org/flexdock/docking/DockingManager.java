@@ -1273,7 +1273,6 @@ public class DockingManager implements DockingConstants {
      * @return {@code true} if the current layout model was succesfully stored,
      *         {@code false} otherwise.
      * @throws IOException
-     * @throws PersisterException
      * @see #getLayoutManager()
      * @see #setLayoutManager(LayoutManager)
      * @see LayoutManager#store()
@@ -1306,7 +1305,6 @@ public class DockingManager implements DockingConstants {
      * @return {@code true} if the current layout model was succesfully loaded,
      *         {@code false} otherwise.
      * @throws IOException
-     * @throws PersisterException
      * @see #loadLayoutModel(boolean)
      * @see LayoutManager#load()
      */
@@ -1340,7 +1338,7 @@ public class DockingManager implements DockingConstants {
      * @return {@code true} if the current layout model was succesfully loaded,
      *         {@code false} otherwise.
      * @throws IOException
-     * @throws PersisterException
+     * @throws PersistenceException
      * @see #getLayoutManager()
      * @see #setLayoutManager(LayoutManager)
      * @see #restoreLayout(boolean)
@@ -1372,7 +1370,7 @@ public class DockingManager implements DockingConstants {
      *
      * @return {@code true} if the in-memory layout model was properly restored
      *         to the application view, {@code false} otherwise.
-     * @throws PersisterException
+     * @throws PersistenceException
      * @see #restoreLayout(boolean)
      * @see #getLayoutManager()
      * @see #setLayoutManager(LayoutManager)
@@ -1413,7 +1411,7 @@ public class DockingManager implements DockingConstants {
      *            storage into memory before synchronizing the application view.
      * @return {@code true} if the in-memory layout model was properly restored
      *         to the application view, {@code false} otherwise.
-     * @throws PersisterException
+     * @throws PersistenceException
      * @see #getLayoutManager()
      * @see #setLayoutManager(LayoutManager)
      * @see LayoutManager#restore(boolean)
