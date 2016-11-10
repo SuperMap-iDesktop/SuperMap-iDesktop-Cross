@@ -1,4 +1,4 @@
-package com.supermap.desktop.GeometryPropertyBindWindow;
+package com.supermap.desktop.controls.property.GeometryPropertyBindWindow;
 
 import com.supermap.data.Dataset;
 import com.supermap.mapping.Layer;
@@ -9,7 +9,7 @@ public interface IBindProperty {
 	/**
 	 * 刷新地图
 	 */
-	public void refreshMap(Selection selection,Layer layer);
+    public void refreshMap(Selection selection, Layer layer);
 
 	/**
 	 * 移除事件
@@ -25,5 +25,5 @@ public interface IBindProperty {
 
 	public void removePropertySelectChangeListener(PropertySelectChangeListener l);
 
-	public void firePropertySelectChanged(int[] rows,Dataset dataset);
+    public void firePropertySelectChanged(int[] rows, Dataset dataset);
 }

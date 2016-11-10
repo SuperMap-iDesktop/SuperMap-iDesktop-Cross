@@ -1,4 +1,4 @@
-package com.supermap.desktop.GeometryPropertyBindWindow;
+package com.supermap.desktop.controls.property.GeometryPropertyBindWindow;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.Recordset;
@@ -54,7 +54,7 @@ public class BindUtilties {
             }
 
         });
-//        formManager.addActiveFormChangedListener(activeFormChangeListener);
+        formManager.addActiveFormChangedListener(activeFormChangeListener);
     }
 
     public static void openTabular(Dataset dataset, Recordset recordset) {

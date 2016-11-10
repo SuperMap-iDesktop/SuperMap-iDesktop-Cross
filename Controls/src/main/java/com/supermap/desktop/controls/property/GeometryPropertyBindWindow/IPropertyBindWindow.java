@@ -1,4 +1,4 @@
-package com.supermap.desktop.GeometryPropertyBindWindow;
+package com.supermap.desktop.controls.property.GeometryPropertyBindWindow;
 
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.ui.docking.SplitWindow;
@@ -11,7 +11,7 @@ public interface IPropertyBindWindow {
 
 	public IBindWindow getBindWindow();
 
-	public void setBindWindow(IBindWindow bindWindow,Layer activeLayer);
+    public void setBindWindow(IBindWindow bindWindow, Layer activeLayer);
 
 	public IBindProperty getBindProperty();
 
