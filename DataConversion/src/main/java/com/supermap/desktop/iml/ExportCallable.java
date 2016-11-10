@@ -5,10 +5,12 @@ import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.baseUI.PanelExportTransform;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.exportUI.DataExportDialog;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.concurrent.CancellationException;
@@ -41,21 +43,30 @@ public class ExportCallable extends UpdateProgressCallable {
             for (int i = 0; i < exportPanels.size(); i++) {
                 DataExport dataExport = new DataExport();
                 ExportSettings exportSettings = dataExport.getExportSettings();
-                exportSettings.add(exportPanels.get(i).getExportsFileInfo().getExportSetting());
-                PercentProgress progress = new PercentProgress(i);
-                dataExport.addExportSteppedListener(progress);
-                long startTime = System.currentTimeMillis();
-                ExportResult result = dataExport.run();
-                long endTime = System.currentTimeMillis();
-                String time = String.valueOf((endTime - startTime) / 1000.0);
-                printExportInfo(result, i, time);
-                if (null != progress && progress.isCancel()) {
-                    break;
+                ExportSetting tempExportSetting = exportPanels.get(i).getExportsFileInfo().getExportSetting();
+                String filePath = tempExportSetting.getTargetFilePath();
+                if (new File(filePath).exists() && !tempExportSetting.isOverwrite()) {
+                    Application.getActiveApplication().getOutput().output(MessageFormat.format(DataConversionProperties.getString("String_DuplicateFileError"), filePath));
+                } else {
+                    exportSettings.add(tempExportSetting);
+                    PercentProgress progress = new PercentProgress(i);
+                    dataExport.addExportSteppedListener(progress);
+                    long startTime = System.currentTimeMillis();
+                    ExportResult result = dataExport.run();
+                    long endTime = System.currentTimeMillis();
+                    String time = String.valueOf((endTime - startTime) / 1000.0);
+                    printExportInfo(result, i, time);
+                    if (null != progress && progress.isCancel()) {
+                        break;
+                    }
+                    dataExport.removeExportSteppedListener(progress);
                 }
-                dataExport.removeExportSteppedListener(progress);
             }
 
-        } catch (Exception e) {
+        } catch (
+                Exception e)
+
+        {
             Application.getActiveApplication().getOutput().output(e);
         }
         return true;
@@ -92,6 +103,7 @@ public class ExportCallable extends UpdateProgressCallable {
                 this.isCancel = true;
             }
         }
+
     }
 
     /**
@@ -108,12 +120,12 @@ public class ExportCallable extends UpdateProgressCallable {
                 ExportSetting[] failExportSettings = result.getFailedSettings();
 
                 if (null != successExportSettings && 0 < successExportSettings.length) {
-                    exportPanels.get(i).getExportsFileInfo().setState(DataConversionProperties.getString("String_FormImport_Succeed"));
+                    exportTable.setValueAt(DataConversionProperties.getString("String_FormImport_Succeed"), i, DataExportDialog.COLUMN_STATE);
                     String successDatasetAlis = getDatasetAlis(successExportSettings[0]);
                     Application.getActiveApplication().getOutput()
                             .output(MessageFormat.format(successExportInfo, successDatasetAlis, successExportSettings[0].getTargetFilePath(), time));
                 } else if (null != failExportSettings && 0 < failExportSettings.length) {
-                    exportPanels.get(i).getExportsFileInfo().setState(DataConversionProperties.getString("String_FormImport_NotSucceed"));
+                    exportTable.setValueAt(DataConversionProperties.getString("String_FormImport_Succeed"), i, DataExportDialog.COLUMN_STATE);
                     String failDatasetAlis = getDatasetAlis(failExportSettings[0]);
                     Application.getActiveApplication().getOutput()
                             .output(MessageFormat.format(failExportInfo, failDatasetAlis));
