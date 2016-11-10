@@ -31,7 +31,6 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
-import com.supermap.desktop.ui.docking.TabWindow;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.WorkspaceUtilities;
@@ -134,10 +133,6 @@ public class FormBase extends JFrame implements IFormMain {
         this.setTitle(text);
     }
 
-    public TabWindow getChildWindowsContainer() {
-        return ((DockbarManager) this.dockbarManager).getChildFormsWindow();
-    }
-
     @Override
     public void loadUI() {
         try {
@@ -173,8 +168,6 @@ public class FormBase extends JFrame implements IFormMain {
 
 //				}
 //			});
-            this.formManager.setRootContainer(dockbar.getRootWindow());
-            this.formManager.setChildWindowsContainer(dockbar.getChildFormsWindow());
 
             IDockbar outputDockbar = dockbar.getOutputFrame();
             if (outputDockbar != null && outputDockbar.getComponent() instanceof OutputFrame) {
@@ -213,7 +206,6 @@ public class FormBase extends JFrame implements IFormMain {
         this.setLayout(new GridBagLayout());
         this.add(jMenuBarMain, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER));
         this.add(this.toolbarManager.getToolbarsContainer(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 5));
-        this.add(dockbar.getRootWindow(), new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
     }
 
     @Override

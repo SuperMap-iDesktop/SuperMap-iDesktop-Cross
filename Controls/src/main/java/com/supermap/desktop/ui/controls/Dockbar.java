@@ -4,11 +4,6 @@ import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop.enums.DockState;
 import com.supermap.desktop.ui.XMLDockbar;
-import com.supermap.desktop.ui.docking.DockingWindow;
-import com.supermap.desktop.ui.docking.DockingWindowListener;
-import com.supermap.desktop.ui.docking.OperationAbortedException;
-import com.supermap.desktop.ui.docking.View;
-import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
 
 import java.awt.*;
 
@@ -20,7 +15,7 @@ import java.awt.*;
  * @author wuxb
  *
  */
-public class Dockbar extends View implements IDockbar {
+public class Dockbar implements IDockbar {
 	private static final long serialVersionUID = -741186257818181105L;
 
 	private static final int SHOWN = 0;
@@ -57,12 +52,12 @@ public class Dockbar extends View implements IDockbar {
 	}
 
 	public Dockbar(final XMLDockbar xmlDockbar) {
-		super(xmlDockbar.getLabel());
+//		super(xmlDockbar.getLabel());
 		this.xmlDockbar = xmlDockbar;
 		initialize();
-		this.getWindowProperties().setMaximizeEnabled(false);
-		this.getWindowProperties().setMinimizeEnabled(false);
-		this.addListener(new SetDockingWindowListener());
+//		this.getWindowProperties().setMaximizeEnabled(false);
+//		this.getWindowProperties().setMinimizeEnabled(false);
+//		this.addListener(new SetDockingWindowListener());
 	}
 
 	public boolean initialize() {
@@ -71,7 +66,7 @@ public class Dockbar extends View implements IDockbar {
 		}
 
 		this.setVisible(xmlDockbar.getVisible());
-		this.setComponent(xmlDockbar.CreateComponent());
+//		this.setComponent(xmlDockbar.CreateComponent());
 		return true;
 	}
 
@@ -93,12 +88,11 @@ public class Dockbar extends View implements IDockbar {
 	@Override
 	public void setVisible(boolean isVisible) {
 		this.xmlDockbar.setVisible(isVisible);
+	}
 
-		if (isVisible) {
-			this.restore();
-		} else {
-			this.close();
-		}
+	@Override
+	public Component getComponent() {
+		return null;
 	}
 
 	@Override
@@ -113,7 +107,7 @@ public class Dockbar extends View implements IDockbar {
 
 	@Override
 	public String getLabel() {
-		return this.getTitle();
+		return "this.getTitle()";
 	}
 
 	@Override
@@ -168,104 +162,6 @@ public class Dockbar extends View implements IDockbar {
 
 	@Override
 	public void active() {
-		makeVisible();
-	}
-
-	class SetDockingWindowListener implements DockingWindowListener {
-
-		@Override
-		public void windowUndocking(DockingWindow window) throws OperationAbortedException {
-			currentAction = UNDOCKING;
-		}
-
-		@Override
-		public void windowUndocked(DockingWindow window) {
-			currentAction = UNDOCKED;
-			if (window != null) {
-				// 在桌面上拖拽/Dock/Undock 浮动窗口之后，设置其父容器的功能性按钮（Close、Dock 等）不可见，仅保留自己的。
-				DockbarManager.setTabWindowProperties(window.getWindowParent());
-			}
-		}
-
-		@Override
-		public void windowShown(DockingWindow window) {
-			currentAction = SHOWN;
-		}
-
-		@Override
-		public void windowRestoring(DockingWindow window) throws OperationAbortedException {
-			currentAction = RESTORING;
-		}
-
-		@Override
-		public void windowRestored(DockingWindow window) {
-			currentAction = RESTORED;
-		}
-
-		@Override
-		public void windowRemoved(DockingWindow removedFromWindow, DockingWindow removedWindow) {
-			currentAction = REMOVED;
-		}
-
-		@Override
-		public void windowMinimizing(DockingWindow window) throws OperationAbortedException {
-			currentAction = MINIMIZING;
-		}
-
-		@Override
-		public void windowMinimized(DockingWindow window) {
-			currentAction = MINIMIZED;
-		}
-
-		@Override
-		public void windowMaximizing(DockingWindow window) throws OperationAbortedException {
-			currentAction = MAXIMIZING;
-		}
-
-		@Override
-		public void windowMaximized(DockingWindow window) {
-			currentAction = MAXIMIZED;
-		}
-
-		@Override
-		public void windowHidden(DockingWindow window) {
-			currentAction = HIDDEN;
-		}
-
-		@Override
-		public void windowDocking(DockingWindow window) throws OperationAbortedException {
-			currentAction = DOCKING;
-		}
-
-		@Override
-		public void windowDocked(DockingWindow window) {
-			currentAction = DOCKED;
-		}
-
-		@Override
-		public void windowClosing(WindowClosingEvent evt) throws OperationAbortedException {
-			currentAction = CLOSING;
-		}
-
-		@Override
-		public void windowClosed(DockingWindow window) {
-			currentAction = CLOSED;
-			xmlDockbar.setVisible(false);
-		}
-
-		@Override
-		public void windowAdded(DockingWindow addedToWindow, DockingWindow addedWindow) {
-			currentAction = ADDED;
-			if (addedWindow != null) {
-				// 在桌面上拖拽/Dock/Undock 浮动窗口之后，设置其父容器的功能性按钮（Close、Dock 等）不可见，仅保留自己的。
-				DockbarManager.setTabWindowProperties(addedWindow.getWindowParent());
-			}
-		}
-
-		@Override
-		public void viewFocusChanged(View previouslyFocusedView, View focusedView) {
-			currentAction = FOCUS_CHANGED;
-		}
 
 	}
 }
