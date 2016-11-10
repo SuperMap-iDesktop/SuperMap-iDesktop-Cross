@@ -1,19 +1,8 @@
 package com.supermap.desktop.utilities;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasets;
-import com.supermap.data.Datasource;
-import com.supermap.data.PrjCoordSysType;
-import com.supermap.data.StatisticMode;
-import com.supermap.data.Tolerance;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.Interface.IFormScene;
-import com.supermap.desktop.Interface.IFormTabular;
+import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerGroup;
@@ -148,7 +137,7 @@ public class DatasetUtilities {
 		return false;
 	}
 
-	private static boolean isIncludeDataset(Layers layers, Dataset dataset) {
+	public static boolean isIncludeDataset(Layers layers, Dataset dataset) {
 		for (int i = 0; i < layers.getCount(); i++) {
 			if (isIncludeDataset(layers.get(i), dataset)) {
 				return true;

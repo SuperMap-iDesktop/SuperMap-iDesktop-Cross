@@ -1,29 +1,13 @@
 package com.supermap.desktop.utilities;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.GeoStyle3D;
-import com.supermap.data.GeoText;
-import com.supermap.data.GeoText3D;
-import com.supermap.data.Geometry;
-import com.supermap.data.Geometry3D;
-import com.supermap.data.Point2D;
-import com.supermap.data.PrjCoordSys;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerGroup;
-import com.supermap.mapping.LayerSettingVector;
-import com.supermap.mapping.Layers;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.ThemeLabel;
-import com.supermap.mapping.TrackingLayer;
+import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -49,6 +33,22 @@ public class MapUtilities {
 			}
 		}
 		return mapControl;
+	}
+
+	public static IFormMap getFormMap(Dataset dataset) {
+		IFormMap result = null;
+		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+		for (int i = 0; i < formManager.getCount(); i++) {
+			IForm form = formManager.get(i);
+			if (form instanceof IFormMap) {
+				// 判断地图有没有
+				Layers layers = ((IFormMap) form).getMapControl().getMap().getLayers();
+				if (DatasetUtilities.isIncludeDataset(layers, dataset)) {
+					result = (IFormMap) form;
+				}
+			}
+		}
+		return result;
 	}
 
 	/**

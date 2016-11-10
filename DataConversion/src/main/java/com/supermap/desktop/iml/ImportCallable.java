@@ -6,12 +6,18 @@ import com.supermap.data.Datasources;
 import com.supermap.data.SpatialIndexType;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.tableModel.ImportTableModel;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.JOptionPaneUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -29,8 +35,7 @@ public class ImportCallable extends UpdateProgressCallable {
     private ArrayList<ImportInfo> fileInfos;
     private JTable table;
     private ImportSetting importSetting;
-    private SpatialIndexType[] spatialIndexTypes = {SpatialIndexType.MULTI_LEVEL_GRID, SpatialIndexType.NONE, SpatialIndexType.QTREE,
-            SpatialIndexType.RTREE, SpatialIndexType.TILE};
+    private SpatialIndexType[] spatialIndexTypes = {SpatialIndexType.MULTI_LEVEL_GRID, SpatialIndexType.QTREE, SpatialIndexType.RTREE, SpatialIndexType.TILE};
 
     public ImportCallable(List<ImportInfo> fileInfos, JTable table) {
         this.fileInfos = (ArrayList<ImportInfo>) fileInfos;
@@ -51,25 +56,18 @@ public class ImportCallable extends UpdateProgressCallable {
                 DataImport dataImport = new DataImport();
                 ImportSettings importSettings = dataImport.getImportSettings();
                 importSetting = fileInfos.get(i).getImportSetting();
-                importSettings.add(importSetting);
-                PercentProgress percentProgress = new PercentProgress(i);
-                dataImport.addImportSteppedListener(percentProgress);
-                long startTime = System.currentTimeMillis(); // 获取开始时间
-                ImportResult result = dataImport.run();
-                if (null != result.getSucceedSettings() && result.getSucceedSettings().length > 0) {
-                    map.put(result.getSucceedSettings()[0].getTargetDatasource().getAlias(),
-                            map.get(result.getSucceedSettings()[0].getTargetDatasource().getAlias()) + 1);
+                String datasetName = importSetting.getTargetDatasetName();
+                Dataset dataset = DatasourceUtilities.getDataset(datasetName, importSetting.getTargetDatasource());
+                if (importSetting.getImportMode().equals(ImportMode.OVERWRITE) && DatasetUtilities.isDatasetOpened(dataset)) {
+                    if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(DataConversionProperties.getString("String_FormImport_MessageBoxOverWrite"))) {
+                        IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+                        IForm form = MapUtilities.getFormMap(dataset);
+                        formManager.close(form);
+                        doImport(importSettings, i, dataImport, map);
+                    }
+                } else {
+                    doImport(importSettings, i, dataImport, map);
                 }
-                long endTime = System.currentTimeMillis(); // 获取结束时间
-                long time = endTime - startTime;
-                printMessage(result, i, time);
-                // 更新行
-                ((ImportTableModel) table.getModel()).updateRows(fileInfos);
-                if (null != percentProgress && percentProgress.isCancel()) {
-                    break;
-                }
-                dataImport.removeImportSteppedListener(percentProgress);
-                dataImport.dispose();
             }
         } catch (Exception e2) {
             Application.getActiveApplication().getOutput().output(e2);
@@ -99,6 +97,28 @@ public class ImportCallable extends UpdateProgressCallable {
             }
         }
         return true;
+    }
+
+    private void doImport(ImportSettings importSettings, int i, DataImport dataImport, HashMap<String, Integer> map) {
+        importSettings.add(importSetting);
+        PercentProgress percentProgress = new PercentProgress(i);
+        dataImport.addImportSteppedListener(percentProgress);
+        long startTime = System.currentTimeMillis(); // 获取开始时间
+        ImportResult result = dataImport.run();
+        if (null != result.getSucceedSettings() && result.getSucceedSettings().length > 0) {
+            map.put(result.getSucceedSettings()[0].getTargetDatasource().getAlias(),
+                    map.get(result.getSucceedSettings()[0].getTargetDatasource().getAlias()) + 1);
+        }
+        long endTime = System.currentTimeMillis(); // 获取结束时间
+        long time = endTime - startTime;
+        printMessage(result, i, time);
+        // 更新行
+        ((ImportTableModel) table.getModel()).updateRows(fileInfos);
+        if (null != percentProgress && percentProgress.isCancel()) {
+            return;
+        }
+        dataImport.removeImportSteppedListener(percentProgress);
+        dataImport.dispose();
     }
 
     /**
@@ -139,6 +159,7 @@ public class ImportCallable extends UpdateProgressCallable {
      * @param result
      * @param i
      */
+
     private void printMessage(ImportResult result, int i, long time) {
         ImportSetting[] successImportSettings = result.getSucceedSettings();
         ImportSetting[] failImportSettings = result.getFailedSettings();
