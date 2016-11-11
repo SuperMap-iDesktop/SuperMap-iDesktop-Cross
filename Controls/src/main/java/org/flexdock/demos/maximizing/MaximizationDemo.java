@@ -30,11 +30,11 @@ public class MaximizationDemo {
 
     public static void main(String[] args) {
 
-        try {
-            UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
-        } catch (UnsupportedLookAndFeelException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
+//        } catch (UnsupportedLookAndFeelException e) {
+//            throw new RuntimeException(e);
+//        }
 
         boolean loaded = configureDocking();
 
