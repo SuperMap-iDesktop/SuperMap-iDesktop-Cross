@@ -4,6 +4,7 @@ import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop.enums.DockState;
 import com.supermap.desktop.ui.XMLDockbar;
+import org.flexdock.view.View;
 
 import java.awt.*;
 
@@ -11,11 +12,10 @@ import java.awt.*;
  * iDesktop java 第一个版本，DockBar 不做关闭桌面保存的功能。 DockBar 的实现依赖于所用的开源库，IDockBar 所定义的属性 并非 DockBar 本身的属性，而是由 DockBar 与 DockBar 的 Parent 所处状态来共同决定的，因此在本类中，IDockBar
  * 的具体实现 不能简单的从自身进行获取，目前仅简单的直接读取 XMLDockbar 的值，但是 XMLDockbar 的值仅仅只是桌面初始化配置文件得到的， 并不能表示 DockBar 的当前状态，因此后续版本做保存的时候， 需要重新设计一下 DockBar 的结构。 当前版本如果尝试通过 DockBar
  * 的实例在代码中设置一些本身并不支持的属性，暂时抛出 UnsupportedOperationException 的异常。
- * 
- * @author wuxb
  *
+ * @author wuxb
  */
-public class Dockbar implements IDockbar {
+public class Dockbar extends View implements IDockbar {
 	private static final long serialVersionUID = -741186257818181105L;
 
 	private static final int SHOWN = 0;
@@ -43,6 +43,9 @@ public class Dockbar implements IDockbar {
 	// 所以暂时定义这样一个变量来记录当前 Action，具体实现日后再说。
 	private int currentAction = -1;
 
+	// dockbar 内嵌的用户自定义控件
+	private Component embbedComponent;
+
 	public int getCurrentAction() {
 		return currentAction;
 	}
@@ -52,7 +55,7 @@ public class Dockbar implements IDockbar {
 	}
 
 	public Dockbar(final XMLDockbar xmlDockbar) {
-//		super(xmlDockbar.getLabel());
+		super(xmlDockbar.getID(), xmlDockbar.getLabel());
 		this.xmlDockbar = xmlDockbar;
 		initialize();
 //		this.getWindowProperties().setMaximizeEnabled(false);
@@ -66,7 +69,8 @@ public class Dockbar implements IDockbar {
 		}
 
 		this.setVisible(xmlDockbar.getVisible());
-//		this.setComponent(xmlDockbar.CreateComponent());
+		this.embbedComponent = xmlDockbar.CreateComponent();
+		getContentPane().add(this.embbedComponent);
 		return true;
 	}
 
@@ -93,6 +97,10 @@ public class Dockbar implements IDockbar {
 	@Override
 	public Component getComponent() {
 		return null;
+	}
+
+	public Component getEmbbedComponent() {
+		return getContentPane().getComponent(0);
 	}
 
 	@Override
