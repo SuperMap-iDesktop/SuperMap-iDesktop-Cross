@@ -1,4 +1,4 @@
-package com.supermap.desktop.controls.property.GeometryPropertyBindWindow;
+package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;

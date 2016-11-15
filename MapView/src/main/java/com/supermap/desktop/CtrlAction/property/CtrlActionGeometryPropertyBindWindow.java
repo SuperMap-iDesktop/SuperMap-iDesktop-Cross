@@ -8,7 +8,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.property.GeometryPropertyBindWindow.BindUtilties;
+import com.supermap.desktop.controls.GeometryPropertyBindWindow.BindUtilties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DockbarManager;

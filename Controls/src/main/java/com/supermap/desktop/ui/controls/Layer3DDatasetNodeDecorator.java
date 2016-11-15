@@ -18,114 +18,116 @@ import java.awt.image.BufferedImage;
  */
 class Layer3DDatasetNodeDecorator implements TreeNodeDecorator {
 
-	public void decorate(JLabel label, TreeNodeData data) {
-		if (data.getType().equals(NodeDataType.LAYER3D_DATASET)) {
-			Layer3DDataset layer3DDataset = (Layer3DDataset) data.getData();
-			label.setText(layer3DDataset.getCaption());
-			Dataset dataset = layer3DDataset.getDataset();
-			if (dataset == null) {
-				ImageIcon icon = (ImageIcon) label.getIcon();
-				BufferedImage bufferedImage = new BufferedImage(IMAGEICON_WIDTH, IMAGEICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-				Graphics graphics = bufferedImage.getGraphics();
-				graphics.drawImage(InternalImageIconFactory.DT_UNKNOWN.getImage(), 0, 0, label);
-				icon.setImage(bufferedImage);
-			} else {
-				Resources resources;
-				resources = dataset.getDatasource().getWorkspace().getResources();
+    public void decorate(JLabel label, TreeNodeData data) {
+        if (data.getType().equals(NodeDataType.LAYER3D_DATASET)) {
+            Layer3DDataset layer3DDataset = (Layer3DDataset) data.getData();
+            label.setText(layer3DDataset.getCaption());
+            Dataset dataset = layer3DDataset.getDataset();
+            if (dataset == null) {
+                ImageIcon icon = (ImageIcon) label.getIcon();
+                BufferedImage bufferedImage = new BufferedImage(IMAGEICON_WIDTH, IMAGEICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+                Graphics graphics = bufferedImage.getGraphics();
+                graphics.drawImage(InternalImageIconFactory.DT_UNKNOWN.getImage(), 0, 0, label);
+                icon.setImage(bufferedImage);
+            } else {
+                Resources resources;
+                resources = dataset.getDatasource().getWorkspace().getResources();
 
-				if (dataset instanceof DatasetVector) {
-					DatasetVector datasetVector = (DatasetVector) dataset;
-					ImageIcon icon = (ImageIcon) label.getIcon();
-					BufferedImage bufferedImage = new BufferedImage(IMAGEICON_WIDTH, IMAGEICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-					Graphics graphics = bufferedImage.getGraphics();
-					DatasetType type = datasetVector.getType();
-					GeoStyle3D geoStyle;
-					if (((DatasetVector) dataset).getParentDataset() != null) {
-						if (dataset.getType() == DatasetType.POINT) {
-							graphics.drawImage(getImage(DatasetType.NETWORK), 0, 0, label);
-						} else if (dataset.getType() == DatasetType.POINT3D) {
-							graphics.drawImage(getImage(DatasetType.NETWORK3D), 0, 0, label);
-						}
-					} else if (type.equals(DatasetType.POINT) || type.equals(DatasetType.POINT3D)) {
-						Layer3DSettingVector layersetting = (Layer3DSettingVector) layer3DDataset
-								.getAdditionalSetting();
-						if (layersetting == null) {
-							layersetting = new Layer3DSettingVector();
-						}
-						geoStyle = layersetting.getStyle();
-						GeoStyle geoStyle2 = geoStyle3D2GeoStyle(geoStyle);
-						Geometry geometry = getGeometryByDatasetType(type);
-						geometry.setStyle(geoStyle2);
-						SymbolMarkerLibrary library = resources
-								.getMarkerLibrary();
-						int markerSymbolID = geoStyle2.getMarkerSymbolID();
-						if (markerSymbolID < 1) {
-							graphics.setColor(geoStyle2.getLineColor());
-							graphics.fillOval(IMAGEICON_WIDTH / 2 - 2,
-									IMAGEICON_WIDTH / 2 - 2, 4, 4);
-						} else {
-							Symbol findSymbol = library
-									.findSymbol(markerSymbolID);
-							findSymbol.draw(graphics, geometry);
-						}
-						icon.setImage(bufferedImage);
-					} else if (type.equals(DatasetType.LINE)
-							|| type.equals(DatasetType.LINE3D)) {
-						Layer3DSettingVector layersetting = (Layer3DSettingVector) layer3DDataset
-								.getAdditionalSetting();
-						if (layersetting == null) {
-							layersetting = new Layer3DSettingVector();
-						}
-						geoStyle = layersetting.getStyle();
-						GeoStyle geoStyle2 = geoStyle3D2GeoStyle(geoStyle);
-						geoStyle2.setLineWidth(0.2);
-						Geometry geometry = getGeometryByDatasetType(type);
-						geometry.setStyle(geoStyle2);
-						Toolkit.draw(geometry, resources, graphics);
-						icon.setImage(bufferedImage);
-					} else if (type.equals(DatasetType.REGION)
-							|| type.equals(DatasetType.REGION3D)) {
-						Layer3DSettingVector layerSettingVector = (Layer3DSettingVector) layer3DDataset
-								.getAdditionalSetting();
-						if (layerSettingVector == null) {
-							layerSettingVector = new Layer3DSettingVector();
-						}
-						geoStyle = layerSettingVector.getStyle();
-						GeoStyle geoStyle2 = geoStyle3D2GeoStyle(geoStyle);
-						Geometry geometry = getGeometryByDatasetType(type);
-						geometry.setStyle(geoStyle2);
-						Toolkit.draw(geometry, resources, graphics);
-						icon.setImage(bufferedImage);
-					} else if (type.equals(DatasetType.CAD)) {
-						graphics.drawImage(getImage(DatasetType.CAD), 0, 0, label);
-					} else if (type.equals(DatasetType.LINEM)) {
-						graphics.drawImage(getImage(DatasetType.LINEM), 0, 0, label);
-					} else if (type.equals(DatasetType.LINKTABLE)) {
-						graphics.drawImage(getImage(DatasetType.LINKTABLE), 0, 0, label);
-					} else if (type.equals(DatasetType.NETWORK)) {
-						graphics.drawImage(getImage(DatasetType.NETWORK), 0, 0, label);
-					} else if (type.equals(DatasetType.TABULAR)) {
-						graphics.drawImage(getImage(DatasetType.TABULAR), 0, 0, label);
-					} else if (type.equals(DatasetType.TEXT)) {
-						graphics.drawImage(getImage(DatasetType.TEXT), 0, 0, label);
-					} else if (type.equals(DatasetType.PARAMETRICLINE)) {
-						graphics.drawImage(getImage(DatasetType.PARAMETRICLINE), 0, 0, label);
-					} else if (type.equals(DatasetType.PARAMETRICREGION)) {
-						graphics.drawImage(getImage(DatasetType.PARAMETRICREGION), 0, 0, label);
-					} else if (type == DatasetType.NETWORK3D) {
-						graphics.drawImage(getImage(DatasetType.NETWORK3D), 0, 0, label);
-					}
-					icon.setImage(bufferedImage);
-				}
+                if (dataset instanceof DatasetVector) {
+                    DatasetVector datasetVector = (DatasetVector) dataset;
+                    ImageIcon icon = (ImageIcon) label.getIcon();
+                    BufferedImage bufferedImage = new BufferedImage(IMAGEICON_WIDTH, IMAGEICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+                    Graphics graphics = bufferedImage.getGraphics();
+                    DatasetType type = datasetVector.getType();
+                    GeoStyle3D geoStyle;
+                    if (((DatasetVector) dataset).getParentDataset() != null) {
+                        if (dataset.getType() == DatasetType.POINT) {
+                            graphics.drawImage(getImage(DatasetType.NETWORK), 0, 0, label);
+                        } else if (dataset.getType() == DatasetType.POINT3D) {
+                            graphics.drawImage(getImage(DatasetType.NETWORK3D), 0, 0, label);
+                        }
+                    } else if (type.equals(DatasetType.POINT) || type.equals(DatasetType.POINT3D)) {
+                        Layer3DSettingVector layersetting = (Layer3DSettingVector) layer3DDataset
+                                .getAdditionalSetting();
+                        if (layersetting == null) {
+                            layersetting = new Layer3DSettingVector();
+                        }
+                        geoStyle = layersetting.getStyle();
+                        GeoStyle geoStyle2 = geoStyle3D2GeoStyle(geoStyle);
+                        Geometry geometry = getGeometryByDatasetType(type);
+                        geometry.setStyle(geoStyle2);
+                        SymbolMarkerLibrary library = resources
+                                .getMarkerLibrary();
+                        int markerSymbolID = geoStyle2.getMarkerSymbolID();
+                        if (markerSymbolID < 1) {
+                            graphics.setColor(geoStyle2.getLineColor());
+                            graphics.fillOval(IMAGEICON_WIDTH / 2 - 2,
+                                    IMAGEICON_WIDTH / 2 - 2, 4, 4);
+                        } else {
+                            Symbol findSymbol = library
+                                    .findSymbol(markerSymbolID);
+                            findSymbol.draw(graphics, geometry);
+                        }
+                        icon.setImage(bufferedImage);
+                    } else if (type.equals(DatasetType.LINE)
+                            || type.equals(DatasetType.LINE3D)) {
+                        Layer3DSettingVector layersetting = (Layer3DSettingVector) layer3DDataset
+                                .getAdditionalSetting();
+                        if (layersetting == null) {
+                            layersetting = new Layer3DSettingVector();
+                        }
+                        geoStyle = layersetting.getStyle();
+                        GeoStyle geoStyle2 = geoStyle3D2GeoStyle(geoStyle);
+                        geoStyle2.setLineWidth(0.2);
+                        Geometry geometry = getGeometryByDatasetType(type);
+                        geometry.setStyle(geoStyle2);
+                        Toolkit.draw(geometry, resources, graphics);
+                        icon.setImage(bufferedImage);
+                    } else if (type.equals(DatasetType.REGION)
+                            || type.equals(DatasetType.REGION3D)) {
+                        Layer3DSettingVector layerSettingVector = (Layer3DSettingVector) layer3DDataset
+                                .getAdditionalSetting();
+                        if (layerSettingVector == null) {
+                            layerSettingVector = new Layer3DSettingVector();
+                        }
+                        geoStyle = layerSettingVector.getStyle();
+                        GeoStyle geoStyle2 = geoStyle3D2GeoStyle(geoStyle);
+                        Geometry geometry = getGeometryByDatasetType(type);
+                        geometry.setStyle(geoStyle2);
+                        Toolkit.draw(geometry, resources, graphics);
+                        icon.setImage(bufferedImage);
+                    } else if (type.equals(DatasetType.CAD)) {
+                        graphics.drawImage(getImage(DatasetType.CAD), 0, 0, label);
+                    } else if (type.equals(DatasetType.LINEM)) {
+                        graphics.drawImage(getImage(DatasetType.LINEM), 0, 0, label);
+                    } else if (type.equals(DatasetType.LINKTABLE)) {
+                        graphics.drawImage(getImage(DatasetType.LINKTABLE), 0, 0, label);
+                    } else if (type.equals(DatasetType.NETWORK)) {
+                        graphics.drawImage(getImage(DatasetType.NETWORK), 0, 0, label);
+                    } else if (type.equals(DatasetType.TABULAR)) {
+                        graphics.drawImage(getImage(DatasetType.TABULAR), 0, 0, label);
+                    } else if (type.equals(DatasetType.TEXT)) {
+                        graphics.drawImage(getImage(DatasetType.TEXT), 0, 0, label);
+                    } else if (type.equals(DatasetType.PARAMETRICLINE)) {
+                        graphics.drawImage(getImage(DatasetType.PARAMETRICLINE), 0, 0, label);
+                    } else if (type.equals(DatasetType.PARAMETRICREGION)) {
+                        graphics.drawImage(getImage(DatasetType.PARAMETRICREGION), 0, 0, label);
+                    } else if (type == DatasetType.NETWORK3D) {
+                        graphics.drawImage(getImage(DatasetType.NETWORK3D), 0, 0, label);
+                    } else if (type == DatasetType.MODEL) {
+                        graphics.drawImage(getImage(DatasetType.MODEL), 0, 0, label);
+                    }
+                    icon.setImage(bufferedImage);
+                }
 
-				if (dataset instanceof DatasetTopology) {
-					ImageIcon icon = (ImageIcon) label.getIcon();
-					BufferedImage bufferedImage = new BufferedImage(IMAGEICON_WIDTH, IMAGEICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-					Graphics graphics = bufferedImage.getGraphics();
-					graphics.drawImage(InternalImageIconFactory.DT_TOPOLOGY.getImage(), 0, 0, label);
-					icon.setImage(bufferedImage);
-				}
-			}
+                if (dataset instanceof DatasetTopology) {
+                    ImageIcon icon = (ImageIcon) label.getIcon();
+                    BufferedImage bufferedImage = new BufferedImage(IMAGEICON_WIDTH, IMAGEICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+                    Graphics graphics = bufferedImage.getGraphics();
+                    graphics.drawImage(InternalImageIconFactory.DT_TOPOLOGY.getImage(), 0, 0, label);
+                    icon.setImage(bufferedImage);
+                }
+            }
 //			if (dataset == null) {
 //				ImageIcon icon = (ImageIcon) label.getIcon();
 //				BufferedImage bufferedImage = new BufferedImage(
@@ -278,50 +280,50 @@ class Layer3DDatasetNodeDecorator implements TreeNodeDecorator {
 //						icon.setImage(bufferedImage);
 //					}
 //				}
-		}
-	}
+        }
+    }
 
-	private Image getImage(DatasetType cad) {
-		return ((ImageIcon) ControlsResources.getIcon(CommonToolkit.DatasetImageWrap.getImageIconPath(cad))).getImage();
-	}
+    private Image getImage(DatasetType cad) {
+        return ((ImageIcon) ControlsResources.getIcon(CommonToolkit.DatasetImageWrap.getImageIconPath(cad))).getImage();
+    }
 
-	private Geometry getGeometryByDatasetType(DatasetType type) {
-		if (type.equals(DatasetType.POINT) || type.equals(DatasetType.POINT3D)) {
-			GeoPoint geoPoint = new GeoPoint();
-			return geoPoint;
-		}
-		if (type.equals(DatasetType.LINE) || type.equals(DatasetType.LINE3D)) {
-			Point2D[] pts = {new Point2D(0, 16), new Point2D(4, 0),
-					new Point2D(12, 16), new Point2D(16, 0)};
-			Point2Ds ds = new Point2Ds(pts);
-			GeoLine geoLine = new GeoLine(ds);
-			return geoLine;
-		}
-		if (type.equals(DatasetType.REGION)
-				|| type.equals(DatasetType.REGION3D)) {
-			Point2D[] points = {new Point2D(1, 15), new Point2D(1, 5),
-					new Point2D(10, 1), new Point2D(15, 5),
-					new Point2D(15, 15), new Point2D(1, 15)};
-			Point2Ds ds = new Point2Ds(points);
-			GeoRegion geoRegion = new GeoRegion(ds);
-			return geoRegion;
-		}
-		return null;
-	}
+    private Geometry getGeometryByDatasetType(DatasetType type) {
+        if (type.equals(DatasetType.POINT) || type.equals(DatasetType.POINT3D)) {
+            GeoPoint geoPoint = new GeoPoint();
+            return geoPoint;
+        }
+        if (type.equals(DatasetType.LINE) || type.equals(DatasetType.LINE3D)) {
+            Point2D[] pts = {new Point2D(0, 16), new Point2D(4, 0),
+                    new Point2D(12, 16), new Point2D(16, 0)};
+            Point2Ds ds = new Point2Ds(pts);
+            GeoLine geoLine = new GeoLine(ds);
+            return geoLine;
+        }
+        if (type.equals(DatasetType.REGION)
+                || type.equals(DatasetType.REGION3D)) {
+            Point2D[] points = {new Point2D(1, 15), new Point2D(1, 5),
+                    new Point2D(10, 1), new Point2D(15, 5),
+                    new Point2D(15, 15), new Point2D(1, 15)};
+            Point2Ds ds = new Point2Ds(points);
+            GeoRegion geoRegion = new GeoRegion(ds);
+            return geoRegion;
+        }
+        return null;
+    }
 
-	private GeoStyle geoStyle3D2GeoStyle(GeoStyle3D style3D) {
-		GeoStyle geoStyle = new GeoStyle();
-		geoStyle.setFillBackColor(style3D.getFillForeColor());
-		geoStyle.setFillForeColor(style3D.getFillForeColor());
-		geoStyle.setLineColor(style3D.getLineColor());
-		if (style3D.getLineWidth() > 0.2) {
-			geoStyle.setLineWidth(0.2);
-		} else {
-			geoStyle.setLineWidth(style3D.getLineWidth());
-		}
-		geoStyle.setMarkerSize(new Size2D(style3D.getMarkerSize(), style3D
-				.getMarkerSize()));
-		return geoStyle;
-	}
+    private GeoStyle geoStyle3D2GeoStyle(GeoStyle3D style3D) {
+        GeoStyle geoStyle = new GeoStyle();
+        geoStyle.setFillBackColor(style3D.getFillForeColor());
+        geoStyle.setFillForeColor(style3D.getFillForeColor());
+        geoStyle.setLineColor(style3D.getLineColor());
+        if (style3D.getLineWidth() > 0.2) {
+            geoStyle.setLineWidth(0.2);
+        } else {
+            geoStyle.setLineWidth(style3D.getLineWidth());
+        }
+        geoStyle.setMarkerSize(new Size2D(style3D.getMarkerSize(), style3D
+                .getMarkerSize()));
+        return geoStyle;
+    }
 
 }

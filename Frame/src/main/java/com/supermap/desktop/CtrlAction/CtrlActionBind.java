@@ -2,7 +2,7 @@ package com.supermap.desktop.CtrlAction;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.*;
-import com.supermap.desktop.controls.property.GeometryPropertyBindWindow.BindUtilties;
+import com.supermap.desktop.controls.GeometryPropertyBindWindow.BindUtilties;
 import com.supermap.desktop.implement.CtrlAction;
 
 /**
@@ -16,7 +16,7 @@ public class CtrlActionBind extends CtrlAction {
     @Override
     public void run() {
         try {
-            new BindUtilties();
+            BindUtilties.showPopumenu(getCaller());
         } catch (Exception e) {
             e.printStackTrace();
         }
