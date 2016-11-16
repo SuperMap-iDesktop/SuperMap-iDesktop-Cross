@@ -6,9 +6,14 @@ import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Map;
 import org.w3c.dom.DOMException;
@@ -23,7 +28,11 @@ import javax.swing.table.DefaultTableModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.awt.*;
@@ -31,7 +40,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -252,9 +267,8 @@ public class ScaleEnabledContainer extends SmDialog {
 	}
 
 	private void setTableCell(int selectRow, String selectScale) {
-		scaleDisplays.set(selectRow, selectScale);
+		scaleDisplays.set(selectRow, "1:" + DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(selectScale.split(":")[1])));
 		getTable();
-		return;
 	}
 
 	private void unRegistEvents() {
@@ -527,7 +541,7 @@ public class ScaleEnabledContainer extends SmDialog {
 			String scaleNow = table.getValueAt(selectRow, 1).toString();
 			double scaleNextD = Double.parseDouble(scaleNext.split(":")[1]);
 			double scaleNowD = Double.parseDouble(scaleNow.split(":")[1]);
-			String scaleInsert = new String("1:" + String.valueOf(format.format((scaleNextD + scaleNowD) / 2)));
+			String scaleInsert = "1:" + DoubleUtilities.getFormatString((scaleNextD + scaleNowD) / 2);
 			this.scaleDisplays.add(selectRow + 1, scaleInsert);
 			getTable();
 			this.table.addRowSelectionInterval(selectRow + 1, selectRow + 1);
@@ -548,8 +562,8 @@ public class ScaleEnabledContainer extends SmDialog {
 		if (selectRow == table.getRowCount() - 1 || table.getRowCount() > 0 && selectRow < 0) {
 			// 没有选中项，但是表中有数据时
 			String scaleEnd = table.getValueAt(table.getRowCount() - 1, 1).toString();
-			double scaleEndD = Double.parseDouble(scaleEnd.split(":")[1]);
-			String scaleLast = new String("1:" + String.valueOf(format.format(scaleEndD / 2)));
+			double scaleEndD = DoubleUtilities.stringToValue(scaleEnd.split(":")[1]);
+			String scaleLast = "1:" + DoubleUtilities.getFormatString(scaleEndD / 2);
 			this.scaleDisplays.add(scaleLast);
 			getTable();
 			checkButtonState();
@@ -720,9 +734,9 @@ public class ScaleEnabledContainer extends SmDialog {
 		this.scales = scales;
 		scaleDisplays.clear();
 		if (scales.length > 0) {
-			for (int i = 0; i < scales.length; i++) {
-				String tempdDisplay = new String(new ScaleModel(scales[i]).getScaleCaption());
-				scaleDisplays.add(tempdDisplay);
+			for (double scale : scales) {
+				String tempDisplay = new ScaleModel(scale).getScaleCaption();
+				scaleDisplays.add(tempDisplay);
 			}
 		}
 		getTable();

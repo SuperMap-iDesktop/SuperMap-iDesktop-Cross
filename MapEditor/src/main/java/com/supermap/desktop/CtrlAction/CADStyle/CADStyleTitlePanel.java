@@ -1,12 +1,27 @@
 package com.supermap.desktop.CtrlAction.CADStyle;
 
-import com.supermap.data.*;
+import com.supermap.data.EditHistory;
+import com.supermap.data.EditType;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Geometry;
+import com.supermap.data.GeometryType;
+import com.supermap.data.Recordset;
+import com.supermap.data.Resources;
+import com.supermap.data.Symbol;
+import com.supermap.data.SymbolMarker;
+import com.supermap.data.SymbolMarker3D;
+import com.supermap.data.SymbolType;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
-import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.*;
+import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbols;
+import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbolsFill;
+import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbolsLine;
+import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbolsPoint;
+import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.SymbolSelectedChangedListener;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.SymbolMarkerType;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
@@ -47,8 +62,8 @@ public class CADStyleTitlePanel extends JPanel {
 
         @Override
         public void SymbolSelectedChangedEvent(Symbol symbol) {
-            //此处若修改了recordset需要重新获取recordset
-            resetSymbol(symbol);
+	        // 此处若修改了recordset需要重新获取recordset
+	        resetSymbol(symbol);
             parent.setModify(true);
         }
 
@@ -57,9 +72,25 @@ public class CADStyleTitlePanel extends JPanel {
             // Do nothing
         }
     };
+	// FIXME: 2016/11/14 UGDJ-530
+	// 关闭或打开工作空间时重新加载
+//	private WorkspaceClosedListener workSpaceClosedListener = new WorkspaceClosedListener() {
+//		@Override
+//		public void workspaceClosed(WorkspaceClosedEvent workspaceClosedEvent) {
+//			workSpaceChanged(Application.getActiveApplication().getWorkspace());
+//		}
+//	};
+//
+//	private WorkspaceOpenedListener workSpaceOpenedListener= new WorkspaceOpenedListener() {
+//
+//		@Override
+//		public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
+//			workSpaceChanged(workspaceOpenedEvent.getWorkspace());
+//		}
+//	};
 
-    public CADStyleTitlePanel(CADStyleContainer parent, int styleType) {
-        this.parent = parent;
+	public CADStyleTitlePanel(CADStyleContainer parent, int styleType) {
+		this.parent = parent;
         this.styleType = styleType;
         this.COLOR_SYSTEM_DEFAULT = getBackground();
         initComponents();
@@ -77,11 +108,18 @@ public class CADStyleTitlePanel extends JPanel {
     }
 
     private void registEvents() {
+	    // FIXME: 2016/11/14 UGDJ-530
+//	    Application.getActiveApplication().getWorkspace().addClosedListener(workSpaceClosedListener);
+//	    Application.getActiveApplication().getWorkspace().addOpenedListener(workSpaceOpenedListener);
         this.panelSymbols.addSymbolSelectedChangedListener(this.panelSymbolsListener);
     }
 
-    private void initResources() {
-        switch (styleType) {
+	private void workSpaceChanged(Workspace workspace) {
+		initComponents();
+	}
+
+	private void initResources() {
+		switch (styleType) {
             case GEOPOINTTYPE:
                 this.setBorder(new TitledBorder(MapEditorProperties.getString("String_Point")));
                 break;

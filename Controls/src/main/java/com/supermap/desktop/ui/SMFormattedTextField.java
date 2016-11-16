@@ -8,6 +8,8 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.NumberFormatter;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
@@ -28,6 +30,16 @@ public class SMFormattedTextField extends JFormattedTextField implements Documen
 	private void init() {
 		getCaretPositionListener().registerComponent(this);
 		getDocument().addDocumentListener(this);
+		addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+					if (!StringUtilities.isNullOrEmpty(getText()) && DoubleUtilities.stringToValue(getText()) != null) {
+						setText(DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(getText())));
+					}
+				}
+			}
+		});
 	}
 
 	private CaretPositionListener getCaretPositionListener() {
@@ -95,4 +107,8 @@ public class SMFormattedTextField extends JFormattedTextField implements Documen
 		return false;
 	}
 
+	@Override
+	public void setText(String t) {
+		super.setText(t);
+	}
 }
