@@ -12,8 +12,6 @@ public class ExportFileInfo {
 
     private ExportSetting exportSetting;
 
-    private String state;
-
     private FileType fileType;
 
     public ExportFileInfo() {
@@ -26,14 +24,6 @@ public class ExportFileInfo {
 
     public void setExportSetting(ExportSetting exportSetting) {
         this.exportSetting = exportSetting;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
     }
 
     public FileType getFileType() {

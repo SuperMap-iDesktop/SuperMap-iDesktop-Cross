@@ -60,7 +60,19 @@ public class ComponentFactory {
 		return buttonClose;
 	}
 
-	/**
+    public static JButton createButtonSelectAll() {
+        SmButton buttonClose = new SmButton();
+        buttonClose.setText(CommonProperties.getString(CommonProperties.selectAll));
+        return buttonClose;
+    }
+
+    public static JButton createButtonSelectInverse() {
+        SmButton buttonClose = new SmButton();
+        buttonClose.setText(CommonProperties.getString(CommonProperties.selectInverse));
+        return buttonClose;
+    }
+
+    /**
 	 * 生产一个整型限制的输入控件
 	 * 
 	 * @param defaultValue

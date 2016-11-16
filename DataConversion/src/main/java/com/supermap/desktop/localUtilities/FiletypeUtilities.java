@@ -23,7 +23,8 @@ public class FiletypeUtilities {
     private static final FileType[] vectorValue = {FileType.WOR, FileType.SCV, FileType.DXF, FileType.SHP,
             FileType.E00, FileType.MIF, FileType.TAB, FileType.MAPGIS, FileType.ModelOSG, FileType.Model3DS,
             FileType.ModelDXF, FileType.ModelX, FileType.KML, FileType.KMZ, FileType.DWG, FileType.VCT, FileType.DBF,
-            FileType.GJB5068, FileType.DGN};
+            FileType.GJB5068, FileType.DGN, FileType.TEMSVector, FileType.TEMSBuildingVector};
+
     public static String getParseFile(String filePath, String fileFilter) {
         String fileType = "";
         if (filePath.equalsIgnoreCase(FileTypeLocale.DBF_STRING)) {

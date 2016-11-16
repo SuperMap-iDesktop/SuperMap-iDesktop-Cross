@@ -1,13 +1,15 @@
-package com.supermap.desktop.GeometryPropertyBindWindow;
+package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
+import com.supermap.desktop.implement.SmMenuItem;
 import com.supermap.desktop.ui.docking.DockingWindow;
 import com.supermap.desktop.ui.docking.DockingWindowAdapter;
 import com.supermap.desktop.ui.docking.SplitWindow;
@@ -16,6 +18,9 @@ import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
 import net.infonode.util.Direction;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class BindUtilties {
     private static SplitWindow splitWindow;
@@ -54,7 +59,7 @@ public class BindUtilties {
             }
 
         });
-//        formManager.addActiveFormChangedListener(activeFormChangeListener);
+        formManager.addActiveFormChangedListener(activeFormChangeListener);
     }
 
     public static void openTabular(Dataset dataset, Recordset recordset) {
@@ -64,6 +69,16 @@ public class BindUtilties {
         tabular.getIdMap().clear();
         tabular.getRowIndexMap().clear();
         tabular.setRecordset(recordset);
+    }
+
+    public static void showPopumenu(IBaseItem caller) {
+        Point point = ((SmMenuItem) caller).getLocation();
+        int x = (int) point.getX() + 10;
+        JPopupMenuBind popupMenuBind = new JPopupMenuBind();
+        int y = (int) point.getY() + popupMenuBind.getHeight();
+        JFrame mainFrame = (JFrame) Application.getActiveApplication().getMainFrame();
+        popupMenuBind.show(mainFrame, x, y);
+        popupMenuBind.setVisible(true);
     }
 
     class LocalFormChangedListener implements ActiveFormChangedListener {

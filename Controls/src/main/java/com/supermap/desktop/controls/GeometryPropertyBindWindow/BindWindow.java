@@ -1,4 +1,4 @@
-package com.supermap.desktop.GeometryPropertyBindWindow;
+package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetVector;

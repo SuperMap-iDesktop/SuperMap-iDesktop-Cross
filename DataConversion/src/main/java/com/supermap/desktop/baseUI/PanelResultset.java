@@ -119,7 +119,6 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
                             break;
                         case 2:
                             importSetting.setImportMode(ImportMode.OVERWRITE);
-                            break;
                         default:
                             break;
                     }
