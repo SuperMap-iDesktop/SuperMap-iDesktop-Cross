@@ -60,7 +60,7 @@ public class ViewDemo extends JFrame implements DockingConstants {
 
 		Viewport viewport = new Viewport();
 		p.add(viewport, BorderLayout.CENTER);
-		viewport.setRegionBlocked(DockingConstants.CENTER_REGION, true);
+//		viewport.setRegionBlocked(DockingConstants.CENTER_REGION, true);
 
 		View startPage = createStartPage();
 		View view1 = createView("solution.explorer", "Solution Explorer");

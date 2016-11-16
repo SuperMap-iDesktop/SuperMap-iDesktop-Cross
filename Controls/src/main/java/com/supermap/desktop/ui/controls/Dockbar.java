@@ -4,6 +4,7 @@ import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop.enums.DockState;
 import com.supermap.desktop.ui.XMLDockbar;
+import org.flexdock.docking.DockingManager;
 import org.flexdock.view.View;
 
 import java.awt.*;
@@ -44,7 +45,7 @@ public class Dockbar extends View implements IDockbar {
 	private int currentAction = -1;
 
 	// dockbar 内嵌的用户自定义控件
-	private Component embbedComponent;
+	private Component innerComponent;
 
 	public int getCurrentAction() {
 		return currentAction;
@@ -69,19 +70,9 @@ public class Dockbar extends View implements IDockbar {
 		}
 
 		this.setVisible(xmlDockbar.getVisible());
-		this.embbedComponent = xmlDockbar.CreateComponent();
-		getContentPane().add(this.embbedComponent);
+		this.innerComponent = xmlDockbar.CreateComponent();
+		getContentPane().add(this.innerComponent);
 		return true;
-	}
-
-	@Override
-	public DockState getDockState() {
-		return this.xmlDockbar.getDockState();
-	}
-
-	@Override
-	public void setDockState(DockState dockState) {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -95,37 +86,8 @@ public class Dockbar extends View implements IDockbar {
 	}
 
 	@Override
-	public Component getComponent() {
-		return null;
-	}
-
-	public Component getEmbbedComponent() {
+	public Component getInnerComponent() {
 		return getContentPane().getComponent(0);
-	}
-
-	@Override
-	public String getCustomProperty() {
-		return this.xmlDockbar.getCustomProperty();
-	}
-
-	@Override
-	public void setCustomProperty(String customProperty) {
-		this.xmlDockbar.setCustomProperty(customProperty);
-	}
-
-	@Override
-	public String getLabel() {
-		return "this.getTitle()";
-	}
-
-	@Override
-	public void setLabel(String label) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public boolean isActived() {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -134,42 +96,12 @@ public class Dockbar extends View implements IDockbar {
 	}
 
 	@Override
-	public int getIndex() {
-		return this.xmlDockbar.getIndex();
-	}
-
-	@Override
-	public void setIndex(int index) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public String getComponentName() {
-		return this.xmlDockbar.getControlClass();
-	}
-
-	@Override
-	public boolean isAutoHide() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void setAutoHide(boolean isAutoHide) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Point getFloatingLocation() {
-		return this.xmlDockbar.getFloatingLoation();
-	}
-
-	@Override
-	public void setFloatingLocation(Point floatingLocation) {
-		throw new UnsupportedOperationException();
+		return this.innerComponent.getClass().getName();
 	}
 
 	@Override
 	public void active() {
-
+		setActive(true);
 	}
 }

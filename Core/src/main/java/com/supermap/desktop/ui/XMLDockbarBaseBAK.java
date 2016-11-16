@@ -7,7 +7,10 @@ import org.w3c.dom.Element;
 
 import java.awt.*;
 
-public class XMLDockbarBase{
+/**
+ * Created by highsad on 2016/11/16.
+ */
+public class XMLDockbarBaseBAK { // extends XMLCommand
 //	private static final String SPLIT_COMMA = ",";
 //
 //	private DockSite dockSite = DockSite.LEFT;

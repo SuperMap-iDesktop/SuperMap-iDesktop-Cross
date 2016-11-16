@@ -12,7 +12,8 @@ import org.w3c.dom.Element;
 
 import java.awt.*;
 
-public class XMLDockbar extends XMLDockbarBase {
+public class XMLDockbar extends XMLCommand {
+	private static final String SPLIT_COMMA = ",";
 	private String controlClass = null;
 
 	public XMLDockbar(PluginInfo pluginInfo, XMLCommandBase group) {
@@ -22,14 +23,17 @@ public class XMLDockbar extends XMLDockbarBase {
 
 	@Override
 	public boolean initialize(Element element) {
-		super.initialize(element);
+		boolean result = false;
+
+		result = super.initialize(element);
 
 		try {
 			this.controlClass = element.getAttribute(g_AttributionControl);
+			result = true;
 		} catch (Exception e) {
-			// TODO: handle exception
+			result = false;
 		}
-		return true;
+		return result;
 	}
 
 	public Component CreateComponent() {
@@ -73,10 +77,18 @@ public class XMLDockbar extends XMLDockbarBase {
 		XMLDockbar result = null;
 
 		try {
-			result = (XMLDockbar) super.clone(parent);
-			result.setControlClass(this.controlClass);
+			result = (XMLDockbar) createNew(parent);
+			if (result != null) {
+				result.setID(this.getID());
+				result.setVisible(this.getVisible());
+				result.setCustomProperty(this.getCustomProperty());
+				result.setLabel(this.getLabel());
+				result.setTooltip(this.getTooltip());
+				result.setIndex(this.getIndex());
+				result.setControlClass(this.controlClass);
+			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			result = null;
 		}
 		return result;
 	}
@@ -86,15 +98,22 @@ public class XMLDockbar extends XMLDockbarBase {
 		XMLDockbar result = null;
 
 		try {
-			result = (XMLDockbar) super.saveToPluginInfo(pluginInfo, parent);
+			if (this.getPluginInfo() == pluginInfo) {
+				result = (XMLDockbar) createNew(pluginInfo, parent);
+			}
+
 			if (result != null) {
+				result.setID(this.getID());
+				result.setVisible(this.getVisible());
+				result.setCustomProperty(this.getCustomProperty());
+				result.setIndex(this.getIndex());
 				result.setLabel(this.getLabel());
 				result.setControlClass(this.getControlClass());
 				result.getPluginInfo().setBundleName(this.getPluginInfo().getBundleName());
 				result.setHelpURL(this.getHelpURL());
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			result = null;
 		}
 		return result;
 	}
@@ -108,12 +127,7 @@ public class XMLDockbar extends XMLDockbarBase {
 				dockbarNode = document.createElement(g_NodeDockbar);
 				dockbarNode.setAttribute(g_AttributionIndex, Integer.toString(this.getIndex()));
 				dockbarNode.setAttribute(g_AttributionLabel, this.getLabel());
-				dockbarNode.setAttribute(g_AttributionDockstate, DockState.toString(this.getDockState()));
-				dockbarNode.setAttribute(g_AttributionDocksite, DockSite.toString(this.getDockSite()));
 				dockbarNode.setAttribute(g_AttributionVisible, Boolean.toString(this.getVisible()));
-				dockbarNode.setAttribute(g_AttributionAutoHide, Boolean.toString(this.isAutoHide()));
-				dockbarNode.setAttribute(g_AttributionFloatingLocation, convertToString(this.getFloatingLoation()));
-				dockbarNode.setAttribute(g_AttributionSize, convertToString(this.getPaneSize()));
 				dockbarNode.setAttribute(g_AttributionControl, this.getControlClass());
 				dockbarNode.setAttribute(g_AttributionBundleName, this.getPluginInfo().getBundleName());
 				dockbarNode.setAttribute(g_AttributionHelpURL, this.getHelpURL());
@@ -123,6 +137,100 @@ public class XMLDockbar extends XMLDockbarBase {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 		return dockbarNode;
+	}
+
+	public static String convertToString(Dimension size) {
+		String result = null;
+
+		try {
+			result = Double.toString(size.getWidth()) + SPLIT_COMMA + Double.toString(size.getHeight());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return result;
+	}
+
+	public static String convertToString(Point point) {
+		String result = null;
+
+		try {
+			result = Double.toString(point.getX()) + SPLIT_COMMA + Double.toString(point.getY());
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return result;
+	}
+
+	@Override
+	protected boolean doRemove() {
+		boolean result = false;
+
+		try {
+			result = ((XMLDockbars) this.getParent()).getDockbars().remove(this);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return result;
+	}
+
+	/**
+	 * 创建一个新的对象
+	 *
+	 * @param parent 指定的父容器
+	 * @return
+	 */
+	protected XMLCommandBase createNew(XMLCommandBase parent) {
+		XMLCommandBase result = null;
+
+		if (this instanceof XMLDockbar) {
+			result = new XMLDockbar(this.getPluginInfo(), parent);
+		}
+		return result;
+	}
+
+	protected XMLCommandBase createNew(PluginInfo pluginInfo, XMLCommandBase parent) {
+		XMLCommandBase result = null;
+
+		if (this instanceof XMLDockbar) {
+			result = new XMLDockbar(pluginInfo, parent);
+		}
+		return result;
+	}
+
+	private Point getPoint(String pointString) {
+		Point point = new Point();
+
+		try {
+			if (!pointString.isEmpty()) {
+				String[] strArray = pointString.split(SPLIT_COMMA);
+				if (strArray.length == 2) {
+					int pointX = Integer.parseInt(strArray[0]);
+					int pointY = Integer.parseInt(strArray[1]);
+					point = new Point(pointX, pointY);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return point;
+	}
+
+	private Dimension getDimension(String dimensionString) {
+		Dimension dimension = new Dimension();
+
+		try {
+			if (!dimensionString.isEmpty()) {
+				String[] strArray = dimensionString.split(SPLIT_COMMA);
+				if (strArray.length == 2) {
+					int width = Integer.parseInt(strArray[0]);
+					int height = Integer.parseInt(strArray[1]);
+					dimension = new Dimension(width, height);
+				}
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return dimension;
 	}
 
 	@Override

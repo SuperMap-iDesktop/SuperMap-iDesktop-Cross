@@ -14,7 +14,6 @@ import java.util.ArrayList;
 /**
  * SplitWindow 某一部分设置为不可见，只会是内容不可见，SplitWindow 的布局会保持原样，可见的部分不会填充整个 SplitWindow。其他 Dock 风格的 Window 也一样。因此第一个版本不实现动态设置 visible 的功能。后续版本可能会根据需求另外选择合适的 Docking
  * 库，或者自行修改。
- *
  */
 public class DockbarManager implements IDockbarManager {
 	private static final String WORKSPACE_COMPONENT_MANAGER_NAME = "com.supermap.desktop.ui.WorkspaceComponentManager";
@@ -62,7 +61,7 @@ public class DockbarManager implements IDockbarManager {
 		try {
 			for (int i = 0; i < this.dockbars.size(); i++) {
 				IDockbar dockbar = this.dockbars.get(i);
-				if (controlClass == dockbar.getComponent().getClass()) {
+				if (controlClass == dockbar.getInnerComponent().getClass()) {
 					result = dockbar;
 					break;
 				}
@@ -115,14 +114,14 @@ public class DockbarManager implements IDockbarManager {
 						&& dockbar.getComponentName().equalsIgnoreCase(OUTPUT_FRAME_NAME)) {
 					this.outputFrame = dockbar;
 				} else {
-					if (dockbar.getDockState() == DockState.DOCK) {
+//					if (dockbar.getDockState() == DockState.DOCK) {
 //						this.customDockbarsWindow.addTab(dockbar, dockbar.getIndex());
-					} else if (dockbar.getDockState() == DockState.FLOAT) {
+//					} else if (dockbar.getDockState() == DockState.FLOAT) {
 //						this.floatingWindowChildrenContainer.addTab(dockbar);
-					}
+//					}
 				}
 
-				this.dockbars.add(dockbar);
+//				this.dockbars.add(dockbar);
 			}
 		}
 

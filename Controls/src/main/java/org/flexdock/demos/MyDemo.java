@@ -37,33 +37,35 @@ public class MyDemo extends JFrame {
 
 		this.getContentPane().add(button, BorderLayout.NORTH);
 		this.getContentPane().add(viewport, BorderLayout.CENTER);
-		viewport.setRegionBlocked(DockingConstants.REGION, true);
-
 
 		JPanel panelMain = new JPanel();
 		panelMain.setBackground(Color.lightGray);
 		final View view = new View("main", "main");
 		view.setContentPane(panelMain);
-
+		view.setTitlebar(null);
+		view.setTerritoryBlocked(DockingConstants.CENTER_REGION, true);
 		JPanel panel1 = createPanel("panel1");
 		JPanel panel2 = createPanel("panel2");
 		JPanel panel3 = createPanel("panel3");
 		JPanel panel4 = createPanel("panel4");
 
 		final View view1 = new View("panel1", "panel1");
+		view1.setTerritoryBlocked(DockingConstants.WEST_REGION, true);
+		view1.setTerritoryBlocked(DockingConstants.EAST_REGION, true);
+		view1.setTerritoryBlocked(DockingConstants.CENTER_REGION, true);
 		view1.setContentPane(panel1);
 
 		View view2 = new View("panel2", "panel2");
-		view1.setContentPane(panel2);
+		view2.setContentPane(panel2);
 
 		View view3 = new View("panel3", "panel3");
-		view1.setContentPane(panel3);
+		view3.setContentPane(panel3);
 
 		View view4 = new View("panel4", "panel4");
-		view1.setContentPane(panel4);
-
+		view4.setContentPane(panel4);
 		viewport.dock(view);
 
+//		viewport.setRegionBlocked(DockingConstants.CENTER_REGION, true);
 //		viewport.dock(((Dockable) view3), DockingConstants.EAST_REGION);
 //		viewport.dock((Dockable) view1, DockingConstants.SOUTH_REGION);
 //		viewport.dock(((Dockable) view2), DockingConstants.WEST_REGION);
@@ -79,18 +81,12 @@ public class MyDemo extends JFrame {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (DockingManager.isDocked((Dockable) view1)) {
-					try {
-						DockingManager.storeLayoutModel();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					} catch (PersistenceException e1) {
-						e1.printStackTrace();
-					}
-					DockingManager.close(view1);
-				} else {
-					DockingManager.display(view1);
-				}
+//				if (DockingManager.isDocked((Dockable) view1)) {
+//					DockingManager.close(view1);
+//				} else {
+//					DockingManager.display(view1);
+//				}
+				System.out.println(DockingManager.getDockingState(view1).toString());
 			}
 		});
 	}
