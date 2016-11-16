@@ -14,6 +14,7 @@ import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.docking.DockingWindow;
 import com.supermap.desktop.ui.docking.TabWindow;
 import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
@@ -143,13 +144,21 @@ public class JPopupMenuBind extends JPopupMenu {
         for (int j = 0; j < size; j++) {
             IForm formMap = (IForm) formList.get(j);
             if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() &&
-                    !mapControl.equals(((IFormMap) formMap).getMapControl()) && haveSaveMap(((IFormMap) formMap).getMapControl().getMap(), mapControl.getMap())) {
-                Map map = ((IFormMap) formMap).getMapControl().getMap();
-                Map sourceMap = mapControl.getMap();
-                Layers layers = map.getLayers();
-                int layerSize = layers.getCount();
-                for (int k = 0; k < layerSize; k++) {
-                    layers.get(k).setSelection(sourceMap.getLayers().get(k).getSelection());
+                    !mapControl.equals(((IFormMap) formMap).getMapControl()) && includeSameLayer(((IFormMap) formMap).getMapControl().getMap(), mapControl.getMap())) {
+                Map sourceMap = ((IFormMap) formMap).getMapControl().getMap();
+                Map targetMap = mapControl.getMap();
+                Layers sourceLayers = sourceMap.getLayers();
+                Layers targetLayers = targetMap.getLayers();
+                int sourceLayesSize = sourceLayers.getCount();
+                int targetLaysersSize = targetLayers.getCount();
+                for (int i = 0; i < sourceLayesSize; i++) {
+                    for (int k = 0; k < targetLaysersSize; k++) {
+                        Layer sourceLayer = sourceLayers.get(i);
+                        Layer targetLayer = targetLayers.get(k);
+                        if (sourceLayer.getDataset().equals(targetLayer.getDataset())) {
+                            sourceLayer.setSelection(targetLayer.getSelection());
+                        }
+                    }
                 }
             }
         }
@@ -256,17 +265,18 @@ public class JPopupMenuBind extends JPopupMenu {
         }
     }
 
-    private boolean haveSaveMap(Map sourceMap, Map targetMap) {
-        boolean result = true;
+    private boolean includeSameLayer(Map sourceMap, Map targetMap) {
+        boolean result = false;
         Layers sourceLayers = sourceMap.getLayers();
         Layers targetLayers = targetMap.getLayers();
-        if (sourceLayers.getCount() != targetLayers.getCount()) {
-            result = false;
-        } else {
-            int size = sourceLayers.getCount();
-            for (int i = 0; i < size; i++) {
-                if (!sourceLayers.get(i).getName().equals(targetLayers.get(i).getName())) {
-                    result = false;
+        int sourceLayesSize = sourceLayers.getCount();
+        int targetLaysersSize = targetLayers.getCount();
+        for (int i = 0; i < sourceLayesSize; i++) {
+            for (int k = 0; k < targetLaysersSize; k++) {
+                Layer sourceLayer = sourceLayers.get(i);
+                Layer targetLayer = targetLayers.get(k);
+                if (sourceLayer.getDataset().equals(targetLayer.getDataset())) {
+                    result = true;
                     break;
                 }
             }

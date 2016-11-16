@@ -2,7 +2,6 @@ package com.supermap.desktop.iml;
 
 import com.supermap.data.conversion.FileType;
 import com.supermap.desktop.Interface.IExportPanelFactory;
-import com.supermap.desktop.Interface.IPanelTransformFactory;
 import com.supermap.desktop.baseUI.PanelExportTransform;
 import com.supermap.desktop.exportUI.PanelExportTransformForGrid;
 import com.supermap.desktop.exportUI.PanelExportTransformForVector;
@@ -21,9 +20,11 @@ public class ExportPanelFactory implements IExportPanelFactory {
 
     @Override
     public PanelExportTransform createExportPanel(ExportFileInfo exportsFileInfo) {
-        IPanelTransformFactory transformFactory = new PanelTransformFactory();
         PanelExportTransform result = new PanelExportTransform(exportsFileInfo);
         FileType fileType = exportsFileInfo.getFileType();
+        if (fileType.equals(FileType.CSV)) {
+            return new PanelExportTransformForVector(exportsFileInfo);
+        }
         if (FiletypeUtilities.isGridType(fileType)) {
             result = new PanelExportTransformForGrid(exportsFileInfo);
         } else if (FiletypeUtilities.isVectorType(fileType)) {

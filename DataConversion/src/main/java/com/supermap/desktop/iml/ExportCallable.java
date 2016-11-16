@@ -125,7 +125,7 @@ public class ExportCallable extends UpdateProgressCallable {
                     Application.getActiveApplication().getOutput()
                             .output(MessageFormat.format(successExportInfo, successDatasetAlis, successExportSettings[0].getTargetFilePath(), time));
                 } else if (null != failExportSettings && 0 < failExportSettings.length) {
-                    exportTable.setValueAt(DataConversionProperties.getString("String_FormImport_Succeed"), i, DataExportDialog.COLUMN_STATE);
+                    exportTable.setValueAt(DataConversionProperties.getString("String_FormImport_NotSucceed"), i, DataExportDialog.COLUMN_STATE);
                     String failDatasetAlis = getDatasetAlis(failExportSettings[0]);
                     Application.getActiveApplication().getOutput()
                             .output(MessageFormat.format(failExportInfo, failDatasetAlis));
