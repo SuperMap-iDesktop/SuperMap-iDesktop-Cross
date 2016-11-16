@@ -1457,9 +1457,9 @@ public class CommonToolkit {
 		/**
 		 * 根据指定的文件后缀获取相应的文件引擎类型
 		 *
-		 * @param fileExt
-		 *            文件的扩展名
-		 * @return 对应的引擎类型
+         * @param
+         *
+         * @return 对应的引擎类型
 		 */
 		private EngineTypeWrap() {
 			// 不提供构造函数
@@ -4636,8 +4636,8 @@ public class CommonToolkit {
 			datasetImage.put(DatasetType.WCS, fileParentPath + "Image_DatasetWCS_Normal.png");
 			datasetImage.put(DatasetType.WMS, fileParentPath + "Image_DatasetWMS_Normal.png");
 			datasetImage.put(DatasetType.TEXTURE, fileParentPath + "Image_DataseSimpleDataset_Normal.png");
-
-			String filePathTopo = fileParentPath + "TopologyDatasetRelations/Image_TopologyDatasetRelations_Normal.png";
+            datasetImage.put(DatasetType.VOLUME, fileParentPath + "Image_DatasetVOLUME_Normal.png");
+            String filePathTopo = fileParentPath + "TopologyDatasetRelations/Image_TopologyDatasetRelations_Normal.png";
 			datasetImage.put(DatasetType.TOPOLOGY, filePathTopo);
 		}
 

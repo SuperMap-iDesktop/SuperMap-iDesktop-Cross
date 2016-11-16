@@ -407,7 +407,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                 temp[COLUMN_DATASET] = new DataCell(dataset);
                 for (int i = 0; i < size; i++) {
                     FileType fileType = fileTypes[i];
-                    if (!fileType.equals(FileType.CSV) && !fileType.equals(FileType.GEOJSON)) {
+                    if (!fileType.equals(FileType.GEOJSON)) {
                         newExportSetting = exportSettingFactory.createExportSetting(fileType);
                         temp[COLUMN_EXPORTTYPE] = CommonUtilities.getDatasetName(fileType.toString());
                         exportsFileInfo.setFileType(fileType);
@@ -474,7 +474,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             this.steppedComboBox.removeAllItems();
             for (int j = 0; j < size; j++) {
                 FileType fileType = fileTypes[j];
-                if (!fileType.equals(FileType.CSV) && !fileType.equals(FileType.GEOJSON)) {
+                if (!fileType.equals(FileType.GEOJSON)) {
                     String datasetName = CommonUtilities.getDatasetName(fileType.toString());
                     if (!StringUtilities.isNullOrEmpty(datasetName)) {
                         this.steppedComboBox.addItem(datasetName);
@@ -506,7 +506,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                         String fileName = tableExport.getValueAt(row, COLUMN_FILENAME).toString();
                         filePath = getFilePath(filePath, exportsFileInfo, fileName);
                         newExportSetting.setTargetFilePath(filePath);
-                        newExportSetting.setTargetFileType(fileType);
+                        newExportSetting.setOverwrite(tempExportsetting.isOverwrite());
                         exportsFileInfo.setExportSetting(newExportSetting);
                         replaceExportPanel(exportsFileInfo);
                     }
