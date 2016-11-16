@@ -95,6 +95,7 @@ public class CtrlActionGeometryToSymbol extends CtrlAction {
 						if (!supportGeometryTypeList.contains(type)) {
 							return false;
 						}
+						recordset.moveNext();
 					}
 				} catch (Exception e) {
 					Application.getActiveApplication().getOutput().output(e);
