@@ -6,6 +6,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -87,7 +88,7 @@ public class JPanelFormat extends JPanel {
 
 		labelAngle.setOpaque(true);
 		labelAngle.setBackground(background);
-		labelAngle.setText(CommonProperties.getString("String_AngleUnit_Degree"));
+		labelAngle.setText(CommonProperties.getString("String_AngleSign_Degree"));
 		labelAngle.setBorder(BorderFactory.createMatteBorder(1, 0, 1, 1, borderColor));
 		smTextFieldAngle.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 0, borderColor));
 
@@ -142,8 +143,7 @@ public class JPanelFormat extends JPanel {
 			this.smTextFieldA.setText(String.valueOf(a));
 			int m = (int) Math.floor((Math.abs(value) - Math.abs(a)) * 60);
 			this.smTextFieldM.setText(String.valueOf(m));
-			double s = Math.floor((Math.abs(value) - Math.abs(a) - (double) m / 60) * 3600);
-			this.smTextFieldS.setText(String.valueOf(s));
+			this.smTextFieldS.setText(DoubleUtilities.toString((Math.abs(value) - Math.abs(a) - (double) m / 60) * 3600, 2));
 		}
 	}
 

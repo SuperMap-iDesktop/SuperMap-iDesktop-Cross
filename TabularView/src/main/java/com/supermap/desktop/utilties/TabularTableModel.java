@@ -8,6 +8,7 @@ import com.supermap.data.QueryParameter;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.utilities.Convert;
+import com.supermap.desktop.utilities.DoubleUtilities;
 
 import javax.swing.table.AbstractTableModel;
 import java.sql.Time;
@@ -266,7 +267,8 @@ public class TabularTableModel extends AbstractTableModel {
 				// bool类型先处理
 
 				Object value = aValue;
-				if (FieldType.BOOLEAN == fieldInfos.get(getColumnName(columnIndex)).getType()) {
+				FieldType fieldType = fieldInfos.get(getColumnName(columnIndex)).getType();
+				if (FieldType.BOOLEAN == fieldType) {
 					if (!isDataNull) {
 						value = "True".equals(aValue);
 					} else {
@@ -275,11 +277,16 @@ public class TabularTableModel extends AbstractTableModel {
 				}
 				if (isDataNull) {
 					recordset.setFieldValueNull(getColumnName(columnIndex));
-				} else if (FieldType.BYTE == fieldInfos.get(getColumnName(columnIndex)).getType()) {
+				} else if (FieldType.BYTE == fieldType) {
 					recordset.setByte(getColumnName(columnIndex), Short.parseShort(String.valueOf(value)));
-				} else if (FieldType.DATETIME == fieldInfos.get(getColumnName(columnIndex)).getType()) {
+				} else if (FieldType.DATETIME == fieldType) {
 					Date date = Convert.toDateTime(getValueAt(rowIndex, columnIndex));
 					recordset.setFieldValue(getColumnName(columnIndex), date);
+				} else if (FieldType.INT16 == fieldType || FieldType.INT32 == fieldType || FieldType.INT64 == fieldType) {
+					int intValue = DoubleUtilities.intValue(DoubleUtilities.stringToValue(String.valueOf(value)));
+					recordset.setFieldValue(getColumnName(columnIndex), intValue);
+				} else if (FieldType.SINGLE == fieldType || FieldType.DOUBLE == fieldType) {
+					recordset.setFieldValue(getColumnName(columnIndex), value);
 				} else {
 					recordset.setFieldValue(getColumnName(columnIndex), value);
 				}
