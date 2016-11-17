@@ -10,6 +10,7 @@ import com.supermap.desktop.ScaleModel;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.ScaleEditor;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -27,7 +28,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.NumberFormat;
 
 public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
@@ -50,27 +50,27 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	private SmButton buttonSetCustomBounds; // 设置自定义全幅范围
 
 	private JLabel labelCenterX;
-	private JFormattedTextField textFieldCenterX;
+	private SMFormattedTextField textFieldCenterX;
 	private JLabel labelCenterY;
-	private JFormattedTextField textFieldCenterY;
+	private SMFormattedTextField textFieldCenterY;
 
 	private JLabel labelCurrentViewLeft;
-	private JFormattedTextField textFieldCurrentViewLeft;
+	private SMFormattedTextField textFieldCurrentViewLeft;
 	private JLabel labelCurrentViewTop;
-	private JFormattedTextField textFieldCurrentViewTop;
+	private SMFormattedTextField textFieldCurrentViewTop;
 	private JLabel labelCurrentViewRight;
-	private JFormattedTextField textFieldCurrentViewRight;
+	private SMFormattedTextField textFieldCurrentViewRight;
 	private JLabel labelCurrentViewBottom;
-	private JFormattedTextField textFieldCurrentViewBottom;
+	private SMFormattedTextField textFieldCurrentViewBottom;
 
 	private JLabel labelMapViewLeft;
-	private JFormattedTextField textFieldMapViewLeft;
+	private SMFormattedTextField textFieldMapViewLeft;
 	private JLabel labelMapViewTop;
-	private JFormattedTextField textFieldMapViewTop;
+	private SMFormattedTextField textFieldMapViewTop;
 	private JLabel labelMapViewRight;
-	private JFormattedTextField textFieldMapViewRight;
+	private SMFormattedTextField textFieldMapViewRight;
 	private JLabel labelMapViewBottom;
-	private JFormattedTextField textFieldMapViewBottom;
+	private SMFormattedTextField textFieldMapViewBottom;
 
 	private double scale = 0.0;
 	public static boolean isVisibleScalesEnabled = false;
@@ -274,33 +274,31 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		this.checkBoxIsCustomBoundsEnabled = new JCheckBox("IsCustomBoundsEnabled");
 		this.buttonSetCustomBounds = new SmButton("SetCustomBounds");
 
-		NumberFormat numberFormat = NumberFormat.getNumberInstance();
-		numberFormat.setMinimumFractionDigits(10);
 		this.labelCenterX = new JLabel("X:");
-		this.textFieldCenterX = new JFormattedTextField(numberFormat);
+		this.textFieldCenterX = new SMFormattedTextField();
 		this.labelCenterY = new JLabel("Y:");
-		this.textFieldCenterY = new JFormattedTextField(numberFormat);
+		this.textFieldCenterY = new SMFormattedTextField();
 
 		this.labelCurrentViewLeft = new JLabel("Left:");
-		this.textFieldCurrentViewLeft = new JFormattedTextField(numberFormat);
+		this.textFieldCurrentViewLeft = new SMFormattedTextField();
 		this.labelCurrentViewTop = new JLabel("Top:");
-		this.textFieldCurrentViewTop = new JFormattedTextField(numberFormat);
+		this.textFieldCurrentViewTop = new SMFormattedTextField();
 		this.labelCurrentViewRight = new JLabel("Right:");
-		this.textFieldCurrentViewRight = new JFormattedTextField(numberFormat);
+		this.textFieldCurrentViewRight = new SMFormattedTextField();
 		this.labelCurrentViewBottom = new JLabel("Bottom:");
-		this.textFieldCurrentViewBottom = new JFormattedTextField(numberFormat);
+		this.textFieldCurrentViewBottom = new SMFormattedTextField();
 
 		this.labelMapViewLeft = new JLabel("Left:");
-		this.textFieldMapViewLeft = new JFormattedTextField(numberFormat);
+		this.textFieldMapViewLeft = new SMFormattedTextField();
 		this.textFieldMapViewLeft.setEditable(false);
 		this.labelMapViewTop = new JLabel("Top:");
-		this.textFieldMapViewTop = new JFormattedTextField(numberFormat);
+		this.textFieldMapViewTop = new SMFormattedTextField();
 		this.textFieldMapViewTop.setEditable(false);
 		this.labelMapViewRight = new JLabel("Right:");
-		this.textFieldMapViewRight = new JFormattedTextField(numberFormat);
+		this.textFieldMapViewRight = new SMFormattedTextField();
 		this.textFieldMapViewRight.setEditable(false);
 		this.labelMapViewBottom = new JLabel("Bottom:");
-		this.textFieldMapViewBottom = new JFormattedTextField(numberFormat);
+		this.textFieldMapViewBottom = new SMFormattedTextField();
 		this.textFieldMapViewBottom.setEditable(false);
 
 		// 中心点位置
