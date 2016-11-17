@@ -5,8 +5,11 @@ import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IDockbarManager;
 import com.supermap.desktop.WorkEnvironment;
 import com.supermap.desktop.enums.DockState;
+import com.supermap.desktop.ui.DockConstraint;
 import com.supermap.desktop.ui.XMLDockbar;
 import com.supermap.desktop.ui.XMLDockbarBase;
+import com.supermap.desktop.ui.XMLDockbars;
+import org.flexdock.docking.DockingManager;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -16,19 +19,12 @@ import java.util.ArrayList;
  * 库，或者自行修改。
  */
 public class DockbarManager implements IDockbarManager {
-	private static final String WORKSPACE_COMPONENT_MANAGER_NAME = "com.supermap.desktop.ui.WorkspaceComponentManager";
-	private static final String LAYERS_COMPONENT_MANAGER_NAME = "com.supermap.desktop.ui.LayersComponentManager";
-	private static final String OUTPUT_FRAME_NAME = "com.supermap.desktop.ui.OutputFrame";
+	private static final String WORKSPACE_COMPONENT_MANAGER_ID = "workspaceComponentManager";
+	private static final String LAYERS_COMPONENT_MANAGER_ID = "layersComponentManager";
+	private static final String OUTPUT_FRAME_ID = "outputFrame";
 
-	private static final String SUPERMAP_PLUGIN_CONTROLS = "SuperMap.Desktop.Controls";
-
-	private static final Point DEFAULT_FLOATINGLOCATION = new Point(600, 200);
-	private static final Dimension DEFAULT_FLOATINGSIZE = new Dimension(400, 300);
 	private ArrayList<IDockbar> dockbars = null;
 
-	/**
-	 * 放置所有 Floating 状态的 Dock 面板。
-	 */
 	private Dockbar workspaceComponentManager = null;
 	private Dockbar layersComponentManager = null;
 	private Dockbar outputFrame = null;
@@ -38,15 +34,15 @@ public class DockbarManager implements IDockbarManager {
 	}
 
 	public IDockbar getWorkspaceComponentManager() {
-		return this.workspaceComponentManager;
+		return (IDockbar) DockingManager.getDockable(WORKSPACE_COMPONENT_MANAGER_ID);
 	}
 
 	public IDockbar getLayersComponentManager() {
-		return this.layersComponentManager;
+		return (IDockbar) DockingManager.getDockable(LAYERS_COMPONENT_MANAGER_ID);
 	}
 
 	public IDockbar getOutputFrame() {
-		return this.outputFrame;
+		return (IDockbar) DockingManager.getDockable(OUTPUT_FRAME_ID);
 	}
 
 	@Override
@@ -99,31 +95,8 @@ public class DockbarManager implements IDockbarManager {
 	}
 
 	public boolean load(WorkEnvironment workEnvironment) {
-		for (int i = 0; i < workEnvironment.getPluginInfos().getDockbars().getDockbars().size(); i++) {
-			XMLDockbar xmlDockbar = workEnvironment.getPluginInfos().getDockbars().get(i);
-
-			if (xmlDockbar instanceof XMLDockbar) {
-				Dockbar dockbar = new Dockbar((XMLDockbar) xmlDockbar);
-				if (dockbar.getPluginInfo().getBundleName().equalsIgnoreCase(SUPERMAP_PLUGIN_CONTROLS)
-						&& dockbar.getComponentName().equalsIgnoreCase(WORKSPACE_COMPONENT_MANAGER_NAME)) {
-					this.workspaceComponentManager = dockbar;
-				} else if (dockbar.getPluginInfo().getBundleName().equalsIgnoreCase(SUPERMAP_PLUGIN_CONTROLS)
-						&& dockbar.getComponentName().equalsIgnoreCase(LAYERS_COMPONENT_MANAGER_NAME)) {
-					this.layersComponentManager = dockbar;
-				} else if (dockbar.getPluginInfo().getBundleName().equalsIgnoreCase(SUPERMAP_PLUGIN_CONTROLS)
-						&& dockbar.getComponentName().equalsIgnoreCase(OUTPUT_FRAME_NAME)) {
-					this.outputFrame = dockbar;
-				} else {
-//					if (dockbar.getDockState() == DockState.DOCK) {
-//						this.customDockbarsWindow.addTab(dockbar, dockbar.getIndex());
-//					} else if (dockbar.getDockState() == DockState.FLOAT) {
-//						this.floatingWindowChildrenContainer.addTab(dockbar);
-//					}
-				}
-
-//				this.dockbars.add(dockbar);
-			}
-		}
+		XMLDockbars dockbars = workEnvironment.getPluginInfos().getDockbars();
+		DockConstraint dc = dockbars.getDockConstraint();
 
 		return true;
 	}

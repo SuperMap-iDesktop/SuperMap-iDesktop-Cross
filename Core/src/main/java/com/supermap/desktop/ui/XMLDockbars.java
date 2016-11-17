@@ -26,6 +26,10 @@ public class XMLDockbars extends XMLCommandBase {
 		this.dockBars = new ArrayList<XMLDockbar>();
 	}
 
+	public DockConstraint getDockConstraint() {
+		return this.dockConstraint;
+	}
+
 	public boolean load(Element element) {
 		boolean result = false;
 
@@ -43,6 +47,7 @@ public class XMLDockbars extends XMLCommandBase {
 					if (xmlDockbar != null) {
 						xmlDockbar.initialize((Element) barNode);
 						this.dockBars.add(xmlDockbar);
+						this.dockConstraint.install(xmlDockbar);
 					}
 				}
 			}

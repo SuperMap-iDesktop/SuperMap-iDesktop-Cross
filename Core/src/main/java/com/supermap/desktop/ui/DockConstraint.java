@@ -6,66 +6,71 @@ import java.util.ArrayList;
  * Created by highsad on 2016/11/17.
  */
 public class DockConstraint {
-	private ArrayList<DockConstraint> leftDocks = new ArrayList<>();
-	private ArrayList<DockConstraint> rightDocks = new ArrayList<>();
-	private ArrayList<DockConstraint> topDocks = new ArrayList<>();
-	private ArrayList<DockConstraint> bottomDocks = new ArrayList<>();
+	private DockConstraint left;
+	private DockConstraint right;
+	private DockConstraint top;
+	private DockConstraint bottom;
 
-	private XMLDockbar dockbar;
+	private ArrayList<XMLDockbar> dockbars = new ArrayList<>();
 
 	public DockConstraint() {
 
 	}
 
-	public DockConstraint[] getLeftDocks() {
-		return this.leftDocks.toArray(new DockConstraint[this.leftDocks.size()]);
+	public DockConstraint getLeft() {
+		return left;
 	}
 
-	public DockConstraint[] getRightDocks() {
-		return this.rightDocks.toArray(new DockConstraint[this.rightDocks.size()]);
+	public DockConstraint getRight() {
+		return right;
 	}
 
-	public DockConstraint[] getTopDocks() {
-		return this.topDocks.toArray(new DockConstraint[this.topDocks.size()]);
+	public DockConstraint getTop() {
+		return top;
 	}
 
-	public DockConstraint[] getBottomDocks() {
-		return this.bottomDocks.toArray(new DockConstraint[this.bottomDocks.size()]);
+	public DockConstraint getBottom() {
+		return bottom;
 	}
 
-	public XMLDockbar getDockbar() {
-		return dockbar;
+	public XMLDockbar[] getDockbars() {
+		return this.dockbars.toArray(new XMLDockbar[this.dockbars.size()]);
 	}
 
-	public void setDockbar(XMLDockbar dockbar) {
-		this.dockbar = dockbar;
+	public void addDockbar(XMLDockbar dockbar) {
+		this.dockbars.add(dockbar);
 	}
 
-	public int addLeftDock(DockConstraint left) {
-		this.leftDocks.add(left);
-		return this.leftDocks.size() - 1;
-	}
+	public void install(XMLDockbar dockbar) {
+		if (dockbar != null) {
+			Direction[] directions = dockbar.getDockPath().getDirections();
+			DockConstraint dc = this;
+			for (int i = 0; i < directions.length; i++) {
+				Direction direction = directions[i];
 
-	public int addRightDock(DockConstraint right) {
-		this.rightDocks.add(right);
-		return this.rightDocks.size() - 1;
-	}
-
-	public int addTopDock(DockConstraint top) {
-		this.topDocks.add(top);
-		return this.topDocks.size() - 1;
-	}
-
-	public int addBottomDock(DockConstraint bottom) {
-		this.bottomDocks.add(bottom);
-		return this.bottomDocks.size() - 1;
+				if (direction == Direction.TOP) {
+					this.top = this.top == null ? new DockConstraint() : this.top;
+					dc = this.top;
+				} else if (direction == Direction.LEFT) {
+					this.left = this.left == null ? new DockConstraint() : this.left;
+					dc = this.left;
+				} else if (direction == Direction.BOTTOM) {
+					this.bottom = this.bottom == null ? new DockConstraint() : this.bottom;
+					dc = this.bottom;
+				} else if (direction == Direction.RIGHT) {
+					this.right = this.right == null ? new DockConstraint() : this.right;
+					dc = this.right;
+				}
+			}
+			dc.addDockbar(dockbar);
+		}
 	}
 
 	public void reset() {
-		this.leftDocks.clear();
-		this.rightDocks.clear();
-		this.topDocks.clear();
-		this.bottomDocks.clear();
-		this.dockbar = null;
+		this.left.reset();
+		this.right.reset();
+		this.top.reset();
+		this.bottom.reset();
+		this.dockbars.clear();
 	}
 }
