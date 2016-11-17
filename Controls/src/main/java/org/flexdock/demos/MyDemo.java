@@ -81,12 +81,12 @@ public class MyDemo extends JFrame {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				if (DockingManager.isDocked((Dockable) view1)) {
-//					DockingManager.close(view1);
-//				} else {
-//					DockingManager.display(view1);
-//				}
-				System.out.println(DockingManager.getDockingState(view1).toString());
+				if (DockingManager.isDocked((Dockable) view1)) {
+					DockingManager.close(view1);
+				} else {
+					DockingManager.display(view1);
+				}
+//				System.out.println(DockingManager.getDockingState(view1).toString());
 			}
 		});
 	}

@@ -28,13 +28,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 public class XmlUtilities {
 	private XmlUtilities() {
 		// 工具类不提供构造函数
 	}
+
 	/**
 	 * 根据文件获取Document
+	 *
 	 * @param file
 	 * @param i
 	 * @return
@@ -145,12 +148,9 @@ public class XmlUtilities {
 	/**
 	 * 将指定的Node写到指定的OutputStream流中。
 	 *
-	 * @param os
-	 *            将要写入的流。
-	 * @param node
-	 *            将要写入的节点。
-	 * @param encoding
-	 *            编码。
+	 * @param os       将要写入的流。
+	 * @param node     将要写入的节点。
+	 * @param encoding 编码。
 	 */
 	public static void writeXml(OutputStream os, Node node, String encoding) throws TransformerException {
 		TransformerFactory transFactory = TransformerFactory.newInstance();
@@ -229,6 +229,13 @@ public class XmlUtilities {
 		return documentBuilder.newDocument();
 	}
 
+	/**
+	 * 获取指定节点下，找到的第一个 name 节点
+	 *
+	 * @param node
+	 * @param name
+	 * @return
+	 */
 	public static Node getChildElementNodeByName(Node node, String name) {
 		if (node == null) {
 			return null;
@@ -243,5 +250,30 @@ public class XmlUtilities {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * 获取指定节点下所有的 name 节点
+	 *
+	 * @param node
+	 * @param name
+	 * @return
+	 */
+	public static Element[] getChildElementNodesByName(Node node, String name) {
+		if (node == null) {
+			return null;
+		}
+
+		ArrayList<Element> elements = new ArrayList<>();
+		NodeList nodeList = node.getChildNodes();
+		if (nodeList != null && nodeList.getLength() > 0) {
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Node item = nodeList.item(i);
+				if (item != null && (node.getNodeType() == Node.ELEMENT_NODE) && name.equalsIgnoreCase(item.getNodeName())) {
+					elements.add((Element) item);
+				}
+			}
+		}
+		return elements.toArray(new Element[elements.size()]);
 	}
 }

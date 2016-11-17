@@ -14,6 +14,8 @@ public class _XMLTag {
 	public static final String g_NodeDockbars = "dockbars";
 	public static final String g_NodeDockbarGroup = "dockbarGroup";
 	public static final String g_NodeDockbar = "dockbar";
+	public static final String g_NodeDockPath = "dockPath";
+	public static final String g_NodeDirection = "direction";
 	public static final String g_NodeStartMenu = "startMenu";
 	public static final String g_NodeStatusbar = "statusbar";
 	public static final String g_NodeStatusbars = "statusbars";
@@ -54,6 +56,7 @@ public class _XMLTag {
 	public static final String g_ControlLabel = "label";
 	public static final String g_ControlSeparator = "separator";
 
+	public static final String g_AttributionTitle = "title";
 	public static final String g_AttributionName = "name";
 	public static final String g_AttributionAuthor = "author";
 	public static final String g_AttributionURL = "url";
@@ -97,10 +100,12 @@ public class _XMLTag {
 	public static final String g_AttributionGalleryMaxColumns = "galleryMaxColumns";
 	public static final String g_AttributionCheckBoxStyle = "checkBoxStyle";
 	public static final String g_AttributionControl = "control";
+	public static final String g_AttributionComponent = "component";
 	public static final String g_AttributionCodeType = "codeType";
 	public static final String g_AttributionCustomProperty = "customProperty";
 	public static final String g_AttributionMenuStrip = "menuStrip";
 	public static final String g_AttributionUpDownStyle = "upDownStyle";
+	public static final String g_AttributionRatio = "ratio";
 
 	public static final String g_ValueFalse = "false";
 	public static final String g_ValueTrue = "true";
@@ -178,12 +183,12 @@ public class _XMLTag {
 	public static final String g_AttributionForMessage = "forMessage";
 
 	public static final String g_ValueLargeImagePostfix = ".large";
-//	public static final String g_NodeWorkEnvironment = "workEnvironment";
+	//	public static final String g_NodeWorkEnvironment = "workEnvironment";
 	private static String g_strWorkEnvironment;
 
 	/**
 	 * linux上使用“Linux”中的配置文件，其他的系统则使用默认的环境
-	 * 
+	 *
 	 * @return
 	 */
 

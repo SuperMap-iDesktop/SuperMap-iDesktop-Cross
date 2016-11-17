@@ -18,23 +18,6 @@ import java.awt.*;
  */
 public class Dockbar extends View implements IDockbar {
 	private static final long serialVersionUID = -741186257818181105L;
-
-	private static final int SHOWN = 0;
-	private static final int HIDDEN = 1;
-	private static final int FOCUS_CHANGED = 2;
-	private static final int ADDED = 3;
-	private static final int REMOVED = 4;
-	private static final int CLOSING = 5;
-	private static final int CLOSED = 6;
-	private static final int UNDOCKING = 7;
-	private static final int UNDOCKED = 8;
-	private static final int DOCKING = 9;
-	private static final int DOCKED = 10;
-	private static final int MINIMIZED = 11;
-	private static final int MAXIMIZED = 12;
-	private static final int RESTORED = 13;
-	private static final int MAXIMIZING = 14;
-	private static final int MINIMIZING = 15;
 	private static final int RESTORING = 16;
 
 	private transient XMLDockbar xmlDockbar = null;

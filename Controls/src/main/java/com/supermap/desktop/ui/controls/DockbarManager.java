@@ -100,10 +100,10 @@ public class DockbarManager implements IDockbarManager {
 
 	public boolean load(WorkEnvironment workEnvironment) {
 		for (int i = 0; i < workEnvironment.getPluginInfos().getDockbars().getDockbars().size(); i++) {
-			XMLDockbarBase xmlDockbarBase = workEnvironment.getPluginInfos().getDockbars().get(i);
+			XMLDockbar xmlDockbar = workEnvironment.getPluginInfos().getDockbars().get(i);
 
-			if (xmlDockbarBase instanceof XMLDockbar) {
-				Dockbar dockbar = new Dockbar((XMLDockbar) xmlDockbarBase);
+			if (xmlDockbar instanceof XMLDockbar) {
+				Dockbar dockbar = new Dockbar((XMLDockbar) xmlDockbar);
 				if (dockbar.getPluginInfo().getBundleName().equalsIgnoreCase(SUPERMAP_PLUGIN_CONTROLS)
 						&& dockbar.getComponentName().equalsIgnoreCase(WORKSPACE_COMPONENT_MANAGER_NAME)) {
 					this.workspaceComponentManager = dockbar;

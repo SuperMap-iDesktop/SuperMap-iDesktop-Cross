@@ -1,11 +1,14 @@
 package com.supermap.desktop.ui;
 
+import com.sun.javaws.jnl.XMLUtils;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Plugin;
 import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop.enums.DockSite;
 import com.supermap.desktop.enums.DockState;
 import com.supermap.desktop.enums.XMLCommandType;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -13,8 +16,9 @@ import org.w3c.dom.Element;
 import java.awt.*;
 
 public class XMLDockbar extends XMLCommand {
-	private static final String SPLIT_COMMA = ",";
+	private String title = "";
 	private String controlClass = null;
+	private DockPath dockPath = new DockPath();
 
 	public XMLDockbar(PluginInfo pluginInfo, XMLCommandBase group) {
 		super(pluginInfo, group);
@@ -23,15 +27,53 @@ public class XMLDockbar extends XMLCommand {
 
 	@Override
 	public boolean initialize(Element element) {
+		boolean result = super.initialize(element);
+
+		if (!result) {
+			return false;
+		}
+
+		if (element.hasAttribute(g_AttributionTitle)) {
+			this.title = element.getAttribute(g_AttributionTitle);
+		}
+
+		if (element.hasAttribute(g_AttributionComponent)) {
+			this.controlClass = element.getAttribute(g_AttributionComponent);
+		}
+
+		if (StringUtilities.isNullOrEmpty(this.controlClass)) {
+			return false;
+		}
+		this.title = StringUtilities.isNullOrEmpty(this.title) ? this.controlClass : this.title;
+		return loadPath((Element) XmlUtilities.getChildElementNodeByName(element, g_NodeDockPath));
+	}
+
+	private boolean loadPath(Element element) {
 		boolean result = false;
 
-		result = super.initialize(element);
+		if (element.hasAttribute(g_AttributionRatio)) {
+			String strRatio = element.getAttribute(g_AttributionRatio);
+			double ratio = 0.5;
+			try {
+				ratio = Double.parseDouble(strRatio);
+			} catch (NumberFormatException e) {
+				ratio = 0.5;
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(e);
+			}
+			this.dockPath.setRatio(ratio);
+		}
 
-		try {
-			this.controlClass = element.getAttribute(g_AttributionControl);
-			result = true;
-		} catch (Exception e) {
-			result = false;
+		// 获取路径
+		Element[] directionNodes = XmlUtilities.getChildElementNodesByName(element, g_NodeDirection);
+		for (int i = 0; i < directionNodes.length; i++) {
+			Element directionNode = directionNodes[i];
+			this.dockPath.addDirection(Direction.valueOf(directionNode.getNodeValue()));
+		}
+
+		// 配置文件没有配置，默认 left
+		if (this.dockPath.getDepth() < 1) {
+			this.dockPath.addDirection(Direction.LEFT);
 		}
 		return result;
 	}
@@ -79,13 +121,11 @@ public class XMLDockbar extends XMLCommand {
 		try {
 			result = (XMLDockbar) createNew(parent);
 			if (result != null) {
-				result.setID(this.getID());
-				result.setVisible(this.getVisible());
-				result.setCustomProperty(this.getCustomProperty());
-				result.setLabel(this.getLabel());
-				result.setTooltip(this.getTooltip());
-				result.setIndex(this.getIndex());
-				result.setControlClass(this.controlClass);
+				result.setID(getID());
+				result.setTitle(getTitle());
+				result.setVisible(getVisible());
+				result.setControlClass(getControlClass());
+				result.getDockPath().init(getDockPath());
 			}
 		} catch (Exception e) {
 			result = null;
@@ -103,14 +143,12 @@ public class XMLDockbar extends XMLCommand {
 			}
 
 			if (result != null) {
-				result.setID(this.getID());
-				result.setVisible(this.getVisible());
-				result.setCustomProperty(this.getCustomProperty());
-				result.setIndex(this.getIndex());
-				result.setLabel(this.getLabel());
-				result.setControlClass(this.getControlClass());
-				result.getPluginInfo().setBundleName(this.getPluginInfo().getBundleName());
-				result.setHelpURL(this.getHelpURL());
+				result.setID(getID());
+				result.setTitle(getTitle());
+				result.setVisible(getVisible());
+				result.setControlClass(getControlClass());
+				result.getDockPath().init(getDockPath());
+				result.getPluginInfo().setBundleName(getPluginInfo().getBundleName());
 			}
 		} catch (Exception e) {
 			result = null;
@@ -124,41 +162,19 @@ public class XMLDockbar extends XMLCommand {
 
 		try {
 			if (document != null) {
-				dockbarNode = document.createElement(g_NodeDockbar);
-				dockbarNode.setAttribute(g_AttributionIndex, Integer.toString(this.getIndex()));
-				dockbarNode.setAttribute(g_AttributionLabel, this.getLabel());
-				dockbarNode.setAttribute(g_AttributionVisible, Boolean.toString(this.getVisible()));
-				dockbarNode.setAttribute(g_AttributionControl, this.getControlClass());
-				dockbarNode.setAttribute(g_AttributionBundleName, this.getPluginInfo().getBundleName());
-				dockbarNode.setAttribute(g_AttributionHelpURL, this.getHelpURL());
-				dockbarNode.setAttribute(g_AttributionCustomProperty, this.getCustomProperty());
+//				dockbarNode = document.createElement(g_NodeDockbar);
+//				dockbarNode.setAttribute(g_AttributionIndex, Integer.toString(this.getIndex()));
+//				dockbarNode.setAttribute(g_AttributionLabel, this.getLabel());
+//				dockbarNode.setAttribute(g_AttributionVisible, Boolean.toString(this.getVisible()));
+//				dockbarNode.setAttribute(g_AttributionControl, this.getControlClass());
+//				dockbarNode.setAttribute(g_AttributionBundleName, this.getPluginInfo().getBundleName());
+//				dockbarNode.setAttribute(g_AttributionHelpURL, this.getHelpURL());
+//				dockbarNode.setAttribute(g_AttributionCustomProperty, this.getCustomProperty());
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 		return dockbarNode;
-	}
-
-	public static String convertToString(Dimension size) {
-		String result = null;
-
-		try {
-			result = Double.toString(size.getWidth()) + SPLIT_COMMA + Double.toString(size.getHeight());
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return result;
-	}
-
-	public static String convertToString(Point point) {
-		String result = null;
-
-		try {
-			result = Double.toString(point.getX()) + SPLIT_COMMA + Double.toString(point.getY());
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return result;
 	}
 
 	@Override
@@ -179,58 +195,12 @@ public class XMLDockbar extends XMLCommand {
 	 * @param parent 指定的父容器
 	 * @return
 	 */
-	protected XMLCommandBase createNew(XMLCommandBase parent) {
-		XMLCommandBase result = null;
-
-		if (this instanceof XMLDockbar) {
-			result = new XMLDockbar(this.getPluginInfo(), parent);
-		}
-		return result;
+	private XMLCommandBase createNew(XMLCommandBase parent) {
+		return new XMLDockbar(getPluginInfo(), parent);
 	}
 
-	protected XMLCommandBase createNew(PluginInfo pluginInfo, XMLCommandBase parent) {
-		XMLCommandBase result = null;
-
-		if (this instanceof XMLDockbar) {
-			result = new XMLDockbar(pluginInfo, parent);
-		}
-		return result;
-	}
-
-	private Point getPoint(String pointString) {
-		Point point = new Point();
-
-		try {
-			if (!pointString.isEmpty()) {
-				String[] strArray = pointString.split(SPLIT_COMMA);
-				if (strArray.length == 2) {
-					int pointX = Integer.parseInt(strArray[0]);
-					int pointY = Integer.parseInt(strArray[1]);
-					point = new Point(pointX, pointY);
-				}
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return point;
-	}
-
-	private Dimension getDimension(String dimensionString) {
-		Dimension dimension = new Dimension();
-
-		try {
-			if (!dimensionString.isEmpty()) {
-				String[] strArray = dimensionString.split(SPLIT_COMMA);
-				if (strArray.length == 2) {
-					int width = Integer.parseInt(strArray[0]);
-					int height = Integer.parseInt(strArray[1]);
-					dimension = new Dimension(width, height);
-				}
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		return dimension;
+	private XMLCommandBase createNew(PluginInfo pluginInfo, XMLCommandBase parent) {
+		return new XMLDockbar(pluginInfo, parent);
 	}
 
 	@Override
@@ -244,5 +214,17 @@ public class XMLDockbar extends XMLCommand {
 
 	public void setControlClass(String controlClass) {
 		this.controlClass = controlClass;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public DockPath getDockPath() {
+		return dockPath;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 }

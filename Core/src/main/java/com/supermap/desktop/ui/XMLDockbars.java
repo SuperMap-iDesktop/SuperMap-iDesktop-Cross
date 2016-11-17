@@ -11,17 +11,19 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 
 public class XMLDockbars extends XMLCommandBase {
-	private ArrayList<XMLDockbarBase> dockBars = null;
+	private ArrayList<XMLDockbar> dockBars = null;
+	private DockConstraint dockConstraint = null;
 
 	public XMLDockbars() {
 		this.commandType = XMLCommandType.DOCKBARS;
-		this.dockBars = new ArrayList<XMLDockbarBase>();
+		this.dockBars = new ArrayList<XMLDockbar>();
+		this.dockConstraint = new DockConstraint();
 	}
 
 	public XMLDockbars(PluginInfo pluginInfo) {
 		super(pluginInfo);
 		this.commandType = XMLCommandType.DOCKBARS;
-		this.dockBars = new ArrayList<XMLDockbarBase>();
+		this.dockBars = new ArrayList<XMLDockbar>();
 	}
 
 	public boolean load(Element element) {
@@ -33,16 +35,14 @@ public class XMLDockbars extends XMLCommandBase {
 			for (int i = 0; i < nodes.getLength(); i++) {
 				Node barNode = nodes.item(i);
 				if (barNode instanceof Element) {
-					XMLDockbarBase XMLDockbarBase = null;
+					XMLDockbar xmlDockbar = null;
 					if (barNode.getNodeName().equalsIgnoreCase(g_NodeDockbar)) {
-						XMLDockbarBase = new XMLDockbar(this.getPluginInfo(), this);
-					} else if (barNode.getNodeName().equals(g_NodeDockbarGroup)) {
-						XMLDockbarBase = new XMLDockbarGroup(this.getPluginInfo(), this);
+						xmlDockbar = new XMLDockbar(this.getPluginInfo(), this);
 					}
 
-					if (XMLDockbarBase != null) {
-						XMLDockbarBase.initialize((Element) barNode);
-						this.dockBars.add(XMLDockbarBase);
+					if (xmlDockbar != null) {
+						xmlDockbar.initialize((Element) barNode);
+						this.dockBars.add(xmlDockbar);
 					}
 				}
 			}
@@ -55,22 +55,15 @@ public class XMLDockbars extends XMLCommandBase {
 
 	public boolean merge(XMLDockbars otherBars) {
 		for (int i = 0; i < otherBars.getDockbars().size(); i++) {
-			XMLDockbarBase bar = otherBars.dockBars.get(i);
+			XMLDockbar bar = otherBars.dockBars.get(i);
 			if (bar instanceof XMLDockbar) {
 				if (bar.getID() != null && !bar.getID().isEmpty() && bar.getID().length() != 0) {
-					XMLDockbarBase preBar = this.getDockBar(bar.getID());
+					XMLDockbar preBar = this.getDockBar(bar.getID());
 					if (preBar == null) {
 						bar.copyTo(this);
 					}
 				} else {
 					bar.copyTo(this);
-				}
-			} else if (bar instanceof XMLDockbarGroup && (bar.getID() != null && !bar.getID().isEmpty() && bar.getID().length() != 0)) {
-				XMLDockbarBase preBarGroup = this.getDockBar(bar.getID());
-				if (preBarGroup == null || preBarGroup instanceof XMLDockbar) {
-					bar.copyTo(this);
-				} else if (preBarGroup instanceof XMLDockbarGroup) {
-					((XMLDockbarGroup) preBarGroup).merge((XMLDockbarGroup) bar);
 				}
 			}
 		}
@@ -99,7 +92,7 @@ public class XMLDockbars extends XMLCommandBase {
 	@Override
 	public void addSubItem(XMLCommandBase subItem) {
 		try {
-			this.dockBars.add((XMLDockbarBase) subItem);
+			this.dockBars.add((XMLDockbar) subItem);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
@@ -108,29 +101,29 @@ public class XMLDockbars extends XMLCommandBase {
 	@Override
 	public void insertSubItem(XMLCommandBase preItem, XMLCommandBase insertItem) {
 		try {
-			XMLDockbarBase preDockBarBase = (XMLDockbarBase) preItem;
-			XMLDockbarBase insertDockBarBase = (XMLDockbarBase) insertItem;
+			XMLDockbar preDockBar = (XMLDockbar) preItem;
+			XMLDockbar insertDockBar = (XMLDockbar) insertItem;
 
-			if (insertDockBarBase != null) {
+			if (insertDockBar != null) {
 				int insertIndex = 0;
-				insertDockBarBase.setIndex(0);
+				insertDockBar.setIndex(0);
 
 				// 如果前一个元素为空，就默认插入到最前
-				if (preDockBarBase != null) {
-					if (!this.dockBars.contains(preDockBarBase)) {
+				if (preDockBar != null) {
+					if (!this.dockBars.contains(preDockBar)) {
 						throw new Exception("Error.");
 					}
 
-					insertIndex = this.dockBars.indexOf(preDockBarBase) + 1;
-					insertDockBarBase.setIndex(preDockBarBase.getIndex() + 1);
+					insertIndex = this.dockBars.indexOf(preDockBar) + 1;
+					insertDockBar.setIndex(preDockBar.getIndex() + 1);
 				}
 
-				this.dockBars.add(insertIndex, insertDockBarBase);
+				this.dockBars.add(insertIndex, insertDockBar);
 
 				// 如果不是插入到最后，那么需要比较后面子项的 commandIndex 进行递增
-				if (insertIndex + 1 < this.dockBars.size() && (insertDockBarBase.getIndex() >= this.dockBars.get(insertIndex + 1).getIndex())) {
+				if (insertIndex + 1 < this.dockBars.size() && (insertDockBar.getIndex() >= this.dockBars.get(insertIndex + 1).getIndex())) {
 					for (int i = insertIndex + 1; i < this.dockBars.size(); i++) {
-						this.dockBars.get(i).setIndex((i - insertIndex) + insertDockBarBase.getIndex());
+						this.dockBars.get(i).setIndex((i - insertIndex) + insertDockBar.getIndex());
 					}
 				}
 			}
@@ -146,10 +139,10 @@ public class XMLDockbars extends XMLCommandBase {
 
 	@Override
 	public XMLCommandBase createElement(XMLCommandType commandType) {
-		XMLDockbarBase result = null;
+		XMLDockbar result = null;
 
 		try {
-			result = (XMLDockbarBase) this.getXMLCreator().createElement(commandType);
+			result = (XMLDockbar) this.getXMLCreator().createElement(commandType);
 			this.dockBars.add(result);
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -165,9 +158,9 @@ public class XMLDockbars extends XMLCommandBase {
 			if (this.getPluginInfo() == pluginInfo) {
 				result = new XMLDockbars(pluginInfo);
 				for (int i = 0; i < this.dockBars.size(); i++) {
-					XMLDockbarBase resultDockBarBase = (XMLDockbarBase) this.dockBars.get(i).saveToPluginInfo(pluginInfo, result);
-					if (resultDockBarBase != null) {
-						result.getDockbars().add(resultDockBarBase);
+					XMLDockbar resultDockBar = (XMLDockbar) this.dockBars.get(i).saveToPluginInfo(pluginInfo, result);
+					if (resultDockBar != null) {
+						result.getDockbars().add(resultDockBar);
 					}
 				}
 			}
@@ -199,20 +192,20 @@ public class XMLDockbars extends XMLCommandBase {
 		return this.dockBars.size();
 	}
 
-	public ArrayList<XMLDockbarBase> getDockbars() {
+	public ArrayList<XMLDockbar> getDockbars() {
 		return dockBars;
 	}
 
-	public XMLDockbarBase get(int index) {
+	public XMLDockbar get(int index) {
 		return this.dockBars.get(index);
 	}
 
-	private XMLDockbarBase getDockBar(String id) {
-		XMLDockbarBase result = null;
+	private XMLDockbar getDockBar(String id) {
+		XMLDockbar result = null;
 
 		if (!this.dockBars.isEmpty() && id != null && !id.isEmpty()) {
 			for (int i = 0; i < this.dockBars.size(); i++) {
-				XMLDockbarBase dockBar = this.dockBars.get(i);
+				XMLDockbar dockBar = this.dockBars.get(i);
 				if (id.equalsIgnoreCase(dockBar.getID())) {
 					result = dockBar;
 					break;
