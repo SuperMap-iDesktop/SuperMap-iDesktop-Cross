@@ -18,6 +18,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
 
@@ -709,9 +710,17 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			textFieldNumericRight.setText(((JTextField) e.getSource()).getText());
-			textFieldNumericLeft.setText(((JTextField) e.getSource()).getText());
-			updateUI();
+			String text = ((JTextField) e.getSource()).getText();
+			Double value = DoubleUtilities.stringToValue(text);
+			if (value == null) {
+				return;
+			}
+			if (e.getSource() == textFieldNumericRight) {
+				textFieldNumericLeft.setText(DoubleUtilities.getFormatString(value));
+			} else {
+				textFieldNumericRight.setText(DoubleUtilities.getFormatString(value));
+			}
+//			updateUI();
 		}
 	}
 

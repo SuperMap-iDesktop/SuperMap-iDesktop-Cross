@@ -9,20 +9,32 @@ import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
 import com.supermap.desktop.newtheme.commonUtils.ThemeGuideFactory;
+import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.AlongLineDirection;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.OverLengthLabelMode;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeLabel;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 
@@ -37,12 +49,12 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
     private JLabel labelFontSpace = new JLabel();
     private JSpinner spinnerFontSpace = new JSpinner();// 沿线字间距
     private JLabel labelRepeatInterval = new JLabel();
-    private JTextField textFieldRepeatInterval = new JTextField();// 沿线周期间距
-    private JLabel labelUnity = new JLabel();
-    private JCheckBox checkBoxRepeatIntervalFixed = new JCheckBox();// 固定循环标注
-    // panelTextFontSet
-    private JLabel labelOverLength = new JLabel();
-    private JComboBox<String> comboBoxOverLength = new JComboBox<String>();// 超长处理方式
+	private SMFormattedTextField textFieldRepeatInterval = new SMFormattedTextField();// 沿线周期间距
+	private JLabel labelUnity = new JLabel();
+	private JCheckBox checkBoxRepeatIntervalFixed = new JCheckBox();// 固定循环标注
+	// panelTextFontSet
+	private JLabel labelOverLength = new JLabel();
+	private JComboBox<String> comboBoxOverLength = new JComboBox<String>();// 超长处理方式
     private JLabel labelFontCount = new JLabel();
     private JSpinner spinnerFontCount = new JSpinner();// 单行文本字数
     private JLabel labelAlignmentStyle = new JLabel();
@@ -66,11 +78,11 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
     // private JLabel labelMinFontWidthUnity = new JLabel();
     // panelTextExtentInflation
     private JLabel labelHorizontal = new JLabel();
-    private JTextField textFieldHorizontal = new JTextField();// 横向
-    private JLabel labelHorizontalUnity = new JLabel();
+	private SMFormattedTextField textFieldHorizontal = new SMFormattedTextField();// 横向
+	private JLabel labelHorizontalUnity = new JLabel();
     private JLabel labelVertical = new JLabel();
-    private JTextField textFieldVertical = new JTextField();// 纵向
-    private JLabel labelVerticalUnity = new JLabel();
+	private SMFormattedTextField textFieldVertical = new SMFormattedTextField();// 纵向
+	private JLabel labelVerticalUnity = new JLabel();
     private JLabel labelFontSpaceUnity = new JLabel();
     private Dimension textFieldDimension = new Dimension(400, 20);
     private Dimension labelDimension = new Dimension(30, 20);
@@ -162,14 +174,14 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 
     private void initTextFieldAndSpinnerValue() {
         Size2D size2d = themeLabel.getTextExtentInflation();
-        this.textFieldHorizontal.setText(String.valueOf(size2d.getWidth()));
-        this.textFieldVertical.setText(String.valueOf(size2d.getHeight()));
-        this.textFieldMaxFontHeight.setText(String.valueOf(themeLabel.getMaxTextHeight()));
-        // this.textFieldMaxFontWidth.setText(String.valueOf(themeLabel.getMaxTextWidth()));
-        this.textFieldMinFontHeight.setText(String.valueOf(themeLabel.getMinTextHeight()));
-        // this.textFieldMinFontWidth.setText(String.valueOf(themeLabel.getMinTextWidth()));
-        this.textFieldRepeatInterval.setText(String.valueOf(themeLabel.getLabelRepeatInterval()));
-        this.spinnerFontCount.setValue(themeLabel.getMaxLabelLength());
+	    this.textFieldHorizontal.setText(DoubleUtilities.getFormatString(size2d.getWidth()));
+	    this.textFieldVertical.setText(DoubleUtilities.getFormatString(size2d.getHeight()));
+	    this.textFieldMaxFontHeight.setText(DoubleUtilities.getFormatString(themeLabel.getMaxTextHeight()));
+	    // this.textFieldMaxFontWidth.setText(String.valueOf(themeLabel.getMaxTextWidth()));
+	    this.textFieldMinFontHeight.setText(DoubleUtilities.getFormatString(themeLabel.getMinTextHeight()));
+	    // this.textFieldMinFontWidth.setText(String.valueOf(themeLabel.getMinTextWidth()));
+	    this.textFieldRepeatInterval.setText(DoubleUtilities.getFormatString(themeLabel.getLabelRepeatInterval()));
+	    this.spinnerFontCount.setValue(themeLabel.getMaxLabelLength());
         this.spinnerFontSpace.setValue(themeLabel.getAlongLineSpaceRatio());
     }
 

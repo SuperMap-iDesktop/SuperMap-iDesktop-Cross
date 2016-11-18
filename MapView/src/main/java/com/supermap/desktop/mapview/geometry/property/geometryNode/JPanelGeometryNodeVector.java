@@ -20,6 +20,7 @@ import com.supermap.desktop.mapview.geometry.property.geometryNode.vectorTableMo
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.GeometryTypeUtilities;
 import com.supermap.mapping.Map;
 import com.supermap.ui.MapControl;
@@ -337,7 +338,7 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 		for (VectorTableModel tableModel : tableModels) {
 			count += tableModel.getRowCount();
 		}
-		textFieldNodeCount.setText(String.valueOf(count));
+		textFieldNodeCount.setText(DoubleUtilities.getFormatString(count));
 	}
 
 	private void showPointInMap() {
