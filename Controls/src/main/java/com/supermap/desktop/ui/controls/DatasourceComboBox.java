@@ -107,7 +107,11 @@ public class DatasourceComboBox extends JComboBox<Object> {
      * @param datasource
      */
     public void setSelectedDatasource(Datasource datasource) {
-        if (getItemCount() <= 0 || datasource == null) {
+        if (datasource == null) {
+            setSelectedItem(null);
+            return;
+        }
+        if (getItemCount() <= 0) {
             return;
         }
         int selectIndex = 0;
