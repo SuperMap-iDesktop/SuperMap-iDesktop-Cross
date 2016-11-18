@@ -53,7 +53,7 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
     private ImportSetting importSetting;
     private ArrayList<PanelImport> panelImports;
     private int layeroutType;
-    private final static int DATASOURCE_TYPE = 0;
+    //    private final static int DATASOURCE_TYPE = 0;
     private final static int DATASET_TYPE = 1;
     private final static int IMPORTMODE_TYPE = 2;
     private final static int ENCODE_TYPE = 3;
@@ -438,13 +438,35 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
     }
 
     private void initDatasource() {
-        if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length >= 0 && null == panelImports) {
-            Datasource targetDatasource = Application.getActiveApplication().getActiveDatasources()[0];
-            this.importSetting.setTargetDatasource(targetDatasource);
-            this.comboBoxDatasource.setSelectedDatasource(targetDatasource);
+        if (null == panelImports) {
+            this.comboBoxDatasource.setSelectedDatasource(importSetting.getTargetDatasource());
         } else {
-            this.comboBoxDatasource.setSelectedItem(selectedItem(DATASOURCE_TYPE));
+            this.comboBoxDatasource.setSelectedDatasource(selectedDatasource());
         }
+    }
+
+    private Datasource selectedDatasource() {
+        Datasource result = null;
+        Datasource temp = null;
+        Datasource info = panelImports.get(0).getImportInfo().getImportSetting().getTargetDatasource();
+        if (null != info) {
+            temp = info;
+        } else {
+            result = temp;
+            return result;
+        }
+        boolean isSame = true;
+        for (PanelImport tempPanel : panelImports) {
+            String tempObject = tempPanel.getResultset().getComboBoxDatasource().getSelectedDatasource().getAlias();
+            if (!temp.getAlias().equals(tempObject)) {
+                isSame = false;
+                break;
+            }
+        }
+        if (isSame) {
+            result = info;
+        }
+        return result;
     }
 
     private Boolean externalDataSelectAll(int type) {
@@ -479,38 +501,36 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
 
     private Object selectedItem(int type) {
         Object result = null;
-        String temp = "";
-        Object info = getCombobox(panelImports.get(0).getResultset(), type).getSelectedItem();
+        Object temp = "";
+        Object info = getResult(panelImports.get(0).getResultset(), type).toString();
         if (null != info) {
-            temp = info.toString();
+            temp = info;
         } else {
             result = temp;
             return result;
         }
         boolean isSame = true;
         for (PanelImport tempPanel : panelImports) {
-            String tempObject = getCombobox(tempPanel.getResultset(), type).getSelectedItem().toString();
+            String tempObject = getResult(tempPanel.getResultset(), type).toString();
             if (!temp.equals(tempObject)) {
                 isSame = false;
                 break;
             }
         }
         if (isSame) {
-            result = temp;
+            result = info;
         }
         return result;
     }
 
-    private JComboBox getCombobox(IImportSettingResultset tempPanel, int type) {
-        JComboBox result = null;
-        if (type == DATASOURCE_TYPE) {
-            result = tempPanel.getComboBoxDatasource();
-        } else if (type == DATASET_TYPE) {
-            result = tempPanel.getComboBoxDatasetType();
+    private Object getResult(IImportSettingResultset tempPanel, int type) {
+        Object result = null;
+        if (type == DATASET_TYPE) {
+            result = tempPanel.getComboBoxDatasetType().getSelectedItem();
         } else if (type == ENCODE_TYPE) {
-            result = tempPanel.getComboBoxEncodeType();
+            result = tempPanel.getComboBoxEncodeType().getSelectedItem();
         } else if (type == IMPORTMODE_TYPE) {
-            result = tempPanel.getComboBoxImportMode();
+            result = tempPanel.getComboBoxImportMode().getSelectedItem();
         }
         return result;
     }
