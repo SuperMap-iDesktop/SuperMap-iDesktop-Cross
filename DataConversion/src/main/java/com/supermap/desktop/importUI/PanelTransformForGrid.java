@@ -3,14 +3,14 @@ package com.supermap.desktop.importUI;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.baseUI.PanelTransform;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.ui.StateChangeEvent;
+import com.supermap.desktop.ui.StateChangeListener;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 /**
@@ -20,9 +20,10 @@ import java.util.ArrayList;
 public class PanelTransformForGrid extends PanelTransform {
     private ArrayList<PanelImport> panelImports;
     private TristateCheckBox checkBoxBuildImgPyramid;
-    private ItemListener buildImgPyramidListener = new ItemListener() {
+    private StateChangeListener buildImgPyramidListener = new StateChangeListener() {
+
         @Override
-        public void itemStateChanged(ItemEvent e) {
+        public void stateChange(StateChangeEvent e) {
             if (null != panelImports) {
                 for (PanelImport tempPanelImport : panelImports) {
                     ((PanelTransformForGrid) tempPanelImport.getTransform()).getCheckBoxBuildImgPyramid().setSelected(checkBoxBuildImgPyramid.isSelected());
@@ -30,23 +31,17 @@ public class PanelTransformForGrid extends PanelTransform {
             } else {
                 if (importSetting instanceof ImportSettingRAW) {
                     ((ImportSettingRAW) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
-                }
-                if (importSetting instanceof ImportSettingTEMSClutter) {
+                } else if (importSetting instanceof ImportSettingTEMSClutter) {
                     ((ImportSettingTEMSClutter) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
-                }
-                if (importSetting instanceof ImportSettingBIP) {
+                } else if (importSetting instanceof ImportSettingBIP) {
                     ((ImportSettingBIP) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
-                }
-                if (importSetting instanceof ImportSettingBSQ) {
+                } else if (importSetting instanceof ImportSettingBSQ) {
                     ((ImportSettingBSQ) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
-                }
-                if (importSetting instanceof ImportSettingGBDEM) {
+                } else if (importSetting instanceof ImportSettingGBDEM) {
                     ((ImportSettingGBDEM) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
-                }
-                if (importSetting instanceof ImportSettingUSGSDEM) {
+                } else if (importSetting instanceof ImportSettingUSGSDEM) {
                     ((ImportSettingUSGSDEM) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
-                }
-                if (importSetting instanceof ImportSettingBIL) {
+                } else if (importSetting instanceof ImportSettingBIL) {
                     ((ImportSettingBIL) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
                 }
             }
@@ -118,12 +113,12 @@ public class PanelTransformForGrid extends PanelTransform {
     @Override
     public void registEvents() {
         removeEvents();
-        this.checkBoxBuildImgPyramid.addItemListener(this.buildImgPyramidListener);
+        this.checkBoxBuildImgPyramid.addStateChangeListener(this.buildImgPyramidListener);
     }
 
     @Override
     public void removeEvents() {
-        this.checkBoxBuildImgPyramid.removeItemListener(this.buildImgPyramidListener);
+        this.checkBoxBuildImgPyramid.removeStateChangeListener(this.buildImgPyramidListener);
     }
 
     @Override

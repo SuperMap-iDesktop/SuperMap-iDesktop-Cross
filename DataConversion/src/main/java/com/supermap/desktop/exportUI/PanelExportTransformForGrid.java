@@ -9,7 +9,6 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.StateChangeEvent;
 import com.supermap.desktop.ui.StateChangeListener;
 import com.supermap.desktop.ui.TristateCheckBox;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
@@ -29,6 +28,7 @@ import java.util.ArrayList;
  * 导出栅格数据集矢量参数设置
  */
 public class PanelExportTransformForGrid extends PanelExportTransform {
+    private DataExportDialog owner;
     private JLabel labelCompressionRatio;
     private JTextField textFieldCompressionRatio;
     private JLabel labelPrjFile;
@@ -109,11 +109,11 @@ public class PanelExportTransformForGrid extends PanelExportTransform {
         public void keyReleased(KeyEvent e) {
             String password = String.valueOf(passwordField.getPassword());
             String confrim = String.valueOf(passwordFieldConfrim.getPassword());
-            if (!confrim.equals(password) && e.getSource().equals(passwordFieldConfrim)) {
-                UICommonToolkit.showConfirmDialog(DataConversionProperties.getString("string_PasswordError"));
-                passwordFieldConfrim.requestFocus();
+            if (!confrim.equals(password)) {
+                owner.getButtonExport().setEnabled(false);
                 return;
             } else {
+                owner.getButtonExport().setEnabled(true);
                 ExportSetting exportSetting = exportsFileInfo.getExportSetting();
                 if (!StringUtilities.isNullOrEmpty(password)) {
                     if (null != panels) {
@@ -175,13 +175,15 @@ public class PanelExportTransformForGrid extends PanelExportTransform {
         }
     };
 
-    public PanelExportTransformForGrid(ExportFileInfo exportsFileInfo) {
+    public PanelExportTransformForGrid(DataExportDialog owner, ExportFileInfo exportsFileInfo) {
         super(exportsFileInfo);
+        this.owner = owner;
         registEvents();
     }
 
-    public PanelExportTransformForGrid(ArrayList<PanelExportTransform> panelExportTransforms, int layoutType) {
+    public PanelExportTransformForGrid(DataExportDialog owner, ArrayList<PanelExportTransform> panelExportTransforms, int layoutType) {
         super(panelExportTransforms, layoutType);
+        this.owner = owner;
         registEvents();
     }
 

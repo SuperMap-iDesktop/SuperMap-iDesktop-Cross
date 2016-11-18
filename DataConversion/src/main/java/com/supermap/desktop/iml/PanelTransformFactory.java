@@ -119,7 +119,8 @@ public class PanelTransformFactory implements IPanelTransformFactory {
         return importSetting instanceof ImportSettingSHP || importSetting instanceof ImportSettingGRD ||
                 importSetting instanceof ImportSettingE00 || importSetting instanceof ImportSettingAiBinGrid ||
                 importSetting instanceof ImportSettingDBF || importSetting instanceof ImportSettingLIDAR ||
-                importSetting instanceof ImportSettingTAB || importSetting instanceof ImportSettingMIF;
+                importSetting instanceof ImportSettingTAB || importSetting instanceof ImportSettingMIF ||
+                importSetting instanceof ImportSettingFileGDBVector;
     }
 
     private boolean isClutterType(ImportSetting importSetting) {
