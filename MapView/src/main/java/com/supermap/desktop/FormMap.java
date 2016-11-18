@@ -466,8 +466,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			if (clickCount == 2 && mapControl.getMap().findSelection(true).length > 0) {
 
 				// 双击显示对象属性
-				JDialog dialogPropertyContainer = (JDialog) Application.getActiveApplication().getMainFrame().getPropertyManager();
-				dialogPropertyContainer.setVisible(true);
+				Application.getActiveApplication().getMainFrame().getPropertyManager().setPropertyVisible(true);
 				setSelectedGeometryProperty();
 			}
 		}

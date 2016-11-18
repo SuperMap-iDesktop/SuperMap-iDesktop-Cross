@@ -147,7 +147,7 @@ class DoubleFormatter extends NumberFormat {
 	public DoubleFormatter() {
 		numberFormat = NumberFormat.getInstance();
 		numberFormat.setMaximumFractionDigits(MaxDigits);
-		numberFormat.setMinimumIntegerDigits(0);
+		numberFormat.setMinimumIntegerDigits(1);
 	}
 
 

@@ -5,19 +5,21 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.metal.MetalBorders;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.math.BigDecimal;
 
 public class DatasetPropertyControl extends AbstractPropertyControl {
 
@@ -25,7 +27,6 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	private static final int DEFAULT_LABEL_WIDTH = 100;
 
 	private JLabel labelName;
 	private JTextField textFieldName;
@@ -37,13 +38,13 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 	private JTextField textFieldEncoding;
 
 	private JLabel labelLeft;
-	private JTextField textFieldLeft;
+	private SMFormattedTextField textFieldLeft;
 	private JLabel labelTop;
-	private JTextField textFieldTop;
+	private SMFormattedTextField textFieldTop;
 	private JLabel labelRight;
-	private JTextField textFieldRight;
+	private SMFormattedTextField textFieldRight;
 	private JLabel labelBottom;
-	private JTextField textFieldBottom;
+	private SMFormattedTextField textFieldBottom;
 
 	private JLabel labelDescription;
 	private JTextArea textAreaDescription;
@@ -125,84 +126,47 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 
 		JPanel panelBase = new JPanel();
 		panelBase.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_BasicInfo")));
-		GroupLayout gl_panelBase = new GroupLayout(panelBase);
-		gl_panelBase.setAutoCreateContainerGaps(true);
-		gl_panelBase.setAutoCreateGaps(true);
-		panelBase.setLayout(gl_panelBase);
-		// @formatter:off
-		gl_panelBase.setHorizontalGroup(gl_panelBase.createSequentialGroup()
-				.addGroup(gl_panelBase.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelName, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-						.addComponent(this.labelDatasetType, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-						.addComponent(this.labelRecordsetName, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-						.addComponent(this.labelEncoding, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH))
-				.addGroup(gl_panelBase.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.textFieldName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(this.textFieldDatasetType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(this.textFieldRecordsetName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(this.textFieldEncoding, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-		
-		gl_panelBase.setVerticalGroup(gl_panelBase.createSequentialGroup()
-				.addGroup(gl_panelBase.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelName)
-						.addComponent(this.textFieldName, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelBase.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelDatasetType)
-						.addComponent(this.textFieldDatasetType, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelBase.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelRecordsetName)
-						.addComponent(this.textFieldRecordsetName, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelBase.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelEncoding)
-						.addComponent(this.textFieldEncoding, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)));
-		// @formatter:on
+		panelBase.setLayout(new GridBagLayout());
+		panelBase.add(labelName, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelBase.add(textFieldName, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10));
+
+		panelBase.add(labelDatasetType, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelBase.add(textFieldDatasetType, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelBase.add(labelRecordsetName, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelBase.add(textFieldRecordsetName, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelBase.add(labelEncoding, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelBase.add(textFieldEncoding, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 10, 10));
+
 
 		this.labelLeft = new JLabel("Left:");
-		this.textFieldLeft = new JTextField();
+		this.textFieldLeft = new SMFormattedTextField();
 		this.textFieldLeft.setEditable(false);
 		this.labelTop = new JLabel("Top:");
-		this.textFieldTop = new JTextField();
+		this.textFieldTop = new SMFormattedTextField();
 		this.textFieldTop.setEditable(false);
 		this.labelRight = new JLabel("Right");
-		this.textFieldRight = new JTextField();
+		this.textFieldRight = new SMFormattedTextField();
 		this.textFieldRight.setEditable(false);
 		this.labelBottom = new JLabel("Bottom:");
-		this.textFieldBottom = new JTextField();
+		this.textFieldBottom = new SMFormattedTextField();
 		this.textFieldBottom.setEditable(false);
 
 		JPanel panelBounds = new JPanel();
 		panelBounds.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_DatasetBounds")));
-		GroupLayout gl_panelBounds = new GroupLayout(panelBounds);
-		gl_panelBounds.setAutoCreateContainerGaps(true);
-		gl_panelBounds.setAutoCreateGaps(true);
-		panelBounds.setLayout(gl_panelBounds);
-		// @formatter:off
-		gl_panelBounds.setHorizontalGroup(gl_panelBounds.createSequentialGroup()
-				.addGroup(gl_panelBounds.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelLeft, DEFAULT_LABEL_WIDTH/2, DEFAULT_LABEL_WIDTH/2, DEFAULT_LABEL_WIDTH/2)
-						.addComponent(this.labelTop, DEFAULT_LABEL_WIDTH/2, DEFAULT_LABEL_WIDTH/2, DEFAULT_LABEL_WIDTH/2)
-						.addComponent(this.labelRight, DEFAULT_LABEL_WIDTH/2, DEFAULT_LABEL_WIDTH/2, DEFAULT_LABEL_WIDTH/2)
-						.addComponent(this.labelBottom, DEFAULT_LABEL_WIDTH/2, DEFAULT_LABEL_WIDTH/2, DEFAULT_LABEL_WIDTH/2))
-				.addGroup(gl_panelBounds.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.textFieldLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(this.textFieldTop, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(this.textFieldRight, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(this.textFieldBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-		
-		gl_panelBounds.setVerticalGroup(gl_panelBounds.createSequentialGroup()
-				.addGroup(gl_panelBounds.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelLeft)
-						.addComponent(this.textFieldLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelBounds.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelTop)
-						.addComponent(this.textFieldTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelBounds.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelRight)
-						.addComponent(this.textFieldRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelBounds.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelBottom)
-						.addComponent(this.textFieldBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)));
-		// @formatter:on
+		panelBounds.setLayout(new GridBagLayout());
+		panelBounds.add(labelLeft, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelBounds.add(textFieldLeft, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10));
+
+		panelBounds.add(labelTop, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelBounds.add(textFieldTop, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelBounds.add(labelRight, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelBounds.add(textFieldRight, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelBounds.add(labelBottom, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelBounds.add(textFieldBottom, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 10, 10));
 
 		this.labelDescription = new JLabel("Description:");
 		this.textAreaDescription = new JTextArea();
@@ -210,58 +174,30 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 
 		JPanel panelDescription = new JPanel();
 		panelDescription.setBorder(BorderFactory.createTitledBorder(""));
-		GroupLayout gl_panelDescription = new GroupLayout(panelDescription);
-		gl_panelDescription.setAutoCreateContainerGaps(true);
-		gl_panelDescription.setAutoCreateGaps(true);
-		panelDescription.setLayout(gl_panelDescription);
-		// @formatter:off
-		gl_panelDescription.setHorizontalGroup(gl_panelDescription.createSequentialGroup()
-				.addComponent(this.labelDescription, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-				.addComponent(this.textAreaDescription, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
-		
-		gl_panelDescription.setVerticalGroup(gl_panelDescription.createParallelGroup(Alignment.LEADING)
-				.addComponent(this.labelDescription)
-				.addComponent(this.textAreaDescription, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
-		// @formatter:on
+		panelDescription.setLayout(new GridBagLayout());
+		panelDescription.add(labelDescription, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 10));
+		panelDescription.add(textAreaDescription, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 10, 10));
 
 		this.buttonReset = new SmButton("Reset");
 		this.buttonApply = new SmButton("Apply");
 
 		JPanel panelButtons = new JPanel();
-		GroupLayout gl_panelButtons = new GroupLayout(panelButtons);
-		gl_panelButtons.setAutoCreateGaps(true);
-		panelButtons.setLayout(gl_panelButtons);
-		// @formatter:off
-		gl_panelButtons.setHorizontalGroup(gl_panelButtons.createSequentialGroup()
-				.addGap(10, 10, Short.MAX_VALUE)
-				.addComponent(this.buttonReset, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(this.buttonApply, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addContainerGap());
-		
-		gl_panelButtons.setVerticalGroup(gl_panelButtons.createParallelGroup(Alignment.CENTER)
-				.addComponent(this.buttonReset, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(this.buttonApply, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
-		// @formatter:on
+		panelButtons.setLayout(new GridBagLayout());
+		panelButtons.add(buttonReset, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 10, 0));
+		panelButtons.add(buttonApply, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 10, 10));
 
-		GroupLayout gl_mainContent = new GroupLayout(this);
-		gl_mainContent.setAutoCreateContainerGaps(true);
-		gl_mainContent.setAutoCreateGaps(true);
-		setLayout(gl_mainContent);
-		// @formatter:off
-		gl_mainContent.setHorizontalGroup(gl_mainContent.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_mainContent.createSequentialGroup()
-						.addComponent(panelBase, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-						.addComponent(panelBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
-				.addComponent(panelDescription, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addComponent(panelButtons, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
-		
-		gl_mainContent.setVerticalGroup(gl_mainContent.createSequentialGroup()
-				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
-						.addComponent(panelBase, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(panelBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addComponent(panelDescription, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addComponent(panelButtons, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
-		// @formatter:on
+		JScrollPane jScrollPane = new JScrollPane();
+		JPanel panelMain = new JPanel();
+		panelMain.setLayout(new GridBagLayout());
+		panelMain.add(panelBase, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 10, 0, 10));
+		panelMain.add(panelBounds, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
+		panelMain.add(panelDescription, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
+
+		jScrollPane.setViewportView(panelMain);
+		this.setLayout(new GridBagLayout());
+		this.add(jScrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
+		this.add(panelButtons, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
+
 	}
 
 	private void initializeResources() {
@@ -304,10 +240,10 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 		this.textFieldDatasetType.setText(DatasetTypeUtilities.toString(this.dataset.getType()));
 		this.textFieldRecordsetName.setText(this.dataset.getTableName());
 		this.textFieldEncoding.setText(EncodeTypeUtilities.toString(this.dataset.getEncodeType()));
-		this.textFieldLeft.setText(BigDecimal.valueOf(this.dataset.getBounds().getLeft()).toString());
-		this.textFieldTop.setText(BigDecimal.valueOf(this.dataset.getBounds().getTop()).toString());
-		this.textFieldRight.setText(BigDecimal.valueOf(this.dataset.getBounds().getRight()).toString());
-		this.textFieldBottom.setText(BigDecimal.valueOf(this.dataset.getBounds().getBottom()).toString());
+		this.textFieldLeft.setText(DoubleUtilities.getFormatString(this.dataset.getBounds().getLeft()));
+		this.textFieldTop.setText(DoubleUtilities.getFormatString(this.dataset.getBounds().getTop()));
+		this.textFieldRight.setText(DoubleUtilities.getFormatString(this.dataset.getBounds().getRight()));
+		this.textFieldBottom.setText(DoubleUtilities.getFormatString(this.dataset.getBounds().getBottom()));
 		this.textAreaDescription.setText(this.description);
 	}
 

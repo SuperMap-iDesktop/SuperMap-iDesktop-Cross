@@ -47,4 +47,6 @@ public interface IPropertyManager {
 	int getPropertyIndex(IProperty property);
 
 	IProperty getCurrentProperty();
+
+	void setPropertyVisible(boolean visible);
 }
