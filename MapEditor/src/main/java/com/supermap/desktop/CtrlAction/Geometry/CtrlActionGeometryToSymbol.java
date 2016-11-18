@@ -33,14 +33,11 @@ public class CtrlActionGeometryToSymbol extends CtrlAction {
 			GeometryType.GEOLINE,
 			GeometryType.GEOREGION,
 			GeometryType.GEOTEXT,
-			GeometryType.GEOARC,
 			GeometryType.GEOCIRCLE,
 			GeometryType.GEOBOX,
 			GeometryType.GEOCOMPOUND,
 			GeometryType.GEOELLIPTICARC,
-			GeometryType.GEOLINEM,
 			GeometryType.GEOROUNDRECTANGLE,
-			GeometryType.GEOPIE
 	};
 	private static List<GeometryType> supportGeometryTypeList;
 

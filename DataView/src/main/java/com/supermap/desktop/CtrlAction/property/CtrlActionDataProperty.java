@@ -11,7 +11,6 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 
-import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
@@ -25,8 +24,7 @@ public class CtrlActionDataProperty extends CtrlAction {
 	@Override
 	public void run() {
 		setSelectedDataProperty();
-		JDialog dialogPropertyContainer = (JDialog) Application.getActiveApplication().getMainFrame().getPropertyManager();
-		dialogPropertyContainer.setVisible(true);
+		Application.getActiveApplication().getMainFrame().getPropertyManager().setPropertyVisible(true);
 	}
 
 	/**

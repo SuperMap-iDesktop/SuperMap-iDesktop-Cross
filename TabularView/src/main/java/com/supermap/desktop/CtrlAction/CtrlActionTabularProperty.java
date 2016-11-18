@@ -11,7 +11,6 @@ import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
 import com.supermap.desktop.controls.property.dataset.RecordsetPropertyControl;
 import com.supermap.desktop.implement.CtrlAction;
 
-import javax.swing.*;
 import java.util.ArrayList;
 
 /**
@@ -29,14 +28,13 @@ public class CtrlActionTabularProperty extends CtrlAction {
 		ArrayList<IProperty> properties = WorkspaceTreeDataPropertyFactory.getDatasetProperties(dataset);
 		IPropertyManager propertyManager = Application.getActiveApplication().getMainFrame().getPropertyManager();
 		propertyManager.setProperty(properties.toArray(new IProperty[properties.size()]));
-		JDialog dialogPropertyContainer = (JDialog) Application.getActiveApplication().getMainFrame().getPropertyManager();
 		for (IProperty property : properties) {
 			if (property instanceof RecordsetPropertyControl) {
 				propertyManager.setSelectedProperty(property);
 				break;
 			}
 		}
-		dialogPropertyContainer.setVisible(true);
+		propertyManager.setPropertyVisible(true);
 	}
 
 	@Override
