@@ -1,13 +1,15 @@
 package com.supermap.desktop.utilities;
 
+import com.supermap.desktop.GlobalParameters;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.FieldPosition;
 import java.text.NumberFormat;
-import java.text.ParseException;
+import java.text.ParsePosition;
 
 public class DoubleUtilities {
 
-	private static int MaxDigits = 8;
 
 	private DoubleUtilities() {
 		// 默认私有构造器
@@ -114,23 +116,84 @@ public class DoubleUtilities {
 	}
 
 	public static String getFormatString(double value) {
+
 		return getDoubleFormatInstance().format(value);
 	}
 
 	public static NumberFormat getDoubleFormatInstance() {
-		NumberFormat instance = NumberFormat.getInstance();
-		instance.setMaximumFractionDigits(MaxDigits);
-		instance.setMinimumIntegerDigits(0);
-		return instance;
+//		NumberFormat numberFormat = NumberFormat.getInstance();
+//		numberFormat.setMaximumFractionDigits(8);
+//		numberFormat.setMinimumIntegerDigits(0);
+//		return numberFormat;
+		return DoubleFormatter.getNumberFormat();
 	}
 
 	public static Double stringToValue(String scaleString) {
 		Double value = null;
 		try {
 			value = Double.valueOf(String.valueOf(getDoubleFormatInstance().parse(scaleString)));
-		} catch (ParseException e) {
+		} catch (Exception e) {
 			// ignore
 		}
 		return value;
+	}
+}
+
+class DoubleFormatter extends NumberFormat {
+	private static int MaxDigits = 8;
+	private static NumberFormat numberFormat;
+	private static DoubleFormatter doubleFormatterInstance;
+
+	public DoubleFormatter() {
+		numberFormat = NumberFormat.getInstance();
+		numberFormat.setMaximumFractionDigits(MaxDigits);
+		numberFormat.setMinimumIntegerDigits(0);
+	}
+
+
+//	@Override
+//	public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+//		if (!GlobalParameters.isUseThousandPointDivision()) {
+//			if (obj != null) {
+//				String str = String.valueOf(obj);
+//				toAppendTo.append(str);
+//				pos.setBeginIndex(0);
+//				pos.setEndIndex(str.length());
+//			}
+//			return toAppendTo;
+//		}
+//		return numberFormat.format(obj, toAppendTo, pos);
+//
+//	}
+
+
+	@Override
+	public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
+		if (!GlobalParameters.isUseThousandPointDivision()) {
+			toAppendTo.append(String.valueOf(number));
+			return toAppendTo;
+		}
+		return numberFormat.format(number, toAppendTo, pos);
+	}
+
+	@Override
+	public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
+		if (!GlobalParameters.isUseThousandPointDivision()) {
+			toAppendTo.append(String.valueOf(number));
+			return toAppendTo;
+		}
+		return numberFormat.format(number, toAppendTo, pos);
+	}
+
+	@Override
+	public Number parse(String source, ParsePosition parsePosition) {
+		return numberFormat.parse(source, parsePosition);
+	}
+
+	public static DoubleFormatter getNumberFormat() {
+		if (doubleFormatterInstance == null) {
+			doubleFormatterInstance = new DoubleFormatter();
+		}
+		return doubleFormatterInstance;
 	}
 }

@@ -40,6 +40,8 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 	private JLabel labelAnalystMemorySize;// 分析内存模式
 	private JComboBox<String> comboBoxAnalystMemorySize;
 
+	private JCheckBox checkBoxUseThousandPointDivision;// 千分位分隔符
+
 	private JCheckBox checkBoxSceneAntialias;// 场景反走样系数
 	private JSpinner spinnerSceneAntialiasValue;
 
@@ -47,6 +49,7 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 
 	private JLabel labelFileCache;
 	private FileChooserControl fileChooserControlFileCache;
+
 
 	private JPanel panelOutput;
 	private JCheckBox checkBoxOutputInfo;
@@ -98,6 +101,7 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 		openCLCapability = Environment.checkOpenCLCapability();
 		panelBasicSetting = new JPanel();
 		panelBasicSetting.setBorder(BorderFactory.createTitledBorder(FrameProperties.getString("String_CaptionBaseSetting")));
+		checkBoxUseThousandPointDivision = new JCheckBox();
 //		labelTitle = new JLabel();
 //		smTextFieldLegitTitle = new SmTextFieldLegit();
 		labelOMPNumThreads = new JLabel();
@@ -143,6 +147,7 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 		panelBasicSetting.add(spinnerSceneAntialiasValue, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL));
 
 		panelBasicSetting.add(checkBoxGPUComputingEnabled, new GridBagConstraintsHelper(0, 4, 2, 1).setWeight(1, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL));
+		panelBasicSetting.add(checkBoxUseThousandPointDivision, new GridBagConstraintsHelper(0, 5, 2, 1).setWeight(1, 0).setInsets(5, 5, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL));
 
 	}
 
@@ -233,6 +238,7 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 		checkBoxGPUComputingEnabled.addItemListener(itemListener);
 		checkBoxOutputInfo.addItemListener(itemListener);
 		checkBoxOutputException.addItemListener(itemListener);
+		checkBoxUseThousandPointDivision.addItemListener(itemListener);
 		fileChooserControlFileCache.getButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -286,6 +292,7 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 		labelFileCache.setText(FrameProperties.getString("String_FileCacheFolder"));
 		checkBoxOutputInfo.setText(FrameProperties.getString("String_OutputLevel"));
 		checkBoxOutputException.setText(FrameProperties.getString("String_OutputLevelDebug"));
+		checkBoxUseThousandPointDivision.setText(FrameProperties.getString("String_UseThousandPointDivision"));
 
 	}
 
@@ -302,7 +309,7 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 		fileChooserControlFileCache.getEditor().setText(Environment.getFileCacheFolder());
 		checkBoxOutputException.setSelected(GlobalParameters.isLogException());
 		checkBoxOutputInfo.setSelected(GlobalParameters.isLogInformation());
-
+		checkBoxUseThousandPointDivision.setSelected(GlobalParameters.isUseThousandPointDivision());
 	}
 
 	@Override
@@ -334,6 +341,8 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 				GlobalParameters.setLogException(checkBoxOutputException.isSelected());
 			} else if (changedValue == checkBoxSceneAntialias) {
 				Environment.setSceneAntialias(checkBoxSceneAntialias.isSelected());
+			} else if (changedValue == checkBoxUseThousandPointDivision) {
+				GlobalParameters.setIsUseThousandPointDivision(checkBoxUseThousandPointDivision.isSelected());
 			}
 		}
 	}

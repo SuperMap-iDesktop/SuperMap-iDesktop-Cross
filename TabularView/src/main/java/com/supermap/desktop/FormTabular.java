@@ -545,21 +545,24 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		DefaultCellEditor objectCellEditor = new TableDefaultCellEditor(objectEditorControl);
 		this.jTableTabular.setDefaultEditor(Object.class, objectCellEditor);
 		// TODO: 2016/11/15
-		DataTableCellEditor editor = new DataTableCellEditor(new JTextField()) {
+		DefaultCellEditor editor = new DefaultCellEditor(new JTextField()) {
 			@Override
 			public boolean stopCellEditing() {
 				String value = (String) super.getCellEditorValue();
 				if (DoubleUtilities.stringToValue(value) == null) {
-					return false;
+					return super.stopCellEditing();
 				}
-				return super.stopCellEditing();
+				if (DoubleUtilities.stringToValue(value) != null) {
+					return super.stopCellEditing();
+				}
+				return false;
 			}
 		};
 		this.jTableTabular.setDefaultEditor(Double.class, editor);
 		this.jTableTabular.setDefaultEditor(Float.class, editor);
 		this.jTableTabular.setDefaultEditor(Integer.class, editor);
 		this.jTableTabular.setDefaultEditor(Long.class, editor);
-		TableCellEditor defaultEditor = this.jTableTabular.getDefaultEditor(Double.class);
+
 		// 设置列宽
 		setColumnsWidth();
 		// 设置行高

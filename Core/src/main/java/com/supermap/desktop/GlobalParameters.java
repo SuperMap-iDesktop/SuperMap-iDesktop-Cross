@@ -1015,9 +1015,11 @@ public class GlobalParameters {
 	}
 	//endregion
 
-	//region 编辑回退设置
+	//region 编辑
 	private static void initEdit() {
 		initPositiveselect();
+		// 是否使用千分位分隔符
+		initIsUseThousandPointDivision();
 	}
 
 	//region 选择模式
@@ -1038,6 +1040,28 @@ public class GlobalParameters {
 		GlobalParameters.positiveSelect = positiveSelect;
 	}
 	//endregion
+
+	//endregion
+
+	//region 是否使用千分位分隔符
+	private static boolean isUseThousandPointDivision = true;
+
+	private static void initIsUseThousandPointDivision() {
+		String value = getValue("_startup_edit", "useThousandPointDivision");
+		if (value != null) {
+			boolean result = Boolean.valueOf(value);
+			setIsUseThousandPointDivision(result);
+		}
+	}
+
+	public static boolean isUseThousandPointDivision() {
+		return isUseThousandPointDivision;
+	}
+
+
+	public static void setIsUseThousandPointDivision(boolean isShowDataInNewWindow) {
+		GlobalParameters.isUseThousandPointDivision = isShowDataInNewWindow;
+	}
 
 	//endregion
 
@@ -1112,6 +1136,7 @@ public class GlobalParameters {
 			startup.appendChild(emptyDocument.createComment(CoreProperties.getString("String_editComment")));
 			Element edit = emptyDocument.createElement("edit");
 			edit.setAttribute("positiveselect", String.valueOf(positiveSelect));
+			edit.setAttribute("useThousandPointDivision", String.valueOf(isUseThousandPointDivision));
 			startup.appendChild(edit);
 
 			XmlUtilities.saveXml(startupXml, emptyDocument, "UTF-8");
