@@ -43,6 +43,7 @@ import com.supermap.desktop.mapview.geometry.property.GeometryPropertyFactory;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.GeometryNodeFactory;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.FormBaseChild;
+import com.supermap.desktop.ui.FormManager;
 import com.supermap.desktop.ui.LayersComponentManager;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -146,7 +147,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						FormMap.this.close();
+						Application.getActiveApplication().getMainFrame().getFormManager().close(FormMap.this);
 					}
 				});
 			}
@@ -506,7 +507,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		map.setWorkspace(Application.getActiveApplication().getWorkspace());
 		map.setName(title);
 
-		this.setComponent(this.jScrollPaneChildWindow);
+		setLayout(new BorderLayout());
+		this.add(this.jScrollPaneChildWindow);
 
 		if (Application.getActiveApplication().getMainFrame() != null) {
 			IContextMenuManager manager = Application.getActiveApplication().getMainFrame().getContextMenuManager();
@@ -990,12 +992,12 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	@Override
 	public String getText() {
-		return super.getTitle();
+		return this.mapControl.getName();
 	}
 
 	@Override
 	public void setText(String text) {
-		super.setTitle(text);
+
 	}
 
 	@Override

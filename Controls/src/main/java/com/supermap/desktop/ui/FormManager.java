@@ -15,19 +15,26 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.mdi.MdiGroup;
 
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FormManager implements IFormManager {
 	private IFormMain mainForm = null;
-//	private TabWindow childWindowsContainer = null;
+	//	private TabWindow childWindowsContainer = null;
 	private WindowType activatedChildFormType = WindowType.UNKNOWN;
 	private IForm activeForm;
 	private EventListenerList listenerList = new EventListenerList();
 	private ArrayList<IForm> childForms = new ArrayList<IForm>();
+	private MdiGroup mdiGroup = new MdiGroup(null);
+
+	public MdiGroup getContentPane() {
+		return this.mdiGroup;
+	}
 
 	public FormManager(IFormMain mainForm) {
 		this.setMainForm(mainForm);
@@ -85,32 +92,33 @@ public class FormManager implements IFormManager {
 
 	@Override
 	public void setActiveForm(IForm form) {
-		try {
-			IForm oldActiveForm = this.activeForm;
-			this.activeForm = form;
-
-			if (this.activeForm != oldActiveForm) {
-				if (oldActiveForm != null) {
-					oldActiveForm.deactived();
-				}
-
-				// 选中子窗体
-//				int index = this.childWindowsContainer.getChildWindowIndex((DockingWindow) form);
-//				if (index >= 0) {
-//					this.childWindowsContainer.setSelectedTab(index);
+		this.mdiGroup.getPage((Component) form).close();
+//		try {
+//			IForm oldActiveForm = this.activeForm;
+//			this.activeForm = form;
+//
+//
+//			if (this.activeForm != oldActiveForm) {
+//				if (oldActiveForm != null) {
+//					oldActiveForm.deactived();
 //				}
-
-				if (this.activeForm != null) {
-					this.activeForm.actived();
-				}
-				ToolbarUIUtilities.updataToolbarsState();
-				fireActiveFormChanged(new ActiveFormChangedEvent(this, oldActiveForm, form));
-			}
-
-
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
+//
+//				// 选中子窗体
+////				int index = this.childWindowsContainer.getChildWindowIndex((DockingWindow) form);
+////				if (index >= 0) {
+////					this.childWindowsContainer.setSelectedTab(index);
+////				}
+//
+//				if (this.activeForm != null) {
+//					this.activeForm.actived();
+//				}
+//				ToolbarUIUtilities.updataToolbarsState();
+//				fireActiveFormChanged(new ActiveFormChangedEvent(this, oldActiveForm, form));
+//			}
+//
+//		} catch (Exception ex) {
+//			Application.getActiveApplication().getOutput().output(ex);
+//		}
 	}
 
 	@Override
@@ -444,7 +452,6 @@ public class FormManager implements IFormManager {
 
 	/**
 	 * 窗口关闭响应事件
-	 *
 	 */
 //	private void childWindowClosing(WindowClosingEvent evt) throws OperationAbortedException {
 //		try {
@@ -542,7 +549,6 @@ public class FormManager implements IFormManager {
 //			Application.getActiveApplication().getOutput().output(ex);
 //		}
 //	}
-
 	public IFormMain getMainForm() {
 		return mainForm;
 	}

@@ -260,6 +260,17 @@ public class MdiGroup extends JComponent {
 		return c;
 	}
 
+	public MdiPage getPage(Component component) {
+		MdiPage page = null;
+		for (int i = 0; i < this.pages.size(); i++) {
+			if (this.pages.get(i).getComponent() == component) {
+				page = this.pages.get(i);
+				break;
+			}
+		}
+		return page;
+	}
+
 	public MdiPage[] getPages() {
 		return this.pages.toArray(new MdiPage[this.pages.size()]);
 	}

@@ -12,12 +12,13 @@ import java.util.ArrayList;
 
 public class XMLDockbars extends XMLCommandBase {
 	private ArrayList<XMLDockbar> dockBars = null;
+
+	/*为空则表示没有 Dockbar 配置，有实例对象存在则表示有 Dockbar*/
 	private DockConstraint dockConstraint = null;
 
 	public XMLDockbars() {
 		this.commandType = XMLCommandType.DOCKBARS;
 		this.dockBars = new ArrayList<XMLDockbar>();
-		this.dockConstraint = new DockConstraint();
 	}
 
 	public XMLDockbars(PluginInfo pluginInfo) {
@@ -27,7 +28,7 @@ public class XMLDockbars extends XMLCommandBase {
 	}
 
 	public DockConstraint getDockConstraint() {
-		return this.dockConstraint;
+		return this.dockConstraint == null ? new DockConstraint() : this.dockConstraint;
 	}
 
 	public boolean load(Element element) {
