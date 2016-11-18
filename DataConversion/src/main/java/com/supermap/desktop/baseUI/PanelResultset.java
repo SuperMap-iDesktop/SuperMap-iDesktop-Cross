@@ -185,6 +185,7 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
                             ((ImportSettingDGN) importSetting).setImportingAsCAD(false);
                         }
                     } else if (datasetType.equals(DataConversionProperties.getString("string_comboboxitem_image"))) {
+                        ((PanelTransformForImage) owner.getTransform()).getComboBoxBandImportModel().insertItemAt(DataConversionProperties.getString("string_multiBand"), 1);
                         ((PanelTransformForImage) owner.getTransform()).getComboBoxBandImportModel().insertItemAt(DataConversionProperties.getString("string_compositeBand"), 2);
                         if (importSetting instanceof ImportSettingJPG) {
                             ((ImportSettingJPG) importSetting).setImportingAsGrid(false);
@@ -218,6 +219,7 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
                         } else if (importSetting instanceof ImportSettingIMG) {
                             ((ImportSettingIMG) importSetting).setImportingAsGrid(true);
                         } else if (importSetting instanceof ImportSettingTIF) {
+                            ((PanelTransformForImage) owner.getTransform()).getComboBoxBandImportModel().removeItem(DataConversionProperties.getString("string_multiBand"));
                             ((ImportSettingTIF) importSetting).setImportingAsGrid(true);
                         } else if (importSetting instanceof ImportSettingGIF) {
                             ((ImportSettingGIF) importSetting).setImportingAsGrid(true);
@@ -587,7 +589,9 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
                 importSetting instanceof ImportSettingDBF || importSetting instanceof ImportSettingBIL ||
                 importSetting instanceof ImportSettingBSQ || importSetting instanceof ImportSettingBIP ||
                 importSetting instanceof ImportSettingTEMSClutter || importSetting instanceof ImportSettingVCT ||
-                importSetting instanceof ImportSettingRAW || importSetting instanceof ImportSettingGJB) {
+                importSetting instanceof ImportSettingRAW || importSetting instanceof ImportSettingGJB ||
+                importSetting instanceof ImportSettingTEMSVector || importSetting instanceof ImportSettingTEMSBuildingVector
+                || importSetting instanceof ImportSettingFileGDBVector) {
             this.comboBoxDatasetType = new DatasetComboBox();
             if (importSetting instanceof ImportSettingGRD) {
                 this.comboBoxEncodeType.setModel(new DefaultComboBoxModel(new String[]{DataConversionProperties.getString("string_comboboxitem_nullcoding"), "SGL", "LZW"}));
@@ -601,9 +605,12 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             if (importSetting instanceof ImportSettingSHP) {
                 this.add(this.checkBoxFieldIndex, new GridBagConstraintsHelper(0, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
                 this.add(this.checkBoxSpatialIndex, new GridBagConstraintsHelper(4, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-            } else if (importSetting instanceof ImportSettingE00 || importSetting instanceof ImportSettingGJB) {
+            } else if (importSetting instanceof ImportSettingE00 || importSetting instanceof ImportSettingGJB
+                    || importSetting instanceof ImportSettingTEMSVector || importSetting instanceof ImportSettingTEMSBuildingVector
+                    || importSetting instanceof ImportSettingFileGDBVector) {
                 this.add(this.checkBoxSpatialIndex, new GridBagConstraintsHelper(0, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-                if (importSetting instanceof ImportSettingGJB) {
+                if (importSetting instanceof ImportSettingGJB || importSetting instanceof ImportSettingTEMSVector
+                        || importSetting instanceof ImportSettingTEMSBuildingVector || importSetting instanceof ImportSettingFileGDBVector) {
                     this.labelDatasetName.setEnabled(false);
                     this.textFieldDatasetName.setEnabled(false);
                 }

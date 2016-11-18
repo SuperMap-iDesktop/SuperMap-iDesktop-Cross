@@ -35,9 +35,11 @@ public class PanelTransformForGRD extends PanelTransform {
             } else {
                 if (importSetting instanceof ImportSettingGRD) {
                     ((ImportSettingGRD) importSetting).setPyramidBuilt(checkBoxPyramidBuild.isSelected());
+                    return;
                 }
                 if (importSetting instanceof ImportSettingGBDEM) {
                     ((ImportSettingGBDEM) importSetting).setPyramidBuilt(checkBoxPyramidBuild.isSelected());
+                    return;
                 }
             }
         }
@@ -52,18 +54,27 @@ public class PanelTransformForGRD extends PanelTransform {
             } else {
                 if (importSetting instanceof ImportSettingSHP) {
                     ((ImportSettingSHP) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
+                    return;
                 }
                 if (importSetting instanceof ImportSettingE00) {
                     ((ImportSettingE00) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
+                    return;
                 }
                 if (importSetting instanceof ImportSettingLIDAR) {
                     ((ImportSettingLIDAR) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
+                    return;
                 }
                 if (importSetting instanceof ImportSettingTAB) {
                     ((ImportSettingTAB) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
+                    return;
                 }
                 if (importSetting instanceof ImportSettingMIF) {
                     ((ImportSettingMIF) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
+                    return;
+                }
+                if (importSetting instanceof ImportSettingFileGDBVector) {
+                    ((ImportSettingFileGDBVector) importSetting).setAttributeIgnored(checkBoxAttributeIgnored.isSelected());
+                    return;
                 }
             }
         }
@@ -98,18 +109,27 @@ public class PanelTransformForGRD extends PanelTransform {
         if (null == panelImports) {
             if (importSetting instanceof ImportSettingSHP) {
                 checkBoxAttributeIgnored.setSelected(((ImportSettingSHP) importSetting).isAttributeIgnored());
+                return;
             }
             if (importSetting instanceof ImportSettingE00) {
                 checkBoxAttributeIgnored.setSelected(((ImportSettingE00) importSetting).isAttributeIgnored());
+                return;
             }
             if (importSetting instanceof ImportSettingLIDAR) {
                 checkBoxAttributeIgnored.setSelected(((ImportSettingLIDAR) importSetting).isAttributeIgnored());
+                return;
             }
             if (importSetting instanceof ImportSettingTAB) {
                 checkBoxAttributeIgnored.setSelected(((ImportSettingTAB) importSetting).isAttributeIgnored());
+                return;
             }
             if (importSetting instanceof ImportSettingMIF) {
                 checkBoxAttributeIgnored.setSelected(((ImportSettingMIF) importSetting).isAttributeIgnored());
+                return;
+            }
+            if (importSetting instanceof ImportSettingFileGDBVector) {
+                checkBoxAttributeIgnored.setSelected(((ImportSettingFileGDBVector) importSetting).isAttributeIgnored());
+                return;
             }
         }
     }
@@ -118,9 +138,11 @@ public class PanelTransformForGRD extends PanelTransform {
         if (null == panelImports) {
             if (importSetting instanceof ImportSettingGRD) {
                 checkBoxPyramidBuild.setSelected(((ImportSettingGRD) importSetting).isPyramidBuilt());
+                return;
             }
             if (importSetting instanceof ImportSettingGBDEM) {
                 checkBoxPyramidBuild.setSelected(((ImportSettingGBDEM) importSetting).isPyramidBuilt());
+                return;
             }
         }
     }

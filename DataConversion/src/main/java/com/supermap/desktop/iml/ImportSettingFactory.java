@@ -19,15 +19,19 @@ public class ImportSettingFactory implements IImportSettingFactory {
         if (fileType.equalsIgnoreCase(FileTypeLocale.DXF_STRING)) {
             if (!fileFilter.equalsIgnoreCase(DataConversionProperties.getString("string_filetype_3ds"))) {
                 importSetting = new ImportSettingDXF();
+                ((ImportSettingDXF) importSetting).setImportEmptyDataset(true);
             } else {
                 importSetting = new ImportSettingModelDXF();
             }
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.DWG_STRING)) {
             importSetting = new ImportSettingDWG();
+            ((ImportSettingDWG) importSetting).setImportEmptyDataset(true);
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.VCT_STRING)) {
             importSetting = new ImportSettingVCT();
+            ((ImportSettingVCT) importSetting).setImportEmptyDataset(true);
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.DBF_STRING)) {
             importSetting = new ImportSettingDBF();
+            ((ImportSettingDBF) importSetting).setImportEmptyDataset(true);
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.GRD_STRING)
                 || fileType.equalsIgnoreCase(FileTypeLocale.DEM_STRING)) {
             //.dem类型的文件默认导入为GRD
@@ -48,8 +52,10 @@ public class ImportSettingFactory implements IImportSettingFactory {
             importSetting = new ImportSettingMIF();
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.KML_STRING)) {
             importSetting = new ImportSettingKML();
+            ((ImportSettingKML) importSetting).setImportEmptyDataset(true);
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.KMZ_STRING)) {
             importSetting = new ImportSettingKMZ();
+            ((ImportSettingKMZ) importSetting).setImportEmptyDataset(true);
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.WAL_STRING) || fileType.equalsIgnoreCase(FileTypeLocale.WAN_STRING)
                 || fileType.equalsIgnoreCase(FileTypeLocale.WAT_STRING) || fileType.equalsIgnoreCase(FileTypeLocale.WAP_STRING)) {
             importSetting = new ImportSettingMAPGIS();
@@ -96,6 +102,7 @@ public class ImportSettingFactory implements IImportSettingFactory {
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.XLSX_STRING) || fileType.equalsIgnoreCase(FileTypeLocale.XLS_STRING)) {
             // 暂时没有实现excel文件的导入类,用ImportSettingCSV实例化避免异常
             importSetting = new ImportSettingCSV();
+            ((ImportSettingCSV) importSetting).setImportEmptyDataset(true);
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.TDS_STRING)) {
             // 3ds数据的导入
             importSetting = new ImportSettingModel3DS();
@@ -107,6 +114,7 @@ public class ImportSettingFactory implements IImportSettingFactory {
 //        }
         else if (fileType.equalsIgnoreCase(FileTypeLocale.DGN_STRING)) {
             importSetting = new ImportSettingDGN();
+            ((ImportSettingDGN) importSetting).setImportEmptyDataset(true);
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.FBX_STRING)) {
             importSetting = new ImportSettingModelFBX();
         }

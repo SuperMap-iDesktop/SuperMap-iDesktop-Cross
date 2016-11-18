@@ -14,6 +14,8 @@ public class ExportFileInfo {
 
     private FileType fileType;
 
+    private String filePath;
+
     public ExportFileInfo() {
 
     }
@@ -32,6 +34,14 @@ public class ExportFileInfo {
 
     public void setFileType(FileType fileType) {
         this.fileType = fileType;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 }
 

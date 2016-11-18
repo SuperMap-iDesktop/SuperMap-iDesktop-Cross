@@ -159,10 +159,7 @@ public class PanelExportTransformForVector extends PanelExportTransform {
         }
 
         private void setExpression() {
-            String expression = textAreaExpression.getText();
-            if (!StringUtilities.isNullOrEmpty(expression)) {
-                exportsFileInfo.getExportSetting().setFilter(expression);
-            }
+            exportsFileInfo.getExportSetting().setFilter(textAreaExpression.getText());
         }
     };
     private ActionListener buttonExpressionListener = new ActionListener() {

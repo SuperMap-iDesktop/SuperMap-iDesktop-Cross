@@ -43,11 +43,20 @@ public class ExportCallable extends UpdateProgressCallable {
             for (int i = 0; i < exportPanels.size(); i++) {
                 DataExport dataExport = new DataExport();
                 ExportSettings exportSettings = dataExport.getExportSettings();
-                ExportSetting tempExportSetting = exportPanels.get(i).getExportsFileInfo().getExportSetting();
-                String filePath = tempExportSetting.getTargetFilePath();
+                ExportFileInfo fileInfo = exportPanels.get(i).getExportsFileInfo();
+                ExportSetting tempExportSetting = fileInfo.getExportSetting();
+
+                String filePath = getFilePath(fileInfo, ((Dataset) tempExportSetting.getSourceData()).getName());
+                if (fileInfo.getFileType().equals(FileType.SHP) || fileInfo.getFileType().equals(FileType.E00)
+                        || fileInfo.getFileType().equals(FileType.MIF) || fileInfo.getFileType().equals(FileType.TAB)
+                        || fileInfo.getFileType().equals(FileType.IMG) || fileInfo.getFileType().equals(FileType.GRD)
+                        || fileInfo.getFileType().equals(FileType.DBF) || fileInfo.getFileType().equals(FileType.TEMSClutter)) {
+                    tempExportSetting.setTargetFileType(fileInfo.getFileType());
+                }
                 if (new File(filePath).exists() && !tempExportSetting.isOverwrite()) {
                     Application.getActiveApplication().getOutput().output(MessageFormat.format(DataConversionProperties.getString("String_DuplicateFileError"), filePath));
                 } else {
+                    tempExportSetting.setTargetFilePath(filePath);
                     exportSettings.add(tempExportSetting);
                     PercentProgress progress = new PercentProgress(i);
                     dataExport.addExportSteppedListener(progress);
@@ -63,13 +72,31 @@ public class ExportCallable extends UpdateProgressCallable {
                 }
             }
 
-        } catch (
-                Exception e)
-
-        {
+        } catch (Exception e) {
             Application.getActiveApplication().getOutput().output(e);
         }
         return true;
+    }
+
+    private String getFilePath(ExportFileInfo exportFileInfo, String fileName) {
+        String result = "";
+        String filePath = exportFileInfo.getFilePath();
+        if (FileType.TEMSClutter == exportFileInfo.getExportSetting().getTargetFileType()) {
+            if (!filePath.endsWith(File.separator)) {
+                result = filePath + File.separator + fileName + DataConversionProperties.getString("string_index_pause") + "b";
+            } else {
+                result = filePath + fileName + DataConversionProperties.getString("string_index_pause") + "b";
+            }
+        } else {
+            if (!filePath.endsWith(File.separator)) {
+                result = filePath + File.separator + fileName + DataConversionProperties.getString("string_index_pause")
+                        + exportFileInfo.getFileType().toString().toLowerCase();
+            } else {
+                result = filePath + fileName + DataConversionProperties.getString("string_index_pause")
+                        + exportFileInfo.getFileType().toString().toLowerCase();
+            }
+        }
+        return result;
     }
 
     /**
@@ -93,7 +120,7 @@ public class ExportCallable extends UpdateProgressCallable {
         public void stepped(ExportSteppedEvent arg0) {
             try {
                 int count = exportPanels.size();
-                int totalPercent = (int) ((100 * this.i + arg0.getSubPercent()) / count);
+                int totalPercent = (100 * this.i + arg0.getSubPercent()) / count;
                 updateProgressTotal(arg0.getSubPercent(),
                         MessageFormat.format(CommonProperties.getString("String_TotalTaskNumber"), String.valueOf(exportPanels.size())),
                         totalPercent,

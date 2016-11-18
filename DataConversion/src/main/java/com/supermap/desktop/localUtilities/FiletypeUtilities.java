@@ -25,6 +25,13 @@ public class FiletypeUtilities {
             FileType.ModelDXF, FileType.ModelX, FileType.KML, FileType.KMZ, FileType.DWG, FileType.VCT, FileType.DBF,
             FileType.GJB5068, FileType.DGN, FileType.TEMSVector, FileType.TEMSBuildingVector};
 
+    /**
+     * 根据文件路径，文件过滤项获取文件中文类型
+     *
+     * @param filePath
+     * @param fileFilter
+     * @return
+     */
     public static String getParseFile(String filePath, String fileFilter) {
         String fileType = "";
         if (filePath.equalsIgnoreCase(FileTypeLocale.DBF_STRING)) {
@@ -74,13 +81,13 @@ public class FiletypeUtilities {
             fileType = DataConversionProperties.getString("String_FormImport_GRID");
             // 栅格文件(*.bil,*.raw,*.bsq,*.bip,*.sid,*.b)
         } else if (filePath.equalsIgnoreCase(FileTypeLocale.SID_STRING)) {
-            fileType = "SID";
+            fileType = DataConversionProperties.getString("String_FileTypeSID");
         } else if (filePath.equalsIgnoreCase(FileTypeLocale.VCT_STRING)) {
             fileType = DataConversionProperties.getString("String_FormImport_VCT");
         } else if (filePath.equalsIgnoreCase(FileTypeLocale.DGN_STRING)) {
-            fileType = "DGN";
+            fileType = DataConversionProperties.getString("String_FileTypeDGN");
         } else if (filePath.equalsIgnoreCase(FileTypeLocale.ECW_STRING)) {
-            fileType = "ECW";
+            fileType = DataConversionProperties.getString("String_FileTypeECW");
         } else if (filePath.equalsIgnoreCase(FileTypeLocale.DEM_STRING)) {
             fileType = DataConversionProperties.getString("String_FormImport_ArcGIS");
         } else if (fileFilter.equalsIgnoreCase(DataConversionProperties.getString("string_filetype_lidar"))) {
@@ -182,14 +189,30 @@ public class FiletypeUtilities {
         return result;
     }
 
+    /**
+     * 获取栅格类型数组
+     *
+     * @return
+     */
     public static FileType[] getGridValue() {
         return gridValue;
     }
 
+    /**
+     * 获取矢量类型数组
+     *
+     * @return
+     */
     public static FileType[] getVectorValue() {
         return vectorValue;
     }
 
+    /**
+     * 是否为栅格类型
+     *
+     * @param fileType
+     * @return
+     */
     public static boolean isGridType(FileType fileType) {
         for (FileType gridType : gridValue) {
             if (gridType.equals(fileType)) {
@@ -199,6 +222,12 @@ public class FiletypeUtilities {
         return false;
     }
 
+    /**
+     * 是否为矢量类型
+     *
+     * @param fileType
+     * @return
+     */
     public static boolean isVectorType(FileType fileType) {
         for (FileType vectorType : vectorValue) {
             if (vectorType.equals(fileType)) {
