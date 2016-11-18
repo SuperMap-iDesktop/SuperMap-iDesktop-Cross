@@ -5,6 +5,9 @@ import com.supermap.desktop.baseUI.PanelTransform;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.localUtilities.CommonUtilities;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.StateChangeEvent;
+import com.supermap.desktop.ui.StateChangeListener;
+import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
@@ -35,6 +38,7 @@ public class PanelTransformForImage extends PanelTransform {
     private JComboBox comboBoxBandImportModel;
     private JLabel labelPrjFile;
     private FileChooserControl chooserControlPrjFile;
+    private TristateCheckBox checkBoxBuildImgPyramid;
     private JLabel labelPassWord;
     private JPasswordField passwordField;
     private final int SINGLEBAND = 0;
@@ -174,15 +178,36 @@ public class PanelTransformForImage extends PanelTransform {
             } else {
                 if (importSetting instanceof ImportSettingBMP) {
                     ((ImportSettingBMP) importSetting).setWorldFilePath(worldFile);
-                }
-                if (importSetting instanceof ImportSettingJPG) {
+                } else if (importSetting instanceof ImportSettingJPG) {
                     ((ImportSettingJPG) importSetting).setWorldFilePath(worldFile);
-                }
-                if (importSetting instanceof ImportSettingPNG) {
+                } else if (importSetting instanceof ImportSettingPNG) {
                     ((ImportSettingPNG) importSetting).setWorldFilePath(worldFile);
-                }
-                if (importSetting instanceof ImportSettingGIF) {
+                } else if (importSetting instanceof ImportSettingGIF) {
                     ((ImportSettingGIF) importSetting).setWorldFilePath(worldFile);
+                }
+            }
+        }
+    };
+    private StateChangeListener checkBoxBuildImgPyramidListener = new StateChangeListener() {
+        @Override
+        public void stateChange(StateChangeEvent e) {
+            if (null != panelImports) {
+                for (PanelImport tempPanelImport : panelImports) {
+                    ((PanelTransformForImage) tempPanelImport.getTransform()).getCheckBoxBuildImgPyramid().setSelected(checkBoxBuildImgPyramid.isSelected());
+                }
+            } else {
+                if (importSetting instanceof ImportSettingBMP) {
+                    ((ImportSettingBMP) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
+                } else if (importSetting instanceof ImportSettingPNG) {
+                    ((ImportSettingPNG) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
+                } else if (importSetting instanceof ImportSettingIMG) {
+                    ((ImportSettingIMG) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
+                } else if (importSetting instanceof ImportSettingJPG) {
+                    ((ImportSettingJPG) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
+                } else if (importSetting instanceof ImportSettingTIF) {
+                    ((ImportSettingTIF) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
+                } else if (importSetting instanceof ImportSettingGIF) {
+                    ((ImportSettingGIF) importSetting).setPyramidBuilt(checkBoxBuildImgPyramid.isSelected());
                 }
             }
         }
@@ -209,18 +234,39 @@ public class PanelTransformForImage extends PanelTransform {
     public void initComponents() {
         this.labelBandImportModel = new JLabel();
         this.comboBoxBandImportModel = new JComboBox();
-        if (null != importSetting) {
+        if (null == panelImports) {
             initComboBoxBandImportModel();
         }
         this.labelPrjFile = new JLabel();
         this.chooserControlPrjFile = new FileChooserControl();
-        if (null != importSetting) {
+        if (null == panelImports) {
             initChooserControlPrjFile();
         }
         this.labelPassWord = new JLabel();
         this.passwordField = new JPasswordField();
-        if (null != importSetting) {
+        this.checkBoxBuildImgPyramid = new TristateCheckBox();
+        if (null == panelImports) {
             initPassWord();
+        }
+        if (null == panelImports) {
+            initCheckboxState();
+        }
+    }
+
+    private void initCheckboxState() {
+        //bmp，png,img,jpg,tif,gif:是否自动建立影像金字塔
+        if (importSetting instanceof ImportSettingBMP) {
+            checkBoxBuildImgPyramid.setSelected(((ImportSettingBMP) importSetting).isPyramidBuilt());
+        } else if (importSetting instanceof ImportSettingPNG) {
+            checkBoxBuildImgPyramid.setSelected(((ImportSettingPNG) importSetting).isPyramidBuilt());
+        } else if (importSetting instanceof ImportSettingIMG) {
+            checkBoxBuildImgPyramid.setSelected(((ImportSettingIMG) importSetting).isPyramidBuilt());
+        } else if (importSetting instanceof ImportSettingJPG) {
+            checkBoxBuildImgPyramid.setSelected(((ImportSettingJPG) importSetting).isPyramidBuilt());
+        } else if (importSetting instanceof ImportSettingTIF) {
+            checkBoxBuildImgPyramid.setSelected(((ImportSettingTIF) importSetting).isPyramidBuilt());
+        } else if (importSetting instanceof ImportSettingGIF) {
+            checkBoxBuildImgPyramid.setSelected(((ImportSettingGIF) importSetting).isPyramidBuilt());
         }
     }
 
@@ -233,14 +279,11 @@ public class PanelTransformForImage extends PanelTransform {
     private void initChooserControlPrjFile() {
         if (importSetting instanceof ImportSettingBMP && !StringUtilities.isNullOrEmpty(((ImportSettingBMP) importSetting).getWorldFilePath())) {
             chooserControlPrjFile.getEditor().setText(((ImportSettingBMP) importSetting).getWorldFilePath());
-        }
-        if (importSetting instanceof ImportSettingJPG && !StringUtilities.isNullOrEmpty(((ImportSettingJPG) importSetting).getWorldFilePath())) {
+        } else if (importSetting instanceof ImportSettingJPG && !StringUtilities.isNullOrEmpty(((ImportSettingJPG) importSetting).getWorldFilePath())) {
             chooserControlPrjFile.getEditor().setText(((ImportSettingJPG) importSetting).getWorldFilePath());
-        }
-        if (importSetting instanceof ImportSettingPNG && !StringUtilities.isNullOrEmpty(((ImportSettingPNG) importSetting).getWorldFilePath())) {
+        } else if (importSetting instanceof ImportSettingPNG && !StringUtilities.isNullOrEmpty(((ImportSettingPNG) importSetting).getWorldFilePath())) {
             chooserControlPrjFile.getEditor().setText(((ImportSettingPNG) importSetting).getWorldFilePath());
-        }
-        if (importSetting instanceof ImportSettingGIF && !StringUtilities.isNullOrEmpty(((ImportSettingGIF) importSetting).getWorldFilePath())) {
+        } else if (importSetting instanceof ImportSettingGIF && !StringUtilities.isNullOrEmpty(((ImportSettingGIF) importSetting).getWorldFilePath())) {
             chooserControlPrjFile.getEditor().setText(((ImportSettingGIF) importSetting).getWorldFilePath());
         }
     }
@@ -254,11 +297,9 @@ public class PanelTransformForImage extends PanelTransform {
             MultiBandImportMode multiBandImportMode = ((ImportSettingIMG) importSetting).getMultiBandImportMode();
             if (multiBandImportMode.equals(MultiBandImportMode.SINGLEBAND)) {
                 this.comboBoxBandImportModel.setSelectedIndex(0);
-            }
-            if (multiBandImportMode.equals(MultiBandImportMode.MULTIBAND)) {
+            } else if (multiBandImportMode.equals(MultiBandImportMode.MULTIBAND)) {
                 this.comboBoxBandImportModel.setSelectedIndex(1);
-            }
-            if (multiBandImportMode.equals(MultiBandImportMode.COMPOSITE)) {
+            } else if (multiBandImportMode.equals(MultiBandImportMode.COMPOSITE)) {
                 this.comboBoxBandImportModel.setSelectedIndex(2);
             }
             return;
@@ -267,11 +308,9 @@ public class PanelTransformForImage extends PanelTransform {
             MultiBandImportMode multiBandImportMode = ((ImportSettingTIF) importSetting).getMultiBandImportMode();
             if (multiBandImportMode.equals(MultiBandImportMode.SINGLEBAND)) {
                 this.comboBoxBandImportModel.setSelectedIndex(0);
-            }
-            if (multiBandImportMode.equals(MultiBandImportMode.MULTIBAND)) {
+            } else if (multiBandImportMode.equals(MultiBandImportMode.MULTIBAND)) {
                 this.comboBoxBandImportModel.setSelectedIndex(1);
-            }
-            if (multiBandImportMode.equals(MultiBandImportMode.COMPOSITE)) {
+            } else if (multiBandImportMode.equals(MultiBandImportMode.COMPOSITE)) {
                 this.comboBoxBandImportModel.setSelectedIndex(2);
             }
             return;
@@ -280,11 +319,9 @@ public class PanelTransformForImage extends PanelTransform {
             MultiBandImportMode multiBandImportMode = ((ImportSettingMrSID) importSetting).getMultiBandImportMode();
             if (multiBandImportMode.equals(MultiBandImportMode.SINGLEBAND)) {
                 this.comboBoxBandImportModel.setSelectedIndex(0);
-            }
-            if (multiBandImportMode.equals(MultiBandImportMode.MULTIBAND)) {
+            } else if (multiBandImportMode.equals(MultiBandImportMode.MULTIBAND)) {
                 this.comboBoxBandImportModel.setSelectedIndex(1);
-            }
-            if (multiBandImportMode.equals(MultiBandImportMode.COMPOSITE)) {
+            } else if (multiBandImportMode.equals(MultiBandImportMode.COMPOSITE)) {
                 this.comboBoxBandImportModel.setSelectedIndex(2);
             }
             return;
@@ -293,11 +330,9 @@ public class PanelTransformForImage extends PanelTransform {
             MultiBandImportMode multiBandImportMode = ((ImportSettingECW) importSetting).getMultiBandImportMode();
             if (multiBandImportMode.equals(MultiBandImportMode.SINGLEBAND)) {
                 this.comboBoxBandImportModel.setSelectedIndex(0);
-            }
-            if (multiBandImportMode.equals(MultiBandImportMode.MULTIBAND)) {
+            } else if (multiBandImportMode.equals(MultiBandImportMode.MULTIBAND)) {
                 this.comboBoxBandImportModel.setSelectedIndex(1);
-            }
-            if (multiBandImportMode.equals(MultiBandImportMode.COMPOSITE)) {
+            } else if (multiBandImportMode.equals(MultiBandImportMode.COMPOSITE)) {
                 this.comboBoxBandImportModel.setSelectedIndex(2);
             }
             return;
@@ -409,6 +444,8 @@ public class PanelTransformForImage extends PanelTransform {
 
     @Override
     public void initLayerout() {
+        //bmp,png,gif,sit,tif,tiff,sid,ecw,img,jpk,jpg,jp2,jpeg等图像文件的转换参数设置界面
+        //img,tif,bmp,png,jpg,gif:是否自动建立影像金字塔
         this.removeAll();
         this.setLayout(new GridBagLayout());
         if (importSetting instanceof ImportSettingSIT) {
@@ -421,8 +458,8 @@ public class PanelTransformForImage extends PanelTransform {
             JPanel panelBandModel = new JPanel();
             panelBandModel.setLayout(new GridBagLayout());
             panelBandModel.add(this.labelBandImportModel, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-            panelBandModel.add(this.comboBoxBandImportModel, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 170).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
-            panelBandModel.add(new JPanel(), new GridBagConstraintsHelper(4, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            panelBandModel.add(this.comboBoxBandImportModel, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setIpad(-60, 0));
+            panelBandModel.add(this.checkBoxBuildImgPyramid, new GridBagConstraintsHelper(4, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
 
             JPanel panelPrjFile = new JPanel();
             panelPrjFile.setLayout(new GridBagLayout());
@@ -433,17 +470,58 @@ public class PanelTransformForImage extends PanelTransform {
             this.add(panelBandModel, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             this.add(panelPrjFile, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             setBandImportModel();
+            setCheckboxState();
             setPrjText();
-        } else if (importSetting instanceof ImportSettingIMG || importSetting instanceof ImportSettingMrSID || importSetting instanceof ImportSettingECW) {
+        } else if (importSetting instanceof ImportSettingIMG) {
+            this.add(this.labelBandImportModel, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+            this.add(this.comboBoxBandImportModel, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 20).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setIpad(-60, 0));
+            this.add(this.checkBoxBuildImgPyramid, new GridBagConstraintsHelper(4, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            setBandImportModel();
+            setCheckboxState();
+        } else if (importSetting instanceof ImportSettingMrSID || importSetting instanceof ImportSettingECW) {
             this.add(this.labelBandImportModel, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
             this.add(this.comboBoxBandImportModel, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 176).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             this.add(new JPanel(), new GridBagConstraintsHelper(4, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             setBandImportModel();
+        } else if (importSetting instanceof ImportSettingBMP || importSetting instanceof ImportSettingPNG
+                || importSetting instanceof ImportSettingJPG || importSetting instanceof ImportSettingGIF) {
+            //bmp，png,jpg,gif
+            this.add(this.checkBoxBuildImgPyramid, new GridBagConstraintsHelper(0, 0, 8, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+            this.add(this.labelPrjFile, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+            this.add(this.chooserControlPrjFile, new GridBagConstraintsHelper(2, 1, 6, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            setCheckboxState();
+            setPrjText();
         } else {
             this.add(this.labelPrjFile, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-            this.add(this.chooserControlPrjFile, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            this.add(this.chooserControlPrjFile, new GridBagConstraintsHelper(2, 0, 6, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             setPrjText();
         }
+    }
+
+    private void setCheckboxState() {
+        if (null != panelImports) {
+            this.checkBoxBuildImgPyramid.setSelectedEx(externalDataSelectAll());
+        }
+    }
+
+    private Boolean externalDataSelectAll() {
+        Boolean result = null;
+        int selectCount = 0;
+        int unSelectCount = 0;
+        for (PanelImport tempPanel : panelImports) {
+            boolean select = ((PanelTransformForImage) tempPanel.getTransform()).getCheckBoxBuildImgPyramid().isSelected();
+            if (select) {
+                selectCount++;
+            } else if (!select) {
+                unSelectCount++;
+            }
+        }
+        if (selectCount == panelImports.size()) {
+            result = true;
+        } else if (unSelectCount == panelImports.size()) {
+            result = false;
+        }
+        return result;
     }
 
     private void setPasswordField() {
@@ -475,6 +553,7 @@ public class PanelTransformForImage extends PanelTransform {
         this.comboBoxBandImportModel.addItemListener(this.multiBandImportModeListener);
         this.passwordField.getDocument().addDocumentListener(this.passwordListener);
         this.chooserControlPrjFile.getButton().addActionListener(this.prjFileListener);
+        this.checkBoxBuildImgPyramid.addStateChangeListener(this.checkBoxBuildImgPyramidListener);
     }
 
     @Override
@@ -490,6 +569,7 @@ public class PanelTransformForImage extends PanelTransform {
         this.labelPassWord.setText(DataConversionProperties.getString("string_label_lblPassword") + "       ");
         this.labelPrjFile.setText(DataConversionProperties.getString("String_FormExport_LabelWorldFile"));
         this.labelBandImportModel.setText(DataConversionProperties.getString("string_label_lblSaveImport"));
+        this.checkBoxBuildImgPyramid.setText(DataConversionProperties.getString("string_checkbox_chckbxImageInfo"));
     }
 
     public JComboBox getComboBoxBandImportModel() {
@@ -504,4 +584,7 @@ public class PanelTransformForImage extends PanelTransform {
         return passwordField;
     }
 
+    public TristateCheckBox getCheckBoxBuildImgPyramid() {
+        return checkBoxBuildImgPyramid;
+    }
 }
