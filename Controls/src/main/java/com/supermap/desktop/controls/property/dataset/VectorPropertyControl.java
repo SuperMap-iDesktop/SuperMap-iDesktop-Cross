@@ -14,6 +14,7 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxCharset;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
 import javax.swing.*;
@@ -39,7 +40,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 
 
 	private JLabel labelRecordCount;
-	private JTextField textFieldRecordCount;
+	private SMFormattedTextField textFieldRecordCount;
 	private JLabel labelSpatialIndexType;
 	private JTextField textFieldSpatialIndexType;
 	private JLabel labelCharset;
@@ -155,7 +156,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 
 	private void initializeComponents() {
 		this.labelRecordCount = new JLabel("RecordCount:");
-		this.textFieldRecordCount = new JTextField();
+		this.textFieldRecordCount = new SMFormattedTextField();
 		this.textFieldRecordCount.setEditable(false);
 		this.labelSpatialIndexType = new JLabel("SpatialIndexType:");
 		this.textFieldSpatialIndexType = new JTextField();
@@ -323,7 +324,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void fillComponents() {
-		this.textFieldRecordCount.setText(Integer.toString(this.datasetVector.getRecordCount()));
+		this.textFieldRecordCount.setText(DoubleUtilities.getFormatString(this.datasetVector.getRecordCount()));
 		this.textFieldSpatialIndexType.setText(SpatialIndexTypeUtilities.toString(this.datasetVector.getSpatialIndexType()));
 		this.comboBoxCharset.setSelectedItem(this.charset);
 		this.checkBoxIsReadOnly.setSelected(this.isReadOnly);

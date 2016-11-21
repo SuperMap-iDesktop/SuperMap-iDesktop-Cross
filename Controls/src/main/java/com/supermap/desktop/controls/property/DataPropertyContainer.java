@@ -36,7 +36,6 @@ public class DataPropertyContainer extends JPanel implements IPropertyManager {
 	public DataPropertyContainer() {
 		this.controls = new ArrayList<>();
 		this.tabbledPane.addChangeListener(this.tabbledPaneChangeListener);
-		tabbledPane.setBorder(BorderFactory.createEmptyBorder());
 		this.setLayout(new GridBagLayout());
 		this.add(tabbledPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(10));
 	}
@@ -99,6 +98,7 @@ public class DataPropertyContainer extends JPanel implements IPropertyManager {
 				setTabbledPaneSelectedPropertyControl(this.currentProperty);
 			}
 		}
+		tabbledPane.setVisible(tabbledPane.getTabCount() > 0);
 	}
 
 	/**
