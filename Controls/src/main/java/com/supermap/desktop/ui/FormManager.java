@@ -16,6 +16,7 @@ import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.mdi.MdiGroup;
+import com.supermap.desktop.ui.mdi.MdiPage;
 
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
@@ -23,7 +24,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class FormManager implements IFormManager {
+public class FormManager extends MdiGroup implements IFormManager {
 	private IFormMain mainForm = null;
 	//	private TabWindow childWindowsContainer = null;
 	private WindowType activatedChildFormType = WindowType.UNKNOWN;
@@ -37,6 +38,7 @@ public class FormManager implements IFormManager {
 	}
 
 	public FormManager(IFormMain mainForm) {
+		super(null);
 		this.setMainForm(mainForm);
 	}
 
@@ -58,22 +60,18 @@ public class FormManager implements IFormManager {
 
 	@Override
 	public void add(IForm form) {
-
-		try {
-			this.childForms.add(form);
-//			View childWindow = (View) form;
-//			this.getChildWindowsContainer().addTab(childWindow);
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
+		add(form, getPageCount());
 	}
 
 	@Override
-	public void add(int index, IForm form) {
+	public void add(IForm form, int index) {
 		try {
-			this.childForms.add(index, form);
-//			View childWindow = (View) form;
-//			this.getChildWindowsContainer().addTab(childWindow, index);
+			if (form instanceof FormBaseChild) {
+				MdiPage page = MdiPage.createMdiPage((FormBaseChild) form, ((FormBaseChild) form).getText(), true, false);
+				addPage(page, index);
+			} else {
+				Application.getActiveApplication().getOutput().output("error.");
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -82,17 +80,17 @@ public class FormManager implements IFormManager {
 
 	@Override
 	public int getCount() {
-		return this.childForms.size();
+		return getPageCount();
 	}
 
 	@Override
 	public IForm getActiveForm() {
-		return this.activeForm;
+		return (FormBaseChild) getActivePage().getComponent();
 	}
 
 	@Override
 	public void setActiveForm(IForm form) {
-		this.mdiGroup.getPage((Component) form).close();
+		activePage((FormBaseChild) form);
 //		try {
 //			IForm oldActiveForm = this.activeForm;
 //			this.activeForm = form;

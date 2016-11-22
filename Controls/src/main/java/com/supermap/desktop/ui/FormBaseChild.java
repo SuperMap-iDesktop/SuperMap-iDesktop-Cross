@@ -10,7 +10,7 @@ import com.supermap.desktop.ui.controls.DockbarManager;
 import javax.swing.*;
 import java.awt.*;
 
-public class FormBaseChild extends JPanel implements IForm {
+public abstract class FormBaseChild extends JPanel implements IForm {
 
 	/**
 	 *

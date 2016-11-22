@@ -71,8 +71,8 @@ public class MyDemo extends JFrame {
 //		viewport.dock(((Dockable) view2), DockingConstants.WEST_REGION);
 
 		view.dock((Dockable) view2, DockingConstants.WEST_REGION);
-		view.dock((Dockable) view3, DockingConstants.WEST_REGION);
-		view.dock((Dockable) view1, DockingConstants.SOUTH_REGION);
+		view2.dock((Dockable) view3, DockingConstants.WEST_REGION);
+		view3.dock((Dockable) view1, DockingConstants.SOUTH_REGION);
 
 //		view.dock((Dockable) view2, DockingConstants.CENTER_REGION);
 //		view.dock((Dockable) view3, DockingConstants.CENTER_REGION);

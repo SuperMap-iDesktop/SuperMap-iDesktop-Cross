@@ -121,6 +121,14 @@ public class MdiGroup extends JComponent {
 	 * @param page
 	 */
 	public void addPage(MdiPage page) {
+		addPage(page, getPageCount());
+	}
+
+	/**
+	 * @param page
+	 * @param index
+	 */
+	public void addPage(MdiPage page, int index) {
 		if (page == null) {
 			return;
 		}
@@ -133,10 +141,11 @@ public class MdiGroup extends JComponent {
 			}
 		}
 
+		// 设置一下初始状态
 		page.getComponent().setVisible(false);
 		page.setGroup(this);
 		this.pages.add(page);
-		add(page.getComponent());
+		add(page.getComponent(), index);
 		firePageAdded(new PageAddedEvent(this, page, this.pages.indexOf(page)));
 		activePage(page);
 	}
@@ -170,6 +179,13 @@ public class MdiGroup extends JComponent {
 		// 更改状态重绘
 		revalidate();
 		repaint();
+	}
+
+	public void activePage(Component component) {
+		MdiPage page = getPage(component);
+		if (page != null) {
+			activePage(page);
+		}
 	}
 
 	public int indexOf(MdiPage page) {
