@@ -60,4 +60,6 @@ docs:
     MapSetting_Range: /SuperMap-iDesktop-Cross/docs/Map/MapSetting_Range.html
   Scene:
     SceneDia: /SuperMap-iDesktop-Cross/docs/Scene/SceneDia.html
+  FAQAll:
+    FAQ: /SuperMap-iDesktop-Cross/docs/FAQ.html
 
