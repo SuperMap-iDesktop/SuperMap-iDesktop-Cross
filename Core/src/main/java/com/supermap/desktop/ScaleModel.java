@@ -117,7 +117,7 @@ public class ScaleModel {
 		}
 
 		try {
-			this.scaleDenominator = Double.parseDouble(scaleDenominatorCaption);
+			this.scaleDenominator = DoubleUtilities.stringToValue(scaleDenominatorCaption);
 		} catch (Exception e) {
 			this.scaleDenominator = INVALID_SCALE;
 			throw new InvalidScaleException();

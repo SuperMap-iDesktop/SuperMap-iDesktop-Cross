@@ -31,7 +31,7 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 	private ArrayList<Map> addedMaps = new ArrayList<>();
 
 	public TransformationTarget(FormTransformation formTransformation) {
-		super();
+		super(formTransformation);
 		transformationBeens = new ArrayList<>();
 		this.formTransformation = formTransformation;
 		this.mapControl.getMap().setWorkspace(Application.getActiveApplication().getWorkspace());

@@ -19,6 +19,10 @@ public class DoubleUtilities {
 		return Math.abs(d1 - d2) < Math.pow(10, pow * (-1));
 	}
 
+	public static boolean equals(double d1, double d2) {
+		return equals(d1, d2, 6);
+	}
+
 	/**
 	 * double直接转换为string
 	 *
@@ -93,7 +97,10 @@ public class DoubleUtilities {
 			return false;
 		}
 		try {
-			Double aDouble = Double.valueOf(s);
+			Double aDouble = DoubleUtilities.stringToValue(s);
+			if (Double.isNaN(aDouble) || Double.isInfinite(aDouble)) {
+				return false;
+			}
 		} catch (Exception e) {
 			return false;
 		}
