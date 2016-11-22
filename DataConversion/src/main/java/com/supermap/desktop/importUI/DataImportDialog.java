@@ -258,7 +258,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                     ArrayList<JPanel> removePanel = new ArrayList<JPanel>();
                     if (selectedRow.length < table.getRowCount()) {
                         for (int i = 0; i < selectedRow.length; i++) {
-                            removePanel.add((JPanel) panelImports.get(selectedRow[i]));
+                            removePanel.add(panelImports.get(selectedRow[i]));
                         }
                         model.removeRows(selectedRow);
                         panelImports.removeAll(removePanel);
@@ -421,10 +421,12 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
     private void initTableTheme() {
         TableColumn fileNameColumn = table.getColumn(table.getModel().getColumnName(ImportTableModel.COLUMN_FILENAME));
         TableColumn fileTypeColumn = table.getColumn(table.getModel().getColumnName(ImportTableModel.COLUMN_FILETYPE));
+        TableColumn stateColumn = table.getColumn(table.getModel().getColumnName(ImportTableModel.COLUMN_STATE));
         fileNameColumn.setCellRenderer(TableTooltipCellRenderer.getInstance());
         fileTypeColumn.setCellRenderer(TableTooltipCellRenderer.getInstance());
         fileTypeColumn.setMinWidth(120);
-        table.getColumn(table.getModel().getColumnName(ImportTableModel.COLUMN_STATE)).setMaxWidth(50);
+        stateColumn.setMaxWidth(50);
+        stateColumn.setCellRenderer(TableTooltipCellRenderer.getInstance());
     }
 
     private void initToolbar() {

@@ -46,7 +46,7 @@ public class ExportCallable extends UpdateProgressCallable {
                 ExportFileInfo fileInfo = exportPanels.get(i).getExportsFileInfo();
                 ExportSetting tempExportSetting = fileInfo.getExportSetting();
 
-                String filePath = getFilePath(fileInfo, ((Dataset) tempExportSetting.getSourceData()).getName());
+                String filePath = getFilePath(fileInfo, fileInfo.getFileName());
                 if (fileInfo.getFileType().equals(FileType.SHP) || fileInfo.getFileType().equals(FileType.E00)
                         || fileInfo.getFileType().equals(FileType.MIF) || fileInfo.getFileType().equals(FileType.TAB)
                         || fileInfo.getFileType().equals(FileType.IMG) || fileInfo.getFileType().equals(FileType.GRD)
