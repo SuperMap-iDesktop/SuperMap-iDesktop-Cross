@@ -17,6 +17,10 @@ import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.mdi.MdiGroup;
 import com.supermap.desktop.ui.mdi.MdiPage;
+import com.supermap.desktop.ui.mdi.events.PageActivatedEvent;
+import com.supermap.desktop.ui.mdi.events.PageActivatedListener;
+import com.supermap.desktop.ui.mdi.events.PageClosingEvent;
+import com.supermap.desktop.ui.mdi.events.PageClosingListener;
 
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
@@ -25,21 +29,35 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FormManager extends MdiGroup implements IFormManager {
-	private IFormMain mainForm = null;
-	//	private TabWindow childWindowsContainer = null;
 	private WindowType activatedChildFormType = WindowType.UNKNOWN;
 	private IForm activeForm;
 	private EventListenerList listenerList = new EventListenerList();
 	private ArrayList<IForm> childForms = new ArrayList<IForm>();
-	private MdiGroup mdiGroup = new MdiGroup(null);
+	private MdiGroup mdiGroup;
+	private PageActivatedListener pageActivatedListener = new PageActivatedListener() {
+		@Override
+		public void pageActivated(PageActivatedEvent event) {
+			ToolbarUIUtilities.updataToolbarsState();
+			fireActiveFormChanged(new ActiveFormChangedEvent(this, (IForm) event.getOldActivedPage().getComponent(), (IForm) event.getActivedPage().getComponent()));
+			refreshMenusAndToolbars((IForm) event.getActivedPage().getComponent());
+		}
+	};
+	private PageClosingListener pageClosingListener = new PageClosingListener() {
+		@Override
+		public void pageRemoving(PageClosingEvent e) {
+			childFormClosing(e);
+		}
+	};
 
 	public MdiGroup getContentPane() {
 		return this.mdiGroup;
 	}
 
-	public FormManager(IFormMain mainForm) {
+	public FormManager() {
 		super(null);
-		this.setMainForm(mainForm);
+		this.mdiGroup = new MdiGroup(null);
+		addPageActivatedListener(this.pageActivatedListener);
+		addPageClosingListener(this.pageClosingListener);
 	}
 
 	private IForm[] getMdiChildren() {
@@ -91,32 +109,6 @@ public class FormManager extends MdiGroup implements IFormManager {
 	@Override
 	public void setActiveForm(IForm form) {
 		activePage((FormBaseChild) form);
-//		try {
-//			IForm oldActiveForm = this.activeForm;
-//			this.activeForm = form;
-//
-//
-//			if (this.activeForm != oldActiveForm) {
-//				if (oldActiveForm != null) {
-//					oldActiveForm.deactived();
-//				}
-//
-//				// 选中子窗体
-////				int index = this.childWindowsContainer.getChildWindowIndex((DockingWindow) form);
-////				if (index >= 0) {
-////					this.childWindowsContainer.setSelectedTab(index);
-////				}
-//
-//				if (this.activeForm != null) {
-//					this.activeForm.actived();
-//				}
-//				ToolbarUIUtilities.updataToolbarsState();
-//				fireActiveFormChanged(new ActiveFormChangedEvent(this, oldActiveForm, form));
-//			}
-//
-//		} catch (Exception ex) {
-//			Application.getActiveApplication().getOutput().output(ex);
-//		}
 	}
 
 	@Override
@@ -127,22 +119,16 @@ public class FormManager extends MdiGroup implements IFormManager {
 	@Override
 	public void showChildForm(IForm childForm) {
 		try {
-			// 查找窗体，如果窗体不存在，就添加到TabWindow中
-			int index = -1;
-//			for (int i = 0; i < this.childWindowsContainer.getChildWindowCount(); i++) {
-//				if (this.childWindowsContainer.getChildWindow(i).equals(childForm)) {
-//					index = i;
-//					break;
-//				}
-//			}
-
-			if (index == -1) {
-				// 将子窗体加入标签容器显示
-				add(childForm);
+			if (!(childForm instanceof FormBaseChild)) {
+				return;
 			}
 
-			this.setActiveForm(childForm);
-
+			MdiPage page = getPage((FormBaseChild) childForm);
+			if (page == null) {
+				page = addPage((FormBaseChild) childForm);
+			} else {
+				activePage(page);
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
@@ -150,21 +136,11 @@ public class FormManager extends MdiGroup implements IFormManager {
 
 	@Override
 	public boolean close(IForm form) {
-		boolean result = false;
-		try {
-//			if (activeForm == form) {
-//				setActiveForm(null);
-//				refreshMenusAndToolbars(null);
-//			}
-			this.childForms.remove(form);
-			form.clean();
-//			((DockingWindow) form).close();
-//			((DockingWindow) form).removeAll();
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
+		boolean isClosed = false;
+		if (form instanceof FormBaseChild) {
+			isClosed = super.close((FormBaseChild) form);
 		}
-
-		return result;
+		return isClosed;
 	}
 
 	@Override
@@ -349,10 +325,6 @@ public class FormManager extends MdiGroup implements IFormManager {
 		return result;
 	}
 
-	public void raise_FormCreated(Object obj) {
-		// 默认实现，后续进行初始化操作
-	}
-
 	@Override
 	public void addActiveFormChangedListener(ActiveFormChangedListener listener) {
 		this.listenerList.add(ActiveFormChangedListener.class, listener);
@@ -372,16 +344,6 @@ public class FormManager extends MdiGroup implements IFormManager {
 			}
 		}
 	}
-//
-//	private void childWindowActived(DockingWindow window) {
-//		try {
-//			setActiveForm((IForm) window);
-//			refreshMenusAndToolbars((IForm) window);
-//
-//		} catch (Exception ex) {
-//			Application.getActiveApplication().getOutput().output(ex);
-//		}
-//	}
 
 	private void refreshMenusAndToolbars(IForm window) {
 		// 获取之前激活的窗口的类型
@@ -426,137 +388,56 @@ public class FormManager extends MdiGroup implements IFormManager {
 	}
 
 	/**
-	 * 当没有新的窗口激活，移出 Menus 和 Toolbars
-	 */
-	private void childWindowHidden() {
-		// 默认实现，后续进行初始化操作
-	}
-
-//	private void childWindowFocusChanged(View focusedView) {
-//		try {
-//			if (focusedView != null && focusedView instanceof IForm && focusedView != this.activeForm) {
-//				setActiveForm((IForm) focusedView);
-//				refreshMenusAndToolbars((IForm) focusedView);
-//			}
-//		} catch (Exception ex) {
-//			Application.getActiveApplication().getOutput().output(ex);
-//		}
-//	}
-
-	private void childWindowAdded() {
-		// 默认实现后续进行初始化操作
-	}
-
-
-	/**
 	 * 窗口关闭响应事件
 	 */
-//	private void childWindowClosing(WindowClosingEvent evt) throws OperationAbortedException {
-//		try {
-//			if (evt.getWindow() instanceof IForm) {
-//				if (GlobalParameters.isShowFormClosingInfo()) {
-//					IForm form = (IForm) evt.getWindow();
-//					boolean isNeedSave = false;
-//					String message = "";
-//
-//					if (form.getWindowType() == WindowType.MAP) {
-//						// 地图 修改过才提示
-//						if (((IFormMap) form).getMapControl().getMap().isModified()) {
-//							isNeedSave = true;
-//							message = String.format(ControlsProperties.getString("String_SaveMapPrompt"), form.getText());
-//						}
-//					} else if (form instanceof IFormScene) {
-//						// 场景 组件不支持，始终提示
-//						isNeedSave = true;
-//						message = String.format(ControlsProperties.getString("String_SaveScenePrompt"), form.getText());
-//					} else if (form instanceof IFormLayout && ((IFormLayout) form).getMapLayoutControl().getMapLayout().isModified()) {
-//						isNeedSave = true;
-//						message = String.format(ControlsProperties.getString("String_SaveLayoutPrompt"), form.getText());
-//					}
-//					if (isNeedSave) {
-//						int result = GlobalParameters.isShowFormClosingInfo() ? UICommonToolkit.showConfirmDialogWithCancel(message) : JOptionPane.NO_OPTION;
-//						if (result == JOptionPane.YES_OPTION) {
-//							form.save();
-//							form.clean();
-//						} else if (result == JOptionPane.NO_OPTION) {
-//							// 不保存，直接关闭
-//							form.clean();
-//						} else if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
-//							// 取消关闭操作
-//							evt.setCancel(true);
-//						}
-//					} else {
-//						form.clean();
-//					}
-//				}
-//			}
-//			else if (evt.getWindow() instanceof FloatingWindow && evt.getWindow().getChildWindowCount() > 0) {
-//				ArrayList<IForm> closingForms = new ArrayList<IForm>();
-//				DockingWindow dockingWindow = evt.getWindow().getChildWindow(0);
-//
-//				if (dockingWindow instanceof TabWindow) {
-//					TabWindow tabWindow = (TabWindow) dockingWindow;
-//
-//					for (int i = 0; i < tabWindow.getChildWindowCount(); i++) {
-//						DockingWindow childWindow = tabWindow.getChildWindow(i);
-//						if (childWindow instanceof IForm) {
-//							closingForms.add((IForm) childWindow);
-//						}
-//					}
-//
-//					if (!closingForms.isEmpty() && !saveForms(closingForms.toArray(new IForm[closingForms.size()]), true)) {
-//						// 取消关闭操作
-//						evt.setCancel(true);
-//					}
-//				}
-//			}
-//		} catch (Exception ex) {
-//			Application.getActiveApplication().getOutput().output(ex);
-//		}
-//	}
+	private void childFormClosing(PageClosingEvent e) {
+		try {
+			if (GlobalParameters.isShowFormClosingInfo()) {
+				IForm form = (IForm) e.getPage().getComponent();
+				boolean isNeedSave = false;
+				String message = "";
 
-//	private void childWindowClosed(DockingWindow window) {
-//		try {
-//			// DockingWindow 结构很奇特，以下代码用来判断是否需要移除一个子窗口
-//			if (window instanceof IForm) {
-//				this.childForms.remove(window);
-//			} else if (window instanceof FloatingWindow && window.getChildWindowCount() > 0) {
-//				DockingWindow dockingWindow = window.getChildWindow(0);
-//				if (dockingWindow instanceof TabWindow) {
-//					TabWindow tabWindow = (TabWindow) dockingWindow;
-//					for (int i = 0; i < tabWindow.getChildWindowCount(); i++) {
-//						DockingWindow childWindow = tabWindow.getChildWindow(i);
-//						if (childWindow instanceof IForm) {
-//							this.childForms.remove(childWindow);
-//						}
-//					}
-//				}
-//			}
-//
-//			// 子窗口集合不包含 activeForm，表明之前移除了 activeForm，那么就需要切换另一个 activeForm 了
-//			if (!this.childForms.contains(this.activeForm)) {
-//				if (!childForms.isEmpty()) {
-//					this.setActiveForm(this.childForms.get(0));
-//				} else {
-//					// 为空时置空当前活动窗体
-//					this.setActiveForm(null);
-//				}
-//			}
-//			refreshMenusAndToolbars(getActiveForm());
-//		} catch (Exception ex) {
-//			Application.getActiveApplication().getOutput().output(ex);
-//		}
-//	}
-	public IFormMain getMainForm() {
-		return mainForm;
-	}
-
-	public void setMainForm(IFormMain mainForm) {
-		this.mainForm = mainForm;
+				if (form.getWindowType() == WindowType.MAP) {
+					// 地图 修改过才提示
+					if (((IFormMap) form).getMapControl().getMap().isModified()) {
+						isNeedSave = true;
+						message = String.format(ControlsProperties.getString("String_SaveMapPrompt"), form.getText());
+					}
+				} else if (form instanceof IFormScene) {
+					// 场景 组件不支持，始终提示
+					isNeedSave = true;
+					message = String.format(ControlsProperties.getString("String_SaveScenePrompt"), form.getText());
+				} else if (form instanceof IFormLayout && ((IFormLayout) form).getMapLayoutControl().getMapLayout().isModified()) {
+					isNeedSave = true;
+					message = String.format(ControlsProperties.getString("String_SaveLayoutPrompt"), form.getText());
+				}
+				if (isNeedSave) {
+					int result = GlobalParameters.isShowFormClosingInfo() ? UICommonToolkit.showConfirmDialogWithCancel(message) : JOptionPane.NO_OPTION;
+					if (result == JOptionPane.YES_OPTION) {
+						form.save();
+						form.clean();
+					} else if (result == JOptionPane.NO_OPTION) {
+						// 不保存，直接关闭
+						form.clean();
+					} else if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
+						// 取消关闭操作
+						e.setCancel(true);
+					}
+				} else {
+					form.clean();
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
 	}
 
 	@Override
-	public boolean isContain(IFormMap formMap) {
-		return childForms.contains(formMap);
+	public boolean isContain(IForm form) {
+		if (form instanceof FormBaseChild) {
+			return getPage((FormBaseChild) form) != null;
+		} else {
+			return false;
+		}
 	}
 }

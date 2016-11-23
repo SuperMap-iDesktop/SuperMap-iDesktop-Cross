@@ -1,5 +1,6 @@
 package com.supermap.desktop.ui.mdi;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.ui.mdi.events.*;
 import com.supermap.desktop.ui.mdi.exception.MdiActionModeException;
 import com.supermap.desktop.ui.mdi.exception.NullParameterException;
@@ -118,6 +119,21 @@ public class MdiGroup extends JComponent {
 	}
 
 	/**
+	 * 添加指定 Component，并返回对应的 MdiPage
+	 *
+	 * @param component
+	 * @return
+	 */
+	public MdiPage addPage(Component component) {
+		MdiPage page = getPage(component);
+		if (page == null) {
+			page = MdiPage.createMdiPage(component);
+			addPage(page);
+		}
+		return page;
+	}
+
+	/**
 	 * @param page
 	 */
 	public void addPage(MdiPage page) {
@@ -167,14 +183,15 @@ public class MdiGroup extends JComponent {
 			return;
 		}
 
-		firePageActivating(new PageActivatingEvent(this, activePage));
+		MdiPage oldActivePage = this.activePage;
+		firePageActivating(new PageActivatingEvent(this, activePage, oldActivePage));
 		this.activePage = activePage;
 
 		// activePage 可见，其余不可见
 		for (int i = 0; i < this.pages.size(); i++) {
 			this.pages.get(i).getComponent().setVisible(this.pages.get(i) == activePage);
 		}
-		firePageActivated(new PageActivatedEvent(this, activePage));
+		firePageActivated(new PageActivatedEvent(this, activePage, oldActivePage));
 
 		// 更改状态重绘
 		revalidate();
@@ -192,6 +209,10 @@ public class MdiGroup extends JComponent {
 		return this.pages.indexOf(page);
 	}
 
+	public int indexOf(Component component) {
+		return indexOf(getPage(component));
+	}
+
 	public int getActivePageIndex() {
 		return this.pages.size() == 0 ? -1 : this.pages.indexOf(this.activePage);
 	}
@@ -204,36 +225,27 @@ public class MdiGroup extends JComponent {
 		return this.pages.contains(page) && this.activePage == page;
 	}
 
-	public void close(MdiPage page) {
+	public boolean close(MdiPage page) {
+		boolean isClosed = false;
 		if (page != null && this.pages.contains(page)) {
+			try {
+				PageClosingEvent removingEvent = new PageClosingEvent(this, page);
+				firePageClosing(removingEvent);
 
-			PageClosingEvent removingEvent = new PageClosingEvent(this, page);
-			firePageClosing(removingEvent);
+				if (!removingEvent.isCancel()) {
+					boolean isCloseActivePage = page.isActive();
+					int closingIndex = this.pages.indexOf(page);
+					page.getComponent().setVisible(false);
+					this.remove(page.getComponent());
+					this.pages.remove(page);
+					page.setGroup(null);
+					firePageClosed(new PageClosedEvent(this, page));
 
-			if (!removingEvent.isCancel()) {
-				boolean isCloseActivePage = page.isActive();
-				int closingIndex = this.pages.indexOf(page);
-				page.getComponent().setVisible(false);
-				this.remove(page.getComponent());
-				this.pages.remove(page);
-				page.setGroup(null);
-				firePageClosed(new PageClosedEvent(this, page));
+					if (isCloseActivePage) {
 
-				if (isCloseActivePage) {
-
-					// 关闭一个在激活状态的页面之后，默认激活前一个页面，关闭的已经是最前的页面，则激活下一个页面
-					int activeIndex = -1;
-					for (int i = closingIndex - 1; i >= 0; i--) {
-						if (!isPageFloating(i)) {
-
-							// page 不在浮动状态，就激活它
-							activeIndex = i;
-							break;
-						}
-					}
-
-					if (activeIndex == -1) {
-						for (int i = activeIndex >= 0 ? activeIndex : 0; i < this.pages.size(); i++) {
+						// 关闭一个在激活状态的页面之后，默认激活前一个页面，关闭的已经是最前的页面，则激活下一个页面
+						int activeIndex = -1;
+						for (int i = closingIndex - 1; i >= 0; i--) {
 							if (!isPageFloating(i)) {
 
 								// page 不在浮动状态，就激活它
@@ -241,26 +253,45 @@ public class MdiGroup extends JComponent {
 								break;
 							}
 						}
+
+						if (activeIndex == -1) {
+							for (int i = activeIndex >= 0 ? activeIndex : 0; i < this.pages.size(); i++) {
+								if (!isPageFloating(i)) {
+
+									// page 不在浮动状态，就激活它
+									activeIndex = i;
+									break;
+								}
+							}
+						}
+
+						if (activeIndex >= 0) {
+							activePage(activeIndex);
+						} else {
+
+							// 直到最后都还没找到合适的，那就是没有 page 了，这时候 activePage 只能是 null，别无选择
+							this.activePage = null;
+						}
 					}
 
-					if (activeIndex >= 0) {
-						activePage(activeIndex);
-					} else {
-
-						// 直到最后都还没找到合适的，那就是没有 page 了，这时候 activePage 只能是 null，别无选择
-						this.activePage = null;
-					}
+					// 重绘
+					validate();
+					repaint();
+					isClosed = true;
 				}
-
-				// 重绘
-				validate();
-				repaint();
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(e);
 			}
 		}
+		return isClosed;
 	}
 
-	public void close(int pageIndex) {
-		close(getPageAt(pageIndex));
+	public boolean close(int pageIndex) {
+		return close(getPageAt(pageIndex));
+	}
+
+	public boolean close(Component component) {
+		return close(getPage(component));
 	}
 
 	public MdiPane getMdiParent() {

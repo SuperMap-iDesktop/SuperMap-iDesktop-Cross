@@ -66,7 +66,7 @@ public class FormBase extends JFrame implements IFormMain {
 	private transient FrameMenuManager frameMenuManager = null;
 	private transient ContextMenuManager contextMenuManager = null;
 	private transient ToolbarManager toolbarManager = null;
-	private transient IDockbarManager dockbarManager = null;
+	private transient DockbarManager dockbarManager = null;
 	private transient StatusbarManager statusbarManager = null;
 	private transient IPropertyManager propertyManager = null;
 	private int defaultType = -1;
@@ -75,7 +75,7 @@ public class FormBase extends JFrame implements IFormMain {
 	private ArrayList<FormLoadedListener> formLoadedListeners = new ArrayList<>();
 
 	public FormBase() {
-		this.formManager = new FormManager(this);
+		this.formManager = new FormManager();
 		this.frameMenuManager = new FrameMenuManager();
 		this.contextMenuManager = new ContextMenuManager();
 		this.toolbarManager = new ToolbarManager();
@@ -87,7 +87,6 @@ public class FormBase extends JFrame implements IFormMain {
 		JMenu menu = new JMenu("loading");
 		this.jMenuBarMain.add(menu);
 		jMenuBarMain.setMinimumSize(new Dimension(20, 23));
-//		this.setJMenuBar(this.jMenuBarMain);
 
 		this.addWindowListener(new FormBaseListener());
 		initDrag();
@@ -150,17 +149,12 @@ public class FormBase extends JFrame implements IFormMain {
 			WorkspaceUtilities.initRecentFileMenu();
 			DatasourceUtilities.initRecentFileMenu();
 
-//			this.getContentPane().add(this.toolbarManager.getToolbarsContainer(), BorderLayout.NORTH);
-//			((FlowLayout) this.toolbarManager.getToolbarsContainer().getLayout()).setAlignment(FlowLayout.LEADING);
-
-//			this.toolbarManager.setToolbarContainer(this.toolbarManager.getToolbarsContainer());
 			this.toolbarManager.load(workEnvironment);
 			this.contextMenuManager.load(workEnvironment);
 			this.statusbarManager.load(workEnvironment);
 
 			DockbarManager dockbar = (DockbarManager) this.dockbarManager;
 			dockbar.load(workEnvironment);
-//			this.getContentPane().add(dockbar.getRootWindow(), BorderLayout.CENTER);
 			this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 			// UI 的操作需要在 EDT 里进行，否则可能会有各种 GUI 的问题
@@ -172,8 +166,6 @@ public class FormBase extends JFrame implements IFormMain {
 
 //				}
 //			});
-//            this.formManager.setRootContainer(dockbar.getRootWindow());
-//            this.formManager.setChildWindowsContainer(dockbar.getChildFormsWindow());
 
 			IDockbar outputDockbar = dockbar.getOutputFrame();
 			if (outputDockbar != null && outputDockbar.getInnerComponent() instanceof OutputFrame) {
@@ -190,9 +182,6 @@ public class FormBase extends JFrame implements IFormMain {
 					if (GlobalParameters.isWorkspaceRecovery()) {
 						WorkspaceRecovery.getInstance().run();
 					}
-//					if (GlobalParameters.isWorkspaceAutoSave()) {
-//						WorkspaceAutoSave.getInstance().start();
-//					}
 				}
 			});
 
@@ -212,7 +201,7 @@ public class FormBase extends JFrame implements IFormMain {
 		this.setLayout(new GridBagLayout());
 		this.add(jMenuBarMain, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER));
 		this.add(this.toolbarManager.getToolbarsContainer(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 5));
-//        this.add(dockbar.getRootWindow(), new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
+		this.add(dockbar.getRootWindow(), new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
 	}
 
 	@Override

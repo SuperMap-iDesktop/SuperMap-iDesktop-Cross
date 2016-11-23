@@ -9,7 +9,8 @@ import java.util.EventObject;
  */
 public class PageActivatedEvent extends EventObject {
 
-	private MdiPage page;
+	private MdiPage oldPage;
+	private MdiPage newPage;
 
 	/**
 	 * Constructs a prototypical Event.
@@ -17,12 +18,17 @@ public class PageActivatedEvent extends EventObject {
 	 * @param source The object on which the Event initially occurred.
 	 * @throws IllegalArgumentException if source is null.
 	 */
-	public PageActivatedEvent(Object source, MdiPage page) {
+	public PageActivatedEvent(Object source, MdiPage newPage, MdiPage oldPage) {
 		super(source);
-		this.page = page;
+		this.newPage = newPage;
+		this.oldPage = oldPage;
 	}
 
-	public MdiPage getPage() {
-		return page;
+	public MdiPage getActivedPage() {
+		return this.newPage;
+	}
+
+	public MdiPage getOldActivedPage() {
+		return this.oldPage;
 	}
 }

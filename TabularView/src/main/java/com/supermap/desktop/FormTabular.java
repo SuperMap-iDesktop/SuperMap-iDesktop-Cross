@@ -181,8 +181,8 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		rowHeader.setCellRenderer(new RowHeaderRenderer(jTableTabular));
 
 		jScrollPaneChildWindow.setRowHeaderView(rowHeader);
-
-		this.setComponent(jScrollPaneChildWindow);
+		setLayout(new BorderLayout());
+		this.add(jScrollPaneChildWindow);
 		if (Application.getActiveApplication().getMainFrame() != null) {
 			IContextMenuManager manager = Application.getActiveApplication().getMainFrame().getContextMenuManager();
 			this.FormSuperTabularContextMenu = (JPopupMenu) manager.get("SuperMap.Desktop.FormSuperTabular.FormSuperTabularContextMenu");

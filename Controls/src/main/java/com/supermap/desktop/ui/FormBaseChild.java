@@ -133,6 +133,8 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 		// 默认实现，后续进行初始化操作
 	}
 
+	public abstract void onClosing();
+
 	private SmStatusbar createStatusbar() {
 		SmStatusbar smstatusbar = null;
 		Class<?> formClass = this.getClass();

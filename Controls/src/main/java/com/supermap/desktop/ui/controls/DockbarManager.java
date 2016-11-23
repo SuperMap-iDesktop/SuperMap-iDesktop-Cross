@@ -14,6 +14,7 @@ import org.flexdock.docking.DockingManager;
 import org.flexdock.view.View;
 import org.flexdock.view.Viewport;
 
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -34,17 +35,15 @@ public class DockbarManager implements IDockbarManager {
 	private Dockbar layersComponentManager = null;
 	private Dockbar outputFrame = null;
 
-	public DockbarManager() {
+	public DockbarManager(JComponent mainContent) {
 		this.dockbars = new ArrayList<Dockbar>();
 		this.dockPort = new Viewport();
 		this.mainView = new View("mainView", null, null);
 		this.mainView.setTerritoryBlocked(DockingConstants.CENTER_REGION, true);
 		this.mainView.setTitlebar(null);
+		this.mainView.getContentPane().setLayout(new BorderLayout());
+		this.mainView.getContentPane().add(mainContent);
 		this.dockPort.dock(this.mainView);
-	}
-
-	public void setMainView(Container c) {
-		this.mainView.setContentPane(c);
 	}
 
 	public IDockbar getWorkspaceComponentManager() {
