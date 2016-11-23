@@ -5,6 +5,7 @@ import com.supermap.desktop.ScaleModel;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.utilities.DoubleUtilities;
 
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalBorders;
@@ -121,9 +122,9 @@ public class ScaleEditor extends JPanel {
 	private void valueChange(PropertyChangeEvent e) {
 		try {
 			ScaleModel oldModel = this.scaleModel;
-			if (ScaleModel.isLegitScaleString(1 / Double.valueOf(String.valueOf(e.getNewValue())))) {
+			if (DoubleUtilities.isDoubleWithoutD(String.valueOf(e.getNewValue())) && ScaleModel.isLegitScaleString(1 / DoubleUtilities.stringToValue(String.valueOf(e.getNewValue())))) {
 				//输入值判断
-				this.scaleModel = new ScaleModel(1 / Double.valueOf(String.valueOf(e.getNewValue())));
+				this.scaleModel = new ScaleModel(1 / DoubleUtilities.stringToValue(String.valueOf(e.getNewValue())));
 			} else {
 				this.scaleModel = oldModel;
 			}

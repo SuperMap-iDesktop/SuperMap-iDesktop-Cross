@@ -291,10 +291,6 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 		try {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				double selectedScale = getScale(e.getItem());
-				if (selectedScale <= 0) {
-					this.comboBoxMinVisibleScale.setSelectedItem(new ScaleModel(getModifiedLayerPropertyModel().getMinVisibleScale()));
-					return;
-				}
 
 				boolean isChanged = false;
 

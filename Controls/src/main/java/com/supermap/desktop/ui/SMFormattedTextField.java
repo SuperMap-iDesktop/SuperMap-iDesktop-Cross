@@ -91,7 +91,7 @@ public class SMFormattedTextField extends JFormattedTextField implements Documen
 		Object lastValue = getValue();
 
 		try {
-			if (!StringUtilities.isNullOrEmpty(getText()) && StringUtilities.isNumber(getText())) {
+			if (!StringUtilities.isNullOrEmpty(getText()) && null != DoubleUtilities.stringToValue(getText())) {
 				commitEdit();
 			}
 		} catch (ParseException e1) {

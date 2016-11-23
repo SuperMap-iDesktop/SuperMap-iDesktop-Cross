@@ -1480,5 +1480,14 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 		getMapControl().getMap().setVisibleScalesEnabled(isVisibleScalesEnabled);
 		// TODO: 2016/9/10 下拉框刷新
 	}
+
+	public void setActiveSubForm(TransformationBase transformationBase) {
+		if (currentForceWindow != transformationBase) {
+			currentForceWindow.deactived();
+			currentForceWindow = transformationBase;
+			transformationBase.actived();
+			Application.getActiveApplication().getMainFrame().getFormManager().resetActiveForm();
+		}
+	}
 	//endregion
 }

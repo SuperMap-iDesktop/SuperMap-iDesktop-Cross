@@ -24,12 +24,10 @@ import java.util.List;
  */
 public class TransformationReference extends TransformationBase implements ITransformation, IFormMap {
 
-	private FormTransformation formTransformation;
 	private ArrayList<Map> addedMaps;
 
 	public TransformationReference(FormTransformation formTransformation) {
-		super();
-		this.formTransformation = formTransformation;
+		super(formTransformation);
 		mapControl.getMap().setWorkspace(Application.getActiveApplication().getWorkspace());
 		mapControl.getMap().setName(DataEditorProperties.getString("String_Transfernation_ReferLayer"));
 		this.addedMaps = new ArrayList<>();
