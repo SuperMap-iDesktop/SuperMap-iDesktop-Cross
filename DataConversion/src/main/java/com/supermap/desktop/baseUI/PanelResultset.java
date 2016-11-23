@@ -246,7 +246,7 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
                     ((PanelTransformForImage) owner.getTransform()).getComboBoxBandImportModel().setModel(new DefaultComboBoxModel(new String[]{DataConversionProperties.getString("string_singleBand"),
                             DataConversionProperties.getString("string_multiBand")}));
                 }
-                if (containsFileType(FileType.TIF)) {
+                if (containsFileType(FileType.TIF) || containsFileType(FileType.IMG)) {
                     ((PanelTransformForImage) owner.getTransform()).getComboBoxBandImportModel().setModel(new DefaultComboBoxModel(new String[]{DataConversionProperties.getString("string_singleBand")}));
                 }
             }
@@ -458,9 +458,11 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             this.textFieldDatasetName.setText(importSetting.getTargetDatasetName());
         } else if (StringUtilities.isNullOrEmpty(importSetting.getTargetDatasetName()) && panelImports == null) {
             String textInfo = FileUtilities.getFileAlias(this.importSetting.getSourceFilePath());
-            String availableName = this.comboBoxDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(textInfo);
-            this.textFieldDatasetName.setText(availableName);
-            this.importSetting.setTargetDatasetName(availableName);
+            if (null != textInfo) {
+                String availableName = this.comboBoxDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(textInfo);
+                this.textFieldDatasetName.setText(availableName);
+                this.importSetting.setTargetDatasetName(availableName);
+            }
         }
     }
 

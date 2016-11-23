@@ -782,6 +782,9 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
             default:
                 break;
         }
+        if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length >= 0) {
+            result.setTargetDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
+        }
         return result;
     }
 

@@ -292,7 +292,7 @@ public class PanelTransformForImage extends PanelTransform {
         this.comboBoxBandImportModel.setEditable(true);
         ((JTextField) this.comboBoxBandImportModel.getEditor().getEditorComponent()).setEditable(false);
         if (importSetting instanceof ImportSettingIMG && null != ((ImportSettingIMG) importSetting).getMultiBandImportMode()) {
-            resetBandImportModel(((ImportSettingIMG) importSetting).isImportingAsGrid(), false, ((ImportSettingIMG) importSetting).getMultiBandImportMode());
+            resetBandImportModel(((ImportSettingIMG) importSetting).isImportingAsGrid(), true, ((ImportSettingIMG) importSetting).getMultiBandImportMode());
             return;
         }
         if (importSetting instanceof ImportSettingTIF && null != ((ImportSettingTIF) importSetting).getMultiBandImportMode()) {
