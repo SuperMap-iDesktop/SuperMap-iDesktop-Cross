@@ -2,9 +2,11 @@ package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DataCell;
@@ -14,9 +16,7 @@ import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.docking.DockingWindow;
 import com.supermap.desktop.ui.docking.TabWindow;
 import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Layers;
-import com.supermap.mapping.Map;
+import com.supermap.mapping.*;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
@@ -27,6 +27,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class JPopupMenuBind extends JPopupMenu {
     private JPanel panelButton;
     private JLabel labelTitle;
     private IForm activeForm;
-    private List formList;
+    private List formList = new ArrayList();
     private ActionListener selectAllListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -119,34 +120,43 @@ public class JPopupMenuBind extends JPopupMenu {
                 mapControl.addMouseWheelListener(new MouseWheelListener() {
                     @Override
                     public void mouseWheelMoved(MouseWheelEvent e) {
-                        bindMapCenterAndScale(size, e);
+                        bindMapCenterAndScale(size, ((MapControl) e.getSource()).getMap());
                     }
                 });
                 mapControl.addMouseMotionListener(new MouseMotionAdapter() {
                     @Override
-                    public void mouseMoved(MouseEvent e) {
+                    public void mouseDragged(MouseEvent e) {
                         bindMapsMousePosition(size, e);
                     }
 
-
+                    @Override
+                    public void mouseMoved(MouseEvent e) {
+                        bindMapsMousePosition(size, e);
+                    }
+                });
+                mapControl.getMap().addDrawingListener(new MapDrawingListener() {
+                    @Override
+                    public void mapDrawing(MapDrawingEvent e) {
+                        bindMapCenterAndScale(size, (Map) e.getSource());
+                    }
                 });
                 mapControl.addGeometrySelectChangedListener(new GeometrySelectChangedListener() {
                     @Override
                     public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
-                        bindMapsSelection(size, mapControl);
+                        bindMapsSelection(size, mapControl.getMap());
                     }
                 });
             }
         }
     }
 
-    private void bindMapsSelection(int size, MapControl mapControl) {
+    private void bindMapsSelection(int size, Map map) {
         for (int j = 0; j < size; j++) {
             IForm formMap = (IForm) formList.get(j);
             if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() &&
-                    !mapControl.equals(((IFormMap) formMap).getMapControl()) && includeSameLayer(((IFormMap) formMap).getMapControl().getMap(), mapControl.getMap())) {
+                    !map.equals(((IFormMap) formMap).getMapControl().getMap()) && includeSameLayer(((IFormMap) formMap).getMapControl().getMap(), map)) {
                 Map sourceMap = ((IFormMap) formMap).getMapControl().getMap();
-                Map targetMap = mapControl.getMap();
+                Map targetMap = map;
                 Layers sourceLayers = sourceMap.getLayers();
                 Layers targetLayers = targetMap.getLayers();
                 int sourceLayesSize = sourceLayers.getCount();
@@ -229,20 +239,20 @@ public class JPopupMenuBind extends JPopupMenu {
         return sm;
     }
 
-    private void bindMapCenterAndScale(int size, MouseWheelEvent e) {
-        Point2D center = ((MapControl) e.getSource()).getMap().getCenter();
-        double scale = ((MapControl) e.getSource()).getMap().getScale();
+    private void bindMapCenterAndScale(int size, Map sourceMap) {
+        Point2D center = sourceMap.getCenter();
+        double scale = sourceMap.getScale();
         for (int j = 0; j < size; j++) {
             IForm formMap = (IForm) formList.get(j);
             Map map;
-            if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() && !e.getSource().equals(((IFormMap) formMap).getMapControl())) {
+            if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() && !sourceMap.equals(((IFormMap) formMap).getMapControl().getMap())) {
                 map = ((IFormMap) formMap).getMapControl().getMap();
                 if (null != center && scale - 0.0 > 0) {
                     map.setCenter(center);
                     map.setScale(scale);
                     map.refresh();
                 }
-            } else if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() && e.getSource().equals(((IFormMap) formMap).getMapControl())) {
+            } else if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() && sourceMap.equals(((IFormMap) formMap).getMapControl().getMap())) {
                 map = ((IFormMap) formMap).getMapControl().getMap();
                 center = map.getCenter();
                 scale = map.getScale();
@@ -285,7 +295,7 @@ public class JPopupMenuBind extends JPopupMenu {
     }
 
     private void splitTabWindow() {
-        TabWindow tabWindow = null;
+        TabWindow tabWindow;
         int size = formList.size();
         while (size > 1) {
             tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
@@ -350,10 +360,19 @@ public class JPopupMenuBind extends JPopupMenu {
         IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
         activeForm = Application.getActiveApplication().getActiveForm();
         int size = formManager.getCount();
-        formList = new ArrayList();
+        int listSize = formList.size();
         for (int i = 0; i < size; i++) {
             IForm form = formManager.get(i);
-            CheckableItem item = new CheckableItem(form.getText());
+            CheckableItem item = new CheckableItem();
+            item.setStr(form.getText());
+            item.setForm(form);
+            for (int j = 0; j < listSize; j++) {
+                if (form.equals(formList.get(j))) {
+                    item.setSelected(true);
+                } else {
+                    item.setSelected(false);
+                }
+            }
             listModel.addElement(item);
         }
     }
@@ -411,12 +430,21 @@ public class JPopupMenuBind extends JPopupMenu {
             JPanel panelContent = new JPanel();
             JCheckBox checkBox = new JCheckBox();
             DataCell dataCell = new DataCell();
-            dataCell.initDataImage(new ImageIcon(InternalImageIconFactory.MAPS.getImage()), value.toString());
+            if (value instanceof CheckableItem) {
+                checkBox.setSelected(((CheckableItem) value).isSelected());
+                if (((CheckableItem) value).getForm() instanceof IFormMap) {
+                    dataCell.initDataImage(new ImageIcon(InternalImageIconFactory.MAPS.getImage()), value.toString());
+                } else if (((CheckableItem) value).getForm() instanceof IFormTabular) {
+                    String path = CommonToolkit.DatasetImageWrap.getImageIconPath(DatasetType.TABULAR);
+                    URL url = JPopupMenuBind.class.getResource(path);
+                    dataCell.initDataImage(new ImageIcon(url), value.toString());
+                }
+            }
+
             panelContent.setLayout(new GridBagLayout());
             panelContent.setLayout(new FlowLayout(FlowLayout.LEFT));
             panelContent.add(checkBox);
             panelContent.add(dataCell);
-            checkBox.setSelected(((CheckableItem) value).isSelected());
             dataCell.setFont(list.getFont());
             setComponentTheme(panelContent);
             setComponentTheme(checkBox);
@@ -433,10 +461,17 @@ public class JPopupMenuBind extends JPopupMenu {
     class CheckableItem {
         private String str;
         private boolean isSelected;
+        private IForm form;
 
-        public CheckableItem(String str) {
-            this.str = str;
-            this.isSelected = false;
+        public CheckableItem() {
+        }
+
+        public IForm getForm() {
+            return form;
+        }
+
+        public void setForm(IForm form) {
+            this.form = form;
         }
 
         public void setSelected(boolean b) {
@@ -445,6 +480,14 @@ public class JPopupMenuBind extends JPopupMenu {
 
         public boolean isSelected() {
             return this.isSelected;
+        }
+
+        public String getStr() {
+            return str;
+        }
+
+        public void setStr(String str) {
+            this.str = str;
         }
 
         public String toString() {

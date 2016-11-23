@@ -16,7 +16,7 @@ public class FiletypeUtilities {
 
     // 栅格类型文件
     private static final FileType[] gridValue = {FileType.BMP, FileType.SIT, FileType.GRD, FileType.RAW,
-            FileType.CSV, FileType.BIL, FileType.IMG, FileType.TIF, FileType.PNG, FileType.JPG, FileType.JP2,
+            FileType.CSV, FileType.IMG, FileType.TIF, FileType.PNG, FileType.JPG, FileType.JP2,
             FileType.GIF, FileType.GBDEM, FileType.USGSDEM, FileType.BSQ, FileType.BIP, FileType.BIL,
             FileType.MrSID, FileType.ECW, FileType.TEMSClutter};
     // 矢量文件

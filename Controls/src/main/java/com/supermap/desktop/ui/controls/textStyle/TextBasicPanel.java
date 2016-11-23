@@ -935,9 +935,11 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.comboBoxAlign.removeItemListener(this.alignItemListener);
         this.textFieldFontSize.removeFocusListener(this.textFieldFontSizeFocusListener);
         this.textFieldFontHeight.removeFocusListener(this.textfieldFontHeightFocusListener);
-//        this.textFieldFontHeight.removeKeyListener(this.fontHeightKeyListener);
-        this.textFieldFontSize.removeKeyListener(this.fontSizeKeyListener);
         this.textFieldFontHeight.removeCaretListener(this.textfieldFontHeightListener);
+        this.textFieldFontHeight.removeKeyListener(this.fontHeightKeyListener);
+        this.spinnerFontHeight.removeChangeListener(this.changeListener);
+        this.textFieldFontSize.removeKeyListener(this.fontSizeKeyListener);
+        this.comboBoxFontSize.removeItemListener(this.itemListener);
         this.textFieldFontRotationAngl.removeCaretListener(this.textfieldFontRotationAnglListener);
         this.textFieldFontItalicAngl.removeCaretListener(this.textFieldFontItalicAnglListener);
         this.textfieldOutLineWidth.removeCaretListener(this.textfieldOutLineWidthListener);

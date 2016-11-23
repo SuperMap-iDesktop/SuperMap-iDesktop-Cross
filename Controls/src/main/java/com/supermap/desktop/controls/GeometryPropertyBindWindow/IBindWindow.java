@@ -28,9 +28,9 @@ public interface IBindWindow {
 
 	/**
 	 * 获取当前活动的图层
-	 * 
-	 * @param layer
-	 */
+	 *
+     * @param
+     */
 	public Layer getActiveLayer();
 
 	/**

@@ -184,14 +184,20 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
             if (2 == e.getClickCount() && table.getSelectedColumn() != ImportTableModel.COLUMN_FILETYPE) {
                 addImportInfo();
                 return;
-            } else if (table.getSelectedRows().length == 1) {
-                relesePanelImportTemp();
-                replaceImportInfo(table.getSelectedRow());
-            } else if (table.getSelectedRows().length > 1) {
-                replaceImportInfos();
+            } else {
+                replaceImportPanel();
             }
         }
     };
+
+    private void replaceImportPanel() {
+        if (table.getSelectedRows().length == 1) {
+            relesePanelImportTemp();
+            replaceImportInfo(table.getSelectedRow());
+        } else if (table.getSelectedRows().length > 1) {
+            replaceImportInfos();
+        }
+    }
 
     private void relesePanelImportTemp() {
         if (null != panelImportTemp) {
@@ -297,6 +303,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
             try {
                 CommonUtilities.selectAll(table);
                 setButtonState();
+                replaceImportPanel();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -313,8 +320,8 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                     labelTitle.setText(DataConversionProperties.getString("string_label_importData"));
                     CommonUtilities.replace(panelImportInfo, panelParams);
                     setButtonState();
-                } else if (1 == selectRows.length) {
-                    replaceImportInfo(table.getSelectedRow());
+                } else {
+                    replaceImportPanel();
                 }
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
@@ -646,7 +653,9 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 
                 private void replaceImportPanel(ImportSetting newImportSetting) {
                     IImportPanelFactory importPanelFactory = new ImportPanelFactory();
-                    String filePath = tempFileInfo.getImportSetting().getSourceFilePath();
+                    ImportSetting oldImportSetting = tempFileInfo.getImportSetting();
+                    String filePath = oldImportSetting.getSourceFilePath();
+                    newImportSetting.setTargetDatasource(oldImportSetting.getTargetDatasource());
                     newImportSetting.setSourceFilePath(filePath);
                     tempFileInfo.setImportSetting(newImportSetting);
                     PanelImport panelImport = (PanelImport) importPanelFactory.createPanelImport(DataImportDialog.this, tempFileInfo);

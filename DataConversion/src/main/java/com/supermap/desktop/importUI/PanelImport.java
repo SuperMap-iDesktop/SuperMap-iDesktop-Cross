@@ -72,7 +72,7 @@ public class PanelImport extends JPanel implements IPanelImport {
             this.transform = transformFactory.createPanelTransform(importSetting);
         } else if (null != this.panelImports) {
             panelImportType = transformFactory.getImportSettingsType(panelImports);
-            this.resultset = new PanelResultset(panelImports, panelImportType);
+            this.resultset = new PanelResultset(PanelImport.this, panelImports, panelImportType);
             this.sourceInfo = new PanelSourceInfo(panelImports, panelImportType);
             this.transform = transformFactory.createPanelTransform(panelImports);
         }

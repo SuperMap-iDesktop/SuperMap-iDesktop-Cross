@@ -129,6 +129,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             try {
                 CommonUtilities.selectAll(tableExport);
                 setButtonState();
+                replaceExportPanel();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -139,6 +140,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         public void actionPerformed(ActionEvent e) {
             try {
                 CommonUtilities.invertSelect(tableExport);
+                replaceExportPanel();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -250,13 +252,8 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                 } else {
                     addExportInfo();
                 }
-            } else if (tableExport.getSelectedRows().length == 1) {
-                //刷新右边界面
-                relesePanelExportTemp();
-                CommonUtilities.replace(panelExportInfo, panelExports.get(tableExport.getSelectedRow()));
-            } else if (tableExport.getSelectedRows().length > 1) {
-                //刷新右边界面
-                replaceExportInfos();
+            } else {
+                replaceExportPanel();
             }
         }
 
@@ -274,6 +271,17 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             }
         }
     };
+
+    private void replaceExportPanel() {
+        if (tableExport.getSelectedRows().length == 1) {
+            //刷新右边界面
+            relesePanelExportTemp();
+            CommonUtilities.replace(panelExportInfo, panelExports.get(tableExport.getSelectedRow()));
+        } else if (tableExport.getSelectedRows().length > 1) {
+            //刷新右边界面
+            replaceExportInfos();
+        }
+    }
 
     private void deleteExportInfo() {
         if (null != tableExport.getSelectedRows() && tableExport.getSelectedRows().length != 0) {

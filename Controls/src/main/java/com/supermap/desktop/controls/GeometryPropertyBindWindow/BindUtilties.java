@@ -72,13 +72,14 @@ public class BindUtilties {
     }
 
     public static void showPopumenu(IBaseItem caller) {
-        Point point = ((SmMenuItem) caller).getLocation();
-        int x = (int) point.getX() + 10;
+        Point point = ((SmMenuItem) caller).getParent().getLocation();
+        int x = (int) point.getX() + 46;
         JPopupMenuBind popupMenuBind = new JPopupMenuBind();
-        int y = (int) point.getY() + popupMenuBind.getHeight();
+        int y = (int) point.getY() + 52;
         JFrame mainFrame = (JFrame) Application.getActiveApplication().getMainFrame();
         popupMenuBind.show(mainFrame, x, y);
         popupMenuBind.setVisible(true);
+        popupMenuBind = null;
     }
 
     class LocalFormChangedListener implements ActiveFormChangedListener {

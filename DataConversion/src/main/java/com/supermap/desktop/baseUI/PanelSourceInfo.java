@@ -66,9 +66,6 @@ public class PanelSourceInfo extends JPanel implements IImportSettingSourceInfo 
     }
 
     public PanelSourceInfo(ArrayList<PanelImport> panelImports, int layoutType) {
-        if (layoutType == PackageInfo.GRID_AND_VERTICAL_TYPE) {
-            return;
-        }
         this.panelImports = panelImports;
         this.layoutType = layoutType;
         this.importSetting = panelImports.get(panelImports.size() - 1).getImportInfo().getImportSetting();
@@ -77,7 +74,7 @@ public class PanelSourceInfo extends JPanel implements IImportSettingSourceInfo 
             initLayerout();
         } else if (layoutType == PackageInfo.GRID_TYPE) {
             initLayerout();
-        } else if (layoutType == PackageInfo.VERTICAL_TYPE) {
+        } else if (layoutType == PackageInfo.VERTICAL_TYPE || layoutType == PackageInfo.GRID_AND_VERTICAL_TYPE) {
             initVerticalLayout();
         }
 

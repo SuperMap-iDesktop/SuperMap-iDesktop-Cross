@@ -291,51 +291,40 @@ public class PanelTransformForImage extends PanelTransform {
     private void initComboBoxBandImportModel() {
         this.comboBoxBandImportModel.setEditable(true);
         ((JTextField) this.comboBoxBandImportModel.getEditor().getEditorComponent()).setEditable(false);
-        this.comboBoxBandImportModel.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_singleBand"),
-                DataConversionProperties.getString("string_multiBand"), DataConversionProperties.getString("string_compositeBand")}));
         if (importSetting instanceof ImportSettingIMG && null != ((ImportSettingIMG) importSetting).getMultiBandImportMode()) {
-            MultiBandImportMode multiBandImportMode = ((ImportSettingIMG) importSetting).getMultiBandImportMode();
-            if (multiBandImportMode.equals(MultiBandImportMode.SINGLEBAND)) {
-                this.comboBoxBandImportModel.setSelectedIndex(0);
-            } else if (multiBandImportMode.equals(MultiBandImportMode.MULTIBAND)) {
-                this.comboBoxBandImportModel.setSelectedIndex(1);
-            } else if (multiBandImportMode.equals(MultiBandImportMode.COMPOSITE)) {
-                this.comboBoxBandImportModel.setSelectedIndex(2);
-            }
+            resetBandImportModel(((ImportSettingIMG) importSetting).isImportingAsGrid(), false, ((ImportSettingIMG) importSetting).getMultiBandImportMode());
             return;
         }
         if (importSetting instanceof ImportSettingTIF && null != ((ImportSettingTIF) importSetting).getMultiBandImportMode()) {
-            MultiBandImportMode multiBandImportMode = ((ImportSettingTIF) importSetting).getMultiBandImportMode();
-            if (multiBandImportMode.equals(MultiBandImportMode.SINGLEBAND)) {
-                this.comboBoxBandImportModel.setSelectedIndex(0);
-            } else if (multiBandImportMode.equals(MultiBandImportMode.MULTIBAND)) {
-                this.comboBoxBandImportModel.setSelectedIndex(1);
-            } else if (multiBandImportMode.equals(MultiBandImportMode.COMPOSITE)) {
-                this.comboBoxBandImportModel.setSelectedIndex(2);
-            }
+            resetBandImportModel(((ImportSettingTIF) importSetting).isImportingAsGrid(), true, ((ImportSettingTIF) importSetting).getMultiBandImportMode());
             return;
         }
         if (importSetting instanceof ImportSettingMrSID && null != ((ImportSettingMrSID) importSetting).getMultiBandImportMode()) {
-            MultiBandImportMode multiBandImportMode = ((ImportSettingMrSID) importSetting).getMultiBandImportMode();
-            if (multiBandImportMode.equals(MultiBandImportMode.SINGLEBAND)) {
-                this.comboBoxBandImportModel.setSelectedIndex(0);
-            } else if (multiBandImportMode.equals(MultiBandImportMode.MULTIBAND)) {
-                this.comboBoxBandImportModel.setSelectedIndex(1);
-            } else if (multiBandImportMode.equals(MultiBandImportMode.COMPOSITE)) {
-                this.comboBoxBandImportModel.setSelectedIndex(2);
-            }
+            resetBandImportModel(((ImportSettingMrSID) importSetting).isImportingAsGrid(), false, ((ImportSettingMrSID) importSetting).getMultiBandImportMode());
             return;
         }
         if (importSetting instanceof ImportSettingECW && null != ((ImportSettingECW) importSetting).getMultiBandImportMode()) {
-            MultiBandImportMode multiBandImportMode = ((ImportSettingECW) importSetting).getMultiBandImportMode();
-            if (multiBandImportMode.equals(MultiBandImportMode.SINGLEBAND)) {
-                this.comboBoxBandImportModel.setSelectedIndex(0);
-            } else if (multiBandImportMode.equals(MultiBandImportMode.MULTIBAND)) {
-                this.comboBoxBandImportModel.setSelectedIndex(1);
-            } else if (multiBandImportMode.equals(MultiBandImportMode.COMPOSITE)) {
-                this.comboBoxBandImportModel.setSelectedIndex(2);
-            }
+            resetBandImportModel(((ImportSettingECW) importSetting).isImportingAsGrid(), false, ((ImportSettingECW) importSetting).getMultiBandImportMode());
             return;
+        }
+    }
+
+    private void resetBandImportModel(boolean isGrid, boolean isTiff, MultiBandImportMode multiBandImportMode) {
+        if (isGrid && isTiff) {
+            this.comboBoxBandImportModel.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_singleBand")}));
+        } else if (isGrid && !isTiff) {
+            this.comboBoxBandImportModel.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_singleBand"),
+                    DataConversionProperties.getString("string_multiBand")}));
+        } else {
+            this.comboBoxBandImportModel.setModel(new DefaultComboBoxModel<Object>(new String[]{DataConversionProperties.getString("string_singleBand"),
+                    DataConversionProperties.getString("string_multiBand"), DataConversionProperties.getString("string_compositeBand")}));
+        }
+        if (multiBandImportMode.equals(MultiBandImportMode.SINGLEBAND)) {
+            this.comboBoxBandImportModel.setSelectedItem(DataConversionProperties.getString("string_singleBand"));
+        } else if (multiBandImportMode.equals(MultiBandImportMode.MULTIBAND)) {
+            this.comboBoxBandImportModel.setSelectedItem(DataConversionProperties.getString("string_multiBand"));
+        } else if (multiBandImportMode.equals(MultiBandImportMode.COMPOSITE)) {
+            this.comboBoxBandImportModel.setSelectedItem(DataConversionProperties.getString("string_compositeBand"));
         }
     }
 
