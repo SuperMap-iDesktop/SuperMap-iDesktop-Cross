@@ -4,10 +4,12 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMain;
 import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.ui.controls.DockbarManager;
 
 import javax.swing.*;
+import javax.swing.event.EventListenerList;
 import java.awt.*;
 
 public abstract class FormBaseChild extends JPanel implements IForm {
@@ -18,38 +20,28 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 	private static final long serialVersionUID = 1L;
 	private SmStatusbar statusbar;
 
+	private EventListenerList listenerList = new EventListenerList();
+	private String title;
+	private Icon icon;
+
 	public FormBaseChild(String title, Icon icon, Component component) {
 		this.statusbar = createStatusbar();
-//		this.getWindowProperties().setMaximizeEnabled(false);
-//		this.getWindowProperties().setMinimizeEnabled(false);
-//		this.addListener(new DockingWindowAdapter() {
-//			@Override
-//			public void windowUndocked(DockingWindow window) {
-//				if (window != null) {
-//					// 在桌面上拖拽/Dock/Undock 窗口之后，设置其父容器的功能性按钮（Close、Dock 等）不可见，仅保留自己的。
-//					DockbarManager.setTabWindowProperties(window.getWindowParent());
-//				}
-//			}
-//
-//			@Override
-//			public void windowAdded(DockingWindow addedToWindow, DockingWindow addedWindow) {
-//				if (addedWindow != null) {
-//					// 在桌面上拖拽/Dock/Undock 窗口之后，设置其父容器的功能性按钮（Close、Dock 等）不可见，仅保留自己的。
-//					DockbarManager.setTabWindowProperties(addedWindow.getWindowParent());
-//				}
-//			}
-//		});
+		this.title = title;
+		this.icon = icon;
 	}
 
 	@Override
 	public String getText() {
-
-		return null;
+		return this.title;
 	}
 
 	@Override
 	public void setText(String text) {
-		// 默认实现，后续进行初始化操作
+		this.title = text;
+	}
+
+	public Icon getIcon() {
+		return this.icon;
 	}
 
 	@Override
@@ -118,22 +110,73 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 	}
 
 	/**
-	 * 窗体被激活时候触发
+	 * 先执行 formClosing，再调用事件
+	 *
+	 * @param listener
 	 */
-	@Override
-	public void windowShown() {
-		// 默认实现，后续进行初始化操作
+	public void addFormClosingListener(FormClosingListener listener) {
+		this.listenerList.add(FormClosingListener.class, listener);
 	}
 
 	/**
-	 * 窗体被隐藏时候触发
+	 * 先执行 formClosed，再调用事件
+	 *
+	 * @param listener
 	 */
-	@Override
-	public void windowHidden() {
-		// 默认实现，后续进行初始化操作
+	public void removeFormClosingListener(FormClosingListener listener) {
+		this.listenerList.remove(FormClosingListener.class, listener);
 	}
 
-	public abstract void onClosing();
+	/**
+	 * 先执行 formShown，再调用事件
+	 *
+	 * @param listener
+	 */
+	public void addFormClosedListener(FormClosedListener listener) {
+		this.listenerList.add(FormClosedListener.class, listener);
+	}
+
+	public void removeFormClosedListener(FormClosedListener listener) {
+		this.listenerList.remove(FormClosedListener.class, listener);
+	}
+
+	public void addFormShownListener(FormShownListener listener) {
+		this.listenerList.add(FormShownListener.class, listener);
+	}
+
+	public void removeFormShownListener(FormShownListener listener) {
+		this.listenerList.remove(FormShownListener.class, listener);
+	}
+
+	private void fireFormClosing(FormClosingEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == FormClosingListener.class) {
+				((FormClosingListener) listeners[i + 1]).formClosing(e);
+			}
+		}
+	}
+
+	private void fireFormClosed(FormClosedEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == FormClosedListener.class) {
+				((FormClosedListener) listeners[i + 1]).formClosed(e);
+			}
+		}
+	}
+
+	private void fireFormShown(FormShownEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == FormShownListener.class) {
+				((FormShownListener) listeners[i + 1]).formShown(e);
+			}
+		}
+	}
 
 	private SmStatusbar createStatusbar() {
 		SmStatusbar smstatusbar = null;

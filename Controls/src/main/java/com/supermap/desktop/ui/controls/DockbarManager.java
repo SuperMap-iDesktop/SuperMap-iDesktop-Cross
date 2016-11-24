@@ -46,6 +46,10 @@ public class DockbarManager implements IDockbarManager {
 		this.dockPort.dock(this.mainView);
 	}
 
+	public View getMainView() {
+		return mainView;
+	}
+
 	public IDockbar getWorkspaceComponentManager() {
 		return (IDockbar) DockingManager.getDockable(WORKSPACE_COMPONENT_MANAGER_ID);
 	}

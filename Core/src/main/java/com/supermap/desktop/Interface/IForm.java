@@ -1,6 +1,7 @@
 package com.supermap.desktop.Interface;
 
 import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.event.*;
 
 /**
  * 定义窗体所具有的基本功能的接口
@@ -89,17 +90,17 @@ public interface IForm {
 	/**
 	 * 窗体由不可见到可见时触发
 	 */
-	void windowShown();
+	void formShown();
 
 	/**
 	 * 窗口关闭前触发
 	 */
-	void windowClosing();
+	void formClosing(FormClosedEvent e);
 
 	/**
 	 * 窗口关闭后触发
 	 */
-	void windowClosed();
+	void formClosed(FormClosedEvent e);
 
 	/**
 	 * 关闭时清理
@@ -107,6 +108,4 @@ public interface IForm {
 	void clean();
 
 	boolean isClosed();
-
-
 }

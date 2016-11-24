@@ -42,9 +42,6 @@ public class Dockbar extends View implements IDockbar {
 		super(xmlDockbar.getID(), xmlDockbar.getLabel());
 		this.xmlDockbar = xmlDockbar;
 		initialize();
-//		this.getWindowProperties().setMaximizeEnabled(false);
-//		this.getWindowProperties().setMinimizeEnabled(false);
-//		this.addListener(new SetDockingWindowListener());
 	}
 
 	public boolean initialize() {

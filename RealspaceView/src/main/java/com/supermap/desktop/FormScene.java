@@ -2,8 +2,8 @@ package com.supermap.desktop;
 
 import com.supermap.data.*;
 import com.supermap.desktop.CtrlAction.Utilties.SceneJumpUtilties;
-import com.supermap.desktop.Interface.IContextMenuManager;
-import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.DialogSaveAsScene;
@@ -11,6 +11,7 @@ import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveLayer3DsChangedEvent;
 import com.supermap.desktop.event.ActiveLayer3DsChangedListener;
+import com.supermap.desktop.event.CancellationEvent;
 import com.supermap.desktop.realspaceview.RealspaceViewProperties;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.LayersComponentManager;
@@ -124,8 +125,9 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 
 		try {
 			this.title = title;
+			setLayout(new BorderLayout());
 			this.sceneControl = new SceneControl();
-			this.setComponent(this.sceneControl);
+			add(this.sceneControl, BorderLayout.CENTER);
 
 			this.layer3DsTree = UICommonToolkit.getLayersManager().getLayer3DsTree();
 			addListeners();
@@ -230,17 +232,6 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 	}
 
 	@Override
-	public String getText() {
-		return super.getTitle();
-
-	}
-
-	@Override
-	public void setText(String text) {
-		super.setTitle(text);
-	}
-
-	@Override
 	public WindowType getWindowType() {
 		return WindowType.SCENE;
 	}
@@ -252,7 +243,7 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 			if (this.isNeedSave()) {
 				Workspace workspace = this.sceneControl.getScene().getWorkspace();
 				if (workspace != null) {
-					if (workspace.getScenes().indexOf(this.getTitle()) >= 0) {
+					if (workspace.getScenes().indexOf(getText()) >= 0) {
 						result = workspace.getScenes().setSceneXML(this.getText(), this.sceneControl.getScene().toXML());
 					} else {
 						result = save(true, true);
@@ -497,12 +488,35 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 		// 未实现
 	}
 
-	/**
-	 * 窗体隐藏时触发
-	 */
 	@Override
-	public void windowHidden() {
-//		removeListeners();
+	public void formClosing(CancellationEvent e) {
+		try {
+			if (GlobalParameters.isShowFormClosingInfo()) {
+
+				// 场景 组件不支持判断是否有更改，始终提示
+				boolean isNeedSave = true;
+				String message = String.format(ControlsProperties.getString("String_SaveScenePrompt"), getText());
+
+				int result = GlobalParameters.isShowFormClosingInfo() ? UICommonToolkit.showConfirmDialogWithCancel(message) : JOptionPane.NO_OPTION;
+				if (result == JOptionPane.YES_OPTION) {
+					save();
+					clean();
+				} else if (result == JOptionPane.NO_OPTION) {
+					// 不保存，直接关闭
+					clean();
+				} else if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
+					// 取消关闭操作
+					e.setCancel(true);
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	@Override
+	public void windowClosed() {
+		super.windowClosed();
 	}
 
 	/**

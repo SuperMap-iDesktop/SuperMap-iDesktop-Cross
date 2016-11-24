@@ -18,9 +18,8 @@ import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Recordset;
 import com.supermap.data.Rectangle2D;
 import com.supermap.data.Workspace;
-import com.supermap.desktop.Interface.IContextMenuManager;
-import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.Interface.IProperty;
+import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.DialogSaveAsMap;
@@ -31,6 +30,7 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveLayersChangedEvent;
 import com.supermap.desktop.event.ActiveLayersChangedListener;
+import com.supermap.desktop.event.CancellationEvent;
 import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
@@ -991,16 +991,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	@Override
-	public String getText() {
-		return this.mapControl.getName();
-	}
-
-	@Override
-	public void setText(String text) {
-
-	}
-
-	@Override
 	public WindowType getWindowType() {
 		return WindowType.MAP;
 	}
@@ -1315,13 +1305,39 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	}
 
-	/**
-	 * 窗体被隐藏时候触发
-	 */
 	@Override
-	public void windowHidden() {
-		// do nothing
+	public void formClosing(CancellationEvent e) {
+		try {
+			if (GlobalParameters.isShowFormClosingInfo()) {
 
+				// 地图 修改过才提示
+				boolean isNeedSave = getMapControl().getMap().isModified();
+				String message = String.format(ControlsProperties.getString("String_SaveMapPrompt"), getText());
+
+				if (isNeedSave) {
+					int result = GlobalParameters.isShowFormClosingInfo() ? UICommonToolkit.showConfirmDialogWithCancel(message) : JOptionPane.NO_OPTION;
+					if (result == JOptionPane.YES_OPTION) {
+						save();
+						clean();
+					} else if (result == JOptionPane.NO_OPTION) {
+						// 不保存，直接关闭
+						clean();
+					} else if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
+						// 取消关闭操作
+						e.setCancel(true);
+					}
+				} else {
+					clean();
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	@Override
+	public void windowClosed() {
+		super.windowClosed();
 	}
 
 	public void removeLayers(Layer[] layers) {

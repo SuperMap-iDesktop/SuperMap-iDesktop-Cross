@@ -2,19 +2,19 @@ package com.supermap.desktop.event;
 
 import java.util.EventObject;
 
-public class CancelEventObject extends EventObject {
+public class CancellationEvent extends EventObject {
 
 	private boolean isCancel = false;
-	
-	public CancelEventObject(Object source) {
+
+	public CancellationEvent(Object source, boolean isCancel) {
 		super(source);
-		// TODO Auto-generated constructor stub
+		this.isCancel = isCancel;
 	}
-	
+
 	public boolean isCancel() {
 		return this.isCancel;
 	}
-	
+
 	public void setCancel(boolean isCancel) {
 		this.isCancel = isCancel;
 	}

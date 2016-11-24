@@ -12,6 +12,7 @@ import com.supermap.desktop.Interface.IPropertyManager;
 import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.event.CancellationEvent;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.ui.FormBaseChild;
@@ -188,16 +189,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			this.FormSuperTabularContextMenu = (JPopupMenu) manager.get("SuperMap.Desktop.FormSuperTabular.FormSuperTabularContextMenu");
 		}
 
-		this.addListener(new DockingWindowAdapter() {
-			@Override
-			public void windowClosing(WindowClosingEvent evt) throws OperationAbortedException {
-				if (evt.getSource().equals(FormTabular.this)) {
-					removeListener(this);
-					unRegisterEvents();
-					recordset.dispose();
-				}
-			}
-		});
 		initStatusbars();
 		registerEvents();
 	}
@@ -287,23 +278,14 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	@Override
-	public String getText() {
-		return this.title;
-	}
-
-	@Override
-	public void setText(String text) {
-		super.setTitle(text);
-	}
-
-	@Override
 	public WindowType getWindowType() {
 		return WindowType.TABULAR;
 	}
 
 	@Override
-	public void windowHidden() {
-		// 隐藏
+	public void formClosing(CancellationEvent e) {
+		unRegisterEvents();
+		recordset.dispose();
 	}
 
 	@Override

@@ -3,8 +3,6 @@ package com.supermap.desktop.CtrlAction.Map.MapMeasure.Measure;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.enums.MeasureType;
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.ui.docking.DockingWindow;
-import com.supermap.desktop.ui.docking.DockingWindowAdapter;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.ui.MapControl;
 

@@ -4,27 +4,21 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLayout;
-import com.supermap.desktop.Interface.IFormMain;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.DialogSaveChildForms;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
+import com.supermap.desktop.event.CancellationEvent;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.mdi.MdiGroup;
 import com.supermap.desktop.ui.mdi.MdiPage;
-import com.supermap.desktop.ui.mdi.events.PageActivatedEvent;
-import com.supermap.desktop.ui.mdi.events.PageActivatedListener;
-import com.supermap.desktop.ui.mdi.events.PageClosingEvent;
-import com.supermap.desktop.ui.mdi.events.PageClosingListener;
+import com.supermap.desktop.ui.mdi.events.*;
 
-import javax.swing.*;
 import javax.swing.event.EventListenerList;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -35,17 +29,39 @@ public class FormManager extends MdiGroup implements IFormManager {
 	private ArrayList<IForm> childForms = new ArrayList<IForm>();
 	private MdiGroup mdiGroup;
 	private PageActivatedListener pageActivatedListener = new PageActivatedListener() {
+
 		@Override
 		public void pageActivated(PageActivatedEvent event) {
+			if (event.getOldActivedPage() != null && event.getOldActivedPage().getComponent() instanceof FormBaseChild) {
+				((FormBaseChild) event.getOldActivedPage().getComponent()).deactived();
+			}
+
+			if (event.getActivedPage() != null && event.getActivedPage().getComponent() instanceof FormBaseChild) {
+				((FormBaseChild) event.getActivedPage().getComponent()).actived();
+			}
 			ToolbarUIUtilities.updataToolbarsState();
 			fireActiveFormChanged(new ActiveFormChangedEvent(this, (IForm) event.getOldActivedPage().getComponent(), (IForm) event.getActivedPage().getComponent()));
 			refreshMenusAndToolbars((IForm) event.getActivedPage().getComponent());
 		}
 	};
+
 	private PageClosingListener pageClosingListener = new PageClosingListener() {
 		@Override
 		public void pageRemoving(PageClosingEvent e) {
-			childFormClosing(e);
+			if (e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
+				CancellationEvent cancellation = new CancellationEvent(e.getPage().getComponent(), false);
+				((FormBaseChild) e.getPage().getComponent()).formClosing(cancellation);
+				e.setCancel(cancellation.isCancel());
+			}
+		}
+	};
+
+	private PageClosedListener pageClosedListener = new PageClosedListener() {
+		@Override
+		public void pageRemoved(PageClosedEvent e) {
+			if (e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
+				((FormBaseChild) e.getPage().getComponent()).windowClosed();
+			}
 		}
 	};
 
@@ -58,6 +74,7 @@ public class FormManager extends MdiGroup implements IFormManager {
 		this.mdiGroup = new MdiGroup(null);
 		addPageActivatedListener(this.pageActivatedListener);
 		addPageClosingListener(this.pageClosingListener);
+		addPageClosedListener(this.pageClosedListener);
 	}
 
 	private IForm[] getMdiChildren() {
@@ -384,51 +401,6 @@ public class FormManager extends MdiGroup implements IFormManager {
 				frameMenuManager.getMenuBar().updateUI();
 				toolbarManager.getToolbarsContainer().repaint();
 			}
-		}
-	}
-
-	/**
-	 * 窗口关闭响应事件
-	 */
-	private void childFormClosing(PageClosingEvent e) {
-		try {
-			if (GlobalParameters.isShowFormClosingInfo()) {
-				IForm form = (IForm) e.getPage().getComponent();
-				boolean isNeedSave = false;
-				String message = "";
-
-				if (form.getWindowType() == WindowType.MAP) {
-					// 地图 修改过才提示
-					if (((IFormMap) form).getMapControl().getMap().isModified()) {
-						isNeedSave = true;
-						message = String.format(ControlsProperties.getString("String_SaveMapPrompt"), form.getText());
-					}
-				} else if (form instanceof IFormScene) {
-					// 场景 组件不支持，始终提示
-					isNeedSave = true;
-					message = String.format(ControlsProperties.getString("String_SaveScenePrompt"), form.getText());
-				} else if (form instanceof IFormLayout && ((IFormLayout) form).getMapLayoutControl().getMapLayout().isModified()) {
-					isNeedSave = true;
-					message = String.format(ControlsProperties.getString("String_SaveLayoutPrompt"), form.getText());
-				}
-				if (isNeedSave) {
-					int result = GlobalParameters.isShowFormClosingInfo() ? UICommonToolkit.showConfirmDialogWithCancel(message) : JOptionPane.NO_OPTION;
-					if (result == JOptionPane.YES_OPTION) {
-						form.save();
-						form.clean();
-					} else if (result == JOptionPane.NO_OPTION) {
-						// 不保存，直接关闭
-						form.clean();
-					} else if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
-						// 取消关闭操作
-						e.setCancel(true);
-					}
-				} else {
-					form.clean();
-				}
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
 
