@@ -4,8 +4,10 @@ import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.FileTypeLocale;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.io.File;
 
@@ -38,7 +40,8 @@ public class FileUtilities {
         return null != fileName ? fileName.substring(0, fileName.lastIndexOf(".")) : "";
     }
 
-    private static boolean isFilePath(String filePath) {
+    public static boolean isFilePath(String filePath) {
+
         boolean isFile = true;
         try {
             if (!new File(filePath).exists()) {
@@ -48,6 +51,20 @@ public class FileUtilities {
             isFile = false;
         }
         return isFile;
+    }
+
+    public static SmFileChoose createExportFileChooser(String filePath) {
+        if (!SmFileChoose.isModuleExist("DataExportFrame_OutPutDirectories")) {
+            SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), DataConversionProperties.getString("String_Export"),
+                    "DataExportFrame_OutPutDirectories", "GetDirectories");
+        }
+        SmFileChoose tempfileChooser = new SmFileChoose("DataExportFrame_OutPutDirectories");
+
+        if (!StringUtilities.isNullOrEmpty(filePath)) {
+            tempfileChooser.setSelectedFile(new File(filePath));
+        }
+        tempfileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        return tempfileChooser;
     }
 
     /**

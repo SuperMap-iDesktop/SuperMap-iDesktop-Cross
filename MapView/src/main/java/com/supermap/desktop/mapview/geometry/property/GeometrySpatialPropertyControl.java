@@ -1,6 +1,27 @@
 package com.supermap.desktop.mapview.geometry.property;
 
-import com.supermap.data.*;
+import com.supermap.data.GeoBSpline;
+import com.supermap.data.GeoCardinal;
+import com.supermap.data.GeoChord;
+import com.supermap.data.GeoCircle;
+import com.supermap.data.GeoCurve;
+import com.supermap.data.GeoEllipse;
+import com.supermap.data.GeoEllipticArc;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoLine3D;
+import com.supermap.data.GeoLineM;
+import com.supermap.data.GeoParametricLineCompound;
+import com.supermap.data.GeoParametricRegionCompound;
+import com.supermap.data.GeoPie;
+import com.supermap.data.GeoRectangle;
+import com.supermap.data.GeoRegion;
+import com.supermap.data.GeoRegion3D;
+import com.supermap.data.GeoRoundRectangle;
+import com.supermap.data.Geometry;
+import com.supermap.data.GeometryType;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.PrjCoordSysType;
+import com.supermap.data.Unit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -8,6 +29,8 @@ import com.supermap.desktop.controls.property.AbstractPropertyControl;
 import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.enums.PropertyType;
+import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.GeoTypeUtilities;
 import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 
@@ -15,7 +38,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.math.BigDecimal;
 
 public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 
@@ -37,24 +59,24 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 	private JLabel labelGeometryType;
 	private JTextField textFieldGeometryType;
 	private JLabel labelLength;
-	private JTextField textFieldLength;
+	private SMFormattedTextField textFieldLength;
 	private JComboBox<LengthUnit> comboBoxLengthUnit;
 	private JLabel labelPerimeter;
-	private JTextField textFieldPerimeter;
+	private SMFormattedTextField textFieldPerimeter;
 	private JComboBox<LengthUnit> comboBoxPerimeterUnit;
 	private JLabel labelGeometryArea;
-	private JTextField textFieldArea;
+	private SMFormattedTextField textFieldArea;
 	private JComboBox<AreaUnit> comboBoxAreaUnit;
 
 	private JPanel panelBounds;
 	private JLabel labelLeft;
-	private JTextField textFieldLeft;
+	private SMFormattedTextField textFieldLeft;
 	private JLabel labelTop;
-	private JTextField textFieldTop;
+	private SMFormattedTextField textFieldTop;
 	private JLabel labelRight;
-	private JTextField textFieldRight;
+	private SMFormattedTextField textFieldRight;
 	private JLabel labelBottom;
-	private JTextField textFieldBottom;
+	private SMFormattedTextField textFieldBottom;
 
 	private PrjCoordSys prjCoordSys; // 数据集的投影，用来处理单位信息
 	private Geometry geometry; // 地理对象
@@ -137,17 +159,17 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 		this.textFieldGeometryType.setEditable(false);
 		this.textFieldGeometryType.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 		this.labelLength = new JLabel("Length:");
-		this.textFieldLength = new JTextField();
+		this.textFieldLength = new SMFormattedTextField();
 		this.textFieldLength.setEditable(false);
 		this.textFieldLength.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 		this.comboBoxLengthUnit = createComboBoxUnit();
 		this.labelPerimeter = new JLabel("Perimeter:");
-		this.textFieldPerimeter = new JTextField();
+		this.textFieldPerimeter = new SMFormattedTextField();
 		this.textFieldPerimeter.setEditable(false);
 		this.textFieldPerimeter.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 		this.comboBoxPerimeterUnit = createComboBoxUnit();
 		this.labelGeometryArea = new JLabel("Area:");
-		this.textFieldArea = new JTextField();
+		this.textFieldArea = new SMFormattedTextField();
 		this.textFieldArea.setEditable(false);
 		this.textFieldArea.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 		this.comboBoxAreaUnit = createComboBoxAreaUnit();
@@ -170,19 +192,19 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 
 		// 外接矩形
 		this.labelLeft = new JLabel("Left:");
-		this.textFieldLeft = new JTextField();
+		this.textFieldLeft = new SMFormattedTextField();
 		this.textFieldLeft.setEditable(false);
 		this.textFieldLeft.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 		this.labelTop = new JLabel("Top:");
-		this.textFieldTop = new JTextField();
+		this.textFieldTop = new SMFormattedTextField();
 		this.textFieldTop.setEditable(false);
 		this.textFieldTop.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 		this.labelRight = new JLabel("Right:");
-		this.textFieldRight = new JTextField();
+		this.textFieldRight = new SMFormattedTextField();
 		this.textFieldRight.setEditable(false);
 		this.textFieldRight.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 		this.labelBottom = new JLabel("Bottom:");
-		this.textFieldBottom = new JTextField();
+		this.textFieldBottom = new SMFormattedTextField();
 		this.textFieldBottom.setEditable(false);
 		this.textFieldBottom.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 
@@ -225,19 +247,19 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 
 	private void updateBasicInfo(Geometry geometry) {
 		this.textFieldGeometryType.setText(GeoTypeUtilities.toString(this.geometry.getType()));
-		this.textFieldLength.setText(BigDecimal.valueOf(this.length.getValue()).toString());
-		this.textFieldPerimeter.setText(BigDecimal.valueOf(this.perimeter.getValue()).toString());
-		this.textFieldArea.setText(BigDecimal.valueOf(this.area.getValue()).toString());
+		this.textFieldLength.setText(DoubleUtilities.getFormatString(this.length.getValue()));
+		this.textFieldPerimeter.setText(DoubleUtilities.getFormatString(this.perimeter.getValue()));
+		this.textFieldArea.setText(DoubleUtilities.getFormatString(this.area.getValue()));
 		this.comboBoxLengthUnit.setSelectedItem(this.length.getUnit());
 		this.comboBoxPerimeterUnit.setSelectedItem(this.perimeter.getUnit());
 		this.comboBoxAreaUnit.setSelectedItem(this.perimeter.getUnit());
 	}
 
 	private void updateBoundsInfo(Geometry geometry) {
-		this.textFieldLeft.setText(BigDecimal.valueOf(geometry.getBounds().getLeft()).toString());
-		this.textFieldTop.setText(BigDecimal.valueOf(geometry.getBounds().getTop()).toString());
-		this.textFieldRight.setText(BigDecimal.valueOf(geometry.getBounds().getRight()).toString());
-		this.textFieldBottom.setText(BigDecimal.valueOf(geometry.getBounds().getBottom()).toString());
+		this.textFieldLeft.setText(DoubleUtilities.getFormatString(geometry.getBounds().getLeft()));
+		this.textFieldTop.setText(DoubleUtilities.getFormatString(geometry.getBounds().getTop()));
+		this.textFieldRight.setText(DoubleUtilities.getFormatString(geometry.getBounds().getRight()));
+		this.textFieldBottom.setText(DoubleUtilities.getFormatString(geometry.getBounds().getBottom()));
 	}
 
 	// @formatter:off
@@ -768,7 +790,7 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 
 			if (selectedUnit != this.length.getUnit()) {
 				this.length.convertTo(selectedUnit);
-				this.textFieldLength.setText(String.valueOf(this.length.getValue()));
+				this.textFieldLength.setText(DoubleUtilities.getFormatString(this.length.getValue()));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -781,7 +803,7 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 
 			if (selectedUnit != this.perimeter.getUnit()) {
 				this.perimeter.convertTo(selectedUnit);
-				this.textFieldPerimeter.setText(String.valueOf(this.perimeter.getValue()));
+				this.textFieldPerimeter.setText(DoubleUtilities.getFormatString(this.perimeter.getValue()));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -794,7 +816,7 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 
 			if (selectedUnit != this.area.getUnit()) {
 				this.area.convertTo(selectedUnit);
-				this.textFieldArea.setText(String.valueOf(this.area.getValue()));
+				this.textFieldArea.setText(DoubleUtilities.getFormatString(this.area.getValue()));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);

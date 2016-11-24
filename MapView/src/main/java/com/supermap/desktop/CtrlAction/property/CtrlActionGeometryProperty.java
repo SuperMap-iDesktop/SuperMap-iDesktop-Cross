@@ -6,8 +6,6 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
 
-import javax.swing.*;
-
 public class CtrlActionGeometryProperty extends CtrlAction {
 
 	public CtrlActionGeometryProperty(IBaseItem caller, IForm formClass) {
@@ -22,7 +20,6 @@ public class CtrlActionGeometryProperty extends CtrlAction {
 		if (activeForm instanceof FormMap) {
 			((FormMap) activeForm).setSelectedGeometryProperty();
 		}
-		JDialog dialogPropertyContainer = (JDialog) Application.getActiveApplication().getMainFrame().getPropertyManager();
-		dialogPropertyContainer.setVisible(true);
+		Application.getActiveApplication().getMainFrame().getPropertyManager().setPropertyVisible(true);
 	}
 }

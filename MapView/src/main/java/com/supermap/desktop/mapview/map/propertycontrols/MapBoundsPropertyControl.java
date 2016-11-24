@@ -10,6 +10,7 @@ import com.supermap.desktop.ScaleModel;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.ScaleEditor;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -27,12 +28,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.NumberFormat;
+import java.util.ArrayList;
 
 public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -50,27 +51,27 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	private SmButton buttonSetCustomBounds; // 设置自定义全幅范围
 
 	private JLabel labelCenterX;
-	private JFormattedTextField textFieldCenterX;
+	private SMFormattedTextField textFieldCenterX;
 	private JLabel labelCenterY;
-	private JFormattedTextField textFieldCenterY;
+	private SMFormattedTextField textFieldCenterY;
 
 	private JLabel labelCurrentViewLeft;
-	private JFormattedTextField textFieldCurrentViewLeft;
+	private SMFormattedTextField textFieldCurrentViewLeft;
 	private JLabel labelCurrentViewTop;
-	private JFormattedTextField textFieldCurrentViewTop;
+	private SMFormattedTextField textFieldCurrentViewTop;
 	private JLabel labelCurrentViewRight;
-	private JFormattedTextField textFieldCurrentViewRight;
+	private SMFormattedTextField textFieldCurrentViewRight;
 	private JLabel labelCurrentViewBottom;
-	private JFormattedTextField textFieldCurrentViewBottom;
+	private SMFormattedTextField textFieldCurrentViewBottom;
 
 	private JLabel labelMapViewLeft;
-	private JFormattedTextField textFieldMapViewLeft;
+	private SMFormattedTextField textFieldMapViewLeft;
 	private JLabel labelMapViewTop;
-	private JFormattedTextField textFieldMapViewTop;
+	private SMFormattedTextField textFieldMapViewTop;
 	private JLabel labelMapViewRight;
-	private JFormattedTextField textFieldMapViewRight;
+	private SMFormattedTextField textFieldMapViewRight;
 	private JLabel labelMapViewBottom;
-	private JFormattedTextField textFieldMapViewBottom;
+	private SMFormattedTextField textFieldMapViewBottom;
 
 	private double scale = 0.0;
 	public static boolean isVisibleScalesEnabled = false;
@@ -85,10 +86,10 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	private double centerX = 0.0;
 	private double centerY = 0.0;
 
-	private double currentViewL = 0.0;
-	private double currentViewT = 0.0;
-	private double currentViewR = 0.0;
-	private double currentViewB = 0.0;
+	private double currentViewLeft = 0.0;
+	private double currentViewTop = 0.0;
+	private double currentViewRight = 0.0;
+	private double currentViewBottom = 0.0;
 
 	private double mapViewL = 0.0;
 	private double mapViewT = 0.0;
@@ -215,6 +216,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 	@Override
 	public void apply() {
+		//
 		Map activeMap = getMap();
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
 		if (activeForm != null && activeForm instanceof IFormMap) {
@@ -255,8 +257,36 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		} else if (operationType == OperationType.CENTERPOINT) {
 			activeMap.setCenter(new Point2D(this.centerX, this.centerY));
 		} else if (operationType == OperationType.CURRENTVIEW) {
-			activeMap.setViewBounds(new Rectangle2D(this.currentViewL, this.currentViewB, this.currentViewR, this.currentViewT));
+			ArrayList<SMFormattedTextField> changedBoundTextFields = new ArrayList<>();
+			Rectangle2D viewBounds = activeMap.getViewBounds();
+			// 找到改变了的范围
+			if (!DoubleUtilities.equals(viewBounds.getLeft(), currentViewLeft)) {
+				changedBoundTextFields.add(textFieldCurrentViewLeft);
+			}
+			if (!DoubleUtilities.equals(viewBounds.getBottom(), currentViewBottom)) {
+				changedBoundTextFields.add(textFieldCurrentViewBottom);
+			}
+			if (!DoubleUtilities.equals(viewBounds.getRight(), currentViewRight)) {
+				changedBoundTextFields.add(textFieldCurrentViewRight);
+			}
+			if (!DoubleUtilities.equals(viewBounds.getTop(), currentViewTop)) {
+				changedBoundTextFields.add(textFieldCurrentViewTop);
+			}
+
+			if (changedBoundTextFields.size() == 1) {
+				// 如果只有一项改变，则以这一项为准
+				SMFormattedTextField textField = changedBoundTextFields.get(0);
+				activeMap.setViewBounds(new Rectangle2D(
+						textField == textFieldCurrentViewRight ? currentViewRight - viewBounds.getWidth() : currentViewLeft,
+						textField == textFieldCurrentViewTop ? currentViewTop - viewBounds.getHeight() : currentViewBottom,
+						textField == textFieldCurrentViewLeft ? currentViewLeft + viewBounds.getWidth() : currentViewRight,
+						textField == textFieldCurrentViewBottom ? currentViewBottom + viewBounds.getHeight() : currentViewTop
+				));
+			} else if (changedBoundTextFields.size() >= 2) {
+				activeMap.setViewBounds(new Rectangle2D(this.currentViewLeft, this.currentViewBottom, this.currentViewRight, this.currentViewTop));
+			}
 		}
+		operationType = OperationType.NONE;
 		activeMap.refresh();
 	}
 
@@ -274,33 +304,31 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		this.checkBoxIsCustomBoundsEnabled = new JCheckBox("IsCustomBoundsEnabled");
 		this.buttonSetCustomBounds = new SmButton("SetCustomBounds");
 
-		NumberFormat numberFormat = NumberFormat.getNumberInstance();
-		numberFormat.setMinimumFractionDigits(10);
 		this.labelCenterX = new JLabel("X:");
-		this.textFieldCenterX = new JFormattedTextField(numberFormat);
+		this.textFieldCenterX = new SMFormattedTextField();
 		this.labelCenterY = new JLabel("Y:");
-		this.textFieldCenterY = new JFormattedTextField(numberFormat);
+		this.textFieldCenterY = new SMFormattedTextField();
 
 		this.labelCurrentViewLeft = new JLabel("Left:");
-		this.textFieldCurrentViewLeft = new JFormattedTextField(numberFormat);
+		this.textFieldCurrentViewLeft = new SMFormattedTextField();
 		this.labelCurrentViewTop = new JLabel("Top:");
-		this.textFieldCurrentViewTop = new JFormattedTextField(numberFormat);
+		this.textFieldCurrentViewTop = new SMFormattedTextField();
 		this.labelCurrentViewRight = new JLabel("Right:");
-		this.textFieldCurrentViewRight = new JFormattedTextField(numberFormat);
+		this.textFieldCurrentViewRight = new SMFormattedTextField();
 		this.labelCurrentViewBottom = new JLabel("Bottom:");
-		this.textFieldCurrentViewBottom = new JFormattedTextField(numberFormat);
+		this.textFieldCurrentViewBottom = new SMFormattedTextField();
 
 		this.labelMapViewLeft = new JLabel("Left:");
-		this.textFieldMapViewLeft = new JFormattedTextField(numberFormat);
+		this.textFieldMapViewLeft = new SMFormattedTextField();
 		this.textFieldMapViewLeft.setEditable(false);
 		this.labelMapViewTop = new JLabel("Top:");
-		this.textFieldMapViewTop = new JFormattedTextField(numberFormat);
+		this.textFieldMapViewTop = new SMFormattedTextField();
 		this.textFieldMapViewTop.setEditable(false);
 		this.labelMapViewRight = new JLabel("Right:");
-		this.textFieldMapViewRight = new JFormattedTextField(numberFormat);
+		this.textFieldMapViewRight = new SMFormattedTextField();
 		this.textFieldMapViewRight.setEditable(false);
 		this.labelMapViewBottom = new JLabel("Bottom:");
-		this.textFieldMapViewBottom = new JFormattedTextField(numberFormat);
+		this.textFieldMapViewBottom = new SMFormattedTextField();
 		this.textFieldMapViewBottom.setEditable(false);
 
 		// 中心点位置
@@ -482,10 +510,10 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		this.customBounds = map.getCustomBounds();
 		this.centerX = map.getCenter().getX();
 		this.centerY = map.getCenter().getY();
-		this.currentViewL = map.getViewBounds().getLeft();
-		this.currentViewT = map.getViewBounds().getTop();
-		this.currentViewR = map.getViewBounds().getRight();
-		this.currentViewB = map.getViewBounds().getBottom();
+		this.currentViewLeft = map.getViewBounds().getLeft();
+		this.currentViewTop = map.getViewBounds().getTop();
+		this.currentViewRight = map.getViewBounds().getRight();
+		this.currentViewBottom = map.getViewBounds().getBottom();
 		this.mapViewL = map.getBounds().getLeft();
 		this.mapViewT = map.getBounds().getTop();
 		this.mapViewR = map.getBounds().getRight();
@@ -555,10 +583,10 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 			this.checkBoxIsCustomBoundsEnabled.setSelected(this.isCustomBoundsEnabled);
 			this.textFieldCenterX.setValue(this.centerX);
 			this.textFieldCenterY.setValue(this.centerY);
-			this.textFieldCurrentViewLeft.setValue(this.currentViewL);
-			this.textFieldCurrentViewTop.setValue(this.currentViewT);
-			this.textFieldCurrentViewRight.setValue(this.currentViewR);
-			this.textFieldCurrentViewBottom.setValue(this.currentViewB);
+			this.textFieldCurrentViewLeft.setValue(this.currentViewLeft);
+			this.textFieldCurrentViewTop.setValue(this.currentViewTop);
+			this.textFieldCurrentViewRight.setValue(this.currentViewRight);
+			this.textFieldCurrentViewBottom.setValue(this.currentViewBottom);
 			this.textFieldMapViewLeft.setValue(this.mapViewL);
 			this.textFieldMapViewTop.setValue(this.mapViewT);
 			this.textFieldMapViewRight.setValue(this.mapViewR);
@@ -587,10 +615,10 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 				|| this.isViewBoundsLocked != getMap().isViewBoundsLocked() || this.lockedViewBounds != getMap().getLockedViewBounds()
 				|| this.isCustomBoundsEnabled != getMap().isCustomBoundsEnabled() || this.customBounds != getMap().getCustomBounds()
 				|| Double.compare(this.centerX, getMap().getCenter().getX()) != 0 || Double.compare(this.centerY, getMap().getCenter().getY()) != 0
-				|| Double.compare(this.currentViewL, getMap().getViewBounds().getLeft()) != 0
-				|| Double.compare(this.currentViewT, getMap().getViewBounds().getTop()) != 0
-				|| Double.compare(this.currentViewR, getMap().getViewBounds().getRight()) != 0
-				|| Double.compare(this.currentViewB, getMap().getViewBounds().getBottom()) != 0
+				|| Double.compare(this.currentViewLeft, getMap().getViewBounds().getLeft()) != 0
+				|| Double.compare(this.currentViewTop, getMap().getViewBounds().getTop()) != 0
+				|| Double.compare(this.currentViewRight, getMap().getViewBounds().getRight()) != 0
+				|| Double.compare(this.currentViewBottom, getMap().getViewBounds().getBottom()) != 0
 				|| !this.lockedViewBounds.equals(getMap().getLockedViewBounds()) || !this.customBounds.equals(getMap().getCustomBounds());
 	}
 
@@ -704,7 +732,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	private void textFieldCurrentViewLValueChange(PropertyChangeEvent e) {
 		try {
 			this.operationType = OperationType.CURRENTVIEW;
-			this.currentViewL = Double.valueOf(e.getNewValue().toString());
+			this.currentViewLeft = Double.valueOf(e.getNewValue().toString());
 			verify();
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
@@ -714,7 +742,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	private void textFieldCurrentViewTValueChange(PropertyChangeEvent e) {
 		try {
 			this.operationType = OperationType.CURRENTVIEW;
-			this.currentViewT = Double.valueOf(e.getNewValue().toString());
+			this.currentViewTop = Double.valueOf(e.getNewValue().toString());
 			verify();
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
@@ -736,7 +764,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	private void textFieldCurrentViewRValueChange(PropertyChangeEvent e) {
 		try {
 			this.operationType = OperationType.CURRENTVIEW;
-			this.currentViewR = Double.valueOf(e.getNewValue().toString());
+			this.currentViewRight = Double.valueOf(e.getNewValue().toString());
 			verify();
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
@@ -746,7 +774,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	private void textFieldCurrentViewBValueChange(PropertyChangeEvent e) {
 		try {
 			this.operationType = OperationType.CURRENTVIEW;
-			this.currentViewB = Double.valueOf(e.getNewValue().toString());
+			this.currentViewBottom = Double.valueOf(e.getNewValue().toString());
 			verify();
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
@@ -772,20 +800,32 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 			this.scale = getMap().getScale();
 			this.centerX = getMap().getCenter().getX();
 			this.centerY = getMap().getCenter().getY();
-			this.currentViewL = getMap().getViewBounds().getLeft();
-			this.currentViewT = getMap().getViewBounds().getTop();
-			this.currentViewR = getMap().getViewBounds().getRight();
-			this.currentViewB = getMap().getViewBounds().getBottom();
+			this.currentViewLeft = getMap().getViewBounds().getLeft();
+			this.currentViewTop = getMap().getViewBounds().getTop();
+			this.currentViewRight = getMap().getViewBounds().getRight();
+			this.currentViewBottom = getMap().getViewBounds().getBottom();
 
 			if (!DoubleUtilities.equals(scaleEditor.getScale(), scale, 6)) {
 				this.scaleEditor.setScale(this.scale);
 			}
-			this.textFieldCenterX.setValue(this.centerX);
-			this.textFieldCenterY.setValue(this.centerY);
-			this.textFieldCurrentViewLeft.setValue(this.currentViewL);
-			this.textFieldCurrentViewTop.setValue(this.currentViewT);
-			this.textFieldCurrentViewRight.setValue(this.currentViewR);
-			this.textFieldCurrentViewBottom.setValue(this.currentViewB);
+			if (!DoubleUtilities.equals(DoubleUtilities.stringToValue(textFieldCenterX.getText()), centerX, 6)) {
+				this.textFieldCenterX.setValue(this.centerX);
+			}
+			if (!DoubleUtilities.equals(DoubleUtilities.stringToValue(textFieldCenterY.getText()), centerY, 6)) {
+				this.textFieldCenterY.setValue(this.centerY);
+			}
+			if (!DoubleUtilities.equals(DoubleUtilities.stringToValue(textFieldCurrentViewLeft.getText()), currentViewLeft, 6)) {
+				this.textFieldCurrentViewLeft.setValue(this.currentViewLeft);
+			}
+			if (!DoubleUtilities.equals(DoubleUtilities.stringToValue(textFieldCurrentViewTop.getText()), currentViewTop, 6)) {
+				this.textFieldCurrentViewTop.setValue(this.currentViewTop);
+			}
+			if (!DoubleUtilities.equals(DoubleUtilities.stringToValue(textFieldCurrentViewRight.getText()), currentViewRight, 6)) {
+				this.textFieldCurrentViewRight.setValue(this.currentViewRight);
+			}
+			if (!DoubleUtilities.equals(DoubleUtilities.stringToValue(textFieldCurrentViewBottom.getText()), currentViewBottom, 6)) {
+				this.textFieldCurrentViewBottom.setValue(this.currentViewBottom);
+			}
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
 		} finally {

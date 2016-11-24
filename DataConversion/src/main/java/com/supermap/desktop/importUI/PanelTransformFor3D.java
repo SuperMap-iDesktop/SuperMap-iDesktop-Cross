@@ -148,6 +148,7 @@ public class PanelTransformFor3D extends PanelTransform {
                 textAreaPrjInfo.setText(prjCoorSysInfo);
                 if (null != panelImports) {
                     for (PanelImport tempPanelImport : panelImports) {
+                        tempPanelImport.getImportInfo().getImportSetting().setTargetPrjCoordSys(newPrjCoordSys);
                         ((PanelTransformFor3D) tempPanelImport.getTransform()).getTextAreaPrjInfo().setText(prjCoorSysInfo);
                     }
                 } else {
@@ -198,6 +199,7 @@ public class PanelTransformFor3D extends PanelTransform {
             textAreaPrjInfo.setText(prjCoorSysInfo);
             if (null != panelImports) {
                 for (PanelImport panelImport : panelImports) {
+                    panelImport.getImportInfo().getImportSetting().setTargetPrjCoordSys(newPrjCoorSys);
                     ((PanelTransformFor3D) panelImport.getTransform()).getFileChooserControlImportPrjFile().getEditor().setText(filePath);
                     ((PanelTransformFor3D) panelImport.getTransform()).getTextAreaPrjInfo().setText(prjCoorSysInfo);
                 }

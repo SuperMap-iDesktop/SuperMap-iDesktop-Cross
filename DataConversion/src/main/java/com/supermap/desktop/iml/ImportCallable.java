@@ -182,7 +182,9 @@ public class ImportCallable extends UpdateProgressCallable {
                             int count = ((DatasetVector) dataset).getFieldInfos().getCount();
                             for (int k = 0; k < count; k++) {
                                 String fieldName = ((DatasetVector) dataset).getFieldInfos().get(k).getName();
-                                String indexName = MessageFormat.format("{0}_{1}", fieldName, UUID.randomUUID());
+                                String uuidStr = UUID.randomUUID().toString();
+                                String fieldIndex = uuidStr.substring(0, 8) + uuidStr.substring(9, 13) + uuidStr.substring(14, 18) + uuidStr.substring(19, 23) + uuidStr.substring(24);
+                                String indexName = MessageFormat.format("{0}_{1}", fieldName, fieldIndex);
                                 if (indexName.length() > 30) {
                                     indexName = indexName.substring(0, 30);
                                 }

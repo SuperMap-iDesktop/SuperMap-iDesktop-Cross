@@ -1,6 +1,8 @@
 package com.supermap.desktop.localUtilities;
 
+import com.supermap.data.conversion.FileType;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.iml.ExportFileInfo;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -103,6 +105,35 @@ public class CommonUtilities {
             }
         }
         return resultFileType;
+    }
+
+    /**
+     * 选中不同的数据是否有支持的导出文件类型，如果有就返回支持的导出文件类型，没有就返回空
+     *
+     * @param exportFileInfos
+     * @return
+     */
+    public static ArrayList<String> getSameFileTypes(ArrayList<ExportFileInfo> exportFileInfos) {
+        ArrayList<String> sameFileType = new ArrayList();
+        if (!exportFileInfos.isEmpty()) {
+            ExportFileInfo tempExportFileInfo = exportFileInfos.get(0);
+            FileType[] fileTypes = tempExportFileInfo.getExportSetting().getSupportedFileType();
+            for (int i = 0; i < fileTypes.length; i++) {
+                sameFileType.add(fileTypes[i].name());
+            }
+            for (int i = 0; i < exportFileInfos.size(); i++) {
+                ArrayList<String> tempFileTypes = new ArrayList<String>();
+                FileType[] compare = exportFileInfos.get(i).getExportSetting().getSupportedFileType();
+                for (int j = 0; j < compare.length; j++) {
+                    tempFileTypes.add(compare[j].name());
+                }
+                sameFileType.retainAll(tempFileTypes);
+            }
+        }
+        if (sameFileType.isEmpty()) {
+            return new ArrayList();
+        }
+        return sameFileType;
     }
 
     /**

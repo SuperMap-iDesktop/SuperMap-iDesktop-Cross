@@ -4,6 +4,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Maps;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.FormTransformation;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.enums.WindowType;
@@ -49,9 +50,11 @@ public abstract class TransformationBase implements IFormMap {
 	private ArrayList<Layer> activeLayersList = new ArrayList<Layer>();
 	private int isShowPopupMenu = 0;
 	private List<String> lastSelectedGeometry = new ArrayList<>();
+	private FormTransformation formTransformation;
 
 
-	public TransformationBase() {
+	public TransformationBase(FormTransformation formTransformation) {
+		this.formTransformation = formTransformation;
 		initDrag();
 	}
 
@@ -314,6 +317,7 @@ public abstract class TransformationBase implements IFormMap {
 							}
 						}
 						addDatas(objects);
+						formTransformation.setActiveSubForm(TransformationBase.this);
 					}
 				} catch (Exception e) {
 					Application.getActiveApplication().getOutput().output(e);

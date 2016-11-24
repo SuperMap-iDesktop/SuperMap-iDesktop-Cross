@@ -7,7 +7,6 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
 import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class PropertyBindWindow implements IPropertyBindWindow {
 
@@ -16,8 +15,8 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 	private IFormMap formMap;
 	private SplitWindow splitWindow;
 	// 是否要选中属性表中的某些行
-	private boolean addRow;
-	private PropertySelectChangeListener selectRowsChangeListener;
+//	private boolean addRow;
+    private PropertySelectChangeListener selectRowsChangeListener;
 	private MapSelectionChangeListener selectionChangeListener;
 	private MouseAdapter formMapMouseListener;
 
@@ -27,8 +26,8 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 
 			@Override
 			public void selectChanged(int[] selectRows, Dataset dataset) {
-				if (null != dataset && !addRow && dataset.equals(bindWindow.getActiveLayer().getDataset())) {
-					bindWindow.refreshFormTabular(selectRows);
+                if (null != dataset && dataset.equals(bindWindow.getActiveLayer().getDataset())) {
+                    bindWindow.refreshFormTabular(selectRows);
 				} else if (null == dataset) {
 					bindWindow.refreshFormTabular(selectRows);
 				}
@@ -38,11 +37,10 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 
 			@Override
 			public void selectionChanged(Selection selection, Layer layer) {
-				addRow = true;
 				bindProperty.refreshMap(selection, layer);
 			}
 		};
-		this.formMapMouseListener = new MouseAdapter() {
+//		this.formMapMouseListener = new MouseAdapter() {
 
 			// @Override
 			// public void mouseClicked(MouseEvent e) {
@@ -51,28 +49,28 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 			// }
 			// }
 
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				addRow = false;
-			}
+//			@Override
+//			public void mouseEntered(MouseEvent e) {
+//				addRow = false;
+//			}
 
-		};
-	}
+//		};
+    }
 
 	@Override
 	public void registEvents() {
 
 		removeEvents();
-		formMap.getMapControl().addMouseListener(formMapMouseListener);
-		bindProperty.addPropertySelectChangeListener(selectRowsChangeListener);
+//		formMap.getMapControl().addMouseListener(formMapMouseListener);
+        bindProperty.addPropertySelectChangeListener(selectRowsChangeListener);
 		bindWindow.addMapSelectionChangeListener(selectionChangeListener);
 	}
 
 	@Override
 	public void removeEvents() {
 		if (null != formMap.getMapControl()) {
-			formMap.getMapControl().removeMouseListener(formMapMouseListener);
-			bindProperty.removePropertySelectChangeListener(selectRowsChangeListener);
+//			formMap.getMapControl().removeMouseListener(formMapMouseListener);
+            bindProperty.removePropertySelectChangeListener(selectRowsChangeListener);
 			bindWindow.removeMapSelectionChangeListener(selectionChangeListener);
 		}
 	}
@@ -114,12 +112,12 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 		this.formMap = formMap;
 	}
 
-	public boolean isAddRow() {
-		return addRow;
-	}
-
-	public void setAddRow(boolean addRow) {
-		this.addRow = addRow;
-	}
+//	public boolean isAddRow() {
+//		return addRow;
+//	}
+//
+//	public void setAddRow(boolean addRow) {
+//		this.addRow = addRow;
+//	}
 
 }

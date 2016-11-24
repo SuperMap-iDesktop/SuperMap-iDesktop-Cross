@@ -119,7 +119,8 @@ public class PanelTransformFactory implements IPanelTransformFactory {
         return importSetting instanceof ImportSettingSHP || importSetting instanceof ImportSettingGRD ||
                 importSetting instanceof ImportSettingE00 || importSetting instanceof ImportSettingAiBinGrid ||
                 importSetting instanceof ImportSettingDBF || importSetting instanceof ImportSettingLIDAR ||
-                importSetting instanceof ImportSettingTAB || importSetting instanceof ImportSettingMIF;
+                importSetting instanceof ImportSettingTAB || importSetting instanceof ImportSettingMIF ||
+                importSetting instanceof ImportSettingFileGDBVector;
     }
 
     private boolean isClutterType(ImportSetting importSetting) {
@@ -149,7 +150,7 @@ public class PanelTransformFactory implements IPanelTransformFactory {
         int count = 0;
         for (PanelImport tempPanelImport : panelImports) {
             for (FileType tempFileType : FiletypeUtilities.getVectorValue()) {
-                if (tempPanelImport.getImportInfo().getImportSetting().getSourceFileType().equals(tempFileType)) {
+                if (tempPanelImport.getImportInfo().getImportSetting().getSourceFileType() == tempFileType) {
                     count++;
                 }
             }
@@ -162,7 +163,7 @@ public class PanelTransformFactory implements IPanelTransformFactory {
         int count = 0;
         for (PanelImport tempPanelImport : panelImports) {
             for (FileType tempFileType : FiletypeUtilities.getGridValue()) {
-                if (tempPanelImport.getImportInfo().getImportSetting().getSourceFileType().equals(tempFileType)) {
+                if (tempPanelImport.getImportInfo().getImportSetting().getSourceFileType() == tempFileType) {
                     count++;
                 }
             }
@@ -175,7 +176,7 @@ public class PanelTransformFactory implements IPanelTransformFactory {
         boolean isSame = true;
         FileType fileType = panelImports.get(0).getImportInfo().getImportSetting().getSourceFileType();
         for (PanelImport tempPanelImport : panelImports) {
-            if (!tempPanelImport.getImportInfo().getImportSetting().getSourceFileType().equals(fileType)) {
+            if (tempPanelImport.getImportInfo().getImportSetting().getSourceFileType() != fileType) {
                 isSame = false;
                 break;
             }

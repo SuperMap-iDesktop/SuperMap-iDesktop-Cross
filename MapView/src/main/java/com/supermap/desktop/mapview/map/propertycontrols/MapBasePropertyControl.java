@@ -23,7 +23,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.NumberFormat;
 
 public class MapBasePropertyControl extends AbstractPropertyControl {
 
@@ -180,12 +179,12 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 
 		this.textFieldMapName = new JTextField();
 		this.textFieldMapName.setEditable(false);
-		this.textFieldAngle = new SMFormattedTextField(NumberFormat.getNumberInstance());
+		this.textFieldAngle = new SMFormattedTextField();
 		this.comboBoxColorMode = new JComboBox<String>();
 		this.buttonBackgroundColor = new ButtonColorSelector();
-		this.textFieldMinVisibleTextSize = new SMFormattedTextField(NumberFormat.getNumberInstance());
-		this.textFieldMaxVisibleTextSize = new SMFormattedTextField(NumberFormat.getNumberInstance());
-		this.textFieldMaxVisibleVertex = new SMFormattedTextField(NumberFormat.getIntegerInstance());
+		this.textFieldMinVisibleTextSize = new SMFormattedTextField();
+		this.textFieldMaxVisibleTextSize = new SMFormattedTextField();
+		this.textFieldMaxVisibleVertex = new SMFormattedTextField();
 		this.buttonOverlapDisplayedOptions = new SmButton("OverlapDisplayedOptions");
 		this.checkBoxIsOverlapDisplayed = new JCheckBox("IsOverlapDisplayed");
 		this.checkBoxIsMarkerAngleFixed = new JCheckBox("IsMarkerAngleFixed");

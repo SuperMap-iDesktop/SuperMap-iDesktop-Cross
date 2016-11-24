@@ -20,7 +20,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 /**
  * 有3点需要在结构中考虑。 1：及时刷新 2：多图层批量编辑 3：属性状态改变事件 本想让结构简单化，但是要处理以上三点，就不得不再做一个 Model 类了
@@ -286,6 +291,7 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 		try {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				double selectedScale = getScale(e.getItem());
+
 				boolean isChanged = false;
 
 				if (Double.compare(selectedScale, ScaleModel.INVALID_SCALE) == 0) {
@@ -294,6 +300,7 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 					if (Double.compare(getModifiedLayerPropertyModel().getMaxVisibleScale(), selectedScale) >= 0
 							|| Double.compare(getModifiedLayerPropertyModel().getMaxVisibleScale(), 0) == 0) {
 						getModifiedLayerPropertyModel().setMinVisibleScale(selectedScale);
+						this.comboBoxMinVisibleScale.setSelectedItem(new ScaleModel(selectedScale));
 						isChanged = true;
 					} else {
 						this.comboBoxMinVisibleScale.setSelectedItem(new ScaleModel(getModifiedLayerPropertyModel().getMinVisibleScale()));
@@ -302,7 +309,7 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 					// 如果选中的是当前可见比例尺，那么就把文本设置为当前比例尺，如果选中的是清除，那么就把文本设置为 NONE
 					if (isChanged
 							&& this.comboBoxMinVisibleScale.getSelectedItem().toString()
-									.equalsIgnoreCase(MapViewProperties.getString("String_SetCurrentScale"))) {
+							.equalsIgnoreCase(MapViewProperties.getString("String_SetCurrentScale"))) {
 						this.comboBoxMinVisibleScale.removeItemListener(comboBoxItemListener);
 						this.comboBoxMinVisibleScale.setSelectedItem(new ScaleModel(selectedScale));
 						this.comboBoxMinVisibleScale.addItemListener(comboBoxItemListener);
@@ -324,12 +331,17 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 		try {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				double selectedScale = getScale(e.getItem());
+				if (selectedScale <= 0) {
+					this.comboBoxMaxVisibleScale.setSelectedItem(new ScaleModel(getModifiedLayerPropertyModel().getMinVisibleScale()));
+					return;
+				}
 				boolean isChanged = false;
 				if (Double.compare(selectedScale, ScaleModel.INVALID_SCALE) == 0) {
 					this.comboBoxMaxVisibleScale.setSelectedItem(new ScaleModel(getModifiedLayerPropertyModel().getMaxVisibleScale()));
 				} else {
 					if (Double.compare(selectedScale, getModifiedLayerPropertyModel().getMinVisibleScale()) >= 0 || Double.compare(selectedScale, 0) == 0) {
 						getModifiedLayerPropertyModel().setMaxVisibleScale(selectedScale);
+						this.comboBoxMaxVisibleScale.setSelectedItem(new ScaleModel(selectedScale));
 						isChanged = true;
 					} else {
 						this.comboBoxMaxVisibleScale.setSelectedItem(new ScaleModel(getModifiedLayerPropertyModel().getMaxVisibleScale()));
@@ -337,7 +349,7 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 					// 如果选中的是当前可见比例尺，那么就把文本设置为当前比例尺，如果选中的是清除，那么就把文本设置为 NONE
 					if (isChanged
 							&& this.comboBoxMaxVisibleScale.getSelectedItem().toString()
-									.equalsIgnoreCase(MapViewProperties.getString("String_SetCurrentScale"))) {
+							.equalsIgnoreCase(MapViewProperties.getString("String_SetCurrentScale"))) {
 						this.comboBoxMaxVisibleScale.removeItemListener(comboBoxItemListener);
 						this.comboBoxMaxVisibleScale.setSelectedItem(new ScaleModel(selectedScale));
 						this.comboBoxMaxVisibleScale.addItemListener(comboBoxItemListener);
@@ -374,7 +386,7 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 				}
 			}
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			return -1;
 		}
 		return scale;
 	}

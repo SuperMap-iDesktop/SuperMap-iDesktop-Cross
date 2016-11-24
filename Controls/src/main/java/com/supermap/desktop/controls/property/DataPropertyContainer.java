@@ -2,8 +2,9 @@ package com.supermap.desktop.controls.property;
 
 import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.Interface.IPropertyManager;
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.PropertyType;
+import com.supermap.desktop.ui.controls.Dockbar;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -11,11 +12,11 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class JDialogDataPropertyContainer extends JDialog implements IPropertyManager {
+/**
+ * @author XiaJT
+ */
+public class DataPropertyContainer extends JPanel implements IPropertyManager {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 	private ArrayList<AbstractPropertyControl> controls = new ArrayList<AbstractPropertyControl>();
 	private transient IProperty currentProperty; // 当前选中的属性窗口，切换节点的时候，当然是希望保持当前选中的视图（如果有的话）
@@ -32,15 +33,11 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 	/**
 	 * Create the dialog.
 	 */
-	public JDialogDataPropertyContainer(Window mainFrame) {
-		super(mainFrame);
-		setBounds(100, 100, 750, 450);
-		this.setContentPane(new JPanel(new BorderLayout()));
-		this.setLocationRelativeTo(null);
-		setModal(false);
-		this.controls = new ArrayList<AbstractPropertyControl>();
+	public DataPropertyContainer() {
+		this.controls = new ArrayList<>();
 		this.tabbledPane.addChangeListener(this.tabbledPaneChangeListener);
-		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.setLayout(new GridBagLayout());
+		this.add(tabbledPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(10));
 	}
 
 	@Override
@@ -51,19 +48,16 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 			this.currentProperty = (IProperty) this.tabbledPane.getSelectedComponent();
 		}
 
-		this.setTitle(ControlsProperties.getString("String_Property"));
 		for (AbstractPropertyControl control : this.controls) {
 			control.hidden();
 		}
 		this.controls.clear();
-		this.getContentPane().removeAll();
 		this.tabbledPane.removeAll();
 
 		updateControls(properties);
 
-		if (isShowing()) {
-			((JPanel) this.getContentPane()).updateUI();
-		}
+		this.revalidate();
+		this.repaint();
 	}
 
 	@Override
@@ -93,19 +87,18 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 			if (properties.length == 1) {
 				this.currentProperty = properties[0];
 				this.controls.add((AbstractPropertyControl) this.currentProperty);
-				this.setTitle(this.currentProperty.getPropertyName());
-				this.getContentPane().add((AbstractPropertyControl) this.currentProperty, BorderLayout.CENTER);
+				this.add((AbstractPropertyControl) this.currentProperty, BorderLayout.CENTER);
 			} else if (properties.length > 1) {
 				this.tabbledPane.removeChangeListener(this.tabbledPaneChangeListener);
 				for (IProperty property : properties) {
 					this.controls.add((AbstractPropertyControl) property);
 					this.tabbledPane.addTab(property.getPropertyName(), (AbstractPropertyControl) property);
-					this.getContentPane().add(this.tabbledPane, BorderLayout.CENTER);
 				}
 				this.tabbledPane.addChangeListener(this.tabbledPaneChangeListener);
 				setTabbledPaneSelectedPropertyControl(this.currentProperty);
 			}
 		}
+		tabbledPane.setVisible(tabbledPane.getTabCount() > 0);
 	}
 
 	/**
@@ -190,6 +183,12 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 
 	@Override
 	public void setPropertyVisible(boolean visible) {
-		this.setVisible(visible);
+		Component parentDocker = this;
+		while (parentDocker != null && !(parentDocker instanceof Dockbar)) {
+			parentDocker = parentDocker.getParent();
+		}
+		if (parentDocker != null) {
+			parentDocker.setVisible(true);
+		}
 	}
 }

@@ -82,7 +82,7 @@ public class PanelTransformForDGN extends PanelTransform {
             this.checkBoxImportByLayer.setSelected(!((ImportSettingDGN) importSetting).isImportingByLayer());
         } else {
             this.checkBoxImportCellAsPoint.setSelectedEx(externalDataSelectAll(CELLASPOINT));
-            this.checkBoxImportByLayer.setSelectedEx(!externalDataSelectAll(IMPORTBYLAYER));
+            this.checkBoxImportByLayer.setSelectedEx(externalDataSelectAll(IMPORTBYLAYER));
         }
     }
 
