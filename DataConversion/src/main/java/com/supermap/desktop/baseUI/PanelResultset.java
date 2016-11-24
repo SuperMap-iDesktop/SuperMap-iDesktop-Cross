@@ -1,6 +1,7 @@
 package com.supermap.desktop.baseUI;
 
 import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
 import com.supermap.data.EncodeType;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
@@ -373,11 +374,11 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
     public void initComponents() {
         this.labelDatasource = new JLabel();
         this.comboBoxDatasource = new DatasourceComboBox();
+        removeDatasource();
         initDatasource();
         this.labelDatasetName = new JLabel();
         this.textFieldDatasetName = new JTextField();
         initDatasetName();
-
         this.labelEncodeType = new JLabel();
         this.comboBoxEncodeType = new JComboBox();
         this.labelImportMode = new JLabel();
@@ -392,6 +393,17 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
         ((JTextField) this.comboBoxEncodeType.getEditor().getEditorComponent()).setEditable(false);
         this.comboBoxImportMode.setEditable(true);
         ((JTextField) this.comboBoxImportMode.getEditor().getEditorComponent()).setEditable(false);
+    }
+
+    private void removeDatasource() {
+        //删除只读数据源
+        Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+        int size = datasources.getCount();
+        for (int i = 0; i < size; i++) {
+            if (datasources.get(i).isReadOnly()) {
+                this.comboBoxDatasource.removeDataSource(datasources.get(i));
+            }
+        }
     }
 
     private void initEncodeType() {

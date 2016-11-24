@@ -5,10 +5,14 @@ import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.controls.GeometryPropertyBindWindow.BindUtilties;
 import com.supermap.desktop.implement.CtrlAction;
 
+import java.util.List;
+
 /**
  * Created by xie on 2016/11/10.
  */
 public class CtrlActionBind extends CtrlAction {
+    public static List selectList;
+
     public CtrlActionBind(IBaseItem caller, IForm formClass) {
         super(caller, formClass);
     }

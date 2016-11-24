@@ -61,6 +61,7 @@ public class ImportSettingFactory implements IImportSettingFactory {
             importSetting = new ImportSettingMAPGIS();
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.CSV_STRING)) {
             importSetting = new ImportSettingCSV();
+            ((ImportSettingCSV) importSetting).setImportEmptyDataset(true);
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.BMP_STRING)) {
             importSetting = new ImportSettingBMP();
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.JPG_STRING) || fileType.equalsIgnoreCase(FileTypeLocale.JPEG_STRING)) {

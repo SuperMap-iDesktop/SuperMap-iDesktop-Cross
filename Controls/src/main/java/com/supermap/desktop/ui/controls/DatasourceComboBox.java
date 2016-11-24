@@ -88,7 +88,6 @@ public class DatasourceComboBox extends JComboBox<Object> {
         for (int i = 0; i < this.getItemCount(); i++) {
             if (this.getDatasourceAt(i).getAlias().equals(alias)) {
                 this.removeItem(this.getItemAt(i));
-                updateUI();
             }
         }
     }

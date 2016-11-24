@@ -114,7 +114,6 @@ public class PanelExportTransformForGrid extends PanelExportTransform {
                 return;
             } else {
                 owner.getButtonExport().setEnabled(true);
-                ExportSetting exportSetting = exportsFileInfo.getExportSetting();
                 if (!StringUtilities.isNullOrEmpty(password)) {
                     if (null != panels) {
                         for (PanelExportTransform tempPanel : panels) {
@@ -122,6 +121,7 @@ public class PanelExportTransformForGrid extends PanelExportTransform {
                             ((PanelExportTransformForGrid) tempPanel).getPasswordFieldConfrim().setText(password);
                         }
                     } else {
+                        ExportSetting exportSetting = exportsFileInfo.getExportSetting();
                         ((ExportSettingSIT) exportSetting).setPassword(password);
                     }
                 }

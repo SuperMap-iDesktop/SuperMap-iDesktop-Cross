@@ -14,6 +14,7 @@ import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.docking.DockingWindow;
+import com.supermap.desktop.ui.docking.SplitWindow;
 import com.supermap.desktop.ui.docking.TabWindow;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.*;
@@ -76,12 +77,14 @@ public class JPopupMenuBind extends JPopupMenu {
     private ActionListener okListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            BindUtilties.selectList.clear();
             addFormList();
             splitTabWindow();
             JPopupMenuBind.this.setVisible(false);
             showView();
         }
     };
+    private SplitWindow splitWindow;
 
     private void addFormList() {
         IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
@@ -95,6 +98,7 @@ public class JPopupMenuBind extends JPopupMenu {
                     ((IFormMap) form).getMapControl().setAction(Action.PAN);
                 }
                 formList.add(form);
+                BindUtilties.selectList.add(form);
             }
         }
     }
@@ -114,6 +118,19 @@ public class JPopupMenuBind extends JPopupMenu {
                     public void mouseReleased(MouseEvent e) {
                         if (e.getButton() == MouseEvent.BUTTON1) {
                             bindMapCenter(size, e);
+                        }
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                        for (int j = 0; j < size; j++) {
+                            IForm formMap = (IForm) formList.get(j);
+                            Map map;
+                            if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl()) {
+                                map = ((IFormMap) formMap).getMapControl().getMap();
+                                MapUtilities.clearTrackingObjects(map, TAG_MOVE);
+                                map.refreshTrackingLayer();
+                            }
                         }
                     }
                 });
@@ -300,11 +317,14 @@ public class JPopupMenuBind extends JPopupMenu {
         while (size > 1) {
             tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
             if (tabWindow.getChildWindowCount() > 0) {
-                tabWindow.split((DockingWindow) formList.get(size - 1), Direction.RIGHT, (float) (1 - 1.0 / size));
+                this.splitWindow = tabWindow.split((DockingWindow) formList.get(size - 1), Direction.RIGHT, (float) (1 - 1.0 / size));
                 size--;
             } else {
                 break;
             }
+        }
+        if (size > 0) {
+            Application.getActiveApplication().setActiveForm((IForm) formList.get(0));
         }
     }
 
@@ -360,17 +380,16 @@ public class JPopupMenuBind extends JPopupMenu {
         IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
         activeForm = Application.getActiveApplication().getActiveForm();
         int size = formManager.getCount();
-        int listSize = formList.size();
+        int listSize = BindUtilties.selectList.size();
         for (int i = 0; i < size; i++) {
             IForm form = formManager.get(i);
             CheckableItem item = new CheckableItem();
             item.setStr(form.getText());
             item.setForm(form);
             for (int j = 0; j < listSize; j++) {
-                if (form.equals(formList.get(j))) {
+                if (form.equals(BindUtilties.selectList.get(j))) {
                     item.setSelected(true);
-                } else {
-                    item.setSelected(false);
+                    break;
                 }
             }
             listModel.addElement(item);
