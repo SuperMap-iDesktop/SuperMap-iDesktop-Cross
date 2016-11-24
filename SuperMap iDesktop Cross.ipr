@@ -483,31 +483,10 @@
       <module fileurl="file://$PROJECT_DIR$/iDesktop/iDesktop.iml" filepath="$PROJECT_DIR$/iDesktop/iDesktop.iml" />
     </modules>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" default="false" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" default="false" assert-keyword="true" jdk-15="true" project-jdk-name="1.7 (1)" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="iDesktop Startup Develop" type="Application" factoryName="Application" singleton="false">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <option name="MAIN_CLASS_NAME" value="com.supermap.desktop.iDesktop.Startup" />
-      <option name="VM_PARAMETERS" value="-Dfelix.config.properties=file:Configuration/configDevelop.properties -splash:Resources/Frame/iDesktop_Cross_Startup.gif" />
-      <option name="PROGRAM_PARAMETERS" value="" />
-      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-      <option name="ALTERNATIVE_JRE_PATH" value="1.7" />
-      <option name="ENABLE_SWING_INSPECTOR" value="false" />
-      <option name="ENV_VARIABLES" />
-      <option name="PASS_PARENT_ENVS" value="true" />
-      <module name="iDesktop" />
-      <envs>
-        <env name="path" value="bin" />
-      </envs>
-      <method>
-        <option name="Make" enabled="false" />
-        <option name="MakeProject" enabled="true" />
-        <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="package" />
-      </method>
-    </configuration>
     <configuration default="false" name="iDesktop Startup" type="Application" factoryName="Application" singleton="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <option name="MAIN_CLASS_NAME" value="com.supermap.desktop.iDesktop.Startup" />
@@ -526,6 +505,27 @@
       <method>
         <option name="Make" enabled="false" />
         <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="compile" />
+        <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="package" />
+      </method>
+    </configuration>
+    <configuration default="false" name="iDesktop Startup Develop" type="Application" factoryName="Application" singleton="false">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <option name="MAIN_CLASS_NAME" value="com.supermap.desktop.iDesktop.Startup" />
+      <option name="VM_PARAMETERS" value="-Dfelix.config.properties=file:Configuration/configDevelop.properties -splash:Resources/Frame/iDesktop_Cross_Startup.gif" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="ALTERNATIVE_JRE_PATH" value="1.7" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="iDesktop" />
+      <envs>
+        <env name="path" value="bin" />
+      </envs>
+      <method>
+        <option name="Make" enabled="false" />
+        <option name="MakeProject" enabled="true" />
         <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="package" />
       </method>
     </configuration>
