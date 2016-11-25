@@ -3,7 +3,10 @@ package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 import com.supermap.data.Dataset;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IBaseItem;
+import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.implement.SmMenuItem;
@@ -18,7 +21,6 @@ import net.infonode.util.Direction;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class BindUtilties {
     private static SplitWindow splitWindow;
@@ -30,14 +32,13 @@ public class BindUtilties {
     private static BindUtilties utilties = new BindUtilties();
     private static ActiveFormChangedListener activeFormChangeListener = utilties.new LocalFormChangedListener();
     static int tabSize = 0;// 属性表个数
-    public static java.util.List<IForm> selectList = new ArrayList();
 
     public static void windowBindProperty(IFormMap formMap, TabWindow tabWindow, Layer layer) {
         mapControl = formMap.getMapControl();
         newTabWindow = tabWindow.getChildWindow(tabWindow.getChildWindowCount() - 1);
         tabSize += 1;
         if (null == splitWindow) {
-            splitWindow = tabWindow.split(newTabWindow, Direction.DOWN, 0.4f);
+            splitWindow = tabWindow.split(newTabWindow, Direction.DOWN, 0.7f);
         } else if (splitWindow.getChildWindowCount() > 0) {
             ((TabWindow) splitWindow.getChildWindow(splitWindow.getChildWindowCount() - 1)).addTab(newTabWindow);
         }
@@ -73,12 +74,22 @@ public class BindUtilties {
     public static void showPopumenu(IBaseItem caller) {
         Point point = ((SmMenuItem) caller).getParent().getLocation();
         int x = (int) point.getX() + 46;
-        JPopupMenuBind popupMenuBind = new JPopupMenuBind();
+        final JPopupMenuBind popupMenuBind = JPopupMenuBind.instance();
         int y = (int) point.getY() + 52;
         JFrame mainFrame = (JFrame) Application.getActiveApplication().getMainFrame();
+        popupMenuBind.init();
         popupMenuBind.show(mainFrame, x, y);
         popupMenuBind.setVisible(true);
-        popupMenuBind = null;
+        //窗口关闭完后删除事件
+        Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(new ActiveFormChangedListener() {
+            @Override
+            public void activeFormChanged(ActiveFormChangedEvent e) {
+                if (null == e.getNewActiveForm()) {
+                    popupMenuBind.removeEvents();
+                    popupMenuBind.dispose();
+                }
+            }
+        });
     }
 
     class LocalFormChangedListener implements ActiveFormChangedListener {

@@ -39,7 +39,7 @@ public class FiletypeUtilities {
         } else if (filePath.equalsIgnoreCase(FileTypeLocale.VCT_STRING)) {
             fileType = DataConversionProperties.getString("String_FormImport_VCT");
             // vct文件
-        } else if (filePath.equalsIgnoreCase(FileTypeLocale.DXF_STRING) || filePath.equalsIgnoreCase(FileTypeLocale.DWG_STRING)) {
+        } else if ((filePath.equalsIgnoreCase(FileTypeLocale.DXF_STRING) && !fileFilter.equals(DataConversionProperties.getString("string_filetype_3ds"))) || filePath.equalsIgnoreCase(FileTypeLocale.DWG_STRING)) {
             fileType = DataConversionProperties.getString("String_FormImport_CAD");
             // AutoCAD 格式(*.dxf,*.dwg)
         } else if (filePath.equalsIgnoreCase(FileTypeLocale.SHP_STRING) || filePath.equalsIgnoreCase(FileTypeLocale.GRD_STRING)
