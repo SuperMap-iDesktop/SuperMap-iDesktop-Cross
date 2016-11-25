@@ -9,6 +9,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.DialogSaveAsLayout;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.CancellationEvent;
+import com.supermap.desktop.event.FormClosingEvent;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -337,7 +338,7 @@ public class FormLayout extends FormBaseChild implements IFormLayout {
 	}
 
 	@Override
-	public void formClosing(CancellationEvent e) {
+	public void formClosing(FormClosingEvent e) {
 		try {
 			if (GlobalParameters.isShowFormClosingInfo()) {
 				boolean isNeedSave = this.mapLayoutControl.getMapLayout().isModified();

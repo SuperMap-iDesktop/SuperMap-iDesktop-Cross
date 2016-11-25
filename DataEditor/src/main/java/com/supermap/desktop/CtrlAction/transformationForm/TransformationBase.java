@@ -7,8 +7,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.ActiveLayersChangedEvent;
-import com.supermap.desktop.event.ActiveLayersChangedListener;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.ui.LayersComponentManager;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.NodeDataType;
@@ -80,14 +79,18 @@ public abstract class TransformationBase implements IFormMap {
 		layersComponentManager.setMap(null);
 	}
 
-
 	@Override
-	public void windowShown() {
+	public void formShown(FormShownEvent e) {
 
 	}
 
 	@Override
-	public void windowHidden() {
+	public void formClosing(FormClosingEvent e) {
+
+	}
+
+	@Override
+	public void formClosed(FormClosedEvent e) {
 
 	}
 

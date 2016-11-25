@@ -13,6 +13,8 @@ import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.CancellationEvent;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormShownEvent;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.ui.FormBaseChild;
@@ -283,13 +285,13 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	@Override
-	public void formClosing(CancellationEvent e) {
+	public void formClosing(FormClosingEvent e) {
 		unRegisterEvents();
 		recordset.dispose();
 	}
 
 	@Override
-	public void windowShown() {
+	public void formShown(FormShownEvent e) {
 		// 显示
 		UICommonToolkit.getLayersManager().setMap(null);
 	}

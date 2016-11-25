@@ -28,9 +28,7 @@ import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.ActiveLayersChangedEvent;
-import com.supermap.desktop.event.ActiveLayersChangedListener;
-import com.supermap.desktop.event.CancellationEvent;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
@@ -1296,17 +1294,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 	}
 
-	/**
-	 * 窗体被激活时候触发
-	 */
 	@Override
-	public void windowShown() {
-		// do nothing
-
-	}
-
-	@Override
-	public void formClosing(CancellationEvent e) {
+	public void formClosing(FormClosingEvent e) {
 		try {
 			if (GlobalParameters.isShowFormClosingInfo()) {
 
@@ -1333,11 +1322,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
-	}
-
-	@Override
-	public void windowClosed() {
-		super.windowClosed();
 	}
 
 	public void removeLayers(Layer[] layers) {

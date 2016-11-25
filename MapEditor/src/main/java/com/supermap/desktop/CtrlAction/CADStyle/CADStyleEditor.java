@@ -9,10 +9,6 @@ import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.editor.AbstractEditor;
 import com.supermap.desktop.ui.controls.Dockbar;
-import com.supermap.desktop.ui.docking.DockingWindow;
-import com.supermap.desktop.ui.docking.DockingWindowAdapter;
-import com.supermap.desktop.ui.docking.OperationAbortedException;
-import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
@@ -55,30 +51,30 @@ public class CADStyleEditor extends AbstractEditor {
     public void activate(final EditEnvironment environment) {
         try {
             dockbarCADStyleContainer = Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(CADSTYLECONTAINER));
-            if (dockbarCADStyleContainer != null && null != dockbarCADStyleContainer.getComponent()) {
+            if (dockbarCADStyleContainer != null && null != dockbarCADStyleContainer.getInnerComponent()) {
                 dockbarCADStyleContainer.setVisible(true);
                 dockbarCADStyleContainer.active();
-                cadStyleContainer = (CADStyleContainer) dockbarCADStyleContainer.getComponent();
+                cadStyleContainer = (CADStyleContainer) dockbarCADStyleContainer.getInnerComponent();
                 ArrayList<Recordset> recordsets = CADStyleUtilities.getActiveRecordset(environment.getMap());
                 if (null != recordsets) {
                     cadStyleContainer.init(recordsets);
                 }
             }
-            ((Dockbar) dockbarCADStyleContainer).addListener(new DockingWindowAdapter() {
-
-                @Override
-                public void windowClosing(WindowClosingEvent evt) throws OperationAbortedException {
-                    // 关闭dockbar时，关闭编辑
-                    environment.stopEditor();
-
-                }
-
-                @Override
-                public void windowClosed(DockingWindow window) {
-                    environment.stopEditor();
-                }
-
-            });
+//            ((Dockbar) dockbarCADStyleContainer).addListener(new DockingWindowAdapter() {
+//
+//                @Override
+//                public void windowClosing(WindowClosingEvent evt) throws OperationAbortedException {
+//                    // 关闭dockbar时，关闭编辑
+//                    environment.stopEditor();
+//
+//                }
+//
+//                @Override
+//                public void windowClosed(DockingWindow window) {
+//                    environment.stopEditor();
+//                }
+//
+//            });
             registEvents(environment);
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex);

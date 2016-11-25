@@ -2,7 +2,6 @@ package com.supermap.desktop.GeometryPropertyBindWindow;
 
 import com.supermap.data.Dataset;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.ui.docking.SplitWindow;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
@@ -14,7 +13,6 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 	private IBindWindow bindWindow;
 	private IBindProperty bindProperty;
 	private IFormMap formMap;
-	private SplitWindow splitWindow;
 	// 是否要选中属性表中的某些行
 	private boolean addRow;
 	private PropertySelectChangeListener selectRowsChangeListener;
@@ -98,13 +96,13 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 		this.bindProperty = bindProperty;
 	}
 
-	public SplitWindow getSplitWindow() {
-		return splitWindow;
-	}
-
-	public void setSplitWindow(SplitWindow splitWindow) {
-		this.splitWindow = splitWindow;
-	}
+//	public SplitWindow getSplitWindow() {
+//		return splitWindow;
+//	}
+//
+//	public void setSplitWindow(SplitWindow splitWindow) {
+//		this.splitWindow = splitWindow;
+//	}
 
 	public IFormMap getFormMap() {
 		return formMap;

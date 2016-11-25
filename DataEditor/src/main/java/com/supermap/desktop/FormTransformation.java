@@ -827,16 +827,6 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	}
 
 	@Override
-	public void windowShown() {
-
-	}
-
-	@Override
-	public void windowHidden() {
-
-	}
-
-	@Override
 	public void clean() {
 		removeListeners();
 		if (UICommonToolkit.getLayersManager().getLayersTree().getMap() == this.getMapControl().getMap()) {

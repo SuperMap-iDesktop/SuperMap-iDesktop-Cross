@@ -109,6 +109,21 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 		// 默认实现,后续进行初始化操作
 	}
 
+	@Override
+	public void formShown(FormShownEvent e) {
+		// 默认实现,后续进行初始化操作
+	}
+
+	@Override
+	public void formClosing(FormClosingEvent e) {
+		// 默认实现,后续进行初始化操作
+	}
+
+	@Override
+	public void formClosed(FormClosedEvent e) {
+		// 默认实现,后续进行初始化操作
+	}
+
 	/**
 	 * 先执行 formClosing，再调用事件
 	 *
@@ -148,7 +163,7 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 		this.listenerList.remove(FormShownListener.class, listener);
 	}
 
-	private void fireFormClosing(FormClosingEvent e) {
+	void fireFormClosing(FormClosingEvent e) {
 		Object[] listeners = listenerList.getListenerList();
 
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
@@ -158,7 +173,7 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 		}
 	}
 
-	private void fireFormClosed(FormClosedEvent e) {
+	void fireFormClosed(FormClosedEvent e) {
 		Object[] listeners = listenerList.getListenerList();
 
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
@@ -168,7 +183,7 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 		}
 	}
 
-	private void fireFormShown(FormShownEvent e) {
+	void fireFormShown(FormShownEvent e) {
 		Object[] listeners = listenerList.getListenerList();
 
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {

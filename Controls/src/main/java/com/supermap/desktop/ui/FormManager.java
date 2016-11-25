@@ -10,9 +10,7 @@ import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.DialogSaveChildForms;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.ActiveFormChangedEvent;
-import com.supermap.desktop.event.ActiveFormChangedListener;
-import com.supermap.desktop.event.CancellationEvent;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.mdi.MdiGroup;
 import com.supermap.desktop.ui.mdi.MdiPage;
@@ -49,9 +47,13 @@ public class FormManager extends MdiGroup implements IFormManager {
 		@Override
 		public void pageRemoving(PageClosingEvent e) {
 			if (e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
-				CancellationEvent cancellation = new CancellationEvent(e.getPage().getComponent(), false);
-				((FormBaseChild) e.getPage().getComponent()).formClosing(cancellation);
-				e.setCancel(cancellation.isCancel());
+				FormClosingEvent event = new FormClosingEvent((IForm) e.getPage().getComponent(), false);
+				((FormBaseChild) e.getPage().getComponent()).formClosing(event);
+
+				if (!event.isCancel()) {
+					((FormBaseChild) e.getPage().getComponent()).fireFormClosing(event);
+				}
+				e.setCancel(event.isCancel());
 			}
 		}
 	};
@@ -60,7 +62,9 @@ public class FormManager extends MdiGroup implements IFormManager {
 		@Override
 		public void pageRemoved(PageClosedEvent e) {
 			if (e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
-				((FormBaseChild) e.getPage().getComponent()).windowClosed();
+				FormClosedEvent event = new FormClosedEvent((IForm) e.getPage().getComponent());
+				((FormBaseChild) e.getPage().getComponent()).formClosed(event);
+				((FormBaseChild) e.getPage().getComponent()).fireFormClosed(event);
 			}
 		}
 	};

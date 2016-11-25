@@ -90,12 +90,12 @@ public interface IForm {
 	/**
 	 * 窗体由不可见到可见时触发
 	 */
-	void formShown();
+	void formShown(FormShownEvent e);
 
 	/**
 	 * 窗口关闭前触发
 	 */
-	void formClosing(FormClosedEvent e);
+	void formClosing(FormClosingEvent e);
 
 	/**
 	 * 窗口关闭后触发

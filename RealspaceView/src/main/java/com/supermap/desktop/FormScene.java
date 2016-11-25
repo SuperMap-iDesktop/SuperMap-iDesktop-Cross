@@ -12,6 +12,7 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.ActiveLayer3DsChangedEvent;
 import com.supermap.desktop.event.ActiveLayer3DsChangedListener;
 import com.supermap.desktop.event.CancellationEvent;
+import com.supermap.desktop.event.FormClosingEvent;
 import com.supermap.desktop.realspaceview.RealspaceViewProperties;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.LayersComponentManager;
@@ -480,16 +481,8 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 		}
 	}
 
-	/**
-	 * 窗体被激活时候触发
-	 */
 	@Override
-	public void windowShown() {
-		// 未实现
-	}
-
-	@Override
-	public void formClosing(CancellationEvent e) {
+	public void formClosing(FormClosingEvent e) {
 		try {
 			if (GlobalParameters.isShowFormClosingInfo()) {
 
@@ -512,11 +505,6 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
-	}
-
-	@Override
-	public void windowClosed() {
-		super.windowClosed();
 	}
 
 	/**

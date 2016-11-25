@@ -39,7 +39,7 @@ public class CommonUtilities {
 		IDockbar dockbarPropertyContainer;
 		dockbarPropertyContainer = getDockBar(FILE_MANAGER_CONTROL_CLASS);
 		if (dockbarPropertyContainer != null) {
-			fileManagerContainer = (FileManagerContainer) dockbarPropertyContainer.getComponent();
+			fileManagerContainer = (FileManagerContainer) dockbarPropertyContainer.getInnerComponent();
 			dockbarPropertyContainer.setVisible(true);
 			dockbarPropertyContainer.active();
 		}
@@ -56,7 +56,7 @@ public class CommonUtilities {
 		IDockbar dockbarPropertyContainer;
 		dockbarPropertyContainer = getDockBar(TASK_MANAGER_CONTROL_CLASS);
 		if (dockbarPropertyContainer != null) {
-			taskManagerContainer = (TaskManagerContainer) dockbarPropertyContainer.getComponent();
+			taskManagerContainer = (TaskManagerContainer) dockbarPropertyContainer.getInnerComponent();
 			dockbarPropertyContainer.setVisible(true);
 			dockbarPropertyContainer.active();
 		}
@@ -86,7 +86,7 @@ public class CommonUtilities {
 	public static void removeItem(ITask task) {
 		IDockbar dockbarPropertyContainer = CommonUtilities.getDockBar(FILE_MANAGER_CONTROL_CLASS);
 		if (null != dockbarPropertyContainer) {
-			FileManagerContainer fileManagerContainer = (FileManagerContainer) dockbarPropertyContainer.getComponent();
+			FileManagerContainer fileManagerContainer = (FileManagerContainer) dockbarPropertyContainer.getInnerComponent();
 			fileManagerContainer.removeItem(task);
 		}
 	}
