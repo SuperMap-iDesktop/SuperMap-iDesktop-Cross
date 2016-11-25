@@ -48,7 +48,7 @@ public class XMLDockbars extends XMLCommandBase {
 					if (xmlDockbar != null) {
 						xmlDockbar.initialize((Element) barNode);
 						this.dockBars.add(xmlDockbar);
-						this.dockConstraint.install(xmlDockbar);
+						getDockConstraint().install(xmlDockbar);
 					}
 				}
 			}

@@ -46,8 +46,8 @@ public class DockbarManager implements IDockbarManager {
 		this.dockPort.dock(this.mainView);
 	}
 
-	public View getMainView() {
-		return mainView;
+	public Component getDockPort() {
+		return this.dockPort;
 	}
 
 	public IDockbar getWorkspaceComponentManager() {
@@ -126,7 +126,7 @@ public class DockbarManager implements IDockbarManager {
 			} else if (dockbar.getID().equalsIgnoreCase(OUTPUT_FRAME_ID)) {
 				this.outputFrame = new Dockbar(dockbar);
 			} else {
-				this.dockbars.add(new Dockbar(dockbar));
+//				this.dockbars.add(new Dockbar(dockbar));
 			}
 		}
 
