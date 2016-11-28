@@ -234,25 +234,30 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
                 resetImportModel();
             }
         }
-
-        private void resetImportModel() {
-            String newdatasetType = comboBoxDatasetType.getSelectItem().toString();
-            if (newdatasetType.equalsIgnoreCase(DataConversionProperties.getString("string_comboboxitem_image"))) {
-                if (owner.getTransform() instanceof PanelTransformForImage) {
-                    ((PanelTransformForImage) owner.getTransform()).getComboBoxBandImportModel().setModel(new DefaultComboBoxModel(new String[]{DataConversionProperties.getString("string_singleBand"),
-                            DataConversionProperties.getString("string_multiBand"), DataConversionProperties.getString("string_compositeBand")}));
-                }
-            } else if (newdatasetType.equalsIgnoreCase(DataConversionProperties.getString("string_comboboxitem_grid"))) {
-                if (owner.getTransform() instanceof PanelTransformForImage) {
-                    ((PanelTransformForImage) owner.getTransform()).getComboBoxBandImportModel().setModel(new DefaultComboBoxModel(new String[]{DataConversionProperties.getString("string_singleBand"),
-                            DataConversionProperties.getString("string_multiBand")}));
-                }
-                if (containsFileType(FileType.TIF) || containsFileType(FileType.IMG)) {
-                    ((PanelTransformForImage) owner.getTransform()).getComboBoxBandImportModel().setModel(new DefaultComboBoxModel(new String[]{DataConversionProperties.getString("string_singleBand")}));
-                }
-            }
-        }
     };
+
+    private void resetImportModel() {
+        String newdatasetType = comboBoxDatasetType.getSelectItem().toString();
+        if (newdatasetType.equalsIgnoreCase(DataConversionProperties.getString("string_comboboxitem_image"))) {
+            if (owner.getTransform() instanceof PanelTransformForImage) {
+                ((PanelTransformForImage) owner.getTransform()).getComboBoxBandImportModel().setModel(new DefaultComboBoxModel(new String[]{DataConversionProperties.getString("string_singleBand"),
+                        DataConversionProperties.getString("string_multiBand"), DataConversionProperties.getString("string_compositeBand")}));
+            }
+        } else if (newdatasetType.equalsIgnoreCase(DataConversionProperties.getString("string_comboboxitem_grid"))) {
+            if (owner.getTransform() instanceof PanelTransformForImage) {
+                ((PanelTransformForImage) owner.getTransform()).getComboBoxBandImportModel().setModel(new DefaultComboBoxModel(new String[]{DataConversionProperties.getString("string_singleBand"),
+                        DataConversionProperties.getString("string_multiBand")}));
+            }
+            setImgImportModel();
+        }
+    }
+
+    private void setImgImportModel() {
+        if (containsFileType(FileType.TIF) || containsFileType(FileType.IMG)) {
+            ((PanelTransformForImage) owner.getTransform()).getComboBoxBandImportModel().setModel(new DefaultComboBoxModel(new String[]{DataConversionProperties.getString("string_singleBand")}));
+        }
+    }
+
     private StateChangeListener fieldIndexListener = new StateChangeListener() {
 
         @Override
@@ -744,6 +749,10 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
     private void initDatasetType() {
         if (null != panelImports && null != this.comboBoxDatasetType) {
             this.comboBoxDatasetType.setSelectedItem(selectedItem(DATASET_TYPE));
+            if (null == this.comboBoxDatasetType.getSelectItem() && owner.getTransform() instanceof PanelTransformForImage) {
+                //选择集不同且导入类型为img或者tiff时导入波段模式设置为多个单波段
+                setImgImportModel();
+            }
         }
     }
 

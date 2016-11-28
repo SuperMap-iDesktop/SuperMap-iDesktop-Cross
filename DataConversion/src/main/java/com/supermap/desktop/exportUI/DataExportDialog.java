@@ -60,6 +60,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     public static final int COLUMN_STATE = 5;
     private ArrayList<PanelExportTransform> panelExports;
     private PanelExportTransform panelExportsTemp;
+    private JPanel panelEmpty;
 
     private String[] title = {DataConversionProperties.getString("String_Dataset"),
             DataConversionProperties.getString("string_outputtype"),
@@ -129,8 +130,8 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         public void actionPerformed(ActionEvent e) {
             try {
                 CommonUtilities.selectAll(tableExport);
-                setButtonState();
                 replaceExportPanel();
+                setButtonState();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -142,6 +143,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             try {
                 CommonUtilities.invertSelect(tableExport);
                 replaceExportPanel();
+                setButtonState();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -281,6 +283,8 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         } else if (tableExport.getSelectedRows().length > 1) {
             //刷新右边界面
             replaceExportInfos();
+        } else {
+            CommonUtilities.replace(panelExportInfo, panelEmpty);
         }
     }
 
@@ -299,6 +303,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             this.tableExport.setRowSelectionInterval(tableExport.getRowCount() - 1, tableExport.getRowCount() - 1);
         } else if (tableExport.getRowCount() == 0) {
             tableExport.clearSelection();
+            CommonUtilities.replace(panelExportInfo, panelEmpty);
         }
         setButtonState();
     }
@@ -345,6 +350,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 
     @Override
     public void initComponents() {
+        this.panelEmpty = new JPanel();
         this.buttonAddDataset = new JButton();
         this.buttonDelete = new JButton();
         this.buttonSelectAll = new JButton();
@@ -537,15 +543,18 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     private void setButtonState() {
         if (0 < tableExport.getRowCount()) {
             this.buttonExport.setEnabled(true);
-            this.buttonDelete.setEnabled(true);
             this.buttonSelectAll.setEnabled(true);
             this.buttonInvertSelect.setEnabled(true);
-            this.buttonExportsSet.setEnabled(true);
         } else {
             this.buttonExport.setEnabled(false);
-            this.buttonDelete.setEnabled(false);
             this.buttonSelectAll.setEnabled(false);
             this.buttonInvertSelect.setEnabled(false);
+        }
+        if (tableExport.getSelectedRows().length > 0) {
+            this.buttonDelete.setEnabled(true);
+            this.buttonExportsSet.setEnabled(true);
+        } else {
+            this.buttonDelete.setEnabled(false);
             this.buttonExportsSet.setEnabled(false);
         }
     }

@@ -38,6 +38,10 @@ public class PanelExportTransformForGrid extends PanelExportTransform {
     private JPasswordField passwordField;
     private JLabel labelPasswordConfrim;
     private JPasswordField passwordFieldConfrim;
+    private static final int COMPRESSION_RATIO = 0;
+    private static final int PASSWORD = 1;
+    private static final int CONFRIM_PASSWORD = 2;
+
     private ActionListener prjListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -224,6 +228,50 @@ public class PanelExportTransformForGrid extends PanelExportTransform {
         } else if (isPrjTypes(panels)) {
             this.prjFileChooser.setEnabled(true);
         }
+        setTextFieldInfo();
+    }
+
+    private void setTextFieldInfo() {
+        if (null != panels) {
+            this.textFieldCompressionRatio.setText(getText(COMPRESSION_RATIO));
+            this.passwordField.setText(getText(PASSWORD));
+            this.passwordFieldConfrim.setText(getText(CONFRIM_PASSWORD));
+        }
+    }
+
+    public String getText(int type) {
+        String result = "";
+        String temp = getInfo(panels.get(0), type);
+        boolean isSame = true;
+        for (PanelExportTransform tempPanel : panels) {
+            String tempObject = getInfo(tempPanel, type);
+            if (!temp.equals(tempObject)) {
+                isSame = false;
+                break;
+            }
+        }
+        if (isSame) {
+            result = temp;
+        }
+        return result;
+    }
+
+    public String getInfo(PanelExportTransform tempPanel, int type) {
+        String result = "";
+        switch (type) {
+            case COMPRESSION_RATIO:
+                result = ((PanelExportTransformForGrid) tempPanel).getTextFieldCompressionRatio().getText();
+                break;
+            case PASSWORD:
+                result = ((PanelExportTransformForGrid) tempPanel).getPasswordField().getText();
+                break;
+            case CONFRIM_PASSWORD:
+                result = ((PanelExportTransformForGrid) tempPanel).getPasswordFieldConfrim().getText();
+                break;
+            default:
+                break;
+        }
+        return result;
     }
 
     private Boolean checkBoxSelectAll(ArrayList<PanelExportTransform> panels) {

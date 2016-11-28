@@ -246,41 +246,29 @@ public class PanelTransformFor3D extends PanelTransform {
     private void initTextFiledPosition() {
         if (importSetting instanceof ImportSettingModelOSG) {
             Point3D point = ((ImportSettingModelOSG) importSetting).getPosition();
-            this.textFieldPositionX.setText(String.valueOf(point.getX()));
-            this.textFieldPositionY.setText(String.valueOf(point.getY()));
-            this.textFieldPositionZ.setText(String.valueOf(point.getZ()));
-        }
-
-        if (importSetting instanceof ImportSettingModelX) {
+            initTextFileds(point);
+        } else if (importSetting instanceof ImportSettingModelX) {
             Point3D point = ((ImportSettingModelX) importSetting).getPosition();
-            this.textFieldPositionX.setText(String.valueOf(point.getX()));
-            this.textFieldPositionY.setText(String.valueOf(point.getY()));
-            this.textFieldPositionZ.setText(String.valueOf(point.getZ()));
-        }
-        if (importSetting instanceof ImportSettingModel3DS) {
+            initTextFileds(point);
+        } else if (importSetting instanceof ImportSettingModel3DS) {
             Point3D point = ((ImportSettingModel3DS) importSetting).getPosition();
-            this.textFieldPositionX.setText(String.valueOf(point.getX()));
-            this.textFieldPositionY.setText(String.valueOf(point.getY()));
-            this.textFieldPositionZ.setText(String.valueOf(point.getZ()));
-        }
-        if (importSetting instanceof ImportSettingModelDXF) {
+            initTextFileds(point);
+        } else if (importSetting instanceof ImportSettingModelDXF) {
             Point3D point = ((ImportSettingModelDXF) importSetting).getPosition();
-            this.textFieldPositionX.setText(String.valueOf(point.getX()));
-            this.textFieldPositionY.setText(String.valueOf(point.getY()));
-            this.textFieldPositionZ.setText(String.valueOf(point.getZ()));
-        }
-        if (importSetting instanceof ImportSettingModelFBX) {
+            initTextFileds(point);
+        } else if (importSetting instanceof ImportSettingModelFBX) {
             Point3D point = ((ImportSettingModelFBX) importSetting).getPosition();
-            this.textFieldPositionX.setText(String.valueOf(point.getX()));
-            this.textFieldPositionY.setText(String.valueOf(point.getY()));
-            this.textFieldPositionZ.setText(String.valueOf(point.getZ()));
-        }
-        if (importSetting instanceof ImportSettingModelFLT) {
+            initTextFileds(point);
+        } else if (importSetting instanceof ImportSettingModelFLT) {
             Point3D point = ((ImportSettingModelFLT) importSetting).getPosition();
-            this.textFieldPositionX.setText(String.valueOf(point.getX()));
-            this.textFieldPositionY.setText(String.valueOf(point.getY()));
-            this.textFieldPositionZ.setText(String.valueOf(point.getZ()));
+            initTextFileds(point);
         }
+    }
+
+    private void initTextFileds(Point3D point) {
+        this.textFieldPositionX.setText(String.valueOf(point.getX()));
+        this.textFieldPositionY.setText(String.valueOf(point.getY()));
+        this.textFieldPositionZ.setText(String.valueOf(point.getZ()));
     }
 
     @Override
