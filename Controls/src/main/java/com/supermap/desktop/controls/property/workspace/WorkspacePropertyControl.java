@@ -12,13 +12,14 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.metal.MetalBorders;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -40,7 +41,7 @@ public class WorkspacePropertyControl extends AbstractPropertyControl {
 
 	private SmButton buttonApply;
 	private SmButton buttonReset;
-	private SmButton buttonChangePassword;
+	private JButton buttonChangePassword;
 
 	private transient Workspace workspace;
 	private String description = "";
@@ -147,49 +148,70 @@ public class WorkspacePropertyControl extends AbstractPropertyControl {
 
 		buttonReset = new SmButton("Reset");
 
-		buttonChangePassword = new SmButton("Change Password...");
+		buttonChangePassword = new JButton("Change Password...");
 
-		GroupLayout groupLayout = new GroupLayout(this);
-		groupLayout.setAutoCreateContainerGaps(true);
-		groupLayout.setAutoCreateGaps(true);
-		this.setLayout(groupLayout);
+		this.setLayout(new GridBagLayout());
+		this.add(labelFileName, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 10, 0, 0));
+		this.add(textFieldFilePath, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 10, 0, 10));
 
-		// 	@formatter:off
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-				.addGroup(groupLayout.createSequentialGroup()
-						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(this.labelFileName)
-								.addComponent(this.labelWorkspaceType)
-								.addComponent(this.labelVersion)
-								.addComponent(this.labelDescription))
-						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-								.addComponent(this.textFieldFilePath, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(this.textFieldWorkspaceType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(this.textFieldVersion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(this.textFieldDescription, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-				.addGroup(groupLayout.createSequentialGroup()
-						.addComponent(this.buttonChangePassword,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)
-						.addGap(GroupLayout.PREFERRED_SIZE, 100, Short.MAX_VALUE)
-						.addComponent(this.buttonReset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonApply, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
-		
-		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelFileName)
-						.addComponent(this.textFieldFilePath, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelWorkspaceType)
-						.addComponent(this.textFieldWorkspaceType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelVersion)
-						.addComponent(this.textFieldVersion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelDescription)
-						.addComponent(this.textFieldDescription, 80, 150, Short.MAX_VALUE))
-				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.buttonChangePassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonReset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonApply, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
+		this.add(labelWorkspaceType, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 0));
+		this.add(textFieldWorkspaceType, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
+
+		this.add(labelVersion, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 0));
+		this.add(textFieldVersion, new GridBagConstraintsHelper(0, 5, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
+
+		this.add(labelDescription, new GridBagConstraintsHelper(0, 6, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
+		this.add(textFieldDescription, new GridBagConstraintsHelper(0, 7, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
+
+		JPanel buttonPanel = new JPanel();
+		buttonPanel.setLayout(new GridBagLayout());
+		buttonPanel.add(buttonChangePassword, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 0, 0));
+		buttonPanel.add(buttonReset, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 0, 0));
+		buttonPanel.add(buttonApply, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 0, 0));
+
+		this.add(buttonPanel, new GridBagConstraintsHelper(0, 8, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 10, 10));
+
+//		GroupLayout groupLayout = new GroupLayout(this);
+//		groupLayout.setAutoCreateContainerGaps(true);
+//		groupLayout.setAutoCreateGaps(true);
+//		this.setLayout(groupLayout);
+//
+//		// 	@formatter:off
+//		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.CENTER)
+//				.addGroup(groupLayout.createSequentialGroup()
+//						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addComponent(this.labelFileName)
+//								.addComponent(this.labelWorkspaceType)
+//								.addComponent(this.labelVersion)
+//								.addComponent(this.labelDescription))
+//						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//								.addComponent(this.textFieldFilePath, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//								.addComponent(this.textFieldWorkspaceType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//								.addComponent(this.textFieldVersion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//								.addComponent(this.textFieldDescription, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+//				.addGroup(groupLayout.createSequentialGroup()
+//						.addComponent(this.buttonChangePassword,GroupLayout.PREFERRED_SIZE,GroupLayout.DEFAULT_SIZE,GroupLayout.PREFERRED_SIZE)
+//						.addGap(GroupLayout.PREFERRED_SIZE, 100, Short.MAX_VALUE)
+//						.addComponent(this.buttonReset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(this.buttonApply, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
+//
+//		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
+//				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
+//						.addComponent(this.labelFileName)
+//						.addComponent(this.textFieldFilePath, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
+//						.addComponent(this.labelWorkspaceType)
+//						.addComponent(this.textFieldWorkspaceType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
+//						.addComponent(this.labelVersion)
+//						.addComponent(this.textFieldVersion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//				.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//						.addComponent(this.labelDescription)
+//						.addComponent(this.textFieldDescription, 80, 150, Short.MAX_VALUE))
+//				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
+//						.addComponent(this.buttonChangePassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(this.buttonReset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(this.buttonApply, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
 		// 	@formatter:on
 	}
 

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class DataPropertyContainer extends JPanel implements IPropertyManager {
 
 	private static final long serialVersionUID = 1L;
-	private ArrayList<AbstractPropertyControl> controls = new ArrayList<AbstractPropertyControl>();
+	private ArrayList<AbstractPropertyControl> controls = new ArrayList<>();
 	private transient IProperty currentProperty; // 当前选中的属性窗口，切换节点的时候，当然是希望保持当前选中的视图（如果有的话）
 	private JTabbedPane tabbledPane = new JTabbedPane();
 
@@ -87,7 +87,7 @@ public class DataPropertyContainer extends JPanel implements IPropertyManager {
 			if (properties.length == 1) {
 				this.currentProperty = properties[0];
 				this.controls.add((AbstractPropertyControl) this.currentProperty);
-				this.add((AbstractPropertyControl) this.currentProperty, BorderLayout.CENTER);
+				this.add((AbstractPropertyControl) this.currentProperty, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 			} else if (properties.length > 1) {
 				this.tabbledPane.removeChangeListener(this.tabbledPaneChangeListener);
 				for (IProperty property : properties) {
