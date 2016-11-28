@@ -14,10 +14,10 @@ import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.docking.DockingWindow;
+import com.supermap.desktop.ui.docking.SplitWindow;
 import com.supermap.desktop.ui.docking.TabWindow;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.*;
-import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
 import com.supermap.ui.MapControl;
@@ -25,6 +25,8 @@ import net.infonode.util.Direction;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
@@ -34,7 +36,7 @@ import java.util.List;
 /**
  * Created by xie on 2016/11/10.
  */
-public class JPopupMenuBind extends JPopupMenu {
+public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
     private static final int MARKET_WIDTH = 128;
     private static final String TAG_MOVE = "MOVE";
     private JScrollPane scrollPane;
@@ -46,8 +48,13 @@ public class JPopupMenuBind extends JPopupMenu {
     private JButton buttonOk;
     private JPanel panelButton;
     private JLabel labelTitle;
-    private IForm activeForm;
-    private List formList = new ArrayList();
+    //    private List formList = new ArrayList();
+    private List formMapList = new ArrayList();
+    private List formTabularList = new ArrayList();
+    public List<IForm> selectList = new ArrayList();
+    private static JPopupMenuBind popupMenubind;
+
+
     private ActionListener selectAllListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -76,14 +83,85 @@ public class JPopupMenuBind extends JPopupMenu {
     private ActionListener okListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            selectList.clear();
             addFormList();
             splitTabWindow();
             JPopupMenuBind.this.setVisible(false);
             showView();
         }
     };
+    private SplitWindow splitWindow;
+    private MouseListener mapControlMouseListener = new MouseAdapter() {
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            if (e.getButton() == MouseEvent.BUTTON1) {
+                bindMapCenter(formMapList.size(), e);
+            }
+        }
+
+//        @Override
+//        public void mouseEntered(MouseEvent e) {
+        //想要实现鼠标进入时激活窗口，方便数据集拖拽响应，但是刷新太慢，关闭
+//            String name = ((MapControl) e.getSource()).getMap().getName();
+//            IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+//            int size = formManager.getCount();
+//            for (int i = 0; i < size; i++) {
+//                IForm form = formManager.get(i);
+//                if (name.equals(form.getText())) {
+//                    Application.getActiveApplication().setActiveForm(form);
+//                }
+//            }
+////            Application.getActiveApplication().setActiveForm();
+//        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            int size = formMapList.size();
+            for (int j = 0; j < size; j++) {
+                IForm formMap = (IForm) formMapList.get(j);
+                Map map;
+                if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl()) {
+                    map = ((IFormMap) formMap).getMapControl().getMap();
+                    MapUtilities.clearTrackingObjects(map, TAG_MOVE);
+                    map.refreshTrackingLayer();
+                }
+            }
+        }
+    };
+    private MouseWheelListener mapControlMouseWheelListener = new MouseWheelListener() {
+        @Override
+        public void mouseWheelMoved(MouseWheelEvent e) {
+            bindMapCenterAndScale(formMapList.size(), ((MapControl) e.getSource()).getMap());
+        }
+    };
+    private MouseMotionListener mapControlMouseMotionListener = new MouseMotionAdapter() {
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            bindMapsMousePosition(formMapList.size(), e);
+        }
+
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            bindMapsMousePosition(formMapList.size(), e);
+        }
+    };
+    private MapDrawingListener mapDrawingListener = new MapDrawingListener() {
+        @Override
+        public void mapDrawing(MapDrawingEvent e) {
+            bindMapCenterAndScale(formMapList.size(), (Map) e.getSource());
+        }
+    };
+    private GeometrySelectChangedListener geoMetrySelectChangeListener;
+    private MapDrawnListener mapDrawnListener = new MapDrawnListener() {
+        @Override
+        public void mapDrawn(MapDrawnEvent mapDrawnEvent) {
+            mapDrawnEvent.getMap().refresh();
+        }
+    };
 
     private void addFormList() {
+        formMapList.clear();
+        formTabularList.clear();
         IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
         DefaultListModel model = (DefaultListModel) listForms.getModel();
         int size = model.getSize();
@@ -91,68 +169,69 @@ public class JPopupMenuBind extends JPopupMenu {
             CheckableItem item = (CheckableItem) model.getElementAt(i);
             if (item.isSelected()) {
                 IForm form = formManager.get(i);
-                if (form instanceof IFormMap && !form.getText().equals(activeForm.getText())) {
-                    ((IFormMap) form).getMapControl().setAction(Action.PAN);
+                if (form instanceof IFormMap) {
+                    formMapList.add(form);
+                } else if (form instanceof IFormTabular) {
+                    formTabularList.add(form);
                 }
-                formList.add(form);
+                selectList.add(form);
             }
         }
     }
 
     private void showView() {
-        final int size = formList.size();
+        final int size = formMapList.size();
         // 如果有多个同名的FormMap，关联时实现选择集关联
         //如果有多个同名但不同类型的Form,FormMap之间直接实现选择集关联，
         //FormMap和FormTabular之间关联实现关联浏览属性表
+
         for (int i = 0; i < size; i++) {
-            IForm temp = (IForm) formList.get(i);
+            IForm temp = (IForm) formMapList.get(i);
             if (temp instanceof IFormMap) {
                 final MapControl mapControl = ((IFormMap) temp).getMapControl();
-
-                mapControl.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        if (e.getButton() == MouseEvent.BUTTON1) {
-                            bindMapCenter(size, e);
-                        }
-                    }
-                });
-                mapControl.addMouseWheelListener(new MouseWheelListener() {
-                    @Override
-                    public void mouseWheelMoved(MouseWheelEvent e) {
-                        bindMapCenterAndScale(size, ((MapControl) e.getSource()).getMap());
-                    }
-                });
-                mapControl.addMouseMotionListener(new MouseMotionAdapter() {
-                    @Override
-                    public void mouseDragged(MouseEvent e) {
-                        bindMapsMousePosition(size, e);
-                    }
-
-                    @Override
-                    public void mouseMoved(MouseEvent e) {
-                        bindMapsMousePosition(size, e);
-                    }
-                });
-                mapControl.getMap().addDrawingListener(new MapDrawingListener() {
-                    @Override
-                    public void mapDrawing(MapDrawingEvent e) {
-                        bindMapCenterAndScale(size, (Map) e.getSource());
-                    }
-                });
-                mapControl.addGeometrySelectChangedListener(new GeometrySelectChangedListener() {
-                    @Override
-                    public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
-                        bindMapsSelection(size, mapControl.getMap());
-                    }
-                });
+                mapControl.addMouseListener(this.mapControlMouseListener);
+                mapControl.addMouseWheelListener(this.mapControlMouseWheelListener);
+                mapControl.addMouseMotionListener(this.mapControlMouseMotionListener);
+                mapControl.getMap().addDrawingListener(this.mapDrawingListener);
+                mapControl.getMap().addDrawnListener(this.mapDrawnListener);
+                this.geoMetrySelectChangeListener = new LocalSelectChangedListener(mapControl.getMap());
+                mapControl.addGeometrySelectChangedListener(this.geoMetrySelectChangeListener);
             }
+        }
+    }
+
+    @Override
+    public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+        removeBind();
+    }
+
+    @Override
+    public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+        removeBind();
+    }
+
+    @Override
+    public void popupMenuCanceled(PopupMenuEvent e) {
+        removeBind();
+    }
+
+
+    class LocalSelectChangedListener implements GeometrySelectChangedListener {
+        private Map map;
+
+        public LocalSelectChangedListener(Map map) {
+            this.map = map;
+        }
+
+        @Override
+        public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
+            bindMapsSelection(formMapList.size(), map);
         }
     }
 
     private void bindMapsSelection(int size, Map map) {
         for (int j = 0; j < size; j++) {
-            IForm formMap = (IForm) formList.get(j);
+            IForm formMap = (IForm) formMapList.get(j);
             if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() &&
                     !map.equals(((IFormMap) formMap).getMapControl().getMap()) && includeSameLayer(((IFormMap) formMap).getMapControl().getMap(), map)) {
                 Map sourceMap = ((IFormMap) formMap).getMapControl().getMap();
@@ -174,20 +253,53 @@ public class JPopupMenuBind extends JPopupMenu {
         }
     }
 
+    public void dispose() {
+        if (null != formMapList) {
+            removeBind();
+            this.formMapList = null;
+        }
+        if (null != formTabularList) {
+            this.formTabularList = null;
+        }
+    }
+
+    private void removeBind() {
+        final int size = formMapList.size();
+        for (int i = 0; i < size; i++) {
+            final MapControl mapControl = ((IFormMap) formMapList.get(i)).getMapControl();
+            if (null != mapControl) {
+                mapControl.removeMouseListener(this.mapControlMouseListener);
+                mapControl.removeMouseWheelListener(this.mapControlMouseWheelListener);
+                mapControl.removeMouseMotionListener(this.mapControlMouseMotionListener);
+                mapControl.getMap().removeDrawingListener(this.mapDrawingListener);
+                mapControl.getMap().removeDrawnListener(this.mapDrawnListener);
+                mapControl.removeGeometrySelectChangedListener(this.geoMetrySelectChangeListener);
+            }
+        }
+    }
+
     private void bindMapsMousePosition(int size, MouseEvent e) {
-        Map currentMap = ((MapControl) e.getSource()).getMap();
+        Map sourceMap = ((MapControl) e.getSource()).getMap();
+        Map currentMap = sourceMap;
         currentMap.getTrackingLayer().clear();
         currentMap.refreshTrackingLayer();
+        Point2Ds points = new Point2Ds();
         for (int j = 0; j < size; j++) {
-            IForm formMap = (IForm) formList.get(j);
+            IForm formMap = (IForm) formMapList.get(j);
             Map map;
             if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() && !e.getSource().equals(((IFormMap) formMap).getMapControl())) {
                 map = ((IFormMap) formMap).getMapControl().getMap();
+                if (!sourceMap.getPrjCoordSys().equals(map.getPrjCoordSys())) {
+                    points.clear();
+                    points.add(map.pixelToLogical(e.getPoint()));
+                    CoordSysTranslator.convert(points, currentMap.getPrjCoordSys(), map.getPrjCoordSys(), new CoordSysTransParameter(), CoordSysTransMethod.MTH_COORDINATE_FRAME);
+                }
                 MapUtilities.clearTrackingObjects(map, TAG_MOVE);
                 Geometry tempGeometry = getTrackingGeometry(map.pixelToMap(e.getPoint()), Color.gray);
                 map.getTrackingLayer().add(tempGeometry, TAG_MOVE);
                 tempGeometry.dispose();
                 map.refreshTrackingLayer();
+
             }
         }
     }
@@ -243,7 +355,7 @@ public class JPopupMenuBind extends JPopupMenu {
         Point2D center = sourceMap.getCenter();
         double scale = sourceMap.getScale();
         for (int j = 0; j < size; j++) {
-            IForm formMap = (IForm) formList.get(j);
+            IForm formMap = (IForm) formMapList.get(j);
             Map map;
             if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() && !sourceMap.equals(((IFormMap) formMap).getMapControl().getMap())) {
                 map = ((IFormMap) formMap).getMapControl().getMap();
@@ -261,10 +373,13 @@ public class JPopupMenuBind extends JPopupMenu {
     }
 
     private void bindMapCenter(int size, MouseEvent e) {
-        Point2D center = ((MapControl) e.getSource()).getMap().getCenter();
+        Map sourceMap = ((MapControl) e.getSource()).getMap();
+        Point2D center = sourceMap.getCenter();
+        Point2Ds points = new Point2Ds();
         for (int j = 0; j < size; j++) {
-            IForm formMap = (IForm) formList.get(j);
+            IForm formMap = (IForm) formMapList.get(j);
             Map map;
+
             if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() && !e.getSource().equals(((IFormMap) formMap).getMapControl())) {
                 map = ((IFormMap) formMap).getMapControl().getMap();
                 if (null != center) {
@@ -295,16 +410,38 @@ public class JPopupMenuBind extends JPopupMenu {
     }
 
     private void splitTabWindow() {
-        TabWindow tabWindow;
-        int size = formList.size();
-        while (size > 1) {
-            tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
-            if (tabWindow.getChildWindowCount() > 0) {
-                tabWindow.split((DockingWindow) formList.get(size - 1), Direction.RIGHT, (float) (1 - 1.0 / size));
-                size--;
-            } else {
-                break;
+        int formMapSize = formMapList.size();
+        int formTabularSize = formTabularList.size();
+        SplitWindow splitWindow = null;
+        TabWindow formMapSplitWindow = null;
+        TabWindow formTabularTabWindow = null;
+        TabWindow tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
+        if (formTabularSize > 0) {
+            splitWindow = tabWindow.split((DockingWindow) formTabularList.get(0), Direction.DOWN, 0.7f);
+            formTabularTabWindow = (TabWindow) splitWindow.getChildWindow(splitWindow.getChildWindowCount() - 1);
+            for (int i = 1; i < formTabularSize; i++) {
+                formTabularTabWindow.addTab((DockingWindow) formTabularList.get(i));
             }
+        }
+        if (formMapSize > 0 && null != splitWindow) {
+            formMapSplitWindow = (TabWindow) splitWindow.getChildWindow(0);
+            while (formMapSize > 1) {
+                formMapSplitWindow.split((DockingWindow) formMapList.get(formMapSize - 1), Direction.RIGHT, (float) (1 - 1.0 / formMapSize));
+                formMapSize--;
+
+            }
+        } else if (formMapSize > 0 && null == splitWindow) {
+            while (formMapSize > 1) {
+                if (tabWindow.getChildWindowCount() > 0) {
+                    this.splitWindow = tabWindow.split((DockingWindow) formMapList.get(formMapSize - 1), Direction.RIGHT, (float) (1 - 1.0 / formMapSize));
+                    formMapSize--;
+                } else {
+                    break;
+                }
+            }
+        }
+        if (formMapSize > 0) {
+            Application.getActiveApplication().setActiveForm((IForm) formMapList.get(0));
         }
     }
 
@@ -318,12 +455,19 @@ public class JPopupMenuBind extends JPopupMenu {
         }
     };
 
-    public JPopupMenuBind() {
-        super();
+    public static JPopupMenuBind instance() {
+        if (null == popupMenubind) {
+            popupMenubind = new JPopupMenuBind();
+        }
+        return popupMenubind;
+    }
+
+    public void init() {
         initComponents();
         initLayout();
         registEvents();
         initResources();
+        addPopupMenuListener(this);
         this.setPopupSize(480, 270);
     }
 
@@ -358,19 +502,17 @@ public class JPopupMenuBind extends JPopupMenu {
 
     private void addItemToList(DefaultListModel listModel) {
         IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
-        activeForm = Application.getActiveApplication().getActiveForm();
         int size = formManager.getCount();
-        int listSize = formList.size();
+        int listSize = selectList.size();
         for (int i = 0; i < size; i++) {
             IForm form = formManager.get(i);
             CheckableItem item = new CheckableItem();
             item.setStr(form.getText());
             item.setForm(form);
             for (int j = 0; j < listSize; j++) {
-                if (form.equals(formList.get(j))) {
+                if (form.equals(selectList.get(j))) {
                     item.setSelected(true);
-                } else {
-                    item.setSelected(false);
+                    break;
                 }
             }
             listModel.addElement(item);
@@ -387,7 +529,7 @@ public class JPopupMenuBind extends JPopupMenu {
         this.listForms.addMouseListener(this.listFormsMouseListener);
     }
 
-    private void removeEvents() {
+    public void removeEvents() {
         this.buttonSelectAll.removeActionListener(this.selectAllListener);
         this.buttonSelectInverse.removeActionListener(this.selectInverseListener);
 //        this.buttonImage.removeActionListener(this.imageListener);
@@ -397,6 +539,7 @@ public class JPopupMenuBind extends JPopupMenu {
     }
 
     private void initLayout() {
+        this.removeAll();
         this.panelButton.setLayout(new GridBagLayout());
         this.panelButton.add(this.buttonSelectAll, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 1));
         this.panelButton.add(this.buttonSelectInverse, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 1));

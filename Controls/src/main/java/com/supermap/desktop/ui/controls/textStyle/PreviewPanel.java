@@ -35,7 +35,7 @@ public class PreviewPanel extends JPanel implements IPreview {
     public void refresh(String text, TextStyle tempTextStyle, double rotation) {
         // 地图全幅显示
         double newFontHeight = FontUtilities.mapHeightToFontSize(tempTextStyle.getFontHeight(), MapUtilities.getActiveMap(), tempTextStyle.isSizeFixed()) * 10;
-        if (!tempTextStyle.isSizeFixed()) {
+        if (!tempTextStyle.isSizeFixed() && newFontHeight - 0.0 > 0) {
             tempTextStyle.setFontHeight(newFontHeight);
         }
         mapControl.setInteractionMode(InteractionMode.CUSTOMALL);

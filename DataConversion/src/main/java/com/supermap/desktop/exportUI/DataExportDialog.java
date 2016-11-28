@@ -60,6 +60,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     public static final int COLUMN_STATE = 5;
     private ArrayList<PanelExportTransform> panelExports;
     private PanelExportTransform panelExportsTemp;
+    private JPanel panelEmpty;
 
     private String[] title = {DataConversionProperties.getString("String_Dataset"),
             DataConversionProperties.getString("string_outputtype"),
@@ -106,6 +107,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         @Override
         public void actionPerformed(ActionEvent e) {
             ExportsSetDialog exportsSetDialog = new ExportsSetDialog(DataExportDialog.this);
+            replaceExportPanel();
             exportsSetDialog = null;
         }
     };
@@ -128,8 +130,8 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         public void actionPerformed(ActionEvent e) {
             try {
                 CommonUtilities.selectAll(tableExport);
-                setButtonState();
                 replaceExportPanel();
+                setButtonState();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -141,6 +143,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             try {
                 CommonUtilities.invertSelect(tableExport);
                 replaceExportPanel();
+                setButtonState();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -280,25 +283,29 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         } else if (tableExport.getSelectedRows().length > 1) {
             //刷新右边界面
             replaceExportInfos();
+        } else {
+            CommonUtilities.replace(panelExportInfo, panelEmpty);
         }
     }
 
     private void deleteExportInfo() {
         if (null != tableExport.getSelectedRows() && tableExport.getSelectedRows().length != 0) {
-            int size = tableExport.getSelectedRows().length;
+            int[] selectRows = tableExport.getSelectedRows();
+            int size = selectRows.length;
             for (int i = size - 1; i >= 0; i--) {
-                panelExports.remove(i);
+                panelExports.remove(selectRows[i]);
             }
             ((MutiTableModel) tableExport.getModel()).removeRows(tableExport.getSelectedRows());
             this.tableExport.updateUI();
         }
         if (0 < tableExport.getRowCount()) {
             initComboBoxColumns();
-            setButtonState();
             this.tableExport.setRowSelectionInterval(tableExport.getRowCount() - 1, tableExport.getRowCount() - 1);
         } else if (tableExport.getRowCount() == 0) {
             tableExport.clearSelection();
+            CommonUtilities.replace(panelExportInfo, panelEmpty);
         }
+        setButtonState();
     }
 
     private TableModelListener tableModelListener = new TableModelListener() {
@@ -343,6 +350,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 
     @Override
     public void initComponents() {
+        this.panelEmpty = new JPanel();
         this.buttonAddDataset = new JButton();
         this.buttonDelete = new JButton();
         this.buttonSelectAll = new JButton();
@@ -491,26 +499,31 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                         ExportSetting tempExportsetting = exportsFileInfo.getExportSetting();
                         ExportSetting newExportSetting = exportSettingFactory.createExportSetting(fileType);
                         exportsFileInfo.setFileType(fileType);
-                        newExportSetting.setSourceData(tempExportsetting.getSourceData());
-                        newExportSetting.setTargetFileCharset(tempExportsetting.getTargetFileCharset());
-                        newExportSetting.setFilter(tempExportsetting.getFilter());
-                        newExportSetting.setOverwrite(tempExportsetting.isOverwrite());
-                        exportsFileInfo.setExportSetting(newExportSetting);
-                        replaceExportPanel(exportsFileInfo);
+                        replaceExportPanelForFileType(newExportSetting, tempExportsetting, exportsFileInfo, tableExport.getSelectedRow());
                     }
                 }
 
-                private void replaceExportPanel(ExportFileInfo exportsFileInfo) {
-                    int selectRow = tableExport.getSelectedRow();
-                    IExportPanelFactory exportPanelFactory = new ExportPanelFactory();
-                    PanelExportTransform exportTransform = exportPanelFactory.createExportPanel(DataExportDialog.this, exportsFileInfo);
-                    panelExports.remove(selectRow);
-                    panelExports.add(selectRow, exportTransform);
-                    CommonUtilities.replace(panelExportInfo, exportTransform);
-                }
+
             };
             this.steppedComboBox.addItemListener(this.itemListener);
         }
+    }
+
+    public void replaceExportPanelForFileType(ExportSetting newExportSetting, ExportSetting tempExportsetting, ExportFileInfo exportFileInfo, int selectRow) {
+        newExportSetting.setSourceData(tempExportsetting.getSourceData());
+        newExportSetting.setTargetFileCharset(tempExportsetting.getTargetFileCharset());
+        newExportSetting.setFilter(tempExportsetting.getFilter());
+        newExportSetting.setOverwrite(tempExportsetting.isOverwrite());
+        exportFileInfo.setExportSetting(newExportSetting);
+        replacePanel(exportFileInfo, selectRow);
+    }
+
+    private void replacePanel(ExportFileInfo exportsFileInfo, int selectRow) {
+        IExportPanelFactory exportPanelFactory = new ExportPanelFactory();
+        PanelExportTransform exportTransform = exportPanelFactory.createExportPanel(DataExportDialog.this, exportsFileInfo);
+        panelExports.remove(selectRow);
+        panelExports.add(selectRow, exportTransform);
+        CommonUtilities.replace(panelExportInfo, exportTransform);
     }
 
     private void initToolbar() {
@@ -530,15 +543,18 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     private void setButtonState() {
         if (0 < tableExport.getRowCount()) {
             this.buttonExport.setEnabled(true);
-            this.buttonDelete.setEnabled(true);
             this.buttonSelectAll.setEnabled(true);
             this.buttonInvertSelect.setEnabled(true);
-            this.buttonExportsSet.setEnabled(true);
         } else {
             this.buttonExport.setEnabled(false);
-            this.buttonDelete.setEnabled(false);
             this.buttonSelectAll.setEnabled(false);
             this.buttonInvertSelect.setEnabled(false);
+        }
+        if (tableExport.getSelectedRows().length > 0) {
+            this.buttonDelete.setEnabled(true);
+            this.buttonExportsSet.setEnabled(true);
+        } else {
+            this.buttonDelete.setEnabled(false);
             this.buttonExportsSet.setEnabled(false);
         }
     }

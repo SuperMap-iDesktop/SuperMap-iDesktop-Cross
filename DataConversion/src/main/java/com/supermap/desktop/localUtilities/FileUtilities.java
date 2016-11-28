@@ -61,7 +61,7 @@ public class FileUtilities {
         SmFileChoose tempfileChooser = new SmFileChoose("DataExportFrame_OutPutDirectories");
 
         if (!StringUtilities.isNullOrEmpty(filePath)) {
-            tempfileChooser.setSelectedFile(new File(filePath));
+            tempfileChooser.setCurrentDirectory(new File(filePath));
         }
         tempfileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         return tempfileChooser;

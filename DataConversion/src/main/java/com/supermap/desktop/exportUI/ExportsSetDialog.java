@@ -1,11 +1,14 @@
 package com.supermap.desktop.exportUI;
 
 import com.supermap.data.conversion.ExportSetting;
+import com.supermap.data.conversion.FileType;
+import com.supermap.desktop.Interface.IExportSettingFactory;
 import com.supermap.desktop.Interface.IPanelModel;
 import com.supermap.desktop.baseUI.PanelExportTransform;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.ExportFileInfo;
+import com.supermap.desktop.iml.ExportSettingFactory;
 import com.supermap.desktop.localUtilities.CommonUtilities;
 import com.supermap.desktop.localUtilities.FileUtilities;
 import com.supermap.desktop.localUtilities.FiletypeUtilities;
@@ -37,6 +40,7 @@ public class ExportsSetDialog extends SmDialog implements IPanelModel {
     private JButton buttonCancel;
     private JPanel panelContent;
     private DataExportDialog owner;
+
     private ItemListener checkBoxListener = new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
@@ -92,6 +96,7 @@ public class ExportsSetDialog extends SmDialog implements IPanelModel {
             if (null != targetFilePath) {
                 resetTableAndFileInfos(owner.COLUMN_FILEPATH, targetFilePath);
             }
+
             ExportsSetDialog.this.dispose();
         }
     };
@@ -104,7 +109,13 @@ public class ExportsSetDialog extends SmDialog implements IPanelModel {
         for (int i = 0; i < size; i++) {
             tableExports.setValueAt(targetFileType, selectrows[i], columnExporttype);
             if (columnExporttype == owner.COLUMN_EXPORTTYPE) {
-                fileInfos.get(selectrows[i]).getExportsFileInfo().setFileType(FiletypeUtilities.getFileType(targetFileType.toString()));
+                //替换修改的行所在的界面
+                FileType fileType = FiletypeUtilities.getFileType(targetFileType.toString());
+                ExportFileInfo fileInfo = fileInfos.get(selectrows[i]).getExportsFileInfo();
+                fileInfo.setFileType(fileType);
+                IExportSettingFactory exportSettingFactory = new ExportSettingFactory();
+                ExportSetting newExportsetting = exportSettingFactory.createExportSetting(fileType);
+                owner.replaceExportPanelForFileType(newExportsetting, fileInfo.getExportSetting(), fileInfo, selectrows[i]);
             }
         }
     }
@@ -184,21 +195,23 @@ public class ExportsSetDialog extends SmDialog implements IPanelModel {
 
     private void addSamePath(ArrayList<ExportFileInfo> selectFileInfos) {
         int size = selectFileInfos.size();
-        if (1 == size) {
-            fileChooserControlExportPath.getEditor().setText(selectFileInfos.get(0).getFilePath());
-            return;
-        }
-        String filePath = selectFileInfos.get(0).getFilePath();
-        boolean hasSamePath = true;
-        for (int i = 1; i < size; i++) {
-            String temp = selectFileInfos.get(i).getFilePath();
-            if (!filePath.equals(temp)) {
-                hasSamePath = false;
-                break;
+        if (size > 0) {
+            if (1 == size) {
+                fileChooserControlExportPath.getEditor().setText(selectFileInfos.get(0).getFilePath());
+                return;
             }
-        }
-        if (hasSamePath) {
-            fileChooserControlExportPath.getEditor().setText(filePath);
+            String filePath = selectFileInfos.get(0).getFilePath();
+            boolean hasSamePath = true;
+            for (int i = 1; i < size; i++) {
+                String temp = selectFileInfos.get(i).getFilePath();
+                if (!filePath.equals(temp)) {
+                    hasSamePath = false;
+                    break;
+                }
+            }
+            if (hasSamePath) {
+                fileChooserControlExportPath.getEditor().setText(filePath);
+            }
         }
     }
 

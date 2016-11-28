@@ -147,10 +147,11 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
             panelBasicSet.setUnityVisible(false);
             panelBasicSet.initTextBasicPanel();
             this.setLayout(new GridBagLayout());
-            this.add(initLeftPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH)
-                    .setInsets(2).setWeight(1, 1));
-            this.add(initRightPanel(),
-                    new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setInsets(2).setWeight(1, 1));
+            JPanel panelContent = new JPanel();
+            panelContent.setLayout(new GridBagLayout());
+            panelContent.add(initLeftPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setInsets(2).setWeight(1, 0));
+            panelContent.add(initRightPanel(), new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setInsets(2).setWeight(1, 0));
+            this.add(panelContent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL));
         }
     }
 
@@ -160,22 +161,17 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
         this.checkboxApplyForTextPart.setSelected(true);
         rightPanel.setLayout(new GridBagLayout());
         this.panelTextPart.getPanel().setPreferredSize(new Dimension(160, 200));
-        rightPanel.add(this.panelBasicSet.getEffectPanel(),
-                new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(1).setWeight(0, 1));
-        rightPanel.add(this.checkboxApplyForTextPart, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1));
-        rightPanel.add(this.panelTextPart.getPanel(),
-                new GridBagConstraintsHelper(0, 2, 1, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(1).setWeight(0, 2).setIpad(0, 15));
+        rightPanel.add(this.panelBasicSet.getEffectPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(1).setWeight(0, 0));
+        rightPanel.add(this.checkboxApplyForTextPart, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 0));
+        rightPanel.add(this.panelTextPart.getPanel(), new GridBagConstraintsHelper(0, 2, 1, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(1).setWeight(0, 2).setIpad(0, 15));
         return rightPanel;
     }
 
     private JPanel initLeftPanel() {
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new GridBagLayout());
-        leftPanel.add(this.panelBasicSet.getBasicsetPanel(),
-                new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(1)
-                        .setWeight(1, 0));
-        leftPanel.add(this.panelPreview.getPanel(),
-                new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setInsets(1).setWeight(1, 1));
+        leftPanel.add(this.panelBasicSet.getBasicsetPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(1).setWeight(1, 0));
+        leftPanel.add(this.panelPreview.getPanel(), new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setInsets(1).setWeight(1, 1));
         leftPanel.setMinimumSize(new Dimension(260, 200));
         return leftPanel;
     }

@@ -123,15 +123,15 @@ public class GeometryGeoTextPropertyControl extends AbstractPropertyControl {
 		this.removeAll();
 		if (Application.getActiveApplication().getActiveForm() instanceof FormMap) {
 			this.currentForm = (FormMap) Application.getActiveApplication().getActiveForm();
-		}
-		this.setLayout(new GridBagLayout());
-		initPanelButtons();
-		//@formatter:off
-		panelGeoTextProperty = new JPanelGeoTextProperty(recordset.getGeometry());
-		panelGeoTextProperty.enabled(((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].isEditable());
-		this.add(panelGeoTextProperty.getPanel(),new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(10,10,0,10));
-		this.add(panelButtons,new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(5, 10, 10, 10));
-		//@formatter:on
+            this.setLayout(new GridBagLayout());
+            initPanelButtons();
+            //@formatter:off
+            panelGeoTextProperty = new JPanelGeoTextProperty(recordset.getGeometry());
+            panelGeoTextProperty.enabled(((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].isEditable());
+            this.add(panelGeoTextProperty.getPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(10, 10, 0, 10));
+            this.add(panelButtons, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(5, 10, 10, 10));
+            //@formatter:on
+        }
 	}
 
 	private void initResources() {
