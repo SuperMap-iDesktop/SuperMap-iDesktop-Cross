@@ -25,6 +25,8 @@ import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
@@ -109,6 +111,22 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             ExportsSetDialog exportsSetDialog = new ExportsSetDialog(DataExportDialog.this);
             replaceExportPanel();
             exportsSetDialog = null;
+        }
+    };
+    private ListSelectionListener listSelectionListener = new ListSelectionListener() {
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            if (tableExport.getRowCount() > 0) {
+                int lastSelectRow = e.getLastIndex() != tableExport.getSelectedRow() ? e.getLastIndex() : e.getFirstIndex();
+                if (lastSelectRow < panelExports.size()) {
+                    PanelExportTransform exportTransform = panelExports.get(lastSelectRow);
+                    if (!buttonExport.isEnabled() && exportTransform instanceof PanelExportTransformForGrid) {
+                        ((PanelExportTransformForGrid) exportTransform).getPasswordField().setText("");
+                        ((PanelExportTransformForGrid) exportTransform).getPasswordFieldConfrim().setText("");
+                        buttonExport.setEnabled(true);
+                    }
+                }
+            }
         }
     };
 
@@ -293,6 +311,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             int[] selectRows = tableExport.getSelectedRows();
             int size = selectRows.length;
             for (int i = size - 1; i >= 0; i--) {
+                panelExports.get(i).removeEvents();
                 panelExports.remove(selectRows[i]);
             }
             ((MutiTableModel) tableExport.getModel()).removeRows(tableExport.getSelectedRows());
@@ -610,6 +629,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         this.buttonClose.addActionListener(this.closeListener);
         this.buttonExportsSet.addActionListener(this.exportsSetListener);
         this.tableExport.getModel().addTableModelListener(this.tableModelListener);
+        this.tableExport.getSelectionModel().addListSelectionListener(this.listSelectionListener);
         this.tableExport.addKeyListener(this.exportKeyListener);
         this.tableExport.addMouseListener(this.exportMouseListener);
         this.scrollPane.addMouseListener(this.exportMouseListener);
@@ -625,7 +645,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         this.buttonExport.removeActionListener(this.exportListener);
         this.buttonClose.removeActionListener(this.closeListener);
         this.tableExport.getModel().removeTableModelListener(this.tableModelListener);
-
+        this.tableExport.getSelectionModel().removeListSelectionListener(this.listSelectionListener);
         this.tableExport.removeKeyListener(this.exportKeyListener);
         this.tableExport.removeMouseListener(this.exportMouseListener);
         this.scrollPane.removeMouseListener(this.exportMouseListener);
@@ -660,5 +680,25 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 
     public SmButton getButtonExport() {
         return buttonExport;
+    }
+
+    public JButton getButtonAddDataset() {
+        return buttonAddDataset;
+    }
+
+    public JButton getButtonDelete() {
+        return buttonDelete;
+    }
+
+    public JButton getButtonSelectAll() {
+        return buttonSelectAll;
+    }
+
+    public JButton getButtonInvertSelect() {
+        return buttonInvertSelect;
+    }
+
+    public JButton getButtonExportsSet() {
+        return buttonExportsSet;
     }
 }

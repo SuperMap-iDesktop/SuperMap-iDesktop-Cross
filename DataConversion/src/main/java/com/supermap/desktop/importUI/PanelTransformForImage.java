@@ -126,14 +126,12 @@ public class PanelTransformForImage extends PanelTransform {
 
         private void updatePassword() {
             String password = String.valueOf(passwordField.getPassword());
-            if (!StringUtilities.isNullOrEmpty(password)) {
-                if (null != panelImports) {
-                    for (PanelImport panelImport : panelImports) {
-                        ((PanelTransformForImage) panelImport.getTransform()).getPasswordField().setText(password);
-                    }
-                } else {
-                    ((ImportSettingSIT) importSetting).setPassword(password);
+            if (null != panelImports) {
+                for (PanelImport panelImport : panelImports) {
+                    ((PanelTransformForImage) panelImport.getTransform()).getPasswordField().setText(password);
                 }
+            } else {
+                ((ImportSettingSIT) importSetting).setPassword(password);
             }
         }
 
