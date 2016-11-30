@@ -150,6 +150,7 @@ public class FormBase extends JFrame implements IFormMain {
 			this.statusbarManager.load(workEnvironment);
 
 			DockbarManager dockbar = (DockbarManager) this.dockbarManager;
+			initLayout();
 			dockbar.load(workEnvironment);
 			this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -169,7 +170,6 @@ public class FormBase extends JFrame implements IFormMain {
 			}
 			ToolbarUIUtilities.updataToolbarsState();
 
-			initLayout(dockbar);
 			FormBase.this.setVisible(true);
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
@@ -193,11 +193,11 @@ public class FormBase extends JFrame implements IFormMain {
 		}
 	}
 
-	private void initLayout(DockbarManager dockbar) {
+	private void initLayout() {
 		this.setLayout(new GridBagLayout());
 		this.add(jMenuBarMain, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER));
 		this.add(this.toolbarManager.getToolbarsContainer(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 5));
-		this.add(dockbar.getDockPort(), new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
+		this.add(this.dockbarManager.getDockPort(), new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
 	}
 
 	@Override

@@ -4,9 +4,12 @@ import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop.enums.DockState;
 import com.supermap.desktop.ui.XMLDockbar;
+import org.flexdock.docking.DockingConstants;
 import org.flexdock.docking.DockingManager;
 import org.flexdock.view.View;
 
+import javax.swing.*;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 
 /**
@@ -49,9 +52,17 @@ public class Dockbar extends View implements IDockbar {
 			return false;
 		}
 
+		addAction(DockingConstants.CLOSE_ACTION);
+		addAction(DockingConstants.PIN_ACTION);
 		this.setVisible(xmlDockbar.getVisible());
+
+		JPanel panel = new JPanel();
+		panel.setBorder(new LineBorder(Color.GRAY, 1));
+		panel.setLayout(new BorderLayout());
+		panel.setLayout(new BorderLayout());
+		setContentPane(panel);
 		this.innerComponent = xmlDockbar.CreateComponent();
-		getContentPane().add(this.innerComponent);
+		panel.add(this.innerComponent);
 		return true;
 	}
 

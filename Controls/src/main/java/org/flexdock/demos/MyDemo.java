@@ -20,6 +20,17 @@ import java.io.IOException;
  */
 public class MyDemo extends JFrame {
 	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
 		final MyDemo demo = new MyDemo();
 		demo.setSize(600, 400);
 		SwingUtilities.invokeLater(new Runnable() {
@@ -40,10 +51,10 @@ public class MyDemo extends JFrame {
 
 		JPanel panelMain = new JPanel();
 		panelMain.setBackground(Color.lightGray);
-		final View view = new View("main", "main");
-		view.setContentPane(panelMain);
-		view.setTitlebar(null);
-		view.setTerritoryBlocked(DockingConstants.CENTER_REGION, true);
+		final View mainView = new View("main", "main");
+		mainView.setContentPane(panelMain);
+		mainView.setTitlebar(null);
+		mainView.setTerritoryBlocked(DockingConstants.CENTER_REGION, true);
 		JPanel panel1 = createPanel("panel1");
 		JPanel panel2 = createPanel("panel2");
 		JPanel panel3 = createPanel("panel3");
@@ -63,16 +74,16 @@ public class MyDemo extends JFrame {
 
 		View view4 = new View("panel4", "panel4");
 		view4.setContentPane(panel4);
-		viewport.dock(view);
+		viewport.dock(mainView);
 
 //		viewport.setRegionBlocked(DockingConstants.CENTER_REGION, true);
 //		viewport.dock(((Dockable) view3), DockingConstants.EAST_REGION);
 //		viewport.dock((Dockable) view1, DockingConstants.SOUTH_REGION);
 //		viewport.dock(((Dockable) view2), DockingConstants.WEST_REGION);
 
-		view.dock((Dockable) view2, DockingConstants.WEST_REGION);
-		view2.dock((Dockable) view3, DockingConstants.WEST_REGION);
-		view3.dock((Dockable) view1, DockingConstants.SOUTH_REGION);
+		mainView.dock((Dockable) view2, DockingConstants.WEST_REGION, 0.3f);
+		view2.dock((Dockable) view3, DockingConstants.SOUTH_REGION, 0.5f);
+		mainView.dock((Dockable) view1, DockingConstants.SOUTH_REGION, 0.3f);
 
 //		view.dock((Dockable) view2, DockingConstants.CENTER_REGION);
 //		view.dock((Dockable) view3, DockingConstants.CENTER_REGION);

@@ -1,5 +1,6 @@
 package com.supermap.desktop.ui.controls;
 
+import com.sun.prism.image.ViewPort;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IDockbarManager;
@@ -11,6 +12,7 @@ import com.supermap.desktop.ui.XMLDockbarBase;
 import com.supermap.desktop.ui.XMLDockbars;
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.docking.DockingManager;
+import org.flexdock.docking.DockingPort;
 import org.flexdock.view.View;
 import org.flexdock.view.Viewport;
 
@@ -43,7 +45,6 @@ public class DockbarManager implements IDockbarManager {
 		this.mainView.setTitlebar(null);
 		this.mainView.getContentPane().setLayout(new BorderLayout());
 		this.mainView.getContentPane().add(mainContent);
-		this.dockPort.dock(this.mainView);
 	}
 
 	public Component getDockPort() {
@@ -130,16 +131,18 @@ public class DockbarManager implements IDockbarManager {
 			}
 		}
 
-		this.mainView.dock(this.workspaceComponentManager, DockingConstants.EAST_REGION, 0.3f);
+
+		this.dockPort.dock(this.mainView);
+		this.mainView.dock(this.workspaceComponentManager, DockingConstants.WEST_REGION, 0.3f);
 		this.workspaceComponentManager.dock(this.layersComponentManager, DockingConstants.SOUTH_REGION, 0.5f);
-		for (int i = 0; i < this.dockbars.size(); i++) {
-			if (i == 0) {
-				this.mainView.dock(this.dockbars.get(i), DockingConstants.WEST_REGION, 0.3f);
-			} else {
-				this.dockbars.get(0).dock(this.dockbars.get(i));
-			}
-		}
 		this.mainView.dock(this.outputFrame, DockingConstants.SOUTH_REGION, 0.3f);
+//		for (int i = 0; i < this.dockbars.size(); i++) {
+//			if (i == 0) {
+//				this.mainView.dock(this.dockbars.get(i), DockingConstants.WEST_REGION, 0.3f);
+//			} else {
+//				this.dockbars.get(0).dock(this.dockbars.get(i));
+//			}
+//		}
 		return true;
 	}
 

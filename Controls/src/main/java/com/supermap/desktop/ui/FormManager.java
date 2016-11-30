@@ -124,7 +124,11 @@ public class FormManager extends MdiGroup implements IFormManager {
 
 	@Override
 	public IForm getActiveForm() {
-		return (FormBaseChild) getActivePage().getComponent();
+		if (getActivePage() == null) {
+			return null;
+		} else {
+			return (FormBaseChild) getActivePage().getComponent();
+		}
 	}
 
 	@Override
