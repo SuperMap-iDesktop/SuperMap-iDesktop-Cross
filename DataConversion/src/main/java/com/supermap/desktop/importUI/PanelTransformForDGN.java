@@ -41,7 +41,7 @@ public class PanelTransformForDGN extends PanelTransform {
         public void itemStateChanged(ItemEvent e) {
             if (null != panelImports) {
                 for (PanelImport tempPanelImport : panelImports) {
-                    ((PanelTransformForDGN) tempPanelImport.getTransform()).getCheckBoxImportByLayer().setSelected(!checkBoxImportByLayer.isSelected());
+                    ((PanelTransformForDGN) tempPanelImport.getTransform()).getCheckBoxImportByLayer().setSelected(checkBoxImportByLayer.isSelected());
                 }
             } else {
                 ((ImportSettingDGN) importSetting).setImportingByLayer(!checkBoxImportByLayer.isSelected());
