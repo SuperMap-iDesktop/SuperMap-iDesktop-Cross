@@ -94,12 +94,13 @@ public class PanelImport extends JPanel implements IPanelImport {
 
     @Override
     public void registEvents() {
-
     }
 
     @Override
     public void removeEvents() {
-
+        this.transform.removeEvents();
+        this.resultset.removeEvents();
+        this.sourceInfo.removeEvents();
     }
 
     public IImportSettingResultset getResultset() {

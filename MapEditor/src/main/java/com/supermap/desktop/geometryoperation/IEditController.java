@@ -1,6 +1,11 @@
 package com.supermap.desktop.geometryoperation;
 
-import com.supermap.ui.*;
+import com.supermap.ui.ActionChangedEvent;
+import com.supermap.ui.GeometryEvent;
+import com.supermap.ui.GeometrySelectChangedEvent;
+import com.supermap.ui.GeometrySelectedEvent;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackingEvent;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -76,6 +81,11 @@ public interface IEditController {
 	public void geometrySelected(EditEnvironment environment, GeometrySelectedEvent arg0);
 
 	public void geometrySelectChanged(EditEnvironment environment, GeometrySelectChangedEvent arg0);
+	 /**
+     * @author lixiaoyao
+	 * @description 新增对选中的对象进行增删移动时，进行监听
+     */
+	public void geometryModified(EditEnvironment environment,GeometryEvent arg0);
 
 	public void undone(EditEnvironment environment, EventObject arg0);
 

@@ -6,19 +6,60 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.core.MouseButtons;
-import com.supermap.desktop.geometry.Abstract.*;
+import com.supermap.desktop.geometry.Abstract.ICompoundFeature;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
+import com.supermap.desktop.geometry.Abstract.ILine3DFeature;
+import com.supermap.desktop.geometry.Abstract.ILineFeature;
+import com.supermap.desktop.geometry.Abstract.ILineMFeature;
+import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
+import com.supermap.desktop.geometry.Abstract.INormalFeature;
+import com.supermap.desktop.geometry.Abstract.IPointFeature;
+import com.supermap.desktop.geometry.Abstract.IRegion3DFeature;
+import com.supermap.desktop.geometry.Abstract.IRegionFeature;
+import com.supermap.desktop.geometry.Abstract.ITextFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.editor.IEditor;
 import com.supermap.desktop.geometryoperation.editor.NullEditor;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.mapping.*;
-import com.supermap.ui.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerEditableChangedEvent;
+import com.supermap.mapping.LayerEditableChangedListener;
+import com.supermap.mapping.LayerRemovedEvent;
+import com.supermap.mapping.LayerRemovedListener;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.MapClosedEvent;
+import com.supermap.mapping.MapClosedListener;
+import com.supermap.mapping.MapOpenedEvent;
+import com.supermap.mapping.MapOpenedListener;
+import com.supermap.mapping.Selection;
+import com.supermap.ui.Action;
+import com.supermap.ui.ActionChangedEvent;
+import com.supermap.ui.ActionChangedListener;
+import com.supermap.ui.GeometryEvent;
+import com.supermap.ui.GeometryModifiedListener;
+import com.supermap.ui.GeometrySelectChangedEvent;
+import com.supermap.ui.GeometrySelectChangedListener;
+import com.supermap.ui.GeometrySelectedEvent;
+import com.supermap.ui.GeometrySelectedListener;
+import com.supermap.ui.MapControl;
+import com.supermap.ui.RedoneListener;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackedListener;
+import com.supermap.ui.TrackingEvent;
+import com.supermap.ui.TrackingListener;
+import com.supermap.ui.UndoneListener;
 
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
+
+//import com.supermap.ui.GeometryModifiedListener;
 
 // @formatter:off
 
@@ -143,6 +184,19 @@ public class EditEnvironment {
             EditEnvironment.this.editableChanged(arg0);
         }
     };
+
+	/**
+	 * @author lixiaoyao
+	 * @description 新增对选中的对象进行增删移动时，进行监听
+	 */
+	private GeometryModifiedListener geometryModifiedListener = new GeometryModifiedListener(){
+
+		@Override
+		public void geometryModified(GeometryEvent arg0) {
+			EditEnvironment.this.editController.geometryModified(EditEnvironment.this, arg0);
+		}
+	};
+
     private LayerRemovedListener layerRemovedListener = new LayerRemovedListener() {
 
         @Override
@@ -217,6 +271,8 @@ public class EditEnvironment {
         // 选中对象状态改变
         this.formMap.getMapControl().addGeometrySelectChangedListener(this.geometrySelectChangedListener);
         this.formMap.getMapControl().addGeometrySelectedListener(this.geometrySelectedListener);
+	    //选中的对象进行删除节点或拖动节点
+	    this.formMap.getMapControl().addGeometryModifiedListener(this.geometryModifiedListener);
         // 图层可编辑状态改变
         this.formMap.getMapControl().getMap().getLayers().addLayerEditableChangedListener(this.layerEditableChangedListener);
         this.formMap.getMapControl().getMap().getLayers().addLayerRemovedListener(this.layerRemovedListener);
@@ -237,6 +293,8 @@ public class EditEnvironment {
         // 选中对象状态改变
         this.formMap.getMapControl().removeGeometrySelectChangedListener(this.geometrySelectChangedListener);
         this.formMap.getMapControl().removeGeometrySelectedListener(this.geometrySelectedListener);
+	    //选中的对象进行删除节点或拖动节点
+	    this.formMap.getMapControl().removeGeometryModifiedListener(this.geometryModifiedListener);
         // 图层可编辑状态改变
         this.formMap.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(this.layerEditableChangedListener);
         this.formMap.getMapControl().getMap().getLayers().removeLayerRemovedListener(this.layerRemovedListener);

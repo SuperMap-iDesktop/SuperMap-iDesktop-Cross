@@ -121,6 +121,7 @@ public class PanelExportTransformForGrid extends PanelExportTransform {
                 if (!StringUtilities.isNullOrEmpty(password)) {
                     if (null != panels) {
                         for (PanelExportTransform tempPanel : panels) {
+                            ((ExportSettingSIT) tempPanel.getExportsFileInfo().getExportSetting()).setPassword(password);
                             ((PanelExportTransformForGrid) tempPanel).getPasswordField().setText(password);
                             ((PanelExportTransformForGrid) tempPanel).getPasswordFieldConfrim().setText(password);
                         }

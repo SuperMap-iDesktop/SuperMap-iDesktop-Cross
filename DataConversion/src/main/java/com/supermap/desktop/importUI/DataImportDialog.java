@@ -264,13 +264,17 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                     ArrayList<JPanel> removePanel = new ArrayList<JPanel>();
                     if (selectedRow.length < table.getRowCount()) {
                         for (int i = 0; i < selectedRow.length; i++) {
-                            removePanel.add(panelImports.get(selectedRow[i]));
+                            PanelImport panelImport = panelImports.get(selectedRow[i]);
+                            panelImport.removeEvents();
+                            removePanel.add(panelImport);
                         }
                         model.removeRows(selectedRow);
                         panelImports.removeAll(removePanel);
                     } else {
                         int[] tempRow = new int[table.getRowCount()];
                         for (int i = 0; i < table.getRowCount(); i++) {
+                            PanelImport panelImport = panelImports.get(i);
+                            panelImport.removeEvents();
                             tempRow[i] = i;
                         }
                         model.removeRows(tempRow);
