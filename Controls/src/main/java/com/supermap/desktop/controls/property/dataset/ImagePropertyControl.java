@@ -3,7 +3,6 @@ package com.supermap.desktop.controls.property.dataset;
 import com.supermap.data.DatasetImage;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.Interface.IPropertyManager;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
@@ -263,7 +262,7 @@ public class ImagePropertyControl extends AbstractPropertyControl {
 
 	private void initializeResources() {
 		this.labelBandCount.setText(ControlsProperties.getString("String_LabelBandsSize"));
-		this.labelX.setText(ControlsProperties.getString("String_LabelPixelFormat"));
+		this.labelX.setText(ControlsProperties.getString("String_LabelXPixelFormat"));
 		this.labelY.setText(ControlsProperties.getString("String_LabelYPixelFormat"));
 		this.labelNoValue.setText(ControlsProperties.getString("String_LabelNoValue"));
 		this.labelHeight.setText(ControlsProperties.getString("String_LabelRowsSize"));
@@ -350,8 +349,7 @@ public class ImagePropertyControl extends AbstractPropertyControl {
 	}
 
 	private void buttonSetClipRegionClicked() {
-		IPropertyManager propertyManager = Application.getActiveApplication().getMainFrame().getPropertyManager();
-		JDialogSetClipRegion dialog = new JDialogSetClipRegion((JDialog) propertyManager);
+		JDialogSetClipRegion dialog = new JDialogSetClipRegion();
 		if (dialog.showDialog() == DialogResult.OK) {
 			this.datasetImage.setClipRegion(dialog.getRegion());
 			dialog.disposeRegion();

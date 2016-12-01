@@ -14,13 +14,13 @@ import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.TabularUtilities;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -126,30 +126,44 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		initializeTable();
 		JScrollPane scrollPane = new JScrollPane(this.tableRecordset);
 
-		GroupLayout gl_mainContent = new GroupLayout(this);
-		gl_mainContent.setAutoCreateContainerGaps(true);
-		gl_mainContent.setAutoCreateGaps(true);
-		this.setLayout(gl_mainContent);
+		JPanel panelButtonAdd = new JPanel();
+		panelButtonAdd.setLayout(new GridBagLayout());
+		panelButtonAdd.add(buttonAdd, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 10, 0));
+		panelButtonAdd.add(buttonDelete, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 5, 10, 10));
+		JPanel panelButtonApply = new JPanel();
+		panelButtonApply.setLayout(new GridBagLayout());
+		panelButtonApply.add(checkBoxShowWarning, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 10, 0));
+		panelButtonApply.add(buttonReset, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 10, 0));
+		panelButtonApply.add(buttonApply, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 10, 10));
 
-		// @formatter:off
-		gl_mainContent.setHorizontalGroup(gl_mainContent.createParallelGroup(Alignment.LEADING)
-				.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addGroup(gl_mainContent.createSequentialGroup()
-						.addComponent(this.buttonAdd)
-						.addComponent(this.buttonDelete)
-						.addComponent(this.checkBoxShowWarning)
-						.addGap(10, 10, Short.MAX_VALUE)
-						.addComponent(this.buttonReset)
-						.addComponent(this.buttonApply)));
-
-		gl_mainContent.setVerticalGroup(gl_mainContent.createSequentialGroup()
-				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.buttonAdd)
-						.addComponent(this.buttonDelete)
-						.addComponent(this.checkBoxShowWarning)
-						.addComponent(this.buttonReset)
-						.addComponent(this.buttonApply)));
+		this.setLayout(new GridBagLayout());
+		this.add(scrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(10, 10, 0, 10));
+		this.add(panelButtonAdd, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER));
+		this.add(panelButtonApply, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER));
+//		GroupLayout gl_mainContent = new GroupLayout(this);
+//		gl_mainContent.setAutoCreateContainerGaps(true);
+//		gl_mainContent.setAutoCreateGaps(true);
+//		this.setLayout(gl_mainContent);
+//
+//		// @formatter:off
+//		gl_mainContent.setHorizontalGroup(gl_mainContent.createParallelGroup(Alignment.LEADING)
+//				.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//				.addGroup(gl_mainContent.createSequentialGroup()
+//						.addComponent(this.buttonAdd)
+//						.addComponent(this.buttonDelete)
+//						.addComponent(this.checkBoxShowWarning)
+//						.addGap(10, 10, Short.MAX_VALUE)
+//						.addComponent(this.buttonReset)
+//						.addComponent(this.buttonApply)));
+//
+//		gl_mainContent.setVerticalGroup(gl_mainContent.createSequentialGroup()
+//				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
+//						.addComponent(this.buttonAdd)
+//						.addComponent(this.buttonDelete)
+//						.addComponent(this.checkBoxShowWarning)
+//						.addComponent(this.buttonReset)
+//						.addComponent(this.buttonApply)));
 		//@formatter:on
 	}
 

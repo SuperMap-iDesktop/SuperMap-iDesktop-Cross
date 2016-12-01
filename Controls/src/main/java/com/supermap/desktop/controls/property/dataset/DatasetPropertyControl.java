@@ -111,7 +111,9 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void initializeComponents() {
+		Dimension labelSize = new Dimension(40, 23);
 		this.labelName = new JLabel("DatasetName:");
+		labelName.setPreferredSize(labelSize);
 		this.textFieldName = new JTextField();
 		this.textFieldName.setEditable(false);
 		this.labelDatasetType = new JLabel("DatasetType:");
@@ -141,6 +143,7 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 
 
 		this.labelLeft = new JLabel("Left:");
+		labelLeft.setPreferredSize(labelSize);
 		this.textFieldLeft = new SMFormattedTextField();
 		this.textFieldLeft.setEditable(false);
 		this.labelTop = new JLabel("Top:");
@@ -157,16 +160,16 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 		panelBounds.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_DatasetBounds")));
 		panelBounds.setLayout(new GridBagLayout());
 		panelBounds.add(labelLeft, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
-		panelBounds.add(textFieldLeft, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10));
+		panelBounds.add(textFieldLeft, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setAnchor(GridBagConstraints.CENTER));
 
 		panelBounds.add(labelTop, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
-		panelBounds.add(textFieldTop, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+		panelBounds.add(textFieldTop, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10).setAnchor(GridBagConstraints.CENTER));
 
 		panelBounds.add(labelRight, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
-		panelBounds.add(textFieldRight, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+		panelBounds.add(textFieldRight, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10).setAnchor(GridBagConstraints.CENTER));
 
-		panelBounds.add(labelBottom, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
-		panelBounds.add(textFieldBottom, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 10, 10));
+		panelBounds.add(labelBottom, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 10, 0).setAnchor(GridBagConstraints.WEST));
+		panelBounds.add(textFieldBottom, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 10, 10).setAnchor(GridBagConstraints.CENTER));
 
 		this.labelDescription = new JLabel("Description:");
 		this.textAreaDescription = new JTextArea();
@@ -192,11 +195,11 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 		panelMain.add(panelBase, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 10, 0, 10));
 		panelMain.add(panelBounds, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
 		panelMain.add(panelDescription, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
+		panelMain.add(panelButtons, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
 
 		jScrollPane.setViewportView(panelMain);
 		this.setLayout(new GridBagLayout());
 		this.add(jScrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
-		this.add(panelButtons, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
 
 	}
 
