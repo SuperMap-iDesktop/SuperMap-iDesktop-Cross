@@ -98,9 +98,7 @@ public class MdiGroupFeature extends AbstractMdiFeature {
 	@Override
 	protected void validating() {
 		if (getGroup().getPageCount() - getGroup().getFloatingPageCount() == 0) {
-
-			// Group 没有 tab 页了
-			this.features.clear();
+			// Group 没有 tab 页了，什么都不做
 		} else {
 			if (this.features.size() == 0) {
 				initFeatures();
@@ -113,8 +111,12 @@ public class MdiGroupFeature extends AbstractMdiFeature {
 
 	@Override
 	public void paint(Graphics graphics) {
-		for (int i = 0; i < this.features.size(); i++) {
-			this.features.get(i).paint(graphics);
+		if (getGroup().getPageCount() - getGroup().getFloatingPageCount() == 0) {
+			// group 没有 Tab 页了，就不再绘制了
+		} else {
+			for (int i = 0; i < this.features.size(); i++) {
+				this.features.get(i).paint(graphics);
+			}
 		}
 	}
 

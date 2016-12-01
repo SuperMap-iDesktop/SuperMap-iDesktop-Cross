@@ -44,7 +44,7 @@ public class MdiGroupUI extends ComponentUI {
 
 	private void installIcons() {
 //		MdiResource.putIconSize(MdiResource.CLOSE, 12, 12);
-		MdiResource.putIconSize(MdiResource.FLOAT, 12, 12);
+//		MdiResource.putIconSize(MdiResource.FLOAT, 12, 12);
 //		MdiResource.putIconSize(MdiResource.LIST, 12, 12);
 //		MdiResource.putIconSize(MdiResource.PRE, 12, 12);
 //		MdiResource.putIconSize(MdiResource.NEXT, 12, 12);
@@ -86,16 +86,6 @@ public class MdiGroupUI extends ComponentUI {
 		if (this.group == null) {
 			return;
 		}
-
-		g.setColor(Color.RED);
-
-//		g.drawLine(1, 1, 1, 3);
-//		g.drawLine(2, 3, 3, 3);
-//		g.drawLine(3, 1, 3, 3);
-//		g.drawLine(2, 1, 3, 1);
-
-//		g.drawLine(1, 1, 3, 1);
-//		g.drawLine(2, 1, 2, 2);
 
 		this.groupFeature.paint(g);
 	}
