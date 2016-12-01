@@ -87,8 +87,11 @@ public class DataPropertyContainer extends JPanel implements IPropertyManager {
 			if (properties.length == 1) {
 				this.currentProperty = properties[0];
 				this.controls.add((AbstractPropertyControl) this.currentProperty);
+				this.removeAll();
 				this.add((AbstractPropertyControl) this.currentProperty, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 			} else if (properties.length > 1) {
+				this.removeAll();
+				this.add(tabbledPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(10));
 				this.tabbledPane.removeChangeListener(this.tabbledPaneChangeListener);
 				for (IProperty property : properties) {
 					this.controls.add((AbstractPropertyControl) property);

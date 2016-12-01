@@ -4,14 +4,15 @@ import com.supermap.data.PrjCoordSysType;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysTranslator;
 import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.plaf.metal.MetalBorders;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -97,40 +98,59 @@ public class PrjCoordSysPropertyControl extends AbstractPropertyControl {
 		JScrollPane scrollPane = new JScrollPane(this.textAreaCoordInfo);
 		scrollPane.setBorder(MetalBorders.getTextFieldBorder());
 
-		GroupLayout groupLayout = new GroupLayout(this);
-		groupLayout.setAutoCreateContainerGaps(true);
-		groupLayout.setAutoCreateGaps(true);
-		this.setLayout(groupLayout);
+		this.setLayout(new GridBagLayout());
+		this.add(labelName, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		this.add(textFieldName, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10));
+
+		this.add(labelCoordUnit, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		this.add(textFieldCoordUnit, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		this.add(labelCoordInfo, new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
+		this.add(scrollPane, new GridBagConstraintsHelper(0, 3, 2, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
+
+		JPanel panelButtons = new JPanel();
+		panelButtons.setLayout(new GridBagLayout());
+//		panelButtons.add(buttonExport, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE));
+//		panelButtons.add(buttonCopy, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE));
+		panelButtons.add(buttonSet, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(5, 10, 10, 0));
+		panelButtons.add(buttonConvert, new GridBagConstraintsHelper(3, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(5, 5, 10, 10));
+
+		this.add(panelButtons, new GridBagConstraintsHelper(0, 99, 2, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER));
+
+//		GroupLayout groupLayout = new GroupLayout(this);
+//		groupLayout.setAutoCreateContainerGaps(true);
+//		groupLayout.setAutoCreateGaps(true);
+//		this.setLayout(groupLayout);
 
 		// @formatter:off
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(groupLayout.createSequentialGroup()
-						.addComponent(this.labelName)
-						.addComponent(this.textFieldName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(this.labelCoordUnit)
-						.addComponent(this.textFieldCoordUnit, GroupLayout.PREFERRED_SIZE, DEFAULT_COMPONENT_WIDTH, DEFAULT_COMPONENT_WIDTH))
-				.addComponent(this.labelCoordInfo)
-				.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addGroup(groupLayout.createSequentialGroup()
-						.addComponent(this.buttonExport, DEFAULT_BUTTON_WIDTH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonCopy, DEFAULT_BUTTON_WIDTH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addGap(10, 10, Short.MAX_VALUE)
-						.addComponent(this.buttonSet, DEFAULT_BUTTON_WIDTH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonConvert, DEFAULT_BUTTON_WIDTH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)));
-		
-		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelName)
-						.addComponent(this.textFieldName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.labelCoordUnit)
-						.addComponent(this.textFieldCoordUnit, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addComponent(this.labelCoordInfo)
-				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.buttonExport, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonCopy, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonSet, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonConvert, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
+//		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+//				.addGroup(groupLayout.createSequentialGroup()
+//						.addComponent(this.labelName)
+//						.addComponent(this.textFieldName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//						.addComponent(this.labelCoordUnit)
+//						.addComponent(this.textFieldCoordUnit, GroupLayout.PREFERRED_SIZE, DEFAULT_COMPONENT_WIDTH, DEFAULT_COMPONENT_WIDTH))
+//				.addComponent(this.labelCoordInfo)
+//				.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//				.addGroup(groupLayout.createSequentialGroup()
+//						.addComponent(this.buttonExport, DEFAULT_BUTTON_WIDTH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(this.buttonCopy, DEFAULT_BUTTON_WIDTH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addGap(10, 10, Short.MAX_VALUE)
+//						.addComponent(this.buttonSet, DEFAULT_BUTTON_WIDTH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(this.buttonConvert, DEFAULT_BUTTON_WIDTH, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)));
+//
+//		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
+//				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
+//						.addComponent(this.labelName)
+//						.addComponent(this.textFieldName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(this.labelCoordUnit)
+//						.addComponent(this.textFieldCoordUnit, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//				.addComponent(this.labelCoordInfo)
+//				.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
+//						.addComponent(this.buttonExport, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(this.buttonCopy, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(this.buttonSet, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(this.buttonConvert, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
 		// @formatter:on
 	}
 

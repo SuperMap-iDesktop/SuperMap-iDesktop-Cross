@@ -1,7 +1,5 @@
 package com.supermap.desktop.controls.property.datasource;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
@@ -13,23 +11,17 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.metal.MetalBorders;
-import javax.swing.table.DefaultTableModel;
-import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class DatasourcePropertyControl extends AbstractPropertyControl {
 
@@ -38,17 +30,13 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final Dimension DEFAULT_BUTTON_PREFERREDSIZE = new Dimension(75, 23);
-	private static final int DEFAULT_COLUMN_WIDTH = 130;
 
-	private String TOTAL = "Total";
-	private String OTHERS = "Others";
 
 	private JLabel labelServer;
 	private JLabel labelDatasourceType;
 	private JLabel labelOpenType;
 	private JLabel labelDescription;
 
-	private JTable table;
 	private JTextField textFieldServer;
 	private JTextField textFieldDatasourceType;
 	private JTextField textFieldOpenType;
@@ -63,9 +51,6 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 
 	private transient Datasource datasource = null;
 
-	private HashMap<DatasetType, Integer> statisticMap;
-	private HashMap<DatasetType, String> strDatasetTypeMap;
-	private ArrayList<DatasetType> excludeDatasets;
 
 	private transient DocumentListener textFieldDescriptionDocumentListener = new DocumentListener() {
 
@@ -104,9 +89,8 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 	 */
 	public DatasourcePropertyControl(Datasource datasource) {
 		super(ControlsProperties.getString("String_DatasourceProperty"));
-		this.statisticMap = new HashMap<DatasetType, Integer>();
-		this.strDatasetTypeMap = new HashMap<DatasetType, String>();
-		initializeExcludes();
+
+
 		initializeComponents();
 		initializeResources();
 		setDatasource(datasource);
@@ -138,15 +122,6 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 		return PropertyType.DATASOURCE;
 	}
 
-	private void initializeExcludes() {
-		this.excludeDatasets = new ArrayList<>();
-		this.excludeDatasets.add(DatasetType.TEXTURE);
-		this.excludeDatasets.add(DatasetType.VOLUME);
-		this.excludeDatasets.add(DatasetType.POINTEPS);
-		this.excludeDatasets.add(DatasetType.LINEEPS);
-		this.excludeDatasets.add(DatasetType.REGIONEPS);
-		this.excludeDatasets.add(DatasetType.TEXTEPS);
-	}
 
 	private void initializeComponents() {
 		textFieldServer = new JTextField();
@@ -165,100 +140,102 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 		textFieldDescription.setBorder(MetalBorders.getTextFieldBorder());
 		labelDescription = new JLabel("Description:");
 		buttonChangePassword = new SmButton();
+		buttonChangePassword.setUseDefaultSize(false);
 		buttonChangePassword.setText("ChangePassword...");
 		buttonApply = new SmButton("Apply");
 		buttonApply.setPreferredSize(DEFAULT_BUTTON_PREFERREDSIZE);
 		buttonReset = new SmButton("OK");
 		buttonReset.setPreferredSize(DEFAULT_BUTTON_PREFERREDSIZE);
 
-		JScrollPane scrollPaneStatisticValue = new JScrollPane();
-		scrollPaneStatisticValue.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_StatisticsInfo")));
-		table = new JTable();
-		table.setModel(new DefaultTableModel(new Object[][]{,}, new String[]{ControlsProperties.getString("String_DatasetType"),
-				ControlsProperties.getString("String_StatisticResult")}) {
-			/**
-			 *
-			 */
-			private static final long serialVersionUID = 1L;
+		this.setLayout(new GridBagLayout());
+		this.add(labelServer, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0));
+		this.add(textFieldServer, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(10, 10, 0, 10));
 
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		});
-		table.getColumnModel().getColumn(0).setPreferredWidth(DEFAULT_COLUMN_WIDTH);
-		table.getColumnModel().getColumn(1).setPreferredWidth(DEFAULT_COLUMN_WIDTH);
-		scrollPaneStatisticValue.setPreferredSize(table.getPreferredSize());
-		scrollPaneStatisticValue.setViewportView(table);
+		this.add(labelDatasourceType, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		this.add(textFieldDatasourceType, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 10));
 
-		JPanel panelDatasourceInfo = new JPanel();
-		panelDatasourceInfo.setBorder(new TitledBorder(null, ControlsProperties.getString("String_DatasourceInfo"), TitledBorder.LEADING, TitledBorder.TOP,
-				null, null));
-		GroupLayout gl_panelDatasourceInfo = new GroupLayout(panelDatasourceInfo);
-		gl_panelDatasourceInfo.setAutoCreateContainerGaps(true);
-		gl_panelDatasourceInfo.setAutoCreateGaps(true);
-		panelDatasourceInfo.setLayout(gl_panelDatasourceInfo);
+		this.add(labelOpenType, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		this.add(textFieldOpenType, new GridBagConstraintsHelper(0, 5, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 10));
 
-		// @formatter:off
-		gl_panelDatasourceInfo.setHorizontalGroup(gl_panelDatasourceInfo.createSequentialGroup()
-				.addGroup(gl_panelDatasourceInfo.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelServer)
-						.addComponent(this.labelDatasourceType)
-						.addComponent(this.labelOpenType)
-						.addComponent(this.labelDescription))
-				.addGroup(gl_panelDatasourceInfo.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.textFieldServer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(this.textFieldDatasourceType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(this.textFieldOpenType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(this.textFieldDescription, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-		
-		gl_panelDatasourceInfo.setVerticalGroup(gl_panelDatasourceInfo.createSequentialGroup()
-				.addGroup(gl_panelDatasourceInfo.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelServer)
-						.addComponent(this.textFieldServer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelDatasourceInfo.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelDatasourceType)
-						.addComponent(this.textFieldDatasourceType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelDatasourceInfo.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelOpenType)
-						.addComponent(this.textFieldOpenType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelDatasourceInfo.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelDescription)
-						.addComponent(this.textFieldDescription, 80, 150, Short.MAX_VALUE)));
-		// @formatter:on
+		this.add(labelDescription, new GridBagConstraintsHelper(0, 6, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		this.add(textFieldDescription, new GridBagConstraintsHelper(0, 7, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 10));
 
-		GroupLayout gl_mainContent = new GroupLayout(this);
-		gl_mainContent.setAutoCreateContainerGaps(true);
-		gl_mainContent.setAutoCreateGaps(true);
-		this.setLayout(gl_mainContent);
+		JPanel panelButtons = new JPanel();
+		panelButtons.setLayout(new GridBagLayout());
+//		panelButtons.setBorder(BorderFactory.createLineBorder(Color.black));
+		panelButtons.add(buttonChangePassword, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 10, 0));
+		panelButtons.add(buttonApply, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 10, 0));
+		panelButtons.add(buttonReset, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 10, 10));
 
-		// @formatter:off
-		gl_mainContent.setHorizontalGroup(gl_mainContent.createSequentialGroup()
-				.addGroup(gl_mainContent.createParallelGroup(Alignment.LEADING)
-						.addComponent(panelDatasourceInfo, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-						.addComponent(this.buttonChangePassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_mainContent.createParallelGroup(Alignment.TRAILING)
-						.addComponent(scrollPaneStatisticValue, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE+30)
-						.addGroup(gl_mainContent.createSequentialGroup()
-								.addComponent(this.buttonReset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(this.buttonApply, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))));
-		
-		gl_mainContent.setVerticalGroup(gl_mainContent.createSequentialGroup()
-				.addGroup(gl_mainContent.createParallelGroup(Alignment.LEADING)
-						.addComponent(panelDatasourceInfo, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(scrollPaneStatisticValue, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.buttonChangePassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonReset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonApply, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
-		// @formatter:on
+		this.add(panelButtons, new GridBagConstraintsHelper(0, 99, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER));
+//		JPanel panelDatasourceInfo = new JPanel();
+//		panelDatasourceInfo.setBorder(new TitledBorder(null, ControlsProperties.getString("String_DatasourceInfo"), TitledBorder.LEADING, TitledBorder.TOP,
+//				null, null));
+//		GroupLayout gl_panelDatasourceInfo = new GroupLayout(panelDatasourceInfo);
+//		gl_panelDatasourceInfo.setAutoCreateContainerGaps(true);
+//		gl_panelDatasourceInfo.setAutoCreateGaps(true);
+//		panelDatasourceInfo.setLayout(gl_panelDatasourceInfo);
+//
+//		// @formatter:off
+//		gl_panelDatasourceInfo.setHorizontalGroup(gl_panelDatasourceInfo.createSequentialGroup()
+//				.addGroup(gl_panelDatasourceInfo.createParallelGroup(Alignment.LEADING)
+//						.addComponent(this.labelServer)
+//						.addComponent(this.labelDatasourceType)
+//						.addComponent(this.labelOpenType)
+//						.addComponent(this.labelDescription))
+//				.addGroup(gl_panelDatasourceInfo.createParallelGroup(Alignment.LEADING)
+//						.addComponent(this.textFieldServer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//						.addComponent(this.textFieldDatasourceType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//						.addComponent(this.textFieldOpenType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+//						.addComponent(this.textFieldDescription, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+//
+//		gl_panelDatasourceInfo.setVerticalGroup(gl_panelDatasourceInfo.createSequentialGroup()
+//				.addGroup(gl_panelDatasourceInfo.createParallelGroup(Alignment.CENTER)
+//						.addComponent(this.labelServer)
+//						.addComponent(this.textFieldServer, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//				.addGroup(gl_panelDatasourceInfo.createParallelGroup(Alignment.CENTER)
+//						.addComponent(this.labelDatasourceType)
+//						.addComponent(this.textFieldDatasourceType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//				.addGroup(gl_panelDatasourceInfo.createParallelGroup(Alignment.CENTER)
+//						.addComponent(this.labelOpenType)
+//						.addComponent(this.textFieldOpenType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//				.addGroup(gl_panelDatasourceInfo.createParallelGroup(Alignment.LEADING)
+//						.addComponent(this.labelDescription)
+//						.addComponent(this.textFieldDescription, 80, 150, Short.MAX_VALUE)));
+//		// @formatter:on
+//
+//		GroupLayout gl_mainContent = new GroupLayout(this);
+//		gl_mainContent.setAutoCreateContainerGaps(true);
+//		gl_mainContent.setAutoCreateGaps(true);
+//		this.setLayout(gl_mainContent);
+//
+//		// @formatter:off
+//		gl_mainContent.setHorizontalGroup(gl_mainContent.createSequentialGroup()
+//				.addGroup(gl_mainContent.createParallelGroup(Alignment.LEADING)
+//						.addComponent(panelDatasourceInfo, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+//						.addComponent(this.buttonChangePassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+//				.addGroup(gl_mainContent.createParallelGroup(Alignment.TRAILING)
+////						.addComponent(scrollPaneStatisticValue, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE+30)
+//						.addGroup(gl_mainContent.createSequentialGroup()
+//								.addComponent(this.buttonReset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//								.addComponent(this.buttonApply, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))));
+//
+//		gl_mainContent.setVerticalGroup(gl_mainContent.createSequentialGroup()
+//				.addGroup(gl_mainContent.createParallelGroup(Alignment.LEADING)
+//						.addComponent(panelDatasourceInfo, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+////						.addComponent(scrollPaneStatisticValue, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+//				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
+//						.addComponent(this.buttonChangePassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(this.buttonReset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(this.buttonApply, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
+//		// @formatter:on
 	}
 
 	private void fillComponents() {
 		if (this.datasource != null) {
 			this.textFieldServer.setText(this.datasource.getConnectionInfo().getServer());
 			this.textFieldDatasourceType.setText(this.datasource.getEngineType().toString());
-			String message = null;
+			String message;
 			if (this.datasource.getConnectionInfo().isReadOnly()) {
 				message = CoreProperties.getString(CoreProperties.ReadOnly);
 			} else {
@@ -266,78 +243,16 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 			}
 			this.textFieldOpenType.setText(message);
 			this.textFieldDescription.setText(this.datasource.getDescription());
-			fillTableStatisticValue();
+
 		}
 	}
 
-	private void fillTableStatisticValue() {
-		fillStatisticMap();
-		statistic();
-
-		DefaultTableModel tableModel = (DefaultTableModel) this.table.getModel();
-
-		// clear tableModel
-		while (tableModel.getRowCount() > 0) {
-			tableModel.removeRow(tableModel.getRowCount() - 1);
-		}
-		//  屏蔽texture
-		int count = datasource.getDatasets().getCount();
-		int excludeCount = 0;
-		for (int i = 0; i < datasource.getDatasets().getCount(); i++) {
-			DatasetType type = datasource.getDatasets().get(i).getType();
-			if (this.excludeDatasets.contains(type)) {
-				excludeCount++;
-			}
-		}
-		tableModel.addRow(new Object[]{TOTAL, count});
-		com.supermap.data.Enum[] enums = DatasetType.getEnums(DatasetType.class);
-		for (int i = 0; i < enums.length; i++) {
-			DatasetType datasetType = (DatasetType) enums[i];
-			// 排除掉 exclude 的数据集类型
-			if (!excludeDatasets.contains(datasetType)) {
-				tableModel.addRow(new Object[]{this.strDatasetTypeMap.get(datasetType), this.statisticMap.get(datasetType)});
-			}
-		}
-		tableModel.addRow(new Object[]{OTHERS, excludeCount});
-	}
-
-	private void fillStatisticMap() {
-		com.supermap.data.Enum[] enums = DatasetType.getEnums(DatasetType.class);
-
-		for (int i = 0; i < enums.length; i++) {
-			this.statisticMap.put((DatasetType) enums[i], 0);
-		}
-	}
-
-	private void fillStrDatasetTypeMap() {
-		com.supermap.data.Enum[] enums = DatasetType.getEnums(DatasetType.class);
-
-		for (int i = 0; i < enums.length; i++) {
-			DatasetType datasetType = (DatasetType) enums[i];
-			if (datasetType != DatasetType.TEXTURE && datasetType != DatasetType.VOLUME) {
-				strDatasetTypeMap.put(datasetType, DatasetTypeUtilities.toString(datasetType));
-				statisticMap.put(datasetType, 0);
-			}
-		}
-	}
-
-	private void statistic() {
-		if (this.datasource != null) {
-			for (int i = 0; i < datasource.getDatasets().getCount(); i++) {
-				Dataset dataset = datasource.getDatasets().get(i);
-
-				if (dataset != null && dataset.getType() != DatasetType.TEXTURE && dataset.getType() != DatasetType.VOLUME) {
-					this.statisticMap.put(dataset.getType(), this.statisticMap.get(dataset.getType()) + 1);
-				}
-			}
-		}
-	}
 
 	private void reset() {
 		this.newPassword = this.datasource.getConnectionInfo().getPassword();
 		this.description = this.datasource.getDescription();
 		this.textFieldDescription.setText(this.description);
-		statistic();
+
 		setButtonApplyEnabledInEDT(checkChange());
 		setButtonResetEnabledInEDT(checkChange());
 	}
@@ -357,7 +272,7 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 	}
 
 	private void initializeResources() {
-		fillStrDatasetTypeMap();
+
 		this.labelServer.setText(ControlsProperties.getString("String_LabelServer"));
 		this.labelDatasourceType.setText(ControlsProperties.getString("String_LabelEngineType"));
 		this.labelOpenType.setText(ControlsProperties.getString("String_OpenMode"));
@@ -365,8 +280,7 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 		this.buttonChangePassword.setText(ControlsProperties.getString("String_ButtonChangePassword"));
 		this.buttonApply.setText(CommonProperties.getString("String_Button_Apply"));
 		this.buttonReset.setText(CommonProperties.getString("String_Button_Reset"));
-		TOTAL = CommonProperties.getString(CommonProperties.Total);
-		OTHERS = CoreProperties.getString(CoreProperties.Other);
+
 	}
 
 	private void buttonChangePasswordClicked() {
