@@ -42,7 +42,7 @@ public class Dockbar extends View implements IDockbar {
 	}
 
 	public Dockbar(final XMLDockbar xmlDockbar) {
-		super(xmlDockbar.getID(), xmlDockbar.getLabel());
+		super(xmlDockbar.getID(), xmlDockbar.getTitle());
 		this.xmlDockbar = xmlDockbar;
 		initialize();
 	}
@@ -61,6 +61,7 @@ public class Dockbar extends View implements IDockbar {
 		panel.setLayout(new BorderLayout());
 		panel.setLayout(new BorderLayout());
 		setContentPane(panel);
+		setTitle(this.xmlDockbar.getTitle());
 		this.innerComponent = xmlDockbar.CreateComponent();
 		panel.add(this.innerComponent);
 		return true;
