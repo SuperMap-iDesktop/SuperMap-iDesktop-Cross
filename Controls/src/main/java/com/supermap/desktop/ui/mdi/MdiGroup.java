@@ -294,6 +294,19 @@ public class MdiGroup extends JComponent {
 		return close(getPage(component));
 	}
 
+	public boolean closeAll() {
+		boolean result = true;
+		try {
+			for (int i = getPageCount(); i >= 0; i--) {
+				result = result && close(i);
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+
+		return result;
+	}
+
 	public MdiPane getMdiParent() {
 		return this.mdiPane;
 	}

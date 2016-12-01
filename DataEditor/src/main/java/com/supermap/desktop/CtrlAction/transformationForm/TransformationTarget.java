@@ -11,6 +11,9 @@ import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.enums.FormTransformationSubFormType;
+import com.supermap.desktop.event.FormClosedListener;
+import com.supermap.desktop.event.FormClosingListener;
+import com.supermap.desktop.event.FormShownListener;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
@@ -108,6 +111,36 @@ public class TransformationTarget extends TransformationBase implements ITransfo
 //		for (Map addedMap : addedMaps) {
 //			addedMap.close();
 //		}
+	}
+
+	@Override
+	public void addFormClosingListener(FormClosingListener listener) {
+
+	}
+
+	@Override
+	public void removeFormClosingListener(FormClosingListener listener) {
+
+	}
+
+	@Override
+	public void addFormClosedListener(FormClosedListener listener) {
+
+	}
+
+	@Override
+	public void removeFormClosedListener(FormClosedListener listener) {
+
+	}
+
+	@Override
+	public void addFormShownListener(FormShownListener listener) {
+
+	}
+
+	@Override
+	public void removeFormShownListener(FormShownListener listener) {
+
 	}
 
 	@Override

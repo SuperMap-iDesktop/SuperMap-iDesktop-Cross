@@ -1307,21 +1307,22 @@ public class FormMap extends FormBaseChild implements IFormMap {
 					int result = GlobalParameters.isShowFormClosingInfo() ? UICommonToolkit.showConfirmDialogWithCancel(message) : JOptionPane.NO_OPTION;
 					if (result == JOptionPane.YES_OPTION) {
 						save();
-						clean();
-					} else if (result == JOptionPane.NO_OPTION) {
-						// 不保存，直接关闭
-						clean();
 					} else if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
 						// 取消关闭操作
 						e.setCancel(true);
+					} else if (result == JOptionPane.NO_OPTION) {
+						// 不保存，直接关闭
 					}
-				} else {
-					clean();
 				}
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
+	}
+
+	@Override
+	public void formClosed(FormClosedEvent e) {
+		clean();
 	}
 
 	public void removeLayers(Layer[] layers) {

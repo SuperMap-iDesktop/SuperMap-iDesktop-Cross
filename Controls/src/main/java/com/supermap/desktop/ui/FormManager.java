@@ -22,9 +22,7 @@ import java.util.HashMap;
 
 public class FormManager extends MdiGroup implements IFormManager {
 	private WindowType activatedChildFormType = WindowType.UNKNOWN;
-	private IForm activeForm;
 	private EventListenerList listenerList = new EventListenerList();
-	private ArrayList<IForm> childForms = new ArrayList<IForm>();
 	private MdiGroup mdiGroup;
 	private PageActivatedListener pageActivatedListener = new PageActivatedListener() {
 
@@ -38,7 +36,9 @@ public class FormManager extends MdiGroup implements IFormManager {
 				((FormBaseChild) event.getActivedPage().getComponent()).actived();
 			}
 			ToolbarUIUtilities.updataToolbarsState();
-			fireActiveFormChanged(new ActiveFormChangedEvent(this, (IForm) event.getOldActivedPage().getComponent(), (IForm) event.getActivedPage().getComponent()));
+			IForm oldActive = event.getOldActivedPage() != null && event.getOldActivedPage().getComponent() instanceof IForm ? (IForm) event.getOldActivedPage().getComponent() : null;
+			IForm newActive = event.getActivedPage() != null && event.getActivedPage().getComponent() instanceof IForm ? (IForm) event.getActivedPage().getComponent() : null;
+			fireActiveFormChanged(new ActiveFormChangedEvent(this, oldActive, newActive));
 			refreshMenusAndToolbars((IForm) event.getActivedPage().getComponent());
 		}
 	};
@@ -82,19 +82,35 @@ public class FormManager extends MdiGroup implements IFormManager {
 	}
 
 	private IForm[] getMdiChildren() {
-		return this.childForms.toArray(new IForm[this.childForms.size()]);
+		IForm[] forms = new IForm[0];
+		try {
+			forms = new IForm[getPageCount()];
+			for (int i = 0; i < getPageCount(); i++) {
+				MdiPage page = getPageAt(i);
+				if (page.getComponent() instanceof IForm) {
+					forms[i] = (IForm) page.getComponent();
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+		return forms;
 	}
 
 	@Override
 	public IForm get(int index) {
-		IForm result = null;
 		try {
-			result = this.childForms.get(index);
+			if (index < getPageCount()) {
+				MdiPage page = getPageAt(index);
+				if (page.getComponent() instanceof IForm) {
+					return (IForm) page.getComponent();
+				}
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 
-		return result;
+		return null;
 	}
 
 	@Override
@@ -138,7 +154,10 @@ public class FormManager extends MdiGroup implements IFormManager {
 
 	@Override
 	public void resetActiveForm() {
-		fireActiveFormChanged(new ActiveFormChangedEvent(this, null, this.activeForm));
+		if (getActivePage() != null && getActivePage() instanceof IForm) {
+			MdiPage page = getActivePage();
+			fireActiveFormChanged(new ActiveFormChangedEvent(this, (IForm) page.getComponent(), (IForm) page.getComponent()));
+		}
 	}
 
 	@Override
@@ -166,22 +185,6 @@ public class FormManager extends MdiGroup implements IFormManager {
 			isClosed = super.close((FormBaseChild) form);
 		}
 		return isClosed;
-	}
-
-	@Override
-	public boolean closeAll() {
-		boolean result = false;
-		try {
-			for (int i = this.childForms.size() - 1; i >= 0; i--) {
-				close(this.childForms.get(i));
-			}
-			result = true;
-
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-
-		return result;
 	}
 
 	@Override

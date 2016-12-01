@@ -7,6 +7,7 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.*;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.ui.controls.DockbarManager;
+import com.supermap.desktop.ui.mdi.MdiGroup;
 
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
@@ -129,6 +130,7 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 	 *
 	 * @param listener
 	 */
+	@Override
 	public void addFormClosingListener(FormClosingListener listener) {
 		this.listenerList.add(FormClosingListener.class, listener);
 	}
@@ -138,6 +140,7 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 	 *
 	 * @param listener
 	 */
+	@Override
 	public void removeFormClosingListener(FormClosingListener listener) {
 		this.listenerList.remove(FormClosingListener.class, listener);
 	}
@@ -147,18 +150,22 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 	 *
 	 * @param listener
 	 */
+	@Override
 	public void addFormClosedListener(FormClosedListener listener) {
 		this.listenerList.add(FormClosedListener.class, listener);
 	}
 
+	@Override
 	public void removeFormClosedListener(FormClosedListener listener) {
 		this.listenerList.remove(FormClosedListener.class, listener);
 	}
 
+	@Override
 	public void addFormShownListener(FormShownListener listener) {
 		this.listenerList.add(FormShownListener.class, listener);
 	}
 
+	@Override
 	public void removeFormShownListener(FormShownListener listener) {
 		this.listenerList.remove(FormShownListener.class, listener);
 	}
@@ -224,12 +231,8 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 
 	@Override
 	public boolean isClosed() {
-		return true;
+		// 默认的 FormBaseChild 是已 JPanel 的形式添加到 FormManager 里的
+		// 关闭之后会从 MdiGroup 里移除，以后支持了 Floating 特性之后，再进行浮动的判断即可
+		return !(getParent() instanceof MdiGroup);
 	}
-
-//	@Override
-//	public boolean isClosed() {
-//		return !isVisible();
-//	}
-
 }

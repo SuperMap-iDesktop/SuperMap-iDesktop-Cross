@@ -22,9 +22,8 @@ import java.io.InputStreamReader;
 
 /**
  * 加载地图模板
- * 
- * @author XiaJT
  *
+ * @author XiaJT
  */
 public class CtrlActionLoadMapTemplate extends CtrlAction {
 
@@ -72,6 +71,8 @@ public class CtrlActionLoadMapTemplate extends CtrlAction {
 					String availableMapName = MapUtilities.getAvailableMapName(map.getName(), true);
 					formMap.setText(availableMapName);
 					formMap.getMapControl().getMap().setName(availableMapName);
+
+					// 用于触发 ActiveFormChanged，刷新图层属性、地图属性等
 					Application.getActiveApplication().getMainFrame().getFormManager().resetActiveForm();
 				}
 			}

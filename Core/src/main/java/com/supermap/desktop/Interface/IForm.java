@@ -102,6 +102,18 @@ public interface IForm {
 	 */
 	void formClosed(FormClosedEvent e);
 
+	void addFormClosingListener(FormClosingListener listener);
+
+	void removeFormClosingListener(FormClosingListener listener);
+
+	void addFormClosedListener(FormClosedListener listener);
+
+	void removeFormClosedListener(FormClosedListener listener);
+
+	void addFormShownListener(FormShownListener listener);
+
+	void removeFormShownListener(FormShownListener listener);
+
 	/**
 	 * 关闭时清理
 	 */
