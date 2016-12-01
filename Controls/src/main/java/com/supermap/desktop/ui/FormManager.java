@@ -169,7 +169,7 @@ public class FormManager extends MdiGroup implements IFormManager {
 
 			MdiPage page = getPage((FormBaseChild) childForm);
 			if (page == null) {
-				page = addPage((FormBaseChild) childForm);
+				add((IForm) childForm);
 			} else {
 				activePage(page);
 			}

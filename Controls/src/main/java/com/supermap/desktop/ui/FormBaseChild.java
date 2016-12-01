@@ -26,6 +26,7 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 	private Icon icon;
 
 	public FormBaseChild(String title, Icon icon, Component component) {
+		setLayout(new BorderLayout());
 		this.statusbar = createStatusbar();
 		this.title = title;
 		this.icon = icon;
@@ -208,7 +209,7 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 		if (formClass != null) {
 			smstatusbar = statusbarManager.getStatusbar(formClass.getName());
 			if (smstatusbar != null) {
-//				this.setSouthComponent(smstatusbar);
+				add(smstatusbar, BorderLayout.SOUTH);
 				smstatusbar.build(this);
 			}
 		}

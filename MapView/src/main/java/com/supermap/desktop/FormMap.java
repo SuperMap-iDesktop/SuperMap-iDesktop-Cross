@@ -505,7 +505,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		map.setWorkspace(Application.getActiveApplication().getWorkspace());
 		map.setName(title);
 
-		setLayout(new BorderLayout());
 		this.add(this.jScrollPaneChildWindow);
 
 		if (Application.getActiveApplication().getMainFrame() != null) {

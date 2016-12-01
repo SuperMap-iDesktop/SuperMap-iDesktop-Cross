@@ -125,9 +125,19 @@ public class MdiGroup extends JComponent {
 	 * @return
 	 */
 	public MdiPage addPage(Component component) {
+		return addPage(component, "MdiPage");
+	}
+
+	/**
+	 * 添加指定 Component，并返回对应的 MdiPage
+	 *
+	 * @param component
+	 * @return
+	 */
+	public MdiPage addPage(Component component, String title) {
 		MdiPage page = getPage(component);
 		if (page == null) {
-			page = MdiPage.createMdiPage(component);
+			page = MdiPage.createMdiPage(component, title);
 			addPage(page);
 		}
 		return page;
