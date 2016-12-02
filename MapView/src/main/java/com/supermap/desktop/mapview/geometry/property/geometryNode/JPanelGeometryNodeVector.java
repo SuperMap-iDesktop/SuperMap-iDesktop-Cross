@@ -187,32 +187,31 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 		initPanelGeometryProperty();
 		initPanelNodeInfo();
 		this.setLayout(new GridBagLayout());
-		this.add(panelGeometryProperty, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
-		this.add(panelNodeInfo, new GridBagConstraintsHelper(1, 0, 4, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(0, 5, 0, 0));
+		this.add(panelGeometryProperty, new GridBagConstraintsHelper(0, 0, 4, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 0));
+		this.add(panelNodeInfo, new GridBagConstraintsHelper(0, 1, 4, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(0, 5, 0, 0));
 
-		this.add(new JPanel(), new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0).setFill(GridBagConstraints.BOTH));
-		this.add(buttonAdd, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 5, 20, 0));
-		this.add(buttonInsert, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 5, 20, 0));
-		this.add(buttonDel, new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 5, 20, 10));
-		this.add(new JPanel(), new GridBagConstraintsHelper(4, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setFill(GridBagConstraints.BOTH));
+		this.add(buttonAdd, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 5, 20, 0));
+		this.add(buttonInsert, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 5, 20, 0));
+		this.add(buttonDel, new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 5, 20, 10));
+		this.add(new JPanel(), new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setFill(GridBagConstraints.BOTH));
 	}
 
 	private void initPanelGeometryProperty() {
 		panelGeometryProperty.setBorder(BorderFactory.createTitledBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_GeometryPropertyVertexInfoControl_GroupBoxGeometryInfo"))));
 		panelGeometryProperty.setLayout(new GridBagLayout());
-		panelGeometryProperty.add(labelGeometryType, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 10));
-		panelGeometryProperty.add(textFieldGeometryType, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 10));
+		panelGeometryProperty.add(labelGeometryType, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0));
+		panelGeometryProperty.add(textFieldGeometryType, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(10, 5, 0, 10));
 
-		panelGeometryProperty.add(labelSubGeometryCount, new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 10));
-		panelGeometryProperty.add(textFieldSubGeometryCount, new GridBagConstraintsHelper(0, 3, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 10));
+		panelGeometryProperty.add(labelSubGeometryCount, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		panelGeometryProperty.add(textFieldSubGeometryCount, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 0, 10));
 
-		panelGeometryProperty.add(labelCurrentSubGeometry, new GridBagConstraintsHelper(0, 4, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 10));
-		panelGeometryProperty.add(comboBoxCurrentSubGeometry, new GridBagConstraintsHelper(0, 5, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 10));
+		panelGeometryProperty.add(labelCurrentSubGeometry, new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		panelGeometryProperty.add(comboBoxCurrentSubGeometry, new GridBagConstraintsHelper(1, 2, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 0, 10));
 
-		panelGeometryProperty.add(labelNodeCount, new GridBagConstraintsHelper(0, 6, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 10));
-		panelGeometryProperty.add(textFieldNodeCount, new GridBagConstraintsHelper(0, 7, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 10, 0, 10));
+		panelGeometryProperty.add(labelNodeCount, new GridBagConstraintsHelper(0, 3, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		panelGeometryProperty.add(textFieldNodeCount, new GridBagConstraintsHelper(1, 3, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 0, 10));
 
-		panelGeometryProperty.add(new JPanel(), new GridBagConstraintsHelper(0, 8, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setInsets(5, 10, 10, 10));
+		panelGeometryProperty.add(new JPanel(), new GridBagConstraintsHelper(0, 8, 2, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setInsets(5, 10, 10, 10));
 
 	}
 

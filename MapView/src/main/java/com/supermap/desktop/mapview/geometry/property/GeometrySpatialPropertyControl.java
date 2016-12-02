@@ -30,6 +30,7 @@ import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.GeoTypeUtilities;
 import com.supermap.desktop.utilities.PrjCoordSysUtilities;
@@ -141,6 +142,7 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void initializeComponents() {
+		Dimension dimension = new Dimension(65, 23);
 		this.panelBasic = new JPanel();
 		this.panelBasic.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_BasicInfo")));
 		this.panelBounds = new JPanel();
@@ -148,13 +150,14 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 
 		GridBagLayout mainLayout = new GridBagLayout();
 		this.setLayout(mainLayout);
-		// @formatter:off
-		add(this.panelBasic, new GridBagConstraints(0, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 10, 5, 10), 0, 0));
-		add(this.panelBounds, new GridBagConstraints(1, 0, 1, 1, 1, 1, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(10, 0, 10, 10), 0, 0));
-		// @formatter:on
+		this.add(this.panelBasic, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 10, 0, 10));
+		this.add(this.panelBounds, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
+		this.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 1));
+
 
 		// 基本信息
 		this.labelGeometryType = new JLabel("GeometryType:");
+		labelGeometryType.setPreferredSize(dimension);
 		this.textFieldGeometryType = new JTextField();
 		this.textFieldGeometryType.setEditable(false);
 		this.textFieldGeometryType.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
@@ -192,6 +195,7 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 
 		// 外接矩形
 		this.labelLeft = new JLabel("Left:");
+		labelLeft.setPreferredSize(dimension);
 		this.textFieldLeft = new SMFormattedTextField();
 		this.textFieldLeft.setEditable(false);
 		this.textFieldLeft.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
