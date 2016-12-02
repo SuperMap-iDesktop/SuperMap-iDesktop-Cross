@@ -39,8 +39,6 @@ public interface DockablePropertySet {
 
     public static final String ACTIVE = "Dockable.ACTIVE";
 
-
-
     public String getDockableDesc();
 
     public Boolean isDockingEnabled();
@@ -64,10 +62,6 @@ public interface DockablePropertySet {
     public String getDockingId();
 
     public Boolean isActive();
-
-
-
-
 
     public void setDockableDesc(String desc);
 

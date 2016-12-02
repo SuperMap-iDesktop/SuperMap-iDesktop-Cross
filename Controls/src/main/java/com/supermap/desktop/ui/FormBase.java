@@ -149,28 +149,23 @@ public class FormBase extends JFrame implements IFormMain {
 			this.contextMenuManager.load(workEnvironment);
 			this.statusbarManager.load(workEnvironment);
 
-			DockbarManager dockbar = (DockbarManager) this.dockbarManager;
 			initLayout();
-			dockbar.load(workEnvironment);
+			this.dockbarManager.load(workEnvironment);
 			this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-			// UI 的操作需要在 EDT 里进行，否则可能会有各种 GUI 的问题
-//			SwingUtilities.invokeLater(new Runnable() {
-
-//				@Override
-//				public void run() {
-//			        FormBase.this.setVisible(true);
-
-//				}
-//			});
-
-			IDockbar outputDockbar = dockbar.getOutputFrame();
+			IDockbar outputDockbar = this.dockbarManager.getOutputFrame();
 			if (outputDockbar != null && outputDockbar.getInnerComponent() instanceof OutputFrame) {
 				Application.getActiveApplication().setOutput((OutputFrame) outputDockbar.getInnerComponent());
 			}
 			ToolbarUIUtilities.updataToolbarsState();
 
-			FormBase.this.setVisible(true);
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					FormBase.this.setVisible(true);
+				}
+			});
+
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {

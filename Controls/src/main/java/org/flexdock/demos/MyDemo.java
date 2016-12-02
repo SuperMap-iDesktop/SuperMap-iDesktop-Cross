@@ -3,6 +3,9 @@ package org.flexdock.demos;
 import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.docking.DockingManager;
+import org.flexdock.docking.defaults.DefaultDockingStrategy;
+import org.flexdock.docking.event.DockingEvent;
+import org.flexdock.docking.event.DockingListener;
 import org.flexdock.docking.state.PersistenceException;
 import org.flexdock.util.SwingUtility;
 import org.flexdock.view.View;
@@ -10,9 +13,13 @@ import org.flexdock.view.Viewport;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.IOException;
 
 /**
@@ -46,7 +53,7 @@ public class MyDemo extends JFrame {
 		this.getContentPane().setLayout(new BorderLayout());
 		JButton button = new JButton("可见控制");
 
-		this.getContentPane().add(button, BorderLayout.NORTH);
+//		this.getContentPane().add(button, BorderLayout.NORTH);
 		this.getContentPane().add(viewport, BorderLayout.CENTER);
 
 		JPanel panelMain = new JPanel();
@@ -81,9 +88,60 @@ public class MyDemo extends JFrame {
 //		viewport.dock((Dockable) view1, DockingConstants.SOUTH_REGION);
 //		viewport.dock(((Dockable) view2), DockingConstants.WEST_REGION);
 
-		mainView.dock((Dockable) view2, DockingConstants.WEST_REGION, 0.3f);
+		DefaultDockingStrategy.keepConstantPercentage(true);
+
+		mainView.dock((Dockable) view2, DockingConstants.WEST_REGION, 0.5f);
 		view2.dock((Dockable) view3, DockingConstants.SOUTH_REGION, 0.5f);
-		mainView.dock((Dockable) view1, DockingConstants.SOUTH_REGION, 0.3f);
+		mainView.dock((Dockable) view1, DockingConstants.SOUTH_REGION, 0.5f);
+
+		view2.addAncestorListener(new AncestorListener() {
+			@Override
+			public void ancestorAdded(AncestorEvent event) {
+				System.out.println("");
+			}
+
+			@Override
+			public void ancestorRemoved(AncestorEvent event) {
+
+			}
+
+			@Override
+			public void ancestorMoved(AncestorEvent event) {
+
+			}
+		});
+
+		view2.addDockingListener(new DockingListener() {
+			@Override
+			public void dockingComplete(DockingEvent evt) {
+				System.out.println("");
+			}
+
+			@Override
+			public void dockingCanceled(DockingEvent evt) {
+
+			}
+
+			@Override
+			public void dragStarted(DockingEvent evt) {
+				System.out.println("");
+			}
+
+			@Override
+			public void dropStarted(DockingEvent evt) {
+
+			}
+
+			@Override
+			public void undockingComplete(DockingEvent evt) {
+
+			}
+
+			@Override
+			public void undockingStarted(DockingEvent evt) {
+
+			}
+		});
 
 //		view.dock((Dockable) view2, DockingConstants.CENTER_REGION);
 //		view.dock((Dockable) view3, DockingConstants.CENTER_REGION);

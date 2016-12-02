@@ -13,6 +13,7 @@ import com.supermap.desktop.ui.XMLDockbars;
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.docking.DockingManager;
 import org.flexdock.docking.DockingPort;
+import org.flexdock.docking.defaults.DefaultDockingStrategy;
 import org.flexdock.view.View;
 import org.flexdock.view.Viewport;
 
@@ -38,6 +39,7 @@ public class DockbarManager implements IDockbarManager {
 	private Dockbar outputFrame = null;
 
 	public DockbarManager(JComponent mainContent) {
+		DefaultDockingStrategy.keepConstantPercentage(true);
 		this.dockbars = new ArrayList<Dockbar>();
 		this.dockPort = new Viewport();
 		this.mainView = new View("mainView", null, null);
@@ -133,9 +135,9 @@ public class DockbarManager implements IDockbarManager {
 
 
 		this.dockPort.dock(this.mainView);
-		this.mainView.dock(this.workspaceComponentManager, DockingConstants.WEST_REGION, 0.3f);
+		this.mainView.dock(this.workspaceComponentManager, DockingConstants.WEST_REGION, 0.2f);
 		this.workspaceComponentManager.dock(this.layersComponentManager, DockingConstants.SOUTH_REGION, 0.5f);
-		this.mainView.dock(this.outputFrame, DockingConstants.SOUTH_REGION, 0.3f);
+		this.mainView.dock(this.outputFrame, DockingConstants.SOUTH_REGION, 0.7f);
 //		for (int i = 0; i < this.dockbars.size(); i++) {
 //			if (i == 0) {
 //				this.mainView.dock(this.dockbars.get(i), DockingConstants.WEST_REGION, 0.3f);

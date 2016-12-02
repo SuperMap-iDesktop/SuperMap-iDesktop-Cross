@@ -45,7 +45,6 @@ public class MainFrame extends FormBase implements WindowListener {
 		images.add(toolkit.createImage(path + "iDesktop_Cross_128.png"));
 		images.add(toolkit.createImage(path + "iDesktop_Cross_256.png"));
 		images.add(toolkit.createImage(path + "iDesktop Cross.ico"));
-//		this.setIconImage(new ImageIcon(path + "iDesktop Cross.ico").getImage());//不支持设置ico文件为图标
 		this.setIconImages(images);
 		this.setVisible(true);
 		this.addWindowListener(this);
