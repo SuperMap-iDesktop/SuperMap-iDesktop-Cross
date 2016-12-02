@@ -5,12 +5,10 @@ package com.supermap.desktop.geometryoperation.editor;
  */
 
 import com.supermap.data.CursorType;
-import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.EditType;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoRegion;
-import com.supermap.data.Geometrist;
 import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
 import com.supermap.data.Point2D;
@@ -22,22 +20,24 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.geometryoperation.EditControllerAdapter;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.IEditController;
+import com.supermap.desktop.geometryoperation.IEditModel;
 import com.supermap.desktop.geometryoperation.NullEditController;
+import com.supermap.desktop.geometryoperation.control.MapControlTip;
+import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilities.ListUtilities;
-import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.GeometryEvent;
 import com.supermap.ui.GeometrySelectedEvent;
 
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConcertEditor extends AbstractEditor {
-	boolean isCanEdit = false;
-	Geometry oldGeometry = null;
-	Point2D changePoint2D = new Point2D();
-	Point2D moveAfterPoint2D = new Point2D();
 
 	private IEditController concertEditController = new EditControllerAdapter() {
 		@Override
@@ -53,12 +53,20 @@ public class ConcertEditor extends AbstractEditor {
 
 		@Override
 		public void geometrySelected(EditEnvironment environment, GeometrySelectedEvent arg0) {
-			isCanEdit = isCanConcertEdit(environment);
+			if (!(environment.getEditModel() instanceof ConcertEditModel)) {
+				return;
+			}
+			ConcertEditModel editModel = (ConcertEditModel) environment.getEditModel();
+			editModel.isCanEdit = isCanConcertEdit(environment);
 		}
 
 		@Override
 		public void geometryModified(EditEnvironment environment, GeometryEvent event) {
-			if (isCanEdit) {
+			if (!(environment.getEditModel() instanceof ConcertEditModel)) {
+				return;
+			}
+			ConcertEditModel editModel = (ConcertEditModel) environment.getEditModel();
+			if (editModel.isCanEdit) {
 				runConcertEdit(environment);
 			}
 		}
@@ -67,7 +75,15 @@ public class ConcertEditor extends AbstractEditor {
 
 	@Override
 	public void activate(EditEnvironment environment) {
-		isCanEdit = isCanConcertEdit(environment);
+		ConcertEditModel editModel;
+		if (environment.getEditModel() instanceof ConcertEditModel) {
+			editModel = (ConcertEditModel) environment.getEditModel();
+		} else {
+			editModel = new ConcertEditModel();
+			environment.setEditModel(editModel);
+		}
+		editModel.isCanEdit = isCanConcertEdit(environment);
+		editModel.oldMapControlAction = environment.getMapControl().getAction();
 		environment.getMapControl().setAction(Action.VERTEXEDIT);
 
 		if (environment.getMapControl().getAction() != Action.VERTEXEDIT) {
@@ -76,26 +92,37 @@ public class ConcertEditor extends AbstractEditor {
 		} else {
 			environment.setEditController(this.concertEditController);
 			environment.getMap().refresh();
+			editModel.tip.bind(environment.getMapControl());
 		}
 	}
 
 	@Override
 	public void deactivate(EditEnvironment environment) {
-		environment.getMapControl().setAction(Action.SELECT2);
-		environment.setEditController(NullEditController.instance());
+		if (environment.getEditModel() instanceof ConcertEditModel) {
+			ConcertEditModel editModel = (ConcertEditModel) environment.getEditModel();
+			try {
+				environment.getMapControl().setAction(editModel.oldMapControlAction);
+				clear(environment);
+			} finally {
+				editModel.tip.unbind();
+				environment.setEditController(NullEditController.instance());
+				environment.setEditModel(null);
+			}
+		}
 	}
 
 	@Override
 	public boolean enble(EditEnvironment environment) {
 		return environment.getEditProperties().getSelectedGeometryCount() == 1
 				&& environment.getEditProperties().getEditableSelectedGeometryCount() == 1
-				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOLINE,
-				GeometryType.GEOREGION);
+				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(),
+				GeometryType.GEOLINE, GeometryType.GEOREGION);
 	}
 
 	@Override
 	public boolean check(EditEnvironment environment) {
-		return environment.getEditor() instanceof ConcertEditor;
+		return environment.getMapControl().getAction() == Action.VERTEXEDIT
+				&& environment.getEditor() instanceof ConcertEditor;
 	}
 
 	/**
@@ -103,70 +130,50 @@ public class ConcertEditor extends AbstractEditor {
 	 * 否则，当作节点编辑处理
 	 */
 	private boolean isCanConcertEdit(EditEnvironment environment) {
+		ConcertEditModel editModel = (ConcertEditModel) environment.getEditModel();
 		List<Layer> layers = environment.getEditProperties().getSelectedLayers();
 		Recordset selectRecordset = null;
-		Recordset sourceRecordset = null;
 		boolean result = false;
 
 		if (layers.size() == 0) {
 			return false;
 		}
+
 		for (Layer layer : layers) {
 			selectRecordset = layer.getSelection().toRecordset();
-			sourceRecordset = ((DatasetVector) layer.getDataset()).getRecordset(false, CursorType.DYNAMIC);
-		}
 
-		/*Geometry selectGeometry = selectRecordset.getGeometry();
-		int selectID = selectGeometry.getID();
-		oldGeometry = selectGeometry;
-		sourceRecordset.moveFirst();
+			if (!editModel.hasCommonNodeGeometryIDs.containsKey(layer)) {
+				editModel.hasCommonNodeGeometryIDs.put(layer, new ArrayList<Integer>());
+			}
 
-		try {
-			for (int i = 0; i < sourceRecordset.getRecordCount(); ++i) {
-				Geometry tempGeometry = sourceRecordset.getGeometry();
-				int sourceID = tempGeometry.getID();
-				if (sourceID == selectID) {
-					sourceRecordset.moveNext();
-					continue;
+			if (selectRecordset.getRecordCount() == 1) {
+				editModel.oldGeometry = selectRecordset.getGeometry();
+			}
+			Recordset resultRecordset = queryGeometryTouchSelectedGeometry(selectRecordset, selectRecordset.getDataset());
+			if (resultRecordset.getRecordCount() >= 1) {
+				result = true;
+				resultRecordset.moveFirst();
+				for (int i = 0; i < resultRecordset.getRecordCount(); ++i) {
+					editModel.hasCommonNodeGeometryIDs.get(layer).add(resultRecordset.getID());
+					resultRecordset.moveNext();
 				}
-				boolean resultHasCommonPoint = Geometrist.hasCommonPoint(selectGeometry, tempGeometry);
-				if (result == false && resultHasCommonPoint == true) {
-					result = true;
-					break;
-				}
-				sourceRecordset.moveNext();
 			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex.toString());
-		} finally {
-			if (selectRecordset != null) {
-				selectRecordset.close();
-				selectRecordset.dispose();
-			}
-			if (sourceRecordset != null) {
-				sourceRecordset.close();
-				sourceRecordset.dispose();
-			}
-		}*/
-
-		Recordset resultRecordset=queryGeometryTouchSelectedGeometry(selectRecordset,selectRecordset.getDataset());
-		if (resultRecordset!=null)
-		{
-			result=true;
 		}
 		return result;
 	}
+	/**
+	 * 定义空间查询
+	 */
+	private Recordset queryGeometryTouchSelectedGeometry(Recordset selectedRecordset, DatasetVector nowDatasetVector) {
+		Recordset resultRecordset = null;
 
-	private Recordset queryGeometryTouchSelectedGeometry(Recordset selectedRecordset,DatasetVector nowDatasetVector){
-		Recordset resultRecordset=null;
-
-		QueryParameter parameter=new QueryParameter();
-		//parameter.setAttributeFilter();
-		parameter.setCursorType(CursorType.STATIC);
+		QueryParameter parameter = new QueryParameter();
+		parameter.setCursorType(CursorType.DYNAMIC);
 		parameter.setSpatialQueryMode(SpatialQueryMode.TOUCH);
+		parameter.setHasGeometry(true);
 		parameter.setSpatialQueryObject(selectedRecordset);
 
-		resultRecordset=nowDatasetVector.query(parameter);
+		resultRecordset = nowDatasetVector.query(parameter);
 		return resultRecordset;
 	}
 
@@ -174,61 +181,61 @@ public class ConcertEditor extends AbstractEditor {
 	 * 进行协调编辑
 	 */
 	private void runConcertEdit(EditEnvironment environment) {
+		ConcertEditModel editModel = (ConcertEditModel) environment.getEditModel();
 		environment.getMapControl().getEditHistory().batchBegin();
-		List<Layer> layers = MapUtilities.getLayers(environment.getMap());
-		Recordset selectRecordset = null;
+		Recordset recordset = null;
 		Recordset sourceRecordset = null;
-
-		for (Layer layer : layers) {
-			if (layer.isEditable() && layer.getSelection().getCount() == 1
-					&& (layer.getDataset().getType() == DatasetType.LINE
-					|| layer.getDataset().getType() == DatasetType.REGION)) {
-
-				selectRecordset = layer.getSelection().toRecordset();
-				sourceRecordset = ((DatasetVector) layer.getDataset()).getRecordset(false, CursorType.DYNAMIC);
-				Geometry selectGeometry = selectRecordset.getGeometry();
-				boolean moveOrDelete = isMoveOrDelete(selectGeometry);
-				int selectID = selectGeometry.getID();
-
-				sourceRecordset.moveFirst();
-
-				while (!sourceRecordset.isEOF()) {
-					Geometry tempGeometry = sourceRecordset.getGeometry();
-					int sourceID = tempGeometry.getID();
-					if (sourceID != selectID) {
-						boolean resultHasCommonPoint = Geometrist.hasCommonPoint(this.oldGeometry, tempGeometry);
-						if (resultHasCommonPoint) {
-							environment.getMapControl().getEditHistory().add(EditType.MODIFY, sourceRecordset, true);
-							Geometry newGeometry = null;
-							if (tempGeometry.getType() == GeometryType.GEOLINE) {
-								newGeometry = lineNodeEdit(tempGeometry, moveOrDelete);
-							} else if (tempGeometry.getType() == GeometryType.GEOREGION) {
-								newGeometry = regionNodeEdit(tempGeometry, moveOrDelete);
-							}
-							sourceRecordset.edit();
-							sourceRecordset.setGeometry(newGeometry);
-							sourceRecordset.update();
-							newGeometry.dispose();
-						}
-					}
-					sourceRecordset.moveNext();
+		try {
+			for (Layer layer : editModel.hasCommonNodeGeometryIDs.keySet()) {
+				recordset = layer.getSelection().toRecordset();
+				Geometry selectedGeometry = recordset.getGeometry();
+				if (selectedGeometry == null) {// 不是很好的处理，
+					continue;
 				}
+
+				boolean moveOrDelete = isMoveOrDelete(selectedGeometry, environment);
+				sourceRecordset = ((DatasetVector) layer.getDataset()).getRecordset(false, CursorType.DYNAMIC);
+
+				for (int i = 0; i < editModel.hasCommonNodeGeometryIDs.get(layer).size(); ++i) {
+					Integer id = editModel.hasCommonNodeGeometryIDs.get(layer).get(i);
+					sourceRecordset.seekID(id);
+					Geometry tempGeometry = sourceRecordset.getGeometry();
+					if (tempGeometry==null){
+						continue;
+					}
+					environment.getMapControl().getEditHistory().add(EditType.MODIFY, sourceRecordset, true);
+					Geometry newGeometry = nodeEdit(tempGeometry,moveOrDelete,environment);
+					newGeometry.setStyle(tempGeometry.getStyle());
+					sourceRecordset.edit();
+					sourceRecordset.setGeometry(newGeometry);
+					sourceRecordset.update();
+					newGeometry.dispose();
+					tempGeometry.dispose();
+				}
+				selectedGeometry.dispose();
 			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex.toString());
+		} finally {
+			if (sourceRecordset != null) {
+				sourceRecordset.close();
+				sourceRecordset.dispose();
+			}
+			if (recordset != null) {
+				recordset.close();
+				recordset.dispose();
+			}
+			environment.getMapControl().getEditHistory().batchEnd();
+			environment.getMap().refresh();
+			editModel.isCanEdit = isCanConcertEdit(environment);
 		}
-		if (sourceRecordset != null) {
-			sourceRecordset.close();
-			sourceRecordset.dispose();
-		}
-		environment.getMapControl().getEditHistory().batchEnd();
-		environment.getMap().refresh();
-		environment.getMapControl().revalidate();
-		isCanEdit = isCanConcertEdit(environment);
 	}
 
 	/**
 	 * 获取当前移动的节点是那个节点并保留没移动前的节点和移动后新的节点
 	 */
-	private Point2D moveNode(Point2Ds oldPoints, Point2Ds selectPoints) {
+	private Point2D moveNode(Point2Ds oldPoints, Point2Ds selectPoints, EditEnvironment environment) {
+		ConcertEditModel editModel = (ConcertEditModel) environment.getEditModel();
 		Point2D movePoint2D = new Point2D();
 		try {
 			for (int i = 0; i < oldPoints.getCount(); ++i) {
@@ -236,7 +243,7 @@ public class ConcertEditor extends AbstractEditor {
 				Point2D selectPoint = selectPoints.getItem(i);
 				if (!oldPoint.equals(selectPoint)) {
 					movePoint2D = oldPoint;
-					this.moveAfterPoint2D = selectPoint;
+					editModel.moveAfterPoint2D = selectPoint;
 				}
 			}
 		} catch (Exception ex) {
@@ -268,32 +275,22 @@ public class ConcertEditor extends AbstractEditor {
 		return deletePoint2D;
 	}
 
-	private Point2Ds RegionPoint2Ds(Geometry geometry) {
-		GeoRegion tempGeoRegion = (GeoRegion) geometry;
+	private Point2Ds geometryToPoint2Ds(Geometry geometry) {
 		Point2Ds resultPoint2Ds = new Point2Ds();
 		try {
-			for (int i = 0; i < tempGeoRegion.getPartCount(); ++i) {
-				Point2Ds tempPoint2Ds = tempGeoRegion.getPart(i);
-				for (int j = 0; j < tempPoint2Ds.getCount(); ++j) {
-					Point2D tempPoint2D = tempPoint2Ds.getItem(j);
-					resultPoint2Ds.add(tempPoint2D);
+			if (geometry.getType() == GeometryType.GEOLINE) {
+				for (int i = 0; i < ((GeoLine)geometry).getPartCount(); ++i) {
+					Point2Ds tempPoint2Ds = ((GeoLine)geometry).getPart(i);
+					for (int j = 0; j < tempPoint2Ds.getCount(); ++j) {
+						resultPoint2Ds.add(tempPoint2Ds.getItem(j));
+					}
 				}
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex.toString());
-		}
-		return resultPoint2Ds;
-	}
-
-	private Point2Ds LinePoint2Ds(Geometry geometry) {
-		GeoLine tempGeoLine = (GeoLine) geometry;
-		Point2Ds resultPoint2Ds = new Point2Ds();
-		try {
-			for (int i = 0; i < tempGeoLine.getPartCount(); ++i) {
-				Point2Ds tempPoint2Ds = tempGeoLine.getPart(i);
-				for (int j = 0; j < tempPoint2Ds.getCount(); ++j) {
-					Point2D tempPoint2D = tempPoint2Ds.getItem(j);
-					resultPoint2Ds.add(tempPoint2D);
+			} else if (geometry.getType() == GeometryType.GEOREGION) {
+				for (int i = 0; i < ((GeoRegion)geometry).getPartCount(); ++i) {
+					Point2Ds tempPoint2Ds = ((GeoRegion)geometry).getPart(i);
+					for (int j = 0; j < tempPoint2Ds.getCount(); ++j) {
+						resultPoint2Ds.add(tempPoint2Ds.getItem(j));
+					}
 				}
 			}
 		} catch (Exception ex) {
@@ -305,89 +302,91 @@ public class ConcertEditor extends AbstractEditor {
 	/**
 	 * 判断当前进行的是移动节点还是删除节点操作，
 	 */
-	private boolean isMoveOrDelete(Geometry nowSelectGeometry) {
+	private boolean isMoveOrDelete(Geometry nowSelectGeometry, EditEnvironment environment) {
+		ConcertEditModel editModel = (ConcertEditModel) environment.getEditModel();
 		boolean result = false;
 		Point2Ds selectGeoPoints = new Point2Ds();
 		Point2Ds oldGeoPoints = new Point2Ds();
 
-		if (this.oldGeometry.getType() == GeometryType.GEOLINE) {
-			selectGeoPoints = LinePoint2Ds(nowSelectGeometry);
-			oldGeoPoints = LinePoint2Ds(this.oldGeometry);
-		} else if (this.oldGeometry.getType() == GeometryType.GEOREGION) {
-			selectGeoPoints = RegionPoint2Ds(nowSelectGeometry);
-			oldGeoPoints = RegionPoint2Ds(this.oldGeometry);
-		}
+		selectGeoPoints = geometryToPoint2Ds(nowSelectGeometry);
+		oldGeoPoints = geometryToPoint2Ds(editModel.oldGeometry);
 
 		if (selectGeoPoints.getCount() == oldGeoPoints.getCount()) {
-			this.changePoint2D = moveNode(oldGeoPoints, selectGeoPoints);
+			editModel.changePoint2D = moveNode(oldGeoPoints, selectGeoPoints, environment);
 		} else {
-			this.changePoint2D = deleteNode(oldGeoPoints, selectGeoPoints);
+			editModel.changePoint2D = deleteNode(oldGeoPoints, selectGeoPoints);
 			result = true;
 		}
 		return result;
 	}
 
-	private Geometry regionNodeEdit(Geometry inputGeometry, boolean moveOrDelete) {
-		Point2Ds inputGeoPoint2Ds = RegionPoint2Ds(inputGeometry);
-
+	private Geometry nodeEdit(Geometry inputGeometry, boolean moveOrDelete, EditEnvironment environment) {
+		ConcertEditModel editModel = (ConcertEditModel) environment.getEditModel();
+		Point2Ds inputGeoPoint2Ds = geometryToPoint2Ds(inputGeometry);
 		try {
 			int deleteID = -1;
 			for (int i = 0; i < inputGeoPoint2Ds.getCount(); ++i) {
 				Point2D tempPoint2D = inputGeoPoint2Ds.getItem(i);
-				if (tempPoint2D.equals(this.changePoint2D)) {
+				if (tempPoint2D.equals(editModel.changePoint2D)) {
 					if (moveOrDelete) {
 						deleteID = i;
 						break;
 					} else {
-						inputGeoPoint2Ds.setItem(i, this.moveAfterPoint2D);
+						inputGeoPoint2Ds.setItem(i, editModel.moveAfterPoint2D);
 						break;
 					}
 				}
 			}
-
 			if (deleteID != -1) {
 				inputGeoPoint2Ds.remove(deleteID);
+			}
+			if (inputGeometry.getType()==GeometryType.GEOREGION) {
+				((GeoRegion) inputGeometry).setPart(0, inputGeoPoint2Ds);
+			}else if (inputGeometry.getType()==GeometryType.GEOLINE ){
+				if (inputGeoPoint2Ds.getCount() >= 2) {//  当线对象删除节点后，如果只剩一个点会抛异常，进行控制
+					((GeoLine) inputGeometry).setPart(0, inputGeoPoint2Ds);
+				}
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex.toString());
 		}
-
-		GeoRegion result = (GeoRegion) inputGeometry;
-		result.setPart(0, inputGeoPoint2Ds);
-		Geometry newGeometry = (Geometry) result;
-
-		return newGeometry;
+		return inputGeometry;
 	}
 
-	private Geometry lineNodeEdit(Geometry inputGeometry, boolean moveOrDelete) {
-		Point2Ds inputGeoPoint2Ds = LinePoint2Ds(inputGeometry);
+	private void clear(EditEnvironment environment) {
+		if (!(environment.getEditModel() instanceof ConcertEditModel)) {
+			return;
+		}
+		ConcertEditModel editModel = (ConcertEditModel) environment.getEditModel();
+		environment.getMapControl().setAction(Action.SELECT2);
+		editModel.clear();
+	}
 
-		try {
-			int deleteID = -1;
-			for (int i = 0; i < inputGeoPoint2Ds.getCount(); ++i) {
-				Point2D tempPoint2D = inputGeoPoint2Ds.getItem(i);
-				if (tempPoint2D.equals(this.changePoint2D)) {
-					if (moveOrDelete) {
-						deleteID = i;
-						break;
-					} else {
-						inputGeoPoint2Ds.setItem(i, this.moveAfterPoint2D);
-						break;
-					}
-				}
-			}
+	private class ConcertEditModel implements IEditModel {
+		public Action oldMapControlAction = Action.SELECT2;
+		public MapControlTip tip = new MapControlTip();
+		private JLabel tipLabel = new JLabel(MapEditorProperties.getString("String_GeometryOperation_ConcertEdit"));
+		public boolean isCanEdit = false;//true表示当前选中的对象可以进行协调编辑，false则相反
+		public Geometry oldGeometry = null;//选中的对象协调编辑前的状态
+		public Point2D changePoint2D = new Point2D();//协调编辑改变前的点
+		public Point2D moveAfterPoint2D = new Point2D();//协调编辑改变后的点
+		public Map<Layer, List<Integer>> hasCommonNodeGeometryIDs = new HashMap<>();
 
-			if (deleteID != -1) {
-				inputGeoPoint2Ds.remove(deleteID);
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex.toString());
+		public ConcertEditModel() {
+			this.tip.addLabel(this.tipLabel);
 		}
 
-		GeoLine result = (GeoLine) inputGeometry;
-		result.setPart(0, inputGeoPoint2Ds);
-		Geometry newGeometry = (Geometry) result;
+		public void setTipMessage(String tipMessage) {
+			this.tipLabel.setText(tipMessage);
+			this.tipLabel.repaint();
+		}
 
-		return newGeometry;
+		public void clear() {
+			this.oldMapControlAction = Action.SELECT2;
+			this.isCanEdit = false;
+			this.oldGeometry = null;
+			this.hasCommonNodeGeometryIDs.clear();
+			this.tipLabel.setText(MapEditorProperties.getString("String_GeometryOperation_ConcertEdit"));
+		}
 	}
 }

@@ -1,7 +1,7 @@
 package com.supermap.desktop.geometryoperation.editor;
 
 /**
- * @author Cooler——lixiaoyao
+ * @author lixiaoyao
  */
 
 import com.supermap.data.GeoLine;
@@ -39,7 +39,6 @@ public class GeometrySplitByDrawingLineEditor extends GeometryDrawingSplitEditor
 		GeoLine splitLine = (GeoLine) splitGeometry;
 		GeoLine resultGeolines[] = null;
 		resultGeolines = Geometrist.splitLine(sourceLine, splitLine, tolerance);
-
 		return resultGeolines;
 	}
 }
