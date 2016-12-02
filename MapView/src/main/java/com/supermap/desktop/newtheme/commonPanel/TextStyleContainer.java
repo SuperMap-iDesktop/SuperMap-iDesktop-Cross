@@ -226,7 +226,6 @@ public class TextStyleContainer extends ThemeChangePanel {
 
         @Override
         public void mapDrawn(MapDrawnEvent mapDrawnEvent) {
-            // 由于控件问题暂不支持缩放地图修改字高，字号显示大小变化
             changeFontSizeWithMapObject();
         }
     }
@@ -241,17 +240,18 @@ public class TextStyleContainer extends ThemeChangePanel {
             if (!((ThemeLabel) theme).getUniformStyle().isSizeFixed()) {
                 // 非固定时，地图中显示的字体在屏幕中显示的大小肯定发生了变化，所以需要重新计算现在的字体大小
                 // 字体信息从现在的TextStyle属性中获取，经过计算后显示其字号大小
-                Double size = FontUtilities.mapHeightToFontSize(fontHeight, map, false) * 10;
+                Double oldSize = FontUtilities.mapHeightToFontSize(fontHeight, map, false) * 10;
+                Double size = Math.round(oldSize * 2) / 2.0;
                 DecimalFormat decimalFormat = new DecimalFormat("0.0");
-                String numeric = "0.00";
-                if (Double.compare(size, size.intValue()) > 0) {
+                if (size - 0.0 > 0) {
                     ((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTSIZE)).setText(decimalFormat.format(size));
                 } else {
-                    decimalFormat = new DecimalFormat("0");
-                    ((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTSIZE)).setText(decimalFormat.format(size));
+                    ((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTSIZE)).setText(decimalFormat.format(0));
                 }
-                if (((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT)).getFocusTraversalKeysEnabled()) {
-                    ((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT)).setText(new DecimalFormat(numeric).format(size / 0.283));
+                if ((textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT)).getFocusTraversalKeysEnabled()) {
+                    double defaultHeight = size / 0.283;
+                    double height = Math.round(defaultHeight * 2) / 2.0;
+                    ((JTextField) textStylePanel.getComponentsMap().get(TextStyleType.FONTHEIGHT)).setText(decimalFormat.format(height));
                 }
             } else {
                 // 字体是固定大小时，字体显示的大小不发生变化，不需要更新任何控件内容

@@ -357,7 +357,8 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             initDefaultLayout();
             this.add(this.checkBoxFieldIndex, new GridBagConstraintsHelper(0, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
             this.add(this.checkBoxSpatialIndex, new GridBagConstraintsHelper(4, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-            this.checkBoxFieldIndex.setEnabled(isVisible(panelImports));
+            this.checkBoxFieldIndex.setEnabled(isVisible(true));
+            this.checkBoxSpatialIndex.setEnabled(isVisible(false));
         } else if (layeroutType == PackageInfo.GRID_TYPE) {
             initDefaultLayout();
             this.remove(labelDatasetName);
@@ -380,13 +381,17 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
         initCheckboxState();
     }
 
-    private boolean isVisible(ArrayList<PanelImport> panelImports) {
+    private boolean isVisible(boolean isFieldType) {
         boolean isVisible = true;
         for (PanelImport tempImport : panelImports) {
-            if (!(tempImport.getResultset()).getCheckBoxFieldIndex().isVisible()) {
+            if (isFieldType && !(tempImport.getResultset()).getCheckBoxFieldIndex().isVisible()) {
+                isVisible = false;
+                break;
+            } else if (!isFieldType && !(tempImport.getResultset()).getCheckBoxSpatialIndex().isVisible()) {
                 isVisible = false;
                 break;
             }
+
         }
         return isVisible;
     }
