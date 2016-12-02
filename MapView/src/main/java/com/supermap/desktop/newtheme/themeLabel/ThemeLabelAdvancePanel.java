@@ -31,6 +31,8 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -55,7 +57,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 	// panelTextFontSet
 	private JLabel labelOverLength = new JLabel();
 	private JComboBox<String> comboBoxOverLength = new JComboBox<String>();// 超长处理方式
-    private JLabel labelFontCount = new JLabel();
+	private JLabel labelFontCount = new JLabel();
     private JSpinner spinnerFontCount = new JSpinner();// 单行文本字数
     private JLabel labelAlignmentStyle = new JLabel();
     private JComboBox<String> comboBoxAlignmentStyle = new JComboBox<String>();// 文本对齐方式
@@ -97,6 +99,21 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
     private Layer themeLabelLayer;
     private String layerName;
     private JPanel panelRotateLabel;
+	private KeyAdapter keyAdapter = new KeyAdapter() {
+		@Override
+		public void keyPressed(KeyEvent e) {
+			JTextField textField = (JTextField) e.getSource();
+			if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+				setFormattedValue(textField);
+			}
+		}
+	};
+	private FocusAdapter focusAdapter = new FocusAdapter() {
+		@Override
+		public void focusLost(FocusEvent e) {
+			setFormattedValue((JTextField) e.getSource());
+		}
+	};
 
     public ThemeLabelAdvancePanel(Layer themelabelLayer) {
         this.themeLabelLayer = themelabelLayer;
@@ -202,6 +219,14 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
         this.textFieldRepeatInterval.addKeyListener(this.localKeyListener);
         this.textFieldVertical.addKeyListener(this.localKeyListener);
         this.textFieldMaxFontHeight.addKeyListener(this.localKeyListener);
+
+
+	    textFieldMinFontHeight.addKeyListener(keyAdapter);
+	    textFieldMaxFontHeight.addKeyListener(keyAdapter);
+
+	    textFieldMinFontHeight.addFocusListener(focusAdapter);
+	    textFieldMaxFontHeight.addFocusListener(focusAdapter);
+
         // this.textFieldMaxFontWidth.addKeyListener(this.localKeyListener);
         this.textFieldMinFontHeight.addKeyListener(this.localKeyListener);
         // this.textFieldMinFontWidth.addKeyListener(this.localKeyListener);
@@ -211,9 +236,16 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
         this.comboBoxAlignmentStyle.addItemListener(this.itemListener);
     }
 
-    /**
-     * 注销事件
-     */
+	private void setFormattedValue(JTextField textField) {
+		Double aDouble = DoubleUtilities.stringToValue(textField.getText());
+		if (aDouble != null) {
+			textField.setText(DoubleUtilities.getFormatString(aDouble));
+		}
+	}
+
+	/**
+	 * 注销事件
+	 */
     public void unregistActionListener() {
         this.comboBoxLineDirection.removeItemListener(this.itemListener);
         this.comboBoxOverLength.removeItemListener(this.itemListener);
@@ -308,31 +340,37 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
         //@formatter:on
     }
 
-    /**
-     * 初始化最大文本高度
-     */
-    private void initTextFieldMaxFontHeight() {
-        if (themeLabel.getMaxTextHeight() > 0) {
-            this.textFieldMaxFontHeight.setText(String.valueOf(themeLabel.getMaxTextHeight()));
-        } else {
+	/**
+	 * 初始化最大文本高度
+	 */
+	private boolean lock = false;
+
+	private void initTextFieldMaxFontHeight() {
+		if (themeLabel.getMaxTextHeight() > 0) {
+	        this.textFieldMaxFontHeight.setText(DoubleUtilities.getFormatString(themeLabel.getMaxTextHeight()));
+		} else {
             this.textFieldMaxFontHeight.setText("0");
         }
         textFieldMaxFontHeight.setSmTextFieldLegit(new ISmTextFieldLegit() {
             @Override
             public boolean isTextFieldValueLegit(String textFieldValue) {
-                if (!StringUtilities.isNullOrEmpty(textFieldValue)) {
-                    String minFontHeight = textFieldMinFontHeight.getText();
-                    if (StringUtilities.isNumber(minFontHeight) && StringUtilities.isNumber(textFieldValue)) {
-                        if (Integer.parseInt(minFontHeight) > Integer.parseInt(textFieldValue) && Integer.parseInt(textFieldValue) != 0 && Integer.parseInt(minFontHeight) != 0) {
-                            return false;
-                        } else {
-                            if (StringUtilities.isNumber(textFieldValue) && textFieldValue.length() <= 8) {
-                                int maxTextHeight = Integer.parseInt(textFieldValue);
-                                themeLabel.setMaxTextHeight(maxTextHeight);
-                            }
-                            return true;
-                        }
-                    }
+	            textFieldMinFontHeight.setForeground(Color.BLACK);
+	            if (!StringUtilities.isNullOrEmpty(textFieldValue)) {
+	                String minFontHeight = textFieldMinFontHeight.getText();
+	                Double textFieldDouble = DoubleUtilities.stringToValue(textFieldValue);
+	                Double minFontDouble = DoubleUtilities.stringToValue(minFontHeight);
+	                if (textFieldDouble != null && minFontDouble != null) {
+		                int textFieldIntValue = textFieldDouble.intValue();
+		                int minFontHeightValue = minFontDouble.intValue();
+		                if (minFontHeightValue > textFieldIntValue && textFieldIntValue != 0 && minFontHeightValue != 0) {
+			                return false;
+		                } else {
+			                if (String.valueOf(textFieldIntValue).length() <= 8) {
+				                themeLabel.setMaxTextHeight(textFieldIntValue);
+			                }
+			                return true;
+		                }
+	                }
                 } else {
                     themeLabel.setMaxTextHeight(0);
                 }
@@ -354,26 +392,31 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
      */
     private void initTextFieldMinFontHeight() {
         if (themeLabel.getMaxTextHeight() > 0) {
-            this.textFieldMinFontHeight.setText(String.valueOf(themeLabel.getMinTextHeight()));
+	        this.textFieldMinFontHeight.setText(DoubleUtilities.getFormatString(themeLabel.getMinTextHeight()));
         } else {
             this.textFieldMinFontHeight.setText("0");
         }
         textFieldMinFontHeight.setSmTextFieldLegit(new ISmTextFieldLegit() {
             @Override
             public boolean isTextFieldValueLegit(String textFieldValue) {
-                if (!StringUtilities.isNullOrEmpty(textFieldValue)) {
+	            textFieldMaxFontHeight.setForeground(Color.BLACK);
+	            if (!StringUtilities.isNullOrEmpty(textFieldValue)) {
                     String maxFontHeight = textFieldMaxFontHeight.getText();
-                    if (StringUtilities.isNumber(maxFontHeight) && StringUtilities.isNumber(textFieldValue)) {
-                        if (Integer.parseInt(textFieldValue) > Integer.parseInt(maxFontHeight) && Integer.parseInt(textFieldValue) != 0 && Integer.parseInt(maxFontHeight) != 0) {
-                            return false;
-                        } else {
-                            if (StringUtilities.isNumber(textFieldValue) && textFieldValue.length() <= 8) {
-                                int minTextHeight = Integer.parseInt(textFieldValue);
-                                themeLabel.setMinTextHeight(minTextHeight);
-                            }
-                            return true;
-                        }
-                    }
+	                Double textFieldDouble = DoubleUtilities.stringToValue(textFieldValue);
+	                Double maxFontDouble = DoubleUtilities.stringToValue(maxFontHeight);
+	                if (textFieldDouble != null && maxFontDouble != null) {
+		                int textFieldIntValue = textFieldDouble.intValue();
+		                int maxFontHeightValue = maxFontDouble.intValue();
+		                if (maxFontHeightValue < textFieldIntValue && textFieldIntValue != 0 && maxFontHeightValue != 0) {
+			                return false;
+		                } else {
+			                if (String.valueOf(textFieldIntValue).length() <= 8) {
+				                themeLabel.setMinTextHeight(textFieldIntValue);
+			                }
+			                return true;
+		                }
+	                }
+
                 } else {
                     themeLabel.setMinTextHeight(0);
                 }

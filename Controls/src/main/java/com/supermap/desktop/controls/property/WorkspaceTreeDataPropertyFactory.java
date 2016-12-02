@@ -17,6 +17,7 @@ import com.supermap.desktop.controls.property.dataset.ImageCollectionPropertyCon
 import com.supermap.desktop.controls.property.dataset.ImagePropertyControl;
 import com.supermap.desktop.controls.property.dataset.RecordsetPropertyControl;
 import com.supermap.desktop.controls.property.dataset.VectorPropertyControl;
+import com.supermap.desktop.controls.property.datasource.DatasourceInfoControl;
 import com.supermap.desktop.controls.property.datasource.DatasourcePrjCoordSysHandle;
 import com.supermap.desktop.controls.property.datasource.DatasourcePropertyControl;
 import com.supermap.desktop.controls.property.workspace.WorkspacePropertyControl;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 public class WorkspaceTreeDataPropertyFactory {
 	private static WorkspacePropertyControl workspacePropertyControl;
 	private static DatasourcePropertyControl datasourcePropertyControl;
+	private static DatasourceInfoControl datasourceInfoControl;
 	private static PrjCoordSysPropertyControl prjCoordSysPropertyControl;
 	private static DatasetPropertyControl datasetPropertyControl;
 	private static VectorPropertyControl vectorPropertyControl;
@@ -52,6 +54,7 @@ public class WorkspaceTreeDataPropertyFactory {
 					Datasource tempDatasource = (Datasource) data.getData();
 					boolean covert = tempDatasource != null && !tempDatasource.isReadOnly();
 					properties.add(getDatasourcePropertyControl((Datasource) data.getData()));
+					properties.add(getDatasourceInfoControl((Datasource) data.getData()));
 					properties.add(getPrjCoordSysPropertyControl(new DatasourcePrjCoordSysHandle((Datasource) data.getData()), covert));
 				} else if (NodeDataTypeUtilities.isNodeDataset(data.getType()) && data.getData() instanceof Dataset) {
 					Dataset dataset = (Dataset) data.getData();
@@ -109,6 +112,15 @@ public class WorkspaceTreeDataPropertyFactory {
 		}
 
 		return datasourcePropertyControl;
+	}
+
+	private static DatasourceInfoControl getDatasourceInfoControl(Datasource datasource) {
+		if (datasourceInfoControl == null) {
+			datasourceInfoControl = new DatasourceInfoControl(datasource);
+		} else {
+			datasourceInfoControl.setDatasource(datasource);
+		}
+		return datasourceInfoControl;
 	}
 
 	private static PrjCoordSysPropertyControl getPrjCoordSysPropertyControl(PrjCoordSysHandle prjHandle, boolean covertFlag) {

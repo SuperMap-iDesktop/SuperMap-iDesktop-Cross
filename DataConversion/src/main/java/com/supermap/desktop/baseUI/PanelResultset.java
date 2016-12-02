@@ -357,6 +357,8 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             initDefaultLayout();
             this.add(this.checkBoxFieldIndex, new GridBagConstraintsHelper(0, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
             this.add(this.checkBoxSpatialIndex, new GridBagConstraintsHelper(4, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+            this.checkBoxFieldIndex.setEnabled(isVisible(true));
+            this.checkBoxSpatialIndex.setEnabled(isVisible(false));
         } else if (layeroutType == PackageInfo.GRID_TYPE) {
             initDefaultLayout();
             this.remove(labelDatasetName);
@@ -377,6 +379,21 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
         initDatasetType();
         initEncodeType();
         initCheckboxState();
+    }
+
+    private boolean isVisible(boolean isFieldType) {
+        boolean isVisible = true;
+        for (PanelImport tempImport : panelImports) {
+            if (isFieldType && !(tempImport.getResultset()).getCheckBoxFieldIndex().isVisible()) {
+                isVisible = false;
+                break;
+            } else if (!isFieldType && !(tempImport.getResultset()).getCheckBoxSpatialIndex().isVisible()) {
+                isVisible = false;
+                break;
+            }
+
+        }
+        return isVisible;
     }
 
     @Override
@@ -421,14 +438,24 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
         }
     }
 
+
     private void setGridEncodeTypeModel() {
-        if (containsFileType(FileType.ECW)) {
-            this.comboBoxEncodeType.setModel(new DefaultComboBoxModel(new String[]{DataConversionProperties.getString("string_comboboxitem_nullcoding")}));
-        } else if (containsFileType(FileType.GRD)) {
-            this.comboBoxEncodeType.setModel(new DefaultComboBoxModel(new String[]{DataConversionProperties.getString("string_comboboxitem_nullcoding"), "LZW"}));
-        } else {
-            initComboboxEncodeType(true);
+        ArrayList<String> listModel = new ArrayList();
+        JComboBox tempEncodeComboBox = panelImports.get(0).getResultset().getComboBoxEncodeType();
+        int size = tempEncodeComboBox.getItemCount();
+        for (int i = 0; i < size; i++) {
+            listModel.add(tempEncodeComboBox.getItemAt(i).toString());
         }
+        for (int i = 0; i < panelImports.size(); i++) {
+            ArrayList<String> tempFileTypes = new ArrayList();
+            JComboBox compare = panelImports.get(i).getResultset().getComboBoxEncodeType();
+            int compareItemCount = compare.getItemCount();
+            for (int j = 0; j < compareItemCount; j++) {
+                tempFileTypes.add(compare.getItemAt(j).toString());
+            }
+            listModel.retainAll(tempFileTypes);
+        }
+        this.comboBoxEncodeType.setModel(new DefaultComboBoxModel(listModel.toArray(new String[listModel.size()])));
     }
 
     private boolean containsFileType(FileType fileType) {

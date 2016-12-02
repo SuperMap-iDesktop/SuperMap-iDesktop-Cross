@@ -13,12 +13,12 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.event.TableCellValueChangeEvent;
 import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -47,7 +47,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 	private PropertyTableModel propertyTableModel;
 	private transient FieldInfos fieldInfos;
 	private final static int COLUMN_WIDTH = 140;
-	private final static int ROW_HEIGHT = 24;
+	private final static int ROW_HEIGHT = 23;
 	private static final Color COLOR_SELECTED = new Color(185, 214, 244);
 	private static final Color COLOR_SYSTEM_NOT_SELECTED = new Color(230, 230, 230);
 	private static final Color COLOR_EDITABLE_NOT_SELECTED = new Color(247, 247, 247);
@@ -148,10 +148,12 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 	private void initializeComponents() {
 
 		this.propertyTable = new PropertyTable();
+		propertyTable.getTableHeader().setReorderingAllowed(false);
 		propertyTable.setSurrendersFocusOnKeystroke(true);
-		this.propertyTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+//		this.propertyTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		this.propertyTable.setRowHeight(ROW_HEIGHT);
-		JScrollPane scrollPane = new JScrollPane(this.propertyTable);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setViewportView(this.propertyTable);
 		this.checkBoxHideSysField = new JCheckBox("Hidden_SystemField");
 		this.checkBoxHideSysField.setSelected(true);
 		this.checkBoxHideDetail = new JCheckBox("Hidden_DetailInfo");
@@ -159,32 +161,15 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 		this.buttonReset = new SmButton("reset");
 		this.buttonApply = new SmButton("apply");
 
-		GroupLayout layout = new GroupLayout(this);
-		layout.setAutoCreateContainerGaps(true);
-		layout.setAutoCreateGaps(true);
-		setLayout(layout);
+		this.setLayout(new GridBagLayout());
+		this.add(scrollPane, new GridBagConstraintsHelper(0, 0, 2, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 10, 0, 10).setFill(GridBagConstraints.BOTH));
+		this.add(checkBoxHideDetail, new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 10));
 
-		// @formatter:off
-          layout.setHorizontalGroup( layout
-                    .createParallelGroup(Alignment.LEADING )
-                    .addComponent( scrollPane)
-                    .addGroup(
-                              layout.createSequentialGroup()
-                                        .addComponent(this.checkBoxHideSysField )
-                                        .addComponent(this.checkBoxHideDetail )
-                                        .addGap(10, 10, Short.MAX_VALUE )
-                                        .addComponent(this.buttonReset )
-                                        .addComponent(this.buttonApply )));
-          layout.setVerticalGroup( layout
-                    .createSequentialGroup()
-                    .addComponent( scrollPane)
-                    .addGroup(
-                              layout.createParallelGroup(Alignment.CENTER)
-                                        .addComponent(this.checkBoxHideSysField )
-                                        .addComponent(this.checkBoxHideDetail )
-                                        .addComponent(this.buttonReset )
-                                        .addComponent(this.buttonApply )));
-          // @formatter:on
+		this.add(checkBoxHideSysField, new GridBagConstraintsHelper(0, 2, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 10));
+
+		this.add(buttonReset, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 10, 0));
+		this.add(buttonApply, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 10, 10));
+
 	}
 
 	private void initResources() {

@@ -1,10 +1,18 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.GeoRegion;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.DatasetComboBox;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.SQLExpressionDialog;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
 import javax.swing.*;
@@ -65,8 +73,7 @@ public class JDialogSetClipRegion extends SmDialog {
 	};
 
 
-	public JDialogSetClipRegion(JDialog owner) {
-		super(owner);
+	public JDialogSetClipRegion() {
 		initializeComponents();
 		initializeResources();
 		setModal(true);

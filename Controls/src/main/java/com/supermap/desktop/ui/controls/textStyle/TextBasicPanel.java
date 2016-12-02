@@ -358,8 +358,8 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
                 double fontHeight = 0.0;
                 double oldSize = DoubleUtilities.stringToValue(text);
                 double size = Math.round(oldSize * 2) / 2.0;
-                isSetFontHeight = false;
-                if (!StringUtilities.isNullOrEmptyString(textHeight)) {
+//                isSetFontHeight = false;
+                if (!StringUtilities.isNullOrEmptyString(textHeight) && StringUtilities.isDecimal(textHeight)) {
                     double defaultHeight = DoubleUtilities.stringToValue(textHeight);
                     double height = Math.round(defaultHeight * 2) / 2.0;
                     textFieldFontHeight.setText(String.valueOf(height));
@@ -378,12 +378,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 setFontSize();
             }
-        }
-    };
-    private ChangeListener changeListener = new ChangeListener() {
-        @Override
-        public void stateChanged(ChangeEvent e) {
-
         }
     };
 
@@ -415,7 +409,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_ENTER && isSetFontSize) {
                 setFontSize();
-            } else if (isSetFontSize && !StringUtilities.isNullOrEmpty(textFieldFontSize.getText())) {
+            } else if (isSetFontSize && !StringUtilities.isNullOrEmpty(textFieldFontSize.getText()) && StringUtilities.isDecimal(textFieldFontSize.getText())) {
                 double size = Double.valueOf(textFieldFontSize.getText());
                 double fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), checkBoxFixedSize.isSelected());
                 if (!DoubleUtilities.equals(fontHeight, textStyle.getFontHeight(), pow) && fontHeight > 0) {
@@ -438,7 +432,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.textFieldFontHeight.addFocusListener(this.textfieldFontHeightFocusListener);
         this.textFieldFontHeight.addCaretListener(this.textfieldFontHeightListener);
         this.textFieldFontHeight.addKeyListener(this.fontHeightKeyListener);
-        this.spinnerFontHeight.addChangeListener(this.changeListener);
         this.textFieldFontSize.addKeyListener(this.fontSizeKeyListener);
         this.comboBoxFontSize.addItemListener(this.itemListener);
         this.textFieldFontRotationAngl.addCaretListener(this.textfieldFontRotationAnglListener);
@@ -937,7 +930,6 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.textFieldFontHeight.removeFocusListener(this.textfieldFontHeightFocusListener);
         this.textFieldFontHeight.removeCaretListener(this.textfieldFontHeightListener);
         this.textFieldFontHeight.removeKeyListener(this.fontHeightKeyListener);
-        this.spinnerFontHeight.removeChangeListener(this.changeListener);
         this.textFieldFontSize.removeKeyListener(this.fontSizeKeyListener);
         this.comboBoxFontSize.removeItemListener(this.itemListener);
         this.textFieldFontRotationAngl.removeCaretListener(this.textfieldFontRotationAnglListener);
