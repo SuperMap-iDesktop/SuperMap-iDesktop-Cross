@@ -4,7 +4,6 @@ import com.supermap.data.Colors;
 import com.supermap.data.DatasetGrid;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.Interface.IPropertyManager;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
@@ -14,15 +13,16 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.ColorsUtilities;
 import com.supermap.desktop.utilities.PixelFormatUtilities;
 import com.supermap.mapping.Layers;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -156,69 +156,56 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void initializeComponents() {
+		Dimension labelSize = new Dimension(60, 23);
 		this.labelPixelFormat = new JLabel("PixelFormat:");
+		labelPixelFormat.setPreferredSize(labelSize);
 		this.textFieldPixelFormat = new JTextField();
 		this.textFieldPixelFormat.setEditable(false);
 		this.labelX = new JLabel("ResolutionX:");
+		labelX.setPreferredSize(labelSize);
 		this.textFieldX = new JTextField();
 		this.textFieldX.setEditable(false);
 		this.labelY = new JLabel("ResolutionY:");
+		labelY.setPreferredSize(labelSize);
 		this.textFieldY = new JTextField();
 		this.textFieldY.setEditable(false);
 		this.labelNoValue = new JLabel("NoValue:");
+		labelNoValue.setPreferredSize(labelSize);
 		this.textFieldNoValue = new SMFormattedTextField(NumberFormat.getNumberInstance());
 		this.labelHeight = new JLabel("RowCount:");
+		labelHeight.setPreferredSize(labelSize);
 		this.textFieldHeight = new JTextField();
 		this.textFieldHeight.setEditable(false);
 		this.labelWidth = new JLabel("ColumnCount:");
+		labelWidth.setPreferredSize(labelSize);
 		this.textFieldWidth = new JTextField();
 		this.textFieldWidth.setEditable(false);
 
 		JPanel panelPixelProperty = new JPanel();
 		panelPixelProperty.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_ImageProperty")));
-		GroupLayout gl_panelPixelProperty = new GroupLayout(panelPixelProperty);
-		gl_panelPixelProperty.setAutoCreateContainerGaps(true);
-		gl_panelPixelProperty.setAutoCreateGaps(true);
-		panelPixelProperty.setLayout(gl_panelPixelProperty);
-		// @formatter:off
-		gl_panelPixelProperty.setHorizontalGroup(gl_panelPixelProperty.createSequentialGroup()
-				.addGroup(gl_panelPixelProperty.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelPixelFormat, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-						.addComponent(this.labelX, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-						.addComponent(this.labelY, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH))
-				.addGroup(gl_panelPixelProperty.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.textFieldPixelFormat, DEFUALT_COMPONENT_WIDTH, DEFUALT_COMPONENT_WIDTH, DEFUALT_COMPONENT_WIDTH)
-						.addComponent(this.textFieldX, DEFUALT_COMPONENT_WIDTH, DEFUALT_COMPONENT_WIDTH, DEFUALT_COMPONENT_WIDTH)
-						.addComponent(this.textFieldY, DEFUALT_COMPONENT_WIDTH, DEFUALT_COMPONENT_WIDTH, DEFUALT_COMPONENT_WIDTH))
-				.addGap(40)
-				.addGroup(gl_panelPixelProperty.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelNoValue, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-						.addComponent(this.labelHeight, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-						.addComponent(this.labelWidth, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH))
-				.addGroup(gl_panelPixelProperty.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.textFieldNoValue, GroupLayout.PREFERRED_SIZE, DEFUALT_COMPONENT_WIDTH, Short.MAX_VALUE)
-						.addComponent(this.textFieldHeight, GroupLayout.PREFERRED_SIZE, DEFUALT_COMPONENT_WIDTH, Short.MAX_VALUE)
-						.addComponent(this.textFieldWidth, GroupLayout.PREFERRED_SIZE, DEFUALT_COMPONENT_WIDTH, Short.MAX_VALUE)));
-		
-		gl_panelPixelProperty.setVerticalGroup(gl_panelPixelProperty.createSequentialGroup()
-				.addGroup(gl_panelPixelProperty.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelPixelFormat)
-						.addComponent(this.textFieldPixelFormat, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.labelNoValue)
-						.addComponent(this.textFieldNoValue, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelPixelProperty.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelX)
-						.addComponent(this.textFieldX, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.labelHeight)
-						.addComponent(this.textFieldHeight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelPixelProperty.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelY)
-						.addComponent(this.textFieldY, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.labelWidth)
-						.addComponent(this.textFieldWidth, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)));
+		panelPixelProperty.setLayout(new GridBagLayout());
+		panelPixelProperty.add(labelPixelFormat, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0));
+		panelPixelProperty.add(textFieldPixelFormat, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(10, 5, 0, 10));
+
+		panelPixelProperty.add(labelX, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		panelPixelProperty.add(textFieldX, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
+
+		panelPixelProperty.add(labelY, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		panelPixelProperty.add(textFieldY, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
+
+		panelPixelProperty.add(labelNoValue, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		panelPixelProperty.add(textFieldNoValue, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
+
+		panelPixelProperty.add(labelHeight, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		panelPixelProperty.add(textFieldHeight, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
+
+		panelPixelProperty.add(labelWidth, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		panelPixelProperty.add(textFieldWidth, new GridBagConstraintsHelper(1, 4, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
+
 		// @formatter:on
 
 		this.labelMaxValue = new JLabel("MaxValue:");
+		labelMaxValue.setPreferredSize(labelSize);
 		this.textFieldMaxValue = new JTextField();
 		this.textFieldMaxValue.setEditable(false);
 		this.labelMinValue = new JLabel("MinValue:");
@@ -227,29 +214,17 @@ public class GridPropertyControl extends AbstractPropertyControl {
 
 		JPanel panelExtreme = new JPanel();
 		panelExtreme.setBorder(BorderFactory.createTitledBorder(CommonProperties.getString(CommonProperties.Extremum)));
-		GroupLayout gl_panelExtreme = new GroupLayout(panelExtreme);
-		gl_panelExtreme.setAutoCreateContainerGaps(true);
-		gl_panelExtreme.setAutoCreateGaps(true);
-		panelExtreme.setLayout(gl_panelExtreme);
-		// @formatter:off
-		gl_panelExtreme.setHorizontalGroup(gl_panelExtreme.createSequentialGroup()
-				.addGroup(gl_panelExtreme.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelMaxValue, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-						.addComponent(this.labelMinValue, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH))
-				.addGroup(gl_panelExtreme.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.textFieldMaxValue, DEFUALT_COMPONENT_WIDTH, DEFUALT_COMPONENT_WIDTH, DEFUALT_COMPONENT_WIDTH)
-						.addComponent(this.textFieldMinValue, DEFUALT_COMPONENT_WIDTH, DEFUALT_COMPONENT_WIDTH, DEFUALT_COMPONENT_WIDTH)));
-		
-		gl_panelExtreme.setVerticalGroup(gl_panelExtreme.createSequentialGroup()
-				.addGroup(gl_panelExtreme.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelMaxValue)
-						.addComponent(this.textFieldMaxValue, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelExtreme.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelMinValue)
-						.addComponent(this.textFieldMinValue, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)));
-		// @formatter:on
+		panelExtreme.setLayout(new GridBagLayout());
+		panelExtreme.add(labelMaxValue, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0));
+		panelExtreme.add(textFieldMaxValue, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(10, 5, 0, 10));
+
+		panelExtreme.add(labelMinValue, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		panelExtreme.add(textFieldMinValue, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 0, 10));
+
+
 
 		this.labelHasPyramid = new JLabel("HasPyramid:");
+		labelHasPyramid.setPreferredSize(labelSize);
 		this.textFieldHasPyramid = new JTextField();
 		this.textFieldHasPyramid.setEditable(false);
 		this.labelClipRegion = new JLabel("ClipRegion:");
@@ -258,81 +233,40 @@ public class GridPropertyControl extends AbstractPropertyControl {
 
 		JPanel panelOther = new JPanel();
 		panelOther.setBorder(BorderFactory.createTitledBorder(CoreProperties.getString(CoreProperties.Other)));
-		GroupLayout gl_panelOther = new GroupLayout(panelOther);
-		gl_panelOther.setAutoCreateContainerGaps(true);
-		gl_panelOther.setAutoCreateGaps(true);
-		panelOther.setLayout(gl_panelOther);
-		// @formatter:off
-		gl_panelOther.setHorizontalGroup(gl_panelOther.createSequentialGroup()
-				.addGroup(gl_panelOther.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelHasPyramid, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-						.addComponent(this.labelClipRegion, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH))
-				.addGroup(gl_panelOther.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.textFieldHasPyramid, GroupLayout.PREFERRED_SIZE, DEFUALT_COMPONENT_WIDTH, Short.MAX_VALUE)
-						.addGroup(gl_panelOther.createSequentialGroup()
-								.addGap(10, 10, Short.MAX_VALUE)
-								.addComponent(this.buttonSetClipRegion)
-								.addComponent(this.buttonClearClipRegion))));
-		
-		gl_panelOther.setVerticalGroup(gl_panelOther.createSequentialGroup()
-				.addGroup(gl_panelOther.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelHasPyramid)
-						.addComponent(this.textFieldHasPyramid, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelOther.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelClipRegion)
-						.addComponent(this.buttonSetClipRegion)
-						.addComponent(this.buttonClearClipRegion)));
-		// @formatter:on
+		panelOther.setLayout(new GridBagLayout());
+		panelOther.add(labelHasPyramid, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0));
+		panelOther.add(textFieldHasPyramid, new GridBagConstraintsHelper(1, 0, 2, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(10, 5, 0, 10));
+
+		panelOther.add(labelClipRegion, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		panelOther.add(buttonSetClipRegion, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 0));
+		panelOther.add(buttonClearClipRegion, new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
+
 
 		this.labelColorTable = new JLabel("ColorTable:");
+		labelColorTable.setPreferredSize(labelSize);
 		this.comboBoxColors = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Grid_DEM"));
 
 		JPanel panelColors = new JPanel();
+		panelColors.setLayout(new GridBagLayout());
 		panelColors.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_ColorTable")));
-		GroupLayout gl_panelColors = new GroupLayout(panelColors);
-		gl_panelColors.setAutoCreateContainerGaps(true);
-		gl_panelColors.setAutoCreateGaps(true);
-		panelColors.setLayout(gl_panelColors);
-		// @formatter:off
-		gl_panelColors.setHorizontalGroup(gl_panelColors.createSequentialGroup()
-				.addComponent(this.labelColorTable, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-				.addComponent(this.comboBoxColors, GroupLayout.PREFERRED_SIZE, DEFUALT_COMPONENT_WIDTH, Short.MAX_VALUE));
-		
-		gl_panelColors.setVerticalGroup(gl_panelColors.createParallelGroup(Alignment.CENTER)
-				.addComponent(this.labelColorTable)
-				.addComponent(this.comboBoxColors, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
-		// @formatter:on
+		panelColors.add(labelColorTable, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0).setWeight(0, 0));
+		panelColors.add(comboBoxColors, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(10, 5, 0, 10).setAnchor(GridBagConstraints.EAST));
 
+
+		JPanel panelButton = new JPanel();
+		panelButton.setLayout(new GridBagLayout());
 		this.buttonReset = new SmButton("Reset");
 		this.buttonApply = new SmButton("Apply");
+		panelButton.add(buttonReset, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.EAST).setInsets(5, 10, 10, 0));
+		panelButton.add(buttonApply, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(5, 5, 10, 10));
 
-		GroupLayout gl_mainContent = new GroupLayout(this);
-		gl_mainContent.setAutoCreateContainerGaps(true);
-		gl_mainContent.setAutoCreateGaps(true);
-		this.setLayout(gl_mainContent);
-		// @formatter:off
-		gl_mainContent.setHorizontalGroup(gl_mainContent.createParallelGroup(Alignment.LEADING)
-				.addComponent(panelPixelProperty, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-				.addGroup(gl_mainContent.createSequentialGroup()
-						.addComponent(panelExtreme, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(panelOther, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE))
-				.addComponent(panelColors, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-				.addGroup(gl_mainContent.createSequentialGroup()
-						.addGap(10, 10, Short.MAX_VALUE)
-						.addComponent(this.buttonReset)
-						.addComponent(this.buttonApply)));
-		
-		gl_mainContent.setVerticalGroup(gl_mainContent.createSequentialGroup()
-				.addComponent(panelPixelProperty, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
-						.addComponent(panelExtreme, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(panelOther, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addComponent(panelColors, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addGap(10, 10, Short.MAX_VALUE)
-				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.buttonReset)
-						.addComponent(this.buttonApply)));
-		// @formatter:on
+		this.setLayout(new GridBagLayout());
+		this.add(panelPixelProperty, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(10, 10, 0, 10));
+		this.add(panelExtreme, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
+		this.add(panelColors, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
+		this.add(new JPanel(), new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
+		this.add(panelButton, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+
 	}
 
 	private void initializeResources() {
@@ -430,8 +364,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void buttonSettingClipRegionClicked() {
-		IPropertyManager propertyManager = Application.getActiveApplication().getMainFrame().getPropertyManager();
-		JDialogSetClipRegion dialog = new JDialogSetClipRegion((JDialog) propertyManager);
+		JDialogSetClipRegion dialog = new JDialogSetClipRegion();
 		if (dialog.showDialog() == DialogResult.OK) {
 			this.datasetGrid.setClipRegion(dialog.getRegion());
 			dialog.disposeRegion();
