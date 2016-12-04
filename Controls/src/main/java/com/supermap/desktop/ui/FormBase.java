@@ -75,11 +75,11 @@ public class FormBase extends JFrame implements IFormMain {
 	private ArrayList<FormLoadedListener> formLoadedListeners = new ArrayList<>();
 
 	public FormBase() {
-		this.formManager = new FormManager(this);
+		this.formManager = new FormManager();
 		this.frameMenuManager = new FrameMenuManager();
 		this.contextMenuManager = new ContextMenuManager();
 		this.toolbarManager = new ToolbarManager();
-		this.dockbarManager = new DockbarManager();
+		this.dockbarManager = new DockbarManager(this.formManager);
 		this.statusbarManager = new StatusbarManager();
 		this.jMenuBarMain = new JMenuBar();
 //        this.propertyManager = new JDialogDataPropertyContainer(this);
@@ -201,7 +201,7 @@ public class FormBase extends JFrame implements IFormMain {
 		IPropertyManager iPropertyManager = null;
 		try {
 			Dockbar dockbar = (Dockbar) getDockbarManager().get(Class.forName("com.supermap.desktop.controls.property.DataPropertyContainer"));
-			iPropertyManager = (IPropertyManager) ((Container) dockbar.getComponent(0)).getComponent(0);
+			iPropertyManager = (IPropertyManager)dockbar.getInnerComponent();
 		} catch (ClassNotFoundException e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}

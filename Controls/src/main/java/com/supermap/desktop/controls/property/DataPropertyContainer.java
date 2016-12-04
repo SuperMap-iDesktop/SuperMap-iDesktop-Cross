@@ -1,10 +1,13 @@
 package com.supermap.desktop.controls.property;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.Interface.IPropertyManager;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.ui.controls.Dockbar;
+import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import org.flexdock.view.View;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -186,12 +189,16 @@ public class DataPropertyContainer extends JPanel implements IPropertyManager {
 
 	@Override
 	public void setPropertyVisible(boolean visible) {
-		Component parentDocker = this;
-		while (parentDocker != null && !(parentDocker instanceof Dockbar)) {
-			parentDocker = parentDocker.getParent();
-		}
-		if (parentDocker != null) {
-			parentDocker.setVisible(true);
+//		Component parentDocker = this;
+//		while (parentDocker != null && !(parentDocker instanceof View)) {
+//			parentDocker = parentDocker.getParent();
+//		}
+//		if (parentDocker != null) {
+//			parentDocker.setVisible(true);
+//		}
+		Dockbar propertyDock = ((DockbarManager) Application.getActiveApplication().getMainFrame().getDockbarManager()).findDockbar(this);
+		if (propertyDock != null) {
+			propertyDock.setVisible(visible);
 		}
 	}
 }

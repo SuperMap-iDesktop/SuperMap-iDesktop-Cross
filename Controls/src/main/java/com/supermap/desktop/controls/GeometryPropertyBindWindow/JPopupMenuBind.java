@@ -13,15 +13,11 @@ import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
-import com.supermap.desktop.ui.docking.DockingWindow;
-import com.supermap.desktop.ui.docking.SplitWindow;
-import com.supermap.desktop.ui.docking.TabWindow;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.*;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
 import com.supermap.ui.MapControl;
-import net.infonode.util.Direction;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -90,7 +86,6 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
             showView();
         }
     };
-    private SplitWindow splitWindow;
     private MouseListener mapControlMouseListener = new MouseAdapter() {
         @Override
         public void mouseReleased(MouseEvent e) {
@@ -410,39 +405,39 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
     }
 
     private void splitTabWindow() {
-        int formMapSize = formMapList.size();
-        int formTabularSize = formTabularList.size();
-        SplitWindow splitWindow = null;
-        TabWindow formMapSplitWindow = null;
-        TabWindow formTabularTabWindow = null;
-        TabWindow tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
-        if (formTabularSize > 0) {
-            splitWindow = tabWindow.split((DockingWindow) formTabularList.get(0), Direction.DOWN, 0.7f);
-            formTabularTabWindow = (TabWindow) splitWindow.getChildWindow(splitWindow.getChildWindowCount() - 1);
-            for (int i = 1; i < formTabularSize; i++) {
-                formTabularTabWindow.addTab((DockingWindow) formTabularList.get(i));
-            }
-        }
-        if (formMapSize > 0 && null != splitWindow) {
-            formMapSplitWindow = (TabWindow) splitWindow.getChildWindow(0);
-            while (formMapSize > 1) {
-                formMapSplitWindow.split((DockingWindow) formMapList.get(formMapSize - 1), Direction.RIGHT, (float) (1 - 1.0 / formMapSize));
-                formMapSize--;
-
-            }
-        } else if (formMapSize > 0 && null == splitWindow) {
-            while (formMapSize > 1) {
-                if (tabWindow.getChildWindowCount() > 0) {
-                    this.splitWindow = tabWindow.split((DockingWindow) formMapList.get(formMapSize - 1), Direction.RIGHT, (float) (1 - 1.0 / formMapSize));
-                    formMapSize--;
-                } else {
-                    break;
-                }
-            }
-        }
-        if (formMapSize > 0) {
-            Application.getActiveApplication().setActiveForm((IForm) formMapList.get(0));
-        }
+//        int formMapSize = formMapList.size();
+//        int formTabularSize = formTabularList.size();
+//        SplitWindow splitWindow = null;
+//        TabWindow formMapSplitWindow = null;
+//        TabWindow formTabularTabWindow = null;
+//        TabWindow tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
+//        if (formTabularSize > 0) {
+//            splitWindow = tabWindow.split((DockingWindow) formTabularList.get(0), Direction.DOWN, 0.7f);
+//            formTabularTabWindow = (TabWindow) splitWindow.getChildWindow(splitWindow.getChildWindowCount() - 1);
+//            for (int i = 1; i < formTabularSize; i++) {
+//                formTabularTabWindow.addTab((DockingWindow) formTabularList.get(i));
+//            }
+//        }
+//        if (formMapSize > 0 && null != splitWindow) {
+//            formMapSplitWindow = (TabWindow) splitWindow.getChildWindow(0);
+//            while (formMapSize > 1) {
+//                formMapSplitWindow.split((DockingWindow) formMapList.get(formMapSize - 1), Direction.RIGHT, (float) (1 - 1.0 / formMapSize));
+//                formMapSize--;
+//
+//            }
+//        } else if (formMapSize > 0 && null == splitWindow) {
+//            while (formMapSize > 1) {
+//                if (tabWindow.getChildWindowCount() > 0) {
+//                    this.splitWindow = tabWindow.split((DockingWindow) formMapList.get(formMapSize - 1), Direction.RIGHT, (float) (1 - 1.0 / formMapSize));
+//                    formMapSize--;
+//                } else {
+//                    break;
+//                }
+//            }
+//        }
+//        if (formMapSize > 0) {
+//            Application.getActiveApplication().setActiveForm((IForm) formMapList.get(0));
+//        }
     }
 
     private MouseListener listFormsMouseListener = new MouseAdapter() {

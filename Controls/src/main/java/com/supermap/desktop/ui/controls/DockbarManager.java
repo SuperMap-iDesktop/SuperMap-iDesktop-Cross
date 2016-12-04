@@ -34,6 +34,7 @@ public class DockbarManager implements IDockbarManager {
 	private ArrayList<Dockbar> dockbars = null;
 	private Viewport dockPort;
 	private View mainView;
+	private View rightView;
 
 	private Dockbar workspaceComponentManager = null;
 	private Dockbar layersComponentManager = null;
@@ -170,16 +171,49 @@ public class DockbarManager implements IDockbarManager {
 			} else if (dockbar == this.outputFrame) {
 				this.mainView.dock(this.outputFrame.getView(), DockingConstants.SOUTH_REGION, 0.7f);
 			} else {
-				Dockable east = this.mainView.getSibling(DockingConstants.EAST_REGION);
-				if (east != null) {
-					east.dock(dockbar.getView());
+				Dockable docked = null;
+				for (int i = 0; i < this.dockbars.size(); i++) {
+					if (DockingManager.isDocked((Dockable) this.dockbars.get(i).getView())) {
+						docked = this.dockbars.get(i).getView();
+						break;
+					}
+				}
+
+				if (docked != null) {
+					docked.dock(dockbar.getView());
 				} else {
 					this.mainView.dock(dockbar.getView(), DockingConstants.EAST_REGION, 0.7f);
 				}
+
+//				Dockable east = this.mainView.getSibling(DockingConstants.EAST_REGION);
+//				if (east != null) {
+//					east.dock(dockbar.getView());
+//				} else {
+//					this.mainView.dock(dockbar.getView(), DockingConstants.EAST_REGION, 0.7f);
+//				}
 			}
 		} else {
 			DockingManager.close(dockbar.getView());
 		}
+	}
+
+	public Dockbar findDockbar(Component component) {
+		Dockbar dock = null;
+		if (this.workspaceComponentManager.getInnerComponent() == component) {
+			dock = this.workspaceComponentManager;
+		} else if (this.layersComponentManager.getInnerComponent() == component) {
+			dock = this.layersComponentManager;
+		} else if (this.outputFrame.getInnerComponent() == component) {
+			dock = this.outputFrame;
+		} else {
+			for (int i = 0; i < this.dockbars.size(); i++) {
+				if (this.dockbars.get(i).getInnerComponent() == component) {
+					dock = this.dockbars.get(i);
+					break;
+				}
+			}
+		}
+		return dock;
 	}
 
 	private void dock(View dockParent, DockConstraint dockConstraint) {
