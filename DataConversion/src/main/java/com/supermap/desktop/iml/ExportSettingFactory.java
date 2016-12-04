@@ -40,6 +40,8 @@ public class ExportSettingFactory implements IExportSettingFactory {
             result = new ExportSettingTIF();
         } else if (fileType.equals(FileType.VCT)) {
             result = new ExportSettingVCT();
+        } else if (fileType.equals(FileType.CSV)) {
+            result = new ExportSettingCSV();
         }
         // 复制目标文件路径到新的exportsetting中
         return result;

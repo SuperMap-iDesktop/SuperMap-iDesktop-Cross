@@ -25,8 +25,10 @@ public class CommonListCellRenderer implements ListCellRenderer<Object>, TableCe
         if (value instanceof JPanel) {
             if (isSelected) {// 设置选中时的背景色
                 ((JPanel) value).setBackground(new Color(51, 153, 255));
+                ((JPanel) value).setForeground(Color.white);
             } else {
                 ((JPanel) value).setBackground(Color.white);
+                ((JPanel) value).setForeground(Color.black);
             }
             return (JPanel) value;
         }

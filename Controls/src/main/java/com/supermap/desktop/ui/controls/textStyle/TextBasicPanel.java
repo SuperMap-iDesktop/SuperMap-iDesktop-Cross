@@ -85,7 +85,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
     private JPanel panelEffect;
 
     // 显示精度
-    private String numeric = "0.00";
+    private String numeric = "0.0";
     // 经验值
     private final static double EXPERIENCE = 0.283;
     private boolean isProperty;
@@ -267,8 +267,8 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
                 Double oldSize = logicalHeight * EXPERIENCE;
                 double size = Math.round(oldSize * 2) / 2.0;
                 isSetFontSize = false;
-                comboBoxFontSize.setSelectedItem(new DecimalFormat("0.0").format(size));
-                double fontHeight = FontUtilities.fontSizeToMapHeight(oldSize, MapUtilities.getActiveMap(), checkBoxFixedSize.isSelected());
+                textFieldFontSize.setText(new DecimalFormat(numeric).format(size));
+                double fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), checkBoxFixedSize.isSelected());
 
                 if (!DoubleUtilities.equals(fontHeight, textStyle.getFontHeight(), pow) && fontHeight > 0) {
                     textStyleTypeMap.put(TextStyleType.FONTHEIGHT, fontHeight / UNIT_CONVERSION);
@@ -348,6 +348,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         public void keyReleased(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                 String text = textFieldFontSize.getText();
+                String textHeight = textFieldFontHeight.getText();
                 if (!SymbolSpinnerUtilties.isLegitNumber(0.1, 72.17, text)) {
                     textFieldFontSize.setForeground(Color.red);
                     return;
@@ -355,15 +356,27 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
                     textFieldFontSize.setForeground(Color.black);
                 }
                 double fontHeight = 0.0;
-                double oldSize = Double.valueOf(text);
+                double oldSize = DoubleUtilities.stringToValue(text);
                 double size = Math.round(oldSize * 2) / 2.0;
-                isSetFontHeight = false;
-                textFieldFontHeight.setText(new DecimalFormat(numeric).format((size / EXPERIENCE)));
+//                isSetFontHeight = false;
+                if (!StringUtilities.isNullOrEmptyString(textHeight) && StringUtilities.isDecimal(textHeight)) {
+                    double defaultHeight = DoubleUtilities.stringToValue(textHeight);
+                    double height = Math.round(defaultHeight * 2) / 2.0;
+                    textFieldFontHeight.setText(String.valueOf(height));
+                }
                 fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), checkBoxFixedSize.isSelected());
                 if (!DoubleUtilities.equals(fontHeight, textStyle.getFontHeight(), pow) && fontHeight > 0) {
                     textStyleTypeMap.put(TextStyleType.FONTHEIGHT, fontHeight / UNIT_CONVERSION);
                     fireTextStyleChanged(TextStyleType.FONTHEIGHT);
                 }
+            }
+        }
+    };
+    private ItemListener itemListener = new ItemListener() {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                setFontSize();
             }
         }
     };
@@ -379,9 +392,11 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         double fontHeight = 0.0;
         double oldSize = Double.valueOf(text);
         double size = Math.round(oldSize * 2) / 2.0;
+        double defaultHeight = size / EXPERIENCE;
+        double height = Math.round(defaultHeight * 2) / 2.0;
         textFieldFontSize.setText(String.valueOf(size));
         isSetFontHeight = false;
-        textFieldFontHeight.setText(new DecimalFormat(numeric).format((size / EXPERIENCE)));
+        textFieldFontHeight.setText(String.valueOf(height));
         fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), checkBoxFixedSize.isSelected());
         if (!DoubleUtilities.equals(fontHeight, textStyle.getFontHeight(), pow) && fontHeight > 0) {
             textStyleTypeMap.put(TextStyleType.FONTHEIGHT, fontHeight / UNIT_CONVERSION);
@@ -394,7 +409,7 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_ENTER && isSetFontSize) {
                 setFontSize();
-            } else if (isSetFontSize && !StringUtilities.isNullOrEmpty(textFieldFontSize.getText())) {
+            } else if (isSetFontSize && !StringUtilities.isNullOrEmpty(textFieldFontSize.getText()) && StringUtilities.isDecimal(textFieldFontSize.getText())) {
                 double size = Double.valueOf(textFieldFontSize.getText());
                 double fontHeight = FontUtilities.fontSizeToMapHeight(size, MapUtilities.getActiveMap(), checkBoxFixedSize.isSelected());
                 if (!DoubleUtilities.equals(fontHeight, textStyle.getFontHeight(), pow) && fontHeight > 0) {
@@ -416,8 +431,9 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.textFieldFontSize.addFocusListener(this.textFieldFontSizeFocusListener);
         this.textFieldFontHeight.addFocusListener(this.textfieldFontHeightFocusListener);
         this.textFieldFontHeight.addCaretListener(this.textfieldFontHeightListener);
-//        this.textFieldFontHeight.addKeyListener(this.fontHeightKeyListener);
+        this.textFieldFontHeight.addKeyListener(this.fontHeightKeyListener);
         this.textFieldFontSize.addKeyListener(this.fontSizeKeyListener);
+        this.comboBoxFontSize.addItemListener(this.itemListener);
         this.textFieldFontRotationAngl.addCaretListener(this.textfieldFontRotationAnglListener);
         this.textFieldFontItalicAngl.addCaretListener(this.textFieldFontItalicAnglListener);
         this.textfieldOutLineWidth.addCaretListener(this.textfieldOutLineWidthListener);
@@ -812,16 +828,11 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
             }
             Double oldSize = FontUtilities.mapHeightToFontSize(textStyle.getFontHeight(), map, textStyle.isSizeFixed()) * UNIT_CONVERSION;
             Double size = Math.round(oldSize * 2) / 2.0;
-            DecimalFormat decimalFormat = new DecimalFormat("0.0");
-            String textFieldString = "";
-            if (Double.compare(size, size.intValue()) > 0) {
-                textFieldString = decimalFormat.format(size);
-                this.textFieldFontSize.setText(textFieldString);
-            } else {
-                textFieldString = decimalFormat.format(size);
-                this.textFieldFontSize.setText(textFieldString);
-            }
-            this.textFieldFontHeight.setText(new DecimalFormat(numeric).format(size / EXPERIENCE));
+            Double defaultHeight = size / EXPERIENCE;
+            Double height = Math.round(defaultHeight * 2) / 2.0;
+            DecimalFormat decimalFormat = new DecimalFormat(numeric);
+            this.textFieldFontSize.setText(decimalFormat.format(size));
+            this.textFieldFontHeight.setText(new DecimalFormat(numeric).format(height));
         }
     }
 
@@ -917,9 +928,10 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.comboBoxAlign.removeItemListener(this.alignItemListener);
         this.textFieldFontSize.removeFocusListener(this.textFieldFontSizeFocusListener);
         this.textFieldFontHeight.removeFocusListener(this.textfieldFontHeightFocusListener);
-//        this.textFieldFontHeight.removeKeyListener(this.fontHeightKeyListener);
-        this.textFieldFontSize.removeKeyListener(this.fontSizeKeyListener);
         this.textFieldFontHeight.removeCaretListener(this.textfieldFontHeightListener);
+        this.textFieldFontHeight.removeKeyListener(this.fontHeightKeyListener);
+        this.textFieldFontSize.removeKeyListener(this.fontSizeKeyListener);
+        this.comboBoxFontSize.removeItemListener(this.itemListener);
         this.textFieldFontRotationAngl.removeCaretListener(this.textfieldFontRotationAnglListener);
         this.textFieldFontItalicAngl.removeCaretListener(this.textFieldFontItalicAnglListener);
         this.textfieldOutLineWidth.removeCaretListener(this.textfieldOutLineWidthListener);

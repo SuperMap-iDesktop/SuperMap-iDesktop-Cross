@@ -19,6 +19,7 @@ import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilties.TabularStatisticUtilties;
 import com.supermap.desktop.utilties.TabularTableModel;
@@ -169,7 +170,23 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		super(title, icon, component);
 		this.title = title;
 		jTableTabular = new AbstractHandleTable();
-
+		TableCellRenderer numberRenderer = new TableCellRenderer() {
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				JLabel jLabel = new JLabel();
+				jLabel.setOpaque(true);
+				jLabel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+				jLabel.setForeground(isSelected ? table.getSelectionForeground() : table.getForeground());
+				if (value != null) {
+					jLabel.setText(DoubleUtilities.getFormatString(Double.valueOf(String.valueOf(value))));
+				}
+				return jLabel;
+			}
+		};
+		jTableTabular.setDefaultRenderer(Double.class, numberRenderer);
+		jTableTabular.setDefaultRenderer(Integer.class, numberRenderer);
+		jTableTabular.setDefaultRenderer(Float.class, numberRenderer);
+		jTableTabular.setDefaultRenderer(Long.class, numberRenderer);
 		// 输入时直接开始编辑
 		jTableTabular.setSurrendersFocusOnKeystroke(true);
 		// 设置行高
@@ -369,8 +386,8 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	 *
 	 * @author XiaJT
 	 */
-	private class DataTabelCellEditor extends DefaultCellEditor {
-		public DataTabelCellEditor(final JTextField textField) {
+	private class DataTableCellEditor extends DefaultCellEditor {
+		public DataTableCellEditor(final JTextField textField) {
 			super(textField);
 			textField.setHorizontalAlignment(JTextField.CENTER);
 
@@ -502,12 +519,31 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		this.jTableTabular.setDefaultRenderer(Boolean.class, new BooleanTableCellRenderer());
 
-		this.jTableTabular.setDefaultEditor(Time.class, new DataTabelCellEditor(new JTextField()));
+		this.jTableTabular.setDefaultEditor(Time.class, new DataTableCellEditor(new JTextField()));
 		this.jTableTabular.setDefaultRenderer(Time.class, new DataTabelCellRender());
 		JTextField objectEditorControl = new JTextField();
 		objectEditorControl.setHorizontalAlignment(JTextField.CENTER);
 		DefaultCellEditor objectCellEditor = new TableDefaultCellEditor(objectEditorControl);
 		this.jTableTabular.setDefaultEditor(Object.class, objectCellEditor);
+		// TODO: 2016/11/15
+		DefaultCellEditor editor = new DefaultCellEditor(new JTextField()) {
+			@Override
+			public boolean stopCellEditing() {
+				String value = (String) super.getCellEditorValue();
+				if (DoubleUtilities.stringToValue(value) == null) {
+					return super.stopCellEditing();
+				}
+				if (DoubleUtilities.stringToValue(value) != null) {
+					return super.stopCellEditing();
+				}
+				return false;
+			}
+		};
+		this.jTableTabular.setDefaultEditor(Double.class, editor);
+		this.jTableTabular.setDefaultEditor(Float.class, editor);
+		this.jTableTabular.setDefaultEditor(Integer.class, editor);
+		this.jTableTabular.setDefaultEditor(Long.class, editor);
+
 		// 设置列宽
 		setColumnsWidth();
 		// 设置行高

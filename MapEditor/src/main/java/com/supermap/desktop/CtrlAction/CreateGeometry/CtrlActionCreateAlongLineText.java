@@ -1,6 +1,11 @@
 package com.supermap.desktop.CtrlAction.CreateGeometry;
 
-import com.supermap.data.*;
+import com.supermap.data.DatasetType;
+import com.supermap.data.GeoCardinal;
+import com.supermap.data.GeoCompound;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoText;
+import com.supermap.data.TextPart;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
@@ -15,7 +20,11 @@ import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.ui.Action;
-import com.supermap.ui.*;
+import com.supermap.ui.ActionChangedEvent;
+import com.supermap.ui.ActionChangedListener;
+import com.supermap.ui.TrackMode;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackedListener;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -25,7 +34,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CtrlActionCreateAlongLineText extends ActionCreateBase {
-
 	private static final double DEFAULT_FONT_PIXEL_HEIGHT = 23;
 
 	private TrackedListener trackedListener = new TrackedListener() {

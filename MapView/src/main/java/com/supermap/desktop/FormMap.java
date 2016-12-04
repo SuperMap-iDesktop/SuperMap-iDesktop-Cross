@@ -161,11 +161,11 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private transient DropTarget dropTargeted;
 	private transient PrjCoordSysType prjCoordSysType = null;
 	private int SELECT_NUMBER = 1;
-	private int LOCATION = 2;
-	private int PRJCOORSYS = 3;
-	private int CENTER_X = 5;
-	private int CENTER_Y = 6;
-	private int SCALE = 8;
+	private int SCALE = 3;
+	private int LOCATION = 4;
+	private int PRJCOORSYS = 5;
+	private int CENTER_X = 7;
+	private int CENTER_Y = 8;
 	private boolean isRegisterEvents = false;
 	private boolean isResetComboBox = false;
 
@@ -465,8 +465,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			if (clickCount == 2 && mapControl.getMap().findSelection(true).length > 0) {
 
 				// 双击显示对象属性
-				JDialog dialogPropertyContainer = (JDialog) Application.getActiveApplication().getMainFrame().getPropertyManager();
-				dialogPropertyContainer.setVisible(true);
+				Application.getActiveApplication().getMainFrame().getPropertyManager().setPropertyVisible(true);
 				setSelectedGeometryProperty();
 			}
 		}
@@ -561,35 +560,36 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 		if (list.get(2) != null) {
 			statusbar.add(list.get(2), new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(1, 1).setIpad(100, 0));
+					.setWeight(0, 1));
 		}
 		if (list.get(3) != null) {
-			list.get(3).setMinimumSize(new Dimension(200, list.get(3).getHeight()));
 			statusbar.add(list.get(3), new GridBagConstraintsHelper(3, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1));
+					.setWeight(0, 1).setIpad(50, 0));
 		}
 		if (list.get(4) != null) {
 			statusbar.add(list.get(4), new GridBagConstraintsHelper(4, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1));
+					.setWeight(1, 1).setIpad(100, 0));
 		}
 		if (list.get(5) != null) {
-			list.get(5).setMinimumSize(new Dimension(60, list.get(5).getHeight()));
+			list.get(5).setMinimumSize(new Dimension(200, list.get(5).getHeight()));
 			statusbar.add(list.get(5), new GridBagConstraintsHelper(5, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
 					.setWeight(0, 1));
 		}
 		if (list.get(6) != null) {
-			list.get(6).setMinimumSize(new Dimension(60, list.get(6).getHeight()));
 			statusbar.add(list.get(6), new GridBagConstraintsHelper(6, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
 					.setWeight(0, 1));
 		}
 		if (list.get(7) != null) {
+			list.get(7).setMinimumSize(new Dimension(60, list.get(7).getHeight()));
 			statusbar.add(list.get(7), new GridBagConstraintsHelper(7, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
 					.setWeight(0, 1));
 		}
 		if (list.get(8) != null) {
+			list.get(8).setMinimumSize(new Dimension(60, list.get(8).getHeight()));
 			statusbar.add(list.get(8), new GridBagConstraintsHelper(8, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1).setIpad(50, 0));
+					.setWeight(0, 1));
 		}
+
 	}
 
 	private Dimension newSize;
@@ -722,8 +722,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			String pointXFieldText = pointXField.getText();
 			String pointYFieldText = pointYField.getText();
 			if (DoubleUtilities.isDoubleWithoutD(pointXFieldText) && DoubleUtilities.isDoubleWithoutD(pointYFieldText)) {
-				double pointX = Double.parseDouble(pointXFieldText);
-				double pointY = Double.parseDouble(pointYFieldText);
+				double pointX = DoubleUtilities.stringToValue(pointXFieldText);
+				double pointY = DoubleUtilities.stringToValue(pointYFieldText);
 				Point2D point2d = new Point2D(pointX, pointY);
 				mapControl.getMap().setCenter(point2d);
 				mapControl.getMap().refresh();
@@ -742,7 +742,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	 */
 	protected void updatePrjCoorSysPlace(MouseEvent e) {
 		try {
-			final DecimalFormat format = new DecimalFormat("######0.000000");
 			PrjCoordSysType coordSysType = this.getMapControl().getMap().getPrjCoordSys().getType();
 			Point pointMouse = e.getPoint();
 			Point2D point = mapControl.getMap().pixelToMap(pointMouse);
@@ -753,7 +752,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			} else if (Double.isNaN(point.getX())) {
 				x = MapViewProperties.getString("String_NotANumber");
 			} else {
-				x = format.format(point.getX());
+				x = DoubleUtilities.getFormatString(point.getX());
 			}
 			String y = "";
 			if (Double.isInfinite(point.getY())) {
@@ -761,7 +760,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			} else if (Double.isNaN(point.getY())) {
 				y = MapViewProperties.getString("String_NotANumber");
 			} else {
-				y = format.format(point.getY());
+				y = DoubleUtilities.getFormatString(point.getY());
 			}
 
 			// XY坐标信息
@@ -921,10 +920,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	private void initCenter() {
-		DecimalFormat format = new DecimalFormat("######0.####");
-		String x = Double.isNaN(mapControl.getMap().getCenter().getX()) ? MapViewProperties.getString("String_NotANumber") : format.format(mapControl.getMap()
+		String x = Double.isNaN(mapControl.getMap().getCenter().getX()) ? MapViewProperties.getString("String_NotANumber") : DoubleUtilities.getFormatString(mapControl.getMap()
 				.getCenter().getX());
-		String y = Double.isNaN(mapControl.getMap().getCenter().getY()) ? MapViewProperties.getString("String_NotANumber") : format.format(mapControl.getMap()
+		String y = Double.isNaN(mapControl.getMap().getCenter().getY()) ? MapViewProperties.getString("String_NotANumber") : DoubleUtilities.getFormatString(mapControl.getMap()
 				.getCenter().getY());
 		this.pointXField.setText(x);
 		this.pointXField.setCaretPosition(0);

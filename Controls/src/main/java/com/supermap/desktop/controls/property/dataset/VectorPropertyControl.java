@@ -12,13 +12,15 @@ import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxCharset;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.text.NumberFormatter;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -39,7 +41,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 
 
 	private JLabel labelRecordCount;
-	private JTextField textFieldRecordCount;
+	private SMFormattedTextField textFieldRecordCount;
 	private JLabel labelSpatialIndexType;
 	private JTextField textFieldSpatialIndexType;
 	private JLabel labelCharset;
@@ -154,8 +156,10 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void initializeComponents() {
+		Dimension dimension = new Dimension(80, 23);
 		this.labelRecordCount = new JLabel("RecordCount:");
-		this.textFieldRecordCount = new JTextField();
+		labelRecordCount.setPreferredSize(dimension);
+		this.textFieldRecordCount = new SMFormattedTextField();
 		this.textFieldRecordCount.setEditable(false);
 		this.labelSpatialIndexType = new JLabel("SpatialIndexType:");
 		this.textFieldSpatialIndexType = new JTextField();
@@ -169,41 +173,19 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 
 		JPanel panelVectorParam = new JPanel();
 		panelVectorParam.setBorder(BorderFactory.createTitledBorder(CommonProperties.getString(CommonProperties.DatasetVector)));
-		GroupLayout gl_panelVectorParam = new GroupLayout(panelVectorParam);
-		gl_panelVectorParam.setAutoCreateContainerGaps(true);
-		gl_panelVectorParam.setAutoCreateGaps(true);
-		panelVectorParam.setLayout(gl_panelVectorParam);
-		// @formatter:off
-		gl_panelVectorParam.setHorizontalGroup(gl_panelVectorParam.createSequentialGroup()
-				.addGroup(gl_panelVectorParam.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelRecordCount, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-						.addComponent(this.labelCharset, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH))
-				.addGroup(gl_panelVectorParam.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.textFieldRecordCount, DEFAULT_COMPONENT_WIDTH, DEFAULT_COMPONENT_WIDTH, DEFAULT_COMPONENT_WIDTH)
-						.addComponent(this.comboBoxCharset, DEFAULT_COMPONENT_WIDTH, DEFAULT_COMPONENT_WIDTH, DEFAULT_COMPONENT_WIDTH))
-				.addGroup(gl_panelVectorParam.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelSpatialIndexType, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-						.addComponent(this.checkBoxIsReadOnly, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH))
-				.addGroup(gl_panelVectorParam.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.textFieldSpatialIndexType, GroupLayout.PREFERRED_SIZE, DEFAULT_COMPONENT_WIDTH, Short.MAX_VALUE)
-						.addGroup(gl_panelVectorParam.createSequentialGroup()
-								.addComponent(this.checkBoxIsFileCache)
-								.addGap(10, 20, Short.MAX_VALUE)
-								.addComponent(this.buttonClearCache))));
-		
-		gl_panelVectorParam.setVerticalGroup(gl_panelVectorParam.createSequentialGroup()
-				.addGroup(gl_panelVectorParam.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelRecordCount)
-						.addComponent(this.textFieldRecordCount, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.labelSpatialIndexType)
-						.addComponent(this.textFieldSpatialIndexType, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelVectorParam.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelCharset)
-						.addComponent(this.comboBoxCharset, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.checkBoxIsReadOnly)
-						.addComponent(this.checkBoxIsFileCache)
-						.addComponent(this.buttonClearCache)));
-		// @formatter:on
+		panelVectorParam.setLayout(new GridBagLayout());
+		panelVectorParam.add(labelRecordCount, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelVectorParam.add(textFieldRecordCount, new GridBagConstraintsHelper(1, 0, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10));
+
+		panelVectorParam.add(labelSpatialIndexType, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelVectorParam.add(textFieldSpatialIndexType, new GridBagConstraintsHelper(1, 1, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelVectorParam.add(labelCharset, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelVectorParam.add(comboBoxCharset, new GridBagConstraintsHelper(1, 2, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelVectorParam.add(checkBoxIsReadOnly, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 10, 0).setAnchor(GridBagConstraints.WEST));
+		panelVectorParam.add(checkBoxIsFileCache, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 0, 10, 0));
+		panelVectorParam.add(buttonClearCache, new GridBagConstraintsHelper(2, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.NONE).setInsets(5, 5, 10, 10));
 
 		NumberFormat numberInstance = NumberFormat.getNumberInstance();
 		numberInstance.setMaximumFractionDigits(20);
@@ -211,6 +193,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 		numberFormatter.setValueClass(Double.class);
 		numberFormatter.setMinimum(0.0);
 		this.labelNodeSnap = new JLabel("NodeSnap:");
+		labelNodeSnap.setPreferredSize(dimension);
 		this.textFieldNodeSnap = new SMFormattedTextField(numberFormatter);
 		this.labelDangle = new JLabel("Dangle");
 		this.textFieldDangle = new SMFormattedTextField(numberFormatter);
@@ -225,72 +208,39 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 
 		JPanel panelTolerance = new JPanel();
 		panelTolerance.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_DatasetTolerance")));
-		GroupLayout gl_panelTolerance = new GroupLayout(panelTolerance);
-		gl_panelTolerance.setAutoCreateContainerGaps(true);
-		gl_panelTolerance.setAutoCreateGaps(true);
-		panelTolerance.setLayout(gl_panelTolerance);
-		// @formatter:off
-		gl_panelTolerance.setHorizontalGroup(gl_panelTolerance.createSequentialGroup()
-				.addGroup(gl_panelTolerance.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelNodeSnap, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-						.addComponent(this.labelGrain, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-						.addComponent(this.labelSmallPolygon, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH))
-				.addGroup(gl_panelTolerance.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.textFieldNodeSnap, DEFAULT_COMPONENT_WIDTH, DEFAULT_COMPONENT_WIDTH, DEFAULT_COMPONENT_WIDTH)
-						.addComponent(this.textFieldGrain, DEFAULT_COMPONENT_WIDTH, DEFAULT_COMPONENT_WIDTH, DEFAULT_COMPONENT_WIDTH)
-						.addComponent(this.textFieldSmallPolygon, DEFAULT_COMPONENT_WIDTH, DEFAULT_COMPONENT_WIDTH, DEFAULT_COMPONENT_WIDTH))
-				.addGroup(gl_panelTolerance.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.labelDangle, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH)
-						.addComponent(this.labelExtend, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH, DEFAULT_LABEL_WIDTH))
-				.addGroup(gl_panelTolerance.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.textFieldDangle, GroupLayout.PREFERRED_SIZE, DEFAULT_COMPONENT_WIDTH, Short.MAX_VALUE)
-						.addComponent(this.textFieldExtend, GroupLayout.PREFERRED_SIZE, DEFAULT_COMPONENT_WIDTH, Short.MAX_VALUE)
-						.addGroup(gl_panelTolerance.createSequentialGroup()
-								.addGap(10, 10, Short.MAX_VALUE)
-								.addComponent(this.buttonDefaultTolerance, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(this.buttonClearTolerance, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))));
-		
-		gl_panelTolerance.setVerticalGroup(gl_panelTolerance.createSequentialGroup()
-				.addGroup(gl_panelTolerance.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelNodeSnap)
-						.addComponent(this.textFieldNodeSnap, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.labelDangle)
-						.addComponent(this.textFieldDangle, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelTolerance.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelGrain)
-						.addComponent(this.textFieldGrain, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.labelExtend)
-						.addComponent(this.textFieldExtend, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(gl_panelTolerance.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.labelSmallPolygon)
-						.addComponent(this.textFieldSmallPolygon, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonDefaultTolerance)
-						.addComponent(this.buttonClearTolerance)));
-		// |@formatter:on
+		panelTolerance.setLayout(new GridBagLayout());
+		panelTolerance.add(labelNodeSnap, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelTolerance.add(textFieldNodeSnap, new GridBagConstraintsHelper(1, 0, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10));
+
+		panelTolerance.add(labelDangle, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelTolerance.add(textFieldDangle, new GridBagConstraintsHelper(1, 1, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelTolerance.add(labelGrain, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelTolerance.add(textFieldGrain, new GridBagConstraintsHelper(1, 2, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelTolerance.add(labelExtend, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelTolerance.add(textFieldExtend, new GridBagConstraintsHelper(1, 3, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+
+		panelTolerance.add(labelSmallPolygon, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 10, 0, 0).setAnchor(GridBagConstraints.WEST));
+		panelTolerance.add(textFieldSmallPolygon, new GridBagConstraintsHelper(1, 4, 2, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 10));
+		panelTolerance.add(new JLabel(), new GridBagConstraintsHelper(0, 5, 1, 1));
+		panelTolerance.add(buttonDefaultTolerance, new GridBagConstraintsHelper(1, 6, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(5, 5, 10, 0));
+		panelTolerance.add(buttonClearTolerance, new GridBagConstraintsHelper(2, 6, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(5, 5, 10, 10));
+
 
 		this.buttonReset = new SmButton("Reset");
 		this.buttonApply = new SmButton("Apply");
-		GroupLayout gl_mainContent = new GroupLayout(this);
-		gl_mainContent.setAutoCreateContainerGaps(true);
-		gl_mainContent.setAutoCreateGaps(true);
-		this.setLayout(gl_mainContent);
-		// @formatter:off
-		gl_mainContent.setHorizontalGroup(gl_mainContent.createParallelGroup(Alignment.LEADING)
-				.addComponent(panelVectorParam)
-				.addComponent(panelTolerance)
-				.addGroup(gl_mainContent.createSequentialGroup()
-						.addGap(10, 10, Short.MAX_VALUE)
-						.addComponent(this.buttonReset)
-						.addComponent(this.buttonApply)));
-		
-		gl_mainContent.setVerticalGroup(gl_mainContent.createSequentialGroup()
-				.addComponent(panelVectorParam, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(panelTolerance, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addGap(10, 10, Short.MAX_VALUE)
-				.addGroup(gl_mainContent.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.buttonReset)
-						.addComponent(this.buttonApply)));
-		// @formatter:on
+		JPanel panelButton = new JPanel();
+		panelButton.setLayout(new GridBagLayout());
+		panelButton.add(buttonReset, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 10, 0));
+		panelButton.add(buttonApply, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 10, 10));
+
+		this.setLayout(new GridBagLayout());
+		this.add(panelVectorParam, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 10, 0, 10));
+		this.add(panelTolerance, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
+		this.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
+		this.add(panelButton, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+
 	}
 
 	private void initializeResources() {
@@ -323,7 +273,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	}
 
 	private void fillComponents() {
-		this.textFieldRecordCount.setText(Integer.toString(this.datasetVector.getRecordCount()));
+		this.textFieldRecordCount.setText(DoubleUtilities.getFormatString(this.datasetVector.getRecordCount()));
 		this.textFieldSpatialIndexType.setText(SpatialIndexTypeUtilities.toString(this.datasetVector.getSpatialIndexType()));
 		this.comboBoxCharset.setSelectedItem(this.charset);
 		this.checkBoxIsReadOnly.setSelected(this.isReadOnly);

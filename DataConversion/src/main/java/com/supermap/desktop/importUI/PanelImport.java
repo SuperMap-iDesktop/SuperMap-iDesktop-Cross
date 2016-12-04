@@ -67,14 +67,14 @@ public class PanelImport extends JPanel implements IPanelImport {
             if (null == importSetting) {
                 return;
             }
+            this.transform = transformFactory.createPanelTransform(importSetting);
             this.resultset = new PanelResultset(PanelImport.this, importInfo);
             this.sourceInfo = new PanelSourceInfo(owner, importSetting);
-            this.transform = transformFactory.createPanelTransform(importSetting);
         } else if (null != this.panelImports) {
             panelImportType = transformFactory.getImportSettingsType(panelImports);
-            this.resultset = new PanelResultset(panelImports, panelImportType);
-            this.sourceInfo = new PanelSourceInfo(panelImports, panelImportType);
             this.transform = transformFactory.createPanelTransform(panelImports);
+            this.resultset = new PanelResultset(PanelImport.this, panelImports, panelImportType);
+            this.sourceInfo = new PanelSourceInfo(panelImports, panelImportType);
         }
     }
 
@@ -94,12 +94,13 @@ public class PanelImport extends JPanel implements IPanelImport {
 
     @Override
     public void registEvents() {
-
     }
 
     @Override
     public void removeEvents() {
-
+        this.transform.removeEvents();
+        this.resultset.removeEvents();
+        this.sourceInfo.removeEvents();
     }
 
     public IImportSettingResultset getResultset() {

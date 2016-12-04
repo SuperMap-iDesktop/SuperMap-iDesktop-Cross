@@ -30,7 +30,7 @@ public class FormProgress extends SmDialog implements IUpdateProgress {
 	private String message = "";
 	private String remainTime = "";
 	private int percent = 0;
-	private boolean isCancel = false;
+	private volatile boolean isCancel = false;
 
 	private JProgressBar progressBar = null;
 	private JLabel labelMessage = null;

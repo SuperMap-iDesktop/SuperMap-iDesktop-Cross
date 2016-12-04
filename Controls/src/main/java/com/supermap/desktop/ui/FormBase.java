@@ -21,11 +21,11 @@ import com.supermap.desktop.Interface.IPropertyManager;
 import com.supermap.desktop.Interface.IStatusbarManager;
 import com.supermap.desktop.Interface.IToolbarManager;
 import com.supermap.desktop.WorkEnvironment;
-import com.supermap.desktop.controls.property.JDialogDataPropertyContainer;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.FormLoadedListener;
+import com.supermap.desktop.ui.controls.Dockbar;
 import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.NodeDataType;
@@ -68,25 +68,26 @@ public class FormBase extends JFrame implements IFormMain {
 	private transient ToolbarManager toolbarManager = null;
 	private transient DockbarManager dockbarManager = null;
 	private transient StatusbarManager statusbarManager = null;
-	private transient IPropertyManager propertyManager = null;
+	// private transient IPropertyManager propertyManager = null;
 	private int defaultType = -1;
 	private int workspaceType = 0;
 	private int datasourceType = 1;
 	private ArrayList<FormLoadedListener> formLoadedListeners = new ArrayList<>();
 
 	public FormBase() {
-		this.formManager = new FormManager();
+		this.formManager = new FormManager(this);
 		this.frameMenuManager = new FrameMenuManager();
 		this.contextMenuManager = new ContextMenuManager();
 		this.toolbarManager = new ToolbarManager();
-		this.dockbarManager = new DockbarManager(this.formManager);
+		this.dockbarManager = new DockbarManager();
 		this.statusbarManager = new StatusbarManager();
 		this.jMenuBarMain = new JMenuBar();
-		this.propertyManager = new JDialogDataPropertyContainer(this);
+//        this.propertyManager = new JDialogDataPropertyContainer(this);
 
 		JMenu menu = new JMenu("loading");
 		this.jMenuBarMain.add(menu);
 		jMenuBarMain.setMinimumSize(new Dimension(20, 23));
+//		this.setJMenuBar(this.jMenuBarMain);
 
 		this.addWindowListener(new FormBaseListener());
 		initDrag();
@@ -197,7 +198,14 @@ public class FormBase extends JFrame implements IFormMain {
 
 	@Override
 	public IPropertyManager getPropertyManager() {
-		return this.propertyManager;
+		IPropertyManager iPropertyManager = null;
+		try {
+			Dockbar dockbar = (Dockbar) getDockbarManager().get(Class.forName("com.supermap.desktop.controls.property.DataPropertyContainer"));
+			iPropertyManager = (IPropertyManager) ((Container) dockbar.getComponent(0)).getComponent(0);
+		} catch (ClassNotFoundException e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+		return iPropertyManager;
 	}
 
 	private void loadFrameMenu(WorkEnvironment workEnvironment) {

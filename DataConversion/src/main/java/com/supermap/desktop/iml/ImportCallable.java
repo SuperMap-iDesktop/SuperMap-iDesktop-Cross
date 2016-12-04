@@ -1,9 +1,6 @@
 package com.supermap.desktop.iml;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasources;
-import com.supermap.data.SpatialIndexType;
+import com.supermap.data.*;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
@@ -181,12 +178,16 @@ public class ImportCallable extends UpdateProgressCallable {
                         if (isBuildFiledIndex) {
                             int count = ((DatasetVector) dataset).getFieldInfos().getCount();
                             for (int k = 0; k < count; k++) {
-                                String fieldName = ((DatasetVector) dataset).getFieldInfos().get(k).getName();
-                                String indexName = MessageFormat.format("{0}_{1}", fieldName, UUID.randomUUID());
-                                if (indexName.length() > 30) {
-                                    indexName = indexName.substring(0, 30);
+                                if (((DatasetVector) dataset).getFieldInfos().get(k) instanceof FieldInfo) {
+                                    String fieldName = ((DatasetVector) dataset).getFieldInfos().get(k).getName();
+                                    String uuidStr = UUID.randomUUID().toString();
+                                    String fieldIndex = uuidStr.substring(0, 8) + uuidStr.substring(9, 13) + uuidStr.substring(14, 18) + uuidStr.substring(19, 23) + uuidStr.substring(24);
+                                    String indexName = MessageFormat.format("{0}_{1}", fieldName, fieldIndex);
+                                    if (indexName.length() > 30) {
+                                        indexName = indexName.substring(0, 30);
+                                    }
+                                    ((DatasetVector) dataset).buildFieldIndex(new String[]{fieldName}, indexName);
                                 }
-                                ((DatasetVector) dataset).buildFieldIndex(new String[]{fieldName}, indexName);
                             }
 
                         }

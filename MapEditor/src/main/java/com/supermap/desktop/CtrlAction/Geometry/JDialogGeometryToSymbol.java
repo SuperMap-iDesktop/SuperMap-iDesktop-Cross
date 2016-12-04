@@ -18,6 +18,8 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 /**
  * @author XiaJT
@@ -37,6 +39,7 @@ public class JDialogGeometryToSymbol extends SmDialog {
 		this.setTitle(MapEditorProperties.getString("String_GeometryToSymbol"));
 		this.setSize(300, 150);
 		this.setLocationRelativeTo(null);
+		this.rootPane.setDefaultButton(buttonOk);
 	}
 
 	private void init() {
@@ -94,6 +97,15 @@ public class JDialogGeometryToSymbol extends SmDialog {
 			public void actionPerformed(ActionEvent e) {
 				dialogResult = DialogResult.CANCEL;
 				dispose();
+			}
+		});
+		textFieldName.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+					dialogResult = DialogResult.OK;
+					dispose();
+				}
 			}
 		});
 	}

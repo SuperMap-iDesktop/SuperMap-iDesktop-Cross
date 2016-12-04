@@ -35,14 +35,12 @@ class LayerNodeDecorator implements TreeNodeDecorator {
                 graphics.drawImage(InternalImageIconFactory.DT_UNKNOWN.getImage(), 0, 0, label);
                 icon.setImage(bufferedImage);
             } else {
-                Resources resources;
-                resources = dataset.getDatasource().getWorkspace().getResources();
-
+                Resources resources = dataset.getDatasource().getWorkspace().getResources();
+                ImageIcon icon = (ImageIcon) label.getIcon();
+                BufferedImage bufferedImage = new BufferedImage(IMAGEICON_WIDTH, IMAGEICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+                Graphics graphics = bufferedImage.getGraphics();
                 if (dataset instanceof DatasetVector) {
                     DatasetVector datasetVector = (DatasetVector) dataset;
-                    ImageIcon icon = (ImageIcon) label.getIcon();
-                    BufferedImage bufferedImage = new BufferedImage(IMAGEICON_WIDTH, IMAGEICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-                    Graphics graphics = bufferedImage.getGraphics();
                     DatasetType type = datasetVector.getType();
                     GeoStyle geoStyle;
                     if (((DatasetVector) dataset).getParentDataset() != null) {
@@ -138,17 +136,16 @@ class LayerNodeDecorator implements TreeNodeDecorator {
                         graphics.drawImage(getImage(DatasetType.NETWORK3D), 0, 0, label);
                     } else if (type == DatasetType.MODEL) {
                         graphics.drawImage(getImage(DatasetType.MODEL), 0, 0, label);
+                    } else if (type == DatasetType.VOLUME) {
+                        graphics.drawImage(getImage(DatasetType.VOLUME), 0, 0, label);
                     }
-                    icon.setImage(bufferedImage);
-                }
-
-                if (dataset instanceof DatasetTopology) {
-                    ImageIcon icon = (ImageIcon) label.getIcon();
-                    BufferedImage bufferedImage = new BufferedImage(IMAGEICON_WIDTH, IMAGEICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-                    Graphics graphics = bufferedImage.getGraphics();
+                } else if (dataset instanceof DatasetTopology) {
                     graphics.drawImage(InternalImageIconFactory.DT_TOPOLOGY.getImage(), 0, 0, label);
-                    icon.setImage(bufferedImage);
+                } else if (dataset instanceof DatasetVolume) {
+                    graphics.drawImage(getImage(DatasetType.VOLUME), 0, 0, label);
+
                 }
+                icon.setImage(bufferedImage);
             }
         }
 

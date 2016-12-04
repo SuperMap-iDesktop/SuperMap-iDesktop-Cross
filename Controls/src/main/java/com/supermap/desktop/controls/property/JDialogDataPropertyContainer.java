@@ -187,4 +187,9 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 	public IProperty getCurrentProperty() {
 		return currentProperty;
 	}
+
+	@Override
+	public void setPropertyVisible(boolean visible) {
+		this.setVisible(visible);
+	}
 }

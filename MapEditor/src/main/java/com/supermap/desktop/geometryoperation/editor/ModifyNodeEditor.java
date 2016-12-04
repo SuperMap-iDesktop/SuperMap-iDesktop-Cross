@@ -51,11 +51,12 @@ public class ModifyNodeEditor extends AbstractEditor {
 		return environment.getEditProperties().getSelectedGeometryCount() == 1
 				&& environment.getEditProperties().getEditableSelectedGeometryCount() == 1
 				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypes(), GeometryType.GEOLINE, GeometryType.GEOLINE3D,
-						GeometryType.GEOREGION);
+				GeometryType.GEOREGION);
 	}
 
 	@Override
 	public boolean check(EditEnvironment environment) {
-		return environment.getMapControl().getAction() == Action.VERTEXEDIT;
+		return environment.getMapControl().getAction() == Action.VERTEXEDIT
+				&& environment.getEditor() instanceof ModifyNodeEditor;
 	}
 }

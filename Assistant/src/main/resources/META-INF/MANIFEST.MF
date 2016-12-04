@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1476943964326
+Bnd-LastModified: 1478769744429
 Build-Jdk: 1.7.0_80
-Built-By: highsad
+Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.assistant.AssistantActivator
 Bundle-ManifestVersion: 2
 Bundle-Name: Assistant

@@ -88,7 +88,6 @@ public class DatasourceComboBox extends JComboBox<Object> {
         for (int i = 0; i < this.getItemCount(); i++) {
             if (this.getDatasourceAt(i).getAlias().equals(alias)) {
                 this.removeItem(this.getItemAt(i));
-                updateUI();
             }
         }
     }
@@ -107,7 +106,11 @@ public class DatasourceComboBox extends JComboBox<Object> {
      * @param datasource
      */
     public void setSelectedDatasource(Datasource datasource) {
-        if (getItemCount() <= 0 || datasource == null) {
+        if (datasource == null) {
+            setSelectedItem(null);
+            return;
+        }
+        if (getItemCount() <= 0) {
             return;
         }
         int selectIndex = 0;

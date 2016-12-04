@@ -1,19 +1,6 @@
 package com.supermap.desktop.Action;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetImage;
-import com.supermap.data.Datasource;
-import com.supermap.data.GeoPoint;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.GeoText;
-import com.supermap.data.PixelFormat;
-import com.supermap.data.Point2D;
-import com.supermap.data.Rectangle2D;
-import com.supermap.data.Size2D;
-import com.supermap.data.TextAlignment;
-import com.supermap.data.TextPart;
-import com.supermap.data.TextStyle;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
@@ -24,11 +11,7 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.MapClosedEvent;
-import com.supermap.mapping.MapClosedListener;
-import com.supermap.mapping.TrackingLayer;
+import com.supermap.mapping.*;
 import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
 
@@ -40,14 +23,12 @@ import java.awt.event.MouseEvent;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class CtrlActionQueryGridValueByMouse extends CtrlAction {
 	private transient TransparentBackground transparentBackground;
 	private transient MapControl mapControl;
 	private IFormMap formMap;
 	private final DecimalFormat format = new DecimalFormat("######0.000000");
-	public static HashMap<MapControl, ArrayList<Integer>> queryArrayMap = new HashMap<>();
 	private static final String trackingObjectName = "QueryGridValue";
 
 	private void hideTransparentBackground() {

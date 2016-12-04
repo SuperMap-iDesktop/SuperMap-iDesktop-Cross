@@ -1,4 +1,4 @@
-package com.supermap.desktop.GeometryPropertyBindWindow;
+package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.mapping.Layer;
@@ -28,9 +28,9 @@ public interface IBindWindow {
 
 	/**
 	 * 获取当前活动的图层
-	 * 
-	 * @param layer
-	 */
+	 *
+     * @param
+     */
 	public Layer getActiveLayer();
 
 	/**
@@ -52,7 +52,7 @@ public interface IBindWindow {
 
 	public void removeMapSelectionChangeListener(MapSelectionChangeListener l);
 
-	public void fireSelectionChanged(Selection selection,Layer layer);
+    public void fireSelectionChanged(Selection selection, Layer layer);
 
 	/**
 	 * 获取属性表

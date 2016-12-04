@@ -10,6 +10,7 @@ import com.supermap.desktop.baseUI.PanelExportTransform;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.*;
 import com.supermap.desktop.localUtilities.CommonUtilities;
+import com.supermap.desktop.localUtilities.FileUtilities;
 import com.supermap.desktop.localUtilities.FiletypeUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -24,12 +25,13 @@ import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -60,6 +62,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     public static final int COLUMN_STATE = 5;
     private ArrayList<PanelExportTransform> panelExports;
     private PanelExportTransform panelExportsTemp;
+    private JPanel panelEmpty;
 
     private String[] title = {DataConversionProperties.getString("String_Dataset"),
             DataConversionProperties.getString("string_outputtype"),
@@ -67,8 +70,6 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             DataConversionProperties.getString("string_directory"),
             DataConversionProperties.getString("string_coverage"),
             DataConversionProperties.getString("string_tabletitle_state")};
-
-    private ArrayList<ExportFileInfo> exportsFileInfos;
 
     private ActionListener addDatasetListener = new ActionListener() {
         @Override
@@ -104,6 +105,30 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         }
 
     };
+    private ActionListener exportsSetListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            ExportsSetDialog exportsSetDialog = new ExportsSetDialog(DataExportDialog.this);
+            replaceExportPanel();
+            exportsSetDialog = null;
+        }
+    };
+    private ListSelectionListener listSelectionListener = new ListSelectionListener() {
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            if (tableExport.getRowCount() > 0) {
+                int lastSelectRow = e.getLastIndex() != tableExport.getSelectedRow() ? e.getLastIndex() : e.getFirstIndex();
+                if (lastSelectRow < panelExports.size()) {
+                    PanelExportTransform exportTransform = panelExports.get(lastSelectRow);
+                    if (!buttonExport.isEnabled() && exportTransform instanceof PanelExportTransformForGrid) {
+                        ((PanelExportTransformForGrid) exportTransform).getPasswordField().setText("");
+                        ((PanelExportTransformForGrid) exportTransform).getPasswordFieldConfrim().setText("");
+                        buttonExport.setEnabled(true);
+                    }
+                }
+            }
+        }
+    };
 
     private void panelExportsDispose() {
         for (PanelExportTransform panelImportTemp : panelExports) {
@@ -123,6 +148,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         public void actionPerformed(ActionEvent e) {
             try {
                 CommonUtilities.selectAll(tableExport);
+                replaceExportPanel();
                 setButtonState();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
@@ -134,6 +160,8 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         public void actionPerformed(ActionEvent e) {
             try {
                 CommonUtilities.invertSelect(tableExport);
+                replaceExportPanel();
+                setButtonState();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -219,7 +247,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 
     private void replaceExportInfos(ArrayList<PanelExportTransform> tempPanels) {
         IExportPanelFactory panelFactory = new ExportPanelFactory();
-        panelExportsTemp = panelFactory.createExportPanel(tempPanels);
+        panelExportsTemp = panelFactory.createExportPanel(DataExportDialog.this, tempPanels);
         CommonUtilities.replace(panelExportInfo, panelExportsTemp);
     }
 
@@ -245,53 +273,58 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                 } else {
                     addExportInfo();
                 }
-            } else if (tableExport.getSelectedRows().length == 1) {
-                //刷新右边界面
-                relesePanelExportTemp();
-                CommonUtilities.replace(panelExportInfo, panelExports.get(tableExport.getSelectedRow()));
-            } else if (tableExport.getSelectedRows().length > 1) {
-                //刷新右边界面
-                replaceExportInfos();
+            } else {
+                replaceExportPanel();
             }
         }
 
         private void setExportPath() {
-            if (!SmFileChoose.isModuleExist("DataExportFrame_OutPutDirectories")) {
-                SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), DataConversionProperties.getString("String_Export"),
-                        "DataExportFrame_OutPutDirectories", "GetDirectories");
-            }
-            SmFileChoose tempfileChooser = new SmFileChoose("DataExportFrame_OutPutDirectories");
             int selectRow = tableExport.getSelectedRow();
             String filePath = tableExport.getValueAt(selectRow, COLUMN_FILEPATH).toString();
-            if (!StringUtilities.isNullOrEmpty(filePath)) {
-                tempfileChooser.setSelectedFile(new File(filePath));
-            }
-            tempfileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            SmFileChoose tempfileChooser = FileUtilities.createExportFileChooser(filePath);
             int state = tempfileChooser.showSaveDialog(null);
             if (state == JFileChooser.APPROVE_OPTION) {
                 String directories = tempfileChooser.getFilePath();
-                tableExport.setValueAt(directories, selectRow, COLUMN_FILEPATH);
-                tableExport.updateUI();
+                if (FileUtilities.isFilePath(directories)) {
+                    tableExport.setValueAt(directories, selectRow, COLUMN_FILEPATH);
+                    tableExport.updateUI();
+                }
             }
         }
     };
 
+    private void replaceExportPanel() {
+        if (tableExport.getSelectedRows().length == 1) {
+            //刷新右边界面
+            relesePanelExportTemp();
+            CommonUtilities.replace(panelExportInfo, panelExports.get(tableExport.getSelectedRow()));
+        } else if (tableExport.getSelectedRows().length > 1) {
+            //刷新右边界面
+            replaceExportInfos();
+        } else {
+            CommonUtilities.replace(panelExportInfo, panelEmpty);
+        }
+    }
+
     private void deleteExportInfo() {
         if (null != tableExport.getSelectedRows() && tableExport.getSelectedRows().length != 0) {
-            int size = tableExport.getSelectedRows().length;
+            int[] selectRows = tableExport.getSelectedRows();
+            int size = selectRows.length;
             for (int i = size - 1; i >= 0; i--) {
-                panelExports.remove(i);
+                panelExports.get(i).removeEvents();
+                panelExports.remove(selectRows[i]);
             }
             ((MutiTableModel) tableExport.getModel()).removeRows(tableExport.getSelectedRows());
             this.tableExport.updateUI();
-            if (0 < tableExport.getRowCount()) {
-                this.tableExport.setRowSelectionInterval(tableExport.getRowCount() - 1, tableExport.getRowCount() - 1);
-            }
-            setButtonState();
         }
-        if (tableExport.getRowCount() == 0) {
+        if (0 < tableExport.getRowCount()) {
+            initComboBoxColumns();
+            this.tableExport.setRowSelectionInterval(tableExport.getRowCount() - 1, tableExport.getRowCount() - 1);
+        } else if (tableExport.getRowCount() == 0) {
             tableExport.clearSelection();
+            CommonUtilities.replace(panelExportInfo, panelEmpty);
         }
+        setButtonState();
     }
 
     private TableModelListener tableModelListener = new TableModelListener() {
@@ -304,11 +337,16 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                 ExportSetting tempExportSetting = fileInfo.getExportSetting();
                 if (column == COLUMN_ISOVERWRITE && tableExport.getValueAt(row, column) instanceof Boolean) {
                     tempExportSetting.setOverwrite((Boolean) tableExport.getValueAt(row, column));
-                } else if (column == COLUMN_FILENAME || column == COLUMN_FILEPATH) {
-                    String filePath = tableExport.getValueAt(row, COLUMN_FILEPATH).toString();
+                } else if (column == COLUMN_FILENAME) {
                     String fileName = tableExport.getValueAt(row, COLUMN_FILENAME).toString();
-                    filePath = getFilePath(filePath, fileInfo, fileName);
-                    tempExportSetting.setTargetFilePath(filePath);
+                    if (!StringUtilities.isNullOrEmptyString(fileName)) {
+                        fileInfo.setFileName(fileName);
+                    }
+                } else if (column == COLUMN_FILEPATH) {
+                    String filePath = tableExport.getValueAt(row, COLUMN_FILEPATH).toString();
+                    if (FileUtilities.isFilePath(filePath)) {
+                        fileInfo.setFilePath(filePath);
+                    }
                 }
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
@@ -331,6 +369,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 
     @Override
     public void initComponents() {
+        this.panelEmpty = new JPanel();
         this.buttonAddDataset = new JButton();
         this.buttonDelete = new JButton();
         this.buttonSelectAll = new JButton();
@@ -340,7 +379,6 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         this.buttonExport = new SmButton();
         this.buttonClose = new SmButton();
         this.panelExport = new JPanel();
-        this.exportsFileInfos = new ArrayList<>();
         this.tableExport = new MutiTable();
         this.tableExport.getTableHeader().setReorderingAllowed(false);
         this.panelExportInfo = new JPanel();
@@ -368,6 +406,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             addTableInfo(datasets);
         }
         initToolbar();
+        setButtonState();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setSize(new Dimension(800, 450));
         this.setLocation(Math.abs(screenSize.width - 800) / 2, Math.abs(screenSize.height - 450) / 2);
@@ -380,13 +419,14 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         this.stateColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_STATE));
         this.fileNameColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_FILENAME));
         this.filePathColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_FILEPATH));
-        stateColumn.setMaxWidth(40);
         overwriteColumn.setMaxWidth(40);
         this.exportTypeColumn.setMinWidth(120);
         filePathColumn.setMinWidth(140);
+        datasetColumn.setCellRenderer(TableTooltipCellRenderer.getInstance());
         exportTypeColumn.setCellRenderer(TableTooltipCellRenderer.getInstance());
         fileNameColumn.setCellRenderer(TableTooltipCellRenderer.getInstance());
         filePathColumn.setCellRenderer(TableTooltipCellRenderer.getInstance());
+        stateColumn.setCellRenderer(TableTooltipCellRenderer.getInstance());
         stateColumn.setMaxWidth(50);
         datasetColumn.setCellRenderer(new CommonListCellRenderer());
     }
@@ -407,7 +447,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                 temp[COLUMN_DATASET] = new DataCell(dataset);
                 for (int i = 0; i < size; i++) {
                     FileType fileType = fileTypes[i];
-                    if (!fileType.equals(FileType.CSV) && !fileType.equals(FileType.GEOJSON)) {
+                    if (!fileType.equals(FileType.GEOJSON)) {
                         newExportSetting = exportSettingFactory.createExportSetting(fileType);
                         temp[COLUMN_EXPORTTYPE] = CommonUtilities.getDatasetName(fileType.toString());
                         exportsFileInfo.setFileType(fileType);
@@ -415,18 +455,16 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                     }
                 }
                 newExportSetting.setSourceData(dataset);
-                String filePath = System.getProperty("user.dir");
+                exportsFileInfo.setFilePath(System.getProperty("user.dir"));
                 String fileName = dataset.getName();
+                exportsFileInfo.setFileName(fileName);
                 exportsFileInfo.setExportSetting(newExportSetting);
-                filePath = getFilePath(filePath, exportsFileInfo, fileName);
-                newExportSetting.setTargetFilePath(filePath);
 
-                this.exportsFileInfos.add(exportsFileInfo);
                 temp[COLUMN_ISOVERWRITE] = newExportSetting.isOverwrite();
                 temp[COLUMN_STATE] = DataConversionProperties.getString("string_change");
                 temp[COLUMN_FILENAME] = fileName;
-                temp[COLUMN_FILEPATH] = System.getProperty("user.dir");
-                this.panelExports.add(exportPanelFactory.createExportPanel(exportsFileInfo));
+                temp[COLUMN_FILEPATH] = exportsFileInfo.getFilePath();
+                this.panelExports.add(exportPanelFactory.createExportPanel(DataExportDialog.this, exportsFileInfo));
                 this.tableExport.addRow(temp);
             }
         }
@@ -438,25 +476,6 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         }
     }
 
-    private String getFilePath(String filePath, ExportFileInfo exportFileInfo, String fileName) {
-        String result = "";
-        if (FileType.TEMSClutter == exportFileInfo.getExportSetting().getTargetFileType()) {
-            if (!filePath.endsWith(File.separator)) {
-                result = filePath + File.separator + fileName + DataConversionProperties.getString("string_index_pause") + "b";
-            } else {
-                result = filePath + fileName + DataConversionProperties.getString("string_index_pause") + "b";
-            }
-        } else {
-            if (!filePath.endsWith(File.separator)) {
-                result = filePath + File.separator + fileName + DataConversionProperties.getString("string_index_pause")
-                        + exportFileInfo.getFileType().toString().toLowerCase();
-            } else {
-                result = filePath + fileName + DataConversionProperties.getString("string_index_pause")
-                        + exportFileInfo.getFileType().toString().toLowerCase();
-            }
-        }
-        return result;
-    }
 
     /**
      * 为table添加下拉列表
@@ -474,7 +493,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             this.steppedComboBox.removeAllItems();
             for (int j = 0; j < size; j++) {
                 FileType fileType = fileTypes[j];
-                if (!fileType.equals(FileType.CSV) && !fileType.equals(FileType.GEOJSON)) {
+                if (!fileType.equals(FileType.GEOJSON)) {
                     String datasetName = CommonUtilities.getDatasetName(fileType.toString());
                     if (!StringUtilities.isNullOrEmpty(datasetName)) {
                         this.steppedComboBox.addItem(datasetName);
@@ -499,30 +518,31 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                         ExportSetting tempExportsetting = exportsFileInfo.getExportSetting();
                         ExportSetting newExportSetting = exportSettingFactory.createExportSetting(fileType);
                         exportsFileInfo.setFileType(fileType);
-                        newExportSetting.setSourceData(tempExportsetting.getSourceData());
-                        newExportSetting.setTargetFileCharset(tempExportsetting.getTargetFileCharset());
-                        newExportSetting.setFilter(tempExportsetting.getFilter());
-                        String filePath = tableExport.getValueAt(row, COLUMN_FILEPATH).toString();
-                        String fileName = tableExport.getValueAt(row, COLUMN_FILENAME).toString();
-                        filePath = getFilePath(filePath, exportsFileInfo, fileName);
-                        newExportSetting.setTargetFilePath(filePath);
-                        newExportSetting.setTargetFileType(fileType);
-                        exportsFileInfo.setExportSetting(newExportSetting);
-                        replaceExportPanel(exportsFileInfo);
+                        replaceExportPanelForFileType(newExportSetting, tempExportsetting, exportsFileInfo, tableExport.getSelectedRow());
                     }
                 }
 
-                private void replaceExportPanel(ExportFileInfo exportsFileInfo) {
-                    int selectRow = tableExport.getSelectedRow();
-                    IExportPanelFactory exportPanelFactory = new ExportPanelFactory();
-                    PanelExportTransform exportTransform = exportPanelFactory.createExportPanel(exportsFileInfo);
-                    panelExports.remove(selectRow);
-                    panelExports.add(selectRow, exportTransform);
-                    CommonUtilities.replace(panelExportInfo, exportTransform);
-                }
+
             };
             this.steppedComboBox.addItemListener(this.itemListener);
         }
+    }
+
+    public void replaceExportPanelForFileType(ExportSetting newExportSetting, ExportSetting tempExportsetting, ExportFileInfo exportFileInfo, int selectRow) {
+        newExportSetting.setSourceData(tempExportsetting.getSourceData());
+        newExportSetting.setTargetFileCharset(tempExportsetting.getTargetFileCharset());
+        newExportSetting.setFilter(tempExportsetting.getFilter());
+        newExportSetting.setOverwrite(tempExportsetting.isOverwrite());
+        exportFileInfo.setExportSetting(newExportSetting);
+        replacePanel(exportFileInfo, selectRow);
+    }
+
+    private void replacePanel(ExportFileInfo exportsFileInfo, int selectRow) {
+        IExportPanelFactory exportPanelFactory = new ExportPanelFactory();
+        PanelExportTransform exportTransform = exportPanelFactory.createExportPanel(DataExportDialog.this, exportsFileInfo);
+        panelExports.remove(selectRow);
+        panelExports.add(selectRow, exportTransform);
+        CommonUtilities.replace(panelExportInfo, exportTransform);
     }
 
     private void initToolbar() {
@@ -542,14 +562,19 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     private void setButtonState() {
         if (0 < tableExport.getRowCount()) {
             this.buttonExport.setEnabled(true);
-            this.buttonDelete.setEnabled(true);
             this.buttonSelectAll.setEnabled(true);
             this.buttonInvertSelect.setEnabled(true);
         } else {
             this.buttonExport.setEnabled(false);
-            this.buttonDelete.setEnabled(false);
             this.buttonSelectAll.setEnabled(false);
             this.buttonInvertSelect.setEnabled(false);
+        }
+        if (tableExport.getSelectedRows().length > 0) {
+            this.buttonDelete.setEnabled(true);
+            this.buttonExportsSet.setEnabled(true);
+        } else {
+            this.buttonDelete.setEnabled(false);
+            this.buttonExportsSet.setEnabled(false);
         }
     }
 
@@ -574,9 +599,9 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         JPanel panel = new JPanel();
         JPanel panelContent = new JPanel();
         if (null != datasets && datasets.length > 0 && panelExports.size() > 0) {
-            panelContent = exportPanelFactory.createExportPanel(panelExports.get(panelExports.size() - 1).getExportsFileInfo());
+            panelContent = exportPanelFactory.createExportPanel(DataExportDialog.this, panelExports.get(panelExports.size() - 1).getExportsFileInfo());
         } else {
-            panelContent = new PanelExportTransformForGrid(new ExportFileInfo());
+            panelContent = new PanelExportTransformForGrid(DataExportDialog.this, new ExportFileInfo());
         }
         panel.setLayout(new GridBagLayout());
         panel.add(panelContent, new GridBagConstraintsHelper(0, 0).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
@@ -602,8 +627,9 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         this.buttonInvertSelect.addActionListener(this.invertSelectListener);
         this.buttonExport.addActionListener(this.exportListener);
         this.buttonClose.addActionListener(this.closeListener);
+        this.buttonExportsSet.addActionListener(this.exportsSetListener);
         this.tableExport.getModel().addTableModelListener(this.tableModelListener);
-
+        this.tableExport.getSelectionModel().addListSelectionListener(this.listSelectionListener);
         this.tableExport.addKeyListener(this.exportKeyListener);
         this.tableExport.addMouseListener(this.exportMouseListener);
         this.scrollPane.addMouseListener(this.exportMouseListener);
@@ -619,7 +645,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         this.buttonExport.removeActionListener(this.exportListener);
         this.buttonClose.removeActionListener(this.closeListener);
         this.tableExport.getModel().removeTableModelListener(this.tableModelListener);
-
+        this.tableExport.getSelectionModel().removeListSelectionListener(this.listSelectionListener);
         this.tableExport.removeKeyListener(this.exportKeyListener);
         this.tableExport.removeMouseListener(this.exportMouseListener);
         this.scrollPane.removeMouseListener(this.exportMouseListener);
@@ -631,6 +657,8 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         this.buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
         this.buttonInvertSelect.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
         this.buttonDelete.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
+        this.buttonExportsSet.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Setting.PNG"));
+        this.buttonExportsSet.setToolTipText(CommonProperties.getString("String_ToolBar_SetBatch"));
         this.buttonAddDataset.setToolTipText(DataConversionProperties.getString("string_button_add"));
         this.buttonDelete.setToolTipText(DataConversionProperties.getString("string_button_delete"));
         this.buttonSelectAll.setToolTipText(DataConversionProperties.getString("string_button_selectAll"));
@@ -640,5 +668,37 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         this.buttonClose.setText(CommonProperties.getString("String_Button_Close"));
         this.buttonClose.setToolTipText(CommonProperties.getString("String_Button_Close"));
         this.checkBoxAutoClose.setText(DataConversionProperties.getString("String_CloseAfterExportEnd"));
+    }
+
+    public MutiTable getTableExport() {
+        return tableExport;
+    }
+
+    public ArrayList<PanelExportTransform> getPanelExports() {
+        return panelExports;
+    }
+
+    public SmButton getButtonExport() {
+        return buttonExport;
+    }
+
+    public JButton getButtonAddDataset() {
+        return buttonAddDataset;
+    }
+
+    public JButton getButtonDelete() {
+        return buttonDelete;
+    }
+
+    public JButton getButtonSelectAll() {
+        return buttonSelectAll;
+    }
+
+    public JButton getButtonInvertSelect() {
+        return buttonInvertSelect;
+    }
+
+    public JButton getButtonExportsSet() {
+        return buttonExportsSet;
     }
 }

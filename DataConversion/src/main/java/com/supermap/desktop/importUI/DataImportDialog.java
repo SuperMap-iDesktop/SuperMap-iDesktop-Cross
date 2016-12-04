@@ -69,6 +69,11 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
     private final int VERTICAL_TYPE = 2;
     private final int SAME_TYPE = 4;
 
+    private static final int IMPORT_TEMSVECTORS = 0;
+    private static final int IMPORT_TEMSBUILDINGVECTORS = 1;
+    private static final int IMPORT_FILEGDBVECTORS = 2;
+    private static final int IMPORT_GJB = 3;
+
     private ActionListener addFileListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -179,14 +184,20 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
             if (2 == e.getClickCount() && table.getSelectedColumn() != ImportTableModel.COLUMN_FILETYPE) {
                 addImportInfo();
                 return;
-            } else if (table.getSelectedRows().length == 1) {
-                relesePanelImportTemp();
-                replaceImportInfo(table.getSelectedRow());
-            } else if (table.getSelectedRows().length > 1) {
-                replaceImportInfos();
+            } else {
+                replaceImportPanel();
             }
         }
     };
+
+    private void replaceImportPanel() {
+        if (table.getSelectedRows().length == 1) {
+            relesePanelImportTemp();
+            replaceImportInfo(table.getSelectedRow());
+        } else if (table.getSelectedRows().length > 1) {
+            replaceImportInfos();
+        }
+    }
 
     private void relesePanelImportTemp() {
         if (null != panelImportTemp) {
@@ -253,13 +264,17 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                     ArrayList<JPanel> removePanel = new ArrayList<JPanel>();
                     if (selectedRow.length < table.getRowCount()) {
                         for (int i = 0; i < selectedRow.length; i++) {
-                            removePanel.add((JPanel) panelImports.get(selectedRow[i]));
+                            PanelImport panelImport = panelImports.get(selectedRow[i]);
+                            panelImport.removeEvents();
+                            removePanel.add(panelImport);
                         }
                         model.removeRows(selectedRow);
                         panelImports.removeAll(removePanel);
                     } else {
                         int[] tempRow = new int[table.getRowCount()];
                         for (int i = 0; i < table.getRowCount(); i++) {
+                            PanelImport panelImport = panelImports.get(i);
+                            panelImport.removeEvents();
                             tempRow[i] = i;
                         }
                         model.removeRows(tempRow);
@@ -292,6 +307,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
             try {
                 CommonUtilities.selectAll(table);
                 setButtonState();
+                replaceImportPanel();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -308,8 +324,8 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                     labelTitle.setText(DataConversionProperties.getString("string_label_importData"));
                     CommonUtilities.replace(panelImportInfo, panelParams);
                     setButtonState();
-                } else if (1 == selectRows.length) {
-                    replaceImportInfo(table.getSelectedRow());
+                } else {
+                    replaceImportPanel();
                 }
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
@@ -416,10 +432,12 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
     private void initTableTheme() {
         TableColumn fileNameColumn = table.getColumn(table.getModel().getColumnName(ImportTableModel.COLUMN_FILENAME));
         TableColumn fileTypeColumn = table.getColumn(table.getModel().getColumnName(ImportTableModel.COLUMN_FILETYPE));
+        TableColumn stateColumn = table.getColumn(table.getModel().getColumnName(ImportTableModel.COLUMN_STATE));
         fileNameColumn.setCellRenderer(TableTooltipCellRenderer.getInstance());
         fileTypeColumn.setCellRenderer(TableTooltipCellRenderer.getInstance());
         fileTypeColumn.setMinWidth(120);
-        table.getColumn(table.getModel().getColumnName(ImportTableModel.COLUMN_STATE)).setMaxWidth(50);
+        stateColumn.setMaxWidth(50);
+        stateColumn.setCellRenderer(TableTooltipCellRenderer.getInstance());
     }
 
     private void initToolbar() {
@@ -639,7 +657,9 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 
                 private void replaceImportPanel(ImportSetting newImportSetting) {
                     IImportPanelFactory importPanelFactory = new ImportPanelFactory();
-                    String filePath = tempFileInfo.getImportSetting().getSourceFilePath();
+                    ImportSetting oldImportSetting = tempFileInfo.getImportSetting();
+                    String filePath = oldImportSetting.getSourceFilePath();
+                    newImportSetting.setTargetDatasource(oldImportSetting.getTargetDatasource());
                     newImportSetting.setSourceFilePath(filePath);
                     tempFileInfo.setImportSetting(newImportSetting);
                     PanelImport panelImport = (PanelImport) importPanelFactory.createPanelImport(DataImportDialog.this, tempFileInfo);
@@ -679,7 +699,6 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 
     class AddDirDialog extends JPopupMenu {
 
-        private static final long serialVersionUID = 1L;
         JList<String> list = new JList<String>();
 
         public AddDirDialog() {
@@ -687,51 +706,90 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         }
 
         private void initComponent() {
-            this.setPreferredSize(new Dimension(160, 90));
+            this.setPreferredSize(new Dimension(240, 160));
             JScrollPane pane = new JScrollPane();
             this.setLayout(new GridBagLayout());
             this.add(pane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
             pane.setViewportView(list);
             pane.setBorder(null);
             DefaultListModel<String> listModel = new DefaultListModel<String>();
-            listModel.addElement(DataConversionProperties.getString("String_FormImportGJB_Text"));
+            listModel.addElement(DataConversionProperties.getString("String_ImportTEMSVectors"));
+            listModel.addElement(DataConversionProperties.getString("String_ImportTEMSBuildingVectors"));
+            listModel.addElement(DataConversionProperties.getString("String_ImportFileGDBVectors"));
+            listModel.addElement(DataConversionProperties.getString("String_ImportGJB"));
             list.setModel(listModel);
             list.addListSelectionListener(new ListSelectionListener() {
 
                 @Override
                 public void valueChanged(ListSelectionEvent e) {
-                    if (!SmFileChoose.isModuleExist("DataImportFrame_ImportDirectories")) {
-                        SmFileChoose.addNewNode("", "", DataConversionProperties.getString("String_ScanDir"),
-                                "DataImportFrame_ImportDirectories", "GetDirectories");
-                    }
-                    SmFileChoose tempfileChooser = new SmFileChoose("DataImportFrame_ImportDirectories");
-                    tempfileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-                    int state = tempfileChooser.showDefaultDialog();
-                    if (state == JFileChooser.APPROVE_OPTION) {
-                        String directories = tempfileChooser.getFilePath();
-                        ImportInfo importInfo = new ImportInfo();
-                        ImportSettingGJB importSettingGJB = new ImportSettingGJB();
-                        importSettingGJB.setSourceFilePath(directories);
-                        importInfo.setImportSetting(importSettingGJB);
-                        importInfo.setFiletype("GJB5068");
-                        importInfo.setFileName(directories);
-                        importInfo.setState(DataConversionProperties.getString("string_change"));
-                        IImportPanelFactory importPanelFactory = new ImportPanelFactory();
-                        PanelImport panelImport = (PanelImport) importPanelFactory.createPanelImport(DataImportDialog.this, importInfo);
-                        panelImports.add(panelImport);
-                        model.addRow(importInfo);
-                        if (panelImports.size() > 0) {
-                            table.setRowSelectionInterval(table.getRowCount() - 1, table.getRowCount() - 1);
-                            labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), "GJB"));
-                            initComboBoxColumns();
-                            CommonUtilities.replace(panelImportInfo, panelImport);
-                            setButtonState();
-                        }
-                    }
-
+                    int selectIndex = list.getSelectedIndex();
+                    initImportDirectoryInfo(selectIndex);
                 }
             });
+
         }
+    }
+
+    private void initImportDirectoryInfo(int type) {
+        if (!SmFileChoose.isModuleExist("DataImportFrame_ImportDirectories")) {
+            SmFileChoose.addNewNode("", "", DataConversionProperties.getString("String_ScanDir"),
+                    "DataImportFrame_ImportDirectories", "GetDirectories");
+        }
+        SmFileChoose tempfileChooser = new SmFileChoose("DataImportFrame_ImportDirectories");
+        tempfileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int state = tempfileChooser.showDefaultDialog();
+        if (state == JFileChooser.APPROVE_OPTION) {
+            String directories = tempfileChooser.getFilePath();
+            ImportInfo importInfo = new ImportInfo();
+            ImportSetting importSetting = createImportSetting(importInfo, type);
+            importSetting.setSourceFilePath(directories);
+            importInfo.setImportSetting(importSetting);
+            importInfo.setFileName(directories);
+            importInfo.setState(DataConversionProperties.getString("string_change"));
+            IImportPanelFactory importPanelFactory = new ImportPanelFactory();
+            PanelImport panelImport = (PanelImport) importPanelFactory.createPanelImport(DataImportDialog.this, importInfo);
+            panelImports.add(panelImport);
+            model.addRow(importInfo);
+            if (panelImports.size() > 0) {
+                table.setRowSelectionInterval(table.getRowCount() - 1, table.getRowCount() - 1);
+                labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), importSetting.getSourceFileType().name()));
+                initComboBoxColumns();
+                CommonUtilities.replace(panelImportInfo, panelImport);
+                setButtonState();
+            }
+        }
+    }
+
+    private ImportSetting createImportSetting(ImportInfo importInfo, int type) {
+        ImportSetting result = null;
+        switch (type) {
+            case IMPORT_TEMSVECTORS:
+                result = new ImportSettingTEMSVector();
+                ((ImportSettingTEMSVector) result).setImportEmptyDataset(true);
+                importInfo.setFiletype(DataConversionProperties.getString("String_ImportTEMSVector"));
+                break;
+            case IMPORT_TEMSBUILDINGVECTORS:
+                result = new ImportSettingTEMSBuildingVector();
+                ((ImportSettingTEMSBuildingVector) result).setImportEmptyDataset(true);
+                importInfo.setFiletype(DataConversionProperties.getString("String_ImportTEMSBuildingVector"));
+                break;
+            case IMPORT_FILEGDBVECTORS:
+                result = new ImportSettingFileGDBVector();
+                ((ImportSettingFileGDBVector) result).setImportEmptyDataset(true);
+                importInfo.setFiletype(DataConversionProperties.getString("String_ImportFileGDBVector"));
+                break;
+            case IMPORT_GJB:
+                result = new ImportSettingGJB();
+                ((ImportSettingGJB) result).setImportEmptyDataset(true);
+                importInfo.setFiletype("GJB5068");
+                break;
+            default:
+                break;
+        }
+        if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length >= 0) {
+            result.setTargetDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
+        }
+        return result;
     }
 
 }

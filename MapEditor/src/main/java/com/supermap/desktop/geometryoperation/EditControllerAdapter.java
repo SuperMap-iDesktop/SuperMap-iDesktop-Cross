@@ -1,6 +1,11 @@
 package com.supermap.desktop.geometryoperation;
 
-import com.supermap.ui.*;
+import com.supermap.ui.ActionChangedEvent;
+import com.supermap.ui.GeometryEvent;
+import com.supermap.ui.GeometrySelectChangedEvent;
+import com.supermap.ui.GeometrySelectedEvent;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackingEvent;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -90,6 +95,15 @@ public abstract class EditControllerAdapter implements IEditController {
 
 	@Override
 	public void tracked(EditEnvironment environment, TrackedEvent e) {
+
+	}
+
+	/**
+	 * @author lixiaoyao
+	 * @description 新增对选中的对象的节点进行删除移动时，进行监听
+	 */
+	@Override
+	public void geometryModified(EditEnvironment environment,GeometryEvent event){
 
 	}
 }
