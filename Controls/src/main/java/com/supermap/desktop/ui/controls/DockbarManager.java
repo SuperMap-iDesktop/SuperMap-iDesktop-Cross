@@ -10,6 +10,7 @@ import com.supermap.desktop.ui.DockConstraint;
 import com.supermap.desktop.ui.XMLDockbar;
 import com.supermap.desktop.ui.XMLDockbarBase;
 import com.supermap.desktop.ui.XMLDockbars;
+import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.docking.DockingManager;
 import org.flexdock.docking.DockingPort;
@@ -54,15 +55,15 @@ public class DockbarManager implements IDockbarManager {
 	}
 
 	public IDockbar getWorkspaceComponentManager() {
-		return (IDockbar) DockingManager.getDockable(WORKSPACE_COMPONENT_MANAGER_ID);
+		return this.workspaceComponentManager;
 	}
 
 	public IDockbar getLayersComponentManager() {
-		return (IDockbar) DockingManager.getDockable(LAYERS_COMPONENT_MANAGER_ID);
+		return this.layersComponentManager;
 	}
 
 	public IDockbar getOutputFrame() {
-		return (IDockbar) DockingManager.getDockable(OUTPUT_FRAME_ID);
+		return this.outputFrame;
 	}
 
 	@Override
@@ -120,32 +121,65 @@ public class DockbarManager implements IDockbarManager {
 //		dock(this.mainView, dc);
 		XMLDockbars dockbars = workEnvironment.getPluginInfos().getDockbars();
 		for (int i = 0; i < dockbars.size(); i++) {
-			XMLDockbar dockbar = dockbars.get(i);
+			Dockbar dockbar = new Dockbar(dockbars.get(i));
 
 			if (dockbar.getID().equalsIgnoreCase(WORKSPACE_COMPONENT_MANAGER_ID)) {
-				this.workspaceComponentManager = new Dockbar(dockbar);
+				this.workspaceComponentManager = dockbar;
 			} else if (dockbar.getID().equalsIgnoreCase(LAYERS_COMPONENT_MANAGER_ID)) {
-				this.layersComponentManager = new Dockbar(dockbar);
+				this.layersComponentManager = dockbar;
 			} else if (dockbar.getID().equalsIgnoreCase(OUTPUT_FRAME_ID)) {
-				this.outputFrame = new Dockbar(dockbar);
+				this.outputFrame = dockbar;
 			} else {
-//				this.dockbars.add(new Dockbar(dockbar));
+				this.dockbars.add(dockbar);
 			}
 		}
 
-
 		this.dockPort.dock(this.mainView);
-		this.mainView.dock(this.workspaceComponentManager, DockingConstants.WEST_REGION, 0.2f);
-		this.workspaceComponentManager.dock(this.layersComponentManager, DockingConstants.SOUTH_REGION, 0.5f);
-		this.mainView.dock(this.outputFrame, DockingConstants.SOUTH_REGION, 0.7f);
-//		for (int i = 0; i < this.dockbars.size(); i++) {
-//			if (i == 0) {
-//				this.mainView.dock(this.dockbars.get(i), DockingConstants.WEST_REGION, 0.3f);
-//			} else {
-//				this.dockbars.get(0).dock(this.dockbars.get(i));
-//			}
-//		}
+		this.mainView.dock(this.workspaceComponentManager.getView(), DockingConstants.WEST_REGION, 0.2f);
+		this.workspaceComponentManager.getView().dock(this.layersComponentManager.getView(), DockingConstants.SOUTH_REGION, 0.5f);
+		this.mainView.dock(this.outputFrame.getView(), DockingConstants.SOUTH_REGION, 0.7f);
+		DockingManager.setMinimized(this.outputFrame.getView(), true, DockingConstants.BOTTOM);
+		for (int i = 0; i < this.dockbars.size(); i++) {
+			Dockbar dockbar = this.dockbars.get(i);
+			if (i == 0) {
+				this.mainView.dock(dockbar.getView(), DockingConstants.EAST_REGION, 0.7f);
+			} else {
+				this.dockbars.get(0).getView().dock(dockbar.getView());
+			}
+			dockbar.setVisible(dockbar.isVisible());
+		}
 		return true;
+	}
+
+	public void display(Dockbar dockbar, boolean isDisplay) {
+		if (isDisplay) {
+			if (dockbar == this.workspaceComponentManager) {
+				Dockable layer = DockingManager.getDockable(LAYERS_COMPONENT_MANAGER_ID);
+				if (layer != null) {
+					layer.dock(this.workspaceComponentManager.getView(), DockingConstants.NORTH_REGION, 0.5f);
+				} else {
+					this.mainView.dock(this.workspaceComponentManager.getView(), DockingConstants.WEST_REGION, 0.2f);
+				}
+			} else if (dockbar == this.layersComponentManager) {
+				Dockable workspace = DockingManager.getDockable(WORKSPACE_COMPONENT_MANAGER_ID);
+				if (workspace != null) {
+					workspace.dock(this.layersComponentManager.getView(), DockingConstants.SOUTH_REGION, 0.5f);
+				} else {
+					this.mainView.dock(this.layersComponentManager.getView(), DockingConstants.WEST_REGION, 0.2f);
+				}
+			} else if (dockbar == this.outputFrame) {
+				this.mainView.dock(this.outputFrame.getView(), DockingConstants.SOUTH_REGION, 0.7f);
+			} else {
+				Dockable east = this.mainView.getSibling(DockingConstants.EAST_REGION);
+				if (east != null) {
+					east.dock(dockbar.getView());
+				} else {
+					this.mainView.dock(dockbar.getView(), DockingConstants.EAST_REGION, 0.7f);
+				}
+			}
+		} else {
+			DockingManager.close(dockbar.getView());
+		}
 	}
 
 	private void dock(View dockParent, DockConstraint dockConstraint) {

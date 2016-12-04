@@ -1,5 +1,6 @@
 package com.supermap.desktop.ui.controls;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop.enums.DockState;
@@ -19,7 +20,7 @@ import java.awt.*;
  *
  * @author wuxb
  */
-public class Dockbar extends View implements IDockbar {
+public class Dockbar implements IDockbar {
 	private static final long serialVersionUID = -741186257818181105L;
 	private static final int RESTORING = 16;
 
@@ -30,6 +31,7 @@ public class Dockbar extends View implements IDockbar {
 	// 所以暂时定义这样一个变量来记录当前 Action，具体实现日后再说。
 	private int currentAction = -1;
 
+	private View view;
 	// dockbar 内嵌的用户自定义控件
 	private Component innerComponent;
 
@@ -42,29 +44,40 @@ public class Dockbar extends View implements IDockbar {
 	}
 
 	public Dockbar(final XMLDockbar xmlDockbar) {
-		super(xmlDockbar.getID(), xmlDockbar.getTitle());
 		this.xmlDockbar = xmlDockbar;
 		initialize();
 	}
 
 	public boolean initialize() {
-		if (this.xmlDockbar == null) {
-			return false;
+		try {
+			if (this.xmlDockbar == null) {
+				return false;
+			}
+
+			this.view = new View(this.xmlDockbar.getID(), this.xmlDockbar.getTitle(), this.xmlDockbar.getTitle());
+			this.view.addAction(DockingConstants.CLOSE_ACTION);
+			this.view.addAction(DockingConstants.PIN_ACTION);
+//		this.setVisible(xmlDockbar.getVisible());
+
+			JPanel panel = new JPanel();
+			panel.setBorder(new LineBorder(Color.GRAY, 1));
+			panel.setLayout(new BorderLayout());
+			panel.setLayout(new BorderLayout());
+			this.view.setContentPane(panel);
+			this.innerComponent = xmlDockbar.CreateComponent();
+			panel.add(this.innerComponent);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
-
-		addAction(DockingConstants.CLOSE_ACTION);
-		addAction(DockingConstants.PIN_ACTION);
-		this.setVisible(xmlDockbar.getVisible());
-
-		JPanel panel = new JPanel();
-		panel.setBorder(new LineBorder(Color.GRAY, 1));
-		panel.setLayout(new BorderLayout());
-		panel.setLayout(new BorderLayout());
-		setContentPane(panel);
-		setTitle(this.xmlDockbar.getTitle());
-		this.innerComponent = xmlDockbar.CreateComponent();
-		panel.add(this.innerComponent);
 		return true;
+	}
+
+	public View getView() {
+		return this.view;
+	}
+
+	public String getID() {
+		return this.xmlDockbar.getID();
 	}
 
 	@Override
@@ -75,11 +88,28 @@ public class Dockbar extends View implements IDockbar {
 	@Override
 	public void setVisible(boolean isVisible) {
 		this.xmlDockbar.setVisible(isVisible);
+		((DockbarManager) Application.getActiveApplication().getMainFrame().getDockbarManager()).display(this, isVisible);
 	}
 
 	@Override
 	public Component getInnerComponent() {
-		return getContentPane().getComponent(0);
+		return this.innerComponent;
+	}
+
+	@Override
+	public String getTitle() {
+		return this.xmlDockbar.getTitle();
+	}
+
+	@Override
+	public void setTitle(String title) {
+		this.xmlDockbar.setTitle(title);
+		this.view.setTitle(title);
+	}
+
+	@Override
+	public boolean isActive() {
+		return this.view.isActive();
 	}
 
 	@Override
@@ -94,6 +124,6 @@ public class Dockbar extends View implements IDockbar {
 
 	@Override
 	public void active() {
-		setActive(true);
+		this.view.setActive(true);
 	}
 }
