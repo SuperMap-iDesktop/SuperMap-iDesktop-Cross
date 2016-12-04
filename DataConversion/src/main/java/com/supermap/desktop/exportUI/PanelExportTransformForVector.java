@@ -216,11 +216,11 @@ public class PanelExportTransformForVector extends PanelExportTransform {
             initComponentsState(exportsFileInfo.getExportSetting());
             this.charsetComboBox.setSelectCharset(exportsFileInfo.getExportSetting().getTargetFileCharset().name());
         } else if (null != panels) {
-            initComponentsState(panels, layoutType);
+            initComponentsState(panels);
         }
     }
 
-    private void initComponentsState(ArrayList<PanelExportTransform> panels, int layoutType) {
+    private void initComponentsState(ArrayList<PanelExportTransform> panels) {
         this.charsetComboBox.setEnabled(true);
         this.charsetComboBox.setSelectedItem(selectSameCharsetItem(panels));
         if (isDtype(panels)) {
@@ -333,11 +333,31 @@ public class PanelExportTransformForVector extends PanelExportTransform {
             this.checkBoxExportExternalData.setEnabled(true);
             this.checkBoxExportExternalRecord.setEnabled(true);
             this.comboBoxCADVersion.setEnabled(true);
+            if (tempExportSetting instanceof ExportSettingDWG) {
+                this.checkBoxExportExternalData.setSelected(((ExportSettingDWG) tempExportSetting).isExportingExternalData());
+                this.checkBoxExportExternalRecord.setSelected(((ExportSettingDWG) tempExportSetting).isExportingXRecord());
+            } else {
+                this.checkBoxExportExternalData.setSelected(((ExportSettingDXF) tempExportSetting).isExportingExternalData());
+                this.checkBoxExportExternalRecord.setSelected(((ExportSettingDXF) tempExportSetting).isExportingXRecord());
+            }
+            this.comboBoxCADVersion.setSelectedItem(selectItem(tempExportSetting));
         }
         this.charsetComboBox.setEnabled(true);
         this.textAreaExpression.setEnabled(true);
         this.buttonExpression.setEnabled(true);
+        this.textAreaExpression.setText(tempExportSetting.getFilter());
     }
+
+    private String selectItem(ExportSetting tempExportSetting) {
+        CADVersion cadVersion = null;
+        if (tempExportSetting instanceof ExportSettingDWG) {
+            cadVersion = ((ExportSettingDWG) tempExportSetting).getVersion();
+        } else {
+            cadVersion = ((ExportSettingDXF) tempExportSetting).getVersion();
+        }
+        return cadVersion.toString();
+    }
+
 
     private void initComboboxCADVersion() {
         this.comboBoxCADVersion.setModel(new DefaultComboBoxModel<>(new String[]{CADVersion.CAD12.toString(), CADVersion.CAD13.toString(),

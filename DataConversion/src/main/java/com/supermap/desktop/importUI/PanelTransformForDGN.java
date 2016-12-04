@@ -41,10 +41,10 @@ public class PanelTransformForDGN extends PanelTransform {
         public void itemStateChanged(ItemEvent e) {
             if (null != panelImports) {
                 for (PanelImport tempPanelImport : panelImports) {
-                    ((PanelTransformForDGN) tempPanelImport.getTransform()).getCheckBoxImportByLayer().setSelected(checkBoxImportByLayer.isSelected());
+                    ((PanelTransformForDGN) tempPanelImport.getTransform()).getCheckBoxImportByLayer().setSelected(!checkBoxImportByLayer.isSelected());
                 }
             } else {
-                ((ImportSettingDGN) importSetting).setImportingByLayer(checkBoxImportByLayer.isSelected());
+                ((ImportSettingDGN) importSetting).setImportingByLayer(!checkBoxImportByLayer.isSelected());
             }
         }
     };
@@ -79,10 +79,10 @@ public class PanelTransformForDGN extends PanelTransform {
     private void setCheckboxState() {
         if (null == panelImports) {
             this.checkBoxImportCellAsPoint.setSelected(((ImportSettingDGN) importSetting).isImportingCellAsPoint());
-            this.checkBoxImportByLayer.setSelected(((ImportSettingDGN) importSetting).isImportingByLayer());
+            this.checkBoxImportByLayer.setSelected(!((ImportSettingDGN) importSetting).isImportingByLayer());
         } else {
             this.checkBoxImportCellAsPoint.setSelectedEx(externalDataSelectAll(CELLASPOINT));
-            this.checkBoxImportByLayer.setSelectedEx(externalDataSelectAll(IMPORTBYLAYER));
+            this.checkBoxImportByLayer.setSelectedEx(!externalDataSelectAll(IMPORTBYLAYER));
         }
     }
 

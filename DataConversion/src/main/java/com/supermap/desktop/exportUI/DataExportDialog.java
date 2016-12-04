@@ -225,13 +225,24 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 
     private MouseListener exportMouseListener = new MouseAdapter() {
         @Override
+        public void mouseExited(MouseEvent e) {
+            if (null != tableExport.getCellEditor() && e.getSource().equals(scrollPane)) {
+                tableExport.getCellEditor().stopCellEditing();
+            }
+        }
+
+        @Override
         public void mouseReleased(MouseEvent e) {
             if (2 == e.getClickCount()) {
                 int selectColumn = tableExport.getSelectedColumn();
-                TableColumn tempColumn = tableExport.getColumn(tableExport.getModel().getColumnName(selectColumn));
-                if (e.getSource().equals(tableExport) && tempColumn.equals(filePathColumn)) {
-                    setExportPath();
-                } else if (!tempColumn.equals(fileNameColumn) && !tempColumn.equals(overwriteColumn) && !tempColumn.equals(exportTypeColumn)) {
+                if (selectColumn > 0) {
+                    TableColumn tempColumn = tableExport.getColumn(tableExport.getModel().getColumnName(selectColumn));
+                    if (e.getSource().equals(tableExport) && tempColumn.equals(filePathColumn)) {
+                        setExportPath();
+                    } else if (!tempColumn.equals(fileNameColumn) && !tempColumn.equals(overwriteColumn) && !tempColumn.equals(exportTypeColumn)) {
+                        addExportInfo();
+                    }
+                } else {
                     addExportInfo();
                 }
             } else if (tableExport.getSelectedRows().length == 1) {
@@ -250,11 +261,16 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                         "DataExportFrame_OutPutDirectories", "GetDirectories");
             }
             SmFileChoose tempfileChooser = new SmFileChoose("DataExportFrame_OutPutDirectories");
+            int selectRow = tableExport.getSelectedRow();
+            String filePath = tableExport.getValueAt(selectRow, COLUMN_FILEPATH).toString();
+            if (!StringUtilities.isNullOrEmpty(filePath)) {
+                tempfileChooser.setSelectedFile(new File(filePath));
+            }
             tempfileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             int state = tempfileChooser.showSaveDialog(null);
             if (state == JFileChooser.APPROVE_OPTION) {
                 String directories = tempfileChooser.getFilePath();
-                tableExport.setValueAt(directories, tableExport.getSelectedRow(), COLUMN_FILEPATH);
+                tableExport.setValueAt(directories, selectRow, COLUMN_FILEPATH);
                 tableExport.updateUI();
             }
         }
@@ -288,13 +304,11 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                 ExportSetting tempExportSetting = fileInfo.getExportSetting();
                 if (column == COLUMN_ISOVERWRITE && tableExport.getValueAt(row, column) instanceof Boolean) {
                     tempExportSetting.setOverwrite((Boolean) tableExport.getValueAt(row, column));
-//                    tableExport.getCellEditor().stopCellEditing();
                 } else if (column == COLUMN_FILENAME || column == COLUMN_FILEPATH) {
                     String filePath = tableExport.getValueAt(row, COLUMN_FILEPATH).toString();
                     String fileName = tableExport.getValueAt(row, COLUMN_FILENAME).toString();
                     filePath = getFilePath(filePath, fileInfo, fileName);
                     tempExportSetting.setTargetFilePath(filePath);
-//                    tableExport.getCellEditor().stopCellEditing();
                 }
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
@@ -386,38 +400,42 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 
             ExportFileInfo exportsFileInfo = new ExportFileInfo();
             ExportSetting newExportSetting = new ExportSetting();
-            int size = exportSetting.getSupportedFileType().length;
-            Object[] temp = new Object[6];
-            temp[COLUMN_DATASET] = new DataCell(dataset);
-            for (int i = 0; i < size; i++) {
-                FileType fileType = exportSetting.getSupportedFileType()[i];
-                if (!fileType.equals(FileType.CSV) && !fileType.equals(FileType.GEOJSON)) {
-                    newExportSetting = exportSettingFactory.createExportSetting(fileType);
-                    temp[COLUMN_EXPORTTYPE] = CommonUtilities.getDatasetName(fileType.toString());
-                    exportsFileInfo.setFileType(fileType);
-                    break;
+            FileType[] fileTypes = exportSetting.getSupportedFileType();
+            int size = fileTypes.length;
+            if (size > 0) {
+                Object[] temp = new Object[6];
+                temp[COLUMN_DATASET] = new DataCell(dataset);
+                for (int i = 0; i < size; i++) {
+                    FileType fileType = fileTypes[i];
+                    if (!fileType.equals(FileType.CSV) && !fileType.equals(FileType.GEOJSON)) {
+                        newExportSetting = exportSettingFactory.createExportSetting(fileType);
+                        temp[COLUMN_EXPORTTYPE] = CommonUtilities.getDatasetName(fileType.toString());
+                        exportsFileInfo.setFileType(fileType);
+                        break;
+                    }
                 }
-            }
-            newExportSetting.setSourceData(dataset);
-            String filePath = System.getProperty("user.dir");
-            String fileName = dataset.getName();
-            exportsFileInfo.setExportSetting(newExportSetting);
-            filePath = getFilePath(filePath, exportsFileInfo, fileName);
-            newExportSetting.setTargetFilePath(filePath);
+                newExportSetting.setSourceData(dataset);
+                String filePath = System.getProperty("user.dir");
+                String fileName = dataset.getName();
+                exportsFileInfo.setExportSetting(newExportSetting);
+                filePath = getFilePath(filePath, exportsFileInfo, fileName);
+                newExportSetting.setTargetFilePath(filePath);
 
-            exportsFileInfo.setState(DataConversionProperties.getString("string_change"));
-            this.exportsFileInfos.add(exportsFileInfo);
-            temp[COLUMN_ISOVERWRITE] = newExportSetting.isOverwrite();
-            temp[COLUMN_STATE] = exportsFileInfo.getState();
-            temp[COLUMN_FILENAME] = fileName;
-            temp[COLUMN_FILEPATH] = System.getProperty("user.dir");
-            this.panelExports.add(exportPanelFactory.createExportPanel(exportsFileInfo));
-            this.tableExport.addRow(temp);
+                this.exportsFileInfos.add(exportsFileInfo);
+                temp[COLUMN_ISOVERWRITE] = newExportSetting.isOverwrite();
+                temp[COLUMN_STATE] = DataConversionProperties.getString("string_change");
+                temp[COLUMN_FILENAME] = fileName;
+                temp[COLUMN_FILEPATH] = System.getProperty("user.dir");
+                this.panelExports.add(exportPanelFactory.createExportPanel(exportsFileInfo));
+                this.tableExport.addRow(temp);
+            }
         }
-        CommonUtilities.replace(panelExportInfo, panelExports.get(panelExports.size() - 1));
-        this.tableExport.setRowSelectionInterval(tableExport.getRowCount() - 1, tableExport.getRowCount() - 1);
-        initComboBoxColumns();
-        setButtonState();
+        if (panelExports.size() > 0) {
+            CommonUtilities.replace(panelExportInfo, panelExports.get(panelExports.size() - 1));
+            this.tableExport.setRowSelectionInterval(tableExport.getRowCount() - 1, tableExport.getRowCount() - 1);
+            initComboBoxColumns();
+            setButtonState();
+        }
     }
 
     private String getFilePath(String filePath, ExportFileInfo exportFileInfo, String fileName) {
@@ -478,9 +496,12 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                         int row = tableExport.getSelectedRow();
                         FileType fileType = FiletypeUtilities.getFileType(fileTypeAlias);
                         ExportFileInfo exportsFileInfo = panelExports.get(row).getExportsFileInfo();
+                        ExportSetting tempExportsetting = exportsFileInfo.getExportSetting();
                         ExportSetting newExportSetting = exportSettingFactory.createExportSetting(fileType);
                         exportsFileInfo.setFileType(fileType);
-                        newExportSetting.setSourceData(exportSetting.getSourceData());
+                        newExportSetting.setSourceData(tempExportsetting.getSourceData());
+                        newExportSetting.setTargetFileCharset(tempExportsetting.getTargetFileCharset());
+                        newExportSetting.setFilter(tempExportsetting.getFilter());
                         String filePath = tableExport.getValueAt(row, COLUMN_FILEPATH).toString();
                         String fileName = tableExport.getValueAt(row, COLUMN_FILENAME).toString();
                         filePath = getFilePath(filePath, exportsFileInfo, fileName);
@@ -552,7 +573,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         IExportPanelFactory exportPanelFactory = new ExportPanelFactory();
         JPanel panel = new JPanel();
         JPanel panelContent = new JPanel();
-        if (null != datasets && datasets.length > 0) {
+        if (null != datasets && datasets.length > 0 && panelExports.size() > 0) {
             panelContent = exportPanelFactory.createExportPanel(panelExports.get(panelExports.size() - 1).getExportsFileInfo());
         } else {
             panelContent = new PanelExportTransformForGrid(new ExportFileInfo());
