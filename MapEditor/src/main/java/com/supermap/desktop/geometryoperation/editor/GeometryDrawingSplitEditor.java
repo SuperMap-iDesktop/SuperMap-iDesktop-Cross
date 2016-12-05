@@ -7,8 +7,6 @@ package com.supermap.desktop.geometryoperation.editor;
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.GeoLine;
-import com.supermap.data.GeoRegion;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
@@ -56,16 +54,7 @@ public abstract class GeometryDrawingSplitEditor extends AbstractEditor {
 
 	public abstract TrackMode getTrackMode();
 
-	/**
-	 * 针对面对象进行分割
-	 */
-	public abstract boolean runSplitRegion(GeoRegion sourceRegion, Geometry splitGeometry, GeoRegion resultRegion1, GeoRegion resultRegion2);
-
-	/**
-	 * 针对线对象进行分割
-	 */
-	public abstract GeoLine[] runSplitLine(GeoLine sourceLine, Geometry splitGeometry, Double tolerance);
-
+	public abstract boolean splitGeometry(Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle, double tolerance);
 
 	private IEditController regionSplitController = new EditControllerAdapter() {
 		@Override
@@ -251,14 +240,21 @@ public abstract class GeometryDrawingSplitEditor extends AbstractEditor {
 							Map<String, Object> values = RecordsetUtilities.getFieldValues(recordset);
 							boolean result = false;
 
-							if (geometry.getType() == GeometryType.GEOREGION) {
+							/*if (geometry.getType() == GeometryType.GEOREGION) {
 								result = regionSplitGeometry(geometry, editModel.geometry, resultGeometrys, values, geoStyle);
 							} else if (geometry.getType() == GeometryType.GEOLINE) {
 								if (recordset.getDataset().getTolerance().getNodeSnap() == 0) {
 									recordset.getDataset().getTolerance().setDefault();
 								}
 								result = lineSplitGeometry(geometry, editModel.geometry, resultGeometrys, values, geoStyle, recordset.getDataset().getTolerance().getNodeSnap());
+							}*/
+							if (geometry.getType() == GeometryType.GEOLINE) {
+								if (recordset.getDataset().getTolerance().getNodeSnap() == 0) {
+									recordset.getDataset().getTolerance().setDefault();
+								}
 							}
+							result = splitGeometry(geometry, editModel.geometry, resultGeometrys, values, geoStyle, recordset.getDataset().getTolerance().getNodeSnap());
+
 							if (result) {
 								delete.delete(recordset.getID());
 							} else {
@@ -302,51 +298,6 @@ public abstract class GeometryDrawingSplitEditor extends AbstractEditor {
 			environment.getMapControl().getEditHistory().batchEnd();
 			environment.getMapControl().getMap().refresh();
 		}
-	}
-
-	private boolean regionSplitGeometry(Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle) {
-		boolean result = false;
-		GeoRegion resultGeoRegion1 = new GeoRegion();
-		GeoRegion resultGeoRegion2 = new GeoRegion();
-		GeoRegion tempGeoRegion = (GeoRegion) geometry;
-
-		try {
-			boolean resultSplit = runSplitRegion(tempGeoRegion, splitGeometry, resultGeoRegion1, resultGeoRegion2);
-			if (resultSplit) {
-				result = true;
-				if (geoStyle != null) {
-					resultGeoRegion1.setStyle(geoStyle.clone());//设置风格
-					resultGeoRegion2.setStyle(geoStyle.clone());
-				}
-				resultGeometry.put(resultGeoRegion1, values);
-				resultGeometry.put(resultGeoRegion2, values);
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex.toString());
-		}
-		return result;
-	}
-
-	private boolean lineSplitGeometry(Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle, double tolerance) {
-		boolean result = false;
-		GeoLine tempGeoLine = (GeoLine) geometry;
-		try {
-			GeoLine resultLines[] = runSplitLine(tempGeoLine, splitGeometry, tolerance);
-			if (resultLines != null && resultLines.length >= 2) {
-				result = true;
-				for (GeoLine resultGeoLine : resultLines) {
-					if (resultGeoLine != null) {
-						if (geoStyle != null) {
-							resultGeoLine.setStyle(geoStyle.clone());//设置风格
-						}
-						resultGeometry.put(resultGeoLine, values);
-					}
-				}
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex.toString());
-		}
-		return result;
 	}
 
 	private void clear(EditEnvironment environment) {
