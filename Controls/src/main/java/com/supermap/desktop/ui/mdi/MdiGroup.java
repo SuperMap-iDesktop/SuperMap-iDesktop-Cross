@@ -33,7 +33,7 @@ public class MdiGroup extends JComponent {
 	private static final long serialVersionUID = 1L;
 	private static final String uiClassID = "MdiGroupUI";
 
-	private EventListenerList listenerList = new EventListenerList();
+	private MdiEventsHelper eventsHelper = new MdiEventsHelper();
 
 	private List<MdiPage> pages;
 	private MdiPane mdiPane = null;
@@ -118,6 +118,10 @@ public class MdiGroup extends JComponent {
 		return this.activePage;
 	}
 
+	public boolean isFocused() {
+		return this.mdiPane == null ? true : this.mdiPane.getSelectedGroup() == this;
+	}
+
 	/**
 	 * 添加指定 Component，并返回对应的 MdiPage
 	 *
@@ -172,7 +176,7 @@ public class MdiGroup extends JComponent {
 		page.setGroup(this);
 		this.pages.add(page);
 		add(page.getComponent(), index);
-		firePageAdded(new PageAddedEvent(this, page, this.pages.indexOf(page)));
+		this.eventsHelper.firePageAdded(new PageAddedEvent(this, page, this.pages.indexOf(page)));
 		activePage(page);
 	}
 
@@ -194,14 +198,14 @@ public class MdiGroup extends JComponent {
 		}
 
 		MdiPage oldActivePage = this.activePage;
-		firePageActivating(new PageActivatingEvent(this, activePage, oldActivePage));
+		this.eventsHelper.firePageActivating(new PageActivatingEvent(this, activePage, oldActivePage));
 		this.activePage = activePage;
 
 		// activePage 可见，其余不可见
 		for (int i = 0; i < this.pages.size(); i++) {
 			this.pages.get(i).getComponent().setVisible(this.pages.get(i) == activePage);
 		}
-		firePageActivated(new PageActivatedEvent(this, activePage, oldActivePage));
+		this.eventsHelper.firePageActivated(new PageActivatedEvent(this, activePage, oldActivePage));
 
 		// 更改状态重绘
 		revalidate();
@@ -240,7 +244,7 @@ public class MdiGroup extends JComponent {
 		if (page != null && this.pages.contains(page)) {
 			try {
 				PageClosingEvent removingEvent = new PageClosingEvent(this, page);
-				firePageClosing(removingEvent);
+				this.eventsHelper.firePageClosing(removingEvent);
 
 				if (!removingEvent.isCancel()) {
 					boolean isCloseActivePage = page.isActive();
@@ -249,7 +253,7 @@ public class MdiGroup extends JComponent {
 					this.remove(page.getComponent());
 					this.pages.remove(page);
 					page.setGroup(null);
-					firePageClosed(new PageClosedEvent(this, page));
+					this.eventsHelper.firePageClosed(new PageClosedEvent(this, page));
 
 					if (isCloseActivePage) {
 
@@ -584,95 +588,43 @@ public class MdiGroup extends JComponent {
 		return this.pageActions.toArray(new IMdiAction[this.pageActions.size()]);
 	}
 
-	///// 事件处理 /////
-
 	public void addPageAddedListener(PageAddedListener listener) {
-		this.listenerList.add(PageAddedListener.class, listener);
+		this.eventsHelper.addPageAddedListener(listener);
 	}
 
 	public void removePageAddedListener(PageAddedListener listener) {
-		this.listenerList.remove(PageAddedListener.class, listener);
+		this.eventsHelper.removePageAddedListener(listener);
 	}
 
 	public void addPageClosedListener(PageClosedListener listener) {
-		this.listenerList.add(PageClosedListener.class, listener);
+		this.eventsHelper.addPageClosedListener(listener);
 	}
 
 	public void removePageClosedListener(PageClosedListener listener) {
-		this.listenerList.remove(PageClosedListener.class, listener);
+		this.eventsHelper.removePageClosedListener(listener);
 	}
 
 	public void addPageClosingListener(PageClosingListener listener) {
-		this.listenerList.add(PageClosingListener.class, listener);
+		this.eventsHelper.addPageClosingListener(listener);
 	}
 
 	public void removePageClosingListener(PageClosingListener listener) {
-		this.listenerList.remove(PageClosingListener.class, listener);
+		this.eventsHelper.removePageClosingListener(listener);
 	}
 
 	public void addPageActivatingListener(PageActivatingListener listener) {
-		this.listenerList.add(PageActivatingListener.class, listener);
+		this.eventsHelper.addPageActivatingListener(listener);
 	}
 
 	public void removePageActivatingListener(PageActivatingListener listener) {
-		this.listenerList.remove(PageActivatingListener.class, listener);
+		this.eventsHelper.removePageActivatingListener(listener);
 	}
 
 	public void addPageActivatedListener(PageActivatedListener listener) {
-		this.listenerList.add(PageActivatedListener.class, listener);
+		this.eventsHelper.addPageActivatedListener(listener);
 	}
 
 	public void removePageActivatedListener(PageActivatedListener listener) {
-		this.listenerList.remove(PageActivatedListener.class, listener);
-	}
-
-	private void firePageAdded(PageAddedEvent e) {
-		Object[] listeners = listenerList.getListenerList();
-
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == PageAddedListener.class) {
-				((PageAddedListener) listeners[i + 1]).pageAdded(e);
-			}
-		}
-	}
-
-	private void firePageClosed(PageClosedEvent e) {
-		Object[] listeners = listenerList.getListenerList();
-
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == PageClosedListener.class) {
-				((PageClosedListener) listeners[i + 1]).pageRemoved(e);
-			}
-		}
-	}
-
-	private void firePageClosing(PageClosingEvent e) {
-		Object[] listeners = listenerList.getListenerList();
-
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == PageClosingListener.class) {
-				((PageClosingListener) listeners[i + 1]).pageRemoving(e);
-			}
-		}
-	}
-
-	private void firePageActivating(PageActivatingEvent e) {
-		Object[] listeners = listenerList.getListenerList();
-
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == PageActivatingListener.class) {
-				((PageActivatingListener) listeners[i + 1]).pageActivating(e);
-			}
-		}
-	}
-
-	private void firePageActivated(PageActivatedEvent e) {
-		Object[] listeners = listenerList.getListenerList();
-
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == PageActivatedListener.class) {
-				((PageActivatedListener) listeners[i + 1]).pageActivated(e);
-			}
-		}
+		this.eventsHelper.removePageActivatedListener(listener);
 	}
 }

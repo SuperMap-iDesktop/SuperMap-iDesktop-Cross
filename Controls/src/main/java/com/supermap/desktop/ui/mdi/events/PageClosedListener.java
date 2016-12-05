@@ -6,5 +6,5 @@ import java.util.EventListener;
  * Created by highsad on 2016/9/22.
  */
 public interface PageClosedListener extends EventListener {
-	void pageRemoved(PageClosedEvent e);
+	void pageClosed(PageClosedEvent e);
 }

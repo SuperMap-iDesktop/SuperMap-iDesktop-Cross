@@ -45,7 +45,7 @@ public class FormManager extends MdiGroup implements IFormManager {
 
 	private PageClosingListener pageClosingListener = new PageClosingListener() {
 		@Override
-		public void pageRemoving(PageClosingEvent e) {
+		public void pageClosing(PageClosingEvent e) {
 			if (e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
 				FormClosingEvent event = new FormClosingEvent((IForm) e.getPage().getComponent(), false);
 				((FormBaseChild) e.getPage().getComponent()).formClosing(event);
@@ -60,7 +60,7 @@ public class FormManager extends MdiGroup implements IFormManager {
 
 	private PageClosedListener pageClosedListener = new PageClosedListener() {
 		@Override
-		public void pageRemoved(PageClosedEvent e) {
+		public void pageClosed(PageClosedEvent e) {
 			if (e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
 				FormClosedEvent event = new FormClosedEvent((IForm) e.getPage().getComponent());
 				((FormBaseChild) e.getPage().getComponent()).formClosed(event);

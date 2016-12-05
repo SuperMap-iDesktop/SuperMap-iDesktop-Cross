@@ -7,5 +7,5 @@ import java.util.EventListener;
  */
 public interface PageAddedListener extends EventListener {
 
-	void pageAdded(PageAddedEvent event);
+	void pageAdded(PageAddedEvent e);
 }

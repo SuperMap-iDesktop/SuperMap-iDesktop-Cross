@@ -3,11 +3,15 @@ package com.supermap.desktop.ui.mdi;
 import com.supermap.desktop.ui.mdi.events.*;
 
 import java.awt.*;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.accessibility.Accessible;
 import javax.swing.*;
+import javax.swing.event.EventListenerList;
 
 /**
  * @author highsad
@@ -28,6 +32,52 @@ public class MdiPane extends JPanel implements Accessible {
 	private static final String uiClassID = "MdiPaneUI";
 	private List<MdiGroup> groups;
 	private MdiGroup selectedGroup;
+	private MdiEventsHelper eventsHelper = new MdiEventsHelper();
+
+	private FocusListener focusListener = new FocusAdapter() {
+		@Override
+		public void focusGained(FocusEvent e) {
+			if (e.getSource() instanceof MdiGroup) {
+				MdiPane.this.selectedGroup = (MdiGroup) e.getSource();
+			}
+		}
+	};
+	private PageAddedListener pageAddedListener = new PageAddedListener() {
+		@Override
+		public void pageAdded(PageAddedEvent e) {
+			MdiPane.this.eventsHelper.firePageAdded(e);
+		}
+	};
+	private PageClosingListener pageClosingListener = new PageClosingListener() {
+		@Override
+		public void pageClosing(PageClosingEvent e) {
+			MdiPane.this.eventsHelper.firePageClosing(e);
+		}
+	};
+	private PageClosedListener pageClosedListener = new PageClosedListener() {
+		@Override
+		public void pageClosed(PageClosedEvent e) {
+			MdiPane.this.eventsHelper.firePageClosed(e);
+			if (e.getSource() instanceof MdiGroup) {
+				MdiGroup group = (MdiGroup) e.getSource();
+				if (group.getPageCount() == 0) {
+					MdiPane.this.layoutComponents();
+				}
+			}
+		}
+	};
+	private PageActivatingListener pageActivatingListener = new PageActivatingListener() {
+		@Override
+		public void pageActivating(PageActivatingEvent event) {
+
+		}
+	};
+	private PageActivatedListener pageActivatedListener = new PageActivatedListener() {
+		@Override
+		public void pageActivated(PageActivatedEvent event) {
+
+		}
+	};
 
 	public MdiPane() {
 		this(HORIZONTAL);
@@ -42,8 +92,9 @@ public class MdiPane extends JPanel implements Accessible {
 	}
 
 	private void layoutComponents() {
+		removeAll();
+		setLayout(new BorderLayout());
 		if (this.groups.size() == 1) {
-			setLayout(new BorderLayout());
 			add(this.groups.get(0));
 		} else {
 			JSplitPane splitPane = createSplitPane(this.groups.get(0), this.layoutMode);
@@ -90,14 +141,24 @@ public class MdiPane extends JPanel implements Accessible {
 	 */
 	public MdiGroup createGroup() {
 		MdiGroup group = new MdiGroup(this);
+		registerEvents(group);
 		this.groups.add(group);
 		return group;
+	}
+
+	private void registerEvents(MdiGroup group) {
+		group.addFocusListener(this.focusListener);
+
 	}
 
 	// MdiPane
 
 	public MdiPage getSelectedPage() {
 		return this.selectedGroup == null ? null : this.selectedGroup.getActivePage();
+	}
+
+	public MdiGroup getSelectedGroup() {
+		return this.selectedGroup;
 	}
 
 	/**
@@ -126,63 +187,48 @@ public class MdiPane extends JPanel implements Accessible {
 		}
 	}
 
+	/**
+	 * 不能遍历 Groups 转发事件，因为如果在之后有新增加的 Group，则无法正常工作
+	 *
+	 * @param listener
+	 */
 	public void addPageAddedListener(PageAddedListener listener) {
-		for (int i = 0; i < this.groups.size(); i++) {
-			this.groups.get(i).addPageAddedListener(listener);
-		}
+		this.eventsHelper.addPageAddedListener(listener);
 	}
 
 	public void removePageAddedListener(PageAddedListener listener) {
-		for (int i = 0; i < this.groups.size(); i++) {
-			this.groups.get(i).removePageAddedListener(listener);
-		}
+		this.eventsHelper.removePageAddedListener(listener);
 	}
 
 	public void addPageClosedListener(PageClosedListener listener) {
-		for (int i = 0; i < this.groups.size(); i++) {
-			this.groups.get(i).addPageClosedListener(listener);
-		}
+		this.eventsHelper.addPageClosedListener(listener);
 	}
 
 	public void removePageClosedListener(PageClosedListener listener) {
-		for (int i = 0; i < this.groups.size(); i++) {
-			this.groups.get(i).removePageClosedListener(listener);
-		}
+		this.eventsHelper.removePageClosedListener(listener);
 	}
 
 	public void addPageClosingListener(PageClosingListener listener) {
-		for (int i = 0; i < this.groups.size(); i++) {
-			this.groups.get(i).addPageClosingListener(listener);
-		}
+		this.eventsHelper.addPageClosingListener(listener);
 	}
 
 	public void removePageClosingListener(PageClosingListener listener) {
-		for (int i = 0; i < this.groups.size(); i++) {
-			this.groups.get(i).removePageClosingListener(listener);
-		}
+		this.eventsHelper.removePageClosingListener(listener);
 	}
 
 	public void addPageActivatingListener(PageActivatingListener listener) {
-		for (int i = 0; i < this.groups.size(); i++) {
-			this.groups.get(i).addPageActivatingListener(listener);
-		}
+		this.eventsHelper.addPageActivatingListener(listener);
 	}
 
 	public void removePageActivatingListener(PageActivatingListener listener) {
-		for (int i = 0; i < this.groups.size(); i++) {
-			this.groups.get(i).removePageActivatingListener(listener);
-		}
+		this.eventsHelper.removePageActivatingListener(listener);
 	}
 
 	public void addPageActivatedListener(PageActivatedListener listener) {
-		for (int i = 0; i < this.groups.size(); i++) {
-			this.groups.get(i).addPageActivatedListener(listener);
-		}
+		this.eventsHelper.addPageActivatedListener(listener);
 	}
 
 	public void removePageActivatedListener(PageActivatedListener listener) {
-		for (int i = 0; i < this.groups.size(); i++) {
-			this.groups.get(i).removePageActivatedListener(listener);
-		}
+		this.eventsHelper.removePageActivatedListener(listener);
 	}
 }
