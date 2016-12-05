@@ -1009,6 +1009,17 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/jasypt/jasypt/1.9.0/jasypt-1.9.0-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: org.jb2011:beautyeye_lnf:v3.7">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jb2011/beautyeye_lnf/v3.7/beautyeye_lnf-v3.7.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jb2011/beautyeye_lnf/v3.7/beautyeye_lnf-v3.7-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jb2011/beautyeye_lnf/v3.7/beautyeye_lnf-v3.7-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: org.slf4j:slf4j-api:1.7.21">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar!/" />

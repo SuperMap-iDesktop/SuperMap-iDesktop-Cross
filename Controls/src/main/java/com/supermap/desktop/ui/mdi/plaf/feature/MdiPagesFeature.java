@@ -13,12 +13,18 @@ import java.util.List;
 public class MdiPagesFeature extends AbstractMdiFeature {
 
 
+	private MdiTabsFeature tabsFeature;
+
 	public MdiPagesFeature(MdiGroup group, IMdiFeature parent) {
 		super(group, parent);
 	}
 
 	public static Insets getInsets() {
 		return MdiPagesUIProperties.INSETS;
+	}
+
+	public void setTabsFeature(MdiTabsFeature tabsFeature) {
+		this.tabsFeature = tabsFeature;
 	}
 
 	@Override
@@ -61,7 +67,7 @@ public class MdiPagesFeature extends AbstractMdiFeature {
 	 */
 	private void paintBorderBottomEdge(Graphics graphics) {
 
-		// 绘制外边框
+		// 绘制外边线
 		graphics.setColor(MdiPagesUIProperties.COLOR_BORDER_LINE);
 		graphics.fillRect(getX() + 1, getY() + getHeight() - 1, getWidth() - 2, 1);
 
@@ -99,8 +105,13 @@ public class MdiPagesFeature extends AbstractMdiFeature {
 
 		// 绘制外边线
 		graphics.setColor(MdiPagesUIProperties.COLOR_BORDER_LINE);
-		// getX() +1 是左边框绘制占用，getX() + getWidth() -1 是右边框绘制占用
-		graphics.fillRect(getX() + 1, getY(), getWidth() - 2, 1);
+		if (this.tabsFeature == null || this.tabsFeature.getActiveTab() == null) {
+			// getX() +1 是左边框绘制占用，getX() + getWidth() -1 是右边框绘制占用
+			graphics.fillRect(getX() + 1, getY(), getWidth() - 2, 1);
+		} else {
+			graphics.fillRect(getX() + 1, getY(), this.tabsFeature.getActiveTab().getX() - getX(), 1);
+			graphics.fillRect(this.tabsFeature.getActiveTab().getX() + this.tabsFeature.getActiveTab().getWidth(), getY(), getWidth() - this.tabsFeature.getX(), 1);
+		}
 
 		// 填充边框内部
 		graphics.setColor(MdiPagesUIProperties.COLOR_BORDER_FILL_ACTIVE);

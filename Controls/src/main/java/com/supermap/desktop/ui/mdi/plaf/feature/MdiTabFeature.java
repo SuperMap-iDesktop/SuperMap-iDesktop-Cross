@@ -106,7 +106,13 @@ class MdiTabFeature extends AbstractMdiFeature {
 		// 绘制边框
 		graphics.setColor(MdiTabUIProperties.BORDER_COLOR);
 		// drawRect 实际渲染了 width + 1 和 height +1 的区域
-		graphics.drawRect(getX(), getY(), getWidth(), getHeight());
+		if (this.getPage().isActive()) {
+			graphics.fillRect(getX(), getY(), getWidth(), 1);
+			graphics.fillRect(getX(), getY(), 1, getHeight());
+			graphics.fillRect(getX() + getWidth(), getY(), 1, getHeight());
+		} else {
+			graphics.drawRect(getX(), getY(), getWidth(), getHeight());
+		}
 
 		// 填充底色
 		graphics.setColor(this.page.isActive() ? MdiTabUIProperties.BACKCOLOR_ACTIVE : MdiTabUIProperties.BACKCOLOR_NORMAL);

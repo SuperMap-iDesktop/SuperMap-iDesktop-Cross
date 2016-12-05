@@ -20,6 +20,7 @@ public class MdiTabsFeature extends AbstractMdiFeature {
 	private int firstVisibleTabIndex = 0; // 当前 tabs 第一个可显示的 tab
 	private int lastVisibleTabIndex = 0; // 当前 tabs 最后一个可显示的 tab
 	private int height = 0;
+	private MdiTabFeature activeTab;
 
 	public MdiTabsFeature(MdiGroup group, IMdiFeature parent) {
 		super(group, parent);
@@ -132,6 +133,7 @@ public class MdiTabsFeature extends AbstractMdiFeature {
 	private void layoutingFeaturesRect() {
 		if (this.features.size() > 0) {
 			// 初始化所有 Tab 为不可见
+			this.activeTab = null;
 			for (int i = 0; i < this.features.size(); i++) {
 				MdiTabFeature feature = (MdiTabFeature) this.features.get(i);
 				feature.setX(0);
@@ -147,8 +149,16 @@ public class MdiTabsFeature extends AbstractMdiFeature {
 				childFeature.setY(y);
 				childFeature.setHidden(false);
 				x += childFeature.getWidth() + getTabGap();
+
+				if (this.activeTab == null && childFeature.getPage().isActive()) {
+					this.activeTab = childFeature;
+				}
 			}
 		}
+	}
+
+	public MdiTabFeature getActiveTab() {
+		return activeTab;
 	}
 
 	public boolean canForward() {

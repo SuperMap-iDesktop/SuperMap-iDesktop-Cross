@@ -1,5 +1,7 @@
 package com.supermap.desktop.ui.mdi;
 
+import com.supermap.desktop.ui.mdi.events.*;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -121,6 +123,66 @@ public class MdiPane extends JPanel implements Accessible {
 		if (!this.groups.contains(group)) {
 			this.groups.add(group);
 			group.addPage(content);
+		}
+	}
+
+	public void addPageAddedListener(PageAddedListener listener) {
+		for (int i = 0; i < this.groups.size(); i++) {
+			this.groups.get(i).addPageAddedListener(listener);
+		}
+	}
+
+	public void removePageAddedListener(PageAddedListener listener) {
+		for (int i = 0; i < this.groups.size(); i++) {
+			this.groups.get(i).removePageAddedListener(listener);
+		}
+	}
+
+	public void addPageClosedListener(PageClosedListener listener) {
+		for (int i = 0; i < this.groups.size(); i++) {
+			this.groups.get(i).addPageClosedListener(listener);
+		}
+	}
+
+	public void removePageClosedListener(PageClosedListener listener) {
+		for (int i = 0; i < this.groups.size(); i++) {
+			this.groups.get(i).removePageClosedListener(listener);
+		}
+	}
+
+	public void addPageClosingListener(PageClosingListener listener) {
+		for (int i = 0; i < this.groups.size(); i++) {
+			this.groups.get(i).addPageClosingListener(listener);
+		}
+	}
+
+	public void removePageClosingListener(PageClosingListener listener) {
+		for (int i = 0; i < this.groups.size(); i++) {
+			this.groups.get(i).removePageClosingListener(listener);
+		}
+	}
+
+	public void addPageActivatingListener(PageActivatingListener listener) {
+		for (int i = 0; i < this.groups.size(); i++) {
+			this.groups.get(i).addPageActivatingListener(listener);
+		}
+	}
+
+	public void removePageActivatingListener(PageActivatingListener listener) {
+		for (int i = 0; i < this.groups.size(); i++) {
+			this.groups.get(i).removePageActivatingListener(listener);
+		}
+	}
+
+	public void addPageActivatedListener(PageActivatedListener listener) {
+		for (int i = 0; i < this.groups.size(); i++) {
+			this.groups.get(i).addPageActivatedListener(listener);
+		}
+	}
+
+	public void removePageActivatedListener(PageActivatedListener listener) {
+		for (int i = 0; i < this.groups.size(); i++) {
+			this.groups.get(i).removePageActivatedListener(listener);
 		}
 	}
 }

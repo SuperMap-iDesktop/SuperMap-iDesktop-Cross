@@ -13,5 +13,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.apache.felix:org.apache.felix.framework:5.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.felix:org.apache.felix.main:5.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jb2011:beautyeye_lnf:v3.7" level="project" />
   </component>
 </module>

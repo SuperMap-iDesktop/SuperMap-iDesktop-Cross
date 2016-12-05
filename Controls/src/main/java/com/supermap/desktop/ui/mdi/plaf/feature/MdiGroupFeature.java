@@ -34,6 +34,7 @@ public class MdiGroupFeature extends AbstractMdiFeature {
 		this.pagesFeature = MdiPagesFeature.instance(this.group, this);
 		this.tabsFeature = MdiTabsFeature.instance(this.group, this);
 		this.oprsFeature = MdiOprsFeature.instance(this.group, this);
+		this.pagesFeature.setTabsFeature(this.tabsFeature);
 		initFeatures();
 	}
 

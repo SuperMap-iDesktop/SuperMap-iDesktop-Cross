@@ -11,6 +11,8 @@ public class MdiTabUIProperties {
 	public static int CONTENT_GAP = 4; // tab 上的 icon 与 icon之间、icon 与文本之间的间距
 	public static Color FORECOLOR = Color.BLACK;
 	public static Color BORDER_COLOR = Color.LIGHT_GRAY;
-	public static Color BACKCOLOR_NORMAL = new Color(219, 234, 254, 255);
-	public static Color BACKCOLOR_ACTIVE = new Color(248, 208, 120);
+	public static Color BACKCOLOR_NORMAL = new Color(212, 212, 212);
+//	public static Color BACKCOLOR_NORMAL = new Color(219, 234, 254, 255);
+	public static Color BACKCOLOR_ACTIVE = new Color(255, 255, 255);
+//	public static Color BACKCOLOR_ACTIVE = new Color(248, 208, 120);
 }

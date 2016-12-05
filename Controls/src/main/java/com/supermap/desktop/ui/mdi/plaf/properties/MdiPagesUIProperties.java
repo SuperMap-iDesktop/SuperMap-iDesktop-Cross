@@ -8,6 +8,7 @@ import java.awt.*;
 public class MdiPagesUIProperties {
 	public static Insets INSETS = new Insets(4, 4, 4, 4);
 	public static int BORDER_WIDTH = 2;
-	public static Color COLOR_BORDER_FILL_ACTIVE = new Color(248, 208, 120);
+	public static Color COLOR_BORDER_FILL_ACTIVE = new Color(255, 255, 255);
+	//	public static Color COLOR_BORDER_FILL_ACTIVE = new Color(248, 208, 120);
 	public static Color COLOR_BORDER_LINE = Color.LIGHT_GRAY;
 }
