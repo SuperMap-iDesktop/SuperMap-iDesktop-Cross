@@ -45,18 +45,12 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.dataview.DataViewResources;
+import com.supermap.desktop.event.FormClosingEvent;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.controls.DatasetTypeComboBox;
 import com.supermap.desktop.ui.controls.TextFieldSearch;
 import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.ui.docking.DockingWindow;
-import com.supermap.desktop.ui.docking.DockingWindowAdapter;
-import com.supermap.desktop.ui.docking.DockingWindowListener;
-import com.supermap.desktop.ui.docking.OperationAbortedException;
-import com.supermap.desktop.ui.docking.View;
-import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
-import com.supermap.desktop.ui.docking.location.NullLocation;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -299,7 +293,6 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		addJPopupMenuListeners();
 		textFieldSearchChangedListeners();
 		addRefreshListeners();
-		addWindowListeners();
 	}
 
 	/**
@@ -446,30 +439,23 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		});
 	}
 
-	/**
-	 * 窗口监听
-	 */
-	private void addWindowListeners() {
-		this.addListener(new DockingWindowAdapter() {
-			@Override
-			public void windowClosing(WindowClosingEvent evt) throws OperationAbortedException {
-				//移除所有监听
-				//System.out.println("手动关闭工作空间");
-				jTable.removeAll();
-				jTable = null;
-				textFieldSearch.removeAll();
-				textFieldSearch = null;
-				datasetTypeComboBox.removeAll();
-				datasetTypeComboBox = null;
-				jButtonLastLevel.removeAll();
-				jButtonLastLevel = null;
+	@Override
+	public void formClosing(FormClosingEvent e) {
+		//移除所有监听
+		//System.out.println("手动关闭工作空间");
+		jTable.removeAll();
+		jTable = null;
+		textFieldSearch.removeAll();
+		textFieldSearch = null;
+		datasetTypeComboBox.removeAll();
+		datasetTypeComboBox = null;
+		jButtonLastLevel.removeAll();
+		jButtonLastLevel = null;
 
-				//当窗口关闭的时候，设置其为空，（尝试一下）
-				//下列操作多余？？
-				IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
-				formManager.close(WorkspaceManagerWindow.this);
-			}
-		});
+		//当窗口关闭的时候，设置其为空，（尝试一下）
+		//下列操作多余？？
+		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+		formManager.close(WorkspaceManagerWindow.this);
 	}
 
 	/**
