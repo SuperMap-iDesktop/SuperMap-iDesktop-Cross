@@ -11,6 +11,7 @@ public class Startup {
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//			org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
 			Main.main(args);
 		} catch (Exception e) {
 			e.printStackTrace();
