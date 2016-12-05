@@ -100,7 +100,7 @@ public abstract class EditControllerAdapter implements IEditController {
 
 	/**
 	 * @author lixiaoyao
-	 * @description 新增对选中的对象进行增删移动时，进行监听
+	 * @description 新增对选中的对象的节点进行删除移动时，进行监听
 	 */
 	@Override
 	public void geometryModified(EditEnvironment environment,GeometryEvent event){
