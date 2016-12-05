@@ -6,6 +6,8 @@
 	<plaf name="apple.laf.AquaLookAndFeel" ref="default" />
 	<plaf name="com.sun.java.swing.plaf.gtk.GTKLookAndFeel" ref="default" />
 	<plaf name="com.sun.java.swing.plaf.windows.WindowsLookAndFeel" ref="win32" />
+	<plaf name="org.jb2011.lnf.beautyeye.BeautyEyeLookAndFeelWin" ref="win32" />
+	<plaf name="org.jb2011.lnf.beautyeye.BeautyEyeLookAndFeelCross" ref="win32" />
 	<plaf name="com.sun.java.swing.plaf.motif.MotifLookAndFeel" ref="default" />
 	<plaf name="com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel" ref="eclipse2" />
 	<plaf name="com.l2fprod.gui.plaf.skin.SkinLookAndFeel" ref="default"
@@ -116,8 +118,10 @@
 		
 		<!-- List the various painters available -->
 		<painter-resource name="win32Painter" extends="defaultPainter">
-			<property name="bgcolor" value="#C4C1BC" handler="color"/>
-			<property name="bgcolor.active" value="#0A246A" handler="color"/>
+			<!--<property name="bgcolor" value="#C4C1BC" handler="color"/>-->
+			<!--<property name="bgcolor.active" value="#0A246A" handler="color"/>-->
+			<property name="bgcolor" value="#D4D4D4" handler="color"/>
+			<property name="bgcolor.active" value="#3875d6" handler="color"/>
 		</painter-resource>
 		
 	

@@ -20,7 +20,7 @@ public class TextFeature extends AbstractMdiFeature {
 
 	public TextFeature(String text, MdiGroup group, IMdiFeature parent) {
 		super(group, parent);
-		this.text = text;
+		this.text = text == null ? "" : text;
 		this.height = MdiGroupUtilities.getFontHeight(group);
 		this.width = SwingUtilities2.stringWidth(group, group.getFontMetrics(group.getFont()), this.text);
 		this.fontDescent = group.getFontMetrics(group.getFont()).getDescent();
