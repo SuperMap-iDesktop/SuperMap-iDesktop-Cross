@@ -131,6 +131,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	public void windowShown() {
 		super.windowShown();
 		//刷新jtable，其显示跟随tree焦点
+		System.out.println("SHOW");
 		this.isWindowShown = true;
 		initJTable();
 	}
@@ -540,22 +541,20 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				//comboxBox改变监听只在第三层生效
-				if (isWindowShown) {
-					if (levelNum == THIRD_LEVEL) {
-						//选择了“所有数据集类型
-						if (datasetTypeComboBox.getSelectedItem().toString().equals(CommonProperties.getString("String_DatasetType_All"))) {
-							jTable.setModel(new GetTableModel().getDatasourceTableModel(selectedDatasource));
-						}
-						//选择了“其他数据类型”
-						else {
-							jTable.setModel(new GetTableModel().getDatasourceTypeTableModel(selectedDatasource, CommonToolkit.DatasetTypeWrap.findType(datasetTypeComboBox.getSelectedItem().toString())));
-						}
-						//设置table的渲染
-						jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasource());
-						TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
-						column.setCellRenderer(render);
-						jTable.repaint();
+				if (levelNum == THIRD_LEVEL) {
+					//选择了“所有数据集类型
+					if (datasetTypeComboBox.getSelectedItem().toString().equals(CommonProperties.getString("String_DatasetType_All"))) {
+						jTable.setModel(new GetTableModel().getDatasourceTableModel(selectedDatasource));
 					}
+					//选择了“其他数据类型”
+					else {
+						jTable.setModel(new GetTableModel().getDatasourceTypeTableModel(selectedDatasource, CommonToolkit.DatasetTypeWrap.findType(datasetTypeComboBox.getSelectedItem().toString())));
+					}
+					//设置table的渲染
+					jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasource());
+					TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
+					column.setCellRenderer(render);
+					jTable.repaint();
 				}
 			}
 		});
@@ -568,97 +567,97 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	private void jTableDoubleClickedListeners() {
 		this.jTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				if (isExistModel) {
-					if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-						//System.out.println("JTable,Clicked,BUTTON1,jTableMouseListeners");
-						//获得首列单元格内容，以此作为跳转判断依据
-						int rowIndex = ((JTable) e.getSource()).rowAtPoint(e.getPoint());
-						if (rowIndex >= 0) {
-							Object cellVal = jTable.getValueAt(rowIndex, COLUMN_NAME);
-							jButtonLastLevel.setEnabled(true);
-							// textFieldSearch.setEnabled(true);
-							//暂时通过首列字符串以判断方式进行所选判断
-							if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideDatasource"))) {//数据源
-								//设置model
-								jTable.setModel(new GetTableModel().getDatasourcesTableModel(getActiveApplication().getWorkspace().getDatasources()));
-								//jTable.setDefaultRenderer(Integer.class, new TableCellRenderer_Datasources());
-								jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasources());
-								isExistModel = true;
-								TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
-								column.setCellRenderer(render);
 
-								textFieldSearch.setEnabled(true);
-								levelNum = SECOND_LEVEL;
+				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+					//System.out.println("JTable,Clicked,BUTTON1,jTableMouseListeners");
+					//获得首列单元格内容，以此作为跳转判断依据
+					int rowIndex = ((JTable) e.getSource()).rowAtPoint(e.getPoint());
+					if (rowIndex >= 0) {
+						Object cellVal = jTable.getValueAt(rowIndex, COLUMN_NAME);
+						jButtonLastLevel.setEnabled(true);
+						// textFieldSearch.setEnabled(true);
+						//暂时通过首列字符串以判断方式进行所选判断
+						if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideDatasource"))) {//数据源
+							//设置model
+							jTable.setModel(new GetTableModel().getDatasourcesTableModel(getActiveApplication().getWorkspace().getDatasources()));
+							//jTable.setDefaultRenderer(Integer.class, new TableCellRenderer_Datasources());
+							jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasources());
+							isExistModel = true;
+							TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
+							column.setCellRenderer(render);
 
-							} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideMap"))) {//地图
-								jTable.setModel(new GetTableModel().getMapsTableModel(getActiveApplication().getWorkspace().getMaps()));
-								//jTable.setDefaultRenderer(Integer.class, new TableCellRenderer_Maps());
-								jTable.setDefaultRenderer(Icon.class, new TableCellRendererMaps());
-								isExistModel = true;
-								textFieldSearch.setEnabled(true);
-								levelNum = SECOND_LEVEL;
+							textFieldSearch.setEnabled(true);
+							levelNum = SECOND_LEVEL;
 
-							} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideLayout"))) {//暂不实现此方法，隐藏布局列
-							} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideScene"))) {//场景
-								jTable.setModel(new GetTableModel().getScenesTableModel(getActiveApplication().getWorkspace().getScenes()));
-								//jTable.setDefaultRenderer(Integer.class, new TableCellRenderer_Scenes());
-								jTable.setDefaultRenderer(Icon.class, new TableCellRendererScenes());
-								isExistModel = true;
-								textFieldSearch.setEnabled(true);
-								levelNum = SECOND_LEVEL;
-							} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideResources"))) {//资源
-								jTable.setModel(new GetTableModel().getResourcesTableModel());
-								//jTable.setDefaultRenderer(Integer.class, new TableCellRenderer_Resources());
-								jTable.setDefaultRenderer(Icon.class, new TableCellRendererResources());
-								isExistModel = true;
-								textFieldSearch.setText("");
-								textFieldSearch.setEnabled(false);
-								levelNum = SECOND_LEVEL;
-								//通过cellVal,数据源文件存在其选择的数据源，并选中了其数据源
-							} else if (getActiveApplication().getWorkspace().getDatasources().get(cellVal.toString()) != null && cellVal.equals(getActiveApplication().getWorkspace().getDatasources().get(cellVal.toString()).getAlias())) {//数据源文件
-								for (int num = 0; num < getWorkspaceManager().getWorkspace().getDatasources().getCount(); num++) {
-									if ((getWorkspaceManager().getWorkspace().getDatasources().get(num).getAlias()).equals(cellVal)) {
-										selectedDatasource = getActiveApplication().getWorkspace().getDatasources().get(num);
-										//设置model
-										jTable.setModel(new GetTableModel().getDatasourceTableModel(getActiveApplication().getWorkspace().getDatasources().get(num)));
-										//jTable.setDefaultRenderer(Integer.class, new TableCellRenderer_Datasource());
-										jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasource());
-										isExistModel = true;
+						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideMap"))) {//地图
+							jTable.setModel(new GetTableModel().getMapsTableModel(getActiveApplication().getWorkspace().getMaps()));
+							//jTable.setDefaultRenderer(Integer.class, new TableCellRenderer_Maps());
+							jTable.setDefaultRenderer(Icon.class, new TableCellRendererMaps());
+							isExistModel = true;
+							textFieldSearch.setEnabled(true);
+							levelNum = SECOND_LEVEL;
 
-										TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
-										column.setCellRenderer(render);
+						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideLayout"))) {//暂不实现此方法，隐藏布局列
+						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideScene"))) {//场景
+							jTable.setModel(new GetTableModel().getScenesTableModel(getActiveApplication().getWorkspace().getScenes()));
+							//jTable.setDefaultRenderer(Integer.class, new TableCellRenderer_Scenes());
+							jTable.setDefaultRenderer(Icon.class, new TableCellRendererScenes());
+							isExistModel = true;
+							textFieldSearch.setEnabled(true);
+							levelNum = SECOND_LEVEL;
+						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideResources"))) {//资源
+							jTable.setModel(new GetTableModel().getResourcesTableModel());
+							//jTable.setDefaultRenderer(Integer.class, new TableCellRenderer_Resources());
+							jTable.setDefaultRenderer(Icon.class, new TableCellRendererResources());
+							isExistModel = true;
+							textFieldSearch.setText("");
+							textFieldSearch.setEnabled(false);
+							levelNum = SECOND_LEVEL;
+							//通过cellVal,数据源文件存在其选择的数据源，并选中了其数据源
+						} else if (getActiveApplication().getWorkspace().getDatasources().get(cellVal.toString()) != null && cellVal.equals(getActiveApplication().getWorkspace().getDatasources().get(cellVal.toString()).getAlias())) {//数据源文件
+							for (int num = 0; num < getWorkspaceManager().getWorkspace().getDatasources().getCount(); num++) {
+								if ((getWorkspaceManager().getWorkspace().getDatasources().get(num).getAlias()).equals(cellVal)) {
+									selectedDatasource = getActiveApplication().getWorkspace().getDatasources().get(num);
+									//设置model
+									jTable.setModel(new GetTableModel().getDatasourceTableModel(getActiveApplication().getWorkspace().getDatasources().get(num)));
+									//jTable.setDefaultRenderer(Integer.class, new TableCellRenderer_Datasource());
+									jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasource());
+									isExistModel = true;
 
-										datasetTypeComboBox.getSelectedIndex();
-										datasetTypeComboBox.setEnabled(true);
-										textFieldSearch.setEnabled(true);
-										levelNum = THIRD_LEVEL;
-										break;
-									}
+									TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
+									column.setCellRenderer(render);
+
+									datasetTypeComboBox.getSelectedIndex();
+									datasetTypeComboBox.setEnabled(true);
+									textFieldSearch.setEnabled(true);
+									levelNum = THIRD_LEVEL;
+									break;
 								}
-								//选中数据源中存在数据
-							} else if (levelNum == THIRD_LEVEL && selectedDatasource != null) {
-								for (int num = 0; num < selectedDatasource.getDatasets().getCount(); num++) {
-									if (cellVal.equals(selectedDatasource.getDatasets().get(num).getName())) {
-										//较为累赘，先回去数据集地址，待优化：单元格中存在的直接为对象，直接打开
-										//Dataset aimdataset = new FindDatasetbyName().getDatasetPath(getActiveApplication().getWorkspace(), cellVal.toString());
-
-										//打来数据集到mapcontorl，默认以新建mapcontorl的方式打开
-										MapViewUIUtilities.addDatasetsToNewWindow(new Dataset[]{(Dataset) selectedDatasource.getDatasets().get(num)}, true);
-										break;
-									}
-								}
-							} else if (levelNum == SECOND_LEVEL && getActiveApplication().getWorkspace().getMaps().getCount() > 0) {//存在地图
-								for (int num = 0; num < getActiveApplication().getWorkspace().getMaps().getCount(); num++) {
-									if (cellVal.equals(getActiveApplication().getWorkspace().getMaps().get(num))) {
-										MapViewUIUtilities.openMap(cellVal.toString());
-										break;
-									}
-								}
-							} else {
 							}
+							//选中数据源中存在数据
+						} else if (levelNum == THIRD_LEVEL && selectedDatasource != null) {
+							for (int num = 0; num < selectedDatasource.getDatasets().getCount(); num++) {
+								if (cellVal.equals(selectedDatasource.getDatasets().get(num).getName())) {
+									//较为累赘，先回去数据集地址，待优化：单元格中存在的直接为对象，直接打开
+									//Dataset aimdataset = new FindDatasetbyName().getDatasetPath(getActiveApplication().getWorkspace(), cellVal.toString());
+
+									//打来数据集到mapcontorl，默认以新建mapcontorl的方式打开
+									MapViewUIUtilities.addDatasetsToNewWindow(new Dataset[]{(Dataset) selectedDatasource.getDatasets().get(num)}, true);
+									break;
+								}
+							}
+						} else if (levelNum == SECOND_LEVEL && getActiveApplication().getWorkspace().getMaps().getCount() > 0) {//存在地图
+							for (int num = 0; num < getActiveApplication().getWorkspace().getMaps().getCount(); num++) {
+								if (cellVal.equals(getActiveApplication().getWorkspace().getMaps().get(num))) {
+									MapViewUIUtilities.openMap(cellVal.toString());
+									break;
+								}
+							}
+						} else {
 						}
 					}
 				}
+
 			}
 		});
 	}
@@ -669,77 +668,77 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	private void addJPopupMenuListeners() {
 		this.jTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				if (isWindowShown) {
-					//当点击松开了右键，设置右键菜单
-					if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
-						//System.out.println("JTable,Pressed,BUTTON3,addJPopupMenuListeners");
-						int rowIndex = ((JTable) e.getSource()).rowAtPoint(e.getPoint());
-						if (rowIndex >= 0) {
-							Object cellVal = jTable.getValueAt(rowIndex, COLUMN_NAME);
-							if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideDatasource"))) {
-								//设置右键菜单
-								JPopupMenu jPopupMenu_datasources = getWorkspaceManager().getDatasourcesPopupMenu();
-								jPopupMenu_datasources.show(jTable, e.getX(), e.getY());
 
-							} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideMap"))) {
-								JPopupMenu jPopupMenu_maps = getWorkspaceManager().getMapsPopupMenu();
-								jPopupMenu_maps.show(jTable, e.getX(), e.getY());
-							} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideLayout"))) {//暂不实现此功能
-								//暂无右键菜单
-							} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideScene"))) {
-								JPopupMenu jPopupMenu_scenes = getWorkspaceManager().getScenesPopupMenu();
-								jPopupMenu_scenes.show(jTable, e.getX(), e.getY());
-							} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideResources"))) {
-								//暂无右键菜单
-							} else if (cellVal.equals(ControlsProperties.getString("SymbolMarkerLibNodeName"))) {
-								//设置被选中
-								JPopupMenu jPopupMenu_Marker_Resources = getWorkspaceManager().getSymbolMarkerPopupMenu();
-								jPopupMenu_Marker_Resources.show(jTable, e.getX(), e.getY());
-							} else if (cellVal.equals(ControlsProperties.getString("SymbolLineLibNodeName"))) {
-								//设置被选中
-								JPopupMenu jPopupMenu_Line_Resources = getWorkspaceManager().getSymbolLinePopupMenu();
-								jPopupMenu_Line_Resources.show(jTable, e.getX(), e.getY());
-							} else if (cellVal.equals(ControlsProperties.getString("SymbolFillLibNodeName"))) {
-								//设置被选中
-								JPopupMenu jPopupMenu_Fill_Resources = getWorkspaceManager().getSymbolFillPopupMenu();
-								jPopupMenu_Fill_Resources.show(jTable, e.getX(), e.getY());
-							}
-							//存在数据集(处于第二层，存在数据源文件，并且选中了)
-							else if (levelNum == SECOND_LEVEL && (getActiveApplication().getWorkspace().getDatasources().get(cellVal.toString()) != null && cellVal.equals(getActiveApplication().getWorkspace().getDatasources().get(cellVal.toString()).getAlias()))) {
-								JPopupMenu jPopupMenu_datasource = getWorkspaceManager().getDatasourcePopupMenu();
-								jPopupMenu_datasource.show(jTable, e.getX(), e.getY());
-							}
-							//存在数据（需要进入对数据进行遍历，获得num，如何简化？）
-							else if (levelNum == THIRD_LEVEL && getActiveApplication().getWorkspace().getDatasources().get(selectedDatasource.getAlias().toString()).getDatasets() != null) {//选中了数据集
-								for (int num = 0; num < selectedDatasource.getDatasets().getCount(); num++) {
-									if (cellVal.equals(selectedDatasource.getDatasets().get(num).getName())) {
-										//根据数据类型赋予不同的右键菜单,待补充
-										Object datasetType = jTable.getValueAt(rowIndex, 1);
-										if (datasetType.equals(DatasetType.GRID)) {
-											JPopupMenu jPopupMenu_dataset = getWorkspaceManager().getDatasetGridPopupMenu();
-											jPopupMenu_dataset.show(jTable, e.getX(), e.getY());
-											break;
-										} else {
-											JPopupMenu jPopupMenu_dataset = getWorkspaceManager().getDatasetVectorPopupMenu();
-											jPopupMenu_dataset.show(jTable, e.getX(), e.getY());
-											break;
-										}
-									}
-								}
-							}
-							//存在地图（需要进入对地图进行遍历，获得num，如何简化？）
-							else if (levelNum == SECOND_LEVEL && getActiveApplication().getWorkspace().getMaps().getCount() > 0) {
-								for (int num = 0; num < getActiveApplication().getWorkspace().getMaps().getCount(); num++) {
-									if (cellVal.equals(getActiveApplication().getWorkspace().getMaps().get(num))) {
-										JPopupMenu jPopupMenu_map = getWorkspaceManager().getMapPopupMenu();
-										jPopupMenu_map.show(jTable, e.getX(), e.getY());
+				//当点击松开了右键，设置右键菜单
+				if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
+					//System.out.println("JTable,Pressed,BUTTON3,addJPopupMenuListeners");
+					int rowIndex = ((JTable) e.getSource()).rowAtPoint(e.getPoint());
+					if (rowIndex >= 0) {
+						Object cellVal = jTable.getValueAt(rowIndex, COLUMN_NAME);
+						if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideDatasource"))) {
+							//设置右键菜单
+							JPopupMenu jPopupMenu_datasources = getWorkspaceManager().getDatasourcesPopupMenu();
+							jPopupMenu_datasources.show(jTable, e.getX(), e.getY());
+
+						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideMap"))) {
+							JPopupMenu jPopupMenu_maps = getWorkspaceManager().getMapsPopupMenu();
+							jPopupMenu_maps.show(jTable, e.getX(), e.getY());
+						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideLayout"))) {//暂不实现此功能
+							//暂无右键菜单
+						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideScene"))) {
+							JPopupMenu jPopupMenu_scenes = getWorkspaceManager().getScenesPopupMenu();
+							jPopupMenu_scenes.show(jTable, e.getX(), e.getY());
+						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideResources"))) {
+							//暂无右键菜单
+						} else if (cellVal.equals(ControlsProperties.getString("SymbolMarkerLibNodeName"))) {
+							//设置被选中
+							JPopupMenu jPopupMenu_Marker_Resources = getWorkspaceManager().getSymbolMarkerPopupMenu();
+							jPopupMenu_Marker_Resources.show(jTable, e.getX(), e.getY());
+						} else if (cellVal.equals(ControlsProperties.getString("SymbolLineLibNodeName"))) {
+							//设置被选中
+							JPopupMenu jPopupMenu_Line_Resources = getWorkspaceManager().getSymbolLinePopupMenu();
+							jPopupMenu_Line_Resources.show(jTable, e.getX(), e.getY());
+						} else if (cellVal.equals(ControlsProperties.getString("SymbolFillLibNodeName"))) {
+							//设置被选中
+							JPopupMenu jPopupMenu_Fill_Resources = getWorkspaceManager().getSymbolFillPopupMenu();
+							jPopupMenu_Fill_Resources.show(jTable, e.getX(), e.getY());
+						}
+						//存在数据集(处于第二层，存在数据源文件，并且选中了)
+						else if (levelNum == SECOND_LEVEL && (getActiveApplication().getWorkspace().getDatasources().get(cellVal.toString()) != null && cellVal.equals(getActiveApplication().getWorkspace().getDatasources().get(cellVal.toString()).getAlias()))) {
+							JPopupMenu jPopupMenu_datasource = getWorkspaceManager().getDatasourcePopupMenu();
+							jPopupMenu_datasource.show(jTable, e.getX(), e.getY());
+						}
+						//存在数据（需要进入对数据进行遍历，获得num，如何简化？）
+						else if (levelNum == THIRD_LEVEL && getActiveApplication().getWorkspace().getDatasources().get(selectedDatasource.getAlias().toString()).getDatasets() != null) {//选中了数据集
+							for (int num = 0; num < selectedDatasource.getDatasets().getCount(); num++) {
+								if (cellVal.equals(selectedDatasource.getDatasets().get(num).getName())) {
+									//根据数据类型赋予不同的右键菜单,待补充
+									Object datasetType = jTable.getValueAt(rowIndex, 1);
+									if (datasetType.equals(DatasetType.GRID)) {
+										JPopupMenu jPopupMenu_dataset = getWorkspaceManager().getDatasetGridPopupMenu();
+										jPopupMenu_dataset.show(jTable, e.getX(), e.getY());
+										break;
+									} else {
+										JPopupMenu jPopupMenu_dataset = getWorkspaceManager().getDatasetVectorPopupMenu();
+										jPopupMenu_dataset.show(jTable, e.getX(), e.getY());
 										break;
 									}
 								}
 							}
 						}
+						//存在地图（需要进入对地图进行遍历，获得num，如何简化？）
+						else if (levelNum == SECOND_LEVEL && getActiveApplication().getWorkspace().getMaps().getCount() > 0) {
+							for (int num = 0; num < getActiveApplication().getWorkspace().getMaps().getCount(); num++) {
+								if (cellVal.equals(getActiveApplication().getWorkspace().getMaps().get(num))) {
+									JPopupMenu jPopupMenu_map = getWorkspaceManager().getMapPopupMenu();
+									jPopupMenu_map.show(jTable, e.getX(), e.getY());
+									break;
+								}
+							}
+						}
 					}
 				}
+
 			}
 		});
 	}
@@ -751,104 +750,104 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		this.jTable.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if (isWindowShown) {
-					if (e.getButton() == MouseEvent.BUTTON1 || e.getButton() == MouseEvent.BUTTON3) {
-						//System.out.println("JTable,Pressed,BUTTON1||BUTTON3,jTableToTreeListeners");
-						int rowIndex = ((JTable) e.getSource()).rowAtPoint(e.getPoint());
-						if (rowIndex >= 0) {
-							//当只选中一条数据时，点击刷新高亮显示
-							if (jTable.getSelectedRowCount() <= 1) {
-								jTable.changeSelection(rowIndex, COLUMN_NAME, false, false);
-							}
-							Object cellVal = jTable.getValueAt(rowIndex, COLUMN_NAME);
-							if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideDatasource"))) {
-								DefaultMutableTreeNode datasourcesNode = getWorkspaceManager().getWorkspaceTree().getDatasourcesNode();
-								selectedTreeNodePath = new TreePath(datasourcesNode.getPath());
-							} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideMap"))) {
-								DefaultMutableTreeNode mapsNode = getWorkspaceManager().getWorkspaceTree().getMapsNode();
-								selectedTreeNodePath = new TreePath(mapsNode.getPath());
-							} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideLayout"))) {//暂不实现任何功能
-							} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideScene"))) {
-								DefaultMutableTreeNode scenesNode = getWorkspaceManager().getWorkspaceTree().getScenesNode();
-								selectedTreeNodePath = new TreePath(scenesNode.getPath());
-							} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideResources"))) {
-								DefaultMutableTreeNode resourcesNode = getWorkspaceManager().getWorkspaceTree().getResourcesNode();
-								selectedTreeNodePath = new TreePath(resourcesNode.getPath());
-							} else if (cellVal.equals(ControlsProperties.getString("SymbolMarkerLibNodeName"))
-									|| cellVal.equals(ControlsProperties.getString("SymbolLineLibNodeName"))
-									|| cellVal.equals(ControlsProperties.getString("SymbolFillLibNodeName"))
-									) {
-								//DefaultMutableTreeNode resourceNode;
-								if (cellVal.equals(ControlsProperties.getString("SymbolMarkerLibNodeName"))) {
-									DefaultMutableTreeNode resourceMarkerNode = (DefaultMutableTreeNode) getWorkspaceManager().getWorkspaceTree().getResourcesNode().getChildAt(RESOURCE_MARKER_NUM);
-									selectedTreeNodePath = new TreePath(resourceMarkerNode.getPath());
-								} else if (cellVal.equals(ControlsProperties.getString("SymbolLineLibNodeName"))) {
-									DefaultMutableTreeNode resourceLineNode = (DefaultMutableTreeNode) getWorkspaceManager().getWorkspaceTree().getResourcesNode().getChildAt(RESOURCE_LINE_NUM);
-									selectedTreeNodePath = new TreePath(resourceLineNode.getPath());
-								} else if (cellVal.equals(ControlsProperties.getString("SymbolFillLibNodeName"))) {
-									DefaultMutableTreeNode resourceFillNode = (DefaultMutableTreeNode) getWorkspaceManager().getWorkspaceTree().getResourcesNode().getChildAt(RESOURCE_FILL_NUM);
-									selectedTreeNodePath = new TreePath(resourceFillNode.getPath());
-								}
-							}
-							//点击了数据源
-							else if (getActiveApplication().getWorkspace().getDatasources().get(cellVal.toString()) != null && cellVal.equals(getActiveApplication().getWorkspace().getDatasources().get(cellVal.toString()).getAlias()) && levelNum == SECOND_LEVEL) {
-								//获得数据源文件节点
-								for (int i = 0; i < getWorkspaceManager().getWorkspace().getDatasources().getCount(); i++) {
-									if ((getWorkspaceManager().getWorkspace().getDatasources().get(i).getAlias()).equals(cellVal)) {
-										//展开数据源文件节点
-										DefaultMutableTreeNode datasourceNode = getWorkspaceManager().getWorkspaceTree().getDatasourcesNode();
-										selectedTreeNodePath = new TreePath(datasourceNode.getPath());
-										getWorkspaceManager().getWorkspaceTree().expandPath(selectedTreeNodePath);
-										//设置选中数据源
-										selectedDatasourceNode = (DefaultMutableTreeNode) getWorkspaceManager().getWorkspaceTree().getDatasourcesNode().getChildAt(i);
-										selectedTreeNodePath = new TreePath(selectedDatasourceNode.getPath());
-										break;
-									}
-								}
-							}
-							//点击了数据集
-							else if (levelNum == THIRD_LEVEL && selectedDatasource != null && getActiveApplication().getWorkspace().getDatasources().get(selectedDatasource.getAlias().toString()).getDatasets() != null) {
-								for (int num = 0; num < selectedDatasource.getDatasets().getCount(); num++) {
-									if (cellVal.equals(selectedDatasource.getDatasets().get(num).getName())) {
-										//展开数据源节点
-										selectedTreeNodePath = new TreePath(selectedDatasourceNode.getPath());
-										getWorkspaceManager().getWorkspaceTree().expandPath(selectedTreeNodePath);
-										//选中数据集节点数据
-										DefaultMutableTreeNode selectedDatasetNode = (DefaultMutableTreeNode) selectedDatasourceNode.getChildAt(num);
-										selectedTreeNodePath = new TreePath(selectedDatasetNode.getPath());
-									}
-								}
-							} else if (levelNum == SECOND_LEVEL && getActiveApplication().getWorkspace().getMaps().getCount() > 0) {//存在地图
-								for (int num = 0; num < getActiveApplication().getWorkspace().getMaps().getCount(); num++) {
-									if (cellVal.equals(getActiveApplication().getWorkspace().getMaps().get(num))) {
-										//设置联动及焦点获取
-										//展开地图节点
-										DefaultMutableTreeNode mapNode = getWorkspaceManager().getWorkspaceTree().getMapsNode();
-										selectedTreeNodePath = new TreePath(mapNode.getPath());
-										getWorkspaceManager().getWorkspaceTree().expandPath(selectedTreeNodePath);
-										//设置选中节点为地图
-										DefaultMutableTreeNode selectedMapNode = (DefaultMutableTreeNode) mapNode.getChildAt(num);
-										selectedTreeNodePath = new TreePath(selectedMapNode.getPath());
-										break;
-									}
-								}
-							}
-							//设置选中节点对应tree高亮显示
-							if (jTable.getSelectedRowCount() > 1) {
-								//暂时只实现单个点击进行多选
-								getWorkspaceManager().getWorkspaceTree().addSelectionPath(selectedTreeNodePath);
-							} else {
-								getWorkspaceManager().getWorkspaceTree().setSelectionPath(selectedTreeNodePath);
-							}
-							getWorkspaceManager().getWorkspaceTree().scrollPathToVisible(selectedTreeNodePath);
-							//获得工作空间节点
-							DefaultMutableTreeNode workspaceNode = getWorkspaceManager().getWorkspaceTree().getWorkspaceNode();
-							selectedTreeNodePath = new TreePath(workspaceNode.getPath());
-							//展开工作空间节点
-							getWorkspaceManager().getWorkspaceTree().expandPath(selectedTreeNodePath);
+
+				if (e.getButton() == MouseEvent.BUTTON1 || e.getButton() == MouseEvent.BUTTON3) {
+					//System.out.println("JTable,Pressed,BUTTON1||BUTTON3,jTableToTreeListeners");
+					int rowIndex = ((JTable) e.getSource()).rowAtPoint(e.getPoint());
+					if (rowIndex >= 0) {
+						//当只选中一条数据时，点击刷新高亮显示
+						if (jTable.getSelectedRowCount() <= 1) {
+							jTable.changeSelection(rowIndex, COLUMN_NAME, false, false);
 						}
+						Object cellVal = jTable.getValueAt(rowIndex, COLUMN_NAME);
+						if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideDatasource"))) {
+							DefaultMutableTreeNode datasourcesNode = getWorkspaceManager().getWorkspaceTree().getDatasourcesNode();
+							selectedTreeNodePath = new TreePath(datasourcesNode.getPath());
+						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideMap"))) {
+							DefaultMutableTreeNode mapsNode = getWorkspaceManager().getWorkspaceTree().getMapsNode();
+							selectedTreeNodePath = new TreePath(mapsNode.getPath());
+						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideLayout"))) {//暂不实现任何功能
+						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideScene"))) {
+							DefaultMutableTreeNode scenesNode = getWorkspaceManager().getWorkspaceTree().getScenesNode();
+							selectedTreeNodePath = new TreePath(scenesNode.getPath());
+						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideResources"))) {
+							DefaultMutableTreeNode resourcesNode = getWorkspaceManager().getWorkspaceTree().getResourcesNode();
+							selectedTreeNodePath = new TreePath(resourcesNode.getPath());
+						} else if (cellVal.equals(ControlsProperties.getString("SymbolMarkerLibNodeName"))
+								|| cellVal.equals(ControlsProperties.getString("SymbolLineLibNodeName"))
+								|| cellVal.equals(ControlsProperties.getString("SymbolFillLibNodeName"))
+								) {
+							//DefaultMutableTreeNode resourceNode;
+							if (cellVal.equals(ControlsProperties.getString("SymbolMarkerLibNodeName"))) {
+								DefaultMutableTreeNode resourceMarkerNode = (DefaultMutableTreeNode) getWorkspaceManager().getWorkspaceTree().getResourcesNode().getChildAt(RESOURCE_MARKER_NUM);
+								selectedTreeNodePath = new TreePath(resourceMarkerNode.getPath());
+							} else if (cellVal.equals(ControlsProperties.getString("SymbolLineLibNodeName"))) {
+								DefaultMutableTreeNode resourceLineNode = (DefaultMutableTreeNode) getWorkspaceManager().getWorkspaceTree().getResourcesNode().getChildAt(RESOURCE_LINE_NUM);
+								selectedTreeNodePath = new TreePath(resourceLineNode.getPath());
+							} else if (cellVal.equals(ControlsProperties.getString("SymbolFillLibNodeName"))) {
+								DefaultMutableTreeNode resourceFillNode = (DefaultMutableTreeNode) getWorkspaceManager().getWorkspaceTree().getResourcesNode().getChildAt(RESOURCE_FILL_NUM);
+								selectedTreeNodePath = new TreePath(resourceFillNode.getPath());
+							}
+						}
+						//点击了数据源
+						else if (getActiveApplication().getWorkspace().getDatasources().get(cellVal.toString()) != null && cellVal.equals(getActiveApplication().getWorkspace().getDatasources().get(cellVal.toString()).getAlias()) && levelNum == SECOND_LEVEL) {
+							//获得数据源文件节点
+							for (int i = 0; i < getWorkspaceManager().getWorkspace().getDatasources().getCount(); i++) {
+								if ((getWorkspaceManager().getWorkspace().getDatasources().get(i).getAlias()).equals(cellVal)) {
+									//展开数据源文件节点
+									DefaultMutableTreeNode datasourceNode = getWorkspaceManager().getWorkspaceTree().getDatasourcesNode();
+									selectedTreeNodePath = new TreePath(datasourceNode.getPath());
+									getWorkspaceManager().getWorkspaceTree().expandPath(selectedTreeNodePath);
+									//设置选中数据源
+									selectedDatasourceNode = (DefaultMutableTreeNode) getWorkspaceManager().getWorkspaceTree().getDatasourcesNode().getChildAt(i);
+									selectedTreeNodePath = new TreePath(selectedDatasourceNode.getPath());
+									break;
+								}
+							}
+						}
+						//点击了数据集
+						else if (levelNum == THIRD_LEVEL && selectedDatasource != null && getActiveApplication().getWorkspace().getDatasources().get(selectedDatasource.getAlias().toString()).getDatasets() != null) {
+							for (int num = 0; num < selectedDatasource.getDatasets().getCount(); num++) {
+								if (cellVal.equals(selectedDatasource.getDatasets().get(num).getName())) {
+									//展开数据源节点
+									selectedTreeNodePath = new TreePath(selectedDatasourceNode.getPath());
+									getWorkspaceManager().getWorkspaceTree().expandPath(selectedTreeNodePath);
+									//选中数据集节点数据
+									DefaultMutableTreeNode selectedDatasetNode = (DefaultMutableTreeNode) selectedDatasourceNode.getChildAt(num);
+									selectedTreeNodePath = new TreePath(selectedDatasetNode.getPath());
+								}
+							}
+						} else if (levelNum == SECOND_LEVEL && getActiveApplication().getWorkspace().getMaps().getCount() > 0) {//存在地图
+							for (int num = 0; num < getActiveApplication().getWorkspace().getMaps().getCount(); num++) {
+								if (cellVal.equals(getActiveApplication().getWorkspace().getMaps().get(num))) {
+									//设置联动及焦点获取
+									//展开地图节点
+									DefaultMutableTreeNode mapNode = getWorkspaceManager().getWorkspaceTree().getMapsNode();
+									selectedTreeNodePath = new TreePath(mapNode.getPath());
+									getWorkspaceManager().getWorkspaceTree().expandPath(selectedTreeNodePath);
+									//设置选中节点为地图
+									DefaultMutableTreeNode selectedMapNode = (DefaultMutableTreeNode) mapNode.getChildAt(num);
+									selectedTreeNodePath = new TreePath(selectedMapNode.getPath());
+									break;
+								}
+							}
+						}
+						//设置选中节点对应tree高亮显示
+						if (jTable.getSelectedRowCount() > 1) {
+							//暂时只实现单个点击进行多选
+							getWorkspaceManager().getWorkspaceTree().addSelectionPath(selectedTreeNodePath);
+						} else {
+							getWorkspaceManager().getWorkspaceTree().setSelectionPath(selectedTreeNodePath);
+						}
+						getWorkspaceManager().getWorkspaceTree().scrollPathToVisible(selectedTreeNodePath);
+						//获得工作空间节点
+						DefaultMutableTreeNode workspaceNode = getWorkspaceManager().getWorkspaceTree().getWorkspaceNode();
+						selectedTreeNodePath = new TreePath(workspaceNode.getPath());
+						//展开工作空间节点
+						getWorkspaceManager().getWorkspaceTree().expandPath(selectedTreeNodePath);
 					}
 				}
+
 			}
 		});
 	}
