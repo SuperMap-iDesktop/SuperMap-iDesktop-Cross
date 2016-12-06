@@ -131,7 +131,6 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	public void windowShown() {
 		super.windowShown();
 		//刷新jtable，其显示跟随tree焦点
-		System.out.println("SHOW");
 		this.isWindowShown = true;
 		initJTable();
 	}
