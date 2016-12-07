@@ -1,8 +1,23 @@
 package com.supermap.desktop.utilities;
 
-import com.supermap.data.*;
+import com.supermap.data.GeoCompound;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoText;
+import com.supermap.data.GeoText3D;
+import com.supermap.data.Geometrist;
+import com.supermap.data.Geometry;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.Point3D;
+import com.supermap.data.Point3Ds;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.geometry.Abstract.*;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
+import com.supermap.desktop.geometry.Abstract.ILineFeature;
+import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
+import com.supermap.desktop.geometry.Abstract.IPointFeature;
+import com.supermap.desktop.geometry.Abstract.IRegionFeature;
+import com.supermap.desktop.geometry.Abstract.ITextFeature;
 import com.supermap.desktop.geometry.Implements.DGeoCompound;
 import com.supermap.desktop.geometry.Implements.DGeoText;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
@@ -249,6 +264,8 @@ public class GeometryUtilities {
 						// 表明是面特性对象
 						if (dGeometry instanceof IRegionFeature) {
 							result = GeometryUtilities.union(result, ((IRegionFeature) dGeometry).convertToRegion(60), true);
+						}else if (dGeometry instanceof  ILineFeature){
+							result = GeometryUtilities.union(result, ((ILineFeature) dGeometry).convertToLine(120), true);
 						}
 						recordset.moveNext();
 					} finally {
