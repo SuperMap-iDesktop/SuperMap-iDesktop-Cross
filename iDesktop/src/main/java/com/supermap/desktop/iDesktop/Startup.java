@@ -15,6 +15,7 @@ public class Startup {
 			org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
 			UIManager.put("RootPane.setupButtonVisible", false);
 			BeautyEyeLNFHelper.translucencyAtFrameInactive = false;
+//			BeautyEyeLNFHelper.setMaximizedBoundForFrame = false;
 			Main.main(args);
 		} catch (Exception e) {
 			e.printStackTrace();

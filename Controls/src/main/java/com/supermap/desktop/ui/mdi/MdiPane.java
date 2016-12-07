@@ -7,7 +7,9 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.accessibility.Accessible;
 import javax.swing.*;
@@ -24,7 +26,6 @@ public class MdiPane extends JPanel implements Accessible {
 	private static final long serialVersionUID = 1L;
 	private static final int HORIZONTAL = 1;
 	private static final int VERTICAL = 2;
-	private int layoutMode = HORIZONTAL;
 
 	/**
 	 * @see #getUIClassID
@@ -32,6 +33,9 @@ public class MdiPane extends JPanel implements Accessible {
 	private static final String uiClassID = "MdiPaneUI";
 	private List<MdiGroup> groups;
 	private MdiGroup selectedGroup;
+	private JSplitPane mainSplit; // 第一层 split，与 MdiPane 共存亡
+	private JSplitPane topSplit; // 最顶层 split，绑定一个 MdiGroup
+	private int layoutMode = HORIZONTAL;
 	private MdiEventsHelper eventsHelper = new MdiEventsHelper();
 
 	private FocusListener focusListener = new FocusAdapter() {
@@ -60,9 +64,7 @@ public class MdiPane extends JPanel implements Accessible {
 			MdiPane.this.eventsHelper.firePageClosed(e);
 			if (e.getSource() instanceof MdiGroup) {
 				MdiGroup group = (MdiGroup) e.getSource();
-				if (group.getPageCount() == 0) {
-					MdiPane.this.layoutComponents();
-				}
+
 			}
 		}
 	};
@@ -88,50 +90,45 @@ public class MdiPane extends JPanel implements Accessible {
 		this.groups = new ArrayList<>();
 		this.groups.add(createGroup());
 		this.selectedGroup = this.groups.get(0);
-		layoutComponents();
-	}
-
-	private void layoutComponents() {
-		removeAll();
+		this.mainSplit = createSplitPane(this.groups.get(0));
+		this.topSplit = this.mainSplit;
 		setLayout(new BorderLayout());
-		if (this.groups.size() == 1) {
-			add(this.groups.get(0));
-		} else {
-			JSplitPane splitPane = createSplitPane(this.groups.get(0), this.layoutMode);
-			for (int i = 1; i < this.groups.size() - 1; i++) {
-				JSplitPane currentSplit = createSplitPane(this.groups.get(i), this.layoutMode);
-				splitPane.setRightComponent(currentSplit);
-				splitPane = currentSplit;
-			}
-			splitPane.setRightComponent(this.groups.get(this.groups.size() - 1));
-		}
+		add(this.topSplit, BorderLayout.CENTER);
 	}
 
 	public void setLayoutMode(int layoutMode) {
-		this.layoutMode = layoutMode;
-		layoutComponents();
+		if (this.layoutMode != layoutMode) {
+			this.layoutMode = layoutMode;
+		}
 	}
 
-	private JSplitPane createSplitPane(JComponent component, int layoutMode) {
-		JSplitPane splitPane = new JSplitPane();
+	private Map<JSplitPane, Double> getSplitPanes() {
+		Map<JSplitPane, Double> splitPanes = new HashMap<>();
 
-		int orientation = JSplitPane.HORIZONTAL_SPLIT;
-		if (this.layoutMode == HORIZONTAL) {
-			orientation = JSplitPane.HORIZONTAL_SPLIT;
-		} else if (this.layoutMode == VERTICAL) {
-			orientation = JSplitPane.VERTICAL_SPLIT;
-		}
-		splitPane.setOrientation(orientation);
+		return splitPanes;
+	}
+
+	private JSplitPane createSplitPane(JComponent component) {
+		JSplitPane splitPane = new JSplitPane();
+		splitPane.setOrientation(getOrientaition());
 
 		// remove the border from the split pane
 		splitPane.setBorder(null);
-
-		// set the divider size for a more reasonable, less bulky look
-		splitPane.setDividerSize(3);
-		splitPane.setOneTouchExpandable(false);  //zw
-
+		splitPane.setOneTouchExpandable(false);
 		splitPane.setLeftComponent(component);
+		splitPane.setRightComponent(null);
+		splitPane.setDividerSize(0);
 		return splitPane;
+	}
+
+	private int getOrientaition() {
+		int orientation = JSplitPane.HORIZONTAL_SPLIT;
+		if (this.layoutMode == HORIZONTAL || this.layoutMode < 1) {
+			orientation = JSplitPane.HORIZONTAL_SPLIT;
+		} else if (this.layoutMode == VERTICAL || this.layoutMode > 2) {
+			orientation = JSplitPane.VERTICAL_SPLIT;
+		}
+		return orientation;
 	}
 
 	/**
