@@ -1,7 +1,13 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.EditType;
+import com.supermap.data.Geometry;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.geometry.Abstract.ILineFeature;
 import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.control.JDialogFieldOperationSetting;
@@ -25,7 +31,8 @@ public class UnionEditor extends AbstractEditor {
 			// 设置目标数据集类型
 			DatasetType datasetType = DatasetType.CAD;
 			if (environment.getEditProperties().getSelectedGeometryTypes().size() == 1) {
-				datasetType = DatasetType.REGION;
+				//datasetType = DatasetType.REGION;
+				datasetType=environment.getEditProperties().getSelectedDatasetTypes().get(0);
 			}
 			JDialogFieldOperationSetting form = new JDialogFieldOperationSetting(MapEditorProperties.getString("String_GeometryOperation_Union"), environment
 					.getMapControl().getMap(), datasetType);
@@ -48,9 +55,9 @@ public class UnionEditor extends AbstractEditor {
 	public boolean enble(EditEnvironment environment) {
 		boolean enable = false;
 		if (environment.getEditProperties().getSelectedGeometryCount() > 1 // 选中数至少2个
-				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class)
+				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class, ILineFeature.class)
 				&& environment.getEditProperties().getEditableDatasetTypes().size() > 0
-				&& ListUtilities.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.CAD, DatasetType.REGION)) {
+				&& ListUtilities.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.CAD, DatasetType.REGION,DatasetType.LINE)) {
 			enable = true;
 		}
 		return enable;
@@ -67,12 +74,13 @@ public class UnionEditor extends AbstractEditor {
 			List<Layer> selectedLayers = environment.getEditProperties().getSelectedLayers();
 
 			for (Layer layer : selectedLayers) {
-				if (layer.getDataset().getType() == DatasetType.CAD || layer.getDataset().getType() == DatasetType.REGION) {
+				if (layer.getDataset().getType() == DatasetType.CAD || layer.getDataset().getType() == DatasetType.REGION
+						|| layer.getDataset().getType() == DatasetType.LINE) {
 					result = GeometryUtilities.union(result, GeometryUtilities.union(layer), true);
 				}
 			}
 
-			if (editLayer != null) {
+			if (editLayer != null && result!=null) {
 				Selection selection = editLayer.getSelection();
 				targetRecordset = ((DatasetVector) editLayer.getDataset()).getRecordset(false, CursorType.DYNAMIC);
 
@@ -97,6 +105,8 @@ public class UnionEditor extends AbstractEditor {
 					selection.add(addedId);
 				}
 				environment.getMapControl().getEditHistory().add(EditType.ADDNEW, targetRecordset, true);
+			}else{
+				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("string_UnionFailed"));
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
