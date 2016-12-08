@@ -21,6 +21,7 @@ import net.infonode.util.Direction;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class BindUtilties {
     private static SplitWindow splitWindow;
@@ -29,11 +30,13 @@ public class BindUtilties {
     private static IFormTabular tabular;
     private static DockingWindow newTabWindow;
     private static IPropertyBindWindow propertyBindWindow;
+    private static ArrayList<IPropertyBindWindow> propertyBindWindows;
     private static BindUtilties utilties = new BindUtilties();
     private static ActiveFormChangedListener activeFormChangeListener = utilties.new LocalFormChangedListener();
     static int tabSize = 0;// 属性表个数
 
     public static void windowBindProperty(IFormMap formMap, TabWindow tabWindow, Layer layer) {
+        propertyBindWindows = new ArrayList<>();
         mapControl = formMap.getMapControl();
         newTabWindow = tabWindow.getChildWindow(tabWindow.getChildWindowCount() - 1);
         tabSize += 1;
@@ -62,6 +65,7 @@ public class BindUtilties {
         formManager.addActiveFormChangedListener(activeFormChangeListener);
     }
 
+
     public static void openTabular(Dataset dataset, Recordset recordset) {
         // 打开一个默认的属性表，然后修改属性表的title和数据与当前图层对应的数据匹配
         tabular = TabularUtilities.openDatasetVectorFormTabular(dataset);
@@ -69,6 +73,7 @@ public class BindUtilties {
         tabular.getIdMap().clear();
         tabular.getRowIndexMap().clear();
         tabular.setRecordset(recordset);
+
     }
 
     public static void showPopumenu(IBaseItem caller) {
@@ -99,6 +104,7 @@ public class BindUtilties {
             if (null == e.getNewActiveForm()) {
                 // 当所有地图关闭时将splitWindow设置为空，重新关联,并移除事件
                 splitWindow = null;
+
                 propertyBindWindow.removeEvents();
             }
         }

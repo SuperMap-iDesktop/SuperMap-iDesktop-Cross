@@ -4,7 +4,7 @@ import com.supermap.data.*;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CommonProperties;
@@ -57,13 +57,15 @@ public class ImportCallable extends UpdateProgressCallable {
                 Dataset dataset = DatasourceUtilities.getDataset(datasetName, importSetting.getTargetDatasource());
                 if (importSetting.getImportMode().equals(ImportMode.OVERWRITE) && DatasetUtilities.isDatasetOpened(dataset)) {
                     if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(DataConversionProperties.getString("String_FormImport_MessageBoxOverWrite"))) {
-                        IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
                         IForm form = MapUtilities.getFormMap(dataset);
-                        formManager.close(form);
-                        doImport(importSettings, i, dataImport, map);
+                        if (form instanceof IFormMap) {
+                            DatasetUtilities.removeByDataset(((IFormMap) form).getMapControl().getMap().getLayers(), dataset);
+                        }
                     }
                 } else {
                     doImport(importSettings, i, dataImport, map);
+                    importSetting.dispose();
+                    dataImport.dispose();
                 }
             }
         } catch (Exception e2) {
@@ -115,7 +117,6 @@ public class ImportCallable extends UpdateProgressCallable {
             return;
         }
         dataImport.removeImportSteppedListener(percentProgress);
-        dataImport.dispose();
     }
 
     /**
