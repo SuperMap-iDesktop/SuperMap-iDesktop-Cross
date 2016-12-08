@@ -328,13 +328,10 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 	}
 
 	private void comboBoxMaxVisibleScaleSelectedItemChanged(ItemEvent e) {
-		try {
+		try {// TODO: 2016/12/2
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				double selectedScale = getScale(e.getItem());
-				if (selectedScale <= 0) {
-					this.comboBoxMaxVisibleScale.setSelectedItem(new ScaleModel(getModifiedLayerPropertyModel().getMinVisibleScale()));
-					return;
-				}
+
 				boolean isChanged = false;
 				if (Double.compare(selectedScale, ScaleModel.INVALID_SCALE) == 0) {
 					this.comboBoxMaxVisibleScale.setSelectedItem(new ScaleModel(getModifiedLayerPropertyModel().getMaxVisibleScale()));

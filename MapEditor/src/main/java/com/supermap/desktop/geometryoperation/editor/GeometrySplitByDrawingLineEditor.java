@@ -1,15 +1,15 @@
 package com.supermap.desktop.geometryoperation.editor;
 
 /**
- * @author Cooler——lixiaoyao
+ * @author lixiaoyao
  */
 
-import com.supermap.data.GeoLine;
-import com.supermap.data.GeoRegion;
-import com.supermap.data.Geometrist;
+import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometry;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackMode;
+
+import java.util.Map;
 
 public class GeometrySplitByDrawingLineEditor extends GeometryDrawingSplitEditor {
 
@@ -29,17 +29,10 @@ public class GeometrySplitByDrawingLineEditor extends GeometryDrawingSplitEditor
 		return TrackMode.TRACK;
 	}
 
-	public boolean runSplitRegion(GeoRegion sourceRegion, Geometry splitGeometry, GeoRegion resultRegion1, GeoRegion resultRegion2) {
-		GeoLine splitLine = (GeoLine) splitGeometry;
-		boolean resultSplit = Geometrist.splitRegion(sourceRegion, splitLine, resultRegion1, resultRegion2);
-		return resultSplit;
-	}
-
-	public GeoLine[] runSplitLine(GeoLine sourceLine, Geometry splitGeometry, Double tolerance) {
-		GeoLine splitLine = (GeoLine) splitGeometry;
-		GeoLine resultGeolines[] = null;
-		resultGeolines = Geometrist.splitLine(sourceLine, splitLine, tolerance);
-
-		return resultGeolines;
+	public  boolean splitGeometry(Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle, double tolerance){
+		boolean result=false;
+		IDrawingSplit geometrySplitByLine=DrawingSplitFactory.getGeometry(geometry);
+		result=geometrySplitByLine.SplitGeometry(geometry,splitGeometry,resultGeometry,values,geoStyle,tolerance);
+		return result;
 	}
 }

@@ -1,15 +1,41 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import com.supermap.data.*;
+import com.supermap.data.CoordSysTransMethod;
+import com.supermap.data.CoordSysTransParameter;
+import com.supermap.data.CoordSysTranslator;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfos;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoRegion;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Geometrist;
+import com.supermap.data.Geometry;
+import com.supermap.data.GeometryType;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.recordset.RecordsetAddNew;
 import com.supermap.desktop.core.recordset.RecordsetDelete;
-import com.supermap.desktop.geometry.Abstract.*;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
+import com.supermap.desktop.geometry.Abstract.ILineFeature;
+import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
+import com.supermap.desktop.geometry.Abstract.IPointFeature;
+import com.supermap.desktop.geometry.Abstract.IRegionFeature;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
-import com.supermap.desktop.geometryoperation.*;
+import com.supermap.desktop.geometryoperation.EditControllerAdapter;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.desktop.geometryoperation.IEditController;
+import com.supermap.desktop.geometryoperation.IEditModel;
+import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.ArrayUtilities;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.GeometryUtilities;
+import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometrySelectedEvent;
@@ -334,6 +360,7 @@ public class SplitByGeometryEditor extends AbstractEditor {
 							dynamicGeometry = null;
 						}
 
+
 						if (geometry != null) {
 							geometry.dispose();
 							geometry = null;
@@ -347,7 +374,6 @@ public class SplitByGeometryEditor extends AbstractEditor {
 
 				// 向数据集追加结果对象
 				if (resultGeometrys.size() > 0)
-
 				{
 					recordset = null;
 					layer.getSelection().clear();

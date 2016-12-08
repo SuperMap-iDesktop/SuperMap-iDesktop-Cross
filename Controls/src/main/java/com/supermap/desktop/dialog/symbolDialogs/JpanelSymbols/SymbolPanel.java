@@ -42,8 +42,6 @@ public abstract class SymbolPanel extends JPanel {
 		this.symbol = symbol;
 		this.symbolID = symbol.getID();
 		this.symbolName = symbol.getName();
-		labelDimension = new Dimension(getIconWidth() + 12, getIconHeight() + 12);
-		fontSize = getIconWidth() + 40;
 	}
 
 	/**
@@ -57,10 +55,16 @@ public abstract class SymbolPanel extends JPanel {
 		this.symbol = null;
 		this.symbolName = "System " + id;
 		this.resources = resources;
-		labelDimension = new Dimension(getIconWidth() + 12, getIconHeight() + 12);
-		fontSize = getIconWidth() + 40;
 	}
 
+	protected void initSize() {
+		labelDimension = new Dimension(getIconWidth() + 12, getIconHeight() + 12);
+		fontSize = getIconWidth() + 40;
+		labelName = new JLabel();
+		labelName.setText(getFitText(labelName.getFont()));
+		labelName.setBackground(Color.WHITE);
+		labelName.setHorizontalTextPosition(JLabel.CENTER);
+	}
 
 	protected void init(BufferedImage bufferedImage) {
 		ImageIcon icon = new ImageIcon(bufferedImage);
@@ -69,9 +73,6 @@ public abstract class SymbolPanel extends JPanel {
 		labelIcon.setMaximumSize(labelDimension);
 		labelIcon.setPreferredSize(labelDimension);
 		labelIcon.setBackground(Color.WHITE);
-		labelName = new JLabel(getFitText(labelIcon.getFont()));
-		labelName.setBackground(Color.WHITE);
-		labelName.setHorizontalTextPosition(JLabel.CENTER);
 
 		this.setBackground(Color.WHITE);
 		this.setLayout(new GridBagLayout());
@@ -130,25 +131,28 @@ public abstract class SymbolPanel extends JPanel {
 	}
 
 	public void setSelected() {
-		this.labelIcon.setBorder(BorderFactory.createLineBorder(new Color(52, 154, 255), 3));
+		if (labelIcon != null && labelName != null) {
+			this.labelIcon.setBorder(BorderFactory.createLineBorder(new Color(52, 154, 255), 3));
 //		this.labelIcon.setOpaque(true);
 //		this.labelIcon.setForeground(new Color(181, 255, 255));
-		this.labelName.setOpaque(true);
-		this.labelIcon.setOpaque(true);
+			this.labelName.setOpaque(true);
+			this.labelIcon.setOpaque(true);
 
 //		this.labelIcon.setBackground(new Color(52, 154, 255));
-		this.labelName.setBackground(new Color(52, 154, 255));
-		this.labelName.setForeground(Color.WHITE);
-
+			this.labelName.setBackground(new Color(52, 154, 255));
+			this.labelName.setForeground(Color.WHITE);
+		}
 	}
 
 	public void setUnselected() {
-		this.labelIcon.setBorder(BorderFactory.createEmptyBorder());
-		this.labelName.setOpaque(false);
+		if (labelIcon != null && labelName != null) {
+			this.labelIcon.setBorder(BorderFactory.createEmptyBorder());
+			this.labelName.setOpaque(false);
 //		this.labelIcon.setOpaque(false);
 //		this.labelIcon.setBackground(Color.white);
-		this.labelName.setBackground(Color.white);
-		this.labelName.setForeground(Color.BLACK);
+			this.labelName.setBackground(Color.white);
+			this.labelName.setForeground(Color.BLACK);
+		}
 	}
 
 	public int getSymbolID() {
