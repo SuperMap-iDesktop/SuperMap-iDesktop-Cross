@@ -303,7 +303,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	private void showContextMenu(MouseEvent e) {
-		FormSuperTabularContextMenu.show(jTableTabular, e.getX(), e.getY());
+		FormSuperTabularContextMenu.show((Component) e.getSource(), e.getX(), e.getY());
 	}
 
 	@Override
@@ -528,7 +528,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		((DefaultTableCellRenderer) jTableTabular.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
 		// bool类型编辑器
-		JComboBox<String> booleanEditorControl = new JComboBox<String>();
+		JComboBox<String> booleanEditorControl = new JComboBox<>();
 		booleanEditorControl.addItem("");
 		booleanEditorControl.addItem("True");
 		booleanEditorControl.addItem("False");
@@ -567,9 +567,16 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		setColumnsWidth();
 		// 设置行高
 		this.jTableTabular.setRowHeight(FormTabular.PREFER_ROW_HEIGHT);
-		this.jTableTabular.updateUI();
-		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
+		this.jTableTabular.repaint();
 //		setProperty();
+		if (jTableTabular.getSelectedRow() == -1 || jTableTabular.getSelectedColumn() == -1) {
+			if (jTableTabular.getRowCount() > 0 && jTableTabular.getColumnCount() > 0) {
+				jTableTabular.addRowSelectionInterval(0, 0);
+				jTableTabular.addColumnSelectionInterval(0, 0);
+			}
+		}
+		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
+
 	}
 
 	private void checkStatisticsResultState(int[] beforeSelectedColumn) {

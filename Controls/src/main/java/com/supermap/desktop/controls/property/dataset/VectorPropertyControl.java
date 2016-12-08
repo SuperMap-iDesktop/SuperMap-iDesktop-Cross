@@ -126,7 +126,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 	};
 
 	public VectorPropertyControl(DatasetVector datasetVector) {
-		super(CommonProperties.getString(CommonProperties.DatasetVector));
+		super(ControlsProperties.getString("String_Vector"));
 		initializeComponents();
 		initializeResources();
 		setDatasetVector(datasetVector);

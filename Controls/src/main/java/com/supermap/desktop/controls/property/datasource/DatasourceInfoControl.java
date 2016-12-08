@@ -49,7 +49,7 @@ public class DatasourceInfoControl extends AbstractPropertyControl {
 		this.strDatasetTypeMap = new HashMap<DatasetType, String>();
 		initializeExcludes();
 		JScrollPane scrollPaneStatisticValue = new JScrollPane();
-		scrollPaneStatisticValue.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_StatisticsInfo")));
+//		scrollPaneStatisticValue.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_StatisticsInfo")));
 		table = new JTable();
 		table.setModel(new DefaultTableModel(new Object[][]{,}, new String[]{ControlsProperties.getString("String_DatasetType"),
 				ControlsProperties.getString("String_StatisticResult")}) {
@@ -74,7 +74,7 @@ public class DatasourceInfoControl extends AbstractPropertyControl {
 		OTHERS = CoreProperties.getString(CoreProperties.Other);
 		fillComponents();
 		this.setLayout(new GridBagLayout());
-		this.add(scrollPaneStatisticValue, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+		this.add(scrollPaneStatisticValue, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(10));
 	}
 
 	private void fillComponents() {
