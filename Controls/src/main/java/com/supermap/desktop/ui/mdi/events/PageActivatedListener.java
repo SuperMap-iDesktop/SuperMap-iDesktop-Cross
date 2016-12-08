@@ -6,5 +6,5 @@ import java.util.EventListener;
  * Created by highsad on 2016/9/26.
  */
 public interface PageActivatedListener extends EventListener {
-	void pageActivated(PageActivatedEvent event);
+	void pageActivated(PageActivatedEvent e);
 }

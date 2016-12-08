@@ -2,6 +2,7 @@ package com.supermap.desktop.ui.mdi.test;
 
 import com.supermap.desktop.ui.mdi.MdiGroup;
 import com.supermap.desktop.ui.mdi.MdiPage;
+import com.supermap.desktop.ui.mdi.MdiPane;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,19 +16,19 @@ import java.awt.event.ActionListener;
 public class Test {
 
 	public static void main(String[] args) {
-		final MdiGroup group = new MdiGroup(null);
+		final MdiPane pane = new MdiPane();
 //		group.setFloatOnPage(true);
-//		MdiPage page = MdiPage.createMdiPage(new PagePanelDemo("test1"), "test1");
-//		group.addPage(page);
-//
-//		MdiPage page1 = MdiPage.createMdiPage(new PagePanelDemo1(), "test2");
-//		group.addPage(page1);
-//
-//		MdiPage page2 = MdiPage.createMdiPage(new PagePanelDemo("test3"), "test3");
-//		group.addPage(page2);
-//
-//		MdiPage page3 = MdiPage.createMdiPage(new PagePanelDemo1(), "test4");
-//		group.addPage(page3);
+		MdiPage page = MdiPage.createMdiPage(new PagePanelDemo("test1"), "test1");
+		pane.addPage(page);
+
+		MdiPage page1 = MdiPage.createMdiPage(new PagePanelDemo1(), "test2");
+		pane.addNewGroup(page1);
+
+		MdiPage page2 = MdiPage.createMdiPage(new PagePanelDemo("test3"), "test3");
+		pane.addNewGroup(page2);
+
+		MdiPage page3 = MdiPage.createMdiPage(new PagePanelDemo1(), "test4");
+		pane.addNewGroup(page3);
 		final JFrame frame = new JFrame();
 		frame.setSize(600, 600);
 
@@ -35,14 +36,14 @@ public class Test {
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				MdiPage page = MdiPage.createMdiPage(new PagePanelDemo1(), "test" + Integer.toString(group.getPageCount()));
-				group.addPage(page);
+				MdiPage page = MdiPage.createMdiPage(new PagePanelDemo1(), "test" + Integer.toString(pane.getPageCount()));
+				pane.addPage(page);
 			}
 		});
 
 		frame.setLayout(new BorderLayout());
 		frame.add(button, BorderLayout.NORTH);
-		frame.add(group, BorderLayout.CENTER);
+		frame.add(pane, BorderLayout.CENTER);
 
 		SwingUtilities.invokeLater(new Runnable() {
 

@@ -3,9 +3,7 @@ package com.supermap.desktop.ui.mdi;
 import com.supermap.desktop.ui.mdi.events.*;
 
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +11,6 @@ import java.util.Map;
 
 import javax.accessibility.Accessible;
 import javax.swing.*;
-import javax.swing.event.EventListenerList;
 
 /**
  * @author highsad
@@ -30,11 +27,10 @@ public class MdiPane extends JPanel implements Accessible {
 	/**
 	 * @see #getUIClassID
 	 */
-	private static final String uiClassID = "MdiPaneUI";
 	private List<MdiGroup> groups;
 	private MdiGroup selectedGroup;
-	private JSplitPane mainSplit; // 第一层 split，与 MdiPane 共存亡
-	private JSplitPane topSplit; // 最顶层 split，绑定一个 MdiGroup
+	private MdiPage selectedPage;
+	private JSplitPane lastSplit; // 最后级 split，绑定一个 MdiGroup
 	private int layoutMode = HORIZONTAL;
 	private MdiEventsHelper eventsHelper = new MdiEventsHelper();
 
@@ -42,7 +38,19 @@ public class MdiPane extends JPanel implements Accessible {
 		@Override
 		public void focusGained(FocusEvent e) {
 			if (e.getSource() instanceof MdiGroup) {
-				MdiPane.this.selectedGroup = (MdiGroup) e.getSource();
+				MdiGroup oldSelectedGroup = MdiPane.this.selectedGroup;
+				MdiPage oldSelectedPage = oldSelectedGroup == null ? null : MdiPane.this.selectedPage;
+				MdiGroup newSelectedGroup = e.getSource() instanceof MdiGroup ? (MdiGroup) e.getSource() : null;
+
+				if (newSelectedGroup != null) {
+					MdiPage newSelectedPage = newSelectedGroup.getActivePage();
+					MdiPane.this.eventsHelper.firePageActivating(new PageActivatingEvent(newSelectedGroup, newSelectedPage, oldSelectedPage));
+					MdiPane.this.selectedGroup = newSelectedGroup;
+					MdiPane.this.selectedPage = newSelectedPage;
+					MdiPane.this.eventsHelper.firePageActivated(new PageActivatedEvent(newSelectedGroup, newSelectedPage, oldSelectedPage));
+				} else {
+					oldSelectedGroup.requestFocus();
+				}
 			}
 		}
 	};
@@ -61,23 +69,66 @@ public class MdiPane extends JPanel implements Accessible {
 	private PageClosedListener pageClosedListener = new PageClosedListener() {
 		@Override
 		public void pageClosed(PageClosedEvent e) {
-			MdiPane.this.eventsHelper.firePageClosed(e);
 			if (e.getSource() instanceof MdiGroup) {
 				MdiGroup group = (MdiGroup) e.getSource();
+				if (group != null && group.getParent() instanceof JSplitPane) {
+					JSplitPane splitPane = (JSplitPane) group.getParent();
+					JSplitPane parentSplit = splitPane.getParent() instanceof JSplitPane ? (JSplitPane) splitPane.getParent() : null;
+					Component sibling = splitPane.getRightComponent();
+					splitPane.setLeftComponent(null); // remove current group
 
+					if (parentSplit != null) {
+
+						// 上级 split 不为空，表示当前 split 并非第一级 split
+						if (sibling == null) {
+
+							// 当前 group 的 sibling 为空，意味着当前 group 是最后一个 group
+							parentSplit.setRightComponent(null);
+							setDividerSize(parentSplit, true);
+							MdiPane.this.lastSplit = parentSplit;
+						} else {
+
+							// 当前 group 的 sibling 不为空，则用 sibling 替换当前 split
+							splitPane.setRightComponent(null);
+							parentSplit.setRightComponent(sibling);
+							setDividerSize(parentSplit, false);
+						}
+					} else {
+
+						// 上级 split 为空，意味着当前 split 为第一级 split
+						if (sibling == null) {
+
+							// sibling 为空，则移除当前 split
+							MdiPane.this.remove(splitPane);
+							MdiPane.this.lastSplit = null;
+						} else {
+
+							// sibling 不为空，则用 sibling 的内容替换到当前 split
+							MdiPane.this.remove(splitPane);
+							MdiPane.this.add(sibling, BorderLayout.CENTER);
+							MdiPane.this.lastSplit = (JSplitPane) sibling;
+						}
+					}
+				}
 			}
+			MdiPane.this.eventsHelper.firePageClosed(e);
 		}
 	};
 	private PageActivatingListener pageActivatingListener = new PageActivatingListener() {
 		@Override
-		public void pageActivating(PageActivatingEvent event) {
-
+		public void pageActivating(PageActivatingEvent e) {
+			if (e.getSource() == MdiPane.this.selectedGroup) {
+				MdiPane.this.eventsHelper.firePageActivating(e);
+			}
 		}
 	};
 	private PageActivatedListener pageActivatedListener = new PageActivatedListener() {
 		@Override
-		public void pageActivated(PageActivatedEvent event) {
-
+		public void pageActivated(PageActivatedEvent e) {
+			if (e.getSource() == MdiPane.this.selectedGroup) {
+				MdiPane.this.selectedPage = e.getActivedPage();
+				MdiPane.this.eventsHelper.firePageActivated(e);
+			}
 		}
 	};
 
@@ -86,42 +137,73 @@ public class MdiPane extends JPanel implements Accessible {
 	}
 
 	public MdiPane(int layoutMode) {
+		setLayout(new BorderLayout());
 		this.layoutMode = layoutMode;
 		this.groups = new ArrayList<>();
-		this.groups.add(createGroup());
+		createGroup();
 		this.selectedGroup = this.groups.get(0);
-		this.mainSplit = createSplitPane(this.groups.get(0));
-		this.topSplit = this.mainSplit;
-		setLayout(new BorderLayout());
-		add(this.topSplit, BorderLayout.CENTER);
 	}
 
 	public void setLayoutMode(int layoutMode) {
 		if (this.layoutMode != layoutMode) {
 			this.layoutMode = layoutMode;
+			Map<JSplitPane, Double> splitPanes = getSplitPanes();
+			for (JSplitPane splitPane : splitPanes.keySet()) {
+				splitPane.setOrientation(getOrientaition(this.layoutMode));
+				splitPane.setDividerLocation(getDividerProportion(splitPane));
+			}
 		}
 	}
 
+	/**
+	 * 取出结构中的所有嵌套 SplitPanes，以及它们的 dividerProportion
+	 *
+	 * @return
+	 */
 	private Map<JSplitPane, Double> getSplitPanes() {
 		Map<JSplitPane, Double> splitPanes = new HashMap<>();
-
+		Component splitPane = this.lastSplit;
+		while (splitPane instanceof JSplitPane) {
+			splitPanes.put((JSplitPane) splitPane, getDividerProportion((JSplitPane) splitPane));
+			splitPane = ((JSplitPane) splitPane).getParent();
+		}
 		return splitPanes;
 	}
 
+	private double getDividerProportion(JSplitPane splitPane) {
+		if (splitPane == null) {
+			return 0.5;
+		}
+
+		double proportion;
+		int location = splitPane.getDividerLocation();
+		if (splitPane.getOrientation() == JSplitPane.VERTICAL_SPLIT) {
+			proportion = (double) location / (splitPane.getHeight() - splitPane.getDividerSize());
+		} else {
+			proportion = (double) location / (splitPane.getWidth() - splitPane.getDividerSize());
+		}
+		return proportion;
+	}
+
 	private JSplitPane createSplitPane(JComponent component) {
-		JSplitPane splitPane = new JSplitPane();
-		splitPane.setOrientation(getOrientaition());
+		final JSplitPane splitPane = new JSplitPane();
+		splitPane.setOrientation(getOrientaition(this.layoutMode));
 
 		// remove the border from the split pane
 		splitPane.setBorder(null);
 		splitPane.setOneTouchExpandable(false);
 		splitPane.setLeftComponent(component);
 		splitPane.setRightComponent(null);
-		splitPane.setDividerSize(0);
+		splitPane.setResizeWeight(1);
+		setDividerSize(splitPane, true);
 		return splitPane;
 	}
 
-	private int getOrientaition() {
+	private void setDividerSize(JSplitPane splitPane, boolean isLast) {
+		splitPane.setDividerSize(isLast ? 0 : 3);
+	}
+
+	private int getOrientaition(int layoutMode) {
 		int orientation = JSplitPane.HORIZONTAL_SPLIT;
 		if (this.layoutMode == HORIZONTAL || this.layoutMode < 1) {
 			orientation = JSplitPane.HORIZONTAL_SPLIT;
@@ -140,18 +222,27 @@ public class MdiPane extends JPanel implements Accessible {
 		MdiGroup group = new MdiGroup(this);
 		registerEvents(group);
 		this.groups.add(group);
+		JSplitPane splitPane = createSplitPane(group);
+
+		if (this.lastSplit != null) {
+			setDividerSize(this.lastSplit, false);
+			this.lastSplit.setRightComponent(splitPane);
+			this.lastSplit = splitPane;
+		} else {
+			this.lastSplit = splitPane;
+			add(this.lastSplit, BorderLayout.CENTER);
+		}
 		return group;
 	}
 
 	private void registerEvents(MdiGroup group) {
 		group.addFocusListener(this.focusListener);
-
 	}
 
 	// MdiPane
 
 	public MdiPage getSelectedPage() {
-		return this.selectedGroup == null ? null : this.selectedGroup.getActivePage();
+		return this.selectedPage;
 	}
 
 	public MdiGroup getSelectedGroup() {
@@ -159,29 +250,36 @@ public class MdiPane extends JPanel implements Accessible {
 	}
 
 	/**
-	 * 如果当前 pane 只有一个 group，就添加到这个 group 里，如果没有或者有多个，则添加为新的 group
+	 * 添加到 selectedGroup 里，如果没有，则新建一个
 	 *
-	 * @param content
+	 * @param page
 	 * @return
 	 */
-	public MdiGroup add(MdiPage content) {
-		MdiGroup group = this.groups.size() == 1 ? this.groups.get(0) : createGroup();
+	public MdiGroup addPage(MdiPage page) {
+		MdiGroup group = this.groups.size() > 0 ? this.selectedGroup : createGroup();
 
 		if (group != null) {
-			group.addPage(content);
+			group.addPage(page);
 		}
 		return group;
 	}
 
-	/**
-	 * @param content
-	 * @param group
-	 */
-	public void add(MdiPage content, MdiGroup group) {
-		if (!this.groups.contains(group)) {
-			this.groups.add(group);
-			group.addPage(content);
+	public MdiGroup addNewGroup(MdiPage page) {
+		MdiGroup group = createGroup();
+		group.addPage(page);
+		return group;
+	}
+
+	public MdiGroup getGroup(int index) {
+		return index >= 0 && index < this.groups.size() ? this.groups.get(index) : null;
+	}
+
+	public int getPageCount() {
+		int count = 0;
+		for (int i = 0; i < this.groups.size(); i++) {
+			count += this.groups.get(i).getPageCount();
 		}
+		return count;
 	}
 
 	/**
