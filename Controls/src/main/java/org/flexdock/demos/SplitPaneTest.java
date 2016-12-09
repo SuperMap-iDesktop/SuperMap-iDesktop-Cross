@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * Created by highsad on 2016/12/1.
@@ -49,6 +51,13 @@ public class SplitPaneTest extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				splitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 				splitPane.setDividerLocation(splitPane.getDividerLocation());
+			}
+		});
+
+		splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				System.out.println(evt.getNewValue().toString());
 			}
 		});
 	}
