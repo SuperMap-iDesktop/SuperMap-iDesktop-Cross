@@ -188,7 +188,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		textFieldGridCount.setEditable(false);
 
 		JPanel panelPixelProperty = new JPanel();
-		panelPixelProperty.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_ImageProperty")));
+		panelPixelProperty.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_DatasetGridPropertyControl_GroupBoxImageProperty")));
 		panelPixelProperty.setLayout(new GridBagLayout());
 		panelPixelProperty.add(labelPixelFormat, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0));
 		panelPixelProperty.add(textFieldPixelFormat, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(10, 5, 0, 10));

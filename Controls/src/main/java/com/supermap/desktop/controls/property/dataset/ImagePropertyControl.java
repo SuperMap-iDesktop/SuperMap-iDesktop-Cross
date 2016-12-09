@@ -140,7 +140,7 @@ public class ImagePropertyControl extends AbstractPropertyControl {
 		this.textFieldWidth.setEditable(false);
 
 		JPanel panelImageProperty = new JPanel();
-		panelImageProperty.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_ImageProperty")));
+		panelImageProperty.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_DatasetGridPropertyControl_GroupBoxImageProperty")));
 		panelImageProperty.setLayout(new GridBagLayout());
 		panelImageProperty.add(labelBandCount, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0));
 		panelImageProperty.add(textFieldBandCount, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10));
