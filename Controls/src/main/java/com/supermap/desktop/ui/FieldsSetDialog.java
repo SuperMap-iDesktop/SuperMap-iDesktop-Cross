@@ -4,17 +4,18 @@ import com.supermap.data.DatasetVector;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.CheckHeaderCellRenderer;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 /**
@@ -86,18 +87,6 @@ public class FieldsSetDialog extends SmDialog {
         return dialogResult;
     }
 
-    private void selectAll(JTable table) {
-        for (int i = 0; i < table.getRowCount(); i++) {
-            table.setValueAt(new Boolean(true), i, TABLE_COLUMN_CHECKABLE);
-        }
-    }
-
-    private void selectReverse(JTable table) {
-        for (int i = 0; i < table.getRowCount(); i++) {
-            table.setValueAt(new Boolean(false), i, TABLE_COLUMN_CHECKABLE);
-        }
-    }
-
     private void registEvents() {
         removeEvents();
         this.buttonOK.addActionListener(this.buttonOKListener);
@@ -164,7 +153,7 @@ public class FieldsSetDialog extends SmDialog {
                 count++;
             }
         }
-        CheckTableModle checkTableModle = new CheckTableModle(new Object[count][2], tableTitle);
+        CheckTableModle checkTableModle = new CheckTableModle(new Object[count][2], tableTitle, TABLE_COLUMN_CHECKABLE);
         table.setModel(checkTableModle);
         int length = 0;
         for (int i = 0; i < dataset.getFieldInfos().getCount(); i++) {
@@ -175,85 +164,7 @@ public class FieldsSetDialog extends SmDialog {
             }
         }
         table.getColumn(table.getModel().getColumnName(TABLE_COLUMN_CHECKABLE)).setMaxWidth(40);
-        table.getTableHeader().setDefaultRenderer(new CheckHeaderCellRenderer(table));
-    }
-
-
-    class CheckHeaderCellRenderer implements TableCellRenderer {
-        CheckTableModle tableModel;
-        JTableHeader tableHeader;
-        final JCheckBox checkBox;
-
-        public CheckHeaderCellRenderer(JTable table) {
-            this.tableModel = (CheckTableModle) table.getModel();
-            this.tableHeader = table.getTableHeader();
-            checkBox = new JCheckBox(tableModel.getColumnName(0));
-            checkBox.setSelected(false);
-            tableHeader.addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    if (e.getClickCount() > 0) {
-                        //获得选中列
-                        int selectColumn = tableHeader.columnAtPoint(e.getPoint());
-                        if (selectColumn == 0) {
-                            boolean value = !checkBox.isSelected();
-                            checkBox.setSelected(value);
-                            tableModel.selectAllOrNull(value);
-                            tableHeader.repaint();
-                        }
-                    }
-                }
-            });
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus, int row, int column) {
-            String valueStr = (String) value;
-            JLabel label = new JLabel(valueStr);
-            label.setHorizontalAlignment(SwingConstants.CENTER); // 表头标签居左边
-            checkBox.setHorizontalAlignment(SwingConstants.CENTER);// 表头checkBox居中
-            checkBox.setBorderPainted(true);
-            JComponent component = (column == 0) ? checkBox : label;
-
-            component.setForeground(tableHeader.getForeground());
-            component.setBackground(tableHeader.getBackground());
-            component.setFont(tableHeader.getFont());
-            component.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
-
-            return component;
-        }
-
-    }
-
-    class CheckTableModle extends DefaultTableModel {
-
-        public CheckTableModle(Object[][] data, Object[] columnNames) {
-            super(data, columnNames);
-        }
-
-        // /**
-        // * 根据类型返回显示控件
-        // * 布尔类型返回显示checkbox
-        // */
-        @Override
-        public Class getColumnClass(int c) {
-            return getValueAt(0, c).getClass();
-        }
-
-        @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            if (TABLE_COLUMN_CHECKABLE == columnIndex) {
-                return true;
-            }
-            return false;
-        }
-
-        public void selectAllOrNull(boolean value) {
-            for (int i = 0; i < getRowCount(); i++) {
-                this.setValueAt(value, i, 0);
-            }
-        }
-
+        table.getTableHeader().setDefaultRenderer(new CheckHeaderCellRenderer(table, ""));
     }
 
     public String[] getSourceFields() {

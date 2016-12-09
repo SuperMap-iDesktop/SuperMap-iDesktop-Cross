@@ -30,4 +30,21 @@ public class CtrlActionSnapSetting extends CtrlAction {
             Application.getActiveApplication().getOutput().output(ex);
         }
     }
+
+    @Override
+    public boolean enable() {
+        boolean enable = false;
+        try {
+            IForm form = Application.getActiveApplication().getActiveForm();
+            if (form != null) {
+                if (form instanceof IFormMap && null != ((IFormMap) form).getMapControl()) {
+                    enable = true;
+                }
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        return enable;
+    }
+
 }
