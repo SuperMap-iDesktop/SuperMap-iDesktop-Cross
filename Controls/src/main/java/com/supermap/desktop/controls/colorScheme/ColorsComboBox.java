@@ -24,7 +24,15 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import java.applet.Applet;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.AWTEventListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 /**
@@ -113,8 +121,8 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 	public ColorsComboBox(Object themeType) {
 		super();
 		this.themeType = themeType;
-		this.setMinimumSize(new Dimension(20, 24));
-		this.setPreferredSize(new Dimension(20, 24));
+		this.setMinimumSize(new Dimension(20, 23));
+		this.setPreferredSize(new Dimension(20, 23));
 		itemListeners = new ArrayList<>();
 		colorsCellRenderer = new ColorsCellRenderer(this);
 		ColorSchemeManager.getColorSchemeManager().addColorSchemeManagerChangedListener(colorSchemeManagerChangedListener);
