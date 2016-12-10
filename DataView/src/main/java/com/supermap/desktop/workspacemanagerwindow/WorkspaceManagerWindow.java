@@ -810,6 +810,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 								|| cellVal.equals(ControlsProperties.getString("SymbolLineLibNodeName"))
 								|| cellVal.equals(ControlsProperties.getString("SymbolFillLibNodeName"))
 								) {
+
 							if (cellVal.equals(ControlsProperties.getString("SymbolMarkerLibNodeName"))) {
 								DefaultMutableTreeNode resourceMarkerNode = (DefaultMutableTreeNode) getWorkspaceManager().getWorkspaceTree().getResourcesNode().getChildAt(RESOURCE_MARKER_NUM);
 								selectedTreeNodePath = new TreePath(resourceMarkerNode.getPath());
