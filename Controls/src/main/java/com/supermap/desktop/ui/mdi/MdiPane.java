@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.accessibility.Accessible;
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
@@ -34,12 +35,10 @@ public class MdiPane extends JPanel implements Accessible {
 	 * @see #getUIClassID
 	 */
 	private List<SplitGroup> groups; // 排列顺序与 List 顺序保持一致
-	private MdiGroup selectedGroup;
+	private SplitGroup selectedGroup;
 	private MdiPage selectedPage;
-	private JSplitPane lastSplit; // 最后级 split，绑定一个 MdiGroup
 	private int layoutMode = HORIZONTAL;
 	private MdiEventsHelper eventsHelper = new MdiEventsHelper();
-	private Map<JSplitPane, Double> dividerProportions = new HashMap<>();
 	private MdiGroupHandler mdiGroupHandler = new MdiGroupHandler();
 	private ComponentHandler componentHandler = new ComponentHandler();
 
@@ -64,80 +63,97 @@ public class MdiPane extends JPanel implements Accessible {
 		}
 	}
 
-	private double getDividerProportion(JSplitPane splitPane) {
-		if (splitPane == null) {
-			return 0.5;
-		}
-
-		double proportion;
-		int location = splitPane.getDividerLocation();
-		if (splitPane.getOrientation() == JSplitPane.VERTICAL_SPLIT) {
-			proportion = (double) location / (splitPane.getHeight() - splitPane.getDividerSize());
-		} else {
-			proportion = (double) location / (splitPane.getWidth() - splitPane.getDividerSize());
-		}
-		return proportion;
-	}
-
-
-	private void setDividerSize(JSplitPane splitPane, boolean isLast) {
-		splitPane.setDividerSize(isLast ? 0 : 3);
-	}
 
 	/**
 	 * 创建一个属于该 MdiPane 的 Group
 	 *
 	 * @return
 	 */
-	public MdiGroup createGroup() {
-		SplitGroup group = new SplitGroup();
-		registerEvents(group.getGroup());
-		this.groups.add(group);
-		return group.getGroup();
+	synchronized public MdiGroup createGroup() {
+		SplitGroup split = new SplitGroup();
+		addGroup(split);
+		return split.getGroup();
+	}
+
+	private void addGroup(SplitGroup split) {
+		registerEvents(split.getGroup());
+		SplitGroup preSplit = this.groups.size() > 0 ? this.groups.get(this.groups.size() - 1) : null;
+		this.groups.add(split);
+
+		if (preSplit != null) {
+			preSplit.setNextSplit(split);
+		} else {
+			add(split.getSplitPane(), BorderLayout.CENTER);
+			split.resetDividerSize();
+		}
+
+		if (this.selectedGroup == null) {
+
+			// 如果此时没有选中的 group，则设置为选中
+			this.selectedGroup = split;
+		}
 	}
 
 	private void removeGroup(MdiGroup group) {
-		if (group != null && group.getParent() instanceof JSplitPane) {
+		SplitGroup splitGroup = findSplitGroup(group);
+
+		if (splitGroup != null) {
 			unregisterEvents(group);
-			this.groups.remove(group);
-			JSplitPane splitPane = (JSplitPane) group.getParent();
-			JSplitPane parentSplit = splitPane.getParent() instanceof JSplitPane ? (JSplitPane) splitPane.getParent() : null;
-			Component sibling = splitPane.getRightComponent();
-			splitPane.setLeftComponent(null); // remove current group
+			SplitGroup preSplit = findPreSplit(splitGroup);
+			SplitGroup nextSplit = findNextSplit(splitGroup);
 
-			if (parentSplit != null) {
-
-				// 上级 split 不为空，表示当前 split 并非第一级 split
-				if (sibling == null) {
-
-					// 当前 group 的 sibling 为空，意味着当前 group 是最后一个 group
-					parentSplit.setRightComponent(null);
-					setDividerSize(parentSplit, true);
-					MdiPane.this.lastSplit = parentSplit;
-				} else {
-
-					// 当前 group 的 sibling 不为空，则用 sibling 替换当前 split
-					splitPane.setRightComponent(null);
-					parentSplit.setRightComponent(sibling);
-					setDividerSize(parentSplit, false);
-				}
+			if (preSplit != null) {
+				preSplit.setNextSplit(nextSplit);
 			} else {
 
 				// 上级 split 为空，意味着当前 split 为第一级 split
-				if (sibling == null) {
+				remove(splitGroup.getSplitPane());
+				if (nextSplit != null) {
+					add(nextSplit.getSplitPane(), BorderLayout.CENTER);
+				}
+			}
+			this.groups.remove(splitGroup);
+			unregisterEvents(splitGroup.getGroup());
 
-					// sibling 为空，则移除当前 split
-					MdiPane.this.remove(splitPane);
-					MdiPane.this.lastSplit = null;
-				} else {
-
-					// sibling 不为空，则用 sibling 的内容替换到当前 split
-					MdiPane.this.remove(splitPane);
-					MdiPane.this.add(sibling, BorderLayout.CENTER);
-					MdiPane.this.lastSplit = (JSplitPane) sibling;
+			// 处理选中
+			if (this.selectedGroup == splitGroup) {
+				this.selectedGroup = this.groups.size() > 0 ? this.groups.get(0) : null;
+				if (this.selectedGroup != null) {
+					this.selectedGroup.getGroup().requestFocus();
 				}
 			}
 		}
+	}
+
+	private SplitGroup findSplitGroup(MdiGroup group) {
+		SplitGroup splitGroup = null;
+		for (int i = 0; i < this.groups.size(); i++) {
+			if (this.groups.get(i).getGroup() == group) {
+				splitGroup = this.groups.get(i);
+				break;
+			}
+		}
+		return splitGroup;
+	}
+
+	private SplitGroup findPreSplit(SplitGroup split) {
+		SplitGroup preSplit = null;
+		int index = this.groups.indexOf(split);
+
+		if (index > 0) {
+			preSplit = this.groups.get(index - 1);
+		}
+		return preSplit;
+	}
+
+	private SplitGroup findNextSplit(SplitGroup split) {
+		SplitGroup nextSplit = null;
+		int index = this.groups.indexOf(split);
+
+		if (index > -1 && index + 1 < this.groups.size()) {
+			nextSplit = this.groups.get(index + 1);
+		}
+		return nextSplit;
 	}
 
 	private void registerEvents(MdiGroup group) {
@@ -166,7 +182,7 @@ public class MdiPane extends JPanel implements Accessible {
 	}
 
 	public MdiGroup getSelectedGroup() {
-		return this.selectedGroup;
+		return this.selectedGroup == null ? null : this.selectedGroup.getGroup();
 	}
 
 	/**
@@ -176,7 +192,7 @@ public class MdiPane extends JPanel implements Accessible {
 	 * @return
 	 */
 	public MdiGroup addPage(MdiPage page) {
-		MdiGroup group = this.groups.size() > 0 ? this.selectedGroup : createGroup();
+		MdiGroup group = this.groups.size() > 0 ? this.selectedGroup.getGroup() : createGroup();
 
 		if (group != null) {
 			group.addPage(page);
@@ -262,6 +278,7 @@ public class MdiPane extends JPanel implements Accessible {
 
 		public SplitGroup(MdiGroup group, int layoutMode) {
 			this.group = group;
+			this.dividerProportion = 0.5;
 			this.splitPane = createSplitPane(group, layoutMode);
 		}
 
@@ -271,6 +288,10 @@ public class MdiPane extends JPanel implements Accessible {
 
 		public JSplitPane getSplitPane() {
 			return splitPane;
+		}
+
+		public void resetDividerLocation() {
+			setDividerProportion(this.dividerProportion);
 		}
 
 		public void setDividerProportion(double dividerProportion) {
@@ -283,8 +304,25 @@ public class MdiPane extends JPanel implements Accessible {
 			this.splitPane.setDividerLocation(this.dividerProportion);
 		}
 
+		public void setNextSplit(SplitGroup nextSplit) {
+			if (nextSplit != null) {
+				this.splitPane.setRightComponent(nextSplit.getSplitPane());
+			} else {
+				this.splitPane.setRightComponent(null);
+			}
+			resetDividerSize();
+		}
+
+		private void resetDividerSize(JSplitPane splitPane) {
+			splitPane.setDividerSize(splitPane.getRightComponent() == null ? 0 : 3);
+		}
+
+		private void resetDividerSize() {
+			resetDividerSize(this.splitPane);
+		}
+
 		private JSplitPane createSplitPane(JComponent component, int layoutMode) {
-			final JSplitPane splitPane = new JSplitPane();
+			this.splitPane = new JSplitPane();
 			splitPane.setOrientation(getOrientaition(layoutMode));
 
 			// remove the border from the split pane
@@ -293,7 +331,7 @@ public class MdiPane extends JPanel implements Accessible {
 			splitPane.setLeftComponent(component);
 			splitPane.setRightComponent(null);
 			splitPane.setResizeWeight(1);
-			setDividerSize(splitPane, true);
+			resetDividerSize();
 
 			if (splitPane.getUI() instanceof BasicSplitPaneUI) {
 				BasicSplitPaneDivider divider = ((BasicSplitPaneUI) splitPane.getUI()).getDivider();
@@ -303,15 +341,25 @@ public class MdiPane extends JPanel implements Accessible {
 			splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, new PropertyChangeListener() {
 				@Override
 				public void propertyChange(PropertyChangeEvent evt) {
-					int location = splitPane.getDividerLocation();
-					if (splitPane.getOrientation() == JSplitPane.VERTICAL_SPLIT) {
-						SplitGroup.this.dividerProportion = (double) location / (splitPane.getHeight() - splitPane.getDividerSize());
-					} else {
-						SplitGroup.this.dividerProportion  = (double) location / (splitPane.getWidth() - splitPane.getDividerSize());
-					}
+					SplitGroup.this.dividerProportion = getDividerProportion(splitPane);
 				}
 			});
 			return splitPane;
+		}
+
+		private double getDividerProportion(JSplitPane splitPane) {
+			if (splitPane == null) {
+				return 0.5;
+			}
+
+			double proportion;
+			int location = splitPane.getDividerLocation();
+			if (splitPane.getOrientation() == JSplitPane.VERTICAL_SPLIT) {
+				proportion = (double) location / (splitPane.getHeight() - splitPane.getDividerSize());
+			} else {
+				proportion = (double) location / (splitPane.getWidth() - splitPane.getDividerSize());
+			}
+			return proportion;
 		}
 
 		private int getOrientaition(int layoutMode) {
@@ -365,10 +413,8 @@ public class MdiPane extends JPanel implements Accessible {
 
 		@Override
 		public void componentResized(ComponentEvent e) {
-			Component splitPane = MdiPane.this.lastSplit;
-			while (splitPane instanceof JSplitPane) {
-				((JSplitPane) splitPane).setDividerLocation(0.5);
-				splitPane = splitPane.getParent();
+			for (int i = 0; i < MdiPane.this.groups.size(); i++) {
+				MdiPane.this.groups.get(i).resetDividerLocation();
 			}
 		}
 
@@ -390,14 +436,14 @@ public class MdiPane extends JPanel implements Accessible {
 		@Override
 		public void focusGained(FocusEvent e) {
 			if (e.getSource() instanceof MdiGroup) {
-				MdiGroup oldSelectedGroup = MdiPane.this.selectedGroup;
+				MdiGroup oldSelectedGroup = MdiPane.this.getSelectedGroup();
 				MdiPage oldSelectedPage = oldSelectedGroup == null ? null : MdiPane.this.selectedPage;
 				MdiGroup newSelectedGroup = e.getSource() instanceof MdiGroup ? (MdiGroup) e.getSource() : null;
 
 				if (newSelectedGroup != null) {
 					MdiPage newSelectedPage = newSelectedGroup.getActivePage();
 					MdiPane.this.eventsHelper.firePageActivating(new PageActivatingEvent(newSelectedGroup, newSelectedPage, oldSelectedPage));
-					MdiPane.this.selectedGroup = newSelectedGroup;
+					MdiPane.this.selectedGroup = MdiPane.this.findSplitGroup(newSelectedGroup);
 					MdiPane.this.selectedPage = newSelectedPage;
 					MdiPane.this.eventsHelper.firePageActivated(new PageActivatedEvent(newSelectedGroup, newSelectedPage, oldSelectedPage));
 				} else {
