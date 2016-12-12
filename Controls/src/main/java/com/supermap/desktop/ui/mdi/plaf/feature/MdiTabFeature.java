@@ -115,7 +115,7 @@ class MdiTabFeature extends AbstractMdiFeature {
 		}
 
 		// 填充底色
-		graphics.setColor(this.page.isActive() ? MdiTabUIProperties.BACKCOLOR_ACTIVE : MdiTabUIProperties.BACKCOLOR_NORMAL);
+		graphics.setColor(this.getGroup().isFocused() && this.page.isActive() ? MdiTabUIProperties.BACKCOLOR_ACTIVE : MdiTabUIProperties.BACKCOLOR_NORMAL);
 		graphics.fillRect(getX() + 1, getY() + 1, getWidth() - 1, getHeight() - 1);
 		super.paint(graphics);
 	}
