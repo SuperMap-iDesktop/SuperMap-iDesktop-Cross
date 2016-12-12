@@ -72,6 +72,7 @@ public class MdiPane extends JPanel implements Accessible {
 	synchronized public MdiGroup createGroup() {
 		SplitGroup split = new SplitGroup();
 		addGroup(split);
+		adjustDividerProportion();
 		return split.getGroup();
 	}
 
@@ -154,6 +155,15 @@ public class MdiPane extends JPanel implements Accessible {
 			nextSplit = this.groups.get(index + 1);
 		}
 		return nextSplit;
+	}
+
+	/**
+	 * 调整 DividerProportion，为其计算一个合适的 DividerProportion
+	 */
+	public void adjustDividerProportion() {
+		for (int i = 0; i < this.groups.size(); i++) {
+			this.groups.get(i).setDividerProportion(1d / (this.groups.size() - i));
+		}
 	}
 
 	private void registerEvents(MdiGroup group) {
@@ -290,18 +300,16 @@ public class MdiPane extends JPanel implements Accessible {
 			return splitPane;
 		}
 
-		public void resetDividerLocation() {
-			setDividerProportion(this.dividerProportion);
-		}
-
 		public void setDividerProportion(double dividerProportion) {
 			this.dividerProportion = dividerProportion;
-			this.splitPane.setDividerLocation(this.dividerProportion);
+			this.splitPane.setResizeWeight(this.dividerProportion);
 		}
 
 		public void setLayoutMode(int layoutMode) {
 			this.splitPane.setOrientation(getOrientaition(layoutMode));
 			this.splitPane.setDividerLocation(this.dividerProportion);
+			this.splitPane.setResizeWeight(this.dividerProportion);
+			this.splitPane.doLayout();
 		}
 
 		public void setNextSplit(SplitGroup nextSplit) {
@@ -330,20 +338,21 @@ public class MdiPane extends JPanel implements Accessible {
 			splitPane.setOneTouchExpandable(false);
 			splitPane.setLeftComponent(component);
 			splitPane.setRightComponent(null);
-			splitPane.setResizeWeight(1);
 			resetDividerSize();
 
 			if (splitPane.getUI() instanceof BasicSplitPaneUI) {
 				BasicSplitPaneDivider divider = ((BasicSplitPaneUI) splitPane.getUI()).getDivider();
 				divider.setBorder(null);
-			}
 
-			splitPane.addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, new PropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent evt) {
-					SplitGroup.this.dividerProportion = getDividerProportion(splitPane);
-				}
-			});
+				divider.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseReleased(MouseEvent e) {
+						// 当 Didiver 位置改变之后，记录一下 proportion，切换 LayoutMode 之后需要使用该值
+						SplitGroup.this.dividerProportion = getDividerProportion(splitPane);
+						SplitGroup.this.splitPane.setResizeWeight(SplitGroup.this.dividerProportion);
+					}
+				});
+			}
 			return splitPane;
 		}
 
@@ -413,9 +422,7 @@ public class MdiPane extends JPanel implements Accessible {
 
 		@Override
 		public void componentResized(ComponentEvent e) {
-			for (int i = 0; i < MdiPane.this.groups.size(); i++) {
-				MdiPane.this.groups.get(i).resetDividerLocation();
-			}
+
 		}
 
 		@Override
@@ -425,7 +432,7 @@ public class MdiPane extends JPanel implements Accessible {
 
 		@Override
 		public void componentShown(ComponentEvent e) {
-
+			System.out.println("ComponentShown");
 		}
 
 		@Override

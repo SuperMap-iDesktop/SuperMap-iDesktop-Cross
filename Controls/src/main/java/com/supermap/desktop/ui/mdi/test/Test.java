@@ -18,7 +18,7 @@ public class Test {
 	public static void main(String[] args) {
 		final MdiPane pane = new MdiPane();
 //		group.setFloatOnPage(true);
-		MdiPage page = MdiPage.createMdiPage(new PagePanelDemo("test1"), "test1");
+		final MdiPage page = MdiPage.createMdiPage(new PagePanelDemo("test1"), "test1");
 		pane.addPage(page);
 
 		MdiPage page1 = MdiPage.createMdiPage(new PagePanelDemo1(), "test2");
