@@ -3,6 +3,7 @@ package com.supermap.desktop.CtrlAction.Edit.SnapSetting;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolSpinnerUtilties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
@@ -21,7 +22,6 @@ public class WarningTextFeild extends JPanel {
     private Double startValue;
     private Double endValue;
     private String defaultValue;
-    private String rightValue;
     private int type;
     private ArrayList listeners;
     private DecimalFormat format = new DecimalFormat("0");
@@ -33,7 +33,7 @@ public class WarningTextFeild extends JPanel {
             if (null != startValue && null != endValue && !SymbolSpinnerUtilties.isLegitNumber(startValue, endValue, text)) {
                 labelWarning.setText("<html><font color='red' style='font-weight:bold '>!</font></html>");
                 return;
-            } else {
+            } else if (!StringUtilities.isNullOrEmpty(text)) {
                 labelWarning.setText(" ");
                 fireListener(text);
             }
@@ -45,7 +45,6 @@ public class WarningTextFeild extends JPanel {
         this.defaultValue = defaultValue;
         initComponents();
         initLayout();
-        registEvents();
     }
 
     public void setInitInfo(double startValue, double endValue, int type, String floatLength) {
@@ -71,18 +70,21 @@ public class WarningTextFeild extends JPanel {
         this.setLayout(new GridBagLayout());
         this.add(this.labelWarning, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(this.textField, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
+        this.textField.setPreferredSize(new Dimension(100, 23));
     }
 
     public void addRightValueListener(RightValueListener listener) {
         if (null != listener && !listeners.contains(listener)) {
             listeners.add(listener);
         }
+        registEvents();
     }
 
-    public void removeRigthValueListener(RightValueListener listener) {
+    public void removeRightValueListener(RightValueListener listener) {
         if (null != listener && !listeners.contains(listener)) {
             listeners.remove(listener);
         }
+        registEvents();
     }
 
     private void fireListener(String value) {
@@ -105,5 +107,9 @@ public class WarningTextFeild extends JPanel {
 
     public JTextField getTextField() {
         return textField;
+    }
+
+    public void setText(String str) {
+        textField.setText(str);
     }
 }
