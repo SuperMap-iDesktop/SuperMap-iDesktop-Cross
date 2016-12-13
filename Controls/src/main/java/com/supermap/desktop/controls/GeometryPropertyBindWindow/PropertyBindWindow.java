@@ -52,7 +52,6 @@ public class PropertyBindWindow implements IPropertyBindWindow {
         bindProperty.addPropertySelectChangeListener(selectRowsChangeListener);
         bindWindow.addMapSelectionChangeListener(selectionChangeListener);
     }
-
     @Override
     public void removeEvents() {
         if (null != formMap.getMapControl()) {

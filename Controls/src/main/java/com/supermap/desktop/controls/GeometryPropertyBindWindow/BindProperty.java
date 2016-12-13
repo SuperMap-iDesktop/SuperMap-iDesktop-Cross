@@ -21,7 +21,6 @@ public class BindProperty implements IBindProperty {
     public BindProperty(MapControl mapControl) {
         this.mapControl = mapControl;
         this.map = mapControl.getMap();
-        registEvents();
     }
 
     private void registEvents() {
@@ -142,6 +141,7 @@ public class BindProperty implements IBindProperty {
         if (!propertySelectChangeListener.contains(l)) {
             propertySelectChangeListener.add(l);
         }
+        registEvents();
     }
 
     @Override
@@ -149,6 +149,7 @@ public class BindProperty implements IBindProperty {
         if (null != propertySelectChangeListener && propertySelectChangeListener.contains(l)) {
             propertySelectChangeListener.remove(l);
         }
+        removeEvents();
     }
 
     @Override
