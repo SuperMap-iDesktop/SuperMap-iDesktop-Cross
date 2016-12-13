@@ -11,4 +11,6 @@ public interface ITabularEditHistory {
 	void redo(IFormTabular tabular);
 
 	void undo(IFormTabular tabular);
+
+	int getCount();
 }

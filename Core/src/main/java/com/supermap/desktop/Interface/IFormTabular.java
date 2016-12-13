@@ -123,6 +123,12 @@ public interface IFormTabular extends IForm {
 
 	void removeValueChangedListener(TabularValueChangedListener tabularValueChangedListener);
 
+	/**
+	 * 将recordset定位到指定行并返回smId
+	 *
+	 * @param row
+	 * @return
+	 */
 	int getSmId(int row);
 
 	ITabularEditHistoryManager getEditHistoryManager();

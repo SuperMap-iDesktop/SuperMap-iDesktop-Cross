@@ -49,4 +49,9 @@ public class TabularEditHistory implements ITabularEditHistory {
 		recordset.getBatch().update();
 		recordset.seekID(id);
 	}
+
+	@Override
+	public int getCount() {
+		return editHistoryBeanJList.size();
+	}
 }
