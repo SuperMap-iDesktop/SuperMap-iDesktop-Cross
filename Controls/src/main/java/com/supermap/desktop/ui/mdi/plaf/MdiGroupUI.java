@@ -12,6 +12,8 @@ import javax.swing.*;
 import javax.swing.plaf.ComponentUI;
 import java.awt.*;
 import java.awt.event.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 // group 右上角的统一管理图标，定义为 group 功能区 groupOprsFeature
@@ -23,6 +25,7 @@ import java.util.ArrayList;
 public class MdiGroupUI extends ComponentUI {
 
 	private static final Rectangle ZERO_RECT = new Rectangle(0, 0, 0, 0);
+
 	private MdiGroup group;
 	private MosueHandler mouseHandler = new MosueHandler();
 	private MouseMotionHandler mouseMotionHandler = new MouseMotionHandler();
@@ -32,7 +35,7 @@ public class MdiGroupUI extends ComponentUI {
 	public static ComponentUI createUI(JComponent c) {
 		return new MdiGroupUI();
 	}
-
+	
 	@Override
 	public void installUI(JComponent c) {
 		this.group = (MdiGroup) c;
@@ -171,6 +174,7 @@ public class MdiGroupUI extends ComponentUI {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
+			MdiGroupUI.this.group.requestFocusInWindow();
 			MdiGroupUI.this.groupFeature.mousePressed(e);
 		}
 

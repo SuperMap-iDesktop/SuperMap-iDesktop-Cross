@@ -1,11 +1,14 @@
 package com.supermap.desktop.ui.mdi;
 
 import com.supermap.desktop.ui.mdi.events.*;
+import com.supermap.desktop.ui.mdi.plaf.MdiGroupUtilities;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +33,8 @@ public class MdiPane extends JPanel implements Accessible {
 	private static final long serialVersionUID = 1L;
 	private static final int HORIZONTAL = 1;
 	private static final int VERTICAL = 2;
+	private static final String PERMANENT_FOCUS_OWNER = "permanentFocusOwner";
+	private static final String FOCUS_OWNER = "focusOwner";
 
 	/**
 	 * @see #getUIClassID
@@ -40,7 +45,7 @@ public class MdiPane extends JPanel implements Accessible {
 	private int layoutMode = HORIZONTAL;
 	private MdiEventsHelper eventsHelper = new MdiEventsHelper();
 	private MdiGroupHandler mdiGroupHandler = new MdiGroupHandler();
-	private ComponentHandler componentHandler = new ComponentHandler();
+	private PropertyChangeHandler propertyChangeHandler = new PropertyChangeHandler();
 
 	public MdiPane() {
 		this(HORIZONTAL);
@@ -50,7 +55,13 @@ public class MdiPane extends JPanel implements Accessible {
 		setLayout(new BorderLayout());
 		this.layoutMode = layoutMode;
 		this.groups = new ArrayList<>();
-		addComponentListener(this.componentHandler);
+
+		EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(MdiPane.this.propertyChangeHandler);
+			}
+		});
 	}
 
 	public void setLayoutMode(int layoutMode) {
@@ -167,7 +178,6 @@ public class MdiPane extends JPanel implements Accessible {
 	}
 
 	private void registerEvents(MdiGroup group) {
-		group.addFocusListener(this.componentHandler);
 		group.addPageAddedListener(this.mdiGroupHandler);
 		group.addPageClosingListener(this.mdiGroupHandler);
 		group.addPageClosedListener(this.mdiGroupHandler);
@@ -176,7 +186,6 @@ public class MdiPane extends JPanel implements Accessible {
 	}
 
 	private void unregisterEvents(MdiGroup group) {
-		group.removeFocusListener(this.componentHandler);
 		group.removePageAddedListener(this.mdiGroupHandler);
 		group.removePageClosingListener(this.mdiGroupHandler);
 		group.removePageClosedListener(this.mdiGroupHandler);
@@ -353,6 +362,7 @@ public class MdiPane extends JPanel implements Accessible {
 					}
 				});
 			}
+
 			return splitPane;
 		}
 
@@ -418,50 +428,41 @@ public class MdiPane extends JPanel implements Accessible {
 		}
 	}
 
-	private class ComponentHandler implements FocusListener, ComponentListener {
+	private class PropertyChangeHandler implements PropertyChangeListener {
 
 		@Override
-		public void componentResized(ComponentEvent e) {
-
-		}
-
-		@Override
-		public void componentMoved(ComponentEvent e) {
-
-		}
-
-		@Override
-		public void componentShown(ComponentEvent e) {
-			System.out.println("ComponentShown");
-		}
-
-		@Override
-		public void componentHidden(ComponentEvent e) {
-
-		}
-
-		@Override
-		public void focusGained(FocusEvent e) {
-			if (e.getSource() instanceof MdiGroup) {
-				MdiGroup oldSelectedGroup = MdiPane.this.getSelectedGroup();
-				MdiPage oldSelectedPage = oldSelectedGroup == null ? null : MdiPane.this.selectedPage;
-				MdiGroup newSelectedGroup = e.getSource() instanceof MdiGroup ? (MdiGroup) e.getSource() : null;
-
-				if (newSelectedGroup != null) {
-					MdiPage newSelectedPage = newSelectedGroup.getActivePage();
-					MdiPane.this.eventsHelper.firePageActivating(new PageActivatingEvent(newSelectedGroup, newSelectedPage, oldSelectedPage));
-					MdiPane.this.selectedGroup = MdiPane.this.findSplitGroup(newSelectedGroup);
-					MdiPane.this.selectedPage = newSelectedPage;
-					MdiPane.this.eventsHelper.firePageActivated(new PageActivatedEvent(newSelectedGroup, newSelectedPage, oldSelectedPage));
-				} else {
-					oldSelectedGroup.requestFocus();
+		public void propertyChange(PropertyChangeEvent evt) {
+			EventQueue.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(new PropertyChangeListener() {
+						@Override
+						public void propertyChange(PropertyChangeEvent evt) {
+							if (evt.getPropertyName().equals(PERMANENT_FOCUS_OWNER) && evt.getNewValue() instanceof Component) {
+								Component c = (Component) evt.getNewValue();
+								MdiGroup group = MdiGroupUtilities.findAncestorGroup(c);
+								activeGroup(group);
+							}
+						}
+					});
 				}
-			}
+			});
 		}
 
-		@Override
-		public void focusLost(FocusEvent e) {
+		private void activeGroup(MdiGroup newSelectedGroup) {
+			MdiGroup oldSelectedGroup = MdiPane.this.getSelectedGroup();
+			MdiPage oldSelectedPage = oldSelectedGroup == null ? null : MdiPane.this.selectedPage;
 
+			if (newSelectedGroup != null) {
+				MdiPage newSelectedPage = newSelectedGroup.getActivePage();
+				MdiPane.this.eventsHelper.firePageActivating(new PageActivatingEvent(newSelectedGroup, newSelectedPage, oldSelectedPage));
+				MdiPane.this.selectedGroup = MdiPane.this.findSplitGroup(newSelectedGroup);
+				MdiPane.this.selectedPage = newSelectedPage;
+				MdiPane.this.eventsHelper.firePageActivated(new PageActivatedEvent(newSelectedGroup, newSelectedPage, oldSelectedPage));
+			} else {
+				oldSelectedGroup.requestFocusInWindow();
+			}
+			repaint();
 		}
 	}
 }

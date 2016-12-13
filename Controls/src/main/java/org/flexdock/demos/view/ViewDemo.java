@@ -7,6 +7,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -73,6 +75,20 @@ public class ViewDemo extends JFrame implements DockingConstants {
 		startPage.dock(view2, SOUTH_REGION, .3f);
 		startPage.dock(view4, EAST_REGION, .3f);
 		view1.dock(view3, SOUTH_REGION, .3f);
+
+		view1.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				super.focusGained(e);
+			}
+		});
+
+		viewport.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				super.focusGained(e);
+			}
+		});
 
 		return p;
 	}
