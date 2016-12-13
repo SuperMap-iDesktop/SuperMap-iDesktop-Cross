@@ -140,4 +140,6 @@ public interface IFormTabular extends IForm {
 	void redo();
 
 	void undo();
+
+	void setSelectedCellBySmIDs(int[] smIds, String fieldName);
 }

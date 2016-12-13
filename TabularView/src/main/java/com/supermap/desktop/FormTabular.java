@@ -92,6 +92,17 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	private KeyListener keyListener = new KeyAdapter() {
 
 		@Override
+		public void keyPressed(KeyEvent e) {
+			if (e.isControlDown()) {
+				if (e.getKeyChar() == KeyEvent.VK_Z && canUndo()) {
+					undo();
+				} else if (e.getKeyChar() == KeyEvent.VK_Y && canRedo()) {
+					redo();
+				}
+			}
+		}
+
+		@Override
 		public void keyReleased(KeyEvent e) {
 			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
@@ -876,6 +887,17 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		tableEditHistoryManager.undo();
 		jTableTabular.repaint();
 		ToolbarUIUtilities.updataToolbarsState();
+	}
+
+	@Override
+	public void setSelectedCellBySmIDs(int[] smIds, String fieldName) {
+		this.jTableTabular.clearSelection();
+		int column = tabularTableModel.getFieldColumn(fieldName);
+		this.jTableTabular.setColumnSelectionInterval(column, column);
+		for (int smId : smIds) {
+			int row = tabularTableModel.getRowBySmId(smId);
+			jTableTabular.addRowSelectionInterval(row, row);
+		}
 	}
 
 	@Override
