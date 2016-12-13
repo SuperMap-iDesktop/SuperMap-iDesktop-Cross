@@ -31,16 +31,16 @@ public class TableModelResources extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return 2;
+		return 5;
 	}
 
 	@Override
 	public Object getValueAt(int row, int col) {
-		if (row == 0) {
+		if (row == 0 && (col == COLUMN_NAME || col == COLUMN_TYPE)) {
 			return ControlsProperties.getString("SymbolMarkerLibNodeName");
-		} else if (row == 1) {
+		} else if (row == 1 && (col == COLUMN_NAME || col == COLUMN_TYPE)) {
 			return ControlsProperties.getString("SymbolLineLibNodeName");
-		} else if (row == 2) {
+		} else if (row == 2 && (col == COLUMN_NAME || col == COLUMN_TYPE)) {
 			return ControlsProperties.getString("SymbolFillLibNodeName");
 		}
 		return "";

@@ -43,7 +43,7 @@ public class TableModelWorkspace extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return 3;
+		return 5;
 	}
 
 	@Override

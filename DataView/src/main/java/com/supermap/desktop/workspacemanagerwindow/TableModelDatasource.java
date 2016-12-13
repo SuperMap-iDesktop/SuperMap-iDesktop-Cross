@@ -1,5 +1,9 @@
 package com.supermap.desktop.workspacemanagerwindow;
 
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetGridCollection;
+import com.supermap.data.DatasetImage;
+import com.supermap.data.DatasetImageCollection;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
@@ -19,8 +23,13 @@ import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindow
  * @author YuanR
  */
 public class TableModelDatasource extends AbstractTableModel {
-	Datasource datasource;
-	DatasetVector datasetVector;
+	private Datasource datasource;
+	private DatasetVector datasetVector;
+	private DatasetGrid datasetGrid;
+	private DatasetImage datasetImage;
+	private DatasetGridCollection datasetGridCollection;
+	private DatasetImageCollection datasetImageCollection;
+
 
 	//获得工作空间以及列名
 	public TableModelDatasource(Datasource datasource) {
@@ -48,7 +57,7 @@ public class TableModelDatasource extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return 4;
+		return 5;
 	}
 
 	@Override
@@ -64,6 +73,18 @@ public class TableModelDatasource extends AbstractTableModel {
 				if (this.datasource.getDatasets().get(row) instanceof DatasetVector) {
 					this.datasetVector = (DatasetVector) this.datasource.getDatasets().get(row);
 					return this.datasetVector.getRecordCount();
+				} else if (this.datasource.getDatasets().get(row) instanceof DatasetGrid) {
+					this.datasetGrid = (DatasetGrid) this.datasource.getDatasets().get(row);
+					return this.datasetGrid.getWidth() * this.datasetGrid.getHeight();
+				} else if (this.datasource.getDatasets().get(row) instanceof DatasetImage) {
+					this.datasetImage = (DatasetImage) this.datasource.getDatasets().get(row);
+					return this.datasetImage.getWidth() * this.datasetImage.getHeight();
+				} else if (this.datasource.getDatasets().get(row) instanceof DatasetGridCollection) {
+					this.datasetGridCollection = (DatasetGridCollection) this.datasource.getDatasets().get(row);
+					return this.datasetGridCollection.getCount();
+				} else if (this.datasource.getDatasets().get(row) instanceof DatasetImageCollection) {
+					this.datasetImageCollection = (DatasetImageCollection) this.datasource.getDatasets().get(row);
+					return this.datasetImageCollection.getCount();
 				} else {
 					return 0;
 				}
@@ -76,9 +97,10 @@ public class TableModelDatasource extends AbstractTableModel {
 	}
 
 	public Class getColumnClass(int col) {
-		//当列数为“1”，返回Icon,否则返回String
 		if (col == COLUMN_NAME) {
 			return Icon.class;
+		} else if (col == COLUMN_TYPE) {
+			return DatasetType.class;
 		} else {
 			return getValueAt(0, col).getClass();
 		}

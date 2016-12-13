@@ -8,6 +8,7 @@ public class WorkspaceManagerWindowResources {
 	public static final int COLUMN_TYPE = 1;
 	public static final int COLUMN_NUMBER = 2;
 	public static final int COLUMN_PRJCOORDSYS = 3;
+	public static final int COLUMN_NULL = 4;
 	public static final int COLUMN_PATH = 3;
 	public static final int FIRST_LEVEL = 1;
 	public static final int SECOND_LEVEL = 2;
