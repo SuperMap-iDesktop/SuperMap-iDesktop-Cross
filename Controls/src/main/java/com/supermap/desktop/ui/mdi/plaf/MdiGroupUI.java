@@ -35,7 +35,7 @@ public class MdiGroupUI extends ComponentUI {
 	public static ComponentUI createUI(JComponent c) {
 		return new MdiGroupUI();
 	}
-	
+
 	@Override
 	public void installUI(JComponent c) {
 		this.group = (MdiGroup) c;
@@ -174,7 +174,6 @@ public class MdiGroupUI extends ComponentUI {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			MdiGroupUI.this.group.requestFocusInWindow();
 			MdiGroupUI.this.groupFeature.mousePressed(e);
 		}
 

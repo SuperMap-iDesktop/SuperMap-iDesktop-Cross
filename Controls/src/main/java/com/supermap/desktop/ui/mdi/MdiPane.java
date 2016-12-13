@@ -25,7 +25,7 @@ import javax.swing.plaf.basic.BasicSplitPaneUI;
  *
  * @author highsad
  */
-public class MdiPane extends JPanel implements Accessible {
+public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 
 	/**
 	 *
@@ -282,6 +282,23 @@ public class MdiPane extends JPanel implements Accessible {
 		this.eventsHelper.removePageActivatedListener(listener);
 	}
 
+	@Override
+	public void active(MdiGroup group) {
+		MdiGroup oldSelectedGroup = MdiPane.this.getSelectedGroup();
+		MdiPage oldSelectedPage = oldSelectedGroup == null ? null : MdiPane.this.selectedPage;
+
+		if (group != null) {
+			MdiPage newSelectedPage = group.getActivePage();
+			MdiPane.this.eventsHelper.firePageActivating(new PageActivatingEvent(group, newSelectedPage, oldSelectedPage));
+			MdiPane.this.selectedGroup = MdiPane.this.findSplitGroup(group);
+			MdiPane.this.selectedPage = newSelectedPage;
+			MdiPane.this.eventsHelper.firePageActivated(new PageActivatedEvent(group, newSelectedPage, oldSelectedPage));
+		} else {
+			oldSelectedGroup.requestFocusInWindow();
+		}
+		repaint();
+	}
+
 	private class SplitGroup {
 		private MdiGroup group;
 		private JSplitPane splitPane;
@@ -441,28 +458,12 @@ public class MdiPane extends JPanel implements Accessible {
 							if (evt.getPropertyName().equals(PERMANENT_FOCUS_OWNER) && evt.getNewValue() instanceof Component) {
 								Component c = (Component) evt.getNewValue();
 								MdiGroup group = MdiGroupUtilities.findAncestorGroup(c);
-								activeGroup(group);
+								MdiPane.this.active(group);
 							}
 						}
 					});
 				}
 			});
-		}
-
-		private void activeGroup(MdiGroup newSelectedGroup) {
-			MdiGroup oldSelectedGroup = MdiPane.this.getSelectedGroup();
-			MdiPage oldSelectedPage = oldSelectedGroup == null ? null : MdiPane.this.selectedPage;
-
-			if (newSelectedGroup != null) {
-				MdiPage newSelectedPage = newSelectedGroup.getActivePage();
-				MdiPane.this.eventsHelper.firePageActivating(new PageActivatingEvent(newSelectedGroup, newSelectedPage, oldSelectedPage));
-				MdiPane.this.selectedGroup = MdiPane.this.findSplitGroup(newSelectedGroup);
-				MdiPane.this.selectedPage = newSelectedPage;
-				MdiPane.this.eventsHelper.firePageActivated(new PageActivatedEvent(newSelectedGroup, newSelectedPage, oldSelectedPage));
-			} else {
-				oldSelectedGroup.requestFocusInWindow();
-			}
-			repaint();
 		}
 	}
 }
