@@ -124,7 +124,9 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                     if (!buttonExport.isEnabled() && exportTransform instanceof PanelExportTransformForGrid) {
                         ((PanelExportTransformForGrid) exportTransform).getPasswordField().setText("");
                         ((PanelExportTransformForGrid) exportTransform).getPasswordFieldConfrim().setText("");
-                        ((ExportSettingSIT) panelExports.get(lastSelectRow).getExportsFileInfo().getExportSetting()).setPassword("");
+                        if (panelExports.get(lastSelectRow).getExportsFileInfo().getExportSetting() instanceof ExportSettingSIT) {
+                            ((ExportSettingSIT) panelExports.get(lastSelectRow).getExportsFileInfo().getExportSetting()).setPassword("");
+                        }
                         buttonExport.setEnabled(true);
                     }
                 }

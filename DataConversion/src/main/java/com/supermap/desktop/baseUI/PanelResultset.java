@@ -500,6 +500,11 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
     }
 
     private void initDatasetName() {
+        if (importSetting instanceof ImportSettingBIL || importSetting instanceof ImportSettingBIP
+                || importSetting instanceof ImportSettingBSQ || importSetting instanceof ImportSettingTEMSClutter
+                || importSetting instanceof ImportSettingTEMSVector) {
+            return;
+        }
         if (layeroutType == 4 && hasSameName()) {
             this.textFieldDatasetName.setText(importSetting.getTargetDatasetName());
         } else if (!StringUtilities.isNullOrEmpty(importSetting.getTargetDatasetName()) && panelImports == null) {

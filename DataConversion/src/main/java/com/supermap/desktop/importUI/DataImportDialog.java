@@ -345,7 +345,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                         fileInfos.add(panelImport.getImportInfo());
                     }
                     if (null != formProgress) {
-                        formProgress.doWork(new ImportCallable(fileInfos, table));
+                        formProgress.doWork(new ImportCallable(fileInfos, DataImportDialog.this));
                     }
                 } else {
                     UICommonToolkit.showMessageDialog(DataConversionProperties.getString("String_ImportSettingPanel_Cue_AddFiles"));
@@ -395,7 +395,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 
     @Override
     public void initComponents() {
-        this.panelImports = new ArrayList<PanelImport>();
+        this.panelImports = new ArrayList<>();
         this.splitPane = new JSplitPane();
         this.contentPane = new JPanel();
         this.table = new JTable();
@@ -571,6 +571,14 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
             this.buttonSelectAll.setEnabled(false);
             this.buttonInvertSelect.setEnabled(false);
         }
+    }
+
+    public JTable getTable() {
+        return table;
+    }
+
+    public JCheckBox getCheckBoxAutoClose() {
+        return checkBoxAutoClose;
     }
 
     /**

@@ -185,14 +185,13 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
     private void splitTabWindow() {
         int formMapSize = formMapList.size();
         int formTabularSize = formTabularList.size();
-        SplitWindow splitWindow = null;
         TabWindow formMapSplitWindow = null;
         TabWindow formTabularTabWindow = null;
         TabWindow tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
         if (formMapsOnly) {
             while (formMapSize > 1) {
                 if (tabWindow.getChildWindowCount() > 0) {
-                    this.splitWindow = tabWindow.split((DockingWindow) formMapList.get(formMapSize - 1), Direction.RIGHT, (float) (1 - 1.0 / formMapSize));
+                    tabWindow.split((DockingWindow) formMapList.get(formMapSize - 1), Direction.RIGHT, (float) (1 - 1.0 / formMapSize));
                     formMapSize--;
                 } else {
                     break;
@@ -201,7 +200,7 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
         } else if (formTabularsOnly) {
             while (formTabularSize > 1) {
                 if (tabWindow.getChildWindowCount() > 0) {
-                    this.splitWindow = tabWindow.split((DockingWindow) formTabularList.get(formTabularSize - 1), Direction.DOWN, (float) (1 - 1.0 / formTabularSize));
+                    tabWindow.split((DockingWindow) formTabularList.get(formTabularSize - 1), Direction.DOWN, (float) (1 - 1.0 / formTabularSize));
                     formTabularSize--;
                 } else {
                     break;
@@ -209,7 +208,7 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
             }
         } else if (formMapsAndFormTabulars) {
             //有地图和属性表时
-            splitWindow = tabWindow.split((DockingWindow) formTabularList.get(0), Direction.DOWN, 0.7f);
+            this.splitWindow = tabWindow.split((DockingWindow) formTabularList.get(0), Direction.DOWN, 0.7f);
             formTabularTabWindow = (TabWindow) splitWindow.getChildWindow(splitWindow.getChildWindowCount() - 1);
             for (int i = 1; i < formTabularSize; i++) {
                 formTabularTabWindow.addTab((DockingWindow) formTabularList.get(i));
