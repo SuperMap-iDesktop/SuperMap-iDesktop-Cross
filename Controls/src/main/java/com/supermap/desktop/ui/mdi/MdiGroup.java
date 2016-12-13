@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.*;
-import javax.swing.event.EventListenerList;
 
 // @formatter:off
 /**
@@ -35,7 +34,7 @@ public class MdiGroup extends JComponent {
 	private MdiEventsHelper eventsHelper = new MdiEventsHelper();
 
 	private List<MdiPage> pages;
-	private MdiPane mdiPane = null;
+	private IMdiContainer mdiContainer = null;
 	private List<Integer> floatingPages = new ArrayList<Integer>();
 
 	/**
@@ -68,7 +67,7 @@ public class MdiGroup extends JComponent {
 	}
 
 	public MdiGroup(MdiPane mdiPane) {
-		this.mdiPane = mdiPane;
+		this.mdiContainer = mdiPane;
 		this.pages = new ArrayList<MdiPage>();
 		setFocusable(true);
 		initializeActions();
@@ -119,7 +118,7 @@ public class MdiGroup extends JComponent {
 	}
 
 	public boolean isFocused() {
-		return this.mdiPane == null ? true : this.mdiPane.getSelectedGroup() == this;
+		return this.mdiContainer == null ? true : this.mdiContainer.getSelectedGroup() == this;
 	}
 
 	/**
@@ -216,6 +215,12 @@ public class MdiGroup extends JComponent {
 		MdiPage page = getPage(component);
 		if (page != null) {
 			activePage(page);
+		}
+	}
+
+	public void activeItself() {
+		if (this.mdiContainer != null) {
+			this.mdiContainer.active(this);
 		}
 	}
 
@@ -321,8 +326,8 @@ public class MdiGroup extends JComponent {
 		return result;
 	}
 
-	public MdiPane getMdiParent() {
-		return this.mdiPane;
+	public IMdiContainer getMdiContainer() {
+		return this.mdiContainer;
 	}
 
 	public Component getComponent(int index) {

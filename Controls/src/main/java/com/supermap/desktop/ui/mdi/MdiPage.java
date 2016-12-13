@@ -86,8 +86,8 @@ public class MdiPage {
 		}
 	}
 
-	public MdiPane getParent() {
-		return this.group == null ? null : this.group.getMdiParent();
+	public IMdiContainer getContainer() {
+		return this.group == null ? null : this.group.getMdiContainer();
 	}
 
 	public MdiGroup getGroup() {

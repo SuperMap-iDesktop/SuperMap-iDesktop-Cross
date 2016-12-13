@@ -175,6 +175,7 @@ public class MdiGroupUI extends ComponentUI {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			MdiGroupUI.this.groupFeature.mousePressed(e);
+			MdiGroupUI.this.group.activeItself();
 		}
 
 		@Override
