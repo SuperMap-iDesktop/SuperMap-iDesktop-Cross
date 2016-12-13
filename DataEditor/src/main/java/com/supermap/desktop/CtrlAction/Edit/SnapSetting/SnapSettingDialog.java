@@ -10,17 +10,22 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TableTooltipCellRenderer;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.mapping.SnapMode;
 import com.supermap.mapping.SnapSetting;
+import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.text.DecimalFormat;
 
 /**
@@ -30,13 +35,15 @@ public class SnapSettingDialog extends SmDialog {
     private JTabbedPane tabbedPane;
     private JPanel panelSnapMode;
     private JPanel panelSnapParams;
-    private SnapSetting defaultSnapSetting;
+    private SnapSetting mapControlSnapSetting;
+    private SnapSetting srcSnapSetting;
+    private MapControl mapControl;
     private JScrollPane scrollPaneSnapMode;
     private JTable tableSnapMode;
-    private JButton buttonMoveNext;
-    private JButton buttonMoveForward;
-    private JButton buttonMoveFrist;
-    private JButton buttonMoveLast;
+    private JButton buttonMoveToNext;
+    private JButton buttonMoveToForward;
+    private JButton buttonMoveToFrist;
+    private JButton buttonMoveToLast;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JButton buttonRecover;
@@ -52,19 +59,237 @@ public class SnapSettingDialog extends SmDialog {
     private WarningTextFeild textFieldMinSnappedLength;
     private JCheckBox checkBoxSnappedLineBroken;
     private JPanel panelTolarenceView;
+    private JLabel labelImageCicle;
+    private JLabel labelImageArraw;
     private String[] tableTitle = {"", CommonProperties.getString("String_Type"),
             ControlsProperties.getString("String_Description")};
     private static final int TABLE_COLUMN_CHECKABLE = 0;
     private static final int TABLE_COLUMN_TYPE = 1;
     private static final int TABLE_COLUMN_DESCRIPTION = 2;
+    private static final DecimalFormat format = new DecimalFormat("0");
 
-    private static final int POINT_ON_ENDPOINT = 0, POINT_ON_MIDPOINT = 1, POINT_ON_LINE = 2,
-            POINT_ON_POINT = 3, POINT_ON_EXTENSION = 4, LINE_WITH_HORIZONTAL = 5,
-            LINE_WITH_VERTICAL = 6, LINE_WITH_PARALLEL = 7, LINE_WITH_PERPENDICULAR = 8,
-            LINE_WITH_FIXED_ANGLE = 9, LINE_WITH_FIXED_LENGTH = 10;
+    private MouseListener mouseListener = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            int row = tableSnapMode.getSelectedRow();
+            int column = tableSnapMode.getSelectedColumn();
+            if (1 == e.getClickCount() && column == TABLE_COLUMN_CHECKABLE) {
+                CheckableItem item = (CheckableItem) tableSnapMode.getModel().getValueAt(row, column);
+                boolean value = !item.isSelected();
+                item.setSelected(value);
+                tableSnapMode.setValueAt(item, row, column);
+                setSnapMode(row, value);
+            }
+        }
+    };
+    private ActionListener recoverListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            srcSnapSetting = SnapSettingUtilities.parseSnapSetting(mapControl);
+            mapControlSnapSetting = srcSnapSetting;
+            initTable();
+            textFieldSnapTolarence.setText(format.format(srcSnapSetting.getTolerance()));
+            textFieldFixedAngle.setText(format.format(srcSnapSetting.getFixedAngle()));
+            textFieldMaxSnappedCount.setText(format.format(srcSnapSetting.getMaxSnappedCount()));
+            textFieldMinSnappedLength.setText(format.format(srcSnapSetting.getMinSnappedLength()));
+            textFieldFixedLength.setText(format.format(srcSnapSetting.getFixedLength()));
+            checkBoxSnappedLineBroken.setSelected(srcSnapSetting.isSnappedLineBroken());
+        }
+    };
+    private ActionListener cancelListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            dispose();
+        }
+    };
+    private ActionListener moveListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource().equals(buttonMoveToFrist)) {
+                //移动到最上端
+                moveToFrist();
+            } else if (e.getSource().equals(buttonMoveToForward)) {
+                //上移一位
+                moveToForward();
+            } else if (e.getSource().equals(buttonMoveToNext)) {
+                //下移一位
+                moveToNext();
+            } else if (e.getSource().equals(buttonMoveToLast)) {
+                moveToLast();
+            }
+        }
 
-    public SnapSettingDialog(SnapSetting snapSetting) {
-        this.defaultSnapSetting = new SnapSetting(snapSetting);
+        private void moveToFrist() {
+            int[] selectRows = tableSnapMode.getSelectedRows();
+            int size = selectRows.length;
+            if (0 == size) {
+                return;
+            } else if (1 <= size && 0 == selectRows[0]) {
+                return;
+            } else {
+                //交换到第一个时需要进行双层遍历，且时时修改selectRows才能实现整体位移
+                int exchangeSize = selectRows[0] - 1;
+                for (int i = exchangeSize; i >= 0; i--) {
+                    int row = i;
+                    for (int j = 0; j < size; j++) {
+                        exchangeItem(selectRows[j], row);
+                        selectRows[j] = row;
+                        row++;
+                    }
+                }
+                tableSnapMode.clearSelection();
+                for (int i = 0; i < size; i++) {
+                    tableSnapMode.addRowSelectionInterval(i, i);
+                }
+            }
+        }
+
+        private void moveToLast() {
+            int[] selectRows = tableSnapMode.getSelectedRows();
+            int size = selectRows.length;
+            if (0 == size) {
+                return;
+            } else if (1 <= size && tableSnapMode.getRowCount() - 1 == selectRows[size - 1]) {
+                return;
+            } else {
+                //交换到最后一个时需要进行双层遍历，且时时修改selectRows才能实现整体位移,
+                //方法和移动到第一个相似，逆序
+                int exchangeSize = selectRows[size - 1] + 1;
+                int rowCount = tableSnapMode.getRowCount() - 1;
+                for (int i = exchangeSize; i <= rowCount; i++) {
+                    int row = i;
+                    for (int j = size - 1; j >= 0; j--) {
+                        exchangeItem(selectRows[j], row);
+                        selectRows[j] = row;
+                        row--;
+                    }
+                }
+                tableSnapMode.clearSelection();
+                for (int i = 0; i < size; i++) {
+                    tableSnapMode.addRowSelectionInterval(rowCount - i, rowCount - i);
+                }
+            }
+        }
+
+        private void moveToNext() {
+            int[] selectRows = tableSnapMode.getSelectedRows();
+            int size = selectRows.length;
+            if (0 == size) {
+                return;
+            } else if (1 <= size && tableSnapMode.getRowCount() - 1 == selectRows[size - 1]) {
+                return;
+            } else {
+                int rowLocation = selectRows[size - 1] + 1;
+                for (int i = size - 1; i >= 0; i--) {
+                    exchangeItem(selectRows[i], rowLocation);
+                    rowLocation--;
+                }
+                tableSnapMode.clearSelection();
+                for (int i = 0; i < size; i++) {
+                    tableSnapMode.addRowSelectionInterval(selectRows[i] + 1, selectRows[i] + 1);
+                }
+            }
+        }
+
+        private void moveToForward() {
+            int[] selectRows = tableSnapMode.getSelectedRows();
+            int size = selectRows.length;
+            if (0 == size) {
+                return;
+            } else if (1 <= size && 0 == selectRows[0]) {
+                return;
+            } else {
+                int rowLocation = selectRows[0] - 1;
+                for (int i = 0; i < size; i++) {
+                    exchangeItem(selectRows[i], rowLocation);
+                    rowLocation++;
+                }
+                tableSnapMode.clearSelection();
+                for (int i = 0; i < size; i++) {
+                    tableSnapMode.addRowSelectionInterval(selectRows[i] - 1, selectRows[i] - 1);
+                }
+            }
+
+        }
+
+        private void exchangeItem(int from, int target) {
+            CheckableItem item = (CheckableItem) tableSnapMode.getValueAt(from, TABLE_COLUMN_CHECKABLE);
+            CheckableItem targetItem = (CheckableItem) tableSnapMode.getValueAt(target, TABLE_COLUMN_CHECKABLE);
+            String snapType = (String) tableSnapMode.getValueAt(from, TABLE_COLUMN_TYPE);
+            String targetSnapType = (String) tableSnapMode.getValueAt(target, TABLE_COLUMN_TYPE);
+            String snapDescription = (String) tableSnapMode.getValueAt(from, TABLE_COLUMN_DESCRIPTION);
+            String targetSnapDescription = (String) tableSnapMode.getValueAt(target, TABLE_COLUMN_DESCRIPTION);
+            tableSnapMode.setValueAt(targetSnapDescription, from, TABLE_COLUMN_DESCRIPTION);
+            tableSnapMode.setValueAt(snapDescription, target, TABLE_COLUMN_DESCRIPTION);
+            tableSnapMode.setValueAt(targetSnapType, from, TABLE_COLUMN_TYPE);
+            tableSnapMode.setValueAt(snapType, target, TABLE_COLUMN_TYPE);
+            tableSnapMode.setValueAt(targetItem, from, TABLE_COLUMN_CHECKABLE);
+            tableSnapMode.setValueAt(item, target, TABLE_COLUMN_CHECKABLE);
+            mapControlSnapSetting.exchange(from, target);
+        }
+    };
+    private RightValueListener tolarenceListener = new RightValueListener() {
+        @Override
+        public void update(String value) {
+            int tolerance = Integer.parseInt(value);
+            mapControlSnapSetting.setTolerance(tolerance);
+            labelImageCicle.setIcon(buildIcon(tolerance));
+        }
+    };
+    private RightValueListener fixedAngleListener = new RightValueListener() {
+        @Override
+        public void update(String value) {
+            mapControlSnapSetting.setFixedAngle(Double.parseDouble(value));
+        }
+    };
+    private RightValueListener maxSnappedCountListener = new RightValueListener() {
+        @Override
+        public void update(String value) {
+            mapControlSnapSetting.setMaxSnappedCount(Integer.parseInt(value));
+        }
+    };
+    private RightValueListener fixedLengthListener = new RightValueListener() {
+        @Override
+        public void update(String value) {
+            mapControlSnapSetting.setFixedLength(Double.parseDouble(value));
+        }
+    };
+    private RightValueListener minSnappedLengthListener = new RightValueListener() {
+        @Override
+        public void update(String value) {
+            mapControlSnapSetting.setMinSnappedLength(Integer.parseInt(value));
+        }
+    };
+    private ChangeListener snappedLineBrokenListener = new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            mapControlSnapSetting.setSnappedLineBroken(checkBoxSnappedLineBroken.isSelected());
+        }
+    };
+    private ActionListener okListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            mapControl.setSnapSetting(mapControlSnapSetting);
+            SnapSettingUtilities.replaceSnapMode(mapControlSnapSetting, mapControl.getSnapSetting());
+            removeEvents();
+            dispose();
+        }
+    };
+
+    public SnapSettingDialog(MapControl mapControl) {
+        this.mapControl = mapControl;
+        this.mapControlSnapSetting = new SnapSetting(mapControl.getSnapSetting());
+        this.srcSnapSetting = new SnapSetting(mapControlSnapSetting);
+        File file = new File(PathUtilities.getFullPathName(DataEditorProperties.getString("String_SnapSettingXMLPath"), false));
+        if (!file.exists()) {
+            SnapSettingUtilities.createSnapSettingFile();
+        }
+        if (!SnapSettingUtilities.isSnapSettingExists(mapControl)) {
+            SnapSettingUtilities.addSnapSettingNode(mapControl);
+        }
+
+        SnapSettingUtilities.replaceSnapMode(mapControl.getSnapSetting(), this.mapControlSnapSetting);
+        SnapSettingUtilities.replaceSnapMode(mapControl.getSnapSetting(), this.srcSnapSetting);
     }
 
     private void init() {
@@ -76,9 +301,43 @@ public class SnapSettingDialog extends SmDialog {
 
     private void registEvents() {
         removeEvents();
+        this.tableSnapMode.addMouseListener(this.mouseListener);
+        this.buttonRecover.addActionListener(this.recoverListener);
+        this.buttonCancel.addActionListener(this.cancelListener);
+        this.buttonMoveToFrist.addActionListener(this.moveListener);
+        this.buttonMoveToForward.addActionListener(this.moveListener);
+        this.buttonMoveToNext.addActionListener(this.moveListener);
+        this.buttonMoveToLast.addActionListener(this.moveListener);
+        this.textFieldSnapTolarence.addRightValueListener(this.tolarenceListener);
+        this.textFieldFixedAngle.addRightValueListener(this.fixedAngleListener);
+        this.textFieldMaxSnappedCount.addRightValueListener(this.maxSnappedCountListener);
+        this.textFieldFixedLength.addRightValueListener(this.fixedLengthListener);
+        this.textFieldMinSnappedLength.addRightValueListener(this.minSnappedLengthListener);
+        this.checkBoxSnappedLineBroken.addChangeListener(this.snappedLineBrokenListener);
+        this.buttonOK.addActionListener(this.okListener);
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                removeEvents();
+            }
+        });
     }
 
     private void removeEvents() {
+        this.tableSnapMode.removeMouseListener(this.mouseListener);
+        this.buttonRecover.removeActionListener(this.recoverListener);
+        this.buttonCancel.removeActionListener(this.cancelListener);
+        this.buttonMoveToFrist.removeActionListener(this.moveListener);
+        this.buttonMoveToForward.removeActionListener(this.moveListener);
+        this.buttonMoveToNext.removeActionListener(this.moveListener);
+        this.buttonMoveToLast.removeActionListener(this.moveListener);
+        this.textFieldSnapTolarence.removeRightValueListener(this.tolarenceListener);
+        this.textFieldFixedAngle.removeRightValueListener(this.fixedAngleListener);
+        this.textFieldMaxSnappedCount.removeRightValueListener(this.maxSnappedCountListener);
+        this.textFieldFixedLength.removeRightValueListener(this.fixedLengthListener);
+        this.textFieldMinSnappedLength.removeRightValueListener(this.minSnappedLengthListener);
+        this.checkBoxSnappedLineBroken.removeChangeListener(this.snappedLineBrokenListener);
+        this.buttonOK.removeActionListener(this.okListener);
     }
 
     private void initResouces() {
@@ -90,10 +349,10 @@ public class SnapSettingDialog extends SmDialog {
         this.labelMinSnappedLength.setText(DataEditorProperties.getString("String_SnapSettingMinSnappedLength"));
         this.checkBoxSnappedLineBroken.setText(DataEditorProperties.getString("String_SnapSettingLineBroken"));
         this.buttonRecover.setText(DataEditorProperties.getString("String_SnapSettingResume"));
-        this.buttonMoveForward.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_MoveForward.png"));
-        this.buttonMoveFrist.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_MoveFrist.png"));
-        this.buttonMoveLast.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_MoveLast.png"));
-        this.buttonMoveNext.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_MoveNext.png"));
+        this.buttonMoveToForward.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_MoveForward.png"));
+        this.buttonMoveToFrist.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_MoveFrist.png"));
+        this.buttonMoveToLast.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_MoveLast.png"));
+        this.buttonMoveToNext.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_MoveNext.png"));
     }
 
     private void initLayout() {
@@ -101,7 +360,7 @@ public class SnapSettingDialog extends SmDialog {
         this.setLocationRelativeTo(null);
         JPanel panelButton = new JPanel();
         panelButton.setLayout(new GridBagLayout());
-        panelButton.add(this.buttonRecover, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 10, 5));
+        panelButton.add(this.buttonRecover, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 0, 10, 5));
         panelButton.add(this.buttonOK, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(5, 0, 10, 5));
         panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(5, 0, 10, 10));
 
@@ -139,6 +398,31 @@ public class SnapSettingDialog extends SmDialog {
         this.panelSnapParams.add(new JPanel(), new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(0).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
         this.panelTolarenceView.setPreferredSize(new Dimension(100, 100));
         this.panelTolarenceView.setBorder(new LineBorder(Color.gray));
+
+        this.panelTolarenceView.setLayout(new GridBagLayout());
+        this.labelImageArraw.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Select.png"));
+        this.panelTolarenceView.add(labelImageArraw, new GridBagConstraintsHelper(0, 0, 1, 1));
+        this.panelTolarenceView.add(labelImageCicle, new GridBagConstraintsHelper(0, 0, 1, 1));
+        this.labelImageCicle.setIcon(buildIcon(30));
+    }
+
+    private ImageIcon buildIcon(int width) {
+        ImageIcon colorIcon = new ImageIcon();
+        BufferedImage bufferedImage = new BufferedImage(99, 99, BufferedImage.TYPE_INT_RGB);
+        Graphics g = bufferedImage.createGraphics();
+        g.setColor(panelTolarenceView.getBackground());
+        g.fillRect(0, 0, 99, 99);//填充整个屏幕
+        g.setColor(Color.red);
+        int pointx = 43;
+        int pointy = 42;
+        if (width > 2) {
+            pointx = pointx - width / 2;
+            pointy = pointy - width / 2;
+        }
+        g.drawOval(pointx, pointy, width, width);
+        colorIcon.setImage(bufferedImage);
+        g.dispose();
+        return colorIcon;
     }
 
     private void initPanelSnapModeLayout() {
@@ -151,10 +435,14 @@ public class SnapSettingDialog extends SmDialog {
         panelModeDisplay.add(panelButtonDisplay, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
 
         panelButtonDisplay.setLayout(new GridBagLayout());
-        panelButtonDisplay.add(this.buttonMoveFrist, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        panelButtonDisplay.add(this.buttonMoveForward, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
-        panelButtonDisplay.add(this.buttonMoveNext, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        panelButtonDisplay.add(this.buttonMoveLast, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
+        panelButtonDisplay.add(this.buttonMoveToFrist, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        panelButtonDisplay.add(this.buttonMoveToForward, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        panelButtonDisplay.add(this.buttonMoveToNext, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        panelButtonDisplay.add(this.buttonMoveToLast, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.buttonMoveToFrist.setPreferredSize(new Dimension(36, 36));
+        this.buttonMoveToForward.setPreferredSize(new Dimension(36, 36));
+        this.buttonMoveToNext.setPreferredSize(new Dimension(36, 36));
+        this.buttonMoveToLast.setPreferredSize(new Dimension(36, 36));
         this.scrollPaneSnapMode.setViewportView(tableSnapMode);
         this.scrollPaneSnapMode.setBackground(Color.white);
         this.tableSnapMode.setBackground(Color.white);
@@ -178,57 +466,64 @@ public class SnapSettingDialog extends SmDialog {
         this.tableSnapMode.setRowHeight(23);
         this.tableSnapMode.setShowHorizontalLines(false);
         this.tableSnapMode.setShowVerticalLines(false);
+        this.tableSnapMode.addRowSelectionInterval(0, 0);
+    }
+
+    private void setSnapModeAll(boolean value) {
+        mapControlSnapSetting.set(SnapMode.POINT_ON_ENDPOINT, value);
+        mapControlSnapSetting.set(SnapMode.POINT_ON_MIDPOINT, value);
+        mapControlSnapSetting.set(SnapMode.POINT_ON_LINE, value);
+        mapControlSnapSetting.set(SnapMode.POINT_ON_POINT, value);
+        mapControlSnapSetting.set(SnapMode.POINT_ON_EXTENSION, value);
+        mapControlSnapSetting.set(SnapMode.LINE_WITH_HORIZONTAL, value);
+        mapControlSnapSetting.set(SnapMode.LINE_WITH_VERTICAL, value);
+        mapControlSnapSetting.set(SnapMode.LINE_WITH_PARALLEL, value);
+        mapControlSnapSetting.set(SnapMode.LINE_WITH_PERPENDICULAR, value);
+        mapControlSnapSetting.set(SnapMode.LINE_WITH_FIXED_ANGLE, value);
+        mapControlSnapSetting.set(SnapMode.LINE_WITH_FIXED_LENGTH, value);
+    }
+
+    private void setSnapMode(int row, boolean value) {
+        SnapMode mode = srcSnapSetting.getAt(row);
+        mapControlSnapSetting.set(mode, value);
     }
 
     private void initItem(CheckableItem item, int row) {
-        switch (row) {
-            case POINT_ON_ENDPOINT:
-                item.setSelected(defaultSnapSetting.get(SnapMode.POINT_ON_ENDPOINT));
-                item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_PointOnEndpoint.png"));
-                break;
-            case POINT_ON_MIDPOINT:
-                item.setSelected(defaultSnapSetting.get(SnapMode.POINT_ON_MIDPOINT));
-                item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_PointOnMidpoint.png"));
-                break;
-            case POINT_ON_LINE:
-                item.setSelected(defaultSnapSetting.get(SnapMode.POINT_ON_LINE));
-                item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_PointOnLine.png"));
-                break;
-            case POINT_ON_POINT:
-                item.setSelected(defaultSnapSetting.get(SnapMode.POINT_ON_POINT));
-                item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_PointOnPoint.png"));
-                break;
-            case POINT_ON_EXTENSION:
-                item.setSelected(defaultSnapSetting.get(SnapMode.POINT_ON_EXTENSION));
-                item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_PointOnExtension.png"));
-                break;
-            case LINE_WITH_HORIZONTAL:
-                item.setSelected(defaultSnapSetting.get(SnapMode.LINE_WITH_HORIZONTAL));
-                item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_LineWithHorizontal.png"));
-                break;
-            case LINE_WITH_VERTICAL:
-                item.setSelected(defaultSnapSetting.get(SnapMode.LINE_WITH_VERTICAL));
-                item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_LineWithVertical.png"));
-                break;
-            case LINE_WITH_PARALLEL:
-                item.setSelected(defaultSnapSetting.get(SnapMode.LINE_WITH_PARALLEL));
-                item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_LineWithParallel.png"));
-                break;
-            case LINE_WITH_PERPENDICULAR:
-                item.setSelected(defaultSnapSetting.get(SnapMode.LINE_WITH_PERPENDICULAR));
-                item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_LineWithPerpendicular.png"));
-                break;
-            case LINE_WITH_FIXED_ANGLE:
-                item.setSelected(defaultSnapSetting.get(SnapMode.LINE_WITH_FIXED_ANGLE));
-                item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_LineWithFixedAngle.png"));
-                break;
-            case LINE_WITH_FIXED_LENGTH:
-                item.setSelected(defaultSnapSetting.get(SnapMode.LINE_WITH_FIXED_LENGTH));
-                item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_LineWithFixedLength.png"));
-                break;
-            default:
-                break;
-
+        SnapMode mode = srcSnapSetting.getAt(row);
+        item.setMode(mode);
+        if (mode == SnapMode.POINT_ON_ENDPOINT) {
+            item.setSelected(srcSnapSetting.get(SnapMode.POINT_ON_ENDPOINT));
+            item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_PointOnEndpoint.png"));
+        } else if (mode == SnapMode.POINT_ON_MIDPOINT) {
+            item.setSelected(srcSnapSetting.get(SnapMode.POINT_ON_MIDPOINT));
+            item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_PointOnMidpoint.png"));
+        } else if (mode == SnapMode.POINT_ON_LINE) {
+            item.setSelected(srcSnapSetting.get(SnapMode.POINT_ON_LINE));
+            item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_PointOnLine.png"));
+        } else if (mode == SnapMode.POINT_ON_POINT) {
+            item.setSelected(srcSnapSetting.get(SnapMode.POINT_ON_POINT));
+            item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_PointOnPoint.png"));
+        } else if (mode == SnapMode.POINT_ON_EXTENSION) {
+            item.setSelected(srcSnapSetting.get(SnapMode.POINT_ON_EXTENSION));
+            item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_PointOnExtension.png"));
+        } else if (mode == SnapMode.LINE_WITH_HORIZONTAL) {
+            item.setSelected(srcSnapSetting.get(SnapMode.LINE_WITH_HORIZONTAL));
+            item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_LineWithHorizontal.png"));
+        } else if (mode == SnapMode.LINE_WITH_VERTICAL) {
+            item.setSelected(srcSnapSetting.get(SnapMode.LINE_WITH_VERTICAL));
+            item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_LineWithVertical.png"));
+        } else if (mode == SnapMode.LINE_WITH_PARALLEL) {
+            item.setSelected(srcSnapSetting.get(SnapMode.LINE_WITH_PARALLEL));
+            item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_LineWithParallel.png"));
+        } else if (mode == SnapMode.LINE_WITH_PERPENDICULAR) {
+            item.setSelected(srcSnapSetting.get(SnapMode.LINE_WITH_PERPENDICULAR));
+            item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_LineWithPerpendicular.png"));
+        } else if (mode == SnapMode.LINE_WITH_FIXED_ANGLE) {
+            item.setSelected(srcSnapSetting.get(SnapMode.LINE_WITH_FIXED_ANGLE));
+            item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_LineWithFixedAngle.png"));
+        } else if (mode == SnapMode.LINE_WITH_FIXED_LENGTH) {
+            item.setSelected(srcSnapSetting.get(SnapMode.LINE_WITH_FIXED_LENGTH));
+            item.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_LineWithFixedLength.png"));
         }
     }
 
@@ -252,6 +547,7 @@ public class SnapSettingDialog extends SmDialog {
                             boolean value = !checkBox.isSelected();
                             checkBox.setSelected(value);
                             tableModel.selectAllOrNull(value);
+                            setSnapModeAll(value);
                             tableHeader.repaint();
                         }
                     }
@@ -282,8 +578,17 @@ public class SnapSettingDialog extends SmDialog {
     class CheckableItem {
         private Icon icon;
         private boolean isSelected;
+        private SnapMode mode;
 
         public CheckableItem() {
+        }
+
+        public SnapMode getMode() {
+            return mode;
+        }
+
+        public void setMode(SnapMode mode) {
+            this.mode = mode;
         }
 
         public void setSelected(boolean b) {
@@ -384,92 +689,79 @@ public class SnapSettingDialog extends SmDialog {
             component.setBackground(UIManager.getColor("List.textBackground"));
             component.setForeground(UIManager.getColor("List.textForeground"));
         }
+
     }
 
 
-    private Object getSnapMode(int i, int tableColumn) {
+    private Object getSnapMode(int row, int tableColumn) {
         Object result = "";
-        switch (i) {
-            case POINT_ON_ENDPOINT:
-                if (tableColumn == TABLE_COLUMN_TYPE) {
-                    result = DataEditorProperties.getString("String_Point_On_EndPoint");
-                } else {
-                    result = DataEditorProperties.getString("String_POINT_ON_ENDPOINT");
-                }
-                break;
-            case POINT_ON_MIDPOINT:
-                if (tableColumn == TABLE_COLUMN_TYPE) {
-                    result = DataEditorProperties.getString("String_Point_On_MidPoint");
-                } else {
-                    result = DataEditorProperties.getString("String_POINT_ON_MIDPOINT");
-                }
-                break;
-            case POINT_ON_LINE:
-                if (tableColumn == TABLE_COLUMN_TYPE) {
-                    result = DataEditorProperties.getString("String_Point_On_Line");
-                } else {
-                    result = DataEditorProperties.getString("String_POINT_ON_LINE");
-                }
-                break;
-            case POINT_ON_POINT:
-                if (tableColumn == TABLE_COLUMN_TYPE) {
-                    result = DataEditorProperties.getString("String_Point_On_Point");
-                } else {
-                    result = DataEditorProperties.getString("String_POINT_ON_POINT");
-                }
-                break;
-            case POINT_ON_EXTENSION:
-                if (tableColumn == TABLE_COLUMN_TYPE) {
-                    result = DataEditorProperties.getString("String_Point_On_Extension");
-                } else {
-                    result = DataEditorProperties.getString("String_POINT_ON_EXTENSION");
-                }
-                break;
-            case LINE_WITH_HORIZONTAL:
-                if (tableColumn == TABLE_COLUMN_TYPE) {
-                    result = DataEditorProperties.getString("String_Line_With_Horizontal");
-                } else {
-                    result = DataEditorProperties.getString("String_LINE_WITH_HORIZONTAL");
-                }
-                break;
-            case LINE_WITH_VERTICAL:
-                if (tableColumn == TABLE_COLUMN_TYPE) {
-                    result = DataEditorProperties.getString("String_Line_With_Vertical");
-                } else {
-                    result = DataEditorProperties.getString("String_LINE_WITH_VERTICAL");
-                }
-                break;
-            case LINE_WITH_PARALLEL:
-                if (tableColumn == TABLE_COLUMN_TYPE) {
-                    result = DataEditorProperties.getString("String_Line_With_Parallel");
-                } else {
-                    result = DataEditorProperties.getString("String_LINE_WITH_PARALLEL");
-                }
-                break;
-            case LINE_WITH_PERPENDICULAR:
-                if (tableColumn == TABLE_COLUMN_TYPE) {
-                    result = DataEditorProperties.getString("String_Line_With_Perpendicular");
-                } else {
-                    result = DataEditorProperties.getString("String_LINE_WITH_PERPENDICULAR");
-                }
-                break;
-            case LINE_WITH_FIXED_ANGLE:
-                if (tableColumn == TABLE_COLUMN_TYPE) {
-                    result = DataEditorProperties.getString("String_Line_With_Fixed_Angle");
-                } else {
-                    result = DataEditorProperties.getString("String_LINE_WITH_FIXED_ANGLE");
-                }
-                break;
-            case LINE_WITH_FIXED_LENGTH:
-                if (tableColumn == TABLE_COLUMN_TYPE) {
-                    result = DataEditorProperties.getString("String_Line_With_Fixed_Length");
-                } else {
-                    result = DataEditorProperties.getString("String_LINE_WITH_FIXED_LENGTH");
-                }
-                break;
-            default:
-                break;
-
+        SnapMode mode = srcSnapSetting.getAt(row);
+        if (mode == SnapMode.POINT_ON_ENDPOINT) {
+            if (tableColumn == TABLE_COLUMN_TYPE) {
+                result = DataEditorProperties.getString("String_Point_On_EndPoint");
+            } else {
+                result = DataEditorProperties.getString("String_POINT_ON_ENDPOINT");
+            }
+        } else if (mode == SnapMode.POINT_ON_MIDPOINT) {
+            if (tableColumn == TABLE_COLUMN_TYPE) {
+                result = DataEditorProperties.getString("String_Point_On_MidPoint");
+            } else {
+                result = DataEditorProperties.getString("String_POINT_ON_MIDPOINT");
+            }
+        } else if (mode == SnapMode.POINT_ON_LINE) {
+            if (tableColumn == TABLE_COLUMN_TYPE) {
+                result = DataEditorProperties.getString("String_Point_On_Line");
+            } else {
+                result = DataEditorProperties.getString("String_POINT_ON_LINE");
+            }
+        } else if (mode == SnapMode.POINT_ON_POINT) {
+            if (tableColumn == TABLE_COLUMN_TYPE) {
+                result = DataEditorProperties.getString("String_Point_On_Point");
+            } else {
+                result = DataEditorProperties.getString("String_POINT_ON_POINT");
+            }
+        } else if (mode == SnapMode.POINT_ON_EXTENSION) {
+            if (tableColumn == TABLE_COLUMN_TYPE) {
+                result = DataEditorProperties.getString("String_Point_On_Extension");
+            } else {
+                result = DataEditorProperties.getString("String_POINT_ON_EXTENSION");
+            }
+        } else if (mode == SnapMode.LINE_WITH_HORIZONTAL) {
+            if (tableColumn == TABLE_COLUMN_TYPE) {
+                result = DataEditorProperties.getString("String_Line_With_Horizontal");
+            } else {
+                result = DataEditorProperties.getString("String_LINE_WITH_HORIZONTAL");
+            }
+        } else if (mode == SnapMode.LINE_WITH_VERTICAL) {
+            if (tableColumn == TABLE_COLUMN_TYPE) {
+                result = DataEditorProperties.getString("String_Line_With_Vertical");
+            } else {
+                result = DataEditorProperties.getString("String_LINE_WITH_VERTICAL");
+            }
+        } else if (mode == SnapMode.LINE_WITH_PARALLEL) {
+            if (tableColumn == TABLE_COLUMN_TYPE) {
+                result = DataEditorProperties.getString("String_Line_With_Parallel");
+            } else {
+                result = DataEditorProperties.getString("String_LINE_WITH_PARALLEL");
+            }
+        } else if (mode == SnapMode.LINE_WITH_PERPENDICULAR) {
+            if (tableColumn == TABLE_COLUMN_TYPE) {
+                result = DataEditorProperties.getString("String_Line_With_Perpendicular");
+            } else {
+                result = DataEditorProperties.getString("String_LINE_WITH_PERPENDICULAR");
+            }
+        } else if (mode == SnapMode.LINE_WITH_FIXED_ANGLE) {
+            if (tableColumn == TABLE_COLUMN_TYPE) {
+                result = DataEditorProperties.getString("String_Line_With_Fixed_Angle");
+            } else {
+                result = DataEditorProperties.getString("String_LINE_WITH_FIXED_ANGLE");
+            }
+        } else if (mode == SnapMode.LINE_WITH_FIXED_LENGTH) {
+            if (tableColumn == TABLE_COLUMN_TYPE) {
+                result = DataEditorProperties.getString("String_Line_With_Fixed_Length");
+            } else {
+                result = DataEditorProperties.getString("String_LINE_WITH_FIXED_LENGTH");
+            }
         }
         return result;
     }
@@ -481,30 +773,32 @@ public class SnapSettingDialog extends SmDialog {
         this.panelTolarenceView = new JPanel();
         this.scrollPaneSnapMode = new JScrollPane();
         this.tableSnapMode = new JTable();
-        this.buttonMoveNext = new JButton();
-        this.buttonMoveForward = new JButton();
-        this.buttonMoveFrist = new JButton();
-        this.buttonMoveLast = new JButton();
+        this.buttonMoveToNext = new JButton();
+        this.buttonMoveToForward = new JButton();
+        this.buttonMoveToFrist = new JButton();
+        this.buttonMoveToLast = new JButton();
         this.buttonOK = ComponentFactory.createButtonOK();
         this.buttonCancel = ComponentFactory.createButtonCancel();
         this.buttonRecover = new SmButton();
         this.labelSnapTolarence = new JLabel();
-        DecimalFormat format = new DecimalFormat("0");
-        this.textFieldSnapTolarence = new WarningTextFeild(format.format(defaultSnapSetting.getTolerance()));
+        this.textFieldSnapTolarence = new WarningTextFeild(format.format(srcSnapSetting.getTolerance()));
         this.textFieldSnapTolarence.setInitInfo(1, 20, 0, "null");
         this.labelFixedAngle = new JLabel();
-        this.textFieldFixedAngle = new WarningTextFeild(format.format(defaultSnapSetting.getFixedAngle()));
+        this.textFieldFixedAngle = new WarningTextFeild(format.format(srcSnapSetting.getFixedAngle()));
         this.textFieldFixedAngle.setInitInfo(0, 360, 1, "2");
         this.labelMaxSnappedCount = new JLabel();
-        this.textFieldMaxSnappedCount = new WarningTextFeild(format.format(defaultSnapSetting.getMaxSnappedCount()));
+        this.textFieldMaxSnappedCount = new WarningTextFeild(format.format(srcSnapSetting.getMaxSnappedCount()));
+        this.textFieldMaxSnappedCount.setInitInfo(20, 5000, 0, "null");
         this.labelFixedLength = new JLabel();
-        this.textFieldFixedLength = new WarningTextFeild(format.format(defaultSnapSetting.getFixedLength()));
-        this.textFieldFixedLength.setInitInfo(20, 5000, 0, "null");
+        this.textFieldFixedLength = new WarningTextFeild(format.format(srcSnapSetting.getFixedLength()));
+        this.textFieldFixedLength.setInitInfo(0, 1000000000, 1, "2");
         this.labelMinSnappedLength = new JLabel();
-        this.textFieldMinSnappedLength = new WarningTextFeild(format.format(defaultSnapSetting.getMinSnappedLength()));
+        this.textFieldMinSnappedLength = new WarningTextFeild(format.format(srcSnapSetting.getMinSnappedLength()));
         this.textFieldMinSnappedLength.setInitInfo(1, 120, 0, "null");
         this.checkBoxSnappedLineBroken = new JCheckBox();
-
+        this.checkBoxSnappedLineBroken.setSelected(srcSnapSetting.isSnappedLineBroken());
+        this.labelImageCicle = new JLabel();
+        this.labelImageArraw = new JLabel();
     }
 
     public DialogResult showDialog() {
