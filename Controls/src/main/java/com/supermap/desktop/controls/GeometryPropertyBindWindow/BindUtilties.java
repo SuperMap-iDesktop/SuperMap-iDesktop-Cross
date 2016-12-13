@@ -82,6 +82,7 @@ public class BindUtilties {
         final JPopupMenuBind popupMenuBind = JPopupMenuBind.instance();
         int y = (int) point.getY() + 52;
         JFrame mainFrame = (JFrame) Application.getActiveApplication().getMainFrame();
+        popupMenuBind.removeBind();
         popupMenuBind.init();
         popupMenuBind.show(mainFrame, x, y);
         popupMenuBind.setVisible(true);
@@ -90,6 +91,7 @@ public class BindUtilties {
             @Override
             public void activeFormChanged(ActiveFormChangedEvent e) {
                 if (null == e.getNewActiveForm()) {
+                    popupMenuBind.removeBind();
                     popupMenuBind.removeEvents();
                     popupMenuBind.dispose();
                 }

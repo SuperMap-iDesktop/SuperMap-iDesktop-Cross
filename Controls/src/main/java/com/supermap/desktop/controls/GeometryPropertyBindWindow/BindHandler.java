@@ -375,15 +375,6 @@ public class BindHandler {
     }
 
     public void bindFormMapsAndFormTabulars() {
-        int formSize = formsList.size();
-        for (int i = 0; i < formSize; i++) {
-            IForm tempForm = (IForm) formsList.get(i);
-            if (tempForm instanceof IFormMap) {
-                this.formMapList.add(tempForm);
-            } else if (tempForm instanceof IFormTabular) {
-                this.formTabularList.add(tempForm);
-            }
-        }
         bindFormMaps();
         int formMapSize = formMapList.size();
         int formTabularSize = formTabularList.size();
