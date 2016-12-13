@@ -1162,22 +1162,35 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         String updateField = comboBoxUpdateField.getSelectedItem().toString();// 更新字段
         recordset.getBatch().setMaxRecordCount(1024);
         recordset.getBatch().begin();
-        for (int i = 0; i < selectRows.length; i++) {
-            recordset.moveTo(selectRows[i]);
-            resultSet.moveTo(selectRows[i]);
-            if (UpdateColumnUtilties.isIntegerType(fieldType)) {
-                recordset.setFieldValue(updateField, Convert.toInteger(resultSet.getFieldValue(resultField)));
-            } else if (fieldType.equals(FieldType.SINGLE) || fieldType.equals(FieldType.DOUBLE)) {
-                recordset.setFieldValue(updateField, Convert.toDouble(resultSet.getFieldValue(resultField)));
-            } else if (fieldType.equals(FieldType.BOOLEAN)) {
-                recordset.setFieldValue(updateField, Convert.toBoolean(resultSet.getFieldValue(resultField)));
-            } else if (fieldType.equals(FieldType.TEXT) || fieldType.equals(FieldType.WTEXT) || fieldType.equals(FieldType.CHAR)) {
-                recordset.setFieldValue(updateField, resultSet.getFieldValue(resultField).toString());
-            }
-        }
+	    Object newValue = null;
+	    TabularEditHistory tabularEditHistory = new TabularEditHistory();
+	    for (int i = 0; i < selectRows.length; i++) {
+		    int smId = tabular.getSmId(selectRows[i]);
+		    EditHistoryBean editHistoryBean = new EditHistoryBean();
+		    editHistoryBean.setSmId(smId);
+		    editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
+		    editHistoryBean.setFieldName(updateField);
+		    resultSet.moveTo(selectRows[i]);
+		    if (UpdateColumnUtilties.isIntegerType(fieldType)) {
+	            newValue = Convert.toInteger(resultSet.getFieldValue(resultField));
+	            recordset.setFieldValue(updateField, newValue);
+		    } else if (fieldType.equals(FieldType.SINGLE) || fieldType.equals(FieldType.DOUBLE)) {
+	            newValue = Convert.toDouble(resultSet.getFieldValue(resultField));
+	            recordset.setFieldValue(updateField, newValue);
+		    } else if (fieldType.equals(FieldType.BOOLEAN)) {
+	            newValue = Convert.toBoolean(resultSet.getFieldValue(resultField));
+	            recordset.setFieldValue(updateField, newValue);
+		    } else if (fieldType.equals(FieldType.TEXT) || fieldType.equals(FieldType.WTEXT) || fieldType.equals(FieldType.CHAR)) {
+	            newValue = resultSet.getFieldValue(resultField).toString();
+	            recordset.setFieldValue(updateField, newValue);
+		    }
+		    editHistoryBean.setAfterValue(newValue);
+		    tabularEditHistory.addEditHistoryBean(editHistoryBean);
+	    }
         recordset.getBatch().update();
-        if (beyoundMaxLength) {
-            Application.getActiveApplication().getOutput()
+	    tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
+	    if (beyoundMaxLength) {
+		    Application.getActiveApplication().getOutput()
                     .output(MessageFormat.format(TabularViewProperties.getString("String_FormTabularUpdataColumn_FieldInfoDesValueIsOverlong"), updateField));
         }
         // 重新查询避免操作后记录集清除的异常
@@ -1220,15 +1233,25 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         recordset.getBatch().setMaxRecordCount(1024);
         recordset.getBatch().begin();
         Object newValue = null;
-        for (int i = 0; i < selectRows.length; i++) {
-            recordset.moveTo(selectRows[i]);
-            newValue = UpdateColumnUtilties.getUpdataModeMathValueDataTime(recordset.getFieldValue(operationField), recordset.getFieldValue(updateField),
+	    TabularEditHistory tabularEditHistory = new TabularEditHistory();
+	    for (int i = 0; i < selectRows.length; i++) {
+	        int smId = tabular.getSmId(selectRows[i]);
+	        EditHistoryBean editHistoryBean = new EditHistoryBean();
+	        editHistoryBean.setSmId(smId);
+	        editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
+	        editHistoryBean.setFieldName(updateField);
+		    newValue = UpdateColumnUtilties.getUpdataModeMathValueDataTime(recordset.getFieldValue(operationField), recordset.getFieldValue(updateField),
                     method, textFieldX.getText());
             if (null != newValue) {
-                recordset.setFieldValue(updateField, newValue);
+	            editHistoryBean.setAfterValue(newValue);
+	            recordset.setFieldValue(updateField, newValue);
+	            tabularEditHistory.addEditHistoryBean(editHistoryBean);
             }
         }
         recordset.getBatch().update();
+	    if (tabularEditHistory.getCount() > 0) {
+		    tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
+	    }
         // 重新查询避免操作后记录集清除的异常
         refreshTabular(selectRows);
     }
@@ -1242,10 +1265,15 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         recordset.getBatch().setMaxRecordCount(1024);
         recordset.getBatch().begin();
         Object newValue = null;
-        for (int i = 0; i < selectRows.length; i++) {
-            recordset.moveTo(selectRows[i]);
-            if (UpdateColumnUtilties.isObjectConnect(method)) {
-                newValue = UpdateColumnUtilties.getObjectInfo(method, recordset.getGeometry(), fieldType);
+	    TabularEditHistory tabularEditHistory = new TabularEditHistory();
+	    for (int i = 0; i < selectRows.length; i++) {
+		    int smId = tabular.getSmId(selectRows[i]);
+		    EditHistoryBean editHistoryBean = new EditHistoryBean();
+		    editHistoryBean.setSmId(smId);
+		    editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
+		    editHistoryBean.setFieldName(updateField);
+		    if (UpdateColumnUtilties.isObjectConnect(method)) {
+			    newValue = UpdateColumnUtilties.getObjectInfo(method, recordset.getGeometry(), fieldType);
             } else if (UpdateColumnUtilties.isDaysInfo(method)) {
                 newValue = UpdateColumnUtilties.getDateInfo(method, (Date) recordset.getFieldValue(comboBoxOperationField.getSelectedItem().toString()));
                 newValue = newValue.toString();
@@ -1257,14 +1285,17 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 beyoundMaxLength = true;
                 newValue = newValue.toString().substring(0, recordset.getFieldInfos().get(updateField).getMaxLength());
             }
-            recordset.setFieldValue(updateField, newValue);
-        }
+		    editHistoryBean.setAfterValue(newValue);
+		    recordset.setFieldValue(updateField, newValue);
+		    tabularEditHistory.addEditHistoryBean(editHistoryBean);
+	    }
         recordset.getBatch().update();
         if (beyoundMaxLength) {
             Application.getActiveApplication().getOutput()
                     .output(MessageFormat.format(TabularViewProperties.getString("String_FormTabularUpdataColumn_FieldInfoDesValueIsOverlong"), updateField));
         }
-        // 重新查询避免操作后记录集清除的异常
+	    tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
+	    // 重新查询避免操作后记录集清除的异常
         refreshTabular(selectRows);
     }
 
@@ -1276,9 +1307,14 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         recordset.getBatch().setMaxRecordCount(1024);
         recordset.getBatch().begin();
         Object newValue = null;
-        for (int i = 0; i < selectRows.length; i++) {
-            recordset.moveTo(selectRows[i]);
-            if (UpdateColumnUtilties.isMathInfo(method)) {
+	    TabularEditHistory tabularEditHistory = new TabularEditHistory();
+	    for (int i = 0; i < selectRows.length; i++) {
+		    int smId = tabular.getSmId(selectRows[i]);
+		    EditHistoryBean editHistoryBean = new EditHistoryBean();
+		    editHistoryBean.setSmId(smId);
+		    editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
+		    editHistoryBean.setFieldName(updateField);
+		    if (UpdateColumnUtilties.isMathInfo(method)) {
                 String textFieldXInfo = "";
                 if (null != textFieldX.getText()) {
                     textFieldXInfo = textFieldX.getText();
@@ -1293,10 +1329,13 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             } else if (UpdateColumnUtilties.isDaysInfo(method)) {
                 newValue = UpdateColumnUtilties.getDateInfo(method, (Date) recordset.getFieldValue(comboBoxOperationField.getSelectedItem().toString()));
             }
-            recordset.setFieldValue(updateField, newValue);
-        }
+		    editHistoryBean.setAfterValue(newValue);
+		    recordset.setFieldValue(updateField, newValue);
+		    tabularEditHistory.addEditHistoryBean(editHistoryBean);
+	    }
         recordset.getBatch().update();
-        // 重新查询避免操作后记录集清除的异常
+	    tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
+	    // 重新查询避免操作后记录集清除的异常
         refreshTabular(selectRows);
     }
 
@@ -1339,12 +1378,15 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         boolean beyoundMaxLength = false;
         recordset.getBatch().setMaxRecordCount(1024);
         recordset.getBatch().begin();
-        for (int i = 0; i < selectRows.length; i++) {
-	        if (!recordset.seekID(tabular.getSmId(selectRows[i]))) {
-		        continue;
-	        }
-            if (isText) {
-	            String newValue;
+	    TabularEditHistory tabularEditHistory = new TabularEditHistory();
+	    for (int i = 0; i < selectRows.length; i++) {
+		    int smId = tabular.getSmId(selectRows[i]);
+		    EditHistoryBean editHistoryBean = new EditHistoryBean();
+		    editHistoryBean.setSmId(smId);
+		    editHistoryBean.setFieldName(updateField);
+		    editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
+		    if (isText) {
+			    String newValue;
 	            if (null == recordset.getFieldValue(fristField) && null == recordset.getFieldValue(secondField)) {
                     newValue = "";
                 } else if (null == recordset.getFieldValue(fristField) && null != recordset.getFieldValue(secondField)) {
@@ -1386,7 +1428,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                         newValue = newValue.substring(0, recordset.getFieldInfos().get(updateField).getMaxLength());
                     }
                 }
-                recordset.setFieldValue(updateField, newValue);
+			    editHistoryBean.setAfterValue(newValue);
+			    recordset.setFieldValue(updateField, newValue);
             } else {
                 Object source = null;
                 Object source1 = null;
@@ -1397,11 +1440,15 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                     source = recordset.getFieldValue(fristField);
                     source1 = recordset.getFieldValue(secondField);
                 }
-                recordset.setFieldValue(updateField, UpdateColumnUtilties.getCommonMethodInfo(method, source, source1, fieldType));
-            }
-        }
+			    Object newValue = UpdateColumnUtilties.getCommonMethodInfo(method, source, source1, fieldType);
+			    editHistoryBean.setAfterValue(newValue);
+			    recordset.setFieldValue(updateField, newValue);
+		    }
+		    tabularEditHistory.addEditHistoryBean(editHistoryBean);
+	    }
         recordset.getBatch().update();
-        if (beyoundMaxLength) {
+	    tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
+	    if (beyoundMaxLength) {
             Application.getActiveApplication().getOutput()
                     .output(MessageFormat.format(TabularViewProperties.getString("String_FormTabularUpdataColumn_FieldInfoDesValueIsOverlong"), updateField));
         }
@@ -1464,10 +1511,15 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         boolean beyoundMaxLength = false;
         recordset.getBatch().setMaxRecordCount(1024);
         recordset.getBatch().begin();
-        for (int i = 0; i < selectRows.length; i++) {
-            recordset.moveTo(selectRows[i]);
-            if (isText) {
-                String newValue = "";
+	    TabularEditHistory tabularEditHistory = new TabularEditHistory();
+	    for (int i = 0; i < selectRows.length; i++) {
+		    int smId = tabular.getSmId(selectRows[i]);
+		    EditHistoryBean editHistoryBean = new EditHistoryBean();
+		    editHistoryBean.setSmId(smId);
+		    editHistoryBean.setFieldName(updateField);
+		    editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
+		    if (isText) {
+			    String newValue = "";
                 if (checkBoxInversion.isSelected()) {
                     if (null == recordset.getFieldValue(fristField)) {
                         newValue = value + "";
@@ -1498,8 +1550,9 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 } else if (operationFieldType.equals(FieldType.BOOLEAN) && !fieldType.equals(FieldType.CHAR)) {
                     newValue = newValue.substring(0, 1).toUpperCase() + newValue.substring(1, newValue.length());
                 }
-                recordset.setFieldValue(updateField, newValue);
-            } else {
+			    editHistoryBean.setAfterValue(newValue);
+			    recordset.setFieldValue(updateField, newValue);
+		    } else {
                 Object source = null;
                 Object source1 = null;
                 if (checkBoxInversion.isSelected()) {
@@ -1509,11 +1562,15 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                     source = recordset.getFieldValue(fristField);
                     source1 = value;
                 }
-                recordset.setFieldValue(updateField, UpdateColumnUtilties.getCommonMethodInfo(method, source, source1, fieldType));
-            }
-        }
+			    Object newValue = UpdateColumnUtilties.getCommonMethodInfo(method, source, source1, fieldType);
+			    editHistoryBean.setAfterValue(newValue);
+			    recordset.setFieldValue(updateField, newValue);
+		    }
+		    tabularEditHistory.addEditHistoryBean(editHistoryBean);
+	    }
         recordset.getBatch().update();
-        if (beyoundMaxLength) {
+	    tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
+	    if (beyoundMaxLength) {
             Application.getActiveApplication().getOutput()
                     .output(MessageFormat.format(TabularViewProperties.getString("String_FormTabularUpdataColumn_FieldInfoDesValueIsOverlong"), updateField));
         }
@@ -1632,16 +1689,22 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         if (expression.split(basicMathMethod).length == 2) {
             String fieldLeft = expression.split(basicMathMethod)[0];
             String fieldRight = expression.split(basicMathMethod)[1];
-            if (StringUtilities.isNumber(fieldLeft) && StringUtilities.isNumber(fieldRight)) {
-                newValue = UpdateColumnUtilties.getCommonMethodInfo(basicMathMethod, fieldLeft, fieldRight, FieldType.BOOLEAN);
+	        TabularEditHistory tabularEditHistory = new TabularEditHistory();
+	        if (StringUtilities.isNumber(fieldLeft) && StringUtilities.isNumber(fieldRight)) {
+		        newValue = UpdateColumnUtilties.getCommonMethodInfo(basicMathMethod, fieldLeft, fieldRight, FieldType.BOOLEAN);
                 Recordset recordset = tabular.getRecordset();
                 recordset.getBatch().setMaxRecordCount(1024);
                 recordset.getBatch().begin();
-                for (int i = 0; i < selectRows.length; i++) {
-
-                    recordset.moveTo(selectRows[i]);
-                    recordset.setFieldValue(updateField, newValue);
-                }
+		        for (int i = 0; i < selectRows.length; i++) {
+			        EditHistoryBean editHistoryBean = new EditHistoryBean();
+			        int smId = tabular.getSmId(selectRows[i]);
+			        editHistoryBean.setSmId(smId);
+			        editHistoryBean.setFieldName(updateField);
+			        editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
+			        editHistoryBean.setAfterValue(newValue);
+			        recordset.setFieldValue(updateField, newValue);
+			        tabularEditHistory.addEditHistoryBean(editHistoryBean);
+		        }
                 recordset.getBatch().update();
                 // 重新查询避免操作后记录集清除的异常
                 refreshTabular(selectRows);
@@ -1650,11 +1713,17 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 recordset.getBatch().setMaxRecordCount(1024);
                 recordset.getBatch().begin();
                 for (int i = 0; i < selectRows.length; i++) {
-                    recordset.moveTo(selectRows[i]);
-                    if (null != recordset.getFieldValue(fieldLeft)) {
-                        newValue = UpdateColumnUtilties.getCommonMethodInfo(basicMathMethod, recordset.getFieldValue(fieldLeft), fieldRight, FieldType.BOOLEAN);
-                    }
-                    recordset.setFieldValue(updateField, newValue);
+	                int smId = tabular.getSmId(selectRows[i]);
+	                if (null != recordset.getFieldValue(fieldLeft)) {
+		                newValue = UpdateColumnUtilties.getCommonMethodInfo(basicMathMethod, recordset.getFieldValue(fieldLeft), fieldRight, FieldType.BOOLEAN);
+	                }
+	                EditHistoryBean editHistoryBean = new EditHistoryBean();
+	                editHistoryBean.setSmId(smId);
+	                editHistoryBean.setFieldName(updateField);
+	                editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
+	                editHistoryBean.setAfterValue(newValue);
+	                recordset.setFieldValue(updateField, newValue);
+	                tabularEditHistory.addEditHistoryBean(editHistoryBean);
                 }
                 recordset.getBatch().update();
                 // 重新查询避免操作后记录集清除的异常
@@ -1664,16 +1733,23 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 recordset.getBatch().setMaxRecordCount(1024);
                 recordset.getBatch().begin();
                 for (int i = 0; i < selectRows.length; i++) {
-                    recordset.moveTo(selectRows[i]);
-                    if (null != recordset.getFieldValue(fieldLeft) && null != recordset.getFieldValue(fieldRight)) {
+	                int smId = tabular.getSmId(selectRows[i]);
+	                if (null != recordset.getFieldValue(fieldLeft) && null != recordset.getFieldValue(fieldRight)) {
                         newValue = UpdateColumnUtilties.getCommonMethodInfo(basicMathMethod, recordset.getFieldValue(fieldLeft), recordset.getFieldValue(fieldRight), FieldType.BOOLEAN);
                     }
-                    recordset.setFieldValue(updateField, newValue);
+	                EditHistoryBean editHistoryBean = new EditHistoryBean();
+	                editHistoryBean.setSmId(smId);
+	                editHistoryBean.setFieldName(updateField);
+	                editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
+	                editHistoryBean.setAfterValue(newValue);
+	                recordset.setFieldValue(updateField, newValue);
+	                tabularEditHistory.addEditHistoryBean(editHistoryBean);
                 }
                 recordset.getBatch().update();
                 // 重新查询避免操作后记录集清除的异常
                 refreshTabular(selectRows);
             }
+	        tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
         } else {
             return;
         }
