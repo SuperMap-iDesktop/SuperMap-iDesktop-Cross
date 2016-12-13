@@ -33,7 +33,7 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 	private Datasource datasource;
 	private PercentListener percentListener;
 	private EngineType[] UN_SUPPORT_TYPE = new EngineType[]{EngineType.OGC, EngineType.ISERVERREST,
-		EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS, EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS, EngineType.MAPWORLD};
+			EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS, EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS};
 
 	public DatasetCopyCallable(MutiTable table) {
 		this.table = table;

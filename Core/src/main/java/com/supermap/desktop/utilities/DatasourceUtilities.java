@@ -1,7 +1,15 @@
 package com.supermap.desktop.utilities;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasets;
+import com.supermap.data.Datasource;
+import com.supermap.data.DatasourceConnectionInfo;
+import com.supermap.data.EngineInfo;
+import com.supermap.data.EngineType;
+import com.supermap.data.ErrorInfo;
 import com.supermap.data.Toolkit;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
@@ -67,7 +75,7 @@ public class DatasourceUtilities {
     // #endregion
     private static EngineType[] webEngineTypes = {
             EngineType.OGC, EngineType.ISERVERREST, EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS, EngineType.BAIDUMAPS,
-            EngineType.OPENSTREETMAPS, EngineType.MAPWORLD};
+		    EngineType.OPENSTREETMAPS};
 
     /**
      * 是否为web型数据源
@@ -543,7 +551,7 @@ public class DatasourceUtilities {
     }
 
     private static EngineType[] WEB_TYPE = new EngineType[]{EngineType.OGC, EngineType.ISERVERREST, EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS,
-            EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS, EngineType.MAPWORLD};
+		    EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS};
 
     /**
      * 根据引擎类型判断是否为web类型的数据源

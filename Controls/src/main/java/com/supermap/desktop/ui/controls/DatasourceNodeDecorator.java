@@ -67,10 +67,10 @@ class DatasourceNodeDecorator implements TreeNodeDecorator {
 				graphics.drawImage(
 						InternalImageIconFactory.DATASOURCE_ISERVERREST.getImage(), 0, 0, label);
 			}
-			else if(engineType.equals(EngineType.MAPWORLD)){
-				graphics.drawImage(
-						InternalImageIconFactory.DATASOURCE_MAPWORLD.getImage(), 0, 0, label);
-			}
+//			else if(engineType.equals(EngineType.MAPWORLD)){
+//				graphics.drawImage(
+//						InternalImageIconFactory.DATASOURCE_MAPWORLD.getImage(), 0, 0, label);
+//			}
 			else if(engineType.equals(EngineType.ORACLESPATIAL)){
 				graphics.drawImage(
 						InternalImageIconFactory.DATASOURCE_ORACLESPATIAL.getImage(), 0, 0, label);

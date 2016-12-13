@@ -1,12 +1,24 @@
 package com.supermap.desktop.ui;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldType;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormTabular;
+import com.supermap.desktop.Interface.ITabularEditHistoryManager;
+import com.supermap.desktop.beans.EditHistoryBean;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
+import com.supermap.desktop.editHistory.TabularEditHistory;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.tabularview.TabularViewProperties;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.FileChooserControl;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SQLExpressionDialog;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.Convert;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -16,15 +28,23 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.Toolkit;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * 更新列主界面
@@ -1320,10 +1340,12 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         recordset.getBatch().setMaxRecordCount(1024);
         recordset.getBatch().begin();
         for (int i = 0; i < selectRows.length; i++) {
-            recordset.moveTo(selectRows[i]);
+	        if (!recordset.seekID(tabular.getSmId(selectRows[i]))) {
+		        continue;
+	        }
             if (isText) {
-                String newValue = "";
-                if (null == recordset.getFieldValue(fristField) && null == recordset.getFieldValue(secondField)) {
+	            String newValue;
+	            if (null == recordset.getFieldValue(fristField) && null == recordset.getFieldValue(secondField)) {
                     newValue = "";
                 } else if (null == recordset.getFieldValue(fristField) && null != recordset.getFieldValue(secondField)) {
                     if (recordset.getFieldValue(secondField) instanceof Date) {
@@ -1388,16 +1410,17 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     }
 
     private void refreshTabular(int[] selectRows) {
-        int selectColumn = tabular.getjTableTabular().getSelectedColumn();
-        Recordset tempRecordset = tabular.getRecordset().getDataset().getRecordset(false, CursorType.DYNAMIC);
-        tabular.setRecordset(tempRecordset);
-        // 恢复原来的选中项
-        for (int j = 0; j < selectRows.length; j++) {
-            tabular.getjTableTabular().addRowSelectionInterval(selectRows[j], selectRows[j]);
-        }
-        if (selectColumn != -1) {
-            tabular.getjTableTabular().setColumnSelectionInterval(selectColumn, selectColumn);
-        }
+	    tabular.getjTableTabular().repaint(); // 重新查询会导致sql查询后的数据集更新列后查询条件丢失
+//        int selectColumn = tabular.getjTableTabular().getSelectedColumn();
+//        Recordset tempRecordset = tabular.getRecordset().getDataset().getRecordset(false, CursorType.DYNAMIC);
+//        tabular.setRecordset(tempRecordset);
+//        // 恢复原来的选中项
+//        for (int j = 0; j < selectRows.length; j++) {
+//            tabular.getjTableTabular().addRowSelectionInterval(selectRows[j], selectRows[j]);
+//        }
+//        if (selectColumn != -1) {
+//            tabular.getjTableTabular().setColumnSelectionInterval(selectColumn, selectColumn);
+//        }
     }
 
     private void updateOneField() {
@@ -1615,6 +1638,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 recordset.getBatch().setMaxRecordCount(1024);
                 recordset.getBatch().begin();
                 for (int i = 0; i < selectRows.length; i++) {
+
                     recordset.moveTo(selectRows[i]);
                     recordset.setFieldValue(updateField, newValue);
                 }
@@ -1661,26 +1685,35 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         Recordset recordset = tabular.getRecordset();
         recordset.getBatch().setMaxRecordCount(1024);
         recordset.getBatch().begin();
-        for (int i = 0; i < selectRows.length; i++) {
-            recordset.moveTo(selectRows[i]);
-            if (updateFieldType.equals(FieldType.TEXT) || updateFieldType.equals(FieldType.WTEXT) || updateFieldType.equals(FieldType.CHAR)) {
-                if (newValue.toString().contains("\"")) {
+	    TabularEditHistory editHistory = new TabularEditHistory();
+	    for (int i = 0; i < selectRows.length; i++) {
+		    int smId = tabular.getSmId(selectRows[i]);
+		    EditHistoryBean editHistoryBean = new EditHistoryBean();
+		    editHistoryBean.setSmId(smId);
+		    editHistoryBean.setFieldName(updateField);
+		    editHistoryBean.setBeforeValue(recordset.getFieldInfos().get(updateField));
+		    if (updateFieldType.equals(FieldType.TEXT) || updateFieldType.equals(FieldType.WTEXT) || updateFieldType.equals(FieldType.CHAR)) {
+			    if (newValue.toString().contains("\"")) {
                     newValue = newValue.toString().replace("\"", "");
                 }
                 if (newValue.toString().length() > recordset.getFieldInfos().get(updateField).getMaxLength()) {
                     beyoundMaxLength = true;
                     newValue = newValue.toString().substring(0, recordset.getFieldInfos().get(updateField).getMaxLength());
                 }
-            }
-            recordset.setFieldValue(updateField, newValue);
-        }
+		    }
+		    editHistoryBean.setAfterValue(newValue);
+		    editHistory.addEditHistoryBean(editHistoryBean);
+		    recordset.setFieldValue(updateField, newValue);
+	    }
         recordset.getBatch().update();
-        if (beyoundMaxLength) {
-            Application.getActiveApplication().getOutput()
+	    ITabularEditHistoryManager editHistoryManager = tabular.getEditHistoryManager();
+	    editHistoryManager.addEditHistory(editHistory);
+	    if (beyoundMaxLength) {
+		    Application.getActiveApplication().getOutput()
                     .output(MessageFormat.format(TabularViewProperties.getString("String_FormTabularUpdataColumn_FieldInfoDesValueIsOverlong"), updateField));
         }
         // 重新查询避免操作后记录集清除的异常
-        refreshTabular(selectRows);
+	    refreshTabular(selectRows);
     }
 
     private void fileChooserClicked() {

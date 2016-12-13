@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1478769762663
+Bnd-LastModified: 1481531079370
 Build-Jdk: 1.7.0_80
 Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.tabularview.TabularViewActivator

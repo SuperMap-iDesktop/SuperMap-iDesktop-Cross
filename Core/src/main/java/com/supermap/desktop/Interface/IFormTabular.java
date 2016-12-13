@@ -2,6 +2,7 @@ package com.supermap.desktop.Interface;
 
 import com.supermap.data.Recordset;
 import com.supermap.data.StatisticMode;
+import com.supermap.desktop.event.TabularValueChangedListener;
 
 import javax.swing.*;
 import java.util.HashMap;
@@ -12,7 +13,7 @@ public interface IFormTabular extends IForm {
 	/**
 	 * 获取数据表
 	 */
-	public Recordset getRecordset();
+	Recordset getRecordset();
 
 	/**
 	 * 设置数据表
@@ -20,70 +21,70 @@ public interface IFormTabular extends IForm {
 	 * @param recordset
 	 * @return
 	 */
-	public void setRecordset(Recordset recordset);
+	void setRecordset(Recordset recordset);
 
 	/**
 	 * 获取数据行数
 	 * 
 	 * @return
 	 */
-	public int getRowCount();
+	int getRowCount();
 
 	/**
 	 * 获取选中行
 	 * 
 	 * @return
 	 */
-	public int getSelectedRow();
+	int getSelectedRow();
 
 	/**
 	 * 获取选中行
 	 * 
 	 * @return
 	 */
-	public int[] getSelectedRows();
+	int[] getSelectedRows();
 
 	/**
 	 * 定位到指定行
 	 */
-	public void goToRow(int goToRow);
+	void goToRow(int goToRow);
 
 	/**
 	 * 添加选中项
 	 */
-	public void addRows(List<Integer> tempRows);
+	void addRows(List<Integer> tempRows);
 
 	/**
 	 * 获取选中行的数目
 	 */
-	public int getSelectColumnCount();
+	int getSelectColumnCount();
 
 	/**
 	 * 获取选中的列
 	 * 
 	 * @return
 	 */
-	public int[] getSelectedColumns();
+	int[] getSelectedColumns();
 
 	/**
 	 * 获取指定行列的数据
 	 */
-	public Object getValueAt(int row, int column);
+	Object getValueAt(int row, int column);
 
 	/**
 	 * 按条件排序
 	 */
-	public boolean sortRecordset(String sortKind, int... selectedColumns);
+	boolean sortRecordset(String sortKind, int... selectedColumns);
 
 	/**
 	 * 统计信息
 	 */
-	public boolean doStatisticAnalust(StatisticMode statisticMode, String successMessage);
+	boolean doStatisticAnalust(StatisticMode statisticMode, String successMessage);
 
 	/**
 	 * 获取字段类型
 	 */
-	public String getSelectColumnType(int columnIndex);
+	String getSelectColumnType(int columnIndex);
 
 	/**
 	 * 获取字段名称
@@ -92,29 +93,45 @@ public interface IFormTabular extends IForm {
 	 *            列号
 	 * @return
 	 */
-	public String getSelectColumnName(int columnIndex);
+	String getSelectColumnName(int columnIndex);
 
 	/**
 	 * 获取属性表table容器
 	 * 
 	 * @return
 	 */
-	public JTable getjTableTabular();
+	JTable getjTableTabular();
 
 	/**
 	 * 获取属性表list容器
 	 * 
 	 * @return
 	 */
-	public JList getRowHeader();
+	JList getRowHeader();
 	/**
 	 * 获取属性表中和行数对应的ID
 	 * @return
 	 */
-	public HashMap<Integer, Object> getRowIndexMap();
+	HashMap<Integer, Object> getRowIndexMap();
 	/**
 	 * 获取属性表中和ID对应的行数
 	 * @return
 	 */
-	public HashMap<Object, Integer> getIdMap();
+	HashMap<Object, Integer> getIdMap();
+
+	void addValueChangedListener(TabularValueChangedListener tabularValueChangedListener);
+
+	void removeValueChangedListener(TabularValueChangedListener tabularValueChangedListener);
+
+	int getSmId(int row);
+
+	ITabularEditHistoryManager getEditHistoryManager();
+
+	boolean canRedo();
+
+	boolean canUndo();
+
+	void redo();
+
+	void undo();
 }
