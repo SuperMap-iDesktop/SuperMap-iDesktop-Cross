@@ -366,4 +366,23 @@ public class TabularTableModel extends AbstractTableModel {
 			tabularValueChangedListeners.get(i).valueChanged(tabularChangedEvent);
 		}
 	}
+
+	public int getFieldColumn(String fieldName) {
+		for (int i = 0; i < fieldInfos.getCount(); i++) {
+			if (fieldInfos.get(i).getName().equals(fieldName)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	public int getRowBySmId(int smId) {
+		for (int i = 0; i < getRowCount(); i++) {
+			moveToRow(i);
+			if (recordset.getID() == smId) {
+				return i;
+			}
+		}
+		return -1;
+	}
 }

@@ -22,16 +22,23 @@ public class TabularEditHistory implements ITabularEditHistory {
 
 	@Override
 	public void redo(IFormTabular tabular) {
+		if (editHistoryBeanJList.size() <= 0) {
+			return;
+		}
 		Recordset recordset = tabular.getRecordset();
 		int id = recordset.getID();
 		recordset.getBatch().setMaxRecordCount(5000);
 		recordset.getBatch().begin();
-		for (EditHistoryBean editHistoryBean : editHistoryBeanJList) {
+		int[] smIds = new int[editHistoryBeanJList.size()];
+		for (int i = 0; i < editHistoryBeanJList.size(); i++) {
+			EditHistoryBean editHistoryBean = editHistoryBeanJList.get(i);
+			smIds[i] = editHistoryBean.getSmId();
 			if (recordset.seekID(editHistoryBean.getSmId())) {
 				recordset.setFieldValue(editHistoryBean.getFieldName(), editHistoryBean.getAfterValue());
 			}
 		}
 		recordset.getBatch().update();
+		tabular.setSelectedCellBySmIDs(smIds, editHistoryBeanJList.get(0).getFieldName());
 		recordset.seekID(id);
 	}
 
@@ -41,12 +48,16 @@ public class TabularEditHistory implements ITabularEditHistory {
 		int id = recordset.getID();
 		recordset.getBatch().setMaxRecordCount(5000);
 		recordset.getBatch().begin();
-		for (EditHistoryBean editHistoryBean : editHistoryBeanJList) {
+		int[] smIds = new int[editHistoryBeanJList.size()];
+		for (int i = 0; i < editHistoryBeanJList.size(); i++) {
+			EditHistoryBean editHistoryBean = editHistoryBeanJList.get(i);
+			smIds[i] = editHistoryBean.getSmId();
 			if (recordset.seekID(editHistoryBean.getSmId())) {
 				recordset.setFieldValue(editHistoryBean.getFieldName(), editHistoryBean.getBeforeValue());
 			}
 		}
 		recordset.getBatch().update();
+		tabular.setSelectedCellBySmIDs(smIds, editHistoryBeanJList.get(0).getFieldName());
 		recordset.seekID(id);
 	}
 
