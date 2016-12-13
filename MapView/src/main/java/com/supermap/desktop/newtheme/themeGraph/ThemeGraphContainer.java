@@ -98,6 +98,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
     private JButton buttonAxisStyle = new JButton("...");
     private JCheckBox checkBoxShowAxisGrid = new JCheckBox();
     // panelStyleOfBAR
+    //修改为柱宽系数和柱间距系数
     private JLabel labelBarWidth = new JLabel();
     private JSpinner spinnerBarWidth = new JSpinner();
     // panelStyleOfRoseAndPIE
@@ -239,7 +240,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         initpanelParameterSetting(this.panelParameterSetting);
         initpanelRemark(this.panelRemark);
         initpanelAxis(this.panelAxis);
-        initPanelStyleOfBAR(this.panelStyleOfBAR);
+        initPanelStyleOfBAR();
         initPanelStyleOfRoseAndPIE(this.panelStyleOfRoseAndPIE);
         JPanel panelAdvanceContent = new JPanel();
         this.panelAdvance.add(
@@ -289,7 +290,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         }
     }
 
-    private void initPanelStyleOfBAR(JPanel panelStyleOfBAR) {
+    private void initPanelStyleOfBAR() {
         // @formatter:off
         this.spinnerBarWidth.setEnabled(false);
         panelStyleOfBAR.setLayout(new GridBagLayout());
@@ -1057,7 +1058,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         @Override
         public void stateChanged(ChangeEvent e) {
             double barWidth = (double) spinnerBarWidth.getValue();
-            themeGraph.setBarWidth(barWidth);
+//            themeGraph.setBarWidth(barWidth);
+            themeGraph.setBarWidthRatio(barWidth);
             refreshMapAtOnce();
         }
     }
@@ -1715,6 +1717,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
                 nowGraph.add(this.themeGraph.getItem(i));
             }
             nowGraph.fromXML(this.themeGraph.toXML());
+            nowGraph.setBarWidthRatio(this.themeGraph.getBarWidthRatio());
             UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeGraphLayer);
             this.map.refresh();
         }

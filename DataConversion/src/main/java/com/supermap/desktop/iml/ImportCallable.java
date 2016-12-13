@@ -66,13 +66,12 @@ public class ImportCallable extends UpdateProgressCallable {
                             ((IFormMap) form).getMapControl().getMap().refresh();
                         }
                     }
-                } else {
-                    doImport(importSettings, i, dataImport, map);
-                    if (!dataImportDialog.isVisible()) {
-                        importSetting.dispose();
-                    }
-                    dataImport.dispose();
                 }
+                doImport(importSettings, i, dataImport, map);
+                if (!dataImportDialog.isVisible()) {
+                    importSetting.dispose();
+                }
+                dataImport.dispose();
             }
         } catch (Exception e2) {
             Application.getActiveApplication().getOutput().output(e2);
