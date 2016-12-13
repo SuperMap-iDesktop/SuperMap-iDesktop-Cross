@@ -6,6 +6,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLayout;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.implement.CtrlAction;
 
 public class CtrlActionRedo extends CtrlAction {
@@ -30,6 +31,8 @@ public class CtrlActionRedo extends CtrlAction {
 				} else if (form instanceof IFormLayout) {
 					((IFormLayout) form).getMapLayoutControl().redo();
 					((IFormLayout) form).getMapLayoutControl().getMapLayout().refresh();
+				} else if (form instanceof IFormTabular) {
+					((IFormTabular) form).redo();
 				}
 			}
 		} catch (Exception ex) {
@@ -49,6 +52,8 @@ public class CtrlActionRedo extends CtrlAction {
 					// TODO 目前场景并不支持编辑，后续版本根据组件支持情况再行实现
 				} else if (form instanceof IFormLayout) {
 					enable = ((IFormLayout) form).getMapLayoutControl().canRedo();
+				} else if (form instanceof IFormTabular) {
+					enable = ((IFormTabular) form).canRedo();
 				}
 			}
 		} catch (Exception ex) {

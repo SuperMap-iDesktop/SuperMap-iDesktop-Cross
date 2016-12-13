@@ -97,7 +97,7 @@ public final class InternalImageIconFactory {
 
 	public final static ImageIcon DATASOURCE_ISERVERREST = createIconFromFile("Image_Datasource_iServerRest_Normal.png");
 
-	public final static ImageIcon DATASOURCE_MAPWORLD = createIconFromFile("Image_Datasource_MapWorld_Normal.png");
+//	public final static ImageIcon DATASOURCE_MAPWORLD = createIconFromFile("Image_Datasource_MapWorld_Normal.png");
 
 	public final static ImageIcon DATASOURCE_NETCDF = createIconFromFile("Image_Datasource_NetCDF_Normal.png");
 

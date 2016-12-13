@@ -1,4 +1,4 @@
-package com.supermap.desktop.editHistory;
+package com.supermap.desktop.beans;
 
 /**
  * @author XiaJT
@@ -8,6 +8,10 @@ public class EditHistoryBean {
 	private String fieldName;
 	private Object beforeValue;
 	private Object afterValue;
+
+	public EditHistoryBean() {
+
+	}
 
 	public EditHistoryBean(int smId, String fieldName, Object beforeValue, Object afterValue) {
 		SmId = smId;

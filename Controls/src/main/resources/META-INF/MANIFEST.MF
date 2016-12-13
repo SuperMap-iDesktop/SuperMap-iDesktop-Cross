@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1478769744131
+Bnd-LastModified: 1481531024791
 Build-Jdk: 1.7.0_80
 Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.controls.ControlsActivator
@@ -15,8 +15,8 @@ Export-Package: com.supermap.desktop.controls.colorScheme;version="1.0.0
  ";uses:="com.supermap.desktop.dialog.ColorSchemeDialogs,com.supermap.de
  sktop.ui.controls",com.supermap.desktop.controls;version="1.0.0";uses:=
  "org.osgi.framework,org.osgi.util.tracker",com.supermap.desktop.control
- s.GeometryPropertyBindWindow;uses:="com.supermap.desktop.ui.docking";ve
- rsion="1.0.0",com.supermap.desktop.controls.property;version="1.0.0";us
+ s.GeometryPropertyBindWindow;version="1.0.0";uses:="com.supermap.deskto
+ p.ui.docking",com.supermap.desktop.controls.property;version="1.0.0";us
  es:="com.supermap.desktop.controls.property.dataset,com.supermap.deskto
  p.ui.controls",com.supermap.desktop.controls.property.dataset;version="
  1.0.0";uses:="com.supermap.desktop.controls.property,com.supermap.deskt

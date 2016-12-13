@@ -9,9 +9,14 @@ import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.Interface.IPropertyManager;
+import com.supermap.desktop.Interface.ITabularEditHistoryManager;
 import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
+import com.supermap.desktop.editHistory.TabularEditHistoryManager;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.event.TabularChangedEvent;
+import com.supermap.desktop.event.TabularValueChangedListener;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.ui.FormBaseChild;
@@ -155,7 +160,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 	};
-
+	private TabularEditHistoryManager tableEditHistoryManager;
 	// endregion
 
 	public FormTabular() {
@@ -478,13 +483,18 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 	@Override
 	public void setRecordset(Recordset recordset) {
-
 		// 数据信息
 		if (this.tabularTableModel != null) {
 			this.tabularTableModel.dispose();
 		}
 		this.recordset = recordset;
 		this.tabularTableModel = new TabularTableModel(recordset);
+		this.tabularTableModel.addValueChangedListener(new TabularValueChangedListener() {
+			@Override
+			public void valueChanged(TabularChangedEvent tabularChangedEvent) {
+				ToolbarUIUtilities.updataToolbarsState();
+			}
+		});
 		this.jTableTabular.setModel(this.tabularTableModel);
 
 		// 编辑时保存
@@ -576,6 +586,11 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			}
 		}
 		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
+		if (tableEditHistoryManager == null) {
+			tableEditHistoryManager = new TabularEditHistoryManager(this);
+		} else {
+			tableEditHistoryManager.clear();
+		}
 
 	}
 
@@ -832,4 +847,51 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		}
 		return result;
 	}
+
+	@Override
+	public int getSmId(int row) {
+		tabularTableModel.moveToRow(row);
+		return recordset.getID();
+	}
+
+	@Override
+	public boolean canRedo() {
+		return tableEditHistoryManager != null && tableEditHistoryManager.canRedo();
+	}
+
+	@Override
+	public boolean canUndo() {
+		return tableEditHistoryManager != null && tableEditHistoryManager.canUndo();
+	}
+
+	@Override
+	public void redo() {
+		tableEditHistoryManager.redo();
+		jTableTabular.repaint();
+		ToolbarUIUtilities.updataToolbarsState();
+	}
+
+	@Override
+	public void undo() {
+		tableEditHistoryManager.undo();
+		jTableTabular.repaint();
+		ToolbarUIUtilities.updataToolbarsState();
+	}
+
+	@Override
+	public ITabularEditHistoryManager getEditHistoryManager() {
+		return tableEditHistoryManager;
+	}
+
+	@Override
+	public void addValueChangedListener(TabularValueChangedListener tabularValueChangedListener) {
+		tabularTableModel.addValueChangedListener(tabularValueChangedListener);
+	}
+
+	@Override
+	public void removeValueChangedListener(TabularValueChangedListener tabularValueChangedListener) {
+		tabularTableModel.removeValueChangedListener(tabularValueChangedListener);
+	}
+
+
 }
