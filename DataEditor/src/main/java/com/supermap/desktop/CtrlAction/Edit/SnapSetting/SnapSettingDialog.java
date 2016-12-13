@@ -360,9 +360,9 @@ public class SnapSettingDialog extends SmDialog {
         this.setLocationRelativeTo(null);
         JPanel panelButton = new JPanel();
         panelButton.setLayout(new GridBagLayout());
-        panelButton.add(this.buttonRecover, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(5, 0, 10, 5));
-        panelButton.add(this.buttonOK, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(5, 0, 10, 5));
-        panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(5, 0, 10, 10));
+        panelButton.add(this.buttonRecover, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(10, 0, 10, 5));
+        panelButton.add(this.buttonOK, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(10, 0, 10, 5));
+        panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(10, 0, 10, 10));
 
         this.setLayout(new GridBagLayout());
         this.add(tabbedPane, new GridBagConstraintsHelper(0, 0, 4, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
@@ -429,7 +429,7 @@ public class SnapSettingDialog extends SmDialog {
         this.panelSnapMode.setLayout(new GridBagLayout());
         JPanel panelModeDisplay = new JPanel();
         JPanel panelButtonDisplay = new JPanel();
-        this.panelSnapMode.add(panelModeDisplay, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(20).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+        this.panelSnapMode.add(panelModeDisplay, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(20, 20, 10, 0).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
         panelModeDisplay.setLayout(new GridBagLayout());
         panelModeDisplay.add(scrollPaneSnapMode, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
         panelModeDisplay.add(panelButtonDisplay, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
