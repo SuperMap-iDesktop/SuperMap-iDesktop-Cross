@@ -14,13 +14,14 @@ import com.supermap.desktop.event.*;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.mdi.MdiGroup;
 import com.supermap.desktop.ui.mdi.MdiPage;
+import com.supermap.desktop.ui.mdi.MdiPane;
 import com.supermap.desktop.ui.mdi.events.*;
 
 import javax.swing.event.EventListenerList;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class FormManager extends MdiGroup implements IFormManager {
+public class FormManager extends MdiPane implements IFormManager {
 	private WindowType activatedChildFormType = WindowType.UNKNOWN;
 	private EventListenerList listenerList = new EventListenerList();
 	private MdiGroup mdiGroup;
@@ -74,7 +75,6 @@ public class FormManager extends MdiGroup implements IFormManager {
 	}
 
 	public FormManager() {
-		super(null);
 		this.mdiGroup = new MdiGroup(null);
 		addPageActivatedListener(this.pageActivatedListener);
 		addPageClosingListener(this.pageClosingListener);

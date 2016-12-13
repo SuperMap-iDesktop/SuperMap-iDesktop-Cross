@@ -219,6 +219,32 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 		return group;
 	}
 
+	public void addPage(MdiPage page, int pageIndex) {
+		if (this.selectedGroup != null) {
+			this.selectedGroup.getGroup().addPage(page, pageIndex);
+		}
+	}
+
+	/**
+	 * 将 page 添加到指定的 group 中
+	 *
+	 * @param page
+	 * @param groupIndex
+	 * @param pageIndex
+	 */
+	public void addPage(MdiPage page, int groupIndex, int pageIndex) {
+		if (groupIndex >= 0 && groupIndex < this.groups.size()) {
+			MdiGroup group = this.groups.get(groupIndex).getGroup();
+			group.addPage(page, pageIndex);
+		}
+	}
+
+	public void closeAll() {
+		for (int i = 0; i < this.groups.size(); i++) {
+			this.groups.get(i).getGroup().closeAll();
+		}
+	}
+
 	public MdiGroup addNewGroup(MdiPage page) {
 		MdiGroup group = createGroup();
 		group.addPage(page);
@@ -229,12 +255,42 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 		return index >= 0 && index < this.groups.size() ? this.groups.get(index).getGroup() : null;
 	}
 
+	/**
+	 * 获取所有的 page 数
+	 *
+	 * @return
+	 */
 	public int getPageCount() {
 		int count = 0;
 		for (int i = 0; i < this.groups.size(); i++) {
 			count += this.groups.get(i).getGroup().getPageCount();
 		}
 		return count;
+	}
+
+	/**
+	 * 获取指定 index 的 group 的 Page 数
+	 * index 顺序为水平从左到右，竖直从上到下
+	 *
+	 * @param groupIndex
+	 * @return
+	 */
+	public int getPageCount(int groupIndex) {
+		if (groupIndex >= 0 && groupIndex < this.groups.size()) {
+			return this.groups.get(groupIndex).getGroup().getPageCount();
+		} else {
+			return -1;
+		}
+	}
+
+	public MdiPage getPageAt(int index) {
+		MdiPage page = null;
+
+		return page;
+	}
+
+	public MdiPage getActivePage() {
+		return this.selectedGroup == null ? null : this.selectedGroup.getGroup().getActivePage();
 	}
 
 	/**
@@ -418,7 +474,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 
 		@Override
 		public void pageClosed(PageClosedEvent e) {
-			if (e.getSource() instanceof MdiGroup) {
+			if (e.getSource() instanceof MdiGroup && ((MdiGroup) e.getSource()).getPageCount() == 0) {
 				removeGroup((MdiGroup) e.getSource());
 			}
 			MdiPane.this.eventsHelper.firePageClosed(e);
