@@ -139,9 +139,10 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	// 当窗口显示
 	@Override
 	public void windowShown() {
-		super.windowShown();
 		//刷新jtable，其显示跟随tree焦点
 		this.isWindowShown = true;
+		this.add(buttonToolBar, BorderLayout.NORTH);
+		this.add(scrollPaneInfo, BorderLayout.CENTER);
 		initJTable();
 	}
 
@@ -154,7 +155,6 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	// 当窗口隐藏
 	@Override
 	public void windowHidden() {
-		super.windowHidden();
 		//断开窗口与外部的连接
 		this.isWindowShown = false;
 	}
