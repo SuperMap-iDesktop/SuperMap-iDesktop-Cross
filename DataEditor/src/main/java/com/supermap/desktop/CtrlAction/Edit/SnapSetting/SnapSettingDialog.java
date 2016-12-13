@@ -67,6 +67,7 @@ public class SnapSettingDialog extends SmDialog {
     private static final int TABLE_COLUMN_TYPE = 1;
     private static final int TABLE_COLUMN_DESCRIPTION = 2;
     private static final DecimalFormat format = new DecimalFormat("0");
+    private boolean isRecover = false;
 
     private MouseListener mouseListener = new MouseAdapter() {
         @Override
@@ -86,7 +87,7 @@ public class SnapSettingDialog extends SmDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             srcSnapSetting = SnapSettingUtilities.parseSnapSetting(mapControl);
-            mapControlSnapSetting = srcSnapSetting;
+            isRecover = true;
             initTable();
             textFieldSnapTolarence.setText(format.format(srcSnapSetting.getTolerance()));
             textFieldFixedAngle.setText(format.format(srcSnapSetting.getFixedAngle()));
@@ -99,6 +100,7 @@ public class SnapSettingDialog extends SmDialog {
     private ActionListener cancelListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            isRecover = false;
             dispose();
         }
     };
@@ -269,9 +271,13 @@ public class SnapSettingDialog extends SmDialog {
     private ActionListener okListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            if (isRecover) {
+                mapControlSnapSetting = srcSnapSetting;
+            }
             mapControl.setSnapSetting(mapControlSnapSetting);
             SnapSettingUtilities.replaceSnapMode(mapControlSnapSetting, mapControl.getSnapSetting());
             removeEvents();
+            isRecover = false;
             dispose();
         }
     };
