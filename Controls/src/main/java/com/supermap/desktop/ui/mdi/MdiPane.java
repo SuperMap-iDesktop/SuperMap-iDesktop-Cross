@@ -52,8 +52,8 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 
 	public MdiPane(int layoutMode) {
 		setLayout(new BorderLayout());
-		this.strategy = FlowLayoutStrategy.instance(this, layoutMode);
 		this.groups = new ArrayList<>();
+		this.strategy = FlowLayoutStrategy.instance(this, layoutMode);
 
 		EventQueue.invokeLater(new Runnable() {
 			@Override
@@ -97,6 +97,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 			// 如果此时没有选中的 group，则设置为选中
 			this.selectedGroup = group;
 		}
+		revalidate();
 	}
 
 	private void removeGroup(MdiGroup group) {
