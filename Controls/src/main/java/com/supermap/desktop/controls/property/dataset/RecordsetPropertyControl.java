@@ -713,7 +713,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		@Override
 		public String getColumnName(int column) {
 			if (column == INDEX) {
-				return CommonProperties.getString(CommonProperties.Index);
+				return "";
 			} else if (column == FIELD_NAME) {
 				return CommonProperties.getString(CommonProperties.FieldName);
 			} else if (column == FIELD_CAPTION) {

@@ -805,7 +805,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 			this.currentViewRight = getMap().getViewBounds().getRight();
 			this.currentViewBottom = getMap().getViewBounds().getBottom();
 
-			if (!DoubleUtilities.equals(scaleEditor.getScale(), scale, 6)) {
+			if (!DoubleUtilities.equals(scaleEditor.getScale(), scale, 16)) {
 				this.scaleEditor.setScale(this.scale);
 			}
 			if (!DoubleUtilities.equals(DoubleUtilities.stringToValue(textFieldCenterX.getText()), centerX, 6)) {

@@ -79,8 +79,8 @@ public class EditEnvironment {
 	private boolean isInitialAction = false; // 某些编辑功能需要搭配 MapControl 的 Action 使用，这时候不需要执行一些 ActionChanged 的回调方法
 	private boolean isMiddleMousePressed = false;
 
-	private static final int MAXRECORDCOUNT = 2000;// 设置批量更新的最大提交数量
-	private static final int GEOMETRYCONVERTOSEGMENT = 120;// 设置线面等对象转换时的segment
+	private static final int MAX_RECORD_COUNT = 2000;// 设置批量更新的最大提交数量
+	private static final int GEOMETRY_CONVERT_TO_SEGMENT = 120;// 设置线面等对象转换时的segment
 
 	private IEditModel editModel;
 	private IEditController editController = NullEditController.instance();
@@ -588,11 +588,11 @@ public class EditEnvironment {
 	 * @desciption 获取批量更新的最大提交数目；获取geometry转换的segment
 	 */
 	public int getMaxRecordCount() {
-		return MAXRECORDCOUNT;
+		return MAX_RECORD_COUNT;
 	}
 
 	public int getGeometryConverToSegment() {
-		return GEOMETRYCONVERTOSEGMENT;
+		return GEOMETRY_CONVERT_TO_SEGMENT;
 	}
 
 	public void clear() {

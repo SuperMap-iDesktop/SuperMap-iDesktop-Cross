@@ -11,13 +11,11 @@ import com.supermap.desktop.exportUI.DataExportDialog;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 
-import javax.swing.*;
-
 public class CtrlActionDataExport extends CtrlAction {
 
 
     public static EngineType[] UN_SUPPORT_TYPE = new EngineType[]{EngineType.OGC, EngineType.ISERVERREST,
-            EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS, EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS, EngineType.MAPWORLD};
+		    EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS, EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS};
 
     public CtrlActionDataExport(IBaseItem caller, IForm formClass) {
         super(caller, formClass);
@@ -25,15 +23,9 @@ public class CtrlActionDataExport extends CtrlAction {
 
     @Override
     public void run() {
-
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-                DataExportDialog dataExportDialog = new DataExportDialog(datasets);
-                dataExportDialog.setVisible(true);
-            }
-        });
+        Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
+        DataExportDialog dataExportDialog = new DataExportDialog(datasets);
+        dataExportDialog.setVisible(true);
     }
 
     @Override

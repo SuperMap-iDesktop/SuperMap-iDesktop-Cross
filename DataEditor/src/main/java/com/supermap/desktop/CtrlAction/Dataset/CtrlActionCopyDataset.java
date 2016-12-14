@@ -11,7 +11,7 @@ import com.supermap.desktop.implement.CtrlAction;
 public class CtrlActionCopyDataset extends CtrlAction {
 
 	public static EngineType[] UN_SUPPORT_TYPE = new EngineType[]{EngineType.OGC, EngineType.ISERVERREST,
-		EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS, EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS, EngineType.MAPWORLD};
+			EngineType.SUPERMAPCLOUD, EngineType.GOOGLEMAPS, EngineType.BAIDUMAPS, EngineType.OPENSTREETMAPS};
 	public CtrlActionCopyDataset(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}

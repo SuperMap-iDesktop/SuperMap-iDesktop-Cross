@@ -6,6 +6,9 @@ import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
 import com.supermap.data.QueryParameter;
 import com.supermap.data.Recordset;
+import com.supermap.desktop.enums.TabularChangedType;
+import com.supermap.desktop.event.TabularChangedEvent;
+import com.supermap.desktop.event.TabularValueChangedListener;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.utilities.Convert;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -13,8 +16,10 @@ import com.supermap.desktop.utilities.DoubleUtilities;
 import javax.swing.table.AbstractTableModel;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -35,6 +40,7 @@ public class TabularTableModel extends AbstractTableModel {
 	// 用于存放行值和ID与行值之间的关系
 	private HashMap<Object, Integer> idMap = new HashMap<Object, Integer>();
 	private SimpleDateFormat resultFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss", Locale.US);
+	private List<TabularValueChangedListener> tabularValueChangedListeners = new ArrayList<>();
 
 	public TabularTableModel(Recordset recordset) {
 		setRecordset(recordset);
@@ -112,7 +118,7 @@ public class TabularTableModel extends AbstractTableModel {
 	 *
 	 * @param rowIndex
 	 */
-	private void moveToRow(int rowIndex) {
+	public void moveToRow(int rowIndex) {
 		if (recordset == null || recordset.isClosed()) {
 			return;
 		}
@@ -248,11 +254,12 @@ public class TabularTableModel extends AbstractTableModel {
 			return;
 		}
 
-		if (fieldInfos.get(getColumnName(columnIndex)) == null) {
+		String columnName = getColumnName(columnIndex);
+		if (fieldInfos.get(columnName) == null) {
 			return;
 		}
-
 		moveToRow(rowIndex);
+		TabularChangedEvent tabularChangedEvent = new TabularChangedEvent();
 		try {
 			// 判断Data是否为空
 			boolean isDataNull = false;
@@ -261,13 +268,13 @@ public class TabularTableModel extends AbstractTableModel {
 			} else if (aValue instanceof String && ((String) aValue).length() <= 0) {
 				isDataNull = true;
 			}
-			if ((!isDataNull || !fieldInfos.get(getColumnName(columnIndex)).isRequired())
-					&& (recordset.getFieldValue(getColumnName(columnIndex)) == null || !recordset.getFieldValue(getColumnName(columnIndex)).equals(aValue))) {
+			Object oldFieldValue = recordset.getFieldValue(columnName);
+			if ((!isDataNull || !fieldInfos.get(columnName).isRequired())
+					&& (oldFieldValue == null || !oldFieldValue.equals(aValue))) {
 				recordset.edit();
 				// bool类型先处理
-
 				Object value = aValue;
-				FieldType fieldType = fieldInfos.get(getColumnName(columnIndex)).getType();
+				FieldType fieldType = fieldInfos.get(columnName).getType();
 				if (FieldType.BOOLEAN == fieldType) {
 					if (!isDataNull) {
 						value = "True".equals(aValue);
@@ -276,23 +283,28 @@ public class TabularTableModel extends AbstractTableModel {
 					}
 				}
 				if (isDataNull) {
-					recordset.setFieldValueNull(getColumnName(columnIndex));
+					recordset.setFieldValueNull(columnName);
 				} else if (FieldType.BYTE == fieldType) {
-					recordset.setByte(getColumnName(columnIndex), Short.parseShort(String.valueOf(value)));
+					recordset.setByte(columnName, Short.parseShort(String.valueOf(value)));
 				} else if (FieldType.DATETIME == fieldType) {
 					Date date = Convert.toDateTime(getValueAt(rowIndex, columnIndex));
-					recordset.setFieldValue(getColumnName(columnIndex), date);
+					recordset.setFieldValue(columnName, date);
 				} else if (FieldType.INT16 == fieldType || FieldType.INT32 == fieldType || FieldType.INT64 == fieldType) {
 					int intValue = DoubleUtilities.intValue(DoubleUtilities.stringToValue(String.valueOf(value)));
-					recordset.setFieldValue(getColumnName(columnIndex), intValue);
+					recordset.setFieldValue(columnName, intValue);
 				} else if (FieldType.SINGLE == fieldType || FieldType.DOUBLE == fieldType) {
-					recordset.setFieldValue(getColumnName(columnIndex), value);
+					recordset.setFieldValue(columnName, value);
 				} else {
-					recordset.setFieldValue(getColumnName(columnIndex), value);
+					recordset.setFieldValue(columnName, value);
 				}
-				// tabularCache.updateValue(getKey(rowIndex, columnIndex), value);
 				recordset.update();
-
+				tabularChangedEvent.setTabularChangedType(TabularChangedType.UPDATED);
+				tabularChangedEvent.setSmId(recordset.getID());
+				tabularChangedEvent.setBeforeValue(oldFieldValue);
+				tabularChangedEvent.setAfterValue(value);
+				tabularChangedEvent.setFieldName(columnName);
+				fireTabularValueChangedListener(tabularChangedEvent);
+				// tabularCache.updateValue(getKey(rowIndex, columnIndex), value);
 			}
 		} catch (Exception e) {
 			deadException(e);
@@ -339,5 +351,38 @@ public class TabularTableModel extends AbstractTableModel {
 
 	public void deadException(Exception e) {
 		// do nothing
+	}
+
+	public void addValueChangedListener(TabularValueChangedListener tabularValueChangedListener) {
+		tabularValueChangedListeners.add(tabularValueChangedListener);
+	}
+
+	public void removeValueChangedListener(TabularValueChangedListener tabularValueChangedListener) {
+		tabularValueChangedListeners.remove(tabularValueChangedListener);
+	}
+
+	protected void fireTabularValueChangedListener(TabularChangedEvent tabularChangedEvent) {
+		for (int i = tabularValueChangedListeners.size() - 1; i >= 0; i--) {
+			tabularValueChangedListeners.get(i).valueChanged(tabularChangedEvent);
+		}
+	}
+
+	public int getFieldColumn(String fieldName) {
+		for (int i = 0; i < fieldInfos.getCount(); i++) {
+			if (fieldInfos.get(i).getName().equals(fieldName)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	public int getRowBySmId(int smId) {
+		for (int i = 0; i < getRowCount(); i++) {
+			moveToRow(i);
+			if (recordset.getID() == smId) {
+				return i;
+			}
+		}
+		return -1;
 	}
 }

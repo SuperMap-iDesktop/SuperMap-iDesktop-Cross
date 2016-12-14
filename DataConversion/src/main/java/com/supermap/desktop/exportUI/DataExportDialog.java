@@ -2,6 +2,7 @@ package com.supermap.desktop.exportUI;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.conversion.ExportSetting;
+import com.supermap.data.conversion.ExportSettingSIT;
 import com.supermap.data.conversion.FileType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IExportPanelFactory;
@@ -123,6 +124,9 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
                     if (!buttonExport.isEnabled() && exportTransform instanceof PanelExportTransformForGrid) {
                         ((PanelExportTransformForGrid) exportTransform).getPasswordField().setText("");
                         ((PanelExportTransformForGrid) exportTransform).getPasswordFieldConfrim().setText("");
+                        if (panelExports.get(lastSelectRow).getExportsFileInfo().getExportSetting() instanceof ExportSettingSIT) {
+                            ((ExportSettingSIT) panelExports.get(lastSelectRow).getExportsFileInfo().getExportSetting()).setPassword("");
+                        }
                         buttonExport.setEnabled(true);
                     }
                 }

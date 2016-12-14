@@ -2,6 +2,7 @@ package com.supermap.desktop.mapview.map.propertycontrols;
 
 import com.supermap.data.Enum;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.controls.ButtonColorSelector;
@@ -14,15 +15,10 @@ import com.supermap.mapping.MapOverlapDisplayedOptions;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import java.awt.*;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.text.MessageFormat;
 
 public class MapBasePropertyControl extends AbstractPropertyControl {
 
@@ -473,7 +469,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
 				} else {
 					angleIsRight = false;
 					this.labelAngleTip.setText("<html><font color='red' style='font-weight:bold'>!</font></html>");
-					this.labelAngleTip.setToolTipText(MapViewProperties.getString("String_AngleTip"));
+					this.labelAngleTip.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatWarning"), "22", "[-360,360]"));
 				}
 			}
 		} catch (Exception e2) {

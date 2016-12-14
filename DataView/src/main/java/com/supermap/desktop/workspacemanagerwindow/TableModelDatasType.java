@@ -1,6 +1,10 @@
 package com.supermap.desktop.workspacemanagerwindow;
 
 import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetGridCollection;
+import com.supermap.data.DatasetImage;
+import com.supermap.data.DatasetImageCollection;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
@@ -22,6 +26,11 @@ import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindow
 public class TableModelDatasType extends AbstractTableModel {
 	private Datasource datasource;
 	private DatasetType datasetType;
+	private DatasetVector datasetVector;
+	private DatasetGrid datasetGrid;
+	private DatasetImage datasetImage;
+	private DatasetGridCollection datasetGridCollection;
+	private DatasetImageCollection datasetImageCollection;
 
 	private int sum = 0;
 	private Dataset[] aimDataset;
@@ -66,7 +75,7 @@ public class TableModelDatasType extends AbstractTableModel {
 	}
 
 	public int getColumnCount() {
-		return 4;
+		return 5;
 	}
 
 	@Override
@@ -79,16 +88,22 @@ public class TableModelDatasType extends AbstractTableModel {
 				return this.datasetType;
 			}
 			if (col == COLUMN_NUMBER) {
-				if (this.aimDataset[row].getType().equals(DatasetType.POINT)
-						|| this.aimDataset[row].getType().equals(DatasetType.POINT)
-						|| this.aimDataset[row].getType().equals(DatasetType.LINE)
-						|| this.aimDataset[row].getType().equals(DatasetType.REGION)
-						|| this.aimDataset[row].getType().equals(DatasetType.TEXT)
-						|| this.aimDataset[row].getType().equals(DatasetType.CAD)) {
-					DatasetVector datasetVector = (DatasetVector) this.aimDataset[row];
-					return datasetVector.getRecordCount();
+				if (this.aimDataset[row] instanceof DatasetVector) {
+					this.datasetVector = (DatasetVector) this.aimDataset[row];
+					return this.datasetVector.getRecordCount();
+				} else if (this.aimDataset[row] instanceof DatasetGrid) {
+					this.datasetGrid = (DatasetGrid) this.aimDataset[row];
+					return this.datasetGrid.getWidth() * this.datasetGrid.getHeight();
+				} else if (this.aimDataset[row] instanceof DatasetImage) {
+					this.datasetImage = (DatasetImage) this.aimDataset[row];
+					return this.datasetImage.getWidth() * this.datasetImage.getHeight();
+				} else if (this.aimDataset[row] instanceof DatasetGridCollection) {
+					this.datasetGridCollection = (DatasetGridCollection) this.aimDataset[row];
+					return this.datasetGridCollection.getCount();
+				} else if (this.aimDataset[row] instanceof DatasetImageCollection) {
+					this.datasetImageCollection = (DatasetImageCollection) this.aimDataset[row];
+					return this.datasetImageCollection.getCount();
 				} else {
-					//其他数据类型，暂不显示对象个数的，默认为0
 					return 0;
 				}
 			}
@@ -103,6 +118,8 @@ public class TableModelDatasType extends AbstractTableModel {
 		//当列数为“1”，返回Icon,否则返回String
 		if (col == COLUMN_NAME) {
 			return Icon.class;
+		} else if (col == COLUMN_TYPE) {
+			return DatasetType.class;
 		} else {
 			return getValueAt(0, col).getClass();
 		}

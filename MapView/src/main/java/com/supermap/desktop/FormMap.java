@@ -573,21 +573,19 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		if (list.get(5) != null) {
 			list.get(5).setMinimumSize(new Dimension(200, list.get(5).getHeight()));
 			statusbar.add(list.get(5), new GridBagConstraintsHelper(5, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1));
+					.setWeight(1, 1));
 		}
 		if (list.get(6) != null) {
 			statusbar.add(list.get(6), new GridBagConstraintsHelper(6, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
 					.setWeight(0, 1));
 		}
 		if (list.get(7) != null) {
-			list.get(7).setMinimumSize(new Dimension(60, list.get(7).getHeight()));
 			statusbar.add(list.get(7), new GridBagConstraintsHelper(7, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1));
+					.setWeight(0, 1).setIpad(80, 0));
 		}
 		if (list.get(8) != null) {
-			list.get(8).setMinimumSize(new Dimension(60, list.get(8).getHeight()));
 			statusbar.add(list.get(8), new GridBagConstraintsHelper(8, 0, 1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER)
-					.setWeight(0, 1));
+					.setWeight(0, 1).setIpad(80, 0));
 		}
 
 	}

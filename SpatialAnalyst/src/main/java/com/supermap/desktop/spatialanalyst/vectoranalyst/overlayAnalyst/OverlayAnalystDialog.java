@@ -472,7 +472,7 @@ public class OverlayAnalystDialog extends SmDialog {
             }
         });
         scrollPane.setViewportView(listOverlayAnalystType);
-        scrollPane.setPreferredSize(new Dimension(120, 320));
+        scrollPane.setPreferredSize(new Dimension(140, 320));
         JPanel panelBasicAnalyst = new JPanel();
         panelBasicAnalyst.setLayout(new GridBagLayout());
         panelBasicAnalyst.add(this.panelSource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
@@ -486,6 +486,7 @@ public class OverlayAnalystDialog extends SmDialog {
         this.add(scrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(10, 10, 10, 0).setFill(GridBagConstraints.BOTH));
         this.add(panelBasicAnalyst, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(5).setFill(GridBagConstraints.BOTH));
         this.add(panelButton, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+
     }
 
     private void initPanelTargetLayout() {

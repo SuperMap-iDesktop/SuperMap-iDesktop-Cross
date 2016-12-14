@@ -9,16 +9,21 @@ import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.Interface.IPropertyManager;
+import com.supermap.desktop.Interface.ITabularEditHistoryManager;
 import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
+import com.supermap.desktop.editHistory.TabularEditHistoryManager;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.CancellationEvent;
-import com.supermap.desktop.event.FormClosingEvent;
-import com.supermap.desktop.event.FormShownEvent;
+import com.supermap.desktop.event.TabularChangedEvent;
+import com.supermap.desktop.event.TabularValueChangedListener;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.docking.DockingWindowAdapter;
+import com.supermap.desktop.ui.docking.OperationAbortedException;
+import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilties.TabularStatisticUtilties;
@@ -85,6 +90,17 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	};
 
 	private KeyListener keyListener = new KeyAdapter() {
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if (e.isControlDown()) {
+				if (e.getKeyChar() == KeyEvent.VK_Z && canUndo()) {
+					undo();
+				} else if (e.getKeyChar() == KeyEvent.VK_Y && canRedo()) {
+					redo();
+				}
+			}
+		}
 
 		@Override
 		public void keyReleased(KeyEvent e) {
@@ -155,7 +171,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 		}
 	};
-
+	private TabularEditHistoryManager tableEditHistoryManager;
 	// endregion
 
 	public FormTabular() {
@@ -201,13 +217,23 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		rowHeader.setCellRenderer(new RowHeaderRenderer(jTableTabular));
 
 		jScrollPaneChildWindow.setRowHeaderView(rowHeader);
-		setLayout(new BorderLayout());
-		this.add(jScrollPaneChildWindow);
+
+		this.setComponent(jScrollPaneChildWindow);
 		if (Application.getActiveApplication().getMainFrame() != null) {
 			IContextMenuManager manager = Application.getActiveApplication().getMainFrame().getContextMenuManager();
 			this.FormSuperTabularContextMenu = (JPopupMenu) manager.get("SuperMap.Desktop.FormSuperTabular.FormSuperTabularContextMenu");
 		}
 
+		this.addListener(new DockingWindowAdapter() {
+			@Override
+			public void windowClosing(WindowClosingEvent evt) throws OperationAbortedException {
+				if (evt.getSource().equals(FormTabular.this)) {
+					removeListener(this);
+					unRegisterEvents();
+					recordset.dispose();
+				}
+			}
+		});
 		initStatusbars();
 		registerEvents();
 	}
@@ -293,7 +319,17 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	private void showContextMenu(MouseEvent e) {
-		FormSuperTabularContextMenu.show(jTableTabular, e.getX(), e.getY());
+		FormSuperTabularContextMenu.show((Component) e.getSource(), e.getX(), e.getY());
+	}
+
+	@Override
+	public String getText() {
+		return this.title;
+	}
+
+	@Override
+	public void setText(String text) {
+		super.setTitle(text);
 	}
 
 	@Override
@@ -302,13 +338,12 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	@Override
-	public void formClosing(FormClosingEvent e) {
-		unRegisterEvents();
-		recordset.dispose();
+	public void windowHidden() {
+		// 隐藏
 	}
 
 	@Override
-	public void formShown(FormShownEvent e) {
+	public void windowShown() {
 		// 显示
 		UICommonToolkit.getLayersManager().setMap(null);
 	}
@@ -459,13 +494,18 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 	@Override
 	public void setRecordset(Recordset recordset) {
-
 		// 数据信息
 		if (this.tabularTableModel != null) {
 			this.tabularTableModel.dispose();
 		}
 		this.recordset = recordset;
 		this.tabularTableModel = new TabularTableModel(recordset);
+		this.tabularTableModel.addValueChangedListener(new TabularValueChangedListener() {
+			@Override
+			public void valueChanged(TabularChangedEvent tabularChangedEvent) {
+				ToolbarUIUtilities.updataToolbarsState();
+			}
+		});
 		this.jTableTabular.setModel(this.tabularTableModel);
 
 		// 编辑时保存
@@ -509,7 +549,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		((DefaultTableCellRenderer) jTableTabular.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
 		// bool类型编辑器
-		JComboBox<String> booleanEditorControl = new JComboBox<String>();
+		JComboBox<String> booleanEditorControl = new JComboBox<>();
 		booleanEditorControl.addItem("");
 		booleanEditorControl.addItem("True");
 		booleanEditorControl.addItem("False");
@@ -548,9 +588,21 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		setColumnsWidth();
 		// 设置行高
 		this.jTableTabular.setRowHeight(FormTabular.PREFER_ROW_HEIGHT);
-		this.jTableTabular.updateUI();
-		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
+		this.jTableTabular.repaint();
 //		setProperty();
+		if (jTableTabular.getSelectedRow() == -1 || jTableTabular.getSelectedColumn() == -1) {
+			if (jTableTabular.getRowCount() > 0 && jTableTabular.getColumnCount() > 0) {
+				jTableTabular.addRowSelectionInterval(0, 0);
+				jTableTabular.addColumnSelectionInterval(0, 0);
+			}
+		}
+		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
+		if (tableEditHistoryManager == null) {
+			tableEditHistoryManager = new TabularEditHistoryManager(this);
+		} else {
+			tableEditHistoryManager.clear();
+		}
+
 	}
 
 	private void checkStatisticsResultState(int[] beforeSelectedColumn) {
@@ -806,4 +858,62 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		}
 		return result;
 	}
+
+	@Override
+	public int getSmId(int row) {
+		tabularTableModel.moveToRow(row);
+		return recordset.getID();
+	}
+
+	@Override
+	public boolean canRedo() {
+		return tableEditHistoryManager != null && tableEditHistoryManager.canRedo();
+	}
+
+	@Override
+	public boolean canUndo() {
+		return tableEditHistoryManager != null && tableEditHistoryManager.canUndo();
+	}
+
+	@Override
+	public void redo() {
+		tableEditHistoryManager.redo();
+		jTableTabular.repaint();
+		ToolbarUIUtilities.updataToolbarsState();
+	}
+
+	@Override
+	public void undo() {
+		tableEditHistoryManager.undo();
+		jTableTabular.repaint();
+		ToolbarUIUtilities.updataToolbarsState();
+	}
+
+	@Override
+	public void setSelectedCellBySmIDs(int[] smIds, String fieldName) {
+		this.jTableTabular.clearSelection();
+		int column = tabularTableModel.getFieldColumn(fieldName);
+		this.jTableTabular.setColumnSelectionInterval(column, column);
+		for (int smId : smIds) {
+			int row = tabularTableModel.getRowBySmId(smId);
+			jTableTabular.addRowSelectionInterval(row, row);
+		}
+	}
+
+	@Override
+	public ITabularEditHistoryManager getEditHistoryManager() {
+		return tableEditHistoryManager;
+	}
+
+	@Override
+	public void addValueChangedListener(TabularValueChangedListener tabularValueChangedListener) {
+		tabularTableModel.addValueChangedListener(tabularValueChangedListener);
+	}
+
+	@Override
+	public void removeValueChangedListener(TabularValueChangedListener tabularValueChangedListener) {
+		tabularTableModel.removeValueChangedListener(tabularValueChangedListener);
+	}
+
+
 }

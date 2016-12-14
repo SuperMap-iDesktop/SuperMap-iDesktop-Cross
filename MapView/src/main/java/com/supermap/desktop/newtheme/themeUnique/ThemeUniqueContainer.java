@@ -5,7 +5,15 @@ import com.supermap.data.Colors;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoPoint;
+import com.supermap.data.GeoRegion;
 import com.supermap.data.GeoStyle;
+import com.supermap.data.Geometry;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.Recordset;
+import com.supermap.data.Rectangle2D;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
@@ -30,6 +38,7 @@ import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.Selection;
 import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeType;
 import com.supermap.mapping.ThemeUnique;
@@ -58,6 +67,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
+import static com.supermap.data.CursorType.STATIC;
+
 /**
  * 单值专题图
  *
@@ -83,6 +94,19 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private JButton buttonAscend = new JButton();
 	private JButton buttonDescend = new JButton();
 	private JButton buttonAntitone = new JButton();
+	//增加关联浏览按钮开关
+	private JButton buttonContinuousMapLocation = new JButton();
+	//是否进行关联浏览
+	private boolean isContinuousMapLocation = false;
+	//增加子项右键菜单
+	private JPopupMenu tablePopupMenuUniqurTheme = new JPopupMenu();
+	//修改风格
+	private JMenuItem menuItemReviseStyle = new JMenuItem();
+	//删除
+	private JMenuItem menuItemDelete = new JMenuItem();
+	//定位
+	private JMenuItem menuItemMapLocation = new JMenuItem();
+
 	private JPanel panelOffsetSet = new JPanel();
 	private JLabel labelOffsetUnity = new JLabel();
 	private JComboBox<String> comboBoxOffsetUnity = new JComboBox<String>();
@@ -108,6 +132,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private ArrayList<String> comboBoxArrayForOffsetX = new ArrayList<String>();
 	private ArrayList<String> comboBoxArrayForOffsetY = new ArrayList<String>();
 	private boolean isNewTheme = false;
+	private Selection nowSelection = new Selection();
 
 	private static int TABLE_COLUMN_VISIBLE = 0;
 	private static int TABLE_COLUMN_GEOSTYLE = 1;
@@ -143,10 +168,12 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 
 	public ThemeUniqueContainer(Layer layer, boolean isNewTheme) {
 		this.themeUniqueLayer = layer;
+
 		this.isNewTheme = isNewTheme;
 		this.layerName = this.themeUniqueLayer.getName();
 		this.themeUnique = new ThemeUnique((ThemeUnique) themeUniqueLayer.getTheme());
 		this.datasetVector = (DatasetVector) layer.getDataset();
+
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		initComponents();
 		initResources();
@@ -163,6 +190,11 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
 		this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Advanced"), this.panelAdvance);
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+		//右键菜单布局
+		this.tablePopupMenuUniqurTheme.add(this.menuItemReviseStyle);
+		this.tablePopupMenuUniqurTheme.add(this.menuItemDelete);
+		this.tablePopupMenuUniqurTheme.add(this.menuItemMapLocation);
+
 		if (isNewTheme) {
 			refreshColor();
 			refreshAtOnce();
@@ -184,11 +216,17 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.buttonAscend.setToolTipText(MapViewProperties.getString("String_Title_Ascend"));
 		this.buttonDescend.setToolTipText(MapViewProperties.getString("String_Title_Descend"));
 		this.buttonAntitone.setToolTipText(MapViewProperties.getString("String_Title_Antitone"));
+		//增加连续定位按钮开关
+		this.buttonContinuousMapLocation.setToolTipText(MapViewProperties.getString("String_ContinuousMapLocation"));
 		this.panelOffsetSet.setBorder(new TitledBorder(null, MapViewProperties.getString("String_GroupBoxOffset"), TitledBorder.LEADING, TitledBorder.TOP,
 				null, null));
 		this.labelOffsetUnity.setText(MapViewProperties.getString("String_LabelOffsetUnit"));
 		this.labelOffsetX.setText(MapViewProperties.getString("String_LabelOffsetX"));
 		this.labelOffsetY.setText(MapViewProperties.getString("String_LabelOffsetY"));
+		//给jtable右键菜单设置资源化
+		this.menuItemReviseStyle.setText(MapViewProperties.getString("String_ThemeGraphItemManager_ModifyStyle"));
+		this.menuItemDelete.setText(MapViewProperties.getString("String_Title_Delete"));
+		this.menuItemMapLocation.setText(MapViewProperties.getString("String_MapLocation"));
 	}
 
 	class LayersTreeChangeListener implements PropertyChangeListener {
@@ -229,6 +267,13 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.buttonDelete.addActionListener(this.actionListener);
 		this.buttonGeoStyle.addActionListener(this.actionListener);
 		this.buttonAntitone.addActionListener(this.actionListener);
+		//关联浏览按钮开关添加监听
+		this.buttonContinuousMapLocation.addActionListener(this.actionListener);
+		//增加jtable右键菜单项的监听
+		this.menuItemReviseStyle.addActionListener(this.actionListener);
+		this.menuItemDelete.addActionListener(this.actionListener);
+		this.menuItemMapLocation.addActionListener(this.actionListener);
+
 		this.tableUniqueInfo.addMouseListener(this.localTableMouseListener);
 		this.tableUniqueInfo.addKeyListener(this.localKeyListener);
 		this.tableUniqueInfo.putClientProperty("terminateEditOnFocusLost", true);
@@ -280,6 +325,13 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.buttonDelete.removeActionListener(this.actionListener);
 		this.buttonGeoStyle.removeActionListener(this.actionListener);
 		this.buttonAntitone.removeActionListener(this.actionListener);
+		//注销关联浏览
+		this.buttonContinuousMapLocation.removeActionListener(this.actionListener);
+		//注销jtable右键菜单项的监听
+		this.menuItemReviseStyle.removeActionListener(this.actionListener);
+		this.menuItemDelete.removeActionListener(this.actionListener);
+		this.menuItemMapLocation.removeActionListener(this.actionListener);
+
 		this.tableUniqueInfo.removeMouseListener(this.localTableMouseListener);
 		this.tableUniqueInfo.removeKeyListener(this.localKeyListener);
 		this.tableUniqueInfo.getModel().removeTableModelListener(this.tableModelListener);
@@ -350,6 +402,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.toolBar.add(this.buttonAdd);
 		this.toolBar.add(this.buttonDelete);
 		this.toolBar.add(this.buttonAntitone);
+		this.toolBar.addSeparator();
+		this.toolBar.add(this.buttonContinuousMapLocation);
 		this.buttonVisble.setIcon(InternalImageIconFactory.VISIBLE);
 		if (CommonToolkit.DatasetTypeWrap.isRegion(datasetVector.getType())) {
 			this.buttonGeoStyle.setIcon(InternalImageIconFactory.REGION_STYLE);
@@ -361,6 +415,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.buttonAdd.setIcon(InternalImageIconFactory.ADD_ITEM);
 		this.buttonDelete.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
 		this.buttonAntitone.setIcon(InternalImageIconFactory.Rever);
+		//给关闭关联浏览设置图标
+		this.buttonContinuousMapLocation.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_OpenLinkageLayer.png"));
 	}
 
 	/**
@@ -460,7 +516,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	}
 
 	class LocalTableMouseListener extends MouseAdapter {
-
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (1 == e.getClickCount() && tableUniqueInfo.getSelectedColumn() == TABLE_COLUMN_VISIBLE && tableUniqueInfo.getSelectedRows().length == 1) {
@@ -490,6 +545,111 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				setItemGeoSytle();
 				tableUniqueInfo.setRowSelectionInterval(selectRow, selectRow);
 				refreshAtOnce();
+			} else if (1 == e.getClickCount() && e.getButton() == MouseEvent.BUTTON1) {//此时进行专题图子项连续定位  12.13yuanR
+				//判断是否开启了连续定位功能
+				if (isContinuousMapLocation) {
+					//每次关联之前清空跟踪层
+					MapUtilities.getActiveMap().getTrackingLayer().clear();
+					Recordset othersRecordsets;
+					Recordset selectedRecordsets;
+					//当选择非最后一行
+					if (tableUniqueInfo.getSelectedRow() != tableUniqueInfo.getRowCount() - 1) {
+						int selectRow = tableUniqueInfo.getSelectedRow();
+						ThemeUniqueItem item = themeUnique.getItem(selectRow);
+						//构造选中行的记录集
+						selectedRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + "=" + "'" + item.getUnique() + "'", STATIC);
+						othersRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + "!=" + "'" + item.getUnique() + "'", STATIC);
+					} else {
+						selectedRecordsets = datasetVector.getRecordset(true, STATIC);
+						othersRecordsets = datasetVector.getRecordset(false, STATIC);
+					}
+					if (selectedRecordsets.getRecordCount() > 0) {
+
+						//Geometry selectedGeo = selectedRecordsets.getGeometry();
+						//将选中子项移动到地图中心
+						/*
+						if (null != selectedGeo) {
+							Rectangle2D rectangle2d = null;
+							Point2Ds points = new Point2Ds(new Point2D[]{new Point2D(selectedGeo.getBounds().getLeft(), selectedGeo.getBounds().getBottom()),
+									new Point2D(selectedGeo.getBounds().getRight(), selectedGeo.getBounds().getTop())});
+							rectangle2d = new Rectangle2D(points.getItem(0), points.getItem(1));
+							map.setCenter(rectangle2d.getCenter());
+						}
+						*/
+
+						//设置其他子项跟踪层风格
+						GeoStyle othersGeoStyle = new GeoStyle();
+						if (othersRecordsets.getRecordCount() > 0) {
+							othersRecordsets.moveFirst();
+							for (int i = 0; i < othersRecordsets.getRecordCount(); i++) {
+								Geometry othersGeo = othersRecordsets.getGeometry();
+								if (othersGeo instanceof GeoRegion) {
+									othersGeoStyle.setFillOpaqueRate(40);
+									othersGeoStyle.setFillForeColor(Color.WHITE);
+									othersGeoStyle.setLineColor(Color.LIGHT_GRAY);
+									othersGeoStyle.setLineWidth(1);
+								} else {
+									othersGeoStyle = null;
+								}
+								if (othersGeoStyle != null) {
+									othersGeo.setStyle(othersGeoStyle);
+									MapUtilities.getActiveMap().getTrackingLayer().add(othersGeo, "");
+								}
+								//对象释放
+								othersGeo.dispose();
+								othersRecordsets.moveNext();
+							}
+						}
+						//设置选中子项跟踪层风格
+						GeoStyle selectedGeoStyle = new GeoStyle();
+						selectedRecordsets.moveFirst();
+						for (int i = 0; i < selectedRecordsets.getRecordCount(); i++) {
+							Geometry selectedGeo = selectedRecordsets.getGeometry();
+							if (selectedGeo instanceof GeoRegion) {
+								selectedGeoStyle.setFillOpaqueRate(0);
+								selectedGeoStyle.setLineWidth(1);
+								selectedGeoStyle.setLineColor(Color.red);
+							} else if (selectedGeo instanceof GeoPoint || selectedGeo instanceof GeoLine) {
+								selectedGeoStyle.setLineWidth(1);
+								selectedGeoStyle.setLineColor(Color.red);
+							} else {
+								selectedGeoStyle = null;
+							}
+							if (selectedGeo != null) {
+								selectedGeo.setStyle(selectedGeoStyle);
+								MapUtilities.getActiveMap().getTrackingLayer().add(selectedGeo, "");
+							}
+							//对象释放
+							selectedGeo.dispose();
+							selectedRecordsets.moveNext();
+						}
+						//对象释放
+						if (selectedGeoStyle != null) {
+							selectedGeoStyle.dispose();
+						}
+						if (othersGeoStyle != null) {
+							othersGeoStyle.dispose();
+						}
+					}
+					map.refresh();
+					//对象释放
+					selectedRecordsets.dispose();
+					othersRecordsets.dispose();
+				}
+			} else if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON3) {//打开右键菜单
+				//打开右键菜单根据是否可视(可选择)状态设置定位功能是否可用
+				if (themeUniqueLayer.isVisible() && themeUniqueLayer.isSelectable()) {
+					menuItemMapLocation.setEnabled(true);
+				} else {
+					menuItemMapLocation.setEnabled(false);
+				}
+				//设置删除键是否可用，当选中最后一行时，不能进行删除操作
+				if (tableUniqueInfo.getSelectedRow() == tableUniqueInfo.getRowCount() - 1) {
+					menuItemDelete.setEnabled(false);
+				} else {
+					menuItemDelete.setEnabled(true);
+				}
+				tablePopupMenuUniqurTheme.show(tableUniqueInfo, e.getX(), e.getY());
 			}
 			// 包含最后一行不能做删除操作
 			int[] selectRows = tableUniqueInfo.getSelectedRows();
@@ -755,7 +915,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	}
 
 	class LocalTableModelListener implements TableModelListener {
-
 		@Override
 		public void tableChanged(TableModelEvent e) {
 			try {
@@ -824,6 +983,21 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			} else if (e.getSource() == buttonAntitone) {
 				// 颜色方案反序
 				setGeoStyleAntitone();
+			} else if (e.getSource() == buttonContinuousMapLocation) {
+				//图层是否更随点选联动
+				setContinuousMapLocation();
+			} else if (e.getSource() == menuItemMapLocation) {
+				//进行地图定位
+				mapLocation();
+			} else if (e.getSource() == menuItemReviseStyle) {
+				//进行风格修改
+				int selectRow = tableUniqueInfo.getSelectedRow();
+				setItemGeoSytle();
+				tableUniqueInfo.setRowSelectionInterval(selectRow, selectRow);
+				refreshAtOnce();
+			} else if (e.getSource() == menuItemDelete) {
+				//进行子项删除
+				deleteItem();
 			}
 			refreshAtOnce();
 			if (null != selectRows && e.getSource() != buttonDelete) {
@@ -832,6 +1006,59 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				}
 				return;
 			}
+		}
+
+		/**
+		 * 子项高亮显示并定位 2016.12.12
+		 * yuanR
+		 * 之后实现
+		 */
+		private void mapLocation() {
+			/*
+			if (themeUniqueLayer.getSelection().getCount() > 0) {
+				themeUniqueLayer.getSelection().clear();
+			}
+			String expression = comboBoxExpression.getSelectedItem().toString();
+			if (tableUniqueInfo.getSelectedRow() != tableUniqueInfo.getRowCount() - 1) {
+				//获得选中的行,需要区分多选和单选
+				if (tableUniqueInfo.getSelectedRowCount() > 1) {
+					//此时为多选
+					themeUniqueLayer.getSelection().addRange(tableUniqueInfo.getSelectedRows());
+				} else {
+					themeUniqueLayer.getSelection().add(tableUniqueInfo.getSelectedRow());
+				}
+
+			} else {//点击了最后一行，全部选择
+				//Recordset recordsets = datasetVector.getRecordset(false, STATIC);
+			}
+			//清空之前的选择集
+
+			//themeUniqueLayer.getSelection().addRange(tableUniqueInfo.getSelectedRows());
+			//themeUniqueLayer.getSelection().fromRecordset(recordsets);
+			//Selection s=new Selection();
+			//s=	themeUniqueLayer.getSelection();
+			themeUniqueLayer.getSelection().setDefaultStyleEnabled(true);
+			themeUniqueLayer.setSelection(themeUniqueLayer.getSelection());
+			MapUtilities.getMapControl().revalidate();
+			map.refresh();
+
+			//重设map中心点
+			Recordset recordsets;
+			int selectRow = tableUniqueInfo.getSelectedRow();
+			ThemeUniqueItem item = themeUnique.getItem(selectRow);
+			//构造选中行的记录集
+			recordsets = datasetVector.query(expression + "=" + "'" + item.getUnique() + "'", STATIC);
+			Geometry geo = recordsets.getGeometry();
+			if (null != geo) {
+				Rectangle2D rectangle2d = null;
+				Point2Ds points = new Point2Ds(new Point2D[]{new Point2D(geo.getBounds().getLeft(), geo.getBounds().getBottom()),
+						new Point2D(geo.getBounds().getRight(), geo.getBounds().getTop())});
+				rectangle2d = new Rectangle2D(points.getItem(0), points.getItem(1));
+				map.setCenter(rectangle2d.getCenter());
+			}
+			//随用随释放
+			recordsets.dispose();
+			*/
 		}
 
 		/**
@@ -847,7 +1074,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			addItemPanel.addPopupMenuListener(popmenuListener);
 			addItemPanel.show(buttonAdd, -addItemPanel.getWidth() / 2, buttonAdd.getHeight());
 			addItemPanel.setVisible(true);
-
 		}
 
 		/**
@@ -1035,6 +1261,22 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	}
 
 	/**
+	 * 设置图层是否跟随点选联动
+	 */
+	private void setContinuousMapLocation() {
+		if (isContinuousMapLocation) {
+			this.buttonContinuousMapLocation.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_OpenLinkageLayer.png"));
+			this.isContinuousMapLocation = false;
+			//当关闭连续定位功能时，清空跟踪层
+			MapUtilities.getActiveMap().getTrackingLayer().clear();
+			map.refresh();
+		} else {
+			this.buttonContinuousMapLocation.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_CloseLinkageLayer.png"));
+			this.isContinuousMapLocation = true;
+		}
+	}
+
+	/**
 	 * 设置文本风格
 	 */
 	private void setItemGeoSytle() {
@@ -1149,6 +1391,13 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			ThemeUnique nowThemeUnique = ((ThemeUnique) this.themeUniqueLayer.getTheme());
 			nowThemeUnique.fromXML(themeUnique.toXML());
 			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeUniqueLayer);
+			//增加刷新清除选择
+			/*
+			if (nowSelection.getCount() > 0) {
+				this.nowSelection.clear();
+				this.themeUniqueLayer.setSelection(nowSelection);
+			}
+			*/
 			this.map.refresh();
 		}
 	}

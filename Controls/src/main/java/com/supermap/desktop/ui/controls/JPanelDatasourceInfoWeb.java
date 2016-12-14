@@ -172,17 +172,17 @@ public class JPanelDatasourceInfoWeb extends JPanel {
                 this.jTextFieldServerAddress.setEnabled(true);
                 this.jLabelPassword.setText(CoreProperties.getString("String_Label_Key"));
             }
-            if (engineType == EngineType.MAPWORLD) {
-                this.jComboBoxServerType.removeAllItems();
-                this.jTextFieldServerAddress.setText(ControlsProperties.getString("String_MapWorldServer"));
-                this.jTextFieldDatasourceAlias.setText(ControlsProperties.getString("String_MapWorld"));
-                this.jComboBoxServerType.setEnabled(false);
-                this.jTextFieldServerAddress.setEnabled(false);
-                this.jTextFieldUserName.setEnabled(false);
-                this.jTextFieldPassword.setEnabled(false);
-                this.jTextFieldDatasourceAlias.setEnabled(true);
-                this.jLabelPassword.setText(CoreProperties.getString("String_Label_Key"));
-            }
+//            if (engineType == EngineType.MAPWORLD) {
+//                this.jComboBoxServerType.removeAllItems();
+//                this.jTextFieldServerAddress.setText(ControlsProperties.getString("String_MapWorldServer"));
+//                this.jTextFieldDatasourceAlias.setText(ControlsProperties.getString("String_MapWorld"));
+//                this.jComboBoxServerType.setEnabled(false);
+//                this.jTextFieldServerAddress.setEnabled(false);
+//                this.jTextFieldUserName.setEnabled(false);
+//                this.jTextFieldPassword.setEnabled(false);
+//                this.jTextFieldDatasourceAlias.setEnabled(true);
+//                this.jLabelPassword.setText(CoreProperties.getString("String_Label_Key"));
+//            }
             if (engineType == EngineType.GOOGLEMAPS) {
                 this.jComboBoxServerType.removeAllItems();
                 this.jTextFieldServerAddress.setText(ControlsProperties.getString("String_GoogleMapsServer"));
@@ -242,7 +242,7 @@ public class JPanelDatasourceInfoWeb extends JPanel {
                 UICommonToolkit.showMessageDialog(ControlsProperties.getString("String_InputServiceAddress"));
                 jTextFieldServerAddress.requestFocus();
                 return 0;
-            } else if (engineType != EngineType.MAPWORLD && !service.isEmpty() && null == datasources.get(datasourceName)) {
+            } else if (!service.isEmpty() && null == datasources.get(datasourceName)) {
                 connectionInfo.setAlias(datasourceName);
                 datasource = datasources.open(connectionInfo);
             } else {

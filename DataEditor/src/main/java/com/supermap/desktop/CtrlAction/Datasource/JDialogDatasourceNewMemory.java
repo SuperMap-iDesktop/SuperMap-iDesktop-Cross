@@ -140,8 +140,7 @@ public class JDialogDatasourceNewMemory extends SmDialog {
 		Datasource result = null;
 		try {
 			DatasourceConnectionInfo info = new DatasourceConnectionInfo();
-			info.setEngineType(EngineType.UDB);
-			info.setServer(":memory:");
+			info.setEngineType(EngineType.MEMORY);
 			String alias = jTextFieldAlias.getText();
 			if (null != alias && !alias.isEmpty() && "" != alias) {
 				alias = DatasourceUtilities.getAvailableDatasourceAlias(alias, 0);

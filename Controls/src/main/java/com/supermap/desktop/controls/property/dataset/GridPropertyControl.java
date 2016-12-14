@@ -71,6 +71,9 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	private SmButton buttonReset;
 	private SmButton buttonApply;
 
+	private JLabel labelGridCount;
+	private JTextField textFieldGridCount;
+
 	private DatasetGrid datasetGrid;
 
 	private double noValue = 0.0;
@@ -126,7 +129,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 	};
 
 	public GridPropertyControl(DatasetGrid datasetGrid) {
-		super(CommonProperties.getString(CommonProperties.DatasetGrid));
+		super(ControlsProperties.getString("String_Grid"));
 		initializeComponents();
 		initializeResources();
 		setDatasetGrid(datasetGrid);
@@ -180,9 +183,12 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		labelWidth.setPreferredSize(labelSize);
 		this.textFieldWidth = new JTextField();
 		this.textFieldWidth.setEditable(false);
+		this.labelGridCount = new JLabel();
+		this.textFieldGridCount = new JTextField();
+		textFieldGridCount.setEditable(false);
 
 		JPanel panelPixelProperty = new JPanel();
-		panelPixelProperty.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_ImageProperty")));
+		panelPixelProperty.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_DatasetGridPropertyControl_GroupBoxImageProperty")));
 		panelPixelProperty.setLayout(new GridBagLayout());
 		panelPixelProperty.add(labelPixelFormat, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0));
 		panelPixelProperty.add(textFieldPixelFormat, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(10, 5, 0, 10));
@@ -190,18 +196,20 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		panelPixelProperty.add(labelX, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
 		panelPixelProperty.add(textFieldX, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
 
-		panelPixelProperty.add(labelY, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
-		panelPixelProperty.add(textFieldY, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
+		panelPixelProperty.add(labelY, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		panelPixelProperty.add(textFieldY, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
 
-		panelPixelProperty.add(labelNoValue, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
-		panelPixelProperty.add(textFieldNoValue, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
+		panelPixelProperty.add(labelNoValue, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		panelPixelProperty.add(textFieldNoValue, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
 
-		panelPixelProperty.add(labelHeight, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
-		panelPixelProperty.add(textFieldHeight, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
+		panelPixelProperty.add(labelHeight, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		panelPixelProperty.add(textFieldHeight, new GridBagConstraintsHelper(1, 4, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
 
-		panelPixelProperty.add(labelWidth, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
-		panelPixelProperty.add(textFieldWidth, new GridBagConstraintsHelper(1, 4, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
+		panelPixelProperty.add(labelWidth, new GridBagConstraintsHelper(0, 5, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
+		panelPixelProperty.add(textFieldWidth, new GridBagConstraintsHelper(1, 5, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
 
+		panelPixelProperty.add(labelGridCount, new GridBagConstraintsHelper(0, 6, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 10, 0));
+		panelPixelProperty.add(textFieldGridCount, new GridBagConstraintsHelper(1, 6, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.CENTER).setInsets(5, 5, 10, 10));
 		// @formatter:on
 
 		this.labelMaxValue = new JLabel("MaxValue:");
@@ -237,9 +245,9 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		panelOther.add(labelHasPyramid, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0));
 		panelOther.add(textFieldHasPyramid, new GridBagConstraintsHelper(1, 0, 2, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(10, 5, 0, 10));
 
-		panelOther.add(labelClipRegion, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
-		panelOther.add(buttonSetClipRegion, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 0));
-		panelOther.add(buttonClearClipRegion, new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10));
+		panelOther.add(labelClipRegion, new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 10, 0));
+		panelOther.add(buttonSetClipRegion, new GridBagConstraintsHelper(1, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(1, 0).setAnchor(GridBagConstraints.EAST).setInsets(5, 5, 10, 0));
+		panelOther.add(buttonClearClipRegion, new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(5, 5, 10, 10));
 
 
 		this.labelColorTable = new JLabel("ColorTable:");
@@ -249,8 +257,8 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		JPanel panelColors = new JPanel();
 		panelColors.setLayout(new GridBagLayout());
 		panelColors.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_ColorTable")));
-		panelColors.add(labelColorTable, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 0, 0).setWeight(0, 0));
-		panelColors.add(comboBoxColors, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(10, 5, 0, 10).setAnchor(GridBagConstraints.EAST));
+		panelColors.add(labelColorTable, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 10, 0).setWeight(0, 0));
+		panelColors.add(comboBoxColors, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(10, 5, 10, 10).setAnchor(GridBagConstraints.EAST));
 
 
 		JPanel panelButton = new JPanel();
@@ -264,8 +272,9 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		this.add(panelPixelProperty, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(10, 10, 0, 10));
 		this.add(panelExtreme, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
 		this.add(panelColors, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
-		this.add(new JPanel(), new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
-		this.add(panelButton, new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+		this.add(panelOther, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
+		this.add(new JPanel(), new GridBagConstraintsHelper(0, 4, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
+		this.add(panelButton, new GridBagConstraintsHelper(0, 5, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
 
 	}
 
@@ -278,6 +287,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		this.labelWidth.setText(ControlsProperties.getString("String_LabelColumnsSize"));
 		this.labelMaxValue.setText(ControlsProperties.getString("String_LabelMaxValue"));
 		this.labelMinValue.setText(ControlsProperties.getString("String_LabelMinValue"));
+		this.labelGridCount.setText(ControlsProperties.getString("String_GridCount"));
 		this.labelHasPyramid.setText(ControlsProperties.getString("String_LabelPyramid"));
 		this.labelClipRegion.setText(ControlsProperties.getString("String_LabelClipRegion"));
 		this.buttonSetClipRegion.setText(ControlsProperties.getString("String_Button_Setting"));
@@ -320,6 +330,9 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		this.textFieldX.setText(BigDecimal.valueOf(this.datasetGrid.getBounds().getWidth() / this.datasetGrid.getWidth()).toString());
 		this.textFieldY.setText(BigDecimal.valueOf(this.datasetGrid.getBounds().getHeight() / this.datasetGrid.getHeight()).toString());
 		this.textFieldNoValue.setValue(this.noValue);
+		int blockCount = datasetGrid.getColumnBlockCount();
+		int rowBlockCount = datasetGrid.getRowBlockCount();
+		textFieldGridCount.setText(MessageFormat.format("{0}*{1}", blockCount, rowBlockCount));
 		this.textFieldHeight.setText(BigDecimal.valueOf(this.datasetGrid.getHeight()).toString());
 		this.textFieldWidth.setText(BigDecimal.valueOf(this.datasetGrid.getWidth()).toString());
 		this.textFieldMaxValue.setText(BigDecimal.valueOf(this.datasetGrid.getMaxValue()).toString());

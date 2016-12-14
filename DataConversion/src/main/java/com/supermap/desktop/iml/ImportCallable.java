@@ -4,8 +4,9 @@ import com.supermap.data.*;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.importUI.DataImportDialog;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.tableModel.ImportTableModel;
@@ -32,11 +33,13 @@ public class ImportCallable extends UpdateProgressCallable {
     private ArrayList<ImportInfo> fileInfos;
     private JTable table;
     private ImportSetting importSetting;
+    private DataImportDialog dataImportDialog;
     private SpatialIndexType[] spatialIndexTypes = {SpatialIndexType.MULTI_LEVEL_GRID, SpatialIndexType.QTREE, SpatialIndexType.RTREE, SpatialIndexType.TILE};
 
-    public ImportCallable(List<ImportInfo> fileInfos, JTable table) {
+    public ImportCallable(List<ImportInfo> fileInfos, DataImportDialog dataImportDialog) {
         this.fileInfos = (ArrayList<ImportInfo>) fileInfos;
-        this.table = table;
+        this.dataImportDialog = dataImportDialog;
+        this.table = dataImportDialog.getTable();
     }
 
     @Override
@@ -57,14 +60,18 @@ public class ImportCallable extends UpdateProgressCallable {
                 Dataset dataset = DatasourceUtilities.getDataset(datasetName, importSetting.getTargetDatasource());
                 if (importSetting.getImportMode().equals(ImportMode.OVERWRITE) && DatasetUtilities.isDatasetOpened(dataset)) {
                     if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(DataConversionProperties.getString("String_FormImport_MessageBoxOverWrite"))) {
-                        IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
                         IForm form = MapUtilities.getFormMap(dataset);
-                        formManager.close(form);
-                        doImport(importSettings, i, dataImport, map);
+                        if (form instanceof IFormMap) {
+                            DatasetUtilities.removeByDataset(((IFormMap) form).getMapControl().getMap().getLayers(), dataset);
+                            ((IFormMap) form).getMapControl().getMap().refresh();
+                        }
                     }
-                } else {
-                    doImport(importSettings, i, dataImport, map);
                 }
+                doImport(importSettings, i, dataImport, map);
+                if (!dataImportDialog.isVisible()) {
+                    importSetting.dispose();
+                }
+                dataImport.dispose();
             }
         } catch (Exception e2) {
             Application.getActiveApplication().getOutput().output(e2);
@@ -115,7 +122,6 @@ public class ImportCallable extends UpdateProgressCallable {
             return;
         }
         dataImport.removeImportSteppedListener(percentProgress);
-        dataImport.dispose();
     }
 
     /**

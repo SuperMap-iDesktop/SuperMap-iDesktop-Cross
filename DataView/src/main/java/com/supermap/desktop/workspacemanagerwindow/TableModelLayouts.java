@@ -38,7 +38,7 @@ public class TableModelLayouts extends AbstractTableModel {
 
 	@Override
 	public int getColumnCount() {
-		return 2;
+		return 5;
 	}
 
 	@Override
