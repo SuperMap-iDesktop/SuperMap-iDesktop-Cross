@@ -97,6 +97,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 		} else {
 			add(split.getSplitPane(), BorderLayout.CENTER);
 			split.resetDividerSize();
+			revalidate();
 		}
 
 		if (this.selectedGroup == null) {
@@ -219,9 +220,17 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 		return group;
 	}
 
+	/**
+	 * 将 page 添加到当前激活的 group 中
+	 *
+	 * @param page
+	 * @param pageIndex
+	 */
 	public void addPage(MdiPage page, int pageIndex) {
-		if (this.selectedGroup != null) {
-			this.selectedGroup.getGroup().addPage(page, pageIndex);
+		MdiGroup group = this.groups.size() > 0 ? this.selectedGroup.getGroup() : createGroup();
+
+		if (group != null) {
+			group.addPage(page, pageIndex);
 		}
 	}
 
@@ -239,10 +248,41 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 		}
 	}
 
-	public void closeAll() {
+	public boolean closeAll() {
+		boolean isClosed = true;
 		for (int i = 0; i < this.groups.size(); i++) {
-			this.groups.get(i).getGroup().closeAll();
+			isClosed = isClosed && this.groups.get(i).getGroup().closeAll();
 		}
+		return isClosed;
+	}
+
+	/**
+	 * 关闭包含指定 component 的 page
+	 *
+	 * @param component
+	 */
+	public boolean close(Component component) {
+		boolean isClosed = false;
+		MdiPage page = getPage(component);
+		if (page != null) {
+			isClosed = close(page);
+		}
+		return isClosed;
+	}
+
+	/**
+	 * 关闭指定的 page，如果该 page 或者 该 page 的 group 未受 MdiPane 管理，则什么都不做
+	 *
+	 * @param page
+	 * @return
+	 */
+	public boolean close(MdiPage page) {
+		boolean isClosed = false;
+
+		if (page != null && page.getGroup().getMdiContainer() == this) {
+			isClosed = page.getGroup().close(page);
+		}
+		return isClosed;
 	}
 
 	public MdiGroup addNewGroup(MdiPage page) {
@@ -283,10 +323,55 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 		}
 	}
 
-	public MdiPage getPageAt(int index) {
-		MdiPage page = null;
+	/**
+	 * 获取所有的 page
+	 *
+	 * @return
+	 */
+	public MdiPage[] getPages() {
+		ArrayList<MdiPage> pages = new ArrayList<>();
 
-		return page;
+		for (int i = 0; i < this.groups.size(); i++) {
+			MdiGroup group = this.groups.get(i).getGroup();
+
+			for (int j = 0; j < group.getPageCount(); j++) {
+				pages.add(group.getPageAt(j));
+			}
+		}
+		return pages.toArray(new MdiPage[pages.size()]);
+	}
+
+	/**
+	 * 获取包含指定 component 的 page
+	 *
+	 * @param component
+	 * @return
+	 */
+	public MdiPage getPage(Component component) {
+		MdiPage[] pages = getPages();
+		for (int i = 0; i < pages.length; i++) {
+			MdiPage page = pages[i];
+			if (page.getComponent() == component) {
+				return page;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * 获取指定 index 的 page
+	 * 如果有多个 group，则按 左→右，上→下 的顺序处理 index
+	 *
+	 * @param index
+	 * @return
+	 */
+	public MdiPage getPageAt(int index) {
+		MdiPage[] pages = getPages();
+
+		if (index >= 0 && index < pages.length) {
+			return pages[index];
+		}
+		return null;
 	}
 
 	public MdiPage getActivePage() {
@@ -343,16 +428,43 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 		MdiGroup oldSelectedGroup = MdiPane.this.getSelectedGroup();
 		MdiPage oldSelectedPage = oldSelectedGroup == null ? null : MdiPane.this.selectedPage;
 
-		if (group != null) {
+		if (group != null && oldSelectedGroup != group) {
 			MdiPage newSelectedPage = group.getActivePage();
 			MdiPane.this.eventsHelper.firePageActivating(new PageActivatingEvent(group, newSelectedPage, oldSelectedPage));
 			MdiPane.this.selectedGroup = MdiPane.this.findSplitGroup(group);
 			MdiPane.this.selectedPage = newSelectedPage;
 			MdiPane.this.eventsHelper.firePageActivated(new PageActivatedEvent(group, newSelectedPage, oldSelectedPage));
-		} else {
-			oldSelectedGroup.requestFocusInWindow();
 		}
 		repaint();
+	}
+
+	/**
+	 * 激活指定 component 的 page
+	 *
+	 * @param component
+	 */
+	public void activePage(Component component) {
+		MdiPage[] pages = getPages();
+		for (int i = 0; i < pages.length; i++) {
+			MdiPage page = pages[i];
+			if (page.getComponent() == component) {
+				activePage(page);
+				break;
+			}
+		}
+	}
+
+	/**
+	 * 激活指定的 page，同时需要激活该 page 所在的 group
+	 *
+	 * @param page
+	 */
+	public void activePage(MdiPage page) {
+		MdiGroup group = page.getGroup();
+		if (group != null && group.getMdiContainer() == this) {
+			group.activePage(page);
+			active(group);
+		}
 	}
 
 	private class SplitGroup {
