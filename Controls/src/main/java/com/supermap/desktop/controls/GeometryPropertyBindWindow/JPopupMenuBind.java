@@ -13,10 +13,6 @@ import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
-import com.supermap.desktop.ui.docking.DockingWindow;
-import com.supermap.desktop.ui.docking.SplitWindow;
-import com.supermap.desktop.ui.docking.TabWindow;
-import net.infonode.util.Direction;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -85,7 +81,6 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
             JPopupMenuBind.this.setVisible(false);
         }
     };
-    private SplitWindow splitWindow;
 
     private void addFormList() {
         formMapList.clear();
@@ -187,50 +182,50 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
     }
 
     private void splitTabWindow() {
-        int formMapSize = formMapList.size();
-        int formTabularSize = formTabularList.size();
-        TabWindow formMapSplitWindow = null;
-        TabWindow formTabularTabWindow = null;
-        TabWindow tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
-        if (formMapsOnly) {
-            while (formMapSize > 1) {
-                if (tabWindow.getChildWindowCount() > 0) {
-                    tabWindow.split((DockingWindow) formMapList.get(formMapSize - 1), Direction.RIGHT, (float) (1 - 1.0 / formMapSize));
-                    formMapSize--;
-                } else {
-                    break;
-                }
-            }
-        } else if (formTabularsOnly) {
-            while (formTabularSize > 1) {
-                if (tabWindow.getChildWindowCount() > 0) {
-                    tabWindow.split((DockingWindow) formTabularList.get(formTabularSize - 1), Direction.DOWN, (float) (1 - 1.0 / formTabularSize));
-                    formTabularSize--;
-                } else {
-                    break;
-                }
-            }
-        } else if (formMapsAndFormTabulars) {
-            //有地图和属性表时
-
-            this.splitWindow = tabWindow.split((DockingWindow) formTabularList.get(0), Direction.DOWN, 0.7f);
-            formMapSplitWindow = (TabWindow) splitWindow.getChildWindow(0);
-            while (formMapSize > 1) {
-                if (formMapSplitWindow.getChildWindowCount() > 0) {
-                    formMapSplitWindow.split((DockingWindow) formMapList.get(formMapSize - 1), Direction.RIGHT, (float) (1 - 1.0 / formMapSize));
-                    formMapSize--;
-                } else {
-                    break;
-                }
-            }
-            formTabularTabWindow = (TabWindow) splitWindow.getChildWindow(splitWindow.getChildWindowCount() - 1);
-            for (int i = 1; i < formTabularSize; i++) {
-                formTabularTabWindow.addTab((DockingWindow) formTabularList.get(i));
-            }
-        }
-        if (formMapSize > 0) {
-            Application.getActiveApplication().setActiveForm((IForm) formMapList.get(0));
-        }
+//        int formMapSize = formMapList.size();
+//        int formTabularSize = formTabularList.size();
+//        TabWindow formMapSplitWindow = null;
+//        TabWindow formTabularTabWindow = null;
+//        TabWindow tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
+//        if (formMapsOnly) {
+//            while (formMapSize > 1) {
+//                if (tabWindow.getChildWindowCount() > 0) {
+//                    tabWindow.split((DockingWindow) formMapList.get(formMapSize - 1), Direction.RIGHT, (float) (1 - 1.0 / formMapSize));
+//                    formMapSize--;
+//                } else {
+//                    break;
+//                }
+//            }
+//        } else if (formTabularsOnly) {
+//            while (formTabularSize > 1) {
+//                if (tabWindow.getChildWindowCount() > 0) {
+//                    tabWindow.split((DockingWindow) formTabularList.get(formTabularSize - 1), Direction.DOWN, (float) (1 - 1.0 / formTabularSize));
+//                    formTabularSize--;
+//                } else {
+//                    break;
+//                }
+//            }
+//        } else if (formMapsAndFormTabulars) {
+//            //有地图和属性表时
+//
+//            this.splitWindow = tabWindow.split((DockingWindow) formTabularList.get(0), Direction.DOWN, 0.7f);
+//            formMapSplitWindow = (TabWindow) splitWindow.getChildWindow(0);
+//            while (formMapSize > 1) {
+//                if (formMapSplitWindow.getChildWindowCount() > 0) {
+//                    formMapSplitWindow.split((DockingWindow) formMapList.get(formMapSize - 1), Direction.RIGHT, (float) (1 - 1.0 / formMapSize));
+//                    formMapSize--;
+//                } else {
+//                    break;
+//                }
+//            }
+//            formTabularTabWindow = (TabWindow) splitWindow.getChildWindow(splitWindow.getChildWindowCount() - 1);
+//            for (int i = 1; i < formTabularSize; i++) {
+//                formTabularTabWindow.addTab((DockingWindow) formTabularList.get(i));
+//            }
+//        }
+//        if (formMapSize > 0) {
+//            Application.getActiveApplication().setActiveForm((IForm) formMapList.get(0));
+//        }
     }
 
     private MouseListener listFormsMouseListener = new MouseAdapter() {

@@ -129,35 +129,35 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		initListeners();
 	}
 
-	@Override
-	public void close() {
-		super.close();
-		this.setVisible(false);
-		this.isWindowShown = false;
-	}
+//	@Override
+//	public void close() {
+//		super.close();
+//		this.setVisible(false);
+//		this.isWindowShown = false;
+//	}
+//
+//	// 当窗口显示
+//	@Override
+//	public void windowShown() {
+//		//刷新jtable，其显示跟随tree焦点
+//		this.isWindowShown = true;
+//		this.add(buttonToolBar, BorderLayout.NORTH);
+//		this.add(scrollPaneInfo, BorderLayout.CENTER);
+//		initJTable();
+//	}
 
-	// 当窗口显示
-	@Override
-	public void windowShown() {
-		//刷新jtable，其显示跟随tree焦点
-		this.isWindowShown = true;
-		this.add(buttonToolBar, BorderLayout.NORTH);
-		this.add(scrollPaneInfo, BorderLayout.CENTER);
-		initJTable();
-	}
-
-	@Override
-	public boolean isUndockable() {
-		//暂时关闭undockable，当undockable时窗口不稳定
-		return false;
-	}
-
-	// 当窗口隐藏
-	@Override
-	public void windowHidden() {
-		//断开窗口与外部的连接
-		this.isWindowShown = false;
-	}
+//	@Override
+//	public boolean isUndockable() {
+//		//暂时关闭undockable，当undockable时窗口不稳定
+//		return false;
+//	}
+//
+//	// 当窗口隐藏
+//	@Override
+//	public void windowHidden() {
+//		//断开窗口与外部的连接
+//		this.isWindowShown = false;
+//	}
 
 	/**
 	 * 构造函数
