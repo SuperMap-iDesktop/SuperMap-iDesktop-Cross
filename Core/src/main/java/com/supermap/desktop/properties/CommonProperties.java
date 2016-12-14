@@ -78,5 +78,8 @@ public class CommonProperties extends Properties {
 	public static final String ResultDataset = "String_Label_ResultDataset";
 	public static final String ResultDatasource = "String_Label_ResultDatasource";
     public static final String keepThisChose = "String_KeepThisChose";
-
+	public static final String moveToFrist = "String_MoveToFrist";
+	public static final String moveToNext = "String_MoveToNext";
+	public static final String moveToForward = "String_MoveToForward";
+	public static final String moveToLast = "String_MoveToLast";
 }

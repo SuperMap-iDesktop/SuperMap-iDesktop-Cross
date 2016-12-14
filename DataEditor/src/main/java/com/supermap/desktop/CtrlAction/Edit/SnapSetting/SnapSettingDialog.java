@@ -9,8 +9,9 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TableTooltipCellRenderer;
+import com.supermap.desktop.ui.controls.TextFields.RightValueListener;
+import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.mapping.SnapMode;
 import com.supermap.mapping.SnapSetting;
 import com.supermap.ui.MapControl;
@@ -25,7 +26,6 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.text.DecimalFormat;
 
 /**
@@ -48,15 +48,15 @@ public class SnapSettingDialog extends SmDialog {
     private JButton buttonCancel;
     private JButton buttonRecover;
     private JLabel labelSnapTolarence;
-    private WarningTextFeild textFieldSnapTolarence;
+    private WaringTextField textFieldSnapTolarence;
     private JLabel labelFixedAngle;
-    private WarningTextFeild textFieldFixedAngle;
-    private JLabel labelMaxSnappedCount;
-    private WarningTextFeild textFieldMaxSnappedCount;
+    private WaringTextField textFieldFixedAngle;
+    //    private JLabel labelMaxSnappedCount;
+//    private WaringTextField textFieldMaxSnappedCount;
     private JLabel labelFixedLength;
-    private WarningTextFeild textFieldFixedLength;
+    private WaringTextField textFieldFixedLength;
     private JLabel labelMinSnappedLength;
-    private WarningTextFeild textFieldMinSnappedLength;
+    private WaringTextField textFieldMinSnappedLength;
     private JCheckBox checkBoxSnappedLineBroken;
     private JPanel panelTolarenceView;
     private JLabel labelImageCicle;
@@ -86,12 +86,12 @@ public class SnapSettingDialog extends SmDialog {
     private ActionListener recoverListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            srcSnapSetting = SnapSettingUtilities.parseSnapSetting(mapControl);
+            srcSnapSetting = SnapSettingUtilities.parseDefaultSnapSetting(mapControl);
             isRecover = true;
             initTable();
             textFieldSnapTolarence.setText(format.format(srcSnapSetting.getTolerance()));
             textFieldFixedAngle.setText(format.format(srcSnapSetting.getFixedAngle()));
-            textFieldMaxSnappedCount.setText(format.format(srcSnapSetting.getMaxSnappedCount()));
+//            textFieldMaxSnappedCount.setText(format.format(srcSnapSetting.getMaxSnappedCount()));
             textFieldMinSnappedLength.setText(format.format(srcSnapSetting.getMinSnappedLength()));
             textFieldFixedLength.setText(format.format(srcSnapSetting.getFixedLength()));
             checkBoxSnappedLineBroken.setSelected(srcSnapSetting.isSnappedLineBroken());
@@ -274,6 +274,11 @@ public class SnapSettingDialog extends SmDialog {
             if (isRecover) {
                 mapControlSnapSetting = srcSnapSetting;
             }
+            if (!SnapSettingUtilities.isSnapSettingFileExists()) {
+                SnapSettingUtilities.createSnapSettingFile(mapControlSnapSetting);
+            } else {
+                SnapSettingUtilities.resetSnapSettingFile(mapControlSnapSetting);
+            }
             mapControl.setSnapSetting(mapControlSnapSetting);
             SnapSettingUtilities.replaceSnapMode(mapControlSnapSetting, mapControl.getSnapSetting());
             removeEvents();
@@ -283,19 +288,29 @@ public class SnapSettingDialog extends SmDialog {
     };
 
     public SnapSettingDialog(MapControl mapControl) {
-        this.mapControl = mapControl;
-        this.mapControlSnapSetting = new SnapSetting(mapControl.getSnapSetting());
-        this.srcSnapSetting = new SnapSetting(mapControlSnapSetting);
-        File file = new File(PathUtilities.getFullPathName(DataEditorProperties.getString("String_SnapSettingXMLPath"), false));
-        if (!file.exists()) {
-            SnapSettingUtilities.createSnapSettingFile();
-        }
-        if (!SnapSettingUtilities.isSnapSettingExists(mapControl)) {
-            SnapSettingUtilities.addSnapSettingNode(mapControl);
-        }
+        initSnapSetting(mapControl);
+    }
 
-        SnapSettingUtilities.replaceSnapMode(mapControl.getSnapSetting(), this.mapControlSnapSetting);
-        SnapSettingUtilities.replaceSnapMode(mapControl.getSnapSetting(), this.srcSnapSetting);
+    private void initSnapSetting(MapControl mapControl) {
+        this.mapControl = mapControl;
+        if (!SnapSettingUtilities.isDefaultSnapSettingFileExists()) {
+            //如果DefaultSnapSetting.xml文件不存在，则创建该文件
+            SnapSettingUtilities.createDefaultSnapSettingFile();
+        }
+        if (!SnapSettingUtilities.isDefaultSnapSettingExists(mapControl)) {
+            //如果默认的SnapSetting不存在，则将该MapControl的SnapSetting添加到DefaultSnapSetting.xml文件中
+            SnapSettingUtilities.addDefaultSnapSettingNode(mapControl);
+        }
+        if (SnapSettingUtilities.isSnapSettingFileExists()) {
+            //如果已经有全局设置的SnapSetting，则直接取出来，并设置当前MapControl的SnapSetting为SnapSetting
+            this.srcSnapSetting = SnapSettingUtilities.parseSnapSetting();
+            this.mapControlSnapSetting = this.srcSnapSetting;
+            mapControl.setSnapSetting(srcSnapSetting);
+            SnapSettingUtilities.replaceSnapMode(srcSnapSetting, mapControl.getSnapSetting());
+        } else {
+            this.srcSnapSetting = new SnapSetting(mapControl.getSnapSetting());
+            this.mapControlSnapSetting = this.srcSnapSetting;
+        }
     }
 
     private void init() {
@@ -316,7 +331,7 @@ public class SnapSettingDialog extends SmDialog {
         this.buttonMoveToLast.addActionListener(this.moveListener);
         this.textFieldSnapTolarence.addRightValueListener(this.tolarenceListener);
         this.textFieldFixedAngle.addRightValueListener(this.fixedAngleListener);
-        this.textFieldMaxSnappedCount.addRightValueListener(this.maxSnappedCountListener);
+//        this.textFieldMaxSnappedCount.addRightValueListener(this.maxSnappedCountListener);
         this.textFieldFixedLength.addRightValueListener(this.fixedLengthListener);
         this.textFieldMinSnappedLength.addRightValueListener(this.minSnappedLengthListener);
         this.checkBoxSnappedLineBroken.addChangeListener(this.snappedLineBrokenListener);
@@ -339,7 +354,7 @@ public class SnapSettingDialog extends SmDialog {
         this.buttonMoveToLast.removeActionListener(this.moveListener);
         this.textFieldSnapTolarence.removeRightValueListener(this.tolarenceListener);
         this.textFieldFixedAngle.removeRightValueListener(this.fixedAngleListener);
-        this.textFieldMaxSnappedCount.removeRightValueListener(this.maxSnappedCountListener);
+//        this.textFieldMaxSnappedCount.removeRightValueListener(this.maxSnappedCountListener);
         this.textFieldFixedLength.removeRightValueListener(this.fixedLengthListener);
         this.textFieldMinSnappedLength.removeRightValueListener(this.minSnappedLengthListener);
         this.checkBoxSnappedLineBroken.removeChangeListener(this.snappedLineBrokenListener);
@@ -351,7 +366,7 @@ public class SnapSettingDialog extends SmDialog {
         this.labelSnapTolarence.setText(DataEditorProperties.getString("String_SnapSettingTolerance"));
         this.labelFixedAngle.setText(DataEditorProperties.getString("String_SnapSettingFixedAngle"));
         this.labelFixedLength.setText(DataEditorProperties.getString("String_SnapSettingFixedLength"));
-        this.labelMaxSnappedCount.setText(DataEditorProperties.getString("String_SnapSettingMaxSnappedCount"));
+//        this.labelMaxSnappedCount.setText(DataEditorProperties.getString("String_SnapSettingMaxSnappedCount"));
         this.labelMinSnappedLength.setText(DataEditorProperties.getString("String_SnapSettingMinSnappedLength"));
         this.checkBoxSnappedLineBroken.setText(DataEditorProperties.getString("String_SnapSettingLineBroken"));
         this.buttonRecover.setText(DataEditorProperties.getString("String_SnapSettingResume"));
@@ -359,20 +374,24 @@ public class SnapSettingDialog extends SmDialog {
         this.buttonMoveToFrist.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_MoveFrist.png"));
         this.buttonMoveToLast.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_MoveLast.png"));
         this.buttonMoveToNext.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Image_MoveNext.png"));
+        this.buttonMoveToForward.setToolTipText(CommonProperties.getString(CommonProperties.moveToForward));
+        this.buttonMoveToFrist.setToolTipText(CommonProperties.getString(CommonProperties.moveToFrist));
+        this.buttonMoveToNext.setToolTipText(CommonProperties.getString(CommonProperties.moveToNext));
+        this.buttonMoveToLast.setToolTipText(CommonProperties.getString(CommonProperties.moveToLast));
     }
 
     private void initLayout() {
-        this.setSize(new Dimension(560, 420));
+        this.setSize(new Dimension(640, 420));
         this.setLocationRelativeTo(null);
         JPanel panelButton = new JPanel();
         panelButton.setLayout(new GridBagLayout());
-        panelButton.add(this.buttonRecover, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 0).setFill(GridBagConstraints.NONE).setInsets(10, 0, 10, 5));
-        panelButton.add(this.buttonOK, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(10, 0, 10, 5));
-        panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(10, 0, 10, 10));
+        panelButton.add(this.buttonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(10, 0, 10, 5));
+        panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(10, 0, 10, 10));
 
         this.setLayout(new GridBagLayout());
-        this.add(tabbedPane, new GridBagConstraintsHelper(0, 0, 4, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        this.add(panelButton, new GridBagConstraintsHelper(0, 1, 4, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+        this.add(tabbedPane, new GridBagConstraintsHelper(0, 0, 6, 1).setAnchor(GridBagConstraints.CENTER).setInsets(10, 8, 0, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+        this.add(buttonRecover, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(10, 10, 10, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(panelButton, new GridBagConstraintsHelper(4, 1, 2, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 
         this.tabbedPane.addTab(DataEditorProperties.getString("String_SnapSetting_TabPageType"), panelSnapMode);
         this.tabbedPane.addTab(DataEditorProperties.getString("String_SnapSetting_TabPageParameters"), panelSnapParams);
@@ -389,13 +408,13 @@ public class SnapSettingDialog extends SmDialog {
         panelSnapParamsDisplay.add(this.textFieldSnapTolarence, new GridBagConstraintsHelper(1, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(20, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
         panelSnapParamsDisplay.add(this.labelFixedAngle, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 20, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         panelSnapParamsDisplay.add(this.textFieldFixedAngle, new GridBagConstraintsHelper(1, 1, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
-        panelSnapParamsDisplay.add(this.labelMaxSnappedCount, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 20, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        panelSnapParamsDisplay.add(this.textFieldMaxSnappedCount, new GridBagConstraintsHelper(1, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
+//        panelSnapParamsDisplay.add(this.labelMaxSnappedCount, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 20, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+//        panelSnapParamsDisplay.add(this.textFieldMaxSnappedCount, new GridBagConstraintsHelper(1, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
         panelSnapParamsDisplay.add(this.labelFixedLength, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 20, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         panelSnapParamsDisplay.add(this.textFieldFixedLength, new GridBagConstraintsHelper(1, 3, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
         panelSnapParamsDisplay.add(this.labelMinSnappedLength, new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 20, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         panelSnapParamsDisplay.add(this.textFieldMinSnappedLength, new GridBagConstraintsHelper(1, 4, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
-        panelSnapParamsDisplay.add(this.checkBoxSnappedLineBroken, new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 20, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        panelSnapParamsDisplay.add(this.checkBoxSnappedLineBroken, new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 16, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
 
         this.panelSnapParams.setLayout(new GridBagLayout());
         this.panelSnapParams.add(panelSnapParamsDisplay, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
@@ -414,10 +433,10 @@ public class SnapSettingDialog extends SmDialog {
 
     private ImageIcon buildIcon(int width) {
         ImageIcon colorIcon = new ImageIcon();
-        BufferedImage bufferedImage = new BufferedImage(99, 99, BufferedImage.TYPE_INT_RGB);
+        BufferedImage bufferedImage = new BufferedImage(98, 98, BufferedImage.TYPE_INT_RGB);
         Graphics g = bufferedImage.createGraphics();
         g.setColor(panelTolarenceView.getBackground());
-        g.fillRect(0, 0, 99, 99);//填充整个屏幕
+        g.fillRect(0, 0, 98, 98);//填充整个屏幕
         g.setColor(Color.red);
         int pointx = 43;
         int pointy = 42;
@@ -467,6 +486,7 @@ public class SnapSettingDialog extends SmDialog {
         }
         this.tableSnapMode.getColumn(tableSnapMode.getModel().getColumnName(TABLE_COLUMN_CHECKABLE)).setMaxWidth(100);
         this.tableSnapMode.getColumn(tableSnapMode.getModel().getColumnName(TABLE_COLUMN_CHECKABLE)).setCellRenderer(new CheckTableRenderer());
+        this.tableSnapMode.getColumn(tableSnapMode.getModel().getColumnName(TABLE_COLUMN_DESCRIPTION)).setMinWidth(220);
         this.tableSnapMode.getColumn(tableSnapMode.getModel().getColumnName(TABLE_COLUMN_DESCRIPTION)).setCellRenderer(TableTooltipCellRenderer.getInstance());
         this.tableSnapMode.getTableHeader().setDefaultRenderer(new CheckableHeaderCellRenderer(tableSnapMode, DataEditorProperties.getString("String_Enabled")));
         this.tableSnapMode.setRowHeight(23);
@@ -787,20 +807,20 @@ public class SnapSettingDialog extends SmDialog {
         this.buttonCancel = ComponentFactory.createButtonCancel();
         this.buttonRecover = new SmButton();
         this.labelSnapTolarence = new JLabel();
-        this.textFieldSnapTolarence = new WarningTextFeild(format.format(srcSnapSetting.getTolerance()));
-        this.textFieldSnapTolarence.setInitInfo(1, 20, 0, "null");
+        this.textFieldSnapTolarence = new WaringTextField(format.format(srcSnapSetting.getTolerance()));
+        this.textFieldSnapTolarence.setInitInfo(1, 20, WaringTextField.INTEGER_TYPE, "null");
         this.labelFixedAngle = new JLabel();
-        this.textFieldFixedAngle = new WarningTextFeild(format.format(srcSnapSetting.getFixedAngle()));
-        this.textFieldFixedAngle.setInitInfo(0, 360, 1, "2");
-        this.labelMaxSnappedCount = new JLabel();
-        this.textFieldMaxSnappedCount = new WarningTextFeild(format.format(srcSnapSetting.getMaxSnappedCount()));
-        this.textFieldMaxSnappedCount.setInitInfo(20, 5000, 0, "null");
+        this.textFieldFixedAngle = new WaringTextField(format.format(srcSnapSetting.getFixedAngle()));
+        this.textFieldFixedAngle.setInitInfo(0, 360, WaringTextField.FLOAT_TYPE, "2");
+//        this.labelMaxSnappedCount = new JLabel();
+//        this.textFieldMaxSnappedCount = new WaringTextField(format.format(srcSnapSetting.getMaxSnappedCount()));
+//        this.textFieldMaxSnappedCount.setInitInfo(20, 5000, WaringTextField.INTEGER_TYPE, "null");
         this.labelFixedLength = new JLabel();
-        this.textFieldFixedLength = new WarningTextFeild(format.format(srcSnapSetting.getFixedLength()));
-        this.textFieldFixedLength.setInitInfo(0, 1000000000, 1, "2");
+        this.textFieldFixedLength = new WaringTextField(format.format(srcSnapSetting.getFixedLength()));
+        this.textFieldFixedLength.setInitInfo(0, 1000000000, WaringTextField.FLOAT_TYPE, "2");
         this.labelMinSnappedLength = new JLabel();
-        this.textFieldMinSnappedLength = new WarningTextFeild(format.format(srcSnapSetting.getMinSnappedLength()));
-        this.textFieldMinSnappedLength.setInitInfo(1, 120, 0, "null");
+        this.textFieldMinSnappedLength = new WaringTextField(format.format(srcSnapSetting.getMinSnappedLength()));
+        this.textFieldMinSnappedLength.setInitInfo(1, 120, WaringTextField.INTEGER_TYPE, "null");
         this.checkBoxSnappedLineBroken = new JCheckBox();
         this.checkBoxSnappedLineBroken.setSelected(srcSnapSetting.isSnappedLineBroken());
         this.labelImageCicle = new JLabel();

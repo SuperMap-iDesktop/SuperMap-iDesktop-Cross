@@ -24,9 +24,12 @@ import java.io.PrintWriter;
  */
 public class SnapSettingUtilities {
 
-    private static Document getCurrentDocument() {
+    private static final String SNAPSETTING_PATH = "String_SnapSettingXMLPath";
+    private static final String DEFAULT_SNAPSETTING_PATH = "String_DefaultSnapSettingXMLPath";
+
+    private static Document getDocument(String str) {
         Document document = null;
-        String filePath = PathUtilities.getFullPathName(DataEditorProperties.getString("String_SnapSettingXMLPath"), false);
+        String filePath = PathUtilities.getFullPathName(DataEditorProperties.getString(str), false);
         File file = new File(filePath);
         if (file.exists() && null != XmlUtilities.getDocument(file, 0)) {
             document = XmlUtilities.getDocument(file, 0);
@@ -40,9 +43,9 @@ public class SnapSettingUtilities {
      * @param mapControl
      * @return
      */
-    private static Node getSnapSettingNode(MapControl mapControl) {
-        if (null != getCurrentDocument()) {
-            Document document = getCurrentDocument();
+    private static Node getDefaultSnapSettingNode(MapControl mapControl) {
+        if (null != getDocument(DEFAULT_SNAPSETTING_PATH)) {
+            Document document = getDocument(DEFAULT_SNAPSETTING_PATH);
             NodeList nodeList = document.getDocumentElement().getChildNodes();
             for (int i = 0; i < nodeList.getLength(); i++) {
                 Node node = nodeList.item(i);
@@ -60,13 +63,40 @@ public class SnapSettingUtilities {
      * @param mapControl
      * @return
      */
-    public static boolean isSnapSettingExists(MapControl mapControl) {
-        return null != getSnapSettingNode(mapControl);
+    public static boolean isDefaultSnapSettingExists(MapControl mapControl) {
+        return null != getDefaultSnapSettingNode(mapControl);
     }
 
-    public static SnapSetting parseSnapSetting(MapControl mapControl) {
+    /**
+     * 从SnapSetting.xml文件中获取SnapSetting节点，并通过该节点构造一个SnapSetting类
+     *
+     * @return
+     */
+    public static SnapSetting parseSnapSetting() {
         SnapSetting result = new SnapSetting();
-        Node node = getSnapSettingNode(mapControl);
+        if (null != getDocument(SNAPSETTING_PATH)) {
+            Document document = getDocument(SNAPSETTING_PATH);
+            Element node = document.getDocumentElement();
+            NodeList nodeList = node.getChildNodes();
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                Node tempNode = nodeList.item(i);
+                if ((tempNode != null && tempNode.getNodeType() == Node.ELEMENT_NODE) && "Node".equals(tempNode.getNodeName())) {
+                    resetSnapSetting(result, tempNode);
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 根据mapcontrol的map的名称从DefaultSnapSetting.xml文件中获取SnapSetting节点，并通过该节点构造一个SnapSetting类
+     *
+     * @param mapControl
+     * @return
+     */
+    public static SnapSetting parseDefaultSnapSetting(MapControl mapControl) {
+        SnapSetting result = new SnapSetting();
+        Node node = getDefaultSnapSettingNode(mapControl);
         NodeList nodeList = node.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node tempNode = nodeList.item(i);
@@ -235,12 +265,130 @@ public class SnapSettingUtilities {
      *
      * @param mapcontrol
      */
-    public static void addSnapSettingNode(MapControl mapcontrol) {
-        Document document = getCurrentDocument();
+    public static void addDefaultSnapSettingNode(MapControl mapcontrol) {
+        Document document = getDocument(DEFAULT_SNAPSETTING_PATH);
         Element snapSettingElement = document.createElement("SnapSetting");
         snapSettingElement.setAttribute("MapName", mapcontrol.getMap().getName());
         Element root = document.getDocumentElement();
         SnapSetting snapSetting = mapcontrol.getSnapSetting();
+        appendNodes(snapSettingElement, document, snapSetting);
+        root.appendChild(snapSettingElement);
+        XmlUtilities.saveXml(PathUtilities.getFullPathName(DataEditorProperties.getString(DEFAULT_SNAPSETTING_PATH), false), document,
+                document.getXmlEncoding());
+    }
+
+
+    /**
+     * 创建SnapSetting.xml文件，用于存放全局的SnapSetting
+     */
+    public static void createSnapSettingFile(SnapSetting snapSetting) {
+        try {
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            Document document = documentBuilder.newDocument();
+            Element root = document.createElement("SnapSetting");
+            root.setAttribute("xmlns", "http://www.supermap.com.cn/desktop");
+            root.setAttribute("version", "8.1.x");
+            document.appendChild(root);
+            appendNodes(root, document, snapSetting);
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            DOMSource source = new DOMSource(document);
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            File file = new File(PathUtilities.getFullPathName(DataEditorProperties.getString("String_SnapSettingXMLPath"), false));
+            if (!file.exists()) {
+                file.createNewFile();
+                parseFileToXML(transformer, source, file);
+            }
+        } catch (DOMException e) {
+            e.printStackTrace();
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 重置SnapSetting.xml文件
+     *
+     * @param snapSetting
+     */
+    public static void resetSnapSettingFile(SnapSetting snapSetting) {
+        Document document = getDocument(SNAPSETTING_PATH);
+        Element element = document.getDocumentElement();
+        NodeList nodeList = element.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node tempNode = nodeList.item(i);
+            if ((tempNode != null && tempNode.getNodeType() == Node.ELEMENT_NODE) && "Node".equals(tempNode.getNodeName())) {
+                resetSnapSettingNode(snapSetting, tempNode);
+            }
+        }
+        XmlUtilities.saveXml(PathUtilities.getFullPathName(DataEditorProperties.getString(SNAPSETTING_PATH), false), document,
+                document.getXmlEncoding());
+    }
+
+    private static void resetSnapSettingNode(SnapSetting snapSetting, Node node) {
+        String elementName = node.getAttributes().getNamedItem("name").getNodeValue();
+        int id = -1;
+        String isSelect = "";
+        if (elementName.equals("Tolerance")) {
+            node.getAttributes().getNamedItem("value").setNodeValue(String.valueOf(snapSetting.getTolerance()));
+        } else if (elementName.equals("FixedAngle")) {
+            node.getAttributes().getNamedItem("value").setNodeValue(String.valueOf(snapSetting.getFixedAngle()));
+        } else if (elementName.equals("MaxSnappedCount")) {
+            node.getAttributes().getNamedItem("value").setNodeValue(String.valueOf(snapSetting.getMaxSnappedCount()));
+        } else if (elementName.equals("FixedLength")) {
+            node.getAttributes().getNamedItem("value").setNodeValue(String.valueOf(snapSetting.getFixedLength()));
+        } else if (elementName.equals("MinSnappedLength")) {
+            node.getAttributes().getNamedItem("value").setNodeValue(String.valueOf(snapSetting.getMinSnappedLength()));
+        } else if (elementName.equals("SnappedLineBroken")) {
+            node.getAttributes().getNamedItem("value").setNodeValue(String.valueOf(snapSetting.isSnappedLineBroken()).toLowerCase());
+        } else if (elementName.equals("PointOnEndPoint")) {
+            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.POINT_ON_ENDPOINT)).toLowerCase());
+            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.POINT_ON_ENDPOINT)));
+        } else if (elementName.equals("PointOnPoint")) {
+            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.POINT_ON_POINT)).toLowerCase());
+            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.POINT_ON_POINT)));
+        } else if (elementName.equals("PointOnLine")) {
+            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.POINT_ON_LINE)).toLowerCase());
+            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.POINT_ON_LINE)));
+        } else if (elementName.equals("PointOnMidPoint")) {
+            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.POINT_ON_MIDPOINT)).toLowerCase());
+            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.POINT_ON_MIDPOINT)));
+        } else if (elementName.equals("PointOnExtension")) {
+            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.POINT_ON_EXTENSION)).toLowerCase());
+            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.POINT_ON_EXTENSION)));
+        } else if (elementName.equals("LineWithFixedAngle")) {
+            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.LINE_WITH_FIXED_ANGLE)).toLowerCase());
+            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.LINE_WITH_FIXED_ANGLE)));
+        } else if (elementName.equals("LineWithFixedLength")) {
+            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.LINE_WITH_FIXED_LENGTH)).toLowerCase());
+            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.LINE_WITH_FIXED_LENGTH)));
+        } else if (elementName.equals("LineWithHorizontal")) {
+            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.LINE_WITH_HORIZONTAL)).toLowerCase());
+            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.LINE_WITH_HORIZONTAL)));
+        } else if (elementName.equals("LineWithVertical")) {
+            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.LINE_WITH_VERTICAL)).toLowerCase());
+            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.LINE_WITH_VERTICAL)));
+        } else if (elementName.equals("LineWithParallel")) {
+            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.LINE_WITH_PARALLEL)).toLowerCase());
+            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.LINE_WITH_PARALLEL)));
+        } else if (elementName.equals("LineWithPerpendicular")) {
+            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.LINE_WITH_PERPENDICULAR)).toLowerCase());
+            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.LINE_WITH_PERPENDICULAR)));
+        }
+    }
+
+
+    private static void appendNodes(Element root, Document document, SnapSetting snapSetting) {
         Element tolerance = document.createElement("Node");
         tolerance.setAttribute("name", "Tolerance");
         tolerance.setAttribute("value", String.valueOf(snapSetting.getTolerance()));
@@ -260,12 +408,12 @@ public class SnapSettingUtilities {
         snappedLineBroken.setAttribute("name", "SnappedLineBroken");
         snappedLineBroken.setAttribute("value", String.valueOf(snapSetting.isSnappedLineBroken()).toLowerCase());
 
-        snapSettingElement.appendChild(tolerance);
-        snapSettingElement.appendChild(fixedAngle);
-        snapSettingElement.appendChild(maxSnappedCount);
-        snapSettingElement.appendChild(fixedLength);
-        snapSettingElement.appendChild(minSnappedLength);
-        snapSettingElement.appendChild(snappedLineBroken);
+        root.appendChild(tolerance);
+        root.appendChild(fixedAngle);
+        root.appendChild(maxSnappedCount);
+        root.appendChild(fixedLength);
+        root.appendChild(minSnappedLength);
+        root.appendChild(snappedLineBroken);
 
         Element pointOnEndPoint = document.createElement("Node");
         pointOnEndPoint.setAttribute("name", "PointOnEndPoint");
@@ -322,26 +470,23 @@ public class SnapSettingUtilities {
         lineWithPerpendicular.setAttribute("index", String.valueOf(snapSetting.indexOf(SnapMode.LINE_WITH_PERPENDICULAR)));
         lineWithPerpendicular.setAttribute("isSelected", String.valueOf(snapSetting.get(SnapMode.LINE_WITH_PERPENDICULAR)).toLowerCase());
 
-        snapSettingElement.appendChild(pointOnMidPoint);
-        snapSettingElement.appendChild(pointOnEndPoint);
-        snapSettingElement.appendChild(pointOnLine);
-        snapSettingElement.appendChild(pointOnPoint);
-        snapSettingElement.appendChild(pointOnExtension);
-        snapSettingElement.appendChild(lineWithFixedAngle);
-        snapSettingElement.appendChild(lineWithFixedLength);
-        snapSettingElement.appendChild(lineWithHorizontal);
-        snapSettingElement.appendChild(lineWithVertical);
-        snapSettingElement.appendChild(lineWithParallel);
-        snapSettingElement.appendChild(lineWithPerpendicular);
-        root.appendChild(snapSettingElement);
-        XmlUtilities.saveXml(PathUtilities.getFullPathName(DataEditorProperties.getString("String_SnapSettingXMLPath"), false), document,
-                document.getXmlEncoding());
+        root.appendChild(pointOnMidPoint);
+        root.appendChild(pointOnEndPoint);
+        root.appendChild(pointOnLine);
+        root.appendChild(pointOnPoint);
+        root.appendChild(pointOnExtension);
+        root.appendChild(lineWithFixedAngle);
+        root.appendChild(lineWithFixedLength);
+        root.appendChild(lineWithHorizontal);
+        root.appendChild(lineWithVertical);
+        root.appendChild(lineWithParallel);
+        root.appendChild(lineWithPerpendicular);
     }
 
     /**
-     * 创建SnapSetting.xml文件，用于存放Mapcontrol的默认SnapSetting
+     * 创建DefaultSnapSetting.xml文件，用于存放Mapcontrol的默认SnapSetting
      */
-    public static void createSnapSettingFile() {
+    public static void createDefaultSnapSettingFile() {
         try {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -355,7 +500,7 @@ public class SnapSettingUtilities {
             DOMSource source = new DOMSource(document);
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            File file = new File(PathUtilities.getFullPathName(DataEditorProperties.getString("String_SnapSettingXMLPath"), false));
+            File file = new File(PathUtilities.getFullPathName(DataEditorProperties.getString(DEFAULT_SNAPSETTING_PATH), false));
             if (!file.exists()) {
                 file.createNewFile();
                 parseFileToXML(transformer, source, file);
@@ -380,4 +525,26 @@ public class SnapSettingUtilities {
         StreamResult streamResult = new StreamResult(pw);
         transformer.transform(source, streamResult);
     }
+
+    /**
+     * 判断SnapSetting.xml文件是否存在
+     *
+     * @return
+     */
+    public static boolean isSnapSettingFileExists() {
+        File file = new File(PathUtilities.getFullPathName(DataEditorProperties.getString(SNAPSETTING_PATH), false));
+        return file.exists();
+    }
+
+    /**
+     * 判断DefaultSnapSetting.xml文件是否存在
+     *
+     * @return
+     */
+    public static boolean isDefaultSnapSettingFileExists() {
+        File file = new File(PathUtilities.getFullPathName(DataEditorProperties.getString(DEFAULT_SNAPSETTING_PATH), false));
+        return file.exists();
+    }
+
+
 }
