@@ -79,14 +79,6 @@ public class PropertyBindWindow implements IPropertyBindWindow {
         this.bindProperty = bindProperty;
     }
 
-//    public SplitWindow getSplitWindow() {
-//        return splitWindow;
-//    }
-//
-//    public void setSplitWindow(SplitWindow splitWindow) {
-//        this.splitWindow = splitWindow;
-//    }
-
     public IFormMap getFormMap() {
         return formMap;
     }

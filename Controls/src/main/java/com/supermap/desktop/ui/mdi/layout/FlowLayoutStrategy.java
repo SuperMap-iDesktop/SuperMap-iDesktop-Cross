@@ -25,27 +25,20 @@ public class FlowLayoutStrategy extends SplitLayoutStrategy {
 	private int layoutMode = HORIZONTAL;
 	private Map<JSplitPane, Double> dividerProportions = new HashMap<>();
 
-	private FlowLayoutStrategy(IMdiContainer container) {
+	private FlowLayoutStrategy(MdiPane container) {
 		this(container, HORIZONTAL);
 	}
 
-	private FlowLayoutStrategy(IMdiContainer container, int layoutMode) {
+	private FlowLayoutStrategy(MdiPane container, int layoutMode) {
 		super(container);
 		this.layoutMode = layoutMode;
-
-		MdiGroup[] groups = container.getGroups();
-		if (groups != null && groups.length > 0) {
-			for (int i = 0; i < groups.length; i++) {
-				addGroup(groups[i]);
-			}
-		}
 	}
 
-	public static FlowLayoutStrategy instance(IMdiContainer container) {
+	public static FlowLayoutStrategy instance(MdiPane container) {
 		return FlowLayoutStrategy.instance(container, HORIZONTAL);
 	}
 
-	public static FlowLayoutStrategy instance(IMdiContainer container, int layoutMode) {
+	public static FlowLayoutStrategy instance(MdiPane container, int layoutMode) {
 		if (container == null) {
 			return null;
 		}
@@ -115,7 +108,19 @@ public class FlowLayoutStrategy extends SplitLayoutStrategy {
 
 	@Override
 	public void layoutGroups() {
+		MdiGroup[] groups = container.getGroups();
+		if (groups != null && groups.length > 0) {
+			for (int i = 0; i < groups.length; i++) {
+				addGroup(groups[i]);
+			}
+		}
+	}
 
+	@Override
+	public void reset() {
+		super.reset();
+		this.dividerProportions.clear();
+		this.container.removeAll();
 	}
 
 	@Override

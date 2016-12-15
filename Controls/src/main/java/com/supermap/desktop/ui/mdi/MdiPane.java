@@ -61,12 +61,14 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 				KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(MdiPane.this.propertyChangeHandler);
 			}
 		});
+
+		this.strategy.layoutGroups();
 	}
 
 	public MdiPane(ILayoutStrategy strategy) {
 		setLayout(new BorderLayout());
-		this.strategy = strategy;
 		this.groups = new ArrayList<>();
+		this.strategy = strategy;
 
 		EventQueue.invokeLater(new Runnable() {
 			@Override
@@ -74,6 +76,8 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 				KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(MdiPane.this.propertyChangeHandler);
 			}
 		});
+
+		this.strategy.layoutGroups();
 	}
 
 	/**
@@ -147,6 +151,12 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	@Override
 	public void setLayoutStrategy(ILayoutStrategy strategy) {
 
+		// 新设置的 strategy 与 当前 strategy 不一致，则更换 strategy
+		if (strategy != null && strategy.getClass() != this.strategy.getClass()) {
+			this.strategy.reset();
+			this.strategy = strategy;
+			this.strategy.layoutGroups();
+		}
 	}
 
 	@Override

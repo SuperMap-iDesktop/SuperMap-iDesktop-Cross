@@ -2,6 +2,7 @@ package com.supermap.desktop.ui.mdi.layout;
 
 import com.supermap.desktop.ui.mdi.IMdiContainer;
 import com.supermap.desktop.ui.mdi.MdiGroup;
+import com.supermap.desktop.ui.mdi.MdiPane;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
@@ -17,9 +18,9 @@ import java.util.Map;
 public abstract class SplitLayoutStrategy implements ILayoutStrategy {
 
 	private Map<MdiGroup, JSplitPane> splits = new HashMap<>();
-	private IMdiContainer container;
+	protected MdiPane container;
 
-	public SplitLayoutStrategy(IMdiContainer container) {
+	public SplitLayoutStrategy(MdiPane container) {
 		this.container = container;
 	}
 
@@ -60,7 +61,17 @@ public abstract class SplitLayoutStrategy implements ILayoutStrategy {
 
 	@Override
 	public void layoutGroups() {
+		MdiGroup[] groups = container.getGroups();
+		if (groups != null && groups.length > 0) {
+			for (int i = 0; i < groups.length; i++) {
+				addGroup(groups[i]);
+			}
+		}
+	}
 
+	@Override
+	public void reset() {
+		this.splits.clear();
 	}
 
 	protected JSplitPane createSplit(MdiGroup group) {

@@ -15,4 +15,6 @@ public interface ILayoutStrategy {
 	void removeGroup(MdiGroup group);
 
 	void layoutGroups();
+
+	void reset();
 }

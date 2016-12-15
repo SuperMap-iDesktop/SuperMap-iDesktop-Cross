@@ -16,7 +16,5 @@ public interface IPropertyBindWindow {
 
     void setBindProperty(IBindProperty bindProperty);
 
-//    void setSplitWindow(SplitWindow splitWindow);
-
     void setFormMap(IFormMap formMap);
 }
