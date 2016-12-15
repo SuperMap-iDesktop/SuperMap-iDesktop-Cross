@@ -67,6 +67,10 @@ public class FormManager extends MdiPane implements IFormManager {
 				((FormBaseChild) e.getPage().getComponent()).formClosed(event);
 				((FormBaseChild) e.getPage().getComponent()).fireFormClosed(event);
 			}
+
+			if (getPageCount() == 0) {
+				refreshMenusAndToolbars(null);
+			}
 		}
 	};
 
@@ -373,7 +377,14 @@ public class FormManager extends MdiPane implements IFormManager {
 		}
 	}
 
+	/**
+	 * 这个方法的实现很不好，并且使用到了一个很鸡肋的东西 WindowType
+	 * 待有空来优化
+	 *
+	 * @param window
+	 */
 	private void refreshMenusAndToolbars(IForm window) {
+		// TODO 待有空优化
 		// 获取之前激活的窗口的类型
 		WindowType beforeType = this.activatedChildFormType;
 		if (window != null) {

@@ -84,7 +84,6 @@ public class FlowLayoutStrategy extends SplitLayoutStrategy {
 
 	@Override
 	public void removeGroup(MdiGroup group) {
-		super.removeGroup(group);
 		JSplitPane split = getSplits().get(group);
 		JSplitPane preSplit = findPreSplit(group);
 		JSplitPane nextSplit = findNextSplit(group);
@@ -99,6 +98,7 @@ public class FlowLayoutStrategy extends SplitLayoutStrategy {
 				((MdiPane) getContainer()).add(nextSplit, BorderLayout.CENTER);
 			}
 		}
+		super.removeGroup(group);
 	}
 
 	private JSplitPane findPreSplit(MdiGroup group) {
