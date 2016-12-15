@@ -13,8 +13,11 @@ import com.supermap.desktop.Interface.ITabularEditHistoryManager;
 import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.editHistory.TabularEditHistoryManager;
+import com.supermap.desktop.enums.GlobalParametersType;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.event.GlobalParametersChangedEvent;
+import com.supermap.desktop.event.GlobalParametersChangedListener;
 import com.supermap.desktop.event.TabularChangedEvent;
 import com.supermap.desktop.event.TabularValueChangedListener;
 import com.supermap.desktop.implement.SmStatusbar;
@@ -249,6 +252,27 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		this.jTableTabular.getTableHeader().addMouseMotionListener(columnHeaderMouseMotionListener);
 
 		this.jTableTabular.getTableHeader().addMouseListener(columnHeaderMouseListener);
+//		((JCheckBox) getStatusbar().get(TabularStatisticUtilties.HIDDEN_SYSTEM_FIELD)).addItemListener(new ItemListener() {
+//			@Override
+//			public void itemStateChanged(ItemEvent e) {
+//				if (isCheckBoxListenerEnable && e.getStateChange() == ItemEvent.SELECTED) {
+//					boolean isHiddenSystemField = ((JCheckBox) getStatusbar().get(TabularStatisticUtilties.HIDDEN_SYSTEM_FIELD)).isSelected();
+//					tabularTableModel.setHiddenSystemField(isHiddenSystemField);
+//					GlobalParameters.setIsTabularHiddenSystemField(isHiddenSystemField);
+//				}
+//			}
+//		});
+
+		GlobalParameters.addGlobalParametersChangedListener(new GlobalParametersChangedListener() {
+			@Override
+			public void valueChanged(GlobalParametersChangedEvent globalParametersChangedEvent) {
+				if (globalParametersChangedEvent.getGlobalParametersType() == GlobalParametersType.TabularHiddenSystemField) {
+					boolean b = (Boolean) globalParametersChangedEvent.getNewValue();
+					((JCheckBox) getStatusbar().get(TabularStatisticUtilties.HIDDEN_SYSTEM_FIELD)).setSelected(b);
+					tabularTableModel.setHiddenSystemField(b);
+				}
+			}
+		});
 	}
 
 	@Override
@@ -313,6 +337,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	 */
 	private void initStatusbars() {
 		SmStatusbar smStatusbar = this.getStatusbar();
+		((JCheckBox) smStatusbar.get(TabularStatisticUtilties.HIDDEN_SYSTEM_FIELD)).setSelected(GlobalParameters.isTabularHiddenSystemField());
 		((JTextField) smStatusbar.get(TabularStatisticUtilties.FIELD_TYPE)).setEditable(false);
 		((JTextField) smStatusbar.get(TabularStatisticUtilties.FIELD_NAME)).setEditable(false);
 		((JTextField) smStatusbar.get(TabularStatisticUtilties.STATISTIC_RESULT_INDEX)).setEditable(false);
@@ -506,6 +531,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 				ToolbarUIUtilities.updataToolbarsState();
 			}
 		});
+		tabularTableModel.setHiddenSystemField(GlobalParameters.isTabularHiddenSystemField());
 		this.jTableTabular.setModel(this.tabularTableModel);
 
 		// 编辑时保存
@@ -915,5 +941,11 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		tabularTableModel.removeValueChangedListener(tabularValueChangedListener);
 	}
 
+	public boolean getHiddenSystemField() {
+		return tabularTableModel.getHiddenSystemField();
+	}
 
+	public void setHiddenSystemField(boolean hiddenSystemField) {
+		tabularTableModel.setHiddenSystemField(hiddenSystemField);
+	}
 }

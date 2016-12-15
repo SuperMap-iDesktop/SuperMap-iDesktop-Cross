@@ -175,6 +175,8 @@ public class XMLMenuGroup extends XMLCommand {
 			xmlCommand = new XMLComboBox(this.getPluginInfo(), this);
 		} else if (xmlNodeCommand.getNodeName().equalsIgnoreCase(g_ControlSeparator)) {
 			xmlCommand = new XMLSeparator(this.getPluginInfo(), this);
+		} else if (xmlNodeCommand.getNodeName().equalsIgnoreCase(g_ControlCheckbox)) {
+			xmlCommand = new XMLCheckBox(this.getPluginInfo(), this);
 		}
 
 		if (xmlCommand != null) {

@@ -22,25 +22,27 @@ import java.text.MessageFormat;
  */
 public class TabularStatisticUtilties {
 
+	public static final int HIDDEN_SYSTEM_FIELD = 0;
+
 	/**
 	 * 记录数
 	 */
-	public static final int SELECTED_NUMBER = 0;
+	public static final int SELECTED_NUMBER = 1;
 	
 	/**
 	 * 字段类型
 	 */
-	public static final int FIELD_TYPE = 2;
+	public static final int FIELD_TYPE = 3;
 	
 	/**
 	 * 字段名称
 	 */
-	public static final int FIELD_NAME = 4;
+	public static final int FIELD_NAME = 5;
 	
 	/**
 	 * 统计结果数据
 	 */
-	public static final int STATISTIC_RESULT_INDEX = 5;
+	public static final int STATISTIC_RESULT_INDEX = 6;
 
 	private TabularStatisticUtilties() {
 
