@@ -58,13 +58,11 @@ public class ImportCallable extends UpdateProgressCallable {
                 if (importSetting.getImportMode().equals(ImportMode.OVERWRITE) && DatasetUtilities.isDatasetOpened(dataset)) {
                     if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(DataConversionProperties.getString("String_FormImport_MessageBoxOverWrite"))) {
                         DatasetUtilities.closeDataset(dataset);
+                        doImport(importSettings, i, dataImport, map);
                     }
+                } else {
+                    doImport(importSettings, i, dataImport, map);
                 }
-                doImport(importSettings, i, dataImport, map);
-                if (!dataImportDialog.isVisible()) {
-                    importSetting.dispose();
-                }
-                dataImport.dispose();
             }
         } catch (Exception e2) {
             Application.getActiveApplication().getOutput().output(e2);
@@ -115,6 +113,10 @@ public class ImportCallable extends UpdateProgressCallable {
             return;
         }
         dataImport.removeImportSteppedListener(percentProgress);
+        if (!dataImportDialog.isVisible()) {
+            importSetting.dispose();
+        }
+        dataImport.dispose();
     }
 
     /**
