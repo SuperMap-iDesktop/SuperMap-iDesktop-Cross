@@ -146,6 +146,7 @@ public class SnapSettingDialog extends SmDialog {
                 for (int i = 0; i < size; i++) {
                     tableSnapMode.addRowSelectionInterval(i, i);
                 }
+                scrollToFrist();
             }
         }
 
@@ -173,6 +174,7 @@ public class SnapSettingDialog extends SmDialog {
                 for (int i = 0; i < size; i++) {
                     tableSnapMode.addRowSelectionInterval(rowCount - i, rowCount - i);
                 }
+                scrollToLast();
             }
         }
 
@@ -184,14 +186,22 @@ public class SnapSettingDialog extends SmDialog {
             } else if (1 <= size && tableSnapMode.getRowCount() - 1 == selectRows[size - 1]) {
                 return;
             } else {
-                int rowLocation = selectRows[size - 1] + 1;
-                for (int i = size - 1; i >= 0; i--) {
-                    exchangeItem(selectRows[i], rowLocation);
+                int index = selectRows[size - 1];
+                int rowLocation = index + 1;
+                int newSize = index - selectRows[0] + 1;
+                for (int i = 0; i < newSize; i++) {
+                    exchangeItem(index, rowLocation);
+                    index--;
                     rowLocation--;
                 }
+
                 tableSnapMode.clearSelection();
                 for (int i = 0; i < size; i++) {
                     tableSnapMode.addRowSelectionInterval(selectRows[i] + 1, selectRows[i] + 1);
+                }
+                int length = tableSnapMode.getSelectedRows().length;
+                if (length > 0 && tableSnapMode.getSelectedRows()[length - 1] == tableSnapMode.getRowCount() - 1) {
+                    scrollToLast();
                 }
             }
         }
@@ -204,14 +214,20 @@ public class SnapSettingDialog extends SmDialog {
             } else if (1 <= size && 0 == selectRows[0]) {
                 return;
             } else {
-                int rowLocation = selectRows[0] - 1;
-                for (int i = 0; i < size; i++) {
-                    exchangeItem(selectRows[i], rowLocation);
+                int index = selectRows[0];
+                int rowLocation = index - 1;
+                int newSize = selectRows[size - 1] - index + 1;
+                for (int i = 0; i < newSize; i++) {
+                    exchangeItem(index, rowLocation);
+                    index++;
                     rowLocation++;
                 }
                 tableSnapMode.clearSelection();
                 for (int i = 0; i < size; i++) {
                     tableSnapMode.addRowSelectionInterval(selectRows[i] - 1, selectRows[i] - 1);
+                }
+                if (tableSnapMode.getSelectedRows().length > 0 && tableSnapMode.getSelectedRows()[0] == 0) {
+                    scrollToFrist();
                 }
             }
 
@@ -233,6 +249,17 @@ public class SnapSettingDialog extends SmDialog {
             mapControlSnapSetting.exchange(from, target);
         }
     };
+
+    private void scrollToFrist() {
+        Rectangle treeVisibleRectangle = new Rectangle(tableSnapMode.getVisibleRect().x, 0, tableSnapMode.getVisibleRect().width, tableSnapMode.getVisibleRect().height);
+        tableSnapMode.scrollRectToVisible(treeVisibleRectangle);
+    }
+
+    private void scrollToLast() {
+        Rectangle treeVisibleRectangle = new Rectangle(tableSnapMode.getVisibleRect().x, tableSnapMode.getVisibleRect().height, tableSnapMode.getVisibleRect().width, tableSnapMode.getVisibleRect().height);
+        tableSnapMode.scrollRectToVisible(treeVisibleRectangle);
+    }
+
     private RightValueListener tolarenceListener = new RightValueListener() {
         @Override
         public void update(String value) {
@@ -275,7 +302,6 @@ public class SnapSettingDialog extends SmDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (isRecover && panelSnapMode.isVisible()) {
-//                mapControlSnapSetting = srcSnapSetting;
                 SnapSettingUtilities.replaceSnapMode(srcSnapSetting, mapControlSnapSetting);
             }
             if (isRecover && panelSnapParams.isVisible()) {

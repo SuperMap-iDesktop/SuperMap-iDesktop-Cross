@@ -1,7 +1,5 @@
 package com.supermap.desktop.ui.controls;
 
-import com.supermap.desktop.Application;
-
 import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -115,11 +113,11 @@ public class CaretPositionListener implements MouseListener {
             @Override
             public void run() {
                 try {
-                    if (offset <= ftf.getDocument().getLength()) {
-                        ftf.setCaretPosition(offset);
-                    }
+                    ftf.setCaretPosition(offset);
                 } catch (IllegalArgumentException e) {
-                    Application.getActiveApplication().getOutput().output(e);
+                    //多线程下获取的ftf，offset不能保证原子性，offset可能大于ftf.getDocument().length引起异常
+                    //故先屏蔽掉异常输出
+//                    Application.getActiveApplication().getOutput().output(e);
                 }
             }
         });

@@ -232,32 +232,44 @@ public class SnapSettingUtilities {
     /**
      * 交换SnapMode的优先级
      *
-     * @param target
      * @param source
+     * @param target
      */
-    public static void replaceSnapMode(SnapSetting target, SnapSetting source) {
-        int pointOnEndPointIndex = target.indexOf(SnapMode.POINT_ON_ENDPOINT);
-        source.moveTo(SnapMode.POINT_ON_ENDPOINT, pointOnEndPointIndex);
-        int pointOnPointIndex = target.indexOf(SnapMode.POINT_ON_POINT);
-        source.moveTo(SnapMode.POINT_ON_POINT, pointOnPointIndex);
-        int pointOnLineIndex = target.indexOf(SnapMode.POINT_ON_LINE);
-        source.moveTo(SnapMode.POINT_ON_LINE, pointOnLineIndex);
-        int pointOnMidPointIndex = target.indexOf(SnapMode.POINT_ON_MIDPOINT);
-        source.moveTo(SnapMode.POINT_ON_MIDPOINT, pointOnMidPointIndex);
-        int pointOnExtensionIndex = target.indexOf(SnapMode.POINT_ON_EXTENSION);
-        source.moveTo(SnapMode.POINT_ON_EXTENSION, pointOnExtensionIndex);
-        int lineWithFixedAngleIndex = target.indexOf(SnapMode.LINE_WITH_FIXED_ANGLE);
-        source.moveTo(SnapMode.LINE_WITH_FIXED_ANGLE, lineWithFixedAngleIndex);
-        int lineWithFixedLengthIndex = target.indexOf(SnapMode.LINE_WITH_FIXED_LENGTH);
-        source.moveTo(SnapMode.LINE_WITH_FIXED_LENGTH, lineWithFixedLengthIndex);
-        int lineWithHorizontalIndex = target.indexOf(SnapMode.LINE_WITH_HORIZONTAL);
-        source.moveTo(SnapMode.LINE_WITH_HORIZONTAL, lineWithHorizontalIndex);
-        int lineWithVerticalIndex = target.indexOf(SnapMode.LINE_WITH_VERTICAL);
-        source.moveTo(SnapMode.LINE_WITH_VERTICAL, lineWithVerticalIndex);
-        int lineWithParallelIndex = target.indexOf(SnapMode.LINE_WITH_PARALLEL);
-        source.moveTo(SnapMode.LINE_WITH_PARALLEL, lineWithParallelIndex);
-        int lineWithPerpendicularIndex = target.indexOf(SnapMode.LINE_WITH_PERPENDICULAR);
-        source.moveTo(SnapMode.LINE_WITH_PERPENDICULAR, lineWithPerpendicularIndex);
+    public static void replaceSnapMode(SnapSetting source, SnapSetting target) {
+        int pointOnEndPointIndex = source.indexOf(SnapMode.POINT_ON_ENDPOINT);
+        target.moveTo(SnapMode.POINT_ON_ENDPOINT, pointOnEndPointIndex);
+        int pointOnPointIndex = source.indexOf(SnapMode.POINT_ON_POINT);
+        target.moveTo(SnapMode.POINT_ON_POINT, pointOnPointIndex);
+        int pointOnLineIndex = source.indexOf(SnapMode.POINT_ON_LINE);
+        target.moveTo(SnapMode.POINT_ON_LINE, pointOnLineIndex);
+        int pointOnMidPointIndex = source.indexOf(SnapMode.POINT_ON_MIDPOINT);
+        target.moveTo(SnapMode.POINT_ON_MIDPOINT, pointOnMidPointIndex);
+        int pointOnExtensionIndex = source.indexOf(SnapMode.POINT_ON_EXTENSION);
+        target.moveTo(SnapMode.POINT_ON_EXTENSION, pointOnExtensionIndex);
+        int lineWithFixedAngleIndex = source.indexOf(SnapMode.LINE_WITH_FIXED_ANGLE);
+        target.moveTo(SnapMode.LINE_WITH_FIXED_ANGLE, lineWithFixedAngleIndex);
+        int lineWithFixedLengthIndex = source.indexOf(SnapMode.LINE_WITH_FIXED_LENGTH);
+        target.moveTo(SnapMode.LINE_WITH_FIXED_LENGTH, lineWithFixedLengthIndex);
+        int lineWithHorizontalIndex = source.indexOf(SnapMode.LINE_WITH_HORIZONTAL);
+        target.moveTo(SnapMode.LINE_WITH_HORIZONTAL, lineWithHorizontalIndex);
+        int lineWithVerticalIndex = source.indexOf(SnapMode.LINE_WITH_VERTICAL);
+        target.moveTo(SnapMode.LINE_WITH_VERTICAL, lineWithVerticalIndex);
+        int lineWithParallelIndex = source.indexOf(SnapMode.LINE_WITH_PARALLEL);
+        target.moveTo(SnapMode.LINE_WITH_PARALLEL, lineWithParallelIndex);
+        int lineWithPerpendicularIndex = source.indexOf(SnapMode.LINE_WITH_PERPENDICULAR);
+        target.moveTo(SnapMode.LINE_WITH_PERPENDICULAR, lineWithPerpendicularIndex);
+
+        target.set(SnapMode.POINT_ON_ENDPOINT, source.get(SnapMode.POINT_ON_ENDPOINT));
+        target.set(SnapMode.POINT_ON_POINT, source.get(SnapMode.POINT_ON_POINT));
+        target.set(SnapMode.POINT_ON_LINE, source.get(SnapMode.POINT_ON_LINE));
+        target.set(SnapMode.POINT_ON_MIDPOINT, source.get(SnapMode.POINT_ON_MIDPOINT));
+        target.set(SnapMode.POINT_ON_EXTENSION, source.get(SnapMode.POINT_ON_EXTENSION));
+        target.set(SnapMode.LINE_WITH_FIXED_ANGLE, source.get(SnapMode.LINE_WITH_FIXED_ANGLE));
+        target.set(SnapMode.LINE_WITH_FIXED_LENGTH, source.get(SnapMode.LINE_WITH_FIXED_LENGTH));
+        target.set(SnapMode.LINE_WITH_HORIZONTAL, source.get(SnapMode.LINE_WITH_HORIZONTAL));
+        target.set(SnapMode.LINE_WITH_VERTICAL, source.get(SnapMode.LINE_WITH_VERTICAL));
+        target.set(SnapMode.LINE_WITH_PARALLEL, source.get(SnapMode.LINE_WITH_PARALLEL));
+        target.set(SnapMode.LINE_WITH_PERPENDICULAR, source.get(SnapMode.LINE_WITH_PERPENDICULAR));
     }
 
     /**
