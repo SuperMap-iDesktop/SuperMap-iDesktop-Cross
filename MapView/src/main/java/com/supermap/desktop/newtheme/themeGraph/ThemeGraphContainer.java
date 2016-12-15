@@ -16,6 +16,8 @@ import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
+import com.supermap.desktop.ui.controls.TextFields.RightValueListener;
+import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -98,8 +100,15 @@ public class ThemeGraphContainer extends ThemeChangePanel {
     private JButton buttonAxisStyle = new JButton("...");
     private JCheckBox checkBoxShowAxisGrid = new JCheckBox();
     // panelStyleOfBAR
-    private JLabel labelBarWidth = new JLabel();
-    private JSpinner spinnerBarWidth = new JSpinner();
+    //修改为柱宽系数和柱间距系数
+//    private JLabel labelBarWidth = new JLabel();
+//    private JSpinner spinnerBarWidth = new JSpinner();
+    private JLabel labelBarWidthRatio = new JLabel();
+    private WaringTextField textFieldBarwidthRatio;
+
+    private JLabel labelBarSpaceRatio = new JLabel();
+    private WaringTextField textFieldBarSpaceRatio;
+
     // panelStyleOfRoseAndPIE
     private JLabel labelStartAngle = new JLabel();
     private JSpinner spinnerStartAngle = new JSpinner();
@@ -130,6 +139,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
     private transient SteppedComboBox fieldComboBox;
     private transient LayersTree layersTree = UICommonToolkit.getLayersManager().getLayersTree();
     private boolean isNewTheme;
+    private static final DecimalFormat format = new DecimalFormat("0");
 
     private MouseListener localMouseListener = new LocalMouseListener();
     private ItemListener graphTypeChangeListener = new GraphTypeChangeListener();
@@ -150,7 +160,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
     private ItemListener axisModelListener = new AxisModelListener();
     private ActionListener axisStyleListener = new AxisStyleListener();
     private ItemListener showAxisGridListener = new ShowAxisGridListener();
-    private ChangeListener barWidthListener = new BarWidthListener();
+    //    private ChangeListener barWidthListener = new BarWidthListener();
     private ChangeListener startAngleListener = new StartAngleListener();
     private ChangeListener roseAngleListener = new RoseAngleListener();
     private ActionListener toolbarAction = new ToolBarAction();
@@ -158,9 +168,24 @@ public class ThemeGraphContainer extends ThemeChangePanel {
     private PropertyChangeListener layerPropertyChangeListener = new LayerPropertyChangeListener();
     private MouseListener tableMouseListener = new TableMouseListener();
     protected TextStyleDialog textStyleDialog;
-    private ArrayList<String> comboBoxArray = new ArrayList<String>();
-    private ArrayList<String> comboBoxArrayForOffsetX = new ArrayList<String>();
-    private ArrayList<String> comboBoxArrayForOffsetY = new ArrayList<String>();
+    private ArrayList<String> comboBoxArray = new ArrayList();
+    private ArrayList<String> comboBoxArrayForOffsetX = new ArrayList();
+    private ArrayList<String> comboBoxArrayForOffsetY = new ArrayList();
+    private RightValueListener barWidthRatioListener = new RightValueListener() {
+
+        @Override
+        public void update(String value) {
+            themeGraph.setBarWidthRatio(Double.parseDouble(value));
+            refreshMapAtOnce();
+        }
+    };
+    private RightValueListener barSpaceRatioListener = new RightValueListener() {
+        @Override
+        public void update(String value) {
+            themeGraph.setBarSpaceRatio(Double.parseDouble(value));
+            refreshMapAtOnce();
+        }
+    };
 
     public ThemeGraphContainer(Layer layer, boolean isNewTheme) {
         this.themeGraphLayer = layer;
@@ -204,7 +229,9 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         this.labelAxisModel.setText(MapViewProperties.getString("String_AxesTextDisplayMode"));
         this.labelAxisStyle.setText(MapViewProperties.getString("String_ThemeGraphAdvance_LabelGraphStyle"));
         this.checkBoxShowAxisGrid.setText(MapViewProperties.getString("String_ThemeGraphAdvance_CheckBoxAxeGrid"));
-        this.labelBarWidth.setText(MapViewProperties.getString("String_ThemeGraphAdvance_LabelBarWidth"));
+//        this.labelBarWidth.setText(MapViewProperties.getString("String_ThemeGraphAdvance_LabelBarWidth"));
+        this.labelBarWidthRatio.setText(MapViewProperties.getString("String_BarWidthRatio"));
+        this.labelBarSpaceRatio.setText(MapViewProperties.getString("String_BarSpaceRatio"));
         this.labelStartAngle.setText(MapViewProperties.getString("String_ThemeGraphAdvance_LabelStartAngle"));
         this.labelRoseRAngle.setText(MapViewProperties.getString("String_ThemeGraphAdvance_LabelRoseAngle"));
         this.panelOptions.setBorder(new TitledBorder(MapViewProperties.getString("String_ThemeGraphAdvance_GroupBoxOption")));
@@ -239,7 +266,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         initpanelParameterSetting(this.panelParameterSetting);
         initpanelRemark(this.panelRemark);
         initpanelAxis(this.panelAxis);
-        initPanelStyleOfBAR(this.panelStyleOfBAR);
+        initPanelStyleOfBAR();
         initPanelStyleOfRoseAndPIE(this.panelStyleOfRoseAndPIE);
         JPanel panelAdvanceContent = new JPanel();
         this.panelAdvance.add(
@@ -289,22 +316,33 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         }
     }
 
-    private void initPanelStyleOfBAR(JPanel panelStyleOfBAR) {
+    private void initPanelStyleOfBAR() {
         // @formatter:off
-        this.spinnerBarWidth.setEnabled(false);
+        this.textFieldBarwidthRatio = new WaringTextField();
+        this.textFieldBarSpaceRatio = new WaringTextField();
+        this.textFieldBarwidthRatio.setInitInfo(0, 10, WaringTextField.FLOAT_TYPE, "22");
+        this.textFieldBarSpaceRatio.setInitInfo(0, 10, WaringTextField.FLOAT_TYPE, "22");
         panelStyleOfBAR.setLayout(new GridBagLayout());
-        panelStyleOfBAR.add(this.labelBarWidth, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(30, 1).setIpad(20, 0));
-        this.spinnerBarWidth.setModel(new SpinnerNumberModel(new Double(0), null, null, new Double(0.01)));
-        panelStyleOfBAR.add(this.spinnerBarWidth, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
-        this.spinnerBarWidth.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth(), 23));
-        initSpinnerBarWidthState();
+        panelStyleOfBAR.add(this.labelBarWidthRatio, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(30, 1).setIpad(20, 0));
+        panelStyleOfBAR.add(this.textFieldBarwidthRatio, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
+        panelStyleOfBAR.add(this.labelBarSpaceRatio, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 10).setWeight(30, 1).setIpad(20, 0));
+        panelStyleOfBAR.add(this.textFieldBarSpaceRatio, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setWeight(50, 1).setFill(GridBagConstraints.HORIZONTAL));
+        this.textFieldBarwidthRatio.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth() + 90, 23));
+        this.textFieldBarSpaceRatio.setPreferredSize(new Dimension((int) this.buttonDraftLine.getPreferredSize().getWidth() + 90, 23));
+        setBarWithComponentsEnabled();
         // @formatter:on
     }
 
-    private void initSpinnerBarWidthState() {
+    private void setBarWithComponentsEnabled() {
         if (themeGraph.getGraphType() == ThemeGraphType.BAR || themeGraph.getGraphType() == ThemeGraphType.BAR3D
                 || themeGraph.getGraphType() == ThemeGraphType.STACK_BAR || themeGraph.getGraphType() == ThemeGraphType.STACK_BAR3D) {
-            this.spinnerBarWidth.setEnabled(true);
+            this.textFieldBarSpaceRatio.setEnable(true);
+            this.textFieldBarwidthRatio.setEnable(true);
+            this.textFieldBarwidthRatio.setText(String.valueOf(themeGraph.getBarWidthRatio()));
+            this.textFieldBarSpaceRatio.setText(String.valueOf(themeGraph.getBarSpaceRatio()));
+        } else {
+            this.textFieldBarSpaceRatio.setEnable(false);
+            this.textFieldBarwidthRatio.setEnable(false);
         }
     }
 
@@ -617,13 +655,13 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         this.themeGraph.setMaxGraphSize(Math.sqrt(Math.pow(point2DEnd.getX() - point2DStart.getX(), 2) + Math.pow(point2DEnd.getY() - point2DStart.getY(), 2)));
         this.themeGraph.setMinGraphSize(Math.sqrt(Math.pow(point2DMinEnd.getX() - point2DStart.getX(), 2)
                 + Math.pow(point2DMinEnd.getY() - point2DStart.getY(), 2)));
-        if (themeGraph.getMaxGraphSize() / 10 < 10) {
-            this.themeGraph.setBarWidth(themeGraph.getMaxGraphSize() / 10);
-        }
+//        if (themeGraph.getMaxGraphSize() / 10 < 10) {
+//            this.themeGraph.setBarWidth(themeGraph.getMaxGraphSize() / 10);
+//        }
         DecimalFormat decfmt = new DecimalFormat("#.######");
         this.textFieldMaxValue.setText(String.valueOf(decfmt.format(themeGraph.getMaxGraphSize())));
         this.textFieldMinValue.setText(String.valueOf(decfmt.format(themeGraph.getMinGraphSize())));
-        this.spinnerBarWidth.setValue(themeGraph.getBarWidth());
+//        this.spinnerBarWidth.setValue(themeGraph.getBarWidth());
     }
 
     class LocalDefualTableModel extends DefaultTableModel {
@@ -782,7 +820,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         this.comboBoxAxisModel.addItemListener(this.axisModelListener);
         this.buttonAxisStyle.addActionListener(this.axisStyleListener);
         this.checkBoxShowAxisGrid.addItemListener(this.showAxisGridListener);
-        this.spinnerBarWidth.addChangeListener(this.barWidthListener);
+        this.textFieldBarwidthRatio.addRightValueListener(this.barWidthRatioListener);
+        this.textFieldBarSpaceRatio.addRightValueListener(this.barSpaceRatioListener);
         this.spinnerStartAngle.addChangeListener(this.startAngleListener);
         this.spinnerRoseAngle.addChangeListener(this.roseAngleListener);
         this.buttonDelete.addActionListener(this.toolbarAction);
@@ -866,7 +905,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
                     // 重置最大，最小和柱宽度
                     textFieldMaxValue.setText("0");
                     textFieldMinValue.setText("0");
-                    spinnerBarWidth.setValue(0.0);
                     buttonAdd.setEnabled(true);
                 }
                 if (selectRow != tableGraphInfo.getRowCount() && tableGraphInfo.getRowCount() > 0) {
@@ -1053,14 +1091,15 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         }
     }
 
-    class BarWidthListener implements ChangeListener {
-        @Override
-        public void stateChanged(ChangeEvent e) {
-            double barWidth = (double) spinnerBarWidth.getValue();
-            themeGraph.setBarWidth(barWidth);
-            refreshMapAtOnce();
-        }
-    }
+//    class BarWidthListener implements ChangeListener {
+//        @Override
+//        public void stateChanged(ChangeEvent e) {
+//            double barWidth = (double) spinnerBarWidth.getValue();
+////            themeGraph.setBarWidth(barWidth);
+//            themeGraph.setBarWidthRatio(barWidth);
+//            refreshMapAtOnce();
+//        }
+//    }
 
     class ShowAxisGridListener implements ItemListener {
         @Override
@@ -1394,10 +1433,10 @@ public class ThemeGraphContainer extends ThemeChangePanel {
                     themeGraph.setMinGraphSize(Math.abs(point2DMinEnd.getX() - point2DStart.getX()));
                 }
                 Point2D pointStart1 = new Point2D(0, 0);
-                Point2D pointEnd1 = new Point2D(themeGraph.getBarWidth(), themeGraph.getBarWidth());
-                Point2D point2DStart1 = map.mapToLogical(pointStart1);
-                Point2D point2DEnd1 = map.mapToLogical(pointEnd1);
-                themeGraph.setBarWidth(10 * Math.abs(point2DEnd1.getX() - point2DStart1.getX()));
+//                Point2D pointEnd1 = new Point2D(themeGraph.getBarWidth(), themeGraph.getBarWidth());
+//                Point2D point2DStart1 = map.mapToLogical(pointStart1);
+//                Point2D point2DEnd1 = map.mapToLogical(pointEnd1);
+//                themeGraph.setBarWidth(10 * Math.abs(point2DEnd1.getX() - point2DStart1.getX()));
             } else {
                 Point2D pointStart = new Point2D(0, 0);
                 Point2D pointEnd = new Point2D(themeGraph.getMaxGraphSize(), themeGraph.getMaxGraphSize());
@@ -1409,17 +1448,17 @@ public class ThemeGraphContainer extends ThemeChangePanel {
                 if (Math.abs(point2DMinEnd.getX() - point2DStart.getX()) > 0) {
                     themeGraph.setMinGraphSize(Math.abs(point2DMinEnd.getX() - point2DStart.getX()));
                 }
-                Point2D pointStart1 = new Point2D(0, 0);
-                Point2D pointEnd1 = new Point2D(themeGraph.getBarWidth(), themeGraph.getBarWidth());
-                Point2D point2DStart1 = map.logicalToMap(pointStart1);
-                Point2D point2DEnd1 = map.logicalToMap(pointEnd1);
-                themeGraph.setBarWidth(Math.abs(point2DEnd1.getX() - point2DStart1.getX()) / 10);
+//                Point2D pointStart1 = new Point2D(0, 0);
+//                Point2D pointEnd1 = new Point2D(themeGraph.getBarWidth(), themeGraph.getBarWidth());
+//                Point2D point2DStart1 = map.logicalToMap(pointStart1);
+//                Point2D point2DEnd1 = map.logicalToMap(pointEnd1);
+//                themeGraph.setBarWidth(Math.abs(point2DEnd1.getX() - point2DStart1.getX()) / 10);
             }
             themeGraph.setGraphSizeFixed(!isAutoScale);
             DecimalFormat decfmt = new DecimalFormat("#.######");
             textFieldMaxValue.setText(String.valueOf(decfmt.format(themeGraph.getMaxGraphSize())));
             textFieldMinValue.setText(String.valueOf(decfmt.format(themeGraph.getMinGraphSize())));
-            spinnerBarWidth.setValue(themeGraph.getBarWidth());
+//            spinnerBarWidth.setValue(themeGraph.getBarWidth());
         }
     }
 
@@ -1471,49 +1510,42 @@ public class ThemeGraphContainer extends ThemeChangePanel {
                 switch (selectIndex) {
                     case 0:
                         themeGraph.setGraphType(ThemeGraphType.AREA);
-                        spinnerBarWidth.setEnabled(false);
                         spinnerRoseAngle.setEnabled(false);
                         spinnerStartAngle.setEnabled(false);
                         setPanelEnableAndRefresh(true);
                         break;
                     case 1:
                         themeGraph.setGraphType(ThemeGraphType.STEP);
-                        spinnerBarWidth.setEnabled(false);
                         spinnerRoseAngle.setEnabled(false);
                         spinnerStartAngle.setEnabled(false);
                         setPanelEnableAndRefresh(true);
                         break;
                     case 2:
                         themeGraph.setGraphType(ThemeGraphType.LINE);
-                        spinnerBarWidth.setEnabled(false);
                         spinnerRoseAngle.setEnabled(false);
                         spinnerStartAngle.setEnabled(false);
                         setPanelEnableAndRefresh(true);
                         break;
                     case 3:
                         themeGraph.setGraphType(ThemeGraphType.POINT);
-                        spinnerBarWidth.setEnabled(false);
                         spinnerRoseAngle.setEnabled(false);
                         spinnerStartAngle.setEnabled(false);
                         setPanelEnableAndRefresh(true);
                         break;
                     case 4:
                         themeGraph.setGraphType(ThemeGraphType.BAR);
-                        spinnerBarWidth.setEnabled(true);
                         spinnerRoseAngle.setEnabled(false);
                         spinnerStartAngle.setEnabled(false);
                         setPanelEnableAndRefresh(true);
                         break;
                     case 5:
                         themeGraph.setGraphType(ThemeGraphType.BAR3D);
-                        spinnerBarWidth.setEnabled(true);
                         spinnerRoseAngle.setEnabled(false);
                         spinnerStartAngle.setEnabled(false);
                         setPanelEnableAndRefresh(true);
                         break;
                     case 6:
                         themeGraph.setGraphType(ThemeGraphType.PIE);
-                        spinnerBarWidth.setEnabled(false);
                         spinnerStartAngle.setEnabled(true);
                         spinnerRoseAngle.setEnabled(false);
                         spinnerStartAngle.setValue(themeGraph.getStartAngle());
@@ -1521,7 +1553,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
                         break;
                     case 7:
                         themeGraph.setGraphType(ThemeGraphType.PIE3D);
-                        spinnerBarWidth.setEnabled(false);
                         spinnerStartAngle.setEnabled(true);
                         spinnerRoseAngle.setEnabled(false);
                         spinnerStartAngle.setValue(themeGraph.getStartAngle());
@@ -1529,7 +1560,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
                         break;
                     case 8:
                         themeGraph.setGraphType(ThemeGraphType.ROSE);
-                        spinnerBarWidth.setEnabled(false);
                         spinnerStartAngle.setEnabled(true);
                         spinnerRoseAngle.setEnabled(true);
                         spinnerRoseAngle.setValue(themeGraph.getRoseAngle());
@@ -1537,7 +1567,6 @@ public class ThemeGraphContainer extends ThemeChangePanel {
                         break;
                     case 9:
                         themeGraph.setGraphType(ThemeGraphType.ROSE3D);
-                        spinnerBarWidth.setEnabled(false);
                         spinnerStartAngle.setEnabled(true);
                         spinnerRoseAngle.setEnabled(true);
                         spinnerRoseAngle.setValue(themeGraph.getRoseAngle());
@@ -1545,22 +1574,18 @@ public class ThemeGraphContainer extends ThemeChangePanel {
                         break;
                     case 10:
                         themeGraph.setGraphType(ThemeGraphType.STACK_BAR);
-                        spinnerBarWidth.setEnabled(true);
                         spinnerRoseAngle.setEnabled(false);
                         spinnerStartAngle.setEnabled(false);
                         setPanelEnableAndRefresh(true);
                         break;
                     case 11:
                         themeGraph.setGraphType(ThemeGraphType.STACK_BAR3D);
-                        spinnerBarWidth.setEnabled(true);
                         spinnerRoseAngle.setEnabled(false);
                         spinnerStartAngle.setEnabled(false);
-                        spinnerBarWidth.setValue(themeGraph.getBarWidth());
                         setPanelEnableAndRefresh(true);
                         break;
                     case 12:
                         themeGraph.setGraphType(ThemeGraphType.RING);
-                        spinnerBarWidth.setEnabled(false);
                         spinnerRoseAngle.setEnabled(false);
                         spinnerStartAngle.setEnabled(false);
                         setPanelEnableAndRefresh(false);
@@ -1568,6 +1593,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
                     default:
                         break;
                 }
+                setBarWithComponentsEnabled();
             }
         }
 
@@ -1634,7 +1660,8 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         this.comboBoxAxisModel.removeItemListener(this.axisModelListener);
         this.buttonAxisStyle.removeActionListener(this.axisStyleListener);
         this.checkBoxShowAxisGrid.removeItemListener(this.showAxisGridListener);
-        this.spinnerBarWidth.removeChangeListener(this.barWidthListener);
+        this.textFieldBarwidthRatio.removeRightValueListener(this.barWidthRatioListener);
+        this.textFieldBarSpaceRatio.removeRightValueListener(this.barSpaceRatioListener);
         this.spinnerStartAngle.removeChangeListener(this.startAngleListener);
         this.spinnerRoseAngle.removeChangeListener(this.roseAngleListener);
         this.buttonDelete.removeActionListener(this.toolbarAction);
@@ -1715,6 +1742,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
                 nowGraph.add(this.themeGraph.getItem(i));
             }
             nowGraph.fromXML(this.themeGraph.toXML());
+            nowGraph.setBarWidthRatio(this.themeGraph.getBarWidthRatio());
             UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeGraphLayer);
             this.map.refresh();
         }

@@ -13,7 +13,6 @@ import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -165,7 +164,7 @@ public class Layer3DsTree extends JTree {
                     treeRenderer = new Layer3DsTreeCellRenderer();
 
                     treeCellEditor = new Layer3DsTreeCellEditor(this, treeRenderer);
-                    getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+//                    getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
                     this.registerLayer3DsEventListener();
                     buildSceneNode(nowScene);
                     defaultTreeModel = new DefaultTreeModel(rootNode);

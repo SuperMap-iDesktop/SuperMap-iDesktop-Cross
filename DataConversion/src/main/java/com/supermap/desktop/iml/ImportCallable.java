@@ -3,8 +3,6 @@ package com.supermap.desktop.iml;
 import com.supermap.data.*;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.importUI.DataImportDialog;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
@@ -15,7 +13,6 @@ import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.JOptionPaneUtilities;
-import com.supermap.desktop.utilities.MapUtilities;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -60,19 +57,14 @@ public class ImportCallable extends UpdateProgressCallable {
                 Dataset dataset = DatasourceUtilities.getDataset(datasetName, importSetting.getTargetDatasource());
                 if (importSetting.getImportMode().equals(ImportMode.OVERWRITE) && DatasetUtilities.isDatasetOpened(dataset)) {
                     if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(DataConversionProperties.getString("String_FormImport_MessageBoxOverWrite"))) {
-                        IForm form = MapUtilities.getFormMap(dataset);
-                        if (form instanceof IFormMap) {
-                            DatasetUtilities.removeByDataset(((IFormMap) form).getMapControl().getMap().getLayers(), dataset);
-                            ((IFormMap) form).getMapControl().getMap().refresh();
-                        }
+                        DatasetUtilities.closeDataset(dataset);
                     }
-                } else {
-                    doImport(importSettings, i, dataImport, map);
-                    if (!dataImportDialog.isVisible()) {
-                        importSetting.dispose();
-                    }
-                    dataImport.dispose();
                 }
+                doImport(importSettings, i, dataImport, map);
+                if (!dataImportDialog.isVisible()) {
+                    importSetting.dispose();
+                }
+                dataImport.dispose();
             }
         } catch (Exception e2) {
             Application.getActiveApplication().getOutput().output(e2);

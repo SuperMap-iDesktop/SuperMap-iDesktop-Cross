@@ -13,7 +13,6 @@ public class BindProperty implements IBindProperty {
     private MapControl mapControl;
     private Map map;
     private MapDrawingListener mapDrawingListener;
-    private boolean selectRowChange;
     private Vector<PropertySelectChangeListener> propertySelectChangeListener;
     private GeometrySelectChangedListener geometrySelectChangedListener;
     private MapDrawingListener drawingListener;
@@ -92,7 +91,6 @@ public class BindProperty implements IBindProperty {
             while (!recordset.isEOF()) {
                 Geometry geo = recordset.getGeometry();
                 if (geo != null) {
-
                     Point2Ds points = new Point2Ds(new Point2D[]{new Point2D(geo.getBounds().getLeft(), geo.getBounds().getBottom()),
                             new Point2D(geo.getBounds().getRight(), geo.getBounds().getTop())});
                     CoordSysTranslator.convert(points, recordset.getDataset().getPrjCoordSys(), prjCoordSys, new CoordSysTransParameter(),
@@ -127,10 +125,6 @@ public class BindProperty implements IBindProperty {
     public void removeEvents() {
         this.map.removeDrawingListener(this.drawingListener);
         this.mapControl.removeGeometrySelectChangedListener(geometrySelectChangedListener);
-    }
-
-    public boolean isSelectRowChange() {
-        return selectRowChange;
     }
 
     @Override

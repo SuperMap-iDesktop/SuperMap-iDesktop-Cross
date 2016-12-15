@@ -10,12 +10,10 @@ import java.util.ArrayList;
 
 /**
  * 首尾连接线
- * 
- * @author highsad
  *
+ * @author highsad
  */
 public class JointLineDirectionEditor extends JointLineEditorBase {
-
 	@Override
 	protected String getTitle() {
 		return MapEditorProperties.getString("String_GeometryOperation_JointLineDirection");
@@ -47,7 +45,7 @@ public class JointLineDirectionEditor extends JointLineEditorBase {
 
 	/**
 	 * 连接线对象功能，线对象的首尾节点有重合需要删除一个点
-	 * 
+	 *
 	 * @param basePoints
 	 * @param targetPoints
 	 * @return

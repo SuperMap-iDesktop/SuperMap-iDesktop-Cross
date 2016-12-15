@@ -1,6 +1,7 @@
-package com.supermap.desktop.CtrlAction.Edit.SnapSetting;
+package com.supermap.desktop.ui.controls.TextFields;
 
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolSpinnerUtilties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -9,19 +10,24 @@ import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
 /**
- * Created by xie on 2016/12/8.
+ * Created by xie on 2016/12/13.
  */
-public class WarningTextFeild extends JPanel {
+public class WaringTextField extends JPanel {
     private JLabel labelWarning;
     private JTextField textField;
     private Double startValue;
     private Double endValue;
     private String defaultValue;
+    public static final int INTEGER_TYPE = 0;
+    public static final int FLOAT_TYPE = 1;
     private int type;
     private ArrayList listeners;
     private DecimalFormat format = new DecimalFormat("0");
@@ -31,16 +37,38 @@ public class WarningTextFeild extends JPanel {
         public void caretUpdate(CaretEvent e) {
             String text = textField.getText();
             if (null != startValue && null != endValue && !SymbolSpinnerUtilties.isLegitNumber(startValue, endValue, text)) {
-                labelWarning.setText("<html><font color='red' style='font-weight:bold '>!</font></html>");
+                labelWarning.setText("");
+                labelWarning.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/warning.png"));
                 return;
-            } else if (!StringUtilities.isNullOrEmpty(text)) {
+            } else if (!StringUtilities.isNullOrEmpty(text) && StringUtilities.isNumber(text)) {
                 labelWarning.setText(" ");
+                labelWarning.setIcon(null);
                 fireListener(text);
             }
         }
     };
+    private KeyListener keyAdapter = new KeyAdapter() {
+        @Override
+        public void keyTyped(KeyEvent e) {
+            int keyChar = e.getKeyChar();
+            if (type == INTEGER_TYPE && keyChar == 46) {
+                e.consume();
+            }
+            if ((keyChar >= KeyEvent.VK_0 && keyChar <= KeyEvent.VK_9) || keyChar == 45
+                    || keyChar == 43 || keyChar == 46) {
+                return;
+            } else {
+                e.consume();
+            }
 
-    public WarningTextFeild(String defaultValue) {
+        }
+    };
+
+    public WaringTextField() {
+        this("");
+    }
+
+    public WaringTextField(String defaultValue) {
         super();
         this.defaultValue = defaultValue;
         initComponents();
@@ -51,11 +79,12 @@ public class WarningTextFeild extends JPanel {
         this.startValue = startValue;
         this.endValue = endValue;
         this.type = type;
-        if (type == 0) {
+        if (type == INTEGER_TYPE) {
             this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_IntegerWarning"), "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
         } else {
             this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatWarning"), floatLength, "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
         }
+        this.labelWarning.setPreferredSize(new Dimension(23, 23));
     }
 
     private void initComponents() {
@@ -99,10 +128,12 @@ public class WarningTextFeild extends JPanel {
     public void registEvents() {
         removeEvents();
         this.textField.addCaretListener(this.caretListener);
+        this.textField.addKeyListener(this.keyAdapter);
     }
 
     public void removeEvents() {
         this.textField.removeCaretListener(this.caretListener);
+        this.textField.removeKeyListener(this.keyAdapter);
     }
 
     public JTextField getTextField() {
@@ -112,4 +143,10 @@ public class WarningTextFeild extends JPanel {
     public void setText(String str) {
         textField.setText(str);
     }
+
+    public void setEnable(boolean enable) {
+        this.labelWarning.setEnabled(enable);
+        this.textField.setEnabled(enable);
+    }
+
 }
