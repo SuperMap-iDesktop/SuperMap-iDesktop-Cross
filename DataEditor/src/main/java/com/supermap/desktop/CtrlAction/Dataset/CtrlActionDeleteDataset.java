@@ -45,16 +45,7 @@ public class CtrlActionDeleteDataset extends CtrlAction {
 				if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(message)) {
 					try {
 						CursorUtilities.setWaitCursor();
-						DatasetUtilities.closeDataset(datasets);
-						for (int i = 0; i < datasets.length; i++) {
-							String resultInfo = MessageFormat.format(DataEditorProperties.getString("String_DelectDatasetSuccessfulInfo"), datasets[i]
-									.getDatasource().getAlias(), datasets[i].getName());
-							datasets[i].getDatasource().getDatasets().delete(datasets[i].getName());
-							datasets[i] = null;
-							Application.getActiveApplication().getOutput().output(resultInfo);
-						}
-						Application.getActiveApplication().setActiveDatasets(null);
-
+						DatasetUtilities.deleteDataset(datasets);
 					} finally {
 						CursorUtilities.setDefaultCursor();
 					}
