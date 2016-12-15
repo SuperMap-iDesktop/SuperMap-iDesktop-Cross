@@ -5,7 +5,15 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IToolbar;
-import com.supermap.desktop.ui.*;
+import com.supermap.desktop.ui.XMLButton;
+import com.supermap.desktop.ui.XMLButtonDropdown;
+import com.supermap.desktop.ui.XMLCheckBox;
+import com.supermap.desktop.ui.XMLComboBox;
+import com.supermap.desktop.ui.XMLCommand;
+import com.supermap.desktop.ui.XMLLabel;
+import com.supermap.desktop.ui.XMLSeparator;
+import com.supermap.desktop.ui.XMLTextbox;
+import com.supermap.desktop.ui.XMLToolbar;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.CoreResources;
 
@@ -14,7 +22,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -383,6 +396,8 @@ public class SmToolbar extends JToolBar implements IToolbar {
 					item = new SmComboBox(null, xmlItem, this);
 				} else if (xmlItem instanceof XMLSeparator) {
 					item = new SmSeparator(null, xmlItem, this);
+				} else if (xmlItem instanceof XMLCheckBox) {
+					item = new SmCheckBox(null, xmlItem, this);
 				}
 
 				if (item != null) {

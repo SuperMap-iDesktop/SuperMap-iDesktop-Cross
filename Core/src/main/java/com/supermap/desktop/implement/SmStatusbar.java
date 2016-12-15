@@ -122,7 +122,7 @@ public class SmStatusbar extends JToolBar implements IStatusbar {
 				gridBagConstraints.gridy = 0;
 				gridBagConstraints.gridheight = 1;
 				gridBagConstraints.gridwidth = 1;
-				if (component instanceof JLabel) {
+				if (component instanceof JLabel || component instanceof JCheckBox) {
 					gridBagConstraints.weightx = 0;
 				} else if (component instanceof JTextField) {
 					gridBagConstraints.weightx = 1;

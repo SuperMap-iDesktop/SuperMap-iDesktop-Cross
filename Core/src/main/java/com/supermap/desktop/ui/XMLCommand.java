@@ -233,6 +233,9 @@ public class XMLCommand extends XMLCommandBase implements Comparator<XMLCommand>
 				result = new XMLComboBox(this.getPluginInfo(), (XMLCommand) parent);
 			} else if (this instanceof XMLSeparator) {
 				result = new XMLSeparator(this.getPluginInfo(), (XMLCommand) parent);
+			} else if (this instanceof XMLCheckBox) {
+				result = new XMLCheckBox(this.getPluginInfo(), (XMLCommand) parent);
+
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);

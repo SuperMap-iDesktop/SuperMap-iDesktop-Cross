@@ -41,6 +41,7 @@ public class TabularTableModel extends AbstractTableModel {
 	private HashMap<Object, Integer> idMap = new HashMap<Object, Integer>();
 	private SimpleDateFormat resultFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss", Locale.US);
 	private List<TabularValueChangedListener> tabularValueChangedListeners = new ArrayList<>();
+	private boolean isHiddenSystemField;
 
 	public TabularTableModel(Recordset recordset) {
 		setRecordset(recordset);
@@ -63,8 +64,22 @@ public class TabularTableModel extends AbstractTableModel {
 		if (this.recordset == null) {
 			return null;
 		}
+		return fieldInfos.get(getFieldIndex(column)).getCaption();
+	}
 
-		return fieldInfos.get(column).getCaption();
+	private int getFieldIndex(int column) {
+		if (isHiddenSystemField) {
+			int index = -1;
+			for (int i = 0; i < fieldInfos.getCount(); i++) {
+				if (!fieldInfos.get(i).isSystemField()) {
+					index++;
+					if (index == column) {
+						return i;
+					}
+				}
+			}
+		}
+		return column;
 	}
 
 	@Override
@@ -81,13 +96,25 @@ public class TabularTableModel extends AbstractTableModel {
 		if (recordset == null || recordset.isClosed()) {
 			return 0;
 		} else {
-			return recordset.getFieldCount();
+			if (!isHiddenSystemField) {
+				return recordset.getFieldCount();
+			} else {
+				FieldInfos fieldInfos = recordset.getFieldInfos();
+				int count = 0;
+				for (int i = fieldInfos.getCount() - 1; i >= 0; i--) {
+					if (!fieldInfos.get(i).isSystemField()) {
+						count++;
+					}
+				}
+				return count;
+			}
 		}
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		// return 0;
+		columnIndex = getFieldIndex(columnIndex);
 		if (recordset == null || recordset.isClosed()) {
 			return null;
 		}
@@ -136,6 +163,7 @@ public class TabularTableModel extends AbstractTableModel {
 
 	@Override
 	public boolean isCellEditable(int row, int column) {
+		column = getFieldIndex(column);
 		if (recordset == null || recordset.getDataset().isReadOnly() || recordset.isClosed()) {
 			return false;
 		}
@@ -214,42 +242,41 @@ public class TabularTableModel extends AbstractTableModel {
 
 	@Override
 	public Class getColumnClass(int c) {
+		c = getFieldIndex(c);
 		if (recordset == null) {
 			return Object.class;
 		}
 
 		Class result;
-		if (c == 0) {
-			result = String.class;
-		} else {
-			if (recordset.getRecordCount() > 0) {
-				FieldType fieldType = fieldInfos.get(c).getType();
-				if (fieldType == FieldType.BOOLEAN) {
-					result = Boolean.class;
-				} else if (fieldType == FieldType.DATETIME) {
-					return Time.class;
-				} else if (fieldType == FieldType.DOUBLE) {
-					result = Double.class;
-				} else if (fieldType == FieldType.INT16) {
-					result = char.class;
-				} else if (fieldType == FieldType.INT32) {
-					result = Integer.class;
-				} else if (fieldType == FieldType.INT64) {
-					result = Long.class;
-				} else if (fieldType == FieldType.SINGLE) {
-					result = Float.class;
-				} else {
-					result = String.class;
-				}
+		if (recordset.getRecordCount() > 0) {
+			FieldType fieldType = fieldInfos.get(c).getType();
+			if (fieldType == FieldType.BOOLEAN) {
+				result = Boolean.class;
+			} else if (fieldType == FieldType.DATETIME) {
+				return Time.class;
+			} else if (fieldType == FieldType.DOUBLE) {
+				result = Double.class;
+			} else if (fieldType == FieldType.INT16) {
+				result = char.class;
+			} else if (fieldType == FieldType.INT32) {
+				result = Integer.class;
+			} else if (fieldType == FieldType.INT64) {
+				result = Long.class;
+			} else if (fieldType == FieldType.SINGLE) {
+				result = Float.class;
 			} else {
 				result = String.class;
 			}
+		} else {
+			result = String.class;
 		}
+
 		return result;
 	}
 
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		columnIndex = getFieldIndex(columnIndex);
 		if (recordset == null) {
 			return;
 		}
@@ -331,7 +358,7 @@ public class TabularTableModel extends AbstractTableModel {
 			if (!isFirst) {
 				buffer.append("#");
 			}
-			buffer.append(fieldInfos.get(selectedColumns[i]).getName());
+			buffer.append(fieldInfos.get(getFieldIndex(selectedColumns[i])).getName());
 			buffer.append(" ");
 			buffer.append(sortKind);
 			isFirst = false;
@@ -368,9 +395,13 @@ public class TabularTableModel extends AbstractTableModel {
 	}
 
 	public int getFieldColumn(String fieldName) {
+		int hiddenFieldIndex = -1;
 		for (int i = 0; i < fieldInfos.getCount(); i++) {
+			if (!fieldInfos.get(i).isSystemField()) {
+				hiddenFieldIndex++;
+			}
 			if (fieldInfos.get(i).getName().equals(fieldName)) {
-				return i;
+				return isHiddenSystemField ? hiddenFieldIndex : i;
 			}
 		}
 		return -1;
@@ -384,5 +415,14 @@ public class TabularTableModel extends AbstractTableModel {
 			}
 		}
 		return -1;
+	}
+
+	public boolean getHiddenSystemField() {
+		return false;
+	}
+
+	public void setHiddenSystemField(boolean isHiddenSystemField) {
+		this.isHiddenSystemField = isHiddenSystemField;
+		fireTableStructureChanged();
 	}
 }

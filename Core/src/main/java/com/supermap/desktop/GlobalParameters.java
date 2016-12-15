@@ -1,6 +1,9 @@
 package com.supermap.desktop;
 
 import com.supermap.data.AltitudeMode;
+import com.supermap.desktop.enums.GlobalParametersType;
+import com.supermap.desktop.event.GlobalParametersChangedEvent;
+import com.supermap.desktop.event.GlobalParametersChangedListener;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.AltitudeModeUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -16,6 +19,7 @@ import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -48,6 +52,7 @@ public class GlobalParameters {
 
 	private static String startupXml;
 	private static final String startupFileName = "SuperMap.Desktop.Startup.xml";
+	private static ArrayList<GlobalParametersChangedListener> globalParametersChangedListeners = new ArrayList<>();
 
 	private GlobalParameters() {
 		// do nothing
@@ -593,8 +598,32 @@ public class GlobalParameters {
 		initThemeRefresh();
 		initMaxVisibleVertex();
 		initEdit();
+		initTabular();
 		// TODO: 2016/3/29 新增节点在此初始化
 	}
+
+	private static boolean isTabularHiddenSystemField = false;
+
+	private static void initTabular() {
+		String value = getValue("_startup_tabular", "isSystemHidden");
+		if (value != null) {
+			isTabularHiddenSystemField = Boolean.valueOf(value);
+		}
+	}
+
+	public static boolean isTabularHiddenSystemField() {
+		return isTabularHiddenSystemField;
+	}
+
+	public static void setIsTabularHiddenSystemField(boolean isTabularHiddenSystemField) {
+		if (GlobalParameters.isTabularHiddenSystemField != isTabularHiddenSystemField) {
+			fireGlobalParametersChangedListener(new GlobalParametersChangedEvent(GlobalParametersType.TabularHiddenSystemField,
+					GlobalParameters.isTabularHiddenSystemField, isTabularHiddenSystemField));
+			GlobalParameters.isTabularHiddenSystemField = isTabularHiddenSystemField;
+			save();
+		}
+	}
+
 
 
 	private static void initDesktopTitle() {
@@ -1139,10 +1168,28 @@ public class GlobalParameters {
 			edit.setAttribute("useThousandPointDivision", String.valueOf(isUseThousandPointDivision));
 			startup.appendChild(edit);
 
+			Element tabular = emptyDocument.createElement("tabular");
+			tabular.setAttribute("isSystemHidden", String.valueOf(isTabularHiddenSystemField));
+			startup.appendChild(tabular);
 			XmlUtilities.saveXml(startupXml, emptyDocument, "UTF-8");
 
 		}
 	}
 
+	private static void fireGlobalParametersChangedListener(GlobalParametersChangedEvent globalParametersChangedEvent) {
+		for (GlobalParametersChangedListener globalParametersChangedListener : globalParametersChangedListeners) {
+			globalParametersChangedListener.valueChanged(globalParametersChangedEvent);
+		}
+	}
+
+	public static void addGlobalParametersChangedListener(GlobalParametersChangedListener globalParametersChangedListener) {
+		if (!globalParametersChangedListeners.contains(globalParametersChangedListener)) {
+			globalParametersChangedListeners.add(globalParametersChangedListener);
+		}
+	}
+
+	public static void removeGlobalParametersChangedListener(GlobalParametersChangedListener globalParametersChangedListener) {
+		globalParametersChangedListeners.remove(globalParametersChangedListener);
+	}
 
 }

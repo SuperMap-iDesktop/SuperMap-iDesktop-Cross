@@ -1,6 +1,14 @@
 package com.supermap.desktop;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoStyle3D;
+import com.supermap.data.Resources;
+import com.supermap.data.Size2D;
+import com.supermap.data.SymbolType;
+import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceClosingEvent;
+import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.desktop.CtrlAction.Utilties.SceneJumpUtilties;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormScene;
@@ -20,7 +28,12 @@ import com.supermap.desktop.ui.controls.Layer3DsTree;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.utilities.DatasourceUtilities;
-import com.supermap.realspace.*;
+import com.supermap.realspace.Camera;
+import com.supermap.realspace.Layer3D;
+import com.supermap.realspace.Layer3DDataset;
+import com.supermap.realspace.Layer3DSettingVector;
+import com.supermap.realspace.Scene;
+import com.supermap.realspace.Selection3D;
 import com.supermap.ui.Action3D;
 import com.supermap.ui.SceneControl;
 
@@ -34,7 +47,15 @@ import java.awt.*;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.*;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 
 public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClosingListener {
@@ -202,20 +223,22 @@ public class FormScene extends FormBaseChild implements IFormScene, WorkspaceClo
             ArrayList<TreePath> paths = new ArrayList<TreePath>();
 
             for (Layer3D layer3D : activeLayer3Ds) {
-                if (this.sceneControl.getScene().getLayers().contains(layer3D.getName())) {
-                    this.activeLayer3DsList.add(layer3D);
+	            if (layer3D != null && !layer3D.isDisposed()) {
+		            if (this.sceneControl.getScene().getLayers().contains(layer3D.getName())) {
+			            this.activeLayer3DsList.add(layer3D);
 
-                    DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.layer3DsTree.getModel().getRoot();
-                    for (int i = 0; i < root.getChildCount(); i++) {
-                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) root.getChildAt(i);
-                        TreeNodeData nodeData = (TreeNodeData) node.getUserObject();
+			            DefaultMutableTreeNode root = (DefaultMutableTreeNode) this.layer3DsTree.getModel().getRoot();
+			            for (int i = 0; i < root.getChildCount(); i++) {
+				            DefaultMutableTreeNode node = (DefaultMutableTreeNode) root.getChildAt(i);
+				            TreeNodeData nodeData = (TreeNodeData) node.getUserObject();
 
-                        if (isNodeLayer3D(nodeData.getType()) && nodeData.getData() == layer3D) {
-                            paths.add(new TreePath(node));
-                            break;
-                        }
-                    }
-                }
+				            if (isNodeLayer3D(nodeData.getType()) && nodeData.getData() == layer3D) {
+					            paths.add(new TreePath(node));
+					            break;
+				            }
+			            }
+		            }
+	            }
             }
 
             this.layer3DsTree.setSelectionPaths(paths.toArray(new TreePath[paths.size()]));

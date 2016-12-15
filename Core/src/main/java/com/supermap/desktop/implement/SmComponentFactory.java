@@ -28,6 +28,8 @@ public class SmComponentFactory {
 					result = new SmComboBox(null, xmlCommand, parent);
 				} else if (xmlCommand.getCommandType() == XMLCommandType.SEPARATOR) {
 					result = new SmSeparator(null, xmlCommand, parent);
+				} else if (xmlCommand.getCommandType() == XMLCommandType.CHECKBOX) {
+					result = new SmCheckBox(null, xmlCommand, parent);
 				}
 			}
 		} catch (Exception e) {

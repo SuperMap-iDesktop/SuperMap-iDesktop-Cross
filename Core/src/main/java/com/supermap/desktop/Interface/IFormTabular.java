@@ -142,4 +142,8 @@ public interface IFormTabular extends IForm {
 	void undo();
 
 	void setSelectedCellBySmIDs(int[] smIds, String fieldName);
+
+	boolean getHiddenSystemField();
+
+	void setHiddenSystemField(boolean hiddenSystemField);
 }
