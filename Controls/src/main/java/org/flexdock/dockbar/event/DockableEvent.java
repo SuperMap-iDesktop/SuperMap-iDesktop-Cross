@@ -1,6 +1,7 @@
-package org.flexdock.event;
+package org.flexdock.dockbar.event;
 
 import org.flexdock.docking.Dockable;
+import org.flexdock.event.Event;
 
 import java.util.EventObject;
 

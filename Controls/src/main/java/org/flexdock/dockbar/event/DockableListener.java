@@ -1,4 +1,4 @@
-package org.flexdock.event;
+package org.flexdock.dockbar.event;
 
 import java.util.EventListener;
 

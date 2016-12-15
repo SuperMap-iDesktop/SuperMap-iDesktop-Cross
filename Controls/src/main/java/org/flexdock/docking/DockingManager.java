@@ -39,6 +39,9 @@ import java.util.WeakHashMap;
 import javax.swing.SwingUtilities;
 
 
+import org.flexdock.dockbar.event.DockableEvent;
+import org.flexdock.dockbar.event.DockableEventHandler;
+import org.flexdock.dockbar.event.DockableListener;
 import org.flexdock.docking.activation.ActiveDockableListener;
 import org.flexdock.docking.adapter.AdapterFactory;
 import org.flexdock.docking.adapter.DockingAdapter;
@@ -204,6 +207,7 @@ public class DockingManager implements DockingConstants {
 
 		// make sure dockingEvents are properly intercepted
 		EventManager.addHandler(new DockingEventHandler());
+		EventManager.addHandler(new DockableEventHandler());
 		EventManager.addListener(FloatPolicyManager.getInstance());
 
 		Properties config = ResourceManager.getProperties(CONFIG_PROPS, true);

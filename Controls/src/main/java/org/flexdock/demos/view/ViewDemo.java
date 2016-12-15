@@ -20,8 +20,8 @@ import org.flexdock.demos.util.DemoUtility;
 import org.flexdock.demos.util.VSNetStartPage;
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.docking.DockingManager;
-import org.flexdock.docking.event.DockingEvent;
-import org.flexdock.docking.event.DockingListener;
+import org.flexdock.dockbar.event.DockableEvent;
+import org.flexdock.dockbar.event.DockableListener;
 import org.flexdock.util.SwingUtility;
 import org.flexdock.view.View;
 import org.flexdock.view.Viewport;
@@ -72,38 +72,10 @@ public class ViewDemo extends JFrame implements DockingConstants {
 		View view3 = createView("class.view", "Class View");
 		View view4 = createView("message.log", "Message Log");
 
-		view1.addDockingListener(new DockingListener() {
+		DockingManager.addDockableListener(new DockableListener() {
 			@Override
-			public void dockingComplete(DockingEvent evt) {
-
-			}
-
-			@Override
-			public void dockingCanceled(DockingEvent evt) {
-
-			}
-
-			@Override
-			public void dragStarted(DockingEvent evt) {
-
-			}
-
-			@Override
-			public void dropStarted(DockingEvent evt) {
-
-			}
-
-			@Override
-			public void undockingComplete(DockingEvent evt) {
-				System.out.println(view1.isActive());
-				System.out.println(view1.isFloating());
-				System.out.println(view1.isMinimized());
-				System.out.println(evt.getRegion());
-			}
-
-			@Override
-			public void undockingStarted(DockingEvent evt) {
-
+			public void dockable(DockableEvent e) {
+				System.out.println(e.getEventType() == DockableEvent.CLOSING ? "Closing" : "Closed");
 			}
 		});
 

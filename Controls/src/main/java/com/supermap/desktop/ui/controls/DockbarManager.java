@@ -1,26 +1,22 @@
 package com.supermap.desktop.ui.controls;
 
-import com.sun.prism.image.ViewPort;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IDockbarManager;
 import com.supermap.desktop.WorkEnvironment;
-import com.supermap.desktop.enums.DockState;
 import com.supermap.desktop.event.DockbarClosedEvent;
 import com.supermap.desktop.event.DockbarClosedListener;
 import com.supermap.desktop.event.DockbarClosingEvent;
 import com.supermap.desktop.event.DockbarClosingListener;
 import com.supermap.desktop.ui.DockConstraint;
 import com.supermap.desktop.ui.XMLDockbar;
-import com.supermap.desktop.ui.XMLDockbarBase;
 import com.supermap.desktop.ui.XMLDockbars;
 import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.docking.DockingManager;
-import org.flexdock.docking.DockingPort;
 import org.flexdock.docking.defaults.DefaultDockingStrategy;
-import org.flexdock.event.DockableEvent;
-import org.flexdock.event.DockableListener;
+import org.flexdock.dockbar.event.DockableEvent;
+import org.flexdock.dockbar.event.DockableListener;
 import org.flexdock.view.View;
 import org.flexdock.view.Viewport;
 
