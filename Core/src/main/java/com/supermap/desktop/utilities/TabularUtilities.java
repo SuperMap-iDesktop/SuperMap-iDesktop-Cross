@@ -7,15 +7,19 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CoreProperties;
+
+import javax.swing.*;
+import java.awt.*;
 
 public class TabularUtilities {
 
 	/**
 	 * 返回属性表的名字 数据集@数据源
-	 * 
+	 *
 	 * @return
 	 */
 	private TabularUtilities() {
@@ -33,7 +37,7 @@ public class TabularUtilities {
 
 	/**
 	 * 打开属性表
-	 * 
+	 *
 	 * @param dataset
 	 */
 	public static IFormTabular openDatasetVectorFormTabular(Dataset dataset) {
@@ -52,7 +56,7 @@ public class TabularUtilities {
 
 	/**
 	 * 刷新已打开的指定数据集的属性表
-	 * 
+	 *
 	 * @param datasetVector
 	 */
 	public static void refreshTabularForm(DatasetVector datasetVector) {

@@ -4,6 +4,7 @@ import com.supermap.desktop.ui.mdi.events.*;
 import com.supermap.desktop.ui.mdi.layout.FlowLayoutStrategy;
 import com.supermap.desktop.ui.mdi.layout.ILayoutStrategy;
 import com.supermap.desktop.ui.mdi.plaf.MdiGroupUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import java.awt.*;
 import java.awt.event.*;

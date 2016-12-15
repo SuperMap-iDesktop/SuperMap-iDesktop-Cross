@@ -10,8 +10,13 @@ import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.implement.SmMenuItem;
+import com.supermap.desktop.ui.FormBaseChild;
+import com.supermap.desktop.ui.FormManager;
 import com.supermap.desktop.ui.mdi.MdiGroup;
+import com.supermap.desktop.ui.mdi.MdiPage;
 import com.supermap.desktop.ui.mdi.MdiPane;
+import com.supermap.desktop.ui.mdi.layout.FlowLayoutStrategy;
+import com.supermap.desktop.ui.mdi.layout.ILayoutStrategy;
 import com.supermap.desktop.ui.mdi.layout.SplitLayoutStrategy;
 import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
@@ -22,44 +27,56 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class BindUtilties {
-	//    private static SplitWindow splitWindow;
-	private static IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+
+	private static final String KEY_FORM_MAP = "group_formMap";
+	private static final String KEY_FORM_TABULAR = "group_formTabular";
+
+	private static MdiGroup formMapGroup;
+	private static MdiGroup formTabularGroup;
 	private static MapControl mapControl;
 	private static IFormTabular tabular;
-	//    private static DockingWindow newTabWindow;
 	private static IPropertyBindWindow propertyBindWindow;
-	private static ArrayList<IPropertyBindWindow> propertyBindWindows;
 	private static BindUtilties utilties = new BindUtilties();
 	private static ActiveFormChangedListener activeFormChangeListener = utilties.new LocalFormChangedListener();
 	static int tabSize = 0;// 属性表个数
 
 	public static void windowBindProperty(IFormMap formMap, Layer layer) {
-		propertyBindWindows = new ArrayList<>();
-		mapControl = formMap.getMapControl();
-		newTabWindow = tabWindow.getChildWindow(tabWindow.getChildWindowCount() - 1);
-		tabSize += 1;
-		if (null == splitWindow) {
-			splitWindow = tabWindow.split(newTabWindow, Direction.DOWN, 0.7f);
-		} else if (splitWindow.getChildWindowCount() > 0) {
-			((TabWindow) splitWindow.getChildWindow(splitWindow.getChildWindowCount() - 1)).addTab(newTabWindow);
+		FormManager formManager = (FormManager) Application.getActiveApplication().getMainFrame().getFormManager();
+
+		ILayoutStrategy strategy = formManager.getLayoutStrategy();
+		if (strategy instanceof FlowLayoutStrategy) {
+			((FlowLayoutStrategy) strategy).setLayoutMode(FlowLayoutStrategy.VERTICAL);
 		}
+
+		if (formManager.indexOf(formMapGroup) < 0) {
+			formMapGroup = null;
+		}
+
+		if (formManager.indexOf(formTabularGroup) < 0) {
+			formTabularGroup = null;
+		}
+
+		MdiPage mapPage = formManager.getPage((FormBaseChild) formMap);
+		if (formMapGroup == null && mapPage != null) {
+			formMapGroup = mapPage.getGroup();
+		}
+		formMapGroup.addPage(mapPage);
+
+		MdiPage tabularPage = formManager.getPage((FormBaseChild) tabular);
+		if (formTabularGroup == null) {
+			if (tabularPage != null) {
+				formTabularGroup = formManager.createGroup();
+			}
+		}
+		formTabularGroup.addPage(tabularPage);
+
+		mapControl = formMap.getMapControl();
+		tabSize += 1;
 		propertyBindWindow = new PropertyBindWindow();
 		propertyBindWindow.setFormMap(formMap);
 		propertyBindWindow.setBindProperty(new BindProperty(mapControl));
 		propertyBindWindow.setBindWindow(new BindWindow(tabular), layer);
 		propertyBindWindow.registEvents();
-		newTabWindow.addListener(new DockingWindowAdapter() {
-
-			@Override
-			public void windowClosed(DockingWindow window) {
-				// 当前属性表关闭时清空map
-				tabSize -= 1;
-				if (0 == tabSize) {
-					splitWindow = null;
-				}
-			}
-
-		});
 		formManager.addActiveFormChangedListener(activeFormChangeListener);
 	}
 
@@ -71,7 +88,6 @@ public class BindUtilties {
 		tabular.getIdMap().clear();
 		tabular.getRowIndexMap().clear();
 		tabular.setRecordset(recordset);
-
 	}
 
 	public static void showPopumenu(IBaseItem caller) {
@@ -109,32 +125,5 @@ public class BindUtilties {
 			}
 		}
 
-	}
-
-	class BindStrategy extends SplitLayoutStrategy {
-
-		public BindStrategy(MdiPane container) {
-			super(container);
-		}
-
-		@Override
-		public void addGroup(MdiGroup group) {
-			super.addGroup(group);
-		}
-
-		@Override
-		public void removeGroup(MdiGroup group) {
-			super.removeGroup(group);
-		}
-
-		@Override
-		public void layoutGroups() {
-			super.layoutGroups();
-		}
-
-		@Override
-		public void reset() {
-			super.reset();
-		}
 	}
 }

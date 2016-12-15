@@ -150,7 +150,7 @@ public class MdiGroup extends JComponent {
 	 * @param page
 	 */
 	public void addPage(MdiPage page) {
-		addPage(page, getPageCount());
+		addPage(page, getPageCount() - 1);
 	}
 
 	/**
@@ -160,6 +160,18 @@ public class MdiGroup extends JComponent {
 	public void addPage(MdiPage page, int index) {
 		if (page == null) {
 			return;
+		}
+
+		// 如果 page 已有 Group，则需要先从原有 Group 中移除
+		if (page.getGroup() != null) {
+
+			// page 原有 Group 的 container 与当前 group 的 container 不一致，或者都没有，则直接返回，禁止操作
+			IMdiContainer preContainer = page.getGroup().getMdiContainer();
+			if (preContainer != this.mdiContainer || preContainer == null) {
+				return;
+			}
+
+			page.getGroup().close(page, PageClosedEvent.CHANGE_GROUP);
 		}
 
 		for (MdiPage mdiPage : pages) {
@@ -245,10 +257,14 @@ public class MdiGroup extends JComponent {
 	}
 
 	public boolean close(MdiPage page) {
+		return close(page, PageClosedEvent.CLOSE);
+	}
+
+	private boolean close(MdiPage page, int operationType) {
 		boolean isClosed = false;
 		if (page != null && this.pages.contains(page)) {
 			try {
-				PageClosingEvent removingEvent = new PageClosingEvent(this, page);
+				PageClosingEvent removingEvent = new PageClosingEvent(this, page, operationType);
 				this.eventsHelper.firePageClosing(removingEvent);
 
 				if (!removingEvent.isCancel()) {
@@ -258,7 +274,7 @@ public class MdiGroup extends JComponent {
 					this.remove(page.getComponent());
 					this.pages.remove(page);
 					page.setGroup(null);
-					this.eventsHelper.firePageClosed(new PageClosedEvent(this, page));
+					this.eventsHelper.firePageClosed(new PageClosedEvent(this, page, operationType));
 
 					if (isCloseActivePage) {
 

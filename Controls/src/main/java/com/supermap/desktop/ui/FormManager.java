@@ -24,7 +24,6 @@ import java.util.HashMap;
 public class FormManager extends MdiPane implements IFormManager {
 	private WindowType activatedChildFormType = WindowType.UNKNOWN;
 	private EventListenerList listenerList = new EventListenerList();
-	private MdiGroup mdiGroup;
 	private PageActivatedListener pageActivatedListener = new PageActivatedListener() {
 
 		@Override
@@ -47,7 +46,7 @@ public class FormManager extends MdiPane implements IFormManager {
 	private PageClosingListener pageClosingListener = new PageClosingListener() {
 		@Override
 		public void pageClosing(PageClosingEvent e) {
-			if (e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
+			if (e.getOperationType() == PageClosingEvent.CLOSE && e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
 				FormClosingEvent event = new FormClosingEvent((IForm) e.getPage().getComponent(), false);
 				((FormBaseChild) e.getPage().getComponent()).formClosing(event);
 
@@ -62,7 +61,7 @@ public class FormManager extends MdiPane implements IFormManager {
 	private PageClosedListener pageClosedListener = new PageClosedListener() {
 		@Override
 		public void pageClosed(PageClosedEvent e) {
-			if (e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
+			if (e.getOperationType() == PageClosedEvent.CLOSE && e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
 				FormClosedEvent event = new FormClosedEvent((IForm) e.getPage().getComponent());
 				((FormBaseChild) e.getPage().getComponent()).formClosed(event);
 				((FormBaseChild) e.getPage().getComponent()).fireFormClosed(event);
@@ -74,12 +73,7 @@ public class FormManager extends MdiPane implements IFormManager {
 		}
 	};
 
-	public MdiGroup getContentPane() {
-		return this.mdiGroup;
-	}
-
 	public FormManager() {
-		this.mdiGroup = new MdiGroup(null);
 		addPageActivatedListener(this.pageActivatedListener);
 		addPageClosingListener(this.pageClosingListener);
 		addPageClosedListener(this.pageClosedListener);
