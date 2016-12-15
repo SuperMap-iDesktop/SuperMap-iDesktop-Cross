@@ -38,8 +38,8 @@ public class TabularEditHistory implements ITabularEditHistory {
 			}
 		}
 		recordset.getBatch().update();
-		tabular.setSelectedCellBySmIDs(smIds, editHistoryBeanJList.get(0).getFieldName());
 		recordset.seekID(id);
+		tabular.setSelectedCellBySmIDs(smIds, editHistoryBeanJList.get(0).getFieldName());
 	}
 
 	@Override
@@ -57,8 +57,8 @@ public class TabularEditHistory implements ITabularEditHistory {
 			}
 		}
 		recordset.getBatch().update();
-		tabular.setSelectedCellBySmIDs(smIds, editHistoryBeanJList.get(0).getFieldName());
 		recordset.seekID(id);
+		tabular.setSelectedCellBySmIDs(smIds, editHistoryBeanJList.get(0).getFieldName());
 	}
 
 	@Override

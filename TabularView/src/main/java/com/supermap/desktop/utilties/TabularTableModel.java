@@ -400,7 +400,7 @@ public class TabularTableModel extends AbstractTableModel {
 			if (!fieldInfos.get(i).isSystemField()) {
 				hiddenFieldIndex++;
 			}
-			if (fieldInfos.get(i).getName().equals(fieldName)) {
+			if (fieldInfos.get(i).getName().equalsIgnoreCase(fieldName)) {
 				return isHiddenSystemField ? hiddenFieldIndex : i;
 			}
 		}

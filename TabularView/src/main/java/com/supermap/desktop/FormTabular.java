@@ -42,6 +42,8 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -93,18 +95,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	};
 
 	private KeyListener keyListener = new KeyAdapter() {
-
-		@Override
-		public void keyPressed(KeyEvent e) {
-			if (e.isControlDown()) {
-				if (e.getKeyChar() == KeyEvent.VK_Z && canUndo()) {
-					undo();
-				} else if (e.getKeyChar() == KeyEvent.VK_Y && canRedo()) {
-					redo();
-				}
-			}
-		}
-
 		@Override
 		public void keyReleased(KeyEvent e) {
 			TabularStatisticUtilties.updateSatusbars(FormTabular.this);
@@ -242,6 +232,23 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	private void registerEvents() {
+		// api上说这个方法已过时
+		this.jTableTabular.registerKeyboardAction(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (canUndo()) {
+					undo();
+				}
+			}
+		}, KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK, false), JComponent.WHEN_FOCUSED);
+		this.jTableTabular.registerKeyboardAction(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (canRedo()) {
+					redo();
+				}
+			}
+		}, KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK, false), JComponent.WHEN_FOCUSED);
 		this.jTableTabular.addMouseListener(mouseAdapter);
 		this.jTableTabular.getTableHeader().addMouseListener(mouseAdapter);
 		this.jTableTabular.addKeyListener(keyListener);
