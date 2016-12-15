@@ -8,10 +8,15 @@ import com.supermap.data.GeometryType;
 import com.supermap.data.Recordset;
 import com.supermap.data.Resources;
 import com.supermap.data.Symbol;
+import com.supermap.data.SymbolGroup;
 import com.supermap.data.SymbolMarker;
 import com.supermap.data.SymbolMarker3D;
 import com.supermap.data.SymbolType;
 import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceClosedEvent;
+import com.supermap.data.WorkspaceClosedListener;
+import com.supermap.data.WorkspaceOpenedEvent;
+import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ControlsResources;
@@ -36,6 +41,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 /**
@@ -74,20 +80,31 @@ public class CADStyleTitlePanel extends JPanel {
     };
 	// FIXME: 2016/11/14 UGDJ-530
 	// 关闭或打开工作空间时重新加载
-//	private WorkspaceClosedListener workSpaceClosedListener = new WorkspaceClosedListener() {
-//		@Override
-//		public void workspaceClosed(WorkspaceClosedEvent workspaceClosedEvent) {
-//			workSpaceChanged(Application.getActiveApplication().getWorkspace());
-//		}
-//	};
-//
-//	private WorkspaceOpenedListener workSpaceOpenedListener= new WorkspaceOpenedListener() {
-//
-//		@Override
-//		public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
-//			workSpaceChanged(workspaceOpenedEvent.getWorkspace());
-//		}
-//	};
+	private WorkspaceClosedListener workSpaceClosedListener = new WorkspaceClosedListener() {
+		@Override
+		public void workspaceClosed(WorkspaceClosedEvent workspaceClosedEvent) {
+
+			workSpaceChanged(Application.getActiveApplication().getWorkspace());
+		}
+	};
+
+	private WorkspaceOpenedListener workSpaceOpenedListener = new WorkspaceOpenedListener() {
+
+		@Override
+		public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
+			try {
+				Method reset = SymbolGroup.class.getDeclaredMethod("reset");
+				reset.setAccessible(true);
+				reset.invoke(Application.getActiveApplication().getWorkspace().getResources().getMarkerLibrary().getRootGroup());
+				reset.invoke(Application.getActiveApplication().getWorkspace().getResources().getLineLibrary().getRootGroup());
+				reset.invoke(Application.getActiveApplication().getWorkspace().getResources().getFillLibrary().getRootGroup());
+				reset.setAccessible(false);
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(e);
+			}
+			workSpaceChanged(workspaceOpenedEvent.getWorkspace());
+		}
+	};
 
 	public CADStyleTitlePanel(CADStyleContainer parent, int styleType) {
 		this.parent = parent;
@@ -108,10 +125,9 @@ public class CADStyleTitlePanel extends JPanel {
     }
 
     private void registEvents() {
-	    // FIXME: 2016/11/14 UGDJ-530
-//	    Application.getActiveApplication().getWorkspace().addClosedListener(workSpaceClosedListener);
-//	    Application.getActiveApplication().getWorkspace().addOpenedListener(workSpaceOpenedListener);
-        this.panelSymbols.addSymbolSelectedChangedListener(this.panelSymbolsListener);
+	    Application.getActiveApplication().getWorkspace().addClosedListener(workSpaceClosedListener);
+	    Application.getActiveApplication().getWorkspace().addOpenedListener(workSpaceOpenedListener);
+	    this.panelSymbols.addSymbolSelectedChangedListener(this.panelSymbolsListener);
     }
 
 	private void workSpaceChanged(Workspace workspace) {

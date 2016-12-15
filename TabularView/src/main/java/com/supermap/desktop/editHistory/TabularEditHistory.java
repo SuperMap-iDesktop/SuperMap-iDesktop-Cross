@@ -57,7 +57,7 @@ public class TabularEditHistory implements ITabularEditHistory {
 			}
 		}
 		recordset.getBatch().update();
-		recordset.seekID(id);
+		recordset.seekID(id);// 属性表改动一定不要被抓住，不然就要死给你看
 		tabular.setSelectedCellBySmIDs(smIds, editHistoryBeanJList.get(0).getFieldName());
 	}
 
