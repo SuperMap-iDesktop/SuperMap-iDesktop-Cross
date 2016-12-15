@@ -77,6 +77,8 @@ import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindow
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.SECOND_LEVEL;
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.THIRD_LEVEL;
 
+
+
 /**
  * @author YuanR 2016.12.3
  */
