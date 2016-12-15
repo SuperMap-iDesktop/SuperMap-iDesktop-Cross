@@ -88,13 +88,16 @@ public class SnapSettingDialog extends SmDialog {
         public void actionPerformed(ActionEvent e) {
             srcSnapSetting = SnapSettingUtilities.parseDefaultSnapSetting(mapControl);
             isRecover = true;
-            initTable();
-            textFieldSnapTolarence.setText(format.format(srcSnapSetting.getTolerance()));
-            textFieldFixedAngle.setText(format.format(srcSnapSetting.getFixedAngle()));
+            if (panelSnapMode.isVisible()) {
+                initTable();
+            } else {
+                textFieldSnapTolarence.setText(format.format(srcSnapSetting.getTolerance()));
+                textFieldFixedAngle.setText(format.format(srcSnapSetting.getFixedAngle()));
 //            textFieldMaxSnappedCount.setText(format.format(srcSnapSetting.getMaxSnappedCount()));
-            textFieldMinSnappedLength.setText(format.format(srcSnapSetting.getMinSnappedLength()));
-            textFieldFixedLength.setText(format.format(srcSnapSetting.getFixedLength()));
-            checkBoxSnappedLineBroken.setSelected(srcSnapSetting.isSnappedLineBroken());
+                textFieldMinSnappedLength.setText(format.format(srcSnapSetting.getMinSnappedLength()));
+                textFieldFixedLength.setText(format.format(srcSnapSetting.getFixedLength()));
+                checkBoxSnappedLineBroken.setSelected(srcSnapSetting.isSnappedLineBroken());
+            }
         }
     };
     private ActionListener cancelListener = new ActionListener() {
@@ -271,8 +274,16 @@ public class SnapSettingDialog extends SmDialog {
     private ActionListener okListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (isRecover) {
-                mapControlSnapSetting = srcSnapSetting;
+            if (isRecover && panelSnapMode.isVisible()) {
+//                mapControlSnapSetting = srcSnapSetting;
+                SnapSettingUtilities.replaceSnapMode(srcSnapSetting, mapControlSnapSetting);
+            }
+            if (isRecover && panelSnapParams.isVisible()) {
+                mapControlSnapSetting.setTolerance(srcSnapSetting.getTolerance());
+                mapControlSnapSetting.setFixedAngle(srcSnapSetting.getFixedAngle());
+                mapControlSnapSetting.setFixedLength(srcSnapSetting.getFixedLength());
+                mapControlSnapSetting.setMinSnappedLength(srcSnapSetting.getMinSnappedLength());
+                mapControlSnapSetting.setSnappedLineBroken(srcSnapSetting.isSnappedLineBroken());
             }
             if (!SnapSettingUtilities.isSnapSettingFileExists()) {
                 SnapSettingUtilities.createSnapSettingFile(mapControlSnapSetting);
