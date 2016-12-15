@@ -1,7 +1,7 @@
-package com.supermap.desktop.CtrlAction.Edit.SnapSetting;
+package com.supermap.desktop.ui.controls.TextFields;
 
 /**
- * Created by xie on 2016/12/8.
+ * Created by xie on 2016/12/13.
  */
 public abstract class RightValueListener {
     public abstract void update(String value);

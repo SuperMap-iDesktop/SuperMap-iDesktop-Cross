@@ -110,17 +110,20 @@ public class CADStyleEditor extends AbstractEditor {
 	@Override
 	public boolean enble(EditEnvironment environment) {
 
-		boolean editable = isEditable(environment.getMap());
-		ArrayList<Recordset> recordsets = CADStyleUtilities.getActiveRecordset(environment.getMap());
-		if (null != cadStyleContainer && editable == false) {
-			cadStyleContainer.enabled(false);
-		} else if (null != cadStyleContainer && null != recordsets && null != dockbarCADStyleContainer) {
-			cadStyleContainer.showDialog(recordsets);
-		} else if (null != cadStyleContainer && null == recordsets) {
-			cadStyleContainer.setNullPanel();
-		}
-		return ListUtilities.isListContainAny(environment.getEditProperties().getSelectedDatasetTypes(), DatasetType.CAD, DatasetType.TEXT);
-	}
+        boolean editable = isEditable(environment.getMap());
+        ArrayList<Recordset> recordsets = CADStyleUtilities.getActiveRecordset(environment.getMap());
+        if (null != cadStyleContainer && editable == false) {
+            cadStyleContainer.enabled(false);
+        } else if (null != cadStyleContainer && editable == true) {
+            cadStyleContainer.setModify(false);
+        }
+        if (null != cadStyleContainer && null != recordsets && null != dockbarCADStyleContainer) {
+            cadStyleContainer.showDialog(recordsets);
+        } else if (null != cadStyleContainer && null == recordsets) {
+            cadStyleContainer.setNullPanel();
+        }
+        return ListUtilities.isListContainAny(environment.getEditProperties().getSelectedDatasetTypes(), DatasetType.CAD, DatasetType.TEXT);
+    }
 
 	private boolean isEditable(Map map) {
 		ArrayList<Recordset> recordset = CADStyleUtilities.getActiveRecordset(map);

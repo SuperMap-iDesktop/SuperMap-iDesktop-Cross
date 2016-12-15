@@ -16,14 +16,14 @@ public class FiletypeUtilities {
 
     // 栅格类型文件
     private static final FileType[] gridValue = {FileType.BMP, FileType.SIT, FileType.GRD, FileType.RAW,
-            FileType.CSV, FileType.IMG, FileType.TIF, FileType.PNG, FileType.JPG, FileType.JP2,
+            FileType.IMG, FileType.TIF, FileType.PNG, FileType.JPG, FileType.JP2,
             FileType.GIF, FileType.GBDEM, FileType.USGSDEM, FileType.BSQ, FileType.BIP, FileType.BIL,
             FileType.MrSID, FileType.ECW, FileType.TEMSClutter};
     // 矢量文件
     private static final FileType[] vectorValue = {FileType.WOR, FileType.SCV, FileType.DXF, FileType.SHP,
             FileType.E00, FileType.MIF, FileType.TAB, FileType.MAPGIS, FileType.ModelOSG, FileType.Model3DS,
             FileType.ModelDXF, FileType.ModelX, FileType.KML, FileType.KMZ, FileType.DWG, FileType.VCT, FileType.DBF,
-            FileType.GJB5068, FileType.DGN, FileType.TEMSVector, FileType.TEMSBuildingVector};
+            FileType.GJB5068, FileType.DGN, FileType.TEMSVector, FileType.CSV, FileType.TEMSBuildingVector};
 
     /**
      * 根据文件路径，文件过滤项获取文件中文类型

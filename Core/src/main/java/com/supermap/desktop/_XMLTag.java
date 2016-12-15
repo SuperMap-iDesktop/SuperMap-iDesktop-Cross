@@ -55,6 +55,7 @@ public class _XMLTag {
 	public static final String g_ControlEditBox = "textBox";
 	public static final String g_ControlLabel = "label";
 	public static final String g_ControlSeparator = "separator";
+	public static final String g_ControlCheckbox = "checkBox";
 
 	public static final String g_AttributionTitle = "title";
 	public static final String g_AttributionName = "name";

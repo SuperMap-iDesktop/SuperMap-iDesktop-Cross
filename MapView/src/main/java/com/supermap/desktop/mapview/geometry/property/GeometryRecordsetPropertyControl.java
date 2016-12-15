@@ -5,11 +5,15 @@ import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.RecordsetFinalizer;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
+import com.supermap.desktop.enums.GlobalParametersType;
 import com.supermap.desktop.enums.PropertyType;
+import com.supermap.desktop.event.GlobalParametersChangedEvent;
+import com.supermap.desktop.event.GlobalParametersChangedListener;
 import com.supermap.desktop.event.TableCellValueChangeEvent;
 import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.properties.CommonProperties;
@@ -71,7 +75,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 			if (e.getSource() == GeometryRecordsetPropertyControl.this.checkBoxHideDetail) {
 				checkBoxHideDetailClicked();
 			} else if (e.getSource() == GeometryRecordsetPropertyControl.this.checkBoxHideSysField) {
-				checkBoxHideSysFieldClicked();
+				GlobalParameters.setIsTabularHiddenSystemField(checkBoxHideSysField.isSelected());
 			}
 		}
 	};
@@ -155,7 +159,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setViewportView(this.propertyTable);
 		this.checkBoxHideSysField = new JCheckBox("Hidden_SystemField");
-		this.checkBoxHideSysField.setSelected(true);
+		this.checkBoxHideSysField.setSelected(GlobalParameters.isTabularHiddenSystemField());
 		this.checkBoxHideDetail = new JCheckBox("Hidden_DetailInfo");
 		this.checkBoxHideDetail.setSelected(true);
 		this.buttonReset = new SmButton("reset");
@@ -187,6 +191,16 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 		if (this.propertyTable.getModel() instanceof PropertyTableModel) {
 			((PropertyTableModel) this.propertyTable.getModel()).addTableCellValueChangeListener(this.tableCellValueChangeListener);
 		}
+		GlobalParameters.addGlobalParametersChangedListener(new GlobalParametersChangedListener() {
+			@Override
+			public void valueChanged(GlobalParametersChangedEvent globalParametersChangedEvent) {
+				if (globalParametersChangedEvent.getGlobalParametersType() == GlobalParametersType.TabularHiddenSystemField) {
+					checkBoxHideSysField.setSelected((Boolean) globalParametersChangedEvent.getNewValue());
+					checkBoxHideSysFieldClicked();
+//					checkBoxHideSysField.setSelected((Boolean) globalParametersChangedEvent.getNewValue());
+				}
+			}
+		});
 	}
 
 	private void unregisterEvents() {
@@ -205,7 +219,6 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 		propertyTableModel.setHiddenSysField(this.checkBoxHideSysField.isSelected());
 		this.propertyTable.setModel(this.propertyTableModel);
 		fillTableData();
-
 	}
 
 	/**

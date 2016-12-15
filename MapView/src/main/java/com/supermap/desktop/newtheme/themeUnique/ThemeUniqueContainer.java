@@ -10,10 +10,7 @@ import com.supermap.data.GeoPoint;
 import com.supermap.data.GeoRegion;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometry;
-import com.supermap.data.Point2D;
-import com.supermap.data.Point2Ds;
 import com.supermap.data.Recordset;
-import com.supermap.data.Rectangle2D;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
@@ -545,97 +542,9 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				setItemGeoSytle();
 				tableUniqueInfo.setRowSelectionInterval(selectRow, selectRow);
 				refreshAtOnce();
-			} else if (1 == e.getClickCount() && e.getButton() == MouseEvent.BUTTON1) {//此时进行专题图子项连续定位  12.13yuanR
-				//判断是否开启了连续定位功能
-				if (isContinuousMapLocation) {
-					//每次关联之前清空跟踪层
-					MapUtilities.getActiveMap().getTrackingLayer().clear();
-					Recordset othersRecordsets;
-					Recordset selectedRecordsets;
-					//当选择非最后一行
-					if (tableUniqueInfo.getSelectedRow() != tableUniqueInfo.getRowCount() - 1) {
-						int selectRow = tableUniqueInfo.getSelectedRow();
-						ThemeUniqueItem item = themeUnique.getItem(selectRow);
-						//构造选中行的记录集
-						selectedRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + "=" + "'" + item.getUnique() + "'", STATIC);
-						othersRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + "!=" + "'" + item.getUnique() + "'", STATIC);
-					} else {
-						selectedRecordsets = datasetVector.getRecordset(true, STATIC);
-						othersRecordsets = datasetVector.getRecordset(false, STATIC);
-					}
-					if (selectedRecordsets.getRecordCount() > 0) {
-
-						//Geometry selectedGeo = selectedRecordsets.getGeometry();
-						//将选中子项移动到地图中心
-						/*
-						if (null != selectedGeo) {
-							Rectangle2D rectangle2d = null;
-							Point2Ds points = new Point2Ds(new Point2D[]{new Point2D(selectedGeo.getBounds().getLeft(), selectedGeo.getBounds().getBottom()),
-									new Point2D(selectedGeo.getBounds().getRight(), selectedGeo.getBounds().getTop())});
-							rectangle2d = new Rectangle2D(points.getItem(0), points.getItem(1));
-							map.setCenter(rectangle2d.getCenter());
-						}
-						*/
-
-						//设置其他子项跟踪层风格
-						GeoStyle othersGeoStyle = new GeoStyle();
-						if (othersRecordsets.getRecordCount() > 0) {
-							othersRecordsets.moveFirst();
-							for (int i = 0; i < othersRecordsets.getRecordCount(); i++) {
-								Geometry othersGeo = othersRecordsets.getGeometry();
-								if (othersGeo instanceof GeoRegion) {
-									othersGeoStyle.setFillOpaqueRate(40);
-									othersGeoStyle.setFillForeColor(Color.WHITE);
-									othersGeoStyle.setLineColor(Color.LIGHT_GRAY);
-									othersGeoStyle.setLineWidth(1);
-								} else {
-									othersGeoStyle = null;
-								}
-								if (othersGeoStyle != null) {
-									othersGeo.setStyle(othersGeoStyle);
-									MapUtilities.getActiveMap().getTrackingLayer().add(othersGeo, "");
-								}
-								//对象释放
-								othersGeo.dispose();
-								othersRecordsets.moveNext();
-							}
-						}
-						//设置选中子项跟踪层风格
-						GeoStyle selectedGeoStyle = new GeoStyle();
-						selectedRecordsets.moveFirst();
-						for (int i = 0; i < selectedRecordsets.getRecordCount(); i++) {
-							Geometry selectedGeo = selectedRecordsets.getGeometry();
-							if (selectedGeo instanceof GeoRegion) {
-								selectedGeoStyle.setFillOpaqueRate(0);
-								selectedGeoStyle.setLineWidth(1);
-								selectedGeoStyle.setLineColor(Color.red);
-							} else if (selectedGeo instanceof GeoPoint || selectedGeo instanceof GeoLine) {
-								selectedGeoStyle.setLineWidth(1);
-								selectedGeoStyle.setLineColor(Color.red);
-							} else {
-								selectedGeoStyle = null;
-							}
-							if (selectedGeo != null) {
-								selectedGeo.setStyle(selectedGeoStyle);
-								MapUtilities.getActiveMap().getTrackingLayer().add(selectedGeo, "");
-							}
-							//对象释放
-							selectedGeo.dispose();
-							selectedRecordsets.moveNext();
-						}
-						//对象释放
-						if (selectedGeoStyle != null) {
-							selectedGeoStyle.dispose();
-						}
-						if (othersGeoStyle != null) {
-							othersGeoStyle.dispose();
-						}
-					}
-					map.refresh();
-					//对象释放
-					selectedRecordsets.dispose();
-					othersRecordsets.dispose();
-				}
+			} else if (1 == e.getClickCount() && e.getButton() == MouseEvent.BUTTON1) {
+				//此时进行专题图子项连续定位
+				ContinuousMapLocation();
 			} else if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON3) {//打开右键菜单
 				//打开右键菜单根据是否可视(可选择)状态设置定位功能是否可用
 				if (themeUniqueLayer.isVisible() && themeUniqueLayer.isSelectable()) {
@@ -659,6 +568,75 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				buttonDelete.setEnabled(true);
 			}
 		}
+
+		/**
+		 * 进行专题图子项连续定位  12.13yuanR
+		 */
+		private void ContinuousMapLocation() {
+			if (isContinuousMapLocation) {
+				int[] selectRow = tableUniqueInfo.getSelectedRows();
+				//此时选中了最后一行
+				if (selectRow[tableUniqueInfo.getSelectedRowCount() - 1] != tableUniqueInfo.getRowCount() - 1) {
+					MapUtilities.getActiveMap().getTrackingLayer().clear();
+					Recordset selectedRecordsets;
+					for (int i = 0; i < tableUniqueInfo.getSelectedRowCount(); i++) {
+						ThemeUniqueItem item = themeUnique.getItem(selectRow[i]);
+						//构造选中行的记录集
+						selectedRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + "=" + "'" + item.getUnique() + "'", STATIC);
+						if (selectedRecordsets.getRecordCount() > 0) {
+									/*
+									Geometry selectedGeos = selectedRecordsets.getGeometry();
+									//将选中子项移动到地图中心
+									if (null != selectedGeos) {
+										Rectangle2D rectangle2d = null;
+										Point2Ds points = new Point2Ds(new Point2D[]{new Point2D(selectedGeos.getBounds().getLeft(), selectedGeos.getBounds().getBottom()),
+												new Point2D(selectedGeos.getBounds().getRight(), selectedGeos.getBounds().getTop())});
+										rectangle2d = new Rectangle2D(points.getItem(0), points.getItem(1));
+										map.setCenter(rectangle2d.getCenter());
+									}
+									selectedGeos.dispose();
+									*/
+							//设置选中子项跟踪层风格
+							GeoStyle selectedGeoStyle = new GeoStyle();
+							selectedRecordsets.moveFirst();
+							for (int n = 0; n < selectedRecordsets.getRecordCount(); n++) {
+								Geometry selectedGeo = selectedRecordsets.getGeometry();
+								if (selectedGeo instanceof GeoRegion) {
+									selectedGeoStyle.setFillOpaqueRate(0);
+									selectedGeoStyle.setLineWidth(0.5);
+									selectedGeoStyle.setLineColor(Color.red);
+								} else if (selectedGeo instanceof GeoPoint || selectedGeo instanceof GeoLine) {
+									selectedGeoStyle.setLineWidth(0.5);
+									selectedGeoStyle.setLineColor(Color.red);
+								} else {
+									selectedGeoStyle = null;
+								}
+								if (selectedGeo != null) {
+									selectedGeo.setStyle(selectedGeoStyle);
+									MapUtilities.getActiveMap().getTrackingLayer().add(selectedGeo, "");
+								}
+								//对象释放
+								selectedGeo.dispose();
+								selectedRecordsets.moveNext();
+							}
+							//对象释放
+							if (selectedGeoStyle != null) {
+								selectedGeoStyle.dispose();
+							}
+						} else {//未找到子项，弹出提示信息
+							Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_NullQuery"));
+						}
+						map.refresh();
+						//对象释放
+						selectedRecordsets.dispose();
+					}
+				} else {
+					//点击了最后一行
+					MapUtilities.getActiveMap().getTrackingLayer().clear();
+					map.refresh();
+				}
+			}
+		}
 	}
 
 	/**
@@ -679,6 +657,13 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		public void keyReleased(KeyEvent e) {
 			if (e.getSource() == tableUniqueInfo && (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN)) {
 				updateButtonDeleteState();
+				//当通过键盘改变jtable行选时，同步实现定位功能
+				new LocalTableMouseListener().ContinuousMapLocation();
+			}
+			if (e.getSource() == tableUniqueInfo && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				//当按下esc键，清除跟踪层
+				MapUtilities.getActiveMap().getTrackingLayer().clear();
+				map.refresh();
 			}
 		}
 	}

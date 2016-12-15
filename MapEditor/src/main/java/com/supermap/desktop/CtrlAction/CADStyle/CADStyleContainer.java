@@ -26,7 +26,9 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by xie on 2016/8/25.
@@ -120,12 +122,12 @@ public class CADStyleContainer extends JPanel {
     private GeoStyle geoLineStyle;
     private GeoStyle geoRegionStyle;
     private Geometry geoText;
-    private boolean isNew;
+    //    private boolean isNew;
     private static final int TAB_MARKER = 0;
     private static final int TAB_LINE = 1;
     private static final int TAB_REGION = 2;
     private static final int TAB_TEXT = 3;
-    private HashMap<String, Object> uiManager = new HashMap<String, Object>();
+//    private HashMap<String, Object> uiManager = new HashMap<String, Object>();
 
     private PropertyChangeListener propertyListener = new PropertyChangeListener() {
         @Override
@@ -807,7 +809,6 @@ public class CADStyleContainer extends JPanel {
     }
 
     public void init(ArrayList<Recordset> recordsets) {
-        isNew = true;
         initComponents();
         initResources();
         registEvents();
@@ -816,7 +817,6 @@ public class CADStyleContainer extends JPanel {
 
     public void showDialog(ArrayList<Recordset> recordsets) {
         if (!modify) {
-            isNew = false;
             this.scrollPane.setViewportView(panelParent);
             enabled(false);
             setEnabled(recordsets);
@@ -957,7 +957,12 @@ public class CADStyleContainer extends JPanel {
         if (null == recordsets) {
             return;
         }
+        if (-1 == panelContaints.getSelectedIndex()) {
+            panelContaints.setSelectedIndex(0);
+        }
         int selectIndex = panelContaints.getSelectedIndex();
+        //用一个Set来存放选择变化集
+        Set<Integer> set = new HashSet();
         int count = recordsets.size();
         for (int i = 0; i < count; i++) {
             Recordset recordset = recordsets.get(i);
@@ -968,61 +973,36 @@ public class CADStyleContainer extends JPanel {
                 }
                 if (GeometryUtilities.isPointGeometry(recordset.getGeometry()) && !recordset.getGeometry().getType().equals(GeometryType.GEOPOINT3D)) {
                     geoPointStyle = recordset.getGeometry().getStyle().clone();
-                    if (isNew) {
-                        panelContaints.setSelectedIndex(TAB_MARKER);
-                        uiManager.put(CoreProperties.getString("String_SpatialQuery_Point"), geoPointStyle);
-                    } else if (!uiManager.containsKey(CoreProperties.getString("String_SpatialQuery_Point"))) {
-                        uiManager.put(CoreProperties.getString("String_SpatialQuery_Point"), geoPointStyle);
-                    }
+                    set.add(TAB_MARKER);
                     setPanelPointEnabled(true);
                 }
                 if (GeometryUtilities.isLineGeometry(recordset.getGeometry()) && !recordset.getGeometry().getType().equals(GeometryType.GEOLINE3D)) {
                     geoLineStyle = recordset.getGeometry().getStyle().clone();
-                    if (isNew) {
-                        panelContaints.setSelectedIndex(TAB_LINE);
-                        uiManager.put(CoreProperties.getString("String_SpatialQuery_Line"), geoLineStyle);
-                    } else if (!uiManager.containsKey(CoreProperties.getString("String_SpatialQuery_Line"))) {
-                        uiManager.put(CoreProperties.getString("String_SpatialQuery_Line"), geoLineStyle);
-                    }
+                    set.add(TAB_LINE);
                     setPanelLineEnabled(true);
                 }
                 if (GeometryUtilities.isRegionGeometry(recordset.getGeometry()) && !recordset.getGeometry().getType().equals(GeometryType.GEOREGION3D)) {
                     geoRegionStyle = recordset.getGeometry().getStyle().clone();
-                    if (isNew) {
-                        panelContaints.setSelectedIndex(TAB_REGION);
-                        uiManager.put(CoreProperties.getString("String_SpatialQuery_Region"), geoRegionStyle);
-                    } else if (!uiManager.containsKey(CoreProperties.getString("String_SpatialQuery_Region"))) {
-                        uiManager.put(CoreProperties.getString("String_SpatialQuery_Region"), geoRegionStyle);
-                    }
+                    set.add(TAB_REGION);
                     setPanelLineEnabled(true);
                     setPanelFillEnabled(true);
                 }
                 if (GeometryUtilities.isTextGeometry(recordset.getGeometry()) && !recordset.getGeometry().getType().equals(GeometryType.GEOTEXT3D)) {
                     geoText = recordset.getGeometry();
-                    if (isNew) {
-                        panelContaints.setSelectedIndex(TAB_TEXT);
-                        uiManager.put(CoreProperties.getString("String_SpatialQuery_Text"), geoText);
-                    } else if (!uiManager.containsKey(CoreProperties.getString("String_SpatialQuery_Text"))) {
-                        uiManager.put(CoreProperties.getString("String_SpatialQuery_Text"), geoText);
-                    }
+                    set.add(TAB_TEXT);
                     this.panelText.init(this);
                 }
                 recordset.moveNext();
             }
             recordset.dispose();
         }
-        Object tempGeoPointStyle = uiManager.get(CoreProperties.getString("String_SpatialQuery_Point"));
-        Object tempGeoRegionStyle = uiManager.get(CoreProperties.getString("String_SpatialQuery_Region"));
-        Object tempGeoLineStyle = uiManager.get(CoreProperties.getString("String_SpatialQuery_Line"));
-        Object tempGeoText = uiManager.get(CoreProperties.getString("String_SpatialQuery_Text"));
-        if (null != geoPointStyle && null != tempGeoPointStyle && !tempGeoPointStyle.equals(geoPointStyle) && selectIndex != TAB_MARKER) {
-            panelContaints.setSelectedIndex(TAB_MARKER);
-        } else if (null != geoLineStyle && null != tempGeoLineStyle && !tempGeoLineStyle.equals(geoLineStyle) && selectIndex != TAB_LINE) {
-            panelContaints.setSelectedIndex(TAB_LINE);
-        } else if (null != geoRegionStyle && null != tempGeoRegionStyle && !tempGeoRegionStyle.equals(geoRegionStyle) && selectIndex != TAB_REGION) {
-            panelContaints.setSelectedIndex(TAB_REGION);
-        } else if (null != geoText && null != tempGeoText && !tempGeoText.equals(geoText) && selectIndex != TAB_TEXT) {
-            panelContaints.setSelectedIndex(TAB_TEXT);
+        int newSelectIndex = -1;
+        Iterator<Integer> iterator = set.iterator();
+        while (iterator.hasNext()) {
+            newSelectIndex = iterator.next();
+        }
+        if (!set.contains(selectIndex) && -1 != newSelectIndex) {
+            panelContaints.setSelectedIndex(newSelectIndex);
         }
     }
 
@@ -1143,7 +1123,7 @@ public class CADStyleContainer extends JPanel {
         panelContaints = new JTabbedPane();
         panelParent = new JPanel();
         panelParent.setLayout(new GridBagLayout());
-        panelParent.add(panelContaints, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 5, 10));
+        panelParent.add(panelContaints, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
         panelContaints.addTab(CoreProperties.getString("String_SpatialQuery_Point"), panelPoint);
         panelContaints.addTab(CoreProperties.getString("String_SpatialQuery_Line"), panelLine);
         panelContaints.addTab(CoreProperties.getString("String_SpatialQuery_Region"), panelFill);

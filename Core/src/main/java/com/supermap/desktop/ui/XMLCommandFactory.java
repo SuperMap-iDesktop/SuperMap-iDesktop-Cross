@@ -25,6 +25,8 @@ public class XMLCommandFactory {
 					command = new XMLComboBox(pluginInfo, parent);
 				} else if (element.getNodeName().equalsIgnoreCase(_XMLTag.g_ControlSeparator)) {
 					command = new XMLSeparator(pluginInfo, parent);
+				} else if (element.getNodeName().equalsIgnoreCase(_XMLTag.g_ControlCheckbox)) {
+					command = new XMLCheckBox(pluginInfo, parent);
 				}
 
 				if (command != null) {

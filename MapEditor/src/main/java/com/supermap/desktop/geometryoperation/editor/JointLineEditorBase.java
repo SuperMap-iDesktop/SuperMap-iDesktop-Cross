@@ -1,6 +1,16 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.EditType;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Geometrist;
+import com.supermap.data.Geometry;
+import com.supermap.data.GeometryType;
+import com.supermap.data.Point2D;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.core.recordset.RecordsetDelete;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
@@ -21,7 +31,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
+
 public abstract class JointLineEditorBase extends AbstractEditor {
+
 
 	@Override
 	public void activate(EditEnvironment environment) {
@@ -36,7 +48,7 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 			}
 		} finally {
 			CursorUtilities.setDefaultCursor(environment.getMapControl());
-			
+
 			// 结束当前编辑。如果是交互性编辑，environment 会自动管理结束，就无需主动调用。
 			environment.activateEditor(NullEditor.INSTANCE);
 		}
@@ -58,7 +70,7 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 
 	/**
 	 * 子类重写这个拿标题
-	 * 
+	 *
 	 * @return
 	 */
 	protected String getTitle() {
@@ -81,6 +93,7 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 		}
 	}
 
+
 	private void jointLine(EditEnvironment environment, Layer editLayer, Map<String, Object> propertyData) {
 		GeoLine baseGeoLine = null;
 		environment.getMapControl().getEditHistory().batchBegin();
@@ -92,6 +105,8 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 			// 统一管理后面从记录集中取出来的GeoLine对象的释放
 			ArrayList<GeoLine> releaseGeoLines = new ArrayList<GeoLine>();
 			ArrayList<Layer> layers = MapUtilities.getLayers(environment.getMapControl().getMap());
+			GeoLineSort geoLineSort = new GeoLineSort();
+			geoLineSort.arrayList.clear();
 
 			for (Layer layer : layers) {
 				Selection selection = null;
@@ -109,23 +124,14 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 						IGeometry geometry = DGeometryFactory.create(recordset.getGeometry());
 						GeoLine currentLine = null;
 
-						if (geometry instanceof ILineFeature) {
+						if (geometry.getGeometry().getType() == GeometryType.GEOLINE) {
 							currentLine = ((ILineFeature) geometry).convertToLine(120);
 
-							if (currentLine.getPartCount() > 1) {
-								partLineCounts++;
-								continue;
-							}
-
-							baseGeoLine = jointTwoLines(baseGeoLine, currentLine, isOriginalBaseLine);
-							if (baseGeoLine != null && currentLine != null && !baseGeoLine.equals(currentLine)) {
-								isOriginalBaseLine = false;
-							}
+							geoLineSort.arrayList.add(currentLine);
 
 							if (editLayer.getDataset().equals(layer.getDataset()) && currentLine != null) {
 								deleteIDs.add(selection.get(i));
 							}
-							releaseGeoLines.add(currentLine);
 						}
 					}
 					selection.dispose();
@@ -133,6 +139,23 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 						recordset.dispose();
 					}
 				}
+			}
+
+			geoLineSort.sort();
+
+			for (int i = 0; i < geoLineSort.arrayList.size(); i++) {
+				GeoLine currentLine = null;
+				currentLine = geoLineSort.arrayList.get(i);
+				if (currentLine.getPartCount() > 1) {
+					partLineCounts++;
+					continue;
+				}
+
+				baseGeoLine = jointTwoLines(baseGeoLine, currentLine, isOriginalBaseLine);
+				if (baseGeoLine != null && currentLine != null && !baseGeoLine.equals(currentLine)) {
+					isOriginalBaseLine = false;
+				}
+				releaseGeoLines.add(currentLine);
 			}
 
 			if (!isOriginalBaseLine) {
@@ -205,10 +228,30 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 			if (baseGeoLine != null) {
 				baseGeoLine.dispose();
 			}
-
+			geoLineSort.arrayList.clear();
 			releaseGeometryList(releaseGeoLines);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	private class GeoLineSort {
+		public ArrayList<GeoLine> arrayList = new ArrayList<GeoLine>();
+		private GeoLine tempGeoLine = null;
+
+		public void sort() {
+			for (int i = 0; i < arrayList.size() - 2; ++i) {
+				double tempDistance = Geometrist.distance(arrayList.get(i), arrayList.get(i + 1));
+				for (int j = i + 2; j < arrayList.size(); ++j) {
+					double distance = Geometrist.distance(arrayList.get(i), arrayList.get(j));
+					if (Double.compare(tempDistance, distance) == 1) {
+						tempGeoLine = null;
+						tempGeoLine = arrayList.get(i + 1);
+						arrayList.set(i + 1, arrayList.get(j));
+						arrayList.set(j, tempGeoLine);
+					}
+				}
+			}
 		}
 	}
 }

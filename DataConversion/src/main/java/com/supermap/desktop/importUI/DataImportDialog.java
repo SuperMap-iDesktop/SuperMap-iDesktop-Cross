@@ -318,15 +318,14 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         public void actionPerformed(ActionEvent e) {
             try {
                 CommonUtilities.invertSelect(table);
-                int[] selectRows = table.getSelectedRows();
                 if (table.getRowCount() == 0) {
                     //没有要导入的项时
                     labelTitle.setText(DataConversionProperties.getString("string_label_importData"));
                     CommonUtilities.replace(panelImportInfo, panelParams);
-                    setButtonState();
                 } else {
                     replaceImportPanel();
                 }
+                setButtonState();
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -562,14 +561,17 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
     private void setButtonState() {
         if (0 < table.getRowCount()) {
             this.buttonImport.setEnabled(true);
-            this.buttonDelete.setEnabled(true);
             this.buttonSelectAll.setEnabled(true);
             this.buttonInvertSelect.setEnabled(true);
         } else {
             this.buttonImport.setEnabled(false);
-            this.buttonDelete.setEnabled(false);
             this.buttonSelectAll.setEnabled(false);
             this.buttonInvertSelect.setEnabled(false);
+        }
+        if (table.getSelectedRows().length > 0) {
+            this.buttonDelete.setEnabled(true);
+        } else {
+            this.buttonDelete.setEnabled(false);
         }
     }
 
