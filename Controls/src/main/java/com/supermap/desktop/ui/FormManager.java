@@ -152,7 +152,7 @@ public class FormManager extends MdiPane implements IFormManager {
 
 	@Override
 	public void resetActiveForm() {
-		if (getActivePage() != null && getActivePage() instanceof IForm) {
+		if (getActivePage() != null && getActivePage().getComponent() instanceof IForm) {
 			MdiPage page = getActivePage();
 			fireActiveFormChanged(new ActiveFormChangedEvent(this, (IForm) page.getComponent(), (IForm) page.getComponent()));
 		}
