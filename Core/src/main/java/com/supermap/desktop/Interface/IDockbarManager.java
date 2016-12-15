@@ -1,5 +1,8 @@
 package com.supermap.desktop.Interface;
 
+import com.supermap.desktop.event.DockbarClosedListener;
+import com.supermap.desktop.event.DockbarClosingListener;
+
 public interface IDockbarManager {
 
 	/**
@@ -19,9 +22,17 @@ public interface IDockbarManager {
 
 	/**
 	 * 检查是否包含指定的浮动窗口。
-	 * 
+	 *
 	 * @param dockBar
 	 * @return
 	 */
 	boolean contains(IDockbar dockBar);
+
+	void addDockbarClosingListener(DockbarClosingListener listener);
+
+	void removeDockbarClosingListener(DockbarClosingListener listener);
+
+	void addDockbarClosedListener(DockbarClosedListener listener);
+
+	void removeDockbarClosedListener(DockbarClosedListener listener);
 }

@@ -6,6 +6,10 @@ import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IDockbarManager;
 import com.supermap.desktop.WorkEnvironment;
 import com.supermap.desktop.enums.DockState;
+import com.supermap.desktop.event.DockbarClosedEvent;
+import com.supermap.desktop.event.DockbarClosedListener;
+import com.supermap.desktop.event.DockbarClosingEvent;
+import com.supermap.desktop.event.DockbarClosingListener;
 import com.supermap.desktop.ui.DockConstraint;
 import com.supermap.desktop.ui.XMLDockbar;
 import com.supermap.desktop.ui.XMLDockbarBase;
@@ -15,10 +19,13 @@ import org.flexdock.docking.DockingConstants;
 import org.flexdock.docking.DockingManager;
 import org.flexdock.docking.DockingPort;
 import org.flexdock.docking.defaults.DefaultDockingStrategy;
+import org.flexdock.event.DockableEvent;
+import org.flexdock.event.DockableListener;
 import org.flexdock.view.View;
 import org.flexdock.view.Viewport;
 
 import javax.swing.*;
+import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -27,10 +34,12 @@ import java.util.ArrayList;
  * 库，或者自行修改。
  */
 public class DockbarManager implements IDockbarManager {
+
 	private static final String WORKSPACE_COMPONENT_MANAGER_ID = "workspaceComponentManager";
 	private static final String LAYERS_COMPONENT_MANAGER_ID = "layersComponentManager";
 	private static final String OUTPUT_FRAME_ID = "outputFrame";
 
+	private EventListenerList listenerList = new EventListenerList();
 	private ArrayList<Dockbar> dockbars = null;
 	private Viewport dockPort;
 	private View mainView;
@@ -98,6 +107,46 @@ public class DockbarManager implements IDockbarManager {
 	@Override
 	public boolean contains(IDockbar dockbar) {
 		return this.dockbars.contains((Dockbar) dockbar);
+	}
+
+	@Override
+	public void addDockbarClosingListener(DockbarClosingListener listener) {
+		this.listenerList.add(DockbarClosingListener.class, listener);
+	}
+
+	@Override
+	public void removeDockbarClosingListener(DockbarClosingListener listener) {
+		this.listenerList.remove(DockbarClosingListener.class, listener);
+	}
+
+	@Override
+	public void addDockbarClosedListener(DockbarClosedListener listener) {
+		this.listenerList.add(DockbarClosedListener.class, listener);
+	}
+
+	@Override
+	public void removeDockbarClosedListener(DockbarClosedListener listener) {
+		this.listenerList.remove(DockbarClosedListener.class, listener);
+	}
+
+	private void fireDockbarClosing(DockbarClosingEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == DockbarClosingListener.class) {
+				((DockbarClosingListener) listeners[i + 1]).dockbarClosing(e);
+			}
+		}
+	}
+
+	private void fireDockbarClosed(DockbarClosedEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == DockbarClosedListener.class) {
+				((DockbarClosedListener) listeners[i + 1]).dockbarClosed(e);
+			}
+		}
 	}
 
 	public boolean add(IDockbar dockbar) {
@@ -216,6 +265,25 @@ public class DockbarManager implements IDockbarManager {
 		return dock;
 	}
 
+	public IDockbar findDockbar(String id) {
+		IDockbar dock = null;
+		if (this.workspaceComponentManager.getID().equals(id)) {
+			dock = this.workspaceComponentManager;
+		} else if (this.layersComponentManager.getID().equals(id)) {
+			dock = this.layersComponentManager;
+		} else if (this.outputFrame.getID().equals(id)) {
+			dock = this.outputFrame;
+		} else {
+			for (int i = 0; i < this.dockbars.size(); i++) {
+				if (this.dockbars.get(i).getID().equals(id)) {
+					dock = this.dockbars.get(i);
+					break;
+				}
+			}
+		}
+		return dock;
+	}
+
 	private void dock(View dockParent, DockConstraint dockConstraint) {
 		if (dockConstraint.getLeft() != null) {
 			DockConstraint left = dockConstraint.getLeft();
@@ -246,5 +314,31 @@ public class DockbarManager implements IDockbarManager {
 
 	private boolean isComponentVisible(Dockbar dockbar) {
 		return dockbar != null && dockbar.isVisible();
+	}
+
+	private class DockableHandler implements DockableListener {
+
+		@Override
+		public void dockable(DockableEvent e) {
+			if (e.getEventType() == DockableEvent.CLOSING) {
+				handleClosing(e);
+			} else if (e.getEventType() == DockableEvent.CLOSED) {
+				handleClosed(e);
+			}
+		}
+
+		private void handleClosing(DockableEvent e) {
+			IDockbar dockbar = findDockbar(e.getId());
+			if (dockbar != null) {
+				fireDockbarClosing(new DockbarClosingEvent(dockbar));
+			}
+		}
+
+		private void handleClosed(DockableEvent e) {
+			IDockbar dockbar = findDockbar(e.getId());
+			if (dockbar != null) {
+				fireDockbarClosed(new DockbarClosedEvent(dockbar));
+			}
+		}
 	}
 }
