@@ -120,7 +120,10 @@ public class CADStyleEditor extends AbstractEditor {
         ArrayList<Recordset> recordsets = CADStyleUtilities.getActiveRecordset(environment.getMap());
         if (null != cadStyleContainer && editable == false) {
             cadStyleContainer.enabled(false);
-        } else if (null != cadStyleContainer && null != recordsets && null != dockbarCADStyleContainer) {
+        } else if (null != cadStyleContainer && editable == true) {
+            cadStyleContainer.setModify(false);
+        }
+        if (null != cadStyleContainer && null != recordsets && null != dockbarCADStyleContainer) {
             cadStyleContainer.showDialog(recordsets);
         } else if (null != cadStyleContainer && null == recordsets) {
             cadStyleContainer.setNullPanel();

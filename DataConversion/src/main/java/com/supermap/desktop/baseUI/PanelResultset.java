@@ -620,7 +620,7 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
 
     private Object getResult(IImportSettingResultset tempPanel, int type) {
         Object result = "";
-        if (type == DATASET_TYPE && null != tempPanel.getComboBoxDatasetType().getSelectedItem()) {
+        if (type == DATASET_TYPE && null != tempPanel.getComboBoxDatasetType() && null != tempPanel.getComboBoxDatasetType().getSelectedItem()) {
             result = tempPanel.getComboBoxDatasetType().getSelectedItem();
         } else if (type == ENCODE_TYPE && null != tempPanel.getComboBoxEncodeType().getSelectedItem()) {
             result = tempPanel.getComboBoxEncodeType().getSelectedItem();

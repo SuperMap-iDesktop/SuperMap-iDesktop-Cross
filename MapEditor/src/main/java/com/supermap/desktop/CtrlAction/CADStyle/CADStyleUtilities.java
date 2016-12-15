@@ -24,7 +24,7 @@ public class CADStyleUtilities {
     public static ArrayList<Recordset> getActiveRecordset(Map map) {
         ArrayList<Recordset> recordset = null;
         if (!selectionHasDisposed(map) && map.findSelection(true).length > 0) {
-            recordset = new ArrayList<Recordset>();
+            recordset = new ArrayList();
             Layers laysers = map.getLayers();
             int layersCount = laysers.getCount();
             for (int i = 0; i < layersCount; i++) {

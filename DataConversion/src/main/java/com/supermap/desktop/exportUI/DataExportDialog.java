@@ -308,6 +308,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         } else {
             CommonUtilities.replace(panelExportInfo, panelEmpty);
         }
+        setButtonState();
     }
 
     private void deleteExportInfo() {
