@@ -189,7 +189,12 @@ public class ConcertEditor extends AbstractEditor {
 
 		QueryParameter parameter = new QueryParameter();
 		parameter.setCursorType(CursorType.DYNAMIC);
-		parameter.setSpatialQueryMode(SpatialQueryMode.TOUCH);
+		if (selectedRecordset.getGeometry().getType()==GeometryType.GEOLINE){
+			parameter.setSpatialQueryMode(SpatialQueryMode.INTERSECT);
+		}
+		else{
+			parameter.setSpatialQueryMode(SpatialQueryMode.TOUCH);
+		}
 		parameter.setHasGeometry(true);
 		parameter.setSpatialQueryObject(selectedRecordset);
 
@@ -353,7 +358,6 @@ public class ConcertEditor extends AbstractEditor {
 		List editNodeNumber = new ArrayList();
 		IGeometry dGeoemtry = null;
 		try {
-			int deleteID = -1;
 			for (int i = 0; i < inputGeoPoint2Ds.getCount(); ++i) {
 				Point2D tempPoint2D = inputGeoPoint2Ds.getItem(i);
 				if (tempPoint2D.equals(editModel.changePoint2D)) {
@@ -365,8 +369,12 @@ public class ConcertEditor extends AbstractEditor {
 				}
 			}
 			if (editNodeNumber.size() != 0) {
-				for (int i = 0; i < editNodeNumber.size(); i++) {
-					inputGeoPoint2Ds.remove((int) editNodeNumber.get(i));
+				for (int i = 0; i < editNodeNumber.size(); ++i) {
+					if (i == 0) {
+						inputGeoPoint2Ds.remove(((int) editNodeNumber.get(i)));
+					} else {
+						inputGeoPoint2Ds.remove(((int) editNodeNumber.get(i) - 1));
+					}
 				}
 			}
 			dGeoemtry = DGeometryFactory.create(inputGeometry);
@@ -402,11 +410,6 @@ public class ConcertEditor extends AbstractEditor {
 		public ConcertEditModel() {
 			this.tip.addLabel(this.tipLabel);
 		}
-
-//		public void setTipMessage(String tipMessage) {
-//			this.tipLabel.setText(tipMessage);
-//			this.tipLabel.repaint();
-//		}
 
 		public void clear() {
 			this.oldMapControlAction = Action.SELECT2;

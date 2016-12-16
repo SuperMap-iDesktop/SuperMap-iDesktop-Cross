@@ -6,7 +6,6 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.EditType;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoStyle;
-import com.supermap.data.Geometrist;
 import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
 import com.supermap.data.Point2D;
@@ -241,9 +240,9 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 
 		public void sort() {
 			for (int i = 0; i < arrayList.size() - 2; ++i) {
-				double tempDistance = Geometrist.distance(arrayList.get(i), arrayList.get(i + 1));
+				double tempDistance = pointDistance(arrayList.get(i), arrayList.get(i + 1));
 				for (int j = i + 2; j < arrayList.size(); ++j) {
-					double distance = Geometrist.distance(arrayList.get(i), arrayList.get(j));
+					double distance = pointDistance(arrayList.get(i), arrayList.get(j));
 					if (Double.compare(tempDistance, distance) == 1) {
 						tempGeoLine = null;
 						tempGeoLine = arrayList.get(i + 1);
@@ -252,6 +251,25 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 					}
 				}
 			}
+		}
+
+		private double pointDistance(GeoLine geoLine1,GeoLine geoLine2){
+			Point2D startPoint1=geoLine1.getPart(0).getItem(0);
+			Point2D endPoint1=geoLine1.getPart(0).getItem(geoLine1.getPart(0).getCount()-1);
+
+			Point2D startPoint2=geoLine2.getPart(0).getItem(0);
+			Point2D endPoint2=geoLine2.getPart(0).getItem(geoLine2.getPart(0).getCount()-1);
+
+			double startToStart=getDistance(startPoint1,startPoint2);
+			double startToEnd=getDistance(startPoint1,endPoint2);
+			double endToStart=getDistance(endPoint1,startPoint2);
+			double endtToEnd=getDistance(endPoint1,endPoint2);
+
+			double minimumDistance = Math.min(startToStart, startToEnd);
+			minimumDistance = Math.min(minimumDistance, endToStart);
+			minimumDistance = Math.min(minimumDistance, endtToEnd);
+
+			return minimumDistance;
 		}
 	}
 }

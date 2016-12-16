@@ -7,7 +7,7 @@ import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.EditType;
-import com.supermap.data.GeoLine;
+import com.supermap.data.GeoRegion;
 import com.supermap.data.Geometrist;
 import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
@@ -32,7 +32,6 @@ import com.supermap.ui.TrackMode;
 import com.supermap.ui.TrackedEvent;
 
 import javax.swing.*;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 
@@ -54,7 +53,8 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 			AutoDrawedRegionModel editModel = (AutoDrawedRegionModel) environment.getEditModel();
 			if (SwingUtilities.isRightMouseButton(e)) {
 				if (editModel.clickNum == 2) {
-					environment.stopEditor();
+					//environment.stopEditor();
+					clear(environment);
 				}
 			}
 		}
@@ -66,20 +66,17 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 			if (!editModel.isTracking && e.getButton() == MouseEvent.BUTTON1) {
 				editModel.clickNum = 0;
 				editModel.isTracking = true;
+				editModel.geometry = null;
 				editModel.setTipMessage(MapEditorProperties.getString("String_RightClickToEnd"));
 			} else if (editModel.isTracking && e.getButton() == MouseEvent.BUTTON3) {
-				if (!editModel.isPressCtrl) {
-					runDrawedRegion(environment);
-				} else {
-					runTrackingRegion(environment);
-					editModel.isPressCtrl = false;
-				}
-				editModel.isTracking = false;
 				editModel.clickNum = 1;
+				runDrawedRegion(environment);
+				editModel.isTracking = false;
 			} else if (!editModel.isTracking && e.getButton() == MouseEvent.BUTTON3) {
-				editModel.clickNum += 1;
+				editModel.clickNum = editModel.clickNum + 1;
 				if (editModel.clickNum == 2) {
 					environment.stopEditor();
+					clear(environment);
 				}
 			}
 		}
@@ -91,28 +88,13 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 
 		@Override
 		public void actionChanged(EditEnvironment environment, ActionChangedEvent e) {
-			if (e.getOldAction() == getMapControlAction() && e.getNewAction() != getMapControlAction()) {
-				environment.stopEditor();
+			if (e.getOldAction() == getMapControlAction() && e.getNewAction() != Action.PAN && e.getNewAction() != getMapControlAction()) {
+				if (environment.getEditModel() instanceof AutoDrawedRegionModel) {
+					environment.stopEditor();
+				}
 			}
 		}
 
-		@Override
-		public void keyPressed(EditEnvironment environment, KeyEvent e) {
-			AutoDrawedRegionModel editModel = (AutoDrawedRegionModel) environment.getEditModel();
-			if (e.getKeyCode() == KeyEvent.VK_CONTROL && !editModel.isPressCtrl) {
-				editModel.isPressCtrl = true;
-			} else if (e.getKeyCode() != KeyEvent.VK_CONTROL ){
-				editModel.isPressCtrl = false;
-			}
-		}
-
-		@Override
-		public void keyReleased(EditEnvironment environment, KeyEvent e) {
-			AutoDrawedRegionModel editModel = (AutoDrawedRegionModel) environment.getEditModel();
-			if (e.getKeyCode() == KeyEvent.VK_CONTROL) {
-				editModel.isPressCtrl = false;
-			}
-		}
 	};
 
 	@Override
@@ -125,9 +107,8 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 			environment.setEditModel(editModel);
 		}
 		environment.setEditController(this.autoDrawedRegionEditControler);
-
-		editModel.oldMapControlAction = environment.getMapControl().getAction();
-		editModel.oldTrackMode = environment.getMapControl().getTrackMode();
+		//editModel.oldMapControlAction = environment.getMapControl().getAction();
+		//editModel.oldTrackMode = environment.getMapControl().getTrackMode();
 		environment.getMapControl().setAction(getMapControlAction());
 		environment.getMapControl().setTrackMode(getTrackMode());
 		editModel.tip.bind(environment.getMapControl());
@@ -137,9 +118,12 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 	public void deactivate(EditEnvironment environment) {
 		if (environment.getEditModel() instanceof AutoDrawedRegionModel) {
 			AutoDrawedRegionModel editModel = (AutoDrawedRegionModel) environment.getEditModel();
-
 			try {
-				environment.getMapControl().setAction(editModel.oldMapControlAction);
+				if (environment.getMapControl().getAction() == Action.CREATEPOLYGON || environment.getMapControl().getAction() == Action.CREATEPOLYLINE) {
+					environment.getMapControl().setAction(Action.SELECT2);
+				} else {
+					environment.getMapControl().setAction(environment.getMapControl().getAction());
+				}
 				environment.getMapControl().setTrackMode(editModel.oldTrackMode);
 				clear(environment);
 			} finally {
@@ -158,7 +142,7 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 
 	@Override
 	public boolean check(EditEnvironment environment) {
-		return environment.getEditor() instanceof AutoDrawedRegionModel;
+		return environment.getEditor() instanceof AutoDrawedRegionEditor;
 	}
 
 	/**
@@ -219,43 +203,6 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 		}
 	}
 
-	private void runTrackingRegion(EditEnvironment environment) {
-		AutoDrawedRegionModel editModel = (AutoDrawedRegionModel) environment.getEditModel();
-		boolean isCanAddNew=true;
-		if (editModel.geometry != null) {
-			environment.getMapControl().getEditHistory().batchBegin();
-			Recordset targetRecordset = null;
-			Geometry resultGeometry = editModel.geometry;
-			try {
-				if (editModel.geometry.getType() == GeometryType.GEOLINE) {
-					if (((GeoLine) editModel.geometry).getPart(0).getCount()>2) {
-						resultGeometry = ((GeoLine) editModel.geometry).convertToRegion();
-					}
-					else{
-						isCanAddNew=false;
-						Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("string_GeometryOperation_AutoDrawingLineIsNotRegion"));
-					}
-				}
-				if (isCanAddNew) {
-					targetRecordset = ((DatasetVector) environment.getFormMap().getMapControl().getActiveEditableLayer().getDataset()).getRecordset(false, CursorType.DYNAMIC);
-					targetRecordset.addNew(resultGeometry);
-					targetRecordset.update();
-					environment.getMapControl().getEditHistory().add(EditType.ADDNEW, targetRecordset, true);
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex.toString());
-			} finally {
-				environment.getMapControl().getEditHistory().batchEnd();
-				environment.getMapControl().getMap().refresh();
-				if (targetRecordset != null) {
-					targetRecordset.close();
-					targetRecordset.dispose();
-				}
-				resultGeometry = null;
-			}
-		}
-	}
-
 	private void clear(EditEnvironment environment) {
 		if (!(environment.getEditModel() instanceof AutoDrawedRegionModel)) {
 			return;
@@ -270,17 +217,21 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 		boolean result = false;
 		AutoDrawedRegionModel editModel = (AutoDrawedRegionModel) environment.getEditModel();
 		Geometry drawedGeometry = editModel.geometry;
-		boolean isCanQuery=true;
+		Recordset resultRecordset = null;
+		boolean isCanQuery = true;
 		try {
-			if (editModel.geometry.getType() == GeometryType.GEOLINE && ((GeoLine) editModel.geometry).getPart(0).getCount()>2) {
-				drawedGeometry = ((GeoLine) editModel.geometry).convertToRegion();
-			}
-			else if (editModel.geometry.getType() == GeometryType.GEOLINE && ((GeoLine) editModel.geometry).getPart(0).getCount()<=2){
-				isCanQuery=false;
-				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("string_GeometryOperation_AutoDrawingCloseLine"));
+//			if (editModel.geometry.getType() == GeometryType.GEOLINE && ((GeoLine) editModel.geometry).getPart(0).getCount() <= 2) {
+//				isCanQuery = false;
+//				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("string_GeometryOperation_AutoDrawingCloseLine"));
+//			} else
+//           if (editModel.geometry.getType() == GeometryType.GEOLINE && ((GeoLine) editModel.geometry).getPart(0).getCount() > 2) {
+//				drawedGeometry = ((GeoLine) editModel.geometry).convertToRegion();
+//			} else
+			if (editModel.geometry.getType() == GeometryType.GEOREGION && ((GeoRegion) editModel.geometry).getPart(0).getCount() <= 2) {
+				isCanQuery = false;
 			}
 			if (isCanQuery) {
-				Recordset resultRecordset = queryGeometryTouchSelectedGeometry(drawedGeometry, (DatasetVector) layer.getDataset());
+				resultRecordset = queryGeometryTouchSelectedGeometry(drawedGeometry, (DatasetVector) layer.getDataset());
 				if (resultRecordset.getRecordCount() >= 1) {
 					result = true;
 					editModel.searchBounds = resultRecordset.getBounds();
@@ -288,6 +239,12 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex.toString());
+		} finally {
+			if (resultRecordset != null) {
+				resultRecordset.close();
+				resultRecordset.dispose();
+				drawedGeometry = null;
+			}
 		}
 		return result;
 	}
@@ -296,9 +253,9 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 		Recordset resultRecordset = null;
 
 		QueryParameter parameter = new QueryParameter();
-		parameter.setCursorType(CursorType.DYNAMIC);
+		parameter.setCursorType(CursorType.STATIC);
 		parameter.setSpatialQueryMode(SpatialQueryMode.INTERSECT);
-		parameter.setHasGeometry(true);
+		//parameter.setHasGeometry(true);
 		parameter.setSpatialQueryObject(selectedGeometry);
 
 		resultRecordset = nowDatasetVector.query(parameter);
@@ -306,7 +263,7 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 	}
 
 	private class AutoDrawedRegionModel implements IEditModel {
-		public com.supermap.ui.Action oldMapControlAction = com.supermap.ui.Action.SELECT2;
+		public com.supermap.ui.Action oldMapControlAction = Action.SELECT2;
 		public TrackMode oldTrackMode = TrackMode.EDIT;
 		public MapControlTip tip = new MapControlTip();
 		private JLabel tipLabel = new JLabel(MapEditorProperties.getString(getDrawedTip()));
@@ -314,7 +271,6 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 		public Geometry geometry = null;
 		public Rectangle2D searchBounds = null;
 		public int clickNum = 0;
-		public boolean isPressCtrl = false;
 
 		public AutoDrawedRegionModel() {
 			this.tip.addLabel(this.tipLabel);

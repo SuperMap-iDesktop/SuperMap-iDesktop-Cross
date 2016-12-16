@@ -34,14 +34,13 @@ public class UnionEditor extends AbstractEditor {
 			DatasetType datasetType = DatasetType.CAD;
 			if (environment.getEditProperties().getSelectedGeometryTypes().size() == 1) {
 				datasetType = environment.getEditProperties().getSelectedDatasetTypes().get(0);
-
-				JDialogFieldOperationSetting form = new JDialogFieldOperationSetting(MapEditorProperties.getString("String_GeometryOperation_Union"), environment
-						.getMapControl().getMap(), datasetType);
-				if (form.showDialog() == DialogResult.OK) {
-					CursorUtilities.setWaitCursor(environment.getMapControl());
-					union(environment, form.getEditLayer(), form.getPropertyData());
-					TabularUtilities.refreshTabularForm((DatasetVector) form.getEditLayer().getDataset());
-				}
+			}
+			JDialogFieldOperationSetting form = new JDialogFieldOperationSetting(MapEditorProperties.getString("String_GeometryOperation_Union"), environment
+					.getMapControl().getMap(), datasetType);
+			if (form.showDialog() == DialogResult.OK) {
+				CursorUtilities.setWaitCursor(environment.getMapControl());
+				union(environment, form.getEditLayer(), form.getPropertyData());
+				TabularUtilities.refreshTabularForm((DatasetVector) form.getEditLayer().getDataset());
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -59,7 +58,8 @@ public class UnionEditor extends AbstractEditor {
 		if (environment.getEditProperties().getSelectedGeometryCount() > 1 // 选中数至少2个
 				&& ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class, ILineFeature.class)
 				&& environment.getEditProperties().getEditableDatasetTypes().size() > 0
-				&& environment.getEditProperties().getSelectedGeometryTypes().size() == 1
+				&& (ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), IRegionFeature.class)
+				|| ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), ILineFeature.class))
 				&& ListUtilities.isListContainAny(environment.getEditProperties().getEditableDatasetTypes(), DatasetType.CAD, DatasetType.REGION, DatasetType.LINE)) {
 			enable = true;
 		}
