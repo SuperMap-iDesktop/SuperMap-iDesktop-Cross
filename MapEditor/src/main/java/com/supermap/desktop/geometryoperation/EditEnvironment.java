@@ -6,6 +6,8 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.core.MouseButtons;
+import com.supermap.desktop.event.DockbarClosedEvent;
+import com.supermap.desktop.event.DockbarClosedListener;
 import com.supermap.desktop.geometry.Abstract.ICompoundFeature;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILine3DFeature;
@@ -84,6 +86,13 @@ public class EditEnvironment {
 
 	private IEditModel editModel;
 	private IEditController editController = NullEditController.instance();
+
+	private DockbarClosedListener dockbarClosedListener = new DockbarClosedListener() {
+		@Override
+		public void dockbarClosed(DockbarClosedEvent e) {
+			EditEnvironment.this.editController.dockbarClosed(EditEnvironment.this, e);
+		}
+	};
 
 	private MouseListener mouseListener = new MouseListener() {
 
@@ -262,6 +271,8 @@ public class EditEnvironment {
 	}
 
 	private void registerEvents() {
+		Application.getActiveApplication().getMainFrame().getDockbarManager().addDockbarClosedListener(this.dockbarClosedListener);
+
 		this.formMap.getMapControl().addMouseListener(this.mouseListener);
 		this.formMap.getMapControl().addMouseMotionListener(this.mouseMotionListener);
 		this.formMap.getMapControl().addKeyListener(this.keyListener);

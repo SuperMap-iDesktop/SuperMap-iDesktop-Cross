@@ -22,6 +22,11 @@
             <artifactId>org.apache.felix.main</artifactId>
             <version>5.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.jb2011</groupId>
+            <artifactId>beautyeye_lnf</artifactId>
+            <version>v3.7</version>
+        </dependency>
     </dependencies>
 
     <build>

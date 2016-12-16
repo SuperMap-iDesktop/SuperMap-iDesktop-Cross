@@ -24,9 +24,6 @@ import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.docking.DockingWindowAdapter;
-import com.supermap.desktop.ui.docking.OperationAbortedException;
-import com.supermap.desktop.ui.docking.event.WindowClosingEvent;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilties.TabularStatisticUtilties;
@@ -211,22 +208,23 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		jScrollPaneChildWindow.setRowHeaderView(rowHeader);
 
-		this.setComponent(jScrollPaneChildWindow);
+		setLayout(new BorderLayout());
+		add(jScrollPaneChildWindow, BorderLayout.CENTER);
 		if (Application.getActiveApplication().getMainFrame() != null) {
 			IContextMenuManager manager = Application.getActiveApplication().getMainFrame().getContextMenuManager();
 			this.FormSuperTabularContextMenu = (JPopupMenu) manager.get("SuperMap.Desktop.FormSuperTabular.FormSuperTabularContextMenu");
 		}
 
-		this.addListener(new DockingWindowAdapter() {
-			@Override
-			public void windowClosing(WindowClosingEvent evt) throws OperationAbortedException {
-				if (evt.getSource().equals(FormTabular.this)) {
-					removeListener(this);
-					unRegisterEvents();
-					recordset.dispose();
-				}
-			}
-		});
+//		this.addListener(new DockingWindowAdapter() {
+//			@Override
+//			public void windowClosing(WindowClosingEvent evt) throws OperationAbortedException {
+//				if (evt.getSource().equals(FormTabular.this)) {
+//					removeListener(this);
+//					unRegisterEvents();
+//					recordset.dispose();
+//				}
+//			}
+//		});
 		initStatusbars();
 		registerEvents();
 	}
@@ -360,25 +358,20 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	@Override
-	public void setText(String text) {
-		super.setTitle(text);
-	}
-
-	@Override
 	public WindowType getWindowType() {
 		return WindowType.TABULAR;
 	}
 
-	@Override
-	public void windowHidden() {
-		// 隐藏
-	}
-
-	@Override
-	public void windowShown() {
-		// 显示
-		UICommonToolkit.getLayersManager().setMap(null);
-	}
+//	@Override
+//	public void windowHidden() {
+//		// 隐藏
+//	}
+//
+//	@Override
+//	public void windowShown() {
+//		// 显示
+//		UICommonToolkit.getLayersManager().setMap(null);
+//	}
 
 	private void setColumnsWidth() {
 		// 设置列宽

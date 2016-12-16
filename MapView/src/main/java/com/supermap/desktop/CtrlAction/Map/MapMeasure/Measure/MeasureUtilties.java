@@ -2,9 +2,9 @@ package com.supermap.desktop.CtrlAction.Map.MapMeasure.Measure;
 
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.enums.MeasureType;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosedListener;
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.ui.docking.DockingWindow;
-import com.supermap.desktop.ui.docking.DockingWindowAdapter;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.ui.MapControl;
 
@@ -17,11 +17,11 @@ import java.util.List;
  */
 public class MeasureUtilties {
 
-	private static final DockingWindowAdapter dockingWindowAdapter = new DockingWindowAdapter() {
+	private static final FormClosedListener formClosedListener = new FormClosedListener() {
 		@Override
-		public void windowClosed(DockingWindow window) {
-			if (window instanceof FormMap) {
-				MapControl mapControl = ((FormMap) window).getMapControl();
+		public void formClosed(FormClosedEvent e) {
+			if (e.getForm() instanceof FormMap) {
+				MapControl mapControl = ((FormMap) e.getForm()).getMapControl();
 				for (IMeasureAble measureAbleList : measureAbleLists) {
 					if (measureAbleList.getMapControl() == mapControl && !measureAbleList.isMeasureAble()) {
 						measureAbleList.stopMeasure();
@@ -30,7 +30,6 @@ public class MeasureUtilties {
 			}
 		}
 	};
-
 
 	private MeasureUtilties() {
 
@@ -91,7 +90,7 @@ public class MeasureUtilties {
 	}
 
 	private static void addListener(FormMap formMap) {
-		formMap.removeListener(dockingWindowAdapter);
-		formMap.addListener(dockingWindowAdapter);
+		formMap.removeFormClosedListener(formClosedListener);
+		formMap.addFormClosedListener(formClosedListener);
 	}
 }

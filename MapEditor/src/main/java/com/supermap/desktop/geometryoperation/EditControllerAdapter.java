@@ -1,5 +1,6 @@
 package com.supermap.desktop.geometryoperation;
 
+import com.supermap.desktop.event.DockbarClosedEvent;
 import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.GeometryEvent;
 import com.supermap.ui.GeometrySelectChangedEvent;
@@ -103,7 +104,12 @@ public abstract class EditControllerAdapter implements IEditController {
 	 * @description 新增对选中的对象的节点进行删除移动时，进行监听
 	 */
 	@Override
-	public void geometryModified(EditEnvironment environment,GeometryEvent event){
+	public void geometryModified(EditEnvironment environment, GeometryEvent event) {
+
+	}
+
+	@Override
+	public void dockbarClosed(EditEnvironment editEnvironment, DockbarClosedEvent e) {
 
 	}
 }

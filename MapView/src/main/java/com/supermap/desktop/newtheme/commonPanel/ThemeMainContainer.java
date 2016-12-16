@@ -369,7 +369,7 @@ public class ThemeMainContainer extends JPanel {
             try {
                 IDockbar dockbarThemeContainer = ThemeGuideFactory.getDockbarThemeContainer();
                 // 专题图dockbar不存在时不做处理
-                if (null == dockbarThemeContainer || null == dockbarThemeContainer.getComponent()) {
+                if (null == dockbarThemeContainer || null == dockbarThemeContainer.getInnerComponent()) {
                     return;
                 }
                 oldLayer = getLayerByPath(e.getOldLeadSelectionPath());

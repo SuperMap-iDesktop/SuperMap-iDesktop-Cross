@@ -31,7 +31,6 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
-import com.supermap.desktop.ui.docking.TabWindow;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.WorkspaceUtilities;
@@ -67,20 +66,20 @@ public class FormBase extends JFrame implements IFormMain {
 	private transient FrameMenuManager frameMenuManager = null;
 	private transient ContextMenuManager contextMenuManager = null;
 	private transient ToolbarManager toolbarManager = null;
-	private transient IDockbarManager dockbarManager = null;
+	private transient DockbarManager dockbarManager = null;
 	private transient StatusbarManager statusbarManager = null;
-	//    private transient IPropertyManager propertyManager = null;
+	// private transient IPropertyManager propertyManager = null;
 	private int defaultType = -1;
 	private int workspaceType = 0;
 	private int datasourceType = 1;
 	private ArrayList<FormLoadedListener> formLoadedListeners = new ArrayList<>();
 
 	public FormBase() {
-		this.formManager = new FormManager(this);
+		this.formManager = new FormManager();
 		this.frameMenuManager = new FrameMenuManager();
 		this.contextMenuManager = new ContextMenuManager();
 		this.toolbarManager = new ToolbarManager();
-		this.dockbarManager = new DockbarManager();
+		this.dockbarManager = new DockbarManager(this.formManager);
 		this.statusbarManager = new StatusbarManager();
 		this.jMenuBarMain = new JMenuBar();
 //        this.propertyManager = new JDialogDataPropertyContainer(this);
@@ -134,10 +133,6 @@ public class FormBase extends JFrame implements IFormMain {
 		this.setTitle(text);
 	}
 
-	public TabWindow getChildWindowsContainer() {
-		return ((DockbarManager) this.dockbarManager).getChildFormsWindow();
-	}
-
 	@Override
 	public void loadUI() {
 		try {
@@ -151,39 +146,27 @@ public class FormBase extends JFrame implements IFormMain {
 			WorkspaceUtilities.initRecentFileMenu();
 			DatasourceUtilities.initRecentFileMenu();
 
-//			this.getContentPane().add(this.toolbarManager.getToolbarsContainer(), BorderLayout.NORTH);
-//			((FlowLayout) this.toolbarManager.getToolbarsContainer().getLayout()).setAlignment(FlowLayout.LEADING);
-
-//			this.toolbarManager.setToolbarContainer(this.toolbarManager.getToolbarsContainer());
 			this.toolbarManager.load(workEnvironment);
 			this.contextMenuManager.load(workEnvironment);
 			this.statusbarManager.load(workEnvironment);
 
-			DockbarManager dockbar = (DockbarManager) this.dockbarManager;
-			dockbar.load(workEnvironment);
-//			this.getContentPane().add(dockbar.getRootWindow(), BorderLayout.CENTER);
+			initLayout();
+			this.dockbarManager.load(workEnvironment);
 			this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-			// UI 的操作需要在 EDT 里进行，否则可能会有各种 GUI 的问题
-//			SwingUtilities.invokeLater(new Runnable() {
-
-//				@Override
-//				public void run() {
-//			        FormBase.this.setVisible(true);
-
-//				}
-//			});
-			this.formManager.setRootContainer(dockbar.getRootWindow());
-			this.formManager.setChildWindowsContainer(dockbar.getChildFormsWindow());
-
-			IDockbar outputDockbar = dockbar.getOutputFrame();
-			if (outputDockbar != null && outputDockbar.getComponent() instanceof OutputFrame) {
-				Application.getActiveApplication().setOutput((OutputFrame) outputDockbar.getComponent());
+			IDockbar outputDockbar = this.dockbarManager.getOutputFrame();
+			if (outputDockbar != null && outputDockbar.getInnerComponent() instanceof OutputFrame) {
+				Application.getActiveApplication().setOutput((OutputFrame) outputDockbar.getInnerComponent());
 			}
 			ToolbarUIUtilities.updataToolbarsState();
 
-			initLayout(dockbar);
-			FormBase.this.setVisible(true);
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					FormBase.this.setVisible(true);
+				}
+			});
+
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
@@ -191,9 +174,6 @@ public class FormBase extends JFrame implements IFormMain {
 					if (GlobalParameters.isWorkspaceRecovery()) {
 						WorkspaceRecovery.getInstance().run();
 					}
-//					if (GlobalParameters.isWorkspaceAutoSave()) {
-//						WorkspaceAutoSave.getInstance().start();
-//					}
 				}
 			});
 
@@ -209,11 +189,11 @@ public class FormBase extends JFrame implements IFormMain {
 		}
 	}
 
-	private void initLayout(DockbarManager dockbar) {
+	private void initLayout() {
 		this.setLayout(new GridBagLayout());
 		this.add(jMenuBarMain, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER));
 		this.add(this.toolbarManager.getToolbarsContainer(), new GridBagConstraintsHelper(0, 1, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(0, 0, 0, 5));
-		this.add(dockbar.getRootWindow(), new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
+		this.add(this.dockbarManager.getDockPort(), new GridBagConstraintsHelper(0, 2, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
 	}
 
 	@Override
@@ -221,7 +201,7 @@ public class FormBase extends JFrame implements IFormMain {
 		IPropertyManager iPropertyManager = null;
 		try {
 			Dockbar dockbar = (Dockbar) getDockbarManager().get(Class.forName("com.supermap.desktop.controls.property.DataPropertyContainer"));
-			iPropertyManager = (IPropertyManager) ((Container) dockbar.getComponent(0)).getComponent(0);
+			iPropertyManager = (IPropertyManager)dockbar.getInnerComponent();
 		} catch (ClassNotFoundException e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}

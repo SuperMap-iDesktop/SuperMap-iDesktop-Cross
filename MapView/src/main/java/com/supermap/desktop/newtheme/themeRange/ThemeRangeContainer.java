@@ -57,6 +57,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
@@ -147,6 +149,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 
 	private transient LocalActionListener actionListener = new LocalActionListener();
 	private transient LocalMouseListener mouseListener = new LocalMouseListener();
+	private transient LocalKeyListener localKeyListener = new LocalKeyListener();
 	private transient LocalComboBoxItemListener itemListener = new LocalComboBoxItemListener();
 	private transient LocalSpinnerChangeListener changeListener = new LocalSpinnerChangeListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
@@ -552,6 +555,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.menuItemMapLocation.addActionListener(this.actionListener);
 
 		this.tableRangeInfo.addMouseListener(this.mouseListener);
+		//给jtable添加键盘监听
+		this.tableRangeInfo.addKeyListener(this.localKeyListener);
 		this.comboBoxColorStyle.addItemListener(this.itemListener);
 		this.comboBoxColorStyle.addColorChangedListener();
 		this.comboBoxExpression.addItemListener(this.itemListener);
@@ -588,6 +593,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.menuItemMapLocation.removeActionListener(this.actionListener);
 
 		this.tableRangeInfo.removeMouseListener(this.mouseListener);
+		//注销table键盘监听
+		this.tableRangeInfo.removeKeyListener(this.localKeyListener);
 		this.comboBoxColorStyle.removeItemListener(this.itemListener);
 		this.comboBoxColorStyle.removeColorChangedListener();
 		this.comboBoxExpression.removeItemListener(this.itemListener);
@@ -944,14 +951,37 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				setItemGeoSytle();
 				tableRangeInfo.setRowSelectionInterval(selectRow, selectRow);
 				refreshAtOnce();
-			} else if (e.getSource() == tableRangeInfo && 1 == e.getClickCount()) {//此时进行专题图子项连续定位   2016.12.13yuanR
-				if (isContinuousMapLocation) {
-					//每次关联之前清空跟踪层
-					MapUtilities.getActiveMap().getTrackingLayer().clear();
-					Recordset othersRecordsets;
-					Recordset selectedRecordsets;
-					int selectRow = tableRangeInfo.getSelectedRow();
-					ThemeRangeItem item = themeRange.getItem(selectRow);
+			} else if (e.getSource() == tableRangeInfo && 1 == e.getClickCount()) {
+				//此时进行专题图子项连续定位   2016.12.13yuanR
+				ContinuousMapLocation();
+			}
+			//打开jtable右键菜单
+			if (e.getSource() == tableRangeInfo && e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON3) {
+				//打开右键菜单根据是否可视(可选择)状态设置定位功能是否可用
+				if (themeRangeLayer.isVisible() && themeRangeLayer.isSelectable()) {
+					menuItemMapLocation.setEnabled(true);
+				} else {
+					menuItemMapLocation.setEnabled(false);
+				}
+				tablePopupMenuRangeTheme.show(tableRangeInfo, e.getX(), e.getY());
+			}
+
+			if (e.getSource() == comboBoxExpression.getComponent(0) || e.getSource() == comboBoxRangeMethod) {
+				isResetComboBox = false;
+			}
+		}
+
+		/**
+		 * 专题图子项连续定位   2016.12.13yuanR
+		 */
+		private void ContinuousMapLocation() {
+			if (isContinuousMapLocation) {
+				//清除跟踪层
+				MapUtilities.getActiveMap().getTrackingLayer().clear();
+				Recordset selectedRecordsets;
+				int[] selectRow = tableRangeInfo.getSelectedRows();
+				for (int i = 0; i < tableRangeInfo.getSelectedRowCount(); i++) {
+					ThemeRangeItem item = themeRange.getItem(selectRow[i]);
 					String expression = comboBoxExpression.getSelectedItem().toString();
 					// 构建选中子项的sql查询
 					QueryParameter selectedParameter = new QueryParameter();
@@ -959,48 +989,18 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					selectedParameter.setCursorType(CursorType.STATIC);
 					selectedRecordsets = datasetVector.query(selectedParameter);
 					selectedParameter.dispose();
-					// 构建未选中子项的sql查询
-					QueryParameter othersParameter = new QueryParameter();
-					othersParameter.setAttributeFilter(expression + " < " + item.getStart() + " OR " + expression + " >= " + item.getEnd());
-					othersParameter.setCursorType(CursorType.STATIC);
-					othersRecordsets = datasetVector.query(othersParameter);
-					othersParameter.dispose();
-
 					if (selectedRecordsets.getRecordCount() > 0) {
-						//设置其他子项跟踪层风格
-						GeoStyle othersGeoStyle = new GeoStyle();
-						if (othersRecordsets.getRecordCount() > 0) {
-							othersRecordsets.moveFirst();
-							for (int i = 0; i < othersRecordsets.getRecordCount(); i++) {
-								Geometry othersGeo = othersRecordsets.getGeometry();
-								if (othersGeo instanceof GeoRegion) {
-									othersGeoStyle.setFillOpaqueRate(40);
-									othersGeoStyle.setFillForeColor(Color.WHITE);
-									othersGeoStyle.setLineColor(Color.LIGHT_GRAY);
-									othersGeoStyle.setLineWidth(1);
-								} else {
-									othersGeoStyle = null;
-								}
-								if (othersGeoStyle != null) {
-									othersGeo.setStyle(othersGeoStyle);
-									MapUtilities.getActiveMap().getTrackingLayer().add(othersGeo, "");
-								}
-								//对象释放
-								othersGeo.dispose();
-								othersRecordsets.moveNext();
-							}
-						}
 						//设置选中子项跟踪层风格
 						GeoStyle selectedGeoStyle = new GeoStyle();
 						selectedRecordsets.moveFirst();
-						for (int i = 0; i < selectedRecordsets.getRecordCount(); i++) {
+						for (int n = 0; n < selectedRecordsets.getRecordCount(); n++) {
 							Geometry selectedGeo = selectedRecordsets.getGeometry();
 							if (selectedGeo instanceof GeoRegion) {
 								selectedGeoStyle.setFillOpaqueRate(0);
 								selectedGeoStyle.setLineWidth(1);
 								selectedGeoStyle.setLineColor(Color.red);
 							} else if (selectedGeo instanceof GeoPoint || selectedGeo instanceof GeoLine) {
-								selectedGeoStyle.setLineWidth(1);
+								selectedGeoStyle.setLineWidth(0.5);
 								selectedGeoStyle.setLineColor(Color.red);
 							} else {
 								selectedGeoStyle = null;
@@ -1017,29 +1017,29 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 						if (selectedGeoStyle != null) {
 							selectedGeoStyle.dispose();
 						}
-						if (othersGeoStyle != null) {
-							othersGeoStyle.dispose();
-						}
+					} else {
+						Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_NullQuery"));
 					}
-					map.refresh();
 					//对象释放
 					selectedRecordsets.dispose();
-					othersRecordsets.dispose();
 				}
+				map.refresh();
 			}
-			//打开jtable右键菜单
-			if (e.getSource() == tableRangeInfo && e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON3) {
-				//打开右键菜单根据是否可视(可选择)状态设置定位功能是否可用
-				if (themeRangeLayer.isVisible() && themeRangeLayer.isSelectable()) {
-					menuItemMapLocation.setEnabled(true);
-				} else {
-					menuItemMapLocation.setEnabled(false);
-				}
-				tablePopupMenuRangeTheme.show(tableRangeInfo, e.getX(), e.getY());
-			}
+		}
+	}
 
-			if (e.getSource() == comboBoxExpression.getComponent(0) || e.getSource() == comboBoxRangeMethod) {
-				isResetComboBox = false;
+
+	class LocalKeyListener extends KeyAdapter {
+		@Override
+		public void keyReleased(KeyEvent e) {
+			if (e.getSource() == tableRangeInfo && (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN)) {
+				//当通过键盘改变jtable行选时，同步实现定位功能
+				new LocalMouseListener().ContinuousMapLocation();
+			}
+			if (e.getSource() == tableRangeInfo && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				//当按下esc键，清除跟踪层
+				MapUtilities.getActiveMap().getTrackingLayer().clear();
+				map.refresh();
 			}
 		}
 	}
@@ -1484,7 +1484,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			makeDefaultAsCustom();
 			refreshAtOnce();
 		}
-
 	}
 
 	class LocalDefualTableModel extends DefaultTableModel {

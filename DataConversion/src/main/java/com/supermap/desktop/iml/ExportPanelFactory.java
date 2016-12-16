@@ -23,9 +23,6 @@ public class ExportPanelFactory implements IExportPanelFactory {
     public PanelExportTransform createExportPanel(DataExportDialog owner, ExportFileInfo exportsFileInfo) {
         PanelExportTransform result = new PanelExportTransform(exportsFileInfo);
         FileType fileType = exportsFileInfo.getFileType();
-        if (fileType.equals(FileType.CSV)) {
-            return new PanelExportTransformForVector(exportsFileInfo);
-        }
         if (FiletypeUtilities.isGridType(fileType)) {
             result = new PanelExportTransformForGrid(owner, exportsFileInfo);
         } else if (FiletypeUtilities.isVectorType(fileType)) {

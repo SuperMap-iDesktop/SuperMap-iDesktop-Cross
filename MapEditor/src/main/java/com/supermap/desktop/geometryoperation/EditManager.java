@@ -3,11 +3,30 @@ package com.supermap.desktop.geometryoperation;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormClosingListener;
 
 import java.util.HashMap;
 
 public class EditManager {
 	private HashMap<IFormMap, EditEnvironment> maps = new HashMap<>();
+	FormClosingListener formClosingListener = new FormClosingListener() {
+		@Override
+		public void formClosing(FormClosingEvent e) {
+			try {
+				if (e.getForm() instanceof IFormMap) {
+					IFormMap formMap = (IFormMap) e.getForm();
+					if (EditManager.this.maps.containsKey(formMap)) {
+						EditEnvironment environment = EditManager.this.maps.get(formMap);
+						environment.clear();
+						remove(formMap);
+					}
+				}
+			} catch (Exception ex) {
+				Application.getActiveApplication().getOutput().output(ex);
+			}
+		}
+	};
 
 	public EditManager() {
 
@@ -15,8 +34,7 @@ public class EditManager {
 
 	/**
 	 * 获取与 ActiveForm 绑定的 GeometryEdit 实例
-	 * 
-	 * @param formMap
+	 *
 	 * @return
 	 */
 	public EditEnvironment instance() {
@@ -30,7 +48,7 @@ public class EditManager {
 
 	/**
 	 * 获取与指定 formMap 绑定的 GeometryEdit 实例
-	 * 
+	 *
 	 * @param formMap
 	 * @return
 	 */
@@ -42,9 +60,10 @@ public class EditManager {
 		} else if (formMap != null) {
 			// @formatter:off
 			// 获取一个新的 EditEnvironment 之前先清理一下失效的、已关闭的 form。
-			// 下一阶段的优化是完善子窗口的事件，提供关闭事件等，通过事件机制来处理清理的问题
 			// @formatter:on
 			clear();
+
+			formMap.addFormClosingListener(this.formClosingListener);
 			edit = EditEnvironment.createInstance(formMap);
 			this.maps.put(formMap, edit);
 		}
@@ -60,9 +79,15 @@ public class EditManager {
 	private void clear() {
 		for (IFormMap formMap : this.maps.keySet()) {
 			if (formMap == null || formMap.isClosed()) {
-				this.maps.get(formMap).clear();
-				this.maps.remove(formMap);
+				remove(formMap);
 			}
+		}
+	}
+
+	private void remove(IFormMap formMap) {
+		if (formMap != null && this.maps.containsKey(formMap)) {
+			formMap.removeFormClosingListener(this.formClosingListener);
+			this.maps.remove(formMap);
 		}
 	}
 }

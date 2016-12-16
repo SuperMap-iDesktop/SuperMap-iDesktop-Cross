@@ -18,9 +18,8 @@ import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Recordset;
 import com.supermap.data.Rectangle2D;
 import com.supermap.data.Workspace;
-import com.supermap.desktop.Interface.IContextMenuManager;
-import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.Interface.IProperty;
+import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.DialogSaveAsMap;
@@ -29,8 +28,7 @@ import com.supermap.desktop.enums.AreaUnit;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.ActiveLayersChangedEvent;
-import com.supermap.desktop.event.ActiveLayersChangedListener;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
@@ -43,6 +41,7 @@ import com.supermap.desktop.mapview.geometry.property.GeometryPropertyFactory;
 import com.supermap.desktop.mapview.geometry.property.geometryNode.GeometryNodeFactory;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.FormBaseChild;
+import com.supermap.desktop.ui.FormManager;
 import com.supermap.desktop.ui.LayersComponentManager;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -146,7 +145,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						FormMap.this.close();
+						Application.getActiveApplication().getMainFrame().getFormManager().close(FormMap.this);
 					}
 				});
 			}
@@ -505,7 +504,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		map.setWorkspace(Application.getActiveApplication().getWorkspace());
 		map.setName(title);
 
-		this.setComponent(this.jScrollPaneChildWindow);
+		this.add(this.jScrollPaneChildWindow);
 
 		if (Application.getActiveApplication().getMainFrame() != null) {
 			IContextMenuManager manager = Application.getActiveApplication().getMainFrame().getContextMenuManager();
@@ -985,16 +984,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	}
 
 	@Override
-	public String getText() {
-		return super.getTitle();
-	}
-
-	@Override
-	public void setText(String text) {
-		super.setTitle(text);
-	}
-
-	@Override
 	public WindowType getWindowType() {
 		return WindowType.MAP;
 	}
@@ -1300,22 +1289,35 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 	}
 
-	/**
-	 * 窗体被激活时候触发
-	 */
 	@Override
-	public void windowShown() {
-		// do nothing
+	public void formClosing(FormClosingEvent e) {
+		try {
+			if (GlobalParameters.isShowFormClosingInfo()) {
 
+				// 地图 修改过才提示
+				boolean isNeedSave = getMapControl().getMap().isModified();
+				String message = String.format(ControlsProperties.getString("String_SaveMapPrompt"), getText());
+
+				if (isNeedSave) {
+					int result = GlobalParameters.isShowFormClosingInfo() ? UICommonToolkit.showConfirmDialogWithCancel(message) : JOptionPane.NO_OPTION;
+					if (result == JOptionPane.YES_OPTION) {
+						save();
+					} else if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
+						// 取消关闭操作
+						e.setCancel(true);
+					} else if (result == JOptionPane.NO_OPTION) {
+						// 不保存，直接关闭
+					}
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
 	}
 
-	/**
-	 * 窗体被隐藏时候触发
-	 */
 	@Override
-	public void windowHidden() {
-		// do nothing
-
+	public void formClosed(FormClosedEvent e) {
+		clean();
 	}
 
 	public void removeLayers(Layer[] layers) {

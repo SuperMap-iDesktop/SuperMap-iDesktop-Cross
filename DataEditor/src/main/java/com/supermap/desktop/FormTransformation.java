@@ -770,12 +770,6 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	}
 
 	@Override
-	public String getText() {
-		return null;
-	}
-
-
-	@Override
 	public WindowType getWindowType() {
 		return WindowType.TRANSFORMATION;
 	}
@@ -824,16 +818,6 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	@Override
 	public void deactived() {
 		currentForceWindow.deactived();
-	}
-
-	@Override
-	public void windowShown() {
-
-	}
-
-	@Override
-	public void windowHidden() {
-
 	}
 
 	@Override
@@ -1462,11 +1446,6 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	@Override
 	public void removeLayers(Layer[] activeLayers) {
 		currentForceWindow.removeLayers(activeLayers);
-	}
-
-	@Override
-	public void setText(String text) {
-
 	}
 
 	@Override

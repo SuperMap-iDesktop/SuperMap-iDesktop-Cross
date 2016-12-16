@@ -134,8 +134,8 @@ public class UICommonToolkit {
 		try {
 			IFormMain formMain = Application.getActiveApplication().getMainFrame();
 			IDockbar workspaceTreeDockbar = ((DockbarManager) formMain.getDockbarManager()).getWorkspaceComponentManager();
-			if (workspaceTreeDockbar != null && workspaceTreeDockbar.getComponent() instanceof WorkspaceComponentManager) {
-				workspaceManager = (WorkspaceComponentManager) workspaceTreeDockbar.getComponent();
+			if (workspaceTreeDockbar != null && workspaceTreeDockbar.getInnerComponent() instanceof WorkspaceComponentManager) {
+				workspaceManager = (WorkspaceComponentManager) workspaceTreeDockbar.getInnerComponent();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -154,8 +154,8 @@ public class UICommonToolkit {
 		try {
 			IFormMain formMain = Application.getActiveApplication().getMainFrame();
 			IDockbar layersTreeDockbar = ((DockbarManager) formMain.getDockbarManager()).getLayersComponentManager();
-			if (layersTreeDockbar != null && layersTreeDockbar.getComponent() instanceof LayersComponentManager) {
-				layersManager = (LayersComponentManager) layersTreeDockbar.getComponent();
+			if (layersTreeDockbar != null && layersTreeDockbar.getInnerComponent() instanceof LayersComponentManager) {
+				layersManager = (LayersComponentManager) layersTreeDockbar.getInnerComponent();
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -164,8 +164,8 @@ public class UICommonToolkit {
 		return layersManager;
 	}
 
-	
-	public static Layer getActiveLayer(Object lastPathComponent){
+
+	public static Layer getActiveLayer(Object lastPathComponent) {
 		Layer result = null;
 		DefaultMutableTreeNode node = (DefaultMutableTreeNode) lastPathComponent;
 		Object obj = node.getUserObject();
@@ -176,7 +176,7 @@ public class UICommonToolkit {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 判断名称是否合法
 	 *

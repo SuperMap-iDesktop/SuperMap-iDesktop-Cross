@@ -5,8 +5,8 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.DatasourceAliasModifiedEvent;
 import com.supermap.data.DatasourceAliasModifiedListener;
-import com.supermap.data.DatasourceClosedEvent;
-import com.supermap.data.DatasourceClosedListener;
+import com.supermap.data.DatasourceClosingEvent;
+import com.supermap.data.DatasourceClosingListener;
 import com.supermap.data.DatasourceCreatedEvent;
 import com.supermap.data.DatasourceCreatedListener;
 import com.supermap.data.DatasourceOpenedEvent;
@@ -77,6 +77,8 @@ import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindow
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.SECOND_LEVEL;
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.THIRD_LEVEL;
 
+
+
 /**
  * @author YuanR 2016.12.3
  */
@@ -129,35 +131,35 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		initListeners();
 	}
 
-	@Override
-	public void close() {
-		super.close();
-		this.setVisible(false);
-		this.isWindowShown = false;
-	}
+//	@Override
+//	public void close() {
+//		super.close();
+//		this.setVisible(false);
+//		this.isWindowShown = false;
+//	}
+//
+//	// 当窗口显示
+//	@Override
+//	public void windowShown() {
+//		//刷新jtable，其显示跟随tree焦点
+//		this.isWindowShown = true;
+//		this.add(buttonToolBar, BorderLayout.NORTH);
+//		this.add(scrollPaneInfo, BorderLayout.CENTER);
+//		initJTable();
+//	}
 
-	// 当窗口显示
-	@Override
-	public void windowShown() {
-		//刷新jtable，其显示跟随tree焦点
-		this.isWindowShown = true;
-		this.add(buttonToolBar, BorderLayout.NORTH);
-		this.add(scrollPaneInfo, BorderLayout.CENTER);
-		initJTable();
-	}
-
-	@Override
-	public boolean isUndockable() {
-		//暂时关闭undockable，当undockable时窗口不稳定
-		return false;
-	}
-
-	// 当窗口隐藏
-	@Override
-	public void windowHidden() {
-		//断开窗口与外部的连接
-		this.isWindowShown = false;
-	}
+//	@Override
+//	public boolean isUndockable() {
+//		//暂时关闭undockable，当undockable时窗口不稳定
+//		return false;
+//	}
+//
+//	// 当窗口隐藏
+//	@Override
+//	public void windowHidden() {
+//		//断开窗口与外部的连接
+//		this.isWindowShown = false;
+//	}
 
 	/**
 	 * 构造函数
@@ -430,9 +432,9 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 			}
 		});
 		//数据源关闭
-		this.getDatasources.addClosedListener(new DatasourceClosedListener() {
+		this.getDatasources.addClosingListener(new DatasourceClosingListener() {
 			@Override
-			public void datasourceClosed(DatasourceClosedEvent datasourceClosedEvent) {
+			public void datasourceClosing(DatasourceClosingEvent datasourceClosingEvent) {
 				if (isWindowShown) {
 					//当关闭数据源时，跳转到数据源文件界面
 					jTable.setModel(new GetTableModel().getDatasourcesTableModel(getActiveApplication().getWorkspace().getDatasources()));
@@ -446,9 +448,9 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 					textFieldSearch.setEnabled(true);
 					levelNum = SECOND_LEVEL;
 				}
-
 			}
 		});
+
 		//数据源创建
 		this.getDatasources.addCreatedListener(new DatasourceCreatedListener() {
 			@Override
@@ -983,7 +985,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	 */
 	private void setColumnWith() {
 		if (isDefaultColWidth) {
-			this.jTable.getColumnModel().getColumn(COLUMN_NAME).setPreferredWidth(150);
+			this.jTable.getColumnModel().getColumn(COLUMN_NAME).setPreferredWidth(200);
 			this.jTable.getColumnModel().getColumn(COLUMN_TYPE).setPreferredWidth(150);
 			this.jTable.getColumnModel().getColumn(COLUMN_NUMBER).setPreferredWidth(150);
 			this.jTable.getColumnModel().getColumn(COLUMN_PRJCOORDSYS).setPreferredWidth(500);

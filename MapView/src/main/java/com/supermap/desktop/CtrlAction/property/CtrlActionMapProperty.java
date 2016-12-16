@@ -24,7 +24,7 @@ public class CtrlActionMapProperty extends CtrlAction {
 					.get(Class.forName(MAP_PRPERTY_CONTROL_CLASS));
 
 			if (dockbarPropertyContainer != null) {
-				MapPropertyContainer container = (MapPropertyContainer) dockbarPropertyContainer.getComponent();
+				MapPropertyContainer container = (MapPropertyContainer) dockbarPropertyContainer.getInnerComponent();
 				if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 					container.setFormMap((IFormMap) Application.getActiveApplication().getActiveForm());
 				}

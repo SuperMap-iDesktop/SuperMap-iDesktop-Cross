@@ -504,8 +504,6 @@
       </envs>
       <method>
         <option name="Make" enabled="false" />
-        <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="compile" />
-        <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="package" />
       </method>
     </configuration>
     <configuration default="false" name="iDesktop Startup Develop" type="Application" factoryName="Application" singleton="false">
@@ -668,6 +666,17 @@
         <root url="jar://$MAVEN_REPOSITORY$/com/alibaba/fastjson/1.2.15/fastjson-1.2.15-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: com.jgoodies:looks:2.2.2">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/jgoodies/looks/2.2.2/looks-2.2.2.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/jgoodies/looks/2.2.2/looks-2.2.2-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/jgoodies/looks/2.2.2/looks-2.2.2-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: com.jhlabs:filters:2.0.235">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/com/jhlabs/filters/2.0.235/filters-2.0.235.jar!/" />
@@ -677,6 +686,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/com/jhlabs/filters/2.0.235/filters-2.0.235-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: com.l2fprod:skinlf:6.7">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/l2fprod/skinlf/6.7/skinlf-6.7.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/com/l2fprod/skinlf/6.7/skinlf-6.7-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/com/l2fprod/skinlf/6.7/skinlf-6.7-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: com.sun.xml.bind:jaxb-impl:2.2.11">
@@ -985,6 +1005,17 @@
       </JAVADOC>
       <SOURCES>
         <root url="jar://$MAVEN_REPOSITORY$/org/jasypt/jasypt/1.9.0/jasypt-1.9.0-sources.jar!/" />
+      </SOURCES>
+    </library>
+    <library name="Maven: org.jb2011:beautyeye_lnf:v3.7">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jb2011/beautyeye_lnf/v3.7/beautyeye_lnf-v3.7.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jb2011/beautyeye_lnf/v3.7/beautyeye_lnf-v3.7-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jb2011/beautyeye_lnf/v3.7/beautyeye_lnf-v3.7-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: org.slf4j:slf4j-api:1.7.21">

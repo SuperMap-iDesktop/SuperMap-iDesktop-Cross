@@ -4,11 +4,14 @@ import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
 import com.supermap.data.Rectangle2D;
 import com.supermap.data.Workspace;
-import com.supermap.desktop.Interface.IContextMenuManager;
-import com.supermap.desktop.Interface.IFormLayout;
+import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.DialogSaveAsLayout;
 import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.event.CancellationEvent;
+import com.supermap.desktop.event.FormClosingEvent;
 import com.supermap.desktop.ui.FormBaseChild;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.layout.LayoutElements;
 import com.supermap.layout.LayoutSelection;
@@ -98,7 +101,7 @@ public class FormLayout extends FormBaseChild implements IFormLayout {
 
 			if ((buttonType == MouseEvent.BUTTON3 && clickCount == 1)
 					&& (getMapLayoutControl().getLayoutAction() == Action.SELECT || getMapLayoutControl().getLayoutAction() == Action.SELECT2 || getMapLayoutControl()
-							.getLayoutAction() == Action.SELECTCIRCLE)) {
+					.getLayoutAction() == Action.SELECTCIRCLE)) {
 				showPopupMenu(e);
 			}
 		}
@@ -119,7 +122,8 @@ public class FormLayout extends FormBaseChild implements IFormLayout {
 		this.mapLayoutControl = new MapLayoutControl();
 		this.mapLayoutControl.getMapLayout().setWorkspace(Application.getActiveApplication().getWorkspace());
 		jScrollPaneChildWindow = new JScrollPane(this.mapLayoutControl);
-		this.setComponent(jScrollPaneChildWindow);
+		setLayout(new BorderLayout());
+		add(jScrollPaneChildWindow, BorderLayout.CENTER);
 
 		this.mapLayoutControl.addMouseListener(layoutControl_MouseListener);
 
@@ -136,16 +140,6 @@ public class FormLayout extends FormBaseChild implements IFormLayout {
 			this.layoutMapNorthArrowObjContextMenu = (JPopupMenu) manager.get("SuperMap.Desktop._FormLayout.LayoutMapNorthArrowObjContextMenuMap");
 			this.layoutGeoArtTextObjContextMenu = (JPopupMenu) manager.get("SuperMap.Desktop._FormLayout.LayoutGeoArtTextObjContextMenu");
 		}
-	}
-
-	@Override
-	public String getText() {
-		return this.title;
-	}
-
-	@Override
-	public void setText(String text) {
-		this.title = text;
 	}
 
 	@Override
@@ -340,6 +334,34 @@ public class FormLayout extends FormBaseChild implements IFormLayout {
 		if (geoSelElement != null) {
 			geoSelElement.dispose();
 			geoSelElement = null;
+		}
+	}
+
+	@Override
+	public void formClosing(FormClosingEvent e) {
+		try {
+			if (GlobalParameters.isShowFormClosingInfo()) {
+				boolean isNeedSave = this.mapLayoutControl.getMapLayout().isModified();
+				String message = String.format(ControlsProperties.getString("String_SaveLayoutPrompt"), getText());
+
+				if (isNeedSave) {
+					int result = GlobalParameters.isShowFormClosingInfo() ? UICommonToolkit.showConfirmDialogWithCancel(message) : JOptionPane.NO_OPTION;
+					if (result == JOptionPane.YES_OPTION) {
+						save();
+						clean();
+					} else if (result == JOptionPane.NO_OPTION) {
+						// 不保存，直接关闭
+						clean();
+					} else if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
+						// 取消关闭操作
+						e.setCancel(true);
+					}
+				} else {
+					clean();
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
 }

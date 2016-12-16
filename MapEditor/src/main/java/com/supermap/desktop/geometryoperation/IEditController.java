@@ -1,5 +1,7 @@
 package com.supermap.desktop.geometryoperation;
 
+import com.supermap.desktop.event.ActiveFormChangedEvent;
+import com.supermap.desktop.event.DockbarClosedEvent;
 import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.GeometryEvent;
 import com.supermap.ui.GeometrySelectChangedEvent;
@@ -13,9 +15,8 @@ import java.util.EventObject;
 
 /**
  * 用来解决单例多窗口事件响应的相关问题
- * 
- * @author highsad
  *
+ * @author highsad
  */
 public interface IEditController {
 
@@ -26,7 +27,7 @@ public interface IEditController {
      * a key typed event.
      */
 	// @formatter:on
-	public void keyTyped(EditEnvironment environment, KeyEvent e);
+    public void keyTyped(EditEnvironment environment, KeyEvent e);
 
 	// @formatter:off
     /**
@@ -35,7 +36,7 @@ public interface IEditController {
      * a key pressed event.
      */
     // @formatter:on
-	public void keyPressed(EditEnvironment environment, KeyEvent e);
+    public void keyPressed(EditEnvironment environment, KeyEvent e);
 
 	// @formatter:off
     /**
@@ -44,7 +45,7 @@ public interface IEditController {
      * a key released event.
      */
     // @formatter:on
-	public void keyReleased(EditEnvironment environment, KeyEvent e);
+    public void keyReleased(EditEnvironment environment, KeyEvent e);
 
 	/**
 	 * Invoked when the mouse button has been clicked (pressed and released) on a component.
@@ -81,11 +82,12 @@ public interface IEditController {
 	public void geometrySelected(EditEnvironment environment, GeometrySelectedEvent arg0);
 
 	public void geometrySelectChanged(EditEnvironment environment, GeometrySelectChangedEvent arg0);
-	 /**
-     * @author lixiaoyao
+
+	/**
+	 * @author lixiaoyao
 	 * @description 新增对选中的对象进行增删移动时，进行监听
-     */
-	public void geometryModified(EditEnvironment environment,GeometryEvent arg0);
+	 */
+	public void geometryModified(EditEnvironment environment, GeometryEvent arg0);
 
 	public void undone(EditEnvironment environment, EventObject arg0);
 
@@ -94,4 +96,6 @@ public interface IEditController {
 	public void tracking(EditEnvironment environment, TrackingEvent e);
 
 	public void tracked(EditEnvironment environment, TrackedEvent e);
+
+	public void dockbarClosed(EditEnvironment editEnvironment, DockbarClosedEvent e);
 }

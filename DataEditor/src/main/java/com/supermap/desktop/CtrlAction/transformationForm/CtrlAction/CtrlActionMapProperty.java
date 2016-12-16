@@ -23,7 +23,9 @@ public class CtrlActionMapProperty extends CtrlAction {
 		try {
 			IDockbar dockbarPropertyContainer = null;
 			for (int i = 0; i < Application.getActiveApplication().getMainFrame().getDockbarManager().getCount(); i++) {
-				if (Application.getActiveApplication().getMainFrame().getDockbarManager().get(i).getLabel().equals(DataEditorProperties.getString("String_mapProperty"))) {
+
+				// 二次修改之后改为直接获取对应 Key 的 Dockbar
+				if (Application.getActiveApplication().getMainFrame().getDockbarManager().get(i).getTitle().equals(DataEditorProperties.getString("String_mapProperty"))) {
 					dockbarPropertyContainer = Application.getActiveApplication().getMainFrame().getDockbarManager().get(i);
 					break;
 				}

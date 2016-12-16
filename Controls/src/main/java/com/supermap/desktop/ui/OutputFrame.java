@@ -7,8 +7,10 @@ import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormMain;
 import com.supermap.desktop.Interface.IOutput;
 import com.supermap.desktop.enums.InfoType;
+import com.supermap.desktop.ui.controls.Dockbar;
 import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.utilities.LogUtilities;
+import org.flexdock.docking.DockingManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -203,7 +205,8 @@ public class OutputFrame extends JScrollPane implements IOutput {
 			IDockbar outputDockBar = ((DockbarManager) formMain.getDockbarManager())
 					.getOutputFrame();
 			if (outputDockBar != null) {
-				outputDockBar.setVisible(true);
+//				outputDockBar.setVisible(true);
+				DockingManager.display(((Dockbar) outputDockBar).getView());
 			}
 		}
 		String messageTemp = message;

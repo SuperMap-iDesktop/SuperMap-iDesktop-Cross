@@ -1,7 +1,6 @@
 package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.ui.docking.SplitWindow;
 import com.supermap.mapping.Layer;
 
 public interface IPropertyBindWindow {
@@ -16,8 +15,6 @@ public interface IPropertyBindWindow {
     IBindProperty getBindProperty();
 
     void setBindProperty(IBindProperty bindProperty);
-
-    void setSplitWindow(SplitWindow splitWindow);
 
     void setFormMap(IFormMap formMap);
 }
