@@ -24,23 +24,23 @@ public class CtrlActionGeometryPropertyForSelection extends CtrlAction {
 
 	@Override
 	public void run() {
-//		try {
-//			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-//			this.map = formMap.getMapControl().getMap();
-//			TabWindow tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
-//			// 获取当前活动图层对应的数据集
-//			Layer activeLayer = formMap.getActiveLayers()[0];
-//			Dataset dataset = activeLayer.getDataset();
-//			UICommonToolkit.getLayersManager().getLayersTree().getMouseListeners();
-//			if (null != dataset && dataset instanceof DatasetVector && map.findSelection(true).length > 0) {
-//				Recordset tempRecordset = map.findSelection(true)[0].toRecordset();
-//				BindUtilties.openTabular(dataset, tempRecordset);
-//				BindUtilties.windowBindProperty(formMap, tabWindow, activeLayer);
-//				return;
-//			}
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
+		try {
+			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+			this.map = formMap.getMapControl().getMap();
+
+			// 获取当前活动图层对应的数据集
+			Layer activeLayer = formMap.getActiveLayers()[0];
+			Dataset dataset = activeLayer.getDataset();
+			UICommonToolkit.getLayersManager().getLayersTree().getMouseListeners();
+			if (null != dataset && dataset instanceof DatasetVector && map.findSelection(true).length > 0) {
+				Recordset tempRecordset = map.findSelection(true)[0].toRecordset();
+				BindUtilties.openTabular(dataset, tempRecordset);
+				BindUtilties.windowBindProperty(formMap, activeLayer);
+				return;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
