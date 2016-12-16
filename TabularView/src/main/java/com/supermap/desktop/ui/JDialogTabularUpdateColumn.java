@@ -1767,7 +1767,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 		    EditHistoryBean editHistoryBean = new EditHistoryBean();
 		    editHistoryBean.setSmId(smId);
 		    editHistoryBean.setFieldName(updateField);
-		    editHistoryBean.setBeforeValue(recordset.getFieldInfos().get(updateField));
+		    editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
 		    if (updateFieldType.equals(FieldType.TEXT) || updateFieldType.equals(FieldType.WTEXT) || updateFieldType.equals(FieldType.CHAR)) {
 			    if (newValue.toString().contains("\"")) {
                     newValue = newValue.toString().replace("\"", "");
