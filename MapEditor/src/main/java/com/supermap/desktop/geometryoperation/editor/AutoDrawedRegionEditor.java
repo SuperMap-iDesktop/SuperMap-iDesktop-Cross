@@ -7,7 +7,6 @@ import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.EditType;
-import com.supermap.data.GeoLine;
 import com.supermap.data.GeoRegion;
 import com.supermap.data.Geometrist;
 import com.supermap.data.Geometry;
@@ -54,7 +53,8 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 			AutoDrawedRegionModel editModel = (AutoDrawedRegionModel) environment.getEditModel();
 			if (SwingUtilities.isRightMouseButton(e)) {
 				if (editModel.clickNum == 2) {
-					environment.stopEditor();
+					//environment.stopEditor();
+					clear(environment);
 				}
 			}
 		}
@@ -66,16 +66,17 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 			if (!editModel.isTracking && e.getButton() == MouseEvent.BUTTON1) {
 				editModel.clickNum = 0;
 				editModel.isTracking = true;
-				editModel.geometry=null;
+				editModel.geometry = null;
 				editModel.setTipMessage(MapEditorProperties.getString("String_RightClickToEnd"));
 			} else if (editModel.isTracking && e.getButton() == MouseEvent.BUTTON3) {
+				editModel.clickNum = 1;
 				runDrawedRegion(environment);
 				editModel.isTracking = false;
-				editModel.clickNum = 1;
 			} else if (!editModel.isTracking && e.getButton() == MouseEvent.BUTTON3) {
-				editModel.clickNum += 1;
+				editModel.clickNum = editModel.clickNum + 1;
 				if (editModel.clickNum == 2) {
 					environment.stopEditor();
+					clear(environment);
 				}
 			}
 		}
@@ -106,7 +107,6 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 			environment.setEditModel(editModel);
 		}
 		environment.setEditController(this.autoDrawedRegionEditControler);
-
 		//editModel.oldMapControlAction = environment.getMapControl().getAction();
 		//editModel.oldTrackMode = environment.getMapControl().getTrackMode();
 		environment.getMapControl().setAction(getMapControlAction());
@@ -118,9 +118,12 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 	public void deactivate(EditEnvironment environment) {
 		if (environment.getEditModel() instanceof AutoDrawedRegionModel) {
 			AutoDrawedRegionModel editModel = (AutoDrawedRegionModel) environment.getEditModel();
-
 			try {
-				environment.getMapControl().setAction(environment.getMapControl().getAction());
+				if (environment.getMapControl().getAction() == Action.CREATEPOLYGON || environment.getMapControl().getAction() == Action.CREATEPOLYLINE) {
+					environment.getMapControl().setAction(Action.SELECT2);
+				} else {
+					environment.getMapControl().setAction(environment.getMapControl().getAction());
+				}
 				environment.getMapControl().setTrackMode(editModel.oldTrackMode);
 				clear(environment);
 			} finally {
@@ -217,12 +220,14 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 		Recordset resultRecordset = null;
 		boolean isCanQuery = true;
 		try {
-			if (editModel.geometry.getType() == GeometryType.GEOLINE && ((GeoLine) editModel.geometry).getPart(0).getCount() <= 2) {
-				isCanQuery = false;
-				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("string_GeometryOperation_AutoDrawingCloseLine"));
-			} else if (editModel.geometry.getType() == GeometryType.GEOLINE && ((GeoLine) editModel.geometry).getPart(0).getCount() > 2) {
-				drawedGeometry = ((GeoLine) editModel.geometry).convertToRegion();
-			} else if (editModel.geometry.getType() == GeometryType.GEOREGION && ((GeoRegion) editModel.geometry).getPart(0).getCount() <= 2) {
+//			if (editModel.geometry.getType() == GeometryType.GEOLINE && ((GeoLine) editModel.geometry).getPart(0).getCount() <= 2) {
+//				isCanQuery = false;
+//				Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("string_GeometryOperation_AutoDrawingCloseLine"));
+//			} else
+//           if (editModel.geometry.getType() == GeometryType.GEOLINE && ((GeoLine) editModel.geometry).getPart(0).getCount() > 2) {
+//				drawedGeometry = ((GeoLine) editModel.geometry).convertToRegion();
+//			} else
+			if (editModel.geometry.getType() == GeometryType.GEOREGION && ((GeoRegion) editModel.geometry).getPart(0).getCount() <= 2) {
 				isCanQuery = false;
 			}
 			if (isCanQuery) {
