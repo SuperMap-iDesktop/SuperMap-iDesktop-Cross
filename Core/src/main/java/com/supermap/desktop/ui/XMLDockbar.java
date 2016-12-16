@@ -1,11 +1,8 @@
 package com.supermap.desktop.ui;
 
-import com.sun.javaws.jnl.XMLUtils;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Plugin;
 import com.supermap.desktop.PluginInfo;
-import com.supermap.desktop.enums.DockSite;
-import com.supermap.desktop.enums.DockState;
 import com.supermap.desktop.enums.XMLCommandType;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
