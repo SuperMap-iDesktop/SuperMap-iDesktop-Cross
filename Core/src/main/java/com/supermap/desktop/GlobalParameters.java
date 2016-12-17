@@ -603,7 +603,7 @@ public class GlobalParameters {
 	}
 
 	private static boolean isTabularHiddenSystemField = false;
-	private static boolean isHeadClickedSelectedColumn = true;
+	private static boolean isHeadClickedSelectedColumn = false;
 
 	private static void initTabular() {
 		String value = getValue("_startup_tabular", "isSystemHidden");
