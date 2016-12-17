@@ -78,7 +78,12 @@ public class SMSpinner extends JSpinner implements DocumentListener {
 					commitEdit();
 				}
 			} catch (ParseException e1) {
-				editor.getTextField().setValue(lastValue);
+				try {
+					this.setValue(lastValue);
+				} catch (Exception e) {
+					//ignore
+				}
+
 			}
 		}
 	}
