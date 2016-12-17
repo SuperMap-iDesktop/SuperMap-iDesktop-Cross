@@ -74,7 +74,7 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 				editModel.isTracking = false;
 			} else if (!editModel.isTracking && e.getButton() == MouseEvent.BUTTON3) {
 				editModel.clickNum = editModel.clickNum + 1;
-				if (editModel.clickNum == 2) {
+				if (editModel.clickNum == 2 || editModel.geometry==null) {
 					environment.stopEditor();
 					clear(environment);
 				}
@@ -107,8 +107,6 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 			environment.setEditModel(editModel);
 		}
 		environment.setEditController(this.autoDrawedRegionEditControler);
-		//editModel.oldMapControlAction = environment.getMapControl().getAction();
-		//editModel.oldTrackMode = environment.getMapControl().getTrackMode();
 		environment.getMapControl().setAction(getMapControlAction());
 		environment.getMapControl().setTrackMode(getTrackMode());
 		editModel.tip.bind(environment.getMapControl());

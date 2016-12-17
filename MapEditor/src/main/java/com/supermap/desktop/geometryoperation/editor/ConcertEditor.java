@@ -318,12 +318,12 @@ public class ConcertEditor extends AbstractEditor {
 					}
 				}
 			} else if (geometry.getType() == GeometryType.GEOREGION) {
-				for (int i = 0; i < ((GeoRegion) geometry).getPartCount(); ++i) {
-					Point2Ds tempPoint2Ds = ((GeoRegion) geometry).getPart(i);
+				//for (int i = 0; i < ((GeoRegion) geometry).getPartCount(); ++i) {
+					Point2Ds tempPoint2Ds = ((GeoRegion) geometry).getPart(0);
 					for (int j = 0; j < tempPoint2Ds.getCount(); ++j) {
 						resultPoint2Ds.add(tempPoint2Ds.getItem(j));
 					}
-				}
+				//}
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex.toString());
@@ -354,33 +354,40 @@ public class ConcertEditor extends AbstractEditor {
 
 	private Geometry nodeEdit(Geometry inputGeometry, boolean moveOrDelete, EditEnvironment environment) {
 		ConcertEditModel editModel = (ConcertEditModel) environment.getEditModel();
-		Point2Ds inputGeoPoint2Ds = geometryToPoint2Ds(inputGeometry);
+		Point2Ds inputGeoPoint2Ds=null;
 		List editNodeNumber = new ArrayList();
 		IGeometry dGeoemtry = null;
+		dGeoemtry = DGeometryFactory.create(inputGeometry);
 		try {
-			for (int i = 0; i < inputGeoPoint2Ds.getCount(); ++i) {
-				Point2D tempPoint2D = inputGeoPoint2Ds.getItem(i);
-				if (tempPoint2D.equals(editModel.changePoint2D)) {
-					if (moveOrDelete) {
-						editNodeNumber.add(i);
-					} else {
-						inputGeoPoint2Ds.setItem(i, editModel.moveAfterPoint2D);
+			for(int j=0;j<((IMultiPartFeature) dGeoemtry).getPartCount();j++) {
+				inputGeoPoint2Ds=null;
+				inputGeoPoint2Ds=(Point2Ds)(((IMultiPartFeature) dGeoemtry).getPart(j));
+				editNodeNumber.clear();
+				for (int i = 0; i < inputGeoPoint2Ds.getCount(); ++i) {
+					Point2D tempPoint2D = inputGeoPoint2Ds.getItem(i);
+					if (tempPoint2D.equals(editModel.changePoint2D)) {
+						if (moveOrDelete) {
+							editNodeNumber.add(i);
+						} else {
+							inputGeoPoint2Ds.setItem(i, editModel.moveAfterPoint2D);
+						}
 					}
 				}
-			}
-			if (editNodeNumber.size() != 0) {
-				for (int i = 0; i < editNodeNumber.size(); ++i) {
-					if (i == 0) {
-						inputGeoPoint2Ds.remove(((int) editNodeNumber.get(i)));
-					} else {
-						inputGeoPoint2Ds.remove(((int) editNodeNumber.get(i) - 1));
+				if (editNodeNumber.size() != 0) {
+					for (int i = 0; i < editNodeNumber.size(); ++i) {
+						if (inputGeoPoint2Ds.getCount()>2) {
+							if (i == 0) {
+								inputGeoPoint2Ds.remove(((int) editNodeNumber.get(i)));
+							} else {
+								inputGeoPoint2Ds.remove(((int) editNodeNumber.get(i) - 1));
+							}
+						}
 					}
 				}
-			}
-			dGeoemtry = DGeometryFactory.create(inputGeometry);
 
-			if (dGeoemtry instanceof IMultiPartFeature) {
-				((IMultiPartFeature) dGeoemtry).setPart(0, inputGeoPoint2Ds);
+				if (dGeoemtry instanceof IMultiPartFeature && inputGeoPoint2Ds.getCount()>=2) {
+						((IMultiPartFeature) dGeoemtry).setPart(j, inputGeoPoint2Ds);
+				}
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex.toString());
