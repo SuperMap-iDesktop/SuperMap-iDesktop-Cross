@@ -106,17 +106,23 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	}
 
 	private void removeGroup(MdiGroup group) {
-		if (this.groups.contains(group)) {
+		if (group != null && this.groups.contains(group)) {
 			this.strategy.removeGroup(group);
 			unregisterEvents(group);
 			this.groups.remove(group);
 
-			// 处理选中
-			if (this.selectedGroup == group) {
-				this.selectedGroup = this.groups.size() > 0 ? this.groups.get(0) : null;
-				if (this.selectedGroup != null) {
-					this.selectedGroup.requestFocusInWindow();
-				}
+			if (this.groups.size() == 0) {
+
+				// 当移除最后一个 group 的时候，发送一次 Actived 事件
+
+				this.selectedGroup = null;
+				this.selectedPage = null;
+				this.eventsHelper.firePageActivated(new PageActivatedEvent(group, null, group.getActivePage()));
+			} else if (this.selectedGroup == group) {
+
+				// 将要删除的是当前选中的 group
+				MdiGroup selectedGroup = this.groups.size() > 0 ? this.groups.get(0) : null;
+				active(selectedGroup);
 			}
 		}
 	}
@@ -397,13 +403,22 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 		this.eventsHelper.removePageActivatedListener(listener);
 	}
 
+	/**
+	 * 传入 null 则什么都不做，避免恶意传入 null 的事情发生。移除最后一个 group 的时候，需要发送一个 PageActived 事件，在 remove 相关方法中处理。
+	 *
+	 * @param group
+	 */
 	@Override
 	public void active(MdiGroup group) {
+		if (!this.groups.contains(group)) {
+			return;
+		}
+
 		MdiGroup oldSelectedGroup = MdiPane.this.getSelectedGroup();
 		MdiPage oldSelectedPage = oldSelectedGroup == null ? null : MdiPane.this.selectedPage;
 
 		if (group != null && oldSelectedGroup != group) {
-			MdiPage newSelectedPage = group.getActivePage();
+			MdiPage newSelectedPage = group == null ? null : group.getActivePage();
 			MdiPane.this.eventsHelper.firePageActivating(new PageActivatingEvent(group, newSelectedPage, oldSelectedPage));
 			MdiPane.this.selectedGroup = group;
 			MdiPane.this.selectedPage = newSelectedPage;
@@ -450,10 +465,11 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 
 		@Override
 		public void pageClosed(PageClosedEvent e) {
+			MdiPane.this.eventsHelper.firePageClosed(e);
+
 			if (e.getSource() instanceof MdiGroup && ((MdiGroup) e.getSource()).getPageCount() == 0) {
 				removeGroup((MdiGroup) e.getSource());
 			}
-			MdiPane.this.eventsHelper.firePageClosed(e);
 		}
 
 		@Override
@@ -463,6 +479,8 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 
 		@Override
 		public void pageActivated(PageActivatedEvent e) {
+
+			// 当发送事件的 group 与当前选中的 group 相同时，发送 MdiPane 的 PageActived 事件
 			if (e.getSource() == MdiPane.this.selectedGroup) {
 				MdiPane.this.selectedPage = e.getActivedPage();
 				MdiPane.this.eventsHelper.firePageActivated(e);

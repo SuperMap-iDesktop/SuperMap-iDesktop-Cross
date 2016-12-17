@@ -250,6 +250,7 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 						tempGeoLine = arrayList.get(i + 1);
 						arrayList.set(i + 1, arrayList.get(j));
 						arrayList.set(j, tempGeoLine);
+						tempDistance=distance;
 					}
 				}
 			}

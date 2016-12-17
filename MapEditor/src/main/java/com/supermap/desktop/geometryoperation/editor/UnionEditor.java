@@ -81,11 +81,15 @@ public class UnionEditor extends AbstractEditor {
 				if (layer.getDataset().getType() == DatasetType.CAD || layer.getDataset().getType() == DatasetType.REGION
 						|| layer.getDataset().getType() == DatasetType.LINE) {
 					if (layer.getDataset().getType() == DatasetType.CAD && geoStyle == null) {
-						Recordset tempRecordset=layer.getSelection().toRecordset();
-						tempRecordset.moveFirst();
-						geoStyle = tempRecordset.getGeometry().getStyle().clone();
-						tempRecordset.close();
-						tempRecordset.dispose();
+						Selection selection = new Selection(layer.getSelection());
+						if (selection!=null && selection.getCount() > 0) {
+							Recordset recordset = ((DatasetVector) layer.getDataset()).getRecordset(false, CursorType.STATIC);
+							recordset.seekID(selection.get(0));
+							geoStyle = recordset.getGeometry().getStyle().clone();
+							recordset.close();
+							recordset.dispose();
+						}
+						selection=null;
 					}
 					result = GeometryUtilities.union(result, GeometryUtilities.union(layer), true);
 				}
