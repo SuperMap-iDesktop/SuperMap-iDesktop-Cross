@@ -1,8 +1,5 @@
 package com.supermap.desktop.workspacemanagerwindow;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetImage;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dataview.DataViewProperties;
@@ -13,6 +10,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_NAME;
+import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_NULL;
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_NUMBER;
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_TYPE;
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.DATAVIEW_ICON_ROOTPATH;
@@ -20,7 +18,7 @@ import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindow
 
 /**
  * @author YuanR
- *         添加数据集图标
+ *         添加数据集图标,类型列用中文显示
  */
 
 public class TableCellRendererDatasource extends DefaultTableCellRenderer {
@@ -41,6 +39,24 @@ public class TableCellRendererDatasource extends DefaultTableCellRenderer {
 			String newDatasetTypeName = datasetTypeName.replace(replaceString, "");
 			this.setText(newDatasetTypeName);
 		}
+		if (column == COLUMN_NUMBER) {
+			if (table.getValueAt(row, COLUMN_TYPE).equals(DatasetType.GRID)) {
+
+				String widthGrid = String.valueOf(table.getValueAt(row, COLUMN_NULL));
+				String heightGrid = String.valueOf((Integer) value / (Integer) (table.getValueAt(row, COLUMN_NULL)));
+				this.setText(widthGrid + "*" + heightGrid);
+			}
+			if (table.getValueAt(row, COLUMN_TYPE).equals(DatasetType.IMAGE)) {
+				String widthImage = String.valueOf(table.getValueAt(row, COLUMN_NULL));
+				String heightImage = String.valueOf((Integer) value / (Integer) (table.getValueAt(row, COLUMN_NULL)));
+				this.setText(widthImage + "*" + heightImage);
+			}
+			this.setHorizontalAlignment(LEFT);
+		}
+		if (column == COLUMN_NULL) {
+			this.setText("");
+		}
+
 		return this;
 	}
 }

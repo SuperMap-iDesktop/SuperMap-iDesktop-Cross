@@ -3,12 +3,18 @@ package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Recordset;
+import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -35,7 +41,13 @@ public class BindWindow implements IBindWindow {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                queryMap(formTabular.getjTableTabular());
+	            if (e.getButton() == MouseEvent.BUTTON3 && e.getSource() == formTabular.getjTableTabular().getTableHeader()) {
+		            if (GlobalParameters.isHeadClickedSelectedColumn()) {
+			            queryMap(formTabular.getjTableTabular());
+		            }
+	            } else {
+		            queryMap(formTabular.getjTableTabular());
+	            }
             }
         };
         this.tabularTableKeyListener = new KeyAdapter() {

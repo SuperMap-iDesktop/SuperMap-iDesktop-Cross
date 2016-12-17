@@ -23,7 +23,6 @@ import com.supermap.desktop.event.TabularValueChangedListener;
 import com.supermap.desktop.implement.SmStatusbar;
 import com.supermap.desktop.tabularview.TabularViewProperties;
 import com.supermap.desktop.ui.FormBaseChild;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilties.TabularStatisticUtilties;
@@ -105,6 +104,24 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
+				int rowAtPoint = jTableTabular.rowAtPoint(e.getPoint());
+				int columnAtPoint = jTableTabular.columnAtPoint(e.getPoint());
+				if (e.getSource() == jTableTabular) {
+					if (!jTableTabular.isCellSelected(rowAtPoint, columnAtPoint)) {
+						jTableTabular.setRowSelectionInterval(rowAtPoint, rowAtPoint);
+						jTableTabular.setColumnSelectionInterval(columnAtPoint, columnAtPoint);
+					}
+				} else {
+					if (!jTableTabular.isColumnSelected(columnAtPoint) || jTableTabular.getSelectedRowCount() != jTableTabular.getRowCount()) {
+						jTableTabular.setColumnSelectionInterval(columnAtPoint, columnAtPoint);
+						jTableTabular.addRowSelectionInterval(0, jTableTabular.getRowCount() - 1);
+					}
+//					jTableTabular.clearSelection();//属性表点击表头不选中整列代码,2016年12月16日17:10:36
+//					jTableTabular.addColumnSelectionInterval(columnAtPoint, columnAtPoint);
+//					if (GlobalParameters.isHeadClickedSelectedColumn()) {
+//						jTableTabular.addRowSelectionInterval(0, jTableTabular.getRowCount() - 1);
+//					}
+				}
 				showContextMenu(e);
 			} else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
 				TabularStatisticUtilties.updateSatusbars(FormTabular.this);
