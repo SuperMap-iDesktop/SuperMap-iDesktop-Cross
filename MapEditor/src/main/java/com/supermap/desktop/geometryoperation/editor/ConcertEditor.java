@@ -168,7 +168,7 @@ public class ConcertEditor extends AbstractEditor {
 			if (selectRecordset.getRecordCount() == 1) {
 				editModel.oldGeometry = selectRecordset.getGeometry();
 			}
-			Recordset resultRecordset = queryGeometryTouchSelectedGeometry(selectRecordset, selectRecordset.getDataset());
+			Recordset resultRecordset = queryGeometryTouchSelectedGeometry(selectRecordset.getGeometry(), selectRecordset.getDataset());
 			if (resultRecordset.getRecordCount() >= 1) {
 				result = true;
 				resultRecordset.moveFirst();
@@ -184,19 +184,14 @@ public class ConcertEditor extends AbstractEditor {
 	/**
 	 * 定义空间查询
 	 */
-	private Recordset queryGeometryTouchSelectedGeometry(Recordset selectedRecordset, DatasetVector nowDatasetVector) {
+	private Recordset queryGeometryTouchSelectedGeometry(Geometry selectedGeometry, DatasetVector nowDatasetVector) {
 		Recordset resultRecordset = null;
 
 		QueryParameter parameter = new QueryParameter();
 		parameter.setCursorType(CursorType.DYNAMIC);
-		if (selectedRecordset.getGeometry().getType()==GeometryType.GEOLINE){
-			parameter.setSpatialQueryMode(SpatialQueryMode.INTERSECT);
-		}
-		else{
-			parameter.setSpatialQueryMode(SpatialQueryMode.TOUCH);
-		}
+		parameter.setSpatialQueryMode(SpatialQueryMode.INTERSECT);
 		parameter.setHasGeometry(true);
-		parameter.setSpatialQueryObject(selectedRecordset);
+		parameter.setSpatialQueryObject(selectedGeometry);
 
 		resultRecordset = nowDatasetVector.query(parameter);
 		return resultRecordset;
@@ -318,12 +313,12 @@ public class ConcertEditor extends AbstractEditor {
 					}
 				}
 			} else if (geometry.getType() == GeometryType.GEOREGION) {
-				//for (int i = 0; i < ((GeoRegion) geometry).getPartCount(); ++i) {
-					Point2Ds tempPoint2Ds = ((GeoRegion) geometry).getPart(0);
+				for (int i = 0; i < ((GeoRegion) geometry).getPartCount(); ++i) {
+					Point2Ds tempPoint2Ds = ((GeoRegion) geometry).getPart(i);
 					for (int j = 0; j < tempPoint2Ds.getCount(); ++j) {
 						resultPoint2Ds.add(tempPoint2Ds.getItem(j));
 					}
-				//}
+				}
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex.toString());
@@ -354,14 +349,14 @@ public class ConcertEditor extends AbstractEditor {
 
 	private Geometry nodeEdit(Geometry inputGeometry, boolean moveOrDelete, EditEnvironment environment) {
 		ConcertEditModel editModel = (ConcertEditModel) environment.getEditModel();
-		Point2Ds inputGeoPoint2Ds=null;
+		Point2Ds inputGeoPoint2Ds = null;
 		List editNodeNumber = new ArrayList();
 		IGeometry dGeoemtry = null;
 		dGeoemtry = DGeometryFactory.create(inputGeometry);
 		try {
-			for(int j=0;j<((IMultiPartFeature) dGeoemtry).getPartCount();j++) {
-				inputGeoPoint2Ds=null;
-				inputGeoPoint2Ds=(Point2Ds)(((IMultiPartFeature) dGeoemtry).getPart(j));
+			for (int j = 0; j < ((IMultiPartFeature) dGeoemtry).getPartCount(); j++) {
+				inputGeoPoint2Ds = null;
+				inputGeoPoint2Ds = (Point2Ds) (((IMultiPartFeature) dGeoemtry).getPart(j));
 				editNodeNumber.clear();
 				for (int i = 0; i < inputGeoPoint2Ds.getCount(); ++i) {
 					Point2D tempPoint2D = inputGeoPoint2Ds.getItem(i);
@@ -375,7 +370,7 @@ public class ConcertEditor extends AbstractEditor {
 				}
 				if (editNodeNumber.size() != 0) {
 					for (int i = 0; i < editNodeNumber.size(); ++i) {
-						if (inputGeoPoint2Ds.getCount()>2) {
+						if (inputGeoPoint2Ds.getCount() > 2) {
 							if (i == 0) {
 								inputGeoPoint2Ds.remove(((int) editNodeNumber.get(i)));
 							} else {
@@ -385,8 +380,8 @@ public class ConcertEditor extends AbstractEditor {
 					}
 				}
 
-				if (dGeoemtry instanceof IMultiPartFeature && inputGeoPoint2Ds.getCount()>=2) {
-						((IMultiPartFeature) dGeoemtry).setPart(j, inputGeoPoint2Ds);
+				if (dGeoemtry instanceof IMultiPartFeature && inputGeoPoint2Ds.getCount() >= 2) {
+					((IMultiPartFeature) dGeoemtry).setPart(j, inputGeoPoint2Ds);
 				}
 			}
 		} catch (Exception ex) {
