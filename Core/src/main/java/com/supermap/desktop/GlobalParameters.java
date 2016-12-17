@@ -603,11 +603,16 @@ public class GlobalParameters {
 	}
 
 	private static boolean isTabularHiddenSystemField = false;
+	private static boolean isHeadClickedSelectedColumn = true;
 
 	private static void initTabular() {
 		String value = getValue("_startup_tabular", "isSystemHidden");
 		if (value != null) {
 			isTabularHiddenSystemField = Boolean.valueOf(value);
+		}
+		value = getValue("_startup_tabular", "isHeadClickedSelectedColumn");
+		if (value != null) {
+			isHeadClickedSelectedColumn = Boolean.valueOf(value);
 		}
 	}
 
@@ -624,7 +629,19 @@ public class GlobalParameters {
 		}
 	}
 
+	public static boolean isHeadClickedSelectedColumn() {
+		return isHeadClickedSelectedColumn;
+	}
 
+	public static void setIsHeadClickedSelectedColumn(boolean isHeadClickedSelectedColumn) {
+		if (GlobalParameters.isHeadClickedSelectedColumn != isHeadClickedSelectedColumn) {
+
+			fireGlobalParametersChangedListener(new GlobalParametersChangedEvent(GlobalParametersType.IsTabularSelectRow,
+					GlobalParameters.isHeadClickedSelectedColumn, isHeadClickedSelectedColumn));
+			GlobalParameters.isHeadClickedSelectedColumn = isHeadClickedSelectedColumn;
+			save();
+		}
+	}
 
 	private static void initDesktopTitle() {
 		String value = getValue("_startup_mainForm", "text");
@@ -1170,6 +1187,7 @@ public class GlobalParameters {
 
 			Element tabular = emptyDocument.createElement("tabular");
 			tabular.setAttribute("isSystemHidden", String.valueOf(isTabularHiddenSystemField));
+			tabular.setAttribute("isHeadClickedSelectedColumn", String.valueOf(isHeadClickedSelectedColumn));
 			startup.appendChild(tabular);
 			XmlUtilities.saveXml(startupXml, emptyDocument, "UTF-8");
 
