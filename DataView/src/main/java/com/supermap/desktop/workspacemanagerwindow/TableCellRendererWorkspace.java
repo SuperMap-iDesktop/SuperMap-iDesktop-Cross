@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
+import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_NUMBER;
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.DATASOURCES_ICON_PATH;
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.LAYOUTS_ICON_PATH;
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.MAPS_ICON_PATH;
@@ -36,6 +37,11 @@ public class TableCellRendererWorkspace extends DefaultTableCellRenderer {
 		}
 		if (value.equals(ControlsProperties.getString("String_ToolBar_HideResources"))) {
 			this.setIcon(DataViewResources.getIcon(RESOURCES_ICON_PATH));
+		}
+
+		if (column == COLUMN_NUMBER) {
+			//靠左对齐
+			this.setHorizontalAlignment(LEFT);
 		}
 		return this;
 	}
