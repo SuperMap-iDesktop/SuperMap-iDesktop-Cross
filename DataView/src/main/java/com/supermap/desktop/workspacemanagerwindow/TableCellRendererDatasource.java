@@ -4,6 +4,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.dataview.DataViewResources;
+import com.supermap.desktop.properties.DatasetTypeProperties;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -30,23 +31,17 @@ public class TableCellRendererDatasource extends DefaultTableCellRenderer {
 
 		//根据数据集类型添加图标
 		if (column == COLUMN_NAME) {
-			this.setIcon(DataViewResources.getIcon(DATAVIEW_ICON_ROOTPATH + table.getValueAt(row, COLUMN_TYPE).toString() + ".png"));
-		}
-		if (column == COLUMN_TYPE) {
-			// 对数据类型显示内容进行转换，转换为中文
-			String replaceString = DataViewProperties.getString("String_Dataset_T");
-			String datasetTypeName = CommonToolkit.DatasetTypeWrap.findName((DatasetType) table.getValueAt(row, COLUMN_TYPE));
-			String newDatasetTypeName = datasetTypeName.replace(replaceString, "");
-			this.setText(newDatasetTypeName);
+			String dataTypeString = table.getValueAt(row, COLUMN_TYPE) + DataViewProperties.getString("String_Dataset_T");
+			DatasetType datasetType = CommonToolkit.DatasetTypeWrap.findType(dataTypeString);
+			this.setIcon(DataViewResources.getIcon(DATAVIEW_ICON_ROOTPATH + datasetType + ".png"));
 		}
 		if (column == COLUMN_NUMBER) {
-			if (table.getValueAt(row, COLUMN_TYPE).equals(DatasetType.GRID)) {
-
+			if (table.getValueAt(row, COLUMN_TYPE).equals(DatasetTypeProperties.getString("String_DatasetType_Grid"))) {
 				String widthGrid = String.valueOf(table.getValueAt(row, COLUMN_NULL));
 				String heightGrid = String.valueOf((Integer) value / (Integer) (table.getValueAt(row, COLUMN_NULL)));
 				this.setText(widthGrid + "*" + heightGrid);
 			}
-			if (table.getValueAt(row, COLUMN_TYPE).equals(DatasetType.IMAGE)) {
+			if (table.getValueAt(row, COLUMN_TYPE).equals(DatasetTypeProperties.getString("String_DatasetType_Image"))) {
 				String widthImage = String.valueOf(table.getValueAt(row, COLUMN_NULL));
 				String heightImage = String.valueOf((Integer) value / (Integer) (table.getValueAt(row, COLUMN_NULL)));
 				this.setText(widthImage + "*" + heightImage);
@@ -56,7 +51,6 @@ public class TableCellRendererDatasource extends DefaultTableCellRenderer {
 		if (column == COLUMN_NULL) {
 			this.setText("");
 		}
-
 		return this;
 	}
 }
