@@ -4,9 +4,9 @@ import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetGridCollection;
 import com.supermap.data.DatasetImage;
 import com.supermap.data.DatasetImageCollection;
-import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
+import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
@@ -68,7 +68,11 @@ public class TableModelDatasource extends AbstractTableModel {
 				return this.datasource.getDatasets().get(row).getName();
 			}
 			if (col == COLUMN_TYPE) {
-				return this.datasource.getDatasets().get(row).getType();
+				String replaceString = DataViewProperties.getString("String_Dataset_T");
+				String datasetTypeName = CommonToolkit.DatasetTypeWrap.findName(this.datasource.getDatasets().get(row).getType());
+				String newDatasetTypeName = datasetTypeName.replace(replaceString, "");
+				return newDatasetTypeName;
+
 			}
 			if (col == COLUMN_NUMBER) {
 				if (this.datasource.getDatasets().get(row) instanceof DatasetVector) {
@@ -76,20 +80,10 @@ public class TableModelDatasource extends AbstractTableModel {
 					return this.datasetVector.getRecordCount();
 				} else if (this.datasource.getDatasets().get(row) instanceof DatasetGrid) {
 					this.datasetGrid = (DatasetGrid) this.datasource.getDatasets().get(row);
-/*
-					String widthGrid= 	String.valueOf(this.datasetGrid.getWidth());
-					String heightGrid= String.valueOf(this.datasetGrid.getHeight());
-					return widthGrid +"*"+ heightGrid;
-*/
 					return this.datasetGrid.getWidth() * this.datasetGrid.getHeight();
 				} else if (this.datasource.getDatasets().get(row) instanceof DatasetImage) {
 					this.datasetImage = (DatasetImage) this.datasource.getDatasets().get(row);
-/*
-					String widthImage= String.valueOf(this.datasetGrid.getWidth());
-					String heightImage= String.valueOf(this.datasetGrid.getHeight());
-					return widthImage +"*"+ heightImage;
-*/
-					return this.datasetGrid.getWidth() * this.datasetGrid.getHeight();
+					return this.datasetImage.getWidth() * this.datasetImage.getHeight();
 				} else if (this.datasource.getDatasets().get(row) instanceof DatasetGridCollection) {
 					this.datasetGridCollection = (DatasetGridCollection) this.datasource.getDatasets().get(row);
 					return this.datasetGridCollection.getCount();
@@ -111,7 +105,7 @@ public class TableModelDatasource extends AbstractTableModel {
 					return this.datasetGrid.getWidth();
 				} else if (this.datasource.getDatasets().get(row) instanceof DatasetImage) {
 					this.datasetImage = (DatasetImage) this.datasource.getDatasets().get(row);
-					return this.datasetGrid.getWidth();
+					return this.datasetImage.getWidth();
 				} else {
 					return 0;
 				}
@@ -123,10 +117,6 @@ public class TableModelDatasource extends AbstractTableModel {
 	public Class getColumnClass(int col) {
 		if (col == COLUMN_NAME) {
 			return Icon.class;
-		} else if (col == COLUMN_TYPE) {
-			return DatasetType.class;
-		} else if (col == COLUMN_NUMBER) {
-			return Integer.class;
 		} else {
 			return getValueAt(0, col).getClass();
 		}

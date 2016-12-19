@@ -370,12 +370,8 @@ public class ConcertEditor extends AbstractEditor {
 				}
 				if (editNodeNumber.size() != 0) {
 					for (int i = 0; i < editNodeNumber.size(); ++i) {
-						if (inputGeoPoint2Ds.getCount() > 2) {
-							if (i == 0) {
-								inputGeoPoint2Ds.remove(((int) editNodeNumber.get(i)));
-							} else {
-								inputGeoPoint2Ds.remove(((int) editNodeNumber.get(i) - 1));
-							}
+						if (inputGeoPoint2Ds.getCount() > 2 && ((int) editNodeNumber.get(i))<=inputGeoPoint2Ds.getCount()) {
+							inputGeoPoint2Ds.remove(((int) editNodeNumber.get(i) - i));
 						}
 					}
 				}
