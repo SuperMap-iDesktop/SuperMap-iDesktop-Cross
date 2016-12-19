@@ -107,8 +107,8 @@ public class FieldTypeUtilities {
 	 * @param fieldType
 	 * @return
 	 */
-	public static boolean isString(FieldType fieldType) {
-		return fieldType == FieldType.WTEXT || fieldType == FieldType.TEXT;
+    public static boolean isTextField(FieldType fieldType) {
+        return fieldType == FieldType.WTEXT || fieldType == FieldType.TEXT;
 	}
 
 	/**
