@@ -41,6 +41,10 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.dataview.DataViewResources;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormClosingListener;
+import com.supermap.desktop.event.FormShownEvent;
+import com.supermap.desktop.event.FormShownListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.controls.DatasetTypeComboBox;
@@ -51,8 +55,6 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -77,8 +79,6 @@ import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindow
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.SECOND_LEVEL;
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.THIRD_LEVEL;
 
-
-
 /**
  * @author YuanR 2016.12.3
  */
@@ -91,19 +91,18 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	private TextFieldSearch textFieldSearch;
 	private Datasource selectedDatasource;
 	private DefaultMutableTreeNode selectedNode;
+
 	private DefaultMutableTreeNode selectedDatasourceNode;
 	private TreePath selectedTreeNodePath;
 
-	private TableRowSorter<TableModel> sorter;
 	private int levelNum;
-	private DefaultTableCellRenderer render;
 	private JTree getJtree;
 	private Workspace getWorkspace;
 	private Datasources getDatasources;
 	private Maps getMaps;
 	private Scenes getScenes;
 	private Resources getResources;
-	private boolean isWindowShown;
+	private boolean isWindowShown = true;
 	private boolean isExistModel;
 	private boolean isDefaultColWidth = true;
 
@@ -130,36 +129,6 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		initLayout();
 		initListeners();
 	}
-
-//	@Override
-//	public void close() {
-//		super.close();
-//		this.setVisible(false);
-//		this.isWindowShown = false;
-//	}
-//
-//	// 当窗口显示
-//	@Override
-//	public void windowShown() {
-//		//刷新jtable，其显示跟随tree焦点
-//		this.isWindowShown = true;
-//		this.add(buttonToolBar, BorderLayout.NORTH);
-//		this.add(scrollPaneInfo, BorderLayout.CENTER);
-//		initJTable();
-//	}
-
-//	@Override
-//	public boolean isUndockable() {
-//		//暂时关闭undockable，当undockable时窗口不稳定
-//		return false;
-//	}
-//
-//	// 当窗口隐藏
-//	@Override
-//	public void windowHidden() {
-//		//断开窗口与外部的连接
-//		this.isWindowShown = false;
-//	}
 
 	/**
 	 * 构造函数
@@ -191,25 +160,20 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		this.textFieldSearch.setEnabled(false);
 
 		this.jTable = new JTable();
-		//model的对齐方式
-		this.render = new DefaultTableCellRenderer();
-		this.render.setHorizontalAlignment(SwingConstants.LEFT);
 		//获得tree选中节点,如果有节点被选中，则show出相应节点下的管理窗口
 		this.selectedNode = (DefaultMutableTreeNode) getWorkspaceManager().getWorkspaceTree().getLastSelectedPathComponent();//返回最后选定的节点
-
 		//赋予jtable初始化的model
 		initJTable();
 		//当不选中任何节点，或者选择了初始化中不包括的节点都赋予起始页
 		if (!isExistModel) {
 			jTable.setModel(new GetTableModel().getWorkspaceTableModel(getActiveApplication().getWorkspace()));
 			jTable.setDefaultRenderer(Icon.class, new TableCellRendererWorkspace());
+			//设置起始页“个数”的对齐方式
+			jTable.setDefaultRenderer(Integer.class, new TableCellRendererWorkspace());
 			//设置列宽
 			setColumnWith();
-			TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
-			column.setCellRenderer(render);
 			this.levelNum = FIRST_LEVEL;
 		}
-
 		//取消网格
 		this.jTable.setShowHorizontalLines(false);
 		this.jTable.setShowVerticalLines(false);
@@ -236,10 +200,9 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 				//设置model
 				jTable.setModel(new GetTableModel().getWorkspaceTableModel(getActiveApplication().getWorkspace()));
 				jTable.setDefaultRenderer(Icon.class, new TableCellRendererWorkspace());
+				//设置起始页“个数”的对齐方式
+				jTable.setDefaultRenderer(Integer.class, new TableCellRendererWorkspace());
 				isExistModel = true;
-				//单元格靠左对齐
-				TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
-				column.setCellRenderer(render);
 				//设置层级其他空间属性
 				jButtonLastLevel.setEnabled(false);
 				textFieldSearch.setText("");
@@ -252,10 +215,9 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 				jTable.setModel(new GetTableModel().getDatasourcesTableModel(getActiveApplication().getWorkspace().getDatasources()));
 				//设置渲染器
 				jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasources());
+				//设置数据源“个数”的对齐方式
+				jTable.setDefaultRenderer(Integer.class, new TableCellRendererDatasources());
 				isExistModel = true;
-				TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
-				column.setCellRenderer(render);
-
 				textFieldSearch.setText("");
 				jButtonLastLevel.setEnabled(true);
 				textFieldSearch.setEnabled(true);
@@ -267,6 +229,12 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 				//设置model为地图
 				jTable.setModel(new GetTableModel().getMapsTableModel(getActiveApplication().getWorkspace().getMaps()));
 				jTable.setDefaultRenderer(Icon.class, new TableCellRendererMaps());
+				if (selectedNodeData.getData() instanceof String) {
+					//当点击了tree中数据集节点，窗口中相应节点高亮显示
+					String selectNodeName = (String) selectedNodeData.getData();
+					//Application.getActiveApplication().getOutput().output(selectNodeName);
+					setJtableInterval(selectNodeName);
+				}
 				isExistModel = true;
 				textFieldSearch.setText("");
 				jButtonLastLevel.setEnabled(true);
@@ -302,18 +270,16 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 				datasetTypeComboBox.setSelectedIndex(COMBOXITEM_ALLDATASTYPE);
 				datasetTypeComboBox.setEnabled(false);
 				levelNum = SECOND_LEVEL;
-
 			} else if (selectedNodeData.getData() instanceof Datasource) {
 				//设置model为数据集
 				selectedDatasource = (Datasource) selectedNodeData.getData();
 				selectedDatasourceNode = (DefaultMutableTreeNode) getWorkspaceManager().getWorkspaceTree().getLastSelectedPathComponent();
 				jTable.setModel(new GetTableModel().getDatasourceTableModel(selectedDatasource));
 				jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasource());
-				jTable.setDefaultRenderer(DatasetType.class, new TableCellRendererDatasource());
-				isExistModel = true;
-				TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
-				column.setCellRenderer(render);
+				//设置数据集“个数”显示方式及对齐方式
+				jTable.setDefaultRenderer(Integer.class, new TableCellRendererDatasource());
 
+				isExistModel = true;
 				jButtonLastLevel.setEnabled(true);
 				textFieldSearch.setText("");
 				textFieldSearch.setEnabled(true);
@@ -328,11 +294,13 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 				selectedDatasource = (Datasource) selectedLastNodeData.getData();
 				jTable.setModel(new GetTableModel().getDatasourceTableModel(selectedDatasource));
 				jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasource());
-				jTable.setDefaultRenderer(DatasetType.class, new TableCellRendererDatasource());
-				isExistModel = true;
-				TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
-				column.setCellRenderer(render);
+				//设置数据集“个数”显示方式及对齐方式
+				jTable.setDefaultRenderer(Integer.class, new TableCellRendererDatasource());
+				//当点击了tree中数据集节点，窗口中相应节点高亮显示
+				String selectNodeName = ((Dataset) selectedNodeData.getData()).getName();
+				setJtableInterval(selectNodeName);
 
+				isExistModel = true;
 				jButtonLastLevel.setEnabled(true);
 				textFieldSearch.setText("");
 				textFieldSearch.setEnabled(true);
@@ -342,6 +310,17 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 			}
 			//设置列宽
 			setColumnWith();
+		}
+	}
+
+	/**
+	 * 当点击了tree中数据集节点，窗口中相应节点高亮显示
+	 */
+	private void setJtableInterval(String selectName) {
+		for (int i = 0; i < jTable.getModel().getRowCount(); i++) {
+			if (jTable.getModel().getValueAt(i, COLUMN_NAME).equals(selectName)) {
+				jTable.setRowSelectionInterval(i, i);
+			}
 		}
 	}
 
@@ -382,16 +361,32 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	 * 刷新监听
 	 */
 	private void addRefreshListeners() {
+		//窗口监听
+		//貌似没有效果
+		this.addFormShownListener(new FormShownListener() {
+			@Override
+			public void formShown(FormShownEvent e) {
+				isWindowShown = true;
+				initJTable();
+			}
+		});
+		this.addFormClosingListener(new FormClosingListener() {
+			@Override
+			public void formClosing(FormClosingEvent e) {
+				isWindowShown = false;
+			}
+		});
 		//工作空间关闭
 		this.getWorkspace = getWorkspaceManager().getWorkspace();
 		this.getWorkspace.addClosedListener(new WorkspaceClosedListener() {
 			@Override
 			public void workspaceClosed(WorkspaceClosedEvent workspaceClosedEvent) {
 				if (isWindowShown) {
-					//System.out.println("关闭工作空间");
 					//当工作空间关闭时，保持窗口存在，层级返回起始页
 					jTable.setModel(new GetTableModel().getWorkspaceTableModel((getActiveApplication().getWorkspace())));
 					jTable.setDefaultRenderer(Icon.class, new TableCellRendererWorkspace());
+					//设置起始页“个数”的对齐方式
+					jTable.setDefaultRenderer(Integer.class, new TableCellRendererWorkspace());
 					//设置列宽
 					setColumnWith();
 					textFieldSearch.setText("");
@@ -409,9 +404,10 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 				//当工作空间打开，刷新
 				// 展示起始页
 				if (isWindowShown) {
-					//System.out.println("打开工作空间");
 					jTable.setModel(new GetTableModel().getWorkspaceTableModel((getActiveApplication().getWorkspace())));
 					jTable.setDefaultRenderer(Icon.class, new TableCellRendererWorkspace());
+					//设置起始页“个数”的对齐方式
+					jTable.setDefaultRenderer(Integer.class, new TableCellRendererWorkspace());
 					//设置列宽
 					setColumnWith();
 					textFieldSearch.setText("");
@@ -439,11 +435,10 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 					//当关闭数据源时，跳转到数据源文件界面
 					jTable.setModel(new GetTableModel().getDatasourcesTableModel(getActiveApplication().getWorkspace().getDatasources()));
 					jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasources());
+					//设置数据源“个数”的对齐方式
+					jTable.setDefaultRenderer(Integer.class, new TableCellRendererDatasources());
 					//设置列宽
 					setColumnWith();
-					TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
-					column.setCellRenderer(render);
-
 					jButtonLastLevel.setEnabled(true);
 					textFieldSearch.setEnabled(true);
 					levelNum = SECOND_LEVEL;
@@ -534,13 +529,12 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 				if (levelNum == SECOND_LEVEL) {//此时处于第二层，需要返回起始页
 					jTable.setModel(new GetTableModel().getWorkspaceTableModel((getActiveApplication().getWorkspace())));
 					jTable.setDefaultRenderer(Icon.class, new TableCellRendererWorkspace());
+					//设置起始页“个数”的对齐方式
+					jTable.setDefaultRenderer(Integer.class, new TableCellRendererWorkspace());
 					//设置列宽
 					setColumnWith();
 					isExistModel = true;
-					TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
-					column.setCellRenderer(render);
 					jTable.repaint();
-
 					textFieldSearch.setText("");
 					textFieldSearch.setEnabled(false);
 					selectedDatasource = null;
@@ -551,13 +545,12 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 					datasetTypeComboBox.setEnabled(false);
 					jTable.setModel(new GetTableModel().getDatasourcesTableModel(getActiveApplication().getWorkspace().getDatasources()));
 					jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasources());
+					//设置起始页“个数”的对齐方式
+					jTable.setDefaultRenderer(Integer.class, new TableCellRendererDatasources());
 					//设置列宽
 					setColumnWith();
 					isExistModel = true;
-					TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
-					column.setCellRenderer(render);
 					jTable.repaint();
-
 					levelNum = SECOND_LEVEL;
 				}
 			}
@@ -583,11 +576,11 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 					}
 					//设置table的渲染
 					jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasource());
-					jTable.setDefaultRenderer(DatasetType.class, new TableCellRendererDatasource());
+					//设置数据集“个数”显示方式及对齐方式
+					jTable.setDefaultRenderer(Integer.class, new TableCellRendererDatasource());
+					//jTable.setDefaultRenderer(DatasetType.class, new TableCellRendererDatasource());
 					//设置列宽
 					setColumnWith();
-					TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
-					column.setCellRenderer(render);
 					jTable.repaint();
 				}
 			}
@@ -601,7 +594,6 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	private void jTableDoubleClickedListeners() {
 		this.jTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-
 				if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
 					//System.out.println("JTable,Clicked,BUTTON1,jTableMouseListeners");
 					//获得首列单元格内容，以此作为跳转判断依据
@@ -609,23 +601,20 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 					if (rowIndex >= 0) {
 						Object cellVal = jTable.getValueAt(rowIndex, COLUMN_NAME);
 						jButtonLastLevel.setEnabled(true);
-						// textFieldSearch.setEnabled(true);
 						//暂时通过首列字符串以判断方式进行所选判断
 						if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideDatasource"))) {//数据源
 							//设置model
 							jTable.setModel(new GetTableModel().getDatasourcesTableModel(getActiveApplication().getWorkspace().getDatasources()));
-							//jTable.setDefaultRenderer(Integer.class, new TableCellRenderer_Datasources());
 							jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasources());
-							isExistModel = true;
-							TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
-							column.setCellRenderer(render);
+							//设置数据源“个数”的对齐方式
+							jTable.setDefaultRenderer(Integer.class, new TableCellRendererDatasources());
 
+							isExistModel = true;
 							textFieldSearch.setEnabled(true);
 							levelNum = SECOND_LEVEL;
-
 						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideMap"))) {//地图
 							jTable.setModel(new GetTableModel().getMapsTableModel(getActiveApplication().getWorkspace().getMaps()));
-							//jTable.setDefaultRenderer(Integer.class, new TableCellRenderer_Maps());
+
 							jTable.setDefaultRenderer(Icon.class, new TableCellRendererMaps());
 							isExistModel = true;
 							textFieldSearch.setEnabled(true);
@@ -634,14 +623,14 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideLayout"))) {//暂不实现此方法，隐藏布局列
 						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideScene"))) {//场景
 							jTable.setModel(new GetTableModel().getScenesTableModel(getActiveApplication().getWorkspace().getScenes()));
-							//jTable.setDefaultRenderer(Integer.class, new TableCellRenderer_Scenes());
+
 							jTable.setDefaultRenderer(Icon.class, new TableCellRendererScenes());
 							isExistModel = true;
 							textFieldSearch.setEnabled(true);
 							levelNum = SECOND_LEVEL;
 						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideResources"))) {//资源
 							jTable.setModel(new GetTableModel().getResourcesTableModel());
-							//jTable.setDefaultRenderer(Integer.class, new TableCellRenderer_Resources());
+
 							jTable.setDefaultRenderer(Icon.class, new TableCellRendererResources());
 							isExistModel = true;
 							textFieldSearch.setText("");
@@ -655,13 +644,11 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 									//设置model
 									jTable.setModel(new GetTableModel().getDatasourceTableModel(getActiveApplication().getWorkspace().getDatasources().get(num)));
 									jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasource());
-									jTable.setDefaultRenderer(DatasetType.class, new TableCellRendererDatasource());
+									//设置数据集“个数”显示方式及对齐方式
+									jTable.setDefaultRenderer(Integer.class, new TableCellRendererDatasource());
+									//jTable.setDefaultRenderer(DatasetType.class, new TableCellRendererDatasource());
 
 									isExistModel = true;
-
-									TableColumn column = jTable.getColumnModel().getColumn(COLUMN_NUMBER);//获取某一列名字
-									column.setCellRenderer(render);
-
 									datasetTypeComboBox.getSelectedIndex();
 									datasetTypeComboBox.setEnabled(true);
 									textFieldSearch.setEnabled(true);
@@ -711,7 +698,6 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 							//设置右键菜单
 							JPopupMenu jPopupMenu_datasources = getWorkspaceManager().getDatasourcesPopupMenu();
 							jPopupMenu_datasources.show(jTable, e.getX(), e.getY());
-
 						} else if (cellVal.equals(ControlsProperties.getString("String_ToolBar_HideMap"))) {
 							JPopupMenu jPopupMenu_maps = getWorkspaceManager().getMapsPopupMenu();
 							jPopupMenu_maps.show(jTable, e.getX(), e.getY());
@@ -770,7 +756,6 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 						}
 					}
 				}
-
 			}
 		});
 	}
@@ -783,7 +768,6 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (e.getButton() == MouseEvent.BUTTON1 || e.getButton() == MouseEvent.BUTTON3) {
-					//System.out.println("JTable,Pressed,BUTTON1||BUTTON3,jTableToTreeListeners");
 					int rowIndex = ((JTable) e.getSource()).rowAtPoint(e.getPoint());
 					if (rowIndex >= 0) {
 						//当只选中一条数据时，点击刷新高亮显示
@@ -810,9 +794,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 							getWorkspaceManager().getWorkspaceTree().setSelectionPath(selectedTreeNodePath);
 						} else if (cellVal.equals(ControlsProperties.getString("SymbolMarkerLibNodeName"))
 								|| cellVal.equals(ControlsProperties.getString("SymbolLineLibNodeName"))
-								|| cellVal.equals(ControlsProperties.getString("SymbolFillLibNodeName"))
-								) {
-
+								|| cellVal.equals(ControlsProperties.getString("SymbolFillLibNodeName"))) {
 							if (cellVal.equals(ControlsProperties.getString("SymbolMarkerLibNodeName"))) {
 								DefaultMutableTreeNode resourceMarkerNode = (DefaultMutableTreeNode) getWorkspaceManager().getWorkspaceTree().getResourcesNode().getChildAt(RESOURCE_MARKER_NUM);
 								selectedTreeNodePath = new TreePath(resourceMarkerNode.getPath());
@@ -974,11 +956,12 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 				return false;
 			}
 		};
-		this.sorter = new TableRowSorter<TableModel>(this.jTable.getModel());
-		this.sorter.setRowFilter(rf);
+		TableRowSorter sorter = new TableRowSorter(this.jTable.getModel());
+		sorter.setRowFilter(rf);
 		this.jTable.setRowSorter(sorter);
 		this.jTable.repaint();
 	}
+
 
 	/**
 	 * 设置列宽

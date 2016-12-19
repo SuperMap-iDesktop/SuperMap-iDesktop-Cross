@@ -140,7 +140,9 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 				}
 			}
 
-			geoLineSort.sort();
+			if (environment.getEditor() instanceof JointLineNearEditor) {
+				geoLineSort.sort();
+			}
 
 			for (int i = 0; i < geoLineSort.arrayList.size(); i++) {
 				GeoLine currentLine = null;
@@ -248,22 +250,23 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 						tempGeoLine = arrayList.get(i + 1);
 						arrayList.set(i + 1, arrayList.get(j));
 						arrayList.set(j, tempGeoLine);
+						tempDistance=distance;
 					}
 				}
 			}
 		}
 
-		private double pointDistance(GeoLine geoLine1,GeoLine geoLine2){
-			Point2D startPoint1=geoLine1.getPart(0).getItem(0);
-			Point2D endPoint1=geoLine1.getPart(0).getItem(geoLine1.getPart(0).getCount()-1);
+		private double pointDistance(GeoLine geoLine1, GeoLine geoLine2) {
+			Point2D startPoint1 = geoLine1.getPart(0).getItem(0);
+			Point2D endPoint1 = geoLine1.getPart(0).getItem(geoLine1.getPart(0).getCount() - 1);
 
-			Point2D startPoint2=geoLine2.getPart(0).getItem(0);
-			Point2D endPoint2=geoLine2.getPart(0).getItem(geoLine2.getPart(0).getCount()-1);
+			Point2D startPoint2 = geoLine2.getPart(0).getItem(0);
+			Point2D endPoint2 = geoLine2.getPart(0).getItem(geoLine2.getPart(0).getCount() - 1);
 
-			double startToStart=getDistance(startPoint1,startPoint2);
-			double startToEnd=getDistance(startPoint1,endPoint2);
-			double endToStart=getDistance(endPoint1,startPoint2);
-			double endtToEnd=getDistance(endPoint1,endPoint2);
+			double startToStart = getDistance(startPoint1, startPoint2);
+			double startToEnd = getDistance(startPoint1, endPoint2);
+			double endToStart = getDistance(endPoint1, startPoint2);
+			double endtToEnd = getDistance(endPoint1, endPoint2);
 
 			double minimumDistance = Math.min(startToStart, startToEnd);
 			minimumDistance = Math.min(minimumDistance, endToStart);

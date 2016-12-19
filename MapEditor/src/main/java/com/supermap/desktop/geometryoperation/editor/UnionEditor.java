@@ -81,7 +81,15 @@ public class UnionEditor extends AbstractEditor {
 				if (layer.getDataset().getType() == DatasetType.CAD || layer.getDataset().getType() == DatasetType.REGION
 						|| layer.getDataset().getType() == DatasetType.LINE) {
 					if (layer.getDataset().getType() == DatasetType.CAD && geoStyle == null) {
-						geoStyle = layer.getSelection().toRecordset().getGeometry().getStyle();
+						Selection selection = new Selection(layer.getSelection());
+						if (selection!=null && selection.getCount() > 0) {
+							Recordset recordset = ((DatasetVector) layer.getDataset()).getRecordset(false, CursorType.STATIC);
+							recordset.seekID(selection.get(0));
+							geoStyle = recordset.getGeometry().getStyle().clone();
+							recordset.close();
+							recordset.dispose();
+						}
+						selection=null;
 					}
 					result = GeometryUtilities.union(result, GeometryUtilities.union(layer), true);
 				}
@@ -128,7 +136,7 @@ public class UnionEditor extends AbstractEditor {
 			if (result != null) {
 				result.dispose();
 			}
-
+			geoStyle=null;
 			if (targetRecordset != null) {
 				targetRecordset.close();
 				targetRecordset.dispose();

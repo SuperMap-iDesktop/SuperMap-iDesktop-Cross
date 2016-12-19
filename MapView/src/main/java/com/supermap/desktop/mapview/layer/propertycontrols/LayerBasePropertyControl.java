@@ -103,7 +103,7 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 		this.textFieldLayerName = new JTextField();
 		this.textFieldLayerName.setEditable(false);
 		this.textFieldLayerCaption = new JTextField();
-		this.spinnerTransparence = new SMSpinner(new SpinnerNumberModel(0, -1, 100, 1));
+		this.spinnerTransparence = new SMSpinner(new SpinnerNumberModel(0, 0, 100, 1));
 		this.comboBoxMinVisibleScale = new JComboBox<>();
 		this.comboBoxMaxVisibleScale = new JComboBox<>();
 

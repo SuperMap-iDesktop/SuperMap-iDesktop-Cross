@@ -1,7 +1,6 @@
 package com.supermap.desktop.workspacemanagerwindow;
 
 import com.supermap.data.Datasources;
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 

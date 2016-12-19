@@ -1,12 +1,10 @@
 package com.supermap.desktop.newtheme.saveThemeAsDataset;
 
-import com.supermap.data.CursorType;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.DatasetVectorInfo;
 import com.supermap.data.Datasource;
 import com.supermap.data.EncodeType;
-import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -17,7 +15,6 @@ import com.supermap.desktop.ui.controls.DatasetTypeComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.mapping.Layer;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -28,11 +25,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import static com.supermap.data.CursorType.DYNAMIC;
-import static com.supermap.data.CursorType.STATIC;
-
 /**
- * @author YuanR
+ * @author YuanR  2016 12.15
  */
 public class DiglogSaveThemeAsDataset extends SmDialog {
 	private SmButton buttonOk;

@@ -8,6 +8,7 @@ import com.supermap.data.DatasetImageCollection;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
+import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
@@ -16,6 +17,7 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_NAME;
+import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_NULL;
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_NUMBER;
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_PRJCOORDSYS;
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_TYPE;
@@ -85,7 +87,10 @@ public class TableModelDatasType extends AbstractTableModel {
 				return this.aimDataset[row].getName();
 			}
 			if (col == COLUMN_TYPE) {
-				return this.datasetType;
+				String replaceString = DataViewProperties.getString("String_Dataset_T");
+				String datasetTypeName = CommonToolkit.DatasetTypeWrap.findName(this.datasetType);
+				String newDatasetTypeName = datasetTypeName.replace(replaceString, "");
+				return newDatasetTypeName;
 			}
 			if (col == COLUMN_NUMBER) {
 				if (this.aimDataset[row] instanceof DatasetVector) {
@@ -110,16 +115,26 @@ public class TableModelDatasType extends AbstractTableModel {
 			if (col == COLUMN_PRJCOORDSYS) {
 				return this.aimDataset[row].getPrjCoordSys().getName();
 			}
+			//取巧，
+			//将栅格/图片的像素数存在第五列，并隐藏，
+			if (col == COLUMN_NULL) {
+				if (this.datasource.getDatasets().get(row) instanceof DatasetGrid) {
+					this.datasetGrid = (DatasetGrid) this.datasource.getDatasets().get(row);
+					return this.datasetGrid.getWidth();
+				} else if (this.datasource.getDatasets().get(row) instanceof DatasetImage) {
+					this.datasetImage = (DatasetImage) this.datasource.getDatasets().get(row);
+					return this.datasetImage.getWidth();
+				} else {
+					return 0;
+				}
+			}
 		}
 		return "";
 	}
 
 	public Class getColumnClass(int col) {
-		//当列数为“1”，返回Icon,否则返回String
 		if (col == COLUMN_NAME) {
 			return Icon.class;
-		} else if (col == COLUMN_TYPE) {
-			return DatasetType.class;
 		} else {
 			return getValueAt(0, col).getClass();
 		}

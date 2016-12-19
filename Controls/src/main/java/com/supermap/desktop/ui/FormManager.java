@@ -20,6 +20,7 @@ import com.supermap.desktop.ui.mdi.events.*;
 import javax.swing.event.EventListenerList;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 
 public class FormManager extends MdiPane implements IFormManager {
 	private WindowType activatedChildFormType = WindowType.UNKNOWN;
@@ -28,18 +29,22 @@ public class FormManager extends MdiPane implements IFormManager {
 
 		@Override
 		public void pageActivated(PageActivatedEvent event) {
-			if (event.getOldActivedPage() != null && event.getOldActivedPage().getComponent() instanceof FormBaseChild) {
-				((FormBaseChild) event.getOldActivedPage().getComponent()).deactived();
-			}
+			try {
+				if (event.getOldActivedPage() != null && event.getOldActivedPage().getComponent() instanceof FormBaseChild) {
+					((FormBaseChild) event.getOldActivedPage().getComponent()).deactived();
+				}
 
-			if (event.getActivedPage() != null && event.getActivedPage().getComponent() instanceof FormBaseChild) {
-				((FormBaseChild) event.getActivedPage().getComponent()).actived();
+				if (event.getActivedPage() != null && event.getActivedPage().getComponent() instanceof FormBaseChild) {
+					((FormBaseChild) event.getActivedPage().getComponent()).actived();
+				}
+				IForm newActive = event.getActivedPage() != null && event.getActivedPage().getComponent() instanceof IForm ? (IForm) event.getActivedPage().getComponent() : null;
+				IForm oldActive = event.getOldActivedPage() != null && event.getOldActivedPage().getComponent() instanceof IForm ? (IForm) event.getOldActivedPage().getComponent() : null;
+				fireActiveFormChanged(new ActiveFormChangedEvent(this, oldActive, newActive));
+				refreshMenusAndToolbars(getActiveForm());
+				ToolbarUIUtilities.updataToolbarsState();
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(e);
 			}
-			ToolbarUIUtilities.updataToolbarsState();
-			IForm oldActive = event.getOldActivedPage() != null && event.getOldActivedPage().getComponent() instanceof IForm ? (IForm) event.getOldActivedPage().getComponent() : null;
-			IForm newActive = event.getActivedPage() != null && event.getActivedPage().getComponent() instanceof IForm ? (IForm) event.getActivedPage().getComponent() : null;
-			fireActiveFormChanged(new ActiveFormChangedEvent(this, oldActive, newActive));
-			refreshMenusAndToolbars((IForm) event.getActivedPage().getComponent());
 		}
 	};
 
