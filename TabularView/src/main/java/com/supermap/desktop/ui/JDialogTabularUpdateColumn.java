@@ -10,6 +10,7 @@ import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.Interface.ITabularEditHistoryManager;
 import com.supermap.desktop.beans.EditHistoryBean;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.editHistory.TabularEditHistory;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.tabularview.TabularViewProperties;
@@ -1098,6 +1099,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             updateModeQuery();
             buttonApply.setEnabled(false);
         }
+	    ToolbarUIUtilities.updataToolbarsState();
     }
 
     private void updateModeQuery() {
