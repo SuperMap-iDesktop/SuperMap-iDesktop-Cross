@@ -1,6 +1,5 @@
 package com.supermap.desktop.controls.utilities;
 
-import com.supermap.data.Dataset;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
@@ -48,41 +47,43 @@ public class SceneUIUtilities {
 
         datasets = getLimitAddToSceneDataset(datasets);
         for (Dataset dataset : datasets) {
-            if (dataset instanceof DatasetVector) {
-                layer3DSetting = new Layer3DSettingVector();
-            } else if (dataset instanceof DatasetImage) {
-                layer3DSetting = new Layer3DSettingImage();
-            } else if (dataset instanceof DatasetGrid) {
-                layer3DSetting = new Layer3DSettingGrid();
-            } else {
-                throw new UnsupportedOperationException();
-            }
-
-            Layer3DDataset layer = scene.getLayers().add(dataset, layer3DSetting, true);
-
-            if (dataset.getType() == DatasetType.REGION || dataset.getType() == DatasetType.REGION3D
-                    || dataset.getType() == DatasetType.PARAMETRICREGION) {
-                Layer3DSettingVector setting = (Layer3DSettingVector) layer.getAdditionalSetting();
-                setting.getStyle().setFillForeColor(GeoStyleUtilities.getFillColor());
-                setting.getStyle().setLineColor(GeoStyleUtilities.getLineColor());
-            } else if (dataset.getType() == DatasetType.LINE || dataset.getType() == DatasetType.NETWORK || dataset.getType() == DatasetType.NETWORK3D
-                    || dataset.getType() == DatasetType.PARAMETRICLINE || dataset.getType() == DatasetType.LINEM
-                    || dataset.getType() == DatasetType.LINE3D) {
-                Layer3DSettingVector setting = (Layer3DSettingVector) layer.getAdditionalSetting();
-                setting.getStyle().setLineColor(GeoStyleUtilities.getLineColor());
-            } else if (dataset.getType() == DatasetType.POINT || dataset.getType() == DatasetType.POINT3D) {
-                Layer3DSettingVector setting = (Layer3DSettingVector) layer.getAdditionalSetting();
-                setting.getStyle().setLineColor(GeoStyleUtilities.getLineColor());
-            }
-            // 网络数据集和三维网络数据集添加到场景上，同时添加点图层
-            if (dataset instanceof DatasetVector && (dataset.getType() == DatasetType.NETWORK || dataset.getType() == DatasetType.NETWORK3D)) {
-                Layer3DSettingVector layer3DSettingVector = new Layer3DSettingVector();
-                Dataset datasetPoint = ((DatasetVector) dataset).getChildDataset();
-
-                if (datasetPoint != null) {
-                    scene.getLayers().add(datasetPoint, layer3DSettingVector, true);
+            if (!DatasourceUtilities.isWebDatasource(dataset.getDatasource().getEngineType())) {
+                if (dataset instanceof DatasetVector) {
+                    layer3DSetting = new Layer3DSettingVector();
+                } else if (dataset instanceof DatasetImage) {
+                    layer3DSetting = new Layer3DSettingImage();
+                } else if (dataset instanceof DatasetGrid) {
+                    layer3DSetting = new Layer3DSettingGrid();
                 } else {
-                    throw new IllegalArgumentException();
+                    throw new UnsupportedOperationException();
+                }
+
+                Layer3DDataset layer = scene.getLayers().add(dataset, layer3DSetting, true);
+
+                if (dataset.getType() == DatasetType.REGION || dataset.getType() == DatasetType.REGION3D
+                        || dataset.getType() == DatasetType.PARAMETRICREGION) {
+                    Layer3DSettingVector setting = (Layer3DSettingVector) layer.getAdditionalSetting();
+                    setting.getStyle().setFillForeColor(GeoStyleUtilities.getFillColor());
+                    setting.getStyle().setLineColor(GeoStyleUtilities.getLineColor());
+                } else if (dataset.getType() == DatasetType.LINE || dataset.getType() == DatasetType.NETWORK || dataset.getType() == DatasetType.NETWORK3D
+                        || dataset.getType() == DatasetType.PARAMETRICLINE || dataset.getType() == DatasetType.LINEM
+                        || dataset.getType() == DatasetType.LINE3D) {
+                    Layer3DSettingVector setting = (Layer3DSettingVector) layer.getAdditionalSetting();
+                    setting.getStyle().setLineColor(GeoStyleUtilities.getLineColor());
+                } else if (dataset.getType() == DatasetType.POINT || dataset.getType() == DatasetType.POINT3D) {
+                    Layer3DSettingVector setting = (Layer3DSettingVector) layer.getAdditionalSetting();
+                    setting.getStyle().setLineColor(GeoStyleUtilities.getLineColor());
+                }
+                // 网络数据集和三维网络数据集添加到场景上，同时添加点图层
+                if (dataset instanceof DatasetVector && (dataset.getType() == DatasetType.NETWORK || dataset.getType() == DatasetType.NETWORK3D)) {
+                    Layer3DSettingVector layer3DSettingVector = new Layer3DSettingVector();
+                    Dataset datasetPoint = ((DatasetVector) dataset).getChildDataset();
+
+                    if (datasetPoint != null) {
+                        scene.getLayers().add(datasetPoint, layer3DSettingVector, true);
+                    } else {
+                        throw new IllegalArgumentException();
+                    }
                 }
             }
         }
