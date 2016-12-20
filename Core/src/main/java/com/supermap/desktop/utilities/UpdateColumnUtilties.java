@@ -189,7 +189,7 @@ public class UpdateColumnUtilties {
         }
         if (isIntegerType(fieldType)) {
             desValue = Convert.toInteger(desValue.toString());
-        } else if (FieldTypeUtilities.isString(fieldType) || fieldType.equals(FieldType.CHAR)) {
+        } else if (FieldTypeUtilities.isTextField(fieldType) || fieldType.equals(FieldType.CHAR)) {
             desValue = desValue.toString();
         } else if (fieldType.equals(FieldType.BYTE)) {
             if (StringUtilities.isNullOrEmptyString(desValue.toString())) {

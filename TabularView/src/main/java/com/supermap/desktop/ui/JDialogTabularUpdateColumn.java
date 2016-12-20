@@ -1,51 +1,29 @@
 package com.supermap.desktop.ui;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldType;
-import com.supermap.data.QueryParameter;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormTabular;
-import com.supermap.desktop.Interface.ITabularEditHistoryManager;
 import com.supermap.desktop.beans.EditHistoryBean;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
-import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.editHistory.TabularEditHistory;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.tabularview.TabularViewProperties;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.FileChooserControl;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SQLExpressionDialog;
-import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.utilities.Convert;
-import com.supermap.desktop.utilities.FieldTypeUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.desktop.utilities.UpdateColumnUtilties;
+import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilities.*;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.Toolkit;
+import java.awt.event.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 
 /**
  * 更新列主界面
@@ -81,18 +59,14 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     private JLabel labelOperationEQ;// 运算方程式
     private JTextField textAreaOperationEQ;
     private JLabel labelEQTip;// 运算方式提示
-    private boolean isApply = true;
-
     private JButton buttonApply;
     private JButton buttonClose;
     private IFormTabular tabular;
     private JPanel contentPanel;
     private FileChooserControl fileChooser;
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
 
-    private Map<Integer, FieldInfo> fieldInfoMap = new HashMap<Integer, FieldInfo>();// 字段信息MAP，用于存放可更新的列
+    private Map<Integer, FieldInfo> fieldInfoMap = new HashMap();// 字段信息MAP，用于存放可更新的列
     private JButton buttonExpression; // 表达式调用入口
-    private String updateExpression;
 
     private final String[] integerExpressions = {"Abs", "Sqrt", "Ln", "Log", "Int", "ObjectCenterX", "ObjectCenterY", "ObjectLeft", "ObjectRight",
             "ObjectTop", "ObjectBottom", "ObjectWidth", "ObjectHeight"};
@@ -367,7 +341,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             this.textFieldSecondField.setText("null");
             this.textAreaOperationEQ.setText("null");
             buttonApply.setEnabled(true);
-        } else if (FieldTypeUtilities.isString(type) || type.equals(FieldType.CHAR)) {
+        } else if (FieldTypeUtilities.isTextField(type) || type.equals(FieldType.CHAR)) {
             this.textFieldSecondField.setText("");
             this.textAreaOperationEQ.setText("\"\"");
         }
@@ -569,7 +543,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 comboBoxMethod.addItem("*");
                 comboBoxMethod.addItem("/");
                 comboBoxMethod.addItem("%");
-            } else if (FieldTypeUtilities.isString(tempType) || tempType.equals(FieldType.CHAR)) {
+            } else if (FieldTypeUtilities.isTextField(tempType) || tempType.equals(FieldType.CHAR)) {
                 comboBoxMethod.removeAllItems();
                 comboBoxMethod.addItem("+");
             } else if (tempType.equals(FieldType.BOOLEAN)) {
@@ -620,6 +594,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         this.buttonExpression.setEnabled(false);
         this.textAreaOperationEQ.setEnabled(false);
         this.checkBoxInversion.setEnabled(false);
+        updataExpressionValue();
     }
 
     private void resetMethodItemsForMathModel() {
@@ -637,7 +612,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 }
             }
         }
-        if (FieldTypeUtilities.isString(updateFieldType) || updateFieldType.equals(FieldType.CHAR)) {
+        if (FieldTypeUtilities.isTextField(updateFieldType) || updateFieldType.equals(FieldType.CHAR)) {
             if (operationFieldType.equals(FieldType.DATETIME)) {
                 for (String dateMethodExpression : dateMethodExpresssions) {
                     comboBoxMethod.addItem(dateMethodExpression);
@@ -664,7 +639,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 
     private void setDoubleFieldInfo() {
         // 双字段运算时的界面设置
-//		addNeededComponents();
         checkBoxInversion.setEnabled(true);
         labelOperationField.setText(TabularViewProperties.getString("String_FormTabularUpdataColumn_labelFirstField"));
         comboBoxOperationField.setEnabled(true);
@@ -683,6 +657,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         this.buttonExpression.setEnabled(true);
         this.textAreaOperationEQ.setEnabled(true);
         this.labelSecondField.setEnabled(true);
+        updataExpressionValue();
     }
 
     private void setSingleFieldInfo() {
@@ -702,10 +677,9 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         labelEQTip.setText("");
         labelSecondFieldType.setText("");
         this.textAreaOperationEQ.setEnabled(true);
-        String info = "";
-        resetTextFieldOperationEQ();
         this.buttonExpression.setEnabled(true);
         this.labelSecondField.setEnabled(true);
+        updataExpressionValue();
     }
 
     private void setUnityEvaluationInfo() {
@@ -730,10 +704,11 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         } else {
             replaceSecondField(textFieldSecondField, comboBoxSecondField, fileChooser);
         }
-        updateEQ(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType(), textFieldSecondField.getText());
+//        updateEQ(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType(), textFieldSecondField.getText());
         this.buttonExpression.setEnabled(true);
         this.textAreaOperationEQ.setEnabled(true);
         this.labelSecondField.setEnabled(true);
+        updataExpressionValue();
     }
 
     private void updateComboboxMethod() {
@@ -750,15 +725,16 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         contentPanel.updateUI();
     }
 
-    private void resetTextFieldOperationEQ() {
-        String info = "";
-        if (checkBoxInversion.isSelected()) {
-            info = comboBoxMethod.getSelectedItem().toString() + comboBoxOperationField.getSelectedItem().toString();
-        } else {
-            info = comboBoxOperationField.getSelectedItem().toString() + comboBoxMethod.getSelectedItem().toString();
-        }
-        updateEQ(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType(), info);
-    }
+//    private void resetTextFieldOperationEQ() {
+//        String info = "";
+//        if (checkBoxInversion.isSelected()) {
+//            info = comboBoxMethod.getSelectedItem().toString() + comboBoxOperationField.getSelectedItem().toString();
+//        } else {
+//            info = comboBoxOperationField.getSelectedItem().toString() + comboBoxMethod.getSelectedItem().toString();
+//        }
+////        updateEQ(fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType(), info);
+//
+//    }
 
     private void updateFieldChanged(ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED) {
@@ -777,13 +753,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 }
             }
             labelFieldType.setText(FieldTypeUtilities.getFieldTypeName(fieldInfoMap.get(updateFieldIndex).getType()));
-            initTextFieldOperationEQText(fieldInfoMap.get(updateFieldIndex).getType());
-            if (fieldType.equals(FieldType.DATETIME) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
-                textAreaOperationEQ.setText(Convert.getDateStr(textFieldSecondField.getText()));
-                buttonApply.setEnabled(true);
-            } else {
-                updateEQ(fieldType, "");
-            }
+            updataExpressionValue();
         }
     }
 
@@ -801,16 +771,8 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             return;
         }
         if (e.getSource().equals(checkBoxInversion)) {
-            String method = comboBoxMethod.getSelectedItem().toString();
-            String filter = textAreaOperationEQ.getText();
-            String[] expression = filter.split("\\" + method);
-            String result = "";
-            if (2 == expression.length) {
-                result = expression[1].trim() + method + expression[0].trim();
-            }
-            textAreaOperationEQ.setText(result);
-            updateExpression = result;
-            buttonApply.setEnabled(true && isApply);
+            updataExpressionValue();
+            return;
         }
     }
 
@@ -844,32 +806,9 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 
     private void operationFieldChanged(ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED) {
-            String sourceOfField = comboBoxSourceOfField.getSelectedItem().toString();
-            FieldType updateFieldType = tabular.getRecordset().getFieldInfos().get(comboBoxUpdateField.getSelectedItem().toString()).getType();
             FieldType operationField = tabular.getRecordset().getFieldInfos().get(comboBoxOperationField.getSelectedItem().toString()).getType();
             labelOperationFieldType.setText(FieldTypeUtilities.getFieldTypeName(operationField));
-            if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
-                // 单字段运算
-                resetTextFieldOperationEQ();
-                return;
-            }
-            if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
-                // 双字段运算
-                String fristField = comboBoxOperationField.getSelectedItem().toString();
-                String operation = comboBoxMethod.getSelectedItem().toString();
-                String secondField = comboBoxSecondField.getSelectedItem().toString();
-                updateExpression = fristField + operation + secondField;
-                textAreaOperationEQ.setText(updateExpression);
-                buttonApply.setEnabled(true);
-                return;
-            }
-            if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeMath"))) {
-                // 函数运算
-                resetMethodInfo();
-                buttonApply.setEnabled(true);
-                return;
-            }
-
+            updataExpressionValue();
         }
     }
 
@@ -884,27 +823,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             String tempOperationField = comboBoxOperationField.getSelectedItem().toString();
             String method = comboBoxMethod.getSelectedItem().toString();
             String sourceOfField = comboBoxSourceOfField.getSelectedItem().toString();
-            FieldType updateFieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
-            if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
-                // 单字段运算
-                resetTextFieldOperationEQ();
-                return;
-            }
-            if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
-                // 双字段运算
-                if (null != comboBoxSecondField.getSelectedItem()) {
-                    if (checkBoxInversion.isSelected()) {
-                        textAreaOperationEQ.setText(comboBoxSecondField.getSelectedItem().toString() + method
-                                + comboBoxOperationField.getSelectedItem().toString());
-                    } else {
-                        textAreaOperationEQ.setText(comboBoxOperationField.getSelectedItem().toString() + method
-                                + comboBoxSecondField.getSelectedItem().toString());
-                    }
-                }
-                updateExpression = textAreaOperationEQ.getText();
-                buttonApply.setEnabled(true);
-                return;
-            }
             if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeMath"))) {
                 // 函数运算
                 if (method.equals("Abs") || method.equals("Sqrt") || method.equals("Ln") || method.equals("Int")) {
@@ -944,8 +862,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                         || method.equals("Year") || method.equals("DayOfYear") || method.equals("DayOfWeek")) {
                     setMethodStatus(false, false, false, tempOperationField + "." + method, method);
                 }
-                buttonApply.setEnabled(true);
-                return;
+                updataExpressionValue();
             }
         }
     }
@@ -961,242 +878,266 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     }
 
     private void textFieldXChanged() {
-        String method = comboBoxMethod.getSelectedItem().toString();
-        if ((method.equals("Log") || method.equals("Left") || method.equals("Right") || method.equals("LRemove") || method.equals("RRemove"))
-                && !StringUtilities.isNullOrEmptyString(textFieldX.getText())) {
-            textAreaOperationEQ.setText(method + "(" + comboBoxOperationField.getSelectedItem().toString() + "," + textFieldX.getText() + ")");
-            buttonApply.setEnabled(true);
-        } else if ((method.equals("AddDays") || method.equals("AddHours") || method.equals("AddMilliseconds") || method.equals("AddSeconds")
-                || method.equals("AddMinutes") || method.equals("AddMonths") || method.equals("AddYears"))
-                && !StringUtilities.isNullOrEmptyString(textFieldX.getText()) && StringUtilities.isPositiveInteger(textFieldX.getText())) {
-            textAreaOperationEQ.setText(comboBoxOperationField.getSelectedItem().toString() + "." + method + "(" + textFieldX.getText() + ")");
-            buttonApply.setEnabled(true);
-        } else if (method.equals("Mid") && !StringUtilities.isNullOrEmptyString(textFieldX.getText())
-                && StringUtilities.isPositiveInteger(textFieldX.getText())) {
-            textAreaOperationEQ.setText(method + "(" + comboBoxOperationField.getSelectedItem().toString() + "," + textFieldX.getText() + ","
-                    + textFieldY.getText() + ")");
-            buttonApply.setEnabled(true);
-        } else if (method.equals("Replace")) {
-            textAreaOperationEQ.setText(method + "(" + comboBoxOperationField.getSelectedItem().toString() + ",\'" + textFieldX.getText() + "\',\'"
-                    + textFieldY.getText() + "\')");
-            buttonApply.setEnabled(true);
-        } else if (method.equals("TrimEnd") || method.equals("TrimStart")) {
-            String expression = method + "(" + comboBoxOperationField.getSelectedItem().toString();
-            for (int i = 0; i < textFieldX.getText().toCharArray().length; i++) {
-                expression += ",\'" + textFieldX.getText().toCharArray()[i] + "\'";
-            }
-            expression += ")";
-            textAreaOperationEQ.setText(expression);
-            buttonApply.setEnabled(true);
-        }
-
+        updataExpressionValue();
     }
 
     private void textFieldYChanged() {
-        String methodItem = comboBoxMethod.getSelectedItem().toString();
-        if (methodItem.equals("Mid") && !StringUtilities.isNullOrEmptyString(textFieldX.getText()) && StringUtilities.isPositiveInteger(textFieldX.getText())) {
-            textAreaOperationEQ.setText(methodItem + "(" + comboBoxOperationField.getSelectedItem().toString() + "," + textFieldX.getText() + ","
-                    + textFieldY.getText() + ")");
-            buttonApply.setEnabled(true);
-            return;
-        }
-        if (methodItem.equals("Replace")) {
-            textAreaOperationEQ.setText(methodItem + "(" + comboBoxOperationField.getSelectedItem().toString() + ",\'" + textFieldX.getText() + "\',\'"
-                    + textFieldY.getText() + "\')");
-            buttonApply.setEnabled(true);
-            return;
-        }
+        updataExpressionValue();
     }
 
     private void secondFieldChanged() {
-
-        String sourceOfField = comboBoxSourceOfField.getSelectedItem().toString();
-        FieldType fieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
-        String text = textFieldSecondField.getText();
-        if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeSetValue"))) {
-            if (fieldType.equals(FieldType.DATETIME) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
-                textAreaOperationEQ.setText(Convert.getDateStr(text));
-                if (!StringUtilities.isNullOrEmpty(Convert.getDateStr(text))) {
-                    buttonApply.setEnabled(true);
-                } else {
-                    buttonApply.setEnabled(false);
-                }
-            } else if (fieldType.equals(FieldType.BYTE) && StringUtilities.isNumber(text)) {
-                textAreaOperationEQ.setText(text);
-                buttonApply.setEnabled(true);
-            } else {
-                updateEQ(fieldType, "");
-            }
-        } else if (sourceOfField.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
-            String info = "";
-            if (!checkBoxInversion.isSelected()) {
-                info = comboBoxOperationField.getSelectedItem().toString() + comboBoxMethod.getSelectedItem().toString();
-            } else {
-                info = comboBoxMethod.getSelectedItem().toString() + comboBoxOperationField.getSelectedItem().toString();
-            }
-            updateEQ(fieldType, info);
-        }
+        updataExpressionValue();
     }
 
-    private void updateEQ(FieldType fieldType, String info) {
-        if ("0".equals(textFieldSecondField.getText()) && "0".equals(info)) {
-            info = "";
-        }
-        if (FieldTypeUtilities.isNumber(fieldType) && StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
-            textAreaOperationEQ.setText(info + "0");
-            buttonApply.setEnabled(true);
-        } else if (!FieldTypeUtilities.isNumber(fieldType) && StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
-            if (!checkBoxInversion.isSelected()) {
-                textAreaOperationEQ.setText(info + "\"\"");
-            } else {
-                textAreaOperationEQ.setText("\"\"" + info);
-            }
-            buttonApply.setEnabled(true);
-        } else if (FieldTypeUtilities.isNumber(fieldType) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
-            if (!checkBoxInversion.isSelected()) {
-                textAreaOperationEQ.setText(info + textFieldSecondField.getText());
-            } else {
-                textAreaOperationEQ.setText(textFieldSecondField.getText() + info);
-            }
-            if (StringUtilities.isNumber(textFieldSecondField.getText())) {
-                buttonApply.setEnabled(true);
-                isApply = true;
-            } else {
-                buttonApply.setEnabled(false);
-                isApply = false;
-            }
-        } else if ((FieldTypeUtilities.isString(fieldType) || fieldType.equals(FieldType.CHAR)) && !StringUtilities.isNullOrEmptyString(textFieldSecondField.getText())) {
-            if (!checkBoxInversion.isSelected()) {
-                textAreaOperationEQ.setText(info + "\"" + textFieldSecondField.getText() + "\"");
-            } else {
-                textAreaOperationEQ.setText("\"" + textFieldSecondField.getText() + "\"" + info);
-            }
-            buttonApply.setEnabled(true);
-        }
-        updateExpression = textAreaOperationEQ.getText();
-    }
-
-    private void buttonApplyClicked() {
-        String updateModel = comboBoxSourceOfField.getSelectedItem().toString();
-        if (updateModel.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeSetValue"))) {
-            // 统一赋值
-            updateUnitySetValue();
-            buttonApply.setEnabled(false);
-        } else if (updateModel.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
-            // 单字段运算
-            updateOneField();
-            buttonApply.setEnabled(false);
-        } else if (updateModel.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
-            // 双字段运算
-            updateTwoField();
-            buttonApply.setEnabled(false);
-        } else if (updateModel.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeMath"))) {
-            // 函数运算
-            updateModeMath();
-            buttonApply.setEnabled(false);
-        } else {
-            // sql查询结果替换
-            updateModeQuery();
-            buttonApply.setEnabled(false);
-        }
-	    ToolbarUIUtilities.updataToolbarsState();
-    }
-
-    private void updateModeQuery() {
+    private void updataExpressionValue() {
         try {
-            QueryParameter parameter = new QueryParameter();
-            String queryFields = textAreaOperationEQ.getText();
-            String[] queryFieldNames = getQueryFieldNames(queryFields);
-            parameter.setAttributeFilter(queryFields);
-            parameter.setCursorType(CursorType.STATIC);
-            parameter.setHasGeometry(true);
-            parameter.setResultFields(queryFieldNames);
-            Recordset result = tabular.getRecordset().getDataset().query(parameter);
-            boolean selectAllColumn = radioButtonUpdateColumn.isSelected();
-            FieldType fieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
-            if (null != result && null != result.getFieldInfos().get(queryFields)) {
-                if (selectAllColumn) {
-                    // 更新选中列
-                    int[] selectRows = new int[tabular.getjTableTabular().getRowCount()];
-                    for (int i = 0; i < selectRows.length; i++) {
-                        selectRows[i] = i;
-                    }
-                    resetFieldForModeExpression(fieldType, selectRows, result, textAreaOperationEQ.getText());
-                } else {
-                    resetFieldForModeExpression(fieldType, tabular.getSelectedRows(), result, textAreaOperationEQ.getText());
+            DatasetVector dataset = tabular.getRecordset().getDataset();
+            EngineType engineType = dataset.getDatasource().getEngineType();
+            FieldType updataFieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
+            String expressionValue = "";
+            String updateMode = comboBoxSourceOfField.getSelectedItem().toString();
+            if (updateMode.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeSetValue"))) {
+                try {
+                    expressionValue = getTextBoxSecondFieldValue(updataFieldType).toString();
+                } catch (Exception e) {
+                    expressionValue = "null";
                 }
-            } else {
-                Application.getActiveApplication().getOutput().output(TabularViewProperties.getString("String_UpdateColumnFailed"));
+                //字符
+                if (updataFieldType == FieldType.CHAR && StringUtilities.isNullOrEmpty(expressionValue)) {
+                    expressionValue = "null";
+                }
+
+                //字符
+                if (updataFieldType == FieldType.WTEXT && StringUtilities.isNullOrEmpty(expressionValue)) {
+                    expressionValue = "null";
+                }
+
+                //二进制,二进制的字段表达式保持为null
+                if (updataFieldType == FieldType.LONGBINARY) {
+                    expressionValue = "null";
+                }
+            } else if (updateMode.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeOneField"))) {
+                String secondField = getTextBoxSecondFieldValue(updataFieldType).toString();
+                String firstField = getRealFieldExpress(comboBoxOperationField.getSelectedItem().toString(), dataset.getFieldInfos().get(comboBoxOperationField.getSelectedItem().toString()).getType(), updataFieldType, engineType);
+                String method = comboBoxMethod.getSelectedItem().toString();
+                if (!checkBoxInversion.isSelected()) {
+                    expressionValue = convertToRealExpress(firstField, secondField, method, updataFieldType, engineType);
+                } else {
+                    expressionValue = convertToRealExpress(secondField, firstField, method, updataFieldType, engineType);
+                }
+            } else if (updateMode.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeTwoFields"))) {
+                String firstField = getRealFieldExpress(comboBoxOperationField.getSelectedItem().toString(), dataset.getFieldInfos().get(comboBoxOperationField.getSelectedItem().toString()).getType(), updataFieldType, engineType);
+                String secondField = getRealFieldExpress(comboBoxSecondField.getSelectedItem().toString(), dataset.getFieldInfos().get(comboBoxSecondField.getSelectedItem().toString()).getType(), updataFieldType, engineType);
+                if (checkBoxInversion.isSelected()) {
+                    expressionValue = convertToRealExpress(secondField, firstField, comboBoxMethod.getSelectedItem().toString(), updataFieldType, engineType);
+                } else {
+                    expressionValue = convertToRealExpress(firstField, secondField, comboBoxMethod.getSelectedItem().toString(), updataFieldType, engineType);
+                }
+            } else if (updateMode.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeMath"))) {
+                expressionValue = getExpressionValueMath(expressionValue);
             }
+            buttonApply.setEnabled(true);
+            textAreaOperationEQ.setText(expressionValue);
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex);
         }
     }
 
-    private String[] getQueryFieldNames(String queryFields) {
-        int bracketsCount = 0;
-        java.util.List<String> fieldNames = new ArrayList<>();
-        char[] fieldNamesChars = queryFields.toCharArray();
-        StringBuilder builderFieldName = new StringBuilder();
-        for (char fieldNamesChar : fieldNamesChars) {
-            if (fieldNamesChar == ',' && bracketsCount == 0 && builderFieldName.length() > 0) {
-                fieldNames.add(builderFieldName.toString());
-                builderFieldName.setLength(0);
-            } else {
-                builderFieldName.append(fieldNamesChar);
-                if (fieldNamesChar == '(') {
-                    bracketsCount++;
-                } else if (fieldNamesChar == ')' && bracketsCount > 0) {
-                    bracketsCount--;
-                }
+    private String getExpressionValueMath(String expressionValue) {
+        try {
+            String fristField = comboBoxOperationField.getSelectedItem().toString();
+            String method = comboBoxMethod.getSelectedItem().toString();
+            //语法与数据库语法一致，Left(SMID,1)
+            if (method == "Left" || method == "Right") {
+                expressionValue = method + "(" + fristField + "," + textFieldX.getText() + ")";
+            } else if (method == "Mid") {
+                expressionValue = method + "(" + fristField + "," + textFieldX.getText() + "," + textFieldY.getText() + ")";
+            } else if (method == "UCase" || method == "LCase" || method == "Trim") {
+                expressionValue = method + "(" + fristField + ")";
+            } else if (method == "TrimEnd" || method == "TrimStart") {
+                expressionValue = method + "(" + method + "," + getCharArrayString(textFieldX.getText()) + ")";
+            } else if (method == "ObjectCenterX" || method == "ObjectCenterY" || method == "ObjectLeft" ||
+                    method == "ObjectRight" || method == "ObjectTop" || method == "ObjectBottom" || method == "ObjectWidth" || method == "ObjectHeight") {
+                expressionValue = "Object." + method + "()";
+            } else if (method == "LRemove" || method == "RRemove") {
+                expressionValue = method + "(" + fristField + "," + textFieldX.getText() + ")";
+            } else if (method == "Replace") {
+                expressionValue = "Replace(" + fristField + ",\"" + textFieldX.getText() + "\",\"" + textFieldY.getText() + "\")";
+            } else if (method == "Parse") {
+                expressionValue = method + "(" + fristField + ",NumberStyles.HexNumber)";
+            } else if (method == "Abs" || method == "Sqrt" || method == "Ln" || method == "Int") {
+                expressionValue = method + "(" + fristField + ")";
+            } else if (method == "Log") {
+                expressionValue = method + "(" + fristField + "," + textFieldX.getText() + ")";
+            } else if (method == "AddDays" || method == "AddHours" || method == "AddMilliseconds" || method == "AddSeconds"
+                    || method == "AddMinutes" || method == "AddMonths" || method == "AddYears") {
+                expressionValue = fristField + "." + method + "(" + textFieldX.getText() + ")";
+            } else if (method == "DaysInMonth") {
+                expressionValue = "DateTime.DaysInMonth(" + fristField + ".Year," + fristField + ".Month)";
+            } else if (method == "Millisecond" || method == "Second" || method == "Minute" || method == "Hour" || method == "Day" ||
+                    method == "Month" || method == "Year" || method == "Date" || method == "DayOfYear" || method == "DayOfWeek") {
+                expressionValue = fristField + "." + method;
+            } else if (method == "Now") {
+                expressionValue = "DateTime.Now";
             }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
         }
-        if (builderFieldName.length() > 0) {
-            fieldNames.add(builderFieldName.toString());
-            builderFieldName.setLength(0);
-        }
-        return fieldNames.toArray(new String[fieldNames.size()]);
+        return expressionValue;
     }
 
-    private void resetFieldForModeExpression(FieldType fieldType, int[] selectRows, Recordset resultSet, String resultField) {
-        Recordset recordset = tabular.getRecordset();
-        boolean beyoundMaxLength = false;
-        String updateField = comboBoxUpdateField.getSelectedItem().toString();// 更新字段
-        recordset.getBatch().setMaxRecordCount(1024);
-        recordset.getBatch().begin();
-	    Object newValue = null;
-	    TabularEditHistory tabularEditHistory = new TabularEditHistory();
-	    for (int i = 0; i < selectRows.length; i++) {
-		    int smId = tabular.getSmId(selectRows[i]);
-		    EditHistoryBean editHistoryBean = new EditHistoryBean();
-		    editHistoryBean.setSmId(smId);
-		    editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
-		    editHistoryBean.setFieldName(updateField);
-		    resultSet.moveTo(selectRows[i]);
-		    if (UpdateColumnUtilties.isIntegerType(fieldType)) {
-	            newValue = Convert.toInteger(resultSet.getFieldValue(resultField));
-	            recordset.setFieldValue(updateField, newValue);
-		    } else if (fieldType.equals(FieldType.SINGLE) || fieldType.equals(FieldType.DOUBLE)) {
-	            newValue = Convert.toDouble(resultSet.getFieldValue(resultField));
-	            recordset.setFieldValue(updateField, newValue);
-		    } else if (fieldType.equals(FieldType.BOOLEAN)) {
-	            newValue = Convert.toBoolean(resultSet.getFieldValue(resultField));
-	            recordset.setFieldValue(updateField, newValue);
-		    } else if (fieldType.equals(FieldType.TEXT) || fieldType.equals(FieldType.WTEXT) || fieldType.equals(FieldType.CHAR)) {
-	            newValue = resultSet.getFieldValue(resultField).toString();
-	            recordset.setFieldValue(updateField, newValue);
-		    }
-		    editHistoryBean.setAfterValue(newValue);
-		    tabularEditHistory.addEditHistoryBean(editHistoryBean);
-	    }
-        recordset.getBatch().update();
-	    tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
-	    if (beyoundMaxLength) {
-		    Application.getActiveApplication().getOutput()
-                    .output(MessageFormat.format(TabularViewProperties.getString("String_FormTabularUpdataColumn_FieldInfoDesValueIsOverlong"), updateField));
+    private String getCharArrayString(String value) {
+        String charArray = "";
+        try {
+            for (char x : value.toCharArray()) {
+                charArray = charArray + "\'" + x + "\',";
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
         }
-        // 重新查询避免操作后记录集清除的异常
-        refreshTabular(selectRows);
+        return charArray;
+    }
+
+    private Object getTextBoxSecondFieldValue(FieldType updataFieldType) {
+        Object value = "";
+        try {
+            String updateMode = comboBoxSourceOfField.getSelectedItem().toString();
+            String secondVaule = textFieldSecondField.getText();
+            if (updataFieldType == FieldType.BYTE || updataFieldType == FieldType.SINGLE || updataFieldType == FieldType.INT16 ||
+                    updataFieldType == FieldType.INT32 || updataFieldType == FieldType.INT64 || updataFieldType == FieldType.DOUBLE ||
+                    updataFieldType == FieldType.BOOLEAN && updateMode.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeSetValue"))) {
+                try {
+                    value = Convert.toDouble(secondVaule);
+                } catch (Exception e) {
+                    value = 0;
+                }
+            } else if (updataFieldType == FieldType.BOOLEAN) {
+                try {
+                    value = Convert.toBoolean(secondVaule);
+                } catch (Exception e) {
+                    value = null;
+                }
+            } else if (updataFieldType == FieldType.LONGBINARY) {
+                Path path = Paths.get(fileChooser.getEditor().getText());
+                try {
+                    value = Files.readAllBytes(path);
+                    Files.deleteIfExists(path);
+                } catch (IOException e) {
+                    value = null;
+                }
+            } else if (updataFieldType == FieldType.DATETIME) {
+                try {
+                    value = Convert.toDateTime(secondVaule);
+                } catch (Exception e) {
+                    value = null;
+                }
+            } else if ((updataFieldType == FieldType.TEXT || updataFieldType == FieldType.WTEXT || updataFieldType == FieldType.CHAR)) {
+                value = "\'" + secondVaule + "\'";
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        return value;
+    }
+
+    /**
+     * 因为文本型字段的连接运算不能使用“+”运算符，需要使用“||”，所以获取一下正确的表达式
+     *
+     * @param param1      第一个参数
+     * @param param2      第二个参数
+     * @param operateType 运算符
+     * @param fieldType   字段类型
+     * @param engineType  数据源引擎类型
+     * @return 正确的表达式
+     */
+    private String convertToRealExpress(String param1, String param2, String operateType, FieldType fieldType, EngineType engineType) {
+        String expresstion = "";
+        try {
+            if ((fieldType == FieldType.TEXT || fieldType == FieldType.WTEXT || fieldType == FieldType.CHAR) &&
+                    operateType.equals("+")) {
+                if (engineType != EngineType.SQLPLUS) {
+                    expresstion = param1 + " " + "||" + " " + param2;
+                } else {
+                    expresstion = param1 + " " + operateType + " " + param2;
+                }
+            } else {
+                expresstion = param1 + " " + operateType + " " + param2;
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        return expresstion;
+    }
+
+    /**
+     * 当待更新字段类型与参与更新字段类型不一致时，可能需要转换
+     *
+     * @param fieldName       参与更新字段名称
+     * @param fieldType       参与更新字段类型
+     * @param updateFieldType 待更新字段类型
+     * @param engineType      引擎类型
+     * @return 参与更新字段表达式
+     */
+    private String getRealFieldExpress(String fieldName, FieldType fieldType, FieldType updateFieldType, EngineType engineType) {
+        String result = fieldName;
+        try {
+            //目前发现SQL Server引擎比较特殊，文本的连接符可以直接用"+"
+            //但是如果待更新字段为文本，而参与更新字段是数值时，需要用 Cast(fieldName as varchar)进行转换一下
+            if (engineType == EngineType.SQLPLUS) {
+                if (FieldTypeUtilities.isTextField(updateFieldType) && FieldTypeUtilities.isNumber(fieldType)) {
+                    result = "cast(" + fieldName + " as varchar)";
+                }
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        return result;
+    }
+
+
+    private void buttonApplyClicked() {
+        CursorUtilities.setWaitCursor();
+        try {
+            String updateMode = comboBoxSourceOfField.getSelectedItem().toString();
+            if (updateMode.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeSetValue"))) {
+                FieldInfo fieldInfo = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex());
+                FieldType updataFieldType = fieldInfo.getType();
+                Object value = getTextBoxSecondFieldValue(updataFieldType);
+                value = formatValue(updataFieldType, value);
+                //二进制和日期类型的数据，组件更新失败。
+                //绕一下，改成我们以前的方法。
+                if (updataFieldType == FieldType.LONGBINARY || updataFieldType == FieldType.DATETIME) {
+                    updataModeSetValue(tabular.getRecordset(), value);
+                } else {
+                    //统一赋值时，字符型的如果有长度限制，可以做截断
+                    String result = textAreaOperationEQ.getText();
+                    if (updataFieldType == FieldType.CHAR || updataFieldType == FieldType.WTEXT || updataFieldType == FieldType.TEXT) {
+                        //这里判断一下，如果以''开始和结束的字符串，表示用户传入的是一个字符串
+                        //否则，可能是自定义表达式，自定义表达式就不做任何处理
+                        if (isSurrondByquotationmarks(result)) {
+                            result = result.substring(1, result.length() - 2);
+                            if (fieldInfo.getMaxLength() < result.length()) {
+                                result = result.substring(0, fieldInfo.getMaxLength() - 1);
+                                textFieldSecondField.setText(result);
+                                Application.getActiveApplication().getOutput()
+                                        .output(MessageFormat.format(TabularViewProperties.getString("String_FormTabularUpdataColumn_FieldInfoDesValueIsOverlong"), comboBoxUpdateField.getSelectedItem().toString()));
+                            }
+                            //截断以后，再重新用''包装上
+                            result = "\'" + result + "\'";
+                        }
+                    }
+                    updateModeCustom(result);
+                }
+            } else if (!updateMode.equals(TabularViewProperties.getString("String_FormTabularUpdataColumn_UpdataModeMath"))) {
+                updateModeCustom(textAreaOperationEQ.getText());
+            } else {
+                updateModeMath();
+            }
+            buttonApply.setEnabled(false);
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        CursorUtilities.setDefaultCursor();
     }
 
     private void updateModeMath() {
@@ -1218,13 +1159,210 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         if (FieldTypeUtilities.isNumber(fieldType) || fieldType.equals(FieldType.BYTE)) {
             // 整型
             updateFieldModeMathNumber(fieldType, selectRows);
-        } else if (FieldTypeUtilities.isString(fieldType) || fieldType.equals(FieldType.CHAR)) {
+        } else if (FieldTypeUtilities.isTextField(fieldType) || fieldType.equals(FieldType.CHAR)) {
             // 字符串型
             updateModeMathText(fieldType, selectRows);
         } else if (fieldType.equals(FieldType.DATETIME)) {
             // 日期型
             updateModeMathDate(selectRows);
         }
+    }
+
+    private void updataModeSetValue(Recordset recordset, Object value) {
+        try {
+            // 判断当前浏览记录数的判断需要去掉，现在查询，查看属性等各种情况都支持修改
+            if (radioButtonUpdateColumn.isSelected()) {
+                //属性表历史记录添加
+                int[] selectRows = new int[tabular.getjTableTabular().getRowCount()];
+                for (int i = 0; i < selectRows.length; i++) {
+                    selectRows[i] = i;
+                }
+                updateModeSet(selectRows, value);
+            } else {
+                updateModeSet(tabular.getSelectedRows(), value);
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        } finally {
+            recordset.getBatch().update();
+        }
+
+    }
+
+    private void updateModeSet(int[] selectRows, Object value) {
+        String updateField = comboBoxUpdateField.getSelectedItem().toString();
+        Recordset recordset = tabular.getRecordset();
+        recordset.getBatch().setMaxRecordCount(1024);
+        recordset.getBatch().begin();
+        TabularEditHistory tabularEditHistory = new TabularEditHistory();
+        for (int i = 0; i < selectRows.length; i++) {
+            int smId = tabular.getSmId(selectRows[i]);
+            EditHistoryBean editHistoryBean = new EditHistoryBean();
+            editHistoryBean.setSmId(smId);
+            editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
+            editHistoryBean.setFieldName(updateField);
+            if (null != value) {
+                editHistoryBean.setAfterValue(value);
+                recordset.setFieldValue(updateField, value);
+                tabularEditHistory.addEditHistoryBean(editHistoryBean);
+            }
+        }
+        recordset.getBatch().update();
+        if (tabularEditHistory.getCount() > 0) {
+            tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
+        }
+        // 重新查询避免操作后记录集清除的异常
+        refreshTabular();
+    }
+
+    /// <summary>
+    /// 判断当前表达式是否以‘'’开始和结束
+    /// </summary>
+    /// <param name="express">表达式</param>
+    /// <returns>是/否</returns>
+    private Boolean isSurrondByquotationmarks(String express) {
+        Boolean result = false;
+        try {
+            if (express.startsWith("\\'") && express.endsWith("\\'")) {
+                result = true;
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        return result;
+    }
+
+    private Object formatValue(FieldType fieldType, Object value) {
+        try {
+            if (fieldType == FieldType.BYTE) {
+                try {
+                    // 字节型
+                    if (StringUtilities.isNullOrEmptyString(value)) {
+                        value = (byte) 0;
+                    } else if (Convert.toInteger(value) < 128 && Convert.toInteger(value) >= 0) {
+                        value = (byte) Convert.toInteger(value);
+                    } else if (Convert.toInteger(value) >= 128 || Convert.toInteger(value) < 0) {
+                        value = (byte) 0;
+                    }
+                } catch (Exception e) {
+                    value = null;
+                }
+            } else if (fieldType == FieldType.SINGLE || fieldType == FieldType.DOUBLE) {
+                value = Convert.toDouble(value);
+            } else if (UpdateColumnUtilties.isIntegerType(fieldType)) {
+                value = Convert.toInteger(value);
+            } else if (fieldType == FieldType.BOOLEAN) {
+                value = Convert.toBoolean(value);
+            } else if (fieldType == FieldType.CHAR || fieldType == FieldType.WTEXT || fieldType == FieldType.TEXT) {
+                if (StringUtilities.isNullOrEmptyString(value)) {
+                    value = "";
+                } else {
+                    value = value.toString();
+                }
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        return value;
+    }
+
+    private void updateModeCustom(String expression) {
+        try {
+            String tarExpress = comboBoxUpdateField.getSelectedItem().toString();
+            DatasetVector datasetVector = tabular.getRecordset().getDataset();
+            if (StringUtilities.isNullOrEmpty(expression)) {
+                expression = "''";
+            }
+            String attributeFilter = "";
+            String fieldName = comboBoxUpdateField.getSelectedItem().toString();
+
+            attributeFilter = getAttributeFilter();
+            //获取原始值
+            List<Object> srcValues = getFieldValues(fieldName, attributeFilter);
+            Boolean isSuccess = datasetVector.updateField(tarExpress, expression, attributeFilter);
+            // 重新查询避免操作后记录集清除的异常
+            if (isSuccess) {
+                refreshTabular();
+
+                //获取更新后的值
+                //属性表撤销更新
+                List<Object> tarValues = getFieldValues(fieldName, attributeFilter);
+                if (srcValues.size() == tarValues.size()) {
+                    int size = srcValues.size();
+                    int[] selectRows = tabular.getSelectedRows();
+                    TabularEditHistory tabularEditHistory = new TabularEditHistory();
+                    for (int i = 0; i < size; i++) {
+                        int smId = tabular.getSmId(selectRows[i]);
+                        EditHistoryBean editHistoryBean = new EditHistoryBean();
+                        editHistoryBean.setSmId(smId);
+                        editHistoryBean.setBeforeValue(srcValues.get(i));
+                        editHistoryBean.setFieldName(fieldName);
+                        editHistoryBean.setAfterValue(tarValues.get(i));
+                        tabularEditHistory.addEditHistoryBean(editHistoryBean);
+                    }
+                    if (tabularEditHistory.getCount() > 0) {
+                        tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
+                    }
+                }
+            } else {
+                Application.getActiveApplication().getOutput().output(TabularViewProperties.getString("String_UpdateColumnFailed"));
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+    }
+
+    private List<Object> getFieldValues(String fieldName, String attributeFilter) {
+        List<Object> result = new ArrayList();
+        try {
+            Recordset recordset = getRecordset(tabular.getRecordset().getDataset(), attributeFilter);
+            recordset.moveFirst();
+            while (!recordset.isEOF()) {
+                result.add(recordset.getFieldValue(fieldName));
+                recordset.moveNext();
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        return result;
+    }
+
+    private Recordset getRecordset(DatasetVector datasetVector, String attributeFilter) {
+        Recordset recordset = null;
+        try {
+            if (radioButtonUpdateSelect.isSelected()) {
+                QueryParameter param = new QueryParameter();
+                param.setHasGeometry(false);
+                param.setCursorType(CursorType.STATIC);
+                param.setAttributeFilter(attributeFilter);
+                recordset = datasetVector.query(param);
+            } else {
+                recordset = datasetVector.getRecordset(false, CursorType.STATIC);
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+        return recordset;
+    }
+
+    private String getAttributeFilter() {
+        String result = "SmID in (";
+
+        if (radioButtonUpdateColumn.isSelected()) {
+            int tableCount = tabular.getRowCount();
+            for (int i = 0; i < tableCount; i++) {
+                result += tabular.getSmId(i) + ",";
+            }
+        } else {
+            //获取到当前展示的Smid 进行更新
+            int[] selectRows = tabular.getSelectedRows();
+            int length = selectRows.length;
+            for (int i = 0; i < length; i++) {
+                result += tabular.getSmId(selectRows[i]) + ",";
+            }
+        }
+        result = result.substring(0, result.length() - 1) + ")";
+        return result;
     }
 
     private void updateModeMathDate(int[] selectRows) {
@@ -1235,27 +1373,28 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         recordset.getBatch().setMaxRecordCount(1024);
         recordset.getBatch().begin();
         Object newValue = null;
-	    TabularEditHistory tabularEditHistory = new TabularEditHistory();
-	    for (int i = 0; i < selectRows.length; i++) {
-	        int smId = tabular.getSmId(selectRows[i]);
-	        EditHistoryBean editHistoryBean = new EditHistoryBean();
-	        editHistoryBean.setSmId(smId);
-	        editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
-	        editHistoryBean.setFieldName(updateField);
-		    newValue = UpdateColumnUtilties.getUpdataModeMathValueDataTime(recordset.getFieldValue(operationField), recordset.getFieldValue(updateField),
+        TabularEditHistory tabularEditHistory = new TabularEditHistory();
+        for (int i = 0; i < selectRows.length; i++) {
+            int smId = tabular.getSmId(selectRows[i]);
+            recordset.moveTo(selectRows[i]);
+            EditHistoryBean editHistoryBean = new EditHistoryBean();
+            editHistoryBean.setSmId(smId);
+            editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
+            editHistoryBean.setFieldName(updateField);
+            newValue = UpdateColumnUtilties.getUpdataModeMathValueDataTime(recordset.getFieldValue(operationField), recordset.getFieldValue(updateField),
                     method, textFieldX.getText());
             if (null != newValue) {
-	            editHistoryBean.setAfterValue(newValue);
-	            recordset.setFieldValue(updateField, newValue);
-	            tabularEditHistory.addEditHistoryBean(editHistoryBean);
+                editHistoryBean.setAfterValue(newValue);
+                recordset.setFieldValue(updateField, newValue);
+                tabularEditHistory.addEditHistoryBean(editHistoryBean);
             }
         }
         recordset.getBatch().update();
-	    if (tabularEditHistory.getCount() > 0) {
-		    tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
-	    }
+        if (tabularEditHistory.getCount() > 0) {
+            tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
+        }
         // 重新查询避免操作后记录集清除的异常
-        refreshTabular(selectRows);
+        refreshTabular();
     }
 
     private void updateModeMathText(FieldType fieldType, int[] selectRows) {
@@ -1267,15 +1406,16 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         recordset.getBatch().setMaxRecordCount(1024);
         recordset.getBatch().begin();
         Object newValue = null;
-	    TabularEditHistory tabularEditHistory = new TabularEditHistory();
-	    for (int i = 0; i < selectRows.length; i++) {
-		    int smId = tabular.getSmId(selectRows[i]);
-		    EditHistoryBean editHistoryBean = new EditHistoryBean();
-		    editHistoryBean.setSmId(smId);
-		    editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
-		    editHistoryBean.setFieldName(updateField);
-		    if (UpdateColumnUtilties.isObjectConnect(method)) {
-			    newValue = UpdateColumnUtilties.getObjectInfo(method, recordset.getGeometry(), fieldType);
+        TabularEditHistory tabularEditHistory = new TabularEditHistory();
+        for (int i = 0; i < selectRows.length; i++) {
+            int smId = tabular.getSmId(selectRows[i]);
+            recordset.moveTo(selectRows[i]);
+            EditHistoryBean editHistoryBean = new EditHistoryBean();
+            editHistoryBean.setSmId(smId);
+            editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
+            editHistoryBean.setFieldName(updateField);
+            if (UpdateColumnUtilties.isObjectConnect(method)) {
+                newValue = UpdateColumnUtilties.getObjectInfo(method, recordset.getGeometry(), fieldType);
             } else if (UpdateColumnUtilties.isDaysInfo(method)) {
                 newValue = UpdateColumnUtilties.getDateInfo(method, (Date) recordset.getFieldValue(comboBoxOperationField.getSelectedItem().toString()));
                 newValue = newValue.toString();
@@ -1287,18 +1427,18 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 beyoundMaxLength = true;
                 newValue = newValue.toString().substring(0, recordset.getFieldInfos().get(updateField).getMaxLength());
             }
-		    editHistoryBean.setAfterValue(newValue);
-		    recordset.setFieldValue(updateField, newValue);
-		    tabularEditHistory.addEditHistoryBean(editHistoryBean);
-	    }
+            editHistoryBean.setAfterValue(newValue);
+            recordset.setFieldValue(updateField, newValue);
+            tabularEditHistory.addEditHistoryBean(editHistoryBean);
+        }
         recordset.getBatch().update();
         if (beyoundMaxLength) {
             Application.getActiveApplication().getOutput()
                     .output(MessageFormat.format(TabularViewProperties.getString("String_FormTabularUpdataColumn_FieldInfoDesValueIsOverlong"), updateField));
         }
-	    tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
-	    // 重新查询避免操作后记录集清除的异常
-        refreshTabular(selectRows);
+        tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
+        // 重新查询避免操作后记录集清除的异常
+        refreshTabular();
     }
 
     private void updateFieldModeMathNumber(FieldType fieldType, int[] selectRows) {
@@ -1309,14 +1449,15 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         recordset.getBatch().setMaxRecordCount(1024);
         recordset.getBatch().begin();
         Object newValue = null;
-	    TabularEditHistory tabularEditHistory = new TabularEditHistory();
-	    for (int i = 0; i < selectRows.length; i++) {
-		    int smId = tabular.getSmId(selectRows[i]);
-		    EditHistoryBean editHistoryBean = new EditHistoryBean();
-		    editHistoryBean.setSmId(smId);
-		    editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
-		    editHistoryBean.setFieldName(updateField);
-		    if (UpdateColumnUtilties.isMathInfo(method)) {
+        TabularEditHistory tabularEditHistory = new TabularEditHistory();
+        for (int i = 0; i < selectRows.length; i++) {
+            int smId = tabular.getSmId(selectRows[i]);
+            recordset.moveTo(selectRows[i]);
+            EditHistoryBean editHistoryBean = new EditHistoryBean();
+            editHistoryBean.setSmId(smId);
+            editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
+            editHistoryBean.setFieldName(updateField);
+            if (UpdateColumnUtilties.isMathInfo(method)) {
                 String textFieldXInfo = "";
                 if (null != textFieldX.getText()) {
                     textFieldXInfo = textFieldX.getText();
@@ -1331,467 +1472,19 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             } else if (UpdateColumnUtilties.isDaysInfo(method)) {
                 newValue = UpdateColumnUtilties.getDateInfo(method, (Date) recordset.getFieldValue(comboBoxOperationField.getSelectedItem().toString()));
             }
-		    editHistoryBean.setAfterValue(newValue);
-		    recordset.setFieldValue(updateField, newValue);
-		    tabularEditHistory.addEditHistoryBean(editHistoryBean);
-	    }
+            editHistoryBean.setAfterValue(newValue);
+            recordset.setFieldValue(updateField, newValue);
+            tabularEditHistory.addEditHistoryBean(editHistoryBean);
+        }
         recordset.getBatch().update();
-	    tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
-	    // 重新查询避免操作后记录集清除的异常
-        refreshTabular(selectRows);
-    }
-
-    private void updateTwoField() {
-        boolean isUpdateAll = radioButtonUpdateColumn.isSelected();
-        FieldType fieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
-        if (isUpdateAll) {
-            // 更新选中列
-            int[] selectRows = new int[tabular.getjTableTabular().getRowCount()];
-            for (int i = 0; i < selectRows.length; i++) {
-                selectRows[i] = i;
-            }
-            resetFieldForTwoField(fieldType, selectRows);
-        } else {
-            resetFieldForTwoField(fieldType, tabular.getSelectedRows());
-        }
-    }
-
-    private void resetFieldForTwoField(FieldType fieldType, int[] selectRows) {
-        if (!updateExpression.equals(textAreaOperationEQ.getText())) {
-            if (null != UpdateColumnUtilties.getBasicMathMethodStr(textAreaOperationEQ.getText()) && fieldType.equals(FieldType.BOOLEAN)) {
-                updateForExpression(comboBoxUpdateField.getSelectedItem().toString(), selectRows, textAreaOperationEQ.getText(), new Object());
-            } else {
-                updateModeQuery();
-            }
-        } else if (fieldType.equals(FieldType.TEXT) || fieldType.equals(FieldType.WTEXT) || fieldType.equals(FieldType.CHAR)) {
-            // 文本型
-            resetFieldForTwoField(selectRows, true, fieldType);
-        } else {
-            resetFieldForTwoField(selectRows, false, fieldType);
-        }
-    }
-
-    private void resetFieldForTwoField(int[] selectRows, boolean isText, FieldType fieldType) {
-        String fristField = comboBoxOperationField.getSelectedItem().toString();
-        String updateField = comboBoxUpdateField.getSelectedItem().toString();
-        String secondField = comboBoxSecondField.getSelectedItem().toString();
-        String method = comboBoxMethod.getSelectedItem().toString();
-        Recordset recordset = tabular.getRecordset();
-        boolean beyoundMaxLength = false;
-        recordset.getBatch().setMaxRecordCount(1024);
-        recordset.getBatch().begin();
-	    TabularEditHistory tabularEditHistory = new TabularEditHistory();
-	    for (int i = 0; i < selectRows.length; i++) {
-		    int smId = tabular.getSmId(selectRows[i]);
-		    EditHistoryBean editHistoryBean = new EditHistoryBean();
-		    editHistoryBean.setSmId(smId);
-		    editHistoryBean.setFieldName(updateField);
-		    editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
-		    if (isText) {
-			    String newValue;
-	            if (null == recordset.getFieldValue(fristField) && null == recordset.getFieldValue(secondField)) {
-                    newValue = "";
-                } else if (null == recordset.getFieldValue(fristField) && null != recordset.getFieldValue(secondField)) {
-                    if (recordset.getFieldValue(secondField) instanceof Date) {
-                        newValue = dateFormat.format(recordset.getFieldValue(fristField));
-                    } else {
-                        newValue = recordset.getFieldValue(secondField).toString();
-                    }
-                } else if (null != recordset.getFieldValue(fristField) && null == recordset.getFieldValue(secondField)) {
-                    if (recordset.getFieldValue(fristField) instanceof Date) {
-                        newValue = dateFormat.format(recordset.getFieldValue(fristField));
-                    } else {
-                        newValue = recordset.getFieldValue(fristField).toString();
-                    }
-                } else {
-                    if (checkBoxInversion.isSelected()) {
-                        if (recordset.getFieldValue(secondField) instanceof Date && recordset.getFieldValue(fristField) instanceof Date) {
-                            newValue = dateFormat.format(recordset.getFieldValue(secondField)).concat(dateFormat.format(recordset.getFieldValue(fristField)));
-                        } else if (recordset.getFieldValue(secondField) instanceof Date && !(recordset.getFieldValue(fristField) instanceof Date)) {
-                            newValue = dateFormat.format(recordset.getFieldValue(secondField)).concat(recordset.getFieldValue(fristField).toString());
-                        } else if (!(recordset.getFieldValue(secondField) instanceof Date) && recordset.getFieldValue(fristField) instanceof Date) {
-                            newValue = recordset.getFieldValue(secondField).toString().concat(dateFormat.format(recordset.getFieldValue(fristField)));
-                        } else {
-                            newValue = recordset.getFieldValue(secondField).toString().concat(recordset.getFieldValue(fristField).toString());
-                        }
-                    } else {
-                        if (recordset.getFieldValue(secondField) instanceof Date && recordset.getFieldValue(fristField) instanceof Date) {
-                            newValue = dateFormat.format(recordset.getFieldValue(fristField)).concat(dateFormat.format(recordset.getFieldValue(secondField)));
-                        } else if (recordset.getFieldValue(secondField) instanceof Date && !(recordset.getFieldValue(fristField) instanceof Date)) {
-                            newValue = recordset.getFieldValue(fristField).toString().concat(dateFormat.format(recordset.getFieldValue(secondField)));
-                        } else if (!(recordset.getFieldValue(secondField) instanceof Date) && recordset.getFieldValue(fristField) instanceof Date) {
-                            newValue = dateFormat.format(recordset.getFieldValue(fristField)).concat(recordset.getFieldValue(secondField).toString());
-                        } else {
-                            newValue = recordset.getFieldValue(fristField).toString().concat(recordset.getFieldValue(secondField).toString());
-                        }
-                    }
-                    if (newValue.length() > recordset.getFieldInfos().get(updateField).getMaxLength()) {
-                        beyoundMaxLength = true;
-                        newValue = newValue.substring(0, recordset.getFieldInfos().get(updateField).getMaxLength());
-                    }
-                }
-			    editHistoryBean.setAfterValue(newValue);
-			    recordset.setFieldValue(updateField, newValue);
-            } else {
-                Object source = null;
-                Object source1 = null;
-                if (checkBoxInversion.isSelected()) {
-                    source = recordset.getFieldValue(secondField);
-                    source1 = recordset.getFieldValue(fristField);
-                } else {
-                    source = recordset.getFieldValue(fristField);
-                    source1 = recordset.getFieldValue(secondField);
-                }
-			    Object newValue = UpdateColumnUtilties.getCommonMethodInfo(method, source, source1, fieldType);
-			    editHistoryBean.setAfterValue(newValue);
-			    recordset.setFieldValue(updateField, newValue);
-		    }
-		    tabularEditHistory.addEditHistoryBean(editHistoryBean);
-	    }
-        recordset.getBatch().update();
-	    tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
-	    if (beyoundMaxLength) {
-            Application.getActiveApplication().getOutput()
-                    .output(MessageFormat.format(TabularViewProperties.getString("String_FormTabularUpdataColumn_FieldInfoDesValueIsOverlong"), updateField));
-        }
+        tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
         // 重新查询避免操作后记录集清除的异常
-        refreshTabular(selectRows);
+        refreshTabular();
     }
 
-    private void refreshTabular(int[] selectRows) {
-	    tabular.getjTableTabular().repaint(); // 重新查询会导致sql查询后的数据集更新列后查询条件丢失
-//        int selectColumn = tabular.getjTableTabular().getSelectedColumn();
-//        Recordset tempRecordset = tabular.getRecordset().getDataset().getRecordset(false, CursorType.DYNAMIC);
-//        tabular.setRecordset(tempRecordset);
-//        // 恢复原来的选中项
-//        for (int j = 0; j < selectRows.length; j++) {
-//            tabular.getjTableTabular().addRowSelectionInterval(selectRows[j], selectRows[j]);
-//        }
-//        if (selectColumn != -1) {
-//            tabular.getjTableTabular().setColumnSelectionInterval(selectColumn, selectColumn);
-//        }
-    }
+    private void refreshTabular() {
+        tabular.getjTableTabular().repaint(); // 重新查询会导致sql查询后的数据集更新列后查询条件丢失
 
-    private void updateOneField() {
-        boolean isUpdateAll = radioButtonUpdateColumn.isSelected();
-        FieldType fieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
-        if (isUpdateAll) {
-            // 更新选中列
-            int[] selectRows = new int[tabular.getjTableTabular().getRowCount()];
-            for (int i = 0; i < selectRows.length; i++) {
-                selectRows[i] = i;
-            }
-            resetFieldForOneField(fieldType, selectRows);
-        } else {
-            resetFieldForOneField(fieldType, tabular.getSelectedRows());
-        }
-    }
-
-    private void resetFieldForOneField(FieldType fieldType, int[] selectRows) {
-        if (!updateExpression.equals(textAreaOperationEQ.getText())) {
-            // 如果输入的表达式与预期的表达式不相同则通过sql表达式获取结果
-            if (null != UpdateColumnUtilties.getBasicMathMethodStr(textAreaOperationEQ.getText()) && fieldType.equals(FieldType.BOOLEAN)) {
-                updateForExpression(comboBoxUpdateField.getSelectedItem().toString(), selectRows, textAreaOperationEQ.getText(), new Object());
-            } else {
-                updateModeQuery();
-            }
-        } else if (fieldType.equals(FieldType.TEXT) || fieldType.equals(FieldType.WTEXT) || fieldType.equals(FieldType.CHAR)) {
-            // 文本型
-            resetFieldForOneField(selectRows, true, fieldType);
-        } else {
-            resetFieldForOneField(selectRows, false, fieldType);
-        }
-    }
-
-    private void resetFieldForOneField(int[] selectRows, boolean isText, FieldType fieldType) {
-        String fristField = comboBoxOperationField.getSelectedItem().toString();
-        FieldType operationFieldType = tabular.getRecordset().getFieldInfos().get(fristField).getType();
-        String updateField = comboBoxUpdateField.getSelectedItem().toString();
-        String method = comboBoxMethod.getSelectedItem().toString();
-        String value = textFieldSecondField.getText();
-        Recordset recordset = tabular.getRecordset();
-        boolean beyoundMaxLength = false;
-        recordset.getBatch().setMaxRecordCount(1024);
-        recordset.getBatch().begin();
-	    TabularEditHistory tabularEditHistory = new TabularEditHistory();
-	    for (int i = 0; i < selectRows.length; i++) {
-		    int smId = tabular.getSmId(selectRows[i]);
-		    EditHistoryBean editHistoryBean = new EditHistoryBean();
-		    editHistoryBean.setSmId(smId);
-		    editHistoryBean.setFieldName(updateField);
-		    editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
-		    if (isText) {
-			    String newValue = "";
-                if (checkBoxInversion.isSelected()) {
-                    if (null == recordset.getFieldValue(fristField)) {
-                        newValue = value + "";
-                    } else {
-                        if (recordset.getFieldValue(fristField) instanceof Date) {
-                            newValue = value.concat(dateFormat.format(recordset.getFieldValue(fristField)));
-                        } else {
-                            newValue = value.concat(recordset.getFieldValue(fristField).toString());
-                        }
-                    }
-                } else {
-                    if (null == recordset.getFieldValue(fristField)) {
-                        newValue = "" + value;
-                    } else {
-                        if (recordset.getFieldValue(fristField) instanceof Date) {
-                            newValue = dateFormat.format(recordset.getFieldValue(fristField)).concat(value);
-                        } else {
-                            newValue = recordset.getFieldValue(fristField).toString().concat(value);
-                        }
-                    }
-                }
-                if (newValue.length() > recordset.getFieldInfos().get(updateField).getMaxLength()) {
-                    beyoundMaxLength = true;
-                    newValue = newValue.substring(0, recordset.getFieldInfos().get(updateField).getMaxLength());
-                }
-                if (operationFieldType.equals(FieldType.BOOLEAN) && fieldType.equals(FieldType.CHAR)) {
-                    newValue = newValue.toUpperCase();
-                } else if (operationFieldType.equals(FieldType.BOOLEAN) && !fieldType.equals(FieldType.CHAR)) {
-                    newValue = newValue.substring(0, 1).toUpperCase() + newValue.substring(1, newValue.length());
-                }
-			    editHistoryBean.setAfterValue(newValue);
-			    recordset.setFieldValue(updateField, newValue);
-		    } else {
-                Object source = null;
-                Object source1 = null;
-                if (checkBoxInversion.isSelected()) {
-                    source = value;
-                    source1 = recordset.getFieldValue(fristField);
-                } else {
-                    source = recordset.getFieldValue(fristField);
-                    source1 = value;
-                }
-			    Object newValue = UpdateColumnUtilties.getCommonMethodInfo(method, source, source1, fieldType);
-			    editHistoryBean.setAfterValue(newValue);
-			    recordset.setFieldValue(updateField, newValue);
-		    }
-		    tabularEditHistory.addEditHistoryBean(editHistoryBean);
-	    }
-        recordset.getBatch().update();
-	    tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
-	    if (beyoundMaxLength) {
-            Application.getActiveApplication().getOutput()
-                    .output(MessageFormat.format(TabularViewProperties.getString("String_FormTabularUpdataColumn_FieldInfoDesValueIsOverlong"), updateField));
-        }
-        refreshTabular(selectRows);
-    }
-
-    private void updateUnitySetValue() {
-        boolean isUpdateAll = radioButtonUpdateColumn.isSelected();
-        String updateField = comboBoxUpdateField.getSelectedItem().toString();
-        String expression = textAreaOperationEQ.getText();
-        FieldType fieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
-        if (isUpdateAll) {
-            // 更新选中列
-            int[] selectRows = new int[tabular.getjTableTabular().getRowCount()];
-            for (int i = 0; i < selectRows.length; i++) {
-                selectRows[i] = i;
-            }
-            upDateForUnitySet(updateField, expression, fieldType, selectRows, tabular.getjTableTabular().getSelectedColumn());
-        } else {
-            int[] selectRows = tabular.getSelectedRows();
-            upDateForUnitySet(updateField, expression, fieldType, selectRows, tabular.getjTableTabular().getSelectedColumn());
-        }
-    }
-
-    private void upDateForUnitySet(String updateField, String expression, FieldType fieldType, int[] selectRows, int selectColumn) {
-        Object newValue = null;
-        if (UpdateColumnUtilties.isIntegerType(fieldType)) {
-            // 整型
-            if (StringUtilities.isNullOrEmptyString(expression)) {
-                // 表达式为空
-                newValue = 0;
-                updateUnitySetValue(selectRows, updateField, newValue);
-            } else if (!StringUtilities.isNullOrEmpty(expression) && StringUtilities.isNumber(expression)) {
-                // 表达式不为空，且为数值型
-                newValue = Convert.toInteger(expression);
-                updateUnitySetValue(selectRows, updateField, newValue);
-            } else if (!StringUtilities.isNullOrEmpty(expression) && !StringUtilities.isNumber(expression)) {
-                // 表达式不为空，且不为数值型
-                updateModeQuery();
-            }
-        } else if (fieldType.equals(FieldType.SINGLE) || fieldType.equals(FieldType.DOUBLE)) {
-            // 浮点型
-            if (StringUtilities.isNullOrEmptyString(expression)) {
-                newValue = 0.0;
-                updateUnitySetValue(selectRows, updateField, newValue);
-            } else if (!StringUtilities.isNullOrEmpty(expression) && StringUtilities.isNumber(expression)) {
-                // 表达式不为空，且为数值型
-                newValue = Convert.toDouble(expression);
-                updateUnitySetValue(selectRows, updateField, newValue);
-            } else if (!StringUtilities.isNullOrEmpty(expression) && !StringUtilities.isNumber(expression)) {
-                // 表达式不为空，且不为数值型
-                updateModeQuery();
-            }
-
-        } else if (fieldType.equals(FieldType.TEXT) || fieldType.equals(FieldType.WTEXT) || fieldType.equals(FieldType.CHAR)) {
-            // 字符型
-            if (StringUtilities.isNullOrEmptyString(expression)) {
-                newValue = null;
-                updateUnitySetValue(selectRows, updateField, newValue);
-            } else if (expression.startsWith("\"") && expression.endsWith("\"")) {
-                newValue = expression;
-                updateUnitySetValue(selectRows, updateField, newValue);
-            } else {
-                updateModeQuery();
-            }
-        } else if (fieldType.equals(FieldType.BOOLEAN)) {
-            // 布尔型
-            if (expression.equalsIgnoreCase("True") || expression.equalsIgnoreCase("False")) {
-                if (expression.equalsIgnoreCase("True")) {
-                    newValue = true;
-                } else {
-                    newValue = false;
-                }
-            } else if (null != UpdateColumnUtilties.getBasicMathMethodStr(expression)) {
-                updateForExpression(updateField, selectRows, expression, newValue);
-                return;
-            } else {
-                updateModeQuery();
-                return;
-            }
-            updateUnitySetValue(selectRows, updateField, newValue);
-        } else if (fieldType.equals(FieldType.LONGBINARY)) {
-            // 二进制型,利用Files类来读取字节
-            // 得到一个Path对象
-            Path path = Paths.get(fileChooser.getEditor().getText());
-            try {
-                newValue = Files.readAllBytes(path);
-                Files.deleteIfExists(path);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            updateUnitySetValue(selectRows, updateField, newValue);
-        } else if (fieldType.equals(FieldType.DATETIME)) {
-            if (StringUtilities.isNullOrEmptyString(expression)) {
-                newValue = new Date();
-            } else {
-                newValue = Convert.toDateTime(expression);
-            }
-            updateUnitySetValue(selectRows, updateField, newValue);
-        } else if (fieldType.equals(FieldType.BYTE)) {
-            // 字节型
-            if (StringUtilities.isNullOrEmptyString(expression)) {
-                newValue = (byte) 0;
-            } else if (Convert.toInteger(expression) < 128 && Convert.toInteger(expression) >= 0) {
-                newValue = (byte) Convert.toInteger(expression);
-            } else if (Convert.toInteger(expression) >= 128 || Convert.toInteger(expression) < 0) {
-                newValue = (byte) 0;
-            }
-            updateUnitySetValue(selectRows, updateField, newValue);
-        }
-    }
-
-    private void updateForExpression(String updateField, int[] selectRows, String expression, Object newValue) {
-        String basicMathMethod = UpdateColumnUtilties.getBasicMathMethodStr(expression);
-        if (expression.split(basicMathMethod).length == 2) {
-            String fieldLeft = expression.split(basicMathMethod)[0];
-            String fieldRight = expression.split(basicMathMethod)[1];
-	        TabularEditHistory tabularEditHistory = new TabularEditHistory();
-	        if (StringUtilities.isNumber(fieldLeft) && StringUtilities.isNumber(fieldRight)) {
-		        newValue = UpdateColumnUtilties.getCommonMethodInfo(basicMathMethod, fieldLeft, fieldRight, FieldType.BOOLEAN);
-                Recordset recordset = tabular.getRecordset();
-                recordset.getBatch().setMaxRecordCount(1024);
-                recordset.getBatch().begin();
-		        for (int i = 0; i < selectRows.length; i++) {
-			        EditHistoryBean editHistoryBean = new EditHistoryBean();
-			        int smId = tabular.getSmId(selectRows[i]);
-			        editHistoryBean.setSmId(smId);
-			        editHistoryBean.setFieldName(updateField);
-			        editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
-			        editHistoryBean.setAfterValue(newValue);
-			        recordset.setFieldValue(updateField, newValue);
-			        tabularEditHistory.addEditHistoryBean(editHistoryBean);
-		        }
-                recordset.getBatch().update();
-                // 重新查询避免操作后记录集清除的异常
-                refreshTabular(selectRows);
-            } else if (!StringUtilities.isNumber(fieldLeft) && StringUtilities.isNumber(fieldRight)) {
-                Recordset recordset = tabular.getRecordset();
-                recordset.getBatch().setMaxRecordCount(1024);
-                recordset.getBatch().begin();
-                for (int i = 0; i < selectRows.length; i++) {
-	                int smId = tabular.getSmId(selectRows[i]);
-	                if (null != recordset.getFieldValue(fieldLeft)) {
-		                newValue = UpdateColumnUtilties.getCommonMethodInfo(basicMathMethod, recordset.getFieldValue(fieldLeft), fieldRight, FieldType.BOOLEAN);
-	                }
-	                EditHistoryBean editHistoryBean = new EditHistoryBean();
-	                editHistoryBean.setSmId(smId);
-	                editHistoryBean.setFieldName(updateField);
-	                editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
-	                editHistoryBean.setAfterValue(newValue);
-	                recordset.setFieldValue(updateField, newValue);
-	                tabularEditHistory.addEditHistoryBean(editHistoryBean);
-                }
-                recordset.getBatch().update();
-                // 重新查询避免操作后记录集清除的异常
-                refreshTabular(selectRows);
-            } else if (!StringUtilities.isNumber(fieldLeft) && !StringUtilities.isNumber(fieldRight)) {
-                Recordset recordset = tabular.getRecordset();
-                recordset.getBatch().setMaxRecordCount(1024);
-                recordset.getBatch().begin();
-                for (int i = 0; i < selectRows.length; i++) {
-	                int smId = tabular.getSmId(selectRows[i]);
-	                if (null != recordset.getFieldValue(fieldLeft) && null != recordset.getFieldValue(fieldRight)) {
-                        newValue = UpdateColumnUtilties.getCommonMethodInfo(basicMathMethod, recordset.getFieldValue(fieldLeft), recordset.getFieldValue(fieldRight), FieldType.BOOLEAN);
-                    }
-	                EditHistoryBean editHistoryBean = new EditHistoryBean();
-	                editHistoryBean.setSmId(smId);
-	                editHistoryBean.setFieldName(updateField);
-	                editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
-	                editHistoryBean.setAfterValue(newValue);
-	                recordset.setFieldValue(updateField, newValue);
-	                tabularEditHistory.addEditHistoryBean(editHistoryBean);
-                }
-                recordset.getBatch().update();
-                // 重新查询避免操作后记录集清除的异常
-                refreshTabular(selectRows);
-            }
-	        tabular.getEditHistoryManager().addEditHistory(tabularEditHistory);
-        } else {
-            return;
-        }
-    }
-
-    private void updateUnitySetValue(int[] selectRows, String updateField, Object newValue) {
-        boolean beyoundMaxLength = false;
-        FieldType updateFieldType = fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType();
-        Recordset recordset = tabular.getRecordset();
-        recordset.getBatch().setMaxRecordCount(1024);
-        recordset.getBatch().begin();
-	    TabularEditHistory editHistory = new TabularEditHistory();
-	    for (int i = 0; i < selectRows.length; i++) {
-		    int smId = tabular.getSmId(selectRows[i]);
-		    EditHistoryBean editHistoryBean = new EditHistoryBean();
-		    editHistoryBean.setSmId(smId);
-		    editHistoryBean.setFieldName(updateField);
-		    editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
-		    if (updateFieldType.equals(FieldType.TEXT) || updateFieldType.equals(FieldType.WTEXT) || updateFieldType.equals(FieldType.CHAR)) {
-			    if (newValue.toString().contains("\"")) {
-                    newValue = newValue.toString().replace("\"", "");
-                }
-                if (newValue.toString().length() > recordset.getFieldInfos().get(updateField).getMaxLength()) {
-                    beyoundMaxLength = true;
-                    newValue = newValue.toString().substring(0, recordset.getFieldInfos().get(updateField).getMaxLength());
-                }
-		    }
-		    editHistoryBean.setAfterValue(newValue);
-		    editHistory.addEditHistoryBean(editHistoryBean);
-		    recordset.setFieldValue(updateField, newValue);
-	    }
-        recordset.getBatch().update();
-	    ITabularEditHistoryManager editHistoryManager = tabular.getEditHistoryManager();
-	    editHistoryManager.addEditHistory(editHistory);
-	    if (beyoundMaxLength) {
-		    Application.getActiveApplication().getOutput()
-                    .output(MessageFormat.format(TabularViewProperties.getString("String_FormTabularUpdataColumn_FieldInfoDesValueIsOverlong"), updateField));
-        }
-        // 重新查询避免操作后记录集清除的异常
-	    refreshTabular(selectRows);
     }
 
     private void fileChooserClicked() {
@@ -1809,23 +1502,12 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 
     private void comboBoxSecondFieldChanged(ItemEvent e) {
         if (e.getStateChange() == ItemEvent.SELECTED && null != textAreaOperationEQ) {
-            if (fieldInfoMap.get(comboBoxUpdateField.getSelectedIndex()).getType().equals(FieldType.BOOLEAN) && !comboBoxOperationField.isEnabled()) {
-                textAreaOperationEQ.setText(comboBoxSecondField.getSelectedItem().toString());
-            } else {
-                if (checkBoxInversion.isSelected()) {
-                    textAreaOperationEQ.setText(comboBoxSecondField.getSelectedItem().toString() + comboBoxMethod.getSelectedItem().toString()
-                            + comboBoxOperationField.getSelectedItem().toString());
-                } else {
-                    textAreaOperationEQ.setText(comboBoxOperationField.getSelectedItem().toString() + comboBoxMethod.getSelectedItem().toString()
-                            + comboBoxSecondField.getSelectedItem().toString());
-                }
-            }
-            updateExpression = textAreaOperationEQ.getText();
             if (null != tabular.getRecordset().getFieldInfos().get(comboBoxSecondField.getSelectedItem().toString())) {
                 labelSecondFieldType.setText(FieldTypeUtilities.getFieldTypeName(tabular.getRecordset().getFieldInfos()
                         .get(comboBoxSecondField.getSelectedItem().toString()).getType()));
             }
             buttonApply.setEnabled(true);
+            updataExpressionValue();
         }
     }
 }

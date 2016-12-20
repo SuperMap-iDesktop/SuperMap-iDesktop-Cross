@@ -128,8 +128,8 @@ public class JDialogFieldOperationSetting extends SmDialog implements ItemListen
 		Object result = null;
 
 		// 字符串型直接做连接
-		if (FieldTypeUtilities.isString(fieldType)) {
-			recordset.moveFirst();
+        if (FieldTypeUtilities.isTextField(fieldType)) {
+            recordset.moveFirst();
 			while (!recordset.isEOF()) {
 				Object value = recordset.getObject(fieldName);
 
