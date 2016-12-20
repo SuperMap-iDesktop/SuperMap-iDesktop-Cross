@@ -307,11 +307,11 @@ public class MdiGroup extends JComponent {
 							// 直到最后都还没找到合适的，那就是没有 page 了，这时候 activePage 只能是 null，别无选择
 							this.eventsHelper.firePageActivated(new PageActivatedEvent(this, null, this.activePage));
 							this.activePage = null;
-
-							// 重绘
-							revalidate();
-							repaint();
 						}
+					} else {
+						// 重绘
+						revalidate();
+						repaint();
 					}
 
 					isClosed = true;
