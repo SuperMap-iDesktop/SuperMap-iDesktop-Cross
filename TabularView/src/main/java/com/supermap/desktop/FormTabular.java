@@ -48,7 +48,6 @@ import java.awt.event.MouseEvent;
 import java.sql.Time;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
 
 public class FormTabular extends FormBaseChild implements IFormTabular {
@@ -885,24 +884,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	@Override
-	public HashMap<Integer, Object> getRowIndexMap() {
-		HashMap<Integer, Object> result = new HashMap<Integer, Object>();
-		if (this.tabularTableModel != null) {
-			result = this.tabularTableModel.getRowIndexMap();
-		}
-		return result;
-	}
-
-	@Override
-	public HashMap<Object, Integer> getIdMap() {
-		HashMap<Object, Integer> result = new HashMap<Object, Integer>();
-		if (this.tabularTableModel != null) {
-			result = this.tabularTableModel.getIdMap();
-		}
-		return result;
-	}
-
-	@Override
 	public int getSmId(int row) {
 		tabularTableModel.moveToRow(row);
 		return recordset.getID();
@@ -939,8 +920,15 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		this.jTableTabular.setColumnSelectionInterval(column, column);
 		for (int smId : smIds) {
 			int row = tabularTableModel.getRowBySmId(smId);
-			jTableTabular.addRowSelectionInterval(row, row);
+			if (row != -1) {
+				jTableTabular.addRowSelectionInterval(row, row);
+			}
 		}
+	}
+
+	@Override
+	public int getRowBySmId(int smId) {
+		return tabularTableModel.getRowBySmId(smId);
 	}
 
 	@Override
