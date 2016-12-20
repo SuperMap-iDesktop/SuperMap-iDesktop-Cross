@@ -87,6 +87,8 @@ public class FlowLayoutStrategy extends SplitLayoutStrategy {
 
 			// 没有上级 split 了，就把自己从 MdiPane 中移除
 			((MdiPane) getContainer()).remove(split);
+			((MdiPane) getContainer()).revalidate();
+			((MdiPane) getContainer()).repaint();
 			if (nextSplit != null) {
 				((MdiPane) getContainer()).add(nextSplit, BorderLayout.CENTER);
 			}
@@ -102,7 +104,7 @@ public class FlowLayoutStrategy extends SplitLayoutStrategy {
 
 	private JSplitPane findNextSplit(MdiGroup group) {
 		int index = getContainer().indexOf(group);
-		MdiGroup nextGroup = index > 0 && index + 1 < getContainer().getGroupCount() ? getContainer().getGroup(index + 1) : null;
+		MdiGroup nextGroup = index >= 0 && index + 1 < getContainer().getGroupCount() ? getContainer().getGroup(index + 1) : null;
 		return nextGroup == null ? null : getSplits().get(nextGroup);
 	}
 

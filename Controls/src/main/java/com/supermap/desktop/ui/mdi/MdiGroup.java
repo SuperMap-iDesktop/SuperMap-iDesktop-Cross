@@ -311,7 +311,7 @@ public class MdiGroup extends JComponent {
 					}
 
 					// 重绘
-					validate();
+					revalidate();
 					repaint();
 					isClosed = true;
 				}
