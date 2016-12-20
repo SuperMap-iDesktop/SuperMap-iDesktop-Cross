@@ -111,13 +111,10 @@ public class Convert {
 
 
     public static int toInteger(Object expression) {
-        if (!StringUtilities.isNullOrEmptyString(expression) && StringUtilities.isNumber(expression.toString()) && expression.toString().length() < 10) {
+        if (!StringUtilities.isNullOrEmptyString(expression) && StringUtilities.isInteger(expression.toString()) && expression.toString().length() < 10) {
             return Integer.parseInt(expression.toString());
-        }
-        if (!StringUtilities.isNullOrEmptyString(expression) && expression.toString().contains(".")) {
-            String tempStr = expression.toString();
-            expression = tempStr.substring(0, tempStr.indexOf("."));
-            return Integer.parseInt(expression.toString());
+        } else if (!StringUtilities.isNullOrEmptyString(expression) && StringUtilities.isDecimal(expression.toString()) && expression.toString().length() < 10) {
+            return (int) Double.parseDouble(expression.toString());
         }
         return 0;
     }
