@@ -232,8 +232,9 @@ public class FormManager extends MdiPane implements IFormManager {
 					formsNeedSaveStatus.put(child, child.isNeedSave());
 					child.setNeedSave(false);
 				}
-				result = closeForms(forms);
+//				result = closeForms(forms);
 
+				result = super.closeAll();
 				for (IForm child : forms) {
 					child.setNeedSave(formsNeedSaveStatus.get(child));
 				}
