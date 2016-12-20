@@ -39,12 +39,12 @@ public class TableCellRendererDatasource extends DefaultTableCellRenderer {
 			if (table.getValueAt(row, COLUMN_TYPE).equals(DatasetTypeProperties.getString("String_DatasetType_Grid"))) {
 				String widthGrid = String.valueOf(table.getValueAt(row, COLUMN_NULL));
 				String heightGrid = String.valueOf((Integer) value / (Integer) (table.getValueAt(row, COLUMN_NULL)));
-				this.setText(widthGrid + "*" + heightGrid);
+				this.setText(heightGrid + "*" + widthGrid);
 			}
 			if (table.getValueAt(row, COLUMN_TYPE).equals(DatasetTypeProperties.getString("String_DatasetType_Image"))) {
 				String widthImage = String.valueOf(table.getValueAt(row, COLUMN_NULL));
 				String heightImage = String.valueOf((Integer) value / (Integer) (table.getValueAt(row, COLUMN_NULL)));
-				this.setText(widthImage + "*" + heightImage);
+				this.setText(heightImage + "*" +widthImage );
 			}
 			this.setHorizontalAlignment(LEFT);
 		}

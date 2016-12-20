@@ -1,9 +1,15 @@
 package com.supermap.desktop.ui.controls;
 
 import com.supermap.desktop.controls.utilities.ControlsResources;
+import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * 带文件选择按钮的textField
@@ -21,17 +27,51 @@ public class FileChooserControl extends JComponent {
 
     private String result;
 
+	private JButton buttonDelete;
+
     private JButton button;
+
+	public FileChooserControl() {
+		this(null);
+	}
 
     // 初始化带有默认文件路径的文件选择控件
     public FileChooserControl(String filePath) {
         initCompanent();
         setText(filePath);
+	    textEditor.getDocument().addDocumentListener(new DocumentListener() {
+		    @Override
+		    public void insertUpdate(DocumentEvent e) {
+			    textEditorValueChanged();
+		    }
+
+		    @Override
+		    public void removeUpdate(DocumentEvent e) {
+			    textEditorValueChanged();
+		    }
+
+		    @Override
+		    public void changedUpdate(DocumentEvent e) {
+			    textEditorValueChanged();
+		    }
+	    });
+	    buttonDelete.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+			    setText("");
+		    }
+	    });
+	    textEditorValueChanged();
     }
 
-    public FileChooserControl() {
-        this(null);
-    }
+	private void textEditorValueChanged() {
+		String text = textEditor.getText();
+//		if (buttonDelete.isVisible() != StringUtilities.isNullOrEmpty(text)) {
+		buttonDelete.setVisible(!StringUtilities.isNullOrEmpty(text));
+//		}
+
+	}
+
 
     public void setText(String filePath) {
         this.textEditor.setText(filePath);
@@ -64,9 +104,23 @@ public class FileChooserControl extends JComponent {
         this.button.setFocusPainted(false);
         this.button.setFocusable(false);
 
-        this.setLayout(new BorderLayout());
-        this.add(this.textEditor, BorderLayout.CENTER);
-        this.add(this.button, BorderLayout.EAST);
+	    buttonDelete = new JButton();
+	    buttonDelete.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
+	    buttonDelete.setMaximumSize(new Dimension(24, 23));
+	    buttonDelete.setPreferredSize(new Dimension(24, 23));
+	    buttonDelete.setForeground(Color.red);
+	    buttonDelete.setBorderPainted(false);
+	    buttonDelete.setContentAreaFilled(false);
+
+	    this.setLayout(new GridBagLayout());
+	    this.add(this.textEditor, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 0, 0));
+	    this.add(buttonDelete, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 0));
+	    this.add(button, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(0, 5, 0, 0));
+
+
+//        this.setLayout(new BorderLayout());
+//        this.add(this.textEditor, BorderLayout.CENTER);
+//        this.add(this.button, BorderLayout.EAST);
     }
 
     public void setIcon(ImageIcon image) {
