@@ -113,7 +113,7 @@ public class Convert {
     public static int toInteger(Object expression) {
         if (!StringUtilities.isNullOrEmptyString(expression) && StringUtilities.isInteger(expression.toString()) && expression.toString().length() < 10) {
             return Integer.parseInt(expression.toString());
-        } else if (!StringUtilities.isNullOrEmptyString(expression) && StringUtilities.isDecimal(expression.toString()) && expression.toString().length() < 10) {
+        } else if (!StringUtilities.isNullOrEmptyString(expression) && StringUtilities.isDecimal(expression.toString())) {
             return (int) Double.parseDouble(expression.toString());
         }
         return 0;

@@ -188,7 +188,7 @@ public class UpdateColumnUtilties {
             desValue = geometry.getBounds().getHeight();
         }
         if (isIntegerType(fieldType)) {
-            desValue = Convert.toInteger(desValue.toString());
+            desValue = Convert.toInteger(desValue);
         } else if (FieldTypeUtilities.isTextField(fieldType) || fieldType.equals(FieldType.CHAR)) {
             desValue = desValue.toString();
         } else if (fieldType.equals(FieldType.BYTE)) {
