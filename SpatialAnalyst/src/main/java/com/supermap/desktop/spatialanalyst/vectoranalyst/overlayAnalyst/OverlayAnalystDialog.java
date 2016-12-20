@@ -452,8 +452,8 @@ public class OverlayAnalystDialog extends SmDialog {
         this.componentList.add(this.buttonOK);
         this.componentList.add(this.buttonCancel);
         this.setFocusTraversalPolicy(policy);
-        setSize(new Dimension(560, 420));
-        setMinimumSize(new Dimension(560, 420));
+        setSize(new Dimension(580, 460));
+        setMinimumSize(new Dimension(580, 460));
         setLocationRelativeTo(null);
         setVisible(true);
     }

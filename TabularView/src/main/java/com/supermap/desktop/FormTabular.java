@@ -224,7 +224,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		jScrollPaneChildWindow.setRowHeaderView(rowHeader);
 
-		setLayout(new BorderLayout());
 		add(jScrollPaneChildWindow, BorderLayout.CENTER);
 		if (Application.getActiveApplication().getMainFrame() != null) {
 			IContextMenuManager manager = Application.getActiveApplication().getMainFrame().getContextMenuManager();

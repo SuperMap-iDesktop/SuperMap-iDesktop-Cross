@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>idesktop.cross</artifactId>
+        <groupId>com.supermap.idesktop.cross</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+    ***************************************************************
+    ********在此处填写你的模块名称，由 IDE 新建的 Maven 工程会自动填写。********
+    ***************************************************************
+    -->
+    <artifactId>Process</artifactId>
+    <packaging>jar</packaging>
+
+    <!--
+    Core、Control 为 SuperMap iDesktop Cross 的核心库，为必填依赖。
+    iDesktop 为 OSGI 框架核心库提供者，为必填依赖。这三个依赖必须保留，禁止修改。
+    -->
+    <dependencies>
+        <dependency>
+            <groupId>com.supermap.idesktop.cross</groupId>
+            <artifactId>iDesktop</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.supermap.idesktop.cross</groupId>
+            <artifactId>Core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.supermap.idesktop.cross</groupId>
+            <artifactId>Controls</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+
+                        <!--
+                        ***************************************************
+                        ********在此处填写 OSGI 插件工程必须的 Activator 类。********
+                        ***************************************************
+                        -->
+                        <Bundle-Activator>com.supermap.desktop.process.ProcessActivator</Bundle-Activator>
+
+                        <!--
+                        此处配置的是 OSGI bundle 间的运行时依赖，Core、Control 为 SuperMap iDesktop Cross 的核心库，为必填依赖。
+                        -->
+                        <Require-Bundle>${project.groupId}.Core,${project.groupId}.Controls</Require-Bundle>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

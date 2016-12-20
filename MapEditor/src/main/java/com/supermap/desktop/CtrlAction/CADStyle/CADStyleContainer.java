@@ -1131,6 +1131,10 @@ public class CADStyleContainer extends JPanel {
         this.scrollPane.setViewportView(panelParent);
         this.scrollPane.setBorder(null);
         this.scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        setPanelFillEnabled(false);
+        setPanelPointEnabled(false);
+        setPanelLineEnabled(false);
+        setFillGradientEnabled(false);
     }
 
     private void initPanelFillComponents() {
