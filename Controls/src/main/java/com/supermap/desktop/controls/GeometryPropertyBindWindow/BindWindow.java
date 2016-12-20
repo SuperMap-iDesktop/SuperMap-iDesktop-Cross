@@ -41,7 +41,7 @@ public class BindWindow implements IBindWindow {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-	            if (e.getButton() == MouseEvent.BUTTON3 && e.getSource() == formTabular.getjTableTabular().getTableHeader()) {
+	            if (e.getSource() == formTabular.getjTableTabular().getTableHeader()) {
 		            if (GlobalParameters.isHeadClickedSelectedColumn()) {
 			            queryMap(formTabular.getjTableTabular());
 		            }
