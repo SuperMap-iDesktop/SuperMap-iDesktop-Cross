@@ -3,14 +3,15 @@ package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DataCell;
-import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 
@@ -19,7 +20,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +43,9 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
     private JButton buttonSelectInverse;
     private JButton buttonOk;
     private JPanel panelButton;
-    private JLabel labelTitle;
-    private List formMapList = new ArrayList();
+	private JCheckBox checkBoxIsQueryWhileSelectedColumn;
+	private JLabel labelTitle;
+	private List formMapList = new ArrayList();
     private List formTabularList = new ArrayList();
     public static List<IForm> selectList = new ArrayList();
     private BindHandler handler = new BindHandler();
@@ -271,7 +279,8 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
         this.buttonSelectAll = ComponentFactory.createButtonSelectAll();
         this.buttonSelectInverse = ComponentFactory.createButtonSelectInverse();
         this.buttonOk = ComponentFactory.createButtonOK();
-        this.labelTitle = new JLabel();
+	    this.checkBoxIsQueryWhileSelectedColumn = new JCheckBox();
+	    this.labelTitle = new JLabel();
         this.panelButton = new JPanel();
         initListForms();
     }
@@ -311,6 +320,12 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
         this.buttonSelectInverse.addActionListener(this.selectInverseListener);
         this.buttonOk.addActionListener(this.okListener);
         this.listForms.addMouseListener(this.listFormsMouseListener);
+	    checkBoxIsQueryWhileSelectedColumn.addItemListener(new ItemListener() {
+		    @Override
+		    public void itemStateChanged(ItemEvent e) {
+			    GlobalParameters.setIsHeadClickedSelectedColumn(checkBoxIsQueryWhileSelectedColumn.isSelected());
+		    }
+	    });
     }
 
     public void removeEvents() {
@@ -325,10 +340,11 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
     private void initLayout() {
         this.removeAll();
         this.panelButton.setLayout(new GridBagLayout());
-        this.panelButton.add(this.buttonSelectAll, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 1));
-        this.panelButton.add(this.buttonSelectInverse, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 1));
-        this.panelButton.add(this.buttonOk, new GridBagConstraintsHelper(4, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 1));
-        this.setLayout(new GridBagLayout());
+	    this.panelButton.add(this.checkBoxIsQueryWhileSelectedColumn, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 10, 0).setFill(GridBagConstraints.NONE).setWeight(1, 0));
+	    this.panelButton.add(this.buttonSelectAll, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 10, 10).setFill(GridBagConstraints.NONE).setWeight(0, 1));
+	    this.panelButton.add(this.buttonSelectInverse, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 10, 10).setFill(GridBagConstraints.NONE).setWeight(0, 1));
+	    this.panelButton.add(this.buttonOk, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5, 5, 10, 10).setFill(GridBagConstraints.NONE).setWeight(0, 1));
+	    this.setLayout(new GridBagLayout());
         this.add(this.labelTitle, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(0, 0));
         this.add(this.scrollPane, new GridBagConstraintsHelper(0, 1, 1, 5).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
         this.add(this.panelButton, new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(1, 0));
@@ -337,6 +353,7 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
 
     private void initResources() {
         this.labelTitle.setText(CoreProperties.getString("String_Bind"));
+	    checkBoxIsQueryWhileSelectedColumn.setText(ControlsProperties.getString("String_IsBindQueryWhileClickHead"));
     }
 
     class CheckListRenderer implements ListCellRenderer<Object> {

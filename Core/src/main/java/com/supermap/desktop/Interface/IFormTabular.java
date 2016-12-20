@@ -5,7 +5,6 @@ import com.supermap.data.StatisticMode;
 import com.supermap.desktop.event.TabularValueChangedListener;
 
 import javax.swing.*;
-import java.util.HashMap;
 import java.util.List;
 
 public interface IFormTabular extends IForm {
@@ -108,16 +107,6 @@ public interface IFormTabular extends IForm {
 	 * @return
 	 */
 	JList getRowHeader();
-	/**
-	 * 获取属性表中和行数对应的ID
-	 * @return
-	 */
-	HashMap<Integer, Object> getRowIndexMap();
-	/**
-	 * 获取属性表中和ID对应的行数
-	 * @return
-	 */
-	HashMap<Object, Integer> getIdMap();
 
 	void addValueChangedListener(TabularValueChangedListener tabularValueChangedListener);
 
@@ -130,6 +119,8 @@ public interface IFormTabular extends IForm {
 	 * @return
 	 */
 	int getSmId(int row);
+
+	int getRowBySmId(int smId);
 
 	ITabularEditHistoryManager getEditHistoryManager();
 
