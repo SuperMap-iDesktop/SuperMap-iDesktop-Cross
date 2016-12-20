@@ -1,24 +1,25 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1481531007863
+Bnd-LastModified: 1482199067225
 Build-Jdk: 1.7.0_80
-Built-By: Administrator
+Built-By: highsad
 Bundle-Activator: com.supermap.desktop.core.CoreActivator
 Bundle-ClassPath: .,lib/fastjson-1.2.15.jar,lib/httpclient-4.5.2.jar,lib
  /commons-codec-1.9.jar,lib/httpcore-4.4.5.jar,lib/httpmime-4.5.2.jar,li
  b/log4j-1.2.17.jar,lib/swingx-1.6.1.jar,lib/filters-2.0.235.jar,lib/swi
  ng-worker-1.1.jar,lib/commons-compress-1.12.jar,lib/commons-logging-1.2
- .jar,lib/com.supermap.analyst.addressmatching-8.1.1.jar,lib/com.superma
- p.analyst.navigation-8.1.1.jar,lib/com.supermap.analyst.networkanalyst-
- 8.1.1.jar,lib/com.supermap.analyst.spatialanalyst-8.1.1.jar,lib/com.sup
- ermap.analyst.spatialstatistics-8.1.1.jar,lib/com.supermap.analyst.terr
- ainanalyst-8.1.1.jar,lib/com.supermap.analyst.trafficanalyst-8.1.1.jar,
- lib/com.supermap.data.conversion-8.1.1.jar,lib/com.supermap.data-8.1.1.
- jar,lib/com.supermap.data.processing-8.1.1.jar,lib/com.supermap.data.to
- pology-8.1.1.jar,lib/com.supermap.layout-8.1.1.jar,lib/com.supermap.lic
- ense-8.1.1.jar,lib/com.supermap.mapping-8.1.1.jar,lib/com.supermap.real
- space-8.1.1.jar,lib/com.supermap.realspace.networkanalyst-8.1.1.jar,lib
- /com.supermap.realspace.spatialanalyst-8.1.1.jar,lib/com.supermap.tiles
- torage-8.1.1.jar,lib/com.supermap.ui.controls-8.1.1.jar
+ .jar,lib/looks-2.2.2.jar,lib/skinlf-6.7.jar,lib/com.supermap.analyst.ad
+ dressmatching-8.1.1.jar,lib/com.supermap.analyst.navigation-8.1.1.jar,l
+ ib/com.supermap.analyst.networkanalyst-8.1.1.jar,lib/com.supermap.analy
+ st.spatialanalyst-8.1.1.jar,lib/com.supermap.analyst.spatialstatistics-
+ 8.1.1.jar,lib/com.supermap.analyst.terrainanalyst-8.1.1.jar,lib/com.sup
+ ermap.analyst.trafficanalyst-8.1.1.jar,lib/com.supermap.data.conversion
+ -8.1.1.jar,lib/com.supermap.data-8.1.1.jar,lib/com.supermap.data.proces
+ sing-8.1.1.jar,lib/com.supermap.data.topology-8.1.1.jar,lib/com.superma
+ p.layout-8.1.1.jar,lib/com.supermap.license-8.1.1.jar,lib/com.supermap.
+ mapping-8.1.1.jar,lib/com.supermap.realspace-8.1.1.jar,lib/com.supermap
+ .realspace.networkanalyst-8.1.1.jar,lib/com.supermap.realspace.spatiala
+ nalyst-8.1.1.jar,lib/com.supermap.tilestorage-8.1.1.jar,lib/com.superma
+ p.ui.controls-8.1.1.jar
 Bundle-ManifestVersion: 2
 Bundle-Name: Core
 Bundle-SymbolicName: com.supermap.idesktop.cross.Core
@@ -38,35 +39,36 @@ Embedded-Artifacts: lib/fastjson-1.2.15.jar;g="com.alibaba";a="fastjson"
  g-worker-1.1.jar;g="org.swinglabs";a="swing-worker";v="1.1",lib/commons
  -compress-1.12.jar;g="org.apache.commons";a="commons-compress";v="1.12"
  ,lib/commons-logging-1.2.jar;g="commons-logging";a="commons-logging";v=
- "1.2",lib/com.supermap.analyst.addressmatching-8.1.1.jar;g="com.superma
- p";a="com.supermap.analyst.addressmatching";v="8.1.1",lib/com.supermap.
- analyst.navigation-8.1.1.jar;g="com.supermap";a="com.supermap.analyst.n
- avigation";v="8.1.1",lib/com.supermap.analyst.networkanalyst-8.1.1.jar;
- g="com.supermap";a="com.supermap.analyst.networkanalyst";v="8.1.1",lib/
- com.supermap.analyst.spatialanalyst-8.1.1.jar;g="com.supermap";a="com.s
- upermap.analyst.spatialanalyst";v="8.1.1",lib/com.supermap.analyst.spat
- ialstatistics-8.1.1.jar;g="com.supermap";a="com.supermap.analyst.spatia
- lstatistics";v="8.1.1",lib/com.supermap.analyst.terrainanalyst-8.1.1.ja
- r;g="com.supermap";a="com.supermap.analyst.terrainanalyst";v="8.1.1",li
- b/com.supermap.analyst.trafficanalyst-8.1.1.jar;g="com.supermap";a="com
- .supermap.analyst.trafficanalyst";v="8.1.1",lib/com.supermap.data.conve
- rsion-8.1.1.jar;g="com.supermap";a="com.supermap.data.conversion";v="8.
- 1.1",lib/com.supermap.data-8.1.1.jar;g="com.supermap";a="com.supermap.d
- ata";v="8.1.1",lib/com.supermap.data.processing-8.1.1.jar;g="com.superm
- ap";a="com.supermap.data.processing";v="8.1.1",lib/com.supermap.data.to
- pology-8.1.1.jar;g="com.supermap";a="com.supermap.data.topology";v="8.1
- .1",lib/com.supermap.layout-8.1.1.jar;g="com.supermap";a="com.supermap.
- layout";v="8.1.1",lib/com.supermap.license-8.1.1.jar;g="com.supermap";a
- ="com.supermap.license";v="8.1.1",lib/com.supermap.mapping-8.1.1.jar;g=
- "com.supermap";a="com.supermap.mapping";v="8.1.1",lib/com.supermap.real
- space-8.1.1.jar;g="com.supermap";a="com.supermap.realspace";v="8.1.1",l
- ib/com.supermap.realspace.networkanalyst-8.1.1.jar;g="com.supermap";a="
- com.supermap.realspace.networkanalyst";v="8.1.1",lib/com.supermap.reals
- pace.spatialanalyst-8.1.1.jar;g="com.supermap";a="com.supermap.realspac
- e.spatialanalyst";v="8.1.1",lib/com.supermap.tilestorage-8.1.1.jar;g="c
- om.supermap";a="com.supermap.tilestorage";v="8.1.1",lib/com.supermap.ui
- .controls-8.1.1.jar;g="com.supermap";a="com.supermap.ui.controls";v="8.
- 1.1"
+ "1.2",lib/looks-2.2.2.jar;g="com.jgoodies";a="looks";v="2.2.2",lib/skin
+ lf-6.7.jar;g="com.l2fprod";a="skinlf";v="6.7",lib/com.supermap.analyst.
+ addressmatching-8.1.1.jar;g="com.supermap";a="com.supermap.analyst.addr
+ essmatching";v="8.1.1",lib/com.supermap.analyst.navigation-8.1.1.jar;g=
+ "com.supermap";a="com.supermap.analyst.navigation";v="8.1.1",lib/com.su
+ permap.analyst.networkanalyst-8.1.1.jar;g="com.supermap";a="com.superma
+ p.analyst.networkanalyst";v="8.1.1",lib/com.supermap.analyst.spatialana
+ lyst-8.1.1.jar;g="com.supermap";a="com.supermap.analyst.spatialanalyst"
+ ;v="8.1.1",lib/com.supermap.analyst.spatialstatistics-8.1.1.jar;g="com.
+ supermap";a="com.supermap.analyst.spatialstatistics";v="8.1.1",lib/com.
+ supermap.analyst.terrainanalyst-8.1.1.jar;g="com.supermap";a="com.super
+ map.analyst.terrainanalyst";v="8.1.1",lib/com.supermap.analyst.traffica
+ nalyst-8.1.1.jar;g="com.supermap";a="com.supermap.analyst.trafficanalys
+ t";v="8.1.1",lib/com.supermap.data.conversion-8.1.1.jar;g="com.supermap
+ ";a="com.supermap.data.conversion";v="8.1.1",lib/com.supermap.data-8.1.
+ 1.jar;g="com.supermap";a="com.supermap.data";v="8.1.1",lib/com.supermap
+ .data.processing-8.1.1.jar;g="com.supermap";a="com.supermap.data.proces
+ sing";v="8.1.1",lib/com.supermap.data.topology-8.1.1.jar;g="com.superma
+ p";a="com.supermap.data.topology";v="8.1.1",lib/com.supermap.layout-8.1
+ .1.jar;g="com.supermap";a="com.supermap.layout";v="8.1.1",lib/com.super
+ map.license-8.1.1.jar;g="com.supermap";a="com.supermap.license";v="8.1.
+ 1",lib/com.supermap.mapping-8.1.1.jar;g="com.supermap";a="com.supermap.
+ mapping";v="8.1.1",lib/com.supermap.realspace-8.1.1.jar;g="com.supermap
+ ";a="com.supermap.realspace";v="8.1.1",lib/com.supermap.realspace.netwo
+ rkanalyst-8.1.1.jar;g="com.supermap";a="com.supermap.realspace.networka
+ nalyst";v="8.1.1",lib/com.supermap.realspace.spatialanalyst-8.1.1.jar;g
+ ="com.supermap";a="com.supermap.realspace.spatialanalyst";v="8.1.1",lib
+ /com.supermap.tilestorage-8.1.1.jar;g="com.supermap";a="com.supermap.ti
+ lestorage";v="8.1.1",lib/com.supermap.ui.controls-8.1.1.jar;g="com.supe
+ rmap";a="com.supermap.ui.controls";v="8.1.1"
 Export-Package: com.supermap.desktop;version="1.0.0";uses:="com.supermap
  .data,com.supermap.desktop.Interface,com.supermap.desktop.enums,com.sup
  ermap.desktop.event,com.supermap.desktop.exception,com.supermap.desktop
