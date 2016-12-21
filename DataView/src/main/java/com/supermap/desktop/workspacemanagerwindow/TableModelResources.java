@@ -1,5 +1,6 @@
 package com.supermap.desktop.workspacemanagerwindow;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 
@@ -36,12 +37,20 @@ public class TableModelResources extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int row, int col) {
-		if (row == 0 && (col == COLUMN_NAME || col == COLUMN_TYPE)) {
+		if (row == 0 && col == COLUMN_TYPE) {
 			return ControlsProperties.getString("SymbolMarkerLibNodeName");
-		} else if (row == 1 && (col == COLUMN_NAME || col == COLUMN_TYPE)) {
+		} else if (row == 1 && col == COLUMN_TYPE) {
 			return ControlsProperties.getString("SymbolLineLibNodeName");
-		} else if (row == 2 && (col == COLUMN_NAME || col == COLUMN_TYPE)) {
+		} else if (row == 2 &&  col == COLUMN_TYPE) {
 			return ControlsProperties.getString("SymbolFillLibNodeName");
+		}
+
+		if (row == 0 && col == COLUMN_NAME ) {
+			return Application.getActiveApplication().getWorkspace().getResources().getMarkerLibrary();
+		} else if (row == 1 && col == COLUMN_NAME ) {
+			return Application.getActiveApplication().getWorkspace().getResources().getLineLibrary();
+		} else if (row == 2 && col == COLUMN_NAME ) {
+			return Application.getActiveApplication().getWorkspace().getResources().getFillLibrary();
 		}
 		return "";
 	}

@@ -97,8 +97,7 @@ public class TableModelDatasource extends AbstractTableModel {
 			if (col == COLUMN_PRJCOORDSYS) {
 				return this.datasource.getDatasets().get(row).getPrjCoordSys().getName();
 			}
-			//取巧，
-			//将栅格/图片的像素数存在第五列，并隐藏，
+			//将栅格/图片的像素数存在第五列
 			if (col == COLUMN_NULL) {
 				if (this.datasource.getDatasets().get(row) instanceof DatasetGrid) {
 					this.datasetGrid = (DatasetGrid) this.datasource.getDatasets().get(row);
