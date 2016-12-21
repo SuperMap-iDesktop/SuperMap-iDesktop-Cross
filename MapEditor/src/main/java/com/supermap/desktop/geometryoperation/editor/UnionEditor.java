@@ -137,7 +137,7 @@ public class UnionEditor extends AbstractEditor {
 				targetRecordset.getBatch().update();
 
 				result.setStyle(geoStyle);
-				// 添加结果几何对象
+				// 添加结果几何对象1
 				targetRecordset.addNew(result, propertyData);
 				targetRecordset.update();
 
