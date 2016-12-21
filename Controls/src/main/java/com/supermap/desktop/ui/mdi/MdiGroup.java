@@ -308,11 +308,12 @@ public class MdiGroup extends JComponent {
 							this.eventsHelper.firePageActivated(new PageActivatedEvent(this, null, this.activePage));
 							this.activePage = null;
 						}
+					} else {
+						// 重绘
+						revalidate();
+						repaint();
 					}
 
-					// 重绘
-					revalidate();
-					repaint();
 					isClosed = true;
 				}
 			} catch (Exception e) {
@@ -330,17 +331,50 @@ public class MdiGroup extends JComponent {
 		return close(getPage(component));
 	}
 
+//	public boolean closeAll() {
+//		boolean result = true;
+//		try {
+//			for (int i = getPageCount(); i >= 0; i--) {
+//				result = result && close(i);
+//			}
+//		} catch (Exception e) {
+//			Application.getActiveApplication().getOutput().output(e);
+//		}
+//
+//		return result;
+//	}
+
 	public boolean closeAll() {
-		boolean result = true;
+		boolean isClosed = true;
+
+		if (this.pages.size() == 0) {
+			return isClosed;
+		}
+
 		try {
-			for (int i = getPageCount(); i >= 0; i--) {
-				result = result && close(i);
+			MdiPage oldActivePage = this.activePage;
+			for (int i = this.pages.size() - 1; i >= 0; i--) {
+				MdiPage page = this.pages.get(i);
+				PageClosingEvent removingEvent = new PageClosingEvent(this, page, PageClosingEvent.CLOSE);
+				this.eventsHelper.firePageClosing(removingEvent);
+
+				if (!removingEvent.isCancel()) {
+					page.getComponent().setVisible(false);
+					this.remove(page.getComponent());
+					this.pages.remove(page);
+					page.setGroup(null);
+					this.eventsHelper.firePageClosed(new PageClosedEvent(this, page, PageClosedEvent.CLOSE));
+					isClosed = true;
+				}
 			}
+			this.eventsHelper.firePageActivated(new PageActivatedEvent(this, null, oldActivePage));
+			revalidate();
+			repaint();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 
-		return result;
+		return isClosed;
 	}
 
 	public IMdiContainer getMdiContainer() {

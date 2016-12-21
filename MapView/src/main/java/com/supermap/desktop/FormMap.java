@@ -1502,7 +1502,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 	}
 
-	@Override
 	public void openMap(String mapName) {
 		unRegisterEvents();
 		Map map = this.getMapControl().getMap();
