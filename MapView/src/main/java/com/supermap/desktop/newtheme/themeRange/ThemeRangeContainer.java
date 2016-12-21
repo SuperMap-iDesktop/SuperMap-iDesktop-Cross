@@ -195,7 +195,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		//右键菜单布局
 		this.tablePopupMenuRangeTheme.add(this.menuItemReviseStyle);
-		this.tablePopupMenuRangeTheme.add(this.menuItemMapLocation);
+		//暂时移除定位菜单
+		//this.tablePopupMenuRangeTheme.add(this.menuItemMapLocation);
 
 		initPanelProperty();
 		initPanelAdvance();
