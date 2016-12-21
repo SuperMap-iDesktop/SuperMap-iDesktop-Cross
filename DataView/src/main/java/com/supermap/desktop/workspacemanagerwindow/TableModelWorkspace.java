@@ -1,7 +1,6 @@
 package com.supermap.desktop.workspacemanagerwindow;
 
 import com.supermap.data.Workspace;
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 
@@ -50,7 +49,7 @@ public class TableModelWorkspace extends AbstractTableModel {
 	public Object getValueAt(int row, int col) {
 		if (row == 0) {
 			if (col == COLUMN_NAME) {
-				return ControlsProperties.getString("String_ToolBar_HideDatasource");
+				return this.workspace.getDatasources();
 			} else if (col == COLUMN_TYPE) {
 				return DataViewProperties.getString("String_DatasourceType");
 			} else if (col == COLUMN_NUMBER) {
@@ -59,7 +58,7 @@ public class TableModelWorkspace extends AbstractTableModel {
 		}
 		if (row == 1) {
 			if (col == COLUMN_NAME) {
-				return ControlsProperties.getString("String_ToolBar_HideMap");
+				return this.workspace.getMaps();
 			} else if (col == COLUMN_TYPE) {
 				return DataViewProperties.getString("String_MapType");
 			} else if (col == COLUMN_NUMBER) {
@@ -68,7 +67,7 @@ public class TableModelWorkspace extends AbstractTableModel {
 		}
 		if (row == 2) {
 			if (col == COLUMN_NAME) {
-				return ControlsProperties.getString("String_ToolBar_HideScene");
+				return this.workspace.getScenes();
 			} else if (col == COLUMN_TYPE) {
 				return DataViewProperties.getString("String_SceneType");
 			} else if (col == COLUMN_NUMBER) {
@@ -77,7 +76,7 @@ public class TableModelWorkspace extends AbstractTableModel {
 		}
 		if (row == 3) {
 			if (col == COLUMN_NAME) {
-				return ControlsProperties.getString("String_ToolBar_HideResources");
+				return this.workspace.getResources();
 			} else if (col == COLUMN_TYPE) {
 				return DataViewProperties.getString("String_ResourceType");
 			} else if (col == COLUMN_NUMBER) {
