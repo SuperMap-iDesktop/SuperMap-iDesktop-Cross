@@ -37,6 +37,7 @@ import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
@@ -45,6 +46,7 @@ import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeType;
 import com.supermap.mapping.ThemeUnique;
 import com.supermap.mapping.ThemeUniqueItem;
+import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -110,6 +112,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private JMenuItem menuItemDelete = new JMenuItem();
 	//定位
 	private JMenuItem menuItemMapLocation = new JMenuItem();
+	//跟踪层
+	private TrackingLayer uniqurThemetrackingLayer;
 
 	private JPanel panelOffsetSet = new JPanel();
 	private JLabel labelOffsetUnity = new JLabel();
@@ -138,6 +142,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private boolean isNewTheme = false;
 
 	//private Selection nowSelection = new Selection();
+
 	private IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 	private MapControl nowMapControl = formMap.getMapControl();
 
@@ -182,6 +187,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.datasetVector = (DatasetVector) layer.getDataset();
 
 		this.map = ThemeGuideFactory.getMapControl().getMap();
+		//获得跟踪层
+		this.uniqurThemetrackingLayer = map.getTrackingLayer();
 		initComponents();
 		initResources();
 		registActionListener();
@@ -341,7 +348,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.menuItemReviseStyle.removeActionListener(this.actionListener);
 		this.menuItemDelete.removeActionListener(this.actionListener);
 		this.menuItemMapLocation.removeActionListener(this.actionListener);
-		//mapContorl移除键盘监听
+		//trackingLayer移除键盘监听
 		this.nowMapControl.removeKeyListener(this.localKeyListener);
 
 		this.tableUniqueInfo.removeMouseListener(this.localTableMouseListener);
@@ -601,19 +608,28 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				int[] selectRow = tableUniqueInfo.getSelectedRows();
 				//此时选中了最后一行
 				if (selectRow[tableUniqueInfo.getSelectedRowCount() - 1] != tableUniqueInfo.getRowCount() - 1) {
-					MapUtilities.getActiveMap().getTrackingLayer().clear();
+					uniqurThemetrackingLayer.clear();
 					Recordset selectedRecordsets;
 					for (int i = 0; i < tableUniqueInfo.getSelectedRowCount(); i++) {
-						ThemeUniqueItem item = themeUnique.getItem(selectRow[i]);
+						ThemeUniqueItem item = themeUnique.getItem(selectRow[0]);
 						//第一查询
 						selectedRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + " = " + "'" + item.getUnique() + "'", STATIC);
+						//第二次查询
 						if (selectedRecordsets.getRecordCount() == 0) {
-							//第二次查询
-							String attributes;
-							attributes = item.getUnique();
-							//提取字符串中字符，减少字符，使查询有结果（此方式降低查询进度，精度值可以自己设置，此时为保留8位小数的）
-							attributes = attributes.substring(0, attributes.length() - 3);
-							selectedRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + " LIKE " + "'" + "%" + attributes + "%" + "'", STATIC);
+							Recordset recordset = datasetVector.getRecordset(false, STATIC);
+							recordset.moveFirst();
+							for (int n = 0; n < recordset.getRecordCount(); n++) {
+								Object value = recordset.getFieldValue(comboBoxExpression.getSelectedItem().toString());
+								if (value instanceof Double) {
+									Double itemValue = Double.valueOf(item.getUnique());
+									if (DoubleUtilities.equals((Double) value, itemValue, 10)) {
+										selectedRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + " = " + "'" + value + "'", STATIC);
+									}
+									recordset.moveNext();
+								}
+							}
+							//释放对象
+							recordset.dispose();
 						}
 						if (selectedRecordsets.getRecordCount() > 0) {
 							//设置选中子项跟踪层风格
@@ -645,7 +661,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 										selectedGeo.setStyle(selectedGeoStyle);
 									}
 								}
-								MapUtilities.getActiveMap().getTrackingLayer().add(selectedGeo, "");
+								uniqurThemetrackingLayer.add(selectedGeo, "");
 								points.add(selectedGeo.getBounds().leftBottom);
 								points.add(selectedGeo.getBounds().rightTop);
 								//对象释放
@@ -666,7 +682,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 								selectedGeoStyle3D.dispose();
 							}
 						} else {//未找到子项，弹出提示信息
-							getActiveApplication().getOutput().output(MapViewProperties.getString("String_NullQuery"));
+							Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_NullQuery"));
 						}
 						map.refresh();
 						//对象释放
@@ -674,7 +690,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 					}
 				} else {
 					//点击了最后一行
-					MapUtilities.getActiveMap().getTrackingLayer().clear();
+					uniqurThemetrackingLayer.clear();
 					map.refresh();
 				}
 			}
@@ -738,16 +754,18 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				//当通过键盘改变jtable行选时，同步实现定位功能
 				new LocalTableMouseListener().ContinuousMapLocation();
 			}
+
 			if (e.getSource() == tableUniqueInfo && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				//当按下esc键，清除跟踪层
-				MapUtilities.getActiveMap().getTrackingLayer().clear();
+				uniqurThemetrackingLayer.clear();
 				map.refresh();
 			}
 			if (e.getSource() == nowMapControl && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				//当焦点在mapContorl上时，按esc键清除跟踪层
-				MapUtilities.getActiveMap().getTrackingLayer().clear();
+				uniqurThemetrackingLayer.clear();
 				map.refresh();
 			}
+
 		}
 	}
 
@@ -1336,8 +1354,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			this.buttonContinuousMapLocation.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_OpenLinkageLayer.png"));
 			this.isContinuousMapLocation = false;
 			//当关闭连续定位功能时，清空跟踪层
-			MapUtilities.getActiveMap().getTrackingLayer().clear();
-			map.refresh();
+			this.uniqurThemetrackingLayer.clear();
+			this.map.refresh();
 		} else {
 			this.buttonContinuousMapLocation.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_CloseLinkageLayer.png"));
 			this.isContinuousMapLocation = true;
