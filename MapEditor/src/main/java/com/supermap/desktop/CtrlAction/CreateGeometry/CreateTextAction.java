@@ -337,6 +337,10 @@ public class CreateTextAction {
             if (!pressedKeys.contains(e.getKeyCode())) {
                 pressedKeys.add(new Integer(e.getKeyCode()));
             }
+	        // 如果按下的只有 enter，那么就在释放按键的时候结束编辑
+	        if (pressedKeys.size() == 1 && pressedKeys.get(0) == KeyEvent.VK_ENTER && e.getKeyCode() == KeyEvent.VK_ENTER) {
+		        commitEditing();
+	        }
         }
 
         /**
@@ -345,10 +349,10 @@ public class CreateTextAction {
         public void keyReleased(final KeyEvent e) {
 
             try {
-                // 如果按下的只有 enter，那么就在释放按键的时候结束编辑
-                if (pressedKeys.size() == 1 && pressedKeys.get(0) == KeyEvent.VK_ENTER && e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    commitEditing();
-                }
+                  // 如果按下的只有 enter，那么就在释放按键的时候结束编辑
+//                if (pressedKeys.size() == 1 && pressedKeys.get(0) == KeyEvent.VK_ENTER && e.getKeyCode() == KeyEvent.VK_ENTER) {
+//                    commitEditing();
+//                }
 
                 // 如果按下的第一个按键是 Shift，第二个按键是 Enter，并且释放的按键也是 Enter，那么就换行
                 if (pressedKeys.size() == 2 && pressedKeys.get(0) == KeyEvent.VK_SHIFT && pressedKeys.get(1) == KeyEvent.VK_ENTER
