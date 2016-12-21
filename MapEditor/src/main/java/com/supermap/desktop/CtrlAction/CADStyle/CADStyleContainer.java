@@ -977,17 +977,18 @@ public class CADStyleContainer extends JPanel {
 				try {
 					if (GeometryUtilities.isPointGeometry(geometry) && !geometry.getType().equals(GeometryType.GEOPOINT3D)) {
 						geoPointStyle = getGeometryStyle(geometry);
-						set.add(TAB_MARKER);
+						addSetItem(set, TAB_MARKER);
 						setPanelPointEnabled(true);
 					}
 					if (GeometryUtilities.isLineGeometry(geometry) && !geometry.getType().equals(GeometryType.GEOLINE3D)) {
 						geoLineStyle = getGeometryStyle(geometry);
-						set.add(TAB_LINE);
+						addSetItem(set, TAB_LINE);
 						setPanelLineEnabled(true);
 					}
 					if (GeometryUtilities.isRegionGeometry(geometry) && !geometry.getType().equals(GeometryType.GEOREGION3D)) {
 						geoRegionStyle = getGeometryStyle(geometry);
-						set.add(TAB_REGION);
+						addSetItem(set, TAB_LINE);
+						addSetItem(set, TAB_REGION);
 						setPanelLineEnabled(true);
 						setPanelFillEnabled(true);
 					}
@@ -1013,6 +1014,12 @@ public class CADStyleContainer extends JPanel {
 		}
 		if (!set.contains(selectIndex) && -1 != newSelectIndex) {
 			panelContaints.setSelectedIndex(newSelectIndex);
+		}
+	}
+
+	private void addSetItem(Set<Integer> set, Integer item) {
+		if (!set.contains(item)) {
+			set.add(item);
 		}
 	}
 
