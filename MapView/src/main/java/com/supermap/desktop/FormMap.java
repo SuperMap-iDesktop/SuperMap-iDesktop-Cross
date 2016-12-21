@@ -115,6 +115,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -124,6 +125,7 @@ import java.util.EventObject;
 public class FormMap extends FormBaseChild implements IFormMap {
 
 	private static final long serialVersionUID = 1L;
+
 	private final DocumentListener pointDocumentListener = new DocumentListener() {
 		@Override
 		public void insertUpdate(DocumentEvent e) {
@@ -152,6 +154,10 @@ public class FormMap extends FormBaseChild implements IFormMap {
 						Application.getActiveApplication().getMainFrame().getFormManager().close(FormMap.this);
 					}
 				});
+			}
+
+			if (Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
+				setSelectedGeometryProperty();
 			}
 		}
 	};
@@ -1502,7 +1508,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		}
 	}
 
-	@Override
 	public void openMap(String mapName) {
 		unRegisterEvents();
 		Map map = this.getMapControl().getMap();

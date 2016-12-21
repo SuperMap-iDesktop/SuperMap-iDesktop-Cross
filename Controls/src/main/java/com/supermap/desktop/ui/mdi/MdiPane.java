@@ -272,7 +272,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 
 	@Override
 	public int getGroupCount() {
-		return 0;
+		return this.groups.size();
 	}
 
 	/**

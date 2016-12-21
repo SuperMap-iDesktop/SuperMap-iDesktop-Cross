@@ -1,7 +1,20 @@
 package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 
-import com.supermap.data.*;
-import com.supermap.mapping.*;
+import com.supermap.data.CoordSysTransMethod;
+import com.supermap.data.CoordSysTransParameter;
+import com.supermap.data.CoordSysTranslator;
+import com.supermap.data.Dataset;
+import com.supermap.data.Geometry;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.Recordset;
+import com.supermap.data.Rectangle2D;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.MapDrawingEvent;
+import com.supermap.mapping.MapDrawingListener;
+import com.supermap.mapping.Selection;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
 import com.supermap.ui.MapControl;
@@ -76,10 +89,14 @@ public class BindProperty implements IBindProperty {
             Point2Ds points = new Point2Ds(new Point2D[]{new Point2D(geo.getBounds().getLeft(), geo.getBounds().getBottom()),
                     new Point2D(geo.getBounds().getRight(), geo.getBounds().getTop())});
             rectangle2d = new Rectangle2D(points.getItem(0), points.getItem(1));
+        } else {
+	        rectangle2d = null;
         }
         if (null != map.getLayers().get(layer.getName())) {
             map.getLayers().get(layer.getName()).setSelection(tempSelection);
-            map.setCenter(rectangle2d.getCenter());
+	        if (rectangle2d != null) {
+		        map.setCenter(rectangle2d.getCenter());
+	        }
             map.refresh();
         }
     }

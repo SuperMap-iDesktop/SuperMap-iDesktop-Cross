@@ -30,6 +30,7 @@
         <module>RealspaceView</module>
         <module>SpatialAnalyst</module>
         <module>TabularView</module>
+        <module>Process</module>
     </modules>
 
     <properties>

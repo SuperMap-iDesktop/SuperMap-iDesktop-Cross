@@ -5,15 +5,21 @@ import com.supermap.data.Colors;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.GeoLine;
-import com.supermap.data.GeoPoint;
 import com.supermap.data.GeoRegion;
+import com.supermap.data.GeoRegion3D;
 import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoStyle3D;
+import com.supermap.data.GeoText3D;
 import com.supermap.data.Geometry;
+import com.supermap.data.Geometry3D;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
 import com.supermap.data.Recordset;
+import com.supermap.data.Rectangle2D;
 import com.supermap.data.SymbolType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
@@ -35,11 +41,11 @@ import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
-import com.supermap.mapping.Selection;
 import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeType;
 import com.supermap.mapping.ThemeUnique;
 import com.supermap.mapping.ThemeUniqueItem;
+import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -65,6 +71,7 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 import static com.supermap.data.CursorType.STATIC;
+import static com.supermap.desktop.Application.getActiveApplication;
 
 /**
  * 单值专题图
@@ -129,7 +136,10 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private ArrayList<String> comboBoxArrayForOffsetX = new ArrayList<String>();
 	private ArrayList<String> comboBoxArrayForOffsetY = new ArrayList<String>();
 	private boolean isNewTheme = false;
-	private Selection nowSelection = new Selection();
+
+	//private Selection nowSelection = new Selection();
+	private IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+	private MapControl nowMapControl = formMap.getMapControl();
 
 	private static int TABLE_COLUMN_VISIBLE = 0;
 	private static int TABLE_COLUMN_GEOSTYLE = 1;
@@ -190,7 +200,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		//右键菜单布局
 		this.tablePopupMenuUniqurTheme.add(this.menuItemReviseStyle);
 		this.tablePopupMenuUniqurTheme.add(this.menuItemDelete);
-		this.tablePopupMenuUniqurTheme.add(this.menuItemMapLocation);
+		//暂时移除定位菜单
+		//this.tablePopupMenuUniqurTheme.add(this.menuItemMapLocation);
 
 		if (isNewTheme) {
 			refreshColor();
@@ -270,6 +281,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.menuItemReviseStyle.addActionListener(this.actionListener);
 		this.menuItemDelete.addActionListener(this.actionListener);
 		this.menuItemMapLocation.addActionListener(this.actionListener);
+		//給mapContorl添加键盘监听
+		this.nowMapControl.addKeyListener(this.localKeyListener);
 
 		this.tableUniqueInfo.addMouseListener(this.localTableMouseListener);
 		this.tableUniqueInfo.addKeyListener(this.localKeyListener);
@@ -328,6 +341,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		this.menuItemReviseStyle.removeActionListener(this.actionListener);
 		this.menuItemDelete.removeActionListener(this.actionListener);
 		this.menuItemMapLocation.removeActionListener(this.actionListener);
+		//mapContorl移除键盘监听
+		this.nowMapControl.removeKeyListener(this.localKeyListener);
 
 		this.tableUniqueInfo.removeMouseListener(this.localTableMouseListener);
 		this.tableUniqueInfo.removeKeyListener(this.localKeyListener);
@@ -548,7 +563,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			} else if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON3) {//打开右键菜单
 				//打开右键菜单根据是否可视(可选择)状态设置定位功能是否可用
 				if (themeUniqueLayer.isVisible() && themeUniqueLayer.isSelectable()) {
-					menuItemMapLocation.setEnabled(true);
+					menuItemMapLocation.setEnabled(false);
 				} else {
 					menuItemMapLocation.setEnabled(false);
 				}
@@ -569,8 +584,17 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			}
 		}
 
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			//满足鼠标拖拽，也可以实现多选效果
+			if (1 == e.getClickCount() && e.getButton() == MouseEvent.BUTTON1) {
+				//此时进行专题图子项连续定位
+				ContinuousMapLocation();
+			}
+		}
+
 		/**
-		 * 进行专题图子项连续定位  12.13yuanR
+		 * 进行专题图子项连续定位  12.20yuanR
 		 */
 		private void ContinuousMapLocation() {
 			if (isContinuousMapLocation) {
@@ -581,50 +605,68 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 					Recordset selectedRecordsets;
 					for (int i = 0; i < tableUniqueInfo.getSelectedRowCount(); i++) {
 						ThemeUniqueItem item = themeUnique.getItem(selectRow[i]);
-						//构造选中行的记录集
-						selectedRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + "=" + "'" + item.getUnique() + "'", STATIC);
+						//第一查询
+						selectedRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + " = " + "'" + item.getUnique() + "'", STATIC);
+						if (selectedRecordsets.getRecordCount() == 0) {
+							//第二次查询
+							String attributes;
+							attributes = item.getUnique();
+							//提取字符串中字符，减少字符，使查询有结果（此方式降低查询进度，精度值可以自己设置，此时为保留8位小数的）
+							attributes = attributes.substring(0, attributes.length() - 3);
+							selectedRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + " LIKE " + "'" + "%" + attributes + "%" + "'", STATIC);
+						}
 						if (selectedRecordsets.getRecordCount() > 0) {
-									/*
-									Geometry selectedGeos = selectedRecordsets.getGeometry();
-									//将选中子项移动到地图中心
-									if (null != selectedGeos) {
-										Rectangle2D rectangle2d = null;
-										Point2Ds points = new Point2Ds(new Point2D[]{new Point2D(selectedGeos.getBounds().getLeft(), selectedGeos.getBounds().getBottom()),
-												new Point2D(selectedGeos.getBounds().getRight(), selectedGeos.getBounds().getTop())});
-										rectangle2d = new Rectangle2D(points.getItem(0), points.getItem(1));
-										map.setCenter(rectangle2d.getCenter());
-									}
-									selectedGeos.dispose();
-									*/
 							//设置选中子项跟踪层风格
 							GeoStyle selectedGeoStyle = new GeoStyle();
+							GeoStyle3D selectedGeoStyle3D = new GeoStyle3D();
+							Point2Ds points = new Point2Ds();
 							selectedRecordsets.moveFirst();
 							for (int n = 0; n < selectedRecordsets.getRecordCount(); n++) {
 								Geometry selectedGeo = selectedRecordsets.getGeometry();
-								if (selectedGeo instanceof GeoRegion) {
-									selectedGeoStyle.setFillOpaqueRate(0);
-									selectedGeoStyle.setLineWidth(0.5);
-									selectedGeoStyle.setLineColor(Color.red);
-								} else if (selectedGeo instanceof GeoPoint || selectedGeo instanceof GeoLine) {
-									selectedGeoStyle.setLineWidth(0.5);
-									selectedGeoStyle.setLineColor(Color.red);
+								//设置geometry的显示
+								if (selectedGeo instanceof Geometry3D) {
+									if (!(selectedGeo instanceof GeoText3D)) {
+										if (selectedGeo instanceof GeoRegion3D) {
+											//当为三维面数据时，设置填充颜色为透明，显示原本风格
+											selectedGeoStyle.setFillOpaqueRate(0);
+										}
+										selectedGeoStyle3D.setLineWidth(0.5);
+										selectedGeoStyle3D.setLineColor(Color.red);
+										((Geometry3D) selectedGeo).setStyle3D(selectedGeoStyle3D);
+									}
 								} else {
-									selectedGeoStyle = null;
+									if (!(selectedGeo instanceof GeoText3D)) {
+										if (selectedGeo instanceof GeoRegion) {
+											//当为面数据时，设置填充颜色为透明，显示原本风格
+											selectedGeoStyle.setFillOpaqueRate(0);
+										}
+										selectedGeoStyle.setLineWidth(0.5);
+										selectedGeoStyle.setLineColor(Color.red);
+										selectedGeo.setStyle(selectedGeoStyle);
+									}
 								}
-								if (selectedGeo != null) {
-									selectedGeo.setStyle(selectedGeoStyle);
-									MapUtilities.getActiveMap().getTrackingLayer().add(selectedGeo, "");
-								}
+								MapUtilities.getActiveMap().getTrackingLayer().add(selectedGeo, "");
+								points.add(selectedGeo.getBounds().leftBottom);
+								points.add(selectedGeo.getBounds().rightTop);
 								//对象释放
 								selectedGeo.dispose();
 								selectedRecordsets.moveNext();
+							}
+							//如果构建的最小矩形没有完全包含于map的矩形，移动其到map中心
+							if (getMInRectangle2D(points) != null) {
+								if (!map.getViewBounds().contains(getMInRectangle2D(points))) {
+									map.setCenter(getMInRectangle2D(points).getCenter());
+								}
 							}
 							//对象释放
 							if (selectedGeoStyle != null) {
 								selectedGeoStyle.dispose();
 							}
+							if (selectedGeoStyle3D != null) {
+								selectedGeoStyle3D.dispose();
+							}
 						} else {//未找到子项，弹出提示信息
-							Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_NullQuery"));
+							getActiveApplication().getOutput().output(MapViewProperties.getString("String_NullQuery"));
 						}
 						map.refresh();
 						//对象释放
@@ -637,7 +679,43 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				}
 			}
 		}
+
+		/**
+		 * 获得点集的最小外接矩形
+		 * yuanR 2016.12.20
+		 */
+		private Rectangle2D getMInRectangle2D(Point2Ds point2Ds) {
+			if (point2Ds.getCount() > 0) {
+				Double maxX = point2Ds.getItem(0).getX();
+				Double maxY = point2Ds.getItem(0).getY();
+				Double minX = point2Ds.getItem(0).getX();
+				Double minY = point2Ds.getItem(0).getY();
+				if (point2Ds.getCount() > 1) {
+					for (int i = 1; i < point2Ds.getCount(); i++) {
+						if (point2Ds.getItem(i).getX() > maxX) {
+							maxX = point2Ds.getItem(i).getX();
+						}
+						if (point2Ds.getItem(i).getY() > maxY) {
+							maxY = point2Ds.getItem(i).getY();
+						}
+						if (point2Ds.getItem(i).getX() < minX) {
+							minX = point2Ds.getItem(i).getX();
+						}
+						if (point2Ds.getItem(i).getY() < minY) {
+							minY = point2Ds.getItem(i).getY();
+						}
+					}
+				}
+				Point2D rightTopPoint = new Point2D(maxX, maxY);
+				Point2D leftBottomPoint = new Point2D(minX, minY);
+				Rectangle2D rectangle2D = new Rectangle2D(leftBottomPoint, rightTopPoint);
+				return rectangle2D;
+			} else {
+				return null;
+			}
+		}
 	}
+
 
 	/**
 	 * 更改删除键状态
@@ -662,6 +740,11 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			}
 			if (e.getSource() == tableUniqueInfo && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				//当按下esc键，清除跟踪层
+				MapUtilities.getActiveMap().getTrackingLayer().clear();
+				map.refresh();
+			}
+			if (e.getSource() == nowMapControl && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				//当焦点在mapContorl上时，按esc键清除跟踪层
 				MapUtilities.getActiveMap().getTrackingLayer().clear();
 				map.refresh();
 			}
@@ -919,7 +1002,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				tableUniqueInfo.addRowSelectionInterval(selectRow, selectRow);
 				refreshAtOnce();
 			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
+				getActiveApplication().getOutput().output(ex);
 			}
 		}
 
@@ -1246,7 +1329,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	}
 
 	/**
-	 * 设置图层是否跟随点选联动
+	 * 设置是否开启子项连续定位
 	 */
 	private void setContinuousMapLocation() {
 		if (isContinuousMapLocation) {
@@ -1258,6 +1341,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		} else {
 			this.buttonContinuousMapLocation.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_CloseLinkageLayer.png"));
 			this.isContinuousMapLocation = true;
+			//当开启连续点选联动时，进行一次定位操作
+			new LocalTableMouseListener().ContinuousMapLocation();
 		}
 	}
 

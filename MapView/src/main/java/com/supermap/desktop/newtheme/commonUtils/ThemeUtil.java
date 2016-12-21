@@ -404,21 +404,21 @@ public class ThemeUtil {
 				}
 			} else {
 				if (start >= map.getLayers().getCount()) {
-					themeLayer = map.getLayers().add(dataset, theme, true);
-					map.getLayers().moveTo(0, start);
+//					themeLayer = map.getLayers().add(dataset, theme, true);
+//					map.getLayers().moveTo(0, start);
 					//layers的insert方法会导致桌面崩溃故暂时绕一下
-//                    themeLayer = map.getLayers().insert(start, dataset, theme);
+					themeLayer = map.getLayers().insert(start, dataset, theme);
 				} else {
 					for (int i = start; i <= end; i++) {
 						if (map.getLayers().get(i).getDataset() != dataset || isRightPosition(map.getLayers().get(i), currentThemeType, dataset)) {
-//                            themeLayer = map.getLayers().insert(i, dataset, theme);
-							themeLayer = map.getLayers().add(dataset, theme, true);
-							map.getLayers().moveTo(0, i);
+							themeLayer = map.getLayers().insert(i, dataset, theme);
+//							themeLayer = map.getLayers().add(dataset, theme, true);
+//							map.getLayers().moveTo(0, i);
 							break;
 						} else if (i == end) {
-//                            themeLayer = map.getLayers().insert(end + 1, dataset, theme);
-							themeLayer = map.getLayers().add(dataset, theme, true);
-							map.getLayers().moveTo(0, end + 1);
+							themeLayer = map.getLayers().insert(end + 1, dataset, theme);
+//							themeLayer = map.getLayers().add(dataset, theme, true);
+//							map.getLayers().moveTo(0, end + 1);
 						} else {
 							//避免有遗漏的情况，用else结尾。s
 						}

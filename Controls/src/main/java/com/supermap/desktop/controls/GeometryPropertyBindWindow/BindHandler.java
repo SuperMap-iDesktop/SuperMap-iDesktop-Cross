@@ -1,18 +1,50 @@
 package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 
-import com.supermap.data.*;
+import com.supermap.data.CoordSysTransMethod;
+import com.supermap.data.CoordSysTransParameter;
+import com.supermap.data.CoordSysTranslator;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.GeoCompound;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoPoint;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Geometry;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.Recordset;
+import com.supermap.data.Rectangle2D;
+import com.supermap.data.Size2D;
+import com.supermap.data.SymbolMarker;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Layers;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.MapDrawingEvent;
+import com.supermap.mapping.MapDrawingListener;
+import com.supermap.mapping.MapDrawnEvent;
+import com.supermap.mapping.MapDrawnListener;
+import com.supermap.mapping.Selection;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
 import com.supermap.ui.MapControl;
 
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,12 +152,10 @@ public class BindHandler {
 
     private List getSelectRowIds(IFormTabular formTabular, Recordset tempRecordset) {
         List ids = new ArrayList();
-        int i = 0;
         tempRecordset.moveFirst();
         while (!tempRecordset.isEOF()) {
-            ids.add(formTabular.getIdMap().get(tempRecordset.getID()));
-            i++;
-            tempRecordset.moveNext();
+	        ids.add(formTabular.getRowBySmId(tempRecordset.getID()));
+	        tempRecordset.moveNext();
         }
         return ids;
     }
@@ -436,7 +466,7 @@ public class BindHandler {
         int[] selectRows = formTabular.getSelectedRows();
         int[] idRows = new int[selectRows.length];
         for (int i = 0; i < selectRows.length; i++) {
-            idRows[i] = (int) formTabular.getRowIndexMap().get(selectRows[i]);
+	        idRows[i] = formTabular.getSmId(selectRows[i]);
         }
         DatasetVector dataset = formTabular.getRecordset().getDataset();
         int formMapSize = formMapList.size();

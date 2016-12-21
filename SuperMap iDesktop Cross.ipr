@@ -266,6 +266,7 @@
         <module name="MapEditor" />
         <module name="MapView" />
         <module name="NetServices" />
+        <module name="Process" />
         <module name="RealspaceEditor" />
         <module name="RealspaceEffect" />
         <module name="RealspaceView" />
@@ -291,6 +292,7 @@
       <module name="MapView" target="1.7" />
       <module name="MyPlugin" target="1.7" />
       <module name="NetServices" target="1.7" />
+      <module name="Process" target="1.7" />
       <module name="RealspaceEditor" target="1.7" />
       <module name="RealspaceEffect" target="1.7" />
       <module name="RealspaceView" target="1.7" />
@@ -474,6 +476,7 @@
       <module fileurl="file://$PROJECT_DIR$/MapEditor/MapEditor.iml" filepath="$PROJECT_DIR$/MapEditor/MapEditor.iml" />
       <module fileurl="file://$PROJECT_DIR$/MapView/MapView.iml" filepath="$PROJECT_DIR$/MapView/MapView.iml" />
       <module fileurl="file://$PROJECT_DIR$/NetServices/NetServices.iml" filepath="$PROJECT_DIR$/NetServices/NetServices.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Process/Process.iml" filepath="$PROJECT_DIR$/Process/Process.iml" />
       <module fileurl="file://$PROJECT_DIR$/RealspaceEditor/RealspaceEditor.iml" filepath="$PROJECT_DIR$/RealspaceEditor/RealspaceEditor.iml" />
       <module fileurl="file://$PROJECT_DIR$/RealspaceEffect/RealspaceEffect.iml" filepath="$PROJECT_DIR$/RealspaceEffect/RealspaceEffect.iml" />
       <module fileurl="file://$PROJECT_DIR$/RealspaceView/RealspaceView.iml" filepath="$PROJECT_DIR$/RealspaceView/RealspaceView.iml" />

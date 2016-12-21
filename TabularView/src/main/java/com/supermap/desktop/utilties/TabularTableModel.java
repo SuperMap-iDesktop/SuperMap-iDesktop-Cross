@@ -18,7 +18,6 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -35,10 +34,6 @@ public class TabularTableModel extends AbstractTableModel {
 	private transient FieldInfos fieldInfosDataset;
 	private int nowRow = 0;
 	// private TabularCache tabularCache = new TabularCache();
-	// 用于存放行值和recordset的ID之间的关系
-	private HashMap<Integer, Object> rowIndexMap = new HashMap<Integer, Object>();
-	// 用于存放行值和ID与行值之间的关系
-	private HashMap<Object, Integer> idMap = new HashMap<Object, Integer>();
 	private SimpleDateFormat resultFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss", Locale.US);
 	private List<TabularValueChangedListener> tabularValueChangedListeners = new ArrayList<>();
 	private boolean isHiddenSystemField;
@@ -188,13 +183,6 @@ public class TabularTableModel extends AbstractTableModel {
 		this.recordset = recordset;
 		recordset.moveFirst();
 		int count = 0;
-		while (!recordset.isEOF()) {
-			Object value = recordset.getFieldValue(0);
-			rowIndexMap.put(count, value);
-			idMap.put(value, count);
-			recordset.moveNext();
-			count++;
-		}
 		init();
 		fireTableStructureChanged();
 	}
@@ -232,13 +220,6 @@ public class TabularTableModel extends AbstractTableModel {
 	// }
 	// }
 
-	public HashMap<Integer, Object> getRowIndexMap() {
-		return rowIndexMap;
-	}
-
-	public HashMap<Object, Integer> getIdMap() {
-		return idMap;
-	}
 
 	@Override
 	public Class getColumnClass(int c) {
