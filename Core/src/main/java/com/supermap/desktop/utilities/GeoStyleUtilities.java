@@ -13,7 +13,7 @@ public class GeoStyleUtilities {
 
 	/**
 	 * 对象风格的候选填充颜色集合
-	 * 
+	 *
 	 * @return
 	 */
 	private GeoStyleUtilities() {
@@ -39,7 +39,7 @@ public class GeoStyleUtilities {
 
 	/**
 	 * 不同于上次选用的填充颜色的颜色
-	 * 
+	 *
 	 * @return
 	 */
 	public static Color getFillColor() {
@@ -56,7 +56,7 @@ public class GeoStyleUtilities {
 
 	/**
 	 * 获取随机的用于线风格的颜色
-	 * 
+	 *
 	 * @return
 	 */
 	public static Color getLineColor() {
@@ -66,7 +66,7 @@ public class GeoStyleUtilities {
 
 	/**
 	 * 产生随机的用于线风格的颜色 经过初步试验，新产生的线颜色，饱和度【0-240】最好在30-100之间 亮度【0-240】最好在75-120之间
-	 * 
+	 *
 	 * @return
 	 */
 	private static Color getRandomLineColor() {
@@ -84,7 +84,7 @@ public class GeoStyleUtilities {
 
 	/**
 	 * 设置指定几何对象的风格
-	 * 
+	 *
 	 * @param geometry
 	 * @param geoStyle
 	 */
@@ -108,7 +108,7 @@ public class GeoStyleUtilities {
 
 	/**
 	 * 设置指定几何对象的风格
-	 * 
+	 *
 	 * @param geometry
 	 * @param geoStyle
 	 */
