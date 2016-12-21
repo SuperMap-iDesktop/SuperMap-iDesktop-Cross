@@ -622,7 +622,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 								Object value = recordset.getFieldValue(comboBoxExpression.getSelectedItem().toString());
 								if (value instanceof Double) {
 									Double itemValue = Double.valueOf(item.getUnique());
-									if (DoubleUtilities.equals((Double) value, itemValue, 10)) {
+									if (DoubleUtilities.equals((Double) value, itemValue)) {
 										selectedRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + " = " + "'" + value + "'", STATIC);
 									}
 									recordset.moveNext();
