@@ -9,12 +9,9 @@ import java.util.EventObject;
  */
 public class PageClosingEvent extends EventObject {
 
-	public static final int CHANGE_GROUP = 1;
-	public static final int CLOSE = 2;
-
 	private MdiPage page;
 	private boolean isCancel = false;
-	private int operationType = CLOSE;
+	private int operation = Operation.CLOSE;
 
 	/**
 	 * Constructs a prototypical Event.
@@ -25,7 +22,7 @@ public class PageClosingEvent extends EventObject {
 	public PageClosingEvent(Object source, MdiPage page, int operationType) {
 		super(source);
 		this.page = page;
-		this.operationType = operationType == CHANGE_GROUP ? CHANGE_GROUP : CLOSE;
+		this.operation = operationType == Operation.CHANGE_GROUP ? Operation.CHANGE_GROUP : Operation.CLOSE;
 	}
 
 	public MdiPage getPage() {
@@ -40,7 +37,7 @@ public class PageClosingEvent extends EventObject {
 		isCancel = cancel;
 	}
 
-	public int getOperationType() {
-		return operationType;
+	public int getOperation() {
+		return operation;
 	}
 }

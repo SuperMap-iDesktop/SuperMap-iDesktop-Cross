@@ -12,7 +12,6 @@ import com.supermap.desktop.dialog.DialogSaveChildForms;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.*;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.mdi.MdiGroup;
 import com.supermap.desktop.ui.mdi.MdiPage;
 import com.supermap.desktop.ui.mdi.MdiPane;
 import com.supermap.desktop.ui.mdi.events.*;
@@ -20,7 +19,6 @@ import com.supermap.desktop.ui.mdi.events.*;
 import javax.swing.event.EventListenerList;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
 
 public class FormManager extends MdiPane implements IFormManager {
 	private WindowType activatedChildFormType = WindowType.UNKNOWN;
@@ -51,7 +49,7 @@ public class FormManager extends MdiPane implements IFormManager {
 	private PageClosingListener pageClosingListener = new PageClosingListener() {
 		@Override
 		public void pageClosing(PageClosingEvent e) {
-			if (e.getOperationType() == PageClosingEvent.CLOSE && e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
+			if (e.getOperation() == Operation.CLOSE && e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
 				FormClosingEvent event = new FormClosingEvent((IForm) e.getPage().getComponent(), false);
 				((FormBaseChild) e.getPage().getComponent()).formClosing(event);
 
@@ -66,7 +64,7 @@ public class FormManager extends MdiPane implements IFormManager {
 	private PageClosedListener pageClosedListener = new PageClosedListener() {
 		@Override
 		public void pageClosed(PageClosedEvent e) {
-			if (e.getOperationType() == PageClosedEvent.CLOSE && e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
+			if (e.getOperation() == Operation.CLOSE && e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
 				FormClosedEvent event = new FormClosedEvent((IForm) e.getPage().getComponent());
 				((FormBaseChild) e.getPage().getComponent()).formClosed(event);
 				((FormBaseChild) e.getPage().getComponent()).fireFormClosed(event);
@@ -74,6 +72,17 @@ public class FormManager extends MdiPane implements IFormManager {
 
 			if (getPageCount() == 0) {
 				refreshMenusAndToolbars(null);
+			}
+		}
+	};
+
+	private PageAddedListener pageAddedListener = new PageAddedListener() {
+		@Override
+		public void pageAdded(PageAddedEvent e) {
+			if (e.getOperation() == Operation.ADD && e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
+				FormShownEvent event = new FormShownEvent((IForm) e.getPage().getComponent());
+				((FormBaseChild) e.getPage().getComponent()).formShown(event);
+				((FormBaseChild) e.getPage().getComponent()).fireFormShown(event);
 			}
 		}
 	};
