@@ -611,7 +611,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 					uniqurThemetrackingLayer.clear();
 					Recordset selectedRecordsets;
 					for (int i = 0; i < tableUniqueInfo.getSelectedRowCount(); i++) {
-						ThemeUniqueItem item = themeUnique.getItem(selectRow[0]);
+						ThemeUniqueItem item = themeUnique.getItem(selectRow[i]);
 						//第一查询
 						selectedRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + " = " + "'" + item.getUnique() + "'", STATIC);
 						//第二次查询
