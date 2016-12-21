@@ -41,7 +41,6 @@ import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
-import com.supermap.mapping.Selection;
 import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeType;
 import com.supermap.mapping.ThemeUnique;
@@ -201,7 +200,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		//右键菜单布局
 		this.tablePopupMenuUniqurTheme.add(this.menuItemReviseStyle);
 		this.tablePopupMenuUniqurTheme.add(this.menuItemDelete);
-		this.tablePopupMenuUniqurTheme.add(this.menuItemMapLocation);
+		//暂时移除定位菜单
+		//this.tablePopupMenuUniqurTheme.add(this.menuItemMapLocation);
 
 		if (isNewTheme) {
 			refreshColor();
