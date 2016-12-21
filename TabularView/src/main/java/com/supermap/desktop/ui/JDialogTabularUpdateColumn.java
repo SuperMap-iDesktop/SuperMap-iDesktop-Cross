@@ -1401,7 +1401,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         TabularEditHistory tabularEditHistory = new TabularEditHistory();
         for (int i = 0; i < selectRows.length; i++) {
             int smId = tabular.getSmId(selectRows[i]);
-            recordset.moveTo(selectRows[i]);
             EditHistoryBean editHistoryBean = new EditHistoryBean();
             editHistoryBean.setSmId(smId);
             editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
@@ -1434,7 +1433,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         TabularEditHistory tabularEditHistory = new TabularEditHistory();
         for (int i = 0; i < selectRows.length; i++) {
             int smId = tabular.getSmId(selectRows[i]);
-            recordset.moveTo(selectRows[i]);
             EditHistoryBean editHistoryBean = new EditHistoryBean();
             editHistoryBean.setSmId(smId);
             editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
@@ -1477,7 +1475,6 @@ public class JDialogTabularUpdateColumn extends SmDialog {
         TabularEditHistory tabularEditHistory = new TabularEditHistory();
         for (int i = 0; i < selectRows.length; i++) {
             int smId = tabular.getSmId(selectRows[i]);
-            recordset.moveTo(selectRows[i]);
             EditHistoryBean editHistoryBean = new EditHistoryBean();
             editHistoryBean.setSmId(smId);
             editHistoryBean.setBeforeValue(recordset.getFieldValue(updateField));
