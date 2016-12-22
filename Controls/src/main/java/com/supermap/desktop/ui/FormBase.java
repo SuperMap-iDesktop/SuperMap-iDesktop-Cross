@@ -146,11 +146,10 @@ public class FormBase extends JFrame implements IFormMain {
 			WorkspaceUtilities.initRecentFileMenu();
 			DatasourceUtilities.initRecentFileMenu();
 
+			initLayout();
 			this.toolbarManager.load(workEnvironment);
 			this.contextMenuManager.load(workEnvironment);
 			this.statusbarManager.load(workEnvironment);
-
-			initLayout();
 			this.dockbarManager.load(workEnvironment);
 			this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 

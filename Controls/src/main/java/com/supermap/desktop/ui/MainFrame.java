@@ -46,7 +46,7 @@ public class MainFrame extends FormBase implements WindowListener {
 		images.add(toolkit.createImage(path + "iDesktop_Cross_256.png"));
 		images.add(toolkit.createImage(path + "iDesktop Cross.ico"));
 		this.setIconImages(images);
-		this.setVisible(true);
+//		this.setVisible(true);
 		this.addWindowListener(this);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 	}
