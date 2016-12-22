@@ -2,6 +2,7 @@ package com.supermap.desktop.ui.controls;
 
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.implement.MyComboBoxUI;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
@@ -17,6 +18,15 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 	// 没有获取当前所有支持类型的方法，需要的时候再开
 	private transient DatasetType[] datasetTypes;
 	private boolean isAllShown = true;
+
+	/**
+	 * by yuanR
+	 * 2016.12.22
+	 */
+	@Override
+	public void updateUI() {
+		this.setUI(new MyComboBoxUI());
+	}
 
 	// 为了保证顺序，不能遍历
 	public static final DatasetType[] ALL_DATASET_TYPE = new DatasetType[]{
