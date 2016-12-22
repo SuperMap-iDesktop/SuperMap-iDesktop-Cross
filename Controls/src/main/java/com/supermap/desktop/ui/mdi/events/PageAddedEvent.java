@@ -12,6 +12,7 @@ public class PageAddedEvent extends EventObject {
 
 	private MdiPage page;
 	private int index;
+	private int operation = Operation.ADD;
 
 	/**
 	 * Constructs a prototypical Event.
@@ -19,10 +20,11 @@ public class PageAddedEvent extends EventObject {
 	 * @param source The object on which the Event initially occurred.
 	 * @throws IllegalArgumentException if source is null.
 	 */
-	public PageAddedEvent(Object source, MdiPage page, int index) {
+	public PageAddedEvent(Object source, MdiPage page, int index, int operation) {
 		super(source);
 		this.page = page;
 		this.index = index;
+		this.operation = operation;
 	}
 
 	public MdiGroup getGroup() {
@@ -35,5 +37,9 @@ public class PageAddedEvent extends EventObject {
 
 	public int getIndex() {
 		return index;
+	}
+
+	public int getOperation() {
+		return this.operation;
 	}
 }

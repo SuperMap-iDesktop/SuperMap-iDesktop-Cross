@@ -88,7 +88,7 @@ public interface IForm {
 	void deactived();
 
 	/**
-	 * 窗体由不可见到可见时触发
+	 * 窗体第一次添加到桌面并可见时触发。不同于 visibleChanged，active/deactive 都会触发 visibleChange，但 formShown 只在第一次添加到桌面时触发。
 	 */
 	void formShown(FormShownEvent e);
 

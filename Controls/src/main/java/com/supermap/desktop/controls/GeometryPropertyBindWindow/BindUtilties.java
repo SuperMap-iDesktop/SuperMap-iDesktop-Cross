@@ -4,7 +4,6 @@ import com.supermap.data.Dataset;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
-import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
@@ -14,17 +13,14 @@ import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.FormManager;
 import com.supermap.desktop.ui.mdi.MdiGroup;
 import com.supermap.desktop.ui.mdi.MdiPage;
-import com.supermap.desktop.ui.mdi.MdiPane;
 import com.supermap.desktop.ui.mdi.layout.FlowLayoutStrategy;
 import com.supermap.desktop.ui.mdi.layout.ILayoutStrategy;
-import com.supermap.desktop.ui.mdi.layout.SplitLayoutStrategy;
 import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 public class BindUtilties {
 
@@ -85,8 +81,6 @@ public class BindUtilties {
 		// 打开一个默认的属性表，然后修改属性表的title和数据与当前图层对应的数据匹配
 		tabular = TabularUtilities.openDatasetVectorFormTabular(dataset);
 		tabular.setText(dataset.getName() + "@" + dataset.getDatasource().getAlias());
-		tabular.getIdMap().clear();
-		tabular.getRowIndexMap().clear();
 		tabular.setRecordset(recordset);
 	}
 
