@@ -123,8 +123,10 @@ public class ImportSettingFactory implements IImportSettingFactory {
             //初始化设置
             importSetting.setSourceFilePath(filePath);
         }
-        if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length >= 0) {
+        if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0) {
             importSetting.setTargetDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
+        } else if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
+            importSetting.setTargetDatasource(Application.getActiveApplication().getWorkspace().getDatasources().get(0));
         }
         return importSetting;
     }
