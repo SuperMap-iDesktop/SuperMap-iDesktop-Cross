@@ -87,6 +87,7 @@ public class FormBase extends JFrame implements IFormMain {
 		JMenu menu = new JMenu("loading");
 		this.jMenuBarMain.add(menu);
 		jMenuBarMain.setMinimumSize(new Dimension(20, 23));
+		jMenuBarMain.setPreferredSize(new Dimension(20, 23));
 //		this.setJMenuBar(this.jMenuBarMain);
 
 		this.addWindowListener(new FormBaseListener());

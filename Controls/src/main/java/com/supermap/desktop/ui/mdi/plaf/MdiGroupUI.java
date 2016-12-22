@@ -11,10 +11,11 @@ import com.supermap.desktop.ui.mdi.util.MdiResource;
 import javax.swing.*;
 import javax.swing.plaf.ComponentUI;
 import java.awt.*;
-import java.awt.event.*;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 // group 右上角的统一管理图标，定义为 group 功能区 groupOprsFeature
 // 所有的 tab 标签绘制区域，定义为 TabsFeature
@@ -159,7 +160,13 @@ public class MdiGroupUI extends ComponentUI {
 					// page 的 bounds 由 pagesFeature 以及 pages 的 Insets 属性决定
 					for (int i = 0; i < MdiGroupUI.this.group.getPageCount(); i++) {
 						MdiPage page = MdiGroupUI.this.group.getPageAt(i);
-						page.getComponent().setBounds(x, y, width, height);
+						Rectangle bounds = page.getComponent().getBounds();
+						if (!page.isActive() || Math.abs(bounds.getHeight() - height) > MdiGroupUIProperties.boundsTolerance
+								|| Math.abs(bounds.getWidth() - width) > MdiGroupUIProperties.boundsTolerance
+								|| Math.abs(bounds.getX() - x) > MdiGroupUIProperties.boundsTolerance
+								|| Math.abs(bounds.getY() - y) > MdiGroupUIProperties.boundsTolerance) {
+							page.getComponent().setBounds(x, y, width, height);
+						}
 					}
 				}
 			}
