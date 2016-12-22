@@ -13,6 +13,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -43,7 +44,9 @@ public class JDialogChangePassword extends SmDialog {
 	 */
 	public JDialogChangePassword() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setResizable(false);
+		//setResizable(false);
+		setSize(new Dimension(350,170));
+		setMinimumSize(new Dimension(350,170));
 		initializeComponents();
 		initializeResources();
 		registerEvents();
