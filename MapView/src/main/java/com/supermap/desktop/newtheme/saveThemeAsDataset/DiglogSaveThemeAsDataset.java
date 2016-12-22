@@ -1,11 +1,13 @@
 package com.supermap.desktop.newtheme.saveThemeAsDataset;
 
 import com.supermap.data.CursorType;
+import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.DatasetVectorInfo;
 import com.supermap.data.Datasource;
 import com.supermap.data.EncodeType;
+import com.supermap.data.Geometry;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
@@ -66,6 +68,7 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 		addListeners();
 	}
 
+
 	/**
 	 * 初始化控件
 	 */
@@ -79,11 +82,15 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 		this.datasourceNameLabel = new JLabel();
 
 		this.datasourceComboBox = new DatasourceComboBox();
+
 		this.datasetTypes = new DatasetType[2];
 		this.datasetTypes[0] = DatasetType.CAD;
 		this.datasetTypes[1] = DatasetType.TEXT;
 		this.datasetTypeComboBox = new DatasetTypeComboBox(datasetTypes);
 		this.datasetTypeComboBox.setAllShown(false);
+		//暂时使用此方式设置ui
+		this.datasetTypeComboBox.updateUI();
+
 		this.textFieldoutDatasetName = new JTextField();
 
 		this.buttonOk = new SmButton();
@@ -100,8 +107,13 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 			if (null == selectedNodeData) {
 				return;
 			}
+			//节点位置为数据源项
 			if (selectedNodeData.getData() instanceof Datasource) {
 				this.datasourceComboBox.setSelectedDatasource((Datasource) selectedNodeData.getData());
+			}
+			//节点位置为数据集
+			if (selectedNodeData.getData() instanceof Dataset) {
+				this.datasourceComboBox.setSelectedDatasource(((Dataset) selectedNodeData.getData()).getDatasource());
 			}
 		}
 		this.toDatasource = this.datasourceComboBox.getSelectedDatasource();
@@ -125,6 +137,7 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 			num++;
 		}
 		this.textFieldoutDatasetName.setText(this.outDatasetName);
+		this.buttonOk.setEnabled(true);
 	}
 
 	/**
@@ -290,20 +303,27 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 		try {
 			//先创建Cad数据集和其记录集
 			DatasetVector tempDataset = ThemeUtil.getActiveLayer().themeToDatasetVector(toDatasource, "tempDataset");
-			Recordset tempRecordset = tempDataset.getRecordset(false, CursorType.DYNAMIC);
+			Recordset tempRecordset = tempDataset.getRecordset(false, CursorType.STATIC);
 			tempRecordset.moveFirst();
 			//创建一个空的文本数据集
 			createNullTextDataset();
 			//得到创建的文本数据集和其记录集
-			DatasetVector aimDataset = (DatasetVector) toDatasource.getDatasets().get(outDatasetName);
-			Recordset aimRecordset = aimDataset.getRecordset(false, CursorType.DYNAMIC);
-			aimRecordset.moveFirst();
-			//通过循环给文本数据集记录集中增加条目
-			for (int i = 0; i < tempRecordset.getRecordCount(); i++) {
-				aimRecordset.addNew(tempRecordset.getGeometry());
+			DatasetVector resultTextDataset = (DatasetVector) toDatasource.getDatasets().get(outDatasetName);
+			Recordset resultTextRecordset = resultTextDataset.getRecordset(false, CursorType.DYNAMIC);
+			resultTextRecordset.moveFirst();
+			//批量操作
+			Recordset.BatchEditor editor = resultTextRecordset.getBatch();
+			// 设置批量更新每次提交的记录数目
+			editor.setMaxRecordCount(5000);
+			editor.begin();
+			while (!tempRecordset.isEOF()) {
+				Geometry tempGeometry = tempRecordset.getGeometry();
+				resultTextRecordset.addNew(tempGeometry);
+				tempGeometry.dispose();
 				tempRecordset.moveNext();
-				aimRecordset.moveNext();
 			}
+			// 批量操作统一提交
+			editor.update();
 			//释放资源
 			tempRecordset.dispose();
 			tempDataset.close();
