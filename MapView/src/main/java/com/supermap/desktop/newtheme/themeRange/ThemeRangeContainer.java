@@ -49,6 +49,7 @@ import com.supermap.mapping.Theme;
 import com.supermap.mapping.ThemeRange;
 import com.supermap.mapping.ThemeRangeItem;
 import com.supermap.mapping.ThemeType;
+import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -119,6 +120,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private JMenuItem menuItemReviseStyle = new JMenuItem();
 	//编辑定位
 	private JMenuItem menuItemMapLocation = new JMenuItem();
+	//跟踪层
+	private TrackingLayer rangeThemeTrackingLayer;
 
 	private JScrollPane scrollPane = new JScrollPane();
 	private JTable tableRangeInfo = new JTable();
@@ -176,6 +179,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.datasetVector = (DatasetVector) layer.getDataset();
 		this.themeRange = new ThemeRange((ThemeRange) layer.getTheme());
 		this.map = ThemeGuideFactory.getMapControl().getMap();
+		//获得跟踪层
+		this.rangeThemeTrackingLayer = map.getTrackingLayer();
 		this.precision = themeRange.getPrecision();
 		initComponents();
 		initResources();
@@ -635,8 +640,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			this.buttonContinuousMapLocation.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_OpenLinkageLayer.png"));
 			this.isContinuousMapLocation = false;
 			//当关闭连续定位功能时，清空跟踪层
-			MapUtilities.getActiveMap().getTrackingLayer().clear();
-			map.refresh();
+			this.rangeThemeTrackingLayer.clear();
+			this.map.refresh();
 		} else {
 			this.buttonContinuousMapLocation.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_CloseLinkageLayer.png"));
 			this.isContinuousMapLocation = true;
@@ -1001,7 +1006,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		private void ContinuousMapLocation() {
 			if (isContinuousMapLocation) {
 				//清除跟踪层
-				MapUtilities.getActiveMap().getTrackingLayer().clear();
+				rangeThemeTrackingLayer.clear();
 				Recordset selectedRecordsets;
 				int[] selectRow = tableRangeInfo.getSelectedRows();
 				for (int i = 0; i < tableRangeInfo.getSelectedRowCount(); i++) {
@@ -1043,7 +1048,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 									selectedGeo.setStyle(selectedGeoStyle);
 								}
 							}
-							MapUtilities.getActiveMap().getTrackingLayer().add(selectedGeo, "");
+							rangeThemeTrackingLayer.add(selectedGeo, "");
 							points.add(selectedGeo.getBounds().leftBottom);
 							points.add(selectedGeo.getBounds().rightTop);
 							//对象释放
@@ -1119,12 +1124,12 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			}
 			if (e.getSource() == tableRangeInfo && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				//当按下esc键，清除跟踪层
-				MapUtilities.getActiveMap().getTrackingLayer().clear();
+				rangeThemeTrackingLayer.clear();
 				map.refresh();
 			}
 			if (e.getSource() == nowMapControl && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				//当焦点在mapContorl上时，按esc键清除跟踪层
-				MapUtilities.getActiveMap().getTrackingLayer().clear();
+				rangeThemeTrackingLayer.clear();
 				map.refresh();
 			}
 

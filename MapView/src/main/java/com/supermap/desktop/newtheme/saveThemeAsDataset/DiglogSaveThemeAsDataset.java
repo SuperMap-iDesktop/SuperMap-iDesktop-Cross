@@ -70,7 +70,7 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 	 * 初始化控件
 	 */
 	private void initComponents() {
-		this.setSize(300, 155);
+		this.setSize(300, 152);
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
 

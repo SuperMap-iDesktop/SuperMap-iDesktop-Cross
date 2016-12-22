@@ -6,6 +6,7 @@ import com.supermap.desktop.ui.mdi.action.IMdiAction;
 import com.supermap.desktop.ui.mdi.plaf.properties.MdiTabUIProperties;
 import com.supermap.desktop.ui.mdi.util.MdiResource;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -143,21 +144,29 @@ class MdiTabFeature extends AbstractMdiFeature {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (this.iconFeature.isContains(e.getPoint()) || this.textFeature.isContains(e.getPoint())) {
-			this.page.active();
-		} else {
-			boolean isChildPressed = false; // 子 feature 是否被点击
-			for (int i = 0; i < this.features.size(); i++) {
-				IMdiFeature feature = this.features.get(i);
-				if (feature.isContains(e.getPoint())) {
-					feature.mousePressed(e);
-					isChildPressed = true;
+		if (SwingUtilities.isLeftMouseButton(e)) {
+			if (this.iconFeature.isContains(e.getPoint()) || this.textFeature.isContains(e.getPoint())) {
+				this.page.active();
+			} else {
+				boolean isChildPressed = false; // 子 feature 是否被点击
+				for (int i = 0; i < this.features.size(); i++) {
+					IMdiFeature feature = this.features.get(i);
+					if (feature.isContains(e.getPoint())) {
+						feature.mousePressed(e);
+						isChildPressed = true;
+					}
+				}
+
+				// 没有点击子 feature，就激活当前选项卡
+				if (!isChildPressed) {
+					this.page.active();
 				}
 			}
-
-			// 没有点击子 feature，就激活当前选项卡
-			if (!isChildPressed) {
-				this.page.active();
+		} else if (SwingUtilities.isRightMouseButton(e)) {
+			// TODO 右键菜单，留空
+		} else if (SwingUtilities.isMiddleMouseButton(e)) {
+			if (this.iconFeature.isContains(e.getPoint()) || this.textFeature.isContains(e.getPoint())) {
+				this.page.close();
 			}
 		}
 	}
