@@ -7,7 +7,11 @@ import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -486,6 +490,9 @@ public class SmFileChoose extends JFileChooser {
 		}
 		int i = filePath.lastIndexOf("\\");
 		if (i > 0 && i < filePath.length() - 1 && !"GetDirectories".equals(moduleType)) {
+			if (filePath.indexOf("\\") == i) {
+				i++;
+			}
 			menuPath = filePath.substring(0, i);
 		} else {
 			menuPath = filePath;
