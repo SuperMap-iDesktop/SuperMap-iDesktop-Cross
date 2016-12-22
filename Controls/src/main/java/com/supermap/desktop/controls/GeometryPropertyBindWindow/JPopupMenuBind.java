@@ -3,12 +3,10 @@ package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
-import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DataCell;
@@ -20,40 +18,23 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by xie on 2016/11/10.
+ * 关联浏览弹出窗口
  */
 public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
-    private static final int MARKET_WIDTH = 128;
-    private static final String TAG_MOVE = "MOVE";
     private JScrollPane scrollPane;
     private JList listForms;
     private JButton buttonSelectAll;
     private JButton buttonSelectInverse;
     private JButton buttonOk;
     private JPanel panelButton;
-	private JCheckBox checkBoxIsQueryWhileSelectedColumn;
-	private JLabel labelTitle;
-	private List formMapList = new ArrayList();
-    private List formTabularList = new ArrayList();
-    public static List<IForm> selectList = new ArrayList();
-    private BindHandler handler = new BindHandler();
+    private JLabel labelTitle;
+    private BindHandler handler = BindHandler.getInstance();
     private static JPopupMenuBind popupMenubind;
-    private boolean formMapsOnly = false;
-    private boolean formTabularsOnly = false;
-    private boolean formMapsAndFormTabulars = false;
-
 
     private ActionListener selectAllListener = new ActionListener() {
         @Override
@@ -78,21 +59,19 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
             }
         }
     };
-    private ActionListener imageListener;
-    private ActionListener removeImageListener;
     private ActionListener okListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             addFormList();
             showView();
-            splitTabWindow();
+            BindUtilties.resetMDILayout();
             JPopupMenuBind.this.setVisible(false);
         }
     };
 
     private void addFormList() {
-        formMapList.clear();
-        formTabularList.clear();
+        handler.getFormMapList().clear();
+        handler.getFormTabularList().clear();
         IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
         DefaultListModel model = (DefaultListModel) listForms.getModel();
         int size = model.getSize();
@@ -101,31 +80,27 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
             if (item.isSelected()) {
                 IForm form = formManager.get(i);
                 if (form instanceof IFormMap) {
-                    formMapList.add(form);
+                    handler.getFormMapList().add(form);
                 } else if (form instanceof IFormTabular) {
-                    formTabularList.add(form);
+                    handler.getFormTabularList().add(form);
                 }
-                selectList.add(form);
+                if (!handler.getFormsList().contains(form)) {
+                    handler.getFormsList().add(form);
+                }
             }
         }
     }
 
     private void showView() {
-        final int formMapSize = formMapList.size();
-        int formSize = selectList.size();
-        int formTabularSize = formTabularList.size();
+        final int formMapSize = handler.getFormMapList().size();
+        int formSize = handler.getFormsList().size();
+        int formTabularSize = handler.getFormTabularList().size();
         //只有属性表
-        handler.setFormMapList(formMapList);
-        handler.setFormTabularList(formTabularList);
-        handler.setFormsList(selectList);
         if (formSize == formMapSize) {
-            formMapsOnly = true;
             handler.bindFormMaps();
         } else if (formTabularSize == formSize) {
-            formTabularsOnly = true;
             handler.bindFormTabulars();
         } else {
-            formMapsAndFormTabulars = true;
             handler.bindFormMapsAndFormTabulars();
         }
     }
@@ -136,20 +111,20 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
     }
 
     public void removeBind() {
-        if (formMapsOnly) {
+        int formMapsSize = handler.getFormMapList().size();
+        int formsSize = handler.getFormsList().size();
+        int formTabularsSize = handler.getFormTabularList().size();
+        if (formsSize == formMapsSize) {
             handler.removeFormMapsBind();
-        } else if (formTabularsOnly) {
+        } else if (formsSize == formTabularsSize) {
             handler.removeFormTabularsBind();
-        } else if (formMapsAndFormTabulars) {
+        } else {
             handler.removeFormMapsAndFormTabularsBind();
         }
     }
 
     @Override
     public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-        formMapsOnly = false;
-        formTabularsOnly = false;
-        formMapsAndFormTabulars = false;
         removeBind();
     }
 
@@ -181,59 +156,7 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
         if (null != scrollPane) {
             scrollPane = null;
         }
-        if (null != formMapList) {
-            formMapList = null;
-        }
-        if (null != formTabularList) {
-            formTabularList = null;
-        }
-    }
 
-    private void splitTabWindow() {
-//        int formMapSize = formMapList.size();
-//        int formTabularSize = formTabularList.size();
-//        TabWindow formMapSplitWindow = null;
-//        TabWindow formTabularTabWindow = null;
-//        TabWindow tabWindow = ((DockbarManager) (Application.getActiveApplication().getMainFrame()).getDockbarManager()).getChildFormsWindow();
-//        if (formMapsOnly) {
-//            while (formMapSize > 1) {
-//                if (tabWindow.getChildWindowCount() > 0) {
-//                    tabWindow.split((DockingWindow) formMapList.get(formMapSize - 1), Direction.RIGHT, (float) (1 - 1.0 / formMapSize));
-//                    formMapSize--;
-//                } else {
-//                    break;
-//                }
-//            }
-//        } else if (formTabularsOnly) {
-//            while (formTabularSize > 1) {
-//                if (tabWindow.getChildWindowCount() > 0) {
-//                    tabWindow.split((DockingWindow) formTabularList.get(formTabularSize - 1), Direction.DOWN, (float) (1 - 1.0 / formTabularSize));
-//                    formTabularSize--;
-//                } else {
-//                    break;
-//                }
-//            }
-//        } else if (formMapsAndFormTabulars) {
-//            //有地图和属性表时
-//
-//            this.splitWindow = tabWindow.split((DockingWindow) formTabularList.get(0), Direction.DOWN, 0.7f);
-//            formMapSplitWindow = (TabWindow) splitWindow.getChildWindow(0);
-//            while (formMapSize > 1) {
-//                if (formMapSplitWindow.getChildWindowCount() > 0) {
-//                    formMapSplitWindow.split((DockingWindow) formMapList.get(formMapSize - 1), Direction.RIGHT, (float) (1 - 1.0 / formMapSize));
-//                    formMapSize--;
-//                } else {
-//                    break;
-//                }
-//            }
-//            formTabularTabWindow = (TabWindow) splitWindow.getChildWindow(splitWindow.getChildWindowCount() - 1);
-//            for (int i = 1; i < formTabularSize; i++) {
-//                formTabularTabWindow.addTab((DockingWindow) formTabularList.get(i));
-//            }
-//        }
-//        if (formMapSize > 0) {
-//            Application.getActiveApplication().setActiveForm((IForm) formMapList.get(0));
-//        }
     }
 
     private MouseListener listFormsMouseListener = new MouseAdapter() {
@@ -268,19 +191,12 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
     }
 
     private void initComponents() {
-        if (null == formMapList) {
-            formMapList = new ArrayList();
-        }
-        if (null == formTabularList) {
-            formTabularList = new ArrayList();
-        }
         this.scrollPane = new JScrollPane();
         this.listForms = new JList();
         this.buttonSelectAll = ComponentFactory.createButtonSelectAll();
         this.buttonSelectInverse = ComponentFactory.createButtonSelectInverse();
         this.buttonOk = ComponentFactory.createButtonOK();
-	    this.checkBoxIsQueryWhileSelectedColumn = new JCheckBox();
-	    this.labelTitle = new JLabel();
+        this.labelTitle = new JLabel();
         this.panelButton = new JPanel();
         initListForms();
     }
@@ -298,14 +214,14 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
     private void addItemToList(DefaultListModel listModel) {
         IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
         int size = formManager.getCount();
-        int listSize = selectList.size();
+        int listSize = handler.getFormsList().size();
         for (int i = 0; i < size; i++) {
             IForm form = formManager.get(i);
             CheckableItem item = new CheckableItem();
             item.setStr(form.getText());
             item.setForm(form);
             for (int j = 0; j < listSize; j++) {
-                if (form.equals(selectList.get(j))) {
+                if (form.equals(handler.getFormsList().get(j))) {
                     item.setSelected(true);
                     break;
                 }
@@ -320,12 +236,6 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
         this.buttonSelectInverse.addActionListener(this.selectInverseListener);
         this.buttonOk.addActionListener(this.okListener);
         this.listForms.addMouseListener(this.listFormsMouseListener);
-	    checkBoxIsQueryWhileSelectedColumn.addItemListener(new ItemListener() {
-		    @Override
-		    public void itemStateChanged(ItemEvent e) {
-			    GlobalParameters.setIsHeadClickedSelectedColumn(checkBoxIsQueryWhileSelectedColumn.isSelected());
-		    }
-	    });
     }
 
     public void removeEvents() {
@@ -340,11 +250,10 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
     private void initLayout() {
         this.removeAll();
         this.panelButton.setLayout(new GridBagLayout());
-	    this.panelButton.add(this.checkBoxIsQueryWhileSelectedColumn, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 10, 0).setFill(GridBagConstraints.NONE).setWeight(1, 0));
-	    this.panelButton.add(this.buttonSelectAll, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 10, 10).setFill(GridBagConstraints.NONE).setWeight(0, 1));
-	    this.panelButton.add(this.buttonSelectInverse, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 10, 10).setFill(GridBagConstraints.NONE).setWeight(0, 1));
-	    this.panelButton.add(this.buttonOk, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5, 5, 10, 10).setFill(GridBagConstraints.NONE).setWeight(0, 1));
-	    this.setLayout(new GridBagLayout());
+        this.panelButton.add(this.buttonSelectAll, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 1));
+        this.panelButton.add(this.buttonSelectInverse, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 1));
+        this.panelButton.add(this.buttonOk, new GridBagConstraintsHelper(4, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 1));
+        this.setLayout(new GridBagLayout());
         this.add(this.labelTitle, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(0, 0));
         this.add(this.scrollPane, new GridBagConstraintsHelper(0, 1, 1, 5).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
         this.add(this.panelButton, new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(1, 0));
@@ -353,7 +262,6 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
 
     private void initResources() {
         this.labelTitle.setText(CoreProperties.getString("String_Bind"));
-	    checkBoxIsQueryWhileSelectedColumn.setText(ControlsProperties.getString("String_IsBindQueryWhileClickHead"));
     }
 
     class CheckListRenderer implements ListCellRenderer<Object> {
