@@ -34,12 +34,12 @@ public class DockbarManager implements IDockbarManager {
 	private static final String WORKSPACE_COMPONENT_MANAGER_ID = "workspaceComponentManager";
 	private static final String LAYERS_COMPONENT_MANAGER_ID = "layersComponentManager";
 	private static final String OUTPUT_FRAME_ID = "outputFrame";
+	private static final String DOCKBAR_MANAGER_PORTID = "dockbarManagerPort";
 
 	private EventListenerList listenerList = new EventListenerList();
 	private ArrayList<Dockbar> dockbars = null;
 	private Viewport dockPort;
 	private View mainView;
-	private View rightView;
 
 	private Dockbar workspaceComponentManager = null;
 	private Dockbar layersComponentManager = null;
@@ -48,7 +48,7 @@ public class DockbarManager implements IDockbarManager {
 	public DockbarManager(JComponent mainContent) {
 		DefaultDockingStrategy.keepConstantPercentage(true);
 		this.dockbars = new ArrayList<Dockbar>();
-		this.dockPort = new Viewport();
+		this.dockPort = new Viewport(DOCKBAR_MANAGER_PORTID);
 		this.mainView = new View("mainView", null, null);
 		this.mainView.setTerritoryBlocked(DockingConstants.CENTER_REGION, true);
 		this.mainView.setTitlebar(null);

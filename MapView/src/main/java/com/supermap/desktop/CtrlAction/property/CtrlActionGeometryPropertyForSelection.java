@@ -10,7 +10,6 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.GeometryPropertyBindWindow.BindUtilties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 
@@ -35,8 +34,8 @@ public class CtrlActionGeometryPropertyForSelection extends CtrlAction {
 			if (null != dataset && dataset instanceof DatasetVector && map.findSelection(true).length > 0) {
 				Recordset tempRecordset = map.findSelection(true)[0].toRecordset();
 				BindUtilties.openTabular(dataset, tempRecordset);
-				BindUtilties.windowBindProperty(formMap, activeLayer);
-				return;
+                BindUtilties.windowBindProperty(formMap);
+                return;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
