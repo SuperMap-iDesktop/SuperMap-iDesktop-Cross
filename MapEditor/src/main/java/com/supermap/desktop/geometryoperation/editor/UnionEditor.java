@@ -6,6 +6,7 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.EditType;
 import com.supermap.data.GeoLine;
 import com.supermap.data.GeoStyle;
+import com.supermap.data.Geometrist;
 import com.supermap.data.Geometry;
 import com.supermap.data.GeometryType;
 import com.supermap.data.Point2D;
@@ -28,6 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 线对象合并
+ */
 public class UnionEditor extends AbstractEditor {
 
 	@Override
@@ -69,7 +73,7 @@ public class UnionEditor extends AbstractEditor {
 		}
 		return enable;
 	}
-
+	//线对象合并
 	private void union(EditEnvironment environment, Layer editLayer, Map<String, Object> propertyData) {
 		Geometry result = null;
 		Recordset targetRecordset = null;
@@ -93,8 +97,7 @@ public class UnionEditor extends AbstractEditor {
 						}
 						selection = null;
 					}
-
-					if (ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), ILineFeature.class)) {
+					if(ListUtilities.isListOnlyContain(environment.getEditProperties().getSelectedGeometryTypeFeatures(), ILineFeature.class)){
 						Recordset recordsetSelected = layer.getSelection().toRecordset();
 						//将选中数据转化为几何对象存放在arrayList中
 						ArrayList<GeoLine> arrayList = new ArrayList();
@@ -105,20 +108,28 @@ public class UnionEditor extends AbstractEditor {
 							}
 							recordsetSelected.moveNext();
 						}
-						//将选中的数据集进行排序
-						GeoLineSort geoLineSort = new GeoLineSort(arrayList);
-						geoLineSort.sort();
-						for (int i = 0; i < arrayList.size(); i++) {
-							result = GeometryUtilities.union(result, arrayList.get(i), true);
-							//其中一个合并失败，则全部合并失败，跳出循环
-							if (result == null) {
-								break;
+
+						for(int i=0;i<arrayList.size();i++){
+							Geometry tempGeoLine=result;
+							tempGeoLine=GeometryUtilities.union(tempGeoLine,arrayList.get(i),false);
+							//合并失败
+							if(tempGeoLine==null){
+								//相等说明整个循环都合并失败了
+								if(i+1==arrayList.size()){
+									result=null;
+									break;
+								}
+							}else {
+								//成功以后就要重新从第0个开始合并，置i为0
+								arrayList.remove(i);
+								result=tempGeoLine;
+								//循环后自加变为0
+								i=-1;
 							}
 						}
 
 					}
-					//union方法有错，合成的是没有顺序的数据集
-					//	result = GeometryUtilities.union(result, GeometryUtilities.union(layer), true);
+
 				}
 			}
 
@@ -171,51 +182,4 @@ public class UnionEditor extends AbstractEditor {
 		}
 	}
 
-	private class GeoLineSort {
-		public ArrayList<GeoLine> arrayList = null;
-		private GeoLine tempGeoLine = null;
-
-		public GeoLineSort(ArrayList<GeoLine> arrayList) {
-			this.arrayList = arrayList;
-		}
-
-		public void sort() {
-			for (int i = 0; i < arrayList.size() - 2; ++i) {
-				double tempDistance = pointDistance(arrayList.get(i), arrayList.get(i + 1));
-				for (int j = i + 2; j < arrayList.size(); ++j) {
-					double distance = pointDistance(arrayList.get(i), arrayList.get(j));
-					if (Double.compare(tempDistance, distance) == 1) {
-						tempGeoLine = null;
-						tempGeoLine = arrayList.get(i + 1);
-						arrayList.set(i + 1, arrayList.get(j));
-						arrayList.set(j, tempGeoLine);
-						tempDistance = distance;
-					}
-				}
-			}
-		}
-
-		private double pointDistance(GeoLine geoLine1, GeoLine geoLine2) {
-			Point2D startPoint1 = geoLine1.getPart(0).getItem(0);
-			Point2D endPoint1 = geoLine1.getPart(0).getItem(geoLine1.getPart(0).getCount() - 1);
-
-			Point2D startPoint2 = geoLine2.getPart(0).getItem(0);
-			Point2D endPoint2 = geoLine2.getPart(0).getItem(geoLine2.getPart(0).getCount() - 1);
-
-			double startToStart = getDistance(startPoint1, startPoint2);
-			double startToEnd = getDistance(startPoint1, endPoint2);
-			double endToStart = getDistance(endPoint1, startPoint2);
-			double endtToEnd = getDistance(endPoint1, endPoint2);
-
-			double minimumDistance = Math.min(startToStart, startToEnd);
-			minimumDistance = Math.min(minimumDistance, endToStart);
-			minimumDistance = Math.min(minimumDistance, endtToEnd);
-
-			return minimumDistance;
-		}
-
-		protected double getDistance(Point2D point1, Point2D point2) {
-			return Math.sqrt(Math.pow((point1.getX() - point2.getX()), 2) + Math.pow((point1.getY() - point2.getY()), 2));
-		}
-	}
 }
