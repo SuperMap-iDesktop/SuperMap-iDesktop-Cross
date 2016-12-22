@@ -6,19 +6,65 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
 import com.supermap.desktop.controls.utilities.SortUIUtilities;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.mapping.*;
-import com.supermap.realspace.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Layers;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.ThemeGridRangeItem;
+import com.supermap.mapping.ThemeGridUniqueItem;
+import com.supermap.mapping.ThemeLabelItem;
+import com.supermap.mapping.ThemeRangeItem;
+import com.supermap.mapping.ThemeUniqueItem;
+import com.supermap.realspace.Feature3D;
+import com.supermap.realspace.Feature3Ds;
+import com.supermap.realspace.Layer3D;
+import com.supermap.realspace.Layer3DAddedEvent;
+import com.supermap.realspace.Layer3DAddedListener;
+import com.supermap.realspace.Layer3DDataset;
+import com.supermap.realspace.Layer3DImageFile;
+import com.supermap.realspace.Layer3DKML;
+import com.supermap.realspace.Layer3DMap;
+import com.supermap.realspace.Layer3DModel;
+import com.supermap.realspace.Layer3DRemovedEvent;
+import com.supermap.realspace.Layer3DRemovedListener;
+import com.supermap.realspace.Layer3DType;
+import com.supermap.realspace.Layer3DVectorFile;
+import com.supermap.realspace.Layer3Ds;
+import com.supermap.realspace.Scene;
+import com.supermap.realspace.ScreenLayer3D;
+import com.supermap.realspace.TerrainLayer;
+import com.supermap.realspace.TerrainLayers;
+import com.supermap.realspace.Theme3DRange;
+import com.supermap.realspace.Theme3DRangeItem;
+import com.supermap.realspace.Theme3DType;
+import com.supermap.realspace.Theme3DUnique;
+import com.supermap.realspace.Theme3DUniqueItem;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.*;
-import java.awt.event.*;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DragSourceAdapter;
+import java.awt.dnd.DragSourceDropEvent;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.beans.Beans;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -876,17 +922,19 @@ public class Layer3DsTree extends JTree {
         }
         int[] selectionRows = getSelectionRows();
         Integer[] integers = new Integer[selectionRows.length];
-        for (int i = 0; i < selectionRows.length; i++) {
-            integers[i] = selectionRows[i];
-        }
+	    TreeNode parent = draggedNode.getParent();
+	    int index = parent.getParent().getIndex(parent);
+	    for (int i = 0; i < selectionRows.length; i++) {
+		    integers[i] = selectionRows[i] - index - 1;
+	    }
         SortUIUtilities.sortList(integers);
         int count = 0; // 记录有多少图层移动到本图层之前
         int lowerCount = 0;// 记录有多少图层本来在目标图层之前
         try {
-            for (int i = selectionRows.length - 1; i >= 0; i--) {
-                int currentIndex = integers[i] - 1;
-                int tempTargetRow = treeNodeLayer3Ds.getIndex(dropTargetNode);
-                if (currentIndex >= tempTargetRow) {
+	        for (int i = selectionRows.length - 1; i >= 0; i--) {
+		        int currentIndex = integers[i];
+		        int tempTargetRow = dropTargetNodeIndex;
+		        if (currentIndex >= tempTargetRow) {
                     currentIndex += count;
                 } else {
                     if (i != selectionRows.length - 1) {
@@ -894,20 +942,23 @@ public class Layer3DsTree extends JTree {
                     }
                     lowerCount++;
                 }
-                count++;
-                ((DefaultTreeModel) getModel()).removeNodeFromParent(draggedNode);
-                ((DefaultTreeModel) getModel()).insertNodeInto(draggedNode, treeNodeLayer3Ds, tempTargetRow);
-                nowScene.getLayers().moveTo(currentIndex, tempTargetRow);
-
+		        count++;
+		        draggedNode = (DefaultMutableTreeNode) parent.getChildAt(currentIndex);
+//		        int beforeLayerIndex = draggedNode.getParent().getIndex(draggedNode);
+//		        int resultIndex = lastPathComponent.getParent().getIndex(lastPathComponent);
+		        ((DefaultTreeModel) getModel()).removeNodeFromParent(draggedNode);
+		        ((DefaultTreeModel) getModel()).insertNodeInto(draggedNode, (MutableTreeNode) parent, tempTargetRow);
+		        nowScene.getLayers().moveTo(currentIndex, tempTargetRow);
             }
             if (isUp) {
                 lowerCount++;
             }
-            setSelectionInterval(dropTargetNodeIndex - lowerCount + 1, dropTargetNodeIndex + selectionRows.length - lowerCount);
-            nowScene.refresh();
+	        setSelectionInterval(dropTargetNodeIndex - lowerCount + 2 + index, dropTargetNodeIndex + selectionRows.length - lowerCount + index + 1);
+	        nowScene.refresh();
             dropTargetNodeIndex = -1;
         } catch (Exception e) {
-            //由于计算问题暂时先这样处理 nowScene.getLayers().moveTo(currentIndex, tempTargetRow);
+	        Application.getActiveApplication().getOutput().output(e);
+	        //由于计算问题暂时先这样处理 nowScene.getLayers().moveTo(currentIndex, tempTargetRow);
         }
     }
 
