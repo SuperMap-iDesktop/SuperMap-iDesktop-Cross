@@ -162,13 +162,6 @@ public class FormBase extends JFrame implements IFormMain {
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					FormBase.this.setVisible(true);
-				}
-			});
-
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
 					fireFormLoadedEvent();
 					if (GlobalParameters.isWorkspaceRecovery()) {
 						WorkspaceRecovery.getInstance().run();

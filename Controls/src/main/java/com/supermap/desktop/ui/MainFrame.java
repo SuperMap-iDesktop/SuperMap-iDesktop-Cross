@@ -5,6 +5,7 @@ import com.supermap.desktop.controls.utilities.SystemUIUtilities;
 import com.supermap.desktop.event.FormActivatedListener;
 import com.supermap.desktop.utilities.PathUtilities;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -46,9 +47,14 @@ public class MainFrame extends FormBase implements WindowListener {
 		images.add(toolkit.createImage(path + "iDesktop_Cross_256.png"));
 		images.add(toolkit.createImage(path + "iDesktop Cross.ico"));
 		this.setIconImages(images);
-//		this.setVisible(true);
 		this.addWindowListener(this);
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				setVisible(true);
+			}
+		});
 	}
 
 
