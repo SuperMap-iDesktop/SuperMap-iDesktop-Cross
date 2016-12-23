@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentListener;
 
 /**
  * @author XiaJT
@@ -40,8 +41,8 @@ public class SmMapControlScrollPanel extends JScrollPane {
 		public void setViewSize(Dimension newSize) {
 			this.newSize = newSize;
 			if (isFirstTime || (getDelay() == null && GlobalParameters.getMapRefreshDelayWhileResize() == 0)) {
-				doResize();
 				isFirstTime = false;
+				doResize();
 				return;
 			}
 			if (timer != null) {
@@ -63,7 +64,10 @@ public class SmMapControlScrollPanel extends JScrollPane {
 		}
 
 		private void doResize() {
+			ComponentListener componentListener = this.getView().getComponentListeners()[0];
+			this.getView().removeComponentListener(componentListener);
 			super.setViewSize(newSize);
+			this.getView().addComponentListener(componentListener);
 		}
 	}
 }

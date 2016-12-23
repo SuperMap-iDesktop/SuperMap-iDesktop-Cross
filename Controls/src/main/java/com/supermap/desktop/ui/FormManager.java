@@ -10,11 +10,23 @@ import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.DialogSaveChildForms;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.*;
+import com.supermap.desktop.event.ActiveFormChangedEvent;
+import com.supermap.desktop.event.ActiveFormChangedListener;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormShownEvent;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.mdi.MdiPage;
 import com.supermap.desktop.ui.mdi.MdiPane;
-import com.supermap.desktop.ui.mdi.events.*;
+import com.supermap.desktop.ui.mdi.events.Operation;
+import com.supermap.desktop.ui.mdi.events.PageActivatedEvent;
+import com.supermap.desktop.ui.mdi.events.PageActivatedListener;
+import com.supermap.desktop.ui.mdi.events.PageAddedEvent;
+import com.supermap.desktop.ui.mdi.events.PageAddedListener;
+import com.supermap.desktop.ui.mdi.events.PageClosedEvent;
+import com.supermap.desktop.ui.mdi.events.PageClosedListener;
+import com.supermap.desktop.ui.mdi.events.PageClosingEvent;
+import com.supermap.desktop.ui.mdi.events.PageClosingListener;
 
 import javax.swing.event.EventListenerList;
 import java.util.ArrayList;
@@ -427,7 +439,6 @@ public class FormManager extends MdiPane implements IFormManager {
 
 				needRefersh = true;
 			}
-
 			if (needRefersh) {
 				frameMenuManager.getMenuBar().updateUI();
 				toolbarManager.getToolbarsContainer().repaint();
