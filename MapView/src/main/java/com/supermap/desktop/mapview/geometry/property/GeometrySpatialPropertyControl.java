@@ -256,7 +256,7 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 		this.textFieldArea.setText(DoubleUtilities.getFormatString(this.area.getValue()));
 		this.comboBoxLengthUnit.setSelectedItem(this.length.getUnit());
 		this.comboBoxPerimeterUnit.setSelectedItem(this.perimeter.getUnit());
-		this.comboBoxAreaUnit.setSelectedItem(this.perimeter.getUnit());
+		this.comboBoxAreaUnit.setSelectedItem(this.area.getUnit());
 	}
 
 	private void updateBoundsInfo(Geometry geometry) {
