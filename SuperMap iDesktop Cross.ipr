@@ -737,13 +737,13 @@
     </library>
     <library name="Maven: com.supermap.online.license:client-lib-deploy:8.1.1-SNAPSHOT">
       <CLASSES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/supermap/online/license/client-lib-deploy/8.1.1-SNAPSHOT/client-lib-deploy-8.1.1-20161222.083832-7.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/supermap/online/license/client-lib-deploy/8.1.1-SNAPSHOT/client-lib-deploy-8.1.1-20161222.130812-8.jar!/" />
       </CLASSES>
       <JAVADOC>
-        <root url="jar://$MAVEN_REPOSITORY$/com/supermap/online/license/client-lib-deploy/8.1.1-SNAPSHOT/client-lib-deploy-8.1.1-20161222.083832-7-javadoc.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/supermap/online/license/client-lib-deploy/8.1.1-SNAPSHOT/client-lib-deploy-8.1.1-20161222.130812-8-javadoc.jar!/" />
       </JAVADOC>
       <SOURCES>
-        <root url="jar://$MAVEN_REPOSITORY$/com/supermap/online/license/client-lib-deploy/8.1.1-SNAPSHOT/client-lib-deploy-8.1.1-20161222.083832-7-sources.jar!/" />
+        <root url="jar://$MAVEN_REPOSITORY$/com/supermap/online/license/client-lib-deploy/8.1.1-SNAPSHOT/client-lib-deploy-8.1.1-20161222.130812-8-sources.jar!/" />
       </SOURCES>
     </library>
     <library name="Maven: commons-codec:commons-codec:1.9">

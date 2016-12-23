@@ -37,7 +37,6 @@ import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.ui.controls.JDialogSymbolsChange;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilities.CoreResources;
-import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
@@ -150,6 +149,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private static int TABLE_COLUMN_GEOSTYLE = 1;
 	private static int TABLE_COLUMN_UNIQUE = 2;
 	private static int TABLE_COLUMN_CAPTION = 3;
+	//连续地图定位的tag
+	private static final String TAG_CONTINUOUSMAPLOCATION_THEMEUNIQUE = "Tag_ContinuousMapLocation_ThemeUnique";
 
 	private transient LocalComboBoxItemListener comboBoxItemListener = new LocalComboBoxItemListener();
 	private transient LocalActionListener actionListener = new LocalActionListener();
@@ -188,7 +189,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		//获得跟踪层
-		this.uniqurThemetrackingLayer = map.getTrackingLayer();
+		this.uniqurThemetrackingLayer = this.map.getTrackingLayer();
 		initComponents();
 		initResources();
 		registActionListener();
@@ -564,9 +565,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				setItemGeoSytle();
 				tableUniqueInfo.setRowSelectionInterval(selectRow, selectRow);
 				refreshAtOnce();
-			} else if (1 == e.getClickCount() && e.getButton() == MouseEvent.BUTTON1) {
-				//此时进行专题图子项连续定位
-				ContinuousMapLocation();
 			} else if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON3) {//打开右键菜单
 				//打开右键菜单根据是否可视(可选择)状态设置定位功能是否可用
 				if (themeUniqueLayer.isVisible() && themeUniqueLayer.isSelectable()) {
@@ -591,47 +589,38 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			}
 		}
 
+		/**
+		 * @param e
+		 */
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			//满足鼠标拖拽，也可以实现多选效果
-			if (1 == e.getClickCount() && e.getButton() == MouseEvent.BUTTON1) {
+			if (e.getSource() == tableUniqueInfo && 1 == e.getClickCount() && e.getButton() == MouseEvent.BUTTON1) {
 				//此时进行专题图子项连续定位
 				ContinuousMapLocation();
 			}
 		}
 
 		/**
-		 * 进行专题图子项连续定位  12.20yuanR
+		 * 进行专题图子项连续定位  12.23yuanR
 		 */
 		private void ContinuousMapLocation() {
 			if (isContinuousMapLocation) {
 				int[] selectRow = tableUniqueInfo.getSelectedRows();
 				//此时选中了最后一行
 				if (selectRow[tableUniqueInfo.getSelectedRowCount() - 1] != tableUniqueInfo.getRowCount() - 1) {
-					uniqurThemetrackingLayer.clear();
+					MapUtilities.clearTrackingObjects(map, TAG_CONTINUOUSMAPLOCATION_THEMEUNIQUE);
 					Recordset selectedRecordsets;
 					for (int i = 0; i < tableUniqueInfo.getSelectedRowCount(); i++) {
 						ThemeUniqueItem item = themeUnique.getItem(selectRow[i]);
-						//第一查询
-						selectedRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + " = " + "'" + item.getUnique() + "'", STATIC);
-						//第二次查询
-						if (selectedRecordsets.getRecordCount() == 0) {
-							Recordset recordset = datasetVector.getRecordset(false, STATIC);
-							recordset.moveFirst();
-							for (int n = 0; n < recordset.getRecordCount(); n++) {
-								Object value = recordset.getFieldValue(comboBoxExpression.getSelectedItem().toString());
-								if (value instanceof Double) {
-									Double itemValue = Double.valueOf(item.getUnique());
-									if (DoubleUtilities.equals((Double) value, itemValue)) {
-										selectedRecordsets = datasetVector.query(comboBoxExpression.getSelectedItem() + " = " + "'" + value + "'", STATIC);
-									}
-									recordset.moveNext();
-								}
-							}
-							//释放对象
-							recordset.dispose();
+						//判断子项值为数字还是字符
+						if (StringUtilities.isNumber(item.getUnique())) {//为数字
+							Double itemUnique = StringUtilities.getNumber(item.getUnique());
+							selectedRecordsets = datasetVector.query("Abs(" + expression + "-" + itemUnique + ")<" + 0.00001, STATIC);
+						} else {//不为数字
+							selectedRecordsets = datasetVector.query(expression + " = " + "'" + item.getUnique() + "'", STATIC);
 						}
-						if (selectedRecordsets.getRecordCount() > 0) {
+						if (selectedRecordsets.getRecordCount() != 0) {
 							//设置选中子项跟踪层风格
 							GeoStyle selectedGeoStyle = new GeoStyle();
 							GeoStyle3D selectedGeoStyle3D = new GeoStyle3D();
@@ -661,7 +650,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 										selectedGeo.setStyle(selectedGeoStyle);
 									}
 								}
-								uniqurThemetrackingLayer.add(selectedGeo, "");
+								uniqurThemetrackingLayer.add(selectedGeo, TAG_CONTINUOUSMAPLOCATION_THEMEUNIQUE);
+
 								points.add(selectedGeo.getBounds().leftBottom);
 								points.add(selectedGeo.getBounds().rightTop);
 								//对象释放
@@ -669,10 +659,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 								selectedRecordsets.moveNext();
 							}
 							//如果构建的最小矩形没有完全包含于map的矩形，移动其到map中心
-							if (getMInRectangle2D(points) != null) {
-								if (!map.getViewBounds().contains(getMInRectangle2D(points))) {
-									map.setCenter(getMInRectangle2D(points).getCenter());
-								}
+							if (getMInRectangle2D(points) != null && !map.getViewBounds().contains(getMInRectangle2D(points))) {
+								map.setCenter(getMInRectangle2D(points).getCenter());
 							}
 							//对象释放
 							if (selectedGeoStyle != null) {
@@ -689,8 +677,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 						selectedRecordsets.dispose();
 					}
 				} else {
-					//点击了最后一行
-					uniqurThemetrackingLayer.clear();
+					//点击了最后一行,仅清除自己在跟踪层中的绘制
+					MapUtilities.clearTrackingObjects(map, TAG_CONTINUOUSMAPLOCATION_THEMEUNIQUE);
 					map.refresh();
 				}
 			}
@@ -757,12 +745,12 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 
 			if (e.getSource() == tableUniqueInfo && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				//当按下esc键，清除跟踪层
-				uniqurThemetrackingLayer.clear();
+				MapUtilities.clearTrackingObjects(map, TAG_CONTINUOUSMAPLOCATION_THEMEUNIQUE);
 				map.refresh();
 			}
 			if (e.getSource() == nowMapControl && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				//当焦点在mapContorl上时，按esc键清除跟踪层
-				uniqurThemetrackingLayer.clear();
+				MapUtilities.clearTrackingObjects(map, TAG_CONTINUOUSMAPLOCATION_THEMEUNIQUE);
 				map.refresh();
 			}
 
@@ -1354,7 +1342,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 			this.buttonContinuousMapLocation.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_OpenLinkageLayer.png"));
 			this.isContinuousMapLocation = false;
 			//当关闭连续定位功能时，清空跟踪层
-			this.uniqurThemetrackingLayer.clear();
+			MapUtilities.clearTrackingObjects(map, TAG_CONTINUOUSMAPLOCATION_THEMEUNIQUE);
 			this.map.refresh();
 		} else {
 			this.buttonContinuousMapLocation.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_CloseLinkageLayer.png"));
