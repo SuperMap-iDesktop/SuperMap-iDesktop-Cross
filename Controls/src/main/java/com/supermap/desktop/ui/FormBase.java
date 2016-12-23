@@ -87,6 +87,7 @@ public class FormBase extends JFrame implements IFormMain {
 		JMenu menu = new JMenu("loading");
 		this.jMenuBarMain.add(menu);
 		jMenuBarMain.setMinimumSize(new Dimension(20, 23));
+		jMenuBarMain.setPreferredSize(new Dimension(20, 23));
 //		this.setJMenuBar(this.jMenuBarMain);
 
 		this.addWindowListener(new FormBaseListener());
@@ -146,11 +147,10 @@ public class FormBase extends JFrame implements IFormMain {
 			WorkspaceUtilities.initRecentFileMenu();
 			DatasourceUtilities.initRecentFileMenu();
 
+			initLayout();
 			this.toolbarManager.load(workEnvironment);
 			this.contextMenuManager.load(workEnvironment);
 			this.statusbarManager.load(workEnvironment);
-
-			initLayout();
 			this.dockbarManager.load(workEnvironment);
 			this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -159,13 +159,6 @@ public class FormBase extends JFrame implements IFormMain {
 				Application.getActiveApplication().setOutput((OutputFrame) outputDockbar.getInnerComponent());
 			}
 			ToolbarUIUtilities.updataToolbarsState();
-
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					FormBase.this.setVisible(true);
-				}
-			});
 
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override

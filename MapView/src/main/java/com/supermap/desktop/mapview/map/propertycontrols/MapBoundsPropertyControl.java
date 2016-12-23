@@ -107,10 +107,15 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 	public Component currentListenerComponent = null;
 
+	private boolean isIgnoreListener = false; // 如果是在控件初始化值得时候不需要进行Apply操作
+
 	private transient PropertyChangeListener boundsPropertyChangeListener = new PropertyChangeListener() {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
+			if (isIgnoreListener) {
+				return;
+			}
 			if (evt.getPropertyName().equals(JPopupMenuBounds.CLIP_REGION)) {
 				MapBoundsPropertyControl.this.clipRegion = popupMenuClipRegion.getGeoRegion();
 				verify();
@@ -155,6 +160,9 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
+			if (isIgnoreListener) {
+				return;
+			}
 			if (e.getSource() == checkBoxIsVisibleScalesEnabled) {
 				checkBoxIsVisibleScalesEnabledCheckedChange();
 			} else if (e.getSource() == checkBoxIsClipRegionEnabled) {
@@ -170,6 +178,9 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
+			if (isIgnoreListener) {
+				return;
+			}
 			scaleEditorValueChange();
 		}
 	};
@@ -177,6 +188,9 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
+			if (isIgnoreListener) {
+				return;
+			}
 			abstractPropertyChange(evt);
 		}
 
@@ -185,11 +199,17 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 		@Override
 		public void mapDrawn(MapDrawnEvent arg0) {
+			if (isIgnoreListener) {
+				return;
+			}
 			MapBoundsPropertyControl.this.mapDrawn();
 		}
 	};
 
 	private void abstractPropertyChange(PropertyChangeEvent evt) {
+		if (isIgnoreListener) {
+			return;
+		}
 		if ("value".equalsIgnoreCase(evt.getPropertyName())) {
 			if (evt.getSource() == textFieldCenterX) {
 				textFieldCenterXValueChange(evt);
@@ -576,6 +596,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	@Override
 	protected void fillComponents() {
 		try {
+			isIgnoreListener = true;
 			this.scaleEditor.setScale(this.scale);
 			this.checkBoxIsVisibleScalesEnabled.setSelected(isVisibleScalesEnabled);
 			this.checkBoxIsClipRegionEnabled.setSelected(this.isClipRegionEnabled);
@@ -591,6 +612,7 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 			this.textFieldMapViewTop.setValue(this.mapViewT);
 			this.textFieldMapViewRight.setValue(this.mapViewR);
 			this.textFieldMapViewBottom.setValue(this.mapViewB);
+			isIgnoreListener = false;
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
@@ -753,8 +775,10 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		try {
 			currentListenerComponent = scaleEditor;
 			this.operationType = OperationType.SCALE;
-			this.scale = scaleEditor.getScale();
-			verify();
+			if (!DoubleUtilities.equals(scaleEditor.getScale(), scale, 16)) {
+				this.scale = scaleEditor.getScale();
+				verify();
+			}
 			currentListenerComponent = null;
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);

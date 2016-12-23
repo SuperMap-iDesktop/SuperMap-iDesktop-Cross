@@ -85,6 +85,8 @@ public class ViewDemo extends JFrame implements DockingConstants {
 		startPage.dock(view4, EAST_REGION, .3f);
 		view1.dock(view3, SOUTH_REGION, .3f);
 
+		view1.dock(view3, SOUTH_REGION, .3f);
+
 		view1.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {

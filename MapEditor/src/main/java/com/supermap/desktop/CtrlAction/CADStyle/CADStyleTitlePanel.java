@@ -1,32 +1,12 @@
 package com.supermap.desktop.CtrlAction.CADStyle;
 
-import com.supermap.data.EditHistory;
-import com.supermap.data.EditType;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.Geometry;
-import com.supermap.data.GeometryType;
-import com.supermap.data.Recordset;
-import com.supermap.data.Resources;
-import com.supermap.data.Symbol;
-import com.supermap.data.SymbolGroup;
-import com.supermap.data.SymbolMarker;
-import com.supermap.data.SymbolMarker3D;
-import com.supermap.data.SymbolType;
-import com.supermap.data.Workspace;
-import com.supermap.data.WorkspaceClosedEvent;
-import com.supermap.data.WorkspaceClosedListener;
-import com.supermap.data.WorkspaceOpenedEvent;
-import com.supermap.data.WorkspaceOpenedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
-import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbols;
-import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbolsFill;
-import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbolsLine;
-import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbolsPoint;
-import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.SymbolSelectedChangedListener;
+import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.*;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.SymbolMarkerType;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
@@ -151,6 +131,8 @@ public class CADStyleTitlePanel extends JPanel {
     }
 
     private void initComponents() {
+
+
         Resources resources = Application.getActiveApplication().getWorkspace().getResources();
         if (styleType == GEOPOINTTYPE) {
             panelSymbols = new JPanelSymbolsPoint();
@@ -344,6 +326,10 @@ public class CADStyleTitlePanel extends JPanel {
     }
 
     private void setLayout(JPanelSymbols panelSymbols) {
+        if (panelMore != null && jScrollPane != null) {
+            this.remove(panelMore);
+            this.remove(jScrollPane);
+        }
         panelMore = new JPanel();
         buttonMoreImage = new JLabel(ControlsResources.getIcon("/controlsresources/Image_SymbolDictionary.png"));
         labelTitle = new JLabel(ControlsProperties.getString("String_SymbolLibraryManager"));
@@ -352,6 +338,7 @@ public class CADStyleTitlePanel extends JPanel {
         panelMore.add(labelTitle);
         jScrollPane = new JScrollPane();
         jScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+
         this.setLayout(new GridBagLayout());
         this.add(jScrollPane, new GridBagConstraintsHelper(0, 0, 1, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(1, 2));
         this.add(panelMore, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setWeight(0, 0));
@@ -374,5 +361,4 @@ public class CADStyleTitlePanel extends JPanel {
             }
         });
     }
-
 }

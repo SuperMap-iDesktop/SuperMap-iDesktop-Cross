@@ -5,6 +5,9 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
+import com.supermap.desktop.event.ActiveFormChangedEvent;
+import com.supermap.desktop.event.ActiveFormChangedListener;
+import com.supermap.desktop.ui.FormManager;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.*;
 import com.supermap.ui.GeometrySelectChangedEvent;
@@ -90,6 +93,18 @@ public class BindHandler {
     private ArrayList<PropertyBindWindow> propertyBindWindows;
     private GeometrySelectChangedListener geoMetroyMapSelectChangeListener;
     private KeyListener tabularTableKeyListener;
+    public static FormManager manager = (FormManager) Application.getActiveApplication().getMainFrame().getFormManager();
+    private ActiveFormChangedListener formChangeListener = new ActiveFormChangedListener() {
+        @Override
+        public void activeFormChanged(ActiveFormChangedEvent e) {
+            if (null == e.getNewActiveForm()) {
+                formMapList.clear();
+                formsList.clear();
+                formTabularList.clear();
+            }
+        }
+    };
+
 
     public static synchronized BindHandler getInstance() {
         if (null == bindHandler) {
@@ -102,6 +117,16 @@ public class BindHandler {
         this.formsList = new ArrayList();
         this.formMapList = new ArrayList();
         this.formTabularList = new ArrayList();
+        registEvents();
+    }
+
+    private void registEvents() {
+        removeEvents();
+        manager.addActiveFormChangedListener(this.formChangeListener);
+    }
+
+    public void removeEvents() {
+        manager.removeActiveFormChangedListener(this.formChangeListener);
     }
 
     //属性表之间关联
