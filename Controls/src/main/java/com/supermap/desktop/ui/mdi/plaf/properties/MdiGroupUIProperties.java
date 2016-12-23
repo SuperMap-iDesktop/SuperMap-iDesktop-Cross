@@ -7,4 +7,5 @@ import java.awt.*;
  */
 public class MdiGroupUIProperties {
 	public static Insets INSETS = new Insets(0, 0, 0, 0);
+	public static int boundsTolerance = 5;
 }

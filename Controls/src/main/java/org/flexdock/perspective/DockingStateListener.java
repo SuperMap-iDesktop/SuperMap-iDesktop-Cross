@@ -88,8 +88,10 @@ public class DockingStateListener extends DockingListener.Stub {
     }
 
     private void updateEmbedded(Dockable dockable) {
-        if(!dockable.getComponent().isValid())
-            return;
+        // 以下代码会导致在主窗口 show 出来之前设置的 dock 状态异常，从而无法进行后面的 DockingPath 处理
+        // 暂时不明白意图，先注释掉
+//        if(!dockable.getComponent().isValid())
+//            return;
 
         updateCenterPoint(dockable);
         updateDockingPath(dockable);

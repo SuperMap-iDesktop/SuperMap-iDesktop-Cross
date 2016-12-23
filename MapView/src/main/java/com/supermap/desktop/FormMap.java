@@ -115,7 +115,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -1261,7 +1260,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				if (exist) {
 					layersComponentManager.setMap(this.getMapControl().getMap());
 					setActiveLayers(rememberActiveLayers);
-					this.getMapControl().getMap().refresh();
 				} else {
 					layersComponentManager.setMap(null);
 				}

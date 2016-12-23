@@ -145,7 +145,8 @@ public class ThemeMainContainer extends JPanel {
                     if (null != tempLayer && !tempLayer.isDisposed()) {
                         // 切换窗口，提示是否保存专题图
                         updateProperty(tempLayer);
-                        ((FormMap) e.getOldActiveForm()).getMapControl().getMap().refresh();
+	                    // 在上面的方法中，点确定的时候已经刷新了地图，如果点取消也不需要刷新地图，所以这里是完全没必要刷新地图的，如果还有原因一定要刷新请注明 by xiaJT
+	                    //((FormMap) e.getOldActiveForm()).getMapControl().getMap().refresh();
                     }
                 }
                 if (null == e.getNewActiveForm()) {

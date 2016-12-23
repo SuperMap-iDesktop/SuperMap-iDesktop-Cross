@@ -44,8 +44,8 @@ import javax.swing.SwingUtilities;
 /**
  * This class provides an abstraction of root containers used in Swing. It
  * allows transparent use of methods common to {@code JFrame}, {@code JApplet},
- * {@code JWindow}, and {@code JDialog} without making an outward distinction
- * between the different container types. This is accomplished by wrapping the
+ * {@code JWindow}, and {@code JDialog} without making a
+ * between the different container types. This is accomplished by wrapping then outward distinction
  * root component.
  *
  * @author Chris Butler
