@@ -1,22 +1,17 @@
 package com.supermap.desktop.ui.controls;
 
-import com.supermap.cloudlicense.api.LicenseService;
-import com.supermap.cloudlicense.commontypes.*;
-import com.supermap.cloudlicense.impl.LicenseServiceFactory;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.license.commontypes.ProductType;
-import com.supermap.online.sso.AuthenticationException;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import sun.net.www.http.HttpClient;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 
 /**
  * Created by xie on 2016/12/20.
@@ -75,12 +70,22 @@ public class CloudLicenseDialog extends SmDialog {
             String userName = textFieldUserName.getText();
             String passWord = String.valueOf(fieldPassWord.getPassword());
             try {
-                doMain(userName, passWord);
+                login(userName, passWord);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }
         }
     };
+
+    private void login(String userName, String passWord) {
+        String urlStr = "http://www.supermapol.com/shiro-cas";
+        try {
+            URL url = new URL(urlStr);
+            HttpClient client = null;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public CloudLicenseDialog() {
         init();
@@ -169,94 +174,6 @@ public class CloudLicenseDialog extends SmDialog {
         this.buttonClose = ComponentFactory.createButtonClose();
         this.checkBoxSavePassword.setSelected(true);
 //        this.buttonLogin.setEnabled(false);
-    }
-
-    private static void doMain(String username, String password) throws IOException {
-        LicenseService licenseService = null;
-        try {
-            licenseService = LicenseServiceFactory.create(username, password, ProductType.IDESKTOP);
-        } catch (AuthenticationException e) {
-            e.printStackTrace();
-        }
-        LicenseId licenseId;
-        {
-            ServiceResponse<QueryFormalLicenseResponse> queryFromalResult = licenseService
-                    .query(new QueryFormalLicenseRequest().productType(ProductType.ICLOUDMANAGER).version(Version.VERSION_8C).pageCount(10));
-            System.out.println(queryFromalResult.code);
-            System.out.println(queryFromalResult.data.licenseCount);
-            System.out.println(queryFromalResult.data.licenses[0].toString());
-            licenseId = queryFromalResult.data.licenses[0].id;
-            EditionedLicenseInfo info = new EditionedLicenseInfo(queryFromalResult.data.licenses[0]);
-            System.out.println(ToStringBuilder.reflectionToString(info, ToStringStyle.JSON_STYLE));
-        }
-        ReturnId returnId;
-        {
-            ApplyFormalLicenseRequest request = new ApplyFormalLicenseRequest();
-            request.days = 2;
-            request.licenseId = licenseId;
-            request.software.productType = ProductType.ICLOUDMANAGER;
-            request.software.version = Version.VERSION_8C;
-            request.machine.name = "computename";
-            request.machine.macAddr = "60-67-20-01-F4-3E";
-            ServiceResponse<ApplyFormalLicenseResponse> response = licenseService.apply(request);
-            returnId = response.data.returnId;
-            System.out.println(returnId);
-            System.out.println(response.data.license);
-        }
-        {
-            ReturnLicenseRequest request = new ReturnLicenseRequest();
-            request.licenseId = licenseId;
-            request.returnId = returnId;
-            ServiceResponse<Integer> response = licenseService.returns(request);
-            System.out.println(response.data);
-        }
-    }
-
-}
-
-/**
- * 处理标准版、专业版、高级版的方式要搞那么复杂，原因是：
- * 并不是所有产品都这么划分版本的，比如IObjects划分的是java，.Net，开发版、运行版。
- * 还有的没有版本划分。
- * 这些信息都依附与ProductId。
- * 只好这么麻烦。由各产品各种写Visitor处理。
- */
-class EditionedLicenseInfo extends LicenseInfo {
-    String edition;
-
-    EditionedLicenseInfo(LicenseInfo licenseInfo) {
-        super(licenseInfo);
-        licenseInfo.productId.acceptEditionVisitor(new EditionVisitor(this));
-    }
-
-    private static class EditionVisitor extends com.supermap.license.commontypes.EditionVisitor {
-
-        private EditionedLicenseInfo target;
-
-        public EditionVisitor(EditionedLicenseInfo icmLicenseInfoWithEdition) {
-            target = icmLicenseInfoWithEdition;
-        }
-
-        @Override
-        public void setAdvanced() {
-            target.edition = "Advanced";
-        }
-
-        @Override
-        public void setProfessional() {
-            target.edition = "Professional";
-        }
-
-        @Override
-        public void setStandard() {
-            target.edition = "Standard";
-        }
-
-        @Override
-        public void setNotApplicable() {
-            target.edition = "NotApplicable";
-        }
-
     }
 
 }
