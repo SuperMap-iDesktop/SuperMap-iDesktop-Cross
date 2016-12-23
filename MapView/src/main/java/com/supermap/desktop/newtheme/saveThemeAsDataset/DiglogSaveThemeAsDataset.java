@@ -20,6 +20,7 @@ import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.CursorUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -40,6 +41,7 @@ import static com.supermap.desktop.ui.UICommonToolkit.getWorkspaceManager;
  *         标签专题图保存为cad/文本数据集
  */
 public class DiglogSaveThemeAsDataset extends SmDialog {
+	private JPanel panel;
 	private SmButton buttonOk;
 	private SmButton buttonCancel;
 	private JLabel datasourcesLabel;
@@ -144,7 +146,7 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 	 * 初始化布局
 	 */
 	private void initLayout() {
-		JPanel panel = new JPanel();
+		this.panel = new JPanel();
 		GroupLayout groupLayout = new GroupLayout(panel);
 		groupLayout.setAutoCreateContainerGaps(true);
 		groupLayout.setAutoCreateGaps(true);
@@ -258,6 +260,9 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (toDatasource != null && outDatasetType != null && isAvailableDatasetName(outDatasetName)) {
+				//设置光标为等待
+				CursorUtilities.setWaitCursor(buttonOk);
+				CursorUtilities.setWaitCursor(panel);
 				//选择了CAD数据集类型
 				if (outDatasetType.equals(DatasetType.CAD)) {
 					SaveAsCAD();
@@ -278,6 +283,9 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 			removeListeners();
 			//关闭窗口
 			DiglogSaveThemeAsDataset.this.dispose();
+			//设置光标为正常
+			CursorUtilities.setDefaultCursor(buttonOk);
+			CursorUtilities.setDefaultCursor(panel);
 		}
 	};
 
