@@ -34,7 +34,7 @@ public class JDialogNewTransformation extends SmDialog {
 	private GridBagConstraintsHelper centerConstraints;
 
 	public JDialogNewTransformation() {
-		this.setSize(600, 450);
+		this.setSize(720, 430);
 		init();
 		this.setLocationRelativeTo(null);
 	}
