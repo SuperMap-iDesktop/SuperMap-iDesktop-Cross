@@ -23,6 +23,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by xie on 2016/8/26.
@@ -43,56 +45,45 @@ public class CADStyleTitlePanel extends JPanel {
     private JScrollPane jScrollPane;
     private GeoStyle geoStyle;
     private ArrayList<Recordset> tempRecordsets;
+    private Map<JPanelSymbols, SymbolSelectedChangedListener> listenerMap = new HashMap<>();
 
-    private SymbolSelectedChangedListener panelSymbolsListener = new SymbolSelectedChangedListener() {
-
+    // FIXME: 2016/11/14 UGDJ-530
+    // 关闭或打开工作空间时重新加载
+    private WorkspaceClosedListener workSpaceClosedListener = new WorkspaceClosedListener() {
         @Override
-        public void SymbolSelectedChangedEvent(Symbol symbol) {
-	        // 此处若修改了recordset需要重新获取recordset
-	        resetSymbol(symbol);
-            parent.setModify(true);
-        }
+        public void workspaceClosed(WorkspaceClosedEvent workspaceClosedEvent) {
 
-        @Override
-        public void SymbolSelectedDoubleClicked() {
-            // Do nothing
+            workSpaceChanged(Application.getActiveApplication().getWorkspace());
         }
     };
-	// FIXME: 2016/11/14 UGDJ-530
-	// 关闭或打开工作空间时重新加载
-	private WorkspaceClosedListener workSpaceClosedListener = new WorkspaceClosedListener() {
-		@Override
-		public void workspaceClosed(WorkspaceClosedEvent workspaceClosedEvent) {
 
-			workSpaceChanged(Application.getActiveApplication().getWorkspace());
-		}
-	};
+    private WorkspaceOpenedListener workSpaceOpenedListener = new WorkspaceOpenedListener() {
 
-	private WorkspaceOpenedListener workSpaceOpenedListener = new WorkspaceOpenedListener() {
+        @Override
+        public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
+            try {
+                Method reset = SymbolGroup.class.getDeclaredMethod("reset");
+                reset.setAccessible(true);
+                reset.invoke(Application.getActiveApplication().getWorkspace().getResources().getMarkerLibrary().getRootGroup());
+                reset.invoke(Application.getActiveApplication().getWorkspace().getResources().getLineLibrary().getRootGroup());
+                reset.invoke(Application.getActiveApplication().getWorkspace().getResources().getFillLibrary().getRootGroup());
+                reset.setAccessible(false);
+            } catch (Exception e) {
+                Application.getActiveApplication().getOutput().output(e);
+            }
+            workSpaceChanged(workspaceOpenedEvent.getWorkspace());
+        }
+    };
 
-		@Override
-		public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
-			try {
-				Method reset = SymbolGroup.class.getDeclaredMethod("reset");
-				reset.setAccessible(true);
-				reset.invoke(Application.getActiveApplication().getWorkspace().getResources().getMarkerLibrary().getRootGroup());
-				reset.invoke(Application.getActiveApplication().getWorkspace().getResources().getLineLibrary().getRootGroup());
-				reset.invoke(Application.getActiveApplication().getWorkspace().getResources().getFillLibrary().getRootGroup());
-				reset.setAccessible(false);
-			} catch (Exception e) {
-				Application.getActiveApplication().getOutput().output(e);
-			}
-			workSpaceChanged(workspaceOpenedEvent.getWorkspace());
-		}
-	};
-
-	public CADStyleTitlePanel(CADStyleContainer parent, int styleType) {
-		this.parent = parent;
+    public CADStyleTitlePanel(CADStyleContainer parent, int styleType) {
+        this.parent = parent;
         this.styleType = styleType;
         this.COLOR_SYSTEM_DEFAULT = getBackground();
-        initComponents();
+        initComponents(Application.getActiveApplication().getWorkspace());
         initResources();
         registEvents();
+        Application.getActiveApplication().getWorkspace().addClosedListener(workSpaceClosedListener);
+        Application.getActiveApplication().getWorkspace().addOpenedListener(workSpaceOpenedListener);
     }
 
     public void enabled(boolean enabled) {
@@ -104,18 +95,31 @@ public class CADStyleTitlePanel extends JPanel {
         this.labelTitle.setVisible(enabled);
     }
 
-    private void registEvents() {
-	    Application.getActiveApplication().getWorkspace().addClosedListener(workSpaceClosedListener);
-	    Application.getActiveApplication().getWorkspace().addOpenedListener(workSpaceOpenedListener);
-	    this.panelSymbols.addSymbolSelectedChangedListener(this.panelSymbolsListener);
+    public void registEvents() {
+        if (null != panelSymbols) {
+            SymbolSelectedChangedListener listener = new SymbolSelectedChangedListener() {
+                @Override
+                public void SymbolSelectedChangedEvent(Symbol symbol) {
+                    resetSymbol(symbol);
+                    parent.setModify(true);
+                }
+
+                @Override
+                public void SymbolSelectedDoubleClicked() {
+
+                }
+            };
+            this.panelSymbols.addSymbolSelectedChangedListener(listener);
+            listenerMap.put(panelSymbols, listener);
+        }
     }
 
-	private void workSpaceChanged(Workspace workspace) {
-		initComponents();
-	}
+    private void workSpaceChanged(Workspace workspace) {
+        initComponents(workspace);
+    }
 
-	private void initResources() {
-		switch (styleType) {
+    private void initResources() {
+        switch (styleType) {
             case GEOPOINTTYPE:
                 this.setBorder(new TitledBorder(MapEditorProperties.getString("String_Point")));
                 break;
@@ -130,10 +134,10 @@ public class CADStyleTitlePanel extends JPanel {
         }
     }
 
-    private void initComponents() {
+    private void initComponents(Workspace workSpace) {
 
 
-        Resources resources = Application.getActiveApplication().getWorkspace().getResources();
+        Resources resources = workSpace.getResources();
         if (styleType == GEOPOINTTYPE) {
             panelSymbols = new JPanelSymbolsPoint();
             panelSymbols.setSymbolGroup(resources, resources.getMarkerLibrary().getRootGroup());
@@ -360,5 +364,13 @@ public class CADStyleTitlePanel extends JPanel {
                 panelMore.setBackground(CADStyleTitlePanel.this.COLOR_SYSTEM_DEFAULT);
             }
         });
+    }
+
+    // FIXME: 2016/12/23 UGDJ-547
+    //删除符号选择事件
+    public void removeEvents() {
+        if (null != listenerMap.get(panelSymbols)) {
+            panelSymbols.removeSymbolSelectedChangedListener(listenerMap.get(panelSymbols));
+        }
     }
 }

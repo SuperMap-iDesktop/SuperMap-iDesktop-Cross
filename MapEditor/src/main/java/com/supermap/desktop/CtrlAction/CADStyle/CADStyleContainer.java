@@ -1071,6 +1071,11 @@ public class CADStyleContainer extends JPanel {
 		this.checkboxBackOpaque.addActionListener(this.actionListener);
 		this.checkboxFillGradient.addActionListener(this.actionListener);
 		this.checkboxWAndH.addActionListener(this.lockListener);
+		// FIXME: 2016/12/23 UGDJ-547
+		// 关闭或打开工作空间时重新加载符号响应事件
+		this.panelPointStyle.registEvents();
+		this.panelFillStyle.registEvents();
+		this.panelLineStyle.registEvents();
 	}
 
 	public void removeEvents() {
@@ -1100,6 +1105,9 @@ public class CADStyleContainer extends JPanel {
 		this.checkboxBackOpaque.removeActionListener(this.actionListener);
 		this.checkboxFillGradient.removeActionListener(this.actionListener);
 		this.checkboxWAndH.removeActionListener(this.lockListener);
+		this.panelFillStyle.removeEvents();
+		this.panelLineStyle.removeEvents();
+		this.panelPointStyle.removeEvents();
 	}
 
 	private void initResources() {
