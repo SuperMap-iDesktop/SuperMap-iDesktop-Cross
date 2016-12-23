@@ -611,6 +611,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 				//此时选中了最后一行
 				if (selectRow[tableUniqueInfo.getSelectedRowCount() - 1] != tableUniqueInfo.getRowCount() - 1) {
 					MapUtilities.clearTrackingObjects(map, TAG_CONTINUOUSMAPLOCATION);
+					map.refreshTrackingLayer();
 					Recordset selectedRecordsets;
 					for (int i = 0; i < tableUniqueInfo.getSelectedRowCount(); i++) {
 						ThemeUniqueItem item = themeUnique.getItem(selectRow[i]);
@@ -653,7 +654,6 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 									}
 								}
 								uniqurThemetrackingLayer.add(selectedGeo, TAG_CONTINUOUSMAPLOCATION);
-								map.refreshTrackingLayer();
 								points.add(selectedGeo.getBounds().leftBottom);
 								points.add(selectedGeo.getBounds().rightTop);
 								//对象释放
@@ -675,11 +675,9 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 						} else {//未找到子项，弹出提示信息
 							Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_NullQuery"), item.getUnique()));
 						}
-
 						//对象释放
 						selectedRecordsets.dispose();
 					}
-					map.refreshTrackingLayer();
 				} else {
 					//点击了最后一行,仅清除自己在跟踪层中的绘制
 					MapUtilities.clearTrackingObjects(map, TAG_CONTINUOUSMAPLOCATION);

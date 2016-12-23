@@ -1006,6 +1006,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			if (isContinuousMapLocation) {
 				//清除跟踪层
 				MapUtilities.clearTrackingObjects(map, TAG_CONTINUOUSMAPLOCATION);
+				map.refreshTrackingLayer();
 				Recordset selectedRecordsets;
 				int[] selectRow = tableRangeInfo.getSelectedRows();
 				for (int i = 0; i < tableRangeInfo.getSelectedRowCount(); i++) {
@@ -1048,7 +1049,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 								}
 							}
 							rangeThemeTrackingLayer.add(selectedGeo, TAG_CONTINUOUSMAPLOCATION);
-							map.refreshTrackingLayer();
 							points.add(selectedGeo.getBounds().leftBottom);
 							points.add(selectedGeo.getBounds().rightTop);
 							//对象释放
@@ -1076,7 +1076,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					//对象释放
 					selectedRecordsets.dispose();
 				}
-				map.refreshTrackingLayer();
 			}
 		}
 
