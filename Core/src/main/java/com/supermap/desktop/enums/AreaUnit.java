@@ -12,7 +12,8 @@ public enum AreaUnit {
 	CENTIMETER(UnitValue.CENTIMETER * UnitValue.CENTIMETER),
 	DECIMETER(UnitValue.DECIMETER * UnitValue.DECIMETER),
 	METER(UnitValue.METER * UnitValue.METER),
-	KILOMETER(UnitValue.KILOMETER * UnitValue.KILOMETER),
+	//改为long型，因为10000000的平方使用int装不下会产生越界错误
+	KILOMETER((long) UnitValue.KILOMETER * UnitValue.KILOMETER),
 	MILE(UnitValue.MILE * UnitValue.MILE),
 	INCH(UnitValue.INCH * UnitValue.INCH),
 	FOOT(UnitValue.FOOT * UnitValue.FOOT),
