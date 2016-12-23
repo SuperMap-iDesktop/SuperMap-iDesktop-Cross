@@ -107,30 +107,17 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
 
     @Override
     public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-        removeBind();
-    }
-
-    public void removeBind() {
-        int formMapsSize = handler.getFormMapList().size();
-        int formsSize = handler.getFormsList().size();
-        int formTabularsSize = handler.getFormTabularList().size();
-        if (formsSize == formMapsSize) {
-            handler.removeFormMapsBind();
-        } else if (formsSize == formTabularsSize) {
-            handler.removeFormTabularsBind();
-        } else {
-            handler.removeFormMapsAndFormTabularsBind();
-        }
+        registEvents();
     }
 
     @Override
     public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-        removeBind();
+        removeEvents();
     }
 
     @Override
     public void popupMenuCanceled(PopupMenuEvent e) {
-        removeBind();
+
     }
 
 
