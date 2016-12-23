@@ -1048,12 +1048,14 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 								}
 							}
 							rangeThemeTrackingLayer.add(selectedGeo, TAG_CONTINUOUSMAPLOCATION);
+							map.refreshTrackingLayer();
 							points.add(selectedGeo.getBounds().leftBottom);
 							points.add(selectedGeo.getBounds().rightTop);
 							//对象释放
 							selectedGeo.dispose();
 							selectedRecordsets.moveNext();
 						}
+
 						//如果构建的最小矩形没有完全包含于map的矩形，移动其到map中心
 						if (getMInRectangle2D(points) != null) {
 							if (!map.getViewBounds().contains(getMInRectangle2D(points))) {
