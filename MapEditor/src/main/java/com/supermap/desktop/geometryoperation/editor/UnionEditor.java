@@ -178,6 +178,7 @@ public class UnionEditor extends AbstractEditor {
 			if (targetRecordset != null) {
 				targetRecordset.close();
 				targetRecordset.dispose();
+
 			}
 		}
 	}
