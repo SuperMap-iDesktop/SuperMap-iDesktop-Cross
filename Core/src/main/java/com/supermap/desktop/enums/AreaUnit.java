@@ -8,11 +8,11 @@ import com.supermap.desktop.properties.CommonProperties;
 
 public enum AreaUnit {
 	// @formatter:off
-	MILIMETER(UnitValue.MILLIMETER * UnitValue.MILLIMETER), 
+	MILIMETER(UnitValue.MILLIMETER * UnitValue.MILLIMETER),
 	CENTIMETER(UnitValue.CENTIMETER * UnitValue.CENTIMETER),
 	DECIMETER(UnitValue.DECIMETER * UnitValue.DECIMETER),
 	METER(UnitValue.METER * UnitValue.METER),
-	//改为long型，因为10000000的平方使用int装不下会产生溢出错误
+	//改为long型，因为10000000的平方使用int装不下会产生溢出的错误
 	KILOMETER((long) UnitValue.KILOMETER * UnitValue.KILOMETER),
 	MILE(UnitValue.MILE * UnitValue.MILE),
 	INCH(UnitValue.INCH * UnitValue.INCH),
