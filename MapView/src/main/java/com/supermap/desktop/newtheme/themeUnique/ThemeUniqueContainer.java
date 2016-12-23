@@ -663,6 +663,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 							//如果构建的最小矩形没有完全包含于map的矩形，移动其到map中心
 							if (getMInRectangle2D(points) != null && !map.getViewBounds().contains(getMInRectangle2D(points))) {
 								map.setCenter(getMInRectangle2D(points).getCenter());
+								map.refresh();
 							}
 							//对象释放
 							if (selectedGeoStyle != null) {

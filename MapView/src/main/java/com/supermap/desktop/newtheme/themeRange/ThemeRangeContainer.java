@@ -1058,6 +1058,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 						if (getMInRectangle2D(points) != null) {
 							if (!map.getViewBounds().contains(getMInRectangle2D(points))) {
 								map.setCenter(getMInRectangle2D(points).getCenter());
+								map.refresh();
 							}
 						}
 						//对象释放
