@@ -86,6 +86,8 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	private static final int TABLE_COLUMN_GEOSTYLE = 1;
 	private static final int TABLE_COLUMN_RANGEVALUE = 2;
 	private static final int TABLE_COLUMN_CAPTION = 3;
+	//连续地图定位的tag
+	private static final String TAG_CONTINUOUSMAPLOCATION_THEMERANGE = "Tag_ContinuousMapLocation_ThemeRange";
 
 	private JTabbedPane tabbedPaneInfo = new JTabbedPane();
 	private JPanel panelProperty = new JPanel();
@@ -640,7 +642,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			this.buttonContinuousMapLocation.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_OpenLinkageLayer.png"));
 			this.isContinuousMapLocation = false;
 			//当关闭连续定位功能时，清空跟踪层
-			this.rangeThemeTrackingLayer.clear();
+			MapUtilities.clearTrackingObjects(map, TAG_CONTINUOUSMAPLOCATION_THEMERANGE);
 			this.map.refresh();
 		} else {
 			this.buttonContinuousMapLocation.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_CloseLinkageLayer.png"));
@@ -980,9 +982,6 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				setItemGeoSytle();
 				tableRangeInfo.setRowSelectionInterval(selectRow, selectRow);
 				refreshAtOnce();
-			} else if (e.getSource() == tableRangeInfo && 1 == e.getClickCount()) {
-				//此时进行专题图子项连续定位   2016.12.13yuanR
-				ContinuousMapLocation();
 			}
 			//打开jtable右键菜单
 			if (e.getSource() == tableRangeInfo && e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON3) {
@@ -1001,12 +1000,12 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		}
 
 		/**
-		 * 专题图子项连续定位   2016.12.20yuanR
+		 * 专题图子项连续定位   2016.12.23yuanR
 		 */
 		private void ContinuousMapLocation() {
 			if (isContinuousMapLocation) {
 				//清除跟踪层
-				rangeThemeTrackingLayer.clear();
+				MapUtilities.clearTrackingObjects(map, TAG_CONTINUOUSMAPLOCATION_THEMERANGE);
 				Recordset selectedRecordsets;
 				int[] selectRow = tableRangeInfo.getSelectedRows();
 				for (int i = 0; i < tableRangeInfo.getSelectedRowCount(); i++) {
@@ -1048,7 +1047,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 									selectedGeo.setStyle(selectedGeoStyle);
 								}
 							}
-							rangeThemeTrackingLayer.add(selectedGeo, "");
+							rangeThemeTrackingLayer.add(selectedGeo, TAG_CONTINUOUSMAPLOCATION_THEMERANGE);
 							points.add(selectedGeo.getBounds().leftBottom);
 							points.add(selectedGeo.getBounds().rightTop);
 							//对象释放
@@ -1124,12 +1123,12 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			}
 			if (e.getSource() == tableRangeInfo && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				//当按下esc键，清除跟踪层
-				rangeThemeTrackingLayer.clear();
+				MapUtilities.clearTrackingObjects(map, TAG_CONTINUOUSMAPLOCATION_THEMERANGE);
 				map.refresh();
 			}
 			if (e.getSource() == nowMapControl && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				//当焦点在mapContorl上时，按esc键清除跟踪层
-				rangeThemeTrackingLayer.clear();
+				MapUtilities.clearTrackingObjects(map, TAG_CONTINUOUSMAPLOCATION_THEMERANGE);
 				map.refresh();
 			}
 
