@@ -94,9 +94,12 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	}
 
 	private void addGroup(MdiGroup group) {
+		if (!this.strategy.addGroup(group)) {
+			return;
+		}
+
 		registerEvents(group);
 		this.groups.add(group);
-		this.strategy.addGroup(group);
 
 		if (this.selectedGroup == null) {
 
@@ -108,7 +111,10 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 
 	private void removeGroup(MdiGroup group) {
 		if (group != null && this.groups.contains(group)) {
-			this.strategy.removeGroup(group);
+			if (this.strategy.removeGroup(group)) {
+				return;
+			}
+
 			unregisterEvents(group);
 			this.groups.remove(group);
 
@@ -153,10 +159,6 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	}
 
 	// MdiPane
-
-	public MdiPage getSelectedPage() {
-		return this.selectedPage;
-	}
 
 	@Override
 	public ILayoutStrategy getLayoutStrategy() {
@@ -366,8 +368,16 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 		return this.selectedGroup == null ? null : this.selectedGroup.getActivePage();
 	}
 
+	public void addPageAddingListener(PageAddingListener listener) {
+		this.eventsHelper.addPageAddingListener(listener);
+	}
+
+	public void removePageAddingListener(PageAddingListener listener) {
+		this.eventsHelper.removePageAddingListener(listener);
+	}
+
 	/**
-	 * 不能遍历 Groups 转发事件，因为如果在之后有新增加的 Group，则无法正常工作
+	 * 不能遍历 Groups 转发 Group 事件，因为如果在之后有新增加的 Group，则无法正常工作
 	 *
 	 * @param listener
 	 */
@@ -459,12 +469,17 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	public void activePage(MdiPage page) {
 		MdiGroup group = page.getGroup();
 		if (group != null && group.getMdiContainer() == this) {
-			group.activePage(page);
+ 			group.activePage(page);
 			active(group);
 		}
 	}
 
-	private class MdiGroupHandler implements PageAddedListener, PageClosingListener, PageClosedListener, PageActivatingListener, PageActivatedListener {
+	private class MdiGroupHandler implements PageAddingListener, PageAddedListener, PageClosingListener, PageClosedListener, PageActivatingListener, PageActivatedListener {
+
+		@Override
+		public void pageAdding(PageAddingEvent e) {
+			MdiPane.this.eventsHelper.firePageAdding(e);
+		}
 
 		@Override
 		public void pageAdded(PageAddedEvent e) {

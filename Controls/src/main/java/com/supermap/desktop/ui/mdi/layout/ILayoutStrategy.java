@@ -10,9 +10,9 @@ public interface ILayoutStrategy {
 
 	IMdiContainer getContainer();
 
-	void addGroup(MdiGroup group);
+	boolean addGroup(MdiGroup group);
 
-	void removeGroup(MdiGroup group);
+	boolean removeGroup(MdiGroup group);
 
 	void layoutGroups();
 
