@@ -27,24 +27,15 @@ public class CtrlActionWorkspaceManagerWindow extends CtrlAction {
 		try {
 			formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 			if (workspaceManagerWindow == null) {
-				//此处存疑：将IForm当做参数传递，目的是：当关闭窗口时，其workspaceManagerWindow不为空
 				workspaceManagerWindow = new WorkspaceManagerWindow();
 				formManager.showChildForm(workspaceManagerWindow);
-				//当show出窗口时，设置其显示为true
-				workspaceManagerWindow.setVisible(true);
 			} else {
 				if (workspaceManagerWindow.isClosed()) {
-					//当窗口为关闭状态时，show出来
 					formManager.showChildForm(workspaceManagerWindow);
-					//当show出窗口时，设置其显示为true
-					workspaceManagerWindow.setVisible(true);
 				} else {
-					//当窗口为打开状态时，关闭窗口，并重写close（），添加formWorkspaceManagerWindow.setVisible(false);
 					formManager.close(workspaceManagerWindow);
-					workspaceManagerWindow.setVisible(false);
 				}
 			}
-
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
