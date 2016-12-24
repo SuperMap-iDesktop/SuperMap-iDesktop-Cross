@@ -100,6 +100,7 @@ public class FormManager extends MdiPane implements IFormManager {
 	};
 
 	public FormManager() {
+		addPageAddedListener(this.pageAddedListener);
 		addPageActivatedListener(this.pageActivatedListener);
 		addPageClosingListener(this.pageClosingListener);
 		addPageClosedListener(this.pageClosedListener);

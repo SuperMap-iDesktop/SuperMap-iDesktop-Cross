@@ -185,6 +185,9 @@ public class MdiGroup extends JComponent {
 			}
 		}
 
+		PageAddingEvent pageAddingEvent = new PageAddingEvent(this, page, operation);
+		this.eventsHelper.firePageAdding(pageAddingEvent);
+
 		// 设置一下初始状态
 		page.getComponent().setVisible(false);
 		page.setGroup(this);

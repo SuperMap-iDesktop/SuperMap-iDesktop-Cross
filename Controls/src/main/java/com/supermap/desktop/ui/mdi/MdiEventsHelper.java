@@ -19,6 +19,14 @@ public class MdiEventsHelper {
 		this.listenerList.remove(PageAddedListener.class, listener);
 	}
 
+	public void addPageAddingListener(PageAddingListener listener) {
+		this.listenerList.add(PageAddingListener.class, listener);
+	}
+
+	public void removePageAddingListener(PageAddingListener listener) {
+		this.listenerList.remove(PageAddingListener.class, listener);
+	}
+
 	public void addPageClosedListener(PageClosedListener listener) {
 		this.listenerList.add(PageClosedListener.class, listener);
 	}
@@ -51,6 +59,20 @@ public class MdiEventsHelper {
 		this.listenerList.remove(PageActivatedListener.class, listener);
 	}
 
+	void firePageAdding(PageAddingEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == PageAddingListener.class) {
+				((PageAddingListener) listeners[i + 1]).pageAdding(e);
+
+				if (e.isCancel()) {
+					break;
+				}
+			}
+		}
+	}
+
 	void firePageAdded(PageAddedEvent e) {
 		Object[] listeners = listenerList.getListenerList();
 
@@ -77,6 +99,10 @@ public class MdiEventsHelper {
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
 			if (listeners[i] == PageClosingListener.class) {
 				((PageClosingListener) listeners[i + 1]).pageClosing(e);
+
+				if (e.isCancel()) {
+					break;
+				}
 			}
 		}
 	}

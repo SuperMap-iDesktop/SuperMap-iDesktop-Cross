@@ -43,6 +43,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	private MdiGroup selectedGroup;
 	private MdiPage selectedPage;
 	private ILayoutStrategy strategy;
+	private ILayoutStrategy defaultStrategy = FlowLayoutStrategy.instance(this, FlowLayoutStrategy.HORIZONTAL);
 	private MdiEventsHelper eventsHelper = new MdiEventsHelper();
 	private MdiGroupHandler mdiGroupHandler = new MdiGroupHandler();
 	private PropertyChangeHandler propertyChangeHandler = new PropertyChangeHandler();
@@ -54,7 +55,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	public MdiPane(int layoutMode) {
 		setLayout(new BorderLayout());
 		this.groups = new ArrayList<>();
-		this.strategy = FlowLayoutStrategy.instance(this, layoutMode);
+		this.strategy = this.defaultStrategy;
 
 		EventQueue.invokeLater(new Runnable() {
 			@Override
@@ -118,11 +119,18 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 				this.selectedGroup = null;
 				this.selectedPage = null;
 				this.eventsHelper.firePageActivated(new PageActivatedEvent(group, null, group.getActivePage()));
-			} else if (this.selectedGroup == group) {
+			} else {
+
+				// 如果移除 group 之后只剩一个 group 了，那么就把 Strategy 还原为 defaultStrategy
+				if (this.groups.size() == 1) {
+					setLayoutStrategy(this.defaultStrategy);
+				}
 
 				// 将要删除的是当前选中的 group
-				MdiGroup selectedGroup = this.groups.size() > 0 ? this.groups.get(0) : null;
-				active(selectedGroup);
+				if (this.selectedGroup == group) {
+					MdiGroup selectedGroup = this.groups.size() > 0 ? this.groups.get(0) : null;
+					active(selectedGroup);
+				}
 			}
 		}
 	}
