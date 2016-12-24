@@ -174,7 +174,6 @@ public class MdiGroup extends JComponent {
 			}
 
 			operation = Operation.CHANGE_GROUP;
-			page.getGroup().close(page, Operation.CHANGE_GROUP);
 		}
 
 		for (MdiPage mdiPage : pages) {
@@ -187,6 +186,16 @@ public class MdiGroup extends JComponent {
 
 		PageAddingEvent pageAddingEvent = new PageAddingEvent(this, page, operation);
 		this.eventsHelper.firePageAdding(pageAddingEvent);
+
+		// 如果被取消了，就结束操作
+		if (pageAddingEvent.isCancel()) {
+			return;
+		}
+
+		// 发送 CHANGE_GROUP 的事件
+		if (page.getGroup() != null && operation == Operation.CHANGE_GROUP) {
+			page.getGroup().close(page, Operation.CHANGE_GROUP);
+		}
 
 		// 设置一下初始状态
 		page.getComponent().setVisible(false);
