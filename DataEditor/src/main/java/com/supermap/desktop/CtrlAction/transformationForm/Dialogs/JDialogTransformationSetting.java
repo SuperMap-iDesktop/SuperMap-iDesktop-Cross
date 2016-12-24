@@ -43,8 +43,8 @@ public class JDialogTransformationSetting extends SmDialog {
 	public JDialogTransformationSetting() {
 		setTitle(DataEditorProperties.getString("String_TransformationSetting"));
 		init();
-		this.setLocationRelativeTo(null);
 		pack();
+		this.setLocationRelativeTo((Component) Application.getActiveApplication().getActiveForm());
 	}
 
 	private void init() {
@@ -66,6 +66,7 @@ public class JDialogTransformationSetting extends SmDialog {
 				return result;
 			}
 		});
+		comboBoxTransformationMode.setPreferredSize(new Dimension(250, 23));
 	}
 
 	private void initListener() {
@@ -114,7 +115,7 @@ public class JDialogTransformationSetting extends SmDialog {
 		this.add(labelTransformationMode, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 0, 0));
 		this.add(comboBoxTransformationMode, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 0, 10).setFill(GridBagConstraints.HORIZONTAL));
 
-		this.add(new JPanel(), new GridBagConstraintsHelper(0, 4, 2, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH));
+		this.add(new JPanel(), new GridBagConstraintsHelper(0, 4, 2, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH));
 
 		JPanel panelButton = new JPanel();
 		panelButton.setLayout(new GridBagLayout());
