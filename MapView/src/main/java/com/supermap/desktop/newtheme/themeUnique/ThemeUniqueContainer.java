@@ -2,6 +2,7 @@ package com.supermap.desktop.newtheme.themeUnique;
 
 import com.supermap.data.ColorGradientType;
 import com.supermap.data.Colors;
+import com.supermap.data.CursorType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
@@ -12,8 +13,10 @@ import com.supermap.data.GeoStyle3D;
 import com.supermap.data.GeoText3D;
 import com.supermap.data.Geometry;
 import com.supermap.data.Geometry3D;
+import com.supermap.data.JoinItems;
 import com.supermap.data.Point2D;
 import com.supermap.data.Point2Ds;
+import com.supermap.data.QueryParameter;
 import com.supermap.data.Recordset;
 import com.supermap.data.Rectangle2D;
 import com.supermap.data.SymbolType;
@@ -72,7 +75,6 @@ import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
-import static com.supermap.data.CursorType.STATIC;
 import static com.supermap.desktop.Application.getActiveApplication;
 
 /**
@@ -619,9 +621,24 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 						//判断子项值为数字还是字符
 						if (StringUtilities.isNumber(item.getUnique())) {//为数字
 							Double itemUnique = StringUtilities.getNumber(item.getUnique());
-							selectedRecordsets = datasetVector.query("Abs(" + expression + "-" + itemUnique + ")<" + 0.00001, STATIC);
+							QueryParameter selectedParameter = new QueryParameter();
+							if(themeUniqueLayer.getDisplayFilter().getJoinItems()!=null){
+								JoinItems joinItems=themeUniqueLayer.getDisplayFilter().getJoinItems();
+								selectedParameter.setJoinItems(joinItems);
+							}
+							selectedParameter.setAttributeFilter("Abs(" + expression + "-" + itemUnique + ")<" + 0.00001);
+							selectedParameter.setCursorType(CursorType.STATIC);
+							selectedRecordsets = datasetVector.query(selectedParameter);
+
 						} else {//不为数字
-							selectedRecordsets = datasetVector.query(expression + " = " + "'" + item.getUnique() + "'", STATIC);
+							QueryParameter selectedParameter = new QueryParameter();
+							if (themeUniqueLayer.getDisplayFilter().getJoinItems() != null) {
+								JoinItems joinItems = themeUniqueLayer.getDisplayFilter().getJoinItems();
+								selectedParameter.setJoinItems(joinItems);
+							}
+							selectedParameter.setAttributeFilter(expression + " = " + "'" + item.getUnique() + "'");
+							selectedParameter.setCursorType(CursorType.STATIC);
+							selectedRecordsets = datasetVector.query(selectedParameter);
 						}
 						if (selectedRecordsets.getRecordCount() != 0) {
 							//设置选中子项跟踪层风格

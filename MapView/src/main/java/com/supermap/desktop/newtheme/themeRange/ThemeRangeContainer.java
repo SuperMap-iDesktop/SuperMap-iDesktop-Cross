@@ -13,6 +13,7 @@ import com.supermap.data.GeoStyle3D;
 import com.supermap.data.GeoText3D;
 import com.supermap.data.Geometry;
 import com.supermap.data.Geometry3D;
+import com.supermap.data.JoinItems;
 import com.supermap.data.Point2D;
 import com.supermap.data.Point2Ds;
 import com.supermap.data.QueryParameter;
@@ -1014,6 +1015,10 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 					String expression = comboBoxExpression.getSelectedItem().toString();
 					// 构建选中子项的sql查询
 					QueryParameter selectedParameter = new QueryParameter();
+					if (themeRangeLayer.getDisplayFilter().getJoinItems() != null) {
+						JoinItems joinItems = themeRangeLayer.getDisplayFilter().getJoinItems();
+						selectedParameter.setJoinItems(joinItems);
+					}
 					selectedParameter.setAttributeFilter(expression + " Between " + item.getStart() + " AND " + item.getEnd());
 					selectedParameter.setCursorType(CursorType.STATIC);
 					selectedRecordsets = datasetVector.query(selectedParameter);
