@@ -38,6 +38,7 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 		this.container = container;
 		this.tabularGroup = new MdiGroup(container);
 		this.mapGroups = new ArrayList<>();
+		this.splits = new HashMap<>();
 
 		this.contentSplit = new JSplitPane();
 		this.contentSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -50,18 +51,11 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 			BasicSplitPaneDivider divider = ((BasicSplitPaneUI) this.contentSplit.getUI()).getDivider();
 			divider.setBorder(null);
 		}
+		this.container.add(this.contentSplit, BorderLayout.CENTER);
 	}
 
 	public MdiGroup getTabularGroup() {
 		return this.tabularGroup;
-	}
-
-	private void initMapGroups() {
-		MdiPage[] pages = this.container.getPages();
-		for (int i = 0; i < pages.length; i++) {
-			MdiPage page = pages[i];
-			MdiGroup group = this.container.createGroup();
-		}
 	}
 
 	@Override
@@ -77,21 +71,87 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 	 */
 	@Override
 	public boolean addGroup(MdiGroup group) {
+		boolean result = false;
 		if (!validateGroup(group) || group == this.tabularGroup) {
 			return false;
 		}
 
-		boolean result = false;
+		if (!this.splits.containsKey(group)) {
+			this.splits.put(group, createSplit(group));
+		}
 
+		this.mapGroups.add(group);
+		JSplitPane split = this.splits.get(group);
+		JSplitPane preSplit = findPreSplit(group);
+
+		if (preSplit != null) {
+			setNextSplit(preSplit, split);
+		} else {
+			((MdiPane) getContainer()).add(split, BorderLayout.CENTER);
+			resetDividerSize(split);
+			((MdiPane) getContainer()).revalidate();
+		}
+		adjustDividerProportion();
+		result = true;
 		return result;
 	}
 
 	@Override
 	public boolean removeGroup(MdiGroup group) {
+		boolean result = false;
 		if (!validateGroup(group)) {
 			return false;
 		}
+
+		if (group != this.tabularGroup) {
+
+			// 将要移除的 group 不是 tabularGroup
+			JSplitPane split = this.splits.get(group);
+			JSplitPane preSplit = findPreSplit(group);
+			JSplitPane nextSplit = findNextSplit(group);
+
+			if (preSplit != null) {
+				setNextSplit(preSplit, nextSplit);
+			} else {
+
+				// 没有上级 split 了，就把自己从 content 中移除
+				this.contentSplit.setLeftComponent(null);
+				this.contentSplit.revalidate();
+				this.contentSplit.repaint();
+				if (nextSplit != null) {
+					this.contentSplit.setLeftComponent(nextSplit);
+				}
+			}
+			this.mapGroups.remove(group);
+		} else {
+			this.contentSplit.setRightComponent(null);
+		}
 		return true;
+	}
+
+	private JSplitPane findPreSplit(MdiGroup group) {
+		int index = this.mapGroups.indexOf(group);
+		MdiGroup preGroup = index > 0 ? this.mapGroups.get(index - 1) : null;
+		return preGroup == null ? null : this.splits.get(preGroup);
+	}
+
+	private JSplitPane findNextSplit(MdiGroup group) {
+		int index = this.mapGroups.indexOf(group);
+		MdiGroup nextGroup = index >= 0 && index + 1 < this.mapGroups.size() ? this.mapGroups.get(index + 1) : null;
+		return nextGroup == null ? null : this.splits.get(nextGroup);
+	}
+
+	private void setNextSplit(JSplitPane split, JSplitPane nextSplit) {
+		if (split == null) {
+			return;
+		}
+
+		if (nextSplit != null) {
+			split.setRightComponent(nextSplit);
+		} else {
+			split.setRightComponent(null);
+		}
+		resetDividerSize(split);
 	}
 
 	public boolean validateGroup(MdiGroup group) {
@@ -100,10 +160,26 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 
 	@Override
 	public void layoutGroups() {
+		this.container.addGroup(this.tabularGroup);
+
+		MdiPage[] pages = this.container.getPages();
+		for (int i = 0; i < pages.length; i++) {
+			MdiPage page = pages[i];
+
+			if (page.getComponent() instanceof IFormTabular) {
+				this.tabularGroup.addPage(page);
+			} else {
+				MdiGroup group = this.container.createGroup();
+				addGroup(group);
+				group.addPage(page);
+			}
+		}
 	}
 
 	@Override
 	public void reset() {
+		this.container.remove(this.contentSplit);
+		this.mapGroups.clear();
 		this.splits.clear();
 	}
 
@@ -135,6 +211,14 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 		splitPane.setDividerSize(splitPane.getRightComponent() == null ? 0 : 3);
 	}
 
+	/**
+	 * 调整 DividerProportion，为其计算一个合适的 DividerProportion
+	 */
+	private void adjustDividerProportion() {
+		for (int i = 0; i < this.mapGroups.size(); i++) {
+			this.splits.get(this.mapGroups.get(i)).setResizeWeight(1d / (this.mapGroups.size() - i));
+		}
+	}
 
 	private class PageAddedHandler implements PageAddingListener {
 

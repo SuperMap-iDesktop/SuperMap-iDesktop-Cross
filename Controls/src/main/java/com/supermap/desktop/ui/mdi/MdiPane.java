@@ -93,7 +93,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 		return group;
 	}
 
-	private void addGroup(MdiGroup group) {
+	public void addGroup(MdiGroup group) {
 		if (!this.strategy.addGroup(group)) {
 			return;
 		}
@@ -469,7 +469,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	public void activePage(MdiPage page) {
 		MdiGroup group = page.getGroup();
 		if (group != null && group.getMdiContainer() == this) {
- 			group.activePage(page);
+			group.activePage(page);
 			active(group);
 		}
 	}
