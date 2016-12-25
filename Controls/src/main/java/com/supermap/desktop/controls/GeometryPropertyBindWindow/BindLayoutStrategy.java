@@ -51,7 +51,6 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 			BasicSplitPaneDivider divider = ((BasicSplitPaneUI) this.contentSplit.getUI()).getDivider();
 			divider.setBorder(null);
 		}
-		this.container.add(this.contentSplit, BorderLayout.CENTER);
 	}
 
 	public MdiGroup getTabularGroup() {
@@ -72,34 +71,41 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 	@Override
 	public boolean addGroup(MdiGroup group) {
 		boolean result = false;
-		if (!validateGroup(group) || group == this.tabularGroup) {
+		if (!validateGroup(group)) {
 			return false;
 		}
 
-		if (!this.splits.containsKey(group)) {
-			this.splits.put(group, createSplit(group));
-		}
-
-		this.mapGroups.add(group);
-		JSplitPane split = this.splits.get(group);
-		JSplitPane preSplit = findPreSplit(group);
-
-		if (preSplit != null) {
-			setNextSplit(preSplit, split);
+		if (group == this.tabularGroup) {
+			if (this.tabularGroup.getParent() != this.container) {
+				this.container.add(this.contentSplit);
+			} else {
+				return false;
+			}
 		} else {
-			((MdiPane) getContainer()).add(split, BorderLayout.CENTER);
-			resetDividerSize(split);
-			((MdiPane) getContainer()).revalidate();
+			if (!this.splits.containsKey(group)) {
+				this.splits.put(group, createSplit(group));
+			}
+
+			this.mapGroups.add(group);
+			JSplitPane split = this.splits.get(group);
+			JSplitPane preSplit = findPreSplit(group);
+
+			if (preSplit != null) {
+				setNextSplit(preSplit, split);
+			} else {
+				this.contentSplit.setLeftComponent(split);
+				resetDividerSize(split);
+				this.contentSplit.revalidate();
+			}
+			adjustDividerProportion();
 		}
-		adjustDividerProportion();
-		result = true;
-		return result;
+		return true;
 	}
 
 	@Override
 	public boolean removeGroup(MdiGroup group) {
 		boolean result = false;
-		if (!validateGroup(group)) {
+		if (!validateGroup(group) || !this.mapGroups.contains(group)) {
 			return false;
 		}
 
@@ -109,6 +115,7 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 			JSplitPane split = this.splits.get(group);
 			JSplitPane preSplit = findPreSplit(group);
 			JSplitPane nextSplit = findNextSplit(group);
+			split.setRightComponent(null);
 
 			if (preSplit != null) {
 				setNextSplit(preSplit, nextSplit);
@@ -160,8 +167,17 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 
 	@Override
 	public void layoutGroups() {
-		this.container.addGroup(this.tabularGroup);
 
+		// 首先进行已有 group 的布局
+		this.container.addGroup(this.tabularGroup);
+		MdiGroup[] groups = container.getGroups();
+		if (groups != null && groups.length > 0) {
+			for (int i = 0; i < groups.length; i++) {
+				addGroup(groups[i]);
+			}
+		}
+
+		// 然后进行 page 的重新分配
 		MdiPage[] pages = this.container.getPages();
 		for (int i = 0; i < pages.length; i++) {
 			MdiPage page = pages[i];
@@ -170,7 +186,6 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 				this.tabularGroup.addPage(page);
 			} else {
 				MdiGroup group = this.container.createGroup();
-				addGroup(group);
 				group.addPage(page);
 			}
 		}
@@ -189,11 +204,10 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 		// remove the border from the split pane
 		splitPane.setBorder(null);
 		splitPane.setOneTouchExpandable(false);
-		splitPane.setLeftComponent(null);
+		splitPane.setLeftComponent(group);
 		splitPane.setRightComponent(null);
 
 		splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-		splitPane.setLeftComponent(group);
 
 		if (splitPane.getUI() instanceof BasicSplitPaneUI) {
 			BasicSplitPaneDivider divider = ((BasicSplitPaneUI) splitPane.getUI()).getDivider();
