@@ -150,7 +150,7 @@ public class MdiGroup extends JComponent {
 	 * @param page
 	 */
 	public void addPage(MdiPage page) {
-		addPage(page, getPageCount() - 1);
+		addPage(page, -1);
 	}
 
 	/**

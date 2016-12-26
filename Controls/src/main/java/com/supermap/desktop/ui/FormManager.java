@@ -140,7 +140,7 @@ public class FormManager extends MdiPane implements IFormManager {
 
 	@Override
 	public void add(IForm form) {
-		add(form, getPageCount());
+		add(form, -1);
 	}
 
 	@Override

@@ -30,7 +30,7 @@ public class CtrlActionWorkspaceManagerWindow extends CtrlAction {
 				workspaceManagerWindow = new WorkspaceManagerWindow();
 				formManager.showChildForm(workspaceManagerWindow);
 			} else {
-				if (workspaceManagerWindow.isClosed()) {
+				if (!workspaceManagerWindow.isShowing()) {
 					formManager.showChildForm(workspaceManagerWindow);
 				} else {
 					formManager.close(workspaceManagerWindow);
