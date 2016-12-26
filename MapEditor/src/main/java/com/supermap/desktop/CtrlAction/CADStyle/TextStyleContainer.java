@@ -1,6 +1,12 @@
 package com.supermap.desktop.CtrlAction.CADStyle;
 
-import com.supermap.data.*;
+import com.supermap.data.EditHistory;
+import com.supermap.data.EditType;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoText;
+import com.supermap.data.Geometry;
+import com.supermap.data.Recordset;
+import com.supermap.data.TextStyle;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.textStyle.ITextStyle;
@@ -123,6 +129,7 @@ public class TextStyleContainer extends JPanel {
 
             @Override
             public void modify(TextStyleType newValue) {
+
                 updateGeometries(newValue);
                 parent.setModify(true);
             }
@@ -135,23 +142,29 @@ public class TextStyleContainer extends JPanel {
     private void updateGeometries(TextStyleType newValue) {
         editHistory = MapUtilities.getMapControl().getEditHistory();
         ArrayList<Recordset> records = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
-        if (null == records) {
-            return;
+	    long startTime = System.currentTimeMillis();
+	    if (null == records) {
+		    return;
         }
         int count = records.size();
         for (int i = 0; i < count; i++) {
             Recordset recordset = records.get(i);
-            recordset.moveFirst();
-            while (!recordset.isEOF()) {
-                editHistory.add(EditType.MODIFY, recordset, true);
+	        if (recordset.getRecordCount() <= 0) {
+		        continue;
+	        }
+	        recordset.getBatch().setMaxRecordCount(1024);
+	        recordset.getBatch().begin();
+	        recordset.moveFirst();
+	        editHistory.add(EditType.MODIFY, recordset, true);
+	        while (!recordset.isEOF()) {
                 recordset.edit();
                 Geometry tempGeometry = recordset.getGeometry();
                 Object newGeoStyleProperty = textBasicPanel.getResultMap().get(newValue);
                 if ("Null".equals(newGeoStyleProperty)) {
                     return;
                 }
-                if (tempGeometry instanceof GeoText && !newValue.equals(TextStyleType.FIXEDSIZE)) {
-                    if (newValue.equals(TextStyleType.ROTATION)) {
+		        if (tempGeometry instanceof GeoText && !newValue.equals(TextStyleType.FIXEDSIZE)) {
+			        if (newValue.equals(TextStyleType.ROTATION)) {
                         for (int j = 0; j < ((GeoText) tempGeometry).getPartCount(); j++) {
                             ((GeoText) tempGeometry).getPart(i).setRotation((Double) newGeoStyleProperty);
                         }
@@ -159,20 +172,21 @@ public class TextStyleContainer extends JPanel {
                         ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
                     }
                 }
-                if (tempGeometry instanceof GeoText && newValue.equals(TextStyleType.FIXEDSIZE)) {
-                    ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
+		        if (tempGeometry instanceof GeoText && newValue.equals(TextStyleType.FIXEDSIZE)) {
+			        ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
                     ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, ((GeoText) tempGeometry).getTextStyle(),
                             textBasicPanel.getResultMap().get(TextStyleType.FONTHEIGHT));
                 }
-                recordset.setGeometry(tempGeometry);
-                tempGeometry.dispose();
-                recordset.update();
-                recordset.moveNext();
-            }
-            editHistory.batchEnd();
-            recordset.dispose();
+		        recordset.setGeometry(tempGeometry);
+		        tempGeometry.dispose();
+//		        recordset.update();
+		        recordset.moveNext();
+	        }
+	        recordset.getBatch().update();
+	        editHistory.batchEnd();
+	        recordset.dispose();
         }
-        MapUtilities.getActiveMap().refresh();
+	    MapUtilities.getActiveMap().refresh();
     }
 
     public void enabled(boolean enabled) {
