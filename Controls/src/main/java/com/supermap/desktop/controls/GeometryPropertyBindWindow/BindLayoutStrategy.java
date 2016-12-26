@@ -105,7 +105,7 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 	@Override
 	public boolean removeGroup(MdiGroup group) {
 		boolean result = false;
-		if (!validateGroup(group) || !this.mapGroups.contains(group)) {
+		if (!validateGroup(group) || (!this.mapGroups.contains(group) && group != this.tabularGroup)) {
 			return false;
 		}
 

@@ -211,12 +211,12 @@ public class SymbolDialogFill extends SymbolDialog {
 		panelCenter.add(spinnerVertical, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 0));
 		panelCenter.add(labelVerticalUnit, new GridBagConstraintsHelper(2, 2, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 5));
 
-		panelCenter.add(labelAngle, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 5, 0));
-		panelCenter.add(spinnerAngle, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 5, 0));
-		panelCenter.add(labelAngleUnit, new GridBagConstraintsHelper(2, 3, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(5, 5, 5, 5));
+        panelCenter.add(labelAngle, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 5, 0));
+        panelCenter.add(spinnerAngle, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 5, 0));
+        panelCenter.add(labelAngleUnit, new GridBagConstraintsHelper(2, 3, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(5, 5, 5, 5));
 
 		panelFill = new CompTitledPane(this.checkBoxFill, panelCenter);
-		Dimension minimumSize = new Dimension(20, (int) panelFill.getPreferredSize().getHeight());
+        Dimension minimumSize = new Dimension(20, (int) (panelCenter.getPreferredSize().getHeight()+60));
 		panelFill.setMinimumSize(minimumSize);
 		panelFill.setMaximumSize(minimumSize);
 		panelFill.setPreferredSize(minimumSize);

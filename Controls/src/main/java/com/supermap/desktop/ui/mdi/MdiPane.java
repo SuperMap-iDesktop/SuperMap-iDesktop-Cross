@@ -111,7 +111,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 
 	private void removeGroup(MdiGroup group) {
 		if (group != null && this.groups.contains(group)) {
-			if (this.strategy.removeGroup(group)) {
+			if (!this.strategy.removeGroup(group)) {
 				return;
 			}
 
@@ -121,7 +121,6 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 			if (this.groups.size() == 0) {
 
 				// 当移除最后一个 group 的时候，发送一次 Actived 事件
-
 				this.selectedGroup = null;
 				this.selectedPage = null;
 				this.eventsHelper.firePageActivated(new PageActivatedEvent(group, null, group.getActivePage()));
