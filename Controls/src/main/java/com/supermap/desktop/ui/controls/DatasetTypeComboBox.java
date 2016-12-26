@@ -19,15 +19,6 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 	private transient DatasetType[] datasetTypes;
 	private boolean isAllShown = true;
 
-	/**
-	 * by yuanR
-	 * 2016.12.22
-	 */
-	@Override
-	public void updateUI() {
-		this.setUI(new MyComboBoxUI());
-	}
-
 	// 为了保证顺序，不能遍历
 	public static final DatasetType[] ALL_DATASET_TYPE = new DatasetType[]{
 			DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.CAD, DatasetType.TABULAR, DatasetType.NETWORK,
