@@ -130,6 +130,7 @@ public class UnionEditor extends AbstractEditor {
 
 					}else {
 						//处理面合并
+
 						result=GeometryUtilities.union(layer);
 
 					}
