@@ -952,7 +952,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			}
 
 			//满足鼠标拖拽，也可以实现多选效果
-			if (e.getSource() == tableRangeInfo && 1 == e.getClickCount() && e.getButton() == MouseEvent.BUTTON1) {
+			if (e.getSource() == tableRangeInfo && e.getButton() == MouseEvent.BUTTON1) {
 				//此时进行专题图子项连续定位
 				ContinuousMapLocation();
 			}

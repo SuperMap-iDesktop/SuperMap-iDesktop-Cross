@@ -598,7 +598,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			//满足鼠标拖拽，也可以实现多选效果
-			if (e.getSource() == tableUniqueInfo && 1 == e.getClickCount() && e.getButton() == MouseEvent.BUTTON1) {
+			if (e.getSource() == tableUniqueInfo && e.getButton() == MouseEvent.BUTTON1) {
 				//此时进行专题图子项连续定位
 				ContinuousMapLocation();
 			}
@@ -622,8 +622,8 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 						if (StringUtilities.isNumber(item.getUnique())) {//为数字
 							Double itemUnique = StringUtilities.getNumber(item.getUnique());
 							QueryParameter selectedParameter = new QueryParameter();
-							if(themeUniqueLayer.getDisplayFilter().getJoinItems()!=null){
-								JoinItems joinItems=themeUniqueLayer.getDisplayFilter().getJoinItems();
+							if (themeUniqueLayer.getDisplayFilter().getJoinItems() != null) {
+								JoinItems joinItems = themeUniqueLayer.getDisplayFilter().getJoinItems();
 								selectedParameter.setJoinItems(joinItems);
 							}
 							selectedParameter.setAttributeFilter("Abs(" + expression + "-" + itemUnique + ")<" + 0.00001);
