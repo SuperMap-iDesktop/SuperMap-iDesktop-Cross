@@ -43,14 +43,7 @@ public class BindProperty implements IBindProperty {
                 queryTabularTable();
             }
         };
-        this.drawingListener = new MapDrawingListener() {
-            @Override
-            public void mapDrawing(MapDrawingEvent mapDrawingEvent) {
-                queryTabularTable();
-            }
-        };
         removeEvents();
-        this.map.addDrawingListener(this.drawingListener);
         this.mapControl.addGeometrySelectChangedListener(geometrySelectChangedListener);
     }
 

@@ -44,6 +44,6 @@ public class CtrlActionMeasureClear extends CtrlAction {
 	@Override
 	public boolean enable() {
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
-		return activeForm instanceof FormMap && ((FormMap) activeForm).getMapControl().getMap().getTrackingLayer().getCount() > 0;
+		return activeForm != null && activeForm instanceof FormMap && ((FormMap) activeForm).getMapControl().getMap().getTrackingLayer().getCount() > 0;
 	}
 }
