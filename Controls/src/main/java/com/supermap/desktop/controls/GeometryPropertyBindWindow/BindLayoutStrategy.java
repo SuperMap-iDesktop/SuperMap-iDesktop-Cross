@@ -45,7 +45,7 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 		this.contentSplit.setBorder(null);
 		this.contentSplit.setOneTouchExpandable(false);
 		this.contentSplit.setLeftComponent(null);
-		this.contentSplit.setRightComponent(this.tabularGroup);
+		this.contentSplit.setRightComponent(null);
 		this.contentSplit.setResizeWeight(0.7);
 		if (this.contentSplit.getUI() instanceof BasicSplitPaneUI) {
 			BasicSplitPaneDivider divider = ((BasicSplitPaneUI) this.contentSplit.getUI()).getDivider();
@@ -76,11 +76,7 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 		}
 
 		if (group == this.tabularGroup) {
-			if (this.tabularGroup.getParent() != this.container) {
-				this.container.add(this.contentSplit);
-			} else {
-				return false;
-			}
+			this.contentSplit.setRightComponent(group);
 		} else {
 			if (!this.splits.containsKey(group)) {
 				this.splits.put(group, createSplit(group));
@@ -168,8 +164,25 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 	@Override
 	public void layoutGroups() {
 
+		// 添加底层的 Split
+		this.container.add(this.contentSplit);
+
+		boolean tabularExist = false;
+		MdiPage[] pages = this.container.getPages();
+		for (int i = 0; i < pages.length; i++) {
+			MdiPage page = pages[i];
+			if (page != null && page.getComponent() instanceof IFormTabular) {
+				tabularExist = true;
+				break;
+			}
+		}
+
 		// 首先进行已有 group 的布局
-		this.container.addGroup(this.tabularGroup);
+		if (tabularExist) {
+
+			// 将要操作的窗口如果有属性表，就将属性表放到专属 group 里，这里先添加属性表专属 group
+			this.container.addGroup(this.tabularGroup);
+		}
 		MdiGroup[] groups = container.getGroups();
 		if (groups != null && groups.length > 0) {
 			for (int i = 0; i < groups.length; i++) {
@@ -178,7 +191,6 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 		}
 
 		// 然后进行 page 的重新分配
-		MdiPage[] pages = this.container.getPages();
 		for (int i = 0; i < pages.length; i++) {
 			MdiPage page = pages[i];
 
