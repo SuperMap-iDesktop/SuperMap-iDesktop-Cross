@@ -81,7 +81,7 @@ import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindow
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.THIRD_LEVEL;
 
 /**
- * @author YuanR 2016.12.3
+ * @author YuanR 2016.12.24
  */
 public class WorkspaceManagerWindow extends FormBaseChild {
 	private JTable jTable;
@@ -97,7 +97,6 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 
 	private int levelNum;
 
-	//private boolean isWindowShown = true;
 	private boolean isExistModel;
 	private boolean isDefaultColWidth = true;
 
@@ -122,7 +121,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		super(title, icon, component);
 		initComponents();
 		initLayout();
-		initListeners();
+		//initListeners();
 	}
 
 	/**
@@ -177,8 +176,8 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		this.jTable.repaint();
 
 		//增加窗口监听
-		this.addFormShownListener(formShownListener);
-		this.addFormClosingListener(formClosingListener);
+		this.addFormShownListener(shownListener);
+		this.addFormClosingListener(closingListener);
 	}
 
 	/**
@@ -333,7 +332,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		this.jTable.addMouseListener(this.jtableListeners);
 		this.jTable.getTableHeader().addMouseListener(this.jtableHeaderListeners);
 		this.datasetTypeComboBox.addItemListener(this.datasetTypeComboBoxLisyeners);
-		this.jButtonLastLevel.addActionListener(this.jButtonLastLevelListeners);
+		this.jButtonLastLevel.addActionListener(this.jButtonLastLevelActionListeners);
 		this.textFieldSearch.getDocument().addDocumentListener(this.textFieldSearchChangeListener);
 		//tree对窗口的监听
 		getWorkspaceManager().getWorkspaceTree().addMouseListener(this.treeToJtable);
@@ -370,7 +369,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		this.jTable.removeMouseListener(this.jtableListeners);
 		this.jTable.getTableHeader().removeMouseListener(this.jtableHeaderListeners);
 		this.datasetTypeComboBox.removeItemListener(this.datasetTypeComboBoxLisyeners);
-		this.jButtonLastLevel.removeActionListener(this.jButtonLastLevelListeners);
+		this.jButtonLastLevel.removeActionListener(this.jButtonLastLevelActionListeners);
 		this.textFieldSearch.getDocument().removeDocumentListener(this.textFieldSearchChangeListener);
 		//移除tree对窗口的监听
 		getWorkspaceManager().getWorkspaceTree().removeMouseListener(this.treeToJtable);
@@ -678,7 +677,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	/**
 	 * 返回上级按钮监听事件
 	 */
-	private ActionListener jButtonLastLevelListeners = new ActionListener() {
+	private ActionListener jButtonLastLevelActionListeners = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (levelNum == SECOND_LEVEL) {//此时处于第二层，需要返回起始页
@@ -689,7 +688,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 			} else if (levelNum == THIRD_LEVEL) {//此时处于第三层（数据集层），需要返回数据源文件层
 				jTable.setModel(new GetTableModel().getDatasourcesTableModel(getActiveApplication().getWorkspace().getDatasources()));
 				jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasources());
-				//设置起始页“个数”的对齐方式
+				//设置“个数”的对齐方式
 				jTable.setDefaultRenderer(Integer.class, new TableCellRendererDatasources());
 			}
 			setOtherComponents(jTable.getModel());
@@ -857,18 +856,18 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	/**
 	 * 窗口显示监听
 	 */
-	private FormShownListener formShownListener = new FormShownListener() {
+	private FormShownListener shownListener = new FormShownListener() {
 		@Override
 		public void formShown(FormShownEvent e) {
-			initializeJTable();
 			initListeners();
+			initializeJTable();
 		}
 	};
 
 	/**
 	 * 窗口隐藏监听
 	 */
-	private FormClosingListener formClosingListener = new FormClosingListener() {
+	private FormClosingListener closingListener = new FormClosingListener() {
 		@Override
 		public void formClosing(FormClosingEvent e) {
 			removeListeners();
@@ -931,7 +930,6 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		if (tableModel != null) {
 			setColumnWith();
 			if (tableModel instanceof TableModelWorkspace) {
-				this.levelNum = FIRST_LEVEL;
 				this.textFieldSearch.setText("");
 				this.datasetTypeComboBox.setSelectedIndex(COMBOXITEM_ALLDATASTYPE);
 				this.jButtonLastLevel.setEnabled(false);
@@ -939,17 +937,17 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 				this.datasetTypeComboBox.setEnabled(false);
 				this.isExistModel = true;
 				this.selectedDatasource = null;
+				this.levelNum = FIRST_LEVEL;
 			} else if (tableModel instanceof TableModelDatasources || tableModel instanceof TableModelMaps || tableModel instanceof TableModelScenes) {
-				this.levelNum = SECOND_LEVEL;
-				this.textFieldSearch.setText("");
-				this.datasetTypeComboBox.setSelectedIndex(COMBOXITEM_ALLDATASTYPE);
 				this.jButtonLastLevel.setEnabled(true);
 				this.textFieldSearch.setEnabled(true);
+				this.textFieldSearch.setText("");
+				this.datasetTypeComboBox.setSelectedIndex(COMBOXITEM_ALLDATASTYPE);
 				this.datasetTypeComboBox.setEnabled(false);
 				this.isExistModel = true;
 				this.selectedDatasource = null;
-			} else if (tableModel instanceof TableModelResources) {
 				this.levelNum = SECOND_LEVEL;
+			} else if (tableModel instanceof TableModelResources) {
 				this.textFieldSearch.setText("");
 				this.datasetTypeComboBox.setSelectedIndex(COMBOXITEM_ALLDATASTYPE);
 				this.jButtonLastLevel.setEnabled(true);
@@ -957,13 +955,14 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 				this.datasetTypeComboBox.setEnabled(false);
 				this.isExistModel = true;
 				this.selectedDatasource = null;
+				this.levelNum = SECOND_LEVEL;
 			} else if (tableModel instanceof TableModelDatasource || tableModel instanceof TableModelDatasType) {
-				this.levelNum = THIRD_LEVEL;
 				this.textFieldSearch.setText("");
 				this.jButtonLastLevel.setEnabled(true);
 				this.textFieldSearch.setEnabled(true);
 				this.datasetTypeComboBox.setEnabled(true);
 				this.isExistModel = true;
+				this.levelNum = THIRD_LEVEL;
 			}
 		}
 	}
