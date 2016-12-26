@@ -20,6 +20,7 @@ import java.awt.event.MouseEvent;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by xie on 2016/12/22.
@@ -178,16 +179,35 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 			}
 		}
 
-		// 然后进行 page 的重新分配
-		MdiPage[] pages = this.container.getPages();
+		// 一山不容二虎
+		// 一个 Group 里，如果只有一个待关联子窗口（非属性表），那么该子窗口就不单飞了
+		// 一个 Group 里，如果有多个待关联子窗口（非属性表），那么就让第一个子窗口待在这个 Group 里，其他的单飞，自立山头，新建 Group
+		// 所有待关联的属性表，都放在 TabularGroup 里
+		Map<MdiGroup, MdiPage> relatedGroups = new HashMap<>();
+		for (int i = 0; i < groups.length; i++) {
+			layoutGroup(relatedGroups, groups[i]);
+		}
+	}
+
+	private void layoutGroup(Map<MdiGroup, MdiPage> relatedGroups, MdiGroup group) {
+		MdiPage[] pages = group.getPages();
 		for (int i = 0; i < pages.length; i++) {
 			MdiPage page = pages[i];
 
-			if (this.bindHandler.getFormTabularList().contains(page.getComponent())) {
+			// 一山不容二虎
+			// 一个 Group 里，如果只有一个待关联子窗口（非属性表），那么该子窗口就不单飞了
+			// 一个 Group 里，如果有多个待关联子窗口（非属性表），那么就让第一个子窗口待在这个 Group 里，其他的单飞，自立山头，新建 Group
+			// 所有待关联的属性表，都放在 TabularGroup 里
+			if (this.bindHandler.getFormMapList().contains(page.getComponent())) {
+				if (!relatedGroups.containsKey(group)) {
+					relatedGroups.put(group, page);
+				} else {
+					MdiGroup key = this.container.createGroup();
+					key.addPage(page);
+					relatedGroups.put(key, page);
+				}
+			} else if (this.bindHandler.getFormTabularList().contains(page.getComponent())) {
 				this.tabularGroup.addPage(page);
-			} else if (this.bindHandler.getFormMapList().contains(page.getComponent())) {
-				MdiGroup group = this.container.createGroup();
-				group.addPage(page);
 			}
 		}
 	}
