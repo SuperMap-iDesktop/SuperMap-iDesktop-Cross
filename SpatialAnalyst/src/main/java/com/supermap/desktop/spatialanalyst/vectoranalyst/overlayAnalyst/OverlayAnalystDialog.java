@@ -9,6 +9,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.implement.MyComboBoxUI;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
@@ -459,7 +460,7 @@ public class OverlayAnalystDialog extends SmDialog {
     }
 
     private void initLayout() {
-        initPanelSourceLayout();
+	    initPanelSourceLayout();
         initPanelOverlayAnalystLayout();
         initPanelTargetLayout();
         JScrollPane scrollPane = new JScrollPane();
