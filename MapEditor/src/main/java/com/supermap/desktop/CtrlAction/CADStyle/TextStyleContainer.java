@@ -164,7 +164,7 @@ public class TextStyleContainer extends JPanel {
 		        if (tempGeometry instanceof GeoText && !newValue.equals(TextStyleType.FIXEDSIZE)) {
 			        if (newValue.equals(TextStyleType.ROTATION)) {
                         for (int j = 0; j < ((GeoText) tempGeometry).getPartCount(); j++) {
-                            ((GeoText) tempGeometry).getPart(i).setRotation((Double) newGeoStyleProperty);
+                            ((GeoText) tempGeometry).getPart(j).setRotation((Double) newGeoStyleProperty);
                         }
                     } else {
                         ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
