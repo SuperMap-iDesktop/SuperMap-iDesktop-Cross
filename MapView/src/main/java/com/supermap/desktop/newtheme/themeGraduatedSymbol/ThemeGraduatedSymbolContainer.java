@@ -108,7 +108,6 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			Application.getActiveApplication().getOutput().output("dengjifuhao");
 			//此处动态刷新字段信息
 			if (e.getSource().equals(comboBoxExpression.getComponent(0))) {
 				//处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
