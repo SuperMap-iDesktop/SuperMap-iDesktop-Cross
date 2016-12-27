@@ -179,35 +179,32 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 			}
 		}
 
-		// 一山不容二虎
-		// 一个 Group 里，如果只有一个待关联子窗口（非属性表），那么该子窗口就不单飞了
-		// 一个 Group 里，如果有多个待关联子窗口（非属性表），那么就让第一个子窗口待在这个 Group 里，其他的单飞，自立山头，新建 Group
+		// 一山不容二虎，所有待关联子窗口（非属性表）都各自占用一个山头，哦不，是各自占用一个 Group
+		// 其他非关联子窗口（非属性表）添加到第一个待关联子窗口的 Group 里
 		// 所有待关联的属性表，都放在 TabularGroup 里
-		Map<MdiGroup, MdiPage> relatedGroups = new HashMap<>();
-		for (int i = 0; i < groups.length; i++) {
-			layoutGroup(relatedGroups, groups[i]);
-		}
-	}
+		MdiPage[] pages = this.container.getPages();
+		ArrayList<MdiPage> unrelatedPages = new ArrayList<>();
+		MdiGroup firstRelatedGroup = null;
 
-	private void layoutGroup(Map<MdiGroup, MdiPage> relatedGroups, MdiGroup group) {
-		MdiPage[] pages = group.getPages();
+		// 先进行关联窗口的布局
 		for (int i = 0; i < pages.length; i++) {
 			MdiPage page = pages[i];
-
-			// 一山不容二虎
-			// 一个 Group 里，如果只有一个待关联子窗口（非属性表），那么该子窗口就不单飞了
-			// 一个 Group 里，如果有多个待关联子窗口（非属性表），那么就让第一个子窗口待在这个 Group 里，其他的单飞，自立山头，新建 Group
-			// 所有待关联的属性表，都放在 TabularGroup 里
 			if (this.bindHandler.getFormMapList().contains(page.getComponent())) {
-				if (!relatedGroups.containsKey(group)) {
-					relatedGroups.put(group, page);
-				} else {
-					MdiGroup key = this.container.createGroup();
-					key.addPage(page);
-					relatedGroups.put(key, page);
+				MdiGroup group = this.container.addNewGroup(page);
+				if (firstRelatedGroup == null) {
+					firstRelatedGroup = group;
 				}
 			} else if (this.bindHandler.getFormTabularList().contains(page.getComponent())) {
 				this.tabularGroup.addPage(page);
+			} else {
+				unrelatedPages.add(page);
+			}
+		}
+
+		// 再处理不需要关联的子窗口
+		for (int i = 0; i < unrelatedPages.size(); i++) {
+			if (firstRelatedGroup != null) {
+				firstRelatedGroup.addPage(unrelatedPages.get(i));
 			}
 		}
 	}

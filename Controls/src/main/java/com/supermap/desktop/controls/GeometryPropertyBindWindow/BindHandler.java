@@ -30,7 +30,6 @@ import java.util.List;
  * IFormTabular有选择行变化，IFormTabular上选择行变化时，IFormMap的选择集有相应的变化
  */
 public class BindHandler {
-	private List formsList;
 	private List formMapList;
 	private List formTabularList;
 	private static final String TAG_MOVE = "MOVE";
@@ -99,7 +98,6 @@ public class BindHandler {
 		public void activeFormChanged(ActiveFormChangedEvent e) {
 			if (null == e.getNewActiveForm()) {
 				formMapList.clear();
-				formsList.clear();
 				formTabularList.clear();
 			}
 		}
@@ -114,7 +112,6 @@ public class BindHandler {
 	}
 
 	private BindHandler() {
-		this.formsList = new ArrayList();
 		this.formMapList = new ArrayList();
 		this.formTabularList = new ArrayList();
 		registEvents();
@@ -411,11 +408,14 @@ public class BindHandler {
 
 	public void removeFormMapsAndFormTabularsBind() {
 		removeFormMapsBind();
-		int propertyBindWindowSize = propertyBindWindows.size();
-		for (int i = 0; i < propertyBindWindowSize; i++) {
-			propertyBindWindows.get(i).removeEvents();
-		}
+		removeFormTabularsBind();
 
+		if (propertyBindWindows != null) {
+			int propertyBindWindowSize = propertyBindWindows.size();
+			for (int i = 0; i < propertyBindWindowSize; i++) {
+				propertyBindWindows.get(i).removeEvents();
+			}
+		}
 	}
 
 	private class LocalKeyListener extends KeyAdapter {
@@ -449,11 +449,6 @@ public class BindHandler {
 			bindTabularsSelectRow(formTabular);
 		}
 	}
-
-	public List getFormsList() {
-		return formsList;
-	}
-
 
 	public List getFormMapList() {
 		return formMapList;
