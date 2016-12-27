@@ -1,6 +1,7 @@
 package com.supermap.desktop.ui.icloud;
 
 
+import com.supermap.data.License;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -20,7 +21,8 @@ import java.util.Date;
  * 许可管理类
  */
 public class LicenseManager {
-    private static final String licDirctory = "C:\\Program Files\\Common Files\\SuperMap\\License";
+    private static final String LIC_DIRCTORY = "C:\\Program Files\\Common Files\\SuperMap\\License";
+    private static final String LINUX_LIC_DIRCTORY = "/home/opt/License";
     private static boolean hasOffLineLicense = false;
 
     /**
@@ -30,12 +32,12 @@ public class LicenseManager {
      */
     public static File getOffLineLicense() {
         File result = null;
-        File licDir = null;
+        File licDir;
         if (SystemPropertyUtilities.isWindows()) {
-            licDir = new File(licDirctory);
+            licDir = new File(LIC_DIRCTORY);
         } else {
             //linux系统暂不处理
-            licDir = new File("");
+            licDir = new File(LINUX_LIC_DIRCTORY);
         }
         if (licDir.exists() && licDir.isDirectory()) {
             File[] files = licDir.listFiles();
@@ -47,6 +49,36 @@ public class LicenseManager {
         }
 
         return result;
+    }
+
+    /**
+     * 判段正式许可(此方法无法检测本机试用许可，只对java开发有用)
+     *
+     * @return
+     */
+    public static boolean valiteLicense() {
+        boolean valitedLicense = false;
+        License license = new License();
+        /**
+         * JAVA开发版本中用到了许可类型，只用全部满足时才为true
+         */
+        com.supermap.data.ProductType[] productTypes = {com.supermap.data.ProductType.IOBJECTS_ADDRESS_MATCHING_DEVELOP, com.supermap.data.ProductType.IOBJECTS_CHART_DEVELOP,
+                com.supermap.data.ProductType.IOBJECTS_CORE_DEVELOP, com.supermap.data.ProductType.IOBJECTS_LAYOUT_DEVELOP, com.supermap.data.ProductType.IOBJECTS_NETWORK_DEVELOP,
+                com.supermap.data.ProductType.IOBJECTS_REALSPACE_EFFECT_DEVELOP, com.supermap.data.ProductType.IOBJECTS_REALSPACE_NETWORK_ANALYST_DEVELOP,
+                com.supermap.data.ProductType.IOBJECTS_REALSPACE_SPATIAL_ANALYST_DEVELOP, com.supermap.data.ProductType.IOBJECTS_SPACE_DEVELOP,
+                com.supermap.data.ProductType.IOBJECTS_SPATIAL_DEVELOP, com.supermap.data.ProductType.IOBJECTS_TOPOLOGY_DEVELOP, com.supermap.data.ProductType.IOBJECTS_TRAFFIC_ANALYST_DEVELOP};
+        int length = productTypes.length;
+        int licenseCount = 0;
+        for (int i = 0; i < length; i++) {
+            int valite = license.connect(productTypes[i]);
+            if (valite == 0) {
+                licenseCount++;
+            }
+        }
+        if (licenseCount == length) {
+            valitedLicense = true;
+        }
+        return valitedLicense;
     }
 
     /**

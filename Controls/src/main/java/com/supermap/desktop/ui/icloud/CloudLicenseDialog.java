@@ -1,5 +1,6 @@
 package com.supermap.desktop.ui.icloud;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.controls.utilities.ControlsResources;
@@ -16,11 +17,12 @@ import com.supermap.desktop.ui.icloud.commontypes.LicenseId;
 import com.supermap.desktop.ui.icloud.commontypes.ProductType;
 import com.supermap.desktop.ui.icloud.impl.LicenseServiceFactory;
 import com.supermap.desktop.ui.icloud.online.AuthenticationException;
+import com.supermap.desktop.utilities.PathUtilities;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 
 /**
@@ -44,6 +46,11 @@ public class CloudLicenseDialog extends SmDialog {
     private ApplyTrialLicenseResponse trialLicenseResponse;//用于归还的试用许可信息
     private static final String REGIST_URL = "https://sso.supermap.com/register?service=http://www.supermapol.com";
     private static final String PASSWORD_URL = "https://sso.supermap.com/v101/cas/password?service=http://itest.supermapol.com";
+    private static final String TOKEN_PATH = PathUtilities.getFullPathName("../Configuration/token", false);
+    private static final int USER_NAME = 0;
+    private static final int PASS_WORD = 1;
+    private static final int SAVE_TOKEN = 2;
+    private static final int AUTO_LOGIN = 3;
 
     private MouseListener registListener = new MouseAdapter() {
         @Override
@@ -80,29 +87,63 @@ public class CloudLicenseDialog extends SmDialog {
     private ActionListener loginListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String userName = textFieldUserName.getText();
-            String passWord = String.valueOf(fieldPassWord.getPassword());
-            try {
-                licenseService = LicenseServiceFactory.create(userName, passWord, ProductType.IDESKTOP);
-                LicenseId licenseId = LicenseManager.getFormalLicenseId(licenseService);
-                if (null != licenseId) {
-                    //有正式许可id，则申请正式许可
-                    formalLicenseResponse = LicenseManager.applyFormalLicense(licenseService, licenseId);
-                    dialogResult = DialogResult.OK;
-                } else {
-                    //没有正式许可id,则申请试用许可
-                    trialLicenseResponse = LicenseManager.applyTrialLicense(licenseService);
-                    dialogResult = DialogResult.OK;
-                }
-            } catch (AuthenticationException e1) {
-                UICommonToolkit.showMessageDialog(CommonProperties.getString("String_PermissionCheckFailed"));
-                dialogResult = dialogResult.CANCEL;
-            } finally {
-                removeEvents();
-                dispose();
-            }
+            login();
         }
     };
+
+    private void login() {
+        String userName = textFieldUserName.getText();
+        String passWord = String.valueOf(fieldPassWord.getPassword());
+        try {
+            licenseService = LicenseServiceFactory.create(userName, passWord, ProductType.IDESKTOP);
+            LicenseId licenseId = LicenseManager.getFormalLicenseId(licenseService);
+            if (null != licenseId) {
+                //有正式许可id，则申请正式许可
+                formalLicenseResponse = LicenseManager.applyFormalLicense(licenseService, licenseId);
+                dialogResult = DialogResult.OK;
+                saveToken();
+            } else {
+                //没有正式许可id,则申请试用许可
+                trialLicenseResponse = LicenseManager.applyTrialLicense(licenseService);
+                dialogResult = DialogResult.OK;
+                saveToken();
+            }
+        } catch (AuthenticationException e1) {
+            UICommonToolkit.showMessageDialog(CommonProperties.getString("String_PermissionCheckFailed"));
+            dialogResult = dialogResult.CANCEL;
+        } finally {
+            removeEvents();
+            dispose();
+        }
+    }
+
+    private void saveToken() {
+        FileOutputStream outPutStream = null;
+        String userName = textFieldUserName.getText() + ",";
+        String password = String.copyValueOf(fieldPassWord.getPassword());
+        String saveToken = checkBoxSavePassword.isSelected() ? "true" : "false";
+        String autoLogin = checkBoxAutoLogin.isSelected() ? "true" : "false";
+        try {
+            outPutStream = new FileOutputStream(TOKEN_PATH);
+            outPutStream.write(userName.getBytes());
+            outPutStream.write(password.getBytes());
+            outPutStream.write(",".getBytes());
+            outPutStream.write(saveToken.getBytes());
+            outPutStream.write(",".getBytes());
+            outPutStream.write(autoLogin.getBytes());
+        } catch (FileNotFoundException e) {
+            Application.getActiveApplication().getOutput().output(e);
+        } catch (IOException e) {
+            Application.getActiveApplication().getOutput().output(e);
+        } finally {
+            try {
+                outPutStream.close();
+            } catch (IOException e) {
+                Application.getActiveApplication().getOutput().output(e);
+            }
+        }
+
+    }
 
     /**
      * // 显示对话框，不过滤字段类型
@@ -201,8 +242,47 @@ public class CloudLicenseDialog extends SmDialog {
         this.checkBoxAutoLogin = new JCheckBox();
         this.buttonLogin = new SmButton();
         this.buttonClose = ComponentFactory.createButtonClose();
-        this.checkBoxSavePassword.setSelected(true);
-//        this.buttonLogin.setEnabled(false);
+        initToken();
+    }
+
+    private void initToken() {
+        FileReader reader = null;
+        try {
+            File file = new File(TOKEN_PATH);
+            if (file.exists()) {
+                reader = new FileReader(file);
+                char[] charArray = new char[(int) file.length()];
+                reader.read(charArray);
+                String[] token = String.valueOf(charArray).split(",");
+                if (null != token && token.length == 4) {
+                    boolean savePassword = "true".equalsIgnoreCase(token[SAVE_TOKEN]);
+                    boolean autoLogin = "true".equalsIgnoreCase(token[AUTO_LOGIN]);
+                    checkBoxSavePassword.setSelected(savePassword);
+                    checkBoxAutoLogin.setSelected(autoLogin);
+                    if (savePassword) {
+                        textFieldUserName.setText(token[USER_NAME]);
+                        fieldPassWord.setText(token[PASS_WORD]);
+                    }
+                    this.buttonLogin.setEnabled(!autoLogin);
+                    if (autoLogin) {
+                        login();
+                    }
+                }
+            }
+
+        } catch (FileNotFoundException e) {
+            Application.getActiveApplication().getOutput().output(e);
+        } catch (IOException e) {
+            Application.getActiveApplication().getOutput().output(e);
+        } finally {
+            try {
+                if (null != reader) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+                Application.getActiveApplication().getOutput().output(e);
+            }
+        }
     }
 
     public LicenseService getLicenseService() {

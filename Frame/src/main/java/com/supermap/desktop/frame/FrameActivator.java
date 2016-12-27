@@ -1,8 +1,6 @@
 package com.supermap.desktop.frame;
 
 
-import com.supermap.data.License;
-import com.supermap.data.ProductType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -10,6 +8,7 @@ import com.supermap.desktop.ui.MainFrame;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.icloud.CloudLicenseDialog;
+import com.supermap.desktop.ui.icloud.LicenseManager;
 import com.supermap.desktop.ui.icloud.api.LicenseService;
 import com.supermap.desktop.ui.icloud.commontypes.ApplyFormalLicenseResponse;
 import com.supermap.desktop.ui.icloud.commontypes.ApplyTrialLicenseResponse;
@@ -19,7 +18,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.FrameworkListener;
 
-import javax.swing.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -43,13 +41,28 @@ public class FrameActivator implements BundleActivator {
         System.out.println("Hello SuperMap === Frame!!");
         try {
             //本机许可是否满足java版本需求
-            if (valiteLicense()) {
+            if (LicenseManager.valiteLicense()) {
                 //yes
                 startUp(bundleContext);
             } else {
+                //判断()试用许可
                 //no
-                //是否登录云许可
-                confirmOnlineLicense(bundleContext, CommonProperties.getString("String_LoginOnlineWhenOffLicense"));
+                if (LicenseManager.hasOffLineLicense()) {
+                    //是否有离线许可
+                    //yes
+                    if (LicenseManager.isOffLineLicenseOverdue()) {
+                        //离线许可是否过期
+                        //yes
+                        loginOnlineLicense(bundleContext);
+                    } else {
+                        //no
+                        startUp(bundleContext);
+                    }
+                } else {
+                    //没有离线许可，登录云许可
+                    //no
+                    loginOnlineLicense(bundleContext);
+                }
             }
 
         } catch (Exception e) {
@@ -58,54 +71,34 @@ public class FrameActivator implements BundleActivator {
         }
     }
 
-    private boolean valiteLicense() {
-        boolean valitedLicense = false;
-        License license = new License();
-        /**
-         * JAVA开发版本中用到了许可类型，只用全部满足时才为true
-         */
-        ProductType[] productTypes = {ProductType.IOBJECTS_ADDRESS_MATCHING_DEVELOP, ProductType.IOBJECTS_CHART_DEVELOP,
-                ProductType.IOBJECTS_CORE_DEVELOP, ProductType.IOBJECTS_LAYOUT_DEVELOP, ProductType.IOBJECTS_NETWORK_DEVELOP,
-                ProductType.IOBJECTS_REALSPACE_EFFECT_DEVELOP, ProductType.IOBJECTS_REALSPACE_NETWORK_ANALYST_DEVELOP,
-                ProductType.IOBJECTS_REALSPACE_SPATIAL_ANALYST_DEVELOP, ProductType.IOBJECTS_SPACE_DEVELOP,
-                ProductType.IOBJECTS_SPATIAL_DEVELOP, ProductType.IOBJECTS_TOPOLOGY_DEVELOP, ProductType.IOBJECTS_TRAFFIC_ANALYST_DEVELOP};
-        int length = productTypes.length;
-        int licenseCount = 0;
-        for (int i = 0; i < length; i++) {
-            int valite = license.connect(productTypes[i]);
-            if (valite == 0) {
-                licenseCount++;
-            }
-        }
-        if (licenseCount == length) {
-            valitedLicense = true;
-        }
-        return valitedLicense;
-    }
-
-    private void confirmOnlineLicense(BundleContext bundleContext, String message) {
+    /**
+     * 登录云许可
+     *
+     * @param bundleContext
+     */
+    private void loginOnlineLicense(BundleContext bundleContext) {
         try {
-            if (UICommonToolkit.showConfirmDialog(message) == JOptionPane.OK_OPTION) {
-                //登录
-                CloudLicenseDialog dialog = new CloudLicenseDialog();
-                service = dialog.getLicenseService();
-                if (dialog.showDialog() == DialogResult.OK) {
-                    //许可申请成功
-                    formLicenseResponse = dialog.getFormalLicenseResponse();
-                    trialLicenseResponse = dialog.getTrialLicenseResponse();
-                    if (null != formLicenseResponse) {
+//            if (UICommonToolkit.showConfirmDialog(message) == JOptionPane.OK_OPTION) {
+            //登录
+            CloudLicenseDialog dialog = new CloudLicenseDialog();
+            service = dialog.getLicenseService();
+            if (dialog.showDialog() == DialogResult.OK) {
+                //许可申请成功
+                formLicenseResponse = dialog.getFormalLicenseResponse();
+                trialLicenseResponse = dialog.getTrialLicenseResponse();
+                if (null != formLicenseResponse) {
 //                    LicenseManager.buildLicense(formLicenseResponse.license);
-                        startUp(bundleContext);
-                    } else if (null != trialLicenseResponse) {
+                    startUp(bundleContext);
+                } else if (null != trialLicenseResponse) {
 //                    LicenseManager.buildLicense(trialLicenseResponse.license);
-                        startUp(bundleContext);
-                    } else {
-                        //不登陆
-                        stop(bundleContext);
-                        System.exit(1);
-                        return;
-                    }
+                    startUp(bundleContext);
+                } else {
+                    //不登陆
+                    stop(bundleContext);
+                    System.exit(1);
+                    return;
                 }
+//                }
             } else {
                 //不登陆
                 stop(bundleContext);
