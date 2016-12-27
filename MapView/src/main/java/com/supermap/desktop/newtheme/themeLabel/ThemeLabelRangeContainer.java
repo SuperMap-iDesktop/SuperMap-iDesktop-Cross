@@ -177,8 +177,11 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
      * 初始化表达式
      */
     private void initComboBoxRangeExpression() {
-        ThemeUtil.initComboBox(comboBoxExpression, themeLabel.getRangeExpression(), datasetVector, this.themeLabelLayer.getDisplayFilter().getJoinItems(),
-                comboBoxArray, true, false);
+	    //处理点击下拉列表框地图卡顿，同 themeUniqueContainer
+	    this.comboBoxExpression.removeItemListener(this.itemListener);
+	    ThemeUtil.initComboBox(comboBoxExpression, themeLabel.getRangeExpression(), datasetVector, this.themeLabelLayer.getDisplayFilter().getJoinItems(),
+			    comboBoxArray, true, false);
+	    this.comboBoxExpression.addItemListener(this.itemListener);
     }
 
     /**

@@ -162,22 +162,32 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 	private transient LocalPopmenuListener popmenuListener = new LocalPopmenuListener();
 	private transient LocalTableModelListener tableModelListener = new LocalTableModelListener();
 	private LayersTreeChangeListener layersTreePropertyChangeListener = new LayersTreeChangeListener();
+	boolean is = true;
 	private MouseAdapter mouseAdapter = new MouseAdapter() {
 		@Override
 		public void mousePressed(MouseEvent arg0) {
 			//此处动态刷新字段信息
 			if (arg0.getSource().equals(comboBoxExpression.getComponent(0))) {
-				// 刷新表达式字段信息
+				// 刷新表达式字段信息（确保关联属性表后，表达式跟随其关联变化）
+				//但关联了属性表，只需要进行一遍初始化，没必要每次点击都初始化
+				//初始化ComboBox会触发itemStateChanged，从而导致每次点击表达式都会进行一次地图刷新，导致卡顿
+				//解决方案：去除监听，当初始化后再添加监听,其他ComboBox同理--yuanR 16.12.27
+				comboBoxExpression.removeItemListener(comboBoxItemListener);
 				ThemeUtil.initComboBox(comboBoxExpression, themeUnique.getUniqueExpression(), datasetVector, themeUniqueLayer.getDisplayFilter().getJoinItems(),
 						comboBoxArray, false, false);
+				comboBoxExpression.addItemListener(comboBoxItemListener);
 			} else if (arg0.getSource().equals(comboBoxOffsetX.getComponent(0))) {
 				// 刷新水平偏移量字段信息
+				comboBoxOffsetX.removeItemListener(comboBoxItemListener);
 				ThemeUtil.initComboBox(comboBoxOffsetX, themeUnique.getOffsetX(), datasetVector, themeUniqueLayer.getDisplayFilter().getJoinItems(),
 						comboBoxArrayForOffsetX, true, true);
+				comboBoxOffsetX.addItemListener(comboBoxItemListener);
 			} else if (arg0.getSource().equals(comboBoxOffsetY.getComponent(0))) {
 				// 刷新垂直偏移量字段信息
+				comboBoxOffsetY.removeItemListener(comboBoxItemListener);
 				ThemeUtil.initComboBox(comboBoxOffsetY, themeUnique.getOffsetY(), datasetVector, themeUniqueLayer.getDisplayFilter().getJoinItems(),
 						comboBoxArrayForOffsetY, true, true);
+				comboBoxOffsetY.addItemListener(comboBoxItemListener);
 			}
 		}
 	};
