@@ -99,6 +99,10 @@ public class ThemeCustomContainer extends ThemeChangePanel {
     private MouseAdapter mouseAdapter = new MouseAdapter() {
         @Override
         public void mouseReleased(MouseEvent e) {
+	        //处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
+	        //移除监听
+	        unregistActionListener();
+
             // 动态刷新表达式
             if (e.getSource().equals(comboBoxFillSymbol.getComponent(0))) {
                 // 填充风格
@@ -146,6 +150,9 @@ public class ThemeCustomContainer extends ThemeChangePanel {
                 // 符号角度
                 initComboBoxMarkerAngle();
             }
+
+			//添加监听
+	        registActionListener();
         }
     };
 
@@ -350,6 +357,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
     }
 
     private void initComboBoxLineWidth() {
+
         comboBoxLists[LINEWIDTH] = new ArrayList<String>();
         this.comboBoxLineWidth.setPreferredSize(dimension);
         ThemeUtil.initComboBox(comboBoxLineWidth, themeCustom.getLineWidthExpression(), datasetVector, themeCustomLayer.getDisplayFilter().getJoinItems(),
@@ -528,6 +536,7 @@ public class ThemeCustomContainer extends ThemeChangePanel {
         this.comboBoxMarkerColor.removeItemListener(this.panelMarkerComboBoxListener);
         this.comboBoxMarkerSize.removeItemListener(this.panelMarkerComboBoxListener);
         this.comboBoxMarkerAngle.removeItemListener(this.panelMarkerComboBoxListener);
+
         this.comboBoxFillSymbol.getComponent(0).removeMouseListener(this.mouseAdapter);
         this.comboBoxFillOpaque.getComponent(0).removeMouseListener(this.mouseAdapter);
         this.comboBoxFillForeColor.getComponent(0).removeMouseListener(this.mouseAdapter);

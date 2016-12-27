@@ -82,17 +82,26 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		public void mouseReleased(MouseEvent arg0) {
 			//此处动态刷新字段信息
 			if (arg0.getSource().equals(comboBoxLabelExpression.getComponent(0))) {
+				//处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
+				comboBoxLabelExpression.removeItemListener(itemListener);
 				// 刷新表达式字段信息
 				ThemeUtil.initComboBox(comboBoxLabelExpression, themeLabel.getLabelExpression(), datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(),
 						comboBoxArray, false, false);
+				comboBoxLabelExpression.addItemListener(itemListener);
 			}else if(arg0.getSource().equals(comboBoxOffsetX.getComponent(0))){
+				//处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
+				comboBoxOffsetX.removeItemListener(itemListener);
 				// 刷新水平偏移量字段信息
 				ThemeUtil.initComboBox(comboBoxOffsetX, themeLabel.getOffsetX(), datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(),
 						comboBoxArrayForOffsetX, true, true);
+				comboBoxOffsetX.addItemListener(itemListener);
 			}else if(arg0.getSource().equals(comboBoxOffsetY.getComponent(0))){
 				// 刷新垂直偏移量字段信息
+				//处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
+				comboBoxOffsetY.removeItemListener(itemListener);
 				ThemeUtil.initComboBox(comboBoxOffsetY, themeLabel.getOffsetY(), datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(),
 						comboBoxArrayForOffsetY, true, true);
+				comboBoxOffsetY.addItemListener(itemListener);
 			}
 		}
 	};
