@@ -129,7 +129,6 @@ public class TextStyleContainer extends JPanel {
 
             @Override
             public void modify(TextStyleType newValue) {
-
                 updateGeometries(newValue);
                 parent.setModify(true);
             }
