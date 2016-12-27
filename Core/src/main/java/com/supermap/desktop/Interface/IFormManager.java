@@ -1,6 +1,6 @@
 package com.supermap.desktop.Interface;
 
-import com.supermap.desktop.event.ActiveFormChangedListener;
+import com.supermap.desktop.event.*;
 
 public interface IFormManager {
 
@@ -33,6 +33,18 @@ public interface IFormManager {
 	void resetActiveForm();
 
 	void showChildForm(IForm childForm);
+
+	void addFormShownListener(FormShownListener listener);
+
+	void removeFormShownListener(FormShownListener listener);
+
+	void addFormClosingListener(FormClosingListener listener);
+
+	void removeFormClosingListener(FormClosingListener listener);
+
+	void addFormClosedListener(FormClosedListener listener);
+
+	void removeFormClosedListener(FormClosedListener listener);
 
 	void addActiveFormChangedListener(ActiveFormChangedListener listener);
 

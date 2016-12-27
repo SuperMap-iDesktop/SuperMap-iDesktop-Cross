@@ -72,6 +72,8 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
 	private ActionListener okListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			handler.removeFormMapsBind();
+			handler.removeFormTabularsBind();
 			handler.removeFormMapsAndFormTabularsBind();
 
 			if (canRelated()) {

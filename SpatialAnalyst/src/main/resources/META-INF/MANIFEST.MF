@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1482721534650
+Bnd-LastModified: 1482825045443
 Build-Jdk: 1.7.0_80
-Built-By: Administrator
+Built-By: highsad
 Bundle-Activator: com.supermap.desktop.spatialanalyst.SpatialAnalystActi
  vator
 Bundle-ManifestVersion: 2

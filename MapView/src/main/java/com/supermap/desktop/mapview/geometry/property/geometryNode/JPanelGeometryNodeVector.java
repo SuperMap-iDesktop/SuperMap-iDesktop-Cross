@@ -277,7 +277,6 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 				selectedRow = getAfterDeleteSelectedRow(selectedRow, beforeRowCount);
 				tableNodeInfo.setRowSelectionInterval(selectedRow, selectedRow);
 				tableNodeInfo.scrollRectToVisible(tableNodeInfo.getCellRect(selectedRow == tableNodeInfo.getRowCount() - 2 ? tableNodeInfo.getRowCount() - 1 : selectedRow, 0, true));
-
 				resetNodeCount();
 			}
 		});
@@ -479,6 +478,8 @@ public class JPanelGeometryNodeVector extends JPanel implements IGeometryNode {
 	public void apply(Recordset recordset) {
 		stopEdit();
 		currentTableModel.apply(recordset);
+		//  liwenfa 当对象节点信息增改删之后，点击应用只是改变了属性集，没有调用地图刷新，所以手动调用，目前的解决办法
+		currentMap.refresh();
 	}
 
 	private void stopEdit() {
