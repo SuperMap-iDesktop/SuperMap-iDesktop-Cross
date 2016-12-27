@@ -42,7 +42,7 @@ public class LicenseManager {
         if (licDir.exists() && licDir.isDirectory()) {
             File[] files = licDir.listFiles();
             int size = files.length;
-            if (size > 0) {
+            if (size > 0 && files[0].getName().endsWith("lic")) {
                 result = files[0];
                 hasOffLineLicense = true;
             }
@@ -109,7 +109,9 @@ public class LicenseManager {
                 Application.getActiveApplication().getOutput().output(e);
             } finally {
                 try {
-                    stream.close();
+                    if (null != stream) {
+                        stream.close();
+                    }
                 } catch (IOException e) {
                     Application.getActiveApplication().getOutput().output(e);
                 }
