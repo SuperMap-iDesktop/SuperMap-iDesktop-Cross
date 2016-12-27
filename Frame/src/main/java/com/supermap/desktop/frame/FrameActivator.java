@@ -6,21 +6,12 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.MainFrame;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.icloud.CloudLicenseDialog;
-import com.supermap.desktop.ui.icloud.LicenseManager;
-import com.supermap.desktop.ui.icloud.api.LicenseService;
-import com.supermap.desktop.ui.icloud.commontypes.ApplyFormalLicenseResponse;
-import com.supermap.desktop.ui.icloud.commontypes.ApplyTrialLicenseResponse;
 import com.supermap.desktop.utilities.LogUtilities;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.FrameworkListener;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -28,9 +19,6 @@ public class FrameActivator implements BundleActivator {
 
     private boolean isError = false;
     private boolean isFrameStarted = false;
-    private LicenseService service;
-    private ApplyFormalLicenseResponse formLicenseResponse;
-    private ApplyTrialLicenseResponse trialLicenseResponse;
 
     /*
      * (non-Javadoc)
@@ -40,75 +28,13 @@ public class FrameActivator implements BundleActivator {
     public void start(BundleContext bundleContext) throws Exception {
         System.out.println("Hello SuperMap === Frame!!");
         try {
-            //本机许可是否满足java版本需求
-            if (LicenseManager.valiteLicense()) {
-                //yes
-                startUp(bundleContext);
-            } else {
-                //判断()试用许可
-                //no
-                if (LicenseManager.hasOffLineLicense()) {
-                    //是否有离线许可
-                    //yes
-                    if (LicenseManager.isOffLineLicenseOverdue()) {
-                        //离线许可是否过期
-                        //yes
-                        loginOnlineLicense(bundleContext);
-                    } else {
-                        //no
-                        startUp(bundleContext);
-                    }
-                } else {
-                    //没有离线许可，登录云许可
-                    //no
-                    loginOnlineLicense(bundleContext);
-                }
-            }
+
+            startUp(bundleContext);
 
         } catch (Exception e) {
             UICommonToolkit.showMessageDialog(CommonProperties.getString("String_PermissionCheckFailed"));
             isError = true;
         }
-    }
-
-    /**
-     * 登录云许可
-     *
-     * @param bundleContext
-     */
-    private void loginOnlineLicense(BundleContext bundleContext) {
-        try {
-//            if (UICommonToolkit.showConfirmDialog(message) == JOptionPane.OK_OPTION) {
-            //登录
-            CloudLicenseDialog dialog = new CloudLicenseDialog();
-            service = dialog.getLicenseService();
-            if (dialog.showDialog() == DialogResult.OK) {
-                //许可申请成功
-                formLicenseResponse = dialog.getFormalLicenseResponse();
-                trialLicenseResponse = dialog.getTrialLicenseResponse();
-                if (null != formLicenseResponse) {
-//                    LicenseManager.buildLicense(formLicenseResponse.license);
-                    startUp(bundleContext);
-                } else if (null != trialLicenseResponse) {
-//                    LicenseManager.buildLicense(trialLicenseResponse.license);
-                    startUp(bundleContext);
-                } else {
-                    //不登陆
-                    stop(bundleContext);
-                    System.exit(1);
-                    return;
-                }
-//                }
-            } else {
-                //不登陆
-                stop(bundleContext);
-                System.exit(1);
-                return;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 
     //启动桌面
@@ -141,19 +67,6 @@ public class FrameActivator implements BundleActivator {
         Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.Frame", bundleContext.getBundle());
         LogUtilities.outPut(CoreProperties.getString("String_DesktopStartFinished"));
         MainFrame mainFrame = new MainFrame();
-        mainFrame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosed(WindowEvent e) {
-                if (null != service && null != trialLicenseResponse) {
-                    try {
-                        //退出产品时，归还试用许可
-                        service.deleteTrialLicense(trialLicenseResponse.returnId);
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }
-        });
         Application.getActiveApplication().setMainFrame(mainFrame);
         mainFrame.loadUI();
     }
