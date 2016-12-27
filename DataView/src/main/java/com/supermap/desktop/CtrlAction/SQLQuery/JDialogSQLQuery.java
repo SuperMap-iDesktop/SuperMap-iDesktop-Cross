@@ -742,8 +742,14 @@ public class JDialogSQLQuery extends SmDialog {
 //				}
 				else if (row != -1) {
 //					lastComponent.push(tableFieldInfo.getValueAt(row, 1).toString(), ADD_FUNCTION_OR_FIELD);
-					lastComponent.push(tableFieldInfo.getSqlValueAt(row, 1), ADD_FUNCTION_OR_FIELD);
-				}
+//					lastComponent.push(tableFieldInfo.getSqlValueAt(row, 1), ADD_FUNCTION_OR_FIELD);
+
+                    if (lastComponent.equals(textareaQueryCondition)) {
+                        lastComponent.push(tableFieldInfo.getSqlValueAt(row, 1), ADD_DIRECT);
+                    } else {
+                        lastComponent.push(tableFieldInfo.getSqlValueAt(row, 1), ADD_FUNCTION_OR_FIELD);
+                    }
+                }
 			}
 		}
 	};
@@ -886,7 +892,7 @@ public class JDialogSQLQuery extends SmDialog {
 			}
 		}
 	};
-	;
+
 
 	private final ActionListener buttonImportActionListener = new ActionListener() {
 		@Override

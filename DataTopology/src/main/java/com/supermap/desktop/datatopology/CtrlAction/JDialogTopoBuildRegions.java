@@ -462,10 +462,20 @@ public class JDialogTopoBuildRegions extends SmDialog {
         if (isTopoprogress) {
             topologyProcess();
         }
-        topologyBuildRegion();
-        unregistAction();
-        buttonCancel.removeActionListener(buttonListener);
-        dispose();
+        Dataset selectedDataset = comboBoxDataset.getSelectedDataset();
+        if (selectedDataset != null) {
+            ArrayList<Dataset> datasets = new ArrayList<>();
+            datasets.add(selectedDataset);
+            java.util.List<Dataset> closedDatasets = DatasetUIUtilities.sureDatasetClosed(datasets);
+            if (closedDatasets.size() > 0) {
+                topologyBuildRegion();
+                unregistAction();
+                buttonCancel.removeActionListener(buttonListener);
+                dispose();
+            } else {
+                return;
+            }
+        }
     }
 
     private void cancelButtonClicked() {

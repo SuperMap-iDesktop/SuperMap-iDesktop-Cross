@@ -100,6 +100,7 @@ public class FormManager extends MdiPane implements IFormManager {
 	};
 
 	public FormManager() {
+		addPageAddedListener(this.pageAddedListener);
 		addPageActivatedListener(this.pageActivatedListener);
 		addPageClosingListener(this.pageClosingListener);
 		addPageClosedListener(this.pageClosedListener);
@@ -139,7 +140,7 @@ public class FormManager extends MdiPane implements IFormManager {
 
 	@Override
 	public void add(IForm form) {
-		add(form, getPageCount());
+		add(form, -1);
 	}
 
 	@Override

@@ -59,8 +59,10 @@ public class FlowLayoutStrategy extends SplitLayoutStrategy {
 	}
 
 	@Override
-	public void addGroup(MdiGroup group) {
-		super.addGroup(group);
+	public boolean addGroup(MdiGroup group) {
+		if (!super.addGroup(group)) {
+			return false;
+		}
 
 		JSplitPane split = getSplits().get(group);
 		JSplitPane preSplit = findPreSplit(group);
@@ -73,10 +75,11 @@ public class FlowLayoutStrategy extends SplitLayoutStrategy {
 			((MdiPane) getContainer()).revalidate();
 		}
 		adjustDividerProportion();
+		return true;
 	}
 
 	@Override
-	public void removeGroup(MdiGroup group) {
+	public boolean removeGroup(MdiGroup group) {
 		JSplitPane split = getSplits().get(group);
 		JSplitPane preSplit = findPreSplit(group);
 		JSplitPane nextSplit = findNextSplit(group);
@@ -93,7 +96,8 @@ public class FlowLayoutStrategy extends SplitLayoutStrategy {
 				((MdiPane) getContainer()).add(nextSplit, BorderLayout.CENTER);
 			}
 		}
-		super.removeGroup(group);
+
+		return super.removeGroup(group);
 	}
 
 	private JSplitPane findPreSplit(MdiGroup group) {
@@ -148,6 +152,12 @@ public class FlowLayoutStrategy extends SplitLayoutStrategy {
 		return split;
 	}
 
+
+	/**
+	 * 设置 Divider 的大小，如果 rightComponent 为 null，设置为 0，否则设置为 3
+	 *
+	 * @param splitPane
+	 */
 	private void resetDividerSize(JSplitPane splitPane) {
 		splitPane.setDividerSize(splitPane.getRightComponent() == null ? 0 : 3);
 	}

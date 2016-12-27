@@ -1,7 +1,13 @@
 package com.supermap.desktop.iml;
 
 import com.supermap.data.Dataset;
-import com.supermap.data.conversion.*;
+import com.supermap.data.conversion.DataExport;
+import com.supermap.data.conversion.ExportResult;
+import com.supermap.data.conversion.ExportSetting;
+import com.supermap.data.conversion.ExportSettings;
+import com.supermap.data.conversion.ExportSteppedEvent;
+import com.supermap.data.conversion.ExportSteppedListener;
+import com.supermap.data.conversion.FileType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.baseUI.PanelExportTransform;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
@@ -159,7 +165,7 @@ public class ExportCallable extends UpdateProgressCallable {
                 }
 
                 // 刷新table
-                exportTable.updateUI();
+//                exportTable.updateUI();// 不需要刷新，调setValueAt的时候会刷新改变的单元格。by xiaJT
             } else {
                 Application.getActiveApplication().getOutput().output(DataConversionProperties.getString("string_exporterror"));
             }

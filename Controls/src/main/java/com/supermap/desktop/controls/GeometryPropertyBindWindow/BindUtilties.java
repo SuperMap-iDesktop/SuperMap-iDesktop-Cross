@@ -19,95 +19,55 @@ import java.awt.*;
 
 public class BindUtilties {
 
-    private static IFormTabular tabular;
+	private static IFormTabular tabular;
 
-    public static void windowBindProperty(IFormMap formMap) {
-        BindHandler handler = BindHandler.getInstance();
-        handler.getFormMapList().clear();
-        handler.getFormTabularList().clear();
-        handler.getFormMapList().add(formMap);
-        handler.getFormTabularList().add(tabular);
-        handler.getFormsList().add(formMap);
-        handler.getFormsList().add(tabular);
-        handler.bindFormMapsAndFormTabulars();
-        resetMDILayout();
-    }
+	public static void windowBindProperty(IFormMap formMap) {
+		BindHandler handler = BindHandler.getInstance();
+		handler.removeFormMapsAndFormTabularsBind();
+		handler.getFormMapList().add(formMap);
+		handler.getFormTabularList().add(tabular);
+		handler.bindFormMapsAndFormTabulars();
+		resetMDILayout();
+	}
 
-    public static void resetMDILayout() {
-        BindHandler handler = BindHandler.getInstance();
-        FormManager formManager = (FormManager) Application.getActiveApplication().getMainFrame().getFormManager();
-        int formMapsSize = handler.getFormMapList().size();
-        int formsSize = handler.getFormsList().size();
-        int formTabularsSize = handler.getFormTabularList().size();
-        if (formsSize == formMapsSize) {
-            ILayoutStrategy strategy = formManager.getLayoutStrategy();
-            if (strategy instanceof FlowLayoutStrategy) {
-                ((FlowLayoutStrategy) strategy).setLayoutMode(FlowLayoutStrategy.HORIZONTAL);
-            }
-            for (int i = 0; i < formMapsSize - 1; i++) {
-                formManager.createGroup();
-            }
+	public static void resetMDILayout() {
+		BindHandler handler = BindHandler.getInstance();
+		FormManager formManager = (FormManager) Application.getActiveApplication().getMainFrame().getFormManager();
+		int formMapsSize = handler.getFormMapList().size();
+		formManager.setLayoutStrategy(new BindLayoutStrategy(formManager, handler));
 
-            int groupCount = formManager.getGroupCount();
-            for (int i = 0; i < groupCount; i++) {
-                MdiPage mapPage = formManager.getPage((Component) handler.getFormMapList().get(i));
-                formManager.getGroup(i).addPage(mapPage);
-            }
+		if (formMapsSize > 0) {
+			Application.getActiveApplication().setActiveForm((IForm) handler.getFormMapList().get(0));
+		}
+	}
 
-        } else if (formsSize == formTabularsSize) {
-            ILayoutStrategy strategy = formManager.getLayoutStrategy();
-            if (strategy instanceof FlowLayoutStrategy) {
-                ((FlowLayoutStrategy) strategy).setLayoutMode(FlowLayoutStrategy.VERTICAL);
-            }
-            for (int i = 0; i < formTabularsSize - 1; i++) {
-                formManager.createGroup();
-            }
+	/**
+	 * 创建属性表
+	 *
+	 * @param dataset
+	 * @param recordset
+	 */
+	public static void openTabular(Dataset dataset, Recordset recordset) {
+		// 打开一个默认的属性表，然后修改属性表的title和数据与当前图层对应的数据匹配
+		tabular = TabularUtilities.openDatasetVectorFormTabular(dataset);
+		tabular.setText(dataset.getName() + "@" + dataset.getDatasource().getAlias());
+		tabular.setRecordset(recordset);
+	}
 
-            int groupCount = formManager.getGroupCount();
-            for (int i = 0; i < groupCount; i++) {
-                MdiPage mapPage = formManager.getPage((Component) handler.getFormTabularList().get(i));
-                formManager.getGroup(i).addPage(mapPage);
-            }
-        } else {
-            formManager.setLayoutStrategy(new BindLayoutStrategy(formManager));
-
-//            ILayoutStrategy strategy = formManager.getLayoutStrategy();
-//            if (strategy instanceof FlowLayoutStrategy) {
-//                ((FlowLayoutStrategy) strategy).setLayoutMode(FlowLayoutStrategy.VERTICAL);
-//            }
-        }
-        if (formMapsSize > 0) {
-            Application.getActiveApplication().setActiveForm((IForm) handler.getFormMapList().get(0));
-        }
-    }
-
-    /**
-     * 创建属性表
-     *
-     * @param dataset
-     * @param recordset
-     */
-    public static void openTabular(Dataset dataset, Recordset recordset) {
-        // 打开一个默认的属性表，然后修改属性表的title和数据与当前图层对应的数据匹配
-        tabular = TabularUtilities.openDatasetVectorFormTabular(dataset);
-        tabular.setText(dataset.getName() + "@" + dataset.getDatasource().getAlias());
-        tabular.setRecordset(recordset);
-    }
-
-    /**
-     * 打开关联浏览窗口
-     *
-     * @param caller
-     */
-    public static void showPopumenu(IBaseItem caller) {
-        Point point = ((SmMenuItem) caller).getParent().getLocation();
-        int x = (int) point.getX() + 46;
-        final JPopupMenuBind popupMenuBind = JPopupMenuBind.instance();
-        int y = (int) point.getY() + 52;
-        JFrame mainFrame = (JFrame) Application.getActiveApplication().getMainFrame();
-        popupMenuBind.init();
-        popupMenuBind.show(mainFrame, x, y);
-        popupMenuBind.setVisible(true);
-    }
+	/**
+	 * 打开关联浏览窗口
+	 *
+	 * @param caller
+	 */
+	public static void showPopumenu(IBaseItem caller) {
+		Point point = ((SmMenuItem) caller).getParent().getLocation();
+		int x = (int) point.getX() + 46;
+		final JPopupMenuBind popupMenuBind = JPopupMenuBind.instance();
+		int y = (int) point.getY() + 52;
+		JFrame mainFrame = (JFrame) Application.getActiveApplication().getMainFrame();
+		popupMenuBind.init();
+		popupMenuBind.show(mainFrame, x, y);
+		popupMenuBind.setVisible(true);
+	}
 
 }

@@ -43,6 +43,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	private MdiGroup selectedGroup;
 	private MdiPage selectedPage;
 	private ILayoutStrategy strategy;
+	private ILayoutStrategy defaultStrategy = FlowLayoutStrategy.instance(this, FlowLayoutStrategy.HORIZONTAL);
 	private MdiEventsHelper eventsHelper = new MdiEventsHelper();
 	private MdiGroupHandler mdiGroupHandler = new MdiGroupHandler();
 	private PropertyChangeHandler propertyChangeHandler = new PropertyChangeHandler();
@@ -54,7 +55,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	public MdiPane(int layoutMode) {
 		setLayout(new BorderLayout());
 		this.groups = new ArrayList<>();
-		this.strategy = FlowLayoutStrategy.instance(this, layoutMode);
+		this.strategy = this.defaultStrategy;
 
 		EventQueue.invokeLater(new Runnable() {
 			@Override
@@ -92,10 +93,13 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 		return group;
 	}
 
-	private void addGroup(MdiGroup group) {
+	public void addGroup(MdiGroup group) {
+		if (!this.strategy.addGroup(group)) {
+			return;
+		}
+
 		registerEvents(group);
 		this.groups.add(group);
-		this.strategy.addGroup(group);
 
 		if (this.selectedGroup == null) {
 
@@ -107,22 +111,31 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 
 	private void removeGroup(MdiGroup group) {
 		if (group != null && this.groups.contains(group)) {
-			this.strategy.removeGroup(group);
+			if (!this.strategy.removeGroup(group)) {
+				return;
+			}
+
 			unregisterEvents(group);
 			this.groups.remove(group);
 
 			if (this.groups.size() == 0) {
 
 				// 当移除最后一个 group 的时候，发送一次 Actived 事件
-
 				this.selectedGroup = null;
 				this.selectedPage = null;
 				this.eventsHelper.firePageActivated(new PageActivatedEvent(group, null, group.getActivePage()));
-			} else if (this.selectedGroup == group) {
+			} else {
+
+				// 如果移除 group 之后只剩一个 group 了，那么就把 Strategy 还原为 defaultStrategy
+				if (this.groups.size() == 1) {
+					setLayoutStrategy(this.defaultStrategy);
+				}
 
 				// 将要删除的是当前选中的 group
-				MdiGroup selectedGroup = this.groups.size() > 0 ? this.groups.get(0) : null;
-				active(selectedGroup);
+				if (this.selectedGroup == group) {
+					MdiGroup selectedGroup = this.groups.size() > 0 ? this.groups.get(0) : null;
+					active(selectedGroup);
+				}
 			}
 		}
 	}
@@ -146,10 +159,6 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 
 	// MdiPane
 
-	public MdiPage getSelectedPage() {
-		return this.selectedPage;
-	}
-
 	@Override
 	public ILayoutStrategy getLayoutStrategy() {
 		return this.strategy;
@@ -159,7 +168,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	public void setLayoutStrategy(ILayoutStrategy strategy) {
 
 		// 新设置的 strategy 与 当前 strategy 不一致，则更换 strategy
-		if (strategy != null && strategy.getClass() != this.strategy.getClass()) {
+		if (strategy != this.strategy) {
 			this.strategy.reset();
 			this.strategy = strategy;
 			this.strategy.layoutGroups();
@@ -225,7 +234,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 
 	public boolean closeAll() {
 		boolean isClosed = true;
-		for (int i = 0; i < this.groups.size(); i++) {
+		for (int i = this.groups.size() - 1; i >= 0; i--) {
 			isClosed = isClosed && this.groups.get(i).closeAll();
 		}
 		return isClosed;
@@ -358,8 +367,16 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 		return this.selectedGroup == null ? null : this.selectedGroup.getActivePage();
 	}
 
+	public void addPageAddingListener(PageAddingListener listener) {
+		this.eventsHelper.addPageAddingListener(listener);
+	}
+
+	public void removePageAddingListener(PageAddingListener listener) {
+		this.eventsHelper.removePageAddingListener(listener);
+	}
+
 	/**
-	 * 不能遍历 Groups 转发事件，因为如果在之后有新增加的 Group，则无法正常工作
+	 * 不能遍历 Groups 转发 Group 事件，因为如果在之后有新增加的 Group，则无法正常工作
 	 *
 	 * @param listener
 	 */
@@ -456,7 +473,12 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 		}
 	}
 
-	private class MdiGroupHandler implements PageAddedListener, PageClosingListener, PageClosedListener, PageActivatingListener, PageActivatedListener {
+	private class MdiGroupHandler implements PageAddingListener, PageAddedListener, PageClosingListener, PageClosedListener, PageActivatingListener, PageActivatedListener {
+
+		@Override
+		public void pageAdding(PageAddingEvent e) {
+			MdiPane.this.eventsHelper.firePageAdding(e);
+		}
 
 		@Override
 		public void pageAdded(PageAddedEvent e) {

@@ -34,25 +34,27 @@ public abstract class SplitLayoutStrategy implements ILayoutStrategy {
 	}
 
 	@Override
-	public void addGroup(MdiGroup group) {
+	public boolean addGroup(MdiGroup group) {
 		if (!validateGroup(group)) {
-			return;
+			return false;
 		}
 
 		if (!this.splits.containsKey(group)) {
 			this.splits.put(group, createSplit(group));
 		}
+		return true;
 	}
 
 	@Override
-	public void removeGroup(MdiGroup group) {
+	public boolean removeGroup(MdiGroup group) {
 		if (!validateGroup(group)) {
-			return;
+			return false;
 		}
 
 		if (this.splits.containsKey(group)) {
 			this.splits.remove(group);
 		}
+		return true;
 	}
 
 	public boolean validateGroup(MdiGroup group) {

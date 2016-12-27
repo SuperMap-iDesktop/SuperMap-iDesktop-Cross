@@ -279,23 +279,23 @@ public class DatasourceOpenFileUtilties {
 					return resultDatasource;
 				} else if (!StringUtilities.isNullOrEmpty(errorMessage)) {
 					// 判断是否为密码错误
-					boolean isPasswordWrong = false;
+					boolean isPasswordWrong =false;
 
-//					ErrorInfo[] errorInfos = Toolkit.getLastErrors(1);
+					ErrorInfo[] errorInfos = Toolkit.getLastErrors(1);
 
-//					for (int i = 0; i < errorInfos.length; i++) {
-//						String marker = errorInfos[i].getMarker();
+					for (int i = 0; i < errorInfos.length; i++) {
+						String marker = errorInfos[i].getMarker();
 					LogUtilities.outPut(MessageFormat.format(ControlsProperties.getString("String_OpenDatasourceFailedCode"), errorMessage));
-//						if (marker.equals(CoreProperties.getString("String_UGS_PASSWORD"))
-//								|| marker.equals(CoreProperties.getString("String_UGS_PASSWORDError"))) {
-//							isPasswordWrong = true;
-//							break;
-//						} else if ("-100".equalsIgnoreCase(marker) && "sit".equalsIgnoreCase(fileType)) {
-//							isPasswordWrong = true;
-//							break;
-//						}
-//					}
-					isPasswordWrong = errorMessage.equals(ControlsProperties.getString("String_errorPassword"));
+						if (marker.equals(CoreProperties.getString("String_UGS_PASSWORD"))
+								|| marker.equals(CoreProperties.getString("String_UGS_PASSWORDError"))) {
+							isPasswordWrong = true;
+							break;
+						} else if ("-100".equalsIgnoreCase(marker) && "sit".equalsIgnoreCase(fileType)) {
+							isPasswordWrong = true;
+							break;
+						}
+					}
+					//isPasswordWrong = errorMessage.equals(ControlsProperties.getString("String_errorPassword"));
 					if (isPasswordWrong) {
 						JDialogGetPassword dialogGetPassword = new JDialogGetPassword(MessageFormat.format(
 								ControlsProperties.getString("String_InputDatasourcePassword"), filePath)) {

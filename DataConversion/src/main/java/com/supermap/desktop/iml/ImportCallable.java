@@ -3,6 +3,7 @@ package com.supermap.desktop.iml;
 import com.supermap.data.*;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.importUI.DataImportDialog;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
@@ -10,9 +11,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.tableModel.ImportTableModel;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
-import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
-import com.supermap.desktop.utilities.JOptionPaneUtilities;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -55,9 +54,11 @@ public class ImportCallable extends UpdateProgressCallable {
                 importSetting = fileInfos.get(i).getImportSetting();
                 String datasetName = importSetting.getTargetDatasetName();
                 Dataset dataset = DatasourceUtilities.getDataset(datasetName, importSetting.getTargetDatasource());
-                if (importSetting.getImportMode().equals(ImportMode.OVERWRITE) && DatasetUtilities.isDatasetOpened(dataset)) {
-                    if (JOptionPane.OK_OPTION == JOptionPaneUtilities.showConfirmDialog(DataConversionProperties.getString("String_FormImport_MessageBoxOverWrite"))) {
-                        DatasetUtilities.closeDataset(dataset);
+                if (importSetting.getImportMode().equals(ImportMode.OVERWRITE) && dataset != null) {
+                    ArrayList<Dataset> datasets = new ArrayList<>();
+                    datasets.add(dataset);
+                    java.util.List<Dataset> closedDatasets = DatasetUIUtilities.sureDatasetClosed(datasets);
+                    if (closedDatasets.size() > 0) {
                         doImport(importSettings, i, dataImport, map);
                     }
                 } else {

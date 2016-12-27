@@ -242,6 +242,12 @@ public class DockbarManager implements IDockbarManager {
 		}
 	}
 
+	private boolean isDisplay(Dockable dockable) {
+		boolean isDisplay = false;
+
+		return isDisplay;
+	}
+
 	public Dockbar findDockbar(Component component) {
 		Dockbar dock = null;
 		if (this.workspaceComponentManager.getInnerComponent() == component) {
