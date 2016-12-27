@@ -1,17 +1,27 @@
-package com.supermap.desktop.ui.controls;
+package com.supermap.desktop.ui.icloud;
 
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.controls.utilities.ControlsResources;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import sun.net.www.http.HttpClient;
+import com.supermap.desktop.ui.icloud.api.LicenseService;
+import com.supermap.desktop.ui.icloud.commontypes.ApplyFormalLicenseResponse;
+import com.supermap.desktop.ui.icloud.commontypes.ApplyTrialLicenseResponse;
+import com.supermap.desktop.ui.icloud.commontypes.LicenseId;
+import com.supermap.desktop.ui.icloud.commontypes.ProductType;
+import com.supermap.desktop.ui.icloud.impl.LicenseServiceFactory;
+import com.supermap.desktop.ui.icloud.online.AuthenticationException;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.net.URI;
-import java.net.URL;
 
 /**
  * Created by xie on 2016/12/20.
@@ -29,6 +39,9 @@ public class CloudLicenseDialog extends SmDialog {
     private JCheckBox checkBoxAutoLogin;
     private SmButton buttonLogin;
     private JButton buttonClose;
+    private LicenseService licenseService;
+    private ApplyFormalLicenseResponse formalLicenseResponse;//用于归还的正式许可信息
+    private ApplyTrialLicenseResponse trialLicenseResponse;//用于归还的试用许可信息
     private static final String REGIST_URL = "https://sso.supermap.com/register?service=http://www.supermapol.com";
     private static final String PASSWORD_URL = "https://sso.supermap.com/v101/cas/password?service=http://itest.supermapol.com";
 
@@ -70,25 +83,41 @@ public class CloudLicenseDialog extends SmDialog {
             String userName = textFieldUserName.getText();
             String passWord = String.valueOf(fieldPassWord.getPassword());
             try {
-                login(userName, passWord);
-            } catch (Exception e1) {
-                e1.printStackTrace();
+                licenseService = LicenseServiceFactory.create(userName, passWord, ProductType.IDESKTOP);
+                LicenseId licenseId = LicenseManager.getFormalLicenseId(licenseService);
+                if (null != licenseId) {
+                    //有正式许可id，则申请正式许可
+                    formalLicenseResponse = LicenseManager.applyFormalLicense(licenseService, licenseId);
+                    dialogResult = DialogResult.OK;
+                } else {
+                    //没有正式许可id,则申请试用许可
+                    trialLicenseResponse = LicenseManager.applyTrialLicense(licenseService);
+                    dialogResult = DialogResult.OK;
+                }
+            } catch (AuthenticationException e1) {
+                UICommonToolkit.showMessageDialog(CommonProperties.getString("String_PermissionCheckFailed"));
+                dialogResult = dialogResult.CANCEL;
+            } finally {
+                removeEvents();
+                dispose();
             }
         }
     };
 
-    private void login(String userName, String passWord) {
-        String urlStr = "http://www.supermapol.com/shiro-cas";
-        try {
-            URL url = new URL(urlStr);
-            HttpClient client = null;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    /**
+     * // 显示对话框，不过滤字段类型
+     *
+     * @param
+     */
+    public DialogResult showDialog() {
+        init();
+        this.setVisible(true);
+        return dialogResult;
     }
 
     public CloudLicenseDialog() {
-        init();
+        super();
+        setModal(true);
     }
 
     private void init() {
@@ -176,5 +205,16 @@ public class CloudLicenseDialog extends SmDialog {
 //        this.buttonLogin.setEnabled(false);
     }
 
+    public LicenseService getLicenseService() {
+        return licenseService;
+    }
+
+    public ApplyFormalLicenseResponse getFormalLicenseResponse() {
+        return formalLicenseResponse;
+    }
+
+    public ApplyTrialLicenseResponse getTrialLicenseResponse() {
+        return trialLicenseResponse;
+    }
 }
 

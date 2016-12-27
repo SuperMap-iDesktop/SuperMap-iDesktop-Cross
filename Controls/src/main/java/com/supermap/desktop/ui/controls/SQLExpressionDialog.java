@@ -629,6 +629,7 @@ public class SQLExpressionDialog extends SmDialog {
         filedQueryParameter = new QueryParameter();
         filedQueryParameter.setAttributeFilter(jTextAreaSQLSentence.getText());
         dialogResult = DialogResult.OK;
+        unRegistActionListener();
         dispose();
     }
 
