@@ -62,6 +62,8 @@ public class MdiGroup extends JComponent {
 	 */
 	private MdiPage activePage = null;
 
+	private Object userObject; // 用户对象，用来做一些用户自定义标识什么的
+
 	static {
 		UIManager.put(uiClassID, "com.supermap.desktop.ui.mdi.plaf.MdiGroupUI");
 	}
@@ -119,6 +121,14 @@ public class MdiGroup extends JComponent {
 
 	public boolean isFocused() {
 		return this.mdiContainer == null ? true : this.mdiContainer.getSelectedGroup() == this;
+	}
+
+	public Object getUserObject() {
+		return userObject;
+	}
+
+	public void setUserObject(Object userObject) {
+		this.userObject = userObject;
 	}
 
 	/**
