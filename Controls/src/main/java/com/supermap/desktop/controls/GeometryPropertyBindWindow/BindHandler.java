@@ -29,8 +29,8 @@ import java.util.List;
  * IFormTabular有选择行变化，IFormTabular上选择行变化时，IFormMap的选择集有相应的变化
  */
 public class BindHandler {
-	private List formMapList;
-	private List formTabularList;
+	private List<IForm> formMapList;
+	private List<IForm> formTabularList;
 	private static final String TAG_MOVE = "MOVE";
 	private static final int MARKET_WIDTH = 128;
 	private static volatile BindHandler bindHandler;
@@ -93,23 +93,26 @@ public class BindHandler {
 	private KeyListener tabularTableKeyListener;
 	public static FormManager manager = (FormManager) Application.getActiveApplication().getMainFrame().getFormManager();
 
-	private FormClosedListener formClosedListener = new FormClosedListener() {
+	private FormClosingListener formClosingListener = new FormClosingListener() {
 		@Override
-		public void formClosed(FormClosedEvent e) {
+		public void formClosing(FormClosingEvent e) {
+			try {
+				if (BindHandler.this.formMapList.contains(e.getForm())) {
+					removeFormMapBind(e.getForm());
+				}
 
-			if (BindHandler.this.formMapList.contains(e.getForm())) {
-				BindHandler.this.formMapList.remove(e.getForm());
-			}
+				if (BindHandler.this.formTabularList.contains(e.getForm())) {
+					removeFormTabularBind(e.getForm());
+				}
 
-			if (BindHandler.this.formTabularList.contains(e.getForm())) {
-				BindHandler.this.formTabularList.remove(e.getForm());
-			}
-
-			// 当子窗口关闭到小于两个的时候，已经不再能够关联了
-			if (BindHandler.this.formMapList.size() + BindHandler.this.formTabularList.size() <= 1) {
-				removeFormMapsBind();
-				removeFormTabularsBind();
-				removeFormMapsAndFormTabularsBind();
+				// 当子窗口关闭到小于两个的时候，已经不再能够关联了
+				if (BindHandler.this.formMapList.size() + BindHandler.this.formTabularList.size() <= 1) {
+					removeFormMapsBind();
+					removeFormTabularsBind();
+					removeFormMapsAndFormTabularsBind();
+				}
+			} catch (Exception ex) {
+				Application.getActiveApplication().getOutput().output(ex);
 			}
 		}
 	};
@@ -129,11 +132,11 @@ public class BindHandler {
 
 	private void registEvents() {
 		removeEvents();
-		manager.addFormClosedListener(this.formClosedListener);
+		manager.addFormClosingListener(this.formClosingListener);
 	}
 
 	public void removeEvents() {
-		manager.removeFormClosedListener(this.formClosedListener);
+		manager.removeFormClosingListener(this.formClosingListener);
 	}
 
 	//属性表之间关联
@@ -337,20 +340,25 @@ public class BindHandler {
 
 	public void removeFormMapsBind() {
 		int formMapSize = formMapList.size();
-		for (int i = 0; i < formMapSize; i++) {
-			IFormMap formMap = (IFormMap) formMapList.get(i);
-			final MapControl mapControl = formMap.getMapControl();
-			if (null != mapControl) {
-				mapControl.removeMouseListener(this.mapControlMouseListener);
-				mapControl.removeMouseWheelListener(this.mapControlMouseWheelListener);
-				mapControl.removeMouseMotionListener(this.mapControlMouseMotionListener);
-				mapControl.getMap().removeDrawingListener(this.mapDrawingListener);
-				mapControl.getMap().removeDrawnListener(this.mapDrawnListener);
-				this.geoMetroySelectChangeListener = new LocalSelectChangedListener(mapControl.getMap());
-				mapControl.removeGeometrySelectChangedListener(this.geoMetroySelectChangeListener);
-			}
+		for (int i = formMapSize - 1; i >= 0; i--) {
+			removeFormMapBind(this.formMapList.get(i));
 		}
-		this.formMapList.clear();
+	}
+
+	public void removeFormMapBind(IForm form) {
+		if (!(form instanceof IFormMap) || !this.formMapList.contains(form)) {
+			return;
+		}
+
+		MapControl mapControl = ((IFormMap) form).getMapControl();
+		mapControl.removeMouseListener(this.mapControlMouseListener);
+		mapControl.removeMouseWheelListener(this.mapControlMouseWheelListener);
+		mapControl.removeMouseMotionListener(this.mapControlMouseMotionListener);
+		mapControl.getMap().removeDrawingListener(this.mapDrawingListener);
+		mapControl.getMap().removeDrawnListener(this.mapDrawnListener);
+		this.geoMetroySelectChangeListener = new LocalSelectChangedListener(mapControl.getMap());
+		mapControl.removeGeometrySelectChangedListener(this.geoMetroySelectChangeListener);
+		this.formMapList.remove(form);
 	}
 
 	public void bindFormTabulars() {
@@ -368,18 +376,24 @@ public class BindHandler {
 
 	public void removeFormTabularsBind() {
 		int formTabularSize = formTabularList.size();
-		for (int i = 0; i < formTabularSize; i++) {
-			IFormTabular formTabular = (IFormTabular) formTabularList.get(i);
-			if (null != formTabular) {
-				this.listMouseListener = new LocalMouseListener(formTabular);
-				this.tabularTableKeyListener = new LocalKeyListener(formTabular);
-				formTabular.getjTableTabular().removeMouseListener(this.listMouseListener);
-				formTabular.getjTableTabular().getTableHeader().removeMouseListener(this.listMouseListener);
-				formTabular.getjTableTabular().removeKeyListener(this.tabularTableKeyListener);
-				formTabular.getRowHeader().removeMouseListener(this.listMouseListener);
-			}
+		for (int i = formTabularSize - 1; i >= 0; i--) {
+			removeFormTabularBind(this.formTabularList.get(i));
 		}
-		this.formTabularList.clear();
+	}
+
+	public void removeFormTabularBind(IForm form) {
+		if (!(form instanceof IFormTabular) || !this.formTabularList.contains(form)) {
+			return;
+		}
+
+		IFormTabular formTabular = (IFormTabular) form;
+		this.listMouseListener = new LocalMouseListener(formTabular);
+		this.tabularTableKeyListener = new LocalKeyListener(formTabular);
+		formTabular.getjTableTabular().removeMouseListener(this.listMouseListener);
+		formTabular.getjTableTabular().getTableHeader().removeMouseListener(this.listMouseListener);
+		formTabular.getjTableTabular().removeKeyListener(this.tabularTableKeyListener);
+		formTabular.getRowHeader().removeMouseListener(this.listMouseListener);
+		this.formTabularList.remove(formTabular);
 	}
 
 	public void bindFormMapsAndFormTabulars() {

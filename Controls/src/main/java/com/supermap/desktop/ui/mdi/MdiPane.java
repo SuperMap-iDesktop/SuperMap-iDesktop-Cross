@@ -1,27 +1,19 @@
 package com.supermap.desktop.ui.mdi;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.ui.mdi.events.*;
 import com.supermap.desktop.ui.mdi.layout.FlowLayoutStrategy;
 import com.supermap.desktop.ui.mdi.layout.ILayoutStrategy;
 import com.supermap.desktop.ui.mdi.plaf.MdiGroupUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.beans.PropertyVetoException;
-import java.beans.VetoableChangeListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.accessibility.Accessible;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.plaf.basic.BasicSplitPaneDivider;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 
 /**
  * MdiPane 与 MdiGroup 可以完全分离，但 MdiGroup 与 MdiPage 则是强制绑定
@@ -56,6 +48,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 		setLayout(new BorderLayout());
 		this.groups = new ArrayList<>();
 		this.strategy = this.defaultStrategy;
+		this.strategy.layoutGroups();
 
 		EventQueue.invokeLater(new Runnable() {
 			@Override
@@ -64,13 +57,13 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 			}
 		});
 
-		this.strategy.layoutGroups();
 	}
 
 	public MdiPane(ILayoutStrategy strategy) {
 		setLayout(new BorderLayout());
 		this.groups = new ArrayList<>();
 		this.strategy = strategy;
+		this.strategy.layoutGroups();
 
 		EventQueue.invokeLater(new Runnable() {
 			@Override
@@ -79,7 +72,6 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 			}
 		});
 
-		this.strategy.layoutGroups();
 	}
 
 	/**
@@ -166,12 +158,19 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 
 	@Override
 	public void setLayoutStrategy(ILayoutStrategy strategy) {
+		try {
+			KeyboardFocusManager.getCurrentKeyboardFocusManager().removePropertyChangeListener(MdiPane.this.propertyChangeHandler);
 
-		// 新设置的 strategy 与 当前 strategy 不一致，则更换 strategy
-		if (strategy != this.strategy) {
-			this.strategy.reset();
-			this.strategy = strategy;
-			this.strategy.layoutGroups();
+			// 新设置的 strategy 与 当前 strategy 不一致，则更换 strategy
+			if (strategy != this.strategy) {
+				this.strategy.reset();
+				this.strategy = strategy;
+				this.strategy.layoutGroups();
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(MdiPane.this.propertyChangeHandler);
 		}
 	}
 
