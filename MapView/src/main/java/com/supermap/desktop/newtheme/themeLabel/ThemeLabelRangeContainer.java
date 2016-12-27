@@ -177,7 +177,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
      * 初始化表达式
      */
     private void initComboBoxRangeExpression() {
-	    //处理点击下拉列表框地图卡顿，同 themeUniqueContainer
+	    //处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
 	    this.comboBoxExpression.removeItemListener(this.itemListener);
 	    ThemeUtil.initComboBox(comboBoxExpression, themeLabel.getRangeExpression(), datasetVector, this.themeLabelLayer.getDisplayFilter().getJoinItems(),
 			    comboBoxArray, true, false);
@@ -188,10 +188,15 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
      * 初始化分段方法项
      */
     private void initComboBoxRangMethod() {
+	    //处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
+	    this.comboBoxRangeMethod.removeItemListener(this.itemListener);
+
         this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[]{MapViewProperties.getString("String_RangeMode_EqualInterval"),
                 MapViewProperties.getString("String_RangeMode_SquareRoot"), MapViewProperties.getString("String_RangeMode_StdDeviation"),
                 MapViewProperties.getString("String_RangeMode_Logarithm"), MapViewProperties.getString("String_RangeMode_Quantile"),
                 MapViewProperties.getString("String_RangeMode_CustomInterval")}));
+	    this.comboBoxRangeMethod.addItemListener(this.itemListener);
+
         if (themeLabel.getRangeMode() == RangeMode.NONE) {
             this.comboBoxRangeMethod.setSelectedIndex(0);
         } else if (themeLabel.getRangeMode() == RangeMode.SQUAREROOT) {
@@ -211,10 +216,14 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
      * 初始化段数
      */
     private void initComboBoxRangeCount() {
+	    //处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
+	    this.comboBoxRangeCount.removeItemListener(this.itemListener);
+
         this.comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[]{"2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
                 "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"}));
         this.comboBoxRangeCount.setEditable(true);
         int rangeCount = this.themeLabel.getCount();
+	    this.comboBoxRangeCount.addItemListener(this.itemListener);
         this.comboBoxRangeCount.setSelectedItem(String.valueOf(rangeCount));
 
     }
@@ -223,12 +232,19 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
      * 初始化段标题格式
      */
     private void initComboBoxRangeFormat() {
+	    //处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
+	    this.comboBoxRangeFormat.removeItemListener(this.itemListener);
+
         this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[]{"0-100", "0<=x<100"}));
+	    this.comboBoxRangeFormat.addItemListener(this.itemListener);
+
         if (this.themeLabel.getItem(0).getCaption().contains("X")) {
             this.comboBoxRangeFormat.setSelectedIndex(1);
         } else {
             this.comboBoxRangeFormat.setSelectedIndex(0);
         }
+
+
     }
 
     /**
