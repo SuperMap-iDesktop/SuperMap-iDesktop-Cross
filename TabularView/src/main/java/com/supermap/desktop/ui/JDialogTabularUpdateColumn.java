@@ -330,7 +330,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     private Component initButtonPanel() {
         JPanel panelButton = new JPanel();
         this.buttonApply = ComponentFactory.createButtonApply();
-        this.buttonApply.setEnabled(false);
+        this.buttonApply.setEnabled(true);
         this.buttonClose = ComponentFactory.createButtonClose();
         panelButton.setLayout(new GridBagLayout());
         panelButton.add(this.buttonApply, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(5, 0, 10, 10));
