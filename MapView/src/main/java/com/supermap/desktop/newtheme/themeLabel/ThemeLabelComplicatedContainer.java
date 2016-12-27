@@ -13,23 +13,38 @@ import com.supermap.desktop.ui.controls.InternalImageIconFactory;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.MathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.MixedTextStyle;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.ThemeType;
 
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 
 /**
  * 标签复合风格专题图
- * 
- * @author xie
  *
+ * @author xie
  */
 public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 
@@ -57,7 +72,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 	private JButton buttonSplit;// 拆分
 	private JButton buttonStyle;// 字体样式
 	private JTable tableComplicated;
-	private String[] nameStrings = { MapViewProperties.getString("String_ThemeLabelRangeItem"), MapViewProperties.getString("String_Title_RangeValue") };
+	private String[] nameStrings = {MapViewProperties.getString("String_ThemeLabelRangeItem"), MapViewProperties.getString("String_Title_RangeValue")};
 	// ,MapViewProperties.getString("String_SplitRange") };
 	protected TextStyleDialog textStyleDialog;
 
@@ -164,8 +179,14 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 	}
 
 	private void initComboBoxSeparatorMethod() {
-		this.comboBoxSeparatorMethod.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_SplitWithSeparator"),
-				MapViewProperties.getString("String_SplitWithPosition") }));
+		//处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
+		this.comboBoxSeparatorMethod.removeItemListener(this.separatorListener);
+
+		this.comboBoxSeparatorMethod.setModel(new DefaultComboBoxModel<String>(new String[]{MapViewProperties.getString("String_SplitWithSeparator"),
+				MapViewProperties.getString("String_SplitWithPosition")}));
+
+		this.comboBoxSeparatorMethod.addItemListener(this.separatorListener);
+
 		if (mixedTextStyle.isSeparatorEnabled()) {
 			this.comboBoxSeparatorMethod.setSelectedIndex(0);
 			this.textFieldSeparator.setEnabled(true);
@@ -227,16 +248,16 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					int itemCount = panelProperty.getComboBoxOffsetUnity().getSelectedIndex();
 					switch (itemCount) {
-					case 0:
-						panelAdvance.getLabelHorizontalUnity().setText(MapViewProperties.getString("String_DistanceUnit_Millimeter"));
-						panelAdvance.getLabelVerticalUnity().setText(MapViewProperties.getString("String_DistanceUnit_Millimeter"));
-						break;
-					case 1:
-						panelAdvance.getLabelHorizontalUnity().setText(UnitValue.parseToString(map.getCoordUnit()));
-						panelAdvance.getLabelVerticalUnity().setText(UnitValue.parseToString(map.getCoordUnit()));
-						break;
-					default:
-						break;
+						case 0:
+							panelAdvance.getLabelHorizontalUnity().setText(MapViewProperties.getString("String_DistanceUnit_Millimeter"));
+							panelAdvance.getLabelVerticalUnity().setText(MapViewProperties.getString("String_DistanceUnit_Millimeter"));
+							break;
+						case 1:
+							panelAdvance.getLabelHorizontalUnity().setText(UnitValue.parseToString(map.getCoordUnit()));
+							panelAdvance.getLabelVerticalUnity().setText(UnitValue.parseToString(map.getCoordUnit()));
+							break;
+						default:
+							break;
 					}
 				}
 			}
@@ -310,19 +331,19 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				int separator = comboBoxSeparatorMethod.getSelectedIndex();
 				switch (separator) {
-				case 0:
-					mixedTextStyle.setSeparatorEnabled(true);
-					textFieldSeparator.setEnabled(true);
-					getTable();
-					refreshAtOnce();
-					break;
-				case 1:
-					mixedTextStyle.setSeparatorEnabled(false);
-					textFieldSeparator.setEnabled(false);
-					getTable();
-					refreshAtOnce();
-				default:
-					break;
+					case 0:
+						mixedTextStyle.setSeparatorEnabled(true);
+						textFieldSeparator.setEnabled(true);
+						getTable();
+						refreshAtOnce();
+						break;
+					case 1:
+						mixedTextStyle.setSeparatorEnabled(false);
+						textFieldSeparator.setEnabled(false);
+						getTable();
+						refreshAtOnce();
+					default:
+						break;
 				}
 			}
 		}
@@ -401,7 +422,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 			// 拆分项
 			if (mixedTextStyle.getSplitIndexes().length == 0) {
 				// 如果当前没有分段则添加一个默认分段
-				int[] newSplits = { 2 };
+				int[] newSplits = {2};
 				TextStyle[] newTextStyle = new TextStyle[2];
 				newTextStyle[0] = mixedTextStyle.getStyles()[0];
 				newTextStyle[1] = mixedTextStyle.getStyles()[0];
@@ -568,7 +589,7 @@ public class ThemeLabelComplicatedContainer extends ThemeChangePanel {
 		String separatNumber = textFieldSeparatNumber.getText();
 		if (!StringUtilities.isNullOrEmptyString(separatNumber)) {
 			int sparatorCount = Integer.parseInt(separatNumber);
-			int[] splits ;
+			int[] splits;
 			if (Integer.parseInt(separatNumber) <= 1) {
 				splits = new int[0];
 				mixedTextStyle.setSplitIndexes(splits);

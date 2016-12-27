@@ -90,7 +90,12 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	 * @return
 	 */
 	synchronized public MdiGroup createGroup() {
+		return createGroup(null);
+	}
+
+	synchronized public MdiGroup createGroup(Object userObject) {
 		MdiGroup group = new MdiGroup(this);
+		group.setUserObject(userObject);
 		addGroup(group);
 		return group;
 	}
@@ -279,7 +284,11 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	}
 
 	public MdiGroup addNewGroup(MdiPage page) {
-		MdiGroup group = createGroup();
+		return addNewGroup(page, null);
+	}
+
+	public MdiGroup addNewGroup(MdiPage page, Object userObject) {
+		MdiGroup group = createGroup(userObject);
 		group.addPage(page);
 		return group;
 	}

@@ -4,6 +4,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.SymbolType;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
@@ -17,24 +18,37 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.GraduatedMode;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeGraduatedSymbol;
+import com.supermap.mapping.ThemeType;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 /**
  * 等级符号专题图
- * 
- * @author xie
  *
+ * @author xie
  */
 public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private JTabbedPane tabbedPaneInfo;
@@ -96,20 +110,27 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		public void mouseReleased(MouseEvent e) {
 			//此处动态刷新字段信息
 			if (e.getSource().equals(comboBoxExpression.getComponent(0))) {
+				//处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
+				comboBoxExpression.removeItemListener(comboxListener);
 				// 刷新表达式字段信息
 				comboBoxArray = new ArrayList<String>();
 				ThemeUtil.initComboBox(comboBoxExpression, themeGraduatedSymbol.getExpression(), datasetVector, themeGraduatedSymbolLayer.getDisplayFilter()
 						.getJoinItems(), comboBoxArray, true, false);
-			}else if(e.getSource().equals(comboBoxOffsetX.getComponent(0))){
+				comboBoxExpression.addItemListener(comboxListener);
+			} else if (e.getSource().equals(comboBoxOffsetX.getComponent(0))) {
+				//comboBoxOffsetX.removeItemListener(comboxListener);
 				// 刷新水平偏移量字段信息
 				comboBoxArrayForOffsetX = new ArrayList<String>();
 				ThemeUtil.initComboBox(comboBoxOffsetX, themeGraduatedSymbol.getOffsetX(), datasetVector, themeGraduatedSymbolLayer.getDisplayFilter().getJoinItems(),
 						comboBoxArrayForOffsetX, true, true);
-			}else if(e.getSource().equals(comboBoxOffsetY.getComponent(0))){
+				//comboBoxOffsetX.addItemListener(comboxListener);
+			} else if (e.getSource().equals(comboBoxOffsetY.getComponent(0))) {
+				//comboBoxOffsetY.removeItemListener(comboxListener);
 				// 刷新垂直偏移量字段信息
 				comboBoxArrayForOffsetY = new ArrayList<String>();
 				ThemeUtil.initComboBox(comboBoxOffsetY, themeGraduatedSymbol.getOffsetY(), datasetVector, themeGraduatedSymbolLayer.getDisplayFilter().getJoinItems(),
 						comboBoxArrayForOffsetY, true, true);
+				//comboBoxOffsetY.addItemListener(comboxListener);
 			}
 		}
 	};
@@ -178,8 +199,8 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 	}
 
 	private void initComboBoxGraduatedMode() {
-		this.comboBoxGraduatedMode.setModel(new DefaultComboBoxModel<String>(new String[] { MapViewProperties.getString("String_GraduatedMode_Constant"),
-				MapViewProperties.getString("String_GraduatedMode_Logarithm"), MapViewProperties.getString("String_GraduatedMode_SquareRoot") }));
+		this.comboBoxGraduatedMode.setModel(new DefaultComboBoxModel<String>(new String[]{MapViewProperties.getString("String_GraduatedMode_Constant"),
+				MapViewProperties.getString("String_GraduatedMode_Logarithm"), MapViewProperties.getString("String_GraduatedMode_SquareRoot")}));
 		this.graduatedMode = themeGraduatedSymbol.getGraduatedMode();
 		if (graduatedMode.equals(GraduatedMode.CONSTANT)) {
 			this.comboBoxGraduatedMode.setSelectedIndex(0);
@@ -276,8 +297,8 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 	 * 初始化偏移量单位
 	 */
 	private void initComboBoxOffsetUnity() {
-		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[] {
-				MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map") }));
+		this.comboBoxOffsetUnity.setModel(new DefaultComboBoxModel<String>(new String[]{
+				MapViewProperties.getString("String_MapBorderLineStyle_LabelDistanceUnit"), MapViewProperties.getString("String_ThemeLabelOffsetUnit_Map")}));
 		if (this.themeGraduatedSymbol.isOffsetFixed()) {
 			this.comboBoxOffsetUnity.setSelectedIndex(0);
 		} else {
@@ -475,24 +496,24 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 
 	private void resetThemeGraduatedStyles(int type, GeoStyle geoStyle) {
 		switch (type) {
-		case POSITIVESTYLE:
-			// 设置正基准值风格
-			themeGraduatedSymbol.setPositiveStyle(geoStyle);
-			break;
-		case ZEROSTYLE:
-			// 设置零值风格
-			themeGraduatedSymbol.setZeroStyle(geoStyle);
-			break;
-		case NEGATIVESTYLE:
-			// 设置负值风格
-			themeGraduatedSymbol.setNegativeStyle(geoStyle);
-			break;
-		case LEADERLINESTYLE:
-			// 设置牵引线风格
-			themeGraduatedSymbol.setLeaderLineStyle(geoStyle);
-			break;
-		default:
-			break;
+			case POSITIVESTYLE:
+				// 设置正基准值风格
+				themeGraduatedSymbol.setPositiveStyle(geoStyle);
+				break;
+			case ZEROSTYLE:
+				// 设置零值风格
+				themeGraduatedSymbol.setZeroStyle(geoStyle);
+				break;
+			case NEGATIVESTYLE:
+				// 设置负值风格
+				themeGraduatedSymbol.setNegativeStyle(geoStyle);
+				break;
+			case LEADERLINESTYLE:
+				// 设置牵引线风格
+				themeGraduatedSymbol.setLeaderLineStyle(geoStyle);
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -505,20 +526,20 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 				if (e.getSource() == comboBoxOffsetUnity) {
 					int unity = comboBoxOffsetUnity.getSelectedIndex();
 					switch (unity) {
-					case 0:
-						themeGraduatedSymbol.setOffsetFixed(true);
-						labelOffsetXUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
-						labelOffsetYUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
-						refreshAtOnce();
-						break;
-					case 1:
-						themeGraduatedSymbol.setOffsetFixed(false);
-						labelOffsetXUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
-						labelOffsetYUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
-						refreshAtOnce();
-						break;
-					default:
-						break;
+						case 0:
+							themeGraduatedSymbol.setOffsetFixed(true);
+							labelOffsetXUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
+							labelOffsetYUnity.setText(MapViewProperties.getString("String_Combobox_MM"));
+							refreshAtOnce();
+							break;
+						case 1:
+							themeGraduatedSymbol.setOffsetFixed(false);
+							labelOffsetXUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
+							labelOffsetYUnity.setText(UnitValue.parseToString(map.getCoordUnit()));
+							refreshAtOnce();
+							break;
+						default:
+							break;
 					}
 				}
 				if (e.getSource() == comboBoxOffsetX) {
@@ -629,20 +650,20 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				int mode = comboBoxGraduatedMode.getSelectedIndex();
 				switch (mode) {
-				case 0:
-					graduatedMode = GraduatedMode.CONSTANT;
-					resetGraduatedMode();
-					break;
-				case 1:
-					graduatedMode = GraduatedMode.LOGARITHM;
-					resetGraduatedMode();
-					break;
-				case 2:
-					graduatedMode = GraduatedMode.SQUAREROOT;
-					resetGraduatedMode();
-					break;
-				default:
-					break;
+					case 0:
+						graduatedMode = GraduatedMode.CONSTANT;
+						resetGraduatedMode();
+						break;
+					case 1:
+						graduatedMode = GraduatedMode.LOGARITHM;
+						resetGraduatedMode();
+						break;
+					case 2:
+						graduatedMode = GraduatedMode.SQUAREROOT;
+						resetGraduatedMode();
+						break;
+					default:
+						break;
 				}
 			}
 		}
@@ -650,20 +671,20 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		private void resetGraduatedMode() {
 			int selectDefualt = comboBoxGraduatedMode.getSelectedIndex();
 			switch (selectDefualt) {
-			case 0:
-				themeGraduatedSymbol.setGraduatedMode(GraduatedMode.CONSTANT);
-				refreshAtOnce();
-				break;
-			case 1:
-				themeGraduatedSymbol.setGraduatedMode(GraduatedMode.LOGARITHM);
-				refreshAtOnce();
-				break;
-			case 2:
-				themeGraduatedSymbol.setGraduatedMode(GraduatedMode.SQUAREROOT);
-				refreshAtOnce();
-				break;
-			default:
-				break;
+				case 0:
+					themeGraduatedSymbol.setGraduatedMode(GraduatedMode.CONSTANT);
+					refreshAtOnce();
+					break;
+				case 1:
+					themeGraduatedSymbol.setGraduatedMode(GraduatedMode.LOGARITHM);
+					refreshAtOnce();
+					break;
+				case 2:
+					themeGraduatedSymbol.setGraduatedMode(GraduatedMode.SQUAREROOT);
+					refreshAtOnce();
+					break;
+				default:
+					break;
 			}
 		}
 
@@ -708,17 +729,17 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 		DatasetVector dataset = datasetVector;
 		int selectDefualt = comboBoxGraduatedMode.getSelectedIndex();
 		switch (selectDefualt) {
-		case 0:
-			graduatedMode = GraduatedMode.CONSTANT;
-			break;
-		case 1:
-			graduatedMode = GraduatedMode.LOGARITHM;
-			break;
-		case 2:
-			graduatedMode = GraduatedMode.SQUAREROOT;
-			break;
-		default:
-			break;
+			case 0:
+				graduatedMode = GraduatedMode.CONSTANT;
+				break;
+			case 1:
+				graduatedMode = GraduatedMode.LOGARITHM;
+				break;
+			case 2:
+				graduatedMode = GraduatedMode.SQUAREROOT;
+				break;
+			default:
+				break;
 		}
 		expression = comboBoxExpression.getSelectedItem().toString();
 		if (expression.contains(".") && expression.split("\\.").length > 2) {
