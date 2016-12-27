@@ -37,9 +37,9 @@ public class BindUtilties {
 		int formMapsSize = handler.getFormMapList().size();
 		formManager.setLayoutStrategy(new BindLayoutStrategy(formManager, handler));
 
-//		if (formMapsSize > 0) {
-//			Application.getActiveApplication().setActiveForm((IForm) handler.getFormMapList().get(0));
-//		}
+		if (formMapsSize > 0) {
+			Application.getActiveApplication().setActiveForm((IForm) handler.getFormMapList().get(0));
+		}
 	}
 
 	/**
