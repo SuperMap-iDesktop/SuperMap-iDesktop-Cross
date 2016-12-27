@@ -168,7 +168,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	public void setLayoutStrategy(ILayoutStrategy strategy) {
 
 		// 新设置的 strategy 与 当前 strategy 不一致，则更换 strategy
-		if (strategy != null && strategy.getClass() != this.strategy.getClass()) {
+		if (strategy != this.strategy) {
 			this.strategy.reset();
 			this.strategy = strategy;
 			this.strategy.layoutGroups();
@@ -234,7 +234,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 
 	public boolean closeAll() {
 		boolean isClosed = true;
-		for (int i = 0; i < this.groups.size(); i++) {
+		for (int i = this.groups.size() - 1; i >= 0; i--) {
 			isClosed = isClosed && this.groups.get(i).closeAll();
 		}
 		return isClosed;

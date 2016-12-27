@@ -18,6 +18,7 @@ public enum AreaUnit {
 	INCH(UnitValue.INCH * UnitValue.INCH),
 	FOOT(UnitValue.FOOT * UnitValue.FOOT),
 	YARD(UnitValue.YARD * UnitValue.YARD),
+	MU(66666666667L),
 	ACRE(404685642240L);
 	// @formatter:on
 
@@ -80,6 +81,7 @@ public enum AreaUnit {
 		}
 		return unit;
 	}
+
 	public long getValue() {
 		return this.value;
 	}
@@ -108,6 +110,8 @@ public enum AreaUnit {
 			result = CommonProperties.getString("String_AreaUnit_Yard");
 		} else if (this == AreaUnit.ACRE) {
 			result = CommonProperties.getString("String_AreaUnit_Acre");
+		} else if (this == AreaUnit.MU) {
+			result = CommonProperties.getString("String_AreaUnit_Mu");
 		}
 		return result;
 	}
@@ -134,6 +138,8 @@ public enum AreaUnit {
 			result = AreaUnit.YARD;
 		} else if (name.equals(CommonProperties.getString("String_AreaUnit_Acre"))) {
 			result = AreaUnit.ACRE;
+		} else if (name.equals(CommonProperties.getString("String_AreaUnit_Mu"))) {
+			result = AreaUnit.MU;
 		}
 
 		return result;

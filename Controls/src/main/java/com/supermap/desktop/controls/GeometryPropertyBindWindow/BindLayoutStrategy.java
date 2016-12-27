@@ -20,12 +20,14 @@ import java.awt.event.MouseEvent;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by xie on 2016/12/22.
  */
 public class BindLayoutStrategy implements ILayoutStrategy {
 
+	private BindHandler bindHandler;
 	private FormManager container;
 	private MdiGroup tabularGroup;
 	private JSplitPane contentSplit;
@@ -34,7 +36,8 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 
 	private PageAddedHandler pageAddedHandler = new PageAddedHandler();
 
-	public BindLayoutStrategy(FormManager container) {
+	public BindLayoutStrategy(FormManager container, BindHandler bindHandler) {
+		this.bindHandler = bindHandler;
 		this.container = container;
 		this.tabularGroup = new MdiGroup(container);
 		this.mapGroups = new ArrayList<>();
@@ -51,10 +54,6 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 			BasicSplitPaneDivider divider = ((BasicSplitPaneUI) this.contentSplit.getUI()).getDivider();
 			divider.setBorder(null);
 		}
-	}
-
-	public MdiGroup getTabularGroup() {
-		return this.tabularGroup;
 	}
 
 	@Override
@@ -167,18 +166,8 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 		// 添加底层的 Split
 		this.container.add(this.contentSplit);
 
-		boolean tabularExist = false;
-		MdiPage[] pages = this.container.getPages();
-		for (int i = 0; i < pages.length; i++) {
-			MdiPage page = pages[i];
-			if (page != null && page.getComponent() instanceof IFormTabular) {
-				tabularExist = true;
-				break;
-			}
-		}
-
 		// 首先进行已有 group 的布局
-		if (tabularExist) {
+		if (this.bindHandler.getFormTabularList().size() > 0) {
 
 			// 将要操作的窗口如果有属性表，就将属性表放到专属 group 里，这里先添加属性表专属 group
 			this.container.addGroup(this.tabularGroup);
@@ -190,21 +179,39 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 			}
 		}
 
-		// 然后进行 page 的重新分配
+		// 一山不容二虎，所有待关联子窗口（非属性表）都各自占用一个山头，哦不，是各自占用一个 Group
+		// 其他非关联子窗口（非属性表）添加到第一个待关联子窗口的 Group 里
+		// 所有待关联的属性表，都放在 TabularGroup 里
+		MdiPage[] pages = this.container.getPages();
+		ArrayList<MdiPage> unrelatedPages = new ArrayList<>();
+		MdiGroup firstRelatedGroup = null;
+
+		// 先进行关联窗口的布局
 		for (int i = 0; i < pages.length; i++) {
 			MdiPage page = pages[i];
-
-			if (page.getComponent() instanceof IFormTabular) {
+			if (this.bindHandler.getFormMapList().contains(page.getComponent())) {
+				MdiGroup group = this.container.addNewGroup(page);
+				if (firstRelatedGroup == null) {
+					firstRelatedGroup = group;
+				}
+			} else if (this.bindHandler.getFormTabularList().contains(page.getComponent())) {
 				this.tabularGroup.addPage(page);
 			} else {
-				MdiGroup group = this.container.createGroup();
-				group.addPage(page);
+				unrelatedPages.add(page);
+			}
+		}
+
+		// 再处理不需要关联的子窗口
+		for (int i = 0; i < unrelatedPages.size(); i++) {
+			if (firstRelatedGroup != null) {
+				firstRelatedGroup.addPage(unrelatedPages.get(i));
 			}
 		}
 	}
 
 	@Override
 	public void reset() {
+		this.bindHandler = null;
 		this.container.remove(this.contentSplit);
 		this.mapGroups.clear();
 		this.splits.clear();

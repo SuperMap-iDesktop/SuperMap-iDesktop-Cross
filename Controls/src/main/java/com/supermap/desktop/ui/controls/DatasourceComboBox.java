@@ -15,6 +15,14 @@ import javax.swing.*;
 public class DatasourceComboBox extends JComboBox<Object> {
     private static final long serialVersionUID = 1L;
 
+	/**
+	 * 覆盖原有的updateUI方法
+	 * 2016.12.26
+	 */
+	@Override
+	public void updateUI() {
+		this.setUI(new MyComboBoxUI());
+	}
     /**
      * 根据工作空间中已经有的数据源集合类创建下拉选择框
      */
@@ -23,7 +31,6 @@ public class DatasourceComboBox extends JComboBox<Object> {
         this.setBorder(BorderFactory.createEtchedBorder(1));
         ListCellRenderer<Object> renderer = new CommonListCellRenderer();
         setRenderer(renderer);
-        this.setUI(new MyComboBoxUI());
     }
 
     /**
@@ -36,7 +43,6 @@ public class DatasourceComboBox extends JComboBox<Object> {
         this.setBorder(BorderFactory.createEtchedBorder(1));
         ListCellRenderer<Object> renderer = new CommonListCellRenderer();
         setRenderer(renderer);
-        this.setUI(new MyComboBoxUI());
     }
 
     /**
@@ -49,7 +55,6 @@ public class DatasourceComboBox extends JComboBox<Object> {
         this.setBorder(BorderFactory.createEtchedBorder(1));
         ListCellRenderer<Object> renderer = new CommonListCellRenderer();
         setRenderer(renderer);
-        this.setUI(new MyComboBoxUI());
     }
 
     /**

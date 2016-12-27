@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1482479005372
+Bnd-LastModified: 1482721526975
 Build-Jdk: 1.7.0_80
 Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.lbsclient.LBSClientActivator

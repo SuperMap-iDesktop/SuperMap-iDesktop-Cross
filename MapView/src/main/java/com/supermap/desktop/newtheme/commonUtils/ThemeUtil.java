@@ -159,9 +159,10 @@ public class ThemeUtil {
 		for (int j = 0; j < count; j++) {
 			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
 			if (isDataType && isDataType(fieldInfo.getType())) {
-				// String dataTypeitem = fieldInfo.getName();
+				 String dataTypeitem = fieldInfo.getName();
 				//原来item为name属性，改为Caption，使其完全与标头字符相同
-				String dataTypeitem = fieldInfo.getCaption();
+//				String dataTypeitem = fieldInfo.getCaption();
+
 				if (0 < itemsCount) {
 					dataTypeitem = datasetVector.getName() + "." + dataTypeitem;
 				}
@@ -169,9 +170,9 @@ public class ThemeUtil {
 				comboBoxArray.add(dataTypeitem);
 			}
 			if (!isDataType) {
-				// String item =fieldInfo.getName();
+				 String item =fieldInfo.getName();
 				//原来item为name属性，改为Caption，使其完全与标头字符相同
-				String item = fieldInfo.getCaption();
+//				String item = fieldInfo.getCaption();
 				if (0 < itemsCount) {
 					item = datasetVector.getName() + "." + item;
 				}

@@ -254,8 +254,11 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 	 * 初始化表达式下拉框
 	 */
 	private void initComboBoxRangeExpression() {
+		//处理点击下拉列表框地图卡顿，同 themeUniqueContainer
+		this.comboBoxExpression.removeItemListener(this.itemListener);
 		ThemeUtil.initComboBox(comboBoxExpression, this.themeRange.getRangeExpression(), datasetVector, this.themeRangeLayer.getDisplayFilter().getJoinItems(),
 				comboBoxArray, true, false);
+		this.comboBoxExpression.addItemListener(this.itemListener);
 	}
 
 	/**
@@ -952,7 +955,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 			}
 
 			//满足鼠标拖拽，也可以实现多选效果
-			if (e.getSource() == tableRangeInfo && 1 == e.getClickCount() && e.getButton() == MouseEvent.BUTTON1) {
+			if (e.getSource() == tableRangeInfo && e.getButton() == MouseEvent.BUTTON1) {
 				//此时进行专题图子项连续定位
 				ContinuousMapLocation();
 			}

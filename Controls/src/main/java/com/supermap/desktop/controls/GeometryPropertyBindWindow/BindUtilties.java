@@ -23,12 +23,9 @@ public class BindUtilties {
 
 	public static void windowBindProperty(IFormMap formMap) {
 		BindHandler handler = BindHandler.getInstance();
-		handler.getFormMapList().clear();
-		handler.getFormTabularList().clear();
+		handler.removeFormMapsAndFormTabularsBind();
 		handler.getFormMapList().add(formMap);
 		handler.getFormTabularList().add(tabular);
-		handler.getFormsList().add(formMap);
-		handler.getFormsList().add(tabular);
 		handler.bindFormMapsAndFormTabulars();
 		resetMDILayout();
 	}
@@ -37,11 +34,11 @@ public class BindUtilties {
 		BindHandler handler = BindHandler.getInstance();
 		FormManager formManager = (FormManager) Application.getActiveApplication().getMainFrame().getFormManager();
 		int formMapsSize = handler.getFormMapList().size();
-		formManager.setLayoutStrategy(new BindLayoutStrategy(formManager));
-//
-//		if (formMapsSize > 0) {
-//			Application.getActiveApplication().setActiveForm((IForm) handler.getFormMapList().get(0));
-//		}
+		formManager.setLayoutStrategy(new BindLayoutStrategy(formManager, handler));
+
+		if (formMapsSize > 0) {
+			Application.getActiveApplication().setActiveForm((IForm) handler.getFormMapList().get(0));
+		}
 	}
 
 	/**

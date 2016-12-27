@@ -782,6 +782,7 @@ public class GeometrySpatialPropertyControl extends AbstractPropertyControl {
 		comboBox.addItem(AreaUnit.MILE);
 		comboBox.addItem(AreaUnit.YARD);
 		comboBox.addItem(AreaUnit.ACRE);
+		comboBox.addItem(AreaUnit.MU);
 		comboBox.setSelectedItem(AreaUnit.METER);
 		comboBox.setEditable(false);
 		comboBox.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
