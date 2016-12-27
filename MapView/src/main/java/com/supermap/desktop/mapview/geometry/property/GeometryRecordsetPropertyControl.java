@@ -641,10 +641,14 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 		 * 应用按钮点击
 		 */
 		public void applyClick() {
+			recordset.getBatch().setMaxRecordCount(1024);
+			recordset.getBatch().begin();
 			for (int i = 0; i < this.getRowCount(); i++) {
 				FieldData fieldData = this.fieldDataInfos.get(i);
 				fieldData.apply();
 			}
+			recordset.getBatch().update();
+			MapViewUIUtilities.refreshCurrentMap();
 			this.isCellValueChange = false;
 		}
 
@@ -660,6 +664,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 					filedDataName = this.getRowData(i).getName();
 				}
 				this.getRowData(i).setFieldValue(recordset.getFieldValue(filedDataName));
+				fireTableCellUpdated(i, getColumnCount() - 1);
 				setDateStyle();
 			}
 			this.isCellValueChange = false;
@@ -828,7 +833,6 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 			try {
 				// 二进制字段当做系统字段处理
 				if (!this.isSystemField && this.getType() != FieldType.LONGBINARY) {
-					this.recordset.edit();
 					if (this.getFieldValue() == null || StringUtilities.isNullOrEmpty(this.getFieldValue().toString())) {
 						if (!this.getFieldInfo().isRequired()) {
 							this.recordset.setFieldValueNull(this.getName());
@@ -847,9 +851,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 						}
 						this.recordset.setFieldValue(this.getName(), resultValue);
 					}
-					this.recordset.update();
 				}
-				MapViewUIUtilities.refreshCurrentMap();
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}

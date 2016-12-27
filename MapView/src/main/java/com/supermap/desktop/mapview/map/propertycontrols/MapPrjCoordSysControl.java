@@ -34,8 +34,8 @@ public class MapPrjCoordSysControl extends AbstractPropertyControl {
 	private JTextField textFieldCoordUnit;
 	private JTextArea textAreaCoordInfo;
 
-	private int PRJCOORSYS = 3;
-	
+	private int PRJCOORSYS = 5;
+
 	private PrjCoordSys currentPrjCoorSys;
 	private boolean isDynamicProjection = false;
 
