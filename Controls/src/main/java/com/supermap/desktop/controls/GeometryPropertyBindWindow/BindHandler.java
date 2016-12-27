@@ -5,10 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
-import com.supermap.desktop.event.ActiveFormChangedEvent;
-import com.supermap.desktop.event.ActiveFormChangedListener;
-import com.supermap.desktop.event.FormClosedEvent;
-import com.supermap.desktop.event.FormClosedListener;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.ui.FormManager;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.*;
@@ -95,12 +92,21 @@ public class BindHandler {
 	private GeometrySelectChangedListener geoMetroyMapSelectChangeListener;
 	private KeyListener tabularTableKeyListener;
 	public static FormManager manager = (FormManager) Application.getActiveApplication().getMainFrame().getFormManager();
+
 	private FormClosedListener formClosedListener = new FormClosedListener() {
 		@Override
 		public void formClosed(FormClosedEvent e) {
 
+			if (BindHandler.this.formMapList.contains(e.getForm())) {
+				BindHandler.this.formMapList.remove(e.getForm());
+			}
+
+			if (BindHandler.this.formTabularList.contains(e.getForm())) {
+				BindHandler.this.formTabularList.remove(e.getForm());
+			}
+
 			// 当子窗口关闭到小于两个的时候，已经不再能够关联了
-			if (manager.getPageCount() <= 1) {
+			if (BindHandler.this.formMapList.size() + BindHandler.this.formTabularList.size() <= 1) {
 				removeFormMapsBind();
 				removeFormTabularsBind();
 				removeFormMapsAndFormTabularsBind();
