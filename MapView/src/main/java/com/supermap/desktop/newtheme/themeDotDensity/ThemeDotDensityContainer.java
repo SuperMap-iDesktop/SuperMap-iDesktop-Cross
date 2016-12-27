@@ -137,9 +137,12 @@ public class ThemeDotDensityContainer extends ThemeChangePanel {
 	}
 
 	private void initComboBoxExpression() {
+		//处理点击下拉列表框地图卡顿，同 themeUniqueContainer
+		this.comboBoxExpression.removeItemListener(this.expressionListener);
 		this.comboBoxArray = new ArrayList<String>();
 		ThemeUtil.initComboBox(comboBoxExpression, themeDotDensity.getDotExpression(), datasetVector, themeDotDensityLayer.getDisplayFilter().getJoinItems(),
 				comboBoxArray, true, false);
+		this.comboBoxExpression.addItemListener(this.expressionListener);
 	}
 
 	private void initTextFieldValue() {
