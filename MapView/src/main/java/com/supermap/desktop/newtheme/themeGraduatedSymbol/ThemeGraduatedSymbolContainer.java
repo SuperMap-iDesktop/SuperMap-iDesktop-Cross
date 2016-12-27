@@ -4,6 +4,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.GeoStyle;
 import com.supermap.data.SymbolType;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
@@ -117,19 +118,19 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 						.getJoinItems(), comboBoxArray, true, false);
 				comboBoxExpression.addItemListener(comboxListener);
 			} else if (e.getSource().equals(comboBoxOffsetX.getComponent(0))) {
-				comboBoxOffsetX.removeItemListener(comboxListener);
+				//comboBoxOffsetX.removeItemListener(comboxListener);
 				// 刷新水平偏移量字段信息
 				comboBoxArrayForOffsetX = new ArrayList<String>();
 				ThemeUtil.initComboBox(comboBoxOffsetX, themeGraduatedSymbol.getOffsetX(), datasetVector, themeGraduatedSymbolLayer.getDisplayFilter().getJoinItems(),
 						comboBoxArrayForOffsetX, true, true);
-				comboBoxOffsetX.addItemListener(comboxListener);
+				//comboBoxOffsetX.addItemListener(comboxListener);
 			} else if (e.getSource().equals(comboBoxOffsetY.getComponent(0))) {
-				comboBoxOffsetY.removeItemListener(comboxListener);
+				//comboBoxOffsetY.removeItemListener(comboxListener);
 				// 刷新垂直偏移量字段信息
 				comboBoxArrayForOffsetY = new ArrayList<String>();
 				ThemeUtil.initComboBox(comboBoxOffsetY, themeGraduatedSymbol.getOffsetY(), datasetVector, themeGraduatedSymbolLayer.getDisplayFilter().getJoinItems(),
 						comboBoxArrayForOffsetY, true, true);
-				comboBoxOffsetY.removeItemListener(comboxListener);
+				//comboBoxOffsetY.addItemListener(comboxListener);
 			}
 		}
 	};

@@ -1264,9 +1264,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 					layersComponentManager.setMap(null);
 				}
 			}
-			if (this.mapControl != null) {
-				this.mapControl.requestFocus();
-			}
 			if (Application.getActiveApplication().getMainFrame().getPropertyManager().isUsable()) {
 				if (PropertyType.isGeometryPropertyType(Application.getActiveApplication().getMainFrame().getPropertyManager().getPropertyType())) {
 					setSelectedGeometryProperty();
