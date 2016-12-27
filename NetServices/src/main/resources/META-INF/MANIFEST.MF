@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1482721533106
+Bnd-LastModified: 1482825044113
 Build-Jdk: 1.7.0_80
-Built-By: Administrator
+Built-By: highsad
 Bundle-Activator: com.supermap.desktop.netservices.NetServicesActivator
 Bundle-ManifestVersion: 2
 Bundle-Name: NetServices

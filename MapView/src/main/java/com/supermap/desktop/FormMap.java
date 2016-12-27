@@ -1538,7 +1538,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				if (recordset.getGeometry() != null) {
 					Geometry geometry = recordset.getGeometry();
 					IGeometry iGeometry = DGeometryFactory.create(geometry);
-					ArrayList<IProperty> properties = new ArrayList<IProperty>();
+					ArrayList<IProperty> properties = new ArrayList<>();
 					properties.add(GeometryPropertyFactory.getGeometryRecordsetPropertyControl(recordset));
 					properties.add(GeometryPropertyFactory.getGeometrySpatialPropertyControl(geometry, datasetVector.getPrjCoordSys()));
 					if (iGeometry != null && GeometryNodeFactory.isSupportGeometry(iGeometry)) {

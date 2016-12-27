@@ -10,11 +10,7 @@ import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.DialogSaveChildForms;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.ActiveFormChangedEvent;
-import com.supermap.desktop.event.ActiveFormChangedListener;
-import com.supermap.desktop.event.FormClosedEvent;
-import com.supermap.desktop.event.FormClosingEvent;
-import com.supermap.desktop.event.FormShownEvent;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.mdi.MdiPage;
 import com.supermap.desktop.ui.mdi.MdiPane;
@@ -34,7 +30,8 @@ import java.util.HashMap;
 
 public class FormManager extends MdiPane implements IFormManager {
 	private WindowType activatedChildFormType = WindowType.UNKNOWN;
-	private EventListenerList listenerList = new EventListenerList();
+	private FormEventHelper eventHelper = new FormEventHelper();
+
 	private PageActivatedListener pageActivatedListener = new PageActivatedListener() {
 
 		@Override
@@ -49,7 +46,7 @@ public class FormManager extends MdiPane implements IFormManager {
 				}
 				IForm newActive = event.getActivedPage() != null && event.getActivedPage().getComponent() instanceof IForm ? (IForm) event.getActivedPage().getComponent() : null;
 				IForm oldActive = event.getOldActivedPage() != null && event.getOldActivedPage().getComponent() instanceof IForm ? (IForm) event.getOldActivedPage().getComponent() : null;
-				fireActiveFormChanged(new ActiveFormChangedEvent(this, oldActive, newActive));
+				FormManager.this.eventHelper.fireActiveFormChanged(new ActiveFormChangedEvent(this, oldActive, newActive));
 				refreshMenusAndToolbars(getActiveForm());
 				ToolbarUIUtilities.updataToolbarsState();
 			} catch (Exception e) {
@@ -67,6 +64,7 @@ public class FormManager extends MdiPane implements IFormManager {
 
 				if (!event.isCancel()) {
 					((FormBaseChild) e.getPage().getComponent()).fireFormClosing(event);
+					FormManager.this.eventHelper.fireFormClosing(event);
 				}
 				e.setCancel(event.isCancel());
 			}
@@ -80,6 +78,7 @@ public class FormManager extends MdiPane implements IFormManager {
 				FormClosedEvent event = new FormClosedEvent((IForm) e.getPage().getComponent());
 				((FormBaseChild) e.getPage().getComponent()).formClosed(event);
 				((FormBaseChild) e.getPage().getComponent()).fireFormClosed(event);
+				FormManager.this.eventHelper.fireFormClosed(event);
 			}
 
 			if (getPageCount() == 0) {
@@ -95,6 +94,7 @@ public class FormManager extends MdiPane implements IFormManager {
 				FormShownEvent event = new FormShownEvent((IForm) e.getPage().getComponent());
 				((FormBaseChild) e.getPage().getComponent()).formShown(event);
 				((FormBaseChild) e.getPage().getComponent()).fireFormShown(event);
+				FormManager.this.eventHelper.fireFormShown(event);
 			}
 		}
 	};
@@ -181,7 +181,7 @@ public class FormManager extends MdiPane implements IFormManager {
 	public void resetActiveForm() {
 		if (getActivePage() != null && getActivePage().getComponent() instanceof IForm) {
 			MdiPage page = getActivePage();
-			fireActiveFormChanged(new ActiveFormChangedEvent(this, (IForm) page.getComponent(), (IForm) page.getComponent()));
+			this.eventHelper.fireActiveFormChanged(new ActiveFormChangedEvent(this, (IForm) page.getComponent(), (IForm) page.getComponent()));
 		}
 	}
 
@@ -380,23 +380,51 @@ public class FormManager extends MdiPane implements IFormManager {
 	}
 
 	@Override
+	public void addFormShownListener(FormShownListener listener) {
+		this.eventHelper.addFormShownListener(listener);
+	}
+
+	@Override
+	public void removeFormShownListener(FormShownListener listener) {
+		this.eventHelper.removeFormShownListener(listener);
+	}
+
+	/**
+	 * 不同于 PageClosing 事件，该事件是 FormManager 独有事件
+	 *
+	 * @param listener
+	 */
+	@Override
+	public void addFormClosingListener(FormClosingListener listener) {
+		this.eventHelper.addFormClosingListener(listener);
+	}
+
+	public void removeFormClosingListener(FormClosingListener listener) {
+		this.eventHelper.removeFormClosingListener(listener);
+	}
+
+	/**
+	 * 不同于 PageClosed 事件，该事件是 FormManager 独有事件
+	 *
+	 * @param listener
+	 */
+	@Override
+	public void addFormClosedListener(FormClosedListener listener) {
+		this.eventHelper.addFormClosedListener(listener);
+	}
+
+	public void removeFormClosedListener(FormClosedListener listener) {
+		this.eventHelper.removeFormClosedListener(listener);
+	}
+
+	@Override
 	public void addActiveFormChangedListener(ActiveFormChangedListener listener) {
-		this.listenerList.add(ActiveFormChangedListener.class, listener);
+		this.eventHelper.addActiveFormChangedListener(listener);
 	}
 
 	@Override
 	public void removeActiveFormChangedListener(ActiveFormChangedListener listener) {
-		this.listenerList.remove(ActiveFormChangedListener.class, listener);
-	}
-
-	protected void fireActiveFormChanged(ActiveFormChangedEvent e) {
-		Object[] listeners = listenerList.getListenerList();
-
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == ActiveFormChangedListener.class) {
-				((ActiveFormChangedListener) listeners[i + 1]).activeFormChanged(e);
-			}
-		}
+		this.eventHelper.removeActiveFormChangedListener(listener);
 	}
 
 	/**
