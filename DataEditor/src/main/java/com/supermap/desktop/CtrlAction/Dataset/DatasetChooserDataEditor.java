@@ -9,17 +9,15 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.dataeditor.DataEditorProperties;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.utilities.CharsetUtilities;
 import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
 
 import javax.swing.*;
-import java.text.MessageFormat;
 import java.util.List;
 
 public class DatasetChooserDataEditor {
@@ -85,54 +83,9 @@ public class DatasetChooserDataEditor {
         public void run() {
             try {
                 CursorUtilities.setWaitCursor();
-                deleteFromDatasource();
+	            DatasetUtilities.deleteDataset(datasetChooser.getSelectedDatasets().toArray(new Dataset[datasetChooser.getSelectedDatasets().size()]));
             } finally {
                 CursorUtilities.setDefaultCursor();
-            }
-        }
-    }
-
-    private void deleteFromDatasource() {
-        List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
-        int count = selectedDatasets.size();
-        Datasource datasource = selectedDatasets.get(0).getDatasource();
-        String datasourceName = datasource.getAlias();
-        if (1 == count) {
-            String datasetName = selectedDatasets.get(0).getName();
-
-            if (JOptionPane.OK_OPTION == UICommonToolkit
-                    .showConfirmDialog(MessageFormat.format(DataEditorProperties.getString("String_DelectOneDataset"), datasourceName, datasetName))) {
-
-                Dataset deleteDataset = datasource.getDatasets().get(datasetName);
-                boolean result = datasource.getDatasets().delete(deleteDataset.getName());
-                if (result) {
-                    deleteDataset = null;
-                    String successInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupSuccess"), datasourceName,
-                            datasetName);
-                    Application.getActiveApplication().getOutput().output(successInfo);
-                    Application.getActiveApplication().setActiveDatasets(null);
-                } else {
-                    String failedInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupFailed"), datasourceName, datasetName);
-                    Application.getActiveApplication().getOutput().output(failedInfo);
-                }
-            }
-        } else if (JOptionPane.OK_OPTION == UICommonToolkit
-                .showConfirmDialog(MessageFormat.format(DataEditorProperties.getString("String_DelectMoreDataset"), count))) {
-            // 删除选中的多条数据
-            for (int i = selectedDatasets.size() - 1; i >= 0; i--) {
-                Dataset deleteDataset = selectedDatasets.get(i);
-                String deleteDatasetName = deleteDataset.getName();
-                boolean result = deleteDataset.getDatasource().getDatasets().delete(deleteDatasetName);
-                if (result) {
-                    deleteDataset = null;
-                    String successInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupSuccess"), datasourceName,
-                            deleteDatasetName);
-                    Application.getActiveApplication().getOutput().output(successInfo);
-                    Application.getActiveApplication().setActiveDatasets(null);
-                } else {
-                    String failedInfo = MessageFormat.format(DataEditorProperties.getString("String_Message_DelGroupFailed"), datasourceName, deleteDatasetName);
-                    Application.getActiveApplication().getOutput().output(failedInfo);
-                }
             }
         }
     }

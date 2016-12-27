@@ -142,7 +142,6 @@ public class TextStyleContainer extends JPanel {
     private void updateGeometries(TextStyleType newValue) {
         editHistory = MapUtilities.getMapControl().getEditHistory();
         ArrayList<Recordset> records = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
-	    long startTime = System.currentTimeMillis();
 	    if (null == records) {
 		    return;
         }
@@ -179,7 +178,6 @@ public class TextStyleContainer extends JPanel {
                 }
 		        recordset.setGeometry(tempGeometry);
 		        tempGeometry.dispose();
-//		        recordset.update();
 		        recordset.moveNext();
 	        }
 	        recordset.getBatch().update();

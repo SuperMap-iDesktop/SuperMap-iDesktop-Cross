@@ -33,8 +33,8 @@ import com.supermap.data.SymbolFillLibrary;
 import com.supermap.data.SymbolLineLibrary;
 import com.supermap.data.SymbolMarkerLibrary;
 import com.supermap.data.Workspace;
-import com.supermap.data.WorkspaceClosedEvent;
-import com.supermap.data.WorkspaceClosedListener;
+import com.supermap.data.WorkspaceClosingEvent;
+import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.data.WorkspaceOpenedEvent;
 import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.CommonToolkit;
@@ -178,6 +178,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		//增加窗口监听
 		this.addFormShownListener(shownListener);
 		this.addFormClosingListener(closingListener);
+
 	}
 
 	/**
@@ -336,10 +337,22 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		this.textFieldSearch.getDocument().addDocumentListener(this.textFieldSearchChangeListener);
 		//tree对窗口的监听
 		getWorkspaceManager().getWorkspaceTree().addMouseListener(this.treeToJtable);
+
+		/**
+		 * 将对工作空间的监听写在initLiseteners外，不进行注销监听的操作
+		 * 当关闭工作空间时，由于会执行closeAll（），导致窗口关闭，窗口关闭又会移除监听，因此不进行移除监听的操作
+		 * 尝试当关闭或打开工作空间时，不关闭窗口_yuanR16.12.27
+		 */
+		//移除工作空间关闭监听
+		getWorkspaceManager().getWorkspace().removeClosingListener(this.workspaceClosingListener);
+		//移除工作空间打开监听
+		getWorkspaceManager().getWorkspace().removeOpenedListener(this.workspaceOpenedListener);
 		//工作空间关闭监听
-		getWorkspaceManager().getWorkspace().addClosedListener(this.workspaceClosedListener);
+		getWorkspaceManager().getWorkspace().addClosingListener(this.workspaceClosingListener);
 		//工作空间打开监听
 		getWorkspaceManager().getWorkspace().addOpenedListener(this.workspaceOpenedListener);
+
+
 		//数据源打开监听
 		getWorkspaceManager().getWorkspace().getDatasources().addOpenedListener(this.datasourceOpenedListener);
 		//数据源关闭监听
@@ -373,10 +386,13 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		this.textFieldSearch.getDocument().removeDocumentListener(this.textFieldSearchChangeListener);
 		//移除tree对窗口的监听
 		getWorkspaceManager().getWorkspaceTree().removeMouseListener(this.treeToJtable);
-		//移除工作空间关闭监听
-		getWorkspaceManager().getWorkspace().removeClosedListener(this.workspaceClosedListener);
-		//移除工作空间打开监听
-		getWorkspaceManager().getWorkspace().removeOpenedListener(this.workspaceOpenedListener);
+
+		//工作空间关闭监听
+		//getWorkspaceManager().getWorkspace().removeClosingListener(this.workspaceClosingListener);
+		//工作空间打开监听
+		//getWorkspaceManager().getWorkspace().removeOpenedListener(this.workspaceOpenedListener);
+
+
 		//移除数据源打开监听
 		getWorkspaceManager().getWorkspace().getDatasources().removeOpenedListener(this.datasourceOpenedListener);
 		//移除数据源关闭监听
@@ -397,6 +413,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		getWorkspaceManager().getWorkspace().getScenes().removeClearedListener(this.sceneClearedListener);
 		//移除重命名场景监听
 		getWorkspaceManager().getWorkspace().getScenes().removeRenamedListener(this.sceneRenamedListener);
+
 	}
 
 	/**
@@ -686,6 +703,8 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 				//设置起始页“个数”的对齐方式
 				jTable.setDefaultRenderer(Integer.class, new TableCellRendererWorkspace());
 			} else if (levelNum == THIRD_LEVEL) {//此时处于第三层（数据集层），需要返回数据源文件层
+				//当需要返回第二层时，提前将ComboBox设置为初始条目，防止之后设置为第二层后，又设置ComboBox，层级错乱
+				datasetTypeComboBox.setSelectedIndex(COMBOXITEM_ALLDATASTYPE);
 				jTable.setModel(new GetTableModel().getDatasourcesTableModel(getActiveApplication().getWorkspace().getDatasources()));
 				jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasources());
 				//设置“个数”的对齐方式
@@ -742,10 +761,9 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	/**
 	 * 工作空间关闭监听
 	 */
-	private WorkspaceClosedListener workspaceClosedListener = new WorkspaceClosedListener() {
+	private WorkspaceClosingListener workspaceClosingListener = new WorkspaceClosingListener() {
 		@Override
-		public void workspaceClosed(WorkspaceClosedEvent workspaceClosedEvent) {
-			//当工作空间关闭时，保持窗口存在，层级返回起始页
+		public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
 			jTable.setModel(new GetTableModel().getWorkspaceTableModel((getActiveApplication().getWorkspace())));
 			jTable.setDefaultRenderer(Icon.class, new TableCellRendererWorkspace());
 			//设置起始页“个数”的对齐方式
@@ -770,6 +788,12 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	private DatasourceClosingListener datasourceClosingListener = new DatasourceClosingListener() {
 		@Override
 		public void datasourceClosing(DatasourceClosingEvent datasourceClosingEvent) {
+			//关闭数据源时需要更换jtable的のmodel，不然会出现对象释放的报错
+			jTable.setModel(new GetTableModel().getDatasourcesTableModel(getActiveApplication().getWorkspace().getDatasources()));
+			jTable.setDefaultRenderer(Icon.class, new TableCellRendererDatasources());
+			//设置起始页“个数”的对齐方式
+			jTable.setDefaultRenderer(Integer.class, new TableCellRendererDatasources());
+			setOtherComponents(jTable.getModel());
 			refresh();
 		}
 	};
@@ -859,6 +883,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 	private FormShownListener shownListener = new FormShownListener() {
 		@Override
 		public void formShown(FormShownEvent e) {
+			removeListeners();
 			initListeners();
 			initializeJTable();
 		}

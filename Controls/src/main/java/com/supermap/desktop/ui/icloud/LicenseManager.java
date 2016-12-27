@@ -238,36 +238,4 @@ public class LicenseManager {
         }
         return licenseId;
     }
-
-//    /**
-//     * 创建本地许可
-//     *
-//     * @param license
-//     */
-//    public static void buildLicense(String license) {
-//        if (null != license) {
-//            FileOutputStream stream = null;
-//            try {
-//                byte[] trialLicenseData = license.getBytes();
-//                File licFile = new File(licDirctory + ComputerUtilities.getComputerName() + "_8C.lic");
-//                if (licFile.exists()){
-//                    licFile.delete();
-//                }
-//                stream = new FileOutputStream(new File(licDirctory + ComputerUtilities.getComputerName() + "_8C.lic"));
-//                stream.write(trialLicenseData);
-//                stream.flush();
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } finally {
-//                try {
-//                    stream.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//        }
-//    }
 }

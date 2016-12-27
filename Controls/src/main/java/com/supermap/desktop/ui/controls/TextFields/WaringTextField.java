@@ -4,6 +4,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolSpinnerUtilties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -30,7 +31,7 @@ public class WaringTextField extends JPanel {
     public static final int FLOAT_TYPE = 1;
     private int type;
     private ArrayList listeners;
-    private DecimalFormat format = new DecimalFormat("0");
+	private DecimalFormat format = new DecimalFormat("0.#######");
 
     private CaretListener caretListener = new CaretListener() {
         @Override
@@ -39,7 +40,7 @@ public class WaringTextField extends JPanel {
             if (null != startValue && null != endValue && !SymbolSpinnerUtilties.isLegitNumber(startValue, endValue, text)) {
                 labelWarning.setText("");
                 labelWarning.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/warning.png"));
-                return;
+	            setInitInfo(startValue, endValue, type, floatLength);
             } else if (!StringUtilities.isNullOrEmpty(text) && StringUtilities.isNumber(text)) {
                 labelWarning.setText(" ");
                 labelWarning.setIcon(null);
@@ -63,9 +64,10 @@ public class WaringTextField extends JPanel {
 
         }
     };
+	private String floatLength;
 
-    public WaringTextField() {
-        this("");
+	public WaringTextField() {
+		this("");
     }
 
     public WaringTextField(String defaultValue) {
@@ -79,10 +81,28 @@ public class WaringTextField extends JPanel {
         this.startValue = startValue;
         this.endValue = endValue;
         this.type = type;
-        if (type == INTEGER_TYPE) {
-            this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_IntegerWarning"), "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
+	    this.floatLength = floatLength;
+	    String text = textField.getText();
+	    double currentValue = 0;
+	    if (!StringUtilities.isNullOrEmpty(text)) {
+		    try {
+			    currentValue = DoubleUtilities.stringToValue(text);
+		    } catch (Exception e) {
+			    // ignore
+		    }
+	    }
+	    if (type == INTEGER_TYPE) {
+		    if (currentValue > endValue) {
+			    this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_IntegerMaxWarning"), "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
+		    } else {
+			    this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_IntegerMinWarning"), "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
+		    }
         } else {
-            this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatWarning"), floatLength, "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
+		    if (currentValue > endValue) {
+			    this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatMaxWarning"), floatLength, "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
+		    } else {
+			    this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatMinWarning"), floatLength, "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
+		    }
         }
         this.labelWarning.setPreferredSize(new Dimension(23, 23));
     }
