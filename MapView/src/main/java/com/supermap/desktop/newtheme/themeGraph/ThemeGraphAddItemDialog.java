@@ -146,8 +146,13 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == buttonSure) {
-				setDialogResult(dialogResult.OK);
-				disposeDialog();
+				//给确定按钮增加判断，当resultList为空，即不选中任何项，直接退出——yuanR
+				if(resultList.isEmpty()){
+					disposeDialog();
+				}else{
+					setDialogResult(dialogResult.OK);
+					disposeDialog();
+				}
 			}
 			if (e.getSource() == buttonCancel) {
 				disposeDialog();
