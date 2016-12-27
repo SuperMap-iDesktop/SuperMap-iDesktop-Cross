@@ -22,7 +22,7 @@ import java.util.Date;
  */
 public class LicenseManager {
     private static final String LIC_DIRCTORY = "C:\\Program Files\\Common Files\\SuperMap\\License";
-    private static final String LINUX_LIC_DIRCTORY = "/home/opt/License";
+    private static final String LINUX_LIC_DIRCTORY = "/opt/License";
     private static boolean hasOffLineLicense = false;
 
     /**
