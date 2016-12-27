@@ -68,20 +68,22 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
 			}
 		}
 	};
+
 	private ActionListener okListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			handler.removeFormMapsAndFormTabularsBind();
-			addFormList();
-			showView();
-			BindUtilties.resetMDILayout();
+
+			if (canRelated()) {
+				addFormList();
+				showView();
+				BindUtilties.resetMDILayout();
+			}
 			JPopupMenuBind.this.setVisible(false);
 		}
 	};
 
 	private void addFormList() {
-		handler.getFormMapList().clear();
-		handler.getFormTabularList().clear();
 		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 		DefaultListModel model = (DefaultListModel) listForms.getModel();
 		int size = model.getSize();
@@ -96,6 +98,26 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
 				}
 			}
 		}
+	}
+
+	// 判断是否关联，当选中的关联窗口数量小于2的时候，不允许关联
+	private boolean canRelated() {
+		boolean canRelated = false;
+		DefaultListModel model = (DefaultListModel) listForms.getModel();
+		int count = 0;
+
+		for (int i = 0; i < model.size(); i++) {
+			CheckableItem item = (CheckableItem) model.getElementAt(i);
+			if (item.isSelected()) {
+				count++;
+			}
+
+			if (count >= 2) {
+				canRelated = true;
+				break;
+			}
+		}
+		return canRelated;
 	}
 
 	private void showView() {

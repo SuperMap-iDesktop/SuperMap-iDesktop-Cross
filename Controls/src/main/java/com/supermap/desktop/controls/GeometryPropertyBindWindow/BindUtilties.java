@@ -23,8 +23,7 @@ public class BindUtilties {
 
 	public static void windowBindProperty(IFormMap formMap) {
 		BindHandler handler = BindHandler.getInstance();
-		handler.getFormMapList().clear();
-		handler.getFormTabularList().clear();
+		handler.removeFormMapsAndFormTabularsBind();
 		handler.getFormMapList().add(formMap);
 		handler.getFormTabularList().add(tabular);
 		handler.bindFormMapsAndFormTabulars();

@@ -340,6 +340,7 @@ public class BindHandler {
 				mapControl.removeGeometrySelectChangedListener(this.geoMetroySelectChangeListener);
 			}
 		}
+		this.formMapList.clear();
 	}
 
 	public void bindFormTabulars() {
@@ -368,6 +369,7 @@ public class BindHandler {
 				formTabular.getRowHeader().removeMouseListener(this.listMouseListener);
 			}
 		}
+		this.formTabularList.clear();
 	}
 
 	public void bindFormMapsAndFormTabulars() {
@@ -415,6 +417,7 @@ public class BindHandler {
 			for (int i = 0; i < propertyBindWindowSize; i++) {
 				propertyBindWindows.get(i).removeEvents();
 			}
+			this.propertyBindWindows.clear();
 		}
 	}
 
