@@ -27,8 +27,6 @@ public class BindUtilties {
 		handler.getFormTabularList().clear();
 		handler.getFormMapList().add(formMap);
 		handler.getFormTabularList().add(tabular);
-		handler.getFormsList().add(formMap);
-		handler.getFormsList().add(tabular);
 		handler.bindFormMapsAndFormTabulars();
 		resetMDILayout();
 	}
