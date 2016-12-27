@@ -7,6 +7,8 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosedListener;
 import com.supermap.desktop.ui.FormManager;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.*;
@@ -93,16 +95,18 @@ public class BindHandler {
 	private GeometrySelectChangedListener geoMetroyMapSelectChangeListener;
 	private KeyListener tabularTableKeyListener;
 	public static FormManager manager = (FormManager) Application.getActiveApplication().getMainFrame().getFormManager();
-	private ActiveFormChangedListener formChangeListener = new ActiveFormChangedListener() {
+	private FormClosedListener formClosedListener = new FormClosedListener() {
 		@Override
-		public void activeFormChanged(ActiveFormChangedEvent e) {
-			if (null == e.getNewActiveForm()) {
-				formMapList.clear();
-				formTabularList.clear();
+		public void formClosed(FormClosedEvent e) {
+
+			// 当子窗口关闭到小于两个的时候，已经不再能够关联了
+			if (manager.getPageCount() <= 1) {
+				removeFormMapsBind();
+				removeFormTabularsBind();
+				removeFormMapsAndFormTabularsBind();
 			}
 		}
 	};
-
 
 	public static synchronized BindHandler getInstance() {
 		if (null == bindHandler) {
@@ -119,11 +123,11 @@ public class BindHandler {
 
 	private void registEvents() {
 		removeEvents();
-		manager.addActiveFormChangedListener(this.formChangeListener);
+		manager.addFormClosedListener(this.formClosedListener);
 	}
 
 	public void removeEvents() {
-		manager.removeActiveFormChangedListener(this.formChangeListener);
+		manager.removeFormClosedListener(this.formClosedListener);
 	}
 
 	//属性表之间关联
@@ -410,7 +414,6 @@ public class BindHandler {
 
 	public void removeFormMapsAndFormTabularsBind() {
 		removeFormMapsBind();
-		removeFormTabularsBind();
 
 		if (propertyBindWindows != null) {
 			int propertyBindWindowSize = propertyBindWindows.size();

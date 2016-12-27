@@ -21,7 +21,7 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 	private static final long serialVersionUID = 1L;
 	private SmStatusbar statusbar;
 
-	private EventListenerList listenerList = new EventListenerList();
+	private FormEventHelper eventHelper = new FormEventHelper();
 	private String title;
 	private Icon icon;
 
@@ -133,7 +133,7 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 	 */
 	@Override
 	public void addFormClosingListener(FormClosingListener listener) {
-		this.listenerList.add(FormClosingListener.class, listener);
+		this.eventHelper.addFormClosingListener(listener);
 	}
 
 	/**
@@ -143,62 +143,44 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 	 */
 	@Override
 	public void removeFormClosingListener(FormClosingListener listener) {
-		this.listenerList.remove(FormClosingListener.class, listener);
+		this.eventHelper.removeFormClosingListener(listener);
 	}
 
 	/**
-	 * 先执行 formShown，再调用事件
+	 * 先执行 FormClosed，再调用事件
 	 *
 	 * @param listener
 	 */
 	@Override
 	public void addFormClosedListener(FormClosedListener listener) {
-		this.listenerList.add(FormClosedListener.class, listener);
+		this.eventHelper.addFormClosedListener(listener);
 	}
 
 	@Override
 	public void removeFormClosedListener(FormClosedListener listener) {
-		this.listenerList.remove(FormClosedListener.class, listener);
+		this.eventHelper.removeFormClosedListener(listener);
 	}
 
 	@Override
 	public void addFormShownListener(FormShownListener listener) {
-		this.listenerList.add(FormShownListener.class, listener);
+		this.eventHelper.addFormShownListener(listener);
 	}
 
 	@Override
 	public void removeFormShownListener(FormShownListener listener) {
-		this.listenerList.remove(FormShownListener.class, listener);
+		this.eventHelper.removeFormShownListener(listener);
 	}
 
 	void fireFormClosing(FormClosingEvent e) {
-		Object[] listeners = listenerList.getListenerList();
-
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == FormClosingListener.class) {
-				((FormClosingListener) listeners[i + 1]).formClosing(e);
-			}
-		}
+		this.eventHelper.fireFormClosing(e);
 	}
 
 	void fireFormClosed(FormClosedEvent e) {
-		Object[] listeners = listenerList.getListenerList();
-
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == FormClosedListener.class) {
-				((FormClosedListener) listeners[i + 1]).formClosed(e);
-			}
-		}
+		this.eventHelper.fireFormClosed(e);
 	}
 
 	void fireFormShown(FormShownEvent e) {
-		Object[] listeners = listenerList.getListenerList();
-
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == FormShownListener.class) {
-				((FormShownListener) listeners[i + 1]).formShown(e);
-			}
-		}
+		this.eventHelper.fireFormShown(e);
 	}
 
 	private SmStatusbar createStatusbar() {
