@@ -135,7 +135,7 @@ public class ThemeUtil {
 		if (addZero) {
 			comboBoxExpression.addItem("0");
 			//进行判断，当前tempExpression值为空时，给于"0",否则给予当前tempExpression值。主要防止，每次点击都显示为"0"__yuanR 16.12.28
-			if (tempExpression.equals("")) {
+			if (StringUtilities.isNullOrEmpty(tempExpression)) {
 				comboBoxExpression.setSelectedItem("0");
 			} else {
 				comboBoxExpression.setSelectedItem(tempExpression);
