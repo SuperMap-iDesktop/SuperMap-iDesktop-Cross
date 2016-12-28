@@ -134,7 +134,12 @@ public class ThemeUtil {
 		}
 		if (addZero) {
 			comboBoxExpression.addItem("0");
-			comboBoxExpression.setSelectedItem("0");
+			//进行判断，当前tempExpression值为空时，给于"0",否则给予当前tempExpression值。主要防止，每次点击都显示为"0"__yuanR 16.12.28
+			if (tempExpression.equals("")) {
+				comboBoxExpression.setSelectedItem("0");
+			} else {
+				comboBoxExpression.setSelectedItem(tempExpression);
+			}
 		}
 	}
 
@@ -159,7 +164,7 @@ public class ThemeUtil {
 		for (int j = 0; j < count; j++) {
 			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
 			if (isDataType && isDataType(fieldInfo.getType())) {
-				 String dataTypeitem = fieldInfo.getName();
+				String dataTypeitem = fieldInfo.getName();
 				//原来item为name属性，改为Caption，使其完全与标头字符相同
 //				String dataTypeitem = fieldInfo.getCaption();
 
@@ -170,7 +175,7 @@ public class ThemeUtil {
 				comboBoxArray.add(dataTypeitem);
 			}
 			if (!isDataType) {
-				 String item =fieldInfo.getName();
+				String item = fieldInfo.getName();
 				//原来item为name属性，改为Caption，使其完全与标头字符相同
 //				String item = fieldInfo.getCaption();
 				if (0 < itemsCount) {
