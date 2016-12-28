@@ -39,6 +39,7 @@ import java.util.WeakHashMap;
 import javax.swing.SwingUtilities;
 
 
+import org.flexdock.dockbar.DockbarManager;
 import org.flexdock.dockbar.event.DockableEvent;
 import org.flexdock.dockbar.event.DockableEventHandler;
 import org.flexdock.dockbar.event.DockableListener;
@@ -613,6 +614,10 @@ public class DockingManager implements DockingConstants {
 	public static boolean isDocked(DockingPort dockingPort, Dockable dockable) {
 		return dockingPort == null || dockable == null ? false : dockingPort
 				.isParentDockingPort(dockable.getComponent());
+	}
+
+	public static boolean isMinimized(Dockable dockable) {
+		return DockingUtility.isMinimized(dockable);
 	}
 
 	/**
