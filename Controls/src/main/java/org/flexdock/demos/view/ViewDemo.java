@@ -32,6 +32,7 @@ import org.flexdock.view.Viewport;
 public class ViewDemo extends JFrame implements DockingConstants {
 
 	public static void main(String[] args) {
+//		SwingUtility.setPlaf("javax.swing.plaf.metal.MetalLookAndFeel");
 		SwingUtility.setPlaf("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 //		SwingUtility.setPlaf("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
 //		SwingUtility.setPlaf("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
