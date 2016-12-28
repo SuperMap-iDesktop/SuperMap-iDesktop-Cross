@@ -1,7 +1,6 @@
 package com.supermap.desktop.iDesktop;
 
 import org.apache.felix.main.Main;
-import org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper;
 
 import javax.swing.*;
 
@@ -11,7 +10,11 @@ import javax.swing.*;
 public class Startup {
 	public static void main(String[] args) {
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			if (!System.getProperties().getProperty("os.name").startsWith("Windows")) {
+				UIManager.setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+			} else {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			}
 //			org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
 //			UIManager.put("RootPane.setupButtonVisible", false);
 //			BeautyEyeLNFHelper.translucencyAtFrameInactive = false;
