@@ -238,7 +238,7 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
 		for (int i = 0; i < size; i++) {
 			IForm form = formManager.get(i);
 
-			if (form instanceof IFormScene || form instanceof IFormLayout) {
+			if (!(form instanceof IFormMap) && !(form instanceof IFormTabular)) {
 				continue;
 			}
 			CheckableItem item = new CheckableItem();

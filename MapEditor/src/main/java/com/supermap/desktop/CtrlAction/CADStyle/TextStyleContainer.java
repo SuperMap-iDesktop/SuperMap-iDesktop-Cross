@@ -158,14 +158,18 @@ public class TextStyleContainer extends JPanel {
                 recordset.edit();
                 Geometry tempGeometry = recordset.getGeometry();
                 Object newGeoStyleProperty = textBasicPanel.getResultMap().get(newValue);
+
                 if ("Null".equals(newGeoStyleProperty)) {
                     return;
                 }
 		        if (tempGeometry instanceof GeoText && !newValue.equals(TextStyleType.FIXEDSIZE)) {
 			        if (newValue.equals(TextStyleType.ROTATION)) {
-                        for (int j = 0; j < ((GeoText) tempGeometry).getPartCount(); j++) {
-                            ((GeoText) tempGeometry).getPart(j).setRotation((Double) newGeoStyleProperty);
-                        }
+				        double tempTest=(Double)newGeoStyleProperty;
+			        	if (Double.compare(tempTest,0)!=0) { // 当设置旋转角度为0时，会抛异常，原因未找到,暂时先进行控制       ————李文发
+					        for (int j = 0; j < ((GeoText) tempGeometry).getPartCount(); j++) {
+						        ((GeoText) tempGeometry).getPart(j).setRotation((Double) newGeoStyleProperty);
+					        }
+				        }
                     } else {
                         ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
                     }
