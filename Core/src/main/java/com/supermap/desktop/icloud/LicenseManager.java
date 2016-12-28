@@ -5,22 +5,29 @@ import com.supermap.data.License;
 import com.supermap.data.Toolkit;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.icloud.api.LicenseService;
-import com.supermap.desktop.icloud.commontypes.*;
+import com.supermap.desktop.icloud.commontypes.ApplyFormalLicenseRequest;
+import com.supermap.desktop.icloud.commontypes.ApplyFormalLicenseResponse;
+import com.supermap.desktop.icloud.commontypes.ApplyTrialLicenseRequest;
+import com.supermap.desktop.icloud.commontypes.ApplyTrialLicenseResponse;
+import com.supermap.desktop.icloud.commontypes.LicenseId;
+import com.supermap.desktop.icloud.commontypes.LicenseInfo;
+import com.supermap.desktop.icloud.commontypes.ProductType;
+import com.supermap.desktop.icloud.commontypes.QueryFormalLicenseRequest;
+import com.supermap.desktop.icloud.commontypes.QueryFormalLicenseResponse;
+import com.supermap.desktop.icloud.commontypes.QueryTrialLicenseRequest;
+import com.supermap.desktop.icloud.commontypes.QueryTrialLicenseResponse;
+import com.supermap.desktop.icloud.commontypes.ReturnLicenseRequest;
+import com.supermap.desktop.icloud.commontypes.ServiceResponse;
+import com.supermap.desktop.icloud.commontypes.Version;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.ComputerUtilities;
 import com.supermap.desktop.utilities.JOptionPaneUtilities;
-import com.supermap.desktop.utilities.PathUtilities;
-import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 
 /**
@@ -169,7 +176,8 @@ public class LicenseManager {
      * @return
      */
     public static ApplyTrialLicenseResponse applyTrialLicense(LicenseService licenseService) {
-        ServiceResponse<ApplyTrialLicenseResponse> response = null;
+	    ApplyTrialLicenseResponse result = null;
+	    ServiceResponse<ApplyTrialLicenseResponse> response = null;
         try {
             ServiceResponse<QueryTrialLicenseResponse> queryTrialResult = licenseService.query(new QueryTrialLicenseRequest()
                     .productType(ProductType.ICLOUDMANAGER).version(Version.VERSION_8C));
@@ -185,7 +193,8 @@ public class LicenseManager {
                     request.machine.name = ComputerUtilities.getComputerName();
                     request.machine.macAddr = ComputerUtilities.getMACAddress();
                     response = licenseService.apply(request);
-                    //用于归还的试用许可信息
+	                result = response.data;
+	                //用于归还的试用许可信息
                     System.out.println(response.data.returnId);
                     System.out.println(response.data.license);
                 }
@@ -196,8 +205,7 @@ public class LicenseManager {
         } catch (IOException e) {
             JOptionPaneUtilities.showMessageDialog(CommonProperties.getString("String_ApplyTrialLicenseFalure"));
         }
-
-        return response.data;
+	    return result;
     }
 
     /**

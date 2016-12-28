@@ -2,10 +2,8 @@ package com.supermap.desktop.frame;
 
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.MainFrame;
-import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.LogUtilities;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -32,7 +30,6 @@ public class FrameActivator implements BundleActivator {
             startUp(bundleContext);
 
         } catch (Exception e) {
-            UICommonToolkit.showMessageDialog(CommonProperties.getString("String_PermissionCheckFailed"));
             isError = true;
         }
     }
