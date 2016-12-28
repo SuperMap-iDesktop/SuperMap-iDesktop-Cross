@@ -64,12 +64,12 @@ Export-Package: com.supermap.desktop.controls.colorScheme;version="1.0.0
  .TextFields;version="1.0.0",com.supermap.desktop.ui.controls.textStyle;
  version="1.0.0",com.supermap.desktop.ui.controls.toolTip;version="1.0.0
  ",com.supermap.desktop.ui.enums;version="1.0.0",com.supermap.desktop.ui
- .icloud.api;version="1.0.0";uses:="com.supermap.desktop.ui.icloud.commo
- ntypes",com.supermap.desktop.ui.icloud;version="1.0.0";uses:="com.super
- map.desktop.ui.controls,com.supermap.desktop.ui.icloud.api,com.supermap
- .desktop.ui.icloud.commontypes",com.supermap.desktop.ui.icloud.commonty
- pes;version="1.0.0",com.supermap.desktop.ui.icloud.fastJSon;version="1.
- 0.0",com.supermap.desktop.ui.icloud.online;version="1.0.0",com.supermap
+ .icloud.api;version="1.0.0";uses:="com.supermap.desktop.icloud.commo
+ ntypes",com.supermap.desktop.icloud;version="1.0.0";uses:="com.super
+ map.desktop.ui.controls,com.supermap.desktop.icloud.api,com.supermap
+ .desktop.ui.icloud.commontypes",com.supermap.desktop.icloud.commonty
+ pes;version="1.0.0",com.supermap.desktop.icloud.fastJSon;version="1.
+ 0.0",com.supermap.desktop.icloud.online;version="1.0.0",com.supermap
  .desktop.ui.icloud.utils;version="1.0.0";uses:="com.supermap.desktop.ui
  .icloud.commontypes",com.supermap.desktop.ui.mdi.action;version="1.0.0"
  ;uses:="com.supermap.desktop.ui.mdi,com.supermap.desktop.ui.mdi.plaf.fe

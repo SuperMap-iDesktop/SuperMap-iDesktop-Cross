@@ -129,7 +129,7 @@ public class ThemeGraduatedSymbolContainer extends ThemeChangePanel {
 				comboBoxArrayForOffsetY = new ArrayList<String>();
 				ThemeUtil.initComboBox(comboBoxOffsetY, themeGraduatedSymbol.getOffsetY(), datasetVector, themeGraduatedSymbolLayer.getDisplayFilter().getJoinItems(),
 						comboBoxArrayForOffsetY, true, true);
-				comboBoxOffsetY.removeItemListener(comboxListener);
+				comboBoxOffsetY.addItemListener(comboxListener);
 			}
 		}
 	};

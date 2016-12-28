@@ -1,22 +1,14 @@
 package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 
-import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.ui.FormManager;
 import com.supermap.desktop.ui.mdi.IMdiContainer;
 import com.supermap.desktop.ui.mdi.MdiGroup;
 import com.supermap.desktop.ui.mdi.MdiPage;
-import com.supermap.desktop.ui.mdi.MdiPane;
-import com.supermap.desktop.ui.mdi.events.*;
 import com.supermap.desktop.ui.mdi.layout.ILayoutStrategy;
-import com.supermap.desktop.ui.mdi.layout.SplitLayoutStrategy;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,21 +19,25 @@ import java.util.Map;
  */
 public class BindLayoutStrategy implements ILayoutStrategy {
 
+	private static final UserObject MAPS = new UserObject("maps");
+	private static final UserObject TABULARS = new UserObject("tabulars");
+
 	private BindHandler bindHandler;
 	private FormManager container;
-	private MdiGroup tabularGroup;
 	private JSplitPane contentSplit;
-	private ArrayList<MdiGroup> mapGroups;
-	private HashMap<MdiGroup, JSplitPane> splits;
+	private ArrayList<MdiGroup> mapGroups; // 待关联的地图子窗口在上并列显示，待关联的属性表子窗口在下并列显示
+	private ArrayList<MdiGroup> tabularGroups; // 需要并列显示的属性表 Group
 
-	private PageAddedHandler pageAddedHandler = new PageAddedHandler();
+	private HashMap<MdiGroup, JSplitPane> mapSplits;
+	private HashMap<MdiGroup, JSplitPane> tabularSplits;
 
 	public BindLayoutStrategy(FormManager container, BindHandler bindHandler) {
 		this.bindHandler = bindHandler;
 		this.container = container;
-		this.tabularGroup = new MdiGroup(container);
 		this.mapGroups = new ArrayList<>();
-		this.splits = new HashMap<>();
+		this.tabularGroups = new ArrayList<>();
+		this.mapSplits = new HashMap<>();
+		this.tabularSplits = new HashMap<>();
 
 		this.contentSplit = new JSplitPane();
 		this.contentSplit.setOrientation(JSplitPane.VERTICAL_SPLIT);
@@ -69,78 +65,89 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 	 */
 	@Override
 	public boolean addGroup(MdiGroup group) {
-		boolean result = false;
 		if (!validateGroup(group)) {
 			return false;
 		}
 
-		if (group == this.tabularGroup) {
-			this.contentSplit.setRightComponent(group);
+		addGroup(group.getUserObject(), group);
+		return true;
+	}
+
+	private void addGroup(Object type, MdiGroup group) {
+		if (!getSplits(type).containsKey(group)) {
+			getSplits(type).put(group, createSplit(group));
+		}
+
+		getGroups(type).add(group);
+		JSplitPane split = getSplits(type).get(group);
+		JSplitPane preSplit = findPreSplit(type, group);
+
+		if (preSplit != null) {
+			setNextSplit(preSplit, split);
 		} else {
-			if (!this.splits.containsKey(group)) {
-				this.splits.put(group, createSplit(group));
-			}
-
-			this.mapGroups.add(group);
-			JSplitPane split = this.splits.get(group);
-			JSplitPane preSplit = findPreSplit(group);
-
-			if (preSplit != null) {
-				setNextSplit(preSplit, split);
+			if (type == TABULARS) {
+				this.contentSplit.setRightComponent(split);
 			} else {
 				this.contentSplit.setLeftComponent(split);
-				resetDividerSize(split);
-				this.contentSplit.revalidate();
 			}
-			adjustDividerProportion();
+			resetDividerSize(split);
+			this.contentSplit.revalidate();
 		}
-		return true;
+		adjustDividerProportion(type);
 	}
 
 	@Override
 	public boolean removeGroup(MdiGroup group) {
-		boolean result = false;
-		if (!validateGroup(group) || (!this.mapGroups.contains(group) && group != this.tabularGroup)) {
+		if (!validateGroup(group) || (!this.mapGroups.contains(group) && !this.tabularGroups.contains(group))) {
 			return false;
 		}
 
-		if (group != this.tabularGroup) {
-
-			// 将要移除的 group 不是 tabularGroup
-			JSplitPane split = this.splits.get(group);
-			JSplitPane preSplit = findPreSplit(group);
-			JSplitPane nextSplit = findNextSplit(group);
-			split.setRightComponent(null);
-
-			if (preSplit != null) {
-				setNextSplit(preSplit, nextSplit);
-			} else {
-
-				// 没有上级 split 了，就把自己从 content 中移除
-				this.contentSplit.setLeftComponent(null);
-				this.contentSplit.revalidate();
-				this.contentSplit.repaint();
-				if (nextSplit != null) {
-					this.contentSplit.setLeftComponent(nextSplit);
-				}
-			}
-			this.mapGroups.remove(group);
-		} else {
-			this.contentSplit.setRightComponent(null);
-		}
+		removeGroup(group.getUserObject(), group);
 		return true;
 	}
 
-	private JSplitPane findPreSplit(MdiGroup group) {
-		int index = this.mapGroups.indexOf(group);
-		MdiGroup preGroup = index > 0 ? this.mapGroups.get(index - 1) : null;
-		return preGroup == null ? null : this.splits.get(preGroup);
+	private void removeGroup(Object type, MdiGroup group) {
+
+		// 将要移除的 group 不是 tabularGroup
+		JSplitPane split = getSplits(type).get(group);
+		JSplitPane preSplit = findPreSplit(type, group);
+		JSplitPane nextSplit = findNextSplit(type, group);
+		split.setRightComponent(null);
+
+		if (preSplit != null) {
+			setNextSplit(preSplit, nextSplit);
+		} else {
+
+			// 没有上级 split 了，就把自己从 content 中移除
+			if (type == TABULARS) {
+				this.contentSplit.setRightComponent(null);
+			} else {
+				this.contentSplit.setLeftComponent(null);
+			}
+			this.contentSplit.revalidate();
+			this.contentSplit.repaint();
+			if (nextSplit != null) {
+
+				if (type == TABULARS) {
+					this.contentSplit.setRightComponent(nextSplit);
+				} else {
+					this.contentSplit.setLeftComponent(nextSplit);
+				}
+			}
+		}
+		getGroups(type).remove(group);
 	}
 
-	private JSplitPane findNextSplit(MdiGroup group) {
-		int index = this.mapGroups.indexOf(group);
-		MdiGroup nextGroup = index >= 0 && index + 1 < this.mapGroups.size() ? this.mapGroups.get(index + 1) : null;
-		return nextGroup == null ? null : this.splits.get(nextGroup);
+	private JSplitPane findPreSplit(Object type, MdiGroup group) {
+		int index = getGroups(type).indexOf(group);
+		MdiGroup preGroup = index > 0 ? getGroups(type).get(index - 1) : null;
+		return preGroup == null ? null : getSplits(type).get(preGroup);
+	}
+
+	private JSplitPane findNextSplit(Object type, MdiGroup group) {
+		int index = getGroups(type).indexOf(group);
+		MdiGroup nextGroup = index >= 0 && index + 1 < getGroups(type).size() ? getGroups(type).get(index + 1) : null;
+		return nextGroup == null ? null : getSplits(type).get(nextGroup);
 	}
 
 	private void setNextSplit(JSplitPane split, JSplitPane nextSplit) {
@@ -167,11 +174,6 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 		this.container.add(this.contentSplit);
 
 		// 首先进行已有 group 的布局
-		if (this.bindHandler.getFormTabularList().size() > 0) {
-
-			// 将要操作的窗口如果有属性表，就将属性表放到专属 group 里，这里先添加属性表专属 group
-			this.container.addGroup(this.tabularGroup);
-		}
 		MdiGroup[] groups = container.getGroups();
 		if (groups != null && groups.length > 0) {
 			for (int i = 0; i < groups.length; i++) {
@@ -179,9 +181,8 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 			}
 		}
 
-		// 一山不容二虎，所有待关联子窗口（非属性表）都各自占用一个山头，哦不，是各自占用一个 Group
-		// 其他非关联子窗口（非属性表）添加到第一个待关联子窗口的 Group 里
-		// 所有待关联的属性表，都放在 TabularGroup 里
+		// 一山不容二虎，所有待关联子窗口都各自占用一个山头，哦不，是各自占用一个 Group
+		// 其他非关联子窗口添加到第一个待关联子窗口的 Group 里
 		MdiPage[] pages = this.container.getPages();
 		ArrayList<MdiPage> unrelatedPages = new ArrayList<>();
 		MdiGroup firstRelatedGroup = null;
@@ -190,12 +191,12 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 		for (int i = 0; i < pages.length; i++) {
 			MdiPage page = pages[i];
 			if (this.bindHandler.getFormMapList().contains(page.getComponent())) {
-				MdiGroup group = this.container.addNewGroup(page);
+				MdiGroup group = this.container.addNewGroup(page, MAPS);
 				if (firstRelatedGroup == null) {
 					firstRelatedGroup = group;
 				}
 			} else if (this.bindHandler.getFormTabularList().contains(page.getComponent())) {
-				this.tabularGroup.addPage(page);
+				this.container.addNewGroup(page, TABULARS);
 			} else {
 				unrelatedPages.add(page);
 			}
@@ -214,7 +215,9 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 		this.bindHandler = null;
 		this.container.remove(this.contentSplit);
 		this.mapGroups.clear();
-		this.splits.clear();
+		this.tabularGroups.clear();
+		this.mapSplits.clear();
+		this.tabularSplits.clear();
 	}
 
 	private JSplitPane createSplit(MdiGroup group) {
@@ -247,37 +250,17 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 	/**
 	 * 调整 DividerProportion，为其计算一个合适的 DividerProportion
 	 */
-	private void adjustDividerProportion() {
-		for (int i = 0; i < this.mapGroups.size(); i++) {
-			this.splits.get(this.mapGroups.get(i)).setResizeWeight(1d / (this.mapGroups.size() - i));
+	private void adjustDividerProportion(Object type) {
+		for (int i = 0; i < getGroups(type).size(); i++) {
+			getSplits(type).get(getGroups(type).get(i)).setResizeWeight(1d / (getGroups(type).size() - i));
 		}
 	}
 
-	private class PageAddedHandler implements PageAddingListener {
-
-		@Override
-		public void pageAdding(PageAddingEvent e) {
-
-			// 验证一下，属性表如果没添加到 tabularGroup 里，或者场景/地图窗口添加到 tabularGroup 里了，就纠正一下
-			if (e.getOperation() == Operation.ADD) {
-				MdiPage page = e.getPage();
-				MdiGroup group = page.getGroup();
-
-				if (page != null) {
-					if (page.getComponent() instanceof IFormTabular && group != BindLayoutStrategy.this.tabularGroup) {
-
-						// 如果将要添加一个 IFormTabular 到非指定的 tabularGroup，那么就处理一下，请它过去
-						e.setCancel(true);
-						BindLayoutStrategy.this.tabularGroup.addPage(page);
-					} else if (page.getComponent() instanceof IForm && group == BindLayoutStrategy.this.tabularGroup) {
-
-						// 如果将要添加一个非 IFormTabular 的 IForm 到指定的 tabularGroup，那么就处理一下，请它离开
-						e.setCancel(true);
-						BindLayoutStrategy.this.container.getSelectedGroup().addPage(page);
-					}
-				}
-			}
-		}
+	private ArrayList<MdiGroup> getGroups(Object type) {
+		return type == TABULARS ? this.tabularGroups : this.mapGroups;
 	}
 
+	private HashMap<MdiGroup, JSplitPane> getSplits(Object type) {
+		return type == TABULARS ? this.tabularSplits : this.mapSplits;
+	}
 }
