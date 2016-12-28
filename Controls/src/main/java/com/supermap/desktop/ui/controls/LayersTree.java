@@ -299,7 +299,7 @@ public class LayersTree extends JTree {
 			}
 			this.setSelectionPath(new TreePath(layerNode.getPath()));
 		}
-		updateUI();
+//		updateUI();
 	}
 
 	private void addLayerItem(Layer layer, DefaultMutableTreeNode layerNode) {
