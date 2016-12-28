@@ -55,6 +55,7 @@ RealspaceEffect/target/
 RealspaceView/target/
 SpatialAnalyst/target/
 TabularView/target/
+Process/target/
 .metadata/
 .recommenders/
 /Configuration/SuperMap.Desktop.RecentFile.xml
