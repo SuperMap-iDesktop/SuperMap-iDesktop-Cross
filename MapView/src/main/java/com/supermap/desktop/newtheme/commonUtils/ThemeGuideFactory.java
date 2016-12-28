@@ -24,6 +24,7 @@ import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.mapping.*;
 import com.supermap.ui.MapControl;
 
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -189,8 +190,17 @@ public class ThemeGuideFactory {
 			result = ThemeUtil.arrayNewThemeLayer(getMapControl().getMap(), layer, theme);
 			UICommonToolkit.getLayersManager().getLayersTree().reload();
 			if (null != result) {
-				int selectRow = getMapControl().getMap().getLayers().indexOf(result.getName());
-				UICommonToolkit.getLayersManager().getLayersTree().setSelectionInterval(selectRow, selectRow);
+				final int selectRow = getMapControl().getMap().getLayers().indexOf(result.getName());
+				/**
+				 * 屏蔽掉BasicTreeUI.completeEditing()方法获取图层树时的空指针异常
+				 */
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						UICommonToolkit.getLayersManager().getLayersTree().setSelectionInterval(selectRow, selectRow);
+					}
+				});
+
 			}
 			if (null != layer) {
 				// 复制关联表信息到新图层中
