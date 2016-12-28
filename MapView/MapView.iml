@@ -11,6 +11,14 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.supermap.online.license:client-lib-deploy:8.1.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-net:commons-net:3.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-io:commons-io:2.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.guava:guava:19.0" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.commons:commons-lang3:3.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: ch.qos.cal10n:cal10n-api:0.7.7" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:slf4j-ext:1.7.21" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:slf4j-log4j12:1.7.21" level="project" />
     <orderEntry type="module" module-name="iDesktop" scope="PROVIDED" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.felix:org.apache.felix.framework:5.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.felix:org.apache.felix.main:5.4.0" level="project" />
@@ -141,7 +149,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.license:8.1.1">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.license.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/com/supermap/com.supermap.license/8.1.1/com.supermap.license-8.1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -202,14 +210,5 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="Controls" scope="PROVIDED" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.supermap.online.license:client-lib-deploy:8.1.1-SNAPSHOT" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-net:commons-net:3.5" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: commons-io:commons-io:2.5" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.guava:guava:19.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.commons:commons-lang3:3.4" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: ch.qos.cal10n:cal10n-api:0.7.7" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:slf4j-ext:1.7.21" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:slf4j-api:1.7.21" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:slf4j-log4j12:1.7.21" level="project" />
   </component>
 </module>

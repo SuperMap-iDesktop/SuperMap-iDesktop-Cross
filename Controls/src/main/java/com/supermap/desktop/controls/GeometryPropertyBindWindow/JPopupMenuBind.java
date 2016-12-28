@@ -4,7 +4,12 @@ import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormLayout;
+import com.supermap.desktop.Interface.IFormManager;
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.properties.CoreProperties;
@@ -211,6 +216,7 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
 		this.buttonSelectInverse = ComponentFactory.createButtonSelectInverse();
 		this.buttonOk = ComponentFactory.createButtonOK();
 		this.checkBoxIsQueryWhileSelectedColumn = new JCheckBox();
+		this.checkBoxIsQueryWhileSelectedColumn.setSelected(GlobalParameters.isHeadClickedSelectedColumn());
 		this.labelTitle = new JLabel();
 		this.panelButton = new JPanel();
 		initListForms();
@@ -232,7 +238,7 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
 		for (int i = 0; i < size; i++) {
 			IForm form = formManager.get(i);
 
-			if (form instanceof IFormScene || form instanceof IFormLayout) {
+			if (!(form instanceof IFormMap) && !(form instanceof IFormTabular)) {
 				continue;
 			}
 			CheckableItem item = new CheckableItem();
