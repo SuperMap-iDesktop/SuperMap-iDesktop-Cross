@@ -237,6 +237,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 				jTable.setModel(new GetTableModel().getScenesTableModel(getActiveApplication().getWorkspace().getScenes()));
 				jTable.setDefaultRenderer(Icon.class, new TableCellRendererScenes());
 
+
 				//当父节点为为场景节点时，即选中了场景
 				if (selectedNodeDatasParent.getData() instanceof Scenes) {
 					//当点击了tree中数据集节点，窗口中相应节点高亮显示
