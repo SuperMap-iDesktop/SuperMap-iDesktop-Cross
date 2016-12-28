@@ -180,6 +180,13 @@
         </dependency>
         <dependency>
             <groupId>${objects.groupId}</groupId>
+            <artifactId>com.supermap.license</artifactId>
+            <version>${objects.version}</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/../bin/com.supermap.data.cloudlicense.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>${objects.groupId}</groupId>
             <artifactId>com.supermap.mapping</artifactId>
             <version>${objects.version}</version>
             <scope>system</scope>
