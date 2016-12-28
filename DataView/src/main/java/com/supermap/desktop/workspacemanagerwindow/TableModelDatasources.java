@@ -49,6 +49,7 @@ public class TableModelDatasources extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int row, int col) {
+		//增加">0"判断，防止索引越界
 		if (this.datasources.getCount() > 0) {
 			if (col == COLUMN_NAME) {
 				return this.datasources.get(row).getAlias();

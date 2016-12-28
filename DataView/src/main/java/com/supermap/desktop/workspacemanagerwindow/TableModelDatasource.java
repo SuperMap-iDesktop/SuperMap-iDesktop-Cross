@@ -63,48 +63,51 @@ public class TableModelDatasource extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int row, int col) {
-		if (col == COLUMN_NAME) {
-			return this.datasource.getDatasets().get(row).getName();
-		}
-		if (col == COLUMN_TYPE) {
-			String replaceString = DataViewProperties.getString("String_Dataset_T");
-			String datasetTypeName = CommonToolkit.DatasetTypeWrap.findName(this.datasource.getDatasets().get(row).getType());
-			String newDatasetTypeName = datasetTypeName.replace(replaceString, "");
-			return newDatasetTypeName;
-		}
-		if (col == COLUMN_NUMBER) {
-			if (this.datasource.getDatasets().get(row) instanceof DatasetVector) {
-				this.datasetVector = (DatasetVector) this.datasource.getDatasets().get(row);
-				return this.datasetVector.getRecordCount();
-			} else if (this.datasource.getDatasets().get(row) instanceof DatasetGrid) {
-				this.datasetGrid = (DatasetGrid) this.datasource.getDatasets().get(row);
-				return this.datasetGrid.getWidth() * this.datasetGrid.getHeight();
-			} else if (this.datasource.getDatasets().get(row) instanceof DatasetImage) {
-				this.datasetImage = (DatasetImage) this.datasource.getDatasets().get(row);
-				return this.datasetImage.getWidth() * this.datasetImage.getHeight();
-			} else if (this.datasource.getDatasets().get(row) instanceof DatasetGridCollection) {
-				this.datasetGridCollection = (DatasetGridCollection) this.datasource.getDatasets().get(row);
-				return this.datasetGridCollection.getCount();
-			} else if (this.datasource.getDatasets().get(row) instanceof DatasetImageCollection) {
-				this.datasetImageCollection = (DatasetImageCollection) this.datasource.getDatasets().get(row);
-				return this.datasetImageCollection.getCount();
-			} else {
-				return 0;
+		//增加">0"判断，防止索引越界
+		if (this.datasource.getDatasets().getCount() > 0) {
+			if (col == COLUMN_NAME) {
+				return this.datasource.getDatasets().get(row).getName();
 			}
-		}
-		if (col == COLUMN_PRJCOORDSYS) {
-			return this.datasource.getDatasets().get(row).getPrjCoordSys().getName();
-		}
-		//将栅格/图片的像素数存在第五列
-		if (col == COLUMN_NULL) {
-			if (this.datasource.getDatasets().get(row) instanceof DatasetGrid) {
-				this.datasetGrid = (DatasetGrid) this.datasource.getDatasets().get(row);
-				return this.datasetGrid.getWidth();
-			} else if (this.datasource.getDatasets().get(row) instanceof DatasetImage) {
-				this.datasetImage = (DatasetImage) this.datasource.getDatasets().get(row);
-				return this.datasetImage.getWidth();
-			} else {
-				return 0;
+			if (col == COLUMN_TYPE) {
+				String replaceString = DataViewProperties.getString("String_Dataset_T");
+				String datasetTypeName = CommonToolkit.DatasetTypeWrap.findName(this.datasource.getDatasets().get(row).getType());
+				String newDatasetTypeName = datasetTypeName.replace(replaceString, "");
+				return newDatasetTypeName;
+			}
+			if (col == COLUMN_NUMBER) {
+				if (this.datasource.getDatasets().get(row) instanceof DatasetVector) {
+					this.datasetVector = (DatasetVector) this.datasource.getDatasets().get(row);
+					return this.datasetVector.getRecordCount();
+				} else if (this.datasource.getDatasets().get(row) instanceof DatasetGrid) {
+					this.datasetGrid = (DatasetGrid) this.datasource.getDatasets().get(row);
+					return this.datasetGrid.getWidth() * this.datasetGrid.getHeight();
+				} else if (this.datasource.getDatasets().get(row) instanceof DatasetImage) {
+					this.datasetImage = (DatasetImage) this.datasource.getDatasets().get(row);
+					return this.datasetImage.getWidth() * this.datasetImage.getHeight();
+				} else if (this.datasource.getDatasets().get(row) instanceof DatasetGridCollection) {
+					this.datasetGridCollection = (DatasetGridCollection) this.datasource.getDatasets().get(row);
+					return this.datasetGridCollection.getCount();
+				} else if (this.datasource.getDatasets().get(row) instanceof DatasetImageCollection) {
+					this.datasetImageCollection = (DatasetImageCollection) this.datasource.getDatasets().get(row);
+					return this.datasetImageCollection.getCount();
+				} else {
+					return 0;
+				}
+			}
+			if (col == COLUMN_PRJCOORDSYS) {
+				return this.datasource.getDatasets().get(row).getPrjCoordSys().getName();
+			}
+			//将栅格/图片的像素数存在第五列
+			if (col == COLUMN_NULL) {
+				if (this.datasource.getDatasets().get(row) instanceof DatasetGrid) {
+					this.datasetGrid = (DatasetGrid) this.datasource.getDatasets().get(row);
+					return this.datasetGrid.getWidth();
+				} else if (this.datasource.getDatasets().get(row) instanceof DatasetImage) {
+					this.datasetImage = (DatasetImage) this.datasource.getDatasets().get(row);
+					return this.datasetImage.getWidth();
+				} else {
+					return 0;
+				}
 			}
 		}
 		return "";
