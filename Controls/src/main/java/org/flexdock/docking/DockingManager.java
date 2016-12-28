@@ -126,6 +126,8 @@ public class DockingManager implements DockingConstants {
 
 	private static Object persistentIdLock = new Object();
 
+	private static Component applicationWindow; // 应用程序主窗口，主要用于 SetMinimized
+
 	private String defaultLayoutManagerClass;
 
 	private String defaultMinimizeManagerClass;
@@ -240,6 +242,10 @@ public class DockingManager implements DockingConstants {
 
 	private static DockingManager getDockingManager() {
 		return SINGLETON;
+	}
+
+	public static void setApplicationWindow(Component window) {
+		applicationWindow = window;
 	}
 
 	public static void addDragSource(Dockable dockable, Component dragSrc) {
@@ -2216,8 +2222,12 @@ public class DockingManager implements DockingConstants {
 		if (dockable == null)
 			return;
 
-		if (window == null)
+		if (window == null) {
+			window = applicationWindow;
+		}
+		if (window == null) {
 			window = SwingUtility.getActiveWindow();
+		}
 		if (window == null)
 			return;
 

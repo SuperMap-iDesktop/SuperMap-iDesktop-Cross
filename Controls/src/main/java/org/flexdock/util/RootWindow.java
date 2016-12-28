@@ -50,7 +50,7 @@ import javax.swing.SwingUtilities;
  *
  * @author Chris Butler
  */
-public class RootWindow {
+public class  RootWindow {
     public static final Integer DEFAULT_MAXED_LAYER = new Integer(
         JLayeredPane.PALETTE_LAYER.intValue() - 10);
 
