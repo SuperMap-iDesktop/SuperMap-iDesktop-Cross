@@ -44,6 +44,7 @@ public class PanelExportTransformForVector extends PanelExportTransform {
     private JLabel labelCADVersion;
     private JComboBox<String> comboBoxCADVersion;
     private JLabel labelExpression;
+    private JScrollPane scrollPaneExpression;
     private JTextArea textAreaExpression;
     private JButton buttonExpression;
     private StateChangeListener externalDataListener = new StateChangeListener() {
@@ -202,6 +203,9 @@ public class PanelExportTransformForVector extends PanelExportTransform {
         this.labelCADVersion = new JLabel();
         this.comboBoxCADVersion = new JComboBox<>();
         this.labelExpression = new JLabel();
+
+        this.scrollPaneExpression = new JScrollPane();
+
         this.textAreaExpression = new JTextArea();
         this.textAreaExpression.setBorder(new LineBorder(Color.gray));
         this.textAreaExpression.setLineWrap(true);
@@ -380,7 +384,12 @@ public class PanelExportTransformForVector extends PanelExportTransform {
         panelContent.add(this.labelCADVersion, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 20).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         panelContent.add(this.comboBoxCADVersion, new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
         panelContent.add(this.labelExpression, new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 0).setFill(GridBagConstraints.HORIZONTAL).setWeight(0, 0));
-        panelContent.add(this.textAreaExpression, new GridBagConstraintsHelper(0, 5, 2, 3).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setIpad(0, 80));
+//        panelContent.add(this.textAreaExpression, new GridBagConstraintsHelper(0, 5, 2, 3).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setIpad(0, 80));
+
+        //添加了JScrollPane用来装JTextArea
+        panelContent.add(this.scrollPaneExpression, new GridBagConstraintsHelper(0, 5, 2, 3).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setIpad(0, 80));
+        scrollPaneExpression.setViewportView(textAreaExpression);
+
         panelContent.add(this.buttonExpression, new GridBagConstraintsHelper(1, 8, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.NONE).setWeight(0, 0));
     }
 

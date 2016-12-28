@@ -70,6 +70,7 @@ public class CloudLicenseDialog extends JDialog {
         }
     };
     private int dialogResult;
+    private LicenseId licenseId;
 
     private void connect(String url) {
         URI uri = URI.create(url);
@@ -95,7 +96,7 @@ public class CloudLicenseDialog extends JDialog {
         String passWord = String.valueOf(fieldPassWord.getPassword());
         try {
             licenseService = LicenseServiceFactory.create(userName, passWord, ProductType.IDESKTOP);
-            LicenseId licenseId = LicenseManager.getFormalLicenseId(licenseService);
+            licenseId = LicenseManager.getFormalLicenseId(licenseService);
             if (null != licenseId) {
                 //有正式许可id，则申请正式许可
                 formalLicenseResponse = LicenseManager.applyFormalLicense(licenseService, licenseId);
@@ -283,6 +284,10 @@ public class CloudLicenseDialog extends JDialog {
                 Application.getActiveApplication().getOutput().output(e);
             }
         }
+    }
+
+    public LicenseId getLicenseId() {
+        return licenseId;
     }
 
     public LicenseService getLicenseService() {
