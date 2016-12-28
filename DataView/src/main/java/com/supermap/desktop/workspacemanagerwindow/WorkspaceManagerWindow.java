@@ -81,7 +81,7 @@ import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindow
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.THIRD_LEVEL;
 
 /**
- * @author YuanR 2016.12.24
+ * @author YuanR 2016.12.28
  */
 public class WorkspaceManagerWindow extends FormBaseChild {
 	private JTable jTable;
@@ -178,7 +178,6 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		//增加窗口监听
 		this.addFormShownListener(shownListener);
 		this.addFormClosingListener(closingListener);
-
 	}
 
 	/**
@@ -236,7 +235,6 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 				//设置model为场景
 				jTable.setModel(new GetTableModel().getScenesTableModel(getActiveApplication().getWorkspace().getScenes()));
 				jTable.setDefaultRenderer(Icon.class, new TableCellRendererScenes());
-
 				//当父节点为为场景节点时，即选中了场景
 				if (selectedNodeDatasParent.getData() instanceof Scenes) {
 					//当点击了tree中数据集节点，窗口中相应节点高亮显示
@@ -352,7 +350,6 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		//工作空间打开监听
 		getWorkspaceManager().getWorkspace().addOpenedListener(this.workspaceOpenedListener);
 
-
 		//数据源打开监听
 		getWorkspaceManager().getWorkspace().getDatasources().addOpenedListener(this.datasourceOpenedListener);
 		//数据源关闭监听
@@ -391,7 +388,6 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 		//getWorkspaceManager().getWorkspace().removeClosingListener(this.workspaceClosingListener);
 		//工作空间打开监听
 		//getWorkspaceManager().getWorkspace().removeOpenedListener(this.workspaceOpenedListener);
-
 
 		//移除数据源打开监听
 		getWorkspaceManager().getWorkspace().getDatasources().removeOpenedListener(this.datasourceOpenedListener);
