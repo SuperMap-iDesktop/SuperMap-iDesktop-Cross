@@ -69,6 +69,10 @@ public class CoreActivator implements BundleActivator {
 	 */
 	private void loginOnlineLicense(BundleContext bundleContext) {
 		try {
+//			startUp(bundleContext, "null");
+//			if (true) {
+//				return;
+//			}
 //            if (UICommonToolkit.showConfirmDialog(message) == JOptionPane.OK_OPTION) {
 			//登录
 			CloudLicenseDialog dialog = new CloudLicenseDialog();

@@ -12,7 +12,10 @@ import com.supermap.desktop.icloud.online.AuthenticationException;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.JOptionPaneUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,8 +31,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URI;
-import java.text.MessageFormat;
 
 /**
  * Created by xie on 2016/12/20.
@@ -270,7 +271,7 @@ public class CloudLicenseDialog extends JDialog {
         this.buttonLogin = new JButton();
         this.buttonClose = new JButton();
         initToken();
-        this.checkBoxAutoLogin.setEnabled(false);
+	    this.checkBoxAutoLogin.setVisible(false);
     }
 
     private void initToken() {
