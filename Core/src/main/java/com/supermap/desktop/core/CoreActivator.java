@@ -1,17 +1,15 @@
 package com.supermap.desktop.core;
 
+import com.supermap.data.CloudLicense;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.exception.SmUncaughtExceptionHandler;
 import com.supermap.desktop.icloud.CloudLicenseDialog;
 import com.supermap.desktop.icloud.LicenseManager;
-import com.supermap.desktop.icloud.api.LicenseService;
-import com.supermap.desktop.icloud.commontypes.ApplyFormalLicenseResponse;
-import com.supermap.desktop.icloud.commontypes.ApplyTrialLicenseResponse;
-import com.supermap.desktop.icloud.commontypes.LicenseId;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.SplashScreenUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import org.osgi.framework.*;
 
 import java.io.File;
@@ -22,12 +20,14 @@ public class CoreActivator implements BundleActivator {
         GlobalParameters.initResource();
     }
 
-    ServiceRegistration<?> registration;
+    //    ServiceRegistration<?> registration;
     CoreServiceTracker serviceTracker;
-    private LicenseService service;
-    private ApplyFormalLicenseResponse formLicenseResponse;
-    private ApplyTrialLicenseResponse trialLicenseResponse;
-    private LicenseId licenseId;
+    private String userName;
+    private String passWord;
+//    private LicenseService service;
+//    private ApplyFormalLicenseResponse formLicenseResponse;
+//    private ApplyTrialLicenseResponse trialLicenseResponse;
+//    private LicenseId licenseId;
 
     /*
      * (non-Javadoc)
@@ -37,22 +37,22 @@ public class CoreActivator implements BundleActivator {
     @Override
     public void start(final BundleContext context) throws Exception {
         //本机许可是否满足java版本需求
-        if (LicenseManager.valiteLicense()) {
+//        if (LicenseManager.valiteLicense()) {
+//            //yes
+//            startUp(context, "null");
+//        } else {
+        //判断试用许可
+        //no
+        if (LicenseManager.valiteTrialLicense()) {
+            //是否有离线许可
             //yes
             startUp(context, "null");
         } else {
-            //判断试用许可
+            //没有离线许可，登录云许可
             //no
-            if (LicenseManager.valiteTrialLicense()) {
-                //是否有离线许可
-                //yes
-                startUp(context, "null");
-            } else {
-                //没有离线许可，登录云许可
-                //no
-                loginOnlineLicense(context);
-            }
+            loginOnlineLicense(context);
         }
+//        }
 
     }
 
@@ -67,21 +67,23 @@ public class CoreActivator implements BundleActivator {
             //登录
             CloudLicenseDialog dialog = new CloudLicenseDialog();
             if (dialog.showDialog() == CloudLicenseDialog.DIALOGRESULT_OK) {
-                service = dialog.getLicenseService();
-                //许可申请成功
-                licenseId = dialog.getLicenseId();
-                formLicenseResponse = dialog.getFormalLicenseResponse();
-                trialLicenseResponse = dialog.getTrialLicenseResponse();
-                if (null != formLicenseResponse) {
-                    startUp(bundleContext, formLicenseResponse.license);
-                } else if (null != trialLicenseResponse) {
-                    startUp(bundleContext, trialLicenseResponse.license);
-                } else {
-                    //不登陆
-                    stop(bundleContext);
-                    System.exit(1);
-                    return;
-                }
+                userName = dialog.getUserName();
+                passWord = dialog.getUserName();
+//                service = dialog.getLicenseService();
+//                //许可申请成功
+//                licenseId = dialog.getLicenseId();
+//                formLicenseResponse = dialog.getFormalLicenseResponse();
+//                trialLicenseResponse = dialog.getTrialLicenseResponse();
+//                if (null != formLicenseResponse) {
+//                    startUp(bundleContext, formLicenseResponse.license);
+//                } else if (null != trialLicenseResponse) {
+//                    startUp(bundleContext, trialLicenseResponse.license);
+//                } else {
+//                    //不登陆
+//                    stop(bundleContext);
+//                    System.exit(1);
+//                    return;
+//                }
 //                }
             } else {
                 //不登陆
@@ -156,14 +158,17 @@ public class CoreActivator implements BundleActivator {
     @Override
     public void stop(BundleContext context) throws Exception {
         System.out.println("Goodbye SuperMap === Core!!");
-        if (null != service && null != licenseId && null != formLicenseResponse) {
-            //退出产品时，归还正式许可
-            LicenseManager.returnFormLicense(service, formLicenseResponse, licenseId);
+        if (!StringUtilities.isNullOrEmpty(userName) && !StringUtilities.isNullOrEmpty(passWord)) {
+            CloudLicense.logout(userName, passWord);
         }
-        if (null != service && null != trialLicenseResponse) {
-            //退出产品时，归还试用许可
-            LicenseManager.returnTrialLicense(service, trialLicenseResponse);
-        }
+//        if (null != service && null != licenseId && null != formLicenseResponse) {
+//            //退出产品时，归还正式许可
+//            LicenseManager.returnFormLicense(service, formLicenseResponse, licenseId);
+//        }
+//        if (null != service && null != trialLicenseResponse) {
+//            //退出产品时，归还试用许可
+//            LicenseManager.returnTrialLicense(service, trialLicenseResponse);
+//        }
         this.serviceTracker.close();
 //		this.registration.unregister();
     }

@@ -27,9 +27,9 @@ import java.util.Iterator;
  * 许可管理类
  */
 public class LicenseManager {
-    private static final String LIC_DIRCTORY = "C:\\Program Files\\Common Files\\SuperMap\\License";
-    private static final String LINUX_LIC_DIRCTORY = "/opt/License";
-    private static final String ONLINE_DIRCTORY = SystemPropertyUtilities.isWindows() ? LIC_DIRCTORY + "\\online\\" : LINUX_LIC_DIRCTORY + "/online/";
+    private static final String LIC_DIRCTORY = "C:/Program Files/Common Files/SuperMap/License/";
+    private static final String LINUX_LIC_DIRCTORY = "/opt/License/";
+    private static final String ONLINE_DIRCTORY = SystemPropertyUtilities.isWindows() ? LIC_DIRCTORY+"online/" : LINUX_LIC_DIRCTORY+"online/";
     private static final String ONLINE_LICENSEFILE = ONLINE_DIRCTORY + ComputerUtilities.getComputerName() + "_8C.lic";
 
     /**
@@ -215,6 +215,10 @@ public class LicenseManager {
     public static File buildLicenseFile(String licenseStr) {
         FileOutputStream outPutStream = null;
         try {
+            File fileDir = new File(ONLINE_DIRCTORY);
+            if (!fileDir.exists()){
+                fileDir.mkdir();
+            }
             outPutStream = new FileOutputStream(ONLINE_LICENSEFILE);
             outPutStream.write(licenseStr.getBytes());
         } catch (FileNotFoundException e) {
@@ -230,6 +234,7 @@ public class LicenseManager {
                 Application.getActiveApplication().getOutput().output(e);
             }
         }
+        License.setSpecifyLicenseFilePath(ONLINE_DIRCTORY);
         return new File(ONLINE_LICENSEFILE);
     }
 
