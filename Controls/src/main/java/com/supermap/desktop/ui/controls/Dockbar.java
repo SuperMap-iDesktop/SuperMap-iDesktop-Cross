@@ -6,10 +6,12 @@ import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop.enums.DockState;
 import com.supermap.desktop.ui.XMLDockbar;
 import org.apache.log4j.Hierarchy;
+import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.docking.DockingManager;
 import org.flexdock.docking.event.DockingEvent;
 import org.flexdock.docking.event.DockingListener;
+import org.flexdock.util.DockingUtility;
 import org.flexdock.view.View;
 
 import javax.swing.*;
@@ -123,7 +125,7 @@ public class Dockbar implements IDockbar {
 
 	@Override
 	public boolean isVisible() {
-		return this.xmlDockbar.getVisible();
+		return DockingManager.isDocked((Dockable) this.view) || DockingUtility.isMinimized(this.view);
 	}
 
 	@Override

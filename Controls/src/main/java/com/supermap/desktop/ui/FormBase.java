@@ -36,6 +36,7 @@ import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.WorkspaceUtilities;
 import com.supermap.layout.MapLayout;
 import com.supermap.realspace.Scene;
+import org.flexdock.docking.DockingManager;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -75,6 +76,7 @@ public class FormBase extends JFrame implements IFormMain {
 	private ArrayList<FormLoadedListener> formLoadedListeners = new ArrayList<>();
 
 	public FormBase() {
+		DockingManager.setApplicationWindow(this);
 		this.formManager = new FormManager();
 		this.frameMenuManager = new FrameMenuManager();
 		this.contextMenuManager = new ContextMenuManager();
@@ -194,7 +196,7 @@ public class FormBase extends JFrame implements IFormMain {
 		IPropertyManager iPropertyManager = null;
 		try {
 			Dockbar dockbar = (Dockbar) getDockbarManager().get(Class.forName("com.supermap.desktop.controls.property.DataPropertyContainer"));
-			iPropertyManager = (IPropertyManager)dockbar.getInnerComponent();
+			iPropertyManager = (IPropertyManager) dockbar.getInnerComponent();
 		} catch (ClassNotFoundException e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}

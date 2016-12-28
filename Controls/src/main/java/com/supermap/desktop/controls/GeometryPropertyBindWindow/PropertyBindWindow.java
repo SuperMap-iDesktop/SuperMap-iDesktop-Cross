@@ -28,8 +28,8 @@ public class PropertyBindWindow implements IPropertyBindWindow {
                 if (null != form && form instanceof IFormTabular) {
                     currentTabuler = (IFormTabular) form;
                 }
-                if (null != dataset && dataset.equals(bindWindow.getActiveLayer().getDataset()) && !bindWindow.getTabular().equals(currentTabuler)) {
-                    bindWindow.refreshFormTabular(selectRows);
+	            if (null != dataset && bindWindow.getActiveLayer() != null && !bindWindow.getActiveLayer().isDisposed() && dataset.equals(bindWindow.getActiveLayer().getDataset()) && !bindWindow.getTabular().equals(currentTabuler)) {
+		            bindWindow.refreshFormTabular(selectRows);
                 } else if (null == dataset) {
                     bindWindow.refreshFormTabular(selectRows);
                 }
