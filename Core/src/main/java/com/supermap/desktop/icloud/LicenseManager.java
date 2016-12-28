@@ -2,52 +2,55 @@ package com.supermap.desktop.icloud;
 
 
 import com.supermap.data.License;
+import com.supermap.data.Toolkit;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.icloud.api.LicenseService;
 import com.supermap.desktop.icloud.commontypes.*;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.ComputerUtilities;
 import com.supermap.desktop.utilities.JOptionPaneUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 /**
  * Created by xie on 2016/12/23.
  * 许可管理类
  */
 public class LicenseManager {
-    private static final String LIC_DIRCTORY = "C:\\Program Files\\Common Files\\SuperMap\\License";
-    private static final String LINUX_LIC_DIRCTORY = "/opt/License";
-    private static boolean hasOffLineLicense = false;
+    private static final String LIC_DIRCTORY = "C:/Program Files/Common Files/SuperMap/License/";
+    private static final String LINUX_LIC_DIRCTORY = "/opt/License/";
+    private static final String ONLINE_DIRCTORY = SystemPropertyUtilities.isWindows() ? LIC_DIRCTORY+"online/" : LINUX_LIC_DIRCTORY+"online/";
+    private static final String ONLINE_LICENSEFILE = ONLINE_DIRCTORY + ComputerUtilities.getComputerName() + "_8C.lic";
 
     /**
-     * 获取离线许可文件
+     * 验证试用许可是否可用
      *
      * @return
      */
-    public static File getOffLineLicense() {
-        File result = null;
-        File licDir;
-        if (SystemPropertyUtilities.isWindows()) {
-            licDir = new File(LIC_DIRCTORY);
-        } else {
-            //linux系统暂不处理
-            licDir = new File(LINUX_LIC_DIRCTORY);
-        }
-        if (licDir.exists() && licDir.isDirectory()) {
-            File[] files = licDir.listFiles();
-            int size = files.length;
-            if (size > 0 && files[0].getName().endsWith("lic")) {
-                result = files[0];
-                hasOffLineLicense = true;
+    public static boolean valiteTrialLicense() {
+        boolean result = false;
+        ArrayList<com.supermap.data.ProductType> trialLicense = Toolkit.getTrialProducts();
+        License var2 = new License();
+        Iterator var3 = trialLicense.iterator();
+
+        while (var3.hasNext()) {
+            com.supermap.data.ProductType var4 = (com.supermap.data.ProductType) var3.next();
+            int var1 = var2.connect(var4);
+            if (var1 == 0) {
+                result = true;
+                break;
             }
         }
-
         return result;
     }
 
@@ -62,62 +65,11 @@ public class LicenseManager {
         /**
          * JAVA开发版本中用到了许可类型，只用全部满足时才为true
          */
-        com.supermap.data.ProductType[] productTypes = {com.supermap.data.ProductType.IOBJECTS_ADDRESS_MATCHING_DEVELOP, com.supermap.data.ProductType.IOBJECTS_CHART_DEVELOP,
-                com.supermap.data.ProductType.IOBJECTS_CORE_DEVELOP, com.supermap.data.ProductType.IOBJECTS_LAYOUT_DEVELOP, com.supermap.data.ProductType.IOBJECTS_NETWORK_DEVELOP,
-                com.supermap.data.ProductType.IOBJECTS_REALSPACE_EFFECT_DEVELOP, com.supermap.data.ProductType.IOBJECTS_REALSPACE_NETWORK_ANALYST_DEVELOP,
-                com.supermap.data.ProductType.IOBJECTS_REALSPACE_SPATIAL_ANALYST_DEVELOP, com.supermap.data.ProductType.IOBJECTS_SPACE_DEVELOP,
-                com.supermap.data.ProductType.IOBJECTS_SPATIAL_DEVELOP, com.supermap.data.ProductType.IOBJECTS_TOPOLOGY_DEVELOP, com.supermap.data.ProductType.IOBJECTS_TRAFFIC_ANALYST_DEVELOP};
-        int length = productTypes.length;
-        int licenseCount = 0;
-        for (int i = 0; i < length; i++) {
-            int valite = license.connect(productTypes[i]);
-            if (valite == 0) {
-                licenseCount++;
-            }
-        }
-        if (licenseCount == length) {
+        int valite = license.connect(com.supermap.data.ProductType.IOBJECTS_CORE_DEVELOP);
+        if (valite == 0) {
             valitedLicense = true;
         }
         return valitedLicense;
-    }
-
-    /**
-     * 判断离线许可是否过期
-     *
-     * @return
-     */
-    public static boolean isOffLineLicenseOverdue() {
-        boolean result = false;
-        if (hasOffLineLicense) {
-            File licFile = getOffLineLicense();
-            FileInputStream stream = null;
-            BufferedReader br;
-            try {
-                stream = new FileInputStream(licFile);
-                br = new BufferedReader(new InputStreamReader(stream));
-                String tempstr = "";
-                while ((tempstr = br.readLine()) != null) {
-                    if (tempstr.contains("<end>")) {
-                        tempstr = tempstr.substring(tempstr.indexOf(">") + 1, tempstr.lastIndexOf("<"));
-                        break;
-                    }
-                }
-                if (compareDate(tempstr) == 1) {
-                    result = true;
-                }
-            } catch (IOException e) {
-                Application.getActiveApplication().getOutput().output(e);
-            } finally {
-                try {
-                    if (null != stream) {
-                        stream.close();
-                    }
-                } catch (IOException e) {
-                    Application.getActiveApplication().getOutput().output(e);
-                }
-            }
-        }
-        return result;
     }
 
     /**
@@ -149,15 +101,6 @@ public class LicenseManager {
             exception.printStackTrace();
         }
         return 0;
-    }
-
-    /**
-     * 是否存在离线许可
-     *
-     * @return
-     */
-    public static boolean hasOffLineLicense() {
-        return getOffLineLicense() != null;
     }
 
 
@@ -223,6 +166,76 @@ public class LicenseManager {
             JOptionPaneUtilities.showConfirmDialog(CommonProperties.getString("String_ApplyFormalLicenseFalure"));
         }
         return response.data;
+    }
+
+    /**
+     * 归还试用许可
+     *
+     * @param licenseService
+     * @param response
+     */
+    public static void returnTrialLicense(LicenseService licenseService, ApplyTrialLicenseResponse response) {
+        try {
+            licenseService.deleteTrialLicense(response.returnId);
+            File file = new File(ONLINE_DIRCTORY);
+            if (file.exists()) {
+                file.delete();
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+
+    /**
+     * 归还正式许可
+     *
+     * @param licenseService
+     * @param response
+     */
+    public static void returnFormLicense(LicenseService licenseService, ApplyFormalLicenseResponse response, LicenseId licenseId) {
+        ReturnLicenseRequest request = new ReturnLicenseRequest();
+        request.licenseId = licenseId;
+        request.returnId = response.returnId;
+        try {
+            licenseService.returns(request);
+            File file = new File(ONLINE_DIRCTORY);
+            if (file.exists()) {
+                file.delete();
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        }
+    }
+
+    /**
+     * 创建许可文件
+     *
+     * @param licenseStr
+     */
+    public static File buildLicenseFile(String licenseStr) {
+        FileOutputStream outPutStream = null;
+        try {
+            File fileDir = new File(ONLINE_DIRCTORY);
+            if (!fileDir.exists()){
+                fileDir.mkdir();
+            }
+            outPutStream = new FileOutputStream(ONLINE_LICENSEFILE);
+            outPutStream.write(licenseStr.getBytes());
+        } catch (FileNotFoundException e) {
+            Application.getActiveApplication().getOutput().output(e);
+        } catch (IOException e) {
+            Application.getActiveApplication().getOutput().output(e);
+        } finally {
+            try {
+                if (null != outPutStream) {
+                    outPutStream.close();
+                }
+            } catch (IOException e) {
+                Application.getActiveApplication().getOutput().output(e);
+            }
+        }
+        License.setSpecifyLicenseFilePath(ONLINE_DIRCTORY);
+        return new File(ONLINE_LICENSEFILE);
     }
 
     /**

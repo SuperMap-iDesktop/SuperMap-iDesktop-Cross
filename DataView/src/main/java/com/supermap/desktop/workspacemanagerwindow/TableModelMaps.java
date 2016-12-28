@@ -1,7 +1,6 @@
 package com.supermap.desktop.workspacemanagerwindow;
 
 import com.supermap.data.Maps;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 
@@ -44,6 +43,7 @@ public class TableModelMaps extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int row, int col) {
+		//增加">0"判断，防止索引越界
 		if (this.maps.getCount() > 0) {
 			if (col == COLUMN_NAME) {
 				return this.maps.get(row);

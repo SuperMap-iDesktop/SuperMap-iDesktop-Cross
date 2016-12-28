@@ -39,6 +39,7 @@ import java.util.WeakHashMap;
 import javax.swing.SwingUtilities;
 
 
+import org.flexdock.dockbar.DockbarManager;
 import org.flexdock.dockbar.event.DockableEvent;
 import org.flexdock.dockbar.event.DockableEventHandler;
 import org.flexdock.dockbar.event.DockableListener;
@@ -124,6 +125,8 @@ public class DockingManager implements DockingConstants {
 	private static final Map maximizedStatesByRootPort = new HashMap();
 
 	private static Object persistentIdLock = new Object();
+
+	private static Component applicationWindow; // 应用程序主窗口，主要用于 SetMinimized
 
 	private String defaultLayoutManagerClass;
 
@@ -239,6 +242,10 @@ public class DockingManager implements DockingConstants {
 
 	private static DockingManager getDockingManager() {
 		return SINGLETON;
+	}
+
+	public static void setApplicationWindow(Component window) {
+		applicationWindow = window;
 	}
 
 	public static void addDragSource(Dockable dockable, Component dragSrc) {
@@ -613,6 +620,10 @@ public class DockingManager implements DockingConstants {
 	public static boolean isDocked(DockingPort dockingPort, Dockable dockable) {
 		return dockingPort == null || dockable == null ? false : dockingPort
 				.isParentDockingPort(dockable.getComponent());
+	}
+
+	public static boolean isMinimized(Dockable dockable) {
+		return DockingUtility.isMinimized(dockable);
 	}
 
 	/**
@@ -2211,8 +2222,12 @@ public class DockingManager implements DockingConstants {
 		if (dockable == null)
 			return;
 
-		if (window == null)
+		if (window == null) {
+			window = applicationWindow;
+		}
+		if (window == null) {
 			window = SwingUtility.getActiveWindow();
+		}
 		if (window == null)
 			return;
 

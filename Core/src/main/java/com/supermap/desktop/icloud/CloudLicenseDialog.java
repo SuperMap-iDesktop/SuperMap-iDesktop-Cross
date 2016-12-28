@@ -1,9 +1,7 @@
 package com.supermap.desktop.icloud;
 
+import com.supermap.data.CloudLicense;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.icloud.api.LicenseService;
 import com.supermap.desktop.icloud.commontypes.ApplyFormalLicenseResponse;
 import com.supermap.desktop.icloud.commontypes.ApplyTrialLicenseResponse;
@@ -11,6 +9,9 @@ import com.supermap.desktop.icloud.commontypes.LicenseId;
 import com.supermap.desktop.icloud.commontypes.ProductType;
 import com.supermap.desktop.icloud.impl.LicenseServiceFactory;
 import com.supermap.desktop.icloud.online.AuthenticationException;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.JOptionPaneUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
@@ -70,6 +71,9 @@ public class CloudLicenseDialog extends JDialog {
         }
     };
     private int dialogResult;
+    private LicenseId licenseId;
+    private String userName;
+    private String passWord;
 
     private void connect(String url) {
         URI uri = URI.create(url);
@@ -91,29 +95,32 @@ public class CloudLicenseDialog extends JDialog {
     };
 
     private void login() {
-        String userName = textFieldUserName.getText();
-        String passWord = String.valueOf(fieldPassWord.getPassword());
-        try {
-            licenseService = LicenseServiceFactory.create(userName, passWord, ProductType.IDESKTOP);
-            LicenseId licenseId = LicenseManager.getFormalLicenseId(licenseService);
-            if (null != licenseId) {
-                //有正式许可id，则申请正式许可
-                formalLicenseResponse = LicenseManager.applyFormalLicense(licenseService, licenseId);
-                dialogResult = DIALOGRESULT_OK;
-                saveToken();
-            } else {
-                //没有正式许可id,则申请试用许可
-                trialLicenseResponse = LicenseManager.applyTrialLicense(licenseService);
-                dialogResult =DIALOGRESULT_OK;
-                saveToken();
-            }
-        } catch (AuthenticationException e1) {
-            JOptionPaneUtilities.showMessageDialog(CommonProperties.getString("String_PermissionCheckFailed"));
-            dialogResult = DIALOGRESULT_CANCEL;
-        } finally {
-            removeEvents();
-            dispose();
-        }
+        userName = textFieldUserName.getText();
+        passWord = String.valueOf(fieldPassWord.getPassword());
+//        try {
+        CloudLicense.login(userName, passWord);
+        saveToken();
+        dialogResult = DIALOGRESULT_OK;
+//            licenseService = LicenseServiceFactory.create(userName, passWord, ProductType.IDESKTOP);
+//            licenseId = LicenseManager.getFormalLicenseId(licenseService);
+//            if (null != licenseId) {
+//                //有正式许可id，则申请正式许可
+//                formalLicenseResponse = LicenseManager.applyFormalLicense(licenseService, licenseId);
+//                dialogResult = DIALOGRESULT_OK;
+//                saveToken();
+//            } else {
+//                //没有正式许可id,则申请试用许可
+//                trialLicenseResponse = LicenseManager.applyTrialLicense(licenseService);
+//                dialogResult = DIALOGRESULT_OK;
+//                saveToken();
+//            }
+//        } catch (AuthenticationException e1) {
+//            JOptionPaneUtilities.showMessageDialog(CommonProperties.getString("String_PermissionCheckFailed"));
+//            dialogResult = DIALOGRESULT_CANCEL;
+//        } finally {
+//            removeEvents();
+//            dispose();
+//        }
     }
 
     private void saveToken() {
@@ -285,6 +292,10 @@ public class CloudLicenseDialog extends JDialog {
         }
     }
 
+    public LicenseId getLicenseId() {
+        return licenseId;
+    }
+
     public LicenseService getLicenseService() {
         return licenseService;
     }
@@ -295,6 +306,22 @@ public class CloudLicenseDialog extends JDialog {
 
     public ApplyTrialLicenseResponse getTrialLicenseResponse() {
         return trialLicenseResponse;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassWord() {
+        return passWord;
+    }
+
+    public void setPassWord(String passWord) {
+        this.passWord = passWord;
     }
 }
 
