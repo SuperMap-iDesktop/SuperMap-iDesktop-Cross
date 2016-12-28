@@ -98,8 +98,8 @@ public class CoreActivator implements BundleActivator {
     }
 
     private void startUp(final BundleContext context, String licenseStr) {
-        File licenseFile = LicenseManager.buildLicenseFile(licenseStr);
-        if (licenseFile.exists() || "null".equals(licenseStr)) {
+//        File licenseFile = LicenseManager.buildLicenseFile(licenseStr);
+        if ("null".equals(licenseStr)) {
             // 设置没有被捕捉的异常的处理方法
             Thread.setDefaultUncaughtExceptionHandler(new SmUncaughtExceptionHandler());
             LogUtilities.outPut(LogUtilities.getSeparator());

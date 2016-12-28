@@ -97,30 +97,30 @@ public class CloudLicenseDialog extends JDialog {
     private void login() {
         userName = textFieldUserName.getText();
         passWord = String.valueOf(fieldPassWord.getPassword());
-//        try {
-        CloudLicense.login(userName, passWord);
-        saveToken();
+        try {
+//        CloudLicense.login(userName, passWord);
+//        saveToken();
         dialogResult = DIALOGRESULT_OK;
-//            licenseService = LicenseServiceFactory.create(userName, passWord, ProductType.IDESKTOP);
-//            licenseId = LicenseManager.getFormalLicenseId(licenseService);
-//            if (null != licenseId) {
-//                //有正式许可id，则申请正式许可
-//                formalLicenseResponse = LicenseManager.applyFormalLicense(licenseService, licenseId);
-//                dialogResult = DIALOGRESULT_OK;
-//                saveToken();
-//            } else {
-//                //没有正式许可id,则申请试用许可
-//                trialLicenseResponse = LicenseManager.applyTrialLicense(licenseService);
-//                dialogResult = DIALOGRESULT_OK;
-//                saveToken();
-//            }
-//        } catch (AuthenticationException e1) {
-//            JOptionPaneUtilities.showMessageDialog(CommonProperties.getString("String_PermissionCheckFailed"));
-//            dialogResult = DIALOGRESULT_CANCEL;
-//        } finally {
-//            removeEvents();
-//            dispose();
-//        }
+            licenseService = LicenseServiceFactory.create(userName, passWord, ProductType.IDESKTOP);
+            licenseId = LicenseManager.getFormalLicenseId(licenseService);
+            if (null != licenseId) {
+                //有正式许可id，则申请正式许可
+                formalLicenseResponse = LicenseManager.applyFormalLicense(licenseService, licenseId);
+                dialogResult = DIALOGRESULT_OK;
+                saveToken();
+            } else {
+                //没有正式许可id,则申请试用许可
+                trialLicenseResponse = LicenseManager.applyTrialLicense(licenseService);
+                dialogResult = DIALOGRESULT_OK;
+                saveToken();
+            }
+        } catch (AuthenticationException e1) {
+            JOptionPaneUtilities.showMessageDialog(CommonProperties.getString("String_PermissionCheckFailed"));
+            dialogResult = DIALOGRESULT_CANCEL;
+        } finally {
+            removeEvents();
+            dispose();
+        }
     }
 
     private void saveToken() {
