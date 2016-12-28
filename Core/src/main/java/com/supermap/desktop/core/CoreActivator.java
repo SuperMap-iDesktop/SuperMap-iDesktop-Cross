@@ -10,9 +10,11 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.SplashScreenUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import org.osgi.framework.*;
-
-import java.io.File;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.SynchronousBundleListener;
 
 public class CoreActivator implements BundleActivator {
 
@@ -66,9 +68,11 @@ public class CoreActivator implements BundleActivator {
 //            if (UICommonToolkit.showConfirmDialog(message) == JOptionPane.OK_OPTION) {
             //登录
             CloudLicenseDialog dialog = new CloudLicenseDialog();
-            if (dialog.showDialog() == CloudLicenseDialog.DIALOGRESULT_OK) {
-                userName = dialog.getUserName();
-                passWord = dialog.getUserName();
+	        dialog.setVisible(true);
+	        if (!StringUtilities.isNullOrEmpty(dialog.getUserName()) && !StringUtilities.isNullOrEmpty(dialog.getPassWord())) {
+		        userName = dialog.getUserName();
+		        passWord = dialog.getPassWord();
+		        startUp(bundleContext, "null");
 //                service = dialog.getLicenseService();
 //                //许可申请成功
 //                licenseId = dialog.getLicenseId();

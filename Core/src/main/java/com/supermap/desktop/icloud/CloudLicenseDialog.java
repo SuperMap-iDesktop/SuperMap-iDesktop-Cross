@@ -1,5 +1,6 @@
 package com.supermap.desktop.icloud;
 
+
 import com.supermap.data.CloudLicense;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.icloud.api.LicenseService;
@@ -106,6 +107,7 @@ public class CloudLicenseDialog extends JDialog {
 	    CloudLicense.login(userName, passWord);
 	    saveToken();
 	    dialogResult = DIALOGRESULT_OK;
+	    dispose();
 //            licenseService = LicenseServiceFactory.create(userName, passWord, ProductType.IDESKTOP);
 //            licenseId = LicenseManager.getFormalLicenseId(licenseService);
 //            if (null != licenseId) {
@@ -170,6 +172,7 @@ public class CloudLicenseDialog extends JDialog {
     public CloudLicenseDialog() {
         super();
         setModal(true);
+	    init();
     }
 
     private void init() {
@@ -275,9 +278,8 @@ public class CloudLicenseDialog extends JDialog {
                         textFieldUserName.setText(token[USER_NAME]);
                         fieldPassWord.setText(token[PASS_WORD]);
                     }
-                    this.buttonLogin.setEnabled(!autoLogin);
                     if (autoLogin) {
-                        login();
+	                    buttonLogin.doClick();
                     }
                 }
             }
