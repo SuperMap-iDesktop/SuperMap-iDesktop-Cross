@@ -9,6 +9,7 @@ import com.supermap.desktop.icloud.commontypes.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.ComputerUtilities;
 import com.supermap.desktop.utilities.JOptionPaneUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import java.io.File;
@@ -27,10 +28,28 @@ import java.util.Iterator;
  * 许可管理类
  */
 public class LicenseManager {
-    private static final String LIC_DIRCTORY = "C:/Program Files/Common Files/SuperMap/License/";
-    private static final String LINUX_LIC_DIRCTORY = "/opt/License/";
-    private static final String ONLINE_DIRCTORY = SystemPropertyUtilities.isWindows() ? LIC_DIRCTORY+"online/" : LINUX_LIC_DIRCTORY+"online/";
-    private static final String ONLINE_LICENSEFILE = ONLINE_DIRCTORY + ComputerUtilities.getComputerName() + "_8C.lic";
+    private static final String LIC_DIRCTORY = "../Configuration";
+//    private static final String ONLINE_LICENSEFILE = ONLINE_DIRCTORY + ComputerUtilities.getComputerName() + "_8C.lic";
+
+
+
+    /**
+     * 获取指定相对路径的绝对路径
+     *
+     * @param pathName
+     * @return
+     */
+    private static String getFullPathName(String pathName, boolean isFolder) {
+
+        String result = System.getProperty("user.dir") + File.separator + "bin";
+        try {
+            String[] pathPrams = new String[]{result, pathName};
+            result = combinePath(pathPrams, isFolder);
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return result;
+    }
 
     /**
      * 验证试用许可是否可用
@@ -55,6 +74,76 @@ public class LicenseManager {
     }
 
     /**
+     * 获取指定路径的上级路径
+     *
+     * @param pathName
+     * @return
+     */
+    private  static String getParentPath(String pathName) {
+        String pathNameTemp = pathName;
+        String result = "";
+        try {
+            if (pathNameTemp != "") {
+                pathNameTemp = pathNameTemp.replace("\\", "/");
+                String[] splits = pathNameTemp.split("/");
+
+                for (int i = 0; i < splits.length - 1; i++) {
+                    result += splits[i];
+                    result += "/";
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return result;
+    }
+    /**
+     * 合并多个路径字符串
+     *
+     * @param paths    路径数组
+     * @param isFolder 是否是文件夹路径
+     * @return 合并后的路径
+     */
+    private  static String combinePath(String[] paths, boolean isFolder) {
+        String result = "";
+        try {
+            if (paths.length > 0) {
+                result = paths[0];
+            }
+
+            if (result.endsWith("/") || result.endsWith("\\")) {
+                // do nothing
+            } else {
+                result += "/";
+            }
+
+            for (int i = 1; i < paths.length; i++) {
+                if (paths[i] != null && paths[i] != "") {
+                    if (paths[i].startsWith("/") || paths[i].startsWith("\\")) {
+                        paths[i] = paths[i].substring(1, paths[i].length());
+                    } else if (paths[i].startsWith("../") || paths[i].startsWith("..\\")) {
+                        result = getParentPath(result);
+                        paths[i] = paths[i].substring(3, paths[i].length());
+                    }
+                    result += paths[i];
+
+                    if (result.endsWith("/") || result.endsWith("\\")) {
+                        // do nothing
+                    } else {
+                        result += "/";
+                    }
+                }
+            }
+
+            if (!isFolder && (result.endsWith("/") || result.endsWith("\\"))) {
+                result = result.substring(0, result.length() - 1);
+            }
+        } catch (Exception ex) {
+            System.out.println(ex);
+        }
+        return result;
+    }
+    /**
      * 判段正式许可(此方法无法检测本机试用许可，只对java开发有用)
      *
      * @return
@@ -70,37 +159,6 @@ public class LicenseManager {
             valitedLicense = true;
         }
         return valitedLicense;
-    }
-
-    /**
-     * 判断日期大小
-     *
-     * @param endStr
-     * @return
-     */
-    private static int compareDate(String endStr) {
-        Date date = new Date();
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-        String dateStr = df.format(date);
-        try {
-            Calendar calendar = Calendar.getInstance();
-            int year = Integer.parseInt(endStr.substring(0, 4));
-            int moth = Integer.parseInt(endStr.substring(4, 6));
-            int day = Integer.parseInt(endStr.substring(6, 8));
-            calendar.set(year, moth, day);
-            Date endDate = calendar.getTime();
-            Date dfDate = df.parse(dateStr);
-            if (dfDate.getTime() > endDate.getTime()) {
-                return 1;
-            } else if (dfDate.getTime() < endDate.getTime()) {
-                return -1;
-            } else {
-                return 0;
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
-        return 0;
     }
 
 
@@ -125,7 +183,7 @@ public class LicenseManager {
                     request.software.productType = ProductType.ICLOUDMANAGER;
                     request.software.version = Version.VERSION_8C;
                     request.machine.name = ComputerUtilities.getComputerName();
-                    request.machine.macAddr = ComputerUtilities.getMac();
+                    request.machine.macAddr = ComputerUtilities.getMACAddress();
                     response = licenseService.apply(request);
                     //用于归还的试用许可信息
                     System.out.println(response.data.returnId);
@@ -158,7 +216,7 @@ public class LicenseManager {
             request.software.productType = ProductType.ICLOUDMANAGER;
             request.software.version = Version.VERSION_8C;
             request.machine.name = ComputerUtilities.getComputerName();
-            request.machine.macAddr = ComputerUtilities.getMac();
+            request.machine.macAddr = ComputerUtilities.getMACAddress();
             response = licenseService.apply(request);
             System.out.println(response.data.returnId);
             System.out.println(response.data.license);
@@ -177,7 +235,8 @@ public class LicenseManager {
     public static void returnTrialLicense(LicenseService licenseService, ApplyTrialLicenseResponse response) {
         try {
             licenseService.deleteTrialLicense(response.returnId);
-            File file = new File(ONLINE_DIRCTORY);
+            String fileName = getFullPathName(LIC_DIRCTORY,true)+"/"+ComputerUtilities.getComputerName() + "_8C.lic";
+            File file = new File(fileName);
             if (file.exists()) {
                 file.delete();
             }
@@ -198,7 +257,8 @@ public class LicenseManager {
         request.returnId = response.returnId;
         try {
             licenseService.returns(request);
-            File file = new File(ONLINE_DIRCTORY);
+            String fileName = getFullPathName(LIC_DIRCTORY,true)+"/"+ComputerUtilities.getComputerName() + "_8C.lic";
+            File file = new File(fileName);
             if (file.exists()) {
                 file.delete();
             }
@@ -214,12 +274,9 @@ public class LicenseManager {
      */
     public static File buildLicenseFile(String licenseStr) {
         FileOutputStream outPutStream = null;
+        String fileName = getFullPathName(LIC_DIRCTORY,true)+"/"+ComputerUtilities.getComputerName() + "_8C.lic";
         try {
-            File fileDir = new File(ONLINE_DIRCTORY);
-            if (!fileDir.exists()){
-                fileDir.mkdir();
-            }
-            outPutStream = new FileOutputStream(ONLINE_LICENSEFILE);
+            outPutStream = new FileOutputStream(fileName);
             outPutStream.write(licenseStr.getBytes());
         } catch (FileNotFoundException e) {
             Application.getActiveApplication().getOutput().output(e);
@@ -234,8 +291,8 @@ public class LicenseManager {
                 Application.getActiveApplication().getOutput().output(e);
             }
         }
-        License.setSpecifyLicenseFilePath(ONLINE_DIRCTORY);
-        return new File(ONLINE_LICENSEFILE);
+        License.setSpecifyLicenseFilePath(fileName);
+        return new File(fileName);
     }
 
     /**

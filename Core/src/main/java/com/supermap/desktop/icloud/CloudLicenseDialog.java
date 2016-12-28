@@ -12,9 +12,7 @@ import com.supermap.desktop.icloud.online.AuthenticationException;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilities.CoreResources;
-import com.supermap.desktop.utilities.JOptionPaneUtilities;
-import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.desktop.utilities.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
+import java.text.MessageFormat;
 
 /**
  * Created by xie on 2016/12/20.
@@ -86,14 +85,23 @@ public class CloudLicenseDialog extends JDialog {
     private String passWord;
 
     private void connect(String url) {
-        URI uri = URI.create(url);
-        Desktop dp = Desktop.getDesktop();
-        if (dp.isSupported(Desktop.Action.BROWSE)) {
-            try {
-                dp.browse(uri);// 获取系统默认浏览器打开网页
-            } catch (IOException e1) {
-                e1.printStackTrace();
+        openUrl(url);
+    }
+    private static void openUrl(String url) {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            if (SystemPropertyUtilities.isWindows()) {
+                runtime.exec("rundll32 url.dll,FileProtocolHandler " + url);
+            } else {
+                String[] browsers = { "epiphany", "firefox", "mozilla", "konqueror", "netscape", "opera", "links", "lynx" };
+
+                StringBuffer cmd = new StringBuffer();
+                for (int i = 0; i < browsers.length; i++)
+                    cmd.append((i == 0 ? "" : " || ") + browsers[i] + " \"" + url + "\" ");
+                runtime.exec(new String[] { "sh", "-c", cmd.toString() });
             }
+        } catch (Exception e) {
+            System.out.println(e);
         }
     }
 
@@ -126,7 +134,7 @@ public class CloudLicenseDialog extends JDialog {
 			    saveToken();
 		    }
 	    } catch (AuthenticationException e1) {
-		    JOptionPaneUtilities.showMessageDialog(CommonProperties.getString("String_PermissionCheckFailed"));
+		    JOptionPaneUtilities.showErrorMessageDialog(CommonProperties.getString("String_PermissionCheckFailed"));
 		    dialogResult = DIALOGRESULT_CANCEL;
 	    } finally {
 		    removeEvents();
@@ -262,6 +270,7 @@ public class CloudLicenseDialog extends JDialog {
         this.buttonLogin = new JButton();
         this.buttonClose = new JButton();
         initToken();
+        this.checkBoxAutoLogin.setEnabled(false);
     }
 
     private void initToken() {
