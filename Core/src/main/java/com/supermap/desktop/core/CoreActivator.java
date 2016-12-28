@@ -37,22 +37,22 @@ public class CoreActivator implements BundleActivator {
     @Override
     public void start(final BundleContext context) throws Exception {
         //本机许可是否满足java版本需求
-//        if (LicenseManager.valiteLicense()) {
-//            //yes
-//            startUp(context, "null");
-//        } else {
-        //判断试用许可
-        //no
-        if (LicenseManager.valiteTrialLicense()) {
-            //是否有离线许可
+        if (LicenseManager.valiteLicense()) {
             //yes
             startUp(context, "null");
         } else {
-            //没有离线许可，登录云许可
+            //判断试用许可
             //no
-            loginOnlineLicense(context);
+            if (LicenseManager.valiteTrialLicense()) {
+                //是否有离线许可
+                //yes
+                startUp(context, "null");
+            } else {
+                //没有离线许可，登录云许可
+                //no
+                loginOnlineLicense(context);
+            }
         }
-//        }
 
     }
 
