@@ -1,6 +1,19 @@
 package com.supermap.desktop.newtheme.commonUtils;
 
-import com.supermap.data.*;
+import com.supermap.data.ColorGradientType;
+import com.supermap.data.CursorType;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldType;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.JoinItems;
+import com.supermap.data.Point2D;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
+import com.supermap.data.Size2D;
+import com.supermap.data.StatisticMode;
+import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.Interface.IFormMap;
@@ -21,10 +34,25 @@ import com.supermap.desktop.newtheme.themeUnique.ThemeUniqueContainer;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.mapping.*;
+import com.supermap.mapping.GraduatedMode;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.MixedTextStyle;
+import com.supermap.mapping.RangeMode;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeCustom;
+import com.supermap.mapping.ThemeDotDensity;
+import com.supermap.mapping.ThemeGraduatedSymbol;
+import com.supermap.mapping.ThemeGraph;
+import com.supermap.mapping.ThemeGraphItem;
+import com.supermap.mapping.ThemeGraphType;
+import com.supermap.mapping.ThemeGridRange;
+import com.supermap.mapping.ThemeGridUnique;
+import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.ThemeRange;
+import com.supermap.mapping.ThemeType;
+import com.supermap.mapping.ThemeUnique;
 import com.supermap.ui.MapControl;
 
-import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -191,15 +219,7 @@ public class ThemeGuideFactory {
 			UICommonToolkit.getLayersManager().getLayersTree().reload();
 			if (null != result) {
 				final int selectRow = getMapControl().getMap().getLayers().indexOf(result.getName());
-				/**
-				 * 屏蔽掉BasicTreeUI.completeEditing()方法获取图层树时的空指针异常
-				 */
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						UICommonToolkit.getLayersManager().getLayersTree().setSelectionInterval(selectRow, selectRow);
-					}
-				});
+				UICommonToolkit.getLayersManager().getLayersTree().setSelectionInterval(selectRow, selectRow);
 
 			}
 			if (null != layer) {
