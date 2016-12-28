@@ -82,6 +82,7 @@ public class TableModelDatasType extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int row, int col) {
+		//增加">0"判断，防止索引越界
 		if (sum > 0) {
 			if (col == COLUMN_NAME) {
 				return this.aimDataset[row].getName();
