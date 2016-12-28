@@ -8,12 +8,13 @@ import com.supermap.desktop.icloud.LicenseManager;
 import com.supermap.desktop.icloud.api.LicenseService;
 import com.supermap.desktop.icloud.commontypes.ApplyFormalLicenseResponse;
 import com.supermap.desktop.icloud.commontypes.ApplyTrialLicenseResponse;
+import com.supermap.desktop.icloud.commontypes.LicenseId;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.SplashScreenUtilities;
 import org.osgi.framework.*;
 
-import java.io.IOException;
+import java.io.File;
 
 public class CoreActivator implements BundleActivator {
 
@@ -26,6 +27,7 @@ public class CoreActivator implements BundleActivator {
     private LicenseService service;
     private ApplyFormalLicenseResponse formLicenseResponse;
     private ApplyTrialLicenseResponse trialLicenseResponse;
+    private LicenseId licenseId;
 
     /*
      * (non-Javadoc)
@@ -37,21 +39,14 @@ public class CoreActivator implements BundleActivator {
         //本机许可是否满足java版本需求
         if (LicenseManager.valiteLicense()) {
             //yes
-            startUp(context);
+            startUp(context, "null");
         } else {
-            //判断()试用许可
+            //判断试用许可
             //no
-            if (LicenseManager.hasOffLineLicense()) {
+            if (LicenseManager.valiteTrialLicense()) {
                 //是否有离线许可
                 //yes
-                if (LicenseManager.isOffLineLicenseOverdue()) {
-                    //离线许可是否过期
-                    //yes
-                    loginOnlineLicense(context);
-                } else {
-                    //no
-                    startUp(context);
-                }
+                startUp(context, "null");
             } else {
                 //没有离线许可，登录云许可
                 //no
@@ -74,14 +69,13 @@ public class CoreActivator implements BundleActivator {
             if (dialog.showDialog() == CloudLicenseDialog.DIALOGRESULT_OK) {
                 service = dialog.getLicenseService();
                 //许可申请成功
+                licenseId = dialog.getLicenseId();
                 formLicenseResponse = dialog.getFormalLicenseResponse();
                 trialLicenseResponse = dialog.getTrialLicenseResponse();
                 if (null != formLicenseResponse) {
-//                    LicenseManager.buildLicense(formLicenseResponse.license);
-                    startUp(bundleContext);
+                    startUp(bundleContext, formLicenseResponse.license);
                 } else if (null != trialLicenseResponse) {
-//                    LicenseManager.buildLicense(trialLicenseResponse.license);
-                    startUp(bundleContext);
+                    startUp(bundleContext, trialLicenseResponse.license);
                 } else {
                     //不登陆
                     stop(bundleContext);
@@ -101,54 +95,56 @@ public class CoreActivator implements BundleActivator {
 
     }
 
-    private void startUp(final BundleContext context) {
-        // 设置没有被捕捉的异常的处理方法
-        Thread.setDefaultUncaughtExceptionHandler(new SmUncaughtExceptionHandler());
-        LogUtilities.outPut(LogUtilities.getSeparator());
-        LogUtilities.outPut(CoreProperties.getString("String_DesktopStarting"));
-        SplashScreenUtilities splashScreenUtiltiesInstance = SplashScreenUtilities.getSplashScreenUtiltiesInstance();
-        if (splashScreenUtiltiesInstance != null) {
-            SplashScreenUtilities.setBundleCount(context.getBundles().length);
-            SplashScreenUtilities.resetCurrentCount();
-            Bundle bundle = context.getBundle();
-            String name = bundle.getSymbolicName();
-            if (name == null) {
-                name = "unname";
-            }
-            String info = "Loading " + name + ".jar";
-            splashScreenUtiltiesInstance.update(info);
-        }
-
-
-        context.addBundleListener(new SynchronousBundleListener() {
-            @Override
-            public void bundleChanged(BundleEvent bundleEvent) {
-                if (bundleEvent.getType() != BundleEvent.STARTING) {
-                    return;
+    private void startUp(final BundleContext context, String licenseStr) {
+        File licenseFile = LicenseManager.buildLicenseFile(licenseStr);
+        if (licenseFile.exists() || "null".equals(licenseStr)) {
+            // 设置没有被捕捉的异常的处理方法
+            Thread.setDefaultUncaughtExceptionHandler(new SmUncaughtExceptionHandler());
+            LogUtilities.outPut(LogUtilities.getSeparator());
+            LogUtilities.outPut(CoreProperties.getString("String_DesktopStarting"));
+            SplashScreenUtilities splashScreenUtiltiesInstance = SplashScreenUtilities.getSplashScreenUtiltiesInstance();
+            if (splashScreenUtiltiesInstance != null) {
+                SplashScreenUtilities.setBundleCount(context.getBundles().length);
+                SplashScreenUtilities.resetCurrentCount();
+                Bundle bundle = context.getBundle();
+                String name = bundle.getSymbolicName();
+                if (name == null) {
+                    name = "unname";
                 }
-                SplashScreenUtilities splashScreenUtiltiesInstance = SplashScreenUtilities.getSplashScreenUtiltiesInstance();
-                if (splashScreenUtiltiesInstance != null) {
-                    Bundle bundle = bundleEvent.getBundle();
-                    String name = bundle.getSymbolicName();
-                    if (name == null) {
-                        name = "unname";
+                String info = "Loading " + name + ".jar";
+                splashScreenUtiltiesInstance.update(info);
+            }
+
+
+            context.addBundleListener(new SynchronousBundleListener() {
+                @Override
+                public void bundleChanged(BundleEvent bundleEvent) {
+                    if (bundleEvent.getType() != BundleEvent.STARTING) {
+                        return;
                     }
-                    String info = "Loading " + name + ".jar";
-                    splashScreenUtiltiesInstance.update(info);
+                    SplashScreenUtilities splashScreenUtiltiesInstance = SplashScreenUtilities.getSplashScreenUtiltiesInstance();
+                    if (splashScreenUtiltiesInstance != null) {
+                        Bundle bundle = bundleEvent.getBundle();
+                        String name = bundle.getSymbolicName();
+                        if (name == null) {
+                            name = "unname";
+                        }
+                        String info = "Loading " + name + ".jar";
+                        splashScreenUtiltiesInstance.update(info);
+                    }
+                    if (bundleEvent.getBundle() == context.getBundles()[context.getBundles().length - 1]) {
+                        context.removeBundleListener(this);
+                    }
                 }
-                if (bundleEvent.getBundle() == context.getBundles()[context.getBundles().length - 1]) {
-                    context.removeBundleListener(this);
-                }
-            }
-        });
-        System.out.println("Hello SuperMap === Core!!");
+            });
+            System.out.println("Hello SuperMap === Core!!");
 
-        // 不知道为什么，core会被加载两次，暂时先这么处理
-        if (Application.getActiveApplication() == null || Application.getActiveApplication().getPluginManager().getBundle("SuperMap.Desktop.Core") == null) {
-            this.serviceTracker = new CoreServiceTracker(context);
-            this.serviceTracker.open();
+            // 不知道为什么，core会被加载两次，暂时先这么处理
+            if (Application.getActiveApplication() == null || Application.getActiveApplication().getPluginManager().getBundle("SuperMap.Desktop.Core") == null) {
+                this.serviceTracker = new CoreServiceTracker(context);
+                this.serviceTracker.open();
 //			this.registration = context.registerService(Application.class.getName(), new Application(), null);
-
+            }
         }
     }
 
@@ -160,13 +156,13 @@ public class CoreActivator implements BundleActivator {
     @Override
     public void stop(BundleContext context) throws Exception {
         System.out.println("Goodbye SuperMap === Core!!");
+        if (null != service && null != licenseId && null != formLicenseResponse) {
+            //退出产品时，归还正式许可
+            LicenseManager.returnFormLicense(service, formLicenseResponse, licenseId);
+        }
         if (null != service && null != trialLicenseResponse) {
-            try {
-                //退出产品时，归还试用许可
-                service.deleteTrialLicense(trialLicenseResponse.returnId);
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            //退出产品时，归还试用许可
+            LicenseManager.returnTrialLicense(service, trialLicenseResponse);
         }
         this.serviceTracker.close();
 //		this.registration.unregister();
