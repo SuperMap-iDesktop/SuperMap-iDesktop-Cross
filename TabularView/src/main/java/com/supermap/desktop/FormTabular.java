@@ -682,20 +682,29 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		this.jTableTabular.clearSelection();
 		this.jTableTabular.setRowSelectionInterval(goToRow, goToRow);
 		setSelectedColumn(0, jTableTabular.getColumnCount() - 1);
-		Rectangle aRect = this.jTableTabular.getCellRect(goToRow, 0, true);
-		this.jTableTabular.scrollRectToVisible(aRect);
+		sureRowVisible(goToRow);
 		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
+	}
+
+	@Override
+	public void sureRowVisible(int row) {
+		Rectangle aRect = this.jTableTabular.getCellRect(row, 0, true);
+		this.jTableTabular.scrollRectToVisible(aRect);
 	}
 
 	@Override
 	public void addRows(List<Integer> addRows) {
 		this.jTableTabular.clearSelection();
+		if (addRows.size() == 0) {
+			return;
+		}
 		for (int i = 0; i < addRows.size(); i++) {
 			if (addRows.get(i) != -1 && addRows.get(i) < jTableTabular.getRowCount()) {
 				this.jTableTabular.addRowSelectionInterval(addRows.get(i), addRows.get(i));
 			}
 			setSelectedColumn(0, jTableTabular.getColumnCount() - 1);
 		}
+		sureRowVisible(addRows.get(0));
 		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 	}
 

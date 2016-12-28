@@ -48,6 +48,8 @@ public interface IFormTabular extends IForm {
 	 */
 	void goToRow(int goToRow);
 
+	void sureRowVisible(int row);
+
 	/**
 	 * 添加选中项
 	 */

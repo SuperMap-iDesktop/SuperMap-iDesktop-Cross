@@ -1,19 +1,29 @@
 package com.supermap.desktop.ui.mdi;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.ui.mdi.events.*;
+import com.supermap.desktop.ui.mdi.events.PageActivatedEvent;
+import com.supermap.desktop.ui.mdi.events.PageActivatedListener;
+import com.supermap.desktop.ui.mdi.events.PageActivatingEvent;
+import com.supermap.desktop.ui.mdi.events.PageActivatingListener;
+import com.supermap.desktop.ui.mdi.events.PageAddedEvent;
+import com.supermap.desktop.ui.mdi.events.PageAddedListener;
+import com.supermap.desktop.ui.mdi.events.PageAddingEvent;
+import com.supermap.desktop.ui.mdi.events.PageAddingListener;
+import com.supermap.desktop.ui.mdi.events.PageClosedEvent;
+import com.supermap.desktop.ui.mdi.events.PageClosedListener;
+import com.supermap.desktop.ui.mdi.events.PageClosingEvent;
+import com.supermap.desktop.ui.mdi.events.PageClosingListener;
 import com.supermap.desktop.ui.mdi.layout.FlowLayoutStrategy;
 import com.supermap.desktop.ui.mdi.layout.ILayoutStrategy;
 import com.supermap.desktop.ui.mdi.plaf.MdiGroupUtilities;
 
+import javax.accessibility.Accessible;
+import javax.swing.*;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.accessibility.Accessible;
-import javax.swing.*;
 
 /**
  * MdiPane 与 MdiGroup 可以完全分离，但 MdiGroup 与 MdiPage 则是强制绑定
@@ -448,8 +458,8 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 			MdiPane.this.selectedGroup = group;
 			MdiPane.this.selectedPage = newSelectedPage;
 			MdiPane.this.eventsHelper.firePageActivated(new PageActivatedEvent(group, newSelectedPage, oldSelectedPage));
+			repaint();
 		}
-		repaint();
 	}
 
 	/**
@@ -526,24 +536,13 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	}
 
 	private class PropertyChangeHandler implements PropertyChangeListener {
-
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
-			EventQueue.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					KeyboardFocusManager.getCurrentKeyboardFocusManager().addPropertyChangeListener(new PropertyChangeListener() {
-						@Override
-						public void propertyChange(PropertyChangeEvent evt) {
-							if (evt.getPropertyName().equals(PERMANENT_FOCUS_OWNER) && evt.getNewValue() instanceof Component) {
-								Component c = (Component) evt.getNewValue();
-								MdiGroup group = MdiGroupUtilities.findAncestorGroup(c);
-								MdiPane.this.active(group);
-							}
-						}
-					});
-				}
-			});
+			if (evt.getPropertyName().equals(PERMANENT_FOCUS_OWNER) && evt.getNewValue() instanceof Component) {
+				Component c = (Component) evt.getNewValue();
+				MdiGroup group = MdiGroupUtilities.findAncestorGroup(c);
+				MdiPane.this.active(group);
+			}
 		}
 	}
 }
