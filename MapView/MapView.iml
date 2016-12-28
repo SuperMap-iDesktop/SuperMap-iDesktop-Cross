@@ -149,7 +149,7 @@
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.license:8.1.1">
         <CLASSES>
-          <root url="jar://$MAVEN_REPOSITORY$/com/supermap/com.supermap.license/8.1.1/com.supermap.license-8.1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../Core/../bin/com.supermap.license.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
