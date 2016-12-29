@@ -3,10 +3,12 @@ package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 import com.supermap.data.Dataset;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
+import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.SmMenuItem;
 import com.supermap.desktop.ui.FormManager;
 import com.supermap.desktop.ui.mdi.MdiPage;
@@ -49,8 +51,7 @@ public class BindUtilties {
 	 */
 	public static void openTabular(Dataset dataset, Recordset recordset) {
 		// 打开一个默认的属性表，然后修改属性表的title和数据与当前图层对应的数据匹配
-		tabular = TabularUtilities.openDatasetVectorFormTabular(dataset);
-		tabular.setText(dataset.getName() + "@" + dataset.getDatasource().getAlias());
+		tabular = (IFormTabular) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.TABULAR,dataset.getName() + "@" + dataset.getDatasource().getAlias());
 		tabular.setRecordset(recordset);
 	}
 
