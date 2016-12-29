@@ -36,54 +36,37 @@ public class BindHandler {
 	private static volatile BindHandler bindHandler;
 
 	private MouseListener mapControlMouseListener = new MouseAdapter() {
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			if (e.getButton() == MouseEvent.BUTTON1) {
-				bindMapCenter(formMapList.size(), e);
-			}
-		}
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-			int size = formMapList.size();
-			for (int j = 0; j < size; j++) {
-				IForm formMap = (IForm) formMapList.get(j);
-				Map map;
-				if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl()) {
-					map = ((IFormMap) formMap).getMapControl().getMap();
-					MapUtilities.clearTrackingObjects(map, TAG_MOVE);
-					map.refreshTrackingLayer();
-				}
-			}
+//			int size = formMapList.size();
+//			for (int j = 0; j < size; j++) {
+//				IForm formMap = (IForm) formMapList.get(j);
+//				Map map;
+//				if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl()) {
+//					map = ((IFormMap) formMap).getMapControl().getMap();
+//					MapUtilities.clearTrackingObjects(map, TAG_MOVE);
+//					map.refreshTrackingLayer();
+//				}
+//			}
 		}
 	};
-	private MouseWheelListener mapControlMouseWheelListener = new MouseWheelListener() {
-		@Override
-		public void mouseWheelMoved(MouseWheelEvent e) {
-			bindMapCenterAndScale(formMapList.size(), ((MapControl) e.getSource()).getMap());
-		}
-	};
-	private MouseMotionListener mapControlMouseMotionListener = new MouseMotionAdapter() {
+	MouseMotionListener mapControlMouseMotionListener = new MouseMotionAdapter() {
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			bindMapsMousePosition(formMapList.size(), e);
+//			bindMapsMousePosition(formMapList.size(), e);
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			bindMapsMousePosition(formMapList.size(), e);
-		}
-	};
-	private MapDrawingListener mapDrawingListener = new MapDrawingListener() {
-		@Override
-		public void mapDrawing(MapDrawingEvent e) {
-			bindMapCenterAndScale(formMapList.size(), (Map) e.getSource());
+//			bindMapsMousePosition(formMapList.size(), e);
 		}
 	};
 	private GeometrySelectChangedListener geoMetroySelectChangeListener;
 	private MapDrawnListener mapDrawnListener = new MapDrawnListener() {
 		@Override
-		public void mapDrawn(MapDrawnEvent mapDrawnEvent) {
+		public void mapDrawn(MapDrawnEvent e) {
+			bindMapCenterAndScale((Map) e.getSource());
 		}
 	};
 	private MouseListener listMouseListener;
@@ -157,9 +140,8 @@ public class BindHandler {
 
 	private void bindMapsMousePosition(int size, MouseEvent e) {
 		Map sourceMap = ((MapControl) e.getSource()).getMap();
-		Map currentMap = sourceMap;
-		currentMap.getTrackingLayer().clear();
-		currentMap.refreshTrackingLayer();
+		sourceMap.getTrackingLayer().clear();
+		sourceMap.refreshTrackingLayer();
 		Point2Ds points = new Point2Ds();
 		for (int j = 0; j < size; j++) {
 			IForm formMap = (IForm) formMapList.get(j);
@@ -169,14 +151,13 @@ public class BindHandler {
 				if (!sourceMap.getPrjCoordSys().equals(map.getPrjCoordSys())) {
 					points.clear();
 					points.add(map.pixelToLogical(e.getPoint()));
-					CoordSysTranslator.convert(points, currentMap.getPrjCoordSys(), map.getPrjCoordSys(), new CoordSysTransParameter(), CoordSysTransMethod.MTH_COORDINATE_FRAME);
+					CoordSysTranslator.convert(points, sourceMap.getPrjCoordSys(), map.getPrjCoordSys(), new CoordSysTransParameter(), CoordSysTransMethod.MTH_COORDINATE_FRAME);
 				}
 				MapUtilities.clearTrackingObjects(map, TAG_MOVE);
 				Geometry tempGeometry = getTrackingGeometry(map.pixelToMap(e.getPoint()), Color.gray);
 				map.getTrackingLayer().add(tempGeometry, TAG_MOVE);
 				tempGeometry.dispose();
 				map.refreshTrackingLayer();
-
 			}
 		}
 	}
@@ -228,39 +209,22 @@ public class BindHandler {
 		return sm;
 	}
 
-	private void bindMapCenterAndScale(int size, Map sourceMap) {
-		Point2D center = sourceMap.getCenter();
-		double scale = sourceMap.getScale();
-		for (int j = 0; j < size; j++) {
-			IForm formMap = (IForm) formMapList.get(j);
-			Map map;
-			if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() && !sourceMap.equals(((IFormMap) formMap).getMapControl().getMap())) {
-				map = ((IFormMap) formMap).getMapControl().getMap();
-				if (null != center && scale - 0.0 > 0) {
-					map.setCenter(center);
-					map.setScale(scale);
-					map.refresh();
-				}
-			} else if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() && sourceMap.equals(((IFormMap) formMap).getMapControl().getMap())) {
-				map = ((IFormMap) formMap).getMapControl().getMap();
-				center = map.getCenter();
-				scale = map.getScale();
-			}
+	private void bindMapCenterAndScale(Map srcMap) {
+		if (srcMap == null) {
+			return;
 		}
-	}
 
-	private void bindMapCenter(int size, MouseEvent e) {
-		Map sourceMap = ((MapControl) e.getSource()).getMap();
-		Point2D center = sourceMap.getCenter();
-		for (int j = 0; j < size; j++) {
-			IForm formMap = (IForm) formMapList.get(j);
-			Map map;
-
-			if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() && !e.getSource().equals(((IFormMap) formMap).getMapControl())) {
-				map = ((IFormMap) formMap).getMapControl().getMap();
-				if (null != center) {
-					map.setCenter(center);
-					map.refresh();
+		Point2D center = srcMap.getCenter();
+		double scale = srcMap.getScale();
+		for (int i = 0; i < this.formMapList.size(); i++) {
+			IFormMap formMap = (IFormMap) this.formMapList.get(i);
+			if (null != formMap.getMapControl() && !srcMap.equals(formMap.getMapControl().getMap())) {
+				if (null != center && scale > 0) {
+					unregister(formMap);
+					formMap.getMapControl().getMap().setCenter(center);
+					formMap.getMapControl().getMap().setScale(scale);
+					formMap.getMapControl().getMap().refresh();
+					register(formMap);
 				}
 			}
 		}
@@ -325,16 +289,24 @@ public class BindHandler {
 	public void bindFormMaps() {
 		int formMapSize = formMapList.size();
 		for (int i = 0; i < formMapSize; i++) {
-			IFormMap temp = (IFormMap) formMapList.get(i);
-			final MapControl mapControl = temp.getMapControl();
-			mapControl.addMouseListener(this.mapControlMouseListener);
-			mapControl.addMouseWheelListener(this.mapControlMouseWheelListener);
-			mapControl.addMouseMotionListener(this.mapControlMouseMotionListener);
-			mapControl.getMap().addDrawingListener(this.mapDrawingListener);
-			mapControl.getMap().addDrawnListener(this.mapDrawnListener);
-			this.geoMetroySelectChangeListener = new LocalSelectChangedListener(mapControl.getMap());
-			mapControl.addGeometrySelectChangedListener(this.geoMetroySelectChangeListener);
+			register((IFormMap) this.formMapList.get(i));
 		}
+	}
+
+	private void register(IFormMap formMap) {
+		formMap.getMapControl().addMouseListener(this.mapControlMouseListener);
+		formMap.getMapControl().addMouseMotionListener(this.mapControlMouseMotionListener);
+		formMap.getMapControl().getMap().addDrawnListener(this.mapDrawnListener);
+		this.geoMetroySelectChangeListener = new LocalSelectChangedListener(formMap.getMapControl().getMap());
+		formMap.getMapControl().addGeometrySelectChangedListener(this.geoMetroySelectChangeListener);
+	}
+
+	private void unregister(IFormMap formMap) {
+		formMap.getMapControl().removeMouseListener(this.mapControlMouseListener);
+		formMap.getMapControl().removeMouseMotionListener(this.mapControlMouseMotionListener);
+		formMap.getMapControl().getMap().removeDrawnListener(this.mapDrawnListener);
+		this.geoMetroySelectChangeListener = new LocalSelectChangedListener(formMap.getMapControl().getMap());
+		formMap.getMapControl().removeGeometrySelectChangedListener(this.geoMetroySelectChangeListener);
 	}
 
 	public void removeFormMapsBind() {
@@ -351,9 +323,7 @@ public class BindHandler {
 
 		MapControl mapControl = ((IFormMap) form).getMapControl();
 		mapControl.removeMouseListener(this.mapControlMouseListener);
-		mapControl.removeMouseWheelListener(this.mapControlMouseWheelListener);
 		mapControl.removeMouseMotionListener(this.mapControlMouseMotionListener);
-		mapControl.getMap().removeDrawingListener(this.mapDrawingListener);
 		mapControl.getMap().removeDrawnListener(this.mapDrawnListener);
 		this.geoMetroySelectChangeListener = new LocalSelectChangedListener(mapControl.getMap());
 		mapControl.removeGeometrySelectChangedListener(this.geoMetroySelectChangeListener);
