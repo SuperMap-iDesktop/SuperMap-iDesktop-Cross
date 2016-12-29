@@ -165,9 +165,8 @@ public class ThemeUtil {
 			FieldInfo fieldInfo = datasetVector.getFieldInfos().get(j);
 			if (isDataType && isDataType(fieldInfo.getType())) {
 				String dataTypeitem = fieldInfo.getName();
-				//原来item为name属性，改为Caption，使其完全与标头字符相同
+				//原来item为name属性，改为Caption，使其完全与标头字符相同--yuanuR
 //				String dataTypeitem = fieldInfo.getCaption();
-
 				if (0 < itemsCount) {
 					dataTypeitem = datasetVector.getName() + "." + dataTypeitem;
 				}
@@ -176,7 +175,7 @@ public class ThemeUtil {
 			}
 			if (!isDataType) {
 				String item = fieldInfo.getName();
-				//原来item为name属性，改为Caption，使其完全与标头字符相同
+				//原来item为name属性，改为Caption，使其完全与标头字符相同--yuanuR
 //				String item = fieldInfo.getCaption();
 				if (0 < itemsCount) {
 					item = datasetVector.getName() + "." + item;

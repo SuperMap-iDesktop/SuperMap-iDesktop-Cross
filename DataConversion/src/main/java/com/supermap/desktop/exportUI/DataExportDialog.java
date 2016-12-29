@@ -370,6 +370,10 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         this.componentList.add(this.buttonClose);
         this.setFocusTraversalPolicy(this.policy);
         this.getRootPane().setDefaultButton(this.buttonExport);
+	    //加载选中数据到jtable放在最后执行--yuanR
+	    if (null != datasets && datasets.length > 0) {
+		    addTableInfo(datasets);
+	    }
     }
 
     @Override
@@ -407,9 +411,13 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         };
         this.tableExport.setModel(tableModel);
         initTableTheme();
-        if (null != datasets && datasets.length > 0) {
-            addTableInfo(datasets);
-        }
+	    // 不要将加载数据到jtable操作放在这里进行，后续操作会导致jtable失去焦点，从而当进入导出界面时，如果直接输入过滤表达式再点击
+	    // jtable会清空刚输入的过滤表达式，造成不便，因此将加载数据到jtable的操作，放到所有操作之后，初始化其他控件之后，最后一步再加载数据--yuanR 16.12.29
+/*
+	    if (null != datasets && datasets.length > 0) {
+		    addTableInfo(datasets);
+	    }
+*/
         initToolbar();
         setButtonState();
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -436,6 +444,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         datasetColumn.setCellRenderer(new CommonListCellRenderer());
     }
 
+	//添加数据到jtable'--yuanR
     public void addTableInfo(Dataset[] datasets) {
         ExportSettingFactory exportSettingFactory = new ExportSettingFactory();
         IExportPanelFactory exportPanelFactory = new ExportPanelFactory();
