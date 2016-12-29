@@ -71,8 +71,8 @@ public class TabularViewActivator implements BundleActivator {
 		try {
 			IForm form = CommonToolkit.FormWrap.getForm(newName, WindowType.TABULAR);
 			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
-
-			if (form == null) {
+			// FIXME: 2016/12/29 xie 关联浏览新建属性表名称处理
+//			if (form == null) {
 				if (newName == null || newName.length() == 0)
 					newName = TabularUtilities.getTabularName();
 
@@ -81,10 +81,10 @@ public class TabularViewActivator implements BundleActivator {
 					formManager.setActiveForm(formTabular);
 				}
 				formManager.showChildForm(formTabular);
-			} else {
-				formTabular = (IFormTabular) form;
-				formManager.setActiveForm(formTabular);
-			}
+//			} else {
+//				formTabular = (IFormTabular) form;
+//				formManager.setActiveForm(formTabular);
+//			}
 
 			if (formTabular != null) {
 				formTabular.setRecordset(openActiveDataset());
