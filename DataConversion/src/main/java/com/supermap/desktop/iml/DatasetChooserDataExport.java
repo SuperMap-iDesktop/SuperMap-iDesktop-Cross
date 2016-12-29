@@ -17,42 +17,42 @@ import java.util.List;
  * 导出数据集选择界面
  */
 public class DatasetChooserDataExport {
-    private final DatasetChooser datasetChooser;
-    private MutiTable exportTable;
-    private DataExportDialog owner;
+	private final DatasetChooser datasetChooser;
+	private MutiTable exportTable;
+	private DataExportDialog owner;
 
-    public DatasetChooserDataExport(JDialog owner, final MutiTable exportTable) {
-        this.exportTable = exportTable;
-        this.owner = (DataExportDialog) owner;
-        datasetChooser = new DatasetChooser(owner) {
-            @Override
-            protected boolean isSupportDatasource(Datasource datasource) {
-                return !DatasourceUtilities.isWebDatasource(datasource.getEngineType()) && super.isSupportDatasource(datasource);
-            }
-        };
-        initSelectDatasource();
-        if (datasetChooser.showDialog() == DialogResult.OK) {
-            addInfoToMainTable();
-        }
-    }
+	public DatasetChooserDataExport(JDialog owner, final MutiTable exportTable) {
+		this.exportTable = exportTable;
+		this.owner = (DataExportDialog) owner;
+		datasetChooser = new DatasetChooser(owner) {
+			@Override
+			protected boolean isSupportDatasource(Datasource datasource) {
+				return !DatasourceUtilities.isWebDatasource(datasource.getEngineType()) && super.isSupportDatasource(datasource);
+			}
+		};
+		initSelectDatasource();
+		if (datasetChooser.showDialog() == DialogResult.OK) {
+			addInfoToMainTable();
+		}
+	}
 
-    private void initSelectDatasource() {
-        if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0) {
-            this.datasetChooser.getWorkspaceTree().setSelectedDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
-        } else if (null != Application.getActiveApplication().getWorkspace().getDatasources()) {
-            this.datasetChooser.getWorkspaceTree().setSelectedDatasource(Application.getActiveApplication().getWorkspace().getDatasources().get(0));
-        }
-    }
+	private void initSelectDatasource() {
+		if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0) {
+			this.datasetChooser.getWorkspaceTree().setSelectedDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
+		} else if (null != Application.getActiveApplication().getWorkspace().getDatasources()) {
+			this.datasetChooser.getWorkspaceTree().setSelectedDatasource(Application.getActiveApplication().getWorkspace().getDatasources().get(0));
+		}
+	}
 
-    private void addInfoToMainTable() {
-        try {
-            List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
-            owner.addTableInfo(selectedDatasets.toArray(new Dataset[selectedDatasets.size()]));
-            if (0 < exportTable.getRowCount()) {
-                exportTable.setRowSelectionInterval(exportTable.getRowCount() - 1, exportTable.getRowCount() - 1);
-            }
-        } catch (Exception ex) {
-            Application.getActiveApplication().getOutput().output(ex);
-        }
-    }
+	private void addInfoToMainTable() {
+		try {
+			List<Dataset> selectedDatasets = datasetChooser.getSelectedDatasets();
+			owner.addTableInfo(selectedDatasets.toArray(new Dataset[selectedDatasets.size()]));
+			if (0 < exportTable.getRowCount()) {
+				exportTable.setRowSelectionInterval(exportTable.getRowCount() - 1, exportTable.getRowCount() - 1);
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
 }
