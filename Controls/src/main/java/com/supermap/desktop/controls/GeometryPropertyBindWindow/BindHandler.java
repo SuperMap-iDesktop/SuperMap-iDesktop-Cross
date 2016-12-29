@@ -84,7 +84,6 @@ public class BindHandler {
 	private MapDrawnListener mapDrawnListener = new MapDrawnListener() {
 		@Override
 		public void mapDrawn(MapDrawnEvent mapDrawnEvent) {
-			mapDrawnEvent.getMap().refresh();
 		}
 	};
 	private MouseListener listMouseListener;
