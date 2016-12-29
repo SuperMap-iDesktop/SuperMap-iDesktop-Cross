@@ -253,8 +253,11 @@ public class LayersTree extends JTree {
 			for (; tempTreePath != null && tempTreePath.hasMoreElements(); ) {
 				this.setExpandedState(tempTreePath.nextElement(), false);
 			}
+			for (int childCount = layerNode.getChildCount() - 1; childCount >= 0; childCount--) {
+				((DefaultTreeModel) getModel()).removeNodeFromParent((MutableTreeNode) layerNode.getChildAt(childCount));
+			}
 			// 删除指定节点
-			layerNode.removeAllChildren();
+//			layerNode.removeAllChildren();
 			// 添加子树
 			addLayerItem(layer, layerNode);
 		}
@@ -290,7 +293,9 @@ public class LayersTree extends JTree {
 		if (null != layerNode) {
 			tempTreePath = this.getExpandedDescendants(new TreePath(layerNode.getPath()));
 			// 删除指定节点
-			layerNode.removeAllChildren();
+			for (int childCount = layerNode.getChildCount() - 1; childCount >= 0; childCount--) {
+				((DefaultTreeModel) getModel()).removeNodeFromParent((MutableTreeNode) layerNode.getChildAt(childCount));
+			}
 			// // 第三步：添加子树，
 			addLayerItem(layer, layerNode);
 			// 恢复到刷新之前的状态
@@ -372,7 +377,7 @@ public class LayersTree extends JTree {
 
 	private void insertNode(TreeNodeData itemNodeData, DefaultMutableTreeNode parentNode, int count) {
 		DefaultMutableTreeNode itemNode = new DefaultMutableTreeNode(itemNodeData);
-		this.treeModeltemp.insertNodeInto(itemNode, parentNode, count);
+		((DefaultTreeModel) this.getModel()).insertNodeInto(itemNode, parentNode, count);
 	}
 
 	private DefaultTreeModel getTreeModel() {
@@ -389,7 +394,8 @@ public class LayersTree extends JTree {
 				root.add(getNodeByLayer(layer));
 			}
 		}
-		return new DefaultTreeModel(root);
+		treeModeltemp = new DefaultTreeModel(root);
+		return treeModeltemp;
 	}
 
 	/**
