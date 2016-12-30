@@ -48,6 +48,7 @@ public class TableCellRendererDatasource extends DefaultTableCellRenderer {
 			}
 			this.setHorizontalAlignment(LEFT);
 		}
+		//第五列存入栅格，影像数据的一个像素值，但不做显示
 		if (column == COLUMN_NULL) {
 			this.setText("");
 		}

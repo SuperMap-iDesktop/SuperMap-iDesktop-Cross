@@ -442,6 +442,9 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 				} else if (selectTreeNodeParentData.getData() instanceof SymbolFillLibrary) {
 					// TODO something
 				}
+				/**
+				 * 双击左键，根据高亮的树节点，执行打开操作
+				 */
 			} else if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
 				DefaultMutableTreeNode selectTreeNode = (DefaultMutableTreeNode) getWorkspaceManager().getWorkspaceTree().getLastSelectedPathComponent();
 				TreeNodeData selectedTreeNodeData = (TreeNodeData) selectTreeNode.getUserObject();
@@ -494,6 +497,10 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 			}
 		}
 
+		/**
+		 * 左键单击jtable树节点对应高亮选中
+		 * @param e
+		 */
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON1 || e.getButton() == MouseEvent.BUTTON3) {

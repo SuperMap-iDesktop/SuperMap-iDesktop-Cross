@@ -2,6 +2,7 @@ package com.supermap.desktop.ui.controls;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
@@ -215,7 +216,13 @@ public class ColorSelectionPanel extends JPanel {
 			jButtonOther.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Color color = JColorChooser.showDialog(null, ControlsProperties.getString("String_ChooseColor"), null);
+					JColorChooser jColorChooser=new JColorChooser();
+					JDialog jDialog=JColorChooser.createDialog(null, ControlsProperties.getString("String_ChooseColor"), true, jColorChooser,
+							null, null);
+					jDialog.setIconImage(((ImageIcon) (ControlsResources.getIcon("/controlsresources/iDesktop_Cross.png"))).getImage());
+					jDialog.show();
+					//Color color = JColorChooser.showDialog(null, ControlsProperties.getString("String_ChooseColor"), null);原来的代码，JColorChooser控件不能设置图标
+					Color color=jColorChooser.getColor();
 					if (color != null) {
 						selectColor(color);
 					}
