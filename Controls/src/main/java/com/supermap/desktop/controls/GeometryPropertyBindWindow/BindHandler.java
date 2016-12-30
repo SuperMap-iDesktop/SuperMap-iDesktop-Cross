@@ -39,39 +39,45 @@ public class BindHandler {
 
 		@Override
 		public void mouseExited(MouseEvent e) {
-//			int size = formMapList.size();
-//			for (int j = 0; j < size; j++) {
-//				IForm formMap = (IForm) formMapList.get(j);
-//				Map map;
-//				if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl()) {
-//					map = ((IFormMap) formMap).getMapControl().getMap();
-//					MapUtilities.clearTrackingObjects(map, TAG_MOVE);
-//					map.refreshTrackingLayer();
-//				}
-//			}
+			int size = formMapList.size();
+			for (int j = 0; j < size; j++) {
+				IForm formMap = (IForm) formMapList.get(j);
+				Map map;
+				if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl()) {
+					map = ((IFormMap) formMap).getMapControl().getMap();
+					MapUtilities.clearTrackingObjects(map, TAG_MOVE);
+					map.refreshTrackingLayer();
+				}
+			}
 		}
 	};
 	MouseMotionListener mapControlMouseMotionListener = new MouseMotionAdapter() {
 		@Override
 		public void mouseDragged(MouseEvent e) {
-//			bindMapsMousePosition(formMapList.size(), e);
+			bindMapsMousePosition(formMapList.size(), e);
 		}
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-//			bindMapsMousePosition(formMapList.size(), e);
+			bindMapsMousePosition(formMapList.size(), e);
 		}
 	};
-	private GeometrySelectChangedListener geoMetroySelectChangeListener;
+	private GeometrySelectChangedListener geometroySelectChangeListener = new GeometrySelectChangedListener() {
+		@Override
+		public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
+			if (geometrySelectChangedEvent.getSource() instanceof MapControl) {
+				bindMapsSelection(formMapList.size(), ((MapControl) geometrySelectChangedEvent.getSource()).getMap());
+			}
+		}
+	};
 	private MapDrawnListener mapDrawnListener = new MapDrawnListener() {
 		@Override
 		public void mapDrawn(MapDrawnEvent e) {
-			bindMapCenterAndScale((Map) e.getSource());
+			bindMapCenterAndScale();
 		}
 	};
 	private MouseListener listMouseListener;
 	private ArrayList<PropertyBindWindow> propertyBindWindows;
-	private GeometrySelectChangedListener geoMetroyMapSelectChangeListener;
 	private KeyListener tabularTableKeyListener;
 	public static FormManager manager = (FormManager) Application.getActiveApplication().getMainFrame().getFormManager();
 
@@ -209,20 +215,27 @@ public class BindHandler {
 		return sm;
 	}
 
-	private void bindMapCenterAndScale(Map srcMap) {
-		if (srcMap == null) {
+	private void bindMapCenterAndScale() {
+		IForm activeForm = Application.getActiveApplication().getActiveForm();
+		IFormMap activeFormMap = activeForm instanceof IFormMap ? ((IFormMap) activeForm) : null;
+		if (activeFormMap == null || activeFormMap.getMapControl() == null || activeFormMap.getMapControl().getMap() == null) {
 			return;
 		}
 
-		Point2D center = srcMap.getCenter();
-		double scale = srcMap.getScale();
+		Point2D activeCenter = activeFormMap.getMapControl().getMap().getCenter();
+		double activeScale = activeFormMap.getMapControl().getMap().getScale();
 		for (int i = 0; i < this.formMapList.size(); i++) {
 			IFormMap formMap = (IFormMap) this.formMapList.get(i);
-			if (null != formMap.getMapControl() && !srcMap.equals(formMap.getMapControl().getMap())) {
-				if (null != center && scale > 0) {
+
+			if (null != formMap.getMapControl() && activeForm != formMap) {
+				Point2D center = formMap.getMapControl().getMap().getCenter();
+				double scale = formMap.getMapControl().getMap().getScale();
+
+				// 中心点如果不同或者比例尺不同，则重设中心点和比例尺
+				if (!center.equals(activeCenter) || Double.compare(activeScale, scale) != 0) {
 					unregister(formMap);
-					formMap.getMapControl().getMap().setCenter(center);
-					formMap.getMapControl().getMap().setScale(scale);
+					formMap.getMapControl().getMap().setCenter(activeCenter);
+					formMap.getMapControl().getMap().setScale(activeScale);
 					formMap.getMapControl().getMap().refresh();
 					register(formMap);
 				}
@@ -273,19 +286,6 @@ public class BindHandler {
 		return result;
 	}
 
-	class LocalSelectChangedListener implements GeometrySelectChangedListener {
-		private Map map;
-
-		public LocalSelectChangedListener(Map map) {
-			this.map = map;
-		}
-
-		@Override
-		public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
-			bindMapsSelection(formMapList.size(), map);
-		}
-	}
-
 	public void bindFormMaps() {
 		int formMapSize = formMapList.size();
 		for (int i = 0; i < formMapSize; i++) {
@@ -297,16 +297,14 @@ public class BindHandler {
 		formMap.getMapControl().addMouseListener(this.mapControlMouseListener);
 		formMap.getMapControl().addMouseMotionListener(this.mapControlMouseMotionListener);
 		formMap.getMapControl().getMap().addDrawnListener(this.mapDrawnListener);
-		this.geoMetroySelectChangeListener = new LocalSelectChangedListener(formMap.getMapControl().getMap());
-		formMap.getMapControl().addGeometrySelectChangedListener(this.geoMetroySelectChangeListener);
+		formMap.getMapControl().addGeometrySelectChangedListener(this.geometroySelectChangeListener);
 	}
 
 	private void unregister(IFormMap formMap) {
 		formMap.getMapControl().removeMouseListener(this.mapControlMouseListener);
 		formMap.getMapControl().removeMouseMotionListener(this.mapControlMouseMotionListener);
 		formMap.getMapControl().getMap().removeDrawnListener(this.mapDrawnListener);
-		this.geoMetroySelectChangeListener = new LocalSelectChangedListener(formMap.getMapControl().getMap());
-		formMap.getMapControl().removeGeometrySelectChangedListener(this.geoMetroySelectChangeListener);
+		formMap.getMapControl().removeGeometrySelectChangedListener(this.geometroySelectChangeListener);
 	}
 
 	public void removeFormMapsBind() {
@@ -321,12 +319,7 @@ public class BindHandler {
 			return;
 		}
 
-		MapControl mapControl = ((IFormMap) form).getMapControl();
-		mapControl.removeMouseListener(this.mapControlMouseListener);
-		mapControl.removeMouseMotionListener(this.mapControlMouseMotionListener);
-		mapControl.getMap().removeDrawnListener(this.mapDrawnListener);
-		this.geoMetroySelectChangeListener = new LocalSelectChangedListener(mapControl.getMap());
-		mapControl.removeGeometrySelectChangedListener(this.geoMetroySelectChangeListener);
+		unregister((IFormMap) form);
 		this.formMapList.remove(form);
 	}
 
