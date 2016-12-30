@@ -122,8 +122,8 @@ public class TextStyleContainer extends JPanel {
 
             @Override
             public void modify(TextStyleType newValue) {
-                updateGeometries(newValue);
                 parent.setModify(true);
+                updateGeometries(newValue);
             }
         };
 
@@ -181,8 +181,6 @@ public class TextStyleContainer extends JPanel {
             recordset.dispose();
         }
         MapUtilities.getActiveMap().refresh();
-        // FIXME: 2016/12/30 recordset,map的刷新会影响到CADStyleEditor.enable()调用CADStypeContainer.showDialog()方法
-        parent.setModify(false);
     }
 
     public void enabled(boolean enabled) {
