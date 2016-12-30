@@ -268,11 +268,9 @@ public class CADStyleTitlePanel extends JPanel {
                 if (!recordset.isReadOnly()) {
                     recordset.edit();
                     Geometry tempGeometry = recordset.getGeometry().clone();
-                    GeoStyle geoStyle = null;
-                    if (null != tempGeometry.getStyle()) {
-                        geoStyle = tempGeometry.getStyle().clone();
-                    } else {
-                        break;
+                    GeoStyle geoStyle = tempGeometry.getStyle();
+                    if (null == geoStyle) {
+                        geoStyle = new GeoStyle();
                     }
                     if (GeometryUtilities.isPointGeometry(tempGeometry) && styleType == GEOPOINTTYPE) {
                         // 修改点符号

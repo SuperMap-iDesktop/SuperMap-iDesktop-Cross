@@ -1,12 +1,6 @@
 package com.supermap.desktop.CtrlAction.CADStyle;
 
-import com.supermap.data.EditHistory;
-import com.supermap.data.EditType;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.GeoText;
-import com.supermap.data.Geometry;
-import com.supermap.data.Recordset;
-import com.supermap.data.TextStyle;
+import com.supermap.data.*;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.textStyle.ITextStyle;
@@ -77,7 +71,6 @@ public class TextStyleContainer extends JPanel {
             while (!recordset.isEOF()) {
                 Geometry tempGeoMetry = recordset.getGeometry();
                 if (tempGeoMetry instanceof GeoText) {
-                    GeoStyle geoStyle = null;
                     textStyle = ((GeoText) tempGeoMetry).getTextStyle();
                     rotation = ((GeoText) tempGeoMetry).getPart(0).getRotation();
                     break;
@@ -141,20 +134,20 @@ public class TextStyleContainer extends JPanel {
     private void updateGeometries(TextStyleType newValue) {
         editHistory = MapUtilities.getMapControl().getEditHistory();
         ArrayList<Recordset> records = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
-	    if (null == records) {
-		    return;
+        if (null == records) {
+            return;
         }
         int count = records.size();
         for (int i = 0; i < count; i++) {
             Recordset recordset = records.get(i);
-	        if (recordset.getRecordCount() <= 0) {
-		        continue;
-	        }
-	        recordset.getBatch().setMaxRecordCount(1024);
-	        recordset.getBatch().begin();
-	        recordset.moveFirst();
-	        editHistory.add(EditType.MODIFY, recordset, true);
-	        while (!recordset.isEOF()) {
+            if (recordset.getRecordCount() <= 0) {
+                continue;
+            }
+            recordset.getBatch().setMaxRecordCount(1024);
+            recordset.getBatch().begin();
+            recordset.moveFirst();
+            editHistory.add(EditType.MODIFY, recordset, true);
+            while (!recordset.isEOF()) {
                 recordset.edit();
                 Geometry tempGeometry = recordset.getGeometry();
                 Object newGeoStyleProperty = textBasicPanel.getResultMap().get(newValue);
@@ -162,32 +155,34 @@ public class TextStyleContainer extends JPanel {
                 if ("Null".equals(newGeoStyleProperty)) {
                     return;
                 }
-		        if (tempGeometry instanceof GeoText && !newValue.equals(TextStyleType.FIXEDSIZE)) {
-			        if (newValue.equals(TextStyleType.ROTATION)) {
-				        double tempTest=(Double)newGeoStyleProperty;
-			        	if (Double.compare(tempTest,0)!=0) { // 当设置旋转角度为0时，会抛异常，原因未找到,暂时先进行控制       ————李文发
-					        for (int j = 0; j < ((GeoText) tempGeometry).getPartCount(); j++) {
-						        ((GeoText) tempGeometry).getPart(j).setRotation((Double) newGeoStyleProperty);
-					        }
-				        }
+                if (tempGeometry instanceof GeoText && !newValue.equals(TextStyleType.FIXEDSIZE)) {
+                    if (newValue.equals(TextStyleType.ROTATION)) {
+                        double tempTest = (Double) newGeoStyleProperty;
+                        if (Double.compare(tempTest, 0) != 0) { // 当设置旋转角度为0时，会抛异常，原因未找到,暂时先进行控制       ————李文发
+                            for (int j = 0; j < ((GeoText) tempGeometry).getPartCount(); j++) {
+                                ((GeoText) tempGeometry).getPart(j).setRotation((Double) newGeoStyleProperty);
+                            }
+                        }
                     } else {
                         ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
                     }
                 }
-		        if (tempGeometry instanceof GeoText && newValue.equals(TextStyleType.FIXEDSIZE)) {
-			        ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
+                if (tempGeometry instanceof GeoText && newValue.equals(TextStyleType.FIXEDSIZE)) {
+                    ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
                     ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, ((GeoText) tempGeometry).getTextStyle(),
                             textBasicPanel.getResultMap().get(TextStyleType.FONTHEIGHT));
                 }
-		        recordset.setGeometry(tempGeometry);
-		        tempGeometry.dispose();
-		        recordset.moveNext();
-	        }
-	        recordset.getBatch().update();
-	        editHistory.batchEnd();
-	        recordset.dispose();
+                recordset.setGeometry(tempGeometry);
+                tempGeometry.dispose();
+                recordset.moveNext();
+            }
+            recordset.getBatch().update();
+            editHistory.batchEnd();
+            recordset.dispose();
         }
-	    MapUtilities.getActiveMap().refresh();
+        MapUtilities.getActiveMap().refresh();
+        // FIXME: 2016/12/30 recordset,map的刷新会影响到CADStyleEditor.enable()调用CADStypeContainer.showDialog()方法
+        parent.setModify(false);
     }
 
     public void enabled(boolean enabled) {
