@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1482911869441
+Bnd-LastModified: 1483601836378
 Build-Jdk: 1.7.0_80
 Built-By: highsad
 Bundle-Activator: com.supermap.desktop.core.CoreActivator
@@ -86,16 +86,16 @@ Export-Package: com.supermap.desktop;version="1.0.0";uses:="com.supermap
  .supermap.desktop.exception;version="1.0.0",com.supermap.desktop.geomet
  ry.Abstract;version="1.0.0";uses:="com.supermap.data",com.supermap.desk
  top.geometry.Implements;version="1.0.0";uses:="com.supermap.data,com.su
- permap.desktop.geometry.Abstract",com.supermap.desktop.icloud.api;uses:
- ="com.supermap.desktop.icloud.commontypes";version="1.0.0",com.supermap
- .desktop.icloud;uses:="com.supermap.desktop.icloud.api,com.supermap.des
- ktop.icloud.commontypes";version="1.0.0",com.supermap.desktop.icloud.co
- mmontypes;version="1.0.0",com.supermap.desktop.icloud.fastJSon;uses:="c
- om.alibaba.fastjson,com.alibaba.fastjson.parser,com.alibaba.fastjson.pa
- rser.deserializer,com.alibaba.fastjson.serializer";version="1.0.0",com.
- supermap.desktop.icloud.online;uses:="org.apache.http.impl.client";vers
- ion="1.0.0",com.supermap.desktop.icloud.utils;uses:="com.supermap.deskt
- op.icloud.commontypes";version="1.0.0",com.supermap.desktop.Interface;v
+ permap.desktop.geometry.Abstract",com.supermap.desktop.icloud.api;versi
+ on="1.0.0";uses:="com.supermap.desktop.icloud.commontypes",com.supermap
+ .desktop.icloud;version="1.0.0";uses:="com.supermap.desktop.icloud.api,
+ com.supermap.desktop.icloud.commontypes",com.supermap.desktop.icloud.co
+ mmontypes;version="1.0.0",com.supermap.desktop.icloud.fastJSon;version=
+ "1.0.0";uses:="com.alibaba.fastjson,com.alibaba.fastjson.parser,com.ali
+ baba.fastjson.parser.deserializer,com.alibaba.fastjson.serializer",com.
+ supermap.desktop.icloud.online;version="1.0.0";uses:="org.apache.http.i
+ mpl.client",com.supermap.desktop.icloud.utils;version="1.0.0";uses:="co
+ m.supermap.desktop.icloud.commontypes",com.supermap.desktop.Interface;v
  ersion="1.0.0";uses:="com.supermap.data,com.supermap.desktop,com.superm
  ap.desktop.beans,com.supermap.desktop.enums,com.supermap.desktop.event,
  com.supermap.desktop.ui,com.supermap.mapping,com.supermap.realspace,com
@@ -144,9 +144,9 @@ Export-Package: com.supermap.desktop;version="1.0.0";uses:="com.supermap
  0.0";uses:="com.supermap.data,com.supermap.mapping,com.supermap.realspa
  ce,com.supermap.tilestorage",com.supermap.data.topology;version="1.0.0"
  ;uses:="com.supermap.data",com.supermap.desktop.iDesktop;version="1.0.0
- ",com.supermap.desktop.icloud.impl;uses:="com.supermap.desktop.icloud.a
- pi,com.supermap.desktop.icloud.commontypes,com.supermap.desktop.icloud.
- online,org.apache.http.impl.client";version="1.0.0",com.supermap.deskto
+ ",com.supermap.desktop.icloud.impl;version="1.0.0";uses:="com.supermap.
+ desktop.icloud.api,com.supermap.desktop.icloud.commontypes,com.supermap
+ .desktop.icloud.online,org.apache.http.impl.client",com.supermap.deskto
  p.implement;version="1.0.0";uses:="com.supermap.desktop.Interface,com.s
  upermap.desktop.enums,com.supermap.desktop.ui",com.supermap.layout;vers
  ion="1.0.0";uses:="com.supermap.data,com.supermap.mapping,com.supermap.
