@@ -1,6 +1,8 @@
 package com.supermap.desktop.ui.controls;
 
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ControlsResources;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -100,12 +102,14 @@ public class FileChooserControl extends JComponent {
 
         this.button = new JButton();
         button.setIcon(ControlsResources.getIcon("/controlsresources/Image_DatasetGroup_Normal.png"));
-        this.button.setBorder(BorderFactory.createEtchedBorder(1));
+	    button.setToolTipText(ControlsProperties.getString("String_Select"));
+	    this.button.setBorder(BorderFactory.createEtchedBorder(1));
         this.button.setFocusPainted(false);
         this.button.setFocusable(false);
 
 	    buttonDelete = new JButton();
 	    buttonDelete.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
+	    buttonDelete.setToolTipText(CommonProperties.getString(CommonProperties.Delete));
 	    buttonDelete.setMaximumSize(new Dimension(24, 23));
 	    buttonDelete.setPreferredSize(new Dimension(24, 23));
 	    buttonDelete.setForeground(Color.red);
