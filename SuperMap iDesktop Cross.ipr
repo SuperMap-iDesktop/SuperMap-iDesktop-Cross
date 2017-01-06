@@ -1038,6 +1038,17 @@
         <root url="jar://$MAVEN_REPOSITORY$/org/jb2011/beautyeye_lnf/v3.7/beautyeye_lnf-v3.7-sources.jar!/" />
       </SOURCES>
     </library>
+    <library name="Maven: org.jhotdraw:jhotdraw:7.4.1">
+      <CLASSES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jhotdraw/jhotdraw/7.4.1/jhotdraw-7.4.1.jar!/" />
+      </CLASSES>
+      <JAVADOC>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jhotdraw/jhotdraw/7.4.1/jhotdraw-7.4.1-javadoc.jar!/" />
+      </JAVADOC>
+      <SOURCES>
+        <root url="jar://$MAVEN_REPOSITORY$/org/jhotdraw/jhotdraw/7.4.1/jhotdraw-7.4.1-sources.jar!/" />
+      </SOURCES>
+    </library>
     <library name="Maven: org.slf4j:slf4j-api:1.7.21">
       <CLASSES>
         <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.21/slf4j-api-1.7.21.jar!/" />
