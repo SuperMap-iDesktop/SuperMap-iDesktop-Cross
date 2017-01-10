@@ -108,6 +108,8 @@ public class CADStyleEditor extends AbstractEditor {
 
     @Override
     public boolean enble(EditEnvironment environment) {
+        // // TODO: 2017/1/10 文本默认风格Part 1 共计 part4  lixiaoyao
+        DefaultTextStyle.setTextDefaultStyle(environment);
         // FIXME: 2016/12/30 enable()方法中集成的响应太多，包括地图刷新事件，而cad操作中包含很多地图刷新事件会造成文本风格中事件的重复调用,将选择事件单独移出
         return ListUtilities.isListContainAny(environment.getEditProperties().getSelectedDatasetTypes(), DatasetType.CAD, DatasetType.TEXT)
                 && isEditable(environment.getMap());
