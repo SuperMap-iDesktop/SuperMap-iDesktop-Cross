@@ -4,7 +4,7 @@ import com.supermap.desktop.Interface.IServerService;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.impl.IServerServiceImpl;
-import com.supermap.desktop.params.IServerInfo;
+import com.supermap.desktop.params.IServerLoginInfo;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -72,15 +72,15 @@ public class JDialogLogin extends SmDialog {
         String password = textFieldPassword.getText();
         IServerService service = new IServerServiceImpl();
         if (!StringUtilities.isNullOrEmpty(textFieldHost.getText()) && !StringUtilities.isNullOrEmpty(textFieldPort.getText())) {
-            IServerInfo.ipAddr = textFieldHost.getText() + ":" + textFieldPort.getText();
+            IServerLoginInfo.ipAddr = textFieldHost.getText() + ":" + textFieldPort.getText();
         }
         HttpClient client = service.login(username, password);
         if (null == client) {
             labelWorning.setForeground(Color.red);
             labelWorning.setText(CoreProperties.getString("String_ErrorUserNameOrPassword"));
         } else {
-            IServerInfo.client = client;
-            IServerInfo.login = true;
+            IServerLoginInfo.client = client;
+            IServerLoginInfo.login = true;
             dialogResult = DialogResult.OK;
             dispose();
         }

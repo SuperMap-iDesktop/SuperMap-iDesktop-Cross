@@ -7,7 +7,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.dialog.JDialogHeatMap;
 import com.supermap.desktop.dialog.JDialogLogin;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.params.IServerInfo;
+import com.supermap.desktop.params.IServerLoginInfo;
 import com.supermap.desktop.ui.controls.DialogResult;
 
 import javax.swing.*;
@@ -23,7 +23,7 @@ public class CtrlActionHeatMap extends CtrlAction {
     @Override
     public void run() {
         try {
-            if (!IServerInfo.login) {
+            if (!IServerLoginInfo.login) {
                 JDialogLogin loginDialog = new JDialogLogin();
                 DialogResult result = loginDialog.showDialog();
                 if (result == DialogResult.OK) {

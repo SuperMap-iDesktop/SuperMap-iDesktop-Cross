@@ -314,11 +314,9 @@ public class MessageBus {
 					}
 					sleep(1000);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Application.getActiveApplication().getOutput().output(e);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+                    Application.getActiveApplication().getOutput().output(e);
 				}
 
 				// 2. import grd file

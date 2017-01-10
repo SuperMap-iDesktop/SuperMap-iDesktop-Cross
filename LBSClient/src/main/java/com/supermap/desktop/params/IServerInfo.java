@@ -1,13 +1,9 @@
 package com.supermap.desktop.params;
 
-import org.apache.http.client.HttpClient;
-
 /**
- * Created by xie on 2017/1/6.
- * 登录信息类
+ * Created by xie on 2017/1/10.
  */
 public class IServerInfo {
-    public static String ipAddr;
-    public static HttpClient client;
-    public static boolean login;
+    public String serviceType;
+    public String serviceAddress;
 }

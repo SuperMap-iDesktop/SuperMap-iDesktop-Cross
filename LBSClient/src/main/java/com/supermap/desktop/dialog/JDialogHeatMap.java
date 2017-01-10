@@ -135,7 +135,7 @@ public class JDialogHeatMap extends SmDialog {
         this.labelBoundsTop.setText(LBSClientProperties.getString("String_Top"));
         this.buttonOK.setText(CommonProperties.getString("String_Button_OK"));
         this.buttonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
-        this.setTitle(LBSClientProperties.getString("String_HeatMap"));
+        this.setTitle(LBSClientProperties.getString("String_KernelDensityAnalyst"));
         this.panelBounds.setBorder(new TitledBorder(null, LBSClientProperties.getString("String_Bounds"), TitledBorder.LEADING,
                 TitledBorder.TOP, null, null));
     }

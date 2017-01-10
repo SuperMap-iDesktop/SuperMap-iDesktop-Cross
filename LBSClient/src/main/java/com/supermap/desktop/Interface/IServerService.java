@@ -1,5 +1,6 @@
 package com.supermap.desktop.Interface;
 
+import com.supermap.desktop.params.KernelDensityJobResultResponse;
 import com.supermap.desktop.params.KernelDensityJobSetting;
 import com.supermap.desktop.params.KernelDensityJobResponse;
 import org.apache.http.client.HttpClient;
@@ -27,9 +28,10 @@ public interface IServerService {
     KernelDensityJobResponse query(KernelDensityJobSetting kernelDensityJobSetting);
 
     /**
-     * 查询核密度分析结果
-     * @param newResourceLocation
+     * 查询JSON结果
+     * @param url
      * @return
      */
-    String query(String newResourceLocation);
+    String query(String url);
+
 }

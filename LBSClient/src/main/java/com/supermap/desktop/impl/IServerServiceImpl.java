@@ -25,7 +25,7 @@ import java.nio.charset.Charset;
 public class IServerServiceImpl implements IServerService {
 
     private final String HTTP_STR = "http://";
-    private final String KERNELDENSITY_URL = "/iserver/services/processing/rest/jobs/spatialanalyst/kernelDensity.json";
+    private final String KERNELDENSITY_URL = "/iserver/services/processing/rest/v1/jobs/spatialanalyst/kernelDensity.json";
     private final String LOGIN_URL = "/iserver/services/security/login.json";
     private static final Charset UTF8 = Charsets.UTF_8;
     private static final String JSON_UTF8_CONTENT_TPYE = "application/json;;charset=" + UTF8.name();
@@ -35,7 +35,7 @@ public class IServerServiceImpl implements IServerService {
         HttpClient result = null;
         try {
             HttpClient client = new DefaultHttpClient();
-            String url = HTTP_STR + IServerInfo.ipAddr + LOGIN_URL;
+            String url = HTTP_STR + IServerLoginInfo.ipAddr + LOGIN_URL;
             HttpPost post = new HttpPost(url);
             Token token = new Token();
             token.username = userName;
@@ -68,13 +68,13 @@ public class IServerServiceImpl implements IServerService {
         KernelDensityJobResponse result = null;
         HttpResponse response = null;
         try {
-            String url = HTTP_STR + IServerInfo.ipAddr + KERNELDENSITY_URL;
+            String url = HTTP_STR + IServerLoginInfo.ipAddr + KERNELDENSITY_URL;
             HttpPost post = new HttpPost(url);
             String jsonBody = JSON.toJSONString(kernelDensityJobSetting);
             StringEntity body = new StringEntity(jsonBody, UTF8);
             body.setContentType(JSON_UTF8_CONTENT_TPYE);
             post.setEntity(body);
-            response = IServerInfo.client.execute(post);
+            response = IServerLoginInfo.client.execute(post);
             if (null != response) {
                 String returnInfo = getJsonStrFromResponse(response);
                 KernelDensityJobResponse tempResponse = JSON.parseObject(returnInfo, KernelDensityJobResponse.class);
@@ -93,11 +93,11 @@ public class IServerServiceImpl implements IServerService {
 
     @Override
     public String query(String newResourceLocation) {
-        String result = "";
+        String result = null;
         HttpResponse response = null;
         try {
             HttpGet get = new HttpGet(newResourceLocation + ".json");
-            response = IServerInfo.client.execute(get);
+            response = IServerLoginInfo.client.execute(get);
             if (null != response) {
                 result = getJsonStrFromResponse(response);
             }
@@ -106,6 +106,7 @@ public class IServerServiceImpl implements IServerService {
         }
         return result;
     }
+
 
     /**
      * @param response
