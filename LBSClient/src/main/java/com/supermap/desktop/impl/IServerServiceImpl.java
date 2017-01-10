@@ -3,15 +3,13 @@ package com.supermap.desktop.impl;
 import com.alibaba.fastjson.JSON;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IServerService;
-import com.supermap.desktop.params.IServerInfo;
-import com.supermap.desktop.params.IServerResponse;
-import com.supermap.desktop.params.KernelDensityJobSetting;
-import com.supermap.desktop.params.Token;
+import com.supermap.desktop.params.*;
 import org.apache.commons.compress.utils.Charsets;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -66,8 +64,8 @@ public class IServerServiceImpl implements IServerService {
     }
 
     @Override
-    public String query(KernelDensityJobSetting kernelDensityJobSetting) {
-        String result = "";
+    public KernelDensityJobResponse query(KernelDensityJobSetting kernelDensityJobSetting) {
+        KernelDensityJobResponse result = null;
         HttpResponse response = null;
         try {
             String url = HTTP_STR + IServerInfo.ipAddr + KERNELDENSITY_URL;
@@ -77,13 +75,35 @@ public class IServerServiceImpl implements IServerService {
             body.setContentType(JSON_UTF8_CONTENT_TPYE);
             post.setEntity(body);
             response = IServerInfo.client.execute(post);
-            result = getJsonStrFromResponse(response);
+            if (null != response) {
+                String returnInfo = getJsonStrFromResponse(response);
+                KernelDensityJobResponse tempResponse = JSON.parseObject(returnInfo, KernelDensityJobResponse.class);
+                if ("true".equals(tempResponse.succeed)) {
+                    result = tempResponse;
+                }
+            }
         } catch (ClientProtocolException e) {
             Application.getActiveApplication().getOutput().output(e);
         } catch (IOException e) {
             Application.getActiveApplication().getOutput().output(e);
         }
 
+        return result;
+    }
+
+    @Override
+    public String query(String newResourceLocation) {
+        String result = "";
+        HttpResponse response = null;
+        try {
+            HttpGet get = new HttpGet(newResourceLocation + ".json");
+            response = IServerInfo.client.execute(get);
+            if (null != response) {
+                result = getJsonStrFromResponse(response);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return result;
     }
 

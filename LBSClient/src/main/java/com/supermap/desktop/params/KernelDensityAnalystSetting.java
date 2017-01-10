@@ -2,6 +2,7 @@ package com.supermap.desktop.params;
 
 /**
  * Created by xie on 2017/1/6.
+ * 核密度分析参数设置类
  */
 public class KernelDensityAnalystSetting {
     public String query;

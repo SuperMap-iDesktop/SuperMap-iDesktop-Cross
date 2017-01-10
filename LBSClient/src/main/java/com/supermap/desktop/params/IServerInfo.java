@@ -4,6 +4,7 @@ import org.apache.http.client.HttpClient;
 
 /**
  * Created by xie on 2017/1/6.
+ * 登录信息类
  */
 public class IServerInfo {
     public static String ipAddr;

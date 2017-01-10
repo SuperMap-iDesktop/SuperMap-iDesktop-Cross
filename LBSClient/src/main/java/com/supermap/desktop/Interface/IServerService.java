@@ -1,10 +1,8 @@
 package com.supermap.desktop.Interface;
 
 import com.supermap.desktop.params.KernelDensityJobSetting;
+import com.supermap.desktop.params.KernelDensityJobResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.CloseableHttpClient;
-
-import java.security.NoSuchAlgorithmException;
 
 /**
  * Created by xie on 2017/1/6.
@@ -21,10 +19,17 @@ public interface IServerService {
     HttpClient login(String userName, String passWord);
 
     /**
-     * 查询核密度分析结果
+     * 生成子（核密度分析）任务
      *
      * @param kernelDensityJobSetting 核密度分析参数
      * @return
      */
-    String query(KernelDensityJobSetting kernelDensityJobSetting);
+    KernelDensityJobResponse query(KernelDensityJobSetting kernelDensityJobSetting);
+
+    /**
+     * 查询核密度分析结果
+     * @param newResourceLocation
+     * @return
+     */
+    String query(String newResourceLocation);
 }

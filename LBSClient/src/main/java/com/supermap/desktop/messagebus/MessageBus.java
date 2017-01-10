@@ -54,7 +54,7 @@ public class MessageBus {
 
 	public static void producer(String command) {
 		if (tasks == null) {
-			tasks = new ArrayList<String>();
+			tasks = new ArrayList();
 		}
 		stop = false;
 		tasks.add(command);

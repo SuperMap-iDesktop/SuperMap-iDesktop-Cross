@@ -10,6 +10,8 @@ import com.supermap.desktop.impl.IServerServiceImpl;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.messagebus.MessageBus;
 import com.supermap.desktop.messagebus.MessageBus.MessageBusType;
+import com.supermap.desktop.messagebus.NewMessageBus;
+import com.supermap.desktop.params.KernelDensityJobResponse;
 import com.supermap.desktop.params.KernelDensityJobSetting;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -275,7 +277,11 @@ public class JDialogHeatMap extends SmDialog {
         kenelDensityJobSetting.input.filePath = textInputURL.getText();
         kenelDensityJobSetting.output.outputPath = textOutputURL.getText();
         IServerService service = new IServerServiceImpl();
-        service.query(kenelDensityJobSetting);
+        KernelDensityJobResponse response = service.query(kenelDensityJobSetting);
+        if (null != response) {
+            NewMessageBus.producer(response);
+            dispose();
+        }
     }
 
     private void unRegisterEvents() {
