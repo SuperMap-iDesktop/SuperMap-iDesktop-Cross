@@ -13,6 +13,7 @@ public class KernelDensityTask extends Task {
 	private static final long serialVersionUID = 1L;
 	public KernelDensityTask(){
 		super();
+		buttonRun.setVisible(false);
 		labelTitle.setText(LBSClientProperties.getString("String_KernelDensity"));
 		labelLogo.setIcon(CommonUtilities.getImageIcon("image_KernelDensity.png"));
 	}
@@ -22,7 +23,7 @@ public class KernelDensityTask extends Task {
 			@Override
 			public void run() {
 				progressBar.setValue(percent);
-				labelStatus.setText("...");
+				labelStatus.setText("");
 				if (percent == 100) {
 					labelTitle.setText(LBSClientProperties.getString("String_KernelDensityFinished"));
 				}

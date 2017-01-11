@@ -162,9 +162,13 @@ public class TextStyleContainer extends JPanel {
                             for (int j = 0; j < ((GeoText) tempGeometry).getPartCount(); j++) {
                                 ((GeoText) tempGeometry).getPart(j).setRotation((Double) newGeoStyleProperty);
                             }
+                            // // TODO: 2017/1/6 新增文本默认风格Part 2  共计Part4  lixiaoyao
+                            DefaultTextStyle.setRotationAngle(tempTest);
                         }
                     } else {
                         ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
+                        // // TODO: 2017/1/6 新增文本默认风格Part 3   共计Part4   lixiaoyao
+                        DefaultTextStyle.setDefaultGeoStyle(((GeoText) tempGeometry).getTextStyle().clone());
                     }
                 }
                 if (tempGeometry instanceof GeoText && newValue.equals(TextStyleType.FIXEDSIZE)) {
