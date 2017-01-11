@@ -3,6 +3,7 @@ package com.supermap.desktop.impl;
 import com.alibaba.fastjson.JSON;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IServerService;
+import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.params.*;
 import org.apache.commons.compress.utils.Charsets;
 import org.apache.http.HttpEntity;
@@ -16,7 +17,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 /**
@@ -26,6 +26,7 @@ public class IServerServiceImpl implements IServerService {
 
     private final String HTTP_STR = "http://";
     private final String KERNELDENSITY_URL = "/iserver/services/processing/rest/v1/jobs/spatialanalyst/kernelDensity.json";
+    private final String BUILDCACHE_URL = "/iserver/services/processing/rest/v1/jobs/mapping/buildCache.json";
     private final String LOGIN_URL = "/iserver/services/security/login.json";
     private static final Charset UTF8 = Charsets.UTF_8;
     private static final String JSON_UTF8_CONTENT_TPYE = "application/json;;charset=" + UTF8.name();
@@ -53,31 +54,38 @@ public class IServerServiceImpl implements IServerService {
                 if ("true".equals(iServerResponse.succeed))
                     result = client;
             }
-        } catch (UnsupportedEncodingException e) {
-            Application.getActiveApplication().getOutput().output(e);
-        } catch (ClientProtocolException e) {
-            Application.getActiveApplication().getOutput().output(e);
-        } catch (IOException e) {
-            Application.getActiveApplication().getOutput().output(e);
+        } catch (Exception e) {
+            Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("Strng_ConnectionException"));
         }
         return result;
     }
 
+    public JobResultResponse query(BuildCacheJobSetting buildCacheJobSetting) {
+        String url = HTTP_STR + IServerLoginInfo.ipAddr + BUILDCACHE_URL;
+        String jsonBody = JSON.toJSONString(buildCacheJobSetting);
+        JobResultResponse result = returnJobResult(url, jsonBody);
+        return result;
+    }
+
     @Override
-    public KernelDensityJobResponse query(KernelDensityJobSetting kernelDensityJobSetting) {
-        KernelDensityJobResponse result = null;
-        HttpResponse response = null;
+    public JobResultResponse query(KernelDensityJobSetting kernelDensityJobSetting) {
+        String url = HTTP_STR + IServerLoginInfo.ipAddr + KERNELDENSITY_URL;
+        String jsonBody = JSON.toJSONString(kernelDensityJobSetting);
+        JobResultResponse result = returnJobResult(url, jsonBody);
+        return result;
+    }
+
+    private JobResultResponse returnJobResult(String url, String jsonBody) {
+        JobResultResponse result = null;
         try {
-            String url = HTTP_STR + IServerLoginInfo.ipAddr + KERNELDENSITY_URL;
             HttpPost post = new HttpPost(url);
-            String jsonBody = JSON.toJSONString(kernelDensityJobSetting);
             StringEntity body = new StringEntity(jsonBody, UTF8);
             body.setContentType(JSON_UTF8_CONTENT_TPYE);
             post.setEntity(body);
-            response = IServerLoginInfo.client.execute(post);
+            HttpResponse response = IServerLoginInfo.client.execute(post);
             if (null != response) {
                 String returnInfo = getJsonStrFromResponse(response);
-                KernelDensityJobResponse tempResponse = JSON.parseObject(returnInfo, KernelDensityJobResponse.class);
+                JobResultResponse tempResponse = JSON.parseObject(returnInfo, JobResultResponse.class);
                 if ("true".equals(tempResponse.succeed)) {
                     result = tempResponse;
                 }
@@ -87,7 +95,6 @@ public class IServerServiceImpl implements IServerService {
         } catch (IOException e) {
             Application.getActiveApplication().getOutput().output(e);
         }
-
         return result;
     }
 

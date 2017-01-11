@@ -1,8 +1,8 @@
 package com.supermap.desktop.Interface;
 
-import com.supermap.desktop.params.KernelDensityJobResultResponse;
+import com.supermap.desktop.params.BuildCacheJobSetting;
 import com.supermap.desktop.params.KernelDensityJobSetting;
-import com.supermap.desktop.params.KernelDensityJobResponse;
+import com.supermap.desktop.params.JobResultResponse;
 import org.apache.http.client.HttpClient;
 
 /**
@@ -25,8 +25,14 @@ public interface IServerService {
      * @param kernelDensityJobSetting 核密度分析参数
      * @return
      */
-    KernelDensityJobResponse query(KernelDensityJobSetting kernelDensityJobSetting);
+    JobResultResponse query(KernelDensityJobSetting kernelDensityJobSetting);
 
+    /**
+     * 生成子（热度图）任务
+     * @param buildCacheJobSetting
+     * @return
+     */
+    JobResultResponse query(BuildCacheJobSetting buildCacheJobSetting);
     /**
      * 查询JSON结果
      * @param url

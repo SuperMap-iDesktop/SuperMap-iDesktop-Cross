@@ -16,8 +16,8 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.http.FileManagerContainer;
 import com.supermap.desktop.impl.IServerServiceImpl;
 import com.supermap.desktop.params.IServerInfo;
-import com.supermap.desktop.params.KernelDensityJobResponse;
-import com.supermap.desktop.params.KernelDensityJobResultResponse;
+import com.supermap.desktop.params.JobItemResultResponse;
+import com.supermap.desktop.params.JobResultResponse;
 import com.supermap.desktop.task.TaskFactory;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.CommonUtilities;
@@ -50,9 +50,14 @@ public class NewMessageBus {
             tasks.add(response);
             FileManagerContainer fileManagerContainer = CommonUtilities.getFileManagerContainer();
             ITaskFactory taskFactory = TaskFactory.getInstance();
-            if (response instanceof KernelDensityJobResponse) {
-                task = taskFactory.getTask(TaskEnum.KERNELDENSITYTASK, null);
-                addTask(fileManagerContainer, task);
+            if (response instanceof JobResultResponse) {
+                if (((JobResultResponse) response).newResourceLocation.contains("kernelDensity")) {
+                    task = taskFactory.getTask(TaskEnum.KERNELDENSITYTASK, null);
+                    addTask(fileManagerContainer, task);
+                } else if (((JobResultResponse) response).newResourceLocation.contains("buildCache")) {
+                    task = taskFactory.getTask(TaskEnum.HEATMAP, null);
+                    addTask(fileManagerContainer, task);
+                }
             }
             ExecutorService eService = Executors.newCachedThreadPool(new ThreadFactory() {
 
@@ -76,14 +81,14 @@ public class NewMessageBus {
     }
 
     public static class MessageBusConsumer implements Runnable, ExceptionListener {
+        private IServerService serverService = new IServerServiceImpl();
+
         @Override
         public void run() {
             try {
                 while (tasks.size() != 0) {
                     for (IResponse response : tasks) {
-                        if (response instanceof KernelDensityJobResponse) {
-                            kernerlDensity(response);
-                        }
+                        excute(response);
                     }
                 }
 
@@ -92,40 +97,42 @@ public class NewMessageBus {
             }
         }
 
-        private void kernerlDensity(IResponse response) throws InterruptedException {
-            IServerService serverService = new IServerServiceImpl();
-            String queryInfo = serverService.query(((KernelDensityJobResponse) response).newResourceLocation);
-            KernelDensityJobResultResponse result = null;
+
+        private void excute(IResponse response) throws InterruptedException {
+            String queryInfo = serverService.query(((JobResultResponse) response).newResourceLocation);
+            JobItemResultResponse result = null;
             if (!StringUtilities.isNullOrEmpty(queryInfo)) {
-                result = JSON.parseObject(queryInfo, KernelDensityJobResultResponse.class);
+                result = JSON.parseObject(queryInfo, JobItemResultResponse.class);
             }
-            if (null != result && "FINISHED".equals(result.state.runState) && null != result.setting.serviceInfo) {
-                tasks.remove(response);
+            if (null != result && "FINISHED".equals(result.state.runState)) {
                 task.updateProgress(100, "", "");
-                // 获取iserver服务发布地址,并打开到地图，如果存在已经打开的地图则将iserver服务上的地图打开到当前地图
-                ArrayList<IServerInfo> mapsList = result.setting.serviceInfo;
-                String serviceAddress = "";
-                int size = mapsList.size();
-                for (int i = 0; i < size; i++) {
-                    if ("RESTMAP".equals(mapsList.get(i).serviceType)) {
-                        serviceAddress = mapsList.get(i).serviceAddress;
-                    }
-                }
-                if (!StringUtilities.isNullOrEmpty(serviceAddress)) {
-                    //获取查询iserver的结果
-                    serviceAddress = serviceAddress + "/maps";
-                    String mapsInfo = serverService.query(serviceAddress);
-                    if (!StringUtilities.isNullOrEmpty(mapsInfo)) {
-                        ArrayList<JSONObject> mapsResult = JSON.parseObject(mapsInfo, ArrayList.class);
-                        String iserverRestAddr = "";
-                        String datasetName = "";
-                        int length = mapsResult.size();
-                        for (int i = 0; i < length; i++) {
-                            JSONObject object = mapsResult.get(i);
-                            iserverRestAddr = (String) object.get("path");
-                            datasetName = (String) object.get("name");
+                if (null != result.setting.serviceInfo.targetServiceInfos) {
+                    // 获取iserver服务发布地址,并打开到地图，如果存在已经打开的地图则将iserver服务上的地图打开到当前地图
+                    ArrayList<IServerInfo> mapsList = result.setting.serviceInfo.targetServiceInfos;
+                    String serviceAddress = "";
+                    int size = mapsList.size();
+                    for (int i = 0; i < size; i++) {
+                        if ("RESTMAP".equals(mapsList.get(i).serviceType)) {
+                            serviceAddress = mapsList.get(i).serviceAddress;
+                            tasks.remove(response);
                         }
-                        openIserverMap(iserverRestAddr, datasetName);
+                    }
+                    if (!StringUtilities.isNullOrEmpty(serviceAddress)) {
+                        //获取查询iserver的结果
+                        serviceAddress = serviceAddress + "/maps";
+                        String mapsInfo = serverService.query(serviceAddress);
+                        if (!StringUtilities.isNullOrEmpty(mapsInfo)) {
+                            ArrayList<JSONObject> mapsResult = JSON.parseObject(mapsInfo, ArrayList.class);
+                            String iserverRestAddr = "";
+                            String datasetName = "";
+                            int length = mapsResult.size();
+                            for (int i = 0; i < length; i++) {
+                                JSONObject object = mapsResult.get(i);
+                                iserverRestAddr = (String) object.get("path");
+                                datasetName = (String) object.get("name");
+                            }
+                            openIserverMap(iserverRestAddr, datasetName);
+                        }
                     }
                 }
             } else {
@@ -167,7 +174,9 @@ public class NewMessageBus {
                 } else {
                     //打开新的地图
                     IFormMap newMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, datasetName);
-                    MapUtilities.addDatasetToMap(newMap.getMapControl().getMap(), dataset, true);
+                    Map map = newMap.getMapControl().getMap();
+                    MapUtilities.addDatasetToMap(map, dataset, true);
+                    map.refresh();
                 }
             }
         }
