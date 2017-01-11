@@ -24,8 +24,9 @@ public class CtrlActionTabularUpdateColumn extends CtrlAction {
 		boolean flag = false;
 		if (Application.getActiveApplication().getActiveForm() instanceof IFormTabular && ((IFormTabular) Application.getActiveApplication().getActiveForm()).getRowCount() > 0) {
 				flag = true;
-			//判断是否是只读模式，只读模式不支持更新列操作
-			if(Application.getActiveApplication().getActiveDatasets().length>0&&Application.getActiveApplication().getActiveDatasets()[0].isReadOnly()){
+			//判断是否是只读模式，只读模式不支持更新列操作，通过当前活动form数据的可读性判读是否更新
+			if(((IFormTabular) Application.getActiveApplication().getActiveForm()).getRecordset().getDataset().getDatasource().getDatasets().getCount()>0
+					&&((IFormTabular) Application.getActiveApplication().getActiveForm()).getRecordset().isReadOnly()){
 				flag=false;
 			}
 		}
