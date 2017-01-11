@@ -89,7 +89,8 @@ public class SQLExpressionDialog extends SmDialog {
 	private JTextField textFieldGOTO;
 
 	private void initialDialog(String expression) {
-		setSize(900, 600);
+		setSize(900, 464);
+		setMinimumSize(new Dimension(650, 350));
 		setTitle(ControlsProperties.getString("String_SQLExpression"));
 		setName("SQLExpressionDialog");
 
@@ -117,17 +118,17 @@ public class SQLExpressionDialog extends SmDialog {
 		//@formatter:off
         JPanel panelButton = new JPanel();
         panelButton.setLayout(new GridBagLayout());
-        panelButton.add(this.jButtonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
-        panelButton.add(this.jButtonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
-        getContentPane().add(this.jTextAreaSQLSentence, new GridBagConstraintsHelper(0, 0, 4, 2).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5).setWeight(3, 3));
-        getContentPane().add(this.jScrollPanel, new GridBagConstraintsHelper(0, 2, 1, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(0, 0, 0, 0).setWeight(0, 0).setIpad(240, 50));
-       //将获取唯一值面板加入主panel
-	    getContentPane().add(this.jPanelGetAllValue, new GridBagConstraintsHelper(1, 2, 1, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3, 0, 5, 3).setWeight(0, 0).setIpad(50,50));
-        getContentPane().add(this.jPanelFunction, new GridBagConstraintsHelper(2, 2, 1, 2).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.BOTH).setInsets(3, 0, 5, 3).setWeight(0, 0).setIpad(0,50));
-        getContentPane().add(this.jPanelCommonOperator, new GridBagConstraintsHelper(3, 2, 1, 2).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.BOTH).setInsets(3, 0, 5, 3).setWeight(0, 0).setIpad(0,50));
-        getContentPane().add(panelButton, new GridBagConstraintsHelper(0, 4, 0, 0).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
-        //@formatter:on
+        panelButton.add(this.jButtonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setInsets(2, 0, 10, 10));
+        panelButton.add(this.jButtonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setInsets(2, 0, 10, 10));
 
+		getContentPane().add(this.jTextAreaSQLSentence, new GridBagConstraintsHelper(0, 0, 3, 3).setWeight(1,1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5));
+	    getContentPane().add(this.jPanelGetAllValue, new GridBagConstraintsHelper(3, 0, 1, 3).setWeight(0,0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(3));
+        getContentPane().add(this.jScrollPanel, new GridBagConstraintsHelper(0, 3, 2, 1).setWeight(3,0).setAnchor(GridBagConstraints.SOUTH).setFill(GridBagConstraints.BOTH).setInsets(3).setIpad(500,100));
+       //将获取唯一值面板加入主panel3, 2, 1, 2
+        getContentPane().add(this.jPanelCommonOperator, new GridBagConstraintsHelper(2, 3, 1, 1).setWeight(0,0).setAnchor(GridBagConstraints.SOUTH).setFill(GridBagConstraints.BOTH).setInsets(3));
+        getContentPane().add(this.jPanelFunction, new GridBagConstraintsHelper(3, 3, 1, 1).setWeight(0,0).setAnchor(GridBagConstraints.SOUTH).setFill(GridBagConstraints.BOTH).setInsets(3).setIpad(10,0));
+        getContentPane().add(panelButton, new GridBagConstraintsHelper(3, 4, 1, 1).setWeight(0,0).setAnchor(GridBagConstraints.EAST));
+        //@formatter:on
 
 		this.jScrollPanel.setViewportView(getTableFieldInfo());
 		this.jTextAreaSQLSentence.setText(expression);
@@ -279,10 +280,10 @@ public class SQLExpressionDialog extends SmDialog {
 		this.textFieldGOTO.setEnabled(false);
 
 		this.jPanelGetAllValue.setLayout(new GridBagLayout());
-		this.jPanelGetAllValue.add(jButtonGetAllValue, new GridBagConstraintsHelper(3, 1, 2, 1).setFill(GridBagConstraints.NONE).setWeight(1, 0.2).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 0, 0));
-		this.jPanelGetAllValue.add(scrollPaneAllValue, new GridBagConstraintsHelper(3, 2, 2, 3).setFill(GridBagConstraints.BOTH).setWeight(1, 0.6).setAnchor(GridBagConstraints.CENTER).setInsets(0, 10, 0, 0));
-		this.jPanelGetAllValue.add(labelGoTO, new GridBagConstraintsHelper(3, 5, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0.2, 0.2).setAnchor(GridBagConstraints.CENTER));
-		this.jPanelGetAllValue.add(textFieldGOTO, new GridBagConstraintsHelper(4, 5, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(0.8, 0.2).setAnchor(GridBagConstraints.CENTER));
+		this.jPanelGetAllValue.add(jButtonGetAllValue, new GridBagConstraintsHelper(3, 1, 2, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(2, 2, 2, 2));
+		this.jPanelGetAllValue.add(scrollPaneAllValue, new GridBagConstraintsHelper(3, 2, 2, 3).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(2, 2, 2, 2));
+		this.jPanelGetAllValue.add(labelGoTO, new GridBagConstraintsHelper(3, 5, 1, 1).setFill(GridBagConstraints.NONE).setInsets(2, 2, 2, 2));
+		this.jPanelGetAllValue.add(textFieldGOTO, new GridBagConstraintsHelper(4, 5, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(2, 2, 2, 2));
 	}
 
 	/**
@@ -576,7 +577,9 @@ public class SQLExpressionDialog extends SmDialog {
 		if (this.jTableFieldInfo == null) {
 			this.defaultTableModel = new DefaultTableModel(NAMES, 0);
 			this.jTableFieldInfo = new JTable(defaultTableModel);
-			this.jTableFieldInfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			//为什么要关闭列宽自动适应？？---yuanR 17.1.11
+			//去除。实现jatble跟随窗口大小的改变自动适应
+			//	this.jTableFieldInfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		}
 		return this.jTableFieldInfo;
 	}

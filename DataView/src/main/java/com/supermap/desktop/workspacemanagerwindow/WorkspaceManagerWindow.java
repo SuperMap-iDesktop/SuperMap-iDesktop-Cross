@@ -941,7 +941,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 			this.jTable.getColumnModel().getColumn(COLUMN_TYPE).setPreferredWidth(150);
 			this.jTable.getColumnModel().getColumn(COLUMN_NUMBER).setPreferredWidth(150);
 			this.jTable.getColumnModel().getColumn(COLUMN_PRJCOORDSYS).setPreferredWidth(500);
-			this.jTable.getColumnModel().getColumn(COLUMN_NULL).setPreferredWidth(800);
+			this.jTable.getColumnModel().getColumn(COLUMN_NULL).setPreferredWidth(522);
 		} else {
 			this.jTable.getColumnModel().getColumn(COLUMN_NAME).setPreferredWidth(this.columnNameWidth);
 			this.jTable.getColumnModel().getColumn(COLUMN_TYPE).setPreferredWidth(this.columnTypeWidth);
