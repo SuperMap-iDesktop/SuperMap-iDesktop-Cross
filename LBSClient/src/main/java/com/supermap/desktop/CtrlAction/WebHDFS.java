@@ -13,346 +13,351 @@ import java.util.ArrayList;
 
 public class WebHDFS {
 
-	public static String webURL = "http://192.168.14.1:50070/webhdfs/v1/data/NY_trip_data/";
-	public static String webFile = "trip_data_1.csv";
-	public static String outputURL = "http://192.168.14.1:50070/webhdfs/v1/output/";
-	public static String defaultURL = "http://192.168.14.1:50070/webhdfs/v1/";
+    //	public static String webURL = "http://192.168.14.1:50070/webhdfs/v1/data/NY_trip_data/";
+//	public static String webFile = "trip_data_1.csv";
+//	public static String outputURL = "http://192.168.14.1:50070/webhdfs/v1/output/";
+//	public static String defaultURL = "http://192.168.14.1:50070/webhdfs/v1/";
+    public static String webURL = "http://192.168.12.103:50070/webhdfs/v1/data/";
+    public static String defaultURL = "http://192.168.12.103:50070/webhdfs/v1/";
+    public static String outputURL = "http://192.168.12.103:50070/webhdfs/v1/lixk/";
 
-	public HDFSDefine getHDFSDefine(String permission, String owner, String group, String size, String replication, String blockSize, String name, Boolean isDir) {
 
-		HDFSDefine define = new HDFSDefine(permission, owner, group, size, replication, blockSize, name, isDir);
-		return define;
-	}
+    public HDFSDefine getHDFSDefine(String permission, String owner, String group, String size, String replication, String blockSize, String name, Boolean isDir) {
 
-	public static String getHDFSFileURL() {
-		String serverPath = webURL;
-		// serverPath = serverPath.replace("webhdfs/v1/", "");
-		// serverPath = serverPath.replace("http", "hdfs");
-		serverPath += webFile;
-		return serverPath;
-	}
+        HDFSDefine define = new HDFSDefine(permission, owner, group, size, replication, blockSize, name, isDir);
+        return define;
+    }
 
-	public static String getHDFSFilePath() {
-		String serverPath = webURL;
-		serverPath = serverPath.replace("http", "hdfs");
-		serverPath = serverPath.replace("50070/webhdfs/v1", "9000");
-		serverPath += webFile;
-		return serverPath;
-	}
+    public static String getHDFSFileURL() {
+        String serverPath = webURL;
+        // serverPath = serverPath.replace("webhdfs/v1/", "");
+        // serverPath = serverPath.replace("http", "hdfs");
+//        serverPath += webFile;
+        return serverPath;
+    }
 
-	public static String getHDFSOutputDirectry() {
-		String directry = outputURL;
-		directry = directry.replace("50070/webhdfs/v1", "9000");
-		directry = directry.replace("http", "hdfs");
-		if (!directry.endsWith("/")) {
-			directry += "/";
-		}
-		return directry;
-	}
+    public static String getHDFSFilePath() {
+        String serverPath = webURL;
+        serverPath = serverPath.replace("http", "hdfs");
+        serverPath = serverPath.replace("50070/webhdfs/v1", "9000");
+//        serverPath += webFile;
+        return serverPath;
+    }
 
-	public static String urlToHDFS(String url) {
-		String hdfs = url.replace("50070/webhdfs/v1", "9000");
-		hdfs = hdfs.replace("http", "hdfs");
-		return hdfs;
-	}
+    public static String getHDFSOutputDirectry() {
+        String directry = outputURL;
+        directry = directry.replace("50070/webhdfs/v1", "9000");
+        directry = directry.replace("http", "hdfs");
+        if (!directry.endsWith("/")) {
+            directry += "/";
+        }
+        return directry;
+    }
 
-	public static String hdfsToURL(String hdfs) {
-		String url = hdfs.replace("9000", "50070/webhdfs/v1");
-		url = url.replace("hdfs://", "http://");
-		return url;
-	}
+    public static String urlToHDFS(String url) {
+        String hdfs = url.replace("50070/webhdfs/v1", "9000");
+        hdfs = hdfs.replace("http", "hdfs");
+        return hdfs;
+    }
 
-	public static String getFileList(String urlPath) {
-		return HttpRequest.getHttpString(urlPath, "op=LISTSTATUS");
-	}
+    public static String hdfsToURL(String hdfs) {
+        String url = hdfs.replace("9000", "50070/webhdfs/v1");
+        url = url.replace("hdfs://", "http://");
+        return url;
+    }
 
-	private static Boolean getFileResult = false;
+    public static String getFileList(String urlPath) {
+        return HttpRequest.getHttpString(urlPath, "op=LISTSTATUS");
+    }
 
-	public static Boolean getFile(String urlPath, String localPath) {
-		getFileResult = false;
-		// 需要实现断点续传
-		// 获取文件总大小，计算给出进度
-		// 提供界面，给出默认名字，允许用户改名字
-		getFileResult = HttpRequest.saveFileToDisk(urlPath, "op=OPEN&offset=0&length=1024", localPath);
+    private static Boolean getFileResult = false;
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-			}
-		});
-		return getFileResult;
-	}
-	
-	private static String getHttpString(InputStream stream) {
-		String result = "";
-		BufferedReader in = null;
-		try {
-			InputStream inputStream = stream;
-			
-			// 定义 BufferedReader输入流来读取URL的响应
-			if (inputStream != null) {
-				in = new BufferedReader(new InputStreamReader(inputStream));
-				String line;
-				while ((line = in.readLine()) != null) {
-					result += line;
-				}
-			}
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_ConnectException"));
-			e.printStackTrace();
-		}
-		// 使用finally块来关闭输入流
-		finally {
-			try {
-				if (in != null) {
-					in.close();
-				}
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-		}
-		return result;
-	}
-	public static HDFSDefine getFileStatus(String url,String name) {
-		HDFSDefine define = null;
-		CreateFile file = new CreateFile();
-		String result = getHttpString(file.getFileStatus(url, name));
-		define = parseStringToDefine(define, result);
+    public static Boolean getFile(String urlPath, String localPath) {
+        getFileResult = false;
+        // 需要实现断点续传
+        // 获取文件总大小，计算给出进度
+        // 提供界面，给出默认名字，允许用户改名字
+        getFileResult = HttpRequest.saveFileToDisk(urlPath, "op=OPEN&offset=0&length=1024", localPath);
 
-		return define;
-	}
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+            }
+        });
+        return getFileResult;
+    }
 
-	private static HDFSDefine parseStringToDefine(HDFSDefine define, String result) {
-		String[] temps = result.split("\"|,|:|\\[|\\]|\\{|\\}|\\\r|\\\n");
-		ArrayList<String> results = new ArrayList<String>();
-		for (String temp : temps) {
-			if (!temp.trim().equals("")) {
-				results.add(temp.trim());
-			}
-		}
+    private static String getHttpString(InputStream stream) {
+        String result = "";
+        BufferedReader in = null;
+        try {
+            InputStream inputStream = stream;
 
-		int itemsCount = 26;
-		// 开始：最前面一个节点 {"FileStatus":[
-		// 结尾：]}}
-		results.remove(0);
-		// "accessTime":0,"blockSize":0,"childrenNum":24,"fileId":16386,"group":"supergroup","length":0,"modificationTime":1461949836347,
-		// "owner":"root","pathSuffix":"data","permission":"755","replication":0,"storagePolicy":0,"type":"DIRECTORY"
-		String permission = "", owner = "", group = "", length = "", replication = "", blockSize = "", pathSuffix = "", type = "";
-		for (int i = 0; i < results.size(); i += itemsCount) {
-			for (int j = 0; j < itemsCount; j += 2) {
-				if (results.get(i + j).equalsIgnoreCase("permission")) {
-					permission = results.get(i + j + 1);
-				} else if (results.get(i + j).equalsIgnoreCase("owner")) {
-					owner = results.get(i + j + 1);
-				} else if (results.get(i + j).equalsIgnoreCase("group")) {
-					group = results.get(i + j + 1);
-				} else if (results.get(i + j).equalsIgnoreCase("length")) {
-					length = results.get(i + j + 1);
-				} else if (results.get(i + j).equalsIgnoreCase("replication")) {
-					replication = results.get(i + j + 1);
-				} else if (results.get(i + j).equalsIgnoreCase("blockSize")) {
-					blockSize = results.get(i + j + 1);
-				} else if (results.get(i + j).equalsIgnoreCase("pathSuffix")) {
-					pathSuffix = results.get(i + j + 1);
-				} else if (results.get(i + j).equalsIgnoreCase("type")) {
-					type = results.get(i + j + 1);
-				}
-			}
+            // 定义 BufferedReader输入流来读取URL的响应
+            if (inputStream != null) {
+                in = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = in.readLine()) != null) {
+                    result += line;
+                }
+            }
+        } catch (Exception e) {
+            Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_ConnectException"));
+            e.printStackTrace();
+        }
+        // 使用finally块来关闭输入流
+        finally {
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+        return result;
+    }
 
-			Boolean isDir = false;
-			if (type.equalsIgnoreCase("DIRECTORY")) {
-				isDir = true;
-			}
+    public static HDFSDefine getFileStatus(String url, String name) {
+        HDFSDefine define = null;
+        CreateFile file = new CreateFile();
+        String result = getHttpString(file.getFileStatus(url, name));
+        define = parseStringToDefine(define, result);
 
-			define = (new WebHDFS()).getHDFSDefine(permission, owner, group, length, replication, blockSize, pathSuffix, isDir);
-		}
-		return define;
-	}
+        return define;
+    }
 
-	public static HDFSDefine getFileStatus(String urlPath) {
-		HDFSDefine define = null;
+    private static HDFSDefine parseStringToDefine(HDFSDefine define, String result) {
+        String[] temps = result.split("\"|,|:|\\[|\\]|\\{|\\}|\\\r|\\\n");
+        ArrayList<String> results = new ArrayList<String>();
+        for (String temp : temps) {
+            if (!temp.trim().equals("")) {
+                results.add(temp.trim());
+            }
+        }
 
-		String result = HttpRequest.getHttpString(urlPath, "op=GETFILESTATUS");
-		define = parseStringToDefine(define, result);
+        int itemsCount = 26;
+        // 开始：最前面一个节点 {"FileStatus":[
+        // 结尾：]}}
+        results.remove(0);
+        // "accessTime":0,"blockSize":0,"childrenNum":24,"fileId":16386,"group":"supergroup","length":0,"modificationTime":1461949836347,
+        // "owner":"root","pathSuffix":"data","permission":"755","replication":0,"storagePolicy":0,"type":"DIRECTORY"
+        String permission = "", owner = "", group = "", length = "", replication = "", blockSize = "", pathSuffix = "", type = "";
+        for (int i = 0; i < results.size(); i += itemsCount) {
+            for (int j = 0; j < itemsCount; j += 2) {
+                if (results.get(i + j).equalsIgnoreCase("permission")) {
+                    permission = results.get(i + j + 1);
+                } else if (results.get(i + j).equalsIgnoreCase("owner")) {
+                    owner = results.get(i + j + 1);
+                } else if (results.get(i + j).equalsIgnoreCase("group")) {
+                    group = results.get(i + j + 1);
+                } else if (results.get(i + j).equalsIgnoreCase("length")) {
+                    length = results.get(i + j + 1);
+                } else if (results.get(i + j).equalsIgnoreCase("replication")) {
+                    replication = results.get(i + j + 1);
+                } else if (results.get(i + j).equalsIgnoreCase("blockSize")) {
+                    blockSize = results.get(i + j + 1);
+                } else if (results.get(i + j).equalsIgnoreCase("pathSuffix")) {
+                    pathSuffix = results.get(i + j + 1);
+                } else if (results.get(i + j).equalsIgnoreCase("type")) {
+                    type = results.get(i + j + 1);
+                }
+            }
 
-		return define;
-	}
+            Boolean isDir = false;
+            if (type.equalsIgnoreCase("DIRECTORY")) {
+                isDir = true;
+            }
 
-	public static HDFSDefine[] listDirectory(String urlPath, String childFolder, Boolean isFolderOnly) {
-		ArrayList<HDFSDefine> defines = new ArrayList<HDFSDefine>();
-		try {
-			int itemsCount = 26;
-			if (!urlPath.endsWith("/")) {
-				urlPath += "/";
-			}
+            define = (new WebHDFS()).getHDFSDefine(permission, owner, group, length, replication, blockSize, pathSuffix, isDir);
+        }
+        return define;
+    }
 
-			if (!"".equals(childFolder)) {
-				if (!childFolder.endsWith("/")) {
-					childFolder += "/";
-				}
+    public static HDFSDefine getFileStatus(String urlPath) {
+        HDFSDefine define = null;
 
-				if (childFolder.startsWith("/")) {
-					childFolder.substring(1, childFolder.length() - 1);
-				}
+        String result = HttpRequest.getHttpString(urlPath, "op=GETFILESTATUS");
+        define = parseStringToDefine(define, result);
 
-				urlPath += childFolder;
-			}
+        return define;
+    }
 
-			String result = WebHDFS.getFileList(urlPath);
-			String[] temps = result.split("\"|,|:|\\[|\\]|\\{|\\}|\\\r|\\\n");
-			ArrayList<String> results = new ArrayList<String>();
-			for (String temp : temps) {
-				if (!temp.trim().equals("")) {
-					results.add(temp.trim());
-				}
-			}
+    public static HDFSDefine[] listDirectory(String urlPath, String childFolder, Boolean isFolderOnly) {
+        ArrayList<HDFSDefine> defines = new ArrayList<HDFSDefine>();
+        try {
+            int itemsCount = 26;
+            if (!urlPath.endsWith("/")) {
+                urlPath += "/";
+            }
 
-			// 开始：最前面两个节点 {"FileStatuses":{"FileStatus":[
-			// 结尾：]}}
-			results.remove(1);
-			results.remove(0);
-			// "accessTime":0,"blockSize":0,"childrenNum":24,"fileId":16386,"group":"supergroup","length":0,"modificationTime":1461949836347,
-			// "owner":"root","pathSuffix":"data","permission":"755","replication":0,"storagePolicy":0,"type":"DIRECTORY"
-			String permission = "", owner = "", group = "", length = "", replication = "", blockSize = "", pathSuffix = "", type = "";
-			for (int i = 0; i < results.size(); i += itemsCount) {
-				for (int j = 0; j < itemsCount; j += 2) {
-					if (results.get(i + j).equalsIgnoreCase("permission")) {
-						permission = results.get(i + j + 1);
-					} else if (results.get(i + j).equalsIgnoreCase("owner")) {
-						owner = results.get(i + j + 1);
-					} else if (results.get(i + j).equalsIgnoreCase("group")) {
-						group = results.get(i + j + 1);
-					} else if (results.get(i + j).equalsIgnoreCase("length")) {
-						length = results.get(i + j + 1);
-					} else if (results.get(i + j).equalsIgnoreCase("replication")) {
-						replication = results.get(i + j + 1);
-					} else if (results.get(i + j).equalsIgnoreCase("blockSize")) {
-						blockSize = results.get(i + j + 1);
-					} else if (results.get(i + j).equalsIgnoreCase("pathSuffix")) {
-						pathSuffix = results.get(i + j + 1);
-					} else if (results.get(i + j).equalsIgnoreCase("type")) {
-						type = results.get(i + j + 1);
-					}
-				}
+            if (!"".equals(childFolder)) {
+                if (!childFolder.endsWith("/")) {
+                    childFolder += "/";
+                }
 
-				Boolean isDir = false;
-				if (type.equalsIgnoreCase("DIRECTORY")) {
-					isDir = true;
-				}
+                if (childFolder.startsWith("/")) {
+                    childFolder.substring(1, childFolder.length() - 1);
+                }
 
-				if (!isFolderOnly || (isFolderOnly && isDir)) {
-					HDFSDefine hdfsDefine = (new WebHDFS()).getHDFSDefine(permission, owner, group, length, replication, blockSize, pathSuffix, isDir);
-					defines.add(hdfsDefine);
-				}
-			}
-		} catch (Exception ex) {
-			
-		}
+                urlPath += childFolder;
+            }
 
-		return defines.toArray(new HDFSDefine[defines.size()]);
-	}
+            String result = WebHDFS.getFileList(urlPath);
+            String[] temps = result.split("\"|,|:|\\[|\\]|\\{|\\}|\\\r|\\\n");
+            ArrayList<String> results = new ArrayList<String>();
+            for (String temp : temps) {
+                if (!temp.trim().equals("")) {
+                    results.add(temp.trim());
+                }
+            }
 
-	/**
-	 * describe a HDFS file
-	 *
-	 * @author huchenpu
-	 */
-	public class HDFSDefine {
-		private String fullPath = "";
-		String permission = "", owner = "", group = "", length = "", replication = "", blockSize = "", pathSuffix = "";
-		Boolean isDir = false;
+            // 开始：最前面两个节点 {"FileStatuses":{"FileStatus":[
+            // 结尾：]}}
+            results.remove(1);
+            results.remove(0);
+            // "accessTime":0,"blockSize":0,"childrenNum":24,"fileId":16386,"group":"supergroup","length":0,"modificationTime":1461949836347,
+            // "owner":"root","pathSuffix":"data","permission":"755","replication":0,"storagePolicy":0,"type":"DIRECTORY"
+            String permission = "", owner = "", group = "", length = "", replication = "", blockSize = "", pathSuffix = "", type = "";
+            for (int i = 0; i < results.size(); i += itemsCount) {
+                for (int j = 0; j < itemsCount; j += 2) {
+                    if (results.get(i + j).equalsIgnoreCase("permission")) {
+                        permission = results.get(i + j + 1);
+                    } else if (results.get(i + j).equalsIgnoreCase("owner")) {
+                        owner = results.get(i + j + 1);
+                    } else if (results.get(i + j).equalsIgnoreCase("group")) {
+                        group = results.get(i + j + 1);
+                    } else if (results.get(i + j).equalsIgnoreCase("length")) {
+                        length = results.get(i + j + 1);
+                    } else if (results.get(i + j).equalsIgnoreCase("replication")) {
+                        replication = results.get(i + j + 1);
+                    } else if (results.get(i + j).equalsIgnoreCase("blockSize")) {
+                        blockSize = results.get(i + j + 1);
+                    } else if (results.get(i + j).equalsIgnoreCase("pathSuffix")) {
+                        pathSuffix = results.get(i + j + 1);
+                    } else if (results.get(i + j).equalsIgnoreCase("type")) {
+                        type = results.get(i + j + 1);
+                    }
+                }
 
-		public HDFSDefine(String permission, String owner, String group, String size, String replication, String blockSize, String name, Boolean isDir) {
-			this.permission = permission;
-			this.owner = owner;
-			this.group = group;
-			this.length = size;
-			this.replication = replication;
-			this.blockSize = blockSize;
-			this.pathSuffix = name;
-			this.isDir = isDir;
-		}
+                Boolean isDir = false;
+                if (type.equalsIgnoreCase("DIRECTORY")) {
+                    isDir = true;
+                }
 
-		public String getPermission() {
-			return permission;
-		}
+                if (!isFolderOnly || (isFolderOnly && isDir)) {
+                    HDFSDefine hdfsDefine = (new WebHDFS()).getHDFSDefine(permission, owner, group, length, replication, blockSize, pathSuffix, isDir);
+                    defines.add(hdfsDefine);
+                }
+            }
+        } catch (Exception ex) {
 
-		public void setPermission(String permission) {
-			this.permission = permission;
-		}
+        }
 
-		public String getOwner() {
-			return owner;
-		}
+        return defines.toArray(new HDFSDefine[defines.size()]);
+    }
 
-		public void setOwner(String owner) {
-			this.owner = owner;
-		}
+    /**
+     * describe a HDFS file
+     *
+     * @author huchenpu
+     */
+    public class HDFSDefine {
+        private String fullPath = "";
+        String permission = "", owner = "", group = "", length = "", replication = "", blockSize = "", pathSuffix = "";
+        Boolean isDir = false;
 
-		public String getGroup() {
-			return this.group;
-		}
+        public HDFSDefine(String permission, String owner, String group, String size, String replication, String blockSize, String name, Boolean isDir) {
+            this.permission = permission;
+            this.owner = owner;
+            this.group = group;
+            this.length = size;
+            this.replication = replication;
+            this.blockSize = blockSize;
+            this.pathSuffix = name;
+            this.isDir = isDir;
+        }
 
-		public void setGroup(String group) {
-			this.group = group;
-		}
+        public String getPermission() {
+            return permission;
+        }
 
-		public String getSize() {
-			return this.length;
-		}
+        public void setPermission(String permission) {
+            this.permission = permission;
+        }
 
-		public void setSize(String length) {
-			this.length = length;
-		}
+        public String getOwner() {
+            return owner;
+        }
 
-		public String getReplication() {
-			return this.replication;
-		}
+        public void setOwner(String owner) {
+            this.owner = owner;
+        }
 
-		public void setReplication(String replication) {
-			this.replication = replication;
-		}
+        public String getGroup() {
+            return this.group;
+        }
 
-		public String getBlockSize() {
-			return this.blockSize;
-		}
+        public void setGroup(String group) {
+            this.group = group;
+        }
 
-		public void setBlockSize(String blockSize) {
-			this.blockSize = blockSize;
-		}
+        public String getSize() {
+            return this.length;
+        }
 
-		public String getName() {
+        public void setSize(String length) {
+            this.length = length;
+        }
+
+        public String getReplication() {
+            return this.replication;
+        }
+
+        public void setReplication(String replication) {
+            this.replication = replication;
+        }
+
+        public String getBlockSize() {
+            return this.blockSize;
+        }
+
+        public void setBlockSize(String blockSize) {
+            this.blockSize = blockSize;
+        }
+
+        public String getName() {
 //			try {
 //				this.pathSuffix = URLEncoder.encode(pathSuffix, "GBK");
 //			} catch (UnsupportedEncodingException e) {
 //				e.printStackTrace();
 //			}
-			return this.pathSuffix;
-		}
+            return this.pathSuffix;
+        }
 
-		public void setName(String pathSuffix) {
-			this.pathSuffix = pathSuffix;
-		}
+        public void setName(String pathSuffix) {
+            this.pathSuffix = pathSuffix;
+        }
 
-		public Boolean isDir() {
-			return this.isDir;
-		}
+        public Boolean isDir() {
+            return this.isDir;
+        }
 
-		public void setIsDir(Boolean isDir) {
-			this.isDir = isDir;
-		}
+        public void setIsDir(Boolean isDir) {
+            this.isDir = isDir;
+        }
 
-		public String getFullPath() {
-			return fullPath;
-		}
+        public String getFullPath() {
+            return fullPath;
+        }
 
-		public void setFullPath(String fullPath) {
-			this.fullPath = fullPath;
-		}
+        public void setFullPath(String fullPath) {
+            this.fullPath = fullPath;
+        }
 
-		@Override
-		public String toString() {
-			return this.fullPath;
-		}
-	}
+        @Override
+        public String toString() {
+            return this.fullPath;
+        }
+    }
 }

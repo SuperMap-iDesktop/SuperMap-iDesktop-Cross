@@ -15,7 +15,7 @@ public class HDFSTableModel extends MutiTableModel {
 	/**
 	 * 构造函数。
 	 * 
-	 * @param columnNames
+	 * @param
 	 */
 	public HDFSTableModel() {
 	}
