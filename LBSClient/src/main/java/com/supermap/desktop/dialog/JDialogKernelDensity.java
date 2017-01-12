@@ -119,7 +119,7 @@ public class JDialogKernelDensity extends SmDialog {
         this.labelSeperator = new JLabel();
         this.textFieldSeperator = new JTextField(",");
         this.labelOutputURL = new JLabel();
-        this.textOutputURL = new JTextField("/opt");
+        this.textOutputURL = new JTextField("/opt/supermap_iserver_811_14511_9_linux64_deploy/webapps/iserver/processingResultData/KernelDensity");
 //        this.buttonOutputBrowser = new JButton();
 
         this.buttonOK = ComponentFactory.createButtonOK();
