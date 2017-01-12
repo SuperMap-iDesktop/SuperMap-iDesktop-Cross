@@ -5,6 +5,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.desktop.geometryoperation.EditManager;
 import com.supermap.ui.Action;
 
 public class CtrlActionCreateText extends ActionCreateBase {
