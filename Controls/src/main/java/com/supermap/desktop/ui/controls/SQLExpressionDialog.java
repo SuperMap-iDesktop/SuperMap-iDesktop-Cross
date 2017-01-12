@@ -121,8 +121,8 @@ public class SQLExpressionDialog extends SmDialog {
 		//@formatter:off
         JPanel panelButton = new JPanel();
         panelButton.setLayout(new GridBagLayout());
-        panelButton.add(this.jButtonClear, new GridBagConstraintsHelper(0, 0, 1, 1).setInsets(2, 0, 10, 10));
-        panelButton.add(this.jButtonOK, new GridBagConstraintsHelper(1, 0, 1, 1).setInsets(2, 0, 10, 10));
+        panelButton.add(this.jButtonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setInsets(2, 0, 10, 10));
+        panelButton.add(this.jButtonClear, new GridBagConstraintsHelper(1, 0, 1, 1).setInsets(2, 0, 10, 10));
         panelButton.add(this.jButtonCancel, new GridBagConstraintsHelper(2, 0, 1, 1).setInsets(2, 0, 10, 10));
 
 
@@ -769,10 +769,8 @@ public class SQLExpressionDialog extends SmDialog {
 			//但点击了获取唯一值按钮-yuanR
 			if (e.getSource() == jButtonGetAllValue) {
 				//获取字段信息
-
-				//YR存疑：为什么filedDatasets是数据集数组？？
-
-				Object[] allValue = getListValue(filedDatasets[0]);
+				//YR存疑：为什么filedDatasets是数据集数组？？因为当设置了关联属性表，其数据集数量会增加（1.12）
+				Object[] allValue = getListValue(filedDatasets);
 				listAllValue.removeAllElements();
 				if (allValue != null && allValue.length > 0) {
 					listAllValue.resetValue(allValue);
@@ -923,15 +921,36 @@ public class SQLExpressionDialog extends SmDialog {
 	 * 获得list里需要填入的值
 	 * yuanR
 	 */
-	private Object[] getListValue(Dataset Dataset) {
-		DatasetVector datasetVector = (DatasetVector) Dataset;
-		Recordset recordset = datasetVector.getRecordset(false, CursorType.STATIC);
+	private Object[] getListValue(Dataset[] datasets) {
+		//首先筛选出选中的数据集
+		//数据集名称
+		String fieldName = jTableFieldInfo.getValueAt(jTableFieldInfo.getSelectedRow(), 1).toString();
+		//数据集序号，默认为0
+		int datasetVectorCount = 0;
+		//当数据集字段名称中含有“.”，说明设置了关联属性表，其数据集数量大于1
+		if (fieldName.indexOf(".") != -1) {
+			String datasetName = jTableFieldInfo.getValueAt(jTableFieldInfo.getSelectedRow(), 1).toString();
+			datasetName = datasetName.substring(0, datasetName.indexOf("."));
+			//字段名称
+			fieldName = fieldName.substring(fieldName.indexOf(".") + 1);
+			DatasetVector datasetVector = null;
+			for (int i = 0; i < datasets.length; i++) {
+				datasetVector = (DatasetVector) datasets[i];
+				if (datasetVector.getName().equals(datasetName)) {
+					datasetVectorCount = i;
+					break;
+				}
+			}
+		}
+		DatasetVector selectedDatasetVector = (DatasetVector) datasets[datasetVectorCount];
+		Recordset recordset = selectedDatasetVector.getRecordset(false, CursorType.STATIC);
 		LinkedHashMap<Object, String> map = new LinkedHashMap<>();
 		try {
 			recordset.moveFirst();
 			for (; !recordset.isEOF(); recordset.moveNext()) {
 				//获得选中字段的当前记录
-				Object result = recordset.getFieldValue(jTableFieldInfo.getValueAt(jTableFieldInfo.getSelectedRow(), 0).toString());
+				//当数据集做了关联属性表，需要处理一下字段名称,否则会查无此项
+				Object result = recordset.getFieldValue(fieldName);
 				if (result != null) {
 					map.put(result, "");
 				}
