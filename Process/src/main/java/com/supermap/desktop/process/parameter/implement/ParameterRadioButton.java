@@ -18,7 +18,7 @@ public class ParameterRadioButton extends AbstractParameter {
 
 	@Override
 	public ParameterType getType() {
-		return ParameterType.CHECKBOX;
+		return ParameterType.RADIO_BUTTON;
 	}
 
 	@Override

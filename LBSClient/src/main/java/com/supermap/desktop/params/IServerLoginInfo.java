@@ -10,4 +10,5 @@ public class IServerLoginInfo {
     public static String ipAddr;
     public static CloseableHttpClient client;
     public static boolean login;
+    public static boolean error;
 }

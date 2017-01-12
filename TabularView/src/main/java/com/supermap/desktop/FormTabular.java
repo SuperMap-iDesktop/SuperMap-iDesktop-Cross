@@ -226,7 +226,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		//设置每行数据的序号（第几个数据）
 		jScrollPaneChildWindow.setRowHeaderView(rowHeader);
 		//在jscrollPaneChildWindow左上角设置一个序号标签
-		JLabel scrollPaneUpperLeftLabel=new JLabel("序号",SwingConstants.CENTER);
+		JLabel scrollPaneUpperLeftLabel=new JLabel(TabularViewProperties.getString("String_TabularForm_Sequence"),SwingConstants.CENTER);
 		jScrollPaneChildWindow.setCorner(JScrollPane.UPPER_LEFT_CORNER,scrollPaneUpperLeftLabel);
 
 		add(jScrollPaneChildWindow, BorderLayout.CENTER);

@@ -6,6 +6,7 @@ import com.supermap.desktop.CtrlAction.WebHDFS.HDFSDefine;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormLBSControl;
 import com.supermap.desktop.controls.utilities.ControlsResources;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.event.FormClosingEvent;
 import com.supermap.desktop.http.CreateFile;
 import com.supermap.desktop.http.DeleteFile;
@@ -64,12 +65,18 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 	private MouseAdapter tableMouseListener = new MouseAdapter() {
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			table_MouseClicked(e);
+			tableMouseClicked(e);
+			SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					ToolbarUIUtilities.updataToolbarsState();
+				}
+			});
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			table_MouseReleased(e);
+			tableMouseReleased(e);
 		}
 	};
 	private ActionListener refreshListener = new ActionListener() {
@@ -80,6 +87,23 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		}
 	};
 	private ActionListener urlActionListener;
+	private KeyListener tableKeyListener = new KeyAdapter() {
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			if (e.getKeyCode() == KeyEvent.VK_F2) {
+				if (getSelectRow() > -1) {
+					String oldName = (String) getTable().getValueAt(getSelectRow(), 0);
+					RenameDialog dialog = new RenameDialog(oldName);
+					if (dialog.showDialog().equals(DialogResult.OK) && !StringUtilities.isNullOrEmpty(dialog.getNewName())) {
+						CreateFile createFile = new CreateFile();
+						HDFSDefine define = (HDFSDefine) ((HDFSTableModel) getTable().getModel()).getRowTagAt(getTable().getSelectedRow());
+						createFile.renameFile(getURL(), oldName, dialog.getNewName(), define.isDir());
+					}
+				}
+			}
+		}
+	};
 
 	public FormLBSControl(String title, Icon icon, Component component) {
 		super(title, icon, component);
@@ -141,29 +165,16 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		this.buttonForward.addActionListener(this.urlActionListener);
 		this.buttonRefresh.addActionListener(this.refreshListener);
 		this.table.addMouseListener(this.tableMouseListener);
-		this.table.addKeyListener(new KeyAdapter() {
-
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_F2) {
-					if (getSelectRow() > -1) {
-						String oldName = (String) getTable().getValueAt(getSelectRow(), 0);
-						RenameDialog dialog = new RenameDialog(oldName);
-						if (dialog.showDialog().equals(DialogResult.OK) && !StringUtilities.isNullOrEmpty(dialog.getNewName())) {
-							CreateFile createFile = new CreateFile();
-							HDFSDefine define = (HDFSDefine) ((HDFSTableModel) getTable().getModel()).getRowTagAt(getTable().getSelectedRow());
-							createFile.renameFile(getURL(), oldName, dialog.getNewName(), define.isDir());
-						}
-					}
-				}
-			}
-		});
+		this.table.addKeyListener(this.tableKeyListener);
 	}
 
 	private void removeEvents() {
 		this.textServerURL.removeKeyListener(this.textServerURLKeyListener);
-		this.buttonRefresh.removeActionListener(refreshListener);
+		this.buttonBack.removeActionListener(this.urlActionListener);
+		this.buttonForward.removeActionListener(this.urlActionListener);
+		this.buttonRefresh.removeActionListener(this.refreshListener);
 		this.table.removeMouseListener(this.tableMouseListener);
+		this.table.removeKeyListener(this.tableKeyListener);
 	}
 
 	public void initializeComponents() {
@@ -239,7 +250,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		}
 	}
 
-	public void table_MouseClicked(MouseEvent e) {
+	public void tableMouseClicked(MouseEvent e) {
 		//
 		if (table.getSelectedRow() != -1 && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
 			HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(table.getSelectedRow());
@@ -270,7 +281,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 		this.contextPopuMenu.show(table, e.getPoint().x, e.getPoint().y);
 	}
 
-	public void table_MouseReleased(MouseEvent e) {
+	public void tableMouseReleased(MouseEvent e) {
 
 	}
 
