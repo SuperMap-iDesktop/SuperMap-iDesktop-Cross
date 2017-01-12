@@ -11,7 +11,6 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.StringUtilities;
-import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 import javax.swing.*;
@@ -76,6 +75,10 @@ public class JDialogLogin extends SmDialog {
             IServerLoginInfo.ipAddr = textFieldHost.getText() + ":" + textFieldPort.getText();
         }
         CloseableHttpClient client = service.login(username, password);
+        if (IServerLoginInfo.error) {
+            dispose();
+            return;
+        }
         if (null == client) {
             labelWorning.setForeground(Color.red);
             labelWorning.setText(CoreProperties.getString("String_ErrorUserNameOrPassword"));
