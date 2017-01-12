@@ -1,6 +1,7 @@
 package com.supermap.desktop.dialog;
 
 import com.supermap.desktop.controls.utilities.ComponentFactory;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -10,6 +11,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class JDialogTaskManager extends SmDialog {
 
@@ -70,6 +73,17 @@ public class JDialogTaskManager extends SmDialog {
 		removeEvents();
 		this.buttonOk.addActionListener(this.buttonOkListener);
 		this.buttonCancel.addActionListener(this.buttonCancelListener);
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						ToolbarUIUtilities.updataToolbarsState();
+					}
+				});
+			}
+		});
 	}
 
 	private void removeEvents() {
