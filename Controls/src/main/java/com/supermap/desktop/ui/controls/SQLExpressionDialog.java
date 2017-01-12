@@ -87,9 +87,12 @@ public class SQLExpressionDialog extends SmDialog {
 	private GetAllValueList listAllValue;
 	private JLabel labelGoTO;
 	private JTextField textFieldGOTO;
+	//清除按钮-yuanR
+	private JButton jButtonClear;
 
 	private void initialDialog(String expression) {
-		setSize(900, 600);
+		setSize(900, 464);
+		setMinimumSize(new Dimension(650, 350));
 		setTitle(ControlsProperties.getString("String_SQLExpression"));
 		setName("SQLExpressionDialog");
 
@@ -113,21 +116,24 @@ public class SQLExpressionDialog extends SmDialog {
 		initPanelFunction();
 		this.jButtonOK = new SmButton();
 		this.jButtonCancel = new SmButton();
+		this.jButtonClear = new SmButton("clear");
 		this.jScrollPanel = new JScrollPane();
 		//@formatter:off
         JPanel panelButton = new JPanel();
         panelButton.setLayout(new GridBagLayout());
-        panelButton.add(this.jButtonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
-        panelButton.add(this.jButtonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
-        getContentPane().add(this.jTextAreaSQLSentence, new GridBagConstraintsHelper(0, 0, 4, 2).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5).setWeight(3, 3));
-        getContentPane().add(this.jScrollPanel, new GridBagConstraintsHelper(0, 2, 1, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(0, 0, 0, 0).setWeight(0, 0).setIpad(240, 50));
-       //将获取唯一值面板加入主panel
-	    getContentPane().add(this.jPanelGetAllValue, new GridBagConstraintsHelper(1, 2, 1, 2).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3, 0, 5, 3).setWeight(0, 0).setIpad(50,50));
-        getContentPane().add(this.jPanelFunction, new GridBagConstraintsHelper(2, 2, 1, 2).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.BOTH).setInsets(3, 0, 5, 3).setWeight(0, 0).setIpad(0,50));
-        getContentPane().add(this.jPanelCommonOperator, new GridBagConstraintsHelper(3, 2, 1, 2).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.BOTH).setInsets(3, 0, 5, 3).setWeight(0, 0).setIpad(0,50));
-        getContentPane().add(panelButton, new GridBagConstraintsHelper(0, 4, 0, 0).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
-        //@formatter:on
+        panelButton.add(this.jButtonClear, new GridBagConstraintsHelper(0, 0, 1, 1).setInsets(2, 0, 10, 10));
+        panelButton.add(this.jButtonOK, new GridBagConstraintsHelper(1, 0, 1, 1).setInsets(2, 0, 10, 10));
+        panelButton.add(this.jButtonCancel, new GridBagConstraintsHelper(2, 0, 1, 1).setInsets(2, 0, 10, 10));
 
+
+		getContentPane().add(this.jTextAreaSQLSentence, new GridBagConstraintsHelper(0, 0, 3, 3).setWeight(1,1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5));
+	    getContentPane().add(this.jPanelGetAllValue, new GridBagConstraintsHelper(3, 0, 1, 3).setWeight(0,0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(3));
+        getContentPane().add(this.jScrollPanel, new GridBagConstraintsHelper(0, 3, 2, 1).setWeight(3,0).setAnchor(GridBagConstraints.SOUTH).setFill(GridBagConstraints.BOTH).setInsets(3).setIpad(500,100));
+       //将获取唯一值面板加入主panel3, 2, 1, 2
+        getContentPane().add(this.jPanelCommonOperator, new GridBagConstraintsHelper(2, 3, 1, 1).setWeight(0,0).setAnchor(GridBagConstraints.SOUTH).setFill(GridBagConstraints.BOTH).setInsets(3));
+        getContentPane().add(this.jPanelFunction, new GridBagConstraintsHelper(3, 3, 1, 1).setWeight(0,0).setAnchor(GridBagConstraints.SOUTH).setFill(GridBagConstraints.BOTH).setInsets(3).setIpad(10,0));
+        getContentPane().add(panelButton, new GridBagConstraintsHelper(3, 4, 1, 1).setWeight(0,0).setAnchor(GridBagConstraints.EAST));
+        //@formatter:on
 
 		this.jScrollPanel.setViewportView(getTableFieldInfo());
 		this.jTextAreaSQLSentence.setText(expression);
@@ -166,6 +172,7 @@ public class SQLExpressionDialog extends SmDialog {
 		this.jComboBoxTimeFunction.addActionListener(this.actionListener);
 		this.jButtonOK.addActionListener(this.buttonActionListener);
 		this.jButtonCancel.addActionListener(this.buttonActionListener);
+		this.jButtonClear.addActionListener(this.buttonActionListener);
 		this.jTableFieldInfo.addMouseListener(this.tableMouseAdapter);
 
 		//获取唯一值相关控件监听事件-yuanR
@@ -202,6 +209,7 @@ public class SQLExpressionDialog extends SmDialog {
 		this.jComboBoxTimeFunction.removeActionListener(this.actionListener);
 		this.jButtonOK.removeActionListener(this.buttonActionListener);
 		this.jButtonCancel.removeActionListener(this.buttonActionListener);
+		this.jButtonClear.removeActionListener(this.buttonActionListener);
 		this.jTableFieldInfo.removeMouseListener(this.tableMouseAdapter);
 		//获取唯一值相关控件监听事件-yuanR
 		this.jTableFieldInfo.getSelectionModel().removeListSelectionListener(this.listSelectionListener);
@@ -216,6 +224,7 @@ public class SQLExpressionDialog extends SmDialog {
 	private void initResources() {
 		this.jButtonOK.setText(CommonProperties.getString("String_Button_OK"));
 		this.jButtonCancel.setText(CommonProperties.getString("String_Button_Cancel"));
+		this.jButtonClear.setText(ControlsProperties.getString("String_GeometryPropertyStyle3DControl_buttonClearMarkerIconFile"));
 		this.jComboBoxMathsOperation
 				.setModel(new DefaultComboBoxModel<String>(new String[]{"", "Abs()", "Acos()", "Asin()", "Atan()", "Atn2()", "Ceiling()", "Cos()", "Cot()",
 						"Degrees()", "Exp()", "Floor()", "Log()", "Log10()", "PI()", "Power()", "Radians()", "Rand()", "Round()", "Sign()", "Sin()",
@@ -279,10 +288,10 @@ public class SQLExpressionDialog extends SmDialog {
 		this.textFieldGOTO.setEnabled(false);
 
 		this.jPanelGetAllValue.setLayout(new GridBagLayout());
-		this.jPanelGetAllValue.add(jButtonGetAllValue, new GridBagConstraintsHelper(3, 1, 2, 1).setFill(GridBagConstraints.NONE).setWeight(1, 0.2).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 0, 0));
-		this.jPanelGetAllValue.add(scrollPaneAllValue, new GridBagConstraintsHelper(3, 2, 2, 3).setFill(GridBagConstraints.BOTH).setWeight(1, 0.6).setAnchor(GridBagConstraints.CENTER).setInsets(0, 10, 0, 0));
-		this.jPanelGetAllValue.add(labelGoTO, new GridBagConstraintsHelper(3, 5, 1, 1).setFill(GridBagConstraints.NONE).setWeight(0.2, 0.2).setAnchor(GridBagConstraints.CENTER));
-		this.jPanelGetAllValue.add(textFieldGOTO, new GridBagConstraintsHelper(4, 5, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(0.8, 0.2).setAnchor(GridBagConstraints.CENTER));
+		this.jPanelGetAllValue.add(jButtonGetAllValue, new GridBagConstraintsHelper(3, 1, 2, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setInsets(2, 2, 2, 2));
+		this.jPanelGetAllValue.add(scrollPaneAllValue, new GridBagConstraintsHelper(3, 2, 2, 3).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(2, 2, 2, 2));
+		this.jPanelGetAllValue.add(labelGoTO, new GridBagConstraintsHelper(3, 5, 1, 1).setFill(GridBagConstraints.NONE).setInsets(2, 2, 2, 2));
+		this.jPanelGetAllValue.add(textFieldGOTO, new GridBagConstraintsHelper(4, 5, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(2, 2, 2, 2));
 	}
 
 	/**
@@ -424,6 +433,7 @@ public class SQLExpressionDialog extends SmDialog {
 	}
 
 	private void initTraversalPolicy() {
+		this.componentList.add(this.jButtonClear);
 		this.componentList.add(this.jButtonOK);
 		this.componentList.add(this.jButtonCancel);
 		this.setFocusTraversalPolicy(policy);
@@ -576,7 +586,11 @@ public class SQLExpressionDialog extends SmDialog {
 		if (this.jTableFieldInfo == null) {
 			this.defaultTableModel = new DefaultTableModel(NAMES, 0);
 			this.jTableFieldInfo = new JTable(defaultTableModel);
-			this.jTableFieldInfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			//为什么要关闭列宽自动适应？？---yuanR 17.1.11
+			//去除。实现jatble跟随窗口大小的改变自动适应
+			//	this.jTableFieldInfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			//仅支持单选--yuanR 17.1.12
+			this.jTableFieldInfo.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		}
 		return this.jTableFieldInfo;
 	}
@@ -742,6 +756,10 @@ public class SQLExpressionDialog extends SmDialog {
 	class LocalButtonAction implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (e.getSource() == jButtonClear) {
+				//清空表达式面板-yuanR
+				jTextAreaSQLSentence.setText("");
+			}
 			if (e.getSource() == jButtonOK) {
 				buttonOkClicked();
 			}
@@ -865,7 +883,8 @@ public class SQLExpressionDialog extends SmDialog {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 && listAllValue.getSelectedIndex() != -1) {
-				jTextAreaSQLSentence.append(listAllValue.getSelectedValue().toString());
+				//通过setSQLSentenceText（）方法将双击选中的唯一值加入"jTextAreaSQLSentence"--yuanR 1.12
+				setSQLSentenceText(jTextAreaSQLSentence, " " + listAllValue.getSelectedValue().toString(), "");
 			}
 		}
 	};

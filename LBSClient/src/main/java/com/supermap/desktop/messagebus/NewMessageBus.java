@@ -16,8 +16,8 @@ import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.http.FileManagerContainer;
 import com.supermap.desktop.impl.IServerServiceImpl;
 import com.supermap.desktop.params.IServerInfo;
-import com.supermap.desktop.params.KernelDensityJobResponse;
-import com.supermap.desktop.params.KernelDensityJobResultResponse;
+import com.supermap.desktop.params.JobItemResultResponse;
+import com.supermap.desktop.params.JobResultResponse;
 import com.supermap.desktop.task.TaskFactory;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.CommonUtilities;
@@ -27,6 +27,7 @@ import com.supermap.mapping.Map;
 
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
@@ -40,19 +41,19 @@ import java.util.concurrent.ThreadFactory;
  */
 public class NewMessageBus {
     private static volatile ITask task;
-    private static volatile ArrayList<IResponse> tasks = null;
 
     public static void producer(IResponse response) {
         try {
-            if (null == tasks) {
-                tasks = new ArrayList<>();
-            }
-            tasks.add(response);
             FileManagerContainer fileManagerContainer = CommonUtilities.getFileManagerContainer();
             ITaskFactory taskFactory = TaskFactory.getInstance();
-            if (response instanceof KernelDensityJobResponse) {
-                task = taskFactory.getTask(TaskEnum.KERNELDENSITYTASK, null);
-                addTask(fileManagerContainer, task);
+            if (response instanceof JobResultResponse) {
+                if (((JobResultResponse) response).newResourceLocation.contains("kernelDensity")) {
+                    task = taskFactory.getTask(TaskEnum.KERNELDENSITYTASK, null);
+                    addTask(fileManagerContainer, task);
+                } else if (((JobResultResponse) response).newResourceLocation.contains("buildCache")) {
+                    task = taskFactory.getTask(TaskEnum.HEATMAP, null);
+                    addTask(fileManagerContainer, task);
+                }
             }
             ExecutorService eService = Executors.newCachedThreadPool(new ThreadFactory() {
 
@@ -63,7 +64,7 @@ public class NewMessageBus {
                     return thread;
                 }
             });
-            eService.submit(new MessageBusConsumer());
+            eService.submit(new MessageBusConsumer(response));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -76,59 +77,73 @@ public class NewMessageBus {
     }
 
     public static class MessageBusConsumer implements Runnable, ExceptionListener {
+        private IServerService serverService = new IServerServiceImpl();
+        private IResponse response;
+        private volatile boolean stop = false;
+
+        public MessageBusConsumer(IResponse response) {
+            this.response = response;
+        }
+
         @Override
         public void run() {
             try {
-                while (tasks.size() != 0) {
-                    for (IResponse response : tasks) {
-                        if (response instanceof KernelDensityJobResponse) {
-                            kernerlDensity(response);
-                        }
-                    }
+                while (!stop) {
+                    excute(response);
                 }
-
             } catch (InterruptedException exception) {
                 Application.getActiveApplication().getOutput().output(exception);
             }
         }
 
-        private void kernerlDensity(IResponse response) throws InterruptedException {
-            IServerService serverService = new IServerServiceImpl();
-            String queryInfo = serverService.query(((KernelDensityJobResponse) response).newResourceLocation);
-            KernelDensityJobResultResponse result = null;
+
+        private synchronized void  excute(IResponse response) throws InterruptedException {
+            String queryInfo = serverService.query(((JobResultResponse) response).newResourceLocation);
+            JobItemResultResponse result = null;
             if (!StringUtilities.isNullOrEmpty(queryInfo)) {
-                result = JSON.parseObject(queryInfo, KernelDensityJobResultResponse.class);
+                result = JSON.parseObject(queryInfo, JobItemResultResponse.class);
             }
-            if (null != result && "FINISHED".equals(result.state.runState) && null != result.setting.serviceInfo) {
-                tasks.remove(response);
+            if (null != result && "FINISHED".equals(result.state.runState)) {
                 task.updateProgress(100, "", "");
-                // 获取iserver服务发布地址,并打开到地图，如果存在已经打开的地图则将iserver服务上的地图打开到当前地图
-                ArrayList<IServerInfo> mapsList = result.setting.serviceInfo;
-                String serviceAddress = "";
-                int size = mapsList.size();
-                for (int i = 0; i < size; i++) {
-                    if ("RESTMAP".equals(mapsList.get(i).serviceType)) {
-                        serviceAddress = mapsList.get(i).serviceAddress;
-                    }
-                }
-                if (!StringUtilities.isNullOrEmpty(serviceAddress)) {
-                    //获取查询iserver的结果
-                    serviceAddress = serviceAddress + "/maps";
-                    String mapsInfo = serverService.query(serviceAddress);
-                    if (!StringUtilities.isNullOrEmpty(mapsInfo)) {
-                        ArrayList<JSONObject> mapsResult = JSON.parseObject(mapsInfo, ArrayList.class);
-                        String iserverRestAddr = "";
-                        String datasetName = "";
-                        int length = mapsResult.size();
-                        for (int i = 0; i < length; i++) {
-                            JSONObject object = mapsResult.get(i);
-                            iserverRestAddr = (String) object.get("path");
-                            datasetName = (String) object.get("name");
+                if (null != result.setting.serviceInfo && null != result.setting.serviceInfo.targetServiceInfos) {
+                    // 获取iserver服务发布地址,并打开到地图，如果存在已经打开的地图则将iserver服务上的地图打开到当前地图
+                    ArrayList<IServerInfo> mapsList = result.setting.serviceInfo.targetServiceInfos;
+                    String serviceAddress = "";
+                    int size = mapsList.size();
+                    for (int i = 0; i < size; i++) {
+                        if ("RESTMAP".equals(mapsList.get(i).serviceType)) {
+                            serviceAddress = mapsList.get(i).serviceAddress;
+                            stop = true;
                         }
-                        openIserverMap(iserverRestAddr, datasetName);
+                    }
+                    if (!StringUtilities.isNullOrEmpty(serviceAddress)) {
+                        //获取查询iserver的结果
+                        String datasourceName = "";
+                        if (serviceAddress.contains("map-kernelDensity")) {
+                            datasourceName = serviceAddress.substring(serviceAddress.indexOf("map-kernelDensity")).replace("/rest", "");
+                        } else if (serviceAddress.contains("mongodb")) {
+                            datasourceName = serviceAddress.substring(serviceAddress.indexOf("mongodb")).replace("/rest", "");
+                        }
+                        serviceAddress = serviceAddress + "/maps";
+
+                        String mapsInfo = serverService.query(serviceAddress);
+                        if (!StringUtilities.isNullOrEmpty(mapsInfo)) {
+                            ArrayList<JSONObject> mapsResult = JSON.parseObject(mapsInfo, ArrayList.class);
+                            String iserverRestAddr = "";
+                            String datasetName = "";
+                            int length = mapsResult.size();
+                            for (int i = 0; i < length; i++) {
+                                JSONObject object = mapsResult.get(i);
+                                iserverRestAddr = (String) object.get("path");
+                                datasetName = (String) object.get("name");
+                            }
+                            openIserverMap(iserverRestAddr, datasourceName, datasetName);
+                        }
                     }
                 }
-            } else {
+            } else
+
+            {
                 updateProgress();
                 Thread.sleep(100);
             }
@@ -138,17 +153,17 @@ public class NewMessageBus {
         public void onException(JMSException exception) {
             Application.getActiveApplication().getOutput().output(exception);
         }
+
     }
 
-    private static void openIserverMap(String iserverRestAddr, String datasetName) {
+    private static void openIserverMap(String iserverRestAddr, String datasourceName, String datasetName) {
         DatasourceConnectionInfo connectionInfo = new DatasourceConnectionInfo();
         connectionInfo.setEngineType(EngineType.ISERVERREST);
         connectionInfo.setServer(iserverRestAddr);
-        String datasourceName = "KernelDensity";
+        connectionInfo.setAlias(datasourceName);
         Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
-        if (null != datasources && null == datasources.get(datasourceName)) {
-            connectionInfo.setAlias(datasourceName);
-            Datasource datasource = datasources.open(connectionInfo);
+        if (null != datasources) {
+            final Datasource datasource = datasources.open(connectionInfo);
             Dataset dataset = null;
             if (null == datasource.getDatasets().get(datasetName)) {
                 return;
@@ -159,7 +174,13 @@ public class NewMessageBus {
                 Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_OpenDatasourceFaild"));
             } else {
                 Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_OpenDatasourceSuccessful"));
-                UICommonToolkit.refreshSelectedDatasourceNode(datasourceName);
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
+                    }
+                });
+
                 if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
                     //添加到当前地图中
                     Map currentMap = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
@@ -167,10 +188,13 @@ public class NewMessageBus {
                 } else {
                     //打开新的地图
                     IFormMap newMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, datasetName);
-                    MapUtilities.addDatasetToMap(newMap.getMapControl().getMap(), dataset, true);
+                    Map map = newMap.getMapControl().getMap();
+                    MapUtilities.addDatasetToMap(map, dataset, true);
+                    map.refresh();
                 }
             }
         }
+
     }
 
     private static void updateProgress() throws InterruptedException {

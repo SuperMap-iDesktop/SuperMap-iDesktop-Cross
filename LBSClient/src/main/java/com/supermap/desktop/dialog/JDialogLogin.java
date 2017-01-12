@@ -12,6 +12,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.StringUtilities;
 import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 import javax.swing.*;
 import java.awt.*;
@@ -74,7 +75,7 @@ public class JDialogLogin extends SmDialog {
         if (!StringUtilities.isNullOrEmpty(textFieldHost.getText()) && !StringUtilities.isNullOrEmpty(textFieldPort.getText())) {
             IServerLoginInfo.ipAddr = textFieldHost.getText() + ":" + textFieldPort.getText();
         }
-        HttpClient client = service.login(username, password);
+        CloseableHttpClient client = service.login(username, password);
         if (null == client) {
             labelWorning.setForeground(Color.red);
             labelWorning.setText(CoreProperties.getString("String_ErrorUserNameOrPassword"));
@@ -100,6 +101,7 @@ public class JDialogLogin extends SmDialog {
         initResources();
         registEvents();
         setSize(new Dimension(450, 350));
+        this.getRootPane().setDefaultButton(this.buttonLogin);
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -135,7 +137,7 @@ public class JDialogLogin extends SmDialog {
         this.radioButtonRemoteHost = new JRadioButton();
         this.labelServer = new JLabel();
         this.textFieldHost = new JTextField(LOCALHOST);
-        this.labelColon = new JLabel();
+        this.labelColon = new JLabel(":");
         this.textFieldPort = new JTextField("8090");
         this.textFieldPort.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
         ButtonGroup buttonGroup = new ButtonGroup();

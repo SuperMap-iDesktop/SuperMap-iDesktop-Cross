@@ -14,8 +14,6 @@ import javax.swing.*;
 
 public class CtrlActionHeatMap extends CtrlAction {
 
-    String topicNameRespond = "KernelDensity_Respond";
-
     public CtrlActionHeatMap(IBaseItem caller, IForm formClass) {
         super(caller, formClass);
     }
@@ -23,22 +21,17 @@ public class CtrlActionHeatMap extends CtrlAction {
     @Override
     public void run() {
         try {
-            if (!IServerLoginInfo.login) {
+//            if (!IServerLoginInfo.login) {
                 JDialogLogin loginDialog = new JDialogLogin();
                 DialogResult result = loginDialog.showDialog();
                 if (result == DialogResult.OK) {
                     JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
-                    new JDialogHeatMap(parent, true).showDialog();
+                    new JDialogHeatMap(parent).showDialog();
                 }
-            } else {
-                JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
-                new JDialogHeatMap(parent, true).showDialog();
-            }
-//			DialogResult result = dialog.showDialog();
-//			if (result == DialogResult.OK || result == DialogResult.APPLY) {
-//				WorkThead thread = new WorkThead();
-//				thread.start();
-//			}
+//            } else {
+//                JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
+//                new JDialogHeatMap(parent).showDialog();
+//            }
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex);
         }
@@ -49,15 +42,4 @@ public class CtrlActionHeatMap extends CtrlAction {
         return true;
     }
 
-    class WorkThead extends Thread {
-
-        @Override
-        public void run() {
-            try {
-//				lbsResultConsumer consumer = new lbsResultConsumer();
-//				consumer.doWork(topicNameRespond);
-            } finally {
-            }
-        }
-    }
 }

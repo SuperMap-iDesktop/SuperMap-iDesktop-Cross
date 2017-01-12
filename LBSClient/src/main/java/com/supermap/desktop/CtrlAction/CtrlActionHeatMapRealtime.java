@@ -7,6 +7,7 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dialog.JDialogHeatMap;
+import com.supermap.desktop.dialog.JDialogKernelDensity;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.messagebus.MessageBus;
 import com.supermap.desktop.messagebus.MessageBus.MessageBusType;
@@ -107,7 +108,7 @@ public class CtrlActionHeatMapRealtime extends CtrlAction {
         double size = this.rectangle.getWidth() >= this.rectangle.getHeight() ? this.rectangle.getWidth() : this.rectangle.getHeight();
         String resolution = String.format("%f", size / 100);
         String radius = String.format("%f", size / 10);
-        String command = JDialogHeatMap.formatKernelDensity(
+        String command = JDialogKernelDensity.formatKernelDensity(
                 MessageBusType.KernelDensityRealtime,
                 WebHDFS.getHDFSFilePath(),
                 WebHDFS.getHDFSOutputDirectry() + "kerneldensity" + System.currentTimeMillis() + ".grd",

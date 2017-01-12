@@ -270,34 +270,34 @@ public class JDialogBuildSpatialIndex extends SmDialog {
 
 	private void doWork() {
 //		SpatialQuery <spark> <csv> <json/dataset> <resultjson>
-		String parmSpark = String.format("sh %s --class %s --master %s %s %s", 
-				"../bin/spark-submit",
-				"com.supermap.gistark.main.Main", 
-				"spark://192.168.14.1:7077", 
-				"GIStark-0.1.0-SNAPSHOT.jar",
-				"HDFSGridIndexBuild");
-
-		String inputFile = WebHDFS.getHDFSFilePath();
-		int index = WebHDFS.webFile.indexOf('.');
-		String temp = "SpatialIndex";
-		if (index != -1) {
-			temp = WebHDFS.webFile.substring(0,  index);
-		}
-		String outputDir = WebHDFS.getHDFSOutputDirectry() + temp;
-		String startPosition = String.format("%s %s", this.textPositionX.getText(), this.textPositionY.getText());
-		String bounds = String.format("%s %s %s %s", this.textBoundsLeft.getText(), this.textBoundsBottom.getText(), this.textBoundsRight.getText(), this.textBoundsTop.getText());
-		String stepSize = this.textStepSize.getText();
-		String parmQuery = String.format("%s %s %s %s %s", inputFile, outputDir, startPosition, bounds, stepSize);
-		String command = String.format("%s %s %s", parmSpark, parmQuery, MessageBusType.BuildSpatialIndex.toString());
-//		Runnable outPutRun = new Runnable() {
-//		@Override
-//		public void run() {
-			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //设置日期格式
-			Application.getActiveApplication().getOutput().output(df.format(new Date()) + "  发送请求..."); //new Date()为获取当前系统时间	
-			Application.getActiveApplication().getOutput().output(command);
+//		String parmSpark = String.format("sh %s --class %s --master %s %s %s",
+//				"../bin/spark-submit",
+//				"com.supermap.gistark.main.Main",
+//				"spark://192.168.14.1:7077",
+//				"GIStark-0.1.0-SNAPSHOT.jar",
+//				"HDFSGridIndexBuild");
+//
+//		String inputFile = WebHDFS.getHDFSFilePath();
+//		int index = WebHDFS.webFile.indexOf('.');
+//		String temp = "SpatialIndex";
+//		if (index != -1) {
+//			temp = WebHDFS.webFile.substring(0,  index);
 //		}
-//	};
-		MessageBus.producer(command);	
+//		String outputDir = WebHDFS.getHDFSOutputDirectry() + temp;
+//		String startPosition = String.format("%s %s", this.textPositionX.getText(), this.textPositionY.getText());
+//		String bounds = String.format("%s %s %s %s", this.textBoundsLeft.getText(), this.textBoundsBottom.getText(), this.textBoundsRight.getText(), this.textBoundsTop.getText());
+//		String stepSize = this.textStepSize.getText();
+//		String parmQuery = String.format("%s %s %s %s %s", inputFile, outputDir, startPosition, bounds, stepSize);
+//		String command = String.format("%s %s %s", parmSpark, parmQuery, MessageBusType.BuildSpatialIndex.toString());
+////		Runnable outPutRun = new Runnable() {
+////		@Override
+////		public void run() {
+//			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); //设置日期格式
+//			Application.getActiveApplication().getOutput().output(df.format(new Date()) + "  发送请求..."); //new Date()为获取当前系统时间
+//			Application.getActiveApplication().getOutput().output(command);
+////		}
+////	};
+//		MessageBus.producer(command);
 	}
 
 	private void buttonInputBrowserActionPerformed() {

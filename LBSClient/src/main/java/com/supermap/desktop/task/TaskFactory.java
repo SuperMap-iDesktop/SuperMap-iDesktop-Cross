@@ -35,6 +35,9 @@ public class TaskFactory implements ITaskFactory {
                 // 计算热度图
                 task = new KernelDensityTask();
                 break;
+            case HEATMAP:
+                task = new HeatMapTask();
+                break;
             case KERNELDENSITYREALTIMETASK:
                 // 实时热度图
                 task = new KernelDensityRealtimeTask();

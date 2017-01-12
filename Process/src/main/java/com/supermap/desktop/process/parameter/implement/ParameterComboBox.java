@@ -1,20 +1,16 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.IParameter;
-import com.supermap.desktop.process.parameter.ParameterComboBoxCellRender;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.process.parameter.ParameterPanels.ParameterComboBoxPanel;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
 
 /**
  * @author XiaJT
  */
-public class ParameterComboBox implements IParameter {
+public class ParameterComboBox extends AbstractParameter {
 
 	private JPanel panel;
 	private ParameterDataNode[] items;
@@ -22,6 +18,7 @@ public class ParameterComboBox implements IParameter {
 	 * label的描述文本
 	 */
 	private String describe;
+	private ParameterDataNode value;
 
 	@Override
 	public ParameterType getType() {
@@ -31,7 +28,7 @@ public class ParameterComboBox implements IParameter {
 	@Override
 	public JPanel getPanel() {
 		if (panel == null) {
-			panel = new ParameterComboBoxPanel();
+			panel = new ParameterComboBoxPanel(this);
 		}
 		return panel;
 	}
@@ -45,6 +42,20 @@ public class ParameterComboBox implements IParameter {
 		return this;
 	}
 
+	@Override
+	public void setSelectedItem(Object value) {
+		if (value instanceof ParameterDataNode) {
+			ParameterDataNode oldValue = this.value;
+			this.value = (ParameterDataNode) value;
+			firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, value));
+		}
+	}
+
+	@Override
+	public Object getSelectedItem() {
+		return this.value;
+	}
+
 	public String getDescribe() {
 		return describe;
 	}
@@ -54,34 +65,5 @@ public class ParameterComboBox implements IParameter {
 		return this;
 	}
 
-	protected class ParameterComboBoxPanel extends JPanel {
-		private JLabel label = new JLabel();
-		private JComboBox<ParameterDataNode> comboBox = new JComboBox<>();
-
-		public ParameterComboBoxPanel() {
-			ParameterDataNode[] items = getItems();
-			if (items != null && items.length > 0) {
-				for (ParameterDataNode item : items) {
-					comboBox.addItem(item);
-				}
-			}
-			comboBox.setPreferredSize(new Dimension(20, 23));
-			comboBox.setRenderer(new ParameterComboBoxCellRender());
-			label.setText(getDescribe());
-			this.setLayout(new GridBagLayout());
-			this.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
-			this.add(comboBox, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
-
-			comboBox.addItemListener(new ItemListener() {
-				@Override
-				public void itemStateChanged(ItemEvent e) {
-					if (e.getStateChange() == ItemEvent.SELECTED) {
-						// todo 值存放在Parameter中还是从combobox中取
-					}
-				}
-			});
-		}
-
-	}
 
 }

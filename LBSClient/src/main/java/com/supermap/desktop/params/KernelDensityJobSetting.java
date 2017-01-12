@@ -6,6 +6,5 @@ package com.supermap.desktop.params;
  */
 public class KernelDensityJobSetting {
     public FileInputDataSetting input = new FileInputDataSetting();
-    public FileOutputSetting output = new FileOutputSetting();
     public KernelDensityAnalystSetting analyst = new KernelDensityAnalystSetting();
 }
