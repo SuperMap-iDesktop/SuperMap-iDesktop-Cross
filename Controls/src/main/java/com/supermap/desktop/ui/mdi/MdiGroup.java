@@ -299,7 +299,7 @@ public class MdiGroup extends JComponent {
 					this.remove(page.getComponent());
 					this.pages.remove(page);
 					page.setGroup(null);
-					this.eventsHelper.firePageClosed(new PageClosedEvent(this, page, operationType));
+					this.eventsHelper.firePageClosed(new PageClosedEvent(this, page, operationType, isCloseActivePage));
 
 					if (isCloseActivePage) {
 
@@ -384,11 +384,12 @@ public class MdiGroup extends JComponent {
 				this.eventsHelper.firePageClosing(removingEvent);
 
 				if (!removingEvent.isCancel()) {
+					boolean isCloseActivePage = page.isActive();
 					page.getComponent().setVisible(false);
 					this.remove(page.getComponent());
 					this.pages.remove(page);
 					page.setGroup(null);
-					this.eventsHelper.firePageClosed(new PageClosedEvent(this, page, Operation.CLOSE));
+					this.eventsHelper.firePageClosed(new PageClosedEvent(this, page, Operation.CLOSE, isCloseActivePage));
 					isClosed = true;
 				}
 			}

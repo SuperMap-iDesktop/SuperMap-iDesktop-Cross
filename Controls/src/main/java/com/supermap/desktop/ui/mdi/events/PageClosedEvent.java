@@ -11,6 +11,14 @@ public class PageClosedEvent extends EventObject {
 
 	private MdiPage page;
 	private int operation = Operation.CLOSE;
+	private boolean isDeactived = false;
+
+	public PageClosedEvent(Object source, MdiPage page, int operationType) {
+		super(source);
+		this.page = page;
+		this.operation = operationType == Operation.CHANGE_GROUP ? Operation.CHANGE_GROUP : Operation.CLOSE;
+		this.isDeactived = false;
+	}
 
 	/**
 	 * Constructs a prototypical Event.
@@ -18,10 +26,11 @@ public class PageClosedEvent extends EventObject {
 	 * @param source The object on which the Event initially occurred.
 	 * @throws IllegalArgumentException if source is null.
 	 */
-	public PageClosedEvent(Object source, MdiPage page, int operationType) {
+	public PageClosedEvent(Object source, MdiPage page, int operationType, boolean isDeactived) {
 		super(source);
 		this.page = page;
 		this.operation = operationType == Operation.CHANGE_GROUP ? Operation.CHANGE_GROUP : Operation.CLOSE;
+		this.isDeactived = isDeactived;
 	}
 
 	public MdiPage getPage() {
@@ -30,5 +39,9 @@ public class PageClosedEvent extends EventObject {
 
 	public int getOperation() {
 		return operation;
+	}
+
+	public boolean isDeactived() {
+		return isDeactived;
 	}
 }

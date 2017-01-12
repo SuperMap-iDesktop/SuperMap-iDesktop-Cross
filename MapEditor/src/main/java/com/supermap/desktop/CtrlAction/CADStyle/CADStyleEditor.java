@@ -4,10 +4,8 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
-import com.supermap.desktop.event.ActiveFormChangedEvent;
-import com.supermap.desktop.event.ActiveFormChangedListener;
-import com.supermap.desktop.event.DockbarClosedEvent;
-import com.supermap.desktop.event.DockbarClosedListener;
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.geometryoperation.EditControllerAdapter;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.geometryoperation.IEditController;
@@ -33,12 +31,12 @@ public class CADStyleEditor extends AbstractEditor {
 	private CADStyleContainer cadStyleContainer;
 	private IDockbar dockbarCADStyleContainer;
 
-	private GeometrySelectChangedListener geometrySelectChangedListener = new GeometrySelectChangedListener() {
+	private IEditController styleController = new EditControllerAdapter() {
 		@Override
-		public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
-			if (geometrySelectChangedEvent.getCount() > 0) {
+		public void geometrySelectChanged(EditEnvironment environment, GeometrySelectChangedEvent arg0) {
+			if (arg0.getCount() > 0) {
 				// FIXME: 2016/12/30 用geometryselected事件修改cad风格显示面板
-				ArrayList<Recordset> recordsets = CADStyleUtilities.getActiveRecordset(((MapControl) geometrySelectChangedEvent.getSource()).getMap());
+				ArrayList<Recordset> recordsets = CADStyleUtilities.getActiveRecordset(((MapControl) arg0.getSource()).getMap());
 				if (null != cadStyleContainer && null != recordsets && null != dockbarCADStyleContainer) {
 					cadStyleContainer.setModify(false);
 					cadStyleContainer.showDialog(recordsets);
@@ -50,8 +48,21 @@ public class CADStyleEditor extends AbstractEditor {
 			}
 		}
 
-	};
+		@Override
+		public void formDeactivated(EditEnvironment editEnvironment, FormDeactivatedEvent e) {
+			cadStyleContainer.setNullPanel();
+		}
 
+		@Override
+		public void formActivated(EditEnvironment editEnvironment, FormActivatedEvent e) {
+			IFormMap formMap = (IFormMap) e.getForm();
+			ArrayList<Recordset> recordsets = CADStyleUtilities.getActiveRecordset(formMap.getMapControl().getMap());
+			if (null != cadStyleContainer && null != recordsets && null != dockbarCADStyleContainer) {
+				cadStyleContainer.setModify(false);
+				cadStyleContainer.showDialog(recordsets);
+			}
+		}
+	};
 
 	@Override
 	public void activate(final EditEnvironment environment) {
@@ -74,43 +85,15 @@ public class CADStyleEditor extends AbstractEditor {
 					environment.stopEditor();
 				}
 			});
-
-			registEvents(environment);
+			environment.setEditController(this.styleController);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
 
-	private void registEvents(final EditEnvironment environment) {
-		removeEvents(environment);
-		environment.getMapControl().addGeometrySelectChangedListener(this.geometrySelectChangedListener);
-
-		// 这个先暂时这样，因为 EditEnvironment 绑定了 Form，之后再做一个 EditEnvironment 的激活机制就可以了
-		Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(new ActiveFormChangedListener() {
-			@Override
-			public void activeFormChanged(ActiveFormChangedEvent e) {
-				if (e.getNewActiveForm() != null && !e.getNewActiveForm().equals(environment.getFormMap())) {
-					if (null != cadStyleContainer && null != dockbarCADStyleContainer) {
-						cadStyleContainer.enabled(false);
-					}
-				} else if (e.getNewActiveForm() == null) {// 2017/1/11   针对CAD面板打开的情况下，关闭所有地图窗口抛异常的缺陷进行修改  lixiaoyao
-					cadStyleContainer.setNullPanel();
-				} else {
-					if (null != cadStyleContainer && null != dockbarCADStyleContainer) {
-						cadStyleContainer.enabled(true);
-					}
-				}
-			}
-		});
-	}
-
-	private void removeEvents(EditEnvironment environment) {
-		environment.getMapControl().removeGeometrySelectChangedListener(this.geometrySelectChangedListener);
-	}
-
 	@Override
 	public void deactivate(EditEnvironment environment) {
-		removeEvents(environment);
+		environment.setEditController(NullEditController.instance());
 	}
 
 

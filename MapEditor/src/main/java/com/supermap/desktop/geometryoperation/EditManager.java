@@ -3,6 +3,8 @@ package com.supermap.desktop.geometryoperation;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosedListener;
 import com.supermap.desktop.event.FormClosingEvent;
 import com.supermap.desktop.event.FormClosingListener;
 
@@ -13,6 +15,23 @@ public class EditManager {
 	FormClosingListener formClosingListener = new FormClosingListener() {
 		@Override
 		public void formClosing(FormClosingEvent e) {
+			try {
+				if (e.getForm() instanceof IFormMap) {
+					IFormMap formMap = (IFormMap) e.getForm();
+					if (EditManager.this.maps.containsKey(formMap)) {
+						EditEnvironment environment = EditManager.this.maps.get(formMap);
+						environment.preClear();
+					}
+				}
+			} catch (Exception ex) {
+				Application.getActiveApplication().getOutput().output(ex);
+			}
+		}
+	};
+
+	FormClosedListener formClosedListener = new FormClosedListener() {
+		@Override
+		public void formClosed(FormClosedEvent e) {
 			try {
 				if (e.getForm() instanceof IFormMap) {
 					IFormMap formMap = (IFormMap) e.getForm();
@@ -64,6 +83,7 @@ public class EditManager {
 			clear();
 
 			formMap.addFormClosingListener(this.formClosingListener);
+			formMap.addFormClosedListener(this.formClosedListener);
 			edit = EditEnvironment.createInstance(formMap);
 			this.maps.put(formMap, edit);
 		}
@@ -87,6 +107,7 @@ public class EditManager {
 	private void remove(IFormMap formMap) {
 		if (formMap != null && this.maps.containsKey(formMap)) {
 			formMap.removeFormClosingListener(this.formClosingListener);
+			formMap.removeFormClosedListener(this.formClosedListener);
 			this.maps.remove(formMap);
 		}
 	}

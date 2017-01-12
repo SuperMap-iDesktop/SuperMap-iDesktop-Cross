@@ -1,6 +1,8 @@
 package com.supermap.desktop.geometryoperation;
 
 import com.supermap.desktop.event.DockbarClosedEvent;
+import com.supermap.desktop.event.FormActivatedEvent;
+import com.supermap.desktop.event.FormDeactivatedEvent;
 import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.GeometryEvent;
 import com.supermap.ui.GeometrySelectChangedEvent;
@@ -110,6 +112,16 @@ public abstract class EditControllerAdapter implements IEditController {
 
 	@Override
 	public void dockbarClosed(EditEnvironment editEnvironment, DockbarClosedEvent e) {
+
+	}
+
+	@Override
+	public void formActivated(EditEnvironment editEnvironment, FormActivatedEvent e) {
+
+	}
+
+	@Override
+	public void formDeactivated(EditEnvironment editEnvironment, FormDeactivatedEvent e) {
 
 	}
 }

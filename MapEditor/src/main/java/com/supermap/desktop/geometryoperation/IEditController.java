@@ -2,6 +2,8 @@ package com.supermap.desktop.geometryoperation;
 
 import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.DockbarClosedEvent;
+import com.supermap.desktop.event.FormActivatedEvent;
+import com.supermap.desktop.event.FormDeactivatedEvent;
 import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.GeometryEvent;
 import com.supermap.ui.GeometrySelectChangedEvent;
@@ -98,4 +100,8 @@ public interface IEditController {
 	public void tracked(EditEnvironment environment, TrackedEvent e);
 
 	public void dockbarClosed(EditEnvironment editEnvironment, DockbarClosedEvent e);
+
+	public void formActivated(EditEnvironment editEnvironment, FormActivatedEvent e);
+
+	public void formDeactivated(EditEnvironment editEnvironment, FormDeactivatedEvent e);
 }

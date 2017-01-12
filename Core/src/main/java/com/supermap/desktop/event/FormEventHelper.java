@@ -8,6 +8,22 @@ import javax.swing.event.EventListenerList;
 public class FormEventHelper {
 	private EventListenerList listenerList = new EventListenerList();
 
+	public void addFormActivatedListener(FormActivatedListener listener) {
+		this.listenerList.add(FormActivatedListener.class, listener);
+	}
+
+	public void removeFormActivatedListener(FormActivatedListener listener) {
+		this.listenerList.remove(FormActivatedListener.class, listener);
+	}
+
+	public void addFormDeactivatedListener(FormDeactivatedListener listener) {
+		this.listenerList.add(FormDeactivatedListener.class, listener);
+	}
+
+	public void removeFormDeactivatedListener(FormDeactivatedListener listener) {
+		this.listenerList.remove(FormDeactivatedListener.class, listener);
+	}
+
 	/**
 	 * 注册子窗口关闭前事件
 	 *
@@ -53,6 +69,26 @@ public class FormEventHelper {
 
 	public void removeActiveFormChangedListener(ActiveFormChangedListener listener) {
 		this.listenerList.remove(ActiveFormChangedListener.class, listener);
+	}
+
+	public void fireFormActivated(FormActivatedEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == FormActivatedListener.class) {
+				((FormActivatedListener) listeners[i + 1]).formActivated(e);
+			}
+		}
+	}
+
+	public void fireFormDeactivated(FormDeactivatedEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == FormDeactivatedListener.class) {
+				((FormDeactivatedListener) listeners[i + 1]).formDeactivated(e);
+			}
+		}
 	}
 
 	public void fireFormClosing(FormClosingEvent e) {

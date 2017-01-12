@@ -6,8 +6,7 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.core.MouseButtons;
-import com.supermap.desktop.event.DockbarClosedEvent;
-import com.supermap.desktop.event.DockbarClosedListener;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.geometry.Abstract.ICompoundFeature;
 import com.supermap.desktop.geometry.Abstract.IGeometry;
 import com.supermap.desktop.geometry.Abstract.ILine3DFeature;
@@ -86,6 +85,20 @@ public class EditEnvironment {
 
 	private IEditModel editModel;
 	private IEditController editController = NullEditController.instance();
+
+	private FormActivatedListener formActivatedListener = new FormActivatedListener() {
+		@Override
+		public void formActivated(FormActivatedEvent e) {
+			EditEnvironment.this.editController.formActivated(EditEnvironment.this, e);
+		}
+	};
+
+	private FormDeactivatedListener formDeactivatedListener = new FormDeactivatedListener() {
+		@Override
+		public void formDeactivated(FormDeactivatedEvent e) {
+			EditEnvironment.this.editController.formDeactivated(EditEnvironment.this, e);
+		}
+	};
 
 	private DockbarClosedListener dockbarClosedListener = new DockbarClosedListener() {
 		@Override
@@ -273,6 +286,8 @@ public class EditEnvironment {
 	private void registerEvents() {
 		Application.getActiveApplication().getMainFrame().getDockbarManager().addDockbarClosedListener(this.dockbarClosedListener);
 
+		this.formMap.addFormActivatedListener(this.formActivatedListener);
+		this.formMap.addFormDeactivatedListener(this.formDeactivatedListener);
 		this.formMap.getMapControl().addMouseListener(this.mouseListener);
 		this.formMap.getMapControl().addMouseMotionListener(this.mouseMotionListener);
 		this.formMap.getMapControl().addKeyListener(this.keyListener);
@@ -294,7 +309,7 @@ public class EditEnvironment {
 		this.formMap.getMapControl().getMap().addMapOpenedListener(this.mapOpenedListener);
 	}
 
-	private void unregisterEvents() {
+	private void unregisterEventsWhenClosing() {
 		this.formMap.getMapControl().removeMouseListener(this.mouseListener);
 		this.formMap.getMapControl().removeMouseMotionListener(this.mouseMotionListener);
 		this.formMap.getMapControl().removeKeyListener(this.keyListener);
@@ -314,6 +329,12 @@ public class EditEnvironment {
 		this.formMap.getMapControl().getMap().getLayers().removeLayerRemovedListener(this.layerRemovedListener);
 		this.formMap.getMapControl().getMap().removeMapClosedListener(this.mapClosedListener);
 		this.formMap.getMapControl().getMap().removeMapOpenedListener(this.mapOpenedListener);
+	}
+
+	private void unregisterEventsWhenClosed() {
+		Application.getActiveApplication().getMainFrame().getDockbarManager().removeDockbarClosedListener(this.dockbarClosedListener);
+		this.formMap.removeFormActivatedListener(this.formActivatedListener);
+		this.formMap.removeFormDeactivatedListener(this.formDeactivatedListener);
 	}
 
 	public IEditModel getEditModel() {
@@ -606,8 +627,16 @@ public class EditEnvironment {
 		return GEOMETRY_CONVERT_TO_SEGMENT;
 	}
 
+	/**
+	 * 预清理。有一部分的资源需要在 Form 关闭前清理
+	 * 比如 mapControl 的相关事件，因为 FormMap 关闭前会移除 MapControl 的关联
+	 */
+	public void preClear() {
+		unregisterEventsWhenClosing();
+	}
+
 	public void clear() {
-		unregisterEvents();
+		unregisterEventsWhenClosed();
 		this.formMap = null;
 		this.properties.clear();
 		this.editor = NullEditor.INSTANCE;

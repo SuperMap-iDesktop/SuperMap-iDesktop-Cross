@@ -46,6 +46,7 @@ public abstract class TransformationBase implements IFormMap {
 	// 我觉得图层选中改变应该和图层管理器相关，而和地图窗口无关
 	private transient LayersTreeSelectionListener layersTreeSelectionListener = new LayersTreeSelectionListener();
 	private transient EventListenerList eventListenerList = new EventListenerList();
+	private transient FormEventHelper formEventHelper = new FormEventHelper();
 	private ArrayList<Layer> activeLayersList = new ArrayList<Layer>();
 	private int isShowPopupMenu = 0;
 	private List<String> lastSelectedGeometry = new ArrayList<>();
@@ -73,6 +74,7 @@ public abstract class TransformationBase implements IFormMap {
 		addListeners();
 		LayersComponentManager layersComponentManager = UICommonToolkit.getLayersManager();
 		layersComponentManager.setMap(getMapControl().getMap());
+		this.formEventHelper.fireFormActivated(new FormActivatedEvent(this));
 	}
 
 	@Override
@@ -80,7 +82,9 @@ public abstract class TransformationBase implements IFormMap {
 		removeListeners();
 		LayersComponentManager layersComponentManager = UICommonToolkit.getLayersManager();
 		layersComponentManager.setMap(null);
+		this.formEventHelper.fireFormDeactivated(new FormDeactivatedEvent(this));
 	}
+
 
 	@Override
 	public void formShown(FormShownEvent e) {
@@ -134,6 +138,26 @@ public abstract class TransformationBase implements IFormMap {
 	@Override
 	public void setActiveLayers(Layer... activeLayers) {
 
+	}
+
+	@Override
+	public void addFormActivatedListener(FormActivatedListener listener) {
+		this.formEventHelper.addFormActivatedListener(listener);
+	}
+
+	@Override
+	public void removeFormActivatedListener(FormActivatedListener listener) {
+		this.formEventHelper.removeFormActivatedListener(listener);
+	}
+
+	@Override
+	public void addFormDeactivatedListener(FormDeactivatedListener listener) {
+		this.formEventHelper.addFormDeactivatedListener(listener);
+	}
+
+	@Override
+	public void removeFormDeactivatedListener(FormDeactivatedListener listener) {
+		this.formEventHelper.removeFormDeactivatedListener(listener);
 	}
 
 	@Override

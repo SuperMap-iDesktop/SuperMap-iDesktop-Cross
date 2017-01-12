@@ -60,7 +60,6 @@ public class Application {
 		formMain.addFormLoadedListener(new FormLoadedListener() {
 			@Override
 			public void loadFinish(EventObject object) {
-				fireFormActivatedEvent(new EventObject(formMainCopy));
 				formMainCopy.removeFormLoadedListener(this);
 			}
 		});
@@ -263,19 +262,4 @@ public class Application {
 			}
 		}
 	}
-
-	public void addFormActivatedListener(FormActivatedListener listener){
-		formActivatedListeners.add(listener);
-	}
-
-	public void removeFormActivatedListener(FormActivatedListener listener) {
-		formActivatedListeners.remove(listener);
-	}
-
-	private void fireFormActivatedEvent(EventObject event){
-		for (int i = formActivatedListeners.size() - 1; i >= 0; i--) {
-			formActivatedListeners.get(i).handleEvent(event);
-		}
-	}
-
 }

@@ -37,12 +37,16 @@ public class FormManager extends MdiPane implements IFormManager {
 		@Override
 		public void pageActivated(PageActivatedEvent event) {
 			try {
-				if (event.getOldActivedPage() != null && event.getOldActivedPage().getComponent() instanceof FormBaseChild) {
+				if (event.getOldActivedPage() != null
+						&& !event.getOldActivedPage().isClosed() // 如果 Page 已被关闭，则不发送 deactive 事件，因为在关闭的时候，已经发送过了
+						&& event.getOldActivedPage().getComponent() instanceof FormBaseChild) {
 					((FormBaseChild) event.getOldActivedPage().getComponent()).deactived();
+					((FormBaseChild) event.getOldActivedPage().getComponent()).fireFormDeactivated();
 				}
 
 				if (event.getActivedPage() != null && event.getActivedPage().getComponent() instanceof FormBaseChild) {
 					((FormBaseChild) event.getActivedPage().getComponent()).actived();
+					((FormBaseChild) event.getActivedPage().getComponent()).fireFormActivated();
 				}
 				IForm newActive = event.getActivedPage() != null && event.getActivedPage().getComponent() instanceof IForm ? (IForm) event.getActivedPage().getComponent() : null;
 				IForm oldActive = event.getOldActivedPage() != null && event.getOldActivedPage().getComponent() instanceof IForm ? (IForm) event.getOldActivedPage().getComponent() : null;
@@ -75,6 +79,11 @@ public class FormManager extends MdiPane implements IFormManager {
 		@Override
 		public void pageClosed(PageClosedEvent e) {
 			if (e.getOperation() == Operation.CLOSE && e.getPage() != null && e.getPage().getComponent() instanceof FormBaseChild) {
+				if (e.isDeactived()) {
+					((FormBaseChild) e.getPage().getComponent()).deactived();
+					((FormBaseChild) e.getPage().getComponent()).fireFormDeactivated();
+				}
+
 				FormClosedEvent event = new FormClosedEvent((IForm) e.getPage().getComponent());
 				((FormBaseChild) e.getPage().getComponent()).formClosed(event);
 				((FormBaseChild) e.getPage().getComponent()).fireFormClosed(event);

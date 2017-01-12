@@ -126,6 +126,26 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 		// 默认实现,后续进行初始化操作
 	}
 
+	@Override
+	public void addFormActivatedListener(FormActivatedListener listener) {
+		this.eventHelper.addFormActivatedListener(listener);
+	}
+
+	@Override
+	public void removeFormActivatedListener(FormActivatedListener listener) {
+		this.eventHelper.removeFormActivatedListener(listener);
+	}
+
+	@Override
+	public void addFormDeactivatedListener(FormDeactivatedListener listener) {
+		this.eventHelper.addFormDeactivatedListener(listener);
+	}
+
+	@Override
+	public void removeFormDeactivatedListener(FormDeactivatedListener listener) {
+		this.eventHelper.removeFormDeactivatedListener(listener);
+	}
+
 	/**
 	 * 先执行 formClosing，再调用事件
 	 *
@@ -169,6 +189,14 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 	@Override
 	public void removeFormShownListener(FormShownListener listener) {
 		this.eventHelper.removeFormShownListener(listener);
+	}
+
+	void fireFormActivated() {
+		this.eventHelper.fireFormActivated(new FormActivatedEvent(this));
+	}
+
+	void fireFormDeactivated() {
+		this.eventHelper.fireFormDeactivated(new FormDeactivatedEvent(this));
 	}
 
 	void fireFormClosing(FormClosingEvent e) {
