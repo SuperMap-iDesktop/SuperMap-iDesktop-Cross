@@ -132,7 +132,7 @@ public class SQLExpressionDialog extends SmDialog {
        //将获取唯一值面板加入主panel3, 2, 1, 2
         getContentPane().add(this.jPanelCommonOperator, new GridBagConstraintsHelper(2, 3, 1, 1).setWeight(0,0).setAnchor(GridBagConstraints.SOUTH).setFill(GridBagConstraints.BOTH).setInsets(3));
         getContentPane().add(this.jPanelFunction, new GridBagConstraintsHelper(3, 3, 1, 1).setWeight(0,0).setAnchor(GridBagConstraints.SOUTH).setFill(GridBagConstraints.BOTH).setInsets(3).setIpad(10,0));
-        getContentPane().add(panelButton, new GridBagConstraintsHelper(3, 4, 1, 1).setWeight(0,0).setAnchor(GridBagConstraints.EAST));
+        getContentPane().add(panelButton, new GridBagConstraintsHelper(2, 4, 2, 1).setWeight(0,0).setAnchor(GridBagConstraints.EAST));
         //@formatter:on
 
 		this.jScrollPanel.setViewportView(getTableFieldInfo());
