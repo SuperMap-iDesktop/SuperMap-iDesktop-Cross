@@ -1,6 +1,10 @@
 package com.supermap.desktop.newtheme.themeLabel;
 
-import com.supermap.data.*;
+import com.supermap.data.ColorGradientType;
+import com.supermap.data.Colors;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.enums.UnitValue;
@@ -16,7 +20,13 @@ import com.supermap.desktop.ui.controls.LayersTree;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.MathUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.RangeMode;
+import com.supermap.mapping.Theme;
+import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.ThemeLabelItem;
+import com.supermap.mapping.ThemeType;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -26,7 +36,12 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
@@ -188,15 +203,10 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
      * 初始化分段方法项
      */
     private void initComboBoxRangMethod() {
-	    //处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
-	    this.comboBoxRangeMethod.removeItemListener(this.itemListener);
-
         this.comboBoxRangeMethod.setModel(new DefaultComboBoxModel<String>(new String[]{MapViewProperties.getString("String_RangeMode_EqualInterval"),
                 MapViewProperties.getString("String_RangeMode_SquareRoot"), MapViewProperties.getString("String_RangeMode_StdDeviation"),
                 MapViewProperties.getString("String_RangeMode_Logarithm"), MapViewProperties.getString("String_RangeMode_Quantile"),
                 MapViewProperties.getString("String_RangeMode_CustomInterval")}));
-	    this.comboBoxRangeMethod.addItemListener(this.itemListener);
-
         if (themeLabel.getRangeMode() == RangeMode.NONE) {
             this.comboBoxRangeMethod.setSelectedIndex(0);
         } else if (themeLabel.getRangeMode() == RangeMode.SQUAREROOT) {
@@ -217,13 +227,11 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
      */
     private void initComboBoxRangeCount() {
 	    //处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
-	    this.comboBoxRangeCount.removeItemListener(this.itemListener);
 
         this.comboBoxRangeCount.setModel(new DefaultComboBoxModel<String>(new String[]{"2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14",
                 "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"}));
         this.comboBoxRangeCount.setEditable(true);
         int rangeCount = this.themeLabel.getCount();
-	    this.comboBoxRangeCount.addItemListener(this.itemListener);
         this.comboBoxRangeCount.setSelectedItem(String.valueOf(rangeCount));
 
     }
@@ -232,11 +240,8 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
      * 初始化段标题格式
      */
     private void initComboBoxRangeFormat() {
-	    //处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
-	    this.comboBoxRangeFormat.removeItemListener(this.itemListener);
 
         this.comboBoxRangeFormat.setModel(new DefaultComboBoxModel<String>(new String[]{"0-100", "0<=x<100"}));
-	    this.comboBoxRangeFormat.addItemListener(this.itemListener);
 
         if (this.themeLabel.getItem(0).getCaption().contains("X")) {
             this.comboBoxRangeFormat.setSelectedIndex(1);
