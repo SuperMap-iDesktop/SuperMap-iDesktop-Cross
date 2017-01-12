@@ -17,6 +17,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilities.CommonUtilities;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -601,7 +602,13 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 					dialogFileSaveAs.setWebURL(this.textServerURL.getText());
 					dialogFileSaveAs.setWebFile(define.getName());
 					dialogFileSaveAs.setFileSize(Long.parseLong(define.getSize()));
-					dialogFileSaveAs.setLocalPath("F:/temp/");
+					String filePath = "";
+					if (SystemPropertyUtilities.isWindows()){
+						filePath = "F:/temp/";
+					}else{
+						filePath = "/opt";
+					}
+					dialogFileSaveAs.setLocalPath(filePath);
 					dialogFileSaveAs.setFileName(define.getName());
 					dialogFileSaveAs.showDialog();
 				}

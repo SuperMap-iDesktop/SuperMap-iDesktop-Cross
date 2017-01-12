@@ -10,6 +10,7 @@ import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.messagebus.NewMessageBus;
 import com.supermap.desktop.params.*;
 import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.ui.Action;
 import com.supermap.ui.*;
 
@@ -132,7 +133,12 @@ public class JDialogHeatMap extends SmDialog {
         this.getRootPane().setDefaultButton(this.buttonOK);
         setComboBoxTheme(this.comboBoxCacheType);
         setComboBoxTheme(this.comboBoxDatabaseType);
-        this.setSize(640, 480);
+
+        if(SystemPropertyUtilities.isWindows()) {
+            this.setSize(640, 480);
+        }else {
+            setSize(800,560);
+        }
         this.setLocationRelativeTo(null);
     }
 

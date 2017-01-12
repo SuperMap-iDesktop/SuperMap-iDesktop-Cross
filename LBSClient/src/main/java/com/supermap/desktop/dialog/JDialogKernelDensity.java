@@ -16,6 +16,7 @@ import com.supermap.desktop.params.KernelDensityJobSetting;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.ui.Action;
 import com.supermap.ui.*;
 
@@ -134,8 +135,11 @@ public class JDialogKernelDensity extends SmDialog {
 
         initContentPane();
         initIndexBoundsPanel();
-
-        setSize(700, 400);
+        if(SystemPropertyUtilities.isWindows()) {
+            setSize(700, 400);
+        }else {
+            setSize(860,500);
+        }
         setLocationRelativeTo(null);
 
         registerEvents();
