@@ -8,12 +8,17 @@ import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.event.DockbarClosedEvent;
 import com.supermap.desktop.event.DockbarClosedListener;
+import com.supermap.desktop.geometryoperation.EditControllerAdapter;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.desktop.geometryoperation.IEditController;
+import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.editor.AbstractEditor;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.MapOpenedEvent;
+import com.supermap.mapping.MapOpenedListener;
 import com.supermap.ui.*;
 
 import java.util.ArrayList;
@@ -27,6 +32,7 @@ public class CADStyleEditor extends AbstractEditor {
 
     private CADStyleContainer cadStyleContainer;
     private IDockbar dockbarCADStyleContainer;
+
     private GeometrySelectChangedListener geometrySelectChangedListener = new GeometrySelectChangedListener() {
         @Override
         public void geometrySelectChanged(GeometrySelectChangedEvent geometrySelectChangedEvent) {
@@ -83,10 +89,12 @@ public class CADStyleEditor extends AbstractEditor {
         Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(new ActiveFormChangedListener() {
             @Override
             public void activeFormChanged(ActiveFormChangedEvent e) {
-                if (!environment.getFormMap().equals(e.getNewActiveForm())) {
+                if (e.getNewActiveForm() != null && !environment.getFormMap().equals(e.getNewActiveForm())) {
                     if (null != cadStyleContainer && null != dockbarCADStyleContainer) {
                         cadStyleContainer.enabled(false);
                     }
+                } else if (e.getNewActiveForm() == null) {// 2017/1/11   针对CAD面板打开的情况下，关闭所有地图窗口抛异常的缺陷进行修改  lixiaoyao
+                    cadStyleContainer.setNullPanel();
                 } else {
                     if (null != cadStyleContainer && null != dockbarCADStyleContainer) {
                         cadStyleContainer.enabled(true);
@@ -109,8 +117,9 @@ public class CADStyleEditor extends AbstractEditor {
     @Override
     public boolean enble(EditEnvironment environment) {
         // FIXME: 2016/12/30 enable()方法中集成的响应太多，包括地图刷新事件，而cad操作中包含很多地图刷新事件会造成文本风格中事件的重复调用,将选择事件单独移出
-        return ListUtilities.isListContainAny(environment.getEditProperties().getSelectedDatasetTypes(), DatasetType.CAD, DatasetType.TEXT)
+        boolean result = ListUtilities.isListContainAny(environment.getEditProperties().getSelectedDatasetTypes(), DatasetType.CAD, DatasetType.TEXT)
                 && isEditable(environment.getMap());
+        return result;
     }
 
     private boolean isEditable(Map map) {

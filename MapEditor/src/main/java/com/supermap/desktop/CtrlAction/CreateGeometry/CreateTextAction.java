@@ -10,6 +10,7 @@ import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Recordset;
 import com.supermap.data.TextPart;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.CtrlAction.CADStyle.DefaultTextStyle;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
@@ -249,6 +250,8 @@ public class CreateTextAction {
     private Recordset finishCommit(Recordset recordset, IForm activeForm) {
         if (activeForm instanceof IFormMap) {
             Layer activeEditableLayer = ((IFormMap) activeForm).getMapControl().getActiveEditableLayer();
+            // 2017/1/10 文本默认风格Part 1 共计 part4  lixiaoyao
+            DefaultTextStyle.isNeedReset(activeEditableLayer.getName(),((IFormMap) activeForm).getMapControl().getMap().getName());
 
             if (activeEditableLayer.getDataset() instanceof DatasetVector
                     && (activeEditableLayer.getDataset().getType() == DatasetType.TEXT || activeEditableLayer.getDataset().getType() == DatasetType.CAD)) {
@@ -259,6 +262,15 @@ public class CreateTextAction {
                     if (!StringUtilities.isNullOrEmpty(text)) {
                         TextPart textPart = new TextPart(text, this.editingGeoText.getPart(0).getAnchorPoint());
                         this.editingGeoText.setPart(0, textPart);
+
+                        //  2017/1/6 文本默认风格Part 4   共计Part4    lixiaoyao
+                        if (Double.compare(DefaultTextStyle.getRotationAngle(),0)!=0){
+                            this.editingGeoText.getPart(0).setRotation(DefaultTextStyle.getRotationAngle());
+                        }
+                        if (DefaultTextStyle.getDefaultGeoStyle()!=null) {
+                            this.editingGeoText.setTextStyle(DefaultTextStyle.getDefaultGeoStyle().clone());
+                        }
+
                         recordset.addNew(this.editingGeoText);
                         recordset.update();
                         mapControl.getEditHistory().add(EditType.ADDNEW, recordset, true);
