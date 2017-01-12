@@ -21,17 +21,17 @@ public class CtrlActionHeatMap extends CtrlAction {
     @Override
     public void run() {
         try {
-            if (!IServerLoginInfo.login) {
+//            if (!IServerLoginInfo.login) {
                 JDialogLogin loginDialog = new JDialogLogin();
                 DialogResult result = loginDialog.showDialog();
                 if (result == DialogResult.OK) {
                     JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
                     new JDialogHeatMap(parent).showDialog();
                 }
-            } else {
-                JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
-                new JDialogHeatMap(parent).showDialog();
-            }
+//            } else {
+//                JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
+//                new JDialogHeatMap(parent).showDialog();
+//            }
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex);
         }

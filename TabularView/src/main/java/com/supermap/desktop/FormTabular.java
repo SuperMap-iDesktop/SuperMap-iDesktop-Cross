@@ -1,5 +1,6 @@
 package com.supermap.desktop;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldType;
 import com.supermap.data.QueryParameter;
@@ -217,12 +218,16 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		jScrollPaneChildWindow.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		ListModel listModel = new LeftTableHeaderListModel(jTableTabular);
+		//listModel.
 		rowHeader = new JList(listModel);
 		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
 		rowHeader.setFixedCellHeight(jTableTabular.getRowHeight());
 		rowHeader.setCellRenderer(new RowHeaderRenderer(jTableTabular));
-
+		//设置每行数据的序号（第几个数据）
 		jScrollPaneChildWindow.setRowHeaderView(rowHeader);
+		//在jscrollPaneChildWindow左上角设置一个序号标签
+		JLabel scrollPaneUpperLeftLabel=new JLabel(TabularViewProperties.getString("String_TabularForm_Sequence"),SwingConstants.CENTER);
+		jScrollPaneChildWindow.setCorner(JScrollPane.UPPER_LEFT_CORNER,scrollPaneUpperLeftLabel);
 
 		add(jScrollPaneChildWindow, BorderLayout.CENTER);
 		if (Application.getActiveApplication().getMainFrame() != null) {

@@ -340,13 +340,13 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 						if (this.getIsOutputFolder()) {
 							WebHDFS.outputURL = root + define.getName() + "/";
 						} else {
-							WebHDFS.webFile = "";
+//							WebHDFS.webFile = "";
 							WebHDFS.webURL = root + define.getName() + "/";
 						}
 					} else {
 						WebHDFS.webURL = this.textServerURL.getText();
 						if (define.getName().endsWith(".idx")) {
-							WebHDFS.webFile = "";
+//							WebHDFS.webFile = "";
 						}
 					}
 					fileSelected = true;

@@ -3,6 +3,7 @@ package com.supermap.desktop.process.parameter;
 import com.supermap.desktop.process.enums.ParameterType;
 
 import javax.swing.*;
+import java.beans.PropertyChangeListener;
 
 /**
  * Created by highsad on 2017/1/5.
@@ -17,4 +18,12 @@ public interface IParameter {
 	 * @return
 	 */
 	JPanel getPanel();
+
+	void setSelectedItem(Object value);
+
+	Object getSelectedItem();
+
+	void addPropertyListener(PropertyChangeListener propertyChangeListener);
+
+	void removePropertyListener(PropertyChangeListener propertyChangeListener);
 }

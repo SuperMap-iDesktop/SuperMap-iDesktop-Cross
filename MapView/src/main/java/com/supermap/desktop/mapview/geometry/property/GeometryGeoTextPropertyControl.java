@@ -81,6 +81,7 @@ public class GeometryGeoTextPropertyControl extends AbstractPropertyControl {
 			}
 		}
 	};
+
 	private boolean isEditable() {
 		try {
 			ArrayList<Layer> layers = MapUtilities.getLayers(currentForm.getMapControl().getMap());
@@ -119,25 +120,30 @@ public class GeometryGeoTextPropertyControl extends AbstractPropertyControl {
 		this.panelGeoTextProperty.removeGeoTextChangeListener(geoInfoLisener);
 		this.currentForm.getMapControl().getMap().getLayers().removeLayerEditableChangedListener(layerEditableChangedListener);
 	}
+
 	private void initComponents() {
 		this.removeAll();
 		if (Application.getActiveApplication().getActiveForm() instanceof FormMap) {
 			this.currentForm = (FormMap) Application.getActiveApplication().getActiveForm();
-            this.setLayout(new GridBagLayout());
-            initPanelButtons();
-            //@formatter:off
+			this.setLayout(new GridBagLayout());
+			initPanelButtons();
+			//@formatter:off
             panelGeoTextProperty = new JPanelGeoTextProperty(recordset.getGeometry());
-            panelGeoTextProperty.enabled(((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].isEditable());
+			if(((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers().length > 0) {
+                panelGeoTextProperty.enabled(((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].isEditable());
+			}
             this.add(panelGeoTextProperty.getPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(10, 10, 0, 10));
             this.add(panelButtons, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0).setInsets(5, 10, 10, 10));
             //@formatter:on
-        }
+		}
 	}
 
 	private void initResources() {
 		buttonApply.setText(CommonProperties.getString(CommonProperties.Apply));
 		buttonReset.setText(CommonProperties.getString(CommonProperties.Reset));
-	};
+	}
+
+	;
 
 	private void initPanelButtons() {
 		if (null == panelButtons) {
