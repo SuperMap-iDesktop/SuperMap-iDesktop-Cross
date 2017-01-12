@@ -1,6 +1,6 @@
 package com.supermap.desktop.params;
 
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
  * Created by xie on 2017/1/6.
@@ -8,6 +8,6 @@ import org.apache.http.client.HttpClient;
  */
 public class IServerLoginInfo {
     public static String ipAddr;
-    public static HttpClient client;
+    public static CloseableHttpClient client;
     public static boolean login;
 }

@@ -6,14 +6,15 @@ import com.supermap.desktop.Interface.IServerService;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.params.*;
 import org.apache.commons.compress.utils.Charsets;
+import org.apache.commons.compress.utils.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -32,10 +33,10 @@ public class IServerServiceImpl implements IServerService {
     private static final String JSON_UTF8_CONTENT_TPYE = "application/json;;charset=" + UTF8.name();
 
     @Override
-    public HttpClient login(String userName, String passWord) {
-        HttpClient result = null;
+    public CloseableHttpClient login(String userName, String passWord) {
+        CloseableHttpClient result = null;
         try {
-            HttpClient client = new DefaultHttpClient();
+            CloseableHttpClient client = HttpClients.createDefault();
             String url = HTTP_STR + IServerLoginInfo.ipAddr + LOGIN_URL;
             HttpPost post = new HttpPost(url);
             Token token = new Token();
@@ -47,7 +48,7 @@ public class IServerServiceImpl implements IServerService {
             body.setContentType(JSON_UTF8_CONTENT_TPYE);
             post.setEntity(body);
             HttpResponse response = client.execute(post);
-            if (response != null) {
+            if (null != response && response.getStatusLine().getStatusCode() == 200) {
                 // 获取client
                 String responseStr = getJsonStrFromResponse(response);
                 IServerResponse iServerResponse = JSON.parseObject(responseStr, IServerResponse.class);
@@ -83,12 +84,16 @@ public class IServerServiceImpl implements IServerService {
             body.setContentType(JSON_UTF8_CONTENT_TPYE);
             post.setEntity(body);
             HttpResponse response = IServerLoginInfo.client.execute(post);
-            if (null != response) {
+            if (null != response && response.getStatusLine().getStatusCode() == 200) {
                 String returnInfo = getJsonStrFromResponse(response);
                 JobResultResponse tempResponse = JSON.parseObject(returnInfo, JobResultResponse.class);
                 if ("true".equals(tempResponse.succeed)) {
                     result = tempResponse;
                 }
+            } else {
+                Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_HaveNoResponse"));
+                IOUtils.closeQuietly(IServerLoginInfo.client);
+                IServerLoginInfo.client = HttpClients.createDefault();
             }
         } catch (ClientProtocolException e) {
             Application.getActiveApplication().getOutput().output(e);
@@ -105,7 +110,7 @@ public class IServerServiceImpl implements IServerService {
         try {
             HttpGet get = new HttpGet(newResourceLocation + ".json");
             response = IServerLoginInfo.client.execute(get);
-            if (null != response) {
+            if (null != response && response.getStatusLine().getStatusCode() == 200) {
                 result = getJsonStrFromResponse(response);
             }
         } catch (IOException e) {

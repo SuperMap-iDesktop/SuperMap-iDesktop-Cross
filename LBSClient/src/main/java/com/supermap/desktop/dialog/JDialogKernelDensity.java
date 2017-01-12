@@ -129,7 +129,7 @@ public class JDialogKernelDensity extends SmDialog {
         initContentPane();
         initIndexBoundsPanel();
 
-        setSize(640, 400);
+        setSize(700, 400);
         setLocationRelativeTo(null);
 
         registerEvents();

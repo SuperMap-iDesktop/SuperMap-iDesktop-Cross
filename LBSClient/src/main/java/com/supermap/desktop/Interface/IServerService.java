@@ -1,9 +1,9 @@
 package com.supermap.desktop.Interface;
 
 import com.supermap.desktop.params.BuildCacheJobSetting;
-import com.supermap.desktop.params.KernelDensityJobSetting;
 import com.supermap.desktop.params.JobResultResponse;
-import org.apache.http.client.HttpClient;
+import com.supermap.desktop.params.KernelDensityJobSetting;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
  * Created by xie on 2017/1/6.
@@ -17,7 +17,7 @@ public interface IServerService {
      * @param passWord
      * @return
      */
-    HttpClient login(String userName, String passWord);
+    CloseableHttpClient login(String userName, String passWord);
 
     /**
      * 生成子（核密度分析）任务
@@ -29,12 +29,15 @@ public interface IServerService {
 
     /**
      * 生成子（热度图）任务
+     *
      * @param buildCacheJobSetting
      * @return
      */
     JobResultResponse query(BuildCacheJobSetting buildCacheJobSetting);
+
     /**
      * 查询JSON结果
+     *
      * @param url
      * @return
      */

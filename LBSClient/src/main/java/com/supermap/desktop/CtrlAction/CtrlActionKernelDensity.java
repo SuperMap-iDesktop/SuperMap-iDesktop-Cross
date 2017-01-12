@@ -23,17 +23,17 @@ public class CtrlActionKernelDensity extends CtrlAction {
     @Override
     public void run() {
         try {
-            if (!IServerLoginInfo.login) {
+//            if (!IServerLoginInfo.login) {
                 JDialogLogin loginDialog = new JDialogLogin();
                 DialogResult result = loginDialog.showDialog();
                 if (result == DialogResult.OK) {
                     JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
                     new JDialogKernelDensity(parent, true).showDialog();
                 }
-            } else {
-                JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
-                new JDialogKernelDensity(parent, true).showDialog();
-            }
+//            } else {
+//                JFrame parent = (JFrame) Application.getActiveApplication().getMainFrame();
+//                new JDialogKernelDensity(parent, true).showDialog();
+//            }
 //			DialogResult result = dialog.showDialog();
 //			if (result == DialogResult.OK || result == DialogResult.APPLY) {
 //				WorkThead thread = new WorkThead();
