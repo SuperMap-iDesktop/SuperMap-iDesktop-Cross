@@ -40,10 +40,10 @@ import java.util.concurrent.ThreadFactory;
  * 新的线程管理，通信类
  */
 public class NewMessageBus {
-    private static volatile ITask task;
 
     public static void producer(IResponse response) {
         try {
+            ITask task = null;
             FileManagerContainer fileManagerContainer = CommonUtilities.getFileManagerContainer();
             ITaskFactory taskFactory = TaskFactory.getInstance();
             if (response instanceof JobResultResponse) {
@@ -64,7 +64,7 @@ public class NewMessageBus {
                     return thread;
                 }
             });
-            eService.submit(new MessageBusConsumer(response));
+            eService.submit(new MessageBusConsumer(response, task));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -80,9 +80,11 @@ public class NewMessageBus {
         private IServerService serverService = new IServerServiceImpl();
         private IResponse response;
         private volatile boolean stop = false;
+        private volatile ITask task;
 
-        public MessageBusConsumer(IResponse response) {
+        public MessageBusConsumer(IResponse response, ITask task) {
             this.response = response;
+            this.task = task;
         }
 
         @Override
@@ -97,7 +99,7 @@ public class NewMessageBus {
         }
 
 
-        private synchronized void  excute(IResponse response) throws InterruptedException {
+        private synchronized void excute(IResponse response) throws InterruptedException {
             String queryInfo = serverService.query(((JobResultResponse) response).newResourceLocation);
             JobItemResultResponse result = null;
             if (!StringUtilities.isNullOrEmpty(queryInfo)) {
@@ -141,9 +143,7 @@ public class NewMessageBus {
                         }
                     }
                 }
-            } else
-
-            {
+            } else {
                 updateProgress();
                 Thread.sleep(100);
             }
@@ -154,6 +154,10 @@ public class NewMessageBus {
             Application.getActiveApplication().getOutput().output(exception);
         }
 
+        private void updateProgress() throws InterruptedException {
+            Thread.sleep(1000);
+            task.updateProgress(getRandomProgress(), "", "");
+        }
     }
 
     private static void openIserverMap(String iserverRestAddr, String datasourceName, String datasetName) {
@@ -197,10 +201,6 @@ public class NewMessageBus {
 
     }
 
-    private static void updateProgress() throws InterruptedException {
-        Thread.sleep(1000);
-        task.updateProgress(getRandomProgress(), "", "");
-    }
 
     private static int getRandomProgress() {
         Random random = new Random(System.currentTimeMillis());

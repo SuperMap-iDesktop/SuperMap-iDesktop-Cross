@@ -148,7 +148,7 @@ public class JDialogKernelDensity extends SmDialog {
         this.labelBoundsRight.setText(LBSClientProperties.getString("String_Right"));
         this.labelBoundsTop.setText(LBSClientProperties.getString("String_Top"));
         this.setTitle(LBSClientProperties.getString("String_KernelDensityAnalyst"));
-        this.panelBounds.setBorder(new TitledBorder(null, LBSClientProperties.getString("String_Bounds"), TitledBorder.LEADING,
+        this.panelBounds.setBorder(new TitledBorder(null, LBSClientProperties.getString("String_DrawBounds"), TitledBorder.LEADING,
                 TitledBorder.TOP, null, null));
     }
 
