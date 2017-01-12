@@ -37,6 +37,7 @@ public class IServerServiceImpl implements IServerService {
     public CloseableHttpClient login(String userName, String passWord) {
         CloseableHttpClient result = null;
         try {
+            IServerLoginInfo.error = false;
             CloseableHttpClient client = HttpClients.createDefault();
             String url = HTTP_STR + IServerLoginInfo.ipAddr + LOGIN_URL;
             HttpPost post = new HttpPost(url);
