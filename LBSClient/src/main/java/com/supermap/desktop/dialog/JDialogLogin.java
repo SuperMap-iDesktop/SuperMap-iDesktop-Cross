@@ -74,7 +74,9 @@ public class JDialogLogin extends SmDialog {
         if (!StringUtilities.isNullOrEmpty(textFieldHost.getText()) && !StringUtilities.isNullOrEmpty(textFieldPort.getText())) {
             IServerLoginInfo.ipAddr = textFieldHost.getText() + ":" + textFieldPort.getText();
         }
+        this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         CloseableHttpClient client = service.login(username, password);
+        this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (IServerLoginInfo.error) {
             return;
         }

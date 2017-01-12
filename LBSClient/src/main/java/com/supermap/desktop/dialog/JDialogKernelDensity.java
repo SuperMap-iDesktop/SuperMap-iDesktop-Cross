@@ -64,7 +64,7 @@ public class JDialogKernelDensity extends SmDialog {
 
     private JLabel labelInputURL;
     private JTextField textInputURL;
-    private JButton buttonInputBrowser;
+//    private JButton buttonInputBrowser;
 
     private JLabel labelResolution;
     private JTextField textResolution;
@@ -99,7 +99,7 @@ public class JDialogKernelDensity extends SmDialog {
 
         this.labelInputURL = new JLabel();
         this.textInputURL = new JTextField("/opt/LBSData/newyork_taxi_2013-01_14k.csv");
-        this.buttonInputBrowser = new JButton();
+//        this.buttonInputBrowser = new JButton();
 
         this.labelResolution = new JLabel();
         this.textResolution = new JTextField("0.004");
@@ -146,6 +146,7 @@ public class JDialogKernelDensity extends SmDialog {
         this.labelResolution.setText(LBSClientProperties.getString("String_Resolution"));
         this.labelRadius.setText(LBSClientProperties.getString("String_Radius"));
         this.buttonDrawBounds.setText(LBSClientProperties.getString("String_DrawBounds"));
+        this.buttonDrawBounds.setToolTipText(LBSClientProperties.getString("String_DrawBounds"));
         this.labelIndex.setText(LBSClientProperties.getString("String_Index"));
         this.labelSeperator.setText(LBSClientProperties.getString("String_Seperator"));
         this.labelOutputURL.setText(LBSClientProperties.getString("String_OutputURL"));
@@ -154,9 +155,9 @@ public class JDialogKernelDensity extends SmDialog {
         this.labelBoundsRight.setText(LBSClientProperties.getString("String_Right"));
         this.labelBoundsTop.setText(LBSClientProperties.getString("String_Top"));
         this.setTitle(LBSClientProperties.getString("String_KernelDensityAnalyst"));
-        this.buttonInputBrowser.setText(LBSClientProperties.getString("String_Browser"));
-        this.buttonInputBrowser.setToolTipText(LBSClientProperties.getString("String_Browser"));
-        this.panelBounds.setBorder(new TitledBorder(null, LBSClientProperties.getString("String_DrawBounds"), TitledBorder.LEADING,
+//        this.buttonInputBrowser.setText(LBSClientProperties.getString("String_Browser"));
+//        this.buttonInputBrowser.setToolTipText(LBSClientProperties.getString("String_Browser"));
+        this.panelBounds.setBorder(new TitledBorder(null, LBSClientProperties.getString("String_AnalystBounds"), TitledBorder.LEADING,
                 TitledBorder.TOP, null, null));
     }
 
@@ -170,8 +171,8 @@ public class JDialogKernelDensity extends SmDialog {
         // @formatter:off
         groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
                 .addGroup(groupLayout.createSequentialGroup().addComponent(this.labelInputURL)
-                        .addComponent(this.textInputURL, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(this.buttonInputBrowser, 32, 32, 32))
+                        .addComponent(this.textInputURL, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+//                        .addComponent(this.buttonInputBrowser, 32, 32, 32))
                 .addComponent(this.panelBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(groupLayout.createSequentialGroup()
                         .addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
@@ -193,8 +194,8 @@ public class JDialogKernelDensity extends SmDialog {
                         .addComponent(this.buttonCancel, 75, 75, 75)));
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
                 .addGroup(groupLayout.createParallelGroup(Alignment.CENTER).addComponent(this.labelInputURL)
-                        .addComponent(this.textInputURL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(this.buttonInputBrowser))
+                        .addComponent(this.textInputURL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+//                        .addComponent(this.buttonInputBrowser))
                 .addComponent(this.panelBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
                         .addComponent(this.labelIndex)
@@ -253,7 +254,7 @@ public class JDialogKernelDensity extends SmDialog {
         unRegisterEvents();
         this.buttonOK.addActionListener(this.kernelDensityListener);
         this.buttonCancel.addActionListener(this.cancelListener);
-        this.buttonInputBrowser.addActionListener(this.inputBrowserListener);
+//        this.buttonInputBrowser.addActionListener(this.inputBrowserListener);
 
 //        this.buttonOutputBrowser.addActionListener(new ActionListener() {
 //            @Override
@@ -286,7 +287,7 @@ public class JDialogKernelDensity extends SmDialog {
         this.buttonOK.removeActionListener(this.kernelDensityListener);
         this.buttonCancel.removeActionListener(this.cancelListener);
         this.buttonDrawBounds.removeActionListener(this.drawBoundsListener);
-        this.buttonInputBrowser.removeActionListener(this.inputBrowserListener);
+//        this.buttonInputBrowser.removeActionListener(this.inputBrowserListener);
     }
 
     public static String formatKernelDensity(MessageBusType messageBusType,
