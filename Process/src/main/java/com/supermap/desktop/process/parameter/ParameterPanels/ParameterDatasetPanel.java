@@ -1,6 +1,8 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
+import com.supermap.data.Dataset;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterDataset;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
@@ -9,6 +11,10 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * @author XiaJT
@@ -19,6 +25,7 @@ public class ParameterDatasetPanel extends JPanel {
 	private DatasourceComboBox datasourceComboBox;
 	private JLabel labelDataset = new JLabel();
 	private DatasetComboBox datasetComboBox;
+	private boolean isSelectingItem = false;
 
 	public ParameterDatasetPanel(ParameterDataset parameterDataset) {
 		this.parameterDataset = parameterDataset;
@@ -47,7 +54,40 @@ public class ParameterDatasetPanel extends JPanel {
 	}
 
 	private void initListener() {
+		parameterDataset.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (!isSelectingItem && evt.getPropertyName().equals(AbstractParameter.PROPERTY_VALE)) {
+					isSelectingItem = true;
+					Object newValue = evt.getNewValue();
+					if (newValue instanceof Dataset) {
+						Dataset dataset = (Dataset) newValue;
+						datasourceComboBox.setSelectedDatasource(dataset.getDatasource());
+						datasetComboBox.setSelectedDataset(dataset);
+					}
+					isSelectingItem = false;
+				}
+			}
+		});
+		datasourceComboBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (!isSelectingItem && e.getStateChange() == ItemEvent.SELECTED) {
+					datasetComboBox.setDatasets(datasourceComboBox.getSelectedDatasource().getDatasets());
+				}
+			}
+		});
+		datasetComboBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (!isSelectingItem && e.getStateChange() == ItemEvent.SELECTED) {
+					isSelectingItem = true;
+					parameterDataset.setSelectedItem(datasetComboBox.getSelectedDataset());
+					isSelectingItem = false;
+				}
+			}
+		});
 
+//		Application.getActiveApplication().getWorkspace().addClosedListener();
 	}
-
 }

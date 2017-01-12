@@ -8,18 +8,15 @@ import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.event.DockbarClosedEvent;
 import com.supermap.desktop.event.DockbarClosedListener;
-import com.supermap.desktop.geometryoperation.EditControllerAdapter;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
-import com.supermap.desktop.geometryoperation.IEditController;
-import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.editor.AbstractEditor;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
-import com.supermap.mapping.MapOpenedEvent;
-import com.supermap.mapping.MapOpenedListener;
-import com.supermap.ui.*;
+import com.supermap.ui.GeometrySelectChangedEvent;
+import com.supermap.ui.GeometrySelectChangedListener;
+import com.supermap.ui.MapControl;
 
 import java.util.ArrayList;
 
@@ -89,8 +86,8 @@ public class CADStyleEditor extends AbstractEditor {
         Application.getActiveApplication().getMainFrame().getFormManager().addActiveFormChangedListener(new ActiveFormChangedListener() {
             @Override
             public void activeFormChanged(ActiveFormChangedEvent e) {
-                if (e.getNewActiveForm() != null && !environment.getFormMap().equals(e.getNewActiveForm())) {
-                    if (null != cadStyleContainer && null != dockbarCADStyleContainer) {
+	            if (e.getNewActiveForm() != null && environment.getFormMap() != e.getNewActiveForm()) {
+		            if (null != cadStyleContainer && null != dockbarCADStyleContainer) {
                         cadStyleContainer.enabled(false);
                     }
                 } else if (e.getNewActiveForm() == null) {// 2017/1/11   针对CAD面板打开的情况下，关闭所有地图窗口抛异常的缺陷进行修改  lixiaoyao
