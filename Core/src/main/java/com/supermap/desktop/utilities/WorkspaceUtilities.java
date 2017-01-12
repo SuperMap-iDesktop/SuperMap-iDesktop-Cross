@@ -581,7 +581,11 @@ public class WorkspaceUtilities {
 		}
 		java.util.List<Datasource> datasourceAOnly = repeatDatasourceDeal.getDatasourceAOnly();
 		for (Datasource datasource : datasourceAOnly) {
-			copyWorkspace.getDatasources().open(datasource.getConnectionInfo());
+			try {
+				copyWorkspace.getDatasources().open(datasource.getConnectionInfo());
+			} catch (Exception e) {
+				// ignore
+			}
 		}
 
 		copyWorkspace.getMaps().clear();
