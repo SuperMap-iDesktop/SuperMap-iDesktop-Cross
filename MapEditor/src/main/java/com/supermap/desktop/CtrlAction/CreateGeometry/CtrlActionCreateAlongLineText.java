@@ -51,9 +51,9 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 			if (jDialogCreateAlongText.showDialog() == DialogResult.OK) {
 				String text = jDialogCreateAlongText.getText();
 
-//				geoText.getTextStyle().setSizeFixed(false);
-				String activeMapName=((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().getName();
-				geoText.setTextStyle(DefaultTextStyle.getDefaultGeoStyle(activeMapName).clone());
+				geoText.getTextStyle().setSizeFixed(false);
+//				String activeMapName=((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().getName();
+//				geoText.setTextStyle(DefaultTextStyle.getDefaultGeoStyle(activeMapName).clone());
 				// DEFAULT_FONT_PIXEL_HEIGHT 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
 				geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilities.pixelLength(formMap.getMapControl()));
 				TextPart textPart = new TextPart();
@@ -201,10 +201,10 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 				this.getRootPane().setDefaultButton(buttonOk);
 				GeoText geoText = GeoText.makeAlongLineText(getText(), geoLine);
 
-				String activeMapName=((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().getName();
-				geoText.setTextStyle(DefaultTextStyle.getDefaultGeoStyle(activeMapName).clone());
-//				geoText.getTextStyle().setFontName("");
-//				geoText.getTextStyle().setSizeFixed(false);
+//				String activeMapName=((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().getName();
+//				geoText.setTextStyle(DefaultTextStyle.getDefaultGeoStyle(activeMapName).clone());
+				geoText.getTextStyle().setFontName("");
+				geoText.getTextStyle().setSizeFixed(false);
 				// DEFAULT_FONT_PIXEL_HEIGHT 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
 				geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilities.pixelLength(formMap.getMapControl()));
 

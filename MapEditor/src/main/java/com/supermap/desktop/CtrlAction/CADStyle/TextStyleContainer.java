@@ -169,11 +169,11 @@ public class TextStyleContainer extends JPanel {
                     } else {
                         ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
                         //  2017/1/12 新增文本默认风格Part 2  共计Part4   lixiaoyao
-                        IForm activeForm = Application.getActiveApplication().getActiveForm();
-                        String activeMapName=((IFormMap) activeForm).getMapControl().getMap().getName();
-                        String activeLayerName=((IFormMap) activeForm).getMapControl().getActiveEditableLayer().getName();
-                        DefaultTextStyle.setDefaultGeoStyle(activeMapName,activeLayerName,((GeoText) tempGeometry).getTextStyle().clone());
-                        DefaultTextStyle.setRotationAngle(activeMapName,activeLayerName,((GeoText) tempGeometry).getPart(0).getRotation());
+//                        IForm activeForm = Application.getActiveApplication().getActiveForm();
+//                        String activeMapName=((IFormMap) activeForm).getMapControl().getMap().getName();
+//                        String activeLayerName=((IFormMap) activeForm).getMapControl().getActiveEditableLayer().getName();
+//                        DefaultTextStyle.setDefaultGeoStyle(activeMapName,activeLayerName,((GeoText) tempGeometry).getTextStyle().clone());
+//                        DefaultTextStyle.setRotationAngle(activeMapName,activeLayerName,((GeoText) tempGeometry).getPart(0).getRotation());
                     }
                 }
                 if (tempGeometry instanceof GeoText && newValue.equals(TextStyleType.FIXEDSIZE)) {

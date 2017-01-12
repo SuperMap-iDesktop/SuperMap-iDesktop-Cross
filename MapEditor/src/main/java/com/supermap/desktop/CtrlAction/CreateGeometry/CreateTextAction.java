@@ -13,6 +13,8 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.CADStyle.DefaultTextStyle;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.desktop.geometryoperation.EditManager;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -251,7 +253,7 @@ public class CreateTextAction {
         if (activeForm instanceof IFormMap) {
             Layer activeEditableLayer = ((IFormMap) activeForm).getMapControl().getActiveEditableLayer();
             // 2017/1/12 文本默认风格Part 1 共计 part4  lixiaoyao
-            String activeMapName=((IFormMap) activeForm).getMapControl().getMap().getName();
+            //String activeMapName=((IFormMap) activeForm).getMapControl().getMap().getName();
 
             if (activeEditableLayer.getDataset() instanceof DatasetVector
                     && (activeEditableLayer.getDataset().getType() == DatasetType.TEXT || activeEditableLayer.getDataset().getType() == DatasetType.CAD)) {
@@ -264,12 +266,12 @@ public class CreateTextAction {
                         this.editingGeoText.setPart(0, textPart);
 
                         //  2017/1/6 文本默认风格Part 4   共计Part4    lixiaoyao
-                        if (Double.compare(DefaultTextStyle.getRotationAngle(activeMapName),0)!=0){
-                            this.editingGeoText.getPart(0).setRotation(DefaultTextStyle.getRotationAngle(activeMapName));
-                        }
-                        if (DefaultTextStyle.getDefaultGeoStyle(activeMapName)!=null) {
-                            this.editingGeoText.setTextStyle(DefaultTextStyle.getDefaultGeoStyle(activeMapName).clone());
-                        }
+//                        if (Double.compare(DefaultTextStyle.getRotationAngle(activeMapName),0)!=0){
+//                            this.editingGeoText.getPart(0).setRotation(DefaultTextStyle.getRotationAngle(activeMapName));
+//                        }
+//                        if (DefaultTextStyle.getDefaultGeoStyle(activeMapName)!=null) {
+//                            this.editingGeoText.setTextStyle(DefaultTextStyle.getDefaultGeoStyle(activeMapName).clone());
+//                        }
 
                         recordset.addNew(this.editingGeoText);
                         recordset.update();
