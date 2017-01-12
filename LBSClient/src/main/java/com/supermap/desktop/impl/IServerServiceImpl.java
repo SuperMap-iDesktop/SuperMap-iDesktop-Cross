@@ -5,6 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IServerService;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.params.*;
+import com.supermap.desktop.utilities.CursorUtilities;
 import org.apache.commons.compress.utils.Charsets;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.http.HttpEntity;
@@ -14,7 +15,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
@@ -37,6 +37,7 @@ public class IServerServiceImpl implements IServerService {
     public CloseableHttpClient login(String userName, String passWord) {
         CloseableHttpClient result = null;
         try {
+            CursorUtilities.setWaitCursor();
             IServerLoginInfo.error = false;
             CloseableHttpClient client = HttpClients.createDefault();
             String url = HTTP_STR + IServerLoginInfo.ipAddr + LOGIN_URL;
@@ -60,6 +61,8 @@ public class IServerServiceImpl implements IServerService {
         } catch (Exception e) {
             Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("Strng_ConnectionException"));
             IServerLoginInfo.error = true;
+        } finally {
+            CursorUtilities.setDefaultCursor();
         }
         return result;
     }
@@ -82,6 +85,7 @@ public class IServerServiceImpl implements IServerService {
     private JobResultResponse returnJobResult(String url, String jsonBody) {
         JobResultResponse result = null;
         try {
+            CursorUtilities.setWaitCursor();
             HttpPost post = new HttpPost(url);
             StringEntity body = new StringEntity(jsonBody, UTF8);
             body.setContentType(JSON_UTF8_CONTENT_TPYE);
@@ -102,6 +106,8 @@ public class IServerServiceImpl implements IServerService {
             Application.getActiveApplication().getOutput().output(e);
         } catch (IOException e) {
             Application.getActiveApplication().getOutput().output(e);
+        } finally {
+            CursorUtilities.setDefaultCursor();
         }
         return result;
     }
@@ -111,6 +117,7 @@ public class IServerServiceImpl implements IServerService {
         String result = null;
         HttpResponse response = null;
         try {
+            CursorUtilities.setWaitCursor();
             HttpGet get = new HttpGet(newResourceLocation + ".json");
             response = IServerLoginInfo.client.execute(get);
             if (null != response && response.getStatusLine().getStatusCode() == 200) {
@@ -118,6 +125,8 @@ public class IServerServiceImpl implements IServerService {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            CursorUtilities.setDefaultCursor();
         }
         return result;
     }

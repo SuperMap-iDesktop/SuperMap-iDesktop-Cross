@@ -76,7 +76,6 @@ public class JDialogLogin extends SmDialog {
         }
         CloseableHttpClient client = service.login(username, password);
         if (IServerLoginInfo.error) {
-            dispose();
             return;
         }
         if (null == client) {
