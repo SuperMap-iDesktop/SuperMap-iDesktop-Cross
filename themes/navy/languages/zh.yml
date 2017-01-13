@@ -21,6 +21,7 @@ sidebar:
   docs:
     welcome: Welcome
     getting_started: 产品入门
+    License: 许可配置
     SuperMap Cross: 产品介绍
     SuperMapDataStructure: 数据组织结构
     Pyramid: 影像金字塔

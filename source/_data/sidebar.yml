@@ -1,6 +1,7 @@
 docs:
   welcome:
     SuperMap Cross: /SuperMap-iDesktop-Cross/docs/index.html
+    License: /SuperMap-iDesktop-Cross/docs/Install/License.html
   getting_started:
     SuperMapDataStructure: /SuperMap-iDesktop-Cross/docs/Basic/SuperMapDataStructure.html
     Pyramid: /SuperMap-iDesktop-Cross/docs/Basic/Pyramid.html
