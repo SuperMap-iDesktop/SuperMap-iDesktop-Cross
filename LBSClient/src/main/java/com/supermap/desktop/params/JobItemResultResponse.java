@@ -8,7 +8,9 @@ import com.supermap.desktop.Interface.IResponse;
 public class JobItemResultResponse implements IResponse {
     //{"id":"app-20170111184413-0006",
     // "state":{"errorStackTrace":null,"startTime":1484131453662,"endTime":1484131463955,"publisherelapsedTime":0,"runState":"FINISHED","errorMsg":null,"elapsedTime":10293},
-    // "setting":{"output":{"cacheName":null,"outputPath":"/opt/supermap_iserver_811_14511_9_linux64_deploy/webapps/iserver/processingResultData/KernelDensity/grids/180ae86c-656e-4b69-9f2c-4fcd97a9d711","cacheType":null},"args":["--input","/opt/LBSData/newyork_taxi_2013-01_14k.csv","--query","-74.050,40.550,-73.750,40.950","--resolution","0.004","--radius","0.004","--separator",",","--geoidx","10","--output","/opt/supermap_iserver_811_14511_9_linux64_deploy/webapps/iserver/processingResultData/KernelDensity/grids/180ae86c-656e-4b69-9f2c-4fcd97a9d711"],"input":{"filePath":"/opt/LBSData/newyork_taxi_2013-01_14k.csv"},
+    // "setting":{"output":{"cacheName":null,"outputPath":"/opt/supermap_iserver_811_14511_9_linux64_deploy/webapps/iserver/processingResultData/KernelDensity/grids/180ae86c-656e-4b69-9f2c-4fcd97a9d711","cacheType":null},
+    // "args":["--input","/opt/LBSData/newyork_taxi_2013-01_14k.csv","--query","-74.050,40.550,-73.750,40.950","--resolution","0.004","--radius","0.004","--separator",",","--geoidx","10","--output","/opt/supermap_iserver_811_14511_9_linux64_deploy/webapps/iserver/processingResultData/KernelDensity/grids/180ae86c-656e-4b69-9f2c-4fcd97a9d711"],
+    // "input":{"filePath":"/opt/LBSData/newyork_taxi_2013-01_14k.csv"},
     // "DEFAULT_MASTER_ADRESS":"local[*] ",
     // mainClass":"com.supermap.spark.main.KernelDensity",
     // "appName":"kernelDensity",
