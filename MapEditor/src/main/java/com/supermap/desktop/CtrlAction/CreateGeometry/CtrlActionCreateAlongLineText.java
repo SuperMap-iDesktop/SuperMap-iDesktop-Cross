@@ -1,13 +1,7 @@
 package com.supermap.desktop.CtrlAction.CreateGeometry;
 
-import com.supermap.data.DatasetType;
-import com.supermap.data.GeoCardinal;
-import com.supermap.data.GeoCompound;
-import com.supermap.data.GeoLine;
-import com.supermap.data.GeoText;
-import com.supermap.data.TextPart;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CtrlAction.CADStyle.DefaultTextStyle;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
@@ -21,11 +15,7 @@ import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.ui.Action;
-import com.supermap.ui.ActionChangedEvent;
-import com.supermap.ui.ActionChangedListener;
-import com.supermap.ui.TrackMode;
-import com.supermap.ui.TrackedEvent;
-import com.supermap.ui.TrackedListener;
+import com.supermap.ui.*;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -51,9 +41,15 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 			if (jDialogCreateAlongText.showDialog() == DialogResult.OK) {
 				String text = jDialogCreateAlongText.getText();
 
-//				geoText.getTextStyle().setSizeFixed(false);
-				String activeMapName=((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().getName();
-				geoText.setTextStyle(DefaultTextStyle.getDefaultGeoStyle(activeMapName).clone());
+				//geoText.getTextStyle().setSizeFixed(false);
+				// 文本默认风格设置 2017.1.13 李逍遥 part8   共计part9
+				if (formMap.getDefaultTextStyle()!=null){
+					geoText.setTextStyle(formMap.getDefaultTextStyle());
+				}
+				if (Double.compare(formMap.getDefaultTextRotationAngle(),0)!=0){
+					geoText.getPart(0).setRotation(formMap.getDefaultTextRotationAngle());
+				}
+
 				// DEFAULT_FONT_PIXEL_HEIGHT 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
 				geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilities.pixelLength(formMap.getMapControl()));
 				TextPart textPart = new TextPart();
@@ -201,8 +197,14 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 				this.getRootPane().setDefaultButton(buttonOk);
 				GeoText geoText = GeoText.makeAlongLineText(getText(), geoLine);
 
-				String activeMapName=((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().getName();
-				geoText.setTextStyle(DefaultTextStyle.getDefaultGeoStyle(activeMapName).clone());
+				// 文本默认风格设置 2017.1.13 李逍遥 part9   共计part9
+				if (formMap.getDefaultTextStyle()!=null){
+					geoText.setTextStyle(formMap.getDefaultTextStyle());
+				}
+				if (Double.compare(formMap.getDefaultTextRotationAngle(),0)!=0){
+					geoText.getPart(0).setRotation(formMap.getDefaultTextRotationAngle());
+				}
+
 //				geoText.getTextStyle().setFontName("");
 //				geoText.getTextStyle().setSizeFixed(false);
 				// DEFAULT_FONT_PIXEL_HEIGHT 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
