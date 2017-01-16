@@ -5,6 +5,7 @@ import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.impl.IServerServiceImpl;
 import com.supermap.desktop.params.IServerLoginInfo;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -82,7 +83,7 @@ public class JDialogLogin extends SmDialog {
         }
         if (null == client) {
             labelWorning.setForeground(Color.red);
-            labelWorning.setText(CoreProperties.getString("String_ErrorUserNameOrPassword"));
+            labelWorning.setText(CommonProperties.getString("String_PermissionCheckFailed"));
         } else {
             IServerLoginInfo.client = client;
             IServerLoginInfo.login = true;

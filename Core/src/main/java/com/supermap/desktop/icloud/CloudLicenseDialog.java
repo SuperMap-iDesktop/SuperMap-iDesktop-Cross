@@ -16,21 +16,12 @@ import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.JOptionPaneUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
+import org.apache.http.impl.client.CloseableHttpClient;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.awt.event.*;
+import java.io.*;
 
 /**
  * Created by xie on 2016/12/20.
@@ -46,6 +37,7 @@ public class CloudLicenseDialog extends JDialog {
     private JLabel labelFindPassword;
     private JCheckBox checkBoxSavePassword;
     private JCheckBox checkBoxAutoLogin;
+    private JLabel labelWarning;
     private JButton buttonLogin;
     private JButton buttonClose;
     private LicenseService licenseService;
@@ -88,18 +80,19 @@ public class CloudLicenseDialog extends JDialog {
     private void connect(String url) {
         openUrl(url);
     }
+
     private static void openUrl(String url) {
         Runtime runtime = Runtime.getRuntime();
         try {
             if (SystemPropertyUtilities.isWindows()) {
                 runtime.exec("rundll32 url.dll,FileProtocolHandler " + url);
             } else {
-                String[] browsers = { "epiphany", "firefox", "mozilla", "konqueror", "netscape", "opera", "links", "lynx" };
+                String[] browsers = {"epiphany", "firefox", "mozilla", "konqueror", "netscape", "opera", "links", "lynx"};
 
                 StringBuffer cmd = new StringBuffer();
                 for (int i = 0; i < browsers.length; i++)
                     cmd.append((i == 0 ? "" : " || ") + browsers[i] + " \"" + url + "\" ");
-                runtime.exec(new String[] { "sh", "-c", cmd.toString() });
+                runtime.exec(new String[]{"sh", "-c", cmd.toString()});
             }
         } catch (Exception e) {
             System.out.println(e);
@@ -116,31 +109,37 @@ public class CloudLicenseDialog extends JDialog {
     private void login() {
         userName = textFieldUserName.getText();
         passWord = String.valueOf(fieldPassWord.getPassword());
-	    try {
+        CloseableHttpClient client = LicenseServiceFactory.getClient(userName, passWord);
+        if (null == client) {
+            this.labelWarning.setForeground(Color.red);
+            this.labelWarning.setText(CommonProperties.getString("String_PermissionCheckFailed"));
+        } else {
+            this.labelWarning.setText("");
+            try {
 //	    CloudLicense.login(userName, passWord);
 //	    saveToken();
 //	    dialogResult = DIALOGRESULT_OK;
 //	    dispose();
-		    licenseService = LicenseServiceFactory.create(userName, passWord, ProductType.IDESKTOP);
-		    licenseId = LicenseManager.getFormalLicenseId(licenseService);
-		    if (null != licenseId) {
-			    //有正式许可id，则申请正式许可
-			    formalLicenseResponse = LicenseManager.applyFormalLicense(licenseService, licenseId);
-			    dialogResult = DIALOGRESULT_OK;
-			    saveToken();
-		    } else {
-			    //没有正式许可id,则申请试用许可
-			    trialLicenseResponse = LicenseManager.applyTrialLicense(licenseService);
-			    dialogResult = DIALOGRESULT_OK;
-			    saveToken();
-		    }
-	    } catch (AuthenticationException e1) {
-		    JOptionPaneUtilities.showErrorMessageDialog(CommonProperties.getString("String_PermissionCheckFailed"));
-		    dialogResult = DIALOGRESULT_CANCEL;
-	    } finally {
-		    removeEvents();
-		    dispose();
-	    }
+                licenseService = LicenseServiceFactory.create(client, ProductType.IDESKTOP);
+                licenseId = LicenseManager.getFormalLicenseId(licenseService);
+                if (null != licenseId) {
+                    //有正式许可id，则申请正式许可
+                    formalLicenseResponse = LicenseManager.applyFormalLicense(licenseService, licenseId);
+                    dialogResult = DIALOGRESULT_OK;
+                    saveToken();
+                } else {
+                    //没有正式许可id,则申请试用许可
+                    trialLicenseResponse = LicenseManager.applyTrialLicense(licenseService);
+                    dialogResult = DIALOGRESULT_OK;
+                    saveToken();
+                }
+            } catch (AuthenticationException e1) {
+                dialogResult = DIALOGRESULT_CANCEL;
+            } finally {
+                removeEvents();
+                dispose();
+            }
+        }
     }
 
     private void saveToken() {
@@ -185,7 +184,7 @@ public class CloudLicenseDialog extends JDialog {
     public CloudLicenseDialog() {
         super();
         setModal(true);
-	    init();
+        init();
     }
 
     private void init() {
@@ -193,7 +192,7 @@ public class CloudLicenseDialog extends JDialog {
         initLayout();
         initResources();
         registEvents();
-        this.setSize(new Dimension(480, 330));
+        this.setSize(new Dimension(480, 360));
         this.setLocationRelativeTo(null);
     }
 
@@ -243,15 +242,16 @@ public class CloudLicenseDialog extends JDialog {
 
         this.add(panelCloudImage, new GridBagConstraintsHelper(0, 0, 6, 3).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
         this.add(panelUserImage, new GridBagConstraintsHelper(0, 3, 1, 3).setInsets(10, 0, 0, 0).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        this.add(labelUserName, new GridBagConstraintsHelper(1, 3, 1, 1).setInsets(10, 5, 10, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(textFieldUserName, new GridBagConstraintsHelper(2, 3, 2, 1).setInsets(10, 0, 10, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
-        this.add(labelRegister, new GridBagConstraintsHelper(4, 3, 1, 1).setInsets(10, 5, 5, 16).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        this.add(labelPassWord, new GridBagConstraintsHelper(1, 4, 1, 1).setInsets(0, 5, 0, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(fieldPassWord, new GridBagConstraintsHelper(2, 4, 2, 1).setInsets(0, 0, 0, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
-        this.add(labelFindPassword, new GridBagConstraintsHelper(4, 4, 1, 1).setInsets(0, 5, 0, 16).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        this.add(checkBoxSavePassword, new GridBagConstraintsHelper(2, 5, 1, 1).setInsets(0, 5, 5, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(checkBoxAutoLogin, new GridBagConstraintsHelper(3, 5, 1, 1).setInsets(0, 0, 5, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(panelButton, new GridBagConstraintsHelper(0, 6, 5, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+        this.add(labelWarning, new GridBagConstraintsHelper(1, 3, 3, 1).setInsets(10, 5, 10, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(labelUserName, new GridBagConstraintsHelper(1, 4, 1, 1).setInsets(10, 5, 10, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(textFieldUserName, new GridBagConstraintsHelper(2, 4, 2, 1).setInsets(10, 0, 10, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.add(labelRegister, new GridBagConstraintsHelper(4, 4, 1, 1).setInsets(10, 5, 5, 16).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+        this.add(labelPassWord, new GridBagConstraintsHelper(1, 5, 1, 1).setInsets(0, 5, 0, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(fieldPassWord, new GridBagConstraintsHelper(2, 5, 2, 1).setInsets(0, 0, 0, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.add(labelFindPassword, new GridBagConstraintsHelper(4, 5, 1, 1).setInsets(0, 5, 0, 16).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+        this.add(checkBoxSavePassword, new GridBagConstraintsHelper(2, 6, 1, 1).setInsets(0, 5, 5, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(checkBoxAutoLogin, new GridBagConstraintsHelper(3, 6, 1, 1).setInsets(0, 0, 5, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(panelButton, new GridBagConstraintsHelper(0, 7, 5, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
         this.labelRegister.setPreferredSize(new Dimension(100, 23));
         this.labelFindPassword.setPreferredSize(new Dimension(100, 23));
     }
@@ -260,6 +260,7 @@ public class CloudLicenseDialog extends JDialog {
     private void initComponents() {
         this.panelCloudImage = new JPanel();
         this.panelUserImage = new JPanel();
+        this.labelWarning = new JLabel("");
         this.labelUserName = new JLabel();
         this.labelPassWord = new JLabel();
         this.textFieldUserName = new JTextField();
@@ -271,7 +272,7 @@ public class CloudLicenseDialog extends JDialog {
         this.buttonLogin = new JButton();
         this.buttonClose = new JButton();
         initToken();
-	    this.checkBoxAutoLogin.setVisible(false);
+        this.checkBoxAutoLogin.setVisible(false);
     }
 
     private void initToken() {
@@ -293,7 +294,7 @@ public class CloudLicenseDialog extends JDialog {
                         fieldPassWord.setText(token[PASS_WORD]);
                     }
                     if (autoLogin) {
-	                    buttonLogin.doClick();
+                        buttonLogin.doClick();
                     }
                 }
             }
