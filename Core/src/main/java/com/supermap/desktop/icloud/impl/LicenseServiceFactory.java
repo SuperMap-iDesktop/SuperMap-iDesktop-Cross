@@ -62,15 +62,23 @@ public class LicenseServiceFactory {
 
     }
 
-    public static LicenseService create(String username, String password, ProductType clientProductType)
+    public static CloseableHttpClient getClient(String username, String password) {
+        CloseableHttpClient client = null;
+        AuthenticatorImpl authenticator = new AuthenticatorImpl();
+        authenticator.setSsoHttpClientBuilder(HttpClients.custom().setSSLContext(SSLCONTEXT));
+        try {
+            client = authenticator.authenticate(new UsernamePassword(username, password), HttpClients.custom().setSSLContext(SSLCONTEXT), LICENSE_SERVICE_LOGIN);
+        } catch (AuthenticationException e) {
+            e.printStackTrace();
+        }
+        return client;
+    }
+
+    public static LicenseService create(CloseableHttpClient client, ProductType clientProductType)
             throws AuthenticationException {
-        LicenseServiceImpl licenseService = null;
+        LicenseServiceImpl licenseService = new LicenseServiceImpl();
         if (null != APP_KEYS.get(clientProductType)) {
             String appKey = APP_KEYS.get(clientProductType);
-            AuthenticatorImpl authenticator = new AuthenticatorImpl();
-            authenticator.setSsoHttpClientBuilder(HttpClients.custom().setSSLContext(SSLCONTEXT));
-            CloseableHttpClient client = authenticator.authenticate(new UsernamePassword(username, password), HttpClients.custom().setSSLContext(SSLCONTEXT), LICENSE_SERVICE_LOGIN);
-            licenseService = new LicenseServiceImpl();
             licenseService.setAppKey(appKey);
             licenseService.setClient(client);
         }
