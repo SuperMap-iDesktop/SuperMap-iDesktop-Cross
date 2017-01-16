@@ -54,4 +54,13 @@ public interface IFormMap extends IForm {
 	void removeLayers(Layer[] activeLayers);
 
 	void setVisibleScalesEnabled(boolean isVisibleScalesEnabled);
+
+	// 文本默认风格设置 2017.1.13 李逍遥 part1   共计part9
+	void setDefaultTextStyle(TextStyle tempTextStyle);
+
+	 TextStyle getDefaultTextStyle();
+
+	void setDefaultTextRotationAngle(double tempRotationAngle);
+
+	double getDefaultTextRotationAngle();
 }
