@@ -1,23 +1,6 @@
 package com.supermap.desktop;
 
-import com.supermap.data.CoordSysTransMethod;
-import com.supermap.data.CoordSysTransParameter;
-import com.supermap.data.CoordSysTranslator;
-import com.supermap.data.CursorType;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.GeoText;
-import com.supermap.data.GeoText3D;
-import com.supermap.data.Geometry;
-import com.supermap.data.InternalHandle;
-import com.supermap.data.Point2D;
-import com.supermap.data.Point2Ds;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.data.PrjCoordSysType;
-import com.supermap.data.Recordset;
-import com.supermap.data.Rectangle2D;
-import com.supermap.data.Workspace;
+import com.supermap.data.*;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IProperty;
@@ -124,6 +107,9 @@ import java.util.EventObject;
 public class FormMap extends FormBaseChild implements IFormMap {
 
 	private static final long serialVersionUID = 1L;
+	private TextStyle currentTextStyle=null;
+	private double currentTextRotationAngle=0;
+	private static final double defaultFontWeight = 3.704375; //  默认字体大小10.5号字体
 
 	private final DocumentListener pointDocumentListener = new DocumentListener() {
 		@Override
@@ -1154,6 +1140,35 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	@Override
 	public int getIsShowPopupMenu() {
 		return isShowPopupMenu;
+	}
+
+	// 文本默认风格设置 2017.1.13 李逍遥 part2   共计part9
+	@Override
+	public void setDefaultTextStyle(TextStyle tempTextStyle){
+		this.currentTextStyle=tempTextStyle.clone();
+	}
+	@Override
+	public TextStyle getDefaultTextStyle(){
+		if (this.currentTextStyle==null){
+			createdefaultTextStyle();
+		}
+		return this.currentTextStyle;
+	}
+	@Override
+	public void setDefaultTextRotationAngle(double tempRotationAngle){
+		this.currentTextRotationAngle=tempRotationAngle;
+	}
+	@Override
+	public double getDefaultTextRotationAngle(){
+		return this.currentTextRotationAngle;
+	}
+
+	private void createdefaultTextStyle() {
+		TextStyle textStyle = new TextStyle();
+		String fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+		textStyle.setFontName(fonts[0]);
+		textStyle.setFontHeight(defaultFontWeight);
+		this.currentTextStyle = textStyle.clone();
 	}
 
 	protected void fireActiveLayersChanged(ActiveLayersChangedEvent e) {

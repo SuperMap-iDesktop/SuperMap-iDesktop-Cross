@@ -2,7 +2,6 @@ package com.supermap.desktop.CtrlAction.CADStyle;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -168,12 +167,11 @@ public class TextStyleContainer extends JPanel {
                         }
                     } else {
                         ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
-                        //  2017/1/12 新增文本默认风格Part 2  共计Part4   lixiaoyao
-//                        IForm activeForm = Application.getActiveApplication().getActiveForm();
-//                        String activeMapName=((IFormMap) activeForm).getMapControl().getMap().getName();
-//                        String activeLayerName=((IFormMap) activeForm).getMapControl().getActiveEditableLayer().getName();
-//                        DefaultTextStyle.setDefaultGeoStyle(activeMapName,activeLayerName,((GeoText) tempGeometry).getTextStyle().clone());
-//                        DefaultTextStyle.setRotationAngle(activeMapName,activeLayerName,((GeoText) tempGeometry).getPart(0).getRotation());
+                        // 文本默认风格设置 2017.1.13 李逍遥 part6   共计part9
+                        IFormMap formMap=(IFormMap) Application.getActiveApplication().getActiveForm();
+                        formMap.setDefaultTextRotationAngle(((GeoText) tempGeometry).getPart(0).getRotation());
+                        formMap.setDefaultTextStyle(((GeoText) tempGeometry).getTextStyle().clone());
+
                     }
                 }
                 if (tempGeometry instanceof GeoText && newValue.equals(TextStyleType.FIXEDSIZE)) {
