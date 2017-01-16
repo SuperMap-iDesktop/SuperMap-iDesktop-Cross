@@ -50,6 +50,9 @@ public class AuthenticatorImpl implements Authenticator {
         CloseableHttpClient client = this.ssoHttpClientBuilder.build();
         try {
             String jSessionId = login(client, token, service);
+            if (null==jSessionId){
+                return null;
+            }
             clientBuilder.addInterceptorLast(new SessionIdCookie(jSessionId));
             return clientBuilder.build();
         } catch (IOException e) {
@@ -74,6 +77,9 @@ public class AuthenticatorImpl implements Authenticator {
         String ssoLoginUrl = getURI(service.toString());
         RequestContent content = getSSOLoginParameter(client, ssoLoginUrl);
         String location = sendUsernamePassword(client, token, ssoLoginUrl, content);
+        if (null==location){
+            return null;
+        }
         return getJSessionId(client, location);
     }
 
@@ -144,7 +150,7 @@ public class AuthenticatorImpl implements Authenticator {
         try {
             int code = response.getStatusLine().getStatusCode();
             if (code == 200) {
-                throw new AuthenticationException("login failed. invalid username/password?");
+               return null;
             }
             if (code == 302) {
                 Header header = response.getFirstHeader("Location");

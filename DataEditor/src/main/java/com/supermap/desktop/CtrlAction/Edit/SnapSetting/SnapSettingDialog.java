@@ -24,13 +24,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 
@@ -72,8 +66,9 @@ public class SnapSettingDialog extends SmDialog {
     private static final int TABLE_COLUMN_CHECKABLE = 0;
     private static final int TABLE_COLUMN_TYPE = 1;
     private static final int TABLE_COLUMN_DESCRIPTION = 2;
-	private static final DecimalFormat format = new DecimalFormat("0.#######");
-	private boolean isRecover = false;
+    private static final DecimalFormat format = new DecimalFormat("0.#######");
+    private boolean isRecoverSnapMode = false;
+    private boolean isRecoverSnapParams = false;
 
     private MouseListener mouseListener = new MouseAdapter() {
         @Override
@@ -93,9 +88,9 @@ public class SnapSettingDialog extends SmDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             srcSnapSetting = SnapSettingUtilities.parseDefaultSnapSetting(mapControl);
-            isRecover = true;
             if (panelSnapMode.isVisible()) {
                 initTable();
+                isRecoverSnapMode = true;
             } else {
                 textFieldSnapTolarence.setText(format.format(srcSnapSetting.getTolerance()));
                 textFieldFixedAngle.setText(format.format(srcSnapSetting.getFixedAngle()));
@@ -103,13 +98,15 @@ public class SnapSettingDialog extends SmDialog {
                 textFieldMinSnappedLength.setText(format.format(srcSnapSetting.getMinSnappedLength()));
                 textFieldFixedLength.setText(format.format(srcSnapSetting.getFixedLength()));
                 checkBoxSnappedLineBroken.setSelected(srcSnapSetting.isSnappedLineBroken());
+                isRecoverSnapParams = true;
             }
         }
     };
     private ActionListener cancelListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            isRecover = false;
+            isRecoverSnapMode = false;
+            isRecoverSnapParams = false;
             dispose();
         }
     };
@@ -307,10 +304,10 @@ public class SnapSettingDialog extends SmDialog {
     private ActionListener okListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (isRecover) {
+            if (isRecoverSnapMode) {
                 SnapSettingUtilities.replaceSnapMode(srcSnapSetting, mapControlSnapSetting);
             }
-            if (isRecover && panelSnapParams.isVisible()) {
+            if (isRecoverSnapParams) {
                 mapControlSnapSetting.setTolerance(srcSnapSetting.getTolerance());
                 mapControlSnapSetting.setFixedAngle(srcSnapSetting.getFixedAngle());
                 mapControlSnapSetting.setFixedLength(srcSnapSetting.getFixedLength());
@@ -325,7 +322,8 @@ public class SnapSettingDialog extends SmDialog {
             mapControl.setSnapSetting(mapControlSnapSetting);
             SnapSettingUtilities.replaceSnapMode(mapControlSnapSetting, mapControl.getSnapSetting());
             removeEvents();
-            isRecover = false;
+            isRecoverSnapMode = false;
+            isRecoverSnapParams = false;
             dispose();
         }
     };

@@ -1,6 +1,8 @@
 package com.supermap.desktop.geometry.property.geoText;
 
 import com.supermap.data.*;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.TextPartType;
 import com.supermap.desktop.enums.TextStyleType;
@@ -235,6 +237,12 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
                 textPart.setText((String) panelTextPart.getResultMap().get(TextPartType.TEXT));
             }
         }
+        // 文本默认风格设置 2017.1.13 李逍遥 part5   共计part9
+        IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+        formMap.setDefaultTextStyle(textStyle.clone());
+        formMap.setDefaultTextRotationAngle(((GeoText)geometry).getPart(0).getRotation());
+
+
         recordset.edit();
         recordset.setGeometry(geometry);
         panelTextPart.resetGeometry(geometry);

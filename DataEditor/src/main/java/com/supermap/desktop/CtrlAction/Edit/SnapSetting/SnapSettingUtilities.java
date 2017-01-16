@@ -78,7 +78,8 @@ public class SnapSettingUtilities {
             Document document = getDocument(SNAPSETTING_PATH);
             Element node = document.getDocumentElement();
             NodeList nodeList = node.getChildNodes();
-            for (int i = 0; i < nodeList.getLength(); i++) {
+            int length = nodeList.getLength();
+            for (int i = 0; i < length; i++) {
                 Node tempNode = nodeList.item(i);
                 if ((tempNode != null && tempNode.getNodeType() == Node.ELEMENT_NODE) && "Node".equals(tempNode.getNodeName())) {
                     resetSnapSetting(result, tempNode);

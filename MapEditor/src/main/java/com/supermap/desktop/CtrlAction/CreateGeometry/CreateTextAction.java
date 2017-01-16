@@ -1,20 +1,9 @@
 package com.supermap.desktop.CtrlAction.CreateGeometry;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.EditType;
-import com.supermap.data.GeoText;
-import com.supermap.data.Point2D;
-import com.supermap.data.PrjCoordSysType;
-import com.supermap.data.Recordset;
-import com.supermap.data.TextPart;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CtrlAction.CADStyle.DefaultTextStyle;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.geometryoperation.EditEnvironment;
-import com.supermap.desktop.geometryoperation.EditManager;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -22,21 +11,13 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.MapClosedEvent;
 import com.supermap.mapping.MapClosedListener;
 import com.supermap.ui.Action;
-import com.supermap.ui.ActionChangedEvent;
-import com.supermap.ui.ActionChangedListener;
-import com.supermap.ui.MapControl;
-import com.supermap.ui.TrackedEvent;
-import com.supermap.ui.TrackedListener;
+import com.supermap.ui.*;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -265,13 +246,15 @@ public class CreateTextAction {
                         TextPart textPart = new TextPart(text, this.editingGeoText.getPart(0).getAnchorPoint());
                         this.editingGeoText.setPart(0, textPart);
 
-                        //  2017/1/6 文本默认风格Part 4   共计Part4    lixiaoyao
-//                        if (Double.compare(DefaultTextStyle.getRotationAngle(activeMapName),0)!=0){
-//                            this.editingGeoText.getPart(0).setRotation(DefaultTextStyle.getRotationAngle(activeMapName));
-//                        }
-//                        if (DefaultTextStyle.getDefaultGeoStyle(activeMapName)!=null) {
-//                            this.editingGeoText.setTextStyle(DefaultTextStyle.getDefaultGeoStyle(activeMapName).clone());
-//                        }
+                        // 文本默认风格设置 2017.1.13 李逍遥 part7   共计part9
+
+                        IFormMap formMap=((IFormMap) activeForm);
+                        if (formMap.getDefaultTextStyle()!=null){
+                            this.editingGeoText.setTextStyle(formMap.getDefaultTextStyle());
+                        }
+                        if (Double.compare(formMap.getDefaultTextRotationAngle(),0)!=0){
+                            this.editingGeoText.getPart(0).setRotation(formMap.getDefaultTextRotationAngle());
+                        }
 
                         recordset.addNew(this.editingGeoText);
                         recordset.update();

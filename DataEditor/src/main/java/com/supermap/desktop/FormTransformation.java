@@ -804,6 +804,26 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 
 	}
 
+	// 文本默认风格设置 2017.1.13 李逍遥 part4   共计part9
+
+	@Override
+	public void setDefaultTextStyle(TextStyle tempTextStyle){
+
+	}
+	@Override
+	public TextStyle getDefaultTextStyle(){
+		return null;
+	}
+
+	@Override
+	public void setDefaultTextRotationAngle(double tempRotationAngle){
+
+	}
+	@Override
+	public double getDefaultTextRotationAngle(){
+		return 0;
+	}
+
 	@Override
 	public boolean isActivated() {
 		return false;
