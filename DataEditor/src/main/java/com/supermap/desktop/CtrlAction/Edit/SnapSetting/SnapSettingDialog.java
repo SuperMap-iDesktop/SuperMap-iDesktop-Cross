@@ -307,7 +307,7 @@ public class SnapSettingDialog extends SmDialog {
     private ActionListener okListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (isRecover && panelSnapMode.isVisible()) {
+            if (isRecover) {
                 SnapSettingUtilities.replaceSnapMode(srcSnapSetting, mapControlSnapSetting);
             }
             if (isRecover && panelSnapParams.isVisible()) {
