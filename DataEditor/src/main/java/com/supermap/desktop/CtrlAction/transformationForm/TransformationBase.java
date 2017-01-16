@@ -3,6 +3,7 @@ package com.supermap.desktop.CtrlAction.transformationForm;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Maps;
+import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormTransformation;
 import com.supermap.desktop.Interface.IFormMap;
@@ -434,5 +435,24 @@ public abstract class TransformationBase implements IFormMap {
 	@Override
 	public void setVisibleScalesEnabled(boolean isVisibleScalesEnabled) {
 		getMapControl().getMap().setVisibleScalesEnabled(isVisibleScalesEnabled);
+	}
+
+	// 文本默认风格设置 2017.1.13 李逍遥 part3  共计part9
+	@Override
+	public void setDefaultTextStyle(TextStyle tempTextStyle){
+
+	}
+	@Override
+	public TextStyle getDefaultTextStyle(){
+		return null;
+	}
+
+	@Override
+	public void setDefaultTextRotationAngle(double tempRotationAngle){
+
+	}
+	@Override
+	public double getDefaultTextRotationAngle(){
+		return 0;
 	}
 }
