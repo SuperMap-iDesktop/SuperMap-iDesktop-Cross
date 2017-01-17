@@ -109,7 +109,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private static final long serialVersionUID = 1L;
 	private TextStyle currentTextStyle=null;
 	private double currentTextRotationAngle=0;
-	private static final double defaultFontWeight = 3.704375; //  默认字体大小10.5号字体
+	private static final double defaultFontWeight = 4.33916666667; //  默认字体大小14号字体
 
 	private final DocumentListener pointDocumentListener = new DocumentListener() {
 		@Override
@@ -1168,6 +1168,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		String fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 		textStyle.setFontName(fonts[0]);
 		textStyle.setFontHeight(defaultFontWeight);
+		textStyle.setSizeFixed(false);
 		this.currentTextStyle = textStyle.clone();
 	}
 
