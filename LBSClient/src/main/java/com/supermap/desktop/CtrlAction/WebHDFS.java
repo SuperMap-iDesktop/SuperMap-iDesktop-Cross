@@ -21,7 +21,7 @@ public class WebHDFS {
     public static String defaultURL = "http://192.168.12.103:50070/webhdfs/v1/";
     public static String outputURL = "http://192.168.12.103:50070/webhdfs/v1/data/";
     public static String webFile = "newyork_taxi_2013-01_147k.csv";
-
+    public static String resultURL ="";
 
     public HDFSDefine getHDFSDefine(String permission, String owner, String group, String size, String replication, String blockSize, String name, Boolean isDir) {
 
@@ -37,7 +37,7 @@ public class WebHDFS {
         return serverPath;
     }
     public static String getResultHDFSFilePath() {
-        String serverPath = webURL;
+        String serverPath = resultURL;
         serverPath = serverPath.replace("http", "hdfs");
         serverPath = serverPath.replace("50070/webhdfs/v1", "9000");
         return serverPath;

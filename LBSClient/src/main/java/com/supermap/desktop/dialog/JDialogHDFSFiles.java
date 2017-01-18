@@ -92,7 +92,11 @@ public class JDialogHDFSFiles extends SmDialog {
         public void actionPerformed(ActionEvent e) {
             if (!StringUtilities.isNullOrEmpty(textServerURL.getText())) {
                 String name = (String) table.getModel().getValueAt(table.getSelectedRow(), COLUMN_INDEX_Name);
-                WebHDFS.webURL = textServerURL.getText() + name;
+                String url = textServerURL.getText();
+                if (!url.endsWith("/")) {
+                    url += "/";
+                }
+                WebHDFS.resultURL = url + name;
                 dialogResult = DialogResult.OK;
                 removeAndDispose();
             }
