@@ -24,7 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class CtrlActionCreateAlongLineText extends ActionCreateBase {
-	private static final double DEFAULT_FONT_PIXEL_HEIGHT = 23;
+	private static final double DEFAULT_FONT_PIXEL_HEIGHT = 19;
 
 	private TrackedListener trackedListener = new TrackedListener() {
 

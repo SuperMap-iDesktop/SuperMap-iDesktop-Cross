@@ -109,7 +109,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	private static final long serialVersionUID = 1L;
 	private TextStyle currentTextStyle=null;
 	private double currentTextRotationAngle=0;
-	private static final double defaultFontWeight = 4.33916666667; //  默认字体大小14号字体
+	private static final double defaultFontWeight = 19; //  此为经验值，即在任何情况下，都要保证仙剑的默认字体大小为14号字体
 
 	private final DocumentListener pointDocumentListener = new DocumentListener() {
 		@Override
@@ -1167,7 +1167,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		TextStyle textStyle = new TextStyle();
 		String fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
 		textStyle.setFontName(fonts[0]);
-		textStyle.setFontHeight(defaultFontWeight);
+		textStyle.setFontHeight(defaultFontWeight * MapUtilities.pixelLength(this.getMapControl()));
 		textStyle.setSizeFixed(false);
 		this.currentTextStyle = textStyle.clone();
 	}
