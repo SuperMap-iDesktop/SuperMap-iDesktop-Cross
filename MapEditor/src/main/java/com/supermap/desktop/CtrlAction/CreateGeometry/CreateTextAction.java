@@ -233,8 +233,6 @@ public class CreateTextAction {
     private Recordset finishCommit(Recordset recordset, IForm activeForm) {
         if (activeForm instanceof IFormMap) {
             Layer activeEditableLayer = ((IFormMap) activeForm).getMapControl().getActiveEditableLayer();
-            // 2017/1/12 文本默认风格Part 1 共计 part4  lixiaoyao
-            //String activeMapName=((IFormMap) activeForm).getMapControl().getMap().getName();
 
             if (activeEditableLayer.getDataset() instanceof DatasetVector
                     && (activeEditableLayer.getDataset().getType() == DatasetType.TEXT || activeEditableLayer.getDataset().getType() == DatasetType.CAD)) {
@@ -251,6 +249,7 @@ public class CreateTextAction {
                         IFormMap formMap=((IFormMap) activeForm);
                         if (formMap.getDefaultTextStyle()!=null){
                             this.editingGeoText.setTextStyle(formMap.getDefaultTextStyle());
+                            //this.editingGeoText.getTextStyle().setSizeFixed(formMap.getDefaultTextStyle().isSizeFixed());
                         }
                         if (Double.compare(formMap.getDefaultTextRotationAngle(),0)!=0){
                             this.editingGeoText.getPart(0).setRotation(formMap.getDefaultTextRotationAngle());
