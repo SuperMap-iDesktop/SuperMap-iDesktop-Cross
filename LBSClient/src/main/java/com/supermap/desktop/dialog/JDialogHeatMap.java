@@ -119,7 +119,7 @@ public class JDialogHeatMap extends SmDialog {
         this.labelXYIndex = new JLabel();
         this.textFieldXYIndex = new JTextField("10,11");
         this.labelFileInputPath = new JLabel();
-        this.textFieldFileInputPath = new JTextField("/opt/LBSData/newyork_taxi_2013-01_14k.csv");
+        this.textFieldFileInputPath = new JTextField(WebHDFS.getHDFSFilePath());
         this.labelCacheName = new JLabel();
         this.textFieldCacheName = new JTextField("test1_heat");
         this.labelDatabaseType = new JLabel();
@@ -292,7 +292,7 @@ public class JDialogHeatMap extends SmDialog {
         JDialogHDFSFiles hdfsFiles = new JDialogHDFSFiles();
         hdfsFiles.setIsOutputFolder(false);
         if (hdfsFiles.showDialog() == DialogResult.OK) {
-            textFieldFileInputPath.setText(WebHDFS.webURL);
+            textFieldFileInputPath.setText(WebHDFS.getHDFSFilePath());
         }
     }
 

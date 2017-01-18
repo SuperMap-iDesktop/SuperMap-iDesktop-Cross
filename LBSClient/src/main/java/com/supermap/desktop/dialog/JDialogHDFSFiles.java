@@ -1,570 +1,456 @@
 package com.supermap.desktop.dialog;
 
-import com.supermap.Interface.ITask;
-import com.supermap.Interface.ITaskFactory;
-import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.WebHDFS;
 import com.supermap.desktop.CtrlAction.WebHDFS.HDFSDefine;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
-import com.supermap.desktop.http.DeleteFile;
-import com.supermap.desktop.http.FileManagerContainer;
-import com.supermap.desktop.http.callable.UploadPropressCallable;
-import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.controls.utilities.ControlsResources;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
+import com.supermap.desktop.event.FormClosingEvent;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
-import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.task.TaskFactory;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 import com.supermap.desktop.utilities.CommonUtilities;
 import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+import javax.swing.table.JTableHeader;
+import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * 下载,上传主界面
- * 
- * @author
  *
+ * @author
  */
 public class JDialogHDFSFiles extends SmDialog {
 
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
-	private static final int COLUMN_INDEX_Permission = 0;
-	private static final int COLUMN_INDEX_Owner = 1;
-	private static final int COLUMN_INDEX_Group = 2;
-	private static final int COLUMN_INDEX_Size = 3;
-	private static final int COLUMN_INDEX_Replication = 4;
-	private static final int COLUMN_INDEX_BlockSize = 5;
-	private static final int COLUMN_INDEX_Name = 6;
+    private static final int COLUMN_INDEX_Name = 0;
+    private static final int ROW_HEADER_WIDTH = 70;
 
-	private JLabel labelServerURL;
-	private JTextField textServerURL;
-	private JButton buttonBrowser;
-	private JTable table;
-//	private SmButton buttonUpload;
-//	private SmButton buttonDownload;
-//	private SmButton buttonDelete;
-	private JButton buttonOK;
-	private JButton buttonCancel;
+    private JLabel labelServerURL;
+    private JTextField textServerURL;
+    private JButton buttonForward;
+    private JButton buttonRefresh;
+    private JButton buttonBack;
+    private JButton buttonOK;
+    private JButton buttonCancel;
+    private JList rowHeader;
+    private ArrayList<String> urlList;
+    private int urlPathIndex = 0;
+    private JScrollPane scrollPaneFormLBSControl;
+    private JTable table;
+    private Boolean isOutputFolder = false;
+    private KeyListener textServerURLKeyListener = new KeyAdapter() {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                refresh();
+            }
+        }
+    };
+    private MouseAdapter tableMouseListener = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            tableMouseClicked(e);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    ToolbarUIUtilities.updataToolbarsState();
+                }
+            });
+        }
 
-	private Boolean isOutputFolder = false;
-	private KeyListener textServerURLKeyListener;
-	private ActionListener buttonBrowserListener;
-	private ActionListener buttonUploadListener;
-	private ActionListener buttonDownLoadListener;
-	private ActionListener buttonDeleteListener;
-	private ActionListener buttonOKListener;
-	private ActionListener buttonCancelListener;
+    };
+    private ActionListener refreshListener = new ActionListener() {
 
-	/**
-	 * Create the dialog.
-	 */
-	public JDialogHDFSFiles() {
-		initializeComponents();
-		initializeResources();
-		registEvents();
-	}
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            refresh();
+        }
+    };
+    private ActionListener urlActionListener;
+    private ActionListener cancelListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            removeAndDispose();
+        }
+    };
 
-	private void registEvents() {
-		this.textServerURLKeyListener = new KeyAdapter() {
-			@Override
-			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					buttonBrowserActionPerformed();
-				}
-			}
-		};
+    private void removeAndDispose() {
+        removeEvents();
+        JDialogHDFSFiles.this.dispose();
+    }
 
-		this.buttonBrowserListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonBrowserActionPerformed();
-			}
-		};
+    private ActionListener okListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (!StringUtilities.isNullOrEmpty(textServerURL.getText())) {
+                WebHDFS.webURL = textServerURL.getText();
+                dialogResult = DialogResult.OK;
+                removeAndDispose();
+            }
+        }
+    };
 
-		this.buttonUploadListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonUploadActionPerformed();
-			}
-		};
+    public JDialogHDFSFiles() {
+        initializeComponents();
+        initializeResources();
+        initializeLayout();
+        registEvents();
+        this.setTitle(LBSClientProperties.getString("String_Scale"));
+        this.setLocationRelativeTo(null);
+    }
 
-		this.buttonDownLoadListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonDownloadActionPerformed();
-			}
-		};
+    private void initializeResources() {
+        this.buttonBack.setIcon(CommonUtilities.getImageIcon("back.png"));
+        this.buttonForward.setIcon(CommonUtilities.getImageIcon("forward.png"));
+        this.buttonRefresh.setIcon(CommonUtilities.getImageIcon("scale.png"));
+        this.buttonBack.setToolTipText(ControlsProperties.getString("String_Back"));
+        this.buttonForward.setToolTipText(ControlsProperties.getString("String_Forward"));
+    }
 
-		this.buttonDeleteListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonDeleteActionPerformed();
-			}
-		};
+    private void registEvents() {
+        this.urlActionListener = new ActionListener() {
 
-		this.buttonOKListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonOKActionPerformed();
-			}
-		};
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == buttonBack) {
+                    if (urlPathIndex > 0) {
+                        urlPathIndex--;
+                        if (null != urlList.get(urlPathIndex)) {
+                            listDirectory(urlList.get(urlPathIndex), "", getIsOutputFolder());
+                            textServerURL.setText(urlList.get(urlPathIndex));
+                            buttonForward.setEnabled(true);
+                            if (urlPathIndex <= 0) {
+                                buttonBack.setEnabled(false);
+                            }
+                        }
+                    }
+                } else {
+                    if (urlPathIndex < urlList.size() - 1) {
+                        urlPathIndex++;
+                        if (null != urlList.get(urlPathIndex)) {
+                            listDirectory(urlList.get(urlPathIndex), "", getIsOutputFolder());
+                            textServerURL.setText(urlList.get(urlPathIndex));
+                            buttonBack.setEnabled(true);
+                            if (urlPathIndex >= urlList.size() - 1) {
+                                buttonForward.setEnabled(false);
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        removeEvents();
+        this.textServerURL.addKeyListener(this.textServerURLKeyListener);
+        this.buttonBack.addActionListener(this.urlActionListener);
+        this.buttonForward.addActionListener(this.urlActionListener);
+        this.buttonRefresh.addActionListener(this.refreshListener);
+        this.table.addMouseListener(this.tableMouseListener);
+        this.buttonOK.addActionListener(this.okListener);
+        this.buttonCancel.addActionListener(this.cancelListener);
+    }
 
-		this.buttonCancelListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				buttonCancelActionPerformed();
-			}
-		};
-		removeEvents();
-		this.buttonBrowser.addActionListener(this.buttonBrowserListener);
-//		this.buttonUpload.addActionListener(this.buttonUploadListener);
-//		this.buttonDownload.addActionListener(this.buttonDownLoadListener);
-//		this.buttonDelete.addActionListener(this.buttonDeleteListener);
-		this.buttonOK.addActionListener(this.buttonOKListener);
-		this.buttonCancel.addActionListener(this.buttonCancelListener);
-		this.textServerURL.addKeyListener(this.textServerURLKeyListener);
-		this.addWindowListener(new WindowAdapter() {
-		
-			@Override
-			public void windowClosed(WindowEvent e) {
-				removeEvents();
-			}
-			
-		});
-		
-		listDirectory(this.textServerURL.getText(), "", this.getIsOutputFolder());
-	}
+    private void removeEvents() {
+        this.textServerURL.removeKeyListener(this.textServerURLKeyListener);
+        this.buttonBack.removeActionListener(this.urlActionListener);
+        this.buttonForward.removeActionListener(this.urlActionListener);
+        this.buttonRefresh.removeActionListener(this.refreshListener);
+        this.table.removeMouseListener(this.tableMouseListener);
+    }
 
-	private void removeEvents(){
-//		this.buttonBrowser.removeActionListener(this.buttonBrowserListener);
-//		this.buttonUpload.removeActionListener(this.buttonUploadListener);
-//		this.buttonDownload.removeActionListener(this.buttonDownLoadListener);
-//		this.buttonDelete.removeActionListener(this.buttonDeleteListener);
-		this.buttonOK.removeActionListener(this.buttonOKListener);
-		this.buttonCancel.removeActionListener(this.buttonCancelListener);
-		this.textServerURL.removeKeyListener(this.textServerURLKeyListener);
-	}
-	
-	public void initializeComponents() {
-		this.setSize(900, 600);
+    public void initializeComponents() {
+        this.setSize(900, 600);
+        this.scrollPaneFormLBSControl = new JScrollPane();
+        this.labelServerURL = new JLabel();
+        this.textServerURL = new JTextField(WebHDFS.webURL);
+        this.urlList = new ArrayList<>();
+        urlList.add(WebHDFS.webURL);
+        this.table = new JTable();
+        this.buttonRefresh = new JButton();
+        this.buttonForward = new JButton();
+        this.buttonBack = new JButton();
+        this.buttonBack.setEnabled(false);
+        this.buttonForward.setEnabled(false);
+        this.buttonOK = ComponentFactory.createButtonOK();
+        this.buttonCancel = ComponentFactory.createButtonCancel();
+        HDFSTableModel tableModel = new HDFSTableModel();
+        this.table.setModel(tableModel);
+        this.table.putClientProperty("terminateEditOnFocusLost", true);
+        this.table.setRowHeight(23);
+        ListModel<?> listModel = new LeftTableHeaderListModel(table);
+        this.rowHeader = new JList(listModel);
+        this.rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
+        this.rowHeader.setFixedCellHeight(table.getRowHeight());
+        this.rowHeader.setCellRenderer(new RowHeaderRenderer(table));
+        this.scrollPaneFormLBSControl.setRowHeaderView(rowHeader);
+        initializeLayout();
+        listDirectory(this.textServerURL.getText(), "", this.getIsOutputFolder());
+        if (0 < table.getRowCount()) {
+            table.setRowSelectionInterval(0, 0);
+        }
+    }
 
-		this.labelServerURL = new JLabel();
-		this.textServerURL = new JTextField(WebHDFS.webURL);
-		this.buttonBrowser = new JButton();
+    private void initializeLayout() {
+        GroupLayout gLayout = new GroupLayout(this.getContentPane());
+        gLayout.setAutoCreateContainerGaps(true);
+        gLayout.setAutoCreateGaps(true);
+        this.getContentPane().setLayout(gLayout);
 
-//		this.buttonUpload = new SmButton("上传");
-//		this.buttonDownload = new SmButton("下载");
-		this.buttonOK = ComponentFactory.createButtonOK();
-//		this.buttonDelete = new SmButton("删除");
-		this.buttonCancel = ComponentFactory.createButtonCancel();
-		this.getRootPane().setDefaultButton(this.buttonOK);
+        // @formatter:off
+        gLayout.setHorizontalGroup(gLayout.createParallelGroup(Alignment.LEADING)
+                .addGroup(gLayout.createSequentialGroup()
+                        .addComponent(this.labelServerURL)
+                        .addComponent(this.buttonBack, 60, 60, 60)
+                        .addComponent(this.buttonForward, 60, 60, 60)
+                        .addComponent(this.textServerURL, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(this.buttonRefresh, 60, 60, 60))
+                .addComponent(scrollPaneFormLBSControl, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(gLayout.createSequentialGroup()
+                        .addGap(10, 10, Short.MAX_VALUE)
+                        .addComponent(this.buttonOK, 60, 60, 60)
+                        .addComponent(this.buttonCancel, 60, 60, 60))
+        );
 
-		GroupLayout gLayout = new GroupLayout(this.getContentPane());
-		gLayout.setAutoCreateContainerGaps(true);
-		gLayout.setAutoCreateGaps(true);
-		this.getContentPane().setLayout(gLayout);
+        gLayout.setVerticalGroup(gLayout.createSequentialGroup()
+                .addGroup(gLayout.createParallelGroup(Alignment.CENTER).addComponent(this.labelServerURL)
+                        .addComponent(this.buttonBack, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(this.buttonForward, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(this.textServerURL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(this.buttonRefresh, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+                .addComponent(scrollPaneFormLBSControl, 100, 200, Short.MAX_VALUE)
+                .addGroup(gLayout.createParallelGroup(Alignment.CENTER)
+                        .addComponent(this.buttonOK)
+                        .addComponent(this.buttonCancel)));
+        scrollPaneFormLBSControl.setViewportView(table);
+        // @formatter:on
+    }
 
-		this.table = new JTable();
-		this.table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+    public DialogResult showDialog() {
+        this.setVisible(true);
+        return this.dialogResult;
+    }
 
-		HDFSTableModel tableModel = new HDFSTableModel(//
-				new String[] { "Permission", "Owner", "Group", "Size", "Replication", "BlockSize", "Name" }) {
-			/**
-			 *
-			 */
-			private static final long serialVersionUID = 1L;
-			boolean[] columnEditables = new boolean[] { false, false, false, false, false, false, false };
+    /**
+     * 添加一行记录
+     *
+     * @param hdfsDefine
+     */
+    private void addFileInfo(WebHDFS.HDFSDefine hdfsDefine) {
+        try {
+            HDFSTableModel tableModel = (HDFSTableModel) this.table.getModel();
+            tableModel.addRow(hdfsDefine);
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+    }
 
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
-			}
-		};
-		this.table.setModel(tableModel);
-		this.table.putClientProperty("terminateEditOnFocusLost", true);
+    public void tableMouseClicked(MouseEvent e) {
+        //
+        if (table.getSelectedRow() != -1 && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+            HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(table.getSelectedRow());
+            if (define != null) {
+                // if mouse double click foler, list folder files
+                if (define.isDir()) {
+                    String name = (String) this.table.getModel().getValueAt(table.getSelectedRow(), COLUMN_INDEX_Name);
+                    String root = this.textServerURL.getText();
+                    if (!root.endsWith("/")) {
+                        root += "/";
+                    }
+                    String url = this.listDirectory(root, name, this.getIsOutputFolder());
+                    this.textServerURL.setText(url);
+                    urlList.add(url);
+                    // urlPathIndex始终为最新加入的url对应的索引号
+                    urlPathIndex = urlList.size() - 1;
+                    this.buttonBack.setEnabled(true);
+                } else {
+                    this.buttonOKActionPerformed();
+                }
+            }
+        }
+    }
 
-		this.table.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				table_MouseClicked(e);
-			}
+    private String listDirectory(String urlPath, String childFolder, Boolean isFolderOnly) {
+        // 删除后设置第0行被选中
+        if (0 < table.getRowCount()) {
+            HDFSTableModel tableModel = (HDFSTableModel) table.getModel();
+            tableModel.removeRows(0, tableModel.getRowCount());
+            table.updateUI();
+        }
 
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				table_MouseReleased(e);
-			}
-		});
-		this.table.setRowHeight(23);
-		JScrollPane scrollPaneTable = new JScrollPane(table);
-		// @formatter:off
-		gLayout.setHorizontalGroup(gLayout.createParallelGroup(Alignment.LEADING)
-				.addGroup(gLayout.createSequentialGroup().addComponent(this.labelServerURL)
-						.addComponent(this.textServerURL, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(this.buttonBrowser, 75, 75, 75))
-				.addComponent(scrollPaneTable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addGroup(gLayout.createSequentialGroup()
-						.addGap(10, 10, Short.MAX_VALUE)
-//						.addComponent(this.buttonUpload, 75, 75, 75)
-//						.addComponent(this.buttonDownload, 75, 75, 75)
-//						.addComponent(this.buttonDelete, 75, 75, 75)
-						.addComponent(this.buttonOK, 75, 75, 75)
-						.addComponent(this.buttonCancel, 75, 75, 75)));
+        if (!"".equals(childFolder)) {
+            if (!childFolder.endsWith("/")) {
+                childFolder += "/";
+            }
 
-		gLayout.setVerticalGroup(gLayout.createSequentialGroup()
-				.addGroup(gLayout.createParallelGroup(Alignment.CENTER).addComponent(this.labelServerURL)
-						.addComponent(this.textServerURL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonBrowser))
-				.addComponent(scrollPaneTable, 100, 200, Short.MAX_VALUE)
-				.addGroup(gLayout.createParallelGroup(Alignment.CENTER)
-//						.addComponent(this.buttonUpload)
-//						.addComponent(this.buttonDownload)
-//						.addComponent(this.buttonDelete)
-						.addComponent(this.buttonOK)
-						.addComponent(this.buttonCancel)));
-		// @formatter:on
+            if (childFolder.startsWith("/")) {
+                childFolder.substring(1, childFolder.length() - 1);
+            }
 
-		this.setLocationRelativeTo(null);
-	}
+            urlPath += childFolder;
+        }
 
-	public DialogResult showDialog() {
-		this.setVisible(true);
-		return this.dialogResult;
-	}
+        WebHDFS.HDFSDefine[] defines = WebHDFS.listDirectory(urlPath, "", isFolderOnly);
+        for (WebHDFS.HDFSDefine define : defines) {
+            this.addFileInfo(define);
+        }
+        this.table.updateUI();
+        return urlPath;
+    }
 
-	private void initializeResources() {
-		if (table != null) {
-			this.setTitle(LBSClientProperties.getString("String_Scale"));
-			this.labelServerURL.setText(LBSClientProperties.getString("String_ServerURL"));
-			this.buttonBrowser.setText(LBSClientProperties.getString("String_Scale"));
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_Permission).setHeaderValue("Permission");
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_Owner).setHeaderValue("Owner");
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_Group).setHeaderValue(("Group"));
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_Size).setHeaderValue("Size");
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_Replication).setHeaderValue("Replication");
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_BlockSize).setHeaderValue(("BlockSize"));
-			this.table.getColumnModel().getColumn(COLUMN_INDEX_Name).setHeaderValue("Name");
-		}
-	}
+    /**
+     * 刷新按钮点击事件
+     */
+    public void refresh() {
+        try {
+            if (!urlList.get(urlList.size() - 1).equals(this.textServerURL.getText())) {
+                urlList.add(this.textServerURL.getText());
+                urlPathIndex = urlList.size() - 1;
+            }
+            listDirectory(this.textServerURL.getText(), "", this.getIsOutputFolder());
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        } finally {
+            CursorUtilities.setDefaultCursor();
+        }
+    }
 
-	/**
-	 * 添加一行记录
-	 *
-	 * @param
-	 * 
-	 */
-	private void addFileInfo(WebHDFS.HDFSDefine hdfsDefine) {
-		try {
-			HDFSTableModel tableModel = (HDFSTableModel) this.table.getModel();
-			tableModel.addRow(hdfsDefine);
-			this.table.updateUI();
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-	}
+    /**
+     * 确定按钮点击事件
+     */
+    private void buttonOKActionPerformed() {
+        try {
+            if (this.textServerURL.isFocusOwner()) {
+                return;
+            }
+            Boolean fileSelected = false;
+            if (table.getSelectedRow() != -1) {
+                HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(table.getSelectedRow());
+                if (define != null) {
+                    String root = this.textServerURL.getText();
+                    if (!root.endsWith("/")) {
+                        root += "/";
+                    }
 
-	public void table_MouseClicked(MouseEvent e) {
-
-		if (table.getSelectedRow() != -1 && e.getClickCount() == 2) {
-			HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(table.getSelectedRow());
-			if (define != null) {
-				// if mouse double click foler, list folder files
-				if (define.isDir()) {
-					String name = (String) this.table.getModel().getValueAt(table.getSelectedRow(), COLUMN_INDEX_Name);
-					String url = this.listDirectory(this.textServerURL.getText(), name, this.getIsOutputFolder());
-					this.textServerURL.setText(url);
-				} else {
-					this.buttonOKActionPerformed();
-				}
-			}
-		}
-	}
-
-	public void table_MouseReleased(MouseEvent e) {
-
-	}
-
-	private String listDirectory(String urlPath, String childFolder, Boolean isFolderOnly) {
-		// 删除后设置第0行被选中
-		if (0 < table.getRowCount()) {
-			HDFSTableModel tableModel = (HDFSTableModel) table.getModel();
-			tableModel.removeRows(0, tableModel.getRowCount());
-			table.updateUI();
-		}
-
-		if (!"".equals(childFolder)) {
-			if (!childFolder.endsWith("/")) {
-				childFolder += "/";
-			}
-
-			if (childFolder.startsWith("/")) {
-				childFolder.substring(1, childFolder.length() - 1);
-			}
-
-			urlPath += childFolder;
-		}
-
-		WebHDFS.HDFSDefine[] defines = WebHDFS.listDirectory(urlPath, "", isFolderOnly);
-		for (WebHDFS.HDFSDefine define : defines) {
-			this.addFileInfo(define);
-		}
-
-		if (0 < table.getRowCount()) {
-			table.setRowSelectionInterval(0, 0);
-		}
-
-		return urlPath;
-	}
-
-	/**
-	 * 浏览按钮点击事件
-	 */
-	private void buttonBrowserActionPerformed() {
-		try {
-			listDirectory(this.textServerURL.getText(), "", this.getIsOutputFolder());
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		} finally {
-			CursorUtilities.setDefaultCursor();
-		}
-	}
-
-	/**
-	 * 确定按钮点击事件
-	 */
-	private void buttonOKActionPerformed() {
-		try {
-			if (this.textServerURL.isFocusOwner()) {
-				return;
-			}
-			Boolean fileSelected = false;
-			if (table.getSelectedRow() != -1) {
-				HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(table.getSelectedRow());
-				if (define != null) {
-					String root = this.textServerURL.getText();
-					if (!root.endsWith("/")) {
-						root += "/";
-					}
-
-					if (define.isDir()) {
-						if (this.getIsOutputFolder()) {
-							WebHDFS.outputURL = root + define.getName() + "/";
-						} else {
+                    if (define.isDir()) {
+                        if (this.getIsOutputFolder()) {
+                            WebHDFS.outputURL = root + define.getName() + "/";
+                        } else {
 //							WebHDFS.webFile = "";
-							WebHDFS.webURL = root + define.getName() + "/";
-						}
-					} else {
-						WebHDFS.webURL = this.textServerURL.getText();
-						if (define.getName().endsWith(".idx")) {
+                            WebHDFS.webURL = root + define.getName() + "/";
+                        }
+                    } else {
+                        WebHDFS.webURL = this.textServerURL.getText();
+                        if (define.getName().endsWith(".idx")) {
 //							WebHDFS.webFile = "";
-						}
-					}
-					this.dispose();
-					this.dialogResult = DialogResult.OK;
+                        }
+                    }
+                    fileSelected = true;
+                }
+            }
 
-					fileSelected = true;
-				}
-			}
+            if (!fileSelected) {
+                UICommonToolkit.showMessageDialog("please select a file");
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        } finally {
+            CursorUtilities.setDefaultCursor();
+        }
+    }
 
-			if (!fileSelected) {
-				UICommonToolkit.showMessageDialog("please select a file");
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		} finally {
-			CursorUtilities.setDefaultCursor();
-		}
-	}
+    public Boolean getIsOutputFolder() {
+        return isOutputFolder;
+    }
 
-	private void buttonUploadActionPerformed() {
-		try {
-			String modelName = "HDFSFileUpload";
-			if (!SmFileChoose.isModuleExist(modelName)) {
-				SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), "选择文件", modelName, "OpenOne");
-			}
-			SmFileChoose smFileChoose = new SmFileChoose(modelName);
-			smFileChoose.setAcceptAllFileFilterUsed(true);
-			int state = smFileChoose.showDefaultDialog();
-			if (state == JFileChooser.APPROVE_OPTION) {
-				File file = new File(smFileChoose.getFilePath());
-				
-				FileManagerContainer fileManagerContainer = CommonUtilities.getFileManagerContainer();
+    public void setIsOutputFolder(Boolean isOutputFolder) {
+        this.isOutputFolder = isOutputFolder;
+    }
 
-				if (file.exists()&&fileManagerContainer != null) {
-					String webPath = this.textServerURL.getText();
-					FileInfo downloadInfo = new FileInfo(webPath);
-					ITaskFactory taskFactory = TaskFactory.getInstance();
-					ITask task = taskFactory.getTask(TaskEnum.UPLOADTASK, downloadInfo);
-					UploadPropressCallable uploadProgressCallable = new UploadPropressCallable(downloadInfo,true);
-					task.doWork(uploadProgressCallable);
-					fileManagerContainer.addItem(task);
-				}
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-			CursorUtilities.setDefaultCursor();
-		}
-	}
+    public void formClosing(FormClosingEvent e) {
+        removeEvents();
+        urlList.clear();
+    }
 
-	private void buttonDownloadActionPerformed() {
-		try {
-			Boolean fileSelected = false;
-			if (table.getSelectedRow() != -1) {
-				HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(table.getSelectedRow());
-				if (define != null && !define.isDir()) {
-					fileSelected = true;
-					// show save file dialog
-					JDialogFileSaveAs dialogFileSaveAs = new JDialogFileSaveAs();
-					dialogFileSaveAs.setWebURL(this.textServerURL.getText());
-					dialogFileSaveAs.setWebFile(define.getName());
-					dialogFileSaveAs.setFileSize(Long.parseLong(define.getSize()));
-					dialogFileSaveAs.setLocalPath("/home/huchenpu/demo/result/" + define.getName());
-					dialogFileSaveAs.setLocalPath("F:/temp/" + define.getName());
-					dialogFileSaveAs.showDialog();
-				}
-			}
+    /**
+     * describe a HDFS file DataModel
+     *
+     * @author
+     */
 
-			if (!fileSelected) {
-				UICommonToolkit.showMessageDialog("please select a file");
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		} finally {
-			CursorUtilities.setDefaultCursor();
-		}
-	}
+    class LeftTableHeaderListModel extends AbstractListModel {
+        private static final long serialVersionUID = 1L;
 
-	private void buttonDeleteActionPerformed() {
-		try {
-			try {
-				Boolean fileSelected = false;
-				String webFile = "";
-				String webURL = "";
+        JTable table;
 
-				if (table.getSelectedRowCount() == 1) {
-					HDFSDefine define = (HDFSDefine)((HDFSTableModel)this.table.getModel()).getRowTagAt(table.getSelectedRow());
-					if (define != null) {
-						webFile = define.getName();
-						webURL = this.textServerURL.getText();
+        public LeftTableHeaderListModel(JTable table) {
+            super();
+            this.table = table;
+        }
 
-						if (define.isDir()) {
-							if (UICommonToolkit.showConfirmDialog("是否确认要删除整个文件夹“" + webFile + "”？") == JOptionPane.OK_OPTION) {
-								fileSelected = true;
-							}
-						} else {
-							if (UICommonToolkit.showConfirmDialog("是否确认要删除文件“" + webFile + "”？") == JOptionPane.OK_OPTION) {
-								fileSelected = true;
-							}
-						}
-						DeleteFile deleteFile = new DeleteFile(webURL, webFile,false);
-						deleteFile.delete();
-					}
-				} else if (table.getSelectedRowCount() > 1) {
-					int[] indexs = table.getSelectedRows();
-					if (UICommonToolkit.showConfirmDialog(String.format("是否确认要删除所选的%d个文件/文件夹？", indexs.length)) == JOptionPane.OK_OPTION) {
-						for (int index : indexs) {
-							HDFSDefine define = (HDFSDefine)((HDFSTableModel)this.table.getModel()).getRowTagAt(index);
-							if (define != null) {
-								webFile = define.getName();
-								webURL = this.textServerURL.getText();
-								
-								DeleteFile deleteFile = new DeleteFile(webURL, webFile,false);
-								deleteFile.delete();
-							}
-						}
-					}					
-				} else {
-				}
+        @Override
+        public int getSize() {
+            return table.getRowCount();
+        }
 
-				if (!fileSelected) {
-					UICommonToolkit.showMessageDialog("please select a file");
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		} finally {
-			CursorUtilities.setDefaultCursor();
-		}
-	}
+        @Override
+        public Object getElementAt(int index) {
+            return index;
+        }
+    }
 
-	/**
-	 * 关闭按钮点击事件
-	 */
-	private void buttonCancelActionPerformed() {
-		this.dispose();
-		this.dialogResult = DialogResult.CANCEL;
-	}
+    /**
+     * 自定义JTable头部渲染器
+     *
+     * @author
+     */
+    public class RowHeaderRenderer extends JLabel implements ListCellRenderer {
+        JTable table;
 
-	public Boolean getIsOutputFolder() {
-		return isOutputFolder;
-	}
+        RowHeaderRenderer(JTable table) {
+            this.table = table;
+            JTableHeader header = table.getTableHeader();
+            setOpaque(true);
+            setHorizontalAlignment(CENTER);
+            setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+            setForeground(header.getForeground());
+            setBackground(header.getBackground());
+            setFont(header.getFont());
+        }
 
-	public void setIsOutputFolder(Boolean isOutputFolder) {
-		this.isOutputFolder = isOutputFolder;
-	}
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
+            this.setText(String.valueOf(index + 1));
+            if (define.isDir()) {
+                this.setToolTipText(LBSClientProperties.getString("String_Dir"));
+                this.setIcon(ControlsResources.getIcon("/controlsresources/Image_DatasetGroup_Normal.png"));
+            } else {
+                this.setToolTipText(LBSClientProperties.getString("String_File"));
+                this.setIcon(ControlsResources.getIcon("/controlsresources/file.png"));
+            }
+            this.setPreferredSize(new Dimension(100, 50));
+            return this;
+        }
 
-	/**
-	 * describe a HDFS file DataModel
-	 *
-	 * @author huchenpu
-	 */
-	private class HDFSTableModel extends MutiTableModel {
-		/**
-		 *
-		 */
-		private static final long serialVersionUID = 1L;
+    }
 
-		/**
-		 * 构造函数。
-		 * 
-		 * @param columnNames
-		 */
-		public HDFSTableModel(String[] columnNames) {
-			super(columnNames);
-		}
+    public int getSelectRow() {
+        return table.getSelectedRow();
+    }
 
-		/**
-		 * 添加指定数据的一行。<br>
-		 * 
-		 * @param define
-		 *            　数据
-		 * @throws Exception
-		 *             抛出数据数不正确的异常
-		 */
-		public void addRow(WebHDFS.HDFSDefine define) {
-			if (null == define) {
-				return;
-			}
+    public String getURL() {
+        return this.textServerURL.getText();
+    }
 
-			// 初始化内容存储
-			Vector<Object> content = new Vector<Object>(this.columnNames.size());
-			content.add(define.getPermission());
-			content.add(define.getOwner());
-			content.add(define.getGroup());
-			content.add(define.getSize());
-			content.add(define.getReplication());
-			content.add(define.getBlockSize());
-			content.add(define.getName());
+    public JTable getTable() {
+        return this.table;
+    }
 
-			// 追加内容
-			contents.add(content);
-			this.setRowTagAt(define, this.getRowCount() - 1);
-		}
-	}
 }

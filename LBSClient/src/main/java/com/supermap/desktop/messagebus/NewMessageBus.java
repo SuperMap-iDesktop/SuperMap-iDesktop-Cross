@@ -83,6 +83,7 @@ public class NewMessageBus {
         private IResponse response;
         private volatile boolean stop = false;
         private volatile ITask task;
+        private volatile int i = 0;
 
         public MessageBusConsumer(IResponse response, ITask task) {
             this.response = response;
@@ -146,7 +147,10 @@ public class NewMessageBus {
                     }
                 }
             } else {
-                updateProgress();
+//                updateProgress();
+                if(i<=99) {
+                    task.updateProgress(i++, "", "");
+                }
                 Thread.sleep(100);
             }
         }
@@ -156,10 +160,11 @@ public class NewMessageBus {
             Application.getActiveApplication().getOutput().output(exception);
         }
 
-        private void updateProgress() throws InterruptedException {
-            Thread.sleep(1000);
-            task.updateProgress(getRandomProgress(), "", "");
-        }
+//        private void updateProgress() throws InterruptedException {
+//            Thread.sleep(1000);
+//            int i = 0;
+//            task.updateProgress(i + 1, "", "");
+//        }
     }
 
     private static void openIserverMap(String iserverRestAddr, String datasourceName, final String datasetName) {
@@ -209,8 +214,8 @@ public class NewMessageBus {
     }
 
 
-    private static int getRandomProgress() {
-        Random random = new Random(System.currentTimeMillis());
-        return random.nextInt(100);
-    }
+//    private static int getRandomProgress() {
+//        Random random = new Random(System.currentTimeMillis());
+//        return random.nextInt(100);
+//    }
 }

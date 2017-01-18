@@ -100,7 +100,7 @@ public class JDialogKernelDensity extends SmDialog {
     private void initializeComponents() {
 
         this.labelInputURL = new JLabel();
-        this.textInputURL = new JTextField("/opt/LBSData/newyork_taxi_2013-01_14k.csv");
+        this.textInputURL = new JTextField(WebHDFS.getHDFSFilePath());
         this.buttonInputBrowser = new JButton();
 
         this.labelResolution = new JLabel();
@@ -128,6 +128,7 @@ public class JDialogKernelDensity extends SmDialog {
         this.textFieldSeperator = new JTextField(",");
         this.labelOutputURL = new JLabel();
         this.textOutputURL = new JTextField("/opt/supermap_iserver_811_14511_9_linux64_deploy/webapps/iserver/processingResultData/KernelDensity");
+        this.textOutputURL.setEnabled(false);
 //        this.buttonOutputBrowser = new JButton();
 
         this.buttonOK = ComponentFactory.createButtonOK();
@@ -372,7 +373,7 @@ public class JDialogKernelDensity extends SmDialog {
         hdfsFiles.setIsOutputFolder(false);
         this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (hdfsFiles.showDialog() == DialogResult.OK) {
-            textInputURL.setText(WebHDFS.webURL);
+            textInputURL.setText(WebHDFS.getHDFSFilePath());
         }
     }
 

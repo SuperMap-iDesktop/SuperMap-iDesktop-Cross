@@ -34,7 +34,6 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
     /**
      *
      */
-    private static final long serialVersionUID = 1L;
     // private static final int COLUMN_INDEX_Permission = 5;
     // private static final int COLUMN_INDEX_Owner = 3;
     // private static final int COLUMN_INDEX_Group = 4;

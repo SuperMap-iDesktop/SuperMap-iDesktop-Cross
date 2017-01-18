@@ -15,4 +15,5 @@ public class IServerLoginInfo {
     public static boolean error = false;
     public static boolean saveLoginInfo = false;
     public static boolean remoteHost = false;
+    public static String port = "";
 }

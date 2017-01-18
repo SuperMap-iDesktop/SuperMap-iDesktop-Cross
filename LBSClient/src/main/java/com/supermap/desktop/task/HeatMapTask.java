@@ -1,7 +1,6 @@
 package com.supermap.desktop.task;
 
 import com.supermap.desktop.lbsclient.LBSClientProperties;
-import com.supermap.desktop.task.Task;
 import com.supermap.desktop.utilities.CommonUtilities;
 
 import javax.swing.*;
@@ -15,12 +14,15 @@ public class HeatMapTask extends Task {
      *
      */
     private static final long serialVersionUID = 1L;
-    public HeatMapTask(){
+
+    public HeatMapTask() {
         super();
+        progressBar.setString("");
         buttonRun.setVisible(false);
         labelTitle.setText(LBSClientProperties.getString("String_HeatMapInfo"));
         labelLogo.setIcon(CommonUtilities.getImageIcon("image_KernelDensityRealtime.png"));
     }
+
     @Override
     public void updateProgress(final int percent, final String remainTime, String message) throws CancellationException {
         SwingUtilities.invokeLater(new Runnable() {

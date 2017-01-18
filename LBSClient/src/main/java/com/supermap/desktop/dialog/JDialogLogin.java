@@ -80,18 +80,20 @@ public class JDialogLogin extends SmDialog {
     private ActionListener saveLoginInfoListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          saveLoginInfo();
+            saveLoginInfo();
         }
     };
 
     private void saveLoginInfo() {
         if (checkBoxSaveLoginInfo.isSelected()) {
             IServerLoginInfo.ipAddr = textFieldHost.getText();
+            IServerLoginInfo.port = textFieldPort.getText();
             IServerLoginInfo.username = textFieldUserName.getText();
             IServerLoginInfo.password = textFieldPassword.getText();
             IServerLoginInfo.saveLoginInfo = true;
         } else {
             IServerLoginInfo.ipAddr = "";
+            IServerLoginInfo.port = "";
             IServerLoginInfo.username = "";
             IServerLoginInfo.password = "";
             IServerLoginInfo.saveLoginInfo = false;
@@ -104,7 +106,8 @@ public class JDialogLogin extends SmDialog {
         String password = textFieldPassword.getText();
         IServerService service = new IServerServiceImpl();
         if (!StringUtilities.isNullOrEmpty(textFieldHost.getText()) && !StringUtilities.isNullOrEmpty(textFieldPort.getText())) {
-            IServerLoginInfo.ipAddr = textFieldHost.getText() + ":" + textFieldPort.getText();
+            IServerLoginInfo.ipAddr = textFieldHost.getText();
+            IServerLoginInfo.port = textFieldPort.getText();
         }
         this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         CloseableHttpClient client = service.login(username, password);
