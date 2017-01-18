@@ -36,7 +36,12 @@ public class WebHDFS {
 //        serverPath += webFile;
         return serverPath;
     }
-
+    public static String getResultHDFSFilePath() {
+        String serverPath = webURL;
+        serverPath = serverPath.replace("http", "hdfs");
+        serverPath = serverPath.replace("50070/webhdfs/v1", "9000");
+        return serverPath;
+    }
     public static String getHDFSFilePath() {
         String serverPath = webURL;
         serverPath = serverPath.replace("http", "hdfs");

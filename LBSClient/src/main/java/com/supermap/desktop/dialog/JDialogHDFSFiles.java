@@ -91,7 +91,8 @@ public class JDialogHDFSFiles extends SmDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (!StringUtilities.isNullOrEmpty(textServerURL.getText())) {
-                WebHDFS.webURL = textServerURL.getText();
+                String name = (String) table.getModel().getValueAt(table.getSelectedRow(), COLUMN_INDEX_Name);
+                WebHDFS.webURL = textServerURL.getText() + name;
                 dialogResult = DialogResult.OK;
                 removeAndDispose();
             }
@@ -104,7 +105,7 @@ public class JDialogHDFSFiles extends SmDialog {
         initializeLayout();
         registEvents();
         this.setTitle(LBSClientProperties.getString("String_Scale"));
-        this.setLocationRelativeTo(null);
+        setLocationRelativeTo(null);
     }
 
     private void initializeResources() {

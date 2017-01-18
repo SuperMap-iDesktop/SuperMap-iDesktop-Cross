@@ -401,8 +401,6 @@ public class EditEnvironment {
 		try {
 			// 选中对象数目
 			resetGeometryStatus();
-			//  文本默认风格设置 2017.1.17李逍遥 10   共计part10
-			setDefaultTextStyle();//    get当前选中的可编辑的文本对象风格
 			if (!Application.getActiveApplication().getMainFrame().getFormManager().isContain(formMap)) {
 				return;
 			}
@@ -425,6 +423,8 @@ public class EditEnvironment {
 				this.properties.getSelectedLayers().add(layer);
 				statisticGeometryData(layer);
 			}
+			//  文本默认风格设置 2017.1.17李逍遥 10   共计part10
+			setDefaultTextStyle();//    get当前选中的可编辑的文本对象风格
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

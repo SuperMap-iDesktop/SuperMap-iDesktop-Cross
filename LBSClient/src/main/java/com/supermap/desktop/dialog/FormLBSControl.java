@@ -12,6 +12,7 @@ import com.supermap.desktop.event.FormClosingEvent;
 import com.supermap.desktop.http.CreateFile;
 import com.supermap.desktop.http.DeleteFile;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -203,6 +204,8 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
         this.rowHeader.setFixedCellHeight(table.getRowHeight());
         this.rowHeader.setCellRenderer(new RowHeaderRenderer(table));
         this.scrollPaneFormLBSControl.setRowHeaderView(rowHeader);
+        JLabel scrollPaneUpperLeftLabel=new JLabel(CommonProperties.getString("String_ColumnHeader_Index"),SwingConstants.CENTER);
+        scrollPaneFormLBSControl.setCorner(JScrollPane.UPPER_LEFT_CORNER,scrollPaneUpperLeftLabel);
         if (Application.getActiveApplication().getMainFrame() != null) {
             IContextMenuManager manager = Application.getActiveApplication().getMainFrame().getContextMenuManager();
             this.contextPopuMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.LBSControlManager.ContextMenuLBSControl");
@@ -354,15 +357,16 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
                         if (this.getIsOutputFolder()) {
                             WebHDFS.outputURL = root + define.getName() + "/";
                         } else {
-//							WebHDFS.webFile = "";
+                            WebHDFS.webFile = "";
                             WebHDFS.webURL = root + define.getName() + "/";
                         }
                     } else {
                         WebHDFS.webURL = this.textServerURL.getText();
                         if (define.getName().endsWith(".idx")) {
-//							WebHDFS.webFile = "";
+                            WebHDFS.webFile = "";
                         }
                     }
+                    this.textServerURL.setText(root + define.getName());
                     fileSelected = true;
                 }
             }
@@ -502,7 +506,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
                     // 全是文件
                     for (int index : indexs) {
                         HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
-                        if (define != null&& !define.isDir()) {
+                        if (define != null && !define.isDir()) {
                             String nowUrl = addSeparator(webURL) + define.getName();
                             DeleteFile deleteFile = new DeleteFile(nowUrl, define.getName(), false);
                             deleteFile.delete();
