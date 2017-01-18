@@ -23,8 +23,6 @@ import javax.swing.undo.UndoManager;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -54,7 +52,7 @@ public class SQLExpressionDialog extends SmDialog {
 	private JButton jButtonAnd;
 	private JButton jButtonAndCompute;
 	private JButton jButtonSpace;
-	private JButton jButtonUndo;
+	private JButton jButtonC;
 	private JButton jButtonRightBracket;
 	private JButton jButtonLeftBracket;
 	private JButton jButtonLessOrEqual;
@@ -92,8 +90,7 @@ public class SQLExpressionDialog extends SmDialog {
 //	private JTextField textFieldGOTO;
 	//清除按钮-yuanR
 	private JButton jButtonClear;
-	//撤销功能-yuanR
-	private UndoManager undomg;
+
 
 	private void initialDialog(String expression) {
 		setSize(850, 520);
@@ -117,9 +114,6 @@ public class SQLExpressionDialog extends SmDialog {
 		this.jTextAreaSQLSentence = new JTextArea();
 		this.jTextAreaSQLSentence.setBorder(BorderFactory.createLineBorder(Color.gray, 1));
 		this.jTextAreaSQLSentence.setLineWrap(true);
-		//给JTextArea添加UndoableEditListener，实现撤销功能yuanR 1.18
-		this.undomg = new UndoManager();
-		this.jTextAreaSQLSentence.getDocument().addUndoableEditListener(undomg);
 
 		initPanelCommonOperator();
 		initPanelGetAllValue();
@@ -175,7 +169,7 @@ public class SQLExpressionDialog extends SmDialog {
 		this.jButtonRightBracket.addMouseListener(this.mouseAdapter);
 		this.jButtonAndCompute.addMouseListener(this.mouseAdapter);
 		this.jButtonSpace.addMouseListener(this.mouseAdapter);
-		this.jButtonUndo.addMouseListener(this.mouseAdapter);
+		this.jButtonC.addMouseListener(this.mouseAdapter);
 		this.jButtonAnd.addMouseListener(this.mouseAdapter);
 		this.jButtonNot.addMouseListener(this.mouseAdapter);
 		this.jButtonLike.addMouseListener(this.mouseAdapter);
@@ -214,7 +208,7 @@ public class SQLExpressionDialog extends SmDialog {
 		this.jButtonRightBracket.removeMouseListener(this.mouseAdapter);
 		this.jButtonAndCompute.removeMouseListener(this.mouseAdapter);
 		this.jButtonSpace.removeMouseListener(this.mouseAdapter);
-		this.jButtonUndo.removeMouseListener(this.mouseAdapter);
+		this.jButtonC.removeMouseListener(this.mouseAdapter);
 		this.jButtonAnd.removeMouseListener(this.mouseAdapter);
 		this.jButtonNot.removeMouseListener(this.mouseAdapter);
 		this.jButtonLike.removeMouseListener(this.mouseAdapter);
@@ -341,7 +335,7 @@ public class SQLExpressionDialog extends SmDialog {
 		this.jButtonLike = new JButton("Like");
 		this.jButtonAndCompute = new JButton("&");
 		this.jButtonSpace = new JButton("Space");
-		this.jButtonUndo = new JButton("Undo");
+		this.jButtonC = new JButton("C");
 		this.jButtonOr = new JButton("Or");
 		setOperatorButtonSize();
 		//@formatter:off
@@ -366,7 +360,7 @@ public class SQLExpressionDialog extends SmDialog {
 
         this.jPanelCommonOperator.add( this.jButtonAndCompute , new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
         this.jPanelCommonOperator.add(this.jButtonSpace, new GridBagConstraintsHelper(1, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonUndo, new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonC, new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
         this.jPanelCommonOperator.add(this.jButtonOr, new GridBagConstraintsHelper(4, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
         //@formatter:on
 	}
@@ -387,7 +381,7 @@ public class SQLExpressionDialog extends SmDialog {
 		this.jButtonRightBracket.setPreferredSize(dimension);
 		this.jButtonAndCompute.setPreferredSize(dimension);
 		this.jButtonSpace.setPreferredSize(dimension);
-		this.jButtonUndo.setPreferredSize(dimension);
+		this.jButtonC.setPreferredSize(dimension);
 		Dimension tempDimension = new Dimension(36, 30);
 		this.jButtonAnd.setPreferredSize(tempDimension);
 		this.jButtonNot.setPreferredSize(tempDimension);
@@ -634,14 +628,8 @@ public class SQLExpressionDialog extends SmDialog {
 		if (opertorString.equals("Space")) {
 			opertorString = " ";
 			setSQLSentenceText(this.jTextAreaSQLSentence, opertorString, "");
-		} else if (opertorString.equals("Undo")) {
-			//删除最近写入的内容-yuanR
-			if (!jTextAreaSQLSentence.getText().isEmpty()) {
-				if (undomg.canUndo()) { //撤销
-					undomg.undo();
-					undomg.die();
-				}
-			}
+		} else if (opertorString.equals("C")) {
+			this.jTextAreaSQLSentence.setText("");
 		} else {
 			opertorString = " " + opertorString;
 			setSQLSentenceText(this.jTextAreaSQLSentence, opertorString, "");
@@ -922,7 +910,7 @@ public class SQLExpressionDialog extends SmDialog {
 		public void mouseClicked(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 && listAllValue.getSelectedIndex() != -1) {
 				//通过setSQLSentenceText（）方法将双击选中的唯一值加入"jTextAreaSQLSentence"--yuanR 1.12
-				setSQLSentenceText(jTextAreaSQLSentence, " " + listAllValue.getSelectedValue().toString(), "");
+				setSQLSentenceText(jTextAreaSQLSentence, " "+"'" + listAllValue.getSelectedValue().toString()+"'", "");
 			}
 		}
 	};
