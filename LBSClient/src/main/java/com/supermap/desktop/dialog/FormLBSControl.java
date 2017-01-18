@@ -486,8 +486,9 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
                 if (define != null && !define.isDir()) {
                     webFile = define.getName();
                     if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFile"), webFile)) == JOptionPane.OK_OPTION) {
-                        DeleteFile deleteFile = new DeleteFile(webURL, webFile, false);
-                        deleteFile.deleteFile();
+                        String nowUrl = addSeparator(webURL) + define.getName();
+                        DeleteFile deleteFile = new DeleteFile(nowUrl, webFile, false);
+                        deleteFile.delete();
                     }
                 } else if (define != null && define.isDir()) {
                     webFile = define.getName();
@@ -502,9 +503,13 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
                     // 全是文件
                     for (int index : indexs) {
                         HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(index);
-                        if (define != null) {
-                            DeleteFile deleteFile = new DeleteFile(webURL, define.getName(), false);
-                            deleteFile.deleteFile();
+                        if (define != null&& !define.isDir()) {
+                            String nowUrl = addSeparator(webURL) + define.getName();
+                            DeleteFile deleteFile = new DeleteFile(nowUrl, define.getName(), false);
+                            deleteFile.delete();
+                        } else if (define != null && define.isDir()) {
+                            String nowUrl = addSeparator(webURL) + define.getName();
+                            deleteDir(nowUrl, define);
                         }
                     }
                 }
@@ -520,28 +525,28 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 
 
     /**
-     * 删除文件夹时需要先删除文件夹下面的文件然后再删除空文件夹
+     * 删除文件夹
      *
      * @param
      * @param
      * @throws IOException
      */
     private void deleteDir(String webURL, HDFSDefine define) throws IOException {
-        WebHDFS.HDFSDefine[] tempDefines = WebHDFS.listDirectory(webURL, "", getIsOutputFolder());
+        WebHDFS.HDFSDefine[] nowDefines = WebHDFS.listDirectory(webURL, "", getIsOutputFolder());
         if (!define.isDir()) {
-            String tempUrl = addSeparator(webURL);
-            DeleteFile deleteFile = new DeleteFile(tempUrl, define.getName(), false);
-            deleteFile.deleteFile();
-        } else if (tempDefines.length == 0) {
-            String tempUrl = addSeparator(webURL);
-            DeleteFile deleteFile = new DeleteFile(tempUrl, define.getName(), true);
-            deleteFile.deleteFile();
+            DeleteFile deleteFile = new DeleteFile(webURL, define.getName(), false);
+            deleteFile.delete();
+        } else if (nowDefines.length == 0) {
+            DeleteFile deleteFile = new DeleteFile(webURL, define.getName(), true);
+            deleteFile.delete();
         } else {
             WebHDFS.HDFSDefine[] defines = WebHDFS.listDirectory(webURL, "", getIsOutputFolder());
             for (HDFSDefine tempDefine : defines) {
                 String tempUrl = addSeparator(webURL) + tempDefine.getName();
                 deleteDir(tempUrl, tempDefine);
             }
+            DeleteFile deleteFile = new DeleteFile(webURL, define.getName(), true);
+            deleteFile.delete();
         }
     }
 
@@ -552,43 +557,6 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
         }
         return result;
     }
-
-//    /**
-//     * 通过递归调用删除一个文件夹及下面的所有文件
-//     * @param file
-//     */
-//    public static void deleteFile(File file){
-//        if(file.isFile()){//表示该文件不是文件夹
-//            file.delete();
-//        }else{
-//            //首先得到当前的路径
-//            String[] childFilePaths = file.list();
-//            for(String childFilePath : childFilePaths){
-//                File childFile=new File(file.getAbsolutePath()+"\\"+childFilePath);
-//                deleteFile(childFile);
-//            }
-//            file.delete();
-//        }
-//    }
-//    private void deleteFilesInDir(String url) throws IOException {
-//        String tempUrl = addSeparator(url);
-//        if (defines.length == 0) {
-//            DeleteFile deleteFile = new DeleteFile(tempUrl, "", false);
-//            deleteFile.deleteFile();
-//        } else {
-//            WebHDFS.HDFSDefine[] defines = WebHDFS.listDirectory(tempUrl, "", getIsOutputFolder());
-//            for (HDFSDefine tempDefine : defines) {
-//
-//                if (tempDefine.isDir()) {
-//                    tempUrl = addSeparator(tempUrl);
-//                    deleteFilesInDir(tempUrl + tempDefine.getName());
-//                } else {
-//                    DeleteFile deleteFile = new DeleteFile(tempUrl, tempDefine.getName(), false);
-//                    deleteFile.deleteFile();
-//                }
-//            }
-//        }
-//}
 
     @Override
     public void download() {
