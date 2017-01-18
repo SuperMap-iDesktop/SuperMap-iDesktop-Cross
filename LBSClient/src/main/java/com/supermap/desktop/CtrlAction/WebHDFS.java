@@ -18,6 +18,7 @@ public class WebHDFS {
 //	public static String outputURL = "http://192.168.14.1:50070/webhdfs/v1/output/";
 //	public static String defaultURL = "http://192.168.14.1:50070/webhdfs/v1/";
     public static String webURL = "http://192.168.12.103:50070/webhdfs/v1/data/Analysis/";
+    public static String url = "http://localhost:50070/webhdfs/v1/data/";
     public static String defaultURL = "http://192.168.12.103:50070/webhdfs/v1/";
     public static String outputURL = "http://192.168.12.103:50070/webhdfs/v1/data/";
     public static String webFile = "newyork_taxi_2013-01_147k.csv";
@@ -43,7 +44,7 @@ public class WebHDFS {
         return serverPath;
     }
     public static String getHDFSFilePath() {
-        String serverPath = webURL;
+        String serverPath = url;
         serverPath = serverPath.replace("http", "hdfs");
         serverPath = serverPath.replace("50070/webhdfs/v1", "9000");
         serverPath += webFile;
