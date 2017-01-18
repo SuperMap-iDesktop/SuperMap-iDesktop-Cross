@@ -140,7 +140,7 @@ public class JDialogKernelDensity extends SmDialog {
         if (SystemPropertyUtilities.isWindows()) {
             setSize(700, 400);
         } else {
-            setSize(860, 500);
+            setSize(860, 460);
         }
         setLocationRelativeTo(null);
 
@@ -373,7 +373,7 @@ public class JDialogKernelDensity extends SmDialog {
         hdfsFiles.setIsOutputFolder(false);
         this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         if (hdfsFiles.showDialog() == DialogResult.OK) {
-            textInputURL.setText(WebHDFS.getHDFSFilePath());
+            textInputURL.setText(WebHDFS.getResultHDFSFilePath());
         }
     }
 

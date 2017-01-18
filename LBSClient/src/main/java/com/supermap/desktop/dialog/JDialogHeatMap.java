@@ -140,7 +140,7 @@ public class JDialogHeatMap extends SmDialog {
         if (SystemPropertyUtilities.isWindows()) {
             this.setSize(640, 480);
         } else {
-            setSize(800, 560);
+            setSize(800, 520);
         }
         this.setLocationRelativeTo(null);
     }
@@ -292,7 +292,7 @@ public class JDialogHeatMap extends SmDialog {
         JDialogHDFSFiles hdfsFiles = new JDialogHDFSFiles();
         hdfsFiles.setIsOutputFolder(false);
         if (hdfsFiles.showDialog() == DialogResult.OK) {
-            textFieldFileInputPath.setText(WebHDFS.getHDFSFilePath());
+            textFieldFileInputPath.setText(WebHDFS.getResultHDFSFilePath());
         }
     }
 
