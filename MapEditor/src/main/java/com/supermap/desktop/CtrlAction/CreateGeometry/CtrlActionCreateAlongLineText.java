@@ -11,7 +11,6 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.ui.Action;
@@ -51,7 +50,7 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 				}
 
 				// DEFAULT_FONT_PIXEL_HEIGHT 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
-				geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilities.pixelLength(formMap.getMapControl()));
+				//geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilities.pixelLength(formMap.getMapControl()));
 				TextPart textPart = new TextPart();
 				textPart.setText(text);
 				geoText.addPart(textPart);
@@ -197,7 +196,7 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 				this.getRootPane().setDefaultButton(buttonOk);
 				GeoText geoText = GeoText.makeAlongLineText(getText(), geoLine);
 
-				// 文本默认风格设置 2017.1.13 李逍遥 part9   共计part9
+				// 文本默认风格设置 2017.1.13 李逍遥 part9   共计part10
 				if (formMap.getDefaultTextStyle()!=null){
 					geoText.setTextStyle(formMap.getDefaultTextStyle());
 				}
@@ -208,7 +207,7 @@ public class CtrlActionCreateAlongLineText extends ActionCreateBase {
 //				geoText.getTextStyle().setFontName("");
 //				geoText.getTextStyle().setSizeFixed(false);
 				// DEFAULT_FONT_PIXEL_HEIGHT 是一个经验值，使得不固定大小的时候，最后绘制到地图上的文本大小与输入的时候基本一致
-				geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilities.pixelLength(formMap.getMapControl()));
+				//geoText.getTextStyle().setFontHeight(DEFAULT_FONT_PIXEL_HEIGHT * MapUtilities.pixelLength(formMap.getMapControl()));
 
 				for (int i = 0; i < formMap.getMapControl().getMap().getTrackingLayer().getCount(); i++) {
 					if (CreateAlongLineTextTracing.equals(formMap.getMapControl().getMap().getTrackingLayer().getTag(i))) {
