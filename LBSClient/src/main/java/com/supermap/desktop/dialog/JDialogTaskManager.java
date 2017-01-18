@@ -6,6 +6,7 @@ import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.utilities.CommonUtilities;
 import com.supermap.desktop.utilities.ManagerXMLParser;
 
 import javax.swing.*;
@@ -28,11 +29,15 @@ public class JDialogTaskManager extends SmDialog {
     private boolean isRecoverTask;
     private static JDialogTaskManager taskManager;
 
+    private boolean isRecoverDownLoadTask;
+    private boolean isrecoverUploadTask;
     private ActionListener buttonOkListener = new ActionListener() {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             isRecoverTask = checkboxRecoverDownloadTask.isSelected() || checkboxRecoverUploadTask.isSelected();
+            isRecoverDownLoadTask = checkboxRecoverDownloadTask.isSelected();
+            isrecoverUploadTask = checkboxRecoverUploadTask.isSelected();
             dialogResult = DialogResult.OK;
             JDialogTaskManager.this.dispose();
         }
@@ -77,10 +82,10 @@ public class JDialogTaskManager extends SmDialog {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-
-                ManagerXMLParser.removeAllTasks();
-                ToolbarUIUtilities.updataToolbarsState();
-
+                if (!isRecoverTask) {
+                    ManagerXMLParser.removeAllTasks();
+                    ToolbarUIUtilities.updataToolbarsState();
+                }
             }
         });
     }
@@ -130,6 +135,14 @@ public class JDialogTaskManager extends SmDialog {
 
     public boolean isRecoverTask() {
         return isRecoverTask;
+    }
+
+    public boolean isRecoverDownLoadTask() {
+        return isRecoverDownLoadTask;
+    }
+
+    public boolean isrecoverUploadTask() {
+        return isrecoverUploadTask;
     }
 
     public void setDownloadTaskCount(int i) {
