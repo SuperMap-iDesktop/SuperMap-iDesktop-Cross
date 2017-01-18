@@ -16,7 +16,7 @@ public class ParameterDatasource extends AbstractParameter {
 	private String describe;
 
 	@Override
-	public ParameterType getType() {
+	public String getType() {
 		return ParameterType.DATASOURCE;
 	}
 
@@ -49,5 +49,10 @@ public class ParameterDatasource extends AbstractParameter {
 
 	public void setDescribe(String describe) {
 		this.describe = describe;
+	}
+
+	@Override
+	public void dispose() {
+
 	}
 }

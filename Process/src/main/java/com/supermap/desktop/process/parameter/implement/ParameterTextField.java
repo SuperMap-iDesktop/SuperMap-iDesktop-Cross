@@ -15,7 +15,7 @@ public class ParameterTextField extends AbstractParameter {
 	private JPanel panel;
 
 	@Override
-	public ParameterType getType() {
+	public String getType() {
 		return ParameterType.TEXTFIELD;
 	}
 
@@ -46,5 +46,10 @@ public class ParameterTextField extends AbstractParameter {
 	public ParameterTextField setDescribe(String describe) {
 		this.describe = describe;
 		return this;
+	}
+
+	@Override
+	public void dispose() {
+
 	}
 }

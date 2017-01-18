@@ -16,7 +16,7 @@ public class ParameterDatasets extends AbstractParameter implements IMultiSelect
 	private List datasets = new ArrayList<>();
 
 	@Override
-	public ParameterType getType() {
+	public String getType() {
 		return ParameterType.DATASETS;
 	}
 
@@ -45,6 +45,11 @@ public class ParameterDatasets extends AbstractParameter implements IMultiSelect
 
 	@Override
 	public void setSelectedItems(Object[] selectedItems) {
+
+	}
+
+	@Override
+	public void dispose() {
 
 	}
 }

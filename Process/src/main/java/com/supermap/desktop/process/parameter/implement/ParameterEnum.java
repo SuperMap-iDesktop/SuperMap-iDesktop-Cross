@@ -19,7 +19,7 @@ public class ParameterEnum extends AbstractParameter {
 //	private Class enumDescribeClassName;
 
 	@Override
-	public ParameterType getType() {
+	public String getType() {
 		return ParameterType.ENUM;
 	}
 
@@ -47,9 +47,9 @@ public class ParameterEnum extends AbstractParameter {
 		return enumClass;
 	}
 
-	public void setEnumClass(Class enumClass) {
+	public ParameterEnum setEnumClass(Class enumClass) {
 		this.enumClass = enumClass;
-		Class<ParameterType> parameterTypeClass = ParameterType.class;
+		return this;
 	}
 
 	public String getDescribe() {
@@ -59,5 +59,10 @@ public class ParameterEnum extends AbstractParameter {
 	public ParameterEnum setDescribe(String describe) {
 		this.describe = describe;
 		return this;
+	}
+
+	@Override
+	public void dispose() {
+
 	}
 }

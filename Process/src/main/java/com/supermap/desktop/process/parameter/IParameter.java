@@ -1,7 +1,5 @@
 package com.supermap.desktop.process.parameter;
 
-import com.supermap.desktop.process.enums.ParameterType;
-
 import javax.swing.*;
 import java.beans.PropertyChangeListener;
 
@@ -9,7 +7,7 @@ import java.beans.PropertyChangeListener;
  * Created by highsad on 2017/1/5.
  */
 public interface IParameter {
-	ParameterType getType();
+	String getType();
 
 	/**
 	 * 获取参数面板
@@ -26,4 +24,6 @@ public interface IParameter {
 	void addPropertyListener(PropertyChangeListener propertyChangeListener);
 
 	void removePropertyListener(PropertyChangeListener propertyChangeListener);
+
+	void dispose();
 }
