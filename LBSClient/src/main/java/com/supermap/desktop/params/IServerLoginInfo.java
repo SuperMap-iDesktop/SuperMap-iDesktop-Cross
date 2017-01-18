@@ -7,8 +7,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
  * 登录信息类
  */
 public class IServerLoginInfo {
-    public static String ipAddr;
+    public static String ipAddr = "";
     public static CloseableHttpClient client;
-    public static boolean login;
-    public static boolean error;
+    public static String username = "";
+    public static String password = "";
+    public static boolean login = false;
+    public static boolean error = false;
+    public static boolean saveLoginInfo = false;
+    public static boolean remoteHost = false;
 }

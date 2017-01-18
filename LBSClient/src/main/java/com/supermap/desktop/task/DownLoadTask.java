@@ -160,7 +160,9 @@ public class DownLoadTask extends Task {
                             CommonUtilities.getActiveLBSControl().refresh();
                         }
                         buttonRun.setEnabled(false);
-                        ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, fileInfo.getUrl(), fileInfo.getFileName());
+                        Application.getActiveApplication().getOutput()
+                                .output(fileInfo.getRealName() + " " + LBSClientProperties.getString("String_DownLoadFinished"));
+                        ManagerXMLParser.removeTask(TaskEnum.DOWNLOADTASK, fileInfo.getUrl(), fileInfo.getRealName());
                         ToolbarUIUtilities.updataToolbarsState();
                     }
                 }

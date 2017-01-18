@@ -29,11 +29,11 @@ public class DeleteFile {
 
 	private boolean isDirectory;
 
-	public DeleteFile(String url, String fileName, boolean isDirctory) throws IOException {
+	public DeleteFile(String url, String fileName, boolean is) throws IOException {
 		super();
 		this.url = url;
 		this.fileName = fileName;
-		this.isDirectory = isDirctory;
+		this.isDirectory = is;
 	}
 
 	public DeleteFile() {
@@ -64,6 +64,7 @@ public class DeleteFile {
 	public void delete(String webFile) {
 		try {
 			HttpDelete requestPut = new HttpDelete(webFile);
+
 
 			HttpResponse response = new DefaultHttpClient().execute(requestPut);
 			if (response != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {

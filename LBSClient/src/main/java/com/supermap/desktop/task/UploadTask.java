@@ -158,7 +158,6 @@ public class UploadTask extends Task {
                             CommonUtilities.getActiveLBSControl().refresh();
                         }
                         buttonRun.setEnabled(false);
-                        ManagerXMLParser.removeTask(TaskEnum.UPLOADTASK, fileInfo.getUrl(), fileInfo.getFileName());
                     }
                 }
             }

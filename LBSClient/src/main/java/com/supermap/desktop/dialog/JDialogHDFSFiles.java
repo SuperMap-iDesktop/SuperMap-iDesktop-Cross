@@ -6,10 +6,12 @@ import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.WebHDFS;
 import com.supermap.desktop.CtrlAction.WebHDFS.HDFSDefine;
+import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.http.DeleteFile;
 import com.supermap.desktop.http.FileManagerContainer;
 import com.supermap.desktop.http.callable.UploadPropressCallable;
 import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.task.TaskFactory;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -52,11 +54,11 @@ public class JDialogHDFSFiles extends SmDialog {
 	private JTextField textServerURL;
 	private JButton buttonBrowser;
 	private JTable table;
-	private SmButton buttonUpload;
-	private SmButton buttonDownload;
-	private SmButton buttonDelete;
-	private SmButton buttonOK;
-	private SmButton buttonCancel;
+//	private SmButton buttonUpload;
+//	private SmButton buttonDownload;
+//	private SmButton buttonDelete;
+	private JButton buttonOK;
+	private JButton buttonCancel;
 
 	private Boolean isOutputFolder = false;
 	private KeyListener textServerURLKeyListener;
@@ -129,9 +131,9 @@ public class JDialogHDFSFiles extends SmDialog {
 		};
 		removeEvents();
 		this.buttonBrowser.addActionListener(this.buttonBrowserListener);
-		this.buttonUpload.addActionListener(this.buttonUploadListener);
-		this.buttonDownload.addActionListener(this.buttonDownLoadListener);
-		this.buttonDelete.addActionListener(this.buttonDeleteListener);
+//		this.buttonUpload.addActionListener(this.buttonUploadListener);
+//		this.buttonDownload.addActionListener(this.buttonDownLoadListener);
+//		this.buttonDelete.addActionListener(this.buttonDeleteListener);
 		this.buttonOK.addActionListener(this.buttonOKListener);
 		this.buttonCancel.addActionListener(this.buttonCancelListener);
 		this.textServerURL.addKeyListener(this.textServerURLKeyListener);
@@ -148,10 +150,10 @@ public class JDialogHDFSFiles extends SmDialog {
 	}
 
 	private void removeEvents(){
-		this.buttonBrowser.removeActionListener(this.buttonBrowserListener);
-		this.buttonUpload.removeActionListener(this.buttonUploadListener);
-		this.buttonDownload.removeActionListener(this.buttonDownLoadListener);
-		this.buttonDelete.removeActionListener(this.buttonDeleteListener);
+//		this.buttonBrowser.removeActionListener(this.buttonBrowserListener);
+//		this.buttonUpload.removeActionListener(this.buttonUploadListener);
+//		this.buttonDownload.removeActionListener(this.buttonDownLoadListener);
+//		this.buttonDelete.removeActionListener(this.buttonDeleteListener);
 		this.buttonOK.removeActionListener(this.buttonOKListener);
 		this.buttonCancel.removeActionListener(this.buttonCancelListener);
 		this.textServerURL.removeKeyListener(this.textServerURLKeyListener);
@@ -160,15 +162,15 @@ public class JDialogHDFSFiles extends SmDialog {
 	public void initializeComponents() {
 		this.setSize(900, 600);
 
-		this.labelServerURL = new JLabel("服务器地址:");
+		this.labelServerURL = new JLabel();
 		this.textServerURL = new JTextField(WebHDFS.webURL);
-		this.buttonBrowser = new JButton("浏览");
+		this.buttonBrowser = new JButton();
 
-		this.buttonUpload = new SmButton("上传");
-		this.buttonDownload = new SmButton("下载");
-		this.buttonOK = new SmButton("选择");
-		this.buttonDelete = new SmButton("删除");
-		this.buttonCancel = new SmButton(CommonProperties.getString("String_Button_Cancel"));
+//		this.buttonUpload = new SmButton("上传");
+//		this.buttonDownload = new SmButton("下载");
+		this.buttonOK = ComponentFactory.createButtonOK();
+//		this.buttonDelete = new SmButton("删除");
+		this.buttonCancel = ComponentFactory.createButtonCancel();
 		this.getRootPane().setDefaultButton(this.buttonOK);
 
 		GroupLayout gLayout = new GroupLayout(this.getContentPane());
@@ -212,13 +214,13 @@ public class JDialogHDFSFiles extends SmDialog {
 		gLayout.setHorizontalGroup(gLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(gLayout.createSequentialGroup().addComponent(this.labelServerURL)
 						.addComponent(this.textServerURL, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(this.buttonBrowser, 32, 32, 32))
+						.addComponent(this.buttonBrowser, 75, 75, 75))
 				.addComponent(scrollPaneTable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 				.addGroup(gLayout.createSequentialGroup()
 						.addGap(10, 10, Short.MAX_VALUE)
-						.addComponent(this.buttonUpload, 75, 75, 75)
-						.addComponent(this.buttonDownload, 75, 75, 75)
-						.addComponent(this.buttonDelete, 75, 75, 75)
+//						.addComponent(this.buttonUpload, 75, 75, 75)
+//						.addComponent(this.buttonDownload, 75, 75, 75)
+//						.addComponent(this.buttonDelete, 75, 75, 75)
 						.addComponent(this.buttonOK, 75, 75, 75)
 						.addComponent(this.buttonCancel, 75, 75, 75)));
 
@@ -228,9 +230,9 @@ public class JDialogHDFSFiles extends SmDialog {
 						.addComponent(this.buttonBrowser))
 				.addComponent(scrollPaneTable, 100, 200, Short.MAX_VALUE)
 				.addGroup(gLayout.createParallelGroup(Alignment.CENTER)
-						.addComponent(this.buttonUpload)
-						.addComponent(this.buttonDownload)
-						.addComponent(this.buttonDelete)
+//						.addComponent(this.buttonUpload)
+//						.addComponent(this.buttonDownload)
+//						.addComponent(this.buttonDelete)
 						.addComponent(this.buttonOK)
 						.addComponent(this.buttonCancel)));
 		// @formatter:on
@@ -245,11 +247,9 @@ public class JDialogHDFSFiles extends SmDialog {
 
 	private void initializeResources() {
 		if (table != null) {
-			this.setTitle(("Browse Directory"));
-			this.buttonCancel.setText(CommonProperties.getString("String_Button_Close"));
-			this.buttonOK.setText(CommonProperties.getString("String_Button_OK"));
-			this.buttonOK.setText("选择");
-
+			this.setTitle(LBSClientProperties.getString("String_Scale"));
+			this.labelServerURL.setText(LBSClientProperties.getString("String_ServerURL"));
+			this.buttonBrowser.setText(LBSClientProperties.getString("String_Scale"));
 			this.table.getColumnModel().getColumn(COLUMN_INDEX_Permission).setHeaderValue("Permission");
 			this.table.getColumnModel().getColumn(COLUMN_INDEX_Owner).setHeaderValue("Owner");
 			this.table.getColumnModel().getColumn(COLUMN_INDEX_Group).setHeaderValue(("Group"));

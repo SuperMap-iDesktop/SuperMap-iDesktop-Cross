@@ -2,6 +2,7 @@ package com.supermap.desktop.dialog;
 
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.CtrlAction.WebHDFS;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IServerService;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
@@ -9,7 +10,8 @@ import com.supermap.desktop.impl.IServerServiceImpl;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.messagebus.NewMessageBus;
 import com.supermap.desktop.params.*;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.ui.Action;
 import com.supermap.ui.*;
@@ -35,7 +37,7 @@ public class JDialogHeatMap extends SmDialog {
     private JLabel labelBoundsTop;
     private JTextField textBoundsTop;
     private JButton buttonDrawBounds;
-//    private JButton buttonInputBrowser;
+    private JButton buttonInputBrowser;
 
     private JLabel labelCacheLevel;
     private JTextField textFieldCacheLevel;
@@ -97,6 +99,7 @@ public class JDialogHeatMap extends SmDialog {
         this.labelCacheType = new JLabel();
         this.comboBoxCacheType = new JComboBox();
         this.comboBoxCacheType.addItem("Heatmap");
+        this.buttonInputBrowser = new JButton();
         this.panelBounds = new JPanel();
         this.labelBoundsLeft = new JLabel();
         this.textBoundsLeft = new JTextField("-74.050");
@@ -134,10 +137,10 @@ public class JDialogHeatMap extends SmDialog {
         setComboBoxTheme(this.comboBoxCacheType);
         setComboBoxTheme(this.comboBoxDatabaseType);
 
-        if(SystemPropertyUtilities.isWindows()) {
+        if (SystemPropertyUtilities.isWindows()) {
             this.setSize(640, 480);
-        }else {
-            setSize(800,560);
+        } else {
+            setSize(800, 560);
         }
         this.setLocationRelativeTo(null);
     }
@@ -155,15 +158,18 @@ public class JDialogHeatMap extends SmDialog {
         this.getContentPane().setLayout(groupLayout);
         // @formatter:off
         groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(groupLayout.createSequentialGroup().addComponent(this.labelCacheType)
+                .addGroup(groupLayout.createSequentialGroup()
+                        .addComponent(this.labelFileInputPath)
+                        .addComponent(this.textFieldFileInputPath)
+                        .addComponent(this.buttonInputBrowser, 75, 75, 75))
+                .addGroup(groupLayout.createSequentialGroup()
+                        .addComponent(this.labelCacheType)
                         .addComponent(this.comboBoxCacheType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-//                        .addComponent(this.buttonInputBrowser, 32, 32, 32))
                 .addComponent(this.panelBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(groupLayout.createSequentialGroup()
                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addComponent(this.labelXYIndex)
                                 .addComponent(this.labelCacheLevel)
-                                .addComponent(this.labelFileInputPath)
                                 .addComponent(this.labelCacheName)
                                 .addComponent(this.labelDatabaseType)
                                 .addComponent(this.labelServiceAddress)
@@ -173,7 +179,6 @@ public class JDialogHeatMap extends SmDialog {
                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addComponent(this.textFieldXYIndex)
                                 .addComponent(this.textFieldCacheLevel)
-                                .addComponent(this.textFieldFileInputPath)
                                 .addComponent(this.textFieldCacheName)
                                 .addComponent(this.comboBoxDatabaseType)
                                 .addComponent(this.textFieldServiceAddress)
@@ -185,9 +190,13 @@ public class JDialogHeatMap extends SmDialog {
                         .addComponent(this.buttonOK, 75, 75, 75)
                         .addComponent(this.buttonCancel, 75, 75, 75)));
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(this.labelCacheType)
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(this.labelFileInputPath)
+                        .addComponent(this.textFieldFileInputPath, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(this.buttonInputBrowser, 23, 23, 23))
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                        .addComponent(this.labelCacheType)
                         .addComponent(this.comboBoxCacheType, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-//                        .addComponent(this.buttonInputBrowser, 32, 32, 32))
                 .addComponent(this.panelBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(this.labelXYIndex)
@@ -195,9 +204,6 @@ public class JDialogHeatMap extends SmDialog {
                 .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(this.labelCacheLevel)
                         .addComponent(this.textFieldCacheLevel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(this.labelFileInputPath)
-                        .addComponent(this.textFieldFileInputPath, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(this.labelCacheName)
                         .addComponent(this.textFieldCacheName, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -268,8 +274,8 @@ public class JDialogHeatMap extends SmDialog {
         this.labelBoundsRight.setText(LBSClientProperties.getString("String_Right"));
         this.labelBoundsTop.setText(LBSClientProperties.getString("String_Top"));
         this.setTitle(LBSClientProperties.getString("String_HeatMap"));
-//        this.buttonInputBrowser.setText(LBSClientProperties.getString("String_Browser"));
-//        this.buttonInputBrowser.setToolTipText(LBSClientProperties.getString("String_Browser"));
+        this.buttonInputBrowser.setText(LBSClientProperties.getString("String_Browser"));
+        this.buttonInputBrowser.setToolTipText(LBSClientProperties.getString("String_Browser"));
         this.panelBounds.setBorder(new TitledBorder(null, LBSClientProperties.getString("String_CacheBounds"), TitledBorder.LEADING,
                 TitledBorder.TOP, null, null));
     }
@@ -279,15 +285,17 @@ public class JDialogHeatMap extends SmDialog {
         this.buttonOK.addActionListener(this.heatMapListener);
         this.buttonCancel.addActionListener(this.cancelListener);
         this.buttonDrawBounds.addActionListener(this.drawBoundsListener);
-//        this.buttonInputBrowser.addActionListener(this.inputBrowserListener);
+        this.buttonInputBrowser.addActionListener(this.inputBrowserListener);
     }
+
     private void buttonInputBrowser() {
         JDialogHDFSFiles hdfsFiles = new JDialogHDFSFiles();
         hdfsFiles.setIsOutputFolder(false);
-        if (hdfsFiles.showDialog() == com.supermap.desktop.ui.controls.DialogResult.OK) {
-
+        if (hdfsFiles.showDialog() == DialogResult.OK) {
+            textFieldFileInputPath.setText(WebHDFS.webURL);
         }
     }
+
     private transient MouseListener controlMouseListener = new MouseAdapter() {
 
         @Override
@@ -376,6 +384,6 @@ public class JDialogHeatMap extends SmDialog {
         this.buttonOK.removeActionListener(this.heatMapListener);
         this.buttonCancel.removeActionListener(this.cancelListener);
         this.buttonDrawBounds.removeActionListener(this.drawBoundsListener);
-//        this.buttonInputBrowser.removeActionListener(this.inputBrowserListener);
+        this.buttonInputBrowser.removeActionListener(this.inputBrowserListener);
     }
 }
