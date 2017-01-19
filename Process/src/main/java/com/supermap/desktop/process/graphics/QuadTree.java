@@ -65,6 +65,10 @@ public class QuadTree<T> {
 		this.root.remove(o);
 	}
 
+	public Collection<T> findAll() {
+		return findInside(this.root.getBounds());
+	}
+
 	public Collection<T> findContains(java.awt.geom.Point2D.Double p) {
 		HashSet result = new HashSet();
 		this.root.findContains(p, result);
@@ -125,6 +129,10 @@ public class QuadTree<T> {
 		public QuadNode(Rectangle2D.Double bounds) {
 			this.bounds = bounds;
 			this.objects = new HashMap();
+		}
+
+		public Rectangle2D.Double getBounds() {
+			return this.bounds;
 		}
 
 		public boolean isLeaf() {

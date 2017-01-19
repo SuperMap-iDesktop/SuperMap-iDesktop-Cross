@@ -8,7 +8,9 @@ import org.jhotdraw.draw.AttributeKeys;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by highsad on 2017/1/17.
@@ -20,9 +22,9 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
-	private ArrayList<IGraph> graphs = new ArrayList<>();
+	private QuadTree<IGraph> graphQuadTree = new QuadTree<>();
 	private double scale = 1.0;
-
+	private IGraph toCreation;
 
 	public static void main(String[] args) {
 		final JFrame frame = new JFrame();
@@ -98,9 +100,15 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 	}
 
+	public void createGraph(IGraph graph) {
+		this.toCreation = graph;
+	}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		if (SwingUtilities.isLeftMouseButton(e) && this.toCreation != null) {
 
+		}
 	}
 
 	@Override
