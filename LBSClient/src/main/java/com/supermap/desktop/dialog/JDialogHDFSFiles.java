@@ -108,7 +108,7 @@ public class JDialogHDFSFiles extends SmDialog {
         initializeResources();
         initializeLayout();
         registEvents();
-        this.setTitle(LBSClientProperties.getString("String_Scale"));
+        this.setTitle(LBSClientProperties.getString("String_SelectFile"));
         setLocationRelativeTo(null);
     }
 

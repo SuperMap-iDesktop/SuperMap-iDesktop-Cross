@@ -245,11 +245,10 @@ public class JDialogLogin extends SmDialog {
         this.buttonClose = ComponentFactory.createButtonClose();
 
         setLayout(new GridBagLayout());
-        panelMain.add(panelService, new GridBagConstraints(0, 0, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(10, 10, 0, 10), 0, 0));
-        panelMain.add(panelUser, new GridBagConstraints(0, 1, 2, 1, 1, 1, GridBagConstraints.WEST, GridBagConstraints.BOTH, new Insets(5, 10, 0, 10), 0, 0));
-        panelMain.add(this.buttonLogin, new GridBagConstraints(0, 2, 1, 1, 1, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 10, 10, 0), 0, 0));
-        panelMain.add(this.buttonClose, new GridBagConstraints(1, 2, 1, 1, 0, 0, GridBagConstraints.EAST, GridBagConstraints.NONE, new Insets(5, 5, 10, 10), 0, 0));
-
+        panelMain.add(panelService, new GridBagConstraintsHelper(0, 0, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setInsets(10, 10, 0, 10));
+        panelMain.add(panelUser, new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
+        panelMain.add(this.buttonLogin, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 10, 0));
+        panelMain.add(this.buttonClose, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 10, 10));
     }
 
 }

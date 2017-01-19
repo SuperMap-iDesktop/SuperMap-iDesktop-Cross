@@ -202,7 +202,7 @@ public class JDialogKernelDensity extends SmDialog {
                 .addGroup(groupLayout.createParallelGroup(Alignment.CENTER).addComponent(this.labelInputURL)
                         .addComponent(this.textInputURL, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                         .addComponent(this.buttonInputBrowser))
-                .addComponent(this.panelBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(this.panelBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
                         .addComponent(this.labelIndex)
                         .addComponent(this.textFieldIndex, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -282,8 +282,10 @@ public class JDialogKernelDensity extends SmDialog {
         kenelDensityJobSetting.analyst.radius = textRadius.getText();
         kenelDensityJobSetting.input.filePath = textInputURL.getText();
         IServerService service = new IServerServiceImpl();
+        this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         JobResultResponse response = service.query(kenelDensityJobSetting);
         if (null != response) {
+            this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             NewMessageBus.producer(response);
             dispose();
         }

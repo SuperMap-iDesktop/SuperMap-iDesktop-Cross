@@ -18,6 +18,7 @@ import com.supermap.ui.*;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.awt.event.*;
 
 /**
@@ -140,7 +141,7 @@ public class JDialogHeatMap extends SmDialog {
         if (SystemPropertyUtilities.isWindows()) {
             this.setSize(640, 480);
         } else {
-            setSize(800, 520);
+            setSize(800, 540);
         }
         this.setLocationRelativeTo(null);
     }
@@ -197,7 +198,7 @@ public class JDialogHeatMap extends SmDialog {
                 .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(this.labelCacheType)
                         .addComponent(this.comboBoxCacheType, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addComponent(this.panelBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(this.panelBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(this.labelXYIndex)
                         .addComponent(this.textFieldXYIndex, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -373,8 +374,10 @@ public class JDialogHeatMap extends SmDialog {
         setting.input = input;
         setting.output = output;
         setting.drawing = drawing;
+        this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         JobResultResponse response = service.query(setting);
         if (null != response) {
+            this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             NewMessageBus.producer(response);
             dispose();
         }

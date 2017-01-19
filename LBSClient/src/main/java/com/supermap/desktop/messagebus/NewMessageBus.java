@@ -148,7 +148,7 @@ public class NewMessageBus {
                 }
             } else {
 //                updateProgress();
-                if(i<=99) {
+                if (i <= 99) {
                     task.updateProgress(i++, "", "");
                 }
                 Thread.sleep(100);
@@ -190,21 +190,21 @@ public class NewMessageBus {
                     @Override
                     public void run() {
                         UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
-                        if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
-                            //添加到当前地图中
-                            Map currentMap = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
-                            MapUtilities.addDatasetToMap(currentMap, finalDataset, true);
-                        } else {
-                            //打开新的地图
-                            IFormMap newMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, datasetName);
-                            Map map = newMap.getMapControl().getMap();
-                            Layer layer = MapUtilities.addDatasetToMap(map, finalDataset, true);
-                            if (finalDataset.getType() == DatasetType.GRID) {
-                                LayerSettingGrid setting = (LayerSettingGrid) layer.getAdditionalSetting();
-                                setting.setOpaqueRate(70);
-                            }
-                            map.refresh();
+//                        if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+//                            //添加到当前地图中
+//                            Map currentMap = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
+//                            MapUtilities.addDatasetToMap(currentMap, finalDataset, true);
+//                        } else {
+                        //打开新的地图
+                        IFormMap newMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, datasetName);
+                        Map map = newMap.getMapControl().getMap();
+                        Layer layer = MapUtilities.addDatasetToMap(map, finalDataset, true);
+                        if (finalDataset.getType() == DatasetType.GRID) {
+                            LayerSettingGrid setting = (LayerSettingGrid) layer.getAdditionalSetting();
+                            setting.setOpaqueRate(70);
                         }
+                        map.refresh();
+//                        }
                     }
                 });
 
