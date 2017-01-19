@@ -17,7 +17,8 @@ public class CtrlActionTaskManager extends CtrlAction {
 
     @Override
     public void run() {
-        if (ManagerXMLParser.getTotalTaskCount() > 0 && null == JDialogTaskManager.getTaskManager()) {
+        if (ManagerXMLParser.getTotalTaskCount() > 0 && null == JDialogTaskManager.getTaskManager()
+                && null != CommonUtilities.getManagerContainer() && CommonUtilities.getManagerContainer().getItems().size() == 0) {
             CommonUtilities.recoverTask();
         } else {
             CommonUtilities.getFileManagerContainer();

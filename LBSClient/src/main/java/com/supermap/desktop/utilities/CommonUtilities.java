@@ -33,7 +33,6 @@ public class CommonUtilities {
      * @return
      */
     public static FileManagerContainer getFileManagerContainer() {
-
         FileManagerContainer fileManagerContainer = null;
         IDockbar dockbarPropertyContainer;
         dockbarPropertyContainer = getDockBar(FILE_MANAGER_CONTROL_CLASS);
@@ -44,6 +43,22 @@ public class CommonUtilities {
         }
         return fileManagerContainer;
     }
+
+    /**
+     * 获取显示进度条ManagerContainer
+     *
+     * @return
+     */
+    public static FileManagerContainer getManagerContainer() {
+        FileManagerContainer fileManagerContainer = null;
+        IDockbar dockbarPropertyContainer;
+        dockbarPropertyContainer = getDockBar(FILE_MANAGER_CONTROL_CLASS);
+        if (dockbarPropertyContainer != null) {
+            fileManagerContainer = (FileManagerContainer) dockbarPropertyContainer.getInnerComponent();
+        }
+        return fileManagerContainer;
+    }
+
 
     /**
      * 获取任务管理界面，并激活dockbar

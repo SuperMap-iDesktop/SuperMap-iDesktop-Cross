@@ -6,7 +6,6 @@ import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.utilities.CommonUtilities;
 import com.supermap.desktop.utilities.ManagerXMLParser;
 
 import javax.swing.*;
@@ -39,6 +38,7 @@ public class JDialogTaskManager extends SmDialog {
             isRecoverDownLoadTask = checkboxRecoverDownloadTask.isSelected();
             isrecoverUploadTask = checkboxRecoverUploadTask.isSelected();
             dialogResult = DialogResult.OK;
+            ToolbarUIUtilities.updataToolbarsState();
             JDialogTaskManager.this.dispose();
         }
     };
