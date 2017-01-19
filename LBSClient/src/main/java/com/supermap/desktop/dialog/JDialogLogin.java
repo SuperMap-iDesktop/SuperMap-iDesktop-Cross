@@ -56,6 +56,7 @@ public class JDialogLogin extends SmDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             removeEvents();
+            saveLoginInfo();
             dispose();
         }
     };

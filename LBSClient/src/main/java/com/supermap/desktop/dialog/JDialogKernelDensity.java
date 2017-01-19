@@ -140,7 +140,7 @@ public class JDialogKernelDensity extends SmDialog {
         if (SystemPropertyUtilities.isWindows()) {
             setSize(700, 400);
         } else {
-            setSize(860, 460);
+            setSize(860, 450);
         }
         setLocationRelativeTo(null);
 
