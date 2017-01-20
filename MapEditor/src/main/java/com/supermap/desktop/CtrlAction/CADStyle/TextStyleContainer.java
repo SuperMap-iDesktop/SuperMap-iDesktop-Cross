@@ -173,11 +173,12 @@ public class TextStyleContainer extends JPanel {
                             textBasicPanel.getResultMap().get(TextStyleType.FONTHEIGHT));
                 }
                 // 文本默认风格设置 2017.1.13 李逍遥 part6   共计part9
-                IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-                formMap.setDefaultTextRotationAngle(((GeoText) tempGeometry).getPart(0).getRotation());
-                formMap.setDefaultTextStyle(((GeoText) tempGeometry).getTextStyle().clone());
-
-                recordset.setGeometry(tempGeometry);
+                if (tempGeometry instanceof GeoText) {
+                    IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+                    formMap.setDefaultTextRotationAngle(((GeoText) tempGeometry).getPart(0).getRotation());
+                    formMap.setDefaultTextStyle(((GeoText) tempGeometry).getTextStyle().clone());
+                    recordset.setGeometry(tempGeometry);
+                }
                 tempGeometry.dispose();
                 recordset.moveNext();
             }

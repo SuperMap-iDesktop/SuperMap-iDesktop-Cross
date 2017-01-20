@@ -196,8 +196,8 @@ public class JDialogHDFSFiles extends SmDialog {
         this.rowHeader.setFixedCellHeight(table.getRowHeight());
         this.rowHeader.setCellRenderer(new RowHeaderRenderer(table));
         this.scrollPaneFormLBSControl.setRowHeaderView(rowHeader);
-        JLabel scrollPaneUpperLeftLabel=new JLabel(CommonProperties.getString("String_ColumnHeader_Index"),SwingConstants.CENTER);
-        scrollPaneFormLBSControl.setCorner(JScrollPane.UPPER_LEFT_CORNER,scrollPaneUpperLeftLabel);
+        JLabel scrollPaneUpperLeftLabel = new JLabel(CommonProperties.getString("String_ColumnHeader_Index"), SwingConstants.CENTER);
+        scrollPaneFormLBSControl.setCorner(JScrollPane.UPPER_LEFT_CORNER, scrollPaneUpperLeftLabel);
         initializeLayout();
         listDirectory(this.textServerURL.getText(), "", this.getIsOutputFolder());
         if (0 < table.getRowCount()) {
