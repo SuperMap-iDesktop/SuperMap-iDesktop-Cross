@@ -35,7 +35,7 @@ public class MapViewUIUtilities {
 
 	public static int CHINACENTERRANGEVALUEX = 107;
 	public static int CHINACENTERRANGEVALUEY = 35;
-	public static double INITSCALE = 0.0002;
+	public static double INITSCALE = 0.00000002;
 
 	private MapViewUIUtilities() {
 		// 工具类，不提供构造方法
@@ -117,23 +117,28 @@ public class MapViewUIUtilities {
 			String name = MapUtilities.getAvailableMapName(
 					MessageFormat.format("{0}@{1}", datasetsToMap.get(0).getName(), datasetsToMap.get(0).getDatasource().getAlias()), true);
 			IFormMap formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, name);
-			addDatasetsToMap(formMap.getMapControl().getMap(), datasetsToMap.toArray(new Dataset[datasetsToMap.size()]), addToHead);
+			Map map = formMap.getMapControl().getMap();
+			addDatasetsToMap(map, datasetsToMap.toArray(new Dataset[datasetsToMap.size()]), addToHead);
 
 			// 打开到新地图时，全幅显示，不使用 EntireView，因为窗口打开之后会动态调整 MapControl 的大小，从而导致此前设置的全幅效果不对
 			Rectangle2D viewBounds = getDatasetsBounds(datasetsToMap.toArray(new Dataset[datasetsToMap.size()]));
 			if (viewBounds != null && Double.compare(viewBounds.getWidth(), 0.0) != 0 && Double.compare(viewBounds.getHeight(), 0.0) != 0) {
-				formMap.getMapControl().getMap().setViewBounds(viewBounds);
+				map.setViewBounds(viewBounds);
 			}
 			//判断所打开的数据集是否需要手动设置合理范围--yuanR 17.1.11
 			boolean isResetRange = isResetRange(datasetsToMap.toArray(new Dataset[datasetsToMap.size()]));
 			if (isResetRange) {
 				//当要打开的数据集为地理数据集时，并且其范围超出合理值，给其设置坐标系为中国范围坐标系--yuanR 17.1.10
-				formMap.getMapControl().getMap().setScale(INITSCALE);
-				formMap.getMapControl().getMap().setCenter(new Point2D(CHINACENTERRANGEVALUEX, CHINACENTERRANGEVALUEY));
+				resetMapRange(map);
 			}
 			// 新建的地图窗口，修改默认的Action为漫游
 			formMap.getMapControl().setAction(Action.PAN);
 		}
+	}
+
+	public static void resetMapRange(Map map) {
+		map.setScale(INITSCALE);
+		map.setCenter(new Point2D(CHINACENTERRANGEVALUEX, CHINACENTERRANGEVALUEY));
 	}
 
 	/**
@@ -166,6 +171,9 @@ public class MapViewUIUtilities {
 	 * 判断是否需要重新设置地图范围方法
 	 */
 	public static boolean isResetRange(Dataset[] datasets) {
+		if (datasets == null || datasets.length <= 0) {
+			return false;
+		}
 		for (Dataset dataset : datasets) {
 			//满足地理坐标系数据集
 			if ((dataset.getPrjCoordSys() == null || dataset.getPrjCoordSys().getType() != PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)

@@ -42,6 +42,9 @@ public class DatasetChooserNewMap {
 			MapViewUIUtilities.addDatasetsToMap(this.formMap.getMapControl().getMap(), datasetsToMap.toArray(new Dataset[datasetsToMap.size()]), true);
 			// 新建的地图窗口，修改默认的Action为漫游
 			formMap.getMapControl().setAction(Action.PAN);
+			if (MapViewUIUtilities.isResetRange(datasetsToMap.toArray(new Dataset[datasetsToMap.size()]))) {
+				MapViewUIUtilities.resetMapRange(formMap.getMapControl().getMap());
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
