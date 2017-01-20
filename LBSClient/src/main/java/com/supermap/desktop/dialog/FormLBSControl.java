@@ -495,7 +495,7 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
                     }
                 } else if (define != null && define.isDir()) {
                     webFile = define.getName();
-                    if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteFile"), webFile)) == JOptionPane.OK_OPTION) {
+                    if (UICommonToolkit.showConfirmDialog(MessageFormat.format(LBSClientProperties.getString("String_DeleteDir"), webFile)) == JOptionPane.OK_OPTION) {
                         String nowUrl = addSeparator(webURL) + define.getName();
                         deleteDir(nowUrl, define);
                     }

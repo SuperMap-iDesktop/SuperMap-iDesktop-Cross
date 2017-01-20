@@ -106,7 +106,6 @@ public class HttpRequest {
             inputStream = connection.getInputStream();
         } catch (Exception e) {
             Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_ConnectException"));
-            e.printStackTrace();
         }
         return inputStream;
     }
