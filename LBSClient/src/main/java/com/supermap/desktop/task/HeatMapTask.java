@@ -20,7 +20,7 @@ public class HeatMapTask extends Task {
         progressBar.setString("");
         buttonRun.setVisible(false);
         labelTitle.setText(LBSClientProperties.getString("String_HeatMapInfo"));
-        labelLogo.setIcon(CommonUtilities.getImageIcon("image_KernelDensityRealtime.png"));
+        labelLogo.setIcon(CommonUtilities.getImageIcon("HeatMap.png"));
     }
 
     @Override

@@ -32,7 +32,7 @@ public class DownLoadTask extends Task {
         super(downloadInfo);
         labelTitle.setText(LBSClientProperties.getString("String_Downloading"));
         labelLogo.setToolTipText(LBSClientProperties.getString("String_Download"));
-        labelLogo.setIcon(CommonUtilities.getImageIcon("image_download.png"));
+        labelLogo.setIcon(CommonUtilities.getImageIcon("Download.png"));
     }
 
     public void registEvents() {

@@ -31,7 +31,7 @@ public class UploadTask extends Task {
     public UploadTask(FileInfo uploadInfo) {
         super(uploadInfo);
         labelTitle.setText(LBSClientProperties.getString("String_Uploading"));
-        labelLogo.setIcon(CommonUtilities.getImageIcon("image_upload.png"));
+        labelLogo.setIcon(CommonUtilities.getImageIcon("Upload.png"));
         labelLogo.setToolTipText(LBSClientProperties.getString("String_Upload"));
     }
 
