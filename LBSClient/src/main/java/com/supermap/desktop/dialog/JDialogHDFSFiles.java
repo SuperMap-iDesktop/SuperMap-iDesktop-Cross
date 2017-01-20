@@ -9,6 +9,7 @@ import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.event.FormClosingEvent;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
@@ -195,6 +196,8 @@ public class JDialogHDFSFiles extends SmDialog {
         this.rowHeader.setFixedCellHeight(table.getRowHeight());
         this.rowHeader.setCellRenderer(new RowHeaderRenderer(table));
         this.scrollPaneFormLBSControl.setRowHeaderView(rowHeader);
+        JLabel scrollPaneUpperLeftLabel=new JLabel(CommonProperties.getString("String_ColumnHeader_Index"),SwingConstants.CENTER);
+        scrollPaneFormLBSControl.setCorner(JScrollPane.UPPER_LEFT_CORNER,scrollPaneUpperLeftLabel);
         initializeLayout();
         listDirectory(this.textServerURL.getText(), "", this.getIsOutputFolder());
         if (0 < table.getRowCount()) {
