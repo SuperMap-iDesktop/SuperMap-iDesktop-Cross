@@ -22,7 +22,6 @@ import com.supermap.desktop.task.TaskFactory;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.CommonUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 
 import javax.jms.ExceptionListener;
@@ -193,7 +192,7 @@ public class NewMessageBus {
 //                            MapUtilities.addDatasetToMap(currentMap, finalDataset, true);
 //                        } else {
                         //打开新的地图
-                        IFormMap newMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, datasetName);
+                        IFormMap newMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, datasetName + "@" + datasource.getAlias());
                         Map map = newMap.getMapControl().getMap();
                         map.getLayers().add(finalDataset, true);
                         map.refresh();
