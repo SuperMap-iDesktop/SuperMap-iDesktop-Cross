@@ -141,7 +141,7 @@ public class JDialogHeatMap extends SmDialog {
         if (SystemPropertyUtilities.isWindows()) {
             this.setSize(640, 480);
         } else {
-            setSize(800, 530);
+            setSize(800, 540);
         }
         this.setLocationRelativeTo(null);
     }
