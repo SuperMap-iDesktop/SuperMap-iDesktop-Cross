@@ -426,7 +426,11 @@ public class CADStyleContainer extends JPanel {
                                 break;
                             }
                             if (!CADStyleUtilities.is3DGeometry(tempGeometry)) {
-                                tempGeometry.setStyle(geoStyle);
+                                try {
+                                    tempGeometry.setStyle(geoStyle);
+                                } catch (Exception e1) {
+                                    //ignore
+                                }
                             }
                             recordset.setGeometry(tempGeometry);
                             tempGeometry.dispose();
