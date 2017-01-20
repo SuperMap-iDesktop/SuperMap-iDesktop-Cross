@@ -222,7 +222,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.comboBoxRangeFormat.addMouseListener(this.mouseListener);
 	}
 
-	/*
+	/**
 	 * 资源化
 	 */
 	private void initResources() {
