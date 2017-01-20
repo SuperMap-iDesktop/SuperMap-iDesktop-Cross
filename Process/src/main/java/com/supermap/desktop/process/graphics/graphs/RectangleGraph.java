@@ -1,11 +1,17 @@
 package com.supermap.desktop.process.graphics.graphs;
 
+import com.supermap.desktop.process.graphics.GraphCanvas;
+
 import java.awt.*;
 
 /**
  * Created by highsad on 2017/1/19.
  */
-public class RectangleGraph implements IGraph {
+public class RectangleGraph extends AbstractGraph {
+
+	public RectangleGraph(GraphCanvas canvas) {
+		super(canvas);
+	}
 
 	@Override
 	public double getWidth() {
@@ -15,6 +21,11 @@ public class RectangleGraph implements IGraph {
 	@Override
 	public double getHeight() {
 		return 0;
+	}
+
+	@Override
+	public boolean contains(Point p) {
+		return false;
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package com.supermap.desktop.process.graphics.graphs;
 
+import com.supermap.desktop.process.graphics.GraphCanvas;
+
 import java.awt.*;
 
 /**
@@ -7,9 +9,19 @@ import java.awt.*;
  */
 public interface IGraph {
 
+	GraphCanvas getCanvas();
+
 	double getWidth();
 
 	double getHeight();
 
+	Point getCenter();
+
+	Point setCenter();
+
+	boolean contains(Point p);
+
 	void paint(Graphics2D g);
+
+	IGraph clone();
 }

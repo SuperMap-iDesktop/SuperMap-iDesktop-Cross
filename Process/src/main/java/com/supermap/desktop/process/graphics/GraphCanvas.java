@@ -4,12 +4,16 @@ import com.sun.corba.se.impl.orbutil.graph.Graph;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import org.jhotdraw.draw.AttributeKeys;
+import org.jhotdraw.geom.Geom;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -25,6 +29,8 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private QuadTree<IGraph> graphQuadTree = new QuadTree<>();
 	private double scale = 1.0;
 	private IGraph toCreation;
+	private IGraph hotGraph;
+	private IGraph selectedGraph;
 
 	public static void main(String[] args) {
 		final JFrame frame = new JFrame();
@@ -54,6 +60,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		setViewRenderingHints(graphics2D);
 		paintBackground(graphics2D);
 		paintCanvas(graphics2D);
+		paintGraphs(graphics2D);
 	}
 
 	/**
@@ -78,7 +85,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	}
 
 	private void paintGraphs(Graphics2D g) {
+		Collection c = this.graphQuadTree.findAll();
+		Iterator iterator = c.iterator();
 
+		while (iterator.hasNext()) {
+			IGraph graph = (IGraph) iterator.next();
+			graph.paint(g);
+		}
 	}
 
 	protected Rectangle getCanvasViewBounds() {
@@ -104,10 +117,32 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		this.toCreation = graph;
 	}
 
+	private IGraph findGraph(Point p) {
+		IGraph graph = null;
+
+		return graph;
+	}
+
+	private Point2D panelToCanvas(Point point) {
+		return new Point2D.Double(point.getX(), point.getY());
+	}
+
+	private Point canvasToPanel(Point2D point2D) {
+		int panelX = Double.valueOf(point2D.getX()).intValue();
+		int panelY = Double.valueOf(point2D.getY()).intValue();
+		return new Point(panelX, panelY);
+	}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (SwingUtilities.isLeftMouseButton(e) && this.toCreation != null) {
+		if (SwingUtilities.isLeftMouseButton(e)) {
+			Point point = e.getPoint();
 
+			if (this.toCreation != null) {
+
+			} else {
+
+			}
 		}
 	}
 
