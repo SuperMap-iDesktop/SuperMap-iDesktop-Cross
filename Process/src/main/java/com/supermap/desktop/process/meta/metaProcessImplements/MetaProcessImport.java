@@ -35,7 +35,7 @@ public class MetaProcessImport extends MetaProcess {
 
 	public MetaProcessImport() {
 		parameters = new DefaultParameters();
-		ParameterFile parameterFile = new ParameterFile();
+		ParameterFile parameterFile = new ParameterFile().setDescribe(ProcessProperties.getString("label_ChooseFile"));
 
 		ParameterSaveDataset parameterSaveDataset = new ParameterSaveDataset();
 		if (Application.getActiveApplication().getActiveDatasources().length > 0) {
@@ -64,6 +64,7 @@ public class MetaProcessImport extends MetaProcess {
 				new ParameterDataNode(ProcessProperties.getString("String_FormImport_OverWrite"), ImportMode.OVERWRITE)
 		};
 		ParameterComboBox comboBoxImportMode = new ParameterComboBox().setDescribe(ProcessProperties.getString("Label_ImportMode")).setItems(parameterImportMode);
+		comboBoxImportMode.setSelectedItem(ImportMode.NONE);
 		ParameterCheckBox checkBoxCreateFieldIndex = new ParameterCheckBox().setDescribe(ProcessProperties.getString("String_FieldIndex"));
 		ParameterCheckBox checkBoxCreateSpaceIndex = new ParameterCheckBox().setDescribe(ProcessProperties.getString("String_CreateSpatialIndex"));
 

@@ -25,7 +25,9 @@ public class DefaultParameters implements IParameters {
 				parameter.dispose();
 			}
 		}
-		panel.removeAll();
+		if (panel != null) {
+			panel.removeAll();
+		}
 		panel = null;
 		this.parameters = iParameters;
 	}

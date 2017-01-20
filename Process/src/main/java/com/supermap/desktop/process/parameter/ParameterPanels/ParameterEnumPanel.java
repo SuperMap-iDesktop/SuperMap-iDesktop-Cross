@@ -4,6 +4,7 @@ import com.supermap.data.Enum;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterEnum;
+import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -39,6 +40,7 @@ public class ParameterEnumPanel extends JPanel {
 	}
 
 	private void initLayout() {
+		label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
 		comboBox.setPreferredSize(new Dimension(20, 23));
 		this.setLayout(new GridBagLayout());
 		this.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
