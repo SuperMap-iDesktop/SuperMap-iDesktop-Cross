@@ -199,10 +199,10 @@ public class NewMessageBus {
                         IFormMap newMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, datasetName);
                         Map map = newMap.getMapControl().getMap();
                         Layer layer = MapUtilities.addDatasetToMap(map, finalDataset, true);
-                        if (finalDataset.getType() == DatasetType.GRID) {
-                            LayerSettingGrid setting = (LayerSettingGrid) layer.getAdditionalSetting();
-                            setting.setOpaqueRate(70);
-                        }
+//                        if (finalDataset.getType() == DatasetType.GRID) {
+//                            LayerSettingGrid setting = (LayerSettingGrid) layer.getAdditionalSetting();
+//                            setting.setOpaqueRate(70);
+//                        }
                         map.refresh();
 //                        }
                     }
