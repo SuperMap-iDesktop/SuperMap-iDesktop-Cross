@@ -17,7 +17,7 @@ public class KernelDensityTask extends Task {
         progressBar.setString("");
         buttonRun.setVisible(false);
         labelTitle.setText(LBSClientProperties.getString("String_KernelDensity"));
-        labelLogo.setIcon(CommonUtilities.getImageIcon("image_KernelDensity.png"));
+        labelLogo.setIcon(CommonUtilities.getImageIcon("KernelDensity.png"));
     }
 
     @Override
