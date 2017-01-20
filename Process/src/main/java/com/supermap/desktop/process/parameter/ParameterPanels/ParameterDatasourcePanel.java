@@ -4,6 +4,7 @@ import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
@@ -32,6 +33,7 @@ public class ParameterDatasourcePanel extends JPanel {
 	}
 
 	private void initLayout() {
+		label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
 		datasourceComboBox.setPreferredSize(new Dimension(20, 23));
 		this.setLayout(new GridBagLayout());
 		this.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE));

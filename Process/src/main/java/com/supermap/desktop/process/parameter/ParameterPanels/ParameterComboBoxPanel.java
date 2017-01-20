@@ -4,6 +4,7 @@ import com.supermap.desktop.process.parameter.ParameterComboBoxCellRender;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
+import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -31,7 +32,9 @@ public class ParameterComboBoxPanel extends JPanel {
 				comboBox.addItem(item);
 			}
 		}
-		comboBox.setSelectedItem(parameterComboBox.getSelectedItem());
+		if (parameterComboBox.getSelectedItem() != null) {
+			comboBox.setSelectedItem(parameterComboBox.getSelectedItem());
+		}
 		initListeners(parameterComboBox);
 		label.setText(parameterComboBox.getDescribe());
 		comboBox.setRenderer(new ParameterComboBoxCellRender());
@@ -41,10 +44,11 @@ public class ParameterComboBoxPanel extends JPanel {
 	}
 
 	private void initLayout() {
+		label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
 		comboBox.setPreferredSize(new Dimension(20, 23));
 		this.setLayout(new GridBagLayout());
 		this.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
-		this.add(comboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+		this.add(comboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
 	}
 
 	private void initListeners(ParameterComboBox parameterComboBox) {

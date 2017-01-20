@@ -2,6 +2,7 @@ package com.supermap.desktop.process.parameter.ParameterPanels;
 
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterFile;
+import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
@@ -29,6 +30,7 @@ public class ParameterFilePanel extends JPanel {
 		if (parameterFile.getSelectedItem() != null) {
 			fileChooserControl.setText(((File) parameterFile.getSelectedItem()).getAbsolutePath());
 		}
+		label.setText(parameterFile.getDescribe());
 		initListener();
 		initLayout();
 	}
@@ -58,6 +60,7 @@ public class ParameterFilePanel extends JPanel {
 	}
 
 	private void initLayout() {
+		label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
 		fileChooserControl.setPreferredSize(new Dimension(20, 23));
 		this.setLayout(new GridBagLayout());
 		this.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE));

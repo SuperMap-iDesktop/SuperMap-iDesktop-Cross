@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
+import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -60,6 +61,8 @@ public class ParameterSaveDatasetPanel extends JPanel {
 	}
 
 	private void initLayout() {
+		labelDatasource.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
+		datasourceComboBox.setPreferredSize(new Dimension(20, 23));
 		this.setLayout(new GridBagLayout());
 		this.add(labelDatasource, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 		this.add(datasourceComboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
