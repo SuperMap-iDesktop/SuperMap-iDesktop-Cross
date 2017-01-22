@@ -51,4 +51,16 @@ public class RectangleGraph extends AbstractGraph {
 		g.setColor(color);
 		g.fill(rect);
 	}
+
+	@Override
+	public IGraph clone() {
+		RectangleGraph graph = new RectangleGraph(getCanvas());
+		graph.setX(getX());
+		graph.setY(getY());
+		graph.setWidth(getWidth());
+		graph.setHeight(getHeight());
+		graph.setArcWidth(getArcWidth());
+		graph.setArcHeight(getArcHeight());
+		return graph;
+	}
 }

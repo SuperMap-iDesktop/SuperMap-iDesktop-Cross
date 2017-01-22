@@ -22,4 +22,9 @@ public class EllipseGraph extends AbstractGraph {
 	public void paint(Graphics2D g, boolean isHot, boolean isSelected) {
 
 	}
+
+	@Override
+	public IGraph clone() {
+		return null;
+	}
 }

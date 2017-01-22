@@ -91,8 +91,5 @@ public abstract class AbstractGraph implements IGraph {
 
 	}
 
-	@Override
-	public IGraph clone() {
-		return null;
-	}
+	public abstract IGraph clone();
 }
