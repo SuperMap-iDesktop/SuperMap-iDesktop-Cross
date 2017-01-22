@@ -11,8 +11,8 @@ import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.messagebus.NewMessageBus;
 import com.supermap.desktop.params.*;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.ui.Action;
 import com.supermap.ui.*;
 
@@ -137,12 +137,7 @@ public class JDialogHeatMap extends SmDialog {
         this.getRootPane().setDefaultButton(this.buttonOK);
         setComboBoxTheme(this.comboBoxCacheType);
         setComboBoxTheme(this.comboBoxDatabaseType);
-
-        if (SystemPropertyUtilities.isWindows()) {
-            this.setSize(640, 480);
-        } else {
-            setSize(800, 540);
-        }
+        this.setSize(640, 500);
         this.setLocationRelativeTo(null);
     }
 
@@ -152,110 +147,57 @@ public class JDialogHeatMap extends SmDialog {
     }
 
     private void initLayout() {
-        initPanelBoundsLayout();
-        GroupLayout groupLayout = new GroupLayout(this.getContentPane());
-        groupLayout.setAutoCreateContainerGaps(true);
-        groupLayout.setAutoCreateGaps(true);
-        this.getContentPane().setLayout(groupLayout);
-        // @formatter:off
-        groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(groupLayout.createSequentialGroup()
-                        .addComponent(this.labelFileInputPath)
-                        .addComponent(this.textFieldFileInputPath)
-                        .addComponent(this.buttonInputBrowser, 75, 75, 75))
-                .addGroup(groupLayout.createSequentialGroup()
-                        .addComponent(this.labelCacheType)
-                        .addComponent(this.comboBoxCacheType, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addComponent(this.panelBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(groupLayout.createSequentialGroup()
-                        .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(this.labelXYIndex)
-                                .addComponent(this.labelCacheLevel)
-                                .addComponent(this.labelCacheName)
-                                .addComponent(this.labelDatabaseType)
-                                .addComponent(this.labelServiceAddress)
-                                .addComponent(this.labelDatabase)
-                                .addComponent(this.labelVersion)
-                        )
-                        .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(this.textFieldXYIndex)
-                                .addComponent(this.textFieldCacheLevel)
-                                .addComponent(this.textFieldCacheName)
-                                .addComponent(this.comboBoxDatabaseType)
-                                .addComponent(this.textFieldServiceAddress)
-                                .addComponent(this.textFieldDatabase)
-                                .addComponent(this.textFieldVersion)
-                        ))
-                .addGroup(groupLayout.createSequentialGroup()
-                        .addGap(10, 10, Short.MAX_VALUE)
-                        .addComponent(this.buttonOK, 75, 75, 75)
-                        .addComponent(this.buttonCancel, 75, 75, 75)));
-        groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(this.labelFileInputPath)
-                        .addComponent(this.textFieldFileInputPath, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(this.buttonInputBrowser, 23, 23, 23))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(this.labelCacheType)
-                        .addComponent(this.comboBoxCacheType, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addComponent(this.panelBounds, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(this.labelXYIndex)
-                        .addComponent(this.textFieldXYIndex, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(this.labelCacheLevel)
-                        .addComponent(this.textFieldCacheLevel, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(this.labelCacheName)
-                        .addComponent(this.textFieldCacheName, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(this.labelDatabaseType)
-                        .addComponent(this.comboBoxDatabaseType, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(this.labelServiceAddress)
-                        .addComponent(this.textFieldServiceAddress, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(this.labelDatabase)
-                        .addComponent(this.textFieldDatabase, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(this.labelVersion)
-                        .addComponent(this.textFieldVersion, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-                        .addComponent(this.buttonOK)
-                        .addComponent(this.buttonCancel)));
-        // @formatter:on
-    }
+        JPanel panelButton = new JPanel();
+        panelButton.setLayout(new GridBagLayout());
+        panelButton.add(this.buttonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(0, 0, 10, 10));
+        panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(0, 0, 10, 10));
+        this.panelBounds.setLayout(new GridBagLayout());
+        this.panelBounds.add(this.labelBoundsLeft, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.panelBounds.add(this.textBoundsLeft, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 0).setWeight(1, 0));
+        this.panelBounds.add(this.labelBoundsBottom, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.panelBounds.add(this.textBoundsBottom, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 0).setWeight(1, 0));
+        this.panelBounds.add(this.labelBoundsRight, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.panelBounds.add(this.textBoundsRight, new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 0).setWeight(1, 0));
+        this.panelBounds.add(this.labelBoundsTop, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 10, 0).setWeight(0, 0));
+        this.panelBounds.add(this.textBoundsTop, new GridBagConstraintsHelper(1, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 10, 0).setWeight(1, 0));
+        this.panelBounds.add(this.buttonDrawBounds, new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 5, 10, 10).setWeight(0, 0));
 
-    private void initPanelBoundsLayout() {
-        GroupLayout groupLayout = new GroupLayout(this.panelBounds);
-        groupLayout.setAutoCreateContainerGaps(true);
-        groupLayout.setAutoCreateGaps(true);
-        this.panelBounds.setLayout(groupLayout);
-        // @formatter:off
-        groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(groupLayout.createSequentialGroup()
-                        .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(this.labelBoundsLeft)
-                                .addComponent(this.labelBoundsBottom)
-                                .addComponent(this.labelBoundsRight)
-                                .addComponent(this.labelBoundsTop))
-                        .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(this.textBoundsLeft)
-                                .addComponent(this.textBoundsBottom)
-                                .addComponent(this.textBoundsRight)
-                                .addComponent(this.textBoundsTop))
-                        .addComponent(buttonDrawBounds, 75, 75, 75)));
-        groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(this.labelBoundsLeft)
-                        .addComponent(this.textBoundsLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(this.labelBoundsBottom)
-                        .addComponent(this.textBoundsBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(this.labelBoundsRight)
-                        .addComponent(this.textBoundsRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER).addComponent(this.labelBoundsTop)
-                        .addComponent(this.textBoundsTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-                        .addComponent(this.buttonDrawBounds, 23, 23, 23)));
-        // @formatter:on
+
+        this.setLayout(new GridBagLayout());
+        this.add(this.labelFileInputPath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textFieldFileInputPath, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 0).setWeight(1, 0));
+        this.add(this.buttonInputBrowser, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 5, 0, 10));
+        this.add(this.labelCacheType, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.comboBoxCacheType, new GridBagConstraintsHelper(1, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.panelBounds, new GridBagConstraintsHelper(0, 2, 4, 4).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(10, 10, 0, 10).setWeight(1, 0));
+        this.add(this.labelXYIndex, new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textFieldXYIndex, new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelCacheLevel, new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textFieldCacheLevel, new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelCacheName, new GridBagConstraintsHelper(0, 7, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textFieldCacheName, new GridBagConstraintsHelper(1, 7, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelDatabaseType, new GridBagConstraintsHelper(0, 8, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.comboBoxDatabaseType, new GridBagConstraintsHelper(1, 8, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelServiceAddress, new GridBagConstraintsHelper(0, 9, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textFieldServiceAddress, new GridBagConstraintsHelper(1, 9, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelDatabase, new GridBagConstraintsHelper(0, 10, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textFieldDatabase, new GridBagConstraintsHelper(1, 10, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelVersion, new GridBagConstraintsHelper(0, 11, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 10, 0).setWeight(0, 0));
+        this.add(this.textFieldVersion, new GridBagConstraintsHelper(1, 11, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 10, 10).setWeight(1, 0));
+
+        this.add(new JPanel(), new GridBagConstraintsHelper(0, 12, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
+        this.add(panelButton, new GridBagConstraintsHelper(0, 13, 4, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+
+        this.panelBounds.setLayout(new GridBagLayout());
+        this.panelBounds.add(this.labelBoundsLeft, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.panelBounds.add(this.textBoundsLeft, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 0).setWeight(1, 0));
+        this.panelBounds.add(this.labelBoundsBottom, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.panelBounds.add(this.textBoundsBottom, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 0).setWeight(1, 0));
+        this.panelBounds.add(this.labelBoundsRight, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.panelBounds.add(this.textBoundsRight, new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 0).setWeight(1, 0));
+        this.panelBounds.add(this.labelBoundsTop, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 10, 0).setWeight(0, 0));
+        this.panelBounds.add(this.textBoundsTop, new GridBagConstraintsHelper(1, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 10, 0).setWeight(1, 0));
+        this.panelBounds.add(this.buttonDrawBounds, new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 5, 10, 0).setWeight(0, 0));
     }
 
     private void initResources() {

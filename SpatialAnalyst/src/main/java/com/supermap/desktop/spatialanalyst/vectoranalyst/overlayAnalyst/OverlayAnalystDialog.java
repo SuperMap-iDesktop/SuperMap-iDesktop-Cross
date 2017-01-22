@@ -453,8 +453,7 @@ public class OverlayAnalystDialog extends SmDialog {
         this.componentList.add(this.buttonOK);
         this.componentList.add(this.buttonCancel);
         this.setFocusTraversalPolicy(policy);
-        setSize(new Dimension(580, 460));
-        setMinimumSize(new Dimension(580, 460));
+        setSize(new Dimension(580, 400));
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -473,7 +472,6 @@ public class OverlayAnalystDialog extends SmDialog {
             }
         });
         scrollPane.setViewportView(listOverlayAnalystType);
-        scrollPane.setPreferredSize(new Dimension(160, 340));
         JPanel panelBasicAnalyst = new JPanel();
         panelBasicAnalyst.setLayout(new GridBagLayout());
         panelBasicAnalyst.add(this.panelSource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
@@ -481,12 +479,13 @@ public class OverlayAnalystDialog extends SmDialog {
         panelBasicAnalyst.add(this.panelTarget, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
         JPanel panelButton = new JPanel();
         panelButton.setLayout(new GridBagLayout());
-        panelButton.add(this.buttonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 5));
-        panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(2, 0, 10, 10));
+        panelButton.add(this.buttonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(0, 0, 10, 5));
+        panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(0, 0, 10, 10));
         this.setLayout(new GridBagLayout());
-        this.add(scrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setInsets(10, 10, 10, 0).setFill(GridBagConstraints.BOTH));
-        this.add(panelBasicAnalyst, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setInsets(5).setFill(GridBagConstraints.BOTH));
-        this.add(panelButton, new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+        this.add(scrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 0).setInsets(10, 10, 0, 0).setFill(GridBagConstraints.BOTH));
+        this.add(panelBasicAnalyst, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 0).setInsets(10,10,0,10).setFill(GridBagConstraints.BOTH));
+        this.add(new JPanel(), new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
+        this.add(panelButton, new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 
     }
 
@@ -609,13 +608,13 @@ public class OverlayAnalystDialog extends SmDialog {
      */
     private void addListItem() {
         DefaultListModel<Object> listModel = new DefaultListModel<Object>();
-        listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Clip"), new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Clip.png"))));
-        listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Union"), new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Union.png"))));
-        listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Erase"), new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Erase.png"))));
-        listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Intersect"), new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Intersect.png"))));
-        listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Identity"), new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Identity.png"))));
-        listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_XOR"), new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_XOR.png"))));
-        listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Update"), new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Update.png"))));
+        listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Clip")+"  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Clip.png"))));
+        listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Union")+"  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Union.png"))));
+        listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Erase")+"  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Erase.png"))));
+        listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Intersect")+"  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Intersect.png"))));
+        listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Identity")+"  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Identity.png"))));
+        listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_XOR")+"  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_XOR.png"))));
+        listModel.addElement(new DataCell(ControlsProperties.getString("String_OverlayAnalystMethod_Update")+"  ", new ImageIcon(OverlayAnalystDialog.class.getResource("/OverlayAnalyst/Image_OverlayAnalyst_Update.png"))));
         this.listOverlayAnalystType.setModel(listModel);
         this.listOverlayAnalystType.setSelectedIndex(0);
         this.listOverlayAnalystType.setCellRenderer(new CommonListCellRenderer());
