@@ -14,13 +14,28 @@ public class LineGraph extends AbstractGraph{
 	}
 
 	@Override
-	public double getWidth() {
-		return 0;
+	public Rectangle getBounds() {
+		return null;
 	}
 
 	@Override
-	public double getHeight() {
-		return 0;
+	public void setX(double x) {
+
+	}
+
+	@Override
+	public void setY(double y) {
+
+	}
+
+	@Override
+	public void setWidth(double width) {
+
+	}
+
+	@Override
+	public void setHeight(double height) {
+
 	}
 
 	@Override
@@ -29,7 +44,7 @@ public class LineGraph extends AbstractGraph{
 	}
 
 	@Override
-	public void paint(Graphics2D g) {
+	public void paint(Graphics2D g, boolean isHot, boolean isSelected) {
 
 	}
 }

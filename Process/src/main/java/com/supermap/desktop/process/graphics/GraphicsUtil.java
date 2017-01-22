@@ -17,6 +17,16 @@ public class GraphicsUtil {
 	private GraphicsUtil() {
 	}
 
+	public static Rectangle createRectangle(Rectangle2D rectangle2D) {
+		return createRectangle(rectangle2D.getX(), rectangle2D.getY(), rectangle2D.getWidth(), rectangle2D.getHeight());
+	}
+
+	public static Rectangle createRectangle(double x, double y, double width, double height) {
+		Rectangle rectangle = new Rectangle();
+		rectangle.setRect(x, y, width, height);
+		return rectangle;
+	}
+
 	public static boolean lineContainsPoint(int x1, int y1, int x2, int y2, int px, int py) {
 		return lineContainsPoint(x1, y1, x2, y2, px, py, 3.0D);
 	}
@@ -24,35 +34,35 @@ public class GraphicsUtil {
 	public static boolean lineContainsPoint(int x1, int y1, int x2, int y2, int px, int py, double tolerance) {
 		Rectangle r = new Rectangle(new Point(x1, y1));
 		r.add(x2, y2);
-		r.grow(Math.max(2, (int)Math.ceil(tolerance)), Math.max(2, (int)Math.ceil(tolerance)));
-		if(!r.contains(px, py)) {
+		r.grow(Math.max(2, (int) Math.ceil(tolerance)), Math.max(2, (int) Math.ceil(tolerance)));
+		if (!r.contains(px, py)) {
 			return false;
-		} else if(x1 == x2) {
-			return (double)Math.abs(px - x1) <= tolerance;
-		} else if(y1 == y2) {
-			return (double)Math.abs(py - y1) <= tolerance;
+		} else if (x1 == x2) {
+			return (double) Math.abs(px - x1) <= tolerance;
+		} else if (y1 == y2) {
+			return (double) Math.abs(py - y1) <= tolerance;
 		} else {
-			double a = (double)(y1 - y2) / (double)(x1 - x2);
-			double b = (double)y1 - a * (double)x1;
-			double x = ((double)py - b) / a;
-			double y = a * (double)px + b;
-			return Math.min(Math.abs(x - (double)px), Math.abs(y - (double)py)) <= tolerance;
+			double a = (double) (y1 - y2) / (double) (x1 - x2);
+			double b = (double) y1 - a * (double) x1;
+			double x = ((double) py - b) / a;
+			double y = a * (double) px + b;
+			return Math.min(Math.abs(x - (double) px), Math.abs(y - (double) py)) <= tolerance;
 		}
 	}
 
 	public static boolean lineContainsPoint(double x1, double y1, double x2, double y2, double px, double py, double tolerance) {
 		Rectangle2D.Double r = new Rectangle2D.Double(x1, y1, 0.0D, 0.0D);
 		r.add(x2, y2);
-		double grow = (double)Math.max(2, (int)Math.ceil(tolerance));
+		double grow = (double) Math.max(2, (int) Math.ceil(tolerance));
 		r.x -= grow;
 		r.y -= grow;
 		r.width += grow * 2.0D;
 		r.height += grow * 2.0D;
-		if(!r.contains(px, py)) {
+		if (!r.contains(px, py)) {
 			return false;
-		} else if(x1 == x2) {
+		} else if (x1 == x2) {
 			return Math.abs(px - x1) <= tolerance;
-		} else if(y1 == y2) {
+		} else if (y1 == y2) {
 			return Math.abs(py - y1) <= tolerance;
 		} else {
 			double a = (y1 - y2) / (x1 - x2);
@@ -68,11 +78,11 @@ public class GraphicsUtil {
 		int vx = x2 - x1;
 		int vy = y2 - y1;
 		byte direction1;
-		if(vy < vx && vx > -vy) {
+		if (vy < vx && vx > -vy) {
 			direction1 = 4;
-		} else if(vy > vx && vy > -vx) {
+		} else if (vy > vx && vy > -vx) {
 			direction1 = 2;
-		} else if(vx < vy && vx < -vy) {
+		} else if (vx < vy && vx < -vy) {
 			direction1 = 1;
 		} else {
 			direction1 = 8;
@@ -86,11 +96,11 @@ public class GraphicsUtil {
 		double vx = x2 - x1;
 		double vy = y2 - y1;
 		byte direction1;
-		if(vy < vx && vx > -vy) {
+		if (vy < vx && vx > -vy) {
 			direction1 = 4;
-		} else if(vy > vx && vy > -vx) {
+		} else if (vy > vx && vy > -vx) {
 			direction1 = 2;
-		} else if(vx < vy && vx < -vy) {
+		} else if (vx < vy && vx < -vy) {
 			direction1 = 1;
 		} else {
 			direction1 = 8;
@@ -101,15 +111,15 @@ public class GraphicsUtil {
 
 	public static int outcode(Rectangle r1, Rectangle r2) {
 		int outcode = 0;
-		if(r2.x > r1.x + r1.width) {
+		if (r2.x > r1.x + r1.width) {
 			outcode = 4;
-		} else if(r2.x + r2.width < r1.x) {
+		} else if (r2.x + r2.width < r1.x) {
 			outcode = 1;
 		}
 
-		if(r2.y > r1.y + r1.height) {
+		if (r2.y > r1.y + r1.height) {
 			outcode |= 8;
-		} else if(r2.y + r2.height < r1.y) {
+		} else if (r2.y + r2.height < r1.y) {
 			outcode |= 2;
 		}
 
@@ -118,15 +128,15 @@ public class GraphicsUtil {
 
 	public static int outcode(Rectangle2D.Double r1, Rectangle2D.Double r2) {
 		int outcode = 0;
-		if(r2.x > r1.x + r1.width) {
+		if (r2.x > r1.x + r1.width) {
 			outcode = 4;
-		} else if(r2.x + r2.width < r1.x) {
+		} else if (r2.x + r2.width < r1.x) {
 			outcode = 1;
 		}
 
-		if(r2.y > r1.y + r1.height) {
+		if (r2.y > r1.y + r1.height) {
 			outcode |= 8;
-		} else if(r2.y + r2.height < r1.y) {
+		} else if (r2.y + r2.height < r1.y) {
 			outcode |= 2;
 		}
 
@@ -164,8 +174,8 @@ public class GraphicsUtil {
 		double moveToY = prevY;
 		i.next();
 
-		while(!i.isDone()) {
-			switch(i.currentSegment(coords)) {
+		while (!i.isDone()) {
+			switch (i.currentSegment(coords)) {
 				case 0:
 					moveToX = coords[0];
 					moveToY = coords[1];
@@ -176,9 +186,9 @@ public class GraphicsUtil {
 			}
 
 			java.awt.geom.Point2D.Double l = intersect(prevX, prevY, coords[0], coords[1], p.x, p.y, ctr.x, ctr.y);
-			if(l != null) {
+			if (l != null) {
 				double cl = length2(l.x, l.y, p.x, p.y);
-				if(cl < len) {
+				if (cl < len) {
 					len = cl;
 					cx = l.x;
 					cy = l.y;
@@ -190,11 +200,11 @@ public class GraphicsUtil {
 			i.next();
 		}
 
-		if(len == 1.7976931348623157E308D) {
-			for(i = shape.getPathIterator(new AffineTransform(), 1.0D); !i.isDone(); i.next()) {
+		if (len == 1.7976931348623157E308D) {
+			for (i = shape.getPathIterator(new AffineTransform(), 1.0D); !i.isDone(); i.next()) {
 				i.currentSegment(coords);
 				double l1 = length2(ctr.x, ctr.y, coords[0], coords[1]);
-				if(l1 < len) {
+				if (l1 < len) {
 					len = l1;
 					cx = coords[0];
 					cy = coords[1];
@@ -230,11 +240,11 @@ public class GraphicsUtil {
 	}
 
 	public static int range(int min, int max, int value) {
-		if(value < min) {
+		if (value < min) {
 			value = min;
 		}
 
-		if(value > max) {
+		if (value > max) {
 			value = max;
 		}
 
@@ -242,11 +252,11 @@ public class GraphicsUtil {
 	}
 
 	public static double range(double min, double max, double value) {
-		if(value < min) {
+		if (value < min) {
 			value = min;
 		}
 
-		if(value > max) {
+		if (value > max) {
 			value = max;
 		}
 
@@ -254,11 +264,11 @@ public class GraphicsUtil {
 	}
 
 	public static long length2(int x1, int y1, int x2, int y2) {
-		return (long)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+		return (long) ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
 	}
 
 	public static long length(int x1, int y1, int x2, int y2) {
-		return (long)Math.sqrt((double)length2(x1, y1, x2, y2));
+		return (long) Math.sqrt((double) length2(x1, y1, x2, y2));
 	}
 
 	public static double length2(double x1, double y1, double x2, double y2) {
@@ -282,7 +292,7 @@ public class GraphicsUtil {
 	public static double pointToAngle(Rectangle r, Point p) {
 		int px = p.x - (r.x + r.width / 2);
 		int py = p.y - (r.y + r.height / 2);
-		return Math.atan2((double)(py * r.width), (double)(px * r.height));
+		return Math.atan2((double) (py * r.width), (double) (px * r.height));
 	}
 
 	public static double pointToAngle(Rectangle2D.Double r, java.awt.geom.Point2D.Double p) {
@@ -301,17 +311,17 @@ public class GraphicsUtil {
 		double e = 1.0E-4D;
 		int x = 0;
 		int y = 0;
-		if(Math.abs(si) > e) {
-			x = (int)((1.0D + co / Math.abs(si)) / 2.0D * (double)r.width);
+		if (Math.abs(si) > e) {
+			x = (int) ((1.0D + co / Math.abs(si)) / 2.0D * (double) r.width);
 			x = range(0, r.width, x);
-		} else if(co >= 0.0D) {
+		} else if (co >= 0.0D) {
 			x = r.width;
 		}
 
-		if(Math.abs(co) > e) {
-			y = (int)((1.0D + si / Math.abs(co)) / 2.0D * (double)r.height);
+		if (Math.abs(co) > e) {
+			y = (int) ((1.0D + si / Math.abs(co)) / 2.0D * (double) r.height);
 			y = range(0, r.height, y);
-		} else if(si >= 0.0D) {
+		} else if (si >= 0.0D) {
 			y = r.height;
 		}
 
@@ -324,17 +334,17 @@ public class GraphicsUtil {
 		double e = 1.0E-4D;
 		double x = 0.0D;
 		double y = 0.0D;
-		if(Math.abs(si) > e) {
+		if (Math.abs(si) > e) {
 			x = (1.0D + co / Math.abs(si)) / 2.0D * r.width;
 			x = range(0.0D, r.width, x);
-		} else if(co >= 0.0D) {
+		} else if (co >= 0.0D) {
 			x = r.width;
 		}
 
-		if(Math.abs(co) > e) {
+		if (Math.abs(co) > e) {
 			y = (1.0D + si / Math.abs(co)) / 2.0D * r.height;
 			y = range(0.0D, r.height, y);
-		} else if(si >= 0.0D) {
+		} else if (si >= 0.0D) {
 			y = r.height;
 		}
 
@@ -344,7 +354,7 @@ public class GraphicsUtil {
 	public static Point polarToPoint(double angle, double fx, double fy) {
 		double si = Math.sin(angle);
 		double co = Math.cos(angle);
-		return new Point((int)(fx * co + 0.5D), (int)(fy * si + 0.5D));
+		return new Point((int) (fx * co + 0.5D), (int) (fy * si + 0.5D));
 	}
 
 	public static java.awt.geom.Point2D.Double polarToPoint2D(double angle, double fx, double fy) {
@@ -355,7 +365,7 @@ public class GraphicsUtil {
 
 	public static Point ovalAngleToPoint(Rectangle r, double angle) {
 		Point center = center(r);
-		Point p = polarToPoint(angle, (double)(r.width / 2), (double)(r.height / 2));
+		Point p = polarToPoint(angle, (double) (r.width / 2), (double) (r.height / 2));
 		return new Point(center.x + p.x, center.y + p.y);
 	}
 
@@ -366,17 +376,17 @@ public class GraphicsUtil {
 	}
 
 	public static Point intersect(int xa, int ya, int xb, int yb, int xc, int yc, int xd, int yd) {
-		double denom = (double)((xb - xa) * (yd - yc) - (yb - ya) * (xd - xc));
-		double rnum = (double)((ya - yc) * (xd - xc) - (xa - xc) * (yd - yc));
-		if(denom == 0.0D) {
-			return rnum != 0.0D?null:((xa >= xb || xb >= xc && xb >= xd) && (xa <= xb || xb <= xc && xb <= xd)?new Point(xa, ya):new Point(xb, yb));
+		double denom = (double) ((xb - xa) * (yd - yc) - (yb - ya) * (xd - xc));
+		double rnum = (double) ((ya - yc) * (xd - xc) - (xa - xc) * (yd - yc));
+		if (denom == 0.0D) {
+			return rnum != 0.0D ? null : ((xa >= xb || xb >= xc && xb >= xd) && (xa <= xb || xb <= xc && xb <= xd) ? new Point(xa, ya) : new Point(xb, yb));
 		} else {
 			double r = rnum / denom;
-			double snum = (double)((ya - yc) * (xb - xa) - (xa - xc) * (yb - ya));
+			double snum = (double) ((ya - yc) * (xb - xa) - (xa - xc) * (yb - ya));
 			double s = snum / denom;
-			if(0.0D <= r && r <= 1.0D && 0.0D <= s && s <= 1.0D) {
-				int px = (int)((double)xa + (double)(xb - xa) * r);
-				int py = (int)((double)ya + (double)(yb - ya) * r);
+			if (0.0D <= r && r <= 1.0D && 0.0D <= s && s <= 1.0D) {
+				int px = (int) ((double) xa + (double) (xb - xa) * r);
+				int py = (int) ((double) ya + (double) (yb - ya) * r);
 				return new Point(px, py);
 			} else {
 				return null;
@@ -387,13 +397,13 @@ public class GraphicsUtil {
 	public static java.awt.geom.Point2D.Double intersect(double xa, double ya, double xb, double yb, double xc, double yc, double xd, double yd) {
 		double denom = (xb - xa) * (yd - yc) - (yb - ya) * (xd - xc);
 		double rnum = (ya - yc) * (xd - xc) - (xa - xc) * (yd - yc);
-		if(denom == 0.0D) {
-			return rnum != 0.0D?null:((xa >= xb || xb >= xc && xb >= xd) && (xa <= xb || xb <= xc && xb <= xd)?new java.awt.geom.Point2D.Double(xa, ya):new java.awt.geom.Point2D.Double(xb, yb));
+		if (denom == 0.0D) {
+			return rnum != 0.0D ? null : ((xa >= xb || xb >= xc && xb >= xd) && (xa <= xb || xb <= xc && xb <= xd) ? new java.awt.geom.Point2D.Double(xa, ya) : new java.awt.geom.Point2D.Double(xb, yb));
 		} else {
 			double r = rnum / denom;
 			double snum = (ya - yc) * (xb - xa) - (xa - xc) * (yb - ya);
 			double s = snum / denom;
-			if(0.0D <= r && r <= 1.0D && 0.0D <= s && s <= 1.0D) {
+			if (0.0D <= r && r <= 1.0D && 0.0D <= s && s <= 1.0D) {
 				double px = xa + (xb - xa) * r;
 				double py = ya + (yb - ya) * r;
 				return new java.awt.geom.Point2D.Double(px, py);
@@ -406,22 +416,22 @@ public class GraphicsUtil {
 	public static java.awt.geom.Point2D.Double intersect(double xa, double ya, double xb, double yb, double xc, double yc, double xd, double yd, double limit) {
 		double denom = (xb - xa) * (yd - yc) - (yb - ya) * (xd - xc);
 		double rnum = (ya - yc) * (xd - xc) - (xa - xc) * (yd - yc);
-		if(denom == 0.0D) {
-			return rnum != 0.0D?null:((xa >= xb || xb >= xc && xb >= xd) && (xa <= xb || xb <= xc && xb <= xd)?new java.awt.geom.Point2D.Double(xa, ya):new java.awt.geom.Point2D.Double(xb, yb));
+		if (denom == 0.0D) {
+			return rnum != 0.0D ? null : ((xa >= xb || xb >= xc && xb >= xd) && (xa <= xb || xb <= xc && xb <= xd) ? new java.awt.geom.Point2D.Double(xa, ya) : new java.awt.geom.Point2D.Double(xb, yb));
 		} else {
 			double r = rnum / denom;
 			double snum = (ya - yc) * (xb - xa) - (xa - xc) * (yb - ya);
 			double s = snum / denom;
 			double px;
 			double py;
-			if(0.0D <= r && r <= 1.0D && 0.0D <= s && s <= 1.0D) {
+			if (0.0D <= r && r <= 1.0D && 0.0D <= s && s <= 1.0D) {
 				px = xa + (xb - xa) * r;
 				py = ya + (yb - ya) * r;
 				return new java.awt.geom.Point2D.Double(px, py);
 			} else {
 				px = xa + (xb - xa) * r;
 				py = ya + (yb - ya) * r;
-				return length(xa, ya, px, py) > limit && length(xb, yb, px, py) > limit && length(xc, yc, px, py) > limit && length(xd, yd, px, py) > limit?null:new java.awt.geom.Point2D.Double(px, py);
+				return length(xa, ya, px, py) > limit && length(xb, yb, px, py) > limit && length(xc, yc, px, py) > limit && length(xd, yd, px, py) > limit ? null : new java.awt.geom.Point2D.Double(px, py);
 			}
 		}
 	}
@@ -429,17 +439,17 @@ public class GraphicsUtil {
 	public static double distanceFromLine(int xa, int ya, int xb, int yb, int xc, int yc) {
 		int xdiff = xb - xa;
 		int ydiff = yb - ya;
-		long l2 = (long)(xdiff * xdiff + ydiff * ydiff);
-		if(l2 == 0L) {
-			return (double)length(xa, ya, xc, yc);
+		long l2 = (long) (xdiff * xdiff + ydiff * ydiff);
+		if (l2 == 0L) {
+			return (double) length(xa, ya, xc, yc);
 		} else {
-			double rnum = (double)((ya - yc) * (ya - yb) - (xa - xc) * (xb - xa));
-			double r = rnum / (double)l2;
-			if(r >= 0.0D && r <= 1.0D) {
-				double xi = (double)xa + r * (double)xdiff;
-				double yi = (double)ya + r * (double)ydiff;
-				double xd = (double)xc - xi;
-				double yd = (double)yc - yi;
+			double rnum = (double) ((ya - yc) * (ya - yb) - (xa - xc) * (xb - xa));
+			double r = rnum / (double) l2;
+			if (r >= 0.0D && r <= 1.0D) {
+				double xi = (double) xa + r * (double) xdiff;
+				double yi = (double) ya + r * (double) ydiff;
+				double xd = (double) xc - xi;
+				double yd = (double) yc - yi;
 				return Math.sqrt(xd * xd + yd * yd);
 			} else {
 				return 1.7976931348623157E308D;

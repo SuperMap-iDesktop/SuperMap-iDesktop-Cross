@@ -14,22 +14,12 @@ public class EllipseGraph extends AbstractGraph {
 	}
 
 	@Override
-	public double getWidth() {
-		return 0;
-	}
-
-	@Override
-	public double getHeight() {
-		return 0;
-	}
-
-	@Override
 	public boolean contains(Point p) {
 		return false;
 	}
 
 	@Override
-	public void paint(Graphics2D g) {
+	public void paint(Graphics2D g, boolean isHot, boolean isSelected) {
 
 	}
 }

@@ -3,6 +3,7 @@ package com.supermap.desktop.process.graphics;
 import com.sun.corba.se.impl.orbutil.graph.Graph;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
+import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import org.jhotdraw.draw.AttributeKeys;
 import org.jhotdraw.geom.Geom;
 
@@ -32,12 +33,31 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private IGraph hotGraph;
 	private IGraph selectedGraph;
 
+	private boolean isPreview = false;
+
 	public static void main(String[] args) {
 		final JFrame frame = new JFrame();
 		frame.setSize(1000, 650);
-		GraphCanvas canvas = new GraphCanvas();
+		final GraphCanvas canvas = new GraphCanvas();
+
+
 		frame.getContentPane().setLayout(new BorderLayout());
 		frame.getContentPane().add(canvas, BorderLayout.CENTER);
+
+		JButton button = new JButton("Rectangle");
+		frame.getContentPane().add(button, BorderLayout.NORTH);
+		button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RectangleGraph graph = new RectangleGraph(canvas);
+				graph.setWidth(100);
+				graph.setHeight(40);
+				graph.setArcHeight(5);
+				graph.setArcWidth(5);
+
+				canvas.createGraph(graph);
+			}
+		});
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -90,7 +110,11 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			IGraph graph = (IGraph) iterator.next();
-			graph.paint(g);
+			graph.paint(g, graph == this.hotGraph, graph == this.selectedGraph);
+		}
+
+		if (this.isPreview && this.toCreation != null) {
+			this.toCreation.paint(g, false, false);
 		}
 	}
 
@@ -99,7 +123,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	}
 
 	/**
-	 * 这是个借鉴方法，暂未完全搞清楚作用和用法
+	 * 这是个借鉴方法，大约是一些抗锯齿的设置
 	 *
 	 * @param g
 	 */
@@ -115,6 +139,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	public void createGraph(IGraph graph) {
 		this.toCreation = graph;
+		this.isPreview = true;
 	}
 
 	private IGraph findGraph(Point p) {
@@ -139,10 +164,14 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			Point point = e.getPoint();
 
 			if (this.toCreation != null) {
-
-			} else {
-
+				this.isPreview = false;
+				repaint(this.toCreation, point);
+				Rectangle bounds = this.toCreation.getBounds();
+				this.graphQuadTree.add(this.toCreation, new Rectangle2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight()));
 			}
+		} else if (SwingUtilities.isRightMouseButton(e)) {
+			this.isPreview = false;
+
 		}
 	}
 
@@ -173,7 +202,20 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
+		if (this.toCreation != null && this.isPreview) {
+			repaint(this.toCreation, e.getPoint());
+		}
+	}
 
+	private void repaint(IGraph graph, Point point) {
+		if (graph.getX() != point.getX() && graph.getY() != point.getY()) {
+			repaint(this.toCreation.getBounds());
+			double x = point.getX() - this.toCreation.getWidth() / 2 - this.toCreation.getBorderWidth();
+			double y = point.getY() - this.toCreation.getHeight() / 2 - this.toCreation.getBorderWidth();
+			this.toCreation.setX(x);
+			this.toCreation.setY(y);
+			repaint(this.toCreation.getBounds());
+		}
 	}
 
 	@Override
