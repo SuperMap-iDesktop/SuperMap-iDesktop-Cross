@@ -33,8 +33,11 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private IGraph toCreation;
 	private IGraph hotGraph;
 	private IGraph selectedGraph;
-
 	private IGraph previewGraph;
+
+	private IGraph draggedGraph;
+	private Point dragBegin;
+	private Point dragCenter;
 
 	public static void main(String[] args) {
 		final JFrame frame = new JFrame();
@@ -196,34 +199,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-
-	}
-
-	private IGraph findGraph(Point point) {
-		IGraph graph = null;
-		Collection<IGraph> c = this.graphQuadTree.findContains(new Point2D.Double(point.getX(), point.getY()));
-
-		if (c != null && c.size() > 0) {
-			Iterator<IGraph> iterator = c.iterator();
-			graph = iterator.next();
-		}
-		return graph;
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e)) {
 			Point point = e.getPoint();
 
-			if (this.toCreation != null) {
-
-				// toCreation 不为空，则新建
-				this.previewGraph = null;
-				repaint(this.toCreation, point);
-				Rectangle bounds = this.toCreation.getBounds();
-				this.graphQuadTree.add(this.toCreation, new Rectangle2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight()));
-				this.toCreation = null;
-			} else {
+			if (this.toCreation == null) {
 
 				// toCreation 为空，则查询
 				IGraph graph = findGraph(point);
@@ -246,16 +225,60 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 					}
 				}
 			}
-		} else if (SwingUtilities.isRightMouseButton(e)) {
-			this.toCreation = null;
-			this.previewGraph = null;
-			repaint();
+		}
+	}
+
+	private IGraph findGraph(Point point) {
+		IGraph graph = null;
+		Collection<IGraph> c = this.graphQuadTree.findContains(new Point2D.Double(point.getX(), point.getY()));
+
+		if (c != null && c.size() > 0) {
+			Iterator<IGraph> iterator = c.iterator();
+			graph = iterator.next();
+		}
+		return graph;
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		if (SwingUtilities.isLeftMouseButton(e)) {
+			System.out.println(e.getPoint());
+			IGraph graph = findGraph(e.getPoint());
+			if (graph != null && this.selectedGraph == graph) {
+				this.draggedGraph = graph;
+				this.dragBegin = e.getPoint();
+				this.dragCenter = this.draggedGraph.getCenter();
+			} else {
+				this.draggedGraph = null;
+				this.dragBegin = null;
+				this.dragCenter = null;
+			}
 		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		if (SwingUtilities.isLeftMouseButton(e)) {
+			Point point = e.getPoint();
 
+			if (this.toCreation != null) {
+
+				// toCreation 不为空，则新建
+				this.previewGraph = null;
+				repaint(this.toCreation, point);
+				Rectangle bounds = this.toCreation.getBounds();
+				this.graphQuadTree.add(this.toCreation, new Rectangle2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight()));
+				this.toCreation = null;
+			}
+
+			if (this.draggedGraph != null) {
+
+			}
+		} else if (SwingUtilities.isRightMouseButton(e)) {
+			this.toCreation = null;
+			this.previewGraph = null;
+			repaint();
+		}
 	}
 
 	@Override
@@ -265,12 +288,21 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-
+		this.draggedGraph = null;
+		this.dragBegin = null;
+		this.dragCenter = null;
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		System.out.println(e.getPoint());
+		if (SwingUtilities.isLeftMouseButton(e) && this.draggedGraph != null && this.dragBegin != null) {
+			this.graphQuadTree.remove(this.draggedGraph);
+			Point dragged = new Point();
+			dragged.setLocation(this.dragCenter.getX(), this.dragCenter.getY());
+			dragged.translate(e.getPoint().x - this.dragBegin.x, e.getPoint().y - this.dragBegin.y);
+			repaint(this.draggedGraph, dragged);
+			this.graphQuadTree.add(this.draggedGraph, new Rectangle2D.Double(this.draggedGraph.getX(), this.draggedGraph.getY(), this.draggedGraph.getWidth(), this.draggedGraph.getHeight()));
+		}
 	}
 
 	@Override

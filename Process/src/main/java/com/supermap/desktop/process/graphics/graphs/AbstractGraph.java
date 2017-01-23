@@ -37,6 +37,13 @@ public abstract class AbstractGraph implements IGraph {
 	}
 
 	@Override
+	public Point getCenter() {
+		Point center = new Point();
+		center.setLocation(this.x + this.width / 2, this.y + this.height / 2);
+		return center;
+	}
+
+	@Override
 	public double getX() {
 		return this.x;
 	}

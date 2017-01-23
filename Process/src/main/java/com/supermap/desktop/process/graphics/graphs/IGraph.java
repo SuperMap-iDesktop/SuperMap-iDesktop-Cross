@@ -16,6 +16,8 @@ public interface IGraph {
 
 	Rectangle getBounds();
 
+	Point getCenter();
+
 	double getX();
 
 	double getY();
