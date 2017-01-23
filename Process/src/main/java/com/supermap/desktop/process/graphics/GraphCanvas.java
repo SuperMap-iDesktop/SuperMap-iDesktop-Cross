@@ -77,10 +77,35 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	@Override
 	protected void paintComponent(Graphics g) {
 		Graphics2D graphics2D = (Graphics2D) g;
+
+//		int borderWidth = getScale(2);
+//		int x = getScale(1);
+//		int y = getScale(1);
+//		int width = getScale(4);
+//		int height = getScale(4);
+//
+//		graphics2D.setColor(Color.RED);
+//		Stroke stroke = new BasicStroke(borderWidth);
+//		graphics2D.setStroke(stroke);
+//		Rectangle rectangle = new Rectangle(x, y, width, height);
+//		graphics2D.draw(rectangle);
+
+
+//		graphics2D.setColor(Color.RED);
+//		Stroke stroke = new BasicStroke(4);
+//		graphics2D.setStroke(stroke);
+//		Rectangle rectangle = new Rectangle(3, 3, 5, 5);
+//		graphics2D.draw(rectangle);
+
+
 		setViewRenderingHints(graphics2D);
 		paintBackground(graphics2D);
 		paintCanvas(graphics2D);
 		paintGraphs(graphics2D);
+	}
+
+	private int getScale(int i) {
+		return i * 100;
 	}
 
 	/**
@@ -114,7 +139,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		}
 
 		if (this.previewGraph != null) {
-			this.previewGraph.paint(g, false, false);
+			this.previewGraph.paintPreview(g);
 		}
 	}
 

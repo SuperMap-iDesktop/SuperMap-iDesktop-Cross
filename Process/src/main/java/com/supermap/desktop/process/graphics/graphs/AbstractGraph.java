@@ -91,5 +91,10 @@ public abstract class AbstractGraph implements IGraph {
 
 	}
 
+	@Override
+	public void paintPreview(Graphics2D g) {
+
+	}
+
 	public abstract IGraph clone();
 }

@@ -36,5 +36,7 @@ public interface IGraph {
 
 	void paint(Graphics2D g, boolean isHot, boolean isSelected);
 
+	void paintPreview(Graphics2D g);
+
 	IGraph clone();
 }

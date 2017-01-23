@@ -39,6 +39,14 @@ public class RectangleGraph extends AbstractGraph {
 		return rect.contains(p);
 	}
 
+	/**
+	 * 为了演示出结果先暂时这样，后续使用 decorator 来重构
+	 * hotDecorator selectedDecorator 等
+	 *
+	 * @param g
+	 * @param isHot
+	 * @param isSelected
+	 */
 	@Override
 	public void paint(Graphics2D g, boolean isHot, boolean isSelected) {
 		RoundRectangle2D rect = new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), this.arcWidth, this.arcHeight);
@@ -47,7 +55,31 @@ public class RectangleGraph extends AbstractGraph {
 		g.setStroke(stroke);
 		g.draw(rect);
 
-		Color color = new Color(Color.PINK.getRed(), Color.PINK.getGreen(), Color.PINK.getBlue(), 100);
+		if (isHot) {
+			Color color = new Color(Color.PINK.getRed(), Color.PINK.getGreen(), Color.PINK.getBlue(), 100);
+			g.setColor(color);
+		} else if (isSelected) {
+
+		} else {
+
+		}
+		g.fill(rect);
+	}
+
+	/**
+	 * 为了演示出结果先暂时这样，后续使用 decorator 来重构
+	 *
+	 * @param g
+	 */
+	@Override
+	public void paintPreview(Graphics2D g) {
+		RoundRectangle2D rect = new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), this.arcWidth, this.arcHeight);
+		g.setColor(Color.BLACK);
+		Stroke stroke = new BasicStroke(getBorderWidth());
+		g.setStroke(stroke);
+		g.draw(rect);
+
+		Color color = new Color(Color.LIGHT_GRAY.getRed(), Color.LIGHT_GRAY.getGreen(), Color.LIGHT_GRAY.getBlue(), 100);
 		g.setColor(color);
 		g.fill(rect);
 	}
