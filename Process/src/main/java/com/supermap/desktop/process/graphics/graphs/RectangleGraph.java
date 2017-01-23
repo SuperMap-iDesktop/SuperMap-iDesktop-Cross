@@ -1,8 +1,10 @@
 package com.supermap.desktop.process.graphics.graphs;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.GraphicsUtil;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
 /**
@@ -50,20 +52,27 @@ public class RectangleGraph extends AbstractGraph {
 	@Override
 	public void paint(Graphics2D g, boolean isHot, boolean isSelected) {
 		RoundRectangle2D rect = new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), this.arcWidth, this.arcHeight);
-		g.setColor(Color.BLACK);
-		Stroke stroke = new BasicStroke(getBorderWidth());
-		g.setStroke(stroke);
-		g.draw(rect);
+		Color color = Color.decode("#AEEEEE");
+		g.setColor(color);
+		g.fill(rect);
+
+		if (isSelected) {
+			Color hot = GraphicsUtil.transparentColor(Color.BLUE, 100);
+			g.setColor(hot);
+			g.fill(rect);
+		}
 
 		if (isHot) {
-			Color color = new Color(Color.PINK.getRed(), Color.PINK.getGreen(), Color.PINK.getBlue(), 100);
-			g.setColor(color);
-		} else if (isSelected) {
-
-		} else {
-
+			Color hot = GraphicsUtil.transparentColor(Color.LIGHT_GRAY, 100);
+			g.setColor(hot);
+			g.fill(rect);
 		}
-		g.fill(rect);
+
+		RoundRectangle2D borderRect = new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), this.arcWidth, this.arcHeight);
+		g.setColor(Color.BLACK);
+		Stroke stroke = new BasicStroke(getBorderWidth(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+		g.setStroke(stroke);
+		g.draw(borderRect);
 	}
 
 	/**
@@ -74,14 +83,15 @@ public class RectangleGraph extends AbstractGraph {
 	@Override
 	public void paintPreview(Graphics2D g) {
 		RoundRectangle2D rect = new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), this.arcWidth, this.arcHeight);
-		g.setColor(Color.BLACK);
-		Stroke stroke = new BasicStroke(getBorderWidth());
-		g.setStroke(stroke);
-		g.draw(rect);
-
-		Color color = new Color(Color.LIGHT_GRAY.getRed(), Color.LIGHT_GRAY.getGreen(), Color.LIGHT_GRAY.getBlue(), 100);
+		Color color = GraphicsUtil.transparentColor(Color.LIGHT_GRAY, 100);
 		g.setColor(color);
 		g.fill(rect);
+
+		RoundRectangle2D borderRect = new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), this.arcWidth, this.arcHeight);
+		g.setColor(Color.BLACK);
+		Stroke stroke = new BasicStroke(getBorderWidth(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+		g.setStroke(stroke);
+		g.draw(borderRect);
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package com.supermap.desktop.process.graphics;
 
 import com.sun.corba.se.impl.orbutil.graph.Graph;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.graphics.graphs.EllipseGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import org.jhotdraw.draw.AttributeKeys;
@@ -44,21 +45,37 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		frame.getContentPane().setLayout(new BorderLayout());
 		frame.getContentPane().add(canvas, BorderLayout.CENTER);
 
+		JPanel panel = new JPanel();
+		frame.getContentPane().add(panel, BorderLayout.NORTH);
+
+		panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 		JButton button = new JButton("Rectangle");
-		frame.getContentPane().add(button, BorderLayout.NORTH);
+		panel.add(button);
 		button.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RectangleGraph graph = new RectangleGraph(canvas);
 				graph.setWidth(200);
 				graph.setHeight(80);
-				graph.setArcHeight(5);
-				graph.setArcWidth(5);
+				graph.setArcHeight(10);
+				graph.setArcWidth(10);
 
 				canvas.createGraph(graph);
 			}
 		});
 
+		JButton button1 = new JButton("Ellipse");
+		panel.add(button1);
+		button1.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				EllipseGraph graph = new EllipseGraph(canvas);
+				graph.setWidth(160);
+				graph.setHeight(60);
+
+				canvas.createGraph(graph);
+			}
+		});
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -167,12 +184,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		this.previewGraph = this.toCreation.clone();
 	}
 
-	private IGraph findGraph(Point p) {
-		IGraph graph = null;
-
-		return graph;
-	}
-
 	private Point2D panelToCanvas(Point point) {
 		return new Point2D.Double(point.getX(), point.getY());
 	}
@@ -185,6 +196,22 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+
+	}
+
+	private IGraph findGraph(Point point) {
+		IGraph graph = null;
+		Collection<IGraph> c = this.graphQuadTree.findContains(new Point2D.Double(point.getX(), point.getY()));
+
+		if (c != null && c.size() > 0) {
+			Iterator<IGraph> iterator = c.iterator();
+			graph = iterator.next();
+		}
+		return graph;
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e)) {
 			Point point = e.getPoint();
 
@@ -199,22 +226,31 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			} else {
 
 				// toCreation 为空，则查询
-				Collection<IGraph> c = this.graphQuadTree.findContains(new Point2D.Double(point.getX(), point.getY()));
+				IGraph graph = findGraph(point);
 
-				if (c != null && c.size() > 0) {
-					Iterator<IGraph> iterator = c.iterator();
-					this.selectedGraph = iterator.next();
+				if (graph == null) {
+					if (this.selectedGraph != null) {
+						repaint(this.selectedGraph.getBounds());
+						this.selectedGraph = graph;
+					}
+				} else {
+					if (this.selectedGraph != null) {
+						if (this.selectedGraph != graph) {
+							repaint(this.selectedGraph.getBounds());
+							this.selectedGraph = graph;
+							repaint(this.selectedGraph.getBounds());
+						}
+					} else {
+						this.selectedGraph = graph;
+						repaint(this.selectedGraph.getBounds());
+					}
 				}
 			}
 		} else if (SwingUtilities.isRightMouseButton(e)) {
+			this.toCreation = null;
 			this.previewGraph = null;
-
+			repaint();
 		}
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-
 	}
 
 	@Override
@@ -241,6 +277,26 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public void mouseMoved(MouseEvent e) {
 		if (this.previewGraph != null) {
 			repaint(this.previewGraph, e.getPoint());
+		} else {
+			IGraph graph = findGraph(e.getPoint());
+
+			if (graph == null) {
+				if (this.hotGraph != null) {
+					repaint(this.hotGraph.getBounds());
+					this.hotGraph = graph;
+				}
+			} else {
+				if (this.hotGraph != null) {
+					if (this.hotGraph != graph) {
+						repaint(this.hotGraph.getBounds());
+						this.hotGraph = graph;
+						repaint(this.hotGraph.getBounds());
+					}
+				} else {
+					this.hotGraph = graph;
+					repaint(this.hotGraph.getBounds());
+				}
+			}
 		}
 	}
 

@@ -16,7 +16,7 @@ public class QuadTree<T> {
 	private int maxOutside = 32;
 
 	public QuadTree() {
-		this.root = new QuadTree.QuadNode(new Rectangle2D.Double(0.0D, 0.0D, 800.0D, 600.0D));
+		this.root = new QuadTree.QuadNode(new Rectangle2D.Double(0.0D, 0.0D, 8000.0D, 6000.0D));
 	}
 
 	public QuadTree(Rectangle2D.Double bounds) {

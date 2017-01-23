@@ -17,6 +17,10 @@ public class GraphicsUtil {
 	private GraphicsUtil() {
 	}
 
+	public static Color transparentColor(Color color, int alpha) {
+		return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+	}
+
 	public static Rectangle createRectangle(Rectangle2D rectangle2D) {
 		return createRectangle(rectangle2D.getX(), rectangle2D.getY(), rectangle2D.getWidth(), rectangle2D.getHeight());
 	}
