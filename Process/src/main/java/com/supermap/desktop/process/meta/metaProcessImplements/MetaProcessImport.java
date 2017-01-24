@@ -85,6 +85,11 @@ public class MetaProcessImport extends MetaProcess {
 	}
 
 	@Override
+	public String getTitle() {
+		return "数据导入";
+	}
+
+	@Override
 	public void run() {
 		String filePath = (String) parameters.getParameter(0).getSelectedItem();
 		String datasetName = ((ParameterSaveDataset) parameters.getParameter(1)).getDatasetName();

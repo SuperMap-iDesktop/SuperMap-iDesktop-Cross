@@ -7,7 +7,7 @@ import java.awt.*;
 /**
  * Created by highsad on 2017/1/19.
  */
-public class LineGraph extends AbstractGraph{
+public class LineGraph extends AbstractGraph {
 
 	public LineGraph(GraphCanvas canvas) {
 		super(canvas);

@@ -1,8 +1,7 @@
 package com.supermap.desktop.process.graphics.graphs;
 
-import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.GraphicsUtil;
+import com.supermap.desktop.process.parameter.IData;
 import sun.swing.SwingUtilities2;
 
 import java.awt.*;
@@ -10,17 +9,12 @@ import java.awt.*;
 /**
  * Created by highsad on 2017/1/24.
  */
-public class ProcessGraph extends RectangleGraph {
+public class DataGraph extends EllipseGraph {
 
-	private IProcess process;
+	private IData data;
 
-	public ProcessGraph(GraphCanvas canvas) {
+	public DataGraph(GraphCanvas canvas) {
 		super(canvas);
-	}
-
-	public ProcessGraph(GraphCanvas canvas, IProcess process) {
-		super(canvas);
-		this.process = process;
 	}
 
 	@Override
@@ -40,7 +34,7 @@ public class ProcessGraph extends RectangleGraph {
 		g.setFont(font);
 		g.setColor(Color.darkGray);
 
-		String text = this.process == null ? "未知节点" : this.process.getTitle();
+		String text = this.data == null ? "未知数据" : this.data.toString();
 		int fontHeight = getCanvas().getFontMetrics(font).getHeight();
 		int fontWidth = SwingUtilities2.stringWidth(getCanvas(), getCanvas().getFontMetrics(font), text);
 		int fontDescent = getCanvas().getFontMetrics(font).getDescent();
@@ -53,15 +47,15 @@ public class ProcessGraph extends RectangleGraph {
 		return Double.valueOf(d).intValue();
 	}
 
+
 	@Override
 	public IGraph clone() {
-		ProcessGraph graph = new ProcessGraph(getCanvas(), this.process);
+		DataGraph graph = new DataGraph(getCanvas());
 		graph.setX(getX());
 		graph.setY(getY());
 		graph.setWidth(getWidth());
 		graph.setHeight(getHeight());
-		graph.setArcWidth(getArcWidth());
-		graph.setArcHeight(getArcHeight());
+
 		return graph;
 	}
 }

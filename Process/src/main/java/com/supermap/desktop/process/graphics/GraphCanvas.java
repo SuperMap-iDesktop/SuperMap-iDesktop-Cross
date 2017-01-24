@@ -2,10 +2,7 @@ package com.supermap.desktop.process.graphics;
 
 import com.sun.corba.se.impl.orbutil.graph.Graph;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.graphics.graphs.EllipseGraph;
-import com.supermap.desktop.process.graphics.graphs.IGraph;
-import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
-import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
+import com.supermap.desktop.process.graphics.graphs.*;
 import org.jhotdraw.draw.AttributeKeys;
 import org.jhotdraw.geom.Geom;
 
@@ -91,6 +88,19 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				graph.setHeight(80);
 				graph.setArcHeight(10);
 				graph.setArcWidth(10);
+
+				canvas.createGraph(graph);
+			}
+		});
+
+		JButton button3 = new JButton("Data");
+		panel.add(button3);
+		button3.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				DataGraph graph = new DataGraph(canvas);
+				graph.setWidth(160);
+				graph.setHeight(60);
 
 				canvas.createGraph(graph);
 			}
