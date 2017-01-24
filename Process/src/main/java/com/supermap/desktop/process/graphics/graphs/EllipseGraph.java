@@ -37,23 +37,26 @@ public class EllipseGraph extends AbstractGraph {
 		g.setColor(color);
 		g.fill(rect);
 
-		if (isSelected) {
-			Color hot = GraphicsUtil.transparentColor(Color.BLUE, 100);
-			g.setColor(hot);
-			g.fill(rect);
-		}
-
+//		if (isSelected) {
+//			Color hot = GraphicsUtil.transparentColor(Color.BLUE, 100);
+//			g.setColor(hot);
+//			g.fill(rect);
+//		}
+//
 		if (isHot) {
 			Color hot = GraphicsUtil.transparentColor(Color.LIGHT_GRAY, 100);
 			g.setColor(hot);
 			g.fill(rect);
 		}
 
+		int border = isSelected ? getBorderWidth() : getBorderWidth() - 1;
 		Ellipse2D borderRect = new Ellipse2D.Double(getX(), getY(), getWidth(), getHeight());
 		g.setColor(Color.BLACK);
-		Stroke stroke = new BasicStroke(getBorderWidth(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+		Stroke stroke = new BasicStroke(border, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 		g.setStroke(stroke);
 		g.draw(borderRect);
+
+		super.paint(g, isHot, isSelected);
 	}
 
 	/**
@@ -70,10 +73,11 @@ public class EllipseGraph extends AbstractGraph {
 
 		Ellipse2D borderRect = new Ellipse2D.Double(getX(), getY(), getWidth(), getHeight());
 		g.setColor(Color.BLACK);
-		Stroke stroke = new BasicStroke(getBorderWidth(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+		Stroke stroke = new BasicStroke(getBorderWidth() - 1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 		g.setStroke(stroke);
 		g.draw(borderRect);
 
+		super.paintPreview(g);
 	}
 
 	@Override

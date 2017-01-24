@@ -4,6 +4,7 @@ import com.sun.corba.se.impl.orbutil.graph.Graph;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.graphics.graphs.EllipseGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
+import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import org.jhotdraw.draw.AttributeKeys;
 import org.jhotdraw.geom.Geom;
@@ -79,6 +80,22 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				canvas.createGraph(graph);
 			}
 		});
+
+		JButton button2 = new JButton("Process");
+		panel.add(button2);
+		button2.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ProcessGraph graph = new ProcessGraph(canvas);
+				graph.setWidth(200);
+				graph.setHeight(80);
+				graph.setArcHeight(10);
+				graph.setArcWidth(10);
+
+				canvas.createGraph(graph);
+			}
+		});
+
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -242,9 +259,8 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e)) {
-			System.out.println(e.getPoint());
 			IGraph graph = findGraph(e.getPoint());
-			if (graph != null && this.selectedGraph == graph) {
+			if (graph != null) {
 				this.draggedGraph = graph;
 				this.dragBegin = e.getPoint();
 				this.dragCenter = this.draggedGraph.getCenter();
@@ -269,10 +285,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				Rectangle bounds = this.toCreation.getBounds();
 				this.graphQuadTree.add(this.toCreation, new Rectangle2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight()));
 				this.toCreation = null;
-			}
-
-			if (this.draggedGraph != null) {
-
 			}
 		} else if (SwingUtilities.isRightMouseButton(e)) {
 			this.toCreation = null;

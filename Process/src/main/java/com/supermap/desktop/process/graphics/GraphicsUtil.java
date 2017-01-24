@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
@@ -15,6 +16,10 @@ public class GraphicsUtil {
 	public static final int OUT_RIGHT = 4;
 
 	private GraphicsUtil() {
+	}
+
+	public static int getFontHeight(JComponent component) {
+		return component == null ? -1 : component.getFontMetrics(component.getFont()).getHeight();
 	}
 
 	public static Color transparentColor(Color color, int alpha) {

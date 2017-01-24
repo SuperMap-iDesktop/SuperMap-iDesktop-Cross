@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1484529005321
+Bnd-LastModified: 1485243598822
 Build-Jdk: 1.7.0_80
 Built-By: highsad
 Bundle-Activator: com.supermap.desktop.dataconversion.DataConversionActi
