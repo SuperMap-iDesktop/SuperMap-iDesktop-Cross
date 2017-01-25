@@ -34,6 +34,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private IGraph draggedGraph;
 	private Point dragBegin;
 	private Point dragCenter;
+	private LineGraph line;
 
 	public static void main(String[] args) {
 		final JFrame frame = new JFrame();
@@ -281,6 +282,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				this.draggedGraph = null;
 				this.dragBegin = null;
 				this.dragCenter = null;
+				this.line = null;
 			}
 		}
 	}

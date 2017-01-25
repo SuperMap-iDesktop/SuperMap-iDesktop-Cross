@@ -3,7 +3,9 @@ package com.supermap.desktop.process.graphics.graphs;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 
 import java.awt.*;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
+import java.util.HashMap;
 
 /**
  * Created by highsad on 2017/1/19.
@@ -132,8 +134,39 @@ public class LineGraph extends AbstractGraph {
 				Stroke stroke = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 				g.setStroke(stroke);
 				g.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y);
+
+//				double[] awrTop = rotateVec(this.endPoint.x - this.startPoint.x, this.endPoint.y - this.startPoint.y, 30, true, 5);
+//				double[] awrBottom = rotateVec(this.endPoint.x - this.startPoint.x, this.endPoint.y - this.startPoint.y, -30, true, 5);
+//				int xTop = Double.valueOf(awrTop[0]).intValue();
+//				int yTop = Double.valueOf(awrTop[1]).intValue();
+//				int xBottom = Double.valueOf(awrBottom[0]).intValue();
+//				int yBottom = Double.valueOf(awrBottom[1]).intValue();
+//
+//				GeneralPath path = new GeneralPath();
+//				path.moveTo(this.endPoint.getX(), this.endPoint.getY());
+//				path.lineTo(xTop, yTop);
+//				path.lineTo(xBottom, yBottom);
+//				path.closePath();
+//				g.fill(path);
 			}
 		}
+	}
+
+	// 计算
+	public static double[] rotateVec(int px, int py, double ang, boolean isChLen, double newLen) {
+
+		double mathstr[] = new double[2];
+		// 矢量旋转函数，参数含义分别是x分量、y分量、旋转角、是否改变长度、新长度
+		double vx = px * Math.cos(ang) - py * Math.sin(ang);
+		double vy = px * Math.sin(ang) + py * Math.cos(ang);
+		if (isChLen) {
+			double d = Math.sqrt(vx * vx + vy * vy);
+			vx = vx / d * newLen;
+			vy = vy / d * newLen;
+			mathstr[0] = vx;
+			mathstr[1] = vy;
+		}
+		return mathstr;
 	}
 
 	@Override

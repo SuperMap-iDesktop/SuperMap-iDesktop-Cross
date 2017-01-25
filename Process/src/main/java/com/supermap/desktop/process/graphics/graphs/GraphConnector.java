@@ -40,4 +40,17 @@ public class GraphConnector {
 		point.setLocation(this.graph.getX() + this.graph.getWidth() / 2, this.graph.getY() + this.graph.getHeight());
 		return point;
 	}
+
+	public boolean canConnect(Point point) {
+		Point topP = getTopConnector();
+		Point leftP = getLeftConnector();
+		Point bottomP = getBottomConnector();
+		Point rightP = getRightConnector();
+
+		Rectangle topR = new Rectangle(topP.x - 2, topP.x - 2, 5, 5);
+		Rectangle leftR = new Rectangle(leftP.x - 2, leftP.x - 2, 5, 5);
+		Rectangle bottomR = new Rectangle(bottomP.x - 2, bottomP.x - 2, 5, 5);
+		Rectangle rightR = new Rectangle(rightP.x - 2, rightP.x - 2, 5, 5);
+		return topR.contains(point) || leftR.contains(point) || bottomR.contains(point) || rightR.contains(point);
+	}
 }
