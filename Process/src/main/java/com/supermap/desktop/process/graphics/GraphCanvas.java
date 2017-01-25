@@ -11,10 +11,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by highsad on 2017/1/17.
@@ -27,6 +24,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
 	private QuadTree<IGraph> graphQuadTree = new QuadTree<>();
+	private ArrayList<LineGraph> lines = new ArrayList<>();
 	private double scale = 1.0;
 	private IGraph toCreation;
 	private IGraph hotGraph;
@@ -185,6 +183,11 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			graph.paint(g, graph == this.hotGraph, graph == this.selectedGraph);
 		}
 
+		for (int i = 0; i < this.lines.size(); i++) {
+			LineGraph lineGraph = this.lines.get(i);
+			lineGraph.paint(g);
+		}
+
 		if (this.previewGraph != null) {
 			this.previewGraph.paintPreview(g);
 		}
@@ -294,6 +297,23 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				repaint(this.toCreation, point);
 				Rectangle bounds = this.toCreation.getBounds();
 				this.graphQuadTree.add(this.toCreation, new Rectangle2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight()));
+
+				if (this.toCreation instanceof ProcessGraph) {
+					DataGraph graph = new DataGraph(this);
+					graph.setWidth(160);
+					graph.setHeight(60);
+					graph.setX(this.toCreation.getX() + this.toCreation.getWidth() + 150);
+					graph.setY(this.toCreation.getY() + (this.toCreation.getHeight() - graph.getHeight()) / 2);
+					Rectangle graphBounds = graph.getBounds();
+					this.graphQuadTree.add(graph, new Rectangle2D.Double(graphBounds.getX(), graphBounds.getY(), graphBounds.getWidth(), graphBounds.getHeight()));
+					repaint(graph.getBounds());
+
+					LineGraph lineGraph = new LineGraph(this);
+					lineGraph.setStart(this.toCreation);
+					lineGraph.setEnd(graph);
+					this.lines.add(lineGraph);
+					repaint();
+				}
 				this.toCreation = null;
 			}
 		} else if (SwingUtilities.isRightMouseButton(e)) {
@@ -324,6 +344,11 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			dragged.translate(e.getPoint().x - this.dragBegin.x, e.getPoint().y - this.dragBegin.y);
 			repaint(this.draggedGraph, dragged);
 			this.graphQuadTree.add(this.draggedGraph, new Rectangle2D.Double(this.draggedGraph.getX(), this.draggedGraph.getY(), this.draggedGraph.getWidth(), this.draggedGraph.getHeight()));
+			for (int i = 0; i < this.draggedGraph.getLines().size(); i++) {
+				Rectangle rect = this.draggedGraph.getLines().get(i).getShape().getBounds();
+				rect.grow(1, 1);
+				repaint(rect);
+			}
 		}
 	}
 
@@ -356,11 +381,12 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	private void repaint(IGraph graph, Point point) {
 		if (graph.getX() != point.getX() && graph.getY() != point.getY()) {
-			repaint(graph.getBounds());
+			Rectangle dirtyRect = graph.getBounds();
 			double x = point.getX() - graph.getWidth() / 2 - graph.getBorderWidth();
 			double y = point.getY() - graph.getHeight() / 2 - graph.getBorderWidth();
 			graph.setX(x);
 			graph.setY(y);
+			repaint(dirtyRect);
 			repaint(graph.getBounds());
 		}
 	}

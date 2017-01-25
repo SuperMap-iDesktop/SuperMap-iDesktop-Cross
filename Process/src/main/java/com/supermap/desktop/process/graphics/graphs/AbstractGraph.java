@@ -4,6 +4,8 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * Created by highsad on 2017/1/20.
@@ -19,10 +21,24 @@ public abstract class AbstractGraph implements IGraph {
 	private double y = 0d;
 	private double width = 0d;
 	private double height = 0d;
+	private GraphConnector connector;
+
+	private ArrayList<LineGraph> lines = new ArrayList<>();
 
 	public AbstractGraph(GraphCanvas canvas) {
 		this.borderWidth = DEFAULT_BORDER_WIDTH;
 		this.canvas = canvas;
+		this.connector = new GraphConnector(this);
+	}
+
+	@Override
+	public ArrayList<LineGraph> getLines() {
+		return this.lines;
+	}
+
+	@Override
+	public GraphConnector getConnector() {
+		return this.connector;
 	}
 
 	@Override
