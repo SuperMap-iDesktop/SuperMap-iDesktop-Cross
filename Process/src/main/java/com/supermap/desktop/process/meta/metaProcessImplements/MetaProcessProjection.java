@@ -70,4 +70,9 @@ public class MetaProcessProjection extends MetaProcess {
 	public String getKey() {
 		return MetaKeys.PROJECTION;
 	}
+
+	@Override
+	public String getTitle() {
+		return "投影转换";
+	}
 }

@@ -62,4 +62,9 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 	public String getKey() {
 		return MetaKeys.SPATIALINDEX;
 	}
+
+	@Override
+	public String getTitle() {
+		return "重建空间索引";
+	}
 }

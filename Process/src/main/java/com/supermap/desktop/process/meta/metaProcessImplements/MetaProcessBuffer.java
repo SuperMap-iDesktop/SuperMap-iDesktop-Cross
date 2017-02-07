@@ -88,6 +88,11 @@ public class MetaProcessBuffer extends MetaProcess {
 	}
 
 	@Override
+	public String getTitle() {
+		return "缓冲区分析";
+	}
+
+	@Override
 	public void run() {
 		// fixme 数据集来源
 		DatasetVector datasetVector = null;
