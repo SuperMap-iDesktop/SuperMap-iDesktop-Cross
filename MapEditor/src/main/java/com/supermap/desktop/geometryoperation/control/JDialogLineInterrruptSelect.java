@@ -265,7 +265,6 @@ public class JDialogLineInterrruptSelect extends SmDialog{
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value,
 		                                               boolean isSelected, boolean hasFocus, int row, int column) {
-			// TODO Auto-generated method stub
 			String valueStr = (String) value;
 			JLabel label = new JLabel(valueStr);
 			label.setHorizontalAlignment(SwingConstants.CENTER); // 表头标签剧中
