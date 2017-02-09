@@ -222,7 +222,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		this.comboBoxRangeFormat.addMouseListener(this.mouseListener);
 	}
 
-	/*
+	/**
 	 * 资源化
 	 */
 	private void initResources() {
@@ -715,7 +715,9 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 		 */
 		private void setRangeMethod() {
 			int rangeMethod = comboBoxRangeMethod.getSelectedIndex();
-			double minValue = datasetGrid.getGridStatisticsResult().getMinValue();
+			// FIXME: 2017/2/8 UGDJ-559缺陷修改
+//			double minnumber = datasetGrid.getGridStatisticsResult().getMinValue();
+			double minNumber = datasetGrid.getMinValue();
 			switch (rangeMethod) {
 				case 0:
 					// 等距分段
@@ -727,7 +729,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 					break;
 				case 1:
 					// 平方根分段
-					if (Double.compare(minValue, 0) < 0) {
+					if (Double.compare(minNumber, 0) < 0) {
 						// 有负数且为平方根分段
 						UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_UnMakeGridRangeThemeSquareRoot"));
 						isResetComboBox = true;
@@ -743,7 +745,7 @@ public class ThemeGridRangeContainer extends ThemeChangePanel {
 					break;
 				case 2:
 					// 对数分段
-					if (Double.compare(minValue, 0) < 0) {
+					if (Double.compare(minNumber, 0) < 0) {
 						// 有负数且为对数分段
 						UICommonToolkit.showErrorMessageDialog(MapViewProperties.getString("String_UnMakeGridRangeTheme"));
 						isResetComboBox = true;

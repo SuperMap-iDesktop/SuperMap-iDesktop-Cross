@@ -1,5 +1,6 @@
 package com.supermap.desktop.mapview.layer.propertymodel;
 
+import com.supermap.data.ColorDictionary;
 import com.supermap.data.Colors;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.mapping.Layer;
@@ -15,6 +16,7 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
 	public static final String SPECIAL_VALUE = "specialValue";
 	public static final String SPECIAL_VALUE_COLOR = "specialValueColor";
 	public static final String IS_SPECIAL_VALUE_TRANSPARENT = "isSpecialValueTransparent";
+	public static final String COLORDICTIONARY = "colorDictionary";
 
 	private Integer layerGridBrightness = 0;
 	private Integer layerGridContrast = 0;
@@ -22,6 +24,8 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
 	private Double layerGridSpecialValue = 0.0;
 	private Color specialValueColor = Color.WHITE;
 	private Boolean isSpecialValueTransparent = false;
+    private ColorDictionary layerGridColorDictionary=null;
+
 
 	public LayerGridParamPropertyModel() {
 		// do nothing
@@ -56,7 +60,19 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
 		this.layerGridColors = colors;
 	}
 
-	public Double getSpecialValue() {
+    public ColorDictionary getLayerGridColorDictionary() {
+        return layerGridColorDictionary;
+    }
+
+    public void setLayerGridColorDictionary(double[] keys,Color[] colors) {
+        this.layerGridColorDictionary = ((LayerSettingGrid) getLayers()[0].getAdditionalSetting()).getColorDictionary();
+        layerGridColorDictionary.clear();
+        for (int i = 0; i < colors.length; i++) {
+            this.layerGridColorDictionary.setColor(keys[i], colors[i]);
+        }
+    }
+
+    public Double getSpecialValue() {
 		return layerGridSpecialValue;
 	}
 
@@ -80,7 +96,7 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
 		this.isSpecialValueTransparent = isSpecialValueTransparent;
 	}
 
-	@Override
+    @Override
 	public void setProperties(LayerPropertyModel model) {
 		LayerGridParamPropertyModel gridParamPropertyModel = (LayerGridParamPropertyModel) model;
 
@@ -134,6 +150,10 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
 			if (this.propertyEnabled.get(IS_SPECIAL_VALUE_TRANSPARENT) && this.isSpecialValueTransparent != null) {
 				setting.setSpecialValueTransparent(this.isSpecialValueTransparent);
 			}
+
+			if (this.propertyEnabled.get(COLORDICTIONARY) && this.layerGridColorDictionary != null) {
+				setting.setColorDictionary(this.layerGridColorDictionary);
+			}
 		}
 	}
 
@@ -153,6 +173,7 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
 			this.layerGridSpecialValue = ComplexPropertyUtilties.union(this.layerGridSpecialValue, setting.getSpecialValue());
 			this.specialValueColor = ComplexPropertyUtilties.union(this.specialValueColor, setting.getSpecialValueColor());
 			this.isSpecialValueTransparent = ComplexPropertyUtilties.union(this.isSpecialValueTransparent, setting.isSpecialValueTransparent());
+			this.layerGridColorDictionary = ComplexPropertyUtilties.union(this.layerGridColorDictionary, setting.getColorDictionary());
 		}
 	}
 
@@ -171,7 +192,8 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
 			this.specialValueColor = ((LayerSettingGrid) getLayers()[0].getAdditionalSetting()).getSpecialValueColor();
 			this.isSpecialValueTransparent = ((LayerSettingGrid) getLayers()[0].getAdditionalSetting()).isSpecialValueTransparent();
 			this.layerGridColors = ((LayerSettingGrid) getLayers()[0].getAdditionalSetting()).getColorTable();
-		}
+            this.layerGridColorDictionary = ((LayerSettingGrid) getLayers()[0].getAdditionalSetting()).getColorDictionary();
+        }
 	}
 
 	private void initializeEnabledMap() {
@@ -181,5 +203,6 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
 		this.propertyEnabled.put(SPECIAL_VALUE, true);
 		this.propertyEnabled.put(SPECIAL_VALUE_COLOR, true);
 		this.propertyEnabled.put(IS_SPECIAL_VALUE_TRANSPARENT, true);
+		this.propertyEnabled.put(COLORDICTIONARY, true);
 	}
 }

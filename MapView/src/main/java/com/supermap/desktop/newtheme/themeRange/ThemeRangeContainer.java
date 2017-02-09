@@ -1663,14 +1663,14 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.themeRangeLayer = MapUtilities.findLayerByName(map, layerName);
 		if (null != themeRangeLayer && null != themeRangeLayer.getTheme() && themeRangeLayer.getTheme().getType() == ThemeType.RANGE) {
 			ThemeRange nowThemeRange = (ThemeRange) this.themeRangeLayer.getTheme();
-			nowThemeRange.clear();
-			if (0 < this.themeRange.getCount()) {
-				for (int i = 0; i < this.themeRange.getCount(); i++) {
-					nowThemeRange.addToTail(this.themeRange.getItem(i), true);
-				}
-			}
-			nowThemeRange.setRangeExpression(this.themeRange.getRangeExpression());
-			nowThemeRange.setPrecision(this.themeRange.getPrecision());
+//			nowThemeRange.clear();
+//			if (0 < this.themeRange.getCount()) {
+//				for (int i = 0; i < this.themeRange.getCount(); i++) {
+//					nowThemeRange.addToTail(this.themeRange.getItem(i), true);
+//				}
+//			}
+//			nowThemeRange.setRangeExpression(this.themeRange.getRangeExpression());
+//			nowThemeRange.setPrecision(this.themeRange.getPrecision());
 			UICommonToolkit.getLayersManager().getLayersTree().refreshNode(this.themeRangeLayer);
 			//增加刷新清除选择
 			/*
@@ -1679,6 +1679,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 				this.themeUniqueLayer.setSelection(nowSelection);
 			}
 			*/
+			this.themeRangeLayer.getTheme().fromXML(this.themeRange.toXML());
 			this.map.refresh();
 		}
 	}
