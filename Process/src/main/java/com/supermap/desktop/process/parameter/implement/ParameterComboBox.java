@@ -21,7 +21,7 @@ public class ParameterComboBox extends AbstractParameter {
 	private ParameterDataNode value;
 
 	@Override
-	public ParameterType getType() {
+	public String getType() {
 		return ParameterType.COMBO_BOX;
 	}
 
@@ -65,5 +65,8 @@ public class ParameterComboBox extends AbstractParameter {
 		return this;
 	}
 
+	@Override
+	public void dispose() {
 
+	}
 }

@@ -2,13 +2,16 @@ package com.supermap.desktop.utilities;
 
 /**
  * 数字相关工具类
- * 
- * @author highsad
  *
+ * @author highsad
  */
 public class NumberUtilities {
 
 	private NumberUtilities() {
 		// 工具类，不提供构造方法
+	}
+
+	public static int doubleToInt(double d) {
+		return Double.valueOf(d).intValue();
 	}
 }

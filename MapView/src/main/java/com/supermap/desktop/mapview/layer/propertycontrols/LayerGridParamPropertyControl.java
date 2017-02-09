@@ -3,9 +3,13 @@ package com.supermap.desktop.mapview.layer.propertycontrols;
 import com.supermap.data.Colors;
 import com.supermap.desktop.DefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.colorScheme.ColorSchemeEditorDialog;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
+import com.supermap.desktop.event.ColorTableChangeEvent;
+import com.supermap.desktop.event.ColorTableChangeListener;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerGridParamPropertyModel;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.SMSpinner;
 import com.supermap.desktop.ui.StateChangeEvent;
@@ -18,8 +22,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
@@ -37,12 +40,13 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 	private JLabel labelContrast;
 	private SMSpinner spinnerContrast;
 	private JLabel labelColorTable;
-	private ColorsComboBox colorsTable;
 	private JLabel labelSpecialValue;
 	private SMFormattedTextField textFieldSpecialValue;
 	private JLabel labelSpecialValueColor;
 	private ButtonColorSelector buttonSpecialValueColor;
 	private TristateCheckBox checkBoxIsSpecialValueTransparent;
+
+    private JButton buttonTable;
 
 	private ChangeListener spinnerValueChangeListener = new ChangeListener() {
 
@@ -75,15 +79,19 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 			}
 		}
 	};
-	private ItemListener itemListener = new ItemListener() {
-
-		@Override
-		public void itemStateChanged(ItemEvent e) {
-			if (e.getSource() == colorsTable && e.getStateChange() == ItemEvent.SELECTED) {
-				colorsTableSelectChange();
-			}
-		}
-	};
+	private ActionListener buttonTableListener =new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            LayerGridParamColorTableDialog layerGridParamColorTableDialog = new LayerGridParamColorTableDialog(getModifiedLayerPropertyModel());
+            layerGridParamColorTableDialog.addColorTableChangeListener(new ColorTableChangeListener() {
+                @Override
+                public void colorTableChange(ColorTableChangeEvent event) {
+                    checkChanged();
+                }
+            });
+            layerGridParamColorTableDialog.showDialog();
+        }
+    };
 
 	public LayerGridParamPropertyControl() {
 		// TODO
@@ -111,7 +119,6 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 		this.spinnerContrast = new SMSpinner(new SpinnerNumberModel(0, 0, 100, 1));
 		this.labelColorTable = new JLabel("ColorTable:");
 		this.labelColorTable.setToolTipText(this.labelColorTable.getText());
-		this.colorsTable = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Grid_DEM"));
 		this.labelSpecialValue = new JLabel("SpecialValue:");
 		this.labelSpecialValue.setToolTipText(this.labelSpecialValue.getText());
 		this.textFieldSpecialValue = new SMFormattedTextField(NumberFormat.getInstance());
@@ -119,6 +126,7 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 		this.labelSpecialValueColor.setToolTipText(this.labelSpecialValueColor.getText());
 		this.buttonSpecialValueColor = new ButtonColorSelector();
 		this.checkBoxIsSpecialValueTransparent = new TristateCheckBox("IsSpecialValueTransparent");
+        this.buttonTable = new JButton();
 
 		GroupLayout grouplayout = new GroupLayout(this);
 		grouplayout.setAutoCreateContainerGaps(true);
@@ -137,7 +145,7 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 						.addGroup(grouplayout.createParallelGroup(Alignment.LEADING)
 								.addComponent(this.spinnerBrightness, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addComponent(this.spinnerContrast, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addComponent(this.colorsTable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(this.buttonTable, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addComponent(this.textFieldSpecialValue, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 								.addComponent(this.buttonSpecialValueColor, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
 				.addComponent(this.checkBoxIsSpecialValueTransparent));
@@ -151,7 +159,7 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 						.addComponent(this.spinnerContrast, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGroup(grouplayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelColorTable)
-						.addComponent(this.colorsTable, GroupLayout.PREFERRED_SIZE, DefaultValues.DEFAULT_COMPONENT_HEIGHT, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.buttonTable, GroupLayout.PREFERRED_SIZE, DefaultValues.DEFAULT_COMPONENT_HEIGHT, GroupLayout.PREFERRED_SIZE))
 				.addGroup(grouplayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelSpecialValue)
 						.addComponent(this.textFieldSpecialValue, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -171,6 +179,7 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 		this.labelSpecialValue.setText(MapViewProperties.getString("String_LayerControl_Grid_SpacialValue"));
 		this.labelSpecialValueColor.setText(MapViewProperties.getString("String_LayerControl_Grid_SetSpecialRasterColor"));
 		this.checkBoxIsSpecialValueTransparent.setText(MapViewProperties.getString("String_LayerControl_Grid_SpecialValueTransparency"));
+		this.buttonTable.setText(CommonProperties.getString("String_Button_Setting"));
 	}
 
 	@Override
@@ -178,7 +187,6 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 		if (getLayerPropertyModel() != null) {
 			LayerPropertyControlUtilties.setSpinnerValue(this.spinnerBrightness, getLayerPropertyModel().getBrightness());
 			LayerPropertyControlUtilties.setSpinnerValue(this.spinnerContrast, getLayerPropertyModel().getContrast());
-			this.colorsTable.setSelectedItem(getLayerPropertyModel().getColors());
 			this.textFieldSpecialValue.setValue(getLayerPropertyModel().getSpecialValue());
 			this.buttonSpecialValueColor.setColor(getLayerPropertyModel().getSpecialValueColor());
 			this.checkBoxIsSpecialValueTransparent.setSelectedEx(getLayerPropertyModel().isSpecialValueTransparent());
@@ -192,7 +200,7 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 		this.textFieldSpecialValue.addPropertyChangeListener(PROPERTY_VALUE, this.propertyChangeListener);
 		this.checkBoxIsSpecialValueTransparent.addStateChangeListener(this.checkBoxStateChangeListener);
 		this.buttonSpecialValueColor.addPropertyChangeListener(ButtonColorSelector.PROPERTY_COLOR, propertyChangeListener);
-		this.colorsTable.addItemListener(this.itemListener);
+		this.buttonTable.addActionListener(this.buttonTableListener);
 	}
 
 	@Override
@@ -202,7 +210,7 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 		this.textFieldSpecialValue.removePropertyChangeListener(PROPERTY_VALUE, this.propertyChangeListener);
 		this.checkBoxIsSpecialValueTransparent.removeStateChangeListener(this.checkBoxStateChangeListener);
 		this.buttonSpecialValueColor.removePropertyChangeListener(ButtonColorSelector.PROPERTY_COLOR, propertyChangeListener);
-		this.colorsTable.removeItemListener(this.itemListener);
+		this.buttonTable.removeActionListener(this.buttonTableListener);
 	}
 
 	private void spinnerBrightnessValueChanged() {
@@ -227,11 +235,6 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 
 	private void buttonSpecialValueColorColorChange() {
 		getModifiedLayerPropertyModel().setSpecialValueColor(this.buttonSpecialValueColor.getColor());
-		checkChanged();
-	}
-
-	private void colorsTableSelectChange() {
-		getModifiedLayerPropertyModel().setColors((Colors) this.colorsTable.getSelectedItem());
 		checkChanged();
 	}
 

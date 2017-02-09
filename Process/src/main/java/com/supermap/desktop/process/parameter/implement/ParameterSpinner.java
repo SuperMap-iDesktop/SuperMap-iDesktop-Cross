@@ -19,7 +19,7 @@ public class ParameterSpinner extends AbstractParameter {
 	private String describe;
 
 	@Override
-	public ParameterType getType() {
+	public String getType() {
 		return ParameterType.SPINNER;
 	}
 
@@ -83,5 +83,10 @@ public class ParameterSpinner extends AbstractParameter {
 	public ParameterSpinner setDescribe(String describe) {
 		this.describe = describe;
 		return this;
+	}
+
+	@Override
+	public void dispose() {
+
 	}
 }
