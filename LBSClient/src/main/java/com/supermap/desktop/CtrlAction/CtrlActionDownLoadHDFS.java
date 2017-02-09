@@ -32,7 +32,8 @@ public class CtrlActionDownLoadHDFS extends CtrlAction {
         boolean enable = false;
         if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormLBSControl) {
             IFormLBSControl control = (IFormLBSControl) Application.getActiveApplication().getActiveForm();
-            if (control.getSelectRow() > -1 && control.getTable().getRowCount() > 0 && !((HDFSDefine) ((HDFSTableModel) control.getTable().getModel()).getRowTagAt(control.getSelectRow())).isDir()) {
+            if (control.getSelectRow() > -1 && control.getTable().getRowCount() > 0 && control.getTable().getRowCount() > control.getSelectRow()
+                    && !((HDFSDefine) ((HDFSTableModel) control.getTable().getModel()).getRowTagAt(control.getSelectRow())).isDir()) {
                 // 不能下载文件夹，选中文件夹时灰选
                 enable = true;
             }

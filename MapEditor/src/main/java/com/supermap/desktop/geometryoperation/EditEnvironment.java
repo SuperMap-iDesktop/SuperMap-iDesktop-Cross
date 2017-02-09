@@ -1,61 +1,20 @@
 package com.supermap.desktop.geometryoperation;
 
-import com.supermap.data.Geometry;
-import com.supermap.data.GeometryType;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.core.MouseButtons;
 import com.supermap.desktop.event.*;
-import com.supermap.desktop.geometry.Abstract.ICompoundFeature;
-import com.supermap.desktop.geometry.Abstract.IGeometry;
-import com.supermap.desktop.geometry.Abstract.ILine3DFeature;
-import com.supermap.desktop.geometry.Abstract.ILineFeature;
-import com.supermap.desktop.geometry.Abstract.ILineMFeature;
-import com.supermap.desktop.geometry.Abstract.IMultiPartFeature;
-import com.supermap.desktop.geometry.Abstract.INormalFeature;
-import com.supermap.desktop.geometry.Abstract.IPointFeature;
-import com.supermap.desktop.geometry.Abstract.IRegion3DFeature;
-import com.supermap.desktop.geometry.Abstract.IRegionFeature;
-import com.supermap.desktop.geometry.Abstract.ITextFeature;
+import com.supermap.desktop.geometry.Abstract.*;
 import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.geometryoperation.editor.IEditor;
 import com.supermap.desktop.geometryoperation.editor.NullEditor;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerEditableChangedEvent;
-import com.supermap.mapping.LayerEditableChangedListener;
-import com.supermap.mapping.LayerRemovedEvent;
-import com.supermap.mapping.LayerRemovedListener;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.MapClosedEvent;
-import com.supermap.mapping.MapClosedListener;
-import com.supermap.mapping.MapOpenedEvent;
-import com.supermap.mapping.MapOpenedListener;
-import com.supermap.mapping.Selection;
-import com.supermap.ui.Action;
-import com.supermap.ui.ActionChangedEvent;
-import com.supermap.ui.ActionChangedListener;
-import com.supermap.ui.GeometryEvent;
-import com.supermap.ui.GeometryModifiedListener;
-import com.supermap.ui.GeometrySelectChangedEvent;
-import com.supermap.ui.GeometrySelectChangedListener;
-import com.supermap.ui.GeometrySelectedEvent;
-import com.supermap.ui.GeometrySelectedListener;
-import com.supermap.ui.MapControl;
-import com.supermap.ui.RedoneListener;
-import com.supermap.ui.TrackedEvent;
-import com.supermap.ui.TrackedListener;
-import com.supermap.ui.TrackingEvent;
-import com.supermap.ui.TrackingListener;
-import com.supermap.ui.UndoneListener;
+import com.supermap.mapping.*;
+import com.supermap.ui.*;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.List;
@@ -464,8 +423,33 @@ public class EditEnvironment {
 				this.properties.getSelectedLayers().add(layer);
 				statisticGeometryData(layer);
 			}
+			//  文本默认风格设置 2017.1.17李逍遥 10   共计part10
+			setDefaultTextStyle();//    get当前选中的可编辑的文本对象风格
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	/**
+	 * 获取当前地图窗口中，选中的可编辑的文本对象的风格
+	 */
+	private void setDefaultTextStyle(){
+		if (!Application.getActiveApplication().getMainFrame().getFormManager().isContain(formMap)) {
+			return;
+		}
+		Layer layer=this.formMap.getMapControl().getActiveEditableLayer();
+		if ( layer!=null && layer.getDataset() != null &&(layer.getDataset().getType()== DatasetType.CAD || layer.getDataset().getType()==DatasetType.TEXT)){
+			if (layer.getSelection() != null && layer.getSelection().getCount() != 0) {
+				Recordset recordset=layer.getSelection().toRecordset();
+				for (int i=0;i<recordset.getRecordCount();i++){
+					Geometry geometry=recordset.getGeometry();
+					if (geometry.getType()==GeometryType.GEOTEXT || geometry.getType()==GeometryType.GEOTEXT3D ){//  不管选中多少个文本对象，始终取第一个文本对象设置给默认文本风格
+						this.formMap.setDefaultTextStyle(((GeoText)geometry).getTextStyle().clone());
+						this.formMap.setDefaultTextRotationAngle(((GeoText)geometry).getPart(0).getRotation());
+						break;
+					}
+				}
+			}
 		}
 	}
 
