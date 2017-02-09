@@ -38,7 +38,7 @@ public class IServerServiceImpl implements IServerService {
         try {
             IServerLoginInfo.error = false;
             CloseableHttpClient client = HttpClients.createDefault();
-            String url = HTTP_STR + IServerLoginInfo.ipAddr + LOGIN_URL;
+            String url = HTTP_STR + IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + LOGIN_URL;
             HttpPost post = new HttpPost(url);
             Token token = new Token();
             token.username = userName;
@@ -64,7 +64,7 @@ public class IServerServiceImpl implements IServerService {
     }
 
     public JobResultResponse query(BuildCacheJobSetting buildCacheJobSetting) {
-        String url = HTTP_STR + IServerLoginInfo.ipAddr + BUILDCACHE_URL;
+        String url = HTTP_STR + IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + BUILDCACHE_URL;
         String jsonBody = JSON.toJSONString(buildCacheJobSetting);
         JobResultResponse result = returnJobResult(url, jsonBody);
         return result;
@@ -72,7 +72,7 @@ public class IServerServiceImpl implements IServerService {
 
     @Override
     public JobResultResponse query(KernelDensityJobSetting kernelDensityJobSetting) {
-        String url = HTTP_STR + IServerLoginInfo.ipAddr + KERNELDENSITY_URL;
+        String url = HTTP_STR +IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + KERNELDENSITY_URL;
         String jsonBody = JSON.toJSONString(kernelDensityJobSetting);
         JobResultResponse result = returnJobResult(url, jsonBody);
         return result;

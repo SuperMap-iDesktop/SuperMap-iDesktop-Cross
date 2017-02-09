@@ -17,7 +17,7 @@ public class ParameterRadioButton extends AbstractParameter {
 	private ParameterDataNode selectedItem;
 
 	@Override
-	public ParameterType getType() {
+	public String getType() {
 		return ParameterType.RADIO_BUTTON;
 	}
 
@@ -59,5 +59,10 @@ public class ParameterRadioButton extends AbstractParameter {
 	public ParameterRadioButton setDescribe(String describe) {
 		this.describe = describe;
 		return this;
+	}
+
+	@Override
+	public void dispose() {
+
 	}
 }

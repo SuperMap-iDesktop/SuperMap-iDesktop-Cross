@@ -13,6 +13,8 @@ public interface IProcess {
 
 	String getKey();
 
+	String getTitle();
+
 	IData getInput();
 
 	IData getOutput();

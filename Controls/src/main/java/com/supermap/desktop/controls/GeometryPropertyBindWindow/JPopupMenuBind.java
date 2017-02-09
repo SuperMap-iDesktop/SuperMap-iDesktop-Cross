@@ -88,7 +88,6 @@ public class JPopupMenuBind extends JPopupMenu implements PopupMenuListener {
 	};
 
 	private void addFormList() {
-		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 		DefaultListModel model = (DefaultListModel) listForms.getModel();
 		int size = model.getSize();
 		for (int i = 0; i < size; i++) {

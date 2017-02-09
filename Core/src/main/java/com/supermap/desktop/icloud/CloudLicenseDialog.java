@@ -13,7 +13,6 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.CoreResources;
-import com.supermap.desktop.utilities.JOptionPaneUtilities;
 import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -109,6 +108,7 @@ public class CloudLicenseDialog extends JDialog {
     private void login() {
         userName = textFieldUserName.getText();
         passWord = String.valueOf(fieldPassWord.getPassword());
+        this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
         CloseableHttpClient client = LicenseServiceFactory.getClient(userName, passWord);
         if (null == client) {
             this.labelWarning.setForeground(Color.red);
@@ -136,6 +136,7 @@ public class CloudLicenseDialog extends JDialog {
             } catch (AuthenticationException e1) {
                 dialogResult = DIALOGRESULT_CANCEL;
             } finally {
+                this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                 removeEvents();
                 dispose();
             }
@@ -242,16 +243,16 @@ public class CloudLicenseDialog extends JDialog {
 
         this.add(panelCloudImage, new GridBagConstraintsHelper(0, 0, 6, 3).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
         this.add(panelUserImage, new GridBagConstraintsHelper(0, 3, 1, 3).setInsets(10, 0, 0, 0).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        this.add(labelWarning, new GridBagConstraintsHelper(1, 3, 3, 1).setInsets(10, 5, 10, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(labelWarning, new GridBagConstraintsHelper(1, 3, 2, 1).setInsets(20, 5, 10, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(labelUserName, new GridBagConstraintsHelper(1, 4, 1, 1).setInsets(10, 5, 10, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(textFieldUserName, new GridBagConstraintsHelper(2, 4, 2, 1).setInsets(10, 0, 10, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
-        this.add(labelRegister, new GridBagConstraintsHelper(4, 4, 1, 1).setInsets(10, 5, 5, 16).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+        this.add(textFieldUserName, new GridBagConstraintsHelper(2, 4, 3, 1).setInsets(10, 0, 10, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.add(labelRegister, new GridBagConstraintsHelper(5, 4, 1, 1).setInsets(10, 5, 5, 16).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
         this.add(labelPassWord, new GridBagConstraintsHelper(1, 5, 1, 1).setInsets(0, 5, 0, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(fieldPassWord, new GridBagConstraintsHelper(2, 5, 2, 1).setInsets(0, 0, 0, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
-        this.add(labelFindPassword, new GridBagConstraintsHelper(4, 5, 1, 1).setInsets(0, 5, 0, 16).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+        this.add(fieldPassWord, new GridBagConstraintsHelper(2, 5, 3, 1).setInsets(0, 0, 0, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.add(labelFindPassword, new GridBagConstraintsHelper(5, 5, 1, 1).setInsets(0, 5, 0, 16).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
         this.add(checkBoxSavePassword, new GridBagConstraintsHelper(2, 6, 1, 1).setInsets(0, 5, 5, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(checkBoxAutoLogin, new GridBagConstraintsHelper(3, 6, 1, 1).setInsets(0, 0, 5, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(panelButton, new GridBagConstraintsHelper(0, 7, 5, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+        this.add(panelButton, new GridBagConstraintsHelper(0, 7, 6, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
         this.labelRegister.setPreferredSize(new Dimension(100, 23));
         this.labelFindPassword.setPreferredSize(new Dimension(100, 23));
     }

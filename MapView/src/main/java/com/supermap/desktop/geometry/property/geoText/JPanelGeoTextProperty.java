@@ -239,7 +239,8 @@ public class JPanelGeoTextProperty extends JPanel implements IGeoTextProperty {
         }
         // 文本默认风格设置 2017.1.13 李逍遥 part5   共计part9
         IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-        formMap.setDefaultTextStyle(textStyle.clone());
+        formMap.setDefaultTextStyle(tempTextStyle.clone());
+       // formMap.getDefaultTextStyle().setSizeFixed(tempTextStyle.isSizeFixed());
         formMap.setDefaultTextRotationAngle(((GeoText)geometry).getPart(0).getRotation());
 
 

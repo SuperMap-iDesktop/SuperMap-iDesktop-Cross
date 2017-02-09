@@ -28,12 +28,17 @@ public class JDialogTaskManager extends SmDialog {
     private boolean isRecoverTask;
     private static JDialogTaskManager taskManager;
 
+    private boolean isRecoverDownLoadTask;
+    private boolean isrecoverUploadTask;
     private ActionListener buttonOkListener = new ActionListener() {
 
         @Override
         public void actionPerformed(ActionEvent e) {
             isRecoverTask = checkboxRecoverDownloadTask.isSelected() || checkboxRecoverUploadTask.isSelected();
+            isRecoverDownLoadTask = checkboxRecoverDownloadTask.isSelected();
+            isrecoverUploadTask = checkboxRecoverUploadTask.isSelected();
             dialogResult = DialogResult.OK;
+            ToolbarUIUtilities.updataToolbarsState();
             JDialogTaskManager.this.dispose();
         }
     };
@@ -77,10 +82,10 @@ public class JDialogTaskManager extends SmDialog {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
-
-                ManagerXMLParser.removeAllTasks();
-                ToolbarUIUtilities.updataToolbarsState();
-
+                if (!isRecoverTask) {
+                    ManagerXMLParser.removeAllTasks();
+                    ToolbarUIUtilities.updataToolbarsState();
+                }
             }
         });
     }
@@ -95,7 +100,7 @@ public class JDialogTaskManager extends SmDialog {
         this.labelUploadTask.setText(LBSClientProperties.getString("String_UploadTask"));
         this.checkboxRecoverUploadTask.setText(LBSClientProperties.getString("String_Recover"));
         this.checkboxRecoverDownloadTask.setText(LBSClientProperties.getString("String_Recover"));
-        this.setTitle(LBSClientProperties.getString("String_TaskManager"));
+        this.setTitle(LBSClientProperties.getString("String_TaskRecover"));
     }
 
     private void initComponents() {
@@ -130,6 +135,14 @@ public class JDialogTaskManager extends SmDialog {
 
     public boolean isRecoverTask() {
         return isRecoverTask;
+    }
+
+    public boolean isRecoverDownLoadTask() {
+        return isRecoverDownLoadTask;
+    }
+
+    public boolean isrecoverUploadTask() {
+        return isrecoverUploadTask;
     }
 
     public void setDownloadTaskCount(int i) {

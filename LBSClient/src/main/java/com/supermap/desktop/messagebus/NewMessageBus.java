@@ -21,17 +21,13 @@ import com.supermap.desktop.params.JobResultResponse;
 import com.supermap.desktop.task.TaskFactory;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.CommonUtilities;
-import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerSettingGrid;
 import com.supermap.mapping.Map;
 
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -83,6 +79,7 @@ public class NewMessageBus {
         private IResponse response;
         private volatile boolean stop = false;
         private volatile ITask task;
+        private volatile int i = 0;
 
         public MessageBusConsumer(IResponse response, ITask task) {
             this.response = response;
@@ -108,8 +105,8 @@ public class NewMessageBus {
                 result = JSON.parseObject(queryInfo, JobItemResultResponse.class);
             }
             if (null != result && "FINISHED".equals(result.state.runState)) {
-                task.updateProgress(100, "", "");
                 if (null != result.setting.serviceInfo && null != result.setting.serviceInfo.targetServiceInfos) {
+                    task.updateProgress(100, "", "");
                     // 获取iserver服务发布地址,并打开到地图，如果存在已经打开的地图则将iserver服务上的地图打开到当前地图
                     ArrayList<IServerInfo> mapsList = result.setting.serviceInfo.targetServiceInfos;
                     String serviceAddress = "";
@@ -146,7 +143,10 @@ public class NewMessageBus {
                     }
                 }
             } else {
-                updateProgress();
+//                updateProgress();
+                if (i <= 99) {
+                    task.updateProgress(i++, "", "");
+                }
                 Thread.sleep(100);
             }
         }
@@ -156,10 +156,11 @@ public class NewMessageBus {
             Application.getActiveApplication().getOutput().output(exception);
         }
 
-        private void updateProgress() throws InterruptedException {
-            Thread.sleep(1000);
-            task.updateProgress(getRandomProgress(), "", "");
-        }
+//        private void updateProgress() throws InterruptedException {
+//            Thread.sleep(1000);
+//            int i = 0;
+//            task.updateProgress(i + 1, "", "");
+//        }
     }
 
     private static void openIserverMap(String iserverRestAddr, String datasourceName, final String datasetName) {
@@ -185,21 +186,18 @@ public class NewMessageBus {
                     @Override
                     public void run() {
                         UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
-                        if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
-                            //添加到当前地图中
-                            Map currentMap = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
-                            MapUtilities.addDatasetToMap(currentMap, finalDataset, true);
-                        } else {
-                            //打开新的地图
-                            IFormMap newMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, datasetName);
-                            Map map = newMap.getMapControl().getMap();
-                            Layer layer = MapUtilities.addDatasetToMap(map, finalDataset, true);
-                            if (finalDataset.getType() == DatasetType.GRID) {
-                                LayerSettingGrid setting = (LayerSettingGrid) layer.getAdditionalSetting();
-                                setting.setOpaqueRate(70);
-                            }
-                            map.refresh();
-                        }
+//                        if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
+//                            //添加到当前地图中
+//                            Map currentMap = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
+//                            MapUtilities.addDatasetToMap(currentMap, finalDataset, true);
+//                        } else {
+                        //打开新的地图
+                        IFormMap newMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, datasetName + "@" + datasource.getAlias());
+                        Map map = newMap.getMapControl().getMap();
+                        map.getLayers().add(finalDataset, true);
+                        map.refresh();
+                        UICommonToolkit.getLayersManager().getLayersTree().reload();
+//                        }
                     }
                 });
 
@@ -209,8 +207,8 @@ public class NewMessageBus {
     }
 
 
-    private static int getRandomProgress() {
-        Random random = new Random(System.currentTimeMillis());
-        return random.nextInt(100);
-    }
+//    private static int getRandomProgress() {
+//        Random random = new Random(System.currentTimeMillis());
+//        return random.nextInt(100);
+//    }
 }

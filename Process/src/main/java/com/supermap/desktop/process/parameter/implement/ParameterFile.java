@@ -17,7 +17,7 @@ public class ParameterFile extends AbstractParameter {
 	private String describe;
 
 	@Override
-	public ParameterType getType() {
+	public String getType() {
 		return ParameterType.FILE;
 	}
 
@@ -49,7 +49,13 @@ public class ParameterFile extends AbstractParameter {
 		return describe;
 	}
 
-	public void setDescribe(String describe) {
+	public ParameterFile setDescribe(String describe) {
 		this.describe = describe;
+		return this;
+	}
+
+	@Override
+	public void dispose() {
+
 	}
 }

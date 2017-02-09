@@ -16,7 +16,7 @@ public class ParameterDataset extends AbstractParameter {
 	private Dataset dataset;
 
 	@Override
-	public ParameterType getType() {
+	public String getType() {
 		return ParameterType.DATASET;
 	}
 
@@ -40,5 +40,10 @@ public class ParameterDataset extends AbstractParameter {
 	@Override
 	public Object getSelectedItem() {
 		return dataset;
+	}
+
+	@Override
+	public void dispose() {
+
 	}
 }

@@ -160,18 +160,11 @@ public class TextStyleContainer extends JPanel {
                 if (tempGeometry instanceof GeoText && !newValue.equals(TextStyleType.FIXEDSIZE)) {
                     if (newValue.equals(TextStyleType.ROTATION)) {
                         double tempTest = (Double) newGeoStyleProperty;
-                        if (Double.compare(tempTest, 0) != 0) { // 当设置旋转角度为0时，会抛异常，原因未找到,暂时先进行控制       ————李文发
-                            for (int j = 0; j < ((GeoText) tempGeometry).getPartCount(); j++) {
-                                ((GeoText) tempGeometry).getPart(j).setRotation((Double) newGeoStyleProperty);
-                            }
+                        for (int j = 0; j < ((GeoText) tempGeometry).getPartCount(); j++) {
+                            ((GeoText) tempGeometry).getPart(j).setRotation((Double) newGeoStyleProperty);
                         }
                     } else {
                         ResetTextStyleUtil.resetTextStyle(newValue, ((GeoText) tempGeometry).getTextStyle(), newGeoStyleProperty);
-                        // 文本默认风格设置 2017.1.13 李逍遥 part6   共计part9
-                        IFormMap formMap=(IFormMap) Application.getActiveApplication().getActiveForm();
-                        formMap.setDefaultTextRotationAngle(((GeoText) tempGeometry).getPart(0).getRotation());
-                        formMap.setDefaultTextStyle(((GeoText) tempGeometry).getTextStyle().clone());
-
                     }
                 }
                 if (tempGeometry instanceof GeoText && newValue.equals(TextStyleType.FIXEDSIZE)) {
@@ -179,7 +172,13 @@ public class TextStyleContainer extends JPanel {
                     ResetTextStyleUtil.resetTextStyle(TextStyleType.FONTHEIGHT, ((GeoText) tempGeometry).getTextStyle(),
                             textBasicPanel.getResultMap().get(TextStyleType.FONTHEIGHT));
                 }
-                recordset.setGeometry(tempGeometry);
+                // 文本默认风格设置 2017.1.13 李逍遥 part6   共计part9
+                if (tempGeometry instanceof GeoText) {
+                    IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+                    formMap.setDefaultTextRotationAngle(((GeoText) tempGeometry).getPart(0).getRotation());
+                    formMap.setDefaultTextStyle(((GeoText) tempGeometry).getTextStyle().clone());
+                    recordset.setGeometry(tempGeometry);
+                }
                 tempGeometry.dispose();
                 recordset.moveNext();
             }

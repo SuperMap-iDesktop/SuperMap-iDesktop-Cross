@@ -21,7 +21,7 @@ public class FileManagerContainer extends JPanel {
 	Group verticalGroup = null;
 
 	public FileManagerContainer() {
-		items = new ArrayList<ITask>();
+		items = new ArrayList<>();
 
 		initializeComponents();
 		initializeResources();
@@ -69,5 +69,9 @@ public class FileManagerContainer extends JPanel {
 			}
 		}
 		updateItems();
+	}
+
+	public ArrayList<ITask> getItems() {
+		return items;
 	}
 }
