@@ -287,34 +287,6 @@ public class DockbarManager implements IDockbarManager {
 		return dock;
 	}
 
-	private void dock(View dockParent, DockConstraint dockConstraint) {
-		if (dockConstraint.getLeft() != null) {
-			DockConstraint left = dockConstraint.getLeft();
-
-			if (left.getDepth() > 0) {
-				XMLDockbar[] dockbars = left.getDockbars();
-
-				for (int i = 0; i < dockbars.length; i++) {
-
-				}
-			} else {
-
-			}
-		}
-
-		if (dockConstraint.getRight() != null) {
-
-		}
-//
-//		dockConstraint.getTop() != null){
-//
-//		}
-//
-//		dockConstraint.getBottom() != null){
-//
-//		}
-	}
-
 	private boolean isComponentVisible(Dockbar dockbar) {
 		return dockbar != null && dockbar.isVisible();
 	}
