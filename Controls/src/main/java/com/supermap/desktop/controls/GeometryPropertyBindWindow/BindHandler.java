@@ -170,8 +170,9 @@ public class BindHandler {
 
 	private void bindMapsMousePosition(int size, MouseEvent e) {
 		Map sourceMap = ((MapControl) e.getSource()).getMap();
-		sourceMap.getTrackingLayer().clear();
-		sourceMap.refreshTrackingLayer();
+		// FIXME: 2017/2/7 UGDJ-549缺陷处理
+//		sourceMap.getTrackingLayer().clear();
+//		sourceMap.refreshTrackingLayer();
 		Point2Ds points = new Point2Ds();
 		for (int j = 0; j < size; j++) {
 			IForm formMap = (IForm) formMapList.get(j);

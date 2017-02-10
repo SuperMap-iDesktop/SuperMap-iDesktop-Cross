@@ -48,7 +48,7 @@ public class UploadFile extends Thread {
 	// 上传速度
 	private long speed;
 
-	private static int BUFF_LENGTH = 1024 * 128;
+	private static int BUFF_LENGTH = 1024 * 1024;
 
 	private int startLength;
 
@@ -93,6 +93,7 @@ public class UploadFile extends Thread {
 				while ((size = stream.read(buff, 0, BUFF_LENGTH)) > 0 && startPos < endPos && !isStop) {
 					String locationURL = "";
 					HttpPost requestPost = new HttpPost(url);
+					requestPost.setHeader("Accept-Encoding", "utf-8");
 					HttpResponse response = new DefaultHttpClient().execute(requestPost);
 					if (response != null) {
 						if (response.getStatusLine().getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT) {

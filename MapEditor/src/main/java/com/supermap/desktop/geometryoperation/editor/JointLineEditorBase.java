@@ -142,9 +142,10 @@ public abstract class JointLineEditorBase extends AbstractEditor {
 
                         if (geometry.getGeometry().getType() == GeometryType.GEOLINE) {
                             currentLine = ((ILineFeature) geometry).convertToLine(120);
-
-                            currentGeolines.add(currentLine);
-                            if (editLayer.getDataset().equals(layer.getDataset()) && currentLine != null) {
+                            if (currentLine.getPartCount() <= 1) {
+                                currentGeolines.add(currentLine);
+                            }
+                            if (editLayer.getDataset().equals(layer.getDataset()) && currentLine != null && currentLine.getPartCount() <= 1) {
                                 deleteIDs.add(selection.get(i));
                             }
                         }

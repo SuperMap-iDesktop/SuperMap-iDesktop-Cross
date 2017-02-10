@@ -173,7 +173,11 @@ public class CADStyleContainer extends JPanel {
                                 count++;
                             }
                             if (!CADStyleUtilities.is3DGeometry(tempGeometry)) {
-                                tempGeometry.setStyle(geoStyle);
+                                try {
+                                    tempGeometry.setStyle(geoStyle);
+                                } catch (Exception e) {
+//                                    ignore
+                                }
                             }
                             recordset.setGeometry(tempGeometry);
                             tempGeometry.dispose();
@@ -223,7 +227,11 @@ public class CADStyleContainer extends JPanel {
                             resetFillModel(index, geoStyle);
                             count++;
                             if (!CADStyleUtilities.is3DGeometry(tempGeometry)) {
-                                tempGeometry.setStyle(geoStyle);
+                                try {
+                                    tempGeometry.setStyle(geoStyle);
+                                } catch (Exception e1) {
+//                                    ignore
+                                }
                             }
                             recordset.setGeometry(tempGeometry);
                             tempGeometry.dispose();
@@ -288,7 +296,11 @@ public class CADStyleContainer extends JPanel {
                             break;
                         }
                         if (!CADStyleUtilities.is3DGeometry(tempGeometry)) {
-                            tempGeometry.setStyle(geoStyle);
+                            try {
+                                tempGeometry.setStyle(geoStyle);
+                            } catch (Exception e) {
+//                                ignore
+                            }
                         }
                         recordset.setGeometry(tempGeometry);
                         tempGeometry.dispose();
@@ -355,7 +367,11 @@ public class CADStyleContainer extends JPanel {
                             break;
                         }
                         if (!CADStyleUtilities.is3DGeometry(tempGeometry)) {
-                            tempGeometry.setStyle(geoStyle);
+                            try {
+                                tempGeometry.setStyle(geoStyle);
+                            } catch (Exception e1) {
+//                               ignore
+                            }
                         }
                         recordset.setGeometry(tempGeometry);
                         tempGeometry.dispose();
@@ -418,7 +434,7 @@ public class CADStyleContainer extends JPanel {
                             if (null == geoStyle) {
                                 geoStyle = new GeoStyle();
                             }
-                            if (!newSize.equals(geoStyle.getMarkerSize())) {
+                            if (!newSize.equals(geoStyle.getMarkerSize()) && newSize.getWidth() > 0 && newSize.getHeight() > 0) {
                                 //设置点符号大小
                                 geoStyle.setMarkerSize(newSize);
                                 count++;
@@ -426,7 +442,11 @@ public class CADStyleContainer extends JPanel {
                                 break;
                             }
                             if (!CADStyleUtilities.is3DGeometry(tempGeometry)) {
-                                tempGeometry.setStyle(geoStyle);
+                                try {
+                                    tempGeometry.setStyle(geoStyle);
+                                } catch (Exception e1) {
+                                    //ignore
+                                }
                             }
                             recordset.setGeometry(tempGeometry);
                             tempGeometry.dispose();
@@ -495,7 +515,11 @@ public class CADStyleContainer extends JPanel {
                             break;
                         }
                         if (!CADStyleUtilities.is3DGeometry(tempGeometry)) {
-                            tempGeometry.setStyle(geoStyle);
+                            try {
+                                tempGeometry.setStyle(geoStyle);
+                            } catch (Exception e1) {
+//                                ignore
+                            }
                         }
                         recordset.setGeometry(tempGeometry);
                         tempGeometry.dispose();
@@ -565,7 +589,11 @@ public class CADStyleContainer extends JPanel {
                             break;
                         }
                         if (!CADStyleUtilities.is3DGeometry(tempGeometry)) {
-                            tempGeometry.setStyle(geoStyle);
+                            try {
+                                tempGeometry.setStyle(geoStyle);
+                            } catch (Exception e) {
+//                                ignore
+                            }
                         }
                         recordset.setGeometry(tempGeometry);
                         tempGeometry.dispose();
@@ -627,7 +655,11 @@ public class CADStyleContainer extends JPanel {
                             break;
                         }
                         if (!CADStyleUtilities.is3DGeometry(tempGeometry)) {
-                            tempGeometry.setStyle(geoStyle);
+                            try {
+                                tempGeometry.setStyle(geoStyle);
+                            } catch (Exception e) {
+//                                ignore
+                            }
                         }
                         recordset.setGeometry(tempGeometry);
                         tempGeometry.dispose();
@@ -767,7 +799,11 @@ public class CADStyleContainer extends JPanel {
                             break;
                         }
                         if (!CADStyleUtilities.is3DGeometry(tempGeometry)) {
-                            tempGeometry.setStyle(geoStyle);
+                            try {
+                                tempGeometry.setStyle(geoStyle);
+                            } catch (Exception e1) {
+                                // ignore
+                            }
                         }
                         recordset.setGeometry(tempGeometry);
                         tempGeometry.dispose();
