@@ -1,6 +1,6 @@
 package com.supermap.desktop.dialog;
 
-import com.supermap.Interface.ITask;
+import com.supermap.Interface.ILBSTask;
 import com.supermap.Interface.ITaskFactory;
 import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
@@ -238,7 +238,7 @@ public class JDialogFileSaveAs extends SmDialog {
                 File file = new File(localPath + fileName);
                 FileInfo downloadInfo = new FileInfo(getWebFilePath(), file.getName(), realName, file.getParentFile().getPath(), this.getFileSize(), 1, true);
                 ITaskFactory taskFactory = TaskFactory.getInstance();
-                ITask task = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
+                ILBSTask task = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
                 DownloadProgressCallable downloadProgressCallable = new DownloadProgressCallable(downloadInfo, true);
                 task.doWork(downloadProgressCallable);
                 fileManagerContainer.addItem(task);

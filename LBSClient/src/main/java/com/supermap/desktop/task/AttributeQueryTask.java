@@ -9,7 +9,7 @@ import java.util.concurrent.CancellationException;
  * @author xie
  *
  */
-public class AttributeQueryTask extends Task{
+public class AttributeQueryTask extends LBSTask {
 
 	/**
 	 * 

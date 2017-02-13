@@ -1,6 +1,6 @@
 package com.supermap.desktop.messagebus;
 
-import com.supermap.Interface.ITask;
+import com.supermap.Interface.ILBSTask;
 import com.supermap.Interface.ITaskFactory;
 import com.supermap.Interface.TaskEnum;
 import com.supermap.data.Dataset;
@@ -50,7 +50,7 @@ public class MessageBus {
 
 	private static ArrayList<String> tasks = null;
 	private static Boolean stop;
-	private static volatile ITask task;
+	private static volatile ILBSTask task;
 
 	public static void producer(String command) {
 		if (tasks == null) {
@@ -137,7 +137,7 @@ public class MessageBus {
 			}
 		}
 
-		private void addTask(FileManagerContainer fileManagerContainer, ITask task) throws InterruptedException {
+		private void addTask(FileManagerContainer fileManagerContainer, ILBSTask task) throws InterruptedException {
 			if (fileManagerContainer != null) {
 				fileManagerContainer.addItem(task);
 			}

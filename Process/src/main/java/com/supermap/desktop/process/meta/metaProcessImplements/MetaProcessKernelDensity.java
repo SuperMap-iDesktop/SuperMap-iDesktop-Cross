@@ -1,11 +1,14 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
+import com.supermap.desktop.lbs.params.JobResultResponse;
 import com.supermap.desktop.lbs.params.KernelDensityJobSetting;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.IParameter;
 import com.supermap.desktop.process.parameter.IParameters;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.utilities.CursorUtilities;
 
 import javax.swing.*;
 
@@ -31,15 +34,15 @@ public class MetaProcessKernelDensity extends MetaProcess {
         ParameterTextField parameterFileInputPath = new ParameterTextField().setDescribe("");
         parameterFileInputPath.setSelectedItem("hdfs://localhost:9000/data/newyork_taxi_2013-01_147k.csv");
         //流程图中不支持在地图中绘制范围，范围表示与iServer的表示相同
-        ParameterTextField parameterBounds = new ParameterTextField().setDescribe("");
+        ParameterTextField parameterBounds = new ParameterTextField().setDescribe(ProcessProperties.getString("String_AnalystBounds"));
         parameterBounds.setSelectedItem("-74.050,40.550,-73.750,40.950");
-        ParameterTextField parameterIndex = new ParameterTextField().setDescribe("");
+        ParameterTextField parameterIndex = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Index"));
         parameterIndex.setSelectedItem("10");
-        ParameterTextField parameterSeperator = new ParameterTextField().setDescribe("");
+        ParameterTextField parameterSeperator = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Seperator"));
         parameterSeperator.setSelectedItem(",");
-        ParameterTextField parameterResolution = new ParameterTextField().setDescribe("");
+        ParameterTextField parameterResolution = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Resolution"));
         parameterResolution.setSelectedItem("0.004");
-        ParameterTextField parameterRadius = new ParameterTextField().setDescribe("");
+        ParameterTextField parameterRadius = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Radius"));
         parameterRadius.setSelectedItem("0.004");
         parameters.setParameters(new IParameter[]{
                 parameterFileInputPath,
@@ -53,7 +56,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
     @Override
     public String getTitle() {
-        return "核密度分析";
+        return ProcessProperties.getString("String_KernelDensityAnalyst");
     }
 
     @Override

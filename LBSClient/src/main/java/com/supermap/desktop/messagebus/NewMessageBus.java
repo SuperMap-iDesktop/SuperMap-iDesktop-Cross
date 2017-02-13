@@ -2,7 +2,7 @@ package com.supermap.desktop.messagebus;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.supermap.Interface.ITask;
+import com.supermap.Interface.ILBSTask;
 import com.supermap.Interface.ITaskFactory;
 import com.supermap.Interface.TaskEnum;
 import com.supermap.data.*;
@@ -41,7 +41,7 @@ public class NewMessageBus {
 
     public static void producer(IResponse response) {
         try {
-            ITask task = null;
+            ILBSTask task = null;
             FileManagerContainer fileManagerContainer = CommonUtilities.getFileManagerContainer();
             ITaskFactory taskFactory = TaskFactory.getInstance();
             if (response instanceof JobResultResponse) {
@@ -68,7 +68,7 @@ public class NewMessageBus {
         }
     }
 
-    private static void addTask(FileManagerContainer fileManagerContainer, ITask task) throws InterruptedException {
+    private static void addTask(FileManagerContainer fileManagerContainer, ILBSTask task) throws InterruptedException {
         if (fileManagerContainer != null) {
             fileManagerContainer.addItem(task);
         }
@@ -78,10 +78,10 @@ public class NewMessageBus {
         private IServerService serverService = new IServerServiceImpl();
         private IResponse response;
         private volatile boolean stop = false;
-        private volatile ITask task;
+        private volatile ILBSTask task;
         private volatile int i = 0;
 
-        public MessageBusConsumer(IResponse response, ITask task) {
+        public MessageBusConsumer(IResponse response, ILBSTask task) {
             this.response = response;
             this.task = task;
         }
