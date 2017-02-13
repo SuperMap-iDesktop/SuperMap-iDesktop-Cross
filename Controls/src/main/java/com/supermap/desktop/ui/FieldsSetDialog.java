@@ -3,7 +3,6 @@ package com.supermap.desktop.ui;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
-import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ChooseTable.SmChooseTable;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -30,30 +29,15 @@ public class FieldsSetDialog extends SmDialog {
     private JButton buttonCancel;
     private JScrollPane scrollpaneSourceFields;
     private JScrollPane scrollpaneOverlayAnalystFields;
-    private final Object[] tableTitle = {"", CommonProperties.getString("String_Field_Caption")};
     private String[] sourceFields;
     private String[] overlayAnalystFields;
-    private static final int TABLE_COLUMN_CHECKABLE = 0;
-    private static final int TABLE_COLUMN_CAPTION = 1;
 
     private DatasetVector sourceDataset, overlayAnalystDataset;
     private ActionListener buttonOKListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            ArrayList<String> sourceFieldList = new ArrayList<String>();
-            ArrayList<String> overlayAnaylstList = new ArrayList<String>();
-            ArrayList<Object> result = new ArrayList<Object>();
-
-            result = smChooseTableSourceFields.getSelectedModelRows(1);
-            for (int i=0;i<result.size();i++){
-                sourceFieldList.add((String)result.get(i));
-            }
-
-            result = null;
-            result = smChooseTableOverlayAnalystFields.getSelectedModelRows(1);
-            for (int i=0;i<result.size();i++){
-                overlayAnaylstList.add((String)result.get(i));
-            }
+            ArrayList<String> sourceFieldList = smChooseTableSourceFields.getSelectedFieldsName();
+            ArrayList<String> overlayAnaylstList = smChooseTableOverlayAnalystFields.getSelectedFieldsName();
 
             sourceFields = sourceFieldList.toArray(new String[sourceFieldList.size()]);
             overlayAnalystFields = overlayAnaylstList.toArray(new String[overlayAnaylstList.size()]);
@@ -137,30 +121,11 @@ public class FieldsSetDialog extends SmDialog {
     }
 
     private void initComponents() {
-        this.smChooseTableSourceFields=new SmChooseTable(getData(sourceDataset),tableTitle,0);
-        this.smChooseTableOverlayAnalystFields =new SmChooseTable(getData(overlayAnalystDataset),tableTitle,0);
+        this.smChooseTableSourceFields=new SmChooseTable(sourceDataset);
+        this.smChooseTableOverlayAnalystFields =new SmChooseTable(overlayAnalystDataset);
 
         this.buttonOK = ComponentFactory.createButtonOK();
         this.buttonCancel = ComponentFactory.createButtonCancel();
-    }
-
-    private Object[][] getData(DatasetVector dataset){
-        int count = 0;
-        for (int i = 0; i < dataset.getFieldInfos().getCount(); i++) {
-            if (!dataset.getFieldInfos().get(i).isSystemField()) {
-                count++;
-            }
-        }
-        Object data[][]=new Object[count][2];
-        int length = 0;
-        for (int i = 0; i < dataset.getFieldInfos().getCount(); i++) {
-            if (!dataset.getFieldInfos().get(i).isSystemField()) {
-                data[length][0]=false;
-                data[length][1]=dataset.getFieldInfos().get(i).getCaption();
-                length++;
-            }
-        }
-        return data;
     }
 
     public String[] getSourceFields() {
