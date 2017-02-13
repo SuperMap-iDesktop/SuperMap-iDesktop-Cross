@@ -1,14 +1,8 @@
 package com.supermap.desktop.ui.controls;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldType;
-import com.supermap.data.QueryParameter;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.utilities.SortUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
@@ -19,17 +13,14 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.undo.UndoManager;
 import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 
 public class SQLExpressionDialog extends SmDialog {
@@ -971,7 +962,16 @@ public class SQLExpressionDialog extends SmDialog {
 			}
 		}
 		DatasetVector selectedDatasetVector = (DatasetVector) datasets[datasetVectorCount];
-		Recordset recordset = selectedDatasetVector.getRecordset(false, CursorType.STATIC);
+        //  2017/2/10 lixiaoyao 针对原来的唯一值获取查询进行优化，原本是遍历获取，现在改为空间查询
+        String queryString=selectedDatasetVector.getName()+'.'+fieldName;
+        QueryParameter queryParameter = new QueryParameter();
+        queryParameter.setCursorType(CursorType.STATIC);
+        queryParameter.setHasGeometry(false);
+        queryParameter.setOrderBy(new String[]{queryString + " asc",});
+        queryParameter.setGroupBy(new String[]{queryString});
+        queryParameter.setResultFields(new String[]{queryString});
+        Recordset recordset = selectedDatasetVector.query(queryParameter);
+		//Recordset recordset = selectedDatasetVector.getRecordset(false, CursorType.STATIC);
 		LinkedHashMap<Object, String> map = new LinkedHashMap<>();
 		try {
 			recordset.moveFirst();
@@ -994,7 +994,7 @@ public class SQLExpressionDialog extends SmDialog {
 			result[i] = iterator.next();
 		}
 		//对数组进行排序
-		SortUIUtilities.sortList(result);
+		//SortUIUtilities.sortList(result);
 		return result;
 	}
 }

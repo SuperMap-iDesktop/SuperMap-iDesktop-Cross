@@ -786,6 +786,7 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
          */
         private void setRangeMethod() {
             int rangeMethod = comboBoxRangeMethod.getSelectedIndex();
+            rangeExpression = comboBoxExpression.getSelectedItem().toString();
             switch (rangeMethod) {
                 case 0:
                     // 等距分段
@@ -1155,18 +1156,20 @@ public class ThemeLabelRangeContainer extends ThemeChangePanel {
         }
         this.themeLabelLayer = MapUtilities.findLayerByName(map, layerName);
         if (null != themeLabelLayer && null != themeLabelLayer.getTheme() && themeLabelLayer.getTheme().getType() == ThemeType.LABEL) {
-            ThemeLabel nowThemeLabel = ((ThemeLabel) themeLabelLayer.getTheme());
-            nowThemeLabel.clear();
-            if (0 < this.themeLabel.getCount()) {
-                for (int i = 0; i < this.themeLabel.getCount(); i++) {
-                    if (null != this.themeLabel.getItem(i)) {
-                        nowThemeLabel.addToTail(this.themeLabel.getItem(i), true);
-                    }
-                }
-            }
-            nowThemeLabel.setRangeExpression(this.themeLabel.getRangeExpression());
-            this.map.refresh();
+//            ThemeLabel nowThemeLabel = ((ThemeLabel) themeLabelLayer.getTheme());
+//            nowThemeLabel.clear();
+//            if (0 < this.themeLabel.getCount()) {
+//                for (int i = 0; i < this.themeLabel.getCount(); i++) {
+//                    if (null != this.themeLabel.getItem(i)) {
+//                        nowThemeLabel.addToTail(this.themeLabel.getItem(i), true);
+//                    }
+//                }
+//            }
+//            nowThemeLabel.setRangeExpression(this.themeLabel.getRangeExpression());
+//            this.map.refresh();
             UICommonToolkit.getLayersManager().getLayersTree().refreshNode(themeLabelLayer);
+            this.themeLabelLayer.getTheme().fromXML(this.themeLabel.toXML());
+            this.map.refresh();
         }
     }
 

@@ -4,6 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop.enums.DockState;
+import com.supermap.desktop.ui.DockPath;
 import com.supermap.desktop.ui.XMLDockbar;
 import org.apache.log4j.Hierarchy;
 import org.flexdock.docking.Dockable;
@@ -117,6 +118,10 @@ public class Dockbar implements IDockbar {
 
 	public View getView() {
 		return this.view;
+	}
+
+	public DockPath getDockPath() {
+		return this.xmlDockbar.getDockPath();
 	}
 
 	public String getID() {

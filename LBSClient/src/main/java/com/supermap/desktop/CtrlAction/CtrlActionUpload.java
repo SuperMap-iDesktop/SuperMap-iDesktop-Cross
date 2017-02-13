@@ -1,6 +1,6 @@
 package com.supermap.desktop.CtrlAction;
 
-import com.supermap.Interface.ITask;
+import com.supermap.Interface.ILBSTask;
 import com.supermap.Interface.ITaskFactory;
 import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
@@ -73,7 +73,7 @@ public class CtrlActionUpload extends CtrlAction {
     private void upload(File file, FileManagerContainer fileManagerContainer, String webPath) {
         FileInfo uploadInfo = new FileInfo(webPath, file.getName(), "", file.getParentFile().getPath(), file.length(), 1, false);
         ITaskFactory taskFactory = TaskFactory.getInstance();
-        ITask task = taskFactory.getTask(TaskEnum.UPLOADTASK, uploadInfo);
+        ILBSTask task = taskFactory.getTask(TaskEnum.UPLOADTASK, uploadInfo);
         UploadPropressCallable uploadProgressCallable = new UploadPropressCallable(uploadInfo, true);
         task.doWork(uploadProgressCallable);
         fileManagerContainer.addItem(task);

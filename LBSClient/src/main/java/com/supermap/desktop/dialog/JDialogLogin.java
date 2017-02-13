@@ -1,11 +1,11 @@
 package com.supermap.desktop.dialog;
 
-import com.supermap.desktop.Interface.IServerService;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
-import com.supermap.desktop.impl.IServerServiceImpl;
+import com.supermap.desktop.lbs.Interface.IServerService;
+import com.supermap.desktop.lbs.impl.IServerServiceImpl;
+import com.supermap.desktop.lbs.params.IServerLoginInfo;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
-import com.supermap.desktop.params.IServerLoginInfo;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -140,7 +140,7 @@ public class JDialogLogin extends SmDialog {
         initComponents();
         initResources();
         registEvents();
-        setSize(new Dimension(450, 350));
+        setSize(new Dimension(450, 356));
         this.getRootPane().setDefaultButton(this.buttonLogin);
         setLocationRelativeTo(null);
         setVisible(true);
@@ -247,9 +247,10 @@ public class JDialogLogin extends SmDialog {
 
         setLayout(new GridBagLayout());
         panelMain.add(panelService, new GridBagConstraintsHelper(0, 0, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setInsets(10, 10, 0, 10));
-        panelMain.add(panelUser, new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
-        panelMain.add(this.buttonLogin, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 10, 0));
-        panelMain.add(this.buttonClose, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 10, 10));
+        panelMain.add(panelUser, new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 0, 10));
+        panelMain.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
+        panelMain.add(this.buttonLogin, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 10, 0));
+        panelMain.add(this.buttonClose, new GridBagConstraintsHelper(1, 3, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 10, 10));
     }
 
 }

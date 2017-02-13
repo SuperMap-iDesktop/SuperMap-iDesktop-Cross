@@ -1,6 +1,6 @@
 package com.supermap.desktop.utilities;
 
-import com.supermap.Interface.ITask;
+import com.supermap.Interface.ILBSTask;
 import com.supermap.Interface.ITaskFactory;
 import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
@@ -96,7 +96,7 @@ public class CommonUtilities {
     /**
      * 删除任务项
      */
-    public static void removeItem(ITask task) {
+    public static void removeItem(ILBSTask task) {
         IDockbar dockbarPropertyContainer = CommonUtilities.getDockBar(FILE_MANAGER_CONTROL_CLASS);
         if (null != dockbarPropertyContainer) {
             FileManagerContainer fileManagerContainer = (FileManagerContainer) dockbarPropertyContainer.getInnerComponent();
@@ -140,7 +140,7 @@ public class CommonUtilities {
 
         if (fileManagerContainer != null) {
             ITaskFactory taskFactory = TaskFactory.getInstance();
-            ITask task = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
+            ILBSTask task = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
             DownloadProgressCallable uploadProgressCallable = new DownloadProgressCallable(downloadInfo, true);
             task.doWork(uploadProgressCallable);
             fileManagerContainer.addItem(task);
@@ -199,7 +199,7 @@ public class CommonUtilities {
                         String[] attriArrayForDownload = downloadAttris.split(",");
                         FileInfo downloadInfo = new FileInfo(attriArrayForDownload[0], attriArrayForDownload[1], attriArrayForDownload[2],
                                 attriArrayForDownload[3], Long.parseLong(attriArrayForDownload[4]), 1, true);
-                        ITask downloadTask = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
+                        ILBSTask downloadTask = taskFactory.getTask(TaskEnum.DOWNLOADTASK, downloadInfo);
                         DownloadProgressCallable downloadProgressCallable = new DownloadProgressCallable(downloadInfo, false);
                         downloadTask.doWork(downloadProgressCallable);
                         fileManagerContainer.addItem(downloadTask);
@@ -212,7 +212,7 @@ public class CommonUtilities {
                         String[] attriArrayForUpload = uploadAttris.split(",");
                         FileInfo uploadInfo = new FileInfo(attriArrayForUpload[0], attriArrayForUpload[1], "", attriArrayForUpload[2],
                                 Long.parseLong(attriArrayForUpload[3]), 1, true);
-                        ITask uploadTask = taskFactory.getTask(TaskEnum.UPLOADTASK, uploadInfo);
+                        ILBSTask uploadTask = taskFactory.getTask(TaskEnum.UPLOADTASK, uploadInfo);
                         UploadPropressCallable downloadProgressCallable = new UploadPropressCallable(uploadInfo, false);
                         uploadTask.doWork(downloadProgressCallable);
                         fileManagerContainer.addItem(uploadTask);

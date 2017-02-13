@@ -1,6 +1,5 @@
 package com.supermap.desktop;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldType;
 import com.supermap.data.QueryParameter;
@@ -854,6 +853,9 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		public void mousePressed(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
 				int pick = jTableTabular.columnAtPoint(e.getPoint());
+				if (pick < 0) {
+					return;
+				}
 				tableClickedColumn = pick;
 				if (e.isShiftDown()) {
 					setSelectedColumn(tableClickedColumn, jTableTabular.getSelectedColumn());

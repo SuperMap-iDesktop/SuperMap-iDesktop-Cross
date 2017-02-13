@@ -6,7 +6,7 @@ import com.supermap.desktop.utilities.CommonUtilities;
 import javax.swing.*;
 import java.util.concurrent.CancellationException;
 
-public class SpatialQueryTask extends Task{
+public class SpatialQueryTask extends LBSTask {
 
 	public SpatialQueryTask() {
 		super();

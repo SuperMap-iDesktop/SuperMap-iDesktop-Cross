@@ -68,7 +68,7 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 	private SmTextFieldLegit smTextFieldLegitSymbolSaveTime;
 	private JLabel labelSymbolSaveTimeUnit;
 
-	private JCheckBox checkBoxIsBindQueryWhileClickHead;
+//	private JCheckBox checkBoxIsBindQueryWhileClickHead;
 
 	private ItemListener itemListener;
 
@@ -81,7 +81,7 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		checkBoxWorkspaceCloseNotify = new JCheckBox();
 		checkBoxCloseMemoryDatasourceNotify = new JCheckBox();
 		checkBoxIsAutoCloseEmptyMap = new JCheckBox();
-		checkBoxIsBindQueryWhileClickHead = new JCheckBox();
+//		checkBoxIsBindQueryWhileClickHead = new JCheckBox();
 
 		labelMapRefreshDelayWhileResize = new JLabel();
 		smTextFieldMapDelay = new SmTextFieldLegit();
@@ -141,7 +141,7 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		this.add(checkBoxWorkspaceCloseNotify, new GridBagConstraintsHelper(0, 2, 3, 1).setWeight(1, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 		this.add(checkBoxCloseMemoryDatasourceNotify, new GridBagConstraintsHelper(0, 3, 3, 1).setWeight(1, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 		this.add(checkBoxIsAutoCloseEmptyMap, new GridBagConstraintsHelper(0, 4, 3, 1).setWeight(1, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
-		this.add(checkBoxIsBindQueryWhileClickHead, new GridBagConstraintsHelper(0, 5, 3, 1).setWeight(1, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+//		this.add(checkBoxIsBindQueryWhileClickHead, new GridBagConstraintsHelper(0, 5, 3, 1).setWeight(1, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 		this.add(checkBoxWorkspaceRecovery, new GridBagConstraintsHelper(0, 6, 3, 1).setWeight(1, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 
 
@@ -253,7 +253,7 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		checkBoxWorkspaceCloseNotify.addItemListener(itemListener);
 		checkBoxCloseMemoryDatasourceNotify.addItemListener(itemListener);
 		checkBoxIsAutoCloseEmptyMap.addItemListener(itemListener);
-		checkBoxIsBindQueryWhileClickHead.addItemListener(itemListener);
+//		checkBoxIsBindQueryWhileClickHead.addItemListener(itemListener);
 //		checkBoxAutoSaveWorkspace.addItemListener(itemListener);
 //		checkBoxSymbolLibraryRecovery.addItemListener(itemListener);
 		checkBoxWorkspaceRecovery.addItemListener(new ItemListener() {
@@ -279,7 +279,7 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		checkBoxWorkspaceCloseNotify.setText(FrameProperties.getString("String_CloseWorkspaceNotyfy"));
 		checkBoxCloseMemoryDatasourceNotify.setText(FrameProperties.getString("String_ShowWorkspaceMemorytTip"));
 		checkBoxIsAutoCloseEmptyMap.setText(FrameProperties.getString("String_CloseEmptyWindow"));
-		checkBoxIsBindQueryWhileClickHead.setText(FrameProperties.getString("String_IsBindQueryWhileClickHead"));
+//		checkBoxIsBindQueryWhileClickHead.setText(FrameProperties.getString("String_IsBindQueryWhileClickHead"));
 		checkBoxWorkspaceRecovery.setText(FrameProperties.getString("String_WorkspaceRecovery"));
 		labelMapRefreshDelayWhileResize.setText(FrameProperties.getString("String_MapRefreshDelay"));
 		labelMapDelayUnit.setText(CommonProperties.getString("String_ms"));
@@ -300,7 +300,7 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		checkBoxWorkspaceCloseNotify.setSelected(GlobalParameters.isWorkspaceCloseNotify());
 		checkBoxCloseMemoryDatasourceNotify.setSelected(GlobalParameters.isCloseMemoryDatasourceNotify());
 		checkBoxIsAutoCloseEmptyMap.setSelected(GlobalParameters.isAutoCloseEmptyWindow());
-		checkBoxIsBindQueryWhileClickHead.setSelected(GlobalParameters.isHeadClickedSelectedColumn());
+//		checkBoxIsBindQueryWhileClickHead.setSelected(GlobalParameters.isHeadClickedSelectedColumn());
 		checkBoxWorkspaceRecovery.setSelected(GlobalParameters.isWorkspaceRecovery());
 		smTextFieldMapDelay.setText(String.valueOf(GlobalParameters.getMapRefreshDelayWhileResize()));
 //		checkBoxAutoSaveWorkspace.setSelected(GlobalParameters.isWorkspaceAutoSave());
@@ -339,9 +339,11 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 				GlobalParameters.setIsCloseMemoryDatasourceNotify(checkBoxCloseMemoryDatasourceNotify.isSelected());
 			} else if (component == checkBoxIsAutoCloseEmptyMap) {
 				GlobalParameters.setIsAutoCloseEmptyWindow(checkBoxIsAutoCloseEmptyMap.isSelected());
-			} else if (component == checkBoxIsBindQueryWhileClickHead) {
-				GlobalParameters.setIsHeadClickedSelectedColumn(checkBoxIsBindQueryWhileClickHead.isSelected());
-			} else if (component == checkBoxWorkspaceRecovery) {
+			}
+//			else if (component == checkBoxIsBindQueryWhileClickHead) {
+//				GlobalParameters.setIsHeadClickedSelectedColumn(checkBoxIsBindQueryWhileClickHead.isSelected());
+//			}
+			else if (component == checkBoxWorkspaceRecovery) {
 				GlobalParameters.setIsWorkspaceRecovery(checkBoxWorkspaceRecovery.isSelected());
 				if (checkBoxWorkspaceRecovery.isSelected()) {
 					WorkspaceTempSave.getInstance().start();
