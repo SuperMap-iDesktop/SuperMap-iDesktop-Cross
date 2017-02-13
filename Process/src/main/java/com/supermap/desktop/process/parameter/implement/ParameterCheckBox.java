@@ -26,7 +26,6 @@ public class ParameterCheckBox extends AbstractParameter {
 			panel = new ParameterCheckBoxPanel(this);
 		}
 		return panel;
-
 	}
 
 	@Override

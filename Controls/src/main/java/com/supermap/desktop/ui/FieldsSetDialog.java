@@ -4,7 +4,7 @@ import com.supermap.data.DatasetVector;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.CheckHeaderCellRenderer;
+import com.supermap.desktop.ui.controls.ChooseTable.SmChooseTable;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
@@ -23,8 +23,9 @@ import java.util.ArrayList;
  * 字段选择器
  */
 public class FieldsSetDialog extends SmDialog {
-    private JTable tableSourceFields;
-    private JTable tableOverlayAnalystFields;
+
+    private SmChooseTable smChooseTableSourceFields;
+    private SmChooseTable smChooseTableOverlayAnalystFields;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JScrollPane scrollpaneSourceFields;
@@ -41,21 +42,19 @@ public class FieldsSetDialog extends SmDialog {
         public void actionPerformed(ActionEvent e) {
             ArrayList<String> sourceFieldList = new ArrayList<String>();
             ArrayList<String> overlayAnaylstList = new ArrayList<String>();
-            for (int i = 0; i < tableSourceFields.getRowCount(); i++) {
-                for (int j = 0; j < sourceDataset.getFieldInfos().getCount(); j++) {
-                    if ((Boolean) tableSourceFields.getValueAt(i, TABLE_COLUMN_CHECKABLE) && sourceDataset.getFieldInfos().get(j).getCaption().equals(tableSourceFields.getValueAt(i, TABLE_COLUMN_CAPTION))) {
-                        sourceFieldList.add(sourceDataset.getFieldInfos().get(j).getName());
-                    }
-                }
+            ArrayList<Object> result = new ArrayList<Object>();
+
+            result = smChooseTableSourceFields.getSelectedModelRows(1);
+            for (int i=0;i<result.size();i++){
+                sourceFieldList.add((String)result.get(i));
             }
 
-            for (int i = 0; i < tableOverlayAnalystFields.getRowCount(); i++) {
-                for (int j = 0; j < overlayAnalystDataset.getFieldInfos().getCount(); j++) {
-                    if ((Boolean) tableOverlayAnalystFields.getValueAt(i, TABLE_COLUMN_CHECKABLE) && overlayAnalystDataset.getFieldInfos().get(j).getCaption().equals(tableOverlayAnalystFields.getValueAt(i, TABLE_COLUMN_CAPTION))) {
-                        overlayAnaylstList.add(overlayAnalystDataset.getFieldInfos().get(j).getName());
-                    }
-                }
+            result = null;
+            result = smChooseTableOverlayAnalystFields.getSelectedModelRows(1);
+            for (int i=0;i<result.size();i++){
+                overlayAnaylstList.add((String)result.get(i));
             }
+
             sourceFields = sourceFieldList.toArray(new String[sourceFieldList.size()]);
             overlayAnalystFields = overlayAnaylstList.toArray(new String[overlayAnaylstList.size()]);
             dialogResult = DialogResult.OK;
@@ -116,10 +115,10 @@ public class FieldsSetDialog extends SmDialog {
         scrollpaneOverlayAnalystFields = new JScrollPane();
         panelSourceFields.setLayout(new GridBagLayout());
         panelSourceFields.add(scrollpaneSourceFields, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        scrollpaneSourceFields.setViewportView(tableSourceFields);
+        scrollpaneSourceFields.setViewportView(smChooseTableSourceFields);
         panelOverlayAnalystFields.setLayout(new GridBagLayout());
         panelOverlayAnalystFields.add(scrollpaneOverlayAnalystFields, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        scrollpaneOverlayAnalystFields.setViewportView(tableOverlayAnalystFields);
+        scrollpaneOverlayAnalystFields.setViewportView(smChooseTableOverlayAnalystFields);
 
         panelSourceFields.setBorder(new TitledBorder(ControlsProperties.getString("String_Label_SourceDatasetFields")));
         panelOverlayAnalystFields.setBorder(new TitledBorder(ControlsProperties.getString("String_Label_OverlayDatasetFields")));
@@ -138,33 +137,30 @@ public class FieldsSetDialog extends SmDialog {
     }
 
     private void initComponents() {
-        this.tableSourceFields = new JTable();
-        initTable(tableSourceFields, sourceDataset);
-        this.tableOverlayAnalystFields = new JTable();
-        initTable(tableOverlayAnalystFields, overlayAnalystDataset);
+        this.smChooseTableSourceFields=new SmChooseTable(getData(sourceDataset),tableTitle,0);
+        this.smChooseTableOverlayAnalystFields =new SmChooseTable(getData(overlayAnalystDataset),tableTitle,0);
+
         this.buttonOK = ComponentFactory.createButtonOK();
         this.buttonCancel = ComponentFactory.createButtonCancel();
     }
 
-    private void initTable(JTable table, DatasetVector dataset) {
+    private Object[][] getData(DatasetVector dataset){
         int count = 0;
         for (int i = 0; i < dataset.getFieldInfos().getCount(); i++) {
             if (!dataset.getFieldInfos().get(i).isSystemField()) {
                 count++;
             }
         }
-        CheckTableModle checkTableModle = new CheckTableModle(new Object[count][2], tableTitle, TABLE_COLUMN_CHECKABLE);
-        table.setModel(checkTableModle);
+        Object data[][]=new Object[count][2];
         int length = 0;
         for (int i = 0; i < dataset.getFieldInfos().getCount(); i++) {
             if (!dataset.getFieldInfos().get(i).isSystemField()) {
-                table.setValueAt(false, length, TABLE_COLUMN_CHECKABLE);
-                table.setValueAt(dataset.getFieldInfos().get(i).getCaption(), length, TABLE_COLUMN_CAPTION);
+                data[length][0]=false;
+                data[length][1]=dataset.getFieldInfos().get(i).getCaption();
                 length++;
             }
         }
-        table.getColumn(table.getModel().getColumnName(TABLE_COLUMN_CHECKABLE)).setMaxWidth(40);
-        table.getTableHeader().setDefaultRenderer(new CheckHeaderCellRenderer(table, ""));
+        return data;
     }
 
     public String[] getSourceFields() {

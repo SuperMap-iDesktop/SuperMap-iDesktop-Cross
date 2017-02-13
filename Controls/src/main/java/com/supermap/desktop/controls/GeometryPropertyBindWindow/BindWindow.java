@@ -3,7 +3,6 @@ package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Recordset;
-import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
@@ -42,9 +41,10 @@ public class BindWindow implements IBindWindow {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (e.getSource() == formTabular.getjTableTabular().getTableHeader()) {
-					if (GlobalParameters.isHeadClickedSelectedColumn()) {
-						queryMap(formTabular.getjTableTabular());
-					}
+					// do nothing
+//					if (GlobalParameters.isHeadClickedSelectedColumn()) {
+//						queryMap(formTabular.getjTableTabular());
+//					}
 				} else {
 					queryMap(formTabular.getjTableTabular());
 				}
