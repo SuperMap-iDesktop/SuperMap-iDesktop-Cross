@@ -21,6 +21,7 @@ public class SmChooseTable extends JTable {
     private static final int TABLE_COLUMN_CHECKABLE = 0;
     private static final int TABLE_COLUMN_CAPTION = 1;
     private DatasetVector datasetVector=null;
+    private int isNotSystemFieldsIndex=0;
 
     private void init(){
         this.setRowHeight(rowHeight);
@@ -42,6 +43,7 @@ public class SmChooseTable extends JTable {
                 count++;
             }
         }
+        this.isNotSystemFieldsIndex=datasetVector.getFieldInfos().getCount()-count;
         Object data[][]=new Object[count][2];
         int length = 0;
         for (int i = 0; i < datasetVector.getFieldInfos().getCount(); i++) {
@@ -56,13 +58,19 @@ public class SmChooseTable extends JTable {
 
     public ArrayList getSelectedFieldsName(){
         ArrayList<String> selectedFieldsName = new ArrayList<String>();
-        for (int i = 0; i < this.getRowCount(); i++) {
-            for (int j = 0; j < this.datasetVector.getFieldInfos().getCount(); j++) {
-                if ((Boolean) this.getValueAt(i, TABLE_COLUMN_CHECKABLE) && this.datasetVector.getFieldInfos().get(j).getCaption().equals(this.getValueAt(i, TABLE_COLUMN_CAPTION))) {
-                    selectedFieldsName.add(this.datasetVector.getFieldInfos().get(j).getName());
-                }
+
+        for (int i=0;i<this.getRowCount();i++){
+            if ((Boolean)this.getValueAt(i,TABLE_COLUMN_CHECKABLE) && this.isNotSystemFieldsIndex!=0){
+                selectedFieldsName.add(this.datasetVector.getFieldInfos().get(this.isNotSystemFieldsIndex+i).getName());
             }
         }
+//        for (int i = 0; i < this.getRowCount(); i++) {
+//            for (int j = 0; j < this.datasetVector.getFieldInfos().getCount(); j++) {
+//                if ((Boolean) this.getValueAt(i, TABLE_COLUMN_CHECKABLE) && this.datasetVector.getFieldInfos().get(j).getCaption().equals(this.getValueAt(i, TABLE_COLUMN_CAPTION))) {
+//                    selectedFieldsName.add(this.datasetVector.getFieldInfos().get(j).getName());
+//                }
+//            }
+//        }
         return selectedFieldsName;
     }
 }
