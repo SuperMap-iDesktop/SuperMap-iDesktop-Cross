@@ -1,8 +1,8 @@
-package com.supermap.desktop.Interface;
+package com.supermap.desktop.lbs.Interface;
 
-import com.supermap.desktop.params.BuildCacheJobSetting;
-import com.supermap.desktop.params.JobResultResponse;
-import com.supermap.desktop.params.KernelDensityJobSetting;
+import com.supermap.desktop.lbs.params.BuildCacheJobSetting;
+import com.supermap.desktop.lbs.params.JobResultResponse;
+import com.supermap.desktop.lbs.params.KernelDensityJobSetting;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
@@ -25,6 +25,7 @@ public interface IServerService {
      * @param kernelDensityJobSetting 核密度分析参数
      * @return
      */
+    
     JobResultResponse query(KernelDensityJobSetting kernelDensityJobSetting);
 
     /**
@@ -44,3 +45,4 @@ public interface IServerService {
     String query(String url);
 
 }
+

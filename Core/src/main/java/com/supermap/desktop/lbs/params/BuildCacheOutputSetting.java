@@ -1,8 +1,4 @@
-package com.supermap.desktop.params;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
+package com.supermap.desktop.lbs.params;
 
 /**
  * Created by xie on 2017/1/11.

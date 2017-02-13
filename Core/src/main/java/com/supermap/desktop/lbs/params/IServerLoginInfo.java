@@ -1,4 +1,4 @@
-package com.supermap.desktop.params;
+package com.supermap.desktop.lbs.params;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 

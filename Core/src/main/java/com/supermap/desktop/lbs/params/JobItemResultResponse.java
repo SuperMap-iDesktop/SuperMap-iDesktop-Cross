@@ -1,6 +1,5 @@
-package com.supermap.desktop.params;
+package com.supermap.desktop.lbs.params;
 
-import com.supermap.desktop.Interface.IResponse;
 
 /**
  * Created by xie on 2017/1/10.

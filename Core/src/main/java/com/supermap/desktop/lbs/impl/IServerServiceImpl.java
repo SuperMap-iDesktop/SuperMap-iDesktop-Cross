@@ -1,10 +1,10 @@
-package com.supermap.desktop.impl;
+package com.supermap.desktop.lbs.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IServerService;
-import com.supermap.desktop.lbsclient.LBSClientProperties;
-import com.supermap.desktop.params.*;
+import com.supermap.desktop.lbs.Interface.IServerService;
+import com.supermap.desktop.lbs.params.*;
+import com.supermap.desktop.properties.CommonProperties;
 import org.apache.commons.compress.utils.Charsets;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.http.HttpEntity;
@@ -57,7 +57,7 @@ public class IServerServiceImpl implements IServerService {
                     result = client;
             }
         } catch (Exception e) {
-            Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("Strng_ConnectionException"));
+            Application.getActiveApplication().getOutput().output(CommonProperties.getString("Strng_ConnectionException"));
             IServerLoginInfo.error = true;
         }
         return result;
@@ -93,7 +93,7 @@ public class IServerServiceImpl implements IServerService {
                     result = tempResponse;
                 }
             } else {
-                Application.getActiveApplication().getOutput().output(LBSClientProperties.getString("String_HaveNoResponse"));
+                Application.getActiveApplication().getOutput().output(CommonProperties.getString("String_HaveNoResponse"));
                 IOUtils.closeQuietly(IServerLoginInfo.client);
                 IServerLoginInfo.client = HttpClients.createDefault();
             }
@@ -146,3 +146,4 @@ public class IServerServiceImpl implements IServerService {
         return result;
     }
 }
+
