@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.IMultiSelectionParameter;
+import com.supermap.desktop.process.parameter.interfaces.IMultiSelectionParameter;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -28,23 +28,14 @@ public class ParameterDatasets extends AbstractParameter implements IMultiSelect
 		return panel;
 	}
 
-	@Override
-	public void setSelectedItem(Object value) {
-
-	}
 
 	@Override
 	public Object getSelectedItem() {
-		return null;
-	}
-
-	@Override
-	public Object[] getSelectedItems() {
 		return new Object[0];
 	}
 
 	@Override
-	public void setSelectedItems(Object[] selectedItems) {
+	public void setSelectedItem(Object selectedItems) {
 
 	}
 
