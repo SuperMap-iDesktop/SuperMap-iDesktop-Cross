@@ -145,6 +145,7 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 
 		//获得数据集类型筛选器
 		this.datasetTypeComboBox = new DatasetTypeComboBox();
+		this.datasetTypeComboBox.setAllShown(true);
 		this.datasetTypeComboBox.setMaximumSize(new Dimension(200, 25));
 		this.datasetTypeComboBox.setEnabled(false);
 		//获得数据集搜索框

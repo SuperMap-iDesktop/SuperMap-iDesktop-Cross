@@ -1,11 +1,11 @@
 package com.supermap.desktop.dialog;
 
-import com.supermap.desktop.Interface.IServerService;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
-import com.supermap.desktop.impl.IServerServiceImpl;
+import com.supermap.desktop.lbs.Interface.IServerService;
+import com.supermap.desktop.lbs.impl.IServerServiceImpl;
+import com.supermap.desktop.lbs.params.IServerLoginInfo;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
-import com.supermap.desktop.params.IServerLoginInfo;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;

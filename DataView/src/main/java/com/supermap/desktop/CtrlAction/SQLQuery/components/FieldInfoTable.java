@@ -2,7 +2,6 @@ package com.supermap.desktop.CtrlAction.SQLQuery.components;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.utilities.SortUIUtilities;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
@@ -222,8 +221,16 @@ public class FieldInfoTable extends SortTable {
 				}
 				// 得到字段类型
 				FieldType fieldType = tempDataset.getFieldInfos().get(fieldName).getType();
-
-				Recordset recordset = tempDataset.getRecordset(false, CursorType.STATIC);
+				//  2017/2/10 lixiaoyao 针对原来的唯一值获取查询进行优化，原本是遍历获取，现在改为SQL查询
+				String queryString=datasetName+'.'+fieldName;
+				QueryParameter queryParameter = new QueryParameter();
+				queryParameter.setCursorType(CursorType.STATIC);
+				queryParameter.setHasGeometry(false);
+				queryParameter.setOrderBy(new String[]{queryString + " asc",});
+				queryParameter.setGroupBy(new String[]{queryString});
+				queryParameter.setResultFields(new String[]{queryString});
+				Recordset recordset = tempDataset.query(queryParameter);
+				//Recordset recordset = tempDataset.getRecordset(false, CursorType.STATIC);
 				try {
 					recordset.moveFirst();
 					for (; !recordset.isEOF(); recordset.moveNext()) {
@@ -242,7 +249,7 @@ public class FieldInfoTable extends SortTable {
 				for (int i = 0; iterator.hasNext(); i++) {
 					result[i] = iterator.next();
 				}
-				SortUIUtilities.sortList(result);
+				//SortUIUtilities.sortList(result);
 				return result;
 			}
 		}

@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.concurrent.CancellationException;
 
-public class DownLoadTask extends Task {
+public class DownLoadTask extends LBSTask {
 
     /**
      *

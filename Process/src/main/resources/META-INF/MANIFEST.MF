@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1485243611396
+Bnd-LastModified: 1486947299524
 Build-Jdk: 1.7.0_80
-Built-By: highsad
+Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.process.ProcessActivator
 Bundle-ClassPath: .,lib/jhotdraw-7.4.1.jar
 Bundle-ManifestVersion: 2

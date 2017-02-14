@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.tasks;
 
-import com.supermap.desktop.process.tasks.callable.CallableFactory;
-import com.supermap.desktop.process.tasks.callable.UpdateProgressCallable;
+import com.supermap.desktop.process.tasks.callable.ProcessCallable;
+import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -15,7 +15,7 @@ public class TasksManagerContainer extends JPanel {
      *
      */
     private static final long serialVersionUID = 1L;
-    private ArrayList<ITask> items;
+    private ArrayList<IProcessTask> items;
     private ArrayList<UpdateProgressCallable> callables;
 
     GroupLayout groupLayout;
@@ -51,7 +51,7 @@ public class TasksManagerContainer extends JPanel {
         verticalGroup = groupLayout.createSequentialGroup();
         groupLayout.setVerticalGroup(verticalGroup);
 
-        for (ITask item : items) {
+        for (IProcessTask item : items) {
             horizontalGroup.addComponent((Component) item);
             verticalGroup.addComponent((Component) item);
         }
@@ -79,16 +79,15 @@ public class TasksManagerContainer extends JPanel {
         }
     }
 
-    public void addItem(ITask task) {
-        CallableFactory factory = new CallableFactory();
-        UpdateProgressCallable callable = factory.createCallable(task);
+    public void addItem(IProcessTask task) {
+        ProcessCallable callable = new ProcessCallable(task.getProcess());
         callables.add(callable);
         items.add(task);
         updateItems();
     }
 
-    public void removeItem(ITask task) {
-        for (ITask item : items) {
+    public void removeItem(IProcessTask task) {
+        for (IProcessTask item : items) {
             if (item.equals(task)) {
                 items.remove(item);
                 groupLayout.removeLayoutComponent((Component) item);
