@@ -33,10 +33,29 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 
 	// 为了保证顺序，不能遍历
 	public static final DatasetType[] ALL_DATASET_TYPE = new DatasetType[]{
-			DatasetType.POINT, DatasetType.LINE, DatasetType.REGION, DatasetType.TEXT, DatasetType.CAD, DatasetType.TABULAR, DatasetType.NETWORK,
-			DatasetType.NETWORK3D, DatasetType.GRID, DatasetType.IMAGE, DatasetType.LINKTABLE, DatasetType.LINEM, DatasetType.TOPOLOGY,
-			DatasetType.WMS, DatasetType.WCS, DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D, DatasetType.PARAMETRICLINE,
-			DatasetType.PARAMETRICREGION, DatasetType.IMAGECOLLECTION, DatasetType.GRIDCOLLECTION
+			DatasetType.POINT,
+			DatasetType.LINE,
+			DatasetType.REGION,
+			DatasetType.TEXT,
+			DatasetType.CAD,
+			DatasetType.TABULAR,
+			DatasetType.LINKTABLE,
+			DatasetType.NETWORK,
+			DatasetType.NETWORK3D,
+			DatasetType.LINEM,
+			DatasetType.PARAMETRICLINE,
+			DatasetType.PARAMETRICREGION,
+			DatasetType.GRIDCOLLECTION,
+			DatasetType.IMAGECOLLECTION,
+			DatasetType.MODEL,
+			DatasetType.IMAGE,
+			DatasetType.WMS,
+			DatasetType.WCS,
+			DatasetType.GRID,
+			DatasetType.TOPOLOGY,
+			DatasetType.POINT3D,
+			DatasetType.LINE3D,
+			DatasetType.REGION3D,
 	};
 
 	/**
@@ -178,6 +197,9 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 	 * 获得选中项的数据集类型字符串
 	 */
 	public String getSelectedDatasetTypeName() {
+		if (getSelectedIndex() == -1) {
+			return null;
+		}
 		String name = null;
 		try {
 			DataCell temp = (DataCell) getSelectedItem();
@@ -194,6 +216,9 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 	 * @return
 	 */
 	public DatasetType[] getSelectedDatasetTypes() {
+		if (getSelectedIndex() == -1) {
+			return null;
+		}
 		String selectedItem = ((DataCell) this.getSelectedItem()).getDataName();
 		if (selectedItem == null) {
 			return null;
