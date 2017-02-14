@@ -11,10 +11,6 @@ import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.SmMenuItem;
 import com.supermap.desktop.ui.FormManager;
-import com.supermap.desktop.ui.mdi.MdiPage;
-import com.supermap.desktop.ui.mdi.layout.FlowLayoutStrategy;
-import com.supermap.desktop.ui.mdi.layout.ILayoutStrategy;
-import com.supermap.desktop.utilities.TabularUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -71,4 +67,11 @@ public class BindUtilties {
 		popupMenuBind.setVisible(true);
 	}
 
+	public static boolean isFormInBind(IForm activeForm) {
+		return BindHandler.getInstance().getFormTabularList().contains(activeForm) || BindHandler.getInstance().getFormMapList().contains(activeForm);
+	}
+
+	public static void queryMap(IFormTabular activeForm) {
+		BindHandler.getInstance().queryMap(activeForm);
+	}
 }

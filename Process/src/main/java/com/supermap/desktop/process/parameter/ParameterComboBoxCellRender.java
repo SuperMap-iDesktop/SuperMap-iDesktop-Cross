@@ -20,11 +20,15 @@ public class ParameterComboBoxCellRender implements ListCellRenderer<ParameterDa
 			jLabel.setBackground(list.getBackground());
 			jLabel.setForeground(list.getForeground());
 		}
-		String describe = value.getDescribe();
-		if (StringUtilities.isNullOrEmpty(describe)) {
-			describe = String.valueOf(value.getData());
+
+		if (value != null) {
+
+			String describe = value.getDescribe();
+			if (StringUtilities.isNullOrEmpty(describe)) {
+				describe = String.valueOf(value.getData());
+			}
+			jLabel.setText(describe);
 		}
-		jLabel.setText(describe);
 		return jLabel;
 
 	}

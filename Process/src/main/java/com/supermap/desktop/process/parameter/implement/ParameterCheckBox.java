@@ -16,7 +16,7 @@ public class ParameterCheckBox extends AbstractParameter {
 	private String describe;
 
 	@Override
-	public ParameterType getType() {
+	public String getType() {
 		return ParameterType.CHECKBOX;
 	}
 
@@ -26,7 +26,6 @@ public class ParameterCheckBox extends AbstractParameter {
 			panel = new ParameterCheckBoxPanel(this);
 		}
 		return panel;
-
 	}
 
 	@Override
@@ -48,5 +47,10 @@ public class ParameterCheckBox extends AbstractParameter {
 	public ParameterCheckBox setDescribe(String describe) {
 		this.describe = describe;
 		return this;
+	}
+
+	@Override
+	public void dispose() {
+
 	}
 }

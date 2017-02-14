@@ -9,7 +9,7 @@ import java.util.concurrent.CancellationException;
 /**
  * Created by xie on 2017/1/11.
  */
-public class HeatMapTask extends Task {
+public class HeatMapTask extends LBSTask {
     /**
      *
      */

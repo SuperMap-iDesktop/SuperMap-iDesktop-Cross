@@ -1,6 +1,6 @@
 package com.supermap.desktop.http.callable;
 
-import com.supermap.Interface.ITask;
+import com.supermap.Interface.ILBSTask;
 import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.http.download.FileInfo;
@@ -27,7 +27,7 @@ public class UploadPropressCallable extends UpdateProgressCallable {
 		@Override
 		public void stepped(FileEvent event) {
 			try {
-				ITask fileManager = (ITask) getUpdate();
+				ILBSTask fileManager = (ILBSTask) getUpdate();
 				if (event != null && event.getDownloadInfo() != null && event.getDownloadInfo().equals(fileManager.getFileInfo())) {
 					updateProgress(event.getProgress(), String.valueOf(event.getRemainTime()), event.getDownloadInfo().getFileName());
 				}

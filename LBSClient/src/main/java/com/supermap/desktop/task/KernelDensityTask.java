@@ -6,7 +6,7 @@ import com.supermap.desktop.utilities.CommonUtilities;
 import javax.swing.*;
 import java.util.concurrent.CancellationException;
 
-public class KernelDensityTask extends Task {
+public class KernelDensityTask extends LBSTask {
     /**
      *
      */

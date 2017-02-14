@@ -15,7 +15,7 @@ import java.awt.*;
 public class XMLDockbar extends XMLCommand {
 	private String title = "";
 	private String controlClass = null;
-	private DockPath dockPath = new DockPath();
+	private DockPath dockPath;
 
 	public XMLDockbar(PluginInfo pluginInfo, XMLCommandBase group) {
 		super(pluginInfo, group);
@@ -48,8 +48,31 @@ public class XMLDockbar extends XMLCommand {
 	private boolean loadPath(Element element) {
 		boolean result = false;
 
-		if (element.hasAttribute(g_AttributionRatio)) {
-			String strRatio = element.getAttribute(g_AttributionRatio);
+		// 获取路径
+		DockPath dockPath = DockPath.ROOT;
+		Element[] directionNodes = XmlUtilities.getChildElementNodesByName(element, g_NodeDirection);
+		if (directionNodes != null && directionNodes.length > 0) {
+			for (int i = 0; i < directionNodes.length; i++) {
+				dockPath = loadDirection(directionNodes[i], dockPath);
+			}
+		} else {
+			// 配置文件没有配置 Direction，则默认为 ROOT.LEFT
+			dockPath = new DockPath();
+			dockPath.setRelateTo(DockPath.ROOT);
+			dockPath.setDirection(Direction.LEFT);
+		}
+		this.dockPath = dockPath;
+
+		return result;
+	}
+
+	private DockPath loadDirection(Element directionNode, DockPath relateTo) {
+		DockPath path = new DockPath();
+		path.setRelateTo(relateTo);
+		path.setDirection(Direction.valueOf(directionNode.getNodeValue()));
+
+		if (directionNode.hasAttribute(g_AttributionRatio)) {
+			String strRatio = directionNode.getAttribute(g_AttributionRatio);
 			double ratio = 0.5;
 			try {
 				ratio = Double.parseDouble(strRatio);
@@ -58,21 +81,10 @@ public class XMLDockbar extends XMLCommand {
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}
-			this.dockPath.setRatio(ratio);
+			path.setRatio(ratio);
 		}
 
-		// 获取路径
-		Element[] directionNodes = XmlUtilities.getChildElementNodesByName(element, g_NodeDirection);
-		for (int i = 0; i < directionNodes.length; i++) {
-			Element directionNode = directionNodes[i];
-			this.dockPath.addDirection(Direction.valueOf(directionNode.getNodeValue()));
-		}
-
-		// 配置文件没有配置，默认 left
-		if (this.dockPath.getDepth() < 1) {
-			this.dockPath.addDirection(Direction.LEFT);
-		}
-		return result;
+		return path;
 	}
 
 	public Component CreateComponent() {
@@ -122,7 +134,7 @@ public class XMLDockbar extends XMLCommand {
 				result.setTitle(getTitle());
 				result.setVisible(getVisible());
 				result.setControlClass(getControlClass());
-				result.getDockPath().init(getDockPath());
+				result.setDockPath(getDockPath());
 			}
 		} catch (Exception e) {
 			result = null;
@@ -144,7 +156,7 @@ public class XMLDockbar extends XMLCommand {
 				result.setTitle(getTitle());
 				result.setVisible(getVisible());
 				result.setControlClass(getControlClass());
-				result.getDockPath().init(getDockPath());
+				result.setDockPath(getDockPath());
 				result.getPluginInfo().setBundleName(getPluginInfo().getBundleName());
 			}
 		} catch (Exception e) {
@@ -219,6 +231,10 @@ public class XMLDockbar extends XMLCommand {
 
 	public DockPath getDockPath() {
 		return dockPath;
+	}
+
+	public void setDockPath(DockPath dockPath) {
+		this.dockPath = dockPath;
 	}
 
 	public void setTitle(String title) {

@@ -6,7 +6,7 @@ import com.supermap.desktop.utilities.CommonUtilities;
 import javax.swing.*;
 import java.util.concurrent.CancellationException;
 
-public class CreateSpatialIndexTask extends Task {
+public class CreateSpatialIndexTask extends LBSTask {
 	/**
 	 * 
 	 */

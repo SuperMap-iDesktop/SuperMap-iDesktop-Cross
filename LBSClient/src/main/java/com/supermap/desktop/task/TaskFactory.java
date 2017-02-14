@@ -1,6 +1,6 @@
 package com.supermap.desktop.task;
 
-import com.supermap.Interface.ITask;
+import com.supermap.Interface.ILBSTask;
 import com.supermap.Interface.ITaskFactory;
 import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.http.download.FileInfo;
@@ -16,8 +16,8 @@ public class TaskFactory implements ITaskFactory {
     }
 
     @Override
-    public ITask getTask(TaskEnum taskEnum, FileInfo fileInfo) {
-        ITask task = null;
+    public ILBSTask getTask(TaskEnum taskEnum, FileInfo fileInfo) {
+        ILBSTask task = null;
         switch (taskEnum) {
             case DOWNLOADTASK:
                 // 下载任务
