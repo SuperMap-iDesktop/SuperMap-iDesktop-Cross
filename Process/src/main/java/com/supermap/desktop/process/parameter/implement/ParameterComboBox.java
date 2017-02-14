@@ -63,7 +63,7 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 		return items[index];
 	}
 
-	public void setItems(ParameterDataNode[] items) {
+	public void setItems(ParameterDataNode... items) {
 		this.items = items;
 	}
 
