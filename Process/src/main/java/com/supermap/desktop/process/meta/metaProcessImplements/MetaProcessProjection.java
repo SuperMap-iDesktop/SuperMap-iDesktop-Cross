@@ -9,11 +9,10 @@ import com.supermap.data.PrjCoordSysType;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.IParameter;
-import com.supermap.desktop.process.parameter.IParameters;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
+import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.properties.CoreProperties;
 
 import javax.swing.*;
@@ -22,7 +21,7 @@ import javax.swing.*;
  * @author XiaJT
  */
 public class MetaProcessProjection extends MetaProcess {
-
+	private ParameterComboBox parameterComboBox;
 	private IParameters parameters;
 
 	public MetaProcessProjection() {
@@ -40,8 +39,9 @@ public class MetaProcessProjection extends MetaProcess {
 				new ParameterDataNode(GeoCoordSysType.GCS_CAPE.name(), GeoCoordSysType.GCS_CAPE),
 				new ParameterDataNode(GeoCoordSysType.GCS_BESSEL_1841.name(), GeoCoordSysType.GCS_BESSEL_1841)
 		};
-		ParameterComboBox parameterComboBox = new ParameterComboBox().setDescribe(CoreProperties.getString("String_ProjectionInfo")).setItems(parameterDataNodes);
-		parameters.setParameters(new IParameter[]{parameterComboBox});
+		parameterComboBox = new ParameterComboBox(CoreProperties.getString("String_ProjectionInfo"));
+		parameterComboBox.setItems(parameterDataNodes);
+		parameters.setParameters(parameterComboBox);
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class MetaProcessProjection extends MetaProcess {
 	public void run() {
 		Dataset dataset = null;// todo 数据集来源
 		fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
-		GeoCoordSysType geoCoordSysType = (GeoCoordSysType) ((ParameterDataNode) parameters.getParameter(0).getSelectedItem()).getData();
+		GeoCoordSysType geoCoordSysType = (GeoCoordSysType) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData();
 		GeoCoordSys geoCoordSys = new GeoCoordSys(geoCoordSysType, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
 		PrjCoordSys prjCoordSys = new PrjCoordSys(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE);
 		prjCoordSys.setGeoCoordSys(geoCoordSys);

@@ -6,11 +6,10 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.IParameter;
-import com.supermap.desktop.process.parameter.IParameters;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
+import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
 import javax.swing.*;
@@ -19,7 +18,7 @@ import javax.swing.*;
  * @author XiaJT
  */
 public class MetaProcessSpatialIndex extends MetaProcess {
-
+	private ParameterComboBox parameterComboBox;
 	private IParameters parameters;
 
 	public MetaProcessSpatialIndex() {
@@ -33,8 +32,9 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 				new ParameterDataNode(SpatialIndexTypeUtilities.toString(SpatialIndexType.QTREE), SpatialIndexType.QTREE),
 		};
 
-		ParameterComboBox parameterComboBox = new ParameterComboBox().setItems(parameterDataNodes).setDescribe(ControlsProperties.getString("String_LabelSpatialIndexType"));
-		parameters.setParameters(new IParameter[]{parameterComboBox});
+		parameterComboBox = new ParameterComboBox(ControlsProperties.getString("String_LabelSpatialIndexType"));
+		parameterComboBox.setItems(parameterDataNodes);
+		parameters.setParameters(parameterComboBox);
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 	public void run() {
 		// TODO: 2017/1/18 数据集来源
 		DatasetVector dataset = null;
-		SpatialIndexType spatialIndexType = (SpatialIndexType) ((ParameterDataNode) parameters.getParameter(0).getSelectedItem()).getData();
+		SpatialIndexType spatialIndexType = (SpatialIndexType) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData();
 		fireRunning(new RunningEvent(this, 0, "start build spatial index"));
 		dataset.buildSpatialIndex(spatialIndexType);
 		fireRunning(new RunningEvent(this, 100, "build spatial index finished"));
