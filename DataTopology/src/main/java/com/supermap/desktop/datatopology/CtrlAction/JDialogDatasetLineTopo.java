@@ -317,7 +317,8 @@ public class JDialogDatasetLineTopo extends SmDialog {
                     }
                 }
 
-                this.comboBoxDataset = new DatasetComboBox(new Dataset[0]);
+//                this.comboBoxDataset = new DatasetComboBox(new Dataset[0]);
+                this.comboBoxDataset = new DatasetComboBox();
                 this.hasDataset = insertItemToComboBox(currentDatasource);
                 if (null != lineDataset) {
                     for (int i = 0; i < this.comboBoxDataset.getItemCount(); i++) {

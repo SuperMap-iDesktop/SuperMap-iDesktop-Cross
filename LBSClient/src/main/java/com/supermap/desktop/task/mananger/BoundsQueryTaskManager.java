@@ -140,7 +140,7 @@ public class BoundsQueryTaskManager extends JPanel implements ITaskManager {
 
 		if (datasources.getCount() > 0) {
 			this.comboBoxDatasource.resetComboBox(datasources, activeDatasource);
-			this.comboBoxDataset.setDatasetTypes(getSupportDatasetTypes());
+			this.comboBoxDataset.setSupportedDatasetTypes(getSupportDatasetTypes());
 		}
 
 		if (this.comboBoxDatasource.getSelectedDatasource() != null) {
@@ -182,7 +182,7 @@ public class BoundsQueryTaskManager extends JPanel implements ITaskManager {
 
 		this.comboBoxDataset.removeAllItems();
 		ArrayList<DatasetType> supportTypes = new ArrayList<DatasetType>();
-		for (DatasetType type : this.comboBoxDataset.getDatasetTypes()) {
+		for (DatasetType type : this.comboBoxDataset.getSupportedDatasetTypes()) {
 			supportTypes.add(type);
 		}
 

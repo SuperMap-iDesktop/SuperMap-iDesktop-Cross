@@ -105,7 +105,7 @@ public class JDialogSetClipRegion extends SmDialog {
 		this.comboBoxDatasource = new DatasourceComboBox();
 		this.labelDataset = new JLabel("Dataset:");
 		this.comboBoxDataset = new DatasetComboBox();
-		this.comboBoxDataset.setDatasetTypes(new DatasetType[]{DatasetType.REGION});
+		this.comboBoxDataset.setSupportedDatasetTypes(new DatasetType[]{DatasetType.REGION});
 		this.labelFilter = new JLabel("Filter:");
 		this.textFieldFilter = new JTextField();
 		this.buttonFilter = new JButton("...");
