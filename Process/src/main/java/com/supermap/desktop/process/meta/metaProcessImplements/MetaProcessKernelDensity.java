@@ -22,12 +22,6 @@ public class MetaProcessKernelDensity extends MetaProcess {
 	ParameterTextField parameterResolution;
 	ParameterTextField parameterRadius;
 
-	private final int FILE_INPUT_PATH = 0;
-	private final int BOUNDS = 1;
-	private final int INDEX = 2;
-	private final int SEPERATOR = 3;
-	private final int RESOLUTION = 4;
-	private final int RADIUS = 5;
 
 	public MetaProcessKernelDensity() {
 		initMetaInfo();
