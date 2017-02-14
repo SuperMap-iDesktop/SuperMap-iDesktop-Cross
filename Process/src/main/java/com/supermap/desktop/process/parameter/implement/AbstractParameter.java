@@ -1,6 +1,6 @@
 package com.supermap.desktop.process.parameter.implement;
 
-import com.supermap.desktop.process.parameter.IParameter;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;

@@ -347,7 +347,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		datasetTypes.add(DatasetType.REGION);
 		// datasetTypes.add(DatasetType.POINT3D);
 		// datasetTypes.add(DatasetType.REGION3D);
-		this.panelBufferData.getComboBoxBufferDataDataset().setDatasetTypes(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
+		this.panelBufferData.getComboBoxBufferDataDataset().setSupportedDatasetTypes(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
 	}
 
 	/**

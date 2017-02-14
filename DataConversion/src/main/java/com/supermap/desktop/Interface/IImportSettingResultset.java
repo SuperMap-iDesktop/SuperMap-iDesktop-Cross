@@ -1,6 +1,6 @@
 package com.supermap.desktop.Interface;
 
-import com.supermap.desktop.ui.controls.DatasetComboBox;
+import com.supermap.desktop.ui.controls.DatasetTypeComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 
 import javax.swing.*;
@@ -41,7 +41,7 @@ public interface IImportSettingResultset extends IPanelModel {
      *
      * @return
      */
-    DatasetComboBox getComboBoxDatasetType();
+    DatasetTypeComboBox getComboBoxDatasetType();
     /**
      * 是否创建字段索引控件，非父类方法
      * 只有特殊的数据类型导入后为矢量数据集

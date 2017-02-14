@@ -2,6 +2,7 @@ package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.data.Datasource;
 import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
@@ -9,7 +10,7 @@ import java.beans.PropertyChangeEvent;
 /**
  * @author XiaJT
  */
-public class ParameterDatasource extends AbstractParameter {
+public class ParameterDatasource extends AbstractParameter implements ISelectionParameter {
 
 	private JPanel panel;
 	private Datasource datasource;

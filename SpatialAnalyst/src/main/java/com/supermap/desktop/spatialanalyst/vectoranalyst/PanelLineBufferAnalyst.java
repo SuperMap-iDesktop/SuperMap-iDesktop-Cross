@@ -472,7 +472,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 		// datasetTypes.add(DatasetType.LINE3D);
 		datasetTypes.add(DatasetType.NETWORK);
 		// datasetTypes.add(DatasetType.NETWORK3D);
-		this.panelBufferData.getComboBoxBufferDataDataset().setDatasetTypes(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
+		this.panelBufferData.getComboBoxBufferDataDataset().setSupportedDatasetTypes(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
 	}
 
 	private void initDatasourceAndDataSet() {
