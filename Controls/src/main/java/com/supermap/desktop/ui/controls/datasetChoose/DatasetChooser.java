@@ -196,6 +196,7 @@ public class DatasetChooser extends SmDialog {
 		separatorS.setOrientation(SwingConstants.VERTICAL);
 		toolBar.add(separatorS);
 		this.datasetTypeComboBox = new DatasetTypeComboBox();
+		this.datasetTypeComboBox.setAllShown(true);
 		this.datasetTypeComboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -204,7 +205,6 @@ public class DatasetChooser extends SmDialog {
 			}
 		});
 		this.datasetTypeComboBox.setMaximumRowCount(10);
-
 		toolBar.add(this.datasetTypeComboBox);
 
 		JSeparator separatorT = new JSeparator();
@@ -536,7 +536,7 @@ public class DatasetChooser extends SmDialog {
 	}
 
 	public void setSupportDatasetTypes(DatasetType[] datasetTypes) {
-		this.datasetTypeComboBox.setDatasetTypes(datasetTypes);
+		this.datasetTypeComboBox.setSupportedDatasetTypes(datasetTypes);
 		compositeSearch();
 	}
 
