@@ -192,8 +192,8 @@ public class JDialogTopoPreProgress extends SmDialog {
 		textFieldTolerance.setText("0");
 		textFieldTolerance.setColumns(10);
 
-		Dataset[] datasets = new Dataset[0];
-		comboBoxConsultDataset = new DatasetComboBox(datasets);
+//		comboBoxConsultDataset = new DatasetComboBox(new Dataset[0]);
+		comboBoxConsultDataset = new DatasetComboBox();
 		comboBoxConsultDataset.setEnabled(false);
 		//@formatter:off
 		GroupLayout gl_panel = new GroupLayout(panel);
