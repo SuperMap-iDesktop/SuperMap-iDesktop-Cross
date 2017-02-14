@@ -189,7 +189,7 @@ public class JDialogGeometryConvert extends SmDialog {
 		this.labelDesDatasource = new JLabel(ControlsProperties.getString("String_Label_TargetDatasource"));
 		this.labelDesDataset = new JLabel(ControlsProperties.getString("String_Label_TargetDataset"));
 		this.comboBoxDatasource = new DatasourceComboBox(new Datasource[0]);
-		this.comboBoxDataset = new DatasetComboBox(new Dataset[0]);
+		this.comboBoxDataset = new DatasetComboBox();
 		this.checkBoxNewDataset = new JCheckBox(ControlsProperties.getString("String_Label_NewDataset"));
 		this.textFieldNewDataset = new SmTextFieldLegit();
 		this.checkBoxRemoveSrc = new JCheckBox(MapEditorProperties.getString("String_RemoveSrcObj"));
