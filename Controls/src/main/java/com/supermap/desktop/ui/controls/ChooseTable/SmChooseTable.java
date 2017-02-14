@@ -20,8 +20,8 @@ public class SmChooseTable extends JTable {
     private final static int enableColumn=0;
     private static final int TABLE_COLUMN_CHECKABLE = 0;
     private static final int TABLE_COLUMN_CAPTION = 1;
-    private DatasetVector datasetVector=null;
-    private int isNotSystemFieldsIndex=0;
+    //private DatasetVector datasetVector=null;
+    ArrayList<String> isNotSystemFields = new ArrayList<String>();
 
     private void init(){
         this.setRowHeight(rowHeight);
@@ -29,7 +29,6 @@ public class SmChooseTable extends JTable {
     }
 
     public SmChooseTable(DatasetVector datasetVector) {
-        this.datasetVector=datasetVector;
         this.checkTableModle = new CheckTableModle(getData(datasetVector), tableTitle, enableColumn);
         this.setModel(this.checkTableModle);
         this.getColumn(this.getModel().getColumnName(checkColumnIndex)).setMaxWidth(checkColumnIndexMaxSize);
@@ -43,13 +42,13 @@ public class SmChooseTable extends JTable {
                 count++;
             }
         }
-        this.isNotSystemFieldsIndex=datasetVector.getFieldInfos().getCount()-count;
         Object data[][]=new Object[count][2];
         int length = 0;
         for (int i = 0; i < datasetVector.getFieldInfos().getCount(); i++) {
             if (!datasetVector.getFieldInfos().get(i).isSystemField()) {
                 data[length][TABLE_COLUMN_CHECKABLE]=false;
                 data[length][TABLE_COLUMN_CAPTION]= datasetVector.getFieldInfos().get(i).getCaption();
+                isNotSystemFields.add(datasetVector.getFieldInfos().get(i).getName());
                 length++;
             }
         }
@@ -60,8 +59,8 @@ public class SmChooseTable extends JTable {
         ArrayList<String> selectedFieldsName = new ArrayList<String>();
 
         for (int i=0;i<this.getRowCount();i++){
-            if ((Boolean)this.getValueAt(i,TABLE_COLUMN_CHECKABLE) && this.isNotSystemFieldsIndex!=0){
-                selectedFieldsName.add(this.datasetVector.getFieldInfos().get(this.isNotSystemFieldsIndex+i).getName());
+            if ((Boolean)this.getValueAt(i,TABLE_COLUMN_CHECKABLE)){
+                selectedFieldsName.add(isNotSystemFields.get(i));
             }
         }
 //        for (int i = 0; i < this.getRowCount(); i++) {
