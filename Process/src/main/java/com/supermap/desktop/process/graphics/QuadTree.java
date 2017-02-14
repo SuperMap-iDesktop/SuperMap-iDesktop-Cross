@@ -1,33 +1,33 @@
 package com.supermap.desktop.process.graphics;
 
+import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 
 /**
  * 四叉树，用来进行平面空间几何对象的位置存储和索引
- * TODO 后续使用希尔伯特曲线来做更为优化的几何对象索引
  * Created by highsad on 2017/1/19.
  */
 public class QuadTree<T> {
-	private HashMap<T, Rectangle2D.Double> outside = new HashMap();
+	private HashMap<T, Rectangle> outside = new HashMap();
 	private QuadTree<T>.QuadNode root;
 	private int maxCapacity = 32;
 	private int minSize = 32;
 	private int maxOutside = 32;
 
 	public QuadTree() {
-		this.root = new QuadTree.QuadNode(new Rectangle2D.Double(0.0D, 0.0D, 8000.0D, 6000.0D));
+		this.root = new QuadTree.QuadNode(new Rectangle(0, 0, 2000, 2000));
 	}
 
-	public QuadTree(Rectangle2D.Double bounds) {
+	public QuadTree(Rectangle bounds) {
 		this.root = new QuadTree.QuadNode(bounds);
 	}
 
-	public void add(T o, Rectangle2D.Double bounds) {
+	public void add(T o, Rectangle bounds) {
 		if (this.root.bounds.contains(bounds)) {
-			this.root.add(o, (Rectangle2D.Double) bounds.clone());
+			this.root.add(o, (Rectangle) bounds.clone());
 		} else {
-			this.outside.put(o, (Rectangle2D.Double) bounds.clone());
+			this.outside.put(o, (Rectangle) bounds.clone());
 			if (this.outside.size() > this.maxOutside) {
 				this.reorganize();
 			}
@@ -40,12 +40,12 @@ public class QuadTree<T> {
 		this.outside.putAll(this.root.objects);
 		this.root.objects.clear();
 		Iterator i = this.outside.entrySet().iterator();
-		Map.Entry<T, Rectangle2D.Double> entry = (Map.Entry) i.next();
-		Rectangle2D.Double treeBounds = (Rectangle2D.Double) (entry.getValue()).clone();
+		Map.Entry<T, Rectangle> entry = (Map.Entry) i.next();
+		Rectangle treeBounds = (Rectangle) (entry.getValue()).clone();
 
 		while (i.hasNext()) {
 			entry = (Map.Entry) i.next();
-			Rectangle2D.Double bounds = entry.getValue();
+			Rectangle bounds = entry.getValue();
 			treeBounds.add(bounds);
 		}
 
@@ -69,14 +69,14 @@ public class QuadTree<T> {
 		return findInside(this.root.getBounds());
 	}
 
-	public Collection<T> findContains(java.awt.geom.Point2D.Double p) {
+	public Collection<T> findContains(Point p) {
 		HashSet result = new HashSet();
 		this.root.findContains(p, result);
 		Iterator iterator = this.outside.entrySet().iterator();
 
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
-			if (((Rectangle2D.Double) entry.getValue()).contains(p)) {
+			if (((Rectangle) entry.getValue()).contains(p)) {
 				result.add(entry.getKey());
 			}
 		}
@@ -85,17 +85,17 @@ public class QuadTree<T> {
 	}
 
 	public Collection<T> findIntersects(Rectangle2D r) {
-		return this.findIntersects(new Rectangle2D.Double(r.getX(), r.getY(), r.getWidth(), r.getHeight()));
+		return this.findIntersects(GraphicsUtil.createRectangle(r.getX(), r.getY(), r.getWidth(), r.getHeight()));
 	}
 
-	public Collection<T> findIntersects(Rectangle2D.Double r) {
+	public Collection<T> findIntersects(Rectangle r) {
 		HashSet result = new HashSet();
 		this.root.findIntersects(r, result);
 		Iterator iterator = this.outside.entrySet().iterator();
 
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
-			if (((Rectangle2D.Double) entry.getValue()).intersects(r)) {
+			if (((Rectangle) entry.getValue()).intersects(r)) {
 				result.add(entry.getKey());
 			}
 		}
@@ -103,7 +103,7 @@ public class QuadTree<T> {
 		return result;
 	}
 
-	public Collection<T> findInside(Rectangle2D.Double r) {
+	public Collection<T> findInside(Rectangle r) {
 		HashSet result = new HashSet();
 		this.root.findInside(r, result);
 		Iterator iterator = this.outside.entrySet().iterator();
@@ -119,19 +119,19 @@ public class QuadTree<T> {
 	}
 
 	private class QuadNode {
-		private Rectangle2D.Double bounds;
-		private HashMap<T, Rectangle2D.Double> objects;
-		private QuadTree<T>.QuadNode northEast;
-		private QuadTree<T>.QuadNode northWest;
-		private QuadTree<T>.QuadNode southEast;
-		private QuadTree<T>.QuadNode southWest;
+		private Rectangle bounds;
+		private HashMap<T, Rectangle> objects;
+		private QuadNode northEast;
+		private QuadNode northWest;
+		private QuadNode southEast;
+		private QuadNode southWest;
 
-		public QuadNode(Rectangle2D.Double bounds) {
+		public QuadNode(Rectangle bounds) {
 			this.bounds = bounds;
 			this.objects = new HashMap();
 		}
 
-		public Rectangle2D.Double getBounds() {
+		public Rectangle getBounds() {
 			return this.bounds;
 		}
 
@@ -149,7 +149,7 @@ public class QuadTree<T> {
 
 		}
 
-		public void add(T o, Rectangle2D.Double oBounds) {
+		public void add(T o, Rectangle oBounds) {
 			if (this.isLeaf() && this.objects.size() >= QuadTree.this.maxCapacity && this.bounds.width > (double) QuadTree.this.minSize && this.bounds.height > (double) QuadTree.this.minSize) {
 				this.split();
 			}
@@ -178,18 +178,18 @@ public class QuadTree<T> {
 
 		public void split() {
 			if (this.isLeaf()) {
-				double hw = this.bounds.width / 2.0D;
-				double hh = this.bounds.height / 2.0D;
-				this.northWest = QuadTree.this.new QuadNode(new Rectangle2D.Double(this.bounds.x, this.bounds.y, hw, hh));
-				this.northEast = QuadTree.this.new QuadNode(new Rectangle2D.Double(this.bounds.x + hw, this.bounds.y, this.bounds.width - hw, hh));
-				this.southWest = QuadTree.this.new QuadNode(new Rectangle2D.Double(this.bounds.x, this.bounds.y + hh, hw, this.bounds.height - hh));
-				this.southEast = QuadTree.this.new QuadNode(new Rectangle2D.Double(this.bounds.x + hw, this.bounds.y + hh, this.bounds.width - hw, this.bounds.height - hh));
+				double hw = this.bounds.getWidth() / 2.0D;
+				double hh = this.bounds.getHeight() / 2.0D;
+				this.northWest = new QuadNode(GraphicsUtil.createRectangle(this.bounds.getX(), this.bounds.getY(), hw, hh));
+				this.northEast = new QuadNode(GraphicsUtil.createRectangle(this.bounds.getX() + hw, this.bounds.getY(), this.bounds.getWidth() - hw, hh));
+				this.southWest = new QuadNode(GraphicsUtil.createRectangle(this.bounds.getX(), this.bounds.getY() + hh, hw, this.bounds.getHeight() - hh));
+				this.southEast = new QuadNode(GraphicsUtil.createRectangle(this.bounds.getX() + hw, this.bounds.getY() + hh, this.bounds.getWidth() - hw, this.bounds.getHeight() - hh));
 				HashMap temp = this.objects;
 				this.objects = new HashMap();
 				Iterator iterator = temp.entrySet().iterator();
 
 				while (iterator.hasNext()) {
-					Map.Entry<T, Rectangle2D.Double> entry = (Map.Entry) iterator.next();
+					Map.Entry<T, Rectangle> entry = (Map.Entry) iterator.next();
 					this.add(entry.getKey(), entry.getValue());
 				}
 			}
@@ -214,12 +214,12 @@ public class QuadTree<T> {
 
 		}
 
-		public void findContains(java.awt.geom.Point2D.Double p, HashSet<T> result) {
+		public void findContains(Point p, HashSet<T> result) {
 			if (this.bounds.contains(p)) {
 				Iterator iterator = this.objects.entrySet().iterator();
 
 				while (iterator.hasNext()) {
-					Map.Entry<T, Rectangle2D.Double> entry = (Map.Entry) iterator.next();
+					Map.Entry<T, Rectangle> entry = (Map.Entry) iterator.next();
 					if ((entry.getValue()).contains(p)) {
 						result.add(entry.getKey());
 					}
@@ -235,13 +235,13 @@ public class QuadTree<T> {
 
 		}
 
-		public void findIntersects(Rectangle2D.Double r, HashSet<T> result) {
+		public void findIntersects(Rectangle r, HashSet<T> result) {
 			if (this.bounds.intersects(r)) {
 				int oldSize = result.size();
 				Iterator iterator = this.objects.entrySet().iterator();
 
 				while (iterator.hasNext()) {
-					Map.Entry<T, Rectangle2D.Double> entry = (Map.Entry) iterator.next();
+					Map.Entry<T, Rectangle> entry = (Map.Entry) iterator.next();
 					if ((entry.getValue()).intersects(r)) {
 						result.add(entry.getKey());
 					}
@@ -257,12 +257,12 @@ public class QuadTree<T> {
 
 		}
 
-		public void findInside(Rectangle2D.Double r, HashSet<T> result) {
+		public void findInside(Rectangle r, HashSet<T> result) {
 			if (this.bounds.intersects(r)) {
 				Iterator iterator = this.objects.entrySet().iterator();
 
 				while (iterator.hasNext()) {
-					Map.Entry<T, Rectangle2D.Double> entry = (Map.Entry) iterator.next();
+					Map.Entry<T, Rectangle> entry = (Map.Entry) iterator.next();
 					if (r.contains(entry.getValue())) {
 						result.add(entry.getKey());
 					}

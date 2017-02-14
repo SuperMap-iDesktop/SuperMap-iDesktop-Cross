@@ -12,17 +12,20 @@ import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
+import java.util.List;
 
 /**
  * Created by highsad on 2017/1/17.
  * 画布单位1默认与屏幕像素1相等，画布缩放之后之后的画布单位1则与屏幕像素 1*scale 相等
+ * 使用多套数据结构来进行元素的存储，比如是用 List 来进行元素的存储，使用四叉树来做空间关系的存储，使用暂未定的某种结构存储连接关系等
  */
 public class GraphCanvas extends JComponent implements MouseListener, MouseMotionListener, MouseWheelListener {
 	public final static Color DEFAULT_BACKGROUNDCOLOR = new Color(11579568);
 	public final static Color DEFAULT_CANVAS_COLOR = new Color(255, 255, 255);
-
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
+
+	Vector graphs = new Vector(30);
 	private QuadTree<IGraph> graphQuadTree = new QuadTree<>();
 	private ArrayList<LineGraph> lines = new ArrayList<>();
 	private double scale = 1.0;
@@ -261,7 +264,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	private IGraph findGraph(Point point) {
 		IGraph graph = null;
-		Collection<IGraph> c = this.graphQuadTree.findContains(new Point2D.Double(point.getX(), point.getY()));
+		Collection<IGraph> c = this.graphQuadTree.findContains(point);
 
 		if (c != null && c.size() > 0) {
 			Iterator<IGraph> iterator = c.iterator();
@@ -298,7 +301,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				this.previewGraph = null;
 				repaint(this.toCreation, point);
 				Rectangle bounds = this.toCreation.getBounds();
-				this.graphQuadTree.add(this.toCreation, new Rectangle2D.Double(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight()));
+				this.graphQuadTree.add(this.toCreation, bounds);
 
 				if (this.toCreation instanceof ProcessGraph) {
 					DataGraph graph = new DataGraph(this);
@@ -307,7 +310,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 					graph.setX(this.toCreation.getX() + this.toCreation.getWidth() + 150);
 					graph.setY(this.toCreation.getY() + (this.toCreation.getHeight() - graph.getHeight()) / 2);
 					Rectangle graphBounds = graph.getBounds();
-					this.graphQuadTree.add(graph, new Rectangle2D.Double(graphBounds.getX(), graphBounds.getY(), graphBounds.getWidth(), graphBounds.getHeight()));
+					this.graphQuadTree.add(graph, graphBounds);
 					repaint(graph.getBounds());
 
 					LineGraph lineGraph = new LineGraph(this);
@@ -345,7 +348,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			dragged.setLocation(this.dragCenter.getX(), this.dragCenter.getY());
 			dragged.translate(e.getPoint().x - this.dragBegin.x, e.getPoint().y - this.dragBegin.y);
 			repaint(this.draggedGraph, dragged);
-			this.graphQuadTree.add(this.draggedGraph, new Rectangle2D.Double(this.draggedGraph.getX(), this.draggedGraph.getY(), this.draggedGraph.getWidth(), this.draggedGraph.getHeight()));
+			this.graphQuadTree.add(this.draggedGraph, this.draggedGraph.getBounds());
 			for (int i = 0; i < this.draggedGraph.getLines().size(); i++) {
 				Rectangle rect = this.draggedGraph.getLines().get(i).getShape().getBounds();
 				rect.grow(1, 1);

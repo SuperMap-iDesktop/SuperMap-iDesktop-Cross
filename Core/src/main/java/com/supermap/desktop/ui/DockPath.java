@@ -8,9 +8,6 @@ import java.util.List;
  */
 public class DockPath {
 
-	public static final DockPath ROOT = new DockPath();
-
-	private DockPath relateTo;
 	private Direction direction = Direction.LEFT;
 	private double ratio = 0.5;
 
@@ -28,14 +25,6 @@ public class DockPath {
 
 	public void setDirection(Direction direction) {
 		this.direction = direction;
-	}
-
-	public DockPath getRelateTo() {
-		return relateTo;
-	}
-
-	public void setRelateTo(DockPath relateTo) {
-		this.relateTo = relateTo;
 	}
 
 	//	/**
