@@ -14,6 +14,36 @@ public enum OverlayAnalystType {
     UPDATE,//更新
     XOR;//对称差
 
+    public String defaultResultName(){
+        String result = "";
+        switch (this) {
+            case CLIP:
+                result = "ClipResult";
+                break;
+            case UNION:
+                result = "UnionResult";
+                break;
+            case ERASE:
+                result = "EraseResult";
+                break;
+            case IDENTITY:
+                result = "IntersectResult";
+                break;
+            case INTERSECT:
+                result = "IdentityResult";
+                break;
+            case UPDATE:
+                result = "XORResult";
+                break;
+            case XOR:
+                result = "UpdateResult";
+                break;
+            default:
+                break;
+        }
+        return result;
+    }
+
     public String toString() {
         String result = "";
         switch (this) {

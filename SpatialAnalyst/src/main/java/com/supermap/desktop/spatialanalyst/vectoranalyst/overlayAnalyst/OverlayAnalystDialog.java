@@ -67,13 +67,6 @@ public class OverlayAnalystDialog extends SmDialog {
     private JButton buttonCancel;
 
     private OverlayAnalystType OVERLAYANALYSTTTYPE = OverlayAnalystType.CLIP;
-    private final String clipResultDatasetName = "ClipResult";
-    private final String unionResultDatasetName = "UnionResult";
-    private final String eraseResultDatasetName = "EraseResult";
-    private final String intersectResultDatasetName = "IntersectResult";
-    private final String identityResultDatasetName = "IdentityResult";
-    private final String xORResultDatasetName = "XORResult";
-    private final String updateResultDatasetName = "UpdateResult";
     private final int CLIP_TYPE = 0;
     private final int UNION_TYPE = 1;
     private final int ERASE_TYPE = 2;
@@ -134,7 +127,7 @@ public class OverlayAnalystDialog extends SmDialog {
         @Override
         public void itemStateChanged(ItemEvent e) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                initTextFieldTargetDataset(getDefualtName());
+                initTextFieldTargetDataset(OVERLAYANALYSTTTYPE.defaultResultName());
             }
         }
     };
@@ -178,42 +171,12 @@ public class OverlayAnalystDialog extends SmDialog {
         OverlayAnalystDialog.this.dispose();
     }
 
-    private String getDefualtName() {
-        int index = listOverlayAnalystType.getSelectedIndex();
-        String defualtName = "";
-        switch (index) {
-            case CLIP_TYPE:
-                defualtName = clipResultDatasetName;
-                break;
-            case UNION_TYPE:
-                defualtName = unionResultDatasetName;
-                break;
-            case ERASE_TYPE:
-                defualtName = eraseResultDatasetName;
-                break;
-            case INTERSECT_TYPE:
-                defualtName = intersectResultDatasetName;
-                break;
-            case IDENTITY_TYPE:
-                defualtName = identityResultDatasetName;
-                OVERLAYANALYSTTTYPE = OverlayAnalystType.IDENTITY;
-                break;
-            case XOR_TYPE:
-                defualtName = xORResultDatasetName;
-                break;
-            case UPDATE_TYPE:
-                defualtName = updateResultDatasetName;
-                break;
-            default:
-                break;
-        }
-        return defualtName;
-    }
 
     private void listSelectionChanged() {
         int index = listOverlayAnalystType.getSelectedIndex();
         Dataset sourceDataset = comboboxSourceDataset.getSelectedDataset();
         Dataset overlayAanlaystDataset = comboboxOverlayAnalystDataset.getSelectedDataset();
+        initTextFieldTargetDataset(OVERLAYANALYSTTTYPE.defaultResultName());
         switch (index) {
             case CLIP_TYPE:
                 // 裁剪设置
@@ -224,7 +187,6 @@ public class OverlayAnalystDialog extends SmDialog {
                     comboboxSourceDataset.setSelectedDataset(sourceDataset);
                     comboboxOverlayAnalystDataset.setSelectedDataset(overlayAanlaystDataset);
                 }
-                initTextFieldTargetDataset(clipResultDatasetName);
                 buttonFieldsSet.setEnabled(false);
                 OVERLAYANALYSTTTYPE = OverlayAnalystType.CLIP;
                 break;
@@ -237,7 +199,6 @@ public class OverlayAnalystDialog extends SmDialog {
                     comboboxSourceDataset.setSelectedDataset(sourceDataset);
                     comboboxOverlayAnalystDataset.setSelectedDataset(overlayAanlaystDataset);
                 }
-                initTextFieldTargetDataset(unionResultDatasetName);
                 buttonFieldsSet.setEnabled(true);
                 OVERLAYANALYSTTTYPE = OverlayAnalystType.UNION;
                 break;
@@ -250,7 +211,6 @@ public class OverlayAnalystDialog extends SmDialog {
                     comboboxSourceDataset.setSelectedDataset(sourceDataset);
                     comboboxOverlayAnalystDataset.setSelectedDataset(overlayAanlaystDataset);
                 }
-                initTextFieldTargetDataset(eraseResultDatasetName);
                 buttonFieldsSet.setEnabled(false);
                 OVERLAYANALYSTTTYPE = OverlayAnalystType.ERASE;
                 break;
@@ -263,7 +223,6 @@ public class OverlayAnalystDialog extends SmDialog {
                     comboboxSourceDataset.setSelectedDataset(sourceDataset);
                     comboboxOverlayAnalystDataset.setSelectedDataset(overlayAanlaystDataset);
                 }
-                initTextFieldTargetDataset(intersectResultDatasetName);
                 buttonFieldsSet.setEnabled(true);
                 OVERLAYANALYSTTTYPE = OverlayAnalystType.INTERSECT;
                 break;
@@ -276,7 +235,6 @@ public class OverlayAnalystDialog extends SmDialog {
                     comboboxSourceDataset.setSelectedDataset(sourceDataset);
                     comboboxOverlayAnalystDataset.setSelectedDataset(overlayAanlaystDataset);
                 }
-                initTextFieldTargetDataset(identityResultDatasetName);
                 buttonFieldsSet.setEnabled(true);
                 OVERLAYANALYSTTTYPE = OverlayAnalystType.IDENTITY;
                 break;
@@ -289,7 +247,6 @@ public class OverlayAnalystDialog extends SmDialog {
                     comboboxSourceDataset.setSelectedDataset(sourceDataset);
                     comboboxOverlayAnalystDataset.setSelectedDataset(overlayAanlaystDataset);
                 }
-                initTextFieldTargetDataset(xORResultDatasetName);
                 buttonFieldsSet.setEnabled(true);
                 OVERLAYANALYSTTTYPE = OverlayAnalystType.XOR;
                 break;
@@ -302,7 +259,6 @@ public class OverlayAnalystDialog extends SmDialog {
                     comboboxSourceDataset.setSelectedDataset(sourceDataset);
                     comboboxOverlayAnalystDataset.setSelectedDataset(overlayAanlaystDataset);
                 }
-                initTextFieldTargetDataset(updateResultDatasetName);
                 buttonFieldsSet.setEnabled(false);
                 OVERLAYANALYSTTTYPE = OverlayAnalystType.UPDATE;
                 break;
@@ -671,7 +627,7 @@ public class OverlayAnalystDialog extends SmDialog {
         this.parameter = new OverlayAnalystParameter();
         addListItem();
         initComboboxsInfo(ALLTYPE);
-        initTextFieldTargetDataset(clipResultDatasetName);
+        initTextFieldTargetDataset(OVERLAYANALYSTTTYPE.defaultResultName());
     }
 
     private void removeReadOnlyAndMemoryDatasource() {
