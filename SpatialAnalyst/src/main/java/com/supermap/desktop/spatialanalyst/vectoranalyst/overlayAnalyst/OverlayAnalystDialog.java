@@ -757,18 +757,20 @@ public class OverlayAnalystDialog extends SmDialog {
 			if (flag == ALLTYPE) {
 				for (int i = 0; i < datasets.getCount(); i++) {
 					if (datasets.get(i).getType() == DatasetType.LINE || datasets.get(i).getType() == DatasetType.POINT || datasets.get(i).getType() == DatasetType.REGION) {
-						DataCell cell = new DataCell();
-						cell.initDatasetType(datasets.get(i));
-						sourceDataset.addItem(cell);
+//						DataCell cell = new DataCell();
+//						cell.initDatasetType(datasets.get(i));
+//						sourceDataset.addItem(cell);
+						sourceDataset.addItem(datasets.get(i));
 						count++;
 					}
 				}
 			} else {
 				for (int i = 0; i < datasets.getCount(); i++) {
 					if (datasets.get(i).getType() == DatasetType.REGION) {
-						DataCell cell = new DataCell();
-						cell.initDatasetType(datasets.get(i));
-						sourceDataset.addItem(cell);
+//						DataCell cell = new DataCell();
+//						cell.initDatasetType(datasets.get(i));
+//						sourceDataset.addItem(cell);
+						sourceDataset.addItem(datasets.get(i));
 						count++;
 					}
 				}

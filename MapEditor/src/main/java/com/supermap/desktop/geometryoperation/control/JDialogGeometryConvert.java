@@ -304,9 +304,10 @@ public class JDialogGeometryConvert extends SmDialog {
 				Dataset dataset = this.desDatasource.getDatasets().get(i);
 
 				if (dataset.getType() == this.datasetType) {
-					DataCell cell = new DataCell();
-					cell.initDatasetType(dataset);
-					this.comboBoxDataset.addItem(cell);
+//					DataCell cell = new DataCell();
+//					cell.initDatasetType(dataset);
+//					this.comboBoxDataset.addItem(cell);
+					this.comboBoxDataset.addItem(dataset);
 				}
 			}
 
@@ -314,9 +315,10 @@ public class JDialogGeometryConvert extends SmDialog {
 				Dataset dataset = this.desDatasource.getDatasets().get(i);
 
 				if (dataset.getType() == DatasetType.CAD) {
-					DataCell cell = new DataCell();
-					cell.initDatasetType(dataset);
-					this.comboBoxDataset.addItem(cell);
+//					DataCell cell = new DataCell();
+//					cell.initDatasetType(dataset);
+//					this.comboBoxDataset.addItem(cell);
+					this.comboBoxDataset.addItem(dataset);
 				}
 			}
 		}
