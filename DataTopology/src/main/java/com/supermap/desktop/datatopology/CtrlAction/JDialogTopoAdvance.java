@@ -203,15 +203,16 @@ public class JDialogTopoAdvance extends SmDialog {
 			if (null != targetDataset) {
 //                this.comboBoxNotCutting = new DatasetComboBox(new Dataset[0]);
 				this.comboBoxNotCutting = new DatasetComboBox();
-				DataCell item = new DataCell();
-				item.setPreferredSize(new Dimension(20, 18));
-				comboBoxNotCutting.addItem(item);
+//				DataCell item = new DataCell();
+//				item.setPreferredSize(new Dimension(20, 18));
+//				comboBoxNotCutting.addItem(item);
 				for (int i = 0; i < targetDataset.getDatasource().getDatasets().getCount(); i++) {
 					Dataset tempDataset = targetDataset.getDatasource().getDatasets().get(i);
 					if (tempDataset.getType() == DatasetType.POINT) {
-						DataCell cell = new DataCell();
-						cell.initDatasetType(tempDataset);
-						this.comboBoxNotCutting.addItem(cell);
+//						DataCell cell = new DataCell();
+//						cell.initDatasetType(tempDataset);
+//						this.comboBoxNotCutting.addItem(cell);
+						this.comboBoxNotCutting.addItem(tempDataset);
 					}
 				}
 			}

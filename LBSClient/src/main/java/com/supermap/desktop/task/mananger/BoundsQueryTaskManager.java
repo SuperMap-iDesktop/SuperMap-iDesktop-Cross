@@ -190,9 +190,10 @@ public class BoundsQueryTaskManager extends JPanel implements ITaskManager {
 			Datasets datasets = datasource.getDatasets();
 			for (int i = 0; i < datasets.getCount(); i++) {
 				if (supportTypes.contains(datasets.get(i).getType())) {
-					DataCell cell = new DataCell();
-					cell.initDatasetType(datasets.get(i));
-					this.comboBoxDataset.addItem(cell);
+//					DataCell cell = new DataCell();
+//					cell.initDatasetType(datasets.get(i));
+//					this.comboBoxDataset.addItem(cell);
+					this.comboBoxDataset.addItem(datasets.get(i));
 				}
 			}
 		}

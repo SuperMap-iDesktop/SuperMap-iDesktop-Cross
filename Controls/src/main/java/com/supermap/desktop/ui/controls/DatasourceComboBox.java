@@ -4,16 +4,17 @@ import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.implement.MyComboBoxUI;
+import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 
 import javax.swing.*;
 
 /**
- * 太乱，需要重构 by wuxb
+ * 数据源下拉列表控件
  *
- * @author highsad
+ * @author YuanR 2017.2.15
  */
-public class DatasourceComboBox extends JComboBox<Object> {
-    private static final long serialVersionUID = 1L;
+public class DatasourceComboBox extends JComboBox<Datasource> {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * 覆盖原有的updateUI方法
@@ -23,164 +24,156 @@ public class DatasourceComboBox extends JComboBox<Object> {
 	public void updateUI() {
 		this.setUI(new MyComboBoxUI());
 	}
-    /**
-     * 根据工作空间中已经有的数据源集合类创建下拉选择框
-     */
-    public DatasourceComboBox() {
-        super(initDatasourceComboBoxItem());
-        this.setBorder(BorderFactory.createEtchedBorder(1));
-        ListCellRenderer<Object> renderer = new CommonListCellRenderer();
-        setRenderer(renderer);
-    }
 
-    /**
-     * 根据给定的数据源集合类创建下拉选择框
-     *
-     * @param datasources
-     */
-    public DatasourceComboBox(Datasources datasources) {
-        super(initDatasourceComboBoxItem(datasources));
-        this.setBorder(BorderFactory.createEtchedBorder(1));
-        ListCellRenderer<Object> renderer = new CommonListCellRenderer();
-        setRenderer(renderer);
-    }
+	/**
+	 * 根据工作空间中已经有的数据源集合类创建下拉选择框
+	 */
+	public DatasourceComboBox() {
+		super(initDatasourceComboBoxItem(Application.getActiveApplication().getWorkspace().getDatasources()));
+		//设置渲染方式
+		setRenderer(new ListDataCellRender());
+	}
 
-    /**
-     * 根据给定的数据源集合创建下拉选择框
-     *
-     * @param datasources
-     */
-    public DatasourceComboBox(Datasource[] datasources) {
-        super(initDatasourceComboBoxItem(datasources));
-        this.setBorder(BorderFactory.createEtchedBorder(1));
-        ListCellRenderer<Object> renderer = new CommonListCellRenderer();
-        setRenderer(renderer);
-    }
+	/**
+	 * 根据给定的数据源集合类创建下拉选择框
+	 *
+	 * @param datasources
+	 */
+	public DatasourceComboBox(Datasources datasources) {
+		super(initDatasourceComboBoxItem(datasources));
+		//设置渲染方式
+		setRenderer(new ListDataCellRender());
+	}
 
-    /**
-     * 由于填充的是DatasetCell 返回时需要得到DatasetCell中JLabel中显示的字符串
-     *
-     * @return
-     */
-    public String getSelectItem() {
-        DataCell temp = (DataCell) getSelectedItem();
-        return temp.getDataName();
-    }
+	/**
+	 * 根据给定的数据源集合创建下拉选择框
+	 *
+	 * @param datasource
+	 */
+	public DatasourceComboBox(Datasource[] datasource) {
+		super(datasource);
+		//设置渲染方式
+		setRenderer(new ListDataCellRender());
+	}
 
-    /**
-     * 获取选中的数据源
-     *
-     * @return
-     */
-    public Datasource getSelectedDatasource() {
-        Datasource result = null;
+	/**
+	 * 由于填充的是DatasetCell 返回时需要得到DatasetCell中JLabel中显示的字符串
+	 *
+	 * @return
+	 */
+	public String getSelectItem() {
+		Datasource temp = (Datasource) getSelectedItem();
+		return temp.getAlias();
+	}
 
-        if (getSelectedItem() instanceof DataCell) {
-            DataCell selected = (DataCell) getSelectedItem();
+	/**
+	 * 获取选中的数据源
+	 *
+	 * @return
+	 */
+	public Datasource getSelectedDatasource() {
+		Datasource result = null;
+		if (getSelectedItem() instanceof Datasource) {
+			result = (Datasource) getSelectedItem();
+		}
+		return result;
+	}
 
-            if (selected.getData() instanceof Datasource) {
-                result = (Datasource) selected.getData();
-            }
-        }
-        return result;
-    }
+	/**
+	 * 通过数据源对象移除数据源
+	 *
+	 * @param currentDatasource
+	 */
+	public void removeDataSource(Datasource currentDatasource) {
+		removeDatasource(currentDatasource.getAlias());
+	}
 
-    public void removeDataSource(Datasource currentDatasource) {
-        removeDatasource(currentDatasource.getAlias());
-    }
+	/**
+	 * 通过alias移除数据源
+	 *
+	 * @param alias
+	 */
+	public void removeDatasource(String alias) {
+		for (int i = 0; i < this.getItemCount(); i++) {
+			if (this.getDatasourceAt(i).getAlias().equals(alias)) {
+				this.removeItem(this.getItemAt(i));
+			}
+		}
+	}
 
-    public void removeDatasource(String alias) {
-        for (int i = 0; i < this.getItemCount(); i++) {
-            if (this.getDatasourceAt(i).getAlias().equals(alias)) {
-                this.removeItem(this.getItemAt(i));
-            }
-        }
-    }
+	/**
+	 * 通过item序号获得数据源
+	 *
+	 * @param index
+	 * @return
+	 */
+	public Datasource getDatasourceAt(int index) {
+		Datasource dataset = null;
+		if (index >= 0 && index < this.getItemCount() && this.getItemAt(index) instanceof Datasource) {
+			dataset = (Datasource) this.getItemAt(index);
+		}
+		return dataset;
+	}
 
-    public Datasource getDatasourceAt(int index) {
-        Datasource dataset = null;
-        if (index >= 0 && index < this.getItemCount() && this.getItemAt(index) instanceof DataCell && ((DataCell) this.getItemAt(index)).getData() instanceof Datasource) {
-            dataset = (Datasource) ((DataCell) this.getItemAt(index)).getData();
-        }
-        return dataset;
-    }
+	/**
+	 * 选中指定数据源的项
+	 *
+	 * @param datasource
+	 */
+	public void setSelectedDatasource(Datasource datasource) {
+		if (datasource == null) {
+			setSelectedItem(null);
+			return;
+		}
+		if (getItemCount() <= 0) {
+			return;
+		}
+		int selectIndex = 0;
 
-    /**
-     * 选中指定数据源的项
-     *
-     * @param datasource
-     */
-    public void setSelectedDatasource(Datasource datasource) {
-        if (datasource == null) {
-            setSelectedItem(null);
-            return;
-        }
-        if (getItemCount() <= 0) {
-            return;
-        }
-        int selectIndex = 0;
+		for (int i = 0; i < getItemCount(); i++) {
+			Datasource ComboBoxDatasource = getItemAt(i);
+			if (ComboBoxDatasource == datasource) {
+				selectIndex = i;
+				break;
+			}
+		}
+		setSelectedIndex(selectIndex);
+	}
 
-        for (int i = 0; i < getItemCount(); i++) {
-            DataCell dataCell = (DataCell) getItemAt(i);
+	/**
+	 * 重置控件
+	 *
+	 * @param datasources
+	 * @param selectedDatasource
+	 */
+	public void resetComboBox(Datasources datasources, Datasource selectedDatasource) {
+		removeAllItems();
+		int selectedIndex = 0;
 
-            if (dataCell.getData() == datasource) {
-                selectIndex = i;
-                break;
-            }
-        }
-        setSelectedIndex(selectIndex);
-    }
+		for (int i = 0; i < datasources.getCount(); i++) {
+			Datasource datasource = datasources.get(i);
+			this.addItem(datasource);
+			if (datasource == selectedDatasource) {
+				selectedIndex = getItemCount() - 1;
+			}
+		}
 
-    /**
-     * 重置控件
-     *
-     * @param datasources
-     * @param selectedDatasource
-     */
-    public void resetComboBox(Datasources datasources, Datasource selectedDatasource) {
-        removeAllItems();
-        int selectedIndex = 0;
+		if (getItemCount() > 0) {
+			setSelectedIndex(selectedIndex);
+		} else {
+			setSelectedIndex(-1);
+		}
+	}
 
-        for (int i = 0; i < datasources.getCount(); i++) {
-            Datasource datasource = datasources.get(i);
-            DataCell dataCell = new DataCell();
-            dataCell.initDatasourceType(datasource);
-            this.addItem(dataCell);
-            if (datasource == selectedDatasource) {
-                selectedIndex = getItemCount() - 1;
-            }
-        }
-
-        if (getItemCount() > 0) {
-            setSelectedIndex(selectedIndex);
-        } else {
-            setSelectedIndex(-1);
-        }
-    }
-
-    private static DataCell[] initDatasourceComboBoxItem(Datasources datasources) {
-        DataCell[] result = new DataCell[datasources.getCount()];
-        for (int i = 0; i < datasources.getCount(); i++) {
-            Datasource datasource = datasources.get(i);
-            result[i] = new DataCell();
-            result[i].initDatasourceType(datasource);
-        }
-        return result;
-    }
-
-    private static DataCell[] initDatasourceComboBoxItem() {
-        Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
-        return initDatasourceComboBoxItem(datasources);
-    }
-
-    private static DataCell[] initDatasourceComboBoxItem(Datasource[] datasources) {
-        DataCell[] result = new DataCell[datasources.length];
-        for (int i = 0; i < datasources.length; i++) {
-            Datasource datasource = datasources[i];
-            result[i] = new DataCell();
-            result[i].initDatasourceType(datasource);
-        }
-        return result;
-    }
-
+	/**
+	 * @param datasources
+	 * @return
+	 */
+	private static Datasource[] initDatasourceComboBoxItem(Datasources datasources) {
+		Datasource[] result = new Datasource[datasources.getCount()];
+		for (int i = 0; i < datasources.getCount(); i++) {
+			result[i] = datasources.get(i);
+		}
+		return result;
+	}
 }

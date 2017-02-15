@@ -14,7 +14,7 @@ import java.awt.event.ItemListener;
 public class PanelResultData extends JPanel {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private JLabel labelDataset;
@@ -96,10 +96,8 @@ public class PanelResultData extends JPanel {
 	private void initComboBoxResultDataDatasource() {
 
 		for (int i = this.comboBoxResultDataDatasource.getItemCount() - 1; i >= 0; i--) {
-			if (this.comboBoxResultDataDatasource.getItemAt(i) instanceof DataCell) {
-				DataCell dataCell = (DataCell) this.comboBoxResultDataDatasource.getItemAt(i);
-				if (dataCell.getData() instanceof Datasource && ((Datasource) dataCell.getData()).isReadOnly())
-					this.comboBoxResultDataDatasource.removeItemAt(i);
+			if (this.comboBoxResultDataDatasource.getItemAt(i) instanceof Datasource && this.comboBoxResultDataDatasource.getItemAt(i).isReadOnly()) {
+				this.comboBoxResultDataDatasource.removeItemAt(i);
 			}
 		}
 	}
