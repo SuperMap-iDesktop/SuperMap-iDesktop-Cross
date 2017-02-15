@@ -21,7 +21,7 @@ import java.awt.event.ItemListener;
 public class JDialogGeometryConvert extends SmDialog {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private static String DEFAULT_DATASET_NAME = "ConvertResult";
@@ -284,9 +284,7 @@ public class JDialogGeometryConvert extends SmDialog {
 			Datasource datasource = workspace.getDatasources().get(i);
 
 			if (isDesDatasourceAvailable(datasource)) {
-				DataCell cell = new DataCell();
-				cell.initDatasourceType(datasource);
-				this.comboBoxDatasource.addItem(cell);
+				this.comboBoxDatasource.addItem(datasource);
 			}
 		}
 		this.comboBoxDatasource.setSelectedDatasource(this.desDatasource);

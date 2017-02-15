@@ -311,7 +311,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 			if (null != currentDatasource) {
 				this.comboBoxDatasource = new DatasourceComboBox(datasources);
 				for (int i = 0; i < this.comboBoxDatasource.getItemCount(); i++) {
-					if (((DataCell) this.comboBoxDatasource.getItemAt(i)).getDataName().equals(currentDatasource.getAlias())) {
+					if ((this.comboBoxDatasource.getItemAt(i).getAlias()).equals(currentDatasource.getAlias())) {
 						this.comboBoxDatasource.setSelectedIndex(i);
 						break;
 					}

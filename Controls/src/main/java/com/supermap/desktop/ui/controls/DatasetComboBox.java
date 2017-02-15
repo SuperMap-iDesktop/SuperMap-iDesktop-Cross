@@ -20,6 +20,8 @@ import javax.swing.*;
  *         <p>
  *         可获得的参数：
  *         SupportedDatasetTypes、SelectedDataset、构建的datasets
+ *         <p>
+ *         重构ComboBox的实现方式，直接将数据集存入item，再通过setRenderer(new ListDataCellRender());进行显示及图标的渲染
  */
 
 public class DatasetComboBox extends JComboBox<Dataset> {
@@ -77,8 +79,8 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 		int selectIndex = -1;
 		if (dataset != null) {
 			for (int i = 0; i < getItemCount(); i++) {
-				Dataset ComboBoxdataset = (Dataset) getItemAt(i);
-				if (ComboBoxdataset == dataset) {
+				Dataset ComboBoxDataset = getItemAt(i);
+				if (ComboBoxDataset == dataset) {
 					selectIndex = i;
 					break;
 				}

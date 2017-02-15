@@ -162,7 +162,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 			if (null != currentDatasource) {
 				this.comboBoxResultDatasource = new DatasourceComboBox(datasourceList.toArray(datasourceArray));
 				for (int i = 0; i < this.comboBoxResultDatasource.getItemCount(); i++) {
-					if (((DataCell) this.comboBoxResultDatasource.getItemAt(i)).getDataName().equals(currentDatasource.getAlias())) {
+					if ((this.comboBoxResultDatasource.getItemAt(i).getAlias()).equals(currentDatasource.getAlias())) {
 						this.comboBoxResultDatasource.setSelectedIndex(i);
 						break;
 					}
@@ -170,7 +170,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 
 				this.comboBoxDatasource = new DatasourceComboBox(datasourceList.toArray(datasourceArray));
 				for (int i = 0; i < this.comboBoxDatasource.getItemCount(); i++) {
-					if (((DataCell) this.comboBoxDatasource.getItemAt(i)).getDataName().equals(currentDatasource.getAlias())) {
+					if ((this.comboBoxDatasource.getItemAt(i).getAlias()).equals(currentDatasource.getAlias())) {
 						this.comboBoxDatasource.setSelectedIndex(i);
 						break;
 					}

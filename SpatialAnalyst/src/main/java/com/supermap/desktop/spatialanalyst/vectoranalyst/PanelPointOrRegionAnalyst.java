@@ -492,8 +492,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getSource() == panelBufferData.getComboBoxBufferDataDatasource()) {
 				panelBufferData.getComboBoxBufferDataDataset().removeAllItems();
-				String datasourceAlis = e.getItem().toString();
-				Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceAlis);
+				Datasource datasource = (Datasource) e.getItem();
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					panelBufferData.getComboBoxBufferDataDataset().setDatasets(datasource.getDatasets());
 				}
