@@ -8,10 +8,9 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.IParameter;
-import com.supermap.desktop.process.parameter.IParameters;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
 import com.supermap.desktop.process.parameter.implement.ParameterOverlayAnalyst;
+import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
 import javax.swing.*;
@@ -24,6 +23,7 @@ import java.text.MessageFormat;
 public class MetaProcessOverlayAnalyst extends MetaProcess {
     private IParameters parameters;
     private OverlayAnalystType analystType;
+    private ParameterOverlayAnalyst parameterOverlayAnalyst;
 
     private SteppedListener steppedListener = new SteppedListener() {
         @Override
@@ -38,9 +38,9 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
     }
 
     private void initMetaInfo() {
-        ParameterOverlayAnalyst parameterOverlayAnalyst = new ParameterOverlayAnalyst();
+        parameterOverlayAnalyst = new ParameterOverlayAnalyst();
         parameterOverlayAnalyst.setOverlayAnalystType(analystType);
-        parameters.setParameters(new IParameter[]{parameterOverlayAnalyst});
+        parameters.setParameters(parameterOverlayAnalyst);
     }
 
     public OverlayAnalystType getAnalystType() {
@@ -59,7 +59,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 
     @Override
     public void run() {
-        ParameterOverlayAnalystInfo info = (ParameterOverlayAnalystInfo) parameters.getParameter(0).getSelectedItem();
+        ParameterOverlayAnalystInfo info = (ParameterOverlayAnalystInfo) parameterOverlayAnalyst.getSelectedItem();
         if (null == info.sourceDataset || null == info.overlayAnalystDataset
                 || null == info.targetDataset || null == info.analystParameter) {
             return;

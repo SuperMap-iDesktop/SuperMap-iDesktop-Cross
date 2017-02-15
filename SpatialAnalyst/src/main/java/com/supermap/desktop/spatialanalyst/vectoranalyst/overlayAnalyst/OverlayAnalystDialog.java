@@ -598,11 +598,11 @@ public class OverlayAnalystDialog extends SmDialog {
         this.labelSourceDatasource = new JLabel();
         this.comboboxSourceDatasource = new DatasourceComboBox();
         this.labelSourceDataset = new JLabel();
-        this.comboboxSourceDataset = new DatasetComboBox(new Dataset[0]);
+        this.comboboxSourceDataset = new DatasetComboBox();
         this.labelOverlayAnalystDatasource = new JLabel();
         this.comboboxOverlayAnalystDatasource = new DatasourceComboBox();
         this.labelOverlayAnalystDataset = new JLabel();
-        this.comboboxOverlayAnalystDataset = new DatasetComboBox(new Dataset[0]);
+        this.comboboxOverlayAnalystDataset = new DatasetComboBox();
         this.comboboxTargetDatasource = new DatasourceComboBox();
         removeReadOnlyAndMemoryDatasource();
         this.labelTargetDatasource = new JLabel();
@@ -711,18 +711,14 @@ public class OverlayAnalystDialog extends SmDialog {
             if (flag == ALLTYPE) {
                 for (int i = 0; i < datasets.getCount(); i++) {
                     if (datasets.get(i).getType() == DatasetType.LINE || datasets.get(i).getType() == DatasetType.POINT || datasets.get(i).getType() == DatasetType.REGION) {
-                        DataCell cell = new DataCell();
-                        cell.initDatasetType(datasets.get(i));
-                        sourceDataset.addItem(cell);
+                        sourceDataset.addItem(datasets.get(i));
                         count++;
                     }
                 }
             } else {
                 for (int i = 0; i < datasets.getCount(); i++) {
                     if (datasets.get(i).getType() == DatasetType.REGION) {
-                        DataCell cell = new DataCell();
-                        cell.initDatasetType(datasets.get(i));
-                        sourceDataset.addItem(cell);
+                        sourceDataset.addItem(datasets.get(i));
                         count++;
                     }
                 }

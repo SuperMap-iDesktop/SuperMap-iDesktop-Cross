@@ -92,22 +92,29 @@ public class ParameterOverlayAnalystPanel extends JPanel {
         this.labelSourceDataset = new JLabel();
         if (comboboxSourceDatasource.getSelectItem() != null) {
             if (this.isAllVectorType) {
-                this.comboboxSourceDataset = new DatasetComboBox(new DatasetType[]{DatasetType.LINE, DatasetType.POINT, DatasetType.REGION});
+                this.comboboxSourceDataset = new DatasetComboBox(this.comboboxSourceDatasource.getSelectedDatasource().getDatasets());
+                this.comboboxSourceDataset.setSupportedDatasetTypes(new DatasetType[]{
+                        DatasetType.POINT,
+                        DatasetType.LINE,
+                        DatasetType.REGION
+                });
             } else {
-                this.comboboxSourceDataset = new DatasetComboBox(new DatasetType[]{DatasetType.REGION});
+                this.comboboxSourceDataset = new DatasetComboBox(this.comboboxSourceDatasource.getSelectedDatasource().getDatasets());
+                this.comboboxSourceDataset.setSupportedDatasetTypes(new DatasetType[]{
+                        DatasetType.REGION});
             }
         } else {
-            this.comboboxSourceDataset = new DatasetComboBox(new Dataset[0]);
+            this.comboboxSourceDataset = new DatasetComboBox();
         }
         this.labelOverlayAnalystDatasource = new JLabel();
         this.comboboxOverlayAnalystDatasource = new DatasourceComboBox();
         if (comboboxOverlayAnalystDatasource.getSelectItem() != null) {
-            this.comboboxOverlayAnalystDataset = new DatasetComboBox(new DatasetType[]{DatasetType.REGION});
+            this.comboboxOverlayAnalystDataset = new DatasetComboBox();
             if (comboboxSourceDataset.getSelectedItem().toString().equals(comboboxOverlayAnalystDataset.getSelectedItem().toString())) {
                 this.comboboxOverlayAnalystDataset.removeItem(comboboxOverlayAnalystDataset.getSelectedItem());
             }
         } else {
-            this.comboboxOverlayAnalystDataset = new DatasetComboBox(new Dataset[0]);
+            this.comboboxOverlayAnalystDataset = new DatasetComboBox();
         }
         this.labelOverlayAnalystDataset = new JLabel();
         this.comboboxTargetDatasource = new DatasourceComboBox();
