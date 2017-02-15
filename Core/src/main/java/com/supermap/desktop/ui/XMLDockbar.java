@@ -11,11 +11,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class XMLDockbar extends XMLCommand {
 	private String title = "";
 	private String controlClass = null;
-	private DockPath dockPath;
+	//	private DockPath dockPath;
+	private ArrayList<DockPath> dockPaths = new ArrayList<>();
 
 	public XMLDockbar(PluginInfo pluginInfo, XMLCommandBase group) {
 		super(pluginInfo, group);
@@ -45,30 +47,48 @@ public class XMLDockbar extends XMLCommand {
 		return loadPath((Element) XmlUtilities.getChildElementNodeByName(element, g_NodeDockPath));
 	}
 
+//	private boolean loadPath(Element element) {
+//		boolean result = false;
+//
+//		// 获取路径
+//		DockPath dockPath = DockPath.ROOT;
+//		Element[] directionNodes = XmlUtilities.getChildElementNodesByName(element, g_NodeDirection);
+//		if (directionNodes != null && directionNodes.length > 0) {
+//			for (int i = 0; i < directionNodes.length; i++) {
+//				dockPath = loadDirection(directionNodes[i], dockPath);
+//			}
+//		} else {
+//			// 配置文件没有配置 Direction，则默认为 ROOT.LEFT
+//			dockPath = new DockPath();
+//			dockPath.setRelateTo(DockPath.ROOT);
+//			dockPath.setDirection(Direction.LEFT);
+//		}
+//		this.dockPath = dockPath;
+//
+//		return result;
+//	}
+
 	private boolean loadPath(Element element) {
 		boolean result = false;
 
 		// 获取路径
-		DockPath dockPath = DockPath.ROOT;
 		Element[] directionNodes = XmlUtilities.getChildElementNodesByName(element, g_NodeDirection);
 		if (directionNodes != null && directionNodes.length > 0) {
 			for (int i = 0; i < directionNodes.length; i++) {
-				dockPath = loadDirection(directionNodes[i], dockPath);
+				this.dockPaths.add(loadDirection(directionNodes[i], null));
 			}
 		} else {
 			// 配置文件没有配置 Direction，则默认为 ROOT.LEFT
-			dockPath = new DockPath();
-			dockPath.setRelateTo(DockPath.ROOT);
+			DockPath dockPath = new DockPath();
 			dockPath.setDirection(Direction.LEFT);
+			this.dockPaths.add(dockPath);
 		}
-		this.dockPath = dockPath;
 
 		return result;
 	}
 
 	private DockPath loadDirection(Element directionNode, DockPath relateTo) {
 		DockPath path = new DockPath();
-		path.setRelateTo(relateTo);
 		path.setDirection(Direction.valueOf(directionNode.getNodeValue()));
 
 		if (directionNode.hasAttribute(g_AttributionRatio)) {
@@ -134,7 +154,6 @@ public class XMLDockbar extends XMLCommand {
 				result.setTitle(getTitle());
 				result.setVisible(getVisible());
 				result.setControlClass(getControlClass());
-				result.setDockPath(getDockPath());
 			}
 		} catch (Exception e) {
 			result = null;
@@ -156,7 +175,6 @@ public class XMLDockbar extends XMLCommand {
 				result.setTitle(getTitle());
 				result.setVisible(getVisible());
 				result.setControlClass(getControlClass());
-				result.setDockPath(getDockPath());
 				result.getPluginInfo().setBundleName(getPluginInfo().getBundleName());
 			}
 		} catch (Exception e) {
@@ -229,12 +247,16 @@ public class XMLDockbar extends XMLCommand {
 		return title;
 	}
 
-	public DockPath getDockPath() {
-		return dockPath;
+	public DockPath[] getDockPaths() {
+		return this.dockPaths.toArray(new DockPath[this.dockPaths.size()]);
 	}
 
+//	public DockPath getDockPath() {
+//		return dockPath;
+//	}
+
 	public void setDockPath(DockPath dockPath) {
-		this.dockPath = dockPath;
+//		this.dockPath = dockPath;
 	}
 
 	public void setTitle(String title) {

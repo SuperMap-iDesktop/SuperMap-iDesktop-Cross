@@ -89,7 +89,7 @@ public class JDialogJoinItems extends SmDialog {
 		private DatasetComboBox getDatasetComboBox(String name) {
 			datasetComboBox = new DatasetComboBox(currentDataset.getDatasource().getDatasets());
 
-			datasetComboBox.setDatasetTypes(datasetTypes);
+			datasetComboBox.setSupportedDatasetTypes(datasetTypes);
 			datasetComboBox.removeDataset(((JoinItemsTableModel) joinItemsTable.getModel()).getCurrentDataset());
 			for (int i = 0; i < joinItems.getCount(); i++) {
 				if (!name.equals(joinItems.get(i).getForeignTable())) {
@@ -100,7 +100,7 @@ public class JDialogJoinItems extends SmDialog {
 				@Override
 				public void itemStateChanged(ItemEvent e) {
 					if (e.getStateChange() == ItemEvent.SELECTED) {
-						datasetComboBox.setSelectedDataset(((Dataset) ((DataCell) e.getItem()).getData()));
+						datasetComboBox.setSelectedDataset(((Dataset) (e.getItem())));
 						stopCellEditing();
 						joinItemsTable.setRowSelectionInterval(currentRow, currentRow);
 					}

@@ -33,7 +33,7 @@ public class JDialogSetAll extends SmDialog {
 	private JCheckBox checkBoxAddToNewMap;
 
 	private JComboBox comboboxTargetDatasource;
-	private DatasetComboBox comboboxDatasetType;
+	private DatasetTypeComboBox comboboxDatasetType;
 	private JComboBox comboboxEncodingType;
 	private JComboBox comboboxCharest;
 	private JComboBox comboboxAddToNewMap;
@@ -63,7 +63,7 @@ public class JDialogSetAll extends SmDialog {
 		this.checkBoxAddToNewMap = new JCheckBox("AddToNewMap:");
 
 		this.comboboxTargetDatasource = new JComboBox();
-		this.comboboxDatasetType = new DatasetComboBox();
+//		this.comboboxDatasetType = new DatasetTypeComboBox();
 		this.comboboxEncodingType = new JComboBox();
 		this.comboboxCharest = new JComboBox();
 		this.comboboxAddToNewMap = new JComboBox();
@@ -71,18 +71,9 @@ public class JDialogSetAll extends SmDialog {
 		// 初始化目标数据源
 		this.comboboxTargetDatasource = new DatasourceComboBox(Application.getActiveApplication().getWorkspace().getDatasources());
 
-		// 初始化数据类型
-		ArrayList<DatasetType> datasetTypes = new ArrayList<DatasetType>();
-		datasetTypes.add(DatasetType.POINT);
-		datasetTypes.add(DatasetType.LINE);
-		datasetTypes.add(DatasetType.REGION);
-		datasetTypes.add(DatasetType.TEXT);
-		datasetTypes.add(DatasetType.CAD);
-		datasetTypes.add(DatasetType.TABULAR);
-		datasetTypes.add(DatasetType.POINT3D);
-		datasetTypes.add(DatasetType.LINE3D);
-		datasetTypes.add(DatasetType.REGION3D);
-		this.comboboxDatasetType = new DatasetComboBox(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
+		DatasetType[] datasetTypes = new DatasetType[]{DatasetType.POINT,DatasetType.LINE,DatasetType.REGION,DatasetType.TEXT,
+				DatasetType.CAD,DatasetType.TABULAR,DatasetType.POINT3D,DatasetType.LINE3D,DatasetType.REGION3D};
+		this.comboboxDatasetType = new DatasetTypeComboBox(datasetTypes);
 
 		// 初始化字符集
 		this.comboboxEncodingType.removeAllItems();
@@ -218,7 +209,7 @@ public class JDialogSetAll extends SmDialog {
 
 	/**
 	 * 获得目标数据源
-	 * 
+	 *
 	 * @return
 	 */
 	public Object getTargetDatasource() {
@@ -230,7 +221,7 @@ public class JDialogSetAll extends SmDialog {
 
 	/**
 	 * 获取数据集类型
-	 * 
+	 *
 	 * @return
 	 */
 	public Object getDatasetType() {
@@ -242,7 +233,7 @@ public class JDialogSetAll extends SmDialog {
 
 	/**
 	 * 获取编码格式
-	 * 
+	 *
 	 * @return
 	 */
 	public Object getEncodingType() {
@@ -254,7 +245,7 @@ public class JDialogSetAll extends SmDialog {
 
 	/**
 	 * 获取字符集
-	 * 
+	 *
 	 * @return
 	 */
 	public Object getCharset() {
@@ -266,7 +257,7 @@ public class JDialogSetAll extends SmDialog {
 
 	/**
 	 * 获取是否加入地图
-	 * 
+	 *
 	 * @return
 	 */
 	public Object getAddtoMap() {

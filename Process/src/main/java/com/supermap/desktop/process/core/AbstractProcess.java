@@ -2,8 +2,8 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
-import com.supermap.desktop.process.parameter.IData;
-import com.supermap.desktop.process.parameter.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.IData;
+import com.supermap.desktop.process.parameter.interfaces.IParameters;
 
 import javax.swing.event.EventListenerList;
 

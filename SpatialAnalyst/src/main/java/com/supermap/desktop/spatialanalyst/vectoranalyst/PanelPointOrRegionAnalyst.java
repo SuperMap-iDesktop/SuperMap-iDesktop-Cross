@@ -347,7 +347,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		datasetTypes.add(DatasetType.REGION);
 		// datasetTypes.add(DatasetType.POINT3D);
 		// datasetTypes.add(DatasetType.REGION3D);
-		this.panelBufferData.getComboBoxBufferDataDataset().setDatasetTypes(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
+		this.panelBufferData.getComboBoxBufferDataDataset().setSupportedDatasetTypes(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
 	}
 
 	/**
@@ -492,8 +492,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getSource() == panelBufferData.getComboBoxBufferDataDatasource()) {
 				panelBufferData.getComboBoxBufferDataDataset().removeAllItems();
-				String datasourceAlis = e.getItem().toString();
-				Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceAlis);
+				Datasource datasource = (Datasource) e.getItem();
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					panelBufferData.getComboBoxBufferDataDataset().setDatasets(datasource.getDatasets());
 				}

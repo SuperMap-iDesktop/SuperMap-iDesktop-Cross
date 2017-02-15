@@ -82,10 +82,12 @@ public class JDialogTopoPreProgress extends SmDialog {
 					if (dataset.getType() == DatasetType.LINE || dataset.getType() == DatasetType.REGION || dataset.getType() == DatasetType.POINT) {
 						Object[] temp = new Object[3];
 						temp[COLUMN_INDEX_COUNT] = table.getRowCount() + 1;
-						DataCell datasetCell = new DataCell();
-						datasetCell.initDatasetType(dataset);
-						getComboBoxConsultDataset().addItem(datasetCell);
-						temp[COLUMN_INDEX_DATASET] = datasetCell;
+//						DataCell datasetCell = new DataCell();
+//						datasetCell.initDatasetType(dataset);
+//						getComboBoxConsultDataset().addItem(datasetCell);
+						getComboBoxConsultDataset().addItem(dataset);
+//						temp[COLUMN_INDEX_DATASET] = datasetCell;
+						temp[COLUMN_INDEX_DATASET] = dataset;
 						Datasource dataSource = dataset.getDatasource();
 						if (dataset.getType() == DatasetType.REGION) {
 							getCheckBoxArcsInserted().setEnabled(true);
@@ -192,8 +194,8 @@ public class JDialogTopoPreProgress extends SmDialog {
 		textFieldTolerance.setText("0");
 		textFieldTolerance.setColumns(10);
 
-		Dataset[] datasets = new Dataset[0];
-		comboBoxConsultDataset = new DatasetComboBox(datasets);
+//		comboBoxConsultDataset = new DatasetComboBox(new Dataset[0]);
+		comboBoxConsultDataset = new DatasetComboBox();
 		comboBoxConsultDataset.setEnabled(false);
 		//@formatter:off
 		GroupLayout gl_panel = new GroupLayout(panel);

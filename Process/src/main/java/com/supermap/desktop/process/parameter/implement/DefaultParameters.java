@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.parameter.implement;
 
-import com.supermap.desktop.process.parameter.IParameter;
-import com.supermap.desktop.process.parameter.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
+import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -19,7 +19,7 @@ public class DefaultParameters implements IParameters {
 	}
 
 	@Override
-	public void setParameters(IParameter[] iParameters) {
+	public void setParameters(IParameter... iParameters) {
 		if (this.parameters != null && this.parameters.length > 0) {
 			for (IParameter parameter : parameters) {
 				parameter.dispose();

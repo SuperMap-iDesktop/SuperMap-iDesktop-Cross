@@ -151,7 +151,7 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 			if (getLayerPropertyModel().getDataset() != null) {
 				// 图层数据集不为空
 				this.comboBoxDatasource.setSelectedDatasource(getLayerPropertyModel().getDataset().getDatasource());
-				this.comboBoxDataset.setDatasetTypes(getSupportDatasetTypes());
+				this.comboBoxDataset.setSupportedDatasetTypes(getSupportDatasetTypes());
 				this.comboBoxDataset.setDatasets(getLayerPropertyModel().getDataset().getDatasource().getDatasets());
 				this.comboBoxDataset.setSelectedDataset(getLayerPropertyModel().getDataset());
 			} else if (comboBoxDatasource.getSelectedDatasource() != null) {
@@ -214,7 +214,7 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 	}
 
 	private void resetComboboxDataset() {
-		this.comboBoxDataset.setDatasetTypes(getSupportDatasetTypes());
+		this.comboBoxDataset.setSupportedDatasetTypes(getSupportDatasetTypes());
 		this.comboBoxDataset.setDatasets(this.comboBoxDatasource.getSelectedDatasource().getDatasets());
 	}
 

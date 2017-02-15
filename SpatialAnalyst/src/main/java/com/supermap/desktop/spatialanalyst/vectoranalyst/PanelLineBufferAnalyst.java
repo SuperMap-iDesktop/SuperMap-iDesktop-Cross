@@ -472,7 +472,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 		// datasetTypes.add(DatasetType.LINE3D);
 		datasetTypes.add(DatasetType.NETWORK);
 		// datasetTypes.add(DatasetType.NETWORK3D);
-		this.panelBufferData.getComboBoxBufferDataDataset().setDatasetTypes(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
+		this.panelBufferData.getComboBoxBufferDataDataset().setSupportedDatasetTypes(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
 	}
 
 	private void initDatasourceAndDataSet() {
@@ -595,8 +595,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 			if (e.getSource() == panelBufferData.getComboBoxBufferDataDatasource()) {
 				panelBufferData.getComboBoxBufferDataDataset().removeAllItems();
-				String datasourceAlis = e.getItem().toString();
-				Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceAlis);
+				Datasource datasource = (Datasource) e.getItem();
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					panelBufferData.getComboBoxBufferDataDataset().setDatasets(datasource.getDatasets());
 					if (panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() == null) {

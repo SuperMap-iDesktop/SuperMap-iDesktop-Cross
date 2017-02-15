@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
 import com.supermap.data.Dataset;
-import com.supermap.desktop.process.parameter.IData;
+import com.supermap.desktop.process.parameter.interfaces.IData;
 
 /**
  * Created by highsad on 2017/1/24.

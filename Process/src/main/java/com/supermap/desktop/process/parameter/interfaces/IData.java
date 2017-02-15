@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.parameter;
+package com.supermap.desktop.process.parameter.interfaces;
 
 /**
  * Created by highsad on 2017/1/5.

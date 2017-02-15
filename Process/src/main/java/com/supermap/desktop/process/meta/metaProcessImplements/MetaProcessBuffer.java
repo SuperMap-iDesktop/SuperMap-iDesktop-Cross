@@ -13,14 +13,13 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.IParameter;
-import com.supermap.desktop.process.parameter.IParameters;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
@@ -30,6 +29,13 @@ import javax.swing.*;
  */
 public class MetaProcessBuffer extends MetaProcess {
 
+	private ParameterComboBox parameterBufferRange;
+	private ParameterTextField parameterTextFieldRadius;
+	private ParameterTextField parameterTextFieldSemicircleLineSegment;
+	private ParameterCheckBox parameterUnionBuffer;
+	private ParameterCheckBox parameterRetainAttribute;
+	private ParameterSaveDataset parameterSaveDataset;
+
 	private IParameters parameters;
 	private SteppedListener steppedListener = new SteppedListener() {
 		@Override
@@ -37,12 +43,26 @@ public class MetaProcessBuffer extends MetaProcess {
 			fireRunning(new RunningEvent(MetaProcessBuffer.this, steppedEvent.getPercent(), steppedEvent.getMessage()));
 		}
 	};
+
 	public MetaProcessBuffer() {
 		parameters = new DefaultParameters();
-		ParameterDataNode defaultSelectedNode = new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), BufferRadiusUnit.Meter);
+		initParameters();
+		initComponentState();
+		parameters.setParameters(
+				parameterBufferRange,
+				parameterTextFieldRadius,
+				parameterUnionBuffer,
+				parameterRetainAttribute,
+				parameterTextFieldSemicircleLineSegment,
+				parameterSaveDataset
+		);
+
+	}
+
+	private void initParameters() {
 		ParameterDataNode[] parameterDataNodes = new ParameterDataNode[]{
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Kilometer"), BufferRadiusUnit.KiloMeter),
-				defaultSelectedNode,
+				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Meter"), BufferRadiusUnit.Meter),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Decimeter"), BufferRadiusUnit.DeciMeter),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Centimeter"), BufferRadiusUnit.CentiMeter),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Millimeter"), BufferRadiusUnit.MiliMeter),
@@ -51,18 +71,20 @@ public class MetaProcessBuffer extends MetaProcess {
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Mile"), BufferRadiusUnit.Mile),
 				new ParameterDataNode(CommonProperties.getString("String_DistanceUnit_Yard"), BufferRadiusUnit.Yard),
 		};
-		ParameterComboBox parameterBufferRange = new ParameterComboBox().setDescribe(ProcessProperties.getString("Label_BufferRadius")).setItems(parameterDataNodes);
-		parameterBufferRange.setSelectedItem(defaultSelectedNode);
+		parameterBufferRange = new ParameterComboBox(ProcessProperties.getString("Label_BufferRadius"));
+		parameterBufferRange.setItems(parameterDataNodes);
+		parameterTextFieldRadius = new ParameterTextField(ProcessProperties.getString("Label_Radius"));
+		parameterUnionBuffer = new ParameterCheckBox(ProcessProperties.getString("String_UnionBufferItem"));
+		parameterRetainAttribute = new ParameterCheckBox(ProcessProperties.getString("String_RetainAttribute"));
+		parameterTextFieldSemicircleLineSegment = new ParameterTextField(ProcessProperties.getString("Label_SemicircleLineSegment"));
+		parameterSaveDataset = new ParameterSaveDataset();
 
-		ParameterTextField parameterTextField = new ParameterTextField().setDescribe(ProcessProperties.getString("Label_Radius"));
-		parameterTextField.setSelectedItem("0");
+	}
 
-		ParameterCheckBox parameterUnionBuffer = new ParameterCheckBox().setDescribe(ProcessProperties.getString("String_UnionBufferItem"));
-		ParameterCheckBox parameterRetainAttribute = new ParameterCheckBox().setDescribe(ProcessProperties.getString("String_RetainAttribute"));
-		ParameterTextField parameterTextFieldSemicircleLineSegment = new ParameterTextField().setDescribe(ProcessProperties.getString("Label_SemicircleLineSegment"));
+	private void initComponentState() {
+		parameterBufferRange.setSelectedItem(BufferRadiusUnit.Meter);
+		parameterTextFieldRadius.setSelectedItem("0");
 		parameterTextFieldSemicircleLineSegment.setSelectedItem("50");
-
-		ParameterSaveDataset parameterSaveDataset = new ParameterSaveDataset();
 		if (Application.getActiveApplication().getActiveDatasources().length > 0) {
 			parameterSaveDataset.setResultDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
 		} else if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
@@ -71,15 +93,6 @@ public class MetaProcessBuffer extends MetaProcess {
 		if (parameterSaveDataset.getResultDatasource() != null) {
 			parameterSaveDataset.setDatasetName(parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName("dataset"));
 		}
-		parameters.setParameters(new IParameter[]{
-				parameterBufferRange,
-				parameterTextField,
-				parameterUnionBuffer,
-				parameterRetainAttribute,
-				parameterTextFieldSemicircleLineSegment,
-				parameterSaveDataset
-		});
-
 	}
 
 	@Override
@@ -97,13 +110,13 @@ public class MetaProcessBuffer extends MetaProcess {
 		// fixme 数据集来源
 		DatasetVector datasetVector = null;
 
-		BufferRadiusUnit radiusUnit = (BufferRadiusUnit) ((ParameterDataNode) parameters.getParameter(0).getSelectedItem()).getData();
-		int radius = Integer.valueOf((String) parameters.getParameter(1).getSelectedItem());
-		boolean isUnion = (boolean) parameters.getParameter(2).getSelectedItem();
-		boolean isAttributeRetained = (boolean) parameters.getParameter(3).getSelectedItem();
-		int semicircleLineSegment = Integer.valueOf(((String) parameters.getParameter(4).getSelectedItem()));
-		Datasource resultDatasource = ((ParameterSaveDataset) parameters.getParameter(5)).getResultDatasource();
-		String resultName = ((ParameterSaveDataset) parameters.getParameter(5)).getDatasetName();
+		BufferRadiusUnit radiusUnit = (BufferRadiusUnit) ((ParameterDataNode) parameterBufferRange.getSelectedItem()).getData();
+		int radius = Integer.valueOf((String) parameterTextFieldRadius.getSelectedItem());
+		boolean isUnion = (boolean) parameterUnionBuffer.getSelectedItem();
+		boolean isAttributeRetained = (boolean) parameterRetainAttribute.getSelectedItem();
+		int semicircleLineSegment = Integer.valueOf(((String) parameterTextFieldSemicircleLineSegment.getSelectedItem()));
+		Datasource resultDatasource = parameterSaveDataset.getResultDatasource();
+		String resultName = parameterSaveDataset.getDatasetName();
 
 		DatasetVectorInfo vectorInfo = new DatasetVectorInfo();
 		vectorInfo.setName(resultName);
