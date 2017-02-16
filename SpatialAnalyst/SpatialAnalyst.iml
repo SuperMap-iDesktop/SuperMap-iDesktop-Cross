@@ -23,7 +23,6 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.felix:org.apache.felix.framework:5.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.felix:org.apache.felix.main:5.4.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jb2011:beautyeye_lnf:v3.7" level="project" />
-    <orderEntry type="module" module-name="Core" scope="PROVIDED" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.alibaba:fastjson:1.2.15" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.httpcomponents:httpclient:4.5.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-codec:commons-codec:1.9" level="project" />
@@ -209,6 +208,7 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="Controls" scope="PROVIDED" />
+    <orderEntry type="module" module-name="Core" />
+    <orderEntry type="module" module-name="Controls" />
   </component>
 </module>
