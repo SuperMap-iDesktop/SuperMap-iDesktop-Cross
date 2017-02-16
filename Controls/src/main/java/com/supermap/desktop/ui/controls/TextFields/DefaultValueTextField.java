@@ -59,7 +59,7 @@ public class DefaultValueTextField extends JTextField {
 	}
 
 	/**
-	 *默认构造方法
+	 * 默认构造方法
 	 */
 	public DefaultValueTextField() {
 		this("", "");
