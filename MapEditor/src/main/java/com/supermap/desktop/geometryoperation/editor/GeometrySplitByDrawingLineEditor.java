@@ -6,6 +6,7 @@ package com.supermap.desktop.geometryoperation.editor;
 
 import com.supermap.data.GeoStyle;
 import com.supermap.data.Geometry;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackMode;
 
@@ -29,10 +30,10 @@ public class GeometrySplitByDrawingLineEditor extends GeometryDrawingSplitEditor
 		return TrackMode.TRACK;
 	}
 
-	public  boolean splitGeometry(Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle, double tolerance){
+	public  boolean splitGeometry(EditEnvironment environment,Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle, double tolerance){
 		boolean result=false;
 		IDrawingSplit geometrySplitByLine=DrawingSplitFactory.getGeometry(geometry);
-		result=geometrySplitByLine.SplitGeometry(geometry,splitGeometry,resultGeometry,values,geoStyle,tolerance);
+		result=geometrySplitByLine.SplitGeometry(environment,geometry,splitGeometry,resultGeometry,values,geoStyle,tolerance);
 		return result;
 	}
 }
