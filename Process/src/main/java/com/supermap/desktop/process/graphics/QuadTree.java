@@ -19,7 +19,8 @@ public class QuadTree<T> {
 	public final static Rectangle ZERO = new Rectangle(0, 0, 0, 0);
 
 	private Vector<T> datas = new Vector<>();
-	private ConcurrentHashMap<T, Rectangle> outsideDatas = new ConcurrentHashMap<>();
+	private Vector<T> outsideDatas = new Vector<>();
+	private ConcurrentHashMap<T, Rectangle> boundsMap = new ConcurrentHashMap<>();
 	private QuadNode root;
 	private Rectangle bounds;
 	private double minNodeWidth = 32;
@@ -35,28 +36,19 @@ public class QuadTree<T> {
 	}
 
 	public void add(T data, Rectangle rect) {
-		if (this.datas.size() > 0) {
-			insert(data, this.datas.size() - 1, bounds);
-		} else {
-			insert(data, 0, bounds);
-		}
-	}
-
-	/**
-	 * 将数据插入到指定 index 的位置
-	 *
-	 * @param data
-	 * @param index
-	 * @param rect
-	 */
-	public void insert(T data, int index, Rectangle rect) {
-		if (!this.datas.contains(data)) {
-			if (!this.bounds.intersects(rect)) {
-				this.outsideDatas.put(data, rect);
-			} else {
-				this.datas.add(index, data);
-				this.root.add(data, bounds);
+		if (this.bounds.contains(rect)) {
+			if (!this.datas.contains(data)) {
+				this.datas.add(data);
+				this.root.add(data, rect);
 			}
+		} else {
+			if (!this.outsideDatas.contains(data)) {
+				this.outsideDatas.add(data);
+			}
+		}
+
+		if (!this.boundsMap.containsKey(data)) {
+			this.boundsMap.put(data, rect);
 		}
 	}
 
@@ -66,33 +58,65 @@ public class QuadTree<T> {
 			this.root.remove(data);
 		}
 
-		if (this.outsideDatas.containsKey(data)) {
+		if (this.outsideDatas.contains(data)) {
 			this.outsideDatas.remove(data);
 		}
+
+		if (this.boundsMap.containsKey(data)) {
+			this.boundsMap.remove(data);
+		}
+	}
+
+	public int getDatasCountInside() {
+		return this.datas.size();
+	}
+
+	public int getDatasCountOutside() {
+		return this.outsideDatas.size();
+	}
+
+	public T[] getDatasInside() {
+		return (T[]) this.datas.toArray(new Object[this.datas.size()]);
+	}
+
+	public T[] getDatasOutside() {
+		return (T[]) this.outsideDatas.toArray();
+	}
+
+	public T[] getAllDatas() {
+		T[] arr = (T[]) new Object[this.datas.size() + this.outsideDatas.size()];
+
+		for (int i = 0; i < this.datas.size(); i++) {
+			arr[i] = this.datas.get(i);
+		}
+
+		for (int i = 0; i < this.outsideDatas.size(); i++) {
+			arr[this.datas.size() + i] = this.outsideDatas.get(i);
+		}
+		return arr;
 	}
 
 	public T[] search(Point point) {
 		return this.root.search(point);
 	}
 
-	public Rectangle findBounds(T data) {
-		if (this.outsideDatas.containsKey(data)) {
-			return this.outsideDatas.get(data);
-		} else {
-			return this.root.findBounds(data);
-		}
+	public Rectangle getBounds(T data) {
+		return this.boundsMap.get(data);
 	}
 
+	/**
+	 * 重新组织
+	 */
 	public void reorganize() {
-		ConcurrentHashMap<T, Rectangle> dataMap = new ConcurrentHashMap<>();
-		this.root.getAllDatas(dataMap);
+		this.datas.clear();
+		this.outsideDatas.clear();
 		this.root.reset();
 		this.root.bounds = (Rectangle) this.bounds.clone();
 
-		Iterator iterator = dataMap.entrySet().iterator();
+		Iterator iterator = this.boundsMap.entrySet().iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<T, Rectangle> entry = (Map.Entry<T, Rectangle>) iterator.next();
-			this.root.add(entry.getKey(), entry.getValue());
+			add(entry.getKey(), entry.getValue());
 		}
 	}
 
@@ -180,27 +204,6 @@ public class QuadTree<T> {
 				ListUtilities.addArraySingle(list, this.southEast.search(point));
 			}
 			return list.size() == 0 ? null : (T[]) list.toArray(new Object[list.size()]);
-		}
-
-		public Rectangle findBounds(T data) {
-			Rectangle rect = this.datas.get(data);
-
-			if (rect == null) {
-				rect = this.northWest.findBounds(data);
-			}
-
-			if (rect == null) {
-				rect = this.northEast.findBounds(data);
-			}
-
-			if (rect == null) {
-				rect = this.southWest.findBounds(data);
-			}
-
-			if (rect == null) {
-				rect = this.southEast.findBounds(data);
-			}
-			return rect;
 		}
 
 		public Map<T, Rectangle> getDatas() {
