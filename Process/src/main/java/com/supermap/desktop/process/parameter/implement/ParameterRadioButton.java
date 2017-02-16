@@ -3,6 +3,7 @@ package com.supermap.desktop.process.parameter.implement;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.ParameterPanels.ParameterRadioButtonPanel;
+import com.supermap.desktop.process.parameter.interfaces.ISingleSelectionParameter;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
@@ -10,7 +11,7 @@ import java.beans.PropertyChangeEvent;
 /**
  * @author XiaJT
  */
-public class ParameterRadioButton extends AbstractParameter {
+public class ParameterRadioButton extends AbstractParameter implements ISingleSelectionParameter {
 	private JPanel panel;
 	private String describe;
 	private ParameterDataNode[] items;
@@ -39,17 +40,40 @@ public class ParameterRadioButton extends AbstractParameter {
 	}
 
 	@Override
+	public int getItemCount() {
+		if (items != null) {
+			return items.length;
+		}
+		return 0;
+	}
+
+	@Override
 	public Object getSelectedItem() {
 		return selectedItem;
 	}
 
+	@Override
 	public ParameterDataNode[] getItems() {
 		return items;
 	}
 
-	public ParameterRadioButton setItems(ParameterDataNode[] parameterDataNodes) {
+	@Override
+	public int getItemIndex(Object item) {
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] == item) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	@Override
+	public ParameterDataNode getItemAt(int index) {
+		return items[index];
+	}
+
+	public void setItems(ParameterDataNode[] parameterDataNodes) {
 		this.items = parameterDataNodes;
-		return this;
 	}
 
 	public String getDescribe() {

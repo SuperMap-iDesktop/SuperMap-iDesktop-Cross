@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.parameter;
+package com.supermap.desktop.process.parameter.interfaces;
 
 import javax.swing.*;
 
@@ -7,7 +7,7 @@ import javax.swing.*;
  */
 public interface IParameters {
 
-	void setParameters(IParameter[] iParameters);
+	void setParameters(IParameter... iParameters);
 
 	IParameter[] getParameters();
 

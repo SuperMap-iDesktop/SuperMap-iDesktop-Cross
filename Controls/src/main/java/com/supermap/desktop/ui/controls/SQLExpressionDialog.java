@@ -1,6 +1,11 @@
 package com.supermap.desktop.ui.controls;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldType;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
@@ -14,13 +19,16 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class SQLExpressionDialog extends SmDialog {
@@ -77,7 +85,7 @@ public class SQLExpressionDialog extends SmDialog {
 	private JButton jButtonGetAllValue;
 	private JScrollPane scrollPaneAllValue;
 	private GetAllValueList listAllValue;
-//	private JLabel labelGoTO;
+	//	private JLabel labelGoTO;
 //	private JTextField textFieldGOTO;
 	//清除按钮-yuanR
 	private JButton jButtonClear;
@@ -901,7 +909,7 @@ public class SQLExpressionDialog extends SmDialog {
 		public void mouseClicked(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 && listAllValue.getSelectedIndex() != -1) {
 				//通过setSQLSentenceText（）方法将双击选中的唯一值加入"jTextAreaSQLSentence"--yuanR 1.12
-				setSQLSentenceText(jTextAreaSQLSentence, " "+"'" + listAllValue.getSelectedValue().toString()+"'", "");
+				setSQLSentenceText(jTextAreaSQLSentence, " " + "'" + listAllValue.getSelectedValue().toString() + "'", "");
 			}
 		}
 	};
@@ -962,23 +970,24 @@ public class SQLExpressionDialog extends SmDialog {
 			}
 		}
 		DatasetVector selectedDatasetVector = (DatasetVector) datasets[datasetVectorCount];
-        //  2017/2/10 lixiaoyao 针对原来的唯一值获取查询进行优化，原本是遍历获取，现在改为空间查询
-        String queryString=selectedDatasetVector.getName()+'.'+fieldName;
-        QueryParameter queryParameter = new QueryParameter();
-        queryParameter.setCursorType(CursorType.STATIC);
-        queryParameter.setHasGeometry(false);
-        queryParameter.setOrderBy(new String[]{queryString + " asc",});
-        queryParameter.setGroupBy(new String[]{queryString});
-        queryParameter.setResultFields(new String[]{queryString});
-        Recordset recordset = selectedDatasetVector.query(queryParameter);
+		// 得到字段类型
+		FieldType fieldType = selectedDatasetVector.getFieldInfos().get(fieldName).getType();
+		//  2017/2/10 lixiaoyao 针对原来的唯一值获取查询进行优化，原本是遍历获取，现在改为空间查询
+		String queryString = selectedDatasetVector.getName() + '.' + fieldName;
+		QueryParameter queryParameter = new QueryParameter();
+		queryParameter.setCursorType(CursorType.STATIC);
+		queryParameter.setHasGeometry(false);
+		queryParameter.setOrderBy(new String[]{queryString + " asc",});
+		queryParameter.setGroupBy(new String[]{queryString});
+		queryParameter.setResultFields(new String[]{queryString});
+		Recordset recordset = selectedDatasetVector.query(queryParameter);
 		//Recordset recordset = selectedDatasetVector.getRecordset(false, CursorType.STATIC);
 		LinkedHashMap<Object, String> map = new LinkedHashMap<>();
 		try {
 			recordset.moveFirst();
 			for (; !recordset.isEOF(); recordset.moveNext()) {
 				//获得选中字段的当前记录
-				//当数据集做了关联属性表，需要处理一下字段名称,否则会查无此项
-				Object result = recordset.getFieldValue(fieldName);
+				Object result = formatData(recordset.getFieldValue(fieldName), fieldType);
 				if (result != null) {
 					map.put(result, "");
 				}
@@ -996,5 +1005,33 @@ public class SQLExpressionDialog extends SmDialog {
 		//对数组进行排序
 		//SortUIUtilities.sortList(result);
 		return result;
+	}
+
+	/**
+	 * 对索引到的数据进行显示控制-yuanR 2017.2.16
+	 * @param fieldValue
+	 * @param fieldType
+	 * @return
+	 */
+	private Object formatData(Object fieldValue, FieldType fieldType) {
+		if (fieldValue == null) {
+			return null;
+		}
+		if (fieldType == FieldType.DATETIME) {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			return dateFormat.format(fieldValue);
+		} else if (fieldType == FieldType.BOOLEAN) {
+			if (fieldValue.equals(true)) {
+				return "True";
+			} else if (fieldValue.equals(false)) {
+				return "False";
+			} else {
+				return null;
+			}
+		} else if (fieldType == FieldType.LONGBINARY) {
+			return "BinaryData";
+		} else {
+			return fieldValue;
+		}
 	}
 }

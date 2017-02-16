@@ -37,6 +37,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -148,7 +149,6 @@ public class DatasetChooser extends SmDialog {
 		this.textFieldPath.setEditable(false);
 
 		toolBar.add(this.textFieldPath);
-		this.textFieldPath.setColumns(10);
 
 		JSeparator separator = new JSeparator();
 		toolBar.add(separator);
@@ -196,6 +196,7 @@ public class DatasetChooser extends SmDialog {
 		separatorS.setOrientation(SwingConstants.VERTICAL);
 		toolBar.add(separatorS);
 		this.datasetTypeComboBox = new DatasetTypeComboBox();
+		this.datasetTypeComboBox.setAllShown(true);
 		this.datasetTypeComboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -204,14 +205,12 @@ public class DatasetChooser extends SmDialog {
 			}
 		});
 		this.datasetTypeComboBox.setMaximumRowCount(10);
-
+		this.datasetTypeComboBox.setPreferredSize(new Dimension(140, 20));
 		toolBar.add(this.datasetTypeComboBox);
 
-		JSeparator separatorT = new JSeparator();
-		separatorT.setOrientation(SwingConstants.VERTICAL);
-		toolBar.add(separatorT);
 		toolBar.add(this.textFieldSearch);
-		this.textFieldSearch.setColumns(10);
+		this.textFieldSearch.setPreferredSize(new Dimension(140, 20));
+
 		this.textFieldSearch.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void removeUpdate(DocumentEvent e) {
@@ -536,7 +535,7 @@ public class DatasetChooser extends SmDialog {
 	}
 
 	public void setSupportDatasetTypes(DatasetType[] datasetTypes) {
-		this.datasetTypeComboBox.setDatasetTypes(datasetTypes);
+		this.datasetTypeComboBox.setSupportedDatasetTypes(datasetTypes);
 		compositeSearch();
 	}
 

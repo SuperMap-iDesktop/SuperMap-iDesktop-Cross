@@ -159,46 +159,69 @@ public class DockbarManager implements IDockbarManager {
 		this.dockbars.clear();
 	}
 
-	public boolean load(WorkEnvironment workEnvironment) {
-//		XMLDockbars dockbars = workEnvironment.getPluginInfos().getDockbars();
-//		DockConstraint dc = dockbars.getDockConstraint();
-//		dock(this.mainView, dc);
-
-		this.dockPort.dock(this.mainView);
-		XMLDockbars dockbars = workEnvironment.getPluginInfos().getDockbars();
-		for (int i = 0; i < dockbars.size(); i++) {
-			XMLDockbar xmlDockbar = dockbars.get(i);
-			Dockbar dockbar = new Dockbar(xmlDockbar);
-
-			if (dockbar.getID().equalsIgnoreCase(WORKSPACE_COMPONENT_MANAGER_ID)) {
-				this.workspaceComponentManager = dockbar;
-			} else if (dockbar.getID().equalsIgnoreCase(LAYERS_COMPONENT_MANAGER_ID)) {
-				this.layersComponentManager = dockbar;
-			} else if (dockbar.getID().equalsIgnoreCase(OUTPUT_FRAME_ID)) {
-				this.outputFrame = dockbar;
-			} else {
-				this.dockbars.add(dockbar);
-			}
-
-			if (xmlDockbar.getVisible()) {
-				display(dockbar, true);
-			}
-		}
+//	public boolean load(WorkEnvironment workEnvironment) {
+////		XMLDockbars dockbars = workEnvironment.getPluginInfos().getDockbars();
+////		DockConstraint dc = dockbars.getDockConstraint();
+////		dock(this.mainView, dc);
 //
-//		this.mainView.dock(this.workspaceComponentManager.getView(), DockingConstants.WEST_REGION, 0.2f);
-//		this.workspaceComponentManager.getView().dock(this.layersComponentManager.getView(), DockingConstants.SOUTH_REGION, 0.5f);
-//		this.mainView.dock(this.outputFrame.getView(), DockingConstants.SOUTH_REGION, 0.7f);
-//		DockingManager.setMinimized(this.outputFrame.getView(), true, DockingConstants.BOTTOM);
-//		for (int i = 0; i < this.dockbars.size(); i++) {
-//			Dockbar dockbar = this.dockbars.get(i);
-//			if (i == 0) {
-//				this.mainView.dock(dockbar.getView(), DockingConstants.EAST_REGION, 0.7f);
-//			} else {
-//				this.dockbars.get(0).getView().dock(dockbar.getView());
+//		this.dockPort.dock(this.mainView);
+//		XMLDockbars dockbars = workEnvironment.getPluginInfos().getDockbars();
+//		for (int i = 0; i < dockbars.size(); i++) {
+//			XMLDockbar xmlDockbar = dockbars.get(i);
+//			Dockbar dockbar = new Dockbar(xmlDockbar);
+//			this.dockbars.add(dockbar);
+//
+//			if (xmlDockbar.getVisible()) {
+//				display(dockbar, true);
 //			}
-//			dockbar.setVisible(dockbar);
 //		}
-		return true;
+////
+////		this.mainView.dock(this.workspaceComponentManager.getView(), DockingConstants.WEST_REGION, 0.2f);
+////		this.workspaceComponentManager.getView().dock(this.layersComponentManager.getView(), DockingConstants.SOUTH_REGION, 0.5f);
+////		this.mainView.dock(this.outputFrame.getView(), DockingConstants.SOUTH_REGION, 0.7f);
+////		DockingManager.setMinimized(this.outputFrame.getView(), true, DockingConstants.BOTTOM);
+////		for (int i = 0; i < this.dockbars.size(); i++) {
+////			Dockbar dockbar = this.dockbars.get(i);
+////			if (i == 0) {
+////				this.mainView.dock(dockbar.getView(), DockingConstants.EAST_REGION, 0.7f);
+////			} else {
+////				this.dockbars.get(0).getView().dock(dockbar.getView());
+////			}
+////			dockbar.setVisible(dockbar);
+////		}
+//		return true;
+//	}
+
+//	public void setVisible(Dockbar dockbar, boolean isVisible) {
+//		if (isVisible) {
+//			DockPath[] dockPaths = dockbar.getDockPaths();
+//
+//			if (dockPaths != null && dockPaths.length > 0) {
+//				Dockable referTo = this.mainView;
+//
+//				for (int i = 0; i < dockPaths.length; i++) {
+//					DockPath dockPath = dockPaths[i];
+//					String region = getDockingRegion(dockPath.getDirection());
+//
+//				}
+//			}
+//		} else {
+//			DockingManager.close(dockbar.getView());
+//		}
+//	}
+
+	private String getDockingRegion(Direction direction) {
+		if (direction == Direction.LEFT) {
+			return DockingConstants.WEST_REGION;
+		} else if (direction == Direction.RIGHT) {
+			return DockingConstants.EAST_REGION;
+		} else if (direction == Direction.TOP) {
+			return DockingConstants.NORTH_REGION;
+		} else if (direction == Direction.BOTTOM) {
+			return DockingConstants.SOUTH_REGION;
+		} else {
+			return DockingConstants.CENTER_REGION;
+		}
 	}
 
 	public void display(Dockbar dockbar, boolean isDisplay) {
@@ -244,6 +267,93 @@ public class DockbarManager implements IDockbarManager {
 			DockingManager.close(dockbar.getView());
 		}
 	}
+
+
+	public boolean load(WorkEnvironment workEnvironment) {
+//		XMLDockbars dockbars = workEnvironment.getPluginInfos().getDockbars();
+//		DockConstraint dc = dockbars.getDockConstraint();
+//		dock(this.mainView, dc);
+
+		this.dockPort.dock(this.mainView);
+		XMLDockbars dockbars = workEnvironment.getPluginInfos().getDockbars();
+		for (int i = 0; i < dockbars.size(); i++) {
+			XMLDockbar xmlDockbar = dockbars.get(i);
+			Dockbar dockbar = new Dockbar(xmlDockbar);
+
+			if (dockbar.getID().equalsIgnoreCase(WORKSPACE_COMPONENT_MANAGER_ID)) {
+				this.workspaceComponentManager = dockbar;
+			} else if (dockbar.getID().equalsIgnoreCase(LAYERS_COMPONENT_MANAGER_ID)) {
+				this.layersComponentManager = dockbar;
+			} else if (dockbar.getID().equalsIgnoreCase(OUTPUT_FRAME_ID)) {
+				this.outputFrame = dockbar;
+			} else {
+				this.dockbars.add(dockbar);
+			}
+
+			if (xmlDockbar.getVisible()) {
+				display(dockbar, true);
+			}
+		}
+//
+//		this.mainView.dock(this.workspaceComponentManager.getView(), DockingConstants.WEST_REGION, 0.2f);
+//		this.workspaceComponentManager.getView().dock(this.layersComponentManager.getView(), DockingConstants.SOUTH_REGION, 0.5f);
+//		this.mainView.dock(this.outputFrame.getView(), DockingConstants.SOUTH_REGION, 0.7f);
+//		DockingManager.setMinimized(this.outputFrame.getView(), true, DockingConstants.BOTTOM);
+//		for (int i = 0; i < this.dockbars.size(); i++) {
+//			Dockbar dockbar = this.dockbars.get(i);
+//			if (i == 0) {
+//				this.mainView.dock(dockbar.getView(), DockingConstants.EAST_REGION, 0.7f);
+//			} else {
+//				this.dockbars.get(0).getView().dock(dockbar.getView());
+//			}
+//			dockbar.setVisible(dockbar);
+//		}
+		return true;
+	}
+
+//	public void display(Dockbar dockbar, boolean isDisplay) {
+//		if (isDisplay) {
+//			if (isDisplay(dockbar.getView())) {
+//				DockingManager.display(dockbar.getView());
+//				return;
+//			}
+//
+//			if (dockbar == this.workspaceComponentManager) {
+//				Dockable layer = DockingManager.getDockable(LAYERS_COMPONENT_MANAGER_ID);
+//				if (layer != null && DockingManager.isDocked(layer)) {
+//					layer.dock(this.workspaceComponentManager.getView(), DockingConstants.NORTH_REGION, 0.5f);
+//				} else {
+//					this.mainView.dock(this.workspaceComponentManager.getView(), DockingConstants.WEST_REGION, 0.2f);
+//				}
+//			} else if (dockbar == this.layersComponentManager) {
+//				Dockable workspace = DockingManager.getDockable(WORKSPACE_COMPONENT_MANAGER_ID);
+//				if (workspace != null && DockingManager.isDocked(workspace)) {
+//					workspace.dock(this.layersComponentManager.getView(), DockingConstants.SOUTH_REGION, 0.5f);
+//				} else {
+//					this.mainView.dock(this.layersComponentManager.getView(), DockingConstants.WEST_REGION, 0.2f);
+//				}
+//			} else if (dockbar == this.outputFrame) {
+//				this.mainView.dock(this.outputFrame.getView(), DockingConstants.SOUTH_REGION, 0.7f);
+//				DockingManager.setMinimized(this.outputFrame.getView(), true, (MainFrame) Application.getActiveApplication().getMainFrame(), DockingConstants.BOTTOM);
+//			} else {
+//				Dockable docked = null;
+//				for (int i = 0; i < this.dockbars.size(); i++) {
+//					if (DockingManager.isDocked((Dockable) this.dockbars.get(i).getView())) {
+//						docked = this.dockbars.get(i).getView();
+//						break;
+//					}
+//				}
+//
+//				if (docked != null) {
+//					docked.dock(dockbar.getView());
+//				} else {
+//					this.mainView.dock(dockbar.getView(), DockingConstants.EAST_REGION, 0.7f);
+//				}
+//			}
+//		} else {
+//			DockingManager.close(dockbar.getView());
+//		}
+//	}
 
 	private boolean isDisplay(Dockable dockable) {
 		return DockingManager.isDocked(dockable) || DockingManager.isMinimized(dockable);

@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.graphics.graphs;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.parameter.IData;
+import com.supermap.desktop.process.parameter.interfaces.IData;
 import sun.swing.SwingUtilities2;
 
 import java.awt.*;

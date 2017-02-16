@@ -3,6 +3,7 @@ package com.supermap.desktop.process.parameter.implement;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.ParameterPanels.ParameterComboBoxPanel;
+import com.supermap.desktop.process.parameter.interfaces.ISingleSelectionParameter;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
@@ -10,7 +11,7 @@ import java.beans.PropertyChangeEvent;
 /**
  * @author XiaJT
  */
-public class ParameterComboBox extends AbstractParameter {
+public class ParameterComboBox extends AbstractParameter implements ISingleSelectionParameter {
 
 	private JPanel panel;
 	private ParameterDataNode[] items;
@@ -19,6 +20,14 @@ public class ParameterComboBox extends AbstractParameter {
 	 */
 	private String describe;
 	private ParameterDataNode value;
+
+	public ParameterComboBox() {
+		this("");
+	}
+
+	public ParameterComboBox(String describe) {
+		this.describe = describe;
+	}
 
 	@Override
 	public String getType() {
@@ -33,22 +42,54 @@ public class ParameterComboBox extends AbstractParameter {
 		return panel;
 	}
 
+	@Override
 	public ParameterDataNode[] getItems() {
 		return items;
 	}
 
-	public ParameterComboBox setItems(ParameterDataNode[] items) {
+	@Override
+	public int getItemIndex(Object item) {
+		for (int i = 0; i < items.length; i++) {
+			ParameterDataNode parameterDataNode = items[i];
+			if (item == parameterDataNode) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	@Override
+	public ParameterDataNode getItemAt(int index) {
+		return items[index];
+	}
+
+	public void setItems(ParameterDataNode... items) {
 		this.items = items;
-		return this;
 	}
 
 	@Override
 	public void setSelectedItem(Object value) {
+		if (!(value instanceof ParameterDataNode)) {
+			for (ParameterDataNode item : items) {
+				if (item.getData() == value) {
+					value = item;
+					break;
+				}
+			}
+		}
 		if (value instanceof ParameterDataNode) {
 			ParameterDataNode oldValue = this.value;
 			this.value = (ParameterDataNode) value;
 			firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, value));
 		}
+	}
+
+	@Override
+	public int getItemCount() {
+		if (items == null) {
+			return 0;
+		}
+		return items.length;
 	}
 
 	@Override

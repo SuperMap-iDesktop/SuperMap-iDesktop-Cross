@@ -1,8 +1,8 @@
 package com.supermap.desktop.process.meta;
 
 import com.supermap.desktop.process.core.AbstractProcess;
-import com.supermap.desktop.process.parameter.IData;
-import com.supermap.desktop.process.parameter.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.IData;
+import com.supermap.desktop.process.parameter.interfaces.IParameters;
 
 /**
  * Created by highsad on 2017/1/5.

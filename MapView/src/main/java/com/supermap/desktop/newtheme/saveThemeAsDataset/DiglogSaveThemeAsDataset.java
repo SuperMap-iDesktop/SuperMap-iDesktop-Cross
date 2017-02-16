@@ -12,7 +12,6 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.implement.MyComboBoxUI;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.properties.CommonProperties;
@@ -90,16 +89,7 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 		this.datasetTypes[0] = DatasetType.CAD;
 		this.datasetTypes[1] = DatasetType.TEXT;
 
-		this.datasetTypeComboBox = new DatasetTypeComboBox() {
-			@Override
-			public void updateUI() {
-				super.updateUI();
-				this.setUI(new MyComboBoxUI());
-			}
-		};
-		this.datasetTypeComboBox.updateUI();
-		this.datasetTypeComboBox.setDatasetTypes(this.datasetTypes);
-		this.datasetTypeComboBox.setAllShown(false);
+		this.datasetTypeComboBox = new DatasetTypeComboBox(this.datasetTypes);
 
 		this.textFieldoutDatasetName = new JTextField();
 

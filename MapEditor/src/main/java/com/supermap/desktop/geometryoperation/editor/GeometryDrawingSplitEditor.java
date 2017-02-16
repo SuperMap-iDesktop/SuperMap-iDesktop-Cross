@@ -25,11 +25,7 @@ import com.supermap.desktop.geometryoperation.IEditModel;
 import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilities.GeometryUtilities;
-import com.supermap.desktop.utilities.ListUtilities;
-import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.desktop.utilities.RecordsetUtilities;
-import com.supermap.desktop.utilities.TabularUtilities;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackMode;
@@ -45,7 +41,7 @@ import java.util.Map;
 
 
 public abstract class GeometryDrawingSplitEditor extends AbstractEditor {
-
+	private static final String Tag_GeometrySplit = "Tag_GeometrySplit";
 	public abstract String getTagTip();
 
 	public abstract String getSplitTip();
@@ -54,15 +50,15 @@ public abstract class GeometryDrawingSplitEditor extends AbstractEditor {
 
 	public abstract TrackMode getTrackMode();
 
-	public abstract boolean splitGeometry(Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle, double tolerance);
+	public abstract boolean splitGeometry(EditEnvironment environment,Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle, double tolerance);
 
 	private IEditController regionSplitController = new EditControllerAdapter() {
-		@Override
-		public void mouseClicked(EditEnvironment environment, MouseEvent e) {
-			if (SwingUtilities.isRightMouseButton(e)) {
-				environment.stopEditor();
-			}
-		}
+//		@Override
+//		public void mouseClicked(EditEnvironment environment, MouseEvent e) {
+//			if (SwingUtilities.isRightMouseButton(e)) {
+//				environment.stopEditor();
+//			}
+//		}
 
 		@Override
 		public void mousePressed(EditEnvironment environment, MouseEvent e) {
@@ -72,6 +68,8 @@ public abstract class GeometryDrawingSplitEditor extends AbstractEditor {
 				editModel.setTipMessage(MapEditorProperties.getString("String_RightClickToEnd"));
 			} else if (editModel.isTracking && e.getButton() == MouseEvent.BUTTON3) {
 				runGeometrySplit(environment);
+				editModel.isTracking=false;
+			}else if (!editModel.isTracking &&e.getButton() == MouseEvent.BUTTON3){
 				environment.stopEditor();
 			}
 		}
@@ -240,20 +238,12 @@ public abstract class GeometryDrawingSplitEditor extends AbstractEditor {
 							Map<String, Object> values = RecordsetUtilities.getFieldValues(recordset);
 							boolean result = false;
 
-							/*if (geometry.getType() == GeometryType.GEOREGION) {
-								result = regionSplitGeometry(geometry, editModel.geometry, resultGeometrys, values, geoStyle);
-							} else if (geometry.getType() == GeometryType.GEOLINE) {
-								if (recordset.getDataset().getTolerance().getNodeSnap() == 0) {
-									recordset.getDataset().getTolerance().setDefault();
-								}
-								result = lineSplitGeometry(geometry, editModel.geometry, resultGeometrys, values, geoStyle, recordset.getDataset().getTolerance().getNodeSnap());
-							}*/
 							if (geometry.getType() == GeometryType.GEOLINE) {
 								if (recordset.getDataset().getTolerance().getNodeSnap() == 0) {
 									recordset.getDataset().getTolerance().setDefault();
 								}
 							}
-							result = splitGeometry(geometry, editModel.geometry, resultGeometrys, values, geoStyle, recordset.getDataset().getTolerance().getNodeSnap());
+							result = splitGeometry(environment,geometry, editModel.geometry, resultGeometrys, values, geoStyle, recordset.getDataset().getTolerance().getNodeSnap());
 
 							if (result) {
 								delete.delete(recordset.getID());
@@ -276,6 +266,8 @@ public abstract class GeometryDrawingSplitEditor extends AbstractEditor {
 							}
 						}
 						addNew.update();
+						environment.getActiveEditableLayer().getSelection().clear();
+						environment.getActiveEditableLayer().getSelection().addRange(ArrayUtilities.convertToInt(addNew.getAddHistoryIDs().toArray(new Integer[addNew.getAddHistoryIDs().size()])));
 						TabularUtilities.refreshTabularForm(newRecordset.getDataset());
 						Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_GeometryOperation_SplitSuccessed"));
 					} catch (Exception ex) {
@@ -296,6 +288,7 @@ public abstract class GeometryDrawingSplitEditor extends AbstractEditor {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
 			environment.getMapControl().getEditHistory().batchEnd();
+			environment.getMap().refreshTrackingLayer();
 			environment.getMapControl().getMap().refresh();
 		}
 	}
@@ -306,7 +299,7 @@ public abstract class GeometryDrawingSplitEditor extends AbstractEditor {
 		}
 		GeometryDrawingSplitModel editModel = (GeometryDrawingSplitModel) environment.getEditModel();
 		editModel.clear();
-		MapUtilities.clearTrackingObjects(environment.getMap(), getTagTip());
+		MapUtilities.clearTrackingObjects(environment.getMap(), Tag_GeometrySplit);
 	}
 
 	private class GeometryDrawingSplitModel implements IEditModel {

@@ -4,24 +4,27 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasets;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.implement.MyComboBoxUI;
-import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 
 import javax.swing.*;
 
-// @formatter:off
-
 /**
- * 带有图标的数据集下拉选择框
- * 太乱，需要重构 by wuxb
- * <p>
- * 需要改成直接存放数据集，然后设置Render渲染成DataCell by xiaJT
+ * 数据集下拉列表控件
  *
- * @author xie
+ * @author YuanR 2017.2.14
+ *         <p>
+ *         提供的构造方法：
+ *         默认构造空的ComboBox（可以通过setDatasets（）方法重新填充，并支持setSupportedDatasetTypes（））
+ *         数据集集合类构造（通过  DatasetComboBox(Datasets datasets) 进行构造）
+ *         <p>
+ *         可获得的参数：
+ *         SupportedDatasetTypes、SelectedDataset、构建的datasets
+ *         <p>
+ *         重构ComboBox的实现方式，直接将数据集存入item，再通过setRenderer(new ListDataCellRender());进行显示及图标的渲染
  */
-// @formatter:on
-public class DatasetComboBox extends JComboBox<Object> {
+
+public class DatasetComboBox extends JComboBox<Dataset> {
 
 	private static final long serialVersionUID = 1L;
 	private transient DatasetType[] datasetTypes;
@@ -37,25 +40,10 @@ public class DatasetComboBox extends JComboBox<Object> {
 	}
 
 	/**
-	 * 包含各种数据集类型的下拉选择框
+	 * 默认构造一个空的下来列表框
 	 */
 	public DatasetComboBox() {
-		super(initDatasetComboBoxItem());
-		this.setBorder(BorderFactory.createEtchedBorder(1));
-		ListCellRenderer<Object> renderer = new CommonListCellRenderer();
-		setRenderer(renderer);
-	}
-
-	/**
-	 * 根据给定数据集类型集合创建下拉选择框
-	 *
-	 * @param datasetTypes
-	 */
-	public DatasetComboBox(String[] datasetTypes) {
-		super(initDatasetComboBoxItem(datasetTypes));
-		this.setBorder(BorderFactory.createEtchedBorder(1));
-		ListCellRenderer<Object> renderer = new CommonListCellRenderer();
-		setRenderer(renderer);
+		setRenderer(new ListDataCellRender());
 	}
 
 	/**
@@ -66,89 +54,87 @@ public class DatasetComboBox extends JComboBox<Object> {
 	public DatasetComboBox(Datasets datasets) {
 		super(initDatasetComboBoxItem(datasets));
 		this.datasets = datasets;
-		this.setBorder(BorderFactory.createEtchedBorder(1));
-		ListCellRenderer<Object> renderer = new CommonListCellRenderer();
-		setRenderer(renderer);
+		//设置渲染方式
+		setRenderer(new ListDataCellRender());
 	}
 
 	/**
-	 * 根据给定的数据集集合创建下拉选择框
-	 */
-	public DatasetComboBox(Dataset[] datasets) {
-		super(initDatasetComboBoxItem(datasets));
-		this.setBorder(BorderFactory.createEtchedBorder(1));
-		ListCellRenderer<Object> renderer = new CommonListCellRenderer();
-		setRenderer(renderer);
-	}
-
-	/**
-	 * 根据给定的数据集类型集合创建下拉选择框
-	 *
-	 * @param datasetTypes
-	 */
-	public DatasetComboBox(DatasetType[] datasetTypes) {
-		super(initDatasetComboBoxItem(datasetTypes));
-		this.datasetTypes = datasetTypes;
-		this.setBorder(BorderFactory.createEtchedBorder(1));
-		ListCellRenderer<Object> renderer = new CommonListCellRenderer();
-		setRenderer(renderer);
-	}
-
-	/**
-	 * 获取选中的数据集
-	 *
+	 * @param datasets
 	 * @return
 	 */
-	public Dataset getSelectedDataset() {
-		Dataset result = null;
-
-		if (getSelectedItem() instanceof DataCell) {
-			DataCell selected = (DataCell) getSelectedItem();
-
-			if (selected.getData() instanceof Dataset) {
-				result = (Dataset) selected.getData();
-			}
+	private static Dataset[] initDatasetComboBoxItem(Datasets datasets) {
+		Dataset[] result = new Dataset[datasets.getCount()];
+		for (int i = 0; i < datasets.getCount(); i++) {
+			result[i] = datasets.get(i);
 		}
 		return result;
 	}
 
 	/**
 	 * 选中指定数据集的项
+	 *
+	 * @param dataset
 	 */
 	public void setSelectedDataset(Dataset dataset) {
 		int selectIndex = -1;
-
 		if (dataset != null) {
 			for (int i = 0; i < getItemCount(); i++) {
-				DataCell dataCell = (DataCell) getItemAt(i);
-
-				if (dataCell.getData() == dataset) {
+				Dataset ComboBoxDataset = getItemAt(i);
+				if (ComboBoxDataset == dataset) {
 					selectIndex = i;
 					break;
 				}
 			}
-
 		}
 		setSelectedIndex(selectIndex);
 	}
 
-	private static JPanel[] initDatasetComboBoxItem(DatasetType[] datasetTypes) {
-		DataCell[] result = new DataCell[datasetTypes.length];
-		for (int i = 0; i < datasetTypes.length; i++) {
-			String datasetType = CommonToolkit.DatasetTypeWrap.findName(datasetTypes[i]);
-			result[i] = new DataCell();
-			result[i].initDatasetType(datasetTypes[i], datasetType);
-		}
-		return result;
+	/**
+	 * 设置数据集集合
+	 *
+	 * @param datasets
+	 */
+	public void setDatasets(Datasets datasets) {
+		this.datasets = datasets;
+		updateItems();
 	}
 
-	private static DataCell[] initDatasetComboBoxItem(Dataset[] datasets) {
-		DataCell[] result = new DataCell[datasets.length];
-		for (int i = 0; i < datasets.length; i++) {
-			result[i].initDatasetType(datasets[i]);
-		}
-		return result;
+	/**
+	 * 设置支持的数据集类型
+	 *
+	 * @param datasetTypes
+	 */
+	public void setSupportedDatasetTypes(DatasetType[] datasetTypes) {
+		this.datasetTypes = datasetTypes;
+		updateItems();
 	}
+
+	/**
+	 * 更改设置之后，更新组合框的子项
+	 */
+	public void updateItems() {
+		try {
+			this.removeAllItems();
+			if (this.datasets != null) {
+				try {
+					for (int i = 0; i < this.datasets.getCount(); i++) {
+						Dataset dataset = this.datasets.get(i);
+						DatasetType type = dataset.getType();
+						if (this.getSupportedDatasetTypes() != null && this.getSupportedDatasetTypes().length > 0 && !isSupportDatasetType(type)) {
+							continue;
+						} else {
+							this.addItem(dataset);
+						}
+					}
+				} catch (Exception ex) {
+					return;
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
 
 	/**
 	 * 由于填充的是DatasetCell 返回时要得到DatasetCell中JLabel显示的字符串
@@ -159,103 +145,42 @@ public class DatasetComboBox extends JComboBox<Object> {
 		if (getSelectedIndex() == -1) {
 			return null;
 		}
-		DataCell temp = (DataCell) getSelectedItem();
-		return temp.getDataName();
+		Dataset temp = (Dataset) getSelectedItem();
+		return temp.getName();
 	}
 
-	private static JPanel[] initDatasetComboBoxItem() {
-		String[] temp = new String[]{CommonProperties.getString("String_DatasetType_All"), CommonProperties.getString("String_DatasetType_CAD"),
-				CommonProperties.getString("String_DatasetType_Grid"), CommonProperties.getString("String_DatasetType_GridCollection"),
-				CommonProperties.getString("String_DatasetType_Image"), CommonProperties.getString("String_DatasetType_ImageCollection"),
-				CommonProperties.getString("String_DatasetType_Line"), CommonProperties.getString("String_DatasetType_Line3D"),
-				CommonProperties.getString("String_DatasetType_LinkTable"), CommonProperties.getString("String_DatasetType_Network"),
-				CommonProperties.getString("String_DatasetType_ParametricLine"), CommonProperties.getString("String_DatasetType_ParametricRegion"),
-				CommonProperties.getString("String_DatasetType_Point"), CommonProperties.getString("String_DatasetType_Point3D"),
-				CommonProperties.getString("String_DatasetType_Region"), CommonProperties.getString("String_DatasetType_Region3D"),
-				CommonProperties.getString("String_DatasetType_LineM"), CommonProperties.getString("String_DatasetType_Tabular"),
-				CommonProperties.getString("String_DatasetType_Template"), CommonProperties.getString("String_DatasetType_Text"),
-				CommonProperties.getString("String_DatasetType_Topology"), CommonProperties.getString("String_DatasetType_Unknown"),
-				CommonProperties.getString("String_DatasetType_WCS"), CommonProperties.getString("String_DatasetType_WMS")};
-		JPanel[] result = initDatasetComboBoxItem(temp);
+	/**
+	 * 获取选中的数据集
+	 *
+	 * @return
+	 */
+	public Dataset getSelectedDataset() {
+		Dataset result = null;
+		if (getSelectedItem() instanceof Dataset) {
+			Dataset selected = (Dataset) getSelectedItem();
+			if (selected instanceof Dataset) {
+				result = selected;
+			}
+		}
 		return result;
 	}
 
 	/**
-	 * 根据数据集类型的中文翻译集合初始化DatasetComboBox中的单元格
+	 * 获得支持的数据集类型
 	 *
-	 * @param datasetTypes ：数据集类型的中文翻译集合
 	 * @return
 	 */
-	private static JPanel[] initDatasetComboBoxItem(String[] datasetTypes) {
-		DataCell[] result = new DataCell[datasetTypes.length];
-		for (int i = 0; i < datasetTypes.length; i++) {
-			String filePath = "";
-			if (datasetTypes[i].equals(CommonProperties.getString("String_DatasetType_Simple"))) {
-				filePath = "/controlsresources/WorkspaceManager/Dataset/Image_SimpleDataset_Normal.png";
-			} else {
-				filePath = CommonToolkit.DatasetImageWrap.getImageIconPath(datasetTypes[i]);
-			}
-			result[i] = new DataCell();
-			result[i].initDataType(filePath, datasetTypes[i]);
-		}
-		return result;
-	}
-
-	private static JPanel[] initDatasetComboBoxItem(Datasets datasets) {
-		DataCell[] result = new DataCell[datasets.getCount()];
-		for (int i = 0; i < datasets.getCount(); i++) {
-			result[i] = new DataCell();
-			result[i].initDatasetType(datasets.get(i));
-		}
-		return result;
-	}
-
-	public DatasetType[] getDatasetTypes() {
+	public DatasetType[] getSupportedDatasetTypes() {
 		return datasetTypes;
 	}
 
-	public void setDatasetTypes(DatasetType[] datasetTypes) {
-		this.datasetTypes = datasetTypes;
-		updateItems();
-	}
-
+	/**
+	 * 获得构造ComboBox的数据集集合类
+	 *
+	 * @return
+	 */
 	public Datasets getDatasets() {
 		return datasets;
-	}
-
-	public void setDatasets(Datasets datasets) {
-		this.datasets = datasets;
-		updateItems();
-	}
-
-	/**
-	 * 更改设置之后，更新组合框的子项
-	 */
-	public void updateItems() {
-		try {
-			this.removeAllItems();
-
-			if (this.datasets != null) {
-				try {
-					for (int i = 0; i < this.datasets.getCount(); i++) {
-						Dataset dataset = this.datasets.get(i);
-						DatasetType type = dataset.getType();
-						if (this.getDatasetTypes() != null && this.getDatasetTypes().length > 0 && !isSupportDatasetType(type)) {
-							continue;
-						} else {
-							DataCell datasetTypeCell = new DataCell();
-							datasetTypeCell.initDatasetType(dataset);
-							this.addItem(datasetTypeCell);
-						}
-					}
-				} catch (Exception ex) {
-					return;
-				}
-			}
-
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
 	}
 
 	/**
@@ -280,18 +205,15 @@ public class DatasetComboBox extends JComboBox<Object> {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
-
 		return isSupport;
 	}
 
-	public Dataset getDatasetAt(int index) {
-		Dataset dataset = null;
-		if (index >= 0 && index < this.getItemCount() && this.getItemAt(index) instanceof DataCell && ((DataCell) this.getItemAt(index)).getData() instanceof Dataset) {
-			dataset = (Dataset) ((DataCell) this.getItemAt(index)).getData();
-		}
-		return dataset;
-	}
-
+	/**
+	 * 判断ComboBox中是否含有此名称的数据集
+	 *
+	 * @param datasetName
+	 * @return
+	 */
 	public boolean hasDataset(String datasetName) {
 		for (int i = 0; i < this.getItemCount(); i++) {
 			if (this.getDatasetAt(i).getName().equals(datasetName)) {
@@ -301,6 +223,11 @@ public class DatasetComboBox extends JComboBox<Object> {
 		return false;
 	}
 
+	/**
+	 * 设置ComboBox选中的数据集为该数据集
+	 *
+	 * @param datasetName
+	 */
 	public void setSelectedDataset(String datasetName) {
 		for (int i = 0; i < this.getItemCount(); i++) {
 			if (this.getDatasetAt(i).getName().equals(datasetName)) {
@@ -310,10 +237,11 @@ public class DatasetComboBox extends JComboBox<Object> {
 		}
 	}
 
-	public void removeDataset(Dataset currentDataset) {
-		removeDataset(currentDataset.getName());
-	}
-
+	/**
+	 * 通过数据集名称移除ComboBox中该item
+	 *
+	 * @param datasetName
+	 */
 	public void removeDataset(String datasetName) {
 		for (int i = 0; i < this.getItemCount(); i++) {
 			if (this.getDatasetAt(i).getName().equals(datasetName)) {
@@ -323,7 +251,34 @@ public class DatasetComboBox extends JComboBox<Object> {
 		}
 	}
 
-	public void addItemAt(int index, Object item) {
-		((DefaultComboBoxModel<Object>) this.getModel()).insertElementAt(item, index);
+	/**
+	 * 移除ComboBox中传入的该数据集item
+	 *
+	 * @param currentDataset
+	 */
+	public void removeDataset(Dataset currentDataset) {
+		removeDataset(currentDataset.getName());
+	}
+
+
+	/**
+	 * 通过item次序获得数据集
+	 *
+	 * @param index
+	 * @return
+	 */
+	public Dataset getDatasetAt(int index) {
+		Dataset dataset = null;
+		if (index >= 0 && index < this.getItemCount() && this.getItemAt(index) instanceof Dataset) {
+			dataset = this.getItemAt(index);
+		}
+		return dataset;
+	}
+
+	/**
+	 * 增加一数据集
+	 */
+	public void addItemAt(int index, Dataset item) {
+		((DefaultComboBoxModel<Dataset>) this.getModel()).insertElementAt(item, index);
 	}
 }

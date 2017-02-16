@@ -1,10 +1,13 @@
 package com.supermap.desktop.process.tasks;
 
+import com.supermap.analyst.spatialanalyst.OverlayAnalyst;
 import com.supermap.desktop.Interface.IAfterWork;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.meta.MetaKeys;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessOverlayAnalyst;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
+import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -274,6 +277,37 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
             labelTitle.setText(ControlsProperties.getString("String_SpatialIndexProgress"));
         } else if (process.getKey().equals(MetaKeys.BUFFER)) {
             labelTitle.setText(ControlsProperties.getString("String_BufferProgress"));
+        }else if (process.getKey().equals(MetaKeys.HEATMAP)) {
+            labelTitle.setText(ControlsProperties.getString("String_HeatMap"));
+        } else if (process.getKey().equals(MetaKeys.KERNELDENSITY)) {
+            labelTitle.setText(ControlsProperties.getString("String_KernelDensity"));
+        } else if (process.getKey().equals(MetaKeys.OVERLAYANALYST)) {
+            OverlayAnalystType analystType = ((MetaProcessOverlayAnalyst)process).getAnalystType();
+            switch (analystType) {
+                case CLIP:
+                    labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_CLIP"));
+                    break;
+                case ERASE:
+                    labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_ERASE"));
+                    break;
+                case IDENTITY:
+                    labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_IDENTITY"));
+                    break;
+                case INTERSECT:
+                    labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_INTERSECT"));
+                    break;
+                case UNION:
+                    labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_UNION"));
+                    break;
+                case XOR:
+                    labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_XOR"));
+                    break;
+                case UPDATE:
+                    labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_UPDATE"));
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

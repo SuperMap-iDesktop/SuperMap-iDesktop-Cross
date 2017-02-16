@@ -10,7 +10,8 @@ import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
-import com.supermap.desktop.ui.controls.DatasetComboBox;
+import com.supermap.desktop.ui.controls.CommonListCellRenderer;
+import com.supermap.desktop.ui.controls.DatasetTypeComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -114,21 +115,12 @@ public class JDialogDatasetNew extends SmDialog {
 		targetDatasourceCellEditor.setClickCountToStart(2);
 		TableColumn targetDatasourceColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_TARGET_DATASOURCE);
 		targetDatasourceColumn.setCellEditor(targetDatasourceCellEditor);
-		// 设置渲染
-//		CommonListCellRenderer renderer = new CommonListCellRenderer();
-//		targetDatasourceColumn.setCellRenderer(renderer);
-		// 可创建的数据集类型
-		ArrayList<DatasetType> datasetTypes = new ArrayList<DatasetType>();
-		datasetTypes.add(DatasetType.POINT);
-		datasetTypes.add(DatasetType.LINE);
-		datasetTypes.add(DatasetType.REGION);
-		datasetTypes.add(DatasetType.TEXT);
-		datasetTypes.add(DatasetType.CAD);
-		datasetTypes.add(DatasetType.TABULAR);
-		datasetTypes.add(DatasetType.POINT3D);
-		datasetTypes.add(DatasetType.LINE3D);
-		datasetTypes.add(DatasetType.REGION3D);
-		final DatasetComboBox comboBoxDatasetType = new DatasetComboBox(datasetTypes.toArray(new DatasetType[datasetTypes.size()]));
+
+		//2017.2.13 数据集类型下拉列表控件创建--yuanR
+		DatasetType[] datasetTypes = new DatasetType[]{DatasetType.POINT,DatasetType.LINE,DatasetType.REGION,DatasetType.TEXT,
+				DatasetType.CAD,DatasetType.TABULAR,DatasetType.POINT3D,DatasetType.LINE3D,DatasetType.REGION3D};
+		final DatasetTypeComboBox comboBoxDatasetType = new DatasetTypeComboBox(datasetTypes);
+
 		DefaultCellEditor datasetTypeCellEditor = new DefaultCellEditor(comboBoxDatasetType);
 		datasetTypeCellEditor.setClickCountToStart(2);
 		TableColumn datasetTypeColumn = table.getColumnModel().getColumn(NewDatasetTableModel.COLUMN_INDEX_DatasetType);

@@ -25,6 +25,7 @@ import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilities.ListUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.ActionChangedEvent;
@@ -182,7 +183,10 @@ public abstract class AutoDrawedRegionEditor extends AbstractEditor {
 						targetRecordset = ((DatasetVector) environment.getFormMap().getMapControl().getActiveEditableLayer().getDataset()).getRecordset(false, CursorType.DYNAMIC);
 						targetRecordset.addNew(geometry);
 						targetRecordset.update();
+						environment.getActiveEditableLayer().getSelection().clear();
+						environment.getActiveEditableLayer().getSelection().add(targetRecordset.getID());
 						environment.getMapControl().getEditHistory().add(EditType.ADDNEW, targetRecordset, true);
+						TabularUtilities.refreshTabularForm(targetRecordset.getDataset());
 					}
 				}
 			}
