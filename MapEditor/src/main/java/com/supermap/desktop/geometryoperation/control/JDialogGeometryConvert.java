@@ -21,7 +21,7 @@ import java.awt.event.ItemListener;
 public class JDialogGeometryConvert extends SmDialog {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private static String DEFAULT_DATASET_NAME = "ConvertResult";
@@ -284,9 +284,7 @@ public class JDialogGeometryConvert extends SmDialog {
 			Datasource datasource = workspace.getDatasources().get(i);
 
 			if (isDesDatasourceAvailable(datasource)) {
-				DataCell cell = new DataCell();
-				cell.initDatasourceType(datasource);
-				this.comboBoxDatasource.addItem(cell);
+				this.comboBoxDatasource.addItem(datasource);
 			}
 		}
 		this.comboBoxDatasource.setSelectedDatasource(this.desDatasource);
@@ -304,9 +302,10 @@ public class JDialogGeometryConvert extends SmDialog {
 				Dataset dataset = this.desDatasource.getDatasets().get(i);
 
 				if (dataset.getType() == this.datasetType) {
-					DataCell cell = new DataCell();
-					cell.initDatasetType(dataset);
-					this.comboBoxDataset.addItem(cell);
+//					DataCell cell = new DataCell();
+//					cell.initDatasetType(dataset);
+//					this.comboBoxDataset.addItem(cell);
+					this.comboBoxDataset.addItem(dataset);
 				}
 			}
 
@@ -314,9 +313,10 @@ public class JDialogGeometryConvert extends SmDialog {
 				Dataset dataset = this.desDatasource.getDatasets().get(i);
 
 				if (dataset.getType() == DatasetType.CAD) {
-					DataCell cell = new DataCell();
-					cell.initDatasetType(dataset);
-					this.comboBoxDataset.addItem(cell);
+//					DataCell cell = new DataCell();
+//					cell.initDatasetType(dataset);
+//					this.comboBoxDataset.addItem(cell);
+					this.comboBoxDataset.addItem(dataset);
 				}
 			}
 		}

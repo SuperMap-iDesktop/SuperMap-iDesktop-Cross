@@ -12,9 +12,13 @@ import com.supermap.desktop.geometryoperation.control.JDialogLineInterrruptSelec
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilities.ArrayUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.RecordsetUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
+import com.supermap.ui.ActionChangedEvent;
 import com.supermap.ui.TrackMode;
 import com.supermap.ui.TrackedEvent;
 
@@ -71,6 +75,24 @@ public class LineInterruptEditor extends AbstractEditor {
 		public void tracked(EditEnvironment environment, TrackedEvent e) {
 			mapControlTracked(environment, e);
 		}
+
+		@Override
+		public void actionChanged(EditEnvironment environment, ActionChangedEvent e) {
+
+			if (environment.getEditor() instanceof LineInterruptEditor && e.getOldAction()== Action.CREATEPOINT)
+			{
+				if (e.getNewAction()==Action.PAN || e.getNewAction()==Action.PAN2 || e.getNewAction()==Action.ZOOMFREE || e.getNewAction()==Action.ZOOMFREE2 || e.getNewAction()==Action.ZOOMIN || e.getNewAction()==Action.ZOOMOUT){
+
+				}else{
+					LineInterruptModel editModel = (LineInterruptModel) environment.getEditModel();
+					editModel.oldMapControlAction=e.getNewAction();
+					environment.stopEditor();
+				}
+			}
+//			if (e.getOldAction() == Action.CREATEPOINT && e.getNewAction() != Action.CREATEPOINT && environment.getEditor() instanceof LineInterruptEditor) {
+//				environment.stopEditor();
+//			}
+		}
 	};
 
 	@Override
@@ -117,6 +139,7 @@ public class LineInterruptEditor extends AbstractEditor {
 			return;
 		}
 		LineInterruptModel editModel = (LineInterruptModel) environment.getEditModel();
+		MapUtilities.clearTrackingObjects(environment.getMap(), TAG_LineInterruptByPoint);
 		editModel.clear();
 	}
 
@@ -145,6 +168,10 @@ public class LineInterruptEditor extends AbstractEditor {
 		LineInterruptModel editModel = (LineInterruptModel) environment.getEditModel();
 		Layer layer = environment.getActiveEditableLayer();
 		boolean result = false;
+		if (layer==null){
+			environment.stopEditor();
+			return result;
+		}
 		editModel.hasCommonNodeLineIDs.clear();
 
 		Recordset resultRecordset = queryGeometryIntersectSelectedGeometry(editModel.geometry,(DatasetVector)layer.getDataset());
@@ -189,6 +216,7 @@ public class LineInterruptEditor extends AbstractEditor {
 
 	private void runInterruptLine(EditEnvironment environment){
 		LineInterruptModel editModel = (LineInterruptModel) environment.getEditModel();
+		environment.getMapControl().getEditHistory().batchBegin();
 		Recordset sourceRecordset = null;
 		sourceRecordset = ((DatasetVector) environment.getActiveEditableLayer().getDataset()).getRecordset(false, CursorType.DYNAMIC);
 		GeoStyle styleRed = new GeoStyle();
@@ -201,6 +229,8 @@ public class LineInterruptEditor extends AbstractEditor {
 
 		RecordsetDelete delete = new RecordsetDelete(sourceRecordset.getDataset(), environment.getMapControl().getEditHistory());
 		delete.begin();
+		// 记录打断线操作成功的对象的ID，在操作结束的时候重置一下它们的选中，用以刷新属性面板等
+		ArrayList<Integer> succeededIDs = new ArrayList<>();
 		try {
 			for (int i = 0; i < editModel.hasCommonNodeLineIDs.size(); i++) {
 				Geometry tempGeometry = null;
@@ -226,6 +256,7 @@ public class LineInterruptEditor extends AbstractEditor {
 							newGeometry.setStyle(tempGeometry.getStyle());
 							sourceRecordset.addNew(newGeometry,values);
 							sourceRecordset.update();
+							succeededIDs.add(sourceRecordset.getID());
 							environment.getMapControl().getEditHistory().add(EditType.ADDNEW, sourceRecordset, true);
 						}
 					}
@@ -236,10 +267,15 @@ public class LineInterruptEditor extends AbstractEditor {
 			}
 			if (delete != null) {// 更新数据集
 				delete.update();
+				environment.getActiveEditableLayer().getSelection().clear();
+				environment.getActiveEditableLayer().getSelection().addRange(ArrayUtilities.convertToInt(succeededIDs.toArray(new Integer[succeededIDs.size()])));
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex.toString());
 		} finally {
+			// 刷新一下桌面的属性表窗口
+			TabularUtilities.refreshTabularForm(sourceRecordset.getDataset());
+			environment.getMapControl().getEditHistory().batchEnd();
 			environment.getMap().refreshTrackingLayer();
 			environment.getMap().refresh();
 

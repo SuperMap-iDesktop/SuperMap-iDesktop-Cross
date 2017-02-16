@@ -5,6 +5,8 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.Datasets;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.implement.MyComboBoxUI;
+import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
+
 import javax.swing.*;
 
 /**
@@ -18,9 +20,11 @@ import javax.swing.*;
  *         <p>
  *         可获得的参数：
  *         SupportedDatasetTypes、SelectedDataset、构建的datasets
+ *         <p>
+ *         重构ComboBox的实现方式，直接将数据集存入item，再通过setRenderer(new ListDataCellRender());进行显示及图标的渲染
  */
 
-public class DatasetComboBox extends JComboBox<Object> {
+public class DatasetComboBox extends JComboBox<Dataset> {
 
 	private static final long serialVersionUID = 1L;
 	private transient DatasetType[] datasetTypes;
@@ -39,7 +43,7 @@ public class DatasetComboBox extends JComboBox<Object> {
 	 * 默认构造一个空的下来列表框
 	 */
 	public DatasetComboBox() {
-		initRenderer();
+		setRenderer(new ListDataCellRender());
 	}
 
 	/**
@@ -50,48 +54,18 @@ public class DatasetComboBox extends JComboBox<Object> {
 	public DatasetComboBox(Datasets datasets) {
 		super(initDatasetComboBoxItem(datasets));
 		this.datasets = datasets;
-		initRenderer();
+		//设置渲染方式
+		setRenderer(new ListDataCellRender());
 	}
-
-	/**
-	 * 根据给定的数据集集合创建下拉选择框
-	 */
-//	public DatasetComboBox(Dataset[] dataset) {
-//		super(initDatasetComboBoxItem(dataset));
-//		this.dataset = dataset;
-//		initRenderer();
-//	}
-
-	/**
-	 * 初始化渲染方式
-	 */
-	private void initRenderer() {
-		this.setBorder(BorderFactory.createEtchedBorder(1));
-		ListCellRenderer<Object> renderer = new CommonListCellRenderer();
-		setRenderer(renderer);
-	}
-
-//	/**
-//	 * @param datasets
-//	 * @return
-//	 */
-//	private static DataCell[] initDatasetComboBoxItem(Dataset[] datasets) {
-//		DataCell[] result = new DataCell[datasets.length];
-//		for (int i = 0; i < datasets.length; i++) {
-//			result[i].initDatasetType(datasets[i]);
-//		}
-//		return result;
-//	}
 
 	/**
 	 * @param datasets
 	 * @return
 	 */
-	private static DataCell[] initDatasetComboBoxItem(Datasets datasets) {
-		DataCell[] result = new DataCell[datasets.getCount()];
+	private static Dataset[] initDatasetComboBoxItem(Datasets datasets) {
+		Dataset[] result = new Dataset[datasets.getCount()];
 		for (int i = 0; i < datasets.getCount(); i++) {
-			result[i] = new DataCell();
-			result[i].initDatasetType(datasets.get(i));
+			result[i] = datasets.get(i);
 		}
 		return result;
 	}
@@ -105,8 +79,8 @@ public class DatasetComboBox extends JComboBox<Object> {
 		int selectIndex = -1;
 		if (dataset != null) {
 			for (int i = 0; i < getItemCount(); i++) {
-				DataCell dataCell = (DataCell) getItemAt(i);
-				if (dataCell.getData() == dataset) {
+				Dataset ComboBoxDataset = getItemAt(i);
+				if (ComboBoxDataset == dataset) {
 					selectIndex = i;
 					break;
 				}
@@ -149,9 +123,7 @@ public class DatasetComboBox extends JComboBox<Object> {
 						if (this.getSupportedDatasetTypes() != null && this.getSupportedDatasetTypes().length > 0 && !isSupportDatasetType(type)) {
 							continue;
 						} else {
-							DataCell datasetTypeCell = new DataCell();
-							datasetTypeCell.initDatasetType(dataset);
-							this.addItem(datasetTypeCell);
+							this.addItem(dataset);
 						}
 					}
 				} catch (Exception ex) {
@@ -173,8 +145,8 @@ public class DatasetComboBox extends JComboBox<Object> {
 		if (getSelectedIndex() == -1) {
 			return null;
 		}
-		DataCell temp = (DataCell) getSelectedItem();
-		return temp.getDataName();
+		Dataset temp = (Dataset) getSelectedItem();
+		return temp.getName();
 	}
 
 	/**
@@ -184,10 +156,10 @@ public class DatasetComboBox extends JComboBox<Object> {
 	 */
 	public Dataset getSelectedDataset() {
 		Dataset result = null;
-		if (getSelectedItem() instanceof DataCell) {
-			DataCell selected = (DataCell) getSelectedItem();
-			if (selected.getData() instanceof Dataset) {
-				result = (Dataset) selected.getData();
+		if (getSelectedItem() instanceof Dataset) {
+			Dataset selected = (Dataset) getSelectedItem();
+			if (selected instanceof Dataset) {
+				result = selected;
 			}
 		}
 		return result;
@@ -210,15 +182,6 @@ public class DatasetComboBox extends JComboBox<Object> {
 	public Datasets getDatasets() {
 		return datasets;
 	}
-
-//	/**
-//	 * 获得ComboBox中的数据集集合数组
-//	 *
-//	 * @return
-//	 */
-//	public Dataset[] getDataset() {
-//		return dataset;
-//	}
 
 	/**
 	 * 根据传入的数据集类型判断此类型是否支持显示
@@ -306,8 +269,8 @@ public class DatasetComboBox extends JComboBox<Object> {
 	 */
 	public Dataset getDatasetAt(int index) {
 		Dataset dataset = null;
-		if (index >= 0 && index < this.getItemCount() && this.getItemAt(index) instanceof DataCell && ((DataCell) this.getItemAt(index)).getData() instanceof Dataset) {
-			dataset = (Dataset) ((DataCell) this.getItemAt(index)).getData();
+		if (index >= 0 && index < this.getItemCount() && this.getItemAt(index) instanceof Dataset) {
+			dataset = this.getItemAt(index);
 		}
 		return dataset;
 	}
@@ -316,6 +279,6 @@ public class DatasetComboBox extends JComboBox<Object> {
 	 * 增加一数据集
 	 */
 	public void addItemAt(int index, Dataset item) {
-		((DefaultComboBoxModel<Object>) this.getModel()).insertElementAt(item, index);
+		((DefaultComboBoxModel<Dataset>) this.getModel()).insertElementAt(item, index);
 	}
 }

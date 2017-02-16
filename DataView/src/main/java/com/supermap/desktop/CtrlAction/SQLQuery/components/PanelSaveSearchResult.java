@@ -18,6 +18,7 @@ import java.awt.event.ItemListener;
 
 /**
  * SQL查询中的保存查询结果类
+ *
  * @author xiajt
  */
 public class PanelSaveSearchResult extends SmComponentPanel {
@@ -92,11 +93,8 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 				}
 			});
 			for (int i = datasourceComboBox.getItemCount() - 1; i >= 0; i--) {
-				if (datasourceComboBox.getItemAt(i) instanceof DataCell) {
-					DataCell dataCell = (DataCell) datasourceComboBox.getItemAt(i);
-					if (dataCell.getData() instanceof Datasource && ((Datasource) dataCell.getData()).isReadOnly()) {
-						datasourceComboBox.removeItemAt(i);
-					}
+				if (datasourceComboBox.getItemAt(i) instanceof Datasource && datasourceComboBox.getItemAt(i).isReadOnly()) {
+					datasourceComboBox.removeItemAt(i);
 				}
 			}
 		}

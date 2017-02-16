@@ -100,7 +100,7 @@ public class JDialogJoinItems extends SmDialog {
 				@Override
 				public void itemStateChanged(ItemEvent e) {
 					if (e.getStateChange() == ItemEvent.SELECTED) {
-						datasetComboBox.setSelectedDataset(((Dataset) ((DataCell) e.getItem()).getData()));
+						datasetComboBox.setSelectedDataset(((Dataset) (e.getItem())));
 						stopCellEditing();
 						joinItemsTable.setRowSelectionInterval(currentRow, currentRow);
 					}

@@ -1,18 +1,12 @@
 package com.supermap.desktop.process.graphics;
 
-import com.sun.corba.se.impl.orbutil.graph.Graph;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.process.graphics.graphs.*;
-import org.jhotdraw.draw.AttributeKeys;
-import org.jhotdraw.geom.Geom;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.*;
-import java.util.List;
 
 /**
  * Created by highsad on 2017/1/17.
@@ -26,7 +20,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
 
 	Vector graphs = new Vector(30);
-	private QuadTree<IGraph> graphQuadTree = new QuadTree<>();
+	private QuadTreeTemp<IGraph> graphQuadTree = new QuadTreeTemp<>();
 	private ArrayList<LineGraph> lines = new ArrayList<>();
 	private double scale = 1.0;
 	private IGraph toCreation;

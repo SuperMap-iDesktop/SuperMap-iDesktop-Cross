@@ -184,7 +184,7 @@ public class DataCell extends JPanel {
 
 	private void initComponents() {
 		this.setSize(300, 15);
-		this.setLayout(new FlowLayout(FlowLayout.LEFT, 2, 0));
+		this.setLayout(new BorderLayout());
 		setToolTipText(dataName);
 		this.add(this.imageLabel);
 	}
