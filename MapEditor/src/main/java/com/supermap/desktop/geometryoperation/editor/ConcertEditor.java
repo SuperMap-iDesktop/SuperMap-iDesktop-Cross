@@ -29,6 +29,7 @@ import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.utilities.ListUtilities;
+import com.supermap.desktop.utilities.TabularUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.GeometryEvent;
@@ -232,7 +233,7 @@ public class ConcertEditor extends AbstractEditor {
 						sourceRecordset.edit();
 						sourceRecordset.setGeometry(newGeometry);
 						sourceRecordset.update();
-
+						TabularUtilities.refreshTabularForm(sourceRecordset.getDataset());
 					}
 				} finally {
 					newGeometry.dispose();

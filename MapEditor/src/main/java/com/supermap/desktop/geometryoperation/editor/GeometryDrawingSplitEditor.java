@@ -25,11 +25,7 @@ import com.supermap.desktop.geometryoperation.IEditModel;
 import com.supermap.desktop.geometryoperation.NullEditController;
 import com.supermap.desktop.geometryoperation.control.MapControlTip;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
-import com.supermap.desktop.utilities.GeometryUtilities;
-import com.supermap.desktop.utilities.ListUtilities;
-import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.desktop.utilities.RecordsetUtilities;
-import com.supermap.desktop.utilities.TabularUtilities;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.Action;
 import com.supermap.ui.TrackMode;
@@ -276,6 +272,9 @@ public abstract class GeometryDrawingSplitEditor extends AbstractEditor {
 							}
 						}
 						addNew.update();
+						environment.getActiveEditableLayer().getSelection().clear();
+						environment.getActiveEditableLayer().getSelection().addRange(ArrayUtilities.convertToInt(addNew.getAddHistoryIDs().toArray(new Integer[addNew.getAddHistoryIDs().size()])));
+						//addNew.getAddHistoryIDs();
 						TabularUtilities.refreshTabularForm(newRecordset.getDataset());
 						Application.getActiveApplication().getOutput().output(MapEditorProperties.getString("String_GeometryOperation_SplitSuccessed"));
 					} catch (Exception ex) {
