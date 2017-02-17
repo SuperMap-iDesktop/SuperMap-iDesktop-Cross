@@ -19,8 +19,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
 
-	Vector graphs = new Vector(30);
-	private QuadTreeTemp<IGraph> graphQuadTree = new QuadTreeTemp<>();
+	private QuadTree<IGraph> graphQuadTree = new QuadTree<>();
 	private ArrayList<LineGraph> lines = new ArrayList<>();
 	private double scale = 1.0;
 	private IGraph toCreation;
@@ -173,11 +172,9 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	}
 
 	private void paintGraphs(Graphics2D g) {
-		Collection c = this.graphQuadTree.findAll();
-		Iterator iterator = c.iterator();
-
-		while (iterator.hasNext()) {
-			IGraph graph = (IGraph) iterator.next();
+		IGraph[] graphs = this.graphQuadTree.getDatasInside();
+		for (int i = 0; i < graphs.length; i++) {
+			IGraph graph = graphs[i];
 			graph.paint(g, graph == this.hotGraph, graph == this.selectedGraph);
 		}
 
@@ -258,11 +255,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	private IGraph findGraph(Point point) {
 		IGraph graph = null;
-		Collection<IGraph> c = this.graphQuadTree.findContains(point);
+		IGraph[] graphs = this.graphQuadTree.search(point);
 
-		if (c != null && c.size() > 0) {
-			Iterator<IGraph> iterator = c.iterator();
-			graph = iterator.next();
+		if (graphs != null && graphs.length > 0) {
+			graph = graphs[0];
 		}
 		return graph;
 	}
