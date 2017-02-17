@@ -48,12 +48,10 @@ public class DatasetChooserDataTopo {
 				Dataset dataset = selectedDatasets.get(i);
 				Object[] temp = new Object[3];
 				temp[0] = preprocessTable.getRowCount() + 1;
-//				DataCell datasetCell = new DataCell();
-//				datasetCell.initDatasetType(dataset);
-//				topoPreProgress.getComboBoxConsultDataset().addItem(datasetCell);
+				DataCell datasetCell = new DataCell();
+				datasetCell.initDatasetType(dataset);
 				topoPreProgress.getComboBoxConsultDataset().addItem(dataset);
-//				temp[1] = datasetCell;
-				temp[1] = dataset;
+				temp[1] = datasetCell;
 				String datasourceName = dataset.getDatasource().getAlias();
 				Datasource dataSource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 				datasetTypes.add(dataset.getType());
