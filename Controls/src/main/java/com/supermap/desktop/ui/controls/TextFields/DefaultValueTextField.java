@@ -56,7 +56,9 @@ public class DefaultValueTextField extends JTextField {
 			this.setMargin(new Insets(0, 23, 0, 0));
 		} else {
 			super.paintComponent(g);
+			this.setMargin(new Insets(0, 0, 0, 0));
 		}
+		repaint();
 	}
 
 	/**
@@ -109,6 +111,5 @@ public class DefaultValueTextField extends JTextField {
 				setForeground(Color.black);
 			}
 		});
-
 	}
 }
