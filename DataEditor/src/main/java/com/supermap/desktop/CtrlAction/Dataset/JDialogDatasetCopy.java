@@ -1,11 +1,27 @@
 package com.supermap.desktop.CtrlAction.Dataset;
 
-import com.supermap.data.*;
+import com.supermap.data.Charset;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetGridCollection;
+import com.supermap.data.DatasetImage;
+import com.supermap.data.DatasetImageCollection;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
+import com.supermap.data.EncodeType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
+import com.supermap.desktop.ui.controls.CommonListCellRenderer;
+import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.DatasetCopyCallable;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
@@ -22,7 +38,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -164,7 +187,6 @@ public class JDialogDatasetCopy extends SmDialog {
 			}
 		};
 		this.targetBoxListener = new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				extractInitilizeColumnTryBlock(targetBox);
@@ -422,7 +444,8 @@ public class JDialogDatasetCopy extends SmDialog {
 				DataCell datasourceCell = new DataCell();
 				datasourceCell.initDatasourceType(datasource);
 				datas[COLUMN_INDEX_CurrentDatasource] = datasourceCell;
-				datas[COLUMN_INDEX_TargetDatasource] = datasourceCell;
+				// 初始jtable时就将目标数据源列存为数据源本身-yuanR 17.2.17
+				datas[COLUMN_INDEX_TargetDatasource] = datasource;
 				datas[COLUMN_INDEX_TargetDataset] = datasource.getDatasets().getAvailableDatasetName(dataset.getName());
 				datas[COLUMN_INDEX_EncodeType] = CommonToolkit.EncodeTypeWrap.findName(dataset.getEncodeType());
 				if (dataset instanceof DatasetVector) {
@@ -486,6 +509,7 @@ public class JDialogDatasetCopy extends SmDialog {
 			Datasource[] array = new Datasource[datasourcesArray.size()];
 			this.targetBox = new DatasourceComboBox(datasourcesArray.toArray(array));
 
+			// 创建jtable编辑器，其中放入comboBox控件
 			TableColumn targetDatasourceColumn = table.getColumnModel().getColumn(COLUMN_INDEX_TargetDatasource);
 			TableCellEditor targetDatasourceCellEditor = new DefaultCellEditor(targetBox);
 			targetDatasourceColumn.setCellEditor(targetDatasourceCellEditor);
@@ -493,9 +517,12 @@ public class JDialogDatasetCopy extends SmDialog {
 			CommonListCellRenderer renderer = new CommonListCellRenderer();
 			TableColumn sourceDatasetColumn = table.getColumnModel().getColumn(COLUMN_INDEX_Dataset);
 			TableColumn currentDatasourceColumn = table.getColumnModel().getColumn(COLUMN_INDEX_CurrentDatasource);
-			targetDatasourceColumn.setCellRenderer(renderer);
 			sourceDatasetColumn.setCellRenderer(renderer);
 			currentDatasourceColumn.setCellRenderer(renderer);
+			// 此时若等同地设置“目标数据源”渲染方式，会导致单元格显示为空
+			// 因为目标数据源列存的数据对象为数据源本身，需要换一种渲染方式--yuanR
+//			targetDatasourceColumn.setCellRenderer(renderer);
+			targetDatasourceColumn.setCellRenderer(new TableDataCellRender());
 
 			// 目标数据集
 			TableColumn targetDatasetColumn = this.table.getColumnModel().getColumn(COLUMN_INDEX_TargetDataset);
@@ -516,8 +543,7 @@ public class JDialogDatasetCopy extends SmDialog {
 
 	private void extractInitilizeColumnTryBlock(final DatasourceComboBox targetBox) {
 		// 选择不同的数据源时更新要复制的数据集的名称
-		String item = (String) targetBox.getSelectItem();
-		Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(item);
+		Datasource datasource = (Datasource) targetBox.getSelectedDatasource();
 		String dataset = table.getValueAt(table.getSelectedRow(), COLUMN_INDEX_Dataset).toString();
 		table.getModel().setValueAt(datasource.getDatasets().getAvailableDatasetName(dataset), table.getSelectedRow(), COLUMN_INDEX_TargetDataset);
 	}
@@ -765,10 +791,10 @@ public class JDialogDatasetCopy extends SmDialog {
 		@Override
 		public Object getCellEditorValue() {
 			String value = textField.getText();
+//			String targetDatasourceName = table.getValueAt(row, COLUMN_INDEX_TargetDatasource).toString();
+//			Datasource targetDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(targetDatasourceName);
 
-			String targetDatasourceName = table.getValueAt(row, COLUMN_INDEX_TargetDatasource).toString();
-			Datasource targetDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(targetDatasourceName);
-
+			Datasource targetDatasource = (Datasource) table.getValueAt(row, COLUMN_INDEX_TargetDatasource);
 			value = targetDatasource.getDatasets().getAvailableDatasetName(value);
 			value = this.getAvailableDatasetName(value, table, column, row);
 			return value;
