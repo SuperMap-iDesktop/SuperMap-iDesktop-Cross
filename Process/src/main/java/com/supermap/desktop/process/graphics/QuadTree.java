@@ -1,13 +1,9 @@
 package com.supermap.desktop.process.graphics;
 
-import com.supermap.desktop.utilities.ListUtilities;
-
 import java.awt.*;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -75,28 +71,28 @@ public class QuadTree<T> {
 		return this.outsideDatas.size();
 	}
 
-	public T[] getDatasInside() {
-		return (T[]) this.datas.toArray(new Object[this.datas.size()]);
+	public Vector<T> getDatasInside() {
+		return this.datas;
 	}
 
-	public T[] getDatasOutside() {
-		return (T[]) this.outsideDatas.toArray();
+	public Vector<T> getDatasOutside() {
+		return this.outsideDatas;
 	}
 
-	public T[] getAllDatas() {
-		T[] arr = (T[]) new Object[this.datas.size() + this.outsideDatas.size()];
+	public Vector<T> getAllDatas() {
+		Vector<T> vector = new Vector<>();
 
 		for (int i = 0; i < this.datas.size(); i++) {
-			arr[i] = this.datas.get(i);
+			vector.add(this.datas.get(i));
 		}
 
 		for (int i = 0; i < this.outsideDatas.size(); i++) {
-			arr[this.datas.size() + i] = this.outsideDatas.get(i);
+			vector.add(this.outsideDatas.get(i));
 		}
-		return arr;
+		return vector;
 	}
 
-	public T[] search(Point point) {
+	public List<T> search(Point point) {
 		return this.root.search(point);
 	}
 
@@ -182,7 +178,7 @@ public class QuadTree<T> {
 			}
 		}
 
-		public T[] search(Point point) {
+		public List<T> search(Point point) {
 			if (!this.bounds.contains(point)) {
 				return null;
 			}
@@ -198,12 +194,25 @@ public class QuadTree<T> {
 			}
 
 			if (!this.isLeaf()) {
-				ListUtilities.addArraySingle(list, this.northWest.search(point));
-				ListUtilities.addArraySingle(list, this.northEast.search(point));
-				ListUtilities.addArraySingle(list, this.southWest.search(point));
-				ListUtilities.addArraySingle(list, this.southEast.search(point));
+				addListUnique(list, this.northWest.search(point));
+				addListUnique(list, this.northEast.search(point));
+				addListUnique(list, this.southWest.search(point));
+				addListUnique(list, this.southEast.search(point));
 			}
-			return list.size() == 0 ? null : (T[]) list.toArray(new Object[list.size()]);
+
+			return list;
+		}
+
+		private <T> void addListUnique(List<T> list, List<T> src) {
+			if (list == null || src == null || src.size() == 0) {
+				return;
+			}
+
+			for (int i = 0; i < src.size(); i++) {
+				if (!list.contains(src.get(i))) {
+					list.add(src.get(i));
+				}
+			}
 		}
 
 		public Map<T, Rectangle> getDatas() {
