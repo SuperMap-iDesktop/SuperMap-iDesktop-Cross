@@ -1,6 +1,7 @@
 package com.supermap.desktop.ui.controls.TextFields;
 
 import com.supermap.desktop.controls.utilities.ControlsResources;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,7 +48,7 @@ public class DefaultValueTextField extends JTextField {
 	@Override
 	public void paintComponent(Graphics g) {
 		// 当有提示信息时，显示提示图标
-		if (!defaultLabelWarning.equals("")) {
+		if (!StringUtilities.isNullOrEmpty(defaultLabelWarning)) {
 			super.paintComponent(g);
 //			int iconWidth = this.searchIcon.getIconWidth();
 			int iconHeight = this.searchIcon.getIconHeight();
@@ -63,6 +64,13 @@ public class DefaultValueTextField extends JTextField {
 	 */
 	public DefaultValueTextField() {
 		this("", "");
+	}
+
+	/**
+	 * 构造方法
+	 */
+	public DefaultValueTextField(String defaultValue) {
+		this(defaultValue, null);
 	}
 
 	/**
@@ -88,7 +96,7 @@ public class DefaultValueTextField extends JTextField {
 	private void initComponents() {
 		this.setText(this.defaultValue);
 		// 当有提示信息时再设置其ToolTipText
-		if (!this.defaultLabelWarning.equals("")) {
+		if (!StringUtilities.isNullOrEmpty(defaultLabelWarning)) {
 			this.setToolTipText(this.defaultLabelWarning);
 		}
 		this.setForeground(Color.gray);
