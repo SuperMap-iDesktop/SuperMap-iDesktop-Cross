@@ -35,6 +35,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.text.MessageFormat;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,15 @@ public abstract class GeometryDrawingSplitEditor extends AbstractEditor {
 		@Override
 		public void tracked(EditEnvironment environment, TrackedEvent e) {
 			mapControlTracked(environment, e);
+		}
+
+		@Override
+		public void undone(EditEnvironment environment, EventObject arg0) {
+			if (!(environment.getEditModel() instanceof GeometryDrawingSplitModel)) {
+				return;
+			}
+			MapUtilities.clearTrackingObjects(environment.getMap(), Tag_GeometrySplit);
+			MapUtilities.clearTrackingObjects(environment.getMap(), MapEditorProperties.getString(getSplitTip()));
 		}
 	};
 
