@@ -71,6 +71,7 @@ public class DefaultValueTextField extends JTextField {
 	 * @param defaultValue
 	 * @param defaultLabelWarning
 	 */
+
 	public DefaultValueTextField(String defaultValue, String defaultLabelWarning) {
 		super();
 		this.defaultValue = defaultValue;

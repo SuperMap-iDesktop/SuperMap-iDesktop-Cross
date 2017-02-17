@@ -260,7 +260,7 @@ public class FieldInfoTable extends SortTable {
 				return null;
 			}
 			if (fieldType == FieldType.DATETIME) {
-				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy" + "/" + "MM" + "/" + "dd hh:mm:ss");
 				return dateFormat.format(fieldValue);
 			} else if (fieldType == FieldType.BOOLEAN) {
 				if (fieldValue.equals(true)) {
