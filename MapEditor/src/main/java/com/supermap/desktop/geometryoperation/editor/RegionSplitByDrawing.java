@@ -21,12 +21,12 @@ public class RegionSplitByDrawing implements IDrawingSplit {
 		GeoRegion tempGeoRegion = (GeoRegion) geometry;
 
 		GeoStyle style1 = new GeoStyle();
-		style1.setLineWidth(0.6);
 		style1.setLineColor(Color.RED);
+		style1.setFillOpaqueRate(0);
 
 		GeoStyle style2 = new GeoStyle();
-		style2.setLineWidth(0.6);
 		style2.setLineColor(Color.BLUE);
+		style2.setFillOpaqueRate(0);
 
 		boolean resultSplit=false;
 		try {
