@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.util.*;
+import java.util.List;
 
 /**
  * Created by highsad on 2017/1/17.
@@ -172,9 +173,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	}
 
 	private void paintGraphs(Graphics2D g) {
-		IGraph[] graphs = this.graphQuadTree.getDatasInside();
-		for (int i = 0; i < graphs.length; i++) {
-			IGraph graph = graphs[i];
+		Vector<IGraph> graphs = this.graphQuadTree.getDatasInside();
+
+		for (int i = 0; i < graphs.size(); i++) {
+			IGraph graph = graphs.get(i);
 			graph.paint(g, graph == this.hotGraph, graph == this.selectedGraph);
 		}
 
@@ -255,10 +257,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	private IGraph findGraph(Point point) {
 		IGraph graph = null;
-		IGraph[] graphs = this.graphQuadTree.search(point);
+		List<IGraph> graphs = this.graphQuadTree.search(point);
 
-		if (graphs != null && graphs.length > 0) {
-			graph = graphs[0];
+		if (graphs != null && graphs.size() > 0) {
+			graph = graphs.get(0);
 		}
 		return graph;
 	}
