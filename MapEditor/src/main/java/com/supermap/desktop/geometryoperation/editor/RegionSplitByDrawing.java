@@ -1,27 +1,32 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import com.supermap.data.GeoLine;
-import com.supermap.data.GeoRegion;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.Geometrist;
-import com.supermap.data.Geometry;
-import com.supermap.data.GeometryType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
 
+import java.awt.*;
 import java.util.Map;
 
 /**
  * @author lixiaoyao
  */
 public class RegionSplitByDrawing implements IDrawingSplit {
-
+	private static final String Tag_GeometrySplit = "Tag_GeometrySplit";
 	@Override
-	public boolean SplitGeometry(Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle, double tolerance)
+	public boolean SplitGeometry(EditEnvironment environment, Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle, double tolerance)
 	{
 		boolean result = false;
 		GeoRegion resultGeoRegion1 = new GeoRegion();
 		GeoRegion resultGeoRegion2 = new GeoRegion();
 		GeoRegion tempGeoRegion = (GeoRegion) geometry;
+
+		GeoStyle style1 = new GeoStyle();
+		style1.setLineWidth(0.6);
+		style1.setLineColor(Color.RED);
+
+		GeoStyle style2 = new GeoStyle();
+		style2.setLineWidth(0.6);
+		style2.setLineColor(Color.BLUE);
 
 		boolean resultSplit=false;
 		try {
@@ -33,6 +38,10 @@ public class RegionSplitByDrawing implements IDrawingSplit {
 			}
 			if (resultSplit) {
 				result = true;
+				resultGeoRegion1.setStyle(style1);
+				environment.getMap().getTrackingLayer().add(resultGeoRegion1, Tag_GeometrySplit);
+				resultGeoRegion2.setStyle(style2);
+				environment.getMap().getTrackingLayer().add(resultGeoRegion2, Tag_GeometrySplit);
 				if (geoStyle != null) {
 					resultGeoRegion1.setStyle(geoStyle.clone());//设置风格
 					resultGeoRegion2.setStyle(geoStyle.clone());

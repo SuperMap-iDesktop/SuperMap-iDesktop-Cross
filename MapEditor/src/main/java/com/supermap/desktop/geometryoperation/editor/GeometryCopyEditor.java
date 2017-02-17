@@ -177,9 +177,14 @@ public class GeometryCopyEditor extends AbstractEditor {
                 for (Layer layer : editModel.copyGeometries.keySet()) {
                     List<Integer> selectionIDs = new ArrayList<Integer>();
                     List<Integer> selectedDs = editModel.copyGeometries.get(layer);
-                    Recordset recordset = ((DatasetVector) layer.getDataset()).query(
-                            ArrayUtilities.convertToInt(selectedDs.toArray(new Integer[selectedDs.size()])), CursorType.DYNAMIC);
+                    Recordset recordset=null;
+                    try {
 
+                         recordset = ((DatasetVector) layer.getDataset()).query(
+                                ArrayUtilities.convertToInt(selectedDs.toArray(new Integer[selectedDs.size()])), CursorType.DYNAMIC);
+                    }catch (Exception ex){
+                        continue;
+                    }
                     for (Integer id : selectedDs) {
                         recordset.seekID(id);
                         Geometry geometry = recordset.getGeometry();
