@@ -81,8 +81,8 @@ public class LineInterruptEditor extends AbstractEditor {
         public void actionChanged(EditEnvironment environment, ActionChangedEvent e) {
 
             if (environment.getEditor() instanceof LineInterruptEditor && e.getOldAction() == Action.CREATEPOINT) {
-                if (e.getNewAction() == Action.PAN || e.getNewAction() == Action.PAN2 || e.getNewAction() == Action.ZOOMFREE || e.getNewAction() == Action.ZOOMFREE2 || e.getNewAction() == Action.ZOOMIN || e.getNewAction() == Action.ZOOMOUT) {
-
+                if (e.getNewAction() == Action.PAN || e.getNewAction() == Action.PAN2 || e.getNewAction() == Action.ZOOMFREE || e.getNewAction() == Action.ZOOMFREE2 || e.getNewAction() == Action.ZOOMIN || e.getNewAction() == Action.ZOOMOUT || e.getNewAction() == Action.SELECT2 || e.getNewAction() == Action.SELECT) {
+                    environment.getMapControl().setAction(Action.CREATEPOINT);
                 } else {
                     LineInterruptModel editModel = (LineInterruptModel) environment.getEditModel();
                     editModel.oldMapControlAction = e.getNewAction();
@@ -175,7 +175,6 @@ public class LineInterruptEditor extends AbstractEditor {
         Layer layer = environment.getActiveEditableLayer();
         boolean result = false;
         if (layer == null) {
-            //environment.stopEditor();
             return result;
         }
         editModel.hasCommonNodeLineIDs.clear();
