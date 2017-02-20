@@ -60,7 +60,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 
 		@Override
 		public void keyReleased(KeyEvent e) {
-			String datasourceName = comboBoxResultDatasource.getSelectItem();
+			String datasourceName = comboBoxResultDatasource.getSelectedItemAlias();
 			if (!StringUtilities.isNullOrEmpty(datasourceName)) {
 				Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 				if (!datasource.getDatasets().isAvailableDatasetName(textFieldResultDataset.getText())) {
@@ -341,7 +341,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 				changeComboBoxItem();
 			}
 			if (c == comboBoxResultDatasource) {
-				String datasourceName = comboBoxResultDatasource.getSelectItem();
+				String datasourceName = comboBoxResultDatasource.getSelectedItemAlias();
 				Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 				initTextFieldName(datasource);
 			}
@@ -354,7 +354,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 	 */
 
 	private void changeComboBoxItem() {
-		String datasourceName = this.comboBoxDatasource.getSelectItem();
+		String datasourceName = this.comboBoxDatasource.getSelectedItemAlias();
 		Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 		this.hasDataset = insertItemToComboBox(datasource);
 		setCheckBoxSelected(this.hasDataset);
@@ -396,7 +396,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 	private void topologyProcess() {
 		try {
 			String datasetName = this.comboBoxDataset.getSelectItem();
-			String datasourceName = this.comboBoxDatasource.getSelectItem();
+			String datasourceName = this.comboBoxDatasource.getSelectedItemAlias();
 			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 			this.topologyProcessingOptions.setAdjacentEndpointsMerged(this.isAdjacentEndpointsMerged);
 			this.topologyProcessingOptions.setDuplicatedLinesCleaned(this.isDuplicatedLinesCleaned);
@@ -420,9 +420,9 @@ public class JDialogTopoBuildRegions extends SmDialog {
 	private void topologyBuildRegion() {
 		try {
 			String datasetName = this.comboBoxDataset.getSelectItem();
-			String resultDatasourceName = this.comboBoxResultDatasource.getSelectItem();
+			String resultDatasourceName = this.comboBoxResultDatasource.getSelectedItemAlias();
 			String targetDatasetName = this.textFieldResultDataset.getText();
-			String targetDatasourceName = this.comboBoxDatasource.getSelectItem();
+			String targetDatasourceName = this.comboBoxDatasource.getSelectedItemAlias();
 			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(targetDatasourceName);
 			Datasource resultDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(resultDatasourceName);
 			Dataset dataset = DatasetUIUtilities.getDatasetFromDatasource(datasetName, datasource);
@@ -447,7 +447,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 		try {
 			if (0 < this.comboBoxDataset.getItemCount()) {
 				String datasetName = this.comboBoxDataset.getSelectItem();
-				String datasourceName = this.comboBoxDatasource.getSelectItem();
+				String datasourceName = this.comboBoxDatasource.getSelectedItemAlias();
 				Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 				Dataset targetDataset = DatasetUIUtilities.getDatasetFromDatasource(datasetName, datasource);
 				if (advance == null || advance.getTargetDataset() != targetDataset) {

@@ -4,6 +4,7 @@ import com.supermap.desktop.Interface.ICloneable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class ListUtilities {
 
@@ -13,7 +14,7 @@ public class ListUtilities {
 
 	/**
 	 * 判断 List 是否包含指定参数列表中的任意一个值，包含则返回 true，不包含则返回 false
-	 * 
+	 *
 	 * @param list
 	 * @param checkItems
 	 * @return
@@ -36,7 +37,7 @@ public class ListUtilities {
 
 	/**
 	 * 判断 List 是否仅包含指定参数列表中的值，是则返回 true，否则返回 false
-	 * 
+	 *
 	 * @param list
 	 * @param checkItems
 	 * @return
@@ -59,7 +60,7 @@ public class ListUtilities {
 
 	/**
 	 * 判断 List 是否包含指定参数列表中所有的值，是则返回 true，否则返回 false
-	 * 
+	 *
 	 * @param list
 	 * @param checkItems
 	 * @return
@@ -83,7 +84,7 @@ public class ListUtilities {
 
 	/**
 	 * 将数组添加到指定集合
-	 * 
+	 *
 	 * @param list
 	 * @param array
 	 */
@@ -99,7 +100,7 @@ public class ListUtilities {
 
 	/**
 	 * 将数组添加到指定集合，保持单值
-	 * 
+	 *
 	 * @param list
 	 * @param array
 	 */
@@ -119,6 +120,7 @@ public class ListUtilities {
 		if (list == null || list.size() <= 0) {
 			return new ArrayList<>();
 		}
+
 		if (list.get(0) instanceof ICloneable) {
 			return ListUtilities.listDeepCopy(list);
 		}
@@ -147,7 +149,7 @@ public class ListUtilities {
 
 	/**
 	 * 将指定列表里的元素反序
-	 * 
+	 *
 	 * @param list
 	 */
 	public static <T> void reverse(List<T> list) {

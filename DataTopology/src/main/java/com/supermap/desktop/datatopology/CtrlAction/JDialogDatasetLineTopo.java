@@ -207,7 +207,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 	private void topologyProcess() {
 		try {
 			String datasetName = this.comboBoxDataset.getSelectItem();
-			String datasourceName = this.comboBoxDatasource.getSelectItem();
+			String datasourceName = this.comboBoxDatasource.getSelectedItemAlias();
 			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 			this.topologyProcessingOptions.setAdjacentEndpointsMerged(this.isAdjacentEndpointsMerged);
 			this.topologyProcessingOptions.setDuplicatedLinesCleaned(this.isDuplicatedLinesCleaned);
@@ -231,7 +231,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 	 */
 	private void changeComboBoxItem() {
 
-		String datasourceName = this.comboBoxDatasource.getSelectItem();
+		String datasourceName = this.comboBoxDatasource.getSelectedItemAlias();
 		Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 		this.hasDataset = insertItemToComboBox(datasource);
 		if (!this.hasDataset) {
@@ -251,7 +251,7 @@ public class JDialogDatasetLineTopo extends SmDialog {
 	private void openAdvanceDialog(TopologyProcessingOptions topologyProcessingOptions) {
 		try {
 			String datasetName = this.comboBoxDataset.getSelectItem();
-			String datasourceName = this.comboBoxDatasource.getSelectItem();
+			String datasourceName = this.comboBoxDatasource.getSelectedItemAlias();
 			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(datasourceName);
 			Dataset targetDataset = DatasetUIUtilities.getDatasetFromDatasource(datasetName, datasource);
 			if (advance == null || advance.getTargetDataset() != targetDataset) {
