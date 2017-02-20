@@ -18,6 +18,7 @@ import java.util.Collections;
  * @author XiaJT
  */
 public class ParameterCombine extends AbstractParameter {
+	// Q: 添加的关联事件如何保存？
 	ArrayList<IParameter> parameters = new ArrayList<>();
 	public static final String HORIZONTAL = "PARAMETER_COMBINE_TYPE_HORIZONTAL";
 	public static final String VERTICAL = "PARAMETER_COMBINE_TYPE_VERTICAL";
