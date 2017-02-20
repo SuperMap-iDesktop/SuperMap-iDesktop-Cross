@@ -72,7 +72,11 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 
 			String currentDatasourceStr = vector.get(COLUMN_INDEX_CurrentDatasource).toString();
 			String datasetStr = vector.get(COLUMN_INDEX_Dataset).toString();
-			String targetDatasourceStr = vector.get(COLUMN_INDEX_TargetDatasource).toString();
+			// 由于DatasourceComboBox的重构，改变了item中存的对象（数据源本身），需要修改此处实现-yuanR 17.2.17
+//			String targetDatasourceStr = vector.get(COLUMN_INDEX_TargetDatasource).toString();
+			Datasource datasourceStr=(Datasource)vector.get(COLUMN_INDEX_TargetDatasource);
+			String targetDatasourceStr = datasourceStr.getAlias();
+
 			String targetDatasetName = vector.get(COLUMN_INDEX_TargetDataset).toString();
 			String encodingType = vector.get(COLUMN_INDEX_EncodeType).toString();
 			String charset = vector.get(COLUMN_INDEX_Charset).toString();
