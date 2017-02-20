@@ -56,12 +56,13 @@ public class DatasourceComboBox extends JComboBox<Datasource> {
 		setRenderer(new ListDataCellRender());
 	}
 
+
 	/**
 	 * 由于填充的是DatasetCell 返回时需要得到DatasetCell中JLabel中显示的字符串
 	 *
 	 * @return
 	 */
-	public String getSelectItem() {
+	public String getSelectedItemAlias () {
 		Datasource temp = (Datasource) getSelectedItem();
 		return temp.getAlias();
 	}

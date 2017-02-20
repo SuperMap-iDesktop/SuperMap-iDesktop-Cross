@@ -1,6 +1,16 @@
 package com.supermap.desktop.CtrlAction.Dataset;
 
-import com.supermap.data.*;
+import com.supermap.data.Charset;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetGridCollection;
+import com.supermap.data.DatasetImage;
+import com.supermap.data.DatasetImageCollection;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
+import com.supermap.data.EncodeType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
@@ -149,7 +159,8 @@ public class JDialogUnifiedSet extends JDialog {
 		int[] selectedRows = table.getSelectedRows();
 		MutiTableModel tableModel = (MutiTableModel) table.getModel();
 		List<Object> contents = tableModel.getContents();
-		DataCell targetDatasource = (DataCell) comboBoxTargetDatasource.getSelectedItem();
+		Datasource tempDatasource = (Datasource) comboBoxTargetDatasource.getSelectedItem();
+		DataCell targetDatasource=new DataCell(tempDatasource);
 		String encodeType = (String) comboBoxEncodeType.getSelectedItem();
 		String charset = (String) comboBoxCharset.getSelectedItem();
 		Object[][] datas = new Object[table.getRowCount()][6];
@@ -166,7 +177,6 @@ public class JDialogUnifiedSet extends JDialog {
 			for (int j = 0; j < selectedRows.length; j++) {
 				int count = selectedRows[j];
 				if (i == count) {
-					Datasource tempDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(targetDatasource.toString());
 					String tempDataset = tempDatasource.getDatasets().getAvailableDatasetName(vector.get(0).toString());
 					if (checkboxTargetDatasource.isSelected()) {
 						datas[count][2] = targetDatasource;

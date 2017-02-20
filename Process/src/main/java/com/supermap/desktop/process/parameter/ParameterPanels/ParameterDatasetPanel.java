@@ -33,7 +33,7 @@ public class ParameterDatasetPanel extends JPanel {
 		labelDatasource.setText(CommonProperties.getString(CommonProperties.Label_Datasource));
 		labelDataset.setText(CommonProperties.getString(CommonProperties.Label_Dataset));
 		this.datasourceComboBox = new DatasourceComboBox(Application.getActiveApplication().getWorkspace().getDatasources());
-		if (datasourceComboBox.getSelectItem() != null) {
+		if (datasourceComboBox.getSelectedItemAlias() != null) {
 			datasetComboBox = new DatasetComboBox(datasourceComboBox.getSelectedDatasource().getDatasets());
 		} else {
 			datasetComboBox = new DatasetComboBox();

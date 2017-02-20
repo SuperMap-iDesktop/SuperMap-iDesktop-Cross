@@ -1,16 +1,11 @@
 package com.supermap.desktop.process.graphics;
 
-import com.sun.corba.se.impl.orbutil.graph.Graph;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.process.graphics.graphs.*;
-import org.jhotdraw.draw.AttributeKeys;
-import org.jhotdraw.geom.Geom;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 import java.util.List;
 
@@ -25,7 +20,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
 
-	Vector graphs = new Vector(30);
 	private QuadTree<IGraph> graphQuadTree = new QuadTree<>();
 	private ArrayList<LineGraph> lines = new ArrayList<>();
 	private double scale = 1.0;
@@ -179,11 +173,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	}
 
 	private void paintGraphs(Graphics2D g) {
-		Collection c = this.graphQuadTree.findAll();
-		Iterator iterator = c.iterator();
+		Vector<IGraph> graphs = this.graphQuadTree.getDatasInside();
 
-		while (iterator.hasNext()) {
-			IGraph graph = (IGraph) iterator.next();
+		for (int i = 0; i < graphs.size(); i++) {
+			IGraph graph = graphs.get(i);
 			graph.paint(g, graph == this.hotGraph, graph == this.selectedGraph);
 		}
 
@@ -264,11 +257,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	private IGraph findGraph(Point point) {
 		IGraph graph = null;
-		Collection<IGraph> c = this.graphQuadTree.findContains(point);
+		List<IGraph> graphs = this.graphQuadTree.search(point);
 
-		if (c != null && c.size() > 0) {
-			Iterator<IGraph> iterator = c.iterator();
-			graph = iterator.next();
+		if (graphs != null && graphs.size() > 0) {
+			graph = graphs.get(0);
 		}
 		return graph;
 	}

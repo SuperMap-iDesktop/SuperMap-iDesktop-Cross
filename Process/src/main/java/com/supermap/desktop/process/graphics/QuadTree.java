@@ -1,182 +1,282 @@
 package com.supermap.desktop.process.graphics;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
+import java.lang.reflect.Array;
 import java.util.*;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 四叉树，用来进行平面空间几何对象的位置存储和索引
- * Created by highsad on 2017/1/19.
+ * Created by highsad on 2017/2/15.
+ * 用来管理 IGraph 空间信息的存储结构。
+ * 采用四叉树结构存储，一个范围 Rectangle 所覆盖的区块均添加该 Rectangle 的管理。
  */
 public class QuadTree<T> {
-	private HashMap<T, Rectangle> outside = new HashMap();
-	private QuadTree<T>.QuadNode root;
-	private int maxCapacity = 32;
-	private int minSize = 32;
-	private int maxOutside = 32;
+	public final static Rectangle ZERO = new Rectangle(0, 0, 0, 0);
+
+	private Vector<T> datas = new Vector<>();
+	private Vector<T> outsideDatas = new Vector<>();
+	private ConcurrentHashMap<T, Rectangle> boundsMap = new ConcurrentHashMap<>();
+	private QuadNode root;
+	private Rectangle bounds;
+	private double minNodeWidth = 32;
+	private double minNodeHeight = 32;
 
 	public QuadTree() {
-		this.root = new QuadTree.QuadNode(new Rectangle(0, 0, 2000, 2000));
+		this(new Rectangle(0, 0, 1920, 1080));
 	}
 
 	public QuadTree(Rectangle bounds) {
-		this.root = new QuadTree.QuadNode(bounds);
+		this.bounds = bounds;
+		this.root = new QuadNode(bounds);
 	}
 
-	public void add(T o, Rectangle bounds) {
-		if (this.root.bounds.contains(bounds)) {
-			this.root.add(o, (Rectangle) bounds.clone());
+	public void add(T data, Rectangle rect) {
+		if (this.bounds.contains(rect)) {
+			if (!this.datas.contains(data)) {
+				this.datas.add(data);
+				this.root.add(data, rect);
+			}
 		} else {
-			this.outside.put(o, (Rectangle) bounds.clone());
-			if (this.outside.size() > this.maxOutside) {
-				this.reorganize();
+			if (!this.outsideDatas.contains(data)) {
+				this.outsideDatas.add(data);
 			}
 		}
 
+		if (!this.boundsMap.containsKey(data)) {
+			this.boundsMap.put(data, rect);
+		}
 	}
 
+	public void remove(T data) {
+		if (this.datas.contains(data)) {
+			this.datas.remove(data);
+			this.root.remove(data);
+		}
+
+		if (this.outsideDatas.contains(data)) {
+			this.outsideDatas.remove(data);
+		}
+
+		if (this.boundsMap.containsKey(data)) {
+			this.boundsMap.remove(data);
+		}
+	}
+
+	public int getDatasCountInside() {
+		return this.datas.size();
+	}
+
+	public int getDatasCountOutside() {
+		return this.outsideDatas.size();
+	}
+
+	public Vector<T> getDatasInside() {
+		return this.datas;
+	}
+
+	public Vector<T> getDatasOutside() {
+		return this.outsideDatas;
+	}
+
+	public Vector<T> getAllDatas() {
+		Vector<T> vector = new Vector<>();
+
+		for (int i = 0; i < this.datas.size(); i++) {
+			vector.add(this.datas.get(i));
+		}
+
+		for (int i = 0; i < this.outsideDatas.size(); i++) {
+			vector.add(this.outsideDatas.get(i));
+		}
+		return vector;
+	}
+
+	public List<T> search(Point point) {
+		return this.root.search(point);
+	}
+
+	public Rectangle getBounds(T data) {
+		return this.boundsMap.get(data);
+	}
+
+	/**
+	 * 重新组织
+	 */
 	public void reorganize() {
-		this.root.join();
-		this.outside.putAll(this.root.objects);
-		this.root.objects.clear();
-		Iterator i = this.outside.entrySet().iterator();
-		Map.Entry<T, Rectangle> entry = (Map.Entry) i.next();
-		Rectangle treeBounds = (Rectangle) (entry.getValue()).clone();
+		this.datas.clear();
+		this.outsideDatas.clear();
+		this.root.reset();
+		this.root.bounds = (Rectangle) this.bounds.clone();
 
-		while (i.hasNext()) {
-			entry = (Map.Entry) i.next();
-			Rectangle bounds = entry.getValue();
-			treeBounds.add(bounds);
-		}
-
-		this.root.bounds = treeBounds;
-		i = this.outside.entrySet().iterator();
-
-		while (i.hasNext()) {
-			entry = (Map.Entry) i.next();
-			this.root.add(entry.getKey(), entry.getValue());
-		}
-
-		this.outside.clear();
-	}
-
-	public void remove(T o) {
-		this.outside.remove(o);
-		this.root.remove(o);
-	}
-
-	public Collection<T> findAll() {
-		return findInside(this.root.getBounds());
-	}
-
-	public Collection<T> findContains(Point p) {
-		HashSet result = new HashSet();
-		this.root.findContains(p, result);
-		Iterator iterator = this.outside.entrySet().iterator();
-
+		Iterator iterator = this.boundsMap.entrySet().iterator();
 		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			if (((Rectangle) entry.getValue()).contains(p)) {
-				result.add(entry.getKey());
-			}
+			Map.Entry<T, Rectangle> entry = (Map.Entry<T, Rectangle>) iterator.next();
+			add(entry.getKey(), entry.getValue());
 		}
-
-		return result;
-	}
-
-	public Collection<T> findIntersects(Rectangle2D r) {
-		return this.findIntersects(GraphicsUtil.createRectangle(r.getX(), r.getY(), r.getWidth(), r.getHeight()));
-	}
-
-	public Collection<T> findIntersects(Rectangle r) {
-		HashSet result = new HashSet();
-		this.root.findIntersects(r, result);
-		Iterator iterator = this.outside.entrySet().iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			if (((Rectangle) entry.getValue()).intersects(r)) {
-				result.add(entry.getKey());
-			}
-		}
-
-		return result;
-	}
-
-	public Collection<T> findInside(Rectangle r) {
-		HashSet result = new HashSet();
-		this.root.findInside(r, result);
-		Iterator iterator = this.outside.entrySet().iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			if (r.contains((Rectangle2D) entry.getValue())) {
-				result.add(entry.getKey());
-			}
-		}
-
-		return result;
 	}
 
 	private class QuadNode {
+		private ConcurrentHashMap<T, Rectangle> datas = new ConcurrentHashMap<>();
 		private Rectangle bounds;
-		private HashMap<T, Rectangle> objects;
-		private QuadNode northEast;
+
 		private QuadNode northWest;
-		private QuadNode southEast;
+		private QuadNode northEast;
 		private QuadNode southWest;
+		private QuadNode southEast;
+
+		public QuadNode() {
+
+		}
 
 		public QuadNode(Rectangle bounds) {
 			this.bounds = bounds;
-			this.objects = new HashMap();
 		}
 
-		public Rectangle getBounds() {
-			return this.bounds;
-		}
+		public void add(T data, Rectangle rect) {
+			if (this.bounds.contains(rect)) {
+				if (this.isLeaf() && rect.width >= QuadTree.this.minNodeWidth && rect.height >= QuadTree.this.minNodeHeight) {
 
-		public boolean isLeaf() {
-			return this.northEast == null;
-		}
+					// 当 Bounds 的宽或者高小于了最小值，就不再继续分解，直接添加元素，以避免在当前实现逻辑之下，data 的 rect 过于小导致无限细化的问题
+					split();
+				}
 
-		public void remove(T o) {
-			if (this.objects.remove(o) == null && !this.isLeaf()) {
-				this.northEast.remove(o);
-				this.northWest.remove(o);
-				this.southEast.remove(o);
-				this.southWest.remove(o);
+				if (!this.isLeaf()) {
+					if (this.northWest.bounds.intersects(rect)) {
+						this.northWest.add(data, rect);
+					}
+
+					if (this.northEast.bounds.intersects(rect)) {
+						this.northEast.add(data, rect);
+					}
+
+					if (this.southWest.bounds.intersects(rect)) {
+						this.southWest.add(data, rect);
+					}
+
+					if (this.southEast.bounds.intersects(rect)) {
+						this.southEast.add(data, rect);
+					}
+				} else {
+					this.datas.put(data, rect);
+				}
+			} else if (this.bounds.intersects(rect)) {
+
+				// 部分相交，以及恰好在中点，即不包含也不相交，那就收下了
+				this.datas.put(data, rect);
 			}
-
 		}
 
-		public void add(T o, Rectangle oBounds) {
-			if (this.isLeaf() && this.objects.size() >= QuadTree.this.maxCapacity && this.bounds.width > (double) QuadTree.this.minSize && this.bounds.height > (double) QuadTree.this.minSize) {
-				this.split();
-			}
-
-			if (!this.isLeaf() && !oBounds.contains(this.bounds)) {
-				if (this.northEast.bounds.intersects(oBounds)) {
-					this.northEast.add(o, oBounds);
-				}
-
-				if (this.northWest.bounds.intersects(oBounds)) {
-					this.northWest.add(o, oBounds);
-				}
-
-				if (this.southEast.bounds.intersects(oBounds)) {
-					this.southEast.add(o, oBounds);
-				}
-
-				if (this.southWest.bounds.intersects(oBounds)) {
-					this.southWest.add(o, oBounds);
-				}
+		public void remove(T data) {
+			if (isLeaf()) {
+				this.datas.remove(data);
 			} else {
-				this.objects.put(o, oBounds);
+				this.northWest.remove(data);
+				this.northEast.remove(data);
+				this.southWest.remove(data);
+				this.southEast.remove(data);
 			}
-
 		}
 
-		public void split() {
+		public List<T> search(Point point) {
+			if (!this.bounds.contains(point)) {
+				return null;
+			}
+
+			ArrayList<T> list = new ArrayList<>();
+			Iterator iterator = this.datas.entrySet().iterator();
+
+			while (iterator.hasNext()) {
+				Map.Entry<T, Rectangle> entry = (Map.Entry<T, Rectangle>) iterator.next();
+				if (!list.contains(entry.getKey()) && entry.getValue().contains(point)) {
+					list.add(entry.getKey());
+				}
+			}
+
+			if (!this.isLeaf()) {
+				addListUnique(list, this.northWest.search(point));
+				addListUnique(list, this.northEast.search(point));
+				addListUnique(list, this.southWest.search(point));
+				addListUnique(list, this.southEast.search(point));
+			}
+
+			return list;
+		}
+
+		private <T> void addListUnique(List<T> list, List<T> src) {
+			if (list == null || src == null || src.size() == 0) {
+				return;
+			}
+
+			for (int i = 0; i < src.size(); i++) {
+				if (!list.contains(src.get(i))) {
+					list.add(src.get(i));
+				}
+			}
+		}
+
+		public Map<T, Rectangle> getDatas() {
+			if (this.datas.size() == 0) {
+				return null;
+			}
+
+			ConcurrentHashMap<T, Rectangle> map = new ConcurrentHashMap<>();
+			map.putAll(this.datas);
+			return map;
+		}
+
+		public void getDatas(Map map) {
+			if (map == null) {
+				return;
+			}
+
+			map.putAll(this.datas);
+		}
+
+		public Map<T, Rectangle> getAllDatas() {
+			if (isLeaf()) {
+				return getDatas();
+			}
+
+			ConcurrentHashMap<T, Rectangle> map = new ConcurrentHashMap<>();
+			map.putAll(this.northWest.getAllDatas());
+			map.putAll(this.northEast.getAllDatas());
+			map.putAll(this.southWest.getAllDatas());
+			map.putAll(this.southEast.getAllDatas());
+			return map;
+		}
+
+		public void getAllDatas(Map map) {
+			if (map == null) {
+				return;
+			}
+
+			if (isLeaf()) {
+				map.putAll(this.datas);
+			} else {
+				this.northWest.getAllDatas(map);
+				this.northEast.getAllDatas(map);
+				this.southWest.getAllDatas(map);
+				this.southEast.getAllDatas(map);
+			}
+		}
+
+		public void reset() {
+			this.datas.clear();
+			this.bounds = ZERO;
+			if (!isLeaf()) {
+				this.northWest.reset();
+				this.northEast.reset();
+				this.southWest.reset();
+				this.southEast.reset();
+				this.northWest = null;
+				this.northEast = null;
+				this.southWest = null;
+				this.southEast = null;
+			}
+		}
+
+		private void split() {
 			if (this.isLeaf()) {
 				double hw = this.bounds.getWidth() / 2.0D;
 				double hh = this.bounds.getHeight() / 2.0D;
@@ -184,98 +284,11 @@ public class QuadTree<T> {
 				this.northEast = new QuadNode(GraphicsUtil.createRectangle(this.bounds.getX() + hw, this.bounds.getY(), this.bounds.getWidth() - hw, hh));
 				this.southWest = new QuadNode(GraphicsUtil.createRectangle(this.bounds.getX(), this.bounds.getY() + hh, hw, this.bounds.getHeight() - hh));
 				this.southEast = new QuadNode(GraphicsUtil.createRectangle(this.bounds.getX() + hw, this.bounds.getY() + hh, this.bounds.getWidth() - hw, this.bounds.getHeight() - hh));
-				HashMap temp = this.objects;
-				this.objects = new HashMap();
-				Iterator iterator = temp.entrySet().iterator();
-
-				while (iterator.hasNext()) {
-					Map.Entry<T, Rectangle> entry = (Map.Entry) iterator.next();
-					this.add(entry.getKey(), entry.getValue());
-				}
 			}
-
 		}
 
-		public void join() {
-			if (!this.isLeaf()) {
-				this.northWest.join();
-				this.northEast.join();
-				this.southWest.join();
-				this.southEast.join();
-				this.objects.putAll(this.northWest.objects);
-				this.objects.putAll(this.northEast.objects);
-				this.objects.putAll(this.southWest.objects);
-				this.objects.putAll(this.southEast.objects);
-				this.northWest = null;
-				this.northEast = null;
-				this.southWest = null;
-				this.southEast = null;
-			}
-
-		}
-
-		public void findContains(Point p, HashSet<T> result) {
-			if (this.bounds.contains(p)) {
-				Iterator iterator = this.objects.entrySet().iterator();
-
-				while (iterator.hasNext()) {
-					Map.Entry<T, Rectangle> entry = (Map.Entry) iterator.next();
-					if ((entry.getValue()).contains(p)) {
-						result.add(entry.getKey());
-					}
-				}
-
-				if (!this.isLeaf()) {
-					this.northWest.findContains(p, result);
-					this.northEast.findContains(p, result);
-					this.southWest.findContains(p, result);
-					this.southEast.findContains(p, result);
-				}
-			}
-
-		}
-
-		public void findIntersects(Rectangle r, HashSet<T> result) {
-			if (this.bounds.intersects(r)) {
-				int oldSize = result.size();
-				Iterator iterator = this.objects.entrySet().iterator();
-
-				while (iterator.hasNext()) {
-					Map.Entry<T, Rectangle> entry = (Map.Entry) iterator.next();
-					if ((entry.getValue()).intersects(r)) {
-						result.add(entry.getKey());
-					}
-				}
-
-				if (!this.isLeaf()) {
-					this.northWest.findIntersects(r, result);
-					this.northEast.findIntersects(r, result);
-					this.southWest.findIntersects(r, result);
-					this.southEast.findIntersects(r, result);
-				}
-			}
-
-		}
-
-		public void findInside(Rectangle r, HashSet<T> result) {
-			if (this.bounds.intersects(r)) {
-				Iterator iterator = this.objects.entrySet().iterator();
-
-				while (iterator.hasNext()) {
-					Map.Entry<T, Rectangle> entry = (Map.Entry) iterator.next();
-					if (r.contains(entry.getValue())) {
-						result.add(entry.getKey());
-					}
-				}
-
-				if (!this.isLeaf()) {
-					this.northWest.findInside(r, result);
-					this.northEast.findInside(r, result);
-					this.southWest.findInside(r, result);
-					this.southEast.findInside(r, result);
-				}
-			}
-
+		private boolean isLeaf() {
+			return this.northWest == null;
 		}
 	}
 }
