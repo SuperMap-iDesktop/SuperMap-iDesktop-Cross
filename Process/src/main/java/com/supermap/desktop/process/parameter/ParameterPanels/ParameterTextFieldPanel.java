@@ -4,6 +4,7 @@ import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.TextFields.DefaultValueTextField;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -18,7 +19,8 @@ import java.beans.PropertyChangeListener;
 public class ParameterTextFieldPanel extends JPanel {
 	private ParameterTextField parameterTextField;
 	private JLabel label = new JLabel();
-	private JTextField textField = new JTextField();
+//	private JTextField textField = new JTextField();
+	private DefaultValueTextField textField = new DefaultValueTextField();
 	private boolean isSelectingItem = false;
 
 	public ParameterTextFieldPanel(ParameterTextField parameterTextField) {

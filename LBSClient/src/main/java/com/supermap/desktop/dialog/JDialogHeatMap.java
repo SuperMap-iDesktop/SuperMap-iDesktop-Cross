@@ -13,6 +13,7 @@ import com.supermap.desktop.messagebus.NewMessageBus;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.TextFields.DefaultValueTextField;
 import com.supermap.ui.Action;
 import com.supermap.ui.*;
 
@@ -30,32 +31,32 @@ public class JDialogHeatMap extends SmDialog {
 
     private JPanel panelBounds;
     private JLabel labelBoundsLeft;
-    private JTextField textBoundsLeft;
+    private DefaultValueTextField textBoundsLeft;
     private JLabel labelBoundsBottom;
-    private JTextField textBoundsBottom;
+    private DefaultValueTextField textBoundsBottom;
     private JLabel labelBoundsRight;
-    private JTextField textBoundsRight;
+    private DefaultValueTextField textBoundsRight;
     private JLabel labelBoundsTop;
-    private JTextField textBoundsTop;
+    private DefaultValueTextField textBoundsTop;
     private JButton buttonDrawBounds;
     private JButton buttonInputBrowser;
 
     private JLabel labelCacheLevel;
-    private JTextField textFieldCacheLevel;
+    private DefaultValueTextField textFieldCacheLevel;
     private JLabel labelXYIndex;
-    private JTextField textFieldXYIndex;
+    private DefaultValueTextField textFieldXYIndex;
     private JLabel labelFileInputPath;
-    private JTextField textFieldFileInputPath;
+    private DefaultValueTextField textFieldFileInputPath;
     private JLabel labelCacheName;
-    private JTextField textFieldCacheName;
+    private DefaultValueTextField textFieldCacheName;
     private JLabel labelDatabaseType;
     private JComboBox comboBoxDatabaseType;
     private JLabel labelServiceAddress;
-    private JTextField textFieldServiceAddress;
+    private DefaultValueTextField textFieldServiceAddress;
     private JLabel labelDatabase;
-    private JTextField textFieldDatabase;
+    private DefaultValueTextField textFieldDatabase;
     private JLabel labelVersion;
-    private JTextField textFieldVersion;
+    private DefaultValueTextField textFieldVersion;
     private JButton buttonOK;
     private JButton buttonCancel;
     private ActionListener heatMapListener = new ActionListener() {
@@ -103,35 +104,35 @@ public class JDialogHeatMap extends SmDialog {
         this.buttonInputBrowser = new JButton();
         this.panelBounds = new JPanel();
         this.labelBoundsLeft = new JLabel();
-        this.textBoundsLeft = new JTextField("-74.050");
+        this.textBoundsLeft = new DefaultValueTextField("-74.050");
         this.labelBoundsBottom = new JLabel();
-        this.textBoundsBottom = new JTextField("40.650");
+        this.textBoundsBottom = new DefaultValueTextField("40.650");
         this.labelBoundsRight = new JLabel();
-        this.textBoundsRight = new JTextField("-73.850");
+        this.textBoundsRight = new DefaultValueTextField("-73.850");
         this.labelBoundsTop = new JLabel();
-        this.textBoundsTop = new JTextField("40.850");
+        this.textBoundsTop = new DefaultValueTextField("40.850");
         this.buttonDrawBounds = new JButton();
         if (Application.getActiveApplication().getActiveForm() == null
                 || !(Application.getActiveApplication().getActiveForm() instanceof IFormMap)) {
             buttonDrawBounds.setEnabled(false);
         }
         this.labelCacheLevel = new JLabel();
-        this.textFieldCacheLevel = new JTextField("1");
+        this.textFieldCacheLevel = new DefaultValueTextField("1");
         this.labelXYIndex = new JLabel();
-        this.textFieldXYIndex = new JTextField("10,11");
+        this.textFieldXYIndex = new DefaultValueTextField("10,11");
         this.labelFileInputPath = new JLabel();
-        this.textFieldFileInputPath = new JTextField(WebHDFS.getHDFSFilePath());
+        this.textFieldFileInputPath = new DefaultValueTextField(WebHDFS.getHDFSFilePath());
         this.labelCacheName = new JLabel();
-        this.textFieldCacheName = new JTextField("test1_heat");
+        this.textFieldCacheName = new DefaultValueTextField("test1_heat");
         this.labelDatabaseType = new JLabel();
         this.comboBoxDatabaseType = new JComboBox();
         this.comboBoxDatabaseType.addItem("MongoDB");
         this.labelServiceAddress = new JLabel();
-        this.textFieldServiceAddress = new JTextField("192.168.15.245:27017");
+        this.textFieldServiceAddress = new DefaultValueTextField("192.168.15.245:27017");
         this.labelDatabase = new JLabel();
-        this.textFieldDatabase = new JTextField("test");
+        this.textFieldDatabase = new DefaultValueTextField("test");
         this.labelVersion = new JLabel();
-        this.textFieldVersion = new JTextField("V1");
+        this.textFieldVersion = new DefaultValueTextField("V1");
         this.buttonOK = ComponentFactory.createButtonOK();
         this.buttonCancel = ComponentFactory.createButtonCancel();
         this.getRootPane().setDefaultButton(this.buttonOK);

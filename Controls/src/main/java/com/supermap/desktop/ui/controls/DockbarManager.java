@@ -311,50 +311,6 @@ public class DockbarManager implements IDockbarManager {
 		return true;
 	}
 
-//	public void display(Dockbar dockbar, boolean isDisplay) {
-//		if (isDisplay) {
-//			if (isDisplay(dockbar.getView())) {
-//				DockingManager.display(dockbar.getView());
-//				return;
-//			}
-//
-//			if (dockbar == this.workspaceComponentManager) {
-//				Dockable layer = DockingManager.getDockable(LAYERS_COMPONENT_MANAGER_ID);
-//				if (layer != null && DockingManager.isDocked(layer)) {
-//					layer.dock(this.workspaceComponentManager.getView(), DockingConstants.NORTH_REGION, 0.5f);
-//				} else {
-//					this.mainView.dock(this.workspaceComponentManager.getView(), DockingConstants.WEST_REGION, 0.2f);
-//				}
-//			} else if (dockbar == this.layersComponentManager) {
-//				Dockable workspace = DockingManager.getDockable(WORKSPACE_COMPONENT_MANAGER_ID);
-//				if (workspace != null && DockingManager.isDocked(workspace)) {
-//					workspace.dock(this.layersComponentManager.getView(), DockingConstants.SOUTH_REGION, 0.5f);
-//				} else {
-//					this.mainView.dock(this.layersComponentManager.getView(), DockingConstants.WEST_REGION, 0.2f);
-//				}
-//			} else if (dockbar == this.outputFrame) {
-//				this.mainView.dock(this.outputFrame.getView(), DockingConstants.SOUTH_REGION, 0.7f);
-//				DockingManager.setMinimized(this.outputFrame.getView(), true, (MainFrame) Application.getActiveApplication().getMainFrame(), DockingConstants.BOTTOM);
-//			} else {
-//				Dockable docked = null;
-//				for (int i = 0; i < this.dockbars.size(); i++) {
-//					if (DockingManager.isDocked((Dockable) this.dockbars.get(i).getView())) {
-//						docked = this.dockbars.get(i).getView();
-//						break;
-//					}
-//				}
-//
-//				if (docked != null) {
-//					docked.dock(dockbar.getView());
-//				} else {
-//					this.mainView.dock(dockbar.getView(), DockingConstants.EAST_REGION, 0.7f);
-//				}
-//			}
-//		} else {
-//			DockingManager.close(dockbar.getView());
-//		}
-//	}
-
 	private boolean isDisplay(Dockable dockable) {
 		return DockingManager.isDocked(dockable) || DockingManager.isMinimized(dockable);
 	}
