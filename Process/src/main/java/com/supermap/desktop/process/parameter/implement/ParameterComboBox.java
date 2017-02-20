@@ -110,4 +110,8 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 	public void dispose() {
 
 	}
+
+	public int getSelectedIndex() {
+		return getItemIndex(getSelectedItem());
+	}
 }
