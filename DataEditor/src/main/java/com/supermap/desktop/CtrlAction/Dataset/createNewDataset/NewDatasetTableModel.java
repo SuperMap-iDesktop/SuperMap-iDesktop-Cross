@@ -115,7 +115,8 @@ public class NewDatasetTableModel extends DefaultTableModel {
 		if (column == COLUMN_INDEX_INDEX) {
 			throw new UnsupportedOperationException("index can't change");
 		} else if (column == COLUMN_INDEX_TARGET_DATASOURCE) {
-			datasetBeans.get(row).setDatasource((Datasource) ((DataCell) aValue).getData());
+			datasetBeans.get(row).setDatasource((Datasource) aValue);
+//			datasetBeans.get(row).setDatasource((Datasource) ((DataCell) aValue).getData());
 			checkCurrentName(row);
 		} else if (column == COLUMN_INDEX_DatasetType) {
 			datasetBeans.get(row).setDatasetType(((DatasetType) ((DataCell) aValue).getData()));
