@@ -104,7 +104,8 @@ public class DatasetChooserDataEditor {
                 datasourceCell.initDatasourceType(datasource);
                 DataCell datasoureCell = datasourceCell;
                 temp[COLUMN_INDEX_SOURCEDATASOURCE] = datasoureCell;
-                temp[COLUMN_INDEX_TARGETDATASOURCE] = datasoureCell;
+//                temp[COLUMN_INDEX_TARGETDATASOURCE] = datasoureCell; --yuanR 2017.2.20
+                temp[COLUMN_INDEX_TARGETDATASOURCE] =  datasource ;
                 temp[COLUMN_INDEX_TARGETDATASET] = datasource.getDatasets().getAvailableDatasetName(dataset.getName());
                 temp[COLUMN_INDEX_CODINGTYPE] = CommonToolkit.EncodeTypeWrap.findName(dataset.getEncodeType());
                 if (dataset instanceof DatasetVector) {
