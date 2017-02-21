@@ -95,31 +95,38 @@ public class SmFieldInfoComboBox extends JComboBox {
         }
     }
 
-    @Override
-    public void setSelectedItem(Object anObject) {
+    public void setSelectedObject(Object anObject) {
         int itemIndex = this.getItemIndex(anObject);
         if (itemIndex > -1) {
-            super.setSelectedItem(this.getItemAt(itemIndex));
             this.setSelectedValue(anObject);
+            super.setSelectedItem(this.getItemAt(itemIndex));
             return;
         }
-        super.setSelectedItem(anObject.toString());
         this.setSelectedValue(anObject);
+        super.setSelectedItem(anObject.toString());
     }
 
-    @Override
-    public void setSelectedIndex(int anIndex) {
-        try {
-            super.setSelectedIndex(anIndex);
-        } catch (Exception e) {
-//            e.printStackTrace();
-            return;
-        }
-        this.setSelectedValue(this.getItemIndex(anIndex));
+    public void setDataset(DatasetVector dataset) {
+        this.dataset = dataset;
+        this.joinItems = null;
+        reInit();
     }
 
-    public void init() {
+    public void setJoinItems(JoinItems joinItems) {
+        this.joinItems = joinItems;
+        reInit();
+    }
+
+    private void reInit() {
+        //移除已有存在的item，重新构造
+        this.removeAllItems();
+        this.datasetFieldInfos.clear();
+        this.addItems();
+    }
+
+    private void init() {
         initComponent();
+        unRegisterListener();
         registerListener();
         setSelectedValue(getSelectedItem());
     }
@@ -134,6 +141,12 @@ public class SmFieldInfoComboBox extends JComboBox {
      */
     private JComboBox<Object> createComboBoxField() {
         this.setEditable(true);
+        addItems();
+        this.setRenderer(new DatasetFieldInfoRender());
+        return this;
+    }
+
+    private void addItems() {
         //添加数据集数值字段
         initFieldInfo();
         for (DatasetFieldInfo datasetFieldInfo : datasetFieldInfos) {
@@ -153,8 +166,6 @@ public class SmFieldInfoComboBox extends JComboBox {
         if (getItemIndex(SQLExpressionText) == -1) {
             this.addItem(SQLExpressionText);
         }
-        this.setRenderer(new DatasetFieldInfoRender());
-        return this;
     }
 
     private void initFieldInfo() {
@@ -203,8 +214,7 @@ public class SmFieldInfoComboBox extends JComboBox {
                 Object item = e.getItem();
                 //选中的是FieldInfo，直接设置为选中项
                 if (item instanceof DatasetFieldInfo) {
-                    setSelectedItem(item);
-                    setSelectedValue(item);
+                    setSelectedObject(item);
                     return;
                 }
                 //选中或输入字符串
@@ -235,27 +245,22 @@ public class SmFieldInfoComboBox extends JComboBox {
                             item = ((String) item).trim();
                         } else {
                             Object selectedValue = getSelectedValue();
-                            setSelectedItem(getSelectedValue());
-                            setSelectedValue(selectedValue);
+                            setSelectedObject(selectedValue);
                             return;
                         }
                     }
                     //属于comboBox的字符串直接选择
                     int itemIndex = getItemIndex(item);
                     if (itemIndex > -1) {
-                        setSelectedItem(getItemAt(itemIndex));
-                        setSelectedValue(getItemAt(itemIndex));
+                        setSelectedObject(getItemAt(itemIndex));
                     } else {
-                        setSelectedItem(item);
-                        setSelectedValue(item);
+                        setSelectedObject(item);
                     }
                 }
                 //item为其他类型对象：主动调用setSelectItem设置的
                 else {
-                    setSelectedItem(item);
-                    setSelectedValue(item);
+                    setSelectedObject(item);
                 }
-
             }
         }
     }
@@ -361,7 +366,7 @@ public class SmFieldInfoComboBox extends JComboBox {
             public void actionPerformed(ActionEvent e) {
                 FieldInfo fieldInfo = dataset.getFieldInfos().get(3);
                 // todo comboBox选中fieldInfo
-                smNumericFieldComboBox.setSelectedItem(fieldInfo);
+                smNumericFieldComboBox.setSelectedObject(fieldInfo);
                 // todo 获取当前选中fieldInfo
                 System.out.println(smNumericFieldComboBox.getSelectedIndex());
                 System.out.println("selectItem Class:" + smNumericFieldComboBox.getSelectedItem().getClass());
@@ -372,8 +377,6 @@ public class SmFieldInfoComboBox extends JComboBox {
             }
         });
         jFrame.setVisible(true);
-
-
     }
 
 
