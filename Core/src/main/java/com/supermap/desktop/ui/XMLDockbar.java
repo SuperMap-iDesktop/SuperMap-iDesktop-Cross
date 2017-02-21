@@ -16,8 +16,7 @@ import java.util.ArrayList;
 public class XMLDockbar extends XMLCommand {
 	private String title = "";
 	private String controlClass = null;
-	//	private DockPath dockPath;
-	private ArrayList<DockPath> dockPaths = new ArrayList<>();
+	private DockPath dockPath;
 
 	public XMLDockbar(PluginInfo pluginInfo, XMLCommandBase group) {
 		super(pluginInfo, group);
@@ -74,20 +73,23 @@ public class XMLDockbar extends XMLCommand {
 		// 获取路径
 		Element[] directionNodes = XmlUtilities.getChildElementNodesByName(element, g_NodeDirection);
 		if (directionNodes != null && directionNodes.length > 0) {
-			for (int i = 0; i < directionNodes.length; i++) {
-				this.dockPaths.add(loadDirection(directionNodes[i], null));
+			this.dockPath = loadDirection(directionNodes[0]);
+			DockPath current = this.dockPath;
+
+			for (int i = 1; i < directionNodes.length; i++) {
+				current.setNext(loadDirection(directionNodes[i]));
+				current = current.getNext();
 			}
 		} else {
 			// 配置文件没有配置 Direction，则默认为 ROOT.LEFT
-			DockPath dockPath = new DockPath();
-			dockPath.setDirection(Direction.LEFT);
-			this.dockPaths.add(dockPath);
+			this.dockPath = new DockPath();
+			this.dockPath.setDirection(Direction.LEFT);
 		}
 
 		return result;
 	}
 
-	private DockPath loadDirection(Element directionNode, DockPath relateTo) {
+	private DockPath loadDirection(Element directionNode) {
 		DockPath path = new DockPath();
 		path.setDirection(Direction.valueOf(directionNode.getNodeValue()));
 
@@ -247,16 +249,12 @@ public class XMLDockbar extends XMLCommand {
 		return title;
 	}
 
-	public DockPath[] getDockPaths() {
-		return this.dockPaths.toArray(new DockPath[this.dockPaths.size()]);
+	public DockPath getDockPath() {
+		return dockPath;
 	}
 
-//	public DockPath getDockPath() {
-//		return dockPath;
-//	}
-
 	public void setDockPath(DockPath dockPath) {
-//		this.dockPath = dockPath;
+		this.dockPath = dockPath;
 	}
 
 	public void setTitle(String title) {

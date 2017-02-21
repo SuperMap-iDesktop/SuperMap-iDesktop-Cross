@@ -10,6 +10,7 @@ public class DockPath {
 
 	private Direction direction = Direction.LEFT;
 	private double ratio = 0.5;
+	private DockPath next;
 
 	public double getRatio() {
 		return ratio;
@@ -25,6 +26,18 @@ public class DockPath {
 
 	public void setDirection(Direction direction) {
 		this.direction = direction;
+	}
+
+	public DockPath getNext() {
+		return next;
+	}
+
+	public void setNext(DockPath next) {
+		this.next = next;
+	}
+
+	public boolean isLeaf() {
+		return this.next == null;
 	}
 
 	//	/**

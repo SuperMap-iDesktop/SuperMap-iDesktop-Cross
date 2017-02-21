@@ -120,13 +120,9 @@ public class Dockbar implements IDockbar {
 		return this.view;
 	}
 
-	public DockPath[] getDockPaths() {
-		return this.xmlDockbar.getDockPaths();
+	public DockPath getDockPath() {
+		return this.xmlDockbar.getDockPath();
 	}
-
-//	public DockPath getDockPath() {
-//		return this.xmlDockbar.getDockPath();
-//	}
 
 	public String getID() {
 		return this.xmlDockbar.getID();

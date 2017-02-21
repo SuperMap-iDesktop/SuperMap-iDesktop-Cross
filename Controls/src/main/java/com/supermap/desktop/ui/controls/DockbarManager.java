@@ -43,6 +43,8 @@ public class DockbarManager implements IDockbarManager {
 	private Dockbar layersComponentManager = null;
 	private Dockbar outputFrame = null;
 
+	private DockLayout dockLayout;
+
 	public DockbarManager(JComponent mainContent) {
 		DefaultDockingStrategy.keepConstantPercentage(true);
 		this.dockbars = new ArrayList<Dockbar>();
@@ -52,6 +54,7 @@ public class DockbarManager implements IDockbarManager {
 		this.mainView.setTitlebar(null);
 		this.mainView.getContentPane().setLayout(new BorderLayout());
 		this.mainView.getContentPane().add(mainContent);
+		this.dockLayout = new DockLayout(this.mainView);
 	}
 
 	public Component getDockPort() {
@@ -194,17 +197,17 @@ public class DockbarManager implements IDockbarManager {
 
 	public void setVisible(Dockbar dockbar, boolean isVisible) {
 		if (isVisible) {
-			DockPath[] dockPaths = dockbar.getDockPaths();
+			DockPath path = dockbar.getDockPath();
 
-			if (dockPaths != null && dockPaths.length > 0) {
-				Dockable referTo = this.mainView;
-
-				for (int i = 0; i < dockPaths.length; i++) {
-					DockPath dockPath = dockPaths[i];
-					String region = getDockingRegion(dockPath.getDirection());
-
-				}
-			}
+//			if (dockPaths != null && dockPaths.length > 0) {
+//				Dockable referTo = this.mainView;
+//
+//				for (int i = 0; i < dockPaths.length; i++) {
+//					DockPath dockPath = dockPaths[i];
+//					String region = getDockingRegion(dockPath.getDirection());
+//
+//				}
+//			}
 		} else {
 			DockingManager.close(dockbar.getView());
 		}
