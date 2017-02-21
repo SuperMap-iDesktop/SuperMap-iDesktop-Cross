@@ -140,7 +140,7 @@ public class Dockbar implements IDockbar {
 	@Override
 	public void setVisible(boolean isVisible) {
 		this.xmlDockbar.setVisible(isVisible);
-		((DockbarManager) Application.getActiveApplication().getMainFrame().getDockbarManager()).display(this, isVisible);
+		((DockbarManager) Application.getActiveApplication().getMainFrame().getDockbarManager()).setVisible(this, isVisible);
 	}
 
 	@Override
