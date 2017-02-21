@@ -66,11 +66,27 @@ public class LayerGridParamColorTableDialog extends SmDialog{
     private double[] keysOrigin;
     private ArrayList<ColorTableChangeListener> listeners;
 
+    //by lixiaoyao 栅格颜色表的非普遍性调用进行优化
+    LayerSettingGrid currentLayerSettingGrid;
+
+
+
+
     public LayerGridParamColorTableDialog(LayerGridParamPropertyModel modelModified){
         super();
         this.modelModified = modelModified;
         LayerSettingGrid setting = (LayerSettingGrid) modelModified.getLayers()[0].getAdditionalSetting();
         ColorDictionary colorDictionary = setting.getColorDictionary();
+        colorsOrigin = colorDictionary.getColors();
+        keysOrigin = colorDictionary.getKeys();
+
+        init();
+    }
+
+    public LayerGridParamColorTableDialog(LayerSettingGrid layerSettingGrid){
+        super();
+        this.currentLayerSettingGrid  = layerSettingGrid;
+        ColorDictionary colorDictionary = this.currentLayerSettingGrid.getColorDictionary();
         colorsOrigin = colorDictionary.getColors();
         keysOrigin = colorDictionary.getKeys();
 
@@ -232,8 +248,12 @@ public class LayerGridParamColorTableDialog extends SmDialog{
             @Override
             public void actionPerformed(ActionEvent e) {
                 //还原图层
-                modelModified.setLayerGridColorDictionary(keysOrigin,colorsOrigin);
-                modelModified.refresh();
+                if (modelModified!=null) {
+                    modelModified.setLayerGridColorDictionary(keysOrigin, colorsOrigin);
+                    modelModified.refresh();
+                }else{
+                    resetCurrentLayerSettingGrid(keysOrigin, colorsOrigin);
+                }
 
                 dialogResult = DialogResult.CANCEL;
                 setVisible(false);
@@ -415,7 +435,12 @@ public class LayerGridParamColorTableDialog extends SmDialog{
      * 填充控件初始值
      */
     private void initComponentStates() {
-        LayerSettingGrid setting = (LayerSettingGrid) modelModified.getLayers()[0].getAdditionalSetting();
+        LayerSettingGrid setting=null;
+        if (modelModified!=null) {
+            setting = (LayerSettingGrid) modelModified.getLayers()[0].getAdditionalSetting();
+        }else if (this.currentLayerSettingGrid!=null){
+            setting=this.currentLayerSettingGrid;
+        }
         comboBoxColor.setSelectedItem(setting.getColorTable());
         colorsWithKeysTableModel.setColorNodes(setting.getColorDictionary().getColors(), setting.getColorDictionary().getKeys());
         if (tableColor.getRowCount() > 0) {
@@ -509,7 +534,11 @@ public class LayerGridParamColorTableDialog extends SmDialog{
             keys[i] = colorsWithKeysTableModel.getKeys().get(i);
             colors[i] = colorsWithKeysTableModel.getColors().get(i);
         }
-        modelModified.setLayerGridColorDictionary(keys,colors);
+        if (modelModified!=null) {
+            modelModified.setLayerGridColorDictionary(keys, colors);
+        }else {
+            resetCurrentLayerSettingGrid(keys, colors);
+        }
 
         fireColorTableChange(new ColorTableChangeEvent(this,keys,colors));
     }
@@ -544,6 +573,21 @@ public class LayerGridParamColorTableDialog extends SmDialog{
         if (listeners.indexOf(listener) > -1) {
             listeners.remove(listener);
         }
+    }
+
+    private void resetCurrentLayerSettingGrid(double[] keys,Color[] colors){
+        if (this.currentLayerSettingGrid!=null){
+            ColorDictionary colorDictionary=this.currentLayerSettingGrid.getColorDictionary();
+            colorDictionary.clear();
+            for (int i = 0; i < colors.length; i++) {
+                colorDictionary.setColor(keys[i], colors[i]);
+            }
+            this.currentLayerSettingGrid.setColorDictionary(colorDictionary);
+        }
+    }
+
+    public LayerSettingGrid getCurrentLayerSettingGrid(){
+        return this.currentLayerSettingGrid;
     }
 }
 
