@@ -21,7 +21,7 @@ public class SmFieldInfoComboBox extends JComboBox {
     private ComboBoxListener comboBoxListener = new ComboBoxListener();
     private DatasetVector dataset;
     private JoinItems joinItems;
-    private ArrayList<DatasetFieldInfo> datasetFieldInfos;
+    private ArrayList<DatasetFieldInfo> datasetFieldInfos = new ArrayList<>();
     private String[] additionalItems;
     private Object selectedValue;
 
@@ -163,7 +163,7 @@ public class SmFieldInfoComboBox extends JComboBox {
         this.setAdditionalItems(additionalItems);
         //添加“表达式...”
         String SQLExpressionText = CoreProperties.getString("String_ThemeGraphItemExpressionPicker_ButtonExpression");
-        if (getItemIndex(SQLExpressionText) == -1) {
+        if (getItemIndex(SQLExpressionText) == -1 && this.dataset != null) {
             this.addItem(SQLExpressionText);
         }
     }
