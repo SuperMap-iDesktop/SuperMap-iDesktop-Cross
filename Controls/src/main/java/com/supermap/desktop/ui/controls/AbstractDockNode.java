@@ -30,22 +30,6 @@ public class AbstractDockNode {
 		return right;
 	}
 
-	public void addDock(Dockbar dockbar, Direction direction, DockPath next) {
-		if (direction == null || next == null) {
-			return;
-		}
-
-		if (direction == Direction.TOP) {
-			addTopDock(dockbar, next);
-		} else if (direction == Direction.LEFT) {
-			addLeftDock(dockbar, next);
-		} else if (direction == Direction.BOTTOM) {
-			addBottomDock(dockbar, next);
-		} else if (direction == Direction.RIGHT) {
-			addRightDock(dockbar, next);
-		}
-	}
-
 	public void addTopDock(Dockbar dockbar, DockPath dockPath) {
 		if (this.top == null) {
 			this.top = new DockNode();

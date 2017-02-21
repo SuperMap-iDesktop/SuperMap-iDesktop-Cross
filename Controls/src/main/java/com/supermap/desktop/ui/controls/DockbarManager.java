@@ -173,10 +173,11 @@ public class DockbarManager implements IDockbarManager {
 			XMLDockbar xmlDockbar = dockbars.get(i);
 			Dockbar dockbar = new Dockbar(xmlDockbar);
 			this.dockbars.add(dockbar);
+			this.dockLayout.addDock(dockbar, dockbar.getDockPath());
+		}
 
-			if (xmlDockbar.getVisible()) {
-				setVisible(dockbar, true);
-			}
+		for (int i = 0; i < this.dockbars.size(); i++) {
+			this.dockbars.get(i).initVisible();
 		}
 //
 //		this.mainView.dock(this.workspaceComponentManager.getView(), DockingConstants.WEST_REGION, 0.2f);

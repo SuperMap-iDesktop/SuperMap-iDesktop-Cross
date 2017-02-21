@@ -25,7 +25,16 @@ public class DockNode extends AbstractDockNode {
 		if (dockPath.isLeaf()) {
 			addCenterDock(dockbar);
 		} else {
-			addDock(dockbar, dockPath.getDirection(), dockPath.getNext());
+			Direction direction = dockPath.getDirection();
+			if (direction == Direction.TOP) {
+				addTopDock(dockbar, dockPath.getNext());
+			} else if (direction == Direction.LEFT) {
+				addLeftDock(dockbar, dockPath.getNext());
+			} else if (direction == Direction.BOTTOM) {
+				addBottomDock(dockbar, dockPath.getNext());
+			} else if (direction == Direction.RIGHT) {
+				addRightDock(dockbar, dockPath.getNext());
+			}
 		}
 	}
 

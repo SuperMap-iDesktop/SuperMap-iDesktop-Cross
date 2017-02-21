@@ -116,6 +116,10 @@ public class Dockbar implements IDockbar {
 		return true;
 	}
 
+	public void initVisible() {
+		setVisible(this.xmlDockbar.getVisible());
+	}
+
 	public View getView() {
 		return this.view;
 	}

@@ -4,6 +4,8 @@ import com.supermap.desktop.process.core.AbstractProcess;
 import com.supermap.desktop.process.parameter.interfaces.IData;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 
+import java.util.Vector;
+
 /**
  * Created by highsad on 2017/1/5.
  */
@@ -20,12 +22,12 @@ public abstract class MetaProcess extends AbstractProcess {
 	}
 
 	@Override
-	public IData getInput() {
+	public Vector<IData> getInputs() {
 		return null;
 	}
 
 	@Override
-	public IData getOutput() {
+	public Vector<IData> getOutputs() {
 		return null;
 	}
 }

@@ -19,10 +19,17 @@ public class DockLayout extends AbstractDockNode {
 	}
 
 	public void addDock(Dockbar dockbar, DockPath dockPath) {
-		if (dockPath.isLeaf()) {
-			return;
-		}
+		Direction direction = dockPath.getDirection();
+		DockPath addPath = dockPath.isLeaf() ? dockPath : dockPath.getNext();
 
-		addDock(dockbar, dockPath.getDirection(), dockPath.getNext());
+		if (direction == Direction.TOP) {
+			addTopDock(dockbar, addPath);
+		} else if (direction == Direction.LEFT) {
+			addLeftDock(dockbar, addPath);
+		} else if (direction == Direction.BOTTOM) {
+			addBottomDock(dockbar, addPath);
+		} else if (direction == Direction.RIGHT) {
+			addRightDock(dockbar, addPath);
+		}
 	}
 }

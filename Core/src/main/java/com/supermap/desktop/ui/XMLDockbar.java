@@ -9,6 +9,7 @@ import com.supermap.desktop.utilities.XmlUtilities;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -91,7 +92,7 @@ public class XMLDockbar extends XMLCommand {
 
 	private DockPath loadDirection(Element directionNode) {
 		DockPath path = new DockPath();
-		path.setDirection(Direction.valueOf(directionNode.getNodeValue()));
+		path.setDirection(Direction.valueOf(directionNode.getTextContent()));
 
 		if (directionNode.hasAttribute(g_AttributionRatio)) {
 			String strRatio = directionNode.getAttribute(g_AttributionRatio);
@@ -156,6 +157,7 @@ public class XMLDockbar extends XMLCommand {
 				result.setTitle(getTitle());
 				result.setVisible(getVisible());
 				result.setControlClass(getControlClass());
+				result.setDockPath(getDockPath());
 			}
 		} catch (Exception e) {
 			result = null;
@@ -177,6 +179,7 @@ public class XMLDockbar extends XMLCommand {
 				result.setTitle(getTitle());
 				result.setVisible(getVisible());
 				result.setControlClass(getControlClass());
+				result.setDockPath(getDockPath());
 				result.getPluginInfo().setBundleName(getPluginInfo().getBundleName());
 			}
 		} catch (Exception e) {
@@ -250,7 +253,7 @@ public class XMLDockbar extends XMLCommand {
 	}
 
 	public DockPath getDockPath() {
-		return dockPath;
+		return this.dockPath;
 	}
 
 	public void setDockPath(DockPath dockPath) {
