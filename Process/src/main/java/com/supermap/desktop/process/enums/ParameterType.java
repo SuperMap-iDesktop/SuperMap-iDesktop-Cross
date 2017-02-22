@@ -20,5 +20,6 @@ public class ParameterType {
 	public static final String FILE = "File";
 	public static final String USER_DEFINE = "UserDefine";
 	public static final String SAVE_DATASET = "SaveDataset";
+	public static final String COMBINE = "Combine";
 
 }

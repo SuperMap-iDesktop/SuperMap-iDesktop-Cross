@@ -84,7 +84,8 @@ public class ParameterOverlayAnalystPanel extends JPanel {
     }
 
     private void initComponents() {
-
+        DatasetType[] allVectorTypes = new DatasetType[]{DatasetType.POINT, DatasetType.LINE, DatasetType.REGION};
+        DatasetType[] regionType = new DatasetType[]{DatasetType.REGION};
         OverlayAnalystType analystType = overlayAnalyst.getOverlayAnalystType();
         this.isAllVectorType = isAllVectorType(analystType);
         this.labelSourceDatasource = new JLabel();
@@ -93,15 +94,10 @@ public class ParameterOverlayAnalystPanel extends JPanel {
         if (comboboxSourceDatasource.getSelectedItemAlias() != null) {
             if (this.isAllVectorType) {
                 this.comboboxSourceDataset = new DatasetComboBox(this.comboboxSourceDatasource.getSelectedDatasource().getDatasets());
-                this.comboboxSourceDataset.setSupportedDatasetTypes(new DatasetType[]{
-                        DatasetType.POINT,
-                        DatasetType.LINE,
-                        DatasetType.REGION
-                });
+                this.comboboxSourceDataset.setSupportedDatasetTypes(allVectorTypes);
             } else {
                 this.comboboxSourceDataset = new DatasetComboBox(this.comboboxSourceDatasource.getSelectedDatasource().getDatasets());
-                this.comboboxSourceDataset.setSupportedDatasetTypes(new DatasetType[]{
-                        DatasetType.REGION});
+                this.comboboxSourceDataset.setSupportedDatasetTypes(regionType);
             }
         } else {
             this.comboboxSourceDataset = new DatasetComboBox();
@@ -110,6 +106,7 @@ public class ParameterOverlayAnalystPanel extends JPanel {
         this.comboboxOverlayAnalystDatasource = new DatasourceComboBox();
         if (comboboxOverlayAnalystDatasource.getSelectedItemAlias() != null) {
             this.comboboxOverlayAnalystDataset = new DatasetComboBox();
+            this.comboboxOverlayAnalystDataset.setSupportedDatasetTypes(regionType);
             if (comboboxSourceDataset.getSelectedItem().toString().equals(comboboxOverlayAnalystDataset.getSelectedItem().toString())) {
                 this.comboboxOverlayAnalystDataset.removeItem(comboboxOverlayAnalystDataset.getSelectedItem());
             }

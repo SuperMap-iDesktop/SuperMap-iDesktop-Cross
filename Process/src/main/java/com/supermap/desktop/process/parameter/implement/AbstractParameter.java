@@ -32,4 +32,9 @@ public abstract class AbstractParameter implements IParameter {
 			propertyChangeListeners.get(i).propertyChange(propertyChangeEvent);
 		}
 	}
+
+	@Override
+	public void dispose() {
+
+	}
 }
