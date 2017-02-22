@@ -33,6 +33,7 @@ import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.RecentFileUtilties;
 import com.supermap.desktop.utilities.WorkspaceUtilities;
 import com.supermap.layout.MapLayout;
 import com.supermap.realspace.Scene;
@@ -146,8 +147,8 @@ public class FormBase extends JFrame implements IFormMain {
 			this.loadFrameMenu(workEnvironment);
 
 			// 初始化最近文件列表
-			WorkspaceUtilities.initRecentFileMenu();
-			DatasourceUtilities.initRecentFileMenu();
+			RecentFileUtilties.initRecentFileMenu(RecentFileUtilties.FILE_TYPE_WORKSPACE);
+			RecentFileUtilties.initRecentFileMenu(RecentFileUtilties.FILE_TYPE_DATASOURCE);
 
 			initLayout();
 			this.toolbarManager.load(workEnvironment);

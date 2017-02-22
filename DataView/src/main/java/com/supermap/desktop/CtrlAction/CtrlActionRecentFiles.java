@@ -15,7 +15,7 @@ import com.supermap.desktop.implement.SmMenuItem;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.RecentFileUtilties;
 import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 import java.io.File;
@@ -80,9 +80,9 @@ public class CtrlActionRecentFiles extends CtrlAction {
 					// 提示文件不存在，删除最近文件项
 					UICommonToolkit.showMessageDialog(DataViewProperties.getString("String_FileDonotExist"));
 					if (isWorkSpaceFile(file)) {
-						WorkspaceUtilities.removeRecentFile(filePath);
+						RecentFileUtilties.removeRecentFile(RecentFileUtilties.FILE_TYPE_WORKSPACE, filePath);
 					} else {
-						DatasourceUtilities.removeRecentFile(filePath);
+						RecentFileUtilties.removeRecentFile(RecentFileUtilties.FILE_TYPE_DATASOURCE, filePath);
 					}
 				}
 			}

@@ -4,10 +4,13 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IMenu;
-import com.supermap.desktop.ui.*;
-import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.ui.XMLCommand;
+import com.supermap.desktop.ui.XMLMenu;
+import com.supermap.desktop.ui.XMLMenuButton;
+import com.supermap.desktop.ui.XMLMenuButtonDropdown;
+import com.supermap.desktop.ui.XMLMenuGroup;
 import com.supermap.desktop.utilities.PathUtilities;
-import com.supermap.desktop.utilities.WorkspaceUtilities;
+import com.supermap.desktop.utilities.RecentFileUtilties;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
@@ -41,7 +44,7 @@ public class SmMenu extends JMenu implements IMenu {
 					xmlMenu.setImageFile("../Resources/MenuHeight16.png");
 				}
 
-				String[] pathPrams = new String[] { PathUtilities.getRootPathName(), xmlMenu.getImageFile() };
+				String[] pathPrams = new String[]{PathUtilities.getRootPathName(), xmlMenu.getImageFile()};
 				String path = PathUtilities.combinePath(pathPrams, false);
 				File file = new File(path);
 				if (file.exists()) {
@@ -292,27 +295,23 @@ public class SmMenu extends JMenu implements IMenu {
 	private void loadMenuItemButtonDropdown(XMLMenuButtonDropdown xmlMenuButtonDropdown, XMLMenuGroup xmlMenuGroup, SmMenu parent) {
 		try {
 			SmMenu menuButtonDropdown = new SmMenu(xmlMenuButtonDropdown);
-			if (menuButtonDropdown != null) {
-				parent.items().add(menuButtonDropdown);
-				((JMenu) parent).add(menuButtonDropdown);
-			}
+			parent.items().add(menuButtonDropdown);
+			((JMenu) parent).add(menuButtonDropdown);
 
 			if ("RecentFile".equals(xmlMenuGroup.getID())) {
 				if ("WorkspaceRecentFiles".equals(xmlMenuButtonDropdown.getID())) {
-					if (WorkspaceUtilities.getPluginInfo() == null) {
-						WorkspaceUtilities.setPluginInfo(xmlMenuButtonDropdown.getPluginInfo());
+					if (RecentFileUtilties.getWorkspacePluginInfo() == null) {
+						RecentFileUtilties.setWorkspacePluginInfo(xmlMenuButtonDropdown.getPluginInfo());
 					}
-
-					if (WorkspaceUtilities.getRecentWorkspaceMenu() == null) {
-						WorkspaceUtilities.setRecentWorkspaceMenu(menuButtonDropdown);
+					if (RecentFileUtilties.getRecentWorkspaceMenu() == null) {
+						RecentFileUtilties.setRecentWorkspaceMenu(menuButtonDropdown);
 					}
 				} else if ("DatasourceRecentFiles".equals(xmlMenuButtonDropdown.getID())) {
-					if (DatasourceUtilities.getPluginInfo() == null) {
-						DatasourceUtilities.setPluginInfo(xmlMenuButtonDropdown.getPluginInfo());
+					if (RecentFileUtilties.getDatasourcePluginInfo() == null) {
+						RecentFileUtilties.setDatasourcePluginInfo(xmlMenuButtonDropdown.getPluginInfo());
 					}
-
-					if (DatasourceUtilities.getRecentDatasourceMenu() == null) {
-						DatasourceUtilities.setRecentDatasourceMenu(menuButtonDropdown);
+					if (RecentFileUtilties.getRecentDatasourceMenu() == null) {
+						RecentFileUtilties.setRecentDatasourceMenu(menuButtonDropdown);
 					}
 				}
 			}

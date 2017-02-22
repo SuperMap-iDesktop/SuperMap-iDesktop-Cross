@@ -13,6 +13,7 @@ import com.supermap.desktop.messagebus.NewMessageBus;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.TextFields.DefaultValueTextField;
 import com.supermap.ui.Action;
 import com.supermap.ui.*;
 
@@ -30,32 +31,32 @@ public class JDialogHeatMap extends SmDialog {
 
     private JPanel panelBounds;
     private JLabel labelBoundsLeft;
-    private JTextField textBoundsLeft;
+    private DefaultValueTextField textBoundsLeft;
     private JLabel labelBoundsBottom;
-    private JTextField textBoundsBottom;
+    private DefaultValueTextField textBoundsBottom;
     private JLabel labelBoundsRight;
-    private JTextField textBoundsRight;
+    private DefaultValueTextField textBoundsRight;
     private JLabel labelBoundsTop;
-    private JTextField textBoundsTop;
+    private DefaultValueTextField textBoundsTop;
     private JButton buttonDrawBounds;
     private JButton buttonInputBrowser;
 
     private JLabel labelCacheLevel;
-    private JTextField textFieldCacheLevel;
+    private DefaultValueTextField textFieldCacheLevel;
     private JLabel labelXYIndex;
-    private JTextField textFieldXYIndex;
+    private DefaultValueTextField textFieldXYIndex;
     private JLabel labelFileInputPath;
-    private JTextField textFieldFileInputPath;
+    private DefaultValueTextField textFieldFileInputPath;
     private JLabel labelCacheName;
-    private JTextField textFieldCacheName;
+    private DefaultValueTextField textFieldCacheName;
     private JLabel labelDatabaseType;
     private JComboBox comboBoxDatabaseType;
     private JLabel labelServiceAddress;
-    private JTextField textFieldServiceAddress;
+    private DefaultValueTextField textFieldServiceAddress;
     private JLabel labelDatabase;
-    private JTextField textFieldDatabase;
+    private DefaultValueTextField textFieldDatabase;
     private JLabel labelVersion;
-    private JTextField textFieldVersion;
+    private DefaultValueTextField textFieldVersion;
     private JButton buttonOK;
     private JButton buttonCancel;
     private ActionListener heatMapListener = new ActionListener() {
@@ -103,41 +104,41 @@ public class JDialogHeatMap extends SmDialog {
         this.buttonInputBrowser = new JButton();
         this.panelBounds = new JPanel();
         this.labelBoundsLeft = new JLabel();
-        this.textBoundsLeft = new JTextField("-74.050");
+        this.textBoundsLeft = new DefaultValueTextField("-74.050");
         this.labelBoundsBottom = new JLabel();
-        this.textBoundsBottom = new JTextField("40.650");
+        this.textBoundsBottom = new DefaultValueTextField("40.650");
         this.labelBoundsRight = new JLabel();
-        this.textBoundsRight = new JTextField("-73.850");
+        this.textBoundsRight = new DefaultValueTextField("-73.850");
         this.labelBoundsTop = new JLabel();
-        this.textBoundsTop = new JTextField("40.850");
+        this.textBoundsTop = new DefaultValueTextField("40.850");
         this.buttonDrawBounds = new JButton();
         if (Application.getActiveApplication().getActiveForm() == null
                 || !(Application.getActiveApplication().getActiveForm() instanceof IFormMap)) {
             buttonDrawBounds.setEnabled(false);
         }
         this.labelCacheLevel = new JLabel();
-        this.textFieldCacheLevel = new JTextField("1");
+        this.textFieldCacheLevel = new DefaultValueTextField("1");
         this.labelXYIndex = new JLabel();
-        this.textFieldXYIndex = new JTextField("10,11");
+        this.textFieldXYIndex = new DefaultValueTextField("10,11");
         this.labelFileInputPath = new JLabel();
-        this.textFieldFileInputPath = new JTextField(WebHDFS.getHDFSFilePath());
+        this.textFieldFileInputPath = new DefaultValueTextField(WebHDFS.getHDFSFilePath());
         this.labelCacheName = new JLabel();
-        this.textFieldCacheName = new JTextField("test1_heat");
+        this.textFieldCacheName = new DefaultValueTextField("test1_heat");
         this.labelDatabaseType = new JLabel();
         this.comboBoxDatabaseType = new JComboBox();
         this.comboBoxDatabaseType.addItem("MongoDB");
         this.labelServiceAddress = new JLabel();
-        this.textFieldServiceAddress = new JTextField("192.168.15.245:27017");
+        this.textFieldServiceAddress = new DefaultValueTextField("192.168.15.245:27017");
         this.labelDatabase = new JLabel();
-        this.textFieldDatabase = new JTextField("test");
+        this.textFieldDatabase = new DefaultValueTextField("test");
         this.labelVersion = new JLabel();
-        this.textFieldVersion = new JTextField("V1");
+        this.textFieldVersion = new DefaultValueTextField("V1");
         this.buttonOK = ComponentFactory.createButtonOK();
         this.buttonCancel = ComponentFactory.createButtonCancel();
         this.getRootPane().setDefaultButton(this.buttonOK);
         setComboBoxTheme(this.comboBoxCacheType);
         setComboBoxTheme(this.comboBoxDatabaseType);
-        this.setSize(640, 500);
+        this.setSize(680, 510);
         this.setLocationRelativeTo(null);
     }
 
@@ -170,23 +171,23 @@ public class JDialogHeatMap extends SmDialog {
         this.add(this.labelCacheType, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
         this.add(this.comboBoxCacheType, new GridBagConstraintsHelper(1, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
         this.add(this.panelBounds, new GridBagConstraintsHelper(0, 2, 4, 4).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(10, 10, 0, 10).setWeight(1, 0));
-        this.add(this.labelXYIndex, new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
-        this.add(this.textFieldXYIndex, new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
-        this.add(this.labelCacheLevel, new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
-        this.add(this.textFieldCacheLevel, new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
-        this.add(this.labelCacheName, new GridBagConstraintsHelper(0, 7, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
-        this.add(this.textFieldCacheName, new GridBagConstraintsHelper(1, 7, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
-        this.add(this.labelDatabaseType, new GridBagConstraintsHelper(0, 8, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
-        this.add(this.comboBoxDatabaseType, new GridBagConstraintsHelper(1, 8, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
-        this.add(this.labelServiceAddress, new GridBagConstraintsHelper(0, 9, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
-        this.add(this.textFieldServiceAddress, new GridBagConstraintsHelper(1, 9, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
-        this.add(this.labelDatabase, new GridBagConstraintsHelper(0, 10, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
-        this.add(this.textFieldDatabase, new GridBagConstraintsHelper(1, 10, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
-        this.add(this.labelVersion, new GridBagConstraintsHelper(0, 11, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 10, 0).setWeight(0, 0));
-        this.add(this.textFieldVersion, new GridBagConstraintsHelper(1, 11, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 10, 10).setWeight(1, 0));
+        this.add(this.labelXYIndex, new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textFieldXYIndex, new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelCacheLevel, new GridBagConstraintsHelper(0, 7, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textFieldCacheLevel, new GridBagConstraintsHelper(1, 7, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelCacheName, new GridBagConstraintsHelper(0, 8, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textFieldCacheName, new GridBagConstraintsHelper(1, 8, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelDatabaseType, new GridBagConstraintsHelper(0, 9, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.comboBoxDatabaseType, new GridBagConstraintsHelper(1, 9, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelServiceAddress, new GridBagConstraintsHelper(0, 10, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textFieldServiceAddress, new GridBagConstraintsHelper(1, 10, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelDatabase, new GridBagConstraintsHelper(0, 11, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textFieldDatabase, new GridBagConstraintsHelper(1, 11, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelVersion, new GridBagConstraintsHelper(0, 12, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 10, 0).setWeight(0, 0));
+        this.add(this.textFieldVersion, new GridBagConstraintsHelper(1, 12, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 10, 10).setWeight(1, 0));
 
-        this.add(new JPanel(), new GridBagConstraintsHelper(0, 12, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
-        this.add(panelButton, new GridBagConstraintsHelper(0, 13, 4, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+        this.add(new JPanel(), new GridBagConstraintsHelper(0, 13, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
+        this.add(panelButton, new GridBagConstraintsHelper(0, 14, 4, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 
         this.panelBounds.setLayout(new GridBagLayout());
         this.panelBounds.add(this.labelBoundsLeft, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));

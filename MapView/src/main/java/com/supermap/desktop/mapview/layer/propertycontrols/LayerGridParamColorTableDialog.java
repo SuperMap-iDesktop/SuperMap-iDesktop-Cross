@@ -3,18 +3,21 @@ package com.supermap.desktop.mapview.layer.propertycontrols;
 import com.supermap.data.ColorDictionary;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
+import com.supermap.desktop.controls.colorScheme.ColorsWithKeysTableModel;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.event.ColorTableChangeEvent;
 import com.supermap.desktop.event.ColorTableChangeListener;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerGridParamPropertyModel;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.ColorSelectionPanel;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.FontUtilities;
 import com.supermap.desktop.utilities.TableUtilities;
-import com.supermap.desktop.controls.colorScheme.ColorsWithKeysTableModel;
 import com.supermap.mapping.LayerSettingGrid;
 
 import javax.swing.*;
@@ -26,8 +29,10 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
-import java.util.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -66,11 +71,27 @@ public class LayerGridParamColorTableDialog extends SmDialog{
     private double[] keysOrigin;
     private ArrayList<ColorTableChangeListener> listeners;
 
+    //by lixiaoyao 栅格颜色表的非普遍性调用进行优化
+    LayerSettingGrid currentLayerSettingGrid;
+
+
+
+
     public LayerGridParamColorTableDialog(LayerGridParamPropertyModel modelModified){
         super();
         this.modelModified = modelModified;
         LayerSettingGrid setting = (LayerSettingGrid) modelModified.getLayers()[0].getAdditionalSetting();
         ColorDictionary colorDictionary = setting.getColorDictionary();
+        colorsOrigin = colorDictionary.getColors();
+        keysOrigin = colorDictionary.getKeys();
+
+        init();
+    }
+
+    public LayerGridParamColorTableDialog(LayerSettingGrid layerSettingGrid){
+        super();
+        this.currentLayerSettingGrid  = layerSettingGrid;
+        ColorDictionary colorDictionary = this.currentLayerSettingGrid.getColorDictionary();
         colorsOrigin = colorDictionary.getColors();
         keysOrigin = colorDictionary.getKeys();
 
@@ -163,8 +184,8 @@ public class LayerGridParamColorTableDialog extends SmDialog{
                 popupMenu.setBorderPainted(false);
                 ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
                 popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
-                colorSelectionPanel.setPreferredSize(new Dimension(170, 200));
-                popupMenu.show(buttonAddColor, buttonAddColor.getX(), buttonAddColor.getY());
+                colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
+                popupMenu.show(buttonAddColor, 0, buttonAddColor.getBounds().height);
                 colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
                     @Override
                     public void propertyChange(PropertyChangeEvent evt) {
@@ -188,8 +209,8 @@ public class LayerGridParamColorTableDialog extends SmDialog{
                     popupMenu.setBorderPainted(false);
                     ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
                     popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
-                    colorSelectionPanel.setPreferredSize(new Dimension(170, 200));
-                    popupMenu.show(buttonInsertColor, buttonInsertColor.getX(), buttonInsertColor.getY());
+                    colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
+                    popupMenu.show(buttonInsertColor, 0, buttonInsertColor.getBounds().height);
                     colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
                         @Override
                         public void propertyChange(PropertyChangeEvent evt) {
@@ -232,8 +253,12 @@ public class LayerGridParamColorTableDialog extends SmDialog{
             @Override
             public void actionPerformed(ActionEvent e) {
                 //还原图层
-                modelModified.setLayerGridColorDictionary(keysOrigin,colorsOrigin);
-                modelModified.refresh();
+                if (modelModified!=null) {
+                    modelModified.setLayerGridColorDictionary(keysOrigin, colorsOrigin);
+                    modelModified.refresh();
+                }else{
+                    resetCurrentLayerSettingGrid(keysOrigin, colorsOrigin);
+                }
 
                 dialogResult = DialogResult.CANCEL;
                 setVisible(false);
@@ -271,7 +296,7 @@ public class LayerGridParamColorTableDialog extends SmDialog{
                     popupMenu.setBorderPainted(false);
                     ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
                     popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
-                    colorSelectionPanel.setPreferredSize(new Dimension(170, 200));
+                    colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
                     popupMenu.show(tableColor, (int) e.getPoint().getX(), (int) e.getPoint().getY());
                     colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
                         @Override
@@ -415,8 +440,15 @@ public class LayerGridParamColorTableDialog extends SmDialog{
      * 填充控件初始值
      */
     private void initComponentStates() {
-        LayerSettingGrid setting = (LayerSettingGrid) modelModified.getLayers()[0].getAdditionalSetting();
-        comboBoxColor.setSelectedItem(setting.getColorTable());
+        LayerSettingGrid setting=null;
+        if (modelModified!=null) {
+            setting = (LayerSettingGrid) modelModified.getLayers()[0].getAdditionalSetting();
+        }else if (this.currentLayerSettingGrid!=null){
+            setting=this.currentLayerSettingGrid;
+        }
+        if (setting != null) {
+            comboBoxColor.setSelectedItem(setting.getColorTable());
+        }
         colorsWithKeysTableModel.setColorNodes(setting.getColorDictionary().getColors(), setting.getColorDictionary().getKeys());
         if (tableColor.getRowCount() > 0) {
             tableColor.setRowSelectionInterval(0, 0);
@@ -488,11 +520,42 @@ public class LayerGridParamColorTableDialog extends SmDialog{
                 public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                     Component rendererComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                     if (rendererComponent instanceof JLabel) {
-                        ((JLabel) rendererComponent).setHorizontalAlignment(CENTER);
+                        ((JLabel) rendererComponent).setHorizontalAlignment(LEFT);
                     }
                     return rendererComponent;
                 }
             });
+
+            class ValueCellEditor extends DefaultCellEditor {
+                public ValueCellEditor(JTextField textField) {
+                    super(textField);
+                }
+
+                public double originalValue;
+
+                @Override
+                public Object getCellEditorValue() {
+                    String s = super.getCellEditorValue().toString();
+                    double aDouble;
+                    try {
+                        aDouble = Double.parseDouble(s);
+                    } catch (NumberFormatException e) {
+                        return originalValue;
+                    }
+                    return aDouble;
+                }
+
+                @Override
+                public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+                    originalValue = (double) table.getModel().getValueAt(row, column);
+                    Component component = super.getTableCellEditorComponent(table, value, isSelected, row, column);
+                    if (component instanceof JTextField) {
+                        ((JTextField) component).setHorizontalAlignment(SwingConstants.LEFT);
+                    }
+                    return component;
+                }
+            }
+            valueColumn.setCellEditor(new ValueCellEditor(new JTextField()));
         }
 
 
@@ -509,20 +572,23 @@ public class LayerGridParamColorTableDialog extends SmDialog{
             keys[i] = colorsWithKeysTableModel.getKeys().get(i);
             colors[i] = colorsWithKeysTableModel.getColors().get(i);
         }
-        modelModified.setLayerGridColorDictionary(keys,colors);
+        if (modelModified!=null) {
+            modelModified.setLayerGridColorDictionary(keys, colors);
+        }else {
+            resetCurrentLayerSettingGrid(keys, colors);
+        }
 
         fireColorTableChange(new ColorTableChangeEvent(this,keys,colors));
     }
 
     /**
      * 颜色表更改信息传递
-     * @param event
      */
     protected void fireColorTableChange(ColorTableChangeEvent event) {
         double[] keys = event.getKeys();
         Color[] colors = event.getColors();
 
-        if (keys == null || colors == null || !keys.equals(keysOrigin)||!colors.equals(colorsOrigin)) {
+        if (keys == null || colors == null || !Arrays.equals(keys, keysOrigin) || !Arrays.equals(colors, colorsOrigin)) {
             if (listeners != null) {
                 for (ColorTableChangeListener listener : listeners) {
                     listener.colorTableChange(event);
@@ -544,6 +610,21 @@ public class LayerGridParamColorTableDialog extends SmDialog{
         if (listeners.indexOf(listener) > -1) {
             listeners.remove(listener);
         }
+    }
+
+    private void resetCurrentLayerSettingGrid(double[] keys,Color[] colors){
+        if (this.currentLayerSettingGrid!=null){
+            ColorDictionary colorDictionary=this.currentLayerSettingGrid.getColorDictionary();
+            colorDictionary.clear();
+            for (int i = 0; i < colors.length; i++) {
+                colorDictionary.setColor(keys[i], colors[i]);
+            }
+            this.currentLayerSettingGrid.setColorDictionary(colorDictionary);
+        }
+    }
+
+    public LayerSettingGrid getCurrentLayerSettingGrid(){
+        return this.currentLayerSettingGrid;
     }
 }
 
