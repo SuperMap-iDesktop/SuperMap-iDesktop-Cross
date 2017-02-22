@@ -211,6 +211,7 @@ public class DockbarManager implements IDockbarManager {
 		if (isVisible) {
 			if (isDisplay(dockbar.getView())) {
 				DockingManager.display(dockbar.getView());
+				return;
 			}
 
 			if (this.leftTopDockbars.contains(dockbar)) {
