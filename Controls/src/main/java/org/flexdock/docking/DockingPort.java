@@ -276,7 +276,7 @@ public interface DockingPort extends DockingListener, DockingMonitor {
      * {@code DockingManager} in the course of maximizing a {@code Dockable}.
      * Client code should not call this method directly.
      * <p>
-     * This {@code DockingPort} is expected to display the specified dockable's
+     * This {@code DockingPort} is expected to setVisible the specified dockable's
      * component such that it occupies all (or the majority) of its screen
      * resources. Also, this {@code DockingPort} is expected to internally store
      * enough information to restore its current state after a subsequent call

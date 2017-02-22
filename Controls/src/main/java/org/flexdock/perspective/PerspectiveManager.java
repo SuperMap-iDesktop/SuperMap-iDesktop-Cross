@@ -280,7 +280,7 @@ public class PerspectiveManager implements LayoutManager {
     /**
      * PerspectiveManager#getMainApplicationWindow returns the first
      * window where #getOwner == null. This is especially a problem for apps with
-     * multiple frames. To display a perspective for a specified window
+     * multiple frames. To setVisible a perspective for a specified window
      * it is highly recommended to use #reload(Window w) instead of #reload()
      * which is the same as DockingManager#restoreLayout().
      * You can use #restoreLayout when the application does not need multiple
