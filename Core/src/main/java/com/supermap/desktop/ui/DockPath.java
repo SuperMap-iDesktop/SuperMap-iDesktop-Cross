@@ -5,6 +5,9 @@ import java.util.List;
 
 /**
  * Created by highsad on 2016/11/17.
+ * 用来做浮动窗口自动构建布局和导入导出用的
+ * 由于当前浮动窗口的使用方式导致实现过于复杂，难点很多，暂时使用
+ * 保留临时解决方案进行浮动窗口的配置文件读取构建，以后有灵感再做
  */
 public class DockPath {
 

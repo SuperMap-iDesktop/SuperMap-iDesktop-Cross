@@ -8,13 +8,28 @@ import java.util.List;
 
 /**
  * Created by highsad on 2017/2/21.
+ * 用来做浮动窗口自动构建布局和导入导出用的
+ * 由于当前浮动窗口的使用方式导致实现过于复杂，难点很多，暂时使用
+ * 保留临时解决方案进行浮动窗口的配置文件读取构建，以后有灵感再做
  */
-public class DockNode extends AbstractDockNode {
+public class DockNode extends DockStrategy {
+	private DockNode parent; // 上级
+	private Direction nodeDirection; // 在上级中的方位
 	private List<Dockbar> centerDocks;
 
-	public DockNode() {
+	public DockNode(DockNode parent, Direction nodeDirection) {
+		this.parent = parent;
+		this.nodeDirection = nodeDirection;
 		this.centerDocks = new ArrayList<>();
 
+	}
+
+	public DockNode getParent() {
+		return parent;
+	}
+
+	public Direction getNodeDirection() {
+		return nodeDirection;
 	}
 
 	public Dockbar[] getCenterDocks() {
@@ -22,19 +37,10 @@ public class DockNode extends AbstractDockNode {
 	}
 
 	public void addDock(Dockbar dockbar, DockPath dockPath) {
-		if (dockPath.isLeaf()) {
+		if (dockPath == null) {
 			addCenterDock(dockbar);
 		} else {
-			Direction direction = dockPath.getDirection();
-			if (direction == Direction.TOP) {
-				addTopDock(dockbar, dockPath.getNext());
-			} else if (direction == Direction.LEFT) {
-				addLeftDock(dockbar, dockPath.getNext());
-			} else if (direction == Direction.BOTTOM) {
-				addBottomDock(dockbar, dockPath.getNext());
-			} else if (direction == Direction.RIGHT) {
-				addRightDock(dockbar, dockPath.getNext());
-			}
+			super.addDock(dockbar, dockPath);
 		}
 	}
 

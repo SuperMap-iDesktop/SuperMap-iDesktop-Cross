@@ -3,10 +3,7 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.PluginInfo;
-import com.supermap.desktop.enums.DockState;
-import com.supermap.desktop.ui.DockPath;
 import com.supermap.desktop.ui.XMLDockbar;
-import org.apache.log4j.Hierarchy;
 import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingConstants;
 import org.flexdock.docking.DockingManager;
@@ -18,12 +15,6 @@ import org.flexdock.view.View;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
-import java.awt.event.InputMethodEvent;
-import java.awt.event.InputMethodListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 /**
  * iDesktop java 第一个版本，DockBar 不做关闭桌面保存的功能。 DockBar 的实现依赖于所用的开源库，IDockBar 所定义的属性 并非 DockBar 本身的属性，而是由 DockBar 与 DockBar 的 Parent 所处状态来共同决定的，因此在本类中，IDockBar
@@ -116,20 +107,24 @@ public class Dockbar implements IDockbar {
 		return true;
 	}
 
-	public void initVisible() {
-		setVisible(this.xmlDockbar.getVisible());
-	}
-
 	public View getView() {
 		return this.view;
 	}
 
-	public DockPath getDockPath() {
-		return this.xmlDockbar.getDockPath();
+	public String getDockDirection() {
+		return this.xmlDockbar.getDockDirection();
+	}
+
+	public String getDockState() {
+		return this.xmlDockbar.getDockState();
 	}
 
 	public String getID() {
 		return this.xmlDockbar.getID();
+	}
+
+	public void initVisible() {
+		((DockbarManager) Application.getActiveApplication().getMainFrame().getDockbarManager()).setVisible(this, this.xmlDockbar.getVisible());
 	}
 
 	@Override
