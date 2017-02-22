@@ -3,18 +3,21 @@ package com.supermap.desktop.mapview.layer.propertycontrols;
 import com.supermap.data.ColorDictionary;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
+import com.supermap.desktop.controls.colorScheme.ColorsWithKeysTableModel;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.event.ColorTableChangeEvent;
 import com.supermap.desktop.event.ColorTableChangeListener;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerGridParamPropertyModel;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.ColorSelectionPanel;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.FontUtilities;
 import com.supermap.desktop.utilities.TableUtilities;
-import com.supermap.desktop.controls.colorScheme.ColorsWithKeysTableModel;
 import com.supermap.mapping.LayerSettingGrid;
 
 import javax.swing.*;
@@ -26,8 +29,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
-import java.beans.*;
-import java.util.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -179,8 +183,8 @@ public class LayerGridParamColorTableDialog extends SmDialog{
                 popupMenu.setBorderPainted(false);
                 ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
                 popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
-                colorSelectionPanel.setPreferredSize(new Dimension(170, 200));
-                popupMenu.show(buttonAddColor, buttonAddColor.getX(), buttonAddColor.getY());
+                colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
+                popupMenu.show(buttonAddColor, 0, buttonAddColor.getBounds().height);
                 colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
                     @Override
                     public void propertyChange(PropertyChangeEvent evt) {
@@ -204,8 +208,8 @@ public class LayerGridParamColorTableDialog extends SmDialog{
                     popupMenu.setBorderPainted(false);
                     ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
                     popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
-                    colorSelectionPanel.setPreferredSize(new Dimension(170, 200));
-                    popupMenu.show(buttonInsertColor, buttonInsertColor.getX(), buttonInsertColor.getY());
+                    colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
+                    popupMenu.show(buttonInsertColor, 0, buttonInsertColor.getBounds().height);
                     colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
                         @Override
                         public void propertyChange(PropertyChangeEvent evt) {
@@ -291,7 +295,7 @@ public class LayerGridParamColorTableDialog extends SmDialog{
                     popupMenu.setBorderPainted(false);
                     ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
                     popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
-                    colorSelectionPanel.setPreferredSize(new Dimension(170, 200));
+                    colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
                     popupMenu.show(tableColor, (int) e.getPoint().getX(), (int) e.getPoint().getY());
                     colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
                         @Override
