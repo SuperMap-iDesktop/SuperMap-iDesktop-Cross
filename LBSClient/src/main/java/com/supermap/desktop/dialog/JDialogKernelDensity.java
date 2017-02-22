@@ -16,6 +16,7 @@ import com.supermap.desktop.messagebus.NewMessageBus;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.TextFields.DefaultValueTextField;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.ui.Action;
 import com.supermap.ui.*;
@@ -65,34 +66,34 @@ public class JDialogKernelDensity extends SmDialog {
     }
 
     private JLabel labelInputURL;
-    private JTextField textInputURL;
+    private DefaultValueTextField textInputURL;
     private JButton buttonInputBrowser;
 
     private JLabel labelResolution;
-    private JTextField textResolution;
+    private DefaultValueTextField textResolution;
     private JLabel labelRadius;
-    private JTextField textRadius;
+    private DefaultValueTextField textRadius;
 
     private JPanel panelBounds;
     private JLabel labelBoundsLeft;
-    private JTextField textBoundsLeft;
+    private DefaultValueTextField textBoundsLeft;
     private JLabel labelBoundsBottom;
-    private JTextField textBoundsBottom;
+    private DefaultValueTextField textBoundsBottom;
     private JLabel labelBoundsRight;
-    private JTextField textBoundsRight;
+    private DefaultValueTextField textBoundsRight;
     private JLabel labelBoundsTop;
-    private JTextField textBoundsTop;
+    private DefaultValueTextField textBoundsTop;
     private JButton buttonDrawBounds;
 
     private JLabel labelOutputURL;
-    private JTextField textOutputURL;
+    private DefaultValueTextField textOutputURL;
 //    private JButton buttonOutputBrowser;
 
     private JLabel labelIndex;
-    private JTextField textFieldIndex;
+    private DefaultValueTextField textFieldIndex;
 
     private JLabel labelSeperator;
-    private JTextField textFieldSeperator;
+    private DefaultValueTextField textFieldSeperator;
 
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -100,34 +101,34 @@ public class JDialogKernelDensity extends SmDialog {
     private void initializeComponents() {
 
         this.labelInputURL = new JLabel();
-        this.textInputURL = new JTextField(WebHDFS.getHDFSFilePath());
+        this.textInputURL = new DefaultValueTextField(WebHDFS.getHDFSFilePath());
         this.buttonInputBrowser = new JButton();
 
         this.labelResolution = new JLabel();
-        this.textResolution = new JTextField("0.004");
+        this.textResolution = new DefaultValueTextField("0.004");
         this.labelRadius = new JLabel();
-        this.textRadius = new JTextField("0.004");
+        this.textRadius = new DefaultValueTextField("0.004");
 
         this.panelBounds = new JPanel();
         this.labelBoundsLeft = new JLabel();
-        this.textBoundsLeft = new JTextField("-74.050");
+        this.textBoundsLeft = new DefaultValueTextField("-74.050");
         this.labelBoundsBottom = new JLabel();
-        this.textBoundsBottom = new JTextField("40.550");
+        this.textBoundsBottom = new DefaultValueTextField("40.550");
         this.labelBoundsRight = new JLabel();
-        this.textBoundsRight = new JTextField("-73.750");
+        this.textBoundsRight = new DefaultValueTextField("-73.750");
         this.labelBoundsTop = new JLabel();
-        this.textBoundsTop = new JTextField("40.950");
+        this.textBoundsTop = new DefaultValueTextField("40.950");
         this.buttonDrawBounds = new JButton();
         if (Application.getActiveApplication().getActiveForm() == null
                 || !(Application.getActiveApplication().getActiveForm() instanceof IFormMap)) {
             buttonDrawBounds.setEnabled(false);
         }
         this.labelIndex = new JLabel();
-        this.textFieldIndex = new JTextField("10");
+        this.textFieldIndex = new DefaultValueTextField("10");
         this.labelSeperator = new JLabel();
-        this.textFieldSeperator = new JTextField(",");
+        this.textFieldSeperator = new DefaultValueTextField(",");
         this.labelOutputURL = new JLabel();
-        this.textOutputURL = new JTextField("/opt/supermap_iserver_811_14511_9_linux64_deploy/webapps/iserver/processingResultData/KernelDensity");
+        this.textOutputURL = new DefaultValueTextField("/opt/supermap_iserver_811_14511_9_linux64_deploy/webapps/iserver/processingResultData/KernelDensity");
         this.textOutputURL.setEnabled(false);
 //        this.buttonOutputBrowser = new JButton();
 
@@ -173,16 +174,16 @@ public class JDialogKernelDensity extends SmDialog {
         this.add(this.textInputURL, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 0).setWeight(1, 0));
         this.add(this.buttonInputBrowser, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 5, 0, 10));
         this.add(this.panelBounds, new GridBagConstraintsHelper(0, 1, 4, 4).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(10, 10, 0, 10).setWeight(1, 0));
-        this.add(this.labelIndex, new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
-        this.add(this.textFieldIndex, new GridBagConstraintsHelper(1, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
-        this.add(this.labelSeperator, new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
-        this.add(this.textFieldSeperator, new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
-        this.add(this.labelResolution, new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
-        this.add(this.textResolution, new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
-        this.add(this.labelRadius, new GridBagConstraintsHelper(0, 7, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
-        this.add(this.textRadius, new GridBagConstraintsHelper(1, 7, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
-        this.add(new JPanel(), new GridBagConstraintsHelper(0, 8, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
-        this.add(panelButton, new GridBagConstraintsHelper(0, 9, 4, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+        this.add(this.labelIndex, new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textFieldIndex, new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelSeperator, new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textFieldSeperator, new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelResolution, new GridBagConstraintsHelper(0, 7, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textResolution, new GridBagConstraintsHelper(1, 7, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(this.labelRadius, new GridBagConstraintsHelper(0, 8, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+        this.add(this.textRadius, new GridBagConstraintsHelper(1, 8, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+        this.add(new JPanel(), new GridBagConstraintsHelper(0, 9, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
+        this.add(panelButton, new GridBagConstraintsHelper(0, 10, 4, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 
         this.panelBounds.setLayout(new GridBagLayout());
         this.panelBounds.add(this.labelBoundsLeft, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
