@@ -32,6 +32,7 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -445,7 +446,9 @@ public class LayerGridParamColorTableDialog extends SmDialog{
         }else if (this.currentLayerSettingGrid!=null){
             setting=this.currentLayerSettingGrid;
         }
-        comboBoxColor.setSelectedItem(setting.getColorTable());
+        if (setting != null) {
+            comboBoxColor.setSelectedItem(setting.getColorTable());
+        }
         colorsWithKeysTableModel.setColorNodes(setting.getColorDictionary().getColors(), setting.getColorDictionary().getKeys());
         if (tableColor.getRowCount() > 0) {
             tableColor.setRowSelectionInterval(0, 0);
@@ -517,11 +520,42 @@ public class LayerGridParamColorTableDialog extends SmDialog{
                 public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                     Component rendererComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
                     if (rendererComponent instanceof JLabel) {
-                        ((JLabel) rendererComponent).setHorizontalAlignment(CENTER);
+                        ((JLabel) rendererComponent).setHorizontalAlignment(LEFT);
                     }
                     return rendererComponent;
                 }
             });
+
+            class ValueCellEditor extends DefaultCellEditor {
+                public ValueCellEditor(JTextField textField) {
+                    super(textField);
+                }
+
+                public double originalValue;
+
+                @Override
+                public Object getCellEditorValue() {
+                    String s = super.getCellEditorValue().toString();
+                    double aDouble;
+                    try {
+                        aDouble = Double.parseDouble(s);
+                    } catch (NumberFormatException e) {
+                        return originalValue;
+                    }
+                    return aDouble;
+                }
+
+                @Override
+                public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+                    originalValue = (double) table.getModel().getValueAt(row, column);
+                    Component component = super.getTableCellEditorComponent(table, value, isSelected, row, column);
+                    if (component instanceof JTextField) {
+                        ((JTextField) component).setHorizontalAlignment(SwingConstants.LEFT);
+                    }
+                    return component;
+                }
+            }
+            valueColumn.setCellEditor(new ValueCellEditor(new JTextField()));
         }
 
 
@@ -549,13 +583,12 @@ public class LayerGridParamColorTableDialog extends SmDialog{
 
     /**
      * 颜色表更改信息传递
-     * @param event
      */
     protected void fireColorTableChange(ColorTableChangeEvent event) {
         double[] keys = event.getKeys();
         Color[] colors = event.getColors();
 
-        if (keys == null || colors == null || !keys.equals(keysOrigin)||!colors.equals(colorsOrigin)) {
+        if (keys == null || colors == null || !Arrays.equals(keys, keysOrigin) || !Arrays.equals(colors, colorsOrigin)) {
             if (listeners != null) {
                 for (ColorTableChangeListener listener : listeners) {
                     listener.colorTableChange(event);
