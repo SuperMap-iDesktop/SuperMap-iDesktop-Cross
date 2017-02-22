@@ -3,7 +3,6 @@ package com.supermap.desktop.spatialanalyst.vectoranalyst;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
-import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 
 import javax.swing.*;
@@ -86,10 +85,10 @@ public class PanelResultData extends JPanel {
 		panelResultDataLayout.setVerticalGroup(panelResultDataLayout.createSequentialGroup()
 				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDatasource)
-						.addComponent(this.comboBoxResultDataDatasource)).addGap(5)
+						.addComponent(this.comboBoxResultDataDatasource,25,25,25)).addGap(5)
 				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDataset)
-						.addComponent(this.textFieldResultDataDataset)));
+						.addComponent(this.textFieldResultDataDataset,25,25,25)));
 		//@formatter:on
 	}
 

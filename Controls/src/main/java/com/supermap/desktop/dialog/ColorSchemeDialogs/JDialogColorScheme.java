@@ -18,32 +18,14 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
-import com.supermap.desktop.utilities.CoreResources;
-import com.supermap.desktop.utilities.FileUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.desktop.utilities.SystemPropertyUtilities;
-import com.supermap.desktop.utilities.TableUtilities;
+import com.supermap.desktop.utilities.*;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
+import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.tree.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -65,7 +47,7 @@ public class JDialogColorScheme extends SmDialog {
 	private JTableColorScheme tableColorScheme;
 	private JPanel panelButton;
 	private SmButton buttonOk;
-	private SmButton buttonCancle;
+	private SmButton buttonCancel;
 	//存放删除的颜色方案，确定时删除
 	private java.util.List<ColorScheme> deletedList;
 	private JMenuItem menuItemExport = new JMenuItem(CommonProperties.getString(CommonProperties.EXPORT));
@@ -99,9 +81,9 @@ public class JDialogColorScheme extends SmDialog {
 		tableColorScheme = new JTableColorScheme();
 		panelButton = new JPanel();
 		buttonOk = new SmButton();
-		buttonCancle = new SmButton();
+		buttonCancel = new SmButton();
 		this.componentList.add(buttonOk);
-		this.componentList.add(buttonCancle);
+		this.componentList.add(buttonCancel);
 		deletedList = new ArrayList<>();
 
 		tree.setEditable(false);
@@ -128,7 +110,7 @@ public class JDialogColorScheme extends SmDialog {
 	private void initPanelButton() {
 		panelButton.setLayout(new GridBagLayout());
 		panelButton.add(buttonOk, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 10, 5));
-		panelButton.add(buttonCancle, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(5, 0, 10, 10));
+		panelButton.add(buttonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setInsets(5, 0, 10, 10));
 	}
 
 	private void initToolBarLayout() {
@@ -316,7 +298,7 @@ public class JDialogColorScheme extends SmDialog {
 			}
 		});
 
-		this.buttonCancle.addActionListener(new ActionListener() {
+		this.buttonCancel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dialogResult = DialogResult.CANCEL;
@@ -561,7 +543,7 @@ public class JDialogColorScheme extends SmDialog {
 		this.buttonExport.setToolTipText(CommonProperties.getString(CommonProperties.EXPORT));
 
 		this.buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
-		this.buttonCancle.setText(CommonProperties.getString(CommonProperties.Cancel));
+		this.buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 
 		this.setTitle(ControlsProperties.getString("String_ColorSchemeManageForm"));
 	}

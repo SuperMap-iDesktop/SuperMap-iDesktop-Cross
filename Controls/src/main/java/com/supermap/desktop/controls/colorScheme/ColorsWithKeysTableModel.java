@@ -178,7 +178,17 @@ public class ColorsWithKeysTableModel extends DefaultTableModel {
 
     public void add(Color color) {
         int size = colorNodes.size();
-        double key = colorNodes.get(size - 1).getKey() * 2 - colorNodes.get(size - 2).getKey();
+        double key;
+        if (size == 0) {
+            //列表为空时直接加0
+            key = 0;
+        } else if (size == 1) {
+            //列表只有一个记录时，步长为1，得到追加的值
+            key = colorNodes.get(0).getKey() + 1;
+        } else {
+            //从最后两个值等差递增得到第三个值
+            key = colorNodes.get(size - 1).getKey() * 2 - colorNodes.get(size - 2).getKey();
+        }
         colorNodes.add(new ColorNode(color, key));
         fireTableDataChanged();
     }
