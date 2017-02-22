@@ -207,10 +207,15 @@ public class DockbarManager implements IDockbarManager {
 		return true;
 	}
 
-	public void setVisible(Dockbar dockbar, boolean isVisible) {
+	public void setVisible(final Dockbar dockbar, boolean isVisible) {
 		if (isVisible) {
 			if (isDisplay(dockbar.getView())) {
-				DockingManager.display(dockbar.getView());
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						DockingManager.display(dockbar.getView());
+					}
+				});
 				return;
 			}
 
