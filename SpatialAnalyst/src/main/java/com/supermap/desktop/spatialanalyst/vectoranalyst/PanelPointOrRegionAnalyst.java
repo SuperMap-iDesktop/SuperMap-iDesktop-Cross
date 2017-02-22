@@ -15,6 +15,7 @@ import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.ui.controls.borderPanel.PanelBufferRadius;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
