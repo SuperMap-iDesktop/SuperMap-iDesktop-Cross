@@ -22,6 +22,7 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.LogUtilities;
+import com.supermap.desktop.utilities.RecentFileUtilties;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
@@ -255,7 +256,7 @@ public class DatasourceOpenFileUtilties {
 			Datasource resultDatasource = DatasourceOpenFileUtilties.isDatasourceOpened(filePath);
 			if (null != resultDatasource) {
 //				UICommonToolkit.refreshSelectedDatasourceNode(resultDatasource.getAlias());
-				DatasourceUtilities.addDatasourceToRecentFile(resultDatasource);
+				RecentFileUtilties.addDatasourceToRecentFile(resultDatasource);
 				return resultDatasource;
 			} else {
 				// 数据源没打开，老实自己打开吧。
@@ -275,7 +276,7 @@ public class DatasourceOpenFileUtilties {
 				}
 				if (resultDatasource != null) {
 					UICommonToolkit.refreshSelectedDatasourceNode(resultDatasource.getAlias());
-					DatasourceUtilities.addDatasourceToRecentFile(resultDatasource);
+					RecentFileUtilties.addDatasourceToRecentFile(resultDatasource);
 					return resultDatasource;
 				} else if (!StringUtilities.isNullOrEmpty(errorMessage)) {
 					// 判断是否为密码错误
@@ -333,7 +334,7 @@ public class DatasourceOpenFileUtilties {
 								}
 								if (datasource != null) {
 									UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
-									DatasourceUtilities.addDatasourceToRecentFile(datasource);
+									RecentFileUtilties.addDatasourceToRecentFile(datasource);
 								}
 								return result;
 							}

@@ -153,7 +153,14 @@ public class _XMLTag {
 	public static final String g_AttributionBlue = "b";
 
 	public static final String FILE_STARTUP_XML = "../Configuration/SuperMap.Desktop.Startup.xml";
-	public static final String RECENT_FILE_XML = "../Configuration/SuperMap.Desktop.RecentFile.xml";
+	public static final String LINUX_RECENT_FILE_XML = "Configuration/SuperMap.Desktop.RecentFile.xml";
+	public static final String WINDOWS_RECENT_FILE_XML = "C:/ProgramData/Supermap/Configuration/SuperMap.Desktop.RecentFile.xml";
+
+	public static final String RECENT_FILE_ID = "id";
+	public static final String RECENT_FILE_GROUP = "group";
+	public static final String RECENT_FILE_WORKSPACE = "Workspace";
+	public static final String RECENT_FILE_DATASOURCE = "Datasource";
+
 	public static final String g_WorkEnvironmentsXML = "../Configuration/SuperMap.Desktop.WorkEnvironments.xml";
 	public static final String g_FileLogoBMP = "Logo_Desktop.gif";
 	public static final String g_FileScriptConfig = "Default/SuperMap.Desktop.Script.config";

@@ -1,7 +1,6 @@
 package com.supermap.desktop.utilities;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop._XMLTag;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -134,10 +133,10 @@ public class XmlUtilities {
 			Document doc = getDocument(xmlFile);
 			rootElement = doc.getDocumentElement();
 			// 必须有我们的命名空间
-			String xmlns = rootElement.getAttribute(_XMLTag.g_AttributionXMLNamespace);
-			if (!xmlns.equalsIgnoreCase(_XMLTag.g_ValueXMLNamespace)) {
-				rootElement = null;
-			}
+//			String xmlns = rootElement.getAttribute(_XMLTag.g_AttributionXMLNamespace);
+//			if (!xmlns.equalsIgnoreCase(_XMLTag.g_ValueXMLNamespace)) {
+//				rootElement = null;
+//			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 			rootElement = null;
@@ -211,8 +210,9 @@ public class XmlUtilities {
 	 * @throws TransformerException
 	 */
 	public static void saveXml(final String fileName, final Node node, String encoding) {
-		try {
-			writeXml(new FileOutputStream(fileName), node, encoding);
+
+		try (FileOutputStream os = new FileOutputStream(fileName)) {
+			writeXml(os, node, encoding);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
