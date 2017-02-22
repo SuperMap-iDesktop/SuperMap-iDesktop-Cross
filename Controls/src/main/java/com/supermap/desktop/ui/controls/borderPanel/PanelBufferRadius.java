@@ -8,6 +8,7 @@ import com.supermap.desktop.ui.controls.comboBox.ComboBoxLengthUnit;
 import com.supermap.desktop.ui.controls.comboBox.SmNumericFieldComboBox;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 /**
@@ -73,6 +74,7 @@ public class PanelBufferRadius extends JPanel {
 
 	/**
 	 * 设置panel的名称
+	 *
 	 * @param labelFieldText
 	 */
 	public void setLabelFieldText(String labelFieldText) {
@@ -93,15 +95,17 @@ public class PanelBufferRadius extends JPanel {
 		this.comboBoxUnit = new ComboBoxLengthUnit();
 		this.numericFieldComboBox = new SmNumericFieldComboBox();
 		this.panelContainer = new JPanel();
+
+		TitledBorder border = new TitledBorder(ControlsProperties.getString("String_BufferRadius"));
+		this.setBorder(border);
 	}
 
 	private void initResources() {
 		this.labelUnit.setText(ControlsProperties.getString("String_ProjectionInfoControl_LabelGeographyUnit"));
-		this.labelField.setText(ControlsProperties.getString("String_GeometryPropertySpacialInfoControl_LabelGeometryLength"));
+		this.labelField.setText(ControlsProperties.getString("String_LabelLength"));
 	}
 
 	private void initLayout() {
-		this.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_BufferRadius")));
 		this.setLayout(new BorderLayout());
 		this.add(this.panelContainer, BorderLayout.CENTER);
 		//内部JPanel布局
