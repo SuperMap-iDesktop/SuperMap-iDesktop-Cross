@@ -11,7 +11,7 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.JDialogWorkspaceSaveAs;
-import com.supermap.desktop.utilities.WorkspaceUtilities;
+import com.supermap.desktop.utilities.RecentFileUtilties;
 
 import javax.swing.*;
 
@@ -59,7 +59,7 @@ public class CtrlActionWorkspaceSaveAs extends CtrlAction {
 						WorkspaceConnectionInfo workspaceConnectionInfo = dialog.getWorkspaceConnectionInfo();
 						UICommonToolkit.getWorkspaceManager().getWorkspaceTree().updateUI();
 						if (workspaceConnectionInfo.getType() == WorkspaceType.SXWU || workspaceConnectionInfo.getType() == WorkspaceType.SMWU) {
-							WorkspaceUtilities.addWorkspaceFileToRecentFile(workspaceConnectionInfo.getServer());
+							RecentFileUtilties.addWorkspaceToRecentFile(Application.getActiveApplication().getWorkspace());
 						}
 					}
 				}
