@@ -37,10 +37,10 @@ public class BufferDialog extends SmDialog {
 	private MapControl mapControl;
 	private PanelButton panelButton;
 	private JPanel panelBuffer;
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(620, 470);
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(620, 350);
-	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 365);
-	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(720, 480);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(620, 390);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(620, 325);
+	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 490);
+	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(720, 425);
 	private LocalActionListener localActionListener = new LocalActionListener();
 	private DoSome some = new DoSome() {
 		@Override
@@ -176,12 +176,10 @@ public class BufferDialog extends SmDialog {
 
 		//@formatter:off
             panelDataTypeLayout.setHorizontalGroup(panelDataTypeLayout.createSequentialGroup()
-            		.addGap(10)
                       .addComponent(this.labelDataType).addGap(30)
                       .addComponent(this.panelButtonGroup));
-           
             panelDataTypeLayout.setVerticalGroup(panelDataTypeLayout.createSequentialGroup()
-                      .addGroup(panelDataTypeLayout.createParallelGroup(Alignment.LEADING)
+                      .addGroup(panelDataTypeLayout.createParallelGroup(Alignment.CENTER)
                                 .addComponent(this.labelDataType)
                                 .addComponent(this.panelButtonGroup)));
        //@formatter:on

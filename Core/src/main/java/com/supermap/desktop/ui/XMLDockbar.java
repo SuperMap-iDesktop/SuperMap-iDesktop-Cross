@@ -9,15 +9,19 @@ import com.supermap.desktop.utilities.XmlUtilities;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import java.awt.*;
 import java.util.ArrayList;
 
 public class XMLDockbar extends XMLCommand {
+	private final static String ATTRIBUTION_DOCK_DIRECTION = "dockDirection";
+	private final static String ATTRIBUTION_DOCK_STATE = "dockState";
 	private String title = "";
 	private String controlClass = null;
 	//	private DockPath dockPath;
-	private ArrayList<DockPath> dockPaths = new ArrayList<>();
+	private String dockDirection = "rightTop";
+	private String dockState = "normal"; // normal minimized maximized float
 
 	public XMLDockbar(PluginInfo pluginInfo, XMLCommandBase group) {
 		super(pluginInfo, group);
@@ -40,71 +44,23 @@ public class XMLDockbar extends XMLCommand {
 			this.controlClass = element.getAttribute(g_AttributionComponent);
 		}
 
+		if (element.hasAttribute(ATTRIBUTION_DOCK_DIRECTION)) {
+			this.dockDirection = element.getAttribute(ATTRIBUTION_DOCK_DIRECTION);
+		}
+
+		if (element.hasAttribute(ATTRIBUTION_DOCK_STATE)) {
+			this.dockState = element.getAttribute(ATTRIBUTION_DOCK_STATE);
+		}
+
+		if (StringUtilities.isNullOrEmpty(this.dockState)) {
+			this.dockState = "normal";
+		}
+
 		if (StringUtilities.isNullOrEmpty(this.controlClass)) {
 			return false;
 		}
 		this.title = StringUtilities.isNullOrEmpty(this.title) ? this.controlClass : this.title;
-		return loadPath((Element) XmlUtilities.getChildElementNodeByName(element, g_NodeDockPath));
-	}
-
-//	private boolean loadPath(Element element) {
-//		boolean result = false;
-//
-//		// 获取路径
-//		DockPath dockPath = DockPath.ROOT;
-//		Element[] directionNodes = XmlUtilities.getChildElementNodesByName(element, g_NodeDirection);
-//		if (directionNodes != null && directionNodes.length > 0) {
-//			for (int i = 0; i < directionNodes.length; i++) {
-//				dockPath = loadDirection(directionNodes[i], dockPath);
-//			}
-//		} else {
-//			// 配置文件没有配置 Direction，则默认为 ROOT.LEFT
-//			dockPath = new DockPath();
-//			dockPath.setRelateTo(DockPath.ROOT);
-//			dockPath.setDirection(Direction.LEFT);
-//		}
-//		this.dockPath = dockPath;
-//
-//		return result;
-//	}
-
-	private boolean loadPath(Element element) {
-		boolean result = false;
-
-		// 获取路径
-		Element[] directionNodes = XmlUtilities.getChildElementNodesByName(element, g_NodeDirection);
-		if (directionNodes != null && directionNodes.length > 0) {
-			for (int i = 0; i < directionNodes.length; i++) {
-				this.dockPaths.add(loadDirection(directionNodes[i], null));
-			}
-		} else {
-			// 配置文件没有配置 Direction，则默认为 ROOT.LEFT
-			DockPath dockPath = new DockPath();
-			dockPath.setDirection(Direction.LEFT);
-			this.dockPaths.add(dockPath);
-		}
-
-		return result;
-	}
-
-	private DockPath loadDirection(Element directionNode, DockPath relateTo) {
-		DockPath path = new DockPath();
-		path.setDirection(Direction.valueOf(directionNode.getNodeValue()));
-
-		if (directionNode.hasAttribute(g_AttributionRatio)) {
-			String strRatio = directionNode.getAttribute(g_AttributionRatio);
-			double ratio = 0.5;
-			try {
-				ratio = Double.parseDouble(strRatio);
-			} catch (NumberFormatException e) {
-				ratio = 0.5;
-			} catch (Exception e) {
-				Application.getActiveApplication().getOutput().output(e);
-			}
-			path.setRatio(ratio);
-		}
-
-		return path;
+		return true;
 	}
 
 	public Component CreateComponent() {
@@ -154,6 +110,8 @@ public class XMLDockbar extends XMLCommand {
 				result.setTitle(getTitle());
 				result.setVisible(getVisible());
 				result.setControlClass(getControlClass());
+				result.setDockDirection(getDockDirection());
+				result.setDockState(getDockState());
 			}
 		} catch (Exception e) {
 			result = null;
@@ -175,6 +133,8 @@ public class XMLDockbar extends XMLCommand {
 				result.setTitle(getTitle());
 				result.setVisible(getVisible());
 				result.setControlClass(getControlClass());
+				result.setDockDirection(getDockDirection());
+				result.setDockState(getDockState());
 				result.getPluginInfo().setBundleName(getPluginInfo().getBundleName());
 			}
 		} catch (Exception e) {
@@ -247,19 +207,23 @@ public class XMLDockbar extends XMLCommand {
 		return title;
 	}
 
-	public DockPath[] getDockPaths() {
-		return this.dockPaths.toArray(new DockPath[this.dockPaths.size()]);
-	}
-
-//	public DockPath getDockPath() {
-//		return dockPath;
-//	}
-
-	public void setDockPath(DockPath dockPath) {
-//		this.dockPath = dockPath;
-	}
-
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public String getDockDirection() {
+		return dockDirection;
+	}
+
+	public void setDockDirection(String dockDirection) {
+		this.dockDirection = dockDirection;
+	}
+
+	public String getDockState() {
+		return dockState;
+	}
+
+	public void setDockState(String dockState) {
+		this.dockState = dockState;
 	}
 }

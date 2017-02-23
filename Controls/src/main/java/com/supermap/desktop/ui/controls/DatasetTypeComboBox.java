@@ -3,7 +3,7 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.implement.MyComboBoxUI;
+import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
@@ -62,7 +62,7 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 	 * 2017.2.13
 	 */
 	public void updateUI() {
-		this.setUI(new MyComboBoxUI());
+		this.setUI(new DefaultComboBoxUI());
 	}
 
 	/**

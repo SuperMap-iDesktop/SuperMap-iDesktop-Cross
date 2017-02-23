@@ -1,12 +1,11 @@
-package com.supermap.desktop.spatialanalyst.vectoranalyst;
+package com.supermap.desktop.ui.controls.borderPanel;
 
-import com.supermap.analyst.spatialanalyst.BufferRadiusUnit;
-import com.supermap.data.Unit;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
+import com.supermap.desktop.ui.controls.comboBox.ComboBoxLengthUnit;
 import com.supermap.desktop.ui.controls.comboBox.SmNumericFieldComboBox;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 
 /**
@@ -19,16 +18,16 @@ public class PanelBufferRadius extends JPanel {
 	private JPanel panelContainer;
 	private JLabel labelUnit;
 	private JLabel labelField;
-	private JComboBox<Unit> comboBoxUnit;
+	private ComboBoxLengthUnit comboBoxUnit;
 	private SmNumericFieldComboBox numericFieldComboBox;
-	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
+//	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
 
 	/**
 	 * 获得缓冲“单位”下拉列表框
 	 *
 	 * @return
 	 */
-	public JComboBox getComboBoxUnit() {
+	public ComboBoxLengthUnit getComboBoxUnit() {
 		return this.comboBoxUnit;
 	}
 
@@ -40,10 +39,14 @@ public class PanelBufferRadius extends JPanel {
 	}
 
 	/**
-	 * @return
+	 * 设置panel的名称
+	 *
+	 * @param labelFieldText
 	 */
-	public BufferRadiusUnit getUnit() {
-		return initComboBoxUnit.getBufferRadiusUnit((Unit) this.comboBoxUnit.getSelectedItem());
+	public void setLabelFieldText(String labelFieldText) {
+		if (labelFieldText != null) {
+			this.setBorder(BorderFactory.createTitledBorder(labelFieldText));
+		}
 	}
 
 	public PanelBufferRadius() {
@@ -55,18 +58,20 @@ public class PanelBufferRadius extends JPanel {
 	private void initComponent() {
 		this.labelUnit = new JLabel("Unit");
 		this.labelField = new JLabel("Length");
-		this.comboBoxUnit = initComboBoxUnit.createComboBoxUnit();
+		this.comboBoxUnit = new ComboBoxLengthUnit();
 		this.numericFieldComboBox = new SmNumericFieldComboBox();
 		this.panelContainer = new JPanel();
+
+		TitledBorder border = new TitledBorder(ControlsProperties.getString("String_BufferRadius"));
+		this.setBorder(border);
 	}
 
 	private void initResources() {
 		this.labelUnit.setText(ControlsProperties.getString("String_ProjectionInfoControl_LabelGeographyUnit"));
-		this.labelField.setText(ControlsProperties.getString("String_GeometryPropertySpacialInfoControl_LabelGeometryLength"));
+		this.labelField.setText(ControlsProperties.getString("String_LabelLength"));
 	}
 
 	private void initLayout() {
-		this.setBorder(BorderFactory.createTitledBorder(SpatialAnalystProperties.getString("String_BufferRadius")));
 		this.setLayout(new BorderLayout());
 		this.add(this.panelContainer, BorderLayout.CENTER);
 		//内部JPanel布局
@@ -85,10 +90,10 @@ public class PanelBufferRadius extends JPanel {
 		panelBufferDataLayout.setVerticalGroup(panelBufferDataLayout.createSequentialGroup()
 				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelUnit)
-						.addComponent(this.comboBoxUnit,25,25,25)).addGap(5)
+						.addComponent(this.comboBoxUnit,20,20,20))
 				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelField)
-						.addComponent(this.numericFieldComboBox,25,25,25)));
+						.addComponent(this.numericFieldComboBox,20,20,20)));
 		//@formatter:on
 	}
 }

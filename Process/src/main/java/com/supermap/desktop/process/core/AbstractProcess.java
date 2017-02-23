@@ -1,11 +1,13 @@
 package com.supermap.desktop.process.core;
 
+import com.sun.corba.se.spi.orbutil.fsm.Input;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.parameter.interfaces.IData;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 
 import javax.swing.event.EventListenerList;
+import java.util.Vector;
 
 /**
  * Created by highsad on 2017/1/5.
@@ -24,10 +26,10 @@ public abstract class AbstractProcess implements IProcess {
 	public abstract String getKey();
 
 	@Override
-	public abstract IData getInput();
+	public abstract Vector<IData> getInputs();
 
 	@Override
-	public abstract IData getOutput();
+	public abstract Vector<IData> getOutputs();
 
 	@Override
 	public void addRunningListener(RunningListener listener) {

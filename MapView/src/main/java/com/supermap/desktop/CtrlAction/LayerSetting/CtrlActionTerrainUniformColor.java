@@ -32,11 +32,14 @@ public class CtrlActionTerrainUniformColor extends CtrlAction {
         boolean result=false;
         IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
         Layers currentFormMapLayer = formMap.getMapControl().getMap().getLayers();
+        int indexCount=0; // 用来判断当前地图窗口打开的删格数据集有几个，如果只有一个功能不可用，如果有两个或两个以上，才可用
         for (int i = 0; i < currentFormMapLayer.getCount(); i++) {
             if (currentFormMapLayer.get(i).getDataset().getType() == DatasetType.GRID) {
-                result=true;
-                break;
+                indexCount=indexCount+1;
             }
+        }
+        if (indexCount>=2){
+            result=true;
         }
         return result;
     }
