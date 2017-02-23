@@ -81,8 +81,10 @@ public class CtrlActionRecentFiles extends CtrlAction {
 					UICommonToolkit.showMessageDialog(DataViewProperties.getString("String_FileDonotExist"));
 					if (isWorkSpaceFile(file)) {
 						RecentFileUtilties.removeRecentFile(RecentFileUtilties.FILE_TYPE_WORKSPACE, filePath);
+						RecentFileUtilties.fillMenu(RecentFileUtilties.FILE_TYPE_WORKSPACE);
 					} else {
 						RecentFileUtilties.removeRecentFile(RecentFileUtilties.FILE_TYPE_DATASOURCE, filePath);
+						RecentFileUtilties.fillMenu(RecentFileUtilties.FILE_TYPE_DATASOURCE);
 					}
 				}
 			}
