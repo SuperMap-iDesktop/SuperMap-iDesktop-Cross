@@ -44,7 +44,7 @@ public class RecentFileUtilties {
 			File file = new File(recentFilePath);
 			if (!file.exists()) {
 				try {
-					if (file.createNewFile()) {
+					if (file.getParentFile().mkdirs() && file.createNewFile()) {
 						FileUtilities.writeToFile(file, CoreProperties.getString("String_RecentFileString"));
 						return true;
 					}
