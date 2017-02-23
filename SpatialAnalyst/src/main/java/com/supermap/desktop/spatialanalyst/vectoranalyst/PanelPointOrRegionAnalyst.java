@@ -178,7 +178,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 		GroupLayout panelBasicRightLayout = new GroupLayout(this.panelBasicRight);
 		this.panelBasicRight.setLayout(panelBasicRightLayout);
-
 		//@formatter:off
           panelBasicRightLayout.setHorizontalGroup(panelBasicRightLayout.createSequentialGroup()
                     .addGroup(panelBasicRightLayout.createParallelGroup(Alignment.LEADING)
