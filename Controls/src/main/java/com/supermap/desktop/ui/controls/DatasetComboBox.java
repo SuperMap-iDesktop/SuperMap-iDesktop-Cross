@@ -4,7 +4,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasets;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.implement.MyComboBoxUI;
+import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 
 import javax.swing.*;
@@ -38,7 +38,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	 */
 	@Override
 	public void updateUI() {
-		this.setUI(new MyComboBoxUI());
+		this.setUI(new DefaultComboBoxUI());
 	}
 
 	/**

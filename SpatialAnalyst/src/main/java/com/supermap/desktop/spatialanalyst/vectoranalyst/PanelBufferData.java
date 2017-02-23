@@ -22,7 +22,7 @@ public class PanelBufferData extends JPanel {
 	private JCheckBox checkBoxGeometrySelect;
 	private JPanel panelBufferDataBasic;
 	private JPanel panelSelect;
-	private final static Dimension DIMENSION = new Dimension(100, 20);
+//	private final static Dimension DIMENSION = new Dimension(100, 20);
 
 	public JCheckBox getCheckBoxGeometrySelect() {
 		return checkBoxGeometrySelect;
@@ -58,9 +58,9 @@ public class PanelBufferData extends JPanel {
 		this.labelDataset = new JLabel("Dataset");
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxBufferDataDatasource = new DatasourceComboBox();
-		this.comboBoxBufferDataDatasource.setSize(DIMENSION);
+//		this.comboBoxBufferDataDatasource.setSize(DIMENSION);
 		this.comboBoxBufferDataDataset = new DatasetComboBox();
-		this.comboBoxBufferDataDataset.setSize(DIMENSION);
+//		this.comboBoxBufferDataDataset.setSize(DIMENSION);
 		this.checkBoxGeometrySelect = new JCheckBox("GeometrySelect");
 		this.panelBufferDataBasic = new JPanel();
 		this.panelSelect = new JPanel();
@@ -94,10 +94,10 @@ public class PanelBufferData extends JPanel {
 		panelBufferDataLayout.setVerticalGroup(panelBufferDataLayout.createSequentialGroup()
 				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDatasource)
-						.addComponent(this.comboBoxBufferDataDatasource,25,25,25)).addGap(5)
+						.addComponent(this.comboBoxBufferDataDatasource,20,20,20))
 				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDataset)
-						.addComponent(this.comboBoxBufferDataDataset,25,25,25)));
+						.addComponent(this.comboBoxBufferDataDataset,20,20,20)));
 		//@formatter:on
 		
 		this.add(this.checkBoxGeometrySelect, BorderLayout.SOUTH);

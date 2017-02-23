@@ -169,7 +169,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelBufferData)
                               .addComponent(this.panelResultData)));
           panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
-                    .addComponent(this.panelBufferData).addGap(10)
+                    .addComponent(this.panelBufferData)
                     .addComponent(this.panelResultData).addContainerGap());
           //@formatter:on
 	}
@@ -178,18 +178,15 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 		GroupLayout panelBasicRightLayout = new GroupLayout(this.panelBasicRight);
 		this.panelBasicRight.setLayout(panelBasicRightLayout);
-
 		//@formatter:off
           panelBasicRightLayout.setHorizontalGroup(panelBasicRightLayout.createSequentialGroup()
                     .addGroup(panelBasicRightLayout.createParallelGroup(Alignment.LEADING)
                               .addComponent(this.panelBufferRadius)
                               .addComponent(this.panelResultSet)));
-         
           panelBasicRightLayout.setVerticalGroup(panelBasicRightLayout.createSequentialGroup()
 		            .addComponent(this.panelBufferRadius)
                     .addComponent(this.panelResultSet).addContainerGap());
           //@formatter:on
-
 	}
 
 	/**
@@ -348,7 +345,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 			// 设置缓冲区参数
 			bufferAnalystParameter.setLeftDistance(this.radius);
 			bufferAnalystParameter.setEndType(BufferEndType.ROUND);
-			bufferAnalystParameter.setRadiusUnit(this.panelBufferRadius.getUnit());
+			bufferAnalystParameter.setRadiusUnit(this.panelBufferRadius.getComboBoxUnit().getUnit());
 			bufferAnalystParameter.setSemicircleLineSegment(Integer.valueOf(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()));
 
 			// 当CheckBoxGeometrySelect()选中时，进行记录集缓冲分析，否则进行数据集缓冲分析
