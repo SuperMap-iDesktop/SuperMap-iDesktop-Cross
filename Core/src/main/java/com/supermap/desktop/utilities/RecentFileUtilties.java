@@ -90,7 +90,7 @@ public class RecentFileUtilties {
 			SmMenuItem menuItem = new SmMenuItem(null, xmlCommand, menu);
 			menu.insert((IBaseItem) menuItem, 0);
 			if (menu.getItemCount() > maxRecentFileCount) {
-				removeRecentFile(fileType, menu.getItem(maxRecentFileCount).getToolTipText());
+				removeFormMenu(fileType, menu.getItem(maxRecentFileCount).getToolTipText());
 			}
 			saveRecentFile(fileType, filePath);
 		}
@@ -133,13 +133,8 @@ public class RecentFileUtilties {
 
 	public static void removeRecentFile(String fileType, String filePath) {
 		try {
-			SmMenu menu = fileType.equals(FILE_TYPE_WORKSPACE) ? recentWorkspaceMenu : recentDatasourceMenu;
 			Document document = getRecentFileDocument();
-			for (IBaseItem item : menu.items()) {
-				if (((SmMenuItem) item).getToolTipText().equals(filePath)) {
-					menu.remove(item);
-				}
-			}
+			removeFormMenu(fileType, filePath);
 
 			String recentFilePath = getRecentFilePath();
 			if (document != null) {
@@ -160,6 +155,15 @@ public class RecentFileUtilties {
 		}
 	}
 
+	private static void removeFormMenu(String fileType, String filePath) {
+		SmMenu menu = fileType.equals(FILE_TYPE_WORKSPACE) ? recentWorkspaceMenu : recentDatasourceMenu;
+		for (IBaseItem item : menu.items()) {
+			if (((SmMenuItem) item).getToolTipText().equals(filePath)) {
+				menu.remove(item);
+			}
+		}
+	}
+
 	public static void initRecentFileMenu(String fileType) {
 		try {
 			Element fileElement;
@@ -177,9 +181,10 @@ public class RecentFileUtilties {
 				return;
 			}
 			Element[] datasources = XmlUtilities.getChildElementNodesByName(fileElement, "button");
-			for (Element datasource : datasources) {
-				String fileName = datasource.getAttribute("label");
-				String filePath = datasource.getAttribute("screenTip");
+			for (int i = 0; i < datasources.length && i < maxRecentFileCount; i++) {
+				Element element = datasources[i];
+				String fileName = element.getAttribute("label");
+				String filePath = element.getAttribute("screenTip");
 				XMLCommand xmlCommand = new XMLCommand(pluginInfo);
 				xmlCommand.setCtrlActionClass("CtrlActionRecentFiles");
 				xmlCommand.setLabel(fileName);
@@ -256,6 +261,37 @@ public class RecentFileUtilties {
 
 	public static void setRecentWorkspaceMenu(SmMenu recentWorkspaceMenu) {
 		RecentFileUtilties.recentWorkspaceMenu = recentWorkspaceMenu;
+	}
+
+	public static void fillMenu(String fileType) {
+		SmMenu smMenu;
+		if (fileType.equals(FILE_TYPE_WORKSPACE)) {
+			smMenu = recentWorkspaceMenu;
+		} else {
+			smMenu = recentDatasourceMenu;
+		}
+		Document document = XmlUtilities.getDocument(getRecentFilePath());
+		Element element = getElement(document, fileType);
+		Element[] buttons = XmlUtilities.getChildElementNodesByName(element, "button");
+		if (smMenu.getCount() < maxRecentFileCount && buttons != null && buttons.length >= maxRecentFileCount) {
+			PluginInfo pluginInfo;
+			if (fileType.equals(FILE_TYPE_WORKSPACE)) {
+				pluginInfo = workspacePluginInfo;
+			} else {
+				pluginInfo = datasourcePluginInfo;
+			}
+			for (int i = smMenu.getCount(); i < maxRecentFileCount; i++) {
+				Element button = buttons[i];
+				String fileName = button.getAttribute("label");
+				String filePath = button.getAttribute("screenTip");
+				XMLCommand xmlCommand = new XMLCommand(pluginInfo);
+				xmlCommand.setCtrlActionClass("CtrlActionRecentFiles");
+				xmlCommand.setLabel(fileName);
+				xmlCommand.setTooltip(filePath);
+				SmMenuItem menuItem = new SmMenuItem(null, xmlCommand, smMenu);
+				smMenu.add((IBaseItem) menuItem);
+			}
+		}
 	}
 	//endregion
 }
