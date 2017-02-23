@@ -32,6 +32,7 @@ public class RecentFileUtilties {
 
 	public static final String FILE_TYPE_DATASOURCE = "datasource";
 	public static final String FILE_TYPE_WORKSPACE = "workspace";
+	private static final int maxRecentFileCount = 8;
 
 	private RecentFileUtilties() {
 
@@ -88,8 +89,8 @@ public class RecentFileUtilties {
 			xmlCommand.setTooltip(filePath);
 			SmMenuItem menuItem = new SmMenuItem(null, xmlCommand, menu);
 			menu.insert((IBaseItem) menuItem, 0);
-			if (menu.getItemCount() > 7) {
-				removeRecentFile(fileType, menu.getItem(7).getToolTipText());
+			if (menu.getItemCount() > maxRecentFileCount) {
+				removeRecentFile(fileType, menu.getItem(maxRecentFileCount).getToolTipText());
 			}
 			saveRecentFile(fileType, filePath);
 		}
