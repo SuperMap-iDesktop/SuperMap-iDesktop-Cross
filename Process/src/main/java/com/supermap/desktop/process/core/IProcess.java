@@ -5,6 +5,7 @@ import com.supermap.desktop.process.parameter.interfaces.IData;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 
 import javax.swing.*;
+import java.util.Vector;
 
 /**
  * Created by highsad on 2017/1/5.
@@ -15,9 +16,9 @@ public interface IProcess {
 
 	String getTitle();
 
-	IData getInput();
+	Vector<IData> getInputs();
 
-	IData getOutput();
+	Vector<IData> getOutputs();
 
 	IParameters getParameters();
 
