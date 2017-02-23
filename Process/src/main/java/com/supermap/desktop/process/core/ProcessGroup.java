@@ -12,7 +12,7 @@ import java.util.Vector;
  * @author XiaJT
  */
 public class ProcessGroup implements IProcessGroup, IProcess {
-
+	// 导出时Iprocess输出路径类似文件路径 ProcessGroup1/ProcessGroup2/process
 	private String name;
 	private ProcessGroup parent;
 	private ArrayList<IProcess> processes = new ArrayList<>();
@@ -44,15 +44,14 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 
 	@Override
 	public void setName(String name) {
-		if (parent == null) {
+		if (parent == null || parent.isLegitName(name)) {
 			this.name = name;
-		} else if (parent.isLegitName(name)) {
-
 		}
 	}
 
 	@Override
 	public boolean isLegitName(String name) {
+		// TODO: 2017/2/23
 		return false;
 	}
 
