@@ -3,7 +3,7 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.implement.MyComboBoxUI;
+import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 
 import javax.swing.*;
@@ -25,7 +25,7 @@ public class DatasourceComboBox extends JComboBox<Datasource> {
 	 */
 	@Override
 	public void updateUI() {
-		this.setUI(new MyComboBoxUI());
+		this.setUI(new DefaultComboBoxUI());
 	}
 
 	/**

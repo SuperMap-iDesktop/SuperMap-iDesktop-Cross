@@ -1,5 +1,6 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
 
@@ -77,6 +78,7 @@ public class PanelResultSet extends JPanel {
 		initComponent();
 		initResources();
 		setPanelResultSetLayout();
+//		setOtherPanelResultSetLayout();
 	}
 
 	private void initComponent() {
@@ -114,7 +116,7 @@ public class PanelResultSet extends JPanel {
 	}
 
 	private void setPanelResultSetLayout() {
-		this.setBorder(BorderFactory.createTitledBorder(SpatialAnalystProperties.getString("String_ResultSet")));
+		this.setBorder(BorderFactory.createTitledBorder(CommonProperties.getString("String_GroupBox_ParamSetting")));
 		GroupLayout panelResultSetLayout = new GroupLayout(this);
 		panelResultSetLayout.setAutoCreateContainerGaps(true);
 		panelResultSetLayout.setAutoCreateGaps(true);
@@ -138,10 +140,41 @@ public class PanelResultSet extends JPanel {
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxDisplayInMap)
 						.addComponent(this.checkBoxDisplayInScene))
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.CENTER)
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.labelSemicircleLineSegment)
 						.addComponent(this.textFieldSemicircleLineSegment)));
 		
+		//@formatter:on
+	}
+
+	public void setOtherPanelResultSetLayout() {
+		this.setBorder(BorderFactory.createTitledBorder(CommonProperties.getString("String_GroupBox_ParamSetting")));
+		GroupLayout panelResultSetLayout = new GroupLayout(this);
+		panelResultSetLayout.setAutoCreateContainerGaps(true);
+		panelResultSetLayout.setAutoCreateGaps(true);
+		this.setLayout(panelResultSetLayout);
+
+		//@formatter:off
+		panelResultSetLayout.setHorizontalGroup(panelResultSetLayout.createSequentialGroup()
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.checkBoxUnionBuffer)
+						.addComponent(this.checkBoxDisplayInMap)
+						.addComponent(this.checkBoxRemainAttributes)
+						.addComponent(this.labelSemicircleLineSegment))
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.textFieldSemicircleLineSegment)));
+
+		panelResultSetLayout.setVerticalGroup(panelResultSetLayout.createSequentialGroup()
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.checkBoxUnionBuffer).addGap(30))
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.checkBoxDisplayInMap).addGap(30))
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
+						.addComponent(this.checkBoxRemainAttributes).addGap(30))
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.labelSemicircleLineSegment)
+						.addComponent(this.textFieldSemicircleLineSegment)));
+
 		//@formatter:on
 	}
 }

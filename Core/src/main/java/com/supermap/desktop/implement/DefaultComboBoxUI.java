@@ -10,9 +10,9 @@ import java.awt.*;
 /**
  * Created by xie on 2016/11/7.
  */
-public class MyComboBoxUI extends BasicComboBoxUI {
+public class DefaultComboBoxUI extends BasicComboBoxUI {
     public static ComponentUI createUI(JComponent c) {
-        return new MyComboBoxUI();
+        return new DefaultComboBoxUI();
     }
 
     protected JButton createArrowButton() {
