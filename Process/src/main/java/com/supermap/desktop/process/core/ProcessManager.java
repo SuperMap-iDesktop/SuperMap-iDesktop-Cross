@@ -2,14 +2,10 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.process.loader.DefaultProcessLoader;
 import com.supermap.desktop.process.loader.IProcessLoader;
-import org.jhotdraw.draw.DefaultDrawingView;
-import org.jhotdraw.draw.DrawingView;
-import org.jhotdraw.samples.draw.DrawView;
-import org.jhotdraw.samples.draw.DrawingPanel;
 import org.jhotdraw.samples.draw.Main;
 
 import javax.swing.*;
-import java.awt.*;
+import java.util.Collections;
 import java.util.Vector;
 
 /**
@@ -47,11 +43,9 @@ public class ProcessManager extends JPanel {
 		addProcesses(loader.loadProcesses());
 	}
 
-	public void addProcesses(IProcess[] processes) {
+	public void addProcesses(IProcess... processes) {
 		if (processes != null && processes.length > 0) {
-			for (int i = 0; i < processes.length; i++) {
-				this.processes.add(processes[i]);
-			}
+			Collections.addAll(this.processes, processes);
 		}
 	}
 }
