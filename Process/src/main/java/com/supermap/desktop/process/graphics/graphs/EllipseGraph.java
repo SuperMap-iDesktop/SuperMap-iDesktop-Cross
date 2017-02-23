@@ -22,6 +22,11 @@ public class EllipseGraph extends AbstractGraph {
 		return ellipse2D.contains(p);
 	}
 
+	@Override
+	public void draw(Graphics graphics) {
+
+	}
+
 	/**
 	 * 为了演示出结果先暂时这样，后续使用 decorator 来重构
 	 * hotDecorator selectedDecorator 等

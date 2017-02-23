@@ -12,36 +12,21 @@ import java.util.ArrayList;
  */
 public abstract class AbstractGraph implements IGraph {
 
-	public final static int CONNECTORSIZE = 2;
 	public final static int DEFAULT_BORDER_WIDTH = 2;
 
+	private Shape shape;
 	private int borderWidth;
 	private GraphCanvas canvas;
 	private double x = 0d;
 	private double y = 0d;
 	private double width = 0d;
 	private double height = 0d;
-	private GraphConnector connector;
-
-	private ArrayList<LineGraph> lines = new ArrayList<>();
 
 	public AbstractGraph(GraphCanvas canvas) {
 		this.borderWidth = DEFAULT_BORDER_WIDTH;
 		this.canvas = canvas;
-		this.connector = new GraphConnector(this);
 	}
 
-	@Override
-	public ArrayList<LineGraph> getLines() {
-		return this.lines;
-	}
-
-	@Override
-	public GraphConnector getConnector() {
-		return this.connector;
-	}
-
-	@Override
 	public int getBorderWidth() {
 		return this.borderWidth;
 	}
@@ -50,59 +35,49 @@ public abstract class AbstractGraph implements IGraph {
 	public Rectangle getBounds() {
 		Rectangle bounds = new Rectangle();
 		bounds.setRect(x, y, width, height);
-		double grow = this.borderWidth > CONNECTORSIZE / 2 + 1 ? borderWidth : CONNECTORSIZE / 2 + 1;
-		bounds.grow(Double.valueOf(grow).intValue(), Double.valueOf(grow).intValue());
+//		double grow = this.borderWidth > CONNECTORSIZE / 2 + 1 ? borderWidth : CONNECTORSIZE / 2 + 1;
+//		bounds.grow(Double.valueOf(grow).intValue(), Double.valueOf(grow).intValue());
 		return bounds;
 	}
 
-	@Override
 	public Point getCenter() {
 		Point center = new Point();
 		center.setLocation(this.x + this.width / 2, this.y + this.height / 2);
 		return center;
 	}
 
-	@Override
 	public double getX() {
 		return this.x;
 	}
 
-	@Override
 	public double getY() {
 		return this.y;
 	}
 
-	@Override
 	public double getWidth() {
 		return this.width;
 	}
 
-	@Override
 	public double getHeight() {
 		return this.height;
 	}
 
-	@Override
 	public void setX(double x) {
 		this.x = x;
 	}
 
-	@Override
 	public void setY(double y) {
 		this.y = y;
 	}
 
-	@Override
 	public void setWidth(double width) {
 		this.width = width;
 	}
 
-	@Override
 	public void setHeight(double height) {
 		this.height = height;
 	}
 
-	@Override
 	public GraphCanvas getCanvas() {
 		return this.canvas;
 	}
@@ -112,12 +87,10 @@ public abstract class AbstractGraph implements IGraph {
 		return false;
 	}
 
-	@Override
 	public void paint(Graphics2D g, boolean isHot, boolean isSelected) {
 		paintBounds(g);
 	}
 
-	@Override
 	public void paintPreview(Graphics2D g) {
 		paintBounds(g);
 	}
