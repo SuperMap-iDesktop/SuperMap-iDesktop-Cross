@@ -1,28 +1,22 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
-import com.supermap.data.Colors;
 import com.supermap.desktop.DefaultValues;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.controls.colorScheme.ColorSchemeEditorDialog;
-import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.event.ColorTableChangeEvent;
 import com.supermap.desktop.event.ColorTableChangeListener;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerGridParamPropertyModel;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.SMFormattedTextField;
-import com.supermap.desktop.ui.SMSpinner;
-import com.supermap.desktop.ui.StateChangeEvent;
-import com.supermap.desktop.ui.StateChangeListener;
-import com.supermap.desktop.ui.TristateCheckBox;
+import com.supermap.desktop.ui.*;
 import com.supermap.desktop.ui.controls.ButtonColorSelector;
+import com.supermap.desktop.ui.controls.DialogResult;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
@@ -89,8 +83,11 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
                     checkChanged();
                 }
             });
-            layerGridParamColorTableDialog.showDialog();
-        }
+			DialogResult dialogResult = layerGridParamColorTableDialog.showDialog();
+			if (dialogResult != DialogResult.OK) {
+				layerGridParamColorTableDialog.actionCanceled();
+			}
+		}
     };
 
 	public LayerGridParamPropertyControl() {
