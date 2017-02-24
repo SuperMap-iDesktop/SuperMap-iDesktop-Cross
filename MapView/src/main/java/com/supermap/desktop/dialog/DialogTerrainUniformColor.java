@@ -1,7 +1,6 @@
 package com.supermap.desktop.dialog;
 
 import com.supermap.data.ColorDictionary;
-import com.supermap.data.Colors;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
@@ -9,7 +8,10 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertycontrols.LayerGridParamColorTableDialog;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.CommonListCellRenderer;
+import com.supermap.desktop.ui.controls.DataCell;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
@@ -41,9 +43,9 @@ public class DialogTerrainUniformColor extends SmDialog {
     private final int COLUMN_INDEX_MINVALUE = 2;
     private final int COLUMN_INDEX_MAXVALUE = 3;
     private boolean isSelectedCheckTip = true;
-    //private double colorsTableMinValue = Double.MAX_VALUE;
-    //private double colorsTableMaxValue = 0 - Double.MAX_VALUE;
     private HashMap<String, Layer> datasetLayerMap = new HashMap<String, Layer>();
+    private ColorDictionary editColorDictionary = null;
+    private String editLayerName;
 
     private ActionListener actionListener = new ActionListener() {
 
@@ -59,11 +61,26 @@ public class DialogTerrainUniformColor extends SmDialog {
                 DataCell dataCell = (DataCell) DialogTerrainUniformColor.this.comboBoxLayer.getSelectedItem();
                 Layer selectedLayer = datasetLayerMap.get(dataCell.getDataName());
                 LayerSettingGrid layerSettingGrid = (LayerSettingGrid) selectedLayer.getAdditionalSetting();
+                //editColorTable=new LayerSettingGrid(layerSettingGrid);
 
                 LayerGridParamColorTableDialog layerGridParamColorTableDialog = new LayerGridParamColorTableDialog(layerSettingGrid);
                 DialogResult result = layerGridParamColorTableDialog.showDialog();
                 if (result == DialogResult.OK) {
-                    selectedLayer.setAdditionalSetting(layerGridParamColorTableDialog.getCurrentLayerSettingGrid());
+                    ColorDictionary colorDictionary = layerSettingGrid.getColorDictionary();
+                    colorDictionary.clear();
+                    //ColorDictionary colorDictionary1=editColorTable.getColorDictionary();
+                    //colorDictionary1.clear();
+                    double[] keys = layerGridParamColorTableDialog.getCurrentLayerSettingGrid().getColorDictionary().getKeys();
+                    Color[] colors = layerGridParamColorTableDialog.getCurrentLayerSettingGrid().getColorDictionary().getColors();
+                    for (int i = 0; i < keys.length; i++) {
+                        colorDictionary.setColor(keys[i], colors[i]);
+                        //colorDictionary1.setColor(keys[i],colors[i]);
+                    }
+                    layerSettingGrid.setColorDictionary(colorDictionary);
+                    selectedLayer.setAdditionalSetting(layerSettingGrid);
+                    editColorDictionary = new ColorDictionary(colorDictionary);
+                    //editColorTable.setColorDictionary(colorDictionary1);
+                    editLayerName = selectedLayer.getName();
                 }
             } else if (e.getSource() == DialogTerrainUniformColor.this.checkBoxTip) {
                 isSelectedCheckTip = DialogTerrainUniformColor.this.checkBoxTip.isSelected();
@@ -172,14 +189,8 @@ public class DialogTerrainUniformColor extends SmDialog {
                 temp[COLUMN_INDEX_LAYER] = datasetCell;
                 double tempValue = ((DatasetGrid) currentFormMapLayer.get(i).getDataset()).getMinValue();
                 temp[COLUMN_INDEX_MINVALUE] = tempValue;
-//                if (Double.compare(tempValue, this.colorsTableMinValue) == -1) {
-//                    this.colorsTableMinValue = tempValue;
-//                }
                 tempValue = ((DatasetGrid) currentFormMapLayer.get(i).getDataset()).getMaxValue();
                 temp[COLUMN_INDEX_MAXVALUE] = tempValue;
-//                if (Double.compare(tempValue, this.colorsTableMaxValue) == 1) {
-//                    this.colorsTableMaxValue = tempValue;
-//                }
                 mutiTable.addRow(temp);
             }
         }
@@ -199,10 +210,18 @@ public class DialogTerrainUniformColor extends SmDialog {
         double colorsTableMinValue = selectedDataset.getMinValue();
         double colorsTableMaxValue = selectedDataset.getMaxValue();
 
-        LayerSettingGrid layerSettingGrid = (LayerSettingGrid) selectedLayer.getAdditionalSetting();
-        ColorDictionary colorDictionary = layerSettingGrid.getColorDictionary();
-        Colors originColors = layerSettingGrid.getColorTable();
+        LayerSettingGrid layerSettingGrid;
+        ColorDictionary colorDictionary;
 
+
+        if (selectedLayer.getName().equals(this.editLayerName)) {
+            colorDictionary = new ColorDictionary(editColorDictionary);
+        } else {
+            layerSettingGrid = new LayerSettingGrid((LayerSettingGrid) selectedLayer.getAdditionalSetting());
+            colorDictionary = layerSettingGrid.getColorDictionary();
+        }
+
+        Color[] originColors = colorDictionary.getColors();
         boolean isNeedReCalculatorRange = false;
 
 
@@ -211,37 +230,37 @@ public class DialogTerrainUniformColor extends SmDialog {
             Layer tempLayer = datasetLayerMap.get(dataCell.getDataName());
             DatasetGrid tempDataset = (DatasetGrid) tempLayer.getDataset();
             if (Double.compare(colorsTableMaxValue, tempDataset.getMaxValue()) == -1) {
-                colorsTableMaxValue=tempDataset.getMaxValue();
+                colorsTableMaxValue = tempDataset.getMaxValue();
                 isNeedReCalculatorRange = true;
             }
             if (Double.compare(colorsTableMinValue, tempDataset.getMinValue()) == 1) {
                 isNeedReCalculatorRange = true;
-                colorsTableMinValue=tempDataset.getMinValue();
+                colorsTableMinValue = tempDataset.getMinValue();
             }
         }
 
 
         if (this.isSelectedCheckTip) {
             if (isNeedReCalculatorRange) {
-                double valueGap = (colorsTableMaxValue - colorsTableMinValue) / (originColors.getCount() - 1);
-                double[] newKeys = new double[originColors.getCount()];
-                Color[] newColors = new Color[originColors.getCount()];
-                for (int i = 0; i < originColors.getCount(); i++) {
+                double valueGap = (colorsTableMaxValue - colorsTableMinValue) / (originColors.length - 1);
+                double[] newKeys = new double[originColors.length];
+                Color[] newColors = new Color[originColors.length];
+                for (int i = 0; i < originColors.length; i++) {
                     newKeys[i] = colorsTableMinValue + valueGap * i;
-                    newColors[i] = originColors.get(i);
+                    newColors[i] = originColors[i];
                 }
                 colorDictionary.clear();
                 for (int j = 0; j < newKeys.length; j++) {
                     colorDictionary.setColor(newKeys[j], newColors[j]);
                 }
-                layerSettingGrid.setColorDictionary(colorDictionary);
+                //layerSettingGrid.setColorDictionary(colorDictionary);
             }
         }
 
         for (int i = 0; i < selectedLayerName.size(); i++) {
             dataCell = (DataCell) selectedLayerName.get(i);
             Layer tempLayer = datasetLayerMap.get(dataCell.getDataName());
-            tempLayer.setAdditionalSetting(layerSettingGrid);
+            ((LayerSettingGrid) tempLayer.getAdditionalSetting()).setColorDictionary(colorDictionary);
         }
 
         IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();

@@ -92,7 +92,7 @@ public class LayerGridParamColorTableDialog extends SmDialog{
 
     public LayerGridParamColorTableDialog(LayerSettingGrid layerSettingGrid){
         super();
-        this.currentLayerSettingGrid  = layerSettingGrid;
+        this.currentLayerSettingGrid  = new LayerSettingGrid(layerSettingGrid);
         ColorDictionary colorDictionary = this.currentLayerSettingGrid.getColorDictionary();
         colorsOrigin = colorDictionary.getColors();
         keysOrigin = colorDictionary.getKeys();
