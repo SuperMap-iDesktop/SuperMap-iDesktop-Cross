@@ -339,8 +339,8 @@ public class ColorSchemeEditorDialog extends SmDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (colorsTableModel.getRowCount() == 0) {
-					// 古锭刀效果触发
-					colorsTableModel.add();
+                    // 古锭刀效果触发--为0时加两行
+                    colorsTableModel.add();
 				}
 				colorsTableModel.add();
 

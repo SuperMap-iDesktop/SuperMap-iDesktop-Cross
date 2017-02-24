@@ -1,5 +1,6 @@
 package com.supermap.desktop.ui.controls.borderPanel;
 
+import com.supermap.analyst.spatialanalyst.BufferRadiusUnit;
 import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.LengthUnit;
@@ -100,6 +101,38 @@ public class SmRadiusPanel extends JPanel {
     }
 
     /**
+     * 获取缓冲半径单位
+     * @return 组件类型BufferRadiusUnit 对象
+     */
+    public BufferRadiusUnit getBufferRadiusUnit() {
+        LengthUnit lengthUnit = (LengthUnit) this.comboBoxLengthUnit.getSelectedItem();
+        return getBufferRadiusUnit(lengthUnit.getUnit());
+    }
+
+    private BufferRadiusUnit getBufferRadiusUnit(Unit unitName) {
+        if (Unit.MILIMETER.equals(unitName)) {
+            return BufferRadiusUnit.MiliMeter;
+        } else if (Unit.CENTIMETER.equals(unitName)) {
+            return BufferRadiusUnit.CentiMeter;
+        } else if (Unit.DECIMETER.equals(unitName)) {
+            return BufferRadiusUnit.DeciMeter;
+        } else if (Unit.METER.equals(unitName)) {
+            return BufferRadiusUnit.Meter;
+        } else if (Unit.KILOMETER.equals(unitName)) {
+            return BufferRadiusUnit.KiloMeter;
+        } else if (Unit.INCH.equals(unitName)) {
+            return BufferRadiusUnit.Inch;
+        } else if (Unit.FOOT.equals(unitName)) {
+            return BufferRadiusUnit.Foot;
+        } else if (Unit.MILE.equals(unitName)) {
+            return BufferRadiusUnit.Mile;
+        } else if (Unit.YARD.equals(unitName)) {
+            return BufferRadiusUnit.Yard;
+        }
+        return null;
+    }
+
+    /**
      * 获取选中的长度字段
      *
      * @return FieldInfo or String表达式
@@ -157,9 +190,11 @@ public class SmRadiusPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 LengthUnit unit = radiusPanel.getUnit();
+                BufferRadiusUnit bufferRadiusUnit = radiusPanel.getBufferRadiusUnit();
                 Object fieldInfo = radiusPanel.getFieldInfo();
                 Object fieldSelectedItem = radiusPanel.getFieldSelectedItem();
                 System.out.println(unit);
+                System.out.println(bufferRadiusUnit);
                 System.out.println(fieldInfo);
                 System.out.println(fieldSelectedItem);
             }

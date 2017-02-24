@@ -367,7 +367,7 @@ public abstract class AbstractDockable implements Dockable {
      * @see DockingManager#getDockingPort(Dockable)
      */
     public DockingPort getDockingPort() {
-        return DockingManager.getDockingPort(this);
+        return DockingManager. getDockingPort(this);
     }
 
     /**

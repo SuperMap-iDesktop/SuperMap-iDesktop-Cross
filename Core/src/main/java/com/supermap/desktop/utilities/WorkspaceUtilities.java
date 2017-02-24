@@ -10,27 +10,18 @@ import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLayout;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
-import com.supermap.desktop.PluginInfo;
 import com.supermap.desktop._XMLTag;
 import com.supermap.desktop.enums.OpenWorkspaceResult;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.SaveWorkspaceEvent;
 import com.supermap.desktop.event.SaveWorkspaceListener;
-import com.supermap.desktop.implement.SmMenu;
-import com.supermap.desktop.implement.SmMenuItem;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.XMLCommand;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import javax.swing.*;
 import java.awt.*;
@@ -54,25 +45,6 @@ public class WorkspaceUtilities {
 	}
 
 	private static transient CopyOnWriteArrayList<SaveWorkspaceListener> saveWorkspaceListeners = new CopyOnWriteArrayList<SaveWorkspaceListener>();
-	private static PluginInfo pluginInfo;
-
-	public static PluginInfo getPluginInfo() {
-		return WorkspaceUtilities.pluginInfo;
-	}
-
-	public static void setPluginInfo(PluginInfo pluginInfo) {
-		WorkspaceUtilities.pluginInfo = pluginInfo;
-	}
-
-	private static SmMenu recentWorkspaceMenu = null;
-
-	public static SmMenu getRecentWorkspaceMenu() {
-		return recentWorkspaceMenu;
-	}
-
-	public static void setRecentWorkspaceMenu(SmMenu recentWorkspaceMenu) {
-		WorkspaceUtilities.recentWorkspaceMenu = recentWorkspaceMenu;
-	}
 
 	public static synchronized void addSaveWorkspaceListener(SaveWorkspaceListener listener) {
 		if (saveWorkspaceListeners == null) {
@@ -247,7 +219,7 @@ public class WorkspaceUtilities {
 				if ((info.getType() == WorkspaceType.SMW || info.getType() == WorkspaceType.SMWU || info.getType() == WorkspaceType.SXWU || info.getType() == WorkspaceType.SXW)
 						&& result == OpenWorkspaceResult.SUCCESSED && isSaveToRecent) {
 					// 如果是文件型工作空间并且打开成功了，则需要添加到最近文件列表中
-					addWorkspaceFileToRecentFile(info.getServer());
+					RecentFileUtilties.addWorkspaceToRecentFile(Application.getActiveApplication().getWorkspace());
 				}
 			} else {
 				result = OpenWorkspaceResult.FAILED_CANCEL;
@@ -259,178 +231,6 @@ public class WorkspaceUtilities {
 		}
 
 		return result;
-	}
-
-	/**
-	 * 将指定路径的工作空间添加到最近文件列表
-	 *
-	 * @param filePath 要加入列表的文件路径
-	 * @return 添加成功返回true，失败返回false
-	 */
-	public static void addWorkspaceFileToRecentFile(String filePath) {
-		String filePathTemp = filePath;
-		try {
-			filePathTemp = filePathTemp.replace("\\", "/");
-			if (recentWorkspaceMenu != null) {
-				removeRecentFile(filePathTemp);
-
-				XMLCommand xmlCommand = new XMLCommand(pluginInfo);
-				xmlCommand.setCtrlActionClass("CtrlActionRecentFiles");
-				xmlCommand.setLabel(filePathTemp);
-				xmlCommand.setTooltip(filePathTemp);
-				SmMenuItem menuItem = new SmMenuItem(null, xmlCommand, recentWorkspaceMenu);
-				if (menuItem != null) {
-					recentWorkspaceMenu.insert((IBaseItem) menuItem, 0);
-					if (recentWorkspaceMenu.getItemCount() > 7) {
-						removeRecentFile(recentWorkspaceMenu.getItem(7).getText());
-					}
-					saveRecentFile(filePathTemp);
-				}
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-	}
-
-	public static void initRecentFileMenu() {
-		try {
-			String recentFilePath = PathUtilities.getFullPathName(_XMLTag.RECENT_FILE_XML, false);
-			File file = new File(recentFilePath);
-			if (file.exists()) {
-				Element element = XmlUtilities.getRootNode(recentFilePath);
-				if (element != null) {
-					NodeList nodes = element.getChildNodes();
-					for (int i = 0; i < nodes.getLength(); i++) {
-						if (nodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-							Element item = (Element) (nodes.item(i));
-							if (item.getNodeName().equalsIgnoreCase(_XMLTag.g_NodeGroup)) {
-								String type = item.getAttribute(_XMLTag.g_ControlLabel);
-								if (type.equalsIgnoreCase(CoreProperties.getString("String_RecentWorkspace"))) {
-									NodeList childnNodes = item.getChildNodes();
-									for (int j = 0; j < childnNodes.getLength(); j++) {
-										if (childnNodes.item(j).getNodeType() == Node.ELEMENT_NODE) {
-											Element childItem = (Element) (childnNodes.item(j));
-											String filePath = childItem.getAttribute(_XMLTag.g_NodeContent);
-											XMLCommand xmlCommand = new XMLCommand(pluginInfo);
-											xmlCommand.setCtrlActionClass("CtrlActionRecentFiles");
-											xmlCommand.setLabel(filePath);
-											xmlCommand.setTooltip(filePath);
-											SmMenuItem menuItem = new SmMenuItem(null, xmlCommand, recentWorkspaceMenu);
-											if (menuItem != null) {
-												recentWorkspaceMenu.add((IBaseItem) menuItem);
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-	}
-
-	public static void saveRecentFile(String filePath) {
-		try {
-			String recentFilePath = PathUtilities.getFullPathName(_XMLTag.RECENT_FILE_XML, false);
-			File file = new File(recentFilePath);
-			if (file.exists()) {
-				Document document = XmlUtilities.getDocument(recentFilePath);
-				Element element = document.getDocumentElement();
-				if (element != null) {
-					NodeList nodes = element.getChildNodes();
-					for (int i = 0; i < nodes.getLength(); i++) {
-						if (nodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-							Element item = (Element) (nodes.item(i));
-							if (item.getNodeName().equalsIgnoreCase(_XMLTag.g_NodeGroup)) {
-								String type = item.getAttribute(_XMLTag.g_ControlLabel);
-								if (type.equalsIgnoreCase(CoreProperties.getString("String_RecentWorkspace"))) {
-									// 把原来的记录全部取出来保存
-									NodeList childnNodes = item.getChildNodes();
-									ArrayList<String> recentFiles = new ArrayList<String>();
-									for (int j = childnNodes.getLength() - 1; j >= 0; j--) {
-										if (childnNodes.item(j).getNodeType() == Node.ELEMENT_NODE) {
-											Element childItem = (Element) (childnNodes.item(j));
-											recentFiles.add(0, childItem.getAttribute(_XMLTag.g_NodeContent));
-										}
-										item.removeChild(childnNodes.item(j));
-									}
-
-									// 添加新纪录
-									Element newItem = document.createElement("item");
-									newItem.setAttribute(_XMLTag.g_NodeContent, filePath);
-									item.appendChild(newItem);
-
-									// 把之前的记录再写入
-									for (int j = 0; j < recentFiles.size(); j++) {
-										newItem = document.createElement("item");
-										newItem.setAttribute(_XMLTag.g_NodeContent, recentFiles.get(j));
-										item.appendChild(newItem);
-									}
-
-									// 保存文件
-									XmlUtilities.saveXml(recentFilePath, document, document.getXmlEncoding());
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
-	}
-
-	public static void removeRecentFile(String filePath) {
-		try {
-			for (IBaseItem item : recentWorkspaceMenu.items()) {
-				if (((SmMenuItem) item).getToolTipText().equals(filePath)) {
-					recentWorkspaceMenu.remove(item);
-					break;
-				}
-			}
-
-			String recentFilePath = PathUtilities.getFullPathName(_XMLTag.RECENT_FILE_XML, false);
-			File file = new File(recentFilePath);
-			if (file.exists()) {
-				Document document = XmlUtilities.getDocument(recentFilePath);
-				Element element = document.getDocumentElement();
-				if (element != null) {
-					NodeList nodes = element.getChildNodes();
-					for (int i = 0; i < nodes.getLength(); i++) {
-						if (nodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-							Element item = (Element) (nodes.item(i));
-							if (item.getNodeName().equalsIgnoreCase(_XMLTag.g_NodeGroup)) {
-								String type = item.getAttribute(_XMLTag.g_ControlLabel);
-								if (type.equalsIgnoreCase(CoreProperties.getString("String_RecentWorkspace"))) {
-									NodeList childnNodes = item.getChildNodes();
-									for (int j = 0; j < childnNodes.getLength(); j++) {
-										if (childnNodes.item(j).getNodeType() == Node.ELEMENT_NODE) {
-											Element childItem = (Element) (childnNodes.item(j));
-											String itemPath = childItem.getAttribute(_XMLTag.g_NodeContent);
-											if (itemPath.equalsIgnoreCase(filePath)) {
-												item.removeChild(childnNodes.item(j));
-											}
-										}
-									}
-
-									// 保存文件
-
-									XmlUtilities.saveXml(recentFilePath, document, document.getXmlEncoding());
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-		}
 	}
 
 	/**
@@ -660,6 +460,10 @@ public class WorkspaceUtilities {
 		if (new File(fillSymbolFilePath).exists()) {
 			new File(fillSymbolFilePath).delete();
 		}
+	}
+
+	private static String getRecentFilePath() {
+		return SystemPropertyUtilities.isWindows() ? _XMLTag.WINDOWS_RECENT_FILE_XML : PathUtilities.getFullPathName(_XMLTag.LINUX_RECENT_FILE_XML, false);
 	}
 
 }

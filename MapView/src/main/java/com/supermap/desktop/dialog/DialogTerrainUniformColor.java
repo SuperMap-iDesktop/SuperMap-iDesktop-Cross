@@ -41,10 +41,9 @@ public class DialogTerrainUniformColor extends SmDialog {
     private final int COLUMN_INDEX_MINVALUE = 2;
     private final int COLUMN_INDEX_MAXVALUE = 3;
     private boolean isSelectedCheckTip = true;
-    private double colorsTableMinValue = Double.MAX_VALUE;
-    private double colorsTableMaxValue = 0 - Double.MAX_VALUE;
+    //private double colorsTableMinValue = Double.MAX_VALUE;
+    //private double colorsTableMaxValue = 0 - Double.MAX_VALUE;
     private HashMap<String, Layer> datasetLayerMap = new HashMap<String, Layer>();
-
 
     private ActionListener actionListener = new ActionListener() {
 
@@ -62,8 +61,8 @@ public class DialogTerrainUniformColor extends SmDialog {
                 LayerSettingGrid layerSettingGrid = (LayerSettingGrid) selectedLayer.getAdditionalSetting();
 
                 LayerGridParamColorTableDialog layerGridParamColorTableDialog = new LayerGridParamColorTableDialog(layerSettingGrid);
-                DialogResult result=layerGridParamColorTableDialog.showDialog();
-                if (result==DialogResult.OK){
+                DialogResult result = layerGridParamColorTableDialog.showDialog();
+                if (result == DialogResult.OK) {
                     selectedLayer.setAdditionalSetting(layerGridParamColorTableDialog.getCurrentLayerSettingGrid());
                 }
             } else if (e.getSource() == DialogTerrainUniformColor.this.checkBoxTip) {
@@ -96,7 +95,9 @@ public class DialogTerrainUniformColor extends SmDialog {
 
         //@formatter:off
         groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                .addComponent(toolBar, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+                .addGroup(groupLayout.createSequentialGroup()
+                        .addComponent(toolBar)
+                        .addComponent(buttonEditColorTable, 110, 110, 110))
                 .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                 .addGroup(groupLayout.createSequentialGroup()
                         .addComponent(checkBoxTip)
@@ -106,7 +107,9 @@ public class DialogTerrainUniformColor extends SmDialog {
                         .addComponent(buttonQuite))
         );
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-                .addComponent(toolBar, 23, 23, 23)
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                        .addComponent(toolBar, 23, 23, 23)
+                        .addComponent(buttonEditColorTable, 23, 23, 23))
                 .addComponent(scrollPane)
                 .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(checkBoxTip)
@@ -128,11 +131,12 @@ public class DialogTerrainUniformColor extends SmDialog {
         mutiTable.setModel(tableModel);
         mutiTable.setCheckHeaderColumn(0);
         mutiTable.getColumnModel().getColumn(COLUMN_INDEX_LAYER).setCellRenderer(new CommonListCellRenderer());
+        mutiTable.setRowHeight(23);
         comboBoxLayer = new JComboBox();
         comboBoxLayer.setRenderer(new CommonListCellRenderer());
         toolBar.add(labelLayer);
         toolBar.add(comboBoxLayer);
-        toolBar.add(buttonEditColorTable);
+        buttonEditColorTable.setPreferredSize(new Dimension(200, 23));
         checkBoxTip.setSelected(true);
         getContentPane().setLayout(groupLayout);
         buttonSure.addActionListener(this.actionListener);
@@ -144,7 +148,6 @@ public class DialogTerrainUniformColor extends SmDialog {
     private void initResources() {
         setTitle(MapViewProperties.getString("String_TerrainUniformColor"));
         labelLayer.setText(MapViewProperties.getString("String_TerrainUniformColorLayer"));
-        // buttonEditColorTable.setIcon(CoreResources.getIcon("/coreresources/ToolBar/TerrainUniformColor.png"));
         buttonEditColorTable.setText(MapViewProperties.getString("String_TerrainUniformColorEditColorTable"));
         buttonSure.setText(CommonProperties.getString("String_Button_OK"));
         buttonQuite.setText(CommonProperties.getString("String_Button_Cancel"));
@@ -169,14 +172,14 @@ public class DialogTerrainUniformColor extends SmDialog {
                 temp[COLUMN_INDEX_LAYER] = datasetCell;
                 double tempValue = ((DatasetGrid) currentFormMapLayer.get(i).getDataset()).getMinValue();
                 temp[COLUMN_INDEX_MINVALUE] = tempValue;
-                if (Double.compare(tempValue, this.colorsTableMinValue) == -1) {
-                    this.colorsTableMinValue = tempValue;
-                }
+//                if (Double.compare(tempValue, this.colorsTableMinValue) == -1) {
+//                    this.colorsTableMinValue = tempValue;
+//                }
                 tempValue = ((DatasetGrid) currentFormMapLayer.get(i).getDataset()).getMaxValue();
                 temp[COLUMN_INDEX_MAXVALUE] = tempValue;
-                if (Double.compare(tempValue, this.colorsTableMaxValue) == 1) {
-                    this.colorsTableMaxValue = tempValue;
-                }
+//                if (Double.compare(tempValue, this.colorsTableMaxValue) == 1) {
+//                    this.colorsTableMaxValue = tempValue;
+//                }
                 mutiTable.addRow(temp);
             }
         }
@@ -193,24 +196,38 @@ public class DialogTerrainUniformColor extends SmDialog {
         Layer selectedLayer = datasetLayerMap.get(dataCell.getDataName());
         DatasetGrid selectedDataset = (DatasetGrid) selectedLayer.getDataset();
 
+        double colorsTableMinValue = selectedDataset.getMinValue();
+        double colorsTableMaxValue = selectedDataset.getMaxValue();
+
         LayerSettingGrid layerSettingGrid = (LayerSettingGrid) selectedLayer.getAdditionalSetting();
         ColorDictionary colorDictionary = layerSettingGrid.getColorDictionary();
         Colors originColors = layerSettingGrid.getColorTable();
 
         boolean isNeedReCalculatorRange = false;
 
-        if (Double.compare(this.colorsTableMaxValue, selectedDataset.getMaxValue()) == 1 ||
-                Double.compare(this.colorsTableMinValue, selectedDataset.getMinValue()) == -1) {
-            isNeedReCalculatorRange = true;
+
+        for (int i = 0; i < selectedLayerName.size(); i++) {
+            dataCell = (DataCell) selectedLayerName.get(i);
+            Layer tempLayer = datasetLayerMap.get(dataCell.getDataName());
+            DatasetGrid tempDataset = (DatasetGrid) tempLayer.getDataset();
+            if (Double.compare(colorsTableMaxValue, tempDataset.getMaxValue()) == -1) {
+                colorsTableMaxValue=tempDataset.getMaxValue();
+                isNeedReCalculatorRange = true;
+            }
+            if (Double.compare(colorsTableMinValue, tempDataset.getMinValue()) == 1) {
+                isNeedReCalculatorRange = true;
+                colorsTableMinValue=tempDataset.getMinValue();
+            }
         }
+
 
         if (this.isSelectedCheckTip) {
             if (isNeedReCalculatorRange) {
-                double valueGap = (this.colorsTableMaxValue - this.colorsTableMinValue) / (originColors.getCount() - 1);
+                double valueGap = (colorsTableMaxValue - colorsTableMinValue) / (originColors.getCount() - 1);
                 double[] newKeys = new double[originColors.getCount()];
                 Color[] newColors = new Color[originColors.getCount()];
                 for (int i = 0; i < originColors.getCount(); i++) {
-                    newKeys[i] = this.colorsTableMinValue + valueGap * i;
+                    newKeys[i] = colorsTableMinValue + valueGap * i;
                     newColors[i] = originColors.get(i);
                 }
                 colorDictionary.clear();

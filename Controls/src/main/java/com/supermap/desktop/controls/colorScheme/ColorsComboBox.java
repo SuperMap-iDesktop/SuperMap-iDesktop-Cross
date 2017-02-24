@@ -24,15 +24,7 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import java.applet.Applet;
 import java.awt.*;
-import java.awt.event.AWTEventListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
@@ -392,6 +384,21 @@ public class ColorsComboBox extends JComponent implements ItemSelectable {
 	public Colors getSelectedItem() {
 		return currentColors;
 	}
+
+	/**
+	 * 根据当前选中色带生成包含指定数量的渐变颜色
+	 *
+	 * @param count
+	 * @return
+	 */
+	public Colors getGradientColors(int count) {
+		if (currentColors != null && currentColors.getCount() > 0 && count > 0) {
+			Color[] colorsArray = currentColors.toArray();
+			return Colors.makeGradient(count, colorsArray);
+		}
+		return null;
+	}
+	
 
 	public void setSelectedItem(Colors colors) {
 		this.currentColors = colors;

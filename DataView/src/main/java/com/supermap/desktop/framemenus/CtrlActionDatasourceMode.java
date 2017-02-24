@@ -1,6 +1,5 @@
 package com.supermap.desktop.framemenus;
 
-import com.sun.corba.se.impl.protocol.giopmsgheaders.Message;
 import com.supermap.data.Datasource;
 import com.supermap.data.DatasourceConnectionInfo;
 import com.supermap.data.EngineType;
@@ -65,7 +64,7 @@ public class CtrlActionDatasourceMode extends CtrlAction {
 						info.setReadOnly(isReadOnly());
 						// 如果数据源没有成功打开，工作空间中会有一个没有数据集的数据源节点，如果重新打开失败，需要保留这个节点，因此不能直接删除
 						// 判断更改独占/可读之后是否可以正常打开，是则重新打开
-						if (DatasourceUtilities.attemptToOpenDataosurce(info)) {
+						if (DatasourceUtilities.attemptToOpenDatasource(info)) {
 							DatasourceUtilities.closeDatasource(datasource);
 							datasources[i] = workspace.getDatasources().open(info);
 						} else {

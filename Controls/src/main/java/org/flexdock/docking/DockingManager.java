@@ -943,7 +943,7 @@ public class DockingManager implements DockingConstants {
 	 * previously been docked within the layout and subsequently removed, as
 	 * with a call to {@code DockingManager.close()}, the {@code Dockable} will
 	 * be restored to its prior state within the layout. This method defers
-	 * processing to the {@code display(Dockable dockable)} method for the
+	 * processing to the {@code setVisible(Dockable dockable)} method for the
 	 * currently installed {@code org.flexdock.docking.state.LayoutManager}.
 	 * The {@code LayoutManager} implementation is responsible for handling the
 	 * semantics of determining an initial docking location or restoring a
@@ -965,14 +965,14 @@ public class DockingManager implements DockingConstants {
 	 * Displays the {@code Dockable} with the specified ID within the
 	 * application's docking layout. A valid {@code Dockable} is looked up for
 	 * the supplied ID. If none is found, this method returns {@code false}.
-	 * Otherwise, processing is dispatched to {@code display(Dockable dockable)}.
+	 * Otherwise, processing is dispatched to {@code setVisible(Dockable dockable)}.
 	 * If the {@code Dockable} has not previously been docked, a suitable
 	 * location is determined within the layout and the {@code Dockable} is
 	 * docked to that location. If the {@code Dockable} has previously been
 	 * docked within the layout and subsequently removed, as with a call to
 	 * {@code DockingManager.close()}, the {@code Dockable} will be restored to
 	 * its prior state within the layout. This method defers processing to the
-	 * {@code display(Dockable dockable)} method for the currently installed
+	 * {@code setVisible(Dockable dockable)} method for the currently installed
 	 * {@code org.flexdock.docking.state.LayoutManager}. The
 	 * {@code LayoutManager} implementation is responsible for handling the
 	 * semantics of determining an initial docking location or restoring a
@@ -2660,7 +2660,7 @@ public class DockingManager implements DockingConstants {
 	 * specified {@code Dockable}'s current {@code DockingPort} is asked to
 	 * temporarily lend the {@code Dockable} for maximization and the root
 	 * {@code DockingPort} is asked to temorarily host the {@code Dockable} and
-	 * display it such that it occupies all (or the majority) of its screen
+	 * setVisible it such that it occupies all (or the majority) of its screen
 	 * resources. If the {@code Dockable} is already maximized, the root
 	 * {@code DockingPort} is asked to return to its original state and the
 	 * {@code Dockable} is returned to its original {@code DockingPort}.

@@ -4,10 +4,11 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasets;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.implement.MyComboBoxUI;
+import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 
 import javax.swing.*;
+import java.awt.*;
 
 /**
  * 数据集下拉列表控件
@@ -29,6 +30,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	private static final long serialVersionUID = 1L;
 	private transient DatasetType[] datasetTypes;
 	private transient Datasets datasets;
+	private final static Dimension DIMENSION = new Dimension(80, 20);
 
 	/**
 	 * 覆盖原有的updateUI方法
@@ -36,7 +38,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	 */
 	@Override
 	public void updateUI() {
-		this.setUI(new MyComboBoxUI());
+		this.setUI(new DefaultComboBoxUI());
 	}
 
 	/**
@@ -44,6 +46,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	 */
 	public DatasetComboBox() {
 		setRenderer(new ListDataCellRender());
+		this.setPreferredSize(DIMENSION);
 	}
 
 	/**
@@ -53,9 +56,12 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	 */
 	public DatasetComboBox(Datasets datasets) {
 		super(initDatasetComboBoxItem(datasets));
+
 		this.datasets = datasets;
+
 		//设置渲染方式
 		setRenderer(new ListDataCellRender());
+		this.setPreferredSize(DIMENSION);
 	}
 
 	/**

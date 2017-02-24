@@ -337,7 +337,7 @@ public class Layout implements Cloneable, FloatManager, Serializable {
         // add to the floating frame
         frame.addDockable(dockable);
 
-        // display and return
+        // setVisible and return
         if(!frame.isVisible())
             frame.setVisible(true);
         return frame;
