@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1486947283817
+Bnd-LastModified: 1487844488564
 Build-Jdk: 1.7.0_80
 Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.frame.FrameActivator
