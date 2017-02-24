@@ -1,6 +1,5 @@
 package com.supermap.desktop.process.tasks;
 
-import com.supermap.analyst.spatialanalyst.OverlayAnalyst;
 import com.supermap.desktop.Interface.IAfterWork;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.core.IProcess;
@@ -273,15 +272,15 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
             labelTitle.setText(ControlsProperties.getString("String_ImportProgress"));
         } else if (process.getKey().equals(MetaKeys.PROJECTION)) {
             labelTitle.setText(ControlsProperties.getString("String_ProjectionProgress"));
-        } else if (process.getKey().equals(MetaKeys.SPATIALINDEX)) {
+        } else if (process.getKey().equals(MetaKeys.SPATIAL_INDEX)) {
             labelTitle.setText(ControlsProperties.getString("String_SpatialIndexProgress"));
         } else if (process.getKey().equals(MetaKeys.BUFFER)) {
             labelTitle.setText(ControlsProperties.getString("String_BufferProgress"));
-        }else if (process.getKey().equals(MetaKeys.HEATMAP)) {
+        } else if (process.getKey().equals(MetaKeys.HEAT_MAP)) {
             labelTitle.setText(ControlsProperties.getString("String_HeatMap"));
-        } else if (process.getKey().equals(MetaKeys.KERNELDENSITY)) {
+        } else if (process.getKey().equals(MetaKeys.KERNEL_DENSITY)) {
             labelTitle.setText(ControlsProperties.getString("String_KernelDensity"));
-        } else if (process.getKey().equals(MetaKeys.OVERLAYANALYST)) {
+        } else if (process.getKey().equals(MetaKeys.OVERLAY_ANALYST)) {
             OverlayAnalystType analystType = ((MetaProcessOverlayAnalyst)process).getAnalystType();
             switch (analystType) {
                 case CLIP:

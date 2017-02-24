@@ -14,6 +14,10 @@ public interface IProcess {
 
 	String getKey();
 
+	IProcessGroup getParent();
+
+	void setParent(ProcessGroup parent);
+
 	String getTitle();
 
 	Vector<IData> getInputs();
