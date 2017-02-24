@@ -581,14 +581,14 @@ public class PanelLineBufferAnalyst extends JPanel {
 				}
 
 			} else if (e.getSource() == numericFieldComboBoxLeft) {
-				if (numericFieldComboBoxLeft.getSelectedItem() != null) {
+				if (numericFieldComboBoxLeft.getSelectedItem() != null && (numericFieldComboBoxLeft.getSelectedIndex() + 1) != numericFieldComboBoxLeft.getItemCount()) {
 					numericFieldComboBoxRight.removeItemListener(localItemListener);
 					numericFieldComboBoxRight.setSelectedItem(numericFieldComboBoxLeft.getSelectedItem());
 					numericFieldComboBoxRight.addItemListener(localItemListener);
 					radiusLeft = numericFieldComboBoxLeft.getSelectedItem().toString();
 				}
 
-			} else if (e.getSource() == numericFieldComboBoxRight) {
+			} else if (e.getSource() == numericFieldComboBoxRight && (numericFieldComboBoxLeft.getSelectedIndex() + 1) != numericFieldComboBoxLeft.getItemCount()) {
 				if (numericFieldComboBoxRight.getSelectedItem() != null) {
 					numericFieldComboBoxLeft.removeItemListener(localItemListener);
 					numericFieldComboBoxLeft.setSelectedItem(numericFieldComboBoxRight.getSelectedItem());

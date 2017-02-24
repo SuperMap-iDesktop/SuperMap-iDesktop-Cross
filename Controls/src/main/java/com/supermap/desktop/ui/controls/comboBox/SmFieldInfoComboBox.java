@@ -171,10 +171,10 @@ public class SmFieldInfoComboBox extends JComboBox {
 		}
 		this.setAdditionalItems(additionalItems);
 		//添加“表达式...”
-//		String SQLExpressionText = CoreProperties.getString("String_ThemeGraphItemExpressionPicker_ButtonExpression");
-//		if (getItemIndex(SQLExpressionText) == -1 && this.dataset != null) {
-//			this.addItem(SQLExpressionText);
-//		}
+		String SQLExpressionText = CoreProperties.getString("String_ThemeGraphItemExpressionPicker_ButtonExpression");
+		if (getItemIndex(SQLExpressionText) == -1 && this.dataset != null) {
+			this.addItem(SQLExpressionText);
+		}
 	}
 
 	private void initFieldInfo() {
