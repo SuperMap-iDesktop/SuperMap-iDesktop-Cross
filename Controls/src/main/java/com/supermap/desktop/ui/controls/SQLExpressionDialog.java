@@ -129,14 +129,14 @@ public class SQLExpressionDialog extends SmDialog {
 		panelButton.add(this.jButtonClear, new GridBagConstraintsHelper(1, 0, 1, 1).setInsets(2, 0, 5, 5));
 		panelButton.add(this.jButtonCancel, new GridBagConstraintsHelper(2, 0, 1, 1).setInsets(2, 0, 5, 5));
 
-		mainPanel.add(this.jScrollPanel, new GridBagConstraintsHelper(0, 0, 2, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(15,15,5,5));
-		mainPanel.add(this.jPanelFunction, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setInsets(15,5,5,15));
-		mainPanel.add(this.jPanelCommonOperator, new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.BOTH).setInsets(5,5,5,15).setIpad(30,50));
+		mainPanel.add(this.jScrollPanel, new GridBagConstraintsHelper(0, 0, 2, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(15, 15, 5, 5));
+		mainPanel.add(this.jPanelFunction, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setInsets(15, 5, 5, 15));
+		mainPanel.add(this.jPanelCommonOperator, new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.BOTH).setInsets(5, 5, 5, 15).setIpad(30, 50));
 
-		mainPanel.add(this.jPanelGetAllValue, new GridBagConstraintsHelper(0, 2, 1, 2).setWeight(0, 0).setFill(GridBagConstraints.BOTH).setInsets(5,15,5,5).setIpad(100, 120));
-		mainPanel.add(this.jTextAreaSQLSentence, new GridBagConstraintsHelper(1, 2, 2, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(5,5,5,15).setIpad(0, 120));
+		mainPanel.add(this.jPanelGetAllValue, new GridBagConstraintsHelper(0, 2, 1, 2).setWeight(0, 0).setFill(GridBagConstraints.BOTH).setInsets(5, 15, 5, 5).setIpad(100, 120));
+		mainPanel.add(this.jTextAreaSQLSentence, new GridBagConstraintsHelper(1, 2, 2, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(5, 5, 5, 15).setIpad(0, 120));
 		//将获取唯一值面板加入主panel3, 2, 1, 2
-		mainPanel.add(panelButton, new GridBagConstraintsHelper(2, 4, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(5,5,15,15));
+		mainPanel.add(panelButton, new GridBagConstraintsHelper(2, 4, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(5, 5, 15, 15));
 		this.add(mainPanel);
 		this.jScrollPanel.setViewportView(getTableFieldInfo());
 		this.jScrollPanel.getViewport().setBackground(Color.white);

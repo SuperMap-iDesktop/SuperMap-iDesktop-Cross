@@ -389,6 +389,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 			DatasetVector selectedDataset = ((DatasetVector) this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset());
 			this.numericFieldComboBoxLeft.setDataset(selectedDataset);
 			this.numericFieldComboBoxRight.setDataset(selectedDataset);
+			// 初始化半径长度值
+			this.numericFieldComboBoxLeft.setSelectedItem("10");
+			this.numericFieldComboBoxRight.setSelectedItem("10");
 		}
 		setComponentEnabled();
 	}
