@@ -60,7 +60,7 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return MetaKeys.SPATIALINDEX;
+		return MetaKeys.SPATIAL_INDEX;
 	}
 
 	@Override

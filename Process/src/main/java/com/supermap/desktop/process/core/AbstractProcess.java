@@ -1,6 +1,5 @@
 package com.supermap.desktop.process.core;
 
-import com.sun.corba.se.spi.orbutil.fsm.Input;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.parameter.interfaces.IData;
@@ -16,6 +15,7 @@ public abstract class AbstractProcess implements IProcess {
 
 	private EventListenerList listenerList = new EventListenerList();
 
+	protected IProcessGroup parent;
 	@Override
 	public abstract IParameters getParameters();
 
@@ -49,5 +49,15 @@ public abstract class AbstractProcess implements IProcess {
 				((RunningListener) listeners[i + 1]).running(e);
 			}
 		}
+	}
+
+	@Override
+	public IProcessGroup getParent() {
+		return parent;
+	}
+
+	@Override
+	public void setParent(ProcessGroup parent) {
+		this.parent = parent;
 	}
 }

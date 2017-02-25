@@ -44,15 +44,15 @@ public class ProcessCallable extends UpdateProgressCallable {
             result = ControlsProperties.getString("String_ImportProgressFinished");
         } else if (process.getKey().equals(MetaKeys.PROJECTION)) {
             result = ControlsProperties.getString("String_ProjectionProgressFinished");
-        } else if (process.getKey().equals(MetaKeys.SPATIALINDEX)) {
+        } else if (process.getKey().equals(MetaKeys.SPATIAL_INDEX)) {
             result = ControlsProperties.getString("String_SpatialIndexProgressFinished");
         } else if (process.getKey().equals(MetaKeys.BUFFER)) {
             result = ControlsProperties.getString("String_BufferProgressFinished");
-        } else if (process.getKey().equals(MetaKeys.HEATMAP)) {
+        } else if (process.getKey().equals(MetaKeys.HEAT_MAP)) {
             result = ControlsProperties.getString("String_HeatMapFinished");
-        } else if (process.getKey().equals(MetaKeys.KERNELDENSITY)) {
+        } else if (process.getKey().equals(MetaKeys.KERNEL_DENSITY)) {
             result = ControlsProperties.getString("String_KernelDensityFinished");
-        } else if (process.getKey().equals(MetaKeys.OVERLAYANALYST)) {
+        } else if (process.getKey().equals(MetaKeys.OVERLAY_ANALYST)) {
             OverlayAnalystType analystType = ((MetaProcessOverlayAnalyst)process).getAnalystType();
             switch (analystType) {
                 case CLIP:

@@ -198,18 +198,18 @@ public class RecentFileUtilties {
 	}
 
 	private static Element getElement(Document document, String fileType) {
-		String findId = "";
-		if (fileType.equals(FILE_TYPE_WORKSPACE)) {
-			findId = RECENT_FILE_WORKSPACE;
-		} else {
-			findId = RECENT_FILE_DATASOURCE;
-		}
+		String findId = fileType.equals(FILE_TYPE_WORKSPACE) ? RECENT_FILE_WORKSPACE : RECENT_FILE_DATASOURCE;
+		String findLabel = fileType.equals(FILE_TYPE_WORKSPACE) ? CoreProperties.getString("String_RecentFileWorkspace") : CoreProperties.getString("String_RecentFileDatasource");
 		Element rootNode = document.getDocumentElement();
 		if (rootNode != null) {
 			Element[] elements = XmlUtilities.getChildElementNodesByName(rootNode, RECENT_FILE_GROUP);
 			for (Element element : elements) {
 				String id = element.getAttribute("id");
 				if (!StringUtilities.isNullOrEmpty(id) && id.equals(findId)) {
+					return element;
+				}
+				String label = element.getAttribute("label");
+				if (!StringUtilities.isNullOrEmptyString(label) && label.equals(findLabel)) {
 					return element;
 				}
 			}

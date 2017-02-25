@@ -1,8 +1,10 @@
 package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.process.events.RunningListener;
+import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.parameter.interfaces.IData;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.utilities.FileUtilities;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -12,10 +14,26 @@ import java.util.Vector;
  * @author XiaJT
  */
 public class ProcessGroup implements IProcessGroup, IProcess {
-	// 导出时Iprocess输出路径类似文件路径 ProcessGroup1/ProcessGroup2/process
+	// 导出时IProcess输出路径类似文件路径 ProcessGroup1/ProcessGroup2/process
+	// 导入时对应路径新建ProcessGroup
 	private String name;
 	private ProcessGroup parent;
 	private ArrayList<IProcess> processes = new ArrayList<>();
+
+
+	public ProcessGroup(ProcessGroup parent) {
+		this.parent = parent;
+	}
+
+	@Override
+	public IProcessGroup getParent() {
+		return parent;
+	}
+
+	@Override
+	public void setParent(ProcessGroup parent) {
+		this.parent = parent;
+	}
 
 	@Override
 	public int getChildCount() {
@@ -27,6 +45,11 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 		return processes.get(index);
 	}
 
+
+	/**
+	 * 查找第一个key相等的Process,会递归查询ProcessGroup内的Process
+	 * 未提供根据key只查询第一层Process方法
+	 */
 	@Override
 	public IProcess getProcessByKey(String key) {
 		for (IProcess process : processes) {
@@ -43,27 +66,39 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 	}
 
 	@Override
-	public void setName(String name) {
-		if (parent == null || parent.isLegitName(name)) {
-			this.name = name;
+	public void setKey(String key) {
+		if (parent == null || parent.isLegitName(key, this)) {
+			this.name = key;
 		}
 	}
 
 	@Override
-	public boolean isLegitName(String name) {
-		// TODO: 2017/2/23
+	public boolean isLegitName(String name, IProcess process) {
+		if (!FileUtilities.isContainUnLegitFileNameChars(name)) {
+			if (processes == null || processes.size() <= 0) {
+				return true;
+			}
+			boolean isProcessGroup = process instanceof IProcessGroup;
+			for (IProcess iProcess : processes) {
+				if (iProcess != process && iProcess instanceof IProcessGroup == isProcessGroup) {
+					if (iProcess.getKey().equals(name)) {
+						return false;
+					}
+				}
+			}
+			return true;
+		}
 		return false;
+	}
+	@Override
+	public String getTitle() {
+		return name;
 	}
 
 	//region 无用方法
 	@Override
 	public String getKey() {
-		return null;
-	}
-
-	@Override
-	public String getTitle() {
-		return null;
+		return MetaKeys.PROCESS_GROUP;
 	}
 
 	@Override

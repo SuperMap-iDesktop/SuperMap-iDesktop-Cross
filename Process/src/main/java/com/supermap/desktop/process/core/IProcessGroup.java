@@ -12,7 +12,8 @@ public interface IProcessGroup extends IProcess {
 
 	IProcess getProcessByKey(String key);
 
-	void setName(String name);
+	void setKey(String key);
 
-	boolean isLegitName(String name);
+
+	boolean isLegitName(String name, IProcess process);
 }
