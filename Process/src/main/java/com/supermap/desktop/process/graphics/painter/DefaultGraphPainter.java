@@ -49,7 +49,19 @@ public class DefaultGraphPainter implements IGraphPainter {
 
 	@Override
 	public void paint(Graphics graphics, IGraph graph) {
-
+		if (graph instanceof LineGraph) {
+			paintLineGraph(graphics, (LineGraph) graph);
+		} else if (graph instanceof RectangleGraph) {
+			paintRectangleGraph(graphics, (RectangleGraph) graph);
+		} else if (graph instanceof EllipseGraph) {
+			paintEllipseGraph(graphics, (EllipseGraph) graph);
+		} else if (graph instanceof HotDecorator) {
+			paintHotDecorator(graphics, (HotDecorator) graph);
+		} else if (graph instanceof SelectedDecorator) {
+			paintSelectedDecorator(graphics, (SelectedDecorator) graph);
+		} else if (graph instanceof ArrowDecorator) {
+			paintArrowDecorator(graphics, (ArrowDecorator) graph);
+		}
 	}
 
 	protected void paintLineGraph(Graphics graphics, LineGraph lineGraph) {
