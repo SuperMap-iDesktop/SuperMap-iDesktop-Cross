@@ -1,5 +1,7 @@
 package com.supermap.desktop.process.graphics.graphs.decorator;
 
+import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.decorator.AbstractDecorator;
 
 import java.awt.*;
@@ -8,6 +10,11 @@ import java.awt.*;
  * Created by highsad on 2017/2/23.
  */
 public class HotDecorator extends AbstractDecorator {
+
+	public HotDecorator(GraphCanvas canvas) {
+		super(canvas);
+	}
+
 	@Override
 	public Rectangle getBounds() {
 		return null;
@@ -19,7 +26,7 @@ public class HotDecorator extends AbstractDecorator {
 	}
 
 	@Override
-	public void draw(Graphics graphics) {
-
+	public IGraph clone() {
+		return null;
 	}
 }

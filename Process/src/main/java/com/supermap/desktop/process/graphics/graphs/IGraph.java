@@ -11,9 +11,21 @@ import java.util.ArrayList;
  * Created by highsad on 2017/1/18.
  */
 public interface IGraph {
+	GraphCanvas getCanvas();
+
 	Rectangle getBounds();
 
-	boolean contains(Point point);
+	Point getLocation();
 
-	void draw(Graphics graphics);
+	Point getCenter();
+
+	int getWidth();
+
+	int getHeight();
+
+	void setLocation(Point point);
+
+	void setSize(int width, int height);
+
+	boolean contains(Point point);
 }
