@@ -47,9 +47,11 @@ public class JDialogLineInterrruptSelect extends SmDialog{
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == JDialogLineInterrruptSelect.this.buttonOK) {
+				editEnvironment.getActiveEditableLayer().getSelection().clear();
 				JDialogLineInterrruptSelect.this.setDialogResult(DialogResult.OK);
 				JDialogLineInterrruptSelect.this.dispose();
 			} else if (e.getSource() == JDialogLineInterrruptSelect.this.buttonCancel) {
+				editEnvironment.getActiveEditableLayer().getSelection().clear();
 				JDialogLineInterrruptSelect.this.dispose();
 			}
 		}
@@ -104,14 +106,19 @@ public class JDialogLineInterrruptSelect extends SmDialog{
 					lineInterruptSelectTable.setValueAt(!(Boolean)lineInterruptSelectTable.getValueAt(rowIndex,colomnIndex),rowIndex,colomnIndex);
 				}
 				recordset.moveFirst();
+				int [] selectedRows=lineInterruptSelectTable.getSelectedRows();
 				editEnvironment.getActiveEditableLayer().getSelection().clear();
 				for(int i=0;i<JDialogLineInterrruptSelect.this.idsArrayList.size();i++){
-					if(lineInterruptSelectTable.getValueAt(i,0).equals(true)){
-						editEnvironment.getActiveEditableLayer().getSelection().add(recordset.getID());
+					for (int j=0;j<selectedRows.length;j++){
+						if (selectedRows[j]==i){
+							editEnvironment.getActiveEditableLayer().getSelection().add(recordset.getID());
+						}
 					}
 					recordset.moveNext();
 				}
 				editEnvironment.getMap().refresh();
+
+//				r
 			}
 		});
 
@@ -246,15 +253,15 @@ public class JDialogLineInterrruptSelect extends SmDialog{
 					this.setValueAt(isSelected,i,0);
 				}
 			}
-			JDialogLineInterrruptSelect.this.recordset.moveFirst();
-			JDialogLineInterrruptSelect.this.editEnvironment.getActiveEditableLayer().getSelection().clear();
-			for(int i=0;i<JDialogLineInterrruptSelect.this.idsArrayList.size();i++){
-				if(JDialogLineInterrruptSelect.this.lineInterruptSelectTable.getValueAt(i,0).equals(true)){
-					JDialogLineInterrruptSelect.this.editEnvironment.getActiveEditableLayer().getSelection().add(JDialogLineInterrruptSelect.this.recordset.getID());
-				}
-				JDialogLineInterrruptSelect.this.recordset.moveNext();
-			}
-			JDialogLineInterrruptSelect.this.editEnvironment.getMap().refresh();
+//			JDialogLineInterrruptSelect.this.recordset.moveFirst();
+//			JDialogLineInterrruptSelect.this.editEnvironment.getActiveEditableLayer().getSelection().clear();
+//			for(int i=0;i<JDialogLineInterrruptSelect.this.idsArrayList.size();i++){
+//				if(JDialogLineInterrruptSelect.this.lineInterruptSelectTable.getValueAt(i,0).equals(true)){
+//					JDialogLineInterrruptSelect.this.editEnvironment.getActiveEditableLayer().getSelection().add(JDialogLineInterrruptSelect.this.recordset.getID());
+//				}
+//				JDialogLineInterrruptSelect.this.recordset.moveNext();
+//			}
+//			JDialogLineInterrruptSelect.this.editEnvironment.getMap().refresh();
 		}
 	}
 	//表头渲染期器
