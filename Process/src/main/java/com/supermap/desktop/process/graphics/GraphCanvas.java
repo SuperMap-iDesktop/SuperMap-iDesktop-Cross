@@ -65,8 +65,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RectangleGraph graph = new RectangleGraph(canvas);
-				graph.setWidth(200);
-				graph.setHeight(80);
+				graph.setSize(200, 80);
 				graph.setArcHeight(10);
 				graph.setArcWidth(10);
 
@@ -79,11 +78,11 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		button1.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				EllipseGraph graph = new EllipseGraph(canvas);
-				graph.setWidth(160);
-				graph.setHeight(60);
-
-				canvas.createGraph(graph);
+//				EllipseGraph graph = new EllipseGraph(canvas);
+//				graph.setWidth(160);
+//				graph.setHeight(60);
+//
+//				canvas.createGraph(graph);
 			}
 		});
 
@@ -92,13 +91,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		button2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ProcessGraph graph = new ProcessGraph(canvas);
-				graph.setWidth(200);
-				graph.setHeight(80);
-				graph.setArcHeight(10);
-				graph.setArcWidth(10);
-
-				canvas.createGraph(graph);
+//				ProcessGraph graph = new ProcessGraph(canvas);
+//				graph.setWidth(200);
+//				graph.setHeight(80);
+//				graph.setArcHeight(10);
+//				graph.setArcWidth(10);
+//
+//				canvas.createGraph(graph);
 			}
 		});
 
@@ -107,11 +106,11 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		button3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				DataGraph graph = new DataGraph(canvas);
-				graph.setWidth(160);
-				graph.setHeight(60);
-
-				canvas.createGraph(graph);
+//				DataGraph graph = new DataGraph(canvas);
+//				graph.setWidth(160);
+//				graph.setHeight(60);
+//
+//				canvas.createGraph(graph);
 			}
 		});
 
@@ -309,14 +308,14 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				this.graphQuadTree.add(this.toCreation, bounds);
 
 				if (this.toCreation instanceof ProcessGraph) {
-					DataGraph graph = new DataGraph(this);
-					graph.setWidth(160);
-					graph.setHeight(60);
+//					DataGraph graph = new DataGraph(this);
+//					graph.setWidth(160);
+//					graph.setHeight(60);
 //					graph.setX(this.toCreation.getX() + this.toCreation.getWidth() + 150);
 //					graph.setY(this.toCreation.getY() + (this.toCreation.getHeight() - graph.getHeight()) / 2);
-					Rectangle graphBounds = graph.getBounds();
-					this.graphQuadTree.add(graph, graphBounds);
-					repaint(graph.getBounds());
+//					Rectangle graphBounds = graph.getBounds();
+//					this.graphQuadTree.add(graph, graphBounds);
+//					repaint(graph.getBounds());
 
 					LineGraph lineGraph = new LineGraph(this);
 //					lineGraph.setStart(this.toCreation);

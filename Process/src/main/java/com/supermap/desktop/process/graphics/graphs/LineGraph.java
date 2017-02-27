@@ -15,7 +15,7 @@ public class LineGraph extends AbstractGraph {
 	private GeneralPath path;
 
 	public LineGraph(GraphCanvas canvas) {
-		super(canvas);
+		super(canvas, new GeneralPath());
 		this.path = new GeneralPath();
 	}
 
@@ -27,25 +27,23 @@ public class LineGraph extends AbstractGraph {
 		this.path.reset();
 	}
 
-	// 计算
-	public static double[] rotateVec(int px, int py, double ang, boolean isChLen, double newLen) {
-
-		double mathstr[] = new double[2];
-		// 矢量旋转函数，参数含义分别是x分量、y分量、旋转角、是否改变长度、新长度
-		double vx = px * Math.cos(ang) - py * Math.sin(ang);
-		double vy = px * Math.sin(ang) + py * Math.cos(ang);
-		if (isChLen) {
-			double d = Math.sqrt(vx * vx + vy * vy);
-			vx = vx / d * newLen;
-			vy = vy / d * newLen;
-			mathstr[0] = vx;
-			mathstr[1] = vy;
-		}
-		return mathstr;
-	}
-
 	@Override
 	public IGraph clone() {
 		return null;
+	}
+
+	@Override
+	public void setLocation(Point point) {
+
+	}
+
+	@Override
+	public void setSize(int width, int height) {
+
+	}
+
+	@Override
+	public boolean contains(Point point) {
+		return false;
 	}
 }

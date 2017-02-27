@@ -40,7 +40,7 @@ public class DefaultStyleFactory implements IStyleFactory {
 
 	@Override
 	public void normalRegion(Graphics graphics) {
-		graphics.setColor(Color.decode("#AEEEEE"));
+		graphics.setColor(new Color(231, 231, 231));
 	}
 
 	@Override

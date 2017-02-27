@@ -12,12 +12,22 @@ import java.awt.*;
 public class HotDecorator extends AbstractDecorator {
 
 	public HotDecorator(GraphCanvas canvas) {
-		super(canvas);
+		super(canvas,null);
 	}
 
 	@Override
 	public Rectangle getBounds() {
 		return null;
+	}
+
+	@Override
+	public void setLocation(Point point) {
+
+	}
+
+	@Override
+	public void setSize(int width, int height) {
+
 	}
 
 	@Override

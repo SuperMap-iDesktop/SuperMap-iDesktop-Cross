@@ -12,41 +12,58 @@ import java.awt.geom.RoundRectangle2D;
  */
 public class RectangleGraph extends AbstractGraph {
 
-	public final static int DEFAULT_BORDER_WIDTH = 2;
-
 	private double arcWidth = 0d;
 	private double arcHeight = 0d;
 
 	public RectangleGraph(GraphCanvas canvas) {
-		super(canvas);
+		super(canvas, new RoundRectangle2D.Double());
+	}
+
+	@Override
+	public RoundRectangle2D getShape() {
+		return (RoundRectangle2D) super.shape;
 	}
 
 	public double getArcWidth() {
-		return arcWidth;
+		return this.arcWidth;
 	}
 
 	public double getArcHeight() {
-		return arcHeight;
+		return this.arcHeight;
 	}
 
 	public void setArcWidth(double arcWidth) {
 		this.arcWidth = arcWidth;
+		getShape().setRoundRect(getShape().getX(), getShape().getY(), getShape().getWidth(), getShape().getHeight(), arcWidth, getShape().getArcHeight());
 	}
 
 	public void setArcHeight(double arcHeight) {
 		this.arcHeight = arcHeight;
+		getShape().setRoundRect(getShape().getX(), getShape().getY(), getShape().getWidth(), getShape().getHeight(), getShape().getArcWidth(), arcHeight);
+	}
+
+	@Override
+	public void setLocation(Point point) {
+		getShape().setFrame(point.getX(), point.getY(), getShape().getWidth(), getShape().getHeight());
+	}
+
+	@Override
+	public void setSize(int width, int height) {
+		getShape().setFrame(getShape().getX(), getShape().getY(), width, height);
 	}
 
 	@Override
 	public boolean contains(Point p) {
-		RoundRectangle2D rect = new RoundRectangle2D.Double(getX(), getY(), getWidth(), getHeight(), this.arcWidth, this.arcHeight);
-		return rect.contains(p);
+		return this.shape.contains(p);
 	}
 
 	@Override
 	public IGraph clone() {
 		RectangleGraph graph = new RectangleGraph(getCanvas());
-
+		graph.setLocation(getLocation());
+		graph.setSize(getWidth(), getHeight());
+		graph.setArcWidth(getArcWidth());
+		graph.setArcHeight(getArcHeight());
 		return graph;
 	}
 }

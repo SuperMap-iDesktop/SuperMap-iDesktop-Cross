@@ -30,10 +30,10 @@ public class ProcessGraph extends RectangleGraph {
 	@Override
 	public IGraph clone() {
 		ProcessGraph graph = new ProcessGraph(getCanvas(), this.process);
-		graph.setWidth(getWidth());
-		graph.setHeight(getHeight());
-		graph.setArcWidth(getArcWidth());
-		graph.setArcHeight(getArcHeight());
+//		graph.setWidth(getWidth());
+//		graph.setHeight(getHeight());
+//		graph.setArcWidth(getArcWidth());
+//		graph.setArcHeight(getArcHeight());
 		return graph;
 	}
 }

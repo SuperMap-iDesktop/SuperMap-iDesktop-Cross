@@ -7,7 +7,6 @@ import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.process.graphics.graphs.decorator.ArrowDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.HotDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.SelectedDecorator;
-import sun.swing.SwingUtilities2;
 
 import java.awt.*;
 
@@ -16,18 +15,18 @@ import java.awt.*;
  */
 public class DefaultGraphPainter implements IGraphPainter {
 
-	private IStyleFactory factory = DefaultStyleFactory.INSTANCE;
+	private IStyleFactory styleFactory = DefaultStyleFactory.INSTANCE;
 	private Graphics graphics = null;
 	private IGraph graph = null;
 
 	@Override
 	public IStyleFactory getStyleFactory() {
-		return this.factory;
+		return this.styleFactory;
 	}
 
 	@Override
 	public void setStyleFactory(IStyleFactory styleFactory) {
-		this.factory = styleFactory;
+		this.styleFactory = styleFactory;
 	}
 
 	@Override
@@ -69,7 +68,8 @@ public class DefaultGraphPainter implements IGraphPainter {
 	}
 
 	protected void paintRectangleGraph(Graphics graphics, RectangleGraph rectangleGraph) {
-
+		this.styleFactory.normalRegion(graphics);
+		((Graphics2D) graphics).fill(rectangleGraph.getShape());
 	}
 
 	protected void paintEllipseGraph(Graphics graphics, EllipseGraph ellipseGraph) {

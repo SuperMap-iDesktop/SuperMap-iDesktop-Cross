@@ -4,6 +4,8 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
+import java.awt.*;
+
 /**
  * Created by highsad on 2017/2/23.
  */
@@ -11,8 +13,8 @@ public abstract class AbstractDecorator extends AbstractGraph {
 
 	private AbstractGraph graph;
 
-	public AbstractDecorator(GraphCanvas canvas) {
-		super(canvas);
+	public AbstractDecorator(GraphCanvas canvas, Shape shape) {
+		super(canvas, shape);
 	}
 
 	public AbstractGraph getGraph() {
