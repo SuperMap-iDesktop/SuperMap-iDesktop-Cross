@@ -3,7 +3,7 @@ package com.supermap.desktop.task;
 import com.supermap.Interface.ILBSTask;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IAfterWork;
-import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.ui.lbs.impl.FileInfo;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.CommonUtilities;

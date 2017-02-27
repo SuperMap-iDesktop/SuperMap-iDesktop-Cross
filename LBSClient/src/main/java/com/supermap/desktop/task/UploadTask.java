@@ -5,7 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.SmOptionPane;
-import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.ui.lbs.impl.FileInfo;
 import com.supermap.desktop.http.upload.BatchUploadFile;
 import com.supermap.desktop.http.upload.UploadUtils;
 import com.supermap.desktop.lbsclient.LBSClientProperties;

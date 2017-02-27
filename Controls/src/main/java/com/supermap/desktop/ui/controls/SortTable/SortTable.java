@@ -1,13 +1,14 @@
 package com.supermap.desktop.ui.controls.SortTable;
 
-import javax.swing.*;
+import com.supermap.desktop.ui.controls.table.SmTable;
+
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class SortTable extends JTable {
+public class SortTable extends SmTable {
 
 	private SortButtonRenderer sortButtonRenderer;
 	private HeaderListener headerListener;

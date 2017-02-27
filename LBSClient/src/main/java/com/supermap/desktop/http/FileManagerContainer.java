@@ -1,6 +1,7 @@
 package com.supermap.desktop.http;
 
 import com.supermap.Interface.ILBSTask;
+import com.supermap.desktop.progress.Interface.IUpdateProgress;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -14,7 +15,7 @@ public class FileManagerContainer extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private ArrayList<ILBSTask> items;
+	private ArrayList<IUpdateProgress> items;
 
 	GroupLayout groupLayout;
 	Group horizontalGroup = null;
@@ -49,19 +50,19 @@ public class FileManagerContainer extends JPanel {
 		verticalGroup = groupLayout.createSequentialGroup();
 		groupLayout.setVerticalGroup(verticalGroup);
 
-		for (ILBSTask item : items) {
+		for (IUpdateProgress item : items) {
 			horizontalGroup.addComponent((Component) item);
 			verticalGroup.addComponent((Component) item);
 		}
 	}
 
-	public void addItem(ILBSTask task) {
+	public void addItem(IUpdateProgress task) {
 		items.add(task);
 		updateItems();
 	}
 
 	public void removeItem(ILBSTask task) {
-		for (ILBSTask item : items) {
+		for (IUpdateProgress item : items) {
 			if (item.equals(task)) {
 				items.remove(item);
 				groupLayout.removeLayoutComponent((Component) item);
@@ -71,7 +72,7 @@ public class FileManagerContainer extends JPanel {
 		updateItems();
 	}
 
-	public ArrayList<ILBSTask> getItems() {
+	public ArrayList<IUpdateProgress> getItems() {
 		return items;
 	}
 }

@@ -63,9 +63,9 @@ public class ThemeGuidDialog extends SmDialog {
      * 界面布局入口
      */
     private void initComponents() {
-        setSize(new Dimension(560, 420));
-        setMinimumSize(new Dimension(560, 420));
-        setLocationRelativeTo(null);
+	    setSize(new Dimension(500, 375));
+	    setMinimumSize(new Dimension(500, 375));
+	    setLocationRelativeTo(null);
         this.panelContent.setBorder(new EmptyBorder(5, 5, 5, 5));
 
         JScrollPane scrollPane = new JScrollPane();
@@ -89,8 +89,9 @@ public class ThemeGuidDialog extends SmDialog {
             }
         });
         scrollPane.setViewportView(listContent);
-        scrollPane.setPreferredSize(new Dimension(140, 320));
-        this.buttonOk.setActionCommand("OK");
+	    scrollPane.setPreferredSize(new Dimension(140, 200));
+	    scrollPane.setMinimumSize(new Dimension(140, 200));
+	    this.buttonOk.setActionCommand("OK");
         getRootPane().setDefaultButton(buttonOk);
         this.buttonCancel.setActionCommand("Cancel");
 
@@ -101,11 +102,11 @@ public class ThemeGuidDialog extends SmDialog {
         //@formatter:off
         getContentPane().setLayout(new GridBagLayout());
         this.contentPanel.setLayout(new GridBagLayout());
-        this.contentPanel.add(scrollPane, new GridBagConstraintsHelper(0, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3).setWeight(0, 1));
-        this.contentPanel.add(this.panel, new GridBagConstraintsHelper(3, 0, 7, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3).setWeight(1, 1));
+	    this.contentPanel.add(scrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.VERTICAL).setInsets(3).setWeight(0, 1));
+	    this.contentPanel.add(this.panel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(3).setWeight(1, 1));
 
-        getContentPane().add(contentPanel, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3).setWeight(1, 3));
-        getContentPane().add(panelButton, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+	    getContentPane().add(contentPanel, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(3).setWeight(1, 1));
+	    getContentPane().add(panelButton, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
         //@formatter:on
         getRootPane().setDefaultButton(this.buttonOk);
     }

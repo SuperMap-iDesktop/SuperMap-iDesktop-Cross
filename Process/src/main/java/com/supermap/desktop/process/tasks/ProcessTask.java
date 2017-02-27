@@ -281,7 +281,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         } else if (process.getKey().equals(MetaKeys.KERNEL_DENSITY)) {
             labelTitle.setText(ControlsProperties.getString("String_KernelDensity"));
         } else if (process.getKey().equals(MetaKeys.OVERLAY_ANALYST)) {
-            OverlayAnalystType analystType = ((MetaProcessOverlayAnalyst)process).getAnalystType();
+            OverlayAnalystType analystType = ((MetaProcessOverlayAnalyst) process).getAnalystType();
             switch (analystType) {
                 case CLIP:
                     labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_CLIP"));
@@ -307,7 +307,8 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
                 default:
                     break;
             }
-        }
+        }// TODO
+        // else if
     }
 
     @Override

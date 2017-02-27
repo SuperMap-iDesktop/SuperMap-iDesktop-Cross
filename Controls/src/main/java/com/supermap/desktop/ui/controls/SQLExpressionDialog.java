@@ -1,15 +1,11 @@
 package com.supermap.desktop.ui.controls;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldType;
-import com.supermap.data.QueryParameter;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.ui.controls.table.SmTable;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -17,24 +13,21 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 
 public class SQLExpressionDialog extends SmDialog {
 	private JButton jButtonCancel;
 	private JButton jButtonOK;
-	private JTable jTableFieldInfo;
+	private SmTable jTableFieldInfo;
 	private JScrollPane jScrollPanel;
 	private JComboBox<String> jComboBoxTimeFunction;
 	private JComboBox<String> jComboBoxStringFunction;
@@ -92,8 +85,8 @@ public class SQLExpressionDialog extends SmDialog {
 
 
 	private void initialDialog(String expression) {
-		setSize(850, 520);
-		setMinimumSize(new Dimension(850, 520));
+		setSize(850, 550);
+		setMinimumSize(new Dimension(850, 550));
 		setTitle(ControlsProperties.getString("String_SQLExpression"));
 		setName("SQLExpressionDialog");
 
@@ -109,7 +102,7 @@ public class SQLExpressionDialog extends SmDialog {
 		}
 
 		this.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2);
-		getContentPane().setLayout(new GridBagLayout());
+
 		this.jTextAreaSQLSentence = new JTextArea();
 		this.jTextAreaSQLSentence.setBorder(BorderFactory.createLineBorder(Color.gray, 1));
 		this.jTextAreaSQLSentence.setLineWrap(true);
@@ -121,23 +114,24 @@ public class SQLExpressionDialog extends SmDialog {
 		this.jButtonCancel = new SmButton();
 		this.jButtonClear = new SmButton("clear");
 		this.jScrollPanel = new JScrollPane();
-		//@formatter:off
-        JPanel panelButton = new JPanel();
-        panelButton.setLayout(new GridBagLayout());
-        panelButton.add(this.jButtonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setInsets(2, 0, 5, 5));
-        panelButton.add(this.jButtonClear, new GridBagConstraintsHelper(1, 0, 1, 1).setInsets(2, 0, 5, 5));
-        panelButton.add(this.jButtonCancel, new GridBagConstraintsHelper(2, 0, 1, 1).setInsets(2, 0, 5, 5));
 
-        getContentPane().add(this.jScrollPanel, new GridBagConstraintsHelper(0, 0, 2, 2).setWeight(1,1).setFill(GridBagConstraints.BOTH).setInsets(3).setIpad(0,0));
-        getContentPane().add(this.jPanelFunction, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0,0).setFill(GridBagConstraints.BOTH).setInsets(5).setIpad(0,20));
-        getContentPane().add(this.jPanelCommonOperator, new GridBagConstraintsHelper(2, 1, 1, 1).setWeight(0,0).setFill(GridBagConstraints.BOTH).setInsets(5).setIpad(50,50));
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new GridBagLayout());
+		JPanel panelButton = new JPanel();
+		panelButton.setLayout(new GridBagLayout());
+		panelButton.add(this.jButtonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setInsets(2, 0, 5, 5));
+		panelButton.add(this.jButtonClear, new GridBagConstraintsHelper(1, 0, 1, 1).setInsets(2, 0, 5, 5));
+		panelButton.add(this.jButtonCancel, new GridBagConstraintsHelper(2, 0, 1, 1).setInsets(2, 0, 5, 0));
 
-	    getContentPane().add(this.jPanelGetAllValue, new GridBagConstraintsHelper(0, 2, 1, 2).setWeight(0,0).setFill(GridBagConstraints.BOTH).setInsets(3).setIpad(100,120));
-		getContentPane().add(this.jTextAreaSQLSentence, new GridBagConstraintsHelper(1, 2, 2, 2).setWeight(1,1).setFill(GridBagConstraints.BOTH).setInsets(3).setIpad(0,120));
-       //将获取唯一值面板加入主panel3, 2, 1, 2
-        getContentPane().add(panelButton, new GridBagConstraintsHelper(2, 4, 1, 1).setWeight(0,0).setAnchor(GridBagConstraints.EAST));
-        //@formatter:on
+		mainPanel.add(this.jScrollPanel, new GridBagConstraintsHelper(0, 0, 2, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(10, 10, 5, 5));
+		mainPanel.add(this.jPanelFunction, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setInsets(10, 0, 5, 10));
+		mainPanel.add(this.jPanelCommonOperator, new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.BOTH).setInsets(0, 0, 5, 10).setIpad(30, 50));
 
+		mainPanel.add(this.jPanelGetAllValue, new GridBagConstraintsHelper(0, 2, 1, 2).setWeight(0, 0).setFill(GridBagConstraints.BOTH).setInsets(0, 10, 5, 5).setIpad(100, 120));
+		mainPanel.add(this.jTextAreaSQLSentence, new GridBagConstraintsHelper(1, 2, 2, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(0, 0, 5, 10).setIpad(0, 120));
+		//将获取唯一值面板加入主panel3, 2, 1, 2
+		mainPanel.add(panelButton, new GridBagConstraintsHelper(2, 4, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(0, 5, 5, 10));
+		this.add(mainPanel);
 		this.jScrollPanel.setViewportView(getTableFieldInfo());
 		this.jScrollPanel.getViewport().setBackground(Color.white);
 		this.jTextAreaSQLSentence.setText(expression);
@@ -267,15 +261,31 @@ public class SQLExpressionDialog extends SmDialog {
 		this.jComboBoxStringFunction = new JComboBox<String>();
 		this.jComboBoxTimeFunction = new JComboBox<String>();
 
+		GroupLayout panelBufferDataLayout = new GroupLayout(this.jPanelFunction);
+		panelBufferDataLayout.setAutoCreateContainerGaps(true);
+		panelBufferDataLayout.setAutoCreateGaps(true);
+		this.jPanelFunction.setLayout(panelBufferDataLayout);
 		//@formatter:off
-        this.jPanelFunction.setLayout(new GridBagLayout());
-        this.jPanelFunction.add(this.jLabelMathsoperation, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1));
-        this.jPanelFunction.add(this.jComboBoxMathsOperation, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-        this.jPanelFunction.add(this.jLabelStringfunction, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1));
-        this.jPanelFunction.add(this.jComboBoxStringFunction, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-        this.jPanelFunction.add(this.jLabelTimefunction, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1));
-        this.jPanelFunction.add(this.jComboBoxTimeFunction, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(1).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL));
-        //@formatter:on
+		panelBufferDataLayout.setHorizontalGroup(panelBufferDataLayout.createSequentialGroup()
+				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.jLabelMathsoperation)
+						.addComponent(this.jLabelStringfunction)
+						.addComponent(this.jLabelTimefunction))
+				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.jComboBoxMathsOperation)
+						.addComponent(this.jComboBoxStringFunction)
+						.addComponent(this.jComboBoxTimeFunction)));
+		panelBufferDataLayout.setVerticalGroup(panelBufferDataLayout.createSequentialGroup()
+				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.jLabelMathsoperation)
+						.addComponent(this.jComboBoxMathsOperation,20,20,20))
+				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.jLabelStringfunction)
+						.addComponent(this.jComboBoxStringFunction,20,20,20))
+				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.jLabelTimefunction)
+						.addComponent(this.jComboBoxTimeFunction,20,20,20)));
+		//@formatter:on
 	}
 
 	/**
@@ -339,28 +349,28 @@ public class SQLExpressionDialog extends SmDialog {
 		setOperatorButtonSize();
 		//@formatter:off
         this.jPanelCommonOperator.setLayout(new GridBagLayout());
-        this.jPanelCommonOperator.add(this.jButtonPlus, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonSubtract, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonMultiply, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonDivide, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonAnd, new GridBagConstraintsHelper(4, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(0, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonPlus, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonSubtract, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonMultiply, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonDivide, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonAnd, new GridBagConstraintsHelper(4, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
 
-        this.jPanelCommonOperator.add(this.jButtonMore, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonLess, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonEqual, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonBracket, new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonNot, new GridBagConstraintsHelper(4, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonMore, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonLess, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonEqual, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonBracket, new GridBagConstraintsHelper(3, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonNot, new GridBagConstraintsHelper(4, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
 
-        this.jPanelCommonOperator.add(this.jButtonMoreOrEqual, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonLessOrEqual, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonLeftBracket, new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonRightBracket, new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonLike, new GridBagConstraintsHelper(4, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonMoreOrEqual, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonLessOrEqual, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonLeftBracket, new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonRightBracket, new GridBagConstraintsHelper(3, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonLike, new GridBagConstraintsHelper(4, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
 
-        this.jPanelCommonOperator.add( this.jButtonAndCompute , new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonSpace, new GridBagConstraintsHelper(1, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonC, new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
-        this.jPanelCommonOperator.add(this.jButtonOr, new GridBagConstraintsHelper(4, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add( this.jButtonAndCompute , new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonSpace, new GridBagConstraintsHelper(1, 3, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonC, new GridBagConstraintsHelper(3, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
+        this.jPanelCommonOperator.add(this.jButtonOr, new GridBagConstraintsHelper(4, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 1).setFill(GridBagConstraints.HORIZONTAL).setInsets(1));
         //@formatter:on
 	}
 
@@ -516,7 +526,7 @@ public class SQLExpressionDialog extends SmDialog {
 		this.defaultTableModel = new cellEditableModel(tableData, NAMES);
 		this.jTableFieldInfo.setModel(defaultTableModel);
 		this.jTableFieldInfo.repaint();
-		resetTableCell();
+//		resetTableCell();
 	}
 
 	/**
@@ -576,22 +586,16 @@ public class SQLExpressionDialog extends SmDialog {
 		this.defaultTableModel = new cellEditableModel(tableData, NAMES);
 		this.jTableFieldInfo.setModel(defaultTableModel);
 		this.jTableFieldInfo.repaint();
-		resetTableCell();
+//		resetTableCell();
 	}
 
-	private void resetTableCell() {
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setPreferredWidth(
-				80);
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setCellRenderer(
-				TableTooltipCellRenderer.getInstance());
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName"))
-				.setPreferredWidth(100);
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName")).setCellRenderer(
-				TableTooltipCellRenderer.getInstance());
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setPreferredWidth(80);
-		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setCellRenderer(
-				TableTooltipCellRenderer.getInstance());
-	}
+//	private void resetTableCell() {
+////		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldCaption")).setPreferredWidth(
+////				80);
+////		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DataGridViewColumnFieldName"))
+////				.setPreferredWidth(100);
+////		this.jTableFieldInfo.getColumn(ControlsProperties.getString("String_GeometryPropertyTabularControl_DatGridViewColumnFieldType")).setPreferredWidth(80);
+//	}
 
 	/**
 	 * 构造JTable类型的FieldInfo，其中实现了方法：双击将table中的信息并将该信息加到TextArea中
@@ -599,7 +603,7 @@ public class SQLExpressionDialog extends SmDialog {
 	private JTable getTableFieldInfo() {
 		if (this.jTableFieldInfo == null) {
 			this.defaultTableModel = new DefaultTableModel(NAMES, 0);
-			this.jTableFieldInfo = new JTable(defaultTableModel);
+			this.jTableFieldInfo = new SmTable(defaultTableModel);
 			//为什么要关闭列宽自动适应？？---yuanR 17.1.11
 			//去除。实现jatble跟随窗口大小的改变自动适应
 			//	this.jTableFieldInfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -607,9 +611,6 @@ public class SQLExpressionDialog extends SmDialog {
 			this.jTableFieldInfo.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			//行高
 			this.jTableFieldInfo.setRowHeight(25);
-			//取消网格
-			this.jTableFieldInfo.setShowHorizontalLines(false);
-			this.jTableFieldInfo.setShowVerticalLines(false);
 		}
 		return this.jTableFieldInfo;
 	}
@@ -823,40 +824,6 @@ public class SQLExpressionDialog extends SmDialog {
 		}
 	}
 
-	static class TableTooltipCellRenderer extends JLabel implements TableCellRenderer {
-		private static TableTooltipCellRenderer tooltipCellRenderer;
-
-		private TableTooltipCellRenderer() {
-
-		}
-
-		@Override
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-
-			if (null != value) {
-				this.setText((String) value);
-				this.setToolTipText((String) value);
-			} else {
-				this.setText((String) value);
-			}
-			if (isSelected) {
-				this.setOpaque(true);
-				this.setBackground(new Color(36, 124, 255));
-			} else {
-				this.setOpaque(true);
-				this.setBackground(Color.white);
-			}
-			return this;
-		}
-
-		public static TableTooltipCellRenderer getInstance() {
-			if (null == tooltipCellRenderer) {
-				tooltipCellRenderer = new TableTooltipCellRenderer();
-			}
-			return tooltipCellRenderer;
-		}
-	}
-
 	//获取唯一值，list-yuanR
 	class GetAllValueList extends JList {
 		public GetAllValueList() {
@@ -1009,6 +976,7 @@ public class SQLExpressionDialog extends SmDialog {
 
 	/**
 	 * 对索引到的数据进行显示控制-yuanR 2017.2.16
+	 *
 	 * @param fieldValue
 	 * @param fieldType
 	 * @return

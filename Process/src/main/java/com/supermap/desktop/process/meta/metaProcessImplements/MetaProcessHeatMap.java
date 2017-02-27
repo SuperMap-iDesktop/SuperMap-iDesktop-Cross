@@ -1,12 +1,14 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.desktop.lbs.Interface.IServerService;
-import com.supermap.desktop.lbs.impl.IServerServiceImpl;
-import com.supermap.desktop.lbs.params.BuildCacheDrawingSetting;
-import com.supermap.desktop.lbs.params.BuildCacheJobSetting;
-import com.supermap.desktop.lbs.params.FileInputDataSetting;
-import com.supermap.desktop.lbs.params.JobResultResponse;
-import com.supermap.desktop.lbs.params.MongoDBOutputsetting;
+import com.supermap.desktop.process.messageBus.NewMessageBus;
+import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
+import com.supermap.desktop.ui.lbs.Interface.IServerService;
+import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
+import com.supermap.desktop.ui.lbs.params.BuildCacheDrawingSetting;
+import com.supermap.desktop.ui.lbs.params.BuildCacheJobSetting;
+import com.supermap.desktop.ui.lbs.params.FileInputDataSetting;
+import com.supermap.desktop.ui.lbs.params.JobResultResponse;
+import com.supermap.desktop.ui.lbs.params.MongoDBOutputsetting;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
@@ -25,7 +27,7 @@ import javax.swing.*;
 public class MetaProcessHeatMap extends MetaProcess {
 	private IParameters parameters;
 
-	private ParameterTextField parameterFileInputPath;
+	private ParameterHDFSPath parameterHDFSPath;
 	private ParameterComboBox parameterCacheType;
 	private ParameterTextField parameterBounds;
 	private ParameterTextField parameterXYIndex;
@@ -43,8 +45,8 @@ public class MetaProcessHeatMap extends MetaProcess {
 	private void initMetaInfo() {
 		this.parameters = new DefaultParameters();
 		//TODO 封装数据管理调用控件，此处先用ParameterTextField控件替换
-		parameterFileInputPath = new ParameterTextField().setDescribe("");
-		parameterFileInputPath.setSelectedItem("hdfs://localhost:9000/data/newyork_taxi_2013-01_147k.csv");
+		parameterHDFSPath = new ParameterHDFSPath();
+		parameterHDFSPath.setSelectedItem("hdfs://localhost:9000/data/newyork_taxi_2013-01_147k.csv");
 
 		parameterCacheType = new ParameterComboBox(ProcessProperties.getString("String_CacheType"));
 		parameterCacheType.setItems(new ParameterDataNode("HeatMap", "HeatMap"));
@@ -66,7 +68,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterVersion = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Version"));
 		parameterVersion.setSelectedItem("V1");
 		this.parameters.setParameters(
-				parameterFileInputPath,
+				parameterHDFSPath,
 				parameterCacheType,
 				parameterBounds,
 				parameterXYIndex,
@@ -92,11 +94,10 @@ public class MetaProcessHeatMap extends MetaProcess {
 	@Override
 	public void run() {
 		//热度图分析功能
-//        IServerService service = new IServerServiceImpl();
 		BuildCacheJobSetting setting = new BuildCacheJobSetting();
 
 		FileInputDataSetting input = new FileInputDataSetting();
-		input.filePath = parameterFileInputPath.getSelectedItem().toString();
+		input.filePath = parameterHDFSPath.getSelectedItem().toString();
 
 		MongoDBOutputsetting output = new MongoDBOutputsetting();
 		output.cacheName = parameterCacheName.getSelectedItem().toString();
@@ -119,7 +120,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 		JobResultResponse response = service.query(setting);
 		if (null != response) {
 			CursorUtilities.setDefaultCursor();
-//            NewMessageBus.producer(response);
+            NewMessageBus.producer(this,response);
 		}
 	}
 }

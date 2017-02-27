@@ -9,7 +9,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLBSControl;
 import com.supermap.desktop.http.FileManagerContainer;
 import com.supermap.desktop.http.callable.UploadPropressCallable;
-import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.ui.lbs.impl.FileInfo;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.properties.CommonProperties;
@@ -17,6 +17,8 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.task.TaskFactory;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.ui.lbs.impl.HDFSDefine;
+import com.supermap.desktop.ui.lbs.impl.WebHDFS;
 import com.supermap.desktop.utilities.CommonUtilities;
 import com.supermap.desktop.utilities.CursorUtilities;
 
@@ -36,7 +38,7 @@ public class CtrlActionUpload extends CtrlAction {
             IFormLBSControl control = (IFormLBSControl) Application.getActiveApplication().getActiveForm();
             String modelName = "HDFSFileUpload";
             if (!SmFileChoose.isModuleExist(modelName)) {
-                SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), LBSClientProperties.getString("String_SelectFile"),
+                SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), CommonProperties.getString("String_SelectFile"),
                         modelName, "OpenOne");
             }
             SmFileChoose smFileChoose = new SmFileChoose(modelName);
@@ -53,7 +55,7 @@ public class CtrlActionUpload extends CtrlAction {
                         webPath += "/";
                     }
                     String webURL = webPath + file.getName();
-                    WebHDFS.HDFSDefine[] nowDefines = WebHDFS.listDirectory(webURL, "", false);
+                    HDFSDefine[] nowDefines = WebHDFS.listDirectory(webURL, "", false);
                     if (nowDefines.length > 0) {
                         //文件已经存在，提示是否覆盖
                         if (UICommonToolkit.showConfirmDialog(MessageFormat.format(CoreProperties.getString("String_FieldExist"), file.getName())) == JOptionPane.OK_OPTION) {

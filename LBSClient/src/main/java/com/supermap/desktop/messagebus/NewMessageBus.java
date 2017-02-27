@@ -2,7 +2,6 @@ package com.supermap.desktop.messagebus;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.supermap.Interface.ILBSTask;
 import com.supermap.Interface.ITaskFactory;
 import com.supermap.Interface.TaskEnum;
 import com.supermap.data.*;
@@ -12,12 +11,13 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.http.FileManagerContainer;
-import com.supermap.desktop.lbs.Interface.IServerService;
-import com.supermap.desktop.lbs.impl.IServerServiceImpl;
-import com.supermap.desktop.lbs.params.IResponse;
-import com.supermap.desktop.lbs.params.IServerInfo;
-import com.supermap.desktop.lbs.params.JobItemResultResponse;
-import com.supermap.desktop.lbs.params.JobResultResponse;
+import com.supermap.desktop.ui.lbs.Interface.IServerService;
+import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
+import com.supermap.desktop.ui.lbs.params.IResponse;
+import com.supermap.desktop.ui.lbs.params.IServerInfo;
+import com.supermap.desktop.ui.lbs.params.JobItemResultResponse;
+import com.supermap.desktop.ui.lbs.params.JobResultResponse;
+import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.task.TaskFactory;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.CommonUtilities;
@@ -41,7 +41,7 @@ public class NewMessageBus {
 
     public static void producer(IResponse response) {
         try {
-            ILBSTask task = null;
+            IUpdateProgress task = null;
             FileManagerContainer fileManagerContainer = CommonUtilities.getFileManagerContainer();
             ITaskFactory taskFactory = TaskFactory.getInstance();
             if (response instanceof JobResultResponse) {
@@ -68,7 +68,7 @@ public class NewMessageBus {
         }
     }
 
-    private static void addTask(FileManagerContainer fileManagerContainer, ILBSTask task) throws InterruptedException {
+    private static void addTask(FileManagerContainer fileManagerContainer, IUpdateProgress task) throws InterruptedException {
         if (fileManagerContainer != null) {
             fileManagerContainer.addItem(task);
         }
@@ -78,10 +78,10 @@ public class NewMessageBus {
         private IServerService serverService = new IServerServiceImpl();
         private IResponse response;
         private volatile boolean stop = false;
-        private volatile ILBSTask task;
-        private volatile int i = 0;
+        private volatile IUpdateProgress task;
+        private volatile int percent = 0;
 
-        public MessageBusConsumer(IResponse response, ILBSTask task) {
+        public MessageBusConsumer(IResponse response, IUpdateProgress task) {
             this.response = response;
             this.task = task;
         }
@@ -143,9 +143,8 @@ public class NewMessageBus {
                     }
                 }
             } else {
-//                updateProgress();
-                if (i <= 99) {
-                    task.updateProgress(i++, "", "");
+                if (percent <= 99) {
+                    task.updateProgress(percent++, "", "");
                 }
                 Thread.sleep(100);
             }
@@ -155,12 +154,6 @@ public class NewMessageBus {
         public void onException(JMSException exception) {
             Application.getActiveApplication().getOutput().output(exception);
         }
-
-//        private void updateProgress() throws InterruptedException {
-//            Thread.sleep(1000);
-//            int i = 0;
-//            task.updateProgress(i + 1, "", "");
-//        }
     }
 
     private static void openIserverMap(String iserverRestAddr, String datasourceName, final String datasetName) {
@@ -186,18 +179,12 @@ public class NewMessageBus {
                     @Override
                     public void run() {
                         UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
-//                        if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
-//                            //添加到当前地图中
-//                            Map currentMap = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
-//                            MapUtilities.addDatasetToMap(currentMap, finalDataset, true);
-//                        } else {
                         //打开新的地图
                         IFormMap newMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, datasetName + "@" + datasource.getAlias());
                         Map map = newMap.getMapControl().getMap();
                         map.getLayers().add(finalDataset, true);
                         map.refresh();
                         UICommonToolkit.getLayersManager().getLayersTree().reload();
-//                        }
                     }
                 });
 

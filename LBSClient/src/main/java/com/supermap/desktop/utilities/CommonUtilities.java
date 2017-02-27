@@ -11,7 +11,7 @@ import com.supermap.desktop.http.FileManagerContainer;
 import com.supermap.desktop.http.TaskManagerContainer;
 import com.supermap.desktop.http.callable.DownloadProgressCallable;
 import com.supermap.desktop.http.callable.UploadPropressCallable;
-import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.ui.lbs.impl.FileInfo;
 import com.supermap.desktop.task.TaskFactory;
 import com.supermap.desktop.ui.controls.DialogResult;
 
