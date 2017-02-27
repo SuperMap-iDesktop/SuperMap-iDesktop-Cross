@@ -1,6 +1,7 @@
 package com.supermap.desktop.utilities;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.properties.CoreProperties;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -214,7 +215,7 @@ public class XmlUtilities {
 		try (FileOutputStream os = new FileOutputStream(fileName)) {
 			writeXml(os, node, encoding);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(CoreProperties.getString("String_SaveXmlFailed"));
 		}
 	}
 
