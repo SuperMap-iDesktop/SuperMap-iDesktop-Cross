@@ -40,7 +40,7 @@ public class JDialogHDFSFiles extends SmDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (!StringUtilities.isNullOrEmpty(panelHDFSFiles.getURL())) {
-                String name = (String) panelHDFSFiles.getTable().getModel().getValueAt(panelHDFSFiles.getTable().getSelectedRow(), 1);
+                String name = (String) panelHDFSFiles.getTable().getModel().getValueAt(panelHDFSFiles.getTable().getSelectedRow(), 0);
                 String url = panelHDFSFiles.getURL();
                 if (!url.endsWith("/")) {
                     url += "/";
