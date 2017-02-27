@@ -46,6 +46,20 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 	}
 
 
+	@Override
+	public int addProcess(IProcess process) {
+		if (!processes.contains(process)) {
+			processes.add(process);
+		}
+		return processes.indexOf(process);
+	}
+
+	@Override
+	public boolean removeProcess(IProcess process) {
+		processes.remove(process);
+		return !processes.contains(process);
+	}
+
 	/**
 	 * 查找第一个key相等的Process,会递归查询ProcessGroup内的Process
 	 * 未提供根据key只查询第一层Process方法
