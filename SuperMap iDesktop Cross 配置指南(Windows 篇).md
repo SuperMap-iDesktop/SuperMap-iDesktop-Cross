@@ -75,14 +75,14 @@ SuperMap iDesktop Cross 分支说明：
 
 ## IntelliJ IDEA ##
 
-1. 拷贝 `OBJECTS_HOME/Bin/` 或者 `OBJECTS_HOME/Bin_x64/` 下所有文件至 `CROSS_HOME/Bin/` 目录下，如果 `CROSS_HOME` 目录不存在，自行新建。
+1. 拷贝 `OBJECTS_HOME/Bin/` 或者 `OBJECTS_HOME/Bin_x64/` 下所有文件至 `CROSS_HOME/Bin/` 目录下，如果 `Bin` 目录不存在，自行新建。
 2. 进入 `CROSS_HOME` 目录，双击 **SuperMap iDesktop Cross.ipr** 启动 IntelliJ IDEA，加载项目；
 3. 查看 IntelliJ IDEA 右边侧边栏，打开 Maven Projects 管理面板，展开 **iDesktop.cross - Lifecycle**，双击 **install** 安装依赖，等待完成；
 4. 查看 IntelliJ IDEA 顶部工具条，选中 **iDesktop Startup** 启动项，点击其后的 **Run（Shift + F10）/Debug（Shift + F9**）即可运行 SuperMap iDesktop Cross。
 
 ## Eclipse ##
 
-1. 拷贝 `OBJECTS_HOME/Bin/` 或者 `OBJECTS_HOME/Bin_x64/` 下所有文件至 `CROSS_HOME/Bin/` 目录下，如果 `CROSS_HOME` 目录不存在，自行新建。
+1. 拷贝 `OBJECTS_HOME/Bin/` 或者 `OBJECTS_HOME/Bin_x64/` 下所有文件至 `CROSS_HOME/Bin/` 目录下，如果 `Bin` 目录不存在，自行新建。
 2. 打开 Eclipse，选择一个新的 Eclipse 工作环境；
 3. 导入项目。依次选择 **File - Import - Maven - Exitsting Maven Projects Next - Browse**，在弹出的文件窗口选中 **CROSS_HOME**， 点击 **Finish** 导入项目；
 4. 配置 Installed JREs。依次选择 **Window - Preferences - Java - Installed JREs**，点击界面右侧 **Add**，弹出向导界面，依次点击 **Standard VM - Next - Directory**，选中 `JDK 1.7.0_80` 安装目录根目录，点击 **Finish**，勾选刚添加的 **JDK 1.7.0_80**，点击 OK 完成配置。
