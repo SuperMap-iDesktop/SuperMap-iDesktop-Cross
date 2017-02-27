@@ -28,4 +28,13 @@ public abstract class AbstractDecorator extends AbstractGraph {
 	public void undecorate() {
 		this.graph = null;
 	}
+
+	public boolean isDecorating() {
+		return this.graph != null;
+	}
+
+	@Override
+	public IGraph clone() {
+		throw new UnsupportedOperationException();
+	}
 }

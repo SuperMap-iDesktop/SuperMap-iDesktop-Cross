@@ -23,26 +23,24 @@ public class EllipseGraph extends AbstractGraph {
 
 	@Override
 	public void setLocation(Point point) {
-
+		getShape().setFrame(point.getX(), point.getY(), getShape().getWidth(), getShape().getHeight());
 	}
 
 	@Override
 	public void setSize(int width, int height) {
-
+		getShape().setFrame(getShape().getX(), getShape().getY(), width, height);
 	}
 
 	@Override
 	public boolean contains(Point p) {
-//		Ellipse2D ellipse2D = new Ellipse2D.Double(getX(), getY(), getWidth(), getHeight());
 		return getShape().contains(p);
 	}
 
 	@Override
 	public IGraph clone() {
 		EllipseGraph graph = new EllipseGraph(getCanvas());
-//		graph.setWidth(getWidth());
-//		graph.setHeight(getHeight());
-
+		graph.setLocation(getLocation());
+		graph.setSize(getWidth(), getHeight());
 		return graph;
 	}
 }

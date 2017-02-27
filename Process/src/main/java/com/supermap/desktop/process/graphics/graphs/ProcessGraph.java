@@ -23,17 +23,12 @@ public class ProcessGraph extends RectangleGraph {
 		this.process = process;
 	}
 
-	private int doubleToInt(double d) {
-		return Double.valueOf(d).intValue();
-	}
-
 	@Override
 	public IGraph clone() {
 		ProcessGraph graph = new ProcessGraph(getCanvas(), this.process);
-//		graph.setWidth(getWidth());
-//		graph.setHeight(getHeight());
-//		graph.setArcWidth(getArcWidth());
-//		graph.setArcHeight(getArcHeight());
+		graph.setSize(getWidth(), getHeight());
+		graph.setArcWidth(getArcWidth());
+		graph.setArcHeight(getArcHeight());
 		return graph;
 	}
 }

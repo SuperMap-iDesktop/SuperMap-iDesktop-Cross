@@ -11,6 +11,7 @@ import java.awt.geom.RoundRectangle2D;
  */
 public class DefaultStyleFactory implements IStyleFactory {
 
+	public final static Color DEFAULT_BACKGROUND_COLOR = new Color(231, 231, 231);
 	public final static DefaultStyleFactory INSTANCE = new DefaultStyleFactory();
 
 	private DefaultStyleFactory() {
@@ -40,7 +41,7 @@ public class DefaultStyleFactory implements IStyleFactory {
 
 	@Override
 	public void normalRegion(Graphics graphics) {
-		graphics.setColor(new Color(231, 231, 231));
+		graphics.setColor(DEFAULT_BACKGROUND_COLOR);
 	}
 
 	@Override
@@ -65,7 +66,7 @@ public class DefaultStyleFactory implements IStyleFactory {
 
 	@Override
 	public void hotRegion(Graphics graphics) {
-		graphics.setColor(GraphicsUtil.transparentColor(Color.LIGHT_GRAY, 100));
+		graphics.setColor(GraphicsUtil.transparentColor(DEFAULT_BACKGROUND_COLOR, 100));
 	}
 
 	@Override
@@ -145,7 +146,7 @@ public class DefaultStyleFactory implements IStyleFactory {
 
 	@Override
 	public void previewRegion(Graphics graphics) {
-		graphics.setColor(GraphicsUtil.transparentColor(Color.LIGHT_GRAY, 100));
+		graphics.setColor(GraphicsUtil.transparentColor(DEFAULT_BACKGROUND_COLOR, 100));
 	}
 
 	@Override

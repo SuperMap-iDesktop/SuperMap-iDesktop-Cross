@@ -6,6 +6,7 @@ import com.supermap.desktop.process.graphics.graphs.LineGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.process.graphics.graphs.decorator.ArrowDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.HotDecorator;
+import com.supermap.desktop.process.graphics.graphs.decorator.PreviewDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.SelectedDecorator;
 
 import java.awt.*;
@@ -60,6 +61,8 @@ public class DefaultGraphPainter implements IGraphPainter {
 			paintSelectedDecorator(graphics, (SelectedDecorator) graph);
 		} else if (graph instanceof ArrowDecorator) {
 			paintArrowDecorator(graphics, (ArrowDecorator) graph);
+		} else if (graph instanceof PreviewDecorator) {
+			paintPreviewDecorator(graphics, (PreviewDecorator) graph);
 		}
 	}
 
@@ -73,7 +76,8 @@ public class DefaultGraphPainter implements IGraphPainter {
 	}
 
 	protected void paintEllipseGraph(Graphics graphics, EllipseGraph ellipseGraph) {
-
+		this.styleFactory.normalRegion(graphics);
+		((Graphics2D) graphics).fill(ellipseGraph.getShape());
 	}
 
 	protected void paintHotDecorator(Graphics graphics, HotDecorator hotDecorator) {
@@ -86,6 +90,13 @@ public class DefaultGraphPainter implements IGraphPainter {
 
 	protected void paintArrowDecorator(Graphics graphics, ArrowDecorator arrowDecorator) {
 
+	}
+
+	protected void paintPreviewDecorator(Graphics graphics, PreviewDecorator previewDecorator) {
+		if (previewDecorator.isDecorating()) {
+			this.styleFactory.previewRegion(graphics);
+			((Graphics2D) graphics).fill(previewDecorator.getShape());
+		}
 	}
 
 	protected void paintText(Graphics graphics, IGraph graph) {
