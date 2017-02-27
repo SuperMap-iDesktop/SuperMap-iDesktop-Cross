@@ -138,7 +138,7 @@ public class JDialogHeatMap extends SmDialog {
 		this.getRootPane().setDefaultButton(this.buttonOK);
 		setComboBoxTheme(this.comboBoxCacheType);
 		setComboBoxTheme(this.comboBoxDatabaseType);
-		this.setSize(680, 510);
+		this.setSize(700, 530);
 		this.setLocationRelativeTo(null);
 	}
 
@@ -207,7 +207,7 @@ public class JDialogHeatMap extends SmDialog {
 		this.labelCacheLevel.setText(LBSClientProperties.getString("String_CacheLevel"));
 		this.buttonDrawBounds.setText(LBSClientProperties.getString("String_DrawBounds"));
 		this.buttonDrawBounds.setToolTipText(LBSClientProperties.getString("String_DrawBounds"));
-		this.labelFileInputPath.setText(LBSClientProperties.getString(""));
+		this.labelFileInputPath.setText(LBSClientProperties.getString("String_InputData"));
 		this.labelCacheName.setText(LBSClientProperties.getString("String_CacheName"));
 		this.labelDatabaseType.setText(LBSClientProperties.getString("String_DatabaseType"));
 		this.labelServiceAddress.setText(LBSClientProperties.getString("String_ServiceAddress"));
