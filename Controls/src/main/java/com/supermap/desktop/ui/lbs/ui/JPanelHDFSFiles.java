@@ -45,19 +45,7 @@ public class JPanelHDFSFiles extends JPanel {
             }
         }
     };
-    private MouseAdapter tableMouseListener = new MouseAdapter() {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            tableMouseClicked(e);
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    ToolbarUIUtilities.updataToolbarsState();
-                }
-            });
-        }
 
-    };
     private ActionListener refreshListener = new ActionListener() {
 
         @Override
@@ -131,7 +119,6 @@ public class JPanelHDFSFiles extends JPanel {
         this.buttonBack.addActionListener(this.urlActionListener);
         this.buttonForward.addActionListener(this.urlActionListener);
         this.buttonRefresh.addActionListener(this.refreshListener);
-        this.table.addMouseListener(this.tableMouseListener);
     }
 
     private void removeEvents() {
@@ -139,7 +126,6 @@ public class JPanelHDFSFiles extends JPanel {
         this.buttonBack.removeActionListener(this.urlActionListener);
         this.buttonForward.removeActionListener(this.urlActionListener);
         this.buttonRefresh.removeActionListener(this.refreshListener);
-        this.table.removeMouseListener(this.tableMouseListener);
     }
 
     public void initializeComponents() {
@@ -219,29 +205,27 @@ public class JPanelHDFSFiles extends JPanel {
         }
     }
 
-    public void tableMouseClicked(MouseEvent e) {
-        //
-        if (table.getSelectedRow() != -1 && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
-            HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(table.getSelectedRow());
-            if (define != null) {
-                // if mouse double click foler, list folder files
-                if (define.isDir()) {
-                    String name = (String) this.table.getModel().getValueAt(table.getSelectedRow(), COLUMN_INDEX_Name);
-                    String root = this.textServerURL.getText();
-                    if (!root.endsWith("/")) {
-                        root += "/";
-                    }
-                    String url = this.listDirectory(root, name, this.getIsOutputFolder());
-                    this.textServerURL.setText(url);
-                    urlList.add(url);
-                    // urlPathIndex始终为最新加入的url对应的索引号
-                    urlPathIndex = urlList.size() - 1;
-                    this.buttonBack.setEnabled(true);
-                } else {
-                    this.buttonOKActionPerformed();
+    public void resetHDFSPath() {
+        HDFSDefine define = (HDFSDefine) ((HDFSTableModel) this.table.getModel()).getRowTagAt(table.getSelectedRow());
+        if (define != null) {
+            // if mouse double click foler, list folder files
+            if (define.isDir()) {
+                String name = (String) this.table.getModel().getValueAt(table.getSelectedRow(), 0);
+                String root = getURL();
+                if (!root.endsWith("/")) {
+                    root += "/";
                 }
+                String url = listDirectory(root, name, this.getIsOutputFolder());
+                textServerURL.setText(url);
+                urlList.add(url);
+                // urlPathIndex始终为最新加入的url对应的索引号
+                urlPathIndex = urlList.size() - 1;
+                buttonBack.setEnabled(true);
+            } else {
+                buttonOKActionPerformed();
             }
         }
+
     }
 
     private String listDirectory(String urlPath, String childFolder, Boolean isFolderOnly) {

@@ -179,18 +179,12 @@ public class NewMessageBus {
                     @Override
                     public void run() {
                         UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
-//                        if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
-//                            //添加到当前地图中
-//                            Map currentMap = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
-//                            MapUtilities.addDatasetToMap(currentMap, finalDataset, true);
-//                        } else {
                         //打开新的地图
                         IFormMap newMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, datasetName + "@" + datasource.getAlias());
                         Map map = newMap.getMapControl().getMap();
                         map.getLayers().add(finalDataset, true);
                         map.refresh();
                         UICommonToolkit.getLayersManager().getLayersTree().reload();
-//                        }
                     }
                 });
 
