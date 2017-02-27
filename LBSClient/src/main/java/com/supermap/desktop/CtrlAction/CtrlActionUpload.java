@@ -38,7 +38,7 @@ public class CtrlActionUpload extends CtrlAction {
             IFormLBSControl control = (IFormLBSControl) Application.getActiveApplication().getActiveForm();
             String modelName = "HDFSFileUpload";
             if (!SmFileChoose.isModuleExist(modelName)) {
-                SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), LBSClientProperties.getString("String_SelectFile"),
+                SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), CommonProperties.getString("String_SelectFile"),
                         modelName, "OpenOne");
             }
             SmFileChoose smFileChoose = new SmFileChoose(modelName);
