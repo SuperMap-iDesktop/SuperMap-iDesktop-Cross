@@ -52,7 +52,7 @@ public class LineInterruptEditor extends AbstractEditor {
                     }
                     //多条线需要选择并且,选择后确定才能打断
                     if (resultRecordset.getRecordCount() > 1) {
-                        JDialogLineInterrruptSelect jDialogLineInterrruptSelect = new JDialogLineInterrruptSelect(resultRecordset, ((LineInterruptModel) environment.getEditModel()).hasCommonNodeLineIDs);
+                        JDialogLineInterrruptSelect jDialogLineInterrruptSelect = new JDialogLineInterrruptSelect(environment,resultRecordset, ((LineInterruptModel) environment.getEditModel()).hasCommonNodeLineIDs);
                         DialogResult result = jDialogLineInterrruptSelect.showDialog();
                         if (result == DialogResult.OK) {
                             ((LineInterruptModel) environment.getEditModel()).setHasCommonNodeLineIDs(jDialogLineInterrruptSelect.getSelectedLineIds());

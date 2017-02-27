@@ -2,6 +2,7 @@ package com.supermap.desktop.geometryoperation.control;
 
 import com.supermap.data.Recordset;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
+import com.supermap.desktop.geometryoperation.EditEnvironment;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -34,6 +35,7 @@ public class JDialogLineInterrruptSelect extends SmDialog{
 	private Object data[][]=null;
 	private ArrayList<Integer> idsArrayList=null;
 	private final static  int COLOMN_COUT=4;
+	private EditEnvironment editEnvironment;
 
 	//private Object[] tableHeadTitles={"参与打断","对象","SMID","对象所在图层"};
 	private Object[] tableHeadTitles={MapEditorProperties.getString("String_Interrupt"),
@@ -73,10 +75,11 @@ public class JDialogLineInterrruptSelect extends SmDialog{
 
 		}
 	};
-	public  JDialogLineInterrruptSelect(Recordset recordset,ArrayList<Integer> idsArrayListList){
+	public  JDialogLineInterrruptSelect(EditEnvironment environment, Recordset recordset, ArrayList<Integer> idsArrayListList){
 		//查询的结果
 		this.recordset=recordset;
 		this.idsArrayList=idsArrayListList;
+		this.editEnvironment=environment;
 		InitComponents();
 		unRegisterEvents();
 		registerEvents();
@@ -100,6 +103,15 @@ public class JDialogLineInterrruptSelect extends SmDialog{
 				if(colomnIndex==0){
 					lineInterruptSelectTable.setValueAt(!(Boolean)lineInterruptSelectTable.getValueAt(rowIndex,colomnIndex),rowIndex,colomnIndex);
 				}
+				recordset.moveFirst();
+				editEnvironment.getActiveEditableLayer().getSelection().clear();
+				for(int i=0;i<JDialogLineInterrruptSelect.this.idsArrayList.size();i++){
+					if(lineInterruptSelectTable.getValueAt(i,0).equals(true)){
+						editEnvironment.getActiveEditableLayer().getSelection().add(recordset.getID());
+					}
+					recordset.moveNext();
+				}
+				editEnvironment.getMap().refresh();
 			}
 		});
 
@@ -234,6 +246,15 @@ public class JDialogLineInterrruptSelect extends SmDialog{
 					this.setValueAt(isSelected,i,0);
 				}
 			}
+			JDialogLineInterrruptSelect.this.recordset.moveFirst();
+			JDialogLineInterrruptSelect.this.editEnvironment.getActiveEditableLayer().getSelection().clear();
+			for(int i=0;i<JDialogLineInterrruptSelect.this.idsArrayList.size();i++){
+				if(JDialogLineInterrruptSelect.this.lineInterruptSelectTable.getValueAt(i,0).equals(true)){
+					JDialogLineInterrruptSelect.this.editEnvironment.getActiveEditableLayer().getSelection().add(JDialogLineInterrruptSelect.this.recordset.getID());
+				}
+				JDialogLineInterrruptSelect.this.recordset.moveNext();
+			}
+			JDialogLineInterrruptSelect.this.editEnvironment.getMap().refresh();
 		}
 	}
 	//表头渲染期器
