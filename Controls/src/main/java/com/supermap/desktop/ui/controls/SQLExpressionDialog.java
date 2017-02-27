@@ -1,15 +1,11 @@
 package com.supermap.desktop.ui.controls;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldType;
-import com.supermap.data.QueryParameter;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.ui.controls.table.SmTable;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -18,22 +14,20 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 
 public class SQLExpressionDialog extends SmDialog {
 	private JButton jButtonCancel;
 	private JButton jButtonOK;
-	private JTable jTableFieldInfo;
+	private SmTable jTableFieldInfo;
 	private JScrollPane jScrollPanel;
 	private JComboBox<String> jComboBoxTimeFunction;
 	private JComboBox<String> jComboBoxStringFunction;
@@ -127,16 +121,16 @@ public class SQLExpressionDialog extends SmDialog {
 		panelButton.setLayout(new GridBagLayout());
 		panelButton.add(this.jButtonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setInsets(2, 0, 5, 5));
 		panelButton.add(this.jButtonClear, new GridBagConstraintsHelper(1, 0, 1, 1).setInsets(2, 0, 5, 5));
-		panelButton.add(this.jButtonCancel, new GridBagConstraintsHelper(2, 0, 1, 1).setInsets(2, 0, 5, 5));
+		panelButton.add(this.jButtonCancel, new GridBagConstraintsHelper(2, 0, 1, 1).setInsets(2, 0, 5, 0));
 
-		mainPanel.add(this.jScrollPanel, new GridBagConstraintsHelper(0, 0, 2, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(15, 15, 5, 5));
-		mainPanel.add(this.jPanelFunction, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setInsets(15, 5, 5, 15));
-		mainPanel.add(this.jPanelCommonOperator, new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.BOTH).setInsets(5, 5, 5, 15).setIpad(30, 50));
+		mainPanel.add(this.jScrollPanel, new GridBagConstraintsHelper(0, 0, 2, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(10, 10, 5, 5));
+		mainPanel.add(this.jPanelFunction, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setInsets(10, 0, 5, 10));
+		mainPanel.add(this.jPanelCommonOperator, new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.BOTH).setInsets(0, 0, 5, 10).setIpad(30, 50));
 
-		mainPanel.add(this.jPanelGetAllValue, new GridBagConstraintsHelper(0, 2, 1, 2).setWeight(0, 0).setFill(GridBagConstraints.BOTH).setInsets(5, 15, 5, 5).setIpad(100, 120));
-		mainPanel.add(this.jTextAreaSQLSentence, new GridBagConstraintsHelper(1, 2, 2, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(5, 5, 5, 15).setIpad(0, 120));
+		mainPanel.add(this.jPanelGetAllValue, new GridBagConstraintsHelper(0, 2, 1, 2).setWeight(0, 0).setFill(GridBagConstraints.BOTH).setInsets(0, 10, 5, 5).setIpad(100, 120));
+		mainPanel.add(this.jTextAreaSQLSentence, new GridBagConstraintsHelper(1, 2, 2, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(0, 0, 5, 10).setIpad(0, 120));
 		//将获取唯一值面板加入主panel3, 2, 1, 2
-		mainPanel.add(panelButton, new GridBagConstraintsHelper(2, 4, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(5, 5, 15, 15));
+		mainPanel.add(panelButton, new GridBagConstraintsHelper(2, 4, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(0, 5, 5, 10));
 		this.add(mainPanel);
 		this.jScrollPanel.setViewportView(getTableFieldInfo());
 		this.jScrollPanel.getViewport().setBackground(Color.white);
@@ -609,7 +603,7 @@ public class SQLExpressionDialog extends SmDialog {
 	private JTable getTableFieldInfo() {
 		if (this.jTableFieldInfo == null) {
 			this.defaultTableModel = new DefaultTableModel(NAMES, 0);
-			this.jTableFieldInfo = new JTable(defaultTableModel);
+			this.jTableFieldInfo = new SmTable(defaultTableModel);
 			//为什么要关闭列宽自动适应？？---yuanR 17.1.11
 			//去除。实现jatble跟随窗口大小的改变自动适应
 			//	this.jTableFieldInfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -617,9 +611,6 @@ public class SQLExpressionDialog extends SmDialog {
 			this.jTableFieldInfo.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			//行高
 			this.jTableFieldInfo.setRowHeight(25);
-			//取消网格
-			this.jTableFieldInfo.setShowHorizontalLines(false);
-			this.jTableFieldInfo.setShowVerticalLines(false);
 		}
 		return this.jTableFieldInfo;
 	}

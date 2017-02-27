@@ -115,7 +115,8 @@ public class JDialogLineInterrruptSelect extends SmDialog{
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 				JLabel tempLabel=(JLabel)value;
 				tempLabel.setOpaque(true);
-				tempLabel.setBackground(isSelected ? table.getSelectionBackground() : table.getBackground());
+				tempLabel.setBackground(isSelected ? new Color(51, 153, 255) : Color.white);
+				tempLabel.setForeground(isSelected? Color.white:Color.black);
 				tempLabel.setHorizontalAlignment(SwingConstants.CENTER);
 				return tempLabel;
 
