@@ -2,17 +2,18 @@ package com.supermap.desktop.dialog;
 
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CtrlAction.WebHDFS;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
-import com.supermap.desktop.lbs.Interface.IServerService;
-import com.supermap.desktop.lbs.impl.IServerServiceImpl;
-import com.supermap.desktop.lbs.params.*;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.messagebus.NewMessageBus;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.lbs.Interface.IServerService;
+import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
+import com.supermap.desktop.ui.lbs.impl.WebHDFS;
+import com.supermap.desktop.ui.lbs.params.*;
+import com.supermap.desktop.ui.lbs.ui.JDialogHDFSFiles;
 import com.supermap.ui.Action;
 import com.supermap.ui.*;
 
@@ -206,7 +207,7 @@ public class JDialogHeatMap extends SmDialog {
 		this.labelCacheLevel.setText(LBSClientProperties.getString("String_CacheLevel"));
 		this.buttonDrawBounds.setText(LBSClientProperties.getString("String_DrawBounds"));
 		this.buttonDrawBounds.setToolTipText(LBSClientProperties.getString("String_DrawBounds"));
-		this.labelFileInputPath.setText(LBSClientProperties.getString("String_FileInputPath"));
+		this.labelFileInputPath.setText(LBSClientProperties.getString(""));
 		this.labelCacheName.setText(LBSClientProperties.getString("String_CacheName"));
 		this.labelDatabaseType.setText(LBSClientProperties.getString("String_DatabaseType"));
 		this.labelServiceAddress.setText(LBSClientProperties.getString("String_ServiceAddress"));
@@ -233,7 +234,6 @@ public class JDialogHeatMap extends SmDialog {
 
 	private void buttonInputBrowser() {
 		JDialogHDFSFiles hdfsFiles = new JDialogHDFSFiles();
-		hdfsFiles.setIsOutputFolder(false);
 		if (hdfsFiles.showDialog() == DialogResult.OK) {
 			textFieldFileInputPath.setText(WebHDFS.getResultHDFSFilePath());
 		}

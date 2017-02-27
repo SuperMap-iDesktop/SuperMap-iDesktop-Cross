@@ -5,7 +5,8 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormLBSControl;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
-import com.supermap.desktop.http.CreateFile;
+import com.supermap.desktop.http.upload.LocalCreateFile;
+import com.supermap.desktop.ui.lbs.impl.CreateFile;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -33,7 +34,7 @@ public class CtrlActionMkdir extends CtrlAction {
 		CreateDirDialog dialog = new CreateDirDialog();
 		if (dialog.showDialog().equals(DialogResult.OK) && !StringUtilities.isNullOrEmpty(dialog.getDirectoryName())
 				&& !isVisibleName(lbsControl, dialog.getDirectoryName())) {
-			CreateFile createFile = new CreateFile();
+			LocalCreateFile createFile = new LocalCreateFile();
 			createFile.createDir(lbsControl.getURL(), dialog.getDirectoryName());
 		}else{
 			Application.getActiveApplication().getOutput().output(MessageFormat.format(LBSClientProperties.getString("String_DirectoryNameInvisible"), dialog.getDirectoryName()));

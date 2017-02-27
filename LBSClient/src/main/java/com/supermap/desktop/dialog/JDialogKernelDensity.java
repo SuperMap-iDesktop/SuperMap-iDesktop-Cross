@@ -2,13 +2,8 @@ package com.supermap.desktop.dialog;
 
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CtrlAction.WebHDFS;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
-import com.supermap.desktop.lbs.Interface.IServerService;
-import com.supermap.desktop.lbs.impl.IServerServiceImpl;
-import com.supermap.desktop.lbs.params.JobResultResponse;
-import com.supermap.desktop.lbs.params.KernelDensityJobSetting;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.messagebus.MessageBus;
 import com.supermap.desktop.messagebus.MessageBus.MessageBusType;
@@ -16,6 +11,12 @@ import com.supermap.desktop.messagebus.NewMessageBus;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.lbs.Interface.IServerService;
+import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
+import com.supermap.desktop.ui.lbs.impl.WebHDFS;
+import com.supermap.desktop.ui.lbs.params.JobResultResponse;
+import com.supermap.desktop.ui.lbs.params.KernelDensityJobSetting;
+import com.supermap.desktop.ui.lbs.ui.JDialogHDFSFiles;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
@@ -319,7 +320,6 @@ public class JDialogKernelDensity extends SmDialog {
 	private void buttonInputBrowser() {
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		JDialogHDFSFiles hdfsFiles = new JDialogHDFSFiles();
-		hdfsFiles.setIsOutputFolder(false);
 		this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		if (hdfsFiles.showDialog() == DialogResult.OK) {
 			textInputURL.setText(WebHDFS.getResultHDFSFilePath());
@@ -328,7 +328,6 @@ public class JDialogKernelDensity extends SmDialog {
 
 	private void buttonOutputBrowserActionPerformed() {
 		JDialogHDFSFiles hdfsFiles = new JDialogHDFSFiles();
-		hdfsFiles.setIsOutputFolder(true);
 		if (hdfsFiles.showDialog() == DialogResult.OK) {
 
 		}

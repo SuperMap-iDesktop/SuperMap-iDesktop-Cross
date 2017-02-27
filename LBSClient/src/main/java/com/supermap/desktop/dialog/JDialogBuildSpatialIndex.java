@@ -2,13 +2,12 @@ package com.supermap.desktop.dialog;
 
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.CtrlAction.WebHDFS;
+import com.supermap.desktop.ui.lbs.impl.WebHDFS;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.messagebus.MessageBus;
-import com.supermap.desktop.messagebus.MessageBus.MessageBusType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.lbs.ui.JDialogHDFSFiles;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.ui.Action;
 import com.supermap.ui.*;
@@ -17,8 +16,6 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.TitledBorder;
 import java.awt.event.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class JDialogBuildSpatialIndex extends SmDialog {
 	/**
@@ -302,7 +299,6 @@ public class JDialogBuildSpatialIndex extends SmDialog {
 
 	private void buttonInputBrowserActionPerformed() {
 		JDialogHDFSFiles hdfsFiles = new JDialogHDFSFiles();
-		hdfsFiles.setIsOutputFolder(false);
 		if (hdfsFiles.showDialog() == DialogResult.OK) {
 			
 		}
@@ -310,7 +306,6 @@ public class JDialogBuildSpatialIndex extends SmDialog {
 	
 	private void buttonOutputBrowserActionPerformed() {
 		JDialogHDFSFiles hdfsFiles = new JDialogHDFSFiles();
-		hdfsFiles.setIsOutputFolder(true);
 		if (hdfsFiles.showDialog() == DialogResult.OK) {
 			
 		}

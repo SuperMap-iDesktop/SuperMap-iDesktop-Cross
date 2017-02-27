@@ -3,7 +3,7 @@ package com.supermap.desktop.http.upload;
 import com.supermap.desktop.http.LogUtils;
 import com.supermap.desktop.http.callable.FileEvent;
 import com.supermap.desktop.http.callable.FileSteppedListener;
-import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.ui.lbs.impl.FileInfo;
 
 import java.util.Collections;
 import java.util.HashMap;

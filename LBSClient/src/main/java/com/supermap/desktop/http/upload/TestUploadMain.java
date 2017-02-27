@@ -1,6 +1,6 @@
 package com.supermap.desktop.http.upload;
 
-import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.ui.lbs.impl.FileInfo;
 
 
 /**

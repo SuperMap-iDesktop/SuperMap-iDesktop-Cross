@@ -3,6 +3,7 @@ package com.supermap.desktop.importUI;
 import com.supermap.data.conversion.ImportSetting;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.localUtilities.FileUtilities;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
@@ -58,7 +59,7 @@ public class ImportFilePropertiesDialog extends SmDialog {
             this.labelPath.setText(filePath);
             File file = new File(filePath);
             if (file.isDirectory()) {
-                this.labelType.setText(DataConversionProperties.getString("String_Dir"));
+                this.labelType.setText(CommonProperties.getString("String_Dir"));
             } else {
                 this.labelType.setText(FileUtilities.getFileType(filePath));
             }

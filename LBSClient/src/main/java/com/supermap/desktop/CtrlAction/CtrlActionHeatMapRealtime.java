@@ -6,11 +6,11 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.dialog.JDialogHeatMap;
 import com.supermap.desktop.dialog.JDialogKernelDensity;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.messagebus.MessageBus;
 import com.supermap.desktop.messagebus.MessageBus.MessageBusType;
+import com.supermap.desktop.ui.lbs.impl.WebHDFS;
 import com.supermap.ui.*;
 
 import java.awt.event.MouseAdapter;

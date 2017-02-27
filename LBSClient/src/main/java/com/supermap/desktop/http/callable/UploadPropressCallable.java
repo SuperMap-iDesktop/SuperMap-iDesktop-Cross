@@ -3,7 +3,7 @@ package com.supermap.desktop.http.callable;
 import com.supermap.Interface.ILBSTask;
 import com.supermap.Interface.TaskEnum;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.ui.lbs.impl.FileInfo;
 import com.supermap.desktop.http.upload.UploadUtils;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.utilities.ManagerXMLParser;

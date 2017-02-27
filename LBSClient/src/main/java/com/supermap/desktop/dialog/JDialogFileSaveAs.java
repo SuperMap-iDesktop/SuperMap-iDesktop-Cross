@@ -7,7 +7,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.http.FileManagerContainer;
 import com.supermap.desktop.http.callable.DownloadProgressCallable;
-import com.supermap.desktop.http.download.FileInfo;
+import com.supermap.desktop.ui.lbs.impl.FileInfo;
 import com.supermap.desktop.lbsclient.LBSClientProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.task.TaskFactory;
