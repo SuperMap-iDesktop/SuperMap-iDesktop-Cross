@@ -150,6 +150,12 @@ public class SmRadiusPanel extends JPanel {
         return this.numericFieldComboBox.getSelectedItem();
     }
 
+	public void setDefaultFieldValue(Object value) {
+		if (value == null)
+			return;
+		this.numericFieldComboBox.setSelectedObject(value);
+	}
+
     public void setLabelFieldText(String labelFieldText) {
         this.labelFieldText = labelFieldText;
         if (labelField != null) {
@@ -182,7 +188,8 @@ public class SmRadiusPanel extends JPanel {
         jFrame.setSize(new Dimension(350, 200));
         jFrame.setLocationRelativeTo(null);
         final SmRadiusPanel radiusPanel = new SmRadiusPanel(dataset, "buffer radius");
-        radiusPanel.setLabelUnitText("radius:");
+	    radiusPanel.setDefaultFieldValue(null);
+	    radiusPanel.setLabelUnitText("radius:");
         JButton jButton = new JButton("Get");
         jFrame.getContentPane().setLayout(new GridBagLayout());
         jFrame.getContentPane().add(radiusPanel, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.NORTH));
