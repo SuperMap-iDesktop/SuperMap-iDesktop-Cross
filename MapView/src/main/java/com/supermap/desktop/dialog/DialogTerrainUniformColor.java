@@ -101,7 +101,7 @@ public class DialogTerrainUniformColor extends SmDialog {
 
     private void initComponents() {
         toolBar.setFloatable(false);
-        Dimension size = new Dimension(500, 380);
+        Dimension size = new Dimension(500, 375);
         setSize(size);
         setMinimumSize(size);
         setLocationRelativeTo(null);
@@ -168,7 +168,8 @@ public class DialogTerrainUniformColor extends SmDialog {
         buttonEditColorTable.setText(MapViewProperties.getString("String_TerrainUniformColorEditColorTable"));
         buttonSure.setText(CommonProperties.getString("String_Button_OK"));
         buttonQuite.setText(CommonProperties.getString("String_Button_Cancel"));
-        checkBoxTip.setText(MapViewProperties.getString("String_TerrainUniformColorTip"));
+        checkBoxTip.setText(MapViewProperties.getString("Sring_TerrainUniformColorCheckBox"));
+        checkBoxTip.setToolTipText(MapViewProperties.getString("String_TerrainUniformColorTip"));
         mutiTable.getColumnModel().getColumn(COLUMN_INDEX_LAYER).setHeaderValue(MapViewProperties.getString("String_TerrainUniformLayer"));
         mutiTable.getColumnModel().getColumn(COLUMN_INDEX_MINVALUE).setHeaderValue(MapViewProperties.getString("String_TerrainUniformLayerMinValue"));
         mutiTable.getColumnModel().getColumn(COLUMN_INDEX_MINVALUE).setMaxWidth(100);
@@ -196,9 +197,9 @@ public class DialogTerrainUniformColor extends SmDialog {
         }
 
         //选中table中所有的加入项
-        if (mutiTable.getRowCount() > 0) {
-            mutiTable.setRowSelectionInterval(0, mutiTable.getRowCount() - 1);
-        }
+//        if (mutiTable.getRowCount() > 0) {
+//            mutiTable.setRowSelectionInterval(0, mutiTable.getRowCount() - 1);
+//        }
     }
 
     private void run() {
