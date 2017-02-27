@@ -66,10 +66,6 @@ public class ColorScheme implements ICloneable {
 
 	private ColorSchemeTreeNode parentNode;
 
-	private static final char[] unLegitFileNameChars = new char[]{
-			'<', '>', '!', ':', '\\', '/', '*', '?', '|'
-	};
-
 	/**
 	 * 构造函数
 	 */
@@ -387,7 +383,7 @@ public class ColorScheme implements ICloneable {
 		if (!new File(customDirectory).exists()) {
 			new File(customDirectory).mkdirs();
 		}
-		if (!isLegitName(name)) {
+		if (FileUtilities.isContainUnLegitFileNameChars(name)) {
 			// 不合法名称有重名
 			return getUniqueFilePath(customDirectory);
 		}
@@ -418,20 +414,11 @@ public class ColorScheme implements ICloneable {
 	}
 
 	private String getFileName(int i, String fileName) {
-		String name = StringUtilities.isNullOrEmpty(fileName) || !isLegitName(fileName) ? "ColorScheme" : fileName;
+		String name = StringUtilities.isNullOrEmpty(fileName) || FileUtilities.isContainUnLegitFileNameChars(fileName) ? "ColorScheme" : fileName;
 		if (i == 0) {
 			return name + ".scs";
 		}
 		return name + "(" + i + ").scs";
-	}
-
-	private boolean isLegitName(String fileName) {
-		for (char unLegitFileNameChar : unLegitFileNameChars) {
-			if (fileName.contains(String.valueOf(unLegitFileNameChar))) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	public void setColorSchemePath(String colorSchemePath) {

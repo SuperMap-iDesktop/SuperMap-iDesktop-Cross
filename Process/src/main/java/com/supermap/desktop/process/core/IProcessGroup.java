@@ -10,9 +10,14 @@ public interface IProcessGroup extends IProcess {
 
 	IProcess getProcessByIndex(int index);
 
+	int addProcess(IProcess process);
+
+	boolean removeProcess(IProcess process);
+
 	IProcess getProcessByKey(String key);
 
-	void setName(String name);
+	void setKey(String key);
 
-	boolean isLegitName(String name);
+
+	boolean isLegitName(String name, IProcess process);
 }

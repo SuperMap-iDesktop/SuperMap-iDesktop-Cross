@@ -6,9 +6,6 @@ import com.supermap.desktop.process.diagram.interfaces.IFigure;
 import org.jhotdraw.draw.EllipseFigure;
 import org.jhotdraw.samples.teddy.Main;
 
-import java.awt.*;
-import java.io.IOException;
-
 /**
  * Created by highsad on 2017/1/5.
  */
@@ -72,7 +69,7 @@ public class SmEllipseFigure extends EllipseFigure implements IFigure {
 //		return name;
 //	}
 //
-//	public void setName(String name) {
+//	public void setKey(String name) {
 //		this.name = name;
 //	}
 //
@@ -88,7 +85,7 @@ public class SmEllipseFigure extends EllipseFigure implements IFigure {
 //		super.read(dr);
 //		String className = dr.readString();
 //		this.process = ProcessSerializationUtilties.getIProcess(className);
-//		this.setName(dr.readString());
+//		this.setKey(dr.readString());
 //	}
 
 //	@Override

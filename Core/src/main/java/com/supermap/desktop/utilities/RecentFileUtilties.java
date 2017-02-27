@@ -12,8 +12,11 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.XMLCommand;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import static com.supermap.desktop._XMLTag.LINUX_RECENT_FILE_XML;
 import static com.supermap.desktop._XMLTag.RECENT_FILE_DATASOURCE;
@@ -103,10 +106,27 @@ public class RecentFileUtilties {
 			if (recentFileDocument != null) {
 				Element element = getElement(recentFileDocument, fileType);
 				if (element != null) {
+					NodeList childNodes = element.getChildNodes();
+					ArrayList<Element> recentFiles = new ArrayList<>();
+					for (int j = childNodes.getLength() - 1; j >= 0; j--) {
+						if (childNodes.item(j).getNodeType() == Node.ELEMENT_NODE) {
+							Element childItem = (Element) (childNodes.item(j));
+							recentFiles.add(0, childItem);
+						}
+						element.removeChild(childNodes.item(j));
+					}
 					Element button = createDefaultButtonElement(recentFileDocument);
 					button.setAttribute("label", filePath.substring(filePath.lastIndexOf("/") + 1, filePath.length()));
 					button.setAttribute("screenTip", filePath);
 					element.appendChild(button);
+					for (int i = 0; i < recentFiles.size(); i++) {
+						if (i >= 49) {
+							// 天衍四九 (.net限制最多50条，这边保持一致)
+							break;
+						}
+						Element recentFile = recentFiles.get(i);
+						element.appendChild(recentFile);
+					}
 					XmlUtilities.saveXml(getRecentFilePath(), recentFileDocument, recentFileDocument.getXmlEncoding());
 				}
 			}
@@ -198,18 +218,18 @@ public class RecentFileUtilties {
 	}
 
 	private static Element getElement(Document document, String fileType) {
-		String findId = "";
-		if (fileType.equals(FILE_TYPE_WORKSPACE)) {
-			findId = RECENT_FILE_WORKSPACE;
-		} else {
-			findId = RECENT_FILE_DATASOURCE;
-		}
+		String findId = fileType.equals(FILE_TYPE_WORKSPACE) ? RECENT_FILE_WORKSPACE : RECENT_FILE_DATASOURCE;
+		String findLabel = fileType.equals(FILE_TYPE_WORKSPACE) ? CoreProperties.getString("String_RecentFileWorkspace") : CoreProperties.getString("String_RecentFileDatasource");
 		Element rootNode = document.getDocumentElement();
 		if (rootNode != null) {
 			Element[] elements = XmlUtilities.getChildElementNodesByName(rootNode, RECENT_FILE_GROUP);
 			for (Element element : elements) {
 				String id = element.getAttribute("id");
 				if (!StringUtilities.isNullOrEmpty(id) && id.equals(findId)) {
+					return element;
+				}
+				String label = element.getAttribute("label");
+				if (!StringUtilities.isNullOrEmptyString(label) && label.equals(findLabel)) {
 					return element;
 				}
 			}

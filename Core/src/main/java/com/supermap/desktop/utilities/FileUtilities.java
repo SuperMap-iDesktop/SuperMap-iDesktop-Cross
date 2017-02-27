@@ -3,11 +3,18 @@ package com.supermap.desktop.utilities;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CoreProperties;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.channels.FileChannel;
 
 public class FileUtilities {
 
+	private static final char[] unLegitFileNameChars = new char[]{
+			'<', '>', '!', ':', '\\', '/', '*', '?', '|'
+	};
 	private FileUtilities() {
 		// 工具类，不提供构造方法
 	}
@@ -300,6 +307,15 @@ public class FileUtilities {
 			}
 		}
 		return flag;
+	}
+
+	public static boolean isContainUnLegitFileNameChars(String name) {
+		for (char unLegitFileNameChar : unLegitFileNameChars) {
+			if (name.contains(String.valueOf(unLegitFileNameChar))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

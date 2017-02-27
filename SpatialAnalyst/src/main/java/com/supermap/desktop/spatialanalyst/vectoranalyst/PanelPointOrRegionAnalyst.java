@@ -283,6 +283,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 			DatasetVector comboBoxDataset = (DatasetVector) this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset();
 			this.panelBufferRadius.getNumericFieldComboBox().setDataset(comboBoxDataset);
 		}
+		this.panelBufferRadius.getNumericFieldComboBox().setSelectedItem("10");
 		setComponentEnabled();
 	}
 
