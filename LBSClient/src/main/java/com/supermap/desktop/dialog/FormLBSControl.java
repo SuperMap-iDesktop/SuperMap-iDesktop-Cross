@@ -72,16 +72,13 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
         super(title, icon, component);
         panelHDFSFiles = new JPanelHDFSFiles();
         this.add(panelHDFSFiles, BorderLayout.CENTER);
+        initializeComponents();
         registEvents();
         setText("FormHDFSManager");
     }
 
     public FormLBSControl(String title) {
         this(title, null, null);
-    }
-
-    public FormLBSControl() {
-        this("");
     }
 
     private void registEvents() {
@@ -106,7 +103,9 @@ public class FormLBSControl extends FormBaseChild implements IFormLBSControl {
 
 
     public void tableMouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON3) {
+        if (table.getSelectedRow() != -1 && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
+            panelHDFSFiles.resetHDFSPath();
+        }else if (e.getClickCount() == 1 && e.getButton() == MouseEvent.BUTTON3) {
             showContextMenu(e);
         }
     }
