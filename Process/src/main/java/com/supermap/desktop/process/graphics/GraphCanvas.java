@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics;
 
+import com.supermap.desktop.implement.Output;
 import com.supermap.desktop.process.graphics.graphs.*;
 import com.supermap.desktop.process.graphics.graphs.decorator.AbstractDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.HotDecorator;
@@ -107,7 +108,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 //				graph.setWidth(160);
 //				graph.setHeight(60);
 //
-//				canvas.createGraph(graph);
+				canvas.connet();
 			}
 		});
 
@@ -168,6 +169,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		paintGraphs(graphics2D);
 	}
 
+	public void connet() {
+		this.line = new LineGraph(this);
+	}
+
 	private int getScale(int i) {
 		return i * 100;
 	}
@@ -211,6 +216,8 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		this.painterFactory.getPainter(this.hotDecorator, g).paint();
 		this.painterFactory.getPainter(this.selectedDecorator, g).paint();
 		this.painterFactory.getPainter(this.previewDecorator, g).paint();
+
+		this.painterFactory.getPainter(this.line, g).paint();
 	}
 
 	protected Rectangle getCanvasViewBounds() {
@@ -294,9 +301,15 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 			// TODO 不加 contains 判断会导致多对象的时候出现奇怪的拖拽现象，可能是四叉树实现不完整，需要优化
 			if (graph != null && graph.contains(e.getPoint())) {
-				this.draggedGraph = graph;
-				this.dragBegin = e.getPoint();
-				this.dragCenter = this.draggedGraph.getCenter();
+				if (this.line != null) {
+					if (graph instanceof OutputGraph) {
+						this.line.setPreProcess(graph);
+					}
+				} else {
+					this.draggedGraph = graph;
+					this.dragBegin = e.getPoint();
+					this.dragCenter = this.draggedGraph.getCenter();
+				}
 			} else {
 				this.draggedGraph = null;
 				this.dragBegin = null;
@@ -319,8 +332,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				this.graphQuadTree.add(this.previewGraph, bounds);
 
 				if (this.previewGraph instanceof ProcessGraph) {
-//					ProcessData data = ((ProcessGraph) this.previewGraph).getProcess().getOutputs().get(0);
 					ProcessData data = null;
+					if (this.previewGraph != null && ((ProcessGraph) this.previewGraph).getProcess() != null
+							&& ((ProcessGraph) this.previewGraph).getProcess().getOutputs() != null
+							&& ((ProcessGraph) this.previewGraph).getProcess().getOutputs().size() > 0) {
+						data = ((ProcessGraph) this.previewGraph).getProcess().getOutputs().get(0);
+					}
+
 					OutputGraph graph = new OutputGraph(this, data);
 					graph.setSize(160, 60);
 					Point location = new Point();
@@ -359,20 +377,26 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (SwingUtilities.isLeftMouseButton(e) && this.draggedGraph != null && this.dragBegin != null) {
-			this.graphQuadTree.remove(this.draggedGraph);
-			Point dragged = new Point();
-			dragged.setLocation(this.dragCenter.getX(), this.dragCenter.getY());
-			dragged.translate(e.getPoint().x - this.dragBegin.x, e.getPoint().y - this.dragBegin.y);
-			repaint(this.draggedGraph, dragged);
-			this.graphQuadTree.add(this.draggedGraph, this.draggedGraph.getBounds());
+		if (SwingUtilities.isLeftMouseButton(e)) {
+			if (this.line != null) {
+				if (this.line.getPreProcess() != null) {
+					this.line.setEnd(e.getPoint());
+				}
+			} else if (this.draggedGraph != null && this.dragBegin != null) {
+				this.graphQuadTree.remove(this.draggedGraph);
+				Point dragged = new Point();
+				dragged.setLocation(this.dragCenter.getX(), this.dragCenter.getY());
+				dragged.translate(e.getPoint().x - this.dragBegin.x, e.getPoint().y - this.dragBegin.y);
+				repaint(this.draggedGraph, dragged);
+				this.graphQuadTree.add(this.draggedGraph, this.draggedGraph.getBounds());
 
-			ArrayList<LineGraph> ls = getLines(this.draggedGraph);
-			for (int i = 0; i < ls.size(); i++) {
-				Rectangle rect = ls.get(i).getShape().getBounds();
-				rect.grow(1, 1);
+				ArrayList<LineGraph> ls = getLines(this.draggedGraph);
+				for (int i = 0; i < ls.size(); i++) {
+					Rectangle rect = ls.get(i).getShape().getBounds();
+					rect.grow(1, 1);
 //				repaint(rect);
-				repaint();
+					repaint();
+				}
 			}
 		}
 	}

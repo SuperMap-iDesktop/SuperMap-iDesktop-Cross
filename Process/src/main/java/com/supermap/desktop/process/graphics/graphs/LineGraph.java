@@ -48,31 +48,51 @@ public class LineGraph extends AbstractGraph {
 		Point preRightCenter = new Point();
 		preRightCenter.setLocation(this.preProcess.getLocation().getX() + this.preProcess.getWidth(), this.preProcess.getLocation().getY() + this.preProcess.getHeight() / 2);
 
-		Point nextTopCenter = new Point();
-		nextTopCenter.setLocation(this.nextProcess.getLocation().getX() + this.nextProcess.getWidth() / 2, this.nextProcess.getLocation().getY());
-		Point nextLeftCenter = new Point();
-		nextLeftCenter.setLocation(this.nextProcess.getLocation().getX(), this.nextProcess.getLocation().getY() + this.nextProcess.getHeight() / 2);
-		Point nextBottomCenter = new Point();
-		nextBottomCenter.setLocation(this.nextProcess.getLocation().getX() + this.nextProcess.getWidth() / 2, this.nextProcess.getLocation().getY() + this.nextProcess.getHeight());
-		Point nextRightCenter = new Point();
-		nextRightCenter.setLocation(this.nextProcess.getLocation().getX() + this.nextProcess.getWidth(), this.nextProcess.getLocation().getY() + this.nextProcess.getHeight() / 2);
+		if (this.nextProcess != null && this.nextProcess.getLocation() != null) {
+			Point nextTopCenter = new Point();
+			Point nextLeftCenter = new Point();
+			Point nextBottomCenter = new Point();
+			Point nextRightCenter = new Point();
+			nextTopCenter.setLocation(this.nextProcess.getLocation().getX() + this.nextProcess.getWidth() / 2, this.nextProcess.getLocation().getY());
+			nextLeftCenter.setLocation(this.nextProcess.getLocation().getX(), this.nextProcess.getLocation().getY() + this.nextProcess.getHeight() / 2);
+			nextBottomCenter.setLocation(this.nextProcess.getLocation().getX() + this.nextProcess.getWidth() / 2, this.nextProcess.getLocation().getY() + this.nextProcess.getHeight());
+			nextRightCenter.setLocation(this.nextProcess.getLocation().getX() + this.nextProcess.getWidth(), this.nextProcess.getLocation().getY() + this.nextProcess.getHeight() / 2);
 
-		if (this.preProcess.getLocation().getX() > this.nextProcess.getLocation().getX() + this.nextProcess.getWidth()) {
-			re[0] = preLeftCenter;
-			re[1] = nextRightCenter;
-		} else if (this.preProcess.getLocation().getX() + this.preProcess.getWidth() < this.nextProcess.getLocation().getX()) {
-			re[0] = preRightCenter;
-			re[1] = nextLeftCenter;
-		} else if (this.preProcess.getLocation().getY() > this.nextProcess.getLocation().getY() + this.nextProcess.getHeight()) {
-			re[0] = preTopCenter;
-			re[1] = nextBottomCenter;
-		} else if (this.preProcess.getLocation().getY() + this.preProcess.getHeight() < this.nextProcess.getLocation().getY()) {
-			re[0] = preBottomCenter;
-			re[1] = nextTopCenter;
+			if (this.preProcess.getLocation().getX() > this.nextProcess.getLocation().getX() + this.nextProcess.getWidth()) {
+				re[0] = preLeftCenter;
+				re[1] = nextRightCenter;
+			} else if (this.preProcess.getLocation().getX() + this.preProcess.getWidth() < this.nextProcess.getLocation().getX()) {
+				re[0] = preRightCenter;
+				re[1] = nextLeftCenter;
+			} else if (this.preProcess.getLocation().getY() > this.nextProcess.getLocation().getY() + this.nextProcess.getHeight()) {
+				re[0] = preTopCenter;
+				re[1] = nextBottomCenter;
+			} else if (this.preProcess.getLocation().getY() + this.preProcess.getHeight() < this.nextProcess.getLocation().getY()) {
+				re[0] = preBottomCenter;
+				re[1] = nextTopCenter;
+			} else {
+				re[0] = preBottomCenter;
+				re[1] = nextTopCenter;
+			}
 		} else {
-			re[0] = preBottomCenter;
-			re[1] = nextTopCenter;
+			if (this.preProcess.getLocation().getX() > this.end.getX()) {
+				re[0] = preLeftCenter;
+				re[1] = this.end;
+			} else if (this.preProcess.getLocation().getX() + this.preProcess.getWidth() < this.end.getX()) {
+				re[0] = preRightCenter;
+				re[1] = this.end;
+			} else if (this.preProcess.getLocation().getY() > this.end.getY()) {
+				re[0] = preTopCenter;
+				re[1] = this.end;
+			} else if (this.preProcess.getLocation().getY() + this.preProcess.getHeight() < this.end.getY()) {
+				re[0] = preBottomCenter;
+				re[1] = this.end;
+			} else {
+				re[0] = preBottomCenter;
+				re[1] = this.end;
+			}
 		}
+
 		return re;
 	}
 
@@ -86,7 +106,11 @@ public class LineGraph extends AbstractGraph {
 	}
 
 	public Point getEnd() {
-		return getPoints()[1];
+		if (this.nextProcess != null) {
+			return getPoints()[1];
+		} else {
+			return this.end;
+		}
 	}
 
 	public boolean isArrow() {
