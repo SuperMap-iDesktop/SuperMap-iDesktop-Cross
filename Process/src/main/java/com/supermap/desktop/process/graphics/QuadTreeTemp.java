@@ -69,6 +69,26 @@ public class QuadTreeTemp<T> {
 		return findInside(this.root.getBounds());
 	}
 
+	public Vector<T> getDatasInside() {
+		Vector<T> re = new Vector<>();
+		Collection<T> c = findAll();
+		Iterator it = c.iterator();
+		while (it.hasNext()) {
+			re.add((T) it.next());
+		}
+		return re;
+	}
+
+	public Vector<T> search(Point p) {
+		Vector<T> re = new Vector<>();
+		Collection<T> c = findContains(p);
+		Iterator it = c.iterator();
+		while (it.hasNext()) {
+			re.add((T) it.next());
+		}
+		return re;
+	}
+
 	public Collection<T> findContains(Point p) {
 		HashSet result = new HashSet();
 		this.root.findContains(p, result);

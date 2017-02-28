@@ -36,7 +36,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private AbstractDecorator previewDecorator = new PreviewDecorator(this);
 	private IGraph previewGraph;
 
-	private QuadTree<IGraph> graphQuadTree = new QuadTree<>();
+	private QuadTreeTemp<IGraph> graphQuadTree = new QuadTreeTemp<>();
 	private ArrayList<LineGraph> lines = new ArrayList<>();
 	private double scale = 1.0;
 	private IGraph selectedGraph; // Decorator 的类结构还需要优化，现在接收 AbstractGraph 会导致 hot selected preview Decorator 扩展不易
