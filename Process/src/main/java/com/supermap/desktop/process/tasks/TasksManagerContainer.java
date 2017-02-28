@@ -57,13 +57,15 @@ public class TasksManagerContainer extends JPanel {
         }
     }
 
+    /**
+     * 串行结构时的任务执行
+     */
     public void run() {
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 int size = items.size();
-                int i = 0;
                 for (int j = 0; j < size; j++) {
                     items.get(j).doWork(callables.get(j));
                 }
@@ -71,7 +73,9 @@ public class TasksManagerContainer extends JPanel {
         });
         thread.start();
     }
-
+    /**
+     * 串行结构时的任务结束
+     */
     public void stop() {
         int size = items.size();
         for (int i = 0; i < size; i++) {

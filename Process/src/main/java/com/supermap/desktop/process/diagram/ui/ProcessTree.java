@@ -1,6 +1,8 @@
 package com.supermap.desktop.process.diagram.ui;
 
 import com.supermap.desktop.controls.drop.DropAndDragHandler;
+import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.core.IProcessGroup;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -8,14 +10,15 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
-import java.awt.dnd.*;
+import java.awt.dnd.DragGestureEvent;
 
 /**
  * Created by xie on 2017/2/23.
  */
-public class ProcessTree extends JPanel{
-    JTree processTree;
-    JScrollPane processTreeView;
+public class ProcessTree extends JPanel {
+    private JTree processTree;
+    private JScrollPane processTreeView;
+    private DefaultMutableTreeNode rootNode;
 
     public ProcessTree() {
         init();
@@ -25,44 +28,52 @@ public class ProcessTree extends JPanel{
         initComponents();
         initLayout();
         initResouces();
-        new TreeDropAndDragHandler(DataFlavor.stringFlavor).bindSource(this).addDropTarget(this);
+        new TreeDropAndDragHandler(DataFlavor.stringFlavor).bindSource(this.processTree).addDropTarget(this);
     }
 
     class TreeDropAndDragHandler extends DropAndDragHandler {
-        public TreeDropAndDragHandler(DataFlavor ...flavor){
+        public TreeDropAndDragHandler(DataFlavor... flavor) {
             super(flavor);
-        };
+        }
+
+        ;
+
         @Override
         public Object getTransferData(DragGestureEvent dge) {
             JTree tree = (JTree) dge.getComponent();
-            return ((DefaultMutableTreeNode)tree.getLastSelectedPathComponent()).getUserObject().toString();
+            return ((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject().toString();
         }
     }
+
     public void initComponents() {
-        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("流程控制");
-        createNodes(rootNode);
-        processTreeView = new JScrollPane();
-        processTree = new JTree(rootNode);
-        processTree.putClientProperty("JTree.lineStyle", "Horizontal");
-        processTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        this.rootNode = new DefaultMutableTreeNode(ProcessProperties.getString("String_Process"));
+        this.processTreeView = new JScrollPane();
+        this.processTree = new JTree(rootNode);
+        this.processTree.putClientProperty("JTree.lineStyle", "Horizontal");
+        this.processTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     }
 
-    private void createNodes(DefaultMutableTreeNode rootNode) {
-        DefaultMutableTreeNode importProcessNode = new DefaultMutableTreeNode("导入");
-        rootNode.add(importProcessNode);
-
-        DefaultMutableTreeNode projectionProcessNode = new DefaultMutableTreeNode("投影转换");
-        rootNode.add(projectionProcessNode);
-        DefaultMutableTreeNode spatialIndexProcessNode = new DefaultMutableTreeNode("创建空间索引");
-        rootNode.add(spatialIndexProcessNode);
-        DefaultMutableTreeNode bufferProcessNode = new DefaultMutableTreeNode("缓冲区分析");
-        rootNode.add(bufferProcessNode);
+    /**
+     * 添加
+     *
+     * @param processGroup
+     */
+    public void createNodes(IProcessGroup... processGroup) {
+        for (IProcessGroup iProcessGroup : processGroup) {
+            DefaultMutableTreeNode processGroupNode = new DefaultMutableTreeNode(iProcessGroup);
+            int childCount = iProcessGroup.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                DefaultMutableTreeNode processNode = new DefaultMutableTreeNode(iProcessGroup.getProcessByIndex(i));
+                processGroupNode.add(processNode);
+            }
+            this.rootNode.add(processGroupNode);
+        }
     }
 
     public void initLayout() {
         this.setLayout(new GridBagLayout());
         this.add(this.processTreeView, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(0));
-        processTreeView.setViewportView(processTree);
+        this.processTreeView.setViewportView(processTree);
     }
 
     public void initResouces() {
