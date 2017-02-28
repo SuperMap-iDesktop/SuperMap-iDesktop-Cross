@@ -14,29 +14,4 @@ public class SelectedDecorator extends AbstractDecorator {
 	public SelectedDecorator(GraphCanvas canvas) {
 		super(canvas, null);
 	}
-
-	@Override
-	public Rectangle getBounds() {
-		return null;
-	}
-
-	@Override
-	public void setLocation(Point point) {
-
-	}
-
-	@Override
-	public void setSize(int width, int height) {
-
-	}
-
-	@Override
-	public boolean contains(Point point) {
-		return false;
-	}
-
-	@Override
-	public IGraph clone() {
-		return null;
-	}
 }

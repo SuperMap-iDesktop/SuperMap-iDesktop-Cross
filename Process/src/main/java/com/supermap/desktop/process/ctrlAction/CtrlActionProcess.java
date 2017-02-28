@@ -22,6 +22,7 @@ public class CtrlActionProcess extends CtrlAction {
 		try {
 			IDockbar iDockbar = Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(processTreeClassName));
 			iDockbar.setVisible(true);
+
 			FormProcess formProcess = new FormProcess();
 			Application.getActiveApplication().getMainFrame().getFormManager().add(formProcess);
 		} catch (ClassNotFoundException e) {

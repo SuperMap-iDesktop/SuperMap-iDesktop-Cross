@@ -55,6 +55,8 @@ public class DefaultGraphPainter implements IGraphPainter {
 			paintLineGraph(graphics, (LineGraph) graph);
 		} else if (graph instanceof ProcessGraph) {
 			paintProcessGraph(graphics, (ProcessGraph) graph);
+		} else if (graph instanceof OutputGraph) {
+			paintOutputGraph(graphics, (OutputGraph) graph);
 		} else if (graph instanceof RectangleGraph) {
 			paintRectangleGraph(graphics, (RectangleGraph) graph);
 		} else if (graph instanceof EllipseGraph) {
@@ -152,7 +154,11 @@ public class DefaultGraphPainter implements IGraphPainter {
 	}
 
 	protected void paintSelectedDecorator(Graphics graphics, SelectedDecorator selectedDecorator) {
-
+		if (selectedDecorator.isDecorating()) {
+			Rectangle rect = (Rectangle) selectedDecorator.getBounds().clone();
+			rect.grow(-1, -1);
+			((Graphics2D) graphics).draw(rect);
+		}
 	}
 
 	protected void paintArrowDecorator(Graphics graphics, ArrowDecorator arrowDecorator) {
@@ -208,14 +214,14 @@ public class DefaultGraphPainter implements IGraphPainter {
 		graphics.setColor(Color.darkGray);
 
 		int fontHeight = this.canvas.getFontMetrics(font).getHeight();
-		int fontWidth = SwingUtilities2.stringWidth(this.canvas, this.canvas.getFontMetrics(font), "Output");
+		int fontWidth = SwingUtilities2.stringWidth(this.canvas, this.canvas.getFontMetrics(font), "output");
 		int fontDescent = this.canvas.getFontMetrics(font).getDescent();
 
 		// 字符绘制时，坐标点指定的是基线的位置，而实际上我们希望指定的坐标点是整个字符块最下边的位置，因此使用 fontDescent 做个处理
 		Point location = outputGraph.getLocation();
 		double width = outputGraph.getWidth();
 		double height = outputGraph.getHeight();
-		graphics.drawString("Output", intValue(location.getX() + (width - fontWidth) / 2), intValue(location.getY() + height / 2 + fontHeight / 2 - fontDescent));
+		graphics.drawString("output", intValue(location.getX() + (width - fontWidth) / 2), intValue(location.getY() + height / 2 + fontHeight / 2 - fontDescent));
 	}
 
 	private static int intValue(double value) {

@@ -1,6 +1,9 @@
 package com.supermap.desktop.process.graphics;
 
+import com.supermap.desktop.event.SelectedChangeListener;
 import com.supermap.desktop.implement.Output;
+import com.supermap.desktop.process.events.GraphSelectChangedListener;
+import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.graphs.*;
 import com.supermap.desktop.process.graphics.graphs.decorator.AbstractDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.HotDecorator;
@@ -45,6 +48,8 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private Point dragBegin;
 	private Point dragCenter;
 	private LineGraph line;
+
+	private ArrayList<GraphSelectChangedListener> selectChangedListeners = new ArrayList<>();
 
 	public static void main(String[] args) {
 		final JFrame frame = new JFrame();
@@ -266,21 +271,28 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				if (graph == null) {
 					if (this.selectedGraph != null) {
 						repaint(this.selectedGraph.getBounds());
-						this.selectedGraph = graph;
+						setSelectedGraph(graph);
 					}
 				} else {
 					if (this.selectedGraph != null) {
 						if (this.selectedGraph != graph) {
 							repaint(this.selectedGraph.getBounds());
-							this.selectedGraph = graph;
+							setSelectedGraph(graph);
 							repaint(this.selectedGraph.getBounds());
 						}
 					} else {
-						this.selectedGraph = graph;
+						setSelectedGraph(graph);
 						repaint(this.selectedGraph.getBounds());
 					}
 				}
 			}
+		}
+	}
+
+	private void setSelectedGraph(IGraph selectedGraph) {
+		if (this.selectedGraph != selectedGraph) {
+			this.selectedGraph = selectedGraph;
+			fireGraphSelectChanged(new GraphSelectedChangedEvent(this, this.selectedGraph));
 		}
 	}
 
@@ -362,12 +374,15 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				if (graph != null && graph instanceof ProcessGraph) {
 					this.line.setNextProcess(graph);
 					this.lines.add(this.line);
-					repaint();
+					this.line = new LineGraph(this);
+				} else {
+					this.line.setPreProcess(null);
 				}
-				this.line = null;
+				repaint();
 			}
 		} else if (SwingUtilities.isRightMouseButton(e)) {
 			this.previewGraph = null;
+			this.line = null;
 			repaint();
 		}
 	}
@@ -466,5 +481,23 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 
+	}
+
+	public void addGraphSelectChangedListener(GraphSelectChangedListener listener) {
+		if (!this.selectChangedListeners.contains(listener)) {
+			this.selectChangedListeners.add(listener);
+		}
+	}
+
+	public void removeGraphSelectChangedListener(GraphSelectChangedListener listener) {
+		if (this.selectChangedListeners.contains(listener)) {
+			this.selectChangedListeners.remove(listener);
+		}
+	}
+
+	protected void fireGraphSelectChanged(GraphSelectedChangedEvent e) {
+		for (int i = 0; i < this.selectChangedListeners.size(); i++) {
+			this.selectChangedListeners.get(i).GraphSelectChanged(e);
+		}
 	}
 }
