@@ -83,7 +83,49 @@ public class DefaultGraphPainter implements IGraphPainter {
 	}
 
 	protected void paintLineGraph(Graphics graphics, LineGraph lineGraph) {
+		graphics.setColor(Color.GRAY);
+		Point start = lineGraph.getStart();
+		Point end = lineGraph.getEnd();
+		graphics.drawLine(start.x, start.y, end.x, end.y);
 
+//		if (lineGraph.getPreProcess() instanceof OutputGraph && lineGraph.getNextProcess() instanceof ProcessGraph) {
+			Point[] points = calArrow(start, end);
+			graphics.drawLine(points[0].x, points[0].y, end.x, end.y);
+			graphics.drawLine(points[1].x, points[1].y, end.x, end.y);
+//		}
+	}
+
+	public Point[] calArrow(Point start, Point end) {
+		return calArrow(start.x, start.y, end.x, end.y);
+	}
+
+	public Point[] calArrow(int startX, int startY, int endX, int endY) {
+		double awrad = 15 * Math.PI / 180;// 30表示角度，但是在计算中要用弧度进行计算，所以要把角度转换为弧度
+		double arraow_len = 12;// 箭头长度
+		double[] arr1 = rotateVec(endX - startX, endY - startY, awrad, arraow_len);
+		double[] arr2 = rotateVec(endX - startX, endY - startY, -awrad, arraow_len);
+		double x1 = endX - arr1[0]; // (x3,y3)是第一端点
+		double y1 = endY - arr1[1];
+		double x2 = endX - arr2[0]; // (x4,y4)是第二端点
+		double y2 = endY - arr2[1];
+		Point point1 = new Point(intValue(x1), intValue(y1));
+		Point point2 = new Point(intValue(x2), intValue(y2));
+		return new Point[]{point1, point2};
+	}
+
+	// 计算
+	public double[] rotateVec(int px, int py, double ang, double newLen) {
+
+		double mathstr[] = new double[2];
+		// 矢量旋转函数，参数含义分别是x分量、y分量、旋转角、新长度
+		double vx = px * Math.cos(ang) - py * Math.sin(ang);
+		double vy = px * Math.sin(ang) + py * Math.cos(ang);
+		double d = Math.sqrt(vx * vx + vy * vy);
+		vx = vx / d * newLen;
+		vy = vy / d * newLen;
+		mathstr[0] = vx;
+		mathstr[1] = vy;
+		return mathstr;
 	}
 
 	protected void paintRectangleGraph(Graphics graphics, RectangleGraph rectangleGraph) {
@@ -151,6 +193,23 @@ public class DefaultGraphPainter implements IGraphPainter {
 		double width = processGraph.getWidth();
 		double height = processGraph.getHeight();
 		graphics.drawString(processGraph.getTitle(), intValue(location.getX() + (width - fontWidth) / 2), intValue(location.getY() + height / 2 + fontHeight / 2 - fontDescent));
+	}
+
+	private void paintOutputGraph(Graphics graphics, OutputGraph outputGraph) {
+		paintEllipseGraph(graphics, outputGraph);
+		Font font = new Font("宋体", Font.PLAIN, 24);
+		graphics.setFont(font);
+		graphics.setColor(Color.darkGray);
+
+		int fontHeight = this.canvas.getFontMetrics(font).getHeight();
+		int fontWidth = SwingUtilities2.stringWidth(this.canvas, this.canvas.getFontMetrics(font), "Output");
+		int fontDescent = this.canvas.getFontMetrics(font).getDescent();
+
+		// 字符绘制时，坐标点指定的是基线的位置，而实际上我们希望指定的坐标点是整个字符块最下边的位置，因此使用 fontDescent 做个处理
+		Point location = outputGraph.getLocation();
+		double width = outputGraph.getWidth();
+		double height = outputGraph.getHeight();
+		graphics.drawString("Output", intValue(location.getX() + (width - fontWidth) / 2), intValue(location.getY() + height / 2 + fontHeight / 2 - fontDescent));
 	}
 
 	private static int intValue(double value) {

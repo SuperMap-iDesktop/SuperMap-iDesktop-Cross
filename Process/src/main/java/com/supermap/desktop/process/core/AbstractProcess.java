@@ -2,7 +2,7 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
-import com.supermap.desktop.process.parameter.interfaces.IData;
+import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 
 import javax.swing.event.EventListenerList;
@@ -26,10 +26,10 @@ public abstract class AbstractProcess implements IProcess {
 	public abstract String getKey();
 
 	@Override
-	public abstract Vector<IData> getInputs();
+	public abstract Vector<ProcessData> getInputs();
 
 	@Override
-	public abstract Vector<IData> getOutputs();
+	public abstract Vector<ProcessData> getOutputs();
 
 	@Override
 	public void addRunningListener(RunningListener listener) {

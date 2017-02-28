@@ -2,7 +2,7 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.meta.MetaKeys;
-import com.supermap.desktop.process.parameter.interfaces.IData;
+import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.utilities.FileUtilities;
 
@@ -116,12 +116,12 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 	}
 
 	@Override
-	public Vector<IData> getInputs() {
+	public Vector<ProcessData> getInputs() {
 		return null;
 	}
 
 	@Override
-	public Vector<IData> getOutputs() {
+	public Vector<ProcessData> getOutputs() {
 		return null;
 	}
 

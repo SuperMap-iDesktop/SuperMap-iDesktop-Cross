@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.graphics.graphs;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.parameter.interfaces.IData;
+import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import sun.swing.SwingUtilities2;
 
 import java.awt.*;
@@ -11,7 +11,7 @@ import java.awt.*;
  */
 public class DataGraph extends EllipseGraph {
 
-	private IData data;
+	private ProcessData data;
 
 	public DataGraph(GraphCanvas canvas) {
 		super(canvas);

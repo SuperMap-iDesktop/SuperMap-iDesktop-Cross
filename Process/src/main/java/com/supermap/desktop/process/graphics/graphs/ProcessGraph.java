@@ -14,12 +14,15 @@ import java.util.ArrayList;
  */
 public class ProcessGraph extends RectangleGraph {
 
-	private ArrayList<OutputGraph> outputGraphs = new ArrayList<>();
 	private IProcess process;
 
 	public ProcessGraph(GraphCanvas canvas, IProcess process) {
 		super(canvas);
 		this.process = process;
+	}
+
+	public IProcess getProcess() {
+		return process;
 	}
 
 	public String getTitle() {

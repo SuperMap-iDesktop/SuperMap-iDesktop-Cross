@@ -9,6 +9,7 @@ import com.supermap.desktop.process.graphics.painter.DefaultGraphPainter;
 import com.supermap.desktop.process.graphics.painter.DefaultGraphPainterFactory;
 import com.supermap.desktop.process.graphics.painter.IGraphPainter;
 import com.supermap.desktop.process.graphics.painter.IGraphPainterFactory;
+import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 
 import javax.swing.*;
 import java.awt.*;
@@ -318,18 +319,21 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				this.graphQuadTree.add(this.previewGraph, bounds);
 
 				if (this.previewGraph instanceof ProcessGraph) {
-//					DataGraph graph = new DataGraph(this);
-//					graph.setWidth(160);
-//					graph.setHeight(60);
-//					graph.setX(this.toCreation.getX() + this.toCreation.getWidth() + 150);
-//					graph.setY(this.toCreation.getY() + (this.toCreation.getHeight() - graph.getHeight()) / 2);
-//					Rectangle graphBounds = graph.getBounds();
-//					this.graphQuadTree.add(graph, graphBounds);
-//					repaint(graph.getBounds());
+//					ProcessData data = ((ProcessGraph) this.previewGraph).getProcess().getOutputs().get(0);
+					ProcessData data = null;
+					OutputGraph graph = new OutputGraph(this, data);
+					graph.setSize(160, 60);
+					Point location = new Point();
+					location.setLocation(this.previewGraph.getLocation().getX() + this.previewGraph.getWidth() + 150,
+							this.previewGraph.getLocation().getY() + (this.previewGraph.getHeight() - graph.getHeight()) / 2);
+					graph.setLocation(location);
+					Rectangle graphBounds = graph.getBounds();
+					this.graphQuadTree.add(graph, graphBounds);
+					repaint(graph.getBounds());
 
 					LineGraph lineGraph = new LineGraph(this);
-//					lineGraph.setStart(this.toCreation);
-//					lineGraph.setEnd(graph);
+					lineGraph.setPreProcess(this.previewGraph);
+					lineGraph.setNextProcess(graph);
 					this.lines.add(lineGraph);
 					repaint();
 				}
@@ -362,12 +366,26 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			dragged.translate(e.getPoint().x - this.dragBegin.x, e.getPoint().y - this.dragBegin.y);
 			repaint(this.draggedGraph, dragged);
 			this.graphQuadTree.add(this.draggedGraph, this.draggedGraph.getBounds());
-//			for (int i = 0; i < this.draggedGraph.getLines().size(); i++) {
-//				Rectangle rect = this.draggedGraph.getLines().get(i).getShape().getBounds();
-//				rect.grow(1, 1);
+
+			ArrayList<LineGraph> ls = getLines(this.draggedGraph);
+			for (int i = 0; i < ls.size(); i++) {
+				Rectangle rect = ls.get(i).getShape().getBounds();
+				rect.grow(1, 1);
 //				repaint(rect);
-//			}
+				repaint();
+			}
 		}
+	}
+
+	private ArrayList<LineGraph> getLines(IGraph graph) {
+		ArrayList<LineGraph> ls = new ArrayList<>();
+		for (int i = 0; i < this.lines.size(); i++) {
+			LineGraph line = this.lines.get(i);
+			if (line.getPreProcess() == graph || line.getNextProcess() == graph) {
+				ls.add(line);
+			}
+		}
+		return ls;
 	}
 
 	@Override
