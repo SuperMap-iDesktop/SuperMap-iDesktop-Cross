@@ -1,6 +1,14 @@
 package com.supermap.desktop.process.graphics;
 
 import com.supermap.desktop.process.graphics.graphs.*;
+import com.supermap.desktop.process.graphics.graphs.decorator.AbstractDecorator;
+import com.supermap.desktop.process.graphics.graphs.decorator.HotDecorator;
+import com.supermap.desktop.process.graphics.graphs.decorator.PreviewDecorator;
+import com.supermap.desktop.process.graphics.graphs.decorator.SelectedDecorator;
+import com.supermap.desktop.process.graphics.painter.DefaultGraphPainter;
+import com.supermap.desktop.process.graphics.painter.DefaultGraphPainterFactory;
+import com.supermap.desktop.process.graphics.painter.IGraphPainter;
+import com.supermap.desktop.process.graphics.painter.IGraphPainterFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,13 +28,17 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
 
+	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory();
+	private AbstractDecorator hotDecorator = new HotDecorator(this);
+	private AbstractDecorator selectedDecorator = new SelectedDecorator(this); // 目前还没有支持多选，就先这样用单例修饰
+	private AbstractDecorator previewDecorator = new PreviewDecorator(this);
+	private IGraph previewGraph;
+
 	private QuadTree<IGraph> graphQuadTree = new QuadTree<>();
 	private ArrayList<LineGraph> lines = new ArrayList<>();
 	private double scale = 1.0;
-	private IGraph toCreation;
 	private IGraph hotGraph;
-	private IGraph selectedGraph;
-	private IGraph previewGraph;
+	private IGraph selectedGraph; // Decorator 的类结构还需要优化，现在接收 AbstractGraph 会导致 hot selected preview Decorator 扩展不易
 
 	private IGraph draggedGraph;
 	private Point dragBegin;
@@ -52,8 +64,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RectangleGraph graph = new RectangleGraph(canvas);
-				graph.setWidth(200);
-				graph.setHeight(80);
+				graph.setSize(200, 80);
 				graph.setArcHeight(10);
 				graph.setArcWidth(10);
 
@@ -67,8 +78,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				EllipseGraph graph = new EllipseGraph(canvas);
-				graph.setWidth(160);
-				graph.setHeight(60);
+				graph.setSize(160, 60);
 
 				canvas.createGraph(graph);
 			}
@@ -79,13 +89,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		button2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ProcessGraph graph = new ProcessGraph(canvas);
-				graph.setWidth(200);
-				graph.setHeight(80);
-				graph.setArcHeight(10);
-				graph.setArcWidth(10);
-
-				canvas.createGraph(graph);
+//				ProcessGraph graph = new ProcessGraph(canvas);
+//				graph.setWidth(200);
+//				graph.setHeight(80);
+//				graph.setArcHeight(10);
+//				graph.setArcWidth(10);
+//
+//				canvas.createGraph(graph);
 			}
 		});
 
@@ -94,11 +104,11 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		button3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				DataGraph graph = new DataGraph(canvas);
-				graph.setWidth(160);
-				graph.setHeight(60);
-
-				canvas.createGraph(graph);
+//				DataGraph graph = new DataGraph(canvas);
+//				graph.setWidth(160);
+//				graph.setHeight(60);
+//
+//				canvas.createGraph(graph);
 			}
 		});
 
@@ -115,6 +125,18 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addMouseWheelListener(this);
+	}
+
+	public void setSelectedDecorator(IGraph selectedDecorator) {
+
+	}
+
+	public void setHotDecorator(IGraph hotDecorator) {
+
+	}
+
+	public void setPreviewDecorator(IGraph previewDecorator) {
+
 	}
 
 	@Override
@@ -177,17 +199,20 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		for (int i = 0; i < graphs.size(); i++) {
 			IGraph graph = graphs.get(i);
-			graph.paint(g, graph == this.hotGraph, graph == this.selectedGraph);
+			this.painterFactory.getPainter(graph, g).paint();
 		}
 
 		for (int i = 0; i < this.lines.size(); i++) {
 			LineGraph lineGraph = this.lines.get(i);
-			lineGraph.paint(g);
+			this.painterFactory.getPainter(lineGraph, g).paint();
 		}
 
-		if (this.previewGraph != null) {
-			this.previewGraph.paintPreview(g);
-		}
+		this.hotDecorator.decorate((AbstractGraph) this.hotGraph);
+		this.selectedDecorator.decorate((AbstractGraph) this.selectedGraph);
+		this.previewDecorator.decorate((AbstractGraph) this.previewGraph);
+		this.painterFactory.getPainter(this.hotDecorator, g).paint();
+		this.painterFactory.getPainter(this.selectedDecorator, g).paint();
+		this.painterFactory.getPainter(this.previewDecorator, g).paint();
 	}
 
 	protected Rectangle getCanvasViewBounds() {
@@ -209,9 +234,8 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 	}
 
-	public void createGraph(IGraph graph) {
-		this.toCreation = graph;
-		this.previewGraph = this.toCreation.clone();
+	public void createGraph(AbstractGraph graph) {
+		this.previewGraph = graph;
 	}
 
 	private Point2D panelToCanvas(Point point) {
@@ -229,7 +253,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		if (SwingUtilities.isLeftMouseButton(e)) {
 			Point point = e.getPoint();
 
-			if (this.toCreation == null) {
+			if (this.previewGraph == null) {
 
 				// toCreation 为空，则查询
 				IGraph graph = findGraph(point);
@@ -269,7 +293,9 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public void mousePressed(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e)) {
 			IGraph graph = findGraph(e.getPoint());
-			if (graph != null) {
+
+			// TODO 不加 contains 判断会导致多对象的时候出现奇怪的拖拽现象，可能是四叉树实现不完整，需要优化
+			if (graph != null && graph.contains(e.getPoint())) {
 				this.draggedGraph = graph;
 				this.dragBegin = e.getPoint();
 				this.dragCenter = this.draggedGraph.getCenter();
@@ -287,34 +313,32 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		if (SwingUtilities.isLeftMouseButton(e)) {
 			Point point = e.getPoint();
 
-			if (this.toCreation != null) {
+			if (this.previewGraph != null) {
 
 				// toCreation 不为空，则新建
-				this.previewGraph = null;
-				repaint(this.toCreation, point);
-				Rectangle bounds = this.toCreation.getBounds();
-				this.graphQuadTree.add(this.toCreation, bounds);
+				repaint(this.previewGraph, point);
+				Rectangle bounds = this.previewGraph.getBounds();
+				this.graphQuadTree.add(this.previewGraph, bounds);
 
-				if (this.toCreation instanceof ProcessGraph) {
-					DataGraph graph = new DataGraph(this);
-					graph.setWidth(160);
-					graph.setHeight(60);
-					graph.setX(this.toCreation.getX() + this.toCreation.getWidth() + 150);
-					graph.setY(this.toCreation.getY() + (this.toCreation.getHeight() - graph.getHeight()) / 2);
-					Rectangle graphBounds = graph.getBounds();
-					this.graphQuadTree.add(graph, graphBounds);
-					repaint(graph.getBounds());
+				if (this.previewGraph instanceof ProcessGraph) {
+//					DataGraph graph = new DataGraph(this);
+//					graph.setWidth(160);
+//					graph.setHeight(60);
+//					graph.setX(this.toCreation.getX() + this.toCreation.getWidth() + 150);
+//					graph.setY(this.toCreation.getY() + (this.toCreation.getHeight() - graph.getHeight()) / 2);
+//					Rectangle graphBounds = graph.getBounds();
+//					this.graphQuadTree.add(graph, graphBounds);
+//					repaint(graph.getBounds());
 
 					LineGraph lineGraph = new LineGraph(this);
-					lineGraph.setStart(this.toCreation);
-					lineGraph.setEnd(graph);
+//					lineGraph.setStart(this.toCreation);
+//					lineGraph.setEnd(graph);
 					this.lines.add(lineGraph);
 					repaint();
 				}
-				this.toCreation = null;
+				this.previewGraph = null;
 			}
 		} else if (SwingUtilities.isRightMouseButton(e)) {
-			this.toCreation = null;
 			this.previewGraph = null;
 			repaint();
 		}
@@ -341,11 +365,11 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			dragged.translate(e.getPoint().x - this.dragBegin.x, e.getPoint().y - this.dragBegin.y);
 			repaint(this.draggedGraph, dragged);
 			this.graphQuadTree.add(this.draggedGraph, this.draggedGraph.getBounds());
-			for (int i = 0; i < this.draggedGraph.getLines().size(); i++) {
-				Rectangle rect = this.draggedGraph.getLines().get(i).getShape().getBounds();
-				rect.grow(1, 1);
-				repaint(rect);
-			}
+//			for (int i = 0; i < this.draggedGraph.getLines().size(); i++) {
+//				Rectangle rect = this.draggedGraph.getLines().get(i).getShape().getBounds();
+//				rect.grow(1, 1);
+//				repaint(rect);
+//			}
 		}
 	}
 
@@ -377,12 +401,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	}
 
 	private void repaint(IGraph graph, Point point) {
-		if (graph.getX() != point.getX() && graph.getY() != point.getY()) {
+		if (graph.getLocation() != point) {
 			Rectangle dirtyRect = graph.getBounds();
-			double x = point.getX() - graph.getWidth() / 2 - graph.getBorderWidth();
-			double y = point.getY() - graph.getHeight() / 2 - graph.getBorderWidth();
-			graph.setX(x);
-			graph.setY(y);
+			double x = point.getX() - graph.getWidth() / 2;
+			double y = point.getY() - graph.getHeight() / 2;
+			Point location = new Point();
+			location.setLocation(x, y);
+			graph.setLocation(location);
 			repaint(dirtyRect);
 			repaint(graph.getBounds());
 		}

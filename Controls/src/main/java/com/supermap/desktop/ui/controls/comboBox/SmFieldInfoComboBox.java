@@ -1,6 +1,11 @@
 package com.supermap.desktop.ui.controls.comboBox;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldInfos;
+import com.supermap.data.FieldType;
+import com.supermap.data.JoinItems;
 import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.DialogResult;

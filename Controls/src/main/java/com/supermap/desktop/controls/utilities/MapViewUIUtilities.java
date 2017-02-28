@@ -136,6 +136,10 @@ public class MapViewUIUtilities {
 		}
 	}
 
+	/**
+	 * 设置坐标系为中国范围坐标系
+	 * @param map
+	 */
 	public static void resetMapRange(Map map) {
 		map.setScale(INITSCALE);
 		map.setCenter(new Point2D(CHINACENTERRANGEVALUEX, CHINACENTERRANGEVALUEY));

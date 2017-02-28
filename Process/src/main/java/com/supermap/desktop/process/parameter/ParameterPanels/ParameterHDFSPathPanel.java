@@ -3,6 +3,7 @@ package com.supermap.desktop.process.parameter.ParameterPanels;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
+import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.lbs.impl.WebHDFS;
@@ -40,6 +41,7 @@ public class ParameterHDFSPathPanel extends JPanel {
         this.buttonInputBrowser = new JButton();
         this.buttonInputBrowser.setText(ProcessProperties.getString("String_Browser"));
         this.labelFileInputPath.setText(ProcessProperties.getString("String_FileInputPath"));
+        this.labelFileInputPath.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
         this.setLayout(new GridBagLayout());
         this.add(this.labelFileInputPath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(this.textFieldFileInputPath, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0).setWeight(1, 0));

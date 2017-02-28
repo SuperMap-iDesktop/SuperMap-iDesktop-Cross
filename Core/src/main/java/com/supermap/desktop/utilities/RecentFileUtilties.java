@@ -47,9 +47,11 @@ public class RecentFileUtilties {
 			File file = new File(recentFilePath);
 			if (!file.exists()) {
 				try {
-					if (file.getParentFile().mkdirs() && file.createNewFile()) {
-						FileUtilities.writeToFile(file, CoreProperties.getString("String_RecentFileString"));
-						return true;
+					if (file.getParentFile().exists() || file.getParentFile().mkdirs()) {
+						if (file.createNewFile()) {
+							FileUtilities.writeToFile(file, CoreProperties.getString("String_RecentFileString"));
+							return true;
+						}
 					}
 				} catch (Exception e) {
 					return false;

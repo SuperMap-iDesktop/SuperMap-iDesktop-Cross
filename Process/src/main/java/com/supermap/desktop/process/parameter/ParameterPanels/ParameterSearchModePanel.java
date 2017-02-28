@@ -4,6 +4,7 @@ import com.supermap.analyst.spatialanalyst.SearchMode;
 import com.supermap.desktop.process.parameter.ParameterSearchModeInfo;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterSearchMode;
+import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -167,6 +168,9 @@ public class ParameterSearchModePanel extends JPanel {
 
     private void initLayout() {
         this.setLayout(new GridBagLayout());
+        this.labelSearchModel.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
+        this.labelMaxRadius.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
+        this.labelSearchCount.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
         this.add(this.labelSearchModel, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
         this.add(this.radioSearchModelCount, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1));
         this.add(this.radioSearchModelRadius, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 1));

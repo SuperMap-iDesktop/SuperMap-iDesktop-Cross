@@ -17,31 +17,31 @@ public class SmNumericFieldComboBox extends SmFieldInfoComboBox {
 	}
 
 	public SmNumericFieldComboBox(DatasetVector dataset) {
-        super(dataset);
-    }
+		super(dataset);
+	}
 
-  public SmNumericFieldComboBox(DatasetVector dataset, JoinItems joinItems) {
-        super(dataset, joinItems);
-    }
+	public SmNumericFieldComboBox(DatasetVector dataset, JoinItems joinItems) {
+		super(dataset, joinItems);
+	}
 
-    @Override
-    protected ArrayList<FieldType> getFieldIntoTypes() {
-        ArrayList<FieldType> fieldTypes = new ArrayList<>();
-        fieldTypes.add(FieldType.INT16);
-        fieldTypes.add(FieldType.INT32);
-        fieldTypes.add(FieldType.INT64);
-        fieldTypes.add(FieldType.DOUBLE);
-        fieldTypes.add(FieldType.SINGLE);
-        return fieldTypes;
-    }
+	@Override
+	protected ArrayList<FieldType> getFieldIntoTypes() {
+		ArrayList<FieldType> fieldTypes = new ArrayList<>();
+		fieldTypes.add(FieldType.INT16);
+		fieldTypes.add(FieldType.INT32);
+		fieldTypes.add(FieldType.INT64);
+		fieldTypes.add(FieldType.DOUBLE);
+		fieldTypes.add(FieldType.SINGLE);
+		return fieldTypes;
+	}
 
-    @Override
-    protected boolean isLegalField(FieldInfo fieldInfo) {
-        return fieldInfo.getType().equals(FieldType.INT16)
-                || fieldInfo.getType().equals(FieldType.INT32)
-                || fieldInfo.getType().equals(FieldType.INT64)
-                || fieldInfo.getType().equals(FieldType.DOUBLE)
-                || fieldInfo.getType().equals(FieldType.SINGLE);
-    }
+	@Override
+	protected boolean isLegalField(FieldInfo fieldInfo) {
+		return fieldInfo.getType().equals(FieldType.INT16)
+				|| fieldInfo.getType().equals(FieldType.INT32)
+				|| fieldInfo.getType().equals(FieldType.INT64)
+				|| fieldInfo.getType().equals(FieldType.DOUBLE)
+				|| fieldInfo.getType().equals(FieldType.SINGLE);
+	}
 }
 
