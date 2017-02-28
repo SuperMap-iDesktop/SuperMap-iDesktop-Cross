@@ -9,18 +9,30 @@ import com.supermap.desktop.messagebus.NewMessageBus;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.TextFields.DefaultValueTextField;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
 import com.supermap.desktop.ui.lbs.impl.WebHDFS;
-import com.supermap.desktop.ui.lbs.params.*;
+import com.supermap.desktop.ui.lbs.params.BuildCacheDrawingSetting;
+import com.supermap.desktop.ui.lbs.params.BuildCacheJobSetting;
+import com.supermap.desktop.ui.lbs.params.FileInputDataSetting;
+import com.supermap.desktop.ui.lbs.params.JobResultResponse;
+import com.supermap.desktop.ui.lbs.params.MongoDBOutputsetting;
 import com.supermap.desktop.ui.lbs.ui.JDialogHDFSFiles;
 import com.supermap.ui.Action;
-import com.supermap.ui.*;
+import com.supermap.ui.MapControl;
+import com.supermap.ui.TrackMode;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackedListener;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * Created by xie on 2017/1/11.
@@ -52,7 +64,8 @@ public class JDialogHeatMap extends SmDialog {
 	private JLabel labelDatabaseType;
 	private JComboBox comboBoxDatabaseType;
 	private JLabel labelServiceAddress;
-	private JTextField textFieldServiceAddress;
+	//	private JTextField textFieldServiceAddress;
+	private DefaultValueTextField textFieldServiceAddress;
 	private JLabel labelDatabase;
 	private JTextField textFieldDatabase;
 	private JLabel labelVersion;
@@ -128,7 +141,8 @@ public class JDialogHeatMap extends SmDialog {
 		this.comboBoxDatabaseType = new JComboBox();
 		this.comboBoxDatabaseType.addItem("MongoDB");
 		this.labelServiceAddress = new JLabel();
-		this.textFieldServiceAddress = new JTextField("192.168.15.245:27017");
+//		this.textFieldServiceAddress = new JTextField("192.168.15.245:27017");
+		this.textFieldServiceAddress = new DefaultValueTextField("{ip}:{port}");
 		this.labelDatabase = new JLabel();
 		this.textFieldDatabase = new JTextField("test");
 		this.labelVersion = new JLabel();
