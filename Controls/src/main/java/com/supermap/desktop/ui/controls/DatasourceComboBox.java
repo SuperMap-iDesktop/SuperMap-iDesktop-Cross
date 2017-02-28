@@ -70,7 +70,7 @@ public class DatasourceComboBox extends JComboBox<Datasource> {
 	 */
 	public String getSelectedItemAlias () {
 		Datasource temp = (Datasource) getSelectedItem();
-		return temp.getAlias();
+		return temp != null ? temp.getAlias() : "";
 	}
 
 	/**

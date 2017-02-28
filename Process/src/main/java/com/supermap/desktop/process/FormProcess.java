@@ -1,5 +1,6 @@
 package com.supermap.desktop.process;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.FormActivatedListener;
@@ -11,10 +12,13 @@ import com.supermap.desktop.event.FormDeactivatedListener;
 import com.supermap.desktop.event.FormShownEvent;
 import com.supermap.desktop.event.FormShownListener;
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.events.GraphSelectChangedListener;
+import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.ui.FormBaseChild;
+import com.supermap.desktop.ui.controls.Dockbar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,6 +34,19 @@ public class FormProcess extends FormBaseChild implements IForm {
 		super("", null, null);
 		setLayout(new BorderLayout());
 		add(graphCanvas, BorderLayout.CENTER);
+		graphCanvas.addGraphSelectChangedListener(new GraphSelectChangedListener() {
+			@Override
+			public void GraphSelectChanged(GraphSelectedChangedEvent e) {
+				if (e.getSelected() instanceof ProcessGraph) {
+					try {
+						ParameterManager component = (ParameterManager) ((Dockbar) Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName("com.supermap.desktop.process.ParameterManager"))).getInnerComponent();
+						component.setProcess(((ProcessGraph) e.getSelected()).getProcess());
+					} catch (ClassNotFoundException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 
 	public static void main(String[] args) {

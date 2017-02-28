@@ -1,7 +1,13 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
 import com.supermap.analyst.spatialanalyst.OverlayAnalystParameter;
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.DatasetVectorInfo;
+import com.supermap.data.Datasets;
+import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.LengthUnit;
@@ -108,8 +114,8 @@ public class ParameterOverlayAnalystPanel extends JPanel {
         if (comboboxOverlayAnalystDatasource.getSelectedItemAlias() != null) {
             this.comboboxOverlayAnalystDataset = new DatasetComboBox();
             this.comboboxOverlayAnalystDataset.setSupportedDatasetTypes(regionType);
-            if (comboboxSourceDataset.getSelectedItem().toString().equals(comboboxOverlayAnalystDataset.getSelectedItem().toString())) {
-                this.comboboxOverlayAnalystDataset.removeItem(comboboxOverlayAnalystDataset.getSelectedItem());
+	        if (comboboxSourceDataset.getSelectedItem() != null && comboboxSourceDataset.getSelectedItem().toString().equals(comboboxOverlayAnalystDataset.getSelectedItem().toString())) {
+		        this.comboboxOverlayAnalystDataset.removeItem(comboboxOverlayAnalystDataset.getSelectedItem());
             }
         } else {
             this.comboboxOverlayAnalystDataset = new DatasetComboBox();

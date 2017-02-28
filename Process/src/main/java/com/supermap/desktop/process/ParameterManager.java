@@ -14,13 +14,19 @@ public class ParameterManager extends JPanel {
 
 	public ParameterManager() {
 		this.setLayout(new GridBagLayout());
-		this.add(mainPanel, new GridBagConstraintsHelper(0, 0, 1, 1));
+		mainPanel.setLayout(new GridBagLayout());
+		this.add(mainPanel, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
 	}
 
 	public void setProcess(IProcess process) {
 		mainPanel.removeAll();
 		if (process != null) {
-			mainPanel.add(process.getComponent(), new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
+			JComponent component = process.getComponent();
+			mainPanel.add(component, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
+			mainPanel.revalidate();
+			mainPanel.repaint();
+			this.revalidate();
+			this.repaint();
 		}
 	}
 }

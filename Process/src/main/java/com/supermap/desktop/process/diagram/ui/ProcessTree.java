@@ -54,7 +54,7 @@ public class ProcessTree extends JPanel {
 		root.addProcess(new MetaProcessBuffer());
 		root.addProcess(new MetaProcessHeatMap());
 		root.addProcess(new MetaProcessImport());
-		root.addProcess(new MetaProcessInterpolator(InterpolationAlgorithmType.DENSITY));
+		root.addProcess(new MetaProcessInterpolator(InterpolationAlgorithmType.IDW));
 		root.addProcess(new MetaProcessKernelDensity());
 		root.addProcess(new MetaProcessOverlayAnalyst(OverlayAnalystType.CLIP));
 		root.addProcess(new MetaProcessProjection());

@@ -37,6 +37,6 @@ public class ParameterHDFSPath extends AbstractParameter implements ISelectionPa
         if (null == panel) {
             panel = new ParameterHDFSPathPanel(this);
         }
-        return null;
+	    return panel;
     }
 }
