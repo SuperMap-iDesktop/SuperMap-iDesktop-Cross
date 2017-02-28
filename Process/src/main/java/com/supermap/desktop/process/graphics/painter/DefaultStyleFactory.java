@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics.painter;
 
+import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import sun.swing.SwingUtilities2;
 
@@ -46,7 +47,17 @@ public class DefaultStyleFactory implements IStyleFactory {
 
 	@Override
 	public void normalText(Graphics graphics) {
-
+		Font font = new Font("微软雅黑", Font.PLAIN, 20);
+		graphics.setFont(font);
+		graphics.setColor(Color.darkGray);
+//
+//		String text = this.data == null ? "未知数据" : this.data.toString();
+//		int fontHeight = getCanvas().getFontMetrics(font).getHeight();
+//		int fontWidth = SwingUtilities2.stringWidth(getCanvas(), getCanvas().getFontMetrics(font), text);
+//		int fontDescent = getCanvas().getFontMetrics(font).getDescent();
+//
+//		// 字符绘制时，坐标点指定的是基线的位置，而实际上我们希望指定的坐标点是整个字符块最下边的位置，因此使用 fontDescent 做个处理
+//		g.drawString(text, doubleToInt(getX() + (getWidth() - fontWidth) / 2), doubleToInt(getY() + getHeight() / 2 + fontHeight / 2 - fontDescent));
 	}
 
 	@Override

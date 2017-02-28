@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics.painter;
 
+import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import java.awt.*;
@@ -12,6 +13,8 @@ public interface IGraphPainter {
 	IStyleFactory getStyleFactory();
 
 	void setStyleFactory(IStyleFactory styleFactory);
+
+	void setCanvas(GraphCanvas canvas);
 
 	void setGraphics(Graphics graphics);
 

@@ -1,9 +1,12 @@
 package com.supermap.desktop.process.graphics.painter;
 
+import com.supermap.desktop.process.graphics.GraphCanvas;
+
 import java.awt.*;
 
 /**
  * 用于在 {@link IGraphPainter} 中对 IGraph 进行绘制时，定制对应 GraphPainter 的 Graphics 绘制属性。
+ * TODO 之后改为直接获取 style，不再操作 graphics
  * Created by highsad on 2017/2/25.
  */
 public interface IStyleFactory {

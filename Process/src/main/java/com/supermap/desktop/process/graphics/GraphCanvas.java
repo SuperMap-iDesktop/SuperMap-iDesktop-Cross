@@ -28,7 +28,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
 
-	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory();
+	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory(this);
 	private AbstractDecorator hotDecorator = new HotDecorator(this);
 	private AbstractDecorator selectedDecorator = new SelectedDecorator(this); // 目前还没有支持多选，就先这样用单例修饰
 	private AbstractDecorator previewDecorator = new PreviewDecorator(this);
@@ -37,7 +37,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private QuadTree<IGraph> graphQuadTree = new QuadTree<>();
 	private ArrayList<LineGraph> lines = new ArrayList<>();
 	private double scale = 1.0;
-	private IGraph hotGraph;
 	private IGraph selectedGraph; // Decorator 的类结构还需要优化，现在接收 AbstractGraph 会导致 hot selected preview Decorator 扩展不易
 
 	private IGraph draggedGraph;
@@ -89,13 +88,12 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		button2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				ProcessGraph graph = new ProcessGraph(canvas);
-//				graph.setWidth(200);
-//				graph.setHeight(80);
-//				graph.setArcHeight(10);
-//				graph.setArcWidth(10);
-//
-//				canvas.createGraph(graph);
+				ProcessGraph graph = new ProcessGraph(canvas, null);
+				graph.setSize(200, 80);
+				graph.setArcHeight(10);
+				graph.setArcWidth(10);
+
+				canvas.createGraph(graph);
 			}
 		});
 
@@ -207,7 +205,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			this.painterFactory.getPainter(lineGraph, g).paint();
 		}
 
-		this.hotDecorator.decorate((AbstractGraph) this.hotGraph);
 		this.selectedDecorator.decorate((AbstractGraph) this.selectedGraph);
 		this.previewDecorator.decorate((AbstractGraph) this.previewGraph);
 		this.painterFactory.getPainter(this.hotDecorator, g).paint();
@@ -380,21 +377,21 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		} else {
 			IGraph graph = findGraph(e.getPoint());
 
-			if (graph == null) {
-				if (this.hotGraph != null) {
-					repaint(this.hotGraph.getBounds());
-					this.hotGraph = graph;
-				}
-			} else {
-				if (this.hotGraph != null) {
-					if (this.hotGraph != graph) {
-						repaint(this.hotGraph.getBounds());
-						this.hotGraph = graph;
-						repaint(this.hotGraph.getBounds());
+			if (graph != null && graph.contains(e.getPoint())) {
+				if (this.hotDecorator.isDecorating()) {
+					if (this.hotDecorator.getGraph() != graph) {
+						repaint(this.hotDecorator.getBounds());
+						this.hotDecorator.decorate((AbstractGraph) graph);
+						repaint(this.hotDecorator.getBounds());
 					}
 				} else {
-					this.hotGraph = graph;
-					repaint(this.hotGraph.getBounds());
+					this.hotDecorator.decorate((AbstractGraph) graph);
+					repaint(this.hotDecorator.getBounds());
+				}
+			} else {
+				if (this.hotDecorator.isDecorating()) {
+					repaint(this.hotDecorator.getBounds());
+					this.hotDecorator.undecorate();
 				}
 			}
 		}

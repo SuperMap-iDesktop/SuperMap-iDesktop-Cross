@@ -34,6 +34,51 @@ public abstract class AbstractDecorator extends AbstractGraph {
 	}
 
 	@Override
+	public Shape getShape() {
+		return getGraph().getShape();
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		return getGraph().getBounds();
+	}
+
+	@Override
+	public Point getLocation() {
+		return getGraph().getLocation();
+	}
+
+	@Override
+	public Point getCenter() {
+		return getGraph().getCenter();
+	}
+
+	@Override
+	public int getWidth() {
+		return getGraph().getWidth();
+	}
+
+	@Override
+	public int getHeight() {
+		return getGraph().getHeight();
+	}
+
+	@Override
+	public void setLocation(Point point) {
+		getGraph().setLocation(point);
+	}
+
+	@Override
+	public void setSize(int width, int height) {
+		getGraph().setSize(width, height);
+	}
+
+	@Override
+	public boolean contains(Point point) {
+		return getGraph().contains(point);
+	}
+
+	@Override
 	public IGraph clone() {
 		throw new UnsupportedOperationException();
 	}
