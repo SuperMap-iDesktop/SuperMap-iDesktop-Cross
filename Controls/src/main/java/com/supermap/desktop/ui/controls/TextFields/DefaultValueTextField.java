@@ -17,27 +17,31 @@ import java.awt.event.FocusListener;
 
 public class DefaultValueTextField extends JTextField {
 
-	private ImageIcon searchIcon;
-	private String defaultValue;
+	//	private ImageIcon searchIcon;
+//	private String defaultValue;
 	private String defaultWarningValue;
 
 	@Override
 	public String getText() {
-		if (super.getText().equals(defaultWarningValue)) {
-			return null;
+		if (!StringUtilities.isNullOrEmpty(this.defaultWarningValue)) {
+			if (super.getText().equals(this.defaultWarningValue)) {
+				return null;
+			} else {
+				return super.getText();
+			}
 		} else {
 			return super.getText();
 		}
 	}
 
-	/**
-	 * 获得默认值
-	 *
-	 * @return
-	 */
-	public String getDefaultValue() {
-		return this.defaultValue;
-	}
+//	/**
+//	 * 获得默认值
+//	 *
+//	 * @return
+//	 */
+//	public String getDefaultValue() {
+//		return this.defaultValue;
+//	}
 
 	/**
 	 * 获得默认提示文本
@@ -55,31 +59,42 @@ public class DefaultValueTextField extends JTextField {
 		super();
 	}
 
+	/**
+	 * 输入默认提示信息
+	 *
+	 * @param defaultWarningValue
+	 */
+	public DefaultValueTextField(String defaultWarningValue) {
+		this("", defaultWarningValue);
+	}
+
 
 	/**
 	 * 构造函数
+	 * 输入默认值和默认提示信息
 	 *
 	 * @param Value
 	 * @param defaultWarningValue
 	 */
 	public DefaultValueTextField(String Value, String defaultWarningValue) {
-		super();
-		setDefaultValue(Value);
+		super(Value);
+//		setDefaultValue(Value);
 		setDefaulWarningText(defaultWarningValue);
 		initListener();
 	}
 
-	/**
-	 * 设置文本框默认值
-	 *
-	 * @param text
-	 */
-	public void setDefaultValue(String text) {
-		if (!StringUtilities.isNullOrEmpty(text)) {
-			this.defaultValue = text;
-			this.setText(this.defaultValue);
-		}
-	}
+//	/**
+//	 * 设置文本框默认值
+//	 *
+//	 * @param text
+//	 */
+//	public void setDefaultValue(String text) {
+//		if (!StringUtilities.isNullOrEmpty(text)) {
+//			this.defaultValue = text;
+//			this.setText(this.defaultValue);
+//
+//		}
+//	}
 
 	/**
 	 * 设置提示文本，当文本框值为空的时候，显示提示信息
@@ -89,6 +104,11 @@ public class DefaultValueTextField extends JTextField {
 	public void setDefaulWarningText(String text) {
 		if (!StringUtilities.isNullOrEmpty(text)) {
 			this.defaultWarningValue = text;
+			if (StringUtilities.isNullOrEmpty(getText())) {
+				this.setText(this.defaultWarningValue);
+				setForeground(Color.gray);
+			}
+			;
 		}
 	}
 
@@ -114,7 +134,7 @@ public class DefaultValueTextField extends JTextField {
 			}
 		});
 	}
-	//	/**
+//		/**
 //	 * @param g
 //	 */
 //	@Override

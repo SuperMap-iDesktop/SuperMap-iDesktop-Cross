@@ -604,9 +604,6 @@ public class SQLExpressionDialog extends SmDialog {
 		if (this.jTableFieldInfo == null) {
 			this.defaultTableModel = new DefaultTableModel(NAMES, 0);
 			this.jTableFieldInfo = new SmTable(defaultTableModel);
-			//为什么要关闭列宽自动适应？？---yuanR 17.1.11
-			//去除。实现jatble跟随窗口大小的改变自动适应
-			//	this.jTableFieldInfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			//仅支持单选--yuanR 17.1.12
 			this.jTableFieldInfo.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			//行高
