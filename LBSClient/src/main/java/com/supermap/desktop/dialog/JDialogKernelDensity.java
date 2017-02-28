@@ -143,7 +143,7 @@ public class JDialogKernelDensity extends SmDialog {
 		this.getRootPane().setDefaultButton(this.buttonOK);
 
 		initContentPane();
-		setSize(560, 400);
+		setSize(560, 410);
 		setLocationRelativeTo(null);
 
 		registerEvents();

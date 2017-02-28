@@ -121,6 +121,10 @@ public class JDialogLogin extends SmDialog {
         } else {
             IServerLoginInfo.client = client;
             IServerLoginInfo.login = true;
+            if (IServerLoginInfo.saveLoginInfo) {
+                IServerLoginInfo.username = username;
+                IServerLoginInfo.password = password;
+            }
             dialogResult = DialogResult.OK;
             dispose();
         }
