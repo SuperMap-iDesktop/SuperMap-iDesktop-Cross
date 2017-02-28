@@ -2,8 +2,8 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.meta.MetaKeys;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.utilities.FileUtilities;
 
 import javax.swing.*;
@@ -148,6 +148,11 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 	@Override
 	public JComponent getComponent() {
 		return null;
+	}
+
+	@Override
+	public void setInputs(Vector<ProcessData> inputs) {
+
 	}
 	//endregion
 }

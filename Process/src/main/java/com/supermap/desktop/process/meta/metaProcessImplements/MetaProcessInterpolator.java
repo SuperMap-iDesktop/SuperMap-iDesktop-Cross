@@ -1,7 +1,21 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.analyst.spatialanalyst.*;
-import com.supermap.data.*;
+import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
+import com.supermap.analyst.spatialanalyst.InterpolationIDWParameter;
+import com.supermap.analyst.spatialanalyst.InterpolationKrigingParameter;
+import com.supermap.analyst.spatialanalyst.InterpolationParameter;
+import com.supermap.analyst.spatialanalyst.InterpolationRBFParameter;
+import com.supermap.analyst.spatialanalyst.Interpolator;
+import com.supermap.analyst.spatialanalyst.SearchMode;
+import com.supermap.analyst.spatialanalyst.VariogramMode;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
+import com.supermap.data.PixelFormat;
+import com.supermap.data.Rectangle2D;
+import com.supermap.data.SteppedEvent;
+import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
@@ -9,8 +23,14 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.ParameterSearchModeInfo;
-import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.implement.DefaultParameters;
+import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.implement.ParameterSearchMode;
+import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.PixelFormatProperties;
 
@@ -187,11 +207,14 @@ public class MetaProcessInterpolator extends MetaProcess {
             ((InterpolationKrigingParameter) interpolationParameter).setNugget((Double) parameterNugget.getSelectedItem());
         }
         Interpolator.addSteppedListener(this.stepLitener);
-        Interpolator.interpolate(interpolationParameter, ((DatasetVector) parameterDataset.getSelectedItem()),
-                parameterInterpolatorFields.getSelectedItem().toString(), ((double) parameterScaling.getSelectedItem()),
-                ((Datasource) parameterResultDatasource.getSelectedItem()), parameterResultDatasetName.getSelectedItem().toString(),
-                (PixelFormat) ((ParameterDataNode) parameterPixelType.getSelectedItem()).getData());
-        Interpolator.removeSteppedListener(this.stepLitener);
+	    DatasetGrid dataset = Interpolator.interpolate(interpolationParameter, ((DatasetVector) parameterDataset.getSelectedItem()),
+			    parameterInterpolatorFields.getSelectedItem().toString(), ((double) parameterScaling.getSelectedItem()),
+			    ((Datasource) parameterResultDatasource.getSelectedItem()), parameterResultDatasetName.getSelectedItem().toString(),
+			    (PixelFormat) ((ParameterDataNode) parameterPixelType.getSelectedItem()).getData());
+	    Interpolator.removeSteppedListener(this.stepLitener);
+	    ProcessData processData = new ProcessData();
+	    processData.setData(dataset);
+	    outPuts.set(0, processData);
     }
 
     public InterpolationAlgorithmType getInterpolationAlgorithmType() {

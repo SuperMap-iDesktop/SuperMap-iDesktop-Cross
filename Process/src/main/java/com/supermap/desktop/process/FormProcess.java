@@ -1,49 +1,35 @@
 package com.supermap.desktop.process;
 
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.enums.WindowType;
+import com.supermap.desktop.event.FormActivatedListener;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosedListener;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormClosingListener;
+import com.supermap.desktop.event.FormDeactivatedListener;
+import com.supermap.desktop.event.FormShownEvent;
+import com.supermap.desktop.event.FormShownListener;
+import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
+import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.ui.FormBaseChild;
-import org.jhotdraw.draw.DefaultDrawing;
-import org.jhotdraw.draw.DefaultDrawingEditor;
-import org.jhotdraw.draw.DefaultDrawingView;
-import org.jhotdraw.draw.RectangleFigure;
-import org.jhotdraw.draw.tool.CreationTool;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * Created by highsad on 2017/1/6.
  */
-public class FormProcess extends JPanel {
+public class FormProcess extends FormBaseChild implements IForm {
+	private GraphCanvas graphCanvas = new GraphCanvas();
 
-	private DefaultDrawingView drawingView;
-	private DefaultDrawing drawing;
-	private DefaultDrawingEditor drawingEditor;
-
-//	public FormProcess(String title, Icon icon, Component component) {
-//		super(title, icon, component);
-//	}
 
 	public FormProcess() {
-		this.drawing = new DefaultDrawing();
-		this.drawingEditor = new DefaultDrawingEditor();
-		this.drawingView = new DefaultDrawingView();
-		this.drawingView.setDrawing(this.drawing);
-		this.drawingEditor.add(this.drawingView);
-		this.drawingEditor.setActiveView(this.drawingView);
-
-		JButton button = new JButton("test");
-		button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				drawingEditor.setTool(new CreationTool(new RectangleFigure()));
-			}
-		});
-
+		super("", null, null);
 		setLayout(new BorderLayout());
-		add(button, BorderLayout.NORTH);
-		add(this.drawingView, BorderLayout.CENTER);
+		add(graphCanvas, BorderLayout.CENTER);
 	}
 
 	public static void main(String[] args) {
@@ -59,4 +45,149 @@ public class FormProcess extends JPanel {
 			}
 		});
 	}
+
+	//region ignore
+	@Override
+	public String getText() {
+		return "工作流";
+	}
+
+	@Override
+	public void setText(String text) {
+
+	}
+
+	@Override
+	public WindowType getWindowType() {
+		return WindowType.UNKNOWN;
+	}
+
+	@Override
+	public boolean save() {
+		return false;
+	}
+
+	@Override
+	public boolean save(boolean notify, boolean isNewWindow) {
+		return false;
+	}
+
+	@Override
+	public boolean saveFormInfos() {
+		return false;
+	}
+
+	@Override
+	public boolean saveAs(boolean isNewWindow) {
+		return false;
+	}
+
+	@Override
+	public boolean isNeedSave() {
+		return false;
+	}
+
+	@Override
+	public void setNeedSave(boolean needSave) {
+
+	}
+
+	@Override
+	public boolean isActivated() {
+		return false;
+	}
+
+	@Override
+	public void actived() {
+
+	}
+
+	@Override
+	public void deactived() {
+
+	}
+
+	@Override
+	public void formShown(FormShownEvent e) {
+
+	}
+
+	@Override
+	public void formClosing(FormClosingEvent e) {
+
+	}
+
+	@Override
+	public void formClosed(FormClosedEvent e) {
+
+	}
+
+	@Override
+	public void addFormActivatedListener(FormActivatedListener listener) {
+
+	}
+
+	@Override
+	public void removeFormActivatedListener(FormActivatedListener listener) {
+
+	}
+
+	@Override
+	public void addFormDeactivatedListener(FormDeactivatedListener listener) {
+
+	}
+
+	@Override
+	public void removeFormDeactivatedListener(FormDeactivatedListener listener) {
+
+	}
+
+	@Override
+	public void addFormClosingListener(FormClosingListener listener) {
+
+	}
+
+	@Override
+	public void removeFormClosingListener(FormClosingListener listener) {
+
+	}
+
+	@Override
+	public void addFormClosedListener(FormClosedListener listener) {
+
+	}
+
+	@Override
+	public void removeFormClosedListener(FormClosedListener listener) {
+
+	}
+
+	@Override
+	public void addFormShownListener(FormShownListener listener) {
+
+	}
+
+	@Override
+	public void removeFormShownListener(FormShownListener listener) {
+
+	}
+
+	@Override
+	public void clean() {
+
+	}
+
+	@Override
+	public boolean isClosed() {
+		return false;
+	}
+
+	public void addProcess(IProcess process) {
+		RectangleGraph graph = new ProcessGraph(graphCanvas, process);
+		graph.setSize(200, 150);
+		graph.setArcWidth(20);
+		graph.setArcHeight(30);
+		graphCanvas.createGraph(graph);
+	}
+	//endregion
 }

@@ -13,6 +13,7 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.properties.CoreProperties;
 
 import javax.swing.*;
@@ -51,7 +52,7 @@ public class MetaProcessProjection extends MetaProcess {
 
 	@Override
 	public void run() {
-		Dataset dataset = null;// todo 数据集来源
+		Dataset dataset = (Dataset) inputs.get(0).getData();
 		fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
 		GeoCoordSysType geoCoordSysType = (GeoCoordSysType) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData();
 		GeoCoordSys geoCoordSys = new GeoCoordSys(geoCoordSysType, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
@@ -59,6 +60,9 @@ public class MetaProcessProjection extends MetaProcess {
 		prjCoordSys.setGeoCoordSys(geoCoordSys);
 		dataset.setPrjCoordSys(prjCoordSys);
 		fireRunning(new RunningEvent(this, 100, "set geoCoorSys finished"));
+		ProcessData processData = new ProcessData();
+		processData.setData(dataset);
+		outPuts.set(0, processData);
 	}
 
 	@Override

@@ -20,9 +20,11 @@ import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
+import java.util.Vector;
 
 /**
  * @author XiaJT
@@ -43,6 +45,7 @@ public class MetaProcessBuffer extends MetaProcess {
 			fireRunning(new RunningEvent(MetaProcessBuffer.this, steppedEvent.getPercent(), steppedEvent.getMessage()));
 		}
 	};
+	private Vector<ProcessData> processDatas;
 
 	public MetaProcessBuffer() {
 		parameters = new DefaultParameters();
@@ -108,7 +111,7 @@ public class MetaProcessBuffer extends MetaProcess {
 	@Override
 	public void run() {
 		// fixme 数据集来源
-		DatasetVector datasetVector = null;
+		DatasetVector datasetVector = (DatasetVector) getInputs().get(0).getData();
 
 		BufferRadiusUnit radiusUnit = (BufferRadiusUnit) ((ParameterDataNode) parameterBufferRange.getSelectedItem()).getData();
 		int radius = Integer.valueOf((String) parameterTextFieldRadius.getSelectedItem());
@@ -132,5 +135,8 @@ public class MetaProcessBuffer extends MetaProcess {
 		BufferAnalyst.addSteppedListener(this.steppedListener);
 		BufferAnalyst.createBuffer(datasetVector, result, parameter, isUnion, isAttributeRetained);
 		BufferAnalyst.removeSteppedListener(this.steppedListener);
+		ProcessData processData = new ProcessData();
+		processData.setData(datasetVector);
+		outPuts.set(0, processData);
 	}
 }

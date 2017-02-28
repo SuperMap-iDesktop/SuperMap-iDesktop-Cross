@@ -9,8 +9,10 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
+import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterOverlayAnalyst;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
 import javax.swing.*;
@@ -21,8 +23,8 @@ import java.text.MessageFormat;
  * 叠加分析
  */
 public class MetaProcessOverlayAnalyst extends MetaProcess {
-    private IParameters parameters;
-    private OverlayAnalystType analystType;
+	private IParameters parameters = new DefaultParameters();
+	private OverlayAnalystType analystType;
     private ParameterOverlayAnalyst parameterOverlayAnalyst;
 
     private SteppedListener steppedListener = new SteppedListener() {
@@ -98,6 +100,10 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
                 break;
         }
         OverlayAnalyst.removeSteppedListener(this.steppedListener);
+
+	    ProcessData processData = new ProcessData();
+	    processData.setData(info.sourceDataset);
+	    outPuts.set(0, processData);
     }
 
     private boolean isSameProjection(PrjCoordSys prjCoordSys, PrjCoordSys prjCoordSys1) {
