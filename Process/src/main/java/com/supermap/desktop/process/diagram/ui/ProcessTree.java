@@ -2,6 +2,7 @@ package com.supermap.desktop.process.diagram.ui;
 
 import com.supermap.desktop.controls.drop.DropAndDragHandler;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.IProcessGroup;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
@@ -28,7 +29,7 @@ public class ProcessTree extends JPanel {
         initComponents();
         initLayout();
         initResouces();
-        new TreeDropAndDragHandler(DataFlavor.stringFlavor).bindSource(this.processTree).addDropTarget(this);
+        new TreeDropAndDragHandler(DataFlavor.stringFlavor).bindSource(this.processTree).addDropTarget(this.processTree);
     }
 
     class TreeDropAndDragHandler extends DropAndDragHandler {
@@ -36,12 +37,16 @@ public class ProcessTree extends JPanel {
             super(flavor);
         }
 
-        ;
-
         @Override
         public Object getTransferData(DragGestureEvent dge) {
             JTree tree = (JTree) dge.getComponent();
-            return ((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject().toString();
+            String result = "";
+            if (((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject() instanceof IProcess) {
+                result = ((IProcess) ((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject()).getTitle();
+            } else {
+                result = ((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject().toString();
+            }
+            return result;
         }
     }
 
@@ -54,7 +59,7 @@ public class ProcessTree extends JPanel {
     }
 
     /**
-     * 添加
+     * 添加节点
      *
      * @param processGroup
      */
