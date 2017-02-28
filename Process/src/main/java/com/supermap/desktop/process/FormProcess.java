@@ -182,9 +182,13 @@ public class FormProcess extends FormBaseChild implements IForm {
 		return false;
 	}
 
+	public GraphCanvas getCanvas() {
+		return this.graphCanvas;
+	}
+
 	public void addProcess(IProcess process) {
 		RectangleGraph graph = new ProcessGraph(graphCanvas, process);
-		graph.setSize(200, 80);
+		graph.setSize(150, 60);
 		graph.setArcWidth(20);
 		graph.setArcHeight(30);
 		graphCanvas.createGraph(graph);

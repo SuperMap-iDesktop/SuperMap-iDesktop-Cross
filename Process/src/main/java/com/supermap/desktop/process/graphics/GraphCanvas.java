@@ -2,6 +2,7 @@ package com.supermap.desktop.process.graphics;
 
 import com.supermap.desktop.event.SelectedChangeListener;
 import com.supermap.desktop.implement.Output;
+import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.graphs.*;
@@ -19,6 +20,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
 
@@ -354,7 +356,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 					OutputGraph graph = new OutputGraph(this, data);
 					graph.setSize(160, 60);
 					Point location = new Point();
-					location.setLocation(this.previewGraph.getLocation().getX() + this.previewGraph.getWidth() + 150,
+					location.setLocation(this.previewGraph.getLocation().getX() + this.previewGraph.getWidth() + 100,
 							this.previewGraph.getLocation().getY() + (this.previewGraph.getHeight() - graph.getHeight()) / 2);
 					graph.setLocation(location);
 					Rectangle graphBounds = graph.getBounds();
@@ -499,5 +501,16 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		for (int i = 0; i < this.selectChangedListeners.size(); i++) {
 			this.selectChangedListeners.get(i).GraphSelectChanged(e);
 		}
+	}
+
+	public ArrayList<IProcess> getTasks() {
+		ArrayList<IProcess> re = new ArrayList<>();
+
+		ArrayList<LineGraph> checked = new ArrayList<>();
+		for (int i = 0; i < this.lines.size(); i++) {
+			LineGraph line = this.lines.get(i);
+
+		}
+		return re;
 	}
 }
