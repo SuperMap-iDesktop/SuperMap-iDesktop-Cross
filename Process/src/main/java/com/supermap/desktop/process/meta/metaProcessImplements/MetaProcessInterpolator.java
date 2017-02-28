@@ -194,6 +194,10 @@ public class MetaProcessInterpolator extends MetaProcess {
         Interpolator.removeSteppedListener(this.stepLitener);
     }
 
+    public InterpolationAlgorithmType getInterpolationAlgorithmType() {
+        return interpolationAlgorithmType;
+    }
+
     public void setInterpolationParameter(InterpolationParameter interpolationParameter) {
         Rectangle2D bounds = new Rectangle2D();
         bounds.setLeft((Double) parameterBoundsLeft.getSelectedItem());

@@ -8,6 +8,7 @@ import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterOverlayAnalyst;
+import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.FieldsSetDialog;
 import com.supermap.desktop.ui.SMFormattedTextField;
@@ -352,6 +353,9 @@ public class ParameterOverlayAnalystPanel extends JPanel {
 
     private void initPanelTargetLayout() {
         this.panelTarget.setLayout(new GridBagLayout());
+        this.labelTargetDatasource.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
+        this.labelTargetDataset.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
+        this.labelTolerance.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
         this.panelTarget.add(this.labelTargetDatasource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.panelTarget.add(this.comboboxTargetDatasource, new GridBagConstraintsHelper(1, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
         this.panelTarget.add(this.labelTargetDataset, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
@@ -365,6 +369,8 @@ public class ParameterOverlayAnalystPanel extends JPanel {
 
     private void initPanelOverlayAnalystLayout() {
         this.panelOverlayAnalyst.setLayout(new GridBagLayout());
+        this.labelOverlayAnalystDatasource.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
+        this.labelOverlayAnalystDataset.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
         this.panelOverlayAnalyst.add(this.labelOverlayAnalystDatasource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.panelOverlayAnalyst.add(this.comboboxOverlayAnalystDatasource, new GridBagConstraintsHelper(1, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
         this.panelOverlayAnalyst.add(this.labelOverlayAnalystDataset, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
@@ -373,6 +379,8 @@ public class ParameterOverlayAnalystPanel extends JPanel {
 
     private void initPanelSourceLayout() {
         this.panelSource.setLayout(new GridBagLayout());
+        this.labelSourceDatasource.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
+        this.labelSourceDataset.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
         this.panelSource.add(this.labelSourceDatasource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.panelSource.add(this.comboboxSourceDatasource, new GridBagConstraintsHelper(1, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
         this.panelSource.add(this.labelSourceDataset, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));

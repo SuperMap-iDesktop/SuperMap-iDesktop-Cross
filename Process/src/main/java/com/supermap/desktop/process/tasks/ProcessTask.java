@@ -1,9 +1,11 @@
 package com.supermap.desktop.process.tasks;
 
+import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
 import com.supermap.desktop.Interface.IAfterWork;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.meta.MetaKeys;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessInterpolator;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessOverlayAnalyst;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
@@ -307,8 +309,21 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
                 default:
                     break;
             }
-        }// TODO
-        // else if
+        } else if (process.getKey().equals(MetaKeys.INTERPOLATOR)) {
+            InterpolationAlgorithmType type = ((MetaProcessInterpolator) process).getInterpolationAlgorithmType();
+            if (type.equals(InterpolationAlgorithmType.IDW)) {
+                labelTitle.setText(ControlsProperties.getString("String_Interpolator_IDW"));
+            } else if (type.equals(InterpolationAlgorithmType.RBF)) {
+                labelTitle.setText(ControlsProperties.getString("String_Interpolator_RBF"));
+            } else if (type.equals(InterpolationAlgorithmType.KRIGING)) {
+                labelTitle.setText(ControlsProperties.getString("String_Interpolator_KRIGING"));
+            } else if (type.equals(InterpolationAlgorithmType.SimpleKRIGING)) {
+                labelTitle.setText(ControlsProperties.getString("String_Interpolator_SimpleKRIGING"));
+            } else if (type.equals(InterpolationAlgorithmType.UniversalKRIGING)) {
+                labelTitle.setText(ControlsProperties.getString("String_Interpolator_UniversalKRIGING"));
+            }
+        }
+
     }
 
     @Override
