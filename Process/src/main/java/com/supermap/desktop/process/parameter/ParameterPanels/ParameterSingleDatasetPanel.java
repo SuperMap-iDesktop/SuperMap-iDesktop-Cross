@@ -43,9 +43,10 @@ public class ParameterSingleDatasetPanel extends JPanel {
     private void initComponents() {
         this.labelDataset = new JLabel();
         this.labelDataset.setText(CommonProperties.getString(CommonProperties.Label_Datasource));
-        if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0)
-            this.datasetComboBox = new DatasetComboBox(Application.getActiveApplication().getActiveDatasources()[0].getDatasets());
-        this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
+	    if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
+		    this.datasetComboBox = new DatasetComboBox(Application.getActiveApplication().getWorkspace().getDatasources().get(0).getDatasets());
+		    this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
+	    }
     }
 
     private void initLayout() {
