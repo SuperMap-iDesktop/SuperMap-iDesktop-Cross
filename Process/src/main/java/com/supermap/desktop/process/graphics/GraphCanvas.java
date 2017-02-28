@@ -3,6 +3,7 @@ package com.supermap.desktop.process.graphics;
 import com.supermap.desktop.event.SelectedChangeListener;
 import com.supermap.desktop.implement.Output;
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.UniversalMatrix;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.graphs.*;
@@ -353,7 +354,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 						data = ((ProcessGraph) this.previewGraph).getProcess().getOutputs().get(0);
 					}
 
-					OutputGraph graph = new OutputGraph(this, data);
+					OutputGraph graph = new OutputGraph(this, (ProcessGraph) this.previewGraph, data);
 					graph.setSize(160, 60);
 					Point location = new Point();
 					location.setLocation(this.previewGraph.getLocation().getX() + this.previewGraph.getWidth() + 100,
@@ -503,13 +504,18 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		}
 	}
 
-	public ArrayList<IProcess> getTasks() {
-		ArrayList<IProcess> re = new ArrayList<>();
+	public UniversalMatrix getTasks() {
+		UniversalMatrix re = new UniversalMatrix();
 
-		ArrayList<LineGraph> checked = new ArrayList<>();
 		for (int i = 0; i < this.lines.size(); i++) {
 			LineGraph line = this.lines.get(i);
-
+			if (line.getPreProcess() instanceof OutputGraph || line.getNextProcess() instanceof ProcessGraph) {
+				IProcess processF = ((OutputGraph) line.getPreProcess()).getProcessGraph().getProcess();
+				IProcess processT = ((ProcessGraph) line.getNextProcess()).getProcess();
+				re.addNode(processF);
+				re.addNode(processT);
+				re.addProcessRelationship(processF.getTitle(), processT.getTitle(), 8);
+			}
 		}
 		return re;
 	}

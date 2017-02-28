@@ -8,11 +8,17 @@ import com.supermap.desktop.process.parameter.interfaces.ProcessData;
  */
 public class OutputGraph extends EllipseGraph {
 
+	private ProcessGraph processGraph;
 	private ProcessData processData;
 
-	public OutputGraph(GraphCanvas canvas, ProcessData processData) {
+	public OutputGraph(GraphCanvas canvas, ProcessGraph processGraph, ProcessData processData) {
 		super(canvas);
+		this.processGraph = processGraph;
 		this.processData = processData;
+	}
+
+	public ProcessGraph getProcessGraph() {
+		return processGraph;
 	}
 
 	public ProcessData getProcessData() {
