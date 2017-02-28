@@ -92,7 +92,9 @@ public class DefaultGraphPainter implements IGraphPainter {
 		Point end = lineGraph.getEnd();
 		graphics.drawLine(start.x, start.y, end.x, end.y);
 
-		if (lineGraph.getPreProcess() instanceof OutputGraph && lineGraph.getNextProcess() instanceof ProcessGraph) {
+		if (lineGraph.getPreProcess() instanceof OutputGraph && ((
+				lineGraph.getNextProcess() == null && lineGraph.getEnd() != null) ||
+				lineGraph.getNextProcess() instanceof ProcessGraph)) {
 			Point[] points = calArrow(start, end);
 			graphics.drawLine(points[0].x, points[0].y, end.x, end.y);
 			graphics.drawLine(points[1].x, points[1].y, end.x, end.y);

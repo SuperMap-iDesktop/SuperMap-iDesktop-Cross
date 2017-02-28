@@ -34,7 +34,7 @@ public class LineGraph extends AbstractGraph {
 	}
 
 	public Point[] getPoints() {
-		if (this.preProcess == null || this.nextProcess == null) {
+		if (this.preProcess == null || (this.nextProcess == null && this.end == null)) {
 			return null;
 		}
 		Point[] re = new Point[2];
@@ -75,21 +75,25 @@ public class LineGraph extends AbstractGraph {
 				re[1] = nextTopCenter;
 			}
 		} else {
-			if (this.preProcess.getLocation().getX() > this.end.getX()) {
-				re[0] = preLeftCenter;
-				re[1] = this.end;
-			} else if (this.preProcess.getLocation().getX() + this.preProcess.getWidth() < this.end.getX()) {
-				re[0] = preRightCenter;
-				re[1] = this.end;
-			} else if (this.preProcess.getLocation().getY() > this.end.getY()) {
-				re[0] = preTopCenter;
-				re[1] = this.end;
-			} else if (this.preProcess.getLocation().getY() + this.preProcess.getHeight() < this.end.getY()) {
-				re[0] = preBottomCenter;
-				re[1] = this.end;
-			} else {
-				re[0] = preBottomCenter;
-				re[1] = this.end;
+			try {
+				if (this.preProcess.getLocation().getX() > this.end.getX()) {
+					re[0] = preLeftCenter;
+					re[1] = this.end;
+				} else if (this.preProcess.getLocation().getX() + this.preProcess.getWidth() < this.end.getX()) {
+					re[0] = preRightCenter;
+					re[1] = this.end;
+				} else if (this.preProcess.getLocation().getY() > this.end.getY()) {
+					re[0] = preTopCenter;
+					re[1] = this.end;
+				} else if (this.preProcess.getLocation().getY() + this.preProcess.getHeight() < this.end.getY()) {
+					re[0] = preBottomCenter;
+					re[1] = this.end;
+				} else {
+					re[0] = preBottomCenter;
+					re[1] = this.end;
+				}
+			} catch (Exception e) {
+				System.out.println(e);
 			}
 		}
 

@@ -36,7 +36,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private AbstractDecorator previewDecorator = new PreviewDecorator(this);
 	private IGraph previewGraph;
 
-	private QuadTree<IGraph> graphQuadTree = new QuadTree<>();
+	private QuadTreeTemp<IGraph> graphQuadTree = new QuadTreeTemp<>();
 	private ArrayList<LineGraph> lines = new ArrayList<>();
 	private double scale = 1.0;
 	private IGraph selectedGraph; // Decorator 的类结构还需要优化，现在接收 AbstractGraph 会导致 hot selected preview Decorator 扩展不易
@@ -356,6 +356,15 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 					repaint();
 				}
 				this.previewGraph = null;
+			} else if (this.line != null) {
+				IGraph graph = findGraph(e.getPoint());
+
+				if (graph != null && graph instanceof ProcessGraph) {
+					this.line.setNextProcess(graph);
+					this.lines.add(this.line);
+					repaint();
+				}
+				this.line = null;
 			}
 		} else if (SwingUtilities.isRightMouseButton(e)) {
 			this.previewGraph = null;
@@ -373,6 +382,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		this.draggedGraph = null;
 		this.dragBegin = null;
 		this.dragCenter = null;
+		this.line = null;
 	}
 
 	@Override
@@ -381,6 +391,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			if (this.line != null) {
 				if (this.line.getPreProcess() != null) {
 					this.line.setEnd(e.getPoint());
+					repaint();
 				}
 			} else if (this.draggedGraph != null && this.dragBegin != null) {
 				this.graphQuadTree.remove(this.draggedGraph);
