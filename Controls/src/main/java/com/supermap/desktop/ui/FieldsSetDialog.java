@@ -3,7 +3,7 @@ package com.supermap.desktop.ui;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
-import com.supermap.desktop.ui.controls.ChooseTable.SmChooseTable;
+import com.supermap.desktop.ui.controls.ChooseTable.SmFieldsChooseTable;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
@@ -23,8 +23,8 @@ import java.util.ArrayList;
  */
 public class FieldsSetDialog extends SmDialog {
 
-    private SmChooseTable smChooseTableSourceFields;
-    private SmChooseTable smChooseTableOverlayAnalystFields;
+    private SmFieldsChooseTable smFieldsChooseTableSourceFields;
+    private SmFieldsChooseTable smFieldsChooseTableOverlayAnalystFields;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JScrollPane scrollpaneSourceFields;
@@ -36,8 +36,8 @@ public class FieldsSetDialog extends SmDialog {
     private ActionListener buttonOKListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            ArrayList<String> sourceFieldList = smChooseTableSourceFields.getSelectedFieldsName();
-            ArrayList<String> overlayAnaylstList = smChooseTableOverlayAnalystFields.getSelectedFieldsName();
+            ArrayList<String> sourceFieldList = smFieldsChooseTableSourceFields.getSelectedFieldsName();
+            ArrayList<String> overlayAnaylstList = smFieldsChooseTableOverlayAnalystFields.getSelectedFieldsName();
 
             sourceFields = sourceFieldList.toArray(new String[sourceFieldList.size()]);
             overlayAnalystFields = overlayAnaylstList.toArray(new String[overlayAnaylstList.size()]);
@@ -99,10 +99,10 @@ public class FieldsSetDialog extends SmDialog {
         scrollpaneOverlayAnalystFields = new JScrollPane();
         panelSourceFields.setLayout(new GridBagLayout());
         panelSourceFields.add(scrollpaneSourceFields, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        scrollpaneSourceFields.setViewportView(smChooseTableSourceFields);
+        scrollpaneSourceFields.setViewportView(smFieldsChooseTableSourceFields);
         panelOverlayAnalystFields.setLayout(new GridBagLayout());
         panelOverlayAnalystFields.add(scrollpaneOverlayAnalystFields, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 5).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-        scrollpaneOverlayAnalystFields.setViewportView(smChooseTableOverlayAnalystFields);
+        scrollpaneOverlayAnalystFields.setViewportView(smFieldsChooseTableOverlayAnalystFields);
 
         panelSourceFields.setBorder(new TitledBorder(ControlsProperties.getString("String_Label_SourceDatasetFields")));
         panelOverlayAnalystFields.setBorder(new TitledBorder(ControlsProperties.getString("String_Label_OverlayDatasetFields")));
@@ -121,8 +121,8 @@ public class FieldsSetDialog extends SmDialog {
     }
 
     private void initComponents() {
-        this.smChooseTableSourceFields=new SmChooseTable(sourceDataset);
-        this.smChooseTableOverlayAnalystFields =new SmChooseTable(overlayAnalystDataset);
+        this.smFieldsChooseTableSourceFields =new SmFieldsChooseTable(sourceDataset);
+        this.smFieldsChooseTableOverlayAnalystFields =new SmFieldsChooseTable(overlayAnalystDataset);
 
         this.buttonOK = ComponentFactory.createButtonOK();
         this.buttonCancel = ComponentFactory.createButtonCancel();

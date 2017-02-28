@@ -41,7 +41,7 @@ public class LineInterruptEditor extends AbstractEditor {
             environment.getMap().getTrackingLayer().clear();
             if (SwingUtilities.isRightMouseButton(e)) {
                 LineInterruptModel editModel = (LineInterruptModel) environment.getEditModel();
-                editModel.oldMapControlAction=Action.SELECT2;
+                editModel.oldMapControlAction = Action.SELECT2;
                 environment.stopEditor();
             } else if (SwingUtilities.isLeftMouseButton(e)) {
                 if (isCanInterrupt(environment)) {
@@ -52,11 +52,13 @@ public class LineInterruptEditor extends AbstractEditor {
                     }
                     //多条线需要选择并且,选择后确定才能打断
                     if (resultRecordset.getRecordCount() > 1) {
-                        JDialogLineInterrruptSelect jDialogLineInterrruptSelect = new JDialogLineInterrruptSelect(environment,resultRecordset, ((LineInterruptModel) environment.getEditModel()).hasCommonNodeLineIDs);
+                        JDialogLineInterrruptSelect jDialogLineInterrruptSelect = new JDialogLineInterrruptSelect(environment, resultRecordset, ((LineInterruptModel) environment.getEditModel()).hasCommonNodeLineIDs, (JFrame) Application.getActiveApplication().getMainFrame(), true);
                         DialogResult result = jDialogLineInterrruptSelect.showDialog();
                         if (result == DialogResult.OK) {
-                            ((LineInterruptModel) environment.getEditModel()).setHasCommonNodeLineIDs(jDialogLineInterrruptSelect.getSelectedLineIds());
-                            runInterruptLine(environment);
+                            if (jDialogLineInterrruptSelect.getSelectedLineIds().size() > 0) {
+                                ((LineInterruptModel) environment.getEditModel()).setHasCommonNodeLineIDs(jDialogLineInterrruptSelect.getSelectedLineIds());
+                                runInterruptLine(environment);
+                            }
                         }
 
                     }
@@ -64,14 +66,6 @@ public class LineInterruptEditor extends AbstractEditor {
                 }
             }
         }
-
-//        @Override
-//        public void mousePressed(EditEnvironment environment, MouseEvent e) {
-//            if (e.getButton() == MouseEvent.BUTTON3) {
-//                environment.getMap().getTrackingLayer().clear();
-//                environment.stopEditor();
-//            }
-//        }
 
         @Override
         public void tracked(EditEnvironment environment, TrackedEvent e) {
@@ -82,7 +76,7 @@ public class LineInterruptEditor extends AbstractEditor {
         public void actionChanged(EditEnvironment environment, ActionChangedEvent e) {
 
             if (environment.getEditor() instanceof LineInterruptEditor && e.getOldAction() == Action.CREATEPOINT) {
-                if (e.getNewAction() == Action.PAN || e.getNewAction() == Action.PAN2 || e.getNewAction() == Action.ZOOMFREE || e.getNewAction() == Action.ZOOMFREE2 || e.getNewAction() == Action.ZOOMIN || e.getNewAction() == Action.ZOOMOUT ) {
+                if (e.getNewAction() == Action.PAN || e.getNewAction() == Action.PAN2 || e.getNewAction() == Action.ZOOMFREE || e.getNewAction() == Action.ZOOMFREE2 || e.getNewAction() == Action.ZOOMIN || e.getNewAction() == Action.ZOOMOUT) {
                     environment.getMapControl().setAction(Action.CREATEPOINT);
                 } else {
                     LineInterruptModel editModel = (LineInterruptModel) environment.getEditModel();
