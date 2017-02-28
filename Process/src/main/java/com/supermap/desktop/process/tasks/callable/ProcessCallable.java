@@ -1,10 +1,12 @@
 package com.supermap.desktop.process.tasks.callable;
 
+import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.meta.MetaKeys;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessInterpolator;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessOverlayAnalyst;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
@@ -53,7 +55,7 @@ public class ProcessCallable extends UpdateProgressCallable {
         } else if (process.getKey().equals(MetaKeys.KERNEL_DENSITY)) {
             result = ControlsProperties.getString("String_KernelDensityFinished");
         } else if (process.getKey().equals(MetaKeys.OVERLAY_ANALYST)) {
-            OverlayAnalystType analystType = ((MetaProcessOverlayAnalyst)process).getAnalystType();
+            OverlayAnalystType analystType = ((MetaProcessOverlayAnalyst) process).getAnalystType();
             switch (analystType) {
                 case CLIP:
                     result = ControlsProperties.getString("String_OverlayAnalyst_CLIPFinished");
@@ -78,6 +80,19 @@ public class ProcessCallable extends UpdateProgressCallable {
                     break;
                 default:
                     break;
+            }
+        } else if (process.getKey().equals(MetaKeys.INTERPOLATOR)) {
+            InterpolationAlgorithmType type = ((MetaProcessInterpolator) process).getInterpolationAlgorithmType();
+            if (type.equals(InterpolationAlgorithmType.IDW)) {
+                result = ControlsProperties.getString("String_Interpolator_IDWFinished");
+            } else if (type.equals(InterpolationAlgorithmType.RBF)) {
+                result = ControlsProperties.getString("String_Interpolator_RBFFinished");
+            } else if (type.equals(InterpolationAlgorithmType.KRIGING)) {
+                result = ControlsProperties.getString("String_Interpolator_KRIGINGFinished");
+            } else if (type.equals(InterpolationAlgorithmType.SimpleKRIGING)) {
+                result = ControlsProperties.getString("String_Interpolator_SimpleKRIGINGFinished");
+            } else if (type.equals(InterpolationAlgorithmType.UniversalKRIGING)) {
+                result = ControlsProperties.getString("String_Interpolator_UniversalKRIGINGFinished");
             }
         }
         return result;
