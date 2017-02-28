@@ -1,7 +1,14 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
+import com.supermap.desktop.process.meta.MetaProcess;
+import com.supermap.desktop.process.parameter.ParameterDataNode;
+import com.supermap.desktop.process.parameter.implement.DefaultParameters;
+import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
+import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
 import com.supermap.desktop.ui.lbs.params.BuildCacheDrawingSetting;
@@ -9,13 +16,6 @@ import com.supermap.desktop.ui.lbs.params.BuildCacheJobSetting;
 import com.supermap.desktop.ui.lbs.params.FileInputDataSetting;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
 import com.supermap.desktop.ui.lbs.params.MongoDBOutputsetting;
-import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
-import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
-import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.utilities.CursorUtilities;
 
 import javax.swing.*;
@@ -109,7 +109,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 		BuildCacheDrawingSetting drawing = new BuildCacheDrawingSetting();
 		drawing.imageType = ((ParameterDataNode) parameterCacheType.getSelectedItem()).getData().toString();
 		drawing.bounds = parameterBounds.getSelectedItem().toString();
-		;
+
 		drawing.level = parameterCacheLevel.getSelectedItem().toString();
 		drawing.xyIndex = parameterXYIndex.getSelectedItem().toString();
 		setting.input = input;
@@ -122,5 +122,6 @@ public class MetaProcessHeatMap extends MetaProcess {
 			CursorUtilities.setDefaultCursor();
             NewMessageBus.producer(this,response);
 		}
+
 	}
 }

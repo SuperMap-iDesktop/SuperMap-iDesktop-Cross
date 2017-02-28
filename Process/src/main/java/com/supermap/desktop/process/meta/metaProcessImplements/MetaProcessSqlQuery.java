@@ -1,13 +1,20 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.meta.MetaProcess;
+import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -20,8 +27,8 @@ import java.util.ArrayList;
  * sql查询简单实现
  */
 public class MetaProcessSqlQuery extends MetaProcess {
-    private IParameters parameters;
-    private ParameterSingleDataset dataset;
+	private IParameters parameters = new DefaultParameters();
+	private ParameterSingleDataset dataset;
     private ParameterTextArea parameterAttributeFilter;
     private ParameterTextArea parameterResultFields;
     private ParameterSaveDataset parameterSaveDataset;
@@ -81,11 +88,15 @@ public class MetaProcessSqlQuery extends MetaProcess {
                     resultRecord.dispose();
                     resultRecord = null;
                 }
+	            ProcessData processData = new ProcessData();
+	            processData.setData(resultRecord);
+	            outPuts.set(0, processData);
 
                 // 保存查询结果
                 saveQueryResult(resultRecord);
             }
         }
+
     }
 
     private void saveQueryResult(Recordset resultRecord) {

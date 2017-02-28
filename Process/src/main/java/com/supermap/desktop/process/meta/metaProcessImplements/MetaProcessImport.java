@@ -21,6 +21,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterFile;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
 
 import javax.swing.*;
@@ -122,5 +123,8 @@ public class MetaProcessImport extends MetaProcess {
 		ImportResult run = dataImport.run();
 		ImportSetting[] succeedSettings = run.getSucceedSettings();
 		Dataset dataset = succeedSettings[0].getTargetDatasource().getDatasets().get(0);
+		ProcessData processData = new ProcessData();
+		processData.setData(dataset);
+		outPuts.set(0, processData);
 	}
 }

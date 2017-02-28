@@ -10,6 +10,7 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
 import javax.swing.*;
@@ -44,13 +45,14 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 
 	@Override
 	public void run() {
-		// TODO: 2017/1/18 数据集来源
-		DatasetVector dataset = null;
+		DatasetVector dataset = (DatasetVector) inputs.get(0).getData();
 		SpatialIndexType spatialIndexType = (SpatialIndexType) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData();
 		fireRunning(new RunningEvent(this, 0, "start build spatial index"));
 		dataset.buildSpatialIndex(spatialIndexType);
 		fireRunning(new RunningEvent(this, 100, "build spatial index finished"));
-
+		ProcessData processData = new ProcessData();
+		processData.setData(dataset);
+		outPuts.set(0, processData);
 	}
 
 	@Override
