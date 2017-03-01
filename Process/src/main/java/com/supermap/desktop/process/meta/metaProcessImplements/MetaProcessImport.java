@@ -26,6 +26,7 @@ import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
 
 import javax.swing.*;
+import java.io.File;
 
 /**
  * @author XiaJT
@@ -101,14 +102,14 @@ public class MetaProcessImport extends MetaProcess {
 
 	@Override
 	public void run() {
+		String filePath = ((File) parameterImportFile.getSelectedItem()).getPath();
 		fireRunning(new RunningEvent(this, 0, "start"));
-		String filePath = (String) parameterImportFile.getSelectedItem();
 		String datasetName = parameterSaveDataset.getDatasetName();
 		Datasource datasource = parameterSaveDataset.getResultDatasource();
 		EncodeType data = (EncodeType) ((ParameterDataNode) comboBoxEncodeType.getSelectedItem()).getData();
-		ImportMode importMode = (ImportMode) comboBoxImportMode.getSelectedItem();
-		boolean createFieldIndex = (boolean) checkBoxCreateFieldIndex.getSelectedItem();// 喵喵喵？？？
-		boolean createSpaceIndex = (boolean) checkBoxCreateSpaceIndex.getSelectedItem();// 喵喵喵？？？
+		ImportMode importMode = (ImportMode) ((ParameterDataNode) comboBoxImportMode.getSelectedItem()).getData();
+//		boolean createFieldIndex = (boolean) checkBoxCreateFieldIndex.getSelectedItem();// 喵喵喵？？？
+//		boolean createSpaceIndex = (boolean) checkBoxCreateSpaceIndex.getSelectedItem();// 喵喵喵？？？
 
 		ImportSettingSHP importSettingSHP = new ImportSettingSHP(filePath, datasource);
 		importSettingSHP.setTargetEncodeType(data);

@@ -58,6 +58,7 @@ public class ParameterSaveDatasetPanel extends JPanel {
 		initLayout();
 		initListener();
 		initComponentState();
+		parameterSaveDataset.setResultDatasource(datasourceComboBox.getSelectedDatasource());
 	}
 
 	private void initLayout() {
