@@ -4,9 +4,7 @@ import com.supermap.analyst.spatialanalyst.OverlayAnalystParameter;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
 import com.supermap.data.Datasets;
-import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -125,7 +123,7 @@ public class ParameterOverlayAnalystPanel extends JPanel {
 		removeReadOnlyAndMemoryDatasource();
 		this.labelTargetDatasource = new JLabel();
 		this.labelTargetDataset = new JLabel();
-		this.textFieldTargetDataset = new JTextField();
+		this.textFieldTargetDataset = new JTextField("OverlayAnalystDataset");
 		this.buttonFieldsSet = new JButton();
 		this.labelTolerance = new JLabel();
 		NumberFormat numberInstance = NumberFormat.getNumberInstance();

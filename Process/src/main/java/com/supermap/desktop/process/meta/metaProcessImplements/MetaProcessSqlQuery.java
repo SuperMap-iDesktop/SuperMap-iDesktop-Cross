@@ -49,7 +49,9 @@ public class MetaProcessSqlQuery extends MetaProcess {
 			this.dataset.setSelectedItem(Application.getActiveApplication().getActiveDatasets()[0]);
 		}
 		parameterResultFields = new ParameterTextArea(CommonProperties.getString("String_QueryField"));
+		parameterResultFields.setSelectedItem("RoadLine.*");
 		parameterAttributeFilter = new ParameterTextArea(CommonProperties.getString("String_QueryCondition"));
+		parameterAttributeFilter.setSelectedItem("RoadLine.RoadLeve = 'Lev1'");
 		parameterSaveDataset = new ParameterSaveDataset();
 		parameterSaveDataset.setDatasetName("QueryResult");
 		parameters.setParameters(this.dataset, this.parameterResultFields,
