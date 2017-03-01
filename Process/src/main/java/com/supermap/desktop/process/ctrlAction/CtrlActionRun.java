@@ -1,6 +1,5 @@
 package com.supermap.desktop.process.ctrlAction;
 
-import com.sun.xml.internal.bind.v2.model.core.ID;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IDockbar;

@@ -54,7 +54,8 @@ public class ParameterHDFSPathPanel extends JPanel {
             public void propertyChange(PropertyChangeEvent evt) {
                 if (!isSelectingItem && AbstractParameter.PROPERTY_VALE.equals(evt.getPropertyName())) {
                     isSelectingItem = true;
-                    textFieldFileInputPath.setText((String) evt.getNewValue());
+                    WebHDFS.resultURL = textFieldFileInputPath.getText();
+                    parameterHDFSPath.setSelectedItem(WebHDFS.getResultHDFSFilePath());
                     isSelectingItem = false;
                 }
             }
@@ -68,7 +69,8 @@ public class ParameterHDFSPathPanel extends JPanel {
             private void changeHDFSPath() {
                 if (!isSelectingItem && !StringUtilities.isNullOrEmptyString(textFieldFileInputPath.getText())) {
                     isSelectingItem = true;
-                    parameterHDFSPath.setSelectedItem(textFieldFileInputPath.getText());
+                    WebHDFS.resultURL = textFieldFileInputPath.getText();
+                    parameterHDFSPath.setSelectedItem(WebHDFS.getResultHDFSFilePath());
                     isSelectingItem = false;
                 }
             }
@@ -90,7 +92,8 @@ public class ParameterHDFSPathPanel extends JPanel {
                 if (!isSelectingItem && hdfsFiles.showDialog() == DialogResult.OK
                         && !StringUtilities.isNullOrEmptyString(WebHDFS.getResultHDFSFilePath())) {
                     isSelectingItem = true;
-                    parameterHDFSPath.setSelectedItem(textFieldFileInputPath.getText());
+                    WebHDFS.resultURL = textFieldFileInputPath.getText();
+                    parameterHDFSPath.setSelectedItem(WebHDFS.getResultHDFSFilePath());
                     isSelectingItem = false;
                 }
             }
