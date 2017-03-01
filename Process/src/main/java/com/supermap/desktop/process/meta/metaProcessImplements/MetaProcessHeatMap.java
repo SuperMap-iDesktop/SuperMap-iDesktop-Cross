@@ -1,7 +1,9 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
+import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
@@ -15,6 +17,7 @@ import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
 import com.supermap.desktop.ui.lbs.params.BuildCacheDrawingSetting;
 import com.supermap.desktop.ui.lbs.params.BuildCacheJobSetting;
 import com.supermap.desktop.ui.lbs.params.FileInputDataSetting;
+import com.supermap.desktop.ui.lbs.params.IServerLoginInfo;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
 import com.supermap.desktop.ui.lbs.params.MongoDBOutputsetting;
 import com.supermap.desktop.utilities.CursorUtilities;
@@ -50,7 +53,9 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterHDFSPath.setSelectedItem("hdfs://localhost:9000/data/newyork_taxi_2013-01_147k.csv");
 
 		parameterCacheType = new ParameterComboBox(ProcessProperties.getString("String_CacheType"));
-		parameterCacheType.setItems(new ParameterDataNode("HeatMap", "HeatMap"));
+		ParameterDataNode parameterDataNode1 = new ParameterDataNode("HeatMap", "HeatMap");
+		parameterCacheType.setItems(parameterDataNode1);
+		parameterCacheType.setSelectedItem(parameterDataNode1);
 		//流程图中不支持在地图中绘制范围，范围表示与iServer的表示相同
 		parameterBounds = new ParameterTextField().setDescribe(ProcessProperties.getString("String_CacheBounds"));
 		parameterBounds.setSelectedItem("-74.050,40.650,-73.850,40.850");
@@ -61,7 +66,9 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterCacheName = new ParameterTextField().setDescribe(ProcessProperties.getString("String_CacheName"));
 		parameterCacheName.setSelectedItem("test1_heat");
 		parameterDatabaseType = new ParameterComboBox(ProcessProperties.getString("String_DatabaseType"));
-		parameterDatabaseType.setItems(new ParameterDataNode("MongoDB", "MongoDB"));
+		ParameterDataNode parameterDataNode = new ParameterDataNode("MongoDB", "MongoDB");
+		parameterDatabaseType.setItems(parameterDataNode);
+		parameterDatabaseType.setSelectedItem(parameterDataNode);
 		parameterServiceAddress = new ParameterTextField().setDescribe(ProcessProperties.getString("String_ServiceAddress"));
 		parameterServiceAddress.setSelectedItem("192.168.15.245:27017");
 		parameterDatabase = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Database"));
@@ -94,6 +101,18 @@ public class MetaProcessHeatMap extends MetaProcess {
 
 	@Override
 	public void run() {
+//		JDialogLogin jDialogLogin = new JDialogLogin();
+//		if (jDialogLogin.showDialog() != DialogResult.OK) {
+//			return;
+//		}
+		String username = "admin";
+		String password = "map123!@#";
+		IServerService service = new IServerServiceImpl();
+		IServerLoginInfo.ipAddr = "192.168.20.189";
+		IServerLoginInfo.port = "8090";
+		service.login(username, password);
+
+		fireRunning(new RunningEvent(this, 0, "start"));
 		//热度图分析功能
 		BuildCacheJobSetting setting = new BuildCacheJobSetting();
 
@@ -117,15 +136,19 @@ public class MetaProcessHeatMap extends MetaProcess {
 		setting.output = output;
 		setting.drawing = drawing;
 		CursorUtilities.setWaitCursor();
-		IServerService service = new IServerServiceImpl();
 		JobResultResponse response = service.query(setting);
 		if (null != response) {
 			CursorUtilities.setDefaultCursor();
-            NewMessageBus.producer(this,response);
+			NewMessageBus.producer(this, response);
 		}
 		ProcessData processData = new ProcessData();
 		processData.setData("Output");
-		outPuts.set(0, processData);
+		outPuts.add(0, processData);
+		fireRunning(new RunningEvent(this, 100, "finished"));
+	}
 
+	@Override
+	public String getKey() {
+		return MetaKeys.HEAT_MAP;
 	}
 }

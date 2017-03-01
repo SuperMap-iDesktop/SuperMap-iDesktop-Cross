@@ -41,6 +41,9 @@ public class ParameterSaveDatasetPanel extends JPanel {
 				if (StringUtilities.isNullOrEmpty(textFieldDataset.getText())) {
 					return false;
 				}
+				if (datasourceComboBox.getSelectedDatasource() == null) {
+					return true;
+				}
 				boolean isLegit = datasourceComboBox.getSelectedDatasource().getDatasets().isAvailableDatasetName(textFieldValue);
 				if (isLegit) {
 					isSelectingItem = true;
@@ -58,6 +61,7 @@ public class ParameterSaveDatasetPanel extends JPanel {
 		initLayout();
 		initListener();
 		initComponentState();
+		parameterSaveDataset.setResultDatasource(datasourceComboBox.getSelectedDatasource());
 	}
 
 	private void initLayout() {

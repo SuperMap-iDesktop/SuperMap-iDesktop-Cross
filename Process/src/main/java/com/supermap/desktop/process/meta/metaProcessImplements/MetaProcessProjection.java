@@ -52,7 +52,7 @@ public class MetaProcessProjection extends MetaProcess {
 
 	@Override
 	public void run() {
-		Dataset dataset = (Dataset) inputs.get(0).getData();
+		Dataset dataset = (Dataset) inputs.getData();
 		fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
 		GeoCoordSysType geoCoordSysType = (GeoCoordSysType) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData();
 		GeoCoordSys geoCoordSys = new GeoCoordSys(geoCoordSysType, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
@@ -62,7 +62,7 @@ public class MetaProcessProjection extends MetaProcess {
 		fireRunning(new RunningEvent(this, 100, "set geoCoorSys finished"));
 		ProcessData processData = new ProcessData();
 		processData.setData(dataset);
-		outPuts.set(0, processData);
+		outPuts.add(0, processData);
 	}
 
 	@Override

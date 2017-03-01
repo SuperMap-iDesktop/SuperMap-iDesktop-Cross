@@ -11,6 +11,7 @@ import com.supermap.data.Geometry;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
@@ -21,13 +22,14 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -39,6 +41,8 @@ import static com.supermap.desktop.ui.UICommonToolkit.getWorkspaceManager;
 /**
  * @author YuanR  2016 12.21
  *         标签专题图保存为cad/文本数据集
+ *         yuanR  2017.3.1
+ *         代码优化
  */
 public class DiglogSaveThemeAsDataset extends SmDialog {
 	private JPanel panel;
@@ -56,6 +60,11 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 	private Datasource toDatasource;
 	private DatasetType outDatasetType;
 	private DatasetVector outDataset;
+
+	public final static Dimension DEFAULT_WINDOWS_DIMENSION = new Dimension(300, 150);
+	public final static Dimension DEFAULT_LINUX_DIMENSION = new Dimension(300, 140);
+	public final static int GAPDIMENSION =105;
+	public final static int intMRecordaxCount=5000;
 
 	/**
 	 * 创建保存为cad/文本数据集Dialog
@@ -75,7 +84,13 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 	 * 初始化控件
 	 */
 	private void initComponents() {
-		this.setSize(300, 152);
+		//根据不同操作系统设置不同的面板尺寸
+		if (SystemPropertyUtilities.isWindows()) {
+			this.setSize(DEFAULT_WINDOWS_DIMENSION);
+		} else {
+			this.setSize(DEFAULT_LINUX_DIMENSION);
+		}
+
 		this.setLocationRelativeTo(null);
 		this.setResizable(false);
 
@@ -121,6 +136,7 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 
 	/**
 	 * 初始化导出的数据类型
+	 * 打开面板不操作下拉列表框时默认导出数据为CAD
 	 */
 	private void initOutDatasetType() {
 		this.outDatasetType = DatasetType.CAD;
@@ -150,39 +166,39 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 		groupLayout.setAutoCreateGaps(true);
 		panel.setLayout(groupLayout);
 		// @formatter:off
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 								.addComponent(this.datasourcesLabel)
 								.addComponent(this.datasourceTypeLabel)
-								.addComponent(this. datasourceNameLabel))
-						.addGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+								.addComponent(this.datasourceNameLabel))
+						.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 								.addComponent(this.datasourceComboBox)
 								.addComponent(this.datasetTypeComboBox)
 								.addComponent(this.textFieldoutDatasetName)))
 				.addGroup(groupLayout.createSequentialGroup()
-						.addGap(10, 10, Short.MAX_VALUE)
-						.addComponent(this.buttonOk, javax.swing.GroupLayout.PREFERRED_SIZE, 75,
-								javax.swing.GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.buttonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 75,
-								javax.swing.GroupLayout.PREFERRED_SIZE)
+						.addGap(GAPDIMENSION)
+						.addComponent(this.buttonOk)
+						.addGap(ControlDefaultValues.DEFAULT_PREFERREDSIZE_GAP)
+						.addComponent(this.buttonCancel)
 						));
 
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.datasourcesLabel)
-						.addComponent(this.datasourceComboBox, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.datasourceComboBox))
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.datasourceTypeLabel)
-						.addComponent(this.datasetTypeComboBox, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.datasetTypeComboBox))
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this. datasourceNameLabel)
-						.addComponent(this.textFieldoutDatasetName, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.textFieldoutDatasetName))
 				.addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.buttonOk)
 						.addComponent(this.buttonCancel)
 						));
 		// @formatter:on
+
 		this.add(panel);
 	}
 
@@ -199,16 +215,10 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 	}
 
 	/**
-	 * 根据选中的专题图类型，初始化相关功能开启与否
-	 */
-	private void initThemeStyle() {
-
-	}
-
-	/**
 	 * 初始化监听
 	 */
 	private void addListeners() {
+		removeListeners();
 		this.datasourceComboBox.addItemListener(this.DatasourceComboBoxListener);
 		this.datasetTypeComboBox.addItemListener(this.DatasetTypeComboBoxListener);
 		this.textFieldoutDatasetName.getDocument().addDocumentListener(this.JTextFieldDocumentListener);
@@ -293,10 +303,10 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 	private void SaveAsCAD() {
 		try {
 			//进行保存为CAD数据集操作
-			DatasetVector datasetCAD = ThemeUtil.getActiveLayer().themeToDatasetVector(toDatasource, outDatasetName);
-			outDataset = datasetCAD;
+			DatasetVector datasetCAD = ThemeUtil.getActiveLayer().themeToDatasetVector(this.toDatasource, this.outDatasetName);
+			this.outDataset = datasetCAD;
 			//标签专题图保存为数据集“BaseMap_R”成功
-			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_LabelThemeSacveAsDatasetSuccessed"), outDatasetName));
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_LabelThemeSacveAsDatasetSuccessed"), this.outDatasetName));
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_LabelThemeSacveAsDatasetFailed"));
 		}
@@ -314,13 +324,13 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 			//创建一个空的文本数据集
 			createNullTextDataset();
 			//得到创建的文本数据集和其记录集
-			DatasetVector resultTextDataset = (DatasetVector) toDatasource.getDatasets().get(outDatasetName);
+			DatasetVector resultTextDataset = (DatasetVector) this.toDatasource.getDatasets().get(this.outDatasetName);
 			Recordset resultTextRecordset = resultTextDataset.getRecordset(false, CursorType.DYNAMIC);
 			resultTextRecordset.moveFirst();
 			//批量操作
 			Recordset.BatchEditor editor = resultTextRecordset.getBatch();
 			// 设置批量更新每次提交的记录数目
-			editor.setMaxRecordCount(5000);
+			editor.setMaxRecordCount(intMRecordaxCount);
 			editor.begin();
 			while (!tempRecordset.isEOF()) {
 				Geometry tempGeometry = tempRecordset.getGeometry();
@@ -334,13 +344,13 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 			tempRecordset.dispose();
 			tempDataset.close();
 			//删除创建的cad数据集
-			toDatasource.getDatasets().delete("tempDataset");
-			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_LabelThemeSacveAsDatasetSuccessed"), outDatasetName));
+			this.toDatasource.getDatasets().delete("tempDataset");
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_LabelThemeSacveAsDatasetSuccessed"), this.outDatasetName));
 			//高亮显示新创建的数据集
 			DatasetInterval();
 		} catch (Exception ex) {
 			//删除创建的cad数据集
-			toDatasource.getDatasets().delete("tempDataset");
+			this.toDatasource.getDatasets().delete("tempDataset");
 			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_LabelThemeSacveAsDatasetFailed"));
 		}
 	}
@@ -424,12 +434,12 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 	 * 创建一个空的文本数据集
 	 */
 	private void createNullTextDataset() {
-		if (outDatasetName != null && outDatasetType != null) {
-			DatasetVectorInfo info = new DatasetVectorInfo(outDatasetName, outDatasetType);
+		if (this.outDatasetName != null && this.outDatasetType != null) {
+			DatasetVectorInfo info = new DatasetVectorInfo(this.outDatasetName, outDatasetType);
 			//压缩方式
 			info.setEncodeType(EncodeType.NONE);
 			try {
-				outDataset = toDatasource.getDatasets().create(info);
+				this.outDataset = this.toDatasource.getDatasets().create(info);
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_BuildTextDatasetFailed"));
 			}

@@ -8,6 +8,7 @@ import com.supermap.data.QueryParameter;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
@@ -29,140 +30,153 @@ import java.util.ArrayList;
 public class MetaProcessSqlQuery extends MetaProcess {
 	private IParameters parameters = new DefaultParameters();
 	private ParameterSingleDataset dataset;
-    private ParameterTextArea parameterAttributeFilter;
-    private ParameterTextArea parameterResultFields;
-    private ParameterSaveDataset parameterSaveDataset;
-    private DatasetType[] datasetTypes = new DatasetType[]{
-            DatasetType.POINT, DatasetType.LINE, DatasetType.REGION,
-            DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D,
-            DatasetType.TEXT, DatasetType.TABULAR, DatasetType.CAD
-    };
+	private ParameterTextArea parameterAttributeFilter;
+	private ParameterTextArea parameterResultFields;
+	private ParameterSaveDataset parameterSaveDataset;
+	private DatasetType[] datasetTypes = new DatasetType[]{
+			DatasetType.POINT, DatasetType.LINE, DatasetType.REGION,
+			DatasetType.POINT3D, DatasetType.LINE3D, DatasetType.REGION3D,
+			DatasetType.TEXT, DatasetType.TABULAR, DatasetType.CAD
+	};
 
-    public MetaProcessSqlQuery() {
-        initMetaInfo();
-    }
+	public MetaProcessSqlQuery() {
+		initMetaInfo();
+	}
 
-    private void initMetaInfo() {
-        this.dataset = new ParameterSingleDataset(datasetTypes);
-        if (null != Application.getActiveApplication().getActiveDatasets() && Application.getActiveApplication().getActiveDatasets().length > 0) {
-            this.dataset.setSelectedItem(Application.getActiveApplication().getActiveDatasets()[0]);
-        }
-        parameterResultFields = new ParameterTextArea(CommonProperties.getString("String_QueryField"));
-        parameterAttributeFilter = new ParameterTextArea(CommonProperties.getString("String_QueryCondition"));
-        parameterSaveDataset = new ParameterSaveDataset();
-        parameterSaveDataset.setDatasetName("QueryResult");
-        parameters.setParameters(this.dataset, this.parameterResultFields,
-                this.parameterAttributeFilter, this.parameterSaveDataset);
-    }
+	private void initMetaInfo() {
+		this.dataset = new ParameterSingleDataset(datasetTypes);
+		if (null != Application.getActiveApplication().getActiveDatasets() && Application.getActiveApplication().getActiveDatasets().length > 0) {
+			this.dataset.setSelectedItem(Application.getActiveApplication().getActiveDatasets()[0]);
+		}
+		parameterResultFields = new ParameterTextArea(CommonProperties.getString("String_QueryField"));
+		parameterResultFields.setSelectedItem("RoadLine.*");
+		parameterAttributeFilter = new ParameterTextArea(CommonProperties.getString("String_QueryCondition"));
+		parameterAttributeFilter.setSelectedItem("RoadLine.RoadLeve = 'Lev1'");
+		parameterSaveDataset = new ParameterSaveDataset();
+		parameterSaveDataset.setDatasetName("QueryResult");
+		parameters.setParameters(this.dataset, this.parameterResultFields,
+				this.parameterAttributeFilter, this.parameterSaveDataset);
+	}
 
-    @Override
-    public String getTitle() {
-        return ProcessProperties.getString("String_SqlQuery");
-    }
+	@Override
+	public String getTitle() {
+		return ProcessProperties.getString("String_SqlQuery");
+	}
 
-    @Override
-    public JComponent getComponent() {
-        return parameters.getPanel();
-    }
+	@Override
+	public JComponent getComponent() {
+		return parameters.getPanel();
+	}
 
-    @Override
-    public void run() {
-        if (null != dataset.getSelectedItem() && dataset.getSelectedItem() instanceof DatasetVector) {
-            // 构建查询语句
-            DatasetVector currentDatasetVector = ((DatasetVector) dataset.getSelectedItem());
-            QueryParameter queryParameter = new QueryParameter();
-            queryParameter.setCursorType(CursorType.DYNAMIC);
-            queryParameter.setHasGeometry(true);
+	@Override
+	public void run() {
+		fireRunning(new RunningEvent(this, 0, "start"));
+		DatasetVector currentDatasetVector = inputs.getData() instanceof DatasetVector ? ((DatasetVector) inputs.getData()) : null;
+		if (currentDatasetVector == null && dataset.getSelectedItem() instanceof DatasetVector) {
+			currentDatasetVector = (DatasetVector) dataset.getSelectedItem();
+		}
+		if (null != currentDatasetVector) {
+			// 构建查询语句
+			QueryParameter queryParameter = new QueryParameter();
+			queryParameter.setCursorType(CursorType.DYNAMIC);
+			queryParameter.setHasGeometry(true);
 
-            // 查询字段
-            String queryFields = (String) parameterResultFields.getSelectedItem();
-            String[] queryFieldNames = getQueryFieldNames(queryFields);
-            queryParameter.setResultFields(queryFieldNames);
-            // 查询条件
-            queryParameter.setAttributeFilter((String) parameterAttributeFilter.getSelectedItem());
-            preProcessSQLQuery(queryParameter);
-            queryParameter.setSpatialQueryObject(currentDatasetVector);
-            Recordset resultRecord = currentDatasetVector.query(queryParameter);
-            if (resultRecord != null && resultRecord.getRecordCount() > 0) {
-                if (StringUtilities.isNullOrEmpty(queryFields)) {
-                    resultRecord.dispose();
-                    resultRecord = null;
-                }
-	            ProcessData processData = new ProcessData();
-	            processData.setData(resultRecord);
-	            outPuts.set(0, processData);
+			// 查询字段
+			String queryFields = (String) parameterResultFields.getSelectedItem();
+			String[] queryFieldNames = getQueryFieldNames(queryFields);
+			queryParameter.setResultFields(queryFieldNames);
+			// 查询条件
+			queryParameter.setAttributeFilter((String) parameterAttributeFilter.getSelectedItem());
+			preProcessSQLQuery(queryParameter);
+			queryParameter.setSpatialQueryObject(currentDatasetVector);
+			Recordset resultRecord = currentDatasetVector.query(queryParameter);
+			if (resultRecord != null && resultRecord.getRecordCount() > 0) {
+				if (StringUtilities.isNullOrEmpty(queryFields)) {
+					resultRecord.dispose();
+					resultRecord = null;
+				}
 
-                // 保存查询结果
-                saveQueryResult(resultRecord);
-            }
-        }
+				fireRunning(new RunningEvent(this, 100, "finished"));
+				// 保存查询结果
+				DatasetVector datasetVector = saveQueryResult(resultRecord);
+				ProcessData processData = new ProcessData();
+				processData.setData(datasetVector);
+				outPuts.add(0, processData);
+			}
+		}
 
-    }
+	}
 
-    private void saveQueryResult(Recordset resultRecord) {
-        Datasource resultDatasource = parameterSaveDataset.getResultDatasource();
-        String datasetName = parameterSaveDataset.getDatasetName();
-        if (resultDatasource != null && !StringUtilities.isNullOrEmpty(datasetName)) {
-            DatasetVector resultDataset = null;
-            try {
-                resultDataset = resultDatasource.recordsetToDataset(resultRecord, datasetName);
-            } catch (Exception e) {
-                resultDataset = null;
-            }
-            resultRecord.moveFirst();
-            if (resultDataset == null) {
-                Application.getActiveApplication().getOutput().output(CommonProperties.getString("String_SQLQuerySaveAsResultFaield"));
-            } else {
-                Application.getActiveApplication().getOutput()
-                        .output(MessageFormat.format(CommonProperties.getString("String_SQLQuerySavaAsResultSucces"), resultDataset.getName()));
-            }
-        }
+	@Override
+	public String getKey() {
+		return "SQLQUERY";
+	}
 
-    }
+	private DatasetVector saveQueryResult(Recordset resultRecord) {
+		DatasetVector resultDataset = null;
+		Datasource resultDatasource = parameterSaveDataset.getResultDatasource();
+		String datasetName = parameterSaveDataset.getDatasetName();
+		if (resultDatasource != null && !StringUtilities.isNullOrEmpty(datasetName)) {
+			try {
+				resultDataset = resultDatasource.recordsetToDataset(resultRecord, datasetName);
+			} catch (Exception e) {
+				resultDataset = null;
+			}
+			resultRecord.moveFirst();
+			if (resultDataset == null) {
+				Application.getActiveApplication().getOutput().output(CommonProperties.getString("String_SQLQuerySaveAsResultFaield"));
+			} else {
+				Application.getActiveApplication().getOutput()
+						.output(MessageFormat.format(CommonProperties.getString("String_SQLQuerySavaAsResultSucces"), resultDataset.getName()));
+			}
+		}
 
-    private void preProcessSQLQuery(QueryParameter queryParameter) {
-        try {
-            for (String field : queryParameter.getResultFields()) {
-                String strText = field.toUpperCase();
-                if (strText.contains("SUM(") || strText.contains("MAX(") || strText.contains("MIN(") || strText.contains("AVG(") || strText.contains("COUNT(")
-                        || strText.contains("STDEV(") || strText.contains("STDEVP(") || strText.contains("VAR(") || strText.contains("VARP(")) {
-                    queryParameter.setCursorType(CursorType.STATIC);
-                    break;
-                }
-            }
+		return resultDataset;
+	}
 
-            if (queryParameter.getGroupBy().length > 0) {
-                queryParameter.setCursorType(CursorType.STATIC);
-            }
+	private void preProcessSQLQuery(QueryParameter queryParameter) {
+		try {
+			for (String field : queryParameter.getResultFields()) {
+				String strText = field.toUpperCase();
+				if (strText.contains("SUM(") || strText.contains("MAX(") || strText.contains("MIN(") || strText.contains("AVG(") || strText.contains("COUNT(")
+						|| strText.contains("STDEV(") || strText.contains("STDEVP(") || strText.contains("VAR(") || strText.contains("VARP(")) {
+					queryParameter.setCursorType(CursorType.STATIC);
+					break;
+				}
+			}
 
-        } catch (Exception ex) {
-            Application.getActiveApplication().getOutput().output(ex);
-        }
-    }
+			if (queryParameter.getGroupBy().length > 0) {
+				queryParameter.setCursorType(CursorType.STATIC);
+			}
 
-    private String[] getQueryFieldNames(String queryFields) {
-        int bracketsCount = 0;
-        java.util.List<String> fieldNames = new ArrayList<>();
-        char[] fieldNamesChars = queryFields.toCharArray();
-        StringBuilder builderFieldName = new StringBuilder();
-        for (char fieldNamesChar : fieldNamesChars) {
-            if (fieldNamesChar == ',' && bracketsCount == 0 && builderFieldName.length() > 0) {
-                fieldNames.add(builderFieldName.toString());
-                builderFieldName.setLength(0);
-            } else {
-                builderFieldName.append(fieldNamesChar);
-                if (fieldNamesChar == '(') {
-                    bracketsCount++;
-                } else if (fieldNamesChar == ')' && bracketsCount > 0) {
-                    bracketsCount--;
-                }
-            }
-        }
-        if (builderFieldName.length() > 0) {
-            fieldNames.add(builderFieldName.toString());
-            builderFieldName.setLength(0);
-        }
-        return fieldNames.toArray(new String[fieldNames.size()]);
-    }
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	private String[] getQueryFieldNames(String queryFields) {
+		int bracketsCount = 0;
+		java.util.List<String> fieldNames = new ArrayList<>();
+		char[] fieldNamesChars = queryFields.toCharArray();
+		StringBuilder builderFieldName = new StringBuilder();
+		for (char fieldNamesChar : fieldNamesChars) {
+			if (fieldNamesChar == ',' && bracketsCount == 0 && builderFieldName.length() > 0) {
+				fieldNames.add(builderFieldName.toString());
+				builderFieldName.setLength(0);
+			} else {
+				builderFieldName.append(fieldNamesChar);
+				if (fieldNamesChar == '(') {
+					bracketsCount++;
+				} else if (fieldNamesChar == ')' && bracketsCount > 0) {
+					bracketsCount--;
+				}
+			}
+		}
+		if (builderFieldName.length() > 0) {
+			fieldNames.add(builderFieldName.toString());
+			builderFieldName.setLength(0);
+		}
+		return fieldNames.toArray(new String[fieldNames.size()]);
+	}
 
 }
