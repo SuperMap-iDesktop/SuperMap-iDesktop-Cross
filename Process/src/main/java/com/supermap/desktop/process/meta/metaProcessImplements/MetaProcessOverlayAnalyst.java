@@ -50,7 +50,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 
 	@Override
 	public String getTitle() {
-		return "叠加分析";
+		return "叠加分析-求交";
 	}
 
 	@Override
