@@ -78,6 +78,7 @@ public class MetaProcessInterpolator extends MetaProcess {
         this.interpolationAlgorithmType = interpolationAlgorithmType;
         parameters = new DefaultParameters();
         parameterDatasource = new ParameterDatasource();
+        parameterDatasource.setDescribe(ProcessProperties.getString("String_SourceDatasource"));
         Datasource currentDatasource = null;
         if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0) {
             currentDatasource = Application.getActiveApplication().getActiveDatasources()[0];
@@ -85,9 +86,11 @@ public class MetaProcessInterpolator extends MetaProcess {
         parameterDatasource.setSelectedItem(currentDatasource);
         parameterDataset = new ParameterSingleDataset(DatasetType.POINT);
         parameterInterpolatorFields = new ParameterComboBox();
+        parameterInterpolatorFields.setDescribe(ProcessProperties.getString("String_InterpolatorFields"));
         parameterScaling = new ParameterTextField().setDescribe(CommonProperties.getString("String_Scaling"));
         parameterScaling.setSelectedItem("1");
         parameterResultDatasource = new ParameterDatasource();
+        parameterResultDatasource.setDescribe(ProcessProperties.getString("String_TargetDatasource"));
         parameterResultDatasource.setSelectedItem(currentDatasource);
         parameterResultDatasetName = new ParameterTextField().setDescribe(CommonProperties.getString(CommonProperties.Label_Dataset));
         parameterResulotion = new ParameterTextField().setDescribe(CommonProperties.getString("String_Resolution"));

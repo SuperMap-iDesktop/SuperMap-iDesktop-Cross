@@ -46,7 +46,7 @@ public class ProcessTree extends JPanel {
 		initComponents();
 		initLayout();
 		initResouces();
-		new TreeDropAndDragHandler(DataFlavor.stringFlavor).bindSource(this.processTree).addDropTarget(this.processTree);
+		new TreeDropAndDragHandler(DataFlavor.stringFlavor).bindSource(this.processTree);
 		// fixme 使用自行实现的TreeNode
 		// @see com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolGroupTreeNode
 		ProcessGroup root = new ProcessGroup(null);
