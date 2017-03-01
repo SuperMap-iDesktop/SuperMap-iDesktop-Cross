@@ -12,6 +12,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
+import com.supermap.desktop.ui.lbs.params.IServerLoginInfo;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
 import com.supermap.desktop.ui.lbs.params.KernelDensityJobSetting;
 import com.supermap.desktop.utilities.CursorUtilities;
@@ -74,6 +75,12 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
     @Override
     public void run() {
+	    String username = "admin";
+	    String password = "map123!@#";
+	    IServerService service = new IServerServiceImpl();
+	    IServerLoginInfo.ipAddr = "192.168.20.189";
+	    IServerLoginInfo.port = "8090";
+	    service.login(username, password);
 	    fireRunning(new RunningEvent(this, 0, "start"));
 	    //核密度分析功能实现
         KernelDensityJobSetting kenelDensityJobSetting = new KernelDensityJobSetting();
@@ -83,7 +90,6 @@ public class MetaProcessKernelDensity extends MetaProcess {
         kenelDensityJobSetting.analyst.resolution = parameterResolution.getSelectedItem().toString();
         kenelDensityJobSetting.analyst.radius = parameterRadius.getSelectedItem().toString();
         kenelDensityJobSetting.input.filePath = parameterHDFSPath.getSelectedItem().toString();
-        IServerService service = new IServerServiceImpl();
         CursorUtilities.setWaitCursor();
         JobResultResponse response = service.query(kenelDensityJobSetting);
         if (null != response) {
