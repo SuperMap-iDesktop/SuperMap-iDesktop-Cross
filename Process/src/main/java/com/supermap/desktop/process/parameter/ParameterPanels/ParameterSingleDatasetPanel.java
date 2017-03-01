@@ -46,6 +46,7 @@ public class ParameterSingleDatasetPanel extends JPanel {
 	    if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
 		    this.datasetComboBox = new DatasetComboBox(Application.getActiveApplication().getWorkspace().getDatasources().get(0).getDatasets());
 		    this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
+		    parameterSingleDataset.setSelectedItem(datasetComboBox.getSelectedDataset());
 	    }
     }
 
