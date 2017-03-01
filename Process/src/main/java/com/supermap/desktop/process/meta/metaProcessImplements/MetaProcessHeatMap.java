@@ -2,6 +2,7 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
+import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
@@ -127,5 +128,10 @@ public class MetaProcessHeatMap extends MetaProcess {
 		processData.setData("Output");
 		outPuts.set(0, processData);
 
+	}
+
+	@Override
+	public String getKey() {
+		return MetaKeys.HEAT_MAP;
 	}
 }

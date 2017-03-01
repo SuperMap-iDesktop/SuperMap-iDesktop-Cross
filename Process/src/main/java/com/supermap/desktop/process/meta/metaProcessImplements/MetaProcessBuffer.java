@@ -12,6 +12,7 @@ import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
@@ -111,7 +112,7 @@ public class MetaProcessBuffer extends MetaProcess {
 	@Override
 	public void run() {
 		// fixme 数据集来源
-		DatasetVector datasetVector = (DatasetVector) getInputs().get(0).getData();
+		DatasetVector datasetVector = (DatasetVector) getInputs().getData();
 
 		BufferRadiusUnit radiusUnit = (BufferRadiusUnit) ((ParameterDataNode) parameterBufferRange.getSelectedItem()).getData();
 		int radius = Integer.valueOf((String) parameterTextFieldRadius.getSelectedItem());
@@ -138,5 +139,10 @@ public class MetaProcessBuffer extends MetaProcess {
 		ProcessData processData = new ProcessData();
 		processData.setData(datasetVector);
 		outPuts.set(0, processData);
+	}
+
+	@Override
+	public String getKey() {
+		return MetaKeys.BUFFER;
 	}
 }

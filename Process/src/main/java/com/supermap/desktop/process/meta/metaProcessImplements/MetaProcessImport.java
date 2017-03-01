@@ -13,6 +13,7 @@ import com.supermap.data.conversion.ImportSteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
@@ -126,5 +127,10 @@ public class MetaProcessImport extends MetaProcess {
 		ProcessData processData = new ProcessData();
 		processData.setData(dataset);
 		outPuts.set(0, processData);
+	}
+
+	@Override
+	public String getKey() {
+		return MetaKeys.IMPORT;
 	}
 }

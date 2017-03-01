@@ -1,8 +1,10 @@
 package com.supermap.desktop.process.core;
 
+import com.sun.corba.se.spi.orbutil.fsm.Input;
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.utilities.FileUtilities;
 
@@ -104,6 +106,7 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 		}
 		return false;
 	}
+
 	@Override
 	public String getTitle() {
 		return name;
@@ -116,7 +119,7 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 	}
 
 	@Override
-	public Vector<ProcessData> getInputs() {
+	public Inputs getInputs() {
 		return null;
 	}
 
@@ -150,9 +153,5 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 		return null;
 	}
 
-	@Override
-	public void setInputs(Vector<ProcessData> inputs) {
-
-	}
 	//endregion
 }

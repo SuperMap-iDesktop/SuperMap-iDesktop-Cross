@@ -2,6 +2,7 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
+import com.supermap.desktop.process.parameter.interfaces.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 
@@ -16,6 +17,7 @@ public abstract class AbstractProcess implements IProcess {
 	private EventListenerList listenerList = new EventListenerList();
 
 	protected IProcessGroup parent;
+
 	@Override
 	public abstract IParameters getParameters();
 
@@ -26,7 +28,7 @@ public abstract class AbstractProcess implements IProcess {
 	public abstract String getKey();
 
 	@Override
-	public abstract Vector<ProcessData> getInputs();
+	public abstract Inputs getInputs();
 
 	@Override
 	public abstract Vector<ProcessData> getOutputs();

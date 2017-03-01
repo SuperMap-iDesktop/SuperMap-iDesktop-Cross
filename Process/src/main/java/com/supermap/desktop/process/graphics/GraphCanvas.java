@@ -512,11 +512,49 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			if (line.getPreProcess() instanceof OutputGraph || line.getNextProcess() instanceof ProcessGraph) {
 				IProcess processF = ((OutputGraph) line.getPreProcess()).getProcessGraph().getProcess();
 				IProcess processT = ((ProcessGraph) line.getNextProcess()).getProcess();
+				processT.getInputs().followProcess(processF);
 				re.addNode(processF);
 				re.addNode(processT);
 				re.addProcessRelationship(processF.getTitle(), processT.getTitle(), 8);
 			}
 		}
+
+		if (re.getCount() == 0) {
+			Vector<IGraph> graphs = this.graphQuadTree.getDatasInside();
+			for (int i = 0; i < graphs.size(); i++) {
+				IGraph graph = graphs.get(i);
+				if (graph instanceof ProcessGraph) {
+					re.addNode(((ProcessGraph) graph).getProcess());
+				}
+			}
+		}
 		return re;
 	}
+
+//	public ArrayList<IProcess> getTasks() {
+//		ArrayList<IProcess> re = new ArrayList<>();
+//
+//		for (int i = 0; i < this.lines.size(); i++) {
+//			LineGraph line = this.lines.get(i);
+//			if (line.getPreProcess() instanceof OutputGraph || line.getNextProcess() instanceof ProcessGraph) {
+//				IProcess processF = ((OutputGraph) line.getPreProcess()).getProcessGraph().getProcess();
+//				IProcess processT = ((ProcessGraph) line.getNextProcess()).getProcess();
+//				processT.getInputs().followProcess(processF);
+//				re.addNode(processF);
+//				re.addNode(processT);
+//				re.addProcessRelationship(processF.getTitle(), processT.getTitle(), 8);
+//			}
+//		}
+//
+//		if (re.getCount() == 0) {
+//			Vector<IGraph> graphs = this.graphQuadTree.getDatasInside();
+//			for (int i = 0; i < graphs.size(); i++) {
+//				IGraph graph = graphs.get(i);
+//				if (graph instanceof ProcessGraph) {
+//					re.addNode(((ProcessGraph) graph).getProcess());
+//				}
+//			}
+//		}
+//		return re;
+//	}
 }

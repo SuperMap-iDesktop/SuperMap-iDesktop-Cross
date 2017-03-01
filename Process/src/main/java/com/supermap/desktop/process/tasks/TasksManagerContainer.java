@@ -73,6 +73,7 @@ public class TasksManagerContainer extends JPanel {
         });
         thread.start();
     }
+
     /**
      * 串行结构时的任务结束
      */

@@ -2,286 +2,318 @@ package com.supermap.desktop.process.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 /**
  * Created by lixiaoyao on 2017/2/24.
  */
 public class UniversalMatrix {
-    private HashMap<String, SecondMatrix> twoDimensionArray = new HashMap<>();
-    private HashMap<String, Object> nodeHashMap = new HashMap<>();
+	private HashMap<String, SecondMatrix> twoDimensionArray = new HashMap<>();
+	private HashMap<String, Object> nodeHashMap = new HashMap<>();
 
-    /*
-    * 根据节点名称获取节点
-    *@param nodeName 节点名称
-     */
-    public Object getNode(String nodeName) {
-        return nodeHashMap.get(nodeName);
-    }
 
-    /*
+	public int getCount() {
+		return this.nodeHashMap.keySet().size();
+	}
+
+	/*
+	* 根据节点名称获取节点
+	*@param nodeName 节点名称
+	 */
+	public Object getNode(String nodeName) {
+		return nodeHashMap.get(nodeName);
+	}
+
+	/*
    * 加入节点
    *@param object 节点  每个process需存储需要一个标志，目前暂定process title
-    */
-    public void addNode(Object object) {
-        if (!nodeHashMap.containsKey(((IProcess)object).getTitle())){
-            nodeHashMap.put(((IProcess)object).getTitle(),object);
-        }
-    }
+	*/
+	public void addNode(Object object) {
+		if (!nodeHashMap.containsKey(((IProcess) object).getTitle())) {
+			nodeHashMap.put(((IProcess) object).getTitle(), object);
+			this.twoDimensionArray.put(((IProcess) object).getTitle(), new SecondMatrix());
+		}
+	}
 
-    /*
-    * 加入节点       测试用
-    */
-    public void addNode(String nodeName) {
-        if (!nodeHashMap.containsKey(nodeName)) {
-            nodeHashMap.put(nodeName,(Object)nodeName);
-        }
-    }
+	/*
+	* 加入节点       测试用
+	*/
+	public void addNode(String nodeName) {
+		if (!nodeHashMap.containsKey(nodeName)) {
+			nodeHashMap.put(nodeName, (Object) nodeName);
+		}
+	}
 
-    /*
-    * 加入节点与节点之间的关系
-    *@param nodeName 前一个节点名称
-    * @param nodeName2 后一个节点名称
-    * @param relationshipSate 两个节点间关系,必须大于0
-     */
-    public void addProcessRelationship(String nodeName, String nodeName2, Integer relationshipSate) {
-        if (!isHasCurrentNode(nodeName)) {
-            //Application.getActiveApplication().getOutput().output(nodeName+ProcessProperties.getString("String_IsNotHaveCurrentNode"));
-            return;
-        }
-        if (!isHasCurrentNode(nodeName2)) {
-            //Application.getActiveApplication().getOutput().output(nodeName2+ProcessProperties.getString("String_IsNotHaveCurrentNode"));
-            return;
-        }
-        if (twoDimensionArray.containsKey(nodeName)) {
-            twoDimensionArray.get(nodeName).twoDimension.put(nodeName2, relationshipSate);
-        } else {
-            SecondMatrix secondMatrix = new SecondMatrix();
-            secondMatrix.twoDimension.put(nodeName2, relationshipSate);
-            twoDimensionArray.put(nodeName, secondMatrix);
-        }
-    }
+	/*
+	* 加入节点与节点之间的关系
+	*@param nodeName 前一个节点名称
+	* @param nodeName2 后一个节点名称
+	* @param relationshipSate 两个节点间关系,必须大于0
+	 */
+	public void addProcessRelationship(String nodeName, String nodeName2, Integer relationshipSate) {
+		if (!isHasCurrentNode(nodeName)) {
+			//Application.getActiveApplication().getOutput().output(nodeName+ProcessProperties.getString("String_IsNotHaveCurrentNode"));
+			return;
+		}
+		if (!isHasCurrentNode(nodeName2)) {
+			//Application.getActiveApplication().getOutput().output(nodeName2+ProcessProperties.getString("String_IsNotHaveCurrentNode"));
+			return;
+		}
+		if (twoDimensionArray.containsKey(nodeName)) {
+			twoDimensionArray.get(nodeName).twoDimension.put(nodeName2, relationshipSate);
+		} else {
+			SecondMatrix secondMatrix = new SecondMatrix();
+			secondMatrix.twoDimension.put(nodeName2, relationshipSate);
+			twoDimensionArray.put(nodeName, secondMatrix);
+		}
+	}
 
-    private boolean isHasCurrentNode(String nodeName) {
-        boolean result = true;
-        if (!this.nodeHashMap.containsKey(nodeName)) {
-            result = false;
-        }
-        return result;
-    }
+	private boolean isHasCurrentNode(String nodeName) {
+		boolean result = true;
+		if (!this.nodeHashMap.containsKey(nodeName)) {
+			result = false;
+		}
+		return result;
+	}
 
-    /*
+	/*
    * 获取当前节点的下一个节点，如果下一个节点同级的有两个或两个以上，则都返回
    *@param nodeName 节点名称
-    */
-    public ArrayList getNextNode(String nodeName) {
-        ArrayList<String> result = new ArrayList<>();
-        if (twoDimensionArray.containsKey(nodeName)) {
-            SecondMatrix tempMatrix = twoDimensionArray.get(nodeName);
-            Object[] arrayList = (Object[]) tempMatrix.twoDimension.keySet().toArray();
-            for (int i = 0; i < arrayList.length; i++) {
-                if (tempMatrix.twoDimension.get(arrayList[i]) > 0) {
-                    result.add((String) arrayList[i]);
-                }
-            }
-        }
-        return result;
-    }
+	*/
+	public ArrayList getNextNode(String nodeName) {
+		ArrayList<String> result = new ArrayList<>();
+		if (twoDimensionArray.containsKey(nodeName)) {
+			SecondMatrix tempMatrix = twoDimensionArray.get(nodeName);
+			Object[] arrayList = (Object[]) tempMatrix.twoDimension.keySet().toArray();
+			for (int i = 0; i < arrayList.length; i++) {
+				if (tempMatrix.twoDimension.get(arrayList[i]) > 0) {
+					result.add((String) arrayList[i]);
+				}
+			}
+		}
+		return result;
+	}
 
-    /*
+	/*
    * 获取当前节点的上一个节点，如果上一个节点同级的有两个或两个以上，则都返回
    *@param nodeName 节点名称
-    */
-    public ArrayList getPreNode(String nodeName) {
-        ArrayList<String> result = new ArrayList<>();
-        Object[] arrayList = (Object[]) this.twoDimensionArray.keySet().toArray();
-        for (int i = 0; i < arrayList.length; i++) {
-            String tempString = (String) arrayList[i];
-            SecondMatrix secondMatrix = this.twoDimensionArray.get(tempString);
-            if (secondMatrix.twoDimension.containsKey(nodeName)) {
-                result.add(tempString);
-            }
-        }
-        return result;
-    }
+	*/
+	public ArrayList getPreNode(String nodeName) {
+		ArrayList<String> result = new ArrayList<>();
+		Object[] arrayList = (Object[]) this.twoDimensionArray.keySet().toArray();
+		for (int i = 0; i < arrayList.length; i++) {
+			String tempString = (String) arrayList[i];
+			SecondMatrix secondMatrix = this.twoDimensionArray.get(tempString);
+			if (secondMatrix.twoDimension.containsKey(nodeName)) {
+				result.add(tempString);
+			}
+		}
+		return result;
+	}
 
-    /*
-    * 获取当前节点以后的所有节点，直到某个节点的下个节点有两个或两个以上或者某个节点没有下一个节点，则返回
-    *@param nodeName 节点名称
-     */
-    public ArrayList getAllNextNode(String nodeName) {
-        ArrayList<String> result = new ArrayList<>();
-        boolean state = true;
-        while (state) {
-            if (!twoDimensionArray.containsKey(nodeName)) {
-                break;
-            }
-            SecondMatrix tempMatrix = twoDimensionArray.get(nodeName);
-            if (tempMatrix.twoDimension == null) {
-                break;
-            }
-            if (tempMatrix.twoDimension.size() >= 2) {
-                state = false;
-                break;
-            } else {
-                Object[] arrayList = (Object[]) tempMatrix.twoDimension.keySet().toArray();
-                if (arrayList.length == 1) {
-                    result.add((String) arrayList[0]);
-                    nodeName = (String) arrayList[0];
-                } else if (arrayList.length == 0) {
-                    state = false;
-                    break;
-                }
-            }
-        }
-        return result;
-    }
+	/*
+	* 获取当前节点以后的所有节点，直到某个节点的下个节点有两个或两个以上或者某个节点没有下一个节点，则返回
+	*@param nodeName 节点名称
+	 */
+	public ArrayList getAllNextNode(String nodeName) {
+		ArrayList<String> result = new ArrayList<>();
+		boolean state = true;
+		while (state) {
+			if (!twoDimensionArray.containsKey(nodeName)) {
+				break;
+			}
+			SecondMatrix tempMatrix = twoDimensionArray.get(nodeName);
+			if (tempMatrix.twoDimension == null) {
+				break;
+			}
+			if (tempMatrix.twoDimension.size() >= 2) {
+				state = false;
+				break;
+			} else {
+				Object[] arrayList = (Object[]) tempMatrix.twoDimension.keySet().toArray();
+				if (arrayList.length == 1) {
+					result.add((String) arrayList[0]);
+					nodeName = (String) arrayList[0];
+				} else if (arrayList.length == 0) {
+					state = false;
+					break;
+				}
+			}
+		}
+		return result;
+	}
 
-    /*
-    * 删除当前节点以及跟这个节点相关的某个节点的连接关系
-    *@param nodeName1 当前节点名称
-    * @parm nodeName2  相关节点名称
-     */
-    public boolean deleteNodeRealtionship(String nodeName1, String nodeName2) {
-        boolean result = true;
-        if (!isHasCurrentNode(nodeName1)) {
-            //Application.getActiveApplication().getOutput().output(nodeName1+ProcessProperties.getString("String_IsNotHaveCurrentNode"));
-            result = false;
-        }
-        if (!isHasCurrentNode(nodeName2)) {
-            //Application.getActiveApplication().getOutput().output(nodeName2 +ProcessProperties.getString("String_IsNotHaveCurrentNode"));
-            result = false;
-        }
-        if (result) {
-            SecondMatrix tempMatrix = twoDimensionArray.get(nodeName1);
-            if (!tempMatrix.twoDimension.containsKey(nodeName2)) {
-                //Application.getActiveApplication().getOutput().output(nodeName1 +ProcessProperties.getString("String_NodeIsNotConntct")+nodeName2);
-                result = false;
-            } else {
-                tempMatrix.twoDimension.remove(nodeName2);
-            }
-        }
-        return result;
-    }
+	/*
+	* 删除当前节点以及跟这个节点相关的某个节点的连接关系
+	*@param nodeName1 当前节点名称
+	* @parm nodeName2  相关节点名称
+	 */
+	public boolean deleteNodeRealtionship(String nodeName1, String nodeName2) {
+		boolean result = true;
+		if (!isHasCurrentNode(nodeName1)) {
+			//Application.getActiveApplication().getOutput().output(nodeName1+ProcessProperties.getString("String_IsNotHaveCurrentNode"));
+			result = false;
+		}
+		if (!isHasCurrentNode(nodeName2)) {
+			//Application.getActiveApplication().getOutput().output(nodeName2 +ProcessProperties.getString("String_IsNotHaveCurrentNode"));
+			result = false;
+		}
+		if (result) {
+			SecondMatrix tempMatrix = twoDimensionArray.get(nodeName1);
+			if (!tempMatrix.twoDimension.containsKey(nodeName2)) {
+				//Application.getActiveApplication().getOutput().output(nodeName1 +ProcessProperties.getString("String_NodeIsNotConntct")+nodeName2);
+				result = false;
+			} else {
+				tempMatrix.twoDimension.remove(nodeName2);
+			}
+		}
+		return result;
+	}
 
-    /*
-    * 删除当前节点以及跟这个节点相关的所有连接关系
-    *@param nodeName 节点名称
-     */
-    public boolean deleteNode(String nodeName) {
-        boolean result = true;
-        if (!isHasCurrentNode(nodeName)) {
-            //Application.getActiveApplication().getOutput().output(nodeName+ProcessProperties.getString("String_IsNotHaveCurrentNode"));
-            result = false;
-        } else {
-            this.nodeHashMap.remove(nodeName);
-            if (this.twoDimensionArray.containsKey(nodeName)) {
-                this.twoDimensionArray.remove(nodeName);
-            }
-            Object[] arrayList = (Object[]) this.twoDimensionArray.keySet().toArray();
-            for (int i = 0; i < arrayList.length; i++) {
-                String temp = (String) arrayList[i];
-                SecondMatrix secondMatrix = this.twoDimensionArray.get(temp);
-                if (secondMatrix.twoDimension.containsKey(nodeName)) {
-                    secondMatrix.twoDimension.remove(nodeName);
-                    if (secondMatrix.twoDimension.size() == 0) {
-                        this.twoDimensionArray.remove(temp);
-                    }
-                }
-            }
-        }
-        return result;
-    }
+	/*
+	* 删除当前节点以及跟这个节点相关的所有连接关系
+	*@param nodeName 节点名称
+	 */
+	public boolean deleteNode(String nodeName) {
+		boolean result = true;
+		if (!isHasCurrentNode(nodeName)) {
+			//Application.getActiveApplication().getOutput().output(nodeName+ProcessProperties.getString("String_IsNotHaveCurrentNode"));
+			result = false;
+		} else {
+			this.nodeHashMap.remove(nodeName);
+			if (this.twoDimensionArray.containsKey(nodeName)) {
+				this.twoDimensionArray.remove(nodeName);
+			}
+			Object[] arrayList = (Object[]) this.twoDimensionArray.keySet().toArray();
+			for (int i = 0; i < arrayList.length; i++) {
+				String temp = (String) arrayList[i];
+				SecondMatrix secondMatrix = this.twoDimensionArray.get(temp);
+				if (secondMatrix.twoDimension.containsKey(nodeName)) {
+					secondMatrix.twoDimension.remove(nodeName);
+					if (secondMatrix.twoDimension.size() == 0) {
+						this.twoDimensionArray.remove(temp);
+					}
+				}
+			}
+		}
+		return result;
+	}
 
-    /*
-    * 获取当前连接关系中所有起始节点
-     */
-    public ArrayList getAllStartNode() {
-        ArrayList<String> result = new ArrayList<>();
-        Object[] arrayList = (Object[]) this.nodeHashMap.keySet().toArray();
-        for (int i = 0; i < this.nodeHashMap.size(); i++) {
-            String tempName = (String) arrayList[i];
-            if (!twoDimensionArray.containsKey(tempName)) {
-                continue;
-            } else {
-                boolean isHas = true;
-                for (SecondMatrix matrix : twoDimensionArray.values()) {
-                    if (matrix.twoDimension.containsKey(tempName)) {
-                        isHas = true;
-                        break;
-                    } else {
-                        isHas = false;
-                    }
-                }
-                if (!isHas) {
-                    result.add(tempName);
-                }
-            }
+	/*
+	* 获取当前连接关系中所有起始节点
+	 */
+	public ArrayList getAllStartNode() {
+		ArrayList<String> result = new ArrayList<>();
+		Object[] arrayList = this.nodeHashMap.keySet().toArray();
 
-        }
-        return result;
-    }
+		for (int i = 0; i < this.nodeHashMap.size(); i++) {
+			String tempName = (String) arrayList[i];
+			if (!twoDimensionArray.containsKey(tempName)) {
+				continue;
+			} else {
+				boolean isHas = false;
+				for (SecondMatrix matrix : twoDimensionArray.values()) {
+					if (matrix.twoDimension.containsKey(tempName)) {
+						isHas = true;
+						break;
+					}
+				}
+				if (!isHas) {
+					result.add(tempName);
+				}
+			}
 
-    /*
-    * 获取当前连接关系中所有结尾节点
-     */
-    public ArrayList getAllEndNode() {
-        ArrayList<String> result = new ArrayList<>();
-        Object[] arrayList = (Object[]) this.nodeHashMap.keySet().toArray();
-        for (int i = 0; i < this.nodeHashMap.size(); i++) {
-            String tempName = (String) arrayList[i];
-            if (twoDimensionArray.containsKey(tempName)) {
-                continue;
-            } else {
-                boolean isHas = true;
-                for (SecondMatrix matrix : twoDimensionArray.values()) {
-                    if (matrix.twoDimension.containsKey(tempName)) {
-                        isHas = false;
-                        break;
-                    } else {
-                        isHas = true;
-                    }
-                }
-                if (!isHas) {
-                    result.add(tempName);
-                }
-            }
+		}
+		return result;
+	}
 
-        }
-        return result;
-    }
+//	public ArrayList getAllStartNode() {
+//		ArrayList<String> result = new ArrayList<>();
+//		Object[] arrayList = (Object[]) this.nodeHashMap.keySet().toArray();
+//		for (int i = 0; i < this.nodeHashMap.size(); i++) {
+//			String tempName = (String) arrayList[i];
+//			if (!twoDimensionArray.containsKey(tempName)) {
+//				continue;
+//			} else {
+//				boolean isHas = true;
+//				for (SecondMatrix matrix : twoDimensionArray.values()) {
+//					if (matrix.twoDimension.containsKey(tempName)) {
+//						isHas = true;
+//						break;
+//					} else {
+//						isHas = false;
+//					}
+//				}
+//				if (!isHas) {
+//					result.add(tempName);
+//				}
+//			}
+//
+//		}
+//		return result;
+//	}
 
-    /*
-    * 获取当前连接关系中所有未参与连接的节点
-     */
-    public ArrayList getAllSingleDogNode() {
-        ArrayList<String> result = new ArrayList<>();
-        Object[] arrayList = (Object[]) this.nodeHashMap.keySet().toArray();
-        for (int i = 0; i < this.nodeHashMap.size(); i++) {
-            String tempName = (String) arrayList[i];
-            if (twoDimensionArray.containsKey(tempName)) {
-                continue;
-            } else {
-                boolean isHas = true;
-                for (SecondMatrix matrix : twoDimensionArray.values()) {
-                    if (matrix.twoDimension.containsKey(tempName)) {
-                        isHas = true;
-                        break;
-                    } else {
-                        isHas = false;
-                    }
-                }
-                if (!isHas) {
-                    result.add(tempName);
-                }
-            }
-        }
-        return result;
-    }
+	/*
+	* 获取当前连接关系中所有结尾节点
+	 */
+	public ArrayList getAllEndNode() {
+		ArrayList<String> result = new ArrayList<>();
+		Object[] arrayList = (Object[]) this.nodeHashMap.keySet().toArray();
+		for (int i = 0; i < this.nodeHashMap.size(); i++) {
+			String tempName = (String) arrayList[i];
+			if (twoDimensionArray.containsKey(tempName)) {
+				continue;
+			} else {
+				boolean isHas = true;
+				for (SecondMatrix matrix : twoDimensionArray.values()) {
+					if (matrix.twoDimension.containsKey(tempName)) {
+						isHas = false;
+						break;
+					} else {
+						isHas = true;
+					}
+				}
+				if (!isHas) {
+					result.add(tempName);
+				}
+			}
 
-    private class SecondMatrix {
-        HashMap<String, Integer> twoDimension = new HashMap<>();
-    }
+		}
+		return result;
+	}
+
+	/*
+	* 获取当前连接关系中所有未参与连接的节点
+	 */
+	public ArrayList getAllSingleDogNode() {
+		ArrayList<String> result = new ArrayList<>();
+		Object[] arrayList = (Object[]) this.nodeHashMap.keySet().toArray();
+		for (int i = 0; i < this.nodeHashMap.size(); i++) {
+			String tempName = (String) arrayList[i];
+			if (twoDimensionArray.containsKey(tempName)) {
+				continue;
+			} else {
+				boolean isHas = true;
+				for (SecondMatrix matrix : twoDimensionArray.values()) {
+					if (matrix.twoDimension.containsKey(tempName)) {
+						isHas = true;
+						break;
+					} else {
+						isHas = false;
+					}
+				}
+				if (!isHas) {
+					result.add(tempName);
+				}
+			}
+		}
+		return result;
+	}
+
+	private class SecondMatrix {
+		HashMap<String, Integer> twoDimension = new HashMap<>();
+	}
 
 
 /*
