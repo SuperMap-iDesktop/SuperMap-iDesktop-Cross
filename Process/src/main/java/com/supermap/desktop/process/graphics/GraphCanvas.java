@@ -509,7 +509,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		for (int i = 0; i < this.lines.size(); i++) {
 			LineGraph line = this.lines.get(i);
-			if (line.getPreProcess() instanceof OutputGraph || line.getNextProcess() instanceof ProcessGraph) {
+			if (line.getPreProcess() instanceof OutputGraph && line.getNextProcess() instanceof ProcessGraph) {
 				IProcess processF = ((OutputGraph) line.getPreProcess()).getProcessGraph().getProcess();
 				IProcess processT = ((ProcessGraph) line.getNextProcess()).getProcess();
 				processT.getInputs().followProcess(processF);
