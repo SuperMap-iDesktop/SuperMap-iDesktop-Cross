@@ -7,6 +7,7 @@ import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import java.util.List;
  */
 public class DatasetTypeComboBox extends JComboBox<DataCell> {
 	private static final long serialVersionUID = 1L;
+	private final static Dimension DIMENSION = new Dimension(80, 20);
 	// 没有获取当前所有支持类型的方法，需要的时候再开
 	private transient DatasetType[] supportedDatasetTypes;
 	//是否含有“所有数据类型”这一项，默认不含
@@ -70,6 +72,7 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 	 */
 	public DatasetTypeComboBox() {
 		supportedDatasetTypes = DatasetTypeComboBox.ALL_DATASET_TYPE;
+		this.setPreferredSize(DIMENSION);
 		inits();
 	}
 
@@ -80,6 +83,7 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 	 */
 	public DatasetTypeComboBox(DatasetType[] supportedDatasetTypes) {
 		this.supportedDatasetTypes = supportedDatasetTypes;
+		this.setPreferredSize(DIMENSION);
 		inits();
 	}
 
@@ -106,6 +110,7 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 		} else {
 			this.supportedDatasetTypes = datasetTypes;
 		}
+		this.setPreferredSize(DIMENSION);
 		inits();
 	}
 
@@ -132,20 +137,6 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 
 			ListCellRenderer<Object> renderer = new CommonListCellRenderer();
 			setRenderer(renderer);
-
-
-//			renderer.getListCellRendererComponent().
-//
-//			JButton button = new BasicArrowButton(BasicArrowButton.SOUTH,
-//					Color.white,
-//					Color.white,
-//					Color.black,
-//					UIManager.getColor("ComboBox.buttonHighlight"));
-//			button.setBorder(new LineBorder(Color.white));
-//			button.setName("ComboBox.arrowButton");
-//			return button;
-
-
 		}
 	}
 
@@ -169,28 +160,6 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 		this.isAllShown = isAllShown;
 		inits();
 	}
-
-//	/**
-//	 * 获得选中项的数据集类型
-//	 *
-//	 * @return
-//	 */
-//	public DatasetType getSelectedDatasetType() {
-//		DatasetType type = DatasetType.TOPOLOGY;
-//		try {
-//			DataCell temp = (DataCell) getSelectedItem();
-//			if(isAllShown&&	temp.getDataName().equals(CommonProperties.getString("String_DatasetType_All"))){
-//				getSelectedDatasetTypes();
-//			}else{
-//				type = (DatasetType) temp.getData();
-//			}
-//
-//
-//		} catch (Exception ex) {
-//			Application.getActiveApplication().getOutput().output(ex);
-//		}
-//		return type;
-//	}
 
 	/**
 	 * 获得选中项的数据集类型字符串
