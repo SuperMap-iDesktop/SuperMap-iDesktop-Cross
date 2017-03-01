@@ -341,7 +341,11 @@ public class FormBase extends JFrame implements IFormMain {
 								}
 							} else {
 								WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
-								DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) workspaceTree.getSelectionPath().getLastPathComponent();
+								Object lastSelectedPathComponent = workspaceTree.getLastSelectedPathComponent();
+								if (lastSelectedPathComponent == null || !(lastSelectedPathComponent instanceof DefaultMutableTreeNode)) {
+									return;
+								}
+								DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) lastSelectedPathComponent;
 								TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
 								if (null != selectedNodeData.getData() && selectedNodeData.getData() instanceof String) {
 									String name = (String) selectedNodeData.getData();
