@@ -2,6 +2,7 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 
 import javax.swing.*;
@@ -20,7 +21,7 @@ public interface IProcess {
 
 	String getTitle();
 
-	Vector<ProcessData> getInputs();
+	Inputs getInputs();
 
 	Vector<ProcessData> getOutputs();
 
@@ -33,7 +34,5 @@ public interface IProcess {
 	void removeRunningListener(RunningListener listener);
 
 	JComponent getComponent();
-
-	void setInputs(Vector<ProcessData> inputs);
 }
 

@@ -1,7 +1,9 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
+import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
@@ -72,7 +74,8 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
     @Override
     public void run() {
-        //核密度分析功能实现
+	    fireRunning(new RunningEvent(this, 0, "start"));
+	    //核密度分析功能实现
         KernelDensityJobSetting kenelDensityJobSetting = new KernelDensityJobSetting();
         kenelDensityJobSetting.analyst.query = parameterBounds.getSelectedItem().toString();
         kenelDensityJobSetting.analyst.geoidx = parameterIndex.getSelectedItem().toString();
@@ -89,6 +92,12 @@ public class MetaProcessKernelDensity extends MetaProcess {
         }
 	    ProcessData processData = new ProcessData();
 	    processData.setData("Output");
-	    outPuts.set(0, processData);
+	    outPuts.add(0, processData);
+	    fireRunning(new RunningEvent(this, 100, "finished"));
+    }
+
+    @Override
+    public String getKey() {
+        return MetaKeys.KERNEL_DENSITY;
     }
 }

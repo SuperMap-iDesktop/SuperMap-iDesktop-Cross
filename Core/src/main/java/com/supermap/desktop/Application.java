@@ -28,6 +28,7 @@ public class Application {
 	private ArrayList<Dataset> activeDatasets = new ArrayList<Dataset>();
 
 	private EventListenerList eventListenerList = new EventListenerList();
+	private ArrayList<FormLoadedListener> formLoadedListeners = new ArrayList<>();
 	public ArrayList<FormActivatedListener> formActivatedListeners = new ArrayList<FormActivatedListener>();
 
 	/**
@@ -60,6 +61,7 @@ public class Application {
 		formMain.addFormLoadedListener(new FormLoadedListener() {
 			@Override
 			public void loadFinish(EventObject object) {
+				fireFormLoadedEvent(object);//自动化使用，请勿删除
 				formMainCopy.removeFormLoadedListener(this);
 			}
 		});
@@ -226,7 +228,10 @@ public class Application {
 			System.err.println(e.getMessage());
 		}
 	}
-
+	//自动化使用，请勿删除
+	public void addFormLoadedListener(FormLoadedListener listener){
+		formLoadedListeners.add(listener);
+	}
 	public void addActiveDatasourceChangedListener(ActiveDatasourcesChangeListener listener) {
 		eventListenerList.add(ActiveDatasourcesChangeListener.class, listener);
 	}
@@ -241,6 +246,13 @@ public class Application {
 
 	public void removeActiveDatasetChanagedListener(ActiveDatasetsChangeListener listener) {
 		eventListenerList.remove(ActiveDatasetsChangeListener.class, listener);
+	}
+
+	//自动化使用，请勿删除
+	protected void fireFormLoadedEvent(EventObject eventObject) {
+		for (int i = formLoadedListeners.size() - 1; i >= 0; i--) {
+			formLoadedListeners.get(i).loadFinish(eventObject);
+		}
 	}
 
 	protected void fireActiveDatasourcesChange(ActiveDatasourcesChangeEvent e) {

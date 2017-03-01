@@ -13,7 +13,7 @@ import java.beans.PropertyChangeEvent;
 public class ParameterCheckBox extends AbstractParameter implements ISelectionParameter {
 
 	private JPanel panel;
-	private Object value;
+	private Object value = "false";
 	private String describe;
 
 	public ParameterCheckBox() {

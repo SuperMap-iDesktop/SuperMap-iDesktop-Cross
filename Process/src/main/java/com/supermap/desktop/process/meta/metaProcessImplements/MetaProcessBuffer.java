@@ -12,6 +12,7 @@ import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
@@ -110,13 +111,14 @@ public class MetaProcessBuffer extends MetaProcess {
 
 	@Override
 	public void run() {
+		fireRunning(new RunningEvent(this, 0, "start"));
 		// fixme 数据集来源
-		DatasetVector datasetVector = (DatasetVector) getInputs().get(0).getData();
+		DatasetVector datasetVector = (DatasetVector) getInputs().getData();
 
 		BufferRadiusUnit radiusUnit = (BufferRadiusUnit) ((ParameterDataNode) parameterBufferRange.getSelectedItem()).getData();
 		int radius = Integer.valueOf((String) parameterTextFieldRadius.getSelectedItem());
-		boolean isUnion = (boolean) parameterUnionBuffer.getSelectedItem();
-		boolean isAttributeRetained = (boolean) parameterRetainAttribute.getSelectedItem();
+		boolean isUnion = "true".equalsIgnoreCase((String) parameterUnionBuffer.getSelectedItem());
+		boolean isAttributeRetained = "true".equalsIgnoreCase((String) parameterRetainAttribute.getSelectedItem());
 		int semicircleLineSegment = Integer.valueOf(((String) parameterTextFieldSemicircleLineSegment.getSelectedItem()));
 		Datasource resultDatasource = parameterSaveDataset.getResultDatasource();
 		String resultName = parameterSaveDataset.getDatasetName();
@@ -137,6 +139,12 @@ public class MetaProcessBuffer extends MetaProcess {
 		BufferAnalyst.removeSteppedListener(this.steppedListener);
 		ProcessData processData = new ProcessData();
 		processData.setData(datasetVector);
-		outPuts.set(0, processData);
+		outPuts.add(0, processData);
+		fireRunning(new RunningEvent(this, 100, "finished"));
+	}
+
+	@Override
+	public String getKey() {
+		return MetaKeys.BUFFER;
 	}
 }

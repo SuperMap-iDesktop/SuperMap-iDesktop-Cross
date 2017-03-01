@@ -73,6 +73,7 @@ public class TasksManagerContainer extends JPanel {
         });
         thread.start();
     }
+
     /**
      * 串行结构时的任务结束
      */
@@ -100,5 +101,11 @@ public class TasksManagerContainer extends JPanel {
         }
         updateItems();
     }
+
+	public void clear() {
+		for (IProcessTask item : items) {
+			removeItem(item);
+		}
+	}
 }
 

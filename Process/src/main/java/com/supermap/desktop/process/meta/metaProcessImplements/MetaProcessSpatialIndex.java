@@ -45,14 +45,14 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 
 	@Override
 	public void run() {
-		DatasetVector dataset = (DatasetVector) inputs.get(0).getData();
+		DatasetVector dataset = (DatasetVector) inputs.getData();
 		SpatialIndexType spatialIndexType = (SpatialIndexType) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData();
 		fireRunning(new RunningEvent(this, 0, "start build spatial index"));
 		dataset.buildSpatialIndex(spatialIndexType);
 		fireRunning(new RunningEvent(this, 100, "build spatial index finished"));
 		ProcessData processData = new ProcessData();
 		processData.setData(dataset);
-		outPuts.set(0, processData);
+		outPuts.add(0, processData);
 	}
 
 	@Override

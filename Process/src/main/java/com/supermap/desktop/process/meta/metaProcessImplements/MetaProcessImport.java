@@ -13,6 +13,7 @@ import com.supermap.data.conversion.ImportSteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
@@ -25,6 +26,7 @@ import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
 
 import javax.swing.*;
+import java.io.File;
 
 /**
  * @author XiaJT
@@ -100,13 +102,14 @@ public class MetaProcessImport extends MetaProcess {
 
 	@Override
 	public void run() {
-		String filePath = (String) parameterImportFile.getSelectedItem();
+		String filePath = ((File) parameterImportFile.getSelectedItem()).getPath();
+		fireRunning(new RunningEvent(this, 0, "start"));
 		String datasetName = parameterSaveDataset.getDatasetName();
 		Datasource datasource = parameterSaveDataset.getResultDatasource();
 		EncodeType data = (EncodeType) ((ParameterDataNode) comboBoxEncodeType.getSelectedItem()).getData();
-		ImportMode importMode = (ImportMode) comboBoxImportMode.getSelectedItem();
-		boolean createFieldIndex = (boolean) checkBoxCreateFieldIndex.getSelectedItem();// 喵喵喵？？？
-		boolean createSpaceIndex = (boolean) checkBoxCreateSpaceIndex.getSelectedItem();// 喵喵喵？？？
+		ImportMode importMode = (ImportMode) ((ParameterDataNode) comboBoxImportMode.getSelectedItem()).getData();
+//		boolean createFieldIndex = (boolean) checkBoxCreateFieldIndex.getSelectedItem();// 喵喵喵？？？
+//		boolean createSpaceIndex = (boolean) checkBoxCreateSpaceIndex.getSelectedItem();// 喵喵喵？？？
 
 		ImportSettingSHP importSettingSHP = new ImportSettingSHP(filePath, datasource);
 		importSettingSHP.setTargetEncodeType(data);
@@ -122,9 +125,15 @@ public class MetaProcessImport extends MetaProcess {
 		});
 		ImportResult run = dataImport.run();
 		ImportSetting[] succeedSettings = run.getSucceedSettings();
-		Dataset dataset = succeedSettings[0].getTargetDatasource().getDatasets().get(0);
+		Dataset dataset = succeedSettings[0].getTargetDatasource().getDatasets().get(succeedSettings[0].getTargetDatasetName());
 		ProcessData processData = new ProcessData();
 		processData.setData(dataset);
-		outPuts.set(0, processData);
+		outPuts.add(0, processData);
+		fireRunning(new RunningEvent(this, 100, "finished"));
+	}
+
+	@Override
+	public String getKey() {
+		return MetaKeys.IMPORT;
 	}
 }
