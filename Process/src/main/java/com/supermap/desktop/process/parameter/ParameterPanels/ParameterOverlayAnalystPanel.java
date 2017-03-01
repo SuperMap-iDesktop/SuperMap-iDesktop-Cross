@@ -112,9 +112,9 @@ public class ParameterOverlayAnalystPanel extends JPanel {
         this.labelOverlayAnalystDatasource = new JLabel();
         this.comboboxOverlayAnalystDatasource = new DatasourceComboBox();
         if (comboboxOverlayAnalystDatasource.getSelectedItemAlias() != null) {
-            this.comboboxOverlayAnalystDataset = new DatasetComboBox();
+            this.comboboxOverlayAnalystDataset = new DatasetComboBox(this.comboboxOverlayAnalystDatasource.getSelectedDatasource().getDatasets());
             this.comboboxOverlayAnalystDataset.setSupportedDatasetTypes(regionType);
-	        if (comboboxSourceDataset.getSelectedItem() != null && comboboxSourceDataset.getSelectedItem().toString().equals(comboboxOverlayAnalystDataset.getSelectedItem().toString())) {
+	        if (comboboxSourceDataset.getSelectedItem() != null && comboboxOverlayAnalystDataset.getSelectedItem() != null && comboboxSourceDataset.getSelectedItem().toString().equals(comboboxOverlayAnalystDataset.getSelectedItem().toString())) {
 		        this.comboboxOverlayAnalystDataset.removeItem(comboboxOverlayAnalystDataset.getSelectedItem());
             }
         } else {

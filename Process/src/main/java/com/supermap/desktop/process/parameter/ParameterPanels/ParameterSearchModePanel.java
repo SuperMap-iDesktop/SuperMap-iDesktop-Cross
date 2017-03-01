@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
 import com.supermap.analyst.spatialanalyst.SearchMode;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.parameter.ParameterSearchModeInfo;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterSearchMode;
@@ -30,6 +31,7 @@ public class ParameterSearchModePanel extends JPanel {
     private JLabel labelSearchCount;
     private JTextField textFieldMaxRadius;
     private JTextField textFieldSearchCount;
+    private ButtonGroup buttonGroup = new ButtonGroup();
 
     private boolean isSelectingItem = false;
     private ParameterSearchMode parameterSearchMode;
@@ -152,12 +154,17 @@ public class ParameterSearchModePanel extends JPanel {
 
     private void initComponents() {
         this.labelSearchModel = new JLabel();
+        this.labelSearchModel.setText(ProcessProperties.getString("String_SearchMode"));
         this.radioSearchModelCount = new JRadioButton();
         this.radioSearchModelRadius = new JRadioButton();
+        this.radioSearchModelCount.setText(ProcessProperties.getString("String_SearchModelCount"));
+        this.radioSearchModelRadius.setText(ProcessProperties.getString("String_SearchModelRadius"));
         this.labelMaxRadius = new JLabel();
         this.labelSearchCount = new JLabel();
         this.textFieldMaxRadius = new JTextField();
         this.textFieldSearchCount = new JTextField();
+        buttonGroup.add(this.radioSearchModelCount);
+        buttonGroup.add(this.radioSearchModelRadius);
         if (null != info) {
             this.radioSearchModelCount.setSelected(info.searchMode == SearchMode.KDTREE_FIXED_COUNT);
             this.radioSearchModelRadius.setSelected(info.searchMode == SearchMode.KDTREE_FIXED_RADIUS);

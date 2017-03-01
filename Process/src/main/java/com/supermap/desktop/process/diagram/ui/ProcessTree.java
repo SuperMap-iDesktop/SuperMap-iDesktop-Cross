@@ -3,6 +3,7 @@ package com.supermap.desktop.process.diagram.ui;
 import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.drop.DropAndDragHandler;
+import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
 import com.supermap.desktop.process.FormProcess;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.IProcess;
@@ -46,21 +47,31 @@ public class ProcessTree extends JPanel {
 		initComponents();
 		initLayout();
 		initResouces();
-		new TreeDropAndDragHandler(DataFlavor.stringFlavor).bindSource(this.processTree).addDropTarget(this.processTree);
+		new TreeDropAndDragHandler(DataFlavor.stringFlavor).bindSource(this.processTree);
 		// fixme 使用自行实现的TreeNode
 		// @see com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolGroupTreeNode
 		ProcessGroup root = new ProcessGroup(null);
 		root.setKey(ProcessProperties.getString("String_Process"));
-		root.addProcess(new MetaProcessBuffer());
-		root.addProcess(new MetaProcessHeatMap());
-		root.addProcess(new MetaProcessImport());
-		root.addProcess(new MetaProcessInterpolator(InterpolationAlgorithmType.IDW));
-		root.addProcess(new MetaProcessKernelDensity());
-		root.addProcess(new MetaProcessOverlayAnalyst(OverlayAnalystType.CLIP));
-		root.addProcess(new MetaProcessProjection());
-		root.addProcess(new MetaProcessSpatialIndex());
-		root.addProcess(new MetaProcessSqlQuery());
-		createNodes(root);
+
+		ProcessGroup online = new ProcessGroup(root);
+		online.setKey("Online");
+		online.addProcess(new MetaProcessHeatMap());
+		online.addProcess(new MetaProcessKernelDensity());
+
+		ProcessGroup standAloneGroup = new ProcessGroup(root);
+		standAloneGroup.setKey(ProcessProperties.getString("String_StandAlone"));
+		standAloneGroup.addProcess(new MetaProcessBuffer());
+		standAloneGroup.addProcess(new MetaProcessImport());
+		standAloneGroup.addProcess(new MetaProcessProjection());
+		standAloneGroup.addProcess(new MetaProcessInterpolator(InterpolationAlgorithmType.IDW));
+		standAloneGroup.addProcess(new MetaProcessOverlayAnalyst(OverlayAnalystType.CLIP));
+		standAloneGroup.addProcess(new MetaProcessSpatialIndex());
+		standAloneGroup.addProcess(new MetaProcessSqlQuery());
+		root.addProcess(standAloneGroup);
+		root.addProcess(online);
+
+		createNodes(rootNode, root);
+		JTreeUIUtilities.expandTree(processTree, true);
 		processTree.setCellRenderer(new DefaultTreeCellRenderer() {
 			@Override
 			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
@@ -92,7 +103,11 @@ public class ProcessTree extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					Object userObject = ((DefaultMutableTreeNode) processTree.getLastSelectedPathComponent()).getUserObject();
+					Object lastSelectedPathComponent = processTree.getLastSelectedPathComponent();
+					if (lastSelectedPathComponent == null) {
+						return;
+					}
+					Object userObject = ((DefaultMutableTreeNode) lastSelectedPathComponent).getUserObject();
 					if (userObject instanceof IProcess && !(userObject instanceof IProcessGroup)) {
 						if (Application.getActiveApplication().getActiveForm() instanceof FormProcess) {
 							((FormProcess) Application.getActiveApplication().getActiveForm()).addProcess((IProcess) userObject);
@@ -137,15 +152,17 @@ public class ProcessTree extends JPanel {
 	 *
 	 * @param processGroup
 	 */
-	public void createNodes(IProcessGroup... processGroup) {
+	public void createNodes(DefaultMutableTreeNode node, IProcessGroup... processGroup) {
 		for (IProcessGroup iProcessGroup : processGroup) {
-//			DefaultMutableTreeNode processGroupNode = new DefaultMutableTreeNode(iProcessGroup);
 			int childCount = iProcessGroup.getChildCount();
 			for (int i = 0; i < childCount; i++) {
-				DefaultMutableTreeNode processNode = new DefaultMutableTreeNode(iProcessGroup.getProcessByIndex(i));
-				rootNode.add(processNode);
+				IProcess process = iProcessGroup.getProcessByIndex(i);
+				DefaultMutableTreeNode processNode = new DefaultMutableTreeNode(process);
+				if (process instanceof IProcessGroup) {
+					createNodes(processNode, (IProcessGroup) process);
+				}
+				node.add(processNode);
 			}
-//			this.rootNode.add(processGroupNode);
 		}
 	}
 
