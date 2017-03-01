@@ -294,7 +294,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	private void setSelectedGraph(IGraph selectedGraph) {
 		if (this.selectedGraph != selectedGraph) {
+			if (this.selectedDecorator.isDecorating()) {
+				repaint(this.selectedDecorator.getBounds());
+			}
 			this.selectedGraph = selectedGraph;
+			if (this.selectedDecorator.isDecorating()) {
+				repaint(this.selectedDecorator.getBounds());
+			}
 			fireGraphSelectChanged(new GraphSelectedChangedEvent(this, this.selectedGraph));
 		}
 	}
@@ -509,7 +515,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		for (int i = 0; i < this.lines.size(); i++) {
 			LineGraph line = this.lines.get(i);
-			if (line.getPreProcess() instanceof OutputGraph || line.getNextProcess() instanceof ProcessGraph) {
+			if (line.getPreProcess() instanceof OutputGraph && line.getNextProcess() instanceof ProcessGraph) {
 				IProcess processF = ((OutputGraph) line.getPreProcess()).getProcessGraph().getProcess();
 				IProcess processT = ((ProcessGraph) line.getNextProcess()).getProcess();
 				processT.getInputs().followProcess(processF);

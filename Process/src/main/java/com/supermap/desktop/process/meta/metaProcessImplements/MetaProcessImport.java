@@ -52,9 +52,9 @@ public class MetaProcessImport extends MetaProcess {
 		} else if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
 			parameterSaveDataset.setResultDatasource(Application.getActiveApplication().getWorkspace().getDatasources().get(0));
 		}
-		if (parameterSaveDataset.getResultDatasource() != null) {
-			parameterSaveDataset.setDatasetName(parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName("dataset"));
-		}
+//		if (parameterSaveDataset.getResultDatasource() != null) {
+		parameterSaveDataset.setDatasetName("RoadLine");
+//		}
 
 
 		ParameterDataNode[] parameterEncodeType = new ParameterDataNode[]{

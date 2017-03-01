@@ -80,8 +80,8 @@ public class ParameterTextAreaPanel extends JPanel {
         if (!StringUtilities.isNullOrEmpty(parameterTextArea.getDiscribe()))
             this.label.setText(parameterTextArea.getDiscribe());
         this.textArea = new JTextArea();
-        if (StringUtilities.isNullOrEmpty((String) parameterTextArea.getSelectedItem())) {
-            this.textArea.setText((String) parameterTextArea.getSelectedItem());
+	    if (!StringUtilities.isNullOrEmpty((String) parameterTextArea.getSelectedItem())) {
+		    this.textArea.setText((String) parameterTextArea.getSelectedItem());
         }
 
     }

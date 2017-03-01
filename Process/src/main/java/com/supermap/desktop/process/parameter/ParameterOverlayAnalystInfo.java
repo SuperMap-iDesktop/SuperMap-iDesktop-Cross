@@ -8,10 +8,11 @@ import com.supermap.data.Datasource;
  * Created by xie on 2017/2/14.
  */
 public class ParameterOverlayAnalystInfo {
-    public Datasource sourceDatatsource;
-    public DatasetVector sourceDataset;
-    public Datasource overlayAnalystDatasource;
-    public DatasetVector overlayAnalystDataset;
-    public DatasetVector targetDataset;
-    public OverlayAnalystParameter analystParameter;
+	public Datasource sourceDatatsource;
+	public DatasetVector sourceDataset;
+	public Datasource overlayAnalystDatasource;
+	public DatasetVector overlayAnalystDataset;
+	public Datasource targetDatasource;
+	public String targetDataset;
+	public OverlayAnalystParameter analystParameter;
 }

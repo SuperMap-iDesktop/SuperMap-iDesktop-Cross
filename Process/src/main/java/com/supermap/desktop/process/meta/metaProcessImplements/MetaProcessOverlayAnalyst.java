@@ -1,10 +1,7 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.analyst.spatialanalyst.OverlayAnalyst;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -53,7 +50,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 
 	@Override
 	public String getTitle() {
-		return "叠加分析";
+		return "叠加分析-求交";
 	}
 
 	@Override
@@ -80,28 +77,37 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 			return;
 		}
 		OverlayAnalyst.addSteppedListener(this.steppedListener);
+		DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
+		datasetVectorInfo.setType(info.sourceDataset.getType());
+		datasetVectorInfo.setEncodeType(info.sourceDataset.getEncodeType());
+		if (info.targetDatasource.getDatasets().getAvailableDatasetName(info.targetDataset).equals(info.targetDataset)) {
+			// 名称合法时可以设置名称
+			datasetVectorInfo.setName(info.targetDataset);
+		}
+		DatasetVector targetDataset = info.targetDatasource.getDatasets().create(datasetVectorInfo);
+		targetDataset.setPrjCoordSys(info.sourceDataset.getPrjCoordSys());
 
 		switch (analystType) {
 			case CLIP:
-				OverlayAnalyst.clip(info.sourceDataset, info.overlayAnalystDataset, info.targetDataset, info.analystParameter);
+				OverlayAnalyst.clip(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
 				break;
 			case ERASE:
-				OverlayAnalyst.erase(info.sourceDataset, info.overlayAnalystDataset, info.targetDataset, info.analystParameter);
+				OverlayAnalyst.erase(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
 				break;
 			case IDENTITY:
-				OverlayAnalyst.identity(info.sourceDataset, info.overlayAnalystDataset, info.targetDataset, info.analystParameter);
+				OverlayAnalyst.identity(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
 				break;
 			case INTERSECT:
-				OverlayAnalyst.intersect(info.sourceDataset, info.overlayAnalystDataset, info.targetDataset, info.analystParameter);
+				OverlayAnalyst.intersect(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
 				break;
 			case UNION:
-				OverlayAnalyst.union(info.sourceDataset, info.overlayAnalystDataset, info.targetDataset, info.analystParameter);
+				OverlayAnalyst.union(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
 				break;
 			case XOR:
-				OverlayAnalyst.xOR(info.sourceDataset, info.overlayAnalystDataset, info.targetDataset, info.analystParameter);
+				OverlayAnalyst.xOR(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
 				break;
 			case UPDATE:
-				OverlayAnalyst.update(info.sourceDataset, info.overlayAnalystDataset, info.targetDataset, info.analystParameter);
+				OverlayAnalyst.update(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
 				break;
 			default:
 				break;

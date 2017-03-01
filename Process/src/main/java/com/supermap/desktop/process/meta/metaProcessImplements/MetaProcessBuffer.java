@@ -94,9 +94,9 @@ public class MetaProcessBuffer extends MetaProcess {
 		} else if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
 			parameterSaveDataset.setResultDatasource(Application.getActiveApplication().getWorkspace().getDatasources().get(0));
 		}
-		if (parameterSaveDataset.getResultDatasource() != null) {
-			parameterSaveDataset.setDatasetName(parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName("dataset"));
-		}
+//		if (parameterSaveDataset.getResultDatasource() != null) {
+		parameterSaveDataset.setDatasetName("RoadBuffer");
+//		}
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public class MetaProcessBuffer extends MetaProcess {
 		BufferAnalyst.createBuffer(datasetVector, result, parameter, isUnion, isAttributeRetained);
 		BufferAnalyst.removeSteppedListener(this.steppedListener);
 		ProcessData processData = new ProcessData();
-		processData.setData(datasetVector);
+		processData.setData(result);
 		outPuts.add(0, processData);
 		fireRunning(new RunningEvent(this, 100, "finished"));
 	}

@@ -39,6 +39,7 @@ public class JDialogHDFSFiles extends SmDialog {
         removeEvents();
         JDialogHDFSFiles.this.dispose();
     }
+
     private MouseAdapter tableMouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -55,6 +56,7 @@ public class JDialogHDFSFiles extends SmDialog {
         public void mouseReleased(MouseEvent e) {
 
         }
+
         public void tableMouseClicked(MouseEvent e) {
             if (table.getSelectedRow() != -1 && e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1) {
                 panelHDFSFiles.resetHDFSPath();
@@ -64,7 +66,7 @@ public class JDialogHDFSFiles extends SmDialog {
     private ActionListener okListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (!StringUtilities.isNullOrEmpty(panelHDFSFiles.getURL())) {
+            if (!StringUtilities.isNullOrEmpty(panelHDFSFiles.getURL()) && panelHDFSFiles.getTable().getSelectedRow() > 0) {
                 String name = (String) panelHDFSFiles.getTable().getModel().getValueAt(panelHDFSFiles.getTable().getSelectedRow(), 0);
                 String url = panelHDFSFiles.getURL();
                 if (!url.endsWith("/")) {

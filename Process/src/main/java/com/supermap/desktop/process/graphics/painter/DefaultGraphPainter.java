@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.graphics.painter;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.graphs.*;
 import com.supermap.desktop.process.graphics.graphs.decorator.*;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -142,7 +143,7 @@ public class DefaultGraphPainter implements IGraphPainter {
 	}
 
 	protected void paintEllipseGraph(Graphics graphics, EllipseGraph ellipseGraph) {
-		this.styleFactory.normalRegion(graphics);
+		graphics.setColor(Color.decode("#C1FFC1"));
 		((Graphics2D) graphics).fill(ellipseGraph.getShape());
 	}
 
@@ -155,9 +156,10 @@ public class DefaultGraphPainter implements IGraphPainter {
 
 	protected void paintSelectedDecorator(Graphics graphics, SelectedDecorator selectedDecorator) {
 		if (selectedDecorator.isDecorating()) {
-			Rectangle rect = (Rectangle) selectedDecorator.getBounds().clone();
-			rect.grow(-1, -1);
-			((Graphics2D) graphics).draw(rect);
+//			Rectangle rect = (Rectangle) selectedDecorator.getBounds().clone();
+//			rect.grow(-1, -1);
+//			((Graphics2D) graphics).draw(rect);
+			((Graphics2D) graphics).draw(selectedDecorator.getShape());
 		}
 	}
 
@@ -173,9 +175,9 @@ public class DefaultGraphPainter implements IGraphPainter {
 			if (previewDecorator.getGraph() instanceof ProcessGraph) {
 				ProcessGraph processGraph = (ProcessGraph) previewDecorator.getGraph();
 
-				Font font = new Font("宋体", Font.PLAIN, 24);
+				Font font = new Font("宋体", Font.PLAIN, 20);
 				graphics.setFont(font);
-				graphics.setColor(Color.darkGray);
+				graphics.setColor(GraphicsUtil.transparentColor(Color.LIGHT_GRAY, 100));
 
 				int fontHeight = this.canvas.getFontMetrics(font).getHeight();
 				int fontWidth = SwingUtilities2.stringWidth(this.canvas, this.canvas.getFontMetrics(font), processGraph.getTitle());
