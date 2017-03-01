@@ -21,10 +21,11 @@ public class ListDataCellRender extends DefaultListCellRenderer {
 			result = new DataCell(value);
 		}
 		if (isSelected) {
-			result.setBackground(new Color(51, 153, 255));
-			result.setForeground(Color.white);
+			result.setBackground(list.getSelectionBackground());
+			result.setForeground(list.getSelectionForeground());
 		} else {
-			result.setBackground(Color.white);
+			result.setBackground(list.getBackground());
+			result.setForeground(list.getForeground());
 		}
 		return result;
 	}
