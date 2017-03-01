@@ -62,7 +62,7 @@ public class MetaProcessProjection extends MetaProcess {
 		fireRunning(new RunningEvent(this, 100, "set geoCoorSys finished"));
 		ProcessData processData = new ProcessData();
 		processData.setData(dataset);
-		outPuts.set(0, processData);
+		outPuts.add(0, processData);
 	}
 
 	@Override

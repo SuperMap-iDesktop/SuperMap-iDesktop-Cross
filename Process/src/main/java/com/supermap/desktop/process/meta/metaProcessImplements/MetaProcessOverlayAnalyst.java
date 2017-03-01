@@ -63,6 +63,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 
 	@Override
 	public void run() {
+		fireRunning(new RunningEvent(this, 0, "start"));
 		ParameterOverlayAnalystInfo info = (ParameterOverlayAnalystInfo) parameterOverlayAnalyst.getSelectedItem();
 		if (inputs.getData() != null && inputs.getData() instanceof DatasetVector) {
 			info.sourceDataset = (DatasetVector) inputs.getData();
@@ -106,10 +107,10 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 				break;
 		}
 		OverlayAnalyst.removeSteppedListener(this.steppedListener);
-
+		fireRunning(new RunningEvent(this, 100, "finished"));
 		ProcessData processData = new ProcessData();
 		processData.setData(info.sourceDataset);
-		outPuts.set(0, processData);
+		outPuts.add(0, processData);
 	}
 
 	@Override

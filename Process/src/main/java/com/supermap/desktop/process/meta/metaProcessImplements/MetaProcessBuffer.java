@@ -111,6 +111,7 @@ public class MetaProcessBuffer extends MetaProcess {
 
 	@Override
 	public void run() {
+		fireRunning(new RunningEvent(this, 0, "start"));
 		// fixme 数据集来源
 		DatasetVector datasetVector = (DatasetVector) getInputs().getData();
 
@@ -138,7 +139,8 @@ public class MetaProcessBuffer extends MetaProcess {
 		BufferAnalyst.removeSteppedListener(this.steppedListener);
 		ProcessData processData = new ProcessData();
 		processData.setData(datasetVector);
-		outPuts.set(0, processData);
+		outPuts.add(0, processData);
+		fireRunning(new RunningEvent(this, 100, "finished"));
 	}
 
 	@Override

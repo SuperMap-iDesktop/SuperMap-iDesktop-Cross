@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
@@ -95,6 +96,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 
 	@Override
 	public void run() {
+		fireRunning(new RunningEvent(this, 0, "start"));
 		//热度图分析功能
 		BuildCacheJobSetting setting = new BuildCacheJobSetting();
 
@@ -126,8 +128,8 @@ public class MetaProcessHeatMap extends MetaProcess {
 		}
 		ProcessData processData = new ProcessData();
 		processData.setData("Output");
-		outPuts.set(0, processData);
-
+		outPuts.add(0, processData);
+		fireRunning(new RunningEvent(this, 100, "finished"));
 	}
 
 	@Override

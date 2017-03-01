@@ -20,6 +20,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.ParameterSearchModeInfo;
@@ -183,6 +184,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 
 	@Override
 	public void run() {
+		fireRunning(new RunningEvent(this, 0, "start"));
 		InterpolationParameter interpolationParameter = null;
 		if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.IDW)) {
 			interpolationParameter = new InterpolationIDWParameter();
@@ -219,7 +221,8 @@ public class MetaProcessInterpolator extends MetaProcess {
 		Interpolator.removeSteppedListener(this.stepLitener);
 		ProcessData processData = new ProcessData();
 		processData.setData(dataset);
-		outPuts.set(0, processData);
+		outPuts.add(0, processData);
+		fireRunning(new RunningEvent(this, 100, "finished"));
 	}
 
 	@Override

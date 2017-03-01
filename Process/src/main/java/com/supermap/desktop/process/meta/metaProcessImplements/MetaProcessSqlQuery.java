@@ -8,7 +8,7 @@ import com.supermap.data.QueryParameter;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.meta.MetaKeys;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
@@ -68,7 +68,8 @@ public class MetaProcessSqlQuery extends MetaProcess {
 
 	@Override
 	public void run() {
-		DatasetVector currentDatasetVector = (DatasetVector) inputs.getData();
+		fireRunning(new RunningEvent(this, 0, "start"));
+		DatasetVector currentDatasetVector = null;
 		if (currentDatasetVector == null && dataset.getSelectedItem() instanceof DatasetVector) {
 			currentDatasetVector = (DatasetVector) dataset.getSelectedItem();
 		}
@@ -94,8 +95,8 @@ public class MetaProcessSqlQuery extends MetaProcess {
 				}
 				ProcessData processData = new ProcessData();
 				processData.setData(resultRecord);
-				outPuts.set(0, processData);
-
+				outPuts.add(0, processData);
+				fireRunning(new RunningEvent(this, 100, "finished"));
 				// 保存查询结果
 				saveQueryResult(resultRecord);
 			}

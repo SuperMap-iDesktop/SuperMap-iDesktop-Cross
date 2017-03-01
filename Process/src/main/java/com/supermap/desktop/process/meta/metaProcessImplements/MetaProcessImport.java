@@ -101,6 +101,7 @@ public class MetaProcessImport extends MetaProcess {
 
 	@Override
 	public void run() {
+		fireRunning(new RunningEvent(this, 0, "start"));
 		String filePath = (String) parameterImportFile.getSelectedItem();
 		String datasetName = parameterSaveDataset.getDatasetName();
 		Datasource datasource = parameterSaveDataset.getResultDatasource();
@@ -126,7 +127,8 @@ public class MetaProcessImport extends MetaProcess {
 		Dataset dataset = succeedSettings[0].getTargetDatasource().getDatasets().get(0);
 		ProcessData processData = new ProcessData();
 		processData.setData(dataset);
-		outPuts.set(0, processData);
+		outPuts.add(0, processData);
+		fireRunning(new RunningEvent(this, 100, "finished"));
 	}
 
 	@Override
