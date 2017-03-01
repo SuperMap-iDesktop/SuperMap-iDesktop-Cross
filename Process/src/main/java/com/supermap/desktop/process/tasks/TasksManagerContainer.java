@@ -101,5 +101,11 @@ public class TasksManagerContainer extends JPanel {
         }
         updateItems();
     }
+
+	public void clear() {
+		for (IProcessTask item : items) {
+			removeItem(item);
+		}
+	}
 }
 

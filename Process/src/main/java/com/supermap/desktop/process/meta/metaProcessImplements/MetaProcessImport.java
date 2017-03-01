@@ -125,7 +125,7 @@ public class MetaProcessImport extends MetaProcess {
 		});
 		ImportResult run = dataImport.run();
 		ImportSetting[] succeedSettings = run.getSucceedSettings();
-		Dataset dataset = succeedSettings[0].getTargetDatasource().getDatasets().get(0);
+		Dataset dataset = succeedSettings[0].getTargetDatasource().getDatasets().get(succeedSettings[0].getTargetDatasetName());
 		ProcessData processData = new ProcessData();
 		processData.setData(dataset);
 		outPuts.add(0, processData);
