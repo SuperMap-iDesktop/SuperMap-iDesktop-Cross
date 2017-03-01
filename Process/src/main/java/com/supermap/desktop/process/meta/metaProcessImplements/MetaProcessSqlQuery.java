@@ -71,7 +71,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 	@Override
 	public void run() {
 		fireRunning(new RunningEvent(this, 0, "start"));
-		DatasetVector currentDatasetVector = null;
+		DatasetVector currentDatasetVector = inputs.getData() instanceof DatasetVector ? ((DatasetVector) inputs.getData()) : null;
 		if (currentDatasetVector == null && dataset.getSelectedItem() instanceof DatasetVector) {
 			currentDatasetVector = (DatasetVector) dataset.getSelectedItem();
 		}
@@ -95,12 +95,13 @@ public class MetaProcessSqlQuery extends MetaProcess {
 					resultRecord.dispose();
 					resultRecord = null;
 				}
-				ProcessData processData = new ProcessData();
-				processData.setData(resultRecord);
-				outPuts.add(0, processData);
+
 				fireRunning(new RunningEvent(this, 100, "finished"));
 				// 保存查询结果
-				saveQueryResult(resultRecord);
+				DatasetVector datasetVector = saveQueryResult(resultRecord);
+				ProcessData processData = new ProcessData();
+				processData.setData(datasetVector);
+				outPuts.add(0, processData);
 			}
 		}
 
@@ -111,11 +112,11 @@ public class MetaProcessSqlQuery extends MetaProcess {
 		return "SQLQUERY";
 	}
 
-	private void saveQueryResult(Recordset resultRecord) {
+	private DatasetVector saveQueryResult(Recordset resultRecord) {
+		DatasetVector resultDataset = null;
 		Datasource resultDatasource = parameterSaveDataset.getResultDatasource();
 		String datasetName = parameterSaveDataset.getDatasetName();
 		if (resultDatasource != null && !StringUtilities.isNullOrEmpty(datasetName)) {
-			DatasetVector resultDataset = null;
 			try {
 				resultDataset = resultDatasource.recordsetToDataset(resultRecord, datasetName);
 			} catch (Exception e) {
@@ -130,6 +131,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 			}
 		}
 
+		return resultDataset;
 	}
 
 	private void preProcessSQLQuery(QueryParameter queryParameter) {

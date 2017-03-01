@@ -138,7 +138,7 @@ public class MetaProcessBuffer extends MetaProcess {
 		BufferAnalyst.createBuffer(datasetVector, result, parameter, isUnion, isAttributeRetained);
 		BufferAnalyst.removeSteppedListener(this.steppedListener);
 		ProcessData processData = new ProcessData();
-		processData.setData(datasetVector);
+		processData.setData(result);
 		outPuts.add(0, processData);
 		fireRunning(new RunningEvent(this, 100, "finished"));
 	}
