@@ -117,8 +117,8 @@ public class MetaProcessBuffer extends MetaProcess {
 
 		BufferRadiusUnit radiusUnit = (BufferRadiusUnit) ((ParameterDataNode) parameterBufferRange.getSelectedItem()).getData();
 		int radius = Integer.valueOf((String) parameterTextFieldRadius.getSelectedItem());
-		boolean isUnion = (boolean) parameterUnionBuffer.getSelectedItem();
-		boolean isAttributeRetained = (boolean) parameterRetainAttribute.getSelectedItem();
+		boolean isUnion = "true".equalsIgnoreCase((String) parameterUnionBuffer.getSelectedItem());
+		boolean isAttributeRetained = "true".equalsIgnoreCase((String) parameterRetainAttribute.getSelectedItem());
 		int semicircleLineSegment = Integer.valueOf(((String) parameterTextFieldSemicircleLineSegment.getSelectedItem()));
 		Datasource resultDatasource = parameterSaveDataset.getResultDatasource();
 		String resultName = parameterSaveDataset.getDatasetName();
