@@ -7,6 +7,7 @@ import com.supermap.desktop.ui.controls.DatasourceComboBox;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -20,6 +21,7 @@ public class PanelResultData extends JPanel {
 	private JLabel labelDatasource;
 	private DatasourceComboBox comboBoxResultDataDatasource;
 	private JTextField textFieldResultDataDataset;
+	private final static Dimension DIMENSION = new Dimension(80, 20);
 
 	public DatasourceComboBox getComboBoxResultDataDatasource() {
 		return comboBoxResultDataDatasource;
@@ -56,6 +58,7 @@ public class PanelResultData extends JPanel {
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxResultDataDatasource = new DatasourceComboBox();
 		this.textFieldResultDataDataset = new JTextField("Buffer");
+		this.textFieldResultDataDataset.setPreferredSize(DIMENSION);
 
 		comboBoxResultDataDatasource.addItemListener(new ItemListener() {
 			@Override
@@ -85,10 +88,10 @@ public class PanelResultData extends JPanel {
 		panelResultDataLayout.setVerticalGroup(panelResultDataLayout.createSequentialGroup()
 				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDatasource)
-						.addComponent(this.comboBoxResultDataDatasource,20,20,20)).addGap(5)
+						.addComponent(this.comboBoxResultDataDatasource))
 				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDataset)
-						.addComponent(this.textFieldResultDataDataset,20,20,20)));
+						.addComponent(this.textFieldResultDataDataset)));
 		//@formatter:on
 	}
 

@@ -139,8 +139,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	}
 
 	private void setPanelPointOrRegionAnalyst() {
-		setPanelBufferRadius();
 		setPanelBufferData();
+		setPanelBufferRadius();
 		setPanelResultData();
 		registerEvent();
 	}
