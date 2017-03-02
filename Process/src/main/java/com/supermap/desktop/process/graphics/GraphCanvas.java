@@ -42,7 +42,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
 
 	private CoordinateTransform coordinateTransform = new CoordinateTransform();
-	private Selection selection = new MultiSelction();
+	private Selection selection = new MultiSelction(this);
 	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory(this);
 	private AbstractDecorator hotDecorator = new HotDecorator(this);
 	private AbstractDecorator selectedDecorator = new SelectedDecorator(this); // 目前还没有支持多选，就先这样用单例修饰

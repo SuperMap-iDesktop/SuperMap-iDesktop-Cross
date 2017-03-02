@@ -250,6 +250,28 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="Assistant" />
+        <module name="Controls" />
+        <module name="Core" />
+        <module name="DataConversion" />
+        <module name="DataEditor" />
+        <module name="DataProcess" />
+        <module name="DataTopology" />
+        <module name="DataView" />
+        <module name="Frame" />
+        <module name="iDesktop" />
+        <module name="LayoutEditor" />
+        <module name="LayoutView" />
+        <module name="LBSClient" />
+        <module name="MapEditor" />
+        <module name="MapView" />
+        <module name="NetServices" />
+        <module name="Process" />
+        <module name="RealspaceEditor" />
+        <module name="RealspaceEffect" />
+        <module name="RealspaceView" />
+        <module name="SpatialAnalyst" />
+        <module name="TabularView" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
