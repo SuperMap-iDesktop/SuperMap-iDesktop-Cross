@@ -1,5 +1,7 @@
 package com.supermap.desktop.geometryoperation.control;
 
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoStyle;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
@@ -8,6 +10,7 @@ import com.supermap.desktop.ui.controls.ChooseTable.SmChooseTable;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.utilities.MapUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,7 +39,9 @@ public class JDialogLineInterrruptSelect extends SmDialog {
     private static final int COLUMN_INDEX_OBJECT = 1;
     private static final int COLUMN_INDEX_SMID = 2;
     private static final int COLUMN_INDEX_LAYER_OF_OBJECT = 3;
-
+    private static final String TAG_LineInterruptByPoint = "TAG_LineInterrupt";
+    private final int MAX_COLUMN_WIDTH=100;
+    private GeoStyle styleRed = new GeoStyle();
 
     private Object[] tableHeadTitles = {MapEditorProperties.getString("String_Interrupt"),
             MapEditorProperties.getString("String_Object"),
@@ -48,33 +53,52 @@ public class JDialogLineInterrruptSelect extends SmDialog {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == JDialogLineInterrruptSelect.this.buttonOK) {
                 editEnvironment.getActiveEditableLayer().getSelection().clear();
+                MapUtilities.clearTrackingObjects(editEnvironment.getMap(), TAG_LineInterruptByPoint);
                 JDialogLineInterrruptSelect.this.setDialogResult(DialogResult.OK);
                 JDialogLineInterrruptSelect.this.dispose();
             } else if (e.getSource() == JDialogLineInterrruptSelect.this.buttonCancel) {
                 editEnvironment.getActiveEditableLayer().getSelection().clear();
+                MapUtilities.clearTrackingObjects(editEnvironment.getMap(), TAG_LineInterruptByPoint);
                 JDialogLineInterrruptSelect.this.dispose();
             }
         }
     };
 
     //  选中table中对象时，地图窗口的对应对象高亮
-    private MouseListener mouseListener = new MouseAdapter() {
+    private MouseListener mouseListener=new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            recordset.moveFirst();
-            int[] selectedRows = smChooseTable.getSelectedRows();
-            editEnvironment.getActiveEditableLayer().getSelection().clear();
-            for (int i = 0; i < JDialogLineInterrruptSelect.this.idsArrayList.size(); i++) {
-                for (int j = 0; j < selectedRows.length; j++) {
-                    if (selectedRows[j] == i) {
-                        editEnvironment.getActiveEditableLayer().getSelection().add(recordset.getID());
-                    }
-                }
-                recordset.moveNext();
-            }
-            editEnvironment.getMap().refresh();
+            highLightLine();
+        }
+
+    };
+
+    private MouseMotionListener mouseMotionListener=new MouseMotionAdapter() {
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            highLightLine();
         }
     };
+
+    private void highLightLine(){
+        this.recordset.moveFirst();
+        int[] selectedRows = this.smChooseTable.getSelectedRows();
+        this.editEnvironment.getActiveEditableLayer().getSelection().clear();
+        MapUtilities.clearTrackingObjects(this.editEnvironment.getMap(), TAG_LineInterruptByPoint);
+        for (int i = 0; i < JDialogLineInterrruptSelect.this.idsArrayList.size(); i++) {
+            for (int j = 0; j < selectedRows.length; j++) {
+                if (selectedRows[j] == i) {
+                    this.editEnvironment.getActiveEditableLayer().getSelection().add(this.recordset.getID());
+                    GeoLine geoLine=(GeoLine)this.recordset.getGeometry();
+                    geoLine.setStyle(this.styleRed);
+                    this.editEnvironment.getMap().getTrackingLayer().add(geoLine, TAG_LineInterruptByPoint);
+                }
+            }
+            this.recordset.moveNext();
+        }
+        this.editEnvironment.getMap().refreshTrackingLayer();
+        this.editEnvironment.getMap().refresh();
+    }
 
     public JDialogLineInterrruptSelect(EditEnvironment environment, Recordset recordset, ArrayList<Integer> idsArrayListList, JFrame owner, boolean model) {
         super(owner, model);
@@ -92,12 +116,11 @@ public class JDialogLineInterrruptSelect extends SmDialog {
     private void InitComponents() {
         this.buttonOK.setSelected(true);
         this.setTitle(MapEditorProperties.getString("String_DialogSelectedTitle"));
-        this.setMinimumSize(new Dimension(500, 250));
+        this.setMinimumSize(new Dimension(440, 300));
         setLocationRelativeTo(null);
 
         this.data = this.getData();
         this.smChooseTable = new SmChooseTable(this.data, this.tableHeadTitles);
-        this.smChooseTable.addMouseListener(this.mouseListener);
         this.tableScrollpane.getViewport().setView(this.smChooseTable);
         this.setLayout(new GridBagLayout());
         this.panelWindow.setLayout(new BorderLayout());
@@ -107,18 +130,28 @@ public class JDialogLineInterrruptSelect extends SmDialog {
         this.panelButtons.setLayout(new GridBagLayout());
         panelButtons.add(this.buttonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setInsets(2, 0, 2, 10));
         panelButtons.add(this.buttonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setInsets(2, 0, 2, 10));
-        this.getContentPane().add(this.tableScrollpane, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(4, 10, 0, 10));
+        this.getContentPane().add(this.tableScrollpane, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(6, 10, 0, 10));
         this.getContentPane().add(this.panelButtons, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(4, 20, 4, 0));
+        this.smChooseTable.getColumnModel().getColumn(COLUMN_INDEX_OBJECT).setMaxWidth(MAX_COLUMN_WIDTH);
+        this.smChooseTable.getColumnModel().getColumn(COLUMN_INDEX_SMID).setMaxWidth(MAX_COLUMN_WIDTH);
+        this.smChooseTable.getColumnModel().getColumn(COLUMN_INDEX_OBJECT).setMinWidth(MAX_COLUMN_WIDTH);
+        this.smChooseTable.getColumnModel().getColumn(COLUMN_INDEX_SMID).setMinWidth(MAX_COLUMN_WIDTH);
+        this.styleRed.setLineWidth(0.6);
+        this.styleRed.setLineColor(Color.RED);
     }
 
     private void registerEvents() {
         this.buttonOK.addActionListener(actionListener);
         this.buttonCancel.addActionListener(actionListener);
+        this.smChooseTable.addMouseListener(this.mouseListener);
+        this.smChooseTable.addMouseMotionListener(this.mouseMotionListener);
     }
 
     private void unRegisterEvents() {
         this.buttonOK.removeActionListener(actionListener);
         this.buttonCancel.removeActionListener(actionListener);
+        this.smChooseTable.removeMouseListener(this.mouseListener);
+        this.smChooseTable.removeMouseMotionListener(this.mouseMotionListener);
     }
 
     //获取当前对话框填充到table中的数据

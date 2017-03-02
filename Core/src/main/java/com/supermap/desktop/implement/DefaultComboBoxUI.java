@@ -11,18 +11,18 @@ import java.awt.*;
  * Created by xie on 2016/11/7.
  */
 public class DefaultComboBoxUI extends BasicComboBoxUI {
-    public static ComponentUI createUI(JComponent c) {
-        return new DefaultComboBoxUI();
-    }
+	public static ComponentUI createUI(JComponent c) {
+		return new DefaultComboBoxUI();
+	}
 
-    protected JButton createArrowButton() {
-        JButton button = new BasicArrowButton(BasicArrowButton.SOUTH,
-                Color.white,
-                Color.white,
-                Color.black,
-                UIManager.getColor("ComboBox.buttonHighlight"));
-        button.setBorder(new LineBorder(Color.white));
-        button.setName("ComboBox.arrowButton");
-        return button;
-    }
+	protected JButton createArrowButton() {
+		JButton button = new BasicArrowButton(BasicArrowButton.SOUTH,
+				Color.white,
+				Color.white,
+				Color.black,
+				UIManager.getColor("ComboBox.buttonHighlight"));
+		button.setBorder(new LineBorder(Color.white));
+		button.setName("ComboBox.arrowButton");
+		return button;
+	}
 }

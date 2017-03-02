@@ -63,8 +63,8 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 
 	public final static Dimension DEFAULT_WINDOWS_DIMENSION = new Dimension(300, 150);
 	public final static Dimension DEFAULT_LINUX_DIMENSION = new Dimension(300, 140);
-	public final static int GAPDIMENSION =105;
-	public final static int intMRecordaxCount=5000;
+	public final static int GAPDIMENSION = 105;
+	public final static int intMRecordaxCount = 5000;
 
 	/**
 	 * 创建保存为cad/文本数据集Dialog
@@ -452,10 +452,7 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 	 * @return
 	 */
 	public Datasource getToDatasource() {
-		if (this.toDatasource != null) {
-			return this.toDatasource;
-		}
-		return null;
+		return this.toDatasource;
 	}
 
 	/**
@@ -464,10 +461,7 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 	 * @return
 	 */
 	public DatasetType getOutDatasetType() {
-		if (null != this.outDatasetType) {
-			return this.outDatasetType;
-		}
-		return null;
+		return this.outDatasetType;
 	}
 
 	/**
@@ -476,10 +470,7 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 	 * @return
 	 */
 	public String getoutDatasetName() {
-		if (null != this.outDatasetName) {
-			return this.outDatasetName;
-		}
-		return null;
+		return this.outDatasetName;
 	}
 
 	/**
@@ -488,10 +479,7 @@ public class DiglogSaveThemeAsDataset extends SmDialog {
 	 * @return
 	 */
 	public DatasetVector getoutDataset() {
-		if (null != this.outDataset) {
-			return this.outDataset;
-		}
-		return null;
+		return this.outDataset;
 	}
 }
 
