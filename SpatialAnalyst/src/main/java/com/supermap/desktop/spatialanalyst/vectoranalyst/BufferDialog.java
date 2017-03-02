@@ -37,8 +37,8 @@ public class BufferDialog extends SmDialog {
 	private MapControl mapControl;
 	private PanelButton panelButton;
 	private JPanel panelBuffer;
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(620, 390);
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(620, 325);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(720, 390);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 325);
 	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 490);
 	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(720, 425);
 	private LocalActionListener localActionListener = new LocalActionListener();
@@ -108,7 +108,6 @@ public class BufferDialog extends SmDialog {
 		setSize(getPointPanelDimension());
 		this.radioButtonPointOrRegion.setSelected(true);
 		((PanelPointOrRegionAnalyst) panelBufferType).setSome(some);
-
 	}
 
 	private void getLineType() {

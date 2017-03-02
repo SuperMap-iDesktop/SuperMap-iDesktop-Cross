@@ -17,12 +17,19 @@ public class CheckHeaderCellRenderer implements TableCellRenderer {
     JTableHeader tableHeader;
     final JCheckBox checkBox;
 
-    public CheckHeaderCellRenderer(JTable table, String title) {
+    /*
+    *parm table要渲染的table，titletable标题，isSelectedCheckBox是否选中checkbox
+     */
+    public CheckHeaderCellRenderer(JTable table, String title,boolean isSelectedCheckBox) {
         this.tableModel = (CheckTableModle) table.getModel();
         this.tableHeader = table.getTableHeader();
         this.checkBox = new JCheckBox(tableModel.getColumnName(0));
-        this.checkBox.setSelected(false);
+        this.checkBox.setSelected(isSelectedCheckBox);
         this.checkBox.setText(title);
+        if (isSelectedCheckBox){
+            tableModel.selectAllOrNull(true);
+            tableHeader.repaint();
+        }
         this.tableHeader.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() > 0) {

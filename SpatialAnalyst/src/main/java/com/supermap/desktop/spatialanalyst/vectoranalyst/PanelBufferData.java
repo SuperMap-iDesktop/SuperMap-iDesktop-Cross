@@ -1,5 +1,6 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
@@ -12,7 +13,7 @@ import java.awt.*;
 public class PanelBufferData extends JPanel {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private JLabel labelDataset;
@@ -22,7 +23,7 @@ public class PanelBufferData extends JPanel {
 	private JCheckBox checkBoxGeometrySelect;
 	private JPanel panelBufferDataBasic;
 	private JPanel panelSelect;
-//	private final static Dimension DIMENSION = new Dimension(100, 20);
+
 
 	public JCheckBox getCheckBoxGeometrySelect() {
 		return checkBoxGeometrySelect;
@@ -58,9 +59,9 @@ public class PanelBufferData extends JPanel {
 		this.labelDataset = new JLabel("Dataset");
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxBufferDataDatasource = new DatasourceComboBox();
-//		this.comboBoxBufferDataDatasource.setSize(DIMENSION);
+		this.comboBoxBufferDataDatasource.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.comboBoxBufferDataDataset = new DatasetComboBox();
-//		this.comboBoxBufferDataDataset.setSize(DIMENSION);
+		this.comboBoxBufferDataDataset.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.checkBoxGeometrySelect = new JCheckBox("GeometrySelect");
 		this.panelBufferDataBasic = new JPanel();
 		this.panelSelect = new JPanel();
@@ -94,12 +95,22 @@ public class PanelBufferData extends JPanel {
 		panelBufferDataLayout.setVerticalGroup(panelBufferDataLayout.createSequentialGroup()
 				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDatasource)
-						.addComponent(this.comboBoxBufferDataDatasource,20,20,20))
+						.addComponent(this.comboBoxBufferDataDatasource))
 				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDataset)
-						.addComponent(this.comboBoxBufferDataDataset,20,20,20)));
+						.addComponent(this.comboBoxBufferDataDataset)));
 		//@formatter:on
-		
+
 		this.add(this.checkBoxGeometrySelect, BorderLayout.SOUTH);
+	}
+
+	/**
+	 * 创建面板是否可用方法
+	 * 2017.3.2 yuanR
+	 *
+	 * @param isEnable
+	 */
+	public void setPanelEnable(boolean isEnable) {
+		this.comboBoxBufferDataDataset.setEnabled(isEnable);
 	}
 }

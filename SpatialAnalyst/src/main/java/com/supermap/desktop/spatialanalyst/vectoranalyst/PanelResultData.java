@@ -1,6 +1,7 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
 import com.supermap.data.Datasource;
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
@@ -56,8 +57,8 @@ public class PanelResultData extends JPanel {
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxResultDataDatasource = new DatasourceComboBox();
 		this.textFieldResultDataDataset = new JTextField("Buffer");
-
-		comboBoxResultDataDatasource.addItemListener(new ItemListener() {
+		this.textFieldResultDataDataset.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.comboBoxResultDataDatasource.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				resetDatasetName();
@@ -85,10 +86,10 @@ public class PanelResultData extends JPanel {
 		panelResultDataLayout.setVerticalGroup(panelResultDataLayout.createSequentialGroup()
 				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDatasource)
-						.addComponent(this.comboBoxResultDataDatasource,20,20,20)).addGap(5)
+						.addComponent(this.comboBoxResultDataDatasource))
 				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDataset)
-						.addComponent(this.textFieldResultDataDataset,20,20,20)));
+						.addComponent(this.textFieldResultDataDataset)));
 		//@formatter:on
 	}
 
@@ -106,5 +107,16 @@ public class PanelResultData extends JPanel {
 		if (this.comboBoxResultDataDatasource.getSelectedDatasource() != null) {
 			this.textFieldResultDataDataset.setText(this.comboBoxResultDataDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(name));
 		}
+	}
+
+	/**
+	 * 创建面板是否可用方法
+	 * 2017.3.2 yuanR
+	 *
+	 * @param isEnable
+	 */
+	public void setPanelEnable(boolean isEnable) {
+		this.comboBoxResultDataDatasource.setEnabled(isEnable);
+		this.textFieldResultDataDataset.setEnabled(isEnable);
 	}
 }
