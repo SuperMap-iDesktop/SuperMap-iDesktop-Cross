@@ -13,6 +13,8 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.utilities.MapUtilities;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -29,7 +31,7 @@ public class JDialogLineInterrruptSelect extends SmDialog {
     private Recordset recordset = null;
     private Object data[][] = null;
     private ArrayList<Integer> idsArrayList = null;
-    private final static int COLOMN_COUT = 4;
+    private final static int COLUMN_COUT = 4;
     private EditEnvironment editEnvironment;
     private SmChooseTable smChooseTable = null;
     private final String geometryTip1 = MapEditorProperties.getString("Srting_GeometryTip1");
@@ -42,6 +44,7 @@ public class JDialogLineInterrruptSelect extends SmDialog {
     private static final String TAG_LineInterruptByPoint = "TAG_LineInterrupt";
     private final int MAX_COLUMN_WIDTH=100;
     private GeoStyle styleRed = new GeoStyle();
+
 
     private Object[] tableHeadTitles = {MapEditorProperties.getString("String_Interrupt"),
             MapEditorProperties.getString("String_Object"),
@@ -80,6 +83,13 @@ public class JDialogLineInterrruptSelect extends SmDialog {
         }
     };
 
+    private TableModelListener tableModelListener=new TableModelListener() {
+        @Override
+        public void tableChanged(TableModelEvent e) {
+            buttonStateSet();
+        }
+    };
+
     private void highLightLine(){
         this.recordset.moveFirst();
         int[] selectedRows = this.smChooseTable.getSelectedRows();
@@ -98,6 +108,18 @@ public class JDialogLineInterrruptSelect extends SmDialog {
         }
         this.editEnvironment.getMap().refreshTrackingLayer();
         this.editEnvironment.getMap().refresh();
+    }
+
+    private void buttonStateSet(){
+        if (this.getSelectedLineIds().size()>0 &&this.buttonCancel.isSelected()){
+            this.buttonOK.setEnabled(true);
+            this.buttonOK.setSelected(true);
+            this.buttonCancel.setSelected(false);
+        }else if (this.getSelectedLineIds().size()==0 && this.buttonOK.isEnabled()){
+            this.buttonOK.setEnabled(false);
+            this.buttonOK.setSelected(false);
+            this.buttonCancel.setSelected(true);
+        }
     }
 
     public JDialogLineInterrruptSelect(EditEnvironment environment, Recordset recordset, ArrayList<Integer> idsArrayListList, JFrame owner, boolean model) {
@@ -145,6 +167,7 @@ public class JDialogLineInterrruptSelect extends SmDialog {
         this.buttonCancel.addActionListener(actionListener);
         this.smChooseTable.addMouseListener(this.mouseListener);
         this.smChooseTable.addMouseMotionListener(this.mouseMotionListener);
+        this.smChooseTable.getModel().addTableModelListener(this.tableModelListener);
     }
 
     private void unRegisterEvents() {
@@ -152,11 +175,12 @@ public class JDialogLineInterrruptSelect extends SmDialog {
         this.buttonCancel.removeActionListener(actionListener);
         this.smChooseTable.removeMouseListener(this.mouseListener);
         this.smChooseTable.removeMouseMotionListener(this.mouseMotionListener);
+        this.smChooseTable.getModel().removeTableModelListener(this.tableModelListener);
     }
 
     //获取当前对话框填充到table中的数据
     private Object[][] getData() {
-        Object data[][] = new Object[this.idsArrayList.size()][JDialogLineInterrruptSelect.COLOMN_COUT];
+        Object data[][] = new Object[this.idsArrayList.size()][JDialogLineInterrruptSelect.COLUMN_COUT];
         this.recordset.moveFirst();
         for (int i = 0; i < this.idsArrayList.size(); i++) {
             recordset.seekID(idsArrayList.get(i));
