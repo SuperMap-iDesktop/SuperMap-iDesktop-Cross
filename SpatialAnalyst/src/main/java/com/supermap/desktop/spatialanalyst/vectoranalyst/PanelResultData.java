@@ -1,13 +1,13 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
 import com.supermap.data.Datasource;
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -21,7 +21,6 @@ public class PanelResultData extends JPanel {
 	private JLabel labelDatasource;
 	private DatasourceComboBox comboBoxResultDataDatasource;
 	private JTextField textFieldResultDataDataset;
-	private final static Dimension DIMENSION = new Dimension(80, 20);
 
 	public DatasourceComboBox getComboBoxResultDataDatasource() {
 		return comboBoxResultDataDatasource;
@@ -58,9 +57,8 @@ public class PanelResultData extends JPanel {
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxResultDataDatasource = new DatasourceComboBox();
 		this.textFieldResultDataDataset = new JTextField("Buffer");
-		this.textFieldResultDataDataset.setPreferredSize(DIMENSION);
-
-		comboBoxResultDataDatasource.addItemListener(new ItemListener() {
+		this.textFieldResultDataDataset.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.comboBoxResultDataDatasource.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				resetDatasetName();
