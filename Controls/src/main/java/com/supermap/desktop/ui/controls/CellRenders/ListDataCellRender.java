@@ -1,12 +1,13 @@
 package com.supermap.desktop.ui.controls.CellRenders;
 
 import com.supermap.desktop.ui.controls.DataCell;
+
 import javax.swing.*;
 import java.awt.*;
 
 /**
  * @author YuanR 17.2.15
- * 构造ListCellRenderer渲染器，主要适用于DatasetCombox和datasourceComboBox
+ *         构造ListCellRenderer渲染器，主要适用于DatasetCombox和datasourceComboBox
  */
 public class ListDataCellRender extends DefaultListCellRenderer {
 
@@ -24,6 +25,7 @@ public class ListDataCellRender extends DefaultListCellRenderer {
 			result.setForeground(list.getSelectionForeground());
 		} else {
 			result.setBackground(list.getBackground());
+			result.setForeground(list.getForeground());
 		}
 		return result;
 	}

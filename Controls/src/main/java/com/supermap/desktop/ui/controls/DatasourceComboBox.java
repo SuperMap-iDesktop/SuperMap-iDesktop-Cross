@@ -7,7 +7,6 @@ import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * 数据源下拉列表控件
@@ -16,8 +15,6 @@ import java.awt.*;
  */
 public class DatasourceComboBox extends JComboBox<Datasource> {
 	private static final long serialVersionUID = 1L;
-
-	private final static Dimension DIMENSION = new Dimension(80, 20);
 
 	/**
 	 * 覆盖原有的updateUI方法
@@ -33,9 +30,8 @@ public class DatasourceComboBox extends JComboBox<Datasource> {
 	 */
 	public DatasourceComboBox() {
 		super(initDatasourceComboBoxItem(Application.getActiveApplication().getWorkspace().getDatasources()));
-		//设置渲染方式
-		setRenderer(new ListDataCellRender());
-		this.setPreferredSize(DIMENSION);
+		//设置显示风格
+		setDisplayStyle();
 	}
 
 	/**
@@ -45,9 +41,8 @@ public class DatasourceComboBox extends JComboBox<Datasource> {
 	 */
 	public DatasourceComboBox(Datasources datasources) {
 		super(initDatasourceComboBoxItem(datasources));
-		//设置渲染方式
-		setRenderer(new ListDataCellRender());
-		this.setPreferredSize(DIMENSION);
+		//设置显示风格
+		setDisplayStyle();
 	}
 
 	/**
@@ -57,18 +52,26 @@ public class DatasourceComboBox extends JComboBox<Datasource> {
 	 */
 	public DatasourceComboBox(Datasource[] datasource) {
 		super(datasource);
-		//设置渲染方式
-		setRenderer(new ListDataCellRender());
-		this.setPreferredSize(DIMENSION);
+		//设置显示风格
+		setDisplayStyle();
+	}
+
+	/**
+	 * 显示风格设置
+	 */
+	public void setDisplayStyle() {
+		this.setBorder(BorderFactory.createEtchedBorder(1));
+		this.setRenderer(new ListDataCellRender());
+//		this.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 	}
 
 
 	/**
-	 * 由于填充的是DatasetCell 返回时需要得到DatasetCell中JLabel中显示的字符串
+	 * 获得数据源名称（Alias）
 	 *
 	 * @return
 	 */
-	public String getSelectedItemAlias () {
+	public String getSelectedItemAlias() {
 		Datasource temp = (Datasource) getSelectedItem();
 		return temp != null ? temp.getAlias() : "";
 	}

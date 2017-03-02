@@ -8,7 +8,6 @@ import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * 数据集下拉列表控件
@@ -30,7 +29,6 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	private static final long serialVersionUID = 1L;
 	private transient DatasetType[] datasetTypes;
 	private transient Datasets datasets;
-	private final static Dimension DIMENSION = new Dimension(80, 20);
 
 	/**
 	 * 覆盖原有的updateUI方法
@@ -45,8 +43,9 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	 * 默认构造一个空的下来列表框
 	 */
 	public DatasetComboBox() {
+		this.setBorder(BorderFactory.createEtchedBorder(1));
 		setRenderer(new ListDataCellRender());
-		this.setPreferredSize(DIMENSION);
+//		this.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 	}
 
 	/**
@@ -60,8 +59,9 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 		this.datasets = datasets;
 
 		//设置渲染方式
+		this.setBorder(BorderFactory.createEtchedBorder(1));
 		setRenderer(new ListDataCellRender());
-		this.setPreferredSize(DIMENSION);
+//		this.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	 * @return
 	 */
 	public DatasetType[] getSupportedDatasetTypes() {
-		return datasetTypes;
+		return this.datasetTypes;
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	 * @return
 	 */
 	public Datasets getDatasets() {
-		return datasets;
+		return this.datasets;
 	}
 
 	/**
@@ -252,7 +252,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 		for (int i = 0; i < this.getItemCount(); i++) {
 			if (this.getDatasetAt(i).getName().equals(datasetName)) {
 				this.removeItem(this.getItemAt(i));
-				updateUI();
+				repaint();
 			}
 		}
 	}

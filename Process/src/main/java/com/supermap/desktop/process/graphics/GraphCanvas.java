@@ -294,7 +294,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	private void setSelectedGraph(IGraph selectedGraph) {
 		if (this.selectedGraph != selectedGraph) {
+			if (this.selectedDecorator.isDecorating()) {
+				repaint(this.selectedDecorator.getBounds());
+			}
 			this.selectedGraph = selectedGraph;
+			if (this.selectedDecorator.isDecorating()) {
+				repaint(this.selectedDecorator.getBounds());
+			}
 			fireGraphSelectChanged(new GraphSelectedChangedEvent(this, this.selectedGraph));
 		}
 	}

@@ -15,10 +15,10 @@ public class WebHDFS {
 //	public static String webFile = "trip_data_1.csv";
 //	public static String outputURL = "http://192.168.14.1:50070/webhdfs/v1/output/";
 //	public static String defaultURL = "http://192.168.14.1:50070/webhdfs/v1/";
-    public static String webURL = "http://192.168.12.103:50070/webhdfs/v1/data/Analysis/";
+    public static String webURL = "http://172.16.14.148:50070/webhdfs/v1/data/";
     public static String url = "http://localhost:50070/webhdfs/v1/data/";
-    public static String defaultURL = "http://192.168.12.103:50070/webhdfs/v1/";
-    public static String outputURL = "http://192.168.12.103:50070/webhdfs/v1/data/";
+    public static String defaultURL = "http://172.16.14.148:50070/webhdfs/v1/";
+    public static String outputURL = "http://172.16.14.148:50070/webhdfs/v1/data/";
     public static String webFile = "newyork_taxi_2013-01_147k.csv";
     public static String resultURL ="";
 
