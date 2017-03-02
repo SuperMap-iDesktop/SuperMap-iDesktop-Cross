@@ -16,31 +16,31 @@ import com.supermap.ui.TrackMode;
  * @author lixiaoyao
  */
 public class AutoDrawingRegionByLineEditor extends AutoDrawedRegionEditor {
-	public String getTagTip() {
-		return "Tag_AutoDrawingRegionByLine";
-	}
+    public String getTagTip() {
+        return "Tag_AutoDrawingRegionByLine";
+    }
 
-	public String getDrawedTip() {
-		return "string_GeometryOperation_AutoDrawingRegionByLine";
-	}
+    public String getDrawedTip() {
+        return "string_GeometryOperation_AutoDrawingRegionByLine";
+    }
 
-	public Action getMapControlAction() {
-		return Action.CREATEPOLYLINE;
-	}
+    public Action getMapControlAction() {
+        return Action.CREATEPOLYLINE;
+    }
 
-	public TrackMode getTrackMode() {
-		return TrackMode.TRACK;
-	}
+    public TrackMode getTrackMode() {
+        return TrackMode.TRACK;
+    }
 
-	public Geometry[] runSuccessedRegion(Layer layer, Rectangle2D rectangle2D,Geometry geometry) {
-		GeoRegion resultGeoRegion[] = null;
-		try {
-			if (geometry.getType() == GeometryType.GEOLINE) {
-				resultGeoRegion = Generalization.autoCompletePolygon((DatasetVector) layer.getDataset(), rectangle2D, (GeoLine) geometry);
-			}
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex.toString());
-		}
-		return resultGeoRegion;
-	}
+    public Geometry[] runSuccessedRegion(Layer layer, Rectangle2D rectangle2D, Geometry geometry) {
+        GeoRegion resultGeoRegion[] = null;
+        try {
+            if (geometry.getType() == GeometryType.GEOLINE) {
+                resultGeoRegion = Generalization.autoCompletePolygon((DatasetVector) layer.getDataset(), rectangle2D, (GeoLine) geometry);
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex.toString());
+        }
+        return resultGeoRegion;
+    }
 }

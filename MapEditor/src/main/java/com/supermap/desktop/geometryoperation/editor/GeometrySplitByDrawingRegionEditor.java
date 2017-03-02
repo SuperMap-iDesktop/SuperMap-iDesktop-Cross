@@ -14,27 +14,27 @@ import java.util.Map;
 
 public class GeometrySplitByDrawingRegionEditor extends GeometryDrawingSplitEditor {
 
-	public String getTagTip() {
-		return "Tag_RegionSplitByRegionTracking";
-	}
+    public String getTagTip() {
+        return "Tag_RegionSplitByRegionTracking";
+    }
 
-	public String getSplitTip() {
-		return "String_GeometryOperation_RegionSplitByRegion";
-	}
+    public String getSplitTip() {
+        return "String_GeometryOperation_RegionSplitByRegion";
+    }
 
-	public Action getMapControlAction() {
-		return Action.CREATEPOLYGON;
-	}
+    public Action getMapControlAction() {
+        return Action.CREATEPOLYGON;
+    }
 
-	public TrackMode getTrackMode() {
-		return TrackMode.TRACK;
-	}
+    public TrackMode getTrackMode() {
+        return TrackMode.TRACK;
+    }
 
-	public  boolean splitGeometry(EditEnvironment environment, Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle, double tolerance){
-		boolean result=false;
-		IDrawingSplit geometrySplitByRegion=DrawingSplitFactory.getGeometry(geometry);
-		result=geometrySplitByRegion.SplitGeometry(environment,geometry,splitGeometry,resultGeometry,values,geoStyle,tolerance);
-		return result;
-	}
+    public boolean splitGeometry(EditEnvironment environment, Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle, double tolerance) {
+        boolean result = false;
+        IDrawingSplit geometrySplitByRegion = DrawingSplitFactory.getGeometry(geometry);
+        result = geometrySplitByRegion.SplitGeometry(environment, geometry, splitGeometry, resultGeometry, values, geoStyle, tolerance);
+        return result;
+    }
 
 }

@@ -10,5 +10,5 @@ import java.util.Map;
  * @author lixiaoyao
  */
 public interface IDrawingSplit {
-	public boolean SplitGeometry(EditEnvironment environment,Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle, double tolerance);
+    public boolean SplitGeometry(EditEnvironment environment, Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle, double tolerance);
 }
