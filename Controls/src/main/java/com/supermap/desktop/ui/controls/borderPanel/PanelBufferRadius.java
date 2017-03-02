@@ -96,4 +96,20 @@ public class PanelBufferRadius extends JPanel {
 						.addComponent(this.numericFieldComboBox,20,20,20)));
 		//@formatter:on
 	}
+
+	/**
+	 * 创建面板是否可用方法
+	 * 2017.3.2 yuanR
+	 *
+	 * @param isEnable
+	 */
+	public void setPanelEnable(boolean isEnable) {
+		if (isEnable) {
+			this.comboBoxUnit.setEnabled(true);
+			this.numericFieldComboBox.setEnabled(true);
+		} else {
+			this.comboBoxUnit.setEnabled(false);
+			this.numericFieldComboBox.setEnabled(false);
+		}
+	}
 }

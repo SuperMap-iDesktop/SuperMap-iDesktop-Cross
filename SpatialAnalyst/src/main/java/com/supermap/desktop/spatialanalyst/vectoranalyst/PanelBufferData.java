@@ -12,7 +12,7 @@ import java.awt.*;
 public class PanelBufferData extends JPanel {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private JLabel labelDataset;
@@ -99,7 +99,17 @@ public class PanelBufferData extends JPanel {
 						.addComponent(this.labelDataset)
 						.addComponent(this.comboBoxBufferDataDataset,20,20,20)));
 		//@formatter:on
-		
+
 		this.add(this.checkBoxGeometrySelect, BorderLayout.SOUTH);
+	}
+
+	/**
+	 * 创建面板是否可用方法
+	 * 2017.3.2 yuanR
+	 *
+	 * @param isEnable
+	 */
+	public void setPanelEnable(boolean isEnable) {
+		this.comboBoxBufferDataDataset.setEnabled(isEnable);
 	}
 }

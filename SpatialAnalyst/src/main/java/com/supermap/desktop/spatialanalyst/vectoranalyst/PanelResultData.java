@@ -107,4 +107,15 @@ public class PanelResultData extends JPanel {
 			this.textFieldResultDataDataset.setText(this.comboBoxResultDataDatasource.getSelectedDatasource().getDatasets().getAvailableDatasetName(name));
 		}
 	}
+
+	/**
+	 * 创建面板是否可用方法
+	 * 2017.3.2 yuanR
+	 *
+	 * @param isEnable
+	 */
+	public void setPanelEnable(boolean isEnable) {
+		this.comboBoxResultDataDatasource.setEnabled(isEnable);
+		this.textFieldResultDataDataset.setEnabled(isEnable);
+	}
 }

@@ -14,7 +14,7 @@ import java.text.NumberFormat;
 public class PanelResultSet extends JPanel {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -176,5 +176,19 @@ public class PanelResultSet extends JPanel {
 						.addComponent(this.textFieldSemicircleLineSegment)));
 
 		//@formatter:on
+	}
+
+	/**
+	 * 创建面板是否可用方法
+	 * 2017.3.2 yuanR
+	 *
+	 * @param isEnable
+	 */
+	public void setPanelEnable(boolean isEnable) {
+		this.checkBoxUnionBuffer.setEnabled(isEnable);
+		this.checkBoxRemainAttributes.setEnabled(isEnable);
+		this.checkBoxDisplayInMap.setEnabled(isEnable);
+		this.checkBoxDisplayInScene.setEnabled(isEnable);
+		this.textFieldSemicircleLineSegment.setEnabled(isEnable);
 	}
 }
