@@ -287,4 +287,18 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	public void addItemAt(int index, Dataset item) {
 		((DefaultComboBoxModel<Dataset>) this.getModel()).insertElementAt(item, index);
 	}
+
+	public boolean addDataset(Dataset dataset) {
+		if (dataset == null) {
+			return false;
+		}
+		DatasetType type = dataset.getType();
+		for (DatasetType datasetType : datasetTypes) {
+			if (type == datasetType) {
+				addItem(dataset);
+				return true;
+			}
+		}
+		return false;
+	}
 }
