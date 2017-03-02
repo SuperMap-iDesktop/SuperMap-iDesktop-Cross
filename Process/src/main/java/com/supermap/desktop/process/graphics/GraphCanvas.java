@@ -11,6 +11,8 @@ import com.supermap.desktop.process.graphics.graphs.decorator.AbstractDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.HotDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.PreviewDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.SelectedDecorator;
+import com.supermap.desktop.process.graphics.interaction.MultiSelction;
+import com.supermap.desktop.process.graphics.interaction.Selection;
 import com.supermap.desktop.process.graphics.painter.DefaultGraphPainter;
 import com.supermap.desktop.process.graphics.painter.DefaultGraphPainterFactory;
 import com.supermap.desktop.process.graphics.painter.IGraphPainter;
@@ -20,7 +22,9 @@ import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.RoundRectangle2D;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
@@ -29,6 +33,7 @@ import java.util.List;
  * Created by highsad on 2017/1/17.
  * 画布单位1默认与屏幕像素1相等，画布缩放之后之后的画布单位1则与屏幕像素 1*scale 相等
  * 使用多套数据结构来进行元素的存储，比如是用 List 来进行元素的存储，使用四叉树来做空间关系的存储，使用暂未定的某种结构存储连接关系等
+ * 图上流程在运行的时候解析为邻接矩阵，任务运行模块查找所有起点，同时开始执行，遇到等待状态的节点则等待，条件达成继续执行。（最简单的执行方案，无需特定结构存储执行过程）
  */
 public class GraphCanvas extends JComponent implements MouseListener, MouseMotionListener, MouseWheelListener {
 	public final static Color DEFAULT_BACKGROUNDCOLOR = new Color(11579568);
@@ -36,6 +41,8 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
 
+	private CoordinateTransform coordinateTransform = new CoordinateTransform();
+	private Selection selection = new MultiSelction();
 	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory(this);
 	private AbstractDecorator hotDecorator = new HotDecorator(this);
 	private AbstractDecorator selectedDecorator = new SelectedDecorator(this); // 目前还没有支持多选，就先这样用单例修饰
@@ -170,11 +177,30 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 //		Rectangle rectangle = new Rectangle(3, 3, 5, 5);
 //		graphics2D.draw(rectangle);
 
-
 		setViewRenderingHints(graphics2D);
-		paintBackground(graphics2D);
-		paintCanvas(graphics2D);
-		paintGraphs(graphics2D);
+
+		AffineTransform origin = graphics2D.getTransform();
+
+		AffineTransform transform = new AffineTransform();
+		transform.translate(200, 200);
+		graphics2D.setTransform(transform);
+
+		graphics2D.setColor(Color.ORANGE);
+		RoundRectangle2D round = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
+		graphics2D.fill(round);
+
+		graphics2D.setColor(Color.BLACK);
+		BasicStroke stroke = new BasicStroke(3);
+
+		graphics2D.setStroke(stroke);
+		graphics2D.draw(round);
+
+//		setViewRenderingHints(graphics2D);
+//		paintBackground(graphics2D);
+//		paintCanvas(graphics2D);
+//		paintGraphs(graphics2D);
+
+//		graphics2D.setTransform(origin);
 	}
 
 	public void connet() {
