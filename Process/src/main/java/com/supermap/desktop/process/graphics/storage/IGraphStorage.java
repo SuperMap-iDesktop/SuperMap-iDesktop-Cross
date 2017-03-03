@@ -20,6 +20,10 @@ public interface IGraphStorage {
 
 	void add(IGraph graph);
 
+	void add(IGraph graph, Rectangle bounds);
+
+	void remove(IGraph graph);
+
 	/**
 	 * 获取指定点最上层的 IGraph
 	 *
