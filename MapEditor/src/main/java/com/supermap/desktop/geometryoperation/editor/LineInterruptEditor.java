@@ -23,7 +23,6 @@ import com.supermap.ui.TrackMode;
 import com.supermap.ui.TrackedEvent;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.EventObject;
@@ -219,14 +218,6 @@ public class LineInterruptEditor extends AbstractEditor {
         environment.getMapControl().getEditHistory().batchBegin();
         Recordset sourceRecordset = null;
         sourceRecordset = ((DatasetVector) environment.getActiveEditableLayer().getDataset()).getRecordset(false, CursorType.DYNAMIC);
-        GeoStyle styleRed = new GeoStyle();
-        styleRed.setLineWidth(0.6);
-        styleRed.setLineColor(Color.RED);
-
-        GeoStyle styleBule = new GeoStyle();
-        styleBule.setLineWidth(0.6);
-        styleBule.setLineColor(Color.BLUE);
-
         RecordsetDelete delete = new RecordsetDelete(sourceRecordset.getDataset(), environment.getMapControl().getEditHistory());
         delete.begin();
         // 记录打断线操作成功的对象的ID，在操作结束的时候重置一下它们的选中，用以刷新属性面板等
@@ -246,9 +237,9 @@ public class LineInterruptEditor extends AbstractEditor {
                         delete.delete(tempGeometry.getID());
                         for (int j = 0; j < resultGeoline.length; j++) {
                             if (j % 2 == 0) {
-                                resultGeoline[j].setStyle(styleRed);
+                                resultGeoline[j].setStyle(RegionAndLineHighLightStyle.getLineStyleRed());
                             } else {
-                                resultGeoline[j].setStyle(styleBule);
+                                resultGeoline[j].setStyle(RegionAndLineHighLightStyle.getLineStyleBlue());
                             }
                             environment.getMap().getTrackingLayer().add(resultGeoline[j], TAG_LineInterruptByPoint);
 

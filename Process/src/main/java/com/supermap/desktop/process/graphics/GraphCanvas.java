@@ -11,16 +11,22 @@ import com.supermap.desktop.process.graphics.graphs.decorator.AbstractDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.HotDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.PreviewDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.SelectedDecorator;
+import com.supermap.desktop.process.graphics.interaction.MultiSelction;
+import com.supermap.desktop.process.graphics.interaction.Selection;
 import com.supermap.desktop.process.graphics.painter.DefaultGraphPainter;
 import com.supermap.desktop.process.graphics.painter.DefaultGraphPainterFactory;
 import com.supermap.desktop.process.graphics.painter.IGraphPainter;
 import com.supermap.desktop.process.graphics.painter.IGraphPainterFactory;
+import com.supermap.desktop.process.graphics.storage.IGraphStorage;
+import com.supermap.desktop.process.graphics.storage.ListGraphs;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.awt.geom.RoundRectangle2D;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.util.List;
@@ -29,6 +35,7 @@ import java.util.List;
  * Created by highsad on 2017/1/17.
  * 画布单位1默认与屏幕像素1相等，画布缩放之后之后的画布单位1则与屏幕像素 1*scale 相等
  * 使用多套数据结构来进行元素的存储，比如是用 List 来进行元素的存储，使用四叉树来做空间关系的存储，使用暂未定的某种结构存储连接关系等
+ * 图上流程在运行的时候解析为邻接矩阵，任务运行模块查找所有起点，同时开始执行，遇到等待状态的节点则等待，条件达成继续执行。（最简单的执行方案，无需特定结构存储执行过程）
  */
 public class GraphCanvas extends JComponent implements MouseListener, MouseMotionListener, MouseWheelListener {
 	public final static Color DEFAULT_BACKGROUNDCOLOR = new Color(11579568);
@@ -36,13 +43,16 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
 
+	private IGraphStorage graphStorage = new ListGraphs();
+	private CoordinateTransform coordinateTransform = new CoordinateTransform();
+	private Selection selection = new MultiSelction(this);
 	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory(this);
 	private AbstractDecorator hotDecorator = new HotDecorator(this);
 	private AbstractDecorator selectedDecorator = new SelectedDecorator(this); // 目前还没有支持多选，就先这样用单例修饰
 	private AbstractDecorator previewDecorator = new PreviewDecorator(this);
 	private IGraph previewGraph;
 
-	private QuadTreeTemp<IGraph> graphQuadTree = new QuadTreeTemp<>();
+	//	private QuadTreeTemp<IGraph> graphQuadTree = new QuadTreeTemp<>();
 	private ArrayList<LineGraph> lines = new ArrayList<>();
 	private double scale = 1.0;
 	private IGraph selectedGraph; // Decorator 的类结构还需要优化，现在接收 AbstractGraph 会导致 hot selected preview Decorator 扩展不易
@@ -170,11 +180,30 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 //		Rectangle rectangle = new Rectangle(3, 3, 5, 5);
 //		graphics2D.draw(rectangle);
 
+		setViewRenderingHints(graphics2D);
+
+		AffineTransform origin = graphics2D.getTransform();
+
+//		AffineTransform transform = new AffineTransform();
+//		transform.translate(200, 200);
+//		graphics2D.setTransform(transform);
+//
+//		graphics2D.setColor(Color.ORANGE);
+//		RoundRectangle2D round = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
+//		graphics2D.fill(round);
+//
+//		graphics2D.setColor(Color.BLACK);
+//		BasicStroke stroke = new BasicStroke(3);
+//
+//		graphics2D.setStroke(stroke);
+//		graphics2D.draw(round);
 
 		setViewRenderingHints(graphics2D);
 		paintBackground(graphics2D);
 		paintCanvas(graphics2D);
 		paintGraphs(graphics2D);
+
+		graphics2D.setTransform(origin);
 	}
 
 	public void connet() {
@@ -207,10 +236,12 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	}
 
 	private void paintGraphs(Graphics2D g) {
-		Vector<IGraph> graphs = this.graphQuadTree.getDatasInside();
+		IGraph[] graphs = this.graphStorage.getGraphs();
 
-		for (int i = 0; i < graphs.size(); i++) {
-			IGraph graph = graphs.get(i);
+//		Vector<IGraph> graphs = this.graphQuadTree.getDatasInside();
+
+		for (int i = 0; i < graphs.length; i++) {
+			IGraph graph = graphs[i];
 			this.painterFactory.getPainter(graph, g).paint();
 		}
 
@@ -307,10 +338,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	private IGraph findGraph(Point point) {
 		IGraph graph = null;
-		List<IGraph> graphs = this.graphQuadTree.search(point);
+		IGraph[] graphs = this.graphStorage.findGraphs(point);
 
-		if (graphs != null && graphs.size() > 0) {
-			graph = graphs.get(0);
+		if (graphs != null && graphs.length > 0) {
+			graph = graphs[0];
 		}
 		return graph;
 	}
@@ -350,7 +381,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				// toCreation 不为空，则新建
 				repaint(this.previewGraph, point);
 				Rectangle bounds = this.previewGraph.getBounds();
-				this.graphQuadTree.add(this.previewGraph, bounds);
+				this.graphStorage.add(this.previewGraph, bounds);
 
 				if (this.previewGraph instanceof ProcessGraph) {
 					ProcessData data = null;
@@ -367,7 +398,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 							this.previewGraph.getLocation().getY() + (this.previewGraph.getHeight() - graph.getHeight()) / 2);
 					graph.setLocation(location);
 					Rectangle graphBounds = graph.getBounds();
-					this.graphQuadTree.add(graph, graphBounds);
+					this.graphStorage.add(graph, graphBounds);
 					repaint(graph.getBounds());
 
 					LineGraph lineGraph = new LineGraph(this);
@@ -418,12 +449,12 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 					repaint();
 				}
 			} else if (this.draggedGraph != null && this.dragBegin != null) {
-				this.graphQuadTree.remove(this.draggedGraph);
+				this.graphStorage.remove(this.draggedGraph);
 				Point dragged = new Point();
 				dragged.setLocation(this.dragCenter.getX(), this.dragCenter.getY());
 				dragged.translate(e.getPoint().x - this.dragBegin.x, e.getPoint().y - this.dragBegin.y);
 				repaint(this.draggedGraph, dragged);
-				this.graphQuadTree.add(this.draggedGraph, this.draggedGraph.getBounds());
+				this.graphStorage.add(this.draggedGraph, this.draggedGraph.getBounds());
 
 				ArrayList<LineGraph> ls = getLines(this.draggedGraph);
 				for (int i = 0; i < ls.size(); i++) {
@@ -526,9 +557,9 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		}
 
 		if (re.getCount() == 0) {
-			Vector<IGraph> graphs = this.graphQuadTree.getDatasInside();
-			for (int i = 0; i < graphs.size(); i++) {
-				IGraph graph = graphs.get(i);
+			IGraph[] graphs = this.graphStorage.getGraphs();
+			for (int i = 0; i < graphs.length; i++) {
+				IGraph graph = graphs[i];
 				if (graph instanceof ProcessGraph) {
 					re.addNode(((ProcessGraph) graph).getProcess());
 				}

@@ -1,15 +1,10 @@
 package com.supermap.desktop.geometryoperation.editor;
 
-import com.supermap.data.GeoLine;
-import com.supermap.data.GeoRegion;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.Geometrist;
-import com.supermap.data.Geometry;
-import com.supermap.data.GeometryType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.geometryoperation.EditEnvironment;
+import com.supermap.desktop.geometryoperation.RegionAndLineHighLightStyle;
 
-import java.awt.*;
 import java.util.Map;
 
 /**
@@ -17,19 +12,12 @@ import java.util.Map;
  */
 public class LineSplitByDrawing implements IDrawingSplit {
     private static final String Tag_GeometrySplit = "Tag_GeometrySplit";
+
     @Override
     public boolean SplitGeometry(EditEnvironment environment, Geometry geometry, Geometry splitGeometry, Map<Geometry, Map<String, Object>> resultGeometry, Map<String, Object> values, GeoStyle geoStyle, double tolerance) {
         boolean result = false;
         GeoLine tempGeoLine = (GeoLine) geometry;
         GeoLine resultLines[] = null;
-
-        GeoStyle style1 = new GeoStyle();
-        style1.setLineWidth(0.6);
-        style1.setLineColor(Color.RED);
-
-        GeoStyle style2 = new GeoStyle();
-        style2.setLineWidth(0.6);
-        style2.setLineColor(Color.BLUE);
 
         try {
             if (splitGeometry.getType() == GeometryType.GEOLINE) {
@@ -41,9 +29,9 @@ public class LineSplitByDrawing implements IDrawingSplit {
                 result = true;
                 for (int i = 0; i < resultLines.length; i++) {
                     if (i % 2 == 0) {
-                        resultLines[i].setStyle(style1);
+                        resultLines[i].setStyle(RegionAndLineHighLightStyle.getLineStyleRed());
                     } else {
-                        resultLines[i].setStyle(style2);
+                        resultLines[i].setStyle(RegionAndLineHighLightStyle.getLineStyleBlue());
                     }
                     environment.getMap().getTrackingLayer().add(resultLines[i], Tag_GeometrySplit);
 
