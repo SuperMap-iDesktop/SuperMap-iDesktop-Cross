@@ -17,6 +17,7 @@ import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.borderPanel.PanelBufferRadius;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
 
@@ -519,6 +520,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	 * 判断“半径长度值”是否正确
 	 */
 	private void judgeRadiusNum() {
+		// 为空时，设置确定按钮不可用
+		setOKButtonisEnabled(!StringUtilities.isNullOrEmpty(this.panelBufferRadius.getNumericFieldComboBox().getEditor().getItem().toString()));
 		// 情况的判断
 		// TODO something
 	}
