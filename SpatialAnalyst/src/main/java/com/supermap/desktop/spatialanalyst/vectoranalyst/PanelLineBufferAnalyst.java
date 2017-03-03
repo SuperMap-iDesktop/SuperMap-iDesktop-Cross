@@ -18,13 +18,17 @@ import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxLengthUnit;
 import com.supermap.desktop.ui.controls.comboBox.SmNumericFieldComboBox;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.NumberFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -33,8 +37,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -82,8 +84,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private final static int DEFAULT_MIN = 4;
 	private final static int DEFAULT_MAX = 200;
 	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
-	private LocalKeylistener localKeylistener = new LocalKeylistener();
 	private LocalItemListener localItemListener = new LocalItemListener();
+	private NumericLeftCaretListener numericLeftCaretListener = new NumericLeftCaretListener();
+	private NumericRightCaretListener numericRightCaretListener = new NumericRightCaretListener();
 
 	public void setSome(DoSome some) {
 		this.some = some;
@@ -409,7 +412,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 		} else {
 			setHasResultDatasource(false);
 		}
-
 	}
 
 	private void registerEvent() {
@@ -426,8 +428,11 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.radioButtonBufferTypeRound.addActionListener(new LocalActionListener());
 		this.numericFieldComboBoxLeft.addItemListener(localItemListener);
 		this.numericFieldComboBoxRight.addItemListener(localItemListener);
-		this.numericFieldComboBoxLeft.addKeyListener(localKeylistener);
-		this.numericFieldComboBoxRight.addKeyListener(localKeylistener);
+		// 给结果数据集名称文本框添加监听--yuanR 2017.3.2
+		this.panelResultData.getTextFieldResultDataDataset().getDocument().addDocumentListener(new LocalDocumentListener());
+		//给“半径长度”左右comboBox控件添加监听--yuanR 2017.3.2
+		((JTextField) this.numericFieldComboBoxLeft.getEditor().getEditorComponent()).addCaretListener(numericLeftCaretListener);
+		((JTextField) this.numericFieldComboBoxRight.getEditor().getEditorComponent()).addCaretListener(numericRightCaretListener);
 	}
 
 	private void setComboBoxDatasetType() {
@@ -457,6 +462,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	}
 
 	public void addListener() {
+		// 更改监听
 		this.panelResultSet.getTextFieldSemicircleLineSegment().addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE,
 				new PropertyChangeListener() {
 					@Override
@@ -593,41 +599,17 @@ public class PanelLineBufferAnalyst extends JPanel {
 					}
 				}
 				setComponentEnabled();
-			} else if (e.getSource() == numericFieldComboBoxLeft) {
-				if (numericFieldComboBoxLeft.getSelectedItem() != null && (numericFieldComboBoxLeft.getSelectedIndex() + 1) != numericFieldComboBoxLeft.getItemCount()) {
-					numericFieldComboBoxRight.removeItemListener(localItemListener);
-					numericFieldComboBoxRight.setSelectedItem(numericFieldComboBoxLeft.getSelectedItem());
-					numericFieldComboBoxRight.addItemListener(localItemListener);
-					radiusLeft = numericFieldComboBoxLeft.getSelectedItem().toString();
-				}
-
-			} else if (e.getSource() == numericFieldComboBoxRight && (numericFieldComboBoxLeft.getSelectedIndex() + 1) != numericFieldComboBoxLeft.getItemCount()) {
-				if (numericFieldComboBoxRight.getSelectedItem() != null) {
-					numericFieldComboBoxLeft.removeItemListener(localItemListener);
-					numericFieldComboBoxLeft.setSelectedItem(numericFieldComboBoxRight.getSelectedItem());
-					numericFieldComboBoxLeft.addItemListener(localItemListener);
-					radiusRight = numericFieldComboBoxRight.getSelectedItem().toString();
-				}
 			} else if (e.getSource() == panelBufferData.getCheckBoxGeometrySelect()) {
 				setComponentEnabled();
 			} else if (e.getSource() == panelResultSet.getCheckBoxUnionBuffer()) {
 				setComponentEnabled();
 				panelResultSet.getCheckBoxRemainAttributes().setSelected(false);
-			} else if (e.getSource() == checkBoxBufferLeft) {
-				// 当左右缓冲复选框都没有被选中时，设置确定按钮为不可用--yuanR 2017.3.2
-				if (checkBoxBufferLeft.isSelected() || checkBoxBufferRight.isSelected()) {
-					setRadiusNumSuitable(true);
-				} else {
+			} else if (e.getSource() == checkBoxBufferLeft || e.getSource() == checkBoxBufferRight) {
+				//当操作左右半径复选框时,根据左右半径长度值的情况设置确定按钮是否可用--yuanR 2017.3.2
+				if (!checkBoxBufferRight.isSelected() && !checkBoxBufferLeft.isSelected()) {
 					setRadiusNumSuitable(false);
-				}
-
-				setComponentEnabled();
-			} else if (e.getSource() == checkBoxBufferRight) {
-				// 当左右缓冲复选框都没有被选中时，设置确定按钮为不可用--yuanR 2017.3.2
-				if (checkBoxBufferLeft.isSelected() || checkBoxBufferRight.isSelected()) {
-					setRadiusNumSuitable(true);
 				} else {
-					setRadiusNumSuitable(false);
+					setRadiusNumSuitable(true);
 				}
 				setComponentEnabled();
 			}
@@ -638,59 +620,102 @@ public class PanelLineBufferAnalyst extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == radioButtonBufferTypeRound) {
-				// 当点击平头缓冲时
+				// 当点击圆头缓冲时
 				numericFieldComboBoxRight.setSelectedItem(numericFieldComboBoxLeft.getSelectedItem());
-				numericFieldComboBoxLeft.addKeyListener(localKeylistener);
-				numericFieldComboBoxRight.addKeyListener(localKeylistener);
-				numericFieldComboBoxLeft.addItemListener(localItemListener);
-				numericFieldComboBoxRight.addItemListener(localItemListener);
-//				if (numericFieldComboBoxLeft.getSelectedItem() != null) {
-//					numericFieldComboBoxLeft.setSelectedIndex(0);
-//					numericFieldComboBoxRight.setSelectedIndex(0);
-//				}
 				checkBoxBufferLeft.setSelected(true);
 				checkBoxBufferRight.setSelected(true);
 				setComponentEnabled();
 			} else if (e.getSource() == radioButtonBufferTypeFlat) {
-				// 当点击平头缓冲时，左右半径可以不同，移除监听设置不同步
-				numericFieldComboBoxLeft.removeKeyListener(localKeylistener);
-				numericFieldComboBoxRight.removeKeyListener(localKeylistener);
-				numericFieldComboBoxLeft.removeItemListener(localItemListener);
-				numericFieldComboBoxRight.removeItemListener(localItemListener);
-				setComponentEnabled();
+				checkBoxBufferLeft.setEnabled(!radioButtonBufferTypeRound.isSelected());
+				checkBoxBufferRight.setEnabled(!radioButtonBufferTypeRound.isSelected());
 			}
 		}
 	}
 
-	class LocalKeylistener implements KeyListener {
-
+	/**
+	 * yuanR 2017.3.2
+	 * 给结果数据集名称文本框添加的改变事件，用以当名称输入错误时，置灰确定按钮
+	 */
+	class LocalDocumentListener implements DocumentListener {
 		@Override
-		public void keyTyped(KeyEvent e) {
-			// TODO Auto-generated method stub
-
+		public void changedUpdate(DocumentEvent e) {
+			newFilter();
 		}
 
 		@Override
-		public void keyPressed(KeyEvent e) {
-			// TODO Auto-generated method stub
-
+		public void removeUpdate(DocumentEvent e) {
+			newFilter();
 		}
 
 		@Override
-		public void keyReleased(KeyEvent e) {
-			String text = ((JTextField) e.getSource()).getText();
-			Double value = DoubleUtilities.stringToValue(text);
-			if (value == null) {
-				return;
-			}
-			if (e.getSource() == numericFieldComboBoxRight) {
-				numericFieldComboBoxLeft.setSelectedItem(DoubleUtilities.getFormatString(value));
+		public void insertUpdate(DocumentEvent e) {
+			newFilter();
+		}
+
+		/**
+		 * 当文本框改变时
+		 */
+		private void newFilter() {
+			if (isAvailableDatasetName(panelResultData.getTextFieldResultDataDataset().getText())) {
+				setOKButtonisEnabled(true);
+				panelResultData.getTextFieldResultDataDataset().setForeground(Color.BLACK);
 			} else {
-				numericFieldComboBoxRight.setSelectedItem(DoubleUtilities.getFormatString(value));
+				setOKButtonisEnabled(false);
+				panelResultData.getTextFieldResultDataDataset().setForeground(Color.RED);
 			}
-//			updateUI();
+		}
+
+		/**
+		 * 判断数据集名称是否合法
+		 *
+		 * @param name
+		 * @return
+		 */
+		private boolean isAvailableDatasetName(String name) {
+			if (panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource().getDatasets().isAvailableDatasetName(name)) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
+
+	/**
+	 * yuanR 2017.3.2
+	 * 给“缓冲右半径长度”JComboBox添加光标改变事件，当值改变时，相应控件属性也更随改变：置灰确定按钮等
+	 */
+	class NumericRightCaretListener implements CaretListener {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			if (radioButtonBufferTypeRound.isSelected()) {
+				// 当选择了圆头缓冲类型时，进行同步设置
+				String text = ((JTextField) e.getSource()).getText();
+				((JTextField) numericFieldComboBoxLeft.getEditor().getEditorComponent()).removeCaretListener(numericLeftCaretListener);
+				numericFieldComboBoxLeft.setSelectedItem(text);
+				((JTextField) numericFieldComboBoxLeft.getEditor().getEditorComponent()).addCaretListener(numericLeftCaretListener);
+			}
+			setOKButtonisEnabled(!StringUtilities.isNullOrEmpty(numericFieldComboBoxRight.getEditor().getItem().toString()));
+		}
+	}
+
+	/**
+	 * yuanR 2017.3.2
+	 * 给“缓冲左半径长度”JComboBox添加光标改变事件，当值改变时，相应控件属性也更随改变：置灰确定按钮等
+	 */
+	class NumericLeftCaretListener implements CaretListener {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			if (radioButtonBufferTypeRound.isSelected()) {
+				// 当选择了圆头缓冲类型时，进行同步设置
+				String text = ((JTextField) e.getSource()).getText();
+				((JTextField) numericFieldComboBoxRight.getEditor().getEditorComponent()).removeCaretListener(numericRightCaretListener);
+				numericFieldComboBoxRight.setSelectedItem(text);
+				((JTextField) numericFieldComboBoxRight.getEditor().getEditorComponent()).addCaretListener(numericRightCaretListener);
+			}
+			setOKButtonisEnabled(!StringUtilities.isNullOrEmpty(numericFieldComboBoxLeft.getEditor().getItem().toString()));
+		}
+	}
+
 
 	private void judgeArcSegmentNum() {
 		try {
@@ -706,13 +731,21 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 	}
 
+	/**
+	 * 判断“半径长度值”是否正确
+	 */
 	private void judgeRadiusNum() {
-//		double leftNum = Double.parseDouble(textFieldNumericLeft.getValue().toString());
-//		double rightNum = Double.parseDouble(textFieldNumericRight.getValue().toString());
-//		if (leftNum <= 0 || rightNum <= 0) {
-//			setRadiusNumSuitable(false);
-//		} else {
-//			setRadiusNumSuitable(true);
-//		}
+		// 其他情况的判断
+		// TODO something
+	}
+
+	/**
+	 * 设置确定按钮是否可用
+	 * yuanR 2017.3.3
+	 */
+	public void setOKButtonisEnabled(Boolean okButtonisEnabled) {
+		if (some != null) {
+			some.doSome(okButtonisEnabled, okButtonisEnabled, okButtonisEnabled, okButtonisEnabled);
+		}
 	}
 }

@@ -44,8 +44,8 @@ public class BufferDialog extends SmDialog {
 	private LocalActionListener localActionListener = new LocalActionListener();
 	private DoSome some = new DoSome() {
 		@Override
-		public void doSome(boolean isArcSegmentNumSuitable, boolean isComboBoxDatasetNotNull1, boolean isRadiusNumSuitable, boolean isHasResultDatasource) {
-			panelButton.getButtonOk().setEnabled(isArcSegmentNumSuitable && isComboBoxDatasetNotNull1 && isRadiusNumSuitable && isHasResultDatasource);
+		public void doSome(boolean isArcSegmentNumSuitable, boolean isComboBoxDatasetNotNull, boolean isRadiusNumSuitable, boolean isHasResultDatasource) {
+			panelButton.getButtonOk().setEnabled(isArcSegmentNumSuitable && isComboBoxDatasetNotNull && isRadiusNumSuitable && isHasResultDatasource);
 		}
 	};
 

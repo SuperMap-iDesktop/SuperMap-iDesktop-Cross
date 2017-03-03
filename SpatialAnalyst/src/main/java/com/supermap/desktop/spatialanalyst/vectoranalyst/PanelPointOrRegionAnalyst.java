@@ -23,6 +23,10 @@ import com.supermap.ui.MapControl;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
@@ -308,6 +312,10 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.panelResultSet.getCheckBoxDisplayInScene().addItemListener(new LocalItemListener());
 		this.panelResultSet.getCheckBoxRemainAttributes().addItemListener(new LocalItemListener());
 		this.panelResultSet.getCheckBoxUnionBuffer().addItemListener(new LocalItemListener());
+		// 给结果数据集名称文本框添加监听--yuanR 2017.3.2
+		this.panelResultData.getTextFieldResultDataDataset().getDocument().addDocumentListener(new LocalDocumentListener());
+		//给“半径长度”comboBox控件添加监听--yuanR 2017.3.2
+		((JTextField) this.panelBufferRadius.getNumericFieldComboBox().getEditor().getEditorComponent()).addCaretListener(new LocalCaretListener());
 	}
 
 	private void initDatasourceAndDataset() {
@@ -318,8 +326,11 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	}
 
 	private void setComponentEnabled() {
-		this.panelBufferData.getComboBoxBufferDataDataset().setEnabled(!this.panelBufferData.getCheckBoxGeometrySelect().isSelected());
-		this.panelBufferData.getComboBoxBufferDataDatasource().setEnabled(!this.panelBufferData.getCheckBoxGeometrySelect().isSelected());
+		// 当数据集为空时，不进行是否可用设置--yuanR 2017.3.2
+		if (this.panelBufferData.getComboBoxBufferDataDataset().getItemCount() > 0) {
+			this.panelBufferData.getComboBoxBufferDataDataset().setEnabled(!this.panelBufferData.getCheckBoxGeometrySelect().isSelected());
+			this.panelBufferData.getComboBoxBufferDataDatasource().setEnabled(!this.panelBufferData.getCheckBoxGeometrySelect().isSelected());
+		}
 		this.panelResultSet.getCheckBoxRemainAttributes().setEnabled(!this.panelResultSet.getCheckBoxUnionBuffer().isSelected());
 	}
 
@@ -388,16 +399,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 						getButtonOkEnabled();
 					}
 				});
-//		this.textFieldNumeric.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, new PropertyChangeListener() {
-//			@Override
-//			public void propertyChange(PropertyChangeEvent evt) {
-//				judgeRadiusNum();
-//			}
-//		});
-
 		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(localItemListener);
 		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(localItemListener);
-
 	}
 
 	class LocalItemListener implements ItemListener {
@@ -437,31 +440,67 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				setComponentEnabled();
 				panelResultSet.getCheckBoxRemainAttributes().setSelected(false);
 			}
-
 		}
-
 	}
 
-//	class LocalActionListener implements ActionListener {
-//		@Override
-//		public void actionPerformed(ActionEvent e) {
-//			if (e.getSource() == radioButtonField) {
-//				if (comboBoxFieldControl.getSelectedItem() != null) {
-//					radius = comboBoxFieldControl.getSelectedItem().toString();
-//				}
-//				setComponentEnabled();
-//			} else if (e.getSource() == radioButtonNumeric) {
-//				radius = Double.parseDouble(textFieldNumeric.getValue().toString());
-//				setComponentEnabled();
-//			} else if (e.getSource() == textFieldNumeric) {
-//				radius = Double.parseDouble(textFieldNumeric.getValue().toString());
-//			} else if (e.getSource() == comboBoxFieldControl) {
-//				if (comboBoxFieldControl.getSelectedItem() != null) {
-//					radius = comboBoxFieldControl.getSelectedItem().toString();
-//				}
-//			}
-//		}
-//	}
+	/**
+	 * yuanR 2017.3.2
+	 * 给结果数据集名称文本框添加的改变事件，用以当名称输入错误时，置灰确定按钮
+	 */
+	class LocalDocumentListener implements DocumentListener {
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			newFilter();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			newFilter();
+		}
+
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			newFilter();
+		}
+
+		/**
+		 * 当文本框改变时
+		 */
+		private void newFilter() {
+			if (isAvailableDatasetName(panelResultData.getTextFieldResultDataDataset().getText())) {
+				setOKButtonisEnabled(true);
+				panelResultData.getTextFieldResultDataDataset().setForeground(Color.BLACK);
+			} else {
+				setOKButtonisEnabled(false);
+				panelResultData.getTextFieldResultDataDataset().setForeground(Color.RED);
+			}
+		}
+
+		/**
+		 * 判断数据集名称是否合法
+		 *
+		 * @param name
+		 * @return
+		 */
+		private boolean isAvailableDatasetName(String name) {
+			if (panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource().getDatasets().isAvailableDatasetName(name)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+	}
+
+	/**
+	 * yuanR 2017.3.2
+	 * 给“缓冲半径长度”JComboBox添加光标改变事件，当值有误时，置灰确定按钮
+	 */
+	class LocalCaretListener implements CaretListener {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			judgeRadiusNum();
+		}
+	}
 
 	private void getButtonOkEnabled() {
 		try {
@@ -476,23 +515,20 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		}
 	}
 
-//	private void judgeRadiusNum() {
-//		double num = Double.parseDouble(textFieldNumeric.getValue().toString());
-//		setRadiusNumSuitable(true);
-//		if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() != null) {
-//			if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset().getType() == DatasetType.POINT) {
-//				if (num <= 0) {
-//					setRadiusNumSuitable(false);
-//				} else {
-//					setRadiusNumSuitable(true);
-//				}
-//			} else if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset().getType() == DatasetType.REGION) {
-//				if (num == 0) {
-//					setRadiusNumSuitable(false);
-//				} else {
-//					setRadiusNumSuitable(true);
-//				}
-//			}
-//		}
-//	}
+	/**
+	 * 判断“半径长度值”是否正确
+	 */
+	private void judgeRadiusNum() {
+		// 情况的判断
+		// TODO something
+	}
+	/**
+	 * 设置确定按钮是否可用
+	 * yuanR 2017.3.3
+	 */
+	public void setOKButtonisEnabled(Boolean okButtonisEnabled) {
+		if (some != null) {
+			some.doSome(okButtonisEnabled, okButtonisEnabled, okButtonisEnabled, okButtonisEnabled);
+		}
+	}
 }

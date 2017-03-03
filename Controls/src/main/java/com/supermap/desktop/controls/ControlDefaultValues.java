@@ -8,7 +8,7 @@ public class ControlDefaultValues {
 	public static final String PROPERTYNAME_VALUE = "value";
 	public static final String SCALE_PROPERTY_VALUE = "SCALE_PROPERTY_VALUE";
 	//确定取消按钮间隔值
-	public static final int DEFAULT_PREFERREDSIZE_GAP=10;
+	public static final int DEFAULT_PREFERREDSIZE_GAP = 10;
 	// 设置缓冲区面板控件尺寸
 	public static final Dimension BUFFERCOMPONT_PREFERREDSIZE = new Dimension(80, 20);
 
