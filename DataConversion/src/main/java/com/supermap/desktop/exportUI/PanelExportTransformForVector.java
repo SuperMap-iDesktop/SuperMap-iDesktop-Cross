@@ -7,6 +7,7 @@ import com.supermap.data.conversion.ExportSettingDWG;
 import com.supermap.data.conversion.ExportSettingDXF;
 import com.supermap.desktop.baseUI.PanelExportTransform;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.ExportFileInfo;
 import com.supermap.desktop.ui.StateChangeEvent;
@@ -220,7 +221,20 @@ public class PanelExportTransformForVector extends PanelExportTransform {
             initComponentsState(panels);
         }
     }
-
+    @Override
+    public void setComponentName() {
+        super.setComponentName();
+        ComponentUIUtilities.setName(this.checkBoxExportExternalData,"checkBoxExportExternalData");
+        ComponentUIUtilities.setName(this.checkBoxExportExternalRecord,"checkBoxExportExternalRecord");
+        ComponentUIUtilities.setName(this.labelDatasets,"labelDatasets");
+        ComponentUIUtilities.setName(this.charsetComboBox,"charsetComboBox");
+        ComponentUIUtilities.setName(this.labelCADVersion,"labelCADVersion");
+        ComponentUIUtilities.setName(this.comboBoxCADVersion,"comboBoxCADVersion");
+        ComponentUIUtilities.setName(this.labelExpression,"labelExpression");
+        ComponentUIUtilities.setName(this.scrollPaneExpression,"scrollPaneExpression");
+        ComponentUIUtilities.setName(this.textAreaExpression,"textAreaExpression");
+        ComponentUIUtilities.setName(this.buttonExpression,"buttonExpression");
+    }
     private void initComponentsState(ArrayList<PanelExportTransform> panels) {
         this.charsetComboBox.setEnabled(true);
         this.charsetComboBox.setSelectedItem(selectSameCharsetItem(panels));

@@ -8,6 +8,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IExportPanelFactory;
 import com.supermap.desktop.Interface.IPanelModel;
 import com.supermap.desktop.baseUI.PanelExportTransform;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.DatasetChooserDataExport;
 import com.supermap.desktop.iml.ExportCallable;
@@ -397,6 +398,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 		if (null != datasets && datasets.length > 0) {
 			addTableInfo(datasets);
 		}
+		setComponentName();
 	}
 
 	@Override
@@ -448,6 +450,22 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
 		this.setLocation(Math.abs(screenSize.width - 800) / 2, Math.abs(screenSize.height - 450) / 2);
 	}
 
+	public void setComponentName(){
+		ComponentUIUtilities.setName(this.buttonAddDataset,"DataExportDialog_buttonAddDataset");
+		ComponentUIUtilities.setName(this.buttonDelete,"DataExportDialog_buttonDelete");
+		ComponentUIUtilities.setName(this.buttonSelectAll,"DataExportDialog_buttonSelectAll");
+		ComponentUIUtilities.setName(this.buttonInvertSelect,"DataExportDialog_buttonInvertSelect");
+		ComponentUIUtilities.setName(this.buttonExportsSet,"DataExportDialog_buttonExportsSet");
+		ComponentUIUtilities.setName(this.checkBoxAutoClose,"DataExportDialog_checkBoxAutoClose");
+		ComponentUIUtilities.setName(this.buttonExport,"DataExportDialog_buttonExport");
+		ComponentUIUtilities.setName(this.buttonClose,"DataExportDialog_buttonClose");
+		ComponentUIUtilities.setName(this.panelExport,"DataExportDialog_panelExport");
+		ComponentUIUtilities.setName(this.panelExportInfo,"DataExportDialog_panelExportInfo");
+		ComponentUIUtilities.setName(this.tableExport,"DataExportDialog_tableExport");
+		ComponentUIUtilities.setName(this.toolBar,"DataExportDialog_toolBar");
+		ComponentUIUtilities.setName(this.scrollPane,"DataExportDialog_scrollPane");
+		ComponentUIUtilities.setName(this.contentPane,"DataExportDialog_contentPane");
+	}
 	private void initTableTheme() {
 		this.datasetColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_DATASET));
 		this.exportTypeColumn = tableExport.getColumn(tableExport.getModel().getColumnName(COLUMN_EXPORTTYPE));

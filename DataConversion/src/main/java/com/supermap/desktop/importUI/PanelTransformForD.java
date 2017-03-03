@@ -5,6 +5,7 @@ import com.supermap.data.conversion.ImportSetting;
 import com.supermap.data.conversion.ImportSettingDWG;
 import com.supermap.data.conversion.ImportSettingDXF;
 import com.supermap.desktop.baseUI.PanelTransform;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -276,7 +277,23 @@ public class PanelTransformForD extends PanelTransform {
         initImportSetting();
         initCheckbox();
     }
-
+    @Override
+    public void setComponentName() {
+        super.setComponentName();
+        ComponentUIUtilities.setName(this.panelCheckBox, "PanelTransformForD_panelCheckBox");
+        ComponentUIUtilities.setName(this.labelCurveSegment, "PanelTransformForD_labelCurveSegment");
+        ComponentUIUtilities.setName(this.textFieldCurveSegment, "PanelTransformForD_textFieldCurveSegment");
+        ComponentUIUtilities.setName(this.buttonFontset, "PanelTransformForD_buttonFontset");
+        ComponentUIUtilities.setName(this.checkBoxExtendsData, "PanelTransformForD_checkBoxExtendsData");
+        ComponentUIUtilities.setName(this.checkBoxImportingXRecord, "PanelTransformForD_checkBoxImportingXRecord");
+        ComponentUIUtilities.setName(this.checkBoxSaveHeight, "PanelTransformForD_checkBoxSaveHeight");
+        ComponentUIUtilities.setName(this.checkBoxImportInvisibleLayer, "PanelTransformForD_checkBoxImportInvisibleLayer");
+        ComponentUIUtilities.setName(this.checkBoxSaveWPLineWidth, "PanelTransformForD_checkBoxSaveWPLineWidth");
+        ComponentUIUtilities.setName(this.checkBoxMergeLayer, "PanelTransformForD_checkBoxMergeLayer");
+        ComponentUIUtilities.setName(this.checkBoxImportProperty, "PanelTransformForD_checkBoxImportProperty");
+        ComponentUIUtilities.setName(this.checkBoxKeepingParametricPart, "PanelTransformForD_checkBoxKeepingParametricPart");
+        ComponentUIUtilities.setName(this.checkBoxImportSymbol, "PanelTransformForD_checkBoxImportSymbol");
+    }
     @Override
     public void initImportSetting() {
         if (importSetting instanceof ImportSettingDXF) {

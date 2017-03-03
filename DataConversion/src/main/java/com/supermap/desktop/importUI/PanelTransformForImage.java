@@ -2,6 +2,7 @@ package com.supermap.desktop.importUI;
 
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.baseUI.PanelTransform;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.localUtilities.CommonUtilities;
 import com.supermap.desktop.properties.CommonProperties;
@@ -250,7 +251,17 @@ public class PanelTransformForImage extends PanelTransform {
             initCheckboxState();
         }
     }
-
+    @Override
+    public void setComponentName() {
+        super.setComponentName();
+        ComponentUIUtilities.setName(this.labelBandImportModel, "PanelTransformForImage_labelBandImportModel");
+        ComponentUIUtilities.setName(this.comboBoxBandImportModel, "PanelTransformForImage_comboBoxBandImportModel");
+        ComponentUIUtilities.setName(this.labelPrjFile, "PanelTransformForImage_labelPrjFile");
+        ComponentUIUtilities.setName(this.chooserControlPrjFile, "PanelTransformForImage_chooserControlPrjFile");
+        ComponentUIUtilities.setName(this.checkBoxBuildImgPyramid, "PanelTransformForImage_checkBoxBuildImgPyramid");
+        ComponentUIUtilities.setName(this.labelPassWord, "PanelTransformForImage_labelPassWord");
+        ComponentUIUtilities.setName(this.passwordField, "PanelTransformForImage_passwordField");
+    }
     private void initCheckboxState() {
         //bmp，png,img,jpg,tif,gif:是否自动建立影像金字塔
         if (importSetting instanceof ImportSettingBMP) {

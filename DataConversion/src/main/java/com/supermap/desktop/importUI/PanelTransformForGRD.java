@@ -2,6 +2,7 @@ package com.supermap.desktop.importUI;
 
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.baseUI.PanelTransform;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -82,6 +83,7 @@ public class PanelTransformForGRD extends PanelTransform {
 
     public PanelTransformForGRD(ImportSetting importSetting) {
         super(importSetting);
+        setComponentName();
         registEvents();
     }
 
@@ -89,6 +91,7 @@ public class PanelTransformForGRD extends PanelTransform {
         super(panelImports, layoutType);
         this.panelImports = panelImports;
         initLayerout();
+        setComponentName();
         registEvents();
     }
 
@@ -104,7 +107,11 @@ public class PanelTransformForGRD extends PanelTransform {
             initCheckBoxAttributeIgenored();
         }
     }
-
+    public void setComponentName() {
+        super.setComponentName();
+        ComponentUIUtilities.setName(this.checkBoxPyramidBuild, "PanelTransformForGRD_checkBoxPyramidBuild");
+        ComponentUIUtilities.setName(this.checkBoxAttributeIgnored, "PanelTransformForGRD_checkBoxAttributeIgnored");
+    }
     private void initCheckBoxAttributeIgenored() {
         if (null == panelImports) {
             if (importSetting instanceof ImportSettingSHP) {

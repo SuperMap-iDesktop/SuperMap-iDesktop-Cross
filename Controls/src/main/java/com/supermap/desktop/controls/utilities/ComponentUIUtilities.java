@@ -19,4 +19,10 @@ public class ComponentUIUtilities {
 		}
 		return getParentWindow(c.getParent());
 	}
+
+	public static void setName(Component c,String name){
+		if(c != null){
+			c.setName(name);
+		}
+	}
 }

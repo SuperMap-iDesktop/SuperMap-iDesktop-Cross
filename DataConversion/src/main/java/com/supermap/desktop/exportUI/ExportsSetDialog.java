@@ -6,6 +6,7 @@ import com.supermap.desktop.Interface.IExportSettingFactory;
 import com.supermap.desktop.Interface.IPanelModel;
 import com.supermap.desktop.baseUI.PanelExportTransform;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.ExportFileInfo;
 import com.supermap.desktop.iml.ExportSettingFactory;
@@ -142,6 +143,7 @@ public class ExportsSetDialog extends SmDialog implements IPanelModel {
     public ExportsSetDialog(DataExportDialog owner) {
         this.owner = owner;
         init(owner);
+        setComponentName();
     }
 
     private void init(DataExportDialog owner) {
@@ -155,6 +157,19 @@ public class ExportsSetDialog extends SmDialog implements IPanelModel {
         this.setVisible(true);
     }
 
+    public void setComponentName() {
+        ComponentUIUtilities.setName(this.checkBoxFileType, "ExportsSetDialog_checkBoxFileType");
+        ComponentUIUtilities.setName(this.comboBoxFileType, "ExportsSetDialog_comboBoxFileType");
+        ComponentUIUtilities.setName(this.checkBoxOverwirte, "ExportsSetDialog_checkBoxOverwirte");
+        ComponentUIUtilities.setName(this.radioButtonOK, "ExportsSetDialog_radioButtonOK");
+        ComponentUIUtilities.setName(this.radioButtonNO, "ExportsSetDialog_radioButtonNO");
+        ComponentUIUtilities.setName(this.checkBoxExportPath, "ExportsSetDialog_checkBoxExportPath");
+        ComponentUIUtilities.setName(this.fileChooserControlExportPath, "ExportsSetDialog_fileChooserControlExportPath");
+        ComponentUIUtilities.setName(this.buttonOK, "ExportsSetDialog_buttonOK");
+        ComponentUIUtilities.setName(this.buttonCancel, "ExportsSetDialog_buttonCancel");
+        ComponentUIUtilities.setName(this.panelContent, "ExportsSetDialog_panelContent");
+        ComponentUIUtilities.setName(this.owner, "ExportsSetDialog_owner");
+    }
     @Override
     public void initComponents() {
         this.checkBoxFileType = new JCheckBox();

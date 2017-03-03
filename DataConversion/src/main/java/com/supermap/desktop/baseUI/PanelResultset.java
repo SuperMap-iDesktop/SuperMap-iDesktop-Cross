@@ -48,8 +48,9 @@ import com.supermap.data.conversion.ImportSettingTIF;
 import com.supermap.data.conversion.ImportSettingUSGSDEM;
 import com.supermap.data.conversion.ImportSettingVCT;
 import com.supermap.data.conversion.ImportSettingWOR;
-import com.supermap.desktop.Application;
+import com.supermap.desktop.*;
 import com.supermap.desktop.Interface.IImportSettingResultset;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.ImportInfo;
@@ -375,6 +376,7 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
 		initLayerout();
 		initResources();
 		registEvents();
+		setComponentName();
 	}
 
 	public PanelResultset(PanelImport owner, ArrayList<PanelImport> panelImports, int layeroutType) {
@@ -390,6 +392,7 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
 		}
 		initResources();
 		registEvents();
+		setComponentName();
 	}
 
 	private void setDefaultImportSettingEncode() {
@@ -468,6 +471,21 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
 		((JTextField) this.comboBoxImportMode.getEditor().getEditorComponent()).setEditable(false);
 	}
 
+	public void setComponentName(){
+		ComponentUIUtilities.setName(this.owner,"PanelResultset_owner");
+		ComponentUIUtilities.setName(this.labelDatasource,"PanelResultset_labelDatasource");
+		ComponentUIUtilities.setName(this.labelDatasetName,"PanelResultset_labelDatasetName");
+		ComponentUIUtilities.setName(this.labelEncodeType,"PanelResultset_labelEncodeType");
+		ComponentUIUtilities.setName(this.labelImportMode,"PanelResultset_labelImportMode");
+		ComponentUIUtilities.setName(this.labelDatasetType,"PanelResultset_labelDatasetType");
+		ComponentUIUtilities.setName(this.comboBoxDatasetType,"PanelResultset_comboBoxDatasetType");
+		ComponentUIUtilities.setName(this.comboBoxDatasource,"PanelResultset_comboBoxDatasource");
+		ComponentUIUtilities.setName(this.comboBoxEncodeType,"PanelResultset_comboBoxEncodeType");
+		ComponentUIUtilities.setName(this.comboBoxImportMode,"PanelResultset_comboBoxImportMode");
+		ComponentUIUtilities.setName(this.checkBoxFieldIndex,"PanelResultset_checkBoxFieldIndex");
+		ComponentUIUtilities.setName(this.checkBoxSpatialIndex,"PanelResultset_checkBoxSpatialIndex");
+		ComponentUIUtilities.setName(this.textFieldDatasetName,"PanelResultset_textFieldDatasetName");
+	}
 	private void removeDatasource() {
 		//删除只读数据源
 		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();

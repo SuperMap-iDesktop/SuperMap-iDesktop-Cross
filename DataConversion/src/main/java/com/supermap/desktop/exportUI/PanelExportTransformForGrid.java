@@ -2,6 +2,7 @@ package com.supermap.desktop.exportUI;
 
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.baseUI.PanelExportTransform;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.ExportFileInfo;
 import com.supermap.desktop.localUtilities.CommonUtilities;
@@ -216,7 +217,21 @@ public class PanelExportTransformForGrid extends PanelExportTransform {
             initComponentsState(panels, layoutType);
         }
     }
+    @Override
+    public void setComponentName() {
+        super.setComponentName();
+        ComponentUIUtilities.setName(this.owner,"owner");
+        ComponentUIUtilities.setName(this.labelCompressionRatio,"labelCompressionRatio");
+        ComponentUIUtilities.setName(this.textFieldCompressionRatio,"textFieldCompressionRatio");
+        ComponentUIUtilities.setName(this.labelPrjFile,"labelPrjFile");
+        ComponentUIUtilities.setName(this.prjFileChooser,"prjFileChooser");
+        ComponentUIUtilities.setName(this.checkBoxExportTFW,"checkBoxExportTFW");
+        ComponentUIUtilities.setName(this.labelPassword,"labelPassword");
+        ComponentUIUtilities.setName(this.passwordField,"passwordField");
+        ComponentUIUtilities.setName(this.labelPasswordConfrim,"labelPasswordConfrim");
+        ComponentUIUtilities.setName(this.passwordFieldConfrim,"passwordFieldConfrim");
 
+    }
     private void initComponentsState(ArrayList<PanelExportTransform> panels, int layoutType) {
         if (layoutType == 0) {
             //相同类型
