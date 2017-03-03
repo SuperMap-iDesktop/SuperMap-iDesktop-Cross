@@ -37,8 +37,11 @@ public class PanelExportTransform extends JPanel implements IPanelModel {
         initComponents();
         initLayerout();
         initResources();
+        setComponentName();
     }
+    public void setComponentName() {
 
+    }
     @Override
     public void initComponents() {
 

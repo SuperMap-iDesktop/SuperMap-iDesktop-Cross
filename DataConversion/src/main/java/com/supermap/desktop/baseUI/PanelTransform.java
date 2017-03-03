@@ -20,6 +20,7 @@ public class PanelTransform extends JPanel implements IImportSetttingTransform {
         initComponents();
         initLayerout();
         initResources();
+        setComponentName();
     }
 
     public PanelTransform(ArrayList<PanelImport> panelImports, int layoutType) {
@@ -27,6 +28,11 @@ public class PanelTransform extends JPanel implements IImportSetttingTransform {
         this.importSetting = panelImports.get(panelImports.size() - 1).getImportInfo().getImportSetting();
         initComponents();
         initResources();
+        setComponentName();
+    }
+
+    public void setComponentName(){
+
     }
 
     public void initGridLayout() {

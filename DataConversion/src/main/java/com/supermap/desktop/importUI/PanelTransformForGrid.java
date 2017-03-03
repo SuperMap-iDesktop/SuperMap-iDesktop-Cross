@@ -2,6 +2,7 @@ package com.supermap.desktop.importUI;
 
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.baseUI.PanelTransform;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.StateChangeEvent;
 import com.supermap.desktop.ui.StateChangeListener;
@@ -78,6 +79,12 @@ public class PanelTransformForGrid extends PanelTransform {
         } else if (importSetting instanceof ImportSettingBIL) {
             checkBoxBuildImgPyramid.setSelected(((ImportSettingBIL) importSetting).isPyramidBuilt());
         }
+    }
+
+    @Override
+    public void setComponentName() {
+        super.setComponentName();
+        ComponentUIUtilities.setName(this.checkBoxBuildImgPyramid, "PanelTransformForGrid_checkBoxBuildImgPyramid");
     }
 
     @Override

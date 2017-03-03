@@ -6,6 +6,7 @@ import com.supermap.data.PrjFileType;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.baseUI.PanelTransform;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.FileTypeLocale;
 import com.supermap.desktop.localUtilities.FileUtilities;
@@ -242,7 +243,24 @@ public class PanelTransformFor3D extends PanelTransform {
         this.textAreaPrjInfo.setEditable(false);
         initTextFiledPosition();
     }
-
+    @Override
+    public void setComponentName() {
+        super.setComponentName();
+        ComponentUIUtilities.setName(this.labelRotationType, "PanelTransformFor3D_labelRotationType");
+        ComponentUIUtilities.setName(this.comboBoxRotationType, "PanelTransformFor3D_comboBoxRotationType");
+        ComponentUIUtilities.setName(this.checkBoxSplitForMore, "PanelTransformFor3D_checkBoxSplitForMore");
+        ComponentUIUtilities.setName(this.radioButtonPrjSet, "PanelTransformFor3D_radioButtonPrjSet");
+        ComponentUIUtilities.setName(this.buttonPrjSet, "PanelTransformFor3D_buttonPrjSet");
+        ComponentUIUtilities.setName(this.radioButtonImportPrjFile, "PanelTransformFor3D_radioButtonImportPrjFile");
+        ComponentUIUtilities.setName(this.fileChooserControlImportPrjFile, "PanelTransformFor3D_radioButtonImportPrjFile");
+        ComponentUIUtilities.setName(this.labelPositionX, "PanelTransformFor3D_labelPositionX");
+        ComponentUIUtilities.setName(this.textFieldPositionX, "PanelTransformFor3D_textFieldPositionX");
+        ComponentUIUtilities.setName(this.labelPositionY, "PanelTransformFor3D_labelPositionY");
+        ComponentUIUtilities.setName(this.textFieldPositionY, "PanelTransformFor3D_textFieldPositionY");
+        ComponentUIUtilities.setName(this.labelPositionZ, "PanelTransformFor3D_labelPositionZ");
+        ComponentUIUtilities.setName(this.textFieldPositionZ, "PanelTransformFor3D_textFieldPositionZ");
+        ComponentUIUtilities.setName(this.textAreaPrjInfo, "PanelTransformFor3D_textAreaPrjInfo");
+    }
     private void initTextFiledPosition() {
         if (importSetting instanceof ImportSettingModelOSG) {
             Point3D point = ((ImportSettingModelOSG) importSetting).getPosition();

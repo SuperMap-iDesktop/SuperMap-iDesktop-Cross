@@ -3,6 +3,7 @@ package com.supermap.desktop.importUI;
 import com.supermap.data.conversion.ImportSetting;
 import com.supermap.data.conversion.ImportSettingMAPGIS;
 import com.supermap.desktop.baseUI.PanelTransform;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.localUtilities.CommonUtilities;
 import com.supermap.desktop.properties.CommonProperties;
@@ -79,6 +80,13 @@ public class PanelTransformForMapGIS extends PanelTransform {
         if (!StringUtilities.isNullOrEmpty(filePath)) {
             fileChooserColorIndex.getEditor().setText(new File(filePath).getAbsolutePath());
         }
+    }
+
+    @Override
+    public void setComponentName() {
+        super.setComponentName();
+        ComponentUIUtilities.setName(this.labelColorIndex, "PanelTransformForMapGIS_labelColorIndex");
+        ComponentUIUtilities.setName(this.fileChooserColorIndex, "PanelTransformForMapGIS_fileChooserColorIndex");
     }
 
     @Override
