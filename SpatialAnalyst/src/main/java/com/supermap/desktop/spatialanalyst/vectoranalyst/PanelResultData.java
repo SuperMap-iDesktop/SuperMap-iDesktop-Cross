@@ -5,9 +5,12 @@ import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -62,6 +65,16 @@ public class PanelResultData extends JPanel {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				resetDatasetName();
+			}
+		});
+
+		// 给数据集名称输入框添加焦点监听，当文本框为空的时候，给予正确的数据集名称--yuanR 2017.3.3
+		this.textFieldResultDataDataset.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (StringUtilities.isNullOrEmpty(textFieldResultDataDataset.getText())) {
+					resetDatasetName();
+				}
 			}
 		});
 

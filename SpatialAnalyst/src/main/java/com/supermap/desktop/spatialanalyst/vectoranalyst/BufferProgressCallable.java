@@ -66,10 +66,12 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 			}
 			if (createBufferAnalyst) {
 				setSucceed(true);
+				// yuanRyuanR是否修改待议
 				Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreatedSuccess"));
+//				Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreatedSuccess")+resultDatasetVector.getName() +"@"+resultDatasetVector.getDatasource().getAlias());
 				if (isShowInMap) {
 					SwingUtilities.invokeLater(new Runnable() {
-						
+
 						@Override
 						public void run() {
 							addDatasettoMap();
