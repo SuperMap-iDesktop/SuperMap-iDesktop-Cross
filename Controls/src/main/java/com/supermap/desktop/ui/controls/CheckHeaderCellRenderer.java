@@ -56,12 +56,10 @@ public class CheckHeaderCellRenderer implements TableCellRenderer {
         checkBox.setBorderPainted(true);
         JComponent component = (column == 0) ? checkBox : label;
 
-        component.setForeground(tableHeader.getForeground());
-        component.setBackground(tableHeader.getBackground());
+        component.setForeground(table.getForeground());
+        component.setBackground(table.getBackground());
         component.setFont(tableHeader.getFont());
         component.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
-
         return component;
     }
-
 }

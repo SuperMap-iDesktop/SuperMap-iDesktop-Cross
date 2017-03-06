@@ -23,7 +23,8 @@ public class HeaderCheckBoxRenderer extends JCheckBox implements TableCellRender
 	 * 构造函数。<br>
 	 */
 	public HeaderCheckBoxRenderer() {
-		this.setBorderPainted(true);
+		this.setHorizontalAlignment(SwingConstants.CENTER);// 表头checkBox居中
+		//this.setBorderPainted(true);   //   这句代码是针对checkbox，产生边框，即当列头的checkbox选中之后就会产生边框，进而产生一种凹陷的效果，但是不美观，所以注释掉   by  liwenfa
 	}
 
 	/*
