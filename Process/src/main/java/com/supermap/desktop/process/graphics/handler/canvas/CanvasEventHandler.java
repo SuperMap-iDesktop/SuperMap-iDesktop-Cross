@@ -8,5 +8,5 @@ import java.awt.event.MouseWheelListener;
  * Created by highsad on 2017/3/2.
  */
 public interface CanvasEventHandler extends MouseListener, MouseMotionListener, MouseWheelListener {
-
+	void clean();
 }

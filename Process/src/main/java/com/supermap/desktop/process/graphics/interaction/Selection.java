@@ -6,6 +6,7 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.handler.canvas.CanvasEventAdapter;
 
 import javax.swing.event.EventListenerList;
+import java.awt.*;
 
 /**
  * Created by highsad on 2017/3/2.
@@ -29,4 +30,6 @@ public abstract class Selection extends CanvasEventAdapter {
 	public void fireGraphSelectChanged(GraphSelectedChangedEvent e) {
 
 	}
+
+	public abstract void paint(Graphics graphics);
 }
