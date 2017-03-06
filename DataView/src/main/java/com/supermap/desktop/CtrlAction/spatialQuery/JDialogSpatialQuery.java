@@ -487,6 +487,7 @@ public class JDialogSpatialQuery extends SmDialog {
 				if (isSelected) {
 					jLabel.setOpaque(true);
 					jLabel.setBackground(table.getSelectionBackground());
+					jLabel.setForeground(table.getSelectionForeground());
 				}
 				return jLabel;
 			}
