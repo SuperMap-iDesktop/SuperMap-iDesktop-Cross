@@ -91,10 +91,10 @@ public class PanelBufferRadius extends JPanel {
 						.addComponent(this.comboBoxUnit)
 						.addComponent(this.numericFieldComboBox)));
 		panelBufferDataLayout.setVerticalGroup(panelBufferDataLayout.createSequentialGroup()
-				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelUnit)
 						.addComponent(this.comboBoxUnit))
-				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelField)
 						.addComponent(this.numericFieldComboBox)));
 		//@formatter:on

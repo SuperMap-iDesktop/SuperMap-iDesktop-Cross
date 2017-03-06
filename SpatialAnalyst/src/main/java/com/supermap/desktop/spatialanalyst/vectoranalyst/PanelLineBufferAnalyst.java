@@ -237,7 +237,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 					.addComponent(this.radioButtonBufferTypeRound)
 					.addComponent(this.radioButtonBufferTypeFlat)
 					.addComponent(this.checkBoxBufferLeft)
-					.addComponent(this.checkBoxBufferRight)).addContainerGap());
+					.addComponent(this.checkBoxBufferRight)));
 		//@formatter:on
 	}
 
@@ -271,13 +271,13 @@ public class PanelLineBufferAnalyst extends JPanel {
 						.addComponent(this.numericFieldComboBoxLeft)
 						.addComponent(this.numericFieldComboBoxRight)));
 		panelBufferRadiusLayout.setVerticalGroup(panelBufferRadiusLayout.createSequentialGroup()
-				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.BASELINE)
+				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelUnit)
 						.addComponent(this.comboBoxUnit))
-				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.BASELINE)
+				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelLeftNumericFieldRadius)
 						.addComponent(this.numericFieldComboBoxLeft))
-				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.BASELINE)
+				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelRightNumericFieldRadius)
 						.addComponent(this.numericFieldComboBoxRight)));
 		//@formatter:on

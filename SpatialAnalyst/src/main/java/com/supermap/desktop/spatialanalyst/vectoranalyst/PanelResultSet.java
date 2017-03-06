@@ -95,7 +95,6 @@ public class PanelResultSet extends JPanel {
 		NumberFormatter numberFormatter = new NumberFormatter(NumberFormat.getInstance());
 		numberFormatter.setValueClass(Long.class);
 		this.textFieldSemicircleLineSegment = new SMFormattedTextField(numberFormatter);
-		this.textFieldSemicircleLineSegment.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.textFieldSemicircleLineSegment.setText(TEXT_VALUE);
 		this.textFieldSemicircleLineSegment.addKeyListener(new KeyAdapter() {
 
