@@ -11,6 +11,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CommonListCellRenderer;
 import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
@@ -36,18 +37,20 @@ public class DialogTerrainUniformColor extends SmDialog {
     private SmButton buttonSure = new SmButton("String_Button_OK");
     private SmButton buttonQuite = new SmButton("String_Button_Cancel");
     private SmButton buttonEditColorTable = new SmButton("String_TerrainUniformColorEditColorTable");
-    private JLabel labelLayer = new JLabel("String_TerrainUniformColorLayer");
-    private JCheckBox checkBoxTip = new JCheckBox("String_TerrainUniformColorTip");
+    private JLabel labelLayer = new JLabel();
+    private JCheckBox checkBoxTip = new JCheckBox();
     private final int COLUMN_INDEX_CHECK = 0;
     private final int COLUMN_INDEX_LAYER = 1;
     private final int COLUMN_INDEX_MINVALUE = 2;
     private final int COLUMN_INDEX_MAXVALUE = 3;
-    private final int ROW_HRIGHT=23;
-    private final int MAX_COLUMN_WIDTH=100;
-    private final int BUTTON_COLOR_EDIT_WIDTH=110;
+    private final int ROW_HRIGHT = 23;
+    private final int MAX_COLUMN_WIDTH = 100;
+    private final int BUTTON_COLOR_EDIT_WIDTH = 110;
     private boolean isSelectedCheckTip = true;
     private HashMap<String, Layer> datasetLayerMap = new HashMap<String, Layer>();
     private ColorDictionary editColorDictionary = null;
+    private WarningOrHelpProvider helpProvider;
+
 
     private ActionListener actionListener = new ActionListener() {
         @Override
@@ -76,9 +79,9 @@ public class DialogTerrainUniformColor extends SmDialog {
                     layerSettingGrid.setColorDictionary(colorDictionary);
                     selectedLayer.setAdditionalSetting(layerSettingGrid);
                     editColorDictionary = new ColorDictionary(colorDictionary);
-                }else{
-                    if (editColorDictionary!=null){
-                        editColorDictionary=null;
+                } else {
+                    if (editColorDictionary != null) {
+                        editColorDictionary = null;
                     }
                 }
             } else if (e.getSource() == DialogTerrainUniformColor.this.checkBoxTip) {
@@ -110,6 +113,7 @@ public class DialogTerrainUniformColor extends SmDialog {
         GroupLayout groupLayout = new GroupLayout(getContentPane());
         groupLayout.setAutoCreateContainerGaps(true);
         groupLayout.setAutoCreateGaps(true);
+        helpProvider=new WarningOrHelpProvider(MapViewProperties.getString("String_TerrainUniformColorTip"),false);
 
         //@formatter:off
         groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -119,6 +123,8 @@ public class DialogTerrainUniformColor extends SmDialog {
                 .addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
                 .addGroup(groupLayout.createSequentialGroup()
                         .addComponent(checkBoxTip)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(helpProvider)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 80, Short.MAX_VALUE)
                         .addComponent(buttonSure)
                         .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -129,8 +135,9 @@ public class DialogTerrainUniformColor extends SmDialog {
                         .addComponent(toolBar, ROW_HRIGHT, ROW_HRIGHT, ROW_HRIGHT)
                         .addComponent(buttonEditColorTable, ROW_HRIGHT, ROW_HRIGHT, ROW_HRIGHT))
                 .addComponent(scrollPane)
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                         .addComponent(checkBoxTip)
+                        .addComponent(helpProvider)
                         .addComponent(buttonSure)
                         .addComponent(buttonQuite)));
         //@formatter:on
@@ -165,7 +172,6 @@ public class DialogTerrainUniformColor extends SmDialog {
         buttonSure.setText(CommonProperties.getString("String_Button_OK"));
         buttonQuite.setText(CommonProperties.getString("String_Button_Cancel"));
         checkBoxTip.setText(MapViewProperties.getString("Sring_TerrainUniformColorCheckBox"));
-        checkBoxTip.setToolTipText(MapViewProperties.getString("String_TerrainUniformColorTip"));
         mutiTable.getColumnModel().getColumn(COLUMN_INDEX_LAYER).setHeaderValue(MapViewProperties.getString("String_TerrainUniformLayer"));
         mutiTable.getColumnModel().getColumn(COLUMN_INDEX_MINVALUE).setHeaderValue(MapViewProperties.getString("String_TerrainUniformLayerMinValue"));
         mutiTable.getColumnModel().getColumn(COLUMN_INDEX_MINVALUE).setMaxWidth(MAX_COLUMN_WIDTH);
@@ -204,9 +210,9 @@ public class DialogTerrainUniformColor extends SmDialog {
         LayerSettingGrid layerSettingGrid;
         ColorDictionary colorDictionary;
 
-        if (editColorDictionary!=null){
+        if (editColorDictionary != null) {
             colorDictionary = new ColorDictionary(editColorDictionary);
-        }else{
+        } else {
             layerSettingGrid = new LayerSettingGrid((LayerSettingGrid) selectedLayer.getAdditionalSetting());
             colorDictionary = layerSettingGrid.getColorDictionary();
         }
