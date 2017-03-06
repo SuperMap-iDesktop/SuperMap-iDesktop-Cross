@@ -60,8 +60,10 @@ public class PanelBufferData extends JPanel {
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxBufferDataDatasource = new DatasourceComboBox();
 		this.comboBoxBufferDataDatasource.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.comboBoxBufferDataDatasource.setMinimumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.comboBoxBufferDataDataset = new DatasetComboBox();
 		this.comboBoxBufferDataDataset.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.comboBoxBufferDataDataset.setMinimumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.checkBoxGeometrySelect = new JCheckBox("GeometrySelect");
 		this.panelBufferDataBasic = new JPanel();
 		this.panelSelect = new JPanel();

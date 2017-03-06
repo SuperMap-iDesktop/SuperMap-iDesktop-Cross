@@ -23,7 +23,6 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.NumberFormatter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
@@ -31,8 +30,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 public class PanelLineBufferAnalyst extends JPanel {
@@ -77,8 +74,12 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private boolean isBufferSucceed;
 	private final static int DEFAULT_MIN = 4;
 	private final static int DEFAULT_MAX = 200;
-	private InitComboBoxUnit initComboBoxUnit = new InitComboBoxUnit();
+
 	private LocalItemListener localItemListener = new LocalItemListener();
+	private LocalActionListener localActionListener = new LocalActionListener();
+	private LocalDocumentListener localDocumentListener = new LocalDocumentListener();
+	private SemicircleLineSegmentCaretListener semicircleLineSegmentCaretListener = new SemicircleLineSegmentCaretListener();
+
 	private NumericLeftCaretListener numericLeftCaretListener = new NumericLeftCaretListener();
 	private NumericRightCaretListener numericRightCaretListener = new NumericRightCaretListener();
 
@@ -203,7 +204,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.checkBoxBufferRight.setText(SpatialAnalystProperties.getString("String_BufferTypeRight"));
 	}
 
-	private void setPanelLineBufferAnalyst() {
+	public void setPanelLineBufferAnalyst() {
 		setPanelBufferType();
 		setPanelBufferData();
 		setPanelBuffeRadius();
@@ -247,8 +248,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.labelRightNumericFieldRadius = new JLabel("RightNumericFieldRadius");
 		this.comboBoxUnit = new ComboBoxLengthUnit();
 
-		NumberFormatter numberFormatter = new NumberFormatter();
-		numberFormatter.setValueClass(Double.class);
+//		NumberFormatter numberFormatter = new NumberFormatter();
+//		numberFormatter.setValueClass(Double.class);
 
 		this.numericFieldComboBoxLeft = new SmNumericFieldComboBox();
 		this.numericFieldComboBoxRight = new SmNumericFieldComboBox();
@@ -441,24 +442,48 @@ public class PanelLineBufferAnalyst extends JPanel {
 	}
 
 	private void registerEvent() {
-		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(new LocalItemListener());
-		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(new LocalItemListener());
-		this.panelBufferData.getCheckBoxGeometrySelect().addItemListener(new LocalItemListener());
-		this.checkBoxBufferLeft.addItemListener(new LocalItemListener());
-		this.checkBoxBufferRight.addItemListener(new LocalItemListener());
-		this.panelResultSet.getCheckBoxDisplayInMap().addItemListener(new LocalItemListener());
-		this.panelResultSet.getCheckBoxDisplayInScene().addItemListener(new LocalItemListener());
-		this.panelResultSet.getCheckBoxRemainAttributes().addItemListener(new LocalItemListener());
-		this.panelResultSet.getCheckBoxUnionBuffer().addItemListener(new LocalItemListener());
-		this.radioButtonBufferTypeFlat.addActionListener(new LocalActionListener());
-		this.radioButtonBufferTypeRound.addActionListener(new LocalActionListener());
+		removeRegisterEvent();
+		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(localItemListener);
+		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(localItemListener);
+		this.panelBufferData.getCheckBoxGeometrySelect().addItemListener(localItemListener);
+		this.checkBoxBufferLeft.addItemListener(localItemListener);
+		this.checkBoxBufferRight.addItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxDisplayInMap().addItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxDisplayInScene().addItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxRemainAttributes().addItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxUnionBuffer().addItemListener(localItemListener);
+		this.radioButtonBufferTypeFlat.addActionListener(localActionListener);
+		this.radioButtonBufferTypeRound.addActionListener(localActionListener);
 		this.numericFieldComboBoxLeft.addItemListener(localItemListener);
 		this.numericFieldComboBoxRight.addItemListener(localItemListener);
+		this.panelResultSet.getTextFieldSemicircleLineSegment().addCaretListener(semicircleLineSegmentCaretListener);
 		// 给结果数据集名称文本框添加监听--yuanR 2017.3.2
-		this.panelResultData.getTextFieldResultDataDataset().getDocument().addDocumentListener(new LocalDocumentListener());
+		this.panelResultData.getTextFieldResultDataDataset().getDocument().addDocumentListener(localDocumentListener);
 		//给“半径长度”左右comboBox控件添加监听--yuanR 2017.3.2
 		((JTextField) this.numericFieldComboBoxLeft.getEditor().getEditorComponent()).addCaretListener(numericLeftCaretListener);
 		((JTextField) this.numericFieldComboBoxRight.getEditor().getEditorComponent()).addCaretListener(numericRightCaretListener);
+	}
+
+	private void removeRegisterEvent() {
+		this.panelBufferData.getComboBoxBufferDataDatasource().removeItemListener(localItemListener);
+		this.panelBufferData.getComboBoxBufferDataDataset().removeItemListener(localItemListener);
+		this.panelBufferData.getCheckBoxGeometrySelect().removeItemListener(localItemListener);
+		this.checkBoxBufferLeft.removeItemListener(localItemListener);
+		this.checkBoxBufferRight.removeItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxDisplayInMap().removeItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxDisplayInScene().removeItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxRemainAttributes().removeItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxUnionBuffer().removeItemListener(localItemListener);
+		this.radioButtonBufferTypeFlat.removeActionListener(localActionListener);
+		this.radioButtonBufferTypeRound.removeActionListener(localActionListener);
+		this.numericFieldComboBoxLeft.removeItemListener(localItemListener);
+		this.numericFieldComboBoxRight.removeItemListener(localItemListener);
+		this.panelResultSet.getTextFieldSemicircleLineSegment().removeCaretListener(semicircleLineSegmentCaretListener);
+		// 给结果数据集名称文本框添加监听--yuanR 2017.3.2c
+		this.panelResultData.getTextFieldResultDataDataset().getDocument().removeDocumentListener(localDocumentListener);
+		//给“半径长度”左右comboBox控件添加监听--yuanR 2017.3.2
+		((JTextField) this.numericFieldComboBoxLeft.getEditor().getEditorComponent()).removeCaretListener(numericLeftCaretListener);
+		((JTextField) this.numericFieldComboBoxRight.getEditor().getEditorComponent()).removeCaretListener(numericRightCaretListener);
 	}
 
 	private void setComboBoxDatasetType() {
@@ -485,33 +510,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.panelResultSet.getCheckBoxRemainAttributes().setEnabled(!this.panelResultSet.getCheckBoxUnionBuffer().isSelected());
 		this.checkBoxBufferLeft.setEnabled(!this.radioButtonBufferTypeRound.isSelected());
 		this.checkBoxBufferRight.setEnabled(!this.radioButtonBufferTypeRound.isSelected());
-	}
-
-	public void addListener() {
-		// 更改监听
-		this.panelResultSet.getTextFieldSemicircleLineSegment().addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE,
-				new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent evt) {
-						judgeArcSegmentNum();
-					}
-				});
-
-//		this.textFieldNumericLeft.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, new PropertyChangeListener() {
-//			@Override
-//			public void propertyChange(PropertyChangeEvent evt) {
-//				judgeRadiusNum();
-//			}
-//		});
-//		this.textFieldNumericRight.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, new PropertyChangeListener() {
-//			@Override
-//			public void propertyChange(PropertyChangeEvent evt) {
-//				judgeRadiusNum();
-//			}
-//		});
-
-		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(localItemListener);
-		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(localItemListener);
 	}
 
 	/**
@@ -600,6 +598,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 		datasource.getDatasets().delete(this.resultDatasetName);
 	}
 
+	/**
+	 *
+	 */
 	class LocalItemListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
@@ -660,6 +661,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 		}
 	}
 
+	/**
+	 *
+	 */
 	class LocalActionListener implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -721,6 +725,18 @@ public class PanelLineBufferAnalyst extends JPanel {
 			} else {
 				return false;
 			}
+		}
+	}
+
+
+	/**
+	 * yuanR 2017.3.6
+	 * 给“参数设置”JTextField添加光标改变事件，当值有误时，置灰确定按钮
+	 */
+	class SemicircleLineSegmentCaretListener implements CaretListener {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			judgeArcSegmentNum();
 		}
 	}
 

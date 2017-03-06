@@ -40,10 +40,10 @@ public class BufferDialog extends SmDialog {
 	// 确定/取消按钮面板
 	private PanelButton panelButton;
 	private MapControl mapControl;
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(720, 400);
 	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 330);
-	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(750, 330);
-	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(750, 400);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(720, 400);
+	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(750, 350);
+	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(750, 420);
 	private LocalActionListener localActionListener = new LocalActionListener();
 	private DoSome some = new DoSome() {
 		@Override
@@ -121,22 +121,26 @@ public class BufferDialog extends SmDialog {
 
 	private void getPointorRegionType() {
 		this.panelBufferType.removeAll();
-
-		this.panelPointOrRegionAnalyst = new PanelPointOrRegionAnalyst();
+		if (this.panelPointOrRegionAnalyst == null) {
+			this.panelPointOrRegionAnalyst = new PanelPointOrRegionAnalyst(some);
+		}
+		this.panelPointOrRegionAnalyst.setPanelPointOrRegionAnalyst();
 		this.panelBufferType.add(panelPointOrRegionAnalyst);
 		setSize(getPointPanelDimension());
 		this.radioButtonPointOrRegion.setSelected(true);
-		this.panelPointOrRegionAnalyst.setSome(some);
+//		this.panelPointOrRegionAnalyst.setSome(some);
 	}
 
 	private void getLineType() {
 		this.panelBufferType.removeAll();
-
-		this.panelLineBufferAnalyst = new PanelLineBufferAnalyst();
+		if (this.panelLineBufferAnalyst == null) {
+			this.panelLineBufferAnalyst = new PanelLineBufferAnalyst(some);
+		}
+		this.panelLineBufferAnalyst.setPanelLineBufferAnalyst();
 		this.panelBufferType.add(panelLineBufferAnalyst);
 		setSize(getLinePanelDimension());
 		this.radioButtonLine.setSelected(true);
-		this.panelLineBufferAnalyst.setSome(some);
+//		this.panelLineBufferAnalyst.setSome(some);
 	}
 
 	private void initTraversalPolicy() {
@@ -171,9 +175,9 @@ public class BufferDialog extends SmDialog {
 	private void initLayout() {
 		setPanelDataTypeLayout();
 		this.mainPanel.setLayout(new BorderLayout());
-		this.mainPanel.add(this.panelDataType,BorderLayout.NORTH);
-		this.mainPanel.add(this.panelBufferType,BorderLayout.CENTER);
-		this.mainPanel.add(this.panelButton,BorderLayout.SOUTH);
+		this.mainPanel.add(this.panelDataType, BorderLayout.NORTH);
+		this.mainPanel.add(this.panelBufferType, BorderLayout.CENTER);
+		this.mainPanel.add(this.panelButton, BorderLayout.SOUTH);
 		this.getContentPane().add(this.mainPanel);
 	}
 
@@ -249,7 +253,6 @@ public class BufferDialog extends SmDialog {
 				escapePressed();
 			}
 		}
-
 	}
 
 	public void escapePressed() {
@@ -267,7 +270,8 @@ public class BufferDialog extends SmDialog {
 			}
 		} catch (Exception e1) {
 			BufferDialog.this.dispose();
-		} finally {
+		}
+		if(flag){
 			BufferDialog.this.dispose();
 		}
 	}
