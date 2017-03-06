@@ -24,7 +24,7 @@ public class SmFieldsChooseTable extends JTable {
 
     private void init(){
         this.setRowHeight(rowHeight);
-        this.getTableHeader().setDefaultRenderer(new CheckHeaderCellRenderer(this,"",false));
+        this.getTableHeader().getColumnModel().getColumn(TABLE_COLUMN_CHECKABLE).setHeaderRenderer(new CheckHeaderCellRenderer(this,"",false));
     }
 
     public SmFieldsChooseTable(DatasetVector datasetVector) {
