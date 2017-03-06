@@ -11,6 +11,9 @@ import com.supermap.desktop.process.graphics.graphs.decorator.AbstractDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.HotDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.PreviewDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.SelectedDecorator;
+import com.supermap.desktop.process.graphics.handler.canvas.CanvasEventHandler;
+import com.supermap.desktop.process.graphics.handler.graph.DefaultGraphEventHanderFactory;
+import com.supermap.desktop.process.graphics.handler.graph.IGraphEventHandlerFactory;
 import com.supermap.desktop.process.graphics.interaction.MultiSelction;
 import com.supermap.desktop.process.graphics.interaction.Selection;
 import com.supermap.desktop.process.graphics.painter.DefaultGraphPainter;
@@ -43,10 +46,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
 
-	private IGraphStorage graphStorage = new ListGraphs();
-	private CoordinateTransform coordinateTransform = new CoordinateTransform();
+	private IGraphStorage graphStorage = new ListGraphs(); // 画布元素的存储结构
+	private CoordinateTransform coordinateTransform = new CoordinateTransform(); // 用以在画布平移、缩放等操作过后进行坐标转换
+	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory(this); // 元素绘制的可扩展类
+	private IGraphEventHandlerFactory graphHandlerFactory = new DefaultGraphEventHanderFactory(); // 在某具体元素上进行的可扩展交互类
+	private Vector<CanvasEventHandler> canvasHandlers = new Vector<>(); // 统一入口的画布事件接口，通过添加 CanvasEventHandler 对象实现 Canvas 的事件处理
+
 	private Selection selection = new MultiSelction(this);
-	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory(this);
 	private AbstractDecorator hotDecorator = new HotDecorator(this);
 	private AbstractDecorator selectedDecorator = new SelectedDecorator(this); // 目前还没有支持多选，就先这样用单例修饰
 	private AbstractDecorator previewDecorator = new PreviewDecorator(this);
@@ -184,26 +190,40 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		AffineTransform origin = graphics2D.getTransform();
 
-//		AffineTransform transform = new AffineTransform();
-//		transform.translate(200, 200);
-//		graphics2D.setTransform(transform);
-//
-//		graphics2D.setColor(Color.ORANGE);
-//		RoundRectangle2D round = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
-//		graphics2D.fill(round);
-//
-//		graphics2D.setColor(Color.BLACK);
-//		BasicStroke stroke = new BasicStroke(3);
-//
-//		graphics2D.setStroke(stroke);
-//		graphics2D.draw(round);
-
+		AffineTransform transform = new AffineTransform();
 		setViewRenderingHints(graphics2D);
 		paintBackground(graphics2D);
 		paintCanvas(graphics2D);
-		paintGraphs(graphics2D);
+		transform.translate(100, 100);
+		transform.scale(2, 2);
+		graphics2D.setTransform(transform);
+
+		graphics2D.setColor(Color.ORANGE);
+		RoundRectangle2D round = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
+		graphics2D.fill(round);
+
+		graphics2D.setColor(Color.BLACK);
+		BasicStroke stroke = new BasicStroke(3);
+
+		graphics2D.setStroke(stroke);
+		graphics2D.draw(round);
+
+//		setViewRenderingHints(graphics2D);
+//		paintBackground(graphics2D);
+//		paintCanvas(graphics2D);
+//		paintGraphs(graphics2D);
 
 		graphics2D.setTransform(origin);
+
+		graphics2D.setColor(Color.ORANGE);
+		RoundRectangle2D round1 = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
+		graphics2D.fill(round);
+
+		graphics2D.setColor(Color.BLACK);
+		BasicStroke stroke1 = new BasicStroke(3);
+
+		graphics2D.setStroke(stroke1);
+		graphics2D.draw(round1);
 	}
 
 	public void connet() {
