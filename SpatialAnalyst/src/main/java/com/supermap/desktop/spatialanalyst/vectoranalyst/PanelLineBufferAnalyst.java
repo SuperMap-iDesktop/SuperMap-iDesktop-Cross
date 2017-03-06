@@ -237,7 +237,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 					.addComponent(this.radioButtonBufferTypeRound)
 					.addComponent(this.radioButtonBufferTypeFlat)
 					.addComponent(this.checkBoxBufferLeft)
-					.addComponent(this.checkBoxBufferRight)));
+					.addComponent(this.checkBoxBufferRight)).addContainerGap());
 		//@formatter:on
 	}
 
@@ -286,6 +286,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 	private void setPanelBasicLayout() {
 		GroupLayout panelBasicLayout = new GroupLayout(this.panelBasic);
+		panelBasicLayout.setAutoCreateContainerGaps(true);
 		panelBasicLayout.setAutoCreateGaps(true);
 		this.panelBasic.setLayout(panelBasicLayout);
 
@@ -303,6 +304,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private void setPanelBasicLeftLayout() {
 		GroupLayout panelBasicLeftLayout = new GroupLayout(this.panelBasicLeft);
 		panelBasicLeftLayout.setAutoCreateGaps(true);
+//		panelBasicLeftLayout.setAutoCreateContainerGaps(true);
 		this.panelBasicLeft.setLayout(panelBasicLeftLayout);
 
 		//@formatter:off
@@ -311,8 +313,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 						.addComponent(this.panelBufferData)
 						.addComponent(this.panelResultSet)));
 		panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
-				.addComponent(this.panelBufferData)
-				.addComponent(this.panelResultSet));
+				.addComponent(this.panelBufferData,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE).addContainerGap()
+				.addComponent(this.panelResultSet,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
 		//@formatter:on
 
 	}
@@ -320,18 +322,19 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private void setPanelBasicRightLayout() {
 		GroupLayout panelBasicRightLayout = new GroupLayout(this.panelBasicRight);
 		panelBasicRightLayout.setAutoCreateGaps(true);
+//		panelBasicRightLayout.setAutoCreateContainerGaps(true);
 		this.panelBasicRight.setLayout(panelBasicRightLayout);
 
 		//@formatter:off
 		panelBasicRightLayout.setHorizontalGroup(panelBasicRightLayout.createSequentialGroup()
 				.addGroup(panelBasicRightLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.panelBufferType,0,70,Short.MAX_VALUE)
+						.addComponent(this.panelBufferType,0,10,Short.MAX_VALUE)
 						.addComponent(this.panelBufferRadius)
 						.addComponent(this.panelResultData)));
 		panelBasicRightLayout.setVerticalGroup(panelBasicRightLayout.createSequentialGroup()
-				.addComponent(this.panelBufferType)
-				.addComponent(this.panelBufferRadius)
-				.addComponent(this.panelResultData));
+				.addComponent(this.panelBufferType).addContainerGap()
+				.addComponent(this.panelBufferRadius,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE).addContainerGap()
+				.addComponent(this.panelResultData,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
 		//@formatter:on
 
 	}

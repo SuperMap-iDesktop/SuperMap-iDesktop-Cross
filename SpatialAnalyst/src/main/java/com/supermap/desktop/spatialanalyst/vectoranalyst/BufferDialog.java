@@ -15,7 +15,6 @@ import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
@@ -24,21 +23,23 @@ import java.awt.event.ActionListener;
 
 public class BufferDialog extends SmDialog {
 	/**
-	 *
+	 * 对缓冲区功能进行重构--yuanR 2017.3.6
 	 */
 	private static final long serialVersionUID = 1L;
+	private JPanel mainPanel;
+	// 数据类型面板：点、面数据/线数据
+	private JPanel panelDataType;
 	private JLabel labelDataType;
+	private ButtonGroup buttonGroup;
 	private JRadioButton radioButtonPointOrRegion = new JRadioButton("PointOrRegion");
 	private JRadioButton radioButtonLine = new JRadioButton("Line");
-	private JPanel panelDataType;
+	// 数据类型对应的缓冲区面板
 	private JPanel panelBufferType;
-	private JPanel panelButtonGroup;
-	private ButtonGroup buttonGroup;
-	private MapControl mapControl;
-	private PanelButton panelButton;
-	private JPanel panelBuffer;
 	private PanelLineBufferAnalyst panelLineBufferAnalyst;
 	private PanelPointOrRegionAnalyst panelPointOrRegionAnalyst;
+	// 确定/取消按钮面板
+	private PanelButton panelButton;
+	private MapControl mapControl;
 	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(720, 400);
 	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 330);
 	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(750, 330);
@@ -53,16 +54,30 @@ public class BufferDialog extends SmDialog {
 
 	public BufferDialog() {
 		super();
-		initPanelBufferBasic();
 		setBufferDialog();
+		// 初始化数据类型对应的缓冲区面板--yaunR
+		initPanelBufferBasic();
 		setLocationRelativeTo(null);
 		setResizable(true);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setVisible(true);
 	}
 
+	/**
+	 * 设置缓冲区功能底层控件属性
+	 */
+	private void setBufferDialog() {
+		removeRegisterEvent();
+		initComponent();
+		initResources();
+		registerEvent();
+		initTraversalPolicy();
+	}
+
+	/**
+	 * 根据地图以及树节点的选择情况，设置其缓冲区功能的核心面板属性
+	 */
 	private void initPanelBufferBasic() {
-		this.setTitle(SpatialAnalystProperties.getString("String_SingleBufferAnalysis_Capital"));
 		int layersCount = 0;
 		// 打开地图时，如果选中点面或线数据集时，初始化打开界面为对应的选中缓冲区类型界面，如果选中的数据类型没有点，面，线，网络等类型时，默认打开线缓冲区界面
 		if (Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
@@ -105,27 +120,23 @@ public class BufferDialog extends SmDialog {
 	}
 
 	private void getPointorRegionType() {
+		this.panelBufferType.removeAll();
+
 		this.panelPointOrRegionAnalyst = new PanelPointOrRegionAnalyst();
-		this.panelBufferType = this.panelPointOrRegionAnalyst;
+		this.panelBufferType.add(panelPointOrRegionAnalyst);
 		setSize(getPointPanelDimension());
 		this.radioButtonPointOrRegion.setSelected(true);
-		((PanelPointOrRegionAnalyst) panelBufferType).setSome(some);
+		this.panelPointOrRegionAnalyst.setSome(some);
 	}
 
 	private void getLineType() {
+		this.panelBufferType.removeAll();
+
 		this.panelLineBufferAnalyst = new PanelLineBufferAnalyst();
-		this.panelBufferType = this.panelLineBufferAnalyst;
+		this.panelBufferType.add(panelLineBufferAnalyst);
 		setSize(getLinePanelDimension());
 		this.radioButtonLine.setSelected(true);
-		((PanelLineBufferAnalyst) panelBufferType).setSome(some);
-	}
-
-	private void setBufferDialog() {
-		removeRegisterEvent();
-		initComponent();
-		initResources();
-		registerEvent();
-		initTraversalPolicy();
+		this.panelLineBufferAnalyst.setSome(some);
 	}
 
 	private void initTraversalPolicy() {
@@ -139,17 +150,18 @@ public class BufferDialog extends SmDialog {
 	}
 
 	private void initComponent() {
+		this.mainPanel = new JPanel();
+		// 初始化数据类型面板及其控件
 		this.labelDataType = new JLabel("DataType");
-		this.panelDataType = new JPanel();
-		this.panelButton = new PanelButton();
-		this.panelBuffer = new JPanel();
-		this.panelButtonGroup = new JPanel();
 		this.buttonGroup = new ButtonGroup();
 		this.buttonGroup.add(this.radioButtonPointOrRegion);
 		this.buttonGroup.add(this.radioButtonLine);
-
+		this.panelDataType = new JPanel();
+		// 初始化其他面板
+		this.panelBufferType = new JPanel();
+		this.panelBufferType.setLayout(new BorderLayout());
+		this.panelButton = new PanelButton();
 		initLayout();
-
 	}
 
 	/**
@@ -157,80 +169,49 @@ public class BufferDialog extends SmDialog {
 	 * yuanR 2017.3.6
 	 */
 	private void initLayout() {
-		setPanelGroupButtonLayout();
 		setPanelDataTypeLayout();
-		setPanelBufferLayout();
-
-		this.getContentPane().setLayout(new BorderLayout());
-		this.getContentPane().add(this.panelBuffer, BorderLayout.CENTER);
-		this.getContentPane().add(this.panelButton, BorderLayout.SOUTH);
+		this.mainPanel.setLayout(new BorderLayout());
+		this.mainPanel.add(this.panelDataType,BorderLayout.NORTH);
+		this.mainPanel.add(this.panelBufferType,BorderLayout.CENTER);
+		this.mainPanel.add(this.panelButton,BorderLayout.SOUTH);
+		this.getContentPane().add(this.mainPanel);
 	}
 
-	private void setPanelGroupButtonLayout() {
-		GroupLayout panelButtonGroupLayout = new GroupLayout(this.panelButtonGroup);
-		this.panelButtonGroup.setLayout(panelButtonGroupLayout);
-		//@formatter:off
-          panelButtonGroupLayout.setHorizontalGroup(panelButtonGroupLayout.createSequentialGroup()
-                    .addComponent(this.radioButtonPointOrRegion).addGap(30)
-                    .addComponent(this.radioButtonLine));
-          panelButtonGroupLayout.setVerticalGroup(panelButtonGroupLayout.createSequentialGroup()
-                    .addGroup(panelButtonGroupLayout.createParallelGroup(Alignment.CENTER)
-                              .addComponent(this.radioButtonPointOrRegion)
-                              .addComponent(this.radioButtonLine)));
-        //@formatter:on
-	}
 
 	private void setPanelDataTypeLayout() {
 		GroupLayout panelDataTypeLayout = new GroupLayout(this.panelDataType);
 		panelDataTypeLayout.setAutoCreateGaps(true);
+		panelDataTypeLayout.setAutoCreateContainerGaps(true);
 		this.panelDataType.setLayout(panelDataTypeLayout);
 
 		//@formatter:off
             panelDataTypeLayout.setHorizontalGroup(panelDataTypeLayout.createSequentialGroup()
-                      .addComponent(this.labelDataType).addGap(30)
-                      .addComponent(this.panelButtonGroup));
+		            .addComponent(this.labelDataType).addGap(30)
+		            .addComponent(this.radioButtonPointOrRegion).addGap(30)
+		            .addComponent(this.radioButtonLine));
             panelDataTypeLayout.setVerticalGroup(panelDataTypeLayout.createSequentialGroup()
                       .addGroup(panelDataTypeLayout.createParallelGroup(Alignment.CENTER)
                                 .addComponent(this.labelDataType)
-                                .addComponent(this.panelButtonGroup)));
+		                        .addComponent(this.radioButtonPointOrRegion)
+                                .addComponent(this.radioButtonLine)));
        //@formatter:on
 	}
 
-	private void setPanelBufferLayout() {
-		GroupLayout layout = new GroupLayout(this.panelBuffer);
-		this.panelBuffer.setLayout(layout);
-		layout.setAutoCreateGaps(true);
-		layout.setAutoCreateContainerGaps(true);
-		//@formatter:off
-		layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(layout.createParallelGroup(Alignment.LEADING)
-				.addComponent(this.panelDataType)
-				.addComponent(this.panelBufferType)));
-        //设置panelBufferType布局竖直方向不拉伸
-		layout.setVerticalGroup(layout.createSequentialGroup()
-				.addComponent(true,this.panelDataType).addPreferredGap(ComponentPlacement.RELATED)
-				.addComponent(this.panelBufferType,GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addContainerGap(10, Short.MAX_VALUE));
-		
-		//@formatter:on
-	}
-
 	private void initResources() {
+		this.setTitle(SpatialAnalystProperties.getString("String_SingleBufferAnalysis_Capital"));
 		this.labelDataType.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_DataType"));
 		this.radioButtonLine.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_Line"));
 		this.radioButtonPointOrRegion.setText(SpatialAnalystProperties.getString("String_BufferAnalysis_PointAndRegion"));
 	}
 
+	/**
+	 * 添加监听事件
+	 */
 	private void registerEvent() {
 		this.radioButtonPointOrRegion.addActionListener(this.localActionListener);
 		this.radioButtonLine.addActionListener(this.localActionListener);
 		this.panelButton.getButtonOk().addActionListener(this.localActionListener);
 		this.panelButton.getButtonCancel().addActionListener(this.localActionListener);
-
-		if (panelBufferType instanceof PanelLineBufferAnalyst) {
-			((PanelLineBufferAnalyst) panelBufferType).addListener();
-		} else if (panelBufferType instanceof PanelPointOrRegionAnalyst) {
-			((PanelPointOrRegionAnalyst) panelBufferType).addListener();
-		}
 	}
 
 	private void removeRegisterEvent() {
@@ -259,33 +240,13 @@ public class BufferDialog extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource() == radioButtonPointOrRegion) {
-				if (panelBufferType instanceof PanelPointOrRegionAnalyst) {
-					((PanelPointOrRegionAnalyst) panelBufferType).setSome(null);
-				} else {
-					((PanelLineBufferAnalyst) panelBufferType).setSome(null);
-				}
-				BufferDialog.this.getContentPane().removeAll();
-				panelPointOrRegionAnalyst = new PanelPointOrRegionAnalyst();
-				panelBufferType = panelPointOrRegionAnalyst;
-				setBufferDialog();
-				((PanelPointOrRegionAnalyst) panelBufferType).setSome(some);
-				setSize(getPointPanelDimension());
+				getPointorRegionType();
 			} else if (e.getSource() == radioButtonLine) {
-				if (panelBufferType instanceof PanelPointOrRegionAnalyst) {
-					((PanelPointOrRegionAnalyst) panelBufferType).setSome(null);
-				} else {
-					((PanelLineBufferAnalyst) panelBufferType).setSome(null);
-				}
-				BufferDialog.this.getContentPane().removeAll();
-				panelLineBufferAnalyst = new PanelLineBufferAnalyst();
-				panelBufferType = panelLineBufferAnalyst;
-				setBufferDialog();
-				((PanelLineBufferAnalyst) panelBufferType).setSome(some);
-				setSize(getLinePanelDimension());
+				getLineType();
 			} else if (e.getSource() == panelButton.getButtonOk()) {
 				okButtonClicked();
 			} else if (e.getSource() == panelButton.getButtonCancel()) {
-				BufferDialog.this.dispose();
+				escapePressed();
 			}
 		}
 
@@ -298,16 +259,15 @@ public class BufferDialog extends SmDialog {
 	private void okButtonClicked() {
 		boolean flag = false;
 		try {
-			if (panelBufferType instanceof PanelPointOrRegionAnalyst) {
-				flag = ((PanelPointOrRegionAnalyst) panelBufferType).createCurrentBuffer();
+			if (radioButtonPointOrRegion.isSelected()) {
+				flag = panelPointOrRegionAnalyst.createCurrentBuffer();
 
-			} else if (panelBufferType instanceof PanelLineBufferAnalyst) {
-				flag = ((PanelLineBufferAnalyst) panelBufferType).CreateCurrentBuffer();
+			} else if (radioButtonLine.isSelected()) {
+				flag = panelLineBufferAnalyst.CreateCurrentBuffer();
 			}
 		} catch (Exception e1) {
 			BufferDialog.this.dispose();
-		}
-		if (flag) {
+		} finally {
 			BufferDialog.this.dispose();
 		}
 	}
