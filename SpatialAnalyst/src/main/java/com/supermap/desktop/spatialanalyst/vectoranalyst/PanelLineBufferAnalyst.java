@@ -168,7 +168,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 		initComponent();
 		initResources();
 		setPanelLineBufferAnalyst();
-
 	}
 
 	private void initComponent() {

@@ -98,10 +98,10 @@ public class PanelResultData extends JPanel {
 						.addComponent(this.textFieldResultDataDataset)));
 		
 		panelResultDataLayout.setVerticalGroup(panelResultDataLayout.createSequentialGroup()
-				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.BASELINE)
+				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.labelDatasource)
 						.addComponent(this.comboBoxResultDataDatasource))
-				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.BASELINE)
+				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.labelDataset)
 						.addComponent(this.textFieldResultDataDataset)));
 		//@formatter:on
