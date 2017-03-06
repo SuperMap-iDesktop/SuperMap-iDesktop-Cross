@@ -18,7 +18,7 @@ public class SmChooseTable extends JTable {
     private void init() {
         this.getColumn(this.getModel().getColumnName(this.checkColumnIndex)).setMaxWidth(checkColumnIndexMaxSize);
         this.setRowHeight(rowHeight);
-        this.getTableHeader().setDefaultRenderer(new CheckHeaderCellRenderer(this, "",true));
+        this.getTableHeader().getColumnModel().getColumn(checkColumnIndex).setHeaderRenderer(new CheckHeaderCellRenderer(this, "",true));
     }
 
     public SmChooseTable(Object data[][], Object titles[]) {

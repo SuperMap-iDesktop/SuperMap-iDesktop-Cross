@@ -53,15 +53,13 @@ public class CheckHeaderCellRenderer implements TableCellRenderer {
         JLabel label = new JLabel(valueStr);
         label.setHorizontalAlignment(SwingConstants.CENTER); // 表头标签居左边
         this.checkBox.setHorizontalAlignment(SwingConstants.CENTER);// 表头checkBox居中
-        checkBox.setBorderPainted(true);
+        //checkBox.setBorderPainted(true);
         JComponent component = (column == 0) ? checkBox : label;
 
         component.setForeground(tableHeader.getForeground());
         component.setBackground(tableHeader.getBackground());
         component.setFont(tableHeader.getFont());
         component.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
-
         return component;
     }
-
 }

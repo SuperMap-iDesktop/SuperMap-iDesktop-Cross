@@ -156,6 +156,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 	private void setPanelBasicLayout() {
 		GroupLayout panelBasicLayout = new GroupLayout(this.panelBasic);
+		panelBasicLayout.setAutoCreateContainerGaps(true);
 		panelBasicLayout.setAutoCreateGaps(true);
 		this.panelBasic.setLayout(panelBasicLayout);
 
@@ -164,7 +165,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                    .addComponent(this.panelBasicLeft,0,180,Short.MAX_VALUE)
                    .addComponent(this.panelBasicRight,0,180,Short.MAX_VALUE));
          panelBasicLayout.setVerticalGroup(panelBasicLayout.createSequentialGroup()
-                   .addGroup(panelBasicLayout.createParallelGroup(Alignment.CENTER)
+                   .addGroup(panelBasicLayout.createParallelGroup(Alignment.LEADING)
                              .addComponent(this.panelBasicLeft)
                              .addComponent(this.panelBasicRight)));
          //@formatter:on
@@ -182,8 +183,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelBufferData)
                               .addComponent(this.panelResultData)));
           panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
-                    .addComponent(this.panelBufferData)
-                    .addComponent(this.panelResultData));
+                    .addComponent(this.panelBufferData,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE).addContainerGap()
+                    .addComponent(this.panelResultData,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
           //@formatter:on
 	}
 
@@ -198,8 +199,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelBufferRadius)
                               .addComponent(this.panelResultSet)));
           panelBasicRightLayout.setVerticalGroup(panelBasicRightLayout.createSequentialGroup()
-		          .addComponent(this.panelBufferRadius)
-		          .addComponent(this.panelResultSet));
+		          .addComponent(this.panelBufferRadius,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE).addContainerGap()
+		          .addComponent(this.panelResultSet,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
           //@formatter:on
 	}
 

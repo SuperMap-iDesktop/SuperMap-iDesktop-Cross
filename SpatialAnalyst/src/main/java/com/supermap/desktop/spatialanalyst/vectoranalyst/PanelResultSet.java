@@ -95,7 +95,6 @@ public class PanelResultSet extends JPanel {
 		NumberFormatter numberFormatter = new NumberFormatter(NumberFormat.getInstance());
 		numberFormatter.setValueClass(Long.class);
 		this.textFieldSemicircleLineSegment = new SMFormattedTextField(numberFormatter);
-		this.textFieldSemicircleLineSegment.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.textFieldSemicircleLineSegment.setText(TEXT_VALUE);
 		this.textFieldSemicircleLineSegment.addKeyListener(new KeyAdapter() {
 
@@ -142,7 +141,7 @@ public class PanelResultSet extends JPanel {
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxDisplayInMap)
 						.addComponent(this.checkBoxDisplayInScene))
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.BASELINE)
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelSemicircleLineSegment)
 						.addComponent(this.textFieldSemicircleLineSegment)));
 		
@@ -168,10 +167,10 @@ public class PanelResultSet extends JPanel {
 
 		panelResultSetLayout.setVerticalGroup(panelResultSetLayout.createSequentialGroup()
 				.addGroup(panelResultSetLayout.createSequentialGroup()
-						.addComponent(this.checkBoxUnionBuffer).addGap(ControlDefaultValues.DEFAULT_PREFERREDSIZE_GAP)
-						.addComponent(this.checkBoxDisplayInMap).addGap(ControlDefaultValues.DEFAULT_PREFERREDSIZE_GAP)
-						.addComponent(this.checkBoxRemainAttributes).addGap(ControlDefaultValues.DEFAULT_PREFERREDSIZE_GAP))
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.checkBoxUnionBuffer).addGap(ControlDefaultValues.DEFAULT_PANEL_GAP)
+						.addComponent(this.checkBoxDisplayInMap).addGap(ControlDefaultValues.DEFAULT_PANEL_GAP)
+						.addComponent(this.checkBoxRemainAttributes).addGap(ControlDefaultValues.DEFAULT_PANEL_GAP))
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelSemicircleLineSegment)
 						.addComponent(this.textFieldSemicircleLineSegment)));
 		//@formatter:on
