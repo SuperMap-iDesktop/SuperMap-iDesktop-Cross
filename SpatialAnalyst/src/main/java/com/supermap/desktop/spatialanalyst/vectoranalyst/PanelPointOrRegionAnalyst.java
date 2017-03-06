@@ -2,12 +2,7 @@ package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
 import com.supermap.analyst.spatialanalyst.BufferAnalystParameter;
 import com.supermap.analyst.spatialanalyst.BufferEndType;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.Datasource;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlDefaultValues;
@@ -23,7 +18,6 @@ import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
@@ -121,6 +115,15 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		}
 	}
 
+	public PanelPointOrRegionAnalyst(DoSome some) {
+		setSome(some);
+		initComponent();
+		setPanelPointOrRegionAnalyst();
+	}
+
+	/**
+	 *
+	 */
 	public PanelPointOrRegionAnalyst() {
 		initComponent();
 		setPanelPointOrRegionAnalyst();
@@ -153,14 +156,13 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 	private void setPanelBasicLayout() {
 		GroupLayout panelBasicLayout = new GroupLayout(this.panelBasic);
+		panelBasicLayout.setAutoCreateGaps(true);
 		this.panelBasic.setLayout(panelBasicLayout);
 
 		//@formatter:off
          panelBasicLayout.setHorizontalGroup(panelBasicLayout.createSequentialGroup()
-                   .addComponent(this.panelBasicLeft,0, 180, Short.MAX_VALUE)
-                   .addPreferredGap(ComponentPlacement.RELATED)
-                   .addComponent(this.panelBasicRight,0, 180, Short.MAX_VALUE));
-        
+                   .addComponent(this.panelBasicLeft,0,180,Short.MAX_VALUE)
+                   .addComponent(this.panelBasicRight,0,180,Short.MAX_VALUE));
          panelBasicLayout.setVerticalGroup(panelBasicLayout.createSequentialGroup()
                    .addGroup(panelBasicLayout.createParallelGroup(Alignment.CENTER)
                              .addComponent(this.panelBasicLeft)
@@ -171,6 +173,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private void setPanelBasicLeftLayout() {
 
 		GroupLayout panelBasicLeftLayout = new GroupLayout(this.panelBasicLeft);
+		panelBasicLeftLayout.setAutoCreateGaps(true);
 		this.panelBasicLeft.setLayout(panelBasicLeftLayout);
 
 		//@formatter:off
@@ -180,13 +183,14 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelResultData)));
           panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
                     .addComponent(this.panelBufferData)
-                    .addComponent(this.panelResultData).addContainerGap());
+                    .addComponent(this.panelResultData));
           //@formatter:on
 	}
 
 	private void setPanelBasicRightLayout() {
 
 		GroupLayout panelBasicRightLayout = new GroupLayout(this.panelBasicRight);
+		panelBasicRightLayout.setAutoCreateGaps(true);
 		this.panelBasicRight.setLayout(panelBasicRightLayout);
 		//@formatter:off
           panelBasicRightLayout.setHorizontalGroup(panelBasicRightLayout.createSequentialGroup()
@@ -194,8 +198,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelBufferRadius)
                               .addComponent(this.panelResultSet)));
           panelBasicRightLayout.setVerticalGroup(panelBasicRightLayout.createSequentialGroup()
-		            .addComponent(this.panelBufferRadius)
-                    .addComponent(this.panelResultSet).addContainerGap());
+		          .addComponent(this.panelBufferRadius)
+		          .addComponent(this.panelResultSet));
           //@formatter:on
 	}
 
@@ -250,7 +254,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDatasource.getDatasets());
 				if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() == null) {
 					setComboBoxDatasetNotNull(false);
-
 				}
 			} else if (nodeData.getData() instanceof Dataset) {
 				Dataset selectedDataset = (Dataset) nodeData.getData();
@@ -525,6 +528,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		// 情况的判断
 		// TODO something
 	}
+
 	/**
 	 * 设置确定按钮是否可用
 	 * yuanR 2017.3.3

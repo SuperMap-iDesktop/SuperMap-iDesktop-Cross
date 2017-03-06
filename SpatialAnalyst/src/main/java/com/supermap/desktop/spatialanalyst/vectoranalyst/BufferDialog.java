@@ -37,10 +37,12 @@ public class BufferDialog extends SmDialog {
 	private MapControl mapControl;
 	private PanelButton panelButton;
 	private JPanel panelBuffer;
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(720, 390);
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 325);
-	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(750, 325);
-	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(750, 390);
+	private PanelLineBufferAnalyst panelLineBufferAnalyst;
+	private PanelPointOrRegionAnalyst panelPointOrRegionAnalyst;
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(720, 400);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 330);
+	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(750, 330);
+	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(750, 400);
 	private LocalActionListener localActionListener = new LocalActionListener();
 	private DoSome some = new DoSome() {
 		@Override
@@ -84,7 +86,6 @@ public class BufferDialog extends SmDialog {
 		}
 
 		// 没有打开地图时，当选中数据集节点，如果为点，面类型时，打开点面缓冲区界面，选中其他节点打开线缓冲区界面
-
 		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
 		TreePath selectedPath = workspaceTree.getSelectionPath();
 		if (selectedPath != null) {
@@ -104,14 +105,16 @@ public class BufferDialog extends SmDialog {
 	}
 
 	private void getPointorRegionType() {
-		this.panelBufferType = new PanelPointOrRegionAnalyst();
+		this.panelPointOrRegionAnalyst = new PanelPointOrRegionAnalyst();
+		this.panelBufferType = this.panelPointOrRegionAnalyst;
 		setSize(getPointPanelDimension());
 		this.radioButtonPointOrRegion.setSelected(true);
 		((PanelPointOrRegionAnalyst) panelBufferType).setSome(some);
 	}
 
 	private void getLineType() {
-		this.panelBufferType = new PanelLineBufferAnalyst();
+		this.panelLineBufferAnalyst = new PanelLineBufferAnalyst();
+		this.panelBufferType = this.panelLineBufferAnalyst;
 		setSize(getLinePanelDimension());
 		this.radioButtonLine.setSelected(true);
 		((PanelLineBufferAnalyst) panelBufferType).setSome(some);
@@ -145,6 +148,15 @@ public class BufferDialog extends SmDialog {
 		this.buttonGroup.add(this.radioButtonPointOrRegion);
 		this.buttonGroup.add(this.radioButtonLine);
 
+		initLayout();
+
+	}
+
+	/**
+	 * 设置其面板布局
+	 * yuanR 2017.3.6
+	 */
+	private void initLayout() {
 		setPanelGroupButtonLayout();
 		setPanelDataTypeLayout();
 		setPanelBufferLayout();
@@ -253,7 +265,8 @@ public class BufferDialog extends SmDialog {
 					((PanelLineBufferAnalyst) panelBufferType).setSome(null);
 				}
 				BufferDialog.this.getContentPane().removeAll();
-				panelBufferType = new PanelPointOrRegionAnalyst();
+				panelPointOrRegionAnalyst = new PanelPointOrRegionAnalyst();
+				panelBufferType = panelPointOrRegionAnalyst;
 				setBufferDialog();
 				((PanelPointOrRegionAnalyst) panelBufferType).setSome(some);
 				setSize(getPointPanelDimension());
@@ -264,7 +277,8 @@ public class BufferDialog extends SmDialog {
 					((PanelLineBufferAnalyst) panelBufferType).setSome(null);
 				}
 				BufferDialog.this.getContentPane().removeAll();
-				panelBufferType = new PanelLineBufferAnalyst();
+				panelLineBufferAnalyst = new PanelLineBufferAnalyst();
+				panelBufferType = panelLineBufferAnalyst;
 				setBufferDialog();
 				((PanelLineBufferAnalyst) panelBufferType).setSome(some);
 				setSize(getLinePanelDimension());

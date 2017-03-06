@@ -59,6 +59,7 @@ public class PanelResultData extends JPanel {
 		this.labelDataset = new JLabel("Dataset");
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxResultDataDatasource = new DatasourceComboBox();
+		this.comboBoxResultDataDatasource.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.textFieldResultDataDataset = new JTextField("Buffer");
 		this.textFieldResultDataDataset.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.comboBoxResultDataDatasource.addItemListener(new ItemListener() {
@@ -97,10 +98,10 @@ public class PanelResultData extends JPanel {
 						.addComponent(this.textFieldResultDataDataset)));
 		
 		panelResultDataLayout.setVerticalGroup(panelResultDataLayout.createSequentialGroup()
-				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
+				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.labelDatasource)
 						.addComponent(this.comboBoxResultDataDatasource))
-				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
+				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.labelDataset)
 						.addComponent(this.textFieldResultDataDataset)));
 		//@formatter:on

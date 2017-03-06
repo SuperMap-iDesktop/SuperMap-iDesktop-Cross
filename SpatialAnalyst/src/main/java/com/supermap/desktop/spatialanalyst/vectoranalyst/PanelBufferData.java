@@ -93,10 +93,10 @@ public class PanelBufferData extends JPanel {
 						.addComponent(this.comboBoxBufferDataDataset)));
 		
 		panelBufferDataLayout.setVerticalGroup(panelBufferDataLayout.createSequentialGroup()
-				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.CENTER)
+				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.labelDatasource)
 						.addComponent(this.comboBoxBufferDataDatasource))
-				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.CENTER)
+				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.labelDataset)
 						.addComponent(this.comboBoxBufferDataDataset)));
 		//@formatter:on
