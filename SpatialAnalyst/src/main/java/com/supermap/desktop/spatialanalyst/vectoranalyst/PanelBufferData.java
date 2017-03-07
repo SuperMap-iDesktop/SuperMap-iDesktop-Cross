@@ -1,6 +1,5 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
-import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
@@ -59,11 +58,11 @@ public class PanelBufferData extends JPanel {
 		this.labelDataset = new JLabel("Dataset");
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxBufferDataDatasource = new DatasourceComboBox();
-		this.comboBoxBufferDataDatasource.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
-		this.comboBoxBufferDataDatasource.setMinimumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+//		this.comboBoxBufferDataDatasource.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+//		this.comboBoxBufferDataDatasource.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.comboBoxBufferDataDataset = new DatasetComboBox();
-		this.comboBoxBufferDataDataset.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
-		this.comboBoxBufferDataDataset.setMinimumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+//		this.comboBoxBufferDataDataset.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+//		this.comboBoxBufferDataDataset.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.checkBoxGeometrySelect = new JCheckBox("GeometrySelect");
 		this.panelBufferDataBasic = new JPanel();
 		this.panelSelect = new JPanel();
@@ -97,10 +96,10 @@ public class PanelBufferData extends JPanel {
 		panelBufferDataLayout.setVerticalGroup(panelBufferDataLayout.createSequentialGroup()
 				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDatasource)
-						.addComponent(this.comboBoxBufferDataDatasource))
+						.addComponent(this.comboBoxBufferDataDatasource,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
 				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDataset)
-						.addComponent(this.comboBoxBufferDataDataset)));
+						.addComponent(this.comboBoxBufferDataDataset,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)));
 		//@formatter:on
 
 		this.add(this.checkBoxGeometrySelect, BorderLayout.SOUTH);

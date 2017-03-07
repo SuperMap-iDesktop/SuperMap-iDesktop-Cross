@@ -87,10 +87,10 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 			some.doSome(isArcSegmentNumSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable, isHasResultDatasource);
 		}
 		// 当数据集为空时，即没有数据用于缓冲，设置其他控件不可用
-		this.panelBufferData.setPanelEnable(isComboBoxDatasetNotNull);
-		this.panelBufferRadius.setPanelEnable(isComboBoxDatasetNotNull);
-		this.panelResultData.setPanelEnable(isComboBoxDatasetNotNull);
-		this.panelResultSet.setPanelEnable(isComboBoxDatasetNotNull);
+		this.panelBufferData.setPanelEnable(this.isComboBoxDatasetNotNull);
+		this.panelBufferRadius.setPanelEnable(this.isComboBoxDatasetNotNull);
+		this.panelResultData.setPanelEnable(this.isComboBoxDatasetNotNull);
+		this.panelResultSet.setPanelEnable(this.isComboBoxDatasetNotNull);
 	}
 
 	public boolean isRadiusNumSuitable() {
@@ -187,7 +187,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelBufferData)
                               .addComponent(this.panelResultData)));
           panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
-                    .addComponent(this.panelBufferData,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE).addContainerGap()
+                    .addComponent(this.panelBufferData).addContainerGap()
                     .addComponent(this.panelResultData,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
           //@formatter:on
 	}
@@ -203,8 +203,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelBufferRadius)
                               .addComponent(this.panelResultSet)));
           panelBasicRightLayout.setVerticalGroup(panelBasicRightLayout.createSequentialGroup()
-		          .addComponent(this.panelBufferRadius,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE).addContainerGap()
-		          .addComponent(this.panelResultSet,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
+		          .addComponent(this.panelBufferRadius).addContainerGap()
+		          .addComponent(this.panelResultSet));
           //@formatter:on
 	}
 

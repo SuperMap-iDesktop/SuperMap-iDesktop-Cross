@@ -97,7 +97,6 @@ public class PanelResultSet extends JPanel {
 		this.textFieldSemicircleLineSegment = new SMFormattedTextField(numberFormatter);
 		this.textFieldSemicircleLineSegment.setText(TEXT_VALUE);
 		this.textFieldSemicircleLineSegment.addKeyListener(new KeyAdapter() {
-
 			@Override
 			public void keyTyped(KeyEvent e) {
 				char keyChar = e.getKeyChar();
@@ -137,13 +136,13 @@ public class PanelResultSet extends JPanel {
 		panelResultSetLayout.setVerticalGroup(panelResultSetLayout.createSequentialGroup()
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxUnionBuffer)
-						.addComponent(this.checkBoxRemainAttributes)).addGap(ControlDefaultValues.DEFAULT_PANEL_GAP)
+						.addComponent(this.checkBoxRemainAttributes))
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxDisplayInMap)
-						.addComponent(this.checkBoxDisplayInScene)).addGap(ControlDefaultValues.DEFAULT_PANEL_GAP)
+						.addComponent(this.checkBoxDisplayInScene))
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.labelSemicircleLineSegment)
-						.addComponent(this.textFieldSemicircleLineSegment)).addGap(ControlDefaultValues.DEFAULT_PANEL_GAP));
+						.addComponent(this.textFieldSemicircleLineSegment)));
 		
 		//@formatter:on
 	}
@@ -167,9 +166,9 @@ public class PanelResultSet extends JPanel {
 
 		panelResultSetLayout.setVerticalGroup(panelResultSetLayout.createSequentialGroup()
 				.addGroup(panelResultSetLayout.createSequentialGroup()
-						.addComponent(this.checkBoxUnionBuffer).addGap(ControlDefaultValues.DEFAULT_PREFERREDSIZE_GAP)
-						.addComponent(this.checkBoxDisplayInMap).addGap(ControlDefaultValues.DEFAULT_PREFERREDSIZE_GAP)
-						.addComponent(this.checkBoxRemainAttributes))
+						.addComponent(this.checkBoxUnionBuffer)
+						.addComponent(this.checkBoxDisplayInMap)
+						.addComponent(this.checkBoxRemainAttributes).addGap(ControlDefaultValues.DEFAULT_PREFERREDSIZE_GAP))
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.labelSemicircleLineSegment)
 						.addComponent(this.textFieldSemicircleLineSegment)));
