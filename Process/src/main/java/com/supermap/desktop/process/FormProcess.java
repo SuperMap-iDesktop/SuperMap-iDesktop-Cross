@@ -37,7 +37,7 @@ public class FormProcess extends FormBaseChild implements IForm {
 		graphCanvas.addGraphSelectChangedListener(new GraphSelectChangedListener() {
 
 			@Override
-			public void GraphSelectChanged(GraphSelectedChangedEvent e) {
+			public void graphSelectChanged(GraphSelectedChangedEvent e) {
 				try {
 					ParameterManager component = (ParameterManager) ((Dockbar) Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName("com.supermap.desktop.process.ParameterManager"))).getInnerComponent();
 					if (e.getSelected() instanceof ProcessGraph) {
