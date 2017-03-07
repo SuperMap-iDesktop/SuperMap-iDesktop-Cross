@@ -140,7 +140,7 @@ public class PanelResultSet extends JPanel {
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxDisplayInMap)
 						.addComponent(this.checkBoxDisplayInScene))
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.CENTER)
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.labelSemicircleLineSegment)
 						.addComponent(this.textFieldSemicircleLineSegment)));
 		
@@ -169,7 +169,7 @@ public class PanelResultSet extends JPanel {
 						.addComponent(this.checkBoxUnionBuffer)
 						.addComponent(this.checkBoxDisplayInMap)
 						.addComponent(this.checkBoxRemainAttributes).addGap(ControlDefaultValues.DEFAULT_PREFERREDSIZE_GAP))
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.CENTER)
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.labelSemicircleLineSegment)
 						.addComponent(this.textFieldSemicircleLineSegment)));
 		//@formatter:on
