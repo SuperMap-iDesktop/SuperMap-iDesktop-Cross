@@ -6,6 +6,7 @@ import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlDefaultValues;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.TreeNodeData;
@@ -747,9 +748,10 @@ public class PanelLineBufferAnalyst extends JPanel {
 	class NumericRightCaretListener implements CaretListener {
 		@Override
 		public void caretUpdate(CaretEvent e) {
-			if (radioButtonBufferTypeRound.isSelected()) {
+			// 防止sql表达式面板弹出两次，当选中“表达式..”不进行同步--yuanR 2017.3.7
+			String text = ((JTextField) e.getSource()).getText();
+			if (radioButtonBufferTypeRound.isSelected() && !text.equals(CoreProperties.getString("String_ThemeGraphItemExpressionPicker_ButtonExpression"))) {
 				// 当选择了圆头缓冲类型时，进行同步设置
-				String text = ((JTextField) e.getSource()).getText();
 				((JTextField) numericFieldComboBoxLeft.getEditor().getEditorComponent()).removeCaretListener(numericLeftCaretListener);
 				numericFieldComboBoxLeft.setSelectedItem(text);
 				((JTextField) numericFieldComboBoxLeft.getEditor().getEditorComponent()).addCaretListener(numericLeftCaretListener);
@@ -765,9 +767,10 @@ public class PanelLineBufferAnalyst extends JPanel {
 	class NumericLeftCaretListener implements CaretListener {
 		@Override
 		public void caretUpdate(CaretEvent e) {
-			if (radioButtonBufferTypeRound.isSelected()) {
+			// 防止sql表达式面板弹出两次，当选中“表达式..”不进行同步--yuanR 2017.3.7
+			String text = ((JTextField) e.getSource()).getText();
+			if (radioButtonBufferTypeRound.isSelected() && !text.equals(CoreProperties.getString("String_ThemeGraphItemExpressionPicker_ButtonExpression"))) {
 				// 当选择了圆头缓冲类型时，进行同步设置
-				String text = ((JTextField) e.getSource()).getText();
 				((JTextField) numericFieldComboBoxRight.getEditor().getEditorComponent()).removeCaretListener(numericRightCaretListener);
 				numericFieldComboBoxRight.setSelectedItem(text);
 				((JTextField) numericFieldComboBoxRight.getEditor().getEditorComponent()).addCaretListener(numericRightCaretListener);

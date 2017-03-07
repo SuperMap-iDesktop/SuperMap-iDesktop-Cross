@@ -41,9 +41,9 @@ public class BufferDialog extends SmDialog {
 	private PanelButton panelButton;
 	private MapControl mapControl;
 	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 330);
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(720, 400);
-	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(750, 350);
-	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(750, 420);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(720, 390);
+	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(750, 360);
+	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(750, 430);
 	private LocalActionListener localActionListener = new LocalActionListener();
 	private DoSome some = new DoSome() {
 		@Override
