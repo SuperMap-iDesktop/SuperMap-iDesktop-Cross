@@ -188,7 +188,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelResultData)));
           panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
                     .addComponent(this.panelBufferData).addContainerGap()
-                    .addComponent(this.panelResultData));
+                    .addComponent(this.panelResultData,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
           //@formatter:on
 	}
 
