@@ -136,13 +136,13 @@ public class PanelResultSet extends JPanel {
 		panelResultSetLayout.setVerticalGroup(panelResultSetLayout.createSequentialGroup()
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxUnionBuffer)
-						.addComponent(this.checkBoxRemainAttributes)).addGap(ControlDefaultValues.DEFAULT_PANEL_GAP)
+						.addComponent(this.checkBoxRemainAttributes))
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxDisplayInMap)
-						.addComponent(this.checkBoxDisplayInScene)).addGap(ControlDefaultValues.DEFAULT_PANEL_GAP)
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.checkBoxDisplayInScene))
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelSemicircleLineSegment)
-						.addComponent(this.textFieldSemicircleLineSegment)).addGap(ControlDefaultValues.DEFAULT_PANEL_GAP));
+						.addComponent(this.textFieldSemicircleLineSegment,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)));
 		
 		//@formatter:on
 	}
@@ -166,12 +166,12 @@ public class PanelResultSet extends JPanel {
 
 		panelResultSetLayout.setVerticalGroup(panelResultSetLayout.createSequentialGroup()
 				.addGroup(panelResultSetLayout.createSequentialGroup()
-						.addComponent(this.checkBoxUnionBuffer).addGap(ControlDefaultValues.DEFAULT_PREFERREDSIZE_GAP)
+						.addComponent(this.checkBoxUnionBuffer).addGap(ControlDefaultValues.DEFAULT_PREFERREDSIZE_GAP))
 						.addComponent(this.checkBoxDisplayInMap).addGap(ControlDefaultValues.DEFAULT_PREFERREDSIZE_GAP)
-						.addComponent(this.checkBoxRemainAttributes))
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.BASELINE)
+						.addComponent(this.checkBoxRemainAttributes)
+				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelSemicircleLineSegment)
-						.addComponent(this.textFieldSemicircleLineSegment)));
+						.addComponent(this.textFieldSemicircleLineSegment,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)));
 		//@formatter:on
 	}
 

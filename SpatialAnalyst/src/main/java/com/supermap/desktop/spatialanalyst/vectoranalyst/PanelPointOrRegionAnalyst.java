@@ -187,8 +187,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelBufferData)
                               .addComponent(this.panelResultData)));
           panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
-                    .addComponent(this.panelBufferData,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE).addContainerGap()
-                    .addComponent(this.panelResultData,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
+                    .addComponent(this.panelBufferData).addContainerGap()
+                    .addComponent(this.panelResultData));
           //@formatter:on
 	}
 
@@ -203,8 +203,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelBufferRadius)
                               .addComponent(this.panelResultSet)));
           panelBasicRightLayout.setVerticalGroup(panelBasicRightLayout.createSequentialGroup()
-		          .addComponent(this.panelBufferRadius,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE).addContainerGap()
-		          .addComponent(this.panelResultSet,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
+		          .addComponent(this.panelBufferRadius).addContainerGap()
+		          .addComponent(this.panelResultSet));
           //@formatter:on
 	}
 
