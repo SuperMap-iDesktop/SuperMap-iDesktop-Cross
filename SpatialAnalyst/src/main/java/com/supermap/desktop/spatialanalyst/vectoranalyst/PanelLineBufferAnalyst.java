@@ -5,7 +5,6 @@ import com.supermap.analyst.spatialanalyst.BufferEndType;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -248,20 +247,17 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.labelLeftNumericFieldRadius = new JLabel("LeftNumericFieldRadius");
 		this.labelRightNumericFieldRadius = new JLabel("RightNumericFieldRadius");
 		this.comboBoxUnit = new ComboBoxLengthUnit();
-		this.comboBoxUnit.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+//		this.comboBoxUnit.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.numericFieldComboBoxLeft = new SmNumericFieldComboBox();
 		this.numericFieldComboBoxRight = new SmNumericFieldComboBox();
-		this.numericFieldComboBoxLeft.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
-		this.numericFieldComboBoxRight.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+//		this.numericFieldComboBoxLeft.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+//		this.numericFieldComboBoxRight.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 
-		JPanel bufferPanel = new JPanel();
-		this.panelBufferRadius.setLayout(new BorderLayout());
-		this.panelBufferRadius.add(bufferPanel, BorderLayout.CENTER);
 		//@formatter:off
-		GroupLayout panelBufferRadiusLayout = new GroupLayout(bufferPanel);
+		GroupLayout panelBufferRadiusLayout = new GroupLayout(this.panelBufferRadius);
 		panelBufferRadiusLayout.setAutoCreateContainerGaps(true);
 		panelBufferRadiusLayout.setAutoCreateGaps(true);
-		bufferPanel.setLayout(panelBufferRadiusLayout);
+		this.panelBufferRadius.setLayout(panelBufferRadiusLayout);
 		
 		panelBufferRadiusLayout.setHorizontalGroup(panelBufferRadiusLayout.createSequentialGroup()
 				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
@@ -282,7 +278,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 						.addComponent(this.numericFieldComboBoxLeft,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
 				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelRightNumericFieldRadius)
-						.addComponent(this.numericFieldComboBoxRight,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)));
+						.addComponent(this.numericFieldComboBoxRight,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
+				.addGap(5,5,Short.MAX_VALUE));
 		//@formatter:on
 
 	}

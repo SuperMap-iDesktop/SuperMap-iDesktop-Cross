@@ -6,7 +6,6 @@ import com.supermap.desktop.ui.controls.comboBox.SmNumericFieldComboBox;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import java.awt.*;
 
 /**
  * Created by hanyz on 2017/2/20.
@@ -76,13 +75,13 @@ public class PanelBufferRadius extends JPanel {
 	}
 
 	private void initLayout() {
-		this.setLayout(new BorderLayout());
-		this.add(this.panelContainer, BorderLayout.CENTER);
+//		this.setLayout(new BorderLayout());
+//		this.add(this.panelContainer, BorderLayout.CENTER);
 		//内部JPanel布局
-		GroupLayout panelBufferDataLayout = new GroupLayout(this.panelContainer);
+		GroupLayout panelBufferDataLayout = new GroupLayout(this);
 		panelBufferDataLayout.setAutoCreateContainerGaps(true);
 		panelBufferDataLayout.setAutoCreateGaps(true);
-		this.panelContainer.setLayout(panelBufferDataLayout);
+		this.setLayout(panelBufferDataLayout);
 		//@formatter:off
 		panelBufferDataLayout.setHorizontalGroup(panelBufferDataLayout.createSequentialGroup()
 				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -97,7 +96,8 @@ public class PanelBufferRadius extends JPanel {
 						.addComponent(this.comboBoxUnit,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
 				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelField)
-						.addComponent(this.numericFieldComboBox,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)));
+						.addComponent(this.numericFieldComboBox,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)).addGap(5,5,Short.MAX_VALUE));
+
 		//@formatter:on
 	}
 

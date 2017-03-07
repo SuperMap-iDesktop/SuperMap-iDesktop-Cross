@@ -8,7 +8,6 @@ import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
@@ -88,13 +87,11 @@ public class PanelResultData extends JPanel {
 
 	private void setPanelResultDataLayout() {
 		this.setBorder(BorderFactory.createTitledBorder(SpatialAnalystProperties.getString("String_ResultData")));
-		this.setLayout(new BorderLayout());
-		this.add(this.panelContainer, BorderLayout.CENTER);
 
-		GroupLayout panelResultDataLayout = new GroupLayout(this.panelContainer);
+		GroupLayout panelResultDataLayout = new GroupLayout(this);
 		panelResultDataLayout.setAutoCreateGaps(true);
 		panelResultDataLayout.setAutoCreateContainerGaps(true);
-		this.panelContainer.setLayout(panelResultDataLayout);
+		this.setLayout(panelResultDataLayout);
 
 		//@formatter:off
 		panelResultDataLayout.setHorizontalGroup(panelResultDataLayout.createSequentialGroup()
@@ -111,7 +108,8 @@ public class PanelResultData extends JPanel {
 						.addComponent(this.comboBoxResultDataDatasource,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
 				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDataset)
-						.addComponent(this.textFieldResultDataDataset,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)));
+						.addComponent(this.textFieldResultDataDataset,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
+				.addGap(5,5,Short.MAX_VALUE));
 		//@formatter:on
 	}
 
