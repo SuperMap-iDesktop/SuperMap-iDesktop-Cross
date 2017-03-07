@@ -147,4 +147,8 @@ public class MetaProcessBuffer extends MetaProcess {
 	public String getKey() {
 		return MetaKeys.BUFFER;
 	}
+
+	public static void main(String[] args) {
+		new MetaProcessBuffer();
+	}
 }

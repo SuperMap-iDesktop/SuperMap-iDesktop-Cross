@@ -12,5 +12,6 @@ public class MetaKeys {
     public static String KERNEL_DENSITY = "KernelDensity";
     public static String OVERLAY_ANALYST = "OverlayAnalyst";
     public static String INTERPOLATOR = "Interpolator";
+    public static String ISOLINE ="ISOLine";
     public static String PROCESS_GROUP = "ProcessGroup";
 }

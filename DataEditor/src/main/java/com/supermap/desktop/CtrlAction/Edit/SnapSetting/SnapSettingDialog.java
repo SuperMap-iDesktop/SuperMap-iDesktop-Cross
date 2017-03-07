@@ -469,7 +469,7 @@ public class SnapSettingDialog extends SmDialog {
         this.labelImageArraw.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/Select.png"));
         this.panelTolarenceView.add(labelImageArraw, new GridBagConstraintsHelper(0, 0, 1, 1));
         this.panelTolarenceView.add(labelImageCicle, new GridBagConstraintsHelper(0, 0, 1, 1));
-        this.labelImageCicle.setIcon(buildIcon(30));
+        this.labelImageCicle.setIcon(buildIcon(mapControlSnapSetting.getTolerance()));
     }
 
     private ImageIcon buildIcon(int width) {
