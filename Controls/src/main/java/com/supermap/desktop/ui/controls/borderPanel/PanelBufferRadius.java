@@ -61,8 +61,10 @@ public class PanelBufferRadius extends JPanel {
 		this.labelField = new JLabel("Length");
 		this.comboBoxUnit = new ComboBoxLengthUnit();
 		this.comboBoxUnit.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.comboBoxUnit.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.numericFieldComboBox = new SmNumericFieldComboBox();
 		this.numericFieldComboBox.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.numericFieldComboBox.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.panelContainer = new JPanel();
 
 		TitledBorder border = new TitledBorder(ControlsProperties.getString("String_BufferRadius"));
@@ -96,7 +98,7 @@ public class PanelBufferRadius extends JPanel {
 						.addComponent(this.comboBoxUnit ))
 				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelField)
-						.addComponent(this.numericFieldComboBox )));
+						.addComponent(this.numericFieldComboBox)));
 		//@formatter:on
 	}
 

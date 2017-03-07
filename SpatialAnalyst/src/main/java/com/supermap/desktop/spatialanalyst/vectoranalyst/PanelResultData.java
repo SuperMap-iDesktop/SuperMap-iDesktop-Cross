@@ -60,8 +60,10 @@ public class PanelResultData extends JPanel {
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxResultDataDatasource = new DatasourceComboBox();
 		this.comboBoxResultDataDatasource.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.comboBoxResultDataDatasource.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.textFieldResultDataDataset = new JTextField("Buffer");
 		this.textFieldResultDataDataset.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.textFieldResultDataDataset.setMinimumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.comboBoxResultDataDatasource.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
