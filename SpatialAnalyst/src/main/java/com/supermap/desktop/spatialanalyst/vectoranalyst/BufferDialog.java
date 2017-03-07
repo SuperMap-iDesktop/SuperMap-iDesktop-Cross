@@ -58,7 +58,7 @@ public class BufferDialog extends SmDialog {
 		// 初始化数据类型对应的缓冲区面板--yaunR
 		initPanelBufferBasic();
 		setLocationRelativeTo(null);
-		setResizable(false);
+		setResizable(true);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setVisible(true);
 	}

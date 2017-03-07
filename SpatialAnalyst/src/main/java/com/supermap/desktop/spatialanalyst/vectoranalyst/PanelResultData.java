@@ -8,6 +8,7 @@ import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
@@ -19,6 +20,7 @@ public class PanelResultData extends JPanel {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+	private JPanel panelContainer;
 	private JLabel labelDataset;
 	private JLabel labelDatasource;
 	private DatasourceComboBox comboBoxResultDataDatasource;
@@ -55,6 +57,7 @@ public class PanelResultData extends JPanel {
 	}
 
 	private void initComponent() {
+		this.panelContainer=new JPanel();
 		this.labelDataset = new JLabel("Dataset");
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxResultDataDatasource = new DatasourceComboBox();
@@ -85,10 +88,13 @@ public class PanelResultData extends JPanel {
 
 	private void setPanelResultDataLayout() {
 		this.setBorder(BorderFactory.createTitledBorder(SpatialAnalystProperties.getString("String_ResultData")));
-		GroupLayout panelResultDataLayout = new GroupLayout(this);
+		this.setLayout(new BorderLayout());
+		this.add(this.panelContainer, BorderLayout.CENTER);
+
+		GroupLayout panelResultDataLayout = new GroupLayout(this.panelContainer);
 		panelResultDataLayout.setAutoCreateGaps(true);
 		panelResultDataLayout.setAutoCreateContainerGaps(true);
-		this.setLayout(panelResultDataLayout);
+		this.panelContainer.setLayout(panelResultDataLayout);
 
 		//@formatter:off
 		panelResultDataLayout.setHorizontalGroup(panelResultDataLayout.createSequentialGroup()
@@ -105,7 +111,7 @@ public class PanelResultData extends JPanel {
 						.addComponent(this.comboBoxResultDataDatasource,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
 				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDataset)
-						.addComponent(this.textFieldResultDataDataset)));
+						.addComponent(this.textFieldResultDataDataset,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)));
 		//@formatter:on
 	}
 

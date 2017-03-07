@@ -92,7 +92,7 @@ public class PanelBufferData extends JPanel {
 				.addGroup(panelBufferDataLayout.createParallelGroup()
 						.addComponent(this.comboBoxBufferDataDatasource)
 						.addComponent(this.comboBoxBufferDataDataset)));
-		
+
 		panelBufferDataLayout.setVerticalGroup(panelBufferDataLayout.createSequentialGroup()
 				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDatasource)
@@ -100,8 +100,8 @@ public class PanelBufferData extends JPanel {
 				.addGroup(panelBufferDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDataset)
 						.addComponent(this.comboBoxBufferDataDataset,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)));
-		//@formatter:on
 
+		//@formatter:on
 		this.add(this.checkBoxGeometrySelect, BorderLayout.SOUTH);
 	}
 

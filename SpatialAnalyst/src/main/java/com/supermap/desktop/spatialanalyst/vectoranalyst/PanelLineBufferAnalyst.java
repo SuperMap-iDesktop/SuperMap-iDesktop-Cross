@@ -5,6 +5,7 @@ import com.supermap.analyst.spatialanalyst.BufferEndType;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -247,19 +248,20 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.labelLeftNumericFieldRadius = new JLabel("LeftNumericFieldRadius");
 		this.labelRightNumericFieldRadius = new JLabel("RightNumericFieldRadius");
 		this.comboBoxUnit = new ComboBoxLengthUnit();
-//		this.comboBoxUnit.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
-//		this.comboBoxUnit.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.comboBoxUnit.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.numericFieldComboBoxLeft = new SmNumericFieldComboBox();
 		this.numericFieldComboBoxRight = new SmNumericFieldComboBox();
-//		this.numericFieldComboBoxLeft.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
-//		this.numericFieldComboBoxLeft.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
-//		this.numericFieldComboBoxRight.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
-//		this.numericFieldComboBoxRight.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.numericFieldComboBoxLeft.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.numericFieldComboBoxRight.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+
+		JPanel bufferPanel = new JPanel();
+		this.panelBufferRadius.setLayout(new BorderLayout());
+		this.panelBufferRadius.add(bufferPanel, BorderLayout.CENTER);
 		//@formatter:off
-		GroupLayout panelBufferRadiusLayout = new GroupLayout(this.panelBufferRadius);
+		GroupLayout panelBufferRadiusLayout = new GroupLayout(bufferPanel);
 		panelBufferRadiusLayout.setAutoCreateContainerGaps(true);
 		panelBufferRadiusLayout.setAutoCreateGaps(true);
-		this.panelBufferRadius.setLayout(panelBufferRadiusLayout);
+		bufferPanel.setLayout(panelBufferRadiusLayout);
 		
 		panelBufferRadiusLayout.setHorizontalGroup(panelBufferRadiusLayout.createSequentialGroup()
 				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
@@ -274,13 +276,13 @@ public class PanelLineBufferAnalyst extends JPanel {
 		panelBufferRadiusLayout.setVerticalGroup(panelBufferRadiusLayout.createSequentialGroup()
 				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelUnit)
-						.addComponent(this.comboBoxUnit))
+						.addComponent(this.comboBoxUnit,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
 				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelLeftNumericFieldRadius)
-						.addComponent(this.numericFieldComboBoxLeft))
+						.addComponent(this.numericFieldComboBoxLeft,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
 				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelRightNumericFieldRadius)
-						.addComponent(this.numericFieldComboBoxRight)));
+						.addComponent(this.numericFieldComboBoxRight,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)));
 		//@formatter:on
 
 	}
