@@ -1,12 +1,12 @@
 package com.supermap.desktop.ui.controls.borderPanel;
 
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxLengthUnit;
 import com.supermap.desktop.ui.controls.comboBox.SmNumericFieldComboBox;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import java.awt.*;
 
 /**
  * Created by hanyz on 2017/2/20.
@@ -59,10 +59,10 @@ public class PanelBufferRadius extends JPanel {
 		this.labelUnit = new JLabel("Unit");
 		this.labelField = new JLabel("Length");
 		this.comboBoxUnit = new ComboBoxLengthUnit();
-//		this.comboBoxUnit.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.comboBoxUnit.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 //		this.comboBoxUnit.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.numericFieldComboBox = new SmNumericFieldComboBox();
-//		this.numericFieldComboBox.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.numericFieldComboBox.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 //		this.numericFieldComboBox.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.panelContainer = new JPanel();
 
@@ -76,13 +76,13 @@ public class PanelBufferRadius extends JPanel {
 	}
 
 	private void initLayout() {
-		this.setLayout(new BorderLayout());
-		this.add(this.panelContainer, BorderLayout.CENTER);
+//		this.setLayout(new BorderLayout());
+//		this.add(this.panelContainer, BorderLayout.CENTER);
 		//内部JPanel布局
-		GroupLayout panelBufferDataLayout = new GroupLayout(this.panelContainer);
+		GroupLayout panelBufferDataLayout = new GroupLayout(this);
 		panelBufferDataLayout.setAutoCreateContainerGaps(true);
 		panelBufferDataLayout.setAutoCreateGaps(true);
-		this.panelContainer.setLayout(panelBufferDataLayout);
+		this.setLayout(panelBufferDataLayout);
 		//@formatter:off
 		panelBufferDataLayout.setHorizontalGroup(panelBufferDataLayout.createSequentialGroup()
 				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -94,10 +94,11 @@ public class PanelBufferRadius extends JPanel {
 		panelBufferDataLayout.setVerticalGroup(panelBufferDataLayout.createSequentialGroup()
 				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelUnit)
-						.addComponent(this.comboBoxUnit ))
+						.addComponent(this.comboBoxUnit,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
 				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelField)
-						.addComponent(this.numericFieldComboBox)));
+						.addComponent(this.numericFieldComboBox,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)).addGap(5,5,Short.MAX_VALUE));
+
 		//@formatter:on
 	}
 

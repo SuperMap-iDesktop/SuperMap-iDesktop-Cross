@@ -40,7 +40,7 @@ public class BufferDialog extends SmDialog {
 	// 确定/取消按钮面板
 	private PanelButton panelButton;
 	private MapControl mapControl;
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 320);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 325);
 	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(720, 380);
 	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(750, 360);
 	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(750, 420);
@@ -58,7 +58,7 @@ public class BufferDialog extends SmDialog {
 		// 初始化数据类型对应的缓冲区面板--yaunR
 		initPanelBufferBasic();
 		setLocationRelativeTo(null);
-		setResizable(false);
+		setResizable(true);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setVisible(true);
 	}
@@ -123,9 +123,14 @@ public class BufferDialog extends SmDialog {
 		this.panelBufferType.removeAll();
 		if (this.panelPointOrRegionAnalyst == null) {
 			this.panelPointOrRegionAnalyst = new PanelPointOrRegionAnalyst(some);
+			// 每次切换时不要重新初始化面板--yaunR 2017.3.7
+			this.panelPointOrRegionAnalyst.setPanelPointOrRegionAnalyst();
+		} else {
+			// 因为没有重新初始化面板，当切换时需要对“确定”按钮状态进行判断--yuanR 2017.3.7
+			// 点面面板仅对数据源情况进行判断
+			this.panelPointOrRegionAnalyst.judgeOKButtonisEnabled();
 		}
-		this.panelPointOrRegionAnalyst.setPanelPointOrRegionAnalyst();
-		this.panelBufferType.add(panelPointOrRegionAnalyst);
+		this.panelBufferType.add(this.panelPointOrRegionAnalyst);
 		setSize(getPointPanelDimension());
 		this.radioButtonPointOrRegion.setSelected(true);
 //		this.panelPointOrRegionAnalyst.setSome(some);
@@ -135,9 +140,12 @@ public class BufferDialog extends SmDialog {
 		this.panelBufferType.removeAll();
 		if (this.panelLineBufferAnalyst == null) {
 			this.panelLineBufferAnalyst = new PanelLineBufferAnalyst(some);
+			this.panelLineBufferAnalyst.setPanelLineBufferAnalyst();
+		} else {
+			// 因为没有重新初始化面板，当切换时需要对“确定”按钮状态进行判断--yuanR 2017.3.7
+			this.panelLineBufferAnalyst.judgeOKButtonisEnabled();
 		}
-		this.panelLineBufferAnalyst.setPanelLineBufferAnalyst();
-		this.panelBufferType.add(panelLineBufferAnalyst);
+		this.panelBufferType.add(this.panelLineBufferAnalyst);
 		setSize(getLinePanelDimension());
 		this.radioButtonLine.setSelected(true);
 //		this.panelLineBufferAnalyst.setSome(some);
@@ -271,7 +279,7 @@ public class BufferDialog extends SmDialog {
 		} catch (Exception e1) {
 			BufferDialog.this.dispose();
 		}
-		if(flag){
+		if (flag) {
 			BufferDialog.this.dispose();
 		}
 	}

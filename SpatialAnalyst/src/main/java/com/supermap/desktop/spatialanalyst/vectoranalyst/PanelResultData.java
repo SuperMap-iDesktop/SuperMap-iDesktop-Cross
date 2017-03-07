@@ -1,6 +1,7 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
 import com.supermap.data.Datasource;
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
@@ -19,6 +20,7 @@ public class PanelResultData extends JPanel {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+	private JPanel panelContainer;
 	private JLabel labelDataset;
 	private JLabel labelDatasource;
 	private DatasourceComboBox comboBoxResultDataDatasource;
@@ -55,13 +57,14 @@ public class PanelResultData extends JPanel {
 	}
 
 	private void initComponent() {
+		this.panelContainer=new JPanel();
 		this.labelDataset = new JLabel("Dataset");
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxResultDataDatasource = new DatasourceComboBox();
-//		this.comboBoxResultDataDatasource.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.comboBoxResultDataDatasource.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 //		this.comboBoxResultDataDatasource.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.textFieldResultDataDataset = new JTextField("Buffer");
-//		this.textFieldResultDataDataset.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.textFieldResultDataDataset.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 //		this.textFieldResultDataDataset.setMinimumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 //		this.textFieldResultDataDataset.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.comboBoxResultDataDatasource.addItemListener(new ItemListener() {
@@ -85,6 +88,7 @@ public class PanelResultData extends JPanel {
 
 	private void setPanelResultDataLayout() {
 		this.setBorder(BorderFactory.createTitledBorder(SpatialAnalystProperties.getString("String_ResultData")));
+
 		GroupLayout panelResultDataLayout = new GroupLayout(this);
 		panelResultDataLayout.setAutoCreateGaps(true);
 		panelResultDataLayout.setAutoCreateContainerGaps(true);
@@ -105,7 +109,8 @@ public class PanelResultData extends JPanel {
 						.addComponent(this.comboBoxResultDataDatasource,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
 				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDataset)
-						.addComponent(this.textFieldResultDataDataset)));
+						.addComponent(this.textFieldResultDataDataset,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE))
+				.addGap(5,5,Short.MAX_VALUE));
 		//@formatter:on
 	}
 
