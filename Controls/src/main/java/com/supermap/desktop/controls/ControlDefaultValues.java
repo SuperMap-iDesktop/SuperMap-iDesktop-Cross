@@ -13,7 +13,7 @@ public class ControlDefaultValues {
 	// 面板之间间距
 	public static final int DEFAULT_PANEL_GAP = 5;
 	// 设置缓冲区面板控件尺寸
-	public static final Dimension BUFFERCOMPONT_PREFERREDSIZE = new Dimension(80, 30);
+	public static final Dimension BUFFERCOMPONT_PREFERREDSIZE = new Dimension(80, 20);
 
 
 	private ControlDefaultValues() {
