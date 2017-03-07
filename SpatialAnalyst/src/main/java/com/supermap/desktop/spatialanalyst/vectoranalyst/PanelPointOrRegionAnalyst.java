@@ -2,15 +2,9 @@ package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
 import com.supermap.analyst.spatialanalyst.BufferAnalystParameter;
 import com.supermap.analyst.spatialanalyst.BufferEndType;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.Datasource;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.TreeNodeData;
@@ -23,7 +17,6 @@ import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
@@ -33,8 +26,6 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 public class PanelPointOrRegionAnalyst extends JPanel {
@@ -66,6 +57,9 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private final static int DEFAULT_MAX = 200;
 	private final static Object DEFAULT_VALUE = 10;
 	private LocalItemListener localItemListener = new LocalItemListener();
+	private LocalDocumentListener localDocumentListener = new LocalDocumentListener();
+	private NumericFieldComboBoxCaretListener numericFieldComboBoxCaretListener = new NumericFieldComboBoxCaretListener();
+	private SemicircleLineSegmentCaretListener semicircleLineSegmentCaretListener=new SemicircleLineSegmentCaretListener();
 
 	public void setSome(DoSome some) {
 		this.some = some;
@@ -93,10 +87,10 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 			some.doSome(isArcSegmentNumSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable, isHasResultDatasource);
 		}
 		// 当数据集为空时，即没有数据用于缓冲，设置其他控件不可用
-		this.panelBufferData.setPanelEnable(isComboBoxDatasetNotNull);
-		this.panelBufferRadius.setPanelEnable(isComboBoxDatasetNotNull);
-		this.panelResultData.setPanelEnable(isComboBoxDatasetNotNull);
-		this.panelResultSet.setPanelEnable(isComboBoxDatasetNotNull);
+		this.panelBufferData.setPanelEnable(this.isComboBoxDatasetNotNull);
+		this.panelBufferRadius.setPanelEnable(this.isComboBoxDatasetNotNull);
+		this.panelResultData.setPanelEnable(this.isComboBoxDatasetNotNull);
+		this.panelResultSet.setPanelEnable(this.isComboBoxDatasetNotNull);
 	}
 
 	public boolean isRadiusNumSuitable() {
@@ -121,6 +115,15 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		}
 	}
 
+	public PanelPointOrRegionAnalyst(DoSome some) {
+		setSome(some);
+		initComponent();
+		setPanelPointOrRegionAnalyst();
+	}
+
+	/**
+	 *
+	 */
 	public PanelPointOrRegionAnalyst() {
 		initComponent();
 		setPanelPointOrRegionAnalyst();
@@ -143,7 +146,11 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		setPanelBasicRightLayout();
 	}
 
-	private void setPanelPointOrRegionAnalyst() {
+	public boolean isBufferSucceed() {
+		return isBufferSucceed;
+	}
+
+	public void setPanelPointOrRegionAnalyst() {
 		setPanelBufferData();
 		setPanelBufferRadius();
 		setPanelResultData();
@@ -153,16 +160,16 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 
 	private void setPanelBasicLayout() {
 		GroupLayout panelBasicLayout = new GroupLayout(this.panelBasic);
+		panelBasicLayout.setAutoCreateContainerGaps(true);
+		panelBasicLayout.setAutoCreateGaps(true);
 		this.panelBasic.setLayout(panelBasicLayout);
 
 		//@formatter:off
          panelBasicLayout.setHorizontalGroup(panelBasicLayout.createSequentialGroup()
-                   .addComponent(this.panelBasicLeft,0, 180, Short.MAX_VALUE)
-                   .addPreferredGap(ComponentPlacement.RELATED)
-                   .addComponent(this.panelBasicRight,0, 180, Short.MAX_VALUE));
-        
+                   .addComponent(this.panelBasicLeft,0,180,Short.MAX_VALUE)
+                   .addComponent(this.panelBasicRight,0,180,Short.MAX_VALUE));
          panelBasicLayout.setVerticalGroup(panelBasicLayout.createSequentialGroup()
-                   .addGroup(panelBasicLayout.createParallelGroup(Alignment.CENTER)
+                   .addGroup(panelBasicLayout.createParallelGroup(Alignment.LEADING)
                              .addComponent(this.panelBasicLeft)
                              .addComponent(this.panelBasicRight)));
          //@formatter:on
@@ -171,6 +178,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private void setPanelBasicLeftLayout() {
 
 		GroupLayout panelBasicLeftLayout = new GroupLayout(this.panelBasicLeft);
+		panelBasicLeftLayout.setAutoCreateGaps(true);
 		this.panelBasicLeft.setLayout(panelBasicLeftLayout);
 
 		//@formatter:off
@@ -179,14 +187,15 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelBufferData)
                               .addComponent(this.panelResultData)));
           panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
-                    .addComponent(this.panelBufferData)
-                    .addComponent(this.panelResultData).addContainerGap());
+                    .addComponent(this.panelBufferData).addContainerGap()
+                    .addComponent(this.panelResultData,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
           //@formatter:on
 	}
 
 	private void setPanelBasicRightLayout() {
 
 		GroupLayout panelBasicRightLayout = new GroupLayout(this.panelBasicRight);
+		panelBasicRightLayout.setAutoCreateGaps(true);
 		this.panelBasicRight.setLayout(panelBasicRightLayout);
 		//@formatter:off
           panelBasicRightLayout.setHorizontalGroup(panelBasicRightLayout.createSequentialGroup()
@@ -194,8 +203,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelBufferRadius)
                               .addComponent(this.panelResultSet)));
           panelBasicRightLayout.setVerticalGroup(panelBasicRightLayout.createSequentialGroup()
-		            .addComponent(this.panelBufferRadius)
-                    .addComponent(this.panelResultSet).addContainerGap());
+		          .addComponent(this.panelBufferRadius).addContainerGap()
+		          .addComponent(this.panelResultSet));
           //@formatter:on
 	}
 
@@ -250,7 +259,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDatasource.getDatasets());
 				if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() == null) {
 					setComboBoxDatasetNotNull(false);
-
 				}
 			} else if (nodeData.getData() instanceof Dataset) {
 				Dataset selectedDataset = (Dataset) nodeData.getData();
@@ -306,17 +314,34 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	}
 
 	private void registerEvent() {
-		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(new LocalItemListener());
-		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(new LocalItemListener());
-		this.panelBufferData.getCheckBoxGeometrySelect().addItemListener(new LocalItemListener());
-		this.panelResultSet.getCheckBoxDisplayInMap().addItemListener(new LocalItemListener());
-		this.panelResultSet.getCheckBoxDisplayInScene().addItemListener(new LocalItemListener());
-		this.panelResultSet.getCheckBoxRemainAttributes().addItemListener(new LocalItemListener());
-		this.panelResultSet.getCheckBoxUnionBuffer().addItemListener(new LocalItemListener());
+		removeRegisterEvent();
+		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(localItemListener);
+		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(localItemListener);
+		this.panelBufferData.getCheckBoxGeometrySelect().addItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxDisplayInMap().addItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxDisplayInScene().addItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxRemainAttributes().addItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxUnionBuffer().addItemListener(localItemListener);
+		this.panelResultSet.getTextFieldSemicircleLineSegment().addCaretListener(semicircleLineSegmentCaretListener);
 		// 给结果数据集名称文本框添加监听--yuanR 2017.3.2
-		this.panelResultData.getTextFieldResultDataDataset().getDocument().addDocumentListener(new LocalDocumentListener());
+		this.panelResultData.getTextFieldResultDataDataset().getDocument().addDocumentListener(localDocumentListener);
 		//给“半径长度”comboBox控件添加监听--yuanR 2017.3.2
-		((JTextField) this.panelBufferRadius.getNumericFieldComboBox().getEditor().getEditorComponent()).addCaretListener(new LocalCaretListener());
+		((JTextField) this.panelBufferRadius.getNumericFieldComboBox().getEditor().getEditorComponent()).addCaretListener(numericFieldComboBoxCaretListener);
+	}
+
+	private void removeRegisterEvent() {
+		this.panelBufferData.getComboBoxBufferDataDatasource().removeItemListener(localItemListener);
+		this.panelBufferData.getComboBoxBufferDataDataset().removeItemListener(localItemListener);
+		this.panelBufferData.getCheckBoxGeometrySelect().removeItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxDisplayInMap().removeItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxDisplayInScene().removeItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxRemainAttributes().removeItemListener(localItemListener);
+		this.panelResultSet.getCheckBoxUnionBuffer().removeItemListener(localItemListener);
+		this.panelResultSet.getTextFieldSemicircleLineSegment().removeCaretListener(semicircleLineSegmentCaretListener);
+		// 给结果数据集名称文本框添加监听--yuanR 2017.3.2
+		this.panelResultData.getTextFieldResultDataDataset().getDocument().removeDocumentListener(localDocumentListener);
+		//给“半径长度”comboBox控件添加监听--yuanR 2017.3.2
+		((JTextField) this.panelBufferRadius.getNumericFieldComboBox().getEditor().getEditorComponent()).removeCaretListener(numericFieldComboBoxCaretListener);
 	}
 
 	private void initDatasourceAndDataset() {
@@ -375,8 +400,12 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 			}
 			if (formProgress != null) {
 				formProgress.doWork(bufferProgressCallable);
+				isBufferSucceed = bufferProgressCallable.isSucceed();
+				// 如果生成缓冲区失败，删除新建的数据集--yuanR
+				if (!isBufferSucceed) {
+					deleteResultDataset();
+				}
 			}
-			isBufferSucceed = bufferProgressCallable.isSucceed();
 		}
 		return isBufferSucceed;
 	}
@@ -392,18 +421,17 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		resultDatasetVector.setPrjCoordSys(sourceDatasetVector.getPrjCoordSys());
 	}
 
-	public void addListener() {
-		this.panelResultSet.getTextFieldSemicircleLineSegment().addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE,
-				new PropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent evt) {
-						getButtonOkEnabled();
-					}
-				});
-		this.panelBufferData.getComboBoxBufferDataDataset().addItemListener(localItemListener);
-		this.panelBufferData.getComboBoxBufferDataDatasource().addItemListener(localItemListener);
+	/**
+	 * 如果生成缓冲区失败，删除其生成的数据集--yuanR 2017.3.6
+	 */
+	private void deleteResultDataset() {
+		Datasource datasource = this.panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource();
+		datasource.getDatasets().delete(this.resultDatasetName);
 	}
 
+	/**
+	 *
+	 */
 	class LocalItemListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
@@ -496,10 +524,21 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	 * yuanR 2017.3.2
 	 * 给“缓冲半径长度”JComboBox添加光标改变事件，当值有误时，置灰确定按钮
 	 */
-	class LocalCaretListener implements CaretListener {
+	class NumericFieldComboBoxCaretListener implements CaretListener {
 		@Override
 		public void caretUpdate(CaretEvent e) {
 			judgeRadiusNum();
+		}
+	}
+
+	/**
+	 *  yuanR 2017.3.6
+	 * 给“参数设置”JTextField添加光标改变事件，当值有误时，置灰确定按钮
+	 */
+	class SemicircleLineSegmentCaretListener implements CaretListener {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			getButtonOkEnabled();
 		}
 	}
 
@@ -525,6 +564,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		// 情况的判断
 		// TODO something
 	}
+
 	/**
 	 * 设置确定按钮是否可用
 	 * yuanR 2017.3.3

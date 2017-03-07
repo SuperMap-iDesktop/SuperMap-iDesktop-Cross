@@ -1,6 +1,11 @@
 package com.supermap.desktop.ui.controls;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldType;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
@@ -14,14 +19,16 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class SQLExpressionDialog extends SmDialog {
@@ -78,8 +85,6 @@ public class SQLExpressionDialog extends SmDialog {
 	private JButton jButtonGetAllValue;
 	private JScrollPane scrollPaneAllValue;
 	private GetAllValueList listAllValue;
-	//	private JLabel labelGoTO;
-//	private JTextField textFieldGOTO;
 	//清除按钮-yuanR
 	private JButton jButtonClear;
 
@@ -127,10 +132,10 @@ public class SQLExpressionDialog extends SmDialog {
 		mainPanel.add(this.jPanelFunction, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.BOTH).setInsets(10, 0, 5, 10));
 		mainPanel.add(this.jPanelCommonOperator, new GridBagConstraintsHelper(2, 1, 1, 1).setFill(GridBagConstraints.BOTH).setInsets(0, 0, 5, 10).setIpad(30, 50));
 
-		mainPanel.add(this.jPanelGetAllValue, new GridBagConstraintsHelper(0, 2, 1, 2).setWeight(0, 0).setFill(GridBagConstraints.BOTH).setInsets(0, 10, 5, 5).setIpad(100, 120));
+		mainPanel.add(this.jPanelGetAllValue, new GridBagConstraintsHelper(0, 2, 1, 2).setFill(GridBagConstraints.BOTH).setInsets(0, 10, 5, 5).setIpad(100, 120));
 		mainPanel.add(this.jTextAreaSQLSentence, new GridBagConstraintsHelper(1, 2, 2, 2).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setInsets(0, 0, 5, 10).setIpad(0, 120));
-		//将获取唯一值面板加入主panel3, 2, 1, 2
-		mainPanel.add(panelButton, new GridBagConstraintsHelper(2, 4, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.EAST).setInsets(0, 5, 5, 10));
+
+		mainPanel.add(panelButton, new GridBagConstraintsHelper(2, 4, 1, 1).setAnchor(GridBagConstraints.EAST).setInsets(0, 5, 5, 10));
 		this.add(mainPanel);
 		this.jScrollPanel.setViewportView(getTableFieldInfo());
 		this.jScrollPanel.getViewport().setBackground(Color.white);
@@ -791,10 +796,10 @@ public class SQLExpressionDialog extends SmDialog {
 			if (e.getSource() == jButtonCancel) {
 				buttonCancelClicked();
 			}
-			//但点击了获取唯一值按钮-yuanR
+			//当点击了获取唯一值按钮-yuanR
 			if (e.getSource() == jButtonGetAllValue) {
 				//获取字段信息
-				//YR存疑：为什么filedDatasets是数据集数组？？因为当设置了关联属性表，其数据集数量会增加（1.12）
+				//yuanR存疑：为什么filedDatasets是数据集数组？？因为当设置了关联属性表，其数据集数量会增加（1.12）
 				Object[] allValue = getListValue(filedDatasets);
 				listAllValue.removeAllElements();
 				if (allValue != null && allValue.length > 0) {
@@ -967,7 +972,7 @@ public class SQLExpressionDialog extends SmDialog {
 			result[i] = iterator.next();
 		}
 		//对数组进行排序
-		//SortUIUtilities.sortList(result);
+//		SortUIUtilities.sortList(result);
 		return result;
 	}
 

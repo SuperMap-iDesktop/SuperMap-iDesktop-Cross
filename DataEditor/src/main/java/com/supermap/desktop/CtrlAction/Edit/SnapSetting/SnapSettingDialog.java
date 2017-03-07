@@ -525,11 +525,11 @@ public class SnapSettingDialog extends SmDialog {
             this.tableSnapMode.setValueAt(getSnapMode(i, TABLE_COLUMN_TYPE), i, TABLE_COLUMN_TYPE);
             this.tableSnapMode.setValueAt(getSnapMode(i, TABLE_COLUMN_DESCRIPTION), i, TABLE_COLUMN_DESCRIPTION);
         }
-        this.tableSnapMode.getColumn(tableSnapMode.getModel().getColumnName(TABLE_COLUMN_CHECKABLE)).setMaxWidth(100);
+        this.tableSnapMode.getColumn(tableSnapMode.getModel().getColumnName(TABLE_COLUMN_CHECKABLE)).setMaxWidth(60);
         this.tableSnapMode.getColumn(tableSnapMode.getModel().getColumnName(TABLE_COLUMN_CHECKABLE)).setCellRenderer(new CheckTableRenderer());
         this.tableSnapMode.getColumn(tableSnapMode.getModel().getColumnName(TABLE_COLUMN_DESCRIPTION)).setMinWidth(220);
         this.tableSnapMode.getColumn(tableSnapMode.getModel().getColumnName(TABLE_COLUMN_DESCRIPTION)).setCellRenderer(TableTooltipCellRenderer.getInstance());
-        this.tableSnapMode.getTableHeader().setDefaultRenderer(new CheckableHeaderCellRenderer(tableSnapMode, DataEditorProperties.getString("String_Enabled")));
+        this.tableSnapMode.getTableHeader().getColumnModel().getColumn(TABLE_COLUMN_CHECKABLE).setHeaderRenderer(new CheckableHeaderCellRenderer(tableSnapMode, DataEditorProperties.getString("String_Enabled")));
         this.tableSnapMode.setRowHeight(23);
         this.tableSnapMode.setShowHorizontalLines(false);
         this.tableSnapMode.setShowVerticalLines(false);
@@ -628,8 +628,8 @@ public class SnapSettingDialog extends SmDialog {
             String valueStr = (String) value;
             JLabel label = new JLabel(valueStr);
             label.setHorizontalAlignment(SwingConstants.LEFT); // 表头标签居左边
-            this.checkBox.setHorizontalAlignment(SwingConstants.LEFT);// 表头checkBox居中
-            checkBox.setBorderPainted(true);
+            this.checkBox.setHorizontalAlignment(SwingConstants.CENTER);// 表头checkBox居中
+            //checkBox.setBorderPainted(true);
             JComponent component = (column == 0) ? checkBox : label;
 
             component.setForeground(tableHeader.getForeground());

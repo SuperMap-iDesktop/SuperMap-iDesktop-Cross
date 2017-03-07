@@ -11,6 +11,9 @@ import com.supermap.desktop.process.graphics.graphs.decorator.AbstractDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.HotDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.PreviewDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.SelectedDecorator;
+import com.supermap.desktop.process.graphics.handler.canvas.CanvasEventHandler;
+import com.supermap.desktop.process.graphics.handler.graph.DefaultGraphEventHanderFactory;
+import com.supermap.desktop.process.graphics.handler.graph.IGraphEventHandlerFactory;
 import com.supermap.desktop.process.graphics.interaction.MultiSelction;
 import com.supermap.desktop.process.graphics.interaction.Selection;
 import com.supermap.desktop.process.graphics.painter.DefaultGraphPainter;
@@ -27,15 +30,20 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.RoundRectangle2D;
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by highsad on 2017/1/17.
  * 画布单位1默认与屏幕像素1相等，画布缩放之后之后的画布单位1则与屏幕像素 1*scale 相等
  * 使用多套数据结构来进行元素的存储，比如是用 List 来进行元素的存储，使用四叉树来做空间关系的存储，使用暂未定的某种结构存储连接关系等
  * 图上流程在运行的时候解析为邻接矩阵，任务运行模块查找所有起点，同时开始执行，遇到等待状态的节点则等待，条件达成继续执行。（最简单的执行方案，无需特定结构存储执行过程）
+ * 几种行为以及对应的事件需求
+ * 1. 创建一个元素（MouseClicked）
+ * 2. 选择元素（MouseClicked）
+ * 3. 拖拽元素（MosueClicked MouseMoved/MouseDragged）
+ * 4. 连接元素（MouseClicked MouseMoved/MosueDragged）
+ * 5. hot 元素（MouseMoved）
  */
 public class GraphCanvas extends JComponent implements MouseListener, MouseMotionListener, MouseWheelListener {
 	public final static Color DEFAULT_BACKGROUNDCOLOR = new Color(11579568);
@@ -43,10 +51,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
 
-	private IGraphStorage graphStorage = new ListGraphs();
-	private CoordinateTransform coordinateTransform = new CoordinateTransform();
+	private IGraphStorage graphStorage = new ListGraphs(); // 画布元素的存储结构
+	private CoordinateTransform coordinateTransform = new CoordinateTransform(); // 用以在画布平移、缩放等操作过后进行坐标转换
+	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory(this); // 元素绘制的可扩展类
+	private IGraphEventHandlerFactory graphHandlerFactory = new DefaultGraphEventHanderFactory(); // 在某具体元素上进行的可扩展交互类
+	private ConcurrentHashMap<Class, CanvasEventHandler> canvasHandlers = new ConcurrentHashMap<>(); // 统一入口的画布事件接口，通过添加 CanvasEventHandler 对象实现 Canvas 的事件处理
+
 	private Selection selection = new MultiSelction(this);
-	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory(this);
 	private AbstractDecorator hotDecorator = new HotDecorator(this);
 	private AbstractDecorator selectedDecorator = new SelectedDecorator(this); // 目前还没有支持多选，就先这样用单例修饰
 	private AbstractDecorator previewDecorator = new PreviewDecorator(this);
@@ -145,6 +156,23 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		addMouseWheelListener(this);
 	}
 
+	public void installCanvasEventHandler(CanvasEventHandler handler) {
+		if (handler == null) {
+			return;
+		}
+
+		Class c = handler.getClass();
+		if (c == null) {
+			return;
+		}
+
+		if (this.canvasHandlers.contains(c)) {
+			this.canvasHandlers.get(c).clean();
+		}
+
+		this.canvasHandlers.put(c, handler);
+	}
+
 	public void setSelectedDecorator(IGraph selectedDecorator) {
 
 	}
@@ -184,26 +212,40 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		AffineTransform origin = graphics2D.getTransform();
 
-//		AffineTransform transform = new AffineTransform();
-//		transform.translate(200, 200);
-//		graphics2D.setTransform(transform);
-//
-//		graphics2D.setColor(Color.ORANGE);
-//		RoundRectangle2D round = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
-//		graphics2D.fill(round);
-//
-//		graphics2D.setColor(Color.BLACK);
-//		BasicStroke stroke = new BasicStroke(3);
-//
-//		graphics2D.setStroke(stroke);
-//		graphics2D.draw(round);
-
+		AffineTransform transform = new AffineTransform();
 		setViewRenderingHints(graphics2D);
 		paintBackground(graphics2D);
 		paintCanvas(graphics2D);
-		paintGraphs(graphics2D);
+		transform.translate(100, 100);
+		transform.scale(2, 2);
+		graphics2D.setTransform(transform);
+
+		graphics2D.setColor(Color.ORANGE);
+		RoundRectangle2D round = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
+		graphics2D.fill(round);
+
+		graphics2D.setColor(Color.BLACK);
+		BasicStroke stroke = new BasicStroke(3);
+
+		graphics2D.setStroke(stroke);
+		graphics2D.draw(round);
+
+//		setViewRenderingHints(graphics2D);
+//		paintBackground(graphics2D);
+//		paintCanvas(graphics2D);
+//		paintGraphs(graphics2D);
 
 		graphics2D.setTransform(origin);
+
+		graphics2D.setColor(Color.ORANGE);
+		RoundRectangle2D round1 = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
+		graphics2D.fill(round);
+
+		graphics2D.setColor(Color.BLACK);
+		BasicStroke stroke1 = new BasicStroke(3);
+
+		graphics2D.setStroke(stroke1);
+		graphics2D.draw(round1);
 	}
 
 	public void connet() {
