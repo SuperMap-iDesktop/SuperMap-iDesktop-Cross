@@ -97,7 +97,6 @@ public class PanelResultSet extends JPanel {
 		this.textFieldSemicircleLineSegment = new SMFormattedTextField(numberFormatter);
 		this.textFieldSemicircleLineSegment.setText(TEXT_VALUE);
 		this.textFieldSemicircleLineSegment.addKeyListener(new KeyAdapter() {
-
 			@Override
 			public void keyTyped(KeyEvent e) {
 				char keyChar = e.getKeyChar();

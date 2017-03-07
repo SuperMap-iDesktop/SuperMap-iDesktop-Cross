@@ -87,10 +87,10 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 			some.doSome(isArcSegmentNumSuitable, isComboBoxDatasetNotNull, isRadiusNumSuitable, isHasResultDatasource);
 		}
 		// 当数据集为空时，即没有数据用于缓冲，设置其他控件不可用
-		this.panelBufferData.setPanelEnable(isComboBoxDatasetNotNull);
-		this.panelBufferRadius.setPanelEnable(isComboBoxDatasetNotNull);
-		this.panelResultData.setPanelEnable(isComboBoxDatasetNotNull);
-		this.panelResultSet.setPanelEnable(isComboBoxDatasetNotNull);
+		this.panelBufferData.setPanelEnable(this.isComboBoxDatasetNotNull);
+		this.panelBufferRadius.setPanelEnable(this.isComboBoxDatasetNotNull);
+		this.panelResultData.setPanelEnable(this.isComboBoxDatasetNotNull);
+		this.panelResultSet.setPanelEnable(this.isComboBoxDatasetNotNull);
 	}
 
 	public boolean isRadiusNumSuitable() {
