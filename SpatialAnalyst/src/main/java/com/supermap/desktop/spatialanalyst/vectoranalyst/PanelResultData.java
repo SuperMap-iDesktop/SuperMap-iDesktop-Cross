@@ -1,7 +1,6 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
 import com.supermap.data.Datasource;
-import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
@@ -59,11 +58,11 @@ public class PanelResultData extends JPanel {
 		this.labelDataset = new JLabel("Dataset");
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxResultDataDatasource = new DatasourceComboBox();
-		this.comboBoxResultDataDatasource.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
-		this.comboBoxResultDataDatasource.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+//		this.comboBoxResultDataDatasource.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+//		this.comboBoxResultDataDatasource.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.textFieldResultDataDataset = new JTextField("Buffer");
-		this.textFieldResultDataDataset.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
-		this.textFieldResultDataDataset.setMinimumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+//		this.textFieldResultDataDataset.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+//		this.textFieldResultDataDataset.setMinimumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.comboBoxResultDataDatasource.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -103,7 +102,7 @@ public class PanelResultData extends JPanel {
 				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDatasource)
 						.addComponent(this.comboBoxResultDataDatasource))
-				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.BASELINE)
+				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDataset)
 						.addComponent(this.textFieldResultDataDataset)));
 		//@formatter:on
