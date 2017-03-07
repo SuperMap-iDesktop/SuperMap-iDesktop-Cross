@@ -101,7 +101,7 @@ public class PanelResultData extends JPanel {
 				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelDatasource)
 						.addComponent(this.comboBoxResultDataDatasource))
-				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.CENTER)
+				.addGroup(panelResultDataLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.labelDataset)
 						.addComponent(this.textFieldResultDataDataset)));
 		//@formatter:on
