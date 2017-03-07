@@ -1,7 +1,5 @@
 package com.supermap.desktop.process.graphics;
 
-import com.supermap.desktop.event.SelectedChangeListener;
-import com.supermap.desktop.implement.Output;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.UniversalMatrix;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
@@ -16,9 +14,7 @@ import com.supermap.desktop.process.graphics.handler.graph.DefaultGraphEventHand
 import com.supermap.desktop.process.graphics.handler.graph.IGraphEventHandlerFactory;
 import com.supermap.desktop.process.graphics.interaction.MultiSelction;
 import com.supermap.desktop.process.graphics.interaction.Selection;
-import com.supermap.desktop.process.graphics.painter.DefaultGraphPainter;
 import com.supermap.desktop.process.graphics.painter.DefaultGraphPainterFactory;
-import com.supermap.desktop.process.graphics.painter.IGraphPainter;
 import com.supermap.desktop.process.graphics.painter.IGraphPainterFactory;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.graphics.storage.ListGraphs;
@@ -212,40 +208,43 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		AffineTransform origin = graphics2D.getTransform();
 
-		AffineTransform transform = new AffineTransform();
-		setViewRenderingHints(graphics2D);
-		paintBackground(graphics2D);
-		paintCanvas(graphics2D);
-		transform.translate(100, 100);
-		transform.scale(2, 2);
-		graphics2D.setTransform(transform);
-
-		graphics2D.setColor(Color.ORANGE);
-		RoundRectangle2D round = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
-		graphics2D.fill(round);
-
-		graphics2D.setColor(Color.BLACK);
-		BasicStroke stroke = new BasicStroke(3);
-
-		graphics2D.setStroke(stroke);
-		graphics2D.draw(round);
-
+		// 测试 AffineTransform 的缩放和平移变换
+//		AffineTransform transform = new AffineTransform();
 //		setViewRenderingHints(graphics2D);
 //		paintBackground(graphics2D);
 //		paintCanvas(graphics2D);
-//		paintGraphs(graphics2D);
+//		transform.translate(100, 100);
+//		transform.scale(2, 2);
+//		graphics2D.setTransform(transform);
+//
+//		graphics2D.setColor(Color.ORANGE);
+//		RoundRectangle2D round = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
+//		graphics2D.fill(round);
+//
+//		graphics2D.setColor(Color.BLACK);
+//		BasicStroke stroke = new BasicStroke(3);
+//
+//		graphics2D.setStroke(stroke);
+//		graphics2D.draw(round);
+
+		// Canvas 自身绘制
+		setViewRenderingHints(graphics2D);
+		paintBackground(graphics2D);
+		paintCanvas(graphics2D);
+		paintGraphs(graphics2D);
 
 		graphics2D.setTransform(origin);
 
-		graphics2D.setColor(Color.ORANGE);
-		RoundRectangle2D round1 = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
-		graphics2D.fill(round);
-
-		graphics2D.setColor(Color.BLACK);
-		BasicStroke stroke1 = new BasicStroke(3);
-
-		graphics2D.setStroke(stroke1);
-		graphics2D.draw(round1);
+		// 默认 AffineTransform 的测试
+//		graphics2D.setColor(Color.ORANGE);
+//		RoundRectangle2D round1 = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
+//		graphics2D.fill(round);
+//
+//		graphics2D.setColor(Color.BLACK);
+//		BasicStroke stroke1 = new BasicStroke(3);
+//
+//		graphics2D.setStroke(stroke1);
+//		graphics2D.draw(round1);
 	}
 
 	public void connet() {
@@ -579,7 +578,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	protected void fireGraphSelectChanged(GraphSelectedChangedEvent e) {
 		for (int i = 0; i < this.selectChangedListeners.size(); i++) {
-			this.selectChangedListeners.get(i).GraphSelectChanged(e);
+			this.selectChangedListeners.get(i).graphSelectChanged(e);
 		}
 	}
 
