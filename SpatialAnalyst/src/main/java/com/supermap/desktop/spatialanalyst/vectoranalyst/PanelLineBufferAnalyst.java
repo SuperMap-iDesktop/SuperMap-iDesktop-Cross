@@ -810,4 +810,16 @@ public class PanelLineBufferAnalyst extends JPanel {
 			some.doSome(okButtonisEnabled, okButtonisEnabled, okButtonisEnabled, okButtonisEnabled);
 		}
 	}
+
+	/**
+	 * 判断确定按钮是否可用--yuanR 2017.3.7
+	 */
+	public void judgeOKButtonisEnabled() {
+		// 数据集情况
+		setOKButtonisEnabled(this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() == null);
+		//结果数据集名称
+		setOKButtonisEnabled(panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource().getDatasets().isAvailableDatasetName(panelResultData.getTextFieldResultDataDataset().getText()));
+		// 左右缓冲复选框，最少选其一
+		setOKButtonisEnabled(checkBoxBufferLeft.isSelected() || checkBoxBufferLeft.isSelected());
+	}
 }

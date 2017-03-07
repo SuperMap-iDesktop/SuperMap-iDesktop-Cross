@@ -56,10 +56,8 @@ public class PanelBufferData extends JPanel {
 		this.labelDatasource = new JLabel("Datasource");
 		this.comboBoxBufferDataDatasource = new DatasourceComboBox();
 		this.comboBoxBufferDataDatasource.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
-//		this.comboBoxBufferDataDatasource.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.comboBoxBufferDataDataset = new DatasetComboBox();
 		this.comboBoxBufferDataDataset.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
-//		this.comboBoxBufferDataDataset.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.checkBoxGeometrySelect = new JCheckBox("GeometrySelect");
 
 	}
@@ -84,7 +82,7 @@ public class PanelBufferData extends JPanel {
 						.addComponent(this.labelDatasource)
 						.addComponent(this.labelDataset))
 					.addGroup(panelBufferDataLayout.createParallelGroup()
-						.addComponent(this.comboBoxBufferDataDatasource)
+						.addComponent(this.comboBoxBufferDataDatasource,5,5,Short.MAX_VALUE)
 						.addComponent(this.comboBoxBufferDataDataset)))
 				.addGroup(panelBufferDataLayout.createSequentialGroup()
 						.addComponent(this.checkBoxGeometrySelect)));
