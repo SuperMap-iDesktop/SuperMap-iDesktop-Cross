@@ -5,6 +5,7 @@ import com.supermap.data.conversion.ImportSetting;
 import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.baseUI.PanelResultset;
 import com.supermap.desktop.baseUI.PanelSourceInfo;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.iml.ImportInfo;
 import com.supermap.desktop.iml.PanelTransformFactory;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -76,6 +77,7 @@ public class PanelImport extends JPanel implements IPanelImport {
             this.resultset = new PanelResultset(PanelImport.this, panelImports, panelImportType);
             this.sourceInfo = new PanelSourceInfo(panelImports, panelImportType);
         }
+        ComponentUIUtilities.setName(this.owner,"PanelImport_owner");
     }
 
     @Override

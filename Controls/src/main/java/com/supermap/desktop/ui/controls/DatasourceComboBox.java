@@ -7,7 +7,6 @@ import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * 数据源下拉列表控件
@@ -16,7 +15,6 @@ import java.awt.*;
  */
 public class DatasourceComboBox extends JComboBox<Datasource> {
 	private static final long serialVersionUID = 1L;
-	private final static Dimension DIMENSION = new Dimension(80, 20);
 
 	/**
 	 * 覆盖原有的updateUI方法
@@ -64,7 +62,7 @@ public class DatasourceComboBox extends JComboBox<Datasource> {
 	public void setDisplayStyle() {
 		this.setBorder(BorderFactory.createEtchedBorder(1));
 		this.setRenderer(new ListDataCellRender());
-		this.setPreferredSize(DIMENSION);
+//		this.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 	}
 
 

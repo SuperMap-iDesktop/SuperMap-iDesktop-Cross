@@ -3,6 +3,7 @@ package com.supermap.desktop.importUI;
 import com.supermap.data.conversion.ImportSetting;
 import com.supermap.data.conversion.ImportSettingDGN;
 import com.supermap.desktop.baseUI.PanelTransform;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -66,7 +67,12 @@ public class PanelTransformForDGN extends PanelTransform {
         this.checkBoxImportCellAsPoint = new TristateCheckBox();
         this.checkBoxImportByLayer = new TristateCheckBox();
     }
-
+    @Override
+    public void setComponentName() {
+        super.setComponentName();
+        ComponentUIUtilities.setName(this.checkBoxImportCellAsPoint, "PanelTransformForDGN_checkBoxImportCellAsPoint");
+        ComponentUIUtilities.setName(this.checkBoxImportByLayer, "PanelTransformForDGN_checkBoxImportByLayer");
+    }
     @Override
     public void initLayerout() {
         this.removeAll();

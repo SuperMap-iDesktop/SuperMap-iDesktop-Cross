@@ -1,5 +1,6 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
@@ -14,7 +15,7 @@ import java.text.NumberFormat;
 public class PanelResultSet extends JPanel {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -96,7 +97,6 @@ public class PanelResultSet extends JPanel {
 		this.textFieldSemicircleLineSegment = new SMFormattedTextField(numberFormatter);
 		this.textFieldSemicircleLineSegment.setText(TEXT_VALUE);
 		this.textFieldSemicircleLineSegment.addKeyListener(new KeyAdapter() {
-
 			@Override
 			public void keyTyped(KeyEvent e) {
 				char keyChar = e.getKeyChar();
@@ -165,16 +165,27 @@ public class PanelResultSet extends JPanel {
 						.addComponent(this.textFieldSemicircleLineSegment)));
 
 		panelResultSetLayout.setVerticalGroup(panelResultSetLayout.createSequentialGroup()
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.checkBoxUnionBuffer).addGap(30))
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.checkBoxDisplayInMap).addGap(30))
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.checkBoxRemainAttributes).addGap(30))
+				.addGroup(panelResultSetLayout.createSequentialGroup()
+						.addComponent(this.checkBoxUnionBuffer)
+						.addComponent(this.checkBoxDisplayInMap)
+						.addComponent(this.checkBoxRemainAttributes).addGap(ControlDefaultValues.DEFAULT_PREFERREDSIZE_GAP))
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.labelSemicircleLineSegment)
 						.addComponent(this.textFieldSemicircleLineSegment)));
-
 		//@formatter:on
+	}
+
+	/**
+	 * 创建面板是否可用方法
+	 * 2017.3.2 yuanR
+	 *
+	 * @param isEnable
+	 */
+	public void setPanelEnable(boolean isEnable) {
+		this.checkBoxUnionBuffer.setEnabled(isEnable);
+		this.checkBoxRemainAttributes.setEnabled(isEnable);
+		this.checkBoxDisplayInMap.setEnabled(isEnable);
+		this.checkBoxDisplayInScene.setEnabled(isEnable);
+		this.textFieldSemicircleLineSegment.setEnabled(isEnable);
 	}
 }

@@ -6,6 +6,7 @@ import com.supermap.desktop.Interface.IImportPanelFactory;
 import com.supermap.desktop.Interface.IImportSettingFactory;
 import com.supermap.desktop.Interface.IPanelImport;
 import com.supermap.desktop.Interface.IPanelModel;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.*;
 import com.supermap.desktop.localUtilities.CommonUtilities;
@@ -384,6 +385,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         this.setSize(new Dimension(864, 486));
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(Math.abs(screenSize.width - 864) / 2, Math.abs(screenSize.height - 486) / 2);
+        setComponentName();
     }
 
     private void initDrag() {
@@ -427,7 +429,26 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         this.labelTitle.setHorizontalAlignment(SwingConstants.CENTER);
         this.labelTitle.setOpaque(true);
     }
-
+    public void setComponentName() {
+        ComponentUIUtilities.setName(this.splitPane,"DataImportDialog_splitPane");
+        ComponentUIUtilities.setName(this.contentPane,"DataImportDialog_contentPane");
+        ComponentUIUtilities.setName(this.table,"DataImportDialog_table");
+        ComponentUIUtilities.setName(this.buttonAddFile,"DataImportDialog_buttonAddFile");
+        ComponentUIUtilities.setName(this.buttonAddDir,"DataImportDialog_buttonAddDir");
+        ComponentUIUtilities.setName(this.buttonDelete,"DataImportDialog_buttonDelete");
+        ComponentUIUtilities.setName(this.buttonSelectAll,"DataImportDialog_buttonSelectAll");
+        ComponentUIUtilities.setName(this.buttonInvertSelect,"DataImportDialog_buttonInvertSelect");
+        ComponentUIUtilities.setName(this.buttonImport,"DataImportDialog_buttonImport");
+        ComponentUIUtilities.setName(this.buttonClose,"DataImportDialog_buttonClose");
+        ComponentUIUtilities.setName(this.panelFiles,"DataImportDialog_panelFiles");
+        ComponentUIUtilities.setName(this.labelTitle,"DataImportDialog_labelTitle");
+        ComponentUIUtilities.setName(this.labelRemind,"DataImportDialog_labelRemind");
+        ComponentUIUtilities.setName(this.panelParams,"DataImportDialog_panelParams");
+        ComponentUIUtilities.setName(this.panelImportInfo,"DataImportDialog_panelImportInfo");
+        ComponentUIUtilities.setName(this.checkBoxAutoClose,"DataImportDialog_checkBoxAutoClose");
+        ComponentUIUtilities.setName(this.toolBar,"DataImportDialog_toolBar");
+        ComponentUIUtilities.setName(this.scrollPane,"DataImportDialog_scrollPane");
+    }
     private void initTableTheme() {
         TableColumn fileNameColumn = table.getColumn(table.getModel().getColumnName(ImportTableModel.COLUMN_FILENAME));
         TableColumn fileTypeColumn = table.getColumn(table.getModel().getColumnName(ImportTableModel.COLUMN_FILETYPE));

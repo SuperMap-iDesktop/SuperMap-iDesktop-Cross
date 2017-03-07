@@ -1,6 +1,7 @@
 package com.supermap.desktop.importUI;
 
 import com.supermap.data.conversion.FileType;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -46,6 +47,13 @@ public class PanelTransformForVector extends PanelTransformForD {
         super.initComponents();
         this.checkBoxImportInvisible = new TristateCheckBox();
         this.checkBoxAttributeIgnored = new TristateCheckBox();
+    }
+
+    @Override
+    public void setComponentName() {
+        super.setComponentName();
+        ComponentUIUtilities.setName(this.checkBoxImportInvisible, "PanelTransformForVector_checkBoxImportInvisible");
+        ComponentUIUtilities.setName(this.checkBoxAttributeIgnored, "PanelTransformForVector_checkBoxAttributeIgnored");
     }
 
     @Override

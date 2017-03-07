@@ -8,7 +8,6 @@ import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * 数据集下拉列表控件
@@ -28,7 +27,6 @@ import java.awt.*;
 public class DatasetComboBox extends JComboBox<Dataset> {
 
 	private static final long serialVersionUID = 1L;
-	private final static Dimension DIMENSION = new Dimension(80, 20);
 	private transient DatasetType[] datasetTypes;
 	private transient Datasets datasets;
 
@@ -47,7 +45,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	public DatasetComboBox() {
 		this.setBorder(BorderFactory.createEtchedBorder(1));
 		setRenderer(new ListDataCellRender());
-		this.setPreferredSize(DIMENSION);
+//		this.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 	}
 
 	/**
@@ -63,7 +61,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 		//设置渲染方式
 		this.setBorder(BorderFactory.createEtchedBorder(1));
 		setRenderer(new ListDataCellRender());
-		this.setPreferredSize(DIMENSION);
+//		this.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 	}
 
 	/**
@@ -288,5 +286,19 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	 */
 	public void addItemAt(int index, Dataset item) {
 		((DefaultComboBoxModel<Dataset>) this.getModel()).insertElementAt(item, index);
+	}
+
+	public boolean addDataset(Dataset dataset) {
+		if (dataset == null) {
+			return false;
+		}
+		DatasetType type = dataset.getType();
+		for (DatasetType datasetType : datasetTypes) {
+			if (type == datasetType) {
+				addItem(dataset);
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -4,6 +4,7 @@
 package com.supermap.desktop.ui.controls.mutiTable.component;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.ui.controls.CheckHeaderCellRenderer;
 
 import javax.swing.*;
 import javax.swing.table.TableCellRenderer;
@@ -33,17 +34,17 @@ public class MutiTable extends JTable implements MouseListener {
 	/**
 	 * 默认_PREFERREDWIDTH
 	 */
-	private final int DEFAULT_PREFERREDWIDTH = 23;
+	private final int DEFAULT_PREFERREDWIDTH = 30;
 
 	/**
 	 * 默认_MAXWIDTH
 	 */
-	private final int DEFAULT_MAXWIDTH = 23;
+	private final int DEFAULT_MAXWIDTH = 30;
 
 	/**
 	 * 默认_MINWIDTH
 	 */
-	private final int DEFAULT_MINWIDTH = 23;
+	private final int DEFAULT_MINWIDTH = 30;
 
 	/**
 	 * 默认列
