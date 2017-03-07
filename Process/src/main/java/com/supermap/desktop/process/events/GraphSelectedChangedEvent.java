@@ -1,6 +1,8 @@
 package com.supermap.desktop.process.events;
 
+import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
+import com.supermap.desktop.process.graphics.interaction.Selection;
 
 import java.util.EventObject;
 
@@ -9,20 +11,26 @@ import java.util.EventObject;
  */
 public class GraphSelectedChangedEvent extends EventObject {
 
-	private IGraph selected;
+	private Selection selection;
+	private GraphCanvas canvas;
 
 	/**
 	 * Constructs a prototypical Event.
 	 *
-	 * @param source The object on which the Event initially occurred.
+	 * @param canvas The object on which the Event initially occurred.
 	 * @throws IllegalArgumentException if source is null.
 	 */
-	public GraphSelectedChangedEvent(Object source, IGraph selected) {
-		super(source);
-		this.selected = selected;
+	public GraphSelectedChangedEvent(GraphCanvas canvas, Selection selected) {
+		super(canvas);
+		this.canvas = canvas;
+		this.selection = selected;
 	}
 
-	public IGraph getSelected() {
-		return selected;
+	public Selection getSelection() {
+		return this.selection;
+	}
+
+	public GraphCanvas getCanvas() {
+		return this.canvas;
 	}
 }

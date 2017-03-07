@@ -38,16 +38,16 @@ public class FormProcess extends FormBaseChild implements IForm {
 
 			@Override
 			public void graphSelectChanged(GraphSelectedChangedEvent e) {
-				try {
-					ParameterManager component = (ParameterManager) ((Dockbar) Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName("com.supermap.desktop.process.ParameterManager"))).getInnerComponent();
-					if (e.getSelected() instanceof ProcessGraph) {
-						component.setProcess(((ProcessGraph) e.getSelected()).getProcess());
-					} else {
-						component.setProcess(null);
-					}
-				} catch (ClassNotFoundException e1) {
-					e1.printStackTrace();
-				}
+//				try {
+//					ParameterManager component = (ParameterManager) ((Dockbar) Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName("com.supermap.desktop.process.ParameterManager"))).getInnerComponent();
+//					if (e.getSelected() instanceof ProcessGraph) {
+//						component.setProcess(((ProcessGraph) e.getSelected()).getProcess());
+//					} else {
+//						component.setProcess(null);
+//					}
+//				} catch (ClassNotFoundException e1) {
+//					e1.printStackTrace();
+//				}
 			}
 		});
 	}
