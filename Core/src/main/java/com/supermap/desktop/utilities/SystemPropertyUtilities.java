@@ -23,6 +23,15 @@ public class SystemPropertyUtilities {
 		return isWindows;
 	}
 
+	/**
+	 * 判断是否是linux系统，暂时认为不是windows就是linux
+	 * 避免增加平台时修改“!SystemPropertyUtilities.isWindows()”这样的调用
+	 * @return
+	 */
+	public static boolean isLinux() {
+		return !isWindows();
+	}
+
 	public static double getSystemSizeRate() {
 		return Toolkit.getDefaultToolkit().getScreenResolution() / DEFAULT_SCREEN_RESOLUTION;
 	}
