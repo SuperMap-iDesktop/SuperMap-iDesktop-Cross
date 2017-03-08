@@ -13,12 +13,12 @@ import java.util.concurrent.CancellationException;
 public interface IProcessTask extends IUpdateProgress {
 
     /**
-     * 获取流程
+     * get process
      *
      * @return
      */
     IProcess getProcess();
 
-    void doWork(final UpdateProgressCallable doWork);
+    void doWork();
 
 }
