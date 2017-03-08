@@ -40,7 +40,9 @@ public interface IGraphStorage {
 	 */
 	IGraph[] findGraphs(Point point);
 
-	IGraph[] findGraphs(Rectangle rect);
+	IGraph[] findIntersetctedGraphs(int x, int y, int width, int height);
+
+	IGraph[] findContainedGraphs(int x, int y, int width, int height);
 
 	void clear();
 }

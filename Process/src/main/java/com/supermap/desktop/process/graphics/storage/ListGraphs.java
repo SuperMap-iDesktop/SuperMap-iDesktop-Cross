@@ -85,7 +85,9 @@ public class ListGraphs implements IGraphStorage {
 	}
 
 	@Override
-	public IGraph[] findGraphs(Rectangle rect) {
+	public IGraph[] findIntersetctedGraphs(int x, int y, int width, int height) {
+		Rectangle rect = new Rectangle(x, y, width, height);
+
 		ArrayList<IGraph> re = new ArrayList<>();
 		for (int i = 0; i < this.rects.size(); i++) {
 			Rectangle bounds = this.rects.get(i);
@@ -94,6 +96,11 @@ public class ListGraphs implements IGraphStorage {
 			}
 		}
 		return re.toArray(new IGraph[re.size()]);
+	}
+
+	@Override
+	public IGraph[] findContainedGraphs(int x, int y, int width, int height) {
+		return new IGraph[0];
 	}
 
 	@Override

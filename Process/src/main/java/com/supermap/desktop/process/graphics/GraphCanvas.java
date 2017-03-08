@@ -203,9 +203,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 //		graphics2D.setStroke(stroke);
 //		Rectangle rectangle = new Rectangle(3, 3, 5, 5);
 //		graphics2D.draw(rectangle);
-
-		setViewRenderingHints(graphics2D);
-
 		AffineTransform origin = graphics2D.getTransform();
 
 		// 测试 AffineTransform 的缩放和平移变换
@@ -232,8 +229,8 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		paintBackground(graphics2D);
 		paintCanvas(graphics2D);
 		paintGraphs(graphics2D);
-
 		graphics2D.setTransform(origin);
+		this.selection.paint(graphics2D);
 
 		// 默认 AffineTransform 的测试
 //		graphics2D.setColor(Color.ORANGE);
@@ -335,49 +332,19 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (SwingUtilities.isLeftMouseButton(e)) {
-			Point point = e.getPoint();
+		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
+		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
 
-			if (this.previewGraph == null) {
-
-				// toCreation 为空，则查询
-				IGraph graph = findGraph(point);
-
-				if (graph == null) {
-					if (this.selectedGraph != null) {
-						repaint(this.selectedGraph.getBounds());
-						setSelectedGraph(graph);
-					}
-				} else {
-					if (this.selectedGraph != null) {
-						if (this.selectedGraph != graph) {
-							repaint(this.selectedGraph.getBounds());
-							setSelectedGraph(graph);
-							repaint(this.selectedGraph.getBounds());
-						}
-					} else {
-						setSelectedGraph(graph);
-						repaint(this.selectedGraph.getBounds());
-					}
-				}
-			}
+		while (iterator.hasNext()) {
+			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
+			entry.getValue().mouseClicked(e);
 		}
+
+		this.selection.mouseClicked(e);
 	}
 
-	private void setSelectedGraph(IGraph selectedGraph) {
-		if (this.selectedGraph != selectedGraph) {
-			if (this.selectedDecorator.isDecorating()) {
-				repaint(this.selectedDecorator.getBounds());
-			}
-			this.selectedGraph = selectedGraph;
-			if (this.selectedDecorator.isDecorating()) {
-				repaint(this.selectedDecorator.getBounds());
-			}
-			fireGraphSelectChanged(new GraphSelectedChangedEvent(this, this.selectedGraph));
-		}
-	}
 
-	private IGraph findGraph(Point point) {
+	public IGraph findTopGraph(Point point) {
 		IGraph graph = null;
 		IGraph[] graphs = this.graphStorage.findGraphs(point);
 
@@ -387,125 +354,81 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		return graph;
 	}
 
+	public IGraph[] findGraphs(Point point) {
+		return this.graphStorage.findGraphs(point);
+	}
+
+	public IGraph[] findContainedGraphs(int x, int y, int width, int height) {
+		return this.graphStorage.findContainedGraphs(x, y, width, height);
+	}
+
+	public IGraph[] findIntersectedGraphs(int x, int y, int width, int height) {
+		return this.graphStorage.findIntersetctedGraphs(x, y, width, height);
+	}
+
 	@Override
 	public void mousePressed(MouseEvent e) {
-		if (SwingUtilities.isLeftMouseButton(e)) {
-			IGraph graph = findGraph(e.getPoint());
+		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
+		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
 
-			// TODO 不加 contains 判断会导致多对象的时候出现奇怪的拖拽现象，可能是四叉树实现不完整，需要优化
-			if (graph != null && graph.contains(e.getPoint())) {
-				if (this.line != null) {
-					if (graph instanceof OutputGraph) {
-						this.line.setPreProcess(graph);
-					}
-				} else {
-					this.draggedGraph = graph;
-					this.dragBegin = e.getPoint();
-					this.dragCenter = this.draggedGraph.getCenter();
-				}
-			} else {
-				this.draggedGraph = null;
-				this.dragBegin = null;
-				this.dragCenter = null;
-				this.line = null;
-			}
+		while (iterator.hasNext()) {
+			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
+			entry.getValue().mousePressed(e);
 		}
+
+		this.selection.mousePressed(e);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if (SwingUtilities.isLeftMouseButton(e)) {
-			Point point = e.getPoint();
+		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
+		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
 
-			if (this.previewGraph != null) {
-
-				// toCreation 不为空，则新建
-				repaint(this.previewGraph, point);
-				Rectangle bounds = this.previewGraph.getBounds();
-				this.graphStorage.add(this.previewGraph, bounds);
-
-				if (this.previewGraph instanceof ProcessGraph) {
-					ProcessData data = null;
-					if (this.previewGraph != null && ((ProcessGraph) this.previewGraph).getProcess() != null
-							&& ((ProcessGraph) this.previewGraph).getProcess().getOutputs() != null
-							&& ((ProcessGraph) this.previewGraph).getProcess().getOutputs().size() > 0) {
-						data = ((ProcessGraph) this.previewGraph).getProcess().getOutputs().get(0);
-					}
-
-					OutputGraph graph = new OutputGraph(this, (ProcessGraph) this.previewGraph, data);
-					graph.setSize(160, 60);
-					Point location = new Point();
-					location.setLocation(this.previewGraph.getLocation().getX() + this.previewGraph.getWidth() + 100,
-							this.previewGraph.getLocation().getY() + (this.previewGraph.getHeight() - graph.getHeight()) / 2);
-					graph.setLocation(location);
-					Rectangle graphBounds = graph.getBounds();
-					this.graphStorage.add(graph, graphBounds);
-					repaint(graph.getBounds());
-
-					LineGraph lineGraph = new LineGraph(this);
-					lineGraph.setPreProcess(this.previewGraph);
-					lineGraph.setNextProcess(graph);
-					this.lines.add(lineGraph);
-					repaint();
-				}
-				this.previewGraph = null;
-			} else if (this.line != null) {
-				IGraph graph = findGraph(e.getPoint());
-
-				if (graph != null && graph instanceof ProcessGraph) {
-					this.line.setNextProcess(graph);
-					this.lines.add(this.line);
-					this.line = new LineGraph(this);
-				} else {
-					this.line.setPreProcess(null);
-				}
-				repaint();
-			}
-		} else if (SwingUtilities.isRightMouseButton(e)) {
-			this.previewGraph = null;
-			this.line = null;
-			repaint();
+		while (iterator.hasNext()) {
+			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
+			entry.getValue().mouseReleased(e);
 		}
+
+		this.selection.mouseReleased(e);
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
+		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
+		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
 
+		while (iterator.hasNext()) {
+			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
+			entry.getValue().mouseEntered(e);
+		}
+
+		this.selection.mouseEntered(e);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		this.draggedGraph = null;
-		this.dragBegin = null;
-		this.dragCenter = null;
-		this.line = null;
+		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
+		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
+
+		while (iterator.hasNext()) {
+			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
+			entry.getValue().mouseExited(e);
+		}
+
+		this.selection.mouseExited(e);
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (SwingUtilities.isLeftMouseButton(e)) {
-			if (this.line != null) {
-				if (this.line.getPreProcess() != null) {
-					this.line.setEnd(e.getPoint());
-					repaint();
-				}
-			} else if (this.draggedGraph != null && this.dragBegin != null) {
-				this.graphStorage.remove(this.draggedGraph);
-				Point dragged = new Point();
-				dragged.setLocation(this.dragCenter.getX(), this.dragCenter.getY());
-				dragged.translate(e.getPoint().x - this.dragBegin.x, e.getPoint().y - this.dragBegin.y);
-				repaint(this.draggedGraph, dragged);
-				this.graphStorage.add(this.draggedGraph, this.draggedGraph.getBounds());
+		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
+		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
 
-				ArrayList<LineGraph> ls = getLines(this.draggedGraph);
-				for (int i = 0; i < ls.size(); i++) {
-					Rectangle rect = ls.get(i).getShape().getBounds();
-					rect.grow(1, 1);
-//				repaint(rect);
-					repaint();
-				}
-			}
+		while (iterator.hasNext()) {
+			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
+			entry.getValue().mouseDragged(e);
 		}
+
+		this.selection.mouseDragged(e);
 	}
 
 	private ArrayList<LineGraph> getLines(IGraph graph) {
@@ -521,29 +444,15 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		if (this.previewGraph != null) {
-			repaint(this.previewGraph, e.getPoint());
-		} else {
-			IGraph graph = findGraph(e.getPoint());
+		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
+		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
 
-			if (graph != null && graph.contains(e.getPoint())) {
-				if (this.hotDecorator.isDecorating()) {
-					if (this.hotDecorator.getGraph() != graph) {
-						repaint(this.hotDecorator.getBounds());
-						this.hotDecorator.decorate((AbstractGraph) graph);
-						repaint(this.hotDecorator.getBounds());
-					}
-				} else {
-					this.hotDecorator.decorate((AbstractGraph) graph);
-					repaint(this.hotDecorator.getBounds());
-				}
-			} else {
-				if (this.hotDecorator.isDecorating()) {
-					repaint(this.hotDecorator.getBounds());
-					this.hotDecorator.undecorate();
-				}
-			}
+		while (iterator.hasNext()) {
+			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
+			entry.getValue().mouseMoved(e);
 		}
+
+		this.selection.mouseMoved(e);
 	}
 
 	private void repaint(IGraph graph, Point point) {
@@ -561,7 +470,15 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
+		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
+		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
 
+		while (iterator.hasNext()) {
+			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
+			entry.getValue().mouseWheelMoved(e);
+		}
+
+		this.selection.mouseWheelMoved(e);
 	}
 
 	public void addGraphSelectChangedListener(GraphSelectChangedListener listener) {
