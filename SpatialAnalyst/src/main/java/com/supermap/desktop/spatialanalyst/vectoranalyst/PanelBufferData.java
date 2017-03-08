@@ -83,7 +83,7 @@ public class PanelBufferData extends JPanel {
 						.addComponent(this.labelDataset))
 					.addGroup(panelBufferDataLayout.createParallelGroup()
 						.addComponent(this.comboBoxBufferDataDatasource,5,5,Short.MAX_VALUE)
-						.addComponent(this.comboBoxBufferDataDataset)))
+						.addComponent(this.comboBoxBufferDataDataset,5,5,Short.MAX_VALUE)))
 				.addGroup(panelBufferDataLayout.createSequentialGroup()
 						.addComponent(this.checkBoxGeometrySelect)));
 

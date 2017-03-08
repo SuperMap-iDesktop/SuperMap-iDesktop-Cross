@@ -15,7 +15,6 @@ import javax.swing.border.TitledBorder;
  */
 public class PanelBufferRadius extends JPanel {
 
-	private JPanel panelContainer;
 	private JLabel labelUnit;
 	private JLabel labelField;
 	private ComboBoxLengthUnit comboBoxUnit;
@@ -64,7 +63,6 @@ public class PanelBufferRadius extends JPanel {
 		this.numericFieldComboBox = new SmNumericFieldComboBox();
 		this.numericFieldComboBox.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 //		this.numericFieldComboBox.setMaximumSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
-		this.panelContainer = new JPanel();
 
 		TitledBorder border = new TitledBorder(ControlsProperties.getString("String_BufferRadius"));
 		this.setBorder(border);
@@ -76,8 +74,6 @@ public class PanelBufferRadius extends JPanel {
 	}
 
 	private void initLayout() {
-//		this.setLayout(new BorderLayout());
-//		this.add(this.panelContainer, BorderLayout.CENTER);
 		//内部JPanel布局
 		GroupLayout panelBufferDataLayout = new GroupLayout(this);
 		panelBufferDataLayout.setAutoCreateContainerGaps(true);
@@ -89,8 +85,8 @@ public class PanelBufferRadius extends JPanel {
 						.addComponent(this.labelUnit)
 						.addComponent(this.labelField))
 				.addGroup(panelBufferDataLayout.createParallelGroup()
-						.addComponent(this.comboBoxUnit)
-						.addComponent(this.numericFieldComboBox)));
+						.addComponent(this.comboBoxUnit,5,5,Short.MAX_VALUE)
+						.addComponent(this.numericFieldComboBox,5,5,Short.MAX_VALUE)));
 		panelBufferDataLayout.setVerticalGroup(panelBufferDataLayout.createSequentialGroup()
 				.addGroup(panelBufferDataLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelUnit)

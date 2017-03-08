@@ -130,7 +130,7 @@ public class PanelResultSet extends JPanel {
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxRemainAttributes)
 						.addComponent(this.checkBoxDisplayInScene)
-						.addComponent(this.textFieldSemicircleLineSegment)));
+						.addComponent(this.textFieldSemicircleLineSegment,5,5,Short.MAX_VALUE)));
 		
 		panelResultSetLayout.setVerticalGroup(panelResultSetLayout.createSequentialGroup()
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)

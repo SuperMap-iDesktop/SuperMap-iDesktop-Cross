@@ -133,13 +133,13 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.panelBasic = new JPanel();
 		this.panelBasicLeft = new JPanel();
 		this.panelBasicRight = new JPanel();
-		this.setLayout(new BorderLayout());
-		this.add(this.panelBasic, BorderLayout.CENTER);
-
 		this.panelBufferRadius = new PanelBufferRadius();
 		this.panelBufferData = new PanelBufferData();
 		this.panelResultData = new PanelResultData();
 		this.panelResultSet = new PanelResultSet();
+
+		this.setLayout(new BorderLayout());
+		this.add(this.panelBasic, BorderLayout.CENTER);
 
 		setPanelBasicLayout();
 		setPanelBasicLeftLayout();
@@ -176,7 +176,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	}
 
 	private void setPanelBasicLeftLayout() {
-
 		GroupLayout panelBasicLeftLayout = new GroupLayout(this.panelBasicLeft);
 		panelBasicLeftLayout.setAutoCreateGaps(true);
 		this.panelBasicLeft.setLayout(panelBasicLeftLayout);

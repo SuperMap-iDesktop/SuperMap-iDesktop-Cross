@@ -190,7 +190,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 		setPanelBasicLayout();
 		setPanelBasicLeftLayout();
 		setPanelBasicRightLayout();
-
 	}
 
 	private void initResources() {
@@ -268,8 +267,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 
 				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.comboBoxUnit)
-						.addComponent(this.numericFieldComboBoxLeft)
-						.addComponent(this.numericFieldComboBoxRight)));
+						.addComponent(this.numericFieldComboBoxLeft,5,5,Short.MAX_VALUE)
+						.addComponent(this.numericFieldComboBoxRight,5,5,Short.MAX_VALUE)));
 		panelBufferRadiusLayout.setVerticalGroup(panelBufferRadiusLayout.createSequentialGroup()
 				.addGroup(panelBufferRadiusLayout.createParallelGroup(Alignment.CENTER)
 						.addComponent(this.labelUnit)
@@ -305,7 +304,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private void setPanelBasicLeftLayout() {
 		GroupLayout panelBasicLeftLayout = new GroupLayout(this.panelBasicLeft);
 		panelBasicLeftLayout.setAutoCreateGaps(true);
-//		panelBasicLeftLayout.setAutoCreateContainerGaps(true);
 		this.panelBasicLeft.setLayout(panelBasicLeftLayout);
 
 		//@formatter:off
@@ -323,9 +321,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private void setPanelBasicRightLayout() {
 		GroupLayout panelBasicRightLayout = new GroupLayout(this.panelBasicRight);
 		panelBasicRightLayout.setAutoCreateGaps(true);
-//		panelBasicRightLayout.setAutoCreateContainerGaps(true);
 		this.panelBasicRight.setLayout(panelBasicRightLayout);
-
 		//@formatter:off
 		panelBasicRightLayout.setHorizontalGroup(panelBasicRightLayout.createSequentialGroup()
 				.addGroup(panelBasicRightLayout.createParallelGroup(Alignment.LEADING)
