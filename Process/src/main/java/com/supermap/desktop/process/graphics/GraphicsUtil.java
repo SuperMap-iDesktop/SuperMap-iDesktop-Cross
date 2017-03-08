@@ -18,6 +18,12 @@ public class GraphicsUtil {
 	private GraphicsUtil() {
 	}
 
+	public static boolean isRegionValid(Rectangle rect) {
+		return (rect.x != Integer.MAX_VALUE && rect.x != Integer.MIN_VALUE)
+				&& (rect.y != Integer.MAX_VALUE && rect.y != Integer.MIN_VALUE)
+				&& rect.width != 0 && rect.height != 0;
+	}
+
 	public static int getFontHeight(JComponent component) {
 		return component == null ? -1 : component.getFontMetrics(component.getFont()).getHeight();
 	}

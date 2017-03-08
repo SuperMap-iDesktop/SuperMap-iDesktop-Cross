@@ -70,11 +70,7 @@ public class MultiSelction extends Selection {
 	public void mouseClicked(MouseEvent e) {
 		Point p = e.getPoint();
 		IGraph hit = getCanvas().findTopGraph(p);
-
-
-		if (isSelecting()) {
-
-		}
+		selectItem(hit);
 	}
 
 	@Override
@@ -94,7 +90,7 @@ public class MultiSelction extends Selection {
 					IGraph[] selected = getCanvas().findContainedGraphs(x, y, width, height);
 					selectItems(selected);
 				} else {
-
+					this.selectedItems.clear();
 				}
 			} else {
 
@@ -142,7 +138,7 @@ public class MultiSelction extends Selection {
 	public void paint(Graphics graphics) {
 		Graphics2D graphics2D = (Graphics2D) graphics;
 
-		if (isRegionValid(this.selectionRegion)) {
+		if (GraphicsUtil.isRegionValid(this.selectionRegion)) {
 			graphics2D.setColor(this.regionColor);
 			graphics2D.fill(this.selectionRegion);
 
@@ -167,13 +163,7 @@ public class MultiSelction extends Selection {
 
 	private boolean isDirty() {
 		return isSelecting() &&
-				isRegionValid(this.dirtyRegion);
-	}
-
-	private boolean isRegionValid(Rectangle rect) {
-		return (rect.x != Integer.MAX_VALUE && rect.x != Integer.MIN_VALUE)
-				&& (rect.y != Integer.MAX_VALUE && rect.y != Integer.MIN_VALUE)
-				&& rect.width != 0 && rect.height != 0;
+				GraphicsUtil.isRegionValid(this.dirtyRegion);
 	}
 
 	/**
