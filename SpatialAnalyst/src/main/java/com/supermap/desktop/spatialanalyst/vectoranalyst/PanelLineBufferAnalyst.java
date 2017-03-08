@@ -247,11 +247,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.labelLeftNumericFieldRadius = new JLabel("LeftNumericFieldRadius");
 		this.labelRightNumericFieldRadius = new JLabel("RightNumericFieldRadius");
 		this.comboBoxUnit = new ComboBoxLengthUnit();
-		this.comboBoxUnit.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 		this.numericFieldComboBoxLeft = new SmNumericFieldComboBox();
 		this.numericFieldComboBoxRight = new SmNumericFieldComboBox();
-		this.numericFieldComboBoxLeft.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
-		this.numericFieldComboBoxRight.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
 
 		//@formatter:off
 		GroupLayout panelBufferRadiusLayout = new GroupLayout(this.panelBufferRadius);

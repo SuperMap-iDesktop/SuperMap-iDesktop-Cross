@@ -3,6 +3,7 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 
@@ -62,7 +63,7 @@ public class DatasourceComboBox extends JComboBox<Datasource> {
 	public void setDisplayStyle() {
 		this.setBorder(BorderFactory.createEtchedBorder(1));
 		this.setRenderer(new ListDataCellRender());
-//		this.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 	}
 
 

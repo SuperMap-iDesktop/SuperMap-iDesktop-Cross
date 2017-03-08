@@ -58,6 +58,7 @@ public class BufferDialog extends SmDialog {
 		// 初始化数据类型对应的缓冲区面板--yaunR
 		initPanelBufferBasic();
 		setResizable(true);
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setVisible(true);
 	}
@@ -129,7 +130,6 @@ public class BufferDialog extends SmDialog {
 		}
 		this.panelBufferType.add(this.panelPointOrRegionAnalyst);
 		setSize(getPointPanelDimension());
-		setLocationRelativeTo(null);
 		this.radioButtonPointOrRegion.setSelected(true);
 //		this.panelPointOrRegionAnalyst.setSome(some);
 	}
@@ -144,7 +144,6 @@ public class BufferDialog extends SmDialog {
 		}
 		this.panelBufferType.add(this.panelLineBufferAnalyst);
 		setSize(getLinePanelDimension());
-		setLocationRelativeTo(null);
 		this.radioButtonLine.setSelected(true);
 	}
 
