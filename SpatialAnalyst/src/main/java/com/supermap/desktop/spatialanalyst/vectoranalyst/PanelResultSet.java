@@ -1,6 +1,5 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
-import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
@@ -131,7 +130,7 @@ public class PanelResultSet extends JPanel {
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
 						.addComponent(this.checkBoxRemainAttributes)
 						.addComponent(this.checkBoxDisplayInScene)
-						.addComponent(this.textFieldSemicircleLineSegment)));
+						.addComponent(this.textFieldSemicircleLineSegment,5,5,Short.MAX_VALUE)));
 		
 		panelResultSetLayout.setVerticalGroup(panelResultSetLayout.createSequentialGroup()
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
@@ -168,7 +167,7 @@ public class PanelResultSet extends JPanel {
 				.addGroup(panelResultSetLayout.createSequentialGroup()
 						.addComponent(this.checkBoxUnionBuffer)
 						.addComponent(this.checkBoxDisplayInMap)
-						.addComponent(this.checkBoxRemainAttributes).addGap(ControlDefaultValues.DEFAULT_PREFERREDSIZE_GAP))
+						.addComponent(this.checkBoxRemainAttributes))
 				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.BASELINE)
 						.addComponent(this.labelSemicircleLineSegment)
 						.addComponent(this.textFieldSemicircleLineSegment)));

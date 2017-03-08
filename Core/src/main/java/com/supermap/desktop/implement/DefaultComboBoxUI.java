@@ -16,6 +16,13 @@ public class DefaultComboBoxUI extends BasicComboBoxUI {
 	}
 
 	protected JButton createArrowButton() {
+//		JButton button = new BasicArrowButton(BasicArrowButton.SOUTH,
+//				UIManager.getColor("ComboBox.buttonBackground"),
+//				UIManager.getColor("ComboBox.buttonShadow"),
+//				UIManager.getColor("ComboBox.buttonDarkShadow"),
+//				UIManager.getColor("ComboBox.buttonHighlight"));
+//		button.setName("ComboBox.arrowButton");
+//		return button;
 		JButton button = new BasicArrowButton(BasicArrowButton.SOUTH,
 				Color.white,
 				Color.white,
@@ -24,5 +31,10 @@ public class DefaultComboBoxUI extends BasicComboBoxUI {
 		button.setBorder(new LineBorder(Color.white));
 		button.setName("ComboBox.arrowButton");
 		return button;
+//		JButton button = new JButton(new MetalComboBoxIcon());
+//		button.setBorder(new LineBorder(Color.white));
+//		button.setBackground(Color.white);
+//		button.setForeground(Color.white);
+//		return button;
 	}
 }

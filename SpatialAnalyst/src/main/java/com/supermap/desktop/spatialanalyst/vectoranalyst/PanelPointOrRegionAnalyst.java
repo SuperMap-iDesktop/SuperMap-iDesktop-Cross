@@ -59,7 +59,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	private LocalItemListener localItemListener = new LocalItemListener();
 	private LocalDocumentListener localDocumentListener = new LocalDocumentListener();
 	private NumericFieldComboBoxCaretListener numericFieldComboBoxCaretListener = new NumericFieldComboBoxCaretListener();
-	private SemicircleLineSegmentCaretListener semicircleLineSegmentCaretListener=new SemicircleLineSegmentCaretListener();
+	private SemicircleLineSegmentCaretListener semicircleLineSegmentCaretListener = new SemicircleLineSegmentCaretListener();
 
 	public void setSome(DoSome some) {
 		this.some = some;
@@ -133,13 +133,13 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.panelBasic = new JPanel();
 		this.panelBasicLeft = new JPanel();
 		this.panelBasicRight = new JPanel();
-		this.setLayout(new BorderLayout());
-		this.add(this.panelBasic, BorderLayout.CENTER);
-
 		this.panelBufferRadius = new PanelBufferRadius();
 		this.panelBufferData = new PanelBufferData();
 		this.panelResultData = new PanelResultData();
 		this.panelResultSet = new PanelResultSet();
+
+		this.setLayout(new BorderLayout());
+		this.add(this.panelBasic, BorderLayout.CENTER);
 
 		setPanelBasicLayout();
 		setPanelBasicLeftLayout();
@@ -176,7 +176,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	}
 
 	private void setPanelBasicLeftLayout() {
-
 		GroupLayout panelBasicLeftLayout = new GroupLayout(this.panelBasicLeft);
 		panelBasicLeftLayout.setAutoCreateGaps(true);
 		this.panelBasicLeft.setLayout(panelBasicLeftLayout);
@@ -188,7 +187,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                               .addComponent(this.panelResultData)));
           panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
                     .addComponent(this.panelBufferData).addContainerGap()
-                    .addComponent(this.panelResultData,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
+                    .addComponent(this.panelResultData));
           //@formatter:on
 	}
 
@@ -532,7 +531,7 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 	}
 
 	/**
-	 *  yuanR 2017.3.6
+	 * yuanR 2017.3.6
 	 * 给“参数设置”JTextField添加光标改变事件，当值有误时，置灰确定按钮
 	 */
 	class SemicircleLineSegmentCaretListener implements CaretListener {
@@ -573,5 +572,15 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		if (some != null) {
 			some.doSome(okButtonisEnabled, okButtonisEnabled, okButtonisEnabled, okButtonisEnabled);
 		}
+	}
+
+	/**
+	 * 判断确定按钮是否可用--yuanR 2017.3.7
+	 */
+	public void judgeOKButtonisEnabled() {
+		// 数据集情况
+		setOKButtonisEnabled(this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() == null);
+		//结果数据集名称
+		setOKButtonisEnabled(panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource().getDatasets().isAvailableDatasetName(panelResultData.getTextFieldResultDataDataset().getText()));
 	}
 }

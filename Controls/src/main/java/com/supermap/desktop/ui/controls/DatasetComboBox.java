@@ -4,6 +4,7 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasets;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 
@@ -45,7 +46,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	public DatasetComboBox() {
 		this.setBorder(BorderFactory.createEtchedBorder(1));
 		setRenderer(new ListDataCellRender());
-//		this.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 	}
 
 	/**
@@ -55,13 +56,11 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	 */
 	public DatasetComboBox(Datasets datasets) {
 		super(initDatasetComboBoxItem(datasets));
-
 		this.datasets = datasets;
-
 		//设置渲染方式
 		this.setBorder(BorderFactory.createEtchedBorder(1));
 		setRenderer(new ListDataCellRender());
-//		this.setPreferredSize(ControlDefaultValues.BUFFERCOMPONT_PREFERREDSIZE);
+		this.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 	}
 
 	/**
