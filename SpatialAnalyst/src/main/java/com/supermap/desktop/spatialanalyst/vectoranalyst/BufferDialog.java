@@ -131,7 +131,6 @@ public class BufferDialog extends SmDialog {
 		this.panelBufferType.add(this.panelPointOrRegionAnalyst);
 		setSize(getPointPanelDimension());
 		this.radioButtonPointOrRegion.setSelected(true);
-//		this.panelPointOrRegionAnalyst.setSome(some);
 	}
 
 	private void getLineType() {
@@ -279,5 +278,4 @@ public class BufferDialog extends SmDialog {
 			BufferDialog.this.dispose();
 		}
 	}
-
 }

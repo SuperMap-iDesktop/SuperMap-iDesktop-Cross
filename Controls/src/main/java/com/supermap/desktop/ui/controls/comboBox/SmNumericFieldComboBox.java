@@ -5,6 +5,7 @@ import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldType;
 import com.supermap.data.JoinItems;
 import com.supermap.desktop.controls.ControlDefaultValues;
+import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.awt.event.FocusAdapter;
@@ -15,6 +16,11 @@ import java.util.ArrayList;
  * Created by hanyz on 2017/2/15.
  */
 public class SmNumericFieldComboBox extends SmFieldInfoComboBox {
+	@Override
+	public void updateUI() {
+		this.setUI(new DefaultComboBoxUI());
+	}
+
 	public static final int DEFAULT_BUFFERRADIUS = 10;
 
 	public SmNumericFieldComboBox() {
