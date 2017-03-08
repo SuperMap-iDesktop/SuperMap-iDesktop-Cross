@@ -12,6 +12,7 @@ import com.supermap.desktop.process.graphics.graphs.decorator.SelectedDecorator;
 import com.supermap.desktop.process.graphics.handler.canvas.CanvasEventHandler;
 import com.supermap.desktop.process.graphics.handler.graph.DefaultGraphEventHanderFactory;
 import com.supermap.desktop.process.graphics.handler.graph.IGraphEventHandlerFactory;
+import com.supermap.desktop.process.graphics.interaction.CanvasTranslation;
 import com.supermap.desktop.process.graphics.interaction.GraphCreation;
 import com.supermap.desktop.process.graphics.interaction.MultiSelction;
 import com.supermap.desktop.process.graphics.interaction.Selection;
@@ -55,6 +56,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private IGraphEventHandlerFactory graphHandlerFactory = new DefaultGraphEventHanderFactory(); // 在某具体元素上进行的可扩展交互类
 	private ConcurrentHashMap<Class, CanvasEventHandler> canvasHandlers = new ConcurrentHashMap<>(); // 统一入口的画布事件接口，通过添加 CanvasEventHandler 对象实现 Canvas 的事件处理
 
+	private CanvasTranslation translation = new CanvasTranslation(this);
 	private GraphCreation creation = new GraphCreation(this);
 	private Selection selection = new MultiSelction(this);
 	private AbstractDecorator hotDecorator = new HotDecorator(this);
@@ -170,6 +172,14 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		}
 
 		this.canvasHandlers.put(c, handler);
+	}
+
+	public CoordinateTransform getCoordinateTransform() {
+		return coordinateTransform;
+	}
+
+	public void setCoordinateTransform(CoordinateTransform coordinateTransform) {
+		this.coordinateTransform = coordinateTransform;
 	}
 
 	public IGraphStorage getGraphStorage() {
@@ -318,7 +328,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		this.painterFactory.getPainter(this.line, g).paint();
 	}
 
-	protected Rectangle getCanvasViewBounds() {
+	public Rectangle getCanvasViewBounds() {
 		return new Rectangle(0, 0, getWidth(), getHeight());
 	}
 
@@ -464,6 +474,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			}
 		}
 
+		this.translation.mouseDragged(e);
 		this.creation.mouseDragged(e);
 		this.selection.mouseDragged(e);
 	}
@@ -520,7 +531,8 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			}
 		}
 
-		this.mouseWheelMoved(e);
+		this.translation.mouseWheelMoved(e);
+		this.creation.mouseWheelMoved(e);
 		this.selection.mouseWheelMoved(e);
 	}
 
