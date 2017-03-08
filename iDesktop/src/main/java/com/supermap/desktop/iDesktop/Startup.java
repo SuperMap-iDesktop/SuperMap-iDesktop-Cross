@@ -11,10 +11,15 @@ public class Startup {
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//			UIManager.setLookAndFeel(new NimbusLookAndFeel());
+//			UIManager.setLookAndFeel(UIManager.get);
 //			org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
 //			UIManager.put("RootPane.setupButtonVisible", false);
 //			BeautyEyeLNFHelper.translucencyAtFrameInactive = false;
 //			BeautyEyeLNFHelper.setMaximizedBoundForFrame = false;
+//			if(UIManager.getLookAndFeel() instanceof MetalLookAndFeel){
+//				((MetalLookAndFeel)UIManager.getLookAndFeel()).setCurrentTheme(new OceanTheme());
+//			}
 			Main.main(args);
 		} catch (Exception e) {
 			e.printStackTrace();

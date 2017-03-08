@@ -1,340 +1,360 @@
 package com.supermap.desktop.process.tasks;
 
 import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
-import com.supermap.desktop.Interface.IAfterWork;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessInterpolator;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessOverlayAnalyst;
-import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.MessageFormat;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
 
-public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
-	private static final int DEFUALT_PROGRESSBAR_HEIGHT = 30;
+/**
+ * Created by xie on 2017/2/15.
+ * progress bar used for displaying process task progress
+ */
+public class ProcessTask extends JPanel implements IProcessTask, IContentModel, Callable {
 
-	private transient SwingWorker<Boolean, Object> worker;
-	private String message = "";
-	private String remainTime = "";
-	private int percent = 0;
-	private volatile boolean isCancel;
+    private static final long serialVersionUID = 1L;
 
-	private JProgressBar progressBar;
-	private JLabel labelTitle;
-	private JLabel labelMessage;
-	private JLabel labelRemaintime;
-	//    private JButton buttonCancel = null;
-	private IProcess process;
-	private ActionListener cancelListener = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			cancel();
-		}
-	};
+    private transient SwingWorker<Boolean, Object> worker;
+    private String message = "";
+    private String remainTime = "";
+    private int percent = 0;
+    private volatile boolean isStop;
 
-	public ProcessTask(IProcess process) {
-		this.process = process;
-		init();
-	}
+    private JProgressBar progressBar;
+    private JLabel labelTitle;
+    private JLabel labelMessage;
+    private JLabel labelRemaintime;
+    private JButton buttonCancel = null;
+    private IProcess process;
+    private volatile boolean isFinished;
+    private ActionListener cancelListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            stop();
+        }
+    };
+    private RunningListener runningListener = new RunningListener() {
+        @Override
+        public void running(RunningEvent e) {
+            if (e.getProgress() >= 100) {
+                updateProgress(100, String.valueOf(e.getRemainTime()), getFinishMessage());
+                isFinished = true;
+            } else {
+                updateProgress(e.getProgress(), String.valueOf(e.getRemainTime()), e.getMessage());
+            }
+        }
+    };
 
-	private void init() {
-		initComponents();
-		initLayout();
-		registEvents();
-		initResouces();
-		this.labelRemaintime.setVisible(false);
-	}
+    public ProcessTask(IProcess process) {
+        this.process = process;
+        init();
+    }
 
-	public void doWork(final UpdateProgressCallable doWork) {
-		try {
-			doWork.setUpdate(this);
-			doWork.call();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+    private void init() {
+        initComponents();
+        initLayout();
+        registEvents();
+        initResouces();
+        this.labelRemaintime.setVisible(false);
+    }
 
-	public void doWork(final UpdateProgressCallable doWork, final IAfterWork<Boolean> afterWork) {
-		doWork.setUpdate(this);
+    @Override
+    public void initComponents() {
+        labelTitle = new JLabel();
+        progressBar = new JProgressBar();
+        progressBar.setStringPainted(true);
+        labelMessage = new JLabel("...");
+        labelRemaintime = new JLabel("...");
+        buttonCancel = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Run.png"));
+    }
 
-		this.worker = new SwingWorker<Boolean, Object>() {
+    @Override
+    public void initLayout() {
+        Dimension dimension = new Dimension(18, 18);
+        this.buttonCancel.setPreferredSize(dimension);
+        this.buttonCancel.setMinimumSize(dimension);
+        this.setLayout(new GridBagLayout());
+        this.add(this.labelTitle, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(this.progressBar, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+        this.add(this.buttonCancel, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraintsHelper.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(this.labelMessage, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(this.labelRemaintime, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(new JPanel(), new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+    }
 
-			@Override
-			protected Boolean doInBackground() throws Exception {
-				return doWork.call();
-			}
+    @Override
+    public void initResouces() {
+        if (process.getKey().equals(MetaKeys.IMPORT)) {
+            labelTitle.setText(ControlsProperties.getString("String_ImportProgress"));
+        } else if (process.getKey().equals(MetaKeys.PROJECTION)) {
+            labelTitle.setText(ControlsProperties.getString("String_ProjectionProgress"));
+        } else if (process.getKey().equals(MetaKeys.SPATIAL_INDEX)) {
+            labelTitle.setText(ControlsProperties.getString("String_SpatialIndexProgress"));
+        } else if (process.getKey().equals(MetaKeys.BUFFER)) {
+            labelTitle.setText(ControlsProperties.getString("String_BufferProgress"));
+        } else if (process.getKey().equals(MetaKeys.HEAT_MAP)) {
+            labelTitle.setText(ControlsProperties.getString("String_HeatMap"));
+        } else if (process.getKey().equals(MetaKeys.KERNEL_DENSITY)) {
+            labelTitle.setText(ControlsProperties.getString("String_KernelDensity"));
+        } else if (process.getKey().equals(MetaKeys.OVERLAY_ANALYST)) {
+            OverlayAnalystType analystType = ((MetaProcessOverlayAnalyst) process).getAnalystType();
+            switch (analystType) {
+                case CLIP:
+                    labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_CLIP"));
+                    break;
+                case ERASE:
+                    labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_ERASE"));
+                    break;
+                case IDENTITY:
+                    labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_IDENTITY"));
+                    break;
+                case INTERSECT:
+                    labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_INTERSECT"));
+                    break;
+                case UNION:
+                    labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_UNION"));
+                    break;
+                case XOR:
+                    labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_XOR"));
+                    break;
+                case UPDATE:
+                    labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_UPDATE"));
+                    break;
+                default:
+                    break;
+            }
+        } else if (process.getKey().equals(MetaKeys.INTERPOLATOR)) {
+            InterpolationAlgorithmType type = ((MetaProcessInterpolator) process).getInterpolationAlgorithmType();
+            if (type.equals(InterpolationAlgorithmType.IDW)) {
+                labelTitle.setText(ControlsProperties.getString("String_Interpolator_IDW"));
+            } else if (type.equals(InterpolationAlgorithmType.RBF)) {
+                labelTitle.setText(ControlsProperties.getString("String_Interpolator_RBF"));
+            } else if (type.equals(InterpolationAlgorithmType.KRIGING)) {
+                labelTitle.setText(ControlsProperties.getString("String_Interpolator_KRIGING"));
+            } else if (type.equals(InterpolationAlgorithmType.SimpleKRIGING)) {
+                labelTitle.setText(ControlsProperties.getString("String_Interpolator_SimpleKRIGING"));
+            } else if (type.equals(InterpolationAlgorithmType.UniversalKRIGING)) {
+                labelTitle.setText(ControlsProperties.getString("String_Interpolator_UniversalKRIGING"));
+            }
+        } else {
+            labelTitle.setText(process.getTitle());
+        }
+    }
 
-			@Override
-			protected void done() {
-				try {
-					if (null != this.get()) {
+    @Override
+    public void registEvents() {
+        removeEvents();
+        this.buttonCancel.addActionListener(this.cancelListener);
+    }
 
-						Boolean result = this.get();
-						if (result) {
-							SwingUtilities.invokeLater(new Runnable() {
-								@Override
-								public void run() {
-									setVisible(false);
-								}
-							});
-						}
-						afterWork.afterWork(result);
-					}
-				} catch (InterruptedException e) {
-					System.out.println(e);
-				} catch (ExecutionException e) {
-					System.out.println(e);
-				} catch (Exception e) {
-					System.out.println(e);
-				} finally {
-					isCancel = false;
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-//                            buttonCancel.setText("取消");
-//                            buttonCancel.setEnabled(true);
-							setVisible(false);
-							removeEvents();
-						}
-					});
-				}
-			}
-		};
+    @Override
+    public void removeEvents() {
+        this.buttonCancel.removeActionListener(this.cancelListener);
+    }
 
-		this.worker.execute();
-		if (null != this) {
-			this.setVisible(true);
-		}
-	}
+    public void doWork() {
+        try {
+            call();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-	public String getMessage() {
-		return this.message;
-	}
+    public String getMessage() {
+        return this.message;
+    }
 
-	public void setMessage(final String message) {
-		this.message = message;
+    public void setMessage(final String message) {
+        this.message = message;
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				labelMessage.setText(message);
-			}
-		});
-	}
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                labelMessage.setText(message);
+            }
+        });
+    }
 
-	public String getRemainTime() {
-		return this.remainTime;
-	}
+    public synchronized boolean isFinished() {
+        return isFinished;
+    }
 
-	public void setRemainTime(final String remainTime) {
-		this.remainTime = remainTime;
+    public String getRemainTime() {
+        return this.remainTime;
+    }
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				labelRemaintime.setText(remainTime);
-			}
-		});
-	}
+    public void setRemainTime(final String remainTime) {
+        this.remainTime = remainTime;
 
-	public int getPercent() {
-		return this.percent;
-	}
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                labelRemaintime.setText(remainTime);
+            }
+        });
+    }
 
-	public void setPercent(final int percent) {
-		this.percent = percent;
+    public int getPercent() {
+        return this.percent;
+    }
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				progressBar.setValue(percent);
-			}
-		});
-	}
+    public void setPercent(final int percent) {
+        this.percent = percent;
 
-	@Override
-	public IProcess getProcess() {
-		return process;
-	}
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setValue(percent);
+            }
+        });
+    }
 
-	@Override
-	public boolean isCancel() {
-		return this.isCancel;
-	}
+    @Override
+    public IProcess getProcess() {
+        return process;
+    }
 
-	public void setCancel(boolean isCancel) {
-		this.isCancel = isCancel;
+    @Override
+    public boolean isCancel() {
+        return false;
+    }
 
-		if (this.isCancel) {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
+    @Override
+    public void setCancel(boolean isCancel) {
+        setStop(isCancel);
+    }
 
-//                    buttonCancel.setText("正在取消...");
-//                    buttonCancel.setEnabled(false);
-				}
-			});
-		} else {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-//                    buttonCancel.setText("取消");
-//                    buttonCancel.setEnabled(true);
-				}
-			});
-		}
-	}
+    public void setStop(boolean isStop) {
+        this.isStop = isStop;
 
-	private void cancel() {
-		setCancel(true);
-	}
+        if (this.isStop) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    buttonCancel.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Stop.png"));
+                }
+            });
+        } else {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    buttonCancel.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Run.png"));
+                }
+            });
+        }
+    }
 
-	@Override
-	public void updateProgress(final int percent, final String remainTime, final String message) throws CancellationException {
-		if (this.isCancel) {
-			throw new CancellationException();
-		}
+    private void stop() {
+        setStop(!isStop);
+    }
 
-		this.percent = percent;
-		this.remainTime = remainTime;
-		this.message = message;
+    @Override
+    public void updateProgress(final int percent, final String remainTime, final String message) throws CancellationException {
+        if (this.isStop) {
+            return;
+        } else {
+            this.percent = percent;
+            this.remainTime = remainTime;
+            this.message = message;
 
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				progressBar.setValue(percent);
-				labelRemaintime.setText(MessageFormat.format("剩余时间:", remainTime));
-				labelMessage.setText(message);
-			}
-		});
-	}
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    progressBar.setValue(percent);
+                    labelRemaintime.setText(MessageFormat.format(ControlsProperties.getString("String_RemainTime"), remainTime));
+                    labelMessage.setText(message);
+                }
+            });
+        }
+    }
 
-	@Override
-	public void updateProgress(int percent, int totalPercent, String remainTime, String message) throws CancellationException {
-		//do nothing
-	}
+    @Override
+    public void updateProgress(int percent, int totalPercent, String remainTime, String message) throws CancellationException {
+        //do nothing
+    }
 
-	@Override
-	public void updateProgress(int percent, String recentTask, int totalPercent, String message) throws CancellationException {
-		//do nothing
-	}
+    @Override
+    public void updateProgress(int percent, String recentTask, int totalPercent, String message) throws CancellationException {
+        //do nothing
+    }
 
-	@Override
-	public void initComponents() {
-		labelTitle = new JLabel();
-		progressBar = new JProgressBar();
-		progressBar.setStringPainted(true);
-		labelMessage = new JLabel("...");
-		labelRemaintime = new JLabel("...");
-//        buttonCancel = new JButton("取消");
-//        this.getRootPane().setDefaultButton(this.buttonCancel);
-	}
 
-	@Override
-	public void initLayout() {
-		GroupLayout groupLayout = new GroupLayout(this);
-		groupLayout.setAutoCreateContainerGaps(true);
-		groupLayout.setAutoCreateGaps(true);
+    @Override
+    public Boolean call() throws Exception {
+        process.addRunningListener(this.runningListener);
+        process.run();
+        return true;
+    }
 
-		groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
-				.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-						.addGroup(groupLayout.createSequentialGroup()
-								.addComponent(this.labelTitle)
-								.addGap(0, 10, Short.MAX_VALUE))
-						.addComponent(this.progressBar)
-						.addGroup(groupLayout.createSequentialGroup()
-								.addComponent(this.labelMessage)
-								.addGap(0, 10, Short.MAX_VALUE)
-								.addComponent(this.labelRemaintime))));
-		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-				.addGroup(groupLayout.createSequentialGroup()
-						.addComponent(this.labelTitle)
-						.addComponent(this.progressBar)
-						.addGroup(groupLayout.createParallelGroup(Alignment.CENTER)
-								.addComponent(this.labelMessage)
-								.addComponent(this.labelRemaintime))));
-		this.setLayout(groupLayout);
-	}
-
-	@Override
-	public void initResouces() {
-		if (process.getKey().equals(MetaKeys.IMPORT)) {
-			labelTitle.setText(ControlsProperties.getString("String_ImportProgress"));
-		} else if (process.getKey().equals(MetaKeys.PROJECTION)) {
-			labelTitle.setText(ControlsProperties.getString("String_ProjectionProgress"));
-		} else if (process.getKey().equals(MetaKeys.SPATIAL_INDEX)) {
-			labelTitle.setText(ControlsProperties.getString("String_SpatialIndexProgress"));
-		} else if (process.getKey().equals(MetaKeys.BUFFER)) {
-			labelTitle.setText(ControlsProperties.getString("String_BufferProgress"));
-		} else if (process.getKey().equals(MetaKeys.HEAT_MAP)) {
-			labelTitle.setText(ControlsProperties.getString("String_HeatMap"));
-		} else if (process.getKey().equals(MetaKeys.KERNEL_DENSITY)) {
-			labelTitle.setText(ControlsProperties.getString("String_KernelDensity"));
-		} else if (process.getKey().equals(MetaKeys.OVERLAY_ANALYST)) {
-			OverlayAnalystType analystType = ((MetaProcessOverlayAnalyst) process).getAnalystType();
-			switch (analystType) {
-				case CLIP:
-					labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_CLIP"));
-					break;
-				case ERASE:
-					labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_ERASE"));
-					break;
-				case IDENTITY:
-					labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_IDENTITY"));
-					break;
-				case INTERSECT:
-					labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_INTERSECT"));
-					break;
-				case UNION:
-					labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_UNION"));
-					break;
-				case XOR:
-					labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_XOR"));
-					break;
-				case UPDATE:
-					labelTitle.setText(ControlsProperties.getString("String_OverlayAnalyst_UPDATE"));
-					break;
-				default:
-					break;
-			}
-		} else if (process.getKey().equals(MetaKeys.INTERPOLATOR)) {
-			InterpolationAlgorithmType type = ((MetaProcessInterpolator) process).getInterpolationAlgorithmType();
-			if (type.equals(InterpolationAlgorithmType.IDW)) {
-				labelTitle.setText(ControlsProperties.getString("String_Interpolator_IDW"));
-			} else if (type.equals(InterpolationAlgorithmType.RBF)) {
-				labelTitle.setText(ControlsProperties.getString("String_Interpolator_RBF"));
-			} else if (type.equals(InterpolationAlgorithmType.KRIGING)) {
-				labelTitle.setText(ControlsProperties.getString("String_Interpolator_KRIGING"));
-			} else if (type.equals(InterpolationAlgorithmType.SimpleKRIGING)) {
-				labelTitle.setText(ControlsProperties.getString("String_Interpolator_SimpleKRIGING"));
-			} else if (type.equals(InterpolationAlgorithmType.UniversalKRIGING)) {
-				labelTitle.setText(ControlsProperties.getString("String_Interpolator_UniversalKRIGING"));
-			}
-		} else {
-			labelTitle.setText(process.getTitle());
-		}
-	}
-
-	@Override
-	public void registEvents() {
-		removeEvents();
-//        this.buttonCancel.addActionListener(this.cancelListener);
-	}
-
-	@Override
-	public void removeEvents() {
-//        this.buttonCancel.removeActionListener(this.cancelListener);
-	}
+    public String getFinishMessage() {
+        String result = "";
+        if (process.getKey().equals(MetaKeys.IMPORT)) {
+            result = ControlsProperties.getString("String_ImportProgressFinished");
+        } else if (process.getKey().equals(MetaKeys.PROJECTION)) {
+            result = ControlsProperties.getString("String_ProjectionProgressFinished");
+        } else if (process.getKey().equals(MetaKeys.SPATIAL_INDEX)) {
+            result = ControlsProperties.getString("String_SpatialIndexProgressFinished");
+        } else if (process.getKey().equals(MetaKeys.BUFFER)) {
+            result = ControlsProperties.getString("String_BufferProgressFinished");
+        } else if (process.getKey().equals(MetaKeys.HEAT_MAP)) {
+            result = ControlsProperties.getString("String_HeatMapFinished");
+        } else if (process.getKey().equals(MetaKeys.KERNEL_DENSITY)) {
+            result = ControlsProperties.getString("String_KernelDensityFinished");
+        } else if (process.getKey().equals(MetaKeys.OVERLAY_ANALYST)) {
+            OverlayAnalystType analystType = ((MetaProcessOverlayAnalyst) process).getAnalystType();
+            switch (analystType) {
+                case CLIP:
+                    result = ControlsProperties.getString("String_OverlayAnalyst_CLIPFinished");
+                    break;
+                case ERASE:
+                    result = ControlsProperties.getString("String_OverlayAnalyst_ERASEFinished");
+                    break;
+                case IDENTITY:
+                    result = ControlsProperties.getString("String_OverlayAnalyst_IDENTITYFinished");
+                    break;
+                case INTERSECT:
+                    result = ControlsProperties.getString("String_OverlayAnalyst_INTERSECTFinished");
+                    break;
+                case UNION:
+                    result = ControlsProperties.getString("String_OverlayAnalyst_UNIONFinished");
+                    break;
+                case XOR:
+                    result = ControlsProperties.getString("String_OverlayAnalyst_XORFinished");
+                    break;
+                case UPDATE:
+                    result = ControlsProperties.getString("String_OverlayAnalyst_UPDATEFinished");
+                    break;
+                default:
+                    break;
+            }
+        } else if (process.getKey().equals(MetaKeys.INTERPOLATOR)) {
+            InterpolationAlgorithmType type = ((MetaProcessInterpolator) process).getInterpolationAlgorithmType();
+            if (type.equals(InterpolationAlgorithmType.IDW)) {
+                result = ControlsProperties.getString("String_Interpolator_IDWFinished");
+            } else if (type.equals(InterpolationAlgorithmType.RBF)) {
+                result = ControlsProperties.getString("String_Interpolator_RBFFinished");
+            } else if (type.equals(InterpolationAlgorithmType.KRIGING)) {
+                result = ControlsProperties.getString("String_Interpolator_KRIGINGFinished");
+            } else if (type.equals(InterpolationAlgorithmType.SimpleKRIGING)) {
+                result = ControlsProperties.getString("String_Interpolator_SimpleKRIGINGFinished");
+            } else if (type.equals(InterpolationAlgorithmType.UniversalKRIGING)) {
+                result = ControlsProperties.getString("String_Interpolator_UniversalKRIGINGFinished");
+            }
+        }
+        return result;
+    }
 }

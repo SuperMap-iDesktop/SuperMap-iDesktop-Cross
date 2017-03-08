@@ -4,6 +4,7 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldType;
 import com.supermap.data.JoinItems;
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.awt.event.FocusAdapter;
@@ -14,10 +15,20 @@ import java.util.ArrayList;
  * Created by hanyz on 2017/2/15.
  */
 public class SmNumericFieldComboBox extends SmFieldInfoComboBox {
+
+	/**
+	 * 添加updateUI确保comboBox样式一致--yuanR 2017.3.8
+	 */
+//	@Override
+//	public void updateUI() {
+//		this.setUI(new DefaultComboBoxUI());
+//	}
+
 	public static final int DEFAULT_BUFFERRADIUS = 10;
 
 	public SmNumericFieldComboBox() {
 		super();
+		this.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 //		// 添加键盘监听事件，控制其键盘输入的字符内容--yuanR 2017.3.7
 //		this.getEditor().getEditorComponent().addKeyListener(new KeyAdapter() {
 //			@Override

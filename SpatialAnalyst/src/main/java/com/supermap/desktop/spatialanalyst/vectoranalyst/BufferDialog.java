@@ -40,8 +40,8 @@ public class BufferDialog extends SmDialog {
 	// 确定/取消按钮面板
 	private PanelButton panelButton;
 	private MapControl mapControl;
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 325);
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(720, 380);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(720, 335);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(720, 390);
 	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(750, 360);
 	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(750, 420);
 	private LocalActionListener localActionListener = new LocalActionListener();
@@ -58,6 +58,7 @@ public class BufferDialog extends SmDialog {
 		// 初始化数据类型对应的缓冲区面板--yaunR
 		initPanelBufferBasic();
 		setResizable(true);
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setVisible(true);
 	}
@@ -129,9 +130,7 @@ public class BufferDialog extends SmDialog {
 		}
 		this.panelBufferType.add(this.panelPointOrRegionAnalyst);
 		setSize(getPointPanelDimension());
-		setLocationRelativeTo(null);
 		this.radioButtonPointOrRegion.setSelected(true);
-//		this.panelPointOrRegionAnalyst.setSome(some);
 	}
 
 	private void getLineType() {
@@ -144,7 +143,6 @@ public class BufferDialog extends SmDialog {
 		}
 		this.panelBufferType.add(this.panelLineBufferAnalyst);
 		setSize(getLinePanelDimension());
-		setLocationRelativeTo(null);
 		this.radioButtonLine.setSelected(true);
 	}
 
@@ -280,5 +278,4 @@ public class BufferDialog extends SmDialog {
 			BufferDialog.this.dispose();
 		}
 	}
-
 }

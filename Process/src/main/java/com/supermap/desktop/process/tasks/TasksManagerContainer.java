@@ -1,8 +1,5 @@
 package com.supermap.desktop.process.tasks;
 
-import com.supermap.desktop.process.tasks.callable.ProcessCallable;
-import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
-
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.GroupLayout.Group;
@@ -16,7 +13,6 @@ public class TasksManagerContainer extends JPanel {
      */
     private static final long serialVersionUID = 1L;
     private ArrayList<IProcessTask> items;
-    private ArrayList<UpdateProgressCallable> callables;
 
     GroupLayout groupLayout;
     Group horizontalGroup = null;
@@ -24,7 +20,6 @@ public class TasksManagerContainer extends JPanel {
 
     public TasksManagerContainer() {
         items = new ArrayList();
-        callables = new ArrayList<>();
         initializeComponents();
         initializeResources();
     }
@@ -58,7 +53,7 @@ public class TasksManagerContainer extends JPanel {
     }
 
     /**
-     * 串行结构时的任务执行
+     * run the parallel tasks
      */
     public void run() {
 
@@ -67,7 +62,7 @@ public class TasksManagerContainer extends JPanel {
             public void run() {
                 int size = items.size();
                 for (int j = 0; j < size; j++) {
-                    items.get(j).doWork(callables.get(j));
+                    items.get(j).doWork();
                 }
             }
         });
@@ -85,8 +80,6 @@ public class TasksManagerContainer extends JPanel {
     }
 
     public void addItem(IProcessTask task) {
-        ProcessCallable callable = new ProcessCallable(task.getProcess());
-        callables.add(callable);
         items.add(task);
         updateItems();
     }
@@ -102,10 +95,10 @@ public class TasksManagerContainer extends JPanel {
         updateItems();
     }
 
-	public void clear() {
-		for (IProcessTask item : items) {
-			removeItem(item);
-		}
-	}
+    public void clear() {
+        for (IProcessTask item : items) {
+            removeItem(item);
+        }
+    }
 }
 

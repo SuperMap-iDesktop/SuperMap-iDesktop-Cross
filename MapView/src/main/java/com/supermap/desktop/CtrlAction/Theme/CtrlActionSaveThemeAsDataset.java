@@ -15,30 +15,30 @@ import com.supermap.mapping.ThemeType;
  */
 public class CtrlActionSaveThemeAsDataset extends CtrlAction {
 
-    public CtrlActionSaveThemeAsDataset(IBaseItem caller, IForm formClass) {
-        super(caller, formClass);
-    }
+	public CtrlActionSaveThemeAsDataset(IBaseItem caller, IForm formClass) {
+		super(caller, formClass);
+	}
 
-    @Override
-    public void run() {
-        DiglogSaveThemeAsDataset diglogSaveThemeAsDataset = new DiglogSaveThemeAsDataset();
-        diglogSaveThemeAsDataset.showDialog();
-    }
+	@Override
+	public void run() {
+		DiglogSaveThemeAsDataset diglogSaveThemeAsDataset = new DiglogSaveThemeAsDataset();
+		diglogSaveThemeAsDataset.showDialog();
+	}
 
-    @Override
-    public boolean enable() {
-        boolean enable = false;
-        try {
-            //当前专题图不可见时，功能不可用
-            // FIXME: 2016/12/29 xie 选择图层判断
-            if (null != ThemeUtil.getActiveLayer() && null != ThemeUtil.getActiveLayer().getTheme()) {
-                if (ThemeUtil.getActiveLayer().isVisible() && (ThemeUtil.getActiveLayer().getTheme().getType().equals(ThemeType.LABEL))) {
-                    enable = true;
-                }
-            }
-        } catch (Exception ex) {
-            Application.getActiveApplication().getOutput().output(ex);
-        }
-        return enable;
-    }
+	@Override
+	public boolean enable() {
+		boolean enable = false;
+		try {
+			//当前专题图不可见时，功能不可用
+			// FIXME: 2016/12/29 xie 选择图层判断
+			if (null != ThemeUtil.getActiveLayer() && null != ThemeUtil.getActiveLayer().getTheme()) {
+				if (ThemeUtil.getActiveLayer().isVisible() && (ThemeUtil.getActiveLayer().getTheme().getType().equals(ThemeType.LABEL))) {
+					enable = true;
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+		return enable;
+	}
 }
