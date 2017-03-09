@@ -2,6 +2,7 @@ package com.supermap.desktop.mapview.layer.propertycontrols;
 
 import com.supermap.data.ColorDictionary;
 import com.supermap.data.Colors;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.controls.colorScheme.ColorsWithKeysTableModel;
@@ -9,12 +10,10 @@ import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.event.ColorTableChangeEvent;
 import com.supermap.desktop.event.ColorTableChangeListener;
+import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerGridParamPropertyModel;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.ColorSelectionPanel;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -34,7 +33,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
+import java.io.File;
+import java.util.*;
 
 /**
  * Created by Chens on 2016/12/29 0029.
@@ -56,6 +56,9 @@ public class LayerGridParamColorTableDialog extends SmDialog{
     private SmButton buttonSelectInvert;
     private SmButton buttonSelectAll;
     private SmButton buttonInvertColors;
+    private SmButton buttonInputColorTable;
+    private SmButton buttonExportColorTable;
+    private SmButton buttonDefaultColotTable;
     private ColorsComboBox comboBoxColor;
 
     //表
@@ -308,6 +311,20 @@ public class LayerGridParamColorTableDialog extends SmDialog{
             }
         });
 
+        buttonExportColorTable.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exportColorTable();
+            }
+        });
+
+        buttonInputColorTable.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                inputColorTable();
+            }
+        });
+
         tableColor.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -426,6 +443,18 @@ public class LayerGridParamColorTableDialog extends SmDialog{
         buttonInvertColors = new SmButton();
         buttonInvertColors.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/invert.png"));
 
+        buttonInputColorTable = new SmButton();
+        buttonInputColorTable.setToolTipText(MapViewProperties.getString("String_InputColorTable"));
+        buttonInputColorTable.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/Image_ToolButton_Import.png"));
+
+        buttonExportColorTable = new SmButton();
+        buttonExportColorTable.setToolTipText(MapViewProperties.getString("String_ExprotColorTable"));
+        buttonExportColorTable.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/Image_ToolButton_Export.png"));
+
+        buttonDefaultColotTable= new SmButton();
+        buttonDefaultColotTable.setToolTipText(MapViewProperties.getString("String_DefaultColorTable"));
+        buttonDefaultColotTable.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/defaultColors.png"));
+
         comboBoxColor = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Grid_DEM"));
         comboBoxColor.setPreferredSize(new Dimension(200,25));
         comboBoxColor.setMaximumSize(new Dimension(200, 25));
@@ -452,7 +481,10 @@ public class LayerGridParamColorTableDialog extends SmDialog{
             toolBar.add(buttonMoveDown);
             toolBar.add(buttonMoveBottom);
             toolBar.add(comboBoxColor);
+            toolBar.add(buttonDefaultColotTable);
             toolBar.add(buttonInvertColors);
+            toolBar.add(buttonInputColorTable);
+            toolBar.add(buttonExportColorTable);
 
             buttonAddColor.setFocusable(false);
             buttonBatchAddColor.setFocusable(false);
@@ -465,6 +497,9 @@ public class LayerGridParamColorTableDialog extends SmDialog{
             buttonMoveDown.setFocusable(false);
             buttonMoveBottom.setFocusable(false);
             buttonInvertColors.setFocusable(false);
+            buttonInputColorTable.setFocusable(false);
+            buttonExportColorTable.setFocusable(false);
+            buttonDefaultColotTable.setFocusable(false);
             comboBoxColor.setFocusable(false);
         }
     }
@@ -674,6 +709,75 @@ public class LayerGridParamColorTableDialog extends SmDialog{
             }
             this.currentLayerSettingGrid.setColorDictionary(colorDictionary);
         }
+    }
+
+    private boolean exportColorTable(){
+        boolean result=true;
+        String moduleName = "ExportColorsTable";
+        if (!SmFileChoose.isModuleExist(moduleName)) {
+            String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("String_DialogColorTable"), "sctu");
+            SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
+                    MapViewProperties.getString("String_ExprotColorTable"), moduleName, "SaveOne");
+        }
+        SmFileChoose smFileChoose = new SmFileChoose(moduleName);
+        smFileChoose.setSelectedFile(new File("ColorTable.sctu"));
+        int state = smFileChoose.showDefaultDialog();
+        String filePath="";
+        if (state == JFileChooser.APPROVE_OPTION) {
+            filePath = smFileChoose.getFilePath();
+            File file = new File(filePath);
+            if (file.isFile() && file.exists()) {
+                file.delete();
+            }
+            ColorTableXmlImpl colorTableXml=new ColorTableXmlImpl();
+            ColorDictionary colorDictionary=new ColorDictionary();
+            colorDictionary.clear();
+            for (int i = 0; i < colorsWithKeysTableModel.getRowCount(); i++) {
+                colorDictionary.setColor(colorsWithKeysTableModel.getKeys().get(i),colorsWithKeysTableModel.getColors().get(i));
+            }
+            colorTableXml.createXml(filePath,colorDictionary);
+            Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_DialogColorTableExportSucess")+filePath);
+        }
+        else{
+            Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_DialogColorTableExportFailed"));
+        }
+        return result;
+    }
+
+    private void inputColorTable(){
+        String moduleName = "InputColorsTable";
+        if (!SmFileChoose.isModuleExist(moduleName)) {
+            String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("String_DialogColorTable"), "sctu");
+            SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
+                    MapViewProperties.getString("String_InputColorTable"), moduleName, "OpenMany");
+        }
+        SmFileChoose smFileChoose = new SmFileChoose(moduleName);
+        int state = smFileChoose.showDefaultDialog();
+        String filePath="";
+        if (state == JFileChooser.APPROVE_OPTION) {
+            filePath = smFileChoose.getFilePath();
+            ColorTableXmlImpl colorTableXml=new ColorTableXmlImpl();
+            ColorDictionary colorDictionary=new ColorDictionary();
+            colorDictionary.clear();
+            colorDictionary= colorTableXml.parserXml(filePath);
+            inputDataChangeColorTable(colorDictionary);
+            Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_DialogColorTableInputSucess")+filePath);
+        }else{
+            Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_DialogColorTableInputFailed"));
+        }
+    }
+
+    private void inputDataChangeColorTable(ColorDictionary colorDictionary){
+        Color[] colors = colorDictionary.getColors();
+        double[] keys = colorDictionary.getKeys();
+        colorsWithKeysTableModel.setColorNodes(colors,keys);
+        if (modelModified!=null) {
+            modelModified.setLayerGridColorDictionary(keys, colors);
+        }else {
+            resetCurrentLayerSettingGrid(keys, colors);
+        }
+
+        fireColorTableChange(new ColorTableChangeEvent(this,keys,colors));
     }
 
     public LayerSettingGrid getCurrentLayerSettingGrid(){
