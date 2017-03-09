@@ -18,8 +18,14 @@ public class GraphicsUtil {
 	private GraphicsUtil() {
 	}
 
+	public static boolean isPointValid(Point point) {
+		return point != null && point.x != Integer.MAX_VALUE && point.x != Integer.MIN_VALUE
+				&& point.y != Integer.MAX_VALUE && point.y != Integer.MIN_VALUE;
+	}
+
 	public static boolean isRegionValid(Rectangle rect) {
-		return (rect.x != Integer.MAX_VALUE && rect.x != Integer.MIN_VALUE)
+		return rect != null
+				&& (rect.x != Integer.MAX_VALUE && rect.x != Integer.MIN_VALUE)
 				&& (rect.y != Integer.MAX_VALUE && rect.y != Integer.MIN_VALUE)
 				&& rect.width != 0 && rect.height != 0;
 	}

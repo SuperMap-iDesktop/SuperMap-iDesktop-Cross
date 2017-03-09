@@ -20,14 +20,12 @@ import com.supermap.desktop.process.graphics.painter.DefaultGraphPainterFactory;
 import com.supermap.desktop.process.graphics.painter.IGraphPainterFactory;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.graphics.storage.ListGraphs;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.geom.RoundRectangle2D;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -50,8 +48,9 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
 
-	private IGraphStorage graphStorage = new ListGraphs(); // 画布元素的存储结构
-	private CoordinateTransform coordinateTransform = new CoordinateTransform(); // 用以在画布平移、缩放等操作过后进行坐标转换
+	private IGraphStorage graphStorage =
+			new ListGraphs(); // 画布元素的存储结构
+	private CoordinateTransform coordinateTransform = new CoordinateTransform(this); // 用以在画布平移、缩放等操作过后进行坐标转换
 	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory(this); // 元素绘制的可扩展类
 	private IGraphEventHandlerFactory graphHandlerFactory = new DefaultGraphEventHanderFactory(); // 在某具体元素上进行的可扩展交互类
 	private ConcurrentHashMap<Class, CanvasEventHandler> canvasHandlers = new ConcurrentHashMap<>(); // 统一入口的画布事件接口，通过添加 CanvasEventHandler 对象实现 Canvas 的事件处理
@@ -61,17 +60,11 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private Selection selection = new MultiSelction(this);
 	private AbstractDecorator hotDecorator = new HotDecorator(this);
 	private AbstractDecorator selectedDecorator = new SelectedDecorator(this); // 目前还没有支持多选，就先这样用单例修饰
-	private AbstractDecorator previewDecorator = new PreviewDecorator(this);
 	private IGraph previewGraph;
 
 	//	private QuadTreeTemp<IGraph> graphQuadTree = new QuadTreeTemp<>();
 	private ArrayList<LineGraph> lines = new ArrayList<>();
-	private double scale = 1.0;
-	private IGraph selectedGraph; // Decorator 的类结构还需要优化，现在接收 AbstractGraph 会导致 hot selected preview Decorator 扩展不易
 
-	private IGraph draggedGraph;
-	private Point dragBegin;
-	private Point dragCenter;
 	private LineGraph line;
 
 	private ArrayList<GraphSelectChangedListener> selectChangedListeners = new ArrayList<>();
@@ -232,7 +225,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 //		graphics2D.setStroke(stroke);
 //		Rectangle rectangle = new Rectangle(3, 3, 5, 5);
 //		graphics2D.draw(rectangle);
-		AffineTransform origin = graphics2D.getTransform();
+
 
 		// 测试 AffineTransform 的缩放和平移变换
 //		AffineTransform transform = new AffineTransform();
@@ -254,6 +247,8 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 //		graphics2D.draw(round);
 
 		// Canvas 自身绘制
+		AffineTransform origin = graphics2D.getTransform();
+		graphics2D.setTransform(this.coordinateTransform.getAffineTransform());
 		setViewRenderingHints(graphics2D);
 		paintBackground(graphics2D);
 		paintCanvas(graphics2D);
@@ -319,11 +314,8 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			this.painterFactory.getPainter(lineGraph, g).paint();
 		}
 
-		this.selectedDecorator.decorate((AbstractGraph) this.selectedGraph);
-		this.previewDecorator.decorate((AbstractGraph) this.previewGraph);
 		this.painterFactory.getPainter(this.hotDecorator, g).paint();
 		this.painterFactory.getPainter(this.selectedDecorator, g).paint();
-		this.painterFactory.getPainter(this.previewDecorator, g).paint();
 
 		this.painterFactory.getPainter(this.line, g).paint();
 	}
