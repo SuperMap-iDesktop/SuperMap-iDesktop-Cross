@@ -86,8 +86,8 @@ public class ParameterCombine extends AbstractParameter {
 	private void buildPanel() {
 		int x = 0, y = 0;
 		if (panel != null) {
-			panel.removeAll();
-		} else {
+			panel.removeAll();		} else {
+
 			panel = new JPanel();
 			panel.setLayout(new GridBagLayout());
 		}

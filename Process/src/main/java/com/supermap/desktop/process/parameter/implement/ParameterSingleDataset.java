@@ -1,9 +1,12 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.analyst.spatialanalyst.AggregationType;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
+import com.supermap.desktop.enums.DockSite;
 import com.supermap.desktop.process.parameter.ParameterPanels.ParameterSingleDatasetPanel;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
+import com.supermap.desktop.process.util.EnumParser;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
@@ -17,6 +20,13 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
     private DatasetType[] datasetTypes;
     public ParameterSingleDataset(DatasetType ...datasetTypes){
         this.datasetTypes = datasetTypes;
+        String[] enumValues = {"LEFT","TOP","BOTTOM"};
+        String[] enumChName = {"左","上","下"};
+        new EnumParser(DockSite.class,enumValues,enumChName).getEnumItems();
+//        String[] enumValues = {"AVERRAGE","MEDIAN","SUM"};
+//        String[] enumChName = {"平均值","中值","和"};
+//        EnumParser parser = new EnumParser(AggregationType.class,enumValues,enumChName);
+//        System.out.println(parser.getEnumItems());
     }
     @Override
     public void setSelectedItem(Object item) {
