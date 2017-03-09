@@ -1,11 +1,8 @@
 package com.supermap.desktop.workspacemanagerwindow;
 
-import com.supermap.data.SymbolFill;
 import com.supermap.data.SymbolFillLibrary;
-import com.supermap.data.SymbolLine;
 import com.supermap.data.SymbolLineLibrary;
 import com.supermap.data.SymbolMarkerLibrary;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dataview.DataViewResources;
 
@@ -13,13 +10,12 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
-import static com.supermap.desktop.ui.UICommonToolkit.getWorkspaceManager;
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.RESOURCES_ICON_PATH;
 
 /**
  * @author YuanR
  */
-public class TableCellRendererResources extends DefaultTableCellRenderer {
+public class TableCellRendererResource extends DefaultTableCellRenderer {
 
 	public Component getTableCellRendererComponent(JTable table, Object value,
 	                                               boolean isSelected, boolean hasFocus, int row, int column) {

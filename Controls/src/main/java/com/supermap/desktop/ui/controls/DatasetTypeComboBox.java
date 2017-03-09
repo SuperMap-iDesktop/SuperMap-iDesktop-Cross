@@ -3,11 +3,11 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class DatasetTypeComboBox extends JComboBox<DataCell> {
 	private static final long serialVersionUID = 1L;
-	private final static Dimension DIMENSION = new Dimension(80, 20);
+//	private final static Dimension DIMENSION = new Dimension(80, 20);
 	// 没有获取当前所有支持类型的方法，需要的时候再开
 	private transient DatasetType[] supportedDatasetTypes;
 	//是否含有“所有数据类型”这一项，默认不含
@@ -72,7 +72,7 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 	 */
 	public DatasetTypeComboBox() {
 		supportedDatasetTypes = DatasetTypeComboBox.ALL_DATASET_TYPE;
-		this.setPreferredSize(DIMENSION);
+		this.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 		inits();
 	}
 
@@ -83,7 +83,7 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 	 */
 	public DatasetTypeComboBox(DatasetType[] supportedDatasetTypes) {
 		this.supportedDatasetTypes = supportedDatasetTypes;
-		this.setPreferredSize(DIMENSION);
+		this.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 		inits();
 	}
 
@@ -110,7 +110,7 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 		} else {
 			this.supportedDatasetTypes = datasetTypes;
 		}
-		this.setPreferredSize(DIMENSION);
+		this.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 		inits();
 	}
 

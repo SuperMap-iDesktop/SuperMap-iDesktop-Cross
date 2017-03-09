@@ -6,19 +6,20 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 
-import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.SCENES_ICON_PATH;
+import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.MAPS_ICON_PATH;
 
 /**
  * @author YuanR
  */
-public class TableCellRendererScenes extends DefaultTableCellRenderer {
+public class TableCellRendererMap extends DefaultTableCellRenderer {
+
 	public Component getTableCellRendererComponent(JTable table, Object value,
 	                                               boolean isSelected, boolean hasFocus, int row, int column) {
 		super.getTableCellRendererComponent(table, value, isSelected, hasFocus,
 				row, column);
-		//给第一列设置“场景”样式图标
-		this.setIcon(DataViewResources.getIcon(SCENES_ICON_PATH));
+		//给第一列设置“地图”样式图标
+		this.setIcon(DataViewResources.getIcon(MAPS_ICON_PATH));
 		return this;
 	}
-}
 
+}

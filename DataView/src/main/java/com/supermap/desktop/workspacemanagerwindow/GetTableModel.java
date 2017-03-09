@@ -27,7 +27,7 @@ public class GetTableModel {
 
 	//获得资源model
 	public TableModel getResourcesTableModel() {
-		this.resourcesTableModel = new TableModelResources();
+		this.resourcesTableModel = new TableModelResource();
 		return this.resourcesTableModel;
 	}
 
@@ -39,37 +39,37 @@ public class GetTableModel {
 
 	//获得数据源（第二层）model
 	public TableModel getDatasourcesTableModel(Datasources datasources) {
-		this.datasourcesTableModel = new TableModelDatasources(datasources);
+		this.datasourcesTableModel = new TableModelDatasource(datasources);
 		return this.datasourcesTableModel;
 	}
 
 	//获得地图（第二层）model
 	public TableModel getMapsTableModel(Maps maps) {
-		this.mapsTableModel = new TableModelMaps(maps);
+		this.mapsTableModel = new TableModelMap(maps);
 		return this.mapsTableModel;
 	}
 
 	//获得布局（第二层）model
 	public TableModel getLayoutsTableModel(Layouts layouts) {
-		this.layoutsTableModel = new TableModelLayouts(layouts);
+		this.layoutsTableModel = new TableModelLayout(layouts);
 		return this.layoutsTableModel;
 	}
 
 	//获得场景（第二层）model
 	public TableModel getScenesTableModel(Scenes scenes) {
-		this.scenesTableModel = new TableModelScenes(scenes);
+		this.scenesTableModel = new TableModelScene(scenes);
 		return this.scenesTableModel;
 	}
 
 	//获得数据集（第三层）model
 	public TableModel getDatasourceTableModel(Datasource datasource) {
-		this.datasourceTableModel = new TableModelDatasource(datasource);
+		this.datasourceTableModel = new TableModelDataset(datasource);
 		return this.datasourceTableModel;
 	}
 
 	//获得特定类型数据集（第三层）model
 	public TableModel getDatasourceTypeTableModel(Datasource datasource, DatasetType datasetType) {
-		this.datasourceTypeTableModel = new TableModelDatasType(datasource, datasetType);
+		this.datasourceTypeTableModel = new TableModelDatasetType(datasource, datasetType);
 		return this.datasourceTypeTableModel;
 	}
 }

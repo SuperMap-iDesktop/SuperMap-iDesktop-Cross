@@ -1,6 +1,6 @@
 package com.supermap.desktop.workspacemanagerwindow;
 
-import com.supermap.data.Layouts;
+import com.supermap.data.Maps;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 
@@ -13,12 +13,12 @@ import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindow
 /**
  * @author YuanR
  */
-public class TableModelLayouts extends AbstractTableModel {
-	Layouts layouts;
+public class TableModelMap extends AbstractTableModel {
+	Maps maps;
 
 	//获得工作空间以及列名
-	public TableModelLayouts(Layouts layouts) {
-		this.layouts = layouts;
+	public TableModelMap(Maps maps) {
+		this.maps = maps;
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class TableModelLayouts extends AbstractTableModel {
 
 	@Override
 	public int getRowCount() {
-		return this.layouts.getCount();
+		return this.maps.getCount();
 	}
 
 	@Override
@@ -44,12 +44,12 @@ public class TableModelLayouts extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int row, int col) {
 		//增加">0"判断，防止索引越界
-		if (this.layouts.getCount() > 0) {
+		if (this.maps.getCount() > 0) {
 			if (col == COLUMN_NAME) {
-				return this.layouts.get(row);
+				return this.maps.get(row);
 			}
 			if (col == COLUMN_TYPE) {
-				return ControlsProperties.getString("String_ToolBar_HideLayout");
+				return ControlsProperties.getString("String_ToolBar_HideMap");
 			}
 		}
 		return "";
@@ -63,5 +63,8 @@ public class TableModelLayouts extends AbstractTableModel {
 		}
 	}
 }
+
+
+
 
 
