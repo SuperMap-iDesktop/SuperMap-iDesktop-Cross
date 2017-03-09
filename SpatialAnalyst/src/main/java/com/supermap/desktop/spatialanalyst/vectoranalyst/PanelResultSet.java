@@ -77,7 +77,7 @@ public class PanelResultSet extends JPanel {
 	public PanelResultSet() {
 		initComponent();
 		initResources();
-		setPanelResultSetLayout();
+		setOtherPanelResultSetLayout();
 //		setOtherPanelResultSetLayout();
 	}
 
@@ -114,37 +114,37 @@ public class PanelResultSet extends JPanel {
 		this.labelSemicircleLineSegment.setText(SpatialAnalystProperties.getString("String_Label_SemicircleLineSegment"));
 	}
 
-	private void setPanelResultSetLayout() {
-		this.setBorder(BorderFactory.createTitledBorder(CommonProperties.getString("String_GroupBox_ParamSetting")));
-		GroupLayout panelResultSetLayout = new GroupLayout(this);
-		panelResultSetLayout.setAutoCreateContainerGaps(true);
-		panelResultSetLayout.setAutoCreateGaps(true);
-		this.setLayout(panelResultSetLayout);
-
-		//@formatter:off
-		panelResultSetLayout.setHorizontalGroup(panelResultSetLayout.createSequentialGroup()
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.checkBoxUnionBuffer)
-						.addComponent(this.checkBoxDisplayInMap)
-						.addComponent(this.labelSemicircleLineSegment))
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.checkBoxRemainAttributes)
-						.addComponent(this.checkBoxDisplayInScene)
-						.addComponent(this.textFieldSemicircleLineSegment,5,5,Short.MAX_VALUE)));
-		
-		panelResultSetLayout.setVerticalGroup(panelResultSetLayout.createSequentialGroup()
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.checkBoxUnionBuffer)
-						.addComponent(this.checkBoxRemainAttributes))
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
-						.addComponent(this.checkBoxDisplayInMap)
-						.addComponent(this.checkBoxDisplayInScene))
-				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.BASELINE)
-						.addComponent(this.labelSemicircleLineSegment)
-						.addComponent(this.textFieldSemicircleLineSegment)));
-		
-		//@formatter:on
-	}
+//	private void setPanelResultSetLayout() {
+//		this.setBorder(BorderFactory.createTitledBorder(CommonProperties.getString("String_GroupBox_ParamSetting")));
+//		GroupLayout panelResultSetLayout = new GroupLayout(this);
+//		panelResultSetLayout.setAutoCreateContainerGaps(true);
+//		panelResultSetLayout.setAutoCreateGaps(true);
+//		this.setLayout(panelResultSetLayout);
+//
+//		//@formatter:off
+//		panelResultSetLayout.setHorizontalGroup(panelResultSetLayout.createSequentialGroup()
+//				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
+//						.addComponent(this.checkBoxUnionBuffer)
+//						.addComponent(this.checkBoxDisplayInMap)
+//						.addComponent(this.labelSemicircleLineSegment))
+//				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
+//						.addComponent(this.checkBoxRemainAttributes)
+//						.addComponent(this.checkBoxDisplayInScene)
+//						.addComponent(this.textFieldSemicircleLineSegment,5,5,Short.MAX_VALUE)));
+//
+//		panelResultSetLayout.setVerticalGroup(panelResultSetLayout.createSequentialGroup()
+//				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
+//						.addComponent(this.checkBoxUnionBuffer)
+//						.addComponent(this.checkBoxRemainAttributes))
+//				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.LEADING)
+//						.addComponent(this.checkBoxDisplayInMap)
+//						.addComponent(this.checkBoxDisplayInScene))
+//				.addGroup(panelResultSetLayout.createParallelGroup(Alignment.BASELINE)
+//						.addComponent(this.labelSemicircleLineSegment)
+//						.addComponent(this.textFieldSemicircleLineSegment)));
+//
+//		//@formatter:on
+//	}
 
 	public void setOtherPanelResultSetLayout() {
 		this.setBorder(BorderFactory.createTitledBorder(CommonProperties.getString("String_GroupBox_ParamSetting")));
