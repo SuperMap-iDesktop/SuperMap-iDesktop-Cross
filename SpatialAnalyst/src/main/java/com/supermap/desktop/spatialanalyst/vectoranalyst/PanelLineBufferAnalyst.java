@@ -180,7 +180,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.panelBufferData = new PanelBufferData();
 		this.panelResultData = new PanelResultData();
 		this.panelResultSet = new PanelResultSet();
-		this.panelResultSet.setOtherPanelResultSetLayout();
 		this.setLayout(new BorderLayout());
 		this.add(this.panelBasic, BorderLayout.CENTER);
 
@@ -350,7 +349,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 							this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
 							this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(activeLayer[i].getDataset().getDatasource().getDatasets());
 							this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(activeLayer[i].getDataset());
-							recordset = activeLayer[i].getSelection().toRecordset();
+							this.recordset = activeLayer[i].getSelection().toRecordset();
 							this.panelBufferData.getCheckBoxGeometrySelect().setEnabled(true);
 							this.panelBufferData.getCheckBoxGeometrySelect().setSelected(true);
 							setComponentEnabled();
@@ -389,8 +388,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 				this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(selectedDataset.getDatasource().getDatasets());
 				if (selectedDataset.getType() == DatasetType.LINE || selectedDataset.getType() == DatasetType.NETWORK) {
 					this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(selectedDataset);
-				} else {
-					setComboBoxDatasetNotNull(false);
 				}
 			} else {
 				initDatasourceAndDataSet();
@@ -517,9 +514,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 			if (sourceDatasetVector.getRecordCount() > 0) {
 				createResultDataset(sourceDatasetVector);
 			}
-
-			this.radiusLeft = numericFieldComboBoxLeft.getSelectedItem().toString();
-			this.radiusRight = numericFieldComboBoxRight.getSelectedItem().toString();
+			// TODO yuanR 2017.3.9
+			this.radiusLeft = numericFieldComboBoxLeft.getSelectedItem();
+			this.radiusRight = numericFieldComboBoxRight.getSelectedItem();
 
 			if (this.radioButtonBufferTypeRound.isSelected()) {
 				bufferAnalystParameter.setEndType(BufferEndType.ROUND);

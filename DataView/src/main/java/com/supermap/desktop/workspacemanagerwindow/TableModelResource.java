@@ -13,7 +13,7 @@ import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindow
 /**
  * @author YuanR
  */
-public class TableModelResources extends AbstractTableModel {
+public class TableModelResource extends AbstractTableModel {
 	@Override
 	public String getColumnName(int column) {
 		if (column == COLUMN_NAME) {

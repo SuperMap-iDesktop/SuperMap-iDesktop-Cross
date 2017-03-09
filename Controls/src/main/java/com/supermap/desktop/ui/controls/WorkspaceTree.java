@@ -1723,7 +1723,6 @@ public class WorkspaceTree extends JTree implements IDisposable {
             tempNode.setUserObject(tempNodeData);
             updateUI();
         }
-
     }
 
     private class WorkspaceTreeSceneAddedListener implements SceneAddedListener {

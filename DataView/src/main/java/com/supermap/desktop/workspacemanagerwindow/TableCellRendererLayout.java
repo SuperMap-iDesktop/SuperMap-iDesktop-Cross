@@ -11,7 +11,7 @@ import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindow
 /**
  * @author YuanR
  */
-public class TableCellRendererLayouts extends DefaultTableCellRenderer {
+public class TableCellRendererLayout extends DefaultTableCellRenderer {
 
 	public Component getTableCellRendererComponent(JTable table, Object value,
 	                                               boolean isSelected, boolean hasFocus, int row, int column) {

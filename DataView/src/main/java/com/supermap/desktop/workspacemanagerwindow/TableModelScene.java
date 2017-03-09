@@ -1,26 +1,24 @@
 package com.supermap.desktop.workspacemanagerwindow;
 
-import com.supermap.data.Datasources;
-import com.supermap.desktop.dataview.DataViewProperties;
+import com.supermap.data.Scenes;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_NAME;
-import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_NUMBER;
-import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_PATH;
 import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_TYPE;
 
 /**
  * @author YuanR
  */
-public class TableModelDatasources extends AbstractTableModel {
-	Datasources datasources;
+public class TableModelScene extends AbstractTableModel {
+	Scenes scenes;
 
 	//获得工作空间以及列名
-	public TableModelDatasources(Datasources datasources) {
-		this.datasources = datasources;
+	public TableModelScene(Scenes scenes) {
+		this.scenes = scenes;
 	}
 
 	@Override
@@ -29,17 +27,13 @@ public class TableModelDatasources extends AbstractTableModel {
 			return CommonProperties.getString("String_Name");
 		} else if (column == COLUMN_TYPE) {
 			return CommonProperties.getString("String_Type");
-		} else if (column == COLUMN_NUMBER) {
-			return DataViewProperties.getString("String_ObjectCount");
-		} else if (column == COLUMN_PATH) {
-			return DataViewProperties.getString("String_Path");
 		}
 		return "";
 	}
 
 	@Override
 	public int getRowCount() {
-		return this.datasources.getCount();
+		return this.scenes.getCount();
 	}
 
 	@Override
@@ -50,18 +44,12 @@ public class TableModelDatasources extends AbstractTableModel {
 	@Override
 	public Object getValueAt(int row, int col) {
 		//增加">0"判断，防止索引越界
-		if (this.datasources.getCount() > 0) {
+		if (this.scenes.getCount() > 0) {
 			if (col == COLUMN_NAME) {
-				return this.datasources.get(row).getAlias();
+				return this.scenes.get(row);
 			}
 			if (col == COLUMN_TYPE) {
-				return this.datasources.get(row).getEngineType();
-			}
-			if (col == COLUMN_NUMBER) {
-				return this.datasources.get(row).getDatasets().getCount();
-			}
-			if (col == COLUMN_PATH) {
-				return this.datasources.get(row).getConnectionInfo().getServer();
+				return ControlsProperties.getString("String_ToolBar_HideScene");
 			}
 		}
 		return "";
@@ -75,4 +63,5 @@ public class TableModelDatasources extends AbstractTableModel {
 		}
 	}
 }
+
 
