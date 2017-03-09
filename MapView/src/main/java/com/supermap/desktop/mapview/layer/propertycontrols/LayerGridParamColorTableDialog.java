@@ -325,6 +325,21 @@ public class LayerGridParamColorTableDialog extends SmDialog{
             }
         });
 
+        //  The default color scheme is the default color scheme to generate the same number of colors in the current layer
+        buttonDefaultColotTable.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int count = keysOrigin.length;
+                Colors colors = comboBoxColor.getGradientColors(count);
+                if (colors == null) {
+                    return;
+                }
+                colorsWithKeysTableModel.setColorNodes(colors.toArray(),keysOrigin);
+                tableColor.repaint();//解决颜色列刷新不全的问题
+                tableChange();
+            }
+        });
+
         tableColor.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -776,7 +791,7 @@ public class LayerGridParamColorTableDialog extends SmDialog{
         }else {
             resetCurrentLayerSettingGrid(keys, colors);
         }
-
+        colorsWithKeysTableModel.fireTableDataChanged();
         fireColorTableChange(new ColorTableChangeEvent(this,keys,colors));
     }
 
