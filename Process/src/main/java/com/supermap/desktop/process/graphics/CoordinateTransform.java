@@ -1,7 +1,6 @@
 package com.supermap.desktop.process.graphics;
 
 import com.supermap.desktop.Application;
-import javafx.scene.transform.Affine;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
