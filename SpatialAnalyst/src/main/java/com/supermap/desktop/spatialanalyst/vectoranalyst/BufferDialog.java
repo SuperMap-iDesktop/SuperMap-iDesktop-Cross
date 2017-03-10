@@ -9,6 +9,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
@@ -20,6 +21,7 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class BufferDialog extends SmDialog {
 	/**
@@ -40,8 +42,8 @@ public class BufferDialog extends SmDialog {
 	// 确定/取消按钮面板
 	private PanelButton panelButton;
 	private MapControl mapControl;
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(620, 348);
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(620, 390);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(620, 360);
+	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(620, 400);
 	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(650, 380);
 	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(650, 420);
 	private LocalActionListener localActionListener = new LocalActionListener();
@@ -82,11 +84,14 @@ public class BufferDialog extends SmDialog {
 		// 打开地图时，如果选中点面或线数据集时，初始化打开界面为对应的选中缓冲区类型界面，如果选中的数据类型没有点，面，线，网络等类型时，默认打开线缓冲区界面
 		if (Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 			this.mapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
-			layersCount = this.mapControl.getMap().getLayers().getCount();
+			// 不能直接获得地图中的所有图层，没有考虑图层分组的情况，会导致报错--yuanR 2017.3.10
+			ArrayList<Layer> arrayList ;
+			arrayList = MapUtilities.getLayers(this.mapControl.getMap(),true);
+			layersCount = arrayList.size();
 			if (layersCount > 0) {
 				for (int i = 0; i < layersCount; i++) {
 					Layer[] activeLayer = new Layer[layersCount];
-					activeLayer[i] = mapControl.getMap().getLayers().get(i);
+					activeLayer[i] = arrayList.get(i);
 					if (activeLayer[i].getSelection() != null && activeLayer[i].getSelection().getCount() != 0) {
 						if (activeLayer[i].getDataset().getType() == DatasetType.POINT || activeLayer[i].getDataset().getType() == DatasetType.REGION) {
 							getPointorRegionType();

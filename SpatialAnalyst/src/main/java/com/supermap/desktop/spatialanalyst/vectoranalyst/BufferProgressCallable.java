@@ -16,6 +16,7 @@ import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
 import javax.swing.*;
+import java.text.MessageFormat;
 import java.util.concurrent.CancellationException;
 
 public class BufferProgressCallable extends UpdateProgressCallable {
@@ -49,6 +50,7 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 		this.union = union;
 		this.isAttributeRetained = isAttributeRetained;
 		this.isShowInMap = isShowInMap;
+
 	}
 
 	@Override
@@ -56,19 +58,51 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 		Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreating"));
 		try {
 			createBufferAnalyst = false;
+			// 根据源数据集设置不同的成功提示信息--yuanR 2017.3.10
+			String CreatedSuccessMessage = "";
+			String CreatedFailedMessage = "";
+
 			BufferAnalyst.addSteppedListener(steppedListener);
 			if (this.sourceData instanceof DatasetVector && resultDatasetVector != null) {
+				long startTime = System.currentTimeMillis();
 				createBufferAnalyst = BufferAnalyst.createBuffer((DatasetVector) sourceData, resultDatasetVector, bufferAnalystParameter, union,
 						isAttributeRetained);
+				long endTime = System.currentTimeMillis();
+				String time = String.valueOf((endTime - startTime) / 1000.0);
+
+				CreatedSuccessMessage =
+						((DatasetVector) sourceData).getName() + "@" + ((DatasetVector) sourceData).getDatasource().getAlias() + " -> " +
+								resultDatasetVector.getName() + "@" + resultDatasetVector.getDatasource().getAlias() +
+								"," + SpatialAnalystProperties.getString("String_BufferCreatedSuccess")
+								+ MessageFormat.format(SpatialAnalystProperties.getString("String_OverlayAnalyst_CostSeconds"), time);
+
+				CreatedFailedMessage =
+						((DatasetVector) sourceData).getName() + "@" + ((DatasetVector) sourceData).getDatasource().getAlias() + " -> " +
+								resultDatasetVector.getName() + "@" + resultDatasetVector.getDatasource().getAlias() +
+								"," + SpatialAnalystProperties.getString("String_BufferCreatedFailed");
+
 			} else if (this.sourceData instanceof Recordset && resultDatasetVector != null) {
+				long startTime = System.currentTimeMillis();
 				createBufferAnalyst = BufferAnalyst.createBuffer((Recordset) sourceData, resultDatasetVector, bufferAnalystParameter, union,
 						isAttributeRetained);
+				long endTime = System.currentTimeMillis();
+				String time = String.valueOf((endTime - startTime) / 1000.0);
+				CreatedSuccessMessage =
+						SpatialAnalystProperties.getString("String_CheckeBox_BufferSelectedRecordset") + ":" +
+								((Recordset) sourceData).getDataset().getName() + "@" + ((Recordset) sourceData).getDataset().getDatasource().getAlias() + " -> " +
+								resultDatasetVector.getName() + "@" + resultDatasetVector.getDatasource().getAlias() +
+								"," + SpatialAnalystProperties.getString("String_BufferCreatedSuccess")
+								+ MessageFormat.format(SpatialAnalystProperties.getString("String_OverlayAnalyst_CostSeconds"), time);
+
+				CreatedFailedMessage =
+						SpatialAnalystProperties.getString("String_CheckeBox_BufferSelectedRecordset") + ":" +
+								((Recordset) sourceData).getDataset().getName() + "@" + ((Recordset) sourceData).getDataset().getDatasource().getAlias() + " -> " +
+								resultDatasetVector.getName() + "@" + resultDatasetVector.getDatasource().getAlias() +
+								"," + SpatialAnalystProperties.getString("String_BufferCreatedFailed");
 			}
 			if (createBufferAnalyst) {
 				setSucceed(true);
-				// yuanRyuanR是否修改待议
-				Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreatedSuccess"));
-//				Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreatedSuccess")+resultDatasetVector.getName() +"@"+resultDatasetVector.getDatasource().getAlias());
+				Application.getActiveApplication().getOutput().output(CreatedSuccessMessage);
 				if (isShowInMap) {
 					SwingUtilities.invokeLater(new Runnable() {
 
@@ -80,8 +114,7 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 				}
 			} else {
 				setSucceed(false);
-				Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreatedFailed"));
-
+				Application.getActiveApplication().getOutput().output(CreatedFailedMessage);
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreatedFailed"));
