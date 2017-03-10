@@ -418,6 +418,9 @@ public class OverlayAnalystDialog extends SmDialog {
 		initPanelOverlayAnalystLayout();
 		initPanelTargetLayout();
 		JScrollPane scrollPane = new JScrollPane();
+		// hanyz 2017.3.9
+		scrollPane.setPreferredSize(new Dimension(100, 120));
+		scrollPane.setMinimumSize(new Dimension(100, 120));
 		listOverlayAnalystType.setCellRenderer(new ListCellRenderer<Object>() {
 
 			@Override

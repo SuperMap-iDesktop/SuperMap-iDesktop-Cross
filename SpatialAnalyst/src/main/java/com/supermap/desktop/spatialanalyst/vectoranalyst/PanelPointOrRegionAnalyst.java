@@ -380,7 +380,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 				isShowInMap = false;
 			}
 			// 获得缓冲长度
-			this.radius = this.panelBufferRadius.getNumericFieldComboBox().getSelectedItem().toString();
+			// TODO yuanR 2017.3.9
+			this.radius = this.panelBufferRadius.getNumericFieldComboBox().getSelectedItem();
 			// 设置缓冲区参数
 			bufferAnalystParameter.setLeftDistance(this.radius);
 			bufferAnalystParameter.setEndType(BufferEndType.ROUND);

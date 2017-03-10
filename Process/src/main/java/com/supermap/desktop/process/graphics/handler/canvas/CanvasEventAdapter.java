@@ -9,6 +9,16 @@ import java.awt.event.MouseWheelEvent;
 public abstract class CanvasEventAdapter implements CanvasEventHandler {
 
 	@Override
+	public boolean enable() {
+		return true;
+	}
+
+	@Override
+	public void setEnable(boolean enable) {
+		// do nothing
+	}
+
+	@Override
 	public void mouseClicked(MouseEvent e) {
 
 	}

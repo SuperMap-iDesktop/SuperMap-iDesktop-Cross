@@ -12,20 +12,20 @@ import com.supermap.desktop.process.graphics.graphs.decorator.SelectedDecorator;
 import com.supermap.desktop.process.graphics.handler.canvas.CanvasEventHandler;
 import com.supermap.desktop.process.graphics.handler.graph.DefaultGraphEventHanderFactory;
 import com.supermap.desktop.process.graphics.handler.graph.IGraphEventHandlerFactory;
+import com.supermap.desktop.process.graphics.interaction.CanvasTranslation;
+import com.supermap.desktop.process.graphics.interaction.GraphCreation;
 import com.supermap.desktop.process.graphics.interaction.MultiSelction;
 import com.supermap.desktop.process.graphics.interaction.Selection;
 import com.supermap.desktop.process.graphics.painter.DefaultGraphPainterFactory;
 import com.supermap.desktop.process.graphics.painter.IGraphPainterFactory;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.graphics.storage.ListGraphs;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.geom.RoundRectangle2D;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -36,10 +36,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * 图上流程在运行的时候解析为邻接矩阵，任务运行模块查找所有起点，同时开始执行，遇到等待状态的节点则等待，条件达成继续执行。（最简单的执行方案，无需特定结构存储执行过程）
  * 几种行为以及对应的事件需求
  * 1. 创建一个元素（MouseClicked）
- * 2. 选择元素（MouseClicked）
+ * 2. 选择元素（MouseClicked/MouseDragged）
  * 3. 拖拽元素（MosueClicked MouseMoved/MouseDragged）
  * 4. 连接元素（MouseClicked MouseMoved/MosueDragged）
  * 5. hot 元素（MouseMoved）
+ * 优先级：创建 - 拖拽/连接 - 选择 - hot
  */
 public class GraphCanvas extends JComponent implements MouseListener, MouseMotionListener, MouseWheelListener {
 	public final static Color DEFAULT_BACKGROUNDCOLOR = new Color(11579568);
@@ -47,26 +48,23 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
 
-	private IGraphStorage graphStorage = new ListGraphs(); // 画布元素的存储结构
-	private CoordinateTransform coordinateTransform = new CoordinateTransform(); // 用以在画布平移、缩放等操作过后进行坐标转换
+	private IGraphStorage graphStorage =
+			new ListGraphs(); // 画布元素的存储结构
+	private CoordinateTransform coordinateTransform = new CoordinateTransform(this); // 用以在画布平移、缩放等操作过后进行坐标转换
 	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory(this); // 元素绘制的可扩展类
 	private IGraphEventHandlerFactory graphHandlerFactory = new DefaultGraphEventHanderFactory(); // 在某具体元素上进行的可扩展交互类
 	private ConcurrentHashMap<Class, CanvasEventHandler> canvasHandlers = new ConcurrentHashMap<>(); // 统一入口的画布事件接口，通过添加 CanvasEventHandler 对象实现 Canvas 的事件处理
 
+	private CanvasTranslation translation = new CanvasTranslation(this);
+	private GraphCreation creation = new GraphCreation(this);
 	private Selection selection = new MultiSelction(this);
 	private AbstractDecorator hotDecorator = new HotDecorator(this);
 	private AbstractDecorator selectedDecorator = new SelectedDecorator(this); // 目前还没有支持多选，就先这样用单例修饰
-	private AbstractDecorator previewDecorator = new PreviewDecorator(this);
 	private IGraph previewGraph;
 
 	//	private QuadTreeTemp<IGraph> graphQuadTree = new QuadTreeTemp<>();
 	private ArrayList<LineGraph> lines = new ArrayList<>();
-	private double scale = 1.0;
-	private IGraph selectedGraph; // Decorator 的类结构还需要优化，现在接收 AbstractGraph 会导致 hot selected preview Decorator 扩展不易
 
-	private IGraph draggedGraph;
-	private Point dragBegin;
-	private Point dragCenter;
 	private LineGraph line;
 
 	private ArrayList<GraphSelectChangedListener> selectChangedListeners = new ArrayList<>();
@@ -94,7 +92,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				graph.setArcHeight(10);
 				graph.setArcWidth(10);
 
-				canvas.createGraph(graph);
+				canvas.creation.create(graph);
 			}
 		});
 
@@ -169,6 +167,30 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		this.canvasHandlers.put(c, handler);
 	}
 
+	public CoordinateTransform getCoordinateTransform() {
+		return coordinateTransform;
+	}
+
+	public void setCoordinateTransform(CoordinateTransform coordinateTransform) {
+		this.coordinateTransform = coordinateTransform;
+	}
+
+	public IGraphStorage getGraphStorage() {
+		return graphStorage;
+	}
+
+	public void setGraphStorage(IGraphStorage graphStorage) {
+		this.graphStorage = graphStorage;
+	}
+
+	public IGraphPainterFactory getPainterFactory() {
+		return painterFactory;
+	}
+
+	public void setPainterFactory(IGraphPainterFactory painterFactory) {
+		this.painterFactory = painterFactory;
+	}
+
 	public void setSelectedDecorator(IGraph selectedDecorator) {
 
 	}
@@ -203,7 +225,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 //		graphics2D.setStroke(stroke);
 //		Rectangle rectangle = new Rectangle(3, 3, 5, 5);
 //		graphics2D.draw(rectangle);
-		AffineTransform origin = graphics2D.getTransform();
+
 
 		// 测试 AffineTransform 的缩放和平移变换
 //		AffineTransform transform = new AffineTransform();
@@ -225,11 +247,15 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 //		graphics2D.draw(round);
 
 		// Canvas 自身绘制
+		AffineTransform origin = graphics2D.getTransform();
+		graphics2D.setTransform(this.coordinateTransform.getAffineTransform());
 		setViewRenderingHints(graphics2D);
 		paintBackground(graphics2D);
 		paintCanvas(graphics2D);
 		paintGraphs(graphics2D);
 		graphics2D.setTransform(origin);
+
+		this.creation.paint(graphics2D);
 		this.selection.paint(graphics2D);
 
 		// 默认 AffineTransform 的测试
@@ -288,16 +314,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			this.painterFactory.getPainter(lineGraph, g).paint();
 		}
 
-		this.selectedDecorator.decorate((AbstractGraph) this.selectedGraph);
-		this.previewDecorator.decorate((AbstractGraph) this.previewGraph);
 		this.painterFactory.getPainter(this.hotDecorator, g).paint();
 		this.painterFactory.getPainter(this.selectedDecorator, g).paint();
-		this.painterFactory.getPainter(this.previewDecorator, g).paint();
 
 		this.painterFactory.getPainter(this.line, g).paint();
 	}
 
-	protected Rectangle getCanvasViewBounds() {
+	public Rectangle getCanvasViewBounds() {
 		return new Rectangle(0, 0, getWidth(), getHeight());
 	}
 
@@ -340,6 +363,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			entry.getValue().mouseClicked(e);
 		}
 
+		this.creation.mouseClicked(e);
 		this.selection.mouseClicked(e);
 	}
 
@@ -373,9 +397,12 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			entry.getValue().mousePressed(e);
+			if (entry.getValue().enable()) {
+				entry.getValue().mousePressed(e);
+			}
 		}
 
+		this.creation.mousePressed(e);
 		this.selection.mousePressed(e);
 	}
 
@@ -386,9 +413,12 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			entry.getValue().mouseReleased(e);
+			if (entry.getValue().enable()) {
+				entry.getValue().mouseReleased(e);
+			}
 		}
 
+		this.creation.mouseReleased(e);
 		this.selection.mouseReleased(e);
 	}
 
@@ -399,9 +429,12 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			entry.getValue().mouseEntered(e);
+			if (entry.getValue().enable()) {
+				entry.getValue().mouseEntered(e);
+			}
 		}
 
+		this.creation.mouseEntered(e);
 		this.selection.mouseEntered(e);
 	}
 
@@ -412,9 +445,12 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			entry.getValue().mouseExited(e);
+			if (entry.getValue().enable()) {
+				entry.getValue().mouseExited(e);
+			}
 		}
 
+		this.creation.mouseExited(e);
 		this.selection.mouseExited(e);
 	}
 
@@ -425,9 +461,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			entry.getValue().mouseDragged(e);
+			if (entry.getValue().enable()) {
+				entry.getValue().mouseDragged(e);
+			}
 		}
 
+		this.translation.mouseDragged(e);
+		this.creation.mouseDragged(e);
 		this.selection.mouseDragged(e);
 	}
 
@@ -449,9 +489,12 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			entry.getValue().mouseMoved(e);
+			if (entry.getValue().enable()) {
+				entry.getValue().mouseMoved(e);
+			}
 		}
 
+		this.creation.mouseMoved(e);
 		this.selection.mouseMoved(e);
 	}
 
@@ -475,9 +518,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			entry.getValue().mouseWheelMoved(e);
+			if (entry.getValue().enable()) {
+				entry.getValue().mouseWheelMoved(e);
+			}
 		}
 
+		this.translation.mouseWheelMoved(e);
+		this.creation.mouseWheelMoved(e);
 		this.selection.mouseWheelMoved(e);
 	}
 

@@ -25,7 +25,7 @@ import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindow
 /**
  * @author YuanR
  */
-public class TableModelDatasType extends AbstractTableModel {
+public class TableModelDatasetType extends AbstractTableModel {
 	private Datasource datasource;
 	private DatasetType datasetType;
 	private DatasetVector datasetVector;
@@ -38,7 +38,7 @@ public class TableModelDatasType extends AbstractTableModel {
 	private Dataset[] aimDataset;
 
 	//获得工作空间以及列名
-	public TableModelDatasType(Datasource datasource, DatasetType dataType) {
+	public TableModelDatasetType(Datasource datasource, DatasetType dataType) {
 		this.datasetType = dataType;
 		this.datasource = datasource;
 		//预处理
@@ -85,7 +85,7 @@ public class TableModelDatasType extends AbstractTableModel {
 		//增加">0"判断，防止索引越界
 		if (sum > 0) {
 			if (col == COLUMN_NAME) {
-				return this.aimDataset[row].getName();
+				return this.aimDataset[row];
 			}
 			if (col == COLUMN_TYPE) {
 				String replaceString = DataViewProperties.getString("String_Dataset_T");

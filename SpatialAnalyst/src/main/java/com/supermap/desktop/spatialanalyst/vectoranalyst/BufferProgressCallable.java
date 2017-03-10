@@ -42,7 +42,7 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 	};
 
 	public BufferProgressCallable(Object sourceData, DatasetVector resultDatasetVector, BufferAnalystParameter bufferAnalystParameter, boolean union,
-			boolean isAttributeRetained, boolean isShowInMap) {
+	                              boolean isAttributeRetained, boolean isShowInMap) {
 		this.sourceData = sourceData;
 		this.resultDatasetVector = resultDatasetVector;
 		this.bufferAnalystParameter = bufferAnalystParameter;
