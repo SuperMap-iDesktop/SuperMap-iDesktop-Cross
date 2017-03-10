@@ -1,69 +1,80 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.ParameterPanels.ParameterEnumPanel;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
+import com.supermap.desktop.process.util.EnumParser;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * @author XiaJT
+ * @author xie
  */
 public class ParameterEnum extends AbstractParameter implements ISelectionParameter {
 
-	// todo 枚举类型如何资源化
-	private JPanel panel;
-	private Class enumClass;
-	private Object value;
-	private String describe;
-//	private Class enumDescribeClassName;
+    private JPanel panel;
+    private EnumParser parser;
+    private ParameterDataNode value;
+    private String describe;
 
-	@Override
-	public String getType() {
-		return ParameterType.ENUM;
-	}
+    public ParameterEnum(EnumParser parser) {
+        this.parser = parser;
+    }
 
-	@Override
-	public JPanel getPanel() {
-		if (panel == null) {
-			panel = new ParameterEnumPanel(this);
-		}
-		return panel;
-	}
+    @Override
+    public String getType() {
+        return ParameterType.ENUM;
+    }
 
-	@Override
-	public void setSelectedItem(Object value) {
-		Object oldValue = this.value;
-		this.value = value;
-		firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, value));
-	}
+    @Override
+    public JPanel getPanel() {
+        if (panel == null) {
+            panel = new ParameterEnumPanel(this);
+        }
+        return panel;
+    }
 
-	@Override
-	public Object getSelectedItem() {
-		return value;
-	}
+    @Override
+    public void setSelectedItem(Object value) {
+        if (!(value instanceof ParameterDataNode)) {
+            CopyOnWriteArrayList<ParameterDataNode> items = parser.getEnumItems();
+            for (ParameterDataNode item : items) {
+                if ((value instanceof String && value.equals(item.getDescribe())) || item.getData() == value) {
+                    value = item;
+                    break;
+                }
+            }
+        }
+        if (value instanceof ParameterDataNode) {
+            ParameterDataNode oldValue = this.value;
+            this.value = (ParameterDataNode) value;
+            firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, value));
+        }
+    }
 
-	public Class getEnumClass() {
-		return enumClass;
-	}
+    @Override
+    public Object getSelectedItem() {
+        return value;
+    }
 
-	public ParameterEnum setEnumClass(Class enumClass) {
-		this.enumClass = enumClass;
-		return this;
-	}
+    public EnumParser getEnumParser() {
+        return parser;
+    }
 
-	public String getDescribe() {
-		return describe;
-	}
+    public String getDescribe() {
+        return describe;
+    }
 
-	public ParameterEnum setDescribe(String describe) {
-		this.describe = describe;
-		return this;
-	}
+    public ParameterEnum setDescribe(String describe) {
+        this.describe = describe;
+        return this;
+    }
 
-	@Override
-	public void dispose() {
+    @Override
+    public void dispose() {
 
-	}
+    }
 }
