@@ -44,26 +44,23 @@ public class ColorTableXmlImpl implements ColorTableXmlInterface {
     }
 
     //  Create XML files based on file name and color table
-    public void createXml(String fileName, ColorDictionary colorDictionary) {
+    @Override
+    public boolean createXml(String fileName, ColorDictionary colorDictionary) {
+        boolean createXMLResult = true;
         Color[] colors = colorDictionary.getColors();
         double[] keys = colorDictionary.getKeys();
         Element root = this.document.createElement(rootName);
         root.setAttribute("version", "1.0");
-        //root.appendChild(this.document.createTextNode("\n    "));
         Element header = this.document.createElement(headerName);
         Element type = this.document.createElement("Type");
         type.appendChild(this.document.createTextNode(typeName));
         Element ItemCount = this.document.createElement(itemCount);
         ItemCount.appendChild(this.document.createTextNode(String.valueOf(keys.length)));
-        //header.appendChild(this.document.createTextNode("\n        "));
         header.appendChild(type);
-        //header.appendChild(this.document.createTextNode("\n        "));
         header.appendChild(ItemCount);
 
-        //root.appendChild(this.document.createTextNode("\n    "));
         Element items = this.document.createElement(itemsName);
         for (int i = 0; i < keys.length; i++) {
-            //items.appendChild(this.document.createTextNode("\n        "));
             Element item = this.document.createElement(itemName);
             item.setAttribute(colorName, aRGBtoHexValue(colors[i].getAlpha()) + aRGBtoHexValue(colors[i].getRed()) + aRGBtoHexValue(colors[i].getGreen()) + aRGBtoHexValue(colors[i].getBlue()));
             item.setAttribute(valueName, String.valueOf(keys[i]));
@@ -81,19 +78,22 @@ public class ColorTableXmlImpl implements ColorTableXmlInterface {
             PrintWriter pw = new PrintWriter(new FileOutputStream(fileName));
             StreamResult result = new StreamResult(pw);
             transformer.transform(source, result);
+            pw.close();
         } catch (TransformerConfigurationException e) {
-            Application.getActiveApplication().getOutput().output(e);
+            createXMLResult = false;
         } catch (IllegalArgumentException e) {
-            Application.getActiveApplication().getOutput().output(e);
+            createXMLResult = false;
         } catch (FileNotFoundException e) {
-            Application.getActiveApplication().getOutput().output(e);
+            createXMLResult = false;
         } catch (TransformerException e) {
-            Application.getActiveApplication().getOutput().output(e);
+            createXMLResult = false;
         }
+        return createXMLResult;
     }
 
     //   Parse the color table file according to the file name
     //    warnging  parameter filename  meaning file-path
+    @Override
     public ColorDictionary parserXml(String fileName) {
         ColorDictionary colorDictionary = new ColorDictionary();
         try {
@@ -121,13 +121,13 @@ public class ColorTableXmlImpl implements ColorTableXmlInterface {
             }
 
         } catch (FileNotFoundException e) {
-            Application.getActiveApplication().getOutput().output(e);
+            return null;
         } catch (ParserConfigurationException e) {
-            Application.getActiveApplication().getOutput().output(e);
+            return null;
         } catch (SAXException e) {
-            Application.getActiveApplication().getOutput().output(e);
+            return null;
         } catch (IOException e) {
-            Application.getActiveApplication().getOutput().output(e);
+            return null;
         }
 
         return colorDictionary;

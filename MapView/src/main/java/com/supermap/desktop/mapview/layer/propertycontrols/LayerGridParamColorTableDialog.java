@@ -40,7 +40,7 @@ import java.util.*;
  * Created by Chens on 2016/12/29 0029.
  * 栅格图层属性颜色表设置
  */
-public class LayerGridParamColorTableDialog extends SmDialog{
+public class LayerGridParamColorTableDialog extends SmDialog {
 
     //region控件
     //工具条
@@ -80,9 +80,7 @@ public class LayerGridParamColorTableDialog extends SmDialog{
     LayerSettingGrid currentLayerSettingGrid;
 
 
-
-
-    public LayerGridParamColorTableDialog(LayerGridParamPropertyModel modelModified){
+    public LayerGridParamColorTableDialog(LayerGridParamPropertyModel modelModified) {
         super();
         this.modelModified = modelModified;
         LayerSettingGrid setting = (LayerSettingGrid) modelModified.getLayers()[0].getAdditionalSetting();
@@ -93,9 +91,9 @@ public class LayerGridParamColorTableDialog extends SmDialog{
         init();
     }
 
-    public LayerGridParamColorTableDialog(LayerSettingGrid layerSettingGrid){
+    public LayerGridParamColorTableDialog(LayerSettingGrid layerSettingGrid) {
         super();
-        this.currentLayerSettingGrid  = new LayerSettingGrid(layerSettingGrid);
+        this.currentLayerSettingGrid = new LayerSettingGrid(layerSettingGrid);
         ColorDictionary colorDictionary = this.currentLayerSettingGrid.getColorDictionary();
         colorsOrigin = colorDictionary.getColors();
         keysOrigin = colorDictionary.getKeys();
@@ -253,7 +251,7 @@ public class LayerGridParamColorTableDialog extends SmDialog{
                         @Override
                         public void propertyChange(PropertyChangeEvent evt) {
                             Color color = (Color) evt.getNewValue();
-                            colorsWithKeysTableModel.insert(selectedRow,color);
+                            colorsWithKeysTableModel.insert(selectedRow, color);
                             tableColor.setRowSelectionInterval(selectedRow + 1, selectedRow + 1);
                             popupMenu.setVisible(false);
                         }
@@ -334,9 +332,10 @@ public class LayerGridParamColorTableDialog extends SmDialog{
                 if (colors == null) {
                     return;
                 }
-                colorsWithKeysTableModel.setColorNodes(colors.toArray(),keysOrigin);
+                colorsWithKeysTableModel.setColorNodes(colors.toArray(), keysOrigin);
                 tableColor.repaint();//解决颜色列刷新不全的问题
                 tableChange();
+                colorsWithKeysTableModel.fireTableDataChanged();
             }
         });
 
@@ -466,14 +465,14 @@ public class LayerGridParamColorTableDialog extends SmDialog{
         buttonExportColorTable.setToolTipText(MapViewProperties.getString("String_ExprotColorTable"));
         buttonExportColorTable.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/Image_ToolButton_Export.png"));
 
-        buttonDefaultColotTable= new SmButton();
+        buttonDefaultColotTable = new SmButton();
         buttonDefaultColotTable.setToolTipText(MapViewProperties.getString("String_DefaultColorTable"));
         buttonDefaultColotTable.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/ColorScheme/defaultColors.png"));
 
         comboBoxColor = new ColorsComboBox(ControlsProperties.getString("String_ColorSchemeManager_Grid_DEM"));
-        comboBoxColor.setPreferredSize(new Dimension(200,25));
+        comboBoxColor.setPreferredSize(new Dimension(200, 25));
         comboBoxColor.setMaximumSize(new Dimension(200, 25));
-        comboBoxColor.setMinimumSize(new Dimension(200,25));
+        comboBoxColor.setMinimumSize(new Dimension(200, 25));
 
         buttonApply = new SmButton();
         buttonCancel = new SmButton();
@@ -530,11 +529,11 @@ public class LayerGridParamColorTableDialog extends SmDialog{
      * 填充控件初始值
      */
     private void initComponentStates() {
-        LayerSettingGrid setting=null;
-        if (modelModified!=null) {
+        LayerSettingGrid setting = null;
+        if (modelModified != null) {
             setting = (LayerSettingGrid) modelModified.getLayers()[0].getAdditionalSetting();
-        }else if (this.currentLayerSettingGrid!=null){
-            setting=this.currentLayerSettingGrid;
+        } else if (this.currentLayerSettingGrid != null) {
+            setting = this.currentLayerSettingGrid;
         }
         colorsWithKeysTableModel.setColorNodes(setting.getColorDictionary().getColors(), setting.getColorDictionary().getKeys());
         if (tableColor.getRowCount() > 0) {
@@ -554,7 +553,7 @@ public class LayerGridParamColorTableDialog extends SmDialog{
         buttonSelectAll.setEnabled(rowCount > 0);
         buttonSelectInvert.setEnabled(rowCount > 0);
         buttonInvertColors.setEnabled(rowCount > 0);
-        buttonInsertColor.setEnabled(selectedRowCount>0);
+        buttonInsertColor.setEnabled(selectedRowCount > 0);
 
         buttonMoveTop.setEnabled(selectedRowCount > 0 && tableColor.getSelectedRows()[selectedRowCount - 1] != selectedRowCount - 1);
         buttonMoveUp.setEnabled(selectedRowCount > 0 && !tableColor.isRowSelected(0));
@@ -665,13 +664,13 @@ public class LayerGridParamColorTableDialog extends SmDialog{
             keys[i] = colorsWithKeysTableModel.getKeys().get(i);
             colors[i] = colorsWithKeysTableModel.getColors().get(i);
         }
-        if (modelModified!=null) {
+        if (modelModified != null) {
             modelModified.setLayerGridColorDictionary(keys, colors);
-        }else {
+        } else {
             resetCurrentLayerSettingGrid(keys, colors);
         }
 
-        fireColorTableChange(new ColorTableChangeEvent(this,keys,colors));
+        fireColorTableChange(new ColorTableChangeEvent(this, keys, colors));
     }
 
     public void actionCanceled() {
@@ -715,9 +714,9 @@ public class LayerGridParamColorTableDialog extends SmDialog{
         }
     }
 
-    private void resetCurrentLayerSettingGrid(double[] keys,Color[] colors){
-        if (this.currentLayerSettingGrid!=null){
-            ColorDictionary colorDictionary=this.currentLayerSettingGrid.getColorDictionary();
+    private void resetCurrentLayerSettingGrid(double[] keys, Color[] colors) {
+        if (this.currentLayerSettingGrid != null) {
+            ColorDictionary colorDictionary = this.currentLayerSettingGrid.getColorDictionary();
             colorDictionary.clear();
             for (int i = 0; i < colors.length; i++) {
                 colorDictionary.setColor(keys[i], colors[i]);
@@ -726,76 +725,79 @@ public class LayerGridParamColorTableDialog extends SmDialog{
         }
     }
 
-    private boolean exportColorTable(){
-        boolean result=true;
+    private boolean exportColorTable() {
+        boolean result = true;
         String moduleName = "ExportColorsTable";
         if (!SmFileChoose.isModuleExist(moduleName)) {
             String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("String_DialogColorTable"), "sctu");
             SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-                    MapViewProperties.getString("String_ExprotColorTable"), moduleName, "SaveOne");
+                    MapViewProperties.getString("String_SaveAsFile"), moduleName, "SaveOne");
         }
         SmFileChoose smFileChoose = new SmFileChoose(moduleName);
         smFileChoose.setSelectedFile(new File("ColorTable.sctu"));
         int state = smFileChoose.showDefaultDialog();
-        String filePath="";
+        String filePath = "";
         if (state == JFileChooser.APPROVE_OPTION) {
             filePath = smFileChoose.getFilePath();
             File file = new File(filePath);
             if (file.isFile() && file.exists()) {
                 file.delete();
             }
-            ColorTableXmlImpl colorTableXml=new ColorTableXmlImpl();
-            ColorDictionary colorDictionary=new ColorDictionary();
+            ColorTableXmlImpl colorTableXml = new ColorTableXmlImpl();
+            ColorDictionary colorDictionary = new ColorDictionary();
             colorDictionary.clear();
             for (int i = 0; i < colorsWithKeysTableModel.getRowCount(); i++) {
-                colorDictionary.setColor(colorsWithKeysTableModel.getKeys().get(i),colorsWithKeysTableModel.getColors().get(i));
+                colorDictionary.setColor(colorsWithKeysTableModel.getKeys().get(i), colorsWithKeysTableModel.getColors().get(i));
             }
-            colorTableXml.createXml(filePath,colorDictionary);
-            Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_DialogColorTableExportSucess")+filePath);
+            if (colorTableXml.createXml(filePath, colorDictionary)) {
+                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_DialogColorTableExportSucess") + filePath);
+            } else {
+                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_DialogColorTableExportFailed"));
+            }
         }
-        else{
-            Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_DialogColorTableExportFailed"));
-        }
+
         return result;
     }
 
-    private void inputColorTable(){
+    private void inputColorTable() {
         String moduleName = "InputColorsTable";
         if (!SmFileChoose.isModuleExist(moduleName)) {
             String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("String_DialogColorTable"), "sctu");
             SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-                    MapViewProperties.getString("String_InputColorTable"), moduleName, "OpenMany");
+                    MapViewProperties.getString("String_OpenColorTable"), moduleName, "OpenMany");
         }
         SmFileChoose smFileChoose = new SmFileChoose(moduleName);
         int state = smFileChoose.showDefaultDialog();
-        String filePath="";
+        String filePath = "";
         if (state == JFileChooser.APPROVE_OPTION) {
             filePath = smFileChoose.getFilePath();
-            ColorTableXmlImpl colorTableXml=new ColorTableXmlImpl();
-            ColorDictionary colorDictionary=new ColorDictionary();
+            ColorTableXmlImpl colorTableXml = new ColorTableXmlImpl();
+            ColorDictionary colorDictionary = new ColorDictionary();
             colorDictionary.clear();
-            colorDictionary= colorTableXml.parserXml(filePath);
-            inputDataChangeColorTable(colorDictionary);
-            Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_DialogColorTableInputSucess")+filePath);
-        }else{
-            Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_DialogColorTableInputFailed"));
+            colorDictionary = colorTableXml.parserXml(filePath);
+            if (colorDictionary != null) {
+                inputDataChangeColorTable(colorDictionary);
+                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_DialogColorTableInputSucess") + filePath);
+            } else {
+                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_DialogColorTableInputFailed"));
+            }
         }
     }
 
-    private void inputDataChangeColorTable(ColorDictionary colorDictionary){
+    private void inputDataChangeColorTable(ColorDictionary colorDictionary) {
         Color[] colors = colorDictionary.getColors();
         double[] keys = colorDictionary.getKeys();
-        colorsWithKeysTableModel.setColorNodes(colors,keys);
-        if (modelModified!=null) {
+        colorsWithKeysTableModel.setColorNodes(colors, keys);
+        if (modelModified != null) {
             modelModified.setLayerGridColorDictionary(keys, colors);
-        }else {
+        } else {
             resetCurrentLayerSettingGrid(keys, colors);
         }
         colorsWithKeysTableModel.fireTableDataChanged();
-        fireColorTableChange(new ColorTableChangeEvent(this,keys,colors));
+        fireColorTableChange(new ColorTableChangeEvent(this, keys, colors));
     }
 
-    public LayerSettingGrid getCurrentLayerSettingGrid(){
+    public LayerSettingGrid getCurrentLayerSettingGrid() {
         return this.currentLayerSettingGrid;
     }
 }
