@@ -211,7 +211,7 @@ public class FormProcess extends FormBaseChild implements IForm {
 		graph.setSize(150, 60);
 		graph.setArcWidth(20);
 		graph.setArcHeight(30);
-		graphCanvas.createGraph(graph);
+//		graphCanvas.createGraph(graph);
 	}
 	//endregion
 }
