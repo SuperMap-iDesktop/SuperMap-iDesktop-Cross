@@ -11,6 +11,7 @@ import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
+import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
 import javax.swing.*;
@@ -36,6 +37,7 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 		parameterComboBox = new ParameterComboBox(ControlsProperties.getString("String_LabelSpatialIndexType"));
 		parameterComboBox.setItems(parameterDataNodes);
 		parameters.setParameters(parameterComboBox);
+		processTask = new ProcessTask(this);
 	}
 
 	@Override

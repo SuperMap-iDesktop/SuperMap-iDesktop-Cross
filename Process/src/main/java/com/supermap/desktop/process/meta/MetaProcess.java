@@ -4,6 +4,7 @@ import com.supermap.desktop.process.core.AbstractProcess;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
+import com.supermap.desktop.process.tasks.ProcessTask;
 
 import java.util.Vector;
 
@@ -13,6 +14,7 @@ import java.util.Vector;
 public abstract class MetaProcess extends AbstractProcess {
 	protected Vector<ProcessData> outPuts;
 	protected Inputs inputs;
+	public ProcessTask processTask;
 
 	public MetaProcess() {
 		this.outPuts = new Vector<>();
@@ -34,4 +36,8 @@ public abstract class MetaProcess extends AbstractProcess {
 		return outPuts;
 	}
 
+	@Override
+	public ProcessTask getProcessTask() {
+		return processTask;
+	}
 }

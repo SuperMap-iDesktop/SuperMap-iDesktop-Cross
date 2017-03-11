@@ -23,6 +23,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterFile;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
+import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
 
 import javax.swing.*;
@@ -87,6 +88,7 @@ public class MetaProcessImport extends MetaProcess {
 				checkBoxCreateFieldIndex,
 				checkBoxCreateSpaceIndex
 		);
+		processTask = new ProcessTask(this);
 	}
 
 	@Override

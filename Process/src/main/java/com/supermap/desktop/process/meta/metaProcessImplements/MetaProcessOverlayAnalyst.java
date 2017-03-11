@@ -12,6 +12,7 @@ import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterOverlayAnalyst;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
+import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
 import javax.swing.*;
@@ -42,6 +43,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		parameterOverlayAnalyst = new ParameterOverlayAnalyst();
 		parameterOverlayAnalyst.setOverlayAnalystType(analystType);
 		parameters.setParameters(parameterOverlayAnalyst);
+		processTask = new ProcessTask(this);
 	}
 
 	public OverlayAnalystType getAnalystType() {

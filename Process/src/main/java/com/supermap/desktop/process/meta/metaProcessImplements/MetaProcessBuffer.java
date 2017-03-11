@@ -22,6 +22,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
+import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
@@ -60,7 +61,7 @@ public class MetaProcessBuffer extends MetaProcess {
 				parameterTextFieldSemicircleLineSegment,
 				parameterSaveDataset
 		);
-
+		processTask = new ProcessTask(this);
 	}
 
 	private void initParameters() {

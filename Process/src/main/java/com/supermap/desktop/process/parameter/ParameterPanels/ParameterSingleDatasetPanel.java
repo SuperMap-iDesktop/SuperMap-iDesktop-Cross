@@ -106,7 +106,7 @@ public class ParameterSingleDatasetPanel extends JPanel {
 			setSelectedDatasource(datasource);
 			this.datasetComboBox = new DatasetComboBox(datasource.getDatasets());
 			this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
-			parameterSingleDataset.setSelectedItem(datasetComboBox.getSelectedDataset());
+			this.parameterSingleDataset.setSelectedItem(datasetComboBox.getSelectedDataset());
 		}
 	}
 
