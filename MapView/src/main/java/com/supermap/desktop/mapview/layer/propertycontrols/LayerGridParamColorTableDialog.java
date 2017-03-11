@@ -87,7 +87,6 @@ public class LayerGridParamColorTableDialog extends SmDialog {
         ColorDictionary colorDictionary = setting.getColorDictionary();
         colorsOrigin = colorDictionary.getColors();
         keysOrigin = colorDictionary.getKeys();
-
         init();
     }
 
@@ -327,12 +326,12 @@ public class LayerGridParamColorTableDialog extends SmDialog {
         buttonDefaultColotTable.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int count = keysOrigin.length;
+                int count = modelModified.getOriginKeyCount().length;
                 Colors colors = comboBoxColor.getGradientColors(count);
                 if (colors == null) {
                     return;
                 }
-                colorsWithKeysTableModel.setColorNodes(colors.toArray(), keysOrigin);
+                colorsWithKeysTableModel.setColorNodes(colors.toArray(), modelModified.getOriginKeyCount());
                 tableColor.repaint();//解决颜色列刷新不全的问题
                 tableChange();
                 colorsWithKeysTableModel.fireTableDataChanged();
