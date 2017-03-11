@@ -13,6 +13,8 @@ import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxLengthUnit;
 import com.supermap.desktop.ui.controls.comboBox.SmNumericFieldComboBox;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
+import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
@@ -60,6 +62,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private PanelResultSet panelResultSet;
 	private MapControl mapControl;
 	private Recordset recordset;
+	private ArrayList<Recordset> recordsetList;
 	private Object radiusLeft;
 	private Object radiusRight;
 	private String resultDatasetName;
@@ -291,8 +294,9 @@ public class PanelLineBufferAnalyst extends JPanel {
 	    		.addComponent(this.panelBasicRight,0,180,Short.MAX_VALUE));
 	    panelBasicLayout.setVerticalGroup(panelBasicLayout.createSequentialGroup()
 	    		.addGroup(panelBasicLayout.createParallelGroup(Alignment.LEADING)
-	    				.addComponent(this.panelBasicLeft)
-	    				.addComponent(this.panelBasicRight)));
+					    // 0,0,400,限制左右面板纵向拉伸程度，当拉伸到一定程度时，不再拉伸
+	    				.addComponent(this.panelBasicLeft,0,0,400)
+	    				.addComponent(this.panelBasicRight,0,0,400)));
 	    //@formatter:on
 	}
 
@@ -337,29 +341,41 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private void setPanelBufferData() {
 		setComboBoxDatasetType();
 		int layersCount;
+		// 判断mapControl是否打开--yuanR 2017.3.10
 		if (Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 			this.mapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
-			layersCount = this.mapControl.getMap().getLayers().getCount();
+			// 不能直接获得地图中的所有图层，没有考虑图层分组的情况，会导致报错--yuanR 2017.3.10
+			ArrayList<Layer> arrayList;
+			arrayList = MapUtilities.getLayers(this.mapControl.getMap(), true);
+			layersCount = arrayList.size();
+			//判断mapControl中是否有图层--yuanR 2017.3.10
 			if (layersCount > 0) {
+				this.recordsetList = new ArrayList<>();
 				for (int i = 0; i < layersCount; i++) {
 					Layer[] activeLayer = new Layer[layersCount];
-					activeLayer[i] = mapControl.getMap().getLayers().get(i);
+					activeLayer[i] = arrayList.get(i);
+					// 添加一个数据集是否存在的判断，防止图层所指的数据集不存在而报错--yuanR 2017.3.10
+					if (activeLayer[i].getDataset() == null) {
+						continue;
+					}
 					if (activeLayer[i].getDataset().getType() == DatasetType.LINE || activeLayer[i].getDataset().getType() == DatasetType.NETWORK) {
 						if (activeLayer[i].getSelection() != null && activeLayer[i].getSelection().getCount() != 0) {
+							// 当前图层有选中的对象，此时需要考虑多图层的情况，但仅对线的数据集--yuanR 2017.3.10
+							// 通过循环先将符合要求的记录集全部获得
+							this.recordsetList.add(activeLayer[i].getSelection().toRecordset());
+
 							this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
 							this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(activeLayer[i].getDataset().getDatasource().getDatasets());
 							this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(activeLayer[i].getDataset());
-							this.recordset = activeLayer[i].getSelection().toRecordset();
 							this.panelBufferData.getCheckBoxGeometrySelect().setEnabled(true);
 							this.panelBufferData.getCheckBoxGeometrySelect().setSelected(true);
 							setComponentEnabled();
-						} else {
-							setWorkspaceTreeNode();
 						}
-						return;
-					} else {
-						setWorkspaceTreeNode();
 					}
+				}
+				// 所有图层所指的数据都不存在或者图层对应的数据都不符合线缓冲区面板要求,此时选择tree节点进行缓冲区初始化--yuanR 2017.3.10
+				if (this.recordsetList.size() <= 0) {
+					setWorkspaceTreeNode();
 				}
 			} else {
 				setWorkspaceTreeNode();
@@ -514,9 +530,18 @@ public class PanelLineBufferAnalyst extends JPanel {
 			if (sourceDatasetVector.getRecordCount() > 0) {
 				createResultDataset(sourceDatasetVector);
 			}
-			// TODO yuanR 2017.3.9
-			this.radiusLeft = numericFieldComboBoxLeft.getSelectedItem();
-			this.radiusRight = numericFieldComboBoxRight.getSelectedItem();
+			// TODO yuanR 2017.3.10
+			this.radiusLeft = this.numericFieldComboBoxLeft.getSelectedItem().toString();
+			this.radiusRight = this.numericFieldComboBoxRight.getSelectedItem().toString();
+			// 暂时由我们桌面进行预处理，如果是可以转为数字的字符串，转换为数字
+			// 因为当源数据集是记录集时，不接受：“10” 这样的字符串
+			// 获得缓冲长度
+			if (DoubleUtilities.isDouble((String) this.radiusRight)) {
+				this.radiusRight = DoubleUtilities.stringToValue(this.numericFieldComboBoxRight.getSelectedItem().toString());
+			}
+			if (DoubleUtilities.isDouble((String) this.radiusLeft)) {
+				this.radiusLeft = DoubleUtilities.stringToValue(this.numericFieldComboBoxLeft.getSelectedItem().toString());
+			}
 
 			if (this.radioButtonBufferTypeRound.isSelected()) {
 				bufferAnalystParameter.setEndType(BufferEndType.ROUND);
@@ -533,35 +558,43 @@ public class PanelLineBufferAnalyst extends JPanel {
 			}
 
 			if (this.panelResultSet.getCheckBoxDisplayInMap().isSelected()) {
-				isShowInMap = true;
+				this.isShowInMap = true;
 			} else {
-				isShowInMap = false;
+				this.isShowInMap = false;
 			}
 
 			bufferAnalystParameter.setRadiusUnit(this.comboBoxUnit.getUnit());
 			bufferAnalystParameter.setSemicircleLineSegment(Integer.parseInt(this.panelResultSet.getTextFieldSemicircleLineSegment().getText()));
 
-			FormProgress formProgress = new FormProgress();
 			// 当CheckBoxGeometrySelect()选中时，进行记录集缓冲分析，否则进行数据集缓冲分析
-
+			FormProgress formProgress = new FormProgress();
 			if (this.panelBufferData.getCheckBoxGeometrySelect().isSelected()) {
-				bufferProgressCallable = new BufferProgressCallable(recordset, resultDatasetVector, bufferAnalystParameter, this.panelResultSet
-						.getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected(), isShowInMap);
+				for (int i = 0; i < this.recordsetList.size(); i++) {
+					this.recordset = this.recordsetList.get(i);
+					this.bufferProgressCallable = new BufferProgressCallable(this.recordset, this.resultDatasetVector, bufferAnalystParameter, this.panelResultSet
+							.getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected(), this.isShowInMap);
+					if (formProgress != null) {
+						formProgress.doWork(this.bufferProgressCallable);
+						this.isBufferSucceed = this.bufferProgressCallable.isSucceed();
+						// 此处即使生成缓冲区失败也不进行删除新建数据的操作--yuanR 2017.3.10
+					}
+					// 释放
+//					this.recordsetList.get(i).dispose();
+				}
 			} else {
-				bufferProgressCallable = new BufferProgressCallable(sourceDatasetVector, resultDatasetVector, bufferAnalystParameter, this.panelResultSet
-						.getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected(), isShowInMap);
-			}
-			if (formProgress != null) {
-				formProgress.doWork(bufferProgressCallable);
-				isBufferSucceed = bufferProgressCallable.isSucceed();
-
-				// 如果生成缓冲区失败，删除新建的数据集--yuanR
-				if (!isBufferSucceed) {
-					deleteResultDataset();
+				this.bufferProgressCallable = new BufferProgressCallable(sourceDatasetVector, this.resultDatasetVector, bufferAnalystParameter, this.panelResultSet
+						.getCheckBoxUnionBuffer().isSelected(), this.panelResultSet.getCheckBoxRemainAttributes().isSelected(), this.isShowInMap);
+				if (formProgress != null) {
+					formProgress.doWork(this.bufferProgressCallable);
+					this.isBufferSucceed = this.bufferProgressCallable.isSucceed();
+					// 如果生成缓冲区失败，删除新建的数据集--yuanR 2017.3.10
+					if (!this.isBufferSucceed) {
+						deleteResultDataset();
+					}
 				}
 			}
 		}
-		return isBufferSucceed;
+		return this.isBufferSucceed;
 	}
 
 	/**
@@ -593,7 +626,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 	class LocalItemListener implements ItemListener {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-
 			if (e.getSource() == panelBufferData.getComboBoxBufferDataDatasource()) {
 				panelBufferData.getComboBoxBufferDataDataset().removeAllItems();
 				Datasource datasource = (Datasource) e.getItem();
@@ -647,6 +679,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 				}
 				setComponentEnabled();
 			}
+			// 当文本框改变时，对缓冲面板其他控件属性是否正确进行判断--yuanR 2017.3.10
+			judgeOKButtonisEnabled();
 		}
 	}
 
@@ -666,6 +700,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 				checkBoxBufferLeft.setEnabled(!radioButtonBufferTypeRound.isSelected());
 				checkBoxBufferRight.setEnabled(!radioButtonBufferTypeRound.isSelected());
 			}
+			// 当文本框改变时，对缓冲面板其他控件属性是否正确进行判断--yuanR 2017.3.10
+			judgeOKButtonisEnabled();
 		}
 	}
 
@@ -700,6 +736,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 				setOKButtonisEnabled(false);
 				panelResultData.getTextFieldResultDataDataset().setForeground(Color.RED);
 			}
+			// 当文本框改变时，对缓冲面板其他控件属性是否正确进行判断--yuanR 2017.3.10
+			judgeOKButtonisEnabled();
 		}
 
 		/**
@@ -709,8 +747,12 @@ public class PanelLineBufferAnalyst extends JPanel {
 		 * @return
 		 */
 		private boolean isAvailableDatasetName(String name) {
-			if (panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource().getDatasets().isAvailableDatasetName(name)) {
-				return true;
+			if (panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource() != null) {
+				if (panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource().getDatasets().isAvailableDatasetName(name)) {
+					return true;
+				} else {
+					return false;
+				}
 			} else {
 				return false;
 			}
@@ -726,6 +768,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 		@Override
 		public void caretUpdate(CaretEvent e) {
 			judgeArcSegmentNum();
+			// 当文本框改变时，对缓冲面板其他控件属性是否正确进行判断--yuanR 2017.3.10
+			judgeOKButtonisEnabled();
 		}
 	}
 
@@ -745,6 +789,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 				((JTextField) numericFieldComboBoxLeft.getEditor().getEditorComponent()).addCaretListener(numericLeftCaretListener);
 			}
 			setOKButtonisEnabled(!StringUtilities.isNullOrEmpty(numericFieldComboBoxRight.getEditor().getItem().toString()));
+			// 当文本框改变时，对缓冲面板其他控件属性是否正确进行判断--yuanR 2017.3.10
+			judgeOKButtonisEnabled();
 		}
 	}
 
@@ -764,6 +810,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 				((JTextField) numericFieldComboBoxRight.getEditor().getEditorComponent()).addCaretListener(numericRightCaretListener);
 			}
 			setOKButtonisEnabled(!StringUtilities.isNullOrEmpty(numericFieldComboBoxLeft.getEditor().getItem().toString()));
+			// 当文本框改变时，对缓冲面板其他控件属性是否正确进行判断--yuanR 2017.3.10
+			judgeOKButtonisEnabled();
 		}
 	}
 
@@ -804,11 +852,27 @@ public class PanelLineBufferAnalyst extends JPanel {
 	 * 判断确定按钮是否可用--yuanR 2017.3.7
 	 */
 	public void judgeOKButtonisEnabled() {
-		// 数据集情况
-		setOKButtonisEnabled(this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() == null);
-		//结果数据集名称
-		setOKButtonisEnabled(panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource().getDatasets().isAvailableDatasetName(panelResultData.getTextFieldResultDataDataset().getText()));
-		// 左右缓冲复选框，最少选其一
-		setOKButtonisEnabled(checkBoxBufferLeft.isSelected() || checkBoxBufferLeft.isSelected());
+		Boolean DatasourceisNotNull = false;
+		Boolean DatasetisNotNull = false;
+		Boolean ResulDatasourceisNotNull = false;
+		Boolean ResulDatasetNameisAvailable = false;
+		Boolean BufferCheckBoxisSelected = false;
+
+		if (this.panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource() != null) {
+			DatasourceisNotNull = true;
+		}
+		if (this.panelBufferData.getComboBoxBufferDataDataset().getSelectedDataset() != null) {
+			DatasetisNotNull = true;
+		}
+		if (this.panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource() != null) {
+			ResulDatasourceisNotNull = true;
+			if (panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource().getDatasets().isAvailableDatasetName(panelResultData.getTextFieldResultDataDataset().getText())) {
+				ResulDatasetNameisAvailable = true;
+			}
+		}
+		if (checkBoxBufferLeft.isSelected() || checkBoxBufferLeft.isSelected()) {
+			BufferCheckBoxisSelected = true;
+		}
+		setOKButtonisEnabled(DatasourceisNotNull && DatasetisNotNull && ResulDatasourceisNotNull && ResulDatasetNameisAvailable && BufferCheckBoxisSelected);
 	}
 }

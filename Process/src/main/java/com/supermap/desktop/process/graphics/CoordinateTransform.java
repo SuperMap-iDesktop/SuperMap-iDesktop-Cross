@@ -12,9 +12,9 @@ import java.awt.geom.AffineTransform;
 public class CoordinateTransform {
 	private GraphCanvas canvas;
 	private Point originLocation;
-	private double translateX;
-	private double translateY;
-	private int scale; // percentage
+	private double translateX; // 100% 画布尺寸下的 X轴平移距离，缩放后的结果会受 scale 的影响
+	private double translateY; // 100% 画布尺寸下的 Y轴平移距离，缩放后的结果会受 scale 的影响
+	private double scale; // percentage
 
 	public CoordinateTransform(GraphCanvas canvas) {
 		this(canvas, new Point(0, 0));
@@ -69,15 +69,20 @@ public class CoordinateTransform {
 		this.scale = 0;
 	}
 
-	public AffineTransform getAffineTransform() {
-		AffineTransform transform = new AffineTransform();
+	/**
+	 * @param origin
+	 * @return
+	 */
+	public AffineTransform getAffineTransform(AffineTransform origin) {
+		AffineTransform transform = new AffineTransform(origin);
+		double scalePercentage = getScalePercentage();
+		transform.scale(scalePercentage, scalePercentage);
 		transform.translate(this.translateX, this.translateY);
-		transform.scale(getScalePercentage(), getScalePercentage());
 		return transform;
 
 	}
 
-	private double getScalePercentage() {
-		return (100 + this.scale) / 100;
+	public double getScalePercentage() {
+		return (100 + this.scale) / 100d;
 	}
 }

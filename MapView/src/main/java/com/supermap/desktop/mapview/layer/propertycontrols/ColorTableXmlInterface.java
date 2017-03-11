@@ -11,7 +11,7 @@ public interface ColorTableXmlInterface {
      * @param fileName 文件全路径名称
      * @param colorDictionary 要输出的颜色表
      */
-    public void createXml(String fileName, ColorDictionary colorDictionary);
+    public boolean createXml(String fileName, ColorDictionary colorDictionary);
     /**
      * 解析XML文档
      * @param fileName 文件全路径名称
