@@ -539,8 +539,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 			if (DoubleUtilities.isDouble((String) this.radiusRight)) {
 				this.radiusRight = DoubleUtilities.stringToValue(this.numericFieldComboBoxRight.getSelectedItem().toString());
 			}
-			if (DoubleUtilities.isDouble((String) this.radiusRight)) {
-				this.radiusRight = DoubleUtilities.stringToValue(this.numericFieldComboBoxRight.getSelectedItem().toString());
+			if (DoubleUtilities.isDouble((String) this.radiusLeft)) {
+				this.radiusLeft = DoubleUtilities.stringToValue(this.numericFieldComboBoxLeft.getSelectedItem().toString());
 			}
 
 			if (this.radioButtonBufferTypeRound.isSelected()) {

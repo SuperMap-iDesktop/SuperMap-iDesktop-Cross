@@ -85,8 +85,8 @@ public class BufferDialog extends SmDialog {
 		if (Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 			this.mapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
 			// 不能直接获得地图中的所有图层，没有考虑图层分组的情况，会导致报错--yuanR 2017.3.10
-			ArrayList<Layer> arrayList ;
-			arrayList = MapUtilities.getLayers(this.mapControl.getMap(),true);
+			ArrayList<Layer> arrayList;
+			arrayList = MapUtilities.getLayers(this.mapControl.getMap(), true);
 			layersCount = arrayList.size();
 			if (layersCount > 0) {
 				for (int i = 0; i < layersCount; i++) {
