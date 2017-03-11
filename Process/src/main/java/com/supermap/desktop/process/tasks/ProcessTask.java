@@ -24,7 +24,7 @@ import java.util.concurrent.CancellationException;
  * Created by xie on 2017/2/15.
  * progress bar used for displaying process task progress
  */
-public class ProcessTask extends JPanel implements IProcessTask, IContentModel, Callable {
+public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 
     private static final long serialVersionUID = 1L;
 
@@ -98,19 +98,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel, 
 
     @Override
     public void initResouces() {
-        if (process.getKey().equals(MetaKeys.IMPORT)) {
-            labelTitle.setText(ControlsProperties.getString("String_ImportProgress"));
-        } else if (process.getKey().equals(MetaKeys.PROJECTION)) {
-            labelTitle.setText(ControlsProperties.getString("String_ProjectionProgress"));
-        } else if (process.getKey().equals(MetaKeys.SPATIAL_INDEX)) {
-            labelTitle.setText(ControlsProperties.getString("String_SpatialIndexProgress"));
-        } else if (process.getKey().equals(MetaKeys.BUFFER)) {
-            labelTitle.setText(ControlsProperties.getString("String_BufferProgress"));
-        } else if (process.getKey().equals(MetaKeys.HEAT_MAP)) {
-            labelTitle.setText(ControlsProperties.getString("String_HeatMap"));
-        } else if (process.getKey().equals(MetaKeys.KERNEL_DENSITY)) {
-            labelTitle.setText(ControlsProperties.getString("String_KernelDensity"));
-        } else if (process.getKey().equals(MetaKeys.OVERLAY_ANALYST)) {
+       if (process.getKey().equals(MetaKeys.OVERLAY_ANALYST)) {
             OverlayAnalystType analystType = ((MetaProcessOverlayAnalyst) process).getAnalystType();
             switch (analystType) {
                 case CLIP:
@@ -168,7 +156,8 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel, 
 
     public void doWork() {
         try {
-            call();
+            process.addRunningListener(this.runningListener);
+            process.run();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -292,13 +281,6 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel, 
         //do nothing
     }
 
-
-    @Override
-    public Boolean call() throws Exception {
-        process.addRunningListener(this.runningListener);
-        process.run();
-        return true;
-    }
 
     public String getFinishMessage() {
         String result = "";

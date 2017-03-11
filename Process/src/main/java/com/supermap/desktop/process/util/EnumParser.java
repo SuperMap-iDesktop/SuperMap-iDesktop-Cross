@@ -12,9 +12,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Created by xie on 2017/3/8.
  * EnumParser:
- * enumType is the enum class
- * enumValues array store your enum value, which you want to translate,
- * chName array store the chinese name for enum values;
+ * EnumType is the enum class
+ * EnumValues array store your enum value, which you want to translate,
+ * ChNames array store the chinese name for enum values;
  */
 public class EnumParser {
     private boolean isSuperMapEnum = false;
@@ -48,7 +48,7 @@ public class EnumParser {
 
     /**
      * Enum class
-     * chinese name reflect to a enum value and put them in diffrent hashmap
+     * Chinese name reflect to a enum value
      */
     public void parse() {
         if (null == enumType || StringUtilities.isNullOrEmptyString(chName)) {
@@ -63,7 +63,7 @@ public class EnumParser {
                     int newLength = enumNames.length;
                     Method parse = enumType.getMethod("parse", Class.class, String.class);
                     for (int i = 0; i < newLength; i++) {
-                        ParameterDataNode item = new ParameterDataNode(chName[i],(Enum) parse.invoke(Enum.class, enumType, enumNames[i]));
+                        ParameterDataNode item = new ParameterDataNode(chName[i], parse.invoke(Enum.class, enumType, enumNames[i]));
                         enumItems.add(item);
                     }
                 }
@@ -81,7 +81,7 @@ public class EnumParser {
                 int size = enumConstants.length;
                 if (enumNames.length == size && enumNames.length == chName.length) {
                     for (int i = 0; i < size; i++) {
-                        ParameterDataNode item = new ParameterDataNode(chName[i],enumConstants[i]);
+                        ParameterDataNode item = new ParameterDataNode(chName[i], enumConstants[i]);
                         enumItems.add(item);
                     }
                 } else if (enumNames.length == chName.length) {
@@ -89,8 +89,8 @@ public class EnumParser {
                         java.lang.Enum nowEnum = (java.lang.Enum) enumConstants[i];
                         int enumNameCount = enumNames.length;
                         for (int j = 0; j < enumNameCount; j++) {
-                            if (enumNames[j].equals(nowEnum.name())) {
-                                ParameterDataNode item = new ParameterDataNode(chName[j],nowEnum);
+                            if (enumNames[j].equalsIgnoreCase(nowEnum.name())) {
+                                ParameterDataNode item = new ParameterDataNode(chName[j], nowEnum);
                                 enumItems.add(item);
                             }
                         }
@@ -105,7 +105,7 @@ public class EnumParser {
     }
 
     /**
-     * your enum item array list
+     * Set your custom arrays
      *
      * @param enumItems
      */

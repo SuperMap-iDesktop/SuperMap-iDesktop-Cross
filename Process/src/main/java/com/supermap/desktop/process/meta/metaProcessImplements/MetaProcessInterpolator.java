@@ -32,6 +32,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
+import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.PixelFormatProperties;
 
@@ -170,6 +171,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 					parameterRow, parameterBoundsLeft, parameterBoundsTop, parameterBoundsRight, parameterBoundsBottom,
 					searchMode, parameterVariogramMode, parameterStill, parameterAngle, parameterRange, parameterMean, parameterNugget);
 		}
+		processTask = new ProcessTask(this);
 	}
 
 	@Override

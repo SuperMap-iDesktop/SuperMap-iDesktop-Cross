@@ -4,6 +4,7 @@ import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
+import com.supermap.desktop.process.tasks.ProcessTask;
 
 import javax.swing.*;
 import java.util.Vector;
@@ -34,5 +35,7 @@ public interface IProcess {
 	void removeRunningListener(RunningListener listener);
 
 	JComponent getComponent();
+
+	 ProcessTask getProcessTask();
 }
 
