@@ -13,7 +13,6 @@ import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxLengthUnit;
 import com.supermap.desktop.ui.controls.comboBox.SmNumericFieldComboBox;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
@@ -295,8 +294,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 	    panelBasicLayout.setVerticalGroup(panelBasicLayout.createSequentialGroup()
 	    		.addGroup(panelBasicLayout.createParallelGroup(Alignment.LEADING)
 					    // 0,0,400,限制左右面板纵向拉伸程度，当拉伸到一定程度时，不再拉伸
-	    				.addComponent(this.panelBasicLeft,0,0,400)
-	    				.addComponent(this.panelBasicRight,0,0,400)));
+	    				.addComponent(this.panelBasicLeft,0,0,270)
+	    				.addComponent(this.panelBasicRight,0,0,270)));
 	    //@formatter:on
 	}
 
@@ -530,18 +529,18 @@ public class PanelLineBufferAnalyst extends JPanel {
 			if (sourceDatasetVector.getRecordCount() > 0) {
 				createResultDataset(sourceDatasetVector);
 			}
-			// TODO yuanR 2017.3.10
+			// TODO yuanR 2017.3.10 需要组件对其接口进行修改，满足传入的参数符合多种情况。
 			this.radiusLeft = this.numericFieldComboBoxLeft.getSelectedItem().toString();
 			this.radiusRight = this.numericFieldComboBoxRight.getSelectedItem().toString();
 			// 暂时由我们桌面进行预处理，如果是可以转为数字的字符串，转换为数字
 			// 因为当源数据集是记录集时，不接受：“10” 这样的字符串
 			// 获得缓冲长度
-			if (DoubleUtilities.isDouble((String) this.radiusRight)) {
-				this.radiusRight = DoubleUtilities.stringToValue(this.numericFieldComboBoxRight.getSelectedItem().toString());
-			}
-			if (DoubleUtilities.isDouble((String) this.radiusLeft)) {
-				this.radiusLeft = DoubleUtilities.stringToValue(this.numericFieldComboBoxLeft.getSelectedItem().toString());
-			}
+//			if (DoubleUtilities.isDouble((String) this.radiusRight)) {
+//				this.radiusRight = DoubleUtilities.stringToValue(this.numericFieldComboBoxRight.getSelectedItem().toString());
+//			}
+//			if (DoubleUtilities.isDouble((String) this.radiusLeft)) {
+//				this.radiusLeft = DoubleUtilities.stringToValue(this.numericFieldComboBoxLeft.getSelectedItem().toString());
+//			}
 
 			if (this.radioButtonBufferTypeRound.isSelected()) {
 				bufferAnalystParameter.setEndType(BufferEndType.ROUND);
@@ -578,8 +577,6 @@ public class PanelLineBufferAnalyst extends JPanel {
 						this.isBufferSucceed = this.bufferProgressCallable.isSucceed();
 						// 此处即使生成缓冲区失败也不进行删除新建数据的操作--yuanR 2017.3.10
 					}
-					// 释放
-//					this.recordsetList.get(i).dispose();
 				}
 			} else {
 				this.bufferProgressCallable = new BufferProgressCallable(sourceDatasetVector, this.resultDatasetVector, bufferAnalystParameter, this.panelResultSet
@@ -672,6 +669,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 				panelResultSet.getCheckBoxRemainAttributes().setSelected(false);
 			} else if (e.getSource() == checkBoxBufferLeft || e.getSource() == checkBoxBufferRight) {
 				//当操作左右半径复选框时,根据左右半径长度值的情况设置确定按钮是否可用--yuanR 2017.3.2
+
 				if (!checkBoxBufferRight.isSelected() && !checkBoxBufferLeft.isSelected()) {
 					setRadiusNumSuitable(false);
 				} else {
@@ -870,7 +868,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 				ResulDatasetNameisAvailable = true;
 			}
 		}
-		if (checkBoxBufferLeft.isSelected() || checkBoxBufferLeft.isSelected()) {
+		if (checkBoxBufferLeft.isSelected() || checkBoxBufferRight.isSelected()) {
 			BufferCheckBoxisSelected = true;
 		}
 		setOKButtonisEnabled(DatasourceisNotNull && DatasetisNotNull && ResulDatasourceisNotNull && ResulDatasetNameisAvailable && BufferCheckBoxisSelected);
