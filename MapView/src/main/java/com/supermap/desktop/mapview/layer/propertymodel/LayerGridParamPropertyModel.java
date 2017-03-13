@@ -2,6 +2,7 @@ package com.supermap.desktop.mapview.layer.propertymodel;
 
 import com.supermap.data.ColorDictionary;
 import com.supermap.data.Colors;
+import com.supermap.data.DatasetGrid;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.LayerSettingGrid;
@@ -17,8 +18,8 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
     public static final String SPECIAL_VALUE_COLOR = "specialValueColor";
     public static final String IS_SPECIAL_VALUE_TRANSPARENT = "isSpecialValueTransparent";
     public static final String COLORDICTIONARY = "colorDictionary";
-    public static double originKey[];
 
+    private double[] originKey;
     private Integer layerGridBrightness = 0;
     private Integer layerGridContrast = 0;
     private Colors layerGridColors;
@@ -38,7 +39,7 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
     }
 
     public double[] getOriginKeyCount() {
-        return originKey;
+        return this.originKey;
     }
 
     public Integer getBrightness() {
@@ -113,6 +114,7 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
             this.specialValueColor = gridParamPropertyModel.getSpecialValueColor();
             this.isSpecialValueTransparent = gridParamPropertyModel.isSpecialValueTransparent();
             this.propertyEnabled = gridParamPropertyModel.propertyEnabled;
+            this.originKey=gridParamPropertyModel.getOriginKeyCount();
         }
     }
 
@@ -179,9 +181,16 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
             this.specialValueColor = ComplexPropertyUtilties.union(this.specialValueColor, setting.getSpecialValueColor());
             this.isSpecialValueTransparent = ComplexPropertyUtilties.union(this.isSpecialValueTransparent, setting.isSpecialValueTransparent());
             this.layerGridColorDictionary = ComplexPropertyUtilties.union(this.layerGridColorDictionary, setting.getColorDictionary());
-            if (originKey == null) {
-                originKey = setting.getColorDictionary().getKeys();
+            DatasetGrid datasetGrid = (DatasetGrid)layer.getDataset();
+            int colorLegth = datasetGrid.getColorTable().getCount();
+            double minValue = datasetGrid.getMinValue();
+            double maxValue = datasetGrid.getMaxValue();
+            this.originKey = new double[colorLegth];
+            double valueGap = (maxValue - minValue) / (colorLegth - 1);
+            for (int i = 0; i < colorLegth; i++) {
+                this.originKey[i] = minValue + valueGap * i;
             }
+            //originKey = setting.getColorDictionary().getKeys();
         }
     }
 
@@ -201,6 +210,7 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
             this.isSpecialValueTransparent = ((LayerSettingGrid) getLayers()[0].getAdditionalSetting()).isSpecialValueTransparent();
             this.layerGridColors = ((LayerSettingGrid) getLayers()[0].getAdditionalSetting()).getColorTable();
             this.layerGridColorDictionary = ((LayerSettingGrid) getLayers()[0].getAdditionalSetting()).getColorDictionary();
+
         }
     }
 
