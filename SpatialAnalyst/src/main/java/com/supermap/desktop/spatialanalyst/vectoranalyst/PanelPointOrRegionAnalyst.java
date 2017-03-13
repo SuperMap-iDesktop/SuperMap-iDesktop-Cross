@@ -143,8 +143,16 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.panelResultData = new PanelResultData();
 		this.panelResultSet = new PanelResultSet();
 
-		this.setLayout(new BorderLayout());
-		this.add(this.panelBasic, BorderLayout.CENTER);
+		GroupLayout panelBufferTypeLayout = new GroupLayout(this);
+		this.setLayout(panelBufferTypeLayout);
+		//@formatter:off
+		panelBufferTypeLayout.setHorizontalGroup(panelBufferTypeLayout.createSequentialGroup()
+					.addComponent(this.panelBasic));
+		panelBufferTypeLayout.setVerticalGroup(panelBufferTypeLayout.createSequentialGroup()
+					.addComponent(this.panelBasic,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
+		//@formatter:on
+//		this.setLayout(new BorderLayout());
+//		this.add(this.panelBasic, BorderLayout.CENTER);
 
 		setPanelBasicLayout();
 		setPanelBasicLeftLayout();
@@ -177,8 +185,8 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                    .addGroup(panelBasicLayout.createParallelGroup(Alignment.LEADING)
                            // 0,0,400,限制左右面板纵向拉伸程度，当拉伸到一定程度时，不再拉伸
 	    			    // 设置中间面板不能拉升，之后需要拉升时，调整即可--yuanR 2017.3.11
-	    				.addComponent(this.panelBasicLeft,0,0,220)
-	    				.addComponent(this.panelBasicRight,0,0,220)));
+	    				.addComponent(this.panelBasicLeft)
+	    				.addComponent(this.panelBasicRight)));
          //@formatter:on
 	}
 

@@ -186,8 +186,18 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.panelBufferData = new PanelBufferData();
 		this.panelResultData = new PanelResultData();
 		this.panelResultSet = new PanelResultSet();
-		this.setLayout(new BorderLayout());
-		this.add(this.panelBasic, BorderLayout.CENTER);
+
+		GroupLayout panelBufferTypeLayout = new GroupLayout(this);
+		this.setLayout(panelBufferTypeLayout);
+		//@formatter:off
+		panelBufferTypeLayout.setHorizontalGroup(panelBufferTypeLayout.createSequentialGroup()
+					.addComponent(this.panelBasic));
+		panelBufferTypeLayout.setVerticalGroup(panelBufferTypeLayout.createSequentialGroup()
+					.addComponent(this.panelBasic,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
+		//@formatter:on
+
+//		this.setLayout(new BorderLayout());
+//		this.add(this.panelBasic, BorderLayout.CENTER);
 
 		initComponentBufferType();
 		initComponentBufferRadius();
@@ -225,12 +235,12 @@ public class PanelLineBufferAnalyst extends JPanel {
 		ButtonGroup bufferTypeButtonGroup = new ButtonGroup();
 		bufferTypeButtonGroup.add(this.radioButtonBufferTypeRound);
 		bufferTypeButtonGroup.add(this.radioButtonBufferTypeFlat);
-		//@formatter:off
+
 		GroupLayout panelBufferTypeLayout = new GroupLayout(this.panelBufferType);
 //		panelBufferTypeLayout.setAutoCreateContainerGaps(true);
 		panelBufferTypeLayout.setAutoCreateGaps(true);
 		this.panelBufferType.setLayout(panelBufferTypeLayout);
-
+		//@formatter:off
 		panelBufferTypeLayout.setHorizontalGroup(panelBufferTypeLayout.createSequentialGroup()
 					.addComponent(this.radioButtonBufferTypeRound)
 					.addComponent(this.radioButtonBufferTypeFlat)
@@ -298,8 +308,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 	    panelBasicLayout.setVerticalGroup(panelBasicLayout.createSequentialGroup()
 	    		.addGroup(panelBasicLayout.createParallelGroup(Alignment.LEADING)
 					    // 0,0,400,限制左右面板纵向拉伸程度，当拉伸到一定程度时，不再拉伸
-	    				.addComponent(this.panelBasicLeft,0,0,270)
-	    				.addComponent(this.panelBasicRight,0,0,270)));
+	    				.addComponent(this.panelBasicLeft)
+	    				.addComponent(this.panelBasicRight)));
 	    //@formatter:on
 	}
 
