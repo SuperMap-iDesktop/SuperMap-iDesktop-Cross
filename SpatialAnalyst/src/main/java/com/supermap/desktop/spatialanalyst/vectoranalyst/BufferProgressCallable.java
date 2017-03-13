@@ -6,7 +6,6 @@ import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
@@ -147,22 +146,14 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 					formMap.getMapControl().setAction(Action.PAN);
 				}
 			}
-		} else if (this.sourceData instanceof Recordset) {
-			Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-			Map map = formMap.getMapControl().getMap();
-			MapViewUIUtilities.addDatasetsToMap(map, datasets, false);
-			// 每次添加数据集到图层的时候对当前图层进行判断，如果图层存在即不重复添加--yuanR 2017.3.11
-			// TODO yuanR 2017.3.11
-//			ArrayList<Layer> arrayList;
-//			arrayList = MapUtilities.getLayers(map, true);
-//			for (int i = 0; i < arrayList.size(); i++) {
-//				Dataset existedDataset = arrayList.get(i).getDataset();
-//				if (!datasets[0].equals(existedDataset)) {
-//					MapViewUIUtilities.addDatasetsToMap(map, datasets, false);
-//				}
-//			}
 		}
+		// 将由记录集生成的数据集添加到地图操作移到方法外，防止重复添加相同数据集到地图--yuanR 2017.3.13
+//		else if (this.sourceData instanceof Recordset) {
+//			Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
+//			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+//			Map map = formMap.getMapControl().getMap();
+//			MapViewUIUtilities.addDatasetsToMap(map, datasets, false);
+//		}
 	}
 
 	public boolean isSucceed() {

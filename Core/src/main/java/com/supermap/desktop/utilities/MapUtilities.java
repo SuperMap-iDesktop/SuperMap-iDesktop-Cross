@@ -582,6 +582,4 @@ public class MapUtilities {
 		}
 		return geometry;
 	}
-
-
 }

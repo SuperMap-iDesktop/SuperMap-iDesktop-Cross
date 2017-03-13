@@ -277,9 +277,8 @@ public class BufferDialog extends SmDialog {
 				flag = panelLineBufferAnalyst.CreateCurrentBuffer();
 			}
 		} catch (Exception e1) {
-			BufferDialog.this.dispose();
-		}
-		if (flag) {
+
+		} finally {
 			BufferDialog.this.dispose();
 		}
 	}

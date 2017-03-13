@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 
 public class FormProgress extends SmDialog implements IUpdateProgress {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final int DEFUALT_PROGRESSBAR_HEIGHT = 30;
