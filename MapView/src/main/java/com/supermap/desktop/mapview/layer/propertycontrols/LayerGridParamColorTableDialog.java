@@ -87,7 +87,6 @@ public class LayerGridParamColorTableDialog extends SmDialog {
         ColorDictionary colorDictionary = setting.getColorDictionary();
         colorsOrigin = colorDictionary.getColors();
         keysOrigin = colorDictionary.getKeys();
-
         init();
     }
 
@@ -102,7 +101,7 @@ public class LayerGridParamColorTableDialog extends SmDialog {
     }
 
     private void init() {
-        setSize(new Dimension(700, 500));
+        setSize(new Dimension(888, 500));
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 
         this.setLocationRelativeTo(null);
@@ -327,12 +326,12 @@ public class LayerGridParamColorTableDialog extends SmDialog {
         buttonDefaultColotTable.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int count = keysOrigin.length;
+                int count = modelModified.getOriginKeyCount().length;
                 Colors colors = comboBoxColor.getGradientColors(count);
                 if (colors == null) {
                     return;
                 }
-                colorsWithKeysTableModel.setColorNodes(colors.toArray(), keysOrigin);
+                colorsWithKeysTableModel.setColorNodes(colors.toArray(), modelModified.getOriginKeyCount());
                 tableColor.repaint();//解决颜色列刷新不全的问题
                 tableChange();
                 colorsWithKeysTableModel.fireTableDataChanged();
@@ -739,9 +738,12 @@ public class LayerGridParamColorTableDialog extends SmDialog {
         String filePath = "";
         if (state == JFileChooser.APPROVE_OPTION) {
             filePath = smFileChoose.getFilePath();
-            File file = new File(filePath);
-            if (file.isFile() && file.exists()) {
-                file.delete();
+            File oleFile = new File(filePath);
+            filePath = filePath.substring(0, filePath.lastIndexOf("."))+".sctu";
+            File NewFile =new File(filePath);
+            oleFile.renameTo(NewFile);
+            if (oleFile.isFile() && oleFile.exists()) {
+                oleFile.delete();
             }
             ColorTableXmlImpl colorTableXml = new ColorTableXmlImpl();
             ColorDictionary colorDictionary = new ColorDictionary();
@@ -762,7 +764,8 @@ public class LayerGridParamColorTableDialog extends SmDialog {
     private void inputColorTable() {
         String moduleName = "InputColorsTable";
         if (!SmFileChoose.isModuleExist(moduleName)) {
-            String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("String_DialogColorTable"), "sctu");
+            String fileFilters=SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MapViewProperties.getString("String_DialogColorTable"), "sctu"),
+                    SmFileChoose.createFileFilter(MapViewProperties.getString("String_DialogColorTableSct"), "sct"));
             SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
                     MapViewProperties.getString("String_OpenColorTable"), moduleName, "OpenMany");
         }
