@@ -134,7 +134,9 @@ public class BufferDialog extends SmDialog {
 			this.panelPointOrRegionAnalyst.judgeOKButtonisEnabled();
 		}
 		this.panelBufferType.add(this.panelPointOrRegionAnalyst);
-		setSize(getPointPanelDimension());
+//		setSize(getPointPanelDimension());
+		pack();
+		setSize(new Dimension(640,this.getPreferredSize().height));
 		this.radioButtonPointOrRegion.setSelected(true);
 	}
 
@@ -147,7 +149,9 @@ public class BufferDialog extends SmDialog {
 			this.panelLineBufferAnalyst.judgeOKButtonisEnabled();
 		}
 		this.panelBufferType.add(this.panelLineBufferAnalyst);
-		setSize(getLinePanelDimension());
+//		setSize(getLinePanelDimension());
+		pack();
+		setSize(new Dimension(640,this.getPreferredSize().height));
 		this.radioButtonLine.setSelected(true);
 	}
 
