@@ -57,7 +57,7 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 	public Boolean call() throws Exception {
 		Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreating"));
 		try {
-			createBufferAnalyst = false;
+			this.createBufferAnalyst = false;
 			// 根据源数据集设置不同的成功提示信息--yuanR 2017.3.10
 			String CreatedSuccessMessage = "";
 			String CreatedFailedMessage = "";
@@ -65,7 +65,7 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 			BufferAnalyst.addSteppedListener(steppedListener);
 			if (this.sourceData instanceof DatasetVector && resultDatasetVector != null) {
 				long startTime = System.currentTimeMillis();
-				createBufferAnalyst = BufferAnalyst.createBuffer((DatasetVector) sourceData, resultDatasetVector, bufferAnalystParameter, union,
+				this.createBufferAnalyst = BufferAnalyst.createBuffer((DatasetVector) sourceData, resultDatasetVector, bufferAnalystParameter, union,
 						isAttributeRetained);
 				long endTime = System.currentTimeMillis();
 				String time = String.valueOf((endTime - startTime) / 1000.0);
@@ -83,7 +83,7 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 
 			} else if (this.sourceData instanceof Recordset && resultDatasetVector != null) {
 				long startTime = System.currentTimeMillis();
-				createBufferAnalyst = BufferAnalyst.createBuffer((Recordset) sourceData, resultDatasetVector, bufferAnalystParameter, union,
+				this.createBufferAnalyst = BufferAnalyst.createBuffer((Recordset) sourceData, resultDatasetVector, bufferAnalystParameter, union,
 						isAttributeRetained);
 				long endTime = System.currentTimeMillis();
 				String time = String.valueOf((endTime - startTime) / 1000.0);
@@ -152,6 +152,16 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 			Map map = formMap.getMapControl().getMap();
 			MapViewUIUtilities.addDatasetsToMap(map, datasets, false);
+			// 每次添加数据集到图层的时候对当前图层进行判断，如果图层存在即不重复添加--yuanR 2017.3.11
+			// TODO yuanR 2017.3.11
+//			ArrayList<Layer> arrayList;
+//			arrayList = MapUtilities.getLayers(map, true);
+//			for (int i = 0; i < arrayList.size(); i++) {
+//				Dataset existedDataset = arrayList.get(i).getDataset();
+//				if (!datasets[0].equals(existedDataset)) {
+//					MapViewUIUtilities.addDatasetsToMap(map, datasets, false);
+//				}
+//			}
 		}
 	}
 
