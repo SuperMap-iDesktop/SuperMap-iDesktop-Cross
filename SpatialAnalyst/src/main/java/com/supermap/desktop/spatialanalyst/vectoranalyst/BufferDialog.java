@@ -10,7 +10,6 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
 
@@ -42,10 +41,10 @@ public class BufferDialog extends SmDialog {
 	// 确定/取消按钮面板
 	private PanelButton panelButton;
 	private MapControl mapControl;
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(620, 360);
-	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(620, 400);
-	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(650, 380);
-	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(650, 420);
+//	public final static Dimension DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION = new Dimension(620, 360);
+//	public final static Dimension DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION = new Dimension(620, 400);
+//	public final static Dimension DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION = new Dimension(650, 380);
+//	public final static Dimension DEFAULT_LINUX_BUFFER_LINE_DIMENSION = new Dimension(650, 420);
 	private LocalActionListener localActionListener = new LocalActionListener();
 	private DoSome some = new DoSome() {
 		@Override
@@ -235,21 +234,21 @@ public class BufferDialog extends SmDialog {
 		this.radioButtonPointOrRegion.removeActionListener(this.localActionListener);
 	}
 
-	private Dimension getLinePanelDimension() {
-		if (SystemPropertyUtilities.isWindows()) {
-			return BufferDialog.DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION;
-		} else {
-			return BufferDialog.DEFAULT_LINUX_BUFFER_LINE_DIMENSION;
-		}
-	}
+//	private Dimension getLinePanelDimension() {
+//		if (SystemPropertyUtilities.isWindows()) {
+//			return BufferDialog.DEFAULT_WINDOWS_BUFFER_LINE_DIMENSION;
+//		} else {
+//			return BufferDialog.DEFAULT_LINUX_BUFFER_LINE_DIMENSION;
+//		}
+//	}
 
-	private Dimension getPointPanelDimension() {
-		if (SystemPropertyUtilities.isWindows()) {
-			return BufferDialog.DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION;
-		} else {
-			return BufferDialog.DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION;
-		}
-	}
+//	private Dimension getPointPanelDimension() {
+//		if (SystemPropertyUtilities.isWindows()) {
+//			return BufferDialog.DEFAULT_WINDOWS_BUFFER_POINTORREGION_DIMENSION;
+//		} else {
+//			return BufferDialog.DEFAULT_LINUX_BUFFER_POINTORREGION_DIMENSION;
+//		}
+//	}
 
 	class LocalActionListener implements ActionListener {
 
