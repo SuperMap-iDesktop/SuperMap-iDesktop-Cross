@@ -10,6 +10,7 @@ import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
@@ -72,6 +73,7 @@ public class MetaProcessISORegion extends MetaProcess {
         smoothNess = new ParameterTextField(CommonProperties.getString("String_SmoothNess"));
         parameters.setParameters(sourceDatasource, dataset, targetDatasource, datasetName, maxGrid, minGrid, maxISORegion, minISORegion, isoLine, datumValue,
                 interval, resampleTolerance, smoothMethod, smoothNess);
+        processTask = new ProcessTask(this);
     }
 
     @Override

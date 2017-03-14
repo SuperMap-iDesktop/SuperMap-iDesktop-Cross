@@ -16,6 +16,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
+import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -56,6 +57,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 		parameterSaveDataset.setDatasetName("QueryResult");
 		parameters.setParameters(this.dataset, this.parameterResultFields,
 				this.parameterAttributeFilter, this.parameterSaveDataset);
+		processTask = new ProcessTask(this);
 	}
 
 	@Override

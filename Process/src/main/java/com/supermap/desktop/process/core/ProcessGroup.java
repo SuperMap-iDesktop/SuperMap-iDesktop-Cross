@@ -6,6 +6,7 @@ import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
+import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.utilities.FileUtilities;
 
 import javax.swing.*;
@@ -150,6 +151,11 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 
 	@Override
 	public JComponent getComponent() {
+		return null;
+	}
+
+	@Override
+	public ProcessTask getProcessTask() {
 		return null;
 	}
 
