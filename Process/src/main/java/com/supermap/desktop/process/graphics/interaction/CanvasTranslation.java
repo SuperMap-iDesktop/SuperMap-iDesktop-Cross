@@ -52,11 +52,6 @@ public class CanvasTranslation extends CanvasEventAdapter {
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent e) {
-		System.out.println(e.getPoint());
-	}
-
-	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		Point scaleCenter = e.getPoint();
 		if (this.canvas.getCanvasViewBounds().contains(scaleCenter)) {
