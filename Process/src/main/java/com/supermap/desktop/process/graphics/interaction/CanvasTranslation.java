@@ -51,10 +51,14 @@ public class CanvasTranslation extends CanvasEventAdapter {
 		}
 	}
 
+	static int count = 0;
+
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		Point scaleCenter = e.getPoint();
 		if (this.canvas.getCanvasViewBounds().contains(scaleCenter)) {
+			count++;
+			System.out.println(count);
 			int preLocationX = this.canvas.getCanvasViewBounds().x;
 			int preLocationY = this.canvas.getCanvasViewBounds().y;
 
@@ -62,7 +66,9 @@ public class CanvasTranslation extends CanvasEventAdapter {
 			int unitStep = e.getWheelRotation() == -1 ? this.step : -1 * this.step;
 			double dx = scaleCenter.getX() - preLocationX;
 			double dy = scaleCenter.getY() - preLocationY;
-			this.transform.translate(-1 * unitStep / 100d * dx, -1 * unitStep / 100d * dy);
+
+//			this.transform.translate((-1 * unitStep / 100d * dx) / this.transform.getScalePercentage(), (-1 * unitStep / 100d * dy) / this.transform.getScalePercentage());
+			this.transform.translate((-1 * unitStep * dx) / (100d * this.transform.getScalePercentage()), (-1 * unitStep * dy) / (100d * this.transform.getScalePercentage()));
 			this.transform.scale(unitStep);
 			this.canvas.repaint();
 		}
