@@ -29,6 +29,12 @@ public class ColorsWithKeysTableModel extends DefaultTableModel {
         }
     }
 
+    public void addColorNodes(Color[] colors,double[] keys){
+        for (int i = 0; i < colors.length; i++) {
+            this.colorNodes.add(new ColorNode(colors[i], keys[i]));
+        }
+    }
+
     public List<ColorNode> getColorNodes() {
         return colorNodes;
     }

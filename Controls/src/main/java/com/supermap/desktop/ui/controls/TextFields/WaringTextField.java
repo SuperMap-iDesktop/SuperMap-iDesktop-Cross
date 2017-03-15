@@ -169,4 +169,12 @@ public class WaringTextField extends JPanel {
         this.textField.setEnabled(enable);
     }
 
+    public boolean isError(){
+        if (this.labelWarning.getIcon()!=null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }
