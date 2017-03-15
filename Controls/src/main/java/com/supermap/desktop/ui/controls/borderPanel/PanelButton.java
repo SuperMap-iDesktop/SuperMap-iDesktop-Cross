@@ -1,4 +1,4 @@
-package com.supermap.desktop.spatialanalyst.vectoranalyst;
+package com.supermap.desktop.ui.controls.borderPanel;
 
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;

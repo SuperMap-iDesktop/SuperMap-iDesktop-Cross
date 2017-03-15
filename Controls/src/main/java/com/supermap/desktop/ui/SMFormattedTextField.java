@@ -1,5 +1,6 @@
 package com.supermap.desktop.ui;
 
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.ui.controls.CaretPositionListener;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -28,6 +29,8 @@ public class SMFormattedTextField extends JFormattedTextField implements Documen
 	}
 
 	private void init() {
+		// 给textField添加最适大小--yuanR 2017.3.14
+		this.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 		getCaretPositionListener().registerComponent(this);
 		getDocument().addDocumentListener(this);
 		addKeyListener(new KeyAdapter() {
