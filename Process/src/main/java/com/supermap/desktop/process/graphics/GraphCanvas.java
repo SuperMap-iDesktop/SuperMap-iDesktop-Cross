@@ -58,11 +58,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private GraphCreation creation = new GraphCreation(this);
 	private Selection selection = new MultiSelction(this);
 
-	//	private QuadTreeTemp<IGraph> graphQuadTree = new QuadTreeTemp<>();
-	private ArrayList<LineGraph> lines = new ArrayList<>();
-
-	private LineGraph line;
-
 	private ArrayList<GraphSelectChangedListener> selectChangedListeners = new ArrayList<>();
 
 	public static void main(String[] args) {
@@ -99,7 +94,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			public void actionPerformed(ActionEvent e) {
 				EllipseGraph graph = new EllipseGraph(canvas);
 				graph.setSize(160, 60);
-
+				canvas.creation.create(graph);
 			}
 		});
 
@@ -125,7 +120,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 //				graph.setWidth(160);
 //				graph.setHeight(60);
 //
-				canvas.connet();
+//				canvas.connet();
 			}
 		});
 
@@ -272,10 +267,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 //		graphics2D.draw(round1);
 	}
 
-	public void connet() {
-		this.line = new LineGraph(this);
-	}
-
 	private int getScale(int i) {
 		return i * 100;
 	}
@@ -307,13 +298,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			IGraph graph = graphs[i];
 			this.painterFactory.getPainter(graph, g).paint();
 		}
-
-		for (int i = 0; i < this.lines.size(); i++) {
-			LineGraph lineGraph = this.lines.get(i);
-			this.painterFactory.getPainter(lineGraph, g).paint();
-		}
-
-		this.painterFactory.getPainter(this.line, g).paint();
 	}
 
 	public Rectangle getCanvasViewBounds() {
@@ -468,17 +452,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		this.selection.mouseDragged(e);
 	}
 
-	private ArrayList<LineGraph> getLines(IGraph graph) {
-		ArrayList<LineGraph> ls = new ArrayList<>();
-		for (int i = 0; i < this.lines.size(); i++) {
-			LineGraph line = this.lines.get(i);
-			if (line.getPreProcess() == graph || line.getNextProcess() == graph) {
-				ls.add(line);
-			}
-		}
-		return ls;
-	}
-
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
@@ -547,17 +520,17 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public UniversalMatrix getTasks() {
 		UniversalMatrix re = new UniversalMatrix();
 
-		for (int i = 0; i < this.lines.size(); i++) {
-			LineGraph line = this.lines.get(i);
-			if (line.getPreProcess() instanceof OutputGraph && line.getNextProcess() instanceof ProcessGraph) {
-				IProcess processF = ((OutputGraph) line.getPreProcess()).getProcessGraph().getProcess();
-				IProcess processT = ((ProcessGraph) line.getNextProcess()).getProcess();
-				processT.getInputs().followProcess(processF);
-				re.addNode(processF);
-				re.addNode(processT);
-				re.addProcessRelationship(processF.getTitle(), processT.getTitle(), 8);
-			}
-		}
+//		for (int i = 0; i < this.lines.size(); i++) {
+//			LineGraph line = this.lines.get(i);
+//			if (line.getPreProcess() instanceof OutputGraph && line.getNextProcess() instanceof ProcessGraph) {
+//				IProcess processF = ((OutputGraph) line.getPreProcess()).getProcessGraph().getProcess();
+//				IProcess processT = ((ProcessGraph) line.getNextProcess()).getProcess();
+//				processT.getInputs().followProcess(processF);
+//				re.addNode(processF);
+//				re.addNode(processT);
+//				re.addProcessRelationship(processF.getTitle(), processT.getTitle(), 8);
+//			}
+//		}
 
 		if (re.getCount() == 0) {
 			IGraph[] graphs = this.graphStorage.getGraphs();
