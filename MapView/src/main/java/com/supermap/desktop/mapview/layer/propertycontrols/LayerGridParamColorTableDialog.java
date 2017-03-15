@@ -214,24 +214,19 @@ public class LayerGridParamColorTableDialog extends SmDialog {
         buttonBatchAddColor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO: 2017/2/23 批量添加颜色
-                final JPopupMenu popupMenu = new JPopupMenu();
-                popupMenu.setBorderPainted(false);
-                ColorSelectionPanel colorSelectionPanel = new ColorSelectionPanel();
-                popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
-                colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
-                popupMenu.show(buttonBatchAddColor, 0, buttonBatchAddColor.getBounds().height);
-                colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {
-                    @Override
-                    public void propertyChange(PropertyChangeEvent evt) {
-                        Color color = (Color) evt.getNewValue();
-                        colorsWithKeysTableModel.add(color);
-                        tableColor.setRowSelectionInterval(tableColor.getRowCount() - 1, tableColor.getRowCount() - 1);
-                        tableColor.scrollRectToVisible(tableColor.getCellRect(tableColor.getRowCount() - 1, 0, true));
-                        popupMenu.setVisible(false);
+                BatchAddColorTableDailog batchAddColorTableDailog=new BatchAddColorTableDailog(modelModified.getOriginKeyCount(),(JFrame) Application.getActiveApplication().getMainFrame(), true);
+                DialogResult result=batchAddColorTableDailog.showDialog();
+                if (result==DialogResult.OK && batchAddColorTableDailog.getResultKeys()!=null){
+                    int count = batchAddColorTableDailog.getResultKeys().length;
+                    Colors colors = comboBoxColor.getGradientColors(count);
+                    if (colors == null) {
+                        return;
                     }
-                });
-                tableChange();
+                    colorsWithKeysTableModel.addColorNodes(colors.toArray(),batchAddColorTableDailog.getResultKeys());
+                    tableColor.repaint();//解决颜色列刷新不全的问题
+                    tableChange();
+                    colorsWithKeysTableModel.fireTableDataChanged();
+                }
             }
         });
 

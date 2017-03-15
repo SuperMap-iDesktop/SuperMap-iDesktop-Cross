@@ -183,8 +183,6 @@ public class PanelPointOrRegionAnalyst extends JPanel {
                    .addComponent(this.panelBasicRight,0,180,Short.MAX_VALUE));
          panelBasicLayout.setVerticalGroup(panelBasicLayout.createSequentialGroup()
                    .addGroup(panelBasicLayout.createParallelGroup(Alignment.LEADING)
-                           // 0,0,400,限制左右面板纵向拉伸程度，当拉伸到一定程度时，不再拉伸
-	    			    // 设置中间面板不能拉升，之后需要拉升时，调整即可--yuanR 2017.3.11
 	    				.addComponent(this.panelBasicLeft)
 	    				.addComponent(this.panelBasicRight)));
          //@formatter:on
