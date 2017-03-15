@@ -197,6 +197,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	}
 
+	public void addGraph(IGraph graph) {
+		if (graph != null && !this.graphStorage.contains(graph)) {
+			this.coordinateTransform.inverse(graph);
+			this.graphStorage.add(graph);
+		}
+	}
+
 	@Override
 	protected void paintComponent(Graphics g) {
 		Graphics2D graphics2D = (Graphics2D) g;
@@ -245,6 +252,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		paintBackground(graphics2D);
 		paintCanvas(graphics2D);
 		AffineTransform origin = graphics2D.getTransform();
+//		System.out.println(origin.getTranslateX() + " " + origin.getTranslateY());
 		graphics2D.setTransform(this.coordinateTransform.getAffineTransform(origin));
 		paintGraphs(graphics2D);
 		graphics2D.setTransform(origin);
