@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.graphics;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -48,8 +49,11 @@ public class CoordinateTransform {
 
 		try {
 			AffineTransform transform = new AffineTransform();
-			transform.translate(this.translateX, this.translateY);
 			transform.scale(getScalePercentage(), getScalePercentage());
+			transform.translate(this.translateX, this.translateY);
+
+//			transform.scale(2, 2);
+//			transform.translate(100, 100);
 			transform.inverseTransform(src, ret);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -57,10 +61,38 @@ public class CoordinateTransform {
 		return ret;
 	}
 
+	/**
+	 * @param distance
+	 * @return
+	 */
+	public int inverse(int distance) {
+		if (distance <= 0) {
+			return -1;
+		}
+
+		Double invesed = new Double(distance / getScalePercentage());
+		return invesed.intValue();
+	}
+
 	public Rectangle inverse(Rectangle rect) {
 		Point leftTop = inverse(rect.getLocation());
 		Point rightBottom = inverse(new Point(rect.x + rect.width, rect.y + rect.height));
 		return new Rectangle(leftTop.x, leftTop.y, rightBottom.x - leftTop.x, rightBottom.y - leftTop.y);
+	}
+
+	/**
+	 * @param graph
+	 */
+	public void inverse(IGraph graph) {
+		if (graph == null) {
+			return;
+		}
+
+		Point inversedLocation = inverse(graph.getLocation());
+		int inversedWidth = inverse(graph.getWidth());
+		int inversedHeight = inverse(graph.getHeight());
+		graph.setLocation(inversedLocation);
+		graph.setSize(inversedWidth, inversedHeight);
 	}
 
 	public void reset() {
@@ -70,7 +102,6 @@ public class CoordinateTransform {
 	}
 
 	/**
-	 * @param origin
 	 * @return
 	 */
 	public AffineTransform getAffineTransform(AffineTransform origin) {
@@ -79,10 +110,13 @@ public class CoordinateTransform {
 		transform.scale(scalePercentage, scalePercentage);
 		transform.translate(this.translateX, this.translateY);
 		return transform;
-
 	}
 
 	public double getScalePercentage() {
 		return (100 + this.scale) / 100d;
+	}
+
+	public double getScaleValue() {
+		return this.scale;
 	}
 }

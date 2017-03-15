@@ -191,9 +191,9 @@ public class DialogTerrainUniformColor extends SmDialog {
                 datasetLayerMap.put(currentFormMapLayer.get(i).getName(), currentFormMapLayer.get(i));
                 temp[COLUMN_INDEX_LAYER] = datasetCell;
                 double tempValue = ((DatasetGrid) currentFormMapLayer.get(i).getDataset()).getMinValue();
-                temp[COLUMN_INDEX_MINVALUE] = tempValue;
+                temp[COLUMN_INDEX_MINVALUE] = tempValue+" ";
                 tempValue = ((DatasetGrid) currentFormMapLayer.get(i).getDataset()).getMaxValue();
-                temp[COLUMN_INDEX_MAXVALUE] = tempValue;
+                temp[COLUMN_INDEX_MAXVALUE] = tempValue+" ";
                 mutiTable.addRow(temp);
             }
         }

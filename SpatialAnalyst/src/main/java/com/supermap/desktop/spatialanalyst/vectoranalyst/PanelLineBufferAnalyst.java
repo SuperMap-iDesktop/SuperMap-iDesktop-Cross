@@ -5,6 +5,7 @@ import com.supermap.analyst.spatialanalyst.BufferEndType;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -17,6 +18,7 @@ import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -33,6 +35,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PanelLineBufferAnalyst extends JPanel {
 
@@ -183,8 +186,18 @@ public class PanelLineBufferAnalyst extends JPanel {
 		this.panelBufferData = new PanelBufferData();
 		this.panelResultData = new PanelResultData();
 		this.panelResultSet = new PanelResultSet();
-		this.setLayout(new BorderLayout());
-		this.add(this.panelBasic, BorderLayout.CENTER);
+
+		GroupLayout panelBufferTypeLayout = new GroupLayout(this);
+		this.setLayout(panelBufferTypeLayout);
+		//@formatter:off
+		panelBufferTypeLayout.setHorizontalGroup(panelBufferTypeLayout.createSequentialGroup()
+					.addComponent(this.panelBasic));
+		panelBufferTypeLayout.setVerticalGroup(panelBufferTypeLayout.createSequentialGroup()
+					.addComponent(this.panelBasic,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE));
+		//@formatter:on
+
+//		this.setLayout(new BorderLayout());
+//		this.add(this.panelBasic, BorderLayout.CENTER);
 
 		initComponentBufferType();
 		initComponentBufferRadius();
@@ -222,12 +235,12 @@ public class PanelLineBufferAnalyst extends JPanel {
 		ButtonGroup bufferTypeButtonGroup = new ButtonGroup();
 		bufferTypeButtonGroup.add(this.radioButtonBufferTypeRound);
 		bufferTypeButtonGroup.add(this.radioButtonBufferTypeFlat);
-		//@formatter:off
+
 		GroupLayout panelBufferTypeLayout = new GroupLayout(this.panelBufferType);
 //		panelBufferTypeLayout.setAutoCreateContainerGaps(true);
 		panelBufferTypeLayout.setAutoCreateGaps(true);
 		this.panelBufferType.setLayout(panelBufferTypeLayout);
-
+		//@formatter:off
 		panelBufferTypeLayout.setHorizontalGroup(panelBufferTypeLayout.createSequentialGroup()
 					.addComponent(this.radioButtonBufferTypeRound)
 					.addComponent(this.radioButtonBufferTypeFlat)
@@ -295,8 +308,8 @@ public class PanelLineBufferAnalyst extends JPanel {
 	    panelBasicLayout.setVerticalGroup(panelBasicLayout.createSequentialGroup()
 	    		.addGroup(panelBasicLayout.createParallelGroup(Alignment.LEADING)
 					    // 0,0,400,限制左右面板纵向拉伸程度，当拉伸到一定程度时，不再拉伸
-	    				.addComponent(this.panelBasicLeft,0,0,400)
-	    				.addComponent(this.panelBasicRight,0,0,400)));
+	    				.addComponent(this.panelBasicLeft)
+	    				.addComponent(this.panelBasicRight)));
 	    //@formatter:on
 	}
 
@@ -344,37 +357,45 @@ public class PanelLineBufferAnalyst extends JPanel {
 		// 判断mapControl是否打开--yuanR 2017.3.10
 		if (Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
 			this.mapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
-			// 不能直接获得地图中的所有图层，没有考虑图层分组的情况，会导致报错--yuanR 2017.3.10
+			// 通过HashMap使用，当进行选择集的缓冲区分析时，对其图层进行：“去重”、“去坏”处理--yuanR 2017.3.13
+			// 获得mapContorl中所有图层，包括分组图层下的
 			ArrayList<Layer> arrayList;
 			arrayList = MapUtilities.getLayers(this.mapControl.getMap(), true);
 			layersCount = arrayList.size();
-			//判断mapControl中是否有图层--yuanR 2017.3.10
+			//是否存在图层
 			if (layersCount > 0) {
-				this.recordsetList = new ArrayList<>();
+				// 遍历所有图层存在的图层，进行去重，去坏处理
+				HashMap<Dataset, Layer> layerMap = new HashMap<>();
 				for (int i = 0; i < layersCount; i++) {
-					Layer[] activeLayer = new Layer[layersCount];
-					activeLayer[i] = arrayList.get(i);
-					// 添加一个数据集是否存在的判断，防止图层所指的数据集不存在而报错--yuanR 2017.3.10
-					if (activeLayer[i].getDataset() == null) {
+					if (arrayList.get(i).getDataset() == null) {
 						continue;
 					}
-					if (activeLayer[i].getDataset().getType() == DatasetType.LINE || activeLayer[i].getDataset().getType() == DatasetType.NETWORK) {
-						if (activeLayer[i].getSelection() != null && activeLayer[i].getSelection().getCount() != 0) {
-							// 当前图层有选中的对象，此时需要考虑多图层的情况，但仅对线的数据集--yuanR 2017.3.10
-							// 通过循环先将符合要求的记录集全部获得
-							this.recordsetList.add(activeLayer[i].getSelection().toRecordset());
+					layerMap.put(arrayList.get(i).getDataset(), arrayList.get(i));
+				}
+				layersCount = layerMap.size();
+				//是否存在不重复的、未损坏的图层
+				if (layersCount > 0) {
+					this.recordsetList = new ArrayList<>();
+					for (Layer layer : layerMap.values()) {
+						// 对不重复，未损毁图层进行其数据集类型的筛选
+						if (layer.getDataset().getType() == DatasetType.LINE || layer.getDataset().getType() == DatasetType.NETWORK) {
+							if (layer.getSelection() != null && layer.getSelection().getCount() != 0) {
+								this.recordsetList.add(layer.getSelection().toRecordset());
 
-							this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(activeLayer[i].getDataset().getDatasource());
-							this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(activeLayer[i].getDataset().getDatasource().getDatasets());
-							this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(activeLayer[i].getDataset());
-							this.panelBufferData.getCheckBoxGeometrySelect().setEnabled(true);
-							this.panelBufferData.getCheckBoxGeometrySelect().setSelected(true);
-							setComponentEnabled();
+								this.panelBufferData.getComboBoxBufferDataDatasource().setSelectedDatasource(layer.getDataset().getDatasource());
+								this.panelBufferData.getComboBoxBufferDataDataset().setDatasets(layer.getDataset().getDatasource().getDatasets());
+								this.panelBufferData.getComboBoxBufferDataDataset().setSelectedDataset(layer.getDataset());
+								this.panelBufferData.getCheckBoxGeometrySelect().setEnabled(true);
+								this.panelBufferData.getCheckBoxGeometrySelect().setSelected(true);
+								setComponentEnabled();
+							}
 						}
 					}
-				}
-				// 所有图层所指的数据都不存在或者图层对应的数据都不符合线缓冲区面板要求,此时选择tree节点进行缓冲区初始化--yuanR 2017.3.10
-				if (this.recordsetList.size() <= 0) {
+					// 所有图层所指的数据都不存在或者图层对应的数据都不符合线缓冲区面板要求,此时选择tree节点进行缓冲区初始化--yuanR 2017.3.10
+					if (this.recordsetList.size() <= 0) {
+						setWorkspaceTreeNode();
+					}
+				} else {
 					setWorkspaceTreeNode();
 				}
 			} else {
@@ -530,18 +551,19 @@ public class PanelLineBufferAnalyst extends JPanel {
 			if (sourceDatasetVector.getRecordCount() > 0) {
 				createResultDataset(sourceDatasetVector);
 			}
-			// TODO yuanR 2017.3.10
+			// TODO yuanR 2017.3.10 需要组件对其接口进行修改，满足传入的参数符合多种情况。
 			this.radiusLeft = this.numericFieldComboBoxLeft.getSelectedItem().toString();
 			this.radiusRight = this.numericFieldComboBoxRight.getSelectedItem().toString();
 			// 暂时由我们桌面进行预处理，如果是可以转为数字的字符串，转换为数字
 			// 因为当源数据集是记录集时，不接受：“10” 这样的字符串
 			// 获得缓冲长度
-			if (DoubleUtilities.isDouble((String) this.radiusRight)) {
+			if (DoubleUtilities.isDouble((String) this.radiusRight) && (DoubleUtilities.isDouble((String) this.radiusLeft))) {
 				this.radiusRight = DoubleUtilities.stringToValue(this.numericFieldComboBoxRight.getSelectedItem().toString());
-			}
-			if (DoubleUtilities.isDouble((String) this.radiusLeft)) {
 				this.radiusLeft = DoubleUtilities.stringToValue(this.numericFieldComboBoxLeft.getSelectedItem().toString());
 			}
+//			if (DoubleUtilities.isDouble((String) this.radiusLeft)) {
+//				this.radiusLeft = DoubleUtilities.stringToValue(this.numericFieldComboBoxLeft.getSelectedItem().toString());
+//			}
 
 			if (this.radioButtonBufferTypeRound.isSelected()) {
 				bufferAnalystParameter.setEndType(BufferEndType.ROUND);
@@ -576,10 +598,16 @@ public class PanelLineBufferAnalyst extends JPanel {
 					if (formProgress != null) {
 						formProgress.doWork(this.bufferProgressCallable);
 						this.isBufferSucceed = this.bufferProgressCallable.isSucceed();
-						// 此处即使生成缓冲区失败也不进行删除新建数据的操作--yuanR 2017.3.10
 					}
-					// 释放
-//					this.recordsetList.get(i).dispose();
+				}
+				// 将生成成功生成的数据集添加到地图-yuanR 2017.3.13
+				if (this.isShowInMap && this.isBufferSucceed) {
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							addRecordsetDatasettoMap();
+						}
+					});
 				}
 			} else {
 				this.bufferProgressCallable = new BufferProgressCallable(sourceDatasetVector, this.resultDatasetVector, bufferAnalystParameter, this.panelResultSet
@@ -618,6 +646,17 @@ public class PanelLineBufferAnalyst extends JPanel {
 	private void deleteResultDataset() {
 		Datasource datasource = this.panelResultData.getComboBoxResultDataDatasource().getSelectedDatasource();
 		datasource.getDatasets().delete(this.resultDatasetName);
+	}
+
+	/**
+	 * 添加由记录集生成的数据集到地图中
+	 * yuanR 2017.3.13
+	 */
+	private void addRecordsetDatasettoMap() {
+		Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
+		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+		Map map = formMap.getMapControl().getMap();
+		MapViewUIUtilities.addDatasetsToMap(map, datasets, false);
 	}
 
 	/**
@@ -672,6 +711,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 				panelResultSet.getCheckBoxRemainAttributes().setSelected(false);
 			} else if (e.getSource() == checkBoxBufferLeft || e.getSource() == checkBoxBufferRight) {
 				//当操作左右半径复选框时,根据左右半径长度值的情况设置确定按钮是否可用--yuanR 2017.3.2
+
 				if (!checkBoxBufferRight.isSelected() && !checkBoxBufferLeft.isSelected()) {
 					setRadiusNumSuitable(false);
 				} else {
@@ -813,6 +853,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 			// 当文本框改变时，对缓冲面板其他控件属性是否正确进行判断--yuanR 2017.3.10
 			judgeOKButtonisEnabled();
 		}
+
 	}
 
 
@@ -870,7 +911,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 				ResulDatasetNameisAvailable = true;
 			}
 		}
-		if (checkBoxBufferLeft.isSelected() || checkBoxBufferLeft.isSelected()) {
+		if (checkBoxBufferLeft.isSelected() || checkBoxBufferRight.isSelected()) {
 			BufferCheckBoxisSelected = true;
 		}
 		setOKButtonisEnabled(DatasourceisNotNull && DatasetisNotNull && ResulDatasourceisNotNull && ResulDatasetNameisAvailable && BufferCheckBoxisSelected);

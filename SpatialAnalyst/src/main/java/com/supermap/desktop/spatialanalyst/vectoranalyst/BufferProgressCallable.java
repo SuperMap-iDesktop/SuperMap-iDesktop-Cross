@@ -6,7 +6,6 @@ import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
@@ -57,7 +56,7 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 	public Boolean call() throws Exception {
 		Application.getActiveApplication().getOutput().output(SpatialAnalystProperties.getString("String_BufferCreating"));
 		try {
-			createBufferAnalyst = false;
+			this.createBufferAnalyst = false;
 			// 根据源数据集设置不同的成功提示信息--yuanR 2017.3.10
 			String CreatedSuccessMessage = "";
 			String CreatedFailedMessage = "";
@@ -65,7 +64,7 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 			BufferAnalyst.addSteppedListener(steppedListener);
 			if (this.sourceData instanceof DatasetVector && resultDatasetVector != null) {
 				long startTime = System.currentTimeMillis();
-				createBufferAnalyst = BufferAnalyst.createBuffer((DatasetVector) sourceData, resultDatasetVector, bufferAnalystParameter, union,
+				this.createBufferAnalyst = BufferAnalyst.createBuffer((DatasetVector) sourceData, resultDatasetVector, bufferAnalystParameter, union,
 						isAttributeRetained);
 				long endTime = System.currentTimeMillis();
 				String time = String.valueOf((endTime - startTime) / 1000.0);
@@ -83,7 +82,7 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 
 			} else if (this.sourceData instanceof Recordset && resultDatasetVector != null) {
 				long startTime = System.currentTimeMillis();
-				createBufferAnalyst = BufferAnalyst.createBuffer((Recordset) sourceData, resultDatasetVector, bufferAnalystParameter, union,
+				this.createBufferAnalyst = BufferAnalyst.createBuffer((Recordset) sourceData, resultDatasetVector, bufferAnalystParameter, union,
 						isAttributeRetained);
 				long endTime = System.currentTimeMillis();
 				String time = String.valueOf((endTime - startTime) / 1000.0);
@@ -147,12 +146,14 @@ public class BufferProgressCallable extends UpdateProgressCallable {
 					formMap.getMapControl().setAction(Action.PAN);
 				}
 			}
-		} else if (this.sourceData instanceof Recordset) {
-			Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-			Map map = formMap.getMapControl().getMap();
-			MapViewUIUtilities.addDatasetsToMap(map, datasets, false);
 		}
+		// 将由记录集生成的数据集添加到地图操作移到方法外，防止重复添加相同数据集到地图--yuanR 2017.3.13
+//		else if (this.sourceData instanceof Recordset) {
+//			Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
+//			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+//			Map map = formMap.getMapControl().getMap();
+//			MapViewUIUtilities.addDatasetsToMap(map, datasets, false);
+//		}
 	}
 
 	public boolean isSucceed() {
