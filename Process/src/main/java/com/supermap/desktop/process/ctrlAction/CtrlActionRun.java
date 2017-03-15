@@ -16,31 +16,30 @@ import com.supermap.desktop.process.util.TaskUtil;
  * Created by highsad on 2017/2/28.
  */
 public class CtrlActionRun extends CtrlAction {
-	private final static String TASKS = "com.supermap.desktop.process.tasks.TasksManagerContainer";
+    private final static String TASKS = "com.supermap.desktop.process.tasks.TasksManagerContainer";
 
-	public CtrlActionRun(IBaseItem caller, IForm formClass) {
-		super(caller, formClass);
-	}
+    public CtrlActionRun(IBaseItem caller, IForm formClass) {
+        super(caller, formClass);
+    }
 
-	@Override
-	public void run() {
-		try {
-			IForm form = Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
-			IDockbarManager manager = Application.getActiveApplication().getMainFrame().getDockbarManager();
-			IDockbar tasksDock = manager.get(Class.forName(TASKS));
-			TasksManagerContainer container = (TasksManagerContainer) tasksDock.getInnerComponent();
-			tasksDock.setVisible(true);
-			container.clear();
+    @Override
+    public void run() {
+        try {
+            IForm form = Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
+            IDockbarManager manager = Application.getActiveApplication().getMainFrame().getDockbarManager();
+            IDockbar tasksDock = manager.get(Class.forName(TASKS));
+            TasksManagerContainer container = (TasksManagerContainer) tasksDock.getInnerComponent();
+            tasksDock.setVisible(true);
+            container.clear();
 
-			if (form instanceof FormProcess) {
-				GraphCanvas canvas = ((FormProcess) form).getCanvas();
-				UniversalMatrix matrix = canvas.getTasks();
+            if (form instanceof FormProcess) {
+                GraphCanvas canvas = ((FormProcess) form).getCanvas();
+                UniversalMatrix matrix = canvas.getTasks();
 
-				TaskUtil.addTasks(matrix);
-				container.run();
-			}
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
+                TaskUtil.excuteTasks(matrix);
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 }
