@@ -39,10 +39,18 @@ public class GraphicsTest extends JPanel {
 		super.paintComponent(g);
 
 		Rectangle rect = getVisibleRect();
-		rect.setLocation(rect.x + 5, rect.y + 5);
-		rect.setSize(rect.width - 5 - 5 - vBar.getWidth(), rect.height - 5 - 5 - hBar.getHeight());
+//		rect.setLocation(rect.x + 5, rect.y + 5);
+//		rect.setSize(rect.width - 5 - 5 - vBar.getWidth(), rect.height - 5 - 5 - hBar.getHeight());
 		g.setColor(Color.BLACK);
 		((Graphics2D) g).fill(rect);
+	}
+
+	@Override
+	public Rectangle getVisibleRect() {
+		Rectangle rect = super.getVisibleRect();
+		rect.setLocation(rect.x + 5, rect.y + 5);
+		rect.setSize(rect.width - 5 - 5 - vBar.getWidth(), rect.height - 5 - 5 - hBar.getHeight());
+		return rect;
 	}
 
 	public static void main(String[] args) {
@@ -51,35 +59,40 @@ public class GraphicsTest extends JPanel {
 		final JFrame frame = new JFrame();
 		frame.setSize(600, 400);
 		frame.setLayout(new BorderLayout());
-		frame.add(test, BorderLayout.CENTER);
+//		frame.add(test, BorderLayout.CENTER);
+//
+//		JButton button = new JButton("test");
+//		frame.add(button, BorderLayout.NORTH);
+//
+//		JButton button1 = new JButton("test1");
+//		frame.add(button1, BorderLayout.WEST);
+//
+//		button.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				test.repaint(new Rectangle(220, 230, 600, 200));
+//			}
+//		});
+//
+//		test.addMouseMotionListener(new MouseMotionListener() {
+//			@Override
+//			public void mouseDragged(MouseEvent e) {
+//
+//			}
+//
+//			int i = 0;
+//
+//			@Override
+//			public void mouseMoved(MouseEvent e) {
+//				i++;
+//				System.out.println(i);
+//			}
+//		});
 
-		JButton button = new JButton("test");
-		frame.add(button, BorderLayout.NORTH);
-
-		JButton button1 = new JButton("test1");
-		frame.add(button1, BorderLayout.WEST);
-
-		button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				test.repaint(new Rectangle(220, 230, 600, 200));
-			}
-		});
-
-		test.addMouseMotionListener(new MouseMotionListener() {
-			@Override
-			public void mouseDragged(MouseEvent e) {
-
-			}
-
-			int i = 0;
-
-			@Override
-			public void mouseMoved(MouseEvent e) {
-				i++;
-				System.out.println(i);
-			}
-		});
+		JScrollPane scrollPane = new JScrollPane();
+		GraphCanvas canvas = new GraphCanvas();
+		scrollPane.setViewportView(canvas);
+		frame.add(scrollPane, BorderLayout.CENTER);
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
