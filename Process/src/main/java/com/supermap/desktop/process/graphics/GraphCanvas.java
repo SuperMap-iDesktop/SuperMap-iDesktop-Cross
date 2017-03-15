@@ -251,8 +251,8 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		setViewRenderingHints(graphics2D);
 		paintBackground(graphics2D);
 		paintCanvas(graphics2D);
+
 		AffineTransform origin = graphics2D.getTransform();
-//		System.out.println(origin.getTranslateX() + " " + origin.getTranslateY());
 		graphics2D.setTransform(this.coordinateTransform.getAffineTransform(origin));
 		paintGraphs(graphics2D);
 		graphics2D.setTransform(origin);

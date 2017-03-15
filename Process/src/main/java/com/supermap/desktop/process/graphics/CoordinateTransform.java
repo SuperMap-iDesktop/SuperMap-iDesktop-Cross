@@ -115,4 +115,8 @@ public class CoordinateTransform {
 	public double getScalePercentage() {
 		return (100 + this.scale) / 100d;
 	}
+
+	public double getScaleValue() {
+		return this.scale;
+	}
 }
