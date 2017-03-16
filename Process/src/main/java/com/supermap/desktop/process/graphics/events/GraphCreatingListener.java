@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.graphics.interaction;
+package com.supermap.desktop.process.graphics.events;
 
 import java.util.EventListener;
 

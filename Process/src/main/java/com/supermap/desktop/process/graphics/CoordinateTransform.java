@@ -1,8 +1,11 @@
 package com.supermap.desktop.process.graphics;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.graphics.events.CanvasTransformEvent;
+import com.supermap.desktop.process.graphics.events.CanvasTransformListener;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
+import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
@@ -12,7 +15,6 @@ import java.awt.geom.AffineTransform;
  */
 public class CoordinateTransform {
 	private GraphCanvas canvas;
-	private Point originLocation;
 	private double maxScale = 900d;
 	private double minScale = -99d;
 	private double maxTranslateX = Integer.MAX_VALUE;
@@ -23,12 +25,9 @@ public class CoordinateTransform {
 	private double translateY; // 100% 画布尺寸下的 Y轴平移距离，缩放后的结果会受 scale 的影响
 	private double scale; // percentage
 
-	public CoordinateTransform(GraphCanvas canvas) {
-		this(canvas, new Point(0, 0));
-	}
+	private EventListenerList listenerList = new EventListenerList();
 
-	public CoordinateTransform(GraphCanvas canvas, Point originLocation) {
-		this.originLocation = originLocation;
+	public CoordinateTransform(GraphCanvas canvas) {
 		this.canvas = canvas;
 		this.translateX = 0;
 		this.translateY = 0;
@@ -43,6 +42,7 @@ public class CoordinateTransform {
 		this.translateY += translateY;
 		this.translateY = this.translateY >= this.maxTranslateY ? this.maxTranslateY : this.translateY;
 		this.translateY = this.translateY <= this.minTranslateY ? this.minTranslateY : this.translateY;
+		fireCanvasTransform(new CanvasTransformEvent(this.canvas, CanvasTransformEvent.TYPE_TRANSLATE));
 	}
 
 	public void scale(double scale) {
@@ -53,6 +53,7 @@ public class CoordinateTransform {
 		} else if (this.scale <= this.minScale) {
 			this.scale = this.minScale;
 		}
+		fireCanvasTransform(new CanvasTransformEvent(this.canvas, CanvasTransformEvent.TYPE_SCALE));
 	}
 
 	/**
@@ -176,6 +177,8 @@ public class CoordinateTransform {
 	}
 
 	/**
+	 * 指定 distance 从屏幕坐标系到画布坐标系的转换。
+	 *
 	 * @param distance
 	 * @return
 	 */
@@ -188,6 +191,12 @@ public class CoordinateTransform {
 		return invesed.intValue();
 	}
 
+	/**
+	 * 指定 rect 从屏幕坐标系到画布坐标系的转换。
+	 *
+	 * @param rect
+	 * @return
+	 */
 	public Rectangle inverse(Rectangle rect) {
 		Point leftTop = inverse(rect.getLocation());
 		Point rightBottom = inverse(new Point(rect.x + rect.width, rect.y + rect.height));
@@ -195,6 +204,8 @@ public class CoordinateTransform {
 	}
 
 	/**
+	 * graph 的空间位置信息从屏幕坐标系到画布坐标系的转换。
+	 *
 	 * @param graph
 	 */
 	public void inverse(IGraph graph) {
@@ -209,6 +220,10 @@ public class CoordinateTransform {
 		graph.setSize(inversedWidth, inversedHeight);
 	}
 
+	/**
+	 * @param src
+	 * @return
+	 */
 	public Point transform(Point src) {
 		Point ret = new Point();
 
@@ -256,5 +271,23 @@ public class CoordinateTransform {
 
 	public double getScaleValue() {
 		return this.scale;
+	}
+
+	public void addCanvasTransformListener(CanvasTransformListener listener) {
+		this.listenerList.add(CanvasTransformListener.class, listener);
+	}
+
+	public void removeCanvasTransformListener(CanvasTransformListener listener) {
+		this.listenerList.remove(CanvasTransformListener.class, listener);
+	}
+
+	private void fireCanvasTransform(CanvasTransformEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == CanvasTransformListener.class) {
+				((CanvasTransformListener) listeners[i + 1]).canvasTransform(e);
+			}
+		}
 	}
 }

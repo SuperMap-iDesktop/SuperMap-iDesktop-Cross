@@ -1,14 +1,14 @@
 package com.supermap.desktop.process.graphics;
 
-import com.supermap.desktop.process.core.IProcess;
+import com.sun.prism.impl.packrect.Rect;
 import com.supermap.desktop.process.core.UniversalMatrix;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
+import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
+import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
+import com.supermap.desktop.process.graphics.events.GraphCreatingEvent;
+import com.supermap.desktop.process.graphics.events.GraphCreatingListener;
 import com.supermap.desktop.process.graphics.graphs.*;
-import com.supermap.desktop.process.graphics.graphs.decorator.AbstractDecorator;
-import com.supermap.desktop.process.graphics.graphs.decorator.HotDecorator;
-import com.supermap.desktop.process.graphics.graphs.decorator.PreviewDecorator;
-import com.supermap.desktop.process.graphics.graphs.decorator.SelectedDecorator;
 import com.supermap.desktop.process.graphics.handler.canvas.CanvasEventHandler;
 import com.supermap.desktop.process.graphics.handler.graph.DefaultGraphEventHanderFactory;
 import com.supermap.desktop.process.graphics.handler.graph.IGraphEventHandlerFactory;
@@ -48,7 +48,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
 	public final static Color GRID_MAJOR_COLOR = new Color(13290186);
 
-	private Rectangle canvasRect = new Rectangle(-5000, -5000, 10000, 10000);
+	private Rectangle canvasRect = new Rectangle(-2000, -2000, 4000, 4000);
 	private IGraphStorage graphStorage = new ListGraphs(); // 画布元素的存储结构
 	private CoordinateTransform coordinateTransform = new CoordinateTransform(this); // 用以在画布平移、缩放等操作过后进行坐标转换
 	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory(this); // 元素绘制的可扩展类
@@ -60,9 +60,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private Selection selection = new MultiSelction(this);
 
 	private ArrayList<GraphSelectChangedListener> selectChangedListeners = new ArrayList<>();
-
-	private HScrollBar hBar = new HScrollBar();
-	private VScrollBar vBar = new VScrollBar();
 
 	public static void main(String[] args) {
 		final JFrame frame = new JFrame();
@@ -107,11 +104,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		button2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ProcessGraph graph = new ProcessGraph(canvas, null);
-				graph.setSize(200, 80);
-				graph.setArcHeight(10);
-				graph.setArcWidth(10);
-
+//				ProcessGraph graph = new ProcessGraph(canvas, null);
+//				graph.setSize(200, 80);
+//				graph.setArcHeight(10);
+//				graph.setArcWidth(10);
 			}
 		});
 
@@ -120,11 +116,9 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		button3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				DataGraph graph = new DataGraph(canvas);
-//				graph.setWidth(160);
-//				graph.setHeight(60);
-//
-//				canvas.connet();
+				Rectangle rect1 = new Rectangle(0, 0, 100, 100);
+				Rectangle rect2 = new Rectangle(200, 150, 101, 101);
+				System.out.println(rect1.union(rect2));
 			}
 		});
 
@@ -137,16 +131,14 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	}
 
 	public GraphCanvas() {
-		initialzeComponents();
+		setLayout(null);
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addMouseWheelListener(this);
 	}
 
-	private void initialzeComponents() {
-//		setLayout(new BorderLayout());
-//		add(this.hBar, BorderLayout.SOUTH);
-//		add(this.vBar, BorderLayout.EAST);
+	public void create(IGraph graph) {
+		this.creation.create(graph);
 	}
 
 	public void installCanvasEventHandler(CanvasEventHandler handler) {
@@ -205,7 +197,12 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public void addGraph(IGraph graph) {
 		if (graph != null && !this.graphStorage.contains(graph)) {
 			this.coordinateTransform.inverse(graph);
-			this.graphStorage.add(graph);
+
+			if (this.canvasRect.contains(graph.getBounds())) {
+				fireGraphCreating(new GraphCreatingEvent(this, graph));
+				this.graphStorage.add(graph);
+				fireGraphCreated(new GraphCreatedEvent(this, graph));
+			}
 		}
 	}
 
@@ -297,7 +294,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	 * @param g
 	 */
 	private void paintCanvas(Graphics2D g) {
-		Rectangle rect = getCanvasViewBounds();
+		Rectangle rect = this.coordinateTransform.transform(getCanvasRect());
 		g.setColor(DEFAULT_CANVAS_COLOR);
 		g.fillRect(rect.x, rect.y, rect.width, rect.height);
 	}
@@ -310,8 +307,22 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		}
 	}
 
-	public Rectangle getCanvasViewBounds() {
-		return new Rectangle(0, 0, getWidth(), getHeight());
+	/**
+	 * 返回画布的可见区域，画布坐标单位
+	 *
+	 * @return
+	 */
+	public Rectangle getVisibleCanvasRect() {
+		return this.coordinateTransform.inverse(getVisibleRect());
+	}
+
+	/**
+	 * 获取画布尺寸，画布坐标单位
+	 *
+	 * @return
+	 */
+	public Rectangle getCanvasRect() {
+		return this.canvasRect;
 	}
 
 	/**
@@ -527,33 +538,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		}
 	}
 
-	public UniversalMatrix getTasks() {
-		UniversalMatrix re = new UniversalMatrix();
-
-//		for (int i = 0; i < this.lines.size(); i++) {
-//			LineGraph line = this.lines.get(i);
-//			if (line.getPreProcess() instanceof OutputGraph && line.getNextProcess() instanceof ProcessGraph) {
-//				IProcess processF = ((OutputGraph) line.getPreProcess()).getProcessGraph().getProcess();
-//				IProcess processT = ((ProcessGraph) line.getNextProcess()).getProcess();
-//				processT.getInputs().followProcess(processF);
-//				re.addNode(processF);
-//				re.addNode(processT);
-//				re.addProcessRelationship(processF.getTitle(), processT.getTitle(), 8);
-//			}
-//		}
-
-		if (re.getCount() == 0) {
-			IGraph[] graphs = this.graphStorage.getGraphs();
-			for (int i = 0; i < graphs.length; i++) {
-				IGraph graph = graphs[i];
-				if (graph instanceof ProcessGraph) {
-					re.addNode(((ProcessGraph) graph).getProcess());
-				}
-			}
-		}
-		return re;
-	}
-
 	@Override
 	public void componentResized(ComponentEvent e) {
 		repaint();
@@ -574,30 +558,39 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	}
 
+	public void addGraphCreatedListener(GraphCreatedListener listener) {
+		this.listenerList.add(GraphCreatedListener.class, listener);
+	}
 
-	private class HScrollBar extends JScrollBar implements AdjustmentListener {
+	public void removeGraphCreatedListener(GraphCreatedListener listener) {
+		this.listenerList.remove(GraphCreatedListener.class, listener);
+	}
 
-		public HScrollBar() {
-			setOrientation(JScrollBar.HORIZONTAL);
-			addAdjustmentListener(this);
-		}
+	public void addGraphCreatingListener(GraphCreatingListener listener) {
+		this.listenerList.add(GraphCreatingListener.class, listener);
+	}
 
-		@Override
-		public void adjustmentValueChanged(AdjustmentEvent e) {
-			System.out.println(e.getValue());
+	public void removeGraphCreatingListener(GraphCreatingListener listener) {
+		this.listenerList.remove(GraphCreatingListener.class, listener);
+	}
+
+	private void fireGraphCreated(GraphCreatedEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == GraphCreatedListener.class) {
+				((GraphCreatedListener) listeners[i + 1]).graphCreated(e);
+			}
 		}
 	}
 
-	private class VScrollBar extends JScrollBar implements AdjustmentListener {
-		public VScrollBar() {
-			setOrientation(JScrollBar.VERTICAL);
-			addAdjustmentListener(this);
-		}
+	private void fireGraphCreating(GraphCreatingEvent e) {
+		Object[] listeners = listenerList.getListenerList();
 
-		@Override
-		public void adjustmentValueChanged(AdjustmentEvent e) {
-
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == GraphCreatingListener.class) {
+				((GraphCreatingListener) listeners[i + 1]).graphCreating(e);
+			}
 		}
 	}
-
 }

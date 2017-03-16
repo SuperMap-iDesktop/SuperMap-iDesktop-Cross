@@ -1,5 +1,7 @@
 package com.supermap.desktop.process.graphics;
 
+import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -89,10 +91,30 @@ public class GraphicsTest extends JPanel {
 //			}
 //		});
 
+		Rectangle rect1 = new Rectangle(0, 0, 0, 0);
+		Rectangle rect2 = new Rectangle(-100, -100, 100, 100);
+		Rectangle rect3 = rect1.union(rect2);
+		System.out.println(rect3);
 		JScrollPane scrollPane = new JScrollPane();
-		GraphCanvas canvas = new GraphCanvas();
+		final GraphCanvas canvas = new GraphCanvas();
 		scrollPane.setViewportView(canvas);
+		scrollPane.getHorizontalScrollBar().setMinimum(-200);
 		frame.add(scrollPane, BorderLayout.CENTER);
+
+		JButton button = new JButton("create");
+		frame.add(button, BorderLayout.NORTH);
+		button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RectangleGraph graph = new RectangleGraph(canvas);
+				graph.setSize(200, 80);
+				graph.setArcHeight(10);
+				graph.setArcWidth(10);
+
+				canvas.create(graph);
+				System.out.println(canvas.getLocation());
+			}
+		});
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override

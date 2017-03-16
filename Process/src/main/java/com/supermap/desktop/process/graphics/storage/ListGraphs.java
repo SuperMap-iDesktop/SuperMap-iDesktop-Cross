@@ -12,6 +12,7 @@ import java.util.Vector;
 public class ListGraphs implements IGraphStorage {
 	private Vector<IGraph> graphs = new Vector();
 	private Vector<Rectangle> rects = new Vector<>();
+	private Rectangle bounds = new Rectangle(0, 0, 0, 0);
 
 	@Override
 	public int getCount() {
@@ -40,14 +41,16 @@ public class ListGraphs implements IGraphStorage {
 
 	@Override
 	public void add(IGraph graph) {
-		this.graphs.add(graph);
-		this.rects.add(graph.getBounds());
+		add(graph, graph.getBounds());
 	}
 
 	@Override
 	public void add(IGraph graph, Rectangle bounds) {
 		this.graphs.add(graph);
 		this.rects.add(bounds);
+		if (!this.bounds.contains(bounds)) {
+			this.bounds = this.bounds.union(bounds);
+		}
 	}
 
 	@Override
@@ -104,8 +107,14 @@ public class ListGraphs implements IGraphStorage {
 	}
 
 	@Override
+	public Rectangle getBounds() {
+		return this.bounds;
+	}
+
+	@Override
 	public void clear() {
 		this.graphs.clear();
 		this.rects.clear();
+		this.bounds = new Rectangle(0, 0, 0, 0);
 	}
 }

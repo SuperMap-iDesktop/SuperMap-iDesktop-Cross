@@ -55,7 +55,7 @@ public class CanvasTranslation extends CanvasEventAdapter {
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		Point scaleCenter = e.getPoint();
-		if (this.canvas.getCanvasViewBounds().contains(scaleCenter)) {
+		if (this.canvas.getVisibleRect().contains(scaleCenter)) {
 
 			// -1 for zooming in,1 form zooming out.
 			double validStep = e.getWheelRotation() == -1 ? this.transform.validateScale(this.step) : -1 * this.transform.validateScale(this.step);

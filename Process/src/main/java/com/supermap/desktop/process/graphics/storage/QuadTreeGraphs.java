@@ -69,6 +69,11 @@ public class QuadTreeGraphs implements IGraphStorage {
 	}
 
 	@Override
+	public Rectangle getBounds() {
+		return null;
+	}
+
+	@Override
 	public void clear() {
 
 	}
