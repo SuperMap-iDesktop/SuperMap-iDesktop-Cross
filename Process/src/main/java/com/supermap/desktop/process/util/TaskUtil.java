@@ -44,13 +44,13 @@ public class TaskUtil {
     }
 
     /**
-     * Use ExecutorService to manager all task thread,
+     * Use ExecutorService to manage all task thread,
      * If task's prev tasks has finished,excute task;
      *
      * @param universalMatrix
      * @return
      */
-    public static TasksManagerContainer addTasks(final UniversalMatrix universalMatrix) {
+    public static TasksManagerContainer excuteTasks(final UniversalMatrix universalMatrix) {
         TasksManagerContainer tasksManagerContainer = getManagerContainer(true);
         final ArrayList<Object> processes = universalMatrix.listAllNode();
         ExecutorService eService = Executors.newCachedThreadPool();
@@ -67,10 +67,12 @@ public class TaskUtil {
                         ArrayList<Object> preNodes = universalMatrix.getPreNode(nowProcessTitle);
                         boolean allPreTasksFinished = true;
                         int preNodesSize = preNodes.size();
-                        for (int j = 0; j < preNodesSize; j++) {
-                            if (!((IProcess) preNodes).getProcessTask().isFinished()) {
-                                allPreTasksFinished = false;
-                                break;
+                        if (preNodesSize > 0) {
+                            for (int j = 0; j < preNodesSize; j++) {
+                                if (!((IProcess) preNodes).getProcessTask().isFinished()) {
+                                    allPreTasksFinished = false;
+                                    break;
+                                }
                             }
                         }
                         if (allPreTasksFinished) {
