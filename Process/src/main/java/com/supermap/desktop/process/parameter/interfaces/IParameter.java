@@ -21,4 +21,8 @@ public interface IParameter extends IAbstractParameter {
 	void removePropertyListener(PropertyChangeListener propertyChangeListener);
 
 	void dispose();
+
+	void setParameters(IParameters parameters);
+
+	IParameters getParameters();
 }

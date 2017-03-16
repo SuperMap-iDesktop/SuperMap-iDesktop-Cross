@@ -13,6 +13,7 @@ import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterOverlayAnalyst;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
@@ -75,8 +76,8 @@ public class ParameterOverlayAnalystPanel extends DefaultParameterPanel implemen
 	private boolean isSelectingItem;
 	private boolean isAllVectorType;
 
-	public ParameterOverlayAnalystPanel(ParameterOverlayAnalyst overlayAnalyst) {
-		this.overlayAnalyst = overlayAnalyst;
+	public ParameterOverlayAnalystPanel(IParameter overlayAnalyst) {
+		this.overlayAnalyst = (ParameterOverlayAnalyst) overlayAnalyst;
 		this.overlayAnalystInfo = this.overlayAnalyst.getOverlayAnalystInfo();
 		initComponents();
 		initResources();

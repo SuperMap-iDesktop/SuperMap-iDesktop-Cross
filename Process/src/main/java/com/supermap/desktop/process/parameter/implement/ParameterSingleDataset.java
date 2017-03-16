@@ -3,6 +3,8 @@ package com.supermap.desktop.process.parameter.implement;
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.process.parameter.ParameterPanels.ParameterSingleDatasetPanel;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
 import java.beans.PropertyChangeEvent;
@@ -35,9 +37,15 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 	    return ParameterType.SINGLE_DATASET;
     }
 
+	@Override
+	public IParameterPanel getParameterPanel() {
+		IParameterPanel parameterPanel = super.getParameterPanel();
+		((ParameterSingleDatasetPanel) parameterPanel).setDatasetTypes(datasetTypes);
+		return parameterPanel;
+	}
 
-    @Override
-    public void dispose() {
+	@Override
+	public void dispose() {
 
     }
 }

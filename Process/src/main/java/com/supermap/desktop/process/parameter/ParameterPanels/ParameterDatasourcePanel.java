@@ -5,6 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
@@ -28,10 +29,10 @@ public class ParameterDatasourcePanel extends DefaultParameterPanel implements I
 	private ParameterDatasource parameterDatasource;
 	private boolean isSelectingItem;
 
-	public ParameterDatasourcePanel(ParameterDatasource parameterDatasource) {
-		this.parameterDatasource = parameterDatasource;
-		this.label.setText(parameterDatasource.getDescribe());
-		this.datasourceComboBox.setSelectedDatasource((Datasource) parameterDatasource.getSelectedItem());
+	public ParameterDatasourcePanel(IParameter parameterDatasource) {
+		this.parameterDatasource = ((ParameterDatasource) parameterDatasource);
+		this.label.setText(this.parameterDatasource.getDescribe());
+		this.datasourceComboBox.setSelectedDatasource((Datasource) this.parameterDatasource.getSelectedItem());
 		initLayout();
 		initListener();
 	}

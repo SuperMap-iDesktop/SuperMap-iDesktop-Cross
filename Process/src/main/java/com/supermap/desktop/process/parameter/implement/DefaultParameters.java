@@ -8,6 +8,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
 /**
@@ -27,6 +28,7 @@ public class DefaultParameters implements IParameters {
 		if (this.parameters != null && this.parameters.length > 0) {
 			for (IParameter parameter : parameters) {
 				parameter.dispose();
+				parameter.setParameters(null);
 			}
 		}
 		if (panel != null) {
@@ -34,6 +36,11 @@ public class DefaultParameters implements IParameters {
 		}
 		panel = null;
 		this.parameters = iParameters;
+		if (this.parameters != null && this.parameters.length > 0) {
+			for (IParameter parameter : parameters) {
+				parameter.setParameters(this);
+			}
+		}
 	}
 
 
@@ -83,8 +90,9 @@ public class DefaultParameters implements IParameters {
 		Class clazz = ParameterUtil.getParameterPanel(parameter.getType(), packages);
 		if (clazz != null) {
 			try {
-				this.getClass().getClassLoader().loadClass(clazz.getName());
-			} catch (ClassNotFoundException e) {
+				Constructor constructor = clazz.getConstructor(IParameter.class);
+				return (IParameterPanel) constructor.newInstance(parameter);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

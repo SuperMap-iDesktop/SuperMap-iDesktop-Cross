@@ -27,6 +27,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
@@ -90,10 +91,20 @@ public class ParameterSingleDatasetPanel extends DefaultParameterPanel implement
 		}
 	};
 
-	public ParameterSingleDatasetPanel(ParameterSingleDataset parameterSingleDataset, DatasetType[] datasetTypes) {
-		this.parameterSingleDataset = parameterSingleDataset;
-		this.datasetTypes = datasetTypes;
+	public ParameterSingleDatasetPanel(IParameter parameterSingleDataset) {
+		this.parameterSingleDataset = (ParameterSingleDataset) parameterSingleDataset;
+//		this.datasetTypes = datasetTypes;
 		init();
+	}
+
+	public DatasetType[] getDatasetTypes() {
+		return datasetTypes;
+	}
+
+	public void setDatasetTypes(DatasetType[] datasetTypes) {
+		this.datasetTypes = datasetTypes;
+		this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);// bug?
+		this.parameterSingleDataset.setSelectedItem(datasetComboBox.getSelectedDataset());
 	}
 
 	private void init() {

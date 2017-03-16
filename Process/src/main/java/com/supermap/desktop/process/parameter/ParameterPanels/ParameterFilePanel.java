@@ -3,6 +3,7 @@ package com.supermap.desktop.process.parameter.ParameterPanels;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterFile;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
@@ -28,13 +29,13 @@ public class ParameterFilePanel extends DefaultParameterPanel implements IParame
 	private boolean isSelectingFile = false;
 	private JLabel label = new JLabel();
 
-	public ParameterFilePanel(ParameterFile parameterFile) {
-		this.parameterFile = parameterFile;
+	public ParameterFilePanel(IParameter parameterFile) {
+		this.parameterFile = (ParameterFile) parameterFile;
 		// todo fileChooseControl不好用，没时间重构，后面再优化
-		if (parameterFile.getSelectedItem() != null) {
-			fileChooserControl.setText(((File) parameterFile.getSelectedItem()).getAbsolutePath());
+		if (this.parameterFile.getSelectedItem() != null) {
+			fileChooserControl.setText(((File) this.parameterFile.getSelectedItem()).getAbsolutePath());
 		}
-		label.setText(parameterFile.getDescribe());
+		label.setText(this.parameterFile.getDescribe());
 		initListener();
 		initLayout();
 	}

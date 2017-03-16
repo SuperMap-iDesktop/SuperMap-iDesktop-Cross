@@ -4,6 +4,7 @@ import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterRadioButton;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -28,8 +29,8 @@ public class ParameterRadioButtonPanel extends DefaultParameterPanel implements 
 	private boolean isSelectingItem = false;
 	private ButtonGroup buttonGroup = new ButtonGroup();
 
-	public ParameterRadioButtonPanel(ParameterRadioButton parameterRadioButton) {
-		this.parameterRadioButton = parameterRadioButton;
+	public ParameterRadioButtonPanel(IParameter parameterRadioButton) {
+		this.parameterRadioButton = (ParameterRadioButton) parameterRadioButton;
 		initLayout();
 		initListeners();
 	}

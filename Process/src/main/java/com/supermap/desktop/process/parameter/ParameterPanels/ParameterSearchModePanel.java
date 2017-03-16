@@ -6,6 +6,7 @@ import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterSearchModeInfo;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterSearchMode;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
@@ -41,10 +42,10 @@ public class ParameterSearchModePanel extends DefaultParameterPanel implements I
     private ParameterSearchMode parameterSearchMode;
     private ParameterSearchModeInfo info;
 
-    public ParameterSearchModePanel(ParameterSearchMode parameterSearchMode) {
-        this.parameterSearchMode = parameterSearchMode;
-        this.info = (ParameterSearchModeInfo) parameterSearchMode.getSelectedItem();
-        initComponents();
+	public ParameterSearchModePanel(IParameter parameterSearchMode) {
+		this.parameterSearchMode = (ParameterSearchMode) parameterSearchMode;
+		this.info = (ParameterSearchModeInfo) this.parameterSearchMode.getSelectedItem();
+		initComponents();
         initLayout();
         initListener();
     }

@@ -2,6 +2,7 @@ package com.supermap.desktop.process.parameter.ParameterPanels;
 
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
@@ -26,9 +27,9 @@ public class ParameterTextAreaPanel extends DefaultParameterPanel implements IPa
     private JScrollPane scrollPane;
     private boolean selectingItem;
 
-    public ParameterTextAreaPanel(ParameterTextArea parameterTextArea) {
-        this.parameterTextArea = parameterTextArea;
-        initComponents();
+	public ParameterTextAreaPanel(IParameter parameterTextArea) {
+		this.parameterTextArea = (ParameterTextArea) parameterTextArea;
+		initComponents();
         initLayout();
         initListener();
     }

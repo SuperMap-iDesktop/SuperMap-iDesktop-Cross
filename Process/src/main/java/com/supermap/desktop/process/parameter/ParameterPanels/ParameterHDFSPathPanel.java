@@ -4,6 +4,7 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
@@ -33,9 +34,9 @@ public class ParameterHDFSPathPanel extends DefaultParameterPanel implements IPa
     private ParameterHDFSPath parameterHDFSPath;
     private boolean isSelectingItem = false;
 
-    public ParameterHDFSPathPanel(ParameterHDFSPath parameterHDFSPath) {
-        this.parameterHDFSPath = parameterHDFSPath;
-        initParameterInfo();
+	public ParameterHDFSPathPanel(IParameter parameterHDFSPath) {
+		this.parameterHDFSPath = (ParameterHDFSPath) parameterHDFSPath;
+		initParameterInfo();
         initListener();
     }
     private void initParameterInfo() {

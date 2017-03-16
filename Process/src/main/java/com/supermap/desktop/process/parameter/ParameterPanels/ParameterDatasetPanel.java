@@ -25,6 +25,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterDataset;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
@@ -101,8 +102,8 @@ public class ParameterDatasetPanel extends DefaultParameterPanel implements IPar
 		}
 	};
 
-	public ParameterDatasetPanel(ParameterDataset parameterDataset) {
-		this.parameterDataset = parameterDataset;
+	public ParameterDatasetPanel(IParameter parameterDataset) {
+		this.parameterDataset = (ParameterDataset) parameterDataset;
 		labelDatasource.setText(CommonProperties.getString(CommonProperties.Label_Datasource));
 		labelDataset.setText(CommonProperties.getString(CommonProperties.Label_Dataset));
 		this.datasourceComboBox = new DatasourceComboBox(Application.getActiveApplication().getWorkspace().getDatasources());

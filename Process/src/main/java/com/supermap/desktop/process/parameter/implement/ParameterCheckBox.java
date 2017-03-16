@@ -51,13 +51,6 @@ public class ParameterCheckBox extends AbstractParameter implements ISelectionPa
 		return this;
 	}
 
-	public IParameters getParameters() {
-		return parameters;
-	}
-
-	public void setParameters(IParameters parameters) {
-		this.parameters = parameters;
-	}
 
 	@Override
 	public void dispose() {

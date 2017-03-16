@@ -5,6 +5,7 @@ import com.supermap.desktop.process.parameter.ParameterComboBoxCellRender;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
@@ -28,19 +29,19 @@ public class ParameterComboBoxPanel extends DefaultParameterPanel implements IPa
 	private JLabel label = new JLabel();
 	private JComboBox<ParameterDataNode> comboBox = new JComboBox<>();
 
-	public ParameterComboBoxPanel(ParameterComboBox parameterComboBox) {
-		this.parameterComboBox = parameterComboBox;
-		ParameterDataNode[] items = parameterComboBox.getItems();
+	public ParameterComboBoxPanel(IParameter parameterComboBox) {
+		this.parameterComboBox = ((ParameterComboBox) parameterComboBox);
+		ParameterDataNode[] items = this.parameterComboBox.getItems();
 		if (items != null && items.length > 0) {
 			for (ParameterDataNode item : items) {
 				comboBox.addItem(item);
 			}
 		}
-		if (parameterComboBox.getSelectedItem() != null) {
-			comboBox.setSelectedItem(parameterComboBox.getSelectedItem());
+		if (this.parameterComboBox.getSelectedItem() != null) {
+			comboBox.setSelectedItem(this.parameterComboBox.getSelectedItem());
 		}
-		initListeners(parameterComboBox);
-		label.setText(parameterComboBox.getDescribe());
+		initListeners(this.parameterComboBox);
+		label.setText(this.parameterComboBox.getDescribe());
 		comboBox.setRenderer(new ParameterComboBoxCellRender());
 
 		initLayout();

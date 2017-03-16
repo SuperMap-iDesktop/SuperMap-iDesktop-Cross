@@ -15,6 +15,7 @@ import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
@@ -81,8 +82,8 @@ public class ParameterSaveDatasetPanel extends DefaultParameterPanel implements 
 	};
 
 
-	public ParameterSaveDatasetPanel(ParameterSaveDataset parameterSaveDataset) {
-		this.parameterSaveDataset = parameterSaveDataset;
+	public ParameterSaveDatasetPanel(IParameter parameterSaveDataset) {
+		this.parameterSaveDataset = (ParameterSaveDataset) parameterSaveDataset;
 		labelDatasource = new JLabel(CommonProperties.getString(CommonProperties.Label_Datasource));
 		labelDataset = new JLabel(CommonProperties.getString(CommonProperties.Label_Dataset));
 		datasourceComboBox = new DatasourceComboBox();
@@ -116,7 +117,7 @@ public class ParameterSaveDatasetPanel extends DefaultParameterPanel implements 
 		initLayout();
 		initListener();
 		initComponentState();
-		parameterSaveDataset.setResultDatasource(datasourceComboBox.getSelectedDatasource());
+		this.parameterSaveDataset.setResultDatasource(datasourceComboBox.getSelectedDatasource());
 	}
 
 	private void initLayout() {

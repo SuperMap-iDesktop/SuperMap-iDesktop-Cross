@@ -26,10 +26,11 @@ public class ParameterUtil {
 			if (classes.size() > 0) {
 				for (Class<?> aClass : classes) {
 					Class<?>[] interfaces = aClass.getInterfaces();
-					ArrayUtilities.isArrayContains(interfaces, IParameterPanel.class);
-					ParameterPanelDescribe annotation = aClass.getAnnotation(ParameterPanelDescribe.class);
-					if (annotation != null && annotation.parameterPanelType().equals(parameterType)) {
-						return aClass;
+					if (ArrayUtilities.isArrayContains(interfaces, IParameterPanel.class)) {
+						ParameterPanelDescribe annotation = aClass.getAnnotation(ParameterPanelDescribe.class);
+						if (annotation != null && annotation.parameterPanelType().equals(parameterType)) {
+							return aClass;
+						}
 					}
 				}
 			}
@@ -54,8 +55,8 @@ public class ParameterUtil {
 		Enumeration<URL> dirs;
 		try {
 			Bundle bundle = Application.getActiveApplication().getPluginManager().getBundle(pack.getBundleName()).getBundle();
-			dirs = bundle.findEntries(packageDirName, ".class", true);
-			if (dirs.hasMoreElements()) {
+			dirs = bundle.findEntries(packageDirName, "*.class", true);
+			while (dirs.hasMoreElements()) {
 				URL url = dirs.nextElement();
 				// 得到路径信息
 				String bundleOneClassName = url.getPath();

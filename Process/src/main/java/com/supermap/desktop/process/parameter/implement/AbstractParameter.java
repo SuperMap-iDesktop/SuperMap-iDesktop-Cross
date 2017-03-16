@@ -80,4 +80,13 @@ public abstract class AbstractParameter implements IParameter {
 	public void dispose() {
 
 	}
+
+	public IParameters getParameters() {
+		return parameters;
+	}
+
+	public void setParameters(IParameters parameters) {
+		this.parameters = parameters;
+	}
+
 }
