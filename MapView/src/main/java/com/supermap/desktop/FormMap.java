@@ -107,8 +107,8 @@ import java.util.EventObject;
 public class FormMap extends FormBaseChild implements IFormMap {
 
 	private static final long serialVersionUID = 1L;
-	private TextStyle currentTextStyle=null;
-	private double currentTextRotationAngle=0;
+	private TextStyle currentTextStyle = null;
+	private double currentTextRotationAngle = 0;
 	private static final double defaultFontWeight = 19; //  此为经验值，即在任何情况下，都要保证仙剑的默认字体大小为14号字体
 
 	private final DocumentListener pointDocumentListener = new DocumentListener() {
@@ -1144,22 +1144,25 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	// 文本默认风格设置 2017.1.13 李逍遥 part2   共计part9
 	@Override
-	public void setDefaultTextStyle(TextStyle tempTextStyle){
-		this.currentTextStyle=tempTextStyle.clone();
+	public void setDefaultTextStyle(TextStyle tempTextStyle) {
+		this.currentTextStyle = tempTextStyle.clone();
 	}
+
 	@Override
-	public TextStyle getDefaultTextStyle(){
-		if (this.currentTextStyle==null){
+	public TextStyle getDefaultTextStyle() {
+		if (this.currentTextStyle == null) {
 			createdefaultTextStyle();
 		}
 		return this.currentTextStyle;
 	}
+
 	@Override
-	public void setDefaultTextRotationAngle(double tempRotationAngle){
-		this.currentTextRotationAngle=tempRotationAngle;
+	public void setDefaultTextRotationAngle(double tempRotationAngle) {
+		this.currentTextRotationAngle = tempRotationAngle;
 	}
+
 	@Override
-	public double getDefaultTextRotationAngle(){
+	public double getDefaultTextRotationAngle() {
 		return this.currentTextRotationAngle;
 	}
 

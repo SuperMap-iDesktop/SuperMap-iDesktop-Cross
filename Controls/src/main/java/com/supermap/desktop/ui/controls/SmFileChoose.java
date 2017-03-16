@@ -521,4 +521,11 @@ public class SmFileChoose extends JFileChooser {
 	public void setSelectFiles(File[] selectFiles) {
 		this.selectFiles = selectFiles;
 	}
+
+	/**
+	 * 获得设置的默认路径
+	 */
+	public String getModuleLastPath(){
+		return moduleLastPath;
+	}
 }

@@ -22,151 +22,166 @@ import java.util.ArrayList;
  * Created by xie on 2016/12/13.
  */
 public class WaringTextField extends JPanel {
-    private JLabel labelWarning;
-    private JTextField textField;
-    private Double startValue;
-    private Double endValue;
-    private String defaultValue;
-    public static final int INTEGER_TYPE = 0;
-    public static final int FLOAT_TYPE = 1;
-    private int type;
-    private ArrayList listeners;
+	private JLabel labelWarning;
+	private JTextField textField;
+	private Double startValue;
+	private Double endValue;
+	private String defaultValue;
+	public static final int INTEGER_TYPE = 0;
+	public static final int FLOAT_TYPE = 1;
+	public static final int MAXVALUE_TYPE = 2;
+	private int type;
+	private ArrayList listeners;
 	private DecimalFormat format = new DecimalFormat("0.#######");
 
-    private CaretListener caretListener = new CaretListener() {
-        @Override
-        public void caretUpdate(CaretEvent e) {
-            String text = textField.getText();
-            if (null != startValue && null != endValue && !SymbolSpinnerUtilties.isLegitNumber(startValue, endValue, text)) {
-                labelWarning.setText("");
-                labelWarning.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/warning.png"));
-	            setInitInfo(startValue, endValue, type, floatLength);
-            } else if (!StringUtilities.isNullOrEmpty(text) && StringUtilities.isNumber(text)) {
-                labelWarning.setText(" ");
-                labelWarning.setIcon(null);
-                fireListener(text);
-            }
-        }
-    };
-    private KeyListener keyAdapter = new KeyAdapter() {
-        @Override
-        public void keyTyped(KeyEvent e) {
-            int keyChar = e.getKeyChar();
-            if (type == INTEGER_TYPE && keyChar == 46) {
-                e.consume();
-            }
-            if ((keyChar >= KeyEvent.VK_0 && keyChar <= KeyEvent.VK_9) || keyChar == 45
-                    || keyChar == 43 || keyChar == 46) {
-                return;
-            } else {
-                e.consume();
-            }
+	private String customTipText;
 
-        }
-    };
+
+	private CaretListener caretListener = new CaretListener() {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			String text = textField.getText();
+			if (null != startValue && null != endValue && !SymbolSpinnerUtilties.isLegitNumber(startValue, endValue, text)) {
+				labelWarning.setText("");
+				labelWarning.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/warning.png"));
+				setInitInfo(startValue, endValue, type, floatLength);
+			} else if (!StringUtilities.isNullOrEmpty(text) && StringUtilities.isNumber(text)) {
+				labelWarning.setText(" ");
+				labelWarning.setIcon(null);
+				fireListener(text);
+			}
+		}
+	};
+	private KeyListener keyAdapter = new KeyAdapter() {
+		@Override
+		public void keyTyped(KeyEvent e) {
+			int keyChar = e.getKeyChar();
+			if (type == INTEGER_TYPE && keyChar == 46) {
+				e.consume();
+			}
+			if ((keyChar >= KeyEvent.VK_0 && keyChar <= KeyEvent.VK_9) || keyChar == 45
+					|| keyChar == 43 || keyChar == 46) {
+				return;
+			} else {
+				e.consume();
+			}
+		}
+	};
 	private String floatLength;
 
 	public WaringTextField() {
 		this("");
-    }
+	}
 
-    public WaringTextField(String defaultValue) {
-        super();
-        this.defaultValue = defaultValue;
-        initComponents();
-        initLayout();
-    }
+	public WaringTextField(String defaultValue) {
+		super();
+		this.defaultValue = defaultValue;
+		initComponents();
+		initLayout();
+	}
 
-    public void setInitInfo(double startValue, double endValue, int type, String floatLength) {
-        this.startValue = startValue;
-        this.endValue = endValue;
-        this.type = type;
-	    this.floatLength = floatLength;
-	    String text = textField.getText();
-	    double currentValue = 0;
-	    if (!StringUtilities.isNullOrEmpty(text)) {
-		    try {
-			    currentValue = DoubleUtilities.stringToValue(text);
-		    } catch (Exception e) {
-			    // ignore
-		    }
-	    }
-	    if (type == INTEGER_TYPE) {
-		    if (currentValue > endValue) {
-			    this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_IntegerMaxWarning"), "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
-		    } else {
-			    this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_IntegerMinWarning"), "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
-		    }
-        } else {
-		    if (currentValue > endValue) {
-			    this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatMaxWarning"), floatLength, "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
-		    } else {
-			    this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatMinWarning"), floatLength, "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
-		    }
-        }
-        this.labelWarning.setPreferredSize(new Dimension(23, 23));
-    }
+	public void setInitInfo(double startValue, double endValue, int type, String floatLength) {
+		this.startValue = startValue;
+		this.endValue = endValue;
+		this.type = type;
+		this.floatLength = floatLength;
+		String text = textField.getText();
+		double currentValue = 0;
+		if (!StringUtilities.isNullOrEmpty(text)) {
+			try {
+				currentValue = DoubleUtilities.stringToValue(text);
+			} catch (Exception e) {
+				// ignore
+			}
+		}
+		if (this.type == INTEGER_TYPE) {
+			if (currentValue > this.endValue) {
+				this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_IntegerMaxWarning"), "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
+			} else {
+				this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_IntegerMinWarning"), "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
+			}
+		} else if (this.type == FLOAT_TYPE) {
+			if (currentValue > this.endValue) {
+				this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatMaxWarning"), floatLength, "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
+			} else {
+				this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatMinWarning"), floatLength, "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
+			}
+			// 添加一种类型，目前用于地图输出为图片中剩余内存警告--yuanR 2017.3.15
+		} else if (this.type == MAXVALUE_TYPE && !StringUtilities.isNullOrEmpty(customTipText)) {
+			if (currentValue > this.endValue) {
+				this.labelWarning.setToolTipText(this.customTipText);
+			}
+		}
+		this.labelWarning.setPreferredSize(new Dimension(23, 23));
+	}
 
-    private void initComponents() {
-        this.labelWarning = new JLabel();
-        this.textField = new JTextField();
-        this.listeners = new ArrayList();
-        this.textField.setText(defaultValue);
-        this.labelWarning.setText(" ");
-    }
+	/**
+	 * 自定义提示信息
+	 * yuanR 2017.3.15
+	 */
+	public void setCustomLabelToolTipText(String tipText) {
+		this.customTipText = tipText;
+	}
 
-    private void initLayout() {
-        this.setLayout(new GridBagLayout());
-        this.add(this.labelWarning, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(this.textField, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
-        this.textField.setPreferredSize(new Dimension(100, 23));
-    }
+	private void initComponents() {
+		this.labelWarning = new JLabel();
+		this.textField = new JTextField();
+		this.listeners = new ArrayList();
+		this.textField.setText(defaultValue);
+		this.labelWarning.setText(" ");
+	}
 
-    public void addRightValueListener(RightValueListener listener) {
-        if (null != listener && !listeners.contains(listener)) {
-            listeners.add(listener);
-        }
-        registEvents();
-    }
+	private void initLayout() {
+		this.setLayout(new GridBagLayout());
+		this.add(this.labelWarning, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+		this.add(this.textField, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
+		this.textField.setPreferredSize(new Dimension(100, 23));
+	}
 
-    public void removeRightValueListener(RightValueListener listener) {
-        if (null != listener && !listeners.contains(listener)) {
-            listeners.remove(listener);
-        }
-        registEvents();
-    }
+	public void addRightValueListener(RightValueListener listener) {
+		if (null != listener && !listeners.contains(listener)) {
+			listeners.add(listener);
+		}
+		registEvents();
+	}
 
-    private void fireListener(String value) {
-        int size = listeners.size();
-        for (int i = 0; i < size; i++) {
-            if (null != listeners.get(i) && listeners.get(i) instanceof RightValueListener) {
-                ((RightValueListener) listeners.get(i)).update(value);
-            }
-        }
-    }
+	public void removeRightValueListener(RightValueListener listener) {
+		if (null != listener && !listeners.contains(listener)) {
+			listeners.remove(listener);
+		}
+		registEvents();
+	}
 
-    public void registEvents() {
-        removeEvents();
-        this.textField.addCaretListener(this.caretListener);
-        this.textField.addKeyListener(this.keyAdapter);
-    }
+	private void fireListener(String value) {
+		int size = listeners.size();
+		for (int i = 0; i < size; i++) {
+			if (null != listeners.get(i) && listeners.get(i) instanceof RightValueListener) {
+				((RightValueListener) listeners.get(i)).update(value);
+			}
+		}
+	}
 
-    public void removeEvents() {
-        this.textField.removeCaretListener(this.caretListener);
-        this.textField.removeKeyListener(this.keyAdapter);
-    }
+	public void registEvents() {
+		removeEvents();
+		this.textField.addCaretListener(this.caretListener);
+		this.textField.addKeyListener(this.keyAdapter);
+	}
 
-    public JTextField getTextField() {
-        return textField;
-    }
+	public void removeEvents() {
+		this.textField.removeCaretListener(this.caretListener);
+		this.textField.removeKeyListener(this.keyAdapter);
+	}
 
-    public void setText(String str) {
-        textField.setText(str);
-    }
+	public JTextField getTextField() {
+		return textField;
+	}
 
-    public void setEnable(boolean enable) {
-        this.labelWarning.setEnabled(enable);
-        this.textField.setEnabled(enable);
-    }
+	public void setText(String str) {
+		textField.setText(str);
+	}
 
+	public void setEnable(boolean enable) {
+		this.labelWarning.setEnabled(enable);
+		this.textField.setEnabled(enable);
+	}
 }
