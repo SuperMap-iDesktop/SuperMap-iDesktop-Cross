@@ -116,15 +116,22 @@ public class FileChooserControl extends JComponent {
 	    buttonDelete.setBorderPainted(false);
 	    buttonDelete.setContentAreaFilled(false);
 
-	    this.setLayout(new GridBagLayout());
-	    this.add(this.textEditor, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 0, 0));
-	    this.add(buttonDelete, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(0, 0, 0, 0));
-	    this.add(button, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(0, 5, 0, 0));
+	    GroupLayout groupLayout=new GroupLayout(this);
+	    groupLayout.setAutoCreateGaps(true);
+	    this.setLayout(groupLayout);
 
-
-//        this.setLayout(new BorderLayout());
-//        this.add(this.textEditor, BorderLayout.CENTER);
-//        this.add(this.button, BorderLayout.EAST);
+	    // @formatter:off
+	    groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
+			    .addComponent(this.textEditor)
+			    .addComponent(this.buttonDelete,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
+			    .addComponent(this.button,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
+	    );
+	    groupLayout.setVerticalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+			    .addComponent(this.textEditor,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
+			    .addComponent(this.buttonDelete,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
+			    .addComponent(this.button,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
+	    );
+	    // @formatter:on
     }
 
     public void setIcon(ImageIcon image) {

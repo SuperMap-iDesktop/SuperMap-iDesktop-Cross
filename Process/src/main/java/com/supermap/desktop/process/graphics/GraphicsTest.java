@@ -1,9 +1,9 @@
 package com.supermap.desktop.process.graphics;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
@@ -13,50 +13,86 @@ import java.awt.geom.Point2D;
  */
 public class GraphicsTest extends JPanel {
 	private int count = 0;
+	private static boolean buttonRefresh = false;
+	private final JScrollBar hBar;
+	private final JScrollBar vBar;
 
 	public GraphicsTest() {
-		setSize(new Dimension(600, 400));
 
-		addMouseWheelListener(new MouseWheelListener() {
-			@Override
-			public void mouseWheelMoved(MouseWheelEvent e) {
-				if (e.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
-					if (e.getWheelRotation() == -1) {
-						count++;
-					} else {
-						count--;
-					}
-//					System.out.println(e.getScrollAmount());
-//					System.out.println(count);
-					repaint();
-				}
-			}
-		});
+		setSize(new Dimension(600, 400));
+		JButton button = new JButton("panelButton");
+		setLayout(new BorderLayout());
+		add(button, BorderLayout.WEST);
+
+		hBar = new JScrollBar();
+		hBar.setOrientation(JScrollBar.HORIZONTAL);
+		vBar = new JScrollBar();
+		vBar.setOrientation(JScrollBar.VERTICAL);
+
+		add(hBar, BorderLayout.SOUTH);
+		add(vBar, BorderLayout.EAST);
 	}
+
 
 	@Override
 	protected void paintComponent(Graphics g) {
-		AffineTransform origin = ((Graphics2D) g).getTransform();
-		AffineTransform translation = new AffineTransform();
+		super.paintComponent(g);
 
-//		translation.scale(2 * (100 + count) / 100d, 2 * (100 + count) / 100d);
-//		((Graphics2D) g).setTransform(translation);
-
-		Rectangle rect = new Rectangle(100, 100, 100, 100);
-		g.setColor(Color.BLUE);
+		Rectangle rect = getVisibleRect();
+//		rect.setLocation(rect.x + 5, rect.y + 5);
+//		rect.setSize(rect.width - 5 - 5 - vBar.getWidth(), rect.height - 5 - 5 - hBar.getHeight());
+		g.setColor(Color.BLACK);
 		((Graphics2D) g).fill(rect);
+	}
 
-
-		((Graphics2D) g).setTransform(origin);
+	@Override
+	public Rectangle getVisibleRect() {
+		Rectangle rect = super.getVisibleRect();
+		rect.setLocation(rect.x + 5, rect.y + 5);
+		rect.setSize(rect.width - 5 - 5 - vBar.getWidth(), rect.height - 5 - 5 - hBar.getHeight());
+		return rect;
 	}
 
 	public static void main(String[] args) {
-		GraphicsTest test = new GraphicsTest();
+		final GraphicsTest test = new GraphicsTest();
 
 		final JFrame frame = new JFrame();
 		frame.setSize(600, 400);
 		frame.setLayout(new BorderLayout());
-		frame.add(test);
+//		frame.add(test, BorderLayout.CENTER);
+//
+//		JButton button = new JButton("test");
+//		frame.add(button, BorderLayout.NORTH);
+//
+//		JButton button1 = new JButton("test1");
+//		frame.add(button1, BorderLayout.WEST);
+//
+//		button.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				test.repaint(new Rectangle(220, 230, 600, 200));
+//			}
+//		});
+//
+//		test.addMouseMotionListener(new MouseMotionListener() {
+//			@Override
+//			public void mouseDragged(MouseEvent e) {
+//
+//			}
+//
+//			int i = 0;
+//
+//			@Override
+//			public void mouseMoved(MouseEvent e) {
+//				i++;
+//				System.out.println(i);
+//			}
+//		});
+
+		JScrollPane scrollPane = new JScrollPane();
+		GraphCanvas canvas = new GraphCanvas();
+		scrollPane.setViewportView(canvas);
+		frame.add(scrollPane, BorderLayout.CENTER);
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
