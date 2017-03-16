@@ -2,10 +2,8 @@ package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.data.Datasource;
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterDatasourcePanel;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 
 /**
@@ -13,21 +11,12 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterDatasource extends AbstractParameter implements ISelectionParameter {
 
-    private JPanel panel;
     private Datasource datasource;
     private String describe;
 
     @Override
     public String getType() {
         return ParameterType.DATASOURCE;
-    }
-
-    @Override
-    public JPanel getPanel() {
-        if (panel == null) {
-            panel = new ParameterDatasourcePanel(this);
-        }
-        return panel;
     }
 
     @Override

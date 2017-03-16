@@ -9,9 +9,12 @@ import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.LengthUnit;
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterOverlayAnalyst;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.FieldsSetDialog;
@@ -40,7 +43,8 @@ import java.text.NumberFormat;
 /**
  * Created by xie on 2017/2/14.
  */
-public class ParameterOverlayAnalystPanel extends JPanel {
+@ParameterPanelDescribe(parameterPanelType = ParameterType.OVERLAY_ANALYST)
+public class ParameterOverlayAnalystPanel extends DefaultParameterPanel implements IParameterPanel {
 	private JPanel panelSource;
 	private JPanel panelOverlayAnalyst;
 	private JPanel panelTarget;
@@ -393,4 +397,6 @@ public class ParameterOverlayAnalystPanel extends JPanel {
 		this.panelSource.add(this.labelSourceDataset, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
 		this.panelSource.add(this.comboboxSourceDataset, new GridBagConstraintsHelper(1, 1, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
 	}
+
+
 }

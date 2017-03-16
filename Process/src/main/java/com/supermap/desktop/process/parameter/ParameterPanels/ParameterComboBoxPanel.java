@@ -1,9 +1,12 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterComboBoxCellRender;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
@@ -17,7 +20,8 @@ import java.beans.PropertyChangeListener;
 /**
  * @author XiaJT
  */
-public class ParameterComboBoxPanel extends JPanel {
+@ParameterPanelDescribe(parameterPanelType = ParameterType.COMBO_BOX)
+public class ParameterComboBoxPanel extends DefaultParameterPanel implements IParameterPanel {
 	private ParameterComboBox parameterComboBox;
 	// 防止多次触发事件
 	private boolean isSelectingItem = false;
@@ -73,4 +77,6 @@ public class ParameterComboBoxPanel extends JPanel {
 			}
 		});
 	}
+
+
 }

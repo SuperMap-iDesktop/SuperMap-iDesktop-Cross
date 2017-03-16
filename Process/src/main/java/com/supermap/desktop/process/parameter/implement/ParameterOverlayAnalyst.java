@@ -1,18 +1,16 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterOverlayAnalystPanel;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 
 /**
  * Created by xie on 2017/2/14.
  */
 public class ParameterOverlayAnalyst extends AbstractParameter implements ISelectionParameter {
-    private JPanel panel;
     private OverlayAnalystType overlayAnalystType;
     private ParameterOverlayAnalystInfo overlayAnalystInfo = new ParameterOverlayAnalystInfo();
 
@@ -30,18 +28,11 @@ public class ParameterOverlayAnalyst extends AbstractParameter implements ISelec
 
     @Override
     public String getType() {
-        return null;
+	    return ParameterType.OVERLAY_ANALYST;
     }
 
-    @Override
-    public JPanel getPanel() {
-        if (null == panel) {
-            panel = new ParameterOverlayAnalystPanel(this);
-        }
-        return panel;
-    }
 
-    @Override
+	@Override
     public void setSelectedItem(Object value) {
         if (value instanceof ParameterOverlayAnalystInfo) {
             ParameterOverlayAnalystInfo oldValue = this.overlayAnalystInfo;

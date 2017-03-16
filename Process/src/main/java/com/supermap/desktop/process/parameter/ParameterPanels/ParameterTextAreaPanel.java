@@ -1,6 +1,9 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -15,7 +18,8 @@ import java.beans.PropertyChangeListener;
 /**
  * Created by xie on 2017/2/21.
  */
-public class ParameterTextAreaPanel extends JPanel {
+@ParameterPanelDescribe(parameterPanelType = ParameterType.TEXT_AREA)
+public class ParameterTextAreaPanel extends DefaultParameterPanel implements IParameterPanel {
     private ParameterTextArea parameterTextArea;
     private JLabel label;
     private JTextArea textArea;
@@ -77,12 +81,13 @@ public class ParameterTextAreaPanel extends JPanel {
     private void initComponents() {
         this.scrollPane = new JScrollPane();
         this.label = new JLabel();
-        if (!StringUtilities.isNullOrEmpty(parameterTextArea.getDiscribe()))
-            this.label.setText(parameterTextArea.getDiscribe());
-        this.textArea = new JTextArea();
+	    if (!StringUtilities.isNullOrEmpty(parameterTextArea.getDescribe()))
+		    this.label.setText(parameterTextArea.getDescribe());
+	    this.textArea = new JTextArea();
 	    if (!StringUtilities.isNullOrEmpty((String) parameterTextArea.getSelectedItem())) {
 		    this.textArea.setText((String) parameterTextArea.getSelectedItem());
         }
 
     }
+
 }

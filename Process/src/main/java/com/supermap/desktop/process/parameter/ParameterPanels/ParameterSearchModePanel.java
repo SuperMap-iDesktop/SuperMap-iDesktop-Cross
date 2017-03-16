@@ -2,9 +2,12 @@ package com.supermap.desktop.process.parameter.ParameterPanels;
 
 import com.supermap.analyst.spatialanalyst.SearchMode;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterSearchModeInfo;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterSearchMode;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -23,7 +26,8 @@ import java.util.Objects;
 /**
  * Created by xie on 2017/2/17.
  */
-public class ParameterSearchModePanel extends JPanel {
+@ParameterPanelDescribe(parameterPanelType = ParameterType.SEARCH_MODE)
+public class ParameterSearchModePanel extends DefaultParameterPanel implements IParameterPanel {
     private JLabel labelSearchModel;
     private JRadioButton radioSearchModelCount;
     private JRadioButton radioSearchModelRadius;

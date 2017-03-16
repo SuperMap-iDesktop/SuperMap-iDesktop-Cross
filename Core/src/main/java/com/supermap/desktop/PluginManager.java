@@ -77,7 +77,6 @@ public class PluginManager {
 			if (this.plugins == null) {
 				this.plugins = new ArrayList<Plugin>();
 			}
-
 			Plugin plugin = getBundle(name);
 			if (plugin == null) {
 				// 查找所有默认工作场景下的插件配置文件
@@ -153,7 +152,6 @@ public class PluginManager {
 		Class<?> result = null;
 		try {
 			if (bundle != null && className != null && className != "") {
-
 				// 搜索Bundle中所有的class文件
 				Enumeration<URL> classFileEntries = bundle.findEntries("/", className + ".class", true);
 				if (classFileEntries == null || !classFileEntries.hasMoreElements()) {

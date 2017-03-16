@@ -1,10 +1,8 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterFilePanel;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 
@@ -13,7 +11,6 @@ import java.io.File;
  */
 public class ParameterFile extends AbstractParameter implements ISelectionParameter {
 
-	private JPanel panel;
 	private File selectedFile;
 	private String describe;
 
@@ -22,13 +19,6 @@ public class ParameterFile extends AbstractParameter implements ISelectionParame
 		return ParameterType.FILE;
 	}
 
-	@Override
-	public JPanel getPanel() {
-		if (panel == null) {
-			panel = new ParameterFilePanel(this);
-		}
-		return panel;
-	}
 
 	@Override
 	public void setSelectedItem(Object value) {

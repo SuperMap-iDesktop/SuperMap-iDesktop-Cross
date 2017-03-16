@@ -1,6 +1,5 @@
 package com.supermap.desktop.process.parameter.interfaces;
 
-import javax.swing.*;
 import java.beans.PropertyChangeListener;
 
 /**
@@ -15,7 +14,7 @@ public interface IParameter extends IAbstractParameter {
 	 *
 	 * @return
 	 */
-	JPanel getPanel();
+	IParameterPanel getParameterPanel();
 
 	void addPropertyListener(PropertyChangeListener propertyChangeListener);
 

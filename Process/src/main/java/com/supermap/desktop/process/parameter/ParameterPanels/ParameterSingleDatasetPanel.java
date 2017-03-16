@@ -24,8 +24,11 @@ import com.supermap.data.WorkspaceCreatedListener;
 import com.supermap.data.WorkspaceOpenedEvent;
 import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
@@ -42,7 +45,8 @@ import java.util.Objects;
 /**
  * Created by xie on 2017/2/16.
  */
-public class ParameterSingleDatasetPanel extends JPanel {
+@ParameterPanelDescribe(parameterPanelType = ParameterType.SINGLE_DATASET)
+public class ParameterSingleDatasetPanel extends DefaultParameterPanel implements IParameterPanel {
 	private ParameterSingleDataset parameterSingleDataset;
 	private JLabel labelDataset;
 	private DatasetComboBox datasetComboBox;

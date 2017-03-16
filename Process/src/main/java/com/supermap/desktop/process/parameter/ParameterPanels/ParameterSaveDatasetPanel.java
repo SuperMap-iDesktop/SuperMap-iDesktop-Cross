@@ -13,7 +13,10 @@ import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.data.WorkspaceOpenedEvent;
 import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
@@ -30,7 +33,8 @@ import java.awt.event.ItemListener;
 /**
  * @author XiaJT
  */
-public class ParameterSaveDatasetPanel extends JPanel {
+@ParameterPanelDescribe(parameterPanelType = ParameterType.SAVE_DATASET)
+public class ParameterSaveDatasetPanel extends DefaultParameterPanel implements IParameterPanel {
 	private ParameterSaveDataset parameterSaveDataset;
 	private JLabel labelDatasource;
 	private DatasourceComboBox datasourceComboBox;

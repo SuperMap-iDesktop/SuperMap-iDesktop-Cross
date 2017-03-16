@@ -1,8 +1,11 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -22,7 +25,8 @@ import java.beans.PropertyChangeListener;
 /**
  * Created by xie on 2017/2/27.
  */
-public class ParameterHDFSPathPanel extends JPanel {
+@ParameterPanelDescribe(parameterPanelType = ParameterType.HDFS_PATH)
+public class ParameterHDFSPathPanel extends DefaultParameterPanel implements IParameterPanel {
     private JLabel labelFileInputPath;
     private JTextField textFieldFileInputPath;
     private JButton buttonInputBrowser;

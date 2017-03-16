@@ -1,8 +1,11 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterRadioButton;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -17,7 +20,8 @@ import java.util.Enumeration;
 /**
  * @author XiaJT
  */
-public class ParameterRadioButtonPanel extends JPanel {
+@ParameterPanelDescribe(parameterPanelType = ParameterType.RADIO_BUTTON)
+public class ParameterRadioButtonPanel extends DefaultParameterPanel implements IParameterPanel {
 
 	private ParameterRadioButton parameterRadioButton;
 	private ActionListener radioButtonSelectedListener;

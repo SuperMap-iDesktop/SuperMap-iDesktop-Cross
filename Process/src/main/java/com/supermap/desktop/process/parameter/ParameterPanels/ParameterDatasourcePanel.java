@@ -2,8 +2,11 @@ package com.supermap.desktop.process.parameter.ParameterPanels;
 
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -18,7 +21,8 @@ import java.beans.PropertyChangeListener;
 /**
  * @author XiaJT
  */
-public class ParameterDatasourcePanel extends JPanel {
+@ParameterPanelDescribe(parameterPanelType = ParameterType.DATASOURCE)
+public class ParameterDatasourcePanel extends DefaultParameterPanel implements IParameterPanel {
 	private JLabel label = new JLabel();
 	private DatasourceComboBox datasourceComboBox = new DatasourceComboBox(Application.getActiveApplication().getWorkspace().getDatasources());
 	private ParameterDatasource parameterDatasource;
@@ -62,4 +66,5 @@ public class ParameterDatasourcePanel extends JPanel {
 			}
 		});
 	}
+
 }

@@ -2,17 +2,14 @@ package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterRadioButtonPanel;
 import com.supermap.desktop.process.parameter.interfaces.ISingleSelectionParameter;
 
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 
 /**
  * @author XiaJT
  */
 public class ParameterRadioButton extends AbstractParameter implements ISingleSelectionParameter {
-	private JPanel panel;
 	private String describe;
 	private ParameterDataNode[] items;
 	private ParameterDataNode selectedItem;
@@ -22,13 +19,6 @@ public class ParameterRadioButton extends AbstractParameter implements ISingleSe
 		return ParameterType.RADIO_BUTTON;
 	}
 
-	@Override
-	public JPanel getPanel() {
-		if (panel == null) {
-			panel = new ParameterRadioButtonPanel(this);
-		}
-		return panel;
-	}
 
 	@Override
 	public void setSelectedItem(Object value) {
