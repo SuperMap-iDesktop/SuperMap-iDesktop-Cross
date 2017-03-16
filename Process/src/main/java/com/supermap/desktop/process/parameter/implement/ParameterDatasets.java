@@ -3,7 +3,6 @@ package com.supermap.desktop.process.parameter.implement;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.IMultiSelectionParameter;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +11,6 @@ import java.util.List;
  */
 public class ParameterDatasets extends AbstractParameter implements IMultiSelectionParameter {
 
-	private JPanel panel;
 	private List datasets = new ArrayList<>();
 
 	@Override
@@ -20,13 +18,6 @@ public class ParameterDatasets extends AbstractParameter implements IMultiSelect
 		return ParameterType.DATASETS;
 	}
 
-	@Override
-	public JPanel getPanel() {
-		if (panel == null) {
-			panel = new JPanel();
-		}
-		return panel;
-	}
 
 
 	@Override

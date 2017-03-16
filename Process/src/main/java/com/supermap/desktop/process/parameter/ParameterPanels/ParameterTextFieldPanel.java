@@ -1,7 +1,11 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
@@ -15,16 +19,17 @@ import java.beans.PropertyChangeListener;
 /**
  * @author XiaJT
  */
-public class ParameterTextFieldPanel extends JPanel {
+@ParameterPanelDescribe(parameterPanelType = ParameterType.TEXTFIELD)
+public class ParameterTextFieldPanel extends DefaultParameterPanel implements IParameterPanel {
 	private ParameterTextField parameterTextField;
 	private JLabel label = new JLabel();
 	private JTextField textField = new JTextField();
 	private boolean isSelectingItem = false;
 
-	public ParameterTextFieldPanel(ParameterTextField parameterTextField) {
-		this.parameterTextField = parameterTextField;
-		label.setText(parameterTextField.getDescribe());
-		textField.setText(String.valueOf(parameterTextField.getSelectedItem()));
+	public ParameterTextFieldPanel(IParameter parameterTextField) {
+		this.parameterTextField = (ParameterTextField) parameterTextField;
+		label.setText(this.parameterTextField.getDescribe());
+		textField.setText(String.valueOf(this.parameterTextField.getSelectedItem()));
 		initLayout();
 		initListeners();
 	}

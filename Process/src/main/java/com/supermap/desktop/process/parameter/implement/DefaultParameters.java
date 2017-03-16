@@ -1,11 +1,15 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 
 /**
  * @author XiaJT
@@ -13,9 +17,10 @@ import java.awt.*;
 public class DefaultParameters implements IParameters {
 	private IParameter[] parameters;
 	private JPanel panel;
+	private ArrayList<ParameterClassBundleNode> packages = new ArrayList<>();
 
 	public DefaultParameters() {
-
+		packages.add(new ParameterClassBundleNode("com.supermap.desktop.process.parameter.ParameterPanels", "SuperMap.Desktop.Process"));
 	}
 
 	@Override
@@ -23,6 +28,7 @@ public class DefaultParameters implements IParameters {
 		if (this.parameters != null && this.parameters.length > 0) {
 			for (IParameter parameter : parameters) {
 				parameter.dispose();
+				parameter.setParameters(null);
 			}
 		}
 		if (panel != null) {
@@ -30,6 +36,11 @@ public class DefaultParameters implements IParameters {
 		}
 		panel = null;
 		this.parameters = iParameters;
+		if (this.parameters != null && this.parameters.length > 0) {
+			for (IParameter parameter : parameters) {
+				parameter.setParameters(this);
+			}
+		}
 	}
 
 
@@ -67,10 +78,24 @@ public class DefaultParameters implements IParameters {
 			panel = new JPanel();
 			panel.setLayout(new GridBagLayout());
 			for (int i = 0; i < parameters.length; i++) {
-				panel.add(parameters[i].getPanel(), new GridBagConstraintsHelper(0, i, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
+				panel.add((JPanel) parameters[i].getParameterPanel().getPanel(), new GridBagConstraintsHelper(0, i, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
 			}
 			panel.add(new JPanel(), new GridBagConstraintsHelper(0, parameters.length, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
 		}
 		return panel;
+	}
+
+	@Override
+	public IParameterPanel createPanel(IParameter parameter) {
+		Class clazz = ParameterUtil.getParameterPanel(parameter.getType(), packages);
+		if (clazz != null) {
+			try {
+				Constructor constructor = clazz.getConstructor(IParameter.class);
+				return (IParameterPanel) constructor.newInstance(parameter);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
 	}
 }

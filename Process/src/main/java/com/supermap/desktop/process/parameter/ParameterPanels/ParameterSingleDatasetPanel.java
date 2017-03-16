@@ -24,8 +24,12 @@ import com.supermap.data.WorkspaceCreatedListener;
 import com.supermap.data.WorkspaceOpenedEvent;
 import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
@@ -42,7 +46,8 @@ import java.util.Objects;
 /**
  * Created by xie on 2017/2/16.
  */
-public class ParameterSingleDatasetPanel extends JPanel {
+@ParameterPanelDescribe(parameterPanelType = ParameterType.SINGLE_DATASET)
+public class ParameterSingleDatasetPanel extends DefaultParameterPanel implements IParameterPanel {
 	private ParameterSingleDataset parameterSingleDataset;
 	private JLabel labelDataset;
 	private DatasetComboBox datasetComboBox;
@@ -86,10 +91,20 @@ public class ParameterSingleDatasetPanel extends JPanel {
 		}
 	};
 
-	public ParameterSingleDatasetPanel(ParameterSingleDataset parameterSingleDataset, DatasetType[] datasetTypes) {
-		this.parameterSingleDataset = parameterSingleDataset;
-		this.datasetTypes = datasetTypes;
+	public ParameterSingleDatasetPanel(IParameter parameterSingleDataset) {
+		this.parameterSingleDataset = (ParameterSingleDataset) parameterSingleDataset;
+//		this.datasetTypes = datasetTypes;
 		init();
+	}
+
+	public DatasetType[] getDatasetTypes() {
+		return datasetTypes;
+	}
+
+	public void setDatasetTypes(DatasetType[] datasetTypes) {
+		this.datasetTypes = datasetTypes;
+		this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);// bug?
+		this.parameterSingleDataset.setSelectedItem(datasetComboBox.getSelectedDataset());
 	}
 
 	private void init() {
