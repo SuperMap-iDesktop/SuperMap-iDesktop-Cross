@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.graphics.handler.canvas;
+package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;

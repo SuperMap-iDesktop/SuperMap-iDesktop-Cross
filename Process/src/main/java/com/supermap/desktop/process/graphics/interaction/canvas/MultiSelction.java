@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.graphics.interaction;
+package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;

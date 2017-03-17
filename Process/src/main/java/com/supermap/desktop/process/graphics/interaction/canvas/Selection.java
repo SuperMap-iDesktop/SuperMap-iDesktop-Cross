@@ -1,14 +1,12 @@
-package com.supermap.desktop.process.graphics.interaction;
+package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
-import com.supermap.desktop.process.graphics.handler.canvas.CanvasEventAdapter;
 
 import javax.swing.event.EventListenerList;
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.util.Vector;
 
 /**

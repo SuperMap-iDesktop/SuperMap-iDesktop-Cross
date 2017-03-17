@@ -12,7 +12,7 @@ import java.util.Vector;
 public class ListGraphs implements IGraphStorage {
 	private Vector<IGraph> graphs = new Vector();
 	private Vector<Rectangle> rects = new Vector<>();
-	private Rectangle bounds = new Rectangle(0, 0, 0, 0);
+	private Rectangle box = null;
 
 	@Override
 	public int getCount() {
@@ -48,8 +48,10 @@ public class ListGraphs implements IGraphStorage {
 	public void add(IGraph graph, Rectangle bounds) {
 		this.graphs.add(graph);
 		this.rects.add(bounds);
-		if (!this.bounds.contains(bounds)) {
-			this.bounds = this.bounds.union(bounds);
+		if (this.box == null) {
+			this.box = bounds;
+		} else {
+			this.box = this.box.union(bounds);
 		}
 	}
 
@@ -59,6 +61,7 @@ public class ListGraphs implements IGraphStorage {
 		if (index > -1) {
 			this.graphs.remove(graph);
 			this.rects.remove(index);
+			computeBox();
 		}
 	}
 
@@ -108,13 +111,35 @@ public class ListGraphs implements IGraphStorage {
 
 	@Override
 	public Rectangle getBounds() {
-		return this.bounds;
+		return this.box;
+	}
+
+	@Override
+	public void modifyGraphBounds(IGraph graph, int x, int y, int width, int height) {
+		if (this.graphs.contains(graph)) {
+			graph.setLocation(new Point(x, y));
+			graph.setSize(width, height);
+			int index = this.graphs.indexOf(graph);
+			this.rects.remove(index);
+			this.rects.add(index, new Rectangle(x, y, width, height));
+			computeBox();
+		}
+	}
+
+	private void computeBox() {
+		for (int i = 0; i < this.rects.size(); i++) {
+			if (this.box == null) {
+				this.box = this.rects.get(i);
+			} else {
+				this.box = this.box.union(this.rects.get(i));
+			}
+		}
 	}
 
 	@Override
 	public void clear() {
 		this.graphs.clear();
 		this.rects.clear();
-		this.bounds = new Rectangle(0, 0, 0, 0);
+		this.box = null;
 	}
 }
