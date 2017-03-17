@@ -1,10 +1,8 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterTextFieldPanel;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 
 /**
@@ -13,7 +11,6 @@ import java.beans.PropertyChangeEvent;
 public class ParameterTextField extends AbstractParameter implements ISelectionParameter {
 	private String describe;
 	private String value;
-	private JPanel panel;
 
 	public ParameterTextField() {
 		this("");
@@ -21,20 +18,11 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 
 	public ParameterTextField(String describe) {
 		this.describe = describe;
-
 	}
 
 	@Override
 	public String getType() {
 		return ParameterType.TEXTFIELD;
-	}
-
-	@Override
-	public JPanel getPanel() {
-		if (panel == null) {
-			panel = new ParameterTextFieldPanel(this);
-		}
-		return panel;
 	}
 
 	@Override

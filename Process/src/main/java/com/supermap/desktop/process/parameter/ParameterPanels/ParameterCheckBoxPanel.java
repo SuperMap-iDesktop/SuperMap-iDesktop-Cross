@@ -1,7 +1,11 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -14,16 +18,17 @@ import java.beans.PropertyChangeListener;
 /**
  * @author XiaJT
  */
-public class ParameterCheckBoxPanel extends JPanel {
+@ParameterPanelDescribe(parameterPanelType = ParameterType.CHECKBOX)
+public class ParameterCheckBoxPanel extends DefaultParameterPanel implements IParameterPanel {
 
 	private ParameterCheckBox parameterCheckBox;
 	private JCheckBox checkBox = new JCheckBox();
 	private boolean isSelectingItem = false;
 
-	public ParameterCheckBoxPanel(ParameterCheckBox parameterCheckBox) {
-		this.parameterCheckBox = parameterCheckBox;
-		checkBox.setText(parameterCheckBox.getDescribe());
-		checkBox.setSelected(Boolean.valueOf(String.valueOf(parameterCheckBox.getSelectedItem())));
+	public ParameterCheckBoxPanel(IParameter parameterCheckBox) {
+		this.parameterCheckBox = ((ParameterCheckBox) parameterCheckBox);
+		checkBox.setText(this.parameterCheckBox.getDescribe());
+		checkBox.setSelected(Boolean.valueOf(String.valueOf(this.parameterCheckBox.getSelectedItem())));
 		initLayout();
 		initListeners();
 	}
@@ -55,4 +60,6 @@ public class ParameterCheckBoxPanel extends JPanel {
 			}
 		});
 	}
+
+
 }

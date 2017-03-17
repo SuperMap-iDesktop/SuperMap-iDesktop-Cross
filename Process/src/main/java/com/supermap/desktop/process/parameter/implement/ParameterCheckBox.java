@@ -1,10 +1,9 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterCheckBoxPanel;
+import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 
 /**
@@ -12,9 +11,9 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterCheckBox extends AbstractParameter implements ISelectionParameter {
 
-	private JPanel panel;
 	private Object value = "false";
 	private String describe;
+	private IParameters parameters;
 
 	public ParameterCheckBox() {
 		this("");
@@ -29,13 +28,7 @@ public class ParameterCheckBox extends AbstractParameter implements ISelectionPa
 		return ParameterType.CHECKBOX;
 	}
 
-	@Override
-	public JPanel getPanel() {
-		if (panel == null) {
-			panel = new ParameterCheckBoxPanel(this);
-		}
-		return panel;
-	}
+
 
 	@Override
 	public void setSelectedItem(Object value) {
@@ -57,6 +50,7 @@ public class ParameterCheckBox extends AbstractParameter implements ISelectionPa
 		this.describe = describe;
 		return this;
 	}
+
 
 	@Override
 	public void dispose() {

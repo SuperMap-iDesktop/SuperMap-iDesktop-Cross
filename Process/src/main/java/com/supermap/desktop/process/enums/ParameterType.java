@@ -22,4 +22,10 @@ public class ParameterType {
 	public static final String SAVE_DATASET = "SaveDataset";
 	public static final String COMBINE = "Combine";
 
+	public static final String HDFS_PATH = "HDFSPath";
+
+	public static final String OVERLAY_ANALYST = "OverlayAnalyst";
+	public static final String SEARCH_MODE = "SearchMode";
+	public static final String SINGLE_DATASET = "SINGLE_DATASET";
+	public static final String TEXT_AREA = "TEXT_AREA";
 }

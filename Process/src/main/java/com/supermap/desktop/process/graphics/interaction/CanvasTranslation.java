@@ -31,7 +31,7 @@ public class CanvasTranslation extends CanvasEventAdapter {
 	private GraphCanvas canvas;
 	private CoordinateTransform transform;
 	private Point start = null;
-	private int step = 2; // once the mouse middle button moved,this canvas zooms in or out for two percent.
+	private double step = 2; // once the mouse middle button moved,this canvas zooms in or out for two percent.
 
 	public CanvasTranslation(GraphCanvas canvas) {
 		this.canvas = canvas;
@@ -55,20 +55,20 @@ public class CanvasTranslation extends CanvasEventAdapter {
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		Point scaleCenter = e.getPoint();
-		if (this.canvas.getCanvasViewBounds().contains(scaleCenter)) {
-			int preLocationX = this.canvas.getCanvasViewBounds().x;
-			int preLocationY = this.canvas.getCanvasViewBounds().y;
+		if (this.canvas.getVisibleRect().contains(scaleCenter)) {
 
 			// -1 for zooming in,1 form zooming out.
-			int unitStep = e.getWheelRotation() == -1 ? this.step : -1 * this.step;
+			double validStep = e.getWheelRotation() == -1 ? this.transform.validateScale(this.step) : -1 * this.transform.validateScale(this.step);
 
 			// 缩放之后，在画布坐标系统下需要进行的位移量
-			double dx = (100 * scaleCenter.getX()) / (100 + this.transform.getScaleValue() + unitStep) - (100 * scaleCenter.getX()) / (100 + this.transform.getScaleValue());
-			double dy = (100 * scaleCenter.getY()) / (100 + this.transform.getScaleValue() + unitStep) - (100 * scaleCenter.getY()) / (100 + this.transform.getScaleValue());
+			double dx = (100 * scaleCenter.getX()) / (100 + this.transform.getScaleValue() + validStep) - (100 * scaleCenter.getX()) / (100 + this.transform.getScaleValue());
+			double dy = (100 * scaleCenter.getY()) / (100 + this.transform.getScaleValue() + validStep) - (100 * scaleCenter.getY()) / (100 + this.transform.getScaleValue());
 
-			this.transform.translate(dx, dy);
-			this.transform.scale(unitStep);
-			this.canvas.repaint();
+			if (this.transform.isTranslateXValid(dx) && this.transform.isTranslateYValid(dy)) {
+				this.transform.translate(dx, dy);
+				this.transform.scale(validStep);
+				this.canvas.repaint();
+			}
 		}
 	}
 
@@ -78,10 +78,15 @@ public class CanvasTranslation extends CanvasEventAdapter {
 
 			// 无论缩放倍数是多少，鼠标拖拽移动的位移就是画布平移的位移
 			// no matter what number the scale is,the translate value of the canvas is the equivalent of the mouse movement.
-			this.transform.translate((e.getX() - this.start.x) / this.transform.getScalePercentage(), (e.getY() - this.start.y) / this.transform.getScalePercentage());
-			// reset the start point.
-			this.start = e.getPoint();
-			this.canvas.repaint();
+			double dx = (e.getX() - this.start.x) / this.transform.getScaleRate();
+			double dy = (e.getY() - this.start.y) / this.transform.getScaleRate();
+
+			if (this.transform.isTranslateXValid(dx) && this.transform.isTranslateYValid(dy)) {
+				this.transform.translate(dx, dy);
+				// reset the start point.
+				this.start = e.getPoint();
+				this.canvas.repaint();
+			}
 		}
 	}
 

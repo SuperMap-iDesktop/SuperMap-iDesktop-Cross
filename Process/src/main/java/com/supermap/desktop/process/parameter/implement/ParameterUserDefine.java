@@ -1,15 +1,13 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.enums.ParameterType;
-
-import javax.swing.*;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 
 /**
  * @author XiaJT
  */
 public class ParameterUserDefine extends AbstractParameter {
 
-	private JPanel panel;
 
 	@Override
 	public String getType() {
@@ -17,11 +15,11 @@ public class ParameterUserDefine extends AbstractParameter {
 	}
 
 	@Override
-	public JPanel getPanel() {
+	public IParameterPanel getParameterPanel() {
 		return panel;
 	}
 
-	public void setPanel(JPanel panel) {
+	public void setPanel(IParameterPanel panel) {
 		this.panel = panel;
 	}
 
