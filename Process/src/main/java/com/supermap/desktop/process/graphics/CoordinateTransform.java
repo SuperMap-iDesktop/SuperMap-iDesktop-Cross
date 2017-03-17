@@ -45,6 +45,38 @@ public class CoordinateTransform {
 		fireCanvasTransform(new CanvasTransformEvent(this.canvas, CanvasTransformEvent.TYPE_TRANSLATE));
 	}
 
+	public void translateX(double translateX) {
+		this.translateX += translateX;
+		this.translateX = this.translateX >= this.maxTranslateX ? this.maxTranslateX : this.translateX;
+		this.translateX = this.translateX <= this.minTranslateX ? this.minTranslateX : this.translateX;
+		fireCanvasTransform(new CanvasTransformEvent(this.canvas, CanvasTransformEvent.TYPE_TRANSLATE));
+	}
+
+	public void translateXTo(double translateTo) {
+		if (this.translateX != translateTo) {
+			this.translateX = translateTo;
+			this.translateX = this.translateX >= this.maxTranslateX ? this.maxTranslateX : this.translateX;
+			this.translateX = this.translateX <= this.minTranslateX ? this.minTranslateX : this.translateX;
+			fireCanvasTransform(new CanvasTransformEvent(this.canvas, CanvasTransformEvent.TYPE_TRANSLATE));
+		}
+	}
+
+	public void translateY(double translateY) {
+		this.translateY += translateY;
+		this.translateY = this.translateY >= this.maxTranslateY ? this.maxTranslateY : this.translateY;
+		this.translateY = this.translateY <= this.minTranslateY ? this.minTranslateY : this.translateY;
+		fireCanvasTransform(new CanvasTransformEvent(this.canvas, CanvasTransformEvent.TYPE_TRANSLATE));
+	}
+
+	public void translateYTo(double translateTo) {
+		if (this.translateY != translateTo) {
+			this.translateY = translateTo;
+			this.translateY = this.translateY >= this.maxTranslateY ? this.maxTranslateY : this.translateY;
+			this.translateY = this.translateY <= this.minTranslateY ? this.minTranslateY : this.translateY;
+			fireCanvasTransform(new CanvasTransformEvent(this.canvas, CanvasTransformEvent.TYPE_TRANSLATE));
+		}
+	}
+
 	public void scale(double scale) {
 		this.scale += scale;
 
