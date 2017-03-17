@@ -5,6 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbols;
+import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.SymbolPanelPoint;
 import com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolFactory;
 import com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolGroupTree;
 import com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolGroupTreeNode;
@@ -42,7 +43,7 @@ public abstract class SymbolDialog extends SmDialog {
     private JMenu menuFile = new JMenu();
     private JMenuItem menuItemProperty = new JMenuItem();
     private JMenu menuEdit = new JMenu();
-    private JMenuItem item = new JMenuItem("导入栅格符号");
+    private JMenuItem item = new JMenuItem(ControlsProperties.getString("String_ImportGridSymbol"));
 
     private JLabel labelSearch = new JLabel();
     private JTextField textFieldSearch = new JTextField();
@@ -304,12 +305,16 @@ public abstract class SymbolDialog extends SmDialog {
         this.menuBar.setLayout(new GridBagLayout());
 
 //		this.menuFile.add(this.menuItemProperty);
-        JMenu menu = new JMenu("导入");
+        JMenu menu = new JMenu(ControlsProperties.getString("string_button_import"));
         menu.add(item);
         this.menuFile.add(menu);
 
         this.menuBar.add(this.menuFile, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(0, 1));
-
+        //Temporary set
+        this.menuFile.setVisible(false);
+        if (panelSymbols.getComponentCount() > 0 && panelSymbols.getComponent(0) instanceof SymbolPanelPoint) {
+            this.menuFile.setVisible(true);
+        }
         // 编辑菜单
 //		this.menuBar.add(this.menuEdit, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.WEST).setWeight(0, 1));
         this.menuBar.add(this.labelSearch, new GridBagConstraintsHelper(2, 0, 1, 1).setFill(GridBagConstraints.NONE).setAnchor(GridBagConstraints.EAST).setInsets(0, 0, 0, 5).setWeight(1, 1));
