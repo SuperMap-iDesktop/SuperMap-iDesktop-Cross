@@ -106,7 +106,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 
     @Override
     public String getTitle() {
-        return "点数据提取等值线";
+        return CommonProperties.getString("String_SurfaceISOPoint");
     }
 
     @Override
