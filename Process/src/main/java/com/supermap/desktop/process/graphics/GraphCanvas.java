@@ -75,11 +75,11 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	public static void main(String[] args) {
 		final JFrame frame = new JFrame();
 		frame.setSize(1000, 650);
-		final GraphCanvas canvas = new GraphCanvas();
-
+		ScrollGraphCanvas scrollCanvas = new ScrollGraphCanvas();
+		final GraphCanvas canvas = scrollCanvas.getCanvas();
 
 		frame.getContentPane().setLayout(new BorderLayout());
-		frame.getContentPane().add(canvas, BorderLayout.CENTER);
+		frame.getContentPane().add(scrollCanvas, BorderLayout.CENTER);
 
 		JPanel panel = new JPanel();
 		frame.getContentPane().add(panel, BorderLayout.NORTH);
