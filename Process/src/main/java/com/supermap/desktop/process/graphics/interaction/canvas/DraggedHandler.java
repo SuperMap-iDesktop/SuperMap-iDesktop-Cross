@@ -2,6 +2,7 @@ package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
+import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import javax.swing.*;
@@ -32,9 +33,15 @@ public class DraggedHandler extends CanvasEventAdapter {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e)) {
-			this.dragged = canvas.findGraph(e.getPoint());
-			if (this.dragged != null) {
-				this.dragStart = canvas.getCoordinateTransform().inverse(e.getPoint());
+
+			// 鼠标位置根据 bounds 查询到的 graph
+			IGraph hitGraph = canvas.findGraph(e.getPoint());
+			Point canvasP = canvas.getCoordinateTransform().inverse(e.getPoint());
+
+			boolean isDragged = hitGraph instanceof AbstractGraph ? ((AbstractGraph) hitGraph).getShape().contains(canvasP) : hitGraph != null;
+			if (isDragged) {
+				this.dragged = hitGraph;
+				this.dragStart = canvasP;
 				this.dirty = new Rectangle(this.dragged.getBounds());
 				this.canvas.getSelection().setEnable(false);
 			}
