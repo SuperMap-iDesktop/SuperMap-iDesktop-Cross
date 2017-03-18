@@ -57,6 +57,7 @@ public class DefaultValueTextField extends JTextField {
 	 */
 	public DefaultValueTextField() {
 		super();
+		initListener();
 	}
 
 	/**

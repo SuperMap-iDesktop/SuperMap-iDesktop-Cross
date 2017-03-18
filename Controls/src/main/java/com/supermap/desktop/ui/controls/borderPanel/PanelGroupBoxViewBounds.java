@@ -1,30 +1,39 @@
 package com.supermap.desktop.ui.controls.borderPanel;
 
+import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.SMFormattedTextField;
+import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
  * @author YuanR
- *         当前视图范围panel
+ *         地图输出为图片设置范围panel
  */
 public class PanelGroupBoxViewBounds extends JPanel {
+
+	public Rectangle2D rectangle2D;
+
 	private MapControl mapControl;
+
 	private JLabel labelCurrentViewLeft;
-	private SMFormattedTextField textFieldCurrentViewLeft;
-	private JLabel labelCurrentViewTop;
-	private SMFormattedTextField textFieldCurrentViewTop;
-	private JLabel labelCurrentViewRight;
-	private SMFormattedTextField textFieldCurrentViewRight;
+	public WaringTextField textFieldCurrentViewLeft;
 	private JLabel labelCurrentViewBottom;
-	private SMFormattedTextField textFieldCurrentViewBottom;
+	public WaringTextField textFieldCurrentViewBottom;
+	private JLabel labelCurrentViewRight;
+	public WaringTextField textFieldCurrentViewRight;
+	private JLabel labelCurrentViewTop;
+	public WaringTextField textFieldCurrentViewTop;
 
 	private JPanel mainPanel;
 
@@ -50,9 +59,15 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	private double currentViewRight = 0.0;
 	private double currentViewBottom = 0.0;
 
-	private static final int DEFAULT_LABELSIZE = 50;
-	private static final int DEFAULT_BUTTONSIZE = 85;
+	//	// 当前值
+	private double valueLeft = 0.0;
+	private double valueTop = 0.0;
+	private double valueRight = 0.0;
+	private double valueBottom = 0.0;
 
+
+	private static final int DEFAULT_LABELSIZE = 20;
+	private static final int DEFAULT_BUTTONSIZE = 85;
 
 	/**
 	 * 默认构造方法
@@ -62,22 +77,26 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		initCompont();
 		initResource();
 		initLayout();
-		registEvents();
+		// 先初始化，然后添加监听，然后再设置一遍范围
+		// 目的：文本框的值域需要其他文本框中值作为参考，为保证初始化时每个文本框都设置值域，先初始化文本框中的值，再触发一次监听事件完成文本框的初始化
 		initValue();
+		registEvents();
+		setAsMapViewBounds();
 	}
 
 	private void initCompont() {
 
+
 		this.mainPanel = new JPanel();
 
 		this.labelCurrentViewLeft = new JLabel("Left:");
-		this.textFieldCurrentViewLeft = new SMFormattedTextField();
-		this.labelCurrentViewTop = new JLabel("Top:");
-		this.textFieldCurrentViewTop = new SMFormattedTextField();
-		this.labelCurrentViewRight = new JLabel("Right:");
-		this.textFieldCurrentViewRight = new SMFormattedTextField();
+		this.textFieldCurrentViewLeft = new WaringTextField();
 		this.labelCurrentViewBottom = new JLabel("Bottom:");
-		this.textFieldCurrentViewBottom = new SMFormattedTextField();
+		this.textFieldCurrentViewBottom = new WaringTextField();
+		this.labelCurrentViewRight = new JLabel("Right:");
+		this.textFieldCurrentViewRight = new WaringTextField();
+		this.labelCurrentViewTop = new JLabel("Top:");
+		this.textFieldCurrentViewTop = new WaringTextField();
 
 		this.mapViewBoundsButton = new JButton("WholeMapBoundsButton");
 		this.currentViewBoundsButton = new JButton("ViewMapBoundsButton");
@@ -101,9 +120,9 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
 	private void initResource() {
 		this.labelCurrentViewLeft.setText(ControlsProperties.getString("String_LabelLeft"));
-		this.labelCurrentViewTop.setText(ControlsProperties.getString("String_LabelTop"));
-		this.labelCurrentViewRight.setText(ControlsProperties.getString("String_LabelRight"));
 		this.labelCurrentViewBottom.setText(ControlsProperties.getString("String_LabelBottom"));
+		this.labelCurrentViewRight.setText(ControlsProperties.getString("String_LabelRight"));
+		this.labelCurrentViewTop.setText(ControlsProperties.getString("String_LabelTop"));
 
 		this.mapViewBoundsButton.setText(ControlsProperties.getString("String_MapView"));
 		this.currentViewBoundsButton.setText(ControlsProperties.getString("String_CurrentView"));
@@ -153,16 +172,16 @@ public class PanelGroupBoxViewBounds extends JPanel {
 						.addComponent(this.textFieldCurrentViewLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(this.mapViewBoundsButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-						.addComponent(this.labelCurrentViewTop)
-						.addComponent(this.textFieldCurrentViewTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.labelCurrentViewBottom)
+						.addComponent(this.textFieldCurrentViewBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(this.currentViewBoundsButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelCurrentViewRight)
 						.addComponent(this.textFieldCurrentViewRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(this.customBoundsComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-						.addComponent(this.labelCurrentViewBottom)
-						.addComponent(this.textFieldCurrentViewBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.labelCurrentViewTop)
+						.addComponent(this.textFieldCurrentViewTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 						.addComponent(this.copyButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.pasteButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -175,12 +194,41 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		removeEvents();
 		this.mapViewBoundsButton.addActionListener(actionButtonListener);
 		this.currentViewBoundsButton.addActionListener(actionButtonListener);
+		// 将文本框的监听事件的注册放到外面，当“整幅地图”、“当前窗口”时，去除对文本框的监听
+		registTextFieldEvents();
 	}
 
 	private void removeEvents() {
 		this.mapViewBoundsButton.removeActionListener(actionButtonListener);
 		this.currentViewBoundsButton.removeActionListener(actionButtonListener);
+		removeTextFieldEvents();
 	}
+
+	private void registTextFieldEvents() {
+		this.textFieldCurrentViewLeft.getTextField().addCaretListener(textFieldLeftCaretListener);
+		this.textFieldCurrentViewBottom.getTextField().addCaretListener(textFieldButtomCaretListener);
+		this.textFieldCurrentViewRight.getTextField().addCaretListener(textFieldRightCaretListener);
+		this.textFieldCurrentViewTop.getTextField().addCaretListener(textFieldTopCaretListener);
+
+		this.textFieldCurrentViewLeft.registEvents();
+		this.textFieldCurrentViewBottom.registEvents();
+		this.textFieldCurrentViewRight.registEvents();
+		this.textFieldCurrentViewTop.registEvents();
+	}
+
+
+	private void removeTextFieldEvents() {
+		this.textFieldCurrentViewLeft.getTextField().removeCaretListener(textFieldLeftCaretListener);
+		this.textFieldCurrentViewBottom.getTextField().removeCaretListener(textFieldButtomCaretListener);
+		this.textFieldCurrentViewRight.getTextField().removeCaretListener(textFieldRightCaretListener);
+		this.textFieldCurrentViewTop.getTextField().removeCaretListener(textFieldTopCaretListener);
+
+		this.textFieldCurrentViewLeft.removeEvents();
+		this.textFieldCurrentViewBottom.removeEvents();
+		this.textFieldCurrentViewRight.removeEvents();
+		this.textFieldCurrentViewTop.removeEvents();
+	}
+
 
 	/**
 	 * 按钮事件枢纽站
@@ -189,10 +237,54 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(mapViewBoundsButton)) {
+				// 设置范围为整个地图范围
+				setAsMapViewBounds();
 				setAsMapViewBounds();
 			} else if (e.getSource().equals(currentViewBoundsButton)) {
+				// 设置范围为当前窗口
 				setAsCurrentViewBounds();
+				setAsCurrentViewBounds();
+			} else if (e.getSource().equals(copyButton)) {
+				// 复制
+				copyParameter();
+
+			} else if (e.getSource().equals(pasteButton)) {
+				// 粘贴
+				pasteParameter();
 			}
+		}
+	};
+
+	private CaretListener textFieldLeftCaretListener = new CaretListener() {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			textFieldLValueChange();
+			// 当文本框中的值改变时，设置当前值为其对应文本框中的值
+//			setCurrentBoundVaule();
+		}
+	};
+	private CaretListener textFieldTopCaretListener = new CaretListener() {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			textFieldTValueChange();
+			// 当文本框中的值改变时，设置当前值为其对应文本框中的值
+//			setCurrentBoundVaule();
+		}
+	};
+	private CaretListener textFieldRightCaretListener = new CaretListener() {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			textFieldRValueChange();
+			// 当文本框中的值改变时，设置当前值为其对应文本框中的值
+//			setCurrentBoundVaule();
+		}
+	};
+	private CaretListener textFieldButtomCaretListener = new CaretListener() {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			textFieldBValueChange();
+			// 当文本框中的值改变时，设置当前值为其对应文本框中的值
+//			setCurrentBoundVaule();
 		}
 	};
 
@@ -210,7 +302,6 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		this.currentViewTop = this.mapControl.getMap().getViewBounds().getTop();
 		this.currentViewRight = this.mapControl.getMap().getViewBounds().getRight();
 		this.currentViewBottom = this.mapControl.getMap().getViewBounds().getBottom();
-
 		setAsMapViewBounds();
 	}
 
@@ -218,19 +309,177 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	 * 设置范围为地图范围
 	 */
 	private void setAsMapViewBounds() {
-		this.textFieldCurrentViewLeft.setValue(this.mapViewL);
-		this.textFieldCurrentViewTop.setValue(this.mapViewT);
-		this.textFieldCurrentViewRight.setValue(this.mapViewR);
-		this.textFieldCurrentViewBottom.setValue(this.mapViewB);
+		this.textFieldCurrentViewLeft.getTextField().setText(DoubleUtilities.getFormatString(this.mapViewL));
+		this.textFieldCurrentViewBottom.getTextField().setText(DoubleUtilities.getFormatString(this.mapViewB));
+		this.textFieldCurrentViewRight.getTextField().setText(DoubleUtilities.getFormatString(this.mapViewR));
+		this.textFieldCurrentViewTop.getTextField().setText(DoubleUtilities.getFormatString(this.mapViewT));
 	}
 
 	/**
 	 * 设置范围为当前可视范围
 	 */
 	private void setAsCurrentViewBounds() {
-		this.textFieldCurrentViewLeft.setValue(this.currentViewLeft);
-		this.textFieldCurrentViewTop.setValue(this.currentViewTop);
-		this.textFieldCurrentViewRight.setValue(this.currentViewRight);
-		this.textFieldCurrentViewBottom.setValue(this.currentViewBottom);
+		this.textFieldCurrentViewLeft.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewLeft));
+		this.textFieldCurrentViewBottom.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewBottom));
+		this.textFieldCurrentViewRight.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewRight));
+		this.textFieldCurrentViewTop.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewTop));
+	}
+
+	/**
+	 * 复制参数
+	 */
+	private void copyParameter() {
+
+	}
+
+	/**
+	 * 粘贴参数
+	 */
+	private void pasteParameter() {
+
+	}
+
+	/**
+	 * 范围文本框——左——改变事件
+	 */
+	private void textFieldLValueChange() {
+		String str = this.textFieldCurrentViewRight.getTextField().getText();
+		if (!StringUtilities.isNullOrEmpty(str) && DoubleUtilities.isDouble(str)) {
+			this.textFieldCurrentViewLeft.setInitInfo(
+					(-Double.MAX_VALUE),
+					DoubleUtilities.stringToValue(textFieldCurrentViewRight.getTextField().getText()),
+					WaringTextField.FLOAT_TYPE,
+					"15");
+		} else {
+			this.textFieldCurrentViewLeft.setInitInfo(
+					(-Double.MAX_VALUE),
+					Double.MAX_VALUE,
+					WaringTextField.FLOAT_TYPE,
+					"15");
+		}
+	}
+
+	/**
+	 * 范围文本框——下——改变事件
+	 */
+	private void textFieldBValueChange() {
+		String str = this.textFieldCurrentViewTop.getTextField().getText();
+		if (!StringUtilities.isNullOrEmpty(str) && DoubleUtilities.isDouble(str)) {
+			this.textFieldCurrentViewBottom.setInitInfo(
+					(-Double.MAX_VALUE),
+					DoubleUtilities.stringToValue(this.textFieldCurrentViewTop.getTextField().getText()),
+					WaringTextField.FLOAT_TYPE,
+					"15");
+		} else {
+			this.textFieldCurrentViewBottom.setInitInfo(
+					(-Double.MAX_VALUE),
+					Double.MAX_VALUE,
+					WaringTextField.FLOAT_TYPE,
+					"15");
+		}
+	}
+
+	/**
+	 * 范围文本框——右——改变事件
+	 */
+	private void textFieldRValueChange() {
+		String str = this.textFieldCurrentViewLeft.getTextField().getText();
+		if (!StringUtilities.isNullOrEmpty(str) && DoubleUtilities.isDouble(str)) {
+			this.textFieldCurrentViewRight.setInitInfo(
+					DoubleUtilities.stringToValue(this.textFieldCurrentViewLeft.getTextField().getText()),
+					Double.MAX_VALUE,
+					WaringTextField.FLOAT_TYPE,
+					"15");
+		} else {
+			this.textFieldCurrentViewRight.setInitInfo(
+					(-Double.MAX_VALUE),
+					Double.MAX_VALUE,
+					WaringTextField.FLOAT_TYPE,
+					"15");
+		}
+	}
+
+
+	/**
+	 * 范围文本框——上——改变事件
+	 */
+	private void textFieldTValueChange() {
+		String str = this.textFieldCurrentViewBottom.getTextField().getText();
+		if (!StringUtilities.isNullOrEmpty(str) && DoubleUtilities.isDouble(str)) {
+			this.textFieldCurrentViewTop.setInitInfo(
+					DoubleUtilities.stringToValue(this.textFieldCurrentViewBottom.getTextField().getText()),
+					Double.MAX_VALUE,
+					WaringTextField.FLOAT_TYPE,
+					"15");
+		} else {
+			this.textFieldCurrentViewTop.setInitInfo(
+					(-Double.MAX_VALUE),
+					Double.MAX_VALUE,
+					WaringTextField.FLOAT_TYPE,
+					"15");
+
+		}
+	}
+
+	/**
+	 * 设置当前
+	 */
+	private void setCurrentBoundVaule() {
+		String valueLeft = this.textFieldCurrentViewLeft.getTextField().getText();
+		String valueTop = this.textFieldCurrentViewTop.getTextField().getText();
+		String valueRight = this.textFieldCurrentViewRight.getTextField().getText();
+		String valueBottom = this.textFieldCurrentViewBottom.getTextField().getText();
+
+		// 当四个文本框都不为空时
+		if (!StringUtilities.isNullOrEmpty(valueLeft) && !StringUtilities.isNullOrEmpty(valueTop) && !StringUtilities.isNullOrEmpty(valueRight) && !StringUtilities.isNullOrEmpty(valueBottom)) {
+			// 当四个文本框参数都为double型时
+			if (DoubleUtilities.isDouble(valueLeft) && DoubleUtilities.isDouble(valueTop) && DoubleUtilities.isDouble(valueRight) && DoubleUtilities.isDouble(valueBottom)) {
+				this.valueLeft = DoubleUtilities.stringToValue(valueLeft);
+				this.valueTop = DoubleUtilities.stringToValue(valueTop);
+				this.valueRight = DoubleUtilities.stringToValue(valueRight);
+				this.valueBottom = DoubleUtilities.stringToValue(valueBottom);
+				return;
+			}
+		}
+		this.valueLeft = 0.0;
+		this.valueTop = 0.0;
+		this.valueRight = 0.0;
+		this.valueBottom = 0.0;
+	}
+
+	/**
+	 * 获得当前面板设置参数下的地图范围
+	 *
+	 * @return
+	 */
+	public Rectangle2D getRangeBound() {
+		// 当要获得范围矩形框时，获得当前文本框的值，并判断是否构成矩形框
+		setCurrentBoundVaule();
+		if ((valueLeft < valueRight) && (valueTop > valueBottom)) {
+			this.rectangle2D = new Rectangle2D();
+			this.rectangle2D.setLeft(valueLeft);
+			this.rectangle2D.setRight(valueRight);
+			this.rectangle2D.setTop(valueTop);
+			this.rectangle2D.setBottom(valueBottom);
+			return this.rectangle2D;
+		}
+		return null;
+	}
+
+	// 获得范围文本框
+	public WaringTextField getTextFieldCurrentViewLeft() {
+		return this.textFieldCurrentViewLeft;
+	}
+
+	public WaringTextField getTextFieldCurrentViewTop() {
+		return this.textFieldCurrentViewTop;
+	}
+
+	public WaringTextField getTextFieldCurrentViewRight() {
+		return this.textFieldCurrentViewRight;
+	}
+
+	public WaringTextField getTextFieldCurrentViewBottom() {
+		return this.textFieldCurrentViewBottom;
 	}
 }
