@@ -4,6 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
+import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import javax.swing.*;
@@ -68,9 +69,12 @@ public class MultiSelction extends Selection {
 	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		Point p = e.getPoint();
-		IGraph hit = getCanvas().findTopGraph(p);
-		selectItem(hit);
+		Point canvasP = getCanvas().getCoordinateTransform().inverse(e.getPoint());
+		IGraph hit = getCanvas().findGraph(e.getPoint());
+		boolean isSelected = hit instanceof AbstractGraph ? ((AbstractGraph) hit).getShape().contains(canvasP) : hit != null;
+		if (isSelected) {
+			selectItem(hit);
+		}
 	}
 
 	@Override

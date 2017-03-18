@@ -393,17 +393,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		}
 	}
 
-
-	public IGraph findTopGraph(Point point) {
-		IGraph graph = null;
-		IGraph[] graphs = this.graphStorage.findGraphs(point);
-
-		if (graphs != null && graphs.length > 0) {
-			graph = graphs[0];
-		}
-		return graph;
-	}
-
 	public IGraph[] findGraphs(Point point) {
 		return this.graphStorage.findGraphs(point);
 	}
