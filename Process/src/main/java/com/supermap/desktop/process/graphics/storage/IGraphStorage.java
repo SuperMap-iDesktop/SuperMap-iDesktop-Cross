@@ -44,5 +44,9 @@ public interface IGraphStorage {
 
 	IGraph[] findContainedGraphs(int x, int y, int width, int height);
 
+	Rectangle getBounds();
+
+	void modifyGraphBounds(IGraph graph, int x, int y, int width, int height);
+
 	void clear();
 }

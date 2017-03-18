@@ -2,11 +2,9 @@ package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterEnumPanel;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 import com.supermap.desktop.process.util.EnumParser;
 
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -15,7 +13,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class ParameterEnum extends AbstractParameter implements ISelectionParameter {
 
-    private JPanel panel;
     private EnumParser parser;
     private ParameterDataNode value;
     private String describe;
@@ -29,13 +26,6 @@ public class ParameterEnum extends AbstractParameter implements ISelectionParame
         return ParameterType.ENUM;
     }
 
-    @Override
-    public JPanel getPanel() {
-        if (panel == null) {
-            panel = new ParameterEnumPanel(this);
-        }
-        return panel;
-    }
 
     @Override
     public void setSelectedItem(Object value) {

@@ -24,22 +24,22 @@ public class CtrlActionRun extends CtrlAction {
 
     @Override
     public void run() {
-        try {
-            IForm form = Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
-            IDockbarManager manager = Application.getActiveApplication().getMainFrame().getDockbarManager();
-            IDockbar tasksDock = manager.get(Class.forName(TASKS));
-            TasksManagerContainer container = (TasksManagerContainer) tasksDock.getInnerComponent();
-            tasksDock.setVisible(true);
-            container.clear();
-
-            if (form instanceof FormProcess) {
-                GraphCanvas canvas = ((FormProcess) form).getCanvas();
-                UniversalMatrix matrix = canvas.getTasks();
-
-                TaskUtil.excuteTasks(matrix);
-            }
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            IForm form = Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
+//            IDockbarManager manager = Application.getActiveApplication().getMainFrame().getDockbarManager();
+//            IDockbar tasksDock = manager.get(Class.forName(TASKS));
+//            TasksManagerContainer container = (TasksManagerContainer) tasksDock.getInnerComponent();
+//            tasksDock.setVisible(true);
+//            container.clear();
+//
+//            if (form instanceof FormProcess) {
+//                GraphCanvas canvas = ((FormProcess) form).getCanvas();
+//                UniversalMatrix matrix = canvas.getTasks();
+//
+//                TaskUtil.excuteTasks(matrix);
+//            }
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
     }
 }

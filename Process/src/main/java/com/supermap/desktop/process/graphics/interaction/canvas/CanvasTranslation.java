@@ -1,9 +1,8 @@
-package com.supermap.desktop.process.graphics.interaction;
+package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.process.graphics.CoordinateTransform;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
-import com.supermap.desktop.process.graphics.handler.canvas.CanvasEventAdapter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -55,7 +54,7 @@ public class CanvasTranslation extends CanvasEventAdapter {
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		Point scaleCenter = e.getPoint();
-		if (this.canvas.getCanvasViewBounds().contains(scaleCenter)) {
+		if (this.canvas.getVisibleRect().contains(scaleCenter)) {
 
 			// -1 for zooming in,1 form zooming out.
 			double validStep = e.getWheelRotation() == -1 ? this.transform.validateScale(this.step) : -1 * this.transform.validateScale(this.step);

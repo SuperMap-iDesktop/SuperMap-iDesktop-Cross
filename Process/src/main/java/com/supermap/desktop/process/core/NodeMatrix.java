@@ -250,26 +250,4 @@ public class NodeMatrix {
         private volatile Hashtable<Object, C> vector = new Hashtable<>();
     }
 
-    public static void main(String[] args) {
-        NodeMatrix matrix = new NodeMatrix();
-        matrix.addNode("A");
-        matrix.addNode("B");
-        matrix.addNode("C");
-        matrix.addNode("D");
-//        matrix.addConstraint("A", "B", new INodeConstraint() {});
-//        matrix.addConstraint("B", "C", new INodeConstraint() {});
-//        matrix.addConstraint("A", "D", new INodeConstraint() {});
-        matrix.addConstraint("A", "B", new INodeConstraint() {
-        });
-        matrix.addConstraint("B", "C", new INodeConstraint() {
-        });
-        matrix.addConstraint("C", "D", new INodeConstraint() {
-        });
-        try {
-            System.out.println(matrix.removeNode("D"));
-        } catch (NodeException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

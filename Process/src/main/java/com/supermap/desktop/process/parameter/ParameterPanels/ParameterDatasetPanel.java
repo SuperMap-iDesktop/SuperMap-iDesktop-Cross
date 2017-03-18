@@ -22,8 +22,12 @@ import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.data.WorkspaceOpenedEvent;
 import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterDataset;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
@@ -40,7 +44,8 @@ import java.beans.PropertyChangeListener;
 /**
  * @author XiaJT
  */
-public class ParameterDatasetPanel extends JPanel {
+@ParameterPanelDescribe(parameterPanelType = ParameterType.DATASET)
+public class ParameterDatasetPanel extends DefaultParameterPanel implements IParameterPanel {
 	private ParameterDataset parameterDataset;
 	private JLabel labelDatasource = new JLabel();
 	private DatasourceComboBox datasourceComboBox;
@@ -97,8 +102,8 @@ public class ParameterDatasetPanel extends JPanel {
 		}
 	};
 
-	public ParameterDatasetPanel(ParameterDataset parameterDataset) {
-		this.parameterDataset = parameterDataset;
+	public ParameterDatasetPanel(IParameter parameterDataset) {
+		this.parameterDataset = (ParameterDataset) parameterDataset;
 		labelDatasource.setText(CommonProperties.getString(CommonProperties.Label_Datasource));
 		labelDataset.setText(CommonProperties.getString(CommonProperties.Label_Dataset));
 		this.datasourceComboBox = new DatasourceComboBox(Application.getActiveApplication().getWorkspace().getDatasources());

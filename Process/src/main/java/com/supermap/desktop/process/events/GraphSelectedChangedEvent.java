@@ -1,8 +1,7 @@
 package com.supermap.desktop.process.events;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.graphs.IGraph;
-import com.supermap.desktop.process.graphics.interaction.Selection;
+import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
 
 import java.util.EventObject;
 

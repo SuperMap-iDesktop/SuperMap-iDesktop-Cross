@@ -18,4 +18,6 @@ public interface IParameters {
 	int size();
 
 	JPanel getPanel();
+
+	IParameterPanel createPanel(IParameter parameter);
 }

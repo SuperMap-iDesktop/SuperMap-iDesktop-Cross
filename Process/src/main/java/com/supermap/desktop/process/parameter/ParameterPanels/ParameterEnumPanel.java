@@ -1,8 +1,12 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterComboBoxCellRender;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterEnum;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -18,7 +22,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * @author xie
  */
-public class ParameterEnumPanel extends JPanel {
+@ParameterPanelDescribe(parameterPanelType = ParameterType.ENUM)
+public class ParameterEnumPanel extends DefaultParameterPanel implements IParameterPanel {
 
     private ParameterEnum parameterEnum;
     private boolean isSelectingItem = false;
@@ -26,12 +31,12 @@ public class ParameterEnumPanel extends JPanel {
     private JLabel label = new JLabel();
     private JComboBox comboBox = new JComboBox();
 
-    public ParameterEnumPanel(ParameterEnum parameterEnum) {
-        this.parameterEnum = parameterEnum;
-        label.setText(parameterEnum.getDescribe());
-        initComboBoxItems();
-        comboBox.setSelectedItem(parameterEnum.getSelectedItem());
-        initListeners();
+	public ParameterEnumPanel(IParameter parameterEnum) {
+		this.parameterEnum = (ParameterEnum) parameterEnum;
+		label.setText(this.parameterEnum.getDescribe());
+		initComboBoxItems();
+		comboBox.setSelectedItem(this.parameterEnum.getSelectedItem());
+		initListeners();
         initLayout();
     }
 
@@ -80,4 +85,5 @@ public class ParameterEnumPanel extends JPanel {
             }
         });
     }
+
 }

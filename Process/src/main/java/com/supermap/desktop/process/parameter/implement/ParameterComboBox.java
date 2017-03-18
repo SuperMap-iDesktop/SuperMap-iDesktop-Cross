@@ -1,11 +1,10 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterComboBoxPanel;
 import com.supermap.desktop.process.parameter.interfaces.ISingleSelectionParameter;
 
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 
 /**
@@ -13,12 +12,13 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterComboBox extends AbstractParameter implements ISingleSelectionParameter {
 
-	private JPanel panel;
 	private ParameterDataNode[] items;
 	/**
 	 * label的描述文本
 	 */
 	private String describe;
+
+	@ParameterField(name = "comboBoxValue")
 	private ParameterDataNode value;
 
 	public ParameterComboBox() {
@@ -32,14 +32,6 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 	@Override
 	public String getType() {
 		return ParameterType.COMBO_BOX;
-	}
-
-	@Override
-	public JPanel getPanel() {
-		if (panel == null) {
-			panel = new ParameterComboBoxPanel(this);
-		}
-		return panel;
 	}
 
 	@Override
@@ -113,5 +105,11 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 
 	public int getSelectedIndex() {
 		return getItemIndex(getSelectedItem());
+	}
+
+	public void setValue(ParameterDataNode value) {
+		PropertyChangeEvent propertyChangeEvent = new PropertyChangeEvent(this, "comboBoxValue", this.value, value);
+		fireFieldValueChanged(propertyChangeEvent);
+		this.value = (ParameterDataNode) propertyChangeEvent.getNewValue();
 	}
 }

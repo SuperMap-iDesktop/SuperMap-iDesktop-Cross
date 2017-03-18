@@ -1,10 +1,8 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterSpinnerPanel;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 
 /**
@@ -12,7 +10,6 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterSpinner extends AbstractParameter implements ISelectionParameter {
 
-	private JPanel panel;
 	private double value;
 	private double min;
 	private double max;
@@ -24,13 +21,6 @@ public class ParameterSpinner extends AbstractParameter implements ISelectionPar
 		return ParameterType.SPINNER;
 	}
 
-	@Override
-	public JPanel getPanel() {
-		if (panel == null) {
-			panel = new ParameterSpinnerPanel(this);
-		}
-		return panel;
-	}
 
 	@Override
 	public void setSelectedItem(Object value) {

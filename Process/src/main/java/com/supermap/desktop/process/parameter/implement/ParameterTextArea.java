@@ -1,9 +1,8 @@
 package com.supermap.desktop.process.parameter.implement;
 
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterTextAreaPanel;
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
-import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 
 /**
@@ -11,16 +10,15 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterTextArea extends AbstractParameter implements ISelectionParameter {
     private String selectItem;
-    private JPanel panel;
-    private String discribe;
+	private String describe;
 
     public ParameterTextArea() {
         this("");
     }
 
-    public ParameterTextArea(String discribe) {
-        this.discribe = discribe;
-    }
+	public ParameterTextArea(String describe) {
+		this.describe = describe;
+	}
 
     @Override
     public void setSelectedItem(Object item) {
@@ -38,24 +36,17 @@ public class ParameterTextArea extends AbstractParameter implements ISelectionPa
 
     @Override
     public String getType() {
-        return null;
+	    return ParameterType.TEXT_AREA;
     }
 
-    public ParameterTextArea setDiscribe(String discribe) {
-        this.discribe = discribe;
-        return this;
+	public ParameterTextArea setDescribe(String describe) {
+		this.describe = describe;
+		return this;
     }
 
-    public String getDiscribe(){
-        return discribe;
-    }
-    @Override
-    public JPanel getPanel() {
-        if (null == panel) {
-            this.panel = new ParameterTextAreaPanel(this);
-        }
-        return panel;
-    }
+	public String getDescribe() {
+		return describe;
+	}
 
     @Override
     public void dispose() {
