@@ -34,7 +34,9 @@ import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Chens on 2016/12/29 0029.
@@ -74,6 +76,7 @@ public class LayerGridParamColorTableDialog extends SmDialog {
     private transient LayerGridParamPropertyModel modelModified;
     private Color[] colorsOrigin;
     private double[] keysOrigin;
+    private double[] initDatasetKeysOrigin;
     private ArrayList<ColorTableChangeListener> listeners;
 
     //by lixiaoyao 栅格颜色表的非普遍性调用进行优化
@@ -87,16 +90,17 @@ public class LayerGridParamColorTableDialog extends SmDialog {
         ColorDictionary colorDictionary = setting.getColorDictionary();
         colorsOrigin = colorDictionary.getColors();
         keysOrigin = colorDictionary.getKeys();
+        this.initDatasetKeysOrigin=this.modelModified.getOriginKeyCount();
         init();
     }
 
-    public LayerGridParamColorTableDialog(LayerSettingGrid layerSettingGrid) {
+    public LayerGridParamColorTableDialog(LayerSettingGrid layerSettingGrid,double inputOriginKeys[]) {
         super();
         this.currentLayerSettingGrid = new LayerSettingGrid(layerSettingGrid);
         ColorDictionary colorDictionary = this.currentLayerSettingGrid.getColorDictionary();
         colorsOrigin = colorDictionary.getColors();
         keysOrigin = colorDictionary.getKeys();
-
+        this.initDatasetKeysOrigin=inputOriginKeys;
         init();
     }
 
@@ -214,7 +218,15 @@ public class LayerGridParamColorTableDialog extends SmDialog {
         buttonBatchAddColor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                BatchAddColorTableDailog batchAddColorTableDailog=new BatchAddColorTableDailog(modelModified.getOriginKeyCount(),(JFrame) Application.getActiveApplication().getMainFrame(), true);
+                BatchAddColorTableDailog batchAddColorTableDailog;
+                int startIndex=colorsWithKeysTableModel.getRowCount();
+                if (colorsWithKeysTableModel.getRowCount()<=1){
+                    batchAddColorTableDailog=new BatchAddColorTableDailog(initDatasetKeysOrigin[0],initDatasetKeysOrigin[initDatasetKeysOrigin.length-1],initDatasetKeysOrigin.length,(JFrame) Application.getActiveApplication().getMainFrame(), true);
+                }else{
+                    List<Double> currentColorTableKeys=colorsWithKeysTableModel.getKeys();
+                    Collections.sort(currentColorTableKeys);
+                    batchAddColorTableDailog=new BatchAddColorTableDailog(currentColorTableKeys.get(0),currentColorTableKeys.get(currentColorTableKeys.size()-1),initDatasetKeysOrigin.length,(JFrame) Application.getActiveApplication().getMainFrame(), true);
+                }
                 DialogResult result=batchAddColorTableDailog.showDialog();
                 if (result==DialogResult.OK && batchAddColorTableDailog.getResultKeys()!=null){
                     int count = batchAddColorTableDailog.getResultKeys().length;
@@ -223,9 +235,10 @@ public class LayerGridParamColorTableDialog extends SmDialog {
                         return;
                     }
                     colorsWithKeysTableModel.addColorNodes(colors.toArray(),batchAddColorTableDailog.getResultKeys());
-                    tableColor.repaint();//解决颜色列刷新不全的问题
                     tableChange();
                     colorsWithKeysTableModel.fireTableDataChanged();
+                    tableColor.setRowSelectionInterval(startIndex, tableColor.getRowCount() - 1);
+                    tableColor.scrollRectToVisible(tableColor.getCellRect(tableColor.getRowCount() - 1, 0, true));
                 }
             }
         });
@@ -321,12 +334,12 @@ public class LayerGridParamColorTableDialog extends SmDialog {
         buttonDefaultColotTable.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int count = modelModified.getOriginKeyCount().length;
+                int count =initDatasetKeysOrigin.length;
                 Colors colors = comboBoxColor.getGradientColors(count);
                 if (colors == null) {
                     return;
                 }
-                colorsWithKeysTableModel.setColorNodes(colors.toArray(), modelModified.getOriginKeyCount());
+                colorsWithKeysTableModel.setColorNodes(colors.toArray(), initDatasetKeysOrigin);
                 tableColor.repaint();//解决颜色列刷新不全的问题
                 tableChange();
                 colorsWithKeysTableModel.fireTableDataChanged();

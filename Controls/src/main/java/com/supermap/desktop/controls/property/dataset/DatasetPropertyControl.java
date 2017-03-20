@@ -3,6 +3,7 @@ package com.supermap.desktop.controls.property.dataset;
 import com.supermap.data.Dataset;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
@@ -89,6 +90,7 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 		initializeComponents();
 		initializeResources();
 		setDataset(dataset);
+		setComponentName();
 	}
 
 	public void setDataset(Dataset dataset) {
@@ -203,6 +205,28 @@ public class DatasetPropertyControl extends AbstractPropertyControl {
 
 	}
 
+	private void setComponentName(){
+		ComponentUIUtilities.setName(this.labelName,"DatasetPropertyControl_labelName");
+		ComponentUIUtilities.setName(this.textFieldName,"DatasetPropertyControl_textFieldName");
+		ComponentUIUtilities.setName(this.labelDatasetType,"DatasetPropertyControl_labelDatasetType");
+		ComponentUIUtilities.setName(this.textFieldDatasetType,"DatasetPropertyControl_textFieldDatasetType");
+		ComponentUIUtilities.setName(this.labelRecordsetName,"DatasetPropertyControl_labelRecordsetName");
+		ComponentUIUtilities.setName(this.textFieldRecordsetName,"DatasetPropertyControl_textFieldRecordsetName");
+		ComponentUIUtilities.setName(this.labelEncoding,"DatasetPropertyControl_labelEncoding");
+		ComponentUIUtilities.setName(this.textFieldEncoding,"DatasetPropertyControl_textFieldEncoding");
+		ComponentUIUtilities.setName(this.labelLeft,"DatasetPropertyControl_labelLeft");
+		ComponentUIUtilities.setName(this.textFieldLeft,"DatasetPropertyControl_textFieldLeft");
+		ComponentUIUtilities.setName(this.labelTop,"DatasetPropertyControl_labelTop");
+		ComponentUIUtilities.setName(this.textFieldTop,"DatasetPropertyControl_textFieldTop");
+		ComponentUIUtilities.setName(this.labelRight,"DatasetPropertyControl_labelRight");
+		ComponentUIUtilities.setName(this.textFieldRight,"DatasetPropertyControl_textFieldRight");
+		ComponentUIUtilities.setName(this.labelBottom,"DatasetPropertyControl_labelBottom");
+		ComponentUIUtilities.setName(this.textFieldBottom,"DatasetPropertyControl_textFieldBottom");
+		ComponentUIUtilities.setName(this.labelDescription,"DatasetPropertyControl_labelDescription");
+		ComponentUIUtilities.setName(this.textAreaDescription,"DatasetPropertyControl_textAreaDescription");
+		ComponentUIUtilities.setName(this.buttonReset,"DatasetPropertyControl_buttonReset");
+		ComponentUIUtilities.setName(this.buttonApply,"DatasetPropertyControl_buttonApply");
+	}
 	private void initializeResources() {
 		this.labelName.setText(ControlsProperties.getString("String_LabelDatasetName"));
 		this.labelName.setToolTipText(this.labelName.getText());

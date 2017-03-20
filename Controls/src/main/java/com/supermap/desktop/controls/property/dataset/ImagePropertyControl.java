@@ -6,6 +6,7 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -91,6 +92,7 @@ public class ImagePropertyControl extends AbstractPropertyControl {
 		super(ControlsProperties.getString("String_ImageProperty"));
 		initializeComponents();
 		initializeResources();
+		setComponentName();
 		setDatasetImage(datasetImage);
 	}
 
@@ -235,7 +237,28 @@ public class ImagePropertyControl extends AbstractPropertyControl {
 		this.buttonReset.setText(CommonProperties.getString(CommonProperties.Reset));
 		this.buttonApply.setText(CommonProperties.getString(CommonProperties.Apply));
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.labelBandCount, "ImagePropertyControl_labelBandCount");
+		ComponentUIUtilities.setName(this.textFieldBandCount, "ImagePropertyControl_textFieldBandCount");
+		ComponentUIUtilities.setName(this.labelX, "ImagePropertyControl_labelX");
+		ComponentUIUtilities.setName(this.textFieldX, "ImagePropertyControl_textFieldX");
+		ComponentUIUtilities.setName(this.labelY, "ImagePropertyControl_labelY");
+		ComponentUIUtilities.setName(this.textFieldY, "ImagePropertyControl_textFieldY");
+		ComponentUIUtilities.setName(this.labelNoValue, "ImagePropertyControl_labelNoValue");
+		ComponentUIUtilities.setName(this.textFieldNoValue, "ImagePropertyControl_textFieldNoValue");
+		ComponentUIUtilities.setName(this.labelHeight, "ImagePropertyControl_labelHeight");
+		ComponentUIUtilities.setName(this.textFieldHeight, "ImagePropertyControl_textFieldHeight");
+		ComponentUIUtilities.setName(this.labelWidth, "ImagePropertyControl_labelWidth");
+		ComponentUIUtilities.setName(this.textFieldWidth, "ImagePropertyControl_textFieldWidth");
+		ComponentUIUtilities.setName(this.tableBandInfo, "ImagePropertyControl_tableBandInfo");
+		ComponentUIUtilities.setName(this.labelHasPyramid, "ImagePropertyControl_labelHasPyramid");
+		ComponentUIUtilities.setName(this.textFieldHasPyramid, "ImagePropertyControl_textFieldHasPyramid");
+		ComponentUIUtilities.setName(this.labelClipRegion, "ImagePropertyControl_labelClipRegion");
+		ComponentUIUtilities.setName(this.buttonSetClipRegion, "ImagePropertyControl_buttonSetClipRegion");
+		ComponentUIUtilities.setName(this.buttonClearClipRegion, "ImagePropertyControl_buttonClearClipRegion");
+		ComponentUIUtilities.setName(this.buttonReset, "ImagePropertyControl_buttonReset");
+		ComponentUIUtilities.setName(this.buttonApply, "ImagePropertyControl_buttonApply");
+	}
 	private void registerEvents() {
 		this.textFieldNoValue.addPropertyChangeListener(ControlDefaultValues.PROPERTYNAME_VALUE, this.propertyChangeListener);
 		this.buttonSetClipRegion.addActionListener(this.actionListener);

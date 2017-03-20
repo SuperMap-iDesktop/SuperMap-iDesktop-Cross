@@ -1,8 +1,11 @@
-package com.supermap.desktop.ui.controls.borderPanel;
+package com.supermap.desktop.mapview.map.propertycontrols;
 
 import com.supermap.data.Rectangle2D;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
@@ -15,6 +18,9 @@ import javax.swing.event.CaretListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 /**
  * @author YuanR
@@ -22,7 +28,7 @@ import java.awt.event.ActionListener;
  */
 public class PanelGroupBoxViewBounds extends JPanel {
 
-	public Rectangle2D rectangle2D;
+	public Rectangle2D rangeRectangle = Rectangle2D.getEMPTY();
 
 	private MapControl mapControl;
 
@@ -41,9 +47,11 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	private JButton mapViewBoundsButton;
 	// 当前窗口地图范围
 	private JButton currentViewBoundsButton;
-	// 自定义范围：选择对象范围/绘制范围
-	private JComboBox customBoundsComboBox;
 
+	private JButton customBoundsButton;
+	private JPopupMenuBounds popupMenuCustomBounds;
+
+	private SmDialog dialog;
 	// 复制
 	private JButton copyButton;
 	// 粘贴
@@ -59,21 +67,93 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	private double currentViewRight = 0.0;
 	private double currentViewBottom = 0.0;
 
-	//	// 当前值
+	// 当前值
 	private double valueLeft = 0.0;
 	private double valueTop = 0.0;
 	private double valueRight = 0.0;
 	private double valueBottom = 0.0;
 
-
 	private static final int DEFAULT_LABELSIZE = 20;
-	private static final int DEFAULT_BUTTONSIZE = 85;
+	private static final int DEFAULT_BUTTONSIZE = 95;
+
 
 	/**
-	 * 默认构造方法
+	 * 按钮事件枢纽站
 	 */
-	public PanelGroupBoxViewBounds() {
+	private ActionListener actionButtonListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (e.getSource().equals(mapViewBoundsButton)) {
+				// 设置范围为整个地图范围
+				setAsMapViewBounds();
+				// 因为每个TextField的范围受其他约束，第一次设置是赋值，第二次设置为初始化值域范围
+				setAsMapViewBounds();
+			} else if (e.getSource().equals(currentViewBoundsButton)) {
+				// 设置范围为当前窗口
+				setAsCurrentViewBounds();
+				// 因为每个TextField的范围受其他约束，第一次设置是赋值，第二次设置为初始化值域范围
+				setAsCurrentViewBounds();
+			} else if (e.getSource().equals(customBoundsButton)) {
+				// 当点击自定义按钮时，show出自定义右键菜单栏
+				popupMenuCustomBounds.show(customBoundsButton, 0, customBoundsButton.getHeight());
+			} else if (e.getSource().equals(copyButton)) {
+				// 复制
+				copyParameter();
+
+			} else if (e.getSource().equals(pasteButton)) {
+				// 粘贴
+				pasteParameter();
+			}
+		}
+	};
+
+	/**
+	 * 当自定义范围结束，获得绘制的矩形范围/选择对象的最小矩形框
+	 */
+	private transient PropertyChangeListener boundsPropertyChangeListener = new PropertyChangeListener() {
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (evt.getPropertyName().equals(JPopupMenuBounds.CUSTOM_BOUNDS)) {
+				// 通过给予的矩形框，设置范围文本框的数值
+				setAsRectangleBounds(popupMenuCustomBounds.getRectangle2D());
+				// 因为每个TextField的范围受其他约束，第一次设置是赋值，第二次设置为初始化值域范围
+				setAsRectangleBounds(popupMenuCustomBounds.getRectangle2D());
+			}
+		}
+	};
+
+
+
+
+	private CaretListener textFieldLeftCaretListener = new CaretListener() {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			textFieldLValueChange();
+		}
+	};
+	private CaretListener textFieldTopCaretListener = new CaretListener() {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			textFieldTValueChange();
+		}
+	};
+	private CaretListener textFieldRightCaretListener = new CaretListener() {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			textFieldRValueChange();
+		}
+	};
+	private CaretListener textFieldButtomCaretListener = new CaretListener() {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			textFieldBValueChange();
+		}
+	};
+
+	public PanelGroupBoxViewBounds(SmDialog smDialog) {
 		super();
+		this.dialog = smDialog;
 		initCompont();
 		initResource();
 		initLayout();
@@ -85,10 +165,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	}
 
 	private void initCompont() {
-
-
 		this.mainPanel = new JPanel();
-
 		this.labelCurrentViewLeft = new JLabel("Left:");
 		this.textFieldCurrentViewLeft = new WaringTextField();
 		this.labelCurrentViewBottom = new JLabel("Bottom:");
@@ -101,18 +178,14 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		this.mapViewBoundsButton = new JButton("WholeMapBoundsButton");
 		this.currentViewBoundsButton = new JButton("ViewMapBoundsButton");
 
-		this.customBoundsComboBox = new JComboBox();
-		// 通过渲染器，设置comboBox中的项显示在ComboBox中间
-		this.customBoundsComboBox.setRenderer(new DefaultListCellRenderer() {
-			@Override
-			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-				Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-				((JLabel) component).setHorizontalAlignment(SwingConstants.CENTER);
-				return component;
-			}
-		});
-		this.customBoundsComboBox.addItem(ControlsProperties.getString("String_DrewBounds"));
-		this.customBoundsComboBox.addItem(ControlsProperties.getString("String_SelectObject"));
+		this.customBoundsButton = new JButton("CustomBounds");
+		// 初始化自定义范围下拉列表对象
+		this.popupMenuCustomBounds = new JPopupMenuBounds(dialog, JPopupMenuBounds.CUSTOM_BOUNDS, Rectangle2D.getEMPTY());
+		// 通过字符串列表，控制popupMenuCustomBounds显示的项
+		ArrayList arrayList = new ArrayList();
+		arrayList.add(MapViewProperties.getString("String_Button_SelectObject"));
+		arrayList.add(MapViewProperties.getString("String_Button_DrawRectangle"));
+		this.popupMenuCustomBounds.setPopupItems(arrayList);
 
 		this.copyButton = new JButton("CopyButton");
 		this.pasteButton = new JButton("PasteButton");
@@ -126,8 +199,10 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
 		this.mapViewBoundsButton.setText(ControlsProperties.getString("String_MapView"));
 		this.currentViewBoundsButton.setText(ControlsProperties.getString("String_CurrentView"));
+		this.customBoundsButton.setText(ControlsProperties.getString("String_CustomBounds"));
 		this.copyButton.setText(CoreProperties.getString("String_CopySymbolOrGroup"));
 		this.pasteButton.setText(CoreProperties.getString("String_PasteSymbolOrGroup"));
+
 	}
 
 	private void initLayout() {
@@ -162,9 +237,9 @@ public class PanelGroupBoxViewBounds extends JPanel {
 				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(this.mapViewBoundsButton, DEFAULT_BUTTONSIZE,  DEFAULT_BUTTONSIZE,GroupLayout.PREFERRED_SIZE)
 						.addComponent(this.currentViewBoundsButton, DEFAULT_BUTTONSIZE,  DEFAULT_BUTTONSIZE,GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.customBoundsComboBox, DEFAULT_BUTTONSIZE,  DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.copyButton,DEFAULT_BUTTONSIZE,  DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.pasteButton, DEFAULT_BUTTONSIZE, DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)));
+						.addComponent(this.customBoundsButton, DEFAULT_BUTTONSIZE,  DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)));
+//						.addComponent(this.copyButton,DEFAULT_BUTTONSIZE,  DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(this.pasteButton, DEFAULT_BUTTONSIZE, DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)));
 
 		viewPanelLayout.setVerticalGroup(viewPanelLayout.createSequentialGroup()
 				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
@@ -178,13 +253,13 @@ public class PanelGroupBoxViewBounds extends JPanel {
 				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelCurrentViewRight)
 						.addComponent(this.textFieldCurrentViewRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.customBoundsComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.customBoundsButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelCurrentViewTop)
-						.addComponent(this.textFieldCurrentViewTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.copyButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-						.addComponent(this.pasteButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.textFieldCurrentViewTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+//						.addComponent(this.copyButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+//				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+//						.addComponent(this.pasteButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGap(5,5,Short.MAX_VALUE));
 
 		// @formatter:on
@@ -194,14 +269,21 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		removeEvents();
 		this.mapViewBoundsButton.addActionListener(actionButtonListener);
 		this.currentViewBoundsButton.addActionListener(actionButtonListener);
-		// 将文本框的监听事件的注册放到外面，当“整幅地图”、“当前窗口”时，去除对文本框的监听
+		this.copyButton.addActionListener(actionButtonListener);
+		this.pasteButton.addActionListener(actionButtonListener);
+		this.customBoundsButton.addActionListener(actionButtonListener);
 		registTextFieldEvents();
+		this.popupMenuCustomBounds.addPropertyChangeListeners(boundsPropertyChangeListener);
 	}
 
 	private void removeEvents() {
 		this.mapViewBoundsButton.removeActionListener(actionButtonListener);
 		this.currentViewBoundsButton.removeActionListener(actionButtonListener);
+		this.copyButton.removeActionListener(actionButtonListener);
+		this.pasteButton.removeActionListener(actionButtonListener);
+		this.customBoundsButton.removeActionListener(actionButtonListener);
 		removeTextFieldEvents();
+		this.popupMenuCustomBounds.removePropertyChangeListener(boundsPropertyChangeListener);
 	}
 
 	private void registTextFieldEvents() {
@@ -229,64 +311,6 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		this.textFieldCurrentViewTop.removeEvents();
 	}
 
-
-	/**
-	 * 按钮事件枢纽站
-	 */
-	private ActionListener actionButtonListener = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (e.getSource().equals(mapViewBoundsButton)) {
-				// 设置范围为整个地图范围
-				setAsMapViewBounds();
-				setAsMapViewBounds();
-			} else if (e.getSource().equals(currentViewBoundsButton)) {
-				// 设置范围为当前窗口
-				setAsCurrentViewBounds();
-				setAsCurrentViewBounds();
-			} else if (e.getSource().equals(copyButton)) {
-				// 复制
-				copyParameter();
-
-			} else if (e.getSource().equals(pasteButton)) {
-				// 粘贴
-				pasteParameter();
-			}
-		}
-	};
-
-	private CaretListener textFieldLeftCaretListener = new CaretListener() {
-		@Override
-		public void caretUpdate(CaretEvent e) {
-			textFieldLValueChange();
-			// 当文本框中的值改变时，设置当前值为其对应文本框中的值
-//			setCurrentBoundVaule();
-		}
-	};
-	private CaretListener textFieldTopCaretListener = new CaretListener() {
-		@Override
-		public void caretUpdate(CaretEvent e) {
-			textFieldTValueChange();
-			// 当文本框中的值改变时，设置当前值为其对应文本框中的值
-//			setCurrentBoundVaule();
-		}
-	};
-	private CaretListener textFieldRightCaretListener = new CaretListener() {
-		@Override
-		public void caretUpdate(CaretEvent e) {
-			textFieldRValueChange();
-			// 当文本框中的值改变时，设置当前值为其对应文本框中的值
-//			setCurrentBoundVaule();
-		}
-	};
-	private CaretListener textFieldButtomCaretListener = new CaretListener() {
-		@Override
-		public void caretUpdate(CaretEvent e) {
-			textFieldBValueChange();
-			// 当文本框中的值改变时，设置当前值为其对应文本框中的值
-//			setCurrentBoundVaule();
-		}
-	};
 
 	/**
 	 * 初始化地图范围的值
@@ -326,18 +350,15 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	}
 
 	/**
-	 * 复制参数
+	 * 设置范围为给予的矩形框范围
 	 */
-	private void copyParameter() {
-
+	private void setAsRectangleBounds(Rectangle2D rectangleBounds) {
+		this.textFieldCurrentViewLeft.getTextField().setText(DoubleUtilities.getFormatString(rectangleBounds.getLeft()));
+		this.textFieldCurrentViewBottom.getTextField().setText(DoubleUtilities.getFormatString(rectangleBounds.getBottom()));
+		this.textFieldCurrentViewRight.getTextField().setText(DoubleUtilities.getFormatString(rectangleBounds.getRight()));
+		this.textFieldCurrentViewTop.getTextField().setText(DoubleUtilities.getFormatString(rectangleBounds.getTop()));
 	}
 
-	/**
-	 * 粘贴参数
-	 */
-	private void pasteParameter() {
-
-	}
 
 	/**
 	 * 范围文本框——左——改变事件
@@ -399,6 +420,21 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		}
 	}
 
+	/**
+	 * 复制参数
+	 */
+	private void copyParameter() {
+		Application.getActiveApplication().getOutput().output("复制");
+
+	}
+
+
+	/**
+	 * 粘贴参数
+	 */
+	private void pasteParameter() {
+		Application.getActiveApplication().getOutput().output("粘贴");
+	}
 
 	/**
 	 * 范围文本框——上——改变事件
@@ -456,14 +492,14 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		// 当要获得范围矩形框时，获得当前文本框的值，并判断是否构成矩形框
 		setCurrentBoundVaule();
 		if ((valueLeft < valueRight) && (valueTop > valueBottom)) {
-			this.rectangle2D = new Rectangle2D();
-			this.rectangle2D.setLeft(valueLeft);
-			this.rectangle2D.setRight(valueRight);
-			this.rectangle2D.setTop(valueTop);
-			this.rectangle2D.setBottom(valueBottom);
-			return this.rectangle2D;
+			this.rangeRectangle.setLeft(valueLeft);
+			this.rangeRectangle.setRight(valueRight);
+			this.rangeRectangle.setTop(valueTop);
+			this.rangeRectangle.setBottom(valueBottom);
+			return this.rangeRectangle;
 		}
 		return null;
+
 	}
 
 	// 获得范围文本框

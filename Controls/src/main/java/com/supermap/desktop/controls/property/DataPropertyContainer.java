@@ -3,6 +3,7 @@ package com.supermap.desktop.controls.property;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.Interface.IPropertyManager;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.ui.controls.Dockbar;
 import com.supermap.desktop.ui.controls.DockbarManager;
@@ -39,6 +40,7 @@ public class DataPropertyContainer extends JPanel implements IPropertyManager {
 	public DataPropertyContainer() {
 		this.controls = new ArrayList<>();
 		this.tabbledPane.addChangeListener(this.tabbledPaneChangeListener);
+		ComponentUIUtilities.setName(this.tabbledPane, "DataPropertyContainer_tabbledPane");
 		this.setLayout(new GridBagLayout());
 		this.add(tabbledPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(10));
 	}
