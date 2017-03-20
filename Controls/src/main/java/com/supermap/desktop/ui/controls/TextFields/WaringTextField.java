@@ -80,8 +80,8 @@ public class WaringTextField extends JPanel {
         public void keyTyped(KeyEvent e) {
             int keyChar = e.getKeyChar();
             String text = textField.getText();
-            if (isNeedDisplayAThousandPoints){
-                text=backNumberFromFormat(text);
+            if (isNeedDisplayAThousandPoints) {
+                text = backNumberFromFormat(text);
             }
             //“-”负号在首位，并且只能输入一次
             if (!StringUtilities.isNullOrEmpty(text) && keyChar == KeyEvent.VK_MINUS) {// keyChar == 45代表负号
@@ -130,8 +130,8 @@ public class WaringTextField extends JPanel {
     public WaringTextField(String defaultValue, boolean isNeedDisplayAThousandPoints) {
         super();
         this.isNeedDisplayAThousandPoints = isNeedDisplayAThousandPoints;
-        if (this.isNeedDisplayAThousandPoints){
-            defaultValue=numberFormat(Double.valueOf(defaultValue));
+        if (this.isNeedDisplayAThousandPoints) {
+            defaultValue = numberFormat(Double.valueOf(defaultValue));
         }
         this.defaultValue = defaultValue;
         initComponents();
@@ -257,9 +257,9 @@ public class WaringTextField extends JPanel {
 
 
     public void setText(String str) {
-        if (this.isNeedDisplayAThousandPoints){
-            str=backNumberFromFormat(str);
-            str=numberFormat(Double.valueOf(str));
+        if (this.isNeedDisplayAThousandPoints) {
+            str = backNumberFromFormat(str);
+            str = numberFormat(Double.valueOf(str));
         }
         textField.setText(str);
     }
@@ -282,39 +282,41 @@ public class WaringTextField extends JPanel {
         return labelWarning;
     }
 
-    public String getText(){
-        String result=this.textField.getText();
-        if (this.isNeedDisplayAThousandPoints){
-            result=backNumberFromFormat(result);
+    public String getText() {
+        String result = this.textField.getText();
+        if (this.isNeedDisplayAThousandPoints) {
+            result = backNumberFromFormat(result);
         }
         return result;
     }
 
-      //Display data in a thousand bit format   将数据以千分位形式显示   by  lixiaoyao
-    private String numberFormat(double temp){
-        String tempStr=String.valueOf(temp);
-        String integerValue="";
-        String floatValue="";
-        String result="";
-        if (tempStr.indexOf(".")!=-1){
-            String[] splitValue=tempStr.split("\\.");
-            integerValue=splitValue[0];
-            floatValue=splitValue[1];
+    //Display data in a thousand bit format   将数据以千分位形式显示   by  lixiaoyao
+    private String numberFormat(double temp) {
+        String tempStr = String.valueOf(temp);
+        String integerValue = "";
+        String floatValue = "";
+        String result = "";
+        if (tempStr.indexOf(".") != -1) {
+            String[] splitValue = tempStr.split("\\.");
+            integerValue = splitValue[0];
+            floatValue = splitValue[1];
             if (!floatValue.equals("0")) {
-                result = COMMA_FORMAT.format(Integer.valueOf(integerValue)) +"."+floatValue;
-            }else{
+                result = COMMA_FORMAT.format(Integer.valueOf(integerValue)) + "." + floatValue;
+            } else {
                 result = COMMA_FORMAT.format(Integer.valueOf(integerValue));
             }
-            return result;
-        }else{
+        } else {
             result = COMMA_FORMAT.format(Integer.valueOf(tempStr));
-            return result;
         }
+        if (Double.compare(temp, 0) == -1 && result.indexOf("-") == -1) {
+            result = "-" + result;
+        }
+        return result;
     }
 
     //Thousand bit format elimination          消除千分位格式        by  李逍遥
-    private String backNumberFromFormat(String text){
-        String result=text.replace(",","");
+    private String backNumberFromFormat(String text) {
+        String result = text.replace(",", "");
         return result;
     }
 }
