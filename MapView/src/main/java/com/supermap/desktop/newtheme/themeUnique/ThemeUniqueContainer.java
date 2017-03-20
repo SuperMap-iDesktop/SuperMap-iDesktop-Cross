@@ -24,6 +24,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
@@ -206,6 +207,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		initComponents();
 		initResources();
 		registActionListener();
+
 	}
 
 	/**
@@ -230,6 +232,17 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		}
 		initPanelProperty();
 		initPanelAdvance();
+		setComponentName();
+	}
+
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.comboBoxExpression,"ThemeUniqueContainer_comboBoxExpression");
+		ComponentUIUtilities.setName(this.comboboxColor,"ThemeUniqueContainer_comboboxColor");
+		ComponentUIUtilities.setName(this.comboBoxOffsetX,"ThemeUniqueContainer_comboBoxOffsetX");
+		ComponentUIUtilities.setName(this.tableUniqueInfo,"ThemeUniqueContainer_tableUniqueInfo");
+		ComponentUIUtilities.setName(this.toolBar,"ThemeUniqueContainer_toolBar");
+		ComponentUIUtilities.setName(this.buttonDelete,"ThemeUniqueContainer_buttonDelete");
+		ComponentUIUtilities.setName(this.buttonVisble,"ThemeUniqueContainer_buttonVisble");
 	}
 
 	/**
@@ -460,6 +473,7 @@ public class ThemeUniqueContainer extends ThemeChangePanel {
 		initToolBar();
 		initComboBoxExpression();
 		//@formatter:off
+
 		this.panelProperty.add(this.labelExpression,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 0).setWeight(20, 0).setIpad(60, 0));
 		this.panelProperty.add(this.comboBoxExpression, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 5, 10).setWeight(60, 0).setFill(GridBagConstraints.HORIZONTAL));
 		this.panelProperty.add(this.labelColorStyle,    new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 5, 0).setWeight(20, 0).setIpad(60, 0));
