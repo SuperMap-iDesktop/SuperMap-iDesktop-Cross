@@ -3,6 +3,7 @@ package com.supermap.desktop.controls.property;
 import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.Interface.IPropertyManager;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.PropertyType;
 
 import javax.swing.*;
@@ -40,6 +41,7 @@ public class JDialogDataPropertyContainer extends JDialog implements IPropertyMa
 		setModal(false);
 		this.controls = new ArrayList<AbstractPropertyControl>();
 		this.tabbledPane.addChangeListener(this.tabbledPaneChangeListener);
+		ComponentUIUtilities.setName(this.tabbledPane, "JDialogDataPropertyContainer_tabbledPane");
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 

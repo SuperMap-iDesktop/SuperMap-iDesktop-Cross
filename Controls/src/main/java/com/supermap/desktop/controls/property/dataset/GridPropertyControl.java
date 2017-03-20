@@ -8,6 +8,7 @@ import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -133,6 +134,7 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		initializeComponents();
 		initializeResources();
 		setDatasetGrid(datasetGrid);
+		setComponentName();
 	}
 
 	public DatasetGrid getDatasetGrid() {
@@ -296,7 +298,35 @@ public class GridPropertyControl extends AbstractPropertyControl {
 		this.buttonReset.setText(CommonProperties.getString(CommonProperties.Reset));
 		this.buttonApply.setText(CommonProperties.getString(CommonProperties.Apply));
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.labelPixelFormat, "GridPropertyControl_labelPixelFormat");
+		ComponentUIUtilities.setName(this.textFieldPixelFormat, "GridPropertyControl_textFieldPixelFormat");
+		ComponentUIUtilities.setName(this.labelX, "GridPropertyControl_labelX");
+		ComponentUIUtilities.setName(this.textFieldX, "GridPropertyControl_textFieldX");
+		ComponentUIUtilities.setName(this.labelY, "GridPropertyControl_labelY");
+		ComponentUIUtilities.setName(this.textFieldY, "GridPropertyControl_textFieldY");
+		ComponentUIUtilities.setName(this.labelNoValue, "GridPropertyControl_labelNoValue");
+		ComponentUIUtilities.setName(this.textFieldNoValue, "GridPropertyControl_textFieldNoValue");
+		ComponentUIUtilities.setName(this.labelHeight, "GridPropertyControl_labelHeight");
+		ComponentUIUtilities.setName(this.textFieldHeight, "GridPropertyControl_textFieldHeight");
+		ComponentUIUtilities.setName(this.labelWidth, "GridPropertyControl_labelWidth");
+		ComponentUIUtilities.setName(this.textFieldWidth, "GridPropertyControl_textFieldWidth");
+		ComponentUIUtilities.setName(this.labelMaxValue, "GridPropertyControl_labelMaxValue");
+		ComponentUIUtilities.setName(this.textFieldMaxValue, "GridPropertyControl_textFieldMaxValue");
+		ComponentUIUtilities.setName(this.labelMinValue, "GridPropertyControl_labelMinValue");
+		ComponentUIUtilities.setName(this.textFieldMinValue, "GridPropertyControl_textFieldMinValue");
+		ComponentUIUtilities.setName(this.labelHasPyramid, "GridPropertyControl_labelHasPyramid");
+		ComponentUIUtilities.setName(this.textFieldHasPyramid, "GridPropertyControl_textFieldHasPyramid");
+		ComponentUIUtilities.setName(this.labelClipRegion, "GridPropertyControl_labelClipRegion");
+		ComponentUIUtilities.setName(this.buttonSetClipRegion, "GridPropertyControl_buttonSetClipRegion");
+		ComponentUIUtilities.setName(this.buttonClearClipRegion, "GridPropertyControl_buttonClearClipRegion");
+		ComponentUIUtilities.setName(this.labelColorTable, "GridPropertyControl_labelColorTable");
+		ComponentUIUtilities.setName(this.comboBoxColors, "GridPropertyControl_comboBoxColors");
+		ComponentUIUtilities.setName(this.buttonReset, "GridPropertyControl_buttonReset");
+		ComponentUIUtilities.setName(this.buttonApply, "GridPropertyControl_buttonApply");
+		ComponentUIUtilities.setName(this.labelGridCount, "GridPropertyControl_labelGridCount");
+		ComponentUIUtilities.setName(this.textFieldGridCount, "GridPropertyControl_textFieldGridCount");
+	}
 	private void reset() {
 		this.noValue = this.datasetGrid.getNoValue();
 		this.colors = this.datasetGrid.getColorTable();

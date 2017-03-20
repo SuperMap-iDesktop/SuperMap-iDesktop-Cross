@@ -21,6 +21,7 @@ import com.supermap.desktop.controls.property.datasource.DatasourceInfoControl;
 import com.supermap.desktop.controls.property.datasource.DatasourcePrjCoordSysHandle;
 import com.supermap.desktop.controls.property.datasource.DatasourcePropertyControl;
 import com.supermap.desktop.controls.property.workspace.WorkspacePropertyControl;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.NodeDataTypeUtilities;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
@@ -100,7 +101,7 @@ public class WorkspaceTreeDataPropertyFactory {
 		} else {
 			workspacePropertyControl.setWorkspace(workspace);
 		}
-
+		ComponentUIUtilities.setName(workspacePropertyControl, "WorkspaceTreeDataPropertyFactory_workspacePropertyControl");
 		return workspacePropertyControl;
 	}
 
@@ -111,6 +112,7 @@ public class WorkspaceTreeDataPropertyFactory {
 			datasourcePropertyControl.setDatasource(datasource);
 		}
 
+		ComponentUIUtilities.setName(datasourcePropertyControl, "WorkspaceTreeDataPropertyFactory_datasourcePropertyControl");
 		return datasourcePropertyControl;
 	}
 
@@ -120,6 +122,7 @@ public class WorkspaceTreeDataPropertyFactory {
 		} else {
 			datasourceInfoControl.setDatasource(datasource);
 		}
+		ComponentUIUtilities.setName(datasourceInfoControl, "WorkspaceTreeDataPropertyFactory_datasourceInfoControl");
 		return datasourceInfoControl;
 	}
 
@@ -130,6 +133,7 @@ public class WorkspaceTreeDataPropertyFactory {
 			prjCoordSysPropertyControl.setPrjCoordSys(prjHandle, covertFlag);
 		}
 
+		ComponentUIUtilities.setName(prjCoordSysPropertyControl, "WorkspaceTreeDataPropertyFactory_prjCoordSysPropertyControl");
 		return prjCoordSysPropertyControl;
 	}
 
@@ -140,6 +144,7 @@ public class WorkspaceTreeDataPropertyFactory {
 			datasetPropertyControl.setDataset(dataset);
 		}
 
+		ComponentUIUtilities.setName(datasetPropertyControl, "WorkspaceTreeDataPropertyFactory_datasetPropertyControl");
 		return datasetPropertyControl;
 	}
 
@@ -150,6 +155,7 @@ public class WorkspaceTreeDataPropertyFactory {
 			vectorPropertyControl.setDatasetVector(datasetVector);
 		}
 
+		ComponentUIUtilities.setName(vectorPropertyControl, "WorkspaceTreeDataPropertyFactory_vectorPropertyControl");
 		return vectorPropertyControl;
 	}
 
@@ -160,6 +166,7 @@ public class WorkspaceTreeDataPropertyFactory {
 			gridPropertyControl.setDatasetGrid(datasetGrid);
 		}
 
+		ComponentUIUtilities.setName(gridPropertyControl, "WorkspaceTreeDataPropertyFactory_gridPropertyControl");
 		return gridPropertyControl;
 	}
 
@@ -170,6 +177,7 @@ public class WorkspaceTreeDataPropertyFactory {
 			imagePropertyControl.setDatasetImage(datasetImage);
 		}
 
+		ComponentUIUtilities.setName(imagePropertyControl, "WorkspaceTreeDataPropertyFactory_imagePropertyControl");
 		return imagePropertyControl;
 	}
 
@@ -180,6 +188,7 @@ public class WorkspaceTreeDataPropertyFactory {
 			imageCollectionPropertyControl.setDatasetImageCollection(datasetImageCollection);
 		}
 
+		ComponentUIUtilities.setName(imageCollectionPropertyControl, "WorkspaceTreeDataPropertyFactory_imageCollectionPropertyControl");
 		return imageCollectionPropertyControl;
 	}
 
@@ -191,6 +200,7 @@ public class WorkspaceTreeDataPropertyFactory {
 			recordsetPropertyControl.setDatasetVector(datasetVector);
 		}
 
+		ComponentUIUtilities.setName(recordsetPropertyControl, "WorkspaceTreeDataPropertyFactory_recordsetPropertyControl");
 		return recordsetPropertyControl;
 	}
 }

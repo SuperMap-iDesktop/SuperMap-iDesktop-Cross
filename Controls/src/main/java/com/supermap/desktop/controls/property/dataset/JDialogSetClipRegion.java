@@ -7,6 +7,7 @@ import com.supermap.data.GeoRegion;
 import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
@@ -76,6 +77,7 @@ public class JDialogSetClipRegion extends SmDialog {
 	public JDialogSetClipRegion() {
 		initializeComponents();
 		initializeResources();
+		setComponentName();
 		setModal(true);
 //		setResizable(false);
 		setSize(new Dimension(355, 160));
@@ -163,7 +165,17 @@ public class JDialogSetClipRegion extends SmDialog {
 		this.buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.labelDatasource, "JDialogSetClipRegion_labelDatasource");
+		ComponentUIUtilities.setName(this.comboBoxDatasource, "JDialogSetClipRegion_comboBoxDatasource");
+		ComponentUIUtilities.setName(this.labelDataset, "JDialogSetClipRegion_labelDataset");
+		ComponentUIUtilities.setName(this.comboBoxDataset, "JDialogSetClipRegion_comboBoxDataset");
+		ComponentUIUtilities.setName(this.labelFilter, "JDialogSetClipRegion_labelFilter");
+		ComponentUIUtilities.setName(this.textFieldFilter, "JDialogSetClipRegion_textFieldFilter");
+		ComponentUIUtilities.setName(this.buttonFilter, "JDialogSetClipRegion_buttonFilter");
+		ComponentUIUtilities.setName(this.buttonOk, "JDialogSetClipRegion_buttonOk");
+		ComponentUIUtilities.setName(this.buttonCancel, "JDialogSetClipRegion_buttonCancel");
+	}
 	private void registerEvents() {
 		this.comboBoxDatasource.addItemListener(this.itemListener);
 		this.comboBoxDataset.addItemListener(this.itemListener);
