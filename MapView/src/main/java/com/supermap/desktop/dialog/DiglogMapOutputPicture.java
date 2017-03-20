@@ -7,13 +7,13 @@ import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.mapview.map.propertycontrols.PanelGroupBoxViewBounds;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
 import com.supermap.desktop.ui.controls.borderPanel.PanelButton;
-import com.supermap.desktop.ui.controls.borderPanel.PanelGroupBoxViewBounds;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
@@ -116,7 +116,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 
 		this.mainPanel = new JPanel();
 		this.outputSetPanel = new JPanel();
-		this.panelGroupBoxViewBounds = new PanelGroupBoxViewBounds();
+		this.panelGroupBoxViewBounds = new PanelGroupBoxViewBounds(this);
 
 		this.waringTextFieldLeft = panelGroupBoxViewBounds.getTextFieldCurrentViewLeft();
 		this.waringTextFieldTop = panelGroupBoxViewBounds.getTextFieldCurrentViewTop();
@@ -492,6 +492,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 		this.outPutBounds = panelGroupBoxViewBounds.getRangeBound();
 		// 初始化宽度、高度
 		setWidthANDHeight();
+		judgeOKButtonisEnabled();
 	}
 
 	/**
