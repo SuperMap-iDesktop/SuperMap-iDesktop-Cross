@@ -1,5 +1,7 @@
 package com.supermap.desktop.controls.property;
 
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -24,6 +26,7 @@ public class JPanelDataPropertyContainer extends JPanel {
 
 	public void setPropertyControl(Component propertyControl) {
 		this.propertyControl = propertyControl;
+		ComponentUIUtilities.setName(this.propertyControl, "JPanelDataPropertyContainer_propertyControl");
 		if (propertyControl != null && this.getComponentCount() > 0) {
 			if (propertyControl == this.getComponent(0)) {
 				return;
