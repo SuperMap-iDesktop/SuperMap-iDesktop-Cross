@@ -4,7 +4,6 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.graphs.*;
 import com.supermap.desktop.process.graphics.graphs.decorator.*;
-import com.supermap.desktop.utilities.DoubleUtilities;
 import sun.swing.SwingUtilities2;
 
 import java.awt.*;
@@ -159,6 +158,9 @@ public class DefaultGraphPainter implements IGraphPainter {
 //			Rectangle rect = (Rectangle) selectedDecorator.getBounds().clone();
 //			rect.grow(-1, -1);
 //			((Graphics2D) graphics).draw(rect);
+			BasicStroke stroke = new BasicStroke(2);
+			((Graphics2D) graphics).setStroke(stroke);
+			graphics.setColor(Color.BLACK);
 			((Graphics2D) graphics).draw(selectedDecorator.getShape());
 		}
 	}

@@ -6,10 +6,12 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
+import com.supermap.desktop.process.graphics.graphs.decorator.SelectedDecorator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 /**
  * Created by highsad on 2017/3/2.
@@ -24,6 +26,7 @@ public class MultiSelction extends Selection {
 	private Point selectionStart = Selection.UNKOWN_POINT;
 	private Rectangle dirtyRegion = new Rectangle(0, 0, 0, 0);
 	private Rectangle selectionRegion = new Rectangle(0, 0, 0, 0);
+	private java.util.List<SelectedDecorator> decorators = new ArrayList();
 
 	public MultiSelction(GraphCanvas canvas) {
 		super(canvas);
@@ -56,6 +59,13 @@ public class MultiSelction extends Selection {
 	@Override
 	public boolean isSelecting() {
 		return this.selectionStart != Selection.UNKOWN_POINT;
+	}
+
+	@Override
+	public void paintSelected(Graphics graphics) {
+		for (int i = 0; i < this.decorators.size(); i++) {
+			getCanvas().getPainterFactory().getPainter(this.decorators.get(i), graphics).paint();
+		}
 	}
 
 	@Override
@@ -184,11 +194,17 @@ public class MultiSelction extends Selection {
 			if (!this.selectedItems.contains(graph) || this.selectedItems.size() != 1) {
 				this.selectedItems.clear();
 				this.selectedItems.add(graph);
+
+				this.decorators.clear();
+				SelectedDecorator decorator = new SelectedDecorator(getCanvas());
+				decorator.decorate(((AbstractGraph) graph));
+				this.decorators.add(decorator);
 				fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
 			}
 		} else {
 			if (this.selectedItems.size() > 0) {
 				this.selectedItems.clear();
+				this.decorators.clear();
 				fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
 			}
 		}
@@ -203,16 +219,21 @@ public class MultiSelction extends Selection {
 	private void selectItems(IGraph[] graphs) {
 		if (graphs != null & graphs.length > 0) {
 			this.selectedItems.clear();
+			this.decorators.clear();
 
 			for (int i = 0; i < graphs.length; i++) {
 				if (graphs[i] != null) {
 					this.selectedItems.add(graphs[i]);
+					SelectedDecorator decorator = new SelectedDecorator(getCanvas());
+					decorator.decorate(((AbstractGraph) graphs[i]));
+					this.decorators.add(decorator);
 				}
 			}
 			fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
 		} else {
 			if (this.selectedItems.size() > 0) {
 				this.selectedItems.clear();
+				this.decorators.clear();
 				fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
 			}
 		}

@@ -54,6 +54,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private IGraphEventHandlerFactory graphHandlerFactory = new DefaultGraphEventHanderFactory(); // 在某具体元素上进行的可扩展交互类
 	private ConcurrentHashMap<Class, CanvasEventHandler> canvasHandlers = new ConcurrentHashMap<>(); // 统一入口的画布事件接口，通过添加 CanvasEventHandler 对象实现 Canvas 的事件处理
 
+
 	private CanvasTranslation translation = new CanvasTranslation(this);
 	private GraphCreation creation = new GraphCreation(this);
 	private Selection selection = new MultiSelction(this);
@@ -274,6 +275,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		AffineTransform origin = graphics2D.getTransform();
 		graphics2D.setTransform(this.coordinateTransform.getAffineTransform(origin));
 		paintGraphs(graphics2D);
+		this.selection.paintSelected(graphics2D);
 		graphics2D.setTransform(origin);
 
 		this.creation.paint(graphics2D);
