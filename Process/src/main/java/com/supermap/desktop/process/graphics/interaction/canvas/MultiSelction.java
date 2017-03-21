@@ -79,11 +79,15 @@ public class MultiSelction extends Selection {
 	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		Point canvasP = getCanvas().getCoordinateTransform().inverse(e.getPoint());
-		IGraph hit = getCanvas().findGraph(e.getPoint());
-		boolean isSelected = hit instanceof AbstractGraph ? ((AbstractGraph) hit).getShape().contains(canvasP) : hit != null;
-		if (isSelected) {
-			selectItem(hit);
+		if (SwingUtilities.isLeftMouseButton(e)) {
+			Point canvasP = getCanvas().getCoordinateTransform().inverse(e.getPoint());
+			IGraph hit = getCanvas().findGraph(e.getPoint());
+			boolean isSelected = hit instanceof AbstractGraph ? ((AbstractGraph) hit).getShape().contains(canvasP) : hit != null;
+			if (isSelected) {
+				selectItem(hit);
+			} else {
+				cleanDecorators();
+			}
 		}
 	}
 
@@ -93,7 +97,7 @@ public class MultiSelction extends Selection {
 			if (isSelecting()) {
 				Point selectionEnd = e.getPoint();
 
-				if (selectionEnd.equals(Selection.UNKOWN_POINT) && !this.selectionStart.equals(selectionEnd)) {
+				if (!selectionEnd.equals(Selection.UNKOWN_POINT) && !this.selectionStart.equals(selectionEnd)) {
 
 					// get selection region.
 					int x = Math.min(this.selectionStart.x, selectionEnd.x);
@@ -167,6 +171,16 @@ public class MultiSelction extends Selection {
 	public void clean() {
 		resetStatus();
 		this.selectedItems.clear();
+		cleanDecorators();
+	}
+
+	private void cleanDecorators() {
+		for (int i = this.decorators.size() - 1; i >= 0; i--) {
+			Rectangle dirtyRect = this.decorators.get(i).getBounds();
+			this.decorators.get(i).undecorate();
+			this.decorators.remove(i);
+			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(dirtyRect));
+		}
 	}
 
 	private void resetStatus() {
@@ -194,8 +208,8 @@ public class MultiSelction extends Selection {
 			if (!this.selectedItems.contains(graph) || this.selectedItems.size() != 1) {
 				this.selectedItems.clear();
 				this.selectedItems.add(graph);
+				cleanDecorators();
 
-				this.decorators.clear();
 				SelectedDecorator decorator = new SelectedDecorator(getCanvas());
 				decorator.decorate(((AbstractGraph) graph));
 				this.decorators.add(decorator);
@@ -204,9 +218,13 @@ public class MultiSelction extends Selection {
 		} else {
 			if (this.selectedItems.size() > 0) {
 				this.selectedItems.clear();
-				this.decorators.clear();
+				cleanDecorators();
 				fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
 			}
+		}
+
+		for (int i = 0; i < this.decorators.size(); i++) {
+			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(this.decorators.get(i).getBounds()));
 		}
 	}
 
@@ -219,7 +237,7 @@ public class MultiSelction extends Selection {
 	private void selectItems(IGraph[] graphs) {
 		if (graphs != null & graphs.length > 0) {
 			this.selectedItems.clear();
-			this.decorators.clear();
+			cleanDecorators();
 
 			for (int i = 0; i < graphs.length; i++) {
 				if (graphs[i] != null) {
@@ -233,9 +251,13 @@ public class MultiSelction extends Selection {
 		} else {
 			if (this.selectedItems.size() > 0) {
 				this.selectedItems.clear();
-				this.decorators.clear();
+				cleanDecorators();
 				fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
 			}
+		}
+
+		for (int i = 0; i < this.decorators.size(); i++) {
+			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(this.decorators.get(i).getBounds()));
 		}
 	}
 }
