@@ -1,10 +1,8 @@
 package com.supermap.desktop.process.graphics.graphs;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.GraphicsUtil;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 
 /**
@@ -33,7 +31,6 @@ public class RectangleGraph extends AbstractGraph {
 	}
 
 	public void setArcWidth(double arcWidth) {
-		this.arcWidth = arcWidth;
 		getShape().setRoundRect(getShape().getX(), getShape().getY(), getShape().getWidth(), getShape().getHeight(), arcWidth, getShape().getArcHeight());
 	}
 
@@ -43,27 +40,17 @@ public class RectangleGraph extends AbstractGraph {
 	}
 
 	@Override
-	public void setLocation(Point point) {
+	public void applyLocation(Point point) {
 		getShape().setFrame(point.getX(), point.getY(), getShape().getWidth(), getShape().getHeight());
 	}
 
 	@Override
-	public void setSize(int width, int height) {
+	public void applySize(int width, int height) {
 		getShape().setFrame(getShape().getX(), getShape().getY(), width, height);
 	}
 
 	@Override
 	public boolean contains(Point p) {
 		return this.shape.contains(p);
-	}
-
-	@Override
-	public IGraph clone() {
-		RectangleGraph graph = new RectangleGraph(getCanvas());
-		graph.setLocation(getLocation());
-		graph.setSize(getWidth(), getHeight());
-		graph.setArcWidth(getArcWidth());
-		graph.setArcHeight(getArcHeight());
-		return graph;
 	}
 }

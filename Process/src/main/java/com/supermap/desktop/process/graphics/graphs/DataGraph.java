@@ -35,11 +35,4 @@ public class DataGraph extends EllipseGraph {
 		return Double.valueOf(d).intValue();
 	}
 
-
-	@Override
-	public IGraph clone() {
-		DataGraph graph = new DataGraph(getCanvas());
-
-		return graph;
-	}
 }
