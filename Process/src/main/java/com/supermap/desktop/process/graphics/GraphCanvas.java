@@ -54,7 +54,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private IGraphEventHandlerFactory graphHandlerFactory = new DefaultGraphEventHanderFactory(); // 在某具体元素上进行的可扩展交互类
 	private ConcurrentHashMap<Class, CanvasEventHandler> canvasHandlers = new ConcurrentHashMap<>(); // 统一入口的画布事件接口，通过添加 CanvasEventHandler 对象实现 Canvas 的事件处理
 
-
 	private CanvasTranslation translation = new CanvasTranslation(this);
 	private GraphCreator creator = new GraphCreator(this);
 	private Selection selection = new MultiSelction(this);
@@ -247,47 +246,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	@Override
 	protected void paintComponent(Graphics g) {
 		Graphics2D graphics2D = (Graphics2D) g;
-
-//		int borderWidth = getScale(2);
-//		int x = getScale(1);
-//		int y = getScale(1);
-//		int width = getScale(4);
-//		int height = getScale(4);
-//
-//		graphics2D.setColor(Color.RED);
-//		Stroke stroke = new BasicStroke(borderWidth);
-//		graphics2D.setStroke(stroke);
-//		Rectangle rectangle = new Rectangle(x, y, width, height);
-//		graphics2D.draw(rectangle);
-
-
-//		graphics2D.setColor(Color.RED);
-//		Stroke stroke = new BasicStroke(4);
-//		graphics2D.setStroke(stroke);
-//		Rectangle rectangle = new Rectangle(3, 3, 5, 5);
-//		graphics2D.draw(rectangle);
-
-
-		// 测试 AffineTransform 的缩放和平移变换
-//		AffineTransform transform = new AffineTransform();
-//		setViewRenderingHints(graphics2D);
-//		paintBackground(graphics2D);
-//		paintCanvas(graphics2D);
-//		transform.translate(100, 100);
-//		transform.scale(2, 2);
-//		graphics2D.setTransform(transform);
-//
-//		graphics2D.setColor(Color.ORANGE);
-//		RoundRectangle2D round = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
-//		graphics2D.fill(round);
-//
-//		graphics2D.setColor(Color.BLACK);
-//		BasicStroke stroke = new BasicStroke(3);
-//
-//		graphics2D.setStroke(stroke);
-//		graphics2D.draw(round);
-
-		// Canvas 自身绘制
 		setViewRenderingHints(graphics2D);
 		paintBackground(graphics2D);
 		paintCanvas(graphics2D);
@@ -300,17 +258,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		this.creator.paint(graphics2D);
 		this.selection.paint(graphics2D);
-
-		// 默认 AffineTransform 的测试
-//		graphics2D.setColor(Color.ORANGE);
-//		RoundRectangle2D round1 = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
-//		graphics2D.fill(round);
-//
-//		graphics2D.setColor(Color.BLACK);
-//		BasicStroke stroke1 = new BasicStroke(3);
-//
-//		graphics2D.setStroke(stroke1);
-//		graphics2D.draw(round1);
 	}
 
 	private int getScale(int i) {
@@ -400,19 +347,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				entry.getValue().mouseClicked(e);
 			}
 		}
-//
-//		if (this.dragged.isEnabled()) {
-//			this.dragged.mouseClicked(e);
-//		}
-//		if (this.translation.isEnabled()) {
-//			this.translation.mouseClicked(e);
-//		}
-//		if (this.creator.isEnabled()) {
-//			this.creator.mouseClicked(e);
-//		}
-//		if (this.selection.isEnabled()) {
-//			this.selection.mouseClicked(e);
-//		}
 	}
 
 	public IGraph[] findGraphs(Point point) {
@@ -440,19 +374,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				entry.getValue().mousePressed(e);
 			}
 		}
-
-//		if (this.dragged.isEnabled()) {
-//			this.dragged.mousePressed(e);
-//		}
-//		if (this.translation.isEnabled()) {
-//			this.translation.mousePressed(e);
-//		}
-//		if (this.creator.isEnabled()) {
-//			this.creator.mousePressed(e);
-//		}
-//		if (this.selection.isEnabled()) {
-//			this.selection.mousePressed(e);
-//		}
 	}
 
 	@Override
@@ -466,19 +387,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				entry.getValue().mouseReleased(e);
 			}
 		}
-
-//		if (this.dragged.isEnabled()) {
-//			this.dragged.mouseReleased(e);
-//		}
-//		if (this.translation.isEnabled()) {
-//			this.translation.mouseReleased(e);
-//		}
-//		if (this.creator.isEnabled()) {
-//			this.creator.mouseReleased(e);
-//		}
-//		if (this.selection.isEnabled()) {
-//			this.selection.mouseReleased(e);
-//		}
 	}
 
 	@Override
@@ -491,19 +399,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			if (entry.getValue().isEnabled()) {
 				entry.getValue().mouseEntered(e);
 			}
-		}
-
-		if (this.dragged.isEnabled()) {
-			this.dragged.mouseEntered(e);
-		}
-		if (this.translation.isEnabled()) {
-			this.translation.mouseEntered(e);
-		}
-		if (this.creator.isEnabled()) {
-			this.creator.mouseEntered(e);
-		}
-		if (this.selection.isEnabled()) {
-			this.selection.mouseEntered(e);
 		}
 	}
 
@@ -518,19 +413,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				entry.getValue().mouseExited(e);
 			}
 		}
-
-//		if (this.dragged.isEnabled()) {
-//			this.dragged.mouseExited(e);
-//		}
-//		if (this.translation.isEnabled()) {
-//			this.translation.mouseExited(e);
-//		}
-//		if (this.creator.isEnabled()) {
-//			this.creator.mouseExited(e);
-//		}
-//		if (this.selection.isEnabled()) {
-//			this.selection.mouseExited(e);
-//		}
 	}
 
 	@Override
@@ -544,19 +426,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				entry.getValue().mouseDragged(e);
 			}
 		}
-
-//		if (this.dragged.isEnabled()) {
-//			this.dragged.mouseDragged(e);
-//		}
-//		if (this.translation.isEnabled()) {
-//			this.translation.mouseDragged(e);
-//		}
-//		if (this.creator.isEnabled()) {
-//			this.creator.mouseDragged(e);
-//		}
-//		if (this.selection.isEnabled()) {
-//			this.selection.mouseDragged(e);
-//		}
 	}
 
 	@Override
@@ -570,19 +439,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				entry.getValue().mouseMoved(e);
 			}
 		}
-
-//		if (this.dragged.isEnabled()) {
-//			this.dragged.mouseMoved(e);
-//		}
-//		if (this.translation.isEnabled()) {
-//			this.translation.mouseMoved(e);
-//		}
-//		if (this.creator.isEnabled()) {
-//			this.creator.mouseMoved(e);
-//		}
-//		if (this.selection.isEnabled()) {
-//			this.selection.mouseMoved(e);
-//		}
 	}
 
 	private void repaint(IGraph graph, Point point) {
@@ -609,19 +465,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				entry.getValue().mouseWheelMoved(e);
 			}
 		}
-
-//		if (this.dragged.isEnabled()) {
-//			this.dragged.mouseWheelMoved(e);
-//		}
-//		if (this.translation.isEnabled()) {
-//			this.translation.mouseWheelMoved(e);
-//		}
-//		if (this.creator.isEnabled()) {
-//			this.creator.mouseWheelMoved(e);
-//		}
-//		if (this.selection.isEnabled()) {
-//			this.selection.mouseWheelMoved(e);
-//		}
 	}
 
 	public void addGraphSelectChangedListener(GraphSelectChangedListener listener) {

@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.graphics.graphs;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
 
 import java.awt.*;
 
@@ -54,6 +55,16 @@ public class ConnectorGraph implements IGraph {
 	@Override
 	public boolean contains(Point point) {
 		return false;
+	}
+
+	@Override
+	public void addGraphBoundsListener(GraphBoundsChangedListener listener) {
+
+	}
+
+	@Override
+	public void removeGraghBoundsListener(GraphBoundsChangedListener listener) {
+
 	}
 
 }

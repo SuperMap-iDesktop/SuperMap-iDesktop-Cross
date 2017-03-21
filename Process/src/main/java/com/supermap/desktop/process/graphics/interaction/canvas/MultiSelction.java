@@ -70,7 +70,9 @@ public class MultiSelction extends Selection {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		this.selectionStart = e.getPoint();
+		if (SwingUtilities.isLeftMouseButton(e)) {
+			this.selectionStart = e.getPoint();
+		}
 	}
 
 	/***
