@@ -42,10 +42,6 @@ public class ParameterCheckBox extends AbstractParameter implements ISelectionPa
 		return value;
 	}
 
-	public String getDescribe() {
-		return describe;
-	}
-
 	public ParameterCheckBox setDescribe(String describe) {
 		this.describe = describe;
 		return this;
@@ -55,5 +51,10 @@ public class ParameterCheckBox extends AbstractParameter implements ISelectionPa
 	@Override
 	public void dispose() {
 
+	}
+
+	@Override
+	public String getDescribe() {
+		return describe;
 	}
 }

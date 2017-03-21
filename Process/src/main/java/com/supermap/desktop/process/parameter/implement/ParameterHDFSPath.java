@@ -31,4 +31,9 @@ public class ParameterHDFSPath extends AbstractParameter implements ISelectionPa
 		return ParameterType.HDFS_PATH;
 	}
 
+	@Override
+	public String getDescribe() {
+		return null;
+	}
+
 }

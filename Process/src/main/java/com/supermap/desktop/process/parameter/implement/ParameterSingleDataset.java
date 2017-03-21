@@ -48,4 +48,9 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 	public void dispose() {
 
     }
+
+    @Override
+    public String getDescribe() {
+        return null;
+    }
 }

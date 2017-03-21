@@ -16,4 +16,5 @@ public class MetaKeys {
     public static String ISOREGION = "ISORegion";
     public static String ISOPOINT = "ISOPoint";
     public static String PROCESS_GROUP = "ProcessGroup";
+    public static String SQL_QUERY="SqlQuery";
 }

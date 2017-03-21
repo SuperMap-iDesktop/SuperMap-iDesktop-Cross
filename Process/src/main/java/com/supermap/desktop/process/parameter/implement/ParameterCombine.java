@@ -64,6 +64,11 @@ public class ParameterCombine extends AbstractParameter {
 		return panel;
 	}
 
+	@Override
+	public String getDescribe() {
+		return "Combine";
+	}
+
 	public void reBuildPanel() {
 		buildPanel();
 		((Component) panel.getPanel()).revalidate();

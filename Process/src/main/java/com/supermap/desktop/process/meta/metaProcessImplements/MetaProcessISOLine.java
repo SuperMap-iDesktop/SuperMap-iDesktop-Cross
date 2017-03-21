@@ -19,7 +19,6 @@ import javax.swing.*;
  * Created by xie on 2017/3/6.
  */
 public class MetaProcessISOLine extends MetaProcess {
-    private IParameters parameters;
 
     private ParameterDatasource sourceDatasource;
     private ParameterSingleDataset dataset;

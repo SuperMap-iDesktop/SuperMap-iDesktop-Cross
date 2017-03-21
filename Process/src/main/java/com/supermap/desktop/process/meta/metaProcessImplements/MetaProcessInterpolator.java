@@ -42,7 +42,6 @@ import javax.swing.*;
  * Created by xie on 2017/2/16.
  */
 public class MetaProcessInterpolator extends MetaProcess {
-	private IParameters parameters;
 	private ParameterDatasource parameterDatasource;
 	private ParameterSingleDataset parameterDataset;
 	private ParameterComboBox parameterInterpolatorFields;

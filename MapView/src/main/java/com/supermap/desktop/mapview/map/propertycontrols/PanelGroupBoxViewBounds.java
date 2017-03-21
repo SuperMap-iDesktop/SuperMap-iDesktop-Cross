@@ -2,6 +2,7 @@ package com.supermap.desktop.mapview.map.propertycontrols;
 
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -16,6 +17,9 @@ import javax.swing.*;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -103,6 +107,8 @@ public class PanelGroupBoxViewBounds extends JPanel {
 			} else if (e.getSource().equals(pasteButton)) {
 				// 粘贴
 				pasteParameter();
+				// 因为每个TextField的范围受其他约束，第一次设置是赋值，第二次设置为初始化值域范围
+				pasteParameter();
 			}
 		}
 	};
@@ -122,8 +128,6 @@ public class PanelGroupBoxViewBounds extends JPanel {
 			}
 		}
 	};
-
-
 
 
 	private CaretListener textFieldLeftCaretListener = new CaretListener() {
@@ -237,9 +241,9 @@ public class PanelGroupBoxViewBounds extends JPanel {
 				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(this.mapViewBoundsButton, DEFAULT_BUTTONSIZE,  DEFAULT_BUTTONSIZE,GroupLayout.PREFERRED_SIZE)
 						.addComponent(this.currentViewBoundsButton, DEFAULT_BUTTONSIZE,  DEFAULT_BUTTONSIZE,GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.customBoundsButton, DEFAULT_BUTTONSIZE,  DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)));
-//						.addComponent(this.copyButton,DEFAULT_BUTTONSIZE,  DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)
-//						.addComponent(this.pasteButton, DEFAULT_BUTTONSIZE, DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)));
+						.addComponent(this.customBoundsButton, DEFAULT_BUTTONSIZE,  DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.copyButton,DEFAULT_BUTTONSIZE,  DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.pasteButton, DEFAULT_BUTTONSIZE, DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)));
 
 		viewPanelLayout.setVerticalGroup(viewPanelLayout.createSequentialGroup()
 				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
@@ -256,10 +260,10 @@ public class PanelGroupBoxViewBounds extends JPanel {
 						.addComponent(this.customBoundsButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 						.addComponent(this.labelCurrentViewTop)
-						.addComponent(this.textFieldCurrentViewTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-//						.addComponent(this.copyButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-//				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-//						.addComponent(this.pasteButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.textFieldCurrentViewTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(this.copyButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+				.addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+						.addComponent(this.pasteButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addGap(5,5,Short.MAX_VALUE));
 
 		// @formatter:on
@@ -343,6 +347,8 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	 * 设置范围为当前可视范围
 	 */
 	private void setAsCurrentViewBounds() {
+
+
 		this.textFieldCurrentViewLeft.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewLeft));
 		this.textFieldCurrentViewBottom.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewBottom));
 		this.textFieldCurrentViewRight.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewRight));
@@ -424,8 +430,29 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	 * 复制参数
 	 */
 	private void copyParameter() {
-		Application.getActiveApplication().getOutput().output("复制");
+		ControlDefaultValues.setCopyCurrentMapboundsLeft(DoubleUtilities.stringToValue(this.textFieldCurrentViewLeft.getTextField().getText()));
+		ControlDefaultValues.setCopyCurrentMapboundsBottom(DoubleUtilities.stringToValue(this.textFieldCurrentViewBottom.getTextField().getText()));
+		ControlDefaultValues.setCopyCurrentMapboundsRight(DoubleUtilities.stringToValue(this.textFieldCurrentViewRight.getTextField().getText()));
+		ControlDefaultValues.setCopyCurrentMapboundsTop(DoubleUtilities.stringToValue(this.textFieldCurrentViewTop.getTextField().getText()));
 
+		String clipBoardTextLeft = ControlsProperties.getString("String_LabelLeft") + this.textFieldCurrentViewLeft.getTextField().getText();
+		String clipBoardTextBottom = ControlsProperties.getString("String_LabelBottom") + this.textFieldCurrentViewBottom.getTextField().getText();
+		String clipBoardTextRight = ControlsProperties.getString("String_LabelRight") + this.textFieldCurrentViewRight.getTextField().getText();
+		String clipBoardTextTop = ControlsProperties.getString("String_LabelTop") + this.textFieldCurrentViewTop.getTextField().getText();
+		// 调用windows复制功能，将值复制到剪贴板
+		setSysClipboardText(clipBoardTextLeft + "，" + clipBoardTextBottom + "，" + clipBoardTextRight + "，" + clipBoardTextTop);
+		Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_MapBounds_Has_Been_Copied"));
+	}
+
+	/**
+	 * 调用windows的剪贴板
+	 *
+	 * @param coypText
+	 */
+	public static void setSysClipboardText(String coypText) {
+		Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+		Transferable Text = new StringSelection(coypText);
+		clip.setContents(Text, null);
 	}
 
 
@@ -433,8 +460,12 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	 * 粘贴参数
 	 */
 	private void pasteParameter() {
-		Application.getActiveApplication().getOutput().output("粘贴");
+		this.textFieldCurrentViewLeft.getTextField().setText(DoubleUtilities.getFormatString(ControlDefaultValues.getCopyCurrentMapboundsLeft()));
+		this.textFieldCurrentViewBottom.getTextField().setText(DoubleUtilities.getFormatString(ControlDefaultValues.getCopyCurrentMapboundsBottom()));
+		this.textFieldCurrentViewRight.getTextField().setText(DoubleUtilities.getFormatString(ControlDefaultValues.getCopyCurrentMapboundsRight()));
+		this.textFieldCurrentViewTop.getTextField().setText(DoubleUtilities.getFormatString(ControlDefaultValues.getCopyCurrentMapboundsTop()));
 	}
+
 
 	/**
 	 * 范围文本框——上——改变事件

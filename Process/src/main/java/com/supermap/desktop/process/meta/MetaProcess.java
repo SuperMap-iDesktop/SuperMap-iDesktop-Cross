@@ -15,6 +15,7 @@ public abstract class MetaProcess extends AbstractProcess {
 	protected Vector<ProcessData> outPuts;
 	protected Inputs inputs;
 	public ProcessTask processTask;
+	protected  IParameters parameters;
 
 	public MetaProcess() {
 		this.outPuts = new Vector<>();
@@ -23,7 +24,7 @@ public abstract class MetaProcess extends AbstractProcess {
 
 	@Override
 	public IParameters getParameters() {
-		return null;
+		return parameters;
 	}
 
 	@Override

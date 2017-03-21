@@ -23,7 +23,6 @@ import java.text.MessageFormat;
  * 叠加分析
  */
 public class MetaProcessOverlayAnalyst extends MetaProcess {
-	private IParameters parameters = new DefaultParameters();
 	private OverlayAnalystType analystType;
 	private ParameterOverlayAnalyst parameterOverlayAnalyst;
 
@@ -40,6 +39,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	}
 
 	private void initMetaInfo() {
+		parameters = new DefaultParameters();
 		parameterOverlayAnalyst = new ParameterOverlayAnalyst();
 		parameterOverlayAnalyst.setOverlayAnalystType(analystType);
 		parameters.setParameters(parameterOverlayAnalyst);

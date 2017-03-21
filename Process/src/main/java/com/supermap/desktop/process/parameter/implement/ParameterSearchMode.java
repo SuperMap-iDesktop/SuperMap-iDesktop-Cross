@@ -37,4 +37,9 @@ public class ParameterSearchMode extends AbstractParameter implements ISelection
 	public void dispose() {
 
 	}
+
+	@Override
+	public String getDescribe() {
+		return "SearchMode";
+	}
 }

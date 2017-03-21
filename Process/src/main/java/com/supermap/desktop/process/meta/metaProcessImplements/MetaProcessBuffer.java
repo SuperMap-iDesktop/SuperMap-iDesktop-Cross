@@ -40,7 +40,6 @@ public class MetaProcessBuffer extends MetaProcess {
 	private ParameterCheckBox parameterRetainAttribute;
 	private ParameterSaveDataset parameterSaveDataset;
 
-	private IParameters parameters;
 	private SteppedListener steppedListener = new SteppedListener() {
 		@Override
 		public void stepped(SteppedEvent steppedEvent) {

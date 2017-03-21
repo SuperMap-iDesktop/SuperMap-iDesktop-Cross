@@ -33,6 +33,11 @@ public class ParameterSaveDataset extends AbstractParameter implements ISelectio
 
 	}
 
+	@Override
+	public String getDescribe() {
+		return "SaveDataset";
+	}
+
 	public Datasource getResultDatasource() {
 		return resultDatasource;
 	}
