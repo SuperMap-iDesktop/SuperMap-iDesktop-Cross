@@ -21,7 +21,7 @@ public class TransparentBackground extends JPanel {
 	private JLabel jLabelRowOfGrid = new JLabel("columnOfGrid:");
 	private JLabel jLabelColumnOfGrid = new JLabel("lineOfGrid:");
 	private JLabel jLabelGridValue = new JLabel("gridValue:");
-	private static final int gapWith = 10;
+	private static final int gapWidth = 10;
 	public static HashMap<MapControl, TransparentBackground> queryGridMap = new HashMap<>();
 
 	public TransparentBackground() {
@@ -56,13 +56,13 @@ public class TransparentBackground extends JPanel {
 		//@formatter:off
 		GroupLayout groupLayout = new GroupLayout(this);
 		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup()
-				.addGroup(groupLayout.createSequentialGroup().addGap(gapWith).addComponent(jLabelDatasource))
-				.addGroup(groupLayout.createSequentialGroup().addGap(gapWith).addComponent(jLabelDataset))
-				.addGroup(groupLayout.createSequentialGroup().addGap(gapWith).addComponent(jLabelPointX))
-				.addGroup(groupLayout.createSequentialGroup().addGap(gapWith).addComponent(jLabelPointY))
-				.addGroup(groupLayout.createSequentialGroup().addGap(gapWith).addComponent(jLabelRowOfGrid))
-				.addGroup(groupLayout.createSequentialGroup().addGap(gapWith).addComponent(jLabelColumnOfGrid))
-				.addGroup(groupLayout.createSequentialGroup().addGap(gapWith).addComponent(jLabelGridValue)));
+				.addGroup(groupLayout.createSequentialGroup().addGap(gapWidth).addComponent(jLabelDatasource))
+				.addGroup(groupLayout.createSequentialGroup().addGap(gapWidth).addComponent(jLabelDataset))
+				.addGroup(groupLayout.createSequentialGroup().addGap(gapWidth).addComponent(jLabelPointX))
+				.addGroup(groupLayout.createSequentialGroup().addGap(gapWidth).addComponent(jLabelPointY))
+				.addGroup(groupLayout.createSequentialGroup().addGap(gapWidth).addComponent(jLabelRowOfGrid))
+				.addGroup(groupLayout.createSequentialGroup().addGap(gapWidth).addComponent(jLabelColumnOfGrid))
+				.addGroup(groupLayout.createSequentialGroup().addGap(gapWidth).addComponent(jLabelGridValue)));
 		groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
 				.addComponent(jLabelDatasource)
 				.addComponent(jLabelDataset)

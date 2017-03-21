@@ -3,6 +3,7 @@ package com.supermap.desktop.process.core;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -12,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class NodeMatrix {
 
-    private volatile Hashtable<Object, SecondNodeMatrix> nodeMatrix = new Hashtable();
+    private volatile ConcurrentHashMap<Object, SecondNodeMatrix> nodeMatrix = new ConcurrentHashMap();
 
     private volatile CopyOnWriteArrayList nodeList = new CopyOnWriteArrayList();
 
@@ -42,7 +43,7 @@ public class NodeMatrix {
      */
     public synchronized boolean removeNodeConstraint(Object node, Object nextNode) throws NodeException {
         boolean hasRemoved = false;
-        if (!nodeList.contains(node) || !nodeList.contains(nextNode) || !nodeMatrix.containsKey(node)) {
+        if (!nodeList.contains(node) || !nodeList.contains(nextNode)) {
             throw new NodeException("Node not exits");
         }
         SecondNodeMatrix secondNodeMatrix = nodeMatrix.get(node);
@@ -122,17 +123,19 @@ public class NodeMatrix {
      */
     public synchronized CopyOnWriteArrayList getPreNodes(Object node) throws NodeException {
         CopyOnWriteArrayList result = new CopyOnWriteArrayList();
-        if (!this.nodeList.contains(node) || !this.nodeMatrix.containsKey(node)) {
+        if (!this.nodeList.contains(node)) {
             throw new NodeException("Node note exists");
         } else {
             int nodeSize = nodeList.size();
             for (int i = 0; i < nodeSize; i++) {
                 Object tempNode = nodeList.get(i);
-                Iterator<Map.Entry<Object, INodeConstraint>> iterator = nodeMatrix.get(tempNode).vector.entrySet().iterator();
-                while (iterator.hasNext()) {
-                    if (node == iterator.next().getKey()) {
-                        result.add(tempNode);
-                        break;
+                if (null != nodeMatrix.get(tempNode)) {
+                    Iterator<Map.Entry<Object, INodeConstraint>> iterator = nodeMatrix.get(tempNode).vector.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        if (node == iterator.next().getKey()) {
+                            result.add(tempNode);
+                            break;
+                        }
                     }
                 }
             }
@@ -148,9 +151,9 @@ public class NodeMatrix {
      */
     public synchronized CopyOnWriteArrayList getNextNodes(Object node) throws NodeException {
         CopyOnWriteArrayList result = new CopyOnWriteArrayList();
-        if (!this.nodeList.contains(node) || !this.nodeMatrix.containsKey(node)) {
+        if (!this.nodeList.contains(node)) {
             throw new NodeException("Node note exists");
-        } else {
+        } else if (null != nodeMatrix.get(node)) {
             Iterator<Map.Entry<Object, INodeConstraint>> iterator = nodeMatrix.get(node).vector.entrySet().iterator();
             while (iterator.hasNext()) {
                 result.add(iterator.next().getKey());

@@ -24,5 +24,7 @@ public interface IParameter extends IAbstractParameter {
 
 	void setParameters(IParameters parameters);
 
+	String getDescribe();
+
 	IParameters getParameters();
 }

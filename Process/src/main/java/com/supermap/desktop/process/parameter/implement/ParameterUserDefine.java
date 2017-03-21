@@ -27,4 +27,9 @@ public class ParameterUserDefine extends AbstractParameter {
 	public void dispose() {
 
 	}
+
+	@Override
+	public String getDescribe() {
+		return "UserDefine";
+	}
 }

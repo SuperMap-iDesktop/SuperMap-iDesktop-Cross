@@ -36,4 +36,9 @@ public class ParameterDataset extends AbstractParameter implements ISelectionPar
 	public void dispose() {
 
 	}
+
+	@Override
+	public String getDescribe() {
+		return "";
+	}
 }

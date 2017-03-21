@@ -9,6 +9,7 @@ import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
@@ -29,7 +30,6 @@ import java.util.ArrayList;
  * sql查询简单实现
  */
 public class MetaProcessSqlQuery extends MetaProcess {
-	private IParameters parameters = new DefaultParameters();
 	private ParameterSingleDataset dataset;
 	private ParameterTextArea parameterAttributeFilter;
 	private ParameterTextArea parameterResultFields;
@@ -45,6 +45,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 	}
 
 	private void initMetaInfo() {
+		parameters = new DefaultParameters();
 		this.dataset = new ParameterSingleDataset(datasetTypes);
 		if (null != Application.getActiveApplication().getActiveDatasets() && Application.getActiveApplication().getActiveDatasets().length > 0) {
 			this.dataset.setSelectedItem(Application.getActiveApplication().getActiveDatasets()[0]);
@@ -111,7 +112,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 
 	@Override
 	public String getKey() {
-		return "SQLQUERY";
+		return MetaKeys.SQL_QUERY;
 	}
 
 	private DatasetVector saveQueryResult(Recordset resultRecord) {

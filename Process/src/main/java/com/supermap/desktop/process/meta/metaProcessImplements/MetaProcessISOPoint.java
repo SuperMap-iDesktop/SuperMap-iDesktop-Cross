@@ -24,7 +24,6 @@ import java.util.ArrayList;
  */
 public class MetaProcessISOPoint extends MetaProcess {
 
-    private IParameters parameters;
     private ParameterDatasource sourceDatasource;
     private ParameterSingleDataset sourceDataset;
     private ParameterComboBox fields;

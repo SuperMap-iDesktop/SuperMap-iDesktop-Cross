@@ -40,8 +40,6 @@ public class MetaProcessImport extends MetaProcess {
 	ParameterComboBox comboBoxImportMode;
 	ParameterCheckBox checkBoxCreateFieldIndex;
 	ParameterCheckBox checkBoxCreateSpaceIndex;
-	private IParameters parameters;
-
 
 	public MetaProcessImport() {
 		parameters = new DefaultParameters();

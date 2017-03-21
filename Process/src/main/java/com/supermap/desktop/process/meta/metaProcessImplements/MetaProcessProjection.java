@@ -24,7 +24,6 @@ import javax.swing.*;
  */
 public class MetaProcessProjection extends MetaProcess {
 	private ParameterComboBox parameterComboBox;
-	private IParameters parameters;
 
 	public MetaProcessProjection() {
 		parameters = new DefaultParameters();

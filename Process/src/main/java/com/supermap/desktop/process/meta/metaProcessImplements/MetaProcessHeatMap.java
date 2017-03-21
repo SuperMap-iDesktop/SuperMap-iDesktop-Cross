@@ -26,7 +26,6 @@ import javax.swing.*;
  * 计算热度图
  */
 public class MetaProcessHeatMap extends MetaProcess {
-    private IParameters parameters;
 
     private ParameterHDFSPath parameterHDFSPath;
     private ParameterComboBox parameterCacheType;

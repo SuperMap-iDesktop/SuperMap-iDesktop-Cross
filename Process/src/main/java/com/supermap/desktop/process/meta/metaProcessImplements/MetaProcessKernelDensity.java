@@ -25,8 +25,6 @@ import javax.swing.*;
  * Created by xie on 2017/2/10.
  */
 public class MetaProcessKernelDensity extends MetaProcess {
-    private IParameters parameters;
-
     ParameterHDFSPath parameterHDFSPath;
     ParameterTextField parameterBounds;
     ParameterTextField parameterIndex;
