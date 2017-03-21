@@ -1,16 +1,14 @@
-package com.supermap.desktop.process.graphics.interaction;
+package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.decorator.PreviewDecorator;
-import com.supermap.desktop.process.graphics.handler.canvas.CanvasEventAdapter;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 
 /**
  * Created by highsad on 2017/3/8.

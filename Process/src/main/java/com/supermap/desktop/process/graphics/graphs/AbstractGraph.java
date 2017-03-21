@@ -1,11 +1,11 @@
 package com.supermap.desktop.process.graphics.graphs;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.graphs.decorator.AbstractDecorator;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by highsad on 2017/1/20.
@@ -13,15 +13,21 @@ import java.util.ArrayList;
 public abstract class AbstractGraph implements IGraph {
 
 	private GraphCanvas canvas;
+	private java.util.List<AbstractDecorator> decorators;
 	protected Shape shape;
 
 	public AbstractGraph(GraphCanvas canvas, Shape shape) {
 		this.canvas = canvas;
 		this.shape = shape;
+		this.decorators = new ArrayList<>();
 	}
 
 	public Shape getShape() {
 		return this.shape;
+	}
+
+	public List<AbstractDecorator> getDecorators() {
+		return this.decorators;
 	}
 
 	@Override

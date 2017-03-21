@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.graphics.interaction;
+package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
 
@@ -19,6 +19,11 @@ public class SingleSelection extends Selection {
 	}
 
 	@Override
+	public void paintSelected(Graphics graphics) {
+
+	}
+
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		super.mouseClicked(e);
 	}
@@ -27,8 +32,6 @@ public class SingleSelection extends Selection {
 	public void paint(Graphics graphics) {
 
 	}
-
-
 
 	@Override
 	public void clean() {

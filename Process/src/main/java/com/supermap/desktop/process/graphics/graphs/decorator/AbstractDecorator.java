@@ -22,11 +22,17 @@ public abstract class AbstractDecorator extends AbstractGraph {
 	}
 
 	public void decorate(AbstractGraph graph) {
-		this.graph = graph;
+		if (!graph.getDecorators().contains(this)) {
+			graph.getDecorators().add(this);
+			this.graph = graph;
+		}
 	}
 
 	public void undecorate() {
-		this.graph = null;
+		if (this.graph != null) {
+			this.graph.getDecorators().remove(this);
+			this.graph = null;
+		}
 	}
 
 	public boolean isDecorating() {

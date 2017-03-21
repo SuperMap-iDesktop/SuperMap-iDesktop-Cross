@@ -5,6 +5,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -73,6 +74,7 @@ public class DatasourceInfoControl extends AbstractPropertyControl {
 		TOTAL = CommonProperties.getString(CommonProperties.Total);
 		OTHERS = CoreProperties.getString(CoreProperties.Other);
 		fillComponents();
+		ComponentUIUtilities.setName(this.table, "DatasourceInfoControl_table");
 		this.setLayout(new GridBagLayout());
 		this.add(scrollPaneStatisticValue, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(10));
 	}

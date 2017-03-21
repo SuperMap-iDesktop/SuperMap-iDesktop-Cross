@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.graphics.handler.graph;
+package com.supermap.desktop.process.graphics.interaction.graph;
 
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 

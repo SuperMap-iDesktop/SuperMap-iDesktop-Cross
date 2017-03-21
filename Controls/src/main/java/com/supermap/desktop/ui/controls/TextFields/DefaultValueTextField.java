@@ -17,8 +17,6 @@ import java.awt.event.FocusListener;
 
 public class DefaultValueTextField extends JTextField {
 
-	//	private ImageIcon searchIcon;
-//	private String defaultValue;
 	private String defaultWarningValue;
 
 	@Override
@@ -34,14 +32,6 @@ public class DefaultValueTextField extends JTextField {
 		}
 	}
 
-//	/**
-//	 * 获得默认值
-//	 *
-//	 * @return
-//	 */
-//	public String getDefaultValue() {
-//		return this.defaultValue;
-//	}
 
 	/**
 	 * 获得默认提示文本
@@ -57,6 +47,7 @@ public class DefaultValueTextField extends JTextField {
 	 */
 	public DefaultValueTextField() {
 		super();
+		initListener();
 	}
 
 	/**
@@ -78,23 +69,10 @@ public class DefaultValueTextField extends JTextField {
 	 */
 	public DefaultValueTextField(String Value, String defaultWarningValue) {
 		super(Value);
-//		setDefaultValue(Value);
 		setDefaulWarningText(defaultWarningValue);
 		initListener();
 	}
 
-//	/**
-//	 * 设置文本框默认值
-//	 *
-//	 * @param text
-//	 */
-//	public void setDefaultValue(String text) {
-//		if (!StringUtilities.isNullOrEmpty(text)) {
-//			this.defaultValue = text;
-//			this.setText(this.defaultValue);
-//
-//		}
-//	}
 
 	/**
 	 * 设置提示文本，当文本框值为空的时候，显示提示信息
@@ -108,7 +86,6 @@ public class DefaultValueTextField extends JTextField {
 				this.setText(this.defaultWarningValue);
 				setForeground(Color.gray);
 			}
-			;
 		}
 	}
 
@@ -134,10 +111,16 @@ public class DefaultValueTextField extends JTextField {
 			}
 		});
 	}
-//		/**
-//	 * @param g
-//	 */
-//	@Override
+
+	/**
+	 * 清除输入的值，但不清楚默认提示信息
+	 */
+	public void clear() {
+		this.setText(defaultWarningValue);
+		this.setForeground(Color.gray);
+	}
+
+	// 此处是对文本框中绘制图片的方法：
 //	public void paintComponent(Graphics g) {
 //		super.paintComponent(g);
 //		// 当有提示信息时，显示提示图标

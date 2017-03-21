@@ -190,7 +190,6 @@ public class LayerGridParamPropertyModel extends LayerPropertyModel {
             for (int i = 0; i < colorLegth; i++) {
                 this.originKey[i] = minValue + valueGap * i;
             }
-            //originKey = setting.getColorDictionary().getKeys();
         }
     }
 

@@ -5,6 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -86,6 +87,7 @@ public class ImageCollectionPropertyControl extends AbstractPropertyControl {
 		initializeComponents();
 		initLayout();
 		initializeResources();
+		setComponentName();
 		setDatasetImageCollection(datasetImageCollection);
 	}
 
@@ -169,7 +171,24 @@ public class ImageCollectionPropertyControl extends AbstractPropertyControl {
 		this.smButtonReset.setText(CommonProperties.getString(CommonProperties.Reset));
 		this.smButtonApply.setText(CommonProperties.getString(CommonProperties.Apply));
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.labelBandCount, "ImageCollectionPropertyControl_labelBandCount");
+		ComponentUIUtilities.setName(this.smTextFieldBandCount, "ImageCollectionPropertyControl_smTextFieldBandCount");
+		ComponentUIUtilities.setName(this.labelNoValue, "ImageCollectionPropertyControl_labelNoValue");
+		ComponentUIUtilities.setName(this.smTextFieldNoValue, "ImageCollectionPropertyControl_smTextFieldNoValue");
+		ComponentUIUtilities.setName(this.labelHasPyramid, "ImageCollectionPropertyControl_labelHasPyramid");
+		ComponentUIUtilities.setName(this.smTextFieldHasPyramid, "ImageCollectionPropertyControl_smTextFieldHasPyramid");
+		ComponentUIUtilities.setName(this.labelDatasetCount, "ImageCollectionPropertyControl_labelDatasetCount");
+		ComponentUIUtilities.setName(this.smTextFieldDatasetCount, "ImageCollectionPropertyControl_smTextFieldDatasetCount");
+		ComponentUIUtilities.setName(this.smButtonSetDatasets, "ImageCollectionPropertyControl_smButtonSetDatasets");
+		ComponentUIUtilities.setName(this.labelPixelType, "ImageCollectionPropertyControl_labelPixelType");
+		ComponentUIUtilities.setName(this.smTextFieldPixelType, "ImageCollectionPropertyControl_smTextFieldPixelType");
+		ComponentUIUtilities.setName(this.labelShowBounds, "ImageCollectionPropertyControl_labelShowBounds");
+		ComponentUIUtilities.setName(this.smButtonSetShowBounds, "ImageCollectionPropertyControl_smButtonSetShowBounds");
+		ComponentUIUtilities.setName(this.smButtonClear, "ImageCollectionPropertyControl_smButtonClear");
+		ComponentUIUtilities.setName(this.smButtonReset, "ImageCollectionPropertyControl_smButtonReset");
+		ComponentUIUtilities.setName(this.smButtonApply, "ImageCollectionPropertyControl_smButtonApply");
+	}
 	@Override
 	public void refreshData() {
 		setDatasetImageCollection(datasetImageCollection);

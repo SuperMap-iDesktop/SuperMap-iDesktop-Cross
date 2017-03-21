@@ -29,14 +29,18 @@ public class BatchAddColorTableDailog extends SmDialog {
     private SmButton okSmButton = new SmButton();
     private SmButton cancelSmButton = new SmButton();
     private final int ROW_HRIGHT = 23;
-    private double keys[];
     private boolean isNeedResetCalculEndValue = false;
-    private boolean isNeedEachOtherWarn = false;
+    private double inputStartValue;
+    private double inputEndVale;
+    private double inputStepLength;
+    private int inputSeriesNum;
     private double resultKeys[];
 
-    public BatchAddColorTableDailog(double keys[], JFrame owner, boolean model) {
+    public BatchAddColorTableDailog(double startValue, double endVale, int seriesNum, JFrame owner, boolean model) {
         super(owner, model);
-        this.keys = keys;
+        this.inputStartValue = startValue;
+        this.inputEndVale = endVale;
+        this.inputSeriesNum = seriesNum;
         initComponents();
         initResources();
         removeEvents();
@@ -65,28 +69,32 @@ public class BatchAddColorTableDailog extends SmDialog {
     private RightValueListener rightStartValue = new RightValueListener() {
         @Override
         public void update(String value) {
-            startValurOrEndValueChange();
+            if (!value.isEmpty()&& Double.compare(inputStartValue, Double.valueOf(value)) != 0 ) {
+                startValurOrEndValueChange();
+                inputStartValue = Double.valueOf(value);
+            }
         }
     };
 
     private RightValueListener rightEndValue = new RightValueListener() {
         @Override
         public void update(String value) {
-            startValurOrEndValueChange();
+            if (!value.isEmpty()&& Double.compare(inputEndVale, Double.valueOf(value)) != 0) {
+                startValurOrEndValueChange();
+                inputEndVale = Double.valueOf(value);
+            }
         }
     };
 
     private RightValueListener rightStepValue = new RightValueListener() {
         @Override
         public void update(String value) {
-            if (!isNeedEachOtherWarn) {
-                isNeedEachOtherWarn = true;
+            if (!value.isEmpty()&& Double.compare(inputStepLength, Double.valueOf(value)) != 0 ) {
                 double currentStepValue = Double.valueOf(value);
-                double currentSeriesNum = (Double.valueOf(endValueText.getTextField().getText()) - Double.valueOf(startValueText.getTextField().getText())) / currentStepValue;
-                Integer cSeriesNum = (int) currentSeriesNum;
-                seriesNumText.getTextField().setText(String.valueOf(cSeriesNum));
-            } else {
-                isNeedEachOtherWarn = false;
+                double currentSeriesNum = (Double.valueOf(endValueText.getText()) - Double.valueOf(startValueText.getText())) / currentStepValue;
+                Integer seriesNum = (int) Math.ceil(Math.abs(currentSeriesNum));
+                inputSeriesNum = seriesNum;
+                seriesNumText.setText(String.valueOf(seriesNum));
             }
         }
     };
@@ -94,13 +102,11 @@ public class BatchAddColorTableDailog extends SmDialog {
     private RightValueListener rightSeriesNum = new RightValueListener() {
         @Override
         public void update(String value) {
-            if (!isNeedEachOtherWarn) {
-                isNeedEachOtherWarn = true;
+            if (!value.isEmpty()&& Integer.compare(inputSeriesNum, Integer.valueOf(value)) != 0 ) {
                 Integer currentSeriesNum = Integer.valueOf(value);
-                double currentStepValue = (Double.valueOf(endValueText.getTextField().getText()) - Double.valueOf(startValueText.getTextField().getText())) / currentSeriesNum;
-                stepLengthText.getTextField().setText(String.valueOf(currentStepValue));
-            } else {
-                isNeedEachOtherWarn = false;
+                double currentStepValue = (Double.valueOf(endValueText.getText()) - Double.valueOf(startValueText.getText())) / currentSeriesNum;
+                inputStepLength = currentStepValue;
+                stepLengthText.setText(String.valueOf(currentStepValue));
             }
         }
     };
@@ -116,15 +122,15 @@ public class BatchAddColorTableDailog extends SmDialog {
         groupLayout.setAutoCreateContainerGaps(true);
         groupLayout.setAutoCreateGaps(true);
 
-        this.startValueText = new WaringTextField(String.valueOf(this.keys[0]));
-        this.startValueText.setInitInfo(Short.MIN_VALUE, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "8");
-        this.endValueText = new WaringTextField(String.valueOf(this.keys[this.keys.length - 1]));
-        this.endValueText.setInitInfo(Short.MIN_VALUE, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "8");
-        this.stepLengthText = new WaringTextField(String.valueOf(this.keys[1] - this.keys[0]));
-        this.stepLengthText.setInitInfo(Short.MIN_VALUE, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "8");
-        this.seriesNumText = new WaringTextField(String.valueOf(this.keys.length));
+        this.startValueText = new WaringTextField(String.valueOf(this.inputStartValue), true);
+        this.startValueText.setInitInfo(Short.MIN_VALUE, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "null");
+        this.endValueText = new WaringTextField(String.valueOf(this.inputEndVale), true);
+        this.endValueText.setInitInfo(Short.MIN_VALUE, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "null");
+        this.inputStepLength = (this.inputEndVale - this.inputStartValue) / this.inputSeriesNum;
+        this.stepLengthText = new WaringTextField(String.valueOf(this.inputStepLength), true);
+        this.stepLengthText.setInitInfo(Short.MIN_VALUE, Short.MAX_VALUE, WaringTextField.FLOAT_TYPE, "null");
+        this.seriesNumText = new WaringTextField(String.valueOf(this.inputSeriesNum), true);
         this.seriesNumText.setInitInfo(2, Short.MAX_VALUE, WaringTextField.INTEGER_TYPE, "null");
-
 
         groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
                 .addGroup(groupLayout.createParallelGroup()
@@ -147,7 +153,7 @@ public class BatchAddColorTableDailog extends SmDialog {
                                 .addComponent(cancelSmButton)))
         );
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(startValue)
                         .addComponent(startValueText, ROW_HRIGHT, ROW_HRIGHT, ROW_HRIGHT))
                 .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
@@ -209,24 +215,26 @@ public class BatchAddColorTableDailog extends SmDialog {
 
     //  起始值或者结尾值更改则更改相对应的步长与级数
     private void startValurOrEndValueChange() {
-        if (this.seriesNum.isSelected()) {
-            Integer currentSeriesNum = Integer.valueOf(this.seriesNumText.getTextField().getText());
-            double currentStepValue = (Double.valueOf(this.endValueText.getTextField().getText()) - Double.valueOf(this.startValueText.getTextField().getText())) / currentSeriesNum;
-            this.stepLengthText.getTextField().setText(String.valueOf(currentStepValue));
-        } else {
-            double currentStepValue = Double.valueOf(this.stepLengthText.getTextField().getText());
-            double currentSeriesNum = (Double.valueOf(this.endValueText.getTextField().getText()) - Double.valueOf(this.startValueText.getTextField().getText())) / currentStepValue;
-            Integer cSeriesNum = (int) currentSeriesNum;
-            this.seriesNumText.getTextField().setText(String.valueOf(cSeriesNum));
+        if (this.seriesNum.isSelected() && !this.endValueText.getText().isEmpty() && !this.seriesNumText.getText().isEmpty() && !this.startValueText.getText().isEmpty()) {
+            Integer currentSeriesNum = Integer.valueOf(this.seriesNumText.getText());
+            double currentStepValue = (Double.valueOf(this.endValueText.getText()) - Double.valueOf(this.startValueText.getText())) / currentSeriesNum;
+            this.inputStepLength = currentStepValue;
+            this.stepLengthText.setText(String.valueOf(currentStepValue));
+        } else if (!this.seriesNum.isSelected() && !this.endValueText.getText().isEmpty() && !this.stepLengthText.getText().isEmpty() && !this.startValueText.getText().isEmpty()){
+            double currentStepValue = Double.valueOf(this.stepLengthText.getText());
+            double currentSeriesNum = (Double.valueOf(this.endValueText.getText()) - Double.valueOf(this.startValueText.getText())) / currentStepValue;
+            Integer cSeriesNum = Math.abs((int) currentSeriesNum);
+            this.inputSeriesNum = cSeriesNum;
+            this.seriesNumText.setText(String.valueOf(cSeriesNum));
         }
     }
 
-    private void calculResultKeys(){
+    private void calculResultKeys() {
         if (!this.startValueText.isError() && !this.endValueText.isError() && !this.stepLengthText.isError() && !this.seriesNumText.isError()) {
-            Integer currentSeriesNum = Integer.valueOf(this.seriesNumText.getTextField().getText());
-            double start = Double.valueOf(this.startValueText.getTextField().getText());
-            double end = Double.valueOf(this.endValueText.getTextField().getText());
-            double step = Double.valueOf(this.stepLengthText.getTextField().getText());
+            Integer currentSeriesNum = Integer.valueOf(this.seriesNumText.getText());
+            double start = Double.valueOf(this.startValueText.getText());
+            double end = Double.valueOf(this.endValueText.getText());
+            double step = Double.valueOf(this.stepLengthText.getText());
             this.resultKeys = new double[currentSeriesNum];
             for (int i = 0; i < currentSeriesNum; i++) {
                 if (i + 1 == currentSeriesNum && !isNeedResetCalculEndValue) {
@@ -238,7 +246,7 @@ public class BatchAddColorTableDailog extends SmDialog {
         }
     }
 
-    public double[] getResultKeys(){
+    public double[] getResultKeys() {
         return this.resultKeys;
     }
 

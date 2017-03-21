@@ -46,5 +46,7 @@ public interface IGraphStorage {
 
 	Rectangle getBounds();
 
+	void modifyGraphBounds(IGraph graph, int x, int y, int width, int height);
+
 	void clear();
 }
