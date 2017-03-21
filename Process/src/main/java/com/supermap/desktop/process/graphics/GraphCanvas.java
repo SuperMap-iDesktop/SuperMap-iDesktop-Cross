@@ -136,22 +136,17 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		addMouseMotionListener(this);
 		addMouseWheelListener(this);
 
-		this.canvasHandlers.put(Selection.class, this.selection);
-		this.canvasHandlers.put(DraggedHandler.class, this.dragged);
-		this.canvasHandlers.put(CanvasTranslation.class, this.translation);
-		this.canvasHandlers.put(GraphCreator.class, this.creator);
+		installCanvasEventHandler(Selection.class, this.selection);
+		installCanvasEventHandler(DraggedHandler.class, this.dragged);
+		installCanvasEventHandler(CanvasTranslation.class, this.translation);
+		installCanvasEventHandler(GraphCreator.class, this.creator);
 	}
 
 	public void create(IGraph graph) {
 		this.creator.create(graph);
 	}
 
-	public void installCanvasEventHandler(CanvasEventHandler handler) {
-		if (handler == null) {
-			return;
-		}
-
-		Class c = handler.getClass();
+	public void installCanvasEventHandler(Class c, CanvasEventHandler handler) {
 		if (c == null) {
 			return;
 		}
@@ -161,6 +156,15 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		}
 
 		this.canvasHandlers.put(c, handler);
+	}
+
+	public void installCanvasEventHandler(CanvasEventHandler handler) {
+		if (handler == null) {
+			return;
+		}
+
+		Class c = handler.getClass();
+		installCanvasEventHandler(c, handler);
 	}
 
 	public CanvasEventHandler getEventHandler(Class c) {
