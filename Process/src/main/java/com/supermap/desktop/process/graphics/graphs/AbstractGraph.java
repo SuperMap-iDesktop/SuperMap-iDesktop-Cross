@@ -1,11 +1,11 @@
 package com.supermap.desktop.process.graphics.graphs;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.graphs.decorator.AbstractDecorator;
+import com.supermap.desktop.process.graphics.events.GraphBoundsChangedEvent;
+import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
 
+import javax.swing.event.EventListenerList;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by highsad on 2017/1/20.
@@ -13,21 +13,16 @@ import java.util.List;
 public abstract class AbstractGraph implements IGraph {
 
 	private GraphCanvas canvas;
-	private java.util.List<AbstractDecorator> decorators;
 	protected Shape shape;
+	private EventListenerList listenerList = new EventListenerList();
 
 	public AbstractGraph(GraphCanvas canvas, Shape shape) {
 		this.canvas = canvas;
 		this.shape = shape;
-		this.decorators = new ArrayList<>();
 	}
 
 	public Shape getShape() {
 		return this.shape;
-	}
-
-	public List<AbstractDecorator> getDecorators() {
-		return this.decorators;
 	}
 
 	@Override
@@ -81,9 +76,57 @@ public abstract class AbstractGraph implements IGraph {
 		}
 	}
 
+	@Override
+	public void setLocation(Point point) {
+		Point oldLocation = getShape().getBounds().getLocation();
+
+		if (!oldLocation.equals(point)) {
+			applyLocation(point);
+			fireGraphBoundsChanged(new GraphBoundsChangedEvent(this, oldLocation, point));
+		}
+	}
+
+	protected abstract void applyLocation(Point point);
+
+	@Override
+	public void setSize(int width, int height) {
+		int oldWidth = getShape().getBounds().width;
+		int oldHeight = getShape().getBounds().height;
+
+		if (oldWidth != width && oldHeight != height) {
+			applySize(width, height);
+			fireGraphBoundsChanged(new GraphBoundsChangedEvent(this, oldWidth, width, oldHeight, height));
+		}
+	}
+
+	protected abstract void applySize(int width, int height);
+
+	@Override
+	public boolean contains(Point point) {
+		return this.shape.contains(point);
+	}
+
 	public GraphCanvas getCanvas() {
 		return this.canvas;
 	}
 
-	public abstract IGraph clone();
+	@Override
+	public void addGraphBoundsListener(GraphBoundsChangedListener listener) {
+		this.listenerList.add(GraphBoundsChangedListener.class, listener);
+	}
+
+	@Override
+	public void removeGraghBoundsListener(GraphBoundsChangedListener listener) {
+		this.listenerList.remove(GraphBoundsChangedListener.class, listener);
+	}
+
+	protected void fireGraphBoundsChanged(GraphBoundsChangedEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == GraphBoundsChangedListener.class) {
+				((GraphBoundsChangedListener) listeners[i + 1]).graghBoundsChanged(e);
+			}
+		}
+	}
 }

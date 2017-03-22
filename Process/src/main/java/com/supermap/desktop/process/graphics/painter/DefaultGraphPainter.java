@@ -66,7 +66,6 @@ public class DefaultGraphPainter implements IGraphPainter {
 			if (decorator instanceof PreviewDecorator) {
 				paintPreviewDecorator(graphics, (PreviewDecorator) decorator);
 			} else {
-				paint(graphics, decorator.getGraph());
 				paintDecorator(graphics, decorator);
 			}
 		}

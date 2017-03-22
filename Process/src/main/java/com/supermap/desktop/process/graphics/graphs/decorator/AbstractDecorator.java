@@ -22,15 +22,11 @@ public abstract class AbstractDecorator extends AbstractGraph {
 	}
 
 	public void decorate(AbstractGraph graph) {
-		if (!graph.getDecorators().contains(this)) {
-			graph.getDecorators().add(this);
-			this.graph = graph;
-		}
+		this.graph = graph;
 	}
 
 	public void undecorate() {
 		if (this.graph != null) {
-			this.graph.getDecorators().remove(this);
 			this.graph = null;
 		}
 	}
@@ -70,12 +66,12 @@ public abstract class AbstractDecorator extends AbstractGraph {
 	}
 
 	@Override
-	public void setLocation(Point point) {
+	protected void applyLocation(Point point) {
 		getGraph().setLocation(point);
 	}
 
 	@Override
-	public void setSize(int width, int height) {
+	protected void applySize(int width, int height) {
 		getGraph().setSize(width, height);
 	}
 

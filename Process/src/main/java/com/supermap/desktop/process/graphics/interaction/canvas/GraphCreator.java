@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics.interaction.canvas;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
@@ -13,14 +14,14 @@ import java.awt.event.MouseEvent;
 /**
  * Created by highsad on 2017/3/8.
  */
-public class GraphCreation extends CanvasEventAdapter {
+public class GraphCreator extends CanvasEventAdapter {
 
 	private GraphCanvas canvas;
 	private PreviewDecorator previewDecorator;
 	private IGraph toCreation;
 	private Rectangle creationRegion = new Rectangle(0, 0, 0, 0);
 
-	public GraphCreation(GraphCanvas canvas) {
+	public GraphCreator(GraphCanvas canvas) {
 		this.canvas = canvas;
 		this.previewDecorator = new PreviewDecorator(this.canvas);
 	}
@@ -32,6 +33,9 @@ public class GraphCreation extends CanvasEventAdapter {
 			if (this.toCreation instanceof AbstractGraph) {
 				this.previewDecorator.decorate((AbstractGraph) this.toCreation);
 			}
+
+			this.canvas.setEventHandlerEnabled(Selection.class, false);
+			this.canvas.setEventHandlerEnabled(DraggedHandler.class, false);
 		}
 	}
 
@@ -83,15 +87,22 @@ public class GraphCreation extends CanvasEventAdapter {
 
 	@Override
 	public void clean() {
-		this.toCreation = null;
-		this.previewDecorator.undecorate();
+		try {
+			this.toCreation = null;
+			this.previewDecorator.undecorate();
 
-		if (GraphicsUtil.isRegionValid(this.creationRegion)) {
-			this.canvas.repaint(this.creationRegion);
-		} else {
-			this.canvas.repaint();
+			if (GraphicsUtil.isRegionValid(this.creationRegion)) {
+				this.canvas.repaint(this.creationRegion);
+			} else {
+				this.canvas.repaint();
+			}
+			this.creationRegion.setBounds(0, 0, 0, 0);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			this.canvas.setEventHandlerEnabled(Selection.class, true);
+			this.canvas.setEventHandlerEnabled(DraggedHandler.class, true);
 		}
-		this.creationRegion.setBounds(0, 0, 0, 0);
 	}
 
 	public void paint(Graphics g) {

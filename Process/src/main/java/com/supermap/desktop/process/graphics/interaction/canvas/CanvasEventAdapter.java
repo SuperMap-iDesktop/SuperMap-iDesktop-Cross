@@ -10,12 +10,12 @@ public abstract class CanvasEventAdapter implements CanvasEventHandler {
 	private boolean enable = true;
 
 	@Override
-	public boolean enable() {
+	public boolean isEnabled() {
 		return this.enable;
 	}
 
 	@Override
-	public void setEnable(boolean enable) {
+	public void setEnabled(boolean enable) {
 		this.enable = enable;
 	}
 

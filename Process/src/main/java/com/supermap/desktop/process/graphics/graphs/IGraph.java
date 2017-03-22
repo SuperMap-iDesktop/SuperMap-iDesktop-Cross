@@ -1,11 +1,9 @@
 package com.supermap.desktop.process.graphics.graphs;
 
-import com.supermap.desktop.Interface.ICloneable;
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 
 /**
  * Graph 类自身不做绘制的好处在于，不同操作系统的风格、绘制工具等不尽相同，当需要适应不同的操作系统
@@ -30,4 +28,8 @@ public interface IGraph {
 	void setSize(int width, int height);
 
 	boolean contains(Point point);
+
+	void addGraphBoundsListener(GraphBoundsChangedListener listener);
+
+	void removeGraghBoundsListener(GraphBoundsChangedListener listener);
 }
