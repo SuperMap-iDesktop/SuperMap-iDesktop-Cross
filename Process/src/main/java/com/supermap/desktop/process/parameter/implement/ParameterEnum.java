@@ -14,7 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ParameterEnum extends AbstractParameter implements ISelectionParameter {
 
     private EnumParser parser;
-    private ParameterDataNode value;
+    private Object value;
     private String describe;
 
     public ParameterEnum(EnumParser parser) {
@@ -39,9 +39,9 @@ public class ParameterEnum extends AbstractParameter implements ISelectionParame
             }
         }
         if (value instanceof ParameterDataNode) {
-            ParameterDataNode oldValue = this.value;
-            this.value = (ParameterDataNode) value;
-            firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, value));
+            Object oldValue = this.value;
+            this.value = ((ParameterDataNode) value).getData();
+            firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, this.value));
         }
     }
 
