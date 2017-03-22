@@ -32,25 +32,25 @@ public class CtrlActionRun extends CtrlAction {
 
     @Override
     public void run() {
-//        NodeMatrix matrix = new NodeMatrix();
-//        MetaProcessImport metaProcessImport = new MetaProcessImport();
-//        MetaProcessBuffer buffer = new MetaProcessBuffer();
-//        MetaProcessProjection projection = new MetaProcessProjection();
-//        MetaProcessSqlQuery sqlQuery = new MetaProcessSqlQuery();
-//        matrix.addNode(metaProcessImport);
-//        matrix.addNode(buffer);
-//        matrix.addNode(projection);
-//        matrix.addNode(sqlQuery);
-//        matrix.addConstraint(metaProcessImport, buffer, new INodeConstraint() {});
-//        matrix.addConstraint(buffer, projection, new INodeConstraint() {});
-//        matrix.addConstraint(projection, sqlQuery, new INodeConstraint() {});
-//
-//        Workflow workflow = new Workflow(matrix);
-//        workflow.parseToXmlFile("C://temp.xml");
-//        WorkflowParser parser = new WorkflowParser();
-//        NodeMatrix nodeMatrix = parser.parseXMLToMatrix("C://temp.xml");
-//        Workflow workflow1 = new Workflow(nodeMatrix);
-//        workflow1.parseToXmlFile("C://temp1.xml");
+        NodeMatrix matrix = new NodeMatrix();
+        MetaProcessImport metaProcessImport = new MetaProcessImport();
+        MetaProcessBuffer buffer = new MetaProcessBuffer();
+        MetaProcessProjection projection = new MetaProcessProjection();
+        MetaProcessSqlQuery sqlQuery = new MetaProcessSqlQuery();
+        matrix.addNode(metaProcessImport);
+        matrix.addNode(buffer);
+        matrix.addNode(projection);
+        matrix.addNode(sqlQuery);
+        matrix.addConstraint(metaProcessImport, buffer, new INodeConstraint() {});
+        matrix.addConstraint(buffer, projection, new INodeConstraint() {});
+        matrix.addConstraint(projection, sqlQuery, new INodeConstraint() {});
+
+        Workflow workflow = new Workflow(matrix);
+        workflow.parseToXmlFile("C://temp.xml");
+        WorkflowParser parser = new WorkflowParser();
+        NodeMatrix nodeMatrix = parser.parseXMLToMatrix("C://temp.xml");
+        Workflow workflow1 = new Workflow(nodeMatrix);
+        workflow1.parseToXmlFile("C://temp1.xml");
 //        try {
 //            IForm form = Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
 //            IDockbarManager manager = Application.getActiveApplication().getMainFrame().getDockbarManager();

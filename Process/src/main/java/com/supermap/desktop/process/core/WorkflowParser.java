@@ -2,15 +2,11 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.meta.metaProcessImplements.*;
-import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
-import com.supermap.desktop.process.parameter.interfaces.IParameter;
+import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 import com.supermap.desktop.utilities.StringUtilities;
 import org.w3c.dom.Document;
@@ -28,6 +24,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by xie on 2017/3/21.
+ * Parse xml to NodeMatrix
  */
 public class WorkflowParser {
     private static final int ITEM_PROCESSES = 3;
@@ -52,28 +49,28 @@ public class WorkflowParser {
                         if ("Process".equals(processesList.item(i).getNodeName())) {
                             Node process = processesList.item(i);
                             NamedNodeMap attrs = process.getAttributes();
+                            MetaProcess metaProcess = null;
                             if (attrs.getLength() > 0 && attrs != null) {
                                 Node attr = attrs.getNamedItem("key");
-                                nodeMatrix.addNode(getMetaProcess(attr.getNodeValue()));
+                                metaProcess = getMetaProcess(attr.getNodeValue());
+                                nodeMatrix.addNode(metaProcess);
                             }
 
-                            //TODO
-                            //Get xml parameters nodes and parse node to our process parameter
-//                            Node parameters = process.getChildNodes().item(1);
-//                            NodeList parameterList = parameters.getChildNodes();
-//                            for (int j = 0; j < parameterList.getLength(); j++) {
-//                                if ("Parameter".equals(parameterList.item(i).getNodeName())) {
-//                                    IParameter parameter = null;
-//                                    Node parameterNode = parameterList.item(i);
-//                                    NamedNodeMap parameterAttrs = parameterNode.getAttributes();
-//                                    if (parameterAttrs.getLength() > 0 && parameterAttrs != null) {
+                            IParameters processParameters = metaProcess.getParameters();
+                            Node parameters = process.getChildNodes().item(1);
+                            NodeList parameterList = parameters.getChildNodes();
+                            for (int j = 0; j < parameterList.getLength(); j++) {
+                                if ("Parameter".equals(parameterList.item(j).getNodeName())) {
+                                    Node parameterNode = parameterList.item(j);
+                                    NamedNodeMap parameterAttrs = parameterNode.getAttributes();
+                                    if (parameterAttrs.getLength() > 0 && parameterAttrs != null) {
 //                                        String type = parameterAttrs.getNamedItem("type").getNodeValue();
-//                                        String describe = parameterAttrs.getNamedItem("describe").getNodeValue();
-//                                        String value = parameterAttrs.getNamedItem("value").getNodeValue();
-//                                        parameter = getParameter(type, describe, value);
-//                                    }
-//                                }
-//                            }
+                                        String describe = parameterAttrs.getNamedItem("describe").getNodeValue();
+                                        String value = parameterAttrs.getNamedItem("value").getNodeValue();
+                                        setParameterValue(processParameters, describe, value);
+                                    }
+                                }
+                            }
                         }
                     }
                     NodeList nodesList = documentChildNodes.item(0).getChildNodes().item(ITEM_NODES).getChildNodes();
@@ -133,22 +130,13 @@ public class WorkflowParser {
     }
 
 
-    public IParameter getParameter(String type, String describe, String value) {
-        IParameter parameter = null;
-        if (ParameterType.CHECKBOX.equals(type)) {
-            parameter = new ParameterCheckBox(describe);
-            ((ParameterCheckBox) parameter).setSelectedItem(value);
-        } else if (ParameterType.COMBO_BOX.equals(type)) {
-            parameter = new ParameterComboBox(describe);
-            ((ParameterComboBox) parameter).setSelectedItem(value);
-        } else if (ParameterType.TEXTFIELD.equals(type)) {
-            parameter = new ParameterTextField(describe);
-            ((ParameterTextField) parameter).setSelectedItem(value);
-        } else if (ParameterType.SAVE_DATASET.equals(type)) {
-            parameter = new ParameterSaveDataset();
-            ((ParameterTextField) parameter).setSelectedItem(value);
+    public void setParameterValue(IParameters parameters, String describe, String value) {
+        int size = parameters.size();
+        for (int i = 0; i < size; i++) {
+            if (describe.equals(parameters.getParameter(i).getDescribe()) && parameters.getParameter(i) instanceof ISelectionParameter) {
+                ((ISelectionParameter) parameters.getParameter(i)).setSelectedItem(value);
+            }
         }
-        return parameter;
     }
 
     public MetaProcess getMetaProcess(String key) {
@@ -175,7 +163,7 @@ public class WorkflowParser {
             result = new MetaProcessSpatialIndex();
         } else if (MetaKeys.OVERLAY_ANALYST.equals(key)) {
             result = new MetaProcessOverlayAnalyst(OverlayAnalystType.CLIP);
-        }else if(MetaKeys.SQL_QUERY.equals(key)){
+        } else if (MetaKeys.SQL_QUERY.equals(key)) {
             result = new MetaProcessSqlQuery();
         }
         return result;
