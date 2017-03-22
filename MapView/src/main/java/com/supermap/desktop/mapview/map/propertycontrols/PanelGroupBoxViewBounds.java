@@ -80,6 +80,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	private static final int DEFAULT_LABELSIZE = 20;
 	private static final int DEFAULT_BUTTONSIZE = 95;
 
+	private String borderName=ControlsProperties.getString("String_MapOutputBounds");
 
 	/**
 	 * 按钮事件枢纽站
@@ -168,6 +169,20 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		setAsMapViewBounds();
 	}
 
+	public PanelGroupBoxViewBounds(SmDialog smDialog,String borderName) {
+		super();
+		this.dialog = smDialog;
+		this.borderName=borderName;
+		initCompont();
+		initResource();
+		initLayout();
+		// 先初始化，然后添加监听，然后再设置一遍范围
+		// 目的：文本框的值域需要其他文本框中值作为参考，为保证初始化时每个文本框都设置值域，先初始化文本框中的值，再触发一次监听事件完成文本框的初始化
+		initValue();
+		registEvents();
+		setAsMapViewBounds();
+	}
+
 	private void initCompont() {
 		this.mainPanel = new JPanel();
 		this.labelCurrentViewLeft = new JLabel("Left:");
@@ -220,7 +235,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	 */
 	private void initMainPanelLayout() {
 
-		this.mainPanel.setBorder(BorderFactory.createTitledBorder(ControlsProperties.getString("String_MapOutputBounds")));
+		this.mainPanel.setBorder(BorderFactory.createTitledBorder(borderName));
 		GroupLayout viewPanelLayout = new GroupLayout(this.mainPanel);
 		viewPanelLayout.setAutoCreateContainerGaps(true);
 		viewPanelLayout.setAutoCreateGaps(true);
