@@ -220,6 +220,16 @@
             <scope>system</scope>
             <systemPath>${basedir}/../bin/com.supermap.ui.controls.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>bson</artifactId>
+            <version>3.0.4</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -235,7 +245,8 @@
                             Aladdin,com.alibaba.*,
                             com.supermap.*,
                             org.apache.*,
-                            org.jdesktop.*
+                            org.jdesktop.*,
+                            com.mongodb.*
                         </Export-Package>
                     </instructions>
                 </configuration>
