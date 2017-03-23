@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.graphics.handler.canvas;
+package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -7,15 +7,16 @@ import java.awt.event.MouseWheelEvent;
  * Created by highsad on 2017/3/3.
  */
 public abstract class CanvasEventAdapter implements CanvasEventHandler {
+	private boolean enable = true;
 
 	@Override
-	public boolean enable() {
-		return true;
+	public boolean isEnabled() {
+		return this.enable;
 	}
 
 	@Override
-	public void setEnable(boolean enable) {
-		// do nothing
+	public void setEnabled(boolean enable) {
+		this.enable = enable;
 	}
 
 	@Override

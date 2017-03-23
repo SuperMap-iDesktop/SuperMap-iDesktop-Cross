@@ -8,6 +8,7 @@ import com.supermap.data.FieldType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.event.TableCellValueChangeEvent;
 import com.supermap.desktop.event.TableCellValueChangeListener;
@@ -108,6 +109,7 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		super(ControlsProperties.getString("String_RecordsetStruct"));
 		initializeComponents();
 		initializeResources();
+		setComponentName();
 		setDatasetVector(datasetVector);
 	}
 
@@ -195,7 +197,14 @@ public class RecordsetPropertyControl extends AbstractPropertyControl {
 		this.buttonReset.setText(CommonProperties.getString(CommonProperties.Reset));
 		this.buttonApply.setText(CommonProperties.getString(CommonProperties.Apply));
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.tableRecordset, "RecordsetPropertyControl_tableRecordset");
+		ComponentUIUtilities.setName(this.buttonAdd, "RecordsetPropertyControl_buttonAdd");
+		ComponentUIUtilities.setName(this.buttonDelete, "RecordsetPropertyControl_buttonDelete");
+		ComponentUIUtilities.setName(this.buttonReset, "RecordsetPropertyControl_buttonReset");
+		ComponentUIUtilities.setName(this.buttonApply, "RecordsetPropertyControl_buttonApply");
+		ComponentUIUtilities.setName(this.checkBoxShowWarning, "RecordsetPropertyControl_checkBoxShowWarning");
+	}
 	private void initializeTable() {
 		this.tableRecordset = new JTable();
 		this.tableRecordset.setSurrendersFocusOnKeystroke(true);

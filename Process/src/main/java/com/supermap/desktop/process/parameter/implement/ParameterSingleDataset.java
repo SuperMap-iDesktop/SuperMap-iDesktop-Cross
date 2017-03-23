@@ -7,6 +7,7 @@ import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterPanels.ParameterSingleDatasetPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
+import com.supermap.desktop.properties.CommonProperties;
 
 import java.beans.PropertyChangeEvent;
 
@@ -50,5 +51,10 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 	@Override
 	public void dispose() {
 
+    }
+
+    @Override
+    public String getDescribe() {
+        return CommonProperties.getString(CommonProperties.Label_Dataset);
     }
 }

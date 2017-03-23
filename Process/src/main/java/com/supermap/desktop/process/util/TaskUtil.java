@@ -3,10 +3,11 @@ package com.supermap.desktop.process.util;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
 import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.core.UniversalMatrix;
+import com.supermap.desktop.process.core.NodeException;
+import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.tasks.TasksManagerContainer;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
@@ -25,7 +26,7 @@ public class TaskUtil {
 
     private static final String TASKMANAGER = "com.supermap.desktop.process.tasks.TasksManagerContainer";
 
-    private static TasksManagerContainer getManagerContainer(boolean isActive) {
+    public static TasksManagerContainer getManagerContainer(boolean isActive) {
         TasksManagerContainer fileManagerContainer = null;
         IDockbar dockbarPropertyContainer = null;
         try {
@@ -47,64 +48,48 @@ public class TaskUtil {
      * Use ExecutorService to manage all task thread,
      * If task's prev tasks has finished,excute task;
      *
-     * @param universalMatrix
+     * @param nodeMatrix
      * @return
      */
-    public static TasksManagerContainer excuteTasks(final UniversalMatrix universalMatrix) {
+    public static TasksManagerContainer excuteTasks(final NodeMatrix nodeMatrix) {
         TasksManagerContainer tasksManagerContainer = getManagerContainer(true);
-        final ArrayList<Object> processes = universalMatrix.listAllNode();
+        final CopyOnWriteArrayList<Object> processes = nodeMatrix.listAllNodes();
         ExecutorService eService = Executors.newCachedThreadPool();
         final Lock lock = new ReentrantLock();
         int size = processes.size();
         for (int i = 0; i < size; i++) {
             if (processes.get(i) instanceof IProcess) {
                 final IProcess nowProcess = ((IProcess) processes.get(i));
-                final String nowProcessTitle = nowProcess.getTitle();
                 Thread thread = new Thread() {
                     @Override
                     public void run() {
                         lock.lock();
-                        ArrayList<Object> preNodes = universalMatrix.getPreNode(nowProcessTitle);
+                        CopyOnWriteArrayList<Object> preNodes = null;
+                        try {
+                            preNodes = nodeMatrix.getPreNodes(nowProcess);
+                        } catch (NodeException e) {
+                            Application.getActiveApplication().getOutput().output(e);
+                        }
                         boolean allPreTasksFinished = true;
                         int preNodesSize = preNodes.size();
                         if (preNodesSize > 0) {
                             for (int j = 0; j < preNodesSize; j++) {
-                                if (!((IProcess) preNodes).getProcessTask().isFinished()) {
+                                if (!((IProcess) preNodes.get(j)).getProcessTask().isFinished()) {
                                     allPreTasksFinished = false;
                                     break;
                                 }
                             }
                         }
-                        if (allPreTasksFinished) {
+                        if (allPreTasksFinished || preNodes.size() == 0) {
                             nowProcess.getProcessTask().doWork();
                         }
                         lock.unlock();
                     }
                 };
-                eService.submit(thread);
+                eService.execute(thread);
             }
         }
         return tasksManagerContainer;
     }
-
-
-//    /**
-//     * 现在只考虑串行结构，且只有一个串时的情境
-//     *
-//     * @param universalMatrix
-//     */
-//    public static TasksManagerContainer addTasks(UniversalMatrix universalMatrix) {
-//        TasksManagerContainer tasksManagerContainer = getManagerContainer(true);
-//        String processKey = (String) universalMatrix.getAllStartNode().get(0);
-//        ArrayList<String> process = new ArrayList<>();
-//        process.add(processKey);
-//        ArrayList<String> processArray = universalMatrix.getAllNextNode(processKey);
-//        process.addAll(processArray);
-//        int size = process.size();
-//        for (int i = 0; i < size; i++) {
-//            tasksManagerContainer.addItem(new ProcessTask((IProcess) universalMatrix.getNode(process.get(i))));
-//        }
-//        return tasksManagerContainer;
-//    }
 
 }

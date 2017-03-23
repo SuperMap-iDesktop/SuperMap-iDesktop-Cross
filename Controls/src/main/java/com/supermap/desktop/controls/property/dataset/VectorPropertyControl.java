@@ -8,6 +8,7 @@ import com.supermap.data.Tolerance;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -129,6 +130,7 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 		super(ControlsProperties.getString("String_Vector"));
 		initializeComponents();
 		initializeResources();
+		setComponentName();
 		setDatasetVector(datasetVector);
 	}
 
@@ -242,7 +244,31 @@ public class VectorPropertyControl extends AbstractPropertyControl {
 		this.add(panelButton, new GridBagConstraintsHelper(0, 3, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
 
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.labelRecordCount, "VectorPropertyControl_labelRecordCount");
+		ComponentUIUtilities.setName(this.textFieldRecordCount, "VectorPropertyControl_textFieldRecordCount");
+		ComponentUIUtilities.setName(this.labelSpatialIndexType, "VectorPropertyControl_labelSpatialIndexType");
+		ComponentUIUtilities.setName(this.textFieldSpatialIndexType, "VectorPropertyControl_textFieldSpatialIndexType");
+		ComponentUIUtilities.setName(this.labelCharset, "VectorPropertyControl_labelCharset");
+		ComponentUIUtilities.setName(this.comboBoxCharset, "VectorPropertyControl_comboBoxCharset");
+		ComponentUIUtilities.setName(this.checkBoxIsReadOnly, "VectorPropertyControl_checkBoxIsReadOnly");
+		ComponentUIUtilities.setName(this.checkBoxIsFileCache, "VectorPropertyControl_checkBoxIsFileCache");
+		ComponentUIUtilities.setName(this.buttonClearCache, "VectorPropertyControl_buttonClearCache");
+		ComponentUIUtilities.setName(this.labelNodeSnap, "VectorPropertyControl_labelNodeSnap");
+		ComponentUIUtilities.setName(this.textFieldNodeSnap, "VectorPropertyControl_textFieldNodeSnap");
+		ComponentUIUtilities.setName(this.labelDangle, "VectorPropertyControl_labelDangle");
+		ComponentUIUtilities.setName(this.textFieldDangle, "VectorPropertyControl_textFieldDangle");
+		ComponentUIUtilities.setName(this.labelGrain, "VectorPropertyControl_labelGrain");
+		ComponentUIUtilities.setName(this.textFieldGrain, "VectorPropertyControl_textFieldGrain");
+		ComponentUIUtilities.setName(this.labelExtend, "VectorPropertyControl_labelExtend");
+		ComponentUIUtilities.setName(this.textFieldExtend, "VectorPropertyControl_textFieldExtend");
+		ComponentUIUtilities.setName(this.labelSmallPolygon, "VectorPropertyControl_labelSmallPolygon");
+		ComponentUIUtilities.setName(this.textFieldSmallPolygon, "VectorPropertyControl_textFieldSmallPolygon");
+		ComponentUIUtilities.setName(this.buttonDefaultTolerance, "VectorPropertyControl_buttonDefaultTolerance");
+		ComponentUIUtilities.setName(this.buttonClearTolerance, "VectorPropertyControl_buttonClearTolerance");
+		ComponentUIUtilities.setName(this.buttonReset, "VectorPropertyControl_buttonReset");
+		ComponentUIUtilities.setName(this.buttonApply, "VectorPropertyControl_buttonApply");
+	}
 	private void initializeResources() {
 		this.labelRecordCount.setText(ControlsProperties.getString("String_LabelRecordsetCount"));
 		this.labelSpatialIndexType.setText(ControlsProperties.getString("String_LabelSpatialIndexType"));

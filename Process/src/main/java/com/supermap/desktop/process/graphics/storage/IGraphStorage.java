@@ -42,9 +42,15 @@ public interface IGraphStorage {
 
 	IGraph[] findIntersetctedGraphs(int x, int y, int width, int height);
 
+	IGraph[] findIntersetctedGraphs(Rectangle rect);
+
 	IGraph[] findContainedGraphs(int x, int y, int width, int height);
 
+	IGraph[] findContainedGraphs(Rectangle rect);
+
 	Rectangle getBounds();
+
+	void modifyGraphBounds(IGraph graph, int x, int y, int width, int height);
 
 	void clear();
 }

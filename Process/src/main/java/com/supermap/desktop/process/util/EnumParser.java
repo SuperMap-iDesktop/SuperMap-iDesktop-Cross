@@ -18,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class EnumParser {
     private boolean isSuperMapEnum = false;
-    private Class enumType;
+    private Class enumClass;
     private String[] chName;
     private String[] enumNames;
     private CopyOnWriteArrayList enumItems = new CopyOnWriteArrayList();
@@ -27,8 +27,8 @@ public class EnumParser {
 
     }
 
-    public EnumParser(Class enumType, String[] enumNames, String... chName) {
-        this.enumType = enumType;
+    public EnumParser(Class enumClass, String[] enumNames, String... chName) {
+        this.enumClass = enumClass;
         this.enumNames = enumNames;
         this.chName = chName;
         parse();
@@ -38,8 +38,8 @@ public class EnumParser {
         this.enumNames = enumNames;
     }
 
-    public void setEnumType(Class enumType) {
-        this.enumType = enumType;
+    public void setEnumClass(Class enumClass) {
+        this.enumClass = enumClass;
     }
 
     public void setChName(String[] chName) {
@@ -51,19 +51,19 @@ public class EnumParser {
      * Chinese name reflect to a enum value
      */
     public void parse() {
-        if (null == enumType || StringUtilities.isNullOrEmptyString(chName)) {
+        if (null == enumClass || StringUtilities.isNullOrEmptyString(chName)) {
             return;
         }
-        if (enumType.getSuperclass() == Enum.class) {
+        if (enumClass.getSuperclass() == Enum.class) {
             isSuperMapEnum = true;
         }
         if (isSuperMapEnum) {
             try {
                 if (enumNames.length == chName.length) {
                     int newLength = enumNames.length;
-                    Method parse = enumType.getMethod("parse", Class.class, String.class);
+                    Method parse = enumClass.getMethod("parse", Class.class, String.class);
                     for (int i = 0; i < newLength; i++) {
-                        ParameterDataNode item = new ParameterDataNode(chName[i], parse.invoke(Enum.class, enumType, enumNames[i]));
+                        ParameterDataNode item = new ParameterDataNode(chName[i], parse.invoke(Enum.class, enumClass, enumNames[i]));
                         enumItems.add(item);
                     }
                 }
@@ -75,8 +75,8 @@ public class EnumParser {
             } catch (InvocationTargetException e) {
                 Application.getActiveApplication().getOutput().output(e);
             }
-        } else if (enumType.isEnum()) {
-            Object[] enumConstants = enumType.getEnumConstants();
+        } else if (enumClass.isEnum()) {
+            Object[] enumConstants = enumClass.getEnumConstants();
             if (enumConstants != null && enumConstants.length > 0) {
                 int size = enumConstants.length;
                 if (enumNames.length == size && enumNames.length == chName.length) {

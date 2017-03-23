@@ -21,7 +21,6 @@ import javax.swing.*;
  */
 public class MetaProcessSpatialIndex extends MetaProcess {
 	private ParameterComboBox parameterComboBox;
-	private IParameters parameters;
 
 	public MetaProcessSpatialIndex() {
 		parameters = new DefaultParameters();

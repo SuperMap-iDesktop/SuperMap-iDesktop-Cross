@@ -45,6 +45,38 @@ public class CoordinateTransform {
 		fireCanvasTransform(new CanvasTransformEvent(this.canvas, CanvasTransformEvent.TYPE_TRANSLATE));
 	}
 
+	public void translateX(double translateX) {
+		this.translateX += translateX;
+		this.translateX = this.translateX >= this.maxTranslateX ? this.maxTranslateX : this.translateX;
+		this.translateX = this.translateX <= this.minTranslateX ? this.minTranslateX : this.translateX;
+		fireCanvasTransform(new CanvasTransformEvent(this.canvas, CanvasTransformEvent.TYPE_TRANSLATE));
+	}
+
+	public void translateXTo(double translateTo) {
+		if (this.translateX != translateTo) {
+			this.translateX = translateTo;
+			this.translateX = this.translateX >= this.maxTranslateX ? this.maxTranslateX : this.translateX;
+			this.translateX = this.translateX <= this.minTranslateX ? this.minTranslateX : this.translateX;
+			fireCanvasTransform(new CanvasTransformEvent(this.canvas, CanvasTransformEvent.TYPE_TRANSLATE));
+		}
+	}
+
+	public void translateY(double translateY) {
+		this.translateY += translateY;
+		this.translateY = this.translateY >= this.maxTranslateY ? this.maxTranslateY : this.translateY;
+		this.translateY = this.translateY <= this.minTranslateY ? this.minTranslateY : this.translateY;
+		fireCanvasTransform(new CanvasTransformEvent(this.canvas, CanvasTransformEvent.TYPE_TRANSLATE));
+	}
+
+	public void translateYTo(double translateTo) {
+		if (this.translateY != translateTo) {
+			this.translateY = translateTo;
+			this.translateY = this.translateY >= this.maxTranslateY ? this.maxTranslateY : this.translateY;
+			this.translateY = this.translateY <= this.minTranslateY ? this.minTranslateY : this.translateY;
+			fireCanvasTransform(new CanvasTransformEvent(this.canvas, CanvasTransformEvent.TYPE_TRANSLATE));
+		}
+	}
+
 	public void scale(double scale) {
 		this.scale += scale;
 
@@ -198,8 +230,12 @@ public class CoordinateTransform {
 	 * @return
 	 */
 	public Rectangle inverse(Rectangle rect) {
-		Point leftTop = inverse(rect.getLocation());
-		Point rightBottom = inverse(new Point(rect.x + rect.width, rect.y + rect.height));
+		return inverse(rect.x, rect.y, rect.width, rect.height);
+	}
+
+	public Rectangle inverse(int x, int y, int width, int height) {
+		Point leftTop = inverse(new Point(x, y));
+		Point rightBottom = inverse(new Point(x + width, y + height));
 		return new Rectangle(leftTop.x, leftTop.y, rightBottom.x - leftTop.x, rightBottom.y - leftTop.y);
 	}
 
@@ -239,8 +275,12 @@ public class CoordinateTransform {
 	}
 
 	public Rectangle transform(Rectangle rect) {
-		Point leftTop = transform(rect.getLocation());
-		Point rightBottom = transform(new Point(rect.x + rect.width, rect.y + rect.height));
+		return transform(rect.x, rect.y, rect.width, rect.height);
+	}
+
+	public Rectangle transform(int x, int y, int width, int height) {
+		Point leftTop = transform(new Point(x, y));
+		Point rightBottom = transform(new Point(x + width, y + height));
 		return new Rectangle(leftTop.x, leftTop.y, rightBottom.x - leftTop.x, rightBottom.y - leftTop.y);
 	}
 

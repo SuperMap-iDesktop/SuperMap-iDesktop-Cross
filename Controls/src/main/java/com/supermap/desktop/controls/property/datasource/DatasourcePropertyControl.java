@@ -6,6 +6,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IPasswordCheck;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.AbstractPropertyControl;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dialog.JDialogChangePassword;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.properties.CommonProperties;
@@ -89,10 +90,9 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 	 */
 	public DatasourcePropertyControl(Datasource datasource) {
 		super(ControlsProperties.getString("String_DatasourceProperty"));
-
-
 		initializeComponents();
 		initializeResources();
+		setComponentName();
 		setDatasource(datasource);
 	}
 
@@ -282,7 +282,19 @@ public class DatasourcePropertyControl extends AbstractPropertyControl {
 		this.buttonReset.setText(CommonProperties.getString("String_Button_Reset"));
 
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.labelServer, "DatasourcePropertyControl_labelServer");
+		ComponentUIUtilities.setName(this.labelDatasourceType, "DatasourcePropertyControl_labelDatasourceType");
+		ComponentUIUtilities.setName(this.labelOpenType, "DatasourcePropertyControl_labelOpenType");
+		ComponentUIUtilities.setName(this.labelDescription, "DatasourcePropertyControl_labelDescription");
+		ComponentUIUtilities.setName(this.textFieldServer, "DatasourcePropertyControl_textFieldServer");
+		ComponentUIUtilities.setName(this.textFieldDatasourceType, "DatasourcePropertyControl_textFieldDatasourceType");
+		ComponentUIUtilities.setName(this.textFieldOpenType, "DatasourcePropertyControl_textFieldOpenType");
+		ComponentUIUtilities.setName(this.textFieldDescription, "DatasourcePropertyControl_textFieldDescription");
+		ComponentUIUtilities.setName(this.buttonChangePassword, "DatasourcePropertyControl_buttonChangePassword");
+		ComponentUIUtilities.setName(this.buttonApply, "DatasourcePropertyControl_buttonApply");
+		ComponentUIUtilities.setName(this.buttonReset, "DatasourcePropertyControl_buttonReset");
+	}
 	private void buttonChangePasswordClicked() {
 		JDialogChangePassword dialog = new JDialogChangePassword("");
 

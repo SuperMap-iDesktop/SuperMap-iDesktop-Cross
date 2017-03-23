@@ -50,7 +50,7 @@ public class DialogTerrainUniformColor extends SmDialog {
     private HashMap<String, Layer> datasetLayerMap = new HashMap<String, Layer>();
     private ColorDictionary editColorDictionary = null;
     private WarningOrHelpProvider helpProvider;
-
+    private double originKey[];
 
     private ActionListener actionListener = new ActionListener() {
         @Override
@@ -64,9 +64,18 @@ public class DialogTerrainUniformColor extends SmDialog {
             } else if (e.getSource() == DialogTerrainUniformColor.this.buttonEditColorTable) {
                 DataCell dataCell = (DataCell) DialogTerrainUniformColor.this.comboBoxLayer.getSelectedItem();
                 Layer selectedLayer = datasetLayerMap.get(dataCell.getDataName());
+                DatasetGrid datasetGrid = (DatasetGrid)selectedLayer.getDataset();
+                int colorLegth = datasetGrid.getColorTable().getCount();
+                double minValue = datasetGrid.getMinValue();
+                double maxValue = datasetGrid.getMaxValue();
+                originKey = new double[colorLegth];
+                double valueGap = (maxValue - minValue) / (colorLegth - 1);
+                for (int i = 0; i < colorLegth; i++) {
+                    originKey[i] = minValue + valueGap * i;
+                }
                 LayerSettingGrid layerSettingGrid = (LayerSettingGrid) selectedLayer.getAdditionalSetting();
 
-                LayerGridParamColorTableDialog layerGridParamColorTableDialog = new LayerGridParamColorTableDialog(layerSettingGrid);
+                LayerGridParamColorTableDialog layerGridParamColorTableDialog = new LayerGridParamColorTableDialog(layerSettingGrid,originKey);
                 DialogResult result = layerGridParamColorTableDialog.showDialog();
                 if (result == DialogResult.OK) {
                     ColorDictionary colorDictionary = layerSettingGrid.getColorDictionary();

@@ -63,7 +63,10 @@ public class ParameterCombine extends AbstractParameter {
 	private void buildPanel() {
 		firePanelRebuildListener();
 	}
-
+	@Override
+	public String getDescribe() {
+		return "Combine";
+	}
 	private void firePanelRebuildListener() {
 		for (ParameterCombineBuildPanelListener parameterCombineBuildPanelListener : parameterCombineBuildPanelListeners) {
 			parameterCombineBuildPanelListener.rebuild();

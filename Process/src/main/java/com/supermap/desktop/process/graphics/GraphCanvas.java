@@ -2,6 +2,7 @@ package com.supermap.desktop.process.graphics;
 
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
+import com.supermap.desktop.process.graphics.connection.Line;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.events.GraphCreatingEvent;
@@ -9,13 +10,9 @@ import com.supermap.desktop.process.graphics.events.GraphCreatingListener;
 import com.supermap.desktop.process.graphics.graphs.EllipseGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
-import com.supermap.desktop.process.graphics.handler.canvas.CanvasEventHandler;
-import com.supermap.desktop.process.graphics.handler.graph.DefaultGraphEventHanderFactory;
-import com.supermap.desktop.process.graphics.handler.graph.IGraphEventHandlerFactory;
-import com.supermap.desktop.process.graphics.interaction.CanvasTranslation;
-import com.supermap.desktop.process.graphics.interaction.GraphCreation;
-import com.supermap.desktop.process.graphics.interaction.MultiSelction;
-import com.supermap.desktop.process.graphics.interaction.Selection;
+import com.supermap.desktop.process.graphics.interaction.canvas.*;
+import com.supermap.desktop.process.graphics.interaction.graph.DefaultGraphEventHanderFactory;
+import com.supermap.desktop.process.graphics.interaction.graph.IGraphEventHandlerFactory;
 import com.supermap.desktop.process.graphics.painter.DefaultGraphPainterFactory;
 import com.supermap.desktop.process.graphics.painter.IGraphPainterFactory;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
@@ -23,15 +20,7 @@ import com.supermap.desktop.process.graphics.storage.ListGraphs;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -66,20 +55,23 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private IGraphEventHandlerFactory graphHandlerFactory = new DefaultGraphEventHanderFactory(); // 在某具体元素上进行的可扩展交互类
 	private ConcurrentHashMap<Class, CanvasEventHandler> canvasHandlers = new ConcurrentHashMap<>(); // 统一入口的画布事件接口，通过添加 CanvasEventHandler 对象实现 Canvas 的事件处理
 
+	private java.util.List<Line> lines = new ArrayList<>();
+
 	private CanvasTranslation translation = new CanvasTranslation(this);
-	private GraphCreation creation = new GraphCreation(this);
+	private GraphCreator creator = new GraphCreator(this);
 	private Selection selection = new MultiSelction(this);
+	private DraggedHandler dragged = new DraggedHandler(this);
 
 	private ArrayList<GraphSelectChangedListener> selectChangedListeners = new ArrayList<>();
 
 	public static void main(String[] args) {
 		final JFrame frame = new JFrame();
 		frame.setSize(1000, 650);
-		final GraphCanvas canvas = new GraphCanvas();
-
+		ScrollGraphCanvas scrollCanvas = new ScrollGraphCanvas();
+		final GraphCanvas canvas = scrollCanvas.getCanvas();
 
 		frame.getContentPane().setLayout(new BorderLayout());
-		frame.getContentPane().add(canvas, BorderLayout.CENTER);
+		frame.getContentPane().add(scrollCanvas, BorderLayout.CENTER);
 
 		JPanel panel = new JPanel();
 		frame.getContentPane().add(panel, BorderLayout.NORTH);
@@ -95,7 +87,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 				graph.setArcHeight(10);
 				graph.setArcWidth(10);
 
-				canvas.creation.create(graph);
+				canvas.creator.create(graph);
 			}
 		});
 
@@ -106,7 +98,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			public void actionPerformed(ActionEvent e) {
 				EllipseGraph graph = new EllipseGraph(canvas);
 				graph.setSize(160, 60);
-				canvas.creation.create(graph);
+				canvas.creator.create(graph);
 			}
 		});
 
@@ -146,18 +138,18 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addMouseWheelListener(this);
+
+		installCanvasEventHandler(Selection.class, this.selection);
+		installCanvasEventHandler(DraggedHandler.class, this.dragged);
+		installCanvasEventHandler(CanvasTranslation.class, this.translation);
+		installCanvasEventHandler(GraphCreator.class, this.creator);
 	}
 
 	public void create(IGraph graph) {
-		this.creation.create(graph);
+		this.creator.create(graph);
 	}
 
-	public void installCanvasEventHandler(CanvasEventHandler handler) {
-		if (handler == null) {
-			return;
-		}
-
-		Class c = handler.getClass();
+	public void installCanvasEventHandler(Class c, CanvasEventHandler handler) {
 		if (c == null) {
 			return;
 		}
@@ -167,6 +159,30 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		}
 
 		this.canvasHandlers.put(c, handler);
+	}
+
+	public void installCanvasEventHandler(CanvasEventHandler handler) {
+		if (handler == null) {
+			return;
+		}
+
+		Class c = handler.getClass();
+		installCanvasEventHandler(c, handler);
+	}
+
+	public CanvasEventHandler getEventHandler(Class c) {
+		if (this.canvasHandlers.size() > 0 && this.canvasHandlers.containsKey(c)) {
+			return this.canvasHandlers.get(c);
+		} else {
+			return null;
+		}
+	}
+
+	public void setEventHandlerEnabled(Class c, boolean enabled) {
+		CanvasEventHandler handler = getEventHandler(c);
+		if (handler != null) {
+			handler.setEnabled(enabled);
+		}
 	}
 
 	public CoordinateTransform getCoordinateTransform() {
@@ -205,6 +221,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	}
 
+	public Selection getSelection() {
+		return this.selection;
+	}
+
 	public void addGraph(IGraph graph) {
 		if (graph != null && !this.graphStorage.contains(graph)) {
 			this.coordinateTransform.inverse(graph);
@@ -217,72 +237,43 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		}
 	}
 
+	public void addConnection(Line connection) {
+		this.lines.add(connection);
+	}
+
+	public void removeConnection(Line line) {
+		this.lines.remove(line);
+	}
+
+	public IGraph findGraph(Point screenPoint) {
+		if (this.graphStorage != null && this.graphStorage.getCount() > 0) {
+			Point canvasPoint = this.coordinateTransform.inverse(screenPoint);
+			return this.graphStorage.findGraph(canvasPoint);
+		} else {
+			return null;
+		}
+	}
+
+	public void modifyGraphBounds(IGraph graph, int x, int y, int width, int height) {
+		this.graphStorage.modifyGraphBounds(graph, x, y, width, height);
+	}
+
 	@Override
 	protected void paintComponent(Graphics g) {
 		Graphics2D graphics2D = (Graphics2D) g;
-
-//		int borderWidth = getScale(2);
-//		int x = getScale(1);
-//		int y = getScale(1);
-//		int width = getScale(4);
-//		int height = getScale(4);
-//
-//		graphics2D.setColor(Color.RED);
-//		Stroke stroke = new BasicStroke(borderWidth);
-//		graphics2D.setStroke(stroke);
-//		Rectangle rectangle = new Rectangle(x, y, width, height);
-//		graphics2D.draw(rectangle);
-
-
-//		graphics2D.setColor(Color.RED);
-//		Stroke stroke = new BasicStroke(4);
-//		graphics2D.setStroke(stroke);
-//		Rectangle rectangle = new Rectangle(3, 3, 5, 5);
-//		graphics2D.draw(rectangle);
-
-
-		// 测试 AffineTransform 的缩放和平移变换
-//		AffineTransform transform = new AffineTransform();
-//		setViewRenderingHints(graphics2D);
-//		paintBackground(graphics2D);
-//		paintCanvas(graphics2D);
-//		transform.translate(100, 100);
-//		transform.scale(2, 2);
-//		graphics2D.setTransform(transform);
-//
-//		graphics2D.setColor(Color.ORANGE);
-//		RoundRectangle2D round = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
-//		graphics2D.fill(round);
-//
-//		graphics2D.setColor(Color.BLACK);
-//		BasicStroke stroke = new BasicStroke(3);
-//
-//		graphics2D.setStroke(stroke);
-//		graphics2D.draw(round);
-
-		// Canvas 自身绘制
 		setViewRenderingHints(graphics2D);
 		paintBackground(graphics2D);
 		paintCanvas(graphics2D);
 
 		AffineTransform origin = graphics2D.getTransform();
 		graphics2D.setTransform(this.coordinateTransform.getAffineTransform(origin));
+		paintLines(graphics2D);
 		paintGraphs(graphics2D);
+		this.selection.paintSelected(graphics2D);
 		graphics2D.setTransform(origin);
 
-		this.creation.paint(graphics2D);
+		this.creator.paint(graphics2D);
 		this.selection.paint(graphics2D);
-
-		// 默认 AffineTransform 的测试
-//		graphics2D.setColor(Color.ORANGE);
-//		RoundRectangle2D round1 = new RoundRectangle2D.Double(100, 100, 300, 160, 30, 30);
-//		graphics2D.fill(round);
-//
-//		graphics2D.setColor(Color.BLACK);
-//		BasicStroke stroke1 = new BasicStroke(3);
-//
-//		graphics2D.setStroke(stroke1);
-//		graphics2D.draw(round1);
 	}
 
 	private int getScale(int i) {
@@ -315,6 +306,12 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		for (int i = 0; i < graphs.length; i++) {
 			IGraph graph = graphs[i];
 			this.painterFactory.getPainter(graph, g).paint();
+		}
+	}
+
+	private void paintLines(Graphics2D g) {
+		for (int i = 0, n = this.lines.size(); i < n; i++) {
+			this.lines.get(i).paint(g);
 		}
 	}
 
@@ -368,23 +365,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			entry.getValue().mouseClicked(e);
+			if (entry.getValue().isEnabled()) {
+				entry.getValue().mouseClicked(e);
+			}
 		}
-
-		this.translation.mouseClicked(e);
-		this.creation.mouseClicked(e);
-		this.selection.mouseClicked(e);
-	}
-
-
-	public IGraph findTopGraph(Point point) {
-		IGraph graph = null;
-		IGraph[] graphs = this.graphStorage.findGraphs(point);
-
-		if (graphs != null && graphs.length > 0) {
-			graph = graphs[0];
-		}
-		return graph;
 	}
 
 	public IGraph[] findGraphs(Point point) {
@@ -392,11 +376,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	}
 
 	public IGraph[] findContainedGraphs(int x, int y, int width, int height) {
-		return this.graphStorage.findContainedGraphs(x, y, width, height);
+		Rectangle canvasRect = this.coordinateTransform.inverse(x, y, width, height);
+		return this.graphStorage.findContainedGraphs(canvasRect.x, canvasRect.y, canvasRect.width, canvasRect.height);
 	}
 
 	public IGraph[] findIntersectedGraphs(int x, int y, int width, int height) {
-		return this.graphStorage.findIntersetctedGraphs(x, y, width, height);
+		Rectangle canvasRect = this.coordinateTransform.inverse(x, y, width, height);
+		return this.graphStorage.findIntersetctedGraphs(canvasRect.x, canvasRect.y, canvasRect.width, canvasRect.height);
 	}
 
 	@Override
@@ -406,14 +392,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().enable()) {
+			if (entry.getValue().isEnabled()) {
 				entry.getValue().mousePressed(e);
 			}
 		}
-
-		this.translation.mousePressed(e);
-		this.creation.mousePressed(e);
-		this.selection.mousePressed(e);
 	}
 
 	@Override
@@ -423,14 +405,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().enable()) {
+			if (entry.getValue().isEnabled()) {
 				entry.getValue().mouseReleased(e);
 			}
 		}
-
-		this.translation.mouseReleased(e);
-		this.creation.mouseReleased(e);
-		this.selection.mouseReleased(e);
 	}
 
 	@Override
@@ -440,14 +418,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().enable()) {
+			if (entry.getValue().isEnabled()) {
 				entry.getValue().mouseEntered(e);
 			}
 		}
-
-		this.translation.mouseEntered(e);
-		this.creation.mouseEntered(e);
-		this.selection.mouseEntered(e);
 	}
 
 	@Override
@@ -457,14 +431,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().enable()) {
+			if (entry.getValue().isEnabled()) {
 				entry.getValue().mouseExited(e);
 			}
 		}
-
-		this.translation.mouseExited(e);
-		this.creation.mouseExited(e);
-		this.selection.mouseExited(e);
 	}
 
 	@Override
@@ -474,14 +444,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().enable()) {
+			if (entry.getValue().isEnabled()) {
 				entry.getValue().mouseDragged(e);
 			}
 		}
-
-		this.translation.mouseDragged(e);
-		this.creation.mouseDragged(e);
-		this.selection.mouseDragged(e);
 	}
 
 	@Override
@@ -491,14 +457,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().enable()) {
+			if (entry.getValue().isEnabled()) {
 				entry.getValue().mouseMoved(e);
 			}
 		}
-
-		this.translation.mouseMoved(e);
-		this.creation.mouseMoved(e);
-		this.selection.mouseMoved(e);
 	}
 
 	private void repaint(IGraph graph, Point point) {
@@ -521,14 +483,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 		while (iterator.hasNext()) {
 			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().enable()) {
+			if (entry.getValue().isEnabled()) {
 				entry.getValue().mouseWheelMoved(e);
 			}
 		}
-
-		this.translation.mouseWheelMoved(e);
-		this.creation.mouseWheelMoved(e);
-		this.selection.mouseWheelMoved(e);
 	}
 
 	public void addGraphSelectChangedListener(GraphSelectChangedListener listener) {

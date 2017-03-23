@@ -2,6 +2,7 @@ package com.supermap.desktop.controls.property;
 
 import com.supermap.data.PrjCoordSysType;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.PropertyType;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -67,6 +68,7 @@ public class PrjCoordSysPropertyControl extends AbstractPropertyControl {
 		super(ControlsProperties.getString("String_ProjectionInfo"));
 		initializeComponents();
 		initializeResources();
+		setComponentName();
 		registerEvents();
 		setPrjCoordSys(prjHandle, covertFlag);
 	}
@@ -163,7 +165,18 @@ public class PrjCoordSysPropertyControl extends AbstractPropertyControl {
 		this.buttonSet.setText(ControlsProperties.getString("String_ProjectionInfoControl_ButtonResetProjectionInfo"));
 		this.buttonConvert.setText(ControlsProperties.getString("String_ProjectionInfoControl_ButtonProjectionConversion"));
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.labelName, "PrjCoordSysPropertyControl_labelName");
+		ComponentUIUtilities.setName(this.textFieldName, "PrjCoordSysPropertyControl_textFieldName");
+		ComponentUIUtilities.setName(this.labelCoordUnit, "PrjCoordSysPropertyControl_labelCoordUnit");
+		ComponentUIUtilities.setName(this.textFieldCoordUnit, "PrjCoordSysPropertyControl_textFieldCoordUnit");
+		ComponentUIUtilities.setName(this.labelCoordInfo, "PrjCoordSysPropertyControl_labelCoordInfo");
+		ComponentUIUtilities.setName(this.textAreaCoordInfo, "PrjCoordSysPropertyControl_textAreaCoordInfo");
+		ComponentUIUtilities.setName(this.buttonExport, "PrjCoordSysPropertyControl_buttonExport");
+		ComponentUIUtilities.setName(this.buttonCopy, "PrjCoordSysPropertyControl_buttonCopy");
+		ComponentUIUtilities.setName(this.buttonSet, "PrjCoordSysPropertyControl_buttonSet");
+		ComponentUIUtilities.setName(this.buttonConvert, "PrjCoordSysPropertyControl_buttonConvert");
+	}
 	public void initButtonState() {
 		// 目前看来，复制，转换，设置是否能使用是一致的。
 		this.buttonConvert.setEnabled(covertFlag);

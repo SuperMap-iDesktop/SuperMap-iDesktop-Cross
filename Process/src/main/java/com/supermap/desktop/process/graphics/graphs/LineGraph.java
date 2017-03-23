@@ -4,8 +4,6 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 
 import java.awt.*;
 import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
-import java.util.HashMap;
 
 /**
  * Created by highsad on 2017/1/19.
@@ -163,12 +161,12 @@ public class LineGraph extends AbstractGraph {
 	}
 
 	@Override
-	public void setLocation(Point point) {
+	public void applyLocation(Point point) {
 
 	}
 
 	@Override
-	public void setSize(int width, int height) {
+	public void applySize(int width, int height) {
 
 	}
 

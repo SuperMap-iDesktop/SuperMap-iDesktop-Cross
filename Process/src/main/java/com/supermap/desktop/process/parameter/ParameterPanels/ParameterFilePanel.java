@@ -33,7 +33,7 @@ public class ParameterFilePanel extends SwingPanel {
 		this.parameterFile = (ParameterFile) parameterFile;
 		// todo fileChooseControl不好用，需要重构
 		if (this.parameterFile.getSelectedItem() != null) {
-			fileChooserControl.setText(((File) this.parameterFile.getSelectedItem()).getAbsolutePath());
+			fileChooserControl.setText(this.parameterFile.getSelectedItem().toString());
 		}
 		label.setText(this.parameterFile.getDescribe());
 		initListener();
@@ -58,7 +58,7 @@ public class ParameterFilePanel extends SwingPanel {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (!isSelectingFile && Objects.equals(evt.getPropertyName(), AbstractParameter.PROPERTY_VALE)) {
-					fileChooserControl.setText(((File) evt.getNewValue()).getAbsolutePath());
+					fileChooserControl.setText(evt.getNewValue().toString());
 				}
 			}
 		});

@@ -64,13 +64,28 @@ public class QuadTreeGraphs implements IGraphStorage {
 	}
 
 	@Override
+	public IGraph[] findIntersetctedGraphs(Rectangle rect) {
+		return new IGraph[0];
+	}
+
+	@Override
 	public IGraph[] findContainedGraphs(int x, int y, int width, int height) {
+		return new IGraph[0];
+	}
+
+	@Override
+	public IGraph[] findContainedGraphs(Rectangle rect) {
 		return new IGraph[0];
 	}
 
 	@Override
 	public Rectangle getBounds() {
 		return null;
+	}
+
+	@Override
+	public void modifyGraphBounds(IGraph graph, int x, int y, int width, int height) {
+
 	}
 
 	@Override

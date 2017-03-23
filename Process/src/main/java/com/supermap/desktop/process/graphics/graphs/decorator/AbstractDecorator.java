@@ -26,7 +26,9 @@ public abstract class AbstractDecorator extends AbstractGraph {
 	}
 
 	public void undecorate() {
-		this.graph = null;
+		if (this.graph != null) {
+			this.graph = null;
+		}
 	}
 
 	public boolean isDecorating() {
@@ -64,12 +66,12 @@ public abstract class AbstractDecorator extends AbstractGraph {
 	}
 
 	@Override
-	public void setLocation(Point point) {
+	protected void applyLocation(Point point) {
 		getGraph().setLocation(point);
 	}
 
 	@Override
-	public void setSize(int width, int height) {
+	protected void applySize(int width, int height) {
 		getGraph().setSize(width, height);
 	}
 

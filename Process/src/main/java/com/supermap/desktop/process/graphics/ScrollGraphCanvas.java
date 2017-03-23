@@ -6,6 +6,8 @@ import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 
 import javax.swing.*;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import java.awt.*;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
@@ -22,16 +24,25 @@ public class ScrollGraphCanvas extends JPanel {
 	private JPanel corner;
 	private GraphCanvasListener canvasListener = new GraphCanvasListener();
 
+	private boolean isHandleScrollBar = false;
+	private boolean isHandleCanvas = false;
+
 	public ScrollGraphCanvas() {
 		this(new GraphCanvas());
 	}
 
-	public ScrollGraphCanvas(GraphCanvas canvas) {
+	public ScrollGraphCanvas(final GraphCanvas canvas) {
 		this.canvas = canvas;
 		setOpaque(true);
 		initilaizeComponents();
 		this.canvas.getCoordinateTransform().addCanvasTransformListener(this.canvasListener);
 		this.canvas.addGraphCreatedListener(this.canvasListener);
+		this.canvas.addComponentListener(this.canvasListener);
+		this.canvas.addAncestorListener(this.canvasListener);
+	}
+
+	public GraphCanvas getCanvas() {
+		return canvas;
 	}
 
 	private void initilaizeComponents() {
@@ -80,7 +91,12 @@ public class ScrollGraphCanvas extends JPanel {
 
 		@Override
 		public void adjustmentValueChanged(AdjustmentEvent e) {
-
+			if (!isHandleCanvas) {
+				isHandleScrollBar = true;
+				canvas.getCoordinateTransform().translateXTo(-1 * e.getValue());
+				canvas.repaint();
+				isHandleScrollBar = false;
+			}
 		}
 	}
 
@@ -93,11 +109,16 @@ public class ScrollGraphCanvas extends JPanel {
 
 		@Override
 		public void adjustmentValueChanged(AdjustmentEvent e) {
-
+			if (!isHandleCanvas) {
+				isHandleScrollBar = true;
+				canvas.getCoordinateTransform().translateYTo(-1 * e.getValue());
+				canvas.repaint();
+				isHandleScrollBar = false;
+			}
 		}
 	}
 
-	private class GraphCanvasListener extends ComponentAdapter implements CanvasTransformListener, GraphCreatedListener {
+	private class GraphCanvasListener extends ComponentAdapter implements CanvasTransformListener, GraphCreatedListener, AncestorListener {
 
 		@Override
 		public void graphCreated(GraphCreatedEvent e) {
@@ -106,34 +127,53 @@ public class ScrollGraphCanvas extends JPanel {
 
 		@Override
 		public void canvasTransform(CanvasTransformEvent e) {
-			if (e.getType() == CanvasTransformEvent.TYPE_SCALE) {
-
-			} else if (e.getType() == CanvasTransformEvent.TYPE_TRANSLATE) {
-
+			if (!isHandleScrollBar) {
+				isHandleCanvas = true;
+				processScrollBars();
+				isHandleCanvas = false;
 			}
 		}
 
 		@Override
 		public void componentResized(ComponentEvent e) {
-
+			processScrollBars();
 		}
 
-		private void computeScrollBarExtent() {
-		}
-	}
-
-	public static void main(String[] args) {
-		ScrollGraphCanvas canvas = new ScrollGraphCanvas();
-		final JFrame frame = new JFrame();
-		frame.setSize(800, 800);
-		frame.setLayout(new BorderLayout());
-		frame.add(canvas, BorderLayout.CENTER);
-
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				frame.setVisible(true);
+		private void processScrollBars() {
+			Rectangle visibleRect = canvas.getVisibleCanvasRect();
+			if (visibleRect.width >= canvas.getCanvasRect().width) {
+				hBar.setVisible(false);
+			} else {
+				hBar.setVisible(true);
+				hBar.setValue(visibleRect.x);
+				hBar.setVisibleAmount(visibleRect.width);
 			}
-		});
+
+			if (visibleRect.height > canvas.getCanvasRect().height) {
+				vBar.setVisible(false);
+			} else {
+				vBar.setVisible(true);
+				vBar.setValue(visibleRect.y);
+				vBar.setVisibleAmount(visibleRect.height);
+			}
+		}
+
+		@Override
+		public void ancestorAdded(AncestorEvent event) {
+
+			// 初始化的时候先做个偏移，以使得进度条滑块居中
+			Rectangle visibleRect = canvas.getVisibleCanvasRect();
+			canvas.getCoordinateTransform().translate(canvas.getWidth() / 2, canvas.getHeight() / 2);
+		}
+
+		@Override
+		public void ancestorRemoved(AncestorEvent event) {
+
+		}
+
+		@Override
+		public void ancestorMoved(AncestorEvent event) {
+
+		}
 	}
 }

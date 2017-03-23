@@ -1,39 +1,34 @@
 package com.supermap.desktop.mapview.map.propertycontrols;
 
-import com.supermap.data.GeoCompound;
-import com.supermap.data.GeoEllipse;
-import com.supermap.data.GeoPie;
-import com.supermap.data.GeoRegion;
-import com.supermap.data.Geometry;
-import com.supermap.data.Recordset;
-import com.supermap.data.Rectangle2D;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilities.SystemPropertyUtilities;
+import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
-import com.supermap.ui.MapControl;
-import com.supermap.ui.TrackMode;
-import com.supermap.ui.TrackedEvent;
-import com.supermap.ui.TrackedListener;
+import com.supermap.ui.*;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
 
+/**
+ * 重构
+ * 自定义JMenuItem的添加
+ * 修改自定义范围PopupMenu，目前实现：
+ * 增添构造方法，将用到此PopupMenu的窗体，作为参数传入，实现当点击了相应的MenuItem，隐藏主窗体，当结束编辑时，再show出主窗体
+ * 待优化：传入窗体的方式，破坏了JPopupMenuBounds类的封装性，虽然可以满足功能的要求，但并不是最好的解决方式，有待优化--yuanR 2017.3.20
+ * <p>
+ * 遇到的问题：
+ * 将  dialog.setVisible(true);放置在绘制事件结束，会导致无法删除绘制出的矩形框，原因可能是：线程冲突，待解决
+ */
 public class JPopupMenuBounds extends JPopupMenu {
 
 	private static final long serialVersionUID = 1L;
@@ -45,13 +40,16 @@ public class JPopupMenuBounds extends JPopupMenu {
 	private JMenuItem menuItemSelectCircle;
 	private JMenuItem menuItemClear;
 
-	private JPanel panelSelectTargetInfo;
-	private JLabel labelSelectTargetInfo;
+	private ArrayList<String> menuItemsText;
+
+	private MapActionSelectTargetInfoPanel panelSelectTargetInfo;
 
 	private String moduleName;
 
 	private transient GeoRegion geoRegion;
 	private transient Rectangle2D rectangle2d;
+
+	private SmDialog dialog;
 
 	private static final String SELECT_TARGET = "SelectTarget";
 	private static final String SELECT_RECTANGLE = "SelectRectangle";
@@ -73,43 +71,70 @@ public class JPopupMenuBounds extends JPopupMenu {
 		public void tracked(TrackedEvent arg0) {
 			abstractTracked(arg0);
 		}
-
 	};
 
 	private void abstractTracked(TrackedEvent arg0) {
 		if (arg0.getGeometry() != null) {
-			if (moduleName.equals(JPopupMenuBounds.CLIP_REGION)) {
+			if (this.moduleName.equals(JPopupMenuBounds.CLIP_REGION)) {
 				if (arg0.getGeometry() instanceof GeoRegion) {
-					geoRegion = (GeoRegion) arg0.getGeometry().clone();
+					this.geoRegion = (GeoRegion) arg0.getGeometry().clone();
 				} else if (arg0.getGeometry() instanceof GeoPie) {
-					geoRegion = ((GeoPie) arg0.getGeometry()).convertToRegion(JPopupMenuBounds.SEGMENTCOUNT).clone();
+					this.geoRegion = ((GeoPie) arg0.getGeometry()).convertToRegion(JPopupMenuBounds.SEGMENTCOUNT).clone();
 				}
-				changeSupport.firePropertyChange(moduleName, null, geoRegion);
+				this.changeSupport.firePropertyChange(this.moduleName, null, this.geoRegion);
 			} else {
-				rectangle2d = arg0.getGeometry().getBounds().clone();
-				changeSupport.firePropertyChange(moduleName, null, rectangle2d);
+				this.rectangle2d = arg0.getGeometry().getBounds().clone();
+				this.changeSupport.firePropertyChange(this.moduleName, null, this.rectangle2d);
 			}
-			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().removeTrackedListener(trackedListener);
+			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().removeTrackedListener(this.trackedListener);
 			exitEdit();
 		} else {
-			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().addMouseListener(controlMouseListener);
+			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().addMouseListener(this.controlMouseListener);
 		}
 	}
+
+	private int flag;
 
 	private transient MouseListener controlMouseListener = new MouseAdapter() {
 
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			MapControl control = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
+
 			if (e.getButton() == MouseEvent.BUTTON3) {
-				control.removeMouseListener(this);
-				exitEdit();
+				doSome();
+			} else if (e.getButton() == MouseEvent.BUTTON1) {
+				flag++;
+				if (flag == 2) {
+					doSome();
+				}
+			}
+		}
+
+		private void doSome() {
+			MapControl control = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
+			control.removeMouseListener(this);
+			exitEdit();
+			//设置完之后，show出主窗体
+			if (dialog != null) {
+				dialog.setVisible(true);
 			}
 		}
 	};
 
+
 	public JPopupMenuBounds(String moduleName, Rectangle2D rectangle2d) {
 		super();
+		this.moduleName = moduleName;
+		this.rectangle2d = rectangle2d;
+		initComponents();
+		initListeners();
+		initResources();
+	}
+
+
+	public JPopupMenuBounds(SmDialog smDialog, String moduleName, Rectangle2D rectangle2d) {
+		super();
+		this.dialog = smDialog;
 		this.moduleName = moduleName;
 		this.rectangle2d = rectangle2d;
 		initComponents();
@@ -129,77 +154,94 @@ public class JPopupMenuBounds extends JPopupMenu {
 	private void initComponents() {
 		Dimension dimension = new Dimension(200, 20);
 
-		panelSelectTargetInfo = new JPanel();
-		if (SystemPropertyUtilities.isWindows()) {
-			panelSelectTargetInfo.setSize(220, 30);
+		this.panelSelectTargetInfo = new MapActionSelectTargetInfoPanel();
+
+
+		this.menuItemSelectTarget = new JMenuItem("SelcetTarget");
+		this.menuItemSelectRectangle = new JMenuItem("SelectRectangle");
+		this.menuItemSelectPolygon = new JMenuItem("SelectPolygon");
+		this.menuItemSelectSector = new JMenuItem("SelectSector");
+		this.menuItemSelectCircle = new JMenuItem("SelectCircle");
+		this.menuItemClear = new JMenuItem("Clear");
+		// 构建可以指定特定显示项的数组，，，默认为全部
+		this.menuItemsText = new ArrayList<>();
+
+		if (this.moduleName.equals(JPopupMenuBounds.VIEW_BOUNDS_LOCKED)) {
+			this.menuItemClear.setText("SetMapBounds");
+		}
+		this.menuItemSelectTarget.setSize(dimension);
+		this.menuItemSelectRectangle.setSize(dimension);
+		this.menuItemSelectPolygon.setSize(dimension);
+		this.menuItemSelectSector.setSize(dimension);
+		this.menuItemSelectCircle.setSize(dimension);
+		this.menuItemClear.setSize(dimension);
+
+		setPopupItems(this.menuItemsText);
+	}
+
+	/**
+	 * 自定义显示的项--yuanR 2017.3.20
+	 *
+	 * @param arrayList
+	 */
+	public void setPopupItems(ArrayList arrayList) {
+		this.removeAll();
+		this.menuItemsText = arrayList;
+		if (this.menuItemsText.size() <= 0) {
+			this.add(this.menuItemSelectTarget);
+			this.addSeparator();
+			this.add(this.menuItemSelectRectangle);
+			this.add(this.menuItemSelectPolygon);
+			this.add(this.menuItemSelectSector);
+			this.add(this.menuItemSelectCircle);
+			this.addSeparator();
+			this.add(this.menuItemClear);
 		} else {
-			panelSelectTargetInfo.setSize(280, 30);
+			for (int i = 0; i < this.menuItemsText.size(); i++) {
+				if (this.menuItemsText.get(i).equals(MapViewProperties.getString("String_Button_SelectObject"))) {
+					this.add(this.menuItemSelectTarget);
+				} else if (this.menuItemsText.get(i).equals(MapViewProperties.getString("String_Button_DrawRectangle"))) {
+					this.add(this.menuItemSelectRectangle);
+				} else if (this.menuItemsText.get(i).equals(MapViewProperties.getString("String_Button_DrawPolygon"))) {
+					this.add(this.menuItemSelectPolygon);
+				} else if (this.menuItemsText.get(i).equals(MapViewProperties.getString("String_Button_DrawPie"))) {
+					this.add(this.menuItemSelectSector);
+				} else if (this.menuItemsText.get(i).equals(MapViewProperties.getString("String_Button_DrawCircle"))) {
+					this.add(this.menuItemSelectCircle);
+				}
+			}
 		}
-		panelSelectTargetInfo.setBorder(new LineBorder(Color.LIGHT_GRAY));
-		panelSelectTargetInfo.setBackground(new Color(255, 255, 255, 220));
-		labelSelectTargetInfo = new JLabel("Select one or more geoRegion.");
-
-		panelSelectTargetInfo.setLayout(new GridBagLayout());
-		panelSelectTargetInfo.add(labelSelectTargetInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
-
-		menuItemSelectTarget = new JMenuItem("SelcetTarget");
-		menuItemSelectRectangle = new JMenuItem("SelectRectangle");
-		menuItemSelectPolygon = new JMenuItem("SelectPolygon");
-		menuItemSelectSector = new JMenuItem("SelectSector");
-		menuItemSelectCircle = new JMenuItem("SelectCircle");
-		menuItemClear = new JMenuItem("Clear");
-
-		if (moduleName.equals(JPopupMenuBounds.VIEW_BOUNDS_LOCKED)) {
-			menuItemClear.setText("SetMapBounds");
-		}
-		menuItemSelectTarget.setSize(dimension);
-		menuItemSelectRectangle.setSize(dimension);
-		menuItemSelectPolygon.setSize(dimension);
-		menuItemSelectSector.setSize(dimension);
-		menuItemSelectCircle.setSize(dimension);
-		menuItemClear.setSize(dimension);
-
-		this.add(menuItemSelectTarget);
-		this.addSeparator();
-		this.add(menuItemSelectRectangle);
-		this.add(menuItemSelectPolygon);
-		this.add(menuItemSelectSector);
-		this.add(menuItemSelectCircle);
-		this.addSeparator();
-		this.add(menuItemClear);
 	}
 
 	private void initListeners() {
-		menuItemSelectTarget.setActionCommand(JPopupMenuBounds.SELECT_TARGET);
-		menuItemSelectRectangle.setActionCommand(JPopupMenuBounds.SELECT_RECTANGLE);
-		menuItemSelectPolygon.setActionCommand(JPopupMenuBounds.SELECT_POLYGON);
-		menuItemSelectSector.setActionCommand(JPopupMenuBounds.SELECT_SECTOR);
-		menuItemSelectCircle.setActionCommand(JPopupMenuBounds.SELECT_CIRCLE);
-		menuItemClear.setActionCommand(JPopupMenuBounds.CLEAR);
+		this.menuItemSelectTarget.setActionCommand(JPopupMenuBounds.SELECT_TARGET);
+		this.menuItemSelectRectangle.setActionCommand(JPopupMenuBounds.SELECT_RECTANGLE);
+		this.menuItemSelectPolygon.setActionCommand(JPopupMenuBounds.SELECT_POLYGON);
+		this.menuItemSelectSector.setActionCommand(JPopupMenuBounds.SELECT_SECTOR);
+		this.menuItemSelectCircle.setActionCommand(JPopupMenuBounds.SELECT_CIRCLE);
+		this.menuItemClear.setActionCommand(JPopupMenuBounds.CLEAR);
 
-		menuItemSelectTarget.addActionListener(actionListener);
-		menuItemSelectRectangle.addActionListener(actionListener);
-		menuItemSelectPolygon.addActionListener(actionListener);
-		menuItemSelectSector.addActionListener(actionListener);
-		menuItemSelectCircle.addActionListener(actionListener);
-		menuItemClear.addActionListener(actionListener);
+		this.menuItemSelectTarget.addActionListener(actionListener);
+		this.menuItemSelectRectangle.addActionListener(actionListener);
+		this.menuItemSelectPolygon.addActionListener(actionListener);
+		this.menuItemSelectSector.addActionListener(actionListener);
+		this.menuItemSelectCircle.addActionListener(actionListener);
+		this.menuItemClear.addActionListener(actionListener);
 	}
 
 	private void initResources() {
-		labelSelectTargetInfo.setText(MapViewProperties.getString("String_SelectOneOrMoreRegion"));
-
-		menuItemSelectTarget.setText(MapViewProperties.getString("String_Button_SelectObject"));
-		menuItemSelectRectangle.setText(MapViewProperties.getString("String_Button_DrawRectangle"));
-		menuItemSelectPolygon.setText(MapViewProperties.getString("String_Button_DrawPolygon"));
-		menuItemSelectSector.setText(MapViewProperties.getString("String_Button_DrawPie"));
-		menuItemSelectCircle.setText(MapViewProperties.getString("String_Button_DrawCircle"));
+		this.menuItemSelectTarget.setText(MapViewProperties.getString("String_Button_SelectObject"));
+		this.menuItemSelectRectangle.setText(MapViewProperties.getString("String_Button_DrawRectangle"));
+		this.menuItemSelectPolygon.setText(MapViewProperties.getString("String_Button_DrawPolygon"));
+		this.menuItemSelectSector.setText(MapViewProperties.getString("String_Button_DrawPie"));
+		this.menuItemSelectCircle.setText(MapViewProperties.getString("String_Button_DrawCircle"));
 
 		if (this.moduleName.equals(JPopupMenuBounds.CLIP_REGION)) {
-			menuItemClear.setText(MapViewProperties.getString("String_Button_ClearClipRegion"));
+			this.menuItemClear.setText(MapViewProperties.getString("String_Button_ClearClipRegion"));
 		} else if (this.moduleName.equals(JPopupMenuBounds.VIEW_BOUNDS_LOCKED)) {
-			menuItemClear.setText(MapViewProperties.getString("String_Button_ClearLockedViewBounds"));
+			this.menuItemClear.setText(MapViewProperties.getString("String_Button_ClearLockedViewBounds"));
 		} else if (this.moduleName.equals(JPopupMenuBounds.CUSTOM_BOUNDS)) {
-			menuItemClear.setText(MapViewProperties.getString("String_Button_ClearCustomBounds"));
+			this.menuItemClear.setText(MapViewProperties.getString("String_Button_ClearCustomBounds"));
 		}
 	}
 
@@ -222,6 +264,10 @@ public class JPopupMenuBounds extends JPopupMenu {
 				clearFullShowBoundsClicked();
 			}
 		} else if (actionCommand.equals(JPopupMenuBounds.SELECT_TARGET)) {
+			// 当点击了“选择对象”PopupMenu，隐藏主窗体
+			if (this.dialog != null) {
+				this.dialog.setVisible(false);
+			}
 			selectButtonClicked();
 		} else {
 			drawButtonClicked(actionCommand);
@@ -255,7 +301,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 	 */
 	private void clearFullShowBoundsClicked() {
 		Map currentMap = getCurrentMap();
-		if (moduleName.equals(JPopupMenuBounds.VIEW_BOUNDS_LOCKED)) {
+		if (this.moduleName.equals(JPopupMenuBounds.VIEW_BOUNDS_LOCKED)) {
 			if (currentMap != null && currentMap.getBounds().getHeight() > 0 && currentMap.getBounds().getWidth() > 0) {
 				this.rectangle2d = currentMap.getBounds();
 			} else {
@@ -276,8 +322,8 @@ public class JPopupMenuBounds extends JPopupMenu {
 		final MapControl activeMapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
 		activeMapControl.setTrackMode(TrackMode.TRACK);
 		activeMapControl.setAction(getSuitableAction(actionCommand));
-		activeMapControl.addMouseListener(controlMouseListener);
-		activeMapControl.addTrackedListener(trackedListener);
+		activeMapControl.addMouseListener(this.controlMouseListener);
+		activeMapControl.addTrackedListener(this.trackedListener);
 	}
 
 	/**
@@ -295,7 +341,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 		final MapControl activeMapControl = activeForm.getMapControl();
 		activeMapControl.setAction(Action.SELECT);
 		activeMapControl.setLayout(null);
-		activeMapControl.add(panelSelectTargetInfo);
+		activeMapControl.add(this.panelSelectTargetInfo);
 
 		final MouseMotionListener mouseMotionListener = new MouseAdapter() {
 			@Override
@@ -321,6 +367,10 @@ public class JPopupMenuBounds extends JPopupMenu {
 					activeForm.getMapControl().removeMouseListener(this);
 					if (activeForm instanceof FormMap) {
 						((FormMap) Application.getActiveApplication().getActiveForm()).clearSelection();
+					}
+					//设置完之后，show出主窗体
+					if (dialog != null) {
+						dialog.setVisible(true);
 					}
 				}
 			}
@@ -355,7 +405,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 	private void abstractActiveMapcontrol(final MapControl activeMapControl) {
 
 		boolean isChanged = false;
-		if (moduleName.equals(JPopupMenuBounds.CLIP_REGION)) {
+		if (this.moduleName.equals(JPopupMenuBounds.CLIP_REGION)) {
 			GeoRegion geoClipRegion = new GeoRegion();
 			Layers layers = activeMapControl.getMap().getLayers();
 			for (int i = 0; i < layers.getCount(); i++) {
@@ -387,7 +437,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 //			System.out.println("Time:"+(System.currentTimeMillis() - startTime));
 			if (isChanged) {
 				JPopupMenuBounds.this.geoRegion = geoClipRegion;
-				changeSupport.firePropertyChange(moduleName, null, JPopupMenuBounds.this.geoRegion);
+				this.changeSupport.firePropertyChange(this.moduleName, null, JPopupMenuBounds.this.geoRegion);
 			}
 		} else {
 			Rectangle2D rectangle2dResult = null;
@@ -414,7 +464,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 			}
 			if (isChanged && rectangle2dResult != null && rectangle2dResult.getHeight() > 0 && rectangle2dResult.getWidth() > 0) {
 				JPopupMenuBounds.this.rectangle2d = rectangle2dResult;
-				changeSupport.firePropertyChange(moduleName, null, JPopupMenuBounds.this.rectangle2d);
+				this.changeSupport.firePropertyChange(this.moduleName, null, JPopupMenuBounds.this.rectangle2d);
 			}
 		}
 	}
@@ -424,6 +474,11 @@ public class JPopupMenuBounds extends JPopupMenu {
 		if (actionCommand.equals(JPopupMenuBounds.SELECT_TARGET)) {
 			result = Action.SELECT;
 		} else if (actionCommand.equals(JPopupMenuBounds.SELECT_RECTANGLE)) {
+			// 当点击了“绘制矩形”PopupMenu，隐藏主窗体
+			if (this.dialog != null) {
+				this.dialog.setVisible(false);
+				this.flag = 0;
+			}
 			result = Action.CREATERECTANGLE;
 		} else if (actionCommand.equals(JPopupMenuBounds.SELECT_POLYGON)) {
 			result = Action.CREATEPOLYGON;
@@ -439,7 +494,6 @@ public class JPopupMenuBounds extends JPopupMenu {
 		MapControl activeMapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
 		activeMapControl.setAction(Action.SELECT2);
 		activeMapControl.setTrackMode(TrackMode.EDIT);
-
 	}
 
 	public void setRectangle2D(Rectangle2D rectangle2d) {
@@ -459,10 +513,10 @@ public class JPopupMenuBounds extends JPopupMenu {
 	}
 
 	public void addPropertyChangeListeners(PropertyChangeListener changeListener) {
-		changeSupport.addPropertyChangeListener(changeListener);
+		this.changeSupport.addPropertyChangeListener(changeListener);
 	}
 
 	public void removePropertyChangeListeners(PropertyChangeListener changeListener) {
-		changeSupport.removePropertyChangeListener(changeListener);
+		this.changeSupport.removePropertyChangeListener(changeListener);
 	}
 }
