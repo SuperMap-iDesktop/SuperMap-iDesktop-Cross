@@ -105,7 +105,7 @@ public class MetaProcessBuffer extends MetaProcess {
         // fixme 数据集来源
         DatasetVector datasetVector = (DatasetVector) getInputs().getData();
 
-        BufferRadiusUnit radiusUnit = (BufferRadiusUnit) ((ParameterDataNode) parameterBufferRange.getSelectedItem()).getData();
+        BufferRadiusUnit radiusUnit = (BufferRadiusUnit) parameterBufferRange.getSelectedItem();
         int radius = Integer.valueOf((String) parameterTextFieldRadius.getSelectedItem());
         boolean isUnion = "true".equalsIgnoreCase((String) parameterUnionBuffer.getSelectedItem());
         boolean isAttributeRetained = "true".equalsIgnoreCase((String) parameterRetainAttribute.getSelectedItem());
@@ -122,6 +122,7 @@ public class MetaProcessBuffer extends MetaProcess {
         BufferAnalystParameter parameter = new BufferAnalystParameter();
         parameter.setRadiusUnit(radiusUnit);
         parameter.setLeftDistance(radius);
+        parameter.setRightDistance(radius);
         parameter.setSemicircleLineSegment(semicircleLineSegment);
 
         BufferAnalyst.addSteppedListener(this.steppedListener);

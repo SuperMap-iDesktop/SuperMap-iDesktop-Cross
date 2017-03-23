@@ -97,10 +97,12 @@ public class WorkflowParser {
                             if (null != preProcess && null != process) {
                                 //TODO
                                 //INodeConstriant now not exist in xml file,so add a new INodeConstriant
+                                process.getInputs().followProcess(preProcess);
                                 nodeMatrix.addConstraint(preProcess, process, new INodeConstraint() {
                                 });
                             }
                             if (null != process && null != nextProcess) {
+                                nextProcess.getInputs().followProcess(process);
                                 nodeMatrix.addConstraint(process, nextProcess, new INodeConstraint() {
                                 });
                             }
