@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1488509649672
+Bnd-LastModified: 1490255454320
 Build-Jdk: 1.7.0_80
 Built-By: Administrator
 Bundle-Activator: com.supermap.desktop.core.CoreActivator
@@ -19,7 +19,8 @@ Bundle-ClassPath: .,lib/fastjson-1.2.15.jar,lib/httpclient-4.5.2.jar,lib
  0.0.jar,lib/com.supermap.mapping-9.0.0.jar,lib/com.supermap.realspace-9
  .0.0.jar,lib/com.supermap.realspace.networkanalyst-9.0.0.jar,lib/com.su
  permap.realspace.spatialanalyst-9.0.0.jar,lib/com.supermap.tilestorage-
- 9.0.0.jar,lib/com.supermap.ui.controls-9.0.0.jar
+ 9.0.0.jar,lib/com.supermap.ui.controls-9.0.0.jar,lib/mongo-java-driver-
+ 3.0.4.jar,lib/bson-3.0.4.jar
 Bundle-ManifestVersion: 2
 Bundle-Name: Core
 Bundle-SymbolicName: com.supermap.idesktop.cross.Core
@@ -69,7 +70,9 @@ Embedded-Artifacts: lib/fastjson-1.2.15.jar;g="com.alibaba";a="fastjson"
  m.supermap";a="com.supermap.realspace.spatialanalyst";v="9.0.0",lib/com
  .supermap.tilestorage-9.0.0.jar;g="com.supermap";a="com.supermap.tilest
  orage";v="9.0.0",lib/com.supermap.ui.controls-9.0.0.jar;g="com.supermap
- ";a="com.supermap.ui.controls";v="9.0.0"
+ ";a="com.supermap.ui.controls";v="9.0.0",lib/mongo-java-driver-3.0.4.ja
+ r;g="org.mongodb";a="mongo-java-driver";v="3.0.4",lib/bson-3.0.4.jar;g=
+ "org.mongodb";a="bson";v="3.0.4"
 Export-Package: com.supermap.desktop;version="1.0.0";uses:="com.supermap
  .data,com.supermap.desktop.Interface,com.supermap.desktop.enums,com.sup
  ermap.desktop.event,com.supermap.desktop.exception,com.supermap.desktop
@@ -404,7 +407,33 @@ Export-Package: com.supermap.desktop;version="1.0.0";uses:="com.supermap
  t,org.jdesktop.swingx.plaf",org.jdesktop.swingx.tips;version="1.0.0",or
  g.jdesktop.swingx.tree;version="1.0.0";uses:="org.jdesktop.swingx.plaf"
  ,org.jdesktop.swingx.treetable;version="1.0.0";uses:="org.jdesktop.swin
- gx.tree",org.jdesktop.swingx.util;version="1.0.0"
+ gx.tree",org.jdesktop.swingx.util;version="1.0.0",com.mongodb;version="
+ 3.0.4";uses:="com.mongodb.annotations,com.mongodb.bulk,com.mongodb.clie
+ nt,com.mongodb.connection",com.mongodb.annotations;version="3.0.4",com.
+ mongodb.assertions;version="3.0.4";uses:="com.mongodb.async",com.mongod
+ b.async;version="3.0.4",com.mongodb.binding;version="3.0.4";uses:="com.
+ mongodb,com.mongodb.async,com.mongodb.connection",com.mongodb.bulk;vers
+ ion="3.0.4";uses:="com.mongodb",com.mongodb.client;version="3.0.4";uses
+ :="com.mongodb,com.mongodb.annotations,com.mongodb.bulk,com.mongodb.cli
+ ent.model,com.mongodb.client.result",com.mongodb.client.model;version="
+ 3.0.4";uses:="com.mongodb",com.mongodb.client.result;version="3.0.4",co
+ m.mongodb.connection;version="3.0.4";uses:="com.mongodb,com.mongodb.ann
+ otations,com.mongodb.async,com.mongodb.binding,com.mongodb.bulk,com.mon
+ godb.event,com.mongodb.internal.connection,com.mongodb.selector",com.mo
+ ngodb.connection.netty;version="3.0.4";uses:="com.mongodb,com.mongodb.c
+ onnection",com.mongodb.diagnostics.logging;version="3.0.4",com.mongodb.
+ event;version="3.0.4";uses:="com.mongodb.connection",com.mongodb.gridfs
+ ;version="3.0.4";uses:="com.mongodb",com.mongodb.internal.async;version
+ ="3.0.4";uses:="com.mongodb.async,com.mongodb.diagnostics.logging",com.
+ mongodb.internal.authentication;version="3.0.4",com.mongodb.internal.co
+ nnection;version="3.0.4";uses:="com.mongodb.connection",com.mongodb.int
+ ernal.management.jmx;version="3.0.4";uses:="com.mongodb.management",com
+ .mongodb.internal.validator;version="3.0.4",com.mongodb.management;vers
+ ion="3.0.4";uses:="com.mongodb.event",com.mongodb.operation;version="3.
+ 0.4";uses:="com.mongodb,com.mongodb.annotations,com.mongodb.async,com.m
+ ongodb.binding,com.mongodb.bulk,com.mongodb.connection",com.mongodb.sel
+ ector;version="3.0.4";uses:="com.mongodb,com.mongodb.annotations,com.mo
+ ngodb.connection",com.mongodb.util;version="3.0.4"
 Import-Package: org.osgi.framework;version="[1.8,1.9)",org.osgi.util.tra
  cker;version="[1.5,2)"
 Originally-Created-By: Apache Maven Bundle Plugin

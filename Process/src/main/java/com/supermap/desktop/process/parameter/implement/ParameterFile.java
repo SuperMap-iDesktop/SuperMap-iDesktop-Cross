@@ -11,7 +11,7 @@ import java.io.File;
  */
 public class ParameterFile extends AbstractParameter implements ISelectionParameter {
 
-	private File selectedFile;
+	private String selectedPath;
 	private String describe;
 
 	@Override
@@ -22,18 +22,19 @@ public class ParameterFile extends AbstractParameter implements ISelectionParame
 
 	@Override
 	public void setSelectedItem(Object value) {
-		File oldValue = this.selectedFile;
-		if (value instanceof File) {
-			selectedFile = (File) value;
-		} else if (value instanceof String && new File((String) value).exists()) {
-			selectedFile = new File((String) value);
-		}
-		firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, selectedFile));
+		String oldValue = this.selectedPath;
+		this.selectedPath = (String) value;
+//		if (value instanceof File) {
+//			selectedFile = (File) value;
+//		} else if (value instanceof String && new File((String) value).exists()) {
+//			selectedFile = new File((String) value);
+//		}
+		firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, selectedPath));
 	}
 
 	@Override
 	public Object getSelectedItem() {
-		return selectedFile;
+		return selectedPath;
 	}
 
 	public String getDescribe() {
