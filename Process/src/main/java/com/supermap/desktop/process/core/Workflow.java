@@ -15,12 +15,14 @@ import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -54,13 +56,7 @@ public class Workflow {
                 parseFileToXML(transformer, source, file);
             }
 
-        } catch (TransformerConfigurationException e) {
-            Application.getActiveApplication().getOutput().output(e);
-        } catch (TransformerException e) {
-            Application.getActiveApplication().getOutput().output(e);
-        } catch (FileNotFoundException e) {
-            Application.getActiveApplication().getOutput().output(e);
-        } catch (IOException e) {
+        } catch (Exception e) {
             Application.getActiveApplication().getOutput().output(e);
         }
 

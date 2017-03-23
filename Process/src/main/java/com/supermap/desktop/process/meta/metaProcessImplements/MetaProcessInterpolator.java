@@ -30,13 +30,11 @@ import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
 import com.supermap.desktop.process.parameter.implement.ParameterSearchMode;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
-import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.PixelFormatProperties;
-
-import javax.swing.*;
 
 /**
  * Created by xie on 2017/2/16.
@@ -179,7 +177,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 	}
 
 	@Override
-	public JComponent getComponent() {
+	public IParameterPanel getComponent() {
 		return parameters.getPanel();
 	}
 
