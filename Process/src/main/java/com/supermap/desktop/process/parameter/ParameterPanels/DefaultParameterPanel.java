@@ -1,15 +1,20 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-
-import javax.swing.*;
 
 /**
  * @author XiaJT
  */
-public class DefaultParameterPanel extends JPanel implements IParameterPanel {
+public abstract class DefaultParameterPanel implements IParameterPanel, FieldConstraintChangedListener {
+	DefaultParameterPanel(IParameter parameter) {
+		parameter.addFieldConstraintChangedListener(this);
+	}
+
 	@Override
-	public Object getPanel() {
-		return this;
+	public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
+
 	}
 }

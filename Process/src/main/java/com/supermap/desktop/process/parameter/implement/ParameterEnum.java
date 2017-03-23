@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
@@ -14,7 +15,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ParameterEnum extends AbstractParameter implements ISelectionParameter {
 
     private EnumParser parser;
-    private ParameterDataNode value;
+	@ParameterField(name = "value")
+	private ParameterDataNode value;
     private String describe;
 
     public ParameterEnum(EnumParser parser) {
@@ -41,7 +43,7 @@ public class ParameterEnum extends AbstractParameter implements ISelectionParame
         if (value instanceof ParameterDataNode) {
             ParameterDataNode oldValue = this.value;
             this.value = (ParameterDataNode) value;
-            firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, value));
+	        firePropertyChangeListener(new PropertyChangeEvent(this, "value", oldValue, value));
         }
     }
 

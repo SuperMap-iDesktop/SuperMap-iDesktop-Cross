@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.data.Datasource;
+import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
@@ -9,7 +10,9 @@ import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
  */
 public class ParameterSaveDataset extends AbstractParameter implements ISelectionParameter {
 
+	@ParameterField(name = "datasource")
 	private Datasource resultDatasource;
+	@ParameterField(name = "detasetName")
 	private String datasetName;
 
 	@Override
@@ -39,6 +42,7 @@ public class ParameterSaveDataset extends AbstractParameter implements ISelectio
 
 	public void setResultDatasource(Datasource resultDatasource) {
 		this.resultDatasource = resultDatasource;
+
 	}
 
 	public String getDatasetName() {

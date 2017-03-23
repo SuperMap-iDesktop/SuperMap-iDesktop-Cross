@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.data.Dataset;
+import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
@@ -11,6 +12,7 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterDataset extends AbstractParameter implements ISelectionParameter {
 
+	@ParameterField(name = "value")
 	private Dataset dataset;
 
 	@Override
@@ -23,7 +25,7 @@ public class ParameterDataset extends AbstractParameter implements ISelectionPar
 		if (value instanceof Dataset) {
 			Dataset oldValue = this.dataset;
 			dataset = (Dataset) value;
-			firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, dataset));
+			firePropertyChangeListener(new PropertyChangeEvent(this, "value", oldValue, dataset));
 		}
 	}
 

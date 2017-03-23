@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterSearchModeInfo;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
@@ -11,6 +12,7 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterSearchMode extends AbstractParameter implements ISelectionParameter {
 
+	@ParameterField(name = "value")
 	private ParameterSearchModeInfo selectedItem;
 
 	@Override
@@ -18,7 +20,7 @@ public class ParameterSearchMode extends AbstractParameter implements ISelection
 		if (item instanceof ParameterSearchModeInfo) {
 			ParameterSearchModeInfo oldValue = selectedItem;
 			selectedItem = (ParameterSearchModeInfo) item;
-			firePropertyChangeListener(new PropertyChangeEvent(ParameterSearchMode.this, AbstractParameter.PROPERTY_VALE, oldValue, selectedItem));
+			firePropertyChangeListener(new PropertyChangeEvent(ParameterSearchMode.this, "value", oldValue, selectedItem));
 		}
 	}
 

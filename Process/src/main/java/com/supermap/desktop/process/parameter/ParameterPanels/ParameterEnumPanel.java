@@ -5,7 +5,6 @@ import com.supermap.desktop.process.parameter.ParameterComboBoxCellRender;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterEnum;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
-import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.process.util.ParameterUtil;
@@ -23,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author xie
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.ENUM)
-public class ParameterEnumPanel extends DefaultParameterPanel implements IParameterPanel {
+public class ParameterEnumPanel extends SwingPanel {
 
     private ParameterEnum parameterEnum;
     private boolean isSelectingItem = false;
@@ -32,6 +31,7 @@ public class ParameterEnumPanel extends DefaultParameterPanel implements IParame
     private JComboBox comboBox = new JComboBox();
 
 	public ParameterEnumPanel(IParameter parameterEnum) {
+		super(parameterEnum);
 		this.parameterEnum = (ParameterEnum) parameterEnum;
 		label.setText(this.parameterEnum.getDescribe());
 		initComboBoxItems();
@@ -43,13 +43,14 @@ public class ParameterEnumPanel extends DefaultParameterPanel implements IParame
     private void initLayout() {
         label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
         comboBox.setPreferredSize(new Dimension(20, 23));
-        this.setLayout(new GridBagLayout());
-        this.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
-        this.add(comboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+	    panel.setLayout(new GridBagLayout());
+	    panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
+	    panel.add(comboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
     }
 
     /**
      * 根据class添加comboBox子项
+     * Add comboBox sub items according to class
      */
     private void initComboBoxItems() {
         EnumParser parser = parameterEnum.getEnumParser();

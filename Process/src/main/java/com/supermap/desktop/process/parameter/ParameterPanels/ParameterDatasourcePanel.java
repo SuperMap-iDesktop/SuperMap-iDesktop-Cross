@@ -1,15 +1,15 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
 import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
-import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
-import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -23,16 +23,17 @@ import java.beans.PropertyChangeListener;
  * @author XiaJT
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.DATASOURCE)
-public class ParameterDatasourcePanel extends DefaultParameterPanel implements IParameterPanel {
+public class ParameterDatasourcePanel extends SwingPanel {
 	private JLabel label = new JLabel();
-	private DatasourceComboBox datasourceComboBox = new DatasourceComboBox(Application.getActiveApplication().getWorkspace().getDatasources());
+	private JComboBox<Datasource> datasourceComboBox = new JComboBox<>();
 	private ParameterDatasource parameterDatasource;
 	private boolean isSelectingItem;
 
 	public ParameterDatasourcePanel(IParameter parameterDatasource) {
+		super(parameterDatasource);
 		this.parameterDatasource = ((ParameterDatasource) parameterDatasource);
 		this.label.setText(this.parameterDatasource.getDescribe());
-		this.datasourceComboBox.setSelectedDatasource((Datasource) this.parameterDatasource.getSelectedItem());
+		this.datasourceComboBox.setSelectedItem(this.parameterDatasource.getSelectedItem());
 		initLayout();
 		initListener();
 	}
@@ -40,9 +41,9 @@ public class ParameterDatasourcePanel extends DefaultParameterPanel implements I
 	private void initLayout() {
 		label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
 		datasourceComboBox.setPreferredSize(new Dimension(20, 23));
-		this.setLayout(new GridBagLayout());
-		this.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE));
-		this.add(datasourceComboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
+		panel.setLayout(new GridBagLayout());
+		panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE));
+		panel.add(datasourceComboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
 	}
 
 	private void initListener() {
@@ -51,7 +52,7 @@ public class ParameterDatasourcePanel extends DefaultParameterPanel implements I
 			public void itemStateChanged(ItemEvent e) {
 				if (!isSelectingItem && e.getStateChange() == ItemEvent.SELECTED) {
 					isSelectingItem = true;
-					parameterDatasource.setSelectedItem(datasourceComboBox.getSelectedDatasource());
+					parameterDatasource.setSelectedItem(datasourceComboBox.getSelectedItem());
 					isSelectingItem = false;
 				}
 			}
@@ -61,11 +62,33 @@ public class ParameterDatasourcePanel extends DefaultParameterPanel implements I
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (!isSelectingItem && evt.getPropertyName().equals(AbstractParameter.PROPERTY_VALE)) {
 					isSelectingItem = true;
-					datasourceComboBox.setSelectedDatasource((Datasource) evt.getNewValue());
+					datasourceComboBox.setSelectedItem(evt.getNewValue());
 					isSelectingItem = false;
 				}
 			}
 		});
 	}
 
+	@Override
+	public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
+		if (event.getFieldName().equals(ParameterDatasource.DATASOURCE_FIELD_NAME)) {
+			isSelectingItem = true;
+			datasourceComboBox.removeAllItems();
+			Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+			for (int i = 0; i < datasources.getCount(); i++) {
+				Datasource datasource = datasources.get(i);
+				if (ParameterDatasourcePanel.this.parameterDatasource.isValueLegal(ParameterDatasource.DATASOURCE_FIELD_NAME, datasource)) {
+					datasourceComboBox.addItem(datasource);
+				}
+			}
+			Object selectedItem = ParameterDatasourcePanel.this.parameterDatasource.getSelectedItem();
+			if (selectedItem != null) {
+				datasourceComboBox.setSelectedItem(selectedItem);
+			}
+			if (selectedItem != datasourceComboBox.getSelectedItem()) {
+				ParameterDatasourcePanel.this.parameterDatasource.setSelectedItem(datasourceComboBox.getSelectedItem());
+			}
+			isSelectingItem = false;
+		}
+	}
 }

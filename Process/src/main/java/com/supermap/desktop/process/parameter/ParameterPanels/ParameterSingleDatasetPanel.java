@@ -47,7 +47,7 @@ import java.util.Objects;
  * Created by xie on 2017/2/16.
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.SINGLE_DATASET)
-public class ParameterSingleDatasetPanel extends DefaultParameterPanel implements IParameterPanel {
+public class ParameterSingleDatasetPanel extends SwingPanel implements IParameterPanel {
 	private ParameterSingleDataset parameterSingleDataset;
 	private JLabel labelDataset;
 	private DatasetComboBox datasetComboBox;
@@ -92,6 +92,7 @@ public class ParameterSingleDatasetPanel extends DefaultParameterPanel implement
 	};
 
 	public ParameterSingleDatasetPanel(IParameter parameterSingleDataset) {
+		super(parameterSingleDataset);
 		this.parameterSingleDataset = (ParameterSingleDataset) parameterSingleDataset;
 //		this.datasetTypes = datasetTypes;
 		init();
@@ -158,9 +159,9 @@ public class ParameterSingleDatasetPanel extends DefaultParameterPanel implement
 	private void initLayout() {
 		labelDataset.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
 		datasetComboBox.setPreferredSize(new Dimension(20, 23));
-		this.setLayout(new GridBagLayout());
-		this.add(labelDataset, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE));
-		this.add(datasetComboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
+		panel.setLayout(new GridBagLayout());
+		panel.add(labelDataset, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setFill(GridBagConstraints.NONE));
+		panel.add(datasetComboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
 	}
 
 	private void initListener() {

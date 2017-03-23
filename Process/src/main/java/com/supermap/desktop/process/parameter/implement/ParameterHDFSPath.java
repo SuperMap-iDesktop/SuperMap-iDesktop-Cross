@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
@@ -10,6 +11,7 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterHDFSPath extends AbstractParameter implements ISelectionParameter {
 
+	@ParameterField(name = "url")
 	private String url;
 
 	@Override
@@ -17,7 +19,7 @@ public class ParameterHDFSPath extends AbstractParameter implements ISelectionPa
 		if (item instanceof String) {
 			String oldValue = url;
 			this.url = (String) item;
-			firePropertyChangeListener(new PropertyChangeEvent(ParameterHDFSPath.this, AbstractParameter.PROPERTY_VALE, oldValue, item));
+			firePropertyChangeListener(new PropertyChangeEvent(ParameterHDFSPath.this, "url", oldValue, item));
 		}
 	}
 

@@ -5,7 +5,6 @@ import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
-import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -27,7 +26,7 @@ import java.beans.PropertyChangeListener;
  * Created by xie on 2017/2/27.
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.HDFS_PATH)
-public class ParameterHDFSPathPanel extends DefaultParameterPanel implements IParameterPanel {
+public class ParameterHDFSPathPanel extends SwingPanel {
     private JLabel labelFileInputPath;
     private JTextField textFieldFileInputPath;
     private JButton buttonInputBrowser;
@@ -35,6 +34,7 @@ public class ParameterHDFSPathPanel extends DefaultParameterPanel implements IPa
     private boolean isSelectingItem = false;
 
 	public ParameterHDFSPathPanel(IParameter parameterHDFSPath) {
+		super(parameterHDFSPath);
 		this.parameterHDFSPath = (ParameterHDFSPath) parameterHDFSPath;
 		initParameterInfo();
         initListener();
@@ -47,10 +47,10 @@ public class ParameterHDFSPathPanel extends DefaultParameterPanel implements IPa
         this.buttonInputBrowser.setText(ProcessProperties.getString("String_Browser"));
         this.labelFileInputPath.setText(ProcessProperties.getString("String_FileInputPath"));
         this.labelFileInputPath.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
-        this.setLayout(new GridBagLayout());
-        this.add(this.labelFileInputPath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(this.textFieldFileInputPath, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0).setWeight(1, 0));
-        this.add(this.buttonInputBrowser, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 0, 0));
+	    panel.setLayout(new GridBagLayout());
+	    panel.add(this.labelFileInputPath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+	    panel.add(this.textFieldFileInputPath, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0).setWeight(1, 0));
+	    panel.add(this.buttonInputBrowser, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 0, 0));
     }
 
     private void initListener() {
