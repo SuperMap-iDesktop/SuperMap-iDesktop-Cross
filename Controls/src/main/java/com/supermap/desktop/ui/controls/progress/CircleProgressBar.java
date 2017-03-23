@@ -72,17 +72,17 @@ public class CircleProgressBar extends JPanel {
         int height = 0;
         int fontSize = 0;
         if (getWidth() >= getHeight()) {
-            x = (getWidth() - getHeight()) / 2 + 25;
-            y = 25;
-            width = getHeight() - 50;
-            height = getHeight() - 50;
-            fontSize = getWidth() / 10;
+            x = (getWidth() - getHeight()) / 2 + 10;
+            y = 10;
+            width = getHeight() - 20;
+            height = getHeight() - 20;
+            fontSize = getWidth() / 5;
         } else {
-            x = 25;
-            y = (getHeight() - getWidth()) / 2 + 25;
-            width = getWidth() - 50;
-            height = getWidth() - 50;
-            fontSize = getHeight() / 10;
+            x = 10;
+            y = (getHeight() - getWidth()) / 2 + 10;
+            width = getWidth() - 20;
+            height = getWidth() - 20;
+            fontSize = getHeight() / 5;
         }
         graphics2d.setStroke(new BasicStroke(5.0f));
         graphics2d.setColor(backgroundColor);

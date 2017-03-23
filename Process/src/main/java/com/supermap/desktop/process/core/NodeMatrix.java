@@ -46,11 +46,13 @@ public class NodeMatrix {
         if (!nodeList.contains(node) || !nodeList.contains(nextNode)) {
             throw new NodeException("Node not exits");
         }
-        SecondNodeMatrix secondNodeMatrix = nodeMatrix.get(node);
-        if (secondNodeMatrix.vector.containsKey(nextNode)) {
-            Object object = secondNodeMatrix.vector.get(nextNode);
-            object = null;
-            hasRemoved = true;
+        if (nodeMatrix.containsKey(node)) {
+            SecondNodeMatrix secondNodeMatrix = nodeMatrix.get(node);
+            if (secondNodeMatrix.vector.containsKey(nextNode)) {
+                Object object = secondNodeMatrix.vector.get(nextNode);
+                object = null;
+                hasRemoved = true;
+            }
         }
         return hasRemoved;
     }
@@ -129,7 +131,7 @@ public class NodeMatrix {
             int nodeSize = nodeList.size();
             for (int i = 0; i < nodeSize; i++) {
                 Object tempNode = nodeList.get(i);
-                if (null != nodeMatrix.get(tempNode)) {
+                if (nodeMatrix.containsKey(tempNode)) {
                     Iterator<Map.Entry<Object, INodeConstraint>> iterator = nodeMatrix.get(tempNode).vector.entrySet().iterator();
                     while (iterator.hasNext()) {
                         if (node == iterator.next().getKey()) {
@@ -153,7 +155,7 @@ public class NodeMatrix {
         CopyOnWriteArrayList result = new CopyOnWriteArrayList();
         if (!this.nodeList.contains(node)) {
             throw new NodeException("Node note exists");
-        } else if (null != nodeMatrix.get(node)) {
+        } else if (nodeMatrix.containsKey(node)) {
             Iterator<Map.Entry<Object, INodeConstraint>> iterator = nodeMatrix.get(node).vector.entrySet().iterator();
             while (iterator.hasNext()) {
                 result.add(iterator.next().getKey());

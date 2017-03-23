@@ -37,7 +37,8 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     private volatile JLabel labelTitle;
     private volatile JLabel labelMessage;
     private volatile JLabel labelRemaintime;
-    private volatile JButton buttonRun = null;
+    private volatile JButton buttonRun;
+    private volatile JButton buttonRemove;
     private volatile IProcess process;
     private volatile boolean isFinished;
     private ActionListener cancelListener = new ActionListener() {
@@ -51,6 +52,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         public void running(RunningEvent e) {
             if (e.getProgress() >= 100) {
                 updateProgress(100, String.valueOf(e.getRemainTime()), getFinishMessage());
+                buttonRun.setEnabled(false);
                 isFinished = true;
             } else {
                 updateProgress(e.getProgress(), String.valueOf(e.getRemainTime()), e.getMessage());
@@ -79,6 +81,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         labelMessage = new JLabel("...");
         labelRemaintime = new JLabel("...");
         buttonRun = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Run.png"));
+        buttonRemove = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_delete.png"));
     }
 
     @Override
@@ -243,7 +246,6 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
                     buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Run.png"));
                 }
             });
-            doWork();
         }
     }
 
