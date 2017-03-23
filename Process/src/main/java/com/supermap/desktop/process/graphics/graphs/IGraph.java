@@ -29,7 +29,7 @@ public interface IGraph {
 
 	boolean contains(Point point);
 
-	void addGraphBoundsListener(GraphBoundsChangedListener listener);
+	void addGraphBoundsChangedListener(GraphBoundsChangedListener listener);
 
-	void removeGraghBoundsListener(GraphBoundsChangedListener listener);
+	void removeGraghBoundsChangedListener(GraphBoundsChangedListener listener);
 }

@@ -111,12 +111,12 @@ public abstract class AbstractGraph implements IGraph {
 	}
 
 	@Override
-	public void addGraphBoundsListener(GraphBoundsChangedListener listener) {
+	public void addGraphBoundsChangedListener(GraphBoundsChangedListener listener) {
 		this.listenerList.add(GraphBoundsChangedListener.class, listener);
 	}
 
 	@Override
-	public void removeGraghBoundsListener(GraphBoundsChangedListener listener) {
+	public void removeGraghBoundsChangedListener(GraphBoundsChangedListener listener) {
 		this.listenerList.remove(GraphBoundsChangedListener.class, listener);
 	}
 

@@ -4,7 +4,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.RoundRectangle2D;
 
 /**
@@ -16,7 +15,6 @@ public class GraphicsTest extends JPanel {
 	private RoundRectangle2D roundRectangle2D = new RoundRectangle2D.Double();
 
 	public GraphicsTest() {
-
 
 
 		this.roundRectangle2D.setRoundRect(100, 100, 200, 200, 30, 30);
@@ -36,23 +34,27 @@ public class GraphicsTest extends JPanel {
 		graphics2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
 		graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-		AffineTransform origin = graphics2D.getTransform();
-		AffineTransform newT = new AffineTransform(origin);
-		newT.scale(scale, scale);
-		graphics2D.setTransform(newT);
-		graphics2D.setColor(Color.PINK);
-		graphics2D.fill(this.roundRectangle2D);
-
-		BasicStroke stroke = new BasicStroke(2);
-		graphics2D.setStroke(stroke);
-		graphics2D.setColor(Color.BLACK);
-		graphics2D.draw(roundRectangle2D);
-		graphics2D.setTransform(origin);
+//		AffineTransform origin = graphics2D.getTransform();
+//		AffineTransform newT = new AffineTransform(origin);
+//		newT.scale(scale, scale);
+//		graphics2D.setTransform(newT);
+//		graphics2D.setColor(Color.PINK);
+//		graphics2D.fill(this.roundRectangle2D);
+//
+//		BasicStroke stroke = new BasicStroke(2);
+//		graphics2D.setStroke(stroke);
+//		graphics2D.setColor(Color.BLACK);
+//		graphics2D.draw(roundRectangle2D);
+//		graphics2D.setTransform(origin);
+		graphics2D.setColor(Color.RED);
+		Rectangle rect = new Rectangle(200, 200, 100, 100);
+		graphics2D.fill(rect);
 	}
 
 	private static double scale = 1;
 
 	public static void main(String[] args) {
+//		Main.main(args);
 		final JFrame frame = new JFrame();
 		frame.setLayout(new BorderLayout());
 		frame.setSize(1000, 1000);
