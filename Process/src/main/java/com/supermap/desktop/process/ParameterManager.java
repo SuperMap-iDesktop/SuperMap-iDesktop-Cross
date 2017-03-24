@@ -25,6 +25,8 @@ public class ParameterManager extends JPanel {
 		if (process != null) {
 			JComponent component = process.getComponent();
 			mainPanel.add(component, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
+			mainPanel.add(new JPanel(),new GridBagConstraintsHelper(0,1,1,1).setWeight(1,1).setFill(GridBagConstraintsHelper.BOTH));
+			mainPanel.add(process.getProcessTask(),new GridBagConstraintsHelper(0,2,1,1).setWeight(1,0).setFill(GridBagConstraintsHelper.HORIZONTAL));
 		}
 		mainPanel.revalidate();
 		mainPanel.repaint();
