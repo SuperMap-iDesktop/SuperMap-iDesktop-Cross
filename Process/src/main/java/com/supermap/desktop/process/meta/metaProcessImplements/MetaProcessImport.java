@@ -3,24 +3,21 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.EncodeType;
-import com.supermap.data.conversion.DataImport;
-import com.supermap.data.conversion.ImportMode;
-import com.supermap.data.conversion.ImportResult;
-import com.supermap.data.conversion.ImportSetting;
-import com.supermap.data.conversion.ImportSettingSHP;
-import com.supermap.data.conversion.ImportSteppedEvent;
-import com.supermap.data.conversion.ImportSteppedListener;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
+
+import javax.swing.*;
 
 /**
  * @author XiaJT
