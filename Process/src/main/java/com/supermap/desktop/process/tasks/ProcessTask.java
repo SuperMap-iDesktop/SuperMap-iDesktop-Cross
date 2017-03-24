@@ -33,7 +33,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     private volatile String message = "";
     private volatile String remainTime = "";
     private volatile int percent = 0;
-    private volatile boolean isStop;
+    private volatile boolean isStop = true;
 
     private volatile JProgressBar progressBar;
     private volatile JLabel labelTitle;
@@ -300,6 +300,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
                 }
             });
         } else {
+            doWork();
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {

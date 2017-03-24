@@ -2,6 +2,7 @@ package com.supermap.desktop.process.util;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
+import com.supermap.desktop.process.ParameterManager;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.NodeException;
 import com.supermap.desktop.process.core.NodeMatrix;
@@ -25,6 +26,26 @@ public class TaskUtil {
     }
 
     private static final String TASKMANAGER = "com.supermap.desktop.process.tasks.TasksManagerContainer";
+    private static final String PARAMETERMANAGER = "com.supermap.desktop.process.ParameterManager";
+
+    public static ParameterManager getParameterManager(boolean isActive) {
+        ParameterManager parameterManager = null;
+        IDockbar dockbarPropertyContainer = null;
+        try {
+            dockbarPropertyContainer = Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(PARAMETERMANAGER));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (dockbarPropertyContainer != null) {
+            parameterManager = (ParameterManager) dockbarPropertyContainer.getInnerComponent();
+        }
+        if (isActive && dockbarPropertyContainer != null) {
+            dockbarPropertyContainer.setVisible(true);
+            dockbarPropertyContainer.active();
+        }
+        return parameterManager;
+    }
+
 
     public static TasksManagerContainer getManagerContainer(boolean isActive) {
         TasksManagerContainer fileManagerContainer = null;
