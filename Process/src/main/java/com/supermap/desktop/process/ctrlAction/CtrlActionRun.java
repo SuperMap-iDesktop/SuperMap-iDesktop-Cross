@@ -3,13 +3,9 @@ package com.supermap.desktop.process.ctrlAction;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.core.NodeMatrix;
-import com.supermap.desktop.process.core.WorkflowParser;
-import com.supermap.desktop.process.tasks.TasksManagerContainer;
+import com.supermap.desktop.process.ParameterManager;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessImport;
 import com.supermap.desktop.process.util.TaskUtil;
-
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by highsad on 2017/2/28.
@@ -63,6 +59,10 @@ public class CtrlActionRun extends CtrlAction {
 //
 //            TaskUtil.excuteTasks(nodeMatrix);
 //            }
+        MetaProcessImport metaProcessImport = new MetaProcessImport();
+        ParameterManager manager = TaskUtil.getParameterManager(true);
+        manager.setProcess(metaProcessImport);
+
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }

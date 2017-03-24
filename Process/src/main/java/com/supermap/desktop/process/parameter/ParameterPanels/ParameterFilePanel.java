@@ -24,53 +24,53 @@ import java.util.Objects;
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.FILE)
 public class ParameterFilePanel extends DefaultParameterPanel implements IParameterPanel {
-	private ParameterFile parameterFile;
-	private FileChooserControl fileChooserControl = new FileChooserControl();
-	private boolean isSelectingFile = false;
-	private JLabel label = new JLabel();
+    private ParameterFile parameterFile;
+    private FileChooserControl fileChooserControl = new FileChooserControl();
+    private boolean isSelectingFile = false;
+    private JLabel label = new JLabel();
 
-	public ParameterFilePanel(IParameter parameterFile) {
-		this.parameterFile = (ParameterFile) parameterFile;
-		// todo fileChooseControl不好用，没时间重构，后面再优化
-		if (this.parameterFile.getSelectedItem() != null) {
-			fileChooserControl.setText(this.parameterFile.getSelectedItem().toString());
-		}
-		label.setText(this.parameterFile.getDescribe());
-		initListener();
-		initLayout();
-	}
+    public ParameterFilePanel(IParameter parameterFile) {
+        this.parameterFile = (ParameterFile) parameterFile;
+        // todo fileChooseControl不好用，没时间重构，后面再优化
+        if (this.parameterFile.getSelectedItem() != null) {
+            fileChooserControl.setText(this.parameterFile.getSelectedItem().toString());
+        }
+        label.setText(this.parameterFile.getDescribe());
+        initListener();
+        initLayout();
+    }
 
-	private void initListener() {
-		fileChooserControl.getButton().addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				JFileChooser jFileChooser = new JFileChooser();
-				if (jFileChooser.showOpenDialog(ParameterFilePanel.this) == JFileChooser.APPROVE_OPTION) {
-					File selectedFile = jFileChooser.getSelectedFile();
-					isSelectingFile = true;
-					fileChooserControl.setText(selectedFile.getAbsolutePath());
-					ParameterFilePanel.this.parameterFile.setSelectedItem(selectedFile);
-					isSelectingFile = false;
-				}
-			}
-		});
-		parameterFile.addPropertyListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				if (!isSelectingFile && Objects.equals(evt.getPropertyName(), AbstractParameter.PROPERTY_VALE)) {
-					fileChooserControl.setText(evt.getNewValue().toString());
-				}
-			}
-		});
-	}
+    private void initListener() {
+        fileChooserControl.getButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser jFileChooser = new JFileChooser();
+                if (jFileChooser.showOpenDialog(ParameterFilePanel.this) == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = jFileChooser.getSelectedFile();
+                    isSelectingFile = true;
+                    fileChooserControl.setText(selectedFile.getAbsolutePath());
+                    ParameterFilePanel.this.parameterFile.setSelectedItem(selectedFile.getAbsolutePath());
+                    isSelectingFile = false;
+                }
+            }
+        });
+        parameterFile.addPropertyListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (!isSelectingFile && Objects.equals(evt.getPropertyName(), AbstractParameter.PROPERTY_VALE)) {
+                    fileChooserControl.setText(evt.getNewValue().toString());
+                }
+            }
+        });
+    }
 
-	private void initLayout() {
-		label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
-		fileChooserControl.setPreferredSize(new Dimension(20, 23));
-		this.setLayout(new GridBagLayout());
-		this.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE));
-		this.add(fileChooserControl, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(0, 5, 0, 0).setFill(GridBagConstraints.HORIZONTAL));
-	}
+    private void initLayout() {
+        label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
+        fileChooserControl.setPreferredSize(new Dimension(20, 23));
+        this.setLayout(new GridBagLayout());
+        this.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE));
+        this.add(fileChooserControl, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(0, 5, 0, 0).setFill(GridBagConstraints.HORIZONTAL));
+    }
 
 
 }
