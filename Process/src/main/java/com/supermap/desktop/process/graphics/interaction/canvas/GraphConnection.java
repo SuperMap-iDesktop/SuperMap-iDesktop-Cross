@@ -2,7 +2,6 @@ package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.connection.DefaultLine;
 import com.supermap.desktop.process.graphics.connection.RelationLine;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
@@ -75,7 +74,7 @@ public class GraphConnection extends CanvasEventAdapter {
 		} finally {
 			this.previewLine.setStartPoint(null);
 			this.previewLine.setEndPoint(null);
-			this.previewLine.setEnabled(true);
+			this.previewLine.setStatus(DefaultLine.NORMAL);
 			this.startGraph = null;
 			this.endGraph = null;
 		}
@@ -110,38 +109,29 @@ public class GraphConnection extends CanvasEventAdapter {
 
 			IGraph hit = this.canvas.findGraph(e.getPoint());
 
-			if (canBeEnd(hit)) {
-				this.endGraph = hit;
-				this.previewLine.setEnabled(true);
-				this.previewLine.setEndPoint(hit.getCenter());
-			} else {
+			if (hit == null) {
 				this.endGraph = null;
-				this.previewLine.setEnabled(false);
+				this.previewLine.setStatus(DefaultLine.NORMAL);
 				this.previewLine.setEndPoint(this.canvas.getCoordinateTransform().inverse(e.getPoint()));
-			}
-
-//			refresh();
-		}
-	}
-
-	private void refresh() {
-		if (this.previewLine.getStartPoint() != null && this.previewLine.getEndPoint() != null) {
-			Rectangle refresh;
-			if (GraphicsUtil.isRegionValid(this.dirtyRegion)) {
-				refresh = this.dirtyRegion.union(this.previewLine.getBounds());
 			} else {
-				refresh = this.previewLine.getBounds();
+				if (isEndValid(hit)) {
+					this.endGraph = hit;
+					this.previewLine.setStatus(DefaultLine.PREPARING);
+					this.previewLine.setEndPoint(hit.getCenter());
+				} else {
+					this.endGraph = null;
+					this.previewLine.setStatus(DefaultLine.INVALID);
+					this.previewLine.setEndPoint(this.canvas.getCoordinateTransform().inverse(e.getPoint()));
+				}
 			}
-			this.dirtyRegion = this.previewLine.getBounds();
-			this.canvas.repaint(refresh);
 		}
 	}
 
-	private boolean canBeStart(IGraph graph) {
+	private boolean isStartValid(IGraph graph) {
 		return graph instanceof DataGraph;
 	}
 
-	private boolean canBeEnd(IGraph graph) {
+	private boolean isEndValid(IGraph graph) {
 		return graph instanceof ProcessGraph;
 	}
 
@@ -151,7 +141,7 @@ public class GraphConnection extends CanvasEventAdapter {
 			if (this.previewLine != null) {
 				this.previewLine.setStartPoint(null);
 				this.previewLine.setEndPoint(null);
-				this.previewLine.setEnabled(true);
+				this.previewLine.setStatus(DefaultLine.NORMAL);
 				this.previewLine = null;
 			}
 			this.dirtyRegion = null;
@@ -169,43 +159,5 @@ public class GraphConnection extends CanvasEventAdapter {
 	@Override
 	public boolean isEnabled() {
 		return super.isEnabled() && this.previewLine != null;
-	}
-
-	public Point[] calArrow(Point start, Point end) {
-		return calArrow(start.x, start.y, end.x, end.y);
-	}
-
-	public Point[] calArrow(int startX, int startY, int endX, int endY) {
-		double awrad = 15 * Math.PI / 180;// 30表示角度，但是在计算中要用弧度进行计算，所以要把角度转换为弧度
-		double arraow_len = 12;// 箭头长度
-		double[] arr1 = rotateVec(endX - startX, endY - startY, awrad, arraow_len);
-		double[] arr2 = rotateVec(endX - startX, endY - startY, -awrad, arraow_len);
-		double x1 = endX - arr1[0]; // (x3,y3)是第一端点
-		double y1 = endY - arr1[1];
-		double x2 = endX - arr2[0]; // (x4,y4)是第二端点
-		double y2 = endY - arr2[1];
-		Point point1 = new Point(intValue(x1), intValue(y1));
-		Point point2 = new Point(intValue(x2), intValue(y2));
-		return new Point[]{point1, point2};
-	}
-
-	// 计算
-	public double[] rotateVec(int px, int py, double ang, double newLen) {
-
-		double mathstr[] = new double[2];
-		// 矢量旋转函数，参数含义分别是x分量、y分量、旋转角、新长度
-		double vx = px * Math.cos(ang) - py * Math.sin(ang);
-		double vy = px * Math.sin(ang) + py * Math.cos(ang);
-		double d = Math.sqrt(vx * vx + vy * vy);
-		vx = vx / d * newLen;
-		vy = vy / d * newLen;
-		mathstr[0] = vx;
-		mathstr[1] = vy;
-		return mathstr;
-	}
-
-	private static int intValue(double value) {
-		Double d = new Double(value);
-		return d.intValue();
 	}
 }

@@ -1,9 +1,9 @@
 package com.supermap.desktop.process.graphics;
 
+import org.jhotdraw.samples.draw.Main;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.RoundRectangle2D;
 
 /**
@@ -54,31 +54,31 @@ public class GraphicsTest extends JPanel {
 	private static double scale = 1;
 
 	public static void main(String[] args) {
-//		Main.main(args);
-		final JFrame frame = new JFrame();
-		frame.setLayout(new BorderLayout());
-		frame.setSize(1000, 1000);
-
-		final GraphicsTest test = new GraphicsTest();
-		frame.add(test, BorderLayout.CENTER);
-
-		JButton button = new JButton("Scale");
-		frame.add(button, BorderLayout.NORTH);
-
-		button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				scale = 3;
-				test.repaint();
-			}
-		});
-
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				frame.setVisible(true);
-			}
-		});
+		Main.main(args);
+//		final JFrame frame = new JFrame();
+//		frame.setLayout(new BorderLayout());
+//		frame.setSize(1000, 1000);
+//
+//		final GraphicsTest test = new GraphicsTest();
+//		frame.add(test, BorderLayout.CENTER);
+//
+//		JButton button = new JButton("Scale");
+//		frame.add(button, BorderLayout.NORTH);
+//
+//		button.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				scale = 3;
+//				test.repaint();
+//			}
+//		});
+//
+//		SwingUtilities.invokeLater(new Runnable() {
+//			@Override
+//			public void run() {
+//				frame.setVisible(true);
+//			}
+//		});
 	}
 
 //	public static void main(String[] args) {
