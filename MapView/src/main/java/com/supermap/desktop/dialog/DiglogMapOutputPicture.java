@@ -84,6 +84,9 @@ public class DiglogMapOutputPicture extends SmDialog {
 	//其他参数
 	double remainingMemory = 0.0;
 	double expectedMemory = 0.0;
+	// 其他参数
+	double width = 0.0;
+	double height = 0.0;
 
 
 	/**
@@ -130,58 +133,29 @@ public class DiglogMapOutputPicture extends SmDialog {
 		this.getRootPane().setDefaultButton(panelButton.getButtonOk());
 
 
-		this.fileNameLabel = new
+		this.fileNameLabel = new JLabel("FileName");
+		this.fileChooserControlExportPath = new FileChooserControl();
 
-				JLabel("FileName");
-		this.fileChooserControlExportPath = new
-
-				FileChooserControl();
-
-		this.resolutionLabel = new
-
-				JLabel("resolution");
-		this.resolutionTextField = new
-
-				WaringTextField();
+		this.resolutionLabel = new JLabel("resolution");
+		this.resolutionTextField = new WaringTextField();
 		// 设置分辨率文本框只能输入数字
-		this.DPILabel = new
+		this.DPILabel = new JLabel("DPI");
 
-				JLabel("DPI");
-
-		this.widthLabel = new
-
-				JLabel("width");
-		this.heightLabel = new
-
-				JLabel("height");
-		this.widthTextField = new
-
-				JTextField();
+		this.widthLabel = new JLabel("width");
+		this.heightLabel = new JLabel("height");
+		this.widthTextField = new JTextField();
 		this.widthTextField.setEditable(false);
 		this.widthTextField.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
-		this.heightTextField = new
-
-				JTextField();
+		this.heightTextField = new JTextField();
 		this.heightTextField.setEditable(false);
 		this.heightTextField.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 
-		this.expectedMemoryLabel = new
+		this.expectedMemoryLabel = new JLabel("expectedMemory");
+		this.occupiedMemoryTextField = new WaringTextField();
+		this.occupiedMemoryTextField.getTextField().setEditable(false);
+		this.occupiedMemoryTextField.getTextField().setBorder(new EmptyBorder(0, 0, 0, 0));
 
-				JLabel("expectedMemory");
-		this.occupiedMemoryTextField = new
-
-				WaringTextField();
-		this.occupiedMemoryTextField.getTextField().
-
-				setEditable(false);
-		this.occupiedMemoryTextField.getTextField().
-
-				setBorder(new EmptyBorder(0, 0, 0, 0));
-
-		this.backTransparent = new
-
-				JCheckBox("backTransparent");
-
+		this.backTransparent = new JCheckBox("backTransparent");
 	}
 
 	/**
@@ -363,21 +337,35 @@ public class DiglogMapOutputPicture extends SmDialog {
 
 	/**
 	 * 设置输出图片的格式
+	 * 背景是否透明只在 png和jpg有效
+	 * DPI参数的出图支持四种格式 ：BMP\JPG\PNG/TIFF
 	 *
 	 * @param str
 	 */
 	private ImageType getImageType(String str) {
 		if (str.contains(".png")) {
+			this.resolutionTextField.setEnable(true);
+			this.backTransparent.setEnabled(true);
 			return this.imageType.PNG;
 		} else if (str.contains(".jpg")) {
+			this.resolutionTextField.setEnable(true);
+			this.backTransparent.setEnabled(false);
 			return this.imageType.JPG;
 		} else if (str.contains(".bmp")) {
+			this.resolutionTextField.setEnable(true);
+			this.backTransparent.setEnabled(false);
 			return this.imageType.BMP;
 		} else if (str.contains(".gif")) {
+			this.resolutionTextField.setEnable(false);
+			this.backTransparent.setEnabled(true);
 			return this.imageType.GIF;
 		} else if (str.contains(".eps")) {
+			this.resolutionTextField.setEnable(false);
+			this.backTransparent.setEnabled(false);
 			return this.imageType.EPS;
 		} else if (str.contains(".tif")) {
+			this.resolutionTextField.setEnable(true);
+			this.backTransparent.setEnabled(false);
 			// 暂时不支持tif
 			return null;
 		} else {
@@ -392,11 +380,12 @@ public class DiglogMapOutputPicture extends SmDialog {
 		@Override
 		public void caretUpdate(CaretEvent e) {
 			// 当手动修改路劲文本框的值时，赋予其内容于路径参数和输出图片类型参数
-			if (!StringUtilities.isNullOrEmpty(fileChooserControlExportPath.getEditor().getText())) {
-				path = fileChooserControlExportPath.getEditor().getText();
+			path = fileChooserControlExportPath.getEditor().getText();
+			if (!StringUtilities.isNullOrEmpty(fileChooserControlExportPath.getEditor().getText()) && getImageType(path) != null) {
+				path = path.substring(path.lastIndexOf("."));
 				imageType = getImageType(path);
+				path = fileChooserControlExportPath.getEditor().getText();
 				// 当路劲文本框改变时，判断其路径是否合法，并且初始化磁盘剩余内存情况
-
 				initRemainingMemory();
 			} else {
 				path = "";
@@ -439,30 +428,28 @@ public class DiglogMapOutputPicture extends SmDialog {
 	 */
 	private void setWidthANDHeight() {
 		// 图片的高度和宽度受分辨率和输出地图范围影响，当两者的值符合时，设置其宽度和高度
-		double dWidth = 0.0;
-		double dHeight = 0.0;
 		double dFactor = 0.0;
 		// 高度和宽度受DPI和范围矩形控制，英雌当要改变其高宽值时，需要判断DPI和范围矩形框是否存在
 		if ((DPI_START <= dpi && dpi <= DPI_END) && outPutBounds != null) {
 			if (map != null) {
 				if (map.getPrjCoordSys().getType().equals(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE)) {
-					dFactor = map.getScale() * 10.0 * 1000000000.0;
-					dWidth = ((outPutBounds.getWidth()) * dpi / 2540.0) * dFactor * 1.11355;
-					dHeight = ((outPutBounds.getHeight()) * dpi / 2540.0) * dFactor * 1.113;
+					dFactor = this.map.getScale() * 10.0 * 1000000000.0;
+					this.width = ((outPutBounds.getWidth()) * dpi / 2540.0) * dFactor * 1.11355;
+					this.height = ((outPutBounds.getHeight()) * dpi / 2540.0) * dFactor * 1.113;
 				} else {
 					dFactor = map.getScale() * 10.0 * 10000.0;
-					dWidth = ((outPutBounds.getWidth()) * dpi / 2540.0) * dFactor;
-					dHeight = ((outPutBounds.getHeight()) * dpi / 2540.0) * dFactor;
+					this.width = ((outPutBounds.getWidth()) * dpi / 2540.0) * dFactor;
+					this.height = ((outPutBounds.getHeight()) * dpi / 2540.0) * dFactor;
 				}
-				this.widthTextField.setText(DoubleUtilities.getFormatString(Math.round(dWidth)));
-				this.heightTextField.setText(DoubleUtilities.getFormatString(Math.round(dHeight)));
+				this.widthTextField.setText(DoubleUtilities.getFormatString(Math.round(width)));
+				this.heightTextField.setText(DoubleUtilities.getFormatString(Math.round(height)));
 			}
 		} else {
 			this.widthTextField.setText("0");
 			this.heightTextField.setText("0");
 		}
 		// 内存消耗和高宽有关，当设置完高宽时，设置一下内存消耗
-		setExpectedMemory(dWidth, dHeight);
+		setExpectedMemory(width, height);
 	}
 
 	/**
@@ -491,7 +478,10 @@ public class DiglogMapOutputPicture extends SmDialog {
 			this.occupiedMemoryTextField.getLabelWarning().setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/warning.png"));
 		} else {
 			this.occupiedMemoryTextField.getLabelWarning().setIcon(null);
+			this.panelButton.getButtonOk().setEnabled(true);
 		}
+		// 当内存超出范围时，置灰确定按钮
+		judgeOKButtonisEnabled();
 	}
 
 
@@ -622,12 +612,18 @@ public class DiglogMapOutputPicture extends SmDialog {
 				if (file.exists()) {
 					double constm = 1024 * 1024 * 1024;
 					this.remainingMemory = file.getFreeSpace() / constm;
+					// 当磁盘剩余内存正确改变时，设置其内存限制范围
+					setExpectedMemory(width, height);
 				} else {
 					// 如果此文件不存在，其路径错误，设置其路径为空，相应的图片类型为空
 					this.path = "";
 					this.imageType = null;
 					this.remainingMemory = 0.0;
 				}
+			} else {
+				this.path = "";
+				this.imageType = null;
+				this.remainingMemory = 0.0;
 			}
 		} else {
 			if (!StringUtilities.isNullOrEmpty(filePath)) {
@@ -637,6 +633,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 				if (file.exists()) {
 					double constm = 1024 * 1024 * 1024;
 					this.remainingMemory = file.getFreeSpace() / constm;
+					setExpectedMemory(width, height);
 				} else {
 					// 如果此文件不存在，其路径错误，设置其路径为空，相应的图片类型为空
 					this.path = "";
@@ -644,9 +641,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 					this.remainingMemory = 0.0;
 				}
 			}
-
 		}
-
 	}
 
 	/**
@@ -657,6 +652,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 		Boolean DPIisValid = false;
 		Boolean imageTypeisValid = false;
 		Boolean outPutBoundsisValid = false;
+		Boolean memory = false;
 
 		if (!StringUtilities.isNullOrEmpty(path)) {
 			pathisValid = true;
@@ -669,9 +665,16 @@ public class DiglogMapOutputPicture extends SmDialog {
 		}
 		if (outPutBounds != null) {
 			outPutBoundsisValid = true;
+			// 当矩形框范围错误时不允许复制其值
+			this.panelGroupBoxViewBounds.getCopyButton().setEnabled(true);
+		} else {
+			this.panelGroupBoxViewBounds.getCopyButton().setEnabled(false);
+		}
+		if (expectedMemory < remainingMemory) {
+			memory = true;
 		}
 		// 根据参数情况设置确定按钮是否可用
-		if (pathisValid && DPIisValid && imageTypeisValid && outPutBoundsisValid) {
+		if (pathisValid && DPIisValid && imageTypeisValid && outPutBoundsisValid && memory) {
 			this.panelButton.getButtonOk().setEnabled(true);
 		} else {
 			this.panelButton.getButtonOk().setEnabled(false);
@@ -699,6 +702,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
+				boolean isSuccess = false;
 				// 获得是否背景透明化参数信息
 				isBackTransparent = backTransparent.isSelected();
 				//设置光标为等待
@@ -708,17 +712,34 @@ public class DiglogMapOutputPicture extends SmDialog {
 				// 将地图输出为图片之前，新建一个地图，对当前地图不会产生影响
 				Map copyMap = new Map();
 				copyMap = map;
+				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_OutputImage_AvoidAndFlowEnabled"));
 				//  设置是否在出图的时候关掉地图的自动避让效果。
 				copyMap.setDisableAutoAvoidEffect(true);
 				// 设置是否在出图的时候关闭地图的动态效果
 				copyMap.setDisableDynamicEffect(true);
 
-				if (copyMap.outputMapToFile(path, imageType, dpi, outPutBounds, isBackTransparent)) {
+
+				if (imageType.equals(imageType.GIF)) {
+					if (copyMap.outputMapToGIF(path, isBackTransparent)) {
+						isSuccess = true;
+					}
+				} else if (imageType.equals(imageType.EPS)) {
+					if (copyMap.outputMapToEPS(path)) {
+						isSuccess = true;
+					}
+				} else {
+					if (copyMap.outputMapToFile(path, imageType, dpi, outPutBounds, isBackTransparent)) {
+						isSuccess = true;
+					}
+				}
+				// 输出结果信息
+				if (isSuccess) {
 					resultMessage = String.format(MapViewProperties.getString("String_OutputToFile_Successed"), path);
 				} else {
 					resultMessage = String.format(MapViewProperties.getString("String_OutputToFile_Failed"), path);
 				}
 				Application.getActiveApplication().getOutput().output(resultMessage);
+
 			} catch (Exception e1) {
 				Application.getActiveApplication().getOutput().output(e1);
 			} finally {

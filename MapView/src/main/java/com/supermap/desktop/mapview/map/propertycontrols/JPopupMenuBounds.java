@@ -6,6 +6,7 @@ import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
@@ -90,16 +91,32 @@ public class JPopupMenuBounds extends JPopupMenu {
 			exitEdit();
 		} else {
 			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().addMouseListener(this.controlMouseListener);
+			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().addKeyListener(this.controlKeyListener);
+
 		}
 	}
+
+	/**
+	 *
+	 */
+	private transient KeyListener controlKeyListener = new KeyAdapter() {
+		@Override
+		public void keyTyped(KeyEvent e) {
+
+			if (e.getKeyCode() == 0) {
+				if (flag == 1) {
+					flag--;
+				}
+			}
+		}
+	};
 
 	private int flag;
 
 	private transient MouseListener controlMouseListener = new MouseAdapter() {
 
 		@Override
-		public void mouseClicked(MouseEvent e) {
-
+		public void mousePressed(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON3) {
 				doSome();
 			} else if (e.getButton() == MouseEvent.BUTTON1) {
@@ -118,6 +135,8 @@ public class JPopupMenuBounds extends JPopupMenu {
 			if (dialog != null) {
 				dialog.setVisible(true);
 			}
+			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().removeMouseListener(controlMouseListener);
+			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().removeKeyListener(controlKeyListener);
 		}
 	};
 
@@ -323,6 +342,8 @@ public class JPopupMenuBounds extends JPopupMenu {
 		activeMapControl.setTrackMode(TrackMode.TRACK);
 		activeMapControl.setAction(getSuitableAction(actionCommand));
 		activeMapControl.addMouseListener(this.controlMouseListener);
+		// 给mapControl添加键盘监听，主要监听esc事件，当按下esc时，取消绘制的起点，重新绘制
+		activeMapControl.addKeyListener(this.controlKeyListener);
 		activeMapControl.addTrackedListener(this.trackedListener);
 	}
 
@@ -441,11 +462,14 @@ public class JPopupMenuBounds extends JPopupMenu {
 			}
 		} else {
 			Rectangle2D rectangle2dResult = null;
-			Layers layers = activeMapControl.getMap().getLayers();
+			// 当有图层分组的地图时，这样的获得方式会导致无法获得全部图层--yuanR
+//			Layers layers = activeMapControl.getMap().getLayers();
+			ArrayList<Layer> arrayList;
+			arrayList = MapUtilities.getLayers(activeMapControl.getMap(), true);
 
-			for (int i = 0; i < layers.getCount(); i++) {
-				Layer layer = layers.get(i);
-				if (!layer.isSelectable()) {
+			for (int i = 0; i < arrayList.size(); i++) {
+				Layer layer = arrayList.get(i);
+				if (!layer.isSelectable() || layer.getDataset() == null) {
 					continue;
 				}
 				Recordset recordset = layer.getSelection().toRecordset();
