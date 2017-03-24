@@ -1,18 +1,22 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.GeoCoordSys;
+import com.supermap.data.GeoCoordSysType;
+import com.supermap.data.GeoSpatialRefType;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.PrjCoordSysType;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterEnum;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CoreProperties;
-
-import javax.swing.*;
 
 /**
  * @author XiaJT
@@ -46,7 +50,7 @@ public class MetaProcessProjection extends MetaProcess {
     }
 
     @Override
-    public JComponent getComponent() {
+    public IParameterPanel getComponent() {
         return parameters.getPanel();
     }
 

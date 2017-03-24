@@ -1,8 +1,10 @@
 package com.supermap.desktop.process.graphics.connection;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedEvent;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
+import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import java.awt.*;
@@ -61,7 +63,7 @@ public class RelationLine extends AbstractLine implements GraphBoundsChangedList
 		this.end = end;
 
 		if (this.end != null) {
-			setEndPoint(this.end.getCenter());
+			setEndPoint(getEndLocation());
 			this.end.addGraphBoundsChangedListener(this);
 		} else {
 			setStartPoint(null);
@@ -72,8 +74,17 @@ public class RelationLine extends AbstractLine implements GraphBoundsChangedList
 	public void graghBoundsChanged(GraphBoundsChangedEvent e) {
 		if (e.getGraph() == this.start) {
 			setStartPoint(this.start.getCenter());
+			setEndPoint(getEndLocation());
 		} else if (e.getGraph() == this.end) {
-			setEndPoint(this.start.getCenter());
+			setEndPoint(getEndLocation());
+		}
+	}
+
+	private Point getEndLocation() {
+		if (this.start != null && this.end != null) {
+			return GraphicsUtil.chop(((AbstractGraph) this.end).getShape(), this.start.getCenter());
+		} else {
+			return null;
 		}
 	}
 }

@@ -1,6 +1,10 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
+import com.supermap.desktop.process.parameter.events.ParameterValueLegalEvent;
+import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
@@ -16,20 +20,24 @@ import java.util.List;
  */
 public abstract class AbstractParameter implements IParameter {
 
+
 	protected IParameterPanel panel;
 	public static final String PROPERTY_VALE = "value";
 	private IParameters parameters;
 
 	private List<PropertyChangeListener> propertyChangeListeners = new ArrayList<>();
-	private List<PropertyChangeListener> filedChangeListeners = new ArrayList<>();
+	private List<ParameterValueLegalListener> parameterValueLegalListeners = new ArrayList<>();
+	private List<FieldConstraintChangedListener> fieldConstraintChangedListeners = new ArrayList<>();
 
 
+	@Override
 	public void addPropertyListener(PropertyChangeListener propertyChangeListener) {
 		if (!propertyChangeListeners.contains(propertyChangeListener)) {
 			propertyChangeListeners.add(propertyChangeListener);
 		}
 	}
 
+	@Override
 	public void removePropertyListener(PropertyChangeListener propertyChangeListener) {
 		propertyChangeListeners.remove(propertyChangeListener);
 	}
@@ -40,23 +48,49 @@ public abstract class AbstractParameter implements IParameter {
 		}
 	}
 
-	public void addFieldListener(PropertyChangeListener propertyChangeListener) {
-		if (!filedChangeListeners.contains(propertyChangeListener)) {
-			filedChangeListeners.add(propertyChangeListener);
+	@Override
+	public void addValueLegalListener(ParameterValueLegalListener parameterValueLegalListener) {
+		if (!parameterValueLegalListeners.contains(parameterValueLegalListener)) {
+			parameterValueLegalListeners.add(parameterValueLegalListener);
 		}
 	}
 
-	public void removeFieldListener(PropertyChangeListener propertyChangeListener) {
-		filedChangeListeners.remove(propertyChangeListener);
+	@Override
+	public void removeValueLegalListener(ParameterValueLegalListener parameterValueLegalListener) {
+		parameterValueLegalListeners.remove(parameterValueLegalListener);
 	}
 
-	public void fireFieldValueChanged(PropertyChangeEvent propertyChangeEvent) {
-		for (PropertyChangeListener filedChangeListener : filedChangeListeners) {
-			filedChangeListener.propertyChange(propertyChangeEvent);
+	@Override
+	public boolean isValueLegal(String fieldName, Object value) {
+		for (ParameterValueLegalListener parameterValueLegalListener : parameterValueLegalListeners) {
+			if (!parameterValueLegalListener.isValueLegal(new ParameterValueLegalEvent(this, fieldName, value))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public void addFieldConstraintChangedListener(FieldConstraintChangedListener fieldConstraintChangedListener) {
+		if (!fieldConstraintChangedListeners.contains(fieldConstraintChangedListener)) {
+			fieldConstraintChangedListeners.add(fieldConstraintChangedListener);
 		}
 	}
 
-	public static ArrayList<String> getFieldNameList(Class<AbstractParameter> clazz) {
+	@Override
+	public void removeFieldConstraintChangedListener(FieldConstraintChangedListener fieldConstraintChangedListener) {
+		fieldConstraintChangedListeners.remove(fieldConstraintChangedListener);
+	}
+
+	@Override
+	public void fireFieldConstraintChanged(String fieldName) {
+		for (FieldConstraintChangedListener fieldConstraintChangedListener : fieldConstraintChangedListeners) {
+			fieldConstraintChangedListener.fieldConstraintChanged(new FieldConstraintChangedEvent(fieldName, this));
+		}
+	}
+
+	@Override
+	public ArrayList<String> getFieldNameList(Class<AbstractParameter> clazz) {
 		ArrayList<String> nameList = new ArrayList<>();
 		Field[] fields = clazz.getClass().getFields();
 		for (Field field : fields) {
@@ -69,6 +103,7 @@ public abstract class AbstractParameter implements IParameter {
 		return nameList;
 	}
 
+
 	@Override
 	public IParameterPanel getParameterPanel() {
 		if (panel == null) {
@@ -76,11 +111,6 @@ public abstract class AbstractParameter implements IParameter {
 		}
 		return panel;
 	}
-	@Override
-	public void dispose() {
-
-	}
-
 	public IParameters getParameters() {
 		return parameters;
 	}
@@ -88,5 +118,11 @@ public abstract class AbstractParameter implements IParameter {
 	public void setParameters(IParameters parameters) {
 		this.parameters = parameters;
 	}
+
+	@Override
+	public void dispose() {
+
+	}
+
 
 }

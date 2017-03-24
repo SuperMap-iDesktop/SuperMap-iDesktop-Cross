@@ -3,8 +3,20 @@ package com.supermap.desktop;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
-import com.supermap.desktop.Interface.*;
-import com.supermap.desktop.event.*;
+import com.supermap.desktop.Interface.ICtrlAction;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormMain;
+import com.supermap.desktop.Interface.IOutput;
+import com.supermap.desktop.Interface.ISplashForm;
+import com.supermap.desktop.Interface.IWorkFlow;
+import com.supermap.desktop.event.ActiveDatasetsChangeEvent;
+import com.supermap.desktop.event.ActiveDatasetsChangeListener;
+import com.supermap.desktop.event.ActiveDatasourcesChangeEvent;
+import com.supermap.desktop.event.ActiveDatasourcesChangeListener;
+import com.supermap.desktop.event.FormActivatedListener;
+import com.supermap.desktop.event.FormLoadedListener;
+import com.supermap.desktop.event.WorkFlowChangedEvent;
+import com.supermap.desktop.event.WorkFlowsChangedListener;
 import com.supermap.desktop.implement.Output;
 
 import javax.swing.event.EventListenerList;
@@ -26,10 +38,12 @@ public class Application {
 	private PluginManager pluginManager = null;
 	private ArrayList<Datasource> activeDatasources = new ArrayList<Datasource>();
 	private ArrayList<Dataset> activeDatasets = new ArrayList<Dataset>();
+	private ArrayList<IWorkFlow> workFlows = new ArrayList<>();
 
 	private EventListenerList eventListenerList = new EventListenerList();
 	private ArrayList<FormLoadedListener> formLoadedListeners = new ArrayList<>();
-	public ArrayList<FormActivatedListener> formActivatedListeners = new ArrayList<FormActivatedListener>();
+	private ArrayList<FormActivatedListener> formActivatedListeners = new ArrayList<FormActivatedListener>();
+	private ArrayList<WorkFlowsChangedListener> workFlowsChangedListeners = new ArrayList<>();
 
 	/**
 	 * classVar1 documentation comment
@@ -274,4 +288,40 @@ public class Application {
 			}
 		}
 	}
+
+	public ArrayList<IWorkFlow> getWorkFlows() {
+		return workFlows;
+	}
+
+	public void setWorkFlows(ArrayList<IWorkFlow> workFlows) {
+		this.workFlows = workFlows;
+		fireWorkFlowsChanged(new WorkFlowChangedEvent(WorkFlowChangedEvent.RE_BUILD, workFlows.toArray(new IWorkFlow[workFlows.size()])));
+	}
+
+	public void addWorkFlow(IWorkFlow workFlow) {
+		this.workFlows.add(workFlow);
+		fireWorkFlowsChanged(new WorkFlowChangedEvent(WorkFlowChangedEvent.ADD, workFlow));
+	}
+
+	public void removeWorkFlow(IWorkFlow workFlow) {
+		this.workFlows.remove(workFlow);
+		fireWorkFlowsChanged(new WorkFlowChangedEvent(WorkFlowChangedEvent.DELETE, workFlow));
+	}
+
+	private void fireWorkFlowsChanged(WorkFlowChangedEvent workFlowChangedEvent) {
+		for (WorkFlowsChangedListener workFlowsChangedListener : workFlowsChangedListeners) {
+			workFlowsChangedListener.workFlowsChanged(workFlowChangedEvent);
+		}
+	}
+
+	public void addWorkFlowChangedListener(WorkFlowsChangedListener workFlowsChangedListener) {
+		if (!workFlowsChangedListeners.contains(workFlowsChangedListener)) {
+			workFlowsChangedListeners.add(workFlowsChangedListener);
+		}
+	}
+
+	public void removeWorkFlowChangedListener(WorkFlowsChangedListener workFlowsChangedListener) {
+		workFlowsChangedListeners.remove(workFlowsChangedListener);
+	}
+
 }

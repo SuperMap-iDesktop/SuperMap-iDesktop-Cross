@@ -45,26 +45,26 @@ import java.text.NumberFormat;
  * Created by xie on 2017/2/14.
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.OVERLAY_ANALYST)
-public class ParameterOverlayAnalystPanel extends DefaultParameterPanel implements IParameterPanel {
+public class ParameterOverlayAnalystPanel extends SwingPanel implements IParameterPanel {
 	private JPanel panelSource;
 	private JPanel panelOverlayAnalyst;
 	private JPanel panelTarget;
 	private JLabel labelSourceDatasource;
-	private DatasourceComboBox comboboxSourceDatasource;// 源数据源
+	private DatasourceComboBox comboboxSourceDatasource;// 源数据源 Source dataSource
 	private JLabel labelSourceDataset;
-	private DatasetComboBox comboboxSourceDataset;// 源数据集
+	private DatasetComboBox comboboxSourceDataset;// 源数据集 Source dataset
 	private JLabel labelOverlayAnalystDatasource;
-	private DatasourceComboBox comboboxOverlayAnalystDatasource;//叠加数据源
+	private DatasourceComboBox comboboxOverlayAnalystDatasource;//叠加数据源 Superimposed datasource
 	private JLabel labelOverlayAnalystDataset;
-	private DatasetComboBox comboboxOverlayAnalystDataset;//叠加数据集
+	private DatasetComboBox comboboxOverlayAnalystDataset;//叠加数据集 Superimposed dataset
 	private JLabel labelTargetDatasource;
-	private DatasourceComboBox comboboxTargetDatasource;//目标数据源
+	private DatasourceComboBox comboboxTargetDatasource;//目标数据源 Target datasource
 	private JLabel labelTargetDataset;
-	private JTextField textFieldTargetDataset;//目标数据集
-	private JButton buttonFieldsSet;//字段设置
+	private JTextField textFieldTargetDataset;//目标数据集 Target dataset
+	private JButton buttonFieldsSet;//字段设置 Field settings
 	private JLabel labelTolerance;
-	private SMFormattedTextField textFieldTolerance;//容限
-	private JLabel labelToleranceUnity;//容限单位
+	private SMFormattedTextField textFieldTolerance;//容限 Tolerance
+	private JLabel labelToleranceUnity;//容限单位 Tolerance Unit
 	private JCheckBox checkboxResultAnalyst;
 
 	private ParameterOverlayAnalyst overlayAnalyst;
@@ -77,6 +77,7 @@ public class ParameterOverlayAnalystPanel extends DefaultParameterPanel implemen
 	private boolean isAllVectorType;
 
 	public ParameterOverlayAnalystPanel(IParameter overlayAnalyst) {
+		super(overlayAnalyst);
 		this.overlayAnalyst = (ParameterOverlayAnalyst) overlayAnalyst;
 		this.overlayAnalystInfo = this.overlayAnalyst.getOverlayAnalystInfo();
 		initComponents();
@@ -357,10 +358,10 @@ public class ParameterOverlayAnalystPanel extends DefaultParameterPanel implemen
 		initPanelSourceLayout();
 		initPanelOverlayAnalystLayout();
 		initPanelTargetLayout();
-		this.setLayout(new GridBagLayout());
-		this.add(this.panelSource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
-		this.add(this.panelOverlayAnalyst, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
-		this.add(this.panelTarget, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
+		panel.setLayout(new GridBagLayout());
+		panel.add(this.panelSource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
+		panel.add(this.panelOverlayAnalyst, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
+		panel.add(this.panelTarget, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.CENTER).setInsets(2).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
 	}
 
 	private void initPanelTargetLayout() {

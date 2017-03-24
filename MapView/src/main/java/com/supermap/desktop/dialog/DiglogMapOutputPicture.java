@@ -5,6 +5,7 @@ import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.map.propertycontrols.PanelGroupBoxViewBounds;
@@ -92,6 +93,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 	public DiglogMapOutputPicture() {
 		super();
 		initComponents();
+		setComponentName();
 		initResources();
 		initLayout();
 		// 初始化各个控件的默认设置
@@ -182,6 +184,11 @@ public class DiglogMapOutputPicture extends SmDialog {
 
 				JCheckBox("backTransparent");
 
+	}
+
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.backTransparent,"DiglogMapOutputPicture_backTransparent");
+		ComponentUIUtilities.setName(this.DPILabel,"DiglogMapOutputPicture_DPILabel");
 	}
 
 	/**
@@ -501,11 +508,17 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private CaretListener rangeTextFiledCareListener = new CaretListener() {
 		@Override
 		public void caretUpdate(CaretEvent e) {
-			Rectangle2D rectangle2D = panelGroupBoxViewBounds.getRangeBound();
-			if (rectangle2D != null) {
-				outPutBounds = rectangle2D;
+			// 判断文本框中输入的内容是否为纯数字
+			if (StringUtilities.isNumber(waringTextFieldLeft.getTextField().getText()) && StringUtilities.isNumber(waringTextFieldTop.getTextField().getText())
+					&& StringUtilities.isNumber(waringTextFieldRight.getTextField().getText()) && StringUtilities.isNumber(waringTextFieldBottom.getTextField().getText())) {
+				Rectangle2D rectangle2D = panelGroupBoxViewBounds.getRangeBound();
+				if (rectangle2D != null) {
+					outPutBounds = rectangle2D;
+				} else {
+					// 当无法获得有效范围矩形框时，设置导出范围矩形框为null
+					outPutBounds = null;
+				}
 			} else {
-				// 当无法获得有效范围矩形框时，设置导出范围矩形框为null
 				outPutBounds = null;
 			}
 			// 当范围文本框改变时，设置一下高度和宽度
@@ -553,20 +566,39 @@ public class DiglogMapOutputPicture extends SmDialog {
 //			CommonProperties.getString("String_DefaultFilePath")
 			// windows和linux系统通用根目录
 //			System.getProperty("user.dir")
-			SmFileChoose.addNewNode(fileFilters,System.getProperty("user.dir"),
+			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
 					ControlsProperties.getString("String_Save"), moduleName, "SaveOne");
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
-		// 设置选择模式为：仅为文件夹
-		this.exportPathFileChoose.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		// 根据不同的系统给予不同的默认路径
+
+		// 两个系统下的获得最近路径得到的结果不同，windows得到的是路径，而linux得到的是完整的文件路径
 		if (SystemPropertyUtilities.isWindows()) {
+			// 对文件名进行判断，当目录下存在该文件时，名称重新给予
+			int num = 1;
 			String lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage.png";
+			File file = new File(lastPath);
+			while (file.exists()) {
+				lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage" + "_" + num + ".png";
+				file = new File(lastPath);
+				num++;
+			}
 			this.fileChooserControlExportPath.setText(lastPath);
 		} else {
-			this.fileChooserControlExportPath.setText(this.exportPathFileChoose.getModuleLastPath());
-		}
+			String lastPath = this.exportPathFileChoose.getModuleLastPath();
 
+			String filePath = lastPath.substring(0, lastPath.lastIndexOf("/") + 1);
+			String fileType = lastPath.substring(lastPath.lastIndexOf("."));
+			String fileName = lastPath.substring(lastPath.lastIndexOf("/") + 1, lastPath.lastIndexOf("."));
+
+			int num = 1;
+			File file = new File(lastPath);
+			while (file.exists()) {
+				lastPath = filePath + fileName + "_" + num + fileType;
+				file = new File(lastPath);
+				num++;
+			}
+			this.fileChooserControlExportPath.setText(lastPath);
+		}
 	}
 
 	/**
@@ -588,20 +620,40 @@ public class DiglogMapOutputPicture extends SmDialog {
 		// 设置内存文本框相关参数，因为内存是不断变化的，所以需要动态设置
 		//1、判断文件路径是否正确，获得所存文件的根目录，以获取磁盘剩余信息
 		String filePath = this.fileChooserControlExportPath.getEditor().getText();
-		if (!StringUtilities.isNullOrEmpty(filePath) && filePath.indexOf("\\") > 0) {
-			//获得文件所在的文件夹目录
-			filePath = filePath.substring(0, filePath.lastIndexOf('\\'));
-			File file = new File(filePath);
-			if (file.exists()) {
-				double constm = 1024 * 1024 * 1024;
-				this.remainingMemory = file.getFreeSpace() / constm;
-			} else {
-				// 如果此文件不存在，其路径错误，设置其路径为空，相应的图片类型为空
-				this.path = "";
-				this.imageType = null;
-				this.remainingMemory = 0.0;
+
+		if (SystemPropertyUtilities.isWindows()) {
+			if (!StringUtilities.isNullOrEmpty(filePath) && filePath.indexOf("\\") > 0) {
+				//获得文件所在的文件夹目录
+				filePath = filePath.substring(0, filePath.lastIndexOf('\\'));
+				File file = new File(filePath);
+				if (file.exists()) {
+					double constm = 1024 * 1024 * 1024;
+					this.remainingMemory = file.getFreeSpace() / constm;
+				} else {
+					// 如果此文件不存在，其路径错误，设置其路径为空，相应的图片类型为空
+					this.path = "";
+					this.imageType = null;
+					this.remainingMemory = 0.0;
+				}
 			}
+		} else {
+			if (!StringUtilities.isNullOrEmpty(filePath)) {
+				//获得文件所在的文件夹目录
+				filePath = filePath.substring(0, filePath.lastIndexOf("/"));
+				File file = new File(filePath);
+				if (file.exists()) {
+					double constm = 1024 * 1024 * 1024;
+					this.remainingMemory = file.getFreeSpace() / constm;
+				} else {
+					// 如果此文件不存在，其路径错误，设置其路径为空，相应的图片类型为空
+					this.path = "";
+					this.imageType = null;
+					this.remainingMemory = 0.0;
+				}
+			}
+
 		}
+
 	}
 
 	/**

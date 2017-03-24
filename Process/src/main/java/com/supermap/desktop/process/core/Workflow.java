@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.process.enums.ParameterType;
@@ -15,22 +16,25 @@ import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by xie on 2017/3/18.
- * Use this class to store node matrix;
+ * WorkFLow应该只存描述字符串，而不是具体的对象。不然打开多个会导致多个窗体指向同一个对象。
  */
-public class Workflow {
-    private NodeMatrix matrix;
-    private Document document;
+public class Workflow implements IWorkFlow {
+	private String name = "workFLow";
+	private NodeMatrix matrix;
+	private Document document;
 
     public Workflow(NodeMatrix matrix) {
         this.matrix = matrix;
@@ -54,13 +58,7 @@ public class Workflow {
                 parseFileToXML(transformer, source, file);
             }
 
-        } catch (TransformerConfigurationException e) {
-            Application.getActiveApplication().getOutput().output(e);
-        } catch (TransformerException e) {
-            Application.getActiveApplication().getOutput().output(e);
-        } catch (FileNotFoundException e) {
-            Application.getActiveApplication().getOutput().output(e);
-        } catch (IOException e) {
+        } catch (Exception e) {
             Application.getActiveApplication().getOutput().output(e);
         }
 
@@ -218,4 +216,12 @@ public class Workflow {
         return document.createElement("Constraint");
     }
 
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }
