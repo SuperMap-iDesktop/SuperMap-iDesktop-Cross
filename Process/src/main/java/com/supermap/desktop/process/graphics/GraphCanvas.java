@@ -7,9 +7,7 @@ import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.events.GraphCreatingEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatingListener;
-import com.supermap.desktop.process.graphics.graphs.EllipseGraph;
-import com.supermap.desktop.process.graphics.graphs.IGraph;
-import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
+import com.supermap.desktop.process.graphics.graphs.*;
 import com.supermap.desktop.process.graphics.interaction.canvas.*;
 import com.supermap.desktop.process.graphics.interaction.graph.DefaultGraphEventHanderFactory;
 import com.supermap.desktop.process.graphics.interaction.graph.IGraphEventHandlerFactory;
@@ -108,10 +106,11 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		button2.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				ProcessGraph graph = new ProcessGraph(canvas, null);
-//				graph.setSize(200, 80);
-//				graph.setArcHeight(10);
-//				graph.setArcWidth(10);
+				ProcessGraph graph = new ProcessGraph(canvas, null);
+				graph.setSize(200, 80);
+				graph.setArcHeight(10);
+				graph.setArcWidth(10);
+				canvas.creator.create(graph);
 			}
 		});
 
@@ -225,10 +224,20 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		return this.selection;
 	}
 
-	public void addGraph(IGraph graph) {
+	public void addGraphTransformed(IGraph graph) {
 		if (graph != null && !this.graphStorage.contains(graph)) {
 			this.coordinateTransform.inverse(graph);
 
+			if (this.canvasRect.contains(graph.getBounds())) {
+				fireGraphCreating(new GraphCreatingEvent(this, graph));
+				this.graphStorage.add(graph);
+				fireGraphCreated(new GraphCreatedEvent(this, graph));
+			}
+		}
+	}
+
+	public void addGraph(IGraph graph) {
+		if (graph != null && !this.graphStorage.contains(graph)) {
 			if (this.canvasRect.contains(graph.getBounds())) {
 				fireGraphCreating(new GraphCreatingEvent(this, graph));
 				this.graphStorage.add(graph);

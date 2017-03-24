@@ -1,6 +1,5 @@
 package com.supermap.desktop.process;
 
-import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.FormActivatedListener;
@@ -15,11 +14,17 @@ import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
+import com.supermap.desktop.process.graphics.connection.RelationLine;
+import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
+import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
+import com.supermap.desktop.process.graphics.graphs.DataGraph;
+import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.ui.FormBaseChild;
-import com.supermap.desktop.ui.controls.Dockbar;
 
+import javax.management.relation.Relation;
 import javax.swing.*;
 import java.awt.*;
 
@@ -27,14 +32,14 @@ import java.awt.*;
  * Created by highsad on 2017/1/6.
  */
 public class FormProcess extends FormBaseChild implements IForm {
-	private GraphCanvas graphCanvas = new GraphCanvas();
+	private ScrollGraphCanvas graphCanvas = new ScrollGraphCanvas();
 
 
 	public FormProcess() {
 		super("", null, null);
 		setLayout(new BorderLayout());
 		add(graphCanvas, BorderLayout.CENTER);
-		graphCanvas.addGraphSelectChangedListener(new GraphSelectChangedListener() {
+		graphCanvas.getCanvas().addGraphSelectChangedListener(new GraphSelectChangedListener() {
 
 			@Override
 			public void graphSelectChanged(GraphSelectedChangedEvent e) {
@@ -48,6 +53,24 @@ public class FormProcess extends FormBaseChild implements IForm {
 //				} catch (ClassNotFoundException e1) {
 //					e1.printStackTrace();
 //				}
+			}
+		});
+
+		graphCanvas.getCanvas().addGraphCreatedListener(new GraphCreatedListener() {
+			@Override
+			public void graphCreated(GraphCreatedEvent e) {
+				if (e.getGraph() instanceof ProcessGraph) {
+					IGraph process = e.getGraph();
+
+					DataGraph data = new DataGraph(graphCanvas.getCanvas());
+					data.setLocation(new Point(process.getLocation().x + process.getWidth() * 3 / 2, process.getLocation().y));
+					data.setSize(process.getWidth(), process.getHeight());
+					graphCanvas.getCanvas().addGraph(data);
+
+					RelationLine line = new RelationLine(graphCanvas.getCanvas(), process, data);
+					graphCanvas.getCanvas().addConnection(line);
+					graphCanvas.getCanvas().repaint();
+				}
 			}
 		});
 	}
@@ -203,15 +226,15 @@ public class FormProcess extends FormBaseChild implements IForm {
 	}
 
 	public GraphCanvas getCanvas() {
-		return this.graphCanvas;
+		return this.graphCanvas.getCanvas();
 	}
 
 	public void addProcess(IProcess process) {
-		RectangleGraph graph = new ProcessGraph(graphCanvas, process);
+		RectangleGraph graph = new ProcessGraph(graphCanvas.getCanvas(), process);
 		graph.setSize(150, 60);
 		graph.setArcWidth(20);
 		graph.setArcHeight(30);
-//		graphCanvas.createGraph(graph);
+		graphCanvas.getCanvas().create(graph);
 	}
 	//endregion
 }
