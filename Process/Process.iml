@@ -219,6 +219,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:mongo-java-driver:3.0.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:bson:3.0.4" level="project" />
     <orderEntry type="module" module-name="Controls" scope="PROVIDED" />
     <orderEntry type="library" name="Maven: org.jhotdraw:jhotdraw:7.4.1" level="project" />
   </component>

@@ -17,7 +17,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.MessageFormat;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
 
 /**
@@ -29,17 +28,18 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     private static final long serialVersionUID = 1L;
 
     private transient SwingWorker<Boolean, Object> worker;
-    private String message = "";
-    private String remainTime = "";
-    private int percent = 0;
+    private volatile String message = "";
+    private volatile String remainTime = "";
+    private volatile int percent = 0;
     private volatile boolean isStop;
 
-    private JProgressBar progressBar;
-    private JLabel labelTitle;
-    private JLabel labelMessage;
-    private JLabel labelRemaintime;
-    private JButton buttonCancel = null;
-    private IProcess process;
+    private volatile JProgressBar progressBar;
+    private volatile JLabel labelTitle;
+    private volatile JLabel labelMessage;
+    private volatile JLabel labelRemaintime;
+    private volatile JButton buttonRun;
+    private volatile JButton buttonRemove;
+    private volatile IProcess process;
     private volatile boolean isFinished;
     private ActionListener cancelListener = new ActionListener() {
         @Override
@@ -52,6 +52,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         public void running(RunningEvent e) {
             if (e.getProgress() >= 100) {
                 updateProgress(100, String.valueOf(e.getRemainTime()), getFinishMessage());
+                buttonRun.setEnabled(false);
                 isFinished = true;
             } else {
                 updateProgress(e.getProgress(), String.valueOf(e.getRemainTime()), e.getMessage());
@@ -79,18 +80,19 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         progressBar.setStringPainted(true);
         labelMessage = new JLabel("...");
         labelRemaintime = new JLabel("...");
-        buttonCancel = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Run.png"));
+        buttonRun = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Run.png"));
+        buttonRemove = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_delete.png"));
     }
 
     @Override
     public void initLayout() {
         Dimension dimension = new Dimension(18, 18);
-        this.buttonCancel.setPreferredSize(dimension);
-        this.buttonCancel.setMinimumSize(dimension);
+        this.buttonRun.setPreferredSize(dimension);
+        this.buttonRun.setMinimumSize(dimension);
         this.setLayout(new GridBagLayout());
         this.add(this.labelTitle, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(this.progressBar, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
-        this.add(this.buttonCancel, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraintsHelper.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+        this.add(this.buttonRun, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraintsHelper.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(this.labelMessage, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(this.labelRemaintime, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
         this.add(new JPanel(), new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
@@ -98,7 +100,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 
     @Override
     public void initResouces() {
-       if (process.getKey().equals(MetaKeys.OVERLAY_ANALYST)) {
+        if (process.getKey().equals(MetaKeys.OVERLAY_ANALYST)) {
             OverlayAnalystType analystType = ((MetaProcessOverlayAnalyst) process).getAnalystType();
             switch (analystType) {
                 case CLIP:
@@ -146,12 +148,12 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     @Override
     public void registEvents() {
         removeEvents();
-        this.buttonCancel.addActionListener(this.cancelListener);
+        this.buttonRun.addActionListener(this.cancelListener);
     }
 
     @Override
     public void removeEvents() {
-        this.buttonCancel.removeActionListener(this.cancelListener);
+        this.buttonRun.removeActionListener(this.cancelListener);
     }
 
     public void doWork() {
@@ -234,14 +236,14 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    buttonCancel.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Stop.png"));
+                    buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Stop.png"));
                 }
             });
         } else {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    buttonCancel.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Run.png"));
+                    buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Run.png"));
                 }
             });
         }
@@ -254,7 +256,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     @Override
     public void updateProgress(final int percent, final String remainTime, final String message) throws CancellationException {
         if (this.isStop) {
-            return;
+            throw new CancellationException();
         } else {
             this.percent = percent;
             this.remainTime = remainTime;

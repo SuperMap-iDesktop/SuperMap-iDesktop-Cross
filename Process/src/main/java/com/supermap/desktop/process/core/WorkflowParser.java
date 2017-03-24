@@ -29,6 +29,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class WorkflowParser {
     private static final int ITEM_PROCESSES = 3;
     private static final int ITEM_NODES = 1;
+    private static final int ITME_WORKFLOW = 0;
 
     public WorkflowParser() {
 
@@ -44,7 +45,7 @@ public class WorkflowParser {
                     DocumentBuilder builder = factory.newDocumentBuilder();
                     Document document = builder.parse(xmlFile);
                     NodeList documentChildNodes = document.getChildNodes();
-                    NodeList processesList = documentChildNodes.item(0).getChildNodes().item(ITEM_PROCESSES).getChildNodes();
+                    NodeList processesList = documentChildNodes.item(ITME_WORKFLOW).getChildNodes().item(ITEM_PROCESSES).getChildNodes();
                     for (int i = 0; i < processesList.getLength(); i++) {
                         if ("Process".equals(processesList.item(i).getNodeName())) {
                             Node process = processesList.item(i);
@@ -97,10 +98,12 @@ public class WorkflowParser {
                             if (null != preProcess && null != process) {
                                 //TODO
                                 //INodeConstriant now not exist in xml file,so add a new INodeConstriant
+                                process.getInputs().followProcess(preProcess);
                                 nodeMatrix.addConstraint(preProcess, process, new INodeConstraint() {
                                 });
                             }
                             if (null != process && null != nextProcess) {
+                                nextProcess.getInputs().followProcess(process);
                                 nodeMatrix.addConstraint(process, nextProcess, new INodeConstraint() {
                                 });
                             }

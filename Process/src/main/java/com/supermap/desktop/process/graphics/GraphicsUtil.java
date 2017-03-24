@@ -48,6 +48,18 @@ public class GraphicsUtil {
 		return rectangle;
 	}
 
+	public static Rectangle createRectangle(Point start, Point end) {
+		if (isPointValid(start) && isPointValid(end)) {
+			int locationX = Math.min(start.x, end.x);
+			int locationY = Math.min(start.y, end.y);
+			int width = Math.abs(end.x - start.x);
+			int height = Math.abs(end.y - start.y);
+			return new Rectangle(locationX, locationY, width, height);
+		} else {
+			return null;
+		}
+	}
+
 	public static boolean lineContainsPoint(int x1, int y1, int x2, int y2, int px, int py) {
 		return lineContainsPoint(x1, y1, x2, y2, px, py, 3.0D);
 	}

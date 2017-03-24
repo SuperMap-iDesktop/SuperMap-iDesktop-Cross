@@ -69,7 +69,7 @@ public class BatchAddColorTableDailog extends SmDialog {
     private RightValueListener rightStartValue = new RightValueListener() {
         @Override
         public void update(String value) {
-            if (!value.isEmpty()&& Double.compare(inputStartValue, Double.valueOf(value)) != 0 ) {
+            if (!value.isEmpty() && Double.compare(inputStartValue, Double.valueOf(value)) != 0) {
                 startValurOrEndValueChange();
                 inputStartValue = Double.valueOf(value);
             }
@@ -79,7 +79,7 @@ public class BatchAddColorTableDailog extends SmDialog {
     private RightValueListener rightEndValue = new RightValueListener() {
         @Override
         public void update(String value) {
-            if (!value.isEmpty()&& Double.compare(inputEndVale, Double.valueOf(value)) != 0) {
+            if (!value.isEmpty() && Double.compare(inputEndVale, Double.valueOf(value)) != 0) {
                 startValurOrEndValueChange();
                 inputEndVale = Double.valueOf(value);
             }
@@ -89,10 +89,13 @@ public class BatchAddColorTableDailog extends SmDialog {
     private RightValueListener rightStepValue = new RightValueListener() {
         @Override
         public void update(String value) {
-            if (!value.isEmpty()&& Double.compare(inputStepLength, Double.valueOf(value)) != 0 ) {
+            if (!value.isEmpty() && Double.compare(inputStepLength, Double.valueOf(value)) != 0 && !endValueText.getText().isEmpty() &&!startValueText.getText().isEmpty()) {
                 double currentStepValue = Double.valueOf(value);
                 double currentSeriesNum = (Double.valueOf(endValueText.getText()) - Double.valueOf(startValueText.getText())) / currentStepValue;
                 Integer seriesNum = (int) Math.ceil(Math.abs(currentSeriesNum));
+                if (Double.compare(Double.valueOf(startValueText.getText()) + seriesNum * currentStepValue, Double.valueOf(endValueText.getText())) == -1 || Double.compare(Double.valueOf(startValueText.getText()) + seriesNum * currentStepValue, Double.valueOf(endValueText.getText())) == 0) {
+                    seriesNum = seriesNum + 1;
+                }
                 inputSeriesNum = seriesNum;
                 seriesNumText.setText(String.valueOf(seriesNum));
             }
@@ -102,9 +105,9 @@ public class BatchAddColorTableDailog extends SmDialog {
     private RightValueListener rightSeriesNum = new RightValueListener() {
         @Override
         public void update(String value) {
-            if (!value.isEmpty()&& Integer.compare(inputSeriesNum, Integer.valueOf(value)) != 0 ) {
+            if (!value.isEmpty() && Integer.compare(inputSeriesNum, Integer.valueOf(value)) != 0 && !endValueText.getText().isEmpty() &&!startValueText.getText().isEmpty()) {
                 Integer currentSeriesNum = Integer.valueOf(value);
-                double currentStepValue = (Double.valueOf(endValueText.getText()) - Double.valueOf(startValueText.getText())) / currentSeriesNum;
+                double currentStepValue = (Double.valueOf(endValueText.getText()) - Double.valueOf(startValueText.getText())) / (currentSeriesNum - 1);
                 inputStepLength = currentStepValue;
                 stepLengthText.setText(String.valueOf(currentStepValue));
             }
@@ -220,7 +223,7 @@ public class BatchAddColorTableDailog extends SmDialog {
             double currentStepValue = (Double.valueOf(this.endValueText.getText()) - Double.valueOf(this.startValueText.getText())) / currentSeriesNum;
             this.inputStepLength = currentStepValue;
             this.stepLengthText.setText(String.valueOf(currentStepValue));
-        } else if (!this.seriesNum.isSelected() && !this.endValueText.getText().isEmpty() && !this.stepLengthText.getText().isEmpty() && !this.startValueText.getText().isEmpty()){
+        } else if (!this.seriesNum.isSelected() && !this.endValueText.getText().isEmpty() && !this.stepLengthText.getText().isEmpty() && !this.startValueText.getText().isEmpty()) {
             double currentStepValue = Double.valueOf(this.stepLengthText.getText());
             double currentSeriesNum = (Double.valueOf(this.endValueText.getText()) - Double.valueOf(this.startValueText.getText())) / currentStepValue;
             Integer cSeriesNum = Math.abs((int) currentSeriesNum);

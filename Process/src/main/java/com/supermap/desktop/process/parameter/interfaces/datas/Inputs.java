@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.parameter.interfaces;
+package com.supermap.desktop.process.parameter.interfaces.datas;
 
 import com.supermap.desktop.process.core.IProcess;
 
