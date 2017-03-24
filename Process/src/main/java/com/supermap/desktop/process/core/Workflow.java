@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.process.enums.ParameterType;
@@ -28,11 +29,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by xie on 2017/3/18.
- * Use this class to store node matrix;
+ * WorkFLow应该只存描述字符串，而不是具体的对象。不然打开多个会导致多个窗体指向同一个对象。
  */
-public class Workflow {
-    private NodeMatrix matrix;
-    private Document document;
+public class Workflow implements IWorkFlow {
+	private String name = "workFLow";
+	private NodeMatrix matrix;
+	private Document document;
 
     public Workflow(NodeMatrix matrix) {
         this.matrix = matrix;
@@ -214,4 +216,12 @@ public class Workflow {
         return document.createElement("Constraint");
     }
 
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }

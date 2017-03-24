@@ -102,8 +102,8 @@ public class NodeMatrix {
     }
 
     /**
-     * If node has not previous or next node return true,else return false;
      *
+     * If node has not previous or next node return true,else return false;
      * @param node
      * @return
      */
@@ -116,8 +116,8 @@ public class NodeMatrix {
     }
 
     /**
+     * 获得前一节点
      * Get node's previous nodes
-     *
      * @param node
      * @return
      */
