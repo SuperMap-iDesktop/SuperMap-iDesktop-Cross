@@ -3,7 +3,13 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.EncodeType;
-import com.supermap.data.conversion.*;
+import com.supermap.data.conversion.DataImport;
+import com.supermap.data.conversion.ImportMode;
+import com.supermap.data.conversion.ImportResult;
+import com.supermap.data.conversion.ImportSetting;
+import com.supermap.data.conversion.ImportSettingSHP;
+import com.supermap.data.conversion.ImportSteppedEvent;
+import com.supermap.data.conversion.ImportSteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -15,8 +21,6 @@ import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
-
-import javax.swing.*;
 
 /**
  * @author XiaJT
@@ -78,7 +82,7 @@ public class MetaProcessImport extends MetaProcess {
     }
 
     @Override
-    public JComponent getComponent() {
+    public IParameterPanel getComponent() {
 
         return parameters.getPanel();
     }

@@ -44,9 +44,9 @@ public class NodeDataType extends Enum {
 
     public static final NodeDataType SCENES = new NodeDataType(1015, 1015);
 
-    public static final NodeDataType LAYOUTS = new NodeDataType(1016, 1016);
+	public static final NodeDataType LAYOUTS = new NodeDataType(1016, 1016);
 
-    public static final NodeDataType RESOURCES = new NodeDataType(1017, 1017);
+	public static final NodeDataType RESOURCES = new NodeDataType(1017, 1017);
 
     public static final NodeDataType SYMBOL_MARKER_LIBRARY = new NodeDataType(1018, 1018);
 
@@ -56,7 +56,12 @@ public class NodeDataType extends Enum {
 
     public static final NodeDataType DATASET_RELATION_SHIP = new NodeDataType(1021, 1021);
 
-    public static final NodeDataType SCREEN_LAYER3D = new NodeDataType(2001, 2001);
+	public static final NodeDataType WORK_FLOWS = new NodeDataType(1022, 1022);
+
+	public static final NodeDataType WORK_FLOW = new NodeDataType(1023, 1023);
+
+
+	public static final NodeDataType SCREEN_LAYER3D = new NodeDataType(2001, 2001);
 
     public static final NodeDataType TERRAIN_LAYERS = new NodeDataType(2002, 2002);
 

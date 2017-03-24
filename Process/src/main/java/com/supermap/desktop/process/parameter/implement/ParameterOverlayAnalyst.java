@@ -11,7 +11,8 @@ import java.beans.PropertyChangeEvent;
  * Created by xie on 2017/2/14.
  */
 public class ParameterOverlayAnalyst extends AbstractParameter implements ISelectionParameter {
-    private OverlayAnalystType overlayAnalystType;
+
+	private OverlayAnalystType overlayAnalystType;
     private ParameterOverlayAnalystInfo overlayAnalystInfo = new ParameterOverlayAnalystInfo();
 
     public OverlayAnalystType getOverlayAnalystType() {

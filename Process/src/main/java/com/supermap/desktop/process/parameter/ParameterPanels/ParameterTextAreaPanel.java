@@ -20,7 +20,7 @@ import java.beans.PropertyChangeListener;
  * Created by xie on 2017/2/21.
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.TEXT_AREA)
-public class ParameterTextAreaPanel extends DefaultParameterPanel implements IParameterPanel {
+public class ParameterTextAreaPanel extends SwingPanel implements IParameterPanel {
     private ParameterTextArea parameterTextArea;
     private JLabel label;
     private JTextArea textArea;
@@ -28,6 +28,7 @@ public class ParameterTextAreaPanel extends DefaultParameterPanel implements IPa
     private boolean selectingItem;
 
 	public ParameterTextAreaPanel(IParameter parameterTextArea) {
+		super(parameterTextArea);
 		this.parameterTextArea = (ParameterTextArea) parameterTextArea;
 		initComponents();
         initLayout();
@@ -73,10 +74,10 @@ public class ParameterTextAreaPanel extends DefaultParameterPanel implements IPa
 
     private void initLayout() {
         label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
-        this.setLayout(new GridBagLayout());
-        this.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST));
-        this.add(scrollPane, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 0, 0).setIpad(0, 30));
-        this.scrollPane.setViewportView(textArea);
+	    panel.setLayout(new GridBagLayout());
+	    panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST));
+	    panel.add(scrollPane, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 0, 0).setIpad(0, 30));
+	    this.scrollPane.setViewportView(textArea);
     }
 
     private void initComponents() {

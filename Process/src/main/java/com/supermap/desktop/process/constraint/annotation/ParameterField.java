@@ -14,5 +14,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ParameterField {
 
-	String name() default "";
+	String name();
 }

@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
@@ -10,6 +11,7 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterSpinner extends AbstractParameter implements ISelectionParameter {
 
+	@ParameterField(name = "value")
 	private double value;
 	private double min;
 	private double max;
@@ -28,7 +30,7 @@ public class ParameterSpinner extends AbstractParameter implements ISelectionPar
 			Double doubleValue = Double.valueOf(String.valueOf(value));
 			double oldValue = this.value;
 			this.value = doubleValue;
-			firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, value));
+			firePropertyChangeListener(new PropertyChangeEvent(this, "value", oldValue, value));
 		} catch (NumberFormatException e) {
 			// ignore
 		}

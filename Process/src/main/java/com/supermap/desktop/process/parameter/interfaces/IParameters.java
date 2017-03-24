@@ -1,7 +1,5 @@
 package com.supermap.desktop.process.parameter.interfaces;
 
-import javax.swing.*;
-
 /**
  * Created by highsad on 2017/1/5.
  */
@@ -17,7 +15,7 @@ public interface IParameters {
 
 	int size();
 
-	JPanel getPanel();
+	IParameterPanel getPanel();
 
 	IParameterPanel createPanel(IParameter parameter);
 }

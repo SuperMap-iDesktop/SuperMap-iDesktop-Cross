@@ -60,6 +60,62 @@ public class GraphicsUtil {
 		}
 	}
 
+	public static Point chop(Shape shape, Point p) {
+		Rectangle2D bounds = shape.getBounds2D();
+		java.awt.geom.Point2D.Double ctr = new java.awt.geom.Point2D.Double(bounds.getCenterX(), bounds.getCenterY());
+		double cx = -1.0D;
+		double cy = -1.0D;
+		double len = 1.7976931348623157E308D;
+		PathIterator i = shape.getPathIterator(new AffineTransform(), 1.0D);
+		double[] coords = new double[6];
+		i.currentSegment(coords);
+		double prevX = coords[0];
+		double prevY = coords[1];
+		double moveToX = prevX;
+		double moveToY = prevY;
+		i.next();
+
+		while (!i.isDone()) {
+			switch (i.currentSegment(coords)) {
+				case 0:
+					moveToX = coords[0];
+					moveToY = coords[1];
+					break;
+				case 4:
+					coords[0] = moveToX;
+					coords[1] = moveToY;
+			}
+
+			java.awt.geom.Point2D.Double l = intersect(prevX, prevY, coords[0], coords[1], p.x, p.y, ctr.x, ctr.y);
+			if (l != null) {
+				double cl = length2(l.x, l.y, p.x, p.y);
+				if (cl < len) {
+					len = cl;
+					cx = l.x;
+					cy = l.y;
+				}
+			}
+
+			prevX = coords[0];
+			prevY = coords[1];
+			i.next();
+		}
+
+		if (len == 1.7976931348623157E308D) {
+			for (i = shape.getPathIterator(new AffineTransform(), 1.0D); !i.isDone(); i.next()) {
+				i.currentSegment(coords);
+				double l1 = length2(ctr.x, ctr.y, coords[0], coords[1]);
+				if (l1 < len) {
+					len = l1;
+					cx = coords[0];
+					cy = coords[1];
+				}
+			}
+		}
+
+		return new Point((int) cx, (int) cy);
+	}
+
 	public static boolean lineContainsPoint(int x1, int y1, int x2, int y2, int px, int py) {
 		return lineContainsPoint(x1, y1, x2, y2, px, py, 3.0D);
 	}
