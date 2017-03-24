@@ -24,6 +24,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
@@ -186,6 +187,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 		this.rangeThemeTrackingLayer = map.getTrackingLayer();
 		this.precision = themeRange.getPrecision();
 		initComponents();
+		setComponentName();
 		initResources();
 		registActionListener();
 	}
@@ -208,6 +210,19 @@ public class ThemeRangeContainer extends ThemeChangePanel {
 
 		initPanelProperty();
 		initPanelAdvance();
+	}
+
+	/**
+	 * 初始化控件名称
+	 */
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.comboBoxExpression,"ThemeRangeContainer_comboBoxExpression");
+		ComponentUIUtilities.setName(this.comboBoxRangeMethod,"ThemeRangeContainer_comboBoxRangeMethod");
+		ComponentUIUtilities.setName(this.comboBoxRangeCount,"ThemeRangeContainer_comboBoxRangeCount");
+		ComponentUIUtilities.setName(this.comboBoxRangePrecision,"ThemeRangeContainer_comboBoxRangePrecision");
+		ComponentUIUtilities.setName(this.comboBoxRangeFormat,"ThemeRangeContainer_comboBoxRangeFormat");
+		ComponentUIUtilities.setName(this.tableRangeInfo,"ThemeRangeContainer_tableRangeInfo");
+		ComponentUIUtilities.setName(this.buttonContinuousMapLocation,"ThemeRangeContainer_buttonContinuousMapLocation");
 	}
 
 	/**
