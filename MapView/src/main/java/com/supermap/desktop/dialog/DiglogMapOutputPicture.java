@@ -552,8 +552,8 @@ public class DiglogMapOutputPicture extends SmDialog {
 							ControlsProperties.getString("String_EPS_Filters")),
 					SmFileChoose.createFileFilter(ControlsProperties.getString("String_TIFF_FileFilter"),
 							ControlsProperties.getString("String_TIFF_Filters")));
-
-			SmFileChoose.addNewNode(fileFilters, MapViewProperties.getString("String_MapOutputPictureCurrentDirectory"),
+//			CommonProperties.getString("String_DefaultFilePath")
+			SmFileChoose.addNewNode(fileFilters,System.getProperty("user.dir"),
 					ControlsProperties.getString("String_Save"), moduleName, "SaveOne");
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
