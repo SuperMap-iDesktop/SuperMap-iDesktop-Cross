@@ -501,11 +501,17 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private CaretListener rangeTextFiledCareListener = new CaretListener() {
 		@Override
 		public void caretUpdate(CaretEvent e) {
-			Rectangle2D rectangle2D = panelGroupBoxViewBounds.getRangeBound();
-			if (rectangle2D != null) {
-				outPutBounds = rectangle2D;
+			// 判断文本框中输入的内容是否为纯数字
+			if (StringUtilities.isNumber(waringTextFieldLeft.getTextField().getText()) && StringUtilities.isNumber(waringTextFieldTop.getTextField().getText())
+					&& StringUtilities.isNumber(waringTextFieldRight.getTextField().getText()) && StringUtilities.isNumber(waringTextFieldBottom.getTextField().getText())) {
+				Rectangle2D rectangle2D = panelGroupBoxViewBounds.getRangeBound();
+				if (rectangle2D != null) {
+					outPutBounds = rectangle2D;
+				} else {
+					// 当无法获得有效范围矩形框时，设置导出范围矩形框为null
+					outPutBounds = null;
+				}
 			} else {
-				// 当无法获得有效范围矩形框时，设置导出范围矩形框为null
 				outPutBounds = null;
 			}
 			// 当范围文本框改变时，设置一下高度和宽度
@@ -553,20 +559,39 @@ public class DiglogMapOutputPicture extends SmDialog {
 //			CommonProperties.getString("String_DefaultFilePath")
 			// windows和linux系统通用根目录
 //			System.getProperty("user.dir")
-			SmFileChoose.addNewNode(fileFilters,System.getProperty("user.dir"),
+			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
 					ControlsProperties.getString("String_Save"), moduleName, "SaveOne");
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
-		// 设置选择模式为：仅为文件夹
-		this.exportPathFileChoose.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		// 根据不同的系统给予不同的默认路径
+
+		// 两个系统下的获得最近路径得到的结果不同，windows得到的是路径，而linux得到的是完整的文件路径
 		if (SystemPropertyUtilities.isWindows()) {
+			// 对文件名进行判断，当目录下存在该文件时，名称重新给予
+			int num = 1;
 			String lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage.png";
+			File file = new File(lastPath);
+			while (file.exists()) {
+				lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage" + "_" + num + ".png";
+				file = new File(lastPath);
+				num++;
+			}
 			this.fileChooserControlExportPath.setText(lastPath);
 		} else {
-			this.fileChooserControlExportPath.setText(this.exportPathFileChoose.getModuleLastPath());
-		}
+			String lastPath = this.exportPathFileChoose.getModuleLastPath();
 
+			String filePath = lastPath.substring(0, lastPath.lastIndexOf("/") + 1);
+			String fileType = lastPath.substring(lastPath.lastIndexOf("."));
+			String fileName = lastPath.substring(lastPath.lastIndexOf("/") + 1, lastPath.lastIndexOf("."));
+
+			int num = 1;
+			File file = new File(lastPath);
+			while (file.exists()) {
+				lastPath = filePath + fileName + "_" + num + fileType;
+				file = new File(lastPath);
+				num++;
+			}
+			this.fileChooserControlExportPath.setText(lastPath);
+		}
 	}
 
 	/**
