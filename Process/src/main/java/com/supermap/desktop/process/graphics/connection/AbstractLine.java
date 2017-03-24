@@ -72,17 +72,20 @@ public abstract class AbstractLine {
 		}
 	}
 
+	public Stroke getStroke() {
+		return new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10);
+	}
+
 	public void paint(Graphics graphics) {
 		if (GraphicsUtil.isPointValid(getStartPoint()) && GraphicsUtil.isPointValid(getEndPoint())) {
 			Graphics2D graphics2D = (Graphics2D) graphics;
 			Stroke originStroke = graphics2D.getStroke();
 
-			BasicStroke stroke = new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10, new float[]{16, 8}, 0);
-			graphics2D.setStroke(stroke);
+			graphics2D.setStroke(getStroke());
 			graphics2D.setColor(Color.LIGHT_GRAY);
 			graphics2D.drawLine(getStartPoint().x, getStartPoint().y, getEndPoint().x, getEndPoint().y);
 
-			stroke = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10);
+			Stroke stroke = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10);
 			graphics2D.setStroke(stroke);
 			graphics2D.setColor(Color.BLACK);
 			graphics2D.draw(this.arrow);

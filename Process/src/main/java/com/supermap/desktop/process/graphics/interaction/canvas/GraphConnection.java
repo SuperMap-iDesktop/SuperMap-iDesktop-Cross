@@ -2,12 +2,13 @@ package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.connection.DefaultLine;
 import com.supermap.desktop.process.graphics.connection.RelationLine;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.DataGraph;
+import com.supermap.desktop.process.graphics.graphs.EllipseGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
-import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,7 +67,6 @@ public class GraphConnection extends CanvasEventAdapter {
 					RelationLine line = new RelationLine(this.canvas, this.startGraph, this.endGraph);
 					this.canvas.addConnection(line);
 					line.repaint();
-//					refresh();
 				}
 			}
 		} catch (Exception ex) {
@@ -117,7 +117,7 @@ public class GraphConnection extends CanvasEventAdapter {
 				if (isEndValid(hit)) {
 					this.endGraph = hit;
 					this.previewLine.setStatus(DefaultLine.PREPARING);
-					this.previewLine.setEndPoint(hit.getCenter());
+					this.previewLine.setEndPoint(GraphicsUtil.chop(((AbstractGraph) this.endGraph).getShape(), this.startGraph.getCenter()));
 				} else {
 					this.endGraph = null;
 					this.previewLine.setStatus(DefaultLine.INVALID);
@@ -132,7 +132,7 @@ public class GraphConnection extends CanvasEventAdapter {
 	}
 
 	private boolean isEndValid(IGraph graph) {
-		return graph instanceof ProcessGraph;
+		return graph != this.startGraph && graph instanceof EllipseGraph;
 	}
 
 	@Override
