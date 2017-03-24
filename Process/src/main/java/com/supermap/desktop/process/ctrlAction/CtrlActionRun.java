@@ -44,24 +44,24 @@ public class CtrlActionRun extends CtrlAction {
 //            IForm form = Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
 //            IDockbarManager manager = Application.getActiveApplication().getMainFrame().getDockbarManager();
 //            IDockbar tasksDock = manager.get(Class.forName(TASKS));
-//            WorkflowParser parser = new WorkflowParser();
-//            NodeMatrix nodeMatrix = parser.parseXMLToMatrix("C://temp.xml");
-//            TasksManagerContainer container = TaskUtil.getManagerContainer(true);
+            WorkflowParser parser = new WorkflowParser();
+            NodeMatrix nodeMatrix = parser.parseXMLToMatrix("C://temp.xml");
+            TasksManagerContainer container = TaskUtil.getManagerContainer(true);
 //            tasksDock.setVisible(true);
 
-//            container.clear();
-//            CopyOnWriteArrayList list = nodeMatrix.listAllNodes();
-//            for (int i = 0; i < list.size(); i++) {
-//                if (list.get(i) instanceof IProcess) {
-//                    container.addItem(((IProcess) list.get(i)).getProcessTask());
-//                }
-//            }
+            container.clear();
+            CopyOnWriteArrayList list = nodeMatrix.listAllNodes();
+            for (int i = 0; i < list.size(); i++) {
+                if (list.get(i) instanceof IProcess) {
+                    container.addItem(((IProcess) list.get(i)).getProcessTask());
+                }
+            }
 //
 //            if (form instanceof FormProcess) {
 //                GraphCanvas canvas = ((FormProcess) form).getCanvas();
 //                UniversalMatrix matrix = canvas.getTasks();
 //
-//            TaskUtil.excuteTasks(nodeMatrix);
+            TaskUtil.excuteTasks(nodeMatrix);
 //            }
 //        } catch (Exception e) {
 //            e.printStackTrace();
