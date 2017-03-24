@@ -102,10 +102,9 @@ public class DiglogMapOutputPicture extends SmDialog {
 		// 初始化各个控件的默认设置
 		initParameter();
 		this.setResizable(true);
-		this.setLocationRelativeTo(null);
 		this.pack();
 		this.setSize(new Dimension(680, this.getPreferredSize().height));
-
+		this.setLocationRelativeTo(null);
 	}
 
 	/**
@@ -124,30 +123,68 @@ public class DiglogMapOutputPicture extends SmDialog {
 		this.waringTextFieldBottom = panelGroupBoxViewBounds.getTextFieldCurrentViewBottom();
 
 		this.panelButton = new PanelButton();
+		// 实现ctrl+enter执行操作
+		if (this.componentList.size() > 0) {
+			this.componentList.clear();
+		}
+		this.componentList.add(panelButton.getButtonOk());
+		this.componentList.add(panelButton.getButtonCancel());
+		this.setFocusTraversalPolicy(policy);
+		this.getRootPane().setDefaultButton(panelButton.getButtonOk());
 
-		this.fileNameLabel = new JLabel("FileName");
-		this.fileChooserControlExportPath = new FileChooserControl();
 
-		this.resolutionLabel = new JLabel("resolution");
-		this.resolutionTextField = new WaringTextField();
+		this.fileNameLabel = new
+
+				JLabel("FileName");
+		this.fileChooserControlExportPath = new
+
+				FileChooserControl();
+
+		this.resolutionLabel = new
+
+				JLabel("resolution");
+		this.resolutionTextField = new
+
+				WaringTextField();
 		// 设置分辨率文本框只能输入数字
-		this.DPILabel = new JLabel("DPI");
+		this.DPILabel = new
 
-		this.widthLabel = new JLabel("width");
-		this.heightLabel = new JLabel("height");
-		this.widthTextField = new JTextField();
+				JLabel("DPI");
+
+		this.widthLabel = new
+
+				JLabel("width");
+		this.heightLabel = new
+
+				JLabel("height");
+		this.widthTextField = new
+
+				JTextField();
 		this.widthTextField.setEditable(false);
 		this.widthTextField.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
-		this.heightTextField = new JTextField();
+		this.heightTextField = new
+
+				JTextField();
 		this.heightTextField.setEditable(false);
 		this.heightTextField.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 
-		this.expectedMemoryLabel = new JLabel("expectedMemory");
-		this.occupiedMemoryTextField = new WaringTextField();
-		this.occupiedMemoryTextField.getTextField().setEditable(false);
-		this.occupiedMemoryTextField.getTextField().setBorder(new EmptyBorder(0, 0, 0, 0));
+		this.expectedMemoryLabel = new
 
-		this.backTransparent = new JCheckBox("backTransparent");
+				JLabel("expectedMemory");
+		this.occupiedMemoryTextField = new
+
+				WaringTextField();
+		this.occupiedMemoryTextField.getTextField().
+
+				setEditable(false);
+		this.occupiedMemoryTextField.getTextField().
+
+				setBorder(new EmptyBorder(0, 0, 0, 0));
+
+		this.backTransparent = new
+
+				JCheckBox("backTransparent");
+
 	}
 
 	/**
@@ -177,10 +214,10 @@ public class DiglogMapOutputPicture extends SmDialog {
 		outputSetPanelLayout.setHorizontalGroup(outputSetPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(outputSetPanelLayout.createSequentialGroup()
 						.addGroup(outputSetPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addComponent(this.fileNameLabel, GroupLayout.PREFERRED_SIZE,  GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(this.resolutionLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(this.widthLabel, GroupLayout.PREFERRED_SIZE,  GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(this.heightLabel, GroupLayout.PREFERRED_SIZE,  GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addComponent(this.fileNameLabel)
+								.addComponent(this.resolutionLabel)
+								.addComponent(this.widthLabel)
+								.addComponent(this.heightLabel))
 						.addGroup(outputSetPanelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 								.addGroup(outputSetPanelLayout.createSequentialGroup().addGap(DEFAULT_GAP).addComponent(fileChooserControlExportPath,GroupLayout.PREFERRED_SIZE,DEFAULT_LABELSIZE, Short.MAX_VALUE))
 								.addGroup(outputSetPanelLayout.createSequentialGroup()
@@ -190,7 +227,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 								.addGroup(outputSetPanelLayout.createSequentialGroup().addGap(DEFAULT_GAP).addComponent(this.heightTextField,GroupLayout.PREFERRED_SIZE,DEFAULT_LABELSIZE, Short.MAX_VALUE))))
 				.addGroup(outputSetPanelLayout.createSequentialGroup()
 						.addComponent(this.expectedMemoryLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.occupiedMemoryTextField,GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.occupiedMemoryTextField,GroupLayout.PREFERRED_SIZE,DEFAULT_LABELSIZE, Short.MAX_VALUE))
 				.addGroup(outputSetPanelLayout.createSequentialGroup()
 						.addComponent(this.backTransparent)));
 
@@ -230,12 +267,12 @@ public class DiglogMapOutputPicture extends SmDialog {
 
 		//@formatter:off
          mainPanelLayout.setHorizontalGroup(mainPanelLayout.createSequentialGroup()
-                   .addComponent(this.outputSetPanel,0,120,Short.MAX_VALUE)
-                   .addComponent(this.panelGroupBoxViewBounds,0,180,Short.MAX_VALUE));
+                   .addComponent(this.outputSetPanel,0,150,Short.MAX_VALUE)
+                   .addComponent(this.panelGroupBoxViewBounds,0,150,Short.MAX_VALUE));
          mainPanelLayout.setVerticalGroup(mainPanelLayout.createSequentialGroup()
                    .addGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-	    				.addComponent(this.outputSetPanel,200,200,200)
-	    				.addComponent(this.panelGroupBoxViewBounds,200,200,200)));
+	    				.addComponent(this.outputSetPanel,220,220,220)
+	    				.addComponent(this.panelGroupBoxViewBounds,220,220,220)));
          //@formatter:on
 
 
