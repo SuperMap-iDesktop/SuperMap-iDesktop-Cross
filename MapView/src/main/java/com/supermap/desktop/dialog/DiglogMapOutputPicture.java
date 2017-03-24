@@ -563,23 +563,35 @@ public class DiglogMapOutputPicture extends SmDialog {
 					ControlsProperties.getString("String_Save"), moduleName, "SaveOne");
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
+
+		// 两个系统下的获得最近路径得到的结果不同，windows得到的是路径，而linux得到的是完整的文件路径
 		if (SystemPropertyUtilities.isWindows()) {
 			// 对文件名进行判断，当目录下存在该文件时，名称重新给予
 			int num = 1;
 			String lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage.png";
 			File file = new File(lastPath);
 			while (file.exists()) {
-				lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage" + "_" + num+".png";
+				lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage" + "_" + num + ".png";
 				file = new File(lastPath);
 				num++;
 			}
 			this.fileChooserControlExportPath.setText(lastPath);
 		} else {
 			String lastPath = this.exportPathFileChoose.getModuleLastPath();
-			Application.getActiveApplication().getOutput().output(lastPath);
-//			this.fileChooserControlExportPath.setText(this.exportPathFileChoose.getModuleLastPath());
-		}
 
+			String filePath = lastPath.substring(0, lastPath.lastIndexOf("/") + 1);
+			String fileType = lastPath.substring(lastPath.lastIndexOf("."));
+			String fileName = lastPath.substring(lastPath.lastIndexOf("/") + 1, lastPath.lastIndexOf("."));
+
+			int num = 1;
+			File file = new File(lastPath);
+			while (file.exists()) {
+				lastPath = filePath + fileName + "_" + num + fileType;
+				file = new File(lastPath);
+				num++;
+			}
+			this.fileChooserControlExportPath.setText(lastPath);
+		}
 	}
 
 	/**
