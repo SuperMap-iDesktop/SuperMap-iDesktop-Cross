@@ -28,7 +28,7 @@ import java.util.Objects;
  * Created by xie on 2017/2/17.
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.SEARCH_MODE)
-public class ParameterSearchModePanel extends DefaultParameterPanel implements IParameterPanel {
+public class ParameterSearchModePanel extends SwingPanel implements IParameterPanel {
     private JLabel labelSearchModel;
     private JRadioButton radioSearchModelCount;
     private JRadioButton radioSearchModelRadius;
@@ -43,6 +43,7 @@ public class ParameterSearchModePanel extends DefaultParameterPanel implements I
     private ParameterSearchModeInfo info;
 
 	public ParameterSearchModePanel(IParameter parameterSearchMode) {
+		super(parameterSearchMode);
 		this.parameterSearchMode = (ParameterSearchMode) parameterSearchMode;
 		this.info = (ParameterSearchModeInfo) this.parameterSearchMode.getSelectedItem();
 		initComponents();
@@ -179,16 +180,16 @@ public class ParameterSearchModePanel extends DefaultParameterPanel implements I
     }
 
     private void initLayout() {
-        this.setLayout(new GridBagLayout());
-        this.labelSearchModel.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
+	    panel.setLayout(new GridBagLayout());
+	    this.labelSearchModel.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
         this.labelMaxRadius.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
         this.labelSearchCount.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
-        this.add(this.labelSearchModel, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
-        this.add(this.radioSearchModelCount, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1));
-        this.add(this.radioSearchModelRadius, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 1));
-        this.add(this.labelMaxRadius, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setInsets(5, 0, 0, 0));
-        this.add(this.textFieldMaxRadius, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setInsets(5, 5, 0, 0));
-        this.add(this.labelSearchCount, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 1).setInsets(5, 0, 0, 0));
-        this.add(this.textFieldSearchCount, new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setInsets(5, 5, 0, 0));
+	    panel.add(this.labelSearchModel, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
+	    panel.add(this.radioSearchModelCount, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1));
+	    panel.add(this.radioSearchModelRadius, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 1));
+	    panel.add(this.labelMaxRadius, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setInsets(5, 0, 0, 0));
+	    panel.add(this.textFieldMaxRadius, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setInsets(5, 5, 0, 0));
+	    panel.add(this.labelSearchCount, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 1).setInsets(5, 0, 0, 0));
+	    panel.add(this.textFieldSearchCount, new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setInsets(5, 5, 0, 0));
     }
 }

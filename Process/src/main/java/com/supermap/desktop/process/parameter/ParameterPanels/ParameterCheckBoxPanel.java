@@ -19,14 +19,15 @@ import java.beans.PropertyChangeListener;
  * @author XiaJT
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.CHECKBOX)
-public class ParameterCheckBoxPanel extends DefaultParameterPanel implements IParameterPanel {
+public class ParameterCheckBoxPanel extends SwingPanel implements IParameterPanel {
 
 	private ParameterCheckBox parameterCheckBox;
 	private JCheckBox checkBox = new JCheckBox();
 	private boolean isSelectingItem = false;
 
 	public ParameterCheckBoxPanel(IParameter parameterCheckBox) {
-		this.parameterCheckBox = ((ParameterCheckBox) parameterCheckBox);
+		super(parameterCheckBox);
+		this.parameterCheckBox = (ParameterCheckBox) parameterCheckBox;
 		checkBox.setText(this.parameterCheckBox.getDescribe());
 		checkBox.setSelected(Boolean.valueOf(String.valueOf(this.parameterCheckBox.getSelectedItem())));
 		initLayout();
@@ -34,8 +35,8 @@ public class ParameterCheckBoxPanel extends DefaultParameterPanel implements IPa
 	}
 
 	private void initLayout() {
-		this.setLayout(new GridBagLayout());
-		this.add(checkBox, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL));
+		panel.setLayout(new GridBagLayout());
+		panel.add(checkBox, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL));
 	}
 
 	private void initListeners() {
@@ -62,4 +63,8 @@ public class ParameterCheckBoxPanel extends DefaultParameterPanel implements IPa
 	}
 
 
+	@Override
+	public Object getPanel() {
+		return this;
+	}
 }

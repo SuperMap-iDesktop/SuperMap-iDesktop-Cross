@@ -12,6 +12,7 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterComboBox extends AbstractParameter implements ISingleSelectionParameter {
 
+	@ParameterField(name = "comboBoxItems")
 	private ParameterDataNode[] items;
 	/**
 	 * label的描述文本
@@ -72,7 +73,7 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 		if (value instanceof ParameterDataNode) {
 			ParameterDataNode oldValue = this.value;
 			this.value = (ParameterDataNode) value;
-			firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, value));
+			firePropertyChangeListener(new PropertyChangeEvent(this, "comboBoxValue", oldValue, value));
 		}
 	}
 
@@ -105,11 +106,5 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 
 	public int getSelectedIndex() {
 		return getItemIndex(getSelectedItem());
-	}
-
-	public void setValue(ParameterDataNode value) {
-		PropertyChangeEvent propertyChangeEvent = new PropertyChangeEvent(this, "comboBoxValue", this.value, value);
-		fireFieldValueChanged(propertyChangeEvent);
-		this.value = (ParameterDataNode) propertyChangeEvent.getNewValue();
 	}
 }

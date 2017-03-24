@@ -20,13 +20,14 @@ import java.beans.PropertyChangeListener;
  * @author XiaJT
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.TEXTFIELD)
-public class ParameterTextFieldPanel extends DefaultParameterPanel implements IParameterPanel {
+public class ParameterTextFieldPanel extends SwingPanel implements IParameterPanel {
 	private ParameterTextField parameterTextField;
 	private JLabel label = new JLabel();
 	private JTextField textField = new JTextField();
 	private boolean isSelectingItem = false;
 
 	public ParameterTextFieldPanel(IParameter parameterTextField) {
+		super(parameterTextField);
 		this.parameterTextField = (ParameterTextField) parameterTextField;
 		label.setText(this.parameterTextField.getDescribe());
 		textField.setText(String.valueOf(this.parameterTextField.getSelectedItem()));
@@ -37,9 +38,9 @@ public class ParameterTextFieldPanel extends DefaultParameterPanel implements IP
 	private void initLayout() {
 		label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
 		textField.setPreferredSize(new Dimension(20, 23));
-		this.setLayout(new GridBagLayout());
-		this.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
-		this.add(textField, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
+		panel.setLayout(new GridBagLayout());
+		panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
+		panel.add(textField, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
 	}
 
 	private void initListeners() {

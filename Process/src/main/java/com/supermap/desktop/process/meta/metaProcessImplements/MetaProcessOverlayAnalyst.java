@@ -1,7 +1,11 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.analyst.spatialanalyst.OverlayAnalyst;
-import com.supermap.data.*;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.DatasetVectorInfo;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.SteppedEvent;
+import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -10,12 +14,11 @@ import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterOverlayAnalyst;
-import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
-import javax.swing.*;
 import java.text.MessageFormat;
 
 /**
@@ -56,7 +59,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	}
 
 	@Override
-	public JComponent getComponent() {
+	public IParameterPanel getComponent() {
 		return parameters.getPanel();
 	}
 

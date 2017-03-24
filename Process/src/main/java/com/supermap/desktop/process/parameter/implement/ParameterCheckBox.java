@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
 import java.beans.PropertyChangeEvent;
@@ -11,9 +11,10 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterCheckBox extends AbstractParameter implements ISelectionParameter {
 
+	public static final String PARAMETER_CHECK_BOX_VALUE = "PARAMETER_CHECK_BOX_VALUE";
+	@ParameterField(name = PARAMETER_CHECK_BOX_VALUE)
 	private Object value = "false";
 	private String describe;
-	private IParameters parameters;
 
 	public ParameterCheckBox() {
 		this("");
@@ -28,13 +29,11 @@ public class ParameterCheckBox extends AbstractParameter implements ISelectionPa
 		return ParameterType.CHECKBOX;
 	}
 
-
-
 	@Override
 	public void setSelectedItem(Object value) {
 		Object oldValue = this.value;
 		this.value = String.valueOf(value);
-		firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, value));
+		firePropertyChangeListener(new PropertyChangeEvent(this, PARAMETER_CHECK_BOX_VALUE, oldValue, value));
 	}
 
 	@Override

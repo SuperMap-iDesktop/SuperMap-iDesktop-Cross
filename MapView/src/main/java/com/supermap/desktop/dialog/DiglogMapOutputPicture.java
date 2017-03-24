@@ -5,6 +5,7 @@ import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.map.propertycontrols.PanelGroupBoxViewBounds;
@@ -92,6 +93,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 	public DiglogMapOutputPicture() {
 		super();
 		initComponents();
+		setComponentName();
 		initResources();
 		initLayout();
 		// 初始化各个控件的默认设置
@@ -182,6 +184,11 @@ public class DiglogMapOutputPicture extends SmDialog {
 
 				JCheckBox("backTransparent");
 
+	}
+
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.backTransparent,"DiglogMapOutputPicture_backTransparent");
+		ComponentUIUtilities.setName(this.DPILabel,"DiglogMapOutputPicture_DPILabel");
 	}
 
 	/**

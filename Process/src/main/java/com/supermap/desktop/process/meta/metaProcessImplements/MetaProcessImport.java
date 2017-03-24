@@ -10,6 +10,7 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.EnumParser;
@@ -78,7 +79,7 @@ public class MetaProcessImport extends MetaProcess {
     }
 
     @Override
-    public JComponent getComponent() {
+    public IParameterPanel getComponent() {
 
         return parameters.getPanel();
     }

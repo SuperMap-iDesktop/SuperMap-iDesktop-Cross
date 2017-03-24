@@ -12,12 +12,13 @@ import javax.swing.*;
  * @author XiaJT
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.SPINNER)
-public class ParameterSpinnerPanel extends DefaultParameterPanel implements IParameterPanel {
+public class ParameterSpinnerPanel extends SwingPanel implements IParameterPanel {
 	private ParameterSpinner parameterSpinner;
 	private JLabel label = new JLabel();
 	private JSpinner spinner;
 
 	public ParameterSpinnerPanel(IParameter parameterSpinner) {
+		super(parameterSpinner);
 		this.parameterSpinner = (ParameterSpinner) parameterSpinner;
 		spinner = new JSpinner();
 	}

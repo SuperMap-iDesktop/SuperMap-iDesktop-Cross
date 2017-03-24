@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.data.Datasource;
+import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
@@ -11,7 +12,10 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterDatasource extends AbstractParameter implements ISelectionParameter {
 
-    private Datasource datasource;
+	public static final String DATASOURCE_FIELD_NAME = "datasourceFieldName";
+
+	@ParameterField(name = DATASOURCE_FIELD_NAME)
+	private Datasource datasource;
     private String describe;
 
     @Override
@@ -24,7 +28,7 @@ public class ParameterDatasource extends AbstractParameter implements ISelection
         if (value instanceof Datasource) {
             Datasource oldValue = this.datasource;
             datasource = (Datasource) value;
-            firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, datasource));
+	        firePropertyChangeListener(new PropertyChangeEvent(this, DATASOURCE_FIELD_NAME, oldValue, datasource));
         }
 
     }
