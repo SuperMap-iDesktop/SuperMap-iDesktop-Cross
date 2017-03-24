@@ -15,12 +15,7 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
-import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.implement.ParameterEnum;
-import com.supermap.desktop.process.parameter.implement.ParameterFile;
-import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.EnumParser;
@@ -122,9 +117,15 @@ public class MetaProcessImport extends MetaProcess {
         });
         ImportResult run = dataImport.run();
         ImportSetting[] succeedSettings = run.getSucceedSettings();
-        Dataset dataset = succeedSettings[0].getTargetDatasource().getDatasets().get(succeedSettings[0].getTargetDatasetName());
-        UICommonToolkit.refreshSelectedDatasourceNode(dataset.getDatasource().getAlias());
+        final Dataset dataset = succeedSettings[0].getTargetDatasource().getDatasets().get(succeedSettings[0].getTargetDatasetName());
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                UICommonToolkit.refreshSelectedDatasourceNode(dataset.getDatasource().getAlias());
+            }
+        });
         ProcessData processData = new ProcessData();
+
         processData.setData(dataset);
         outPuts.add(0, processData);
         fireRunning(new RunningEvent(this, 100, "finished"));

@@ -49,7 +49,7 @@ public class ParameterFilePanel extends SwingPanel {
 					File selectedFile = jFileChooser.getSelectedFile();
 					isSelectingFile = true;
 					fileChooserControl.setText(selectedFile.getAbsolutePath());
-					ParameterFilePanel.this.parameterFile.setSelectedItem(selectedFile);
+					ParameterFilePanel.this.parameterFile.setSelectedItem(selectedFile.getAbsolutePath());
 					isSelectingFile = false;
 				}
 			}

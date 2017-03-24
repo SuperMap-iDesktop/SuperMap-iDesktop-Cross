@@ -2,6 +2,7 @@ package com.supermap.desktop.process.util;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IDockbar;
+import com.supermap.desktop.process.ParameterManager;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.NodeException;
 import com.supermap.desktop.process.core.NodeMatrix;
@@ -25,6 +26,26 @@ public class TaskUtil {
     }
 
     private static final String TASKMANAGER = "com.supermap.desktop.process.tasks.TasksManagerContainer";
+    private static final String PARAMETERMANAGER = "com.supermap.desktop.process.ParameterManager";
+
+    public static ParameterManager getParameterManager(boolean isActive) {
+        ParameterManager parameterManager = null;
+        IDockbar dockbarPropertyContainer = null;
+        try {
+            dockbarPropertyContainer = Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(PARAMETERMANAGER));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        if (dockbarPropertyContainer != null) {
+            parameterManager = (ParameterManager) dockbarPropertyContainer.getInnerComponent();
+        }
+        if (isActive && dockbarPropertyContainer != null) {
+            dockbarPropertyContainer.setVisible(true);
+            dockbarPropertyContainer.active();
+        }
+        return parameterManager;
+    }
+
 
     public static TasksManagerContainer getManagerContainer(boolean isActive) {
         TasksManagerContainer fileManagerContainer = null;
@@ -46,13 +67,12 @@ public class TaskUtil {
 
     /**
      * Use ExecutorService to manage all task thread,
-     * If task's prev tasks has finished,excute task;
+     * If task's prev tasks execute finished,execute task;
      *
      * @param nodeMatrix
      * @return
      */
-    public static TasksManagerContainer excuteTasks(final NodeMatrix nodeMatrix) {
-        TasksManagerContainer tasksManagerContainer = getManagerContainer(true);
+    public static void excuteTasks(final NodeMatrix nodeMatrix) {
         final CopyOnWriteArrayList<Object> processes = nodeMatrix.listAllNodes();
         ExecutorService eService = Executors.newCachedThreadPool();
         final Lock lock = new ReentrantLock();
@@ -89,7 +109,6 @@ public class TaskUtil {
                 eService.execute(thread);
             }
         }
-        return tasksManagerContainer;
     }
 
 }

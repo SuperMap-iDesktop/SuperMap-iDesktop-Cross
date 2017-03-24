@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  * Created by lixiaoyao on 2017/2/28.
  */
-public class FocusPointCalculator {
+public class IntersetctionPointCalculator {
 
     /**
      * 计算椭圆与输入线段的焦点坐标
@@ -416,7 +416,7 @@ public class FocusPointCalculator {
     }
 
 //    public static void main(String args[]) {
-//        FocusPointCalculator focusPointCalculator = new FocusPointCalculator();
+//        IntersetctionPointCalculator focusPointCalculator = new IntersetctionPointCalculator();
 //        Ellipse2D ellipse2D = new Ellipse2D.Double(0, 0, 6, 4);
 //        Point2D point2D1 = new Point2D.Double(1, 0);
 //        Point2D point2D2 = new Point2D.Double(5, 4);

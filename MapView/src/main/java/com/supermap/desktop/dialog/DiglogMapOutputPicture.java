@@ -14,10 +14,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
 import com.supermap.desktop.ui.controls.borderPanel.PanelButton;
-import com.supermap.desktop.utilities.CursorUtilities;
-import com.supermap.desktop.utilities.DoubleUtilities;
-import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.ImageType;
 import com.supermap.mapping.Map;
 
@@ -102,10 +99,9 @@ public class DiglogMapOutputPicture extends SmDialog {
 		// 初始化各个控件的默认设置
 		initParameter();
 		this.setResizable(true);
-		this.setLocationRelativeTo(null);
 		this.pack();
 		this.setSize(new Dimension(680, this.getPreferredSize().height));
-
+		this.setLocationRelativeTo(null);
 	}
 
 	/**
@@ -124,30 +120,68 @@ public class DiglogMapOutputPicture extends SmDialog {
 		this.waringTextFieldBottom = panelGroupBoxViewBounds.getTextFieldCurrentViewBottom();
 
 		this.panelButton = new PanelButton();
+		// 实现ctrl+enter执行操作
+		if (this.componentList.size() > 0) {
+			this.componentList.clear();
+		}
+		this.componentList.add(panelButton.getButtonOk());
+		this.componentList.add(panelButton.getButtonCancel());
+		this.setFocusTraversalPolicy(policy);
+		this.getRootPane().setDefaultButton(panelButton.getButtonOk());
 
-		this.fileNameLabel = new JLabel("FileName");
-		this.fileChooserControlExportPath = new FileChooserControl();
 
-		this.resolutionLabel = new JLabel("resolution");
-		this.resolutionTextField = new WaringTextField();
+		this.fileNameLabel = new
+
+				JLabel("FileName");
+		this.fileChooserControlExportPath = new
+
+				FileChooserControl();
+
+		this.resolutionLabel = new
+
+				JLabel("resolution");
+		this.resolutionTextField = new
+
+				WaringTextField();
 		// 设置分辨率文本框只能输入数字
-		this.DPILabel = new JLabel("DPI");
+		this.DPILabel = new
 
-		this.widthLabel = new JLabel("width");
-		this.heightLabel = new JLabel("height");
-		this.widthTextField = new JTextField();
+				JLabel("DPI");
+
+		this.widthLabel = new
+
+				JLabel("width");
+		this.heightLabel = new
+
+				JLabel("height");
+		this.widthTextField = new
+
+				JTextField();
 		this.widthTextField.setEditable(false);
 		this.widthTextField.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
-		this.heightTextField = new JTextField();
+		this.heightTextField = new
+
+				JTextField();
 		this.heightTextField.setEditable(false);
 		this.heightTextField.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
 
-		this.expectedMemoryLabel = new JLabel("expectedMemory");
-		this.occupiedMemoryTextField = new WaringTextField();
-		this.occupiedMemoryTextField.getTextField().setEditable(false);
-		this.occupiedMemoryTextField.getTextField().setBorder(new EmptyBorder(0, 0, 0, 0));
+		this.expectedMemoryLabel = new
 
-		this.backTransparent = new JCheckBox("backTransparent");
+				JLabel("expectedMemory");
+		this.occupiedMemoryTextField = new
+
+				WaringTextField();
+		this.occupiedMemoryTextField.getTextField().
+
+				setEditable(false);
+		this.occupiedMemoryTextField.getTextField().
+
+				setBorder(new EmptyBorder(0, 0, 0, 0));
+
+		this.backTransparent = new
+
+				JCheckBox("backTransparent");
+
 	}
 
 	/**
@@ -177,10 +211,10 @@ public class DiglogMapOutputPicture extends SmDialog {
 		outputSetPanelLayout.setHorizontalGroup(outputSetPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(outputSetPanelLayout.createSequentialGroup()
 						.addGroup(outputSetPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addComponent(this.fileNameLabel, GroupLayout.PREFERRED_SIZE,  GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(this.resolutionLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(this.widthLabel, GroupLayout.PREFERRED_SIZE,  GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(this.heightLabel, GroupLayout.PREFERRED_SIZE,  GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+								.addComponent(this.fileNameLabel)
+								.addComponent(this.resolutionLabel)
+								.addComponent(this.widthLabel)
+								.addComponent(this.heightLabel))
 						.addGroup(outputSetPanelLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 								.addGroup(outputSetPanelLayout.createSequentialGroup().addGap(DEFAULT_GAP).addComponent(fileChooserControlExportPath,GroupLayout.PREFERRED_SIZE,DEFAULT_LABELSIZE, Short.MAX_VALUE))
 								.addGroup(outputSetPanelLayout.createSequentialGroup()
@@ -190,7 +224,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 								.addGroup(outputSetPanelLayout.createSequentialGroup().addGap(DEFAULT_GAP).addComponent(this.heightTextField,GroupLayout.PREFERRED_SIZE,DEFAULT_LABELSIZE, Short.MAX_VALUE))))
 				.addGroup(outputSetPanelLayout.createSequentialGroup()
 						.addComponent(this.expectedMemoryLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(this.occupiedMemoryTextField,GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(this.occupiedMemoryTextField,GroupLayout.PREFERRED_SIZE,DEFAULT_LABELSIZE, Short.MAX_VALUE))
 				.addGroup(outputSetPanelLayout.createSequentialGroup()
 						.addComponent(this.backTransparent)));
 
@@ -230,12 +264,12 @@ public class DiglogMapOutputPicture extends SmDialog {
 
 		//@formatter:off
          mainPanelLayout.setHorizontalGroup(mainPanelLayout.createSequentialGroup()
-                   .addComponent(this.outputSetPanel,0,120,Short.MAX_VALUE)
-                   .addComponent(this.panelGroupBoxViewBounds,0,180,Short.MAX_VALUE));
+                   .addComponent(this.outputSetPanel,0,150,Short.MAX_VALUE)
+                   .addComponent(this.panelGroupBoxViewBounds,0,150,Short.MAX_VALUE));
          mainPanelLayout.setVerticalGroup(mainPanelLayout.createSequentialGroup()
                    .addGroup(mainPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-	    				.addComponent(this.outputSetPanel,200,200,200)
-	    				.addComponent(this.panelGroupBoxViewBounds,200,200,200)));
+	    				.addComponent(this.outputSetPanel,220,220,220)
+	    				.addComponent(this.panelGroupBoxViewBounds,220,220,220)));
          //@formatter:on
 
 
@@ -362,6 +396,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 				path = fileChooserControlExportPath.getEditor().getText();
 				imageType = getImageType(path);
 				// 当路劲文本框改变时，判断其路径是否合法，并且初始化磁盘剩余内存情况
+
 				initRemainingMemory();
 			} else {
 				path = "";
@@ -466,11 +501,17 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private CaretListener rangeTextFiledCareListener = new CaretListener() {
 		@Override
 		public void caretUpdate(CaretEvent e) {
-			Rectangle2D rectangle2D = panelGroupBoxViewBounds.getRangeBound();
-			if (rectangle2D != null) {
-				outPutBounds = rectangle2D;
+			// 判断文本框中输入的内容是否为纯数字
+			if (StringUtilities.isNumber(waringTextFieldLeft.getTextField().getText()) && StringUtilities.isNumber(waringTextFieldTop.getTextField().getText())
+					&& StringUtilities.isNumber(waringTextFieldRight.getTextField().getText()) && StringUtilities.isNumber(waringTextFieldBottom.getTextField().getText())) {
+				Rectangle2D rectangle2D = panelGroupBoxViewBounds.getRangeBound();
+				if (rectangle2D != null) {
+					outPutBounds = rectangle2D;
+				} else {
+					// 当无法获得有效范围矩形框时，设置导出范围矩形框为null
+					outPutBounds = null;
+				}
 			} else {
-				// 当无法获得有效范围矩形框时，设置导出范围矩形框为null
 				outPutBounds = null;
 			}
 			// 当范围文本框改变时，设置一下高度和宽度
@@ -515,15 +556,42 @@ public class DiglogMapOutputPicture extends SmDialog {
 							ControlsProperties.getString("String_EPS_Filters")),
 					SmFileChoose.createFileFilter(ControlsProperties.getString("String_TIFF_FileFilter"),
 							ControlsProperties.getString("String_TIFF_Filters")));
-
-			SmFileChoose.addNewNode(fileFilters, MapViewProperties.getString("String_MapOutputPictureCurrentDirectory"),
+//			CommonProperties.getString("String_DefaultFilePath")
+			// windows和linux系统通用根目录
+//			System.getProperty("user.dir")
+			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
 					ControlsProperties.getString("String_Save"), moduleName, "SaveOne");
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
-		// 设置选择模式为：仅为文件夹
-		this.exportPathFileChoose.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		String lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage.png";
-		this.fileChooserControlExportPath.setText(lastPath);
+
+		// 两个系统下的获得最近路径得到的结果不同，windows得到的是路径，而linux得到的是完整的文件路径
+		if (SystemPropertyUtilities.isWindows()) {
+			// 对文件名进行判断，当目录下存在该文件时，名称重新给予
+			int num = 1;
+			String lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage.png";
+			File file = new File(lastPath);
+			while (file.exists()) {
+				lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage" + "_" + num + ".png";
+				file = new File(lastPath);
+				num++;
+			}
+			this.fileChooserControlExportPath.setText(lastPath);
+		} else {
+			String lastPath = this.exportPathFileChoose.getModuleLastPath();
+
+			String filePath = lastPath.substring(0, lastPath.lastIndexOf("/") + 1);
+			String fileType = lastPath.substring(lastPath.lastIndexOf("."));
+			String fileName = lastPath.substring(lastPath.lastIndexOf("/") + 1, lastPath.lastIndexOf("."));
+
+			int num = 1;
+			File file = new File(lastPath);
+			while (file.exists()) {
+				lastPath = filePath + fileName + "_" + num + fileType;
+				file = new File(lastPath);
+				num++;
+			}
+			this.fileChooserControlExportPath.setText(lastPath);
+		}
 	}
 
 	/**
@@ -545,20 +613,40 @@ public class DiglogMapOutputPicture extends SmDialog {
 		// 设置内存文本框相关参数，因为内存是不断变化的，所以需要动态设置
 		//1、判断文件路径是否正确，获得所存文件的根目录，以获取磁盘剩余信息
 		String filePath = this.fileChooserControlExportPath.getEditor().getText();
-		if (!StringUtilities.isNullOrEmpty(filePath) && filePath.indexOf("\\") > 0) {
-			//获得文件所在的文件夹目录
-			filePath = filePath.substring(0, filePath.lastIndexOf('\\'));
-			File file = new File(filePath);
-			if (file.exists()) {
-				double constm = 1024 * 1024 * 1024;
-				this.remainingMemory = file.getFreeSpace() / constm;
-			} else {
-				// 如果此文件不存在，其路径错误，设置其路径为空，相应的图片类型为空
-				this.path = "";
-				this.imageType = null;
-				this.remainingMemory = 0.0;
+
+		if (SystemPropertyUtilities.isWindows()) {
+			if (!StringUtilities.isNullOrEmpty(filePath) && filePath.indexOf("\\") > 0) {
+				//获得文件所在的文件夹目录
+				filePath = filePath.substring(0, filePath.lastIndexOf('\\'));
+				File file = new File(filePath);
+				if (file.exists()) {
+					double constm = 1024 * 1024 * 1024;
+					this.remainingMemory = file.getFreeSpace() / constm;
+				} else {
+					// 如果此文件不存在，其路径错误，设置其路径为空，相应的图片类型为空
+					this.path = "";
+					this.imageType = null;
+					this.remainingMemory = 0.0;
+				}
 			}
+		} else {
+			if (!StringUtilities.isNullOrEmpty(filePath)) {
+				//获得文件所在的文件夹目录
+				filePath = filePath.substring(0, filePath.lastIndexOf("/"));
+				File file = new File(filePath);
+				if (file.exists()) {
+					double constm = 1024 * 1024 * 1024;
+					this.remainingMemory = file.getFreeSpace() / constm;
+				} else {
+					// 如果此文件不存在，其路径错误，设置其路径为空，相应的图片类型为空
+					this.path = "";
+					this.imageType = null;
+					this.remainingMemory = 0.0;
+				}
+			}
+
 		}
+
 	}
 
 	/**

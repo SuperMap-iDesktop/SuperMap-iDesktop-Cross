@@ -13,6 +13,7 @@ public class GraphBoundsChangedEvent extends EventObject {
 	private final static int SIZE = 2;
 	private final static int LOCATION_AND_SIZE = 3;
 
+	private IGraph graph;
 	private int type = 3;
 	private Point oldLocation = null;
 	private Point newLocation = null;
@@ -28,6 +29,7 @@ public class GraphBoundsChangedEvent extends EventObject {
 	 */
 	public GraphBoundsChangedEvent(IGraph graph, Point oldLocation, Point newLocation) {
 		super(graph);
+		this.graph = graph;
 		this.type = LOCATION;
 		this.oldLocation = oldLocation;
 		this.newLocation = newLocation;
@@ -35,6 +37,7 @@ public class GraphBoundsChangedEvent extends EventObject {
 
 	public GraphBoundsChangedEvent(IGraph graph, int oldWidth, int newWidth, int oldHeight, int newHeight) {
 		super(graph);
+		this.graph = graph;
 		this.type = SIZE;
 		this.oldWidth = oldWidth;
 		this.newWidth = newWidth;
@@ -44,6 +47,7 @@ public class GraphBoundsChangedEvent extends EventObject {
 
 	public GraphBoundsChangedEvent(IGraph graph, Point oldLocation, Point newLocation, int oldWidth, int newWidth, int oldHeight, int newHeight) {
 		super(graph);
+		this.graph = graph;
 		this.type = LOCATION_AND_SIZE;
 		this.oldLocation = oldLocation;
 		this.newLocation = newLocation;
@@ -51,6 +55,10 @@ public class GraphBoundsChangedEvent extends EventObject {
 		this.newWidth = newWidth;
 		this.oldHeight = oldHeight;
 		this.newHeight = newHeight;
+	}
+
+	public IGraph getGraph() {
+		return this.graph;
 	}
 
 	public int getType() {

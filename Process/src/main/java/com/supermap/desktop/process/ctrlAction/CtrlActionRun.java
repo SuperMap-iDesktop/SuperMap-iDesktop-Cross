@@ -3,15 +3,9 @@ package com.supermap.desktop.process.ctrlAction;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.core.NodeMatrix;
-import com.supermap.desktop.process.core.WorkflowParser;
-import com.supermap.desktop.process.tasks.TasksManagerContainer;
+import com.supermap.desktop.process.ParameterManager;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessImport;
 import com.supermap.desktop.process.util.TaskUtil;
-
-import javax.swing.*;
-import java.awt.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by highsad on 2017/2/28.
@@ -40,38 +34,36 @@ public class CtrlActionRun extends CtrlAction {
 //
 //        Workflow workflow = new Workflow(matrix);
 //        workflow.parseToXmlFile("C://temp.xml");
-        WorkflowParser parser = new WorkflowParser();
-        NodeMatrix nodeMatrix = parser.parseXMLToMatrix("C://temp.xml");
 //        Workflow workflow1 = new Workflow(nodeMatrix);
 //        workflow1.parseToXmlFile("C://temp1.xml");
-        JDialog dialog = new JDialog();
-        TasksManagerContainer container = new TasksManagerContainer();
-        CopyOnWriteArrayList list = nodeMatrix.listAllNodes();
-        for (int i = 0; i < list.size(); i++) {
-            if(list.get(i) instanceof IProcess) {
-                container.addItem(((IProcess) list.get(i)).getProcessTask());
-            }
-        }
-        dialog.add(container, BorderLayout.CENTER);
-        dialog.setSize(400, 300);
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
-        TaskUtil.excuteTasks(nodeMatrix);
 //        try {
 //            IForm form = Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
 //            IDockbarManager manager = Application.getActiveApplication().getMainFrame().getDockbarManager();
 //            IDockbar tasksDock = manager.get(Class.forName(TASKS));
-//            TasksManagerContainer container = (TasksManagerContainer) tasksDock.getInnerComponent();
+//            WorkflowParser parser = new WorkflowParser();
+//            NodeMatrix nodeMatrix = parser.parseXMLToMatrix("C://temp.xml");
+//            TasksManagerContainer container = TaskUtil.getManagerContainer(true);
 //            tasksDock.setVisible(true);
+
 //            container.clear();
+//            CopyOnWriteArrayList list = nodeMatrix.listAllNodes();
+//            for (int i = 0; i < list.size(); i++) {
+//                if (list.get(i) instanceof IProcess) {
+//                    container.addItem(((IProcess) list.get(i)).getProcessTask());
+//                }
+//            }
 //
 //            if (form instanceof FormProcess) {
 //                GraphCanvas canvas = ((FormProcess) form).getCanvas();
 //                UniversalMatrix matrix = canvas.getTasks();
 //
-//                TaskUtil.excuteTasks(matrix);
+//            TaskUtil.excuteTasks(nodeMatrix);
 //            }
-//        } catch (ClassNotFoundException e) {
+        MetaProcessImport metaProcessImport = new MetaProcessImport();
+        ParameterManager manager = TaskUtil.getParameterManager(true);
+        manager.setProcess(metaProcessImport);
+
+//        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
     }

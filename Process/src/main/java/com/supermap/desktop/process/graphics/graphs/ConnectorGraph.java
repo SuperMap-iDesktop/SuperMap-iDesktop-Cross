@@ -58,12 +58,12 @@ public class ConnectorGraph implements IGraph {
 	}
 
 	@Override
-	public void addGraphBoundsListener(GraphBoundsChangedListener listener) {
+	public void addGraphBoundsChangedListener(GraphBoundsChangedListener listener) {
 
 	}
 
 	@Override
-	public void removeGraghBoundsListener(GraphBoundsChangedListener listener) {
+	public void removeGraghBoundsChangedListener(GraphBoundsChangedListener listener) {
 
 	}
 

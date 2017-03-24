@@ -60,7 +60,7 @@ public class WaringTextField extends JPanel {
                 labelWarning.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/warning.png"));
                 setInitInfo(startValue, endValue, type, floatLength);
             } else if (!StringUtilities.isNullOrEmpty(text) && StringUtilities.isNumber(text)) {
-                labelWarning.setText(" ");
+                labelWarning.setText(null);
                 labelWarning.setIcon(null);
                 fireListener(text);
             }
