@@ -1,6 +1,7 @@
 package com.supermap.desktop.ui.controls;
 
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.CoreResources;
@@ -40,7 +41,8 @@ public class FileChooserControl extends JComponent {
     // 初始化带有默认文件路径的文件选择控件
     public FileChooserControl(String filePath) {
         initCompanent();
-        setText(filePath);
+	    setComponentName();
+	    setText(filePath);
 	    textEditor.getDocument().addDocumentListener(new DocumentListener() {
 		    @Override
 		    public void insertUpdate(DocumentEvent e) {
@@ -133,6 +135,12 @@ public class FileChooserControl extends JComponent {
 	    );
 	    // @formatter:on
     }
+
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.textEditor, "FileChooserControl_textEditor");
+		ComponentUIUtilities.setName(this.buttonDelete, "FileChooserControl_buttonDelete");
+		ComponentUIUtilities.setName(this.button, "FileChooserControl_button");
+	}
 
     public void setIcon(ImageIcon image) {
         this.button.setIcon(image);
