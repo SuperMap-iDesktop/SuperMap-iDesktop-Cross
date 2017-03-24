@@ -1,23 +1,28 @@
 package com.supermap.desktop.process.graphics;
 
-import org.jhotdraw.samples.draw.Main;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
 
 /**
  * Created by highsad on 2017/3/9.
  */
-public class GraphicsTest extends JPanel {
+public class GraphicsTest extends JPanel implements MouseMotionListener {
 	private int count = 0;
 	private static boolean buttonRefresh = false;
-	private RoundRectangle2D roundRectangle2D = new RoundRectangle2D.Double();
+	//	private RoundRectangle2D shape = new RoundRectangle2D.Double();
+	private Ellipse2D shape = new Ellipse2D.Double();
+	private Point2D p = null;
 
 	public GraphicsTest() {
-
-
-		this.roundRectangle2D.setRoundRect(100, 100, 200, 200, 30, 30);
+//		this.shape.setRoundRect(100, 100, 200, 200, 50, 50);
+		this.shape.setFrame(100, 100, 400, 250);
+		addMouseMotionListener(this);
 	}
 
 
@@ -39,46 +44,62 @@ public class GraphicsTest extends JPanel {
 //		newT.scale(scale, scale);
 //		graphics2D.setTransform(newT);
 //		graphics2D.setColor(Color.PINK);
-//		graphics2D.fill(this.roundRectangle2D);
+//		graphics2D.fill(this.shape);
 //
 //		BasicStroke stroke = new BasicStroke(2);
 //		graphics2D.setStroke(stroke);
 //		graphics2D.setColor(Color.BLACK);
-//		graphics2D.draw(roundRectangle2D);
+//		graphics2D.draw(shape);
 //		graphics2D.setTransform(origin);
-		graphics2D.setColor(Color.RED);
-		Rectangle rect = new Rectangle(200, 200, 100, 100);
-		graphics2D.fill(rect);
+		graphics2D.draw(this.shape);
+
+		if (p != null) {
+			graphics2D.setColor(Color.RED);
+			Ellipse2D ellipse2D = new Ellipse2D.Double(this.p.getX(), this.p.getY(), 8, 8);
+			graphics2D.fill(ellipse2D);
+		}
 	}
 
 	private static double scale = 1;
 
 	public static void main(String[] args) {
-		Main.main(args);
-//		final JFrame frame = new JFrame();
-//		frame.setLayout(new BorderLayout());
-//		frame.setSize(1000, 1000);
-//
-//		final GraphicsTest test = new GraphicsTest();
-//		frame.add(test, BorderLayout.CENTER);
-//
-//		JButton button = new JButton("Scale");
-//		frame.add(button, BorderLayout.NORTH);
-//
-//		button.addActionListener(new ActionListener() {
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				scale = 3;
-//				test.repaint();
-//			}
-//		});
-//
-//		SwingUtilities.invokeLater(new Runnable() {
-//			@Override
-//			public void run() {
-//				frame.setVisible(true);
-//			}
-//		});
+//		Main.main(args);
+		final JFrame frame = new JFrame();
+		frame.setLayout(new BorderLayout());
+		frame.setSize(1000, 1000);
+
+		final GraphicsTest test = new GraphicsTest();
+		frame.add(test, BorderLayout.CENTER);
+
+		JButton button = new JButton("Scale");
+		frame.add(button, BorderLayout.NORTH);
+
+		button.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				scale = 3;
+				test.repaint();
+			}
+		});
+
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				frame.setVisible(true);
+			}
+		});
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		Point2D.Double point2D = new Point2D.Double(e.getX(), e.getY());
+		this.p = GraphicsUtil.chop(this.shape, point2D);
+		repaint();
 	}
 
 //	public static void main(String[] args) {

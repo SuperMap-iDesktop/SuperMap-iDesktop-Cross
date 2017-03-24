@@ -35,7 +35,7 @@ import java.awt.event.ItemListener;
  * @author XiaJT
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.SAVE_DATASET)
-public class ParameterSaveDatasetPanel extends DefaultParameterPanel implements IParameterPanel {
+public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterPanel {
 	private ParameterSaveDataset parameterSaveDataset;
 	private JLabel labelDatasource;
 	private DatasourceComboBox datasourceComboBox;
@@ -83,6 +83,7 @@ public class ParameterSaveDatasetPanel extends DefaultParameterPanel implements 
 
 
 	public ParameterSaveDatasetPanel(IParameter parameterSaveDataset) {
+		super(parameterSaveDataset);
 		this.parameterSaveDataset = (ParameterSaveDataset) parameterSaveDataset;
 		labelDatasource = new JLabel(CommonProperties.getString(CommonProperties.Label_Datasource));
 		labelDataset = new JLabel(CommonProperties.getString(CommonProperties.Label_Dataset));
@@ -123,12 +124,12 @@ public class ParameterSaveDatasetPanel extends DefaultParameterPanel implements 
 	private void initLayout() {
 		labelDatasource.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
 		datasourceComboBox.setPreferredSize(new Dimension(20, 23));
-		this.setLayout(new GridBagLayout());
-		this.add(labelDatasource, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
-		this.add(datasourceComboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
+		panel.setLayout(new GridBagLayout());
+		panel.add(labelDatasource, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		panel.add(datasourceComboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
 
-		this.add(labelDataset, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 0, 0, 0));
-		this.add(textFieldDataset, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 0));
+		panel.add(labelDataset, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 0, 0, 0));
+		panel.add(textFieldDataset, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 0));
 
 
 	}

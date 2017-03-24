@@ -1,5 +1,6 @@
 package com.supermap.desktop.ui.controls.borderPanel;
 
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
@@ -43,6 +44,8 @@ public class PanelButton extends JPanel {
 	private void initComponent() {
 		this.buttonOk = new SmButton("Ok");
 		this.buttonCancel = new SmButton("Cancel");
+		ComponentUIUtilities.setName(this.buttonOk,"PanelButton_buttonOk");
+		ComponentUIUtilities.setName(this.buttonCancel,"PanelButton_buttonCancel");
 	}
 
 	private void initResources() {

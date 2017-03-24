@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.desktop.process.parameter.ParameterPanels.EmptyParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
@@ -18,6 +19,7 @@ public class DefaultParameters implements IParameters {
 	private IParameter[] parameters;
 	private JPanel panel;
 	private ArrayList<ParameterClassBundleNode> packages = new ArrayList<>();
+	private EmptyParameterPanel parameterPanel = new EmptyParameterPanel();
 
 	public DefaultParameters() {
 		packages.add(new ParameterClassBundleNode("com.supermap.desktop.process.parameter.ParameterPanels", "SuperMap.Desktop.Process"));
@@ -73,7 +75,7 @@ public class DefaultParameters implements IParameters {
 	}
 
 	@Override
-	public JPanel getPanel() {
+	public IParameterPanel getPanel() {
 		if (panel == null) {
 			panel = new JPanel();
 			panel.setLayout(new GridBagLayout());
@@ -82,7 +84,8 @@ public class DefaultParameters implements IParameters {
 			}
 			panel.add(new JPanel(), new GridBagConstraintsHelper(0, parameters.length, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
 		}
-		return panel;
+		parameterPanel.setPanel(panel);
+		return parameterPanel;
 	}
 
 	@Override
@@ -98,4 +101,5 @@ public class DefaultParameters implements IParameters {
 		}
 		return null;
 	}
+
 }

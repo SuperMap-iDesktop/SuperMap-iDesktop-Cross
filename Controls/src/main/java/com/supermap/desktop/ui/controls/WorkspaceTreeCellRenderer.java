@@ -236,5 +236,18 @@ class WorkspaceTreeCellRenderer extends DefaultTreeCellRenderer {
 
         ArrayList<ArrayList<TreeNodeDecorator>> nullDecoratorList = new ArrayList<ArrayList<TreeNodeDecorator>>();
         decoratorsMap.put(NodeDataType.UNKNOWN, nullDecoratorList);
+
+	    ArrayList<ArrayList<TreeNodeDecorator>> workFlowsDecoratorList = new ArrayList<>();
+	    ArrayList<TreeNodeDecorator> treeNodeWorkFlowsDecorators = new ArrayList<>();
+	    treeNodeWorkFlowsDecorators.add(new WorkFlowsDecorator());
+	    workFlowsDecoratorList.add(treeNodeWorkFlowsDecorators);
+	    decoratorsMap.put(NodeDataType.WORK_FLOWS, workFlowsDecoratorList);
+
+	    ArrayList<ArrayList<TreeNodeDecorator>> workFlowDecoratorList = new ArrayList<>();
+	    ArrayList<TreeNodeDecorator> treeNodeWorkFlowDecorators = new ArrayList<>();
+	    treeNodeWorkFlowDecorators.add(new WorkFlowDecorator());
+	    workFlowDecoratorList.add(treeNodeWorkFlowDecorators);
+	    decoratorsMap.put(NodeDataType.WORK_FLOW, workFlowDecoratorList);
+
     }
 }

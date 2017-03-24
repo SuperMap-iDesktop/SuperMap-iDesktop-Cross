@@ -26,7 +26,6 @@ import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
-import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
@@ -45,7 +44,7 @@ import java.beans.PropertyChangeListener;
  * @author XiaJT
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.DATASET)
-public class ParameterDatasetPanel extends DefaultParameterPanel implements IParameterPanel {
+public class ParameterDatasetPanel extends SwingPanel {
 	private ParameterDataset parameterDataset;
 	private JLabel labelDatasource = new JLabel();
 	private DatasourceComboBox datasourceComboBox;
@@ -103,6 +102,7 @@ public class ParameterDatasetPanel extends DefaultParameterPanel implements IPar
 	};
 
 	public ParameterDatasetPanel(IParameter parameterDataset) {
+		super(parameterDataset);
 		this.parameterDataset = (ParameterDataset) parameterDataset;
 		labelDatasource.setText(CommonProperties.getString(CommonProperties.Label_Datasource));
 		labelDataset.setText(CommonProperties.getString(CommonProperties.Label_Dataset));
@@ -121,12 +121,12 @@ public class ParameterDatasetPanel extends DefaultParameterPanel implements IPar
 	private void initLayout() {
 		labelDatasource.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
 		datasourceComboBox.setPreferredSize(new Dimension(20, 23));
-		this.setLayout(new GridBagLayout());
-		this.add(labelDatasource, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE));
-		this.add(datasourceComboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
+		panel.setLayout(new GridBagLayout());
+		panel.add(labelDatasource, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE));
+		panel.add(datasourceComboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
 
-		this.add(labelDataset, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(5, 0, 0, 0));
-		this.add(datasetComboBox, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 0));
+		panel.add(labelDataset, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(5, 0, 0, 0));
+		panel.add(datasetComboBox, new GridBagConstraintsHelper(1, 1, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 0));
 
 	}
 

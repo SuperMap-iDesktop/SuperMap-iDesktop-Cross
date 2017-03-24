@@ -6,4 +6,6 @@ package com.supermap.desktop.process.parameter.interfaces;
 public interface IParameterPanel {
 
 	Object getPanel();
+
+
 }

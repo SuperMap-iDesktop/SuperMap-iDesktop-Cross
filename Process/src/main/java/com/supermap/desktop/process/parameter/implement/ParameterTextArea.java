@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
@@ -9,8 +10,10 @@ import java.beans.PropertyChangeEvent;
  * Created by xie on 2017/2/21.
  */
 public class ParameterTextArea extends AbstractParameter implements ISelectionParameter {
-    private String selectItem;
 	private String describe;
+
+	@ParameterField(name = "value")
+	private String selectItem;
 
     public ParameterTextArea() {
         this("");
@@ -25,7 +28,7 @@ public class ParameterTextArea extends AbstractParameter implements ISelectionPa
         if (item instanceof String) {
             String oldValue = (String) item;
             this.selectItem = (String) item;
-            firePropertyChangeListener(new PropertyChangeEvent(ParameterTextArea.this, AbstractParameter.PROPERTY_VALE, oldValue, selectItem));
+	        firePropertyChangeListener(new PropertyChangeEvent(ParameterTextArea.this, "value", oldValue, selectItem));
         }
     }
 

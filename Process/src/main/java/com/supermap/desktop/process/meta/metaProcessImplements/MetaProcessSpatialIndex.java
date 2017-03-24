@@ -9,12 +9,11 @@ import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
+import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
-
-import javax.swing.*;
 
 /**
  * @author XiaJT
@@ -40,7 +39,7 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 	}
 
 	@Override
-	public JComponent getComponent() {
+	public IParameterPanel getComponent() {
 		return parameters.getPanel();
 	}
 

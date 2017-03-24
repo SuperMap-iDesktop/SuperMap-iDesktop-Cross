@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.ISingleSelectionParameter;
@@ -11,7 +12,9 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterRadioButton extends AbstractParameter implements ISingleSelectionParameter {
 	private String describe;
+	@ParameterField(name = "items")
 	private ParameterDataNode[] items;
+	@ParameterField(name = "selectedItem")
 	private ParameterDataNode selectedItem;
 
 	@Override
@@ -25,7 +28,7 @@ public class ParameterRadioButton extends AbstractParameter implements ISingleSe
 		if (value instanceof ParameterDataNode) {
 			ParameterDataNode oldValue = this.selectedItem;
 			this.selectedItem = (ParameterDataNode) value;
-			firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, value));
+			firePropertyChangeListener(new PropertyChangeEvent(this, "selectedItem", oldValue, value));
 		}
 	}
 
