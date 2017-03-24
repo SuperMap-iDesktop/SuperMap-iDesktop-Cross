@@ -14,10 +14,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
 import com.supermap.desktop.ui.controls.borderPanel.PanelButton;
-import com.supermap.desktop.utilities.CursorUtilities;
-import com.supermap.desktop.utilities.DoubleUtilities;
-import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.ImageType;
 import com.supermap.mapping.Map;
 
@@ -399,6 +396,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 				path = fileChooserControlExportPath.getEditor().getText();
 				imageType = getImageType(path);
 				// 当路劲文本框改变时，判断其路径是否合法，并且初始化磁盘剩余内存情况
+
 				initRemainingMemory();
 			} else {
 				path = "";
@@ -552,15 +550,23 @@ public class DiglogMapOutputPicture extends SmDialog {
 							ControlsProperties.getString("String_EPS_Filters")),
 					SmFileChoose.createFileFilter(ControlsProperties.getString("String_TIFF_FileFilter"),
 							ControlsProperties.getString("String_TIFF_Filters")));
-
-			SmFileChoose.addNewNode(fileFilters, MapViewProperties.getString("String_MapOutputPictureCurrentDirectory"),
+//			CommonProperties.getString("String_DefaultFilePath")
+			// windows和linux系统通用根目录
+//			System.getProperty("user.dir")
+			SmFileChoose.addNewNode(fileFilters,System.getProperty("user.dir"),
 					ControlsProperties.getString("String_Save"), moduleName, "SaveOne");
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
 		// 设置选择模式为：仅为文件夹
 		this.exportPathFileChoose.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		String lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage.png";
-		this.fileChooserControlExportPath.setText(lastPath);
+		// 根据不同的系统给予不同的默认路径
+		if (SystemPropertyUtilities.isWindows()) {
+			String lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage.png";
+			this.fileChooserControlExportPath.setText(lastPath);
+		} else {
+			this.fileChooserControlExportPath.setText(this.exportPathFileChoose.getModuleLastPath());
+		}
+
 	}
 
 	/**
