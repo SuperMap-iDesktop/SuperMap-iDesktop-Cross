@@ -3,6 +3,7 @@ package com.supermap.desktop.task;
 import com.supermap.Interface.ILBSTask;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IAfterWork;
+import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.ui.lbs.impl.FileInfo;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.controls.button.SmButton;
@@ -63,7 +64,8 @@ public class LBSTask extends JPanel implements ILBSTask {
         labelTitle = new JLabel("file name");
         labelLogo = new JLabel();
         this.buttonRun = new SmButton(CommonUtilities.getImageIcon("Image_Stop.png"));
-        this.buttonRemove = new SmButton(CommonUtilities.getImageIcon("image_delete1.png"));
+        this.buttonRemove = new SmButton();
+        this.buttonRemove.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_delete.png"));
         labelProcess = new JLabel("");
         labelStatus = new JLabel("Remain time:0");
         groupLayout.setAutoCreateContainerGaps(true);

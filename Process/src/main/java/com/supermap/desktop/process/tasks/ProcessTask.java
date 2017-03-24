@@ -37,7 +37,8 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     private volatile JLabel labelTitle;
     private volatile JLabel labelMessage;
     private volatile JLabel labelRemaintime;
-    private volatile JButton buttonRun = null;
+    private volatile JButton buttonRun;
+    private volatile JButton buttonRemove;
     private volatile IProcess process;
     private volatile boolean isFinished;
     private ActionListener cancelListener = new ActionListener() {
@@ -51,6 +52,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         public void running(RunningEvent e) {
             if (e.getProgress() >= 100) {
                 updateProgress(100, String.valueOf(e.getRemainTime()), getFinishMessage());
+                buttonRun.setEnabled(false);
                 isFinished = true;
             } else {
                 updateProgress(e.getProgress(), String.valueOf(e.getRemainTime()), e.getMessage());
@@ -79,6 +81,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         labelMessage = new JLabel("...");
         labelRemaintime = new JLabel("...");
         buttonRun = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Run.png"));
+        buttonRemove = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_delete.png"));
     }
 
     @Override
@@ -86,13 +89,39 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         Dimension dimension = new Dimension(18, 18);
         this.buttonRun.setPreferredSize(dimension);
         this.buttonRun.setMinimumSize(dimension);
-        this.setLayout(new GridBagLayout());
-        this.add(this.labelTitle, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(this.progressBar, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
-        this.add(this.buttonRun, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraintsHelper.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(this.labelMessage, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(this.labelRemaintime, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-        this.add(new JPanel(), new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+        GroupLayout layout = new GroupLayout(this);
+        layout.setAutoCreateContainerGaps(true);
+        layout.setAutoCreateGaps(true);
+        layout.setHorizontalGroup(layout.createParallelGroup()
+                .addComponent(this.labelTitle)
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(progressBar,GroupLayout.DEFAULT_SIZE,GroupLayout.DEFAULT_SIZE,Short.MAX_VALUE)
+                        .addComponent(buttonRun,23,23,23)
+                )
+                .addGroup(layout.createSequentialGroup()
+                        .addComponent(labelMessage)
+                        .addComponent(labelRemaintime)
+                )
+        );
+        layout.setVerticalGroup(layout.createSequentialGroup()
+                .addComponent(this.labelTitle,23,23,23)
+                .addGroup(layout.createParallelGroup()
+                        .addComponent(progressBar,23,23,23)
+                        .addComponent(buttonRun,23,23,23)
+                )
+                .addGroup(layout.createParallelGroup()
+                        .addComponent(labelMessage,23,23,23)
+                        .addComponent(labelRemaintime,23,23,23)
+                )
+        );
+        this.setLayout(layout);
+//        this.setLayout(new GridBagLayout());
+//        this.add(this.labelTitle, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+//        this.add(this.progressBar, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+//        this.add(this.buttonRun, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraintsHelper.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+//        this.add(this.labelMessage, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+//        this.add(this.labelRemaintime, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.EAST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+//        this.add(new JPanel(), new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
     }
 
     @Override
@@ -243,7 +272,6 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
                     buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Run.png"));
                 }
             });
-            doWork();
         }
     }
 

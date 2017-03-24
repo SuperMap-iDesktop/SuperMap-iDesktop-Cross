@@ -206,6 +206,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:mongo-java-driver:3.0.4" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mongodb:bson:3.0.4" level="project" />
     <orderEntry type="module" module-name="Controls" scope="PROVIDED" />
     <orderEntry type="library" name="Maven: org.apache.activemq:activemq-core:5.7.0" level="project" />
     <orderEntry type="library" name="Maven: org.apache.activemq:kahadb:5.7.0" level="project" />

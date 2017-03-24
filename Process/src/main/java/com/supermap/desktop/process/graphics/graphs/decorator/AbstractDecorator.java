@@ -8,6 +8,8 @@ import java.awt.*;
 
 /**
  * Created by highsad on 2017/2/23.
+ * TODO 待优化：使用 Decorator 之后可能会导致 Bounds 变大，而在拖拽移动元素的时候所获取的是 IGraph 而不是 Decorator，从而刷新不到正确的 Bounds
+ *
  */
 public abstract class AbstractDecorator extends AbstractGraph {
 

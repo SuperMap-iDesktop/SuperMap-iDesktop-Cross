@@ -46,13 +46,12 @@ public class TaskUtil {
 
     /**
      * Use ExecutorService to manage all task thread,
-     * If task's prev tasks has finished,excute task;
+     * If task's prev tasks execute finished,execute task;
      *
      * @param nodeMatrix
      * @return
      */
-    public static TasksManagerContainer excuteTasks(final NodeMatrix nodeMatrix) {
-        TasksManagerContainer tasksManagerContainer = getManagerContainer(true);
+    public static void excuteTasks(final NodeMatrix nodeMatrix) {
         final CopyOnWriteArrayList<Object> processes = nodeMatrix.listAllNodes();
         ExecutorService eService = Executors.newCachedThreadPool();
         final Lock lock = new ReentrantLock();
@@ -89,7 +88,6 @@ public class TaskUtil {
                 eService.execute(thread);
             }
         }
-        return tasksManagerContainer;
     }
 
 }
