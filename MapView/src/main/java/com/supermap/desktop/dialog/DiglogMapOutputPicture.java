@@ -588,20 +588,40 @@ public class DiglogMapOutputPicture extends SmDialog {
 		// 设置内存文本框相关参数，因为内存是不断变化的，所以需要动态设置
 		//1、判断文件路径是否正确，获得所存文件的根目录，以获取磁盘剩余信息
 		String filePath = this.fileChooserControlExportPath.getEditor().getText();
-		if (!StringUtilities.isNullOrEmpty(filePath) && filePath.indexOf("\\") > 0) {
-			//获得文件所在的文件夹目录
-			filePath = filePath.substring(0, filePath.lastIndexOf('\\'));
-			File file = new File(filePath);
-			if (file.exists()) {
-				double constm = 1024 * 1024 * 1024;
-				this.remainingMemory = file.getFreeSpace() / constm;
-			} else {
-				// 如果此文件不存在，其路径错误，设置其路径为空，相应的图片类型为空
-				this.path = "";
-				this.imageType = null;
-				this.remainingMemory = 0.0;
+
+		if (SystemPropertyUtilities.isWindows()) {
+			if (!StringUtilities.isNullOrEmpty(filePath) && filePath.indexOf("\\") > 0) {
+				//获得文件所在的文件夹目录
+				filePath = filePath.substring(0, filePath.lastIndexOf('\\'));
+				File file = new File(filePath);
+				if (file.exists()) {
+					double constm = 1024 * 1024 * 1024;
+					this.remainingMemory = file.getFreeSpace() / constm;
+				} else {
+					// 如果此文件不存在，其路径错误，设置其路径为空，相应的图片类型为空
+					this.path = "";
+					this.imageType = null;
+					this.remainingMemory = 0.0;
+				}
 			}
+		} else {
+			if (!StringUtilities.isNullOrEmpty(filePath)) {
+				//获得文件所在的文件夹目录
+				filePath = filePath.substring(0, filePath.lastIndexOf("/"));
+				File file = new File(filePath);
+				if (file.exists()) {
+					double constm = 1024 * 1024 * 1024;
+					this.remainingMemory = file.getFreeSpace() / constm;
+				} else {
+					// 如果此文件不存在，其路径错误，设置其路径为空，相应的图片类型为空
+					this.path = "";
+					this.imageType = null;
+					this.remainingMemory = 0.0;
+				}
+			}
+
 		}
+
 	}
 
 	/**
