@@ -53,7 +53,7 @@ public class GraphCreator extends CanvasEventAdapter {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if (this.isCreating() && SwingUtilities.isLeftMouseButton(e)) {
-			this.canvas.addGraph(this.toCreation);
+			this.canvas.addGraphTransformed(this.toCreation);
 			clean();
 		}
 	}

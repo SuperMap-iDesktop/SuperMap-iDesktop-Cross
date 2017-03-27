@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics.interaction.canvas;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
@@ -56,6 +57,21 @@ public abstract class CanvasEventAdapter implements CanvasEventHandler {
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
+
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
 
 	}
 }

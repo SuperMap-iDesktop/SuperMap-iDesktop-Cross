@@ -5,10 +5,7 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.connection.DefaultLine;
 import com.supermap.desktop.process.graphics.connection.RelationLine;
-import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
-import com.supermap.desktop.process.graphics.graphs.DataGraph;
-import com.supermap.desktop.process.graphics.graphs.EllipseGraph;
-import com.supermap.desktop.process.graphics.graphs.IGraph;
+import com.supermap.desktop.process.graphics.graphs.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +17,6 @@ import java.awt.event.MouseEvent;
 public class GraphConnection extends CanvasEventAdapter {
 	private GraphCanvas canvas;
 	private DefaultLine previewLine;
-	private Rectangle dirtyRegion = null;
 	private IGraph startGraph = null;
 	private IGraph endGraph = null;
 
@@ -132,7 +128,7 @@ public class GraphConnection extends CanvasEventAdapter {
 	}
 
 	private boolean isEndValid(IGraph graph) {
-		return graph != this.startGraph && graph instanceof EllipseGraph;
+		return graph != this.startGraph && graph instanceof ProcessGraph;
 	}
 
 	@Override
@@ -144,7 +140,6 @@ public class GraphConnection extends CanvasEventAdapter {
 				this.previewLine.setStatus(DefaultLine.NORMAL);
 				this.previewLine = null;
 			}
-			this.dirtyRegion = null;
 			this.endGraph = null;
 			this.startGraph = null;
 		} catch (Exception e) {

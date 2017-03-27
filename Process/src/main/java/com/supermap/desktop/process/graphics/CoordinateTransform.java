@@ -256,6 +256,15 @@ public class CoordinateTransform {
 		graph.setSize(inversedWidth, inversedHeight);
 	}
 
+	public void inverseTranslate(IGraph graph) {
+		if (graph == null) {
+			return;
+		}
+
+		Point inversedLocation = inverse(graph.getLocation());
+		graph.setLocation(inversedLocation);
+	}
+
 	/**
 	 * @param src
 	 * @return

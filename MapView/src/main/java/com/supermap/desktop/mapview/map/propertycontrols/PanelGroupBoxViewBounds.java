@@ -18,6 +18,7 @@ import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -80,7 +81,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	private static final int DEFAULT_LABELSIZE = 20;
 	private static final int DEFAULT_BUTTONSIZE = 95;
 
-	private String borderName=ControlsProperties.getString("String_MapOutputBounds");
+	private String borderName = ControlsProperties.getString("String_MapOutputBounds");
 
 	/**
 	 * 按钮事件枢纽站
@@ -169,10 +170,10 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		setAsMapViewBounds();
 	}
 
-	public PanelGroupBoxViewBounds(SmDialog smDialog,String borderName) {
+	public PanelGroupBoxViewBounds(SmDialog smDialog, String borderName) {
 		super();
 		this.dialog = smDialog;
-		this.borderName=borderName;
+		this.borderName = borderName;
 		initCompont();
 		initResource();
 		initLayout();
@@ -455,12 +456,13 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		String clipBoardTextRight = ControlsProperties.getString("String_LabelRight") + this.textFieldCurrentViewRight.getTextField().getText();
 		String clipBoardTextTop = ControlsProperties.getString("String_LabelTop") + this.textFieldCurrentViewTop.getTextField().getText();
 		// 调用windows复制功能，将值复制到剪贴板
-		setSysClipboardText(clipBoardTextLeft + "，" + clipBoardTextBottom + "，" + clipBoardTextRight + "，" + clipBoardTextTop);
+		setSysClipboardText(clipBoardTextLeft + clipBoardTextBottom + clipBoardTextRight + clipBoardTextTop);
 		Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_MapBounds_Has_Been_Copied"));
 	}
 
 	/**
 	 * 调用windows的剪贴板
+	 * yuanR
 	 *
 	 * @param coypText
 	 */
@@ -472,9 +474,56 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
 
 	/**
+	 * 调用windows的剪贴板
+	 * 获得系统剪贴板内
+	 * yuanR 2017.3.24
+	 *
+	 * @return
+	 */
+	public static String getSysClipboardText() {
+		Clipboard sysClip = Toolkit.getDefaultToolkit().getSystemClipboard();
+		Transferable clipTf = sysClip.getContents(null);
+		if (clipTf.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+			try {
+				String ret = (String) clipTf.getTransferData(DataFlavor.stringFlavor);
+				return ret;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+
+	/**
 	 * 粘贴参数
 	 */
 	private void pasteParameter() {
+		String clipBoard = getSysClipboardText();
+		// 判断剪切板中是否包含“左：”“下：”“右：”“上：”等“分隔符”
+		String left = ControlsProperties.getString("String_LabelLeft");
+		String bottom = ControlsProperties.getString("String_LabelBottom");
+		String right = ControlsProperties.getString("String_LabelRight");
+		String top = ControlsProperties.getString("String_LabelTop");
+
+		if (clipBoard.contains(left) && clipBoard.contains(bottom) && clipBoard.contains(right) && clipBoard.contains(top)) {
+			String clipBoardLeft = clipBoard.substring(clipBoard.indexOf(ControlsProperties.getString("String_LabelLeft")), clipBoard.indexOf(ControlsProperties.getString("String_LabelBottom")));
+			String clipBoardBottom = clipBoard.substring(clipBoard.indexOf(ControlsProperties.getString("String_LabelBottom")), clipBoard.indexOf(ControlsProperties.getString("String_LabelRight")));
+			String clipBoardRight = clipBoard.substring(clipBoard.indexOf(ControlsProperties.getString("String_LabelRight")), clipBoard.indexOf(ControlsProperties.getString("String_LabelTop")));
+			String clipBoardTop = clipBoard.substring(clipBoard.indexOf(ControlsProperties.getString("String_LabelTop")));
+
+			clipBoardLeft = clipBoardLeft.replace(left, "");
+			clipBoardBottom = clipBoardBottom.replace(bottom, "");
+			clipBoardRight = clipBoardRight.replace(right, "");
+			clipBoardTop = clipBoardTop.replace(top, "");
+
+			if (DoubleUtilities.isDouble(clipBoardLeft) && DoubleUtilities.isDouble(clipBoardBottom) && DoubleUtilities.isDouble(clipBoardRight) && DoubleUtilities.isDouble(clipBoardTop)) {
+				ControlDefaultValues.setCopyCurrentMapboundsLeft(DoubleUtilities.stringToValue(clipBoardLeft));
+				ControlDefaultValues.setCopyCurrentMapboundsBottom(DoubleUtilities.stringToValue(clipBoardBottom));
+				ControlDefaultValues.setCopyCurrentMapboundsRight(DoubleUtilities.stringToValue(clipBoardRight));
+				ControlDefaultValues.setCopyCurrentMapboundsTop(DoubleUtilities.stringToValue(clipBoardTop));
+			}
+		}
 		this.textFieldCurrentViewLeft.getTextField().setText(DoubleUtilities.getFormatString(ControlDefaultValues.getCopyCurrentMapboundsLeft()));
 		this.textFieldCurrentViewBottom.getTextField().setText(DoubleUtilities.getFormatString(ControlDefaultValues.getCopyCurrentMapboundsBottom()));
 		this.textFieldCurrentViewRight.getTextField().setText(DoubleUtilities.getFormatString(ControlDefaultValues.getCopyCurrentMapboundsRight()));
@@ -527,6 +576,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		this.valueTop = 0.0;
 		this.valueRight = 0.0;
 		this.valueBottom = 0.0;
+
 	}
 
 	/**
@@ -537,6 +587,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	public Rectangle2D getRangeBound() {
 		// 当要获得范围矩形框时，获得当前文本框的值，并判断是否构成矩形框
 		setCurrentBoundVaule();
+
 		if ((valueLeft < valueRight) && (valueTop > valueBottom)) {
 			this.rangeRectangle.setLeft(valueLeft);
 			this.rangeRectangle.setRight(valueRight);
@@ -563,5 +614,9 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
 	public WaringTextField getTextFieldCurrentViewBottom() {
 		return this.textFieldCurrentViewBottom;
+	}
+
+	public JButton getCopyButton() {
+		return copyButton;
 	}
 }
