@@ -6,8 +6,10 @@ import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -34,6 +36,9 @@ public class ParameterCombinePanel extends SwingPanel implements ParameterCombin
 			panel.setLayout(new GridBagLayout());
 		}
 		ArrayList<IParameter> parameterList = parameterCombine.getParameterList();
+		if (parameterList.size() <= 0) {
+			return;
+		}
 		String combineType = parameterCombine.getCombineType();
 		int weightIndex = parameterCombine.getWeightIndex();
 		for (IParameter parameter : parameterList) {
@@ -45,6 +50,9 @@ public class ParameterCombinePanel extends SwingPanel implements ParameterCombin
 			} else {
 				x++;
 			}
+		}
+		if (!StringUtilities.isNullOrEmpty(parameterCombine.getDescribe())) {
+			panel.setBorder(new TitledBorder(parameterCombine.getDescribe()));
 		}
 	}
 
