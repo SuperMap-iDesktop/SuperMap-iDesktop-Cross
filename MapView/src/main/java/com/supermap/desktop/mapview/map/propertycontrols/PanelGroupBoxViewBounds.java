@@ -27,6 +27,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
+import static com.supermap.desktop.controls.ControlDefaultValues.*;
+
 /**
  * @author YuanR
  *         地图输出为图片设置范围panel
@@ -341,11 +343,6 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		this.mapViewT = this.mapControl.getMap().getBounds().getTop();
 		this.mapViewR = this.mapControl.getMap().getBounds().getRight();
 		this.mapViewB = this.mapControl.getMap().getBounds().getBottom();
-
-		this.currentViewLeft = this.mapControl.getMap().getViewBounds().getLeft();
-		this.currentViewTop = this.mapControl.getMap().getViewBounds().getTop();
-		this.currentViewRight = this.mapControl.getMap().getViewBounds().getRight();
-		this.currentViewBottom = this.mapControl.getMap().getViewBounds().getBottom();
 		setAsMapViewBounds();
 	}
 
@@ -353,32 +350,53 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	 * 设置范围为地图范围
 	 */
 	private void setAsMapViewBounds() {
-		this.textFieldCurrentViewLeft.getTextField().setText(DoubleUtilities.getFormatString(this.mapViewL));
-		this.textFieldCurrentViewBottom.getTextField().setText(DoubleUtilities.getFormatString(this.mapViewB));
-		this.textFieldCurrentViewRight.getTextField().setText(DoubleUtilities.getFormatString(this.mapViewR));
-		this.textFieldCurrentViewTop.getTextField().setText(DoubleUtilities.getFormatString(this.mapViewT));
+		// 将范围设置为地图范围，进行去除千分位处理
+		String mapLeft = DoubleUtilities.getFormatString(this.mapViewL).replace(",", "");
+		String mapBottom = DoubleUtilities.getFormatString(this.mapViewB).replace(",", "");
+		String mapRight = DoubleUtilities.getFormatString(this.mapViewR).replace(",", "");
+		String mapTop = DoubleUtilities.getFormatString(this.mapViewT).replace(",", "");
+
+		this.textFieldCurrentViewLeft.getTextField().setText(mapLeft);
+		this.textFieldCurrentViewBottom.getTextField().setText(mapBottom);
+		this.textFieldCurrentViewRight.getTextField().setText(mapRight);
+		this.textFieldCurrentViewTop.getTextField().setText(mapTop);
 	}
 
 	/**
 	 * 设置范围为当前可视范围
 	 */
 	private void setAsCurrentViewBounds() {
+		// 当前视图范围可改变，每次设置之前都需要重新取值，并且做去除千分位的处理
+		this.currentViewLeft = this.mapControl.getMap().getViewBounds().getLeft();
+		this.currentViewBottom = this.mapControl.getMap().getViewBounds().getBottom();
+		this.currentViewRight = this.mapControl.getMap().getViewBounds().getRight();
+		this.currentViewTop = this.mapControl.getMap().getViewBounds().getTop();
 
+		String mapLeft = DoubleUtilities.getFormatString(this.currentViewLeft).replace(",", "");
+		String mapBottom = DoubleUtilities.getFormatString(this.currentViewBottom).replace(",", "");
+		String mapRight = DoubleUtilities.getFormatString(this.currentViewRight).replace(",", "");
+		String mapTop = DoubleUtilities.getFormatString(this.currentViewTop).replace(",", "");
 
-		this.textFieldCurrentViewLeft.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewLeft));
-		this.textFieldCurrentViewBottom.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewBottom));
-		this.textFieldCurrentViewRight.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewRight));
-		this.textFieldCurrentViewTop.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewTop));
+		this.textFieldCurrentViewLeft.getTextField().setText(mapLeft);
+		this.textFieldCurrentViewBottom.getTextField().setText(mapBottom);
+		this.textFieldCurrentViewRight.getTextField().setText(mapRight);
+		this.textFieldCurrentViewTop.getTextField().setText(mapTop);
 	}
 
 	/**
 	 * 设置范围为给予的矩形框范围
 	 */
 	private void setAsRectangleBounds(Rectangle2D rectangleBounds) {
-		this.textFieldCurrentViewLeft.getTextField().setText(DoubleUtilities.getFormatString(rectangleBounds.getLeft()));
-		this.textFieldCurrentViewBottom.getTextField().setText(DoubleUtilities.getFormatString(rectangleBounds.getBottom()));
-		this.textFieldCurrentViewRight.getTextField().setText(DoubleUtilities.getFormatString(rectangleBounds.getRight()));
-		this.textFieldCurrentViewTop.getTextField().setText(DoubleUtilities.getFormatString(rectangleBounds.getTop()));
+		//去除千分位处理
+		String mapLeft = DoubleUtilities.getFormatString(rectangleBounds.getLeft()).replace(",", "");
+		String mapBottom = DoubleUtilities.getFormatString(rectangleBounds.getBottom()).replace(",", "");
+		String mapRight = DoubleUtilities.getFormatString(rectangleBounds.getRight()).replace(",", "");
+		String mapTop = DoubleUtilities.getFormatString(rectangleBounds.getTop()).replace(",", "");
+
+		this.textFieldCurrentViewLeft.getTextField().setText(mapLeft);
+		this.textFieldCurrentViewBottom.getTextField().setText(mapBottom);
+		this.textFieldCurrentViewRight.getTextField().setText(mapRight);
+		this.textFieldCurrentViewTop.getTextField().setText(mapTop);
 	}
 
 
@@ -386,15 +404,16 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	 * 范围文本框——左——改变事件
 	 */
 	private void textFieldLValueChange() {
-		String str = this.textFieldCurrentViewRight.getTextField().getText();
+		// 当左范围文本框改变时，设置右范围文本框的限制范围
+		String str = this.textFieldCurrentViewLeft.getTextField().getText();
 		if (!StringUtilities.isNullOrEmpty(str) && DoubleUtilities.isDouble(str)) {
-			this.textFieldCurrentViewLeft.setInitInfo(
-					(-Double.MAX_VALUE),
-					DoubleUtilities.stringToValue(textFieldCurrentViewRight.getTextField().getText()),
+			this.textFieldCurrentViewRight.setInitInfo(
+					DoubleUtilities.stringToValue(this.textFieldCurrentViewLeft.getTextField().getText()),
+					Double.MAX_VALUE,
 					WaringTextField.FLOAT_TYPE,
 					"15");
 		} else {
-			this.textFieldCurrentViewLeft.setInitInfo(
+			this.textFieldCurrentViewRight.setInitInfo(
 					(-Double.MAX_VALUE),
 					Double.MAX_VALUE,
 					WaringTextField.FLOAT_TYPE,
@@ -403,9 +422,10 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	}
 
 	/**
-	 * 范围文本框——下——改变事件
+	 * 范围文本框——上——改变事件
 	 */
-	private void textFieldBValueChange() {
+	private void textFieldTValueChange() {
+		// 当上范围文本框改变时，设置下范围文本框的限制范围
 		String str = this.textFieldCurrentViewTop.getTextField().getText();
 		if (!StringUtilities.isNullOrEmpty(str) && DoubleUtilities.isDouble(str)) {
 			this.textFieldCurrentViewBottom.setInitInfo(
@@ -422,19 +442,43 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		}
 	}
 
+
 	/**
-	 * 范围文本框——右——改变事件
+	 * 范围文本框——下——改变事件
 	 */
-	private void textFieldRValueChange() {
-		String str = this.textFieldCurrentViewLeft.getTextField().getText();
+	private void textFieldBValueChange() {
+		// 当下范围文本框改变时，设置上范围文本框的限制范围
+		String str = this.textFieldCurrentViewBottom.getTextField().getText();
 		if (!StringUtilities.isNullOrEmpty(str) && DoubleUtilities.isDouble(str)) {
-			this.textFieldCurrentViewRight.setInitInfo(
-					DoubleUtilities.stringToValue(this.textFieldCurrentViewLeft.getTextField().getText()),
+			this.textFieldCurrentViewTop.setInitInfo(
+					DoubleUtilities.stringToValue(this.textFieldCurrentViewBottom.getTextField().getText()),
 					Double.MAX_VALUE,
 					WaringTextField.FLOAT_TYPE,
 					"15");
 		} else {
-			this.textFieldCurrentViewRight.setInitInfo(
+			this.textFieldCurrentViewTop.setInitInfo(
+					(-Double.MAX_VALUE),
+					Double.MAX_VALUE,
+					WaringTextField.FLOAT_TYPE,
+					"15");
+
+		}
+	}
+
+	/**
+	 * 范围文本框——右——改变事件
+	 */
+	private void textFieldRValueChange() {
+		// 当右范围文本框改变时，设置左范围文本框的限制范围
+		String str = this.textFieldCurrentViewRight.getTextField().getText();
+		if (!StringUtilities.isNullOrEmpty(str) && DoubleUtilities.isDouble(str)) {
+			this.textFieldCurrentViewLeft.setInitInfo(
+					(-Double.MAX_VALUE),
+					DoubleUtilities.stringToValue(textFieldCurrentViewRight.getTextField().getText()),
+					WaringTextField.FLOAT_TYPE,
+					"15");
+		} else {
+			this.textFieldCurrentViewLeft.setInitInfo(
 					(-Double.MAX_VALUE),
 					Double.MAX_VALUE,
 					WaringTextField.FLOAT_TYPE,
@@ -518,39 +562,26 @@ public class PanelGroupBoxViewBounds extends JPanel {
 			clipBoardTop = clipBoardTop.replace(top, "");
 
 			if (DoubleUtilities.isDouble(clipBoardLeft) && DoubleUtilities.isDouble(clipBoardBottom) && DoubleUtilities.isDouble(clipBoardRight) && DoubleUtilities.isDouble(clipBoardTop)) {
+
 				ControlDefaultValues.setCopyCurrentMapboundsLeft(DoubleUtilities.stringToValue(clipBoardLeft));
 				ControlDefaultValues.setCopyCurrentMapboundsBottom(DoubleUtilities.stringToValue(clipBoardBottom));
 				ControlDefaultValues.setCopyCurrentMapboundsRight(DoubleUtilities.stringToValue(clipBoardRight));
 				ControlDefaultValues.setCopyCurrentMapboundsTop(DoubleUtilities.stringToValue(clipBoardTop));
+
 			}
 		}
-		this.textFieldCurrentViewLeft.getTextField().setText(DoubleUtilities.getFormatString(ControlDefaultValues.getCopyCurrentMapboundsLeft()));
-		this.textFieldCurrentViewBottom.getTextField().setText(DoubleUtilities.getFormatString(ControlDefaultValues.getCopyCurrentMapboundsBottom()));
-		this.textFieldCurrentViewRight.getTextField().setText(DoubleUtilities.getFormatString(ControlDefaultValues.getCopyCurrentMapboundsRight()));
-		this.textFieldCurrentViewTop.getTextField().setText(DoubleUtilities.getFormatString(ControlDefaultValues.getCopyCurrentMapboundsTop()));
+
+		String mapLeft = DoubleUtilities.getFormatString(getCopyCurrentMapboundsLeft()).replace(",", "");
+		String mapBottom = DoubleUtilities.getFormatString(getCopyCurrentMapboundsBottom()).replace(",", "");
+		String mapRight = DoubleUtilities.getFormatString(getCopyCurrentMapboundsRight()).replace(",", "");
+		String mapTop = DoubleUtilities.getFormatString(getCopyCurrentMapboundsTop()).replace(",", "");
+
+		this.textFieldCurrentViewLeft.getTextField().setText(mapLeft);
+		this.textFieldCurrentViewBottom.getTextField().setText(mapBottom);
+		this.textFieldCurrentViewRight.getTextField().setText(mapRight);
+		this.textFieldCurrentViewTop.getTextField().setText(mapTop);
 	}
 
-
-	/**
-	 * 范围文本框——上——改变事件
-	 */
-	private void textFieldTValueChange() {
-		String str = this.textFieldCurrentViewBottom.getTextField().getText();
-		if (!StringUtilities.isNullOrEmpty(str) && DoubleUtilities.isDouble(str)) {
-			this.textFieldCurrentViewTop.setInitInfo(
-					DoubleUtilities.stringToValue(this.textFieldCurrentViewBottom.getTextField().getText()),
-					Double.MAX_VALUE,
-					WaringTextField.FLOAT_TYPE,
-					"15");
-		} else {
-			this.textFieldCurrentViewTop.setInitInfo(
-					(-Double.MAX_VALUE),
-					Double.MAX_VALUE,
-					WaringTextField.FLOAT_TYPE,
-					"15");
-
-		}
-	}
 
 	/**
 	 * 设置当前
