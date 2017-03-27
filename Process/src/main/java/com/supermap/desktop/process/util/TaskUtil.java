@@ -109,6 +109,7 @@ public class TaskUtil {
                 eService.execute(thread);
             }
         }
+        eService.shutdown();
     }
 
 }

@@ -40,7 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 5. hot 元素（MouseMoved）
  * 优先级：创建 - 拖拽/连接 - 选择 - hot
  */
-public class GraphCanvas extends JComponent implements MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener {
+public class GraphCanvas extends JComponent implements MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener, KeyListener {
 	public final static Color DEFAULT_BACKGROUNDCOLOR = new Color(11579568);
 	public final static Color DEFAULT_CANVAS_COLOR = new Color(255, 255, 255);
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
@@ -60,6 +60,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private Selection selection = new MultiSelction(this);
 	private DraggedHandler dragged = new DraggedHandler(this);
 	public GraphConnection connection = new GraphConnection(this);
+	public GraphRemoving removing = new GraphRemoving();
 
 	private ArrayList<GraphSelectChangedListener> selectChangedListeners = new ArrayList<>();
 
@@ -136,12 +137,15 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addMouseWheelListener(this);
+		addComponentListener(this);
+		addKeyListener(this);
 
 		installCanvasEventHandler(Selection.class, this.selection);
 		installCanvasEventHandler(DraggedHandler.class, this.dragged);
 		installCanvasEventHandler(CanvasTranslation.class, this.translation);
 		installCanvasEventHandler(GraphCreator.class, this.creator);
 		installCanvasEventHandler(GraphConnection.class, this.connection);
+		installCanvasEventHandler(GraphRemoving.class, this.removing);
 	}
 
 	public void create(IGraph graph) {
@@ -226,7 +230,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	public void addGraphTransformed(IGraph graph) {
 		if (graph != null && !this.graphStorage.contains(graph)) {
-			this.coordinateTransform.inverse(graph);
+			this.coordinateTransform.inverseTranslate(graph);
 
 			if (this.canvasRect.contains(graph.getBounds())) {
 				fireGraphCreating(new GraphCreatingEvent(this, graph));
@@ -569,6 +573,47 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
 			if (listeners[i] == GraphCreatingListener.class) {
 				((GraphCreatingListener) listeners[i + 1]).graphCreating(e);
+			}
+		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
+		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
+
+		while (iterator.hasNext()) {
+			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
+			if (entry.getValue().isEnabled()) {
+				entry.getValue().keyTyped(e);
+			}
+		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		System.out.println("Pressed");
+		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
+		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
+
+		while (iterator.hasNext()) {
+			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
+			if (entry.getValue().isEnabled()) {
+				entry.getValue().keyPressed(e);
+			}
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		System.out.println("KeyReleased");
+		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
+		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
+
+		while (iterator.hasNext()) {
+			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
+			if (entry.getValue().isEnabled()) {
+				entry.getValue().keyReleased(e);
 			}
 		}
 	}
