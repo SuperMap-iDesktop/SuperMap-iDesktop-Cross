@@ -18,6 +18,7 @@ public class ParameterCombine extends AbstractParameter {
 	// Q: 添加的关联事件如何保存？
 	public static final String HORIZONTAL = "PARAMETER_COMBINE_TYPE_HORIZONTAL";
 	public static final String VERTICAL = "PARAMETER_COMBINE_TYPE_VERTICAL";
+	private String describe;
 	private ArrayList<IParameter> parameterList = new ArrayList<>();
 	private ArrayList<ParameterCombineBuildPanelListener> parameterCombineBuildPanelListeners = new ArrayList<>();
 	private String combineType = VERTICAL;
@@ -65,8 +66,14 @@ public class ParameterCombine extends AbstractParameter {
 	}
 	@Override
 	public String getDescribe() {
-		return "Combine";
+		return describe;
 	}
+
+
+	public void setDescribe(String describe) {
+		this.describe = describe;
+	}
+
 	private void firePanelRebuildListener() {
 		for (ParameterCombineBuildPanelListener parameterCombineBuildPanelListener : parameterCombineBuildPanelListeners) {
 			parameterCombineBuildPanelListener.rebuild();
