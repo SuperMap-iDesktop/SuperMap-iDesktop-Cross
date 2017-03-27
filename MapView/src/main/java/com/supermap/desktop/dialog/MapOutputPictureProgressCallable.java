@@ -1,11 +1,15 @@
 package com.supermap.desktop.dialog;
 
 import com.supermap.data.Rectangle2D;
+import com.supermap.data.SteppedEvent;
+import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.mapping.ImageType;
 import com.supermap.mapping.Map;
+
+import java.util.concurrent.CancellationException;
 
 /**
  * @author YuanR
@@ -21,7 +25,20 @@ public class MapOutputPictureProgressCallable extends UpdateProgressCallable {
 	boolean createMapOutputPictureProgress;
 
 
+	private SteppedListener steppedListener = new SteppedListener() {
+
+		@Override
+		public void stepped(SteppedEvent arg0) {
+			try {
+				updateProgress(arg0.getPercent(), String.valueOf(arg0.getRemainTime()), arg0.getMessage());
+			} catch (CancellationException e) {
+				arg0.setCancel(true);
+			}
+		}
+	};
+
 	public MapOutputPictureProgressCallable(Map map, String path, ImageType imageType, int dpi, Rectangle2D rectangle, boolean isBackTransparent) {
+		this.copyMap = new Map();
 		this.copyMap = map;
 		this.path = path;
 		this.imageType = imageType;
@@ -36,9 +53,11 @@ public class MapOutputPictureProgressCallable extends UpdateProgressCallable {
 		try {
 			this.createMapOutputPictureProgress = false;
 			String resultMessage;
+
 			this.copyMap.setDisableAutoAvoidEffect(true);
 			// 设置是否在出图的时候关闭地图的动态效果
 			this.copyMap.setDisableDynamicEffect(true);
+			this.copyMap.addSteppedListener(steppedListener);
 			if (imageType.equals(imageType.GIF)) {
 				if (copyMap.outputMapToGIF(path, isBackTransparent)) {
 					this.createMapOutputPictureProgress = true;
@@ -62,6 +81,8 @@ public class MapOutputPictureProgressCallable extends UpdateProgressCallable {
 
 		} catch (Exception e1) {
 			Application.getActiveApplication().getOutput().output(e1);
+		} finally {
+			this.copyMap.removeSteppedListener(steppedListener);
 		}
 		return this.createMapOutputPictureProgress;
 	}

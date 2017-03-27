@@ -68,6 +68,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private WaringTextField waringTextFieldTop;
 	private WaringTextField waringTextFieldRight;
 	private WaringTextField waringTextFieldBottom;
+	private MapOutputPictureProgressCallable mapOutputPictureProgressCallable;
 
 	private static final int DEFAULT_LABELSIZE = 80;
 	private static final int DEFAULT_GAP = 16;
@@ -539,9 +540,11 @@ public class DiglogMapOutputPicture extends SmDialog {
 					ControlsProperties.getString("String_Save"), moduleName, "SaveOne");
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
+		String uiID = this.exportPathFileChoose.getUIClassID();
 //		this.exportPathFileChoose.addPropertyChangeListener(new PropertyChangeListener() {
 //			@Override
 //			public void propertyChange(PropertyChangeEvent evt) {
+//
 //				// 获得文件类型的描述
 //				fileName = fileName.substring(0, fileName.indexOf("."));
 //				String tempFileType = exportPathFileChoose.getFileFilter().getDescription();
@@ -766,6 +769,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 				// 设置是否在出图的时候关闭地图的动态效果
 				copyMap.setDisableDynamicEffect(true);
 
+
 				if (imageType.equals(imageType.GIF)) {
 					if (copyMap.outputMapToGIF(path, isBackTransparent)) {
 						isSuccess = true;
@@ -798,6 +802,21 @@ public class DiglogMapOutputPicture extends SmDialog {
 				//关闭窗口
 				DiglogMapOutputPicture.this.dispose();
 			}
+
+			// 进度条实现
+//			isBackTransparent = backTransparent.isSelected();
+//			try {
+//				FormProgress formProgress = new FormProgress();
+//				mapOutputPictureProgressCallable = new MapOutputPictureProgressCallable(map, path, imageType, dpi, outPutBounds, isBackTransparent);
+//				if (formProgress != null) {
+//					formProgress.doWork(mapOutputPictureProgressCallable);
+//				}
+//			} catch (Exception e1) {
+//				Application.getActiveApplication().getOutput().output(e1);
+//			} finally {
+//				removeEvents();
+//				DiglogMapOutputPicture.this.dispose();
+//			}
 		}
 	};
 }
