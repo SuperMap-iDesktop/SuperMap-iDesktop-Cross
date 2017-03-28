@@ -6,6 +6,7 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
+import com.supermap.desktop.process.graphics.graphs.decorator.AbstractDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorator.SelectedDecorator;
 
 import javax.swing.*;
@@ -261,5 +262,27 @@ public class MultiSelction extends Selection {
 		for (int i = 0; i < this.decorators.size(); i++) {
 			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(this.decorators.get(i).getBounds()));
 		}
+	}
+
+	@Override
+	public void deselectItem(IGraph graph) {
+		super.deselectItem(graph);
+		for (int i = 0; i < this.decorators.size(); i++) {
+			AbstractDecorator decorator = this.decorators.get(i);
+			if (decorator.getGraph() == graph) {
+				decorator.undecorate();
+				this.decorators.remove(decorator);
+				break;
+			}
+		}
+	}
+
+	@Override
+	public void deselectItems(IGraph[] graphs) {
+		if (graphs == null || graphs.length == 0) {
+			return;
+		}
+		for (int i = 0; i < graphs.length; i++)
+			deselectItem(graphs[i]);
 	}
 }
