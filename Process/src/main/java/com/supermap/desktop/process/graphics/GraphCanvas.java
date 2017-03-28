@@ -7,7 +7,10 @@ import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.events.GraphCreatingEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatingListener;
-import com.supermap.desktop.process.graphics.graphs.*;
+import com.supermap.desktop.process.graphics.graphs.EllipseGraph;
+import com.supermap.desktop.process.graphics.graphs.IGraph;
+import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
+import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.process.graphics.interaction.canvas.*;
 import com.supermap.desktop.process.graphics.interaction.graph.DefaultGraphEventHanderFactory;
 import com.supermap.desktop.process.graphics.interaction.graph.IGraphEventHandlerFactory;
@@ -83,10 +86,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RectangleGraph graph = new RectangleGraph(canvas);
-				graph.setSize(200, 80);
-				graph.setArcHeight(10);
-				graph.setArcWidth(10);
-
 				canvas.creator.create(graph);
 			}
 		});
@@ -97,7 +96,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				EllipseGraph graph = new EllipseGraph(canvas);
-				graph.setSize(160, 60);
 				canvas.creator.create(graph);
 			}
 		});

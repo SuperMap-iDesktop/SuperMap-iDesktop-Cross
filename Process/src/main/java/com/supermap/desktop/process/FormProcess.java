@@ -2,14 +2,7 @@ package com.supermap.desktop.process;
 
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.FormActivatedListener;
-import com.supermap.desktop.event.FormClosedEvent;
-import com.supermap.desktop.event.FormClosedListener;
-import com.supermap.desktop.event.FormClosingEvent;
-import com.supermap.desktop.event.FormClosingListener;
-import com.supermap.desktop.event.FormDeactivatedListener;
-import com.supermap.desktop.event.FormShownEvent;
-import com.supermap.desktop.event.FormShownListener;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
@@ -24,7 +17,6 @@ import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.ui.FormBaseChild;
 
-import javax.management.relation.Relation;
 import javax.swing.*;
 import java.awt.*;
 
@@ -64,7 +56,6 @@ public class FormProcess extends FormBaseChild implements IForm {
 
 					DataGraph data = new DataGraph(graphCanvas.getCanvas());
 					data.setLocation(new Point(process.getLocation().x + process.getWidth() * 3 / 2, process.getLocation().y));
-					data.setSize(process.getWidth(), process.getHeight());
 					graphCanvas.getCanvas().addGraph(data);
 
 					RelationLine line = new RelationLine(graphCanvas.getCanvas(), process, data);
@@ -231,9 +222,6 @@ public class FormProcess extends FormBaseChild implements IForm {
 
 	public void addProcess(IProcess process) {
 		RectangleGraph graph = new ProcessGraph(graphCanvas.getCanvas(), process);
-		graph.setSize(150, 60);
-		graph.setArcWidth(20);
-		graph.setArcHeight(30);
 		graphCanvas.getCanvas().create(graph);
 	}
 	//endregion
