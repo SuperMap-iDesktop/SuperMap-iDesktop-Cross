@@ -546,7 +546,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
 
 		// 当在Windows系统下，使文件选择器更为智能的实现
-		if (SystemPropertyUtilities.isWindows()) {
+//		if (SystemPropertyUtilities.isWindows()) {
 			this.windowsFileChooserUI = (WindowsFileChooserUI) this.exportPathFileChoose.getUI();
 			this.exportPathFileChoose.addPropertyChangeListener(new PropertyChangeListener() {
 				@Override
@@ -578,7 +578,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 					}
 				}
 			});
-		}
+//		}
 
 
 		// 两个系统下的获得最近路径得到的结果不同，windows得到的是路径，而linux得到的是完整的文件路径
