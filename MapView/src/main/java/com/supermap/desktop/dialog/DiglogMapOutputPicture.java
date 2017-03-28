@@ -324,7 +324,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 	 */
 	private ImageType getImageType(String str) {
 		if (str.contains(".png")) {
-			this.resolutionTextField.setEnable(true);
+			this.resolutionTextField.setEnable(false);
 			this.backTransparent.setEnabled(true);
 			return this.imageType.PNG;
 		} else if (str.contains(".jpg")) {
@@ -347,7 +347,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 			this.resolutionTextField.setEnable(true);
 			this.backTransparent.setEnabled(false);
 			// 暂时不支持tif
-			return null;
+			return this.imageType.TIFF;
 		} else {
 			return null;
 		}
@@ -624,12 +624,10 @@ public class DiglogMapOutputPicture extends SmDialog {
 		public void actionPerformed(ActionEvent e) {
 			try {
 				//设置文件选择器默认文件名为filed中的内容
-				if (SystemPropertyUtilities.isWindows()) {
-					exportPathFileChoose.setSelectedFile(new File(fileName));
-				} else {
-					exportPathFileChoose.setSelectedFile(new File(fileName.substring(0, fileName.indexOf("."))));
+				if (!SystemPropertyUtilities.isWindows() && !StringUtilities.isNullOrEmpty(fileName)) {
+					fileName = fileName.substring(0, fileName.indexOf("."));
 				}
-
+				exportPathFileChoose.setSelectedFile(new File(fileName));
 				int state = exportPathFileChoose.showSaveDialog(null);
 
 				if (state == JFileChooser.APPROVE_OPTION) {
@@ -783,13 +781,24 @@ public class DiglogMapOutputPicture extends SmDialog {
 				// 设置是否在出图的时候关闭地图的动态效果
 				copyMap.setDisableDynamicEffect(true);
 
-
 				if (imageType.equals(imageType.GIF)) {
 					if (copyMap.outputMapToGIF(path, isBackTransparent)) {
 						isSuccess = true;
 					}
 				} else if (imageType.equals(imageType.EPS)) {
 					if (copyMap.outputMapToEPS(path)) {
+						isSuccess = true;
+					}
+				} else if (imageType.equals(imageType.PNG)) {
+					if (copyMap.outputMapToPNG(path, isBackTransparent)) {
+						isSuccess = true;
+					}
+				} else if (imageType.equals(imageType.EMF)) {
+					if (copyMap.outputMapToEMF(path)) {
+						isSuccess = true;
+					}
+				} else if (imageType.equals(imageType.BMP)) {
+					if (copyMap.outputMapToBMP(path)) {
 						isSuccess = true;
 					}
 				} else {
