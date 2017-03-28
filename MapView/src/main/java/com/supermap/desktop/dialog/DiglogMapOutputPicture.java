@@ -1,5 +1,6 @@
 package com.supermap.desktop.dialog;
 
+import com.sun.java.swing.plaf.windows.WindowsFileChooserUI;
 import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
@@ -26,6 +27,8 @@ import javax.swing.event.CaretListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -64,30 +67,31 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private JCheckBox backTransparent;
 
 	private SmFileChoose exportPathFileChoose;
-
 	private WaringTextField waringTextFieldLeft;
 	private WaringTextField waringTextFieldTop;
 	private WaringTextField waringTextFieldRight;
 	private WaringTextField waringTextFieldBottom;
-
+	private MapOutputPictureProgressCallable mapOutputPictureProgressCallable;
+	private WindowsFileChooserUI windowsFileChooserUI;
 
 	private static final int DEFAULT_LABELSIZE = 80;
-	private static final int DEFAULT_GAP = 23;
+	private static final int DEFAULT_GAP = 16;
 	private static final int DPI_START = 1;
 	private static final int DPI_END = 65535;
 
 	// 导出所需参数
-	String path = "";
-	int dpi = 0;
-	ImageType imageType = null;
+	private String path = "";
+	private int dpi = 0;
+	private ImageType imageType = null;
 	private Rectangle2D outPutBounds = null;
-	boolean isBackTransparent = false;
+	private boolean isBackTransparent = false;
 	//其他参数
-	double remainingMemory = 0.0;
-	double expectedMemory = 0.0;
+	private double remainingMemory = 0.0;
+	private double expectedMemory = 0.0;
 	// 其他参数
-	double width = 0.0;
-	double height = 0.0;
+	private double width = 0.0;
+	private double height = 0.0;
+	private String fileName = "";
 
 
 	/**
@@ -137,7 +141,6 @@ public class DiglogMapOutputPicture extends SmDialog {
 
 		this.fileNameLabel = new JLabel("FileName");
 		this.fileChooserControlExportPath = new FileChooserControl();
-
 		this.resolutionLabel = new JLabel("resolution");
 		this.resolutionTextField = new WaringTextField();
 		// 设置分辨率文本框只能输入数字
@@ -161,8 +164,8 @@ public class DiglogMapOutputPicture extends SmDialog {
 	}
 
 	private void setComponentName() {
-		ComponentUIUtilities.setName(this.backTransparent,"DiglogMapOutputPicture_backTransparent");
-		ComponentUIUtilities.setName(this.DPILabel,"DiglogMapOutputPicture_DPILabel");
+		ComponentUIUtilities.setName(this.backTransparent, "DiglogMapOutputPicture_backTransparent");
+		ComponentUIUtilities.setName(this.DPILabel, "DiglogMapOutputPicture_DPILabel");
 	}
 
 	/**
@@ -311,36 +314,6 @@ public class DiglogMapOutputPicture extends SmDialog {
 		this.waringTextFieldBottom.getTextField().removeCaretListener(rangeTextFiledCareListener);
 	}
 
-	/**
-	 * 路径设置按钮监听事件
-	 */
-	private ActionListener exportPathLitener = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			try {
-				//设置文件选择器默认文件名为filed中的内容
-				// TODO yuanR
-				// 此处希望实现：当初次打开时，设置选择框中得文件名称格不为空
-				// 当手动输入过一次文件名后，下次打开时就会，文件名称格会显示上次输入的内容，需要了解其机制，反正跟文本框的输入无关！！！
-//				if (!StringUtilities.isNullOrEmpty(fileChooserControlExportPath.getEditor().getText())) {
-//					exportPathFileChoose.setCurrentDirectory(new File(fileChooserControlExportPath.getEditor().getText()));
-//				}
-				int state = exportPathFileChoose.showSaveDialog(null);
-				if (state == JFileChooser.APPROVE_OPTION) {
-					// 设置输出图片的路径
-					path = exportPathFileChoose.getFilePath();
-					// 设置输出图片的格式
-					getImageType(exportPathFileChoose.getFileFilter().getDescription());
-					// 将路径赋予文本框
-					fileChooserControlExportPath.getEditor().setText(path);
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			} finally {
-				CursorUtilities.setDefaultCursor();
-			}
-		}
-	};
 
 	/**
 	 * 设置输出图片的格式
@@ -351,7 +324,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 	 */
 	private ImageType getImageType(String str) {
 		if (str.contains(".png")) {
-			this.resolutionTextField.setEnable(true);
+			this.resolutionTextField.setEnable(false);
 			this.backTransparent.setEnabled(true);
 			return this.imageType.PNG;
 		} else if (str.contains(".jpg")) {
@@ -374,7 +347,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 			this.resolutionTextField.setEnable(true);
 			this.backTransparent.setEnabled(false);
 			// 暂时不支持tif
-			return null;
+			return this.imageType.TIFF;
 		} else {
 			return null;
 		}
@@ -397,6 +370,17 @@ public class DiglogMapOutputPicture extends SmDialog {
 			} else {
 				path = "";
 				imageType = null;
+			}
+
+			// 当手动输入的路径名称合法时，设置文件名称
+			if (!StringUtilities.isNullOrEmpty(path) && imageType != null) {
+				if (SystemPropertyUtilities.isWindows()) {
+					fileName = path.substring(path.lastIndexOf("\\") + 1);
+				} else {
+					fileName = path.substring(path.lastIndexOf("/") + 1);
+				}
+			} else {
+				fileName = "";
 			}
 			// 当路劲文本框改变时，判断一下确定按钮是否可用
 			judgeOKButtonisEnabled();
@@ -561,14 +545,52 @@ public class DiglogMapOutputPicture extends SmDialog {
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
 
+		// 当在Windows系统下，使文件选择器更为智能的实现
+		if (SystemPropertyUtilities.isWindows()) {
+			this.windowsFileChooserUI = (WindowsFileChooserUI) this.exportPathFileChoose.getUI();
+			this.exportPathFileChoose.addPropertyChangeListener(new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					//当值改变时，获得文件名
+					String tempFileName = windowsFileChooserUI.getFileName();
+					// 当文件选择器对话框文件名称不为空时，当改变数据类型时，不断获得最新的名称，并给其后追加数据类型
+					if (!StringUtilities.isNullOrEmpty(tempFileName)) {
+						// 获得文件类型的描述
+						if (tempFileName.indexOf(".") > 0) {
+							tempFileName = tempFileName.substring(0, tempFileName.indexOf("."));
+						}
+						String tempFileType = exportPathFileChoose.getFileFilter().getDescription();
+						if (tempFileType.indexOf(".png") > 0) {
+							tempFileName = tempFileName + ".png";
+						} else if (tempFileType.indexOf(".jpg") > 0) {
+							tempFileName = tempFileName + ".jpg";
+						} else if (tempFileType.indexOf(".bmp") > 0) {
+							tempFileName = tempFileName + ".bmp";
+						} else if (tempFileType.indexOf(".gif") > 0) {
+							tempFileName = tempFileName + ".gif";
+						} else if (tempFileType.indexOf(".eps") > 0) {
+							tempFileName = tempFileName + ".eps";
+						} else if (tempFileType.indexOf(".tif") > 0) {
+							tempFileName = tempFileName + ".tif";
+						}
+						windowsFileChooserUI.setFileName(tempFileName);
+						fileName = tempFileName;
+					}
+				}
+			});
+		}
+
+
 		// 两个系统下的获得最近路径得到的结果不同，windows得到的是路径，而linux得到的是完整的文件路径
 		if (SystemPropertyUtilities.isWindows()) {
 			// 对文件名进行判断，当目录下存在该文件时，名称重新给予
 			int num = 1;
 			String lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage.png";
 			File file = new File(lastPath);
+			this.fileName = "ExportImage.png";
 			while (file.exists()) {
 				lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage" + "_" + num + ".png";
+				this.fileName = "ExportImage" + "_" + num + ".png";
 				file = new File(lastPath);
 				num++;
 			}
@@ -582,14 +604,48 @@ public class DiglogMapOutputPicture extends SmDialog {
 
 			int num = 1;
 			File file = new File(lastPath);
+			this.fileName = fileName;
 			while (file.exists()) {
 				lastPath = filePath + fileName + "_" + num + fileType;
+				this.fileName = fileName + "_" + num + fileType;
 				file = new File(lastPath);
 				num++;
 			}
 			this.fileChooserControlExportPath.setText(lastPath);
 		}
 	}
+
+
+	/**
+	 * 路径设置按钮监听事件
+	 */
+	private ActionListener exportPathLitener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			try {
+				//设置文件选择器默认文件名为filed中的内容
+				if (!SystemPropertyUtilities.isWindows() && !StringUtilities.isNullOrEmpty(fileName)) {
+					fileName = fileName.substring(0, fileName.indexOf("."));
+				}
+				exportPathFileChoose.setSelectedFile(new File(fileName));
+				int state = exportPathFileChoose.showSaveDialog(null);
+
+				if (state == JFileChooser.APPROVE_OPTION) {
+					// 设置输出图片的路径
+					path = exportPathFileChoose.getFilePath();
+					// 设置输出图片的格式
+					getImageType(exportPathFileChoose.getFileFilter().getDescription());
+					// 将路径赋予文本框
+					fileChooserControlExportPath.getEditor().setText(path);
+				}
+			} catch (Exception ex) {
+				Application.getActiveApplication().getOutput().output(ex);
+			} finally {
+				CursorUtilities.setDefaultCursor();
+			}
+		}
+	};
+
 
 	/**
 	 * 初始化分辨率
@@ -725,13 +781,24 @@ public class DiglogMapOutputPicture extends SmDialog {
 				// 设置是否在出图的时候关闭地图的动态效果
 				copyMap.setDisableDynamicEffect(true);
 
-
 				if (imageType.equals(imageType.GIF)) {
 					if (copyMap.outputMapToGIF(path, isBackTransparent)) {
 						isSuccess = true;
 					}
 				} else if (imageType.equals(imageType.EPS)) {
 					if (copyMap.outputMapToEPS(path)) {
+						isSuccess = true;
+					}
+				} else if (imageType.equals(imageType.PNG)) {
+					if (copyMap.outputMapToPNG(path, isBackTransparent)) {
+						isSuccess = true;
+					}
+				} else if (imageType.equals(imageType.EMF)) {
+					if (copyMap.outputMapToEMF(path)) {
+						isSuccess = true;
+					}
+				} else if (imageType.equals(imageType.BMP)) {
+					if (copyMap.outputMapToBMP(path)) {
 						isSuccess = true;
 					}
 				} else {
@@ -758,6 +825,21 @@ public class DiglogMapOutputPicture extends SmDialog {
 				//关闭窗口
 				DiglogMapOutputPicture.this.dispose();
 			}
+
+			// 进度条实现
+//			isBackTransparent = backTransparent.isSelected();
+//			try {
+//				FormProgress formProgress = new FormProgress();
+//				mapOutputPictureProgressCallable = new MapOutputPictureProgressCallable(map, path, imageType, dpi, outPutBounds, isBackTransparent);
+//				if (formProgress != null) {
+//					formProgress.doWork(mapOutputPictureProgressCallable);
+//				}
+//			} catch (Exception e1) {
+//				Application.getActiveApplication().getOutput().output(e1);
+//			} finally {
+//				removeEvents();
+//				DiglogMapOutputPicture.this.dispose();
+//			}
 		}
 	};
 }

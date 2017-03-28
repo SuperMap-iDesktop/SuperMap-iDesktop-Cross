@@ -30,68 +30,62 @@ public class FileChooserControl extends JComponent {
 
     private String result;
 
-	private JButton buttonDelete;
+    private JButton buttonDelete;
 
     private JButton button;
 
-	public FileChooserControl() {
-		this(null);
-	}
+    public FileChooserControl() {
+        this(null);
+    }
 
     // 初始化带有默认文件路径的文件选择控件
     public FileChooserControl(String filePath) {
         initCompanent();
-	    setComponentName();
-	    setText(filePath);
-	    textEditor.getDocument().addDocumentListener(new DocumentListener() {
-		    @Override
-		    public void insertUpdate(DocumentEvent e) {
-			    textEditorValueChanged();
-		    }
+        setComponentName();
+        setText(filePath);
+        textEditor.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                textEditorValueChanged();
+            }
 
-		    @Override
-		    public void removeUpdate(DocumentEvent e) {
-			    textEditorValueChanged();
-		    }
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                textEditorValueChanged();
+            }
 
-		    @Override
-		    public void changedUpdate(DocumentEvent e) {
-			    textEditorValueChanged();
-		    }
-	    });
-	    buttonDelete.addActionListener(new ActionListener() {
-		    @Override
-		    public void actionPerformed(ActionEvent e) {
-			    setText("");
-		    }
-	    });
-	    textEditorValueChanged();
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                textEditorValueChanged();
+            }
+        });
+        buttonDelete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setText("");
+            }
+        });
+        textEditorValueChanged();
     }
 
-	private void textEditorValueChanged() {
-		String text = textEditor.getText();
+    private void textEditorValueChanged() {
+        String text = textEditor.getText();
 //		if (buttonDelete.isVisible() != StringUtilities.isNullOrEmpty(text)) {
-		buttonDelete.setVisible(!StringUtilities.isNullOrEmpty(text));
+        this.buttonDelete.setEnabled(!StringUtilities.isNullOrEmpty(text));
 //		}
 
-	}
+    }
 
 
     public void setText(String filePath) {
         this.textEditor.setText(filePath);
     }
 
-    public void setButtonEnabled(boolean flag) {
-        this.button.setEnabled(flag);
-    }
-
-    public void setTextEnabled(boolean flag) {
-        this.textEditor.setEnabled(flag);
-    }
 
     @Override
     public void setEnabled(boolean flag) {
         this.textEditor.setEnabled(flag);
+        this.buttonDelete.setEnabled(flag);
         this.button.setEnabled(flag);
     }
 
@@ -102,45 +96,35 @@ public class FileChooserControl extends JComponent {
         this.textEditor.setAutoscrolls(true);
         this.textEditor.setHorizontalAlignment(JTextField.LEFT);
 
+        Dimension buttonDimension = new Dimension(23, 23);
         this.button = new JButton();
-        button.setIcon(ControlsResources.getIcon("/controlsresources/Image_DatasetGroup_Normal.png"));
-	    button.setToolTipText(ControlsProperties.getString("String_Select"));
-	    this.button.setBorder(BorderFactory.createEtchedBorder(1));
+        this.button.setPreferredSize(buttonDimension);
+        this.button.setIcon(ControlsResources.getIcon("/controlsresources/Image_DatasetGroup_Normal.png"));
+        this.button.setToolTipText(ControlsProperties.getString("String_Select"));
+        this.button.setBorder(BorderFactory.createEtchedBorder(1));
+        this.button.setContentAreaFilled(false);
+        this.button.setBorderPainted(false);
         this.button.setFocusPainted(false);
         this.button.setFocusable(false);
 
-	    buttonDelete = new JButton();
-	    buttonDelete.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
-	    buttonDelete.setToolTipText(CommonProperties.getString(CommonProperties.Delete));
-	    buttonDelete.setMaximumSize(new Dimension(24, 23));
-	    buttonDelete.setPreferredSize(new Dimension(24, 23));
-	    buttonDelete.setForeground(Color.red);
-	    buttonDelete.setBorderPainted(false);
-	    buttonDelete.setContentAreaFilled(false);
-
-	    GroupLayout groupLayout=new GroupLayout(this);
-	    groupLayout.setAutoCreateGaps(true);
-	    this.setLayout(groupLayout);
-
-	    // @formatter:off
-	    groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
-			    .addComponent(this.textEditor)
-			    .addComponent(this.buttonDelete,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
-			    .addComponent(this.button,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
-	    );
-	    groupLayout.setVerticalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-			    .addComponent(this.textEditor,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
-			    .addComponent(this.buttonDelete,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
-			    .addComponent(this.button,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE,GroupLayout.PREFERRED_SIZE)
-	    );
-	    // @formatter:on
+        this.buttonDelete = new JButton();
+        this.buttonDelete.setPreferredSize(buttonDimension);
+        this.buttonDelete.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete_16.png"));
+        this.buttonDelete.setToolTipText(CommonProperties.getString(CommonProperties.Delete));
+        this.buttonDelete.setBorder(BorderFactory.createEtchedBorder(1));
+        this.buttonDelete.setBorderPainted(false);
+        this.buttonDelete.setContentAreaFilled(false);
+        this.setLayout(new GridBagLayout());
+        this.add(this.textEditor, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(2, 0));
+        this.add(this.buttonDelete, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0).setInsets(0, 5, 0, 0));
+        this.add(this.button, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
     }
 
-	private void setComponentName() {
-		ComponentUIUtilities.setName(this.textEditor, "FileChooserControl_textEditor");
-		ComponentUIUtilities.setName(this.buttonDelete, "FileChooserControl_buttonDelete");
-		ComponentUIUtilities.setName(this.button, "FileChooserControl_button");
-	}
+    private void setComponentName() {
+        ComponentUIUtilities.setName(this.textEditor, "FileChooserControl_textEditor");
+        ComponentUIUtilities.setName(this.buttonDelete, "FileChooserControl_buttonDelete");
+        ComponentUIUtilities.setName(this.button, "FileChooserControl_button");
+    }
 
     public void setIcon(ImageIcon image) {
         this.button.setIcon(image);
