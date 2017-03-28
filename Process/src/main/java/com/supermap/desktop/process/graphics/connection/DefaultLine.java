@@ -59,14 +59,7 @@ public class DefaultLine extends AbstractLine {
 
 	@Override
 	public Stroke getStroke() {
-		switch (this.status) {
-			case INVALID:
-			case PREPARING:
-				return new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10, new float[]{16, 8}, 0);
-			case NORMAL:
-			default:
-				return super.getStroke();
-		}
+		return new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10, new float[]{16, 8}, 0);
 	}
 
 	@Override
