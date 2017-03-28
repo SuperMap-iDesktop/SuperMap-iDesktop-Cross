@@ -1,6 +1,9 @@
 package com.supermap.desktop.ui.controls;
 
 import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetType;
+import com.supermap.desktop.CommonToolkit;
+import com.supermap.desktop.controls.utilities.ControlsResources;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,7 +25,7 @@ class DatasetGridNodeDecorator implements TreeNodeDecorator {
 					IMAGEICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 			Graphics graphics = bufferedImage.getGraphics();
 			graphics.drawImage(
-					InternalImageIconFactory.DT_GRID.getImage(), 0, 0, label);
+					new ImageIcon(ControlsResources.getResourceURL(CommonToolkit.DatasetImageWrap.getImageIconPath(DatasetType.GRID))).getImage(), 0, 0, label);
 			icon.setImage(bufferedImage);
 		}
 	}

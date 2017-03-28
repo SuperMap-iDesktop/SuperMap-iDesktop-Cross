@@ -1,8 +1,16 @@
 package com.supermap.desktop.process;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.*;
+import com.supermap.desktop.event.FormActivatedListener;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosedListener;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormClosingListener;
+import com.supermap.desktop.event.FormDeactivatedListener;
+import com.supermap.desktop.event.FormShownEvent;
+import com.supermap.desktop.event.FormShownListener;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
@@ -15,7 +23,9 @@ import com.supermap.desktop.process.graphics.graphs.DataGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
+import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
 import com.supermap.desktop.ui.FormBaseChild;
+import com.supermap.desktop.ui.controls.Dockbar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,20 +41,21 @@ public class FormProcess extends FormBaseChild implements IForm {
 		super("", null, null);
 		setLayout(new BorderLayout());
 		add(graphCanvas, BorderLayout.CENTER);
-		graphCanvas.getCanvas().addGraphSelectChangedListener(new GraphSelectChangedListener() {
+		graphCanvas.getCanvas().getSelection().addGraphSelectChangedListener(new GraphSelectChangedListener() {
 
 			@Override
 			public void graphSelectChanged(GraphSelectedChangedEvent e) {
-//				try {
-//					ParameterManager component = (ParameterManager) ((Dockbar) Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName("com.supermap.desktop.process.ParameterManager"))).getInnerComponent();
-//					if (e.getSelected() instanceof ProcessGraph) {
-//						component.setProcess(((ProcessGraph) e.getSelected()).getProcess());
-//					} else {
-//						component.setProcess(null);
-//					}
-//				} catch (ClassNotFoundException e1) {
-//					e1.printStackTrace();
-//				}
+				try {
+					ParameterManager component = (ParameterManager) ((Dockbar) Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName("com.supermap.desktop.process.ParameterManager"))).getInnerComponent();
+					Selection selection = e.getSelection();
+					if (selection.getItem(0) instanceof ProcessGraph) {
+						component.setProcess(((ProcessGraph) selection.getItem(0)).getProcess());
+					} else {
+						component.setProcess(null);
+					}
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 
