@@ -1,5 +1,6 @@
 package com.supermap.desktop.dialog;
 
+import com.sun.java.swing.plaf.windows.WindowsFileChooserUI;
 import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
@@ -26,6 +27,8 @@ import javax.swing.event.CaretListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -69,6 +72,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private WaringTextField waringTextFieldRight;
 	private WaringTextField waringTextFieldBottom;
 	private MapOutputPictureProgressCallable mapOutputPictureProgressCallable;
+	private WindowsFileChooserUI windowsFileChooserUI;
 
 	private static final int DEFAULT_LABELSIZE = 80;
 	private static final int DEFAULT_GAP = 16;
@@ -540,35 +544,41 @@ public class DiglogMapOutputPicture extends SmDialog {
 					ControlsProperties.getString("String_Save"), moduleName, "SaveOne");
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
-		String uiID = this.exportPathFileChoose.getUIClassID();
-//		this.exportPathFileChoose.addPropertyChangeListener(new PropertyChangeListener() {
-//			@Override
-//			public void propertyChange(PropertyChangeEvent evt) {
-//
-//				// 获得文件类型的描述
-//				fileName = fileName.substring(0, fileName.indexOf("."));
-//				String tempFileType = exportPathFileChoose.getFileFilter().getDescription();
-//				if (tempFileType.indexOf(".png") > 0) {
-//					fileName = fileName + ".png";
-//					exportPathFileChoose.setSelectedFile(new File(fileName));
-//				} else if (tempFileType.indexOf(".jpg") > 0) {
-//					fileName = fileName + ".jpg";
-//					exportPathFileChoose.setSelectedFile(new File(fileName));
-//				} else if (tempFileType.indexOf(".bmp") > 0) {
-//					fileName = fileName + ".bmp";
-//					exportPathFileChoose.setSelectedFile(new File(fileName));
-//				} else if (tempFileType.indexOf(".gif") > 0) {
-//					fileName = fileName + ".gif";
-//					exportPathFileChoose.setSelectedFile(new File(fileName));
-//				} else if (tempFileType.indexOf(".eps") > 0) {
-//					fileName = fileName + ".eps";
-//					exportPathFileChoose.setSelectedFile(new File(fileName));
-//				} else if (tempFileType.indexOf(".tif") > 0) {
-//					fileName = fileName + ".tif";
-//					exportPathFileChoose.setSelectedFile(new File(fileName));
-//				}
-//			}
-//		});
+
+		// 当在Windows系统下，使文件选择器更为智能的实现
+		if (SystemPropertyUtilities.isWindows()) {
+			this.windowsFileChooserUI = (WindowsFileChooserUI) this.exportPathFileChoose.getUI();
+			this.exportPathFileChoose.addPropertyChangeListener(new PropertyChangeListener() {
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					//当值改变时，获得文件名
+					String tempFileName = windowsFileChooserUI.getFileName();
+					// 当文件选择器对话框文件名称不为空时，当改变数据类型时，不断获得最新的名称，并给其后追加数据类型
+					if (!StringUtilities.isNullOrEmpty(tempFileName)) {
+						// 获得文件类型的描述
+						if (tempFileName.indexOf(".") > 0) {
+							tempFileName = tempFileName.substring(0, tempFileName.indexOf("."));
+						}
+						String tempFileType = exportPathFileChoose.getFileFilter().getDescription();
+						if (tempFileType.indexOf(".png") > 0) {
+							tempFileName = tempFileName + ".png";
+						} else if (tempFileType.indexOf(".jpg") > 0) {
+							tempFileName = tempFileName + ".jpg";
+						} else if (tempFileType.indexOf(".bmp") > 0) {
+							tempFileName = tempFileName + ".bmp";
+						} else if (tempFileType.indexOf(".gif") > 0) {
+							tempFileName = tempFileName + ".gif";
+						} else if (tempFileType.indexOf(".eps") > 0) {
+							tempFileName = tempFileName + ".eps";
+						} else if (tempFileType.indexOf(".tif") > 0) {
+							tempFileName = tempFileName + ".tif";
+						}
+						windowsFileChooserUI.setFileName(tempFileName);
+						fileName = tempFileName;
+					}
+				}
+			});
+		}
 
 
 		// 两个系统下的获得最近路径得到的结果不同，windows得到的是路径，而linux得到的是完整的文件路径
@@ -615,7 +625,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 			try {
 				//设置文件选择器默认文件名为filed中的内容
 
-				exportPathFileChoose.setSelectedFile(new File(fileName.substring(0, fileName.indexOf("."))));
+				exportPathFileChoose.setSelectedFile(new File(fileName));
 				int state = exportPathFileChoose.showSaveDialog(null);
 
 				if (state == JFileChooser.APPROVE_OPTION) {
@@ -677,7 +687,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 				this.remainingMemory = 0.0;
 			}
 		} else {
-			if (!StringUtilities.isNullOrEmpty(filePath)) {
+			if (!StringUtilities.isNullOrEmpty(filePath) && filePath.indexOf("/") > 0) {
 				//获得文件所在的文件夹目录
 				filePath = filePath.substring(0, filePath.lastIndexOf("/"));
 				File file = new File(filePath);
