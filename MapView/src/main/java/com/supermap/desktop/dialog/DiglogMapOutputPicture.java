@@ -624,8 +624,12 @@ public class DiglogMapOutputPicture extends SmDialog {
 		public void actionPerformed(ActionEvent e) {
 			try {
 				//设置文件选择器默认文件名为filed中的内容
+				if (SystemPropertyUtilities.isWindows()) {
+					exportPathFileChoose.setSelectedFile(new File(fileName));
+				} else {
+					exportPathFileChoose.setSelectedFile(new File(fileName.substring(0, fileName.indexOf("."))));
+				}
 
-				exportPathFileChoose.setSelectedFile(new File(fileName));
 				int state = exportPathFileChoose.showSaveDialog(null);
 
 				if (state == JFileChooser.APPROVE_OPTION) {
@@ -687,7 +691,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 				this.remainingMemory = 0.0;
 			}
 		} else {
-			if (!StringUtilities.isNullOrEmpty(filePath) && filePath.indexOf("/") > 0) {
+			if (!StringUtilities.isNullOrEmpty(filePath)) {
 				//获得文件所在的文件夹目录
 				filePath = filePath.substring(0, filePath.lastIndexOf("/"));
 				File file = new File(filePath);
