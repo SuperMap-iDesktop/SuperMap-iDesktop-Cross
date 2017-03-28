@@ -279,13 +279,14 @@ public class WaringTextField extends JPanel {
 		this.textField.setEnabled(enable);
 	}
 
-	public boolean isError() {
-		if (this.labelWarning.getIcon() != null) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+    //    供外部调用判断当前的textfield输入内容是否合法
+    public boolean isError() {
+        if (this.labelWarning.getIcon() != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
 	public JLabel getLabelWarning() {
 		return labelWarning;
