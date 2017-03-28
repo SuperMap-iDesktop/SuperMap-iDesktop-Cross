@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 /**
  * @author YuanR
@@ -43,14 +44,33 @@ public class DialogMapClip extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(buttonSelectAll)) {
-				// todo
+				// 全选
+				if (mapClipJTable.getRowCount() - 1 < 0) {
+					mapClipJTable.setRowSelectionAllowed(true);
+				} else {
+					mapClipJTable.setRowSelectionAllowed(true);
+					// 设置所有项全部选中
+					mapClipJTable.setRowSelectionInterval(0, mapClipJTable.getRowCount() - 1);
+				}
+
 			} else if (e.getSource().equals(buttonInvertSelect)) {
-				// todo
+				//反选
+				int[] temp = mapClipJTable.getSelectedRows();
+				ArrayList<Integer> selectedRows = new ArrayList<Integer>();
+				for (int index = 0; index < temp.length; index++) {
+					selectedRows.add(temp[index]);
+				}
+				ListSelectionModel selectionModel = mapClipJTable.getSelectionModel();
+				selectionModel.clearSelection();
+				for (int index = 0; index < mapClipJTable.getRowCount(); index++) {
+					if (!selectedRows.contains(index)) {
+						selectionModel.addSelectionInterval(index, index);
+					}
+				}
 			} else if (e.getSource().equals(buttonSet)) {
 				// 弹出统一设置面板
-				mapClipSetDialog = new MapClipSetDialog();
+				mapClipSetDialog = new MapClipSetDialog(mapClipJTable);
 				mapClipSetDialog.showDialog();
-				// todo
 			}
 		}
 	};
@@ -91,6 +111,7 @@ public class DialogMapClip extends SmDialog {
 		this.toolBar.setFloatable(false);
 		this.toolBar.add(this.buttonSelectAll);
 		this.toolBar.add(this.buttonInvertSelect);
+		this.toolBar.addSeparator();
 		this.toolBar.add(this.buttonSet);
 	}
 
