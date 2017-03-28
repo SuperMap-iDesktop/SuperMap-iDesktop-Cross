@@ -2,7 +2,6 @@ package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
-import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import javax.swing.*;
@@ -14,9 +13,9 @@ import java.awt.event.MouseEvent;
  */
 public class DraggedHandler extends CanvasEventAdapter {
 	private GraphCanvas canvas;
-	private IGraph dragged = null;
+	private IGraph[] draggedGraphs = null;
 	private Point dragStart = null;
-	private Rectangle dirty = null;
+	private Rectangle[] dirtys = null;
 
 	public DraggedHandler(GraphCanvas canvas) {
 		this.canvas = canvas;
@@ -24,9 +23,9 @@ public class DraggedHandler extends CanvasEventAdapter {
 
 	@Override
 	public void clean() {
-		this.dragged = null;
+		this.draggedGraphs = null;
 		this.dragStart = null;
-		this.dirty = null;
+		this.dirtys = null;
 		this.canvas.setEventHandlerEnabled(Selection.class, true);
 	}
 
@@ -36,13 +35,21 @@ public class DraggedHandler extends CanvasEventAdapter {
 
 			// 鼠标位置根据 bounds 查询到的 graph
 			IGraph hitGraph = canvas.findGraph(e.getPoint());
-			Point canvasP = canvas.getCoordinateTransform().inverse(e.getPoint());
 
-			boolean isDragged = hitGraph instanceof AbstractGraph ? ((AbstractGraph) hitGraph).getShape().contains(canvasP) : hitGraph != null;
-			if (isDragged) {
-				this.dragged = hitGraph;
-				this.dragStart = canvasP;
-				this.dirty = new Rectangle(this.dragged.getBounds());
+			if (hitGraph != null) {
+				this.dragStart = canvas.getCoordinateTransform().inverse(e.getPoint());
+
+				if (this.canvas.getSelection().isSelected(hitGraph)) {
+					this.draggedGraphs = this.canvas.getSelection().getSelectedItems();
+				} else {
+					this.draggedGraphs = new IGraph[]{hitGraph};
+				}
+
+				this.dirtys = new Rectangle[this.draggedGraphs.length];
+				for (int i = 0, size = this.draggedGraphs.length; i < size; i++) {
+					IGraph dragged = this.draggedGraphs[i];
+					this.dirtys[i] = new Rectangle(dragged.getBounds());
+				}
 				this.canvas.setEventHandlerEnabled(Selection.class, false);
 			}
 		}
@@ -55,25 +62,31 @@ public class DraggedHandler extends CanvasEventAdapter {
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		if (SwingUtilities.isLeftMouseButton(e) && this.dragged != null) {
+		if (SwingUtilities.isLeftMouseButton(e) && this.draggedGraphs != null && this.draggedGraphs.length > 0) {
 			Point dragEnd = canvas.getCoordinateTransform().inverse(e.getPoint());
-			int desX = this.dragged.getLocation().x + dragEnd.x - this.dragStart.x;
-			int desY = this.dragged.getLocation().y + dragEnd.y - this.dragStart.y;
-			Rectangle desRect = new Rectangle(desX, desY, this.dragged.getWidth(), this.dragged.getHeight());
-			if (this.canvas.getCanvasRect().contains(desRect)) {
-				this.canvas.modifyGraphBounds(this.dragged, desX, desY, this.dragged.getWidth(), this.dragged.getHeight());
+			int offsetX = dragEnd.x - this.dragStart.x;
+			int offsetY = dragEnd.y - this.dragStart.y;
 
-				Rectangle refreshRect;
-				if (GraphicsUtil.isRegionValid(this.dirty)) {
-					refreshRect = this.dirty.union(desRect);
-				} else {
-					refreshRect = desRect;
+			for (int i = 0, size = this.draggedGraphs.length; i < size; i++) {
+				IGraph dragged = this.draggedGraphs[i];
+				int desX = dragged.getLocation().x + offsetX;
+				int desY = dragged.getLocation().y + offsetY;
+				Rectangle desRect = new Rectangle(desX, desY, dragged.getWidth(), dragged.getHeight());
+				if (this.canvas.getCanvasRect().contains(desRect)) {
+					this.canvas.modifyGraphBounds(dragged, desX, desY, dragged.getWidth(), dragged.getHeight());
+
+					Rectangle refreshRect;
+					if (GraphicsUtil.isRegionValid(this.dirtys[i])) {
+						refreshRect = this.dirtys[i].union(desRect);
+					} else {
+						refreshRect = desRect;
+					}
+					this.dirtys[i] = desRect;
+					this.dragStart = dragEnd;
+					refreshRect.grow(3, 3);
+					refreshRect = this.canvas.getCoordinateTransform().transform(refreshRect);
+					this.canvas.repaint(refreshRect);
 				}
-				this.dirty = desRect;
-				this.dragStart = dragEnd;
-				refreshRect.grow(3, 3);
-				refreshRect = this.canvas.getCoordinateTransform().transform(refreshRect);
-				this.canvas.repaint(refreshRect);
 			}
 		}
 	}

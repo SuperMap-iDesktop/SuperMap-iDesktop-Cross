@@ -1,5 +1,8 @@
 package com.supermap.desktop.ui.controls;
 
+import com.supermap.desktop.controls.utilities.ControlsResources;
+import com.supermap.desktop.controls.utilities.WorkspaceTreeManagerUIUtilities;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -20,7 +23,7 @@ class MapNameNodeDecorator implements TreeNodeDecorator {
 					IMAGEICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 			Graphics graphics = bufferedImage.getGraphics();
 			graphics.drawImage(
-					InternalImageIconFactory.MAP.getImage(), 0, 0, label);
+					new ImageIcon(ControlsResources.getResourceURL(WorkspaceTreeManagerUIUtilities.MapIconPath)).getImage(), 0, 0, label);
 			icon.setImage(bufferedImage);
 		}
 	}

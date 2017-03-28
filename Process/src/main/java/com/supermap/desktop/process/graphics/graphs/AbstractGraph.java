@@ -11,7 +11,6 @@ import java.awt.*;
  * Created by highsad on 2017/1/20.
  */
 public abstract class AbstractGraph implements IGraph {
-
 	private GraphCanvas canvas;
 	protected Shape shape;
 	private EventListenerList listenerList = new EventListenerList();
@@ -93,7 +92,7 @@ public abstract class AbstractGraph implements IGraph {
 		int oldWidth = getShape().getBounds().width;
 		int oldHeight = getShape().getBounds().height;
 
-		if (oldWidth != width && oldHeight != height) {
+		if (oldWidth != width || oldHeight != height) {
 			applySize(width, height);
 			fireGraphBoundsChanged(new GraphBoundsChangedEvent(this, oldWidth, width, oldHeight, height));
 		}
