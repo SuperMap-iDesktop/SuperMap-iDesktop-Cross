@@ -16,9 +16,9 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.LogUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -30,6 +30,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
 import java.text.MessageFormat;
 
 /**
@@ -429,22 +431,24 @@ public abstract class SymbolDialog extends SmDialog {
         }
 
         int state = fileChooser.showDefaultDialog();
-        if (state == JFileChooser.APPROVE_OPTION && !StringUtilities.isNullOrEmpty(fileChooser.getFilePath())) {
+        if (state == JFileChooser.APPROVE_OPTION && null != fileChooser.getSelectedFile() && fileChooser.getSelectedFile().exists()) {
             try {
-                String filePath = fileChooser.getFilePath();
-                ImageIcon fileIcon = new ImageIcon(fileChooser.getFilePath());
-                int height = fileIcon.getIconHeight();
-                int width = fileIcon.getIconWidth();
-                if (height > 512 || width > 512 || height < 0 || width < 0) {
+                String filePath = fileChooser.getSelectedFile().getPath();
+                FileInputStream stream = new FileInputStream(fileChooser.getSelectedFile());
+                BufferedImage image = ImageIO.read(stream);
+                int height = image.getHeight();
+                int width = image.getWidth();
+                if (height > 512 || width > 512) {
                     SmOptionPane optionPane = new SmOptionPane();
                     optionPane.showConfirmDialog(MessageFormat.format(CommonProperties.getString("String_IconWrongInfo"), filePath));
                     return;
                 } else if (height != width) {
                     SmOptionPane optionPane = new SmOptionPane();
-                    if (optionPane.showConfirmDialog(MessageFormat.format(CommonProperties.getString("String_SaveHandWScal"), filePath)) == JOptionPane.OK_OPTION) {
+                    if (optionPane.showConfirmDialogYesNo(MessageFormat.format(CommonProperties.getString("String_SaveHandWScal"), filePath)) == JOptionPane.OK_OPTION) {
                         saveIcon(fileChooser, height, width);
                     } else {
-                        return;
+                        int newWidth = height > width ? width : height;
+                        saveIcon(fileChooser, newWidth, newWidth);
                     }
                 } else {
                     saveIcon(fileChooser, height, width);
@@ -457,6 +461,7 @@ public abstract class SymbolDialog extends SmDialog {
 
     private void saveIcon(SmFileChoose fileChooser, int height, int width) {
         String fileName = fileChooser.getFileName();
+        fileName = fileName.substring(0, fileName.indexOf("."));
         Rectangle2D bounds = new Rectangle2D(new Point2D(height / 2, width / 2), height, width);
         GeoPicture geoPicture = new GeoPicture(fileChooser.getFilePath(), bounds, 0);
         SymbolMarker marker = new SymbolMarker();

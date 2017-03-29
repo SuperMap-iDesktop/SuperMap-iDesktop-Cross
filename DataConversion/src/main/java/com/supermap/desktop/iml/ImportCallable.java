@@ -3,6 +3,8 @@ package com.supermap.desktop.iml;
 import com.supermap.data.*;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.UserDefineType.ImportSettingGPX;
+import com.supermap.desktop.UserDefineType.UserDefineImportResult;
 import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.importUI.DataImportDialog;
@@ -50,7 +52,6 @@ public class ImportCallable extends UpdateProgressCallable {
         try {
             for (int i = 0; i < fileInfos.size(); i++) {
                 DataImport dataImport = new DataImport();
-                ImportSettings importSettings = dataImport.getImportSettings();
                 importSetting = fileInfos.get(i).getImportSetting();
                 String datasetName = importSetting.getTargetDatasetName();
                 Dataset dataset = DatasourceUtilities.getDataset(datasetName, importSetting.getTargetDatasource());
@@ -59,10 +60,10 @@ public class ImportCallable extends UpdateProgressCallable {
                     datasets.add(dataset);
                     java.util.List<Dataset> closedDatasets = DatasetUIUtilities.sureDatasetClosed(datasets);
                     if (closedDatasets.size() > 0) {
-                        doImport(importSettings, i, dataImport, map);
+                        doImport(i, dataImport, map);
                     }
                 } else {
-                    doImport(importSettings, i, dataImport, map);
+                    doImport(i, dataImport, map);
                 }
             }
         } catch (Exception e2) {
@@ -95,25 +96,42 @@ public class ImportCallable extends UpdateProgressCallable {
         return true;
     }
 
-    private void doImport(ImportSettings importSettings, int i, DataImport dataImport, HashMap<String, Integer> map) {
-        importSettings.add(importSetting);
+    private void doImport(int i, DataImport dataImport, HashMap<String, Integer> map) {
         PercentProgress percentProgress = new PercentProgress(i);
-        dataImport.addImportSteppedListener(percentProgress);
-        long startTime = System.currentTimeMillis(); // 获取开始时间
-        ImportResult result = dataImport.run();
-        if (null != result.getSucceedSettings() && result.getSucceedSettings().length > 0) {
-            map.put(result.getSucceedSettings()[0].getTargetDatasource().getAlias(),
-                    map.get(result.getSucceedSettings()[0].getTargetDatasource().getAlias()) + 1);
+        long startTime;
+        long endTime;
+        long time;
+        if (importSetting instanceof ImportSettingGPX) {
+            ((ImportSettingGPX) importSetting).addImportSteppedListener(percentProgress);
+            startTime = System.currentTimeMillis(); // 获取开始时间
+            UserDefineImportResult result = ((ImportSettingGPX) importSetting).run();
+            if (null != result.getSuccess()) {
+                map.put(result.getSuccess().getTargetDatasource().getAlias(),
+                        map.get(result.getSuccess().getTargetDatasource().getAlias()) + 1);
+            }
+            endTime = System.currentTimeMillis(); // 获取结束时间
+            time = endTime - startTime;
+            printMessage(result, i, time);
+            ((ImportSettingGPX) importSetting).removeImportSteppedListener(percentProgress);
+        } else {
+            dataImport.getImportSettings().add(importSetting);
+            dataImport.addImportSteppedListener(percentProgress);
+            startTime = System.currentTimeMillis(); // 获取开始时间
+            ImportResult result = dataImport.run();
+            if (null != result.getSucceedSettings() && result.getSucceedSettings().length > 0) {
+                map.put(result.getSucceedSettings()[0].getTargetDatasource().getAlias(),
+                        map.get(result.getSucceedSettings()[0].getTargetDatasource().getAlias()) + 1);
+            }
+            endTime = System.currentTimeMillis(); // 获取结束时间
+            time = endTime - startTime;
+            printMessage(result, i, time);
+            dataImport.removeImportSteppedListener(percentProgress);
         }
-        long endTime = System.currentTimeMillis(); // 获取结束时间
-        long time = endTime - startTime;
-        printMessage(result, i, time);
         // 更新行
         ((ImportTableModel) table.getModel()).updateRows(fileInfos);
         if (null != percentProgress && percentProgress.isCancel()) {
             return;
         }
-        dataImport.removeImportSteppedListener(percentProgress);
         if (!dataImportDialog.isVisible()) {
             importSetting.dispose();
         }
@@ -123,7 +141,7 @@ public class ImportCallable extends UpdateProgressCallable {
     /**
      * 进度事件得到运行时间
      *
-     * @author Administrator
+     * @author xie
      */
     class PercentProgress implements ImportSteppedListener {
         private int i;
@@ -149,6 +167,14 @@ public class ImportCallable extends UpdateProgressCallable {
                 arg0.setCancel(true);
                 this.isCancel = true;
             }
+        }
+    }
+
+    private void printMessage(UserDefineImportResult result, int i, long time) {
+        if (null != result.getSuccess()) {
+            String successImportInfo = DataConversionProperties.getString("String_FormImport_OutPutInfoOne");
+            Application.getActiveApplication().getOutput().output(MessageFormat.format(successImportInfo, result.getSuccess().getSourceFilePath(), "->", result.getSuccess().getTargetDatasetName(), result.getSuccess()
+                    .getTargetDatasource().getAlias(), String.valueOf(time / 1000.0)));
         }
     }
 

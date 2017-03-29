@@ -9,22 +9,16 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
+import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.swing.*;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.text.MessageFormat;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -32,18 +26,18 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * WorkFLow应该只存描述字符串，而不是具体的对象。不然打开多个会导致多个窗体指向同一个对象。
  */
 public class Workflow implements IWorkFlow {
-	private String name = "workFLow";
-	private NodeMatrix matrix;
-	private Document document;
+    private String name = "workFLow";
+    private NodeMatrix matrix;
+    private Document document;
 
     public Workflow(NodeMatrix matrix) {
         this.matrix = matrix;
-        createDocument();
+        this.document = XmlUtilities.getEmptyDocument();
     }
 
 
     public void parseToXmlFile(String fileName) {
-        Element nodeMatrix = createWorkflow();
+        Element nodeMatrix = XmlUtilities.createRoot(this.document, "Workflow");
         nodeMatrix.appendChild(createNodeElements());
         nodeMatrix.appendChild(createProcessesElemet());
         DOMSource source = new DOMSource(this.document);
@@ -53,9 +47,9 @@ public class Workflow implements IWorkFlow {
             File file = new File(fileName);
             if (!file.exists()) {
                 file.createNewFile();
-                parseFileToXML(transformer, source, file);
-            } else if (JOptionPane.OK_OPTION == new SmOptionPane().showConfirmDialog(ControlsProperties.getString("String_RenameFile_Message"))) {
-                parseFileToXML(transformer, source, file);
+                XmlUtilities.parseFileToXML(transformer, source, file);
+            } else if (JOptionPane.OK_OPTION == new SmOptionPane().showConfirmDialogYesNo(MessageFormat.format(ControlsProperties.getString("String_RenameFile_Message"), file.getName()))) {
+                XmlUtilities.parseFileToXML(transformer, source, file);
             }
 
         } catch (Exception e) {
@@ -64,13 +58,6 @@ public class Workflow implements IWorkFlow {
 
     }
 
-    private void parseFileToXML(Transformer transformer, DOMSource source, File file) throws FileNotFoundException, TransformerException {
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        PrintWriter pw = new PrintWriter(file);
-        StreamResult streamResult = new StreamResult(pw);
-        transformer.transform(source, streamResult);
-    }
 
     private Element createProcessesElemet() {
         Element processes = createProcesses();
@@ -88,15 +75,15 @@ public class Workflow implements IWorkFlow {
                 for (int j = 0; j < length; j++) {
                     Element parameter = createParameter();
                     parameter.setAttribute("type", parameterArray[j].getType());
-                    parameter.setAttribute("describe",parameterArray[j].getDescribe());
+                    parameter.setAttribute("describe", parameterArray[j].getDescribe());
                     if (parameterArray[j] instanceof ISelectionParameter && null != ((ISelectionParameter) parameterArray[j]).getSelectedItem()) {
-                        if (parameterArray[j].getType().equals(ParameterType.COMBO_BOX)){
-                            parameter.setAttribute("value", ((ParameterDataNode)((ISelectionParameter) parameterArray[j]).getSelectedItem()).getData().toString());
-                        }else {
+                        if (parameterArray[j].getType().equals(ParameterType.COMBO_BOX)) {
+                            parameter.setAttribute("value", ((ParameterDataNode) ((ISelectionParameter) parameterArray[j]).getSelectedItem()).getData().toString());
+                        } else {
                             parameter.setAttribute("value", ((ISelectionParameter) parameterArray[j]).getSelectedItem().toString());
                         }
-                    }else{
-                        parameter.setAttribute("value","");
+                    } else {
+                        parameter.setAttribute("value", "");
                     }
                     parametersElement.appendChild(parameter);
                 }
@@ -155,25 +142,6 @@ public class Workflow implements IWorkFlow {
         return nodes;
     }
 
-    private void createDocument() {
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder documentBuilder = null;
-        try {
-            documentBuilder = documentBuilderFactory.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        }
-        document = documentBuilder.newDocument();
-    }
-
-    private Element createWorkflow() {
-        Element nodeMatrix = document.createElement("Workflow");
-        nodeMatrix.setAttribute("xmlns", "http://www.supermap.com.cn/desktop");
-        nodeMatrix.setAttribute("version", "9.0.x");
-        document.appendChild(nodeMatrix);
-        return nodeMatrix;
-    }
-
     private Element createNodes() {
         return document.createElement("Nodes");
     }
@@ -216,12 +184,12 @@ public class Workflow implements IWorkFlow {
         return document.createElement("Constraint");
     }
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 }

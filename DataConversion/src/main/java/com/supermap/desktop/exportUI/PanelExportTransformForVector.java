@@ -5,6 +5,7 @@ import com.supermap.data.conversion.CADVersion;
 import com.supermap.data.conversion.ExportSetting;
 import com.supermap.data.conversion.ExportSettingDWG;
 import com.supermap.data.conversion.ExportSettingDXF;
+import com.supermap.desktop.UserDefineType.ExportSettingGPX;
 import com.supermap.desktop.baseUI.PanelExportTransform;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
@@ -221,20 +222,21 @@ public class PanelExportTransformForVector extends PanelExportTransform {
             initComponentsState(panels);
         }
     }
+
     @Override
     public void setComponentName() {
-        super.setComponentName();
-        ComponentUIUtilities.setName(this.checkBoxExportExternalData,"checkBoxExportExternalData");
-        ComponentUIUtilities.setName(this.checkBoxExportExternalRecord,"checkBoxExportExternalRecord");
-        ComponentUIUtilities.setName(this.labelDatasets,"labelDatasets");
-        ComponentUIUtilities.setName(this.charsetComboBox,"charsetComboBox");
-        ComponentUIUtilities.setName(this.labelCADVersion,"labelCADVersion");
-        ComponentUIUtilities.setName(this.comboBoxCADVersion,"comboBoxCADVersion");
-        ComponentUIUtilities.setName(this.labelExpression,"labelExpression");
-        ComponentUIUtilities.setName(this.scrollPaneExpression,"scrollPaneExpression");
-        ComponentUIUtilities.setName(this.textAreaExpression,"textAreaExpression");
-        ComponentUIUtilities.setName(this.buttonExpression,"buttonExpression");
+        ComponentUIUtilities.setName(this.checkBoxExportExternalData, "checkBoxExportExternalData");
+        ComponentUIUtilities.setName(this.checkBoxExportExternalRecord, "checkBoxExportExternalRecord");
+        ComponentUIUtilities.setName(this.labelDatasets, "labelDatasets");
+        ComponentUIUtilities.setName(this.charsetComboBox, "charsetComboBox");
+        ComponentUIUtilities.setName(this.labelCADVersion, "labelCADVersion");
+        ComponentUIUtilities.setName(this.comboBoxCADVersion, "comboBoxCADVersion");
+        ComponentUIUtilities.setName(this.labelExpression, "labelExpression");
+        ComponentUIUtilities.setName(this.scrollPaneExpression, "scrollPaneExpression");
+        ComponentUIUtilities.setName(this.textAreaExpression, "textAreaExpression");
+        ComponentUIUtilities.setName(this.buttonExpression, "buttonExpression");
     }
+
     private void initComponentsState(ArrayList<PanelExportTransform> panels) {
         this.charsetComboBox.setEnabled(true);
         this.charsetComboBox.setSelectedItem(selectSameCharsetItem(panels));
@@ -357,10 +359,16 @@ public class PanelExportTransformForVector extends PanelExportTransform {
             }
             this.comboBoxCADVersion.setSelectedItem(selectItem(tempExportSetting));
         }
-        this.charsetComboBox.setEnabled(true);
-        this.textAreaExpression.setEnabled(true);
-        this.buttonExpression.setEnabled(true);
-        this.textAreaExpression.setText(tempExportSetting.getFilter());
+        if (tempExportSetting instanceof ExportSettingGPX) {
+            this.charsetComboBox.setEnabled(false);
+            this.textAreaExpression.setEnabled(false);
+            this.buttonExpression.setEnabled(false);
+        } else {
+            this.charsetComboBox.setEnabled(true);
+            this.textAreaExpression.setEnabled(true);
+            this.buttonExpression.setEnabled(true);
+            this.textAreaExpression.setText(tempExportSetting.getFilter());
+        }
     }
 
     private String selectItem(ExportSetting tempExportSetting) {

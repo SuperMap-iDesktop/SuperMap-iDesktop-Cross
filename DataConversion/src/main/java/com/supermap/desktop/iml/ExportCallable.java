@@ -1,14 +1,10 @@
 package com.supermap.desktop.iml;
 
 import com.supermap.data.Dataset;
-import com.supermap.data.conversion.DataExport;
-import com.supermap.data.conversion.ExportResult;
-import com.supermap.data.conversion.ExportSetting;
-import com.supermap.data.conversion.ExportSettings;
-import com.supermap.data.conversion.ExportSteppedEvent;
-import com.supermap.data.conversion.ExportSteppedListener;
-import com.supermap.data.conversion.FileType;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.UserDefineType.ExportSettingGPX;
+import com.supermap.desktop.UserDefineType.UserDefineExportResult;
 import com.supermap.desktop.baseUI.PanelExportTransform;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.exportUI.DataExportDialog;
@@ -57,24 +53,40 @@ public class ExportCallable extends UpdateProgressCallable {
                         || fileInfo.getFileType().equals(FileType.MIF) || fileInfo.getFileType().equals(FileType.TAB)
                         || fileInfo.getFileType().equals(FileType.IMG) || fileInfo.getFileType().equals(FileType.GRD)
                         || fileInfo.getFileType().equals(FileType.DBF) || fileInfo.getFileType().equals(FileType.TEMSClutter)) {
-                    tempExportSetting.setTargetFileType(fileInfo.getFileType());
+                    tempExportSetting.setTargetFileType((FileType) fileInfo.getFileType());
                 }
                 if (new File(filePath).exists() && !tempExportSetting.isOverwrite()) {
                     Application.getActiveApplication().getOutput().output(MessageFormat.format(DataConversionProperties.getString("String_DuplicateFileError"), filePath));
                 } else {
                     tempExportSetting.setTargetFilePath(filePath);
-                    exportSettings.add(tempExportSetting);
                     PercentProgress progress = new PercentProgress(i);
-                    dataExport.addExportSteppedListener(progress);
-                    long startTime = System.currentTimeMillis();
-                    ExportResult result = dataExport.run();
-                    long endTime = System.currentTimeMillis();
-                    String time = String.valueOf((endTime - startTime) / 1000.0);
-                    printExportInfo(result, i, time);
-                    if (null != progress && progress.isCancel()) {
-                        break;
+                    long startTime;
+                    long endTime;
+                    String time;
+                    if (filePath.endsWith(".gpx")) {
+                        ((ExportSettingGPX) tempExportSetting).addExportSteppedListener(progress);
+                        startTime = System.currentTimeMillis();
+                        UserDefineExportResult result = ((ExportSettingGPX) tempExportSetting).run();
+                        endTime = System.currentTimeMillis();
+                        time = String.valueOf((endTime - startTime) / 1000.0);
+                        printExportInfo(result, i, time);
+                        if (null != progress && progress.isCancel()) {
+                            break;
+                        }
+                        dataExport.removeExportSteppedListener(progress);
+                    } else {
+                        exportSettings.add(tempExportSetting);
+                        dataExport.addExportSteppedListener(progress);
+                        startTime = System.currentTimeMillis();
+                        ExportResult result = dataExport.run();
+                        endTime = System.currentTimeMillis();
+                        time = String.valueOf((endTime - startTime) / 1000.0);
+                        printExportInfo(result, i, time);
+                        if (null != progress && progress.isCancel()) {
+                            break;
+                        }
+                        dataExport.removeExportSteppedListener(progress);
                     }
-                    dataExport.removeExportSteppedListener(progress);
                 }
             }
 
@@ -137,6 +149,36 @@ public class ExportCallable extends UpdateProgressCallable {
             }
         }
 
+    }
+
+    /**
+     * 打印导出gps信息
+     *
+     * @param result
+     */
+    private void printExportInfo(UserDefineExportResult result, int i, String time) {
+        try {
+            if (null != result) {
+                String successExportInfo = DataConversionProperties.getString("String_FormExport_OutPutInfoTwo");
+                String failExportInfo = DataConversionProperties.getString("String_FormExport_OutPutInfoOne");
+                if (null != result.getSuccess()) {
+                    exportTable.setValueAt(DataConversionProperties.getString("String_FormImport_Succeed"), i, DataExportDialog.COLUMN_STATE);
+                    String successDatasetAlis = getDatasetAlis(result.getSuccess());
+                    Application.getActiveApplication().getOutput()
+                            .output(MessageFormat.format(successExportInfo, successDatasetAlis, result.getSuccess().getTargetFilePath(), time));
+                } else if (null != result.getFail()) {
+                    exportTable.setValueAt(DataConversionProperties.getString("String_FormImport_NotSucceed"), i, DataExportDialog.COLUMN_STATE);
+                    String failDatasetAlis = getDatasetAlis(result.getFail());
+                    Application.getActiveApplication().getOutput()
+                            .output(MessageFormat.format(failExportInfo, failDatasetAlis));
+                }
+
+            } else {
+                Application.getActiveApplication().getOutput().output(DataConversionProperties.getString("string_exporterror"));
+            }
+        } catch (Exception e) {
+            Application.getActiveApplication().getOutput().output(e);
+        }
     }
 
     /**

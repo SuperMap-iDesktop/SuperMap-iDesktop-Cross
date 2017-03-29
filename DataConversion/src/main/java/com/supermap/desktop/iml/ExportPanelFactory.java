@@ -22,7 +22,7 @@ public class ExportPanelFactory implements IExportPanelFactory {
     @Override
     public PanelExportTransform createExportPanel(DataExportDialog owner, ExportFileInfo exportsFileInfo) {
         PanelExportTransform result = new PanelExportTransform(exportsFileInfo);
-        FileType fileType = exportsFileInfo.getFileType();
+        Object fileType = exportsFileInfo.getFileType();
         if (FiletypeUtilities.isGridType(fileType)) {
             result = new PanelExportTransformForGrid(owner, exportsFileInfo);
         } else if (FiletypeUtilities.isVectorType(fileType)) {
@@ -67,7 +67,7 @@ public class ExportPanelFactory implements IExportPanelFactory {
     private boolean isVectorTypes(ArrayList<PanelExportTransform> panelExports) {
         int count = 0;
         for (PanelExportTransform tempPanelExport : panelExports) {
-            for (FileType tempFileType : FiletypeUtilities.getVectorValue()) {
+            for (Object tempFileType : FiletypeUtilities.getVectorValue()) {
                 if (tempPanelExport.getExportsFileInfo().getFileType().equals(tempFileType)) {
                     count++;
                 }
@@ -80,7 +80,7 @@ public class ExportPanelFactory implements IExportPanelFactory {
     public boolean isGridTypes(ArrayList<PanelExportTransform> panelExports) {
         int count = 0;
         for (PanelExportTransform tempPanelExport : panelExports) {
-            for (FileType tempFileType : FiletypeUtilities.getGridValue()) {
+            for (Object tempFileType : FiletypeUtilities.getGridValue()) {
                 if (tempPanelExport.getExportsFileInfo().getFileType().equals(tempFileType)) {
                     count++;
                 }

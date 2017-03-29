@@ -14,5 +14,5 @@ public interface IExportSettingFactory {
      * @param fileType
      * @return
      */
-    ExportSetting createExportSetting(FileType fileType);
+    ExportSetting createExportSetting(Object fileType);
 }
