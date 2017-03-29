@@ -41,6 +41,31 @@ public abstract class Selection extends CanvasEventAdapter {
 		return this.selectedItems.get(index);
 	}
 
+	public int size() {
+		return this.selectedItems.size();
+	}
+
+	public void deselectItem(IGraph graph) {
+		if (this.selectedItems.contains(graph)) {
+			this.selectedItems.remove(graph);
+			fireGraphSelectChanged(new GraphSelectedChangedEvent(this.getCanvas(), this));
+		}
+	}
+
+	public void deselectItems(IGraph[] graphs) {
+		if (graphs == null || graphs.length == 0) {
+			return;
+		}
+
+		for (int i = graphs.length - 1; i >= 0; i--) {
+			IGraph graph = graphs[i];
+			if (this.selectedItems.contains(graph)) {
+				this.selectedItems.remove(graph);
+			}
+		}
+		fireGraphSelectChanged(new GraphSelectedChangedEvent(this.getCanvas(), this));
+	}
+
 	public boolean isSelected(IGraph item) {
 		return this.selectedItems.contains(item);
 	}

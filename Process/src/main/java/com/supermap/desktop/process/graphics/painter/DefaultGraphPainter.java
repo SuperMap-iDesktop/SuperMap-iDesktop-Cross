@@ -195,19 +195,21 @@ public class DefaultGraphPainter implements IGraphPainter {
 
 	protected void paintProcessGraph(Graphics graphics, ProcessGraph processGraph) {
 		paintRectangleGraph(graphics, processGraph);
+
 		Font font = new Font("宋体", Font.PLAIN, 24);
 		graphics.setFont(font);
 		graphics.setColor(Color.darkGray);
 
+		String tilte = SwingUtilities2.clipStringIfNecessary(this.canvas, this.canvas.getFontMetrics(font), processGraph.getTitle(), processGraph.getWidth());
 		int fontHeight = this.canvas.getFontMetrics(font).getHeight();
-		int fontWidth = SwingUtilities2.stringWidth(this.canvas, this.canvas.getFontMetrics(font), processGraph.getTitle());
+		int fontWidth = SwingUtilities2.stringWidth(this.canvas, this.canvas.getFontMetrics(font), tilte);
 		int fontDescent = this.canvas.getFontMetrics(font).getDescent();
 
 		// 字符绘制时，坐标点指定的是基线的位置，而实际上我们希望指定的坐标点是整个字符块最下边的位置，因此使用 fontDescent 做个处理
 		Point location = processGraph.getLocation();
 		double width = processGraph.getWidth();
 		double height = processGraph.getHeight();
-		graphics.drawString(processGraph.getTitle(), intValue(location.getX() + (width - fontWidth) / 2), intValue(location.getY() + height / 2 + fontHeight / 2 - fontDescent));
+		graphics.drawString(tilte, intValue(location.getX() + (width - fontWidth) / 2), intValue(location.getY() + height / 2 + fontHeight / 2 - fontDescent));
 	}
 
 	private void paintOutputGraph(Graphics graphics, OutputGraph outputGraph) {

@@ -6,6 +6,7 @@ import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolSpinnerUtilties;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.properties.CommonProperties;
@@ -487,6 +488,16 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
     private void init() {
         initBasicsetPanel();
         initEffectPanel();
+        setComponentName();
+    }
+
+    /**
+     * 初始化控件名称
+     */
+    private void setComponentName() {
+        ComponentUIUtilities.setName(this.comboBoxFontName,"TextBasicPanel_comboBoxFontName");
+        ComponentUIUtilities.setName(this.comboBoxFontSize,"TextBasicPanel_comboBoxFontSize");
+        ComponentUIUtilities.setName(this.checkBoxItalic,"TextBasicPanel_checkBoxItalic");
     }
 
     private void initEffectPanel() {

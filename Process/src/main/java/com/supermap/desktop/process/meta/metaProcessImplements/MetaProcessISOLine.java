@@ -5,7 +5,6 @@ import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
-import com.supermap.data.Datasource;
 import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -16,6 +15,7 @@ import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -29,10 +29,9 @@ public class MetaProcessISOLine extends MetaProcess {
 
     private ParameterDatasource sourceDatasource;
     private ParameterSingleDataset dataset;
-    private ParameterDatasource targetDatasource;
-    private ParameterTextField datasetName;
-    private ParameterTextField maxGrid;
-    private ParameterTextField minGrid;
+	private ParameterSaveDataset saveDataset;
+	private ParameterTextField maxGrid;
+	private ParameterTextField minGrid;
     private ParameterTextField maxISOLine;
     private ParameterTextField minISOLine;
     private ParameterTextField isoLine;
@@ -55,10 +54,10 @@ public class MetaProcessISOLine extends MetaProcess {
 
     private void initParametersState() {
         this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-        this.targetDatasource.setDescribe(CommonProperties.getString("String_TargetDatasource"));
-        this.datasetName.setDescribe(CommonProperties.getString("String_TargetDataset"));
-        this.datasetName.setSelectedItem("ISOLine");
-        if (null != dataset.getSelectedItem() && dataset.getSelectedItem() instanceof DatasetGrid) {
+	    this.saveDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
+	    this.saveDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
+	    this.saveDataset.setSelectedItem("ISOLine");
+	    if (null != dataset.getSelectedItem() && dataset.getSelectedItem() instanceof DatasetGrid) {
             maxGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMaxValue());
             minGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMinValue());
         }
@@ -73,9 +72,8 @@ public class MetaProcessISOLine extends MetaProcess {
         this.parameters = new DefaultParameters();
         this.sourceDatasource = new ParameterDatasource();
         this.dataset = new ParameterSingleDataset(new DatasetType[]{DatasetType.GRID});
-        this.targetDatasource = new ParameterDatasource();
-        this.datasetName = new ParameterTextField();
-        this.maxGrid = new ParameterTextField(CommonProperties.getString("String_MAXGrid"));
+	    this.saveDataset = new ParameterSaveDataset();
+	    this.maxGrid = new ParameterTextField(CommonProperties.getString("String_MAXGrid"));
         this.minGrid = new ParameterTextField(CommonProperties.getString("String_MINGrid"));
         this.maxISOLine = new ParameterTextField(CommonProperties.getString("String_MAXISOLine"));
         this.minISOLine = new ParameterTextField(CommonProperties.getString("String_MINISOLine"));
@@ -85,8 +83,8 @@ public class MetaProcessISOLine extends MetaProcess {
         this.resampleTolerance = new ParameterTextField(CommonProperties.getString("String_ResampleTolerance"));
         this.smoothMethod = new ParameterComboBox().setDescribe(CommonProperties.getString("String_SmoothMethod"));
         this.smoothNess = new ParameterTextField(CommonProperties.getString("String_SmoothNess"));
-        this.parameters.setParameters(sourceDatasource, dataset, targetDatasource, datasetName, maxGrid, minGrid, maxISOLine, minISOLine, isoLine, datumValue,
-                interval, resampleTolerance, smoothMethod, smoothNess);
+	    this.parameters.setParameters(sourceDatasource, dataset, saveDataset, maxGrid, minGrid, maxISOLine, minISOLine, isoLine, datumValue,
+			    interval, resampleTolerance, smoothMethod, smoothNess);
         this.processTask = new ProcessTask(this);
     }
 
@@ -105,8 +103,8 @@ public class MetaProcessISOLine extends MetaProcess {
         surfaceExtractParameter.setSmoothMethod((SmoothMethod) ((ParameterDataNode) smoothMethod.getSelectedItem()).getData());
         surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem().toString()));
         SurfaceAnalyst.addSteppedListener(this.stepListener);
-        SurfaceAnalyst.extractIsoline(surfaceExtractParameter, (DatasetGrid) dataset.getSelectedItem(), (Datasource) targetDatasource.getSelectedItem(), datasetName.getSelectedItem().toString());
-        SurfaceAnalyst.removeSteppedListener(this.stepListener);
+	    SurfaceAnalyst.extractIsoline(surfaceExtractParameter, (DatasetGrid) dataset.getSelectedItem(), saveDataset.getResultDatasource(), saveDataset.getDatasetName());
+	    SurfaceAnalyst.removeSteppedListener(this.stepListener);
         fireRunning(new RunningEvent(MetaProcessISOLine.this, 100, "finished"));
     }
 

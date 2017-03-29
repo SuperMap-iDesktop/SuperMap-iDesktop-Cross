@@ -9,12 +9,11 @@ import java.awt.geom.RoundRectangle2D;
  * Created by highsad on 2017/1/19.
  */
 public class RectangleGraph extends AbstractGraph {
-
 	private double arcWidth = 0d;
 	private double arcHeight = 0d;
 
 	public RectangleGraph(GraphCanvas canvas) {
-		super(canvas, new RoundRectangle2D.Double());
+		super(canvas, new RoundRectangle2D.Double(0, 0, 150, 60, 10, 10));
 	}
 
 	@Override

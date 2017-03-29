@@ -2,6 +2,7 @@ package com.supermap.desktop.newtheme.themeLabel;
 
 import com.supermap.data.*;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
@@ -32,8 +33,8 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 
 	private static final long serialVersionUID = 1L;
 
-	private JLabel labelLabelExpression = new JLabel();
-	private JComboBox<String> comboBoxLabelExpression = new JComboBox<>();// 表达式
+	private JLabel labelExpression = new JLabel();
+	private JComboBox<String> comboBoxExpression = new JComboBox<>();// 表达式
 	// panelBackgroundSet
 	private JLabel labelBGShape = new JLabel();
 	private JComboBox<String> comboBoxBGShape = new JComboBox<>();// 背景形状
@@ -81,13 +82,13 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		@Override
 		public void mouseReleased(MouseEvent arg0) {
 			//此处动态刷新字段信息
-			if (arg0.getSource().equals(comboBoxLabelExpression.getComponent(0))) {
+			if (arg0.getSource().equals(comboBoxExpression.getComponent(0))) {
 				//处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
-				comboBoxLabelExpression.removeItemListener(itemListener);
+				comboBoxExpression.removeItemListener(itemListener);
 				// 刷新表达式字段信息
-				ThemeUtil.initComboBox(comboBoxLabelExpression, themeLabel.getLabelExpression(), datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(),
+				ThemeUtil.initComboBox(comboBoxExpression, themeLabel.getLabelExpression(), datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(),
 						comboBoxArray, false, false);
-				comboBoxLabelExpression.addItemListener(itemListener);
+				comboBoxExpression.addItemListener(itemListener);
 			}else if(arg0.getSource().equals(comboBoxOffsetX.getComponent(0))){
 				//处理点击下拉列表框地图卡顿，同 themeUniqueContainer——yuanR
 				comboBoxOffsetX.removeItemListener(itemListener);
@@ -114,6 +115,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		initResources();
 		initComponents();
+		setComponentName();
 		registActionListener();
 	}
 
@@ -121,7 +123,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 资源化
 	 */
 	private void initResources() {
-		this.labelLabelExpression.setText(MapViewProperties.getString("String_label_Expression"));
+		this.labelExpression.setText(MapViewProperties.getString("String_label_Expression"));
 		this.labelBGShape.setText(MapViewProperties.getString("String_BackShape"));
 		this.labelBGStyle.setText(MapViewProperties.getString("String_BackStyle"));
 		this.labelOffsetUnity.setText(MapViewProperties.getString("String_LabelOffsetUnit"));
@@ -169,17 +171,26 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		JPanel panelPropertyContent = new JPanel();
 		this.add(panelPropertyContent, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 10));
 		panelPropertyContent.setLayout(new GridBagLayout());
-		this.comboBoxLabelExpression.setPreferredSize(new Dimension(180,23));
-		panelPropertyContent.add(this.labelLabelExpression,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5, 10, 5, 0));
-		panelPropertyContent.add(this.comboBoxLabelExpression, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5, 10, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
+		this.comboBoxExpression.setPreferredSize(new Dimension(180,23));
+		panelPropertyContent.add(this.labelExpression,    new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5, 10, 5, 0));
+		panelPropertyContent.add(this.comboBoxExpression, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setWeight(50, 0).setInsets(5, 10, 5, 10).setFill(GridBagConstraints.HORIZONTAL));
 		panelPropertyContent.add(panelBGSet,                   new GridBagConstraintsHelper(0, 1, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
 		panelPropertyContent.add(panelLabelOffset,             new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1,0).setFill(GridBagConstraints.HORIZONTAL));
 		panelPropertyContent.add(panelLabelEffectSet,          new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.CENTER).setInsets(5).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL));
 		//@formatter:on
 	}
 
+	/**
+	 * 初始化控件名称
+	 */
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.comboBoxExpression,"ThemeLabelPropertyPanel_comboBoxExpression");
+		ComponentUIUtilities.setName(this.comboBoxBGShape,"ThemeLabelPropertyPanel_comboBoxBGShape");
+		ComponentUIUtilities.setName(this.checkBoxFlowVisual,"ThemeLabelPropertyPanel_checkBoxFlowVisual");
+	}
+
 	private void initComboBoxLabelExpression() {
-		ThemeUtil.initComboBox(comboBoxLabelExpression, themeLabel.getLabelExpression(), datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(),
+		ThemeUtil.initComboBox(comboBoxExpression, themeLabel.getLabelExpression(), datasetVector, themelabelLayer.getDisplayFilter().getJoinItems(),
 				comboBoxArray, false, false);
 	}
 
@@ -368,14 +379,14 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 */
 	public void registActionListener() {
 		unregistActionListener();
-		this.comboBoxLabelExpression.addItemListener(this.itemListener);
+		this.comboBoxExpression.addItemListener(this.itemListener);
 		this.comboBoxBGShape.addItemListener(this.itemListener);
 		this.comboBoxOffsetUnity.addItemListener(this.itemListener);
 		this.comboBoxOffsetX.addItemListener(this.itemListener);
 		this.comboBoxOffsetY.addItemListener(this.itemListener);
 		this.comboBoxOffsetX.getComponent(0).addMouseListener(this.mouseAdapter);
 		this.comboBoxOffsetY.getComponent(0).addMouseListener(this.mouseAdapter);
-		this.comboBoxLabelExpression.getComponent(0).addMouseListener(mouseAdapter);
+		this.comboBoxExpression.getComponent(0).addMouseListener(mouseAdapter);
 		this.comboBoxAutoAvoidance.addItemListener(this.itemListener);
 		this.comboBoxTextPrecision.addItemListener(this.itemListener);
 		this.buttonBGStyle.addActionListener(this.actionListener);
@@ -393,14 +404,14 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 	 * 注销事件
 	 */
 	public void unregistActionListener() {
-		this.comboBoxLabelExpression.removeItemListener(this.itemListener);
+		this.comboBoxExpression.removeItemListener(this.itemListener);
 		this.comboBoxBGShape.removeItemListener(this.itemListener);
 		this.comboBoxOffsetUnity.removeItemListener(this.itemListener);
 		this.comboBoxOffsetX.removeItemListener(this.itemListener);
 		this.comboBoxOffsetY.removeItemListener(this.itemListener);
 		this.comboBoxOffsetX.getComponent(0).removeMouseListener(this.mouseAdapter);
 		this.comboBoxOffsetY.getComponent(0).removeMouseListener(this.mouseAdapter);
-		this.comboBoxLabelExpression.getComponent(0).removeMouseListener(mouseAdapter);
+		this.comboBoxExpression.getComponent(0).removeMouseListener(mouseAdapter);
 		this.comboBoxAutoAvoidance.removeItemListener(this.itemListener);
 		this.comboBoxTextPrecision.removeItemListener(this.itemListener);
 		this.buttonBGStyle.removeActionListener(this.actionListener);
@@ -427,9 +438,9 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		public void itemStateChanged(ItemEvent e) {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				Dataset[] datasets = ThemeUtil.getDatasets(themelabelLayer, datasetVector);
-				if (e.getSource() == comboBoxLabelExpression) {
+				if (e.getSource() == comboBoxExpression) {
 					// sql表达式
-					boolean isLabelExpressionChanged = ThemeUtil.getSqlExpression(comboBoxLabelExpression, datasets, comboBoxArray,
+					boolean isLabelExpressionChanged = ThemeUtil.getSqlExpression(comboBoxExpression, datasets, comboBoxArray,
 							themeLabel.getLabelExpression(), false);
 					if (isLabelExpressionChanged) {
 						// 设置标签表达式
@@ -572,7 +583,7 @@ public class ThemeLabelPropertyPanel extends ThemeChangePanel {
 		 * 设置标签表达式
 		 */
 		private void setFieldInfo() {
-			String labelExpression = comboBoxLabelExpression.getSelectedItem().toString();
+			String labelExpression = comboBoxExpression.getSelectedItem().toString();
 			if (comboBoxArray.contains(labelExpression)) {
 				DatasetVector dataset = datasetVector;
 				String fieldName = labelExpression;

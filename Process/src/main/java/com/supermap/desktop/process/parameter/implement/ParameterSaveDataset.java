@@ -15,6 +15,8 @@ public class ParameterSaveDataset extends AbstractParameter implements ISelectio
 	private Datasource resultDatasource;
 	@ParameterField(name = "detasetName")
 	private String datasetName;
+	private String datasourceDescribe;
+	private String datasetDescribe;
 
 	@Override
 	public String getType() {
@@ -24,7 +26,7 @@ public class ParameterSaveDataset extends AbstractParameter implements ISelectio
 
 	@Override
 	public void setSelectedItem(Object value) {
-
+		this.datasetName = (String) value;
 	}
 
 	@Override
@@ -57,5 +59,21 @@ public class ParameterSaveDataset extends AbstractParameter implements ISelectio
 
 	public void setDatasetName(String datasetName) {
 		this.datasetName = datasetName;
+	}
+
+	public void setDatasourceDescribe(String datasourceDescribe) {
+		this.datasourceDescribe = datasourceDescribe;
+	}
+
+	public String getDatasourceDescribe() {
+		return datasourceDescribe;
+	}
+
+	public String getDatasetDescribe() {
+		return datasetDescribe;
+	}
+
+	public void setDatasetDescribe(String datasetDescribe) {
+		this.datasetDescribe = datasetDescribe;
 	}
 }

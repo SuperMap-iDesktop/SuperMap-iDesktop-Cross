@@ -1,11 +1,19 @@
 package com.supermap.desktop.process.graphics.interaction.canvas;
 
+import com.supermap.desktop.process.graphics.GraphCanvas;
+
 import java.awt.event.KeyEvent;
 
 /**
  * Created by highsad on 2017/3/25.
  */
 public class GraphRemoving extends CanvasEventAdapter {
+	private GraphCanvas canvas;
+
+	public GraphRemoving(GraphCanvas canvas) {
+		this.canvas = canvas;
+	}
+
 	@Override
 	public void clean() {
 
@@ -13,8 +21,10 @@ public class GraphRemoving extends CanvasEventAdapter {
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-			System.out.println("esc");
+		if (e.getKeyChar() == KeyEvent.VK_DELETE) {
+			if (this.canvas.getSelection().size() > 0) {
+				this.canvas.removeGraphs(this.canvas.getSelection().getSelectedItems());
+			}
 		}
 	}
 }
