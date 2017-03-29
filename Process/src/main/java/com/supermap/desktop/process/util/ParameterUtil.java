@@ -4,7 +4,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.parameter.implement.ParameterClassBundleNode;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
-import com.supermap.desktop.utilities.ArrayUtilities;
 import org.osgi.framework.Bundle;
 
 import java.awt.*;
@@ -26,7 +25,7 @@ public class ParameterUtil {
 			if (classes.size() > 0) {
 				for (Class<?> aClass : classes) {
 					Class<?>[] interfaces = aClass.getInterfaces();
-					if (ArrayUtilities.isArrayContains(interfaces, IParameterPanel.class)) {
+					if (IParameterPanel.class.isAssignableFrom(aClass)) {
 						ParameterPanelDescribe annotation = aClass.getAnnotation(ParameterPanelDescribe.class);
 						if (annotation != null && annotation.parameterPanelType().equals(parameterType)) {
 							return aClass;

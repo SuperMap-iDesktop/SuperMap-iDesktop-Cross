@@ -3,6 +3,7 @@ package com.supermap.desktop.process.graphics;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.connection.AbstractLine;
+import com.supermap.desktop.process.graphics.connection.RelationLine;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.events.GraphCreatingEvent;
@@ -56,14 +57,14 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private IGraphEventHandlerFactory graphHandlerFactory = new DefaultGraphEventHanderFactory(); // 在某具体元素上进行的可扩展交互类
 	private ConcurrentHashMap<Class, CanvasEventHandler> canvasHandlers = new ConcurrentHashMap<>(); // 统一入口的画布事件接口，通过添加 CanvasEventHandler 对象实现 Canvas 的事件处理
 
-	private java.util.List<AbstractLine> lines = new ArrayList<>();
+	private java.util.List<RelationLine> lines = new ArrayList<>();
 
 	private CanvasTranslation translation = new CanvasTranslation(this);
 	private GraphCreator creator = new GraphCreator(this);
 	private Selection selection = new MultiSelction(this);
 	private DraggedHandler dragged = new DraggedHandler(this);
 	public GraphConnection connection = new GraphConnection(this);
-	public GraphRemoving removing = new GraphRemoving();
+	public GraphRemoving removing = new GraphRemoving(this);
 
 	private ArrayList<GraphSelectChangedListener> selectChangedListeners = new ArrayList<>();
 
@@ -137,6 +138,8 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		addMouseWheelListener(this);
 		addComponentListener(this);
 		addKeyListener(this);
+
+		setRequestFocusEnabled(true);
 
 		installCanvasEventHandler(Selection.class, this.selection);
 		installCanvasEventHandler(DraggedHandler.class, this.dragged);
@@ -248,7 +251,34 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		}
 	}
 
-	public void addConnection(AbstractLine connection) {
+	public void removeGraph(IGraph graph) {
+		if (graph != null && this.graphStorage.contains(graph)) {
+			for (int i = this.lines.size() - 1; i >= 0; i--) {
+				RelationLine line = this.lines.get(i);
+				if (line.getStartGraph() == graph || line.getEndGraph() == graph) {
+					this.lines.remove(line);
+				}
+			}
+
+			if (this.selection.isSelected(graph)) {
+				this.selection.deselectItem(graph);
+			}
+			this.graphStorage.remove(graph);
+		}
+		repaint();
+	}
+
+	public void removeGraphs(IGraph[] graphs) {
+		if (graphs != null && graphs.length > 0) {
+			this.selection.deselectItems(graphs);
+			for (int i = 0; i < graphs.length; i++) {
+				removeGraph(graphs[i]);
+			}
+		}
+		repaint();
+	}
+
+	public void addConnection(RelationLine connection) {
 		this.lines.add(connection);
 	}
 
@@ -399,6 +429,12 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		if (SwingUtilities.isLeftMouseButton(e)) {
+			if (!hasFocus() && isRequestFocusEnabled()) {
+				requestFocus();
+			}
+		}
+
 		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
 		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
 
@@ -590,7 +626,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		System.out.println("Pressed");
 		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
 		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
 
@@ -604,7 +639,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		System.out.println("KeyReleased");
 		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
 		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
 
