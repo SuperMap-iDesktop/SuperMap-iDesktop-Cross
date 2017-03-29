@@ -24,6 +24,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -324,7 +325,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 	 */
 	private ImageType getImageType(String str) {
 		if (str.contains(".png")) {
-			this.resolutionTextField.setEnable(false);
+			this.resolutionTextField.setEnable(true);
 			this.backTransparent.setEnabled(true);
 			return this.imageType.PNG;
 		} else if (str.contains(".jpg")) {
@@ -361,8 +362,11 @@ public class DiglogMapOutputPicture extends SmDialog {
 		public void caretUpdate(CaretEvent e) {
 			// 当手动修改路劲文本框的值时，赋予其内容于路径参数和输出图片类型参数
 			path = fileChooserControlExportPath.getEditor().getText();
-			if (!StringUtilities.isNullOrEmpty(fileChooserControlExportPath.getEditor().getText()) && getImageType(path) != null) {
-				path = path.substring(path.lastIndexOf("."));
+			if (!StringUtilities.isNullOrEmpty(fileChooserControlExportPath.getEditor().getText())) {
+				// 从字符中尝试提取需要导出的图片类型
+				if (path.length() > 4) {
+					path = path.substring(path.length() - 4, path.length());
+				}
 				imageType = getImageType(path);
 				path = fileChooserControlExportPath.getEditor().getText();
 				// 当路劲文本框改变时，判断其路径是否合法，并且初始化磁盘剩余内存情况
@@ -373,13 +377,14 @@ public class DiglogMapOutputPicture extends SmDialog {
 			}
 
 			// 当手动输入的路径名称合法时，设置文件名称
-			if (!StringUtilities.isNullOrEmpty(path) && imageType != null) {
+			if (!StringUtilities.isNullOrEmpty(path)) {
 				if (SystemPropertyUtilities.isWindows()) {
 					fileName = path.substring(path.lastIndexOf("\\") + 1);
 				} else {
 					fileName = path.substring(path.lastIndexOf("/") + 1);
 				}
 			} else {
+				// 当文件路径不合法时，也无法获得文件名
 				fileName = "";
 			}
 			// 当路劲文本框改变时，判断一下确定按钮是否可用
@@ -553,25 +558,33 @@ public class DiglogMapOutputPicture extends SmDialog {
 				public void propertyChange(PropertyChangeEvent evt) {
 					//当值改变时，获得文件名
 					String tempFileName = windowsFileChooserUI.getFileName();
+					// 当传入的数据名自带数据类型时，截取文件名
+					if (imageType != null) {
+						tempFileName = tempFileName.substring(0, tempFileName.length() - 4);
+					}
+
 					// 当文件选择器对话框文件名称不为空时，当改变数据类型时，不断获得最新的名称，并给其后追加数据类型
 					if (!StringUtilities.isNullOrEmpty(tempFileName)) {
 						// 获得文件类型的描述
-						if (tempFileName.indexOf(".") > 0) {
-							tempFileName = tempFileName.substring(0, tempFileName.indexOf("."));
-						}
 						String tempFileType = exportPathFileChoose.getFileFilter().getDescription();
 						if (tempFileType.indexOf(".png") > 0) {
 							tempFileName = tempFileName + ".png";
+//							imageType = ImageType.PNG;
 						} else if (tempFileType.indexOf(".jpg") > 0) {
 							tempFileName = tempFileName + ".jpg";
+//							imageType = ImageType.JPG;
 						} else if (tempFileType.indexOf(".bmp") > 0) {
 							tempFileName = tempFileName + ".bmp";
+//							imageType = ImageType.BMP;
 						} else if (tempFileType.indexOf(".gif") > 0) {
 							tempFileName = tempFileName + ".gif";
+//							imageType = ImageType.GIF;
 						} else if (tempFileType.indexOf(".eps") > 0) {
 							tempFileName = tempFileName + ".eps";
+//							imageType = ImageType.EPS;
 						} else if (tempFileType.indexOf(".tif") > 0) {
 							tempFileName = tempFileName + ".tif";
+//							imageType = ImageType.TIFF;
 						}
 						windowsFileChooserUI.setFileName(tempFileName);
 						fileName = tempFileName;
@@ -623,13 +636,27 @@ public class DiglogMapOutputPicture extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
-				//设置文件选择器默认文件名为filed中的内容
-				if (!SystemPropertyUtilities.isWindows() && !StringUtilities.isNullOrEmpty(fileName)) {
-					fileName = fileName.substring(0, fileName.indexOf("."));
-				}
-				exportPathFileChoose.setSelectedFile(new File(fileName));
-				int state = exportPathFileChoose.showSaveDialog(null);
 
+				exportPathFileChoose.setSelectedFile(new File(fileName));
+				// 当数据类型不为空时，打开文件选择对话框时，设置筛选器类型为当前数据类型
+				if (imageType != null) {
+					String imageTypeName = imageType.name();
+					imageTypeName = imageTypeName.toLowerCase();
+					// tiff文件名称预处理一下
+					if (imageTypeName.equals("tiff")) {
+						imageTypeName = "tif";
+					}
+					// 获得所有文件筛选器
+					FileFilter[] fileFilter = exportPathFileChoose.getChoosableFileFilters();
+					for (int i = 0; i < fileFilter.length; i++) {
+						if ((fileFilter[i].getDescription()).contains(imageTypeName)) {
+							// 设置初始筛选器类型为文件类型
+							exportPathFileChoose.setFileFilter(fileFilter[i]);
+						}
+					}
+				}
+
+				int state = exportPathFileChoose.showSaveDialog(null);
 				if (state == JFileChooser.APPROVE_OPTION) {
 					// 设置输出图片的路径
 					path = exportPathFileChoose.getFilePath();
@@ -680,12 +707,10 @@ public class DiglogMapOutputPicture extends SmDialog {
 				} else {
 					// 如果此文件不存在，其路径错误，设置其路径为空，相应的图片类型为空
 					this.path = "";
-					this.imageType = null;
 					this.remainingMemory = 0.0;
 				}
 			} else {
 				this.path = "";
-				this.imageType = null;
 				this.remainingMemory = 0.0;
 			}
 		} else {
@@ -700,7 +725,6 @@ public class DiglogMapOutputPicture extends SmDialog {
 				} else {
 					// 如果此文件不存在，其路径错误，设置其路径为空，相应的图片类型为空
 					this.path = "";
-					this.imageType = null;
 					this.remainingMemory = 0.0;
 				}
 			}
@@ -713,7 +737,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private void judgeOKButtonisEnabled() {
 		Boolean pathisValid = false;
 		Boolean DPIisValid = false;
-		Boolean imageTypeisValid = false;
+//		Boolean imageTypeisValid = false;
 		Boolean outPutBoundsisValid = false;
 		Boolean memory = false;
 
@@ -723,9 +747,9 @@ public class DiglogMapOutputPicture extends SmDialog {
 		if (DPI_START <= dpi && dpi <= DPI_END) {
 			DPIisValid = true;
 		}
-		if (imageType != null) {
-			imageTypeisValid = true;
-		}
+//		if (imageType != null) {
+//			imageTypeisValid = true;
+//		}
 		if (outPutBounds != null) {
 			outPutBoundsisValid = true;
 			// 当矩形框范围错误时不允许复制其值
@@ -737,7 +761,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 			memory = true;
 		}
 		// 根据参数情况设置确定按钮是否可用
-		if (pathisValid && DPIisValid && imageTypeisValid && outPutBoundsisValid && memory) {
+		if (pathisValid && DPIisValid && outPutBoundsisValid && memory) {
 			this.panelButton.getButtonOk().setEnabled(true);
 		} else {
 			this.panelButton.getButtonOk().setEnabled(false);
@@ -787,10 +811,6 @@ public class DiglogMapOutputPicture extends SmDialog {
 					}
 				} else if (imageType.equals(imageType.EPS)) {
 					if (copyMap.outputMapToEPS(path)) {
-						isSuccess = true;
-					}
-				} else if (imageType.equals(imageType.PNG)) {
-					if (copyMap.outputMapToPNG(path, isBackTransparent)) {
 						isSuccess = true;
 					}
 				} else if (imageType.equals(imageType.EMF)) {
