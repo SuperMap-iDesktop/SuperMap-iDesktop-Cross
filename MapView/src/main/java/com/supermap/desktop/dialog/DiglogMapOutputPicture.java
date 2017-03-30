@@ -616,7 +616,6 @@ public class DiglogMapOutputPicture extends SmDialog {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-			} finally {
 				tempFileName = "";
 			}
 			//获得文间名称后尝试获得文件类型,当文件名称中不包含文件类型信息时，设置文件类型为空
@@ -657,12 +656,14 @@ public class DiglogMapOutputPicture extends SmDialog {
 				if (setFileName != null) {
 					setFileName.invoke(fileChooserUI, tempFileName);
 					fileName = tempFileName;
-					// tempFileName 此时一定包含一个数据类型
-					imageType = getImageType(tempFileName.substring(tempFileName.length() - 4, tempFileName.length()));
+					if (tempFileName.length() > 4) {
+						imageType = getImageType(tempFileName.substring(tempFileName.length() - 4, tempFileName.length()));
+					} else {
+						imageType = null;
+					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
-			} finally {
 				fileName = "";
 				imageType = null;
 			}
@@ -777,7 +778,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private void judgeOKButtonisEnabled() {
 		Boolean pathisValid = false;
 		Boolean DPIisValid = false;
-//		Boolean imageTypeisValid = false;
+		Boolean imageTypeisValid = false;
 		Boolean outPutBoundsisValid = false;
 		Boolean memory = false;
 
@@ -787,9 +788,9 @@ public class DiglogMapOutputPicture extends SmDialog {
 		if (DPI_START <= dpi && dpi <= DPI_END) {
 			DPIisValid = true;
 		}
-//		if (imageType != null) {
-//			imageTypeisValid = true;
-//		}
+		if (imageType != null) {
+			imageTypeisValid = true;
+		}
 		if (outPutBounds != null) {
 			outPutBoundsisValid = true;
 			// 当矩形框范围错误时不允许复制其值
@@ -801,7 +802,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 			memory = true;
 		}
 		// 根据参数情况设置确定按钮是否可用
-		if (pathisValid && DPIisValid && outPutBoundsisValid && memory) {
+		if (pathisValid && DPIisValid && imageTypeisValid && outPutBoundsisValid && memory) {
 			this.panelButton.getButtonOk().setEnabled(true);
 		} else {
 			this.panelButton.getButtonOk().setEnabled(false);
