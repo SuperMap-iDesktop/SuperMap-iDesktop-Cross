@@ -19,6 +19,7 @@ import com.supermap.desktop.ui.controls.borderPanel.PanelButton;
 import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.ImageType;
 import com.supermap.mapping.Map;
+import sun.swing.plaf.synth.SynthFileChooserUI;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -73,7 +74,9 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private WaringTextField waringTextFieldRight;
 	private WaringTextField waringTextFieldBottom;
 	private MapOutputPictureProgressCallable mapOutputPictureProgressCallable;
+
 	private WindowsFileChooserUI windowsFileChooserUI;
+	private SynthFileChooserUI synthFileChooserUI;
 
 	private static final int DEFAULT_LABELSIZE = 80;
 	private static final int DEFAULT_GAP = 16;
@@ -558,49 +561,58 @@ public class DiglogMapOutputPicture extends SmDialog {
 					ControlsProperties.getString("String_Save"), moduleName, "SaveOne");
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
-
-		// 当在Windows系统下，使文件选择器更为智能的实现
+		// 分别获得两个系统下的FileChooserUI
 		if (SystemPropertyUtilities.isWindows()) {
-			this.windowsFileChooserUI = (WindowsFileChooserUI) this.exportPathFileChoose.getUI();
-			this.exportPathFileChoose.addPropertyChangeListener(new PropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent evt) {
-					//当值改变时，获得文件名
-					String tempFileName = windowsFileChooserUI.getFileName();
-					// 当传入的数据名自带数据类型时，截取文件名
-					if (imageType != null) {
-						tempFileName = tempFileName.substring(0, tempFileName.length() - 4);
-						// 当文件选择器对话框文件名称不为空时，当改变数据类型时，不断获得最新的名称，并给其后追加数据类型
-						if (!StringUtilities.isNullOrEmpty(tempFileName)) {
-							// 获得文件类型的描述
-							String tempFileType = exportPathFileChoose.getFileFilter().getDescription();
-							if (tempFileType.indexOf(".png") > 0) {
-								tempFileName = tempFileName + ".png";
+			windowsFileChooserUI = (WindowsFileChooserUI) this.exportPathFileChoose.getUI();
+		} else {
+			synthFileChooserUI = (SynthFileChooserUI) this.exportPathFileChoose.getUI();
+		}
+		this.exportPathFileChoose.addPropertyChangeListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				//当值改变时，获得文件名
+				String tempFileName = "";
+				if (SystemPropertyUtilities.isWindows()) {
+					tempFileName = windowsFileChooserUI.getFileName();
+				} else {
+					tempFileName = synthFileChooserUI.getFileName();
+				}
+				// 当传入的数据名自带数据类型时，截取文件名
+				if (imageType != null) {
+					tempFileName = tempFileName.substring(0, tempFileName.length() - 4);
+					// 当文件选择器对话框文件名称不为空时，当改变数据类型时，不断获得最新的名称，并给其后追加数据类型
+					if (!StringUtilities.isNullOrEmpty(tempFileName)) {
+						// 获得文件类型的描述
+						String tempFileType = exportPathFileChoose.getFileFilter().getDescription();
+						if (tempFileType.indexOf(".png") > 0) {
+							tempFileName = tempFileName + ".png";
 //								imageType = ImageType.PNG;
-							} else if (tempFileType.indexOf(".jpg") > 0) {
-								tempFileName = tempFileName + ".jpg";
+						} else if (tempFileType.indexOf(".jpg") > 0) {
+							tempFileName = tempFileName + ".jpg";
 //								imageType = ImageType.JPG;
-							} else if (tempFileType.indexOf(".bmp") > 0) {
-								tempFileName = tempFileName + ".bmp";
+						} else if (tempFileType.indexOf(".bmp") > 0) {
+							tempFileName = tempFileName + ".bmp";
 //								imageType = ImageType.BMP;
-							} else if (tempFileType.indexOf(".gif") > 0) {
-								tempFileName = tempFileName + ".gif";
+						} else if (tempFileType.indexOf(".gif") > 0) {
+							tempFileName = tempFileName + ".gif";
 //								imageType = ImageType.GIF;
-							} else if (tempFileType.indexOf(".eps") > 0) {
-								tempFileName = tempFileName + ".eps";
+						} else if (tempFileType.indexOf(".eps") > 0) {
+							tempFileName = tempFileName + ".eps";
 //								imageType = ImageType.EPS;
-							} else if (tempFileType.indexOf(".tif") > 0) {
-								tempFileName = tempFileName + ".tif";
+						} else if (tempFileType.indexOf(".tif") > 0) {
+							tempFileName = tempFileName + ".tif";
 //								imageType = ImageType.TIFF;
-							}
-							windowsFileChooserUI.setFileName(tempFileName);
-							fileName = tempFileName;
 						}
+						if (SystemPropertyUtilities.isWindows()) {
+							windowsFileChooserUI.setFileName(tempFileName);
+						} else {
+							synthFileChooserUI.setFileName(tempFileName);
+						}
+						fileName = tempFileName;
 					}
 				}
-			});
-		}
-
+			}
+		});
 
 		// 两个系统下的获得最近路径得到的结果不同，windows得到的是路径，而linux得到的是完整的文件路径
 		if (SystemPropertyUtilities.isWindows()) {
@@ -644,7 +656,6 @@ public class DiglogMapOutputPicture extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
-
 				exportPathFileChoose.setSelectedFile(new File(fileName));
 				// 当数据类型不为空时，打开文件选择对话框时，设置筛选器类型为当前数据类型
 				if (imageType != null) {
