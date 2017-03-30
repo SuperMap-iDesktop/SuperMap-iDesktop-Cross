@@ -196,6 +196,16 @@ public class WaringTextField extends JPanel {
 		}
 
 		this.labelWarning.setPreferredSize(new Dimension(23, 23));
+		// 每次设置完范围，当即做一次是否超限的判断
+		if (!SymbolSpinnerUtilties.isLegitNumber(startValue, endValue, text)) {
+			labelWarning.setText("");
+			labelWarning.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/warning.png"));
+		} else if (!StringUtilities.isNullOrEmpty(text) && StringUtilities.isNumber(text)) {
+			labelWarning.setText(null);
+			//当不需要警告图标时，设置一个透明的图标--yuanR 2017.3.27
+			labelWarning.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/clarity.png"));
+			fireListener(text);
+		}
 	}
 
 	/**
