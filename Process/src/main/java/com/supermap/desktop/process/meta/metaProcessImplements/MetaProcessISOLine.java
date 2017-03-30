@@ -75,10 +75,10 @@ public class MetaProcessISOLine extends MetaProcess {
             minGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMinValue());
         }
         ParameterDataNode selectedNode = new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_NONE"), SmoothMethod.NONE);
-        this.smoothMethod.setItems(new ParameterDataNode[]{selectedNode,
-                new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
-                new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH)});
-        this.smoothMethod.setSelectedItem(selectedNode);
+		this.smoothMethod.setItems(selectedNode,
+				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
+				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH));
+		this.smoothMethod.setSelectedItem(selectedNode);
     }
 
     private void initParameters() {

@@ -16,6 +16,7 @@ import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -29,9 +30,8 @@ public class MetaProcessISORegion extends MetaProcess {
 
     private ParameterDatasource sourceDatasource;
     private ParameterSingleDataset dataset;
-    private ParameterDatasource targetDatasource;
-    private ParameterTextField datasetName;
-    private ParameterTextField maxGrid;
+	private ParameterSaveDataset targetDataset;
+	private ParameterTextField maxGrid;
     private ParameterTextField minGrid;
     private ParameterTextField maxISORegion;
     private ParameterTextField minISORegion;
@@ -53,12 +53,11 @@ public class MetaProcessISORegion extends MetaProcess {
         sourceDatasource = new ParameterDatasource();
         sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
         dataset = new ParameterSingleDataset(new DatasetType[]{DatasetType.GRID});
-        targetDatasource = new ParameterDatasource();
-        targetDatasource.setDescribe(CommonProperties.getString("String_TargetDatasource"));
-        datasetName = new ParameterTextField();
-        datasetName.setDescribe(CommonProperties.getString("String_TargetDataset"));
-        datasetName.setSelectedItem("ISORegion");
-        maxGrid = new ParameterTextField(CommonProperties.getString("String_MAXGrid"));
+	    targetDataset = new ParameterSaveDataset();
+	    targetDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
+	    targetDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
+	    targetDataset.setSelectedItem("ISORegion");
+	    maxGrid = new ParameterTextField(CommonProperties.getString("String_MAXGrid"));
         minGrid = new ParameterTextField(CommonProperties.getString("String_MINGrid"));
         maxISORegion = new ParameterTextField(CommonProperties.getString("String_MAXISORegion"));
         minISORegion = new ParameterTextField(CommonProperties.getString("String_MINISORegion"));
@@ -72,13 +71,13 @@ public class MetaProcessISORegion extends MetaProcess {
         resampleTolerance = new ParameterTextField(CommonProperties.getString("String_ResampleTolerance"));
         ParameterDataNode selectedNode = new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_NONE"), SmoothMethod.NONE);
         smoothMethod = new ParameterComboBox().setDescribe(CommonProperties.getString("String_SmoothMethod"));
-        smoothMethod.setItems(new ParameterDataNode[]{selectedNode,
-                new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
-                new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH)});
-        smoothMethod.setSelectedItem(selectedNode);
+	    smoothMethod.setItems(selectedNode,
+			    new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
+			    new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH));
+	    smoothMethod.setSelectedItem(selectedNode);
         smoothNess = new ParameterTextField(CommonProperties.getString("String_SmoothNess"));
-        parameters.setParameters(sourceDatasource, dataset, targetDatasource, datasetName, maxGrid, minGrid, maxISORegion, minISORegion, isoLine, datumValue,
-                interval, resampleTolerance, smoothMethod, smoothNess);
+	    parameters.setParameters(sourceDatasource, dataset, targetDataset, maxGrid, minGrid, maxISORegion, minISORegion, isoLine, datumValue,
+			    interval, resampleTolerance, smoothMethod, smoothNess);
         processTask = new ProcessTask(this);
     }
 
@@ -96,8 +95,8 @@ public class MetaProcessISORegion extends MetaProcess {
         surfaceExtractParameter.setSmoothMethod((SmoothMethod) ((ParameterDataNode) smoothMethod.getSelectedItem()).getData());
         surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem().toString()));
         SurfaceAnalyst.addSteppedListener(this.stepListener);
-        SurfaceAnalyst.extractIsoregion(surfaceExtractParameter, (DatasetGrid) dataset.getSelectedItem(), (Datasource) targetDatasource.getSelectedItem(), datasetName.getSelectedItem().toString(),null);
-        SurfaceAnalyst.removeSteppedListener(this.stepListener);
+	    SurfaceAnalyst.extractIsoregion(surfaceExtractParameter, (DatasetGrid) dataset.getSelectedItem(), (Datasource) targetDataset.getResultDatasource(), targetDataset.getDatasetName(), null);
+	    SurfaceAnalyst.removeSteppedListener(this.stepListener);
         fireRunning(new RunningEvent(MetaProcessISORegion.this, 100, "finished"));
     }
 
