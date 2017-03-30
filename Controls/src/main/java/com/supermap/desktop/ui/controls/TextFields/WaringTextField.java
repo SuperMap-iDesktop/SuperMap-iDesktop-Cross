@@ -1,6 +1,7 @@
 package com.supermap.desktop.ui.controls.TextFields;
 
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolSpinnerUtilties;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -223,6 +224,7 @@ public class WaringTextField extends JPanel {
 		this.listeners = new ArrayList();
 		this.textField.setText(defaultValue);
 		this.labelWarning.setText(" ");
+		ComponentUIUtilities.setName(this.textField,"WaringTextField_textField");
 	}
 
 	private void initLayout() {

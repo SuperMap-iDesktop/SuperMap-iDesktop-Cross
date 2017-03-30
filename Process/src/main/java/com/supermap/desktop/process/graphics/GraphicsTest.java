@@ -2,12 +2,11 @@ package com.supermap.desktop.process.graphics;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 /**
  * Created by highsad on 2017/3/9.
@@ -63,31 +62,34 @@ public class GraphicsTest extends JPanel implements MouseMotionListener {
 	private static double scale = 1;
 
 	public static void main(String[] args) {
+		java.util.List<String> ls = new ArrayList<>();
+
 //		Main.main(args);
-		final JFrame frame = new JFrame();
-		frame.setLayout(new BorderLayout());
-		frame.setSize(1000, 1000);
 
-		final GraphicsTest test = new GraphicsTest();
-		frame.add(test, BorderLayout.CENTER);
-
-		JButton button = new JButton("Scale");
-		frame.add(button, BorderLayout.NORTH);
-
-		button.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				scale = 3;
-				test.repaint();
-			}
-		});
-
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				frame.setVisible(true);
-			}
-		});
+//		final JFrame frame = new JFrame();
+//		frame.setLayout(new BorderLayout());
+//		frame.setSize(1000, 1000);
+//
+//		final GraphicsTest test = new GraphicsTest();
+//		frame.add(test, BorderLayout.CENTER);
+//
+//		JButton button = new JButton("Scale");
+//		frame.add(button, BorderLayout.NORTH);
+//
+//		button.addActionListener(new ActionListener() {
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				scale = 3;
+//				test.repaint();
+//			}
+//		});
+//
+//		SwingUtilities.invokeLater(new Runnable() {
+//			@Override
+//			public void run() {
+//				frame.setVisible(true);
+//			}
+//		});
 	}
 
 	@Override

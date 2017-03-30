@@ -1373,15 +1373,11 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     private Recordset getRecordset(DatasetVector datasetVector, String attributeFilter) {
         Recordset recordset = null;
         try {
-            if (radioButtonUpdateSelect.isSelected()) {
-                QueryParameter param = new QueryParameter();
-                param.setHasGeometry(false);
-                param.setCursorType(CursorType.STATIC);
-                param.setAttributeFilter(attributeFilter);
-                recordset = datasetVector.query(param);
-            } else {
-                recordset = datasetVector.getRecordset(false, CursorType.STATIC);
-            }
+            QueryParameter param = new QueryParameter();
+            param.setHasGeometry(false);
+            param.setCursorType(CursorType.STATIC);
+            param.setAttributeFilter(attributeFilter);
+            recordset = datasetVector.query(param);
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex);
         }
