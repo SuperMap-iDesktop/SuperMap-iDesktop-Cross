@@ -109,7 +109,7 @@ public class MetaProcessBuffer extends MetaProcess {
         boolean isUnion = "true".equalsIgnoreCase((String) parameterUnionBuffer.getSelectedItem());
         boolean isAttributeRetained = "true".equalsIgnoreCase((String) parameterRetainAttribute.getSelectedItem());
         int semicircleLineSegment = Integer.valueOf(((String) parameterTextFieldSemicircleLineSegment.getSelectedItem()));
-        Datasource resultDatasource = parameterSaveDataset.getResultDatasource() == null ? datasetVector.getDatasource() : parameterSaveDataset.getResultDatasource();
+        Datasource resultDatasource = parameterSaveDataset.getResultDatasource();
         String resultName = parameterSaveDataset.getDatasetName();
 
         DatasetVectorInfo vectorInfo = new DatasetVectorInfo();

@@ -301,9 +301,8 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    buttonRun.setEnabled(false);
-                    buttonRun.setToolTipText("");
-                    buttonRun.removeActionListener(cancelListener);
+                    buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_stop_now.png"));
+                    buttonRun.setToolTipText(CommonProperties.getString(CommonProperties.Pause));
                     progressBar.setForegroundColor(CACEL_FOREGROUNDCOLOR);
                 }
             });
