@@ -5,6 +5,7 @@ import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalEvent;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
+import com.supermap.desktop.process.parameter.events.ParameterValueSelectedEvent;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
@@ -24,6 +25,9 @@ public abstract class AbstractParameter implements IParameter {
 	protected IParameterPanel panel;
 	public static final String PROPERTY_VALE = "value";
 	private IParameters parameters;
+
+	public static final String DO_NOT_CARE = new String("Don't Care");
+	public static final String NO = new String("NO");
 
 	private List<PropertyChangeListener> propertyChangeListeners = new ArrayList<>();
 	private List<ParameterValueLegalListener> parameterValueLegalListeners = new ArrayList<>();
@@ -117,6 +121,16 @@ public abstract class AbstractParameter implements IParameter {
 
 	public void setParameters(IParameters parameters) {
 		this.parameters = parameters;
+	}
+
+	public Object isValueSelected(String fieldName, Object value) {
+		for (ParameterValueLegalListener parameterValueLegalListener : parameterValueLegalListeners) {
+			Object valueSelected = parameterValueLegalListener.isValueSelected(new ParameterValueSelectedEvent(this, fieldName, value));
+			if (valueSelected != DO_NOT_CARE) {
+				return valueSelected;
+			}
+		}
+		return DO_NOT_CARE;
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.tasks.ProcessTask;
 
+import javax.swing.*;
 import java.util.Vector;
 
 /**
@@ -29,6 +30,8 @@ public interface IProcess {
 	IParameters getParameters();
 
 	void run();
+
+	Icon getIcon();
 
 	void addRunningListener(RunningListener listener);
 

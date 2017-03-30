@@ -61,10 +61,4 @@ public class ParameterCheckBoxPanel extends SwingPanel implements IParameterPane
 			}
 		});
 	}
-
-
-	@Override
-	public Object getPanel() {
-		return this;
-	}
 }
