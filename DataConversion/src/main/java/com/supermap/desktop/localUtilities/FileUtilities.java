@@ -87,7 +87,9 @@ public class FileUtilities {
                         SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[8], "kml", "kmz"),
                         SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[9], "dem", "bil", "raw", "bsq", "bip", "b"),
                         SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[10], "txt"),
-                        SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[11], "dgn", "vct"));
+                        SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[11], "dgn", "vct"),
+                        SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnew()[12], "gpx")
+                );
                 SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
                         DataConversionProperties.getString("String_FileType"), "CommonFunction", "OpenMany");
             } else {
@@ -100,7 +102,9 @@ public class FileUtilities {
                         SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[5], "3ds"),
                         SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[6], "kml", "kmz"),
                         SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[7], "dem", "bil", "raw", "bsq", "bip"),
-                        SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[8], "vct"));
+                        SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[8], "vct"),
+                        SmFileChoose.createFileFilter(FileTypeLocale.getDescriptionnewforlinux()[9], "gpx")
+                );
                 SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
                         DataConversionProperties.getString("String_FileType"), "CommonFunction", "OpenMany");
             }

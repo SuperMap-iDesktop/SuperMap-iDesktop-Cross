@@ -6,6 +6,7 @@ import com.supermap.desktop.Interface.IImportPanelFactory;
 import com.supermap.desktop.Interface.IImportSettingFactory;
 import com.supermap.desktop.Interface.IPanelImport;
 import com.supermap.desktop.Interface.IPanelModel;
+import com.supermap.desktop.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.*;
@@ -242,7 +243,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
     private void replaceImportInfo(int selectRow) {
         IPanelImport panelImport = panelImports.get(selectRow);
         if (null != panelImport.getImportInfo().getImportSetting()) {
-            labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), panelImport.getImportInfo().getImportSetting().getSourceFileType().toString()));
+            setImportTitle(panelImport.getImportInfo().getImportSetting());
             initComboBoxColumns();
             CommonUtilities.replace(panelImportInfo, (JPanel) panelImport);
             setButtonState();
@@ -429,26 +430,28 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
         this.labelTitle.setHorizontalAlignment(SwingConstants.CENTER);
         this.labelTitle.setOpaque(true);
     }
+
     public void setComponentName() {
-        ComponentUIUtilities.setName(this.splitPane,"DataImportDialog_splitPane");
-        ComponentUIUtilities.setName(this.contentPane,"DataImportDialog_contentPane");
-        ComponentUIUtilities.setName(this.table,"DataImportDialog_table");
-        ComponentUIUtilities.setName(this.buttonAddFile,"DataImportDialog_buttonAddFile");
-        ComponentUIUtilities.setName(this.buttonAddDir,"DataImportDialog_buttonAddDir");
-        ComponentUIUtilities.setName(this.buttonDelete,"DataImportDialog_buttonDelete");
-        ComponentUIUtilities.setName(this.buttonSelectAll,"DataImportDialog_buttonSelectAll");
-        ComponentUIUtilities.setName(this.buttonInvertSelect,"DataImportDialog_buttonInvertSelect");
-        ComponentUIUtilities.setName(this.buttonImport,"DataImportDialog_buttonImport");
-        ComponentUIUtilities.setName(this.buttonClose,"DataImportDialog_buttonClose");
-        ComponentUIUtilities.setName(this.panelFiles,"DataImportDialog_panelFiles");
-        ComponentUIUtilities.setName(this.labelTitle,"DataImportDialog_labelTitle");
-        ComponentUIUtilities.setName(this.labelRemind,"DataImportDialog_labelRemind");
-        ComponentUIUtilities.setName(this.panelParams,"DataImportDialog_panelParams");
-        ComponentUIUtilities.setName(this.panelImportInfo,"DataImportDialog_panelImportInfo");
-        ComponentUIUtilities.setName(this.checkBoxAutoClose,"DataImportDialog_checkBoxAutoClose");
-        ComponentUIUtilities.setName(this.toolBar,"DataImportDialog_toolBar");
-        ComponentUIUtilities.setName(this.scrollPane,"DataImportDialog_scrollPane");
+        ComponentUIUtilities.setName(this.splitPane, "DataImportDialog_splitPane");
+        ComponentUIUtilities.setName(this.contentPane, "DataImportDialog_contentPane");
+        ComponentUIUtilities.setName(this.table, "DataImportDialog_table");
+        ComponentUIUtilities.setName(this.buttonAddFile, "DataImportDialog_buttonAddFile");
+        ComponentUIUtilities.setName(this.buttonAddDir, "DataImportDialog_buttonAddDir");
+        ComponentUIUtilities.setName(this.buttonDelete, "DataImportDialog_buttonDelete");
+        ComponentUIUtilities.setName(this.buttonSelectAll, "DataImportDialog_buttonSelectAll");
+        ComponentUIUtilities.setName(this.buttonInvertSelect, "DataImportDialog_buttonInvertSelect");
+        ComponentUIUtilities.setName(this.buttonImport, "DataImportDialog_buttonImport");
+        ComponentUIUtilities.setName(this.buttonClose, "DataImportDialog_buttonClose");
+        ComponentUIUtilities.setName(this.panelFiles, "DataImportDialog_panelFiles");
+        ComponentUIUtilities.setName(this.labelTitle, "DataImportDialog_labelTitle");
+        ComponentUIUtilities.setName(this.labelRemind, "DataImportDialog_labelRemind");
+        ComponentUIUtilities.setName(this.panelParams, "DataImportDialog_panelParams");
+        ComponentUIUtilities.setName(this.panelImportInfo, "DataImportDialog_panelImportInfo");
+        ComponentUIUtilities.setName(this.checkBoxAutoClose, "DataImportDialog_checkBoxAutoClose");
+        ComponentUIUtilities.setName(this.toolBar, "DataImportDialog_toolBar");
+        ComponentUIUtilities.setName(this.scrollPane, "DataImportDialog_scrollPane");
     }
+
     private void initTableTheme() {
         TableColumn fileNameColumn = table.getColumn(table.getModel().getColumnName(ImportTableModel.COLUMN_FILENAME));
         TableColumn fileTypeColumn = table.getColumn(table.getModel().getColumnName(ImportTableModel.COLUMN_FILETYPE));
@@ -694,7 +697,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                     newImportSetting.setSourceFilePath(filePath);
                     tempFileInfo.setImportSetting(newImportSetting);
                     PanelImport panelImport = (PanelImport) importPanelFactory.createPanelImport(DataImportDialog.this, tempFileInfo);
-                    labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), newImportSetting.getSourceFileType().toString()));
+                    setImportTitle(newImportSetting);
                     int selectRow = table.getSelectedRow();
                     panelImports.remove(selectRow);
                     panelImports.add(selectRow, panelImport);
@@ -702,6 +705,15 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
                 }
             };
             this.steppedComboBox.addItemListener(this.aListener);
+        }
+    }
+
+    private void setImportTitle(ImportSetting importSetting) {
+        if (importSetting instanceof ImportSettingGPX) {
+            //If you want to replace your title for import file,change the message
+            labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), "GPS"));
+        } else {
+            labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), importSetting.getSourceFileType().toString()));
         }
     }
 
@@ -783,7 +795,7 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
             model.addRow(importInfo);
             if (panelImports.size() > 0) {
                 table.setRowSelectionInterval(table.getRowCount() - 1, table.getRowCount() - 1);
-                labelTitle.setText(MessageFormat.format(DataConversionProperties.getString("String_ImportFill"), importSetting.getSourceFileType().name()));
+                setImportTitle(importSetting);
                 initComboBoxColumns();
                 CommonUtilities.replace(panelImportInfo, panelImport);
                 setButtonState();
