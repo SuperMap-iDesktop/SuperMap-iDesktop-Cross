@@ -656,6 +656,11 @@ public class DiglogMapOutputPicture extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
+				// 这里对文件名进行校正，当文件类型为空，并且文件名中含有小数点，取小数点前字符为文件名（文件名中不应该有小数点）
+				if (imageType == null && fileName.indexOf(".") > 0) {
+					fileName = fileName.substring(0, fileName.indexOf("."));
+				}
+				// 设置文件选择器选择的文件
 				exportPathFileChoose.setSelectedFile(new File(fileName));
 				// 当数据类型不为空时，打开文件选择对话框时，设置筛选器类型为当前数据类型
 				if (imageType != null) {
