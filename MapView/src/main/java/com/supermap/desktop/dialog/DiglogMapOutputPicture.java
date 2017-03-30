@@ -1,6 +1,5 @@
 package com.supermap.desktop.dialog;
 
-import com.sun.java.swing.plaf.windows.WindowsFileChooserUI;
 import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
@@ -19,7 +18,6 @@ import com.supermap.desktop.ui.controls.borderPanel.PanelButton;
 import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.ImageType;
 import com.supermap.mapping.Map;
-import sun.swing.plaf.synth.SynthFileChooserUI;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -76,9 +74,6 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private WaringTextField waringTextFieldRight;
 	private WaringTextField waringTextFieldBottom;
 	private MapOutputPictureProgressCallable mapOutputPictureProgressCallable;
-
-	private WindowsFileChooserUI windowsFileChooserUI;
-	private SynthFileChooserUI synthFileChooserUI;
 
 	private static final int DEFAULT_LABELSIZE = 80;
 	private static final int DEFAULT_GAP = 16;
@@ -576,6 +571,8 @@ public class DiglogMapOutputPicture extends SmDialog {
 					try {
 						// 尝试获取子类中是否有getFileName（）方法
 						Method getFileName = ui.getClass().getDeclaredMethod("getFileName");
+						// 确保方法可用
+						getFileName.setAccessible(true);
 						if (getFileName != null) {
 							tempFileName = (String) getFileName.invoke(ui);
 						}
@@ -601,7 +598,9 @@ public class DiglogMapOutputPicture extends SmDialog {
 						}
 						try {
 							// 尝试获取子类中是否有setFileName（）方法
-							Method setFileName = ui.getClass().getMethod("setFileName", String.class);
+							Method setFileName = ui.getClass().getDeclaredMethod("setFileName", String.class);
+							// 确保方法可用
+							setFileName.setAccessible(true);
 							if (setFileName != null) {
 								setFileName.invoke(ui, tempFileName);
 								fileName = tempFileName;
