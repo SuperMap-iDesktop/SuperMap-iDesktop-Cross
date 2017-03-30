@@ -74,7 +74,7 @@ public class UploadTask extends LBSTask {
         setCancel(true);
         if (!UploadUtils.getBatchUploadFileWorker(this.fileInfo).isFinished()) {
             SmOptionPane optionPane = new SmOptionPane();
-            if (optionPane.showConfirmDialogWithCancle(MessageFormat.format(LBSClientProperties.getString("String_UpLoadInfo"), this.fileInfo.getFileName())) == JOptionPane.YES_OPTION) {
+            if (optionPane.showConfirmDialogWithCancel(MessageFormat.format(LBSClientProperties.getString("String_UpLoadInfo"), this.fileInfo.getFileName())) == JOptionPane.YES_OPTION) {
                 UploadUtils.getBatchUploadFileWorker(fileInfo).stopUpload();
                 removeUploadInfoItem();
                 // 未完成的任务暂存在恢复任务列表中，可实现恢复

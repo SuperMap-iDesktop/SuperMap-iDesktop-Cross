@@ -1,6 +1,7 @@
 package com.supermap.desktop.localUtilities;
 
 import com.supermap.data.conversion.FileType;
+import com.supermap.desktop.UserDefineType.UserDefineFileType;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.FileTypeLocale;
 
@@ -15,15 +16,15 @@ public class FiletypeUtilities {
     }
 
     // 栅格类型文件
-    private static final FileType[] gridValue = {FileType.BMP, FileType.SIT, FileType.GRD, FileType.RAW,
+    private static final Object[] gridValue = {FileType.BMP, FileType.SIT, FileType.GRD, FileType.RAW,
             FileType.IMG, FileType.TIF, FileType.PNG, FileType.JPG, FileType.JP2,
             FileType.GIF, FileType.GBDEM, FileType.USGSDEM, FileType.BSQ, FileType.BIP, FileType.BIL,
             FileType.MrSID, FileType.ECW, FileType.TEMSClutter};
     // 矢量文件
-    private static final FileType[] vectorValue = {FileType.WOR, FileType.SCV, FileType.DXF, FileType.SHP,
+    private static final Object[] vectorValue = {FileType.WOR, FileType.SCV, FileType.DXF, FileType.SHP,
             FileType.E00, FileType.MIF, FileType.TAB, FileType.MAPGIS, FileType.ModelOSG, FileType.Model3DS,
             FileType.ModelDXF, FileType.ModelX, FileType.KML, FileType.KMZ, FileType.DWG, FileType.VCT, FileType.DBF,
-            FileType.GJB5068, FileType.DGN, FileType.TEMSVector, FileType.CSV, FileType.TEMSBuildingVector};
+            FileType.GJB5068, FileType.DGN, FileType.TEMSVector, FileType.CSV, FileType.TEMSBuildingVector,UserDefineFileType.GPX};
 
     /**
      * 根据文件路径，文件过滤项获取文件中文类型
@@ -90,6 +91,8 @@ public class FiletypeUtilities {
             fileType = DataConversionProperties.getString("String_FileTypeECW");
         } else if (filePath.equalsIgnoreCase(FileTypeLocale.DEM_STRING)) {
             fileType = DataConversionProperties.getString("String_FormImport_ArcGIS");
+        } else if (filePath.equalsIgnoreCase(FileTypeLocale.GPX_STRING)) {
+            fileType = DataConversionProperties.getString("String_FormImport_GPX");
         } else if (fileFilter.equalsIgnoreCase(DataConversionProperties.getString("string_filetype_lidar"))) {
             // LIDAR文件(*.txt)
             fileType = DataConversionProperties.getString("String_FormImport_FilterLIDAR");
@@ -106,8 +109,8 @@ public class FiletypeUtilities {
      * @param alias
      * @return
      */
-    public static FileType getFileType(String alias) {
-        FileType result = null;
+    public static Object getFileType(String alias) {
+        Object result = null;
         if (alias.equals(DataConversionProperties.getString("String_FileTypeDWG"))) {
             result = FileType.DWG;
         } else if (alias.equals(DataConversionProperties.getString("String_FileTypeDXF"))) {
@@ -184,6 +187,8 @@ public class FiletypeUtilities {
             result = FileType.TEMSBuildingVector;
         } else if (alias.equals(DataConversionProperties.getString("String_FileTypeTEMSVector"))) {
             result = FileType.TEMSVector;
+        }else if (alias.equals(DataConversionProperties.getString("String_FileTypeGPS"))) {
+            result = UserDefineFileType.GPX;
         }
 
         return result;
@@ -194,7 +199,7 @@ public class FiletypeUtilities {
      *
      * @return
      */
-    public static FileType[] getGridValue() {
+    public static Object[] getGridValue() {
         return gridValue;
     }
 
@@ -203,7 +208,7 @@ public class FiletypeUtilities {
      *
      * @return
      */
-    public static FileType[] getVectorValue() {
+    public static Object[] getVectorValue() {
         return vectorValue;
     }
 
@@ -213,8 +218,8 @@ public class FiletypeUtilities {
      * @param fileType
      * @return
      */
-    public static boolean isGridType(FileType fileType) {
-        for (FileType gridType : gridValue) {
+    public static boolean isGridType(Object fileType) {
+        for (Object gridType : gridValue) {
             if (gridType.equals(fileType)) {
                 return true;
             }
@@ -228,8 +233,8 @@ public class FiletypeUtilities {
      * @param fileType
      * @return
      */
-    public static boolean isVectorType(FileType fileType) {
-        for (FileType vectorType : vectorValue) {
+    public static boolean isVectorType(Object fileType) {
+        for (Object vectorType : vectorValue) {
             if (vectorType.equals(fileType)) {
                 return true;
             }

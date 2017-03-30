@@ -1,35 +1,19 @@
 package com.supermap.desktop.CtrlAction.SQLQuery;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
-import com.supermap.data.JoinItems;
-import com.supermap.data.QueryParameter;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.CtrlAction.SQLQuery.components.FieldInfoTable;
-import com.supermap.desktop.CtrlAction.SQLQuery.components.ISQLBuildComponent;
-import com.supermap.desktop.CtrlAction.SQLQuery.components.PanelSaveSearchResult;
-import com.supermap.desktop.CtrlAction.SQLQuery.components.SQLTable;
-import com.supermap.desktop.CtrlAction.SQLQuery.components.SQLTextarea;
-import com.supermap.desktop.CtrlAction.SQLQuery.components.SQLTextfield;
+import com.supermap.desktop.CtrlAction.SQLQuery.components.*;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.ui.controls.TreeNodeData;
-import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.dialogs.dialogJoinItems.JDialogJoinItems;
 import com.supermap.desktop.utilities.MapUtilities;
@@ -42,34 +26,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.event.*;
+import javax.swing.tree.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -177,6 +137,7 @@ public class JDialogSQLQuery extends SmDialog {
 		this.componentList.add(this.buttonClose);
 		this.setFocusTraversalPolicy(policy);
 		this.getRootPane().setDefaultButton(this.buttonClose);
+		setComponentName();
 	}
 
 	/**
@@ -201,7 +162,53 @@ public class JDialogSQLQuery extends SmDialog {
 		buttonGroup.add(radioButtonQuerySpaceAndProperty);
 		this.getRootPane().setDefaultButton(buttonQuery);
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.panelContent, "JDialogSQLQuery_panelContent");
+		ComponentUIUtilities.setName(this.panelSelectSearchData, "JDialogSQLQuery_panelSelectSearchData");
+		ComponentUIUtilities.setName(this.panelShowResult, "JDialogSQLQuery_panelShowResult");
+		ComponentUIUtilities.setName(this.panelSaveSearchResult, "JDialogSQLQuery_panelSaveSearchResult");
+		ComponentUIUtilities.setName(this.panelButton, "JDialogSQLQuery_panelButton");
+		ComponentUIUtilities.setName(this.labelFieldInfo, "JDialogSQLQuery_labelFieldInfo");
+		ComponentUIUtilities.setName(this.labelQueryMode, "JDialogSQLQuery_labelQueryMode");
+		ComponentUIUtilities.setName(this.labelOperator, "JDialogSQLQuery_labelOperator");
+		ComponentUIUtilities.setName(this.labelCommonFunction, "JDialogSQLQuery_labelCommonFunction");
+		ComponentUIUtilities.setName(this.labelGoTO, "JDialogSQLQuery_labelGoTO");
+		ComponentUIUtilities.setName(this.labelQueryField, "JDialogSQLQuery_labelQueryField");
+		ComponentUIUtilities.setName(this.labelQueryCondition, "JDialogSQLQuery_labelQueryCondition");
+		ComponentUIUtilities.setName(this.labelGroupField, "JDialogSQLQuery_labelGroupField");
+		ComponentUIUtilities.setName(this.labelOrderByField, "JDialogSQLQuery_labelOrderByField");
+		ComponentUIUtilities.setName(this.buttonJoinItems, "JDialogSQLQuery_buttonJoinItems");
+		ComponentUIUtilities.setName(this.buttonImport, "JDialogSQLQuery_buttonImport");
+		ComponentUIUtilities.setName(this.buttonExport, "JDialogSQLQuery_buttonExport");
+		ComponentUIUtilities.setName(this.buttonGetAllValue, "JDialogSQLQuery_buttonGetAllValue");
+		ComponentUIUtilities.setName(this.buttonQuery, "JDialogSQLQuery_buttonQuery");
+		ComponentUIUtilities.setName(this.buttonClear, "JDialogSQLQuery_buttonClear");
+		ComponentUIUtilities.setName(this.buttonClose, "JDialogSQLQuery_buttonClose");
+		ComponentUIUtilities.setName(this.textFieldGOTO, "JDialogSQLQuery_textFieldGOTO");
+		ComponentUIUtilities.setName(this.textFieldGroupField, "JDialogSQLQuery_textFieldGroupField");
+		ComponentUIUtilities.setName(this.radioButtonQuerySpaceAndProperty, "JDialogSQLQuery_radioButtonQuerySpaceAndProperty");
+		ComponentUIUtilities.setName(this.radioButtonQueryAttributeInfo, "JDialogSQLQuery_radioButtonQueryAttributeInfo");
+		ComponentUIUtilities.setName(this.checkBoxShowTabular, "JDialogSQLQuery_checkBoxShowTabular");
+		ComponentUIUtilities.setName(this.checkBoxHighLigthMap, "JDialogSQLQuery_checkBoxHighLigthMap");
+		ComponentUIUtilities.setName(this.checkBoxHighLigthScene, "JDialogSQLQuery_checkBoxHighLigthScene");
+		ComponentUIUtilities.setName(this.jComboBoxOperator, "JDialogSQLQuery_jComboBoxOperator");
+		ComponentUIUtilities.setName(this.jComboBoxAggregationFunction, "JDialogSQLQuery_jComboBoxAggregationFunction");
+		ComponentUIUtilities.setName(this.jComboBoxMathsOperation, "JDialogSQLQuery_jComboBoxMathsOperation");
+		ComponentUIUtilities.setName(this.jComboBoxStringFunction, "JDialogSQLQuery_jComboBoxStringFunction");
+		ComponentUIUtilities.setName(this.jComboBoxTimeFunction, "JDialogSQLQuery_jComboBoxTimeFunction");
+		ComponentUIUtilities.setName(this.scrollPaneWorkspaceTree, "JDialogSQLQuery_scrollPaneWorkspaceTree");
+		ComponentUIUtilities.setName(this.workspaceTree, "JDialogSQLQuery_workspaceTree");
+		ComponentUIUtilities.setName(this.scrollPaneFieldInfo, "JDialogSQLQuery_scrollPaneFieldInfo");
+		ComponentUIUtilities.setName(this.tableFieldInfo, "JDialogSQLQuery_tableFieldInfo");
+		ComponentUIUtilities.setName(this.scrollPaneAllValue, "JDialogSQLQuery_scrollPaneAllValue");
+		ComponentUIUtilities.setName(this.listAllValue, "JDialogSQLQuery_listAllValue");
+		ComponentUIUtilities.setName(this.scrollPaneQueryField, "JDialogSQLQuery_scrollPaneQueryField");
+		ComponentUIUtilities.setName(this.textareaQueryField, "JDialogSQLQuery_textareaQueryField");
+		ComponentUIUtilities.setName(this.scrollPaneQueryCondition, "JDialogSQLQuery_scrollPaneQueryCondition");
+		ComponentUIUtilities.setName(this.textareaQueryCondition, "JDialogSQLQuery_textareaQueryCondition");
+		ComponentUIUtilities.setName(this.scrollPaneOrderByField, "JDialogSQLQuery_scrollPaneOrderByField");
+		ComponentUIUtilities.setName(this.sqlTableOrderByField, "JDialogSQLQuery_sqlTableOrderByField");
+	}
 	/**
 	 * 初始化控件状态
 	 */

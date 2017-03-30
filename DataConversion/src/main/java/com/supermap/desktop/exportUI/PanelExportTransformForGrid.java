@@ -219,7 +219,6 @@ public class PanelExportTransformForGrid extends PanelExportTransform {
     }
     @Override
     public void setComponentName() {
-        super.setComponentName();
         ComponentUIUtilities.setName(this.owner,"owner");
         ComponentUIUtilities.setName(this.labelCompressionRatio,"labelCompressionRatio");
         ComponentUIUtilities.setName(this.textFieldCompressionRatio,"textFieldCompressionRatio");

@@ -149,7 +149,7 @@ public class PanelTransformFactory implements IPanelTransformFactory {
     private boolean isVectorTypes(ArrayList<PanelImport> panelImports) {
         int count = 0;
         for (PanelImport tempPanelImport : panelImports) {
-            for (FileType tempFileType : FiletypeUtilities.getVectorValue()) {
+            for (Object tempFileType : FiletypeUtilities.getVectorValue()) {
                 if (tempPanelImport.getImportInfo().getImportSetting().getSourceFileType() == tempFileType) {
                     count++;
                 }
@@ -162,7 +162,7 @@ public class PanelTransformFactory implements IPanelTransformFactory {
     private boolean isGridTypes(ArrayList<PanelImport> panelImports) {
         int count = 0;
         for (PanelImport tempPanelImport : panelImports) {
-            for (FileType tempFileType : FiletypeUtilities.getGridValue()) {
+            for (Object tempFileType : FiletypeUtilities.getGridValue()) {
                 if (tempPanelImport.getImportInfo().getImportSetting().getSourceFileType() == tempFileType) {
                     count++;
                 }

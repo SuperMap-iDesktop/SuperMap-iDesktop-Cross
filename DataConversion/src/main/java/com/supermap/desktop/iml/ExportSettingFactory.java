@@ -2,13 +2,15 @@ package com.supermap.desktop.iml;
 
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Interface.IExportSettingFactory;
+import com.supermap.desktop.UserDefineType.ExportSettingGPX;
+import com.supermap.desktop.UserDefineType.UserDefineFileType;
 
 /**
  * Created by xie on 2016/10/28.
  */
 public class ExportSettingFactory implements IExportSettingFactory {
     @Override
-    public ExportSetting createExportSetting(FileType fileType) {
+    public ExportSetting createExportSetting(Object fileType) {
         ExportSetting result = new ExportSetting();
         if (fileType.equals(FileType.BMP)) {
             result = new ExportSettingBMP();
@@ -42,6 +44,8 @@ public class ExportSettingFactory implements IExportSettingFactory {
             result = new ExportSettingVCT();
         } else if (fileType.equals(FileType.CSV)) {
             result = new ExportSettingCSV();
+        }else if(fileType.equals(UserDefineFileType.GPX)){
+            result = new ExportSettingGPX();
         }
         // 复制目标文件路径到新的exportsetting中
         return result;

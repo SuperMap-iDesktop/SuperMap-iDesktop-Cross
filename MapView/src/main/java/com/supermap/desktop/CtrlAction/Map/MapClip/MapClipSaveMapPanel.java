@@ -5,6 +5,10 @@ import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * @author YuanR
@@ -19,6 +23,34 @@ public class MapClipSaveMapPanel extends JPanel {
 	private WarningOrHelpProvider warningOrHelpProvider;
 	private JTextField saveMapTextField;
 
+	public JTextField getSaveMapTextField() {
+		return saveMapTextField;
+	}
+
+	public JCheckBox getCheckBox() {
+		return resultMapCheckBox;
+	}
+
+	private ActionListener checkBoxActionListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (resultMapCheckBox.isSelected()) {
+				saveMapTextField.setEnabled(true);
+			} else {
+				saveMapTextField.setText("");
+				saveMapTextField.setEnabled(false);
+			}
+		}
+	};
+
+	private CaretListener textFieldCaretListener = new CaretListener() {
+		@Override
+		public void caretUpdate(CaretEvent e) {
+			//todo
+		}
+	};
+
+
 	public CompTitledPane getCompTitledPane() {
 		return compTitledPane;
 	}
@@ -27,6 +59,8 @@ public class MapClipSaveMapPanel extends JPanel {
 		initComponent();
 		initLayout();
 		initResources();
+		registEvents();
+
 	}
 
 	private void initComponent() {
@@ -34,6 +68,7 @@ public class MapClipSaveMapPanel extends JPanel {
 		this.resultMapCaption = new JLabel("ResultMapCaption");
 		this.warningOrHelpProvider = new WarningOrHelpProvider(MapViewProperties.getString("String_MapClip_SaveMap_Info"), false);
 		this.saveMapTextField = new JTextField();
+		this.saveMapTextField.setEnabled(false);
 		this.compTitledPane = new CompTitledPane(this.resultMapCheckBox, this);
 	}
 
@@ -59,5 +94,17 @@ public class MapClipSaveMapPanel extends JPanel {
 	private void initResources() {
 		this.resultMapCheckBox.setText(MapViewProperties.getString("String_MapClip_SaveMap"));
 		this.resultMapCaption.setText(MapViewProperties.getString("String_MapClip_ResultMapCaption"));
+	}
+
+	private void registEvents() {
+		removeEvents();
+		this.resultMapCheckBox.addActionListener(this.checkBoxActionListener);
+		this.saveMapTextField.addCaretListener(this.textFieldCaretListener);
+
+	}
+
+	private void removeEvents() {
+		this.resultMapCheckBox.addActionListener(this.checkBoxActionListener);
+		this.saveMapTextField.addCaretListener(this.textFieldCaretListener);
 	}
 }

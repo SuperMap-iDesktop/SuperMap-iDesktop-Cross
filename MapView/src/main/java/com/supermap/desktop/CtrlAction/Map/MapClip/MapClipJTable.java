@@ -12,26 +12,30 @@ import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
+import javax.swing.table.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import static com.supermap.desktop.CtrlAction.Map.MapClip.MapClipTableModel.*;
 
 /**
  * @author YuanR
- * 2017.3.28
+ *         2017.3.28
  */
 public class MapClipJTable extends MutiTable {
 
+	private TableColumn parClip;
 	private TableColumn layerCaption;
 	private TableColumn aimDatasourceColumn;
 	private TableColumn clipTypeColumn;
 	private TableColumn eraseColumn;
+	public MapClipTableModel mapClipTableModel;
 
-	private MapClipTableModel mapClipTableModel;
-
+	public MapClipTableModel getMapClipTableModel() {
+		return mapClipTableModel;
+	}
 
 	public MapClipJTable() {
 		super();
@@ -58,6 +62,7 @@ public class MapClipJTable extends MutiTable {
 		String[] erase = {MapViewProperties.getString("String_MapClip_Yes"), MapViewProperties.getString("String_MapClip_No")};
 		JComboBox eraseComboBox = new JComboBox(erase);
 
+		this.parClip = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_ISCLIP));
 		this.layerCaption = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_LAYERCAPTION));
 		this.aimDatasourceColumn = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_AIMDATASOURCE));
 		this.clipTypeColumn = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_CLIPTYPE));
@@ -70,6 +75,10 @@ public class MapClipJTable extends MutiTable {
 		//设置渲染器
 		this.aimDatasourceColumn.setCellRenderer(new TableDataCellRender());
 		this.layerCaption.setCellRenderer(new MapClipLayerCaptionTableRender());
+
+		// 给是否参与裁剪表头添加CheckBox
+		this.parClip.setHeaderRenderer(new CheckHeaderCellRenderer(this, MapViewProperties.getString("String_MapClip_IsClip"), false));
+
 	}
 
 	/**
@@ -97,9 +106,12 @@ public class MapClipJTable extends MutiTable {
 			String targetDataset = resultLayer.get(i).getDataset().getName() + "_1";
 			String clipType = MapViewProperties.getString("String_MapClip_In");
 			String erase = MapViewProperties.getString("String_MapClip_No");
-			mapClipTableModel.addRowLayerInfo(clip, layerCaption, targetDatasource, targetDataset, clipType, erase);
+			boolean exactClip = false;
+			this.mapClipTableModel.addRowLayerInfo(clip, layerCaption, targetDatasource, targetDataset, clipType, erase, exactClip);
 			this.updateUI();
 		}
+		// 设置首行记录被选中
+		this.setRowSelectionInterval(0, 0);
 	}
 
 	private void registEvents() {
@@ -120,6 +132,65 @@ public class MapClipJTable extends MutiTable {
 					row, column);
 			this.setText(((Layer) value).getCaption());
 			return this;
+		}
+	}
+
+	/**
+	 * 负责对“参与裁剪”列头做渲染
+	 */
+	class CheckHeaderCellRenderer implements TableCellRenderer {
+		AbstractTableModel tableModel;
+		JTableHeader tableHeader;
+		final JCheckBox checkBox;
+
+		/*
+		*parm table要渲染的table，titletable标题，isSelectedCheckBox是否选中checkbox
+		 */
+		public CheckHeaderCellRenderer(JTable table, String title, boolean isSelectedCheckBox) {
+			this.tableModel = (AbstractTableModel) table.getModel();
+			this.tableHeader = table.getTableHeader();
+			this.checkBox = new JCheckBox(tableModel.getColumnName(0));
+			this.checkBox.setSelected(isSelectedCheckBox);
+			this.checkBox.setText(title);
+			if (isSelectedCheckBox) {
+				for (int i = 0; i < tableModel.getRowCount(); i++) {
+					tableModel.setValueAt(isSelectedCheckBox, i, COLUMN_INDEX_ISCLIP);
+				}
+				tableHeader.repaint();
+			}
+			this.tableHeader.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					if (e.getClickCount() > 0) {
+						//获得选中列
+						int selectColumn = tableHeader.columnAtPoint(e.getPoint());
+						if (selectColumn == 0) {
+							boolean value = !checkBox.isSelected();
+							checkBox.setSelected(value);
+							for (int i = 0; i < tableModel.getRowCount(); i++) {
+								tableModel.setValueAt(value, i, COLUMN_INDEX_ISCLIP);
+							}
+							tableHeader.repaint();
+						}
+					}
+				}
+			});
+		}
+
+		@Override
+		public Component getTableCellRendererComponent(JTable table, Object value,
+		                                               boolean isSelected, boolean hasFocus, int row, int column) {
+			String valueStr = (String) value;
+			JLabel label = new JLabel(valueStr);
+			label.setHorizontalAlignment(SwingConstants.CENTER); // 表头标签居左边
+			this.checkBox.setHorizontalAlignment(SwingConstants.CENTER);// 表头checkBox居中
+//			checkBox.setBorderPainted(true);
+			JComponent component = (column == 0) ? checkBox : label;
+
+//			component.setForeground(table.getForeground());
+//			component.setBackground(table.getBackground());
+//			component.setFont(table.getFont());
+//			component.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+			return component;
 		}
 	}
 }

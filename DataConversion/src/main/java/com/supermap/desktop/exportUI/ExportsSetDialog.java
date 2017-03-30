@@ -111,7 +111,7 @@ public class ExportsSetDialog extends SmDialog implements IPanelModel {
             tableExports.setValueAt(targetFileType, selectrows[i], columnExporttype);
             if (columnExporttype == owner.COLUMN_EXPORTTYPE) {
                 //替换修改的行所在的界面
-                FileType fileType = FiletypeUtilities.getFileType(targetFileType.toString());
+                Object fileType = FiletypeUtilities.getFileType(targetFileType.toString());
                 ExportFileInfo fileInfo = fileInfos.get(selectrows[i]).getExportsFileInfo();
                 fileInfo.setFileType(fileType);
                 IExportSettingFactory exportSettingFactory = new ExportSettingFactory();
