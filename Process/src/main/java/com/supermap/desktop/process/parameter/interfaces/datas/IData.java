@@ -8,6 +8,8 @@ public interface IData {
 	String getName();
 
 	String getType();
+
+	Object getValue();
 }
 
 
