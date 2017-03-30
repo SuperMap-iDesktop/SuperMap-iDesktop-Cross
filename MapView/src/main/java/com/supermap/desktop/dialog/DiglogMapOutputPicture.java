@@ -337,10 +337,14 @@ public class DiglogMapOutputPicture extends SmDialog {
 			this.backTransparent.setEnabled(false);
 			return this.imageType.BMP;
 		} else if (str.contains(".gif")) {
+			// 当数据类型为gif时，此时分辨率属性不可用，设置分辨率为默认值
+			this.resolutionTextField.setText("96");
 			this.resolutionTextField.setEnable(false);
 			this.backTransparent.setEnabled(true);
 			return this.imageType.GIF;
 		} else if (str.contains(".eps")) {
+			// 当数据类型为eps时，此时分辨率属性不可用，设置分辨率为默认值
+			this.resolutionTextField.setText("96");
 			this.resolutionTextField.setEnable(false);
 			this.backTransparent.setEnabled(false);
 			return this.imageType.EPS;
@@ -488,8 +492,13 @@ public class DiglogMapOutputPicture extends SmDialog {
 		@Override
 		public void caretUpdate(CaretEvent e) {
 			// 判断文本框中输入的内容是否为纯数字
-			if (StringUtilities.isNumber(waringTextFieldLeft.getTextField().getText()) && StringUtilities.isNumber(waringTextFieldTop.getTextField().getText())
-					&& StringUtilities.isNumber(waringTextFieldRight.getTextField().getText()) && StringUtilities.isNumber(waringTextFieldBottom.getTextField().getText())) {
+			// 当文本框中内容存在千分位时，做一下处理
+			String leftText = waringTextFieldLeft.getTextField().getText().replace(",", "");
+			String bottomText = waringTextFieldBottom.getTextField().getText().replace(",", "");
+			String rightText = waringTextFieldRight.getTextField().getText().replace(",", "");
+			String topText = waringTextFieldTop.getTextField().getText().replace(",", "");
+			if (StringUtilities.isNumber(leftText) && StringUtilities.isNumber(bottomText)
+					&& StringUtilities.isNumber(rightText) && StringUtilities.isNumber(topText)) {
 				Rectangle2D rectangle2D = panelGroupBoxViewBounds.getRangeBound();
 				if (rectangle2D != null) {
 					outPutBounds = rectangle2D;
@@ -561,33 +570,32 @@ public class DiglogMapOutputPicture extends SmDialog {
 					// 当传入的数据名自带数据类型时，截取文件名
 					if (imageType != null) {
 						tempFileName = tempFileName.substring(0, tempFileName.length() - 4);
-					}
-
-					// 当文件选择器对话框文件名称不为空时，当改变数据类型时，不断获得最新的名称，并给其后追加数据类型
-					if (!StringUtilities.isNullOrEmpty(tempFileName)) {
-						// 获得文件类型的描述
-						String tempFileType = exportPathFileChoose.getFileFilter().getDescription();
-						if (tempFileType.indexOf(".png") > 0) {
-							tempFileName = tempFileName + ".png";
-//							imageType = ImageType.PNG;
-						} else if (tempFileType.indexOf(".jpg") > 0) {
-							tempFileName = tempFileName + ".jpg";
-//							imageType = ImageType.JPG;
-						} else if (tempFileType.indexOf(".bmp") > 0) {
-							tempFileName = tempFileName + ".bmp";
-//							imageType = ImageType.BMP;
-						} else if (tempFileType.indexOf(".gif") > 0) {
-							tempFileName = tempFileName + ".gif";
-//							imageType = ImageType.GIF;
-						} else if (tempFileType.indexOf(".eps") > 0) {
-							tempFileName = tempFileName + ".eps";
-//							imageType = ImageType.EPS;
-						} else if (tempFileType.indexOf(".tif") > 0) {
-							tempFileName = tempFileName + ".tif";
-//							imageType = ImageType.TIFF;
+						// 当文件选择器对话框文件名称不为空时，当改变数据类型时，不断获得最新的名称，并给其后追加数据类型
+						if (!StringUtilities.isNullOrEmpty(tempFileName)) {
+							// 获得文件类型的描述
+							String tempFileType = exportPathFileChoose.getFileFilter().getDescription();
+							if (tempFileType.indexOf(".png") > 0) {
+								tempFileName = tempFileName + ".png";
+//								imageType = ImageType.PNG;
+							} else if (tempFileType.indexOf(".jpg") > 0) {
+								tempFileName = tempFileName + ".jpg";
+//								imageType = ImageType.JPG;
+							} else if (tempFileType.indexOf(".bmp") > 0) {
+								tempFileName = tempFileName + ".bmp";
+//								imageType = ImageType.BMP;
+							} else if (tempFileType.indexOf(".gif") > 0) {
+								tempFileName = tempFileName + ".gif";
+//								imageType = ImageType.GIF;
+							} else if (tempFileType.indexOf(".eps") > 0) {
+								tempFileName = tempFileName + ".eps";
+//								imageType = ImageType.EPS;
+							} else if (tempFileType.indexOf(".tif") > 0) {
+								tempFileName = tempFileName + ".tif";
+//								imageType = ImageType.TIFF;
+							}
+							windowsFileChooserUI.setFileName(tempFileName);
+							fileName = tempFileName;
 						}
-						windowsFileChooserUI.setFileName(tempFileName);
-						fileName = tempFileName;
 					}
 				}
 			});

@@ -92,14 +92,13 @@ public class JPopupMenuBounds extends JPopupMenu {
 		} else {
 			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().addMouseListener(this.controlMouseListener);
 			((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().addKeyListener(this.controlKeyListener);
-
 		}
 	}
 
 	/**
 	 *
 	 */
-	private transient KeyListener controlKeyListener = new KeyAdapter() {
+	private KeyListener controlKeyListener = new KeyAdapter() {
 		@Override
 		public void keyTyped(KeyEvent e) {
 
@@ -113,7 +112,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 
 	private int flag;
 
-	private transient MouseListener controlMouseListener = new MouseAdapter() {
+	private MouseListener controlMouseListener = new MouseAdapter() {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -128,8 +127,6 @@ public class JPopupMenuBounds extends JPopupMenu {
 		}
 
 		private void doSome() {
-			MapControl control = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
-			control.removeMouseListener(this);
 			exitEdit();
 			//设置完之后，show出主窗体
 			if (dialog != null) {
@@ -174,7 +171,6 @@ public class JPopupMenuBounds extends JPopupMenu {
 		Dimension dimension = new Dimension(200, 20);
 
 		this.panelSelectTargetInfo = new MapActionSelectTargetInfoPanel();
-
 
 		this.menuItemSelectTarget = new JMenuItem("SelcetTarget");
 		this.menuItemSelectRectangle = new JMenuItem("SelectRectangle");
@@ -360,7 +356,8 @@ public class JPopupMenuBounds extends JPopupMenu {
 //		if(is)
 		final IFormMap activeForm = (IFormMap) Application.getActiveApplication().getActiveForm();
 		final MapControl activeMapControl = activeForm.getMapControl();
-		activeMapControl.setAction(Action.SELECT);
+		// 选择对象可框选--yuanR 2017.3.30
+		activeMapControl.setAction(Action.SELECT2);
 		activeMapControl.setLayout(null);
 		activeMapControl.add(this.panelSelectTargetInfo);
 
