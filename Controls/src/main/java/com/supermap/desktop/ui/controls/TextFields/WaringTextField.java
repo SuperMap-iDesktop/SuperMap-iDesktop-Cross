@@ -120,6 +120,10 @@ public class WaringTextField extends JPanel {
 		this("");
 	}
 
+	public WaringTextField(boolean isNeedDisplayAThousandPoints) {
+		this("", isNeedDisplayAThousandPoints);
+	}
+
 	public WaringTextField(String defaultValue) {
 		super();
 		this.defaultValue = defaultValue;
@@ -130,9 +134,12 @@ public class WaringTextField extends JPanel {
 	public WaringTextField(String defaultValue, boolean isNeedDisplayAThousandPoints) {
 		super();
 		this.isNeedDisplayAThousandPoints = isNeedDisplayAThousandPoints;
-		if (this.isNeedDisplayAThousandPoints) {
-			defaultValue = numberFormat(Double.valueOf(defaultValue));
+		if (!StringUtilities.isNullOrEmpty(defaultValue)) {
+			if (this.isNeedDisplayAThousandPoints) {
+				defaultValue = numberFormat(Double.valueOf(defaultValue));
+			}
 		}
+
 		this.defaultValue = defaultValue;
 		initComponents();
 		initLayout();
@@ -170,12 +177,12 @@ public class WaringTextField extends JPanel {
 			// 之前判断写得有问题，参考整型类型的判断方法
 			if (startValue == -(Double.MAX_VALUE) || endValue == Double.MAX_VALUE) {
 				if (startValue == -(Double.MAX_VALUE) && endValue == Double.MAX_VALUE) {
-					this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatWarning"), floatLength, "[" + "-∞" + "," + "+∞" + "]"));
+					this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatWarning"), floatLength, "(" + "-∞" + "," + "+∞" + ")"));
 				} else if (startValue == -(Double.MAX_VALUE)) {
-					this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatWarning"), floatLength, "[" + "-∞" + "," + format.format(endValue) + "]"));
+					this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatWarning"), floatLength, "(" + "-∞" + "," + format.format(endValue) + "]"));
 
 				} else if (endValue == Double.MAX_VALUE) {
-					this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatWarning"), floatLength, "[" + format.format(startValue) + "," + "+∞" + "]"));
+					this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatWarning"), floatLength, "[" + format.format(startValue) + "," + "+∞" + ")"));
 				}
 			} else {
 				this.labelWarning.setToolTipText(MessageFormat.format(ControlsProperties.getString("String_FloatWarning"), floatLength, "[" + format.format(startValue) + "," + format.format(endValue) + "]"));
@@ -189,6 +196,16 @@ public class WaringTextField extends JPanel {
 		}
 
 		this.labelWarning.setPreferredSize(new Dimension(23, 23));
+		// 每次设置完范围，当即做一次是否超限的判断
+		if (!SymbolSpinnerUtilties.isLegitNumber(startValue, endValue, text)) {
+			labelWarning.setText("");
+			labelWarning.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/warning.png"));
+		} else if (!StringUtilities.isNullOrEmpty(text) && StringUtilities.isNumber(text)) {
+			labelWarning.setText(null);
+			//当不需要警告图标时，设置一个透明的图标--yuanR 2017.3.27
+			labelWarning.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/clarity.png"));
+			fireListener(text);
+		}
 	}
 
 	/**
@@ -279,14 +296,14 @@ public class WaringTextField extends JPanel {
 		this.textField.setEnabled(enable);
 	}
 
-    //    供外部调用判断当前的textfield输入内容是否合法
-    public boolean isError() {
-        if (this.labelWarning.getIcon() != null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+	//    供外部调用判断当前的textfield输入内容是否合法
+	public boolean isError() {
+		if (this.labelWarning.getIcon() != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	public JLabel getLabelWarning() {
 		return labelWarning;

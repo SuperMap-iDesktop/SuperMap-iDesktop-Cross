@@ -189,13 +189,13 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	private void initCompont() {
 		this.mainPanel = new JPanel();
 		this.labelCurrentViewLeft = new JLabel("Left:");
-		this.textFieldCurrentViewLeft = new WaringTextField();
+		this.textFieldCurrentViewLeft = new WaringTextField(true);
 		this.labelCurrentViewBottom = new JLabel("Bottom:");
-		this.textFieldCurrentViewBottom = new WaringTextField();
+		this.textFieldCurrentViewBottom = new WaringTextField(true);
 		this.labelCurrentViewRight = new JLabel("Right:");
-		this.textFieldCurrentViewRight = new WaringTextField();
+		this.textFieldCurrentViewRight = new WaringTextField(true);
 		this.labelCurrentViewTop = new JLabel("Top:");
-		this.textFieldCurrentViewTop = new WaringTextField();
+		this.textFieldCurrentViewTop = new WaringTextField(true);
 
 		this.mapViewBoundsButton = new JButton("WholeMapBoundsButton");
 		this.currentViewBoundsButton = new JButton("ViewMapBoundsButton");
@@ -350,11 +350,11 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	 * 设置范围为地图范围
 	 */
 	private void setAsMapViewBounds() {
-		// 将范围设置为地图范围，进行去除千分位处理
-		String mapLeft = DoubleUtilities.getFormatString(this.mapViewL).replace(",", "");
-		String mapBottom = DoubleUtilities.getFormatString(this.mapViewB).replace(",", "");
-		String mapRight = DoubleUtilities.getFormatString(this.mapViewR).replace(",", "");
-		String mapTop = DoubleUtilities.getFormatString(this.mapViewT).replace(",", "");
+
+		String mapLeft = DoubleUtilities.getFormatString(this.mapViewL);
+		String mapBottom = DoubleUtilities.getFormatString(this.mapViewB);
+		String mapRight = DoubleUtilities.getFormatString(this.mapViewR);
+		String mapTop = DoubleUtilities.getFormatString(this.mapViewT);
 
 		this.textFieldCurrentViewLeft.getTextField().setText(mapLeft);
 		this.textFieldCurrentViewBottom.getTextField().setText(mapBottom);
@@ -372,31 +372,21 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		this.currentViewRight = this.mapControl.getMap().getViewBounds().getRight();
 		this.currentViewTop = this.mapControl.getMap().getViewBounds().getTop();
 
-		String mapLeft = DoubleUtilities.getFormatString(this.currentViewLeft).replace(",", "");
-		String mapBottom = DoubleUtilities.getFormatString(this.currentViewBottom).replace(",", "");
-		String mapRight = DoubleUtilities.getFormatString(this.currentViewRight).replace(",", "");
-		String mapTop = DoubleUtilities.getFormatString(this.currentViewTop).replace(",", "");
-
-		this.textFieldCurrentViewLeft.getTextField().setText(mapLeft);
-		this.textFieldCurrentViewBottom.getTextField().setText(mapBottom);
-		this.textFieldCurrentViewRight.getTextField().setText(mapRight);
-		this.textFieldCurrentViewTop.getTextField().setText(mapTop);
+		this.textFieldCurrentViewLeft.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewLeft));
+		this.textFieldCurrentViewBottom.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewBottom));
+		this.textFieldCurrentViewRight.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewRight));
+		this.textFieldCurrentViewTop.getTextField().setText(DoubleUtilities.getFormatString(this.currentViewTop));
 	}
 
 	/**
 	 * 设置范围为给予的矩形框范围
 	 */
 	private void setAsRectangleBounds(Rectangle2D rectangleBounds) {
-		//去除千分位处理
-		String mapLeft = DoubleUtilities.getFormatString(rectangleBounds.getLeft()).replace(",", "");
-		String mapBottom = DoubleUtilities.getFormatString(rectangleBounds.getBottom()).replace(",", "");
-		String mapRight = DoubleUtilities.getFormatString(rectangleBounds.getRight()).replace(",", "");
-		String mapTop = DoubleUtilities.getFormatString(rectangleBounds.getTop()).replace(",", "");
 
-		this.textFieldCurrentViewLeft.getTextField().setText(mapLeft);
-		this.textFieldCurrentViewBottom.getTextField().setText(mapBottom);
-		this.textFieldCurrentViewRight.getTextField().setText(mapRight);
-		this.textFieldCurrentViewTop.getTextField().setText(mapTop);
+		this.textFieldCurrentViewLeft.getTextField().setText(DoubleUtilities.getFormatString(rectangleBounds.getLeft()));
+		this.textFieldCurrentViewBottom.getTextField().setText(DoubleUtilities.getFormatString(rectangleBounds.getBottom()));
+		this.textFieldCurrentViewRight.getTextField().setText(DoubleUtilities.getFormatString(rectangleBounds.getRight()));
+		this.textFieldCurrentViewTop.getTextField().setText(DoubleUtilities.getFormatString(rectangleBounds.getTop()));
 	}
 
 
@@ -495,12 +485,12 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		ControlDefaultValues.setCopyCurrentMapboundsRight(DoubleUtilities.stringToValue(this.textFieldCurrentViewRight.getTextField().getText()));
 		ControlDefaultValues.setCopyCurrentMapboundsTop(DoubleUtilities.stringToValue(this.textFieldCurrentViewTop.getTextField().getText()));
 
-		String clipBoardTextLeft = ControlsProperties.getString("String_LabelLeft") + this.textFieldCurrentViewLeft.getTextField().getText();
-		String clipBoardTextBottom = ControlsProperties.getString("String_LabelBottom") + this.textFieldCurrentViewBottom.getTextField().getText();
-		String clipBoardTextRight = ControlsProperties.getString("String_LabelRight") + this.textFieldCurrentViewRight.getTextField().getText();
-		String clipBoardTextTop = ControlsProperties.getString("String_LabelTop") + this.textFieldCurrentViewTop.getTextField().getText();
+		String clipBoardTextLeft = ControlsProperties.getString("String_LabelLeft") + this.textFieldCurrentViewLeft.getTextField().getText().replace(",", "");
+		String clipBoardTextBottom = ControlsProperties.getString("String_LabelBottom") + this.textFieldCurrentViewBottom.getTextField().getText().replace(",", "");
+		String clipBoardTextRight = ControlsProperties.getString("String_LabelRight") + this.textFieldCurrentViewRight.getTextField().getText().replace(",", "");
+		String clipBoardTextTop = ControlsProperties.getString("String_LabelTop") + this.textFieldCurrentViewTop.getTextField().getText().replace(",", "");
 		// 调用windows复制功能，将值复制到剪贴板
-		setSysClipboardText(clipBoardTextLeft + clipBoardTextBottom + clipBoardTextRight + clipBoardTextTop);
+		setSysClipboardText(clipBoardTextLeft + "," + clipBoardTextBottom + "," + clipBoardTextRight + "," + clipBoardTextTop);
 		Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_MapBounds_Has_Been_Copied"));
 	}
 
@@ -541,6 +531,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
 	/**
 	 * 粘贴参数
+	 * 从系统粘贴板获得最新的文本，当文本内容符合范围条件时，才进行粘贴，当不符合时，不做任何操作
 	 */
 	private void pasteParameter() {
 		String clipBoard = getSysClipboardText();
@@ -556,30 +547,29 @@ public class PanelGroupBoxViewBounds extends JPanel {
 			String clipBoardRight = clipBoard.substring(clipBoard.indexOf(ControlsProperties.getString("String_LabelRight")), clipBoard.indexOf(ControlsProperties.getString("String_LabelTop")));
 			String clipBoardTop = clipBoard.substring(clipBoard.indexOf(ControlsProperties.getString("String_LabelTop")));
 
-			clipBoardLeft = clipBoardLeft.replace(left, "");
-			clipBoardBottom = clipBoardBottom.replace(bottom, "");
-			clipBoardRight = clipBoardRight.replace(right, "");
-			clipBoardTop = clipBoardTop.replace(top, "");
+			clipBoardLeft = (clipBoardLeft.replace(left, "")).replace(",", "");
+			clipBoardBottom = (clipBoardBottom.replace(bottom, "")).replace(",", "");
+			clipBoardRight = (clipBoardRight.replace(right, "")).replace(",", "");
+			clipBoardTop = (clipBoardTop.replace(top, "")).replace(",", "");
 
 			if (DoubleUtilities.isDouble(clipBoardLeft) && DoubleUtilities.isDouble(clipBoardBottom) && DoubleUtilities.isDouble(clipBoardRight) && DoubleUtilities.isDouble(clipBoardTop)) {
-
+				// 获得系统粘贴板内的数字符合规范，设置为千分位，存入桌面
 				ControlDefaultValues.setCopyCurrentMapboundsLeft(DoubleUtilities.stringToValue(clipBoardLeft));
 				ControlDefaultValues.setCopyCurrentMapboundsBottom(DoubleUtilities.stringToValue(clipBoardBottom));
 				ControlDefaultValues.setCopyCurrentMapboundsRight(DoubleUtilities.stringToValue(clipBoardRight));
 				ControlDefaultValues.setCopyCurrentMapboundsTop(DoubleUtilities.stringToValue(clipBoardTop));
 
+				String mapLeft = DoubleUtilities.getFormatString(getCopyCurrentMapboundsLeft());
+				String mapBottom = DoubleUtilities.getFormatString(getCopyCurrentMapboundsBottom());
+				String mapRight = DoubleUtilities.getFormatString(getCopyCurrentMapboundsRight());
+				String mapTop = DoubleUtilities.getFormatString(getCopyCurrentMapboundsTop());
+
+				this.textFieldCurrentViewLeft.getTextField().setText(mapLeft);
+				this.textFieldCurrentViewBottom.getTextField().setText(mapBottom);
+				this.textFieldCurrentViewRight.getTextField().setText(mapRight);
+				this.textFieldCurrentViewTop.getTextField().setText(mapTop);
 			}
 		}
-
-		String mapLeft = DoubleUtilities.getFormatString(getCopyCurrentMapboundsLeft()).replace(",", "");
-		String mapBottom = DoubleUtilities.getFormatString(getCopyCurrentMapboundsBottom()).replace(",", "");
-		String mapRight = DoubleUtilities.getFormatString(getCopyCurrentMapboundsRight()).replace(",", "");
-		String mapTop = DoubleUtilities.getFormatString(getCopyCurrentMapboundsTop()).replace(",", "");
-
-		this.textFieldCurrentViewLeft.getTextField().setText(mapLeft);
-		this.textFieldCurrentViewBottom.getTextField().setText(mapBottom);
-		this.textFieldCurrentViewRight.getTextField().setText(mapRight);
-		this.textFieldCurrentViewTop.getTextField().setText(mapTop);
 	}
 
 
