@@ -616,6 +616,8 @@ public class DiglogMapOutputPicture extends SmDialog {
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+			} finally {
+				tempFileName = "";
 			}
 			//获得文间名称后尝试获得文件类型,当文件名称中不包含文件类型信息时，设置文件类型为空
 			if (tempFileName.length() > 4) {
@@ -655,10 +657,14 @@ public class DiglogMapOutputPicture extends SmDialog {
 				if (setFileName != null) {
 					setFileName.invoke(fileChooserUI, tempFileName);
 					fileName = tempFileName;
+					// tempFileName 此时一定包含一个数据类型
 					imageType = getImageType(tempFileName.substring(tempFileName.length() - 4, tempFileName.length()));
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
+			} finally {
+				fileName = "";
+				imageType = null;
 			}
 		}
 	};
