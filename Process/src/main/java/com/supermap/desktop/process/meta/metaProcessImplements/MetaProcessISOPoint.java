@@ -11,6 +11,8 @@ import com.supermap.data.FieldInfos;
 import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
+import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
@@ -19,6 +21,7 @@ import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -36,9 +39,8 @@ public class MetaProcessISOPoint extends MetaProcess {
     private ParameterDatasource sourceDatasource;
     private ParameterSingleDataset sourceDataset;
     private ParameterComboBox fields;
-    private ParameterDatasource targetDatasource;
-    private ParameterTextField targetDatasetName;
-    private ParameterTextField maxISOLine;
+	private ParameterSaveDataset targetDataset;
+	private ParameterTextField maxISOLine;
     private ParameterTextField minISOLine;
     private ParameterTextField isoLine;
     private ParameterComboBox terrainInterpolateType;
@@ -57,8 +59,18 @@ public class MetaProcessISOPoint extends MetaProcess {
 
     public MetaProcessISOPoint() {
         initParameters();
-        initParametersState();
+	    initParameterConstraint();
+	    initParametersState();
     }
+
+	private void initParameterConstraint() {
+		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
+		equalDatasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+
+		DatasourceConstraint datasourceConstraint = new DatasourceConstraint();
+		datasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+	}
 
     private void initParametersState() {
         this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
@@ -74,19 +86,18 @@ public class MetaProcessISOPoint extends MetaProcess {
             }
             this.fields.setItems(nodes.toArray(new ParameterDataNode[nodes.size()]));
         }
-        this.targetDatasource.setDescribe(CommonProperties.getString("String_TargetDatasource"));
-        this.targetDatasetName.setDescribe(CommonProperties.getString("String_TargetDataset"));
-        this.targetDatasetName.setSelectedItem("ISOLine");
-        ParameterDataNode selectedInterpolateType = new ParameterDataNode(CommonProperties.getString("String_TerrainInterpolateType_IDW"), TerrainInterpolateType.IDW);
-        this.terrainInterpolateType.setItems(new ParameterDataNode[]{selectedInterpolateType,
-                new ParameterDataNode(CommonProperties.getString("String_TerrainInterpolateType_Kriging"), TerrainInterpolateType.KRIGING),
-                new ParameterDataNode(CommonProperties.getString("String_TerrainInterpolateType_TIN"), TerrainInterpolateType.TIN)
-        });
-        ParameterDataNode selectedSmoothNode = new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_NONE"), SmoothMethod.NONE);
-        this.smoothMethod.setItems(new ParameterDataNode[]{selectedSmoothNode,
-                new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
-                new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH)});
-        this.smoothMethod.setSelectedItem(selectedSmoothNode);
+	    this.targetDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
+	    this.targetDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
+	    this.targetDataset.setSelectedItem("ISOLine");
+	    ParameterDataNode selectedInterpolateType = new ParameterDataNode(CommonProperties.getString("String_TerrainInterpolateType_IDW"), TerrainInterpolateType.IDW);
+	    this.terrainInterpolateType.setItems(selectedInterpolateType,
+			    new ParameterDataNode(CommonProperties.getString("String_TerrainInterpolateType_Kriging"), TerrainInterpolateType.KRIGING),
+			    new ParameterDataNode(CommonProperties.getString("String_TerrainInterpolateType_TIN"), TerrainInterpolateType.TIN));
+	    ParameterDataNode selectedSmoothNode = new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_NONE"), SmoothMethod.NONE);
+	    this.smoothMethod.setItems(selectedSmoothNode,
+			    new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
+			    new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH));
+	    this.smoothMethod.setSelectedItem(selectedSmoothNode);
     }
 
     private void initParameters() {
@@ -94,9 +105,8 @@ public class MetaProcessISOPoint extends MetaProcess {
         this.sourceDatasource = new ParameterDatasource();
         this.sourceDataset = new ParameterSingleDataset(new DatasetType[]{DatasetType.POINT, DatasetType.POINT3D});
         this.fields = new ParameterComboBox(CommonProperties.getString("String_FieldsName"));
-        this.targetDatasource = new ParameterDatasource();
-        this.targetDatasetName = new ParameterTextField();
-        this.maxISOLine = new ParameterTextField(CommonProperties.getString("String_MAXISOLine"));
+	    this.targetDataset = new ParameterSaveDataset();
+	    this.maxISOLine = new ParameterTextField(CommonProperties.getString("String_MAXISOLine"));
         this.minISOLine = new ParameterTextField(CommonProperties.getString("String_MINISOLine"));
         this.isoLine = new ParameterTextField(CommonProperties.getString("String_ISOLine"));
         this.terrainInterpolateType = new ParameterComboBox(CommonProperties.getString("String_InterpolateType"));
@@ -106,8 +116,8 @@ public class MetaProcessISOPoint extends MetaProcess {
         this.resampleTolerance = new ParameterTextField(CommonProperties.getString("String_ResampleTolerance"));
         this.smoothMethod = new ParameterComboBox().setDescribe(CommonProperties.getString("String_SmoothMethod"));
         this.smoothNess = new ParameterTextField(CommonProperties.getString("String_SmoothNess"));
-        this.parameters.setParameters(sourceDatasource, sourceDataset, fields, targetDatasource, targetDatasetName,
-                maxISOLine, minISOLine, isoLine, terrainInterpolateType, resolution, datumValue, interval,
+	    this.parameters.setParameters(sourceDatasource, sourceDataset, fields, targetDataset,
+			    maxISOLine, minISOLine, isoLine, terrainInterpolateType, resolution, datumValue, interval,
                 resampleTolerance, smoothMethod, smoothNess);
         this.processTask = new ProcessTask(this);
     }

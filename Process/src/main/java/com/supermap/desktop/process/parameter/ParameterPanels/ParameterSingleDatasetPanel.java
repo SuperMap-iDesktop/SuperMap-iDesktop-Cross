@@ -144,10 +144,15 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 	}
 
 	private void removeDatasourceListener(Datasource datasource) {
-		if (datasource != null) {
-			datasource.getDatasets().removeCreatedListener(datasetCreatedListener);
-			datasource.getDatasets().removeDeletingListener(datasetDeletingListener);
-			datasource.getDatasets().removeDeletingAllListener(datasetDeletingAllListener);
+		try {
+			if (datasource != null && datasource.isConnected()) {
+				datasource.getDatasets().removeCreatedListener(datasetCreatedListener);
+				datasource.getDatasets().removeDeletingListener(datasetDeletingListener);
+				datasource.getDatasets().removeDeletingAllListener(datasetDeletingAllListener);
+			}
+		} catch (Exception e) {
+			// ignore 数据源没有判断是否已经被关闭的方法，只有调用之后抛异常才知道
+			// The data source does not determine whether the method has been closed, only after the call to throw exceptions to know
 		}
 	}
 
