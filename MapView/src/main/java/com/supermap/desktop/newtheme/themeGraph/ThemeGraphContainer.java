@@ -3,6 +3,7 @@ package com.supermap.desktop.newtheme.themeGraph;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
 import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
@@ -195,6 +196,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         this.layerName = this.themeGraphLayer.getName();
         this.map = ThemeGuideFactory.getMapControl().getMap();
         initComponents();
+        setComponentName();
         initResources();
         registActionListener();
     }
@@ -251,10 +253,20 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         this.setLayout(gridBagLayout);
         this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Property"), this.panelProperty);
         this.tabbedPaneInfo.add(MapViewProperties.getString("String_Theme_Advanced"), this.panelAdvance);
-        this.panelProperty.setLayout(new GridBagLayout());
         this.add(tabbedPaneInfo, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
         initPanelProperty();
         initPanelAdvance();
+    }
+
+    private void setComponentName(){
+        ComponentUIUtilities.setName(this.tableGraphInfo,"ThemeGraphContainer_tableGraphInfo");
+        ComponentUIUtilities.setName(this.comboBoxColor,"ThemeGraphContainer_comboBoxColor");
+        ComponentUIUtilities.setName(this.buttonDelete,"ThemeGraphContainer_buttonDelete");
+        ComponentUIUtilities.setName(this.buttonAdd,"ThemeGraphContainer_buttonAdd");
+        ComponentUIUtilities.setName(this.comboBoxGraphType,"ThemeGraphContainer_comboBoxGraphType");
+        ComponentUIUtilities.setName(this.comboBoxMethod,"ThemeGraphContainer_comboBoxMethod");
+        ComponentUIUtilities.setName(this.comboBoxAxisModel,"ThemeGraphContainer_comboBoxAxisModel");
+        ComponentUIUtilities.setName(this.textFieldBarwidthRatio,"ThemeGraphContainer_textFieldBarwidthRatio");
     }
 
     private void initPanelAdvance() {

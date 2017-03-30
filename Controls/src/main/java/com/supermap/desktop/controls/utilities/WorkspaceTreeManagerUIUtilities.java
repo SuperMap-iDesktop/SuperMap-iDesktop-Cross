@@ -17,8 +17,8 @@ public class WorkspaceTreeManagerUIUtilities {
 
 	public static final String WorkspaceIconPath = "/controlsresources/WorkspaceManager/Workspace/Image_WorkspaceDefault_Normal.png";
 	public static final String DatasourcesIconPath = "/controlsresources/WorkspaceManager/Datasource/Datasources.png";
-	public static final String MapsIconPath = "/controlsresources/WorkspaceManager/Map/Image_Map_Normal.png";
-	public static final String MapIconPath = "/controlsresources/WorkspaceManager/Map/Maps.png";
+	public static final String MapsIconPath = "/controlsresources/WorkspaceManager/Map/Maps.png";
+	public static final String MapIconPath = "/controlsresources/WorkspaceManager/Map/Image_Map_Normal.png";
 	public static final String LayoutsIconPath = "/controlsresources/WorkspaceManager/Layout/Layouts.png";
 	public static final String LayoutIconPath = "/controlsresources/WorkspaceManager/Layout/Image_Layout_New.png";
 	public static final String ScenesIconPath = "/controlsresources/WorkspaceManager/Scene/Scenes.png";

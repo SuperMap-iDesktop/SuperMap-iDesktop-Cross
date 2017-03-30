@@ -20,6 +20,8 @@ public interface IParameter extends IAbstractParameter {
 
 	boolean isValueLegal(String fieldName, Object value);
 
+	Object isValueSelected(String fieldName, Object value);
+
 	void addFieldConstraintChangedListener(FieldConstraintChangedListener fieldConstraintChangedListener);
 
 	void removeFieldConstraintChangedListener(FieldConstraintChangedListener fieldConstraintChangedListener);

@@ -1,6 +1,5 @@
 package com.supermap.desktop.dialog;
 
-import com.sun.java.swing.plaf.windows.WindowsFileChooserUI;
 import com.supermap.data.PrjCoordSysType;
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
@@ -25,12 +24,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.FileChooserUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 
@@ -73,7 +74,8 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private WaringTextField waringTextFieldRight;
 	private WaringTextField waringTextFieldBottom;
 	private MapOutputPictureProgressCallable mapOutputPictureProgressCallable;
-	private WindowsFileChooserUI windowsFileChooserUI;
+
+	private FileChooserUI fileChooserUI;
 
 	private static final int DEFAULT_LABELSIZE = 80;
 	private static final int DEFAULT_GAP = 16;
@@ -337,10 +339,14 @@ public class DiglogMapOutputPicture extends SmDialog {
 			this.backTransparent.setEnabled(false);
 			return this.imageType.BMP;
 		} else if (str.contains(".gif")) {
+			// 当数据类型为gif时，此时分辨率属性不可用，设置分辨率为默认值
+			this.resolutionTextField.setText("96");
 			this.resolutionTextField.setEnable(false);
 			this.backTransparent.setEnabled(true);
 			return this.imageType.GIF;
 		} else if (str.contains(".eps")) {
+			// 当数据类型为eps时，此时分辨率属性不可用，设置分辨率为默认值
+			this.resolutionTextField.setText("96");
 			this.resolutionTextField.setEnable(false);
 			this.backTransparent.setEnabled(false);
 			return this.imageType.EPS;
@@ -488,8 +494,13 @@ public class DiglogMapOutputPicture extends SmDialog {
 		@Override
 		public void caretUpdate(CaretEvent e) {
 			// 判断文本框中输入的内容是否为纯数字
-			if (StringUtilities.isNumber(waringTextFieldLeft.getTextField().getText()) && StringUtilities.isNumber(waringTextFieldTop.getTextField().getText())
-					&& StringUtilities.isNumber(waringTextFieldRight.getTextField().getText()) && StringUtilities.isNumber(waringTextFieldBottom.getTextField().getText())) {
+			// 当文本框中内容存在千分位时，做一下处理
+			String leftText = waringTextFieldLeft.getTextField().getText().replace(",", "");
+			String bottomText = waringTextFieldBottom.getTextField().getText().replace(",", "");
+			String rightText = waringTextFieldRight.getTextField().getText().replace(",", "");
+			String topText = waringTextFieldTop.getTextField().getText().replace(",", "");
+			if (StringUtilities.isNumber(leftText) && StringUtilities.isNumber(bottomText)
+					&& StringUtilities.isNumber(rightText) && StringUtilities.isNumber(topText)) {
 				Rectangle2D rectangle2D = panelGroupBoxViewBounds.getRangeBound();
 				if (rectangle2D != null) {
 					outPutBounds = rectangle2D;
@@ -549,51 +560,8 @@ public class DiglogMapOutputPicture extends SmDialog {
 					ControlsProperties.getString("String_Save"), moduleName, "SaveOne");
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
-
-		// 当在Windows系统下，使文件选择器更为智能的实现
-		if (SystemPropertyUtilities.isWindows()) {
-			this.windowsFileChooserUI = (WindowsFileChooserUI) this.exportPathFileChoose.getUI();
-			this.exportPathFileChoose.addPropertyChangeListener(new PropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent evt) {
-					//当值改变时，获得文件名
-					String tempFileName = windowsFileChooserUI.getFileName();
-					// 当传入的数据名自带数据类型时，截取文件名
-					if (imageType != null) {
-						tempFileName = tempFileName.substring(0, tempFileName.length() - 4);
-					}
-
-					// 当文件选择器对话框文件名称不为空时，当改变数据类型时，不断获得最新的名称，并给其后追加数据类型
-					if (!StringUtilities.isNullOrEmpty(tempFileName)) {
-						// 获得文件类型的描述
-						String tempFileType = exportPathFileChoose.getFileFilter().getDescription();
-						if (tempFileType.indexOf(".png") > 0) {
-							tempFileName = tempFileName + ".png";
-//							imageType = ImageType.PNG;
-						} else if (tempFileType.indexOf(".jpg") > 0) {
-							tempFileName = tempFileName + ".jpg";
-//							imageType = ImageType.JPG;
-						} else if (tempFileType.indexOf(".bmp") > 0) {
-							tempFileName = tempFileName + ".bmp";
-//							imageType = ImageType.BMP;
-						} else if (tempFileType.indexOf(".gif") > 0) {
-							tempFileName = tempFileName + ".gif";
-//							imageType = ImageType.GIF;
-						} else if (tempFileType.indexOf(".eps") > 0) {
-							tempFileName = tempFileName + ".eps";
-//							imageType = ImageType.EPS;
-						} else if (tempFileType.indexOf(".tif") > 0) {
-							tempFileName = tempFileName + ".tif";
-//							imageType = ImageType.TIFF;
-						}
-						windowsFileChooserUI.setFileName(tempFileName);
-						fileName = tempFileName;
-					}
-				}
-			});
-		}
-
-
+		this.fileChooserUI = exportPathFileChoose.getUI();
+		this.exportPathFileChoose.addPropertyChangeListener(fileChoosePropertyChangeListener);
 		// 两个系统下的获得最近路径得到的结果不同，windows得到的是路径，而linux得到的是完整的文件路径
 		if (SystemPropertyUtilities.isWindows()) {
 			// 对文件名进行判断，当目录下存在该文件时，名称重新给予
@@ -628,15 +596,88 @@ public class DiglogMapOutputPicture extends SmDialog {
 		}
 	}
 
+	/**
+	 * 文件选择器内容改变监听事件，包括文件名、文件类型等
+	 * 监听事件主要负责：
+	 * 为了使 fileChoose更为智能，打开文件选择器后，设置文件名更随类型变化而变化
+	 */
+	private PropertyChangeListener fileChoosePropertyChangeListener = new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			//首先通过反射机制获得相应系统下fileChoose的文件名称
+			String tempFileName = "";
+			try {
+				// 尝试获取子类中是否有getFileName（）方法
+				Method getFileName = fileChooserUI.getClass().getDeclaredMethod("getFileName");
+				// 确保方法可用
+				getFileName.setAccessible(true);
+				if (getFileName != null) {
+					tempFileName = (String) getFileName.invoke(fileChooserUI);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				tempFileName = "";
+			}
+			//获得文间名称后尝试获得文件类型,当文件名称中不包含文件类型信息时，设置文件类型为空
+			if (tempFileName.length() > 4) {
+				imageType = getImageType(tempFileName.substring(tempFileName.length() - 4, tempFileName.length()));
+			} else {
+				imageType = null;
+			}
+			// 如果文件类型不为空，去除文件类型字符；文件类型为空说明无法从文件名中获得，此时对文件名称不做处理
+			if (imageType != null) {
+				tempFileName = tempFileName.substring(0, tempFileName.length() - 4);
+			}
 
+			//此时tempFileName为不带文件类型的文件名（可以是任何字符）,当不为空时，追加选择的文件类型给文件名
+			if (!StringUtilities.isNullOrEmpty(tempFileName)) {
+				String tempFileType = exportPathFileChoose.getFileFilter().getDescription();
+				if (tempFileType.indexOf(".png") > 0) {
+					tempFileName = tempFileName + ".png";
+				} else if (tempFileType.indexOf(".jpg") > 0) {
+					tempFileName = tempFileName + ".jpg";
+				} else if (tempFileType.indexOf(".bmp") > 0) {
+					tempFileName = tempFileName + ".bmp";
+				} else if (tempFileType.indexOf(".gif") > 0) {
+					tempFileName = tempFileName + ".gif";
+				} else if (tempFileType.indexOf(".eps") > 0) {
+					tempFileName = tempFileName + ".eps";
+				} else if (tempFileType.indexOf(".tif") > 0) {
+					tempFileName = tempFileName + ".tif";
+				}
+			}
+
+			// 此时得到了带有文件类型的文件名称或者为空的文件名称，设置文件名称文本框显示为当前处理后的文件名称（通过反射机制）
+			try {
+				// 尝试获取子类中是否有setFileName（）方法
+				Method setFileName = fileChooserUI.getClass().getDeclaredMethod("setFileName", String.class);
+				// 确保方法可用
+				setFileName.setAccessible(true);
+				if (setFileName != null) {
+					setFileName.invoke(fileChooserUI, tempFileName);
+					fileName = tempFileName;
+					if (tempFileName.length() > 4) {
+						imageType = getImageType(tempFileName.substring(tempFileName.length() - 4, tempFileName.length()));
+					} else {
+						imageType = null;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+				fileName = "";
+				imageType = null;
+			}
+		}
+	};
 	/**
 	 * 路径设置按钮监听事件
+	 * 当点击了文件选择器按钮，初始显示文件名以及文件类型
 	 */
 	private ActionListener exportPathLitener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
-
+				// 设置文件选择器中显示的文件名称，是什么给什么，包括空值、带小数点等
 				exportPathFileChoose.setSelectedFile(new File(fileName));
 				// 当数据类型不为空时，打开文件选择对话框时，设置筛选器类型为当前数据类型
 				if (imageType != null) {
@@ -737,7 +778,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private void judgeOKButtonisEnabled() {
 		Boolean pathisValid = false;
 		Boolean DPIisValid = false;
-//		Boolean imageTypeisValid = false;
+		Boolean imageTypeisValid = false;
 		Boolean outPutBoundsisValid = false;
 		Boolean memory = false;
 
@@ -747,9 +788,9 @@ public class DiglogMapOutputPicture extends SmDialog {
 		if (DPI_START <= dpi && dpi <= DPI_END) {
 			DPIisValid = true;
 		}
-//		if (imageType != null) {
-//			imageTypeisValid = true;
-//		}
+		if (imageType != null) {
+			imageTypeisValid = true;
+		}
 		if (outPutBounds != null) {
 			outPutBoundsisValid = true;
 			// 当矩形框范围错误时不允许复制其值
@@ -761,7 +802,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 			memory = true;
 		}
 		// 根据参数情况设置确定按钮是否可用
-		if (pathisValid && DPIisValid && outPutBoundsisValid && memory) {
+		if (pathisValid && DPIisValid && imageTypeisValid && outPutBoundsisValid && memory) {
 			this.panelButton.getButtonOk().setEnabled(true);
 		} else {
 			this.panelButton.getButtonOk().setEnabled(false);

@@ -1,53 +1,31 @@
 package com.supermap.desktop.ui;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.EngineType;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.FieldType;
-import com.supermap.data.QueryParameter;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.beans.EditHistoryBean;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.editHistory.TabularEditHistory;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.tabularview.TabularViewProperties;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.FileChooserControl;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SQLExpressionDialog;
-import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.utilities.Convert;
-import com.supermap.desktop.utilities.CursorUtilities;
-import com.supermap.desktop.utilities.FieldTypeUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.desktop.utilities.UpdateColumnUtilties;
+import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.utilities.*;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.Toolkit;
+import java.awt.event.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 更新列主界面
@@ -251,6 +229,7 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 
         this.setLocation((screenSize.width - frameSize.width) / 2, (screenSize.height - frameSize.height) / 2 - 200);
         initComponents();
+        setComponentName();
         this.componentList.add(this.buttonApply);
         this.componentList.add(this.buttonClose);
         this.setFocusTraversalPolicy(this.policy);
@@ -288,7 +267,36 @@ public class JDialogTabularUpdateColumn extends SmDialog {
             this.textAreaOperationEQ.setText("null");
         }
     }
-
+    private void setComponentName() {
+        ComponentUIUtilities.setName(this.labelUpdataField, "JDialogTabularUpdateColumn_labelUpdataField");
+        ComponentUIUtilities.setName(this.comboBoxUpdateField, "JDialogTabularUpdateColumn_comboBoxUpdateField");
+        ComponentUIUtilities.setName(this.labelFieldType, "JDialogTabularUpdateColumn_labelFieldType");
+        ComponentUIUtilities.setName(this.labelUpdateScope, "JDialogTabularUpdateColumn_labelUpdateScope");
+        ComponentUIUtilities.setName(this.radioButtonUpdateColumn, "JDialogTabularUpdateColumn_radioButtonUpdateColumn");
+        ComponentUIUtilities.setName(this.radioButtonUpdateSelect, "JDialogTabularUpdateColumn_radioButtonUpdateSelect");
+        ComponentUIUtilities.setName(this.labelSourceOfField, "JDialogTabularUpdateColumn_labelSourceOfField");
+        ComponentUIUtilities.setName(this.comboBoxSourceOfField, "JDialogTabularUpdateColumn_comboBoxSourceOfField");
+        ComponentUIUtilities.setName(this.checkBoxInversion, "JDialogTabularUpdateColumn_checkBoxInversion");
+        ComponentUIUtilities.setName(this.labelOperationField, "JDialogTabularUpdateColumn_labelOperationField");
+        ComponentUIUtilities.setName(this.labelOperationFieldType, "JDialogTabularUpdateColumn_labelOperationFieldType");
+        ComponentUIUtilities.setName(this.comboBoxOperationField, "JDialogTabularUpdateColumn_comboBoxOperationField");
+        ComponentUIUtilities.setName(this.labelMethod, "JDialogTabularUpdateColumn_labelMethod");
+        ComponentUIUtilities.setName(this.comboBoxMethod, "JDialogTabularUpdateColumn_comboBoxMethod");
+        ComponentUIUtilities.setName(this.textFieldX, "JDialogTabularUpdateColumn_textFieldX");
+        ComponentUIUtilities.setName(this.textFieldY, "JDialogTabularUpdateColumn_textFieldY");
+        ComponentUIUtilities.setName(this.labelSecondField, "JDialogTabularUpdateColumn_labelSecondField");
+        ComponentUIUtilities.setName(this.labelSecondFieldType, "JDialogTabularUpdateColumn_labelSecondFieldType");
+        ComponentUIUtilities.setName(this.textFieldSecondField, "JDialogTabularUpdateColumn_textFieldSecondField");
+        ComponentUIUtilities.setName(this.comboBoxSecondField, "JDialogTabularUpdateColumn_comboBoxSecondField");
+        ComponentUIUtilities.setName(this.labelOperationEQ, "JDialogTabularUpdateColumn_labelOperationEQ");
+        ComponentUIUtilities.setName(this.textAreaOperationEQ, "JDialogTabularUpdateColumn_textAreaOperationEQ");
+        ComponentUIUtilities.setName(this.labelEQTip, "JDialogTabularUpdateColumn_labelEQTip");
+        ComponentUIUtilities.setName(this.buttonApply, "JDialogTabularUpdateColumn_buttonApply");
+        ComponentUIUtilities.setName(this.buttonClose, "JDialogTabularUpdateColumn_buttonClose");
+        ComponentUIUtilities.setName(this.contentPanel, "JDialogTabularUpdateColumn_contentPanel");
+        ComponentUIUtilities.setName(this.fileChooser, "JDialogTabularUpdateColumn_fileChooser");
+        ComponentUIUtilities.setName(this.buttonExpression, "JDialogTabularUpdateColumn_buttonExpression");
+    }
     private void initLayout() {
         this.contentPanel.removeAll();
         //@formatter:off
@@ -1314,10 +1322,20 @@ public class JDialogTabularUpdateColumn extends SmDialog {
                 List<Object> tarValues = getFieldValues(fieldName, attributeFilter);
                 if (srcValues.size() == tarValues.size()) {
                     int size = srcValues.size();
-                    int[] selectRows = tabular.getSelectedRows();
+                    int[] rows;
+                    if (radioButtonUpdateColumn.isSelected()) {
+                        int tableCount = tabular.getRowCount();
+                        rows = new int[tableCount];
+                        for (int i = 0; i < tableCount; i++) {
+                            rows[i] = i;
+                        }
+                    } else {
+                        rows = tabular.getSelectedRows();
+                    }
+//                    int[] selectRows = tabular.getSelectedRows();
                     TabularEditHistory tabularEditHistory = new TabularEditHistory();
                     for (int i = 0; i < size; i++) {
-                        int smId = tabular.getSmId(selectRows[i]);
+                        int smId = tabular.getSmId(rows[i]);
                         EditHistoryBean editHistoryBean = new EditHistoryBean();
                         editHistoryBean.setSmId(smId);
                         editHistoryBean.setBeforeValue(srcValues.get(i));
@@ -1355,15 +1373,11 @@ public class JDialogTabularUpdateColumn extends SmDialog {
     private Recordset getRecordset(DatasetVector datasetVector, String attributeFilter) {
         Recordset recordset = null;
         try {
-            if (radioButtonUpdateSelect.isSelected()) {
-                QueryParameter param = new QueryParameter();
-                param.setHasGeometry(false);
-                param.setCursorType(CursorType.STATIC);
-                param.setAttributeFilter(attributeFilter);
-                recordset = datasetVector.query(param);
-            } else {
-                recordset = datasetVector.getRecordset(false, CursorType.STATIC);
-            }
+            QueryParameter param = new QueryParameter();
+            param.setHasGeometry(false);
+            param.setCursorType(CursorType.STATIC);
+            param.setAttributeFilter(attributeFilter);
+            recordset = datasetVector.query(param);
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex);
         }
