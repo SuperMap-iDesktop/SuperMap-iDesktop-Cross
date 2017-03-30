@@ -1,6 +1,7 @@
 package com.supermap.desktop.newtheme.themeGraph;
 
 import com.supermap.data.*;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonUtils.ThemeUtil;
 import com.supermap.desktop.properties.CommonProperties;
@@ -41,6 +42,7 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 		this.datasetVector = datasetVector;
 		setList(joinItems, list);
 		initComponents();
+		setComponentName();
 		initResources();
 		registActionListener();
 		this.componentList.add(this.buttonSure);
@@ -84,6 +86,12 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 		this.add(this.panelList,           new GridBagConstraintsHelper(0, 0, 3, 1).setFill(GridBagConstraints.BOTH).setAnchor(GridBagConstraints.CENTER).setInsets(3).setWeight(3, 3));
 		this.add(panelButton,              new GridBagConstraintsHelper(0, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setInsets(0,3,0,5).setWeight(1, 0));
 		//@formatter:on
+	}
+
+	private void setComponentName(){
+		ComponentUIUtilities.setName(this.listExpressions,"ThemeGraphAddItemDialog_listExpressions");
+		ComponentUIUtilities.setName(this.buttonSure,"ThemeGraphAddItemDialog_buttonSure");
+		ComponentUIUtilities.setName(this.buttonCancel,"ThemeGraphAddItemDialog_buttonCancel");
 	}
 
 	private void initPanelButton(JPanel panelButton) {
@@ -227,6 +235,11 @@ public class ThemeGraphAddItemDialog extends SmDialog {
 		public String toString() {
 			return str;
 		}
+
+		public String getText() {
+			return str;
+		}
+
 	}
 
 	public ArrayList<String> getResultList() {
