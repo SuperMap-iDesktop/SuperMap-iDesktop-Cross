@@ -74,7 +74,7 @@ public class DownLoadTask extends LBSTask {
         setCancel(true);
         if (!DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).isFinished()) {
             SmOptionPane optionPane = new SmOptionPane();
-            if (optionPane.showConfirmDialogWithCancle(MessageFormat.format(LBSClientProperties.getString("String_DownLoadInfo"), this.fileInfo.getFileName())) == JOptionPane.YES_OPTION) {
+            if (optionPane.showConfirmDialogWithCancel(MessageFormat.format(LBSClientProperties.getString("String_DownLoadInfo"), this.fileInfo.getFileName())) == JOptionPane.YES_OPTION) {
                 if (DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).getTempFile().exists()) {
                     DownloadUtils.getBatchDownloadFileWorker(this.fileInfo).getTempFile().delete();
                 }

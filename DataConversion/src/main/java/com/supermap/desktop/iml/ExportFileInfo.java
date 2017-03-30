@@ -12,7 +12,7 @@ public class ExportFileInfo {
 
     private ExportSetting exportSetting;
 
-    private FileType fileType;
+    private Object fileType;
 
     private String filePath;
 
@@ -30,11 +30,11 @@ public class ExportFileInfo {
         this.exportSetting = exportSetting;
     }
 
-    public FileType getFileType() {
+    public Object getFileType() {
         return fileType;
     }
 
-    public void setFileType(FileType fileType) {
+    public void setFileType(Object fileType) {
         this.fileType = fileType;
     }
 

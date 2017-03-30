@@ -3,6 +3,7 @@ package com.supermap.desktop.iml;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IImportSettingFactory;
+import com.supermap.desktop.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.localUtilities.FileUtilities;
 
@@ -36,8 +37,7 @@ public class ImportSettingFactory implements IImportSettingFactory {
                 || fileType.equalsIgnoreCase(FileTypeLocale.DEM_STRING)) {
             //.dem类型的文件默认导入为GRD
             importSetting = new ImportSettingGRD();
-        }
-        if (fileType.equalsIgnoreCase(FileTypeLocale.TXT_STRING)) {
+        } else if (fileType.equalsIgnoreCase(FileTypeLocale.TXT_STRING)) {
             if (fileFilter.equalsIgnoreCase(DataConversionProperties.getString("string_filetype_lidar"))) {
                 // 雷达文件
                 importSetting = new ImportSettingLIDAR();
@@ -118,6 +118,8 @@ public class ImportSettingFactory implements IImportSettingFactory {
             ((ImportSettingDGN) importSetting).setImportEmptyDataset(true);
         } else if (fileType.equalsIgnoreCase(FileTypeLocale.FBX_STRING)) {
             importSetting = new ImportSettingModelFBX();
+        } else if (fileType.equalsIgnoreCase(FileTypeLocale.GPX_STRING)) {
+            importSetting = new ImportSettingGPX();
         }
         if (null != importSetting) {
             //初始化设置

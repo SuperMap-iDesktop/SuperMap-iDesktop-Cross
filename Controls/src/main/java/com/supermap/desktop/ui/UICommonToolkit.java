@@ -279,7 +279,7 @@ public class UICommonToolkit {
 	public static int showConfirmDialogWithCancel(String message) {
 		int result = 0;
 		try {
-			result = getSmOptionPane().showConfirmDialogWithCancle(message);
+			result = getSmOptionPane().showConfirmDialogWithCancel(message);
 //			Component parent = (Component) Application.getActiveApplication().getMainFrame();
 //			result = JOptionPane.showConfirmDialog(parent, message, GlobalParameters.getDesktopTitle(),
 //					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);

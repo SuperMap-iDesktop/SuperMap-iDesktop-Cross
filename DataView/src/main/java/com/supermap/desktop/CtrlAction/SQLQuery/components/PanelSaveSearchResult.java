@@ -2,8 +2,8 @@ package com.supermap.desktop.CtrlAction.SQLQuery.components;
 
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataview.DataViewProperties;
-import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
@@ -42,9 +42,12 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 				PanelSaveSearchResult.this.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
 			}
 		});
-
+		setComponentName();
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.checkBoxSaveResult, "PanelSaveSearchResult_checkBoxSaveResult");
+		ComponentUIUtilities.setName(this.insidePanel, "PanelSaveSearchResult_insidePanel");
+	}
 	public void setSelected(boolean isSelected) {
 		this.checkBoxSaveResult.setSelected(isSelected);
 	}
@@ -78,6 +81,7 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 			initComponentStates();
 			registListeners();
 			initResources();
+			setComponentName();
 		}
 
 		private void initComponents() {
@@ -97,6 +101,13 @@ public class PanelSaveSearchResult extends SmComponentPanel {
 					datasourceComboBox.removeItemAt(i);
 				}
 			}
+		}
+
+		private void setComponentName() {
+			ComponentUIUtilities.setName(this.labelDatasource, "PanelSaveSearchResult$InsidePanel_labelDatasource");
+			ComponentUIUtilities.setName(this.labelDataset, "PanelSaveSearchResult$InsidePanel_labelDataset");
+			ComponentUIUtilities.setName(this.datasourceComboBox, "PanelSaveSearchResult$InsidePanel_datasourceComboBox");
+			ComponentUIUtilities.setName(this.textFieldDataset, "PanelSaveSearchResult$InsidePanel_textFieldDataset");
 		}
 
 		private void initLayout() {

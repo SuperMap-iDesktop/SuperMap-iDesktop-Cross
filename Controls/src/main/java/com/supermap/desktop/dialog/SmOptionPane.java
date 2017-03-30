@@ -156,7 +156,7 @@ public class SmOptionPane extends SmDialog {
 		return showDialog(message);
 	}
 
-	public int showConfirmDialogWithCancle(String message) {
+	public int showConfirmDialogWithCancel(String message) {
 		// this.labelIcon.setIcon(UIManager.getIcon("OptionPane.questionIcon"));
 		this.buttonYes.setText(CommonProperties.getString(CommonProperties.yes));
 		this.buttonNo.setText(CommonProperties.getString(CommonProperties.no));

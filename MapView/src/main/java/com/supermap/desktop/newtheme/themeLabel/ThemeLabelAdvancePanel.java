@@ -5,6 +5,7 @@ import com.supermap.data.Size2D;
 import com.supermap.data.StringAlignment;
 import com.supermap.data.TextStyle;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.enums.UnitValue;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.newtheme.commonPanel.ThemeChangePanel;
@@ -121,6 +122,7 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 		this.themeLabel = new ThemeLabel((ThemeLabel) themelabelLayer.getTheme());
 		this.map = ThemeGuideFactory.getMapControl().getMap();
 		initComponents();
+		setComponentName();
 		initResources();
 		registActionListener();
 	}
@@ -159,6 +161,14 @@ public class ThemeLabelAdvancePanel extends ThemeChangePanel {
 //		panelAdvanceContent.add(panelFontWide,            new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2,10,2,10).setFill(GridBagConstraints.HORIZONTAL));
         panelAdvanceContent.add(panelTextExtentInflation, new GridBagConstraintsHelper(0, 3, 2, 1).setAnchor(GridBagConstraints.CENTER).setWeight(1, 0).setInsets(2, 10, 2, 10).setFill(GridBagConstraints.HORIZONTAL));
         //@formatter:on
+	}
+
+	/**
+	 * 初始化控件名称
+	 */
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.comboBoxOverLength,"ThemeLabelAdvancePanel_comboBoxOverLength");
+		ComponentUIUtilities.setName(this.spinnerFontCount,"ThemeLabelAdvancePanel_spinnerFontCount");
 	}
 
 	// 初始化沿线标注复选框
