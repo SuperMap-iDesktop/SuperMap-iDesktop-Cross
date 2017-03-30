@@ -26,12 +26,14 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.plaf.FileChooserUI;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 
@@ -561,54 +563,52 @@ public class DiglogMapOutputPicture extends SmDialog {
 					ControlsProperties.getString("String_Save"), moduleName, "SaveOne");
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
-		// 分别获得两个系统下的FileChooserUI
-		if (SystemPropertyUtilities.isWindows()) {
-			windowsFileChooserUI = (WindowsFileChooserUI) this.exportPathFileChoose.getUI();
-		} else {
-			synthFileChooserUI = (SynthFileChooserUI) this.exportPathFileChoose.getUI();
-		}
+		// 分别获得各个系统下的FileChooserUI
+		// 使文件选择器对话框更为智能
+		// 利用反射机制，针对不同的操作系统，获得FileChooserUI，通过getFileName（）、setFileName（）两个方法实现：切换文件类型，文件名称跟随切换改变
 		this.exportPathFileChoose.addPropertyChangeListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				//当值改变时，获得文件名
-				String tempFileName = "";
-				if (SystemPropertyUtilities.isWindows()) {
-					tempFileName = windowsFileChooserUI.getFileName();
-				} else {
-					tempFileName = synthFileChooserUI.getFileName();
-				}
-				// 当传入的数据名自带数据类型时，截取文件名
 				if (imageType != null) {
-					tempFileName = tempFileName.substring(0, tempFileName.length() - 4);
-					// 当文件选择器对话框文件名称不为空时，当改变数据类型时，不断获得最新的名称，并给其后追加数据类型
+
+					FileChooserUI ui = exportPathFileChoose.getUI();
+					String tempFileName = "";
+					try {
+						// 尝试获取子类中是否有getFileName（）方法
+						Method getFileName = ui.getClass().getDeclaredMethod("getFileName");
+						if (getFileName != null) {
+							tempFileName = (String) getFileName.invoke(ui);
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					if (!StringUtilities.isNullOrEmpty(tempFileName)) {
+						tempFileName = tempFileName.substring(0, tempFileName.length() - 4);
 						// 获得文件类型的描述
 						String tempFileType = exportPathFileChoose.getFileFilter().getDescription();
 						if (tempFileType.indexOf(".png") > 0) {
 							tempFileName = tempFileName + ".png";
-//								imageType = ImageType.PNG;
 						} else if (tempFileType.indexOf(".jpg") > 0) {
 							tempFileName = tempFileName + ".jpg";
-//								imageType = ImageType.JPG;
 						} else if (tempFileType.indexOf(".bmp") > 0) {
 							tempFileName = tempFileName + ".bmp";
-//								imageType = ImageType.BMP;
 						} else if (tempFileType.indexOf(".gif") > 0) {
 							tempFileName = tempFileName + ".gif";
-//								imageType = ImageType.GIF;
 						} else if (tempFileType.indexOf(".eps") > 0) {
 							tempFileName = tempFileName + ".eps";
-//								imageType = ImageType.EPS;
 						} else if (tempFileType.indexOf(".tif") > 0) {
 							tempFileName = tempFileName + ".tif";
-//								imageType = ImageType.TIFF;
 						}
-						if (SystemPropertyUtilities.isWindows()) {
-							windowsFileChooserUI.setFileName(tempFileName);
-						} else {
-							synthFileChooserUI.setFileName(tempFileName);
+						try {
+							// 尝试获取子类中是否有setFileName（）方法
+							Method setFileName = ui.getClass().getMethod("setFileName", String.class);
+							if (setFileName != null) {
+								setFileName.invoke(ui, tempFileName);
+								fileName = tempFileName;
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
-						fileName = tempFileName;
 					}
 				}
 			}
