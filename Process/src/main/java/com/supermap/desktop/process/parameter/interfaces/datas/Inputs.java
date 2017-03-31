@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.parameter.interfaces.datas;
 
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.util.List;
@@ -10,21 +11,21 @@ import java.util.List;
  */
 public class Inputs {
 	private IProcess process;
-	private List<IData> datas;
+	private List<Data> datas;
 
 	public Inputs() {
 
 	}
 
-	public IData getData(String name) {
+	public Data getData(String name) {
 		if (StringUtilities.isNullOrEmpty(name)) {
 			return null;
 		}
 
-		IData result = null;
+		Data result = null;
 
 		for (int i = 0, size = this.datas.size(); i < size; i++) {
-			IData data = this.datas.get(i);
+			Data data = this.datas.get(i);
 			if (data.getName().equals(name)) {
 				result = data;
 				break;
@@ -39,5 +40,15 @@ public class Inputs {
 		} else {
 			return null;
 		}
+	}
+
+	public void addData(Data data) {
+		if (!this.datas.contains(data)) {
+			this.datas.add(data);
+		}
+	}
+
+	public void addData(String name, DataType type) {
+		this.datas.add(new Data(name, type));
 	}
 }

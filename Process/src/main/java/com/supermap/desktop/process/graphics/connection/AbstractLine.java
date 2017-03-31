@@ -87,7 +87,7 @@ public abstract class AbstractLine {
 
 			Stroke stroke = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10);
 			graphics2D.setStroke(stroke);
-			graphics2D.setColor(Color.BLACK);
+			graphics2D.setColor(Color.GRAY);
 			graphics2D.draw(this.arrow);
 			graphics2D.setStroke(originStroke);
 		}
