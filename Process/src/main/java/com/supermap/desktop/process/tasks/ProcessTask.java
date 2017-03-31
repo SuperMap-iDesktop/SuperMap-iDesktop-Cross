@@ -45,7 +45,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     private volatile String message = "";
     private volatile String remainTime = "";
     private volatile int percent = 0;
-    private volatile boolean isStop = false;
+    private volatile boolean isStop;
 
     private volatile RoundProgressBar progressBar;
     private volatile JLabel labelTitle;

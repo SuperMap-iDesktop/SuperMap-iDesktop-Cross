@@ -52,8 +52,8 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 				copyDatasets(this.datasource);
 			}
 		} catch (Exception ex) {
-			
-		}finally{
+
+		} finally {
 			this.datasource.removeSteppedListener(percentListener);
 		}
 		return true;
@@ -74,7 +74,7 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 			String datasetStr = vector.get(COLUMN_INDEX_Dataset).toString();
 			// 由于DatasourceComboBox的重构，改变了item中存的对象（数据源本身），需要修改此处实现-yuanR 17.2.17
 //			String targetDatasourceStr = vector.get(COLUMN_INDEX_TargetDatasource).toString();
-			Datasource datasourceStr=(Datasource)vector.get(COLUMN_INDEX_TargetDatasource);
+			Datasource datasourceStr = (Datasource) vector.get(COLUMN_INDEX_TargetDatasource);
 			String targetDatasourceStr = datasourceStr.getAlias();
 
 			String targetDatasetName = vector.get(COLUMN_INDEX_TargetDataset).toString();
@@ -218,7 +218,7 @@ public class DatasetCopyCallable extends UpdateProgressCallable {
 		}
 		return result;
 	}
-	
+
 	class PercentListener implements SteppedListener {
 		private boolean isCancel = false;
 		private int count;

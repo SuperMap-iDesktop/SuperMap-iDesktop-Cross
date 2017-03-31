@@ -19,6 +19,8 @@ import com.supermap.desktop.ui.lbs.params.KernelDensityJobSetting;
 import com.supermap.desktop.utilities.CursorUtilities;
 import org.apache.http.impl.client.CloseableHttpClient;
 
+import javax.swing.*;
+
 /**
  * Created by xie on 2017/2/10.
  */
@@ -77,7 +79,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 	    String username = "admin";
 	    String password = "map123!@#";
 	    IServerService service = new IServerServiceImpl();
-	    IServerLoginInfo.ipAddr = "172.16.14.148";
+	    IServerLoginInfo.ipAddr = "192.168.20.189";
 	    IServerLoginInfo.port = "8090";
 	    CloseableHttpClient client = service.login(username, password);
 	    if (null!=client) {
@@ -95,7 +97,8 @@ public class MetaProcessKernelDensity extends MetaProcess {
             JobResultResponse response = service.query(kenelDensityJobSetting);
             if (null != response) {
                 CursorUtilities.setDefaultCursor();
-                NewMessageBus.producer(this, response);
+                NewMessageBus messageBus = new NewMessageBus(response, processTask);
+                messageBus.run();
             }
             ProcessData processData = new ProcessData();
             processData.setData("Output");
@@ -108,4 +111,9 @@ public class MetaProcessKernelDensity extends MetaProcess {
     public String getKey() {
         return MetaKeys.KERNEL_DENSITY;
     }
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/KernelDensity.png");
+	}
 }

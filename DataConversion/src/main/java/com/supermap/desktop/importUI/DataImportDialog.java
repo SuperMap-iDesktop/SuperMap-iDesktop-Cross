@@ -11,8 +11,8 @@ import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.*;
 import com.supermap.desktop.localUtilities.CommonUtilities;
-import com.supermap.desktop.localUtilities.FileUtilities;
 import com.supermap.desktop.localUtilities.FiletypeUtilities;
+import com.supermap.desktop.localUtilities.LocalFileUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.tableModel.ImportTableModel;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -20,6 +20,7 @@ import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -141,9 +142,9 @@ public class DataImportDialog extends SmDialog implements IPanelModel {
 
     private void addImportInfo() {
         //获取并创建需要的导入信息类及导入界面信息类
-        SmFileChoose fileChoose = FileUtilities.createImportFileChooser();
+        SmFileChoose fileChoose = LocalFileUtilities.createImportFileChooser();
         int state = fileChoose.showDefaultDialog();
-        FileUtilities.LastFileFilter = fileChoose.getFileFilter().getDescription();
+        LocalFileUtilities.LastFileFilter = fileChoose.getFileFilter().getDescription();
         File[] files = fileChoose.getSelectFiles();
         String fileFilter = fileChoose.getFileFilter().getDescription();
         if (null != files && state == JFileChooser.APPROVE_OPTION) {

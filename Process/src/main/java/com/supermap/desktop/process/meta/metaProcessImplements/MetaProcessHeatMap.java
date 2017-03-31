@@ -15,14 +15,11 @@ import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
-import com.supermap.desktop.ui.lbs.params.BuildCacheDrawingSetting;
-import com.supermap.desktop.ui.lbs.params.BuildCacheJobSetting;
-import com.supermap.desktop.ui.lbs.params.FileInputDataSetting;
-import com.supermap.desktop.ui.lbs.params.IServerLoginInfo;
-import com.supermap.desktop.ui.lbs.params.JobResultResponse;
-import com.supermap.desktop.ui.lbs.params.MongoDBOutputsetting;
+import com.supermap.desktop.ui.lbs.params.*;
 import com.supermap.desktop.utilities.CursorUtilities;
 import org.apache.http.impl.client.CloseableHttpClient;
+
+import javax.swing.*;
 
 /**
  * Created by xie on 2017/2/10.
@@ -47,7 +44,6 @@ public class MetaProcessHeatMap extends MetaProcess {
 
     private void initMetaInfo() {
         this.parameters = new DefaultParameters();
-        //TODO 封装数据管理调用控件，此处先用ParameterTextField控件替换
         parameterHDFSPath = new ParameterHDFSPath();
         parameterHDFSPath.setSelectedItem("hdfs://172.16.14.148:9000/data/newyork_taxi_2013-01_147k.csv");
 
@@ -141,7 +137,8 @@ public class MetaProcessHeatMap extends MetaProcess {
             JobResultResponse response = service.query(setting);
             if (null != response) {
                 CursorUtilities.setDefaultCursor();
-                NewMessageBus.producer(this, response);
+                NewMessageBus messageBus = new NewMessageBus(response, processTask);
+                messageBus.run();
             }
             ProcessData processData = new ProcessData();
             processData.setData("Output");
@@ -154,4 +151,9 @@ public class MetaProcessHeatMap extends MetaProcess {
     public String getKey() {
         return MetaKeys.HEAT_MAP;
     }
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/HeatMap.png");
+	}
 }

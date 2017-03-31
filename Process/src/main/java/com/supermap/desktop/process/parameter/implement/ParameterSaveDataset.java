@@ -11,9 +11,12 @@ import com.supermap.desktop.properties.CommonProperties;
  */
 public class ParameterSaveDataset extends AbstractParameter implements ISelectionParameter {
 
-	@ParameterField(name = "datasource")
+	public static final String DATASOURCE_FIELD_NAME = "datasource";
+	public static final String DETASET_FIELD_NAME = "detasetName";
+
+	@ParameterField(name = DATASOURCE_FIELD_NAME)
 	private Datasource resultDatasource;
-	@ParameterField(name = "detasetName")
+	@ParameterField(name = DETASET_FIELD_NAME)
 	private String datasetName;
 	private String datasourceDescribe;
 	private String datasetDescribe;

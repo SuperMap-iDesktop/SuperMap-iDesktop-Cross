@@ -3,10 +3,10 @@ package com.supermap.desktop.importUI;
 import com.supermap.data.conversion.ImportSetting;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
-import com.supermap.desktop.localUtilities.FileUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.FileUtilities;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -201,21 +201,22 @@ public class ImportFilePropertiesDialog extends SmDialog {
         contentPanel.setLayout(gl_contentPanel);
     }
 
-    public void setComponentName(){
-        ComponentUIUtilities.setName(this.contentPanel,"ImportFilePropertiesDialog_contentPanel");
-        ComponentUIUtilities.setName(this.labelFileType,"ImportFilePropertiesDialog_labelFileType");
-        ComponentUIUtilities.setName(this.labelFileLocation,"ImportFilePropertiesDialog_labelFileLocation");
-        ComponentUIUtilities.setName(this.labelFileSize,"ImportFilePropertiesDialog_labelFileSize");
-        ComponentUIUtilities.setName(this.labelFileModify,"ImportFilePropertiesDialog_labelFileModify");
-        ComponentUIUtilities.setName(this.labelProperty,"ImportFilePropertiesDialog_labelProperty");
-        ComponentUIUtilities.setName(this.checkboxHidden,"ImportFilePropertiesDialog_checkboxHidden");
-        ComponentUIUtilities.setName(this.labelDate,"ImportFilePropertiesDialog_labelDate");
-        ComponentUIUtilities.setName(this.labelSize,"ImportFilePropertiesDialog_labelSize");
-        ComponentUIUtilities.setName(this.labelPath,"ImportFilePropertiesDialog_labelPath");
-        ComponentUIUtilities.setName(this.labelType,"ImportFilePropertiesDialog_labelType");
-        ComponentUIUtilities.setName(this.buttonSure,"ImportFilePropertiesDialog_buttonSure");
-        ComponentUIUtilities.setName(this.buttonQuit,"ImportFilePropertiesDialog_buttonQuit");
+    public void setComponentName() {
+        ComponentUIUtilities.setName(this.contentPanel, "ImportFilePropertiesDialog_contentPanel");
+        ComponentUIUtilities.setName(this.labelFileType, "ImportFilePropertiesDialog_labelFileType");
+        ComponentUIUtilities.setName(this.labelFileLocation, "ImportFilePropertiesDialog_labelFileLocation");
+        ComponentUIUtilities.setName(this.labelFileSize, "ImportFilePropertiesDialog_labelFileSize");
+        ComponentUIUtilities.setName(this.labelFileModify, "ImportFilePropertiesDialog_labelFileModify");
+        ComponentUIUtilities.setName(this.labelProperty, "ImportFilePropertiesDialog_labelProperty");
+        ComponentUIUtilities.setName(this.checkboxHidden, "ImportFilePropertiesDialog_checkboxHidden");
+        ComponentUIUtilities.setName(this.labelDate, "ImportFilePropertiesDialog_labelDate");
+        ComponentUIUtilities.setName(this.labelSize, "ImportFilePropertiesDialog_labelSize");
+        ComponentUIUtilities.setName(this.labelPath, "ImportFilePropertiesDialog_labelPath");
+        ComponentUIUtilities.setName(this.labelType, "ImportFilePropertiesDialog_labelType");
+        ComponentUIUtilities.setName(this.buttonSure, "ImportFilePropertiesDialog_buttonSure");
+        ComponentUIUtilities.setName(this.buttonQuit, "ImportFilePropertiesDialog_buttonQuit");
     }
+
     private void initResource() {
         setTitle(DataConversionProperties.getString("string_fileProperty"));
         this.labelFileLocation.setText(DataConversionProperties.getString("string_label_lblFileLocation"));

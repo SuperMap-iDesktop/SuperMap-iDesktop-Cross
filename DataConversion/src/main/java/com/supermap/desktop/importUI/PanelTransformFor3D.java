@@ -9,7 +9,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.FileTypeLocale;
-import com.supermap.desktop.localUtilities.FileUtilities;
+import com.supermap.desktop.localUtilities.LocalFileUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -17,6 +17,7 @@ import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
+import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 

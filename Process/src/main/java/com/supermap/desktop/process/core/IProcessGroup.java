@@ -20,4 +20,6 @@ public interface IProcessGroup extends IProcess {
 
 
 	boolean isLegitName(String name, IProcess process);
+
+	void setIconPath(String path);
 }

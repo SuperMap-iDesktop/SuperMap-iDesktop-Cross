@@ -13,7 +13,7 @@ import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.ImportInfo;
 import com.supermap.desktop.importUI.PanelImport;
 import com.supermap.desktop.importUI.PanelTransformForImage;
-import com.supermap.desktop.localUtilities.FileUtilities;
+import com.supermap.desktop.localUtilities.LocalFileUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.StateChangeEvent;
 import com.supermap.desktop.ui.StateChangeListener;
@@ -23,6 +23,7 @@ import com.supermap.desktop.ui.controls.DatasetTypeComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
+import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -704,7 +705,7 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
             setDefaultImportSettingEncode();
 
             this.comboBoxDatasetType = new DatasetTypeComboBox(new String[]{CommonProperties.getString("String_DatasetType_CAD")});
-            // 怎加一个item为“简单数据集”--yuanR 17.2.14
+            // 增加一个item为“简单数据集”--yuanR 17.2.14
             String fileParentPath = "/controlsresources/WorkspaceManager/Dataset/Image_SimpleDataset_Normal.png";
             URL url = ControlsResources.getResourceURL(fileParentPath);
             ImageIcon simpleDatasetIcon = new ImageIcon(url);

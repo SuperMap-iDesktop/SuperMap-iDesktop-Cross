@@ -24,6 +24,8 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.properties.CommonProperties;
 
+import javax.swing.*;
+
 /**
  * Created by xie on 2017/3/6.
  */
@@ -61,8 +63,8 @@ public class MetaProcessISOLine extends MetaProcess {
 		equalDatasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
-		DatasourceConstraint datasourceConstraint = new DatasourceConstraint();
-		datasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(saveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	private void initParametersState() {
@@ -84,7 +86,7 @@ public class MetaProcessISOLine extends MetaProcess {
     private void initParameters() {
         this.parameters = new DefaultParameters();
         this.sourceDatasource = new ParameterDatasource();
-        this.dataset = new ParameterSingleDataset(new DatasetType[]{DatasetType.GRID});
+	    this.dataset = new ParameterSingleDataset(DatasetType.GRID);
 	    this.saveDataset = new ParameterSaveDataset();
 	    this.maxGrid = new ParameterTextField(CommonProperties.getString("String_MAXGrid"));
         this.minGrid = new ParameterTextField(CommonProperties.getString("String_MINGrid"));
@@ -130,4 +132,9 @@ public class MetaProcessISOLine extends MetaProcess {
     public IParameterPanel getComponent() {
         return parameters.getPanel();
     }
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/buffer.png");
+	}
 }
