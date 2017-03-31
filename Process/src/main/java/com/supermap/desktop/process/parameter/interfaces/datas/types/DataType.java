@@ -87,4 +87,16 @@ public abstract class DataType {
 		}
 	}
 
+	public class DataTypeFile extends DataType {
+
+		@Override
+		public String getTypeName() {
+			return null;
+		}
+
+		@Override
+		public Class getTypeClass() {
+			return null;
+		}
+	}
 }
