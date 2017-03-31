@@ -47,7 +47,6 @@ public class MetaProcessHeatMap extends MetaProcess {
 
     private void initMetaInfo() {
         this.parameters = new DefaultParameters();
-        //TODO 封装数据管理调用控件，此处先用ParameterTextField控件替换
         parameterHDFSPath = new ParameterHDFSPath();
         parameterHDFSPath.setSelectedItem("hdfs://172.16.14.148:9000/data/newyork_taxi_2013-01_147k.csv");
 

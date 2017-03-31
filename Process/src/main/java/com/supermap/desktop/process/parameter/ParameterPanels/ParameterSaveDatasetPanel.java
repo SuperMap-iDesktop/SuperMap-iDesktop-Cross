@@ -1,26 +1,19 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
-import com.supermap.data.DatasourceClosedEvent;
-import com.supermap.data.DatasourceClosedListener;
-import com.supermap.data.DatasourceCreatedEvent;
-import com.supermap.data.DatasourceCreatedListener;
-import com.supermap.data.DatasourceOpenedEvent;
-import com.supermap.data.DatasourceOpenedListener;
+import com.supermap.data.Datasource;
 import com.supermap.data.Datasources;
-import com.supermap.data.Workspace;
-import com.supermap.data.WorkspaceClosingEvent;
-import com.supermap.data.WorkspaceClosingListener;
-import com.supermap.data.WorkspaceOpenedEvent;
-import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.utilities.JComboBoxUIUtilities;
 import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
+import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.DatasourceComboBox;
+import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
@@ -38,44 +31,16 @@ import java.awt.event.ItemListener;
 public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterPanel {
 	private ParameterSaveDataset parameterSaveDataset;
 	private JLabel labelDatasource;
-	private DatasourceComboBox datasourceComboBox;
+	private JComboBox<Datasource> datasourceComboBox;
 	private JLabel labelDataset;
 	private SmTextFieldLegit textFieldDataset;
 	private boolean isSelectingItem = false;
-	private DatasourceCreatedListener datasourceCreatedListener = new DatasourceCreatedListener() {
-		@Override
-		public void datasourceCreated(DatasourceCreatedEvent datasourceCreatedEvent) {
-			datasourcesChanged();
-		}
-	};
-
-	private DatasourceClosedListener datasourceClosedListener = new DatasourceClosedListener() {
-		@Override
-		public void datasourceClosed(DatasourceClosedEvent datasourceClosedEvent) {
-			boolean isDeleteSelectedDatasource = datasourceClosedEvent.getDatasource() == datasourceComboBox.getSelectedDatasource();
-			datasourcesChanged();
-			if (isDeleteSelectedDatasource) {
-				isSelectingItem = true;
-				datasourceComboBox.setSelectedIndex(-1);
-				isSelectingItem = false;
-				if (datasourceComboBox.getItemCount() > 0) {
-					datasourceComboBox.setSelectedIndex(0);
-				}
-			}
-		}
-	};
-	private DatasourceOpenedListener datasourceOpenedListener = new DatasourceOpenedListener() {
-		@Override
-		public void datasourceOpened(DatasourceOpenedEvent datasourceOpenedEvent) {
-			datasourcesChanged();
-		}
-	};
 	private ItemListener itemListener = new ItemListener() {
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			if (!isSelectingItem && e.getStateChange() == ItemEvent.SELECTED) {
 				isSelectingItem = true;
-				parameterSaveDataset.setResultDatasource(datasourceComboBox.getSelectedDatasource());
+				parameterSaveDataset.setResultDatasource((Datasource) datasourceComboBox.getSelectedItem());
 				isSelectingItem = false;
 			}
 		}
@@ -87,7 +52,8 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 		this.parameterSaveDataset = (ParameterSaveDataset) parameterSaveDataset;
 		labelDatasource = new JLabel(CommonProperties.getString(CommonProperties.Label_Datasource));
 		labelDataset = new JLabel(CommonProperties.getString(CommonProperties.Label_Dataset));
-		datasourceComboBox = new DatasourceComboBox();
+		datasourceComboBox = new JComboBox<>();
+		datasourceComboBox.setRenderer(new ListDataCellRender());
 		textFieldDataset = new SmTextFieldLegit();
 		textFieldDataset.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
@@ -98,10 +64,10 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 				if (StringUtilities.isNullOrEmpty(textFieldDataset.getText())) {
 					return false;
 				}
-				if (datasourceComboBox.getSelectedDatasource() == null) {
+				if (datasourceComboBox.getSelectedItem() == null) {
 					return true;
 				}
-				boolean isLegit = datasourceComboBox.getSelectedDatasource().getDatasets().isAvailableDatasetName(textFieldValue);
+				boolean isLegit = ((Datasource) datasourceComboBox.getSelectedItem()).getDatasets().isAvailableDatasetName(textFieldValue);
 				if (isLegit) {
 					isSelectingItem = true;
 					ParameterSaveDatasetPanel.this.parameterSaveDataset.setDatasetName(textFieldValue);
@@ -112,13 +78,13 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 
 			@Override
 			public String getLegitValue(String currentValue, String backUpValue) {
-				return datasourceComboBox.getSelectedDatasource().getDatasets().getAvailableDatasetName(currentValue);
+				return ((Datasource) datasourceComboBox.getSelectedItem()).getDatasets().getAvailableDatasetName(currentValue);
 			}
 		});
 		initLayout();
 		initListener();
 		initComponentState();
-		this.parameterSaveDataset.setResultDatasource(datasourceComboBox.getSelectedDatasource());
+		this.parameterSaveDataset.setResultDatasource((Datasource) datasourceComboBox.getSelectedItem());
 	}
 
 	private void initLayout() {
@@ -137,53 +103,59 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 	private void initListener() {
 
 		datasourceComboBox.addItemListener(itemListener);
-		addDatasourcesListeners();
-		Workspace workspace = Application.getActiveApplication().getWorkspace();
-		workspace.addOpenedListener(new WorkspaceOpenedListener() {
-			@Override
-			public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
-				removeSelectedDatasourceListener();
-				datasourceComboBox.resetComboBox(Application.getActiveApplication().getWorkspace().getDatasources(), null);
-				addDatasourcesListeners();
-			}
-		});
-		workspace.addClosingListener(new WorkspaceClosingListener() {
-			@Override
-			public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
-				removeSelectedDatasourceListener();
-				datasourceComboBox.resetComboBox(Application.getActiveApplication().getWorkspace().getDatasources(), null);
-				addDatasourcesListeners();
-			}
-		});
-	}
-
-	private void addDatasourcesListeners() {
-		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
-		datasources.addCreatedListener(datasourceCreatedListener);
-		datasources.addOpenedListener(datasourceOpenedListener);
-		datasources.addClosedListener(datasourceClosedListener);
-	}
-
-	private void removeSelectedDatasourceListener() {
-		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
-		datasources.removeCreatedListener(datasourceCreatedListener);
-		datasources.removeOpenedListener(datasourceOpenedListener);
-		datasources.removeClosedListener(datasourceClosedListener);
-	}
-
-	private void datasourcesChanged() {
-		isSelectingItem = true;
-		datasourceComboBox.resetComboBox(Application.getActiveApplication().getWorkspace().getDatasources(), datasourceComboBox.getSelectedDatasource());
-		isSelectingItem = false;
 	}
 
 	private void initComponentState() {
+		datasourceComboBoxInit();
 		isSelectingItem = true;
 		if (parameterSaveDataset.getResultDatasource() != null) {
-			datasourceComboBox.setSelectedDatasource(parameterSaveDataset.getResultDatasource());
+			datasourceComboBox.setSelectedItem(parameterSaveDataset.getResultDatasource());
 		}
 		if (!StringUtilities.isNullOrEmpty(parameterSaveDataset.getDatasetName())) {
 			textFieldDataset.setText(parameterSaveDataset.getDatasetName());
+		}
+		isSelectingItem = false;
+	}
+
+	@Override
+	public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
+		if (event.getFieldName().equals(ParameterSaveDataset.DATASOURCE_FIELD_NAME)) {
+			datasourceComboBoxInit();
+		}
+	}
+
+	private void datasourceComboBoxInit() {
+		isSelectingItem = true;
+		datasourceComboBox.removeAllItems();
+		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+		for (int i = 0; i < datasources.getCount(); i++) {
+			Datasource datasource = datasources.get(i);
+			if (parameterSaveDataset.isValueLegal(ParameterSaveDataset.DATASOURCE_FIELD_NAME, datasource)) {
+				datasourceComboBox.addItem(datasource);
+			}
+		}
+		datasourceComboBox.setSelectedItem(null);
+		for (int i = 0; i < datasourceComboBox.getItemCount(); i++) {
+			Datasource datasource = datasourceComboBox.getItemAt(0);
+			Object valueSelected = parameterSaveDataset.isValueSelected(ParameterSaveDataset.DATASOURCE_FIELD_NAME, datasource);
+			if (valueSelected != AbstractParameter.NO) {
+				if (valueSelected == AbstractParameter.DO_NOT_CARE) {
+					break;
+				} else if (valueSelected instanceof Datasource) {
+					datasourceComboBox.setSelectedItem(valueSelected);
+					break;
+				}
+			}
+		}
+
+		if (datasourceComboBox.getSelectedItem() == null && datasourceComboBox.getItemCount() > 0) {
+			if (parameterSaveDataset.getResultDatasource() != null && JComboBoxUIUtilities.getItemIndex(datasourceComboBox, parameterSaveDataset.getResultDatasource()) != -1) {
+				datasourceComboBox.setSelectedItem(parameterSaveDataset.getResultDatasource());
+			} else {
+				isSelectingItem = false;
+				datasourceComboBox.setSelectedIndex(0);
+				isSelectingItem = true;
+			}
 		}
 		isSelectingItem = false;
 	}

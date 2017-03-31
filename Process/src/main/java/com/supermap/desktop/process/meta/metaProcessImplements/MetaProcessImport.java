@@ -12,6 +12,7 @@ import com.supermap.data.conversion.ImportSteppedEvent;
 import com.supermap.data.conversion.ImportSteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
@@ -51,9 +52,8 @@ public class MetaProcessImport extends MetaProcess {
         } else if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
             parameterSaveDataset.setResultDatasource(Application.getActiveApplication().getWorkspace().getDatasources().get(0));
         }
-//		if (parameterSaveDataset.getResultDatasource() != null) {
         parameterSaveDataset.setDatasetName("RoadLine");
-//		}
+	    DatasourceConstraint.getInstance().constrained(parameterSaveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 
         String[] encodingValue = new String[]{"NONE", "BYTE", "INT16", "INT24", "INT32"};
         String[] encoding = new String[]{
