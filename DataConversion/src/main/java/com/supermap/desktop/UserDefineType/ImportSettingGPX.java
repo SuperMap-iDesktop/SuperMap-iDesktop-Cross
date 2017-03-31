@@ -32,6 +32,10 @@ public class ImportSettingGPX extends ImportSettingSCV {
             info.setName(name);
             info.setType(DatasetType.POINT);
             DatasetVector datasetVector = datasets.create(info);
+            GeoCoordSys geoCoordSys = new GeoCoordSys(GeoCoordSysType.GCS_WGS_1984, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
+            PrjCoordSys prjCoordSys = new PrjCoordSys(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE);
+            prjCoordSys.setGeoCoordSys(geoCoordSys);
+            datasetVector.setPrjCoordSys(prjCoordSys);
             datasetVector.open();
 
             // 创建字段

@@ -25,6 +25,8 @@ import com.supermap.data.WorkspaceOpenedEvent;
 import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
@@ -142,10 +144,15 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 	}
 
 	private void removeDatasourceListener(Datasource datasource) {
-		if (datasource != null) {
-			datasource.getDatasets().removeCreatedListener(datasetCreatedListener);
-			datasource.getDatasets().removeDeletingListener(datasetDeletingListener);
-			datasource.getDatasets().removeDeletingAllListener(datasetDeletingAllListener);
+		try {
+			if (datasource != null && datasource.isConnected()) {
+				datasource.getDatasets().removeCreatedListener(datasetCreatedListener);
+				datasource.getDatasets().removeDeletingListener(datasetDeletingListener);
+				datasource.getDatasets().removeDeletingAllListener(datasetDeletingAllListener);
+			}
+		} catch (Exception e) {
+			// ignore 数据源没有判断是否已经被关闭的方法，只有调用之后抛异常才知道
+			// The data source does not determine whether the method has been closed, only after the call to throw exceptions to know
 		}
 	}
 
@@ -185,8 +192,8 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
                 workspaceChanged();
             }
         });
-        Datasources datasources = workspace.getDatasources();
-        datasources.addClosingListener(new DatasourceClosingListener() {
+	    final Datasources datasources = workspace.getDatasources();
+	    datasources.addClosingListener(new DatasourceClosingListener() {
             @Override
             public void datasourceClosing(DatasourceClosingEvent datasourceClosingEvent) {
 
@@ -240,6 +247,27 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
             }
         });
 
+	    this.parameterSingleDataset.addFieldConstraintChangedListener(new FieldConstraintChangedListener() {
+		    @Override
+		    public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
+			    if (event.getFieldName().equals(ParameterSingleDataset.DATASOURCE_FIELD_NAME)) {
+				    Datasources datasources1 = Application.getActiveApplication().getWorkspace().getDatasources();
+				    for (int i = 0; i < datasources1.getCount(); i++) {
+					    if (parameterSingleDataset.isValueLegal(ParameterSingleDataset.DATASOURCE_FIELD_NAME, datasources1.get(i))) {
+						    Object valueSelected = parameterSingleDataset.isValueSelected(ParameterSingleDataset.DATASOURCE_FIELD_NAME, datasources1.get(i));
+						    if (valueSelected == AbstractParameter.DO_NOT_CARE) {
+							    setSelectedDatasource(datasources1.get(i));
+						    } else if (valueSelected != AbstractParameter.NO) {
+							    setSelectedDatasource((Datasource) valueSelected);
+						    } else {
+							    continue;
+						    }
+						    break;
+					    }
+				    }
+			    }
+		    }
+	    });
     }
 
     private void workspaceChanged() {

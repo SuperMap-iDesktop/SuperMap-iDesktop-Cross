@@ -39,7 +39,7 @@ public class MultipleCheckboxTableHeaderCellRenderer implements TableCellRendere
         String valueStr = (String) value;
         JLabel label = new JLabel(valueStr);
         label.setHorizontalAlignment(SwingConstants.RIGHT); // 表头标签居右边
-        this.checkBox.setHorizontalAlignment(SwingConstants.CENTER);// 表头checkBox居中
+        this.checkBox.setHorizontalAlignment(SwingConstants.LEFT);// 表头checkBox居中
         JComponent component = (column == 0) ? checkBox : label;
 
         component.setForeground(tableHeader.getForeground());

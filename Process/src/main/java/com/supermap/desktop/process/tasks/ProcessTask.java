@@ -12,6 +12,8 @@ import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessInterpolator;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessOverlayAnalyst;
+import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.progress.RoundProgressBar;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
 import javax.swing.*;
@@ -24,18 +26,28 @@ import java.util.concurrent.CancellationException;
 /**
  * Created by xie on 2017/2/15.
  * progress bar used for displaying process task progress
+ * <p>
+ * 背景色1:rgb 251,251,251
+ * 背景色2:rgb 255,255,255
+ * 进度条底色：rgb: 215,215,215
+ * 进度条色：rgb ：39，162，223
+ * 进度条取消暂停色：rgb ：190，190，190
  */
 public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 
     private static final long serialVersionUID = 1L;
+    private static final int WIDTH = 23;
+    private static final Color DEFAULT_BACKGROUNDCOLOR = new Color(215, 215, 215);
+    private static final Color DEFAULT_FOREGROUNDCOLOR = new Color(39, 162, 223);
+    private static final Color CACEL_FOREGROUNDCOLOR = new Color(190, 190, 190);
 
     private transient SwingWorker<Boolean, Object> worker;
     private volatile String message = "";
     private volatile String remainTime = "";
     private volatile int percent = 0;
-    private volatile boolean isStop = true;
+    private volatile boolean isStop = false;
 
-    private volatile JProgressBar progressBar;
+    private volatile RoundProgressBar progressBar;
     private volatile JLabel labelTitle;
     private volatile JLabel labelMessage;
     private volatile JLabel labelRemaintime;
@@ -54,7 +66,8 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         public void running(RunningEvent e) {
             if (e.getProgress() >= 100) {
                 updateProgress(100, String.valueOf(e.getRemainTime()), getFinishMessage());
-                buttonRun.setEnabled(false);
+                buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_finish_now.png"));
+                buttonRun.removeActionListener(cancelListener);
                 isFinished = true;
             } else {
                 updateProgress(e.getProgress(), String.valueOf(e.getRemainTime()), e.getMessage());
@@ -107,18 +120,25 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     @Override
     public void initComponents() {
         labelTitle = new JLabel();
-        progressBar = new JProgressBar();
-        progressBar.setStringPainted(true);
+        progressBar = new RoundProgressBar();
+        progressBar.setBackgroundColor(DEFAULT_BACKGROUNDCOLOR);
+        progressBar.setForegroundColor(DEFAULT_FOREGROUNDCOLOR);
+        progressBar.setDigitalColor(labelTitle.getBackground());
+        progressBar.setDrawString(true);
         labelMessage = new JLabel("...");
         labelRemaintime = new JLabel("...");
-        buttonRun = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Run.png"));
-        buttonRemove = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_delete.png"));
-        ComponentUIUtilities.setName(labelTitle,"ProcessTask_labelTitle");
-        ComponentUIUtilities.setName(progressBar,"ProcessTask_progressBar");
-        ComponentUIUtilities.setName(labelMessage,"ProcessTask_labelMessage");
-        ComponentUIUtilities.setName(labelRemaintime,"ProcessTask_labelRemaintime");
-        ComponentUIUtilities.setName(buttonRun,"ProcessTask_buttonRun");
-        ComponentUIUtilities.setName(buttonRemove,"ProcessTask_buttonRemove");
+        buttonRun = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_run_now.png"));
+        buttonRemove = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_delete_now.png"));
+        buttonRun.setToolTipText(CommonProperties.getString(CommonProperties.Run));
+        buttonRemove.setToolTipText(CommonProperties.getString(CommonProperties.Delete));
+        buttonRun.setContentAreaFilled(false);
+        buttonRemove.setContentAreaFilled(false);
+        ComponentUIUtilities.setName(labelTitle, "ProcessTask_labelTitle");
+        ComponentUIUtilities.setName(progressBar, "ProcessTask_progressBar");
+        ComponentUIUtilities.setName(labelMessage, "ProcessTask_labelMessage");
+        ComponentUIUtilities.setName(labelRemaintime, "ProcessTask_labelRemaintime");
+        ComponentUIUtilities.setName(buttonRun, "ProcessTask_buttonRun");
+        ComponentUIUtilities.setName(buttonRemove, "ProcessTask_buttonRemove");
     }
 
     @Override
@@ -133,8 +153,8 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
                 .addComponent(this.labelTitle)
                 .addGroup(layout.createSequentialGroup()
                         .addComponent(progressBar, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(buttonRun, 20, 20, 20)
-                        .addComponent(buttonRemove, 20, 20, 20)
+                        .addComponent(buttonRun, WIDTH, WIDTH, WIDTH)
+                        .addComponent(buttonRemove, WIDTH, WIDTH, WIDTH)
                 )
                 .addGroup(layout.createSequentialGroup()
                         .addComponent(labelMessage)
@@ -142,15 +162,15 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
                 )
         );
         layout.setVerticalGroup(layout.createSequentialGroup()
-                .addComponent(this.labelTitle, 23, 23, 23)
+                .addComponent(this.labelTitle, WIDTH, WIDTH, WIDTH)
                 .addGroup(layout.createParallelGroup()
-                        .addComponent(progressBar, 20, 20, 20)
-                        .addComponent(buttonRun, 20, 20, 20)
-                        .addComponent(buttonRemove, 20, 20, 20)
+                        .addComponent(progressBar, WIDTH, WIDTH, WIDTH)
+                        .addComponent(buttonRun, WIDTH, WIDTH, WIDTH)
+                        .addComponent(buttonRemove, WIDTH, WIDTH, WIDTH)
                 )
                 .addGroup(layout.createParallelGroup()
-                        .addComponent(labelMessage, 23, 23, 23)
-                        .addComponent(labelRemaintime, 23, 23, 23)
+                        .addComponent(labelMessage, WIDTH, WIDTH, WIDTH)
+                        .addComponent(labelRemaintime, WIDTH, WIDTH, WIDTH)
                 )
         );
         this.setLayout(layout);
@@ -259,21 +279,6 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         });
     }
 
-    public int getPercent() {
-        return this.percent;
-    }
-
-    public void setPercent(final int percent) {
-        this.percent = percent;
-
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                progressBar.setValue(percent);
-            }
-        });
-    }
-
     @Override
     public IProcess getProcess() {
         return process;
@@ -296,7 +301,9 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Stop.png"));
+                    buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_stop_now.png"));
+                    buttonRun.setToolTipText(CommonProperties.getString(CommonProperties.Pause));
+                    progressBar.setForegroundColor(CACEL_FOREGROUNDCOLOR);
                 }
             });
         } else {
@@ -304,7 +311,9 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_Run.png"));
+                    buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_run_now.png"));
+                    buttonRun.setToolTipText(CommonProperties.getString(CommonProperties.Run));
+                    progressBar.setForegroundColor(DEFAULT_FOREGROUNDCOLOR);
                 }
             });
         }
@@ -326,7 +335,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-                    progressBar.setValue(percent);
+                    progressBar.setProgress(percent);
                     labelRemaintime.setText(MessageFormat.format(ControlsProperties.getString("String_RemainTime"), remainTime));
                     labelMessage.setText(message);
                 }

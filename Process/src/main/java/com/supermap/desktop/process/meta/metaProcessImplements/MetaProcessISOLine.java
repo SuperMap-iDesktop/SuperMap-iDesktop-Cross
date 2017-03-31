@@ -7,6 +7,8 @@ import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
+import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
+import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
@@ -29,6 +31,7 @@ public class MetaProcessISOLine extends MetaProcess {
 
     private ParameterDatasource sourceDatasource;
     private ParameterSingleDataset dataset;
+
 	private ParameterSaveDataset saveDataset;
 	private ParameterTextField maxGrid;
 	private ParameterTextField minGrid;
@@ -49,11 +52,21 @@ public class MetaProcessISOLine extends MetaProcess {
 
     public MetaProcessISOLine() {
         initParameters();
-        initParametersState();
+	    initParameterConstraint();
+	    initParametersState();
     }
 
-    private void initParametersState() {
-        this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
+	private void initParameterConstraint() {
+		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
+		equalDatasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+
+		DatasourceConstraint datasourceConstraint = new DatasourceConstraint();
+		datasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+	}
+
+	private void initParametersState() {
+		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 	    this.saveDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
 	    this.saveDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 	    this.saveDataset.setSelectedItem("ISOLine");
@@ -62,10 +75,10 @@ public class MetaProcessISOLine extends MetaProcess {
             minGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMinValue());
         }
         ParameterDataNode selectedNode = new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_NONE"), SmoothMethod.NONE);
-        this.smoothMethod.setItems(new ParameterDataNode[]{selectedNode,
-                new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
-                new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH)});
-        this.smoothMethod.setSelectedItem(selectedNode);
+		this.smoothMethod.setItems(selectedNode,
+				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
+				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH));
+		this.smoothMethod.setSelectedItem(selectedNode);
     }
 
     private void initParameters() {

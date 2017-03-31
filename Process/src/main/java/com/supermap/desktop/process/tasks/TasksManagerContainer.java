@@ -97,8 +97,9 @@ public class TasksManagerContainer extends JPanel {
 
     public void clear() {
         for (IProcessTask item : items) {
-            removeItem(item);
+            groupLayout.removeLayoutComponent((Component) item);
         }
+        items.clear();
     }
 }
 
