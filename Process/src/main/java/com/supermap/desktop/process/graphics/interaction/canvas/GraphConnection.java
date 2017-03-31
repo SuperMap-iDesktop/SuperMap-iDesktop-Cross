@@ -1,11 +1,15 @@
 package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.graphics.CanvasCursor;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.connection.DefaultLine;
 import com.supermap.desktop.process.graphics.connection.RelationLine;
-import com.supermap.desktop.process.graphics.graphs.*;
+import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
+import com.supermap.desktop.process.graphics.graphs.DataGraph;
+import com.supermap.desktop.process.graphics.graphs.IGraph;
+import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,6 +29,7 @@ public class GraphConnection extends CanvasEventAdapter {
 	}
 
 	public void connecting() {
+		CanvasCursor.setConnectingCursor(this.canvas);
 		this.previewLine = new DefaultLine(this.canvas);
 		this.canvas.setEventHandlerEnabled(Selection.class, false);
 		this.canvas.setEventHandlerEnabled(DraggedHandler.class, false);
@@ -43,8 +48,7 @@ public class GraphConnection extends CanvasEventAdapter {
 			Point canvasPoint = this.canvas.getCoordinateTransform().inverse(e.getPoint());
 			IGraph hit = this.canvas.findGraph(e.getPoint());
 
-			boolean ready = hit instanceof AbstractGraph ? ((AbstractGraph) hit).contains(canvasPoint) : hit != null;
-			if (ready) {
+			if (hit != null) {
 //				if (canBeStart(hit)) {
 				this.startGraph = hit;
 				this.previewLine.setStartPoint(hit.getCenter());
@@ -145,6 +149,7 @@ public class GraphConnection extends CanvasEventAdapter {
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
+			CanvasCursor.resetCursor(this.canvas);
 			this.canvas.setEventHandlerEnabled(Selection.class, true);
 			this.canvas.setEventHandlerEnabled(DraggedHandler.class, true);
 			this.canvas.setEventHandlerEnabled(GraphCreator.class, true);

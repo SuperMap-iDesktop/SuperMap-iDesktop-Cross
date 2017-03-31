@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics.interaction.canvas;
 
+import com.supermap.desktop.process.graphics.CanvasCursor;
 import com.supermap.desktop.process.graphics.CoordinateTransform;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
@@ -41,6 +42,7 @@ public class CanvasTranslation extends CanvasEventAdapter {
 	public void mousePressed(MouseEvent e) {
 		if (SwingUtilities.isMiddleMouseButton(e)) {
 			start = e.getPoint();
+			CanvasCursor.setTranslationCursor(this.canvas);
 		}
 	}
 
@@ -48,6 +50,7 @@ public class CanvasTranslation extends CanvasEventAdapter {
 	public void mouseReleased(MouseEvent e) {
 		if (SwingUtilities.isMiddleMouseButton(e)) {
 			start = null;
+			CanvasCursor.resetCursor(this.canvas);
 		}
 	}
 
@@ -91,7 +94,7 @@ public class CanvasTranslation extends CanvasEventAdapter {
 
 	@Override
 	public void clean() {
-
+		this.start = null;
 	}
 
 	public boolean isTranslating() {
