@@ -76,6 +76,7 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 				Point point = e.getPoint();
 				panelSelectTargetInfo.setLocation(point.x + 15, point.y);
 				panelSelectTargetInfo.setVisible(true);
+				panelSelectTargetInfo.updateUI();
 			}
 		};
 		activeMapControl.addMouseMotionListener(mouseMotionListener);

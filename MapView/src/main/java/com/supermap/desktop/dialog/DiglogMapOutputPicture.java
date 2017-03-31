@@ -677,8 +677,6 @@ public class DiglogMapOutputPicture extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
-				// 设置文件选择器中显示的文件名称，是什么给什么，包括空值、带小数点等
-				exportPathFileChoose.setSelectedFile(new File(fileName));
 				// 当数据类型不为空时，打开文件选择对话框时，设置筛选器类型为当前数据类型
 				if (imageType != null) {
 					String imageTypeName = imageType.name();
@@ -696,6 +694,9 @@ public class DiglogMapOutputPicture extends SmDialog {
 						}
 					}
 				}
+
+				// 设置文件选择器中显示的文件名称，是什么给什么，包括空值、带小数点等
+				exportPathFileChoose.setSelectedFile(new File(fileName));
 
 				int state = exportPathFileChoose.showSaveDialog(null);
 				if (state == JFileChooser.APPROVE_OPTION) {

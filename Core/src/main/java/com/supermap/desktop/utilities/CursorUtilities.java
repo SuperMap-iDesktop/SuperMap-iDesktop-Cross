@@ -27,7 +27,7 @@ public class CursorUtilities {
 	}
 
 	/**
-	 * 设置主窗口上的光标为默认光标
+	 * Sets the cursor image of the main frame.
 	 */
 	public static void setDefaultCursor() {
 		IFormMain formMain = Application.getActiveApplication().getMainFrame();
@@ -46,7 +46,7 @@ public class CursorUtilities {
 	}
 
 	/**
-	 * 设置指定控件的光标为等待光标
+	 * Sets the cursor image to the specified waiting cursor.
 	 *
 	 * @param component
 	 */
@@ -55,7 +55,7 @@ public class CursorUtilities {
 	}
 
 	/**
-	 * 设置指定控件的光标为默认光标
+	 * Sets the cursor image to the specified default cursor.
 	 *
 	 * @param component
 	 */
@@ -67,4 +67,15 @@ public class CursorUtilities {
 		component.setCursor(new Cursor(Cursor.HAND_CURSOR));
 	}
 
+	public static void setCustomCursor(Component component, Image cursorImg, String name) {
+		setCustomCursor(component, cursorImg, new Point(0, 0), name);
+	}
+
+	public static void setCustomCursor(Component component, Image cursorImg, Point hotSpot, String name) {
+		Cursor cursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, hotSpot, name);
+
+		if (cursor != null) {
+			component.setCursor(cursor);
+		}
+	}
 }

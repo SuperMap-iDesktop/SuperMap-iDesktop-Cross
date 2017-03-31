@@ -7,9 +7,11 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dialog.DialogMapCacheBuilder;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.mapping.Layers;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.mapping.Layer;
 
 import javax.swing.*;
+import java.util.ArrayList;
 
 /**
  * Created by lixiaoyao on 2017/3/15.
@@ -21,7 +23,8 @@ public class CtrlActionMapCacheBuilder extends CtrlAction {
 
     @Override
     public void run() {
-        DialogMapCacheBuilder dialogMapCacheBuilder = new DialogMapCacheBuilder((JFrame) Application.getActiveApplication().getMainFrame(), true);
+        IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+        DialogMapCacheBuilder dialogMapCacheBuilder = new DialogMapCacheBuilder((JFrame) Application.getActiveApplication().getMainFrame(), true,formMap.getMapControl().getMap());
         DialogResult result = dialogMapCacheBuilder.showDialog();
     }
 
@@ -29,9 +32,11 @@ public class CtrlActionMapCacheBuilder extends CtrlAction {
     public boolean enable() {
         boolean result=false;
         IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-        Layers currentFormMapLayer = formMap.getMapControl().getMap().getLayers();
-        if (currentFormMapLayer.getCount()>0){
-            result=true;
+        if (formMap!=null) {
+            ArrayList<Layer> arrayList = MapUtilities.getLayers(formMap.getMapControl().getMap(), true);
+            if (arrayList.size() > 0) {
+                result = true;
+            }
         }
         return result;
     }
