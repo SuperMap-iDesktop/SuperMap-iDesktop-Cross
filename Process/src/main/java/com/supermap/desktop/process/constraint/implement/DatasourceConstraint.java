@@ -15,16 +15,18 @@ import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.constraint.interfaces.IConstraint;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 
 
 /**
- * 数据源持续更新
+ * 数据源更新时发送事件
  *
  * @author XiaJT
  */
 public class DatasourceConstraint extends DefaultConstraint implements IConstraint, ParameterValueLegalListener {
+	private static DatasourceConstraint datasourceConstraint;
 
-	public DatasourceConstraint() {
+	private DatasourceConstraint() {
 		Application.getActiveApplication().getWorkspace().addClosedListener(new WorkspaceClosedListener() {
 			@Override
 			public void workspaceClosed(WorkspaceClosedEvent workspaceClosedEvent) {
@@ -69,4 +71,15 @@ public class DatasourceConstraint extends DefaultConstraint implements IConstrai
 		}
 	}
 
+	public static DatasourceConstraint getInstance() {
+		if (datasourceConstraint == null) {
+			datasourceConstraint = new DatasourceConstraint();
+		}
+		return datasourceConstraint;
+	}
+
+	@Override
+	protected void constrainedHook(IParameter parameter, String name) {
+		parameter.fireFieldConstraintChanged(name);
+	}
 }

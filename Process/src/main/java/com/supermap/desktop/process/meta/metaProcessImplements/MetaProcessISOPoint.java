@@ -29,6 +29,7 @@ import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 /**
@@ -68,8 +69,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 		equalDatasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
-		DatasourceConstraint datasourceConstraint = new DatasourceConstraint();
-		datasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 	}
 
     private void initParametersState() {
@@ -103,8 +103,8 @@ public class MetaProcessISOPoint extends MetaProcess {
     private void initParameters() {
         this.parameters = new DefaultParameters();
         this.sourceDatasource = new ParameterDatasource();
-        this.sourceDataset = new ParameterSingleDataset(new DatasetType[]{DatasetType.POINT, DatasetType.POINT3D});
-        this.fields = new ParameterComboBox(CommonProperties.getString("String_FieldsName"));
+	    this.sourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.POINT3D);
+	    this.fields = new ParameterComboBox(CommonProperties.getString("String_FieldsName"));
 	    this.targetDataset = new ParameterSaveDataset();
 	    this.maxISOLine = new ParameterTextField(CommonProperties.getString("String_MAXISOLine"));
         this.minISOLine = new ParameterTextField(CommonProperties.getString("String_MINISOLine"));
@@ -150,4 +150,9 @@ public class MetaProcessISOPoint extends MetaProcess {
     public IParameterPanel getComponent() {
         return parameters.getPanel();
     }
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/buffer.png");
+	}
 }

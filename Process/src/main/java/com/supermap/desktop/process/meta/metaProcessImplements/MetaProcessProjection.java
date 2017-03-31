@@ -18,6 +18,8 @@ import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CoreProperties;
 
+import javax.swing.*;
+
 /**
  * @author XiaJT
  */
@@ -83,4 +85,9 @@ public class MetaProcessProjection extends MetaProcess {
     public String getTitle() {
         return "投影转换";
     }
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/Projection.png");
+	}
 }

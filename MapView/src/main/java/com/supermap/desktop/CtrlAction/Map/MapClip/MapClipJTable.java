@@ -1,5 +1,8 @@
 package com.supermap.desktop.CtrlAction.Map.MapClip;
 
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetImage;
+import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
@@ -100,15 +103,26 @@ public class MapClipJTable extends MutiTable {
 		}
 
 		for (int i = 0; i < resultLayer.size(); i++) {
-			boolean clip = false;
-			Layer layerCaption = resultLayer.get(i);
-			Datasource targetDatasource = resultLayer.get(i).getDataset().getDatasource();
-			String targetDataset = resultLayer.get(i).getDataset().getName() + "_1";
-			String clipType = MapViewProperties.getString("String_MapClip_In");
-			String erase = MapViewProperties.getString("String_MapClip_No");
-			boolean exactClip = false;
-			this.mapClipTableModel.addRowLayerInfo(clip, layerCaption, targetDatasource, targetDataset, clipType, erase, exactClip);
-			this.updateUI();
+			// 对获得的图层进行遍历，当数据集类型属于矢量和影像时才进行添加
+			if (resultLayer.get(i).getDataset() instanceof DatasetVector ||
+					resultLayer.get(i).getDataset() instanceof DatasetImage ||
+					resultLayer.get(i).getDataset() instanceof DatasetGrid) {
+				boolean clip = false;
+				Layer layerCaption = resultLayer.get(i);
+				Datasource targetDatasource = resultLayer.get(i).getDataset().getDatasource();
+				// 当初始化的时候就通过判断设置好结果数据集的名称
+				String targetDataset = resultLayer.get(i).getDataset().getName();
+				while (!targetDatasource.getDatasets().isAvailableDatasetName(targetDataset)) {
+					targetDataset = targetDataset + "_1";
+				}
+				String clipType = MapViewProperties.getString("String_MapClip_In");
+				String erase = MapViewProperties.getString("String_MapClip_No");
+				boolean exactClip = false;
+				this.mapClipTableModel.addRowLayerInfo(clip, layerCaption, targetDatasource, targetDataset, clipType, erase, exactClip);
+				this.updateUI();
+			} else {
+				continue;
+			}
 		}
 		// 设置首行记录被选中
 		this.setRowSelectionInterval(0, 0);
@@ -119,7 +133,6 @@ public class MapClipJTable extends MutiTable {
 	}
 
 	public void removeEvents() {
-
 	}
 
 	/**

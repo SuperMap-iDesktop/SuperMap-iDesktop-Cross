@@ -19,6 +19,8 @@ import com.supermap.desktop.ui.lbs.params.*;
 import com.supermap.desktop.utilities.CursorUtilities;
 import org.apache.http.impl.client.CloseableHttpClient;
 
+import javax.swing.*;
+
 /**
  * Created by xie on 2017/2/10.
  * 计算热度图
@@ -42,7 +44,6 @@ public class MetaProcessHeatMap extends MetaProcess {
 
     private void initMetaInfo() {
         this.parameters = new DefaultParameters();
-        //TODO 封装数据管理调用控件，此处先用ParameterTextField控件替换
         parameterHDFSPath = new ParameterHDFSPath();
         parameterHDFSPath.setSelectedItem("hdfs://172.16.14.148:9000/data/newyork_taxi_2013-01_147k.csv");
 
@@ -150,4 +151,9 @@ public class MetaProcessHeatMap extends MetaProcess {
     public String getKey() {
         return MetaKeys.HEAT_MAP;
     }
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/HeatMap.png");
+	}
 }

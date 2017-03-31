@@ -1,11 +1,13 @@
 package com.supermap.desktop.process.meta;
 
+import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.AbstractProcess;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.tasks.ProcessTask;
 
+import javax.swing.*;
 import java.util.Vector;
 
 /**
@@ -42,5 +44,7 @@ public abstract class MetaProcess extends AbstractProcess {
 		return processTask;
 	}
 
-
+	protected Icon getIconByPath(String path) {
+		return new ImageIcon(ProcessResources.getResourceURL(path));
+	}
 }

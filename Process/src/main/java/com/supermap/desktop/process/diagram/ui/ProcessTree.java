@@ -9,7 +9,16 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.IProcessGroup;
 import com.supermap.desktop.process.core.ProcessGroup;
-import com.supermap.desktop.process.meta.metaProcessImplements.*;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessBuffer;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessHeatMap;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISOLine;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessImport;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessInterpolator;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessKernelDensity;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessOverlayAnalyst;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessProjection;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSpatialIndex;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSqlQuery;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
@@ -42,15 +51,18 @@ public class ProcessTree extends JPanel {
 		new TreeDropAndDragHandler(DataFlavor.stringFlavor).bindSource(this.processTree);
 		// fixme 使用自行实现的TreeNode
 		// @see com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolGroupTreeNode
-		ProcessGroup root = new ProcessGroup(null);
+		final ProcessGroup root = new ProcessGroup(null);
+		root.setIconPath("/processresources/Process/root.png");
 		root.setKey(ProcessProperties.getString("String_Process"));
 
 		ProcessGroup online = new ProcessGroup(root);
 		online.setKey("Online");
+		online.setIconPath("/processresources/Process/online.png");
 		online.addProcess(new MetaProcessHeatMap());
 		online.addProcess(new MetaProcessKernelDensity());
 
 		ProcessGroup standAloneGroup = new ProcessGroup(root);
+		standAloneGroup.setIconPath("/processresources/Process/native.png");
 		standAloneGroup.setKey(ProcessProperties.getString("String_StandAlone"));
 		standAloneGroup.addProcess(new MetaProcessBuffer());
 		standAloneGroup.addProcess(new MetaProcessImport());
@@ -70,25 +82,34 @@ public class ProcessTree extends JPanel {
 			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 				value = ((DefaultMutableTreeNode) value).getUserObject();
 				JLabel jLabel = new JLabel();
+				Icon icon = null;
 				jLabel.setOpaque(true);
 				if (value instanceof IProcess) {
 					jLabel.setText(((IProcess) value).getTitle());
+					icon = ((IProcess) value).getIcon();
+
 				} else if (value instanceof String) {
+					// bug
+					icon = root.getIcon();
 					jLabel.setText((String) value);
 				}
+				if (icon == null) {
+					if (leaf) {
+						icon = getLeafIcon();
+					} else if (expanded) {
+						icon = getOpenIcon();
+					} else {
+						icon = getClosedIcon();
+					}
+				}
+				jLabel.setIcon(icon);
 				if (selected) {
 					jLabel.setForeground(Color.WHITE);
 					jLabel.setBackground(new Color(150, 185, 255));
 				} else {
 					jLabel.setBackground(Color.WHITE);
 				}
-				if (leaf) {
-					jLabel.setIcon(getLeafIcon());
-				} else if (expanded) {
-					jLabel.setIcon(getOpenIcon());
-				} else {
-					jLabel.setIcon(getClosedIcon());
-				}
+
 				return jLabel;
 			}
 		});

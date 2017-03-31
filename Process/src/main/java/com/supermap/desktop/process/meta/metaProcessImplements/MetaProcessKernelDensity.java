@@ -19,6 +19,8 @@ import com.supermap.desktop.ui.lbs.params.KernelDensityJobSetting;
 import com.supermap.desktop.utilities.CursorUtilities;
 import org.apache.http.impl.client.CloseableHttpClient;
 
+import javax.swing.*;
+
 /**
  * Created by xie on 2017/2/10.
  */
@@ -109,4 +111,9 @@ public class MetaProcessKernelDensity extends MetaProcess {
     public String getKey() {
         return MetaKeys.KERNEL_DENSITY;
     }
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/KernelDensity.png");
+	}
 }

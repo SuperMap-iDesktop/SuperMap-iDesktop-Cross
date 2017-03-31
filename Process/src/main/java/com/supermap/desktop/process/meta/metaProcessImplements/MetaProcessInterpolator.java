@@ -36,6 +36,8 @@ import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.PixelFormatProperties;
 
+import javax.swing.*;
+
 /**
  * Created by xie on 2017/2/16.
  */
@@ -245,5 +247,10 @@ public class MetaProcessInterpolator extends MetaProcess {
 		interpolationParameter.setSearchRadius(info.searchRadius);
 		interpolationParameter.setResolution((Double) parameterResulotion.getSelectedItem());
 		interpolationParameter.setBounds(bounds);
+	}
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/interpolator.png");
 	}
 }

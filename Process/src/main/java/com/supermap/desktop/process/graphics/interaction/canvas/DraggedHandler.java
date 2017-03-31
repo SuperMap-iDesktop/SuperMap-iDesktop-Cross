@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics.interaction.canvas;
 
+import com.supermap.desktop.process.graphics.CanvasCursor;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
@@ -27,6 +28,7 @@ public class DraggedHandler extends CanvasEventAdapter {
 		this.dragStart = null;
 		this.dirtys = null;
 		this.canvas.setEventHandlerEnabled(Selection.class, true);
+		CanvasCursor.resetCursor(this.canvas);
 	}
 
 	@Override
@@ -37,6 +39,7 @@ public class DraggedHandler extends CanvasEventAdapter {
 			IGraph hitGraph = canvas.findGraph(e.getPoint());
 
 			if (hitGraph != null) {
+				CanvasCursor.setItemDraggedCursor(this.canvas);
 				this.dragStart = canvas.getCoordinateTransform().inverse(e.getPoint());
 
 				if (this.canvas.getSelection().isSelected(hitGraph)) {

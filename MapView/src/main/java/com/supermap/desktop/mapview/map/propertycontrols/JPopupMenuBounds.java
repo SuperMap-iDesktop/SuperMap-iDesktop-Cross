@@ -18,7 +18,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
 
 /**
  * 重构
@@ -49,6 +50,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 
 	private transient GeoRegion geoRegion;
 	private transient Rectangle2D rectangle2d;
+	private java.util.Map<Layer, List<Geometry>> selectedGeometryAndLayer = new HashMap<>();
 
 	private SmDialog dialog;
 
@@ -60,6 +62,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 	private static final String CLEAR = "Clear";
 
 	private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
+	private String currentActionCommand="";
 
 	public static final String CLIP_REGION = "ClipRegion";
 	public static final String VIEW_BOUNDS_LOCKED = "ViewBoundsLocked";
@@ -280,6 +283,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 			}
 		} else if (actionCommand.equals(JPopupMenuBounds.SELECT_TARGET)) {
 			// 当点击了“选择对象”PopupMenu，隐藏主窗体
+			this.currentActionCommand=JPopupMenuBounds.SELECT_TARGET;
 			if (this.dialog != null) {
 				this.dialog.setVisible(false);
 			}
@@ -367,6 +371,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 				Point point = e.getPoint();
 				panelSelectTargetInfo.setLocation(point.x + 15, point.y);
 				panelSelectTargetInfo.setVisible(true);
+				panelSelectTargetInfo.updateUI();
 			}
 		};
 		activeMapControl.addMouseMotionListener(mouseMotionListener);
@@ -461,6 +466,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 			Rectangle2D rectangle2dResult = null;
 			// 当有图层分组的地图时，这样的获得方式会导致无法获得全部图层--yuanR
 //			Layers layers = activeMapControl.getMap().getLayers();
+			this.selectedGeometryAndLayer.clear();
 			ArrayList<Layer> arrayList;
 			arrayList = MapUtilities.getLayers(activeMapControl.getMap(), true);
 
@@ -470,6 +476,7 @@ public class JPopupMenuBounds extends JPopupMenu {
 					continue;
 				}
 				Recordset recordset = layer.getSelection().toRecordset();
+				List<Geometry> selectedGeometry=new ArrayList<>();
 				for (int k = 0; k < recordset.getRecordCount(); k++, recordset.moveNext()) {
 					Geometry geometry = recordset.getGeometry();
 					if (geometry != null) {
@@ -480,7 +487,11 @@ public class JPopupMenuBounds extends JPopupMenu {
 							rectangle2dResult.union(geometry.getBounds().clone());
 							isChanged = true;
 						}
+						selectedGeometry.add(geometry.clone());
 					}
+				}
+				if (selectedGeometry.size()>0 && this.currentActionCommand.equals(JPopupMenuBounds.SELECT_TARGET)) {
+					this.selectedGeometryAndLayer.put(layer,selectedGeometry);
 				}
 			}
 			if (isChanged && rectangle2dResult != null && rectangle2dResult.getHeight() > 0 && rectangle2dResult.getWidth() > 0) {
@@ -531,6 +542,10 @@ public class JPopupMenuBounds extends JPopupMenu {
 
 	public GeoRegion getGeoRegion() {
 		return this.geoRegion;
+	}
+
+	public java.util.Map<Layer, List<Geometry>> getSelectedGeometryAndLayer(){
+		return this.selectedGeometryAndLayer;
 	}
 
 	public void addPropertyChangeListeners(PropertyChangeListener changeListener) {

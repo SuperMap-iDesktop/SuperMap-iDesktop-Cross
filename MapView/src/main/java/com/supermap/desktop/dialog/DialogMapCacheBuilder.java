@@ -3,12 +3,10 @@ package com.supermap.desktop.dialog;
 import com.mongodb.Mongo;
 import com.mongodb.MongoClientURI;
 import com.mongodb.ServerAddress;
-import com.supermap.data.Rectangle2D;
-import com.supermap.data.Unit;
+import com.supermap.data.*;
 import com.supermap.data.processing.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.ScaleModel;
 import com.supermap.desktop.mapview.MapCache.CacheProgressCallable;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -24,25 +22,40 @@ import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
+import com.supermap.desktop.ui.controls.ToolBarJmenu.ToolbarJmenuListener;
+import com.supermap.desktop.ui.controls.ToolBarJmenu.ToolbarMenu;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilities.Convert;
-import com.supermap.desktop.utilities.CoreResources;
-import com.supermap.desktop.utilities.DoubleUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
 import com.supermap.tilestorage.TileStorageConnection;
 import com.supermap.tilestorage.TileStorageType;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
+import java.io.*;
 import java.net.Socket;
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -62,13 +75,14 @@ public class DialogMapCacheBuilder extends SmDialog {
     private SmButton buttonSetting;
 
     //  Scale Panel Control
+    private JToolBar toolBar;
+    private ToolbarMenu toolbarMenuAddScale;
+    private ToolbarMenu toolbarMenuImport;
+    private ToolbarMenu toolbarMenuExport;
+    private JButton buttonSelectAll;
+    private JButton buttonSelectInverse;
+    private JButton buttonDelete;
     private BackgroundMenuBar menuBar;
-    private JMenu jMenuAddScale;
-    private JMenu jMenuSelectAll;
-    private JMenu jMenuSelectInverse;
-    private JMenu jMenuDelete;
-    private JMenu jMenuImport;
-    private JMenu jMenuExport;
     private JMenuItem jMenuItemAddScale;
     private JMenuItem jMenuItemDefaultScale;
     private JMenuItem jMenuItemImportCacheConfigs;
@@ -136,7 +150,7 @@ public class DialogMapCacheBuilder extends SmDialog {
 
     private final String urlStr = "/coreresources/ToolBar/";
     private final int universalWidth = 200;
-    private final int minSize = 20;
+    private final int minSize = 23;
     private final int COLUMN_INDEX = 0;
     private final int COLUMN_SCALE = 1;
     private final int COLUMN_TITLE = 2;
@@ -144,6 +158,7 @@ public class DialogMapCacheBuilder extends SmDialog {
     java.text.NumberFormat scientificNotation = java.text.NumberFormat.getInstance();
     private double originMapCacheScale[];
     private HashMap<Double, String> globalSplitScale = new HashMap<>();
+    private HashMap<Double, String> scaleNames = new HashMap<>();
     private ArrayList<Double> currentMapCacheScale;
     private static final String showScalePrePart = "1:";
     private static final String colon = ":";
@@ -159,9 +174,13 @@ public class DialogMapCacheBuilder extends SmDialog {
     private static final int defaultPort = 27017;
     private boolean validCacheRangeBounds = true;
     private boolean validIndexRangeBounds = true;
+    private static DecimalFormat roundingTwoPoint = new DecimalFormat("#.00");
+    private java.util.Map<Layer, List<Geometry>> selectedGeometryAndLayer = new HashMap<>();
+    private Map currentMap;
 
-    public DialogMapCacheBuilder(JFrame owner, boolean model) {
+    public DialogMapCacheBuilder(JFrame owner, boolean model, Map inputMap) {
         super(owner, model);
+        this.currentMap = inputMap;
         initComponents();
         initLayout();
         initLocalSplitTable();
@@ -171,6 +190,9 @@ public class DialogMapCacheBuilder extends SmDialog {
         initPanelImageSaveValue();
         removeEvents();
         registEvents();
+        this.componentList.add(this.buttonOK);
+        this.componentList.add(this.buttonCancel);
+        this.setFocusTraversalPolicy(policy);
     }
 
     private void initComponents() {
@@ -187,19 +209,21 @@ public class DialogMapCacheBuilder extends SmDialog {
 
 
         this.scrollPane = new JScrollPane();
+        this.toolBar = new JToolBar();
         this.menuBar = new BackgroundMenuBar();
-        this.jMenuAddScale = new JMenu();
-        this.jMenuSelectAll = new JMenu();
-        this.jMenuSelectInverse = new JMenu();
-        this.jMenuDelete = new JMenu();
-        this.jMenuImport = new JMenu();
-        this.jMenuExport = new JMenu();
         this.jMenuItemAddScale = new JMenuItem(MapViewProperties.getString("MapCache_AddScale"), CoreResources.getIcon(urlStr + "Image_ToolButton_AddScale.png"));
         this.jMenuItemDefaultScale = new JMenuItem(MapViewProperties.getString("MapCache_DefaultScale"), CoreResources.getIcon(urlStr + "Image_ToolButton_DefaultScale.png"));
-        this.jMenuItemImportCacheConfigs = new JMenuItem(MapViewProperties.getString("MapCache_ImportCacheConfigs"), CoreResources.getIcon(urlStr + "Image_ToolButton_Export.png"));
+        this.jMenuItemImportCacheConfigs = new JMenuItem(MapViewProperties.getString("MapCache_ImportCacheConfigs"), CoreResources.getIcon(urlStr + "Image_ToolButton_ExportScale.png"));
         this.jMenuItemImportScale = new JMenuItem(MapViewProperties.getString("MapCache_ImportScale"), CoreResources.getIcon(urlStr + "Image_ToolButton_DefaultScale.png"));
-        this.jMenuItemExportCacheConfigs = new JMenuItem(MapViewProperties.getString("MapCache_ExportCacheConfig"), CoreResources.getIcon(urlStr + "Image_ToolButton_Export.png"));
+        this.jMenuItemExportCacheConfigs = new JMenuItem(MapViewProperties.getString("MapCache_ExportCacheConfig"), CoreResources.getIcon(urlStr + "Image_ToolButton_ExportScale.png"));
         this.jMenuItemExportScale = new JMenuItem(MapViewProperties.getString("MapCache_ExportScale"), CoreResources.getIcon(urlStr + "Image_ToolButton_DefaultScale.png"));
+
+        this.toolbarMenuAddScale = new ToolbarMenu(CoreResources.getIcon(urlStr + "Image_ToolButton_AddScale.png"), MapViewProperties.getString("String_AddScale"), MapViewProperties.getString("String_AddScale"));
+        this.toolbarMenuImport = new ToolbarMenu(CoreResources.getIcon(urlStr + "Image_ToolButton_Import.png"), MapViewProperties.getString("MapCache_Import"), MapViewProperties.getString("MapCache_Import"));
+        this.toolbarMenuExport = new ToolbarMenu(CoreResources.getIcon(urlStr + "Image_ToolButton_Export.png"), MapViewProperties.getString("MapCache_Export"), MapViewProperties.getString("MapCache_Export"));
+        this.buttonSelectAll = new JButton();
+        this.buttonSelectInverse = new JButton();
+        this.buttonDelete = new JButton();
 
         this.labelVersion = new JLabel();
         this.labelSplitMode = new JLabel();
@@ -244,7 +268,7 @@ public class DialogMapCacheBuilder extends SmDialog {
     }
 
     private void initLayout() {
-        Dimension dimension = new Dimension(752, 520);
+        Dimension dimension = new Dimension(924, 545);
         setSize(dimension);
         setMinimumSize(dimension);
         setLocationRelativeTo(null);
@@ -254,52 +278,54 @@ public class DialogMapCacheBuilder extends SmDialog {
         groupLayout.setAutoCreateGaps(true);
 
         groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGroup(groupLayout.createSequentialGroup()
-                                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addComponent(this.menuBar)
-                                        .addComponent(this.scrollPane, 343, 343, Short.MAX_VALUE))
-                                .addGap(10, 10, 10)
-                                .addComponent(this.tabbedPane, 362, 363, Short.MAX_VALUE))
-                        .addGroup(groupLayout.createSequentialGroup()
-                                .addComponent(this.autoCloseDialog)
-                                .addComponent(this.showProgressBar)
-                                .addComponent(this.mutiProcessCache)
-                                .addGap(10, 10, Short.MAX_VALUE)
-                                .addComponent(this.buttonSetting)
-                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
-                                .addComponent(this.buttonOK)
-                                .addComponent(this.buttonCancel)
-                        ))
+                        .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addGroup(groupLayout.createSequentialGroup()
+                                        .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                .addComponent(this.toolBar)
+                                                .addComponent(this.scrollPane, 343, 343, Short.MAX_VALUE))
+                                        .addGap(20, 20, 20)
+                                        .addComponent(this.tabbedPane, 363, 363, Short.MAX_VALUE))
+                                .addGroup(groupLayout.createSequentialGroup()
+                                                .addComponent(this.autoCloseDialog)
+                                                .addComponent(this.showProgressBar)
+//                                .addComponent(this.mutiProcessCache)
+//                                .addGap(10, 10, Short.MAX_VALUE)
+//                                .addComponent(this.buttonSetting)
+//                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
+                                                .addGap(200, 200, Short.MAX_VALUE)
+                                                .addComponent(this.buttonOK)
+                                                .addComponent(this.buttonCancel)
+                                ))
         );
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGroup(groupLayout.createSequentialGroup()
-                                .addComponent(this.menuBar, 30, 30, 30)
-                                .addComponent(this.scrollPane))
-                        .addComponent(this.tabbedPane))
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                        .addComponent(this.autoCloseDialog)
-                        .addComponent(this.showProgressBar)
-                        .addComponent(this.mutiProcessCache)
-                        .addComponent(this.buttonSetting)
-                        .addComponent(this.buttonOK)
-                        .addComponent(this.buttonCancel))
+                        .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addGroup(groupLayout.createSequentialGroup()
+                                        .addComponent(this.toolBar, 30, 30, 30)
+                                        .addComponent(this.scrollPane))
+                                .addComponent(this.tabbedPane))
+                        .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                .addComponent(this.autoCloseDialog)
+                                .addComponent(this.showProgressBar)
+//                        .addComponent(this.mutiProcessCache)
+//                        .addComponent(this.buttonSetting)
+                                .addComponent(this.buttonOK)
+                                .addComponent(this.buttonCancel))
         );
 
-        this.jMenuAddScale.add(this.jMenuItemAddScale);
-        this.jMenuAddScale.add(this.jMenuItemDefaultScale);
-        this.jMenuImport.add(this.jMenuItemImportCacheConfigs);
-        this.jMenuImport.add(this.jMenuItemImportScale);
-        this.jMenuExport.add(this.jMenuItemExportCacheConfigs);
-        this.jMenuExport.add(this.jMenuItemExportScale);
-        this.menuBar.add(this.jMenuAddScale);
-        this.menuBar.add(this.jMenuSelectAll);
-        this.menuBar.add(this.jMenuSelectInverse);
-        this.menuBar.add(this.jMenuDelete);
-        this.menuBar.add(this.jMenuImport);
-        this.menuBar.add(this.jMenuExport);
-        this.menuBar.setColor(this.getBackground());
+        this.toolbarMenuAddScale.addJmentItem(this.jMenuItemAddScale);
+        this.toolbarMenuAddScale.addJmentItem(this.jMenuItemDefaultScale);
+        this.toolbarMenuImport.addJmentItem(this.jMenuItemImportCacheConfigs);
+        this.toolbarMenuImport.addJmentItem(this.jMenuItemImportScale);
+        this.toolbarMenuExport.addJmentItem(this.jMenuItemExportCacheConfigs);
+        this.toolbarMenuExport.addJmentItem(this.jMenuItemExportScale);
+        this.toolBar.add(this.toolbarMenuAddScale);
+        this.toolBar.addSeparator();
+        this.toolBar.add(this.buttonSelectAll);
+        this.toolBar.add(this.buttonSelectInverse);
+        this.toolBar.add(this.buttonDelete);
+        this.toolBar.addSeparator();
+        this.toolBar.add(this.toolbarMenuImport);
+        this.toolBar.add(this.toolbarMenuExport);
 
         this.localSplitTable = new MutiTable();
         this.scrollPane.setViewportView(this.localSplitTable);
@@ -307,10 +333,10 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.tabbedPane.add(MapViewProperties.getString("MapCache_BasicSetting"), panelBasicSetting);
         this.tabbedPane.add(MapViewProperties.getString("MapCache_RangeParameter"), panelRangeParameter);
         this.tabbedPane.add(MapViewProperties.getString("MapCache_ImageSave"), panelImageSave);
-        getContentPane().setLayout(groupLayout);
         initPanelBasicSetting();
         initPanelImageSave();
         initPanelRangeParameter();
+        getContentPane().setLayout(groupLayout);
     }
 
     private void initPanelBasicSetting() {
@@ -323,33 +349,33 @@ public class DialogMapCacheBuilder extends SmDialog {
         groupLayoutOutPutSetting.setAutoCreateContainerGaps(true);
         groupLayoutOutPutSetting.setAutoCreateGaps(true);
         groupLayoutOutPutSetting.setHorizontalGroup(groupLayoutOutPutSetting.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(groupLayoutOutPutSetting.createSequentialGroup()
-                        .addGroup(groupLayoutOutPutSetting.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(this.labelVersion)
-                                .addComponent(this.labelSplitMode))
-                        .addGap(30)
-                        .addGroup(groupLayoutOutPutSetting.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                .addComponent(this.comboboxVersion, universalWidth, universalWidth, Short.MAX_VALUE)
-                                .addComponent(this.comboBoxSplitMode, universalWidth, universalWidth, Short.MAX_VALUE)))
-                .addComponent(this.checkBoxUpdataOrAddCacheFile)
-                .addComponent(this.checkBoxGoOnOrRecoveryCacheFile)
-                .addGroup(groupLayoutOutPutSetting.createSequentialGroup()
-                        .addComponent(this.labelConfig)
-                        .addComponent(this.labelConfigValue)
-                )
+                        .addGroup(groupLayoutOutPutSetting.createSequentialGroup()
+                                .addGroup(groupLayoutOutPutSetting.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(this.labelVersion)
+                                        .addComponent(this.labelSplitMode))
+                                .addGap(30)
+                                .addGroup(groupLayoutOutPutSetting.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(this.comboboxVersion, universalWidth, universalWidth, Short.MAX_VALUE)
+                                        .addComponent(this.comboBoxSplitMode, universalWidth, universalWidth, Short.MAX_VALUE)))
+//                .addComponent(this.checkBoxUpdataOrAddCacheFile)
+//                .addComponent(this.checkBoxGoOnOrRecoveryCacheFile)
+                        .addGroup(groupLayoutOutPutSetting.createSequentialGroup()
+                                .addComponent(this.labelConfig)
+                                .addComponent(this.labelConfigValue)
+                        )
         );
         groupLayoutOutPutSetting.setVerticalGroup(groupLayoutOutPutSetting.createSequentialGroup()
-                .addGroup(groupLayoutOutPutSetting.createParallelGroup()
-                        .addComponent(this.labelVersion)
-                        .addComponent(this.comboboxVersion, minSize, minSize, minSize))
-                .addGroup(groupLayoutOutPutSetting.createParallelGroup()
-                        .addComponent(this.labelSplitMode)
-                        .addComponent(this.comboBoxSplitMode, minSize, minSize, minSize))
-                .addComponent(this.checkBoxUpdataOrAddCacheFile)
-                .addComponent(this.checkBoxGoOnOrRecoveryCacheFile)
-                .addGroup(groupLayoutOutPutSetting.createParallelGroup()
-                        .addComponent(this.labelConfig)
-                        .addComponent(this.labelConfigValue))
+                        .addGroup(groupLayoutOutPutSetting.createParallelGroup()
+                                .addComponent(this.labelVersion)
+                                .addComponent(this.comboboxVersion, minSize, minSize, minSize))
+                        .addGroup(groupLayoutOutPutSetting.createParallelGroup()
+                                .addComponent(this.labelSplitMode)
+                                .addComponent(this.comboBoxSplitMode, minSize, minSize, minSize))
+//                .addComponent(this.checkBoxUpdataOrAddCacheFile)
+//                .addComponent(this.checkBoxGoOnOrRecoveryCacheFile)
+                        .addGroup(groupLayoutOutPutSetting.createParallelGroup()
+                                .addComponent(this.labelConfig)
+                                .addComponent(this.labelConfigValue))
         );
         outputSetting.setLayout(groupLayoutOutPutSetting);
 
@@ -499,16 +525,16 @@ public class DialogMapCacheBuilder extends SmDialog {
     }
 
     private void initPanelRangeParameter() {
-        this.panelCacheRange = new PanelGroupBoxViewBounds(this, MapViewProperties.getString("MapCache_CacheRange"));
-        this.panelIndexRange = new PanelGroupBoxViewBounds(this, MapViewProperties.getString("MapCache_IndexRange"));
+        this.panelCacheRange = new PanelGroupBoxViewBounds(this, MapViewProperties.getString("MapCache_CacheRange"), this.currentMap);
+        this.panelIndexRange = new PanelGroupBoxViewBounds(this, MapViewProperties.getString("MapCache_IndexRange"), this.currentMap);
         GroupLayout groupLayoutImageSave = new GroupLayout(this.panelRangeParameter);
         groupLayoutImageSave.setHorizontalGroup(groupLayoutImageSave.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addComponent(this.panelCacheRange)
                 .addComponent(this.panelIndexRange)
         );
         groupLayoutImageSave.setVerticalGroup(groupLayoutImageSave.createSequentialGroup()
-                .addComponent(panelCacheRange)
-                .addComponent(panelIndexRange)
+                .addComponent(panelCacheRange,215,215,215)
+                .addComponent(panelIndexRange,215,215,215)
         );
         this.panelRangeParameter.setLayout(groupLayoutImageSave);
         this.cacheRangeWaringTextFieldLeft = this.panelCacheRange.getTextFieldCurrentViewLeft();
@@ -531,18 +557,13 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.buttonCancel.setText(MapViewProperties.getString("String_BatchAddColorTableCancelButton"));
 
 
-        this.jMenuAddScale.setIcon(CoreResources.getIcon(urlStr + "Image_ToolButton_AddScale.png"));
-        this.jMenuAddScale.setToolTipText(MapViewProperties.getString("MapCache_AddScale"));
-        this.jMenuSelectAll.setIcon(CoreResources.getIcon(urlStr + "Image_ToolButton_SelectAll.png"));
-        this.jMenuSelectAll.setToolTipText(CommonProperties.getString("String_ToolBar_SelectAll"));
-        this.jMenuSelectInverse.setIcon(CoreResources.getIcon(urlStr + "Image_ToolButton_SelectInverse.png"));
-        this.jMenuSelectInverse.setToolTipText(CommonProperties.getString("String_ToolBar_SelectInverse"));
-        this.jMenuDelete.setIcon(CoreResources.getIcon(urlStr + "Image_ToolButton_Delete.png"));
-        this.jMenuDelete.setToolTipText(CommonProperties.getString("String_Delete"));
-        this.jMenuImport.setIcon(CoreResources.getIcon(urlStr + "Image_ToolButton_Import.png"));
-        this.jMenuImport.setToolTipText(MapViewProperties.getString("MapCache_Import"));
-        this.jMenuExport.setIcon(CoreResources.getIcon(urlStr + "Image_ToolButton_Export.png"));
-        this.jMenuExport.setToolTipText(MapViewProperties.getString("MapCache_Export"));
+        this.buttonSelectAll.setIcon(CoreResources.getIcon(urlStr + "Image_ToolButton_SelectAll.png"));
+        this.buttonSelectAll.setToolTipText(CommonProperties.getString("String_ToolBar_SelectAll"));
+        this.buttonSelectInverse.setIcon(CoreResources.getIcon(urlStr + "Image_ToolButton_SelectInverse.png"));
+        this.buttonSelectInverse.setToolTipText(CommonProperties.getString("String_ToolBar_SelectInverse"));
+        this.buttonDelete.setIcon(CoreResources.getIcon(urlStr + "Image_ToolButton_Delete.png"));
+        this.buttonDelete.setToolTipText(CommonProperties.getString("String_Delete"));
+
         this.labelVersion.setText(MapViewProperties.getString("MapCache_LabelVersion"));
         this.labelSplitMode.setText(MapViewProperties.getString("MapCache_LabelSplitMode"));
         this.labelConfig.setText(MapViewProperties.getString("MapCache_LabelConfig"));
@@ -569,9 +590,8 @@ public class DialogMapCacheBuilder extends SmDialog {
     }
 
     private void initGlobalValue() {
-        IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-        this.mapCacheBuilder.setMap(formMap.getMapControl().getMap());
-        this.setTitle(MapViewProperties.getString("MapCache_Title") + "(" + formMap.getMapControl().getMap().getName() + ")");
+        this.mapCacheBuilder.setMap(this.currentMap);
+        this.setTitle(MapViewProperties.getString("MapCache_Title") + "(" + this.currentMap.getName() + ")");
         this.scientificNotation.setGroupingUsed(false);
         this.originMapCacheScale = this.mapCacheBuilder.getDefultOutputScales();
         setLocalSplitTableValue(this.originMapCacheScale);
@@ -583,23 +603,60 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.buttonSetting.setEnabled(false);
         this.showProgressBar.setSelected(true);
         this.autoCloseDialog.setSelected(true);
-        this.cacheRangeBounds = formMap.getMapControl().getMap().getBounds();
-        this.indexRangeBounds = formMap.getMapControl().getMap().getBounds();
+        this.cacheRangeBounds = this.currentMap.getBounds();
+        this.indexRangeBounds = this.currentMap.getBounds();
         this.mapCacheBuilder.setBounds(this.cacheRangeBounds);
         this.mapCacheBuilder.setIndexBounds(this.indexRangeBounds);
     }
 
     private void initBasicSettingPanelValue() {
         this.comboboxVersion.addItem(MapViewProperties.getString("MapCache_ComboboxVersionItem"));
-        this.comboboxVersion.setEnabled(true);
         this.comboBoxSplitMode.addItem(MapViewProperties.getString("MapCache_ComboboxSplitModeLocalSplit"));
         this.comboBoxSplitMode.addItem(MapViewProperties.getString("MapCache_ComboboxSplitModeGlobalSplit"));
+        this.comboBoxSplitMode.setEnabled(false);
+        if (this.currentMap.getPrjCoordSys() != null && this.currentMap.getPrjCoordSys().getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE
+                && this.currentMap.getPrjCoordSys().getGeoCoordSys() != null && this.currentMap.getPrjCoordSys().getGeoCoordSys().getType() == GeoCoordSysType.GCS_WGS_1984
+                && this.currentMap.getPrjCoordSys().getGeoCoordSys().getGeoSpatialRefType() == GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE) {
+            this.comboBoxSplitMode.setEnabled(true);
+        }
         this.checkBoxUpdataOrAddCacheFile.setEnabled(false);
         this.checkBoxGoOnOrRecoveryCacheFile.setEnabled(false);
         this.textFieldCacheName.setText(this.mapCacheBuilder.getMap().getName());
-        this.fileChooserControlFileCache.getEditor().setText(CommonProperties.getString("String_DefaultFilePath"));
+        String moduleName = "ChooseCacheDirectories";
+        if (!SmFileChoose.isModuleExist(moduleName)) {
+            this.fileChooserControlFileCache.getEditor().setText(System.getProperty("user.dir"));
+        } else {
+            SmFileChoose fileChoose = new SmFileChoose(moduleName);
+            if(SystemPropertyUtilities.isWindows()) {
+                this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath() + "\\");
+            }else{
+                this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath() + "/");
+            }
+        }
         this.warningProviderCacheNameIllegal.hideWarning();
         this.warningProviderCachePathIllegal.hideWarning();
+    }
+
+    private void initCacheRangeTextField() {
+        this.cacheRangeWaringTextFieldBottom.getTextField().setText(null);
+        this.cacheRangeWaringTextFieldTop.getTextField().setText(null);
+        this.cacheRangeWaringTextFieldRight.getTextField().setText(null);
+        this.cacheRangeWaringTextFieldLeft.getTextField().setText(null);
+        this.cacheRangeWaringTextFieldBottom.getTextField().setText(String.valueOf(this.cacheRangeBounds.getBottom()));
+        this.cacheRangeWaringTextFieldTop.getTextField().setText(String.valueOf(this.cacheRangeBounds.getTop()));
+        this.cacheRangeWaringTextFieldRight.getTextField().setText(String.valueOf(this.cacheRangeBounds.getRight()));
+        this.cacheRangeWaringTextFieldLeft.getTextField().setText(String.valueOf(this.cacheRangeBounds.getLeft()));
+    }
+
+    private void initIndexRangeTextField() {
+        this.indexRangeWaringTextFieldRight.getTextField().setText(null);
+        this.indexRangeWaringTextFieldTop.getTextField().setText(null);
+        this.indexRangeWaringTextFieldLeft.getTextField().setText(null);
+        this.indexRangeWaringTextFieldBottom.getTextField().setText(null);
+        this.indexRangeWaringTextFieldRight.getTextField().setText(String.valueOf(this.indexRangeBounds.getRight()));
+        this.indexRangeWaringTextFieldTop.getTextField().setText(String.valueOf(this.indexRangeBounds.getTop()));
+        this.indexRangeWaringTextFieldLeft.getTextField().setText(String.valueOf(this.indexRangeBounds.getLeft()));
+        this.indexRangeWaringTextFieldBottom.getTextField().setText(String.valueOf(this.indexRangeBounds.getBottom()));
     }
 
     private void initPanelImageSaveValue() {
@@ -624,7 +681,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.comboBoxSaveType.addItem(MapViewProperties.getString("MapCache_SaveType_Origin"));
         this.comboBoxSaveType.addItem(MapViewProperties.getString("MapCache_SaveType_MongoDB"));
         //this.comboBoxSaveType.addItem(MapViewProperties.getString("MapCache_SaveType_MongoDBMuti"));
-        this.comboBoxSaveType.addItem(MapViewProperties.getString("MapCache_SaveType_GeoPackage"));
+        //this.comboBoxSaveType.addItem(MapViewProperties.getString("MapCache_SaveType_GeoPackage"));
         this.comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_Origin"));
         initPanelImageSaveOutputDisplay(MapViewProperties.getString("MapCache_SaveType_Origin"));
         this.checkBoxFilterSelectionObjectInLayer.setEnabled(false);
@@ -694,6 +751,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                 this.comboBoxMutiTenseVersion.setVisible(false);
                 this.mapCacheBuilder.setStorageType(StorageType.MongoDB);
             }
+            connectMongoDBPretreatment();
         }
     }
 
@@ -709,7 +767,8 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.localSplitTable.setModel(tableModel);
         this.localSplitTable.setRowHeight(23);
         this.localSplitTable.getColumnModel().getColumn(COLUMN_INDEX).setMaxWidth(40);
-        this.localSplitTable.getColumnModel().getColumn(COLUMN_TITLE).setMaxWidth(100);
+        this.localSplitTable.getColumnModel().getColumn(COLUMN_TITLE).setMaxWidth(125);
+        this.localSplitTable.getColumnModel().getColumn(COLUMN_TITLE).setMinWidth(125);
         this.localSplitTable.getColumnModel().getColumn(COLUMN_INDEX).setHeaderValue("");
         this.localSplitTable.getColumnModel().getColumn(COLUMN_SCALE).setHeaderValue(MapViewProperties.getString("MapCache_Scale"));
         this.localSplitTable.getColumnModel().getColumn(COLUMN_TITLE).setHeaderValue(MapViewProperties.getString("MapCache_ScaleTitle"));
@@ -720,8 +779,35 @@ public class DialogMapCacheBuilder extends SmDialog {
             for (int i = 0; i < value.length; i++) {
                 Object[] temp = new Object[3];
                 temp[COLUMN_INDEX] = i + 1 + " ";
-                temp[COLUMN_SCALE] = this.showScalePrePart + String.valueOf(this.scientificNotation.format(1 / value[i]));
+                temp[COLUMN_SCALE] = this.showScalePrePart + String.valueOf(DoubleUtilities.getFormatString(Double.valueOf(this.scientificNotation.format(1 / value[i]))));
                 temp[COLUMN_TITLE] = (int) (Math.round(1 / value[i])) + " ";
+                this.localSplitTable.addRow(temp);
+            }
+            addMoreScale();
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex.toString());
+        }
+    }
+
+    private void setLocalSplitTableValue(HashMap<Double, String> scalesAndNames) {
+        try {
+            Double[] inputScales = scalesAndNames.keySet().toArray(new Double[scalesAndNames.size()]);
+            for (int i = 0; i < inputScales.length - 1; i++) {
+                for (int j = 0; j < inputScales.length - i - 1; j++) {
+                    if (Double.compare(inputScales[j], inputScales[j + 1]) == 1) {
+                        double temp = inputScales[j];
+                        inputScales[j] = inputScales[j + 1];
+                        inputScales[j + 1] = temp;
+                    }
+                }
+            }
+            this.currentMapCacheScale.clear();
+            for (int i = 0; i < scalesAndNames.size(); i++) {
+                Object[] temp = new Object[3];
+                temp[COLUMN_INDEX] = i + 1 + " ";
+                temp[COLUMN_SCALE] = this.showScalePrePart + String.valueOf(DoubleUtilities.getFormatString(Double.valueOf(this.scientificNotation.format(1 / inputScales[i]))));
+                temp[COLUMN_TITLE] = scalesAndNames.get(inputScales[i]);
+                this.currentMapCacheScale.add(inputScales[i]);
                 this.localSplitTable.addRow(temp);
             }
             addMoreScale();
@@ -734,7 +820,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         Object[][] result = new Object[value.length][3];
         for (int i = 0; i < value.length; i++) {
             result[i][COLUMN_INDEX] = i + 1 + " ";
-            result[i][COLUMN_SCALE] = this.showScalePrePart + String.valueOf(this.scientificNotation.format(1 / value[i]));
+            result[i][COLUMN_SCALE] = this.showScalePrePart + String.valueOf(DoubleUtilities.getFormatString(Double.valueOf(this.scientificNotation.format(1 / value[i]))));
             result[i][COLUMN_TITLE] = (int) (Math.round(1 / value[i])) + " ";
         }
         return result;
@@ -801,7 +887,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                 }
                 multipleCheckboxItem.setSelected(isSelected);
                 this.globalSplitTable.setValueAt(multipleCheckboxItem, i, 0);
-                this.globalSplitTable.setValueAt(this.showScalePrePart + String.valueOf(this.scientificNotation.format(1 / temp)), i, COLUMN_SCALE);
+                this.globalSplitTable.setValueAt(this.showScalePrePart + String.valueOf(DoubleUtilities.getFormatString(Double.valueOf(this.scientificNotation.format(1 / temp)))), i, COLUMN_SCALE);
             }
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex.toString());
@@ -881,6 +967,10 @@ public class DialogMapCacheBuilder extends SmDialog {
     private boolean isRightRangeBounds() {
         boolean result = true;
         if (!this.validIndexRangeBounds || !this.validCacheRangeBounds) {
+            if (!this.validCacheRangeBounds) {
+                this.checkBoxFullFillCacheImage.setEnabled(false);
+                this.checkBoxFilterSelectionObjectInLayer.setEnabled(false);
+            }
             result = false;
         }
         return result;
@@ -921,16 +1011,16 @@ public class DialogMapCacheBuilder extends SmDialog {
         return result;
     }
 
-    private void run() {
+    private void setMapCacheBuilderValueBeforeRun() {
         try {
             double[] outputScalevalues;
-            HashMap<Double, String> scaleNames = new HashMap<>();
-            if (this.jMenuAddScale.isEnabled()) {
+            this.scaleNames = new HashMap<>();
+            if (this.toolbarMenuAddScale.isToolbarMenuEnabled()) {
                 outputScalevalues = new double[this.currentMapCacheScale.size()];
                 for (int i = 0; i < outputScalevalues.length; i++) {
                     outputScalevalues[i] = this.currentMapCacheScale.get(i);
                     String scaleTitleName = String.valueOf(this.localSplitTable.getValueAt(i, COLUMN_TITLE));
-                    scaleNames.put(outputScalevalues[i], scaleTitleName);
+                    this.scaleNames.put(outputScalevalues[i], scaleTitleName);
                 }
             } else {
                 ArrayList<Integer> selectedIndex = new ArrayList<>();
@@ -943,11 +1033,11 @@ public class DialogMapCacheBuilder extends SmDialog {
                 outputScalevalues = new double[selectedIndex.size()];
                 for (int i = 0; i < selectedIndex.size(); i++) {
                     outputScalevalues[i] = this.globalScaleSortKeys[selectedIndex.get(i)];
-                    scaleNames.put(this.globalScaleSortKeys[selectedIndex.get(i)], this.globalSplitScale.get(this.globalScaleSortKeys[selectedIndex.get(i)]));
+                    this.scaleNames.put(this.globalScaleSortKeys[selectedIndex.get(i)], this.globalSplitScale.get(this.globalScaleSortKeys[selectedIndex.get(i)]));
                 }
             }
             this.mapCacheBuilder.setOutputScales(outputScalevalues);
-            this.mapCacheBuilder.setOutputScaleCaptions(scaleNames);
+            this.mapCacheBuilder.setOutputScaleCaptions(this.scaleNames);
             this.mapCacheBuilder.setVersion(MapCacheVersion.VERSION_50);
             this.mapCacheBuilder.setCacheName(this.textFieldCacheName.getText());
             this.mapCacheBuilder.setOutputFolder(this.fileChooserControlFileCache.getEditor().getText());
@@ -957,6 +1047,30 @@ public class DialogMapCacheBuilder extends SmDialog {
             }
             this.mapCacheBuilder.setImageCompress(Integer.valueOf(this.smSpinnerImageCompressionRatio.getValue().toString()));
             this.mapCacheBuilder.setTransparent(this.checkBoxBackgroundTransparency.isSelected());
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex.toString());
+        }
+    }
+
+    private boolean isCacheFolderSave() {
+        boolean result = true;
+        File file = new File(this.fileChooserControlFileCache.getEditor().getText() + this.textFieldCacheName.getText());
+        if (file.exists() || file.isDirectory()) {
+            SmOptionPane smOptionPane = new SmOptionPane();
+            int warningResult = smOptionPane.showConfirmDialogYesNo("\"" + this.textFieldCacheName.getText() + "\"" + MapViewProperties.getString("MapCache_FileIsExitWarning"));
+            if (warningResult != 0) {
+                result = false;
+            }
+        }
+        return result;
+    }
+
+    private void run() {
+        try {
+            if (!isCacheFolderSave()) {
+                return;
+            }
+            setMapCacheBuilderValueBeforeRun();
             TileStorageConnection tileStorageConnection = null;
             if (this.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_Compact")) && !this.textFieldUserPassword.getText().isEmpty()) {
                 this.mapCacheBuilder.setPassword(this.textFieldUserPassword.getText());
@@ -966,8 +1080,8 @@ public class DialogMapCacheBuilder extends SmDialog {
                 tileStorageConnection.setName(this.textFieldCacheName.getText());
                 tileStorageConnection.setDatabase(this.comboBoxDatabaseName.getEditor().getItem().toString());
                 tileStorageConnection.setStorageType(TileStorageType.MONGOV2);
-                tileStorageConnection.setUser(null);
-                tileStorageConnection.setPassword(null);
+                tileStorageConnection.setUser(this.textFieldUserName.getText());
+                tileStorageConnection.setPassword(this.textFieldUserPassword.getText());
             }
             if (tileStorageConnection != null) {
                 this.mapCacheBuilder.setConnectionInfo(tileStorageConnection);
@@ -991,7 +1105,7 @@ public class DialogMapCacheBuilder extends SmDialog {
             String time = String.valueOf((endTime - startTime) / 1000.0);
             if (result) {
                 Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateSuccessed"));
-                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + this.fileChooserControlFileCache.getEditor().getText());
+                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + this.fileChooserControlFileCache.getEditor().getText() + this.textFieldCacheName.getText());
             } else {
                 Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateFailed"));
             }
@@ -1057,6 +1171,266 @@ public class DialogMapCacheBuilder extends SmDialog {
         }
     }
 
+    private void importXml() {
+        try {
+            String filePath = getFilePathForImport();
+            this.currentMapCacheScale.clear();
+            if (!StringUtilities.isNullOrEmpty(filePath)) {
+                File file = new File(filePath);
+                FileInputStream fis = new FileInputStream(file);
+                BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+                String tempstr = "";
+                while ((tempstr = br.readLine()) != null) {
+                    if (tempstr.contains("<Scale>")) {
+                        tempstr = tempstr.substring(tempstr.indexOf(">") + 1, tempstr.lastIndexOf("<"));
+                        String[] temp = tempstr.split(":");
+                        this.currentMapCacheScale.add(1 / Double.valueOf(temp[1]));
+                    }
+                }
+                double addScaleAfter[] = new double[this.currentMapCacheScale.size()];
+                for (int i = 0; i < addScaleAfter.length; i++) {
+                    addScaleAfter[i] = this.currentMapCacheScale.get(i);
+                }
+                DDLExportTableModel model = (DDLExportTableModel) this.localSplitTable.getModel();
+                model.removeRows(0, model.getRowCount());
+                setLocalSplitTableValue(addScaleAfter);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void exportXml() {
+        createXml(getFilePathForExport());
+    }
+
+    private void createXml(String filename) {
+        try {
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            Document document = documentBuilder.newDocument();
+            Element scales = document.createElement("Scales");
+            scales.setAttribute("xmlns", "http://www.supermap.com.cn/desktop");
+            scales.setAttribute("version", "8.1.x");
+            document.appendChild(scales);
+            List<String> tempList = new ArrayList<String>();
+
+            if (this.mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
+                for (int i = 0; i < this.localSplitTable.getRowCount() - 1; i++) {
+                    String temp = this.localSplitTable.getValueAt(i, COLUMN_SCALE).toString();
+                    tempList.add(i, showScalePrePart + roundingTwoPoint.format(DoubleUtilities.stringToValue(temp.split(":")[1])).toString());
+                }
+            } else {
+                for (int i = 0; i < this.globalSplitTable.getRowCount(); i++) {
+                    String temp = this.globalSplitTable.getValueAt(i, COLUMN_SCALE).toString();
+                    tempList.add(i, showScalePrePart + roundingTwoPoint.format(DoubleUtilities.stringToValue(temp.split(":")[1])).toString());
+                }
+            }
+            for (int i = 0; i < tempList.size(); i++) {
+                Element scale = document.createElement("Scale");
+                String scaleCaption = tempList.get(i);
+                scale.appendChild(document.createTextNode(scaleCaption));
+                scale.setNodeValue(scaleCaption);
+                scales.appendChild(scale);
+            }
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer = tf.newTransformer();
+            DOMSource source = new DOMSource(document);
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            if (StringUtilities.isNullOrEmpty(filename)) {
+                return;
+            }
+            File file = new File(filename);
+            if (!file.exists()) {
+                file.createNewFile();
+                parseFileToXML(transformer, source, file);
+            } else if (JOptionPane.OK_OPTION == new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_RenameFile_Message"))) {
+                parseFileToXML(transformer, source, file);
+            }
+            if (file.exists() && file.length() > 0) {
+                Application.getActiveApplication().getOutput()
+                        .output(MessageFormat.format(MapViewProperties.getString("String_ExportScale_Scucess_Info"), file.getPath()));
+            }
+        } catch (DOMException e) {
+            e.printStackTrace();
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void parseFileToXML(Transformer transformer, DOMSource source, File file) throws FileNotFoundException, TransformerException {
+        PrintWriter pw = new PrintWriter(file);
+        StreamResult streamResult = new StreamResult(pw);
+        transformer.transform(source, streamResult);
+    }
+
+    private String getFilePathForExport() {
+        String filePath = "";
+        if (!SmFileChoose.isModuleExist("ExportScale")) {
+            String fileFilter = SmFileChoose.createFileFilter(MapViewProperties.getString("String_ScaleFile"), "xml");
+            SmFileChoose.addNewNode(fileFilter, MapViewProperties.getString("String_ScaleFile"), CommonProperties.getString("String_ToolBar_Export"),
+                    "ExportScale", "GetDirectories");
+        }
+        SmFileChoose tempfileChooser = new SmFileChoose("ExportScale");
+        tempfileChooser.setSelectedFile(new File(MapViewProperties.getString("String_Scales") + ".xml"));
+        int state = tempfileChooser.showSaveDialog(null);
+        if (state == JFileChooser.APPROVE_OPTION) {
+            filePath = tempfileChooser.getFilePath();
+        }
+        return filePath;
+    }
+
+    private String getFilePathForImport() {
+        String filePath = "";
+        String title = CommonProperties.getString("String_ToolBar_Import");
+        if (!SmFileChoose.isModuleExist("ImportScale")) {
+            String fileFilter = SmFileChoose.createFileFilter(MapViewProperties.getString("String_ScaleFile"), "xml");
+            SmFileChoose.addNewNode(fileFilter, MapViewProperties.getString("String_ScaleFile"), title, "ImportScale", "OpenOne");
+        }
+        SmFileChoose fileChoose = new SmFileChoose("ImportScale");
+        int stateTemp = fileChoose.showDefaultDialog();
+        if (stateTemp == JFileChooser.APPROVE_OPTION) {
+            filePath = fileChoose.getFilePath();
+        }
+        return filePath;
+    }
+
+    private void addScale() {
+        int insertIndex = this.localSplitTable.getRowCount();
+        if (this.localSplitTable.getRowCount() == 1) {
+            return;
+        }
+        double insertScale = 0;
+        int selectedRowsIndex[] = this.localSplitTable.getSelectedRows();
+        if (selectedRowsIndex != null && selectedRowsIndex.length >= 1 && selectedRowsIndex[selectedRowsIndex.length - 1] + 1 != this.localSplitTable.getRowCount()) {
+            insertIndex = selectedRowsIndex[selectedRowsIndex.length - 1] + 2;
+        }
+        if (insertIndex == this.localSplitTable.getRowCount()) {
+            insertScale = this.currentMapCacheScale.get(insertIndex - 2) * 2;
+        } else {
+            insertScale = (this.currentMapCacheScale.get(insertIndex - 2) + this.currentMapCacheScale.get(insertIndex - 1)) / 2;
+        }
+        this.currentMapCacheScale.add(insertIndex - 1, insertScale);
+        double addScaleAfter[] = new double[this.currentMapCacheScale.size()];
+        for (int i = 0; i < addScaleAfter.length; i++) {
+            addScaleAfter[i] = this.currentMapCacheScale.get(i);
+        }
+        DDLExportTableModel model = (DDLExportTableModel) this.localSplitTable.getModel();
+        model.removeRows(0, model.getRowCount());
+        setLocalSplitTableValue(addScaleAfter);
+        this.localSplitTable.setRowSelectionInterval(insertIndex - 1, insertIndex - 1);
+    }
+
+    private void exportCacheConfigFile() {
+        try {
+            String moduleName = "ExportCacheConfigFile";
+            if (!SmFileChoose.isModuleExist(moduleName)) {
+                String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci");
+                SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
+                        MapViewProperties.getString("String_SaveAsFile"), moduleName, "SaveOne");
+            }
+            SmFileChoose smFileChoose = new SmFileChoose(moduleName);
+            smFileChoose.setSelectedFile(new File(MapViewProperties.getString("MapCache_CacheConfigFileIsNotbrackets")));
+            int state = smFileChoose.showDefaultDialog();
+            String filePath = "";
+            if (state == JFileChooser.APPROVE_OPTION) {
+                filePath = smFileChoose.getFilePath();
+                File oleFile = new File(filePath);
+                filePath = filePath.substring(0, filePath.lastIndexOf(".")) + ".sci";
+                File NewFile = new File(filePath);
+                oleFile.renameTo(NewFile);
+                if (oleFile.isFile() && oleFile.exists()) {
+                    oleFile.delete();
+                }
+                setMapCacheBuilderValueBeforeRun();
+                boolean result = mapCacheBuilder.toConfigFile(filePath);
+                if (result) {
+                    Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_ToCacheConfigFileIsSuccessed") + filePath);
+                } else {
+                    Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_ToCacheConfigFileIsFailed"));
+                }
+            }
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex.toString());
+        }
+    }
+
+    private void inputCacheConfigFile() {
+        String moduleName = "InputCacheConfigFile";
+        if (!SmFileChoose.isModuleExist(moduleName)) {
+            String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci"));
+            SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
+                    MapViewProperties.getString("String_OpenColorTable"), moduleName, "OpenMany");
+        }
+        SmFileChoose smFileChoose = new SmFileChoose(moduleName);
+        int state = smFileChoose.showDefaultDialog();
+        String filePath = "";
+        if (state == JFileChooser.APPROVE_OPTION) {
+            filePath = smFileChoose.getFilePath();
+            String fileName = filePath.substring(filePath.lastIndexOf("\\") + 1);
+            if (mapCacheBuilder.fromConfigFile(filePath)) {
+                HashMap<Double, String> scalesAndNames = mapCacheBuilder.getOutputScaleCaptions();
+                comboBoxImageType.setSelectedItem(mapCacheBuilder.getTileFormat().toString());
+                if (mapCacheBuilder.getTileSize() == TileSize.SIZE64) {
+                    comboBoxPixel.setSelectedItem("64*64");
+                } else if (mapCacheBuilder.getTileSize() == TileSize.SIZE128) {
+                    comboBoxPixel.setSelectedItem("128*128");
+                } else if (mapCacheBuilder.getTileSize() == TileSize.SIZE256) {
+                    comboBoxPixel.setSelectedItem("256*256");
+                } else if (mapCacheBuilder.getTileSize() == TileSize.SIZE512) {
+                    comboBoxPixel.setSelectedItem("512*512");
+                } else if (mapCacheBuilder.getTileSize() == TileSize.SIZE1024) {
+                    comboBoxPixel.setSelectedItem("1024*1024");
+                }
+                if (mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
+                    comboBoxSplitMode.setSelectedItem(MapViewProperties.getString("MapCache_ComboboxSplitModeLocalSplit"));
+                    DDLExportTableModel model = (DDLExportTableModel) localSplitTable.getModel();
+                    model.removeRows(0, model.getRowCount());
+                    setLocalSplitTableValue(scalesAndNames);
+                    indexRangeBounds = mapCacheBuilder.getIndexBounds();
+                } else {
+                    comboBoxSplitMode.setSelectedItem(MapViewProperties.getString("MapCache_ComboboxSplitModeGlobalSplit"));
+                    for (String scaleName : scalesAndNames.values()) {
+                        MultipleCheckboxItem multipleCheckboxItem = (MultipleCheckboxItem) DialogMapCacheBuilder.this.globalSplitTable.getValueAt(Integer.valueOf(scaleName), COLUMN_INDEX);
+                        multipleCheckboxItem.setSelected(true);
+                        DialogMapCacheBuilder.this.globalSplitTable.setValueAt(multipleCheckboxItem, Integer.valueOf(scaleName), COLUMN_INDEX);
+                    }
+                    indexRangeBounds = new Rectangle2D(-180, -90, 180, 90);
+                }
+                labelConfigValue.setText(fileName);
+                textFieldCacheName.setText(mapCacheBuilder.getCacheName());
+                fileChooserControlFileCache.getEditor().setText(mapCacheBuilder.getOutputFolder());
+                cacheRangeBounds = mapCacheBuilder.getBounds();
+                initCacheRangeTextField();
+                initIndexRangeTextField();
+                smSpinnerImageCompressionRatio.setValue(mapCacheBuilder.getImageCompress());
+                checkBoxBackgroundTransparency.setSelected(mapCacheBuilder.isTransparent());
+                if (mapCacheBuilder.getStorageType() == StorageType.Compact) {
+                    comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_Compact"));
+                } else if (mapCacheBuilder.getStorageType() == StorageType.Original) {
+                    comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_Origin"));
+                } else if (mapCacheBuilder.getStorageType() == StorageType.MongoDB) {
+                    comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_MongoDB"));
+                } else if (mapCacheBuilder.getStorageType() == StorageType.GPKG) {
+                    comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_GeoPackage"));
+                }
+                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FromCacheConfigFileIsSuccessed") + filePath);
+            } else {
+                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FromCacheConfigFileIsFailed"));
+            }
+        }
+    }
+
     private ActionListener runListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -1074,28 +1448,14 @@ public class DialogMapCacheBuilder extends SmDialog {
     private ActionListener addScaleListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            int insertIndex = localSplitTable.getRowCount();
-            if (localSplitTable.getRowCount() == 1) {
-                return;
-            }
-            double insertScale = 0;
-            int selectedRowsIndex[] = localSplitTable.getSelectedRows();
-            if (selectedRowsIndex != null && selectedRowsIndex.length >= 1 && selectedRowsIndex[selectedRowsIndex.length - 1] + 1 != localSplitTable.getRowCount()) {
-                insertIndex = selectedRowsIndex[selectedRowsIndex.length - 1] + 2;
-            }
-            if (insertIndex == localSplitTable.getRowCount()) {
-                insertScale = currentMapCacheScale.get(insertIndex - 2) * 2;
-            } else {
-                insertScale = (currentMapCacheScale.get(insertIndex - 2) + currentMapCacheScale.get(insertIndex - 1)) / 2;
-            }
-            currentMapCacheScale.add(insertIndex - 1, insertScale);
-            double addScaleAfter[] = new double[currentMapCacheScale.size()];
-            for (int i = 0; i < addScaleAfter.length; i++) {
-                addScaleAfter[i] = currentMapCacheScale.get(i);
-            }
-            DDLExportTableModel model = (DDLExportTableModel) localSplitTable.getModel();
-            model.removeRows(0, model.getRowCount());
-            setLocalSplitTableValue(addScaleAfter);
+            addScale();
+        }
+    };
+
+    private ToolbarJmenuListener addScaleToolbarJmenuListener = new ToolbarJmenuListener() {
+        @Override
+        public void toolbarMenuClick() {
+            addScale();
         }
     };
 
@@ -1109,13 +1469,14 @@ public class DialogMapCacheBuilder extends SmDialog {
             for (int i = 0; i < originMapCacheScale.length; i++) {
                 currentMapCacheScale.add(originMapCacheScale[i]);
             }
+            localSplitTable.clearSelection();
         }
     };
 
-    private MouseListener selectAllScaleListener = new MouseAdapter() {
+    private ActionListener selectAllScaleListener = new ActionListener() {
         @Override
-        public void mouseClicked(MouseEvent e) {
-            if (jMenuAddScale.isEnabled()) {
+        public void actionPerformed(ActionEvent e) {
+            if (toolbarMenuAddScale.isToolbarMenuEnabled()) {
                 localSplitTable.setRowSelectionInterval(0, localSplitTable.getRowCount() - 1);
             } else {
                 globalSplitTable.setRowSelectionInterval(0, globalSplitTable.getRowCount() - 1);
@@ -1123,14 +1484,14 @@ public class DialogMapCacheBuilder extends SmDialog {
         }
     };
 
-    private MouseListener selectScaleInverseListener = new MouseAdapter() {
+    private ActionListener selectScaleInverseListener = new ActionListener() {
         @Override
-        public void mouseClicked(MouseEvent e) {
+        public void actionPerformed(ActionEvent e) {
             try {
                 int[] temp;
                 ListSelectionModel selectionModel;
                 int allRowCount;
-                if (jMenuAddScale.isEnabled()) {
+                if (toolbarMenuAddScale.isToolbarMenuEnabled()) {
                     selectionModel = localSplitTable.getSelectionModel();
                     temp = localSplitTable.getSelectedRows();
                     allRowCount = localSplitTable.getRowCount();
@@ -1157,9 +1518,9 @@ public class DialogMapCacheBuilder extends SmDialog {
         }
     };
 
-    private MouseListener deleteScaleListener = new MouseAdapter() {
+    private ActionListener deleteScaleListener = new ActionListener() {
         @Override
-        public void mouseClicked(MouseEvent e) {
+        public void actionPerformed(ActionEvent e) {
             int selectedRowsIndex[] = localSplitTable.getSelectedRows();
             int tableCount = localSplitTable.getRowCount();
             List<Double> removeInfo = new ArrayList<Double>();
@@ -1180,8 +1541,57 @@ public class DialogMapCacheBuilder extends SmDialog {
             model.removeRows(selectedRowsIndex);
             localSplitTable.refreshContents(getNewLocalSplitTableValue(addScaleAfter));
             addMoreScale();
+            if (selectedRowsIndex != null) {
+                int deleteAfaterSelectedRowIndex = selectedRowsIndex[0];
+                localSplitTable.setRowSelectionInterval(deleteAfaterSelectedRowIndex, deleteAfaterSelectedRowIndex);
+            }
         }
     };
+
+    private ToolbarJmenuListener exportCacheConfigFileToolbarJmenuListener = new ToolbarJmenuListener() {
+        @Override
+        public void toolbarMenuClick() {
+            exportCacheConfigFile();
+        }
+    };
+
+    private ActionListener exportCacheConfigFileListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            exportCacheConfigFile();
+        }
+    };
+
+
+    private ActionListener exportScalesListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            exportXml();
+        }
+    };
+
+    private ToolbarJmenuListener inputCacheConfigFileToolbarJmenuListener = new ToolbarJmenuListener() {
+        @Override
+        public void toolbarMenuClick() {
+            inputCacheConfigFile();
+        }
+    };
+
+
+    private ActionListener inputCacheConfigFileListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            inputCacheConfigFile();
+        }
+    };
+
+    private ActionListener inputScalesListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            importXml();
+        }
+    };
+
 
     private TableModelListener tableModelListener = new TableModelListener() {
         @Override
@@ -1196,18 +1606,18 @@ public class DialogMapCacheBuilder extends SmDialog {
             if (e.getItem().toString() == MapViewProperties.getString("MapCache_ComboboxSplitModeLocalSplit")) {
                 mapCacheBuilder.setTilingMode(MapTilingMode.LOCAL);
                 scrollPane.setViewportView(localSplitTable);
-                jMenuAddScale.setEnabled(true);
-                jMenuDelete.setEnabled(true);
-                jMenuImport.setEnabled(true);
+                toolbarMenuAddScale.setToolbarMenuEnabled(true);
+                buttonDelete.setEnabled(true);
+                toolbarMenuImport.setToolbarMenuEnabled(true);
             } else if (e.getItem().toString() == MapViewProperties.getString("MapCache_ComboboxSplitModeGlobalSplit")) {
                 DialogMapCacheBuilder.this.mapCacheBuilder.setTilingMode(MapTilingMode.GLOBAL);
                 if (globalSplitScale == null || globalSplitScale.size() == 0) {
                     initGlobalCacheScales();
                 }
                 scrollPane.setViewportView(globalSplitTable);
-                jMenuAddScale.setEnabled(false);
-                jMenuDelete.setEnabled(false);
-                jMenuImport.setEnabled(false);
+                toolbarMenuAddScale.setToolbarMenuEnabled(false);
+                buttonDelete.setEnabled(false);
+                toolbarMenuImport.setToolbarMenuEnabled(false);
             }
         }
     };
@@ -1234,7 +1644,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         public void actionPerformed(ActionEvent e) {
             String moduleName = "ChooseCacheDirectories";
             if (!SmFileChoose.isModuleExist(moduleName)) {
-                SmFileChoose.addNewNode("", CommonProperties.getString("String_DefaultFilePath"), GlobalParameters.getDesktopTitle(),
+                SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
                         moduleName, "GetDirectories");
             }
             SmFileChoose fileChoose = new SmFileChoose(moduleName);
@@ -1353,7 +1763,7 @@ public class DialogMapCacheBuilder extends SmDialog {
             globalSplitScale = null;
             globalSplitTable = null;
             initGlobalCacheScales();
-            if (!jMenuAddScale.isEnabled()) {
+            if (!toolbarMenuAddScale.isToolbarMenuEnabled()) {
                 scrollPane.setViewportView(globalSplitTable);
             }
         }
@@ -1370,12 +1780,21 @@ public class DialogMapCacheBuilder extends SmDialog {
     private CaretListener cacheRangeCareListener = new CaretListener() {
         @Override
         public void caretUpdate(CaretEvent e) {
-            if (StringUtilities.isNumber(cacheRangeWaringTextFieldBottom.getText()) && StringUtilities.isNumber(cacheRangeWaringTextFieldLeft.getText())
-                    && StringUtilities.isNumber(cacheRangeWaringTextFieldRight.getText()) && StringUtilities.isNumber(cacheRangeWaringTextFieldTop.getText())) {
+            if (StringUtilities.isNumber(cacheRangeWaringTextFieldBottom.getText().replace(",", "")) && StringUtilities.isNumber(cacheRangeWaringTextFieldLeft.getText().replace(",", ""))
+                    && StringUtilities.isNumber(cacheRangeWaringTextFieldRight.getText().replace(",", "")) && StringUtilities.isNumber(cacheRangeWaringTextFieldTop.getText().replace(",", ""))) {
                 Rectangle2D rectangle2D = panelCacheRange.getRangeBound();
                 if (rectangle2D != null) {
-                    cacheRangeBounds = rectangle2D;
                     validCacheRangeBounds = true;
+                    if (!cacheRangeBounds.equals(rectangle2D)) {
+                        cacheRangeBounds = rectangle2D;
+//                        if (panelCacheRange.getSelectedGeometryAndLayer() != null && panelCacheRange.getSelectedGeometryAndLayer().size() > 0) {
+//                            checkBoxFullFillCacheImage.setEnabled(true);
+//                            checkBoxFilterSelectionObjectInLayer.setEnabled(true);
+//                        } else {
+//                            checkBoxFullFillCacheImage.setEnabled(false);
+//                            checkBoxFilterSelectionObjectInLayer.setEnabled(false);
+//                        }
+                    }
                 } else {
                     validCacheRangeBounds = false;
                 }
@@ -1400,64 +1819,6 @@ public class DialogMapCacheBuilder extends SmDialog {
                 }
             } else {
                 validIndexRangeBounds = false;
-            }
-            isCanRun();
-        }
-    };
-
-    private DocumentListener indexRangeListener = new DocumentListener() {
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-            Rectangle2D rectangle2D = panelIndexRange.getRangeBound();
-            if (rectangle2D != null) {
-                indexRangeBounds = rectangle2D;
-            }
-            isCanRun();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            Rectangle2D rectangle2D = panelIndexRange.getRangeBound();
-            if (rectangle2D != null) {
-                indexRangeBounds = rectangle2D;
-            }
-            isCanRun();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            Rectangle2D rectangle2D = panelIndexRange.getRangeBound();
-            if (rectangle2D != null) {
-                indexRangeBounds = rectangle2D;
-            }
-            isCanRun();
-        }
-    };
-
-    private DocumentListener cacheRangeListener = new DocumentListener() {
-        @Override
-        public void insertUpdate(DocumentEvent e) {
-//            Rectangle2D rectangle2D = panelCacheRange.getRangeBound();
-//            if (rectangle2D != null) {
-//                cacheRangeBounds = rectangle2D;
-//            }
-//            isCanRun();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-//            Rectangle2D rectangle2D = panelCacheRange.getRangeBound();
-//            if (rectangle2D != null) {
-//                cacheRangeBounds = rectangle2D;
-//            }
-//            isCanRun();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
-            Rectangle2D rectangle2D = panelCacheRange.getRangeBound();
-            if (rectangle2D != null) {
-                cacheRangeBounds = rectangle2D;
             }
             isCanRun();
         }
@@ -1505,12 +1866,36 @@ public class DialogMapCacheBuilder extends SmDialog {
         }
     };
 
+    private DocumentListener databaseNameChangeListener = new DocumentListener() {
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            isCanRun();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            isCanRun();
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            isCanRun();
+        }
+    };
+
     private void registEvents() {
         this.jMenuItemAddScale.addActionListener(this.addScaleListener);
         this.jMenuItemDefaultScale.addActionListener(this.defaultScaleListener);
-        this.jMenuSelectAll.addMouseListener(this.selectAllScaleListener);
-        this.jMenuSelectInverse.addMouseListener(this.selectScaleInverseListener);
-        this.jMenuDelete.addMouseListener(this.deleteScaleListener);
+        this.jMenuItemImportCacheConfigs.addActionListener(this.inputCacheConfigFileListener);
+        this.jMenuItemExportCacheConfigs.addActionListener(this.exportCacheConfigFileListener);
+        this.jMenuItemExportScale.addActionListener(this.exportScalesListener);
+        this.jMenuItemImportScale.addActionListener(this.inputScalesListener);
+        this.buttonSelectAll.addActionListener(this.selectAllScaleListener);
+        this.buttonSelectInverse.addActionListener(this.selectScaleInverseListener);
+        this.buttonDelete.addActionListener(this.deleteScaleListener);
+        this.toolbarMenuAddScale.addFunctionClickListener(this.addScaleToolbarJmenuListener);
+        this.toolbarMenuImport.addFunctionClickListener(this.inputCacheConfigFileToolbarJmenuListener);
+        this.toolbarMenuExport.addFunctionClickListener(this.exportCacheConfigFileToolbarJmenuListener);
         this.localSplitTable.getModel().addTableModelListener(this.tableModelListener);
         this.comboBoxSplitMode.addItemListener(this.comboboxSplitModeItemListener);
         this.textFieldCacheName.getDocument().addDocumentListener(this.cacheNameTextChangeListener);
@@ -1530,7 +1915,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.indexRangeWaringTextFieldBottom.getTextField().addCaretListener(this.indexRangeCareListener);
         this.textFieldUserPassword.getDocument().addDocumentListener(this.passwordChangeListener);
         this.textFieldConfirmPassword.getDocument().addDocumentListener(this.passwordChangeListener);
-        this.comboBoxDatabaseName.addItemListener(this.databaseChangeListener);
+        ((JTextField) this.comboBoxDatabaseName.getEditor().getEditorComponent()).getDocument().addDocumentListener(this.databaseNameChangeListener);
         this.buttonOK.addActionListener(this.runListener);
         this.buttonCancel.addActionListener(this.cancelListener);
     }
@@ -1538,9 +1923,16 @@ public class DialogMapCacheBuilder extends SmDialog {
     private void removeEvents() {
         this.jMenuItemAddScale.removeActionListener(this.addScaleListener);
         this.jMenuItemDefaultScale.removeActionListener(this.defaultScaleListener);
-        this.jMenuSelectAll.removeMouseListener(this.selectAllScaleListener);
-        this.jMenuSelectInverse.removeMouseListener(this.selectScaleInverseListener);
-        this.jMenuDelete.removeMouseListener(this.deleteScaleListener);
+        this.jMenuItemImportCacheConfigs.removeActionListener(this.inputCacheConfigFileListener);
+        this.jMenuItemExportCacheConfigs.removeActionListener(this.exportCacheConfigFileListener);
+        this.jMenuItemExportScale.removeActionListener(this.exportScalesListener);
+        this.jMenuItemImportScale.removeActionListener(this.inputScalesListener);
+        this.buttonSelectAll.removeActionListener(this.selectAllScaleListener);
+        this.buttonSelectInverse.removeActionListener(this.selectScaleInverseListener);
+        this.buttonDelete.removeActionListener(this.deleteScaleListener);
+        this.toolbarMenuAddScale.removeFunctionClickListener(this.addScaleToolbarJmenuListener);
+        this.toolbarMenuImport.removeFunctionClickListener(this.inputCacheConfigFileToolbarJmenuListener);
+        this.toolbarMenuExport.removeFunctionClickListener(this.exportCacheConfigFileToolbarJmenuListener);
         this.localSplitTable.getModel().removeTableModelListener(this.tableModelListener);
         this.comboBoxSplitMode.removeItemListener(this.comboboxSplitModeItemListener);
         this.textFieldCacheName.getDocument().removeDocumentListener(this.cacheNameTextChangeListener);
@@ -1560,7 +1952,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.indexRangeWaringTextFieldBottom.getTextField().removeCaretListener(this.indexRangeCareListener);
         this.textFieldUserPassword.getDocument().removeDocumentListener(this.passwordChangeListener);
         this.textFieldConfirmPassword.getDocument().removeDocumentListener(this.passwordChangeListener);
-        this.comboBoxDatabaseName.removeItemListener(this.databaseChangeListener);
+        ((JTextField) this.comboBoxDatabaseName.getEditor().getEditorComponent()).getDocument().removeDocumentListener(this.databaseNameChangeListener);
         this.buttonOK.removeActionListener(this.runListener);
         this.buttonCancel.removeActionListener(this.cancelListener);
     }
@@ -1579,6 +1971,24 @@ public class DialogMapCacheBuilder extends SmDialog {
             g2d.setColor(bgColor);
             g2d.setBackground(bgColor);
             g2d.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
+        }
+    }
+
+    private class CustomComboBoxRenderer extends BasicComboBoxRenderer {
+        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            if (isSelected) {
+                setBackground(list.getSelectionBackground());
+                setForeground(list.getSelectionForeground());
+                if (-1 < index) {
+                    list.setToolTipText((value == null) ? null : value.toString());
+                }
+            } else {
+                setBackground(list.getBackground());
+                setForeground(list.getForeground());
+            }
+            setFont(list.getFont());
+            setText((value == null) ? "" : value.toString());
+            return this;
         }
     }
 
