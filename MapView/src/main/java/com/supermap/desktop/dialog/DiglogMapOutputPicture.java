@@ -329,30 +329,42 @@ public class DiglogMapOutputPicture extends SmDialog {
 		if (str.contains(".png")) {
 			this.resolutionTextField.setEnable(true);
 			this.backTransparent.setEnabled(true);
+			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(true);
 			return this.imageType.PNG;
 		} else if (str.contains(".jpg")) {
 			this.resolutionTextField.setEnable(true);
 			this.backTransparent.setEnabled(false);
+			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(true);
 			return this.imageType.JPG;
 		} else if (str.contains(".bmp")) {
 			this.resolutionTextField.setEnable(true);
 			this.backTransparent.setEnabled(false);
+			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(true);
 			return this.imageType.BMP;
 		} else if (str.contains(".gif")) {
 			// 当数据类型为gif时，此时分辨率属性不可用，设置分辨率为默认值
 			this.resolutionTextField.setText("96");
 			this.resolutionTextField.setEnable(false);
 			this.backTransparent.setEnabled(true);
+			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(false);
 			return this.imageType.GIF;
 		} else if (str.contains(".eps")) {
-			// 当数据类型为eps时，此时分辨率属性不可用，设置分辨率为默认值
-			this.resolutionTextField.setText("96");
-			this.resolutionTextField.setEnable(false);
-			this.backTransparent.setEnabled(false);
-			return this.imageType.EPS;
+			if (!SystemPropertyUtilities.isWindows()) {
+				// eps类型不能再linux系统上使用
+				return null;
+			} else {
+				// 当数据类型为eps时，此时分辨率属性不可用，设置分辨率为默认值
+				this.resolutionTextField.setText("96");
+				this.resolutionTextField.setEnable(false);
+				this.backTransparent.setEnabled(false);
+				this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(false);
+				return this.imageType.EPS;
+			}
+
 		} else if (str.contains(".tif")) {
 			this.resolutionTextField.setEnable(true);
 			this.backTransparent.setEnabled(false);
+			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(true);
 			// 暂时不支持tif
 			return this.imageType.TIFF;
 		} else {
@@ -537,27 +549,51 @@ public class DiglogMapOutputPicture extends SmDialog {
 	 * 初始化文件选择器、文件路径Filed默认路径
 	 */
 	private void initFileChoose() {
-		String moduleName = "MapOutputPicture";
-		if (!SmFileChoose.isModuleExist(moduleName)) {
-			// 文件过滤器
-			String fileFilters = SmFileChoose.bulidFileFilters(
-					SmFileChoose.createFileFilter(ControlsProperties.getString("String_PNG_FileFilter"),
-							ControlsProperties.getString("String_PNG_Filters")),
-					SmFileChoose.createFileFilter(ControlsProperties.getString("String_JPG_FileFilter"),
-							ControlsProperties.getString("String_JPG_Filters")),
-					SmFileChoose.createFileFilter(ControlsProperties.getString("String_Graphic_FileFilter"),
-							ControlsProperties.getString("String_BMP_Filters")),
-					SmFileChoose.createFileFilter(ControlsProperties.getString("String_GIF_FileFilter"),
-							ControlsProperties.getString("String_GIF_Filters")),
-					SmFileChoose.createFileFilter(ControlsProperties.getString("String_EPS_FileFilter"),
-							ControlsProperties.getString("String_EPS_Filters")),
-					SmFileChoose.createFileFilter(ControlsProperties.getString("String_TIFF_FileFilter"),
-							ControlsProperties.getString("String_TIFF_Filters")));
+		String moduleName = "";
+		if (!SystemPropertyUtilities.isWindows()) {
+			moduleName = "MapOutputPictureLinux";
+			if (!SmFileChoose.isModuleExist(moduleName)) {
+				// 文件过滤器
+				String fileFilters = SmFileChoose.bulidFileFilters(
+						SmFileChoose.createFileFilter(ControlsProperties.getString("String_PNG_FileFilter"),
+								ControlsProperties.getString("String_PNG_Filters")),
+						SmFileChoose.createFileFilter(ControlsProperties.getString("String_JPG_FileFilter"),
+								ControlsProperties.getString("String_JPG_Filters")),
+						SmFileChoose.createFileFilter(ControlsProperties.getString("String_Graphic_FileFilter"),
+								ControlsProperties.getString("String_BMP_Filters")),
+						SmFileChoose.createFileFilter(ControlsProperties.getString("String_GIF_FileFilter"),
+								ControlsProperties.getString("String_GIF_Filters")),
+						SmFileChoose.createFileFilter(ControlsProperties.getString("String_TIFF_FileFilter"),
+								ControlsProperties.getString("String_TIFF_Filters")));
 //			CommonProperties.getString("String_DefaultFilePath")
-			// windows和linux系统通用根目录
+				// windows和linux系统通用根目录
 //			System.getProperty("user.dir")
-			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
-					ControlsProperties.getString("String_Save"), moduleName, "SaveOne");
+				SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
+						ControlsProperties.getString("String_Save"), moduleName, "SaveOne");
+			}
+		} else {
+			moduleName = "MapOutputPictureWindows";
+			if (!SmFileChoose.isModuleExist(moduleName)) {
+				// 文件过滤器
+				String fileFilters = SmFileChoose.bulidFileFilters(
+						SmFileChoose.createFileFilter(ControlsProperties.getString("String_PNG_FileFilter"),
+								ControlsProperties.getString("String_PNG_Filters")),
+						SmFileChoose.createFileFilter(ControlsProperties.getString("String_JPG_FileFilter"),
+								ControlsProperties.getString("String_JPG_Filters")),
+						SmFileChoose.createFileFilter(ControlsProperties.getString("String_Graphic_FileFilter"),
+								ControlsProperties.getString("String_BMP_Filters")),
+						SmFileChoose.createFileFilter(ControlsProperties.getString("String_GIF_FileFilter"),
+								ControlsProperties.getString("String_GIF_Filters")),
+						SmFileChoose.createFileFilter(ControlsProperties.getString("String_EPS_FileFilter"),
+								ControlsProperties.getString("String_EPS_Filters")),
+						SmFileChoose.createFileFilter(ControlsProperties.getString("String_TIFF_FileFilter"),
+								ControlsProperties.getString("String_TIFF_Filters")));
+//			CommonProperties.getString("String_DefaultFilePath")
+				// windows和linux系统通用根目录
+//			System.getProperty("user.dir")
+				SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
+						ControlsProperties.getString("String_Save"), moduleName, "SaveOne");
+			}
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
 		this.fileChooserUI = exportPathFileChoose.getUI();
@@ -848,6 +884,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 				copyMap.setDisableDynamicEffect(true);
 
 				if (imageType.equals(imageType.GIF)) {
+
 					if (copyMap.outputMapToGIF(path, isBackTransparent)) {
 						isSuccess = true;
 					}

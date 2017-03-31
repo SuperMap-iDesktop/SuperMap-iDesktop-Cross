@@ -24,11 +24,10 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.*;
+import java.util.ArrayList;
 
 import static com.supermap.desktop.controls.ControlDefaultValues.*;
 
@@ -88,6 +87,10 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	private static final int DEFAULT_BUTTONSIZE = 95;
 
 	private String borderName = ControlsProperties.getString("String_MapOutputBounds");
+
+	public JButton getCustomBoundsButton() {
+		return customBoundsButton;
+	}
 
 	/**
 	 * 按钮事件枢纽站
@@ -163,6 +166,56 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		}
 	};
 
+	/**
+	 * 文本框获得、失去焦点监听
+	 * 用于实现对于千分位的处理，当编辑时去除千分位，结束编辑时获得千分位
+	 */
+	private FocusListener textFieldFocusListener = new FocusAdapter() {
+		@Override
+		public void focusGained(FocusEvent e) {
+			// 当获得焦点时，将文本框中数字做去除千分位处理
+			if (e.getSource().equals(textFieldCurrentViewLeft.getTextField())) {
+				String temp = textFieldCurrentViewLeft.getTextField().getText();
+				temp = temp.replace(",", "");
+				textFieldCurrentViewLeft.getTextField().setText(temp);
+			} else if (e.getSource().equals(textFieldCurrentViewBottom.getTextField())) {
+				String temp = textFieldCurrentViewBottom.getTextField().getText();
+				temp = temp.replace(",", "");
+				textFieldCurrentViewBottom.getTextField().setText(temp);
+			} else if (e.getSource().equals(textFieldCurrentViewRight.getTextField())) {
+				String temp = textFieldCurrentViewRight.getTextField().getText();
+				temp = temp.replace(",", "");
+				textFieldCurrentViewRight.getTextField().setText(temp);
+			} else if (e.getSource().equals(textFieldCurrentViewTop.getTextField())) {
+				String temp = textFieldCurrentViewTop.getTextField().getText();
+				temp = temp.replace(",", "");
+				textFieldCurrentViewTop.getTextField().setText(temp);
+			}
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			// 当失去焦点时，将文本框中数字设置千分位
+			if (e.getSource().equals(textFieldCurrentViewLeft.getTextField())) {
+				String temp = textFieldCurrentViewLeft.getTextField().getText();
+				temp=DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
+				textFieldCurrentViewLeft.getTextField().setText(temp);
+			} else if (e.getSource().equals(textFieldCurrentViewBottom.getTextField())) {
+				String temp = textFieldCurrentViewBottom.getTextField().getText();
+				temp=DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
+				textFieldCurrentViewBottom.getTextField().setText(temp);
+			} else if (e.getSource().equals(textFieldCurrentViewRight.getTextField())) {
+				String temp = textFieldCurrentViewRight.getTextField().getText();
+				temp=DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
+				textFieldCurrentViewRight.getTextField().setText(temp);
+			} else if (e.getSource().equals(textFieldCurrentViewTop.getTextField())) {
+				String temp = textFieldCurrentViewTop.getTextField().getText();
+				temp=DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
+				textFieldCurrentViewTop.getTextField().setText(temp);
+			}
+		}
+	};
+
 	public PanelGroupBoxViewBounds(SmDialog smDialog) {
 		super();
 		this.dialog = smDialog;
@@ -181,12 +234,12 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		super();
 		this.dialog = smDialog;
 		this.borderName = borderName;
-		this.map=inputMap;
+		this.map = inputMap;
 		init();
 
 	}
 
-	public void init(){
+	public void init() {
 		initCompont();
 		initResource();
 		initLayout();
@@ -325,6 +378,12 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		this.textFieldCurrentViewRight.getTextField().addCaretListener(textFieldRightCaretListener);
 		this.textFieldCurrentViewTop.getTextField().addCaretListener(textFieldTopCaretListener);
 
+		this.textFieldCurrentViewLeft.getTextField().addFocusListener(textFieldFocusListener);
+		this.textFieldCurrentViewBottom.getTextField().addFocusListener(textFieldFocusListener);
+		this.textFieldCurrentViewRight.getTextField().addFocusListener(textFieldFocusListener);
+		this.textFieldCurrentViewTop.getTextField().addFocusListener(textFieldFocusListener);
+
+
 		this.textFieldCurrentViewLeft.registEvents();
 		this.textFieldCurrentViewBottom.registEvents();
 		this.textFieldCurrentViewRight.registEvents();
@@ -338,6 +397,12 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		this.textFieldCurrentViewRight.getTextField().removeCaretListener(textFieldRightCaretListener);
 		this.textFieldCurrentViewTop.getTextField().removeCaretListener(textFieldTopCaretListener);
 
+		this.textFieldCurrentViewLeft.getTextField().removeFocusListener(textFieldFocusListener);
+		this.textFieldCurrentViewBottom.getTextField().removeFocusListener(textFieldFocusListener);
+		this.textFieldCurrentViewRight.getTextField().removeFocusListener(textFieldFocusListener);
+		this.textFieldCurrentViewTop.getTextField().removeFocusListener(textFieldFocusListener);
+
+
 		this.textFieldCurrentViewLeft.removeEvents();
 		this.textFieldCurrentViewBottom.removeEvents();
 		this.textFieldCurrentViewRight.removeEvents();
@@ -350,12 +415,12 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	 */
 	private void initValue() {
 		this.mapControl = MapUtilities.getMapControl();
-		if (this.mapControl!=null) {
+		if (this.mapControl != null) {
 			this.mapViewL = this.mapControl.getMap().getBounds().getLeft();
 			this.mapViewT = this.mapControl.getMap().getBounds().getTop();
 			this.mapViewR = this.mapControl.getMap().getBounds().getRight();
 			this.mapViewB = this.mapControl.getMap().getBounds().getBottom();
-		}else if (this.map!=null){
+		} else if (this.map != null) {
 			this.mapViewL = this.map.getBounds().getLeft();
 			this.mapViewT = this.map.getBounds().getTop();
 			this.mapViewR = this.map.getBounds().getRight();
@@ -386,7 +451,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	 * 设置范围为当前可视范围
 	 */
 	private void setAsCurrentViewBounds() {
-		// 当前视图范围可改变，每次设置之前都需要重新取值，并且做去除千分位的处理
+
 		this.currentViewLeft = this.mapControl.getMap().getViewBounds().getLeft();
 		this.currentViewBottom = this.mapControl.getMap().getViewBounds().getBottom();
 		this.currentViewRight = this.mapControl.getMap().getViewBounds().getRight();
@@ -661,7 +726,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		return copyButton;
 	}
 
-	public java.util.Map<Layer, java.util.List<Geometry>> getSelectedGeometryAndLayer(){
+	public java.util.Map<Layer, java.util.List<Geometry>> getSelectedGeometryAndLayer() {
 		return this.popupMenuCustomBounds.getSelectedGeometryAndLayer();
 	}
 }
