@@ -5,7 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IImportSettingFactory;
 import com.supermap.desktop.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
-import com.supermap.desktop.localUtilities.FileUtilities;
+import com.supermap.desktop.utilities.FileUtilities;
 
 /**
  * Created by xie on 2016/10/14.

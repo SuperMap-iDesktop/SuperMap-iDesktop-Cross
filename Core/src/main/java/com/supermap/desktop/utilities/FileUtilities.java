@@ -308,7 +308,41 @@ public class FileUtilities {
 		}
 		return flag;
 	}
+	/**
+	 * 获取文件类型，默认以最后一个“.”作为分隔
+	 *
+	 * @param filePath
+	 * @return
+	 */
+	public static String getFileType(String filePath) {
+		return isFilePath(filePath) && filePath.contains(".") ? filePath.substring(filePath.lastIndexOf("."), filePath.length()) : "";
+	}
 
+	/**
+	 * Get file alias
+	 * @param filePath
+	 * @return
+	 */
+	public static String getFileAlias(String filePath) {
+		String fileName = isFilePath(filePath) ? filePath.substring(filePath.lastIndexOf("\\"), filePath.length()) : null;
+		if (null == fileName || !fileName.contains(".")) {
+			return null;
+		}
+		return null != fileName ? fileName.substring(0, fileName.lastIndexOf(".")) : "";
+	}
+
+	public static boolean isFilePath(String filePath) {
+
+		boolean isFile = true;
+		try {
+			if (!new File(filePath).exists()) {
+				isFile = false;
+			}
+		} catch (Exception e) {
+			isFile = false;
+		}
+		return isFile;
+	}
 	public static boolean isContainUnLegitFileNameChars(String name) {
 		for (char unLegitFileNameChar : unLegitFileNameChars) {
 			if (name.contains(String.valueOf(unLegitFileNameChar))) {

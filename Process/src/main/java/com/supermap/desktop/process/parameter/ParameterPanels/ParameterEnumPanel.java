@@ -30,22 +30,22 @@ public class ParameterEnumPanel extends SwingPanel {
     private JLabel label = new JLabel();
     private JComboBox comboBox = new JComboBox();
 
-	public ParameterEnumPanel(IParameter parameterEnum) {
-		super(parameterEnum);
-		this.parameterEnum = (ParameterEnum) parameterEnum;
-		label.setText(this.parameterEnum.getDescribe());
-		initComboBoxItems();
-		comboBox.setSelectedItem(this.parameterEnum.getSelectedItem());
-		initListeners();
+    public ParameterEnumPanel(IParameter parameterEnum) {
+        super(parameterEnum);
+        this.parameterEnum = (ParameterEnum) parameterEnum;
+        label.setText(this.parameterEnum.getDescribe());
+        initComboBoxItems();
+        comboBox.setSelectedItem(this.parameterEnum.getSelectedItem());
+        initListeners();
         initLayout();
     }
 
     private void initLayout() {
         label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
         comboBox.setPreferredSize(new Dimension(20, 23));
-	    panel.setLayout(new GridBagLayout());
-	    panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
-	    panel.add(comboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL));
+        panel.setLayout(new GridBagLayout());
+        panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
+        panel.add(comboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
     }
 
     /**
