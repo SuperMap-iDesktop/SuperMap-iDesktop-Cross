@@ -141,4 +141,9 @@ public class MetaProcessImport extends MetaProcess {
     public String getKey() {
         return MetaKeys.IMPORT;
     }
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/import.png");
+	}
 }

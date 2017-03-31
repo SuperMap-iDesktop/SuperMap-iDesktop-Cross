@@ -24,6 +24,8 @@ import com.supermap.desktop.ui.lbs.params.MongoDBOutputsetting;
 import com.supermap.desktop.utilities.CursorUtilities;
 import org.apache.http.impl.client.CloseableHttpClient;
 
+import javax.swing.*;
+
 /**
  * Created by xie on 2017/2/10.
  * 计算热度图
@@ -153,4 +155,9 @@ public class MetaProcessHeatMap extends MetaProcess {
     public String getKey() {
         return MetaKeys.HEAT_MAP;
     }
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/HeatMap.png");
+	}
 }

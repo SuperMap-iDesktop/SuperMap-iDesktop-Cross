@@ -7,7 +7,6 @@ import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.tasks.ProcessTask;
 
-import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import java.util.Vector;
 
@@ -38,10 +37,6 @@ public abstract class AbstractProcess implements IProcess {
     @Override
     public abstract Vector<ProcessData> getOutputs();
 
-	@Override
-	public Icon getIcon() {
-		return null;
-	}
 
 	@Override
 	public void addRunningListener(RunningListener listener) {

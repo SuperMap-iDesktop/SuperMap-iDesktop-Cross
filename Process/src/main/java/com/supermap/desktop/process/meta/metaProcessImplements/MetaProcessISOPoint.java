@@ -29,6 +29,7 @@ import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 /**
@@ -149,4 +150,9 @@ public class MetaProcessISOPoint extends MetaProcess {
     public IParameterPanel getComponent() {
         return parameters.getPanel();
     }
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/buffer.png");
+	}
 }
