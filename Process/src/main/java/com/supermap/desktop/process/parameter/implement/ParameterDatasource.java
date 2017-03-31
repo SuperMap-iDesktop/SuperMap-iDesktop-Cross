@@ -12,7 +12,7 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterDatasource extends AbstractParameter implements ISelectionParameter {
 
-	public static final String DATASOURCE_FIELD_NAME = "datasourceFieldName";
+	public static final String DATASOURCE_FIELD_NAME = "DATASOURCE_FIELD_NAME";
 
 	@ParameterField(name = DATASOURCE_FIELD_NAME)
 	private Datasource datasource;
@@ -30,10 +30,10 @@ public class ParameterDatasource extends AbstractParameter implements ISelection
             datasource = (Datasource) value;
 	        firePropertyChangeListener(new PropertyChangeEvent(this, DATASOURCE_FIELD_NAME, oldValue, datasource));
         }
-
     }
 
-    @Override
+
+	@Override
     public Object getSelectedItem() {
         return datasource;
     }

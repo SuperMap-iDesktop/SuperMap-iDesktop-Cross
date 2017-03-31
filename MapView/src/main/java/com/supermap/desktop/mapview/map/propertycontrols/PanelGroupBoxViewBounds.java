@@ -1,5 +1,6 @@
 package com.supermap.desktop.mapview.map.propertycontrols;
 
+import com.supermap.data.Geometry;
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlDefaultValues;
@@ -11,6 +12,8 @@ import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -25,7 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
+import java.util.*;
 
 import static com.supermap.desktop.controls.ControlDefaultValues.*;
 
@@ -38,6 +41,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	public Rectangle2D rangeRectangle = Rectangle2D.getEMPTY();
 
 	private MapControl mapControl;
+	private Map map;
 
 	private JLabel labelCurrentViewLeft;
 	public WaringTextField textFieldCurrentViewLeft;
@@ -162,20 +166,27 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	public PanelGroupBoxViewBounds(SmDialog smDialog) {
 		super();
 		this.dialog = smDialog;
-		initCompont();
-		initResource();
-		initLayout();
-		// 先初始化，然后添加监听，然后再设置一遍范围
-		// 目的：文本框的值域需要其他文本框中值作为参考，为保证初始化时每个文本框都设置值域，先初始化文本框中的值，再触发一次监听事件完成文本框的初始化
-		initValue();
-		registEvents();
-		setAsMapViewBounds();
+		init();
 	}
 
 	public PanelGroupBoxViewBounds(SmDialog smDialog, String borderName) {
 		super();
 		this.dialog = smDialog;
 		this.borderName = borderName;
+		init();
+
+	}
+
+	public PanelGroupBoxViewBounds(SmDialog smDialog, String borderName, Map inputMap) {
+		super();
+		this.dialog = smDialog;
+		this.borderName = borderName;
+		this.map=inputMap;
+		init();
+
+	}
+
+	public void init(){
 		initCompont();
 		initResource();
 		initLayout();
@@ -339,10 +350,19 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	 */
 	private void initValue() {
 		this.mapControl = MapUtilities.getMapControl();
-		this.mapViewL = this.mapControl.getMap().getBounds().getLeft();
-		this.mapViewT = this.mapControl.getMap().getBounds().getTop();
-		this.mapViewR = this.mapControl.getMap().getBounds().getRight();
-		this.mapViewB = this.mapControl.getMap().getBounds().getBottom();
+		if (this.mapControl!=null) {
+			this.mapViewL = this.mapControl.getMap().getBounds().getLeft();
+			this.mapViewT = this.mapControl.getMap().getBounds().getTop();
+			this.mapViewR = this.mapControl.getMap().getBounds().getRight();
+			this.mapViewB = this.mapControl.getMap().getBounds().getBottom();
+		}else if (this.map!=null){
+			this.mapViewL = this.map.getBounds().getLeft();
+			this.mapViewT = this.map.getBounds().getTop();
+			this.mapViewR = this.map.getBounds().getRight();
+			this.mapViewB = this.map.getBounds().getBottom();
+			this.customBoundsButton.setEnabled(false);
+			this.currentViewBoundsButton.setEnabled(false);
+		}
 		setAsMapViewBounds();
 	}
 
@@ -639,5 +659,9 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
 	public JButton getCopyButton() {
 		return copyButton;
+	}
+
+	public java.util.Map<Layer, java.util.List<Geometry>> getSelectedGeometryAndLayer(){
+		return this.popupMenuCustomBounds.getSelectedGeometryAndLayer();
 	}
 }

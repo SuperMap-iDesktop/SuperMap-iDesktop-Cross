@@ -14,9 +14,7 @@ import com.supermap.data.WorkspaceOpenedEvent;
 import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.constraint.interfaces.IConstraint;
-import com.supermap.desktop.process.parameter.events.ParameterValueLegalEvent;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
-import com.supermap.desktop.process.parameter.interfaces.IParameter;
 
 
 /**
@@ -24,9 +22,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameter;
  *
  * @author XiaJT
  */
-public class DatasourceConstraint implements IConstraint, ParameterValueLegalListener {
-	private String name;
-	private IParameter parameter;
+public class DatasourceConstraint extends DefaultConstraint implements IConstraint, ParameterValueLegalListener {
 
 	public DatasourceConstraint() {
 		Application.getActiveApplication().getWorkspace().addClosedListener(new WorkspaceClosedListener() {
@@ -68,22 +64,9 @@ public class DatasourceConstraint implements IConstraint, ParameterValueLegalLis
 	}
 
 	private void datasourceChanged() {
-		parameter.fireFieldConstraintChanged(name);
-	}
-
-	@Override
-	public void constrained(IParameter parameter, String name) {
-		this.parameter = parameter;
-		this.name = name;
-		parameter.addValueLegalListener(this);
-	}
-
-
-	@Override
-	public boolean isValueLegal(ParameterValueLegalEvent event) {
-		if (event.getFieldName().equals(name)) {
-			return true;
+		for (ParameterNode parameterNode : parameterNodes) {
+			parameterNode.getParameter().fireFieldConstraintChanged(parameterNode.getName());
 		}
-		return true;
 	}
+
 }

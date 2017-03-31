@@ -10,6 +10,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
+import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -33,9 +34,17 @@ public class ParameterDatasourcePanel extends SwingPanel {
 		super(parameterDatasource);
 		this.parameterDatasource = ((ParameterDatasource) parameterDatasource);
 		this.label.setText(this.parameterDatasource.getDescribe());
+		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+		for (int i = 0; i < datasources.getCount(); i++) {
+			datasourceComboBox.addItem(datasources.get(i));
+		}
+		datasourceComboBox.setRenderer(new ListDataCellRender());
 		this.datasourceComboBox.setSelectedItem(this.parameterDatasource.getSelectedItem());
 		initLayout();
 		initListener();
+		if (datasourceComboBox.getSelectedIndex() == -1 && datasourceComboBox.getItemCount() > 0) {
+			datasourceComboBox.setSelectedIndex(0);
+		}
 	}
 
 	private void initLayout() {
@@ -84,6 +93,9 @@ public class ParameterDatasourcePanel extends SwingPanel {
 			Object selectedItem = ParameterDatasourcePanel.this.parameterDatasource.getSelectedItem();
 			if (selectedItem != null) {
 				datasourceComboBox.setSelectedItem(selectedItem);
+			}
+			if (datasourceComboBox.getSelectedIndex() == -1 && datasourceComboBox.getItemCount() > 0) {
+				datasourceComboBox.setSelectedIndex(0);
 			}
 			if (selectedItem != datasourceComboBox.getSelectedItem()) {
 				ParameterDatasourcePanel.this.parameterDatasource.setSelectedItem(datasourceComboBox.getSelectedItem());
