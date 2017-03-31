@@ -28,10 +28,7 @@ import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilities.Convert;
-import com.supermap.desktop.utilities.CoreResources;
-import com.supermap.desktop.utilities.DoubleUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.tilestorage.TileStorageConnection;
@@ -630,7 +627,11 @@ public class DialogMapCacheBuilder extends SmDialog {
             this.fileChooserControlFileCache.getEditor().setText(System.getProperty("user.dir"));
         } else {
             SmFileChoose fileChoose = new SmFileChoose(moduleName);
-            this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath() + "\\");
+            if(SystemPropertyUtilities.isWindows()) {
+                this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath() + "\\");
+            }else{
+                this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath() + "/");
+            }
         }
         this.warningProviderCacheNameIllegal.hideWarning();
         this.warningProviderCachePathIllegal.hideWarning();
@@ -750,6 +751,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                 this.comboBoxMutiTenseVersion.setVisible(false);
                 this.mapCacheBuilder.setStorageType(StorageType.MongoDB);
             }
+            connectMongoDBPretreatment();
         }
     }
 
@@ -1078,8 +1080,8 @@ public class DialogMapCacheBuilder extends SmDialog {
                 tileStorageConnection.setName(this.textFieldCacheName.getText());
                 tileStorageConnection.setDatabase(this.comboBoxDatabaseName.getEditor().getItem().toString());
                 tileStorageConnection.setStorageType(TileStorageType.MONGOV2);
-                tileStorageConnection.setUser(null);
-                tileStorageConnection.setPassword(null);
+                tileStorageConnection.setUser(this.textFieldUserName.getText());
+                tileStorageConnection.setPassword(this.textFieldUserPassword.getText());
             }
             if (tileStorageConnection != null) {
                 this.mapCacheBuilder.setConnectionInfo(tileStorageConnection);
