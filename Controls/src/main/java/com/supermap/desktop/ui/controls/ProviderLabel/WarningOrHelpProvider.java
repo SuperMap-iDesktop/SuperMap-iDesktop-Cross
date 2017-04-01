@@ -34,7 +34,7 @@ public class WarningOrHelpProvider extends JLabel {
     }
 
     public void hideWarning(){
-        this.setText(" ");
-        this.setIcon(null);
+        this.setText("");
+        this.setIcon(ControlsResources.getIcon("/controlsresources/SnapSetting/clarity.png"));
     }
 }
