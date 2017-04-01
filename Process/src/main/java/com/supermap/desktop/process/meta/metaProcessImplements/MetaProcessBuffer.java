@@ -11,13 +11,11 @@ import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
-import java.util.Vector;
 
 /**
  * @author XiaJT
@@ -37,7 +35,7 @@ public class MetaProcessBuffer extends MetaProcess {
             fireRunning(new RunningEvent(MetaProcessBuffer.this, steppedEvent.getPercent(), steppedEvent.getMessage()));
         }
     };
-    private Vector<ProcessData> processDatas;
+//    private Vector<ProcessData> processDatas;
 
     public MetaProcessBuffer() {
         parameters = new DefaultParameters();
@@ -128,8 +126,8 @@ public class MetaProcessBuffer extends MetaProcess {
         BufferAnalyst.addSteppedListener(this.steppedListener);
         BufferAnalyst.createBuffer(datasetVector, result, parameter, isUnion, isAttributeRetained);
         BufferAnalyst.removeSteppedListener(this.steppedListener);
-        ProcessData processData = new ProcessData();
-        processData.setData(result);
+//        ProcessData processData = new ProcessData();
+//        processData.setData(result);
 //        outPuts.add(0, processData);
         fireRunning(new RunningEvent(this, 100, "finished"));
     }

@@ -19,7 +19,7 @@ public abstract class MetaProcess extends AbstractProcess {
 	protected IParameters parameters;
 
 	public MetaProcess() {
-		this.outputs = new Outputs();
+		this.outputs = new Outputs(this);
 		this.inputs = new Inputs();
 	}
 

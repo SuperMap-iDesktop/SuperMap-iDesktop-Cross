@@ -12,7 +12,6 @@ import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -118,9 +117,9 @@ public class MetaProcessImport extends MetaProcess {
                 UICommonToolkit.refreshSelectedDatasourceNode(dataset.getDatasource().getAlias());
             }
         });
-        ProcessData processData = new ProcessData();
-
-        processData.setData(dataset);
+//        ProcessData processData = new ProcessData();
+//
+//        processData.setData(dataset);
 //        outPuts.add(0, processData);
         fireRunning(new RunningEvent(this, 100, "finished"));
     }
