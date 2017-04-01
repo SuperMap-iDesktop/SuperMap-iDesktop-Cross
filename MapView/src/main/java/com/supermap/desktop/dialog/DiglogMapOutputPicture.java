@@ -319,40 +319,37 @@ public class DiglogMapOutputPicture extends SmDialog {
 
 
 	/**
-	 * 设置输出图片的格式
-	 * 背景是否透明只在 png和jpg有效
-	 * DPI参数的出图支持四种格式 ：BMP\JPG\PNG/TIFF
-	 *
+	 * 获得文件类型
 	 * @param str
+	 * @param isUnifySetting 是否根据类型修改控件是否可用以及属性
+	 * @return
 	 */
-	private ImageType getImageType(String str) {
+	private ImageType getImageType(String str, Boolean isUnifySetting) {
 		this.panelButton.getButtonOk().setEnabled(false);
+		ImageType tempImageType = null;
 		if (str.contains(".png")) {
-			unifySetting(ImageType.PNG);
-			return ImageType.PNG;
+			tempImageType = ImageType.PNG;
 		} else if (str.contains(".jpg")) {
-			unifySetting(ImageType.JPG);
-			return ImageType.JPG;
+			tempImageType = ImageType.JPG;
+
 		} else if (str.contains(".bmp")) {
-			unifySetting(ImageType.BMP);
-			return ImageType.BMP;
+			tempImageType = ImageType.BMP;
+
 		} else if (str.contains(".gif")) {
-			unifySetting(ImageType.GIF);
-			return ImageType.GIF;
+			tempImageType = ImageType.GIF;
 		} else if (str.contains(".eps")) {
-			if (!SystemPropertyUtilities.isWindows()) {
+			if (SystemPropertyUtilities.isWindows()) {
 				// eps类型不能再linux系统上使用
-				return null;
-			} else {
-				unifySetting(ImageType.EPS);
-				return ImageType.EPS;
+				tempImageType = ImageType.EPS;
 			}
 		} else if (str.contains(".tif")) {
-			unifySetting(ImageType.TIFF);
-			return ImageType.TIFF;
-		} else {
-			return null;
+			tempImageType = ImageType.TIFF;
 		}
+
+		if (isUnifySetting&&tempImageType!=null) {
+			unifySetting(tempImageType);
+		}
+		return tempImageType;
 	}
 
 	/**
@@ -394,6 +391,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 			this.waringTextFieldTop.getTextField().setEnabled(false);
 			this.waringTextFieldRight.getTextField().setEnabled(false);
 			this.waringTextFieldBottom.getTextField().setEnabled(false);
+			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_OutputPicture_RangeChangedMessage"));
 		}
 	}
 
@@ -410,7 +408,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 				if (path.length() > 4) {
 					path = path.substring(path.length() - 4, path.length());
 				}
-				imageType = getImageType(path);
+				imageType = getImageType(path, true);
 				path = fileChooserControlExportPath.getEditor().getText();
 				// 当路劲文本框改变时，判断其路径是否合法，并且初始化磁盘剩余内存情况
 				initRemainingMemory();
@@ -685,7 +683,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 			}
 			//获得文间名称后尝试获得文件类型,当文件名称中不包含文件类型信息时，设置文件类型为空
 			if (tempFileName.length() > 4) {
-				imageType = getImageType(tempFileName.substring(tempFileName.length() - 4, tempFileName.length()));
+				imageType = getImageType(tempFileName.substring(tempFileName.length() - 4, tempFileName.length()), false);
 			} else {
 				imageType = null;
 			}
@@ -722,7 +720,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 					setFileName.invoke(fileChooserUI, tempFileName);
 					fileName = tempFileName;
 					if (tempFileName.length() > 4) {
-						imageType = getImageType(tempFileName.substring(tempFileName.length() - 4, tempFileName.length()));
+						imageType = getImageType(tempFileName.substring(tempFileName.length() - 4, tempFileName.length()), false);
 					} else {
 						imageType = null;
 					}
@@ -768,7 +766,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 					// 设置输出图片的路径
 					path = exportPathFileChoose.getFilePath();
 					// 设置输出图片的格式
-					getImageType(exportPathFileChoose.getFileFilter().getDescription());
+					getImageType(exportPathFileChoose.getFileFilter().getDescription(), true);
 					// 将路径赋予文本框
 					fileChooserControlExportPath.getEditor().setText(path);
 				}
