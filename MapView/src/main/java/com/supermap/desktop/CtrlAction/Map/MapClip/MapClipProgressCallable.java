@@ -4,10 +4,8 @@ import com.supermap.analyst.spatialanalyst.RasterClip;
 import com.supermap.analyst.spatialanalyst.VectorClip;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
-import com.supermap.desktop.utilities.StringUtilities;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -25,13 +23,17 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 	private Vector VectorInfo;
 	private Dataset resultDataset;
 
-	public ArrayList<Dataset> getDatasetsArrayList() {
-		return datasetsArrayList;
+	ArrayList<Dataset> datasetsArrayList;
+
+	public Dataset[] getResultDatasets() {
+		this.resultDatasets = new Dataset[datasetsArrayList.size()];
+		for (int i = 0; i < datasetsArrayList.size(); i++) {
+			this.resultDatasets[i] = datasetsArrayList.get(i);
+		}
+		return resultDatasets;
 	}
 
-	ArrayList<Dataset> datasetsArrayList;
-	private String saveMapName;
-	private IFormMap formMap = null;
+	Dataset[] resultDatasets;
 	private boolean createMapClip;
 	private PercentListener percentListener;
 
@@ -70,11 +72,9 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 
 	/**
 	 * @param vector
-	 * @param saveMapName
 	 */
-	public MapClipProgressCallable(Vector vector, String saveMapName) {
+	public MapClipProgressCallable(Vector vector) {
 		this.VectorInfo = vector;
-		this.saveMapName = saveMapName;
 	}
 
 	@Override
@@ -107,8 +107,6 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 					} else {
 						this.resultDataset = null;
 					}
-
-
 				} else {
 					RasterClip.addSteppedListener(percentListener);
 					Dataset sourceDataset = (Dataset) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_SOURCEDATASET);
@@ -127,12 +125,11 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 						this.resultDataset = null;
 					}
 				}
-				// 获得结果数据集和
-				if (StringUtilities.isNullOrEmpty(this.saveMapName)) {
-					if (this.resultDataset != null) {
-						datasetsArrayList.add(this.resultDataset);
-					}
+
+				if (this.resultDataset != null) {
+					datasetsArrayList.add(this.resultDataset);
 				}
+
 			}
 			long endTime = System.currentTimeMillis();
 			String time = String.valueOf((endTime - startTime) / 1000.0);
