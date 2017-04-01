@@ -773,21 +773,19 @@ public class DiglogMapOutputPicture extends SmDialog {
 
 				// 设置文件选择器中显示的文件名称，是什么给什么，包括空值、带小数点等
 				exportPathFileChoose.setSelectedFile(new File(fileName));
-
+				exportPathFileChoose.addPropertyChangeListener(fileChoosePropertyChangeListener);
 				int state = exportPathFileChoose.showSaveDialog(null);
 				// 当弹出文件选择器时在添加监听
-				exportPathFileChoose.addPropertyChangeListener(fileChoosePropertyChangeListener);
 				if (state == JFileChooser.APPROVE_OPTION) {
 					// 设置输出图片的路径
 					path = exportPathFileChoose.getFilePath();
 					fileChooserControlExportPath.getEditor().setText(path);
-
+					exportPathFileChoose.removePropertyChangeListener(fileChoosePropertyChangeListener);
 				}
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
 			} finally {
 				CursorUtilities.setDefaultCursor();
-				exportPathFileChoose.removePropertyChangeListener(fileChoosePropertyChangeListener);
 			}
 		}
 	};
