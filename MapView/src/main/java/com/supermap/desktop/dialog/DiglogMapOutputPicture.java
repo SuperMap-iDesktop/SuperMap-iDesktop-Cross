@@ -634,7 +634,6 @@ public class DiglogMapOutputPicture extends SmDialog {
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
 		this.fileChooserUI = exportPathFileChoose.getUI();
-		this.exportPathFileChoose.addPropertyChangeListener(fileChoosePropertyChangeListener);
 		// 两个系统下的获得最近路径得到的结果不同，windows得到的是路径，而linux得到的是完整的文件路径
 		if (SystemPropertyUtilities.isWindows()) {
 			// 对文件名进行判断，当目录下存在该文件时，名称重新给予
@@ -776,15 +775,19 @@ public class DiglogMapOutputPicture extends SmDialog {
 				exportPathFileChoose.setSelectedFile(new File(fileName));
 
 				int state = exportPathFileChoose.showSaveDialog(null);
+				// 当弹出文件选择器时在添加监听
+				exportPathFileChoose.addPropertyChangeListener(fileChoosePropertyChangeListener);
 				if (state == JFileChooser.APPROVE_OPTION) {
 					// 设置输出图片的路径
 					path = exportPathFileChoose.getFilePath();
 					fileChooserControlExportPath.getEditor().setText(path);
+
 				}
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);
 			} finally {
 				CursorUtilities.setDefaultCursor();
+				exportPathFileChoose.removePropertyChangeListener(fileChoosePropertyChangeListener);
 			}
 		}
 	};
