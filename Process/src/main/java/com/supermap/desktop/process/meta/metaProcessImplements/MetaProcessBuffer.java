@@ -3,30 +3,19 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 import com.supermap.analyst.spatialanalyst.BufferAnalyst;
 import com.supermap.analyst.spatialanalyst.BufferAnalystParameter;
 import com.supermap.analyst.spatialanalyst.BufferRadiusUnit;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.Datasource;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
-import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.implement.ParameterEnum;
-import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
-import java.util.Vector;
 
 /**
  * @author XiaJT
@@ -46,7 +35,7 @@ public class MetaProcessBuffer extends MetaProcess {
             fireRunning(new RunningEvent(MetaProcessBuffer.this, steppedEvent.getPercent(), steppedEvent.getMessage()));
         }
     };
-    private Vector<ProcessData> processDatas;
+//    private Vector<ProcessData> processDatas;
 
     public MetaProcessBuffer() {
         parameters = new DefaultParameters();
@@ -137,9 +126,9 @@ public class MetaProcessBuffer extends MetaProcess {
         BufferAnalyst.addSteppedListener(this.steppedListener);
         BufferAnalyst.createBuffer(datasetVector, result, parameter, isUnion, isAttributeRetained);
         BufferAnalyst.removeSteppedListener(this.steppedListener);
-        ProcessData processData = new ProcessData();
-        processData.setData(result);
-        outPuts.add(0, processData);
+//        ProcessData processData = new ProcessData();
+//        processData.setData(result);
+//        outPuts.add(0, processData);
         fireRunning(new RunningEvent(this, 100, "finished"));
     }
 

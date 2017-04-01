@@ -64,6 +64,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	private SmDialog dialog;
 	// 复制
 	private JButton copyButton;
+
 	// 粘贴
 	private JButton pasteButton;
 
@@ -88,8 +89,15 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
 	private String borderName = ControlsProperties.getString("String_MapOutputBounds");
 
+	public JButton getMapViewBoundsButton() {
+		return mapViewBoundsButton;
+	}
+
 	public JButton getCustomBoundsButton() {
 		return customBoundsButton;
+	}
+	public JButton getPasteButton() {
+		return pasteButton;
 	}
 
 	/**
@@ -101,12 +109,8 @@ public class PanelGroupBoxViewBounds extends JPanel {
 			if (e.getSource().equals(mapViewBoundsButton)) {
 				// 设置范围为整个地图范围
 				setAsMapViewBounds();
-				// 因为每个TextField的范围受其他约束，第一次设置是赋值，第二次设置为初始化值域范围
-				setAsMapViewBounds();
 			} else if (e.getSource().equals(currentViewBoundsButton)) {
 				// 设置范围为当前窗口
-				setAsCurrentViewBounds();
-				// 因为每个TextField的范围受其他约束，第一次设置是赋值，第二次设置为初始化值域范围
 				setAsCurrentViewBounds();
 			} else if (e.getSource().equals(customBoundsButton)) {
 				// 当点击自定义按钮时，show出自定义右键菜单栏
@@ -117,8 +121,6 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
 			} else if (e.getSource().equals(pasteButton)) {
 				// 粘贴
-				pasteParameter();
-				// 因为每个TextField的范围受其他约束，第一次设置是赋值，第二次设置为初始化值域范围
 				pasteParameter();
 			}
 		}
@@ -198,19 +200,19 @@ public class PanelGroupBoxViewBounds extends JPanel {
 			// 当失去焦点时，将文本框中数字设置千分位
 			if (e.getSource().equals(textFieldCurrentViewLeft.getTextField())) {
 				String temp = textFieldCurrentViewLeft.getTextField().getText();
-				temp=DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
+				temp = DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
 				textFieldCurrentViewLeft.getTextField().setText(temp);
 			} else if (e.getSource().equals(textFieldCurrentViewBottom.getTextField())) {
 				String temp = textFieldCurrentViewBottom.getTextField().getText();
-				temp=DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
+				temp = DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
 				textFieldCurrentViewBottom.getTextField().setText(temp);
 			} else if (e.getSource().equals(textFieldCurrentViewRight.getTextField())) {
 				String temp = textFieldCurrentViewRight.getTextField().getText();
-				temp=DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
+				temp = DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
 				textFieldCurrentViewRight.getTextField().setText(temp);
 			} else if (e.getSource().equals(textFieldCurrentViewTop.getTextField())) {
 				String temp = textFieldCurrentViewTop.getTextField().getText();
-				temp=DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
+				temp = DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
 				textFieldCurrentViewTop.getTextField().setText(temp);
 			}
 		}
@@ -450,7 +452,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 	/**
 	 * 设置范围为当前可视范围
 	 */
-	private void setAsCurrentViewBounds() {
+	public void setAsCurrentViewBounds() {
 
 		this.currentViewLeft = this.mapControl.getMap().getViewBounds().getLeft();
 		this.currentViewBottom = this.mapControl.getMap().getViewBounds().getBottom();

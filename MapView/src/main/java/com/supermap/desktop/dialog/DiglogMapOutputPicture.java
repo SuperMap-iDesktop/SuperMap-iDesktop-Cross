@@ -23,6 +23,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.FileChooserUI;
 import java.awt.*;
@@ -283,18 +285,18 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private void registEvents() {
 		removeEvents();
 		this.fileChooserControlExportPath.getButton().addActionListener(this.exportPathLitener);
-		this.fileChooserControlExportPath.getEditor().addCaretListener(this.exportPathCareListener);
 
+		this.fileChooserControlExportPath.getEditor().getDocument().addDocumentListener(this.exportPathDocumentListener);
 		this.resolutionTextField.registEvents();
 		this.resolutionTextField.getTextField().addCaretListener(this.resolutionCareListener);
 
-		this.panelButton.getButtonCancel().addActionListener(CancelActionListener);
-		this.panelButton.getButtonOk().addActionListener(OKActionListener);
+		this.panelButton.getButtonCancel().addActionListener(this.CancelActionListener);
+		this.panelButton.getButtonOk().addActionListener(this.OKActionListener);
 
-		this.waringTextFieldLeft.getTextField().addCaretListener(rangeTextFiledCareListener);
-		this.waringTextFieldTop.getTextField().addCaretListener(rangeTextFiledCareListener);
-		this.waringTextFieldRight.getTextField().addCaretListener(rangeTextFiledCareListener);
-		this.waringTextFieldBottom.getTextField().addCaretListener(rangeTextFiledCareListener);
+		this.waringTextFieldLeft.getTextField().addCaretListener(this.rangeTextFiledCareListener);
+		this.waringTextFieldTop.getTextField().addCaretListener(this.rangeTextFiledCareListener);
+		this.waringTextFieldRight.getTextField().addCaretListener(this.rangeTextFiledCareListener);
+		this.waringTextFieldBottom.getTextField().addCaretListener(this.rangeTextFiledCareListener);
 
 	}
 
@@ -303,7 +305,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 	 */
 	private void removeEvents() {
 		this.fileChooserControlExportPath.getButton().removeActionListener(this.exportPathLitener);
-		this.fileChooserControlExportPath.getEditor().removeCaretListener(this.exportPathCareListener);
+		this.fileChooserControlExportPath.getEditor().getDocument().removeDocumentListener(this.exportPathDocumentListener);
 
 		this.resolutionTextField.removeEvents();
 		this.resolutionTextField.getTextField().removeCaretListener(this.resolutionCareListener);
@@ -319,96 +321,131 @@ public class DiglogMapOutputPicture extends SmDialog {
 
 
 	/**
-	 * 设置输出图片的格式
-	 * 背景是否透明只在 png和jpg有效
-	 * DPI参数的出图支持四种格式 ：BMP\JPG\PNG/TIFF
+	 * 获得文件类型
 	 *
 	 * @param str
+	 * @param isUnifySetting 是否根据类型修改控件是否可用以及属性
+	 * @return
 	 */
-	private ImageType getImageType(String str) {
+	private ImageType getImageType(String str, Boolean isUnifySetting) {
+		ImageType tempImageType = null;
 		if (str.contains(".png")) {
-			this.resolutionTextField.setEnable(true);
-			this.backTransparent.setEnabled(true);
-			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(true);
-			return this.imageType.PNG;
+			tempImageType = ImageType.PNG;
 		} else if (str.contains(".jpg")) {
-			this.resolutionTextField.setEnable(true);
-			this.backTransparent.setEnabled(false);
-			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(true);
-			return this.imageType.JPG;
-		} else if (str.contains(".bmp")) {
-			this.resolutionTextField.setEnable(true);
-			this.backTransparent.setEnabled(false);
-			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(true);
-			return this.imageType.BMP;
-		} else if (str.contains(".gif")) {
-			// 当数据类型为gif时，此时分辨率属性不可用，设置分辨率为默认值
-			this.resolutionTextField.setText("96");
-			this.resolutionTextField.setEnable(false);
-			this.backTransparent.setEnabled(true);
-			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(false);
-			return this.imageType.GIF;
-		} else if (str.contains(".eps")) {
-			if (!SystemPropertyUtilities.isWindows()) {
-				// eps类型不能再linux系统上使用
-				return null;
-			} else {
-				// 当数据类型为eps时，此时分辨率属性不可用，设置分辨率为默认值
-				this.resolutionTextField.setText("96");
-				this.resolutionTextField.setEnable(false);
-				this.backTransparent.setEnabled(false);
-				this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(false);
-				return this.imageType.EPS;
-			}
+			tempImageType = ImageType.JPG;
 
+		} else if (str.contains(".bmp")) {
+			tempImageType = ImageType.BMP;
+
+		} else if (str.contains(".gif")) {
+			tempImageType = ImageType.GIF;
+		} else if (str.contains(".eps")) {
+			if (SystemPropertyUtilities.isWindows()) {
+				// eps类型不能再linux系统上使用
+				tempImageType = ImageType.EPS;
+			}
 		} else if (str.contains(".tif")) {
-			this.resolutionTextField.setEnable(true);
-			this.backTransparent.setEnabled(false);
-			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(true);
-			// 暂时不支持tif
-			return this.imageType.TIFF;
-		} else {
-			return null;
+			tempImageType = ImageType.TIFF;
 		}
+
+		if (isUnifySetting && tempImageType != null) {
+			unifySetting(tempImageType);
+		}
+		return tempImageType;
 	}
 
 	/**
-	 * 输出路劲的文本框改变监听
+	 * 统一设置控件是否可用状态
+	 * 主要根据输出图片类型的改变惊醒设置
 	 */
-	private CaretListener exportPathCareListener = new CaretListener() {
-		@Override
-		public void caretUpdate(CaretEvent e) {
-			// 当手动修改路劲文本框的值时，赋予其内容于路径参数和输出图片类型参数
-			path = fileChooserControlExportPath.getEditor().getText();
-			if (!StringUtilities.isNullOrEmpty(fileChooserControlExportPath.getEditor().getText())) {
-				// 从字符中尝试提取需要导出的图片类型
-				if (path.length() > 4) {
-					path = path.substring(path.length() - 4, path.length());
-				}
-				imageType = getImageType(path);
-				path = fileChooserControlExportPath.getEditor().getText();
-				// 当路劲文本框改变时，判断其路径是否合法，并且初始化磁盘剩余内存情况
-				initRemainingMemory();
-			} else {
-				path = "";
-				imageType = null;
-			}
+	private void unifySetting(ImageType imageType) {
+		// 确定按钮
+		this.panelButton.getButtonOk().setEnabled(true);
+		// 分辨率
+		this.resolutionTextField.setEnable(true);
+		// 背景透明
+		this.backTransparent.setEnabled(true);
+		// 整幅范围
+		this.panelGroupBoxViewBounds.getMapViewBoundsButton().setEnabled(true);
+		// 自定义范围
+		this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(true);
+		// 粘贴
+		this.panelGroupBoxViewBounds.getPasteButton().setEnabled(true);
+		// 范围文本框
+		this.waringTextFieldLeft.getTextField().setEnabled(true);
+		this.waringTextFieldTop.getTextField().setEnabled(true);
+		this.waringTextFieldRight.getTextField().setEnabled(true);
+		this.waringTextFieldBottom.getTextField().setEnabled(true);
 
-			// 当手动输入的路径名称合法时，设置文件名称
-			if (!StringUtilities.isNullOrEmpty(path)) {
-				if (SystemPropertyUtilities.isWindows()) {
-					fileName = path.substring(path.lastIndexOf("\\") + 1);
-				} else {
-					fileName = path.substring(path.lastIndexOf("/") + 1);
-				}
-			} else {
-				// 当文件路径不合法时，也无法获得文件名
-				fileName = "";
-			}
-			// 当路劲文本框改变时，判断一下确定按钮是否可用
-			judgeOKButtonisEnabled();
+		if (imageType.equals(ImageType.PNG)) {
+
+		} else if (imageType.equals(ImageType.JPG) || imageType.equals(ImageType.BMP) || imageType.equals(ImageType.TIFF)) {
+			this.backTransparent.setEnabled(false);
+		} else if (imageType.equals(ImageType.GIF) || imageType.equals(ImageType.EPS)) {
+			// 当数据类型为gif时，此时分辨率属性不可用，设置分辨率为默认值
+			this.resolutionTextField.setText("96");
+			panelGroupBoxViewBounds.setAsCurrentViewBounds();
+			this.resolutionTextField.setEnable(false);
+			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(false);
+			this.panelGroupBoxViewBounds.getMapViewBoundsButton().setEnabled(false);
+			this.panelGroupBoxViewBounds.getPasteButton().setEnabled(false);
+			this.waringTextFieldLeft.getTextField().setEnabled(false);
+			this.waringTextFieldTop.getTextField().setEnabled(false);
+			this.waringTextFieldRight.getTextField().setEnabled(false);
+			this.waringTextFieldBottom.getTextField().setEnabled(false);
+			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_OutputPicture_RangeChangedMessage"));
+		}
+	}
+
+
+	private DocumentListener exportPathDocumentListener = new DocumentListener() {
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			textChanged();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			textChanged();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			textChanged();
 		}
 	};
+
+	private void textChanged() {
+		// 当手动修改路劲文本框的值时，赋予其内容于路径参数和输出图片类型参数
+		path = fileChooserControlExportPath.getEditor().getText();
+		if (!StringUtilities.isNullOrEmpty(fileChooserControlExportPath.getEditor().getText())) {
+			// 从字符中尝试提取需要导出的图片类型
+			if (path.length() > 4) {
+				path = path.substring(path.length() - 4, path.length());
+			}
+			imageType = getImageType(path, true);
+			path = fileChooserControlExportPath.getEditor().getText();
+			// 当路劲文本框改变时，判断其路径是否合法，并且初始化磁盘剩余内存情况
+			initRemainingMemory();
+		} else {
+			path = "";
+			imageType = null;
+		}
+
+		// 当手动输入的路径名称合法时，设置文件名称
+		if (!StringUtilities.isNullOrEmpty(path)) {
+			if (SystemPropertyUtilities.isWindows()) {
+				fileName = path.substring(path.lastIndexOf("\\") + 1);
+			} else {
+				fileName = path.substring(path.lastIndexOf("/") + 1);
+			}
+		} else {
+			// 当文件路径不合法时，也无法获得文件名
+			fileName = "";
+		}
+		// 当路劲文本框改变时，判断一下确定按钮是否可用
+		judgeOKButtonisEnabled();
+	}
 
 	/**
 	 * 分辨率textFiled，内容改变监听，主要用于：高、宽值的联动
@@ -597,12 +634,12 @@ public class DiglogMapOutputPicture extends SmDialog {
 		}
 		this.exportPathFileChoose = new SmFileChoose(moduleName);
 		this.fileChooserUI = exportPathFileChoose.getUI();
-		this.exportPathFileChoose.addPropertyChangeListener(fileChoosePropertyChangeListener);
 		// 两个系统下的获得最近路径得到的结果不同，windows得到的是路径，而linux得到的是完整的文件路径
 		if (SystemPropertyUtilities.isWindows()) {
 			// 对文件名进行判断，当目录下存在该文件时，名称重新给予
 			int num = 1;
-			String lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage.png";
+			String lastPath = this.exportPathFileChoose.getModuleLastPath();
+			lastPath = lastPath + "\\" + "ExportImage.png";
 			File file = new File(lastPath);
 			this.fileName = "ExportImage.png";
 			while (file.exists()) {
@@ -614,7 +651,10 @@ public class DiglogMapOutputPicture extends SmDialog {
 			this.fileChooserControlExportPath.setText(lastPath);
 		} else {
 			String lastPath = this.exportPathFileChoose.getModuleLastPath();
-
+			// 如果路径名称中不包含小数点，人为设置
+			if (lastPath.indexOf(".") < 0) {
+				lastPath = lastPath + "/" + "ExportImage.png";
+			}
 			String filePath = lastPath.substring(0, lastPath.lastIndexOf("/") + 1);
 			String fileType = lastPath.substring(lastPath.lastIndexOf("."));
 			String fileName = lastPath.substring(lastPath.lastIndexOf("/") + 1, lastPath.lastIndexOf("."));
@@ -656,7 +696,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 			}
 			//获得文间名称后尝试获得文件类型,当文件名称中不包含文件类型信息时，设置文件类型为空
 			if (tempFileName.length() > 4) {
-				imageType = getImageType(tempFileName.substring(tempFileName.length() - 4, tempFileName.length()));
+				imageType = getImageType(tempFileName.substring(tempFileName.length() - 4, tempFileName.length()), false);
 			} else {
 				imageType = null;
 			}
@@ -693,7 +733,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 					setFileName.invoke(fileChooserUI, tempFileName);
 					fileName = tempFileName;
 					if (tempFileName.length() > 4) {
-						imageType = getImageType(tempFileName.substring(tempFileName.length() - 4, tempFileName.length()));
+						imageType = getImageType(tempFileName.substring(tempFileName.length() - 4, tempFileName.length()), false);
 					} else {
 						imageType = null;
 					}
@@ -733,15 +773,14 @@ public class DiglogMapOutputPicture extends SmDialog {
 
 				// 设置文件选择器中显示的文件名称，是什么给什么，包括空值、带小数点等
 				exportPathFileChoose.setSelectedFile(new File(fileName));
-
+				exportPathFileChoose.addPropertyChangeListener(fileChoosePropertyChangeListener);
 				int state = exportPathFileChoose.showSaveDialog(null);
+				// 当弹出文件选择器时在添加监听
 				if (state == JFileChooser.APPROVE_OPTION) {
 					// 设置输出图片的路径
 					path = exportPathFileChoose.getFilePath();
-					// 设置输出图片的格式
-					getImageType(exportPathFileChoose.getFileFilter().getDescription());
-					// 将路径赋予文本框
 					fileChooserControlExportPath.getEditor().setText(path);
+					exportPathFileChoose.removePropertyChangeListener(fileChoosePropertyChangeListener);
 				}
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);

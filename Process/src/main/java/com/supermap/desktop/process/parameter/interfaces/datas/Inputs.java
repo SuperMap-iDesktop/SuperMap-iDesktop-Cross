@@ -4,51 +4,105 @@ import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
 import com.supermap.desktop.utilities.StringUtilities;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by highsad on 2017/3/1.
  */
 public class Inputs {
 	private IProcess process;
-	private List<Data> datas;
+	private ConcurrentHashMap<String, Data> datas;
 
 	public Inputs() {
 
 	}
 
+	public IProcess getProcess() {
+		return this.process;
+	}
+
+	public Object getData() {
+		return null;
+	}
+
 	public Data getData(String name) {
-		if (StringUtilities.isNullOrEmpty(name)) {
+		if (StringUtilities.isNullOrEmpty(name) || !this.datas.containsKey(name)) {
 			return null;
 		}
 
-		Data result = null;
+		return this.datas.get(name);
+	}
 
-		for (int i = 0, size = this.datas.size(); i < size; i++) {
-			Data data = this.datas.get(i);
-			if (data.getName().equals(name)) {
-				result = data;
+	public void add(Data data) {
+		if (data == null) {
+			return;
+		}
+
+		if (!this.datas.containsKey(data.getName())) {
+			this.datas.put(data.getName(), data);
+		}
+	}
+
+	public void addData(String name, DataType type) {
+		if (StringUtilities.isNullOrEmpty(name)) {
+			return;
+		}
+
+		addData(new Data(name, type));
+	}
+
+	public void addData(Data data) {
+		if (data == null) {
+			return;
+		}
+
+		if (!this.datas.containsKey(data.getName())) {
+			this.datas.put(data.getName(), data);
+		}
+	}
+
+	public Data[] getDatas() {
+		ArrayList<Data> result = new ArrayList<>();
+
+		for (String name : this.datas.keySet()) {
+			result.add(this.datas.get(name));
+		}
+		return result.toArray(new Data[this.datas.size()]);
+	}
+
+	public Data[] getDatas(DataType type) {
+		if (type == null) {
+			return null;
+		}
+
+		ArrayList<Data> result = new ArrayList<>();
+		for (String name : this.datas.keySet()) {
+			Data data = this.datas.get(name);
+			if (data.getType().equals(type)) {
+				result.add(data);
+			}
+		}
+		return result.toArray(new Data[result.size()]);
+	}
+
+	public boolean isContains(DataType type) {
+		if (type == null) {
+			return false;
+		}
+
+		boolean result = false;
+		for (String name : this.datas.keySet()) {
+			Data data = this.datas.get(name);
+			if (data.getType().equals(type)) {
+				result = true;
 				break;
 			}
 		}
 		return result;
 	}
 
-	public Object getData() {
-		if (this.process != null && this.process.getOutputs() != null && this.process.getOutputs().size() > 0) {
-			return this.process.getOutputs().get(0).getData();
-		} else {
-			return null;
-		}
-	}
-
-	public void addData(Data data) {
-		if (!this.datas.contains(data)) {
-			this.datas.add(data);
-		}
-	}
-
-	public void addData(String name, DataType type) {
-		this.datas.add(new Data(name, type));
+	public int getCount() {
+		return this.datas.size();
 	}
 }

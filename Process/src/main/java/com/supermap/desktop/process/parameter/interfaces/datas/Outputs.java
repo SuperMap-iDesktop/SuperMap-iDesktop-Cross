@@ -1,31 +1,33 @@
 package com.supermap.desktop.process.parameter.interfaces.datas;
 
+import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by highsad on 2017/3/22.
  */
 public class Outputs {
-	private List<Data> datas;
+	private IProcess process;
+	private ConcurrentHashMap<String, Data> datas;
+
+	public Outputs(IProcess process) {
+		this.process = process;
+	}
+
+	public IProcess getProcess() {
+		return this.process;
+	}
 
 	public Data getData(String name) {
-		if (StringUtilities.isNullOrEmpty(name)) {
+		if (StringUtilities.isNullOrEmpty(name) || !this.datas.containsKey(name)) {
 			return null;
 		}
 
-		Data result = null;
-
-		for (int i = 0, size = this.datas.size(); i < size; i++) {
-			Data data = this.datas.get(i);
-			if (data.getName().equals(name)) {
-				result = data;
-				break;
-			}
-		}
-		return result;
+		return this.datas.get(name);
 	}
 
 	public void add(Data data) {
@@ -33,40 +35,52 @@ public class Outputs {
 			return;
 		}
 
-		if (isValid(data)) {
-			this.datas.add(data);
+		if (!this.datas.containsKey(data.getName())) {
+			this.datas.put(data.getName(), data);
 		}
 	}
 
-	public Data[] getDatas(String type) {
-		if (StringUtilities.isNullOrEmpty(type)) {
+	public Data[] getDatas() {
+		ArrayList<Data> result = new ArrayList<>();
+
+		for (String name : this.datas.keySet()) {
+			result.add(this.datas.get(name));
+		}
+		return result.toArray(new Data[this.datas.size()]);
+	}
+
+	public Data[] getDatas(DataType type) {
+		if (type == null) {
 			return null;
 		}
 
-		ArrayList<Data> datas = new ArrayList<>();
-
-		for (int i = 0, size = this.datas.size(); i < size; i++) {
-			Data data = this.datas.get(i);
+		ArrayList<Data> result = new ArrayList<>();
+		for (String name : this.datas.keySet()) {
+			Data data = this.datas.get(name);
 			if (data.getType().equals(type)) {
-				datas.add(data);
+				result.add(data);
 			}
 		}
-		return datas.toArray(new Data[datas.size()]);
+		return result.toArray(new Data[result.size()]);
 	}
 
-	public boolean isValid(Data data) {
-		if (this.datas.contains(data)) {
+	public boolean isContains(DataType type) {
+		if (type == null) {
 			return false;
 		}
 
-		boolean result = true;
-
-		for (int i = 0, size = this.datas.size(); i < size; i++) {
-			if (this.datas.get(i).getName().equals(data.getName())) {
-				result = false;
+		boolean result = false;
+		for (String name : this.datas.keySet()) {
+			Data data = this.datas.get(name);
+			if (data.getType().equals(type)) {
+				result = true;
 				break;
 			}
 		}
 		return result;
+	}
+
+	public int getCount() {
+		return this.datas.size();
 	}
 }

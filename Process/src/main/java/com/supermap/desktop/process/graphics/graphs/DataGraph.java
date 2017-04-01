@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.graphics.graphs;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
+import com.supermap.desktop.process.parameter.interfaces.datas.Data;
 import sun.swing.SwingUtilities2;
 
 import java.awt.*;
@@ -11,10 +11,11 @@ import java.awt.*;
  */
 public class DataGraph extends EllipseGraph {
 
-	private ProcessData data;
+	private Data data;
 
-	public DataGraph(GraphCanvas canvas) {
+	public DataGraph(GraphCanvas canvas, Data data) {
 		super(canvas);
+		this.data = data;
 	}
 
 	private void paintText(Graphics2D g) {
@@ -30,9 +31,4 @@ public class DataGraph extends EllipseGraph {
 		// 字符绘制时，坐标点指定的是基线的位置，而实际上我们希望指定的坐标点是整个字符块最下边的位置，因此使用 fontDescent 做个处理
 //		g.drawString(text, doubleToInt(getX() + (getWidth() - fontWidth) / 2), doubleToInt(getY() + getHeight() / 2 + fontHeight / 2 - fontDescent));
 	}
-
-	private int doubleToInt(double d) {
-		return Double.valueOf(d).intValue();
-	}
-
 }

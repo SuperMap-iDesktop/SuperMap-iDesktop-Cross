@@ -3,24 +3,23 @@ package com.supermap.desktop.process.meta;
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.AbstractProcess;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
+import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 import com.supermap.desktop.process.tasks.ProcessTask;
 
 import javax.swing.*;
-import java.util.Vector;
 
 /**
  * Created by highsad on 2017/1/5.
  */
 public abstract class MetaProcess extends AbstractProcess {
-	protected Vector<ProcessData> outPuts;
+	protected Outputs outputs;
 	protected Inputs inputs;
 	public ProcessTask processTask;
-	protected  IParameters parameters;
+	protected IParameters parameters;
 
 	public MetaProcess() {
-		this.outPuts = new Vector<>();
+		this.outputs = new Outputs(this);
 		this.inputs = new Inputs();
 	}
 
@@ -35,8 +34,8 @@ public abstract class MetaProcess extends AbstractProcess {
 	}
 
 	@Override
-	public Vector<ProcessData> getOutputs() {
-		return outPuts;
+	public Outputs getOutputs() {
+		return this.outputs;
 	}
 
 	@Override

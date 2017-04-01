@@ -8,18 +8,22 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
  */
 public class Data {
 
+	private String name;
+	private String description;
+	private DataType type;
 	private Object value;
 
 	public Data(String name, DataType type) {
-
+		this.name = name;
+		this.type = type;
 	}
 
 	public String getName() {
-		return null;
+		return this.name;
 	}
 
 	public DataType getType() {
-		return null;
+		return this.type;
 	}
 
 	public void setValue(Object value) {
@@ -28,6 +32,10 @@ public class Data {
 
 	public Object getValue() {
 		return this.value;
+	}
+
+	public String getDescription() {
+		return this.description;
 	}
 }
 
