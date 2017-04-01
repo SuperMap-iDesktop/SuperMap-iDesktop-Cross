@@ -142,7 +142,7 @@ public class MetaProcessHeatMap extends MetaProcess {
             }
             ProcessData processData = new ProcessData();
             processData.setData("Output");
-            outPuts.add(0, processData);
+//            outPuts.add(0, processData);
             fireRunning(new RunningEvent(this, 100, "finished"));
         }
     }

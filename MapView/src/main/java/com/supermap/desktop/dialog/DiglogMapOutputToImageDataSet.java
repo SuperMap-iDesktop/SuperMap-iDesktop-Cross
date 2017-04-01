@@ -104,7 +104,7 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
     }
 
     private void initLayout() {
-        Dimension dimension = new Dimension(this.initDailogWidth, 344);
+        Dimension dimension = new Dimension(this.initDailogWidth, 315);
         setSize(dimension);
         setMinimumSize(dimension);
         setLocationRelativeTo(null);
@@ -124,7 +124,7 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
                 .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(this.panelResultSetting, 215, 215, 215)
                         .addComponent(this.panelOutPutRangeSetting, 215, 215, 215))
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addContainerGap(0,Short.MAX_VALUE)
                 .addComponent(this.panelButton, 40, 40, 40)
         );
         initPanelResultSettingLayout();

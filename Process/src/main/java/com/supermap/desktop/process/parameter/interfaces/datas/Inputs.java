@@ -35,8 +35,8 @@ public class Inputs {
 	}
 
 	public Object getData() {
-		if (this.process != null && this.process.getOutputs() != null && this.process.getOutputs().size() > 0) {
-			return this.process.getOutputs().get(0).getData();
+		if (this.process != null && this.process.getOutputs() != null && this.process.getOutputs().getCount() > 0) {
+			return this.process.getOutputs().getData(0);
 		} else {
 			return null;
 		}

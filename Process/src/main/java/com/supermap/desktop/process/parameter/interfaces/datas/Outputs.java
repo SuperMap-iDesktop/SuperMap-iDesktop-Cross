@@ -11,6 +11,14 @@ import java.util.List;
 public class Outputs {
 	private List<Data> datas;
 
+	public Data getData(int index) {
+		if (this.datas != null && this.datas.size() > 0 && index > 0 && this.datas.size() > index) {
+			return this.datas.get(index);
+		} else {
+			return null;
+		}
+	}
+
 	public Data getData(String name) {
 		if (StringUtilities.isNullOrEmpty(name)) {
 			return null;
@@ -68,5 +76,9 @@ public class Outputs {
 			}
 		}
 		return result;
+	}
+
+	public int getCount() {
+		return this.datas.size();
 	}
 }
