@@ -28,4 +28,5 @@ public class ParameterType {
 	public static final String SEARCH_MODE = "SearchMode";
 	public static final String SINGLE_DATASET = "SINGLE_DATASET";
 	public static final String TEXT_AREA = "TEXT_AREA";
+	public static final String FIELD_COMBO_BOX = "FIELD_COMBO_BOX";
 }

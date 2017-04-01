@@ -17,11 +17,11 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterSingleDataset extends AbstractParameter implements ISelectionParameter {
 
-	public static final String VALUE_FIELD_NAME = "selectedItem";
+	public static final String DATASET_FIELD_NAME = "selectedItem";
 	public static final String DATASET_TYPES_FIELD_NAME = "datasetTypes";
 	public static final String DATASOURCE_FIELD_NAME = "datasource";
 
-	@ParameterField(name = VALUE_FIELD_NAME)
+	@ParameterField(name = DATASET_FIELD_NAME)
 	private Dataset selectedItem;
 	@ParameterField(name = DATASET_TYPES_FIELD_NAME)
 	private DatasetType[] datasetTypes;
@@ -36,7 +36,7 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
         if (item instanceof Dataset) {
             Dataset oldValue = this.selectedItem;
             this.selectedItem = (Dataset) item;
-	        firePropertyChangeListener(new PropertyChangeEvent(this, VALUE_FIELD_NAME, oldValue, selectedItem));
+	        firePropertyChangeListener(new PropertyChangeEvent(this, DATASET_FIELD_NAME, oldValue, selectedItem));
         }
     }
 
