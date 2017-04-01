@@ -23,6 +23,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.plaf.FileChooserUI;
 import java.awt.*;
@@ -283,18 +285,18 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private void registEvents() {
 		removeEvents();
 		this.fileChooserControlExportPath.getButton().addActionListener(this.exportPathLitener);
-		this.fileChooserControlExportPath.getEditor().addCaretListener(this.exportPathCareListener);
 
+		this.fileChooserControlExportPath.getEditor().getDocument().addDocumentListener(this.exportPathDocumentListener);
 		this.resolutionTextField.registEvents();
 		this.resolutionTextField.getTextField().addCaretListener(this.resolutionCareListener);
 
-		this.panelButton.getButtonCancel().addActionListener(CancelActionListener);
-		this.panelButton.getButtonOk().addActionListener(OKActionListener);
+		this.panelButton.getButtonCancel().addActionListener(this.CancelActionListener);
+		this.panelButton.getButtonOk().addActionListener(this.OKActionListener);
 
-		this.waringTextFieldLeft.getTextField().addCaretListener(rangeTextFiledCareListener);
-		this.waringTextFieldTop.getTextField().addCaretListener(rangeTextFiledCareListener);
-		this.waringTextFieldRight.getTextField().addCaretListener(rangeTextFiledCareListener);
-		this.waringTextFieldBottom.getTextField().addCaretListener(rangeTextFiledCareListener);
+		this.waringTextFieldLeft.getTextField().addCaretListener(this.rangeTextFiledCareListener);
+		this.waringTextFieldTop.getTextField().addCaretListener(this.rangeTextFiledCareListener);
+		this.waringTextFieldRight.getTextField().addCaretListener(this.rangeTextFiledCareListener);
+		this.waringTextFieldBottom.getTextField().addCaretListener(this.rangeTextFiledCareListener);
 
 	}
 
@@ -303,7 +305,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 	 */
 	private void removeEvents() {
 		this.fileChooserControlExportPath.getButton().removeActionListener(this.exportPathLitener);
-		this.fileChooserControlExportPath.getEditor().removeCaretListener(this.exportPathCareListener);
+		this.fileChooserControlExportPath.getEditor().getDocument().removeDocumentListener(this.exportPathDocumentListener);
 
 		this.resolutionTextField.removeEvents();
 		this.resolutionTextField.getTextField().removeCaretListener(this.resolutionCareListener);
@@ -320,12 +322,12 @@ public class DiglogMapOutputPicture extends SmDialog {
 
 	/**
 	 * 获得文件类型
+	 *
 	 * @param str
 	 * @param isUnifySetting 是否根据类型修改控件是否可用以及属性
 	 * @return
 	 */
 	private ImageType getImageType(String str, Boolean isUnifySetting) {
-		this.panelButton.getButtonOk().setEnabled(false);
 		ImageType tempImageType = null;
 		if (str.contains(".png")) {
 			tempImageType = ImageType.PNG;
@@ -346,7 +348,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 			tempImageType = ImageType.TIFF;
 		}
 
-		if (isUnifySetting&&tempImageType!=null) {
+		if (isUnifySetting && tempImageType != null) {
 			unifySetting(tempImageType);
 		}
 		return tempImageType;
@@ -395,43 +397,55 @@ public class DiglogMapOutputPicture extends SmDialog {
 		}
 	}
 
-	/**
-	 * 输出路劲的文本框改变监听
-	 */
-	private CaretListener exportPathCareListener = new CaretListener() {
-		@Override
-		public void caretUpdate(CaretEvent e) {
-			// 当手动修改路劲文本框的值时，赋予其内容于路径参数和输出图片类型参数
-			path = fileChooserControlExportPath.getEditor().getText();
-			if (!StringUtilities.isNullOrEmpty(fileChooserControlExportPath.getEditor().getText())) {
-				// 从字符中尝试提取需要导出的图片类型
-				if (path.length() > 4) {
-					path = path.substring(path.length() - 4, path.length());
-				}
-				imageType = getImageType(path, true);
-				path = fileChooserControlExportPath.getEditor().getText();
-				// 当路劲文本框改变时，判断其路径是否合法，并且初始化磁盘剩余内存情况
-				initRemainingMemory();
-			} else {
-				path = "";
-				imageType = null;
-			}
 
-			// 当手动输入的路径名称合法时，设置文件名称
-			if (!StringUtilities.isNullOrEmpty(path)) {
-				if (SystemPropertyUtilities.isWindows()) {
-					fileName = path.substring(path.lastIndexOf("\\") + 1);
-				} else {
-					fileName = path.substring(path.lastIndexOf("/") + 1);
-				}
-			} else {
-				// 当文件路径不合法时，也无法获得文件名
-				fileName = "";
-			}
-			// 当路劲文本框改变时，判断一下确定按钮是否可用
-			judgeOKButtonisEnabled();
+	private DocumentListener exportPathDocumentListener = new DocumentListener() {
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			textChanged();
+		}
+
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			textChanged();
+		}
+
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			textChanged();
 		}
 	};
+
+	private void textChanged() {
+		// 当手动修改路劲文本框的值时，赋予其内容于路径参数和输出图片类型参数
+		path = fileChooserControlExportPath.getEditor().getText();
+		if (!StringUtilities.isNullOrEmpty(fileChooserControlExportPath.getEditor().getText())) {
+			// 从字符中尝试提取需要导出的图片类型
+			if (path.length() > 4) {
+				path = path.substring(path.length() - 4, path.length());
+			}
+			imageType = getImageType(path, true);
+			path = fileChooserControlExportPath.getEditor().getText();
+			// 当路劲文本框改变时，判断其路径是否合法，并且初始化磁盘剩余内存情况
+			initRemainingMemory();
+		} else {
+			path = "";
+			imageType = null;
+		}
+
+		// 当手动输入的路径名称合法时，设置文件名称
+		if (!StringUtilities.isNullOrEmpty(path)) {
+			if (SystemPropertyUtilities.isWindows()) {
+				fileName = path.substring(path.lastIndexOf("\\") + 1);
+			} else {
+				fileName = path.substring(path.lastIndexOf("/") + 1);
+			}
+		} else {
+			// 当文件路径不合法时，也无法获得文件名
+			fileName = "";
+		}
+		// 当路劲文本框改变时，判断一下确定按钮是否可用
+		judgeOKButtonisEnabled();
+	}
 
 	/**
 	 * 分辨率textFiled，内容改变监听，主要用于：高、宽值的联动
@@ -765,9 +779,6 @@ public class DiglogMapOutputPicture extends SmDialog {
 				if (state == JFileChooser.APPROVE_OPTION) {
 					// 设置输出图片的路径
 					path = exportPathFileChoose.getFilePath();
-					// 设置输出图片的格式
-					getImageType(exportPathFileChoose.getFileFilter().getDescription(), true);
-					// 将路径赋予文本框
 					fileChooserControlExportPath.getEditor().setText(path);
 				}
 			} catch (Exception ex) {

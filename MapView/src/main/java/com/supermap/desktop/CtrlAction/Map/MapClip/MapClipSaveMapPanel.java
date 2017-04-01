@@ -5,8 +5,6 @@ import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 
 import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -40,13 +38,6 @@ public class MapClipSaveMapPanel extends JPanel {
 				saveMapTextField.setText("");
 				saveMapTextField.setEnabled(false);
 			}
-		}
-	};
-
-	private CaretListener textFieldCaretListener = new CaretListener() {
-		@Override
-		public void caretUpdate(CaretEvent e) {
-			//todo
 		}
 	};
 
@@ -99,12 +90,9 @@ public class MapClipSaveMapPanel extends JPanel {
 	private void registEvents() {
 		removeEvents();
 		this.resultMapCheckBox.addActionListener(this.checkBoxActionListener);
-		this.saveMapTextField.addCaretListener(this.textFieldCaretListener);
-
 	}
 
 	private void removeEvents() {
 		this.resultMapCheckBox.addActionListener(this.checkBoxActionListener);
-		this.saveMapTextField.addCaretListener(this.textFieldCaretListener);
 	}
 }

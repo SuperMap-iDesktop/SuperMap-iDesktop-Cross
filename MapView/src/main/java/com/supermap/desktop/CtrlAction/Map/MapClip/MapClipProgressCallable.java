@@ -10,6 +10,7 @@ import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.concurrent.CancellationException;
 
@@ -23,6 +24,12 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 
 	private Vector VectorInfo;
 	private Dataset resultDataset;
+
+	public ArrayList<Dataset> getDatasetsArrayList() {
+		return datasetsArrayList;
+	}
+
+	ArrayList<Dataset> datasetsArrayList;
 	private String saveMapName;
 	private IFormMap formMap = null;
 	private boolean createMapClip;
@@ -78,9 +85,11 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 			this.VectorInfo.size();
 
 			long startTime = System.currentTimeMillis();
+			this.datasetsArrayList = new ArrayList<>();
 			for (int i = 0; i < this.VectorInfo.size(); i++) {
 				Dataset dataset = (Dataset) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_SOURCEDATASET);
 				percentListener = new PercentListener(i, this.VectorInfo.size(), dataset.getName());
+				String targetDatasetName;
 				if (dataset instanceof DatasetVector) {
 					VectorClip.addSteppedListener(percentListener);
 
@@ -89,7 +98,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 					boolean isClipInRegion = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISCLIPINREGION);
 					boolean isEraseSource = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE);
 					Datasource targetDatasource = (Datasource) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETSOURCE);
-					String targetDatasetName = (String) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETNAME);
+					targetDatasetName = (String) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETNAME);
 
 					// 对要裁剪的数据集通过名称做一个判断，如果名字已经存在，说明数据集已经裁剪过了，不需要裁剪，将之前裁剪的结果再次加入地图
 					if (targetDatasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
@@ -97,11 +106,6 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 								isEraseSource, targetDatasource, targetDatasetName);
 					} else {
 						this.resultDataset = null;
-						// 手动添加到图层
-						if (StringUtilities.isNullOrEmpty(this.saveMapName)) {
-							// todo 保存为地图
-						}
-
 					}
 
 
@@ -112,7 +116,8 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 					boolean isClipInRegion = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISCLIPINREGION);
 					boolean isExactClip = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE);
 					Datasource targetDatasource = (Datasource) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETSOURCE);
-					String targetDatasetName = (String) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETNAME);
+					targetDatasetName = (String) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETNAME);
+
 
 					// 对要裁剪的数据集通过名称做一个判断，如果名字已经存在，说明数据集已经裁剪过了，不需要裁剪，将之前裁剪的结果再次加入地图
 					if (targetDatasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
@@ -120,16 +125,13 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 								isExactClip, targetDatasource, targetDatasetName);
 					} else {
 						this.resultDataset = null;
-						// 手动添加到图层
-						if (StringUtilities.isNullOrEmpty(this.saveMapName)) {
-							// todo 保存为地图
-						}
 					}
-
 				}
-
-				if (this.resultDataset != null && StringUtilities.isNullOrEmpty(this.saveMapName)) {
-					// todo 保存为地图
+				// 获得结果数据集和
+				if (StringUtilities.isNullOrEmpty(this.saveMapName)) {
+					if (this.resultDataset != null) {
+						datasetsArrayList.add(this.resultDataset);
+					}
 				}
 			}
 			long endTime = System.currentTimeMillis();
@@ -146,22 +148,4 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 		return this.createMapClip;
 	}
 
-//	private void addDatasettoMap(String mapName) {
-//		Dataset dataset = (Dataset) this.resultDataset;
-//		if (dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
-//			if (formMap == null) {
-//				String name = MapUtilities.getAvailableMapName(String.format("%s@%s", dataset.getName(), dataset.getDatasource().getAlias()), true);
-//				formMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, name);
-//			}
-//			if (formMap != null) {
-//				Map map = formMap.getMapControl().getMap();
-//				map.setName(mapName);
-//				MapUtilities.addDatasetToMap(map, dataset, true);
-//				map.refresh();
-//				UICommonToolkit.getLayersManager().setMap(map);
-//				// 新建的地图窗口，修改默认的Action为漫游
-//				formMap.getMapControl().setAction(Action.PAN);
-//			}
-//		}
-//	}
 }
