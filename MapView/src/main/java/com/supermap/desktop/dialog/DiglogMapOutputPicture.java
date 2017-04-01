@@ -326,49 +326,75 @@ public class DiglogMapOutputPicture extends SmDialog {
 	 * @param str
 	 */
 	private ImageType getImageType(String str) {
+		this.panelButton.getButtonOk().setEnabled(false);
 		if (str.contains(".png")) {
-			this.resolutionTextField.setEnable(true);
-			this.backTransparent.setEnabled(true);
-			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(true);
+			unifySetting(this.imageType.PNG);
 			return this.imageType.PNG;
 		} else if (str.contains(".jpg")) {
-			this.resolutionTextField.setEnable(true);
-			this.backTransparent.setEnabled(false);
-			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(true);
+			unifySetting(this.imageType.JPG);
 			return this.imageType.JPG;
 		} else if (str.contains(".bmp")) {
-			this.resolutionTextField.setEnable(true);
-			this.backTransparent.setEnabled(false);
-			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(true);
+			unifySetting(this.imageType.BMP);
 			return this.imageType.BMP;
 		} else if (str.contains(".gif")) {
-			// 当数据类型为gif时，此时分辨率属性不可用，设置分辨率为默认值
-			this.resolutionTextField.setText("96");
-			this.resolutionTextField.setEnable(false);
-			this.backTransparent.setEnabled(true);
-			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(false);
+			unifySetting(this.imageType.GIF);
 			return this.imageType.GIF;
 		} else if (str.contains(".eps")) {
 			if (!SystemPropertyUtilities.isWindows()) {
 				// eps类型不能再linux系统上使用
 				return null;
 			} else {
-				// 当数据类型为eps时，此时分辨率属性不可用，设置分辨率为默认值
-				this.resolutionTextField.setText("96");
-				this.resolutionTextField.setEnable(false);
-				this.backTransparent.setEnabled(false);
-				this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(false);
+				unifySetting(this.imageType.EPS);
 				return this.imageType.EPS;
 			}
-
 		} else if (str.contains(".tif")) {
-			this.resolutionTextField.setEnable(true);
-			this.backTransparent.setEnabled(false);
-			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(true);
-			// 暂时不支持tif
+			unifySetting(this.imageType.TIFF);
 			return this.imageType.TIFF;
 		} else {
 			return null;
+		}
+	}
+
+	/**
+	 * 统一设置控件是否可用状态
+	 * 主要根据输出图片类型的改变惊醒设置
+	 */
+	private void unifySetting(ImageType imageType) {
+		// 确定按钮
+		this.panelButton.getButtonOk().setEnabled(true);
+		// 分辨率
+		this.resolutionTextField.setEnable(true);
+		// 背景透明
+		this.backTransparent.setEnabled(true);
+		// 整幅范围
+		this.panelGroupBoxViewBounds.getMapViewBoundsButton().setEnabled(true);
+		// 自定义范围
+		this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(true);
+		// 粘贴
+		this.panelGroupBoxViewBounds.getPasteButton().setEnabled(true);
+		// 范围文本框
+		this.waringTextFieldLeft.getTextField().setEnabled(true);
+		this.waringTextFieldTop.getTextField().setEnabled(true);
+		this.waringTextFieldRight.getTextField().setEnabled(true);
+		this.waringTextFieldBottom.getTextField().setEnabled(true);
+
+		if (imageType.equals(ImageType.PNG)) {
+
+		} else if (imageType.equals(ImageType.JPG) || imageType.equals(ImageType.BMP) || imageType.equals(ImageType.TIFF)) {
+			this.backTransparent.setEnabled(false);
+		} else if (imageType.equals(ImageType.GIF) || imageType.equals(ImageType.EPS)) {
+			// 当数据类型为gif时，此时分辨率属性不可用，设置分辨率为默认值
+			this.resolutionTextField.setText("96");
+			panelGroupBoxViewBounds.setAsCurrentViewBounds();
+			this.resolutionTextField.setEnable(false);
+			this.panelGroupBoxViewBounds.getCustomBoundsButton().setEnabled(false);
+			this.panelGroupBoxViewBounds.getMapViewBoundsButton().setEnabled(false);
+			this.panelGroupBoxViewBounds.getPasteButton().setEnabled(false);
+			this.waringTextFieldLeft.getTextField().setEnabled(false);
+			this.waringTextFieldTop.getTextField().setEnabled(false);
+			this.waringTextFieldRight.getTextField().setEnabled(false);
+			this.waringTextFieldBottom.getTextField().setEnabled(false);
+			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_OutputPicture_RangeChangedMessage"));
 		}
 	}
 
@@ -602,7 +628,8 @@ public class DiglogMapOutputPicture extends SmDialog {
 		if (SystemPropertyUtilities.isWindows()) {
 			// 对文件名进行判断，当目录下存在该文件时，名称重新给予
 			int num = 1;
-			String lastPath = this.exportPathFileChoose.getModuleLastPath() + "\\" + "ExportImage.png";
+			String lastPath = this.exportPathFileChoose.getModuleLastPath();
+			lastPath = lastPath + "\\" + "ExportImage.png";
 			File file = new File(lastPath);
 			this.fileName = "ExportImage.png";
 			while (file.exists()) {
