@@ -21,6 +21,7 @@ import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.StringUtilities;
 
+import javax.swing.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -181,4 +182,8 @@ public class MetaProcessSqlQuery extends MetaProcess {
 		return fieldNames.toArray(new String[fieldNames.size()]);
 	}
 
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/sqlQuery.png");
+	}
 }

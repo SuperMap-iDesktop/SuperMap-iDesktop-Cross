@@ -1,7 +1,6 @@
 package com.supermap.desktop.exportUI;
 
 import com.supermap.data.conversion.ExportSetting;
-import com.supermap.data.conversion.FileType;
 import com.supermap.desktop.Interface.IExportSettingFactory;
 import com.supermap.desktop.Interface.IPanelModel;
 import com.supermap.desktop.baseUI.PanelExportTransform;
@@ -11,13 +10,14 @@ import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.ExportFileInfo;
 import com.supermap.desktop.iml.ExportSettingFactory;
 import com.supermap.desktop.localUtilities.CommonUtilities;
-import com.supermap.desktop.localUtilities.FileUtilities;
 import com.supermap.desktop.localUtilities.FiletypeUtilities;
+import com.supermap.desktop.localUtilities.LocalFileUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -58,7 +58,7 @@ public class ExportsSetDialog extends SmDialog implements IPanelModel {
     private ActionListener exportPathLitener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            SmFileChoose tempfileChooser = FileUtilities.createExportFileChooser(fileChooserControlExportPath.getEditor().getText());
+            SmFileChoose tempfileChooser = LocalFileUtilities.createExportFileChooser(fileChooserControlExportPath.getEditor().getText());
             int state = tempfileChooser.showSaveDialog(null);
             if (state == JFileChooser.APPROVE_OPTION) {
                 String directories = tempfileChooser.getFilePath();
@@ -170,6 +170,7 @@ public class ExportsSetDialog extends SmDialog implements IPanelModel {
         ComponentUIUtilities.setName(this.panelContent, "ExportsSetDialog_panelContent");
         ComponentUIUtilities.setName(this.owner, "ExportsSetDialog_owner");
     }
+
     @Override
     public void initComponents() {
         this.checkBoxFileType = new JCheckBox();

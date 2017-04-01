@@ -15,6 +15,8 @@ import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
+import javax.swing.*;
+
 /**
  * @author XiaJT
  */
@@ -68,5 +70,10 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 	@Override
 	public String getTitle() {
 		return "重建空间索引";
+	}
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/SpatialIndex.png");
 	}
 }

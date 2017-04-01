@@ -15,8 +15,8 @@ import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.*;
 import com.supermap.desktop.localUtilities.CommonUtilities;
-import com.supermap.desktop.localUtilities.FileUtilities;
 import com.supermap.desktop.localUtilities.FiletypeUtilities;
+import com.supermap.desktop.localUtilities.LocalFileUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.*;
@@ -26,6 +26,7 @@ import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTableModel;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -289,7 +290,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
         private void setExportPath() {
             int selectRow = tableExport.getSelectedRow();
             String filePath = tableExport.getValueAt(selectRow, COLUMN_FILEPATH).toString();
-            SmFileChoose tempfileChooser = FileUtilities.createExportFileChooser(filePath);
+            SmFileChoose tempfileChooser = LocalFileUtilities.createExportFileChooser(filePath);
             int state = tempfileChooser.showSaveDialog(null);
             if (state == JFileChooser.APPROVE_OPTION) {
                 String directories = tempfileChooser.getFilePath();

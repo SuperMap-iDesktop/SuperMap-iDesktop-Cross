@@ -19,6 +19,7 @@ import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
+import javax.swing.*;
 import java.text.MessageFormat;
 
 /**
@@ -144,5 +145,11 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		}
 		return true;
 	}
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/OverlayAnalyst.png");
+	}
+
 
 }

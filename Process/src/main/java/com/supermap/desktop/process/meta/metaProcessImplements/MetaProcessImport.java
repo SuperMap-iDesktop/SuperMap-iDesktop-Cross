@@ -106,8 +106,6 @@ public class MetaProcessImport extends MetaProcess {
         Datasource datasource = parameterSaveDataset.getResultDatasource();
         EncodeType data = (EncodeType) comboBoxEncodeType.getSelectedItem();
         ImportMode importMode = (ImportMode) comboBoxImportMode.getSelectedItem();
-//		boolean createFieldIndex = (boolean) checkBoxCreateFieldIndex.getSelectedItem();// 喵喵喵？？？
-//		boolean createSpaceIndex = (boolean) checkBoxCreateSpaceIndex.getSelectedItem();// 喵喵喵？？？
 
         ImportSettingSHP importSettingSHP = new ImportSettingSHP(filePath, datasource);
         importSettingSHP.setTargetEncodeType(data);
@@ -141,4 +139,9 @@ public class MetaProcessImport extends MetaProcess {
     public String getKey() {
         return MetaKeys.IMPORT;
     }
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/import.png");
+	}
 }

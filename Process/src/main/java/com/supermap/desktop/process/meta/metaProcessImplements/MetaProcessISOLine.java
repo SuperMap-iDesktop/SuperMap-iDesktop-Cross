@@ -24,6 +24,8 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.properties.CommonProperties;
 
+import javax.swing.*;
+
 /**
  * Created by xie on 2017/3/6.
  */
@@ -130,4 +132,9 @@ public class MetaProcessISOLine extends MetaProcess {
     public IParameterPanel getComponent() {
         return parameters.getPanel();
     }
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Process/buffer.png");
+	}
 }
