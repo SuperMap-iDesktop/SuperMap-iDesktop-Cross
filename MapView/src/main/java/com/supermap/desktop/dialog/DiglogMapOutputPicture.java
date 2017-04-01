@@ -614,7 +614,10 @@ public class DiglogMapOutputPicture extends SmDialog {
 			this.fileChooserControlExportPath.setText(lastPath);
 		} else {
 			String lastPath = this.exportPathFileChoose.getModuleLastPath();
-
+			// 如果路径名称中不包含小数点，人为设置
+			if (lastPath.indexOf(".") < 0) {
+				lastPath = lastPath + "/" + "ExportImage.png";
+			}
 			String filePath = lastPath.substring(0, lastPath.lastIndexOf("/") + 1);
 			String fileType = lastPath.substring(lastPath.lastIndexOf("."));
 			String fileName = lastPath.substring(lastPath.lastIndexOf("/") + 1, lastPath.lastIndexOf("."));
