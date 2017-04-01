@@ -3,12 +3,11 @@ package com.supermap.desktop.process.core;
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
+import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 import com.supermap.desktop.process.tasks.ProcessTask;
 
 import javax.swing.*;
-import java.util.Vector;
 
 /**
  * Created by highsad on 2017/1/5.
@@ -25,7 +24,7 @@ public interface IProcess {
 
 	Inputs getInputs();
 
-	Vector<ProcessData> getOutputs();
+	Outputs getOutputs();
 
 	IParameters getParameters();
 
@@ -39,6 +38,6 @@ public interface IProcess {
 
 	IParameterPanel getComponent();
 
-	 ProcessTask getProcessTask();
+	ProcessTask getProcessTask();
 }
 

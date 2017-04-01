@@ -1,11 +1,7 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.analyst.spatialanalyst.OverlayAnalyst;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -122,7 +118,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		fireRunning(new RunningEvent(this, 100, "finished"));
 		ProcessData processData = new ProcessData();
 		processData.setData(info.sourceDataset);
-		outPuts.add(0, processData);
+//		outPuts.add(0, processData);
 	}
 
 	@Override

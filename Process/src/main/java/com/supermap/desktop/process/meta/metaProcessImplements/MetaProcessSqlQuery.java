@@ -1,11 +1,6 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
-import com.supermap.data.QueryParameter;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -104,7 +99,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 				DatasetVector datasetVector = saveQueryResult(resultRecord);
 				ProcessData processData = new ProcessData();
 				processData.setData(datasetVector);
-				outPuts.add(0, processData);
+//				outPuts.add(0, processData);
 			}
 		}
 

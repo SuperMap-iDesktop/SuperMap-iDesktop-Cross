@@ -5,14 +5,13 @@ import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
+import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.utilities.FileUtilities;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Vector;
 
 /**
  * @author XiaJT
@@ -132,7 +131,7 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 	}
 
 	@Override
-	public Vector<ProcessData> getOutputs() {
+	public Outputs getOutputs() {
 		return null;
 	}
 

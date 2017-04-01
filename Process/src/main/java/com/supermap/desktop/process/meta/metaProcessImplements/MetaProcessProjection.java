@@ -1,11 +1,6 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.GeoCoordSys;
-import com.supermap.data.GeoCoordSysType;
-import com.supermap.data.GeoSpatialRefType;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.data.PrjCoordSysType;
+import com.supermap.data.*;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
@@ -68,7 +63,7 @@ public class MetaProcessProjection extends MetaProcess {
         fireRunning(new RunningEvent(this, 100, "set geoCoorSys finished"));
         ProcessData processData = new ProcessData();
         processData.setData(dataset);
-        outPuts.add(0, processData);
+//        outPuts.add(0, processData);
     }
 
     @Override
