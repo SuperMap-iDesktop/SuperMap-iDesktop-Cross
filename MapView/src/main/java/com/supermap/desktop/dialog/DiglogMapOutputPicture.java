@@ -328,28 +328,28 @@ public class DiglogMapOutputPicture extends SmDialog {
 	private ImageType getImageType(String str) {
 		this.panelButton.getButtonOk().setEnabled(false);
 		if (str.contains(".png")) {
-			unifySetting(this.imageType.PNG);
-			return this.imageType.PNG;
+			unifySetting(ImageType.PNG);
+			return ImageType.PNG;
 		} else if (str.contains(".jpg")) {
-			unifySetting(this.imageType.JPG);
-			return this.imageType.JPG;
+			unifySetting(ImageType.JPG);
+			return ImageType.JPG;
 		} else if (str.contains(".bmp")) {
-			unifySetting(this.imageType.BMP);
-			return this.imageType.BMP;
+			unifySetting(ImageType.BMP);
+			return ImageType.BMP;
 		} else if (str.contains(".gif")) {
-			unifySetting(this.imageType.GIF);
-			return this.imageType.GIF;
+			unifySetting(ImageType.GIF);
+			return ImageType.GIF;
 		} else if (str.contains(".eps")) {
 			if (!SystemPropertyUtilities.isWindows()) {
 				// eps类型不能再linux系统上使用
 				return null;
 			} else {
-				unifySetting(this.imageType.EPS);
-				return this.imageType.EPS;
+				unifySetting(ImageType.EPS);
+				return ImageType.EPS;
 			}
 		} else if (str.contains(".tif")) {
-			unifySetting(this.imageType.TIFF);
-			return this.imageType.TIFF;
+			unifySetting(ImageType.TIFF);
+			return ImageType.TIFF;
 		} else {
 			return null;
 		}
@@ -394,7 +394,6 @@ public class DiglogMapOutputPicture extends SmDialog {
 			this.waringTextFieldTop.getTextField().setEnabled(false);
 			this.waringTextFieldRight.getTextField().setEnabled(false);
 			this.waringTextFieldBottom.getTextField().setEnabled(false);
-			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_OutputPicture_RangeChangedMessage"));
 		}
 	}
 
