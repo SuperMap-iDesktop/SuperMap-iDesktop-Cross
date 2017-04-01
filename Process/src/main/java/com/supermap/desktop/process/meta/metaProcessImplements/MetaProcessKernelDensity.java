@@ -9,7 +9,6 @@ import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
@@ -100,8 +99,8 @@ public class MetaProcessKernelDensity extends MetaProcess {
                 NewMessageBus messageBus = new NewMessageBus(response, processTask);
                 messageBus.run();
             }
-            ProcessData processData = new ProcessData();
-            processData.setData("Output");
+//            ProcessData processData = new ProcessData();
+//            processData.setData("Output");
 //            outPuts.add(0, processData);
             fireRunning(new RunningEvent(this, 100, "finished"));
         }

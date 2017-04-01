@@ -11,7 +11,6 @@ import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterOverlayAnalyst;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
@@ -116,8 +115,8 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		}
 		OverlayAnalyst.removeSteppedListener(this.steppedListener);
 		fireRunning(new RunningEvent(this, 100, "finished"));
-		ProcessData processData = new ProcessData();
-		processData.setData(info.sourceDataset);
+//		ProcessData processData = new ProcessData();
+//		processData.setData(info.sourceDataset);
 //		outPuts.add(0, processData);
 	}
 

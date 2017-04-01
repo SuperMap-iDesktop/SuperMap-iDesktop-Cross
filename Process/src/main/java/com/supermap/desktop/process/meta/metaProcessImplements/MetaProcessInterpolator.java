@@ -12,7 +12,6 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.ParameterSearchModeInfo;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.PixelFormatProperties;
@@ -201,8 +200,8 @@ public class MetaProcessInterpolator extends MetaProcess {
 				((Datasource) parameterResultDatasource.getSelectedItem()), parameterResultDatasetName.getSelectedItem().toString(),
 				(PixelFormat) ((ParameterDataNode) parameterPixelType.getSelectedItem()).getData());
 		Interpolator.removeSteppedListener(this.stepLitener);
-		ProcessData processData = new ProcessData();
-		processData.setData(dataset);
+//		ProcessData processData = new ProcessData();
+//		processData.setData(dataset);
 //		this.outputs.add(0, processData);
 		fireRunning(new RunningEvent(this, 100, "finished"));
 	}

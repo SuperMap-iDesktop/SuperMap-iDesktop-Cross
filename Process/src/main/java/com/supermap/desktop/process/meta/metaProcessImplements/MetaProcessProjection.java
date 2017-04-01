@@ -8,7 +8,6 @@ import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterEnum;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CoreProperties;
@@ -61,8 +60,8 @@ public class MetaProcessProjection extends MetaProcess {
         prjCoordSys.setGeoCoordSys(geoCoordSys);
         dataset.setPrjCoordSys(prjCoordSys);
         fireRunning(new RunningEvent(this, 100, "set geoCoorSys finished"));
-        ProcessData processData = new ProcessData();
-        processData.setData(dataset);
+//        ProcessData processData = new ProcessData();
+//        processData.setData(dataset);
 //        outPuts.add(0, processData);
     }
 

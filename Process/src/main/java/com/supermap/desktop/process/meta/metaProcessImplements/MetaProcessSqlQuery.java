@@ -11,7 +11,6 @@ import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -96,9 +95,9 @@ public class MetaProcessSqlQuery extends MetaProcess {
 
 				fireRunning(new RunningEvent(this, 100, "finished"));
 				// 保存查询结果
-				DatasetVector datasetVector = saveQueryResult(resultRecord);
-				ProcessData processData = new ProcessData();
-				processData.setData(datasetVector);
+//				DatasetVector datasetVector = saveQueryResult(resultRecord);
+//				ProcessData processData = new ProcessData();
+//				processData.setData(datasetVector);
 //				outPuts.add(0, processData);
 			}
 		}
