@@ -4,19 +4,19 @@ import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.borderPanel.PanelButton;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.CoreResources;
-import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -51,6 +51,8 @@ public class DialogMapClip extends SmDialog {
 	// 处理后的vector
 	private Vector resultInfo;
 
+	private String saveMapName="";
+
 	private MapClipProgressCallable mapClipProgressCallable;
 
 	public static final int COLUMN_INDEX_SOURCEDATASET = 0;
@@ -59,7 +61,6 @@ public class DialogMapClip extends SmDialog {
 	public static final int COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE = 3;
 	public static final int COLUMN_INDEX_TARGETDATASETSOURCE = 4;
 	public static final int COLUMN_INDEX_TARGETDATASETNAME = 5;
-
 
 	/**
 	 * 对JTable中model数据进行处理,得到适用于裁剪接口的数据
@@ -174,12 +175,18 @@ public class DialogMapClip extends SmDialog {
 		public void actionPerformed(ActionEvent e) {
 			if (e.getSource().equals(mapClipSaveMapPanel.getCheckBox())) {
 				if (mapClipSaveMapPanel.getCheckBox().isSelected()) {
+					// 设置一个保存为地图的迷默认名称
+					String tempMapName = "MapClip@" + ((Datasource) mapClipJTable.getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_AIMDATASOURCE)).getAlias();
+					tempMapName = MapUtilities.getAvailableMapName(tempMapName, true);
+					mapClipSaveMapPanel.getSaveMapTextField().setText(tempMapName);
 					// 当保存地图复选框选中是，给保存地图文本框添加监听，主要判断其内容是否为空
+					mapClipSaveMapPanel.getSaveMapTextField().addKeyListener(textFileKeyListener);
 					mapClipSaveMapPanel.getSaveMapTextField().addCaretListener(textFiledCaretListener);
-					// 设置确定按钮不可用，此时保存地图文本框为空
-					panelButton.getButtonOk().setEnabled(false);
+
 				} else {
+					mapClipSaveMapPanel.getSaveMapTextField().removeKeyListener(textFileKeyListener);
 					mapClipSaveMapPanel.getSaveMapTextField().removeCaretListener(textFiledCaretListener);
+
 					panelButton.getButtonOk().setEnabled(true);
 				}
 			} else if (e.getSource().equals(exactClip)) {
@@ -195,17 +202,44 @@ public class DialogMapClip extends SmDialog {
 	};
 
 	/**
-	 * textFiled相应事件
+	 * 保存为地图textFiled相应事件
 	 */
 	private CaretListener textFiledCaretListener = new CaretListener() {
 		@Override
 		public void caretUpdate(CaretEvent e) {
-			if (e.getSource().equals(mapClipSaveMapPanel.getSaveMapTextField())) {
-				if (StringUtilities.isNullOrEmpty(mapClipSaveMapPanel.getSaveMapTextField().getText())) {
-					panelButton.getButtonOk().setEnabled(false);
-				} else {
+			try {
+				String name = mapClipSaveMapPanel.getSaveMapTextField().getText();
+				// 用获得的文件名
+				String tempText = MapUtilities.getAvailableMapName(name, true);
+				if (tempText.equals(name)) {
 					panelButton.getButtonOk().setEnabled(true);
+				} else {
+					Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MapClip_DatasetNameError"));
+					panelButton.getButtonOk().setEnabled(false);
 				}
+			} catch (Exception ex) {
+				Application.getActiveApplication().getOutput().output(ex);
+			}
+		}
+	};
+
+	/**
+	 * 保存为地图键盘相应事件
+	 */
+	private KeyListener textFileKeyListener = new KeyAdapter() {
+		@Override
+		public void keyReleased(KeyEvent e) {
+			try {
+				String name = mapClipSaveMapPanel.getSaveMapTextField().getText();
+				if (name == null || name.length() <= 0) {
+					panelButton.getButtonOk().setEnabled(false);
+					Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MapClip_DatasetNameError"));
+				} else if (!UICommonToolkit.isLawName(name, false)) {
+					Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MapClip_DatasetNameError"));
+					panelButton.getButtonOk().setEnabled(false);
+				}
+			} catch (Exception ex) {
+				Application.getActiveApplication().getOutput().output(ex);
 			}
 		}
 	};
@@ -233,7 +267,7 @@ public class DialogMapClip extends SmDialog {
 				int[] selectedRow = mapClipJTable.getSelectedRows();
 				for (int i = 0; i < selectedRow.length; i++) {
 					Datasource tempDatasource = (Datasource) mapClipJTable.getModel().getValueAt(selectedRow[i], COLUMN_INDEX_AIMDATASOURCE);
-					String tempDatasetName = ((Layer) mapClipJTable.getModel().getValueAt(selectedRow[i], COLUMN_INDEX_LAYERCAPTION)).getDataset().getName();
+					String tempDatasetName = ((String) mapClipJTable.getModel().getValueAt(selectedRow[i], COLUMN_INDEX_AIMDATASET));
 					while (!tempDatasource.getDatasets().isAvailableDatasetName(tempDatasetName)) {
 						tempDatasetName = tempDatasetName + "_1";
 					}
@@ -300,8 +334,12 @@ public class DialogMapClip extends SmDialog {
 			if (resultInfo != null && resultInfo.size() > 0) {
 				FormProgressTotal formProgress = new FormProgressTotal();
 				formProgress.setTitle(MapViewProperties.getString("String_MapClip_MapClip"));
-				mapClipProgressCallable = new MapClipProgressCallable(resultInfo, "");
+				//获得要保存的地图名称
+				saveMapName=mapClipSaveMapPanel.getSaveMapTextField().getText();
+				mapClipProgressCallable = new MapClipProgressCallable(resultInfo, saveMapName);
 				formProgress.doWork(mapClipProgressCallable);
+				// 获得采集后的数据集，添加到地图
+				ArrayList arrayList=mapClipProgressCallable.getDatasetsArrayList();
 				DialogMapClip.this.dispose();
 			} else {
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MapClip_SelectLayer"));
