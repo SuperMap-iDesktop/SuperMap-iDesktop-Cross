@@ -3,6 +3,7 @@ package com.supermap.desktop.mapview.layer.propertycontrols;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.DefaultValues;
 import com.supermap.desktop.ScaleModel;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerBasePropertyModel;
@@ -20,12 +21,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 
 /**
  * 有3点需要在结构中考虑。 1：及时刷新 2：多图层批量编辑 3：属性状态改变事件 本想让结构简单化，但是要处理以上三点，就不得不再做一个 Model 类了
@@ -154,8 +150,24 @@ public class LayerBasePropertyControl extends AbstractLayerPropertyControl imple
 						.addComponent(labelMaxVisibleScale)
 						.addComponent(comboBoxMaxVisibleScale, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
 		// @formatter:on
+		setComponentName();
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.checkBoxIsVisible, "LayerBasePropertyControl_checkBoxIsVisible");
+		ComponentUIUtilities.setName(this.checkBoxIsEditable, "LayerBasePropertyControl_checkBoxIsEditable");
+		ComponentUIUtilities.setName(this.checkBoxIsSelectable, "LayerBasePropertyControl_checkBoxIsSelectable");
+		ComponentUIUtilities.setName(this.checkBoxIsSnapable, "LayerBasePropertyControl_checkBoxIsSnapable");
+		ComponentUIUtilities.setName(this.labelLayerName, "LayerBasePropertyControl_labelLayerName");
+		ComponentUIUtilities.setName(this.labelCaption, "LayerBasePropertyControl_labelCaption");
+		ComponentUIUtilities.setName(this.labelTransparence, "LayerBasePropertyControl_labelTransparence");
+		ComponentUIUtilities.setName(this.labelMinVisibleScale, "LayerBasePropertyControl_labelMinVisibleScale");
+		ComponentUIUtilities.setName(this.labelMaxVisibleScale, "LayerBasePropertyControl_labelMaxVisibleScale");
+		ComponentUIUtilities.setName(this.textFieldLayerName, "LayerBasePropertyControl_textFieldLayerName");
+		ComponentUIUtilities.setName(this.textFieldLayerCaption, "LayerBasePropertyControl_textFieldLayerCaption");
+		ComponentUIUtilities.setName(this.spinnerTransparence, "LayerBasePropertyControl_spinnerTransparence");
+		ComponentUIUtilities.setName(this.comboBoxMinVisibleScale, "LayerBasePropertyControl_comboBoxMinVisibleScale");
+		ComponentUIUtilities.setName(this.comboBoxMaxVisibleScale, "LayerBasePropertyControl_comboBoxMaxVisibleScale");
+	}
 	@Override
 	protected void initializeResources() {
 		((TitledBorder) this.getBorder()).setTitle(MapViewProperties.getString("String_MapProperty_VisualControl"));

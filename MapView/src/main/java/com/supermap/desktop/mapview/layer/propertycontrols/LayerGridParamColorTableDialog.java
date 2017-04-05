@@ -6,6 +6,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.colorScheme.ColorsComboBox;
 import com.supermap.desktop.controls.colorScheme.ColorsWithKeysTableModel;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.event.ColorTableChangeEvent;
@@ -119,8 +120,30 @@ public class LayerGridParamColorTableDialog extends SmDialog {
         componentList.add(buttonApply);
         componentList.add(buttonCancel);
         this.getRootPane().setDefaultButton(buttonApply);
+        setComponentName();
     }
-
+    private void setComponentName() {
+        ComponentUIUtilities.setName(this.toolBar, "LayerGridParamColorTableDialog_toolBar");
+        ComponentUIUtilities.setName(this.buttonMoveBottom, "LayerGridParamColorTableDialog_buttonMoveBottom");
+        ComponentUIUtilities.setName(this.buttonMoveDown, "LayerGridParamColorTableDialog_buttonMoveDown");
+        ComponentUIUtilities.setName(this.buttonMoveUp, "LayerGridParamColorTableDialog_buttonMoveUp");
+        ComponentUIUtilities.setName(this.buttonMoveTop, "LayerGridParamColorTableDialog_buttonMoveTop");
+        ComponentUIUtilities.setName(this.buttonRemoveColor, "LayerGridParamColorTableDialog_buttonRemoveColor");
+        ComponentUIUtilities.setName(this.buttonInsertColor, "LayerGridParamColorTableDialog_buttonInsertColor");
+        ComponentUIUtilities.setName(this.buttonAddColor, "LayerGridParamColorTableDialog_buttonAddColor");
+        ComponentUIUtilities.setName(this.buttonBatchAddColor, "LayerGridParamColorTableDialog_buttonBatchAddColor");
+        ComponentUIUtilities.setName(this.buttonSelectInvert, "LayerGridParamColorTableDialog_buttonSelectInvert");
+        ComponentUIUtilities.setName(this.buttonSelectAll, "LayerGridParamColorTableDialog_buttonSelectAll");
+        ComponentUIUtilities.setName(this.buttonInvertColors, "LayerGridParamColorTableDialog_buttonInvertColors");
+        ComponentUIUtilities.setName(this.buttonInputColorTable, "LayerGridParamColorTableDialog_buttonInputColorTable");
+        ComponentUIUtilities.setName(this.buttonExportColorTable, "LayerGridParamColorTableDialog_buttonExportColorTable");
+        ComponentUIUtilities.setName(this.buttonDefaultColotTable, "LayerGridParamColorTableDialog_buttonDefaultColotTable");
+        ComponentUIUtilities.setName(this.comboBoxColor, "LayerGridParamColorTableDialog_comboBoxColor");
+        ComponentUIUtilities.setName(this.tableColor, "LayerGridParamColorTableDialog_tableColor");
+        ComponentUIUtilities.setName(this.panelButton, "LayerGridParamColorTableDialog_panelButton");
+        ComponentUIUtilities.setName(this.buttonCancel, "LayerGridParamColorTableDialog_buttonCancel");
+        ComponentUIUtilities.setName(this.buttonApply, "LayerGridParamColorTableDialog_buttonApply");
+    }
     private void initListeners() {
         buttonSelectAll.addActionListener(new ActionListener() {
             @Override

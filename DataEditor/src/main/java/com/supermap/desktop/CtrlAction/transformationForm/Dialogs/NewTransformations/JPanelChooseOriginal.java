@@ -8,6 +8,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.transformationForm.Dialogs.TransformationTableModel;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationUtilties;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationAddObjectBean;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
@@ -31,12 +32,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -84,9 +80,21 @@ public class JPanelChooseOriginal extends JPanelNewTransformationBase {
 		initListener();
 		initResources();
 		initComponentState();
+		setComponentName();
 		table.getColumnModel().getColumn(TransformationTableModel.COLUMN_SAVE_AS).setMaxWidth(50);
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.panelCenter, "JPanelChooseOriginal_panelCenter");
+		ComponentUIUtilities.setName(this.toolBar, "JPanelChooseOriginal_toolBar");
+		ComponentUIUtilities.setName(this.buttonAdd, "JPanelChooseOriginal_buttonAdd");
+		ComponentUIUtilities.setName(this.buttonSelectAll, "JPanelChooseOriginal_buttonSelectAll");
+		ComponentUIUtilities.setName(this.buttonSelectInvert, "JPanelChooseOriginal_buttonSelectInvert");
+		ComponentUIUtilities.setName(this.buttonDel, "JPanelChooseOriginal_buttonDel");
+		ComponentUIUtilities.setName(this.buttonSetting, "JPanelChooseOriginal_buttonSetting");
+		ComponentUIUtilities.setName(this.scrollPane, "JPanelChooseOriginal_scrollPane");
+		ComponentUIUtilities.setName(this.table, "JPanelChooseOriginal_table");
+		ComponentUIUtilities.setName(this.buttonNext, "JPanelChooseOriginal_buttonNext");
+	}
 	private void initComponents() {
 		panelCenter = new JPanel();
 		toolBar = new JToolBar();

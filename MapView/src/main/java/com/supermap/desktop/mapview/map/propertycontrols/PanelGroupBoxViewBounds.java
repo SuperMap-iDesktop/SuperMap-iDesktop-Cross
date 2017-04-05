@@ -41,6 +41,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
 	private MapControl mapControl;
 	private Map map;
+	private SelectObjectListener selectObjectListener;
 
 	private JLabel labelCurrentViewLeft;
 	public WaringTextField textFieldCurrentViewLeft;
@@ -89,16 +90,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
 	private String borderName = ControlsProperties.getString("String_MapOutputBounds");
 
-	public JButton getMapViewBoundsButton() {
-		return mapViewBoundsButton;
-	}
 
-	public JButton getCustomBoundsButton() {
-		return customBoundsButton;
-	}
-	public JButton getPasteButton() {
-		return pasteButton;
-	}
 
 	/**
 	 * 按钮事件枢纽站
@@ -138,6 +130,8 @@ public class PanelGroupBoxViewBounds extends JPanel {
 				setAsRectangleBounds(popupMenuCustomBounds.getRectangle2D());
 				// 因为每个TextField的范围受其他约束，第一次设置是赋值，第二次设置为初始化值域范围
 				setAsRectangleBounds(popupMenuCustomBounds.getRectangle2D());
+				//  处理进行了选择对象操作，从而获取选择的对象及对象所在的图层
+				fireListener();
 			}
 		}
 	};
@@ -198,19 +192,19 @@ public class PanelGroupBoxViewBounds extends JPanel {
 		@Override
 		public void focusLost(FocusEvent e) {
 			// 当失去焦点时，将文本框中数字设置千分位
-			if (e.getSource().equals(textFieldCurrentViewLeft.getTextField())) {
+			if ( !textFieldCurrentViewLeft.getTextField().getText().isEmpty() && e.getSource().equals(textFieldCurrentViewLeft.getTextField())) {
 				String temp = textFieldCurrentViewLeft.getTextField().getText();
 				temp = DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
 				textFieldCurrentViewLeft.getTextField().setText(temp);
-			} else if (e.getSource().equals(textFieldCurrentViewBottom.getTextField())) {
+			} else if (!textFieldCurrentViewBottom.getTextField().getText().isEmpty() && e.getSource().equals(textFieldCurrentViewBottom.getTextField())) {
 				String temp = textFieldCurrentViewBottom.getTextField().getText();
 				temp = DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
 				textFieldCurrentViewBottom.getTextField().setText(temp);
-			} else if (e.getSource().equals(textFieldCurrentViewRight.getTextField())) {
+			} else if (!textFieldCurrentViewRight.getTextField().getText().isEmpty() &&e.getSource().equals(textFieldCurrentViewRight.getTextField())) {
 				String temp = textFieldCurrentViewRight.getTextField().getText();
 				temp = DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
 				textFieldCurrentViewRight.getTextField().setText(temp);
-			} else if (e.getSource().equals(textFieldCurrentViewTop.getTextField())) {
+			} else if (!textFieldCurrentViewLeft.getTextField().getText().isEmpty() &&e.getSource().equals(textFieldCurrentViewTop.getTextField())) {
 				String temp = textFieldCurrentViewTop.getTextField().getText();
 				temp = DoubleUtilities.getFormatString(DoubleUtilities.stringToValue(temp));
 				textFieldCurrentViewTop.getTextField().setText(temp);
@@ -730,5 +724,30 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
 	public java.util.Map<Layer, java.util.List<Geometry>> getSelectedGeometryAndLayer() {
 		return this.popupMenuCustomBounds.getSelectedGeometryAndLayer();
+	}
+
+	public JButton getMapViewBoundsButton() {
+		return mapViewBoundsButton;
+	}
+
+	public JButton getCustomBoundsButton() {
+		return customBoundsButton;
+	}
+	public JButton getPasteButton() {
+		return pasteButton;
+	}
+
+	public void addSelectObjectLitener(SelectObjectListener selectObjectListener){
+		this.selectObjectListener=selectObjectListener;
+	}
+
+	public void removeSelectObjectListener(SelectObjectListener selectObjectListener){
+		this.selectObjectListener=null;
+	}
+
+	private void fireListener() {
+		if (this.selectObjectListener != null) {
+			this.selectObjectListener.selectObjectListener();
+		}
 	}
 }
