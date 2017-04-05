@@ -2,6 +2,7 @@ package com.supermap.desktop.CtrlAction.transformationForm.Dialogs.NewTransforma
 
 import com.supermap.data.TransformationMode;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationUtilties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -62,6 +63,7 @@ public class JPanelChooseTransformationFile extends JPanelNewTransformationBase 
 		initLayouts();
 		initListeners();
 		initComponentStates();
+		setComponentName();
 	}
 
 	private void initComponents() {
@@ -97,7 +99,19 @@ public class JPanelChooseTransformationFile extends JPanelNewTransformationBase 
 		labelUnSelectedColor.setText(DataEditorProperties.getString("String_UnSelectedColor"));
 		labelUnUseColor.setText(DataEditorProperties.getString("String_UnUseColor"));
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.panelCenter, "JPanelChooseTransformationFile_panelCenter");
+		ComponentUIUtilities.setName(this.labelTransformationFile, "JPanelChooseTransformationFile_labelTransformationFile");
+		ComponentUIUtilities.setName(this.fileChooserControl, "JPanelChooseTransformationFile_fileChooserControl");
+		ComponentUIUtilities.setName(this.labelTransformationMode, "JPanelChooseTransformationFile_labelTransformationMode");
+		ComponentUIUtilities.setName(this.comboBox, "JPanelChooseTransformationFile_comboBox");
+		ComponentUIUtilities.setName(this.labelSelectedColor, "JPanelChooseTransformationFile_labelSelectedColor");
+		ComponentUIUtilities.setName(this.buttonSelectedColor, "JPanelChooseTransformationFile_buttonSelectedColor");
+		ComponentUIUtilities.setName(this.labelUnSelectedColor, "JPanelChooseTransformationFile_labelUnSelectedColor");
+		ComponentUIUtilities.setName(this.buttonUnSelectedColor, "JPanelChooseTransformationFile_buttonUnSelectedColor");
+		ComponentUIUtilities.setName(this.labelUnUseColor, "JPanelChooseTransformationFile_labelUnUseColor");
+		ComponentUIUtilities.setName(this.buttonUnUseColor, "JPanelChooseTransformationFile_buttonUnUseColor");
+	}
 	private void initLayouts() {
 		panelCenter.setLayout(new GridBagLayout());
 		panelCenter.add(labelTransformationFile, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE).setInsets(40, 10, 0, 0));

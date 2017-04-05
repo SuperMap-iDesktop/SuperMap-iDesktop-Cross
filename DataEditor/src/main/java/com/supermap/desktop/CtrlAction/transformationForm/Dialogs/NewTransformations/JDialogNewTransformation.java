@@ -2,6 +2,7 @@ package com.supermap.desktop.CtrlAction.transformationForm.Dialogs.NewTransforma
 
 import com.supermap.data.TransformationMode;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -44,8 +45,18 @@ public class JDialogNewTransformation extends SmDialog {
 		initListeners();
 		initResources();
 		initComponentStates();
+		setComponentName();
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.panelChooseOriginal, "JDialogNewTransformation_panelChooseOriginal");
+		ComponentUIUtilities.setName(this.panelChooseRefer, "JDialogNewTransformation_panelChooseRefer");
+		ComponentUIUtilities.setName(this.panelChooseTransformationFile, "JDialogNewTransformation_panelChooseTransformationFile");
+		ComponentUIUtilities.setName(this.panelCenter, "JDialogNewTransformation_panelCenter");
+		ComponentUIUtilities.setName(this.panelButtons, "JDialogNewTransformation_panelButtons");
+		ComponentUIUtilities.setName(this.buttonPre, "JDialogNewTransformation_buttonPre");
+		ComponentUIUtilities.setName(this.buttonNext, "JDialogNewTransformation_buttonNext");
+		ComponentUIUtilities.setName(this.buttonCancle, "JDialogNewTransformation_buttonCancle");
+	}
 	private void initLayout() {
 		panelButtons.setLayout(new GridBagLayout());
 		panelButtons.add(new JPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 10, 0, 0));

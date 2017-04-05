@@ -1,6 +1,7 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
 import com.supermap.desktop.DefaultValues;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.event.ColorTableChangeEvent;
 import com.supermap.desktop.event.ColorTableChangeListener;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -165,8 +166,21 @@ public class LayerGridParamPropertyControl extends AbstractLayerPropertyControl 
 						.addComponent(this.buttonSpecialValueColor, GroupLayout.PREFERRED_SIZE, DefaultValues.DEFAULT_COMPONENT_HEIGHT, GroupLayout.PREFERRED_SIZE))
 				.addComponent(this.checkBoxIsSpecialValueTransparent));
 		// @formatter:on
+		setComponentName();
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.labelBrightness, "LayerGridParamPropertyControl_labelBrightness");
+		ComponentUIUtilities.setName(this.spinnerBrightness, "LayerGridParamPropertyControl_spinnerBrightness");
+		ComponentUIUtilities.setName(this.labelContrast, "LayerGridParamPropertyControl_labelContrast");
+		ComponentUIUtilities.setName(this.spinnerContrast, "LayerGridParamPropertyControl_spinnerContrast");
+		ComponentUIUtilities.setName(this.labelColorTable, "LayerGridParamPropertyControl_labelColorTable");
+		ComponentUIUtilities.setName(this.labelSpecialValue, "LayerGridParamPropertyControl_labelSpecialValue");
+		ComponentUIUtilities.setName(this.textFieldSpecialValue, "LayerGridParamPropertyControl_textFieldSpecialValue");
+		ComponentUIUtilities.setName(this.labelSpecialValueColor, "LayerGridParamPropertyControl_labelSpecialValueColor");
+		ComponentUIUtilities.setName(this.buttonSpecialValueColor, "LayerGridParamPropertyControl_buttonSpecialValueColor");
+		ComponentUIUtilities.setName(this.checkBoxIsSpecialValueTransparent, "LayerGridParamPropertyControl_checkBoxIsSpecialValueTransparent");
+		ComponentUIUtilities.setName(this.buttonTable, "LayerGridParamPropertyControl_buttonTable");
+	}
 	@Override
 	protected void initializeResources() {
 		((TitledBorder) this.getBorder()).setTitle(MapViewProperties.getString("String_LayerProperty_Grid"));

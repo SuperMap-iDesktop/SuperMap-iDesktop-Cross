@@ -7,6 +7,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.ScaleModel;
 import com.supermap.desktop.controls.ControlDefaultValues;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerVectorParamPropertyModel;
 import com.supermap.desktop.properties.CoreProperties;
@@ -26,12 +27,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
@@ -231,8 +227,26 @@ public class LayerVectorParamPropertyControl extends AbstractLayerPropertyContro
 						.addComponent(comboBoxOrder, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addComponent(buttonJoinItem, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
 		// @formatter:on
+		setComponentName();
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.checkBoxIsCompleteLineSymbolDisplayed, "LayerVectorParamPropertyControl_checkBoxIsCompleteLineSymbolDisplayed");
+		ComponentUIUtilities.setName(this.checkBoxIsCrossroadOptimized, "LayerVectorParamPropertyControl_checkBoxIsCrossroadOptimized");
+		ComponentUIUtilities.setName(this.checkBoxIsSymbolScalable, "LayerVectorParamPropertyControl_checkBoxIsSymbolScalable");
+		ComponentUIUtilities.setName(this.checkBoxIsAntialias, "LayerVectorParamPropertyControl_checkBoxIsAntialias");
+		ComponentUIUtilities.setName(this.checkBoxIsOverlapDisplayed, "LayerVectorParamPropertyControl_checkBoxIsOverlapDisplayed");
+		ComponentUIUtilities.setName(this.checkBoxDesc, "LayerVectorParamPropertyControl_checkBoxDesc");
+		ComponentUIUtilities.setName(this.labelSymbolScale, "LayerVectorParamPropertyControl_labelSymbolScale");
+		ComponentUIUtilities.setName(this.labelMinVisibleGeometrySize, "LayerVectorParamPropertyControl_labelMinVisibleGeometrySize");
+		ComponentUIUtilities.setName(this.labelDisplayFilter, "LayerVectorParamPropertyControl_labelDisplayFilter");
+		ComponentUIUtilities.setName(this.labelGeometryDisplayedOrder, "LayerVectorParamPropertyControl_labelGeometryDisplayedOrder");
+		ComponentUIUtilities.setName(this.comboBoxSymbolScale, "LayerVectorParamPropertyControl_comboBoxSymbolScale");
+		ComponentUIUtilities.setName(this.textFieldMinVisibleGeometrySize, "LayerVectorParamPropertyControl_textFieldMinVisibleGeometrySize");
+		ComponentUIUtilities.setName(this.textFieldDisplayFilter, "LayerVectorParamPropertyControl_textFieldDisplayFilter");
+		ComponentUIUtilities.setName(this.buttonDisplayFilter, "LayerVectorParamPropertyControl_buttonDisplayFilter");
+		ComponentUIUtilities.setName(this.comboBoxOrder, "LayerVectorParamPropertyControl_comboBoxOrder");
+		ComponentUIUtilities.setName(this.buttonJoinItem, "LayerVectorParamPropertyControl_buttonJoinItem");
+	}
 	@Override
 	protected void initializeResources() {
 		((TitledBorder) this.getBorder()).setTitle(MapViewProperties.getString("String_LayerProperty_Vector"));

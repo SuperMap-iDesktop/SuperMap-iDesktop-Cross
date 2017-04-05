@@ -39,7 +39,6 @@ import org.w3c.dom.Element;
 
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -82,7 +81,6 @@ public class DialogMapCacheBuilder extends SmDialog {
     private JButton buttonSelectAll;
     private JButton buttonSelectInverse;
     private JButton buttonDelete;
-    private BackgroundMenuBar menuBar;
     private JMenuItem jMenuItemAddScale;
     private JMenuItem jMenuItemDefaultScale;
     private JMenuItem jMenuItemImportCacheConfigs;
@@ -150,6 +148,8 @@ public class DialogMapCacheBuilder extends SmDialog {
 
     private final String urlStr = "/coreresources/ToolBar/";
     private final int universalWidth = 200;
+    private final int rangePanelHeight = 215;
+    private final int panelGapWithTabbed = 6;
     private final int minSize = 23;
     private final int COLUMN_INDEX = 0;
     private final int COLUMN_SCALE = 1;
@@ -210,7 +210,6 @@ public class DialogMapCacheBuilder extends SmDialog {
 
         this.scrollPane = new JScrollPane();
         this.toolBar = new JToolBar();
-        this.menuBar = new BackgroundMenuBar();
         this.jMenuItemAddScale = new JMenuItem(MapViewProperties.getString("MapCache_AddScale"), CoreResources.getIcon(urlStr + "Image_ToolButton_AddScale.png"));
         this.jMenuItemDefaultScale = new JMenuItem(MapViewProperties.getString("MapCache_DefaultScale"), CoreResources.getIcon(urlStr + "Image_ToolButton_DefaultScale.png"));
         this.jMenuItemImportCacheConfigs = new JMenuItem(MapViewProperties.getString("MapCache_ImportCacheConfigs"), CoreResources.getIcon(urlStr + "Image_ToolButton_ExportScale.png"));
@@ -268,7 +267,7 @@ public class DialogMapCacheBuilder extends SmDialog {
     }
 
     private void initLayout() {
-        Dimension dimension = new Dimension(924, 545);
+        Dimension dimension = new Dimension(924, 551);
         setSize(dimension);
         setMinimumSize(dimension);
         setLocationRelativeTo(null);
@@ -283,7 +282,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                 .addComponent(this.toolBar)
                                                 .addComponent(this.scrollPane, 343, 343, Short.MAX_VALUE))
-                                        .addGap(20, 20, 20)
+                                        .addGap(10, 10, 10)
                                         .addComponent(this.tabbedPane, 363, 363, Short.MAX_VALUE))
                                 .addGroup(groupLayout.createSequentialGroup()
                                                 .addComponent(this.autoCloseDialog)
@@ -413,6 +412,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                 .addComponent(pathSetting)
         );
         groupLayoutPanelBasic.setVerticalGroup(groupLayoutPanelBasic.createSequentialGroup()
+                .addGap(panelGapWithTabbed)
                 .addComponent(outputSetting)
                 .addComponent(pathSetting)
         );
@@ -518,6 +518,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                 .addComponent(panelOutPutSetting)
         );
         groupLayoutImageSave.setVerticalGroup(groupLayoutImageSave.createSequentialGroup()
+                .addGap(panelGapWithTabbed)
                 .addComponent(panelImageParameter)
                 .addComponent(panelOutPutSetting)
         );
@@ -533,8 +534,9 @@ public class DialogMapCacheBuilder extends SmDialog {
                 .addComponent(this.panelIndexRange)
         );
         groupLayoutImageSave.setVerticalGroup(groupLayoutImageSave.createSequentialGroup()
-                .addComponent(panelCacheRange,215,215,215)
-                .addComponent(panelIndexRange,215,215,215)
+                .addGap(panelGapWithTabbed)
+                .addComponent(panelCacheRange, rangePanelHeight, rangePanelHeight, rangePanelHeight)
+                .addComponent(panelIndexRange, rangePanelHeight, rangePanelHeight, rangePanelHeight)
         );
         this.panelRangeParameter.setLayout(groupLayoutImageSave);
         this.cacheRangeWaringTextFieldLeft = this.panelCacheRange.getTextFieldCurrentViewLeft();
@@ -627,10 +629,18 @@ public class DialogMapCacheBuilder extends SmDialog {
             this.fileChooserControlFileCache.getEditor().setText(System.getProperty("user.dir"));
         } else {
             SmFileChoose fileChoose = new SmFileChoose(moduleName);
-            if(SystemPropertyUtilities.isWindows()) {
-                this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath() + "\\");
-            }else{
-                this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath() + "/");
+            if (SystemPropertyUtilities.isWindows()) {
+                if (!fileChoose.getModuleLastPath().substring(fileChoose.getModuleLastPath().length() - 1).equals("\\")) {
+                    this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath() + "\\");
+                } else {
+                    this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath());
+                }
+            } else {
+                if (!fileChoose.getModuleLastPath().substring(fileChoose.getModuleLastPath().length() - 1).equals("/")) {
+                    this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath() + "/");
+                } else {
+                    this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath());
+                }
             }
         }
         this.warningProviderCacheNameIllegal.hideWarning();
@@ -926,7 +936,7 @@ public class DialogMapCacheBuilder extends SmDialog {
     }
 
     private void isCanRun() {
-        if (isRightCacheName() && isRightCachePath() && isAllRightSaveTypeSetting() && isRightRangeBounds()) {
+        if (isRightCacheName() && isRightCachePath() && isAllRightSaveTypeSetting() && isRightRangeBounds() && isEmptyUserNameAndUserPassword()) {
             this.buttonOK.setEnabled(true);
         } else {
             this.buttonOK.setEnabled(false);
@@ -1011,6 +1021,16 @@ public class DialogMapCacheBuilder extends SmDialog {
         return result;
     }
 
+    private boolean isEmptyUserNameAndUserPassword() {
+        boolean result = true;
+        if (this.textFieldUserName.isVisible() && this.textFieldUserName.isEnabled() && this.textFieldUserPassword.isVisible() && this.textFieldUserPassword.isEnabled()) {
+            if (this.textFieldUserName.getText().isEmpty() || this.textFieldUserPassword.getText().isEmpty()) {
+                result = false;
+            }
+        }
+        return result;
+    }
+
     private void setMapCacheBuilderValueBeforeRun() {
         try {
             double[] outputScalevalues;
@@ -1057,10 +1077,8 @@ public class DialogMapCacheBuilder extends SmDialog {
         File file = new File(this.fileChooserControlFileCache.getEditor().getText() + this.textFieldCacheName.getText());
         if (file.exists() || file.isDirectory()) {
             SmOptionPane smOptionPane = new SmOptionPane();
-            int warningResult = smOptionPane.showConfirmDialogYesNo("\"" + this.textFieldCacheName.getText() + "\"" + MapViewProperties.getString("MapCache_FileIsExitWarning"));
-            if (warningResult != 0) {
-                result = false;
-            }
+            smOptionPane.showErrorDialog("\"" + this.textFieldCacheName.getText() + "\"" + MapViewProperties.getString("MapCache_FileIsExitWarning"));
+            result = false;
         }
         return result;
     }
@@ -1112,6 +1130,7 @@ public class DialogMapCacheBuilder extends SmDialog {
             Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_Time") + time + " " + MapViewProperties.getString("MapCache_ShowTime"));
             if (this.autoCloseDialog.isSelected()) {
                 cancelAndCloseDailog();
+                this.mapCacheBuilder.dispose();
             }
         } catch (Exception e) {
             Application.getActiveApplication().getOutput().output(e.toString());
@@ -1163,11 +1182,18 @@ public class DialogMapCacheBuilder extends SmDialog {
         }
         Mongo.Holder holder = new Mongo.Holder();
         this.mongo = holder.connect(new MongoClientURI("mongodb://" + address));
-        java.util.List<String> databaseNames = mongo.getDatabaseNames();
-        this.comboBoxDatabaseName.removeAllItems();
-        this.mongoDBConnectSate = true;
-        for (int i = 0; i < databaseNames.size(); i++) {
-            this.comboBoxDatabaseName.addItem(databaseNames.get(i));
+        try {
+            java.util.List<String> databaseNames = mongo.getDatabaseNames();
+            this.comboBoxDatabaseName.removeAllItems();
+            this.mongoDBConnectSate = true;
+            for (int i = 0; i < databaseNames.size(); i++) {
+                this.comboBoxDatabaseName.addItem(databaseNames.get(i));
+            }
+            this.textFieldUserName.setEnabled(false);
+            this.textFieldUserPassword.setEnabled(false);
+        } catch (Exception e) {
+            this.textFieldUserName.setEnabled(true);
+            this.textFieldUserPassword.setEnabled(true);
         }
     }
 
@@ -1308,19 +1334,20 @@ public class DialogMapCacheBuilder extends SmDialog {
     private void addScale() {
         int insertIndex = this.localSplitTable.getRowCount();
         if (this.localSplitTable.getRowCount() == 1) {
-            return;
-        }
-        double insertScale = 0;
-        int selectedRowsIndex[] = this.localSplitTable.getSelectedRows();
-        if (selectedRowsIndex != null && selectedRowsIndex.length >= 1 && selectedRowsIndex[selectedRowsIndex.length - 1] + 1 != this.localSplitTable.getRowCount()) {
-            insertIndex = selectedRowsIndex[selectedRowsIndex.length - 1] + 2;
-        }
-        if (insertIndex == this.localSplitTable.getRowCount()) {
-            insertScale = this.currentMapCacheScale.get(insertIndex - 2) * 2;
+            this.currentMapCacheScale.add(this.originMapCacheScale[0]);
         } else {
-            insertScale = (this.currentMapCacheScale.get(insertIndex - 2) + this.currentMapCacheScale.get(insertIndex - 1)) / 2;
+            double insertScale = 0;
+            int selectedRowsIndex[] = this.localSplitTable.getSelectedRows();
+            if (selectedRowsIndex != null && selectedRowsIndex.length >= 1 && selectedRowsIndex[selectedRowsIndex.length - 1] + 1 != this.localSplitTable.getRowCount()) {
+                insertIndex = selectedRowsIndex[selectedRowsIndex.length - 1] + 2;
+            }
+            if (insertIndex == this.localSplitTable.getRowCount()) {
+                insertScale = this.currentMapCacheScale.get(insertIndex - 2) * 2;
+            } else {
+                insertScale = (this.currentMapCacheScale.get(insertIndex - 2) + this.currentMapCacheScale.get(insertIndex - 1)) / 2;
+            }
+            this.currentMapCacheScale.add(insertIndex - 1, insertScale);
         }
-        this.currentMapCacheScale.add(insertIndex - 1, insertScale);
         double addScaleAfter[] = new double[this.currentMapCacheScale.size()];
         for (int i = 0; i < addScaleAfter.length; i++) {
             addScaleAfter[i] = this.currentMapCacheScale.get(i);
@@ -1543,7 +1570,11 @@ public class DialogMapCacheBuilder extends SmDialog {
             addMoreScale();
             if (selectedRowsIndex != null) {
                 int deleteAfaterSelectedRowIndex = selectedRowsIndex[0];
-                localSplitTable.setRowSelectionInterval(deleteAfaterSelectedRowIndex, deleteAfaterSelectedRowIndex);
+                if (deleteAfaterSelectedRowIndex + 1 == localSplitTable.getRowCount() && localSplitTable.getRowCount() > 1) {
+                    localSplitTable.setRowSelectionInterval(deleteAfaterSelectedRowIndex - 1, deleteAfaterSelectedRowIndex - 1);
+                } else {
+                    localSplitTable.setRowSelectionInterval(deleteAfaterSelectedRowIndex, deleteAfaterSelectedRowIndex);
+                }
             }
         }
     };
@@ -1859,13 +1890,6 @@ public class DialogMapCacheBuilder extends SmDialog {
         }
     };
 
-    private ItemListener databaseChangeListener = new ItemListener() {
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-            isCanRun();
-        }
-    };
-
     private DocumentListener databaseNameChangeListener = new DocumentListener() {
         @Override
         public void insertUpdate(DocumentEvent e) {
@@ -1913,6 +1937,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.indexRangeWaringTextFieldTop.getTextField().addCaretListener(this.indexRangeCareListener);
         this.indexRangeWaringTextFieldRight.getTextField().addCaretListener(this.indexRangeCareListener);
         this.indexRangeWaringTextFieldBottom.getTextField().addCaretListener(this.indexRangeCareListener);
+        this.textFieldUserName.getDocument().addDocumentListener(this.passwordChangeListener);
         this.textFieldUserPassword.getDocument().addDocumentListener(this.passwordChangeListener);
         this.textFieldConfirmPassword.getDocument().addDocumentListener(this.passwordChangeListener);
         ((JTextField) this.comboBoxDatabaseName.getEditor().getEditorComponent()).getDocument().addDocumentListener(this.databaseNameChangeListener);
@@ -1950,46 +1975,12 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.indexRangeWaringTextFieldTop.getTextField().removeCaretListener(this.indexRangeCareListener);
         this.indexRangeWaringTextFieldRight.getTextField().removeCaretListener(this.indexRangeCareListener);
         this.indexRangeWaringTextFieldBottom.getTextField().removeCaretListener(this.indexRangeCareListener);
+        this.textFieldUserName.getDocument().removeDocumentListener(this.passwordChangeListener);
         this.textFieldUserPassword.getDocument().removeDocumentListener(this.passwordChangeListener);
         this.textFieldConfirmPassword.getDocument().removeDocumentListener(this.passwordChangeListener);
         ((JTextField) this.comboBoxDatabaseName.getEditor().getEditorComponent()).getDocument().removeDocumentListener(this.databaseNameChangeListener);
         this.buttonOK.removeActionListener(this.runListener);
         this.buttonCancel.removeActionListener(this.cancelListener);
-    }
-
-    private class BackgroundMenuBar extends JMenuBar {
-        Color bgColor;
-
-        public void setColor(Color color) {
-            bgColor = color;
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.setColor(bgColor);
-            g2d.setBackground(bgColor);
-            g2d.fillRect(0, 0, getWidth() - 1, getHeight() - 1);
-        }
-    }
-
-    private class CustomComboBoxRenderer extends BasicComboBoxRenderer {
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            if (isSelected) {
-                setBackground(list.getSelectionBackground());
-                setForeground(list.getSelectionForeground());
-                if (-1 < index) {
-                    list.setToolTipText((value == null) ? null : value.toString());
-                }
-            } else {
-                setBackground(list.getBackground());
-                setForeground(list.getForeground());
-            }
-            setFont(list.getFont());
-            setText((value == null) ? "" : value.toString());
-            return this;
-        }
     }
 
 }

@@ -1,6 +1,7 @@
 package com.supermap.desktop.dialog;
 
 import com.supermap.data.DatasetImage;
+import com.supermap.data.Datasource;
 import com.supermap.data.EncodeType;
 import com.supermap.data.Rectangle2D;
 import com.supermap.desktop.Application;
@@ -34,6 +35,7 @@ import java.text.DecimalFormat;
 public class DiglogMapOutputToImageDataSet extends SmDialog {
 
     private JPanel panelResultSetting;
+    private JPanel mainPanel;
     private PanelGroupBoxViewBounds panelOutPutRangeSetting;
     private PanelButton panelButton;
     private JLabel labelDataSource;
@@ -59,7 +61,8 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
     private Map map;
     private boolean isValidRangeBounds = true;
     private Rectangle2D outputRangeBounds;
-    private int initDailogWidth = 640;
+    private int initDialogWidth = 640;
+//    private int initDialogHeight=318;
     private static final DecimalFormat COMMA_FORMAT = new DecimalFormat("#,###");
 
     public DiglogMapOutputToImageDataSet(JFrame owner, boolean model) {
@@ -79,6 +82,7 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
 
     private void initComponents() {
         this.panelResultSetting = new JPanel();
+        this.mainPanel=new JPanel();
         this.labelDataSource = new JLabel();
         this.labelDataSet = new JLabel();
         this.labelResolution = new JLabel();
@@ -104,12 +108,17 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
     }
 
     private void initLayout() {
-        Dimension dimension = new Dimension(this.initDailogWidth, 315);
+//        if (SystemPropertyUtilities.isLinux()){
+//            this.initDialogHeight=290;
+//        }
+        Dimension dimension = new Dimension(this.initDialogWidth, 318);
+        setTitle(MapViewProperties.getString("String_OutputImageDataset_Title"));
         setSize(dimension);
         setMinimumSize(dimension);
         setLocationRelativeTo(null);
         getRootPane().setDefaultButton(this.panelButton.getButtonOk());
-        GroupLayout groupLayout = new GroupLayout(getContentPane());
+
+        GroupLayout groupLayout = new GroupLayout(this.mainPanel);
         groupLayout.setAutoCreateContainerGaps(true);
         groupLayout.setAutoCreateGaps(true);
 
@@ -118,17 +127,20 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
                         .addComponent(this.panelResultSetting, 290, 290, Short.MAX_VALUE)
                         .addGap(10, 10, 10)
                         .addComponent(this.panelOutPutRangeSetting, 290, 290, Short.MAX_VALUE))
-                .addComponent(this.panelButton)
+//                .addComponent(this.panelButton)
         );
         groupLayout.setVerticalGroup(groupLayout.createSequentialGroup()
-                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(this.panelResultSetting, 215, 215, 215)
                         .addComponent(this.panelOutPutRangeSetting, 215, 215, 215))
-                .addContainerGap(0,Short.MAX_VALUE)
-                .addComponent(this.panelButton, 40, 40, 40)
+//                .addContainerGap(0,Short.MAX_VALUE)
+//                .addComponent(this.panelButton, 40, 40, 40)
         );
         initPanelResultSettingLayout();
-        getContentPane().setLayout(groupLayout);
+        this.mainPanel.setLayout(groupLayout);
+        this.setLayout(new BorderLayout());
+        this.add(this.mainPanel, BorderLayout.CENTER);
+        this.add(this.panelButton, BorderLayout.SOUTH);
     }
 
     private void initPanelResultSettingLayout() {
@@ -190,31 +202,16 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
         this.labelRowCount.setText(MapViewProperties.getString("String_OutputImageDataset_RowCount"));
         this.labelColumnCount.setText(MapViewProperties.getString("String_OutputImageDataset_ColumnCount"));
         this.labelCodeType.setText(MapViewProperties.getString("String_OutputImageDataset_CodeType"));
+        Datasource currentDatasource = null;
+        if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0) {
+            currentDatasource = Application.getActiveApplication().getActiveDatasources()[0];
+            datasourceComboBox.setSelectedDatasource(currentDatasource);
+        }
     }
 
     private void initComponentValueAndState() {
-//        boolean state = true;
-//        int t = 0;
-//        while (state) {
-//            t = t + 1;
-//            if (this.datasourceComboBox.getSelectedDatasource().getDatasets().contains(initDatasetName)) {
-//                if (initDatasetName.lastIndexOf("_") == -1) {
-//                    initDatasetName = initDatasetName + "_" + t;
-//                } else if (initDatasetName.lastIndexOf("_") != -1) {
-//                    String str = initDatasetName.substring(initDatasetName.lastIndexOf("_"), initDatasetName.length() - 1);
-//                    if (StringUtilities.isNumber(str)) {
-//                        initDatasetName = initDatasetName.substring(0, initDatasetName.lastIndexOf("_")) + (Integer.valueOf(str) + 1);
-//                    } else {
-//                        initDatasetName = initDatasetName + "_" + t;
-//                    }
-//                }
-//            } else {
-//                this.textFieldDataset.setText(initDatasetName);
-//                state = false;
-//            }
-//        }
         String initDatasetName = this.datasourceComboBox.getSelectedDatasource().getDatasets().getAvailableDatasetName(this.map.getName());
-        this.textFieldResolution.setText(String.valueOf(this.map.getViewBounds().getWidth() / this.initDailogWidth));
+        this.textFieldResolution.setText(String.valueOf(this.map.getViewBounds().getWidth() / this.initDialogWidth));
         this.textFieldDataset.setText(initDatasetName);
         this.textFieldRowCount.setEnabled(false);
         this.textFieldColumnCount.setEnabled(false);
@@ -274,6 +271,7 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
     private void cancelAndCloseDailog() {
         this.dispose();
     }
+
     private boolean isValidDatasetName() {
         boolean result = true;
         if (this.textFieldDataset.getText().isEmpty()) {

@@ -1,5 +1,6 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
@@ -179,8 +180,21 @@ public class BatchAddColorTableDailog extends SmDialog {
         getContentPane().setLayout(groupLayout);
         this.seriesNum.setSelected(true);
         resetTextEnableForRadio();
+        setComponentName();
     }
-
+    private void setComponentName() {
+        ComponentUIUtilities.setName(this.startValue, "BatchAddColorTableDailog_startValue");
+        ComponentUIUtilities.setName(this.endValue, "BatchAddColorTableDailog_endValue");
+        ComponentUIUtilities.setName(this.stepLength, "BatchAddColorTableDailog_stepLength");
+        ComponentUIUtilities.setName(this.seriesNum, "BatchAddColorTableDailog_seriesNum");
+        ComponentUIUtilities.setName(this.resetEndValue, "BatchAddColorTableDailog_resetEndValue");
+        ComponentUIUtilities.setName(this.startValueText, "BatchAddColorTableDailog_startValueText");
+        ComponentUIUtilities.setName(this.endValueText, "BatchAddColorTableDailog_endValueText");
+        ComponentUIUtilities.setName(this.stepLengthText, "BatchAddColorTableDailog_stepLengthText");
+        ComponentUIUtilities.setName(this.seriesNumText, "BatchAddColorTableDailog_seriesNumText");
+        ComponentUIUtilities.setName(this.okSmButton, "BatchAddColorTableDailog_okSmButton");
+        ComponentUIUtilities.setName(this.cancelSmButton, "BatchAddColorTableDailog_cancelSmButton");
+    }
     private void initResources() {
         setTitle(MapViewProperties.getString("String_BatchAddColorTable"));
         this.startValue.setText(MapViewProperties.getString("String_BatchAddColorTableMinValue"));
