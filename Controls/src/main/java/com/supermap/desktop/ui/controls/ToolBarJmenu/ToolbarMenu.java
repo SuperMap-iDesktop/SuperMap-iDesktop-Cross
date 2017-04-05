@@ -30,6 +30,17 @@ public class ToolbarMenu extends JPanel {
         registEvents();
     }
 
+    public ToolbarMenu(String showFunctionText){
+        this.labelShowFunction = new JLabel();
+        this.labelShowFunction.setText(showFunctionText);
+        this.labelArraw = new JLabel(new MetalComboBoxIcon());
+        this.jPopupMenu = new JPopupMenu();
+        this.setBorder(BorderFactory.createEmptyBorder(initWidth + 2, initHeight + 2, initWidth + 2, initHeight + 2));
+        initLayout();
+        removeEvents();
+        registEvents();
+    }
+
     private void initLayout() {
         GroupLayout groupLayout = new GroupLayout(this);
         groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
@@ -106,5 +117,19 @@ public class ToolbarMenu extends JPanel {
 
     public boolean isToolbarMenuEnabled() {
         return this.labelShowFunction.isEnabled();
+    }
+
+    public void removeAllJmenuItem(){
+        this.jPopupMenu.removeAll();
+    }
+
+    public void addSeparator(){
+        this.jPopupMenu.addSeparator();
+    }
+
+    public void setShowFunctionText(String text){
+        if (text!=null &&!text.isEmpty()){
+            this.labelShowFunction.setText(text);
+        }
     }
 }

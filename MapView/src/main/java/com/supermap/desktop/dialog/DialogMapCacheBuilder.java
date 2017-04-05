@@ -11,6 +11,7 @@ import com.supermap.desktop.ScaleModel;
 import com.supermap.desktop.mapview.MapCache.CacheProgressCallable;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.map.propertycontrols.PanelGroupBoxViewBounds;
+import com.supermap.desktop.mapview.map.propertycontrols.SelectObjectListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.SMSpinner;
 import com.supermap.desktop.ui.controls.ChooseTable.MultipleCheckboxItem;
@@ -30,6 +31,7 @@ import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.desktop.utilities.*;
 import com.supermap.mapping.Layer;
+import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
 import com.supermap.tilestorage.TileStorageConnection;
 import com.supermap.tilestorage.TileStorageType;
@@ -176,11 +178,13 @@ public class DialogMapCacheBuilder extends SmDialog {
     private boolean validIndexRangeBounds = true;
     private static DecimalFormat roundingTwoPoint = new DecimalFormat("#.00");
     private java.util.Map<Layer, List<Geometry>> selectedGeometryAndLayer = new HashMap<>();
+    private Rectangle2D selectGeometryRectangle = null;
     private Map currentMap;
 
     public DialogMapCacheBuilder(JFrame owner, boolean model, Map inputMap) {
         super(owner, model);
-        this.currentMap = inputMap;
+        this.currentMap=new Map(inputMap.getWorkspace());
+        this.currentMap.fromXML(inputMap.toXML());
         initComponents();
         initLayout();
         initLocalSplitTable();
@@ -279,6 +283,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addGroup(groupLayout.createSequentialGroup()
+                                        .addContainerGap(5,5)
                                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                 .addComponent(this.toolBar)
                                                 .addComponent(this.scrollPane, 343, 343, Short.MAX_VALUE))
@@ -976,11 +981,8 @@ public class DialogMapCacheBuilder extends SmDialog {
 
     private boolean isRightRangeBounds() {
         boolean result = true;
+        isSelectedGeometry();
         if (!this.validIndexRangeBounds || !this.validCacheRangeBounds) {
-            if (!this.validCacheRangeBounds) {
-                this.checkBoxFullFillCacheImage.setEnabled(false);
-                this.checkBoxFilterSelectionObjectInLayer.setEnabled(false);
-            }
             result = false;
         }
         return result;
@@ -1031,6 +1033,19 @@ public class DialogMapCacheBuilder extends SmDialog {
         return result;
     }
 
+    private void isSelectedGeometry() {
+        if (this.selectedGeometryAndLayer == null || this.selectedGeometryAndLayer.size() == 0 || !this.selectGeometryRectangle.equals(this.cacheRangeBounds)) {
+            checkBoxFullFillCacheImage.setSelected(false);
+            checkBoxFullFillCacheImage.setEnabled(false);
+            checkBoxFilterSelectionObjectInLayer.setSelected(false);
+            checkBoxFilterSelectionObjectInLayer.setEnabled(false);
+            this.selectedGeometryAndLayer = null;
+        } else {
+            checkBoxFullFillCacheImage.setEnabled(true);
+            checkBoxFullFillCacheImage.setEnabled(true);
+        }
+    }
+
     private void setMapCacheBuilderValueBeforeRun() {
         try {
             double[] outputScalevalues;
@@ -1067,6 +1082,17 @@ public class DialogMapCacheBuilder extends SmDialog {
             }
             this.mapCacheBuilder.setImageCompress(Integer.valueOf(this.smSpinnerImageCompressionRatio.getValue().toString()));
             this.mapCacheBuilder.setTransparent(this.checkBoxBackgroundTransparency.isSelected());
+            if (this.checkBoxFilterSelectionObjectInLayer.isEnabled() && this.checkBoxFilterSelectionObjectInLayer.isSelected()) {
+                Layers layers = this.mapCacheBuilder.getMap().getLayers();
+                if (this.selectedGeometryAndLayer != null && this.selectedGeometryAndLayer.size() > 0) {
+                    for (Layer layer : this.selectedGeometryAndLayer.keySet()) {
+                        layers.remove(layer.getName());
+                    }
+                }
+            }
+            if (this.checkBoxFullFillCacheImage.isEnabled() && this.checkBoxFullFillCacheImage.isSelected()) {
+                this.mapCacheBuilder.setFillMargin(true);
+            }
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex.toString());
         }
@@ -1128,6 +1154,14 @@ public class DialogMapCacheBuilder extends SmDialog {
                 Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateFailed"));
             }
             Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_Time") + time + " " + MapViewProperties.getString("MapCache_ShowTime"));
+//            if (this.checkBoxFilterSelectionObjectInLayer.isEnabled() && this.checkBoxFilterSelectionObjectInLayer.isSelected()) {
+//                Layers layers = this.currentMap.getLayers();
+//                if (this.selectedGeometryAndLayer != null && this.selectedGeometryAndLayer.size() > 0) {
+//                    for (Layer layer : this.selectedGeometryAndLayer.keySet()) {
+//                        layers.add(layer);
+//                    }
+//                }
+//            }
             if (this.autoCloseDialog.isSelected()) {
                 cancelAndCloseDailog();
                 this.mapCacheBuilder.dispose();
@@ -1818,13 +1852,6 @@ public class DialogMapCacheBuilder extends SmDialog {
                     validCacheRangeBounds = true;
                     if (!cacheRangeBounds.equals(rectangle2D)) {
                         cacheRangeBounds = rectangle2D;
-//                        if (panelCacheRange.getSelectedGeometryAndLayer() != null && panelCacheRange.getSelectedGeometryAndLayer().size() > 0) {
-//                            checkBoxFullFillCacheImage.setEnabled(true);
-//                            checkBoxFilterSelectionObjectInLayer.setEnabled(true);
-//                        } else {
-//                            checkBoxFullFillCacheImage.setEnabled(false);
-//                            checkBoxFilterSelectionObjectInLayer.setEnabled(false);
-//                        }
                     }
                 } else {
                     validCacheRangeBounds = false;
@@ -1833,6 +1860,26 @@ public class DialogMapCacheBuilder extends SmDialog {
                 validCacheRangeBounds = false;
             }
             isCanRun();
+        }
+    };
+
+    private SelectObjectListener selectObjectListener = new SelectObjectListener() {
+        @Override
+        public void selectObjectListener() {
+            if (panelCacheRange.getSelectedGeometryAndLayer() != null && panelCacheRange.getSelectedGeometryAndLayer().size() > 0) {
+                checkBoxFullFillCacheImage.setEnabled(true);
+                checkBoxFilterSelectionObjectInLayer.setEnabled(true);
+                selectedGeometryAndLayer = panelCacheRange.getSelectedGeometryAndLayer();
+                selectGeometryRectangle = panelCacheRange.getRangeBound().clone();
+                isSelectedGeometry();
+            } else {
+                checkBoxFullFillCacheImage.setSelected(false);
+                checkBoxFullFillCacheImage.setEnabled(false);
+                checkBoxFilterSelectionObjectInLayer.setSelected(false);
+                checkBoxFilterSelectionObjectInLayer.setEnabled(false);
+                selectedGeometryAndLayer = null;
+                selectGeometryRectangle = null;
+            }
         }
     };
 
@@ -1929,10 +1976,12 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.comboBoxPixel.addItemListener(this.comboboxImagePixelListener);
         this.comboBoxSaveType.addItemListener(this.saveTypeListener);
         this.textFieldServerName.addFocusListener(this.serverNameFocusListener);
+        this.panelCacheRange.addSelectObjectLitener(this.selectObjectListener);
         this.cacheRangeWaringTextFieldLeft.getTextField().addCaretListener(this.cacheRangeCareListener);
         this.cacheRangeWaringTextFieldTop.getTextField().addCaretListener(this.cacheRangeCareListener);
         this.cacheRangeWaringTextFieldRight.getTextField().addCaretListener(this.cacheRangeCareListener);
         this.cacheRangeWaringTextFieldBottom.getTextField().addCaretListener(this.cacheRangeCareListener);
+        this.indexRangeWaringTextFieldLeft.getTextField().addCaretListener(this.indexRangeCareListener);
         this.indexRangeWaringTextFieldLeft.getTextField().addCaretListener(this.indexRangeCareListener);
         this.indexRangeWaringTextFieldTop.getTextField().addCaretListener(this.indexRangeCareListener);
         this.indexRangeWaringTextFieldRight.getTextField().addCaretListener(this.indexRangeCareListener);
@@ -1967,6 +2016,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.comboBoxSaveType.removeItemListener(this.saveTypeListener);
         this.comboBoxPixel.removeItemListener(this.comboboxImagePixelListener);
         this.textFieldServerName.removeFocusListener(this.serverNameFocusListener);
+        this.panelCacheRange.removeSelectObjectListener(this.selectObjectListener);
         this.cacheRangeWaringTextFieldLeft.getTextField().removeCaretListener(this.cacheRangeCareListener);
         this.cacheRangeWaringTextFieldTop.getTextField().removeCaretListener(this.cacheRangeCareListener);
         this.cacheRangeWaringTextFieldRight.getTextField().removeCaretListener(this.cacheRangeCareListener);

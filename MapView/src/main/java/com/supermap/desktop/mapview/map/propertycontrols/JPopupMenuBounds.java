@@ -272,7 +272,6 @@ public class JPopupMenuBounds extends JPopupMenu {
 	};
 
 	private void buttonClicked(String actionCommand) {
-
 		if (actionCommand.equals(JPopupMenuBounds.CLEAR)) {
 			if (this.moduleName.equals(JPopupMenuBounds.CLIP_REGION)) {
 				clearCutBundsClicked();
