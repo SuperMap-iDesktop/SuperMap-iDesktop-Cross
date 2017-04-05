@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Outputs {
 	private IProcess process;
-	private ConcurrentHashMap<String, Data> datas;
+	private ConcurrentHashMap<String, Data> datas = new ConcurrentHashMap<>();
 
 	public Outputs(IProcess process) {
 		this.process = process;

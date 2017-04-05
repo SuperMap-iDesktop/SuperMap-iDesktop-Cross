@@ -5,8 +5,6 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterSingleDatasetPanel;
-import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 import com.supermap.desktop.properties.CommonProperties;
 
@@ -18,12 +16,12 @@ import java.beans.PropertyChangeEvent;
 public class ParameterSingleDataset extends AbstractParameter implements ISelectionParameter {
 
 	public static final String DATASET_FIELD_NAME = "selectedItem";
-	public static final String DATASET_TYPES_FIELD_NAME = "datasetTypes";
+	//	public static final String DATASET_TYPES_FIELD_NAME = "datasetTypes";
 	public static final String DATASOURCE_FIELD_NAME = "datasource";
 
 	@ParameterField(name = DATASET_FIELD_NAME)
 	private Dataset selectedItem;
-	@ParameterField(name = DATASET_TYPES_FIELD_NAME)
+	//	@ParameterField(name = DATASET_TYPES_FIELD_NAME) not ready
 	private DatasetType[] datasetTypes;
 	@ParameterField(name = DATASOURCE_FIELD_NAME)
 	private Datasource datasource;
@@ -36,6 +34,7 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
         if (item instanceof Dataset) {
             Dataset oldValue = this.selectedItem;
             this.selectedItem = (Dataset) item;
+	        datasource = selectedItem.getDatasource();
 	        firePropertyChangeListener(new PropertyChangeEvent(this, DATASET_FIELD_NAME, oldValue, selectedItem));
         }
     }
@@ -50,12 +49,6 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 	    return ParameterType.SINGLE_DATASET;
     }
 
-	@Override
-	public IParameterPanel getParameterPanel() {
-		IParameterPanel parameterPanel = super.getParameterPanel();
-		((ParameterSingleDatasetPanel) parameterPanel).setDatasetTypes(datasetTypes);
-		return parameterPanel;
-	}
 
 	@Override
 	public void dispose() {
@@ -74,5 +67,13 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 
 	public Datasource getDatasource() {
 		return datasource;
+	}
+
+	public DatasetType[] getDatasetTypes() {
+		return datasetTypes;
+	}
+
+	public void setDatasetTypes(DatasetType[] datasetTypes) {
+		this.datasetTypes = datasetTypes;
 	}
 }

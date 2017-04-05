@@ -50,4 +50,7 @@ public interface IParameter extends IAbstractParameter {
 
 	IParameters getParameters();
 
+	boolean setFieldVale(String fieldName, Object value);
+
+	Object getFieldValue(String fieldName) throws Exception;
 }

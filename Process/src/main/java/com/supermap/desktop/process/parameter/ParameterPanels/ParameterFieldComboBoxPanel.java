@@ -6,6 +6,7 @@ import com.supermap.data.FieldInfos;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.JComboBoxUIUtilities;
 import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
@@ -60,12 +61,35 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 	}
 
 	private void initComponentState() {
+		comboBox.setRenderer(new ListCellRenderer<FieldInfo>() {
+			@Override
+			public Component getListCellRendererComponent(JList<? extends FieldInfo> list, FieldInfo value, int index, boolean isSelected, boolean cellHasFocus) {
+				JLabel jLabel = new JLabel();
+				jLabel.setText(value.getCaption());
+				jLabel.setOpaque(true);
+				if (isSelected) {
+					jLabel.setBackground(list.getSelectionBackground());
+					jLabel.setForeground(list.getSelectionForeground());
+				} else {
+					jLabel.setBackground(list.getBackground());
+					jLabel.setForeground(list.getForeground());
+				}
+				return jLabel;
+			}
+		});
 		String describe = parameterFieldComboBox.getDescribe();
 		if (describe != null) {
 			label.setText(describe);
 		}
 		DatasetVector dataset = parameterFieldComboBox.getDataset();
 		resetComboBoxItems(dataset);
+	}
+
+	@Override
+	public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
+		if (event.getFieldName().equals(ParameterFieldComboBox.DATASET_FIELD_NAME)) {
+			resetComboBoxItems(parameterFieldComboBox.getDataset());
+		}
 	}
 
 	private void resetComboBoxItems(DatasetVector dataset) {
