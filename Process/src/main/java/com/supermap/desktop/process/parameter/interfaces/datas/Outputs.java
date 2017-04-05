@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Outputs {
 	private IProcess process;
-	private ConcurrentHashMap<String, Data> datas;
+	private ConcurrentHashMap<String, OutputData> datas = new ConcurrentHashMap<>();
 
 	public Outputs(IProcess process) {
 		this.process = process;
@@ -22,7 +22,7 @@ public class Outputs {
 		return this.process;
 	}
 
-	public Data getData(String name) {
+	public OutputData getData(String name) {
 		if (StringUtilities.isNullOrEmpty(name) || !this.datas.containsKey(name)) {
 			return null;
 		}
@@ -30,7 +30,7 @@ public class Outputs {
 		return this.datas.get(name);
 	}
 
-	public void add(Data data) {
+	public void add(OutputData data) {
 		if (data == null) {
 			return;
 		}
@@ -40,28 +40,28 @@ public class Outputs {
 		}
 	}
 
-	public Data[] getDatas() {
-		ArrayList<Data> result = new ArrayList<>();
+	public OutputData[] getDatas() {
+		ArrayList<OutputData> result = new ArrayList<>();
 
 		for (String name : this.datas.keySet()) {
 			result.add(this.datas.get(name));
 		}
-		return result.toArray(new Data[this.datas.size()]);
+		return result.toArray(new OutputData[this.datas.size()]);
 	}
 
-	public Data[] getDatas(DataType type) {
+	public OutputData[] getDatas(DataType type) {
 		if (type == null) {
 			return null;
 		}
 
-		ArrayList<Data> result = new ArrayList<>();
+		ArrayList<OutputData> result = new ArrayList<>();
 		for (String name : this.datas.keySet()) {
-			Data data = this.datas.get(name);
+			OutputData data = this.datas.get(name);
 			if (data.getType().equals(type)) {
 				result.add(data);
 			}
 		}
-		return result.toArray(new Data[result.size()]);
+		return result.toArray(new OutputData[result.size()]);
 	}
 
 	public boolean isContains(DataType type) {
@@ -71,7 +71,7 @@ public class Outputs {
 
 		boolean result = false;
 		for (String name : this.datas.keySet()) {
-			Data data = this.datas.get(name);
+			OutputData data = this.datas.get(name);
 			if (data.getType().equals(type)) {
 				result = true;
 				break;

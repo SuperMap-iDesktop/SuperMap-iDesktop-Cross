@@ -20,7 +20,7 @@ public abstract class MetaProcess extends AbstractProcess {
 
 	public MetaProcess() {
 		this.outputs = new Outputs(this);
-		this.inputs = new Inputs();
+		this.inputs = new Inputs(this);
 	}
 
 	@Override

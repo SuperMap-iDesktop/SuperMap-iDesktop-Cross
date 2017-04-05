@@ -12,11 +12,11 @@ import java.awt.*;
 /**
  * Created by highsad on 2017/3/23.
  */
-public class RelationLine extends AbstractLine implements GraphBoundsChangedListener {
+public class GraphRelationLine extends AbstractLine implements GraphBoundsChangedListener {
 	private IGraph start;
 	private IGraph end;
 
-	public RelationLine(GraphCanvas canvas, IGraph start, IGraph end) {
+	public GraphRelationLine(GraphCanvas canvas, IGraph start, IGraph end) {
 		super(canvas);
 		setStartGraph(start);
 		setEndGraph(end);

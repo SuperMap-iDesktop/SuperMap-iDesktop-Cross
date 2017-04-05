@@ -2,8 +2,7 @@ package com.supermap.desktop.process.graphics;
 
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
-import com.supermap.desktop.process.graphics.connection.AbstractLine;
-import com.supermap.desktop.process.graphics.connection.RelationLine;
+import com.supermap.desktop.process.graphics.connection.GraphRelationLine;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.events.GraphCreatingEvent;
@@ -17,7 +16,9 @@ import com.supermap.desktop.process.graphics.interaction.graph.DefaultGraphEvent
 import com.supermap.desktop.process.graphics.interaction.graph.IGraphEventHandlerFactory;
 import com.supermap.desktop.process.graphics.painter.DefaultGraphPainterFactory;
 import com.supermap.desktop.process.graphics.painter.IGraphPainterFactory;
+import com.supermap.desktop.process.graphics.storage.IGraphConnection;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
+import com.supermap.desktop.process.graphics.storage.ListGraphConnection;
 import com.supermap.desktop.process.graphics.storage.ListGraphs;
 
 import javax.swing.*;
@@ -56,14 +57,13 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory(this); // 元素绘制的可扩展类
 	private IGraphEventHandlerFactory graphHandlerFactory = new DefaultGraphEventHanderFactory(); // 在某具体元素上进行的可扩展交互类
 	private ConcurrentHashMap<Class, CanvasEventHandler> canvasHandlers = new ConcurrentHashMap<>(); // 统一入口的画布事件接口，通过添加 CanvasEventHandler 对象实现 Canvas 的事件处理
-
-	private java.util.List<RelationLine> lines = new ArrayList<>();
+	private IGraphConnection connection = new ListGraphConnection(this);
 
 	private CanvasTranslation translation = new CanvasTranslation(this);
 	private GraphCreator creator = new GraphCreator(this);
 	private Selection selection = new MultiSelction(this);
 	private DraggedHandler dragged = new DraggedHandler(this);
-	public GraphConnection connection = new GraphConnection(this);
+	public GraphConnector connector = new GraphConnector(this);
 	public GraphRemoving removing = new GraphRemoving(this);
 
 	private ArrayList<GraphSelectChangedListener> selectChangedListeners = new ArrayList<>();
@@ -119,7 +119,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		button3.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				canvas.connection.connecting();
+				canvas.connector.connecting();
 			}
 		});
 
@@ -145,7 +145,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		installCanvasEventHandler(DraggedHandler.class, this.dragged);
 		installCanvasEventHandler(CanvasTranslation.class, this.translation);
 		installCanvasEventHandler(GraphCreator.class, this.creator);
-		installCanvasEventHandler(GraphConnection.class, this.connection);
+		installCanvasEventHandler(GraphConnector.class, this.connector);
 		installCanvasEventHandler(GraphRemoving.class, this.removing);
 	}
 
@@ -229,6 +229,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		return this.selection;
 	}
 
+	public IGraphConnection getConnection() {
+		return this.connection;
+	}
+
 	public void addGraphTransformed(IGraph graph) {
 		if (graph != null && !this.graphStorage.contains(graph)) {
 			this.coordinateTransform.inverseTranslate(graph);
@@ -253,12 +257,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	public void removeGraph(IGraph graph) {
 		if (graph != null && this.graphStorage.contains(graph)) {
-			for (int i = this.lines.size() - 1; i >= 0; i--) {
-				RelationLine line = this.lines.get(i);
-				if (line.getStartGraph() == graph || line.getEndGraph() == graph) {
-					this.lines.remove(line);
-				}
-			}
+			this.connection.removeConnection(graph);
 
 			if (this.selection.isSelected(graph)) {
 				this.selection.deselectItem(graph);
@@ -276,14 +275,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			}
 		}
 		repaint();
-	}
-
-	public void addConnection(RelationLine connection) {
-		this.lines.add(connection);
-	}
-
-	public void removeConnection(AbstractLine line) {
-		this.lines.remove(line);
 	}
 
 	public IGraph findGraph(Point screenPoint) {
@@ -310,7 +301,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		graphics2D.setTransform(this.coordinateTransform.getAffineTransform(origin));
 		paintLines(graphics2D);
 		paintGraphs(graphics2D);
-		this.connection.preview(graphics2D);
+		this.connector.preview(graphics2D);
 		this.selection.paintSelected(graphics2D);
 		graphics2D.setTransform(origin);
 
@@ -352,8 +343,9 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	}
 
 	private void paintLines(Graphics2D g) {
-		for (int i = 0, n = this.lines.size(); i < n; i++) {
-			this.lines.get(i).paint(g);
+		GraphRelationLine[] lines = this.connection.getLines();
+		for (int i = 0, n = lines.length; i < n; i++) {
+			lines[i].paint(g);
 		}
 	}
 

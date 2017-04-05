@@ -5,7 +5,6 @@ import com.supermap.desktop.process.graphics.CanvasCursor;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.connection.DefaultLine;
-import com.supermap.desktop.process.graphics.connection.RelationLine;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.DataGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
@@ -18,13 +17,13 @@ import java.awt.event.MouseEvent;
 /**
  * Created by highsad on 2017/3/22.
  */
-public class GraphConnection extends CanvasEventAdapter {
+public class GraphConnector extends CanvasEventAdapter {
 	private GraphCanvas canvas;
 	private DefaultLine previewLine;
-	private IGraph startGraph = null;
+	private DataGraph startGraph = null;
 	private IGraph endGraph = null;
 
-	public GraphConnection(GraphCanvas canvas) {
+	public GraphConnector(GraphCanvas canvas) {
 		this.canvas = canvas;
 	}
 
@@ -45,16 +44,13 @@ public class GraphConnection extends CanvasEventAdapter {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e)) {
-			Point canvasPoint = this.canvas.getCoordinateTransform().inverse(e.getPoint());
 			IGraph hit = this.canvas.findGraph(e.getPoint());
 
-			if (hit != null) {
-				if (isStartValid(hit)) {
-					this.startGraph = hit;
-					this.previewLine.setStartPoint(hit.getCenter());
-				} else {
-					this.startGraph = null;
-				}
+			if (isStartValid(hit)) {
+				this.startGraph = (DataGraph) hit;
+				this.previewLine.setStartPoint(hit.getCenter());
+			} else {
+				this.startGraph = null;
 			}
 		}
 	}
@@ -64,9 +60,7 @@ public class GraphConnection extends CanvasEventAdapter {
 		try {
 			if (SwingUtilities.isLeftMouseButton(e)) {
 				if (this.startGraph != null && this.endGraph != null) {
-					RelationLine line = new RelationLine(this.canvas, this.startGraph, this.endGraph);
-					this.canvas.addConnection(line);
-					line.repaint();
+					this.canvas.getConnection().connect(this.startGraph, this.endGraph);
 				}
 			}
 		} catch (Exception ex) {
@@ -132,7 +126,26 @@ public class GraphConnection extends CanvasEventAdapter {
 	}
 
 	private boolean isEndValid(IGraph graph) {
-		return graph != this.startGraph && graph instanceof ProcessGraph;
+		boolean ret = false;
+
+		if (this.startGraph == null) {
+			return false;
+		}
+
+		if (graph == this.startGraph) {
+			return false;
+		}
+
+		// If the specified graph  has already been connected to this startGraph, return false.
+		if (this.canvas.getConnection().isConnected(this.startGraph, graph)) {
+			return false;
+		}
+
+		if (!(graph instanceof ProcessGraph)) {
+			return false;
+		}
+
+		return ret;
 	}
 
 	@Override
