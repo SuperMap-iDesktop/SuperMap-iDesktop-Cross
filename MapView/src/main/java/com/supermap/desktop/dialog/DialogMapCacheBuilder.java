@@ -283,6 +283,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addGroup(groupLayout.createSequentialGroup()
+                                        .addContainerGap(5,5)
                                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                 .addComponent(this.toolBar)
                                                 .addComponent(this.scrollPane, 343, 343, Short.MAX_VALUE))
