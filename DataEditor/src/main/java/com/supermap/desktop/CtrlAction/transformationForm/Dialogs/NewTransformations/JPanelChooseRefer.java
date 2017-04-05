@@ -3,6 +3,7 @@ package com.supermap.desktop.CtrlAction.transformationForm.Dialogs.NewTransforma
 import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
@@ -99,6 +100,7 @@ public class JPanelChooseRefer extends JPanelNewTransformationBase {
 		initListener();
 		initResources();
 		initComponentState();
+		setComponentName();
 	}
 
 	private void initComponents() {
@@ -115,7 +117,16 @@ public class JPanelChooseRefer extends JPanelNewTransformationBase {
 		initTable();
 
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.panelCenter, "JPanelChooseRefer_panelCenter");
+		ComponentUIUtilities.setName(this.toolBar, "JPanelChooseRefer_toolBar");
+		ComponentUIUtilities.setName(this.buttonAdd, "JPanelChooseRefer_buttonAdd");
+		ComponentUIUtilities.setName(this.buttonSelectAll, "JPanelChooseRefer_buttonSelectAll");
+		ComponentUIUtilities.setName(this.buttonSelectInvert, "JPanelChooseRefer_buttonSelectInvert");
+		ComponentUIUtilities.setName(this.buttonDel, "JPanelChooseRefer_buttonDel");
+		ComponentUIUtilities.setName(this.scrollPane, "JPanelChooseRefer_scrollPane");
+		ComponentUIUtilities.setName(this.table, "JPanelChooseRefer_table");
+	}
 	private void initLayouts() {
 		initToolbar();
 		panelCenter.setLayout(new GridBagLayout());

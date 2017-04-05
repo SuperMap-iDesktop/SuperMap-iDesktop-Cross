@@ -7,6 +7,7 @@ import com.supermap.data.TextStyle;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.FormTransformation;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.*;
@@ -56,9 +57,12 @@ public abstract class TransformationBase implements IFormMap {
 
 	public TransformationBase(FormTransformation formTransformation) {
 		this.formTransformation = formTransformation;
+		setComponentName();
 		initDrag();
 	}
-
+	public void setComponentName() {
+		ComponentUIUtilities.setName(this.mapControl, "TransformationBase_mapControl");
+	}
 	@Override
 	public String getText() {
 		return getMapControl().getMap().getName();

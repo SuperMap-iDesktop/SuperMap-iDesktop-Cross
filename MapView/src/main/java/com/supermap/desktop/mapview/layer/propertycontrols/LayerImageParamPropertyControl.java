@@ -2,6 +2,7 @@ package com.supermap.desktop.mapview.layer.propertycontrols;
 
 import com.supermap.data.ColorSpaceType;
 import com.supermap.desktop.DefaultValues;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerImageParamPropertyModel;
 import com.supermap.desktop.ui.SMSpinner;
@@ -145,8 +146,20 @@ public class LayerImageParamPropertyControl extends AbstractLayerPropertyControl
 						.addComponent(this.labelDisplayColorSpace)
 						.addComponent(this.comboBoxDisplayColorSpace, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
 		// @formatter:on
+		setComponentName();
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.labelBrightness, "LayerImageParamPropertyControl_labelBrightness");
+		ComponentUIUtilities.setName(this.labelContrast, "LayerImageParamPropertyControl_labelContrast");
+		ComponentUIUtilities.setName(this.checkBoxIsTransparent, "LayerImageParamPropertyControl_checkBoxIsTransparent");
+		ComponentUIUtilities.setName(this.labelTransparentColorTolerance, "LayerImageParamPropertyControl_labelTransparentColorTolerance");
+		ComponentUIUtilities.setName(this.labelDisplayColorSpace, "LayerImageParamPropertyControl_labelDisplayColorSpace");
+		ComponentUIUtilities.setName(this.spinnerBrightness, "LayerImageParamPropertyControl_spinnerBrightness");
+		ComponentUIUtilities.setName(this.spinnerContrast, "LayerImageParamPropertyControl_spinnerContrast");
+		ComponentUIUtilities.setName(this.buttonTransparentColor, "LayerImageParamPropertyControl_buttonTransparentColor");
+		ComponentUIUtilities.setName(this.spinnerTransColorTolerance, "LayerImageParamPropertyControl_spinnerTransColorTolerance");
+		ComponentUIUtilities.setName(this.comboBoxDisplayColorSpace, "LayerImageParamPropertyControl_comboBoxDisplayColorSpace");
+	}
 	@Override
 	protected void initializeResources() {
 		((TitledBorder) this.getBorder()).setTitle(MapViewProperties.getString("String_LayerProperty_Image"));

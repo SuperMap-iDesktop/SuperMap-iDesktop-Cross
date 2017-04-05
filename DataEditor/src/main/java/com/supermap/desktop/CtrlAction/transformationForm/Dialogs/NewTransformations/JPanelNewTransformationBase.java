@@ -1,5 +1,6 @@
 package com.supermap.desktop.CtrlAction.transformationForm.Dialogs.NewTransformations;
 
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 
@@ -21,9 +22,15 @@ public abstract class JPanelNewTransformationBase extends JPanel {
 		textArea.setOpaque(false);
 //		labelTitle.setText(getPanelTitle());
 		textArea.setText(getDescribeText());
+		setComponentName();
 		initLayout();
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.panelTitle, "JPanelNewTransformationBase_panelTitle");
+		ComponentUIUtilities.setName(this.labelTitle, "JPanelNewTransformationBase_labelTitle");
+		ComponentUIUtilities.setName(this.panelDescribe, "JPanelNewTransformationBase_panelDescribe");
+		ComponentUIUtilities.setName(this.textArea, "JPanelNewTransformationBase_textArea");
+	}
 	private void initLayout() {
 		this.panelTitle.setLayout(new GridBagLayout());
 		this.panelTitle.add(labelTitle, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER));

@@ -1,18 +1,11 @@
 package com.supermap.desktop.CtrlAction.transformationForm.Dialogs;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetImage;
-import com.supermap.data.DatasetType;
-import com.supermap.data.Datasource;
-import com.supermap.data.Datasources;
-import com.supermap.data.Transformation;
-import com.supermap.data.TransformationMode;
-import com.supermap.data.TransformationResampleMode;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.transformationForm.CtrlAction.TransformCallable;
 import com.supermap.desktop.CtrlAction.transformationForm.TransformationUtilties;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationAddObjectBean;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
@@ -20,12 +13,7 @@ import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.TristateCheckBox;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
-import com.supermap.desktop.ui.controls.DataCell;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.FileChooserControl;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
@@ -45,12 +33,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,10 +111,39 @@ public class JDialogTransformation extends SmDialog {
 		initListener();
 		initResources();
 		initComponentState();
+		setComponentName();
 		table.getColumnModel().getColumn(TransformationTableModel.COLUMN_SAVE_AS).setMaxWidth(50);
-
 	}
 
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.toolBar, "JDialogTransformation_toolBar");
+		ComponentUIUtilities.setName(this.buttonAdd, "JDialogTransformation_buttonAdd");
+		ComponentUIUtilities.setName(this.buttonSelectAll, "JDialogTransformation_buttonSelectAll");
+		ComponentUIUtilities.setName(this.buttonSelectInvert, "JDialogTransformation_buttonSelectInvert");
+		ComponentUIUtilities.setName(this.buttonDel, "JDialogTransformation_buttonDel");
+		ComponentUIUtilities.setName(this.buttonSetting, "JDialogTransformation_buttonSetting");
+		ComponentUIUtilities.setName(this.scrollPane, "JDialogTransformation_scrollPane");
+		ComponentUIUtilities.setName(this.table, "JDialogTransformation_table");
+		ComponentUIUtilities.setName(this.panelProperties, "JDialogTransformation_panelProperties");
+		ComponentUIUtilities.setName(this.labelTransformationFile, "JDialogTransformation_labelTransformationFile");
+		ComponentUIUtilities.setName(this.fileChooserControl, "JDialogTransformation_fileChooserControl");
+		ComponentUIUtilities.setName(this.labelTransformationMode, "JDialogTransformation_labelTransformationMode");
+		ComponentUIUtilities.setName(this.textFieldTransformationMode, "JDialogTransformation_textFieldTransformationMode");
+		ComponentUIUtilities.setName(this.panelResample, "JDialogTransformation_panelResample");
+		ComponentUIUtilities.setName(this.checkBoxResample, "JDialogTransformation_checkBoxResample");
+		ComponentUIUtilities.setName(this.titledPanelResample, "JDialogTransformation_titledPanelResample");
+		ComponentUIUtilities.setName(this.labelResampleMode, "JDialogTransformation_labelResampleMode");
+		ComponentUIUtilities.setName(this.comboBoxResampleMode, "JDialogTransformation_comboBoxResampleMode");
+		ComponentUIUtilities.setName(this.labelPixel, "JDialogTransformation_labelPixel");
+		ComponentUIUtilities.setName(this.textFieldPixel, "JDialogTransformation_textFieldPixel");
+		ComponentUIUtilities.setName(this.panelSetting, "JDialogTransformation_panelSetting");
+		ComponentUIUtilities.setName(this.checkBoxIsSaveAs, "JDialogTransformation_checkBoxIsSaveAs");
+		ComponentUIUtilities.setName(this.comboBoxDatasources, "JDialogTransformation_comboBoxDatasources");
+		ComponentUIUtilities.setName(this.panelButtons, "JDialogTransformation_panelButtons");
+		ComponentUIUtilities.setName(this.checkBoxAutoClose, "JDialogTransformation_checkBoxAutoClose");
+		ComponentUIUtilities.setName(this.buttonOk, "JDialogTransformation_buttonOk");
+		ComponentUIUtilities.setName(this.buttonCancel, "JDialogTransformation_buttonCancel");
+	}
 	private void initComponents() {
 		initTable();
 		comboBoxResampleMode.setRenderer(new ListCellRenderer<TransformationResampleMode>() {
