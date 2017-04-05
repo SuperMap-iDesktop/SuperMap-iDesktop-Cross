@@ -51,7 +51,7 @@ public class DialogMapClip extends SmDialog {
 	// 处理后的vector
 	private Vector resultInfo;
 
-	private String saveMapName="";
+	private String saveMapName;
 
 	private MapClipProgressCallable mapClipProgressCallable;
 
@@ -335,11 +335,11 @@ public class DialogMapClip extends SmDialog {
 				FormProgressTotal formProgress = new FormProgressTotal();
 				formProgress.setTitle(MapViewProperties.getString("String_MapClip_MapClip"));
 				//获得要保存的地图名称
-				saveMapName=mapClipSaveMapPanel.getSaveMapTextField().getText();
-				mapClipProgressCallable = new MapClipProgressCallable(resultInfo, saveMapName);
+				saveMapName = mapClipSaveMapPanel.getSaveMapTextField().getText();
+				mapClipProgressCallable = new MapClipProgressCallable(resultInfo);
 				formProgress.doWork(mapClipProgressCallable);
 				// 获得采集后的数据集，添加到地图
-				ArrayList arrayList=mapClipProgressCallable.getDatasetsArrayList();
+				// 通过mapClipProgressCallable.getResultDatasets()获得裁剪后的数据集
 				DialogMapClip.this.dispose();
 			} else {
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MapClip_SelectLayer"));

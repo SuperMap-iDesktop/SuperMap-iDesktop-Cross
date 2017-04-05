@@ -3,14 +3,7 @@ package com.supermap.desktop.process;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.FormActivatedListener;
-import com.supermap.desktop.event.FormClosedEvent;
-import com.supermap.desktop.event.FormClosedListener;
-import com.supermap.desktop.event.FormClosingEvent;
-import com.supermap.desktop.event.FormClosingListener;
-import com.supermap.desktop.event.FormDeactivatedListener;
-import com.supermap.desktop.event.FormShownEvent;
-import com.supermap.desktop.event.FormShownListener;
+import com.supermap.desktop.event.*;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
@@ -20,10 +13,10 @@ import com.supermap.desktop.process.graphics.connection.RelationLine;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.graphs.DataGraph;
-import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
+import com.supermap.desktop.process.parameter.interfaces.datas.Data;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.controls.Dockbar;
 
@@ -63,15 +56,25 @@ public class FormProcess extends FormBaseChild implements IForm {
 			@Override
 			public void graphCreated(GraphCreatedEvent e) {
 				if (e.getGraph() instanceof ProcessGraph) {
-					IGraph process = e.getGraph();
+					ProcessGraph processGraph = (ProcessGraph) e.getGraph();
+					IProcess process = processGraph.getProcess();
 
-					DataGraph data = new DataGraph(graphCanvas.getCanvas());
-					data.setLocation(new Point(process.getLocation().x + process.getWidth() * 3 / 2, process.getLocation().y));
-					graphCanvas.getCanvas().addGraph(data);
+					Data[] outputs = process.getOutputs().getDatas();
+					int gap = 20;
+					int locationX = processGraph.getLocation().x + processGraph.getWidth() * 3 / 2;
+					int length = outputs.length;
+					int height = processGraph.getHeight();
+					int locationY = processGraph.getLocation().y + height / 2 - length * height / 2 - (length - 1) * gap / 2;
 
-					RelationLine line = new RelationLine(graphCanvas.getCanvas(), process, data);
-					graphCanvas.getCanvas().addConnection(line);
-					graphCanvas.getCanvas().repaint();
+					for (int i = 0; i < length; i++) {
+						DataGraph data = new DataGraph(graphCanvas.getCanvas(), outputs[i]);
+						data.setLocation(new Point(locationX, locationY + i * gap + i * height));
+						graphCanvas.getCanvas().addGraph(data);
+
+						RelationLine line = new RelationLine(graphCanvas.getCanvas(), processGraph, data);
+						graphCanvas.getCanvas().addConnection(line);
+						graphCanvas.getCanvas().repaint();
+					}
 				}
 			}
 		});

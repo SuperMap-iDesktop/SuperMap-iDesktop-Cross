@@ -14,6 +14,9 @@ public class ToolbarMenu extends JPanel {
     private JLabel labelArraw;
     private JPopupMenu jPopupMenu;
     private ToolbarJmenuListener listeners;
+    private int initWidth = this.getWidth();
+    private int initHeight = this.getHeight();
+
 
     public ToolbarMenu(Icon showFunctionIcon, String showFunctionTip, String arrawTip) {
         this.labelShowFunction = new JLabel(showFunctionIcon);
@@ -21,6 +24,7 @@ public class ToolbarMenu extends JPanel {
         this.labelArraw = new JLabel(new MetalComboBoxIcon());
         this.labelArraw.setToolTipText(arrawTip);
         this.jPopupMenu = new JPopupMenu();
+        this.setBorder(BorderFactory.createEmptyBorder(initWidth + 2, initHeight + 2, initWidth + 2, initHeight + 2));
         initLayout();
         removeEvents();
         registEvents();
@@ -29,10 +33,11 @@ public class ToolbarMenu extends JPanel {
     private void initLayout() {
         GroupLayout groupLayout = new GroupLayout(this);
         groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
+                .addGap(3)
                 .addComponent(this.labelShowFunction)
                 .addGap(5)
                 .addComponent(this.labelArraw)
-                .addGap(5)
+                .addContainerGap(1, 1)
         );
         groupLayout.setVerticalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
                 .addComponent(this.labelShowFunction)
@@ -54,7 +59,7 @@ public class ToolbarMenu extends JPanel {
     private MouseListener mouseListener = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (e.getSource() == labelArraw) {
+            if (e.getSource() == labelArraw && labelShowFunction.isEnabled()) {
                 jPopupMenu.show(ToolbarMenu.this, 0, getHeight());
             } else if (e.getSource() == labelShowFunction && labelShowFunction.isEnabled()) {
                 fireListener();
@@ -63,12 +68,16 @@ public class ToolbarMenu extends JPanel {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            ToolbarMenu.this.setBorder(BorderFactory.createEtchedBorder());
+            if (labelShowFunction.isEnabled()) {
+                ToolbarMenu.this.setBorder(BorderFactory.createEtchedBorder());
+            }
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
-            ToolbarMenu.this.setBorder(null);
+            if (labelShowFunction.isEnabled()) {
+                ToolbarMenu.this.setBorder(BorderFactory.createEmptyBorder(initWidth + 2, initHeight + 2, initWidth + 2, initHeight + 2));
+            }
         }
     };
 
@@ -90,12 +99,12 @@ public class ToolbarMenu extends JPanel {
         this.jPopupMenu.add(jMenuItem);
     }
 
-    public void setToolbarMenuEnabled(boolean enabled){
+    public void setToolbarMenuEnabled(boolean enabled) {
         this.labelShowFunction.setEnabled(enabled);
-        this.labelArraw.setEnabled(enabled);
+        //this.labelArraw.setEnabled(enabled);
     }
 
-    public boolean isToolbarMenuEnabled(){
+    public boolean isToolbarMenuEnabled() {
         return this.labelShowFunction.isEnabled();
     }
 }

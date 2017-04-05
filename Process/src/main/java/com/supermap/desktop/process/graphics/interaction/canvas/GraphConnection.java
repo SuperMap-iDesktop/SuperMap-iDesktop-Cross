@@ -49,12 +49,12 @@ public class GraphConnection extends CanvasEventAdapter {
 			IGraph hit = this.canvas.findGraph(e.getPoint());
 
 			if (hit != null) {
-//				if (canBeStart(hit)) {
-				this.startGraph = hit;
-				this.previewLine.setStartPoint(hit.getCenter());
-//				} else {
-//					this.startGraph = null;
-//				}
+				if (isStartValid(hit)) {
+					this.startGraph = hit;
+					this.previewLine.setStartPoint(hit.getCenter());
+				} else {
+					this.startGraph = null;
+				}
 			}
 		}
 	}

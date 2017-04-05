@@ -11,7 +11,6 @@ import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
@@ -52,8 +51,8 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 		fireRunning(new RunningEvent(this, 0, "start build spatial index"));
 		dataset.buildSpatialIndex(spatialIndexType);
 		fireRunning(new RunningEvent(this, 100, "build spatial index finished"));
-		ProcessData processData = new ProcessData();
-		processData.setData(dataset);
+//		ProcessData processData = new ProcessData();
+//		processData.setData(dataset);
 //		outPuts.add(0, processData);
 	}
 

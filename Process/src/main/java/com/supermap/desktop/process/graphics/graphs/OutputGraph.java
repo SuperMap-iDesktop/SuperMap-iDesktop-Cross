@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.graphics.graphs;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.parameter.interfaces.ProcessData;
+import com.supermap.desktop.process.parameter.interfaces.datas.Data;
 
 /**
  * Created by highsad on 2017/2/28.
@@ -9,9 +9,9 @@ import com.supermap.desktop.process.parameter.interfaces.ProcessData;
 public class OutputGraph extends EllipseGraph {
 
 	private ProcessGraph processGraph;
-	private ProcessData processData;
+	private Data processData;
 
-	public OutputGraph(GraphCanvas canvas, ProcessGraph processGraph, ProcessData processData) {
+	public OutputGraph(GraphCanvas canvas, ProcessGraph processGraph, Data processData) {
 		super(canvas);
 		this.processGraph = processGraph;
 		this.processData = processData;
@@ -21,11 +21,11 @@ public class OutputGraph extends EllipseGraph {
 		return processGraph;
 	}
 
-	public ProcessData getProcessData() {
+	public Data getProcessData() {
 		return processData;
 	}
 
 	public String getTitle() {
-		return this.processData.getText();
+		return this.processData.getName();
 	}
 }
