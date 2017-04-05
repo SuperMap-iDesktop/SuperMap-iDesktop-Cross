@@ -1,12 +1,20 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
+import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
@@ -24,6 +32,7 @@ import java.util.ArrayList;
  * sql查询简单实现
  */
 public class MetaProcessSqlQuery extends MetaProcess {
+	private ParameterDatasource datasource;
 	private ParameterSingleDataset dataset;
 	private ParameterTextArea parameterAttributeFilter;
 	private ParameterTextArea parameterResultFields;
@@ -39,6 +48,8 @@ public class MetaProcessSqlQuery extends MetaProcess {
 	}
 
 	private void initMetaInfo() {
+		datasource = new ParameterDatasource();
+		this.datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameters = new DefaultParameters();
 		this.dataset = new ParameterSingleDataset(datasetTypes);
 		if (null != Application.getActiveApplication().getActiveDatasets() && Application.getActiveApplication().getActiveDatasets().length > 0) {
@@ -50,9 +61,22 @@ public class MetaProcessSqlQuery extends MetaProcess {
 		parameterAttributeFilter.setSelectedItem("RoadLine.RoadLeve = 'Lev1'");
 		parameterSaveDataset = new ParameterSaveDataset();
 		parameterSaveDataset.setDatasetName("QueryResult");
-		parameters.setParameters(this.dataset, this.parameterResultFields,
+		initParameterConstraint();
+		parameters.setParameters(datasource, this.dataset, this.parameterResultFields,
 				this.parameterAttributeFilter, this.parameterSaveDataset);
 		processTask = new ProcessTask(this);
+	}
+
+	private void initParameterConstraint() {
+		DatasourceConstraint.getInstance().constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(dataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(parameterSaveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
+
+		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
+		equalDatasourceConstraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+
+
 	}
 
 	@Override
