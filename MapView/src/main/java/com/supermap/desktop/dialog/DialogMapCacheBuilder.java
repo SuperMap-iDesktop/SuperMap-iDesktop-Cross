@@ -180,6 +180,7 @@ public class DialogMapCacheBuilder extends SmDialog {
     private java.util.Map<Layer, List<Geometry>> selectedGeometryAndLayer = new HashMap<>();
     private Rectangle2D selectGeometryRectangle = null;
     private Map currentMap;
+    private int gapWithDialog=3;
 
     public DialogMapCacheBuilder(JFrame owner, boolean model, Map inputMap) {
         super(owner, model);
@@ -272,6 +273,9 @@ public class DialogMapCacheBuilder extends SmDialog {
 
     private void initLayout() {
         Dimension dimension = new Dimension(924, 551);
+        if (SystemPropertyUtilities.isWindows()){
+            this.gapWithDialog=5;
+        }
         setSize(dimension);
         setMinimumSize(dimension);
         setLocationRelativeTo(null);
@@ -283,7 +287,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addGroup(groupLayout.createSequentialGroup()
-                                        .addContainerGap(5,5)
+                                        .addContainerGap(this.gapWithDialog,this.gapWithDialog)
                                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                 .addComponent(this.toolBar)
                                                 .addComponent(this.scrollPane, 343, 343, Short.MAX_VALUE))
