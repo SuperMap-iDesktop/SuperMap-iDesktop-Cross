@@ -4709,6 +4709,7 @@ public class CommonToolkit {
 			datasourceImage.put(EngineType.SUPERMAPCLOUD, fileParentPath + "Image_SuperMapCloud.png");
 			datasourceImage.put(EngineType.GOOGLEMAPS, fileParentPath + "Image_GoogleMaps.png");
 			datasourceImage.put(EngineType.OPENSTREETMAPS, fileParentPath + "Image_OpenStreetMaps.png");
+			datasourceImage.put(EngineType.MEMORY, fileParentPath + "Image_DatasourceImagePlugins_Normal.png");
 			datasourceImage.put(null, fileParentPath + "Image_Datasources_Normal.png");
 		}
 
