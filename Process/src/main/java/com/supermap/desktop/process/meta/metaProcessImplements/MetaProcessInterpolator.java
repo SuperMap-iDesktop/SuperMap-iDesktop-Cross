@@ -11,6 +11,7 @@ import com.supermap.analyst.spatialanalyst.VariogramMode;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasets;
 import com.supermap.data.Datasource;
 import com.supermap.data.PixelFormat;
 import com.supermap.data.Rectangle2D;
@@ -88,9 +89,28 @@ public class MetaProcessInterpolator extends MetaProcess {
 			currentDatasource = Application.getActiveApplication().getActiveDatasources()[0];
 		}
 		parameterDatasource.setSelectedItem(currentDatasource);
+
 		parameterDataset = new ParameterSingleDataset(DatasetType.POINT);
+		DatasetVector currentDataset = null;
+		if (currentDatasource != null) {
+			Datasets datasets = currentDatasource.getDatasets();
+			for (int i = 0; i < datasets.getCount(); i++) {
+				if (datasets.get(i).getType() == DatasetType.POINT) {
+					currentDataset = (DatasetVector) datasets.get(i);
+					break;
+				}
+			}
+		}
+		if (currentDataset != null) {
+			parameterDataset.setSelectedItem(currentDataset);
+		}
+
 		parameterInterpolatorFields = new ParameterFieldComboBox();
 		parameterInterpolatorFields.setDescribe(ProcessProperties.getString("String_InterpolatorFields"));
+		if (currentDataset != null) {
+			parameterInterpolatorFields.setSelectedItem(currentDataset.getFieldInfos().get(0));
+		}
+
 		parameterScaling = new ParameterTextField().setDescribe(CommonProperties.getString("String_Scaling"));
 		parameterScaling.setSelectedItem("1");
 		parameterResultDatasetName = new ParameterSaveDataset();

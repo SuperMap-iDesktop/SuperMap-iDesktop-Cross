@@ -4,6 +4,7 @@ import com.supermap.data.TransformationMode;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormTransformation;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ColorSelectButton;
@@ -49,12 +50,24 @@ public class JDialogTransformationSetting extends SmDialog {
 
 	private void init() {
 		initComponent();
+		setComponentName();
 		initListener();
 		initResources();
 		initLayout();
 		initComponentState();
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.labelSelectedColor, "JDialogTransformationSetting_labelSelectedColor");
+		ComponentUIUtilities.setName(this.buttonSelectedColor, "JDialogTransformationSetting_buttonSelectedColor");
+		ComponentUIUtilities.setName(this.labelUnSelectedColor, "JDialogTransformationSetting_labelUnSelectedColor");
+		ComponentUIUtilities.setName(this.buttonUnSelectedColor, "JDialogTransformationSetting_buttonUnSelectedColor");
+		ComponentUIUtilities.setName(this.labelUnUseColor, "JDialogTransformationSetting_labelUnUseColor");
+		ComponentUIUtilities.setName(this.buttonUnUseColor, "JDialogTransformationSetting_buttonUnUseColor");
+		ComponentUIUtilities.setName(this.labelTransformationMode, "JDialogTransformationSetting_labelTransformationMode");
+		ComponentUIUtilities.setName(this.comboBoxTransformationMode, "JDialogTransformationSetting_comboBoxTransformationMode");
+		ComponentUIUtilities.setName(this.buttonOK, "JDialogTransformationSetting_buttonOK");
+		ComponentUIUtilities.setName(this.buttonCancel, "JDialogTransformationSetting_buttonCancel");
+	}
 	private void initComponent() {
 		comboBoxTransformationMode.setRenderer(new ListCellRenderer<TransformationMode>() {
 			@Override

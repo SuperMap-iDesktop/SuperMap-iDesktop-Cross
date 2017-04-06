@@ -34,6 +34,7 @@ public class EqualDatasetConstraint extends DefaultConstraint {
 	private void fireConstraintChanged(IParameter parameter) {
 		for (ParameterNode parameterNode : parameterNodes) {
 			if (parameterNode.getParameter() != parameter) {
+				parameterNode.getParameter().setFieldVale(parameterNode.getName(), dataset);
 				parameterNode.getParameter().fireFieldConstraintChanged(parameterNode.getName());
 			}
 		}

@@ -5,6 +5,7 @@ import com.supermap.data.Enum;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.DefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerRelocateDatasetPropertyModel;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
@@ -113,8 +114,14 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 						.addComponent(labelDataset)
 						.addComponent(comboBoxDataset, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
 		// @formatter:on
+		setComponentName();
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.labelDatasource, "LayerRelocateDatasetPropertyControl_labelDatasource");
+		ComponentUIUtilities.setName(this.labelDataset, "LayerRelocateDatasetPropertyControl_labelDataset");
+		ComponentUIUtilities.setName(this.comboBoxDatasource, "LayerRelocateDatasetPropertyControl_comboBoxDatasource");
+		ComponentUIUtilities.setName(this.comboBoxDataset, "LayerRelocateDatasetPropertyControl_comboBoxDataset");
+	}
 	@Override
 	protected void initializeResources() {
 		((TitledBorder) this.getBorder()).setTitle(MapViewProperties.getString("String_FormRelateDataset_Title"));

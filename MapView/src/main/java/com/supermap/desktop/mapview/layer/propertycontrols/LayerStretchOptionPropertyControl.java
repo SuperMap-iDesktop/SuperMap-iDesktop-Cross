@@ -1,6 +1,7 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
 import com.supermap.desktop.DefaultValues;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.layer.propertymodel.LayerStretchOptionPropertyModel;
 import com.supermap.desktop.ui.SMFormattedTextField;
@@ -126,8 +127,17 @@ public class LayerStretchOptionPropertyControl extends AbstractLayerPropertyCont
 						.addComponent(this.textFieldGaussionStretchRatioFactor, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 				.addComponent(this.checkBoxIsGaussionStMiddleFactor, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
 		// @formatter:on
+		setComponentName();
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.labelStretchType, "LayerStretchOptionPropertyControl_labelStretchType");
+		ComponentUIUtilities.setName(this.comboBoxStretchType, "LayerStretchOptionPropertyControl_comboBoxStretchType");
+		ComponentUIUtilities.setName(this.labelSdDeviationStretchFactor, "LayerStretchOptionPropertyControl_labelSdDeviationStretchFactor");
+		ComponentUIUtilities.setName(this.textFieldSdDeviationStretchFactor, "LayerStretchOptionPropertyControl_textFieldSdDeviationStretchFactor");
+		ComponentUIUtilities.setName(this.labelGaussianStretchRatioFactor, "LayerStretchOptionPropertyControl_labelGaussianStretchRatioFactor");
+		ComponentUIUtilities.setName(this.textFieldGaussionStretchRatioFactor, "LayerStretchOptionPropertyControl_textFieldGaussionStretchRatioFactor");
+		ComponentUIUtilities.setName(this.checkBoxIsGaussionStMiddleFactor, "LayerStretchOptionPropertyControl_checkBoxIsGaussionStMiddleFactor");
+	}
 	@Override
 	protected void initializeResources() {
 		this.labelStretchType.setText(MapViewProperties.getString("String_LayerControl_Grid_StretchMode"));

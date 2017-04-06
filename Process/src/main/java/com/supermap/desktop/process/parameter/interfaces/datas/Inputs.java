@@ -12,10 +12,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class Inputs {
 	private IProcess process;
-	private ConcurrentHashMap<String, Data> datas;
+	private ConcurrentHashMap<String, InputData> datas = new ConcurrentHashMap<>();
 
-	public Inputs() {
-
+	public Inputs(IProcess process) {
+		this.process = process;
 	}
 
 	public IProcess getProcess() {
@@ -26,7 +26,7 @@ public class Inputs {
 		return null;
 	}
 
-	public Data getData(String name) {
+	public InputData getData(String name) {
 		if (StringUtilities.isNullOrEmpty(name) || !this.datas.containsKey(name)) {
 			return null;
 		}
@@ -34,7 +34,8 @@ public class Inputs {
 		return this.datas.get(name);
 	}
 
-	public void add(Data data) {
+
+	public void add(InputData data) {
 		if (data == null) {
 			return;
 		}
@@ -49,10 +50,10 @@ public class Inputs {
 			return;
 		}
 
-		addData(new Data(name, type));
+		addData(new InputData(name, type));
 	}
 
-	public void addData(Data data) {
+	public void addData(InputData data) {
 		if (data == null) {
 			return;
 		}
@@ -62,28 +63,28 @@ public class Inputs {
 		}
 	}
 
-	public Data[] getDatas() {
-		ArrayList<Data> result = new ArrayList<>();
+	public InputData[] getDatas() {
+		ArrayList<InputData> result = new ArrayList<>();
 
 		for (String name : this.datas.keySet()) {
 			result.add(this.datas.get(name));
 		}
-		return result.toArray(new Data[this.datas.size()]);
+		return result.toArray(new InputData[this.datas.size()]);
 	}
 
-	public Data[] getDatas(DataType type) {
+	public InputData[] getDatas(DataType type) {
 		if (type == null) {
 			return null;
 		}
 
-		ArrayList<Data> result = new ArrayList<>();
+		ArrayList<InputData> result = new ArrayList<>();
 		for (String name : this.datas.keySet()) {
-			Data data = this.datas.get(name);
+			InputData data = this.datas.get(name);
 			if (data.getType().equals(type)) {
 				result.add(data);
 			}
 		}
-		return result.toArray(new Data[result.size()]);
+		return result.toArray(new InputData[result.size()]);
 	}
 
 	public boolean isContains(DataType type) {
@@ -93,7 +94,7 @@ public class Inputs {
 
 		boolean result = false;
 		for (String name : this.datas.keySet()) {
-			Data data = this.datas.get(name);
+			InputData data = this.datas.get(name);
 			if (data.getType().equals(type)) {
 				result = true;
 				break;

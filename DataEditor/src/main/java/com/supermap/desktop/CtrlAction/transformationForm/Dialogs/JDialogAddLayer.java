@@ -6,6 +6,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.AddLayerItemBean;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormTransformation;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
@@ -80,10 +81,22 @@ public class JDialogAddLayer extends SmDialog {
 	private void initComponent() {
 		initToolBar();
 		initTable();
-
+		setComponentName();
 		scrollPane.setViewportView(table);
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.scrollPane, "JDialogAddLayer_scrollPane");
+		ComponentUIUtilities.setName(this.table, "JDialogAddLayer_table");
+		ComponentUIUtilities.setName(this.toolBar, "JDialogAddLayer_toolBar");
+		ComponentUIUtilities.setName(this.buttonAdd, "JDialogAddLayer_buttonAdd");
+		ComponentUIUtilities.setName(this.buttonDelete, "JDialogAddLayer_buttonDelete");
+		ComponentUIUtilities.setName(this.buttonUp, "JDialogAddLayer_buttonUp");
+		ComponentUIUtilities.setName(this.buttonDown, "JDialogAddLayer_buttonDown");
+		ComponentUIUtilities.setName(this.buttonSelectedAll, "JDialogAddLayer_buttonSelectedAll");
+		ComponentUIUtilities.setName(this.buttonSelectedInvert, "JDialogAddLayer_buttonSelectedInvert");
+		ComponentUIUtilities.setName(this.smButtonOk, "JDialogAddLayer_smButtonOk");
+		ComponentUIUtilities.setName(this.smButtonCancle, "JDialogAddLayer_smButtonCancle");
+	}
 	private void initToolBar() {
 		toolBar.setFloatable(false);
 		toolBar.add(buttonAdd);

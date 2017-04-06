@@ -3,6 +3,7 @@ package com.supermap.desktop.mapview.layer.propertycontrols;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.event.ActiveFormChangedEvent;
 import com.supermap.desktop.event.ActiveFormChangedListener;
 import com.supermap.desktop.event.ActiveLayersChangedEvent;
@@ -13,20 +14,7 @@ import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.LayerUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.LayerCaptionChangedEvent;
-import com.supermap.mapping.LayerCaptionChangedListener;
-import com.supermap.mapping.LayerEditableChangedEvent;
-import com.supermap.mapping.LayerEditableChangedListener;
-import com.supermap.mapping.LayerSelectableChangedEvent;
-import com.supermap.mapping.LayerSelectableChangedListener;
-import com.supermap.mapping.LayerSnapableChangedEvent;
-import com.supermap.mapping.LayerSnapableChangedListener;
-import com.supermap.mapping.LayerVisibleChangedEvent;
-import com.supermap.mapping.LayerVisibleChangedListener;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.MapClosedEvent;
-import com.supermap.mapping.MapClosedListener;
+import com.supermap.mapping.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -237,8 +225,13 @@ public class LayerPropertyContainer extends JPanel {
 //						.addComponent(this.checkBoxIsAutoApply)
 //						.addComponent(this.buttonApply)));
 		// @formatter:on
+		setComponentName();
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.panelContainer, "LayerPropertyContainer_panelContainer");
+		ComponentUIUtilities.setName(this.checkBoxIsAutoApply, "LayerPropertyContainer_checkBoxIsAutoApply");
+		ComponentUIUtilities.setName(this.buttonApply, "LayerPropertyContainer_buttonApply");
+	}
 	private void initializeResources() {
 		this.checkBoxIsAutoApply.setText(ControlsProperties.getString("String_AutoApply"));
 		this.buttonApply.setText(CommonProperties.getString("String_Button_Apply"));

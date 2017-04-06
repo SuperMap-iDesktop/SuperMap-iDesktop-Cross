@@ -9,14 +9,13 @@ import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
-import com.supermap.desktop.process.graphics.connection.RelationLine;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.graphs.DataGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
-import com.supermap.desktop.process.parameter.interfaces.datas.Data;
+import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.controls.Dockbar;
 
@@ -59,22 +58,26 @@ public class FormProcess extends FormBaseChild implements IForm {
 					ProcessGraph processGraph = (ProcessGraph) e.getGraph();
 					IProcess process = processGraph.getProcess();
 
-					Data[] outputs = process.getOutputs().getDatas();
 					int gap = 20;
-					int locationX = processGraph.getLocation().x + processGraph.getWidth() * 3 / 2;
+					OutputData[] outputs = process.getOutputs().getDatas();
 					int length = outputs.length;
-					int height = processGraph.getHeight();
-					int locationY = processGraph.getLocation().y + height / 2 - length * height / 2 - (length - 1) * gap / 2;
+					DataGraph[] dataGraphs = new DataGraph[length];
+					int totalHeight = gap * (length - 1);
 
 					for (int i = 0; i < length; i++) {
-						DataGraph data = new DataGraph(graphCanvas.getCanvas(), outputs[i]);
-						data.setLocation(new Point(locationX, locationY + i * gap + i * height));
-						graphCanvas.getCanvas().addGraph(data);
-
-						RelationLine line = new RelationLine(graphCanvas.getCanvas(), processGraph, data);
-						graphCanvas.getCanvas().addConnection(line);
-						graphCanvas.getCanvas().repaint();
+						dataGraphs[i] = new DataGraph(graphCanvas.getCanvas(), outputs[i]);
+						graphCanvas.getCanvas().addGraph(dataGraphs[i]);
+						graphCanvas.getCanvas().getConnection().connect(processGraph, dataGraphs[i]);
+						totalHeight += dataGraphs[i].getHeight();
 					}
+
+					int locationX = processGraph.getLocation().x + processGraph.getWidth() * 3 / 2;
+					int locationY = processGraph.getLocation().y + (processGraph.getHeight() - totalHeight) / 2;
+					for (int i = 0; i < length; i++) {
+						dataGraphs[i].setLocation(new Point(locationX, locationY));
+						locationY = dataGraphs[i].getHeight() + gap;
+					}
+					graphCanvas.getCanvas().repaint();
 				}
 			}
 		});

@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
@@ -115,6 +116,7 @@ public abstract class AbstractParameter implements IParameter {
 		}
 		return panel;
 	}
+
 	public IParameters getParameters() {
 		return parameters;
 	}
@@ -139,4 +141,35 @@ public abstract class AbstractParameter implements IParameter {
 	}
 
 
+	@Override
+	public boolean setFieldVale(String fieldName, Object value) {
+		Field[] fields = this.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			ParameterField annotation = field.getAnnotation(ParameterField.class);
+			if (annotation != null && annotation.name().equals(fieldName)) {
+				field.setAccessible(true);
+				try {
+					field.set(this, value);
+				} catch (Exception e) {
+					return false;
+				} finally {
+					field.setAccessible(false);
+				}
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public Object getFieldValue(String fieldName) throws Exception {
+		Field[] fields = this.getClass().getFields();
+		for (Field field : fields) {
+			ParameterField annotation = field.getAnnotation(ParameterField.class);
+			if (annotation != null && annotation.name().equals(fieldName)) {
+				return field.get(this);
+			}
+		}
+		throw new Exception(ProcessProperties.getString("String_FieldDontExist"));
+	}
 }

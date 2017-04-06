@@ -14,8 +14,10 @@ import javax.swing.event.EventListenerList;
  */
 public abstract class AbstractProcess implements IProcess {
 
-	private EventListenerList listenerList = new EventListenerList();
 
+	private EventListenerList listenerList = new EventListenerList();
+	protected Inputs inputs = new Inputs(this);
+	protected Outputs outputs = new Outputs(this);
 	protected IProcessGroup parent;
 
 	@Override
@@ -28,14 +30,17 @@ public abstract class AbstractProcess implements IProcess {
 	public abstract String getKey();
 
 	@Override
-	public abstract Inputs getInputs();
+	public Inputs getInputs() {
+		return this.inputs;
+	}
 
 	@Override
 	public abstract ProcessTask getProcessTask();
 
 	@Override
-	public abstract Outputs getOutputs();
-
+	public Outputs getOutputs() {
+		return this.outputs;
+	}
 
 	@Override
 	public void addRunningListener(RunningListener listener) {
