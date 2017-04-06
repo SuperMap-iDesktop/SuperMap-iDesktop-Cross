@@ -272,7 +272,7 @@ public class DialogMapCacheBuilder extends SmDialog {
     }
 
     private void initLayout() {
-        Dimension dimension = new Dimension(924, 561);
+        Dimension dimension = new Dimension(853, 565);
         if (SystemPropertyUtilities.isWindows()) {
             this.gapWithDialog = 5;
         }
@@ -290,7 +290,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                                         .addContainerGap(this.gapWithDialog, this.gapWithDialog)
                                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                 .addComponent(this.toolBar)
-                                                .addComponent(this.scrollPane, 343, 343, Short.MAX_VALUE))
+                                                .addComponent(this.scrollPane, 263, 343, Short.MAX_VALUE))
                                         .addGap(10, 10, 10)
                                         .addComponent(this.tabbedPane, 363, 363, Short.MAX_VALUE))
                                 .addGroup(groupLayout.createSequentialGroup()
@@ -311,7 +311,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                                         .addComponent(this.toolBar, 30, 30, 30)
                                         .addComponent(this.scrollPane))
                                 .addComponent(this.tabbedPane))
-                        .addContainerGap(7, 7)
+                        .addContainerGap(10, 10)
                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addComponent(this.autoCloseDialog)
                                 .addComponent(this.showProgressBar)
