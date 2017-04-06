@@ -1167,6 +1167,7 @@ public class JDialogSQLQuery extends SmDialog {
 				// 查询预处理
 				PreProcessSQLQuery(queryParameter);
 				queryParameter.setSpatialQueryObject(currentDatasetVector);
+
 				resultRecord = currentDatasetVector.query(queryParameter);
 				// 判断是否有查询结果，没有查询结果给出提示
 				if (resultRecord != null && resultRecord.getRecordCount() > 0) {
@@ -1243,6 +1244,12 @@ public class JDialogSQLQuery extends SmDialog {
 	private void SaveQueryResult(Recordset resultRecord) {
 		Datasource resultDatasource = panelSaveSearchResult.getSelectDatasouce();
 		String datasetName = panelSaveSearchResult.getDatasetName();
+
+		//   SQL查询保存结果数据集时，显示进度条   by   lixiaoyao
+//		FormProgress formProgress = new FormProgress(DataViewProperties.getString("String_Querying"));
+//		SQLQueryProgressCallable sqlQueryProgressCallable=new SQLQueryProgressCallable(resultDatasource,resultRecord,datasetName);
+//		formProgress.doWork(sqlQueryProgressCallable);
+
 		if (resultDatasource != null && !StringUtilities.isNullOrEmpty(datasetName)) {
 			DatasetVector resultDataset = null;
 			try {

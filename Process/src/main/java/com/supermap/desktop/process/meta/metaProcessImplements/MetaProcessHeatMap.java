@@ -81,7 +81,6 @@ public class MetaProcessHeatMap extends MetaProcess {
                 parameterDatabase,
                 parameterVersion
         );
-        processTask = new ProcessTask(this);
     }
 
     @Override
@@ -136,7 +135,7 @@ public class MetaProcessHeatMap extends MetaProcess {
             JobResultResponse response = service.query(setting);
             if (null != response) {
                 CursorUtilities.setDefaultCursor();
-                NewMessageBus messageBus = new NewMessageBus(response, processTask);
+                NewMessageBus messageBus = new NewMessageBus(response, new ProcessTask(this));
                 messageBus.run();
             }
 //            ProcessData processData = new ProcessData();
@@ -151,8 +150,8 @@ public class MetaProcessHeatMap extends MetaProcess {
         return MetaKeys.HEAT_MAP;
     }
 
-	@Override
-	public Icon getIcon() {
-		return getIconByPath("/processresources/Process/HeatMap.png");
-	}
+    @Override
+    public Icon getIcon() {
+        return getIconByPath("/processresources/Process/HeatMap.png");
+    }
 }

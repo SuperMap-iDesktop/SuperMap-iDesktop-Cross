@@ -15,7 +15,6 @@ import javax.swing.*;
 public abstract class MetaProcess extends AbstractProcess {
 	protected Outputs outputs;
 	protected Inputs inputs;
-	public ProcessTask processTask;
 	protected IParameters parameters;
 
 	public MetaProcess() {
@@ -38,10 +37,6 @@ public abstract class MetaProcess extends AbstractProcess {
 		return this.outputs;
 	}
 
-	@Override
-	public ProcessTask getProcessTask() {
-		return processTask;
-	}
 
 	protected Icon getIconByPath(String path) {
 		return new ImageIcon(ProcessResources.getResourceURL(path));

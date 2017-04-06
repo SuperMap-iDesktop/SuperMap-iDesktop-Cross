@@ -1,6 +1,7 @@
 package com.supermap.desktop.process;
 
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -24,13 +25,14 @@ public class ParameterManager extends JPanel {
 		mainPanel.removeAll();
 		if (process != null && process.getComponent().getPanel() instanceof Component) {
 			JComponent component = (JComponent) process.getComponent().getPanel();
+			ProcessTask task = new ProcessTask(process);
 			mainPanel.add(component, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
 			mainPanel.add(new JPanel(),new GridBagConstraintsHelper(0,1,1,1).setWeight(1,1).setFill(GridBagConstraintsHelper.BOTH));
-			mainPanel.add(process.getProcessTask(),new GridBagConstraintsHelper(0,2,1,1).setWeight(1,0).setFill(GridBagConstraintsHelper.HORIZONTAL));
-			int count = process.getProcessTask().getComponentCount();
+			mainPanel.add(task,new GridBagConstraintsHelper(0,2,1,1).setWeight(1,0).setFill(GridBagConstraintsHelper.HORIZONTAL));
+			int count = task.getComponentCount();
 			for (int i = 0; i < count; i++) {
-				if ("ProcessTask_buttonRemove".equals(process.getProcessTask().getComponent(i).getName())){
-					process.getProcessTask().getComponent(i).setVisible(false);
+				if ("ProcessTask_buttonRemove".equals(task.getComponent(i).getName())){
+					task.getComponent(i).setVisible(false);
 				}
 			}
 		}
