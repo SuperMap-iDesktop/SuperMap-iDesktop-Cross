@@ -101,6 +101,7 @@ public class MetaProcessISORegion extends MetaProcess {
 		SurfaceAnalyst.extractIsoregion(surfaceExtractParameter, (DatasetGrid) dataset.getSelectedItem(), targetDataset.getResultDatasource(), targetDataset.getDatasetName(), null);
 		SurfaceAnalyst.removeSteppedListener(this.stepListener);
 		fireRunning(new RunningEvent(MetaProcessISORegion.this, 100, "finished"));
+		setFinished(true);
 	}
 
 	@Override

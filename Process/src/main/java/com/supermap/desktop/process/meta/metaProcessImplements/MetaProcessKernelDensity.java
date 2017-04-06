@@ -102,6 +102,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 //            processData.setData("Output");
 //            outPuts.add(0, processData);
             fireRunning(new RunningEvent(this, 100, "finished"));
+            setFinished(true);
         }
     }
 

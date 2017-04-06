@@ -113,6 +113,7 @@ public class MetaProcessISOLine extends MetaProcess {
         SurfaceAnalyst.extractIsoline(surfaceExtractParameter, (DatasetGrid) dataset.getSelectedItem(), saveDataset.getResultDatasource(), saveDataset.getDatasetName());
         SurfaceAnalyst.removeSteppedListener(this.stepListener);
         fireRunning(new RunningEvent(MetaProcessISOLine.this, 100, "finished"));
+        setFinished(true);
     }
 
     @Override

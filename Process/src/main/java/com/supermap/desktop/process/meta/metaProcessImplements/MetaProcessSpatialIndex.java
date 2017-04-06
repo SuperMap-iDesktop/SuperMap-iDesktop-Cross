@@ -50,6 +50,7 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 		fireRunning(new RunningEvent(this, 0, "start build spatial index"));
 		dataset.buildSpatialIndex(spatialIndexType);
 		fireRunning(new RunningEvent(this, 100, "build spatial index finished"));
+		setFinished(true);
 //		ProcessData processData = new ProcessData();
 //		processData.setData(dataset);
 //		outPuts.add(0, processData);

@@ -59,6 +59,7 @@ public class MetaProcessProjection extends MetaProcess {
         prjCoordSys.setGeoCoordSys(geoCoordSys);
         dataset.setPrjCoordSys(prjCoordSys);
         fireRunning(new RunningEvent(this, 100, "set geoCoorSys finished"));
+        setFinished(true);
 //        ProcessData processData = new ProcessData();
 //        processData.setData(dataset);
 //        outPuts.add(0, processData);

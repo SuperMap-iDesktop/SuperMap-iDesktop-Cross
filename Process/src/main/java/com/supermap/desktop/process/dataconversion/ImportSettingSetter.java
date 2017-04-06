@@ -12,9 +12,9 @@ import java.util.ArrayList;
 /**
  * Created by xie on 2017/4/6.
  */
-public class ImportSettingSettor {
+public class ImportSettingSetter {
     //Utilities class
-    private ImportSettingSettor() {
+    private ImportSettingSetter() {
     }
 
     public static DataImport setParameter(ImportSetting importSetting, ArrayList<ReflectInfo> basicInfos, ArrayList<ReflectInfo> otherInfo) {

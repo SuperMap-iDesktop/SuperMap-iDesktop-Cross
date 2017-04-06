@@ -117,6 +117,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 				}
 
 				fireRunning(new RunningEvent(this, 100, "finished"));
+				setFinished(true);
 				// 保存查询结果
 //				DatasetVector datasetVector = saveQueryResult(resultRecord);
 //				ProcessData processData = new ProcessData();

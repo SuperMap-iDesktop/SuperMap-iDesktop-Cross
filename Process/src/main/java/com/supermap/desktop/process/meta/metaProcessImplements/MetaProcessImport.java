@@ -120,6 +120,7 @@ public class MetaProcessImport extends MetaProcess {
 //        processData.setData(dataset);
 //        outPuts.add(0, processData);
         fireRunning(new RunningEvent(this, 100, "finished"));
+        setFinished(true);
     }
 
     @Override

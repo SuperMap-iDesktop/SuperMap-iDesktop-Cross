@@ -126,6 +126,7 @@ public class MetaProcessISOPoint extends MetaProcess {
         SurfaceAnalyst.extractIsoline(surfaceExtractParameter, (DatasetVector) sourceDataset.getSelectedItem(), ((ParameterDataNode) fields.getSelectedItem()).getDescribe(), ((TerrainInterpolateType) ((ParameterDataNode) terrainInterpolateType.getSelectedItem()).getData()), (Double) resolution.getSelectedItem(), null);
         SurfaceAnalyst.removeSteppedListener(this.stepListener);
         fireRunning(new RunningEvent(MetaProcessISOPoint.this, 100, "finished"));
+        setFinished(true);
     }
 
     @Override

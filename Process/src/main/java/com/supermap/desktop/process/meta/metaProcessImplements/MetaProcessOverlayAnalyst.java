@@ -140,6 +140,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
         }
         OverlayAnalyst.removeSteppedListener(this.steppedListener);
         fireRunning(new RunningEvent(this, 100, "finished"));
+        setFinished(true);
 //		ProcessData processData = new ProcessData();
 //		processData.setData(info.sourceDataset);
 //		outPuts.add(0, processData);

@@ -6,6 +6,7 @@ import com.supermap.desktop.process.ParameterManager;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.NodeException;
 import com.supermap.desktop.process.core.NodeMatrix;
+import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.tasks.TasksManagerContainer;
 
@@ -95,7 +96,7 @@ public class TaskUtil {
                         int preNodesSize = preNodes.size();
                         if (preNodesSize > 0) {
                             for (int j = 0; j < preNodesSize; j++) {
-                                if (new ProcessTask((IProcess) preNodes.get(j)).isFinished()) {
+                                if (((MetaProcess) preNodes.get(j)).isFinished()) {
                                     allPreTasksFinished = false;
                                     break;
                                 }

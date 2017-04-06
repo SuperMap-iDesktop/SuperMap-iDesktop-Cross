@@ -134,6 +134,7 @@ public class MetaProcessBuffer extends MetaProcess {
 //        processData.setData(result);
 //        outPuts.add(0, processData);
         fireRunning(new RunningEvent(this, 100, "finished"));
+        setFinished(true);
     }
 
     @Override
