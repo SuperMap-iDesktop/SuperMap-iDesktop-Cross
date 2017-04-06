@@ -80,7 +80,6 @@ public class MetaProcessISORegion extends MetaProcess {
 		smoothNess = new ParameterTextField(CommonProperties.getString("String_SmoothNess"));
 		parameters.setParameters(sourceDatasource, dataset, targetDataset, maxGrid, minGrid, maxISORegion, minISORegion, isoLine, datumValue,
 				interval, resampleTolerance, smoothMethod, smoothNess);
-		processTask = new ProcessTask(this);
 
 		DatasourceConstraint.getInstance().constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 	}
@@ -102,6 +101,7 @@ public class MetaProcessISORegion extends MetaProcess {
 		SurfaceAnalyst.extractIsoregion(surfaceExtractParameter, (DatasetGrid) dataset.getSelectedItem(), targetDataset.getResultDatasource(), targetDataset.getDatasetName(), null);
 		SurfaceAnalyst.removeSteppedListener(this.stepListener);
 		fireRunning(new RunningEvent(MetaProcessISORegion.this, 100, "finished"));
+		setFinished(true);
 	}
 
 	@Override

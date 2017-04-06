@@ -3,13 +3,10 @@ package com.supermap.desktop.process.ctrlAction;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.process.ParameterManager;
-import com.supermap.desktop.process.core.*;
-import com.supermap.desktop.process.dataconversion.ImportSettingCreator;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessBuffer;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessImport;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessProjection;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSqlQuery;
+import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.NodeMatrix;
+import com.supermap.desktop.process.core.WorkflowParser;
+import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.tasks.TasksManagerContainer;
 import com.supermap.desktop.process.util.TaskUtil;
 
@@ -48,24 +45,24 @@ public class CtrlActionRun extends CtrlAction {
 //            IForm form = Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
 //            IDockbarManager manager = Application.getActiveApplication().getMainFrame().getDockbarManager();
 //            IDockbar tasksDock = manager.get(Class.forName(TASKS));
-            WorkflowParser parser = new WorkflowParser();
-            NodeMatrix nodeMatrix = parser.parseXMLToMatrix("C://temp.xml");
-            TasksManagerContainer container = TaskUtil.getManagerContainer(true);
+        WorkflowParser parser = new WorkflowParser();
+        NodeMatrix nodeMatrix = parser.parseXMLToMatrix("C://temp.xml");
+        TasksManagerContainer container = TaskUtil.getManagerContainer(true);
 //            tasksDock.setVisible(true);
 
-            container.clear();
-            CopyOnWriteArrayList list = nodeMatrix.listAllNodes();
-            for (int i = 0; i < list.size(); i++) {
-                if (list.get(i) instanceof IProcess) {
-                    container.addItem(((IProcess) list.get(i)).getProcessTask());
-                }
+        container.clear();
+        CopyOnWriteArrayList list = nodeMatrix.listAllNodes();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i) instanceof IProcess) {
+                container.addItem(new ProcessTask((IProcess) list.get(i)));
             }
+        }
 //
 //            if (form instanceof FormProcess) {
 //                GraphCanvas canvas = ((FormProcess) form).getCanvas();
 //                UniversalMatrix matrix = canvas.getTasks();
 //
-            TaskUtil.excuteTasks(nodeMatrix);
+        TaskUtil.excuteTasks(nodeMatrix);
 //            }
 //        MetaProcessImport metaProcessImport = new MetaProcessImport();
 //        ParameterManager manager = TaskUtil.getParameterManager(true);

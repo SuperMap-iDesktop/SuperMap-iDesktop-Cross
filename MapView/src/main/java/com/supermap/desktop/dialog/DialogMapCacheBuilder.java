@@ -180,11 +180,11 @@ public class DialogMapCacheBuilder extends SmDialog {
     private java.util.Map<Layer, List<Geometry>> selectedGeometryAndLayer = new HashMap<>();
     private Rectangle2D selectGeometryRectangle = null;
     private Map currentMap;
-    private int gapWithDialog=3;
+    private int gapWithDialog = 3;
 
     public DialogMapCacheBuilder(JFrame owner, boolean model, Map inputMap) {
         super(owner, model);
-        this.currentMap=new Map(inputMap.getWorkspace());
+        this.currentMap = new Map(inputMap.getWorkspace());
         this.currentMap.fromXML(inputMap.toXML());
         initComponents();
         initLayout();
@@ -272,9 +272,9 @@ public class DialogMapCacheBuilder extends SmDialog {
     }
 
     private void initLayout() {
-        Dimension dimension = new Dimension(924, 551);
-        if (SystemPropertyUtilities.isWindows()){
-            this.gapWithDialog=5;
+        Dimension dimension = new Dimension(853, 565);
+        if (SystemPropertyUtilities.isWindows()) {
+            this.gapWithDialog = 5;
         }
         setSize(dimension);
         setMinimumSize(dimension);
@@ -287,10 +287,10 @@ public class DialogMapCacheBuilder extends SmDialog {
         groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addGroup(groupLayout.createSequentialGroup()
-                                        .addContainerGap(this.gapWithDialog,this.gapWithDialog)
+                                        .addContainerGap(this.gapWithDialog, this.gapWithDialog)
                                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                                 .addComponent(this.toolBar)
-                                                .addComponent(this.scrollPane, 343, 343, Short.MAX_VALUE))
+                                                .addComponent(this.scrollPane, 263, 343, Short.MAX_VALUE))
                                         .addGap(10, 10, 10)
                                         .addComponent(this.tabbedPane, 363, 363, Short.MAX_VALUE))
                                 .addGroup(groupLayout.createSequentialGroup()
@@ -311,6 +311,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                                         .addComponent(this.toolBar, 30, 30, 30)
                                         .addComponent(this.scrollPane))
                                 .addComponent(this.tabbedPane))
+                        .addContainerGap(10, 10)
                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addComponent(this.autoCloseDialog)
                                 .addComponent(this.showProgressBar)
@@ -334,6 +335,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.toolBar.addSeparator();
         this.toolBar.add(this.toolbarMenuImport);
         this.toolBar.add(this.toolbarMenuExport);
+        this.toolBar.setFloatable(false);
 
         this.localSplitTable = new MutiTable();
         this.scrollPane.setViewportView(this.localSplitTable);
@@ -1000,7 +1002,7 @@ public class DialogMapCacheBuilder extends SmDialog {
 
         } else if (this.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_MongoDB")) || this.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_MongoDBMuti"))) {
             if (this.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_MongoDB"))) {
-                if (textFieldServerNameGetFocus || !this.mongoDBConnectSate || this.comboBoxDatabaseName.getEditor().getItem().toString().isEmpty()) {
+                if (!isIp(this.textFieldServerName.getText()) || !this.mongoDBConnectSate || this.comboBoxDatabaseName.getEditor().getItem().toString().isEmpty()) {
                     result = false;
                 }
             } else {
@@ -1075,6 +1077,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                     this.scaleNames.put(this.globalScaleSortKeys[selectedIndex.get(i)], this.globalSplitScale.get(this.globalScaleSortKeys[selectedIndex.get(i)]));
                 }
             }
+            this.mapCacheBuilder.setMap(this.currentMap);
             this.mapCacheBuilder.setOutputScales(outputScalevalues);
             this.mapCacheBuilder.setOutputScaleCaptions(this.scaleNames);
             this.mapCacheBuilder.setVersion(MapCacheVersion.VERSION_50);
@@ -1094,8 +1097,27 @@ public class DialogMapCacheBuilder extends SmDialog {
                     }
                 }
             }
-            if (this.checkBoxFullFillCacheImage.isEnabled() && this.checkBoxFullFillCacheImage.isSelected()) {
-                this.mapCacheBuilder.setFillMargin(true);
+            if (this.checkBoxFullFillCacheImage.isEnabled()) {
+                GeoRegion geoRegion = null;
+                if (!this.checkBoxFullFillCacheImage.isSelected() && this.selectedGeometryAndLayer != null && this.selectedGeometryAndLayer.size() > 0) {
+                    for (Layer layer : this.selectedGeometryAndLayer.keySet()) {
+                        List<Geometry> selectedGeometry = new ArrayList<>();
+                        selectedGeometry = this.selectedGeometryAndLayer.get(layer);
+                        for (int i = 0; i < selectedGeometry.size(); i++) {
+                            if (selectedGeometry.get(i).getType() == GeometryType.GEOREGION) {
+                                if (geoRegion == null) {
+                                    geoRegion = (GeoRegion) selectedGeometry.get(i).clone();
+                                } else {
+                                    geoRegion = (GeoRegion) Geometrist.union(geoRegion, selectedGeometry.get(i).clone());
+                                }
+                            }
+                        }
+                    }
+                }
+                this.mapCacheBuilder.setFillMargin(this.checkBoxFullFillCacheImage.isSelected());
+                if (geoRegion != null) {
+                    this.mapCacheBuilder.setClipRegion(geoRegion);
+                }
             }
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex.toString());
@@ -1153,19 +1175,11 @@ public class DialogMapCacheBuilder extends SmDialog {
             String time = String.valueOf((endTime - startTime) / 1000.0);
             if (result) {
                 Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateSuccessed"));
-                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + this.fileChooserControlFileCache.getEditor().getText() + this.textFieldCacheName.getText());
+                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + this.fileChooserControlFileCache.getEditor().getText() + this.textFieldCacheName.getText() + "\\");
             } else {
                 Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateFailed"));
             }
             Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_Time") + time + " " + MapViewProperties.getString("MapCache_ShowTime"));
-//            if (this.checkBoxFilterSelectionObjectInLayer.isEnabled() && this.checkBoxFilterSelectionObjectInLayer.isSelected()) {
-//                Layers layers = this.currentMap.getLayers();
-//                if (this.selectedGeometryAndLayer != null && this.selectedGeometryAndLayer.size() > 0) {
-//                    for (Layer layer : this.selectedGeometryAndLayer.keySet()) {
-//                        layers.add(layer);
-//                    }
-//                }
-//            }
             if (this.autoCloseDialog.isSelected()) {
                 cancelAndCloseDailog();
                 this.mapCacheBuilder.dispose();
@@ -1221,17 +1235,21 @@ public class DialogMapCacheBuilder extends SmDialog {
         Mongo.Holder holder = new Mongo.Holder();
         this.mongo = holder.connect(new MongoClientURI("mongodb://" + address));
         try {
-            java.util.List<String> databaseNames = mongo.getDatabaseNames();
             this.comboBoxDatabaseName.removeAllItems();
+            java.util.List<String> databaseNames = mongo.getDatabaseNames();
             this.mongoDBConnectSate = true;
             for (int i = 0; i < databaseNames.size(); i++) {
                 this.comboBoxDatabaseName.addItem(databaseNames.get(i));
             }
+            this.textFieldUserName.setText("");
+            this.textFieldUserPassword.setText("");
             this.textFieldUserName.setEnabled(false);
             this.textFieldUserPassword.setEnabled(false);
         } catch (Exception e) {
             this.textFieldUserName.setEnabled(true);
             this.textFieldUserPassword.setEnabled(true);
+            this.textFieldUserName.setText("");
+            this.textFieldUserPassword.setText("");
         }
     }
 
@@ -1494,6 +1512,33 @@ public class DialogMapCacheBuilder extends SmDialog {
                 Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FromCacheConfigFileIsFailed"));
             }
         }
+    }
+
+    public boolean isIp(String ip) {// 判断是否是一个IP
+        boolean b = false;
+        ip = trimSpaces(ip);
+        if (ip.matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) {
+            String s[] = ip.split("\\.");
+            if (Integer.parseInt(s[0]) < 255)
+                if (Integer.parseInt(s[1]) < 255)
+                    if (Integer.parseInt(s[2]) < 255)
+                        if (Integer.parseInt(s[3]) < 255)
+                            b = true;
+        }
+        if (b){
+            connectMongoDBPretreatment();
+        }
+        return b;
+    }
+
+    public String trimSpaces(String ip) {// 去掉IP字符串前后所有的空格
+        while (ip.startsWith(" ")) {
+            ip = ip.substring(1, ip.length()).trim();
+        }
+        while (ip.endsWith(" ")) {
+            ip = ip.substring(0, ip.length() - 1).trim();
+        }
+        return ip;
     }
 
     private ActionListener runListener = new ActionListener() {
@@ -1929,14 +1974,31 @@ public class DialogMapCacheBuilder extends SmDialog {
             if (textFieldServerName.getText().equals(MapViewProperties.getString("MapCache_MongoDB_DefaultServerName"))) {
                 textFieldServerName.setText("");
             }
-            textFieldServerNameGetFocus = true;
-            isCanRun();
+            //textFieldServerNameGetFocus = true;
+            //isCanRun();
         }
 
         @Override
         public void focusLost(FocusEvent e) {
-            textFieldServerNameGetFocus = false;
+            //textFieldServerNameGetFocus = false;
             connectMongoDBPretreatment();
+            isCanRun();
+        }
+    };
+
+    private DocumentListener serverNameDocumentListener=new DocumentListener() {
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            isCanRun();
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            isCanRun();
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
             isCanRun();
         }
     };
@@ -1980,6 +2042,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.comboBoxPixel.addItemListener(this.comboboxImagePixelListener);
         this.comboBoxSaveType.addItemListener(this.saveTypeListener);
         this.textFieldServerName.addFocusListener(this.serverNameFocusListener);
+        this.textFieldServerName.getDocument().addDocumentListener(this.serverNameDocumentListener);
         this.panelCacheRange.addSelectObjectLitener(this.selectObjectListener);
         this.cacheRangeWaringTextFieldLeft.getTextField().addCaretListener(this.cacheRangeCareListener);
         this.cacheRangeWaringTextFieldTop.getTextField().addCaretListener(this.cacheRangeCareListener);
@@ -2019,6 +2082,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.comboBoxImageType.removeItemListener(this.comboboxImageTypeListener);
         this.comboBoxSaveType.removeItemListener(this.saveTypeListener);
         this.comboBoxPixel.removeItemListener(this.comboboxImagePixelListener);
+        this.textFieldServerName.getDocument().removeDocumentListener(this.serverNameDocumentListener);
         this.textFieldServerName.removeFocusListener(this.serverNameFocusListener);
         this.panelCacheRange.removeSelectObjectListener(this.selectObjectListener);
         this.cacheRangeWaringTextFieldLeft.getTextField().removeCaretListener(this.cacheRangeCareListener);

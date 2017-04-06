@@ -37,7 +37,5 @@ public interface IProcess {
 	void removeRunningListener(RunningListener listener);
 
 	IParameterPanel getComponent();
-
-	ProcessTask getProcessTask();
 }
 

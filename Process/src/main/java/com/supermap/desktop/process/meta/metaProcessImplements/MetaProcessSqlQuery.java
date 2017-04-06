@@ -62,7 +62,6 @@ public class MetaProcessSqlQuery extends MetaProcess {
 		initParameterConstraint();
 		parameters.setParameters(datasource, this.dataset, this.parameterResultFields,
 				this.parameterAttributeFilter, this.parameterSaveDataset);
-		processTask = new ProcessTask(this);
 	}
 
 	private void initParameterConstraint() {
@@ -114,6 +113,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 				}
 
 				fireRunning(new RunningEvent(this, 100, "finished"));
+				setFinished(true);
 				// 保存查询结果
 //				DatasetVector datasetVector = saveQueryResult(resultRecord);
 //				ProcessData processData = new ProcessData();

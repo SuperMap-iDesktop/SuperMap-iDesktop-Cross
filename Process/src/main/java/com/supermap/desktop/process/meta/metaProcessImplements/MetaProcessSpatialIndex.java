@@ -43,7 +43,6 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 		parameterComboBox = new ParameterComboBox(ControlsProperties.getString("String_LabelSpatialIndexType"));
 		parameterComboBox.setItems(parameterDataNodes);
 		parameters.setParameters(datasource, dataset, parameterComboBox);
-		processTask = new ProcessTask(this);
 	}
 
 	@Override
@@ -58,6 +57,7 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 		fireRunning(new RunningEvent(this, 0, "start build spatial index"));
 		dataset.buildSpatialIndex(spatialIndexType);
 		fireRunning(new RunningEvent(this, 100, "build spatial index finished"));
+		setFinished(true);
 //		ProcessData processData = new ProcessData();
 //		processData.setData(dataset);
 //		outPuts.add(0, processData);

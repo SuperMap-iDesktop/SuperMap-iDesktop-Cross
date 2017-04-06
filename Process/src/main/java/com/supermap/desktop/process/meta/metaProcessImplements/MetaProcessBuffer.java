@@ -69,12 +69,12 @@ public class MetaProcessBuffer extends MetaProcess {
         processTask = new ProcessTask(this);
     }
 
-	private void initParameterConstraint() {
-		DatasourceConstraint.getInstance().constrained(parameterSaveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
-	}
+    private void initParameterConstraint() {
+        DatasourceConstraint.getInstance().constrained(parameterSaveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
+    }
 
-	private void initParameters() {
-		String[] parameterDataNodes = new String[]{CommonProperties.getString("String_DistanceUnit_Kilometer"),
+    private void initParameters() {
+        String[] parameterDataNodes = new String[]{CommonProperties.getString("String_DistanceUnit_Kilometer"),
                 CommonProperties.getString("String_DistanceUnit_Meter"),
                 CommonProperties.getString("String_DistanceUnit_Decimeter"),
                 CommonProperties.getString("String_DistanceUnit_Centimeter"),
@@ -154,6 +154,7 @@ public class MetaProcessBuffer extends MetaProcess {
 //        processData.setData(result);
 //        outPuts.add(0, processData);
         fireRunning(new RunningEvent(this, 100, "finished"));
+        setFinished(true);
     }
 
     @Override
@@ -165,8 +166,8 @@ public class MetaProcessBuffer extends MetaProcess {
         new MetaProcessBuffer();
     }
 
-	@Override
-	public Icon getIcon() {
-		return getIconByPath("/processresources/Process/buffer.png");
-	}
+    @Override
+    public Icon getIcon() {
+        return getIconByPath("/processresources/Process/buffer.png");
+    }
 }

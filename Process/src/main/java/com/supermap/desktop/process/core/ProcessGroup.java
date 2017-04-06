@@ -165,10 +165,6 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 		return null;
 	}
 
-	@Override
-	public ProcessTask getProcessTask() {
-		return null;
-	}
 
 	//endregion
 }

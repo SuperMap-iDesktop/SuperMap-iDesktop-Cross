@@ -1,8 +1,14 @@
 package com.supermap.desktop.process.dataconversion;
 
-import com.supermap.data.conversion.ImportSetting;
+import com.supermap.data.Point3D;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 import com.supermap.desktop.utilities.FileUtilities;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2017/3/31.
@@ -37,4 +43,5 @@ public class ImportSettingCreator implements IImportSettingCreator {
         }
         return result;
     }
+
 }

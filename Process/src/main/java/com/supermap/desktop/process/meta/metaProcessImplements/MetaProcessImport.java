@@ -12,7 +12,6 @@ import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
@@ -74,7 +73,6 @@ public class MetaProcessImport extends MetaProcess {
                 checkBoxCreateFieldIndex,
                 checkBoxCreateSpaceIndex
         );
-        processTask = new ProcessTask(this);
     }
 
     @Override
@@ -122,6 +120,7 @@ public class MetaProcessImport extends MetaProcess {
 //        processData.setData(dataset);
 //        outPuts.add(0, processData);
         fireRunning(new RunningEvent(this, 100, "finished"));
+        setFinished(true);
     }
 
     @Override

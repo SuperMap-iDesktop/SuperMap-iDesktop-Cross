@@ -54,7 +54,6 @@ public class MetaProcessProjection extends MetaProcess {
 		parameterComboBox = new ParameterEnum(new EnumParser(GeoCoordSysType.class, parameterDataNodes, ch)).setDescribe(CoreProperties.getString("String_ProjectionInfo"));
 		parameterComboBox.setSelectedItem("GCS_WGS_1984");
 		parameters.setParameters(datasource, dataset, parameterComboBox);
-		processTask = new ProcessTask(this);
 	}
 
 	@Override
@@ -62,35 +61,36 @@ public class MetaProcessProjection extends MetaProcess {
 		return parameters.getPanel();
 	}
 
-	@Override
-	public void run() {
-		Dataset dataset = (Dataset) inputs.getData();
-		fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
-		GeoCoordSysType geoCoordSysType = (GeoCoordSysType) parameterComboBox.getSelectedItem();
-		GeoCoordSys geoCoordSys = new GeoCoordSys(geoCoordSysType, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
-		PrjCoordSys prjCoordSys = new PrjCoordSys(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE);
-		prjCoordSys.setGeoCoordSys(geoCoordSys);
-		dataset.setPrjCoordSys(prjCoordSys);
-		fireRunning(new RunningEvent(this, 100, "set geoCoorSys finished"));
+    @Override
+    public void run() {
+        Dataset dataset = (Dataset) inputs.getData();
+        fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
+        GeoCoordSysType geoCoordSysType = (GeoCoordSysType) parameterComboBox.getSelectedItem();
+        GeoCoordSys geoCoordSys = new GeoCoordSys(geoCoordSysType, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
+        PrjCoordSys prjCoordSys = new PrjCoordSys(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE);
+        prjCoordSys.setGeoCoordSys(geoCoordSys);
+        dataset.setPrjCoordSys(prjCoordSys);
+        fireRunning(new RunningEvent(this, 100, "set geoCoorSys finished"));
+        setFinished(true);
 //        ProcessData processData = new ProcessData();
 //        processData.setData(dataset);
 //        outPuts.add(0, processData);
-	}
+    }
 
-	@Override
-	public IParameters getParameters() {
-		return parameters;
-	}
+    @Override
+    public IParameters getParameters() {
+        return parameters;
+    }
 
-	@Override
-	public String getKey() {
-		return MetaKeys.PROJECTION;
-	}
+    @Override
+    public String getKey() {
+        return MetaKeys.PROJECTION;
+    }
 
-	@Override
-	public String getTitle() {
-		return "投影转换";
-	}
+    @Override
+    public String getTitle() {
+        return "投影转换";
+    }
 
 	@Override
 	public Icon getIcon() {

@@ -5,7 +5,6 @@ import com.supermap.desktop.process.core.AbstractProcess;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
-import com.supermap.desktop.process.tasks.ProcessTask;
 
 import javax.swing.*;
 
@@ -13,37 +12,42 @@ import javax.swing.*;
  * Created by highsad on 2017/1/5.
  */
 public abstract class MetaProcess extends AbstractProcess {
-	protected Outputs outputs;
-	protected Inputs inputs;
-	public ProcessTask processTask;
-	protected IParameters parameters;
+    protected Outputs outputs;
+    protected Inputs inputs;
+    protected IParameters parameters;
+    protected boolean finished = false;
 
-	public MetaProcess() {
-		this.outputs = new Outputs(this);
-		this.inputs = new Inputs(this);
-	}
 
-	@Override
-	public IParameters getParameters() {
-		return parameters;
-	}
+    public MetaProcess() {
+        this.outputs = new Outputs(this);
+        this.inputs = new Inputs(this);
+    }
 
-	@Override
-	public Inputs getInputs() {
-		return inputs;
-	}
+    @Override
+    public IParameters getParameters() {
+        return parameters;
+    }
 
-	@Override
-	public Outputs getOutputs() {
-		return this.outputs;
-	}
+    @Override
+    public Inputs getInputs() {
+        return inputs;
+    }
 
-	@Override
-	public ProcessTask getProcessTask() {
-		return processTask;
-	}
+    @Override
+    public Outputs getOutputs() {
+        return this.outputs;
+    }
 
-	protected Icon getIconByPath(String path) {
-		return new ImageIcon(ProcessResources.getResourceURL(path));
-	}
+
+    protected Icon getIconByPath(String path) {
+        return new ImageIcon(ProcessResources.getResourceURL(path));
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
+
+    public boolean isFinished() {
+        return finished;
+    }
 }
