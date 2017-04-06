@@ -64,7 +64,6 @@ public class MetaProcessSqlQuery extends MetaProcess {
 		initParameterConstraint();
 		parameters.setParameters(datasource, this.dataset, this.parameterResultFields,
 				this.parameterAttributeFilter, this.parameterSaveDataset);
-		processTask = new ProcessTask(this);
 	}
 
 	private void initParameterConstraint() {

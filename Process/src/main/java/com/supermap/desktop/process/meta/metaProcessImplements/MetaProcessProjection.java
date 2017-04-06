@@ -42,7 +42,6 @@ public class MetaProcessProjection extends MetaProcess {
         parameterComboBox = new ParameterEnum(new EnumParser(GeoCoordSysType.class, parameterDataNodes, ch)).setDescribe(CoreProperties.getString("String_ProjectionInfo"));
         parameterComboBox.setSelectedItem("GCS_WGS_1984");
         parameters.setParameters(parameterComboBox);
-        processTask = new ProcessTask(this);
     }
 
     @Override

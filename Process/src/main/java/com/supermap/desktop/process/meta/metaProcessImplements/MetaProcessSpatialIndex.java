@@ -36,7 +36,6 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 		parameterComboBox = new ParameterComboBox(ControlsProperties.getString("String_LabelSpatialIndexType"));
 		parameterComboBox.setItems(parameterDataNodes);
 		parameters.setParameters(parameterComboBox);
-		processTask = new ProcessTask(this);
 	}
 
 	@Override

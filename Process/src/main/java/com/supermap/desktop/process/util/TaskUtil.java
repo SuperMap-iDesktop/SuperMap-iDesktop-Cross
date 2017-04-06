@@ -6,6 +6,7 @@ import com.supermap.desktop.process.ParameterManager;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.NodeException;
 import com.supermap.desktop.process.core.NodeMatrix;
+import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.tasks.TasksManagerContainer;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -94,14 +95,14 @@ public class TaskUtil {
                         int preNodesSize = preNodes.size();
                         if (preNodesSize > 0) {
                             for (int j = 0; j < preNodesSize; j++) {
-                                if (!((IProcess) preNodes.get(j)).getProcessTask().isFinished()) {
+                                if (new ProcessTask((IProcess) preNodes.get(j)).isFinished()) {
                                     allPreTasksFinished = false;
                                     break;
                                 }
                             }
                         }
                         if (allPreTasksFinished || preNodes.size() == 0) {
-                            nowProcess.getProcessTask().doWork();
+                            new ProcessTask(nowProcess).doWork();
                         }
                         lock.unlock();
                     }

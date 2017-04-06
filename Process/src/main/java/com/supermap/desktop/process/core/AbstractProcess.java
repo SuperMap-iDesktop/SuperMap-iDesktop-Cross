@@ -34,8 +34,6 @@ public abstract class AbstractProcess implements IProcess {
 		return this.inputs;
 	}
 
-	@Override
-	public abstract ProcessTask getProcessTask();
 
 	@Override
 	public Outputs getOutputs() {

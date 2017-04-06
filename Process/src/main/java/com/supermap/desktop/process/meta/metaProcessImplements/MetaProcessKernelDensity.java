@@ -60,7 +60,6 @@ public class MetaProcessKernelDensity extends MetaProcess {
                 parameterResolution,
                 parameterRadius
         );
-        processTask = new ProcessTask(this);
     }
 
     @Override
@@ -75,13 +74,13 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
     @Override
     public void run() {
-	    String username = "admin";
-	    String password = "map123!@#";
-	    IServerService service = new IServerServiceImpl();
-	    IServerLoginInfo.ipAddr = "192.168.20.189";
-	    IServerLoginInfo.port = "8090";
-	    CloseableHttpClient client = service.login(username, password);
-	    if (null!=client) {
+        String username = "admin";
+        String password = "map123!@#";
+        IServerService service = new IServerServiceImpl();
+        IServerLoginInfo.ipAddr = "192.168.20.189";
+        IServerLoginInfo.port = "8090";
+        CloseableHttpClient client = service.login(username, password);
+        if (null != client) {
             IServerLoginInfo.client = client;
             fireRunning(new RunningEvent(this, 0, "start"));
             //核密度分析功能实现
@@ -96,7 +95,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
             JobResultResponse response = service.query(kenelDensityJobSetting);
             if (null != response) {
                 CursorUtilities.setDefaultCursor();
-                NewMessageBus messageBus = new NewMessageBus(response, processTask);
+                NewMessageBus messageBus = new NewMessageBus(response, new ProcessTask(this));
                 messageBus.run();
             }
 //            ProcessData processData = new ProcessData();
@@ -111,8 +110,8 @@ public class MetaProcessKernelDensity extends MetaProcess {
         return MetaKeys.KERNEL_DENSITY;
     }
 
-	@Override
-	public Icon getIcon() {
-		return getIconByPath("/processresources/Process/KernelDensity.png");
-	}
+    @Override
+    public Icon getIcon() {
+        return getIconByPath("/processresources/Process/KernelDensity.png");
+    }
 }
