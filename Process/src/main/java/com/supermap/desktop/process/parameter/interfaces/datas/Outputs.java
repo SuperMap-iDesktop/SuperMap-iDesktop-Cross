@@ -1,7 +1,6 @@
 package com.supermap.desktop.process.parameter.interfaces.datas;
 
 import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class Outputs {
 		return this.datas.get(name);
 	}
 
-	public void add(OutputData data) {
+	public void addData(OutputData data) {
 		if (data == null) {
 			return;
 		}
@@ -38,6 +37,14 @@ public class Outputs {
 		if (!this.datas.containsKey(data.getName())) {
 			this.datas.put(data.getName(), data);
 		}
+	}
+
+	public void addData(String name, int type) {
+		if (StringUtilities.isNullOrEmpty(name)) {
+			return;
+		}
+
+		addData(new OutputData(name, type));
 	}
 
 	public OutputData[] getDatas() {
@@ -49,30 +56,22 @@ public class Outputs {
 		return result.toArray(new OutputData[this.datas.size()]);
 	}
 
-	public OutputData[] getDatas(DataType type) {
-		if (type == null) {
-			return null;
-		}
-
+	public OutputData[] getDatas(int type) {
 		ArrayList<OutputData> result = new ArrayList<>();
 		for (String name : this.datas.keySet()) {
 			OutputData data = this.datas.get(name);
-			if (data.getType().equals(type)) {
+			if (data.getType() == type) {
 				result.add(data);
 			}
 		}
 		return result.toArray(new OutputData[result.size()]);
 	}
 
-	public boolean isContains(DataType type) {
-		if (type == null) {
-			return false;
-		}
-
+	public boolean isContains(int type) {
 		boolean result = false;
 		for (String name : this.datas.keySet()) {
 			OutputData data = this.datas.get(name);
-			if (data.getType().equals(type)) {
+			if (data.getType() == type) {
 				result = true;
 				break;
 			}

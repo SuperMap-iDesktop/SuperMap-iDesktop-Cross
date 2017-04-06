@@ -1,14 +1,13 @@
 package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.graphics.CanvasCursor;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.connection.DefaultLine;
-import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
-import com.supermap.desktop.process.graphics.graphs.DataGraph;
-import com.supermap.desktop.process.graphics.graphs.IGraph;
-import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
+import com.supermap.desktop.process.graphics.graphs.*;
+import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +19,7 @@ import java.awt.event.MouseEvent;
 public class GraphConnector extends CanvasEventAdapter {
 	private GraphCanvas canvas;
 	private DefaultLine previewLine;
-	private DataGraph startGraph = null;
+	private OutputGraph startGraph = null;
 	private IGraph endGraph = null;
 
 	public GraphConnector(GraphCanvas canvas) {
@@ -47,7 +46,7 @@ public class GraphConnector extends CanvasEventAdapter {
 			IGraph hit = this.canvas.findGraph(e.getPoint());
 
 			if (isStartValid(hit)) {
-				this.startGraph = (DataGraph) hit;
+				this.startGraph = (OutputGraph) hit;
 				this.previewLine.setStartPoint(hit.getCenter());
 			} else {
 				this.startGraph = null;
@@ -145,6 +144,16 @@ public class GraphConnector extends CanvasEventAdapter {
 			return false;
 		}
 
+		ProcessGraph processGraph = (ProcessGraph) graph;
+		IProcess process = processGraph.getProcess();
+		if (process == null || process.getInputs() == null || process.getInputs().getCount() == 0) {
+			return false;
+		}
+
+		Inputs inputs = process.getInputs();
+		if (inputs.getDatas(this.startGraph.getProcessData().getType()).length > 0) {
+			ret = true;
+		}
 		return ret;
 	}
 
