@@ -1,7 +1,6 @@
 package com.supermap.desktop.process.parameter.interfaces.datas;
 
 import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.util.ArrayList;
@@ -34,7 +33,6 @@ public class Inputs {
 		return this.datas.get(name);
 	}
 
-
 	public void add(InputData data) {
 		if (data == null) {
 			return;
@@ -45,7 +43,7 @@ public class Inputs {
 		}
 	}
 
-	public void addData(String name, DataType type) {
+	public void addData(String name, int type) {
 		if (StringUtilities.isNullOrEmpty(name)) {
 			return;
 		}
@@ -72,30 +70,22 @@ public class Inputs {
 		return result.toArray(new InputData[this.datas.size()]);
 	}
 
-	public InputData[] getDatas(DataType type) {
-		if (type == null) {
-			return null;
-		}
-
+	public InputData[] getDatas(int type) {
 		ArrayList<InputData> result = new ArrayList<>();
 		for (String name : this.datas.keySet()) {
 			InputData data = this.datas.get(name);
-			if (data.getType().equals(type)) {
+			if (data.getType() == type) {
 				result.add(data);
 			}
 		}
 		return result.toArray(new InputData[result.size()]);
 	}
 
-	public boolean isContains(DataType type) {
-		if (type == null) {
-			return false;
-		}
-
+	public boolean isContains(int type) {
 		boolean result = false;
 		for (String name : this.datas.keySet()) {
 			InputData data = this.datas.get(name);
-			if (data.getType().equals(type)) {
+			if (data.getType() == type) {
 				result = true;
 				break;
 			}
@@ -105,5 +95,17 @@ public class Inputs {
 
 	public int getCount() {
 		return this.datas.size();
+	}
+
+	public void bind(String name, IValueProvider valueProvider) {
+		if (this.datas.containsKey(name)) {
+			this.datas.get(name).bind(valueProvider);
+		}
+	}
+
+	public void unbind(String name) {
+		if (this.datas.containsKey(name)) {
+			this.datas.get(name).unbind();
+		}
 	}
 }
