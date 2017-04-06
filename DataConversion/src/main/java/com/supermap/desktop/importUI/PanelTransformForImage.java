@@ -462,8 +462,8 @@ public class PanelTransformForImage extends PanelTransform {
             JPanel panelPrjFile = new JPanel();
             panelPrjFile.setLayout(new GridBagLayout());
             this.setLayout(new GridBagLayout());
-            panelPrjFile.add(this.labelPrjFile, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-            panelPrjFile.add(this.chooserControlPrjFile, new GridBagConstraintsHelper(2, 0, 6, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
+            panelPrjFile.add(this.labelPrjFile, new GridBagConstraintsHelper(0, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+            panelPrjFile.add(this.chooserControlPrjFile, new GridBagConstraintsHelper(2, 0, 6, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
 
             this.add(panelBandModel, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
             this.add(panelPrjFile, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 0));
