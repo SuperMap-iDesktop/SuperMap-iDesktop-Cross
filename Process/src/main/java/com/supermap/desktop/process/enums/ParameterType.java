@@ -29,4 +29,6 @@ public class ParameterType {
 	public static final String SINGLE_DATASET = "SINGLE_DATASET";
 	public static final String TEXT_AREA = "TEXT_AREA";
 	public static final String FIELD_COMBO_BOX = "FIELD_COMBO_BOX";
+	public static final String FIELD_SET_DIALOG = "FIELD_SET_DIALOG";
+	public static final String LABEL = "LABEL";
 }

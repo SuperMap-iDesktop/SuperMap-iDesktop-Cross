@@ -56,9 +56,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 			this.dataset.setSelectedItem(Application.getActiveApplication().getActiveDatasets()[0]);
 		}
 		parameterResultFields = new ParameterTextArea(CommonProperties.getString("String_QueryField"));
-		parameterResultFields.setSelectedItem("RoadLine.*");
 		parameterAttributeFilter = new ParameterTextArea(CommonProperties.getString("String_QueryCondition"));
-		parameterAttributeFilter.setSelectedItem("RoadLine.RoadLeve = 'Lev1'");
 		parameterSaveDataset = new ParameterSaveDataset();
 		parameterSaveDataset.setDatasetName("QueryResult");
 		initParameterConstraint();
@@ -69,14 +67,12 @@ public class MetaProcessSqlQuery extends MetaProcess {
 
 	private void initParameterConstraint() {
 		DatasourceConstraint.getInstance().constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		DatasourceConstraint.getInstance().constrained(dataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(parameterSaveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
-
-
 	}
 
 	@Override

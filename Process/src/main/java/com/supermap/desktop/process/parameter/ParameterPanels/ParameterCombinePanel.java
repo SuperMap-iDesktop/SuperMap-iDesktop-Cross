@@ -25,6 +25,7 @@ public class ParameterCombinePanel extends SwingPanel implements ParameterCombin
 		super(parameterCombine);
 		this.parameterCombine = ((ParameterCombine) parameterCombine);
 		((ParameterCombine) parameterCombine).addParameterCombineBuildPanelListeners(this);
+		buildPanel();
 	}
 
 	private void buildPanel() {

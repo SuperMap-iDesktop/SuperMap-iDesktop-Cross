@@ -35,8 +35,11 @@ public class SmFieldsChooseTable extends JTable {
     }
 
     private Object[][] getData(DatasetVector datasetVector){
-        int count = 0;
-        for (int i = 0; i < datasetVector.getFieldInfos().getCount(); i++) {
+	    if (datasetVector == null) {
+		    return new Object[0][0];
+	    }
+	    int count = 0;
+	    for (int i = 0; i < datasetVector.getFieldInfos().getCount(); i++) {
             if (!datasetVector.getFieldInfos().get(i).isSystemField()) {
                 count++;
             }
