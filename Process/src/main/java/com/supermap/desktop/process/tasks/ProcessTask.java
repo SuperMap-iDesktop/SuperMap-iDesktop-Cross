@@ -59,13 +59,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     private RunningListener runningListener = new RunningListener() {
         @Override
         public void running(RunningEvent e) {
-            if (e.getProgress() >= 100) {
-                updateProgress(100, String.valueOf(e.getRemainTime()), MessageFormat.format(ControlsProperties.getString("String_MissionFinished"), labelTitle.getText()));
-                buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_finish_now.png"));
-                buttonRun.removeActionListener(cancelListener);
-            } else {
-                updateProgress(e.getProgress(), String.valueOf(e.getRemainTime()), e.getMessage());
-            }
+            updateProgress(e.getProgress(), String.valueOf(e.getRemainTime()), e.getMessage());
         }
     };
     private ActionListener removeListener = new ActionListener() {
@@ -212,6 +206,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         });
     }
 
+
     public String getRemainTime() {
         return this.remainTime;
     }
@@ -242,18 +237,28 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         setStop(isCancel);
     }
 
+
     public void setStop(boolean isStop) {
         this.isStop = isStop;
 
         if (this.isStop) {
-            buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_stop_now.png"));
-            buttonRun.setToolTipText(CommonProperties.getString(CommonProperties.Pause));
-            progressBar.setForegroundColor(CACEL_FOREGROUNDCOLOR);
-
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_stop_now.png"));
+                    buttonRun.setToolTipText(CommonProperties.getString(CommonProperties.Pause));
+                    progressBar.setForegroundColor(CACEL_FOREGROUNDCOLOR);
+                }
+            });
         } else {
-            buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_run_now.png"));
-            buttonRun.setToolTipText(CommonProperties.getString(CommonProperties.Run));
-            progressBar.setForegroundColor(DEFAULT_FOREGROUNDCOLOR);
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_run_now.png"));
+                    buttonRun.setToolTipText(CommonProperties.getString(CommonProperties.Run));
+                    progressBar.setForegroundColor(DEFAULT_FOREGROUNDCOLOR);
+                }
+            });
             doWork();
         }
     }
@@ -264,9 +269,24 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 
     @Override
     public void updateProgress(final int percent, final String remainTime, final String message) throws CancellationException {
-        progressBar.setProgress(percent);
-        labelRemaintime.setText(MessageFormat.format(ControlsProperties.getString("String_RemainTime"), remainTime));
-        labelMessage.setText(message);
+        this.percent = percent;
+        this.remainTime = remainTime;
+        this.message = message;
+
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setProgress(percent);
+                labelRemaintime.setText(MessageFormat.format(ControlsProperties.getString("String_RemainTime"), remainTime));
+                if (percent >= 100) {
+                    labelMessage.setText(MessageFormat.format(ControlsProperties.getString("String_MissionFinished"), labelTitle.getText()));
+                    buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_finish_now.png"));
+                    buttonRun.removeActionListener(cancelListener);
+                } else {
+                    labelMessage.setText(message);
+                }
+            }
+        });
     }
 
     @Override

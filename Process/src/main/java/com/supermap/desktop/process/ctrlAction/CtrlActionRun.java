@@ -7,6 +7,7 @@ import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.core.WorkflowParser;
 import com.supermap.desktop.process.tasks.ProcessTask;
+import com.supermap.desktop.process.tasks.TaskStore;
 import com.supermap.desktop.process.tasks.TasksManagerContainer;
 import com.supermap.desktop.process.util.TaskUtil;
 
@@ -51,10 +52,12 @@ public class CtrlActionRun extends CtrlAction {
 //            tasksDock.setVisible(true);
 
         container.clear();
-	    CopyOnWriteArrayList list = nodeMatrix.getAllNodes();
-	    for (int i = 0; i < list.size(); i++) {
+        CopyOnWriteArrayList list = nodeMatrix.getAllNodes();
+        for (int i = 0; i < list.size(); i++) {
             if (list.get(i) instanceof IProcess) {
-                container.addItem(new ProcessTask((IProcess) list.get(i)));
+                ProcessTask task = new ProcessTask((IProcess) list.get(i));
+                TaskStore.addTask(task);
+                container.addItem(task);
             }
         }
 //

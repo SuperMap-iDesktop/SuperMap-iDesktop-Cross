@@ -79,7 +79,9 @@ public class ImportParameterCreator implements IParameterCreator {
             setImportingBlockAsPoint.methodName = "setImportingBlockAsPoint";
 
             if (importSetting instanceof ImportSettingDXF) {
-                setCurveSegment.parameter = new ParameterTextField(String.valueOf(((ImportSettingDXF) importSetting).getCurveSegment()));
+                ParameterTextField parameterTextField = new ParameterTextField(CommonProperties.getString("String_CurveSegment"));
+                parameterTextField.setSelectedItem(String.valueOf(((ImportSettingDXF) importSetting).getCurveSegment()));
+                setCurveSegment.parameter = parameterTextField;
 
                 ParameterCheckBox parameterImportExternalData = new ParameterCheckBox(CommonProperties.getString("string_ImportExtendsData"));
                 parameterImportExternalData.setSelectedItem(((ImportSettingDXF) importSetting).isImportingExternalData() ? "true" : "false");

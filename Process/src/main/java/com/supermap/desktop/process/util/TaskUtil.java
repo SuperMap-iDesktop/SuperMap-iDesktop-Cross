@@ -8,6 +8,7 @@ import com.supermap.desktop.process.core.NodeException;
 import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.tasks.ProcessTask;
+import com.supermap.desktop.process.tasks.TaskStore;
 import com.supermap.desktop.process.tasks.TasksManagerContainer;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -103,7 +104,7 @@ public class TaskUtil {
                             }
                         }
                         if (allPreTasksFinished || preNodes.size() == 0) {
-                            new ProcessTask(nowProcess).doWork();
+                            TaskStore.getTask(nowProcess).doWork();
                         }
                         lock.unlock();
                     }
