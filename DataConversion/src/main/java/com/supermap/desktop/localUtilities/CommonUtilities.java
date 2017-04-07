@@ -1,11 +1,16 @@
 package com.supermap.desktop.localUtilities;
 
+import com.supermap.data.DatasetVector;
 import com.supermap.data.conversion.FileType;
+import com.supermap.desktop.UserDefineType.GPXAnalytic;
+import com.supermap.desktop.UserDefineType.UserDefineFileType;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
+import com.supermap.desktop.geometry.Abstract.IFlatFeature;
 import com.supermap.desktop.iml.ExportFileInfo;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -91,6 +96,10 @@ public class CommonUtilities {
      */
     public static String getDatasetName(String fileType) {
         String resultFileType = "";
+        if ("gpx".equals(fileType)){
+            //GPX type reflect GPS
+            fileType = "GPS";
+        }
         String tempFileType = "String_FileType" + fileType;
         if (tempFileType.contains(resultFileType)) {
             boolean isVisibleName = true;
@@ -117,12 +126,26 @@ public class CommonUtilities {
         ArrayList<String> sameFileType = new ArrayList();
         if (!exportFileInfos.isEmpty()) {
             ExportFileInfo tempExportFileInfo = exportFileInfos.get(0);
+            boolean isGPX = false;
+            if (tempExportFileInfo.getExportSetting().getSourceData() instanceof DatasetVector){
+                isGPX = GPXAnalytic.isGPXType((DatasetVector) tempExportFileInfo.getExportSetting().getSourceData());
+            }
+            if (isGPX){
+                sameFileType.add(UserDefineFileType.GPX.toString());
+            }
             FileType[] fileTypes = tempExportFileInfo.getExportSetting().getSupportedFileType();
             for (int i = 0; i < fileTypes.length; i++) {
                 sameFileType.add(fileTypes[i].name());
             }
             for (int i = 0; i < exportFileInfos.size(); i++) {
                 ArrayList<String> tempFileTypes = new ArrayList<String>();
+                boolean hasGPS = false;
+                if (exportFileInfos.get(i).getExportSetting().getSourceData() instanceof DatasetVector){
+                    hasGPS = GPXAnalytic.isGPXType((DatasetVector)exportFileInfos.get(i).getExportSetting().getSourceData());
+                }
+                if (hasGPS){
+                    tempFileTypes.add(UserDefineFileType.GPX.toString());
+                }
                 FileType[] compare = exportFileInfos.get(i).getExportSetting().getSupportedFileType();
                 for (int j = 0; j < compare.length; j++) {
                     tempFileTypes.add(compare[j].name());

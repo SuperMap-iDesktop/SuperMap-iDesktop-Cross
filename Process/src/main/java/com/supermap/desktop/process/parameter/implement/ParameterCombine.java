@@ -49,8 +49,9 @@ public class ParameterCombine extends AbstractParameter {
 		firePanelRebuildListener();
 	}
 
-	public void setWeightIndex(int weightIndex) {
+	public ParameterCombine setWeightIndex(int weightIndex) {
 		this.weightIndex = weightIndex;
+		return this;
 	}
 
 	@Override

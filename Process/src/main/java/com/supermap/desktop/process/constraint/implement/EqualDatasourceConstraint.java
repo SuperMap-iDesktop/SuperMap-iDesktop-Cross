@@ -20,7 +20,7 @@ public class EqualDatasourceConstraint extends DefaultConstraint {
 	}
 
 	@Override
-	public void constrainedHook(final IParameter parameter, final String name) {
+	protected void constrainedHook(final IParameter parameter, final String name) {
 		parameter.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {

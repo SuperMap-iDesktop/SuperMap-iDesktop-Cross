@@ -34,8 +34,14 @@ public class ParameterCombinePanel extends SwingPanel implements ParameterCombin
 			panel.removeAll();
 		} else {
 			panel = new JPanel();
-			panel.setLayout(new GridBagLayout());
 		}
+		panel.setLayout(new GridBagLayout());
+		int defaultInset = 0;
+		if (!StringUtilities.isNullOrEmpty(parameterCombine.getDescribe())) {
+			panel.setBorder(new TitledBorder(parameterCombine.getDescribe()));
+			defaultInset = 10;
+		}
+
 		ArrayList<IParameter> parameterList = parameterCombine.getParameterList();
 		if (parameterList.size() <= 0) {
 			return;
@@ -45,16 +51,14 @@ public class ParameterCombinePanel extends SwingPanel implements ParameterCombin
 		for (IParameter parameter : parameterList) {
 			int weightX = combineType.equals(ParameterCombine.VERTICAL) ? 1 : (weightIndex == -1 || weightIndex == x ? 1 : 0);
 			int weightY = combineType.equals(ParameterCombine.HORIZONTAL) ? 1 : (weightIndex == -1 || weightIndex == y ? 1 : 0);
-			panel.add(((JPanel) parameter.getParameterPanel().getPanel()), new GridBagConstraintsHelper(x, y, 1, 1).setWeight(weightX, weightY).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setInsets(y > 0 ? 5 : 0, x > 0 ? 5 : 0, 0, 0));
+			panel.add(((JPanel) parameter.getParameterPanel().getPanel()), new GridBagConstraintsHelper(x, y, 1, 1).setWeight(weightX, weightY).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setInsets(y > 0 ? 5 : defaultInset, x > 0 ? 5 : defaultInset, 0, 0));
 			if (combineType.equals(ParameterCombine.VERTICAL)) {
 				y++;
 			} else {
 				x++;
 			}
 		}
-		if (!StringUtilities.isNullOrEmpty(parameterCombine.getDescribe())) {
-			panel.setBorder(new TitledBorder(parameterCombine.getDescribe()));
-		}
+
 	}
 
 	@Override

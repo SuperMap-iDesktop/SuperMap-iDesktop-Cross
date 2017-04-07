@@ -107,10 +107,10 @@ public class MetaProcessBuffer extends MetaProcess {
 		return parameters.getPanel();
 	}
 
-	@Override
-	public String getTitle() {
-		return "缓冲区分析";
-	}
+    @Override
+    public String getTitle() {
+	    return ProcessProperties.getString("String_BufferAnalyse");
+    }
 
 	@Override
 	public void run() {
