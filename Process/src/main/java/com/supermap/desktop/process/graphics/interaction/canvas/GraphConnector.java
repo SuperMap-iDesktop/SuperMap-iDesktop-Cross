@@ -10,10 +10,15 @@ import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
+import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 
 import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
 /**
@@ -23,10 +28,28 @@ public class GraphConnector extends CanvasEventAdapter {
 	private GraphCanvas canvas;
 	private DefaultLine previewLine;
 	private OutputGraph startGraph = null;
-	private IGraph endGraph = null;
+	private ProcessGraph endGraph = null;
+	private JPopupMenu inputsMenu = new JPopupMenu();
+
 
 	public GraphConnector(GraphCanvas canvas) {
 		this.canvas = canvas;
+		this.inputsMenu.addPopupMenuListener(new PopupMenuListener() {
+			@Override
+			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+
+			}
+
+			@Override
+			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+				inputsMenu.removeAll();
+			}
+
+			@Override
+			public void popupMenuCanceled(PopupMenuEvent e) {
+
+			}
+		});
 	}
 
 	public void connecting() {
@@ -62,7 +85,27 @@ public class GraphConnector extends CanvasEventAdapter {
 		try {
 			if (SwingUtilities.isLeftMouseButton(e)) {
 				if (this.startGraph != null && this.endGraph != null) {
-					this.canvas.getConnection().connect(this.startGraph, this.endGraph);
+					int type = this.startGraph.getProcessData().getType();
+					final OutputGraph start = this.startGraph;
+					final IGraph end = this.endGraph;
+					final Inputs inputs = this.endGraph.getProcess().getInputs();
+					InputData[] datas = inputs.getDatas(type);
+
+					for (int i = 0; i < datas.length; i++) {
+						final JMenuItem item = new JMenuItem(datas[i].getName());
+						this.inputsMenu.add(item);
+						item.setEnabled(!datas[i].isBinded());
+
+						item.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								inputs.bind(item.getText(), start.getProcessData());
+								canvas.getConnection().connect(start, end, item.getText());
+								inputsMenu.setVisible(false);
+							}
+						});
+					}
+					this.inputsMenu.show(this.canvas, e.getX(), e.getY());
 				}
 			}
 		} catch (Exception ex) {
@@ -111,7 +154,7 @@ public class GraphConnector extends CanvasEventAdapter {
 				this.previewLine.setEndPoint(this.canvas.getCoordinateTransform().inverse(e.getPoint()));
 			} else {
 				if (isEndValid(hit)) {
-					this.endGraph = hit;
+					this.endGraph = (ProcessGraph) hit;
 					this.previewLine.setStatus(DefaultLine.PREPARING);
 					this.previewLine.setEndPoint(GraphicsUtil.chop(((AbstractGraph) this.endGraph).getShape(), this.startGraph.getCenter()));
 				} else {

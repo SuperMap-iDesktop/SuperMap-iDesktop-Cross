@@ -2,13 +2,7 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.analyst.spatialanalyst.OverlayAnalyst;
 import com.supermap.analyst.spatialanalyst.OverlayAnalystParameter;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.Datasource;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
@@ -18,14 +12,7 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
-import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameter.implement.ParameterFieldSetDialog;
-import com.supermap.desktop.process.parameter.implement.ParameterLabel;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
 import com.supermap.desktop.properties.CommonProperties;
@@ -40,8 +27,9 @@ import java.text.MessageFormat;
  * 叠加分析
  */
 public class MetaProcessOverlayAnalyst extends MetaProcess {
-	private final static String INPUT_SOURCE_DATASET = "SourceDataset";
-	private final static String OUTPUT_DATASET = "OverlayAnalyst";
+	private final static String INPUT_DATA = "InputData";
+	private final static String OVERLAY_DATA = "OverlayData";
+	private final static String OUTPUT_DATA = "OverlayResult";
 
 	private OverlayAnalystType analystType;
 	private ParameterDatasource parameterSourceDatasource = new ParameterDatasource();
@@ -71,8 +59,9 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	}
 
 	private void initParameters() {
-		this.inputs.addData(INPUT_SOURCE_DATASET, DataType.DATASET_POINT | DataType.DATASET_LINE | DataType.DATASET_REGION);
-		this.outputs.addData(OUTPUT_DATASET, DataType.DATASET_POINT | DataType.DATASET_LINE | DataType.DATASET_REGION);
+		this.inputs.addData(INPUT_DATA, DataType.DATASET_VECTOR);
+		this.inputs.addData(OVERLAY_DATA, DataType.DATASET_VECTOR);
+		this.outputs.addData(OUTPUT_DATA, DataType.DATASET_VECTOR);
 		parameterSourceDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
 		parameterOverlayDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
 		parameterResultDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
@@ -176,15 +165,21 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	public void run() {
 		fireRunning(new RunningEvent(this, 0, "start"));
 		ParameterOverlayAnalystInfo info = new ParameterOverlayAnalystInfo();
-		if (inputs.getData(INPUT_SOURCE_DATASET) != null && inputs.getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
-			info.sourceDatatsource = ((DatasetVector) inputs.getData(INPUT_SOURCE_DATASET).getValue()).getDatasource();
-			info.sourceDataset = ((DatasetVector) inputs.getData(INPUT_SOURCE_DATASET).getValue());
+		if (inputs.getData(INPUT_DATA) != null && inputs.getData(INPUT_DATA).getValue() instanceof DatasetVector) {
+			info.sourceDataset = (DatasetVector) inputs.getData(INPUT_DATA).getValue();
+			info.sourceDatatsource = info.sourceDataset.getDatasource();
 		} else {
 			info.sourceDatatsource = (Datasource) parameterSourceDatasource.getSelectedItem();
 			info.sourceDataset = (DatasetVector) parameterSourceDataset.getSelectedItem();
 		}
-		info.overlayAnalystDatasource = (Datasource) parameterOverlayDatasource.getSelectedItem();
-		info.overlayAnalystDataset = (DatasetVector) parameterOverlayDataset.getSelectedItem();
+
+		if (inputs.getData(OVERLAY_DATA) != null && inputs.getData(OVERLAY_DATA).getValue() instanceof DatasetVector) {
+			info.overlayAnalystDataset = (DatasetVector) inputs.getData(OVERLAY_DATA).getValue();
+			info.overlayAnalystDatasource = info.overlayAnalystDataset.getDatasource();
+		} else {
+			info.overlayAnalystDatasource = (Datasource) parameterOverlayDatasource.getSelectedItem();
+			info.overlayAnalystDataset = (DatasetVector) parameterOverlayDataset.getSelectedItem();
+		}
 		info.targetDatasource = (Datasource) parameterResultDatasource.getSelectedItem();
 		info.targetDataset = (String) parameterSaveDataset.getSelectedItem();
 		OverlayAnalystParameter overlayAnalystParameter = new OverlayAnalystParameter();
@@ -238,12 +233,9 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 				break;
 		}
 		OverlayAnalyst.removeSteppedListener(this.steppedListener);
-		outputs.getData(OUTPUT_DATASET).setValue(targetDataset);
 		fireRunning(new RunningEvent(this, 100, "finished"));
 		setFinished(true);
-//		ProcessData processData = new ProcessData();
-//		processData.setData(info.sourceDataset);
-//		outPuts.add(0, processData);
+		this.outputs.getData(OUTPUT_DATA).setValue(targetDataset);
 	}
 
 	@Override

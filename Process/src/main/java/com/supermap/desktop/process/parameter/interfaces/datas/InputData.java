@@ -19,6 +19,14 @@ public class InputData implements IDataDescription, IValueProvider {
 		this.dataType = dataType;
 	}
 
+	public boolean isBinded() {
+		return this.valueProvider != null;
+	}
+
+	public boolean isBind(IValueProvider valueProvider) {
+		return this.valueProvider == valueProvider;
+	}
+
 	public void bind(IValueProvider valueProvider) {
 		if (valueProvider != null && this.valueProvider != valueProvider) {
 			this.valueProvider = valueProvider;
