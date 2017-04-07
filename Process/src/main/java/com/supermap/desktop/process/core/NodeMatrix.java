@@ -242,8 +242,8 @@ public class NodeMatrix {
         return true;
     }
 
-    public synchronized CopyOnWriteArrayList listAllNodes() {
-        return this.nodeList;
+	public synchronized CopyOnWriteArrayList getAllNodes() {
+		return this.nodeList;
     }
 
     /**

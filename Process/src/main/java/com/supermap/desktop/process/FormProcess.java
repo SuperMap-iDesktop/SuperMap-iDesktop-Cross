@@ -1,36 +1,103 @@
 package com.supermap.desktop.process;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.Interface.IFormProcess;
+import com.supermap.desktop.Interface.IWorkFlow;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.*;
+import com.supermap.desktop.event.FormActivatedListener;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosedListener;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormClosingListener;
+import com.supermap.desktop.event.FormDeactivatedListener;
+import com.supermap.desktop.event.FormShownEvent;
+import com.supermap.desktop.event.FormShownListener;
+import com.supermap.desktop.process.core.DirectConnect;
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.NodeException;
+import com.supermap.desktop.process.core.NodeMatrix;
+import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
+import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
+import com.supermap.desktop.process.graphics.storage.IGraphConnection;
+import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 import com.supermap.desktop.ui.FormBaseChild;
+import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.Dockbar;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by highsad on 2017/1/6.
  */
-public class FormProcess extends FormBaseChild implements IForm {
+public class FormProcess extends FormBaseChild implements IFormProcess {
 	private ScrollGraphCanvas graphCanvas = new ScrollGraphCanvas();
-
+	private String title;
+	public boolean isNeedSave = true;
 
 	public FormProcess() {
-		super("", null, null);
+		this(ControlsProperties.getString("String_WorkFlows"));
+	}
+
+
+	public FormProcess(String name) {
+		super(name, null, null);
+		if (StringUtilities.isNullOrEmpty(name)) {
+			name = ControlsProperties.getString("String_WorkFlows");
+		}
+		this.title = name;
+		init();
+	}
+
+	public FormProcess(IWorkFlow workflow) {
+		super(workflow.getName(), null, null);
+		init();
+		this.setText(workflow.getName());
+		initFormWorkFlow(workflow);
+	}
+
+	protected void initFormWorkFlow(IWorkFlow workflow) {
+		if (workflow instanceof Workflow) {
+			NodeMatrix matrix = ((Workflow) workflow).getMatrix();
+			CopyOnWriteArrayList allStartNodes = matrix.getAllNodes();
+			for (Object node : allStartNodes) {
+				IGraph graph = (IGraph) node;
+				graphCanvas.getCanvas().addGraph(graph);
+			}
+			IGraphConnection connection = graphCanvas.getCanvas().getConnection();
+			for (Object node : allStartNodes) {
+				IGraph graph = (IGraph) node;
+				try {
+					CopyOnWriteArrayList nextNodes = matrix.getNextNodes(graph);
+					if (nextNodes != null) {
+						for (Object nextNode : nextNodes) {
+							connection.connect(graph, (IGraph) nextNode);
+						}
+					}
+				} catch (NodeException e) {
+					// ignore
+				}
+			}
+		}
+	}
+
+	private void init() {
 		setLayout(new BorderLayout());
 		add(graphCanvas, BorderLayout.CENTER);
 		graphCanvas.getCanvas().getSelection().addGraphSelectChangedListener(new GraphSelectChangedListener() {
@@ -101,12 +168,12 @@ public class FormProcess extends FormBaseChild implements IForm {
 	//region ignore
 	@Override
 	public String getText() {
-		return "工作流";
+		return title;
 	}
 
 	@Override
 	public void setText(String text) {
-
+		this.title = text;
 	}
 
 	@Override
@@ -116,7 +183,44 @@ public class FormProcess extends FormBaseChild implements IForm {
 
 	@Override
 	public boolean save() {
-		return false;
+		int index = -1;
+		ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
+		for (IWorkFlow workFlow : workFlows) {
+			if (workFlow.getName().equals(this.getText())) {
+				index = workFlows.indexOf(workFlow);
+				Application.getActiveApplication().removeWorkFlow(workFlow);
+				break;
+			}
+		}
+
+		if (index == -1) {
+			Application.getActiveApplication().addWorkFlow(getWorkFlow());
+		} else {
+			Application.getActiveApplication().addWorkFlow(index, getWorkFlow());
+		}
+		isNeedSave = false;
+		return true;
+	}
+
+	private Workflow getWorkFlow() {
+		NodeMatrix nodeMatrix = new NodeMatrix();
+		Workflow workflow = new Workflow(nodeMatrix);
+		workflow.setName(getText());
+		IGraphConnection connection = this.graphCanvas.getCanvas().getConnection();
+		IGraphStorage graphStorage = this.graphCanvas.getCanvas().getGraphStorage();
+		IGraph[] graphs = graphStorage.getGraphs();
+		for (IGraph graph : graphs) {
+			nodeMatrix.addNode(graph);
+		}
+		for (IGraph graph : graphs) {
+			IGraph[] nextGraphs = connection.getNextGraphs(graph);
+			if (nextGraphs.length > 0) {
+				for (IGraph nextGraph : nextGraphs) {
+					nodeMatrix.addConstraint(graph, nextGraph, new DirectConnect());
+				}
+			}
+		}
+		return workflow;
 	}
 
 	@Override
@@ -136,7 +240,7 @@ public class FormProcess extends FormBaseChild implements IForm {
 
 	@Override
 	public boolean isNeedSave() {
-		return false;
+		return isNeedSave;
 	}
 
 	@Override
@@ -166,6 +270,14 @@ public class FormProcess extends FormBaseChild implements IForm {
 
 	@Override
 	public void formClosing(FormClosingEvent e) {
+		String message = String.format(ControlsProperties.getString("String_SaveProcessPrompt"), getText());
+		int result = GlobalParameters.isShowFormClosingInfo() ? UICommonToolkit.showConfirmDialogWithCancel(message) : JOptionPane.NO_OPTION;
+		if (result == JOptionPane.YES_OPTION) {
+			save();
+		} else if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
+			// 取消关闭操作
+			e.setCancel(true);
+		}
 
 	}
 

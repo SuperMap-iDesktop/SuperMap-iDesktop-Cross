@@ -75,8 +75,8 @@ public class TaskUtil {
      * @return
      */
     public static void excuteTasks(final NodeMatrix nodeMatrix) {
-        final CopyOnWriteArrayList<Object> processes = nodeMatrix.listAllNodes();
-        ExecutorService eService = Executors.newCachedThreadPool();
+	    final CopyOnWriteArrayList<Object> processes = nodeMatrix.getAllNodes();
+	    ExecutorService eService = Executors.newCachedThreadPool();
         final Lock lock = new ReentrantLock();
         int size = processes.size();
         for (int i = 0; i < size; i++) {

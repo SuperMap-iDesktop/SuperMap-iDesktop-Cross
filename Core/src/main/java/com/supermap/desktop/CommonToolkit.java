@@ -1,7 +1,19 @@
 package com.supermap.desktop;
 
-import com.supermap.data.*;
-import com.supermap.desktop.Interface.*;
+import com.supermap.data.Charset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.EncodeType;
+import com.supermap.data.EngineInfo;
+import com.supermap.data.EngineType;
+import com.supermap.data.StatisticMode;
+import com.supermap.data.Tolerance;
+import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormLBSControl;
+import com.supermap.desktop.Interface.IFormLayout;
+import com.supermap.desktop.Interface.IFormProcess;
+import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
@@ -1960,6 +1972,8 @@ public class CommonToolkit {
 					type = WindowType.TABULAR;
 				}else if(form instanceof IFormLBSControl){
 					type = WindowType.LBSCONTROL;
+				} else if (form instanceof IFormProcess) {
+					type = WindowType.WORK_FLOW;
 				}
 			} catch (Exception ex) {
 				Application.getActiveApplication().getOutput().output(ex);

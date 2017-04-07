@@ -8,5 +8,6 @@ public enum WindowType {
     TABULAR,
     TRANSFORMATION,
     CUSTOM,
-    LBSCONTROL
+	WORK_FLOW,
+	LBSCONTROL
 }

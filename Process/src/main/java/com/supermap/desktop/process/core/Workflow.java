@@ -27,8 +27,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class Workflow implements IWorkFlow {
     private String name = "workFLow";
-    private NodeMatrix matrix;
-    private Document document;
+	private String matrixXml;
+	private NodeMatrix matrix;
+	private Document document;
 
     public Workflow(NodeMatrix matrix) {
         this.matrix = matrix;
@@ -61,8 +62,8 @@ public class Workflow implements IWorkFlow {
 
     private Element createProcessesElemet() {
         Element processes = createProcesses();
-        CopyOnWriteArrayList list = this.matrix.listAllNodes();
-        int nodeSize = list.size();
+	    CopyOnWriteArrayList list = this.matrix.getAllNodes();
+	    int nodeSize = list.size();
         for (int i = 0; i < nodeSize; i++) {
             Element process = createProcess();
             if (list.get(i) instanceof IProcess) {
@@ -98,8 +99,8 @@ public class Workflow implements IWorkFlow {
 
     private Element createNodeElements() {
         Element nodes = createNodes();
-        CopyOnWriteArrayList list = this.matrix.listAllNodes();
-        int nodeSize = list.size();
+	    CopyOnWriteArrayList list = this.matrix.getAllNodes();
+	    int nodeSize = list.size();
         for (int i = 0; i < nodeSize; i++) {
             Element node = createNode();
             Element process = createProcess();
@@ -192,4 +193,8 @@ public class Workflow implements IWorkFlow {
     public void setName(String name) {
         this.name = name;
     }
+
+	public NodeMatrix getMatrix() {
+		return matrix;
+	}
 }

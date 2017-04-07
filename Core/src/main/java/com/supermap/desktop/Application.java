@@ -303,6 +303,11 @@ public class Application {
 		fireWorkFlowsChanged(new WorkFlowChangedEvent(WorkFlowChangedEvent.ADD, workFlow));
 	}
 
+	public void addWorkFlow(int index, IWorkFlow workFlow) {
+		workFlows.add(index, workFlow);
+		fireWorkFlowsChanged(new WorkFlowChangedEvent(WorkFlowChangedEvent.ADD, workFlow));
+	}
+
 	public void removeWorkFlow(IWorkFlow workFlow) {
 		this.workFlows.remove(workFlow);
 		fireWorkFlowsChanged(new WorkFlowChangedEvent(WorkFlowChangedEvent.DELETE, workFlow));
@@ -323,5 +328,6 @@ public class Application {
 	public void removeWorkFlowChangedListener(WorkFlowsChangedListener workFlowsChangedListener) {
 		workFlowsChangedListeners.remove(workFlowsChangedListener);
 	}
+
 
 }
