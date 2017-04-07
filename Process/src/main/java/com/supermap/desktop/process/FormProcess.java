@@ -1,10 +1,12 @@
 package com.supermap.desktop.process;
 
+import com.supermap.data.conversion.ImportSetting;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.*;
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.dataconversion.*;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
@@ -15,9 +17,11 @@ import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessImport;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.controls.Dockbar;
+import com.supermap.desktop.ui.controls.SmFileChoose;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,6 +45,19 @@ public class FormProcess extends FormBaseChild implements IForm {
 					ParameterManager component = (ParameterManager) ((Dockbar) Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName("com.supermap.desktop.process.ParameterManager"))).getInnerComponent();
 					Selection selection = e.getSelection();
 					if (selection.getItem(0) instanceof ProcessGraph) {
+						if (((ProcessGraph) selection.getItem(0)).getProcess() instanceof MetaProcessImport && null == ((ProcessGraph) selection.getItem(0)).getProcess().getParameters().getParameters()) {
+							MetaProcessImport metaProcessImport = (MetaProcessImport) ((ProcessGraph) selection.getItem(0)).getProcess();
+							SmFileChoose jFileChooser = FileType.createImportFileChooser();
+							if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+								IImportSettingCreator creator = new ImportSettingCreator();
+								ImportSetting importSetting = creator.create(jFileChooser.getFilePath());
+								IParameterCreator parameterCreator = new ImportParameterCreator();
+								metaProcessImport.setImportSetting(importSetting);
+								metaProcessImport.setDefaultImportParameters(parameterCreator.createDefault(importSetting));
+								metaProcessImport.setParamParameters(parameterCreator.create(importSetting));
+								metaProcessImport.updateParameters();
+							}
+						}
 						component.setProcess(((ProcessGraph) selection.getItem(0)).getProcess());
 					} else {
 						component.setProcess(null);
