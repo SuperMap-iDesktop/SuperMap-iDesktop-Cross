@@ -14,6 +14,8 @@ public interface IGraphConnection {
 
 	void connect(IGraph start, IGraph end);
 
+	void connect(IGraph start, IGraph end, String message);
+
 	void removeConnection(IGraph graph);
 
 	IGraph[] getPreGraphs(IGraph end);

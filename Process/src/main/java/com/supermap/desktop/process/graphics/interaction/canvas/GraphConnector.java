@@ -100,7 +100,7 @@ public class GraphConnector extends CanvasEventAdapter {
 							@Override
 							public void actionPerformed(ActionEvent e) {
 								inputs.bind(item.getText(), start.getProcessData());
-								canvas.getConnection().connect(start, end);
+								canvas.getConnection().connect(start, end, item.getText());
 								inputsMenu.setVisible(false);
 							}
 						});
