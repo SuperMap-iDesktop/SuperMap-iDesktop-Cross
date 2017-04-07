@@ -2,6 +2,7 @@ package com.supermap.desktop.CtrlAction.Map.MapClip;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -11,7 +12,10 @@ import com.supermap.desktop.ui.controls.borderPanel.PanelButton;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
+import com.supermap.mapping.Layers;
+import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import javax.swing.event.*;
@@ -61,6 +65,8 @@ public class DialogMapClip extends SmDialog {
 	public static final int COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE = 3;
 	public static final int COLUMN_INDEX_TARGETDATASETSOURCE = 4;
 	public static final int COLUMN_INDEX_TARGETDATASETNAME = 5;
+	public static final int COLUMN_LAYERSRTTING_OR_THEME_INDEX=6;
+	public static final int COLUMN_LAYERSRTTING_OR_THEME=7;
 
 	/**
 	 * 对JTable中model数据进行处理,得到适用于裁剪接口的数据
@@ -105,14 +111,21 @@ public class DialogMapClip extends SmDialog {
 						targetDatasource = (Datasource) ((Vector) (this.layerJTableInfo.get(i))).get(COLUMN_INDEX_AIMDATASOURCE);
 						//获得数据集名称，此时获得目标数据集名称时
 						targetDatasetName = (String) ((Vector) (this.layerJTableInfo.get(i))).get(COLUMN_INDEX_AIMDATASET);
+
+
+						boolean isLayersettingOrTheme=(Boolean) ((Vector) (this.layerJTableInfo.get(i))).get(COLUMNS_LAYERSRTTING_OR_THEME_INDEX);
+						Object layersettingOrTheme=(Object)((Vector) (this.layerJTableInfo.get(i))).get(COLUMNS_LAYERSRTTING_OR_THEME);
+
 						// 将处理后的数据添加到新的Vector
-						Vector v = new Vector(6);
+						Vector v = new Vector(8);
 						v.add(COLUMN_INDEX_SOURCEDATASET, targetDataset);
 						v.add(COLUMN_INDEX_USERREGION, userRegion);
 						v.add(COLUMN_INDEX_ISCLIPINREGION, isClipInRegion);
 						v.add(COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE, isExactClipORisEarsesource);
 						v.add(COLUMN_INDEX_TARGETDATASETSOURCE, targetDatasource);
 						v.add(COLUMN_INDEX_TARGETDATASETNAME, targetDatasetName);
+						v.add(COLUMN_LAYERSRTTING_OR_THEME_INDEX, isLayersettingOrTheme);
+						v.add(COLUMN_LAYERSRTTING_OR_THEME, layersettingOrTheme);
 						tempVector.add(v);
 					} else {
 						continue;
@@ -336,16 +349,31 @@ public class DialogMapClip extends SmDialog {
 				formProgress.setTitle(MapViewProperties.getString("String_MapClip_MapClip"));
 				//获得要保存的地图名称
 				saveMapName = mapClipSaveMapPanel.getSaveMapTextField().getText();
-				mapClipProgressCallable = new MapClipProgressCallable(resultInfo);
+				mapClipProgressCallable = new MapClipProgressCallable(resultInfo,saveMapName);
 				formProgress.doWork(mapClipProgressCallable);
 				// 获得采集后的数据集，添加到地图
 				// 通过mapClipProgressCallable.getResultDatasets()获得裁剪后的数据集
+				//saveMap(mapClipProgressCallable.getResultDatasets());
 				DialogMapClip.this.dispose();
 			} else {
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MapClip_SelectLayer"));
 			}
 		}
 	};
+
+	private void saveMap(Dataset[] clipResultDatasets){
+		if (!StringUtilities.isNullOrEmpty(this.saveMapName)){
+			IFormMap formMap=(IFormMap) Application.getActiveApplication().getActiveForm();
+			Map resultMap=new Map(formMap.getMapControl().getMap().getWorkspace());
+			resultMap.fromXML(formMap.getMapControl().getMap().toXML());
+			Layers preLayers=resultMap.getLayers();
+			preLayers.clear();
+			for (int i=0;i<clipResultDatasets.length-1;i++){
+				preLayers.add(clipResultDatasets[i],false);
+			}
+			formMap.getMapControl().getMap().getWorkspace().getMaps().add(this.saveMapName,resultMap.toXML());
+		}
+	}
 
 	public DialogMapClip(GeoRegion region) {
 		super();
