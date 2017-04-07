@@ -4,7 +4,18 @@ import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.meta.metaProcessImplements.*;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessBuffer;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessHeatMap;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISOLine;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISOPoint;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISORegion;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessImport;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessInterpolator;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessKernelDensity;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessOverlayAnalyst;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessProjection;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSpatialIndex;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSqlQuery;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
@@ -123,8 +134,8 @@ public class WorkflowParser {
 
     private MetaProcess getMetaProcess(String key, NodeMatrix nodeMatrix) {
         MetaProcess result = null;
-        CopyOnWriteArrayList metaProcesses = nodeMatrix.listAllNodes();
-        for (int i = 0; i < metaProcesses.size(); i++) {
+	    CopyOnWriteArrayList metaProcesses = nodeMatrix.getAllNodes();
+	    for (int i = 0; i < metaProcesses.size(); i++) {
             if (metaProcesses.get(i) instanceof MetaProcess && key.equals(((MetaProcess) metaProcesses.get(i)).getKey())) {
                 result = (MetaProcess) metaProcesses.get(i);
             }

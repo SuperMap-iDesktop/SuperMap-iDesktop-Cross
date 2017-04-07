@@ -13,9 +13,11 @@ import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormLayout;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormProcess;
 import com.supermap.desktop.Interface.IFormScene;
 import com.supermap.desktop.Interface.IProperty;
 import com.supermap.desktop.Interface.IPropertyManager;
+import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;
@@ -621,6 +623,9 @@ public class WorkspaceComponentManager extends JComponent {
 							UICommonToolkit.getLayersManager().setScene(null);
 						}
 					}
+				} else if (selectedNodeData.getType() == NodeDataType.WORK_FLOW) {
+					String name = ((IWorkFlow) ((TreeNodeData) ((DefaultMutableTreeNode) workspaceTree.getLastSelectedPathComponent()).getUserObject()).getData()).getName();
+					IFormProcess iFormProcess = (IFormProcess) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.WORK_FLOW, name);
 				} else if (selectedNodeData.getType() == NodeDataType.SYMBOL_MARKER_LIBRARY) {
 					SymbolDialogFactory.getSymbolDialog(SymbolType.MARKER).showDialog(new GeoStyle());
 				} else if (selectedNodeData.getType() == NodeDataType.SYMBOL_LINE_LIBRARY) {
