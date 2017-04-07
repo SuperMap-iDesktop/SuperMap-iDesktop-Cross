@@ -39,7 +39,6 @@ public class DraggedHandler extends CanvasEventAdapter {
 			IGraph hitGraph = canvas.findGraph(e.getPoint());
 
 			if (hitGraph != null) {
-				CanvasCursor.setItemDraggedCursor(this.canvas);
 				this.dragStart = canvas.getCoordinateTransform().inverse(e.getPoint());
 
 				if (this.canvas.getSelection().isSelected(hitGraph)) {
@@ -66,6 +65,7 @@ public class DraggedHandler extends CanvasEventAdapter {
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e) && this.draggedGraphs != null && this.draggedGraphs.length > 0) {
+			CanvasCursor.setItemDraggedCursor(this.canvas);
 			Point dragEnd = canvas.getCoordinateTransform().inverse(e.getPoint());
 			int offsetX = dragEnd.x - this.dragStart.x;
 			int offsetY = dragEnd.y - this.dragStart.y;

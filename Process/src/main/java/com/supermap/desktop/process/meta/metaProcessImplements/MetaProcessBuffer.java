@@ -90,7 +90,7 @@ public class MetaProcessBuffer extends MetaProcess {
 
 	private void initComponentState() {
 		parameterBufferRange.setSelectedItem(BufferRadiusUnit.Meter);
-		parameterTextFieldRadius.setSelectedItem("0");
+		parameterTextFieldRadius.setSelectedItem("10");
 		parameterTextFieldSemicircleLineSegment.setSelectedItem("50");
 		if (Application.getActiveApplication().getActiveDatasources().length > 0) {
 			parameterSaveDataset.setResultDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
@@ -133,7 +133,7 @@ public class MetaProcessBuffer extends MetaProcess {
 		String resultName = parameterSaveDataset.getDatasetName();
 
 		DatasetVectorInfo vectorInfo = new DatasetVectorInfo();
-		vectorInfo.setName(resultName);
+		vectorInfo.setName(resultDatasource.getDatasets().getAvailableDatasetName(resultName));
 		vectorInfo.setType(DatasetType.REGION);
 		DatasetVector result = resultDatasource.getDatasets().create(vectorInfo);
 		result.setPrjCoordSys(datasetVector.getPrjCoordSys());
