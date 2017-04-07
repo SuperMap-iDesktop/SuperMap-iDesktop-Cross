@@ -116,7 +116,7 @@ public class MetaProcessBuffer extends MetaProcess {
 
     @Override
     public String getTitle() {
-        return "缓冲区分析";
+	    return ProcessProperties.getString("String_BufferAnalyse");
     }
 
     @Override
