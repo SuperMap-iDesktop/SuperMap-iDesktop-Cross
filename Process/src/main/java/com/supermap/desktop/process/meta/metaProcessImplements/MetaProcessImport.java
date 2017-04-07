@@ -1,78 +1,64 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
-import com.supermap.data.EncodeType;
-import com.supermap.data.conversion.*;
-import com.supermap.desktop.Application;
+import com.supermap.data.conversion.ImportResult;
+import com.supermap.data.conversion.ImportSetting;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
+import com.supermap.desktop.process.dataconversion.ImportSettingSetter;
+import com.supermap.desktop.process.dataconversion.ReflectInfo;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.implement.DefaultParameters;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilities.EncodeTypeUtilities;
 
 import javax.swing.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author XiaJT
  */
 public class MetaProcessImport extends MetaProcess {
 
-    ParameterFile parameterImportFile;
-    ParameterSaveDataset parameterSaveDataset;
-    ParameterEnum comboBoxEncodeType;
-    ParameterEnum comboBoxImportMode;
-    ParameterCheckBox checkBoxCreateFieldIndex;
-    ParameterCheckBox checkBoxCreateSpaceIndex;
+    private ImportSetting importSetting;
+    private CopyOnWriteArrayList<ReflectInfo> defaultImportParameters;
+    private CopyOnWriteArrayList<ReflectInfo> paramParameters;
 
     public MetaProcessImport() {
         parameters = new DefaultParameters();
-        parameterImportFile = new ParameterFile().setDescribe(ProcessProperties.getString("label_ChooseFile"));
+    }
 
-        parameterSaveDataset = new ParameterSaveDataset();
-        if (Application.getActiveApplication().getActiveDatasources().length > 0) {
-            parameterSaveDataset.setResultDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
-        } else if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
-            parameterSaveDataset.setResultDatasource(Application.getActiveApplication().getWorkspace().getDatasources().get(0));
+    public void updateParameters() {
+        if (null != defaultImportParameters && null != paramParameters) {
+            IParameter[] tempParameters = new IParameter[defaultImportParameters.size() + paramParameters.size()];
+            for (int i = 0; i < defaultImportParameters.size(); i++) {
+                tempParameters[i] = defaultImportParameters.get(i).parameter;
+            }
+            for (int i = 0; i < paramParameters.size(); i++) {
+                tempParameters[defaultImportParameters.size() + i] = paramParameters.get(i).parameter;
+            }
+            parameters.setParameters(tempParameters);
+        } else if (null != defaultImportParameters && null == paramParameters) {
+            IParameter[] tempParameters = new IParameter[defaultImportParameters.size()];
+            for (int i = 0; i < defaultImportParameters.size(); i++) {
+                tempParameters[i] = defaultImportParameters.get(i).parameter;
+            }
+            parameters.setParameters(tempParameters);
         }
-        parameterSaveDataset.setDatasetName("RoadLine");
-	    DatasourceConstraint.getInstance().constrained(parameterSaveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
+    }
 
-        String[] encodingValue = new String[]{"NONE", "BYTE", "INT16", "INT24", "INT32"};
-        String[] encoding = new String[]{
-                EncodeTypeUtilities.toString(EncodeType.NONE),
-                EncodeTypeUtilities.toString(EncodeType.BYTE),
-                EncodeTypeUtilities.toString(EncodeType.INT16),
-                EncodeTypeUtilities.toString(EncodeType.INT24),
-                EncodeTypeUtilities.toString(EncodeType.INT32)
-        };
-        comboBoxEncodeType = new ParameterEnum(new EnumParser(EncodeType.class, encodingValue, encoding)).setDescribe(ProcessProperties.getString("label_encodingType"));
-        comboBoxEncodeType.setSelectedItem(EncodeType.NONE);
+    public void setImportSetting(ImportSetting importSetting) {
+        this.importSetting = importSetting;
+    }
 
-        String[] importModel = new String[]{
-                ProcessProperties.getString("String_FormImport_None"),
-                ProcessProperties.getString("String_FormImport_Append"),
-                ProcessProperties.getString("String_FormImport_OverWrite")
-        };
-        String[] importModelValue = new String[]{"NONE", "APPEND", "OVERWRITE"};
-        comboBoxImportMode = new ParameterEnum(new EnumParser(ImportMode.class, importModelValue, importModel)).setDescribe(ProcessProperties.getString("Label_ImportMode"));
-        comboBoxImportMode.setSelectedItem(ImportMode.NONE);
-        checkBoxCreateFieldIndex = new ParameterCheckBox(ProcessProperties.getString("String_FieldIndex"));
-        checkBoxCreateSpaceIndex = new ParameterCheckBox(ProcessProperties.getString("String_CreateSpatialIndex"));
+    public void setDefaultImportParameters(CopyOnWriteArrayList<ReflectInfo> defaultImportParameters) {
+        this.defaultImportParameters = defaultImportParameters;
+    }
 
-        parameters.setParameters(
-                parameterImportFile,
-                parameterSaveDataset,
-                comboBoxEncodeType,
-                comboBoxImportMode,
-                checkBoxCreateFieldIndex,
-                checkBoxCreateSpaceIndex
-        );
+    public void setParamParameters(CopyOnWriteArrayList<ReflectInfo> paramParameters) {
+        this.paramParameters = paramParameters;
     }
 
     @Override
@@ -87,32 +73,15 @@ public class MetaProcessImport extends MetaProcess {
 
     @Override
     public void run() {
-        String filePath = (String) parameterImportFile.getSelectedItem();
-        fireRunning(new RunningEvent(this, 0, "start"));
-        String datasetName = parameterSaveDataset.getDatasetName();
-        Datasource datasource = parameterSaveDataset.getResultDatasource();
-        EncodeType data = (EncodeType) comboBoxEncodeType.getSelectedItem();
-        ImportMode importMode = (ImportMode) comboBoxImportMode.getSelectedItem();
-
-        ImportSettingSHP importSettingSHP = new ImportSettingSHP(filePath, datasource);
-        importSettingSHP.setTargetEncodeType(data);
-        importSettingSHP.setImportMode(importMode);
-        importSettingSHP.setTargetDatasetName(datasetName);
-        DataImport dataImport = new DataImport();
-        dataImport.getImportSettings().add(importSettingSHP);
-        dataImport.addImportSteppedListener(new ImportSteppedListener() {
-            @Override
-            public void stepped(ImportSteppedEvent importSteppedEvent) {
-                fireRunning(new RunningEvent(MetaProcessImport.this, importSteppedEvent.getSubPercent(), ""));
-            }
-        });
-        ImportResult run = dataImport.run();
+        ImportResult run = ImportSettingSetter.setParameter(importSetting, defaultImportParameters, paramParameters).run();
         ImportSetting[] succeedSettings = run.getSucceedSettings();
-        final Dataset dataset = succeedSettings[0].getTargetDatasource().getDatasets().get(succeedSettings[0].getTargetDatasetName());
+        final Datasource datasource = succeedSettings[0].getTargetDatasource();
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                UICommonToolkit.refreshSelectedDatasourceNode(dataset.getDatasource().getAlias());
+                if (null != datasource) {
+                    UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
+                }
             }
         });
 //        ProcessData processData = new ProcessData();
@@ -128,8 +97,8 @@ public class MetaProcessImport extends MetaProcess {
         return MetaKeys.IMPORT;
     }
 
-	@Override
-	public Icon getIcon() {
-		return getIconByPath("/processresources/Process/import.png");
-	}
+    @Override
+    public Icon getIcon() {
+        return getIconByPath("/processresources/Process/import.png");
+    }
 }

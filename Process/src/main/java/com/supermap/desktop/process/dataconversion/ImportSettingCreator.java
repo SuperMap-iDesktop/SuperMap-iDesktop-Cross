@@ -1,20 +1,14 @@
 package com.supermap.desktop.process.dataconversion;
 
-import com.supermap.data.Point3D;
-import com.supermap.data.conversion.*;
+import com.supermap.data.conversion.ImportSetting;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 import com.supermap.desktop.utilities.FileUtilities;
-
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 
 /**
  * Created by xie on 2017/3/31.
  */
 public class ImportSettingCreator implements IImportSettingCreator {
-    private String importSetting = "com.supermap.data.conversion.ImportSetting";
+    private final String importSetting = "com.supermap.data.conversion.ImportSetting";
 
     @Override
     public ImportSetting create(Object o) {
@@ -28,8 +22,23 @@ public class ImportSettingCreator implements IImportSettingCreator {
             //some special type should be pick out
             String fileType = FileUtilities.getFileType((String) o);
             fileType = fileType.replace(".", "");
+            if ("b".equalsIgnoreCase(fileType)) {
+                fileType = "BIL";
+            } else if ("jpk".equalsIgnoreCase(fileType)) {
+                fileType = "JP2";
+            } else if ("wal".equalsIgnoreCase(fileType) || "wap".equalsIgnoreCase(fileType) || "wat".equalsIgnoreCase(fileType) || "wan".equalsIgnoreCase(fileType)) {
+                fileType = "MAPGIS";
+            } else if ("sid".equalsIgnoreCase(fileType)) {
+                fileType = "MrSID";
+            } else if ("3ds".equalsIgnoreCase(fileType) || "x".equalsIgnoreCase(fileType)) {
+                fileType = "Model" + fileType.toUpperCase();
+            } else if ("osgb".equalsIgnoreCase(fileType)) {
+                fileType = "ModelOSG";
+            } else {
+                fileType = fileType.toUpperCase();
+            }
             try {
-                Class importClass = Class.forName(importSetting + fileType.toUpperCase());
+                Class importClass = Class.forName(importSetting + fileType);
                 result = (ImportSetting) importClass.newInstance();
                 result.setTargetDatasetName(datasetName);
                 result.setSourceFilePath((String) o);

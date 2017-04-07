@@ -7,7 +7,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by xie on 2017/4/6.
@@ -17,17 +17,18 @@ public class ImportSettingSetter {
     private ImportSettingSetter() {
     }
 
-    public static DataImport setParameter(ImportSetting importSetting, ArrayList<ReflectInfo> basicInfos, ArrayList<ReflectInfo> otherInfo) {
+    public static DataImport setParameter(ImportSetting importSetting, CopyOnWriteArrayList<ReflectInfo> basicInfos, CopyOnWriteArrayList<ReflectInfo> otherInfo) {
         try {
             Class importSettingClass = importSetting.getClass();
             int basicSize = basicInfos.size();
             for (int i = 0; i < basicSize; i++) {
-                Method method = importSettingClass.getMethod(basicInfos.get(i).methodName, Object.class);
                 if (basicInfos.get(i).parameter instanceof ISelectionParameter) {
                     if (basicInfos.get(i).parameter instanceof ParameterCheckBox) {
-                        method.invoke(importSettingClass, "true".equals(((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem()) ? true : false);
-                    } else {
-                        method.invoke(importSettingClass, ((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem());
+                        Method method = importSettingClass.getMethod(basicInfos.get(i).methodName, boolean.class);
+                        method.invoke(importSetting, "true".equals(((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem()) ? true : false);
+                    } else if (null != ((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem()) {
+                        Method method = importSettingClass.getMethod(basicInfos.get(i).methodName, ((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem().getClass());
+                        method.invoke(importSetting, ((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem());
                     }
                 }
             }
@@ -38,15 +39,18 @@ public class ImportSettingSetter {
                 point3D.setX(Double.valueOf((Double) ((ISelectionParameter) otherInfo.get(0).parameter).getSelectedItem()));
                 point3D.setY(Double.valueOf((Double) ((ISelectionParameter) otherInfo.get(1).parameter).getSelectedItem()));
                 point3D.setZ(Double.valueOf((Double) ((ISelectionParameter) otherInfo.get(2).parameter).getSelectedItem()));
+                Method setPosition = importSettingClass.getMethod("setPosition", point3D.getClass());
+                setPosition.invoke(setPosition, point3D);
             } else {
                 int otherInfoSize = otherInfo.size();
                 for (int i = 0; i < otherInfoSize; i++) {
-                    Method method = importSettingClass.getMethod(otherInfo.get(i).methodName, Object.class);
                     if (otherInfo.get(i).parameter instanceof ISelectionParameter) {
                         if (otherInfo.get(i).parameter instanceof ParameterCheckBox) {
-                            method.invoke(importSettingClass, "true".equals(((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()) ? true : false);
-                        } else {
-                            method.invoke(importSettingClass, ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem());
+                            Method method = importSettingClass.getMethod(otherInfo.get(i).methodName, boolean.class);
+                            method.invoke(importSetting, "true".equals(((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()) ? true : false);
+                        } else if (null != ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem()){
+                            Method method = importSettingClass.getMethod(otherInfo.get(i).methodName, ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem().getClass());
+                            method.invoke(importSetting, ((ISelectionParameter) otherInfo.get(i).parameter).getSelectedItem());
                         }
                     }
                 }

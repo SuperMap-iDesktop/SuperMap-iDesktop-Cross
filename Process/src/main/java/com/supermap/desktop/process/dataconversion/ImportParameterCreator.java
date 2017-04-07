@@ -10,7 +10,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
 
-import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by xie on 2017/3/31.
@@ -18,8 +18,8 @@ import java.util.ArrayList;
 public class ImportParameterCreator implements IParameterCreator {
 
     @Override
-    public ArrayList<ReflectInfo> create(Object importSetting) {
-        ArrayList<ReflectInfo> result = new ArrayList<>();
+    public CopyOnWriteArrayList<ReflectInfo> create(Object importSetting) {
+        CopyOnWriteArrayList<ReflectInfo> result = new CopyOnWriteArrayList<>();
         if (importSetting instanceof ImportSettingRAW || importSetting instanceof ImportSettingTEMSClutter
                 || importSetting instanceof ImportSettingBIP || importSetting instanceof ImportSettingBSQ
                 || importSetting instanceof ImportSettingGBDEM || importSetting instanceof ImportSettingUSGSDEM
@@ -234,6 +234,7 @@ public class ImportParameterCreator implements IParameterCreator {
             setWorldFilePath.parameter = new ParameterFile(CommonProperties.getString("String_WorldFile"));
             result.add(pyramidBuiltInfo);
             result.add(setWorldFilePath);
+            return result;
         }
         if (importSetting instanceof ImportSettingKML || importSetting instanceof ImportSettingKMZ) {
             ReflectInfo setUnvisibleObjectIgnored = new ReflectInfo();
@@ -287,8 +288,8 @@ public class ImportParameterCreator implements IParameterCreator {
     }
 
     @Override
-    public ArrayList<ReflectInfo> createDefault(Object o) {
-        ArrayList<ReflectInfo> result = new ArrayList<>();
+    public CopyOnWriteArrayList<ReflectInfo> createDefault(Object o) {
+        CopyOnWriteArrayList<ReflectInfo> result = new CopyOnWriteArrayList<>();
         //Target dataset reflect info
         ReflectInfo targetDatasource = new ReflectInfo();
         targetDatasource.methodName = "setTargetDatasource";
@@ -306,7 +307,7 @@ public class ImportParameterCreator implements IParameterCreator {
         //EncodeType reflect info
         ReflectInfo setEncodeType = new ReflectInfo();
         setEncodeType.methodName = "setEncodeType";
-        ParameterEnum encodeType = createEnumParser((ImportSetting) o);
+        ParameterEnum encodeType = createEnumParser((ImportSetting) o).setDescribe(ProcessProperties.getString("label_encodingType"));
         setEncodeType.parameter = encodeType;
 
         //ImportMode reflect info
@@ -356,6 +357,7 @@ public class ImportParameterCreator implements IParameterCreator {
             parser.setEnumClass(EncodeType.class);
             parser.parse();
             result = new ParameterEnum(parser);
+            result.setSelectedItem(EncodeType.NONE);
         }
         if (importSetting instanceof ImportSettingGRD
                 || importSetting instanceof ImportSettingGBDEM || importSetting instanceof ImportSettingUSGSDEM) {
@@ -364,6 +366,7 @@ public class ImportParameterCreator implements IParameterCreator {
             parser.setEnumClass(EncodeType.class);
             parser.parse();
             result = new ParameterEnum(parser);
+            result.setSelectedItem(EncodeType.NONE);
         }
         if (importSetting instanceof ImportSettingJPG || importSetting instanceof ImportSettingJP2 ||
                 importSetting instanceof ImportSettingPNG || importSetting instanceof ImportSettingBMP ||
@@ -383,6 +386,7 @@ public class ImportParameterCreator implements IParameterCreator {
             parser.setEnumClass(EncodeType.class);
             parser.parse();
             result = new ParameterEnum(parser);
+            result.setSelectedItem(EncodeType.NONE);
         }
         return result;
     }

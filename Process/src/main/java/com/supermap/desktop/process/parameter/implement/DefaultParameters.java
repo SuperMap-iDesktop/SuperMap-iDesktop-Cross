@@ -17,10 +17,10 @@ import java.util.ArrayList;
  * @author XiaJT
  */
 public class DefaultParameters implements IParameters {
-	private IParameter[] parameters;
-	private JPanel panel;
+	protected IParameter[] parameters;
+	protected JPanel panel;
 	private ArrayList<ParameterClassBundleNode> packages = new ArrayList<>();
-	private EmptyParameterPanel parameterPanel = new EmptyParameterPanel();
+	protected EmptyParameterPanel parameterPanel = new EmptyParameterPanel();
 
 	public DefaultParameters() {
 		packages.add(new ParameterClassBundleNode("com.supermap.desktop.process.parameter.ParameterPanels", "SuperMap.Desktop.Process"));

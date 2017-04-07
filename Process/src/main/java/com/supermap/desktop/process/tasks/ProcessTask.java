@@ -8,6 +8,7 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
+import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.progress.RoundProgressBar;
 
@@ -40,7 +41,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     private volatile String message = "";
     private volatile String remainTime = "";
     private volatile int percent = 0;
-    private volatile boolean isStop;
+    private volatile boolean isStop = true;
 
     private volatile RoundProgressBar progressBar;
     private volatile JLabel labelTitle;
@@ -49,7 +50,6 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     private volatile JButton buttonRun;
     private volatile JButton buttonRemove;
     private volatile IProcess process;
-    private volatile boolean isFinished;
     private ActionListener cancelListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -63,7 +63,6 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
                 updateProgress(100, String.valueOf(e.getRemainTime()), MessageFormat.format(ControlsProperties.getString("String_MissionFinished"), labelTitle.getText()));
                 buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_finish_now.png"));
                 buttonRun.removeActionListener(cancelListener);
-                isFinished = true;
             } else {
                 updateProgress(e.getProgress(), String.valueOf(e.getRemainTime()), e.getMessage());
             }
@@ -77,7 +76,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     };
 
     private void removeItem() {
-        if (!isFinished()) {
+        if (!((MetaProcess) process).isFinished()) {
             SmOptionPane optionPane = new SmOptionPane();
             if (optionPane.showConfirmDialog(MessageFormat.format(ProcessProperties.getString("String_RemoveWarning"), process.getTitle())) == JOptionPane.OK_OPTION) {
                 setStop(true);
@@ -213,10 +212,6 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         });
     }
 
-    public synchronized boolean isFinished() {
-        return isFinished;
-    }
-
     public String getRemainTime() {
         return this.remainTime;
     }
@@ -251,24 +246,15 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         this.isStop = isStop;
 
         if (this.isStop) {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_stop_now.png"));
-                    buttonRun.setToolTipText(CommonProperties.getString(CommonProperties.Pause));
-                    progressBar.setForegroundColor(CACEL_FOREGROUNDCOLOR);
-                }
-            });
+            buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_stop_now.png"));
+            buttonRun.setToolTipText(CommonProperties.getString(CommonProperties.Pause));
+            progressBar.setForegroundColor(CACEL_FOREGROUNDCOLOR);
+
         } else {
+            buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_run_now.png"));
+            buttonRun.setToolTipText(CommonProperties.getString(CommonProperties.Run));
+            progressBar.setForegroundColor(DEFAULT_FOREGROUNDCOLOR);
             doWork();
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_run_now.png"));
-                    buttonRun.setToolTipText(CommonProperties.getString(CommonProperties.Run));
-                    progressBar.setForegroundColor(DEFAULT_FOREGROUNDCOLOR);
-                }
-            });
         }
     }
 
@@ -278,22 +264,9 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 
     @Override
     public void updateProgress(final int percent, final String remainTime, final String message) throws CancellationException {
-        if (this.isStop) {
-            throw new CancellationException();
-        } else {
-            this.percent = percent;
-            this.remainTime = remainTime;
-            this.message = message;
-
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    progressBar.setProgress(percent);
-                    labelRemaintime.setText(MessageFormat.format(ControlsProperties.getString("String_RemainTime"), remainTime));
-                    labelMessage.setText(message);
-                }
-            });
-        }
+        progressBar.setProgress(percent);
+        labelRemaintime.setText(MessageFormat.format(ControlsProperties.getString("String_RemainTime"), remainTime));
+        labelMessage.setText(message);
     }
 
     @Override

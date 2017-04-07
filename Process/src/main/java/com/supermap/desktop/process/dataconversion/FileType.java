@@ -73,7 +73,7 @@ public class FileType {
                         SmFileChoose.createFileFilter(descriptionNew[11], "dgn", "vct")
                 );
                 SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-                        ProcessProperties.getString("String_FileType"), "MetaProcessImport", "OpenMany");
+                        ProcessProperties.getString("String_FileType"), "MetaProcessImport", "OpenOne");
             } else {
                 String fileFilters = SmFileChoose.bulidFileFilters(
                         SmFileChoose.createFileFilter(descriptionNewForLinux[0], extensionsNewForLinux),
@@ -87,7 +87,7 @@ public class FileType {
                         SmFileChoose.createFileFilter(descriptionNewForLinux[8], "vct")
                 );
                 SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-                        ProcessProperties.getString("String_FileType"), "MetaProcessImport", "OpenMany");
+                        ProcessProperties.getString("String_FileType"), "MetaProcessImport", "OpenOne");
             }
 
         }
