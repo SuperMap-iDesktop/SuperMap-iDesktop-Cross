@@ -1,17 +1,30 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.analyst.spatialanalyst.OverlayAnalyst;
-import com.supermap.data.*;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.DatasetVectorInfo;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.SteppedEvent;
+import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
+import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.implement.ParameterCombine;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.implement.ParameterFieldSetDialog;
+import com.supermap.desktop.process.parameter.implement.ParameterLabel;
 import com.supermap.desktop.process.parameter.implement.ParameterOverlayAnalyst;
+import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.tasks.ProcessTask;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
 import javax.swing.*;
@@ -22,8 +35,18 @@ import java.text.MessageFormat;
  * 叠加分析
  */
 public class MetaProcessOverlayAnalyst extends MetaProcess {
-    private OverlayAnalystType analystType;
-    private ParameterOverlayAnalyst parameterOverlayAnalyst;
+	private OverlayAnalystType analystType;
+	private ParameterOverlayAnalyst parameterOverlayAnalyst;
+	private ParameterDatasource parameterSourceDatasource = new ParameterDatasource();
+	private ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset();
+	private ParameterDatasource parameterOverlayDatasource = new ParameterDatasource();
+	private ParameterSingleDataset parameterOverlayDataset = new ParameterSingleDataset();
+	private ParameterDatasource parameterResultDatasource = new ParameterDatasource();
+	private ParameterTextField parameterSaveDataset = new ParameterTextField();
+	private ParameterFieldSetDialog parameterFieldSetDialog = new ParameterFieldSetDialog();
+	private ParameterTextField parameterTolerance = new ParameterTextField();
+	private ParameterLabel parameterUnit = new ParameterLabel();
+	private ParameterCheckBox parameterCheckBoxIsCompareResult = new ParameterCheckBox();
 
     private SteppedListener steppedListener = new SteppedListener() {
         @Override
@@ -32,17 +55,48 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
         }
     };
 
-    public MetaProcessOverlayAnalyst(OverlayAnalystType analystType) {
-        this.analystType = analystType;
-        initMetaInfo();
-    }
+	public MetaProcessOverlayAnalyst(OverlayAnalystType analystType) {
+		this.analystType = analystType;
+		initParameters();
+		initParameterLayout();
+	}
 
-    private void initMetaInfo() {
-        parameters = new DefaultParameters();
-        parameterOverlayAnalyst = new ParameterOverlayAnalyst();
-        parameterOverlayAnalyst.setOverlayAnalystType(analystType);
-        parameters.setParameters(parameterOverlayAnalyst);
-    }
+	private void initParameters() {
+		parameterSourceDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
+		parameterOverlayDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
+		parameterResultDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
+		parameterSaveDataset.setDescribe(CommonProperties.getString(CommonProperties.Label_Dataset));
+		parameterUnit.setDescribe(CommonProperties.getString("String_DistanceUnit_Meter"));//单位和数据集有关系
+		parameterCheckBoxIsCompareResult.setDescribe(CommonProperties.getString("String_CheckBox_ResultComparison"));
+
+	}
+
+	private void initParameterLayout() {
+
+		parameters = new DefaultParameters();
+		ParameterCombine parameterCombineSource = new ParameterCombine();
+		parameterCombineSource.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
+		parameterCombineSource.addParameters(parameterSourceDatasource, parameterSourceDataset);
+
+		ParameterCombine parameterCombineResult = new ParameterCombine();
+		parameterCombineResult.setDescribe(CommonProperties.getString("String_GroupBox_OverlayDataset"));
+		parameterCombineResult.addParameters(parameterOverlayDatasource, parameterOverlayDataset);
+
+		ParameterCombine parameterCombineResultSet = new ParameterCombine();
+		parameterCombineResultSet.setDescribe(CommonProperties.getString("String_ResultSet"));
+		ParameterCombine parameterCombineParent = new ParameterCombine(ParameterCombine.HORIZONTAL);
+		parameterCombineParent.addParameters(
+				new ParameterCombine().addParameters(parameterSaveDataset, parameterTolerance),
+				new ParameterCombine().addParameters(parameterFieldSetDialog, parameterUnit));
+		parameterCombineResult.addParameters(parameterResultDatasource, parameterCombineParent, parameterCheckBoxIsCompareResult);
+
+//		parameters.setParameters(parameterCombineSource, parameterCombineResult, parameterCombineResultSet);
+
+
+		parameterOverlayAnalyst = new ParameterOverlayAnalyst();
+		parameterOverlayAnalyst.setOverlayAnalystType(analystType);
+		parameters.setParameters(parameterOverlayAnalyst);
+	}
 
     public OverlayAnalystType getAnalystType() {
         return analystType;

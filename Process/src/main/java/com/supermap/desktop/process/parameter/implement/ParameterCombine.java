@@ -3,6 +3,7 @@ package com.supermap.desktop.process.parameter.implement;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.ParameterCombineBuildPanelListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
+import com.supermap.desktop.process.parameter.interfaces.IParameters;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +56,14 @@ public class ParameterCombine extends AbstractParameter {
 	@Override
 	public String getType() {
 		return ParameterType.COMBINE;
+	}
+
+	@Override
+	public void setParameters(IParameters parameters) {
+		super.setParameters(parameters);
+		for (IParameter iParameter : parameterList) {
+			iParameter.setParameters(parameters);
+		}
 	}
 
 	public void reBuildPanel() {

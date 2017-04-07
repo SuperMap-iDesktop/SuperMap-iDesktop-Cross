@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.parameter.ParameterPanels.EmptyParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -96,7 +97,7 @@ public class DefaultParameters implements IParameters {
 				Constructor constructor = clazz.getConstructor(IParameter.class);
 				return (IParameterPanel) constructor.newInstance(parameter);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Application.getActiveApplication().getOutput().output((parameter.getType() + " can't find panel"));
 			}
 		}
 		return null;
