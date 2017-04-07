@@ -250,7 +250,11 @@ public class Application {
 			workspace.addOpenedListener(new WorkspaceOpenedListener() {
 				@Override
 				public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
-					resetWorkFlows();
+					try {
+						resetWorkFlows();
+					} catch (Exception e) {
+						// TODO 工作空间开放自定义存储之后，就不再需要存到 workspace 的 description 里了
+					}
 				}
 			});
 			workspace.addClosingListener(new WorkspaceClosingListener() {
