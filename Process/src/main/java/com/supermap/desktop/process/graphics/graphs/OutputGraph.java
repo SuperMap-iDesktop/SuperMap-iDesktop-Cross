@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics.graphs;
 
+import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 
@@ -10,6 +11,10 @@ public class OutputGraph extends EllipseGraph {
 
 	private ProcessGraph processGraph;
 	private OutputData processData;
+
+	private OutputGraph() {
+		super(null);
+	}
 
 	public OutputGraph(GraphCanvas canvas, ProcessGraph processGraph, OutputData processData) {
 		super(canvas);
@@ -27,5 +32,17 @@ public class OutputGraph extends EllipseGraph {
 
 	public String getTitle() {
 		return this.processData.getName();
+	}
+
+	@Override
+	protected void toXmlHook(JSONObject jsonObject) {
+		super.toXmlHook(jsonObject);
+		jsonObject.put("processData", processData.toString());
+	}
+
+	@Override
+	protected void formXmlHook(JSONObject xml) {
+		super.formXmlHook(xml);
+		processData = OutputData.formString(((String) xml.get("processData")));
 	}
 }

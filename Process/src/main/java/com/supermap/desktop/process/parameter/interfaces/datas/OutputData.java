@@ -42,4 +42,16 @@ public class OutputData implements IDataDescription, IValueProvider {
 	public int getType() {
 		return this.dataType;
 	}
+
+	public static OutputData formString(String processData) {
+		String[] split = processData.split(",");
+		return new OutputData(split[0], split[1], Integer.valueOf(split[2]));
+	}
+
+	public String toString() {
+		if (tips == null) {
+			tips = "";
+		}
+		return name + "," + tips + "," + dataType;
+	}
 }

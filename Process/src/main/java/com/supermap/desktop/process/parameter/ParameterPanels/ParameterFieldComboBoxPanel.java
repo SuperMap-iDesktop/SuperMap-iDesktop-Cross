@@ -65,7 +65,9 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 			@Override
 			public Component getListCellRendererComponent(JList<? extends FieldInfo> list, FieldInfo value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
-				jLabel.setText(value.getCaption());
+				if (value != null) {
+					jLabel.setText(value.getCaption());
+				}
 				jLabel.setOpaque(true);
 				if (isSelected) {
 					jLabel.setBackground(list.getSelectionBackground());

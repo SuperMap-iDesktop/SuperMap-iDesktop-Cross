@@ -3,6 +3,10 @@ package com.supermap.desktop;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceClosingEvent;
+import com.supermap.data.WorkspaceClosingListener;
+import com.supermap.data.WorkspaceOpenedEvent;
+import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.Interface.ICtrlAction;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMain;
@@ -16,8 +20,14 @@ import com.supermap.desktop.event.ActiveDatasourcesChangeListener;
 import com.supermap.desktop.event.FormActivatedListener;
 import com.supermap.desktop.event.FormLoadedListener;
 import com.supermap.desktop.event.WorkFlowChangedEvent;
+import com.supermap.desktop.event.WorkFlowInitListener;
 import com.supermap.desktop.event.WorkFlowsChangedListener;
 import com.supermap.desktop.implement.Output;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import javax.swing.event.EventListenerList;
 import java.util.ArrayList;
@@ -45,6 +55,7 @@ public class Application {
 	private ArrayList<FormActivatedListener> formActivatedListeners = new ArrayList<FormActivatedListener>();
 	private ArrayList<WorkFlowsChangedListener> workFlowsChangedListeners = new ArrayList<>();
 
+	private WorkFlowInitListener workFlowInitListener;
 	/**
 	 * classVar1 documentation comment
 	 */
@@ -236,16 +247,32 @@ public class Application {
 	public void initialize() {
 		try {
 			this.workspace = new Workspace();
+			workspace.addOpenedListener(new WorkspaceOpenedListener() {
+				@Override
+				public void workspaceOpened(WorkspaceOpenedEvent workspaceOpenedEvent) {
+					resetWorkFlows();
+				}
+			});
+			workspace.addClosingListener(new WorkspaceClosingListener() {
+				@Override
+				public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
+					for (int i = workFlows.size() - 1; i >= 0; i--) {
+						removeWorkFlowFormTree(workFlows.get(i));
+					}
+				}
+			});
 			this.pluginManager = new PluginManager();
 			this.workEnvironmentManager = new WorkEnvironmentManager();
 		} catch (Exception e) {
 			System.err.println(e.getMessage());
 		}
 	}
+
 	//自动化使用，请勿删除
-	public void addFormLoadedListener(FormLoadedListener listener){
+	public void addFormLoadedListener(FormLoadedListener listener) {
 		formLoadedListeners.add(listener);
 	}
+
 	public void addActiveDatasourceChangedListener(ActiveDatasourcesChangeListener listener) {
 		eventListenerList.add(ActiveDatasourcesChangeListener.class, listener);
 	}
@@ -293,12 +320,60 @@ public class Application {
 		return workFlows;
 	}
 
-	public void setWorkFlows(ArrayList<IWorkFlow> workFlows) {
-		this.workFlows = workFlows;
+	public void resetWorkFlows() {
+		String description = workspace.getDescription();
+		if (StringUtilities.isNullOrEmpty(description)) {
+			initWorkFlowXml();
+			return;
+		} else {
+			Document document = XmlUtilities.stringToDocument(description);
+			Node root = document.getChildNodes().item(0);
+			Node workFlows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
+			Element[] workFlow = XmlUtilities.getChildElementNodesByName(workFlows, "WorkFlow");
+			for (Element element : workFlow) {
+				this.workFlows.add(fireWorkFlowInitListener(element));
+			}
+		}
 		fireWorkFlowsChanged(new WorkFlowChangedEvent(WorkFlowChangedEvent.RE_BUILD, workFlows.toArray(new IWorkFlow[workFlows.size()])));
 	}
 
+	private IWorkFlow fireWorkFlowInitListener(Element element) {
+		return workFlowInitListener.init(element);
+	}
+
 	public void addWorkFlow(IWorkFlow workFlow) {
+		addWorkFlowInWorkspace(workFlow);
+		addWorkFlowInTree(workFlow);
+	}
+
+	private void addWorkFlowInWorkspace(IWorkFlow workFlow) {
+		Workspace workspace = Application.getActiveApplication().getWorkspace();
+		String description = workspace.getDescription();
+		if (StringUtilities.isNullOrEmpty(description)) {
+			description = initWorkFlowXml();
+			workspace.setDescription(description);
+		}
+		Document document = XmlUtilities.stringToDocument(description);
+		Node root = document.getChildNodes().item(0);
+		Node workFlows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
+		Element workFlowNode = document.createElement("WorkFlow");
+		workFlowNode.setAttribute("name", workFlow.getName());
+		workFlowNode.setAttribute("value", workFlow.getMatrixXml());
+		workFlows.appendChild(workFlowNode);
+		workspace.setDescription(XmlUtilities.nodeToString(document, "UTF-8"));
+	}
+
+	private String initWorkFlowXml() {
+		String description;
+		Document document = XmlUtilities.getEmptyDocument();
+		Element root = XmlUtilities.createRoot(document, "root");
+		Element workFlows = document.createElement("WorkFlows");
+		root.appendChild(workFlows);
+		description = XmlUtilities.nodeToString(document, "UTF-8");
+		return description;
+	}
+
+	private void addWorkFlowInTree(IWorkFlow workFlow) {
 		this.workFlows.add(workFlow);
 		fireWorkFlowsChanged(new WorkFlowChangedEvent(WorkFlowChangedEvent.ADD, workFlow));
 	}
@@ -309,8 +384,29 @@ public class Application {
 	}
 
 	public void removeWorkFlow(IWorkFlow workFlow) {
+		removeWorkFlowFormWorkspace(workFlow);
+		removeWorkFlowFormTree(workFlow);
+	}
+
+	private void removeWorkFlowFormTree(IWorkFlow workFlow) {
 		this.workFlows.remove(workFlow);
 		fireWorkFlowsChanged(new WorkFlowChangedEvent(WorkFlowChangedEvent.DELETE, workFlow));
+	}
+
+	private void removeWorkFlowFormWorkspace(IWorkFlow workFlow) {
+		Workspace workspace = Application.getActiveApplication().getWorkspace();
+		String description = workspace.getDescription();
+		Document document = XmlUtilities.stringToDocument(description);
+		Node root = document.getChildNodes().item(0);
+		Node workFlows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
+		Element[] workFlowsArray = XmlUtilities.getChildElementNodesByName(workFlows, "WorkFlow");
+		for (Element element : workFlowsArray) {
+			if (element.getAttribute("name").equals(workFlow.getName())) {
+				workFlows.removeChild(element);
+				break;
+			}
+		}
+		workspace.setDescription(XmlUtilities.nodeToString(document, "UTF-8"));
 	}
 
 	private void fireWorkFlowsChanged(WorkFlowChangedEvent workFlowChangedEvent) {
@@ -329,5 +425,11 @@ public class Application {
 		workFlowsChangedListeners.remove(workFlowsChangedListener);
 	}
 
+	public WorkFlowInitListener getWorkFlowInitListener() {
+		return workFlowInitListener;
+	}
 
+	public void setWorkFlowInitListener(WorkFlowInitListener workFlowInitListener) {
+		this.workFlowInitListener = workFlowInitListener;
+	}
 }

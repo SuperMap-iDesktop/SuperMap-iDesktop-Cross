@@ -40,9 +40,10 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by highsad on 2017/1/6.
  */
 public class FormProcess extends FormBaseChild implements IFormProcess {
-    private ScrollGraphCanvas graphCanvas = new ScrollGraphCanvas();
-    private String title;
-    public boolean isNeedSave = true;
+	private ScrollGraphCanvas graphCanvas = new ScrollGraphCanvas();
+	private String title;
+	private boolean isNeedSave = true;
+	private boolean isAutoAddOutPut = true;
 
     public FormProcess() {
         this(ControlsProperties.getString("String_WorkFlows"));
@@ -65,30 +66,34 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
         initFormWorkFlow(workflow);
     }
 
-    protected void initFormWorkFlow(IWorkFlow workflow) {
-        if (workflow instanceof Workflow) {
-            NodeMatrix matrix = ((Workflow) workflow).getMatrix();
-            CopyOnWriteArrayList allStartNodes = matrix.getAllNodes();
-            for (Object node : allStartNodes) {
-                IGraph graph = (IGraph) node;
-                graphCanvas.getCanvas().addGraph(graph);
-            }
-            IGraphConnection connection = graphCanvas.getCanvas().getConnection();
-            for (Object node : allStartNodes) {
-                IGraph graph = (IGraph) node;
-                try {
-                    CopyOnWriteArrayList nextNodes = matrix.getNextNodes(graph);
-                    if (nextNodes != null) {
-                        for (Object nextNode : nextNodes) {
-                            connection.connect(graph, (IGraph) nextNode);
-                        }
-                    }
-                } catch (NodeException e) {
-                    // ignore
-                }
-            }
-        }
-    }
+	protected void initFormWorkFlow(IWorkFlow workflow) {
+		if (workflow instanceof Workflow) {
+			isAutoAddOutPut = false;
+			try {
+				NodeMatrix matrix = ((Workflow) workflow).getMatrix();
+				CopyOnWriteArrayList allStartNodes = matrix.getAllNodes();
+				for (Object node : allStartNodes) {
+					IGraph graph = (IGraph) node;
+					graphCanvas.getCanvas().addGraph(graph);
+					graph.setCanvas(graphCanvas.getCanvas());
+				}
+				IGraphConnection connection = graphCanvas.getCanvas().getConnection();
+				for (Object node : allStartNodes) {
+					IGraph graph = (IGraph) node;
+					CopyOnWriteArrayList nextNodes = matrix.getNextNodes(graph);
+					if (nextNodes != null) {
+						for (Object nextNode : nextNodes) {
+							connection.connect(graph, (IGraph) nextNode);
+						}
+					}
+				}
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(e);
+			} finally {
+				isAutoAddOutPut = true;
+			}
+		}
+	}
 
     private void init() {
         setLayout(new BorderLayout());
@@ -124,110 +129,113 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
             }
         });
 
-        graphCanvas.getCanvas().addGraphCreatedListener(new GraphCreatedListener() {
-            @Override
-            public void graphCreated(GraphCreatedEvent e) {
-                if (e.getGraph() instanceof ProcessGraph) {
-                    ProcessGraph processGraph = (ProcessGraph) e.getGraph();
-                    IProcess process = processGraph.getProcess();
+		graphCanvas.getCanvas().addGraphCreatedListener(new GraphCreatedListener() {
+			@Override
+			public void graphCreated(GraphCreatedEvent e) {
+				if (!isAutoAddOutPut) {
+					return;
+				}
+				if (e.getGraph() instanceof ProcessGraph) {
+					ProcessGraph processGraph = (ProcessGraph) e.getGraph();
+					IProcess process = processGraph.getProcess();
 
-                    int gap = 20;
-                    OutputData[] outputs = process.getOutputs().getDatas();
-                    int length = outputs.length;
-                    OutputGraph[] dataGraphs = new OutputGraph[length];
-                    int totalHeight = gap * (length - 1);
+					int gap = 20;
+					OutputData[] outputs = process.getOutputs().getDatas();
+					int length = outputs.length;
+					OutputGraph[] dataGraphs = new OutputGraph[length];
+					int totalHeight = gap * (length - 1);
 
-                    for (int i = 0; i < length; i++) {
-                        dataGraphs[i] = new OutputGraph(graphCanvas.getCanvas(), processGraph, outputs[i]);
-                        graphCanvas.getCanvas().addGraph(dataGraphs[i]);
-                        graphCanvas.getCanvas().getConnection().connect(processGraph, dataGraphs[i]);
-                        totalHeight += dataGraphs[i].getHeight();
-                    }
+					for (int i = 0; i < length; i++) {
+						dataGraphs[i] = new OutputGraph(graphCanvas.getCanvas(), processGraph, outputs[i]);
+						graphCanvas.getCanvas().addGraph(dataGraphs[i]);
+						graphCanvas.getCanvas().getConnection().connect(processGraph, dataGraphs[i]);
+						totalHeight += dataGraphs[i].getHeight();
+					}
 
-                    int locationX = processGraph.getLocation().x + processGraph.getWidth() * 3 / 2;
-                    int locationY = processGraph.getLocation().y + (processGraph.getHeight() - totalHeight) / 2;
-                    for (int i = 0; i < length; i++) {
-                        dataGraphs[i].setLocation(new Point(locationX, locationY));
+					int locationX = processGraph.getLocation().x + processGraph.getWidth() * 3 / 2;
+					int locationY = processGraph.getLocation().y + (processGraph.getHeight() - totalHeight) / 2;
+					for (int i = 0; i < length; i++) {
+						dataGraphs[i].setLocation(new Point(locationX, locationY));
 //						System.out.println(dataGraphs[i].getHeight());
-                        locationY += dataGraphs[i].getHeight() + gap;
-                    }
-                    graphCanvas.getCanvas().repaint();
-                }
-            }
-        });
-    }
+						locationY += dataGraphs[i].getHeight() + gap;
+					}
+					graphCanvas.getCanvas().repaint();
+				}
+			}
+		});
+	}
 
-    public static void main(String[] args) {
-        final JFrame frame = new JFrame();
-        frame.setSize(1000, 650);
-        frame.getContentPane().setLayout(new BorderLayout());
-        frame.getContentPane().add(new FormProcess(), BorderLayout.CENTER);
+	public static void main(String[] args) {
+		final JFrame frame = new JFrame();
+		frame.setSize(1000, 650);
+		frame.getContentPane().setLayout(new BorderLayout());
+		frame.getContentPane().add(new FormProcess(), BorderLayout.CENTER);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                frame.setVisible(true);
-            }
-        });
-    }
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				frame.setVisible(true);
+			}
+		});
+	}
 
-    //region ignore
-    @Override
-    public String getText() {
-        return title;
-    }
+	//region ignore
+	@Override
+	public String getText() {
+		return title;
+	}
 
-    @Override
-    public void setText(String text) {
-        this.title = text;
-    }
+	@Override
+	public void setText(String text) {
+		this.title = text;
+	}
 
-    @Override
-    public WindowType getWindowType() {
-        return WindowType.UNKNOWN;
-    }
+	@Override
+	public WindowType getWindowType() {
+		return WindowType.UNKNOWN;
+	}
 
-    @Override
-    public boolean save() {
-        int index = -1;
-        ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
-        for (IWorkFlow workFlow : workFlows) {
-            if (workFlow.getName().equals(this.getText())) {
-                index = workFlows.indexOf(workFlow);
-                Application.getActiveApplication().removeWorkFlow(workFlow);
-                break;
-            }
-        }
+	@Override
+	public boolean save() {
+		int index = -1;
+		ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
+		for (IWorkFlow workFlow : workFlows) {
+			if (workFlow.getName().equals(this.getText())) {
+				index = workFlows.indexOf(workFlow);
+				Application.getActiveApplication().removeWorkFlow(workFlow);
+				break;
+			}
+		}
 
-        if (index == -1) {
-            Application.getActiveApplication().addWorkFlow(getWorkFlow());
-        } else {
-            Application.getActiveApplication().addWorkFlow(index, getWorkFlow());
-        }
-        isNeedSave = false;
-        return true;
-    }
+		if (index == -1) {
+			Application.getActiveApplication().addWorkFlow(getWorkFlow());
+		} else {
+			Application.getActiveApplication().addWorkFlow(index, getWorkFlow());
+		}
+		isNeedSave = false;
+		return true;
+	}
 
-    private Workflow getWorkFlow() {
-        NodeMatrix nodeMatrix = new NodeMatrix();
-        Workflow workflow = new Workflow(nodeMatrix);
-        workflow.setName(getText());
-        IGraphConnection connection = this.graphCanvas.getCanvas().getConnection();
-        IGraphStorage graphStorage = this.graphCanvas.getCanvas().getGraphStorage();
-        IGraph[] graphs = graphStorage.getGraphs();
-        for (IGraph graph : graphs) {
-            nodeMatrix.addNode(graph);
-        }
-        for (IGraph graph : graphs) {
-            IGraph[] nextGraphs = connection.getNextGraphs(graph);
-            if (nextGraphs.length > 0) {
-                for (IGraph nextGraph : nextGraphs) {
-                    nodeMatrix.addConstraint(graph, nextGraph, new DirectConnect());
-                }
-            }
-        }
-        return workflow;
-    }
+	private Workflow getWorkFlow() {
+		NodeMatrix nodeMatrix = new NodeMatrix();
+		IGraphConnection connection = this.graphCanvas.getCanvas().getConnection();
+		IGraphStorage graphStorage = this.graphCanvas.getCanvas().getGraphStorage();
+		IGraph[] graphs = graphStorage.getGraphs();
+		for (IGraph graph : graphs) {
+			nodeMatrix.addNode(graph);
+		}
+		for (IGraph graph : graphs) {
+			IGraph[] nextGraphs = connection.getNextGraphs(graph);
+			if (nextGraphs.length > 0) {
+				for (IGraph nextGraph : nextGraphs) {
+					nodeMatrix.addConstraint(graph, nextGraph, new DirectConnect());
+				}
+			}
+		}
+		Workflow workflow = new Workflow(getText());
+		workflow.setMatrix(nodeMatrix);
+		return workflow;
+	}
 
     @Override
     public boolean save(boolean notify, boolean isNewWindow) {

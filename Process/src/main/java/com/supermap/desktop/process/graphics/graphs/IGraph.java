@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics.graphs;
 
+import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
 
@@ -11,6 +12,9 @@ import java.awt.*;
  * Created by highsad on 2017/1/18.
  */
 public interface IGraph {
+
+	void setCanvas(GraphCanvas canvas);
+
 	GraphCanvas getCanvas();
 
 	Rectangle getBounds();
@@ -32,4 +36,8 @@ public interface IGraph {
 	void addGraphBoundsChangedListener(GraphBoundsChangedListener listener);
 
 	void removeGraghBoundsChangedListener(GraphBoundsChangedListener listener);
+
+	String toXml();
+
+	IGraph formXml(JSONObject xml);
 }

@@ -7,7 +7,6 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
-import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.utilities.FileUtilities;
 
 import javax.swing.*;
@@ -163,6 +162,16 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 	@Override
 	public IParameterPanel getComponent() {
 		return null;
+	}
+
+	@Override
+	public String toXml() {
+		return null;
+	}
+
+	@Override
+	public void fromXml(String xml) {
+
 	}
 
 

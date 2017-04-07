@@ -5,7 +5,6 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
-import com.supermap.desktop.process.tasks.ProcessTask;
 
 import javax.swing.*;
 
@@ -37,5 +36,9 @@ public interface IProcess {
 	void removeRunningListener(RunningListener listener);
 
 	IParameterPanel getComponent();
+
+	String toXml();
+
+	void fromXml(String xml);
 }
 
