@@ -362,17 +362,18 @@ public class DialogMapCacheBuilder extends SmDialog {
                         .addGroup(groupLayoutOutPutSetting.createSequentialGroup()
                                 .addGroup(groupLayoutOutPutSetting.createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addComponent(this.labelVersion)
-                                        .addComponent(this.labelSplitMode))
+                                        .addComponent(this.labelSplitMode)
+                                        .addComponent(this.labelConfig))
                                 .addGap(30)
                                 .addGroup(groupLayoutOutPutSetting.createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addComponent(this.comboboxVersion, universalWidth, universalWidth, Short.MAX_VALUE)
-                                        .addComponent(this.comboBoxSplitMode, universalWidth, universalWidth, Short.MAX_VALUE)))
+                                        .addComponent(this.comboBoxSplitMode, universalWidth, universalWidth, Short.MAX_VALUE)
+                                        .addComponent(this.labelConfigValue)))
 //                .addComponent(this.checkBoxUpdataOrAddCacheFile)
 //                .addComponent(this.checkBoxGoOnOrRecoveryCacheFile)
-                        .addGroup(groupLayoutOutPutSetting.createSequentialGroup()
-                                .addComponent(this.labelConfig)
-                                .addComponent(this.labelConfigValue)
-                        )
+//                        .addGroup(groupLayoutOutPutSetting.createSequentialGroup()
+//                                .addComponent(this.labelConfig)
+//                                .addComponent(this.labelConfigValue))
         );
         groupLayoutOutPutSetting.setVerticalGroup(groupLayoutOutPutSetting.createSequentialGroup()
                         .addGroup(groupLayoutOutPutSetting.createParallelGroup()
@@ -1525,7 +1526,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                         if (Integer.parseInt(s[3]) < 255)
                             b = true;
         }
-        if (b){
+        if (b) {
             connectMongoDBPretreatment();
         }
         return b;
@@ -1986,7 +1987,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         }
     };
 
-    private DocumentListener serverNameDocumentListener=new DocumentListener() {
+    private DocumentListener serverNameDocumentListener = new DocumentListener() {
         @Override
         public void insertUpdate(DocumentEvent e) {
             isCanRun();
