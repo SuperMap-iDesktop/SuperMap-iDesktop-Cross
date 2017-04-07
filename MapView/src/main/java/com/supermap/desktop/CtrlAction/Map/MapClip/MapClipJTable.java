@@ -118,7 +118,13 @@ public class MapClipJTable extends MutiTable {
 				String clipType = MapViewProperties.getString("String_MapClip_In");
 				String erase = MapViewProperties.getString("String_MapClip_No");
 				boolean exactClip = false;
-				this.mapClipTableModel.addRowLayerInfo(clip, layerCaption, targetDatasource, targetDataset, clipType, erase, exactClip);
+				boolean isLayersettingOrTheme=true;
+				if (resultLayer.get(i).getTheme()!=null){
+					isLayersettingOrTheme=false;
+					this.mapClipTableModel.addRowLayerInfo(clip, layerCaption, targetDatasource, targetDataset, clipType, erase, exactClip,isLayersettingOrTheme,(Object)resultLayer.get(i).getTheme());
+				}else {
+					this.mapClipTableModel.addRowLayerInfo(clip, layerCaption, targetDatasource, targetDataset, clipType, erase, exactClip,isLayersettingOrTheme,(Object)resultLayer.get(i).getAdditionalSetting());
+				}
 				this.updateUI();
 			} else {
 				continue;

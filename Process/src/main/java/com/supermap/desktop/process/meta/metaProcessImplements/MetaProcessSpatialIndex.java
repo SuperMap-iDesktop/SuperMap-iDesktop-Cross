@@ -13,7 +13,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
-import com.supermap.desktop.process.tasks.ProcessTask;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
@@ -23,11 +23,15 @@ import javax.swing.*;
  * @author XiaJT
  */
 public class MetaProcessSpatialIndex extends MetaProcess {
+	private final static String INPUT_DATA = "InputData";
+	private final static String OUTPUT_DATA = "output";
 	private ParameterDatasource datasource;
 	private ParameterSingleDataset dataset;
 	private ParameterComboBox parameterComboBox;
 
 	public MetaProcessSpatialIndex() {
+		this.inputs.addData(INPUT_DATA, DataType.DATASET_VECTOR);
+		this.outputs.addData(OUTPUT_DATA, DataType.DATASET_VECTOR);
 		parameters = new DefaultParameters();
 		ParameterDataNode[] parameterDataNodes = new ParameterDataNode[]{
 				// fixme 支持的索引类型和数据源类型相关，目前只把所有的索引类型添加进去，未处理不支持的情况
@@ -52,15 +56,18 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 
 	@Override
 	public void run() {
-		DatasetVector dataset = (DatasetVector) inputs.getData();
+		DatasetVector src = null;
+		if (this.inputs.getData(INPUT_DATA).getValue() instanceof DatasetVector) {
+			src = (DatasetVector) this.inputs.getData(INPUT_DATA).getValue();
+		} else {
+			src = (DatasetVector) this.dataset.getSelectedItem();
+		}
 		SpatialIndexType spatialIndexType = (SpatialIndexType) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData();
 		fireRunning(new RunningEvent(this, 0, "start build spatial index"));
-		dataset.buildSpatialIndex(spatialIndexType);
+		src.buildSpatialIndex(spatialIndexType);
 		fireRunning(new RunningEvent(this, 100, "build spatial index finished"));
 		setFinished(true);
-//		ProcessData processData = new ProcessData();
-//		processData.setData(dataset);
-//		outPuts.add(0, processData);
+		this.outputs.getData(OUTPUT_DATA).setValue(src);
 	}
 
 	@Override

@@ -1,11 +1,6 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
-import com.supermap.data.QueryParameter;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
@@ -13,13 +8,9 @@ import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstrai
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.tasks.ProcessTask;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -32,6 +23,8 @@ import java.util.ArrayList;
  * sql查询简单实现
  */
 public class MetaProcessSqlQuery extends MetaProcess {
+	private final static String INPUT_DATA = "InputData";
+	private final static String OUTPUT_DATA = "QueryResult";
 	private ParameterDatasource datasource;
 	private ParameterSingleDataset dataset;
 	private ParameterTextArea parameterAttributeFilter;
@@ -48,6 +41,8 @@ public class MetaProcessSqlQuery extends MetaProcess {
 	}
 
 	private void initMetaInfo() {
+		this.inputs.addData(INPUT_DATA, DataType.DATASET_VECTOR);
+		this.outputs.addData(OUTPUT_DATA, DataType.DATASET_VECTOR);
 		datasource = new ParameterDatasource();
 		this.datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameters = new DefaultParameters();
@@ -87,10 +82,13 @@ public class MetaProcessSqlQuery extends MetaProcess {
 	@Override
 	public void run() {
 		fireRunning(new RunningEvent(this, 0, "start"));
-		DatasetVector currentDatasetVector = inputs.getData() instanceof DatasetVector ? ((DatasetVector) inputs.getData()) : null;
-		if (currentDatasetVector == null && dataset.getSelectedItem() instanceof DatasetVector) {
+		DatasetVector currentDatasetVector = null;
+		if (this.inputs.getData(INPUT_DATA).getValue() instanceof DatasetVector) {
+			currentDatasetVector = (DatasetVector) this.inputs.getData(INPUT_DATA).getValue();
+		} else {
 			currentDatasetVector = (DatasetVector) dataset.getSelectedItem();
 		}
+
 		if (null != currentDatasetVector) {
 			// 构建查询语句
 			QueryParameter queryParameter = new QueryParameter();
@@ -115,10 +113,8 @@ public class MetaProcessSqlQuery extends MetaProcess {
 				fireRunning(new RunningEvent(this, 100, "finished"));
 				setFinished(true);
 				// 保存查询结果
-//				DatasetVector datasetVector = saveQueryResult(resultRecord);
-//				ProcessData processData = new ProcessData();
-//				processData.setData(datasetVector);
-//				outPuts.add(0, processData);
+				DatasetVector datasetVector = saveQueryResult(resultRecord);
+				this.outputs.getData(OUTPUT_DATA).setValue(datasetVector);
 			}
 		}
 

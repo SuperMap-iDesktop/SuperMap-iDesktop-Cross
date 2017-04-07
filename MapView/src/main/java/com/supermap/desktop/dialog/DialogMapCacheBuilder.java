@@ -1003,7 +1003,7 @@ public class DialogMapCacheBuilder extends SmDialog {
 
         } else if (this.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_MongoDB")) || this.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_MongoDBMuti"))) {
             if (this.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_MongoDB"))) {
-                if (!isIp(this.textFieldServerName.getText()) || !this.mongoDBConnectSate || this.comboBoxDatabaseName.getEditor().getItem().toString().isEmpty()) {
+                if (textFieldServerNameGetFocus||!this.mongoDBConnectSate || this.comboBoxDatabaseName.getEditor().getItem().toString().isEmpty()) {
                     result = false;
                 }
             } else {
@@ -1078,7 +1078,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                     this.scaleNames.put(this.globalScaleSortKeys[selectedIndex.get(i)], this.globalSplitScale.get(this.globalScaleSortKeys[selectedIndex.get(i)]));
                 }
             }
-            this.mapCacheBuilder.setMap(this.currentMap);
+            //this.mapCacheBuilder.setMap(this.currentMap);
             this.mapCacheBuilder.setOutputScales(outputScalevalues);
             this.mapCacheBuilder.setOutputScaleCaptions(this.scaleNames);
             this.mapCacheBuilder.setVersion(MapCacheVersion.VERSION_50);
@@ -1147,10 +1147,15 @@ public class DialogMapCacheBuilder extends SmDialog {
                 this.mapCacheBuilder.setPassword(this.textFieldUserPassword.getText());
             } else if (this.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_MongoDB")) || this.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_MongoDBMuti"))) {
                 tileStorageConnection = new TileStorageConnection();
+                System.out.println(this.textFieldServerName.getText());
+                System.out.println(this.textFieldCacheName.getText());
+                System.out.println(this.comboBoxDatabaseName.getEditor().getItem().toString());
+                System.out.println(this.textFieldUserName.getText());
+                System.out.println(this.textFieldUserPassword.getText());
                 tileStorageConnection.setServer(this.textFieldServerName.getText());
                 tileStorageConnection.setName(this.textFieldCacheName.getText());
                 tileStorageConnection.setDatabase(this.comboBoxDatabaseName.getEditor().getItem().toString());
-                tileStorageConnection.setStorageType(TileStorageType.MONGOV2);
+                tileStorageConnection.setStorageType(TileStorageType.MONGO);
                 tileStorageConnection.setUser(this.textFieldUserName.getText());
                 tileStorageConnection.setPassword(this.textFieldUserPassword.getText());
             }
@@ -1176,7 +1181,7 @@ public class DialogMapCacheBuilder extends SmDialog {
             String time = String.valueOf((endTime - startTime) / 1000.0);
             if (result) {
                 Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateSuccessed"));
-                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + this.fileChooserControlFileCache.getEditor().getText() + this.textFieldCacheName.getText() + "\\");
+                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + this.fileChooserControlFileCache.getEditor().getText() + "\\"+ this.textFieldCacheName.getText() );
             } else {
                 Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateFailed"));
             }
@@ -1525,9 +1530,6 @@ public class DialogMapCacheBuilder extends SmDialog {
                     if (Integer.parseInt(s[2]) < 255)
                         if (Integer.parseInt(s[3]) < 255)
                             b = true;
-        }
-        if (b) {
-            connectMongoDBPretreatment();
         }
         return b;
     }
@@ -1975,13 +1977,13 @@ public class DialogMapCacheBuilder extends SmDialog {
             if (textFieldServerName.getText().equals(MapViewProperties.getString("MapCache_MongoDB_DefaultServerName"))) {
                 textFieldServerName.setText("");
             }
-            //textFieldServerNameGetFocus = true;
-            //isCanRun();
+            textFieldServerNameGetFocus = true;
+            isCanRun();
         }
 
         @Override
         public void focusLost(FocusEvent e) {
-            //textFieldServerNameGetFocus = false;
+            textFieldServerNameGetFocus = false;
             connectMongoDBPretreatment();
             isCanRun();
         }
@@ -1990,16 +1992,31 @@ public class DialogMapCacheBuilder extends SmDialog {
     private DocumentListener serverNameDocumentListener = new DocumentListener() {
         @Override
         public void insertUpdate(DocumentEvent e) {
+            if (isIp(textFieldServerName.getText())) {
+                connectMongoDBPretreatment();
+            } else {
+                mongoDBConnectSate = false;
+            }
             isCanRun();
         }
 
         @Override
         public void removeUpdate(DocumentEvent e) {
+            if (isIp(textFieldServerName.getText())) {
+                connectMongoDBPretreatment();
+            } else {
+                mongoDBConnectSate = false;
+            }
             isCanRun();
         }
 
         @Override
         public void changedUpdate(DocumentEvent e) {
+            if (isIp(textFieldServerName.getText())) {
+                connectMongoDBPretreatment();
+            } else {
+                mongoDBConnectSate = false;
+            }
             isCanRun();
         }
     };
@@ -2043,7 +2060,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.comboBoxPixel.addItemListener(this.comboboxImagePixelListener);
         this.comboBoxSaveType.addItemListener(this.saveTypeListener);
         this.textFieldServerName.addFocusListener(this.serverNameFocusListener);
-        this.textFieldServerName.getDocument().addDocumentListener(this.serverNameDocumentListener);
+        //this.textFieldServerName.getDocument().addDocumentListener(this.serverNameDocumentListener);
         this.panelCacheRange.addSelectObjectLitener(this.selectObjectListener);
         this.cacheRangeWaringTextFieldLeft.getTextField().addCaretListener(this.cacheRangeCareListener);
         this.cacheRangeWaringTextFieldTop.getTextField().addCaretListener(this.cacheRangeCareListener);
@@ -2083,7 +2100,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.comboBoxImageType.removeItemListener(this.comboboxImageTypeListener);
         this.comboBoxSaveType.removeItemListener(this.saveTypeListener);
         this.comboBoxPixel.removeItemListener(this.comboboxImagePixelListener);
-        this.textFieldServerName.getDocument().removeDocumentListener(this.serverNameDocumentListener);
+        //this.textFieldServerName.getDocument().removeDocumentListener(this.serverNameDocumentListener);
         this.textFieldServerName.removeFocusListener(this.serverNameFocusListener);
         this.panelCacheRange.removeSelectObjectListener(this.selectObjectListener);
         this.cacheRangeWaringTextFieldLeft.getTextField().removeCaretListener(this.cacheRangeCareListener);

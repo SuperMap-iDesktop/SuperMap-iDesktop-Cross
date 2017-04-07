@@ -4,8 +4,14 @@ import com.supermap.analyst.spatialanalyst.RasterClip;
 import com.supermap.analyst.spatialanalyst.VectorClip;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.mapping.LayerSetting;
+import com.supermap.mapping.Layers;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.Theme;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -22,6 +28,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 
 	private Vector VectorInfo;
 	private Dataset resultDataset;
+	private String saveMapName;
 
 	ArrayList<Dataset> datasetsArrayList;
 
@@ -73,8 +80,9 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 	/**
 	 * @param vector
 	 */
-	public MapClipProgressCallable(Vector vector) {
+	public MapClipProgressCallable(Vector vector,String saveMapName) {
 		this.VectorInfo = vector;
+		this.saveMapName=saveMapName;
 	}
 
 	@Override
@@ -86,10 +94,28 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 
 			long startTime = System.currentTimeMillis();
 			this.datasetsArrayList = new ArrayList<>();
+
+			boolean isSaveMap=false;
+			Map resultMap=null;
+			Layers preLayers=null;
+			IFormMap formMap=(IFormMap) Application.getActiveApplication().getActiveForm();
+			if (!StringUtilities.isNullOrEmpty(this.saveMapName)){
+				resultMap=new Map(formMap.getMapControl().getMap().getWorkspace());
+				resultMap.fromXML(formMap.getMapControl().getMap().toXML());
+				preLayers=resultMap.getLayers();
+				preLayers.clear();
+				isSaveMap=true;
+				//formMap.getMapControl().getMap().getWorkspace().getMaps().add(this.saveMapName,resultMap.toXML());
+			}
+
 			for (int i = 0; i < this.VectorInfo.size(); i++) {
 				Dataset dataset = (Dataset) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_SOURCEDATASET);
 				percentListener = new PercentListener(i, this.VectorInfo.size(), dataset.getName());
 				String targetDatasetName;
+
+				boolean isLayersettingOrTheme=(Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_LAYERSRTTING_OR_THEME_INDEX);
+				Object layersettingOrTheme=(Object)((Vector) (this.VectorInfo.get(i))).get(COLUMN_LAYERSRTTING_OR_THEME);
+
 				if (dataset instanceof DatasetVector) {
 					VectorClip.addSteppedListener(percentListener);
 
@@ -105,6 +131,13 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 						this.resultDataset = VectorClip.clipDatasetVector(sourceDataset, userRegion, isClipInRegion,
 								isEraseSource, targetDatasource, targetDatasetName);
 					} else {
+						if (isSaveMap){
+							if (isLayersettingOrTheme) {
+								preLayers.add(targetDatasource.getDatasets().get(targetDatasetName), (LayerSetting)layersettingOrTheme,false);
+							}else{
+								preLayers.add(targetDatasource.getDatasets().get(targetDatasetName), (Theme) layersettingOrTheme,false);
+							}
+						}
 						this.resultDataset = null;
 					}
 				} else {
@@ -122,15 +155,30 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 						this.resultDataset = RasterClip.clip(sourceDataset, userRegion, isClipInRegion,
 								isExactClip, targetDatasource, targetDatasetName);
 					} else {
+						if (isSaveMap){
+							if (isLayersettingOrTheme) {
+								preLayers.add(targetDatasource.getDatasets().get(targetDatasetName), (LayerSetting)layersettingOrTheme,false);
+							}else{
+								preLayers.add(targetDatasource.getDatasets().get(targetDatasetName), (Theme) layersettingOrTheme,false);
+							}
+						}
 						this.resultDataset = null;
 					}
 				}
 
 				if (this.resultDataset != null) {
 					datasetsArrayList.add(this.resultDataset);
+					if (isSaveMap){
+						if (isLayersettingOrTheme) {
+							preLayers.add(this.resultDataset, (LayerSetting)layersettingOrTheme,false);
+						}else{
+							preLayers.add(this.resultDataset, (Theme) layersettingOrTheme,false);
+						}
+					}
 				}
 
 			}
+			formMap.getMapControl().getMap().getWorkspace().getMaps().add(this.saveMapName,resultMap.toXML());
 			long endTime = System.currentTimeMillis();
 			String time = String.valueOf((endTime - startTime) / 1000.0);
 			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_MapClip_Finished"), time));

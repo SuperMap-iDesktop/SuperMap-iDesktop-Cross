@@ -26,6 +26,8 @@ public class MapClipTableModel extends AbstractTableModel {
 	public static final int COLUMN_INDEX_ERASE = 5;
 	public static final int COLUMN_INDEX_EXACTCLIP = 6;
 	public static final int COLUMNS_NUMBER = 7;
+	public static final int COLUMNS_LAYERSRTTING_OR_THEME_INDEX=7;
+	public static final int COLUMNS_LAYERSRTTING_OR_THEME=8;
 
 	public MapClipTableModel() {
 		this.layerInfo = new Vector();
@@ -43,8 +45,8 @@ public class MapClipTableModel extends AbstractTableModel {
 	 * @param exactClip        是否精确裁剪
 	 */
 	public void addRowLayerInfo(boolean clip, Layer layer, Datasource targetDatasource,
-	                            String targetDataset, String clipType, String erase, boolean exactClip) {
-		Vector v = new Vector(6);
+	                            String targetDataset, String clipType, String erase, boolean exactClip,boolean isLayersettingOrTheme,Object layersettingOrTheme) {
+		Vector v = new Vector(8);
 		v.add(COLUMN_INDEX_ISCLIP, new Boolean(clip));
 		v.add(COLUMN_INDEX_LAYERCAPTION, layer);
 		v.add(COLUMN_INDEX_AIMDATASOURCE, targetDatasource);
@@ -52,6 +54,8 @@ public class MapClipTableModel extends AbstractTableModel {
 		v.add(COLUMN_INDEX_CLIPTYPE, clipType);
 		v.add(COLUMN_INDEX_ERASE, erase);
 		v.add(COLUMN_INDEX_EXACTCLIP, exactClip);
+		v.add(COLUMNS_LAYERSRTTING_OR_THEME_INDEX,isLayersettingOrTheme);
+		v.add(COLUMNS_LAYERSRTTING_OR_THEME,layersettingOrTheme);
 		this.layerInfo.add(v);
 	}
 
