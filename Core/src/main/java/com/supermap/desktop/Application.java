@@ -3,8 +3,8 @@ package com.supermap.desktop;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
-import com.supermap.data.WorkspaceClosedEvent;
-import com.supermap.data.WorkspaceClosedListener;
+import com.supermap.data.WorkspaceClosingEvent;
+import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.data.WorkspaceOpenedEvent;
 import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.Interface.ICtrlAction;
@@ -20,6 +20,7 @@ import com.supermap.desktop.event.ActiveDatasourcesChangeListener;
 import com.supermap.desktop.event.FormActivatedListener;
 import com.supermap.desktop.event.FormLoadedListener;
 import com.supermap.desktop.event.WorkFlowChangedEvent;
+import com.supermap.desktop.event.WorkFlowInitListener;
 import com.supermap.desktop.event.WorkFlowsChangedListener;
 import com.supermap.desktop.implement.Output;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -54,6 +55,7 @@ public class Application {
 	private ArrayList<FormActivatedListener> formActivatedListeners = new ArrayList<FormActivatedListener>();
 	private ArrayList<WorkFlowsChangedListener> workFlowsChangedListeners = new ArrayList<>();
 
+	private WorkFlowInitListener workFlowInitListener;
 	/**
 	 * classVar1 documentation comment
 	 */
@@ -251,11 +253,11 @@ public class Application {
 					resetWorkFlows();
 				}
 			});
-			workspace.addClosedListener(new WorkspaceClosedListener() {
+			workspace.addClosingListener(new WorkspaceClosingListener() {
 				@Override
-				public void workspaceClosed(WorkspaceClosedEvent workspaceClosedEvent) {
-					for (IWorkFlow workFlow : workFlows) {
-						removeWorkFlowFormTree(workFlow);
+				public void workspaceClosing(WorkspaceClosingEvent workspaceClosingEvent) {
+					for (int i = workFlows.size() - 1; i >= 0; i--) {
+						removeWorkFlowFormTree(workFlows.get(i));
 					}
 				}
 			});
@@ -265,10 +267,12 @@ public class Application {
 			System.err.println(e.getMessage());
 		}
 	}
+
 	//自动化使用，请勿删除
-	public void addFormLoadedListener(FormLoadedListener listener){
+	public void addFormLoadedListener(FormLoadedListener listener) {
 		formLoadedListeners.add(listener);
 	}
+
 	public void addActiveDatasourceChangedListener(ActiveDatasourcesChangeListener listener) {
 		eventListenerList.add(ActiveDatasourcesChangeListener.class, listener);
 	}
@@ -327,10 +331,14 @@ public class Application {
 			Node workFlows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
 			Element[] workFlow = XmlUtilities.getChildElementNodesByName(workFlows, "WorkFlow");
 			for (Element element : workFlow) {
-
+				this.workFlows.add(fireWorkFlowInitListener(element));
 			}
 		}
 		fireWorkFlowsChanged(new WorkFlowChangedEvent(WorkFlowChangedEvent.RE_BUILD, workFlows.toArray(new IWorkFlow[workFlows.size()])));
+	}
+
+	private IWorkFlow fireWorkFlowInitListener(Element element) {
+		return workFlowInitListener.init(element);
 	}
 
 	public void addWorkFlow(IWorkFlow workFlow) {
@@ -417,5 +425,11 @@ public class Application {
 		workFlowsChangedListeners.remove(workFlowsChangedListener);
 	}
 
+	public WorkFlowInitListener getWorkFlowInitListener() {
+		return workFlowInitListener;
+	}
 
+	public void setWorkFlowInitListener(WorkFlowInitListener workFlowInitListener) {
+		this.workFlowInitListener = workFlowInitListener;
+	}
 }
