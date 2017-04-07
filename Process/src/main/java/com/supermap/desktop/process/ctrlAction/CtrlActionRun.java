@@ -51,8 +51,8 @@ public class CtrlActionRun extends CtrlAction {
 //            tasksDock.setVisible(true);
 
         container.clear();
-        CopyOnWriteArrayList list = nodeMatrix.listAllNodes();
-        for (int i = 0; i < list.size(); i++) {
+	    CopyOnWriteArrayList list = nodeMatrix.getAllNodes();
+	    for (int i = 0; i < list.size(); i++) {
             if (list.get(i) instanceof IProcess) {
                 container.addItem(new ProcessTask((IProcess) list.get(i)));
             }

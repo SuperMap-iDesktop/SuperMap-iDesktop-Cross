@@ -27,6 +27,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterLabel;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -39,6 +40,9 @@ import java.text.MessageFormat;
  * 叠加分析
  */
 public class MetaProcessOverlayAnalyst extends MetaProcess {
+	private final static String INPUT_SOURCE_DATASET = "SourceDataset";
+	private final static String OUTPUT_DATASET = "OverlayAnalyst";
+
 	private OverlayAnalystType analystType;
 	private ParameterDatasource parameterSourceDatasource = new ParameterDatasource();
 	private ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
@@ -67,6 +71,8 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	}
 
 	private void initParameters() {
+		this.inputs.addData(INPUT_SOURCE_DATASET, DataType.DATASET_POINT | DataType.DATASET_LINE | DataType.DATASET_REGION);
+		this.outputs.addData(OUTPUT_DATASET, DataType.DATASET_POINT | DataType.DATASET_LINE | DataType.DATASET_REGION);
 		parameterSourceDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
 		parameterOverlayDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
 		parameterResultDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
@@ -170,9 +176,9 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	public void run() {
 		fireRunning(new RunningEvent(this, 0, "start"));
 		ParameterOverlayAnalystInfo info = new ParameterOverlayAnalystInfo();
-		if (inputs.getData() != null && inputs.getData() instanceof DatasetVector) {
-			info.sourceDatatsource = ((DatasetVector) inputs.getData()).getDatasource();
-			info.sourceDataset = (DatasetVector) inputs.getData();
+		if (inputs.getData(INPUT_SOURCE_DATASET) != null && inputs.getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
+			info.sourceDatatsource = ((DatasetVector) inputs.getData(INPUT_SOURCE_DATASET).getValue()).getDatasource();
+			info.sourceDataset = ((DatasetVector) inputs.getData(INPUT_SOURCE_DATASET).getValue());
 		} else {
 			info.sourceDatatsource = (Datasource) parameterSourceDatasource.getSelectedItem();
 			info.sourceDataset = (DatasetVector) parameterSourceDataset.getSelectedItem();
@@ -232,6 +238,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 				break;
 		}
 		OverlayAnalyst.removeSteppedListener(this.steppedListener);
+		outputs.getData(OUTPUT_DATASET).setValue(targetDataset);
 		fireRunning(new RunningEvent(this, 100, "finished"));
 		setFinished(true);
 //		ProcessData processData = new ProcessData();
