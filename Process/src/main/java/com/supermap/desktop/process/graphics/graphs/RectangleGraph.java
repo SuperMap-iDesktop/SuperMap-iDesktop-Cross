@@ -13,7 +13,7 @@ public class RectangleGraph extends AbstractGraph {
 	private double arcHeight = 0d;
 
 	public RectangleGraph(GraphCanvas canvas) {
-		super(canvas, new RoundRectangle2D.Double(0, 0, 150, 60, 10, 10));
+		super(canvas, new RoundRectangle2D.Double(0, 0, 150, 50, 15, 15));
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.graphs.*;
 import com.supermap.desktop.process.graphics.graphs.decorator.*;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import sun.swing.SwingUtilities2;
 
 import java.awt.*;
@@ -214,19 +215,21 @@ public class DefaultGraphPainter implements IGraphPainter {
 
 	private void paintOutputGraph(Graphics graphics, OutputGraph outputGraph) {
 		paintEllipseGraph(graphics, outputGraph);
-		Font font = new Font("宋体", Font.PLAIN, 24);
+		Font font = new Font("宋体", Font.PLAIN, 20);
 		graphics.setFont(font);
 		graphics.setColor(Color.darkGray);
 
+		String text = outputGraph.getTitle();
 		int fontHeight = this.canvas.getFontMetrics(font).getHeight();
-		int fontWidth = SwingUtilities2.stringWidth(this.canvas, this.canvas.getFontMetrics(font), "output");
+		int fontWidth = SwingUtilities2.stringWidth(this.canvas, this.canvas.getFontMetrics(font), text);
 		int fontDescent = this.canvas.getFontMetrics(font).getDescent();
 
 		// 字符绘制时，坐标点指定的是基线的位置，而实际上我们希望指定的坐标点是整个字符块最下边的位置，因此使用 fontDescent 做个处理
 		Point location = outputGraph.getLocation();
 		double width = outputGraph.getWidth();
 		double height = outputGraph.getHeight();
-		graphics.drawString("output", intValue(location.getX() + (width - fontWidth) / 2), intValue(location.getY() + height / 2 + fontHeight / 2 - fontDescent));
+		text = SwingUtilities2.clipStringIfNecessary(this.canvas, this.canvas.getFontMetrics(font), text, DoubleUtilities.intValue(width));
+		graphics.drawString(text, intValue(location.getX() + (width - fontWidth) / 2), intValue(location.getY() + height / 2 + fontHeight / 2 - fontDescent));
 	}
 
 	private static int intValue(double value) {

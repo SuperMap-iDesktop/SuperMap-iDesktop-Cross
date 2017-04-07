@@ -3,24 +3,15 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetType;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.AbstractParameter;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
-import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.tasks.ProcessTask;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
@@ -29,6 +20,8 @@ import javax.swing.*;
  * Created by xie on 2017/3/7.
  */
 public class MetaProcessISORegion extends MetaProcess {
+	private final static String INPUT_DATA = "InputData";
+	private final static String OUTPUT_DATA = "ExtractResult";
 
 	private ParameterDatasource sourceDatasource;
 	private ParameterSingleDataset dataset;
@@ -51,6 +44,8 @@ public class MetaProcessISORegion extends MetaProcess {
 	};
 
 	public MetaProcessISORegion() {
+		this.inputs.addData(INPUT_DATA, DataType.DATASET_GRID);
+		this.outputs.addData(OUTPUT_DATA, DataType.DATASET_REGION);
 		parameters = new DefaultParameters();
 		sourceDatasource = new ParameterDatasource();
 		sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
@@ -86,7 +81,7 @@ public class MetaProcessISORegion extends MetaProcess {
 
 	@Override
 	public String getTitle() {
-		return CommonProperties.getString("String_SurfaceISOLine");
+		return CommonProperties.getString("String_SurfaceISORegion");
 	}
 
 	@Override
@@ -97,9 +92,17 @@ public class MetaProcessISORegion extends MetaProcess {
 		surfaceExtractParameter.setResampleTolerance(Double.valueOf(resampleTolerance.getSelectedItem().toString()));
 		surfaceExtractParameter.setSmoothMethod((SmoothMethod) ((ParameterDataNode) smoothMethod.getSelectedItem()).getData());
 		surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem().toString()));
+		DatasetGrid src = null;
+		if (this.inputs.getData(INPUT_DATA).getValue() != null) {
+			src = (DatasetGrid) this.inputs.getData(INPUT_DATA).getValue();
+		} else {
+			src = (DatasetGrid) dataset.getSelectedItem();
+		}
+
 		SurfaceAnalyst.addSteppedListener(this.stepListener);
-		SurfaceAnalyst.extractIsoregion(surfaceExtractParameter, (DatasetGrid) dataset.getSelectedItem(), targetDataset.getResultDatasource(), targetDataset.getDatasetName(), null);
+		DatasetVector result = SurfaceAnalyst.extractIsoregion(surfaceExtractParameter, src, targetDataset.getResultDatasource(), targetDataset.getDatasetName(), null);
 		SurfaceAnalyst.removeSteppedListener(this.stepListener);
+		this.outputs.getData(OUTPUT_DATA).setValue(result);
 		fireRunning(new RunningEvent(MetaProcessISORegion.this, 100, "finished"));
 		setFinished(true);
 	}

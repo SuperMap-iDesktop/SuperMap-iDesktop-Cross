@@ -11,7 +11,7 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
-import com.supermap.desktop.process.graphics.graphs.DataGraph;
+import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
@@ -61,11 +61,11 @@ public class FormProcess extends FormBaseChild implements IForm {
 					int gap = 20;
 					OutputData[] outputs = process.getOutputs().getDatas();
 					int length = outputs.length;
-					DataGraph[] dataGraphs = new DataGraph[length];
+					OutputGraph[] dataGraphs = new OutputGraph[length];
 					int totalHeight = gap * (length - 1);
 
 					for (int i = 0; i < length; i++) {
-						dataGraphs[i] = new DataGraph(graphCanvas.getCanvas(), outputs[i]);
+						dataGraphs[i] = new OutputGraph(graphCanvas.getCanvas(), processGraph, outputs[i]);
 						graphCanvas.getCanvas().addGraph(dataGraphs[i]);
 						graphCanvas.getCanvas().getConnection().connect(processGraph, dataGraphs[i]);
 						totalHeight += dataGraphs[i].getHeight();
@@ -75,7 +75,8 @@ public class FormProcess extends FormBaseChild implements IForm {
 					int locationY = processGraph.getLocation().y + (processGraph.getHeight() - totalHeight) / 2;
 					for (int i = 0; i < length; i++) {
 						dataGraphs[i].setLocation(new Point(locationX, locationY));
-						locationY = dataGraphs[i].getHeight() + gap;
+//						System.out.println(dataGraphs[i].getHeight());
+						locationY += dataGraphs[i].getHeight() + gap;
 					}
 					graphCanvas.getCanvas().repaint();
 				}
