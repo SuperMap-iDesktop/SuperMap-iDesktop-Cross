@@ -21,10 +21,6 @@ public class Inputs {
 		return this.process;
 	}
 
-	public Object getData() {
-		return null;
-	}
-
 	public InputData getData(String name) {
 		if (StringUtilities.isNullOrEmpty(name) || !this.datas.containsKey(name)) {
 			return null;
@@ -74,7 +70,7 @@ public class Inputs {
 		ArrayList<InputData> result = new ArrayList<>();
 		for (String name : this.datas.keySet()) {
 			InputData data = this.datas.get(name);
-			if (data.getType() == type) {
+			if ((data.getType() & type) != 0) {
 				result.add(data);
 			}
 		}

@@ -1,11 +1,6 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.GeoCoordSys;
-import com.supermap.data.GeoCoordSysType;
-import com.supermap.data.GeoSpatialRefType;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.data.PrjCoordSysType;
+import com.supermap.data.*;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
@@ -15,7 +10,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterEnum;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
-import com.supermap.desktop.process.tasks.ProcessTask;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -26,11 +21,15 @@ import javax.swing.*;
  * @author XiaJT
  */
 public class MetaProcessProjection extends MetaProcess {
+	private final static String INPUT_DATA = "InputData";
+	private final static String OUTPUT_DATA = "output";
 	private ParameterDatasource datasource;
 	private ParameterSingleDataset dataset;
 	private ParameterEnum parameterComboBox;
 
 	public MetaProcessProjection() {
+		this.inputs.addData(INPUT_DATA, DataType.DATASET);
+		this.outputs.addData(OUTPUT_DATA, DataType.DATASET);
 		parameters = new DefaultParameters();
 		datasource = new ParameterDatasource();
 		dataset = new ParameterSingleDataset();
@@ -61,36 +60,39 @@ public class MetaProcessProjection extends MetaProcess {
 		return parameters.getPanel();
 	}
 
-    @Override
-    public void run() {
-        Dataset dataset = (Dataset) inputs.getData();
-        fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
-        GeoCoordSysType geoCoordSysType = (GeoCoordSysType) parameterComboBox.getSelectedItem();
-        GeoCoordSys geoCoordSys = new GeoCoordSys(geoCoordSysType, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
-        PrjCoordSys prjCoordSys = new PrjCoordSys(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE);
-        prjCoordSys.setGeoCoordSys(geoCoordSys);
-        dataset.setPrjCoordSys(prjCoordSys);
-        fireRunning(new RunningEvent(this, 100, "set geoCoorSys finished"));
-        setFinished(true);
-//        ProcessData processData = new ProcessData();
-//        processData.setData(dataset);
-//        outPuts.add(0, processData);
-    }
+	@Override
+	public void run() {
+		Dataset src = null;
+		if (this.inputs.getData(INPUT_DATA).getValue() instanceof Dataset) {
+			src = (Dataset) this.inputs.getData(INPUT_DATA).getValue();
+		} else {
+			src = (Dataset) this.dataset.getSelectedItem();
+		}
+		fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
+		GeoCoordSysType geoCoordSysType = (GeoCoordSysType) parameterComboBox.getSelectedItem();
+		GeoCoordSys geoCoordSys = new GeoCoordSys(geoCoordSysType, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
+		PrjCoordSys prjCoordSys = new PrjCoordSys(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE);
+		prjCoordSys.setGeoCoordSys(geoCoordSys);
+		src.setPrjCoordSys(prjCoordSys);
+		fireRunning(new RunningEvent(this, 100, "set geoCoorSys finished"));
+		setFinished(true);
+		this.outputs.getData(OUTPUT_DATA).setValue(src);
+	}
 
-    @Override
-    public IParameters getParameters() {
-        return parameters;
-    }
+	@Override
+	public IParameters getParameters() {
+		return parameters;
+	}
 
-    @Override
-    public String getKey() {
-        return MetaKeys.PROJECTION;
-    }
+	@Override
+	public String getKey() {
+		return MetaKeys.PROJECTION;
+	}
 
-    @Override
-    public String getTitle() {
-        return "投影转换";
-    }
+	@Override
+	public String getTitle() {
+		return "投影转换";
+	}
 
 	@Override
 	public Icon getIcon() {

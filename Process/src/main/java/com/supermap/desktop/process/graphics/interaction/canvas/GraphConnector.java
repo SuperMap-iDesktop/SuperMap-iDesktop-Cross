@@ -6,7 +6,10 @@ import com.supermap.desktop.process.graphics.CanvasCursor;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.connection.DefaultLine;
-import com.supermap.desktop.process.graphics.graphs.*;
+import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
+import com.supermap.desktop.process.graphics.graphs.IGraph;
+import com.supermap.desktop.process.graphics.graphs.OutputGraph;
+import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 
 import javax.swing.*;
@@ -121,7 +124,7 @@ public class GraphConnector extends CanvasEventAdapter {
 	}
 
 	private boolean isStartValid(IGraph graph) {
-		return graph instanceof DataGraph;
+		return graph instanceof OutputGraph;
 	}
 
 	private boolean isEndValid(IGraph graph) {

@@ -30,6 +30,7 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		super(parameterTextField);
 		this.parameterTextField = (ParameterTextField) parameterTextField;
 		label.setText(this.parameterTextField.getDescribe());
+		label.setToolTipText(this.parameterTextField.getDescribe());
 		textField.setText(String.valueOf(this.parameterTextField.getSelectedItem()));
 		initLayout();
 		initListeners();
