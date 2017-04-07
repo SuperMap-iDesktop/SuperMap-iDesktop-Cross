@@ -151,10 +151,10 @@ public class NodeMatrix {
      * @param node
      * @return If null menu that no such node
      */
-    public synchronized CopyOnWriteArrayList getNextNodes(Object node) throws NodeException {
+    public synchronized CopyOnWriteArrayList getNextNodes(Object node) {
         CopyOnWriteArrayList result = new CopyOnWriteArrayList();
         if (!this.nodeList.contains(node)) {
-            throw new NodeException("Node note exists");
+	        return new CopyOnWriteArrayList();
         } else if (nodeMatrix.containsKey(node)) {
             Iterator<Map.Entry<Object, INodeConstraint>> iterator = nodeMatrix.get(node).vector.entrySet().iterator();
             while (iterator.hasNext()) {

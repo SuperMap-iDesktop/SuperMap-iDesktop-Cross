@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics.graphs;
 
+import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
 
@@ -11,6 +12,11 @@ import java.awt.*;
 public class ConnectorGraph implements IGraph {
 
 	public AbstractGraph graph;
+
+	@Override
+	public void setCanvas(GraphCanvas canvas) {
+
+	}
 
 	@Override
 	public GraphCanvas getCanvas() {
@@ -67,4 +73,13 @@ public class ConnectorGraph implements IGraph {
 
 	}
 
+	@Override
+	public String toXml() {
+		return null;
+	}
+
+	@Override
+	public IGraph formXml(JSONObject xml) {
+		return null;
+	}
 }

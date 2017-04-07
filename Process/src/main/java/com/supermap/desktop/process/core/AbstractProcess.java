@@ -5,7 +5,6 @@ import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
-import com.supermap.desktop.process.tasks.ProcessTask;
 
 import javax.swing.event.EventListenerList;
 
@@ -68,5 +67,15 @@ public abstract class AbstractProcess implements IProcess {
 	@Override
 	public void setParent(ProcessGroup parent) {
 		this.parent = parent;
+	}
+
+	@Override
+	public String toXml() {
+		return "Key = " + getKey();
+	}
+
+	@Override
+	public void fromXml(String xml) {
+
 	}
 }

@@ -16,7 +16,6 @@ import com.supermap.desktop.event.FormShownEvent;
 import com.supermap.desktop.event.FormShownListener;
 import com.supermap.desktop.process.core.DirectConnect;
 import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.core.NodeException;
 import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
@@ -49,7 +48,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class FormProcess extends FormBaseChild implements IFormProcess {
 	private ScrollGraphCanvas graphCanvas = new ScrollGraphCanvas();
 	private String title;
-	public boolean isNeedSave = true;
+	private boolean isNeedSave = true;
+	private boolean isAutoAddOutPut = true;
 
 	public FormProcess() {
 		this(ControlsProperties.getString("String_WorkFlows"));
@@ -74,25 +74,29 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 
 	protected void initFormWorkFlow(IWorkFlow workflow) {
 		if (workflow instanceof Workflow) {
-			NodeMatrix matrix = ((Workflow) workflow).getMatrix();
-			CopyOnWriteArrayList allStartNodes = matrix.getAllNodes();
-			for (Object node : allStartNodes) {
-				IGraph graph = (IGraph) node;
-				graphCanvas.getCanvas().addGraph(graph);
-			}
-			IGraphConnection connection = graphCanvas.getCanvas().getConnection();
-			for (Object node : allStartNodes) {
-				IGraph graph = (IGraph) node;
-				try {
+			isAutoAddOutPut = false;
+			try {
+				NodeMatrix matrix = ((Workflow) workflow).getMatrix();
+				CopyOnWriteArrayList allStartNodes = matrix.getAllNodes();
+				for (Object node : allStartNodes) {
+					IGraph graph = (IGraph) node;
+					graphCanvas.getCanvas().addGraph(graph);
+					graph.setCanvas(graphCanvas.getCanvas());
+				}
+				IGraphConnection connection = graphCanvas.getCanvas().getConnection();
+				for (Object node : allStartNodes) {
+					IGraph graph = (IGraph) node;
 					CopyOnWriteArrayList nextNodes = matrix.getNextNodes(graph);
 					if (nextNodes != null) {
 						for (Object nextNode : nextNodes) {
 							connection.connect(graph, (IGraph) nextNode);
 						}
 					}
-				} catch (NodeException e) {
-					// ignore
 				}
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(e);
+			} finally {
+				isAutoAddOutPut = true;
 			}
 		}
 	}
@@ -121,6 +125,9 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		graphCanvas.getCanvas().addGraphCreatedListener(new GraphCreatedListener() {
 			@Override
 			public void graphCreated(GraphCreatedEvent e) {
+				if (!isAutoAddOutPut) {
+					return;
+				}
 				if (e.getGraph() instanceof ProcessGraph) {
 					ProcessGraph processGraph = (ProcessGraph) e.getGraph();
 					IProcess process = processGraph.getProcess();
@@ -204,8 +211,6 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 
 	private Workflow getWorkFlow() {
 		NodeMatrix nodeMatrix = new NodeMatrix();
-		Workflow workflow = new Workflow(nodeMatrix);
-		workflow.setName(getText());
 		IGraphConnection connection = this.graphCanvas.getCanvas().getConnection();
 		IGraphStorage graphStorage = this.graphCanvas.getCanvas().getGraphStorage();
 		IGraph[] graphs = graphStorage.getGraphs();
@@ -220,6 +225,8 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 				}
 			}
 		}
+		Workflow workflow = new Workflow(getText());
+		workflow.setMatrix(nodeMatrix);
 		return workflow;
 	}
 

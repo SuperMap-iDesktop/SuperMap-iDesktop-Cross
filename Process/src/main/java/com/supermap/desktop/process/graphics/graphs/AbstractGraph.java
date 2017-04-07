@@ -1,11 +1,15 @@
 package com.supermap.desktop.process.graphics.graphs;
 
+import com.alibaba.fastjson.JSONObject;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.Plugin;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedEvent;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
 
 import javax.swing.event.EventListenerList;
 import java.awt.*;
+import java.lang.reflect.Constructor;
 
 /**
  * Created by highsad on 2017/1/20.
@@ -15,7 +19,12 @@ public abstract class AbstractGraph implements IGraph {
 	protected Shape shape;
 	private EventListenerList listenerList = new EventListenerList();
 
+	private AbstractGraph() {
+		// 反射用的
+	}
+
 	public AbstractGraph(GraphCanvas canvas, Shape shape) {
+		// canvas的初始化在添加到画布的时候由画布设值
 		this.canvas = canvas;
 		this.shape = shape;
 	}
@@ -105,6 +114,11 @@ public abstract class AbstractGraph implements IGraph {
 		return this.shape.contains(point);
 	}
 
+	@Override
+	public void setCanvas(GraphCanvas canvas) {
+		this.canvas = canvas;
+	}
+
 	public GraphCanvas getCanvas() {
 		return this.canvas;
 	}
@@ -127,5 +141,45 @@ public abstract class AbstractGraph implements IGraph {
 				((GraphBoundsChangedListener) listeners[i + 1]).graghBoundsChanged(e);
 			}
 		}
+	}
+
+	public final String toXml() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("class", this.getClass().getName());
+		toXmlHook(jsonObject);
+		return jsonObject.toString();
+	}
+
+	protected void toXmlHook(JSONObject jsonObject) {
+
+	}
+
+
+	@Override
+	public final IGraph formXml(JSONObject xml) {
+		formXmlHook(xml);
+		return this;
+	}
+
+	protected void formXmlHook(JSONObject xml) {
+
+	}
+
+	public static IGraph formXmlFile(String xml) {
+		IGraph result = null;
+		JSONObject jsonObject = JSONObject.parseObject(xml);
+		String clazzName = (String) jsonObject.get("class");
+		Plugin process = Application.getActiveApplication().getPluginManager().getBundle("SuperMap.Desktop.Process");
+		try {
+			Class<?> aClass = process.getBundle().loadClass(clazzName);
+			Constructor<?> constructor = aClass.getDeclaredConstructor();
+			constructor.setAccessible(true);
+			result = ((IGraph) constructor.newInstance());
+			constructor.setAccessible(false);
+			result.formXml(jsonObject);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 }

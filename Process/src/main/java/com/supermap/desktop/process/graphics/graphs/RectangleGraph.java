@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics.graphs;
 
+import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 
 import java.awt.*;
@@ -51,5 +52,18 @@ public class RectangleGraph extends AbstractGraph {
 	@Override
 	public boolean contains(Point p) {
 		return this.shape.contains(p);
+	}
+
+	@Override
+	protected void toXmlHook(JSONObject jsonObject) {
+		super.toXmlHook(jsonObject);
+		jsonObject.put("shape", getShape().getX() + "," + getShape().getY() + "," + getShape().getWidth() + "," + getShape().getHeight() + "," + getShape().getArcWidth() + "," + getShape().getArcHeight());
+	}
+
+	@Override
+	protected void formXmlHook(JSONObject xml) {
+		super.formXmlHook(xml);
+		String[] shapes = ((String) xml.get("shape")).split(",");
+		shape = new RoundRectangle2D.Double(Double.valueOf(shapes[0]), Double.valueOf(shapes[1]), Double.valueOf(shapes[2]), Double.valueOf(shapes[3]), Double.valueOf(shapes[4]), Double.valueOf(shapes[5]));
 	}
 }
