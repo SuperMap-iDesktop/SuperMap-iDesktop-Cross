@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
+import com.supermap.desktop.process.dataconversion.FileType;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterFile;
@@ -8,6 +9,7 @@ import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmFileChoose;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,7 +46,7 @@ public class ParameterFilePanel extends SwingPanel {
 		fileChooserControl.getButton().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser jFileChooser = new JFileChooser();
+				SmFileChoose jFileChooser = FileType.createImportFileChooser();
 				if (jFileChooser.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
 					File selectedFile = jFileChooser.getSelectedFile();
 					isSelectingFile = true;

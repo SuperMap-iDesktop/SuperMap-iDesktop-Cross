@@ -7,18 +7,14 @@ import com.supermap.data.conversion.ExportSettingCSV;
 import com.supermap.data.conversion.ExportSteppedEvent;
 import com.supermap.data.conversion.ExportSteppedListener;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.swing.*;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.Vector;
 
 /**
@@ -77,7 +73,7 @@ public class ExportSettingGPX extends ExportSettingCSV {
             if (!file.exists()) {
                 file.createNewFile();
                 XmlUtilities.parseFileToXML(transformer, source, file);
-            } else if (JOptionPane.OK_OPTION == new SmOptionPane().showConfirmDialogYesNo(MessageFormat.format(ControlsProperties.getString("String_RenameFile_Message"), file.getName()))) {
+            } else {
                 XmlUtilities.parseFileToXML(transformer, source, file);
             }
             if (file.length() > 0) {

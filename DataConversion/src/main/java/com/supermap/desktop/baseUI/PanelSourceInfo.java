@@ -3,6 +3,7 @@ package com.supermap.desktop.baseUI;
 import com.supermap.data.Charset;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Interface.IImportSettingSourceInfo;
+import com.supermap.desktop.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.importUI.ImportFilePropertiesDialog;
@@ -121,13 +122,13 @@ public class PanelSourceInfo extends JPanel implements IImportSettingSourceInfo 
         }
     }
 
-    public void setComponentName(){
-        ComponentUIUtilities.setName(this.labelSourceFilePath,"PanelSourceInfo_labelSourceFilePath");
-        ComponentUIUtilities.setName(this.textFieldSourceFilePath,"PanelSourceInfo_textFieldSourceFilePath");
-        ComponentUIUtilities.setName(this.buttonProperty,"PanelSourceInfo_buttonProperty");
-        ComponentUIUtilities.setName(this.labelCharset,"PanelSourceInfo_labelCharset");
-        ComponentUIUtilities.setName(this.comboBoxCharset,"PanelSourceInfo_comboBoxCharset");
-        ComponentUIUtilities.setName(this.labelSourceFilePath,"PanelSourceInfo_owner");
+    public void setComponentName() {
+        ComponentUIUtilities.setName(this.labelSourceFilePath, "PanelSourceInfo_labelSourceFilePath");
+        ComponentUIUtilities.setName(this.textFieldSourceFilePath, "PanelSourceInfo_textFieldSourceFilePath");
+        ComponentUIUtilities.setName(this.buttonProperty, "PanelSourceInfo_buttonProperty");
+        ComponentUIUtilities.setName(this.labelCharset, "PanelSourceInfo_labelCharset");
+        ComponentUIUtilities.setName(this.comboBoxCharset, "PanelSourceInfo_comboBoxCharset");
+        ComponentUIUtilities.setName(this.labelSourceFilePath, "PanelSourceInfo_owner");
     }
 
     private Object selectedItem() {
@@ -167,7 +168,7 @@ public class PanelSourceInfo extends JPanel implements IImportSettingSourceInfo 
         this.comboBoxCharset.setPreferredSize(PackageInfo.defaultSize);
         this.comboBoxCharset.setEditable(true);
         ((JTextField) this.comboBoxCharset.getEditor().getEditorComponent()).setEditable(false);
-        if (importSetting instanceof ImportSettingDXF || importSetting instanceof ImportSettingDWG) {
+        if (importSetting instanceof ImportSettingDXF || importSetting instanceof ImportSettingDWG || importSetting instanceof ImportSettingGPX) {
             needCharset(false);
         } else {
             needCharset(true);
