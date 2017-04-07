@@ -29,12 +29,17 @@ public class ListGraphConnection implements IGraphConnection {
 
 	@Override
 	public void connect(IGraph start, IGraph end) {
+		connect(start, end, null);
+	}
+
+	@Override
+	public void connect(IGraph start, IGraph end, String message) {
 		if (isConnected(start, end)) {
 			return;
 		}
 
 		if (start != null && end != null && start != end) {
-			GraphRelationLine line = new GraphRelationLine(this.canvas, start, end);
+			GraphRelationLine line = new GraphRelationLine(this.canvas, start, end, message);
 			this.lines.add(line);
 			line.repaint();
 		}
@@ -46,6 +51,7 @@ public class ListGraphConnection implements IGraphConnection {
 			GraphRelationLine line = this.lines.get(i);
 			if (line.getStartGraph() == graph || line.getEndGraph() == graph) {
 				this.lines.remove(i);
+				line.clear();
 			}
 		}
 	}

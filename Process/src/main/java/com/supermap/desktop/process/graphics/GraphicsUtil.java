@@ -31,7 +31,11 @@ public class GraphicsUtil {
 	}
 
 	public static int getFontHeight(JComponent component) {
-		return component == null ? -1 : component.getFontMetrics(component.getFont()).getHeight();
+		return getFontHeight(component, component.getFont());
+	}
+
+	public static int getFontHeight(JComponent component, Font font) {
+		return component == null ? -1 : component.getFontMetrics(font).getHeight();
 	}
 
 	public static Color transparentColor(Color color, int alpha) {
