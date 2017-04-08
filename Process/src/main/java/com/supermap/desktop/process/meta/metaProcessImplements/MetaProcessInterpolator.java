@@ -62,7 +62,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 
 	public MetaProcessInterpolator(InterpolationAlgorithmType interpolationAlgorithmType) {
 		this.inputs.addData(INPUT_DATA, DataType.DATASET_VECTOR);
-		this.outputs.addData(OUTPUT_DATA, DataType.DATASET_VECTOR);
+		this.outputs.addData(OUTPUT_DATA, DataType.DATASET_GRID);
 		this.interpolationAlgorithmType = interpolationAlgorithmType;
 		parameters = new DefaultParameters();
 		parameterDatasource = new ParameterDatasource();
