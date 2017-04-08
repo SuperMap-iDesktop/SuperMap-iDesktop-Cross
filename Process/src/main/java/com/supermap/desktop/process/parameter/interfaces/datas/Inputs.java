@@ -99,6 +99,17 @@ public class Inputs {
 		}
 	}
 
+	public String getBindedInput(IValueProvider valueProvider) {
+		for (String key :
+				this.datas.keySet()) {
+			if (this.datas.get(key).isBind(valueProvider)) {
+				return key;
+			}
+		}
+
+		return null;
+	}
+
 	public void unbind(String name) {
 		if (this.datas.containsKey(name)) {
 			this.datas.get(name).unbind();

@@ -183,8 +183,10 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		info.targetDatasource = (Datasource) parameterResultDatasource.getSelectedItem();
 		info.targetDataset = (String) parameterSaveDataset.getSelectedItem();
 		OverlayAnalystParameter overlayAnalystParameter = new OverlayAnalystParameter();
-		overlayAnalystParameter.setSourceRetainedFields(parameterFieldSetDialog.getSourceFieldNames());
-		overlayAnalystParameter.setOperationRetainedFields(parameterFieldSetDialog.getResultFieldNames());
+		if (parameterFieldSetDialog.getSourceFieldNames() != null) {
+			overlayAnalystParameter.setSourceRetainedFields(parameterFieldSetDialog.getSourceFieldNames());
+			overlayAnalystParameter.setOperationRetainedFields(parameterFieldSetDialog.getResultFieldNames());
+		}
 		overlayAnalystParameter.setTolerance(DoubleUtilities.stringToValue(((String) parameterTolerance.getSelectedItem())));
 		info.analystParameter = overlayAnalystParameter;
 
