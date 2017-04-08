@@ -97,7 +97,11 @@ public class CtrlActionRun extends CtrlAction {
 //                GraphCanvas canvas = ((FormProcess) form).getCanvas();
 //                UniversalMatrix matrix = canvas.getTasks();
 //
-		TaskUtil.excuteTasks(nodeMatrix);
+
+//		TaskUtil.excuteTasks(nodeMatrix);
+		MatrixExecutor executor = new MatrixExecutor(nodeMatrix);
+		executor.run();
+
 //            }
 //        MetaProcessImport metaProcessImport = new MetaProcessImport();
 //        ParameterManager manager = TaskUtil.getParameterManager(true);
