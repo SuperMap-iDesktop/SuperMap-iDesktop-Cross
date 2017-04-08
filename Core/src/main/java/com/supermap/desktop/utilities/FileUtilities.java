@@ -3,11 +3,7 @@ package com.supermap.desktop.utilities;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CoreProperties;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.channels.FileChannel;
 
 public class FileUtilities {
@@ -15,6 +11,7 @@ public class FileUtilities {
 	private static final char[] unLegitFileNameChars = new char[]{
 			'<', '>', '!', ':', '\\', '/', '*', '?', '|'
 	};
+
 	private FileUtilities() {
 		// 工具类，不提供构造方法
 	}
@@ -308,6 +305,7 @@ public class FileUtilities {
 		}
 		return flag;
 	}
+
 	/**
 	 * 获取文件类型，默认以最后一个“.”作为分隔
 	 *
@@ -320,11 +318,12 @@ public class FileUtilities {
 
 	/**
 	 * Get file alias
+	 *
 	 * @param filePath
 	 * @return
 	 */
 	public static String getFileAlias(String filePath) {
-		String fileName = isFilePath(filePath) ? filePath.substring(filePath.lastIndexOf("\\"), filePath.length()) : null;
+		String fileName = isFilePath(filePath) ? filePath.substring(filePath.lastIndexOf("\\") + 1, filePath.length()) : null;
 		if (null == fileName || !fileName.contains(".")) {
 			return null;
 		}
@@ -343,6 +342,7 @@ public class FileUtilities {
 		}
 		return isFile;
 	}
+
 	public static boolean isContainUnLegitFileNameChars(String name) {
 		for (char unLegitFileNameChar : unLegitFileNameChars) {
 			if (name.contains(String.valueOf(unLegitFileNameChar))) {
