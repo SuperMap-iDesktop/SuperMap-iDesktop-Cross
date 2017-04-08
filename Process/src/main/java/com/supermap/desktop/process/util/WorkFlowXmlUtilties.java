@@ -200,7 +200,6 @@ public class WorkFlowXmlUtilties {
 				}
 			} catch (Exception e) {
 				System.out.println(e);
-
 			}
 			nodeMatrix.addConstraint(map.get(startId), map.get(endId), new DirectConnect());
 		}
