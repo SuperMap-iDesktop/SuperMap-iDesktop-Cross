@@ -5,6 +5,11 @@ import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.LineGraph;
+import com.supermap.desktop.process.graphics.graphs.OutputGraph;
+import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
+import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
+import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -150,6 +155,16 @@ public class WorkFlowXmlUtilties {
 						Element connect = document.createElement("connect");
 						connect.setAttribute("startId", String.valueOf(arrayList.indexOf(allNode)));
 						connect.setAttribute("endId", String.valueOf(arrayList.indexOf(node)));
+						if (node instanceof ProcessGraph) {
+							Inputs inputs = ((ProcessGraph) node).getProcess().getInputs();
+							InputData[] datas = inputs.getDatas();
+							for (InputData data : datas) {
+								if (data.isBind(((OutputGraph) allNode).getProcessData())) {
+									connect.setAttribute("inputs", data.getName());
+								}
+							}
+						}
+						// TODO: 2017/4/8
 						connections.appendChild(connect);
 					}
 				}
@@ -176,6 +191,15 @@ public class WorkFlowXmlUtilties {
 		for (Element connect : connects) {
 			String startId = connect.getAttribute("startId");
 			String endId = connect.getAttribute("endId");
+			try {
+				String inputs = connect.getAttribute("inputs");
+				if (!StringUtilities.isNullOrEmpty(inputs)) {
+					((ProcessGraph) map.get(endId)).getProcess().getInputs().bind(inputs, ((OutputGraph) map.get(startId)).getProcessData());
+				}
+			} catch (Exception e) {
+				System.out.println(e);
+
+			}
 			nodeMatrix.addConstraint(map.get(startId), map.get(endId), new DirectConnect());
 		}
 		return nodeMatrix;

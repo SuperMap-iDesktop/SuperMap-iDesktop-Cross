@@ -45,4 +45,8 @@ public class OutputGraph extends EllipseGraph {
 		super.formXmlHook(xml);
 		processData = OutputData.formString(((String) xml.get("processData")));
 	}
+
+	public void setProcessGraph(ProcessGraph processGraph) {
+		this.processGraph = processGraph;
+	}
 }

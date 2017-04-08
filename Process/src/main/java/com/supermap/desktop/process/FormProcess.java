@@ -7,9 +7,23 @@ import com.supermap.desktop.Interface.IFormProcess;
 import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.*;
-import com.supermap.desktop.process.core.*;
-import com.supermap.desktop.process.dataconversion.*;
+import com.supermap.desktop.event.FormActivatedListener;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosedListener;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormClosingListener;
+import com.supermap.desktop.event.FormDeactivatedListener;
+import com.supermap.desktop.event.FormShownEvent;
+import com.supermap.desktop.event.FormShownListener;
+import com.supermap.desktop.process.core.DirectConnect;
+import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.NodeMatrix;
+import com.supermap.desktop.process.core.Workflow;
+import com.supermap.desktop.process.dataconversion.FileType;
+import com.supermap.desktop.process.dataconversion.IImportSettingCreator;
+import com.supermap.desktop.process.dataconversion.IParameterCreator;
+import com.supermap.desktop.process.dataconversion.ImportParameterCreator;
+import com.supermap.desktop.process.dataconversion.ImportSettingCreator;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
@@ -83,6 +97,9 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 					CopyOnWriteArrayList nextNodes = matrix.getNextNodes(graph);
 					if (nextNodes != null) {
 						for (Object nextNode : nextNodes) {
+							if (nextNode instanceof OutputGraph) {
+								((OutputGraph) nextNode).setProcessGraph(((ProcessGraph) node));
+							}
 							connection.connect(graph, (IGraph) nextNode);
 						}
 					}
