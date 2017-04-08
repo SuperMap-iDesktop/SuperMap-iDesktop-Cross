@@ -1,15 +1,14 @@
 package com.supermap.desktop.process.ctrlAction;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.core.AbstractProcess;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.meta.MetaProcess;
+import com.supermap.desktop.process.tasks.TaskStore;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -63,7 +62,7 @@ public class MatrixExecutor {
 		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				process.run();
+				TaskStore.getTask(process).doWork();
 			}
 		});
 		thread.start();
