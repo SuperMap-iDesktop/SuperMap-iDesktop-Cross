@@ -41,6 +41,15 @@ public class MatrixExecutor {
 			}
 		}
 
+		starts = this.matrix.getSingleNodes();
+		if (starts.size() > 0) {
+			for (Object o : starts) {
+				if (o instanceof IProcess) {
+					this.ready.add((IProcess) o);
+				}
+			}
+		}
+
 		for (IProcess process : ready) {
 			List next = this.matrix.getNextNodes(process);
 			for (Object o : next) {
