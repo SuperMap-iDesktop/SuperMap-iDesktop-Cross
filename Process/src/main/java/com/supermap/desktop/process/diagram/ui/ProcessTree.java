@@ -9,16 +9,8 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.IProcessGroup;
 import com.supermap.desktop.process.core.ProcessGroup;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessBuffer;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessHeatMap;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISOLine;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessImport;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessInterpolator;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessKernelDensity;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessOverlayAnalyst;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessProjection;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSpatialIndex;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSqlQuery;
+import com.supermap.desktop.process.core.WorkflowParser;
+import com.supermap.desktop.process.meta.metaProcessImplements.*;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
@@ -124,7 +116,8 @@ public class ProcessTree extends JPanel {
 					Object userObject = ((DefaultMutableTreeNode) lastSelectedPathComponent).getUserObject();
 					if (userObject instanceof IProcess && !(userObject instanceof IProcessGroup)) {
 						if (Application.getActiveApplication().getActiveForm() instanceof FormProcess) {
-							((FormProcess) Application.getActiveApplication().getActiveForm()).addProcess((IProcess) userObject);
+							((FormProcess) Application.getActiveApplication().getActiveForm()).addProcess(WorkflowParser.getMetaProcess(((IProcess) userObject).getKey()));
+//							((FormProcess) Application.getActiveApplication().getActiveForm()).addProcess((IProcess) userObject);
 						}
 					}
 				}
