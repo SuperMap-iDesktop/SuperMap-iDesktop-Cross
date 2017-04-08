@@ -326,11 +326,17 @@ public class Application {
 
 	public void resetWorkFlows() {
 		String description = workspace.getDescription();
-		if (StringUtilities.isNullOrEmpty(description)) {
-			initWorkFlowXml();
+		Document document = null;
+		try {
+			document = XmlUtilities.stringToDocument(description);
+		} catch (Exception e) {
+			// ignore
+		}
+		if (StringUtilities.isNullOrEmpty(description) || document == null) {
+			String s = initWorkFlowXml();
+			workspace.setDescription(s);
 			return;
 		} else {
-			Document document = XmlUtilities.stringToDocument(description);
 			Node root = document.getChildNodes().item(0);
 			Node workFlows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
 			Element[] workFlow = XmlUtilities.getChildElementNodesByName(workFlows, "WorkFlow");
