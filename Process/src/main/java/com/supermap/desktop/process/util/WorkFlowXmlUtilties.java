@@ -195,6 +195,8 @@ public class WorkFlowXmlUtilties {
 				String inputs = connect.getAttribute("inputs");
 				if (!StringUtilities.isNullOrEmpty(inputs)) {
 					((ProcessGraph) map.get(endId)).getProcess().getInputs().bind(inputs, ((OutputGraph) map.get(startId)).getProcessData());
+				} else {
+					((OutputGraph) map.get(endId)).setProcessData(((ProcessGraph) map.get(startId)).getProcess().getOutputs().getData(((OutputGraph) map.get(endId)).getName()));
 				}
 			} catch (Exception e) {
 				System.out.println(e);
