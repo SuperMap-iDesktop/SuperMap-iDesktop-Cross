@@ -2,6 +2,7 @@ package com.supermap.desktop.ui.controls.borderPanel;
 
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.ui.controls.comboBox.ComboBoxLengthUnit;
 import com.supermap.desktop.ui.controls.comboBox.SmNumericFieldComboBox;
 
@@ -50,6 +51,7 @@ public class PanelBufferRadius extends JPanel {
 
 	public PanelBufferRadius() {
 		initComponent();
+		setComponentName();
 		initResources();
 		initLayout();
 	}
@@ -62,6 +64,11 @@ public class PanelBufferRadius extends JPanel {
 
 		TitledBorder border = new TitledBorder(ControlsProperties.getString("String_BufferRadius"));
 		this.setBorder(border);
+	}
+
+	private void setComponentName(){
+		ComponentUIUtilities.setName(this.comboBoxUnit,"PanelBufferRadius_comboBoxUnit");
+		ComponentUIUtilities.setName(this.numericFieldComboBox,"PanelBufferRadius_numericFieldComboBox");
 	}
 
 	private void initResources() {

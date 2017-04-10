@@ -1,6 +1,7 @@
 package com.supermap.desktop.spatialanalyst.vectoranalyst;
 
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
@@ -46,6 +47,7 @@ public class PanelBufferData extends JPanel {
 
 	public PanelBufferData() {
 		initComponent();
+		setComponentName();
 		initResources();
 		setPanelBufferDataLayout();
 	}
@@ -56,7 +58,12 @@ public class PanelBufferData extends JPanel {
 		this.comboBoxBufferDataDatasource = new DatasourceComboBox();
 		this.comboBoxBufferDataDataset = new DatasetComboBox();
 		this.checkBoxGeometrySelect = new JCheckBox("GeometrySelect");
+	}
 
+	private void setComponentName(){
+		ComponentUIUtilities.setName(this.comboBoxBufferDataDataset,"PanelBufferData_comboBoxBufferDataDataset");
+		ComponentUIUtilities.setName(this.comboBoxBufferDataDatasource,"PanelBufferData_comboBoxBufferDataDatasource");
+		ComponentUIUtilities.setName(this.checkBoxGeometrySelect,"PanelBufferData_checkBoxGeometrySelect");
 	}
 
 	private void initResources() {
