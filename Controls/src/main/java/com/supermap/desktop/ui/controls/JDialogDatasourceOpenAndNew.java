@@ -172,6 +172,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 
 	private DefaultListModel<Object> getListItemForOpenWebDatasource() {
 		DefaultListModel<Object> listModel = new DefaultListModel<Object>();
+		// TODO: 2017/4/8 大图标
 		DataCell ogcDataCell = new DataCell(EngineType.OGC, ControlsProperties.getString("String_OGC"));
 		DataCell iServerRestDataCell = new DataCell(EngineType.ISERVERREST, ControlsProperties.getString("String_iServerRest"));
 		DataCell superMapCloudDataCell = new DataCell(EngineType.SUPERMAPCLOUD, ControlsProperties.getString("String_SuperMapCloud"));

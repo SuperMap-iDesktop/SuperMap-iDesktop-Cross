@@ -194,10 +194,9 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		this.panelBasicLeft.setLayout(panelBasicLeftLayout);
 
 		//@formatter:off
-          panelBasicLeftLayout.setHorizontalGroup(panelBasicLeftLayout.createSequentialGroup()
-                    .addGroup(panelBasicLeftLayout.createParallelGroup(Alignment.LEADING)
-                              .addComponent(this.panelBufferData)
-                              .addComponent(this.panelResultData)));
+          panelBasicLeftLayout.setHorizontalGroup(panelBasicLeftLayout.createParallelGroup(Alignment.LEADING)
+                    .addComponent(this.panelBufferData)
+                    .addComponent(this.panelResultData));
           panelBasicLeftLayout.setVerticalGroup(panelBasicLeftLayout.createSequentialGroup()
                     .addComponent(this.panelBufferData).addContainerGap()
                     .addComponent(this.panelResultData));
@@ -210,10 +209,9 @@ public class PanelPointOrRegionAnalyst extends JPanel {
 		panelBasicRightLayout.setAutoCreateGaps(true);
 		this.panelBasicRight.setLayout(panelBasicRightLayout);
 		//@formatter:off
-          panelBasicRightLayout.setHorizontalGroup(panelBasicRightLayout.createSequentialGroup()
-                    .addGroup(panelBasicRightLayout.createParallelGroup(Alignment.LEADING)
-                              .addComponent(this.panelBufferRadius)
-                              .addComponent(this.panelResultSet)));
+          panelBasicRightLayout.setHorizontalGroup(panelBasicRightLayout.createParallelGroup(Alignment.LEADING)
+                   .addComponent(this.panelBufferRadius)
+                   .addComponent(this.panelResultSet));
           panelBasicRightLayout.setVerticalGroup(panelBasicRightLayout.createSequentialGroup()
 		          .addComponent(this.panelBufferRadius).addContainerGap()
 		          .addComponent(this.panelResultSet));

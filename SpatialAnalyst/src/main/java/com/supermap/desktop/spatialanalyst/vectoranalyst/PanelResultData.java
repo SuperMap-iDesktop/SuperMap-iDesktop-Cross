@@ -3,6 +3,7 @@ package com.supermap.desktop.spatialanalyst.vectoranalyst;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -43,6 +44,7 @@ public class PanelResultData extends JPanel {
 
 	public PanelResultData() {
 		initComponent();
+		setComponentName();
 		initResources();
 		resetDatasetName();
 		initComboBoxResultDataDatasource();
@@ -77,6 +79,11 @@ public class PanelResultData extends JPanel {
 			}
 		});
 
+	}
+
+	private void setComponentName(){
+		ComponentUIUtilities.setName(this.comboBoxResultDataDatasource,"PanelResultData_comboBoxResultDataDatasource");
+		ComponentUIUtilities.setName(this.textFieldResultDataDataset,"PanelResultData_textFieldResultDataDataset");
 	}
 
 	private void setPanelResultDataLayout() {

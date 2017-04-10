@@ -8,9 +8,12 @@ import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
+import com.supermap.desktop.event.WorkFlowInitListener;
+import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.utilities.CursorUtilities;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.w3c.dom.Element;
 
 import java.util.ArrayList;
 
@@ -38,6 +41,15 @@ public class ProcessActivator implements BundleActivator {
 		System.out.println("Hello SuperMap === Process!!");
 		setContext(bundleContext);
 		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.Process", bundleContext.getBundle());
+		Application.getActiveApplication().setWorkFlowInitListener(new WorkFlowInitListener() {
+			@Override
+			public IWorkFlow init(Element element) {
+				String name = element.getAttribute("name");
+				Workflow workflow = new Workflow(name);
+				workflow.setMatrixXml(element.getAttribute("value"));
+				return workflow;
+			}
+		});
 		CommonToolkit.FormWrap.addNewWindowListener(new NewWindowListener() {
 			@Override
 			public void newWindow(NewWindowEvent evt) {

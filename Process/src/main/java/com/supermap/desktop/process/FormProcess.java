@@ -8,7 +8,10 @@ import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.*;
-import com.supermap.desktop.process.core.*;
+import com.supermap.desktop.process.core.DirectConnect;
+import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.NodeMatrix;
+import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.dataconversion.*;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
@@ -45,26 +48,26 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 	private boolean isNeedSave = true;
 	private boolean isAutoAddOutPut = true;
 
-    public FormProcess() {
-        this(ControlsProperties.getString("String_WorkFlows"));
-    }
+	public FormProcess() {
+		this(ControlsProperties.getString("String_WorkFlows"));
+	}
 
 
-    public FormProcess(String name) {
-        super(name, null, null);
-        if (StringUtilities.isNullOrEmpty(name)) {
-            name = ControlsProperties.getString("String_WorkFlows");
-        }
-        this.title = name;
-        init();
-    }
+	public FormProcess(String name) {
+		super(name, null, null);
+		if (StringUtilities.isNullOrEmpty(name)) {
+			name = ControlsProperties.getString("String_WorkFlows");
+		}
+		this.title = name;
+		init();
+	}
 
-    public FormProcess(IWorkFlow workflow) {
-        super(workflow.getName(), null, null);
-        init();
-        this.setText(workflow.getName());
-        initFormWorkFlow(workflow);
-    }
+	public FormProcess(IWorkFlow workflow) {
+		super(workflow.getName(), null, null);
+		init();
+		this.setText(workflow.getName());
+		initFormWorkFlow(workflow);
+	}
 
 	protected void initFormWorkFlow(IWorkFlow workflow) {
 		if (workflow instanceof Workflow) {
@@ -83,7 +86,16 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 					CopyOnWriteArrayList nextNodes = matrix.getNextNodes(graph);
 					if (nextNodes != null) {
 						for (Object nextNode : nextNodes) {
-							connection.connect(graph, (IGraph) nextNode);
+							if (nextNode instanceof OutputGraph) {
+								((OutputGraph) nextNode).setProcessGraph(((ProcessGraph) node));
+							}
+							String message = null;
+							if (nextNode instanceof ProcessGraph) {
+								ProcessGraph processGraph = (ProcessGraph) nextNode;
+								message = processGraph.getProcess().getInputs().getBindedInput(((OutputGraph) graph).getProcessData());
+							}
+
+							connection.connect(graph, (IGraph) nextNode, message);
 						}
 					}
 				}
@@ -95,39 +107,39 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		}
 	}
 
-    private void init() {
-        setLayout(new BorderLayout());
-        add(graphCanvas, BorderLayout.CENTER);
-        graphCanvas.getCanvas().getSelection().addGraphSelectChangedListener(new GraphSelectChangedListener() {
+	private void init() {
+		setLayout(new BorderLayout());
+		add(graphCanvas, BorderLayout.CENTER);
+		graphCanvas.getCanvas().getSelection().addGraphSelectChangedListener(new GraphSelectChangedListener() {
 
-            @Override
-            public void graphSelectChanged(GraphSelectedChangedEvent e) {
-                try {
-                    ParameterManager component = (ParameterManager) ((Dockbar) Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName("com.supermap.desktop.process.ParameterManager"))).getInnerComponent();
-                    Selection selection = e.getSelection();
-                    if (selection.getItem(0) instanceof ProcessGraph) {
-                        if (((ProcessGraph) selection.getItem(0)).getProcess() instanceof MetaProcessImport && null == ((ProcessGraph) selection.getItem(0)).getProcess().getParameters().getParameters()) {
-                            MetaProcessImport metaProcessImport = (MetaProcessImport) ((ProcessGraph) selection.getItem(0)).getProcess();
-                            SmFileChoose jFileChooser = FileType.createImportFileChooser();
-                            if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                                IImportSettingCreator creator = new ImportSettingCreator();
-                                ImportSetting importSetting = creator.create(jFileChooser.getFilePath());
-                                IParameterCreator parameterCreator = new ImportParameterCreator();
-                                metaProcessImport.setImportSetting(importSetting);
-                                metaProcessImport.setDefaultImportParameters(parameterCreator.createDefault(importSetting));
-                                metaProcessImport.setParamParameters(parameterCreator.create(importSetting));
-                                metaProcessImport.updateParameters();
-                            }
-                        }
-                        component.setProcess(((ProcessGraph) selection.getItem(0)).getProcess());
-                    } else {
-                        component.setProcess(null);
-                    }
-                } catch (ClassNotFoundException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        });
+			@Override
+			public void graphSelectChanged(GraphSelectedChangedEvent e) {
+				try {
+					ParameterManager component = (ParameterManager) ((Dockbar) Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName("com.supermap.desktop.process.ParameterManager"))).getInnerComponent();
+					Selection selection = e.getSelection();
+					if (selection.getItem(0) instanceof ProcessGraph) {
+						if (((ProcessGraph) selection.getItem(0)).getProcess() instanceof MetaProcessImport && null == ((ProcessGraph) selection.getItem(0)).getProcess().getParameters().getParameters()) {
+							MetaProcessImport metaProcessImport = (MetaProcessImport) ((ProcessGraph) selection.getItem(0)).getProcess();
+							SmFileChoose jFileChooser = FileType.createImportFileChooser();
+							if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+								IImportSettingCreator creator = new ImportSettingCreator();
+								ImportSetting importSetting = creator.create(jFileChooser.getFilePath());
+								IParameterCreator parameterCreator = new ImportParameterCreator();
+								metaProcessImport.setImportSetting(importSetting);
+								metaProcessImport.setDefaultImportParameters(parameterCreator.createDefault(importSetting));
+								metaProcessImport.setParamParameters(parameterCreator.create(importSetting));
+								metaProcessImport.updateParameters();
+							}
+						}
+						component.setProcess(((ProcessGraph) selection.getItem(0)).getProcess());
+					} else {
+						component.setProcess(null);
+					}
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
 
 		graphCanvas.getCanvas().addGraphCreatedListener(new GraphCreatedListener() {
 			@Override
@@ -237,136 +249,136 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		return workflow;
 	}
 
-    @Override
-    public boolean save(boolean notify, boolean isNewWindow) {
-        return false;
-    }
+	@Override
+	public boolean save(boolean notify, boolean isNewWindow) {
+		return false;
+	}
 
-    @Override
-    public boolean saveFormInfos() {
-        return false;
-    }
+	@Override
+	public boolean saveFormInfos() {
+		return false;
+	}
 
-    @Override
-    public boolean saveAs(boolean isNewWindow) {
-        return false;
-    }
+	@Override
+	public boolean saveAs(boolean isNewWindow) {
+		return false;
+	}
 
-    @Override
-    public boolean isNeedSave() {
-        return isNeedSave;
-    }
+	@Override
+	public boolean isNeedSave() {
+		return isNeedSave;
+	}
 
-    @Override
-    public void setNeedSave(boolean needSave) {
+	@Override
+	public void setNeedSave(boolean needSave) {
 
-    }
+	}
 
-    @Override
-    public boolean isActivated() {
-        return false;
-    }
+	@Override
+	public boolean isActivated() {
+		return false;
+	}
 
-    @Override
-    public void actived() {
+	@Override
+	public void actived() {
 
-    }
+	}
 
-    @Override
-    public void deactived() {
+	@Override
+	public void deactived() {
 
-    }
+	}
 
-    @Override
-    public void formShown(FormShownEvent e) {
+	@Override
+	public void formShown(FormShownEvent e) {
 
-    }
+	}
 
-    @Override
-    public void formClosing(FormClosingEvent e) {
-        String message = String.format(ControlsProperties.getString("String_SaveProcessPrompt"), getText());
-        int result = GlobalParameters.isShowFormClosingInfo() ? UICommonToolkit.showConfirmDialogWithCancel(message) : JOptionPane.NO_OPTION;
-        if (result == JOptionPane.YES_OPTION) {
-            save();
-        } else if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
-            // 取消关闭操作
-            e.setCancel(true);
-        }
+	@Override
+	public void formClosing(FormClosingEvent e) {
+		String message = String.format(ControlsProperties.getString("String_SaveProcessPrompt"), getText());
+		int result = GlobalParameters.isShowFormClosingInfo() ? UICommonToolkit.showConfirmDialogWithCancel(message) : JOptionPane.NO_OPTION;
+		if (result == JOptionPane.YES_OPTION) {
+			save();
+		} else if (result == JOptionPane.CANCEL_OPTION || result == JOptionPane.CLOSED_OPTION) {
+			// 取消关闭操作
+			e.setCancel(true);
+		}
 
-    }
+	}
 
-    @Override
-    public void formClosed(FormClosedEvent e) {
+	@Override
+	public void formClosed(FormClosedEvent e) {
 
-    }
+	}
 
-    @Override
-    public void addFormActivatedListener(FormActivatedListener listener) {
+	@Override
+	public void addFormActivatedListener(FormActivatedListener listener) {
 
-    }
+	}
 
-    @Override
-    public void removeFormActivatedListener(FormActivatedListener listener) {
+	@Override
+	public void removeFormActivatedListener(FormActivatedListener listener) {
 
-    }
+	}
 
-    @Override
-    public void addFormDeactivatedListener(FormDeactivatedListener listener) {
+	@Override
+	public void addFormDeactivatedListener(FormDeactivatedListener listener) {
 
-    }
+	}
 
-    @Override
-    public void removeFormDeactivatedListener(FormDeactivatedListener listener) {
+	@Override
+	public void removeFormDeactivatedListener(FormDeactivatedListener listener) {
 
-    }
+	}
 
-    @Override
-    public void addFormClosingListener(FormClosingListener listener) {
+	@Override
+	public void addFormClosingListener(FormClosingListener listener) {
 
-    }
+	}
 
-    @Override
-    public void removeFormClosingListener(FormClosingListener listener) {
+	@Override
+	public void removeFormClosingListener(FormClosingListener listener) {
 
-    }
+	}
 
-    @Override
-    public void addFormClosedListener(FormClosedListener listener) {
+	@Override
+	public void addFormClosedListener(FormClosedListener listener) {
 
-    }
+	}
 
-    @Override
-    public void removeFormClosedListener(FormClosedListener listener) {
+	@Override
+	public void removeFormClosedListener(FormClosedListener listener) {
 
-    }
+	}
 
-    @Override
-    public void addFormShownListener(FormShownListener listener) {
+	@Override
+	public void addFormShownListener(FormShownListener listener) {
 
-    }
+	}
 
-    @Override
-    public void removeFormShownListener(FormShownListener listener) {
+	@Override
+	public void removeFormShownListener(FormShownListener listener) {
 
-    }
+	}
 
-    @Override
-    public void clean() {
+	@Override
+	public void clean() {
 
-    }
+	}
 
-    @Override
-    public boolean isClosed() {
-        return false;
-    }
+	@Override
+	public boolean isClosed() {
+		return false;
+	}
 
-    public GraphCanvas getCanvas() {
-        return this.graphCanvas.getCanvas();
-    }
+	public GraphCanvas getCanvas() {
+		return this.graphCanvas.getCanvas();
+	}
 
-    public void addProcess(IProcess process) {
-        RectangleGraph graph = new ProcessGraph(graphCanvas.getCanvas(), process);
-        graphCanvas.getCanvas().create(graph);
-    }
-    //endregion
+	public void addProcess(IProcess process) {
+		RectangleGraph graph = new ProcessGraph(graphCanvas.getCanvas(), process);
+		graphCanvas.getCanvas().create(graph);
+	}
+	//endregion
 }

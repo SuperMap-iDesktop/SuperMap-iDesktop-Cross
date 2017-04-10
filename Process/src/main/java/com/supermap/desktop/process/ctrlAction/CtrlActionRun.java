@@ -8,7 +8,6 @@ import com.supermap.desktop.process.FormProcess;
 import com.supermap.desktop.process.core.DirectConnect;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.NodeMatrix;
-import com.supermap.desktop.process.core.WorkflowParser;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.GraphRelationLine;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
@@ -68,7 +67,7 @@ public class CtrlActionRun extends CtrlAction {
 		IGraph[] graphs = graphStorage.getGraphs();
 		for (IGraph graph : graphs) {
 			if (graph instanceof ProcessGraph) {
-				nodeMatrix.addNode(graph);
+				nodeMatrix.addNode(((ProcessGraph) graph).getProcess());
 			}
 		}
 
@@ -98,7 +97,11 @@ public class CtrlActionRun extends CtrlAction {
 //                GraphCanvas canvas = ((FormProcess) form).getCanvas();
 //                UniversalMatrix matrix = canvas.getTasks();
 //
-		TaskUtil.excuteTasks(nodeMatrix);
+
+//		TaskUtil.excuteTasks(nodeMatrix);
+		MatrixExecutor executor = new MatrixExecutor(nodeMatrix);
+		executor.run();
+
 //            }
 //        MetaProcessImport metaProcessImport = new MetaProcessImport();
 //        ParameterManager manager = TaskUtil.getParameterManager(true);

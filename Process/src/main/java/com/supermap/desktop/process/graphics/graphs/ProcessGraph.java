@@ -50,4 +50,6 @@ public class ProcessGraph extends RectangleGraph {
 		String key = (String) xml.get("process");
 		process = WorkflowParser.getMetaProcess(key);
 	}
+
+
 }

@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.core;
 
+import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -96,15 +97,26 @@ public class NodeMatrix {
         CopyOnWriteArrayList result = new CopyOnWriteArrayList();
         int nodeSize = nodeList.size();
         for (int i = 0; i < nodeSize; i++) {
-            if (!nodeMatrix.containsKey(nodeList.get(i))) {
-                result.add(nodeList.get(i));
-            }
+	        Object o = nodeList.get(i);
+	        if (!nodeMatrix.containsKey(o) && !isContainsValue(o)) {
+		        result.add(o);
+	        }
         }
         return result;
     }
 
-    /**
-     *
+	private boolean isContainsValue(Object o) {
+		Collection<SecondNodeMatrix> values = nodeMatrix.values();
+		for (SecondNodeMatrix value : values) {
+			if (value.vector.containsKey(o)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 *
      * If node has not previous or next node return true,else return false;
      * @param node
      * @return

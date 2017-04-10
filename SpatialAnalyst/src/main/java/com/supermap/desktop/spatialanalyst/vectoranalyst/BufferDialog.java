@@ -4,6 +4,8 @@ import com.supermap.data.Dataset;
 import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.SmDialog;
@@ -70,6 +72,7 @@ public class BufferDialog extends SmDialog {
 	private void setBufferDialog() {
 		removeRegisterEvent();
 		initComponent();
+		setComponentName();
 		initResources();
 		registerEvent();
 		initTraversalPolicy();
@@ -175,6 +178,11 @@ public class BufferDialog extends SmDialog {
 		this.panelBufferType.setLayout(new BorderLayout());
 		this.panelButton = new PanelButton();
 		initLayout();
+	}
+
+	private void setComponentName(){
+		ComponentUIUtilities.setName(this.radioButtonPointOrRegion,"BufferDialog_radioButtonPointOrRegion");
+		ComponentUIUtilities.setName(this.radioButtonLine,"BufferDialog_radioButtonLine");
 	}
 
 	/**

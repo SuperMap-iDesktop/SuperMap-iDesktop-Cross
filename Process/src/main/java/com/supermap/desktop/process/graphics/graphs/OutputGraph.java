@@ -11,6 +11,7 @@ public class OutputGraph extends EllipseGraph {
 
 	private ProcessGraph processGraph;
 	private OutputData processData;
+	private String name;
 
 	private OutputGraph() {
 		super(null);
@@ -31,18 +32,31 @@ public class OutputGraph extends EllipseGraph {
 	}
 
 	public String getTitle() {
-		return this.processData.getName();
+		return processData != null ? this.processData.getName() : name;
 	}
 
 	@Override
 	protected void toXmlHook(JSONObject jsonObject) {
 		super.toXmlHook(jsonObject);
-		jsonObject.put("processData", processData.toString());
+		jsonObject.put("processDataName", processData.getName());
 	}
 
 	@Override
 	protected void formXmlHook(JSONObject xml) {
 		super.formXmlHook(xml);
-		processData = OutputData.formString(((String) xml.get("processData")));
+		name = ((String) xml.get("processDataName"));
+	}
+
+	public void setProcessGraph(ProcessGraph processGraph) {
+		this.processGraph = processGraph;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+	public void setProcessData(OutputData processData) {
+		this.processData = processData;
 	}
 }

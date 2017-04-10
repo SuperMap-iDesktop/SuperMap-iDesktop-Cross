@@ -58,6 +58,9 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 
 	public void setItems(ParameterDataNode... items) {
 		this.items = items;
+		if (items != null && items.length > 0) {
+			value = items[0];
+		}
 	}
 
 	@Override

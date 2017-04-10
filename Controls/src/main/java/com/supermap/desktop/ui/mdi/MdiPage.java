@@ -58,7 +58,7 @@ public class MdiPage {
 		if (this.group != null) {
 			this.group.close(this);
 		}
-	}
+ 	}
 
 	public boolean isClosed() {
 		return this.group == null || !this.group.isContain(this);
