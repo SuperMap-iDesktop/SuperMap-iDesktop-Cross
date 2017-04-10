@@ -1,5 +1,6 @@
 package com.supermap.desktop.netservices.iserver;
 
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.netservices.NetServicesProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -52,6 +53,7 @@ public class JDialogFolderSelector extends SmDialog implements ActionListener {
 		this.componentList.add(buttonOk);
 		this.componentList.add(buttonCancel);
 		this.setFocusTraversalPolicy(policy);
+		setComponentName();
 	}
 
 	private void initializeComponents() {
@@ -84,6 +86,13 @@ public class JDialogFolderSelector extends SmDialog implements ActionListener {
 						.addComponent(this.buttonOk)
 						.addComponent(this.buttonCancel)));
 		// @formatter:on
+	}
+
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.labelMessage, "JDialogFolderSelector_labelMessage");
+		ComponentUIUtilities.setName(this.buttonOk, "JDialogFolderSelector_buttonOk");
+		ComponentUIUtilities.setName(this.buttonCancel, "JDialogFolderSelector_buttonCancel");
+		ComponentUIUtilities.setName(this.panelFolderSelector, "JDialogFolderSelector_panelFolderSelector");
 	}
 
 	private void initializeResources() {

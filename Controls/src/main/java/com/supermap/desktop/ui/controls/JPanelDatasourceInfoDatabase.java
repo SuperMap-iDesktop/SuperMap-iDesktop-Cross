@@ -6,6 +6,7 @@ import com.supermap.data.Datasources;
 import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 
@@ -37,6 +38,7 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 	 */
 	public JPanelDatasourceInfoDatabase() {
 		initComponents();
+		setComponentName();
 	}
 
 	/**
@@ -262,7 +264,24 @@ public class JPanelDatasourceInfoDatabase extends JPanel {
 	private int connectionFlag;
 
 	// End Variables
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.jComboBoxServer, "JPanelDatasourceInfoDatabase_jComboBoxServer");
+		ComponentUIUtilities.setName(this.jLabelDatabaseName, "JPanelDatasourceInfoDatabase_jLabelDatabaseName");
+		ComponentUIUtilities.setName(this.jLabelPassword, "JPanelDatasourceInfoDatabase_jLabelPassword");
+		ComponentUIUtilities.setName(this.jLabelServer, "JPanelDatasourceInfoDatabase_jLabelServer");
+		ComponentUIUtilities.setName(this.jLabelUserName, "JPanelDatasourceInfoDatabase_jLabelUserName");
+		ComponentUIUtilities.setName(this.jLabelDatasourceAlias, "JPanelDatasourceInfoDatabase_jLabelDatasourceAlias");
+		ComponentUIUtilities.setName(this.jLabelOpenType, "JPanelDatasourceInfoDatabase_jLabelOpenType");
+		ComponentUIUtilities.setName(this.jTextFieldDatabaseName, "JPanelDatasourceInfoDatabase_jTextFieldDatabaseName");
+		ComponentUIUtilities.setName(this.jPasswordFieldPassword, "JPanelDatasourceInfoDatabase_jPasswordFieldPassword");
+		ComponentUIUtilities.setName(this.jTextFieldUserName, "JPanelDatasourceInfoDatabase_jTextFieldUserName");
+		ComponentUIUtilities.setName(this.jTextFieldDatasourceAlias, "JPanelDatasourceInfoDatabase_jTextFieldDatasourceAlias");
+		ComponentUIUtilities.setName(this.jCheckBoxReadonly, "JPanelDatasourceInfoDatabase_jCheckBoxReadonly");
+		ComponentUIUtilities.setName(this.jLabelEmptyServer, "JPanelDatasourceInfoDatabase_jLabelEmptyServer");
+		ComponentUIUtilities.setName(this.jLabelEmpty, "JPanelDatasourceInfoDatabase_jLabelEmpty");
+		ComponentUIUtilities.setName(this.jLabelEmptyUser, "JPanelDatasourceInfoDatabase_jLabelEmptyUser");
+		ComponentUIUtilities.setName(this.jLabelEmptyAlias, "JPanelDatasourceInfoDatabase_jLabelEmptyAlias");
+	}
 	/**
 	 * 根据引擎类型设置jTextFieldDatasourceAlias
 	 *

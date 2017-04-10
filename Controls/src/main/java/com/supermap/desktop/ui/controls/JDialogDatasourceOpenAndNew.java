@@ -3,6 +3,7 @@ package com.supermap.desktop.ui.controls;
 import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
@@ -112,8 +113,16 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 				cancelButtonClicked();
 			}
 		});
+		setComponentName();
 	}
-
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.contentPanel, "JDialogDatasourceOpenAndNew_contentPanel");
+		ComponentUIUtilities.setName(this.buttonCancel, "JDialogDatasourceOpenAndNew_buttonCancel");
+		ComponentUIUtilities.setName(this.buttonOk, "JDialogDatasourceOpenAndNew_buttonOk");
+		ComponentUIUtilities.setName(this.listDatasourceType, "JDialogDatasourceOpenAndNew_listDatasourceType");
+		ComponentUIUtilities.setName(this.panelDatasourceInfoDatabase, "JDialogDatasourceOpenAndNew_panelDatasourceInfoDatabase");
+		ComponentUIUtilities.setName(this.panelDatasourceInfoWeb, "JDialogDatasourceOpenAndNew_panelDatasourceInfoWeb");
+	}
 	protected void listWorkspaceType_ItemSelectedChanged() {
 		try {
 			int index = this.listDatasourceType.getSelectedIndex();

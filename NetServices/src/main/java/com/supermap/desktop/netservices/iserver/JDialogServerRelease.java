@@ -7,6 +7,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IAfterWork;
 import com.supermap.desktop.controls.ControlDefaultValues;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.netservices.NetServicesProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.properties.CommonProperties;
@@ -171,6 +172,7 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 		this.componentList.add(buttonRelease);
 		this.componentList.add(buttonClose);
 		this.setFocusTraversalPolicy(policy);
+		setComponentName();
 	}
 
 	@Override
@@ -359,6 +361,35 @@ public class JDialogServerRelease extends SmDialog implements ActionListener, It
 
 		setSize(new Dimension(450, 650));
 		setLocationRelativeTo(null);
+	}
+
+	private void setComponentName() {
+		ComponentUIUtilities.setName(this.radioButtonLocalHost, "JDialogServerRelease_radioButtonLocalHost");
+		ComponentUIUtilities.setName(this.radioButtonRemoteHost, "JDialogServerRelease_radioButtonRemoteHost");
+		ComponentUIUtilities.setName(this.labelServer, "JDialogServerRelease_labelServer");
+		ComponentUIUtilities.setName(this.textFieldHost, "JDialogServerRelease_textFieldHost");
+		ComponentUIUtilities.setName(this.labelColon, "JDialogServerRelease_labelColon");
+		ComponentUIUtilities.setName(this.textFieldPort, "JDialogServerRelease_textFieldPort");
+		ComponentUIUtilities.setName(this.labelUserName, "JDialogServerRelease_labelUserName");
+		ComponentUIUtilities.setName(this.labelPassword, "JDialogServerRelease_labelPassword");
+		ComponentUIUtilities.setName(this.textFieldUserName, "JDialogServerRelease_textFieldUserName");
+		ComponentUIUtilities.setName(this.textFieldPassword, "JDialogServerRelease_textFieldPassword");
+		ComponentUIUtilities.setName(this.checkBoxRestData, "JDialogServerRelease_checkBoxRestData");
+		ComponentUIUtilities.setName(this.checkBoxRestRealspace, "JDialogServerRelease_checkBoxRestRealspace");
+		ComponentUIUtilities.setName(this.checkBoxRestMap, "JDialogServerRelease_checkBoxRestMap");
+		ComponentUIUtilities.setName(this.checkBoxRestTransAnalyst, "JDialogServerRelease_checkBoxRestTransAnalyst");
+		ComponentUIUtilities.setName(this.checkBoxRestSpatialAnalyst, "JDialogServerRelease_checkBoxRestSpatialAnalyst");
+		ComponentUIUtilities.setName(this.checkBoxWCS111, "JDialogServerRelease_checkBoxWCS111");
+		ComponentUIUtilities.setName(this.checkBoxWMS111, "JDialogServerRelease_checkBoxWMS111");
+		ComponentUIUtilities.setName(this.checkBoxWCS112, "JDialogServerRelease_checkBoxWCS112");
+		ComponentUIUtilities.setName(this.checkBoxWMS130, "JDialogServerRelease_checkBoxWMS130");
+		ComponentUIUtilities.setName(this.checkBoxWFS100, "JDialogServerRelease_checkBoxWFS100");
+		ComponentUIUtilities.setName(this.checkBoxWMTS100, "JDialogServerRelease_checkBoxWMTS100");
+		ComponentUIUtilities.setName(this.checkBoxWPS100, "JDialogServerRelease_checkBoxWPS100");
+		ComponentUIUtilities.setName(this.checkBoxWMTSCHINA, "JDialogServerRelease_checkBoxWMTSCHINA");
+		ComponentUIUtilities.setName(this.checkBoxIsEditable, "JDialogServerRelease_checkBoxIsEditable");
+		ComponentUIUtilities.setName(this.buttonRelease, "JDialogServerRelease_buttonRelease");
+		ComponentUIUtilities.setName(this.buttonClose, "JDialogServerRelease_buttonClose");
 	}
 
 	private void initializeResources() {

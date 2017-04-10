@@ -6,6 +6,7 @@ import com.supermap.data.Datasources;
 import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -45,6 +46,7 @@ public class JPanelDatasourceInfoWeb extends JPanel {
     public JPanelDatasourceInfoWeb() {
         initComponents();
         initResources();
+        setComponentName();
     }
 
     private void initComponents() {
@@ -124,6 +126,21 @@ public class JPanelDatasourceInfoWeb extends JPanel {
                                                 .addComponent(jCheckBoxReadonly, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
                                                         GroupLayout.PREFERRED_SIZE).addComponent(jLabelOpenType))
                                 .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+    }
+
+    private void setComponentName() {
+        ComponentUIUtilities.setName(this.jLabelServerAddress, "JPanelDatasourceInfoWeb_jLabelServerAddress");
+        ComponentUIUtilities.setName(this.jLabelServerType, "JPanelDatasourceInfoWeb_jLabelServerType");
+        ComponentUIUtilities.setName(this.jLabelUserName, "JPanelDatasourceInfoWeb_jLabelUserName");
+        ComponentUIUtilities.setName(this.jLabelPassword, "JPanelDatasourceInfoWeb_jLabelPassword");
+        ComponentUIUtilities.setName(this.jLabelDatasourceAlias, "JPanelDatasourceInfoWeb_jLabelDatasourceAlias");
+        ComponentUIUtilities.setName(this.jLabelOpenType, "JPanelDatasourceInfoWeb_jLabelOpenType");
+        ComponentUIUtilities.setName(this.jTextFieldServerAddress, "JPanelDatasourceInfoWeb_jTextFieldServerAddress");
+        ComponentUIUtilities.setName(this.jComboBoxServerType, "JPanelDatasourceInfoWeb_jComboBoxServerType");
+        ComponentUIUtilities.setName(this.jTextFieldUserName, "JPanelDatasourceInfoWeb_jTextFieldUserName");
+        ComponentUIUtilities.setName(this.jTextFieldPassword, "JPanelDatasourceInfoWeb_jTextFieldPassword");
+        ComponentUIUtilities.setName(this.jTextFieldDatasourceAlias, "JPanelDatasourceInfoWeb_jTextFieldDatasourceAlias");
+        ComponentUIUtilities.setName(this.jCheckBoxReadonly, "JPanelDatasourceInfoWeb_jCheckBoxReadonly");
     }
 
     protected void jComboBoxServerTypeChange() {

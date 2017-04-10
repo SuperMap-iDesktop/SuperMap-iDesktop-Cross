@@ -21,11 +21,7 @@ import com.supermap.mapping.MapDrawnListener;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -133,6 +129,9 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			if(isIgnoreListener){
+				return;
+			}
 			JButton button = (JButton) e.getComponent();
 			Rectangle Rectangle = button.getBounds();
 			if (button == buttonClipRegion && buttonClipRegion.isEnabled()) {
@@ -819,8 +818,9 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 	 */
 	// @formatter:on
 	private void mapDrawn() {
-		unregisterEvents();
+//		unregisterEvents();
 		try {
+			isIgnoreListener = true;
 			this.scale = getMap().getScale();
 			this.centerX = getMap().getCenter().getX();
 			this.centerY = getMap().getCenter().getY();
@@ -853,7 +853,8 @@ public class MapBoundsPropertyControl extends AbstractPropertyControl {
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
 		} finally {
-			registerEvents();
+			isIgnoreListener = false;
+//			registerEvents();
 		}
 	}
 
