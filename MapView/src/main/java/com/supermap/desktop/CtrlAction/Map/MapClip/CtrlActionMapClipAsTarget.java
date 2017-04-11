@@ -44,6 +44,7 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 
 	@Override
 	public boolean enable() {
+		boolean result=true;
 		MapControl activeMapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
 		ArrayList<Layer> arrayList;
 		arrayList = MapUtilities.getLayers(activeMapControl.getMap(), true);
@@ -52,11 +53,23 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 			HashMap<Dataset, Layer> layerMap = new HashMap<>();
 			for (int i = 0; i < arrayList.size(); i++) {
 				if (arrayList.get(i).getDataset() != null) {
-					return true;
+					result= true;
+					break;
 				}
 			}
 		}
-		return false;
+
+		Datasources datasources= Application.getActiveApplication().getWorkspace().getDatasources();
+		ArrayList<Datasource> isCanUseDatasources=new ArrayList<>();
+		for (int i=0;i<datasources.getCount();i++){
+			if (!datasources.get(i).isReadOnly()){
+				isCanUseDatasources.add(datasources.get(i));
+			}
+		}
+		if (isCanUseDatasources==null || isCanUseDatasources.size()==0){
+			result=false;
+		}
+		return result;
 	}
 
 

@@ -1,8 +1,6 @@
 package com.supermap.desktop.CtrlAction.Map.MapClip;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.GeoPie;
-import com.supermap.data.GeoRegion;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
@@ -39,6 +37,7 @@ public class CtrlActionMapClipAsCircle extends CtrlAction {
 
 	@Override
 	public boolean enable() {
+		boolean result=true;
 		MapControl activeMapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
 		ArrayList<Layer> arrayList;
 		arrayList = MapUtilities.getLayers(activeMapControl.getMap(), true);
@@ -47,11 +46,23 @@ public class CtrlActionMapClipAsCircle extends CtrlAction {
 			HashMap<Dataset, Layer> layerMap = new HashMap<>();
 			for (int i = 0; i < arrayList.size(); i++) {
 				if (arrayList.get(i).getDataset() != null) {
-					return true;
+					result= true;
+					break;
 				}
 			}
 		}
-		return false;
+
+		Datasources datasources= Application.getActiveApplication().getWorkspace().getDatasources();
+		ArrayList<Datasource> isCanUseDatasources=new ArrayList<>();
+		for (int i=0;i<datasources.getCount();i++){
+			if (!datasources.get(i).isReadOnly()){
+				isCanUseDatasources.add(datasources.get(i));
+			}
+		}
+		if (isCanUseDatasources==null || isCanUseDatasources.size()==0){
+			result=false;
+		}
+		return result;
 	}
 
 	/**

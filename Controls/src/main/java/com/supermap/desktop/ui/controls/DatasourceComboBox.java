@@ -8,6 +8,7 @@ import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 
 import javax.swing.*;
+import java.util.ArrayList;
 
 /**
  * 数据源下拉列表控件
@@ -53,6 +54,17 @@ public class DatasourceComboBox extends JComboBox<Datasource> {
 	 */
 	public DatasourceComboBox(Datasource[] datasource) {
 		super(datasource);
+		//设置显示风格
+		setDisplayStyle();
+	}
+
+	/**
+	 * 根据给定的数据源集合创建下拉选择框
+	 *
+	 * @param datasource
+	 */
+	public DatasourceComboBox(ArrayList<Datasource> datasource) {
+		super(initDatasourceComboBoxItem(datasource));
 		//设置显示风格
 		setDisplayStyle();
 	}
@@ -187,4 +199,13 @@ public class DatasourceComboBox extends JComboBox<Datasource> {
 		}
 		return result;
 	}
+
+	private static Datasource[] initDatasourceComboBoxItem(ArrayList<Datasource> datasources) {
+		Datasource[] result = new Datasource[datasources.size()];
+		for (int i = 0; i < datasources.size(); i++) {
+			result[i] = datasources.get(i);
+		}
+		return result;
+	}
+
 }
