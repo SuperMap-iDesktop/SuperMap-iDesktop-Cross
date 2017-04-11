@@ -10,7 +10,7 @@ import com.supermap.desktop.process.FormProcess;
  * @author XiaJT
  */
 public class CtrlActionProcess extends CtrlAction {
-	private static final String processTreeClassName = "com.supermap.desktop.process.diagram.ui.ProcessTree";
+	private static final String processTreeClassName = "com.supermap.desktop.process.core.ProcessManager";
 	private static final String ParameterManagerClassName = "com.supermap.desktop.process.ParameterManager";
 
 	public CtrlActionProcess(IBaseItem caller, IForm formClass) {

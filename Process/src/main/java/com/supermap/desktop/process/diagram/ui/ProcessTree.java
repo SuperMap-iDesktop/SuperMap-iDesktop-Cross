@@ -1,18 +1,12 @@
 package com.supermap.desktop.process.diagram.ui;
 
-import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.drop.DropAndDragHandler;
 import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
 import com.supermap.desktop.process.FormProcess;
-import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.IProcessGroup;
-import com.supermap.desktop.process.core.ProcessGroup;
 import com.supermap.desktop.process.core.WorkflowParser;
-import com.supermap.desktop.process.meta.metaProcessImplements.*;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.enums.OverlayAnalystType;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -27,49 +21,23 @@ import java.awt.event.MouseEvent;
 /**
  * Created by xie on 2017/2/23.
  */
-public class ProcessTree extends JPanel {
-	private JTree processTree;
-	private JScrollPane processTreeView;
-	private DefaultMutableTreeNode rootNode;
+public class ProcessTree extends JTree {
 
 	public ProcessTree() {
 		init();
 	}
 
+	public ProcessTree(ProcessTreeNode processTreeNode) {
+		super(processTreeNode);
+		init();
+	}
+
 	private void init() {
 		initComponents();
-		initLayout();
-		initResouces();
-		new TreeDropAndDragHandler(DataFlavor.stringFlavor).bindSource(this.processTree);
-		// fixme 使用自行实现的TreeNode
-		// @see com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolGroupTreeNode
-		final ProcessGroup root = new ProcessGroup(null);
-		root.setIconPath("/processresources/Process/root.png");
-		root.setKey(ProcessProperties.getString("String_Process"));
+		new TreeDropAndDragHandler(DataFlavor.stringFlavor).bindSource(this);
 
-		ProcessGroup online = new ProcessGroup(root);
-		online.setKey("Online");
-		online.setIconPath("/processresources/Process/online.png");
-		online.addProcess(new MetaProcessHeatMap());
-		online.addProcess(new MetaProcessKernelDensity());
-
-		ProcessGroup standAloneGroup = new ProcessGroup(root);
-		standAloneGroup.setIconPath("/processresources/Process/native.png");
-		standAloneGroup.setKey(ProcessProperties.getString("String_StandAlone"));
-		standAloneGroup.addProcess(new MetaProcessBuffer());
-		standAloneGroup.addProcess(new MetaProcessImport());
-		standAloneGroup.addProcess(new MetaProcessProjection());
-		standAloneGroup.addProcess(new MetaProcessInterpolator(InterpolationAlgorithmType.IDW));
-		standAloneGroup.addProcess(new MetaProcessOverlayAnalyst(OverlayAnalystType.INTERSECT));
-		standAloneGroup.addProcess(new MetaProcessSpatialIndex());
-		standAloneGroup.addProcess(new MetaProcessSqlQuery());
-		standAloneGroup.addProcess(new MetaProcessISOLine());
-		root.addProcess(standAloneGroup);
-		root.addProcess(online);
-
-		createNodes(rootNode, root);
-		JTreeUIUtilities.expandTree(processTree, true);
-		processTree.setCellRenderer(new DefaultTreeCellRenderer() {
+		JTreeUIUtilities.expandTree(this, true);
+		this.setCellRenderer(new DefaultTreeCellRenderer() {
 			@Override
 			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 				value = ((DefaultMutableTreeNode) value).getUserObject();
@@ -81,8 +49,6 @@ public class ProcessTree extends JPanel {
 					icon = ((IProcess) value).getIcon();
 
 				} else if (value instanceof String) {
-					// bug
-					icon = root.getIcon();
 					jLabel.setText((String) value);
 				}
 				if (icon == null) {
@@ -105,11 +71,11 @@ public class ProcessTree extends JPanel {
 				return jLabel;
 			}
 		});
-		processTree.addMouseListener(new MouseAdapter() {
+		this.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					Object lastSelectedPathComponent = processTree.getLastSelectedPathComponent();
+					Object lastSelectedPathComponent = getLastSelectedPathComponent();
 					if (lastSelectedPathComponent == null) {
 						return;
 					}
@@ -147,39 +113,7 @@ public class ProcessTree extends JPanel {
 	}
 
 	public void initComponents() {
-		this.rootNode = new DefaultMutableTreeNode(ProcessProperties.getString("String_Process"));
-		this.processTreeView = new JScrollPane();
-		this.processTree = new JTree(rootNode);
-		this.processTree.putClientProperty("JTree.lineStyle", "Horizontal");
-		this.processTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-	}
-
-	/**
-	 * 添加节点
-	 *
-	 * @param processGroup
-	 */
-	public void createNodes(DefaultMutableTreeNode node, IProcessGroup... processGroup) {
-		for (IProcessGroup iProcessGroup : processGroup) {
-			int childCount = iProcessGroup.getChildCount();
-			for (int i = 0; i < childCount; i++) {
-				IProcess process = iProcessGroup.getProcessByIndex(i);
-				DefaultMutableTreeNode processNode = new DefaultMutableTreeNode(process);
-				if (process instanceof IProcessGroup) {
-					createNodes(processNode, (IProcessGroup) process);
-				}
-				node.add(processNode);
-			}
-		}
-	}
-
-	public void initLayout() {
-		this.setLayout(new GridBagLayout());
-		this.add(this.processTreeView, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setInsets(0));
-		this.processTreeView.setViewportView(processTree);
-	}
-
-	public void initResouces() {
-
+		this.putClientProperty("JTree.lineStyle", "Horizontal");
+		this.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 	}
 }
