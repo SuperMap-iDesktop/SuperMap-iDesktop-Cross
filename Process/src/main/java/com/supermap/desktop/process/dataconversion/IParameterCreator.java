@@ -2,7 +2,6 @@ package com.supermap.desktop.process.dataconversion;
 
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -11,14 +10,22 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public interface IParameterCreator<T> {
     /**
      * Use t to create a parameter
+     *
      * @param t
      * @return
      */
     CopyOnWriteArrayList<ReflectInfo> create(T t);
+
     /**
      * Create basic import info parameter
+     *
      * @return
      */
     CopyOnWriteArrayList<ReflectInfo> createDefault(T t);
 
+    IParameter getParameterCombineResultSet();
+
+    IParameter getParameterCombineParamSet();
+
+    IParameter getParameterFileSet(String importType);
 }

@@ -12,6 +12,8 @@ import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.tasks.ProcessTask;
+import com.supermap.desktop.process.tasks.TaskStore;
+import com.supermap.desktop.process.util.TaskUtil;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
 import com.supermap.desktop.ui.lbs.params.*;
@@ -135,7 +137,8 @@ public class MetaProcessHeatMap extends MetaProcess {
             JobResultResponse response = service.query(setting);
             if (null != response) {
                 CursorUtilities.setDefaultCursor();
-                NewMessageBus messageBus = new NewMessageBus(response, new ProcessTask(this));
+                ProcessTask task = TaskUtil.getTask(this);
+                NewMessageBus messageBus = new NewMessageBus(response, task);
                 messageBus.run();
             }
 //            ProcessData processData = new ProcessData();

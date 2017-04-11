@@ -7,6 +7,7 @@ import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.NodeException;
 import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.meta.MetaProcess;
+import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.tasks.TaskStore;
 import com.supermap.desktop.process.tasks.TasksManagerContainer;
 
@@ -113,6 +114,17 @@ public class TaskUtil {
 			}
 		}
 		eService.shutdown();
+	}
+
+	public static ProcessTask getTask(IProcess process){
+		ProcessTask task;
+		if (null!= TaskStore.getTask(process)){
+			task = (ProcessTask) TaskStore.getTask(process);
+		}else{
+			task = new ProcessTask(process);
+			TaskStore.addTask(task);
+		}
+		return task;
 	}
 
 	public static void executeMatrix(NodeMatrix matrix) {

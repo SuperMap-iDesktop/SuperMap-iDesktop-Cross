@@ -18,6 +18,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.MessageFormat;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by xie on 2017/2/15.
@@ -50,6 +51,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     private volatile JButton buttonRun;
     private volatile JButton buttonRemove;
     private volatile IProcess process;
+
     private ActionListener cancelListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -97,11 +99,12 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
         init();
     }
 
+
     private void init() {
         initComponents();
         initLayout();
-        registEvents();
         initResouces();
+        registEvents();
         this.labelRemaintime.setVisible(false);
     }
 
@@ -278,12 +281,10 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
             public void run() {
                 progressBar.setProgress(percent);
                 labelRemaintime.setText(MessageFormat.format(ControlsProperties.getString("String_RemainTime"), remainTime));
+                labelMessage.setText(message);
                 if (percent >= 100) {
-                    labelMessage.setText(MessageFormat.format(ControlsProperties.getString("String_MissionFinished"), labelTitle.getText()));
                     buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_finish_now.png"));
                     buttonRun.removeActionListener(cancelListener);
-                } else {
-                    labelMessage.setText(message);
                 }
             }
         });
