@@ -52,33 +52,6 @@ public class TasksManagerContainer extends JPanel {
         }
     }
 
-    /**
-     * run the parallel tasks
-     */
-    public void run() {
-
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int size = items.size();
-                for (int j = 0; j < size; j++) {
-                    items.get(j).doWork();
-                }
-            }
-        });
-        thread.start();
-    }
-
-    /**
-     * 串行结构时的任务结束
-     */
-    public void stop() {
-        int size = items.size();
-        for (int i = 0; i < size; i++) {
-            items.get(i).setCancel(true);
-        }
-    }
-
     public void addItem(IProcessTask task) {
         items.add(task);
         updateItems();

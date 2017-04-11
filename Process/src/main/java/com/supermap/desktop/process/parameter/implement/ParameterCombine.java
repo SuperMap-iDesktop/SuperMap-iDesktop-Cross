@@ -103,7 +103,11 @@ public class ParameterCombine extends AbstractParameter {
 		return parameterList;
 	}
 
-	public String getCombineType() {
+    public void setCombineType(String combineType) {
+        this.combineType = combineType;
+    }
+
+    public String getCombineType() {
 		return combineType;
 	}
 

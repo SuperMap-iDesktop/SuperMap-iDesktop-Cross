@@ -18,16 +18,14 @@ import java.util.Vector;
 public class MapClipTableModel extends AbstractTableModel {
 	public Vector layerInfo;
 
-	public static final int COLUMN_INDEX_ISCLIP = 0;
-	public static final int COLUMN_INDEX_LAYERCAPTION = 1;
-	public static final int COLUMN_INDEX_AIMDATASOURCE = 2;
-	public static final int COLUMN_INDEX_AIMDATASET = 3;
-	public static final int COLUMN_INDEX_CLIPTYPE = 4;
-	public static final int COLUMN_INDEX_ERASE = 5;
-	public static final int COLUMN_INDEX_EXACTCLIP = 6;
-	public static final int COLUMNS_NUMBER = 7;
-	public static final int COLUMNS_LAYERSRTTING_OR_THEME_INDEX=7;
-	public static final int COLUMNS_LAYERSRTTING_OR_THEME=8;
+	//public static final int COLUMN_INDEX_ISCLIP = 0;
+	public static final int COLUMN_INDEX_LAYERCAPTION = 0;
+	public static final int COLUMN_INDEX_AIMDATASOURCE = 1;
+	public static final int COLUMN_INDEX_AIMDATASET = 2;
+	public static final int COLUMN_INDEX_CLIPTYPE = 3;
+	public static final int COLUMN_INDEX_ERASE = 4;
+	public static final int COLUMN_INDEX_EXACTCLIP = 5;
+	public static final int COLUMNS_NUMBER = 6;
 
 	public MapClipTableModel() {
 		this.layerInfo = new Vector();
@@ -36,7 +34,6 @@ public class MapClipTableModel extends AbstractTableModel {
 	/**
 	 * 增加一条记录
 	 *
-	 * @param clip             是否裁剪
 	 * @param layer            图层
 	 * @param targetDatasource 目标数据源
 	 * @param targetDataset    目标数据集
@@ -44,27 +41,26 @@ public class MapClipTableModel extends AbstractTableModel {
 	 * @param erase            是否擦除
 	 * @param exactClip        是否精确裁剪
 	 */
-	public void addRowLayerInfo(boolean clip, Layer layer, Datasource targetDatasource,
-	                            String targetDataset, String clipType, String erase, boolean exactClip,boolean isLayersettingOrTheme,Object layersettingOrTheme) {
-		Vector v = new Vector(8);
-		v.add(COLUMN_INDEX_ISCLIP, new Boolean(clip));
+	public void addRowLayerInfo( Layer layer, Datasource targetDatasource,
+	                            String targetDataset, String clipType, String erase, boolean exactClip) {
+		Vector v = new Vector(6);
+		//v.add(COLUMN_INDEX_ISCLIP, new Boolean(clip));
 		v.add(COLUMN_INDEX_LAYERCAPTION, layer);
 		v.add(COLUMN_INDEX_AIMDATASOURCE, targetDatasource);
 		v.add(COLUMN_INDEX_AIMDATASET, targetDataset);
 		v.add(COLUMN_INDEX_CLIPTYPE, clipType);
 		v.add(COLUMN_INDEX_ERASE, erase);
 		v.add(COLUMN_INDEX_EXACTCLIP, exactClip);
-		v.add(COLUMNS_LAYERSRTTING_OR_THEME_INDEX,isLayersettingOrTheme);
-		v.add(COLUMNS_LAYERSRTTING_OR_THEME,layersettingOrTheme);
 		this.layerInfo.add(v);
 	}
 
 
 	@Override
 	public String getColumnName(int column) {
-		if (column == COLUMN_INDEX_ISCLIP) {
-			return MapViewProperties.getString("String_MapClip_IsClip");
-		} else if (column == COLUMN_INDEX_LAYERCAPTION) {
+//		if (column == COLUMN_INDEX_ISCLIP) {
+//			return MapViewProperties.getString("String_MapClip_IsClip");
+//		} else
+		if (column == COLUMN_INDEX_LAYERCAPTION) {
 			return MapViewProperties.getString("String_MapClip_LayerCaption");
 		} else if (column == COLUMN_INDEX_AIMDATASOURCE) {
 			return MapViewProperties.getString("String_MapClip_TargetDatasource");
@@ -101,7 +97,8 @@ public class MapClipTableModel extends AbstractTableModel {
 		}
 		// 是否擦除列需要添加判断，当数据集类型是矢量数据集时才能进行是否擦除操作的设置
 		if (columnIndex == COLUMN_INDEX_ERASE) {
-			if (((Layer) (this.getValueAt(rowIndex, COLUMN_INDEX_LAYERCAPTION))).getDataset() instanceof DatasetVector) {
+			if (((Layer) (this.getValueAt(rowIndex, COLUMN_INDEX_LAYERCAPTION))).getDataset() instanceof DatasetVector &&
+					!((Layer) (this.getValueAt(rowIndex, COLUMN_INDEX_LAYERCAPTION))).getDataset().isReadOnly()) {
 				return true;
 			} else {
 				return false;
@@ -134,6 +131,14 @@ public class MapClipTableModel extends AbstractTableModel {
 	}
 
 	public Vector getLayerInfo() {
-		return layerInfo;
+		return this.layerInfo;
+	}
+
+	public void addRow(Object object){
+		this.layerInfo.add(object);
+	}
+
+	public void removeRow(int rowIndex){
+		this.layerInfo.remove(rowIndex);
 	}
 }

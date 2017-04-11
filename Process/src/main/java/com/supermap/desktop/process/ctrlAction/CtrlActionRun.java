@@ -16,7 +16,6 @@ import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.storage.IGraphConnection;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.tasks.ProcessTask;
-import com.supermap.desktop.process.tasks.TaskStore;
 import com.supermap.desktop.process.tasks.TasksManagerContainer;
 import com.supermap.desktop.process.util.TaskUtil;
 
@@ -26,14 +25,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by highsad on 2017/2/28.
  */
 public class CtrlActionRun extends CtrlAction {
-	private final static String TASKS = "com.supermap.desktop.process.tasks.TasksManagerContainer";
+    private final static String TASKS = "com.supermap.desktop.process.tasks.TasksManagerContainer";
 
-	public CtrlActionRun(IBaseItem caller, IForm formClass) {
-		super(caller, formClass);
-	}
+    public CtrlActionRun(IBaseItem caller, IForm formClass) {
+        super(caller, formClass);
+    }
 
-	@Override
-	public void run() {
+    @Override
+    public void run() {
 //        NodeMatrix matrix = new NodeMatrix();
 //        MetaProcessImport metaProcessImport = new MetaProcessImport();
 //        MetaProcessBuffer buffer = new MetaProcessBuffer();
@@ -59,39 +58,38 @@ public class CtrlActionRun extends CtrlAction {
 //        WorkflowParser parser = new WorkflowParser();
 //        NodeMatrix nodeMatrix = parser.parseXMLToMatrix("C://temp.xml");
 
-		NodeMatrix nodeMatrix = new NodeMatrix();
-		FormProcess formProcess = (FormProcess) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
-		GraphCanvas canvas = formProcess.getCanvas();
-		IGraphStorage graphStorage = canvas.getGraphStorage();
-		IGraphConnection graphConnection = canvas.getConnection();
-		IGraph[] graphs = graphStorage.getGraphs();
-		for (IGraph graph : graphs) {
-			if (graph instanceof ProcessGraph) {
-				nodeMatrix.addNode(((ProcessGraph) graph).getProcess());
-			}
-		}
+        NodeMatrix nodeMatrix = new NodeMatrix();
+        FormProcess formProcess = (FormProcess) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
+        GraphCanvas canvas = formProcess.getCanvas();
+        IGraphStorage graphStorage = canvas.getGraphStorage();
+        IGraphConnection graphConnection = canvas.getConnection();
+        IGraph[] graphs = graphStorage.getGraphs();
+        for (IGraph graph : graphs) {
+            if (graph instanceof ProcessGraph) {
+                nodeMatrix.addNode(((ProcessGraph) graph).getProcess());
+            }
+        }
 
-		GraphRelationLine[] lines = graphConnection.getLines();
-		for (GraphRelationLine line : lines) {
-			if (line.getEndGraph() instanceof ProcessGraph) {
-				IProcess end = ((ProcessGraph) line.getEndGraph()).getProcess();
-				OutputGraph outputGraph = (OutputGraph) line.getStartGraph();
-				IProcess start = outputGraph.getProcessGraph().getProcess();
-				nodeMatrix.addConstraint(start, end, new DirectConnect());
-			}
-		}
-		TasksManagerContainer container = TaskUtil.getManagerContainer(true);
+        GraphRelationLine[] lines = graphConnection.getLines();
+        for (GraphRelationLine line : lines) {
+            if (line.getEndGraph() instanceof ProcessGraph) {
+                IProcess end = ((ProcessGraph) line.getEndGraph()).getProcess();
+                OutputGraph outputGraph = (OutputGraph) line.getStartGraph();
+                IProcess start = outputGraph.getProcessGraph().getProcess();
+                nodeMatrix.addConstraint(start, end, new DirectConnect());
+            }
+        }
+        TasksManagerContainer container = TaskUtil.getManagerContainer(true);
 //            tasksDock.setVisible(true);
 
-		container.clear();
-		CopyOnWriteArrayList list = nodeMatrix.getAllNodes();
-		for (int i = 0; i < list.size(); i++) {
-			if (list.get(i) instanceof IProcess) {
-				ProcessTask task = new ProcessTask((IProcess) list.get(i));
-				TaskStore.addTask(task);
-				container.addItem(task);
-			}
-		}
+        container.clear();
+        CopyOnWriteArrayList list = nodeMatrix.getAllNodes();
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i) instanceof IProcess) {
+                ProcessTask task = TaskUtil.getTask((IProcess) list.get(i));
+                container.addItem(task);
+            }
+        }
 //
 //            if (form instanceof FormProcess) {
 //                GraphCanvas canvas = ((FormProcess) form).getCanvas();
@@ -99,8 +97,8 @@ public class CtrlActionRun extends CtrlAction {
 //
 
 //		TaskUtil.excuteTasks(nodeMatrix);
-		MatrixExecutor executor = new MatrixExecutor(nodeMatrix);
-		executor.run();
+        MatrixExecutor executor = new MatrixExecutor(nodeMatrix);
+        executor.run();
 
 //            }
 //        MetaProcessImport metaProcessImport = new MetaProcessImport();
@@ -110,10 +108,10 @@ public class CtrlActionRun extends CtrlAction {
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
-	}
+    }
 
-	@Override
-	public boolean enable() {
-		return Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm() instanceof FormProcess;
-	}
+    @Override
+    public boolean enable() {
+        return Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm() instanceof FormProcess;
+    }
 }

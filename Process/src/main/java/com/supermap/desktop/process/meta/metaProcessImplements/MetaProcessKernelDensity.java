@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.meta.MetaKeys;
@@ -10,6 +11,8 @@ import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.tasks.ProcessTask;
+import com.supermap.desktop.process.tasks.TaskStore;
+import com.supermap.desktop.process.util.TaskUtil;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
 import com.supermap.desktop.ui.lbs.params.IServerLoginInfo;
@@ -95,7 +98,8 @@ public class MetaProcessKernelDensity extends MetaProcess {
             JobResultResponse response = service.query(kenelDensityJobSetting);
             if (null != response) {
                 CursorUtilities.setDefaultCursor();
-                NewMessageBus messageBus = new NewMessageBus(response, new ProcessTask(this));
+                ProcessTask task = TaskUtil.getTask(this);
+                NewMessageBus messageBus = new NewMessageBus(response, task);
                 messageBus.run();
             }
 //            ProcessData processData = new ProcessData();

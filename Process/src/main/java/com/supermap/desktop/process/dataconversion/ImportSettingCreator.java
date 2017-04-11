@@ -34,6 +34,8 @@ public class ImportSettingCreator implements IImportSettingCreator {
                 fileType = "Model" + fileType.toUpperCase();
             } else if ("osgb".equalsIgnoreCase(fileType)) {
                 fileType = "ModelOSG";
+            } else if ("dem".equalsIgnoreCase(fileType)) {
+                fileType = "GBDEM";
             } else {
                 fileType = fileType.toUpperCase();
             }
@@ -46,6 +48,28 @@ public class ImportSettingCreator implements IImportSettingCreator {
                 Application.getActiveApplication().getOutput().output(e);
             } catch (IllegalAccessException e) {
                 Application.getActiveApplication().getOutput().output(e);
+            } catch (InstantiationException e) {
+                Application.getActiveApplication().getOutput().output(e);
+            }
+        } else {
+            // o is an import file type
+            try {
+                String type = o.toString().toUpperCase();
+                if ("B".equalsIgnoreCase(type)) {
+                    type = "BIL";
+                } else if ("DEM".equalsIgnoreCase(type)) {
+                    type = "GBDEM";
+                } else if ("3ds".equalsIgnoreCase(type) || "x".equalsIgnoreCase(type)) {
+                    type = "Model" + type.toUpperCase();
+                } else if ("osgb".equalsIgnoreCase(type)) {
+                    type = "ModelOSG";
+                }
+                Class importClass = Class.forName(importSetting + type);
+                result = (ImportSetting) importClass.newInstance();
+            } catch (ClassNotFoundException e) {
+                Application.getActiveApplication().getOutput().output(e);
+                Application.getActiveApplication().getOutput().output(e);
+            } catch (IllegalAccessException e) {
             } catch (InstantiationException e) {
                 Application.getActiveApplication().getOutput().output(e);
             }

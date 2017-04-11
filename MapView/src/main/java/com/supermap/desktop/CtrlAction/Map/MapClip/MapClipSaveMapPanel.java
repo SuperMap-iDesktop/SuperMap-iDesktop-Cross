@@ -35,7 +35,6 @@ public class MapClipSaveMapPanel extends JPanel {
 			if (resultMapCheckBox.isSelected()) {
 				saveMapTextField.setEnabled(true);
 			} else {
-				saveMapTextField.setText("");
 				saveMapTextField.setEnabled(false);
 			}
 		}
