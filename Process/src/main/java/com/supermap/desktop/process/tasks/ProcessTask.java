@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.tasks;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.ControlsResources;
@@ -17,8 +18,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.MessageFormat;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CancellationException;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by xie on 2017/2/15.
@@ -38,11 +39,12 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     private static final Color DEFAULT_FOREGROUNDCOLOR = new Color(39, 162, 223);
     private static final Color CACEL_FOREGROUNDCOLOR = new Color(190, 190, 190);
 
-    private transient SwingWorker<Boolean, Object> worker;
+    private transient SwingWorker<Boolean, Object> worker = null;
     private volatile String message = "";
     private volatile String remainTime = "";
     private volatile int percent = 0;
     private volatile boolean isStop = true;
+    private volatile ProcessCallable callable;
 
     private volatile RoundProgressBar progressBar;
     private volatile JLabel labelTitle;
@@ -58,12 +60,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
             stop();
         }
     };
-    private RunningListener runningListener = new RunningListener() {
-        @Override
-        public void running(RunningEvent e) {
-            updateProgress(e.getProgress(), String.valueOf(e.getRemainTime()), e.getMessage());
-        }
-    };
+
     private ActionListener removeListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -96,6 +93,8 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 
     public ProcessTask(IProcess process) {
         this.process = process;
+        this.callable = new ProcessCallable(process);
+        this.callable.setUpdate(this);
         init();
     }
 
@@ -186,44 +185,25 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
     }
 
     public void doWork() {
-        try {
-            process.addRunningListener(this.runningListener);
-            process.run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+        this.worker = new SwingWorker<Boolean, Object>() {
 
-    public String getMessage() {
-        return this.message;
-    }
-
-    public void setMessage(final String message) {
-        this.message = message;
-
-        SwingUtilities.invokeLater(new Runnable() {
             @Override
-            public void run() {
-                labelMessage.setText(message);
+            protected Boolean doInBackground() throws Exception {
+                return callable.call();
             }
-        });
-    }
 
-
-    public String getRemainTime() {
-        return this.remainTime;
-    }
-
-    public void setRemainTime(final String remainTime) {
-        this.remainTime = remainTime;
-
-        SwingUtilities.invokeLater(new Runnable() {
             @Override
-            public void run() {
-                labelRemaintime.setText(remainTime);
+            protected void done() {
+                try {
+                } catch (Exception e) {
+                    Application.getActiveApplication().getOutput().output(e);
+                } finally {
+                }
             }
-        });
+        };
+        this.worker.execute();
     }
+
 
     @Override
     public IProcess getProcess() {
@@ -262,7 +242,9 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
                     progressBar.setForegroundColor(DEFAULT_FOREGROUNDCOLOR);
                 }
             });
-            doWork();
+            if (null != callable) {
+                doWork();
+            }
         }
     }
 
@@ -272,6 +254,9 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 
     @Override
     public void updateProgress(final int percent, final String remainTime, final String message) throws CancellationException {
+        if (isStop) {
+            throw new CancellationException();
+        }
         this.percent = percent;
         this.remainTime = remainTime;
         this.message = message;

@@ -30,14 +30,12 @@ public class MetaProcessImport extends MetaProcess {
     protected ImportSetting importSetting;
     private CopyOnWriteArrayList<ReflectInfo> defaultImportParameters;
     private CopyOnWriteArrayList<ReflectInfo> paramParameters;
-    private CopyOnWriteArrayList<IParameter> defaultPanelParameters;
-    private CopyOnWriteArrayList<IParameter> paramPanelParameters;
     private String importType = "";
     private IParameterCreator parameterCreator;
     private ImportSteppedListener importStepListener = new ImportSteppedListener() {
         @Override
         public void stepped(ImportSteppedEvent e) {
-            fireRunning(new RunningEvent(MetaProcessImport.this, e.getTotalPercent(), ""));
+            fireRunning(new RunningEvent(MetaProcessImport.this, e.getSubPercent(), ""));
         }
     };
 
@@ -96,8 +94,8 @@ public class MetaProcessImport extends MetaProcess {
         fireRunning(new RunningEvent(this, 0, "start"));
         DataImport dataImport = ImportSettingSetter.setParameter(importSetting, defaultImportParameters, paramParameters);
         dataImport.addImportSteppedListener(this.importStepListener);
-        ImportResult run = dataImport.run();
-        ImportSetting[] succeedSettings = run.getSucceedSettings();
+        ImportResult result = dataImport.run();
+        ImportSetting[] succeedSettings = result.getSucceedSettings();
         if (succeedSettings.length > 0) {
             final Datasource datasource = succeedSettings[0].getTargetDatasource();
             SwingUtilities.invokeLater(new Runnable() {
