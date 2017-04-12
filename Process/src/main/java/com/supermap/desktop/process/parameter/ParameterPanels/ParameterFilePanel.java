@@ -30,7 +30,6 @@ public class ParameterFilePanel extends SwingPanel {
     private boolean isSelectingFile = false;
     private JLabel label = new JLabel();
 
-
     public ParameterFilePanel(IParameter parameterFile) {
         super(parameterFile);
         this.parameterFile = (ParameterFile) parameterFile;

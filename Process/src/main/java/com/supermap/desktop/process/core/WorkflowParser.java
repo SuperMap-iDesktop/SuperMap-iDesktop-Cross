@@ -151,7 +151,7 @@ public class WorkflowParser {
 		} else if (MetaKeys.IMPORT.equals(key)) {
 			result = new MetaProcessImport();
 		} else if (MetaKeys.INTERPOLATOR.equals(key)) {
-			result = new MetaProcessInterpolator(InterpolationAlgorithmType.IDW);
+			result = new MetaProcessInterpolator(InterpolationAlgorithmType.KRIGING);
 		} else if (MetaKeys.ISOLINE.equals(key)) {
 			result = new MetaProcessISOLine();
 		} else if (MetaKeys.ISOPOINT.equals(key)) {
