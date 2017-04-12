@@ -90,7 +90,7 @@ public class ProcessManager extends JPanel {
 		standAloneGroup.addProcess(new MetaProcessBuffer());
 		standAloneGroup.addProcess(new MetaProcessImport());
 		standAloneGroup.addProcess(new MetaProcessProjection());
-		standAloneGroup.addProcess(new MetaProcessInterpolator(InterpolationAlgorithmType.IDW));
+		standAloneGroup.addProcess(new MetaProcessInterpolator(InterpolationAlgorithmType.KRIGING));
 		standAloneGroup.addProcess(new MetaProcessOverlayAnalyst(OverlayAnalystType.INTERSECT));
 		standAloneGroup.addProcess(new MetaProcessSpatialIndex());
 		standAloneGroup.addProcess(new MetaProcessSqlQuery());
