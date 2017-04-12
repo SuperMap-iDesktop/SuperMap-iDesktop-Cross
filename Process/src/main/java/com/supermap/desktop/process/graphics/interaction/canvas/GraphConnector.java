@@ -6,6 +6,7 @@ import com.supermap.desktop.process.graphics.CanvasCursor;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.connection.DefaultLine;
+import com.supermap.desktop.process.graphics.connection.GraphRelationLine;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
@@ -31,6 +32,7 @@ public class GraphConnector extends CanvasEventAdapter {
 	private ProcessGraph endGraph = null;
 	private JPopupMenu inputsMenu = new JPopupMenu();
 
+	private GraphRelationLine selected;
 
 	public GraphConnector(GraphCanvas canvas) {
 		this.canvas = canvas;
@@ -125,6 +127,9 @@ public class GraphConnector extends CanvasEventAdapter {
 		try {
 			if (SwingUtilities.isRightMouseButton(e)) {
 				clean();
+			} else if (SwingUtilities.isLeftMouseButton(e) && isConnecting()) {
+
+				// 选中
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -226,6 +231,10 @@ public class GraphConnector extends CanvasEventAdapter {
 
 	@Override
 	public boolean isEnabled() {
-		return super.isEnabled() && this.previewLine != null;
+		return super.isEnabled() && isConnecting();
+	}
+
+	private boolean isConnecting() {
+		return this.previewLine != null;
 	}
 }
