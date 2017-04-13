@@ -94,6 +94,8 @@ public class DatasourceImageUtilties {
 			return fileParentPath + "Image_Datasource_Kingbase_Normal_24.png";
 		} else if (engineType == EngineType.MYSQL) {
 			return fileParentPath + "Image_MySQL_24.png";
+		} else if (engineType == EngineType.OPENSTREETMAPS) {
+			return fileParentPath + "Image_OpenStreetMaps_24.png";
 		}
 		return "";
 	}
