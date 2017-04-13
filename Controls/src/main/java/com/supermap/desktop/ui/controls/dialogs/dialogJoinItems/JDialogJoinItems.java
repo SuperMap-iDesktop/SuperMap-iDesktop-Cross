@@ -1,20 +1,12 @@
 package com.supermap.desktop.ui.controls.dialogs.dialogJoinItems;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
-import com.supermap.data.FieldInfos;
-import com.supermap.data.JoinItem;
-import com.supermap.data.JoinItems;
-import com.supermap.data.JoinType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
-import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -30,12 +22,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -428,7 +415,7 @@ public class JDialogJoinItems extends SmDialog {
 		this.buttonOk.setText(CommonProperties.getString(CommonProperties.OK));
 		this.buttonCancel.setText(CommonProperties.getString(CommonProperties.Cancel));
 
-		this.buttonAdd.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_AddMap.png"));
+		this.buttonAdd.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_AddItem.png"));
 		this.buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 		this.buttonReverse.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
 		this.buttonDel.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));

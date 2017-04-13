@@ -264,7 +264,7 @@ public class JDialogAddLayer extends SmDialog {
 	}
 
 	private void initComponentState() {
-		this.buttonAdd.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_AddMap.png"));
+		this.buttonAdd.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_AddItem.png"));
 		this.buttonAdd.setToolTipText(CommonProperties.getString(CommonProperties.Add));
 		this.buttonDelete.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
 		this.buttonDelete.setToolTipText(CommonProperties.getString(CommonProperties.Delete));

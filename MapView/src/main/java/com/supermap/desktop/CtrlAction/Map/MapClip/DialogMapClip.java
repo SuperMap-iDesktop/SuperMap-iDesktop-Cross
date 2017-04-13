@@ -692,8 +692,8 @@ public class DialogMapClip extends SmDialog {
 
     private void initResources() {
         this.setTitle(MapViewProperties.getString("String_MapClip_MapClip"));
-        this.buttonAddLayers.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Add.png"));
-        this.buttonAddLayers.setToolTipText(MapViewProperties.getString("String_MapClip_AddLayers"));
+	    this.buttonAddLayers.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_AddItem.png"));
+	    this.buttonAddLayers.setToolTipText(MapViewProperties.getString("String_MapClip_AddLayers"));
         this.buttonDelete.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
         this.buttonDelete.setToolTipText(CommonProperties.getString("String_Delete"));
         this.buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));

@@ -1,10 +1,6 @@
 package com.supermap.desktop.CtrlAction.Dataset.SpatialIndex;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.Datasource;
-import com.supermap.data.SpatialIndexInfo;
-import com.supermap.data.SpatialIndexType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
@@ -18,11 +14,7 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
-import com.supermap.desktop.utilities.CoreResources;
-import com.supermap.desktop.utilities.SpatialIndexInfoUtilities;
-import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.desktop.utilities.TableUtilities;
+import com.supermap.desktop.utilities.*;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -30,13 +22,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -112,7 +98,7 @@ public class JDialogBulidSpatialIndex extends SmDialog {
 		this.buttonSelectInvert = new JButton();
 		this.buttonDelete = new JButton();
 
-		this.buttonAdd.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_AddMap.png"));
+		this.buttonAdd.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_AddItem.png"));
 		this.buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 		this.buttonSelectInvert.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
 		this.buttonDelete.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
