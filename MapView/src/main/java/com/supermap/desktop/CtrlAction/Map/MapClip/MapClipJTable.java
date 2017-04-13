@@ -3,6 +3,7 @@ package com.supermap.desktop.CtrlAction.Map.MapClip;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
@@ -12,8 +13,7 @@ import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumn;
+import javax.swing.table.*;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -56,18 +56,18 @@ public class MapClipJTable extends MutiTable {
         this.setModel(mapClipTableModel);
 
         //设置单元格为下拉列表样式
-        Datasources datasources= Application.getActiveApplication().getWorkspace().getDatasources();
-        this.isCanUseDatasources=new ArrayList<>();
-        for (int i=0;i<datasources.getCount();i++){
-            if (!datasources.get(i).isReadOnly()){
+        Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+        this.isCanUseDatasources = new ArrayList<>();
+        for (int i = 0; i < datasources.getCount(); i++) {
+            if (!datasources.get(i).isReadOnly()) {
                 this.isCanUseDatasources.add(datasources.get(i));
             }
         }
-        DatasourceComboBox datasourceComboBox=null;
-        if (this.isCanUseDatasources!=null && this.isCanUseDatasources.size()>0) {
+        DatasourceComboBox datasourceComboBox = null;
+        if (this.isCanUseDatasources != null && this.isCanUseDatasources.size() > 0) {
             datasourceComboBox = new DatasourceComboBox(this.isCanUseDatasources);
-        }else{
-            return ;
+        } else {
+            return;
         }
 
         String[] clipType = {MapViewProperties.getString("String_MapClip_Out"), MapViewProperties.getString("String_MapClip_In")};
@@ -79,6 +79,7 @@ public class MapClipJTable extends MutiTable {
         this.layerCaption = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_LAYERCAPTION));
         this.aimDatasourceColumn = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_AIMDATASOURCE));
         this.clipTypeColumn = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_CLIPTYPE));
+//        this.clipTypeColumn = new TableColumn(COLUMN_INDEX_CLIPTYPE,75,null,new DefaultCellEditor(clipTypeComboBox));
         this.eraseColumn = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_ERASE));
 
         this.aimDatasourceColumn.setCellEditor(new DefaultCellEditor(datasourceComboBox));
@@ -92,6 +93,15 @@ public class MapClipJTable extends MutiTable {
         // 给是否参与裁剪表头添加CheckBox
         //this.parClip.setHeaderRenderer(new CheckHeaderCellRenderer(this, MapViewProperties.getString("String_MapClip_IsClip"), false));
 
+        this.clipTypeColumn.setHeaderRenderer(new JComponentTableCellRenderer());
+        ImageAndTextTableHeaderCell clipTypeTip = new ImageAndTextTableHeaderCell(MapViewProperties.getString("String_MapClip_ClipType"), ControlsResources.getIcon("/controlsresources/Icon_Help.png"), ControlsResources.getIcon("/controlsresources/Icon_Help.png"));
+        clipTypeTip.setToolTipText("");
+        this.clipTypeColumn.setHeaderValue(clipTypeTip);
+
+        this.eraseColumn.setHeaderRenderer(new JComponentTableCellRenderer());
+        ImageAndTextTableHeaderCell eraseTip = new ImageAndTextTableHeaderCell(MapViewProperties.getString("String_MapClip_Erase"), ControlsResources.getIcon("/controlsresources/Icon_Warning.png"), "擦除裁剪区域会修改原数据");
+        eraseTip.setToolTipText("");
+        this.eraseColumn.setHeaderValue(eraseTip);
     }
 
     /**
@@ -120,10 +130,10 @@ public class MapClipJTable extends MutiTable {
                 //boolean clip = false;
                 Layer layerCaption = resultLayer.get(i);
                 Datasource targetDatasource = resultLayer.get(i).getDataset().getDatasource();
-                if (targetDatasource.isReadOnly()){
-                    if (this.isCanUseDatasources!=null && this.isCanUseDatasources.size()>0){
-                        targetDatasource=this.isCanUseDatasources.get(0);
-                    }else{
+                if (targetDatasource.isReadOnly()) {
+                    if (this.isCanUseDatasources != null && this.isCanUseDatasources.size() > 0) {
+                        targetDatasource = this.isCanUseDatasources.get(0);
+                    } else {
                         continue;
                     }
                 }
@@ -147,13 +157,6 @@ public class MapClipJTable extends MutiTable {
         this.setRowSelectionInterval(0, 0);
     }
 
-//    private void registEvents() {
-//        removeEvents();
-//    }
-//
-//    public void removeEvents() {
-//    }
-
     /**
      * 负责对layerCaption列渲染的内部类
      */
@@ -164,6 +167,89 @@ public class MapClipJTable extends MutiTable {
                     row, column);
             this.setText(((Layer) value).getCaption());
             return this;
+        }
+    }
+
+     class ImageAndTextTableHeaderCell extends JLabel {
+        JLabel labelCaption;
+        JLabel labelTip;
+
+        public ImageAndTextTableHeaderCell(String showText, Icon showIcon, Icon tipIcon) {
+            this.labelCaption = new JLabel(showText);
+            this.labelTip = new JLabel(showIcon);
+            initLayout();
+        }
+
+        public ImageAndTextTableHeaderCell(String showText, Icon showIcon, String tipText) {
+            this.labelCaption = new JLabel(showText);
+            this.labelTip = new JLabel(showIcon);
+            this.labelTip.setToolTipText(tipText);
+            initLayout();
+        }
+        private void initLayout() {
+            this.labelTip.setMinimumSize(new Dimension(23,23));
+            this.labelTip.setMaximumSize(new Dimension(23,23));
+            this.setLayout(new BorderLayout());
+            this.add(this.labelCaption, BorderLayout.WEST);
+            this.add(this.labelTip, BorderLayout.EAST);
+        }
+    }
+
+
+    private class JComponentTableCellRenderer implements TableCellRenderer {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JComponent jComponent = (JComponent) value;
+            jComponent.setBackground(table.getBackground());
+            jComponent.setForeground(table.getForeground());
+            return jComponent;
+        }
+    }
+
+    private class HelpImageHeaderCellRenderer implements TableCellRenderer {
+        AbstractTableModel tableModel;
+        JTableHeader tableHeader;
+        JLabel labelTip;
+
+        public HelpImageHeaderCellRenderer(JTable table, Icon showIcon, Icon tipIcon, String tipText) {
+            this.tableModel = (AbstractTableModel) table.getModel();
+            this.tableHeader = table.getTableHeader();
+            this.labelTip = new JLabel(showIcon) {
+                public JToolTip createToolTip() {
+                    JToolTip tip = super.createToolTip();
+                    tip.setLayout(new BorderLayout());
+                    tip.add(new JButton("Hello"), BorderLayout.NORTH);
+                    tip.add(new JButton("Hello"), BorderLayout.SOUTH);
+                    tip.setPreferredSize(new Dimension(300, 200));
+                    return tip;
+                }
+            };
+            this.labelTip.setToolTipText("");
+        }
+
+        public HelpImageHeaderCellRenderer(JTable table, Icon showIcon, String tipText) {
+            this.tableModel = (AbstractTableModel) table.getModel();
+            this.tableHeader = table.getTableHeader();
+            this.labelTip = new JLabel(showIcon);
+            this.labelTip.setToolTipText(tipText);
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                                       boolean isSelected, boolean hasFocus, int row, int column) {
+            String valueStr = (String) value;
+
+            JPanel jPanel = new JPanel();
+            JLabel jLabel = new JLabel(valueStr);
+            jPanel.setLayout(new BorderLayout());
+            jPanel.add(jLabel, BorderLayout.WEST);
+            jPanel.add(this.labelTip, BorderLayout.EAST);
+            JComponent component = jPanel;
+            component.setBackground(table.getBackground());
+            component.setForeground(table.getForeground());
+            component.setFont(table.getFont());
+            component.updateUI();
+//            component.setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+            return jPanel;
         }
     }
 

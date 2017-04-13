@@ -19,6 +19,7 @@ import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import javax.swing.event.*;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.MessageFormat;
@@ -52,7 +53,6 @@ public class DialogMapClip extends SmDialog {
     private JCheckBox exactClip;
 
     private PanelButton panelButton;
-
 
     private Vector layerJTableInfo;//  从JTable中拿到的vector
     private Vector resultInfo;//  处理后的vector
@@ -517,7 +517,7 @@ public class DialogMapClip extends SmDialog {
             }
         }
         this.exactClip.setEnabled(result);
-        if (result){
+        if (result) {
             this.exactClip.setSelected(true);
             for (int i = 0; i < this.mapClipJTable.getRowCount(); i++) {
                 Layer layer = (Layer) ((Vector) (this.mapClipJTable.getMapClipTableModel().getLayerInfo().get(i))).get(COLUMN_INDEX_LAYERCAPTION);
@@ -548,6 +548,44 @@ public class DialogMapClip extends SmDialog {
         initToolbar();
         // 地图裁剪JTable
         this.mapClipJTable = new MapClipJTable();
+        this.mapClipJTable.setTableHeader(new JTableHeader(this.mapClipJTable.getColumnModel()) {
+            Point point;
+            Point pointLabel;
+
+            @Override
+            public String getToolTipText(MouseEvent event) {
+                point = event.getPoint();
+//                pointLabel = ((MapClipJTable.ImageAndTextTableHeaderCell) (mapClipJTable.getColumnModel().getColumn(3).getHeaderValue())).labelTip.;
+                return super.getToolTipText(event);
+            }
+
+            @Override
+            public JToolTip createToolTip() {
+                if (point.getX() > (mapClipJTable.getWidth() - 23) && point.getX() <= (mapClipJTable.getWidth())) {
+                    JToolTip tip = super.createToolTip();
+                    tip.setLayout(new BorderLayout());
+                    tip.add(new JLabel(), BorderLayout.SOUTH);
+                    tip.setPreferredSize(new Dimension(100, 50));
+                    return tip;
+                }else if (point.getX() > (clipTyleColumn() - 23) && point.getX() <= (clipTyleColumn())){
+                    JToolTip tip = super.createToolTip();
+                    tip.setLayout(new BorderLayout());
+                    tip.add(new JButton("Hello"), BorderLayout.NORTH);
+                    tip.add(new JButton("Hello"), BorderLayout.SOUTH);
+                    tip.setPreferredSize(new Dimension(300, 200));
+                    return tip;
+                }else{
+                    return super.createToolTip();
+                }
+            }
+
+            private int clipTyleColumn(){
+                int result= mapClipJTable.getColumnModel().getColumn(0).getWidth()+mapClipJTable.getColumnModel().getColumn(1).getWidth()+
+                        mapClipJTable.getColumnModel().getColumn(2).getWidth()+mapClipJTable.getColumnModel().getColumn(3).getWidth();
+                return result;
+            }
+
+        });
         this.scrollPane = new JScrollPane(this.mapClipJTable);
         // 地图裁剪保存地图面板
         this.mapClipSaveMapPanel = new MapClipSaveMapPanel();
