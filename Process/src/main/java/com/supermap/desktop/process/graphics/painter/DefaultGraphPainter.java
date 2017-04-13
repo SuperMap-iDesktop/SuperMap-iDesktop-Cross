@@ -137,12 +137,15 @@ public class DefaultGraphPainter implements IGraphPainter {
 	}
 
 	protected void paintRectangleGraph(Graphics graphics, RectangleGraph rectangleGraph) {
-		this.styleFactory.normalRegion(graphics);
+//		this.styleFactory.normalRegion(graphics);
+//		graphics.setColor(Color.decode("#AEEEEE"));
+		graphics.setColor(new Color(202, 221, 254));
 		((Graphics2D) graphics).fill(rectangleGraph.getShape());
 	}
 
 	protected void paintEllipseGraph(Graphics graphics, EllipseGraph ellipseGraph) {
-		graphics.setColor(Color.decode("#C1FFC1"));
+//		graphics.setColor(Color.decode("#C1FFC1"));
+		graphics.setColor(new Color(254, 244, 236));
 		((Graphics2D) graphics).fill(ellipseGraph.getShape());
 	}
 

@@ -10,7 +10,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterEnum;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
@@ -28,8 +28,8 @@ public class MetaProcessProjection extends MetaProcess {
 	private ParameterEnum parameterComboBox;
 
 	public MetaProcessProjection() {
-		this.inputs.addData(INPUT_DATA, DataType.DATASET);
-		this.outputs.addData(OUTPUT_DATA, DataType.DATASET);
+		this.inputs.addData(INPUT_DATA, DatasetTypes.DATASET);
+		this.outputs.addData(OUTPUT_DATA, DatasetTypes.DATASET);
 		parameters = new DefaultParameters();
 		datasource = new ParameterDatasource();
 		dataset = new ParameterSingleDataset();

@@ -1,19 +1,21 @@
 package com.supermap.desktop.process.parameter.interfaces.datas;
 
+import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
+
 /**
  * Created by highsad on 2017/4/5.
  */
 public class InputData implements IDataDescription, IValueProvider {
 	private String name;
 	private String tips;
-	private int dataType;
+	private Type dataType;
 	private IValueProvider valueProvider;
 
-	public InputData(String name, int dataType) {
+	public InputData(String name, Type dataType) {
 		this(name, null, dataType);
 	}
 
-	public InputData(String name, String tips, int dataType) {
+	public InputData(String name, String tips, Type dataType) {
 		this.name = name;
 		this.tips = tips;
 		this.dataType = dataType;
@@ -48,7 +50,7 @@ public class InputData implements IDataDescription, IValueProvider {
 	}
 
 	@Override
-	public int getType() {
+	public Type getType() {
 		return this.dataType;
 	}
 

@@ -24,6 +24,8 @@ public class GraphRelationLine extends AbstractLine implements GraphBoundsChange
 	private String message;
 	private Font font = new Font("宋体", Font.PLAIN, 20);
 	private Color textColor = Color.BLACK;
+	private boolean isEditable = true;
+	private boolean isSelected = true;
 
 	public GraphRelationLine(GraphCanvas canvas, IGraph start, IGraph end) {
 		this(canvas, start, end, null);
@@ -34,6 +36,22 @@ public class GraphRelationLine extends AbstractLine implements GraphBoundsChange
 		setStartGraph(start);
 		setEndGraph(end);
 		this.message = message;
+	}
+
+	public boolean isEditable() {
+		return isEditable;
+	}
+
+	public void setEditable(boolean editable) {
+		isEditable = editable;
+	}
+
+	public boolean isSelected() {
+		return isSelected;
+	}
+
+	public void setSelected(boolean selected) {
+		isSelected = selected;
 	}
 
 	@Override
@@ -58,7 +76,7 @@ public class GraphRelationLine extends AbstractLine implements GraphBoundsChange
 		this.start = start;
 
 		if (this.start != null) {
-			setStartPoint(this.start.getCenter());
+			setStartPoint(getStartLocation());
 			this.start.addGraphBoundsChangedListener(this);
 		} else {
 			setStartPoint(null);
@@ -100,17 +118,21 @@ public class GraphRelationLine extends AbstractLine implements GraphBoundsChange
 
 	@Override
 	public void graghBoundsChanged(GraphBoundsChangedEvent e) {
-		if (e.getGraph() == this.start) {
-			setStartPoint(this.start.getCenter());
-			setEndPoint(getEndLocation());
-		} else if (e.getGraph() == this.end) {
-			setEndPoint(getEndLocation());
-		}
+		setStartPoint(getStartLocation());
+		setEndPoint(getEndLocation());
 	}
 
 	private Point getEndLocation() {
 		if (this.start != null && this.end != null) {
 			return GraphicsUtil.chop(((AbstractGraph) this.end).getShape(), this.start.getCenter());
+		} else {
+			return null;
+		}
+	}
+
+	private Point getStartLocation() {
+		if (this.start != null && this.end != null) {
+			return GraphicsUtil.chop(((AbstractGraph) this.start).getShape(), this.end.getCenter());
 		} else {
 			return null;
 		}
@@ -138,12 +160,27 @@ public class GraphRelationLine extends AbstractLine implements GraphBoundsChange
 	public void paint(Graphics graphics) {
 		super.paint(graphics);
 		Graphics2D graphics2D = (Graphics2D) graphics;
+		Point startP = getStartPoint();
+		Point endP = getEndPoint();
 
-		if (getStartPoint() != null && getEndPoint() != null && !StringUtilities.isNullOrEmpty(this.message)) {
+		if (startP != null && endP != null && !StringUtilities.isNullOrEmpty(this.message)) {
 			graphics.setColor(this.textColor);
 			int textX = Math.min(getStartPoint().x, getEndPoint().x) + (Math.abs(getEndPoint().x - getStartPoint().x)) / 2;
 			int textY = Math.min(getStartPoint().y, getEndPoint().y) + (Math.abs(getEndPoint().y - getStartPoint().y)) / 2;
 			graphics2D.drawString(this.message, textX, textY);
 		}
+
+//		startP = getStartLocation();
+//		endP = getEndLocation();
+//		if (startP != null && endP != null && this.isSelected) {
+//			Rectangle startR = new Rectangle(startP.x - 3, startP.y - 3, 6, 6);
+//			Rectangle endR = new Rectangle(endP.x - 3, endP.y - 3, 6, 6);
+//			graphics.setColor(Color.WHITE);
+//			((Graphics2D) graphics).fill(startR);
+//			((Graphics2D) graphics).fill(endR);
+//			graphics.setColor(Color.BLACK);
+//			((Graphics2D) graphics).draw(startR);
+//			((Graphics2D) graphics).draw(endR);
+//		}
 	}
 }

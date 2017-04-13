@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.parameter.interfaces.datas;
 
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class Outputs {
 		}
 	}
 
-	public void addData(String name, int type) {
+	public void addData(String name, Type type) {
 		if (StringUtilities.isNullOrEmpty(name)) {
 			return;
 		}
@@ -56,22 +57,22 @@ public class Outputs {
 		return result.toArray(new OutputData[this.datas.size()]);
 	}
 
-	public OutputData[] getDatas(int type) {
+	public OutputData[] getDatas(Type type) {
 		ArrayList<OutputData> result = new ArrayList<>();
 		for (String name : this.datas.keySet()) {
 			OutputData data = this.datas.get(name);
-			if (data.getType() == type) {
+			if (data.getType().contains(type)) {
 				result.add(data);
 			}
 		}
 		return result.toArray(new OutputData[result.size()]);
 	}
 
-	public boolean isContains(int type) {
+	public boolean isContains(Type type) {
 		boolean result = false;
 		for (String name : this.datas.keySet()) {
 			OutputData data = this.datas.get(name);
-			if (data.getType() == type) {
+			if (data.getType().contains(type)) {
 				result = true;
 				break;
 			}

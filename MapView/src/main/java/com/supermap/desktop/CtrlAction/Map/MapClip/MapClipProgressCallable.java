@@ -67,6 +67,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
                 int totalPercent = (100 * (this.i - 1) + arg0.getPercent()) / count;
                 updateProgressTotal(arg0.getPercent(), arg0.getMessage(), totalPercent,
                         MessageFormat.format(MapViewProperties.getString("String_MapClip_ProgressCurrentLayer"), datasetName));
+
 //                updateProgress(totalPercent,
 //                        MapViewProperties.getString("String_MapClip_ProgressCurrentLayer")+ datasetName,MessageFormat.format(MapViewProperties.getString("String_MapClip_HasRunLayer"),i+1,count));
             } catch (CancellationException e) {
@@ -96,6 +97,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 
             IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
 
+            Thread.currentThread().sleep(1000);
             for (int i = 0; i < this.VectorInfo.size(); i++) {
                 try {
                     Dataset dataset = (Dataset) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_SOURCEDATASET);
@@ -110,12 +112,22 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
                         }
                         break;
                     }
-                    percentListener = new PercentListener(i, this.VectorInfo.size(), dataset.getName());
+
+                    if (percentListener==null) {
+                        percentListener = new PercentListener(i, this.VectorInfo.size(), dataset.getName());
+                        RasterClip.addSteppedListener(percentListener);
+                        VectorClip.addSteppedListener(percentListener);
+                    }else{
+                        percentListener.i=i;
+                        percentListener.datasetName=dataset.getName();
+                        /*VectorClip.removeSteppedListener(percentListener);
+                        RasterClip.removeSteppedListener(percentListener);*/
+                    }
                     String targetDatasetName;
 
                     Layer layer = (Layer) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_LAYER);
                     if (dataset instanceof DatasetVector) {
-                        VectorClip.addSteppedListener(percentListener);
+//                        VectorClip.addSteppedListener(percentListener);
 
                         DatasetVector sourceDataset = (DatasetVector) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_SOURCEDATASET);
                         GeoRegion userRegion = (GeoRegion) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_USERREGION);
@@ -125,18 +137,18 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
                         targetDatasetName = (String) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETNAME);
 
                         // 对要裁剪的数据集通过名称做一个判断，如果名字已经存在，说明数据集已经裁剪过了，不需要裁剪，将之前裁剪的结果再次加入地图
+//                        Thread.currentThread().sleep(1000);
                         if (targetDatasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
                             this.resultDataset = VectorClip.clipDatasetVector(sourceDataset, userRegion, isClipInRegion,
                                     isEraseSource, targetDatasource, targetDatasetName);
                         } else {
                             if (this.resultMap != null) {
                                 MapUtilities.findLayerByName(this.resultMap, layer.getName()).setDataset(targetDatasource.getDatasets().get(targetDatasetName));
-//							this.resultMap.getLayers().get(layer.getName()).setDataset(targetDatasource.getDatasets().get(targetDatasetName));
                             }
                             this.resultDataset = null;
                         }
                     } else {
-                        RasterClip.addSteppedListener(percentListener);
+//                        RasterClip.addSteppedListener(percentListener);
                         Dataset sourceDataset = (Dataset) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_SOURCEDATASET);
                         GeoRegion userRegion = (GeoRegion) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_USERREGION);
                         boolean isClipInRegion = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISCLIPINREGION);
@@ -144,7 +156,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
                         Datasource targetDatasource = (Datasource) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETSOURCE);
                         targetDatasetName = (String) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETNAME);
 
-
+//                        Thread.currentThread().sleep(1000);
                         // 对要裁剪的数据集通过名称做一个判断，如果名字已经存在，说明数据集已经裁剪过了，不需要裁剪，将之前裁剪的结果再次加入地图
                         if (targetDatasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
                             this.resultDataset = RasterClip.clip(sourceDataset, userRegion, isClipInRegion,

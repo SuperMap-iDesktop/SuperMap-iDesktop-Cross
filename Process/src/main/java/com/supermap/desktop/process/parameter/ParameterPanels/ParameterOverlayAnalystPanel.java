@@ -1,11 +1,7 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
 import com.supermap.analyst.spatialanalyst.OverlayAnalystParameter;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasets;
-import com.supermap.data.Datasources;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.LengthUnit;
@@ -220,7 +216,7 @@ public class ParameterOverlayAnalystPanel extends SwingPanel implements IParamet
 					Datasets datasets = comboboxOverlayAnalystDatasource.getSelectedDatasource().getDatasets();
 					int count = datasets.getCount();
 //                    for (int i = 0; i < count; i++) {
-//                        if (datasets.get(i).getType() != DatasetType.REGION)
+//                        if (datasets.get(i).getType() != DatasetTypes.REGION)
 //                            datasets.delete(i);
 //                    }
 					comboboxOverlayAnalystDataset.setDatasets(datasets);

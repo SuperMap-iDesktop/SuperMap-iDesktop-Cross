@@ -11,7 +11,7 @@ import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
@@ -44,8 +44,8 @@ public class MetaProcessISORegion extends MetaProcess {
 	};
 
 	public MetaProcessISORegion() {
-		this.inputs.addData(INPUT_DATA, DataType.DATASET_GRID);
-		this.outputs.addData(OUTPUT_DATA, DataType.DATASET_REGION);
+		this.inputs.addData(INPUT_DATA, DatasetTypes.GRID);
+		this.outputs.addData(OUTPUT_DATA, DatasetTypes.REGION);
 		parameters = new DefaultParameters();
 		sourceDatasource = new ParameterDatasource();
 		sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));

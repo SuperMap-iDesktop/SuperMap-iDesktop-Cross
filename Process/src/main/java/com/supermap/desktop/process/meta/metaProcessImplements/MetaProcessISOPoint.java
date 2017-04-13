@@ -14,7 +14,7 @@ import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 
@@ -92,8 +92,8 @@ public class MetaProcessISOPoint extends MetaProcess {
 	}
 
 	private void initParameters() {
-		this.inputs.addData(INPUT_DATA, DataType.DATASET_POINT);
-		this.outputs.addData(OUTPUT_DATA, DataType.DATASET_LINE);
+		this.inputs.addData(INPUT_DATA, DatasetTypes.POINT);
+		this.outputs.addData(OUTPUT_DATA, DatasetTypes.LINE);
 		this.parameters = new DefaultParameters();
 		this.sourceDatasource = new ParameterDatasource();
 		this.sourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.POINT3D);

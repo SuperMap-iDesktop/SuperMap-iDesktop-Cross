@@ -6,12 +6,14 @@ import com.supermap.desktop.process.graphics.CanvasCursor;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.connection.DefaultLine;
+import com.supermap.desktop.process.graphics.connection.GraphRelationLine;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
@@ -31,6 +33,7 @@ public class GraphConnector extends CanvasEventAdapter {
 	private ProcessGraph endGraph = null;
 	private JPopupMenu inputsMenu = new JPopupMenu();
 
+	private GraphRelationLine selected;
 
 	public GraphConnector(GraphCanvas canvas) {
 		this.canvas = canvas;
@@ -85,7 +88,7 @@ public class GraphConnector extends CanvasEventAdapter {
 		try {
 			if (SwingUtilities.isLeftMouseButton(e)) {
 				if (this.startGraph != null && this.endGraph != null) {
-					int type = this.startGraph.getProcessData().getType();
+					Type type = this.startGraph.getProcessData().getType();
 					final OutputGraph start = this.startGraph;
 					final IGraph end = this.endGraph;
 					final Inputs inputs = this.endGraph.getProcess().getInputs();
@@ -125,6 +128,9 @@ public class GraphConnector extends CanvasEventAdapter {
 		try {
 			if (SwingUtilities.isRightMouseButton(e)) {
 				clean();
+			} else if (SwingUtilities.isLeftMouseButton(e) && isConnecting()) {
+
+				// 选中
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
@@ -226,6 +232,10 @@ public class GraphConnector extends CanvasEventAdapter {
 
 	@Override
 	public boolean isEnabled() {
-		return super.isEnabled() && this.previewLine != null;
+		return super.isEnabled() && isConnecting();
+	}
+
+	private boolean isConnecting() {
+		return this.previewLine != null;
 	}
 }

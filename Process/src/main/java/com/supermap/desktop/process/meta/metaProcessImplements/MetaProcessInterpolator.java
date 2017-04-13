@@ -15,7 +15,7 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.ParameterSearchModeInfo;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.PixelFormatProperties;
 
@@ -61,8 +61,8 @@ public class MetaProcessInterpolator extends MetaProcess {
 	};
 
 	public MetaProcessInterpolator(InterpolationAlgorithmType interpolationAlgorithmType) {
-		this.inputs.addData(INPUT_DATA, DataType.DATASET_VECTOR);
-		this.outputs.addData(OUTPUT_DATA, DataType.DATASET_GRID);
+		this.inputs.addData(INPUT_DATA, DatasetTypes.VECTOR);
+		this.outputs.addData(OUTPUT_DATA, DatasetTypes.GRID);
 		this.interpolationAlgorithmType = interpolationAlgorithmType;
 		parameters = new DefaultParameters();
 		parameterDatasource = new ParameterDatasource();
@@ -155,26 +155,72 @@ public class MetaProcessInterpolator extends MetaProcess {
 		parameterNugget.setSelectedItem(0);
 
 		if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.IDW)) {
-			parameters.setParameters(parameterDatasource, parameterDataset, parameterInterpolatorFields,
-					parameterScaling
-					, parameterResultDatasetName, parameterResulotion, parameterPixelType, parameterColumn,
-					parameterRow, parameterBoundsLeft, parameterBoundsTop, parameterBoundsRight, parameterBoundsBottom,
-					searchMode, parameterPower);
+			ParameterCombine sourceData = new ParameterCombine(ParameterCombine.HORIZONTAL);
+			sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
+			sourceData.addParameters(new ParameterCombine().addParameters(parameterDatasource, parameterInterpolatorFields)
+					, new ParameterCombine().addParameters(parameterDataset, parameterScaling));
+			ParameterCombine targetData = new ParameterCombine(ParameterCombine.HORIZONTAL);
+			targetData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
+			targetData.addParameters(new ParameterCombine().addParameters(parameterResultDatasetName, parameterResulotion
+			), new ParameterCombine().addParameters(parameterPixelType, parameterColumn, parameterRow));
+			ParameterCombine bounds = new ParameterCombine();
+			bounds.setDescribe(ProcessProperties.getString("String_InterpolationAnalyst_Bounds"));
+			bounds.addParameters(parameterBoundsLeft, parameterBoundsTop, parameterBoundsRight, parameterBoundsBottom);
+			ParameterCombine modeSet = new ParameterCombine();
+			modeSet.setDescribe(ProcessProperties.getString("String_InterpolationAnalyst_SearchModeSetting"));
+			modeSet.addParameters(searchMode);
+
+			ParameterCombine otherParam = new ParameterCombine();
+			otherParam.setDescribe(ProcessProperties.getString("String_InterpolationAnalyst_OtherParameters"));
+			otherParam.addParameters(parameterPower);
+			parameters.setParameters(sourceData, targetData, bounds, modeSet, otherParam);
+
 		} else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.RBF)) {
-			parameters.setParameters(parameterDatasource, parameterDataset, parameterInterpolatorFields,
-					parameterScaling
-					, parameterResultDatasetName, parameterResulotion, parameterPixelType, parameterColumn,
-					parameterRow, parameterBoundsLeft, parameterBoundsTop, parameterBoundsRight, parameterBoundsBottom,
-					searchMode, parameterTension, parameterSmooth);
+			ParameterCombine sourceData = new ParameterCombine(ParameterCombine.HORIZONTAL);
+			sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
+			sourceData.addParameters(new ParameterCombine().addParameters(parameterDatasource, parameterInterpolatorFields)
+					, new ParameterCombine().addParameters(parameterDataset, parameterScaling));
+			ParameterCombine targetData = new ParameterCombine(ParameterCombine.HORIZONTAL);
+			targetData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
+			targetData.addParameters(new ParameterCombine().addParameters(parameterResultDatasetName, parameterResulotion
+			), new ParameterCombine().addParameters(parameterPixelType, parameterColumn, parameterRow));
+			ParameterCombine bounds = new ParameterCombine();
+			bounds.setDescribe(ProcessProperties.getString("String_InterpolationAnalyst_Bounds"));
+			bounds.addParameters(parameterBoundsLeft, parameterBoundsTop, parameterBoundsRight, parameterBoundsBottom);
+			ParameterCombine modeSet = new ParameterCombine();
+			modeSet.setDescribe(ProcessProperties.getString("String_InterpolationAnalyst_SearchModeSetting"));
+			modeSet.addParameters(searchMode);
+
+			ParameterCombine otherParam = new ParameterCombine();
+			otherParam.setDescribe(ProcessProperties.getString("String_InterpolationAnalyst_OtherParameters"));
+			otherParam.addParameters(parameterTension, parameterSmooth);
+			parameters.setParameters(sourceData, targetData, bounds, modeSet, otherParam);
+
 		} else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.KRIGING)
 				|| interpolationAlgorithmType.equals(InterpolationAlgorithmType.SimpleKRIGING)
 				|| interpolationAlgorithmType.equals(InterpolationAlgorithmType.UniversalKRIGING)) {
-			parameters.setParameters(parameterDatasource, parameterDataset, parameterInterpolatorFields,
-					parameterScaling
-					, parameterResultDatasetName, parameterResulotion, parameterPixelType, parameterColumn,
-					parameterRow, parameterBoundsLeft, parameterBoundsTop, parameterBoundsRight, parameterBoundsBottom,
-					searchMode, parameterVariogramMode, parameterStill, parameterAngle, parameterRange, parameterMean, parameterNugget);
+			ParameterCombine sourceData = new ParameterCombine(ParameterCombine.HORIZONTAL);
+			sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
+			sourceData.addParameters(new ParameterCombine().addParameters(parameterDatasource, parameterInterpolatorFields)
+					, new ParameterCombine().addParameters(parameterDataset, parameterScaling));
+			ParameterCombine targetData = new ParameterCombine(ParameterCombine.HORIZONTAL);
+			targetData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
+			targetData.addParameters(new ParameterCombine().addParameters(parameterResultDatasetName, parameterResulotion
+			), new ParameterCombine().addParameters(parameterPixelType, parameterColumn, parameterRow));
+			ParameterCombine bounds = new ParameterCombine();
+			bounds.setDescribe(ProcessProperties.getString("String_InterpolationAnalyst_Bounds"));
+			bounds.addParameters(parameterBoundsLeft, parameterBoundsTop, parameterBoundsRight, parameterBoundsBottom);
+			ParameterCombine modeSet = new ParameterCombine();
+			modeSet.setDescribe(ProcessProperties.getString("String_InterpolationAnalyst_SearchModeSetting"));
+			modeSet.addParameters(searchMode);
+
+			ParameterCombine otherParam = new ParameterCombine(ParameterCombine.HORIZONTAL);
+			otherParam.setDescribe(ProcessProperties.getString("String_InterpolationAnalyst_OtherParameters"));
+			otherParam.addParameters(new ParameterCombine().addParameters(parameterVariogramMode, parameterAngle, parameterMean)
+					, new ParameterCombine().addParameters(parameterStill, parameterRange, parameterNugget));
+			parameters.setParameters(sourceData, targetData, bounds, modeSet, otherParam);
 		}
+
 		initParameterConstraint();
 	}
 
