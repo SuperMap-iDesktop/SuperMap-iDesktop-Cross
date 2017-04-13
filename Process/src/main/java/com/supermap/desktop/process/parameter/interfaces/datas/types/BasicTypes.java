@@ -18,7 +18,7 @@ public final class BasicTypes extends Type {
 	public final static BasicTypes NUMBER = new BasicTypes("number",
 			SHORT.getValue() | INTEGER.getValue() | LONG.getValue() | FLOAT.getValue() | DOUBLE.getValue());
 
-	public BasicTypes(String name, int value) {
+	public BasicTypes(String name, long value) {
 		super(name, value);
 	}
 }

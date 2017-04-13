@@ -7,9 +7,9 @@ public class Type {
 	public final static Type UNKOWN = new Type("unkown", 0x00);
 
 	private String name;
-	private int value;
+	private long value;
 
-	public Type(String name, int value) {
+	public Type(String name, long value) {
 		this.name = name;
 		this.value = value;
 	}
@@ -18,7 +18,7 @@ public class Type {
 		return name;
 	}
 
-	public int getValue() {
+	public long getValue() {
 		return value;
 	}
 
