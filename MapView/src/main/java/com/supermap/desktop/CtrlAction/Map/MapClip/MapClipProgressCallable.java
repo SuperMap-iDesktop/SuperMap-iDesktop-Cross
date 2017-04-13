@@ -110,6 +110,10 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
                         }
                         break;
                     }
+                    if (percentListener!=null){
+                        VectorClip.removeSteppedListener(percentListener);
+                        RasterClip.removeSteppedListener(percentListener);
+                    }
                     percentListener = new PercentListener(i, this.VectorInfo.size(), dataset.getName());
                     String targetDatasetName;
 
