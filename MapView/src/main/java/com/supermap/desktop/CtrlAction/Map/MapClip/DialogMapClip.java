@@ -18,7 +18,10 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 
 import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
@@ -49,20 +52,19 @@ public class DialogMapClip extends SmDialog {
 
     private MapClipSaveMapPanel mapClipSaveMapPanel;
     private CompTitledPane saveMapcompTitledPane;
-    private JPanel clipSetPanel;
-    private JCheckBox exactClip;
+    //private JPanel clipSetPanel;
 
     private PanelButton panelButton;
 
-    private Vector layerJTableInfo;//  从JTable中拿到的vector
-    private Vector resultInfo;//  处理后的vector
+    private Vector layerJTableInfo; //  从JTable中拿到的vector
+    private Vector resultInfo;       //  处理后的vector
     private Vector deletedInfo;
     private Vector selectedDeletedInfo;
 
     private String saveMapName;
     private Map resultMap = null;
-    //private boolean isTableRowCanUse=true;
     private boolean isSaveMapNameIsValid = true;
+    private boolean isDatasetNameIsValid = true;
 
     private MapClipProgressCallable mapClipProgressCallable;
 
@@ -85,9 +87,6 @@ public class DialogMapClip extends SmDialog {
             try {
                 Vector tempVector = new Vector();
                 for (int i = 0; i < this.layerJTableInfo.size(); i++) {
-                    // 从JTable中筛选出需要裁剪的图层对象，按照裁剪接口参数构建新的Vector
-//                    boolean isClip = (Boolean) ((Vector) (this.layerJTableInfo.get(i))).get(COLUMN_INDEX_ISCLIP);
-//                    if (isClip) {
                     Dataset targetDataset;
                     GeoRegion userRegion;
                     boolean isClipInRegion = false;
@@ -111,7 +110,11 @@ public class DialogMapClip extends SmDialog {
                             isExactClipOrIsEarsesource = true;
                         }
                     } else {
-                        isExactClipOrIsEarsesource = (Boolean) ((Vector) (this.layerJTableInfo.get(i))).get(COLUMN_INDEX_EXACTCLIP);
+                        String isExactClip = (String) ((Vector) (this.layerJTableInfo.get(i))).get(COLUMN_INDEX_EXACTCLIP);
+                        if (isExactClip.equals(MapViewProperties.getString("String_MapClip_Yes"))) {
+                            isExactClipOrIsEarsesource = true;
+                        }
+//                        isExactClipOrIsEarsesource = (Boolean) ((Vector) (this.layerJTableInfo.get(i))).get(COLUMN_INDEX_EXACTCLIP);
                     }
                     // 获得目标数据源
                     targetDatasource = (Datasource) ((Vector) (this.layerJTableInfo.get(i))).get(COLUMN_INDEX_AIMDATASOURCE);
@@ -129,13 +132,6 @@ public class DialogMapClip extends SmDialog {
                     v.add(COLUMN_INDEX_TARGETDATASETNAME, targetDatasetName);
                     v.add(COLUMN_LAYER, layer);
                     tempVector.add(v);
-//                    } else {
-//                        if (this.resultMap != null) {
-//                            Layer layer = (Layer) ((Vector) (this.layerJTableInfo.get(i))).get(COLUMN_INDEX_LAYERCAPTION);
-//                            MapUtilities.removeLayer(this.resultMap, layer.getName());
-//                        }
-//                        continue;
-//                    }
                 }
                 this.resultInfo = tempVector;
             } catch (Exception e) {
@@ -151,6 +147,18 @@ public class DialogMapClip extends SmDialog {
                 MapUtilities.removeLayer(this.resultMap, layer.getName());
             }
         }
+        //   过滤掉不支持的数据集类型
+        if (this.resultMap != null) {
+            ArrayList<Layer> layers = MapUtilities.getLayers(this.resultMap);
+            for (int i = 0; i < layers.size(); i++) {
+                if (layers.get(i).getDataset() instanceof DatasetVector ||layers.get(i).getDataset() instanceof DatasetImage || layers.get(i).getDataset() instanceof DatasetGrid) {
+
+                }else{
+                    MapUtilities.removeLayer(this.resultMap, layers.get(i).getName());
+                }
+            }
+        }
+
     }
 
     /**
@@ -159,6 +167,9 @@ public class DialogMapClip extends SmDialog {
     private ActionListener toolBarActionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            if (mapClipJTable.isEditing()) {
+                mapClipJTable.getCellEditor().stopCellEditing();
+            }
             if (e.getSource().equals(buttonSelectAll)) {
                 // 全选
                 if (mapClipJTable.getRowCount() - 1 < 0) {
@@ -252,20 +263,6 @@ public class DialogMapClip extends SmDialog {
                     isSaveMapNameIsValid = true;
                     isCanRun();
                 }
-            } else if (e.getSource().equals(exactClip)) {
-                for (int i = 0; i < mapClipJTable.getRowCount(); i++) {
-                    Layer layer = (Layer) ((Vector) (mapClipJTable.getMapClipTableModel().getLayerInfo().get(i))).get(COLUMN_INDEX_LAYERCAPTION);
-                    if (layer.getDataset().getType() == DatasetType.GRID || layer.getDataset().getType() == DatasetType.IMAGE) {
-                        ((Vector) (mapClipJTable.getMapClipTableModel().getLayerInfo().get(i))).set(COLUMN_INDEX_EXACTCLIP, exactClip.isSelected());
-                    }
-                }
-                // 获得选中的全部 栅格图层，设置其是否精确裁剪
-//                int[] tempSelectedRows = mapClipJTable.getSelectedRows();
-//                for (int i = 0; i < tempSelectedRows.length; i++) {
-//                    Boolean exact = exactClip.isSelected();
-//                    ((Vector) layerJTableInfo.get(tempSelectedRows[i])).remove(COLUMN_INDEX_EXACTCLIP);
-//                    ((Vector) layerJTableInfo.get(tempSelectedRows[i])).add(COLUMN_INDEX_EXACTCLIP, exact);
-//                }
             }
         }
     };
@@ -283,12 +280,10 @@ public class DialogMapClip extends SmDialog {
                 if (tempText.equals(name)) {
                     isSaveMapNameIsValid = true;
                     isCanRun();
-                    //panelButton.getButtonOk().setEnabled(true);
                 } else {
                     Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MapClip_DatasetNameError"));
                     isSaveMapNameIsValid = false;
                     isCanRun();
-                    //panelButton.getButtonOk().setEnabled(false);
                 }
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
@@ -321,24 +316,12 @@ public class DialogMapClip extends SmDialog {
     };
 
     /**
-     * JTableSelection改变事件
-     */
-    private ListSelectionListener tableSelectionListener = new ListSelectionListener() {
-        @Override
-        public void valueChanged(ListSelectionEvent e) {
-            // 当JTable选择的行改变时，需要根据选中行的情况获得精确裁剪是否可用，以及属性值
-            initInfo();
-        }
-    };
-
-    /**
      * model内容改变监听，主要对数据集名称做以判断
      */
     private TableModelListener tableModelListener = new TableModelListener() {
         @Override
         public void tableChanged(TableModelEvent e) {
             isCanRun();
-            // 当结果数据集名称或者数据源内容改变时，都需要判断其
             if (e.getColumn() == COLUMN_INDEX_AIMDATASOURCE) {
                 // 当数据源改变，重新设置文件名称
                 int[] selectedRow = mapClipJTable.getSelectedRows();
@@ -346,6 +329,9 @@ public class DialogMapClip extends SmDialog {
                     Datasource tempDatasource = (Datasource) mapClipJTable.getModel().getValueAt(selectedRow[i], COLUMN_INDEX_AIMDATASOURCE);
                     String tempDatasetName = ((String) mapClipJTable.getModel().getValueAt(selectedRow[i], COLUMN_INDEX_AIMDATASET));
                     while (!tempDatasource.getDatasets().isAvailableDatasetName(tempDatasetName)) {
+                        if (tempDatasetName.lastIndexOf("_") != -1) {
+                            tempDatasetName = tempDatasetName.substring(0, tempDatasetName.lastIndexOf("_"));
+                        }
                         tempDatasetName = tempDatasource.getDatasets().getAvailableDatasetName(tempDatasetName);
                     }
                     mapClipJTable.setValueAt(tempDatasetName, selectedRow[i], COLUMN_INDEX_AIMDATASET);
@@ -353,13 +339,33 @@ public class DialogMapClip extends SmDialog {
             }
             if (e.getColumn() == COLUMN_INDEX_AIMDATASET) {
                 //此时手动修改了结果数据集名称
+                int selectedRow = mapClipJTable.getSelectedRow();
                 Datasource tempDatasource = (Datasource) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_AIMDATASOURCE);
                 String tempDatasetName = (String) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_AIMDATASET);
                 if (!tempDatasource.getDatasets().isAvailableDatasetName(tempDatasetName)) {
-                    Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_MapClip_DatasetNameErrorOne"), tempDatasetName));
-                    panelButton.getButtonOk().setEnabled(false);
+                    if (StringUtilities.isNullOrEmpty(tempDatasetName)) {
+                        Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_MapClip_DatasetNameIsEmpty"), tempDatasetName));
+                        isDatasetNameIsValid = false;
+                        isCanRun();
+                        return;
+                    } else {
+                        Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_MapClip_DatasetNameErrorOne"), tempDatasetName));
+                        while (!tempDatasource.getDatasets().isAvailableDatasetName(tempDatasetName)) {
+                            if (tempDatasetName.lastIndexOf("_") != -1) {
+                                tempDatasetName = tempDatasetName.substring(0, tempDatasetName.lastIndexOf("_"));
+                            }
+                            tempDatasetName = tempDatasource.getDatasets().getAvailableDatasetName(tempDatasetName);
+                        }
+                        mapClipJTable.getModel().setValueAt(tempDatasetName, selectedRow, COLUMN_INDEX_AIMDATASET);
+                        isDatasetNameIsValid = true;
+                    }
                 } else {
-                    panelButton.getButtonOk().setEnabled(true);
+                    isDatasetNameIsValid = true;
+                }
+                if (!isRepeatDatasetName()) {
+                    isDatasetNameIsValid = false;
+                    isCanRun();
+                    return;
                 }
                 // 当手动修改JTable中结果数据集名称时，需要做一个判断，如果JTable中有相同数据集的条目，同时修改其结果数据集名称
                 Layer layer = (Layer) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_LAYERCAPTION);
@@ -381,9 +387,11 @@ public class DialogMapClip extends SmDialog {
                     for (int i = 0; i < array.size(); i++) {
                         int row = array.get(i);
                         mapClipJTable.getModel().setValueAt(tempDatasetName, row, COLUMN_INDEX_AIMDATASET);
+                        mapClipJTable.getModel().setValueAt(tempDatasource, row, COLUMN_INDEX_AIMDATASOURCE);
                     }
                     mapClipJTable.getModel().addTableModelListener(tableModelListener);
                 }
+
             }
             if (e.getColumn() == COLUMN_INDEX_CLIPTYPE) {
                 String clipType = (String) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_CLIPTYPE);
@@ -435,8 +443,35 @@ public class DialogMapClip extends SmDialog {
                     mapClipJTable.getModel().addTableModelListener(tableModelListener);
                 }
             }
+            if (e.getColumn() == COLUMN_INDEX_EXACTCLIP) {
+                String isExactClip = (String) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_EXACTCLIP);
+                Layer layer = (Layer) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_LAYERCAPTION);
+                Dataset dataset = layer.getDataset();
+                ArrayList<Integer> array = new ArrayList<>();
+                for (int i = 0; i < mapClipJTable.getModel().getRowCount(); i++) {
+                    if (i == mapClipJTable.getSelectedRow()) {
+                        continue;
+                    }
+                    Layer tempLayer = (Layer) mapClipJTable.getModel().getValueAt(i, COLUMN_INDEX_LAYERCAPTION);
+                    Dataset tempDataset = tempLayer.getDataset();
+                    if (tempDataset.equals(dataset)) {
+                        array.add(i);
+                    }
+                }
+                if (array.size() > 0) {
+                    //改变值之前先移除监听
+                    mapClipJTable.getModel().removeTableModelListener(tableModelListener);
+                    for (int i = 0; i < array.size(); i++) {
+                        int row = array.get(i);
+                        mapClipJTable.getModel().setValueAt(isExactClip, row, COLUMN_INDEX_EXACTCLIP);
+                    }
+                    mapClipJTable.getModel().addTableModelListener(tableModelListener);
+                }
+            }
+
         }
     };
+
 
     /**
      * 确定取消按钮事件
@@ -465,6 +500,7 @@ public class DialogMapClip extends SmDialog {
             }
             initResultVectorInfo();
             if (resultInfo != null && resultInfo.size() > 0) {
+//                FormProgress formProgress = new FormProgress();
                 FormProgressTotal formProgress = new FormProgressTotal();
                 formProgress.setTitle(MapViewProperties.getString("String_MapClip_MapClip"));
                 //获得要保存的地图名称
@@ -479,13 +515,34 @@ public class DialogMapClip extends SmDialog {
     };
 
     private void isCanRun() {
-        if (this.mapClipJTable.getRowCount() >= 1 && this.isSaveMapNameIsValid) {
+        if (this.mapClipJTable.getRowCount() >= 1 && this.isSaveMapNameIsValid && this.isDatasetNameIsValid) {
             this.panelButton.getButtonOk().setEnabled(true);
         } else {
             this.panelButton.getButtonOk().setEnabled(false);
         }
     }
 
+    private boolean isRepeatDatasetName() {
+        boolean result = true;
+
+        String tempDatasetName = (String) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_AIMDATASET);
+        Layer layer = (Layer) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_LAYERCAPTION);
+        Dataset dataset = layer.getDataset();
+        for (int i = 0; i < mapClipJTable.getModel().getRowCount(); i++) {
+            if (i == mapClipJTable.getSelectedRow()) {
+                continue;
+            }
+            Layer tempLayer = (Layer) mapClipJTable.getModel().getValueAt(i, COLUMN_INDEX_LAYERCAPTION);
+            Dataset tempDataset = tempLayer.getDataset();
+            String otherDatasetName = (String) mapClipJTable.getModel().getValueAt(i, COLUMN_INDEX_AIMDATASET);
+            if (!tempDataset.equals(dataset) && tempDatasetName.equals(otherDatasetName)) {
+                result = false;
+                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MapClip_NotSameDatasetWithSameName"));
+                break;
+            }
+        }
+        return result;
+    }
 
     public DialogMapClip(GeoRegion region) {
         super();
@@ -494,7 +551,6 @@ public class DialogMapClip extends SmDialog {
         initLayout();
         initResources();
         registEvents();
-        initInfo();
         this.pack();
         this.setSize(new Dimension(650, 450));
         this.setLocationRelativeTo(null);
@@ -502,47 +558,6 @@ public class DialogMapClip extends SmDialog {
         this.componentList.add(this.panelButton.getButtonCancel());
         this.setFocusTraversalPolicy(policy);
     }
-
-    /**
-     * 初始化地图裁剪控件属性
-     * 目前主要设置是否精确裁剪，需要根据选中数据的类型决定
-     */
-    private void initInfo() {
-        boolean result = false;
-        for (int i = 0; i < mapClipJTable.getRowCount(); i++) {
-            Layer layer = (Layer) mapClipJTable.getModel().getValueAt(i, COLUMN_INDEX_LAYERCAPTION);
-            if (layer.getDataset().getType() == DatasetType.GRID || layer.getDataset().getType() == DatasetType.IMAGE) {
-                result = true;
-                break;
-            }
-        }
-        this.exactClip.setEnabled(result);
-        if (result) {
-            this.exactClip.setSelected(true);
-            for (int i = 0; i < this.mapClipJTable.getRowCount(); i++) {
-                Layer layer = (Layer) ((Vector) (this.mapClipJTable.getMapClipTableModel().getLayerInfo().get(i))).get(COLUMN_INDEX_LAYERCAPTION);
-                if (layer.getDataset().getType() == DatasetType.GRID || layer.getDataset().getType() == DatasetType.IMAGE) {
-                    ((Vector) (this.mapClipJTable.getMapClipTableModel().getLayerInfo().get(i))).set(COLUMN_INDEX_EXACTCLIP, exactClip.isSelected());
-                }
-            }
-        }
-        this.exactClip.setSelected(this.exactClip.isEnabled());
-//        if (this.mapClipJTable.getSelectedRowCount() > 0) {
-//            Layer selectedLayer = (Layer) this.mapClipJTable.getValueAt(this.mapClipJTable.getSelectedRow(), COLUMN_INDEX_LAYERCAPTION);
-//            if ((selectedLayer.getDataset().getType()).equals(DatasetType.GRID) || (selectedLayer.getDataset().getType()).equals(DatasetType.IMAGE)) {
-//                this.exactClip.setEnabled(true);
-//                // 获得是否精确裁剪属性信息
-//                Boolean exactClip = (Boolean) ((Vector) this.mapClipJTable.getMapClipTableModel().getLayerInfo().get(this.mapClipJTable.getSelectedRow())).get(COLUMN_INDEX_EXACTCLIP);
-//                // 设置精确裁剪复选框状态属性
-//                this.exactClip.setSelected(exactClip);
-//            }
-////            else {
-////                this.exactClip.setSelected(false);
-////                this.exactClip.setEnabled(false);
-////            }
-//        }
-    }
-
 
     private void initComponent() {
         initToolbar();
@@ -567,21 +582,21 @@ public class DialogMapClip extends SmDialog {
                     tip.add(new JLabel(), BorderLayout.SOUTH);
                     tip.setPreferredSize(new Dimension(100, 50));
                     return tip;
-                }else if (point.getX() > (clipTyleColumn() - 23) && point.getX() <= (clipTyleColumn())){
+                } else if (point.getX() > (clipTyleColumn() - 23) && point.getX() <= (clipTyleColumn())) {
                     JToolTip tip = super.createToolTip();
                     tip.setLayout(new BorderLayout());
                     tip.add(new JButton("Hello"), BorderLayout.NORTH);
                     tip.add(new JButton("Hello"), BorderLayout.SOUTH);
                     tip.setPreferredSize(new Dimension(300, 200));
                     return tip;
-                }else{
+                } else {
                     return super.createToolTip();
                 }
             }
 
-            private int clipTyleColumn(){
-                int result= mapClipJTable.getColumnModel().getColumn(0).getWidth()+mapClipJTable.getColumnModel().getColumn(1).getWidth()+
-                        mapClipJTable.getColumnModel().getColumn(2).getWidth()+mapClipJTable.getColumnModel().getColumn(3).getWidth();
+            private int clipTyleColumn() {
+                int result = mapClipJTable.getColumnModel().getColumn(0).getWidth() + mapClipJTable.getColumnModel().getColumn(1).getWidth() +
+                        mapClipJTable.getColumnModel().getColumn(2).getWidth() + mapClipJTable.getColumnModel().getColumn(3).getWidth();
                 return result;
             }
 
@@ -591,7 +606,7 @@ public class DialogMapClip extends SmDialog {
         this.mapClipSaveMapPanel = new MapClipSaveMapPanel();
         this.saveMapcompTitledPane = mapClipSaveMapPanel.getCompTitledPane();
         // 地图裁剪影像栅格数据集裁剪设置
-        intiClipSetPanel();
+//        intiClipSetPanel();
         // 确定取消按钮面板
         this.panelButton = new PanelButton();
 
@@ -616,24 +631,21 @@ public class DialogMapClip extends SmDialog {
     }
 
     //栅格、影像数据集裁剪设置——布局
-    private void intiClipSetPanel() {
-        this.clipSetPanel = new JPanel();
-        this.exactClip = new JCheckBox();
-        GroupLayout clipSetPanelLayout = new GroupLayout(this.clipSetPanel);
-        clipSetPanelLayout.setAutoCreateContainerGaps(true);
-        clipSetPanelLayout.setAutoCreateGaps(true);
-        this.clipSetPanel.setLayout(clipSetPanelLayout);
-        //@formatter:off
-        clipSetPanelLayout.setHorizontalGroup(clipSetPanelLayout.createParallelGroup()
-                .addGroup(clipSetPanelLayout.createSequentialGroup()
-                        .addComponent(this.exactClip)
-                        .addGap(5, 5, Short.MAX_VALUE)));
-        clipSetPanelLayout.setVerticalGroup(clipSetPanelLayout.createSequentialGroup()
-                .addGap(20)
-                .addComponent(this.exactClip)
-                .addGap(5, 5, Short.MAX_VALUE));
-        //@formatter:on
-    }
+//    private void intiClipSetPanel() {
+//        this.clipSetPanel = new JPanel();
+//        GroupLayout clipSetPanelLayout = new GroupLayout(this.clipSetPanel);
+//        clipSetPanelLayout.setAutoCreateContainerGaps(true);
+//        clipSetPanelLayout.setAutoCreateGaps(true);
+//        this.clipSetPanel.setLayout(clipSetPanelLayout);
+//        //@formatter:off
+//        clipSetPanelLayout.setHorizontalGroup(clipSetPanelLayout.createParallelGroup()
+//                .addGroup(clipSetPanelLayout.createSequentialGroup()
+//                        .addGap(5, 5, Short.MAX_VALUE)));
+//        clipSetPanelLayout.setVerticalGroup(clipSetPanelLayout.createSequentialGroup()
+//                .addGap(20)
+//                .addGap(5, 5, Short.MAX_VALUE));
+//        //@formatter:on
+//    }
 
     private void initLayout() {
         JPanel mainPanel = new JPanel();
@@ -646,15 +658,17 @@ public class DialogMapClip extends SmDialog {
                 .addComponent(this.toolBar)
                 .addComponent(this.scrollPane)
                 .addGroup(panelLayout.createSequentialGroup()
-                        .addComponent(saveMapcompTitledPane)
-                        .addComponent(clipSetPanel))
+                                .addComponent(saveMapcompTitledPane)
+//                        .addComponent(clipSetPanel)
+                )
                 .addComponent(this.panelButton));
         panelLayout.setVerticalGroup(panelLayout.createSequentialGroup()
                 .addComponent(this.toolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addComponent(this.scrollPane)
                 .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                        .addComponent(saveMapcompTitledPane)
-                        .addComponent(clipSetPanel))
+                                .addComponent(saveMapcompTitledPane)
+//                        .addComponent(clipSetPanel))
+                )
                 .addComponent(this.panelButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
         //@formatter:on
 
@@ -669,10 +683,10 @@ public class DialogMapClip extends SmDialog {
         this.buttonSelectAll.addActionListener(this.toolBarActionListener);
         this.buttonInvertSelect.addActionListener(this.toolBarActionListener);
         this.buttonSet.addActionListener(this.toolBarActionListener);
-        this.mapClipJTable.getSelectionModel().addListSelectionListener(this.tableSelectionListener);
+//        this.mapClipJTable.getSelectionModel().addListSelectionListener(this.tableSelectionListener);
         this.mapClipJTable.getModel().addTableModelListener(tableModelListener);
         this.mapClipSaveMapPanel.getCheckBox().addActionListener(this.checkBoxActionListener);
-        this.exactClip.addActionListener(checkBoxActionListener);
+//        this.exactClip.addActionListener(checkBoxActionListener);
         this.panelButton.getButtonOk().addActionListener(OKButtonActionListener);
         this.panelButton.getButtonCancel().addActionListener(cancelButtonActionListener);
     }
@@ -683,10 +697,10 @@ public class DialogMapClip extends SmDialog {
         this.buttonSelectAll.removeActionListener(this.toolBarActionListener);
         this.buttonInvertSelect.removeActionListener(this.toolBarActionListener);
         this.buttonSet.removeActionListener(this.toolBarActionListener);
-        this.mapClipJTable.getSelectionModel().removeListSelectionListener(this.tableSelectionListener);
+//        this.mapClipJTable.getSelectionModel().removeListSelectionListener(this.tableSelectionListener);
         this.mapClipJTable.getModel().removeTableModelListener(tableModelListener);
         this.mapClipSaveMapPanel.getCheckBox().removeActionListener(this.checkBoxActionListener);
-        this.exactClip.removeActionListener(checkBoxActionListener);
+//        this.exactClip.removeActionListener(checkBoxActionListener);
 
         this.panelButton.getButtonOk().removeActionListener(OKButtonActionListener);
         this.panelButton.getButtonCancel().removeActionListener(cancelButtonActionListener);
@@ -704,8 +718,8 @@ public class DialogMapClip extends SmDialog {
         this.buttonSelectAll.setToolTipText(CommonProperties.getString("String_ToolBar_SelectAll"));
         this.buttonInvertSelect.setToolTipText(CommonProperties.getString("String_ToolBar_SelectInverse"));
         this.buttonSet.setToolTipText(CommonProperties.getString("String_ToolBar_SetBatch"));
-        this.clipSetPanel.setBorder(BorderFactory.createTitledBorder(MapViewProperties.getString("String_MapClip_Image_ClipSetting")));
-        this.exactClip.setText(MapViewProperties.getString("String_MapClip_ExactClip"));
+//        this.clipSetPanel.setBorder(BorderFactory.createTitledBorder(MapViewProperties.getString("String_MapClip_Image_ClipSetting")));
+//        this.exactClip.setText(MapViewProperties.getString("String_MapClip_ExactClip"));
     }
 }
 

@@ -1,9 +1,6 @@
 package com.supermap.desktop.CtrlAction.Map.MapClip;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlDefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -18,7 +15,7 @@ import com.supermap.mapping.Layer;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import static com.supermap.desktop.CtrlAction.Map.MapClip.MapClipTableModel.*;
 
@@ -38,6 +35,7 @@ public class MapClipSetDialog extends SmDialog {
     private JComboBox eraseComboBox;
     private PanelButton panelButton;
     private MapClipJTable mapClipJTable;
+    private ArrayList<Datasource> isCanUseDatasources;
 
     public static final int DEFAULT_PREFERREDSIZE_GAP = 10;
 
@@ -71,9 +69,20 @@ public class MapClipSetDialog extends SmDialog {
 
     private void initComponent() {
         this.checkBoxAimDataDatasource = new JCheckBox();
-        this.aimDataDatasourceComboBox = new DatasourceComboBox();
-        this.aimDataDatasourceComboBox.setEnabled(false);
+        Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+        this.isCanUseDatasources = new ArrayList<>();
+        for (int i = 0; i < datasources.getCount(); i++) {
+            if (!datasources.get(i).isReadOnly()) {
+                this.isCanUseDatasources.add(datasources.get(i));
+            }
+        }
+        if (this.isCanUseDatasources != null && this.isCanUseDatasources.size() > 0) {
+            this.aimDataDatasourceComboBox = new DatasourceComboBox(this.isCanUseDatasources);
+        } else {
+            return;
+        }
 
+        this.aimDataDatasourceComboBox.setEnabled(false);
         this.checkBoxClipMode = new JCheckBox();
         this.clipModeComboBox = new JComboBox(new String[]{MapViewProperties.getString("String_MapClip_InsideRegion"), MapViewProperties.getString("String_MapClip_OutsideRegion")});
         this.clipModeComboBox.setPreferredSize(ControlDefaultValues.DEFAULT_PREFERREDSIZE);
@@ -147,8 +156,6 @@ public class MapClipSetDialog extends SmDialog {
         this.checkBoxAimDataDatasource.setText(ControlsProperties.getString("String_Label_TargetDatasource"));
         this.checkBoxClipMode.setText(MapViewProperties.getString("String_MapClip_ClipTypeD"));
         this.eraseCheckBox.setText(MapViewProperties.getString("String_MapClip_EraseCheck"));
-
-//		this.exactClippingCheckBox.setText(MapViewProperties.getString("String_MapClip_Image_ExactClip"));
     }
 
     private void initListeners() {
@@ -217,16 +224,12 @@ public class MapClipSetDialog extends SmDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                Boolean accurateClip = null;
+                String accurateClip = null;
                 Datasource targetDatasource = null;
                 String clipType = null;
                 String erase = null;
                 if (accuratelyClipCheckBox.isSelected()) {
-                    if (accuratelyClipComboBox.getSelectedItem().equals(MapViewProperties.getString("String_MapClip_No"))) {
-                        accurateClip = false;
-                    } else {
-                        accurateClip = true;
-                    }
+                    accurateClip=accuratelyClipComboBox.getSelectedItem().toString();
                 }
                 // 目标数据集
                 if (checkBoxAimDataDatasource.isSelected()) {
@@ -252,8 +255,8 @@ public class MapClipSetDialog extends SmDialog {
                         Layer layer = (Layer) mapClipJTable.getModel().getValueAt(selectrows[i], COLUMN_INDEX_LAYERCAPTION);
                         if (accurateClip != null) {
                             if (layer.getDataset().getType() == DatasetType.IMAGE || layer.getDataset().getType() == DatasetType.GRID) {
-                                ((Vector) (mapClipJTable.getMapClipTableModel().getLayerInfo().get(i))).set(COLUMN_INDEX_EXACTCLIP,accurateClip);
-//                                mapClipJTable.getModel().setValueAt(accurateClip, selectrows[i], COLUMN_INDEX_EXACTCLIP);
+//                                ((Vector) (mapClipJTable.getMapClipTableModel().getLayerInfo().get(i))).set(COLUMN_INDEX_EXACTCLIP,accurateClip);
+                                mapClipJTable.getModel().setValueAt(accurateClip, selectrows[i], COLUMN_INDEX_EXACTCLIP);
                             }
                         }
                         if (targetDatasource != null) {
