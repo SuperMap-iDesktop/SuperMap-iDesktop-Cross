@@ -170,17 +170,17 @@ public class GraphRelationLine extends AbstractLine implements GraphBoundsChange
 			graphics2D.drawString(this.message, textX, textY);
 		}
 
-		startP = getStartLocation();
-		endP = getEndLocation();
-		if (startP != null && endP != null && this.isSelected) {
-			Rectangle startR = new Rectangle(startP.x - 3, startP.y - 3, 6, 6);
-			Rectangle endR = new Rectangle(endP.x - 3, endP.y - 3, 6, 6);
-			graphics.setColor(Color.WHITE);
-			((Graphics2D) graphics).fill(startR);
-			((Graphics2D) graphics).fill(endR);
-			graphics.setColor(Color.BLACK);
-			((Graphics2D) graphics).draw(startR);
-			((Graphics2D) graphics).draw(endR);
-		}
+//		startP = getStartLocation();
+//		endP = getEndLocation();
+//		if (startP != null && endP != null && this.isSelected) {
+//			Rectangle startR = new Rectangle(startP.x - 3, startP.y - 3, 6, 6);
+//			Rectangle endR = new Rectangle(endP.x - 3, endP.y - 3, 6, 6);
+//			graphics.setColor(Color.WHITE);
+//			((Graphics2D) graphics).fill(startR);
+//			((Graphics2D) graphics).fill(endR);
+//			graphics.setColor(Color.BLACK);
+//			((Graphics2D) graphics).draw(startR);
+//			((Graphics2D) graphics).draw(endR);
+//		}
 	}
 }
