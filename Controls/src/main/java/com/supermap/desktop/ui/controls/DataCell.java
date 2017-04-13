@@ -8,6 +8,7 @@ import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.ui.controls.toolTip.MapToolTip;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
+import com.supermap.desktop.utilities.DatasourceImageUtilties;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 
@@ -52,7 +53,7 @@ public class DataCell extends JPanel {
 			try {
 				this.dataName = datasource.getAlias();
 				setData(datasource);
-				String datasouceImagepath = CommonToolkit.DatasourceImageWrap.getImageIconPath(datasource.getEngineType());
+				String datasouceImagepath = DatasourceImageUtilties.getImageIconPath(datasource.getEngineType());
 				URL url = ControlsResources.getResourceURL(datasouceImagepath);
 				init(url, this.dataName);
 			} catch (Exception e) {
@@ -71,7 +72,7 @@ public class DataCell extends JPanel {
 	public void initDatasourceType(EngineType engineType, String datasouceName) {
 		setData(engineType);
 		this.dataName = datasouceName;
-		String datasourceImagepath = CommonToolkit.DatasourceImageWrap.getImageIconPath(engineType);
+		String datasourceImagepath = DatasourceImageUtilties.getImageIconPath(engineType);
 		URL url = ControlsResources.getResourceURL(datasourceImagepath);
 		init(url, this.dataName);
 	}

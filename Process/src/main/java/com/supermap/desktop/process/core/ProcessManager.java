@@ -58,7 +58,6 @@ public class ProcessManager extends JPanel {
 		initComponents();
 		initLayout();
 		registerProcessLoader(DefaultProcessLoader.SINGLETON);
-
 	}
 
 	private void initComponents() {

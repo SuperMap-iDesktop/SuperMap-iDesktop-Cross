@@ -4694,64 +4694,6 @@ public class CommonToolkit {
 		}
 	}
 
-	public static class DatasourceImageWrap {
-		private static HashMap<EngineType, String> datasourceImage = null;
-
-		private DatasourceImageWrap() {
-			// 不提供构造函数
-		}
-
-		private static void initialize() {
-			if (null != datasourceImage) {
-				return;
-			}
-			datasourceImage = new HashMap<EngineType, String>();
-			String fileParentPath = "/controlsresources/WorkspaceManager/Datasource/";
-			datasourceImage.put(EngineType.DB2, fileParentPath + "Image_DatasourceDB2_Normal.png");
-			datasourceImage.put(EngineType.IMAGEPLUGINS, fileParentPath + "Image_DatasourceImagePlugins_Normal.png");
-			datasourceImage.put(EngineType.OGC, fileParentPath + "Image_OGC.png");
-			datasourceImage.put(EngineType.ORACLEPLUS, fileParentPath + "Image_DatasourceOraclePlus_Normal.png");
-			datasourceImage.put(EngineType.ORACLESPATIAL, fileParentPath + "Image_DatasourceOracleSpatial_Normal.png");
-			datasourceImage.put(EngineType.POSTGRESQL, fileParentPath + "Image_DatasourcePostgreSQL_Normal.png");
-			datasourceImage.put(EngineType.SQLPLUS, fileParentPath + "Image_DatasourceSQLPlus_Normal.png");
-			datasourceImage.put(EngineType.UDB, fileParentPath + "Image_DatasourceUDB_Normal.png");
-			datasourceImage.put(EngineType.DM, fileParentPath + "Image_Datasource_DMPlus_Normal.png");
-			datasourceImage.put(EngineType.KINGBASE, fileParentPath + "Image_Datasource_Kingbase_Normal.png");
-			datasourceImage.put(EngineType.MYSQL, fileParentPath + "Image_MySQL.png");
-			datasourceImage.put(EngineType.BAIDUMAPS, fileParentPath + "Image_Baidu.png");
-			datasourceImage.put(EngineType.ISERVERREST, fileParentPath + "Image_IServerRest.png");
-			datasourceImage.put(EngineType.SUPERMAPCLOUD, fileParentPath + "Image_SuperMapCloud.png");
-			datasourceImage.put(EngineType.GOOGLEMAPS, fileParentPath + "Image_GoogleMaps.png");
-			datasourceImage.put(EngineType.OPENSTREETMAPS, fileParentPath + "Image_OpenStreetMaps.png");
-			datasourceImage.put(EngineType.MEMORY, fileParentPath + "Image_DatasourceImagePlugins_Normal.png");
-			datasourceImage.put(null, fileParentPath + "Image_Datasources_Normal.png");
-		}
-
-		/**
-		 * 根据数据源引擎类型返回对应的图标所在的相对路径
-		 *
-		 * @param type
-		 * @return
-		 */
-		public static String getImageIconPath(EngineType type) {
-			String resultIcon = "";
-			try {
-				initialize();
-				Iterator<?> iterator = datasourceImage.entrySet().iterator();
-				while (iterator.hasNext()) {
-					java.util.Map.Entry<?, ?> entry = (java.util.Map.Entry<?, ?>) iterator.next();
-					if (type == entry.getKey()) {
-						resultIcon = (String) entry.getValue();
-					}
-				}
-
-			} catch (Exception e) {
-				Application.getActiveApplication().getOutput().output(e);
-			}
-			return resultIcon;
-		}
-	}
-
 	public static class LayerImageWrap {
 		private static HashMap<DatasetType, String> layerImage = null;
 

@@ -4,7 +4,9 @@ import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
+import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilities.DatasourceImageUtilties;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
@@ -172,19 +174,19 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 
 	private DefaultListModel<Object> getListItemForOpenWebDatasource() {
 		DefaultListModel<Object> listModel = new DefaultListModel<Object>();
-		// TODO: 2017/4/8 大图标
-		DataCell ogcDataCell = new DataCell(EngineType.OGC, ControlsProperties.getString("String_OGC"));
-		DataCell iServerRestDataCell = new DataCell(EngineType.ISERVERREST, ControlsProperties.getString("String_iServerRest"));
-		DataCell superMapCloudDataCell = new DataCell(EngineType.SUPERMAPCLOUD, ControlsProperties.getString("String_SuperMapCloud"));
-		DataCell googleMapsDataCell = new DataCell(EngineType.GOOGLEMAPS, ControlsProperties.getString("String_GoogleMaps"));
-		DataCell baiduMapDataCell = new DataCell(EngineType.BAIDUMAPS, ControlsProperties.getString("String_BaiduMap"));
-		DataCell openStreetMapsdCell = new DataCell(EngineType.OPENSTREETMAPS, ControlsProperties.getString("String_OpenStreetMaps"));
-		listModel.addElement(ogcDataCell);
-		listModel.addElement(iServerRestDataCell);
-		listModel.addElement(superMapCloudDataCell);
-//		listModel.addElement(googleMapsDataCell);
-		listModel.addElement(baiduMapDataCell);
-		listModel.addElement(openStreetMapsdCell);
+		JLabel ogcLabel = new JLabel(new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.OGC))));
+		JLabel isLabel = new JLabel(new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.ISERVERREST))));
+		JLabel supermapCloudLabel = new JLabel(new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.SUPERMAPCLOUD))));
+		JLabel googleMapsLabel = new JLabel(new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.GOOGLEMAPS))));
+		JLabel baiduMapsLabel = new JLabel(new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.BAIDUMAPS))));
+		JLabel openStreetMapsLabel = new JLabel(new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.OPENSTREETMAPS))));
+
+		listModel.addElement(ogcLabel);
+		listModel.addElement(isLabel);
+		listModel.addElement(supermapCloudLabel);
+		listModel.addElement(googleMapsLabel);
+		listModel.addElement(baiduMapsLabel);
+		listModel.addElement(openStreetMapsLabel);
 		return listModel;
 	}
 
