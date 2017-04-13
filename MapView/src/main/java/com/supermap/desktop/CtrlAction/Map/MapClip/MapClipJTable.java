@@ -34,7 +34,7 @@ public class MapClipJTable extends MutiTable {
     private TableColumn acurrentClipColumn;
     public MapClipTableModel mapClipTableModel;
     private ArrayList<Datasource> isCanUseDatasources;
-    private HashMap<String,String> datasetsName=new HashMap<>();
+    private HashMap<String, String> datasetsName = new HashMap<>();
 
     public MapClipTableModel getMapClipTableModel() {
         return mapClipTableModel;
@@ -81,18 +81,18 @@ public class MapClipJTable extends MutiTable {
         this.aimDatasourceColumn = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_AIMDATASOURCE));
         this.clipTypeColumn = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_CLIPTYPE));
         this.eraseColumn = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_ERASE));
-        this.acurrentClipColumn=this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_EXACTCLIP));
+        this.acurrentClipColumn = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_EXACTCLIP));
 
-        DefaultCellEditor defaultCellEditorAimDatasourceColumn =new DefaultCellEditor(datasourceComboBox);
+        DefaultCellEditor defaultCellEditorAimDatasourceColumn = new DefaultCellEditor(datasourceComboBox);
         defaultCellEditorAimDatasourceColumn.setClickCountToStart(2);
         this.aimDatasourceColumn.setCellEditor(defaultCellEditorAimDatasourceColumn);
-        DefaultCellEditor defaultCellEditorClipTypeColumn =new DefaultCellEditor(clipTypeComboBox);
+        DefaultCellEditor defaultCellEditorClipTypeColumn = new DefaultCellEditor(clipTypeComboBox);
         defaultCellEditorClipTypeColumn.setClickCountToStart(2);
         this.clipTypeColumn.setCellEditor(defaultCellEditorClipTypeColumn);
-        DefaultCellEditor defaultCellEditorEraseColumn =new DefaultCellEditor(eraseComboBox);
+        DefaultCellEditor defaultCellEditorEraseColumn = new DefaultCellEditor(eraseComboBox);
         defaultCellEditorEraseColumn.setClickCountToStart(2);
         this.eraseColumn.setCellEditor(defaultCellEditorEraseColumn);
-        DefaultCellEditor defaultCellEditorAcurrentClipColumn =new DefaultCellEditor(acurrentComboBox);
+        DefaultCellEditor defaultCellEditorAcurrentClipColumn = new DefaultCellEditor(acurrentComboBox);
         defaultCellEditorAcurrentClipColumn.setClickCountToStart(2);
         this.acurrentClipColumn.setCellEditor(defaultCellEditorAcurrentClipColumn);
 
@@ -100,17 +100,15 @@ public class MapClipJTable extends MutiTable {
         this.aimDatasourceColumn.setCellRenderer(new TableDataCellRender());
         this.layerCaption.setCellRenderer(new MapClipLayerCaptionTableRender());
 
-        // 给是否参与裁剪表头添加CheckBox
-        //this.parClip.setHeaderRenderer(new CheckHeaderCellRenderer(this, MapViewProperties.getString("String_MapClip_IsClip"), false));
 
         this.clipTypeColumn.setHeaderRenderer(new JComponentTableCellRenderer());
-        ImageAndTextTableHeaderCell clipTypeTip = new ImageAndTextTableHeaderCell(MapViewProperties.getString("String_MapClip_ClipType"), ControlsResources.getIcon("/controlsresources/Icon_Help.png"), ControlsResources.getIcon("/controlsresources/Icon_Help.png"));
-        clipTypeTip.setToolTipText("");
+        ImageAndTextTableHeaderCell clipTypeTip = new ImageAndTextTableHeaderCell(MapViewProperties.getString("String_MapClip_ClipType"), ControlsResources.getIcon("/controlsresources/Icon_Help.png"));
+        clipTypeTip.setToolTipText("");//  用来激活表头显示的tip，并且只能为空字符串，如果非空则会覆盖掉tip
         this.clipTypeColumn.setHeaderValue(clipTypeTip);
 
         this.eraseColumn.setHeaderRenderer(new JComponentTableCellRenderer());
-        ImageAndTextTableHeaderCell eraseTip = new ImageAndTextTableHeaderCell(MapViewProperties.getString("String_MapClip_Erase"), ControlsResources.getIcon("/controlsresources/Icon_Warning.png"), "擦除裁剪区域会修改原数据");
-        eraseTip.setToolTipText("");
+        ImageAndTextTableHeaderCell eraseTip = new ImageAndTextTableHeaderCell(MapViewProperties.getString("String_MapClip_Erase"), ControlsResources.getIcon("/controlsresources/Icon_Warning.png"));
+        eraseTip.setToolTipText(""); //  用来激活表头显示的tip，并且只能为空字符串，如果非空则会覆盖掉tip
         this.eraseColumn.setHeaderValue(eraseTip);
     }
 
@@ -132,12 +130,10 @@ public class MapClipJTable extends MutiTable {
             }
         }
 
-        for (int i = 0; i < resultLayer.size(); i++) {
-            // 对获得的图层进行遍历，当数据集类型属于矢量和影像时才进行添加
+        for (int i = 0; i < resultLayer.size(); i++) { // 对获得的图层进行遍历，当数据集类型属于矢量和影像时才进行添加
             if (resultLayer.get(i).getDataset() instanceof DatasetVector ||
                     resultLayer.get(i).getDataset() instanceof DatasetImage ||
                     resultLayer.get(i).getDataset() instanceof DatasetGrid) {
-                //boolean clip = false;
                 Layer layerCaption = resultLayer.get(i);
                 Datasource targetDatasource = resultLayer.get(i).getDataset().getDatasource();
                 if (targetDatasource.isReadOnly()) {
@@ -150,17 +146,17 @@ public class MapClipJTable extends MutiTable {
 
                 // 当初始化的时候就通过判断设置好结果数据集的名称
                 String targetDataset = resultLayer.get(i).getDataset().getName();
-                String origionDatasetName=targetDataset;
-                if (this.datasetsName.containsKey(targetDataset)){
-                    targetDataset=this.datasetsName.get(targetDataset);
-                }else {
+                String origionDatasetName = targetDataset;
+                if (this.datasetsName.containsKey(targetDataset)) {
+                    targetDataset = this.datasetsName.get(targetDataset);
+                } else {
                     while (!targetDatasource.getDatasets().isAvailableDatasetName(targetDataset)) {
                         if (targetDataset.lastIndexOf("_") != -1) {
                             targetDataset = targetDataset.substring(0, targetDataset.lastIndexOf("_"));
                         }
                         targetDataset = targetDatasource.getDatasets().getAvailableDatasetName(targetDataset);
                     }
-                    this.datasetsName.put(origionDatasetName,targetDataset);
+                    this.datasetsName.put(origionDatasetName, targetDataset);
                 }
                 String clipType = MapViewProperties.getString("String_MapClip_In");
                 String erase = MapViewProperties.getString("String_MapClip_No");
@@ -172,8 +168,8 @@ public class MapClipJTable extends MutiTable {
                 continue;
             }
         }
-        // 设置首行记录被选中
-        this.setRowSelectionInterval(0, 0);
+
+        this.setRowSelectionInterval(0, 0);// 设置首行记录被选中
     }
 
     /**
@@ -189,25 +185,19 @@ public class MapClipJTable extends MutiTable {
         }
     }
 
-     class ImageAndTextTableHeaderCell extends JLabel {
+    class ImageAndTextTableHeaderCell extends JLabel {
         JLabel labelCaption;
         JLabel labelTip;
 
-        public ImageAndTextTableHeaderCell(String showText, Icon showIcon, Icon tipIcon) {
+        public ImageAndTextTableHeaderCell(String showText, Icon showIcon) {
             this.labelCaption = new JLabel(showText);
             this.labelTip = new JLabel(showIcon);
             initLayout();
         }
 
-        public ImageAndTextTableHeaderCell(String showText, Icon showIcon, String tipText) {
-            this.labelCaption = new JLabel(showText);
-            this.labelTip = new JLabel(showIcon);
-            this.labelTip.setToolTipText(tipText);
-            initLayout();
-        }
         private void initLayout() {
-            this.labelTip.setMinimumSize(new Dimension(23,23));
-            this.labelTip.setMaximumSize(new Dimension(23,23));
+            this.labelTip.setMinimumSize(new Dimension(23, 23));
+            this.labelTip.setMaximumSize(new Dimension(23, 23));
             this.setLayout(new BorderLayout());
             this.add(this.labelCaption, BorderLayout.WEST);
             this.add(this.labelTip, BorderLayout.EAST);
@@ -217,8 +207,8 @@ public class MapClipJTable extends MutiTable {
     private class JComponentTableCellRenderer implements TableCellRenderer {
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             JComponent jComponent = (JComponent) value;
-            jComponent.setBackground(table.getBackground());
-            jComponent.setForeground(table.getForeground());
+            jComponent.setBackground(table.getTableHeader().getBackground());
+            jComponent.setForeground(table.getTableHeader().getForeground());
             return jComponent;
         }
     }

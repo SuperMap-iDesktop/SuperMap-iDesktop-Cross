@@ -3,6 +3,7 @@ package com.supermap.desktop.CtrlAction.Map.MapClip;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -500,7 +501,6 @@ public class DialogMapClip extends SmDialog {
             }
             initResultVectorInfo();
             if (resultInfo != null && resultInfo.size() > 0) {
-//                FormProgress formProgress = new FormProgress();
                 FormProgressTotal formProgress = new FormProgressTotal();
                 formProgress.setTitle(MapViewProperties.getString("String_MapClip_MapClip"));
                 //获得要保存的地图名称
@@ -561,35 +561,40 @@ public class DialogMapClip extends SmDialog {
 
     private void initComponent() {
         initToolbar();
-        // 地图裁剪JTable
+
         this.mapClipJTable = new MapClipJTable();
+        // 给表头裁剪列和擦除列添加图片tip，因为只能给某个列添加，而想要的效果是给当前列中图片鼠标滑过时显示图片tip，因此进行了坐标显示，但是
+        // 当鼠标滑过当前列的其他部分时，会显示个小黑点留待解决
         this.mapClipJTable.setTableHeader(new JTableHeader(this.mapClipJTable.getColumnModel()) {
             Point point;
-            Point pointLabel;
-
             @Override
             public String getToolTipText(MouseEvent event) {
                 point = event.getPoint();
-//                pointLabel = ((MapClipJTable.ImageAndTextTableHeaderCell) (mapClipJTable.getColumnModel().getColumn(3).getHeaderValue())).labelTip.;
                 return super.getToolTipText(event);
             }
 
             @Override
             public JToolTip createToolTip() {
-                if (point.getX() > (mapClipJTable.getWidth() - 23) && point.getX() <= (mapClipJTable.getWidth())) {
+                if (point.getX() > (eraseColumn() - 17) && point.getX() <= (eraseColumn())) {
                     JToolTip tip = super.createToolTip();
                     tip.setLayout(new BorderLayout());
-                    tip.add(new JLabel(), BorderLayout.SOUTH);
-                    tip.setPreferredSize(new Dimension(100, 50));
+                    JLabel jLabel=new JLabel(MapViewProperties.getString("String_MapClip_EraseChangeOrigionDataset"));
+                    tip.add(jLabel, BorderLayout.CENTER);
+                    tip.setPreferredSize(new Dimension(150,23));
                     return tip;
-                } else if (point.getX() > (clipTyleColumn() - 23) && point.getX() <= (clipTyleColumn())) {
+                } else if (point.getX() > (clipTyleColumn() - 17) && point.getX() <= (clipTyleColumn())) {
                     JToolTip tip = super.createToolTip();
                     tip.setLayout(new BorderLayout());
-                    tip.add(new JButton("Hello"), BorderLayout.NORTH);
-                    tip.add(new JButton("Hello"), BorderLayout.SOUTH);
-                    tip.setPreferredSize(new Dimension(300, 200));
+                    tip.add(new JLabel(MapViewProperties.getString("String_MapClip_ClipTypeExplain")), BorderLayout.NORTH);
+                    tip.add(new JLabel(ControlsResources.getIcon("/controlsresources/Image_ClipType.png")), BorderLayout.SOUTH);
+                    tip.setPreferredSize(new Dimension(250, 186));
                     return tip;
                 } else {
+//                    JToolTip tip = super.createToolTip();
+//                    tip.setLayout(new BorderLayout());
+//                    tip.add(new JLabel(ControlsResources.getIcon("/controlsresources/SnapSetting/clarity.png")), BorderLayout.CENTER);
+//                    tip.setPreferredSize(new Dimension(16,16));
+//                    return tip;
                     return super.createToolTip();
                 }
             }
@@ -600,13 +605,16 @@ public class DialogMapClip extends SmDialog {
                 return result;
             }
 
+            private int eraseColumn(){
+                int result = mapClipJTable.getColumnModel().getTotalColumnWidth()-mapClipJTable.getColumnModel().getColumn(5).getWidth();
+                return result;
+            }
+
         });
         this.scrollPane = new JScrollPane(this.mapClipJTable);
         // 地图裁剪保存地图面板
         this.mapClipSaveMapPanel = new MapClipSaveMapPanel();
         this.saveMapcompTitledPane = mapClipSaveMapPanel.getCompTitledPane();
-        // 地图裁剪影像栅格数据集裁剪设置
-//        intiClipSetPanel();
         // 确定取消按钮面板
         this.panelButton = new PanelButton();
 
@@ -630,23 +638,6 @@ public class DialogMapClip extends SmDialog {
         this.toolBar.add(this.buttonSet);
     }
 
-    //栅格、影像数据集裁剪设置——布局
-//    private void intiClipSetPanel() {
-//        this.clipSetPanel = new JPanel();
-//        GroupLayout clipSetPanelLayout = new GroupLayout(this.clipSetPanel);
-//        clipSetPanelLayout.setAutoCreateContainerGaps(true);
-//        clipSetPanelLayout.setAutoCreateGaps(true);
-//        this.clipSetPanel.setLayout(clipSetPanelLayout);
-//        //@formatter:off
-//        clipSetPanelLayout.setHorizontalGroup(clipSetPanelLayout.createParallelGroup()
-//                .addGroup(clipSetPanelLayout.createSequentialGroup()
-//                        .addGap(5, 5, Short.MAX_VALUE)));
-//        clipSetPanelLayout.setVerticalGroup(clipSetPanelLayout.createSequentialGroup()
-//                .addGap(20)
-//                .addGap(5, 5, Short.MAX_VALUE));
-//        //@formatter:on
-//    }
-
     private void initLayout() {
         JPanel mainPanel = new JPanel();
         GroupLayout panelLayout = new GroupLayout(mainPanel);
@@ -659,7 +650,6 @@ public class DialogMapClip extends SmDialog {
                 .addComponent(this.scrollPane)
                 .addGroup(panelLayout.createSequentialGroup()
                                 .addComponent(saveMapcompTitledPane)
-//                        .addComponent(clipSetPanel)
                 )
                 .addComponent(this.panelButton));
         panelLayout.setVerticalGroup(panelLayout.createSequentialGroup()
@@ -667,7 +657,6 @@ public class DialogMapClip extends SmDialog {
                 .addComponent(this.scrollPane)
                 .addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                 .addComponent(saveMapcompTitledPane)
-//                        .addComponent(clipSetPanel))
                 )
                 .addComponent(this.panelButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
         //@formatter:on
@@ -683,10 +672,8 @@ public class DialogMapClip extends SmDialog {
         this.buttonSelectAll.addActionListener(this.toolBarActionListener);
         this.buttonInvertSelect.addActionListener(this.toolBarActionListener);
         this.buttonSet.addActionListener(this.toolBarActionListener);
-//        this.mapClipJTable.getSelectionModel().addListSelectionListener(this.tableSelectionListener);
         this.mapClipJTable.getModel().addTableModelListener(tableModelListener);
         this.mapClipSaveMapPanel.getCheckBox().addActionListener(this.checkBoxActionListener);
-//        this.exactClip.addActionListener(checkBoxActionListener);
         this.panelButton.getButtonOk().addActionListener(OKButtonActionListener);
         this.panelButton.getButtonCancel().addActionListener(cancelButtonActionListener);
     }
@@ -697,11 +684,8 @@ public class DialogMapClip extends SmDialog {
         this.buttonSelectAll.removeActionListener(this.toolBarActionListener);
         this.buttonInvertSelect.removeActionListener(this.toolBarActionListener);
         this.buttonSet.removeActionListener(this.toolBarActionListener);
-//        this.mapClipJTable.getSelectionModel().removeListSelectionListener(this.tableSelectionListener);
         this.mapClipJTable.getModel().removeTableModelListener(tableModelListener);
         this.mapClipSaveMapPanel.getCheckBox().removeActionListener(this.checkBoxActionListener);
-//        this.exactClip.removeActionListener(checkBoxActionListener);
-
         this.panelButton.getButtonOk().removeActionListener(OKButtonActionListener);
         this.panelButton.getButtonCancel().removeActionListener(cancelButtonActionListener);
     }
@@ -718,8 +702,6 @@ public class DialogMapClip extends SmDialog {
         this.buttonSelectAll.setToolTipText(CommonProperties.getString("String_ToolBar_SelectAll"));
         this.buttonInvertSelect.setToolTipText(CommonProperties.getString("String_ToolBar_SelectInverse"));
         this.buttonSet.setToolTipText(CommonProperties.getString("String_ToolBar_SetBatch"));
-//        this.clipSetPanel.setBorder(BorderFactory.createTitledBorder(MapViewProperties.getString("String_MapClip_Image_ClipSetting")));
-//        this.exactClip.setText(MapViewProperties.getString("String_MapClip_ExactClip"));
     }
 }
 
