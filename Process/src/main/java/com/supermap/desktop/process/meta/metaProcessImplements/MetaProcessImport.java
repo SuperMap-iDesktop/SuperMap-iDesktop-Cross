@@ -17,7 +17,7 @@ import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterFile;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 
@@ -71,12 +71,12 @@ public class MetaProcessImport extends MetaProcess {
 
     public MetaProcessImport() {
         parameters = new DefaultParameters();
-        this.outputs.addData(OUTPUT_DATA, DataType.DATASET);
+        this.outputs.addData(OUTPUT_DATA, DatasetTypes.DATASET);
     }
 
     public void initParameters() {
         parameters = new DefaultParameters();
-        this.outputs.addData(OUTPUT_DATA, DataType.DATASET);
+        this.outputs.addData(OUTPUT_DATA, DatasetTypes.DATASET);
         parameterCreator = new ImportParameterCreator();
         setDefaultImportParameters(parameterCreator.createDefault(importSetting, this.importType));
         setParamParameters(parameterCreator.create(importSetting));

@@ -15,7 +15,7 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.ParameterSearchModeInfo;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.PixelFormatProperties;
 
@@ -61,8 +61,8 @@ public class MetaProcessInterpolator extends MetaProcess {
     };
 
     public MetaProcessInterpolator(InterpolationAlgorithmType interpolationAlgorithmType) {
-        this.inputs.addData(INPUT_DATA, DataType.DATASET_VECTOR);
-        this.outputs.addData(OUTPUT_DATA, DataType.DATASET_GRID);
+        this.inputs.addData(INPUT_DATA, DatasetTypes.VECTOR);
+        this.outputs.addData(OUTPUT_DATA, DatasetTypes.GRID);
         this.interpolationAlgorithmType = interpolationAlgorithmType;
         parameters = new DefaultParameters();
         parameterDatasource = new ParameterDatasource();

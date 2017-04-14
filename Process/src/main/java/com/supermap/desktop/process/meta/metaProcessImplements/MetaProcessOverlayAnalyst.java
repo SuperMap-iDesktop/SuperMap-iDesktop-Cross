@@ -14,7 +14,7 @@ import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -59,9 +59,9 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
     }
 
     private void initParameters() {
-        this.inputs.addData(INPUT_DATA, DataType.DATASET_VECTOR);
-        this.inputs.addData(OVERLAY_DATA, DataType.DATASET_VECTOR);
-        this.outputs.addData(OUTPUT_DATA, DataType.DATASET_VECTOR);
+        this.inputs.addData(INPUT_DATA, DatasetTypes.VECTOR);
+        this.inputs.addData(OVERLAY_DATA, DatasetTypes.VECTOR);
+        this.outputs.addData(OUTPUT_DATA, DatasetTypes.VECTOR);
         parameterSourceDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
         parameterOverlayDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
         parameterResultDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
