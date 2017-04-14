@@ -1,8 +1,10 @@
 package com.supermap.desktop.process.tasks;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
+import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 
 /**
@@ -24,9 +26,16 @@ public class ProcessCallable extends UpdateProgressCallable {
     }
 
     @Override
-    public Boolean call() throws Exception {
+    public Boolean call(){
+        try{
         process.addRunningListener(this.runningListener);
         process.run();
+
+        }catch (Exception e){
+            Application.getActiveApplication().getOutput().output(e);
+        }finally {
+            process.removeRunningListener(this.runningListener);
+        }
         return false;
     }
 }
