@@ -41,6 +41,7 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 	private SmButton buttonCancel = null;
 
 	public FormProgressTotal() {
+		super((JFrame) Application.getActiveApplication().getMainFrame());
 		setResizable(false);
 		setModal(true);
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -145,7 +146,6 @@ public class FormProgressTotal extends JDialog implements IUpdateProgress {
 				}
 			}
 		};
-
 		worker.execute();
 		if (null != this) {
 			this.setVisible(true);

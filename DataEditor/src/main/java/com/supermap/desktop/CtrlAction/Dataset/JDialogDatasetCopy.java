@@ -1,27 +1,12 @@
 package com.supermap.desktop.CtrlAction.Dataset;
 
-import com.supermap.data.Charset;
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetGridCollection;
-import com.supermap.data.DatasetImage;
-import com.supermap.data.DatasetImageCollection;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
-import com.supermap.data.Datasources;
-import com.supermap.data.EncodeType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
-import com.supermap.desktop.ui.controls.CommonListCellRenderer;
-import com.supermap.desktop.ui.controls.DataCell;
-import com.supermap.desktop.ui.controls.DatasetCopyCallable;
-import com.supermap.desktop.ui.controls.DatasourceComboBox;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 import com.supermap.desktop.ui.controls.button.SmButton;
@@ -38,14 +23,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -274,7 +252,7 @@ public class JDialogDatasetCopy extends SmDialog {
 		buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 
 		buttonAdd = new JButton();
-		buttonAdd.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_AddMap.png"));
+		buttonAdd.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_AddItem.png"));
 
 		toolBar.add(buttonAdd);
 		toolBar.add(buttonSelectAll);

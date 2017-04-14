@@ -1,5 +1,6 @@
 package com.supermap.desktop.CtrlAction.Map.MapClip;
 
+import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -18,7 +19,6 @@ import java.util.Vector;
 public class MapClipTableModel extends AbstractTableModel {
     public Vector layerInfo;
 
-    //public static final int COLUMN_INDEX_ISCLIP = 0;
     public static final int COLUMN_INDEX_LAYERCAPTION = 0;
     public static final int COLUMN_INDEX_AIMDATASOURCE = 1;
     public static final int COLUMN_INDEX_AIMDATASET = 2;
@@ -42,9 +42,8 @@ public class MapClipTableModel extends AbstractTableModel {
      * @param exactClip        是否精确裁剪
      */
     public void addRowLayerInfo(Layer layer, Datasource targetDatasource,
-                                String targetDataset, String clipType, String erase, boolean exactClip) {
+                                String targetDataset, String clipType, String erase, String exactClip) {
         Vector v = new Vector(6);
-        //v.add(COLUMN_INDEX_ISCLIP, new Boolean(clip));
         v.add(COLUMN_INDEX_LAYERCAPTION, layer);
         v.add(COLUMN_INDEX_AIMDATASOURCE, targetDatasource);
         v.add(COLUMN_INDEX_AIMDATASET, targetDataset);
@@ -57,9 +56,6 @@ public class MapClipTableModel extends AbstractTableModel {
 
     @Override
     public String getColumnName(int column) {
-//		if (column == COLUMN_INDEX_ISCLIP) {
-//			return MapViewProperties.getString("String_MapClip_IsClip");
-//		} else
         if (column == COLUMN_INDEX_LAYERCAPTION) {
             return MapViewProperties.getString("String_MapClip_LayerCaption");
         } else if (column == COLUMN_INDEX_AIMDATASOURCE) {
@@ -70,6 +66,8 @@ public class MapClipTableModel extends AbstractTableModel {
             return MapViewProperties.getString("String_MapClip_ClipType");
         } else if (column == COLUMN_INDEX_ERASE) {
             return MapViewProperties.getString("String_MapClip_Erase");
+        }else if (column == COLUMN_INDEX_EXACTCLIP) {
+            return MapViewProperties.getString("String_MapClip_AcurrentClip");
         }
         return "";
     }
@@ -81,7 +79,7 @@ public class MapClipTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return COLUMNS_NUMBER - 1;
+        return COLUMNS_NUMBER;
     }
 
     /**
@@ -101,6 +99,18 @@ public class MapClipTableModel extends AbstractTableModel {
                     !((Layer) (this.getValueAt(rowIndex, COLUMN_INDEX_LAYERCAPTION))).getDataset().isReadOnly()) {
                 return true;
             } else {
+                return false;
+            }
+        }
+        if (columnIndex == COLUMN_INDEX_EXACTCLIP) {
+            if (!((Layer) (this.getValueAt(rowIndex, COLUMN_INDEX_LAYERCAPTION))).getDataset().isReadOnly()){
+                if (((Layer) (this.getValueAt(rowIndex, COLUMN_INDEX_LAYERCAPTION))).getDataset().getType()== DatasetType.GRID
+                        ||((Layer) (this.getValueAt(rowIndex, COLUMN_INDEX_LAYERCAPTION))).getDataset().getType()== DatasetType.IMAGE){
+                    return true;
+                }else{
+                    return false;
+                }
+            }else{
                 return false;
             }
         }
@@ -124,7 +134,6 @@ public class MapClipTableModel extends AbstractTableModel {
     public Object getValueAt(int row, int col) {
         return ((Vector) this.layerInfo.get(row)).get(col);
     }
-
 
     public Class getColumnClass(int col) {
         return getValueAt(0, col).getClass();

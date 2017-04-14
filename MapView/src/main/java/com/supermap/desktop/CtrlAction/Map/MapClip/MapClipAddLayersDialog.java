@@ -107,6 +107,7 @@ public class MapClipAddLayersDialog extends SmDialog {
     }
 
     private void initResources() {
+        this.setTitle(MapViewProperties.getString("String_MapClip_AddClipLayer"));
         this.buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
         this.buttonSelectAll.setToolTipText(CommonProperties.getString("String_ToolBar_SelectAll"));
         this.buttonInterverseSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
@@ -151,8 +152,8 @@ public class MapClipAddLayersDialog extends SmDialog {
                 this.mutiTable.addRow(temp);
             }
             this.mutiTable.setRowSelectionInterval(0,0);
-            isCanOK();
         }
+        isCanOK();
     }
 
     public Vector getResultAddLayers(){

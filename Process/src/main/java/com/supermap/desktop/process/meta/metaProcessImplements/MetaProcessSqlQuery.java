@@ -10,7 +10,7 @@ import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -41,8 +41,8 @@ public class MetaProcessSqlQuery extends MetaProcess {
 	}
 
 	private void initMetaInfo() {
-		this.inputs.addData(INPUT_DATA, DataType.DATASET_VECTOR);
-		this.outputs.addData(OUTPUT_DATA, DataType.DATASET_VECTOR);
+		this.inputs.addData(INPUT_DATA, DatasetTypes.VECTOR);
+		this.outputs.addData(OUTPUT_DATA, DatasetTypes.VECTOR);
 		datasource = new ParameterDatasource();
 		this.datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameters = new DefaultParameters();

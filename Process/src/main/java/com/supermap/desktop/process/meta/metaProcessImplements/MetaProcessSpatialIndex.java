@@ -13,7 +13,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.DataType;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
@@ -30,8 +30,8 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 	private ParameterComboBox parameterComboBox;
 
 	public MetaProcessSpatialIndex() {
-		this.inputs.addData(INPUT_DATA, DataType.DATASET_VECTOR);
-		this.outputs.addData(OUTPUT_DATA, DataType.DATASET_VECTOR);
+		this.inputs.addData(INPUT_DATA, DatasetTypes.VECTOR);
+		this.outputs.addData(OUTPUT_DATA, DatasetTypes.VECTOR);
 		parameters = new DefaultParameters();
 		ParameterDataNode[] parameterDataNodes = new ParameterDataNode[]{
 				// fixme 支持的索引类型和数据源类型相关，目前只把所有的索引类型添加进去，未处理不支持的情况
