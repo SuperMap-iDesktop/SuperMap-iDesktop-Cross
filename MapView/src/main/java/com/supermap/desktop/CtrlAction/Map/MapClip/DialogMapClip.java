@@ -569,8 +569,8 @@ public class DialogMapClip extends SmDialog {
         initToolbar();
 
         this.mapClipJTable = new MapClipJTable();
-        // 给表头裁剪列和擦除列添加图片tip，因为只能给某个列添加，而想要的效果是给当前列中图片鼠标滑过时显示图片tip，因此进行了坐标显示，但是
-        // 当鼠标滑过当前列的其他部分时，会显示个小黑点留待解决
+        // 给表头裁剪列和擦除列添加图片tip，因为只能给某个列添加，而想要的效果是给当前列中图片鼠标滑过时显示图片tip，因此进行了坐标计算，但是
+        // 当鼠标滑过当前列的其他部分时，要返回tooltip且不能为空，所以要么是重新寻找解决办法，要么就是不加警告图片，直接给表头加，当鼠标滑过表头就会显示，此时没有小黑点
         this.mapClipJTable.setTableHeader(new JTableHeader(this.mapClipJTable.getColumnModel()) {
             Point point;
 
