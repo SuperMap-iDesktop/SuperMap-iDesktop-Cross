@@ -79,30 +79,73 @@ public class ProcessManager extends JPanel {
         ProcessGroup standAloneGroup = new ProcessGroup(root);
         standAloneGroup.setIconPath("/processresources/Process/native.png");
         standAloneGroup.setKey(ProcessProperties.getString("String_StandAlone"));
-        standAloneGroup.addProcess(new MetaProcessBuffer());
-        ProcessGroup importGroup = new ProcessGroup(null);
+
+        ProcessGroup importGroup = new ProcessGroup(standAloneGroup);
         importGroup.setKey(ProcessProperties.getString("String_Import"));
         importGroup.setIconPath("/processresources/Tree_Node1.png");
         createImportGroup(importGroup);
+
+        ProcessGroup interpolatorGroup = new ProcessGroup(standAloneGroup);
+        interpolatorGroup.setKey(ProcessProperties.getString("String_Interpolator"));
+        interpolatorGroup.setIconPath("/processresources/Tree_Node1.png");
+        createInterpolatorGroup(interpolatorGroup);
+
+        ProcessGroup overlayAnalystGroup = new ProcessGroup(standAloneGroup);
+        overlayAnalystGroup.setKey(ProcessProperties.getString("String_OverlayAnalyst"));
+        overlayAnalystGroup.setIconPath("/processresources/Tree_Node1.png");
+        createOverlayAnalystGroup(overlayAnalystGroup);
+
+
+        ProcessGroup surfaceAnalystGroup = new ProcessGroup(standAloneGroup);
+        surfaceAnalystGroup.setKey(ProcessProperties.getString("String_SurfaceAnalyst"));
+        surfaceAnalystGroup.setIconPath("/processresources/Tree_Node1.png");
+        createSurfaceAnaylstGroup(surfaceAnalystGroup);
+
         standAloneGroup.addProcess(importGroup);
+        standAloneGroup.addProcess(interpolatorGroup);
+        standAloneGroup.addProcess(overlayAnalystGroup);
+        standAloneGroup.addProcess(surfaceAnalystGroup);
+        standAloneGroup.addProcess(new MetaProcessBuffer());
         standAloneGroup.addProcess(new MetaProcessProjection());
-        standAloneGroup.addProcess(new MetaProcessInterpolator(InterpolationAlgorithmType.KRIGING));
-        standAloneGroup.addProcess(new MetaProcessOverlayAnalyst(OverlayAnalystType.INTERSECT));
         standAloneGroup.addProcess(new MetaProcessSpatialIndex());
         standAloneGroup.addProcess(new MetaProcessSqlQuery());
-        standAloneGroup.addProcess(new MetaProcessISOLine());
+
         root.addProcess(standAloneGroup);
         root.addProcess(online);
         return root;
     }
 
+    private void createSurfaceAnaylstGroup(ProcessGroup surfaceAnalystGroup) {
+        surfaceAnalystGroup.addProcess(new MetaProcessISOLine());
+        surfaceAnalystGroup.addProcess(new MetaProcessISORegion());
+        surfaceAnalystGroup.addProcess(new MetaProcessISOPoint());
+    }
+
+    private void createOverlayAnalystGroup(ProcessGroup overlayAnalystGroup) {
+        overlayAnalystGroup.addProcess(new MetaProcessOverlayAnalyst(OverlayAnalystType.CLIP));
+        overlayAnalystGroup.addProcess(new MetaProcessOverlayAnalyst(OverlayAnalystType.UNION));
+        overlayAnalystGroup.addProcess(new MetaProcessOverlayAnalyst(OverlayAnalystType.ERASE));
+        overlayAnalystGroup.addProcess(new MetaProcessOverlayAnalyst(OverlayAnalystType.IDENTITY));
+        overlayAnalystGroup.addProcess(new MetaProcessOverlayAnalyst(OverlayAnalystType.INTERSECT));
+        overlayAnalystGroup.addProcess(new MetaProcessOverlayAnalyst(OverlayAnalystType.UPDATE));
+        overlayAnalystGroup.addProcess(new MetaProcessOverlayAnalyst(OverlayAnalystType.XOR));
+    }
+
+    private void createInterpolatorGroup(ProcessGroup interpolatorGroup) {
+        interpolatorGroup.addProcess(new MetaProcessInterpolator(InterpolationAlgorithmType.IDW));
+        interpolatorGroup.addProcess(new MetaProcessInterpolator(InterpolationAlgorithmType.RBF));
+        interpolatorGroup.addProcess(new MetaProcessInterpolator(InterpolationAlgorithmType.KRIGING));
+        interpolatorGroup.addProcess(new MetaProcessInterpolator(InterpolationAlgorithmType.SimpleKRIGING));
+        interpolatorGroup.addProcess(new MetaProcessInterpolator(InterpolationAlgorithmType.UniversalKRIGING));
+    }
+
     private void createImportGroup(ProcessGroup importGroup) {
-        ProcessGroup autoCADType = new ProcessGroup(null);
+        ProcessGroup autoCADType = new ProcessGroup(importGroup);
         autoCADType.setKey(ProcessProperties.getString("String_filetype_Autocad"));
         autoCADType.setIconPath("/processresources/Tree_Node2.png");
         autoCADType.addProcess(MetaProcessImportFactory.createMetaProcessImport("DXF"));
         autoCADType.addProcess(MetaProcessImportFactory.createMetaProcessImport("DWG"));
-        ProcessGroup arcGISType = new ProcessGroup(null);
+        ProcessGroup arcGISType = new ProcessGroup(importGroup);
         arcGISType.setKey(ProcessProperties.getString("String_filetype_ArcGIS"));
         arcGISType.setIconPath("/processresources/Tree_Node2.png");
         arcGISType.addProcess(MetaProcessImportFactory.createMetaProcessImport("SHP"));

@@ -194,6 +194,6 @@ public class MetaProcessSqlQuery extends MetaProcess {
 
 	@Override
 	public Icon getIcon() {
-		return getIconByPath("/processresources/Tree_Node1.png");
+		return getIconByPath("/processresources/Tree_Node3.png");
 	}
 }

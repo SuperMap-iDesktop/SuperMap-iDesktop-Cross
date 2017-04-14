@@ -102,6 +102,7 @@ public class MetaProcessInterpolator extends MetaProcess {
         parameterResultDatasetName.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
         parameterResultDatasetName.setDatasetDescribe(CommonProperties.getString(CommonProperties.Label_Dataset));
         parameterResulotion = new ParameterTextField().setDescribe(CommonProperties.getString("String_Resolution"));
+        parameterResulotion.setSelectedItem("0");
         parameterPixelType = new ParameterComboBox().setDescribe(CommonProperties.getString("String_PixelType"));
         ParameterDataNode selectedItem = new ParameterDataNode(PixelFormatProperties.getString("String_Bit32"), PixelFormat.BIT32);
         parameterPixelType.setItems(
@@ -241,20 +242,19 @@ public class MetaProcessInterpolator extends MetaProcess {
 
     @Override
     public String getTitle() {
-//		String title = "";
-//		if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.IDW)) {
-//			title = ControlsProperties.getString("String_Interpolator_IDW");
-//		} else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.RBF)) {
-//			title = ControlsProperties.getString("String_Interpolator_RBF");
-//		} else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.KRIGING)) {
-//			title = ControlsProperties.getString("String_Interpolator_KRIGING");
-//		} else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.SimpleKRIGING)) {
-//			title = ControlsProperties.getString("String_Interpolator_SimpleKRIGING");
-//		} else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.UniversalKRIGING)) {
-//			title = ControlsProperties.getString("String_Interpolator_UniversalKRIGING");
-//		}
-//		return title;
-        return ControlsProperties.getString("String_Interpolator");
+        String title = "";
+        if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.IDW)) {
+            title = ControlsProperties.getString("String_Interpolator_IDW");
+        } else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.RBF)) {
+            title = ControlsProperties.getString("String_Interpolator_RBF");
+        } else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.KRIGING)) {
+            title = ControlsProperties.getString("String_Interpolator_KRIGING");
+        } else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.SimpleKRIGING)) {
+            title = ControlsProperties.getString("String_Interpolator_SimpleKRIGING");
+        } else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.UniversalKRIGING)) {
+            title = ControlsProperties.getString("String_Interpolator_UniversalKRIGING");
+        }
+        return title;
     }
 
     @Override
@@ -315,12 +315,21 @@ public class MetaProcessInterpolator extends MetaProcess {
 
     @Override
     public String getKey() {
-        return MetaKeys.INTERPOLATOR;
+        String key = "";
+        if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.IDW)) {
+            key = MetaKeys.INTERPOLATOR_IDW;
+        } else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.RBF)) {
+            key = MetaKeys.INTERPOLATOR_RBF;
+        } else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.KRIGING)) {
+            key = MetaKeys.INTERPOLATOR_KRIGING;
+        } else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.SimpleKRIGING)) {
+            key = MetaKeys.INTERPOLATOR_SimpleKRIGING;
+        } else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.UniversalKRIGING)) {
+            key = MetaKeys.INTERPOLATOR_UniversalKRIGING;
+        }
+        return key;
     }
 
-    public InterpolationAlgorithmType getInterpolationAlgorithmType() {
-        return interpolationAlgorithmType;
-    }
 
     public void setInterpolationParameter(InterpolationParameter interpolationParameter) {
         Rectangle2D bounds = new Rectangle2D();
@@ -338,6 +347,6 @@ public class MetaProcessInterpolator extends MetaProcess {
 
     @Override
     public Icon getIcon() {
-        return getIconByPath("/processresources/Tree_Node1.png");
+        return getIconByPath("/processresources/Tree_Node3.png");
     }
 }

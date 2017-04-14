@@ -6,6 +6,7 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.filechooser.FileFilter;
+import java.text.MessageFormat;
 
 /**
  * Created by xie on 2017/4/7.
@@ -60,7 +61,7 @@ public class FileType {
             } else if ("BIL".equalsIgnoreCase(importType)) {
                 fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(importType, "bil", "b"));
             } else {
-                fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(importType, importType.toLowerCase()));
+                fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"),importType,importType), importType.toLowerCase()));
             }
             SmFileChoose.addNewNode(fileFilter, CommonProperties.getString("String_DefaultFilePath"),
                     ProcessProperties.getString("String_FileType"), "MetaProcessImport" + importType, "OpenOne");

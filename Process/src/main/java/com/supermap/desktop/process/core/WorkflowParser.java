@@ -149,7 +149,15 @@ public class WorkflowParser {
             result = new MetaProcessBuffer();
         } else if (MetaKeys.HEAT_MAP.equals(key)) {
             result = new MetaProcessHeatMap();
-        } else if (MetaKeys.INTERPOLATOR.equals(key)) {
+        } else if (MetaKeys.INTERPOLATOR_IDW.equals(key)) {
+            result = new MetaProcessInterpolator(InterpolationAlgorithmType.IDW);
+        } else if (MetaKeys.INTERPOLATOR_RBF.equals(key)) {
+            result = new MetaProcessInterpolator(InterpolationAlgorithmType.RBF);
+        } else if (MetaKeys.INTERPOLATOR_UniversalKRIGING.equals(key)) {
+            result = new MetaProcessInterpolator(InterpolationAlgorithmType.UniversalKRIGING);
+        } else if (MetaKeys.INTERPOLATOR_SimpleKRIGING.equals(key)) {
+            result = new MetaProcessInterpolator(InterpolationAlgorithmType.SimpleKRIGING);
+        } else if (MetaKeys.INTERPOLATOR_KRIGING.equals(key)) {
             result = new MetaProcessInterpolator(InterpolationAlgorithmType.KRIGING);
         } else if (MetaKeys.ISOLINE.equals(key)) {
             result = new MetaProcessISOLine();
@@ -163,8 +171,20 @@ public class WorkflowParser {
             result = new MetaProcessProjection();
         } else if (MetaKeys.SPATIAL_INDEX.equals(key)) {
             result = new MetaProcessSpatialIndex();
-        } else if (MetaKeys.OVERLAY_ANALYST.equals(key)) {
+        } else if (MetaKeys.OVERLAY_ANALYST_CLIP.equals(key)) {
+            result = new MetaProcessOverlayAnalyst(OverlayAnalystType.CLIP);
+        } else if (MetaKeys.OVERLAY_ANALYST_UNION.equals(key)) {
+            result = new MetaProcessOverlayAnalyst(OverlayAnalystType.UNION);
+        } else if (MetaKeys.OVERLAY_ANALYST_ERASE.equals(key)) {
+            result = new MetaProcessOverlayAnalyst(OverlayAnalystType.ERASE);
+        } else if (MetaKeys.OVERLAY_ANALYST_IDENTITY.equals(key)) {
+            result = new MetaProcessOverlayAnalyst(OverlayAnalystType.IDENTITY);
+        } else if (MetaKeys.OVERLAY_ANALYST_INTERSECT.equals(key)) {
             result = new MetaProcessOverlayAnalyst(OverlayAnalystType.INTERSECT);
+        } else if (MetaKeys.OVERLAY_ANALYST_UPDATE.equals(key)) {
+            result = new MetaProcessOverlayAnalyst(OverlayAnalystType.UPDATE);
+        } else if (MetaKeys.OVERLAY_ANALYST_XOR.equals(key)) {
+            result = new MetaProcessOverlayAnalyst(OverlayAnalystType.XOR);
         } else if (MetaKeys.SQL_QUERY.equals(key)) {
             result = new MetaProcessSqlQuery();
         } else if (key.contains(MetaKeys.IMPORT)) {
