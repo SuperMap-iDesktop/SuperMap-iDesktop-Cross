@@ -70,9 +70,10 @@ public class MetaProcessInterpolator extends MetaProcess {
         Datasource currentDatasource = null;
         if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0) {
             currentDatasource = Application.getActiveApplication().getActiveDatasources()[0];
+        } else if (null != Application.getActiveApplication().getWorkspace().getDatasources() && Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
+            currentDatasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
         }
         parameterDatasource.setSelectedItem(currentDatasource);
-
         parameterDataset = new ParameterSingleDataset(DatasetType.POINT);
         DatasetVector currentDataset = null;
         if (currentDatasource != null) {
@@ -97,6 +98,7 @@ public class MetaProcessInterpolator extends MetaProcess {
         parameterScaling = new ParameterTextField().setDescribe(CommonProperties.getString("String_Scaling"));
         parameterScaling.setSelectedItem("1");
         parameterResultDatasetName = new ParameterSaveDataset();
+        parameterResultDatasetName.setDatasetName("Interpolator");
         parameterResultDatasetName.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
         parameterResultDatasetName.setDatasetDescribe(CommonProperties.getString(CommonProperties.Label_Dataset));
         parameterResulotion = new ParameterTextField().setDescribe(CommonProperties.getString("String_Resolution"));
@@ -267,12 +269,12 @@ public class MetaProcessInterpolator extends MetaProcess {
         if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.IDW)) {
             interpolationParameter = new InterpolationIDWParameter();
             setInterpolationParameter(interpolationParameter);
-            ((InterpolationIDWParameter) interpolationParameter).setPower((Integer) parameterPower.getSelectedItem());
+            ((InterpolationIDWParameter) interpolationParameter).setPower(Integer.valueOf(parameterPower.getSelectedItem().toString()));
         } else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.RBF)) {
             interpolationParameter = new InterpolationRBFParameter();
             setInterpolationParameter(interpolationParameter);
-            ((InterpolationRBFParameter) interpolationParameter).setTension((Double) parameterTension.getSelectedItem());
-            ((InterpolationRBFParameter) interpolationParameter).setSmooth((Double) parameterSmooth.getSelectedItem());
+            ((InterpolationRBFParameter) interpolationParameter).setTension(Double.valueOf(parameterTension.getSelectedItem().toString()));
+            ((InterpolationRBFParameter) interpolationParameter).setSmooth(Double.valueOf(parameterSmooth.getSelectedItem().toString()));
         } else {
             if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.KRIGING)) {
                 interpolationParameter = new InterpolationKrigingParameter(InterpolationAlgorithmType.KRIGING);
@@ -283,11 +285,12 @@ public class MetaProcessInterpolator extends MetaProcess {
             }
             setInterpolationParameter(interpolationParameter);
             ((InterpolationKrigingParameter) interpolationParameter).setVariogramMode((VariogramMode) ((ParameterDataNode) parameterVariogramMode.getSelectedItem()).getData());
-            ((InterpolationKrigingParameter) interpolationParameter).setSill((Double) parameterStill.getSelectedItem());
-            ((InterpolationKrigingParameter) interpolationParameter).setAngle((Double) parameterAngle.getSelectedItem());
-            ((InterpolationKrigingParameter) interpolationParameter).setRange((Double) parameterRange.getSelectedItem());
-            ((InterpolationKrigingParameter) interpolationParameter).setMean((Double) parameterMean.getSelectedItem());
-            ((InterpolationKrigingParameter) interpolationParameter).setNugget((Double) parameterNugget.getSelectedItem());
+            ((InterpolationKrigingParameter) interpolationParameter).setSill(Double.valueOf(parameterStill.getSelectedItem().toString()));
+            ((InterpolationKrigingParameter) interpolationParameter).setAngle(Double.valueOf(parameterAngle.getSelectedItem().toString()));
+            ((InterpolationKrigingParameter) interpolationParameter).setRange(Double.valueOf(parameterRange.getSelectedItem().toString()));
+            if (interpolationParameter.equals(InterpolationAlgorithmType.SimpleKRIGING))
+                ((InterpolationKrigingParameter) interpolationParameter).setMean(Double.valueOf(parameterMean.getSelectedItem().toString()));
+            ((InterpolationKrigingParameter) interpolationParameter).setNugget(Double.valueOf(parameterNugget.getSelectedItem().toString()));
         }
         Interpolator.addSteppedListener(this.stepLitener);
 
@@ -297,9 +300,12 @@ public class MetaProcessInterpolator extends MetaProcess {
         } else {
             datasetVector = (DatasetVector) this.parameterDataset.getSelectedItem();
         }
+        Datasource targetDatasource = parameterResultDatasetName.getResultDatasource();
+        String datasetName = parameterResultDatasetName.getDatasetName();
+        datasetName = targetDatasource.getDatasets().getAvailableDatasetName(datasetName);
         DatasetGrid dataset = Interpolator.interpolate(interpolationParameter, datasetVector,
-                parameterInterpolatorFields.getSelectedItem().toString(), ((double) parameterScaling.getSelectedItem()),
-                parameterResultDatasetName.getResultDatasource(), parameterResultDatasetName.getDatasetName(),
+                ((FieldInfo) parameterInterpolatorFields.getSelectedItem()).getName(), Double.valueOf(parameterScaling.getSelectedItem().toString()),
+                targetDatasource, datasetName,
                 (PixelFormat) ((ParameterDataNode) parameterPixelType.getSelectedItem()).getData());
         Interpolator.removeSteppedListener(this.stepLitener);
         this.outputs.getData(OUTPUT_DATA).setValue(dataset);
@@ -318,15 +324,15 @@ public class MetaProcessInterpolator extends MetaProcess {
 
     public void setInterpolationParameter(InterpolationParameter interpolationParameter) {
         Rectangle2D bounds = new Rectangle2D();
-        bounds.setLeft((Double) parameterBoundsLeft.getSelectedItem());
-        bounds.setTop((Double) parameterBoundsTop.getSelectedItem());
-        bounds.setRight((Double) parameterBoundsRight.getSelectedItem());
-        bounds.setBottom((Double) parameterBoundsBottom.getSelectedItem());
+        bounds.setLeft(Double.valueOf(parameterBoundsLeft.getSelectedItem().toString()));
+        bounds.setTop(Double.valueOf(parameterBoundsTop.getSelectedItem().toString()));
+        bounds.setRight(Double.valueOf(parameterBoundsRight.getSelectedItem().toString()));
+        bounds.setBottom(Double.valueOf(parameterBoundsBottom.getSelectedItem().toString()));
         ParameterSearchModeInfo info = (ParameterSearchModeInfo) searchMode.getSelectedItem();
         interpolationParameter.setExpectedCount(info.expectedCount);
         interpolationParameter.setSearchMode(info.searchMode);
         interpolationParameter.setSearchRadius(info.searchRadius);
-        interpolationParameter.setResolution((Double) parameterResulotion.getSelectedItem());
+        interpolationParameter.setResolution(Double.valueOf(parameterResulotion.getSelectedItem().toString()));
         interpolationParameter.setBounds(bounds);
     }
 

@@ -21,6 +21,7 @@ public class ImportParameterCreator implements IParameterCreator {
     private ParameterCombine parameterCombineResultSet;
     private ParameterCombine parameterCombineParamSet;
     private ParameterFile parameterFile;
+    private ParameterTextField datasetName;
 
     @Override
     public CopyOnWriteArrayList<ReflectInfo> create(Object importSetting) {
@@ -350,8 +351,12 @@ public class ImportParameterCreator implements IParameterCreator {
         return null;
     }
 
+    public ParameterTextField getDatasetName() {
+        return datasetName;
+    }
+
     @Override
-    public CopyOnWriteArrayList<ReflectInfo> createDefault(Object o) {
+    public CopyOnWriteArrayList<ReflectInfo> createDefault(Object o, final String importType) {
 
         CopyOnWriteArrayList<ReflectInfo> result = new CopyOnWriteArrayList<>();
         //Target dataset reflect info
@@ -362,9 +367,9 @@ public class ImportParameterCreator implements IParameterCreator {
         targetDatasource.parameter = datasource;
         result.add(targetDatasource);
 
-        ReflectInfo targetDatasetName = new ReflectInfo();
+        final ReflectInfo targetDatasetName = new ReflectInfo();
         targetDatasetName.methodName = "setTargetDatasetName";
-        ParameterTextField datasetName = new ParameterTextField(CommonProperties.getString(CommonProperties.Label_Dataset));
+        datasetName = new ParameterTextField(CommonProperties.getString(CommonProperties.Label_Dataset));
         if (o instanceof ImportSetting) {
             datasetName.setSelectedItem(((ImportSetting) o).getTargetDatasetName());
         }
@@ -402,7 +407,19 @@ public class ImportParameterCreator implements IParameterCreator {
                 new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(datasource, datasetName),
                 parameterCombineSecond
         );
+        //
+        ReflectInfo parameterFileInfo = new ReflectInfo();
+        parameterFileInfo.methodName = "setSourceFilePath";
+        parameterFile = new ParameterFile(ProcessProperties.getString("label_ChooseFile"));
+        parameterFile.setImportType(importType);
+        parameterFileInfo.parameter = parameterFile;
+        result.add(parameterFileInfo);
         return result;
+    }
+
+    @Override
+    public ParameterFile getParameterFile() {
+        return parameterFile;
     }
 
     @Override
@@ -415,11 +432,6 @@ public class ImportParameterCreator implements IParameterCreator {
         return parameterCombineParamSet;
     }
 
-    @Override
-    public IParameter getParameterFileSet(String importType) {
-        parameterFile = new ParameterFile(ProcessProperties.getString("label_ChooseFile"));
-        return parameterFile;
-    }
 
     private ParameterEnum createEnumParser(ImportSetting importSetting) {
         ParameterEnum result = null;

@@ -44,6 +44,10 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		panel.add(textField, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
 	}
 
+	public void setText(String text){
+		textField.setText(text);
+	}
+
 	private void initListeners() {
 		parameterTextField.addPropertyListener(new PropertyChangeListener() {
 			@Override
