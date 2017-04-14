@@ -3,6 +3,7 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.SpatialIndexType;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
@@ -82,11 +83,11 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 
 	@Override
 	public String getTitle() {
-		return "重建空间索引";
+		return ProcessProperties.getString("String_RebuildSpatialIndex");
 	}
 
 	@Override
 	public Icon getIcon() {
-		return getIconByPath("/processresources/Process/SpatialIndex.png");
+		return getIconByPath("/processresources/Tree_Node1.png");
 	}
 }

@@ -264,7 +264,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 
     @Override
     public Icon getIcon() {
-        return getIconByPath("/processresources/Process/OverlayAnalyst.png");
+        return getIconByPath("/processresources/Tree_Node1.png");
     }
 
 
