@@ -10,12 +10,7 @@ import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
-import com.supermap.desktop.ui.controls.CommonListCellRenderer;
-import com.supermap.desktop.ui.controls.DatasetTypeComboBox;
-import com.supermap.desktop.ui.controls.DatasourceComboBox;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.component.ComboBoxCellEditor;
 import com.supermap.desktop.utilities.CharsetUtilities;
@@ -254,6 +249,7 @@ public class JDialogDatasetNew extends SmDialog {
 	}
 
 	private void buttonSetting_Click() {
+		TableUtilities.stopEditing(table);
 		JDialogSetAll dialogSetAll = new JDialogSetAll();
 		if (dialogSetAll.showDialog() == DialogResult.OK) {
 			int[] selectedRows = table.getSelectedRows();

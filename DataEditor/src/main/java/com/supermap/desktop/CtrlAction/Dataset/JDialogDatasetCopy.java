@@ -15,6 +15,7 @@ import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.CharsetUtilities;
 import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -594,6 +595,7 @@ public class JDialogDatasetCopy extends SmDialog {
 	 */
 	private void buttonSetting_Click() {
 		try {
+			TableUtilities.stopEditing(table);
 			JDialogUnifiedSet unifiedSet = new JDialogUnifiedSet(this, true, table);
 			unifiedSet.setVisible(true);
 		} catch (Exception ex) {
