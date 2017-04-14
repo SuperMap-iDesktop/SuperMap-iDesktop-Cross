@@ -109,9 +109,19 @@ public class MetaProcessISOPoint extends MetaProcess {
 		this.resampleTolerance = new ParameterTextField(CommonProperties.getString("String_ResampleTolerance"));
 		this.smoothMethod = new ParameterComboBox().setDescribe(CommonProperties.getString("String_SmoothMethod"));
 		this.smoothNess = new ParameterTextField(CommonProperties.getString("String_SmoothNess"));
-		this.parameters.setParameters(sourceDatasource, sourceDataset, fields, targetDataset,
-				maxISOLine, minISOLine, isoLine, terrainInterpolateType, resolution, datumValue, interval,
+
+		ParameterCombine sourceData = new ParameterCombine();
+		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
+		sourceData.addParameters(sourceDatasource, sourceDataset,fields);
+		ParameterCombine resultData = new ParameterCombine();
+		resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
+		resultData.addParameters(targetDataset, maxISOLine, minISOLine, isoLine, terrainInterpolateType);
+		ParameterCombine paramSet = new ParameterCombine();
+		paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
+		paramSet.addParameters(resolution, datumValue, interval,
 				resampleTolerance, smoothMethod, smoothNess);
+
+		this.parameters.setParameters(sourceData,resultData,paramSet);
 	}
 
 	@Override
@@ -154,6 +164,6 @@ public class MetaProcessISOPoint extends MetaProcess {
 
 	@Override
 	public Icon getIcon() {
-		return getIconByPath("/processresources/Tree_Node1.png");
+		return getIconByPath("/processresources/Tree_Node3.png");
 	}
 }

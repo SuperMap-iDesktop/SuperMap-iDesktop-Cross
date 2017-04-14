@@ -122,39 +122,10 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
         parameterTolerance.setSelectedItem("0");
     }
 
-    public OverlayAnalystType getAnalystType() {
-        return analystType;
-    }
 
     @Override
     public String getTitle() {
-        String title = "";
-        switch (analystType) {
-            case CLIP:
-                title = ControlsProperties.getString("String_OverlayAnalyst_CLIP");
-                break;
-            case ERASE:
-                title = ControlsProperties.getString("String_OverlayAnalyst_ERASE");
-                break;
-            case IDENTITY:
-                title = ControlsProperties.getString("String_OverlayAnalyst_IDENTITY");
-                break;
-            case INTERSECT:
-                title = ControlsProperties.getString("String_OverlayAnalyst_INTERSECT");
-                break;
-            case UNION:
-                title = ControlsProperties.getString("String_OverlayAnalyst_UNION");
-                break;
-            case XOR:
-                title = ControlsProperties.getString("String_OverlayAnalyst_XOR");
-                break;
-            case UPDATE:
-                title = ControlsProperties.getString("String_OverlayAnalyst_UPDATE");
-                break;
-            default:
-                break;
-        }
-        return title;
+        return analystType.toString();
     }
 
     @Override
@@ -243,7 +214,32 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 
     @Override
     public String getKey() {
-        return MetaKeys.OVERLAY_ANALYST;
+        String key = "";
+        switch (analystType) {
+            case CLIP:
+                key = MetaKeys.OVERLAY_ANALYST_CLIP;
+                break;
+            case UNION:
+                key = MetaKeys.OVERLAY_ANALYST_UNION;
+                break;
+            case ERASE:
+                key = MetaKeys.OVERLAY_ANALYST_ERASE;
+                break;
+            case IDENTITY:
+                key = MetaKeys.OVERLAY_ANALYST_IDENTITY;
+                break;
+            case INTERSECT:
+                key = MetaKeys.OVERLAY_ANALYST_INTERSECT;
+                break;
+            case UPDATE:
+                key = MetaKeys.OVERLAY_ANALYST_UPDATE;
+                break;
+            case XOR:
+                key = MetaKeys.OVERLAY_ANALYST_XOR;
+                break;
+
+        }
+        return key;
     }
 
     private boolean isSameProjection(PrjCoordSys prjCoordSys, PrjCoordSys prjCoordSys1) {
@@ -264,7 +260,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 
     @Override
     public Icon getIcon() {
-        return getIconByPath("/processresources/Tree_Node1.png");
+        return getIconByPath("/processresources/Tree_Node3.png");
     }
 
 

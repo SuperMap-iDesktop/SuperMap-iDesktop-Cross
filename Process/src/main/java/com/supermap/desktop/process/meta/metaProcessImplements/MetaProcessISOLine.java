@@ -4,6 +4,7 @@ import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
 import com.supermap.data.*;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -93,8 +94,20 @@ public class MetaProcessISOLine extends MetaProcess {
 		this.resampleTolerance = new ParameterTextField(CommonProperties.getString("String_ResampleTolerance"));
 		this.smoothMethod = new ParameterComboBox().setDescribe(CommonProperties.getString("String_SmoothMethod"));
 		this.smoothNess = new ParameterTextField(CommonProperties.getString("String_SmoothNess"));
-		this.parameters.setParameters(sourceDatasource, dataset, saveDataset, maxGrid, minGrid, maxISOLine, minISOLine, isoLine, datumValue,
-				interval, resampleTolerance, smoothMethod, smoothNess);
+
+		ParameterCombine sourceData = new ParameterCombine();
+		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
+		sourceData.addParameters(sourceDatasource, dataset);
+		ParameterCombine targetData = new ParameterCombine();
+		targetData.setDescribe(CommonProperties.getString("String_GroupBox_TargetData"));
+		targetData.addParameters(saveDataset);
+		ParameterCombine resultInfo = new ParameterCombine();
+		resultInfo.setDescribe(CommonProperties.getString("String_ResultInfo"));
+		resultInfo.addParameters(maxGrid, minGrid, maxISOLine, minISOLine, isoLine);
+		ParameterCombine paramSet = new ParameterCombine();
+		paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
+		paramSet.addParameters(datumValue, interval, resampleTolerance, smoothMethod, smoothNess);
+		this.parameters.setParameters(sourceData,targetData,resultInfo,paramSet);
 	}
 
 
@@ -138,6 +151,6 @@ public class MetaProcessISOLine extends MetaProcess {
 
 	@Override
 	public Icon getIcon() {
-		return getIconByPath("/processresources/Tree_Node1.png");
+		return getIconByPath("/processresources/Tree_Node3.png");
 	}
 }

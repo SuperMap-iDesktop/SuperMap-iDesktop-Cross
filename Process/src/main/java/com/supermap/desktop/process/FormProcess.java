@@ -120,16 +120,6 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
                     ParameterManager component = (ParameterManager) ((Dockbar) Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName("com.supermap.desktop.process.ParameterManager"))).getInnerComponent();
                     Selection selection = e.getSelection();
                     if (selection.getItem(0) instanceof ProcessGraph) {
-//                        if (((ProcessGraph) selection.getItem(0)).getProcess() instanceof MetaProcessImport && null == ((ProcessGraph) selection.getItem(0)).getProcess().getParameters().getParameters()) {
-//                            MetaProcessImport metaProcessImport = (MetaProcessImport) ((ProcessGraph) selection.getItem(0)).getProcess();
-//                            SmFileChoose jFileChooser = FileType.createImportFileChooser();
-//                            if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-//                                IImportSettingCreator creator = new ImportSettingCreator();
-//                                ImportSetting importSetting = creator.create(jFileChooser.getFilePath());
-//                                metaProcessImport.setImportSetting(importSetting);
-//                                metaProcessImport.initParameters();
-//                            }
-//                        }
                         component.setProcess(((ProcessGraph) selection.getItem(0)).getProcess());
                     } else {
                         component.setProcess(null);
