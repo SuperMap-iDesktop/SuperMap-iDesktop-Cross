@@ -56,12 +56,12 @@ public class GraphRelationLine extends AbstractLine implements GraphBoundsChange
 
 	@Override
 	public Point getStartPoint() {
-		return this.start != null ? this.start.getCenter() : null;
+		return this.start != null ? getStartLocation() : null;
 	}
 
 	@Override
 	public Point getEndPoint() {
-		return this.end != null ? this.end.getCenter() : null;
+		return this.end != null ? getEndLocation() : null;
 	}
 
 	public IGraph getStartGraph() {

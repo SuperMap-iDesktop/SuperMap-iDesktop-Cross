@@ -1,58 +1,127 @@
 package com.supermap.desktop.ui.mdi.test;
 
-import com.supermap.desktop.ui.mdi.MdiGroup;
-import com.supermap.desktop.ui.mdi.MdiPage;
-import com.supermap.desktop.ui.mdi.MdiPane;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Line2D;
 
 public class Test {
 
 	public static void main(String[] args) {
-		final MdiPane pane = new MdiPane();
-//		group.setFloatOnPage(true);
-		final MdiPage page = MdiPage.createMdiPage(new PagePanelDemo("test1"), "test1");
-		pane.addPage(page);
+		JFrame f = new JFrame();
+		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		f.getContentPane().add(new ArrowPanel());
+		f.setSize(500, 400);
+		f.setLocation(200, 200);
+		f.setVisible(true);
+	}
+}
 
-		MdiPage page1 = MdiPage.createMdiPage(new PagePanelDemo1(), "test2");
-		pane.addNewGroup(page1);
+class ArrowPanel extends JPanel {
+	int barb;
+	double phi;
+	Point point1;
+	Point point2;
 
-		MdiPage page2 = MdiPage.createMdiPage(new PagePanelDemo("test3"), "test3");
-		pane.addNewGroup(page2);
+	public ArrowPanel() {
+		barb = 10;                   // barb length
+		phi = Math.PI / 6;             // 30 degrees barb angle
+		setBackground(Color.white);
 
-		MdiPage page3 = MdiPage.createMdiPage(new PagePanelDemo1(), "test4");
-		pane.addNewGroup(page3);
-		final JFrame frame = new JFrame();
-		frame.setSize(600, 600);
 
-		JButton button = new JButton("Add Page");
-		button.addActionListener(new ActionListener() {
+		addMouseMotionListener(new MouseMotionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				MdiPage page = MdiPage.createMdiPage(new PagePanelDemo1(), "test" + Integer.toString(pane.getPageCount()));
-				pane.addPage(page);
+			public void mouseDragged(MouseEvent e) {
+
+			}
+
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				point2 = e.getPoint();
+				repaint();
 			}
 		});
 
-		frame.setLayout(new BorderLayout());
-		frame.add(button, BorderLayout.NORTH);
-		frame.add(pane, BorderLayout.CENTER);
-
-		SwingUtilities.invokeLater(new Runnable() {
-
+		addComponentListener(new ComponentAdapter() {
 			@Override
-			public void run() {
-				frame.setVisible(true);
+			public void componentResized(ComponentEvent e) {
+				point1 = new Point(getWidth() / 2, getHeight() / 2);
 			}
 		});
 	}
+
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				RenderingHints.VALUE_ANTIALIAS_ON);
+//		int w = getWidth();
+//		int h = getHeight();
+//		double theta, x, y;
+//
+//		g2.setPaint(Color.blue);
+//		double x1 = w * 3 / 24, y1 = h * 3 / 32, x2 = w * 11 / 24, y2 = y1;
+//		g2.draw(new Line2D.Double(x1, y1, x2, y2));
+//		// draw this arrow head at point x2, y2 and measure
+//		// angle theta relative to same point, ie, y2 - and x2 -
+//		theta = Math.atan2(y2 - y1, x2 - x1);
+//		drawArrow(g2, theta, x2, y2);
+//
+//		x1 = w * 3 / 8;
+//		y1 = h * 13 / 15;
+//		x2 = w * 2 / 3;
+//		y2 = y1;
+//		g2.draw(new Line2D.Double(x1, y1, x2, y2));
+//		theta = Math.atan2(y1 - y2, x1 - x2);
+//		drawArrow(g2, theta, x1, y1);
+//
+//		g2.setPaint(Color.red);
+//		x1 = w * 3 / 24;
+//		y1 = h * 4 / 32;
+//		x2 = x1;
+//		y2 = h * 18 / 32;
+//		g2.draw(new Line2D.Double(x1, y1, x2, y2));
+//		theta = Math.atan2(y2 - y1, x2 - x1);
+//		drawArrow(g2, theta, x2, y2);
+//
+//		g2.setPaint(Color.orange);
+//		x1 = w * 5 / 32;
+//		y1 = h * 27 / 32;
+//		x2 = w * 27 / 32;
+//		y2 = h * 5 / 32;
+//		g2.draw(new Line2D.Double(x1, y1, x2, y2));
+//		theta = Math.atan2(y2 - y1, x2 - x1);
+//		drawArrow(g2, theta, x2, y2);
+//
+//		g2.setPaint(Color.green.darker());
+//		x1 = w / 2;
+//		y1 = h / 2;
+//		x2 = w * 27 / 32;
+//		y2 = h * 27 / 32;
+//		g2.draw(new Line2D.Double(x1, y1, x2, y2));
+//		theta = Math.atan2(y2 - y1, x2 - x1);
+//		drawArrow(g2, theta, x2, y2);
+
+		g2.setPaint(Color.red);
+		g2.draw(new Line2D.Double(point1, point2));
+		drawArrow(g2, point1, point2);
+	}
+
+	private void drawArrow(Graphics2D g, Point point1, Point point2) {
+		double theta = Math.atan2(point2.getY() - point1.getY(), point2.getX() - point1.getX());
+		drawArrow(g, theta, point2.getX(), point2.getY());
+	}
+
+	private void drawArrow(Graphics2D g2, double theta, double x0, double y0) {
+		double x = x0 - barb * Math.cos(theta + phi);
+		double y = y0 - barb * Math.sin(theta + phi);
+		g2.draw(new Line2D.Double(x0, y0, x, y));
+		x = x0 - barb * Math.cos(theta - phi);
+		y = y0 - barb * Math.sin(theta - phi);
+		g2.draw(new Line2D.Double(x0, y0, x, y));
+	}
+
 }
