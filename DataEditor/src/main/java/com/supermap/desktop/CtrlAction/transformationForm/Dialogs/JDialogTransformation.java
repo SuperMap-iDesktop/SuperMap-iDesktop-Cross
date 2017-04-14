@@ -444,6 +444,7 @@ public class JDialogTransformation extends SmDialog {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				TableUtilities.stopEditing(table);
 				jDialogSetting.initData();
 				if (jDialogSetting.showDialog() == DialogResult.OK) {
 					boolean selected = checkBoxIsSaveAs.isSelected();
