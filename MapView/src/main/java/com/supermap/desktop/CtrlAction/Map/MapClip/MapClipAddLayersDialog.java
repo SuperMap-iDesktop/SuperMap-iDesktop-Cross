@@ -172,7 +172,9 @@ public class MapClipAddLayersDialog extends SmDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (e.getSource().equals(buttonSelectAll)) {
-                mutiTable.setRowSelectionInterval(0, mutiTable.getRowCount() - 1);
+                if (mutiTable.getRowCount()>=1) {
+                    mutiTable.setRowSelectionInterval(0, mutiTable.getRowCount() - 1);
+                }
                 isCanOK();
             } else if (e.getSource().equals(buttonInterverseSelectAll)) {
                 try {

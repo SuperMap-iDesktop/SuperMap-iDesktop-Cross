@@ -6,6 +6,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.JDialogTabularUpdateColumn;
+import com.supermap.desktop.utilities.TableUtilities;
 
 public class CtrlActionTabularUpdateColumn extends CtrlAction {
 
@@ -16,6 +17,7 @@ public class CtrlActionTabularUpdateColumn extends CtrlAction {
 	public void run() {
 		IFormTabular tabular = (IFormTabular) Application.getActiveApplication().getActiveForm();
 		JDialogTabularUpdateColumn dialogTabularUpdateColumn = new JDialogTabularUpdateColumn(tabular);
+		TableUtilities.stopEditing(tabular.getjTableTabular());
 		dialogTabularUpdateColumn.showDialog();
 	}
 

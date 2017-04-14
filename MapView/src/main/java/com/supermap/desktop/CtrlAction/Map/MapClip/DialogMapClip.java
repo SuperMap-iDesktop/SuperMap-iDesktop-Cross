@@ -244,7 +244,7 @@ public class DialogMapClip extends SmDialog {
     private ActionListener checkBoxActionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (e.getSource().equals(mapClipSaveMapPanel.getCheckBox())) {
+            if (e.getSource().equals(mapClipSaveMapPanel.getCheckBox()) && mapClipJTable.getRowCount()>=1) {
                 if (mapClipSaveMapPanel.getCheckBox().isSelected()) {
                     // 设置一个保存为地图的默认名称
                     if (StringUtilities.isNullOrEmpty(mapClipSaveMapPanel.getSaveMapTextField().getText())) {
