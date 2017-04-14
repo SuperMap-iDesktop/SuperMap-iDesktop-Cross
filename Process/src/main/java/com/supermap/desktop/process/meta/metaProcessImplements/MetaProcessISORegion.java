@@ -119,6 +119,6 @@ public class MetaProcessISORegion extends MetaProcess {
 
 	@Override
 	public Icon getIcon() {
-		return getIconByPath("/processresources/Process/buffer.png");
+		return getIconByPath("/processresources/Tree_Node1.png");
 	}
 }

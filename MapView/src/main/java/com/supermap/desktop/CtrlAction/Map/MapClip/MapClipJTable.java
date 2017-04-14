@@ -168,8 +168,9 @@ public class MapClipJTable extends MutiTable {
                 continue;
             }
         }
-
-        this.setRowSelectionInterval(0, 0);// 设置首行记录被选中
+        if(this.mapClipTableModel.getRowCount()>=1) {
+            this.setRowSelectionInterval(0, 0);// 设置首行记录被选中
+        }
     }
 
     /**

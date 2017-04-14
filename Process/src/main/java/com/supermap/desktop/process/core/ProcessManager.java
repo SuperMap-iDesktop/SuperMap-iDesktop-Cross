@@ -82,7 +82,7 @@ public class ProcessManager extends JPanel {
         standAloneGroup.addProcess(new MetaProcessBuffer());
         ProcessGroup importGroup = new ProcessGroup(null);
         importGroup.setKey(ProcessProperties.getString("String_Import"));
-        importGroup.setIconPath("/processresources/Process/import.png");
+        importGroup.setIconPath("/processresources/Tree_Node1.png");
         createImportGroup(importGroup);
         standAloneGroup.addProcess(importGroup);
         standAloneGroup.addProcess(new MetaProcessProjection());
@@ -99,10 +99,12 @@ public class ProcessManager extends JPanel {
     private void createImportGroup(ProcessGroup importGroup) {
         ProcessGroup autoCADType = new ProcessGroup(null);
         autoCADType.setKey(ProcessProperties.getString("String_filetype_Autocad"));
+        autoCADType.setIconPath("/processresources/Tree_Node2.png");
         autoCADType.addProcess(MetaProcessImportFactory.createMetaProcessImport("DXF"));
         autoCADType.addProcess(MetaProcessImportFactory.createMetaProcessImport("DWG"));
         ProcessGroup arcGISType = new ProcessGroup(null);
         arcGISType.setKey(ProcessProperties.getString("String_filetype_ArcGIS"));
+        arcGISType.setIconPath("/processresources/Tree_Node2.png");
         arcGISType.addProcess(MetaProcessImportFactory.createMetaProcessImport("SHP"));
         arcGISType.addProcess(MetaProcessImportFactory.createMetaProcessImport("GRD"));
         arcGISType.addProcess(MetaProcessImportFactory.createMetaProcessImport("TXT"));

@@ -117,6 +117,6 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
     @Override
     public Icon getIcon() {
-        return getIconByPath("/processresources/Process/KernelDensity.png");
+        return getIconByPath("/processresources/Tree_Node1.png");
     }
 }

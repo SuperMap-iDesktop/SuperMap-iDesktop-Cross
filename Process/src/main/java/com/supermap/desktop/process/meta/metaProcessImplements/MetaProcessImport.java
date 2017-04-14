@@ -152,6 +152,6 @@ public class MetaProcessImport extends MetaProcess {
 
     @Override
     public Icon getIcon() {
-        return getIconByPath("/processresources/Process/import.png");
+        return getIconByPath("/processresources/Tree_Node3.png");
     }
 }
