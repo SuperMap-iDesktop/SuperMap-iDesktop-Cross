@@ -199,6 +199,7 @@ public class JPanelChooseOriginal extends JPanelNewTransformationBase {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				TableUtilities.stopEditing(table);
 				jDialogSetting.initData();
 				if (this.jDialogSetting.showDialog() == DialogResult.OK) {
 					boolean selected = jDialogSetting.checkBox.isSelected();

@@ -12,6 +12,7 @@ import javax.swing.filechooser.FileFilter;
  */
 public class FileType {
     public static String LastFileFilter = "";
+    public static String LastFileFilterForSingle = "";
     // 文件类型描述
     private static final String[] descriptionNew = {
             ProcessProperties.getString("String_filetype_all"),
@@ -49,6 +50,34 @@ public class FileType {
             "png", "gif", "img", "raw", "sit", "tif", "tiff",
             "bip", "bil", "bsq", "dem", "e00", "wor", "vct", "ecw",
             "3ds", "gpx"};
+
+
+    public static SmFileChoose createImportFileChooser(String importType) {
+        String fileFilter;
+        if (!SmFileChoose.isModuleExist("MetaProcessImport" + importType)) {
+            if ("MapGIS".equalsIgnoreCase(importType)) {
+                fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(descriptionNew[4], "wat", "wan", "wal", "wap"));
+            } else if ("BIL".equalsIgnoreCase(importType)) {
+                fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(importType, "bil", "b"));
+            } else {
+                fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(importType, importType.toLowerCase()));
+            }
+            SmFileChoose.addNewNode(fileFilter, CommonProperties.getString("String_DefaultFilePath"),
+                    ProcessProperties.getString("String_FileType"), "MetaProcessImport" + importType, "OpenOne");
+        }
+        SmFileChoose fileChoose = new SmFileChoose("MetaProcessImport" + importType);
+
+        if (LastFileFilterForSingle != null) {
+            // 设置过滤器为当前选中
+            for (int i = 0; i < fileChoose.getChoosableFileFilters().length; i++) {
+                FileFilter tempFileFilter = fileChoose.getChoosableFileFilters()[i];
+                if (tempFileFilter.getDescription().equals(LastFileFilterForSingle)) {
+                    fileChoose.setFileFilter(tempFileFilter);
+                }
+            }
+        }
+        return fileChoose;
+    }
 
     /**
      * 创建导入的文件选择器

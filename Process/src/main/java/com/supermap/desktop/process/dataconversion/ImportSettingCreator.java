@@ -63,6 +63,8 @@ public class ImportSettingCreator implements IImportSettingCreator {
                     type = "Model" + type.toUpperCase();
                 } else if ("osgb".equalsIgnoreCase(type)) {
                     type = "ModelOSG";
+                }else if("TXT".equalsIgnoreCase(type)){
+                    type ="GRD";
                 }
                 Class importClass = Class.forName(importSetting + type);
                 result = (ImportSetting) importClass.newInstance();

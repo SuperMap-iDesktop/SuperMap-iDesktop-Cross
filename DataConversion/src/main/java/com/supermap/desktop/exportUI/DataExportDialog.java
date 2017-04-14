@@ -28,6 +28,7 @@ import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.TableUtilities;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -114,6 +115,7 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
     private ActionListener exportsSetListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            TableUtilities.stopEditing(tableExport);
             ExportsSetDialog exportsSetDialog = new ExportsSetDialog(DataExportDialog.this);
             replaceExportPanel();
             exportsSetDialog = null;

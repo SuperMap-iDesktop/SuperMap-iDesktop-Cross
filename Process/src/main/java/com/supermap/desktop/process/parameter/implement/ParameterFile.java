@@ -14,6 +14,7 @@ public class ParameterFile extends AbstractParameter implements ISelectionParame
     @ParameterField(name = "value")
     private String selectedPath;
     private String describe;
+    private String importType;
 
     public ParameterFile(String describe) {
         this.describe = describe;
@@ -58,5 +59,13 @@ public class ParameterFile extends AbstractParameter implements ISelectionParame
     @Override
     public void dispose() {
 
+    }
+
+    public String getImportType() {
+        return importType;
+    }
+
+    public void setImportType(String importType) {
+        this.importType = importType;
     }
 }

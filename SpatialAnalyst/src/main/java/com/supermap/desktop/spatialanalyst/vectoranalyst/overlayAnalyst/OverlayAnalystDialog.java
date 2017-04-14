@@ -505,7 +505,6 @@ public class OverlayAnalystDialog extends SmDialog {
 		String name = MapUtilities.getAvailableMapName(
 				MessageFormat.format("{0}@{1}", dataset.getName(), dataset.getDatasource().getAlias()), true);
 		IFormMap form = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, name);
-		Dataset[] datasets = new Dataset[3];
 		if (null != comboboxSourceDataset.getSelectedDataset()) {
 			GeoStyle sourceGeoStyle = new GeoStyle();
 			sourceGeoStyle.setLineColor(new Color(115, 115, 115));

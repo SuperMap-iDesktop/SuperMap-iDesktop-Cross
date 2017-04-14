@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.data.*;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
@@ -91,11 +92,11 @@ public class MetaProcessProjection extends MetaProcess {
 
 	@Override
 	public String getTitle() {
-		return "投影转换";
+		return ProcessProperties.getString("String_Projection");
 	}
 
 	@Override
 	public Icon getIcon() {
-		return getIconByPath("/processresources/Process/Projection.png");
+		return getIconByPath("/processresources/Tree_Node1.png");
 	}
 }
