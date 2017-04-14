@@ -338,6 +338,6 @@ public class MetaProcessInterpolator extends MetaProcess {
 
     @Override
     public Icon getIcon() {
-        return getIconByPath("/processresources/Process/interpolator.png");
+        return getIconByPath("/processresources/Tree_Node1.png");
     }
 }

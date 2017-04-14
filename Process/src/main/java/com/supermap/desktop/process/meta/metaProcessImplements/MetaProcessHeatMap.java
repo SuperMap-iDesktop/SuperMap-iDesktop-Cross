@@ -156,6 +156,6 @@ public class MetaProcessHeatMap extends MetaProcess {
 
     @Override
     public Icon getIcon() {
-        return getIconByPath("/processresources/Process/HeatMap.png");
+        return getIconByPath("/processresources/Tree_Node1.png");
     }
 }
