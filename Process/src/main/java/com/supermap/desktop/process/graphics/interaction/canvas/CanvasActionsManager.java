@@ -5,7 +5,7 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CanvasActionsManager implements CanvasAction {
 	private GraphCanvas canvas;
 	private ConcurrentHashMap<Class, CanvasAction> actions = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<CanvasAction, List<Class>> mutex = new ConcurrentHashMap<>();
 
 	public CanvasActionsManager(GraphCanvas canvas) {
 		this.canvas = canvas;
@@ -94,7 +95,7 @@ public class CanvasActionsManager implements CanvasAction {
 	public void clean() {
 		Set<Class> keys = this.actions.keySet();
 
-		if (keys != null && keys.size() > 0) {
+		if (keys.size() > 0) {
 			for (Class c :
 					keys) {
 				this.actions.get(c).clean();
@@ -107,10 +108,8 @@ public class CanvasActionsManager implements CanvasAction {
 	@Override
 	public void keyTyped(KeyEvent e) {
 		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
-		Iterator<Map.Entry<Class, CanvasAction>> iterator = set.iterator();
 
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasAction> entry = iterator.next();
+		for (Map.Entry<Class, CanvasAction> entry : set) {
 			if (entry.getValue().isEnabled()) {
 				entry.getValue().keyTyped(e);
 			}
@@ -120,10 +119,8 @@ public class CanvasActionsManager implements CanvasAction {
 	@Override
 	public void keyPressed(KeyEvent e) {
 		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
-		Iterator<Map.Entry<Class, CanvasAction>> iterator = set.iterator();
 
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasAction> entry = iterator.next();
+		for (Map.Entry<Class, CanvasAction> entry : set) {
 			if (entry.getValue().isEnabled()) {
 				entry.getValue().keyPressed(e);
 			}
@@ -133,10 +130,8 @@ public class CanvasActionsManager implements CanvasAction {
 	@Override
 	public void keyReleased(KeyEvent e) {
 		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
-		Iterator<Map.Entry<Class, CanvasAction>> iterator = set.iterator();
 
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasAction> entry = iterator.next();
+		for (Map.Entry<Class, CanvasAction> entry : set) {
 			if (entry.getValue().isEnabled()) {
 				entry.getValue().keyReleased(e);
 			}
@@ -146,10 +141,8 @@ public class CanvasActionsManager implements CanvasAction {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
-		Iterator<Map.Entry<Class, CanvasAction>> iterator = set.iterator();
 
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasAction> entry = iterator.next();
+		for (Map.Entry<Class, CanvasAction> entry : set) {
 			if (entry.getValue().isEnabled()) {
 				entry.getValue().mouseClicked(e);
 			}
@@ -159,10 +152,8 @@ public class CanvasActionsManager implements CanvasAction {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
-		Iterator<Map.Entry<Class, CanvasAction>> iterator = set.iterator();
 
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasAction> entry = iterator.next();
+		for (Map.Entry<Class, CanvasAction> entry : set) {
 			if (entry.getValue().isEnabled()) {
 				entry.getValue().mousePressed(e);
 			}
@@ -172,10 +163,8 @@ public class CanvasActionsManager implements CanvasAction {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
-		Iterator<Map.Entry<Class, CanvasAction>> iterator = set.iterator();
 
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasAction> entry = iterator.next();
+		for (Map.Entry<Class, CanvasAction> entry : set) {
 			if (entry.getValue().isEnabled()) {
 				entry.getValue().mouseReleased(e);
 			}
@@ -185,10 +174,8 @@ public class CanvasActionsManager implements CanvasAction {
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
-		Iterator<Map.Entry<Class, CanvasAction>> iterator = set.iterator();
 
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasAction> entry = iterator.next();
+		for (Map.Entry<Class, CanvasAction> entry : set) {
 			if (entry.getValue().isEnabled()) {
 				entry.getValue().mouseEntered(e);
 			}
@@ -198,10 +185,8 @@ public class CanvasActionsManager implements CanvasAction {
 	@Override
 	public void mouseExited(MouseEvent e) {
 		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
-		Iterator<Map.Entry<Class, CanvasAction>> iterator = set.iterator();
 
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasAction> entry = iterator.next();
+		for (Map.Entry<Class, CanvasAction> entry : set) {
 			if (entry.getValue().isEnabled()) {
 				entry.getValue().mouseExited(e);
 			}
@@ -211,10 +196,8 @@ public class CanvasActionsManager implements CanvasAction {
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
-		Iterator<Map.Entry<Class, CanvasAction>> iterator = set.iterator();
 
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasAction> entry = iterator.next();
+		for (Map.Entry<Class, CanvasAction> entry : set) {
 			if (entry.getValue().isEnabled()) {
 				entry.getValue().mouseDragged(e);
 			}
@@ -224,10 +207,8 @@ public class CanvasActionsManager implements CanvasAction {
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
-		Iterator<Map.Entry<Class, CanvasAction>> iterator = set.iterator();
 
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasAction> entry = iterator.next();
+		for (Map.Entry<Class, CanvasAction> entry : set) {
 			if (entry.getValue().isEnabled()) {
 				entry.getValue().mouseMoved(e);
 			}
@@ -237,10 +218,8 @@ public class CanvasActionsManager implements CanvasAction {
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
-		Iterator<Map.Entry<Class, CanvasAction>> iterator = set.iterator();
 
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasAction> entry = iterator.next();
+		for (Map.Entry<Class, CanvasAction> entry : set) {
 			if (entry.getValue().isEnabled()) {
 				entry.getValue().mouseWheelMoved(e);
 			}
