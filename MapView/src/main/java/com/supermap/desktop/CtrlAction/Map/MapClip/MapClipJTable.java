@@ -3,14 +3,17 @@ package com.supermap.desktop.CtrlAction.Map.MapClip;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.property.dataset.AvailableDatasetName;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
 import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.ui.MapControl;
+import sun.swing.DefaultLookup;
 
 import javax.swing.*;
 import javax.swing.table.*;
@@ -129,11 +132,20 @@ public class MapClipJTable extends MutiTable {
                 resultLayer.add(arrayList.get(i));
             }
         }
-
+        AvailableDatasetName availableDatasetName=new AvailableDatasetName();
         for (int i = 0; i < resultLayer.size(); i++) { // 对获得的图层进行遍历，当数据集类型属于矢量和影像时才进行添加
-            if (resultLayer.get(i).getDataset() instanceof DatasetVector ||
-                    resultLayer.get(i).getDataset() instanceof DatasetImage ||
-                    resultLayer.get(i).getDataset() instanceof DatasetGrid) {
+            if (resultLayer.get(i).getDataset().getType()!=DatasetType.NETWORK  &&
+                    resultLayer.get(i).getDataset().getType()!=DatasetType.NETWORK3D &&
+                    resultLayer.get(i).getDataset().getType()!=DatasetType.LINEM &&
+                    resultLayer.get(i).getDataset().getType()!=DatasetType.POINT3D &&
+                    resultLayer.get(i).getDataset().getType()!=DatasetType.LINE3D &&
+                    resultLayer.get(i).getDataset().getType()!=DatasetType.REGION3D
+//                    resultLayer.get(i).getDataset().getType()==DatasetType.LINE  ||
+//                    resultLayer.get(i).getDataset().getType()==DatasetType.REGION  ||
+//                    resultLayer.get(i).getDataset().getType()==DatasetType.REGION  ||
+//                    resultLayer.get(i).getDataset() instanceof DatasetImage ||
+//                    resultLayer.get(i).getDataset() instanceof DatasetGrid
+                    ) {
                 Layer layerCaption = resultLayer.get(i);
                 Datasource targetDatasource = resultLayer.get(i).getDataset().getDatasource();
                 if (targetDatasource.isReadOnly()) {
@@ -145,19 +157,30 @@ public class MapClipJTable extends MutiTable {
                 }
 
                 // 当初始化的时候就通过判断设置好结果数据集的名称
-                String targetDataset = resultLayer.get(i).getDataset().getName();
-                String origionDatasetName = targetDataset;
-                if (this.datasetsName.containsKey(targetDataset)) {
-                    targetDataset = this.datasetsName.get(targetDataset);
-                } else {
-                    while (!targetDatasource.getDatasets().isAvailableDatasetName(targetDataset)) {
-                        if (targetDataset.lastIndexOf("_") != -1) {
-                            targetDataset = targetDataset.substring(0, targetDataset.lastIndexOf("_"));
-                        }
-                        targetDataset = targetDatasource.getDatasets().getAvailableDatasetName(targetDataset);
-                    }
-                    this.datasetsName.put(origionDatasetName, targetDataset);
-                }
+                String targetDataset =availableDatasetName.getAvailableDatasetName(resultLayer.get(i).getDataset());
+//                String targetDataset = resultLayer.get(i).getDataset().getName();
+//                String origionDatasetName = targetDataset;
+//                if (this.datasetsName.containsKey(origionDatasetName)) {
+//                    targetDataset = this.datasetsName.get(origionDatasetName);
+//                } else {
+//                    while (!targetDatasource.getDatasets().isAvailableDatasetName(targetDataset)) {
+//                        if (targetDataset.indexOf("_") != -1) {
+//                            int index = targetDataset.lastIndexOf("_");
+//                            if (StringUtilities.isNumber(targetDataset.substring(index + 1, targetDataset.length()))) {
+//                                Integer num = Integer.valueOf(targetDataset.substring(index + 1, targetDataset.length()));
+//                                num = num + 1;
+//                                targetDataset = targetDataset.substring(0, index + 1) + num.toString();
+//                            } else if (index==targetDataset.length()-1) {
+//                                targetDataset = targetDataset + "1";
+//                            } else {
+//                                targetDataset = targetDataset + "_1";
+//                            }
+//                        } else {
+//                            targetDataset = targetDataset + "_1";
+//                        }
+//                    }
+//                    this.datasetsName.put(origionDatasetName, targetDataset);
+//                }
                 String clipType = MapViewProperties.getString("String_MapClip_In");
                 String erase = MapViewProperties.getString("String_MapClip_No");
                 String exactClip = MapViewProperties.getString("String_MapClip_No");
@@ -168,7 +191,7 @@ public class MapClipJTable extends MutiTable {
                 continue;
             }
         }
-        if(this.mapClipTableModel.getRowCount()>=1) {
+        if (this.mapClipTableModel.getRowCount() >= 1) {
             this.setRowSelectionInterval(0, 0);// 设置首行记录被选中
         }
     }
@@ -213,5 +236,16 @@ public class MapClipJTable extends MutiTable {
             return jComponent;
         }
     }
+
+//    class  CellIsNotEnableRender implements TableCellRenderer{
+//        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+//
+//            if (!isSelected && !table.isCellEditable(row,column)){
+//                this.setBackground(table.getTableHeader().getBackground());
+//                this.setForeground(table.getTableHeader().getForeground());
+//            }
+//            return value;
+//        }
+//    }
 
 }
