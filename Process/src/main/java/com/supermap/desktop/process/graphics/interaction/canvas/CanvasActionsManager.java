@@ -5,6 +5,7 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CanvasActionsManager implements CanvasAction {
 	private GraphCanvas canvas;
 	private ConcurrentHashMap<Class, CanvasAction> actions = new ConcurrentHashMap<>();
-	private ConcurrentHashMap<CanvasAction, List<Class>> mutex = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<Class, List<Class>> mutex = new ConcurrentHashMap<>();
 
 	public CanvasActionsManager(GraphCanvas canvas) {
 		this.canvas = canvas;
@@ -41,6 +42,8 @@ public class CanvasActionsManager implements CanvasAction {
 
 		if (this.actions.containsKey(c)) {
 			this.actions.get(c).clean();
+		} else {
+			this.mutex.put(c, new ArrayList<Class>());
 		}
 
 		this.actions.put(c, action);
@@ -54,6 +57,33 @@ public class CanvasActionsManager implements CanvasAction {
 		CanvasAction action = this.actions.get(c);
 		action.clean();
 		this.actions.remove(c);
+		this.mutex.remove(c);
+	}
+
+	public void addMutexAction(Class action, Class waiting) {
+		if (action == waiting || action == null || waiting == null) {
+			return;
+		}
+
+		if (this.mutex.containsKey(action)) {
+			List<Class> waitingActions = this.mutex.get(action);
+			if (!waitingActions.contains(waiting)) {
+				waitingActions.add(waiting);
+			}
+		}
+	}
+
+	public void removeMutexAction(Class action, Class waiting) {
+		if (action == waiting || action == null || waiting == null) {
+			return;
+		}
+
+		if (this.mutex.containsKey(action)) {
+			List<Class> waitingActions = this.mutex.get(action);
+			if (waitingActions.contains(waiting)) {
+				waitingActions.remove(waiting);
+			}
+		}
 	}
 
 	public CanvasAction getAction(Class c) {
