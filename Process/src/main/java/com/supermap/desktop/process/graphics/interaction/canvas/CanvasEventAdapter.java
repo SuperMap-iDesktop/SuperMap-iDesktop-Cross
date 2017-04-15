@@ -7,7 +7,7 @@ import java.awt.event.MouseWheelEvent;
 /**
  * Created by highsad on 2017/3/3.
  */
-public abstract class CanvasEventAdapter implements CanvasEventHandler {
+public abstract class CanvasEventAdapter implements CanvasAction {
 	private boolean enable = true;
 
 	@Override

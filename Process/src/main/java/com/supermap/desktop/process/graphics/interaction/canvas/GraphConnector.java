@@ -58,9 +58,9 @@ public class GraphConnector extends CanvasEventAdapter {
 	public void connecting() {
 		CanvasCursor.setConnectingCursor(this.canvas);
 		this.previewLine = new DefaultLine(this.canvas);
-		this.canvas.setEventHandlerEnabled(Selection.class, false);
-		this.canvas.setEventHandlerEnabled(DraggedHandler.class, false);
-		this.canvas.setEventHandlerEnabled(GraphCreator.class, false);
+		this.canvas.setActionEnabled(Selection.class, false);
+		this.canvas.setActionEnabled(DraggedHandler.class, false);
+		this.canvas.setActionEnabled(GraphCreator.class, false);
 	}
 
 	public void preview(Graphics g) {
@@ -224,9 +224,9 @@ public class GraphConnector extends CanvasEventAdapter {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			CanvasCursor.resetCursor(this.canvas);
-			this.canvas.setEventHandlerEnabled(Selection.class, true);
-			this.canvas.setEventHandlerEnabled(DraggedHandler.class, true);
-			this.canvas.setEventHandlerEnabled(GraphCreator.class, true);
+			this.canvas.setActionEnabled(Selection.class, true);
+			this.canvas.setActionEnabled(DraggedHandler.class, true);
+			this.canvas.setActionEnabled(GraphCreator.class, true);
 		}
 	}
 

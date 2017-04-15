@@ -27,7 +27,7 @@ public class DraggedHandler extends CanvasEventAdapter {
 		this.draggedGraphs = null;
 		this.dragStart = null;
 		this.dirtys = null;
-		this.canvas.setEventHandlerEnabled(Selection.class, true);
+		this.canvas.setActionEnabled(Selection.class, true);
 		CanvasCursor.resetCursor(this.canvas);
 	}
 
@@ -52,7 +52,7 @@ public class DraggedHandler extends CanvasEventAdapter {
 					IGraph dragged = this.draggedGraphs[i];
 					this.dirtys[i] = new Rectangle(dragged.getBounds());
 				}
-				this.canvas.setEventHandlerEnabled(Selection.class, false);
+				this.canvas.setActionEnabled(Selection.class, false);
 			}
 		}
 	}

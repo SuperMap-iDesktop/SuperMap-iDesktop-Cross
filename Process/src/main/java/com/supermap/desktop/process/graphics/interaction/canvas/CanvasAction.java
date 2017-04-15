@@ -11,7 +11,7 @@ import java.awt.event.MouseWheelListener;
  * 2. 需要做互斥管理，比如进行拖拽操作的时候，需要禁用选择操作。
  * 3. 当前互斥实现的方式存在一个主要的问题是，新增一种交互实现，无法很好的与已有交互实现进行互斥的管理，只能去更改已有交互的实现代码。
  */
-public interface CanvasEventHandler extends MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
+public interface CanvasAction extends MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
 	boolean isEnabled();
 
 	void setEnabled(boolean enabled);
