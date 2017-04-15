@@ -3,7 +3,11 @@ package com.supermap.desktop.utilities;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CoreProperties;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.channels.FileChannel;
 
 public class FileUtilities {
@@ -196,7 +200,7 @@ public class FileUtilities {
 			result += File.separator;
 		}
 
-		result += "Supermap" + File.separator + "Cross" + File.separator;
+		result += "SuperMap" + File.separator + "iDesktop Cross" + File.separator;
 		return result;
 	}
 
