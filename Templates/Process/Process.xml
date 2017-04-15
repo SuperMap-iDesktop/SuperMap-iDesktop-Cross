@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<root xmlns="http://www.supermap.com.cn/desktop" version="9.0.x">
+    <process name="流程控制" iconPath="">
+        <process key="" name="本地" iconPath="/processresources/Process/native.png">
+            <process key="Buffer" name="缓冲区分析"/>
+            <process name="数据导入">
+                <process name="AutoCAD交换格式">
+                    <process key="ImportDXF" name=".DXF"/>
+                    <process key="ImportDWG" name=".DWG"/>
+                </process>
+                <process name="ArcGIS交换格式">
+                    <process key="ImportDXF" name=".SHP"/>
+                    <process key="ImportGRD" name=".GRD"/>
+                    <process key="ImportTXT" name=".TXT"/>
+                    <process key="ImportEOO" name=".EOO"/>
+                    <process key="ImportDEM" name=".DEM"/>
+                    <process key="ImportDBF" name=".DBF"/>
+                </process>
+            </process>
+            <process key="Projection" name="投影转换"/>
+            <process name="差值分析">
+                <process key="Interpolator_IDW" name="距离反比权重"/>
+                <process key="Interpolator_RBF" name="样条"/>
+                <process key="Interpolator_UniversalKRIGING" name="普通吕克金"/>
+                <process key="Interpolator_SimpleKRIGING" name="简单吕克金"/>
+                <process key="Interpolator_KRIGING" name="范吕克金"/>
+            </process>
+            <process name="叠加分析">
+                <process key="OverlayAnalyst_CLIP" name="裁剪"/>
+                <process key="OverlayAnalyst_UNION" name="合并"/>
+                <process key="OverlayAnalyst_ERASE" name="擦除"/>
+                <process key="OverlayAnalyst_IDENTITY" name="同一"/>
+                <process key="OverlayAnalyst_INTERSECT" name="求交"/>
+                <process key="OverlayAnalyst_UPDATE" name="更新"/>
+                <process key="OverlayAnalyst_XOR" name="对称差"/>
+            </process>
+            <process key="SpatialIndex" name="重构空间索引"/>
+            <process key="SqlQuery" name="Sql查询"/>
+            <process name="表面分析">
+                <process key="ISOLine" name="提取等值线"/>
+                <process key="ISOPoint" name="点数据提取等值线"/>
+                <process key="ISORegion" name="提取等值面"/>
+            </process>
+        </process>
+        <process name="Online" iconPath="/processresources/Process/online.png">
+            <process key="HeatMap" name="计算热度图"/>
+            <process key="KERNEL_DENSITY" name="核密度分析"/>
+        </process>
+    </process>
+</root>
