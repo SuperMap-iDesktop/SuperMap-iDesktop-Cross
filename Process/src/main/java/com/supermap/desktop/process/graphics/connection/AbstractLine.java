@@ -78,7 +78,7 @@ public abstract class AbstractLine {
 	}
 
 	public Stroke getStroke() {
-		return new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10);
+		return new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10);
 	}
 
 	public void paint(Graphics graphics) {
@@ -90,7 +90,7 @@ public abstract class AbstractLine {
 			graphics2D.setColor(Color.GRAY);
 			graphics2D.drawLine(getStartPoint().x, getStartPoint().y, getEndPoint().x, getEndPoint().y);
 
-			Stroke stroke = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10);
+			Stroke stroke = new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10);
 			graphics2D.setStroke(stroke);
 			graphics2D.setColor(Color.GRAY);
 			graphics2D.draw(this.arrow);
