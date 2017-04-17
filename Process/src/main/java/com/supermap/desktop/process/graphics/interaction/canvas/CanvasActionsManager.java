@@ -5,10 +5,7 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -18,6 +15,14 @@ public class CanvasActionsManager implements CanvasAction {
 	private GraphCanvas canvas;
 	private ConcurrentHashMap<Class, CanvasAction> actions = new ConcurrentHashMap<>();
 	private ConcurrentHashMap<Class, List<Class>> mutex = new ConcurrentHashMap<>();
+
+	/**
+	 * 管理所已安装的 CanvasAction 的优先级。数值越小，优先级越高。
+	 * Managing the priorities of all installed {@link ActionType}.
+	 * The smaller the number value,the higher the priority.
+	 */
+	private ConcurrentHashMap<ActionType, ConcurrentHashMap<Class, Integer>> priorities = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<ActionType, List<Class>> sortedPriorities = new ConcurrentHashMap<>();
 
 	public CanvasActionsManager(GraphCanvas canvas) {
 		this.canvas = canvas;
@@ -60,6 +65,10 @@ public class CanvasActionsManager implements CanvasAction {
 		this.mutex.remove(c);
 	}
 
+	/**
+	 * @param action
+	 * @param waiting
+	 */
 	public void addMutexAction(Class action, Class waiting) {
 		if (action == waiting || action == null || waiting == null) {
 			return;
@@ -84,6 +93,85 @@ public class CanvasActionsManager implements CanvasAction {
 				waitingActions.remove(waiting);
 			}
 		}
+	}
+
+	/**
+	 * 设置优先级
+	 *
+	 * @param actionType
+	 * @param action
+	 * @param priority
+	 */
+	public void setPriority(ActionType actionType, Class action, int priority) {
+		if (!this.actions.containsKey(action)) {
+			return;
+		}
+
+		if (!this.priorities.containsKey(actionType) || this.priorities.get(actionType) == null) {
+			this.priorities.put(actionType, new ConcurrentHashMap<Class, Integer>());
+			this.sortedPriorities.put(actionType, new ArrayList<Class>());
+		}
+
+		ConcurrentHashMap<Class, Integer> appointedPrios = this.priorities.get(actionType);
+		appointedPrios.put(action, priority);
+		this.sortedPriorities.get(actionType).add(action);
+		prioritizeActions(actionType);
+	}
+
+	/**
+	 * 取消优先级设置
+	 *
+	 * @param actionType
+	 * @param action
+	 */
+	public void clearPriority(ActionType actionType, Class action) {
+		if (!this.actions.containsKey(action)) {
+			return;
+		}
+
+		ConcurrentHashMap<Class, Integer> appointedPrios = this.priorities.get(actionType);
+		if (appointedPrios != null && appointedPrios.containsKey(action)) {
+			appointedPrios.remove(action);
+			this.sortedPriorities.get(actionType).remove(action);
+		}
+	}
+
+	private void prioritizeActions(ActionType actionType) {
+		if (!this.priorities.containsKey(actionType)
+				|| this.priorities.get(actionType) == null
+				|| this.priorities.get(actionType).size() == 0) {
+			return;
+		}
+
+		final ConcurrentHashMap<Class, Integer> appointedPrios = this.priorities.get(actionType);
+
+		Collections.sort(this.sortedPriorities.get(actionType), new Comparator<Class>() {
+			@Override
+			public int compare(Class o1, Class o2) {
+				if (appointedPrios.get(o1) < appointedPrios.get(o2)) {
+					return -1;
+				} else if (appointedPrios.get(o1) > appointedPrios.get(o2)) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		});
+	}
+
+	private List<Class> getSortedActions(ActionType actionType) {
+		List<Class> result = null;
+		List<Class> prioritized = this.sortedPriorities.containsKey(actionType) ? this.sortedPriorities.get(actionType) : null;
+
+		if (prioritized != null) {
+			result.addAll(prioritized);
+		}
+
+		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+		for (Map.Entry<Class, CanvasAction> entry : set) {
+
+		}
+		return result;
 	}
 
 	public CanvasAction getAction(Class c) {
