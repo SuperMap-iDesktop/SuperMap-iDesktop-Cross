@@ -34,8 +34,8 @@ public class GraphCreator extends CanvasEventAdapter {
 				this.previewDecorator.decorate((AbstractGraph) this.toCreation);
 			}
 
-			this.canvas.setEventHandlerEnabled(Selection.class, false);
-			this.canvas.setEventHandlerEnabled(DraggedHandler.class, false);
+			this.canvas.setActionEnabled(Selection.class, false);
+			this.canvas.setActionEnabled(DraggedHandler.class, false);
 		}
 	}
 
@@ -100,8 +100,8 @@ public class GraphCreator extends CanvasEventAdapter {
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			this.canvas.setEventHandlerEnabled(Selection.class, true);
-			this.canvas.setEventHandlerEnabled(DraggedHandler.class, true);
+			this.canvas.setActionEnabled(Selection.class, true);
+			this.canvas.setActionEnabled(DraggedHandler.class, true);
 		}
 	}
 

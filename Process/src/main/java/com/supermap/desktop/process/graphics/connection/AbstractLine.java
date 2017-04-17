@@ -2,6 +2,7 @@ package com.supermap.desktop.process.graphics.connection;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
+import com.supermap.desktop.utilities.DoubleUtilities;
 
 import java.awt.*;
 import java.awt.geom.GeneralPath;
@@ -63,6 +64,10 @@ public abstract class AbstractLine {
 	private void computeArrowBounds() {
 		if (this.start != null && this.end != null) {
 			Point[] arrowVertexes = computeArrow(this.start, this.end);
+			if (arrowVertexes == null || arrowVertexes.length == 0) {
+				return;
+			}
+
 			this.arrow.reset();
 			this.arrow.moveTo(arrowVertexes[0].getX(), arrowVertexes[0].getY());
 			this.arrow.lineTo(this.end.getX(), this.end.getY());
@@ -82,10 +87,10 @@ public abstract class AbstractLine {
 			Stroke originStroke = graphics2D.getStroke();
 
 			graphics2D.setStroke(getStroke());
-			graphics2D.setColor(Color.LIGHT_GRAY);
+			graphics2D.setColor(Color.GRAY);
 			graphics2D.drawLine(getStartPoint().x, getStartPoint().y, getEndPoint().x, getEndPoint().y);
 
-			Stroke stroke = new BasicStroke(1, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10);
+			Stroke stroke = new BasicStroke(2, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 10);
 			graphics2D.setStroke(stroke);
 			graphics2D.setColor(Color.GRAY);
 			graphics2D.draw(this.arrow);
@@ -116,15 +121,15 @@ public abstract class AbstractLine {
 
 	public Point[] computeArrow(int startX, int startY, int endX, int endY) {
 		double awrad = 15 * Math.PI / 180;// 30表示角度，但是在计算中要用弧度进行计算，所以要把角度转换为弧度
-		double arraow_len = 20;// 箭头长度
+		double arraow_len = 16;// 箭头长度
 		double[] arr1 = rotateVec(endX - startX, endY - startY, awrad, arraow_len);
 		double[] arr2 = rotateVec(endX - startX, endY - startY, -awrad, arraow_len);
 		double x1 = endX - arr1[0]; // (x3,y3)是第一端点
 		double y1 = endY - arr1[1];
 		double x2 = endX - arr2[0]; // (x4,y4)是第二端点
 		double y2 = endY - arr2[1];
-		Point point1 = new Point(intValue(x1), intValue(y1));
-		Point point2 = new Point(intValue(x2), intValue(y2));
+		Point point1 = new Point(DoubleUtilities.intValue(x1), DoubleUtilities.intValue(y1));
+		Point point2 = new Point(DoubleUtilities.intValue(x2), DoubleUtilities.intValue(y2));
 		return new Point[]{point1, point2};
 	}
 
@@ -141,10 +146,5 @@ public abstract class AbstractLine {
 		mathstr[0] = vx;
 		mathstr[1] = vy;
 		return mathstr;
-	}
-
-	private static int intValue(double value) {
-		Double d = new Double(value);
-		return d.intValue();
 	}
 }

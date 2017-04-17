@@ -27,10 +27,6 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by highsad on 2017/1/17.
@@ -56,7 +52,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private CoordinateTransform coordinateTransform = new CoordinateTransform(this); // 用以在画布平移、缩放等操作过后进行坐标转换
 	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory(this); // 元素绘制的可扩展类
 	private IGraphEventHandlerFactory graphHandlerFactory = new DefaultGraphEventHanderFactory(); // 在某具体元素上进行的可扩展交互类
-	private ConcurrentHashMap<Class, CanvasEventHandler> canvasHandlers = new ConcurrentHashMap<>(); // 统一入口的画布事件接口，通过添加 CanvasEventHandler 对象实现 Canvas 的事件处理
+	private CanvasActionsManager actionsManager = new CanvasActionsManager(this);
 	private IGraphConnection connection = new ListGraphConnection(this);
 
 	private CanvasTranslation translation = new CanvasTranslation(this);
@@ -153,19 +149,11 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		this.creator.create(graph);
 	}
 
-	public void installCanvasEventHandler(Class c, CanvasEventHandler handler) {
-		if (c == null) {
-			return;
-		}
-
-		if (this.canvasHandlers.contains(c)) {
-			this.canvasHandlers.get(c).clean();
-		}
-
-		this.canvasHandlers.put(c, handler);
+	public void installCanvasEventHandler(Class c, CanvasAction action) {
+		this.actionsManager.installAction(c, action);
 	}
 
-	public void installCanvasEventHandler(CanvasEventHandler handler) {
+	public void installCanvasEventHandler(CanvasAction handler) {
 		if (handler == null) {
 			return;
 		}
@@ -174,19 +162,12 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		installCanvasEventHandler(c, handler);
 	}
 
-	public CanvasEventHandler getEventHandler(Class c) {
-		if (this.canvasHandlers.size() > 0 && this.canvasHandlers.containsKey(c)) {
-			return this.canvasHandlers.get(c);
-		} else {
-			return null;
-		}
+	public CanvasAction getAction(Class c) {
+		return this.actionsManager.getAction(c);
 	}
 
-	public void setEventHandlerEnabled(Class c, boolean enabled) {
-		CanvasEventHandler handler = getEventHandler(c);
-		if (handler != null) {
-			handler.setEnabled(enabled);
-		}
+	public void setActionEnabled(Class c, boolean enabled) {
+		this.actionsManager.setActionEnabled(c, enabled);
 	}
 
 	public CoordinateTransform getCoordinateTransform() {
@@ -394,15 +375,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
-		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mouseClicked(e);
-			}
-		}
+		this.actionsManager.mouseClicked(e);
 	}
 
 	public IGraph[] findGraphs(Point point) {
@@ -427,80 +400,32 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 			}
 		}
 
-		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
-		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mousePressed(e);
-			}
-		}
+		this.actionsManager.mousePressed(e);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
-		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mouseReleased(e);
-			}
-		}
+		this.actionsManager.mouseReleased(e);
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
-		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mouseEntered(e);
-			}
-		}
+		this.actionsManager.mouseEntered(e);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
-		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mouseExited(e);
-			}
-		}
+		this.actionsManager.mouseExited(e);
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
-		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mouseDragged(e);
-			}
-		}
+		this.actionsManager.mouseDragged(e);
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
-		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mouseMoved(e);
-			}
-		}
+		this.actionsManager.mouseMoved(e);
 	}
 
 	private void repaint(IGraph graph, Point point) {
@@ -518,15 +443,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
-		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mouseWheelMoved(e);
-			}
-		}
+		this.actionsManager.mouseWheelMoved(e);
 	}
 
 	public void addGraphSelectChangedListener(GraphSelectChangedListener listener) {
@@ -605,40 +522,16 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
-		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().keyTyped(e);
-			}
-		}
+		this.actionsManager.keyTyped(e);
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
-		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().keyPressed(e);
-			}
-		}
+		this.actionsManager.keyPressed(e);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		Set<Map.Entry<Class, CanvasEventHandler>> set = this.canvasHandlers.entrySet();
-		Iterator<Map.Entry<Class, CanvasEventHandler>> iterator = set.iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry<Class, CanvasEventHandler> entry = iterator.next();
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().keyReleased(e);
-			}
-		}
+		this.actionsManager.keyReleased(e);
 	}
 }

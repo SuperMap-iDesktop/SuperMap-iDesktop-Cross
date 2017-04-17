@@ -32,8 +32,8 @@ public final class DatasetTypes extends Type {
 	public static final DatasetTypes POINTEPS = new DatasetTypes("pointEPS", 0x20000000);
 	public static final DatasetTypes LINEEPS = new DatasetTypes("lineEPS", 0x40000000);
 	public static final DatasetTypes REGIONEPS = new DatasetTypes("regionEPS", 0x80000000);
-	public static final DatasetTypes TEXTEPS = new DatasetTypes("textEPS", 0x0100000000l);
-	public final static DatasetTypes TABULAR = new DatasetTypes("tabular", 0x0200000000l);
+	public static final DatasetTypes TEXTEPS = new DatasetTypes("textEPS", 0x0100000000L);
+	public final static DatasetTypes TABULAR = new DatasetTypes("tabular", 0x0200000000L);
 
 	public final static DatasetTypes SIMPLE_VECTOR = new DatasetTypes("SimpleVector",
 			POINT.getValue() | LINE.getValue() | REGION.getValue());

@@ -120,16 +120,18 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
                     }else{
                         percentListener.i=i;
                         percentListener.datasetName=dataset.getName();
-                        /*VectorClip.removeSteppedListener(percentListener);
-                        RasterClip.removeSteppedListener(percentListener);*/
                     }
                     String targetDatasetName;
 
                     Layer layer = (Layer) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_LAYER);
                     if (dataset instanceof DatasetVector) {
-//                        VectorClip.addSteppedListener(percentListener);
 
                         DatasetVector sourceDataset = (DatasetVector) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_SOURCEDATASET);
+                        PrjCoordSys prjCoordSys=sourceDataset.getPrjCoordSys();
+                        if ( formMap.getMapControl().getMap().isDynamicProjection() &&
+                                !sourceDataset.getPrjCoordSys().equals(formMap.getMapControl().getMap().getPrjCoordSys())){
+                            CoordSysTranslator.convert(sourceDataset,formMap.getMapControl().getMap().getPrjCoordSys(),formMap.getMapControl().getMap().getDynamicPrjTransParameter(),formMap.getMapControl().getMap().getDynamicPrjTransMethond());
+                        }
                         GeoRegion userRegion = (GeoRegion) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_USERREGION);
                         boolean isClipInRegion = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISCLIPINREGION);
                         boolean isEraseSource = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE);
@@ -137,36 +139,43 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
                         targetDatasetName = (String) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETNAME);
 
                         // 对要裁剪的数据集通过名称做一个判断，如果名字已经存在，说明数据集已经裁剪过了，不需要裁剪，将之前裁剪的结果再次加入地图
-//                        Thread.currentThread().sleep(1000);
                         if (targetDatasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
                             this.resultDataset = VectorClip.clipDatasetVector(sourceDataset, userRegion, isClipInRegion,
                                     isEraseSource, targetDatasource, targetDatasetName);
+                            this.resultDataset.setPrjCoordSys(prjCoordSys);
                         } else {
                             if (this.resultMap != null) {
                                 MapUtilities.findLayerByName(this.resultMap, layer.getName()).setDataset(targetDatasource.getDatasets().get(targetDatasetName));
                             }
                             this.resultDataset = null;
                         }
+                        sourceDataset.setPrjCoordSys(prjCoordSys);
                     } else {
-//                        RasterClip.addSteppedListener(percentListener);
                         Dataset sourceDataset = (Dataset) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_SOURCEDATASET);
+                        PrjCoordSys prjCoordSys=sourceDataset.getPrjCoordSys();
+
+                        if ( formMap.getMapControl().getMap().isDynamicProjection() &&
+                                !sourceDataset.getPrjCoordSys().equals(formMap.getMapControl().getMap().getPrjCoordSys())){
+                            CoordSysTranslator.convert(sourceDataset,formMap.getMapControl().getMap().getPrjCoordSys(),formMap.getMapControl().getMap().getDynamicPrjTransParameter(),formMap.getMapControl().getMap().getDynamicPrjTransMethond());
+                        }
                         GeoRegion userRegion = (GeoRegion) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_USERREGION);
                         boolean isClipInRegion = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISCLIPINREGION);
                         boolean isExactClip = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE);
                         Datasource targetDatasource = (Datasource) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETSOURCE);
                         targetDatasetName = (String) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETNAME);
 
-//                        Thread.currentThread().sleep(1000);
                         // 对要裁剪的数据集通过名称做一个判断，如果名字已经存在，说明数据集已经裁剪过了，不需要裁剪，将之前裁剪的结果再次加入地图
                         if (targetDatasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
                             this.resultDataset = RasterClip.clip(sourceDataset, userRegion, isClipInRegion,
                                     isExactClip, targetDatasource, targetDatasetName);
+                            this.resultDataset.setPrjCoordSys(prjCoordSys);
                         } else {
                             if (this.resultMap != null) {
                                 MapUtilities.findLayerByName(this.resultMap, layer.getName()).setDataset(targetDatasource.getDatasets().get(targetDatasetName));
                             }
                             this.resultDataset = null;
                         }
+                        sourceDataset.setPrjCoordSys(prjCoordSys);
                     }
 
                     if (this.resultDataset != null) {
