@@ -6,6 +6,7 @@ import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
 import com.supermap.data.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
+import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
@@ -88,7 +89,7 @@ public class MetaProcessISOLine extends MetaProcess {
 		this.minGrid = new ParameterTextField(CommonProperties.getString("String_MINGrid"));
 		this.maxISOLine = new ParameterTextField(CommonProperties.getString("String_MAXISOLine"));
 		this.minISOLine = new ParameterTextField(CommonProperties.getString("String_MINISOLine"));
-		this.isoLine = new ParameterTextField(CommonProperties.getString("String_ISOLine"));
+		this.isoLine = new ParameterTextField(CommonProperties.getString("String_ISOData"));
 		this.datumValue = new ParameterTextField(CommonProperties.getString("String_DatumValue"));
 		this.interval = new ParameterTextField(CommonProperties.getString("String_Interval"));
 		this.resampleTolerance = new ParameterTextField(CommonProperties.getString("String_ResampleTolerance"));
