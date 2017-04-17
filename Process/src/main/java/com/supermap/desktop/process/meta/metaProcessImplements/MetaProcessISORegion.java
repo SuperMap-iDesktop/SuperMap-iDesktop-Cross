@@ -50,6 +50,7 @@ public class MetaProcessISORegion extends MetaProcess {
         sourceDatasource = new ParameterDatasource();
         sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
         dataset = new ParameterSingleDataset(DatasetType.GRID);
+
         targetDataset = new ParameterSaveDataset();
         targetDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
         targetDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
@@ -58,7 +59,7 @@ public class MetaProcessISORegion extends MetaProcess {
         minGrid = new ParameterTextField(CommonProperties.getString("String_MINGrid"));
         maxISORegion = new ParameterTextField(CommonProperties.getString("String_MAXISORegion"));
         minISORegion = new ParameterTextField(CommonProperties.getString("String_MINISORegion"));
-        isoLine = new ParameterTextField(CommonProperties.getString("String_ISOLine"));
+        isoLine = new ParameterTextField(CommonProperties.getString("String_ISOData"));
         if (null != dataset.getSelectedItem() && dataset.getSelectedItem() instanceof DatasetGrid) {
             maxGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMaxValue());
             minGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMinValue());

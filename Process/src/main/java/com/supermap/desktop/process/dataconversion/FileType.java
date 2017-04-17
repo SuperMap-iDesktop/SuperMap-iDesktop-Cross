@@ -61,7 +61,7 @@ public class FileType {
             } else if ("BIL".equalsIgnoreCase(importType)) {
                 fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(importType, "bil", "b"));
             } else {
-                fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"),importType,importType), importType.toLowerCase()));
+                fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"),importType,importType.toLowerCase()), importType.toLowerCase()));
             }
             SmFileChoose.addNewNode(fileFilter, CommonProperties.getString("String_DefaultFilePath"),
                     ProcessProperties.getString("String_FileType"), "MetaProcessImport" + importType, "OpenOne");
