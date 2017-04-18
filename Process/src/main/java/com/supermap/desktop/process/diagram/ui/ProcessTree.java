@@ -4,7 +4,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.drop.DropAndDragHandler;
 import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
 import com.supermap.desktop.process.FormProcess;
-import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.WorkflowParser;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -90,13 +89,7 @@ public class ProcessTree extends JTree {
 			if (tree.getLastSelectedPathComponent() == null) {
 				return "";
 			}
-			String result = "";
-			if (((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject() instanceof IProcess) {
-				result = ((IProcess) ((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject()).getTitle();
-			} else {
-				result = ((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject().toString();
-			}
-			return result;
+			return ((ProcessTreeNodeBean) ((DefaultMutableTreeNode) tree.getLastSelectedPathComponent()).getUserObject()).getKey();
 		}
 	}
 
