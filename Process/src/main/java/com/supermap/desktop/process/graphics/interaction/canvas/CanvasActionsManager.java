@@ -160,7 +160,7 @@ public class CanvasActionsManager implements CanvasAction {
 	}
 
 	private List<Class> getSortedActions(ActionType actionType) {
-		List<Class> result = null;
+		List<Class> result = new ArrayList<>();
 		List<Class> prioritized = this.sortedPriorities.containsKey(actionType) ? this.sortedPriorities.get(actionType) : null;
 
 		if (prioritized != null) {
@@ -169,7 +169,9 @@ public class CanvasActionsManager implements CanvasAction {
 
 		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
 		for (Map.Entry<Class, CanvasAction> entry : set) {
-
+			if (!result.contains(entry.getKey())) {
+				result.add(entry.getKey());
+			}
 		}
 		return result;
 	}
@@ -225,121 +227,209 @@ public class CanvasActionsManager implements CanvasAction {
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//
+//		for (Map.Entry<Class, CanvasAction> entry : set) {
+//			if (entry.getValue().isEnabled()) {
+//				entry.getValue().keyTyped(e);
+//			}
+//		}
 
-		for (Map.Entry<Class, CanvasAction> entry : set) {
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().keyTyped(e);
+		List<Class> keys = getSortedActions(ActionType.KEY_TYPED);
+		for (int i = 0, size = keys.size(); i < size; i++) {
+			CanvasAction action = this.actions.get(keys.get(i));
+			if (action.isEnabled()) {
+				action.keyTyped(e);
 			}
 		}
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//
+//		for (Map.Entry<Class, CanvasAction> entry : set) {
+//			if (entry.getValue().isEnabled()) {
+//				entry.getValue().keyPressed(e);
+//			}
+//		}
 
-		for (Map.Entry<Class, CanvasAction> entry : set) {
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().keyPressed(e);
+		List<Class> keys = getSortedActions(ActionType.KEY_PRESSED);
+		for (int i = 0, size = keys.size(); i < size; i++) {
+			CanvasAction action = this.actions.get(keys.get(i));
+			if (action.isEnabled()) {
+				action.keyPressed(e);
 			}
 		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//
+//		for (Map.Entry<Class, CanvasAction> entry : set) {
+//			if (entry.getValue().isEnabled()) {
+//				entry.getValue().keyReleased(e);
+//			}
+//		}
 
-		for (Map.Entry<Class, CanvasAction> entry : set) {
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().keyReleased(e);
+		List<Class> keys = getSortedActions(ActionType.KEY_RELEASED);
+		for (int i = 0, size = keys.size(); i < size; i++) {
+			CanvasAction action = this.actions.get(keys.get(i));
+			if (action.isEnabled()) {
+				action.keyReleased(e);
 			}
 		}
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//
+//		for (Map.Entry<Class, CanvasAction> entry : set) {
+//			if (entry.getValue().isEnabled()) {
+//				entry.getValue().mouseClicked(e);
+//			}
+//		}
 
-		for (Map.Entry<Class, CanvasAction> entry : set) {
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mouseClicked(e);
+		List<Class> keys = getSortedActions(ActionType.MOUSE_CLICKED);
+		for (int i = 0, size = keys.size(); i < size; i++) {
+			CanvasAction action = this.actions.get(keys.get(i));
+			if (action.isEnabled()) {
+				action.mouseClicked(e);
 			}
 		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//
+//		for (Map.Entry<Class, CanvasAction> entry : set) {
+//			if (entry.getValue().isEnabled()) {
+//				entry.getValue().mousePressed(e);
+//			}
+//		}
 
-		for (Map.Entry<Class, CanvasAction> entry : set) {
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mousePressed(e);
+		List<Class> keys = getSortedActions(ActionType.MOUSE_PRESSED);
+		for (int i = 0, size = keys.size(); i < size; i++) {
+			CanvasAction action = this.actions.get(keys.get(i));
+			if (action.isEnabled()) {
+				action.mousePressed(e);
 			}
 		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//
+//		for (Map.Entry<Class, CanvasAction> entry : set) {
+//			if (entry.getValue().isEnabled()) {
+//				entry.getValue().mouseReleased(e);
+//			}
+//		}
 
-		for (Map.Entry<Class, CanvasAction> entry : set) {
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mouseReleased(e);
+		List<Class> keys = getSortedActions(ActionType.MOUSE_RELEASED);
+		for (int i = 0, size = keys.size(); i < size; i++) {
+			CanvasAction action = this.actions.get(keys.get(i));
+			if (action.isEnabled()) {
+				action.mouseReleased(e);
 			}
 		}
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//
+//		for (Map.Entry<Class, CanvasAction> entry : set) {
+//			if (entry.getValue().isEnabled()) {
+//				entry.getValue().mouseEntered(e);
+//			}
+//		}
 
-		for (Map.Entry<Class, CanvasAction> entry : set) {
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mouseEntered(e);
+		List<Class> keys = getSortedActions(ActionType.MOUSE_ENTERED);
+		for (int i = 0, size = keys.size(); i < size; i++) {
+			CanvasAction action = this.actions.get(keys.get(i));
+			if (action.isEnabled()) {
+				action.mouseEntered(e);
 			}
 		}
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//
+//		for (Map.Entry<Class, CanvasAction> entry : set) {
+//			if (entry.getValue().isEnabled()) {
+//				entry.getValue().mouseExited(e);
+//			}
+//		}
 
-		for (Map.Entry<Class, CanvasAction> entry : set) {
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mouseExited(e);
+		List<Class> keys = getSortedActions(ActionType.MOUSE_EXITED);
+		for (int i = 0, size = keys.size(); i < size; i++) {
+			CanvasAction action = this.actions.get(keys.get(i));
+			if (action.isEnabled()) {
+				action.mouseExited(e);
 			}
 		}
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//
+//		for (Map.Entry<Class, CanvasAction> entry : set) {
+//			if (entry.getValue().isEnabled()) {
+//				entry.getValue().mouseDragged(e);
+//			}
+//		}
 
-		for (Map.Entry<Class, CanvasAction> entry : set) {
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mouseDragged(e);
+		List<Class> keys = getSortedActions(ActionType.MOUSE_DRAGGED);
+		for (int i = 0, size = keys.size(); i < size; i++) {
+			CanvasAction action = this.actions.get(keys.get(i));
+			if (action.isEnabled()) {
+				action.mouseDragged(e);
 			}
 		}
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//
+//		for (Map.Entry<Class, CanvasAction> entry : set) {
+//			if (entry.getValue().isEnabled()) {
+//				entry.getValue().mouseMoved(e);
+//			}
+//		}
 
-		for (Map.Entry<Class, CanvasAction> entry : set) {
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mouseMoved(e);
+		List<Class> keys = getSortedActions(ActionType.MOUSE_MOVED);
+		for (int i = 0, size = keys.size(); i < size; i++) {
+			CanvasAction action = this.actions.get(keys.get(i));
+			if (action.isEnabled()) {
+				action.mouseMoved(e);
 			}
 		}
 	}
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
+//
+//		for (Map.Entry<Class, CanvasAction> entry : set) {
+//			if (entry.getValue().isEnabled()) {
+//				entry.getValue().mouseWheelMoved(e);
+//			}
+//		}
 
-		for (Map.Entry<Class, CanvasAction> entry : set) {
-			if (entry.getValue().isEnabled()) {
-				entry.getValue().mouseWheelMoved(e);
+		List<Class> keys = getSortedActions(ActionType.MOUSE_WHEEL_MOVED);
+		for (int i = 0, size = keys.size(); i < size; i++) {
+			CanvasAction action = this.actions.get(keys.get(i));
+			if (action.isEnabled()) {
+				action.mouseWheelMoved(e);
 			}
 		}
 	}
