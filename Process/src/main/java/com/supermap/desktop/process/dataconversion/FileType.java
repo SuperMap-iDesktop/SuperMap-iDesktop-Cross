@@ -59,9 +59,11 @@ public class FileType {
             if ("MapGIS".equalsIgnoreCase(importType)) {
                 fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(descriptionNew[4], "wat", "wan", "wal", "wap"));
             } else if ("BIL".equalsIgnoreCase(importType)) {
-                fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(importType, "bil", "b"));
+                fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), "BIL", "bil"), "b"));
+            }else if("GBDEM".equalsIgnoreCase(importType)||"GRD_DEM".equalsIgnoreCase(importType)){
+                fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), "DEM", "dem"), "dem"));
             } else {
-                fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"),importType,importType.toLowerCase()), importType.toLowerCase()));
+                fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, importType.toLowerCase()), importType.toLowerCase()));
             }
             SmFileChoose.addNewNode(fileFilter, CommonProperties.getString("String_DefaultFilePath"),
                     ProcessProperties.getString("String_FileType"), "MetaProcessImport" + importType, "OpenOne");
