@@ -26,6 +26,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -113,7 +114,12 @@ public class MetaProcessImport extends MetaProcess {
 
     @Override
     public String getTitle() {
-        return "." + importType;
+        if(importType.equalsIgnoreCase("GBDEM")){
+            return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"),"ArcGIS DEM");
+        }else if(importType.equalsIgnoreCase("GRD_DEM")){
+            return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"),ProcessProperties.getString("String_Grid")+"DEM");
+        }
+        return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"),importType);
     }
 
     @Override

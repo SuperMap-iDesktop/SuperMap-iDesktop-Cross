@@ -7,7 +7,7 @@ import java.awt.event.KeyEvent;
 /**
  * Created by highsad on 2017/3/25.
  */
-public class GraphRemoving extends CanvasEventAdapter {
+public class GraphRemoving extends CanvasActionAdapter {
 	private GraphCanvas canvas;
 
 	public GraphRemoving(GraphCanvas canvas) {

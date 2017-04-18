@@ -59,12 +59,24 @@ public class ImportSettingCreator implements IImportSettingCreator {
                     type = "BIL";
                 } else if ("DEM".equalsIgnoreCase(type)) {
                     type = "GBDEM";
-                } else if ("3ds".equalsIgnoreCase(type) || "x".equalsIgnoreCase(type)) {
+                } else if ("3DS".equalsIgnoreCase(type) || "X".equalsIgnoreCase(type)) {
                     type = "Model" + type.toUpperCase();
-                } else if ("osgb".equalsIgnoreCase(type)) {
+                } else if ("OSGB".equalsIgnoreCase(type)) {
                     type = "ModelOSG";
                 }else if("TXT".equalsIgnoreCase(type)){
                     type ="GRD";
+                }else if ("wal".equalsIgnoreCase(type) || "wap".equalsIgnoreCase(type) || "wat".equalsIgnoreCase(type) || "wan".equalsIgnoreCase(type)) {
+                    type = "MAPGIS";
+                }else if ("jpk".equalsIgnoreCase(type)) {
+                    type = "JP2";
+                }else if ("sid".equalsIgnoreCase(type)) {
+                    type = "MrSID";
+                } else if ("TIFF".equalsIgnoreCase(type)) {
+                    type = "TIF";
+                }else if ("JPEG".equalsIgnoreCase(type)) {
+                    type = "JPG";
+                }else if ("GRD_DEM".equalsIgnoreCase(type)) {
+                    type = "GRD";
                 }
                 Class importClass = Class.forName(importSetting + type);
                 result = (ImportSetting) importClass.newInstance();

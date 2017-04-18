@@ -9,12 +9,66 @@
                     <process key="ImportDWG" name=".DWG"/>
                 </process>
                 <process name="ArcGIS交换格式">
-                    <process key="ImportDXF" name=".SHP"/>
+                    <process key="ImportSHP" name=".SHP"/>
                     <process key="ImportGRD" name=".GRD"/>
                     <process key="ImportTXT" name=".TXT"/>
                     <process key="ImportEOO" name=".EOO"/>
-                    <process key="ImportDEM" name=".DEM"/>
+                    <process key="ImportGBDEM" name=".DEM"/>
                     <process key="ImportDBF" name=".DBF"/>
+                </process>
+				<process name="MapInfo交换格式">
+                    <process key="ImportTAB" name=".TAB"/>
+                    <process key="ImportMIF" name=".MIF"/>
+                    <process key="ImportWOR" name=".WOR"/>
+                </process>
+				<process name="MapGIS交换格式">
+                    <process key="ImportWAT" name=".WAT"/>
+                    <process key="ImportWAN" name=".WAN"/>
+                    <process key="ImportWAL" name=".WAL"/>
+					<process key="ImportWAP" name=".WAP"/>	
+                </process>
+				<process name="Microsoft交换格式">
+                    <process key="ImportCSV" name=".CSV"/>
+                </process>
+				<process name="影像位图文件">
+                    <process key="ImportSIT" name=".SIT"/>
+					<process key="ImportIMG" name=".IMG"/>
+					<process key="ImportTIF" name=".TIF"/>
+					<process key="ImportTIFF" name=".TIFF"/>
+					<process key="ImportBMP" name=".BMP"/>
+					<process key="ImportPNG" name=".PNG"/>
+					<process key="ImportGIF" name=".GIF"/>
+					<process key="ImportJPG" name=".JPG"/>
+					<process key="ImportJPEG" name=".JPEG"/>
+					<process key="ImportJP2" name=".JP2"/>
+					<process key="ImportJPK" name=".JPK"/>
+					<process key="ImportSID" name=".SID"/>
+					<process key="ImportECW" name=".ECW"/>
+                </process>
+				<process name="三维模型文件">
+                    <process key="ImportOSGB" name=".OSGB"/>
+					<process key="Import3DS" name=".3DS"/>
+					<process key="ImportX" name=".X"/>
+					<process key="ImportDXF" name=".DXF"/>
+                </process>
+				<process name="谷歌KML交换格式">
+                    <process key="ImportKML" name=".KML"/>
+					<process key="ImportKMZ" name=".KMZ"/>
+                </process>
+				<process name="栅格文件">
+                    <process key="ImportGRD_DEM" name=".DEM"/>
+					<process key="ImportBIL" name=".BIL"/>
+					<process key="ImportRAW" name=".RAW"/>
+					<process key="ImportBSQ" name=".BSQ"/>
+					<process key="ImportBIP" name=".BIP"/>
+					<process key="ImportB" name=".B"/>
+                </process>
+				<process name="LIDAR文件">
+                    <process key="ImportLIDAR" name=".TXT"/>
+                </process>
+				<process name="中国标准矢量格式">
+                    <process key="ImportDGN" name=".DGN"/>
+					<process key="ImportVCT" name=".VCT"/>
                 </process>
             </process>
             <process key="Projection" name="投影转换"/>

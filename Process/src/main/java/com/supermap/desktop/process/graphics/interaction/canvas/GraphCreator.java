@@ -14,7 +14,7 @@ import java.awt.event.MouseEvent;
 /**
  * Created by highsad on 2017/3/8.
  */
-public class GraphCreator extends CanvasEventAdapter {
+public class GraphCreator extends CanvasActionAdapter {
 
 	private GraphCanvas canvas;
 	private PreviewDecorator previewDecorator;
@@ -34,8 +34,7 @@ public class GraphCreator extends CanvasEventAdapter {
 				this.previewDecorator.decorate((AbstractGraph) this.toCreation);
 			}
 
-			this.canvas.setEventHandlerEnabled(Selection.class, false);
-			this.canvas.setEventHandlerEnabled(DraggedHandler.class, false);
+			fireCanvasActionStart();
 		}
 	}
 
@@ -100,8 +99,7 @@ public class GraphCreator extends CanvasEventAdapter {
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			this.canvas.setEventHandlerEnabled(Selection.class, true);
-			this.canvas.setEventHandlerEnabled(DraggedHandler.class, true);
+			fireCanvasActionStop();
 		}
 	}
 
@@ -113,5 +111,10 @@ public class GraphCreator extends CanvasEventAdapter {
 
 	public boolean isCreating() {
 		return this.toCreation != null;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return isCreating();
 	}
 }

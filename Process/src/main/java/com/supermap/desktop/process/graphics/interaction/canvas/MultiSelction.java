@@ -73,6 +73,7 @@ public class MultiSelction extends Selection {
 	public void mousePressed(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e)) {
 			this.selectionStart = e.getPoint();
+			fireCanvasActionStart();
 		}
 	}
 
@@ -190,6 +191,7 @@ public class MultiSelction extends Selection {
 		this.selectionStart = Selection.UNKOWN_POINT;
 		this.dirtyRegion.setBounds(0, 0, 0, 0);
 		this.selectionRegion.setBounds(0, 0, 0, 0);
+		fireCanvasActionStop();
 	}
 
 	private boolean isDirty() {

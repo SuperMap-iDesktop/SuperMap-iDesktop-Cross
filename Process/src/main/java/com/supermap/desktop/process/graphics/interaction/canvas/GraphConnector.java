@@ -26,7 +26,7 @@ import java.awt.event.MouseEvent;
 /**
  * Created by highsad on 2017/3/22.
  */
-public class GraphConnector extends CanvasEventAdapter {
+public class GraphConnector extends CanvasActionAdapter {
 	private GraphCanvas canvas;
 	private DefaultLine previewLine;
 	private OutputGraph startGraph = null;
@@ -37,6 +37,7 @@ public class GraphConnector extends CanvasEventAdapter {
 
 	public GraphConnector(GraphCanvas canvas) {
 		this.canvas = canvas;
+
 		this.inputsMenu.addPopupMenuListener(new PopupMenuListener() {
 			@Override
 			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
@@ -58,9 +59,7 @@ public class GraphConnector extends CanvasEventAdapter {
 	public void connecting() {
 		CanvasCursor.setConnectingCursor(this.canvas);
 		this.previewLine = new DefaultLine(this.canvas);
-		this.canvas.setEventHandlerEnabled(Selection.class, false);
-		this.canvas.setEventHandlerEnabled(DraggedHandler.class, false);
-		this.canvas.setEventHandlerEnabled(GraphCreator.class, false);
+		fireCanvasActionStart();
 	}
 
 	public void preview(Graphics g) {
@@ -224,9 +223,7 @@ public class GraphConnector extends CanvasEventAdapter {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			CanvasCursor.resetCursor(this.canvas);
-			this.canvas.setEventHandlerEnabled(Selection.class, true);
-			this.canvas.setEventHandlerEnabled(DraggedHandler.class, true);
-			this.canvas.setEventHandlerEnabled(GraphCreator.class, true);
+			fireCanvasActionStop();
 		}
 	}
 

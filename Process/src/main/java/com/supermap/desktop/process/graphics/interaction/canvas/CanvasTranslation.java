@@ -27,7 +27,7 @@ import java.awt.event.MouseWheelEvent;
  * Scale and translate the canvas.
  * Created by highsad on 2017/3/8.
  */
-public class CanvasTranslation extends CanvasEventAdapter {
+public class CanvasTranslation extends CanvasActionAdapter {
 	private GraphCanvas canvas;
 	private CoordinateTransform transform;
 	private Point start = null;

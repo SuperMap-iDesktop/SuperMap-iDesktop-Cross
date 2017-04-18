@@ -37,6 +37,18 @@ public class JTreeUIUtilities {
 		expandAll(tree, new TreePath(root), expand);
 	}
 
+	public static void expandTree(JTree tree) {
+		TreeNode root = (TreeNode) tree.getModel().getRoot();
+		TreePath treePath = new TreePath(root);
+		if (root.getChildCount() > 0) {
+			for (Enumeration e = root.children(); e.hasMoreElements(); ) {
+				TreeNode n = (TreeNode) e.nextElement();
+				TreePath path = treePath.pathByAddingChild(n);
+				tree.expandPath(path);
+			}
+		}
+	}
+
 	private static void expandAll(JTree tree, TreePath parent, boolean expand) {
 		TreeNode node = (TreeNode) parent.getLastPathComponent();
 		if (node.getChildCount() > 0) {

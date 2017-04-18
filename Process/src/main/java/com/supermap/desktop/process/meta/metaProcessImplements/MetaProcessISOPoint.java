@@ -6,7 +6,9 @@ import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
 import com.supermap.analyst.spatialanalyst.TerrainInterpolateType;
 import com.supermap.data.*;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
+import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
@@ -30,7 +32,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 
 	private ParameterDatasource sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
-	private ParameterComboBox fields;
+	private ParameterFieldComboBox fields;
 	private ParameterSaveDataset targetDataset;
 	private ParameterTextField maxISOLine;
 	private ParameterTextField minISOLine;
@@ -61,22 +63,14 @@ public class MetaProcessISOPoint extends MetaProcess {
 		equalDatasourceConstraint.constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
 		DatasourceConstraint.getInstance().constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+
+		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
+		equalDatasetConstraint.constrained(sourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		equalDatasetConstraint.constrained(fields, ParameterFieldComboBox.DATASET_FIELD_NAME);
 	}
 
 	private void initParametersState() {
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-		if (null != sourceDataset.getSelectedItem()) {
-			FieldInfos fieldInfos = ((DatasetVector) sourceDataset.getSelectedItem()).getFieldInfos();
-			int fieldCount = fieldInfos.getCount();
-			ArrayList<ParameterDataNode> nodes = new ArrayList<>();
-			for (int i = 0; i < fieldCount; i++) {
-				FieldInfo fieldInfo = fieldInfos.get(i);
-				if (FieldTypeUtilities.isNumber(fieldInfo.getType())) {
-					nodes.add(new ParameterDataNode(fieldInfo.getName(), fieldInfo.getName()));
-				}
-			}
-			this.fields.setItems(nodes.toArray(new ParameterDataNode[nodes.size()]));
-		}
 		this.targetDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
 		this.targetDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 		this.targetDataset.setSelectedItem("ISOLine");
@@ -97,11 +91,13 @@ public class MetaProcessISOPoint extends MetaProcess {
 		this.parameters = new DefaultParameters();
 		this.sourceDatasource = new ParameterDatasource();
 		this.sourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.POINT3D);
-		this.fields = new ParameterComboBox(CommonProperties.getString("String_FieldsName"));
+		this.fields = new ParameterFieldComboBox();
+		this.fields.setDescribe(CommonProperties.getString("String_FieldsName"));
+		this.fields.setDataset((DatasetVector) sourceDataset.getSelectedItem());
 		this.targetDataset = new ParameterSaveDataset();
 		this.maxISOLine = new ParameterTextField(CommonProperties.getString("String_MAXISOLine"));
 		this.minISOLine = new ParameterTextField(CommonProperties.getString("String_MINISOLine"));
-		this.isoLine = new ParameterTextField(CommonProperties.getString("String_ISOLine"));
+		this.isoLine = new ParameterTextField(CommonProperties.getString("String_ISOData"));
 		this.terrainInterpolateType = new ParameterComboBox(CommonProperties.getString("String_InterpolateType"));
 		this.resolution = new ParameterTextField(ProcessProperties.getString("String_Resolution"));
 		this.datumValue = new ParameterTextField(CommonProperties.getString("String_DatumValue"));
