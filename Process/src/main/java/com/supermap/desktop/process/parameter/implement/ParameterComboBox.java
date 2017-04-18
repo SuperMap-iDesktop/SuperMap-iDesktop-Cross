@@ -6,20 +6,24 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.ISingleSelectionParameter;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @author XiaJT
  */
 public class ParameterComboBox extends AbstractParameter implements ISingleSelectionParameter {
 
-	@ParameterField(name = "comboBoxItems")
-	private ParameterDataNode[] items;
+	public static final String comboBoxItems = "comboBoxItems";
+	@ParameterField(name = comboBoxItems)
+	private ArrayList<ParameterDataNode> items = new ArrayList<>();
 	/**
 	 * label的描述文本
 	 */
 	private String describe;
 
-	@ParameterField(name = "comboBoxValue")
+	public static final String comboBoxValue = "comboBoxValue";
+	@ParameterField(name = comboBoxValue)
 	private ParameterDataNode value;
 
 	public ParameterComboBox() {
@@ -36,14 +40,14 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 	}
 
 	@Override
-	public ParameterDataNode[] getItems() {
+	public ArrayList<ParameterDataNode> getItems() {
 		return items;
 	}
 
 	@Override
 	public int getItemIndex(Object item) {
-		for (int i = 0; i < items.length; i++) {
-			ParameterDataNode parameterDataNode = items[i];
+		for (int i = 0; i < items.size(); i++) {
+			ParameterDataNode parameterDataNode = items.get(i);
 			if (item == parameterDataNode) {
 				return i;
 			}
@@ -53,12 +57,13 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 
 	@Override
 	public ParameterDataNode getItemAt(int index) {
-		return items[index];
+		return items.get(index);
 	}
 
 	public void setItems(ParameterDataNode... items) {
-		this.items = items;
-		if (items != null && items.length > 0) {
+		this.items.clear();
+		Collections.addAll(this.items, items);
+		if (items.length > 0) {
 			value = items[0];
 		}
 	}
@@ -85,7 +90,7 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 		if (items == null) {
 			return 0;
 		}
-		return items.length;
+		return items.size();
 	}
 
 	@Override
@@ -109,5 +114,9 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 
 	public int getSelectedIndex() {
 		return getItemIndex(getSelectedItem());
+	}
+
+	public void addItem(ParameterDataNode parameterDataNode) {
+		items.add(parameterDataNode);
 	}
 }

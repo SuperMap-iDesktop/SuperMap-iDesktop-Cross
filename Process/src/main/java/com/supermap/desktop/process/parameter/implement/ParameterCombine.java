@@ -35,10 +35,15 @@ public class ParameterCombine extends AbstractParameter {
 
 
 	public ParameterCombine addParameters(IParameter... parameters) {
+		boolean isNeedRebuild = false;
 		for (IParameter parameter : parameters) {
 			if (this.parameterList.indexOf(parameter) == -1) {
 				this.parameterList.add(parameter);
+				isNeedRebuild = true;
 			}
+		}
+		if (isNeedRebuild) {
+			firePanelRebuildListener();
 		}
 		return this;
 	}

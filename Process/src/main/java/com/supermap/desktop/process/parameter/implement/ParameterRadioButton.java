@@ -6,6 +6,8 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.ISingleSelectionParameter;
 
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @author XiaJT
@@ -13,7 +15,7 @@ import java.beans.PropertyChangeEvent;
 public class ParameterRadioButton extends AbstractParameter implements ISingleSelectionParameter {
 	private String describe;
 	@ParameterField(name = "items")
-	private ParameterDataNode[] items;
+	private ArrayList<ParameterDataNode> items = new ArrayList<>();
 	@ParameterField(name = "selectedItem")
 	private ParameterDataNode selectedItem;
 
@@ -35,7 +37,7 @@ public class ParameterRadioButton extends AbstractParameter implements ISingleSe
 	@Override
 	public int getItemCount() {
 		if (items != null) {
-			return items.length;
+			return items.size();
 		}
 		return 0;
 	}
@@ -46,14 +48,15 @@ public class ParameterRadioButton extends AbstractParameter implements ISingleSe
 	}
 
 	@Override
-	public ParameterDataNode[] getItems() {
+	public ArrayList<ParameterDataNode> getItems() {
 		return items;
 	}
 
 	@Override
 	public int getItemIndex(Object item) {
-		for (int i = 0; i < items.length; i++) {
-			if (items[i] == item) {
+		for (int i = 0; i < items.size(); i++) {
+			ParameterDataNode parameterDataNode = items.get(i);
+			if (parameterDataNode == item) {
 				return i;
 			}
 		}
@@ -62,11 +65,12 @@ public class ParameterRadioButton extends AbstractParameter implements ISingleSe
 
 	@Override
 	public ParameterDataNode getItemAt(int index) {
-		return items[index];
+		return items.get(index);
 	}
 
 	public void setItems(ParameterDataNode[] parameterDataNodes) {
-		this.items = parameterDataNodes;
+		this.items.clear();
+		Collections.addAll(items, parameterDataNodes);
 	}
 
 	public String getDescribe() {

@@ -17,6 +17,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 /**
  * @author XiaJT
@@ -32,8 +33,8 @@ public class ParameterComboBoxPanel extends SwingPanel implements IParameterPane
 	public ParameterComboBoxPanel(IParameter parameterComboBox) {
 		super(parameterComboBox);
 		this.parameterComboBox = ((ParameterComboBox) parameterComboBox);
-		ParameterDataNode[] items = this.parameterComboBox.getItems();
-		if (items != null && items.length > 0) {
+		ArrayList<ParameterDataNode> items = this.parameterComboBox.getItems();
+		if (items != null && items.size() > 0) {
 			for (ParameterDataNode item : items) {
 				comboBox.addItem(item);
 			}

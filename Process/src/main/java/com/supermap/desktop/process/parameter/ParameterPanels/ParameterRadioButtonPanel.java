@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 /**
@@ -38,7 +39,7 @@ public class ParameterRadioButtonPanel extends SwingPanel implements IParameterP
 
 	private void initLayout() {
 		panel.setLayout(new GridBagLayout());
-		ParameterDataNode[] items = parameterRadioButton.getItems();
+		ArrayList<ParameterDataNode> items = parameterRadioButton.getItems();
 		radioButtonSelectedListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -49,17 +50,17 @@ public class ParameterRadioButtonPanel extends SwingPanel implements IParameterP
 				}
 			}
 		};
-		if (items.length == 3) {
-			for (int i = 0; i < items.length; i++) {
-				ParameterDataNode item = items[i];
+		if (items.size() == 3) {
+			for (int i = 0; i < items.size(); i++) {
+				ParameterDataNode item = items.get(i);
 				JRadioButton jRadioButton = new MyRadioButton(item);
 				buttonGroup.add(jRadioButton);
 				jRadioButton.addActionListener(radioButtonSelectedListener);
 				panel.add(jRadioButton, new GridBagConstraintsHelper(i, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE));
 			}
 		} else {
-			for (int i = 0; i < items.length; i++) {
-				ParameterDataNode item = items[i];
+			for (int i = 0; i < items.size(); i++) {
+				ParameterDataNode item = items.get(i);
 				MyRadioButton myRadioButton = new MyRadioButton(item);
 				buttonGroup.add(myRadioButton);
 				myRadioButton.addActionListener(radioButtonSelectedListener);
