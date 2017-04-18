@@ -112,4 +112,9 @@ public class GraphCreator extends CanvasActionAdapter {
 	public boolean isCreating() {
 		return this.toCreation != null;
 	}
+
+	@Override
+	public boolean isEnabled() {
+		return isCreating();
+	}
 }

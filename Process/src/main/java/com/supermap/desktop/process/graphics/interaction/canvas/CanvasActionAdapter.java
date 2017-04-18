@@ -9,18 +9,12 @@ import java.awt.event.MouseWheelEvent;
  * Created by highsad on 2017/3/3.
  */
 public abstract class CanvasActionAdapter implements CanvasAction {
-	private boolean enable = true;
 	private EventListenerList listenerList = new EventListenerList();
 
-//	@Override
-//	public boolean isEnabled() {
-//		return this.enable;
-//	}
-//
-//	@Override
-//	public void setEnabled(boolean enable) {
-//		this.enable = enable;
-//	}
+	@Override
+	public boolean isEnabled() {
+		return true;
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {

@@ -227,10 +227,10 @@ public class GraphConnector extends CanvasActionAdapter {
 		}
 	}
 
-//	@Override
-//	public boolean isEnabled() {
-//		return super.isEnabled() && isConnecting();
-//	}
+	@Override
+	public boolean isEnabled() {
+		return super.isEnabled() && isConnecting();
+	}
 
 	private boolean isConnecting() {
 		return this.previewLine != null;
