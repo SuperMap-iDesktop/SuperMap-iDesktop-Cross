@@ -4,7 +4,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.tasks.ProcessCallable;
 import com.supermap.desktop.process.tasks.TaskStore;
 
 import javax.swing.*;
@@ -69,13 +68,13 @@ public class MatrixExecutor {
     }
 
     private void runProcess(final IProcess process) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
+//        Thread thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
                 TaskStore.getTask(process).doWork();
-            }
-        });
-        thread.start();
+//            }
+//        });
+//        thread.start();
     }
 
     private void invokeWaiting() {
@@ -112,7 +111,6 @@ public class MatrixExecutor {
                             this.waiting.add((IProcess) o);
                         }
                     }
-
                 }
             }
         } catch (Exception e) {
