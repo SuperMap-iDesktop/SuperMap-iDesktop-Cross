@@ -26,7 +26,9 @@ public class ParameterSwitchPanel extends SwingPanel {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (evt.getPropertyName().equals(ParameterSwitch.CURRENT_PARAMETER)) {
 					panel.removeAll();
-					panel.add(((JPanel) ((IParameter) evt.getNewValue()).getParameterPanel().getPanel()), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
+					if (evt.getNewValue() != null && ((IParameter) evt.getNewValue()).getParameterPanel().getPanel() != null) {
+						panel.add(((JPanel) ((IParameter) evt.getNewValue()).getParameterPanel().getPanel()), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
+					}
 					panel.revalidate();
 					panel.repaint();
 				}

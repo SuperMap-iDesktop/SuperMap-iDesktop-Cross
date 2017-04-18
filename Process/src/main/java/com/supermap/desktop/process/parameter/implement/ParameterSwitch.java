@@ -24,7 +24,7 @@ public class ParameterSwitch extends AbstractParameter {
 			parameter.setParameters(parameters);
 		}
 		nodes.add(new ParameterSwitchNode(tag, parameter));
-		if (currentParameter == null) {
+		if (nodes.size() == 1) {
 			currentParameter = parameter;
 		}
 	}
@@ -83,7 +83,9 @@ public class ParameterSwitch extends AbstractParameter {
 	public void setParameters(IParameters parameters) {
 		super.setParameters(parameters);
 		for (ParameterSwitchNode node : nodes) {
-			node.getParameter().setParameters(parameters);
+			if (node.getParameter() != null) {
+				node.getParameter().setParameters(parameters);
+			}
 		}
 	}
 
