@@ -2,6 +2,8 @@ package com.supermap.desktop.process.parameter.interfaces;
 
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 
+import java.util.ArrayList;
+
 /**
  * @author XiaJT
  */
@@ -10,7 +12,7 @@ public interface ISingleSelectionParameter extends ISelectionParameter {
 
 	void setItems(ParameterDataNode... items);
 
-	ParameterDataNode[] getItems();
+	ArrayList<ParameterDataNode> getItems();
 
 	int getItemIndex(Object item);
 

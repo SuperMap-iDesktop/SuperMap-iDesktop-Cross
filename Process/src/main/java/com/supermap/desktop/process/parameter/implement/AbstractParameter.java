@@ -25,7 +25,7 @@ public abstract class AbstractParameter implements IParameter {
 
 	protected IParameterPanel panel;
 	public static final String PROPERTY_VALE = "value";
-	private IParameters parameters;
+	protected IParameters parameters;
 
 	public static final String DO_NOT_CARE = new String("Don't Care");
 	public static final String NO = new String("NO");
@@ -141,6 +141,14 @@ public abstract class AbstractParameter implements IParameter {
 	}
 
 
+	/**
+	 * 直接通过反射设置字段值，不会触发属性改变事件
+	 * Setting field values directly by reflection, does not trigger an event to change the property
+	 *
+	 * @param fieldName 字段的ParameterField注解里面的name值；The name value of the ParameterField annotation in the field
+	 * @param value     值
+	 * @return
+	 */
 	@Override
 	public boolean setFieldVale(String fieldName, Object value) {
 		Field[] fields = this.getClass().getDeclaredFields();

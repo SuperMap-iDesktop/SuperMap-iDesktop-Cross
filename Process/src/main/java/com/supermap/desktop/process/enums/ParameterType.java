@@ -31,4 +31,6 @@ public class ParameterType {
 	public static final String FIELD_COMBO_BOX = "FIELD_COMBO_BOX";
 	public static final String FIELD_SET_DIALOG = "FIELD_SET_DIALOG";
 	public static final String LABEL = "LABEL";
+	public static final String SWITCH = "Switch";// new 一个
+	public static final String COMBO_BOX_SWITCH = "ComboBoxSwitch";
 }
