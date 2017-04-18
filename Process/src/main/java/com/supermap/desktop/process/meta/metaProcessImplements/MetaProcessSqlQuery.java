@@ -79,7 +79,6 @@ public class MetaProcessSqlQuery extends MetaProcess {
 		parameterCombineResultData.addParameters(parameterSaveDataset);
 		parameterCombineResultData.setDescribe(CommonProperties.getString("String_ResultSet"));
 
-
 		parameters.setParameters(parameterCombineSourceData, this.parameterResultFields, this.parameterAttributeFilter, parameterCombineResultData);
 	}
 

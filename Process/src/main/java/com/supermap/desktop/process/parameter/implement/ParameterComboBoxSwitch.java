@@ -13,7 +13,6 @@ import java.beans.PropertyChangeListener;
  * @author XiaJT
  */
 public class ParameterComboBoxSwitch extends AbstractParameter {
-
 	private ParameterCombine parameterCombine = new ParameterCombine();
 	private ParameterComboBox comboBox = new ParameterComboBox();
 	private ParameterSwitch parameterSwitch = new ParameterSwitch();
