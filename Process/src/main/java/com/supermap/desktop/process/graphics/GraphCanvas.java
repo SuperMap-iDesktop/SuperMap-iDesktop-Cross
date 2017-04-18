@@ -58,7 +58,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private CanvasTranslation translation = new CanvasTranslation(this);
 	private GraphCreator creator = new GraphCreator(this);
 	private Selection selection = new MultiSelction(this);
-	private DraggedHandler dragged = new DraggedHandler(this);
+	private GraphDragAction dragged = new GraphDragAction(this);
 	public GraphConnector connector = new GraphConnector(this);
 	public GraphRemoving removing = new GraphRemoving(this);
 
@@ -138,11 +138,29 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		setRequestFocusEnabled(true);
 
 		installCanvasEventHandler(Selection.class, this.selection);
-		installCanvasEventHandler(DraggedHandler.class, this.dragged);
+		installCanvasEventHandler(GraphDragAction.class, this.dragged);
 		installCanvasEventHandler(CanvasTranslation.class, this.translation);
 		installCanvasEventHandler(GraphCreator.class, this.creator);
 		installCanvasEventHandler(GraphConnector.class, this.connector);
 		installCanvasEventHandler(GraphRemoving.class, this.removing);
+
+		this.actionsManager.addMutexAction(GraphDragAction.class, Selection.class);
+		this.actionsManager.addMutexAction(GraphDragAction.class, GraphCreator.class);
+		this.actionsManager.addMutexAction(GraphDragAction.class, GraphConnector.class);
+
+		this.actionsManager.addMutexAction(Selection.class, GraphDragAction.class);
+		this.actionsManager.addMutexAction(Selection.class, GraphCreator.class);
+		this.actionsManager.addMutexAction(Selection.class, GraphConnector.class);
+
+		this.actionsManager.addMutexAction(GraphCreator.class, GraphDragAction.class);
+		this.actionsManager.addMutexAction(GraphCreator.class, Selection.class);
+		this.actionsManager.addMutexAction(GraphCreator.class, GraphConnector.class);
+
+		this.actionsManager.addMutexAction(GraphConnector.class, GraphDragAction.class);
+		this.actionsManager.addMutexAction(GraphConnector.class, Selection.class);
+		this.actionsManager.addMutexAction(GraphConnector.class, GraphCreator.class);
+
+		this.actionsManager.setPriority(CanvasAction.ActionType.MOUSE_PRESSED, GraphDragAction.class, 0);
 	}
 
 	public void create(IGraph graph) {
@@ -166,9 +184,9 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		return this.actionsManager.getAction(c);
 	}
 
-	public void setActionEnabled(Class c, boolean enabled) {
-		this.actionsManager.setActionEnabled(c, enabled);
-	}
+//	public void setActionEnabled(Class c, boolean enabled) {
+//		this.actionsManager.setActionEnabled(c, enabled);
+//	}
 
 	public CoordinateTransform getCoordinateTransform() {
 		return coordinateTransform;
@@ -208,6 +226,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	public Selection getSelection() {
 		return this.selection;
+	}
+
+	public CanvasActionsManager getActionsManager() {
+		return this.actionsManager;
 	}
 
 	public IGraphConnection getConnection() {

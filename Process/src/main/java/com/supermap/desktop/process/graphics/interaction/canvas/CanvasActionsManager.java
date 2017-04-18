@@ -11,10 +11,12 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by highsad on 2017/4/15.
  */
-public class CanvasActionsManager implements CanvasAction {
+public class CanvasActionsManager implements CanvasAction, CanvasActionProcessListener {
 	private GraphCanvas canvas;
 	private ConcurrentHashMap<Class, CanvasAction> actions = new ConcurrentHashMap<>();
 	private ConcurrentHashMap<Class, List<Class>> mutex = new ConcurrentHashMap<>();
+
+	private List<CanvasAction> lockedActions = new ArrayList<>();
 
 	/**
 	 * 管理所已安装的 CanvasAction 的优先级。数值越小，优先级越高。
@@ -47,8 +49,6 @@ public class CanvasActionsManager implements CanvasAction {
 
 		if (this.actions.containsKey(c)) {
 			this.actions.get(c).clean();
-		} else {
-			this.mutex.put(c, new ArrayList<Class>());
 		}
 
 		this.actions.put(c, action);
@@ -62,7 +62,11 @@ public class CanvasActionsManager implements CanvasAction {
 		CanvasAction action = this.actions.get(c);
 		action.clean();
 		this.actions.remove(c);
-		this.mutex.remove(c);
+
+		if (this.mutex.containsKey(c)) {
+			this.mutex.remove(c);
+			action.removeCanvasActionProcessListener(this);
+		}
 	}
 
 	/**
@@ -70,28 +74,48 @@ public class CanvasActionsManager implements CanvasAction {
 	 * @param waiting
 	 */
 	public void addMutexAction(Class action, Class waiting) {
-		if (action == waiting || action == null || waiting == null) {
+		if (action == waiting) {
 			return;
 		}
 
-		if (this.mutex.containsKey(action)) {
-			List<Class> waitingActions = this.mutex.get(action);
-			if (!waitingActions.contains(waiting)) {
-				waitingActions.add(waiting);
-			}
+		if (!this.actions.containsKey(action) || !this.actions.containsKey(waiting)) {
+			return;
+		}
+
+		if (!this.mutex.containsKey(action)) {
+			CanvasAction ca = this.actions.get(action);
+			ca.addCanvasActionProcessListener(this);
+			this.mutex.put(action, new ArrayList<Class>());
+		}
+
+		List<Class> waitingActions = this.mutex.get(action);
+		if (!waitingActions.contains(waiting)) {
+			waitingActions.add(waiting);
 		}
 	}
 
 	public void removeMutexAction(Class action, Class waiting) {
-		if (action == waiting || action == null || waiting == null) {
+		if (action == waiting) {
 			return;
 		}
 
-		if (this.mutex.containsKey(action)) {
-			List<Class> waitingActions = this.mutex.get(action);
-			if (waitingActions.contains(waiting)) {
-				waitingActions.remove(waiting);
-			}
+		if (!this.actions.containsKey(action) || !this.actions.containsKey(waiting)) {
+			return;
+		}
+
+		if (!this.mutex.containsKey(action)) {
+			return;
+		}
+
+		List<Class> waitingActions = this.mutex.get(action);
+		if (waitingActions.contains(waiting)) {
+			waitingActions.remove(waiting);
+		}
+
+		if (waitingActions.size() == 0) {
+			this.mutex.remove(action);
+			CanvasAction ca = this.actions.get(action);
+			ca.removeCanvasActionProcessListener(this);
 		}
 	}
 
@@ -184,12 +208,12 @@ public class CanvasActionsManager implements CanvasAction {
 		return this.actions.get(c);
 	}
 
-	public void setActionEnabled(Class c, boolean enabled) {
-		CanvasAction action = getAction(c);
-		if (action != null) {
-			action.setEnabled(enabled);
-		}
-	}
+//	public void setActionEnabled(Class c, boolean enabled) {
+//		CanvasAction action = getAction(c);
+//		if (action != null) {
+//			action.setEnabled(enabled);
+//		}
+//	}
 
 	public Class[] getActionKeys() {
 		if (this.actions.size() > 0) {
@@ -201,15 +225,15 @@ public class CanvasActionsManager implements CanvasAction {
 		}
 	}
 
-	@Override
-	public boolean isEnabled() {
-		return true;
-	}
-
-	@Override
-	public void setEnabled(boolean enabled) {
-		throw new UnsupportedOperationException();
-	}
+//	@Override
+//	public boolean isEnabled() {
+//		return true;
+//	}
+//
+//	@Override
+//	public void setEnabled(boolean enabled) {
+//		throw new UnsupportedOperationException();
+//	}
 
 	@Override
 	public void clean() {
@@ -226,6 +250,16 @@ public class CanvasActionsManager implements CanvasAction {
 	}
 
 	@Override
+	public void addCanvasActionProcessListener(CanvasActionProcessListener listener) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void removeCanvasActionProcessListener(CanvasActionProcessListener listener) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void keyTyped(KeyEvent e) {
 //		Set<Map.Entry<Class, CanvasAction>> set = this.actions.entrySet();
 //
@@ -238,7 +272,7 @@ public class CanvasActionsManager implements CanvasAction {
 		List<Class> keys = getSortedActions(ActionType.KEY_TYPED);
 		for (int i = 0, size = keys.size(); i < size; i++) {
 			CanvasAction action = this.actions.get(keys.get(i));
-			if (action.isEnabled()) {
+			if (!lockedActions.contains(action)) {
 				action.keyTyped(e);
 			}
 		}
@@ -257,7 +291,7 @@ public class CanvasActionsManager implements CanvasAction {
 		List<Class> keys = getSortedActions(ActionType.KEY_PRESSED);
 		for (int i = 0, size = keys.size(); i < size; i++) {
 			CanvasAction action = this.actions.get(keys.get(i));
-			if (action.isEnabled()) {
+			if (!lockedActions.contains(action)) {
 				action.keyPressed(e);
 			}
 		}
@@ -276,7 +310,7 @@ public class CanvasActionsManager implements CanvasAction {
 		List<Class> keys = getSortedActions(ActionType.KEY_RELEASED);
 		for (int i = 0, size = keys.size(); i < size; i++) {
 			CanvasAction action = this.actions.get(keys.get(i));
-			if (action.isEnabled()) {
+			if (!lockedActions.contains(action)) {
 				action.keyReleased(e);
 			}
 		}
@@ -295,7 +329,7 @@ public class CanvasActionsManager implements CanvasAction {
 		List<Class> keys = getSortedActions(ActionType.MOUSE_CLICKED);
 		for (int i = 0, size = keys.size(); i < size; i++) {
 			CanvasAction action = this.actions.get(keys.get(i));
-			if (action.isEnabled()) {
+			if (!lockedActions.contains(action)) {
 				action.mouseClicked(e);
 			}
 		}
@@ -314,7 +348,7 @@ public class CanvasActionsManager implements CanvasAction {
 		List<Class> keys = getSortedActions(ActionType.MOUSE_PRESSED);
 		for (int i = 0, size = keys.size(); i < size; i++) {
 			CanvasAction action = this.actions.get(keys.get(i));
-			if (action.isEnabled()) {
+			if (!lockedActions.contains(action)) {
 				action.mousePressed(e);
 			}
 		}
@@ -333,7 +367,7 @@ public class CanvasActionsManager implements CanvasAction {
 		List<Class> keys = getSortedActions(ActionType.MOUSE_RELEASED);
 		for (int i = 0, size = keys.size(); i < size; i++) {
 			CanvasAction action = this.actions.get(keys.get(i));
-			if (action.isEnabled()) {
+			if (!lockedActions.contains(action)) {
 				action.mouseReleased(e);
 			}
 		}
@@ -352,7 +386,7 @@ public class CanvasActionsManager implements CanvasAction {
 		List<Class> keys = getSortedActions(ActionType.MOUSE_ENTERED);
 		for (int i = 0, size = keys.size(); i < size; i++) {
 			CanvasAction action = this.actions.get(keys.get(i));
-			if (action.isEnabled()) {
+			if (!lockedActions.contains(action)) {
 				action.mouseEntered(e);
 			}
 		}
@@ -371,7 +405,7 @@ public class CanvasActionsManager implements CanvasAction {
 		List<Class> keys = getSortedActions(ActionType.MOUSE_EXITED);
 		for (int i = 0, size = keys.size(); i < size; i++) {
 			CanvasAction action = this.actions.get(keys.get(i));
-			if (action.isEnabled()) {
+			if (!lockedActions.contains(action)) {
 				action.mouseExited(e);
 			}
 		}
@@ -390,7 +424,7 @@ public class CanvasActionsManager implements CanvasAction {
 		List<Class> keys = getSortedActions(ActionType.MOUSE_DRAGGED);
 		for (int i = 0, size = keys.size(); i < size; i++) {
 			CanvasAction action = this.actions.get(keys.get(i));
-			if (action.isEnabled()) {
+			if (!lockedActions.contains(action)) {
 				action.mouseDragged(e);
 			}
 		}
@@ -409,7 +443,7 @@ public class CanvasActionsManager implements CanvasAction {
 		List<Class> keys = getSortedActions(ActionType.MOUSE_MOVED);
 		for (int i = 0, size = keys.size(); i < size; i++) {
 			CanvasAction action = this.actions.get(keys.get(i));
-			if (action.isEnabled()) {
+			if (!lockedActions.contains(action)) {
 				action.mouseMoved(e);
 			}
 		}
@@ -428,9 +462,49 @@ public class CanvasActionsManager implements CanvasAction {
 		List<Class> keys = getSortedActions(ActionType.MOUSE_WHEEL_MOVED);
 		for (int i = 0, size = keys.size(); i < size; i++) {
 			CanvasAction action = this.actions.get(keys.get(i));
-			if (action.isEnabled()) {
+			if (!lockedActions.contains(action)) {
 				action.mouseWheelMoved(e);
 			}
 		}
+	}
+
+	@Override
+	public void canvasActionProcess(CanvasActionProcessEvent e) {
+		CanvasAction action = e.getAction();
+		Class key = getKey(action);
+
+		if (!this.mutex.containsKey(key)) {
+			return;
+		}
+
+		List<Class> waitings = this.mutex.get(key);
+		if (e.getStatus() == CanvasActionProcessEvent.START) {
+			for (int i = 0, size = waitings.size(); i < size; i++) {
+				CanvasAction ca = this.actions.get(waitings.get(i));
+				if (!this.lockedActions.contains(ca)) {
+					this.lockedActions.add(ca);
+				}
+			}
+		} else if (e.getStatus() == CanvasActionProcessEvent.STOP) {
+			for (int i = 0, size = waitings.size(); i < size; i++) {
+				CanvasAction ca = this.actions.get(waitings.get(i));
+				if (this.lockedActions.contains(ca)) {
+					this.lockedActions.remove(ca);
+				}
+			}
+		}
+	}
+
+	private Class getKey(CanvasAction action) {
+		Class result = null;
+
+		for (Map.Entry<Class, CanvasAction> entry :
+				this.actions.entrySet()) {
+			if (entry.getValue() == action) {
+				result = entry.getKey();
+				break;
+			}
+		}
+		return result;
 	}
 }

@@ -12,13 +12,13 @@ import java.awt.event.MouseEvent;
 /**
  * Created by highsad on 2017/3/3.
  */
-public class DraggedHandler extends CanvasEventAdapter {
+public class GraphDragAction extends CanvasActionAdapter {
 	private GraphCanvas canvas;
 	private IGraph[] draggedGraphs = null;
 	private Point dragStart = null;
 	private Rectangle[] dirtys = null;
 
-	public DraggedHandler(GraphCanvas canvas) {
+	public GraphDragAction(GraphCanvas canvas) {
 		this.canvas = canvas;
 	}
 
@@ -27,7 +27,7 @@ public class DraggedHandler extends CanvasEventAdapter {
 		this.draggedGraphs = null;
 		this.dragStart = null;
 		this.dirtys = null;
-		this.canvas.setActionEnabled(Selection.class, true);
+		fireCanvasActionStop();
 		CanvasCursor.resetCursor(this.canvas);
 	}
 
@@ -52,7 +52,8 @@ public class DraggedHandler extends CanvasEventAdapter {
 					IGraph dragged = this.draggedGraphs[i];
 					this.dirtys[i] = new Rectangle(dragged.getBounds());
 				}
-				this.canvas.setActionEnabled(Selection.class, false);
+
+				fireCanvasActionStart();
 			}
 		}
 	}

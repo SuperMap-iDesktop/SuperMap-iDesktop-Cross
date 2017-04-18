@@ -12,7 +12,7 @@ import java.util.Vector;
 /**
  * Created by highsad on 2017/3/2.
  */
-public abstract class Selection extends CanvasEventAdapter {
+public abstract class Selection extends CanvasActionAdapter {
 	public final static Point UNKOWN_POINT = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
 
 	private GraphCanvas canvas;

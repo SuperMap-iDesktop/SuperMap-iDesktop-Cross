@@ -12,13 +12,17 @@ import java.awt.event.MouseWheelListener;
  * 3. 当前互斥实现的方式存在一个主要的问题是，新增一种交互实现，无法很好的与已有交互实现进行互斥的管理，只能去更改已有交互的实现代码。
  */
 public interface CanvasAction extends MouseListener, MouseMotionListener, MouseWheelListener, KeyListener {
-	boolean isEnabled();
-
-	void setEnabled(boolean enabled);
+//	boolean isEnabled();
+//
+//	void setEnabled(boolean enabled);
 
 	void clean();
 
-	public class ActionType {
+	void addCanvasActionProcessListener(CanvasActionProcessListener listener);
+
+	void removeCanvasActionProcessListener(CanvasActionProcessListener listener);
+
+	class ActionType {
 		public final static ActionType MOUSE_CLICKED = new ActionType("MouseClicked");
 		public final static ActionType MOUSE_PRESSED = new ActionType("MousePressed");
 		public final static ActionType MOUSE_RELEASED = new ActionType("MouseReleased");
