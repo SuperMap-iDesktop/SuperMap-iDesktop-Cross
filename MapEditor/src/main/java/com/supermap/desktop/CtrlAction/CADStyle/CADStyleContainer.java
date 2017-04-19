@@ -9,7 +9,7 @@ import com.supermap.desktop.enums.SymbolMarkerType;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.desktop.ui.controls.ColorSelectButton;
+import com.supermap.desktop.ui.controls.ComponentDropDown;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.GeometryUtilities;
@@ -43,7 +43,7 @@ public class CADStyleContainer extends JPanel {
     // 点风格
     private CADStyleTitlePanel panelPointStyle;
     private JLabel labelPointColor;
-    private ColorSelectButton buttonPointColor;
+    private ComponentDropDown buttonPointColor;
     private JButton buttonPointModel;
     private JLabel labelPointWidth;// 点宽度
     private JSpinner spinnerPointWidth;
@@ -61,16 +61,16 @@ public class CADStyleContainer extends JPanel {
     // 线风格
     private CADStyleTitlePanel panelLineStyle;
     private JLabel labelLineColor;
-    private ColorSelectButton buttonLineColor;//线颜色
+    private ComponentDropDown buttonLineColor;//线颜色
     private JLabel labelLineWidth;
     private JComboBox comboboxLineWidth;//线宽
     private JButton buttonLineModel;
     // 面风格
     private CADStyleTitlePanel panelFillStyle;
     private JLabel labelFillForeColor;
-    private ColorSelectButton buttonFillForeColor;//前景色
+    private ComponentDropDown buttonFillForeColor;//前景色
     private JLabel labelFillBackColor;
-    private ColorSelectButton buttonFillBackColor;//背景色
+    private ComponentDropDown buttonFillBackColor;//背景色
     private JCheckBox checkboxBackOpaque;//背景透明
     private JCheckBox checkboxFillGradient;// 渐变填充
     private JLabel labelFillGradientModel;// 渐变填充类型
@@ -133,7 +133,7 @@ public class CADStyleContainer extends JPanel {
     private PropertyChangeListener propertyListener = new PropertyChangeListener() {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            Color currentColor = ((ColorSelectButton) evt.getSource()).getColor();
+            Color currentColor = ((ComponentDropDown) evt.getSource()).getColor();
             try {
                 ArrayList<Recordset> recordsets = CADStyleUtilities.getActiveRecordset(MapUtilities.getActiveMap());
                 if (null == recordsets) {
@@ -1073,10 +1073,10 @@ public class CADStyleContainer extends JPanel {
         this.textFieldFillGradientAngel = ((JSpinner.NumberEditor) spinnerFillGradientAngel.getEditor()).getTextField();
         this.textFieldLineWidth = (JTextField) comboboxLineWidth.getEditor().getEditorComponent();
         removeEvents();
-        this.buttonPointColor.addPropertyChangeListener("m_selectionColors", this.propertyListener);
-        this.buttonLineColor.addPropertyChangeListener("m_selectionColors", this.propertyListener);
-        this.buttonFillForeColor.addPropertyChangeListener("m_selectionColors", this.propertyListener);
-        this.buttonFillBackColor.addPropertyChangeListener("m_selectionColors", this.propertyListener);
+        this.buttonPointColor.addPropertyChangeListener(ComponentDropDown.CHANGECOLOR, this.propertyListener);
+        this.buttonLineColor.addPropertyChangeListener(ComponentDropDown.CHANGECOLOR, this.propertyListener);
+        this.buttonFillForeColor.addPropertyChangeListener(ComponentDropDown.CHANGECOLOR, this.propertyListener);
+        this.buttonFillBackColor.addPropertyChangeListener(ComponentDropDown.CHANGECOLOR, this.propertyListener);
         this.textFieldPointRotation.addFocusListener(this.focusListener);
         this.textFieldPointOpaque.addFocusListener(this.focusListener);
         this.textFieldFillOpaque.addFocusListener(this.focusListener);
@@ -1231,8 +1231,8 @@ public class CADStyleContainer extends JPanel {
         this.symbolMarkerSizeController.setGeoStyle(new GeoStyle());
         this.spinnerFillGradientAngel.setModel(new SpinnerNumberModel(0.0, 0.0, 360.0, 1.0));
         this.labelFillGradientAngelUnity = new JLabel();
-        this.buttonFillBackColor = new ColorSelectButton(Color.gray);
-        this.buttonFillForeColor = new ColorSelectButton(Color.gray);
+        this.buttonFillBackColor = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
+        this.buttonFillForeColor = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
         panelFill = new JPanel();
         panelFill.setLayout(new GridBagLayout());
         JPanel panelFillComponents = new JPanel();
@@ -1304,7 +1304,7 @@ public class CADStyleContainer extends JPanel {
         this.comboboxLineWidth = new JComboBox();
         this.comboboxLineWidth.setModel(new DefaultComboBoxModel(this.stringLineWidths));
         this.comboboxLineWidth.setEditable(true);
-        this.buttonLineColor = new ColorSelectButton(Color.gray);
+        this.buttonLineColor = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
         panelLine = new JPanel();
         JPanel panelLineComponents = new JPanel();
         panelLine.setLayout(new GridBagLayout());
@@ -1387,7 +1387,7 @@ public class CADStyleContainer extends JPanel {
         this.labelPointHeightUnity = new JLabel();
         this.checkboxWAndH = new JCheckBox();
         this.checkboxWAndH.setSelected(true);
-        this.buttonPointColor = new ColorSelectButton(Color.gray);
+        this.buttonPointColor = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
 
         panelPoint = new JPanel();
         JPanel panelPointComponents = new JPanel();

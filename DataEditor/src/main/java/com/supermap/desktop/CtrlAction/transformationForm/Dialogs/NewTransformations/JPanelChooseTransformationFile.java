@@ -6,10 +6,7 @@ import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.ColorSelectButton;
-import com.supermap.desktop.ui.controls.FileChooserControl;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.TransformationModeUtilities;
@@ -34,11 +31,11 @@ public class JPanelChooseTransformationFile extends JPanelNewTransformationBase 
 	private JComboBox<TransformationMode> comboBox;
 
 	private JLabel labelSelectedColor;
-	private ColorSelectButton buttonSelectedColor;
+	private ComponentDropDown buttonSelectedColor;
 	private JLabel labelUnSelectedColor;
-	private ColorSelectButton buttonUnSelectedColor;
+	private ComponentDropDown buttonUnSelectedColor;
 	private JLabel labelUnUseColor;
-	private ColorSelectButton buttonUnUseColor;
+	private ComponentDropDown buttonUnUseColor;
 
 	@Override
 	protected String getPanelTitle() {
@@ -90,11 +87,14 @@ public class JPanelChooseTransformationFile extends JPanelNewTransformationBase 
 			}
 		});
 		labelSelectedColor = new JLabel();
-		buttonSelectedColor = new ColorSelectButton(Color.blue);
+		buttonSelectedColor = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
+		buttonSelectedColor.setColor(Color.blue);
 		labelUnSelectedColor = new JLabel();
-		buttonUnSelectedColor = new ColorSelectButton(Color.red);
+		buttonUnSelectedColor = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
+		buttonUnSelectedColor.setColor(Color.red);
 		labelUnUseColor = new JLabel();
-		buttonUnUseColor = new ColorSelectButton(Color.GRAY);
+		buttonUnUseColor = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
+		buttonUnUseColor.setColor(Color.gray);
 		labelSelectedColor.setText(DataEditorProperties.getString("String_SelectedColor"));
 		labelUnSelectedColor.setText(DataEditorProperties.getString("String_UnSelectedColor"));
 		labelUnUseColor.setText(DataEditorProperties.getString("String_UnUseColor"));

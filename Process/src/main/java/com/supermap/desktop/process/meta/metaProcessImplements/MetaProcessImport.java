@@ -11,7 +11,6 @@ import com.supermap.desktop.process.dataconversion.ReflectInfo;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterFilePanel;
 import com.supermap.desktop.process.parameter.ParameterPanels.ParameterTextFieldPanel;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterFile;
@@ -19,13 +18,11 @@ import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.utilities.FileUtilities;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -48,18 +45,17 @@ public class MetaProcessImport extends MetaProcess {
     };
     private ParameterFile parameterFile;
     private ParameterTextField datasetName;
-    private ActionListener fileChooseListener = new ActionListener() {
+    private boolean isSelectingFile = false;
+    private PropertyChangeListener fileListener = new PropertyChangeListener() {
         @Override
-        public void actionPerformed(ActionEvent e) {
-            SmFileChoose jFileChooser = com.supermap.desktop.process.dataconversion.FileType.createImportFileChooser(importType);
-            if (jFileChooser.showOpenDialog((Component) parameterCreator.getParameterFile().getParameterPanel().getPanel()) == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = jFileChooser.getSelectedFile();
-                ((ParameterFilePanel) parameterFile.getParameterPanel()).getFileChooserControl().setText(selectedFile.getAbsolutePath());
-                String fileName = selectedFile.getName();
-                String fileAlis = fileName.substring(0, fileName.lastIndexOf("."));
-                ((ParameterTextFieldPanel)datasetName.getParameterPanel()).setText(fileAlis);
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (!isSelectingFile && evt.getNewValue() instanceof String) {
+                isSelectingFile = true;
+                String fileName = (String) evt.getNewValue();
+                String fileAlis = FileUtilities.getFileAlias(fileName);
+                ((ParameterTextFieldPanel) datasetName.getParameterPanel()).setText(fileAlis);
                 datasetName.setSelectedItem(fileAlis);
-                parameterFile.setSelectedItem(selectedFile.getAbsolutePath());
+                isSelectingFile = false;
             }
         }
     };
@@ -92,7 +88,7 @@ public class MetaProcessImport extends MetaProcess {
         } else {
             parameters.setParameters(parameterFile, parameterCreator.getParameterCombineResultSet());
         }
-        ((ParameterFilePanel) parameterFile.getParameterPanel()).addChooseFileListener(this.fileChooseListener);
+        parameterFile.addPropertyListener(this.fileListener);
     }
 
     public void setImportSetting(ImportSetting importSetting) {
@@ -114,12 +110,12 @@ public class MetaProcessImport extends MetaProcess {
 
     @Override
     public String getTitle() {
-        if(importType.equalsIgnoreCase("GBDEM")){
-            return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"),"ArcGIS DEM");
-        }else if(importType.equalsIgnoreCase("GRD_DEM")){
-            return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"),ProcessProperties.getString("String_Grid")+"DEM");
+        if (importType.equalsIgnoreCase("GBDEM")) {
+            return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"), "ArcGIS DEM");
+        } else if (importType.equalsIgnoreCase("GRD_DEM")) {
+            return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"), ProcessProperties.getString("String_Grid") + "DEM");
         }
-        return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"),importType);
+        return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"), importType);
     }
 
     @Override
@@ -148,7 +144,7 @@ public class MetaProcessImport extends MetaProcess {
             setFinished(true);
         }
         dataImport.removeImportSteppedListener(this.importStepListener);
-        ((ParameterFilePanel) parameterFile.getParameterPanel()).removeChooseFileListener(this.fileChooseListener);
+        parameterFile.removePropertyListener(this.fileListener);
     }
 
     @Override

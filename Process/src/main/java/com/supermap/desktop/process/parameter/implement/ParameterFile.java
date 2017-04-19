@@ -3,6 +3,7 @@ package com.supermap.desktop.process.parameter.implement;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
+import com.supermap.desktop.ui.controls.SmFileChoose;
 
 import java.beans.PropertyChangeEvent;
 
@@ -14,7 +15,7 @@ public class ParameterFile extends AbstractParameter implements ISelectionParame
     @ParameterField(name = "value")
     private String selectedPath;
     private String describe;
-    private String importType;
+    private SmFileChoose fileChoose;
 
     public ParameterFile(String describe) {
         this.describe = describe;
@@ -61,11 +62,12 @@ public class ParameterFile extends AbstractParameter implements ISelectionParame
 
     }
 
-    public String getImportType() {
-        return importType;
+    public SmFileChoose getFileChoose() {
+        return fileChoose;
     }
 
-    public void setImportType(String importType) {
-        this.importType = importType;
+    public void setFileChoose(SmFileChoose fileChoose) {
+        this.fileChoose = fileChoose;
     }
+
 }

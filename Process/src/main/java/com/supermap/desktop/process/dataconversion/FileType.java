@@ -13,7 +13,6 @@ import java.text.MessageFormat;
  */
 public class FileType {
     public static String LastFileFilter = "";
-    public static String LastFileFilterForSingle = "";
     // 文件类型描述
     private static final String[] descriptionNew = {
             ProcessProperties.getString("String_filetype_all"),
@@ -53,6 +52,25 @@ public class FileType {
             "3ds", "gpx"};
 
 
+    public static SmFileChoose createFileChooser(String fileFilter,String moduleName){
+        if (!SmFileChoose.isModuleExist(moduleName)) {
+            SmFileChoose.addNewNode(fileFilter, CommonProperties.getString("String_DefaultFilePath"),
+                    ProcessProperties.getString("String_FileType"), moduleName, "OpenOne");
+        }
+        SmFileChoose fileChoose = new SmFileChoose(moduleName);
+
+        if (LastFileFilter != null) {
+            // 设置过滤器为当前选中
+            for (int i = 0; i < fileChoose.getChoosableFileFilters().length; i++) {
+                FileFilter tempFileFilter = fileChoose.getChoosableFileFilters()[i];
+                if (tempFileFilter.getDescription().equals(LastFileFilter)) {
+                    fileChoose.setFileFilter(tempFileFilter);
+                }
+            }
+        }
+        return fileChoose;
+    }
+
     public static SmFileChoose createImportFileChooser(String importType) {
         String fileFilter;
         if (!SmFileChoose.isModuleExist("MetaProcessImport" + importType)) {
@@ -70,11 +88,11 @@ public class FileType {
         }
         SmFileChoose fileChoose = new SmFileChoose("MetaProcessImport" + importType);
 
-        if (LastFileFilterForSingle != null) {
+        if (LastFileFilter != null) {
             // 设置过滤器为当前选中
             for (int i = 0; i < fileChoose.getChoosableFileFilters().length; i++) {
                 FileFilter tempFileFilter = fileChoose.getChoosableFileFilters()[i];
-                if (tempFileFilter.getDescription().equals(LastFileFilterForSingle)) {
+                if (tempFileFilter.getDescription().equals(LastFileFilter)) {
                     fileChoose.setFileFilter(tempFileFilter);
                 }
             }
