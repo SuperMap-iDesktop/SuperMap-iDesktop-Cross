@@ -1,6 +1,7 @@
 package com.supermap.desktop.ui.controls.SortTable;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.util.Hashtable;
@@ -25,40 +26,56 @@ public class SortButtonRenderer extends JButton implements TableCellRenderer {
 		setHorizontalTextPosition(LEFT);
 		setIcon(new BlankIcon());
 
-		// perplexed
-		// ArrowIcon(SwingConstants.SOUTH, true)
-		// BevelArrowIcon (int direction, boolean isRaisedView, boolean isPressedView)
+	}
 
-		downButton = new JButton();
-		downButton.setMargin(new Insets(0, 0, 0, 0));
-		downButton.setHorizontalTextPosition(LEFT);
-		downButton.setIcon(new BevelArrowIcon(BevelArrowIcon.DOWN, false, false));
-		downButton.setPressedIcon(new BevelArrowIcon(BevelArrowIcon.DOWN, false, true));
+	class DownButton extends JButton {
+		DownButton() {
+			super();
+			this.setMargin(new Insets(0, 0, 0, 0));
+			this.setHorizontalTextPosition(LEFT);
+			this.setIcon(new BevelArrowIcon(BevelArrowIcon.DOWN, false, false));
+			this.setPressedIcon(new BevelArrowIcon(BevelArrowIcon.DOWN, false, true));
+		}
+	}
 
-		upButton = new JButton();
-		upButton.setMargin(new Insets(0, 0, 0, 0));
-		upButton.setHorizontalTextPosition(LEFT);
-		upButton.setIcon(new BevelArrowIcon(BevelArrowIcon.UP, false, false));
-		upButton.setPressedIcon(new BevelArrowIcon(BevelArrowIcon.UP, false, true));
-
+	class UpButton extends JButton {
+		UpButton() {
+			super();
+			this.setMargin(new Insets(0, 0, 0, 0));
+			this.setHorizontalTextPosition(LEFT);
+			this.setIcon(new BevelArrowIcon(BevelArrowIcon.UP, false, false));
+			this.setPressedIcon(new BevelArrowIcon(BevelArrowIcon.UP, false, true));
+		}
 	}
 
 	public Component getTableCellRendererComponent(JTable table, Object value,
 	                                               boolean isSelected, boolean hasFocus, int row, int column) {
 		JButton button = this;
+
 		Object obj = state.get(column);
 		if (obj != null) {
 			if ((Integer) obj == DOWN) {
-				button = downButton;
+				button = new DownButton();
 			} else {
-				button = upButton;
+				button = new UpButton();
 			}
 		}
 		button.setText((value == null) ? "" : value.toString());
 		boolean isPressed = (column == pushedColumn);
 		button.getModel().setPressed(isPressed);
 		button.getModel().setArmed(isPressed);
+		setButtonStyle(button);
 		return button;
+	}
+
+	public void setButtonStyle(JButton button) {
+		try {
+			button.setPreferredSize(new Dimension(button.getWidth(), 23));
+			button.setFocusPainted(false);
+			button.setContentAreaFilled(false);
+			button.setBorder(new LineBorder(Color.LIGHT_GRAY));
+		} catch (Exception e) {
+		}
 	}
 
 	public void setPressedColumn(int col) {

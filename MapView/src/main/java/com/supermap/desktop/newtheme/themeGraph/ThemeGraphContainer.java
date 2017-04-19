@@ -94,7 +94,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
     private JButton buttonRemarkStyle = new JButton("...");
     // panelAxis
     private JLabel labelAxisColor = new JLabel();
-    private ColorSelectButton buttonAxisColor;
+    private ComponentDropDown buttonAxisColor;
     private JLabel labelAxisModel = new JLabel();
     private JComboBox<String> comboBoxAxisModel = new JComboBox<String>();
     private JLabel labelAxisStyle = new JLabel();
@@ -258,15 +258,15 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         initPanelAdvance();
     }
 
-    private void setComponentName(){
-        ComponentUIUtilities.setName(this.tableGraphInfo,"ThemeGraphContainer_tableGraphInfo");
-        ComponentUIUtilities.setName(this.comboBoxColor,"ThemeGraphContainer_comboBoxColor");
-        ComponentUIUtilities.setName(this.buttonDelete,"ThemeGraphContainer_buttonDelete");
-        ComponentUIUtilities.setName(this.buttonAdd,"ThemeGraphContainer_buttonAdd");
-        ComponentUIUtilities.setName(this.comboBoxGraphType,"ThemeGraphContainer_comboBoxGraphType");
-        ComponentUIUtilities.setName(this.comboBoxMethod,"ThemeGraphContainer_comboBoxMethod");
-        ComponentUIUtilities.setName(this.comboBoxAxisModel,"ThemeGraphContainer_comboBoxAxisModel");
-        ComponentUIUtilities.setName(this.textFieldBarwidthRatio,"ThemeGraphContainer_textFieldBarwidthRatio");
+    private void setComponentName() {
+        ComponentUIUtilities.setName(this.tableGraphInfo, "ThemeGraphContainer_tableGraphInfo");
+        ComponentUIUtilities.setName(this.comboBoxColor, "ThemeGraphContainer_comboBoxColor");
+        ComponentUIUtilities.setName(this.buttonDelete, "ThemeGraphContainer_buttonDelete");
+        ComponentUIUtilities.setName(this.buttonAdd, "ThemeGraphContainer_buttonAdd");
+        ComponentUIUtilities.setName(this.comboBoxGraphType, "ThemeGraphContainer_comboBoxGraphType");
+        ComponentUIUtilities.setName(this.comboBoxMethod, "ThemeGraphContainer_comboBoxMethod");
+        ComponentUIUtilities.setName(this.comboBoxAxisModel, "ThemeGraphContainer_comboBoxAxisModel");
+        ComponentUIUtilities.setName(this.textFieldBarwidthRatio, "ThemeGraphContainer_textFieldBarwidthRatio");
     }
 
     private void initPanelAdvance() {
@@ -362,7 +362,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         initComboxAxisModel();
         // @formatter:off
         panelAxis.setLayout(new GridBagLayout());
-        this.buttonAxisColor = new ColorSelectButton(Color.gray);
+        this.buttonAxisColor = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
         panelAxis.add(this.labelAxisColor, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 2, 10).setWeight(30, 1));
         panelAxis.add(this.buttonAxisColor, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 10, 2, 10).setWeight(70, 1).setFill(GridBagConstraints.HORIZONTAL));
         panelAxis.add(this.labelAxisModel, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 10, 2, 10).setWeight(30, 1));
@@ -828,7 +828,7 @@ public class ThemeGraphContainer extends ThemeChangePanel {
         this.comboBoxRemarkFormat.addItemListener(this.graphTextFormatListener);
         this.buttonRemarkStyle.addActionListener(this.remarkStyleListener);
         this.checkBoxAxis.addItemListener(this.showAxisTextListener);
-        this.buttonAxisColor.addPropertyChangeListener("m_selectionColors", this.axisColorListener);
+        this.buttonAxisColor.addPropertyChangeListener(ComponentDropDown.CHANGECOLOR, this.axisColorListener);
         this.comboBoxAxisModel.addItemListener(this.axisModelListener);
         this.buttonAxisStyle.addActionListener(this.axisStyleListener);
         this.checkBoxShowAxisGrid.addItemListener(this.showAxisGridListener);

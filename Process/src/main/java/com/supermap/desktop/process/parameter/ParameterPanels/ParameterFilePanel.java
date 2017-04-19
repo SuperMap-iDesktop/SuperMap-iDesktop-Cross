@@ -8,12 +8,15 @@ import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmFileChoose;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.util.Objects;
 
 /**
@@ -38,19 +41,20 @@ public class ParameterFilePanel extends SwingPanel {
         initLayout();
     }
 
-    public void addChooseFileListener(ActionListener actionListener) {
-        this.fileChooserControl.getButton().addActionListener(actionListener);
-    }
-
-    public void removeChooseFileListener(ActionListener actionListener) {
-        this.fileChooserControl.getButton().removeActionListener(actionListener);
-    }
-
-    public FileChooserControl getFileChooserControl() {
-        return fileChooserControl;
-    }
-
     private void initListener() {
+        this.fileChooserControl.getButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SmFileChoose fileChoose = parameterFile.getFileChoose();
+                if (!isSelectingFile && fileChoose.showOpenDialog(((Component) ParameterFilePanel.this.getPanel())) == JFileChooser.APPROVE_OPTION) {
+                    isSelectingFile = true;
+                    File selectedFile = fileChoose.getSelectedFile();
+                    fileChooserControl.setText(selectedFile.getAbsolutePath());
+                    parameterFile.setSelectedItem(selectedFile.getAbsolutePath());
+                    isSelectingFile = false;
+                }
+            }
+        });
         parameterFile.addPropertyListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {

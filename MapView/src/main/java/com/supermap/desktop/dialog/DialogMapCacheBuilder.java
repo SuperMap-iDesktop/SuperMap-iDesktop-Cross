@@ -18,13 +18,13 @@ import com.supermap.desktop.ui.controls.ChooseTable.MultipleCheckboxItem;
 import com.supermap.desktop.ui.controls.ChooseTable.MultipleCheckboxTableHeaderCellRenderer;
 import com.supermap.desktop.ui.controls.ChooseTable.MultipleCheckboxTableRenderer;
 import com.supermap.desktop.ui.controls.ChooseTable.SmChooseTable;
+import com.supermap.desktop.ui.controls.ComponentDropDown;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
 import com.supermap.desktop.ui.controls.ToolBarJmenu.ToolbarJmenuListener;
-import com.supermap.desktop.ui.controls.ToolBarJmenu.ToolbarMenu;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
@@ -77,9 +77,13 @@ public class DialogMapCacheBuilder extends SmDialog {
 
     //  Scale Panel Control
     private JToolBar toolBar;
-    private ToolbarMenu toolbarMenuAddScale;
-    private ToolbarMenu toolbarMenuImport;
-    private ToolbarMenu toolbarMenuExport;
+    //    private ToolbarMenu toolbarMenuAddScale;
+//    private ToolbarMenu toolbarMenuImport;
+//    private ToolbarMenu toolbarMenuExport;
+    private ComponentDropDown addScaleDropDown;
+    private ComponentDropDown importDropDown;
+    private ComponentDropDown exportDropDown;
+
     private JButton buttonSelectAll;
     private JButton buttonSelectInverse;
     private JButton buttonDelete;
@@ -193,7 +197,6 @@ public class DialogMapCacheBuilder extends SmDialog {
         initGlobalValue();
         initBasicSettingPanelValue();
         initPanelImageSaveValue();
-        removeEvents();
         registEvents();
         this.componentList.add(this.buttonOK);
         this.componentList.add(this.buttonCancel);
@@ -227,9 +230,33 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.jMenuItemExportCacheConfigs = new JMenuItem(MapViewProperties.getString("MapCache_ExportCacheConfig"), CoreResources.getIcon(urlStr + "Image_ToolButton_ExportScale.png"));
         this.jMenuItemExportScale = new JMenuItem(MapViewProperties.getString("MapCache_ExportScale"), CoreResources.getIcon(urlStr + "Image_ToolButton_DefaultScale.png"));
 
-        this.toolbarMenuAddScale = new ToolbarMenu(CoreResources.getIcon(urlStr + "Image_ToolButton_AddScale.png"), MapViewProperties.getString("String_AddScale"), MapViewProperties.getString("String_AddScale"));
-        this.toolbarMenuImport = new ToolbarMenu(CoreResources.getIcon(urlStr + "Image_ToolButton_Import.png"), MapViewProperties.getString("MapCache_Import"), MapViewProperties.getString("MapCache_Import"));
-        this.toolbarMenuExport = new ToolbarMenu(CoreResources.getIcon(urlStr + "Image_ToolButton_Export.png"), MapViewProperties.getString("MapCache_Export"), MapViewProperties.getString("MapCache_Export"));
+//        this.toolbarMenuAddScale = new ToolbarMenu(CoreResources.getIcon(urlStr + "Image_ToolButton_AddScale.png"), MapViewProperties.getString("String_AddScale"), MapViewProperties.getString("String_AddScale"));
+//        this.toolbarMenuImport = new ToolbarMenu(CoreResources.getIcon(urlStr + "Image_ToolButton_Import.png"), MapViewProperties.getString("MapCache_Import"), MapViewProperties.getString("MapCache_Import"));
+//        this.toolbarMenuExport = new ToolbarMenu(CoreResources.getIcon(urlStr + "Image_ToolButton_Export.png"), MapViewProperties.getString("MapCache_Export"), MapViewProperties.getString("MapCache_Export"));
+        this.addScaleDropDown = new ComponentDropDown(ComponentDropDown.IMAGE_TYPE);
+        JPopupMenu popupMenuScale = new JPopupMenu();
+        popupMenuScale.add(jMenuItemAddScale);
+        popupMenuScale.add(jMenuItemDefaultScale);
+        this.addScaleDropDown.setPopupMenu(popupMenuScale);
+        this.addScaleDropDown.setToolTip(MapViewProperties.getString("String_AddScale"));
+        this.addScaleDropDown.setIcon(CoreResources.getIcon(urlStr + "Image_ToolButton_AddScale.png"));
+
+        this.importDropDown = new ComponentDropDown(ComponentDropDown.IMAGE_TYPE);
+        JPopupMenu popupMenuImport = new JPopupMenu();
+        popupMenuImport.add(jMenuItemImportCacheConfigs);
+        popupMenuImport.add(jMenuItemImportScale);
+        this.importDropDown.setPopupMenu(popupMenuImport);
+        this.importDropDown.setToolTip(MapViewProperties.getString("MapCache_Import"));
+        this.importDropDown.setIcon(CoreResources.getIcon(urlStr + "Image_ToolButton_Import.png"));
+
+        this.exportDropDown = new ComponentDropDown(ComponentDropDown.IMAGE_TYPE);
+        JPopupMenu popupMenuExport = new JPopupMenu();
+        popupMenuExport.add(jMenuItemExportCacheConfigs);
+        popupMenuExport.add(jMenuItemExportScale);
+        this.exportDropDown.setPopupMenu(popupMenuExport);
+        this.exportDropDown.setToolTip(MapViewProperties.getString("MapCache_Export"));
+        this.exportDropDown.setIcon(CoreResources.getIcon(urlStr + "Image_ToolButton_Export.png"));
+
         this.buttonSelectAll = new JButton();
         this.buttonSelectInverse = new JButton();
         this.buttonDelete = new JButton();
@@ -294,7 +321,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                                 .addGroup(groupLayout.createSequentialGroup()
                                         .addContainerGap(this.gapWithDialog, this.gapWithDialog)
                                         .addGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                .addComponent(this.toolBar)
+                                                .addComponent(this.toolBar, 240, 240, 240)
                                                 .addComponent(this.scrollPane, 263, 343, Short.MAX_VALUE))
                                         .addGap(10, 10, 10)
                                         .addComponent(this.tabbedPane, 363, 363, Short.MAX_VALUE))
@@ -326,20 +353,20 @@ public class DialogMapCacheBuilder extends SmDialog {
                                 .addComponent(this.buttonCancel))
         );
 
-        this.toolbarMenuAddScale.addJmentItem(this.jMenuItemAddScale);
-        this.toolbarMenuAddScale.addJmentItem(this.jMenuItemDefaultScale);
-        this.toolbarMenuImport.addJmentItem(this.jMenuItemImportCacheConfigs);
-        this.toolbarMenuImport.addJmentItem(this.jMenuItemImportScale);
-        this.toolbarMenuExport.addJmentItem(this.jMenuItemExportCacheConfigs);
-        this.toolbarMenuExport.addJmentItem(this.jMenuItemExportScale);
-        this.toolBar.add(this.toolbarMenuAddScale);
+//        this.toolbarMenuAddScale.addJmentItem(this.jMenuItemAddScale);
+//        this.toolbarMenuAddScale.addJmentItem(this.jMenuItemDefaultScale);
+//        this.toolbarMenuImport.addJmentItem(this.jMenuItemImportCacheConfigs);
+//        this.toolbarMenuImport.addJmentItem(this.jMenuItemImportScale);
+//        this.toolbarMenuExport.addJmentItem(this.jMenuItemExportCacheConfigs);
+//        this.toolbarMenuExport.addJmentItem(this.jMenuItemExportScale);
+        this.toolBar.add(this.addScaleDropDown);
         this.toolBar.addSeparator();
         this.toolBar.add(this.buttonSelectAll);
         this.toolBar.add(this.buttonSelectInverse);
         this.toolBar.add(this.buttonDelete);
         this.toolBar.addSeparator();
-        this.toolBar.add(this.toolbarMenuImport);
-        this.toolBar.add(this.toolbarMenuExport);
+        this.toolBar.add(this.importDropDown);
+        this.toolBar.add(this.exportDropDown);
         this.toolBar.setFloatable(false);
 
         this.localSplitTable = new MutiTable();
@@ -1062,7 +1089,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         try {
             double[] outputScalevalues;
             this.scaleNames = new HashMap<>();
-            if (this.toolbarMenuAddScale.isToolbarMenuEnabled()) {
+            if (this.addScaleDropDown.isEnabled()) {
                 outputScalevalues = new double[this.currentMapCacheScale.size()];
                 for (int i = 0; i < outputScalevalues.length; i++) {
                     outputScalevalues[i] = this.currentMapCacheScale.get(i);
@@ -1183,7 +1210,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                 Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateSuccessed"));
                 if (!this.fileChooserControlFileCache.getEditor().getText().substring(this.fileChooserControlFileCache.getEditor().getText().length() - 1).equals("\\")) {
                     Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + this.fileChooserControlFileCache.getEditor().getText() + "\\" + this.textFieldCacheName.getText());
-                }else{
+                } else {
                     Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + this.fileChooserControlFileCache.getEditor().getText() + this.textFieldCacheName.getText());
                 }
             } else {
@@ -1569,9 +1596,9 @@ public class DialogMapCacheBuilder extends SmDialog {
         }
     };
 
-    private ToolbarJmenuListener addScaleToolbarJmenuListener = new ToolbarJmenuListener() {
+    private ActionListener addScaleToolbarJmenuListener = new ActionListener() {
         @Override
-        public void toolbarMenuClick() {
+        public void actionPerformed(ActionEvent e) {
             addScale();
         }
     };
@@ -1593,7 +1620,7 @@ public class DialogMapCacheBuilder extends SmDialog {
     private ActionListener selectAllScaleListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (toolbarMenuAddScale.isToolbarMenuEnabled()) {
+            if (addScaleDropDown.isEnabled()) {
                 localSplitTable.setRowSelectionInterval(0, localSplitTable.getRowCount() - 1);
             } else {
                 globalSplitTable.setRowSelectionInterval(0, globalSplitTable.getRowCount() - 1);
@@ -1608,7 +1635,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                 int[] temp;
                 ListSelectionModel selectionModel;
                 int allRowCount;
-                if (toolbarMenuAddScale.isToolbarMenuEnabled()) {
+                if (addScaleDropDown.isEnabled()) {
                     selectionModel = localSplitTable.getSelectionModel();
                     temp = localSplitTable.getSelectedRows();
                     allRowCount = localSplitTable.getRowCount();
@@ -1669,9 +1696,9 @@ public class DialogMapCacheBuilder extends SmDialog {
         }
     };
 
-    private ToolbarJmenuListener exportCacheConfigFileToolbarJmenuListener = new ToolbarJmenuListener() {
+    private ActionListener exportCacheConfigFileToolbarJmenuListener = new ActionListener() {
         @Override
-        public void toolbarMenuClick() {
+        public void actionPerformed(ActionEvent e) {
             exportCacheConfigFile();
         }
     };
@@ -1691,9 +1718,9 @@ public class DialogMapCacheBuilder extends SmDialog {
         }
     };
 
-    private ToolbarJmenuListener inputCacheConfigFileToolbarJmenuListener = new ToolbarJmenuListener() {
+    private ActionListener inputCacheConfigFileToolbarJmenuListener = new ActionListener() {
         @Override
-        public void toolbarMenuClick() {
+        public void actionPerformed(ActionEvent e) {
             inputCacheConfigFile();
         }
     };
@@ -1727,18 +1754,22 @@ public class DialogMapCacheBuilder extends SmDialog {
             if (e.getItem().toString() == MapViewProperties.getString("MapCache_ComboboxSplitModeLocalSplit")) {
                 mapCacheBuilder.setTilingMode(MapTilingMode.LOCAL);
                 scrollPane.setViewportView(localSplitTable);
-                toolbarMenuAddScale.setToolbarMenuEnabled(true);
+                addScaleDropDown.setEnabled(true);
+//                toolbarMenuAddScale.setToolbarMenuEnabled(true);
                 buttonDelete.setEnabled(true);
-                toolbarMenuImport.setToolbarMenuEnabled(true);
+                importDropDown.setEnabled(true);
+//                toolbarMenuImport.setToolbarMenuEnabled(true);
             } else if (e.getItem().toString() == MapViewProperties.getString("MapCache_ComboboxSplitModeGlobalSplit")) {
                 DialogMapCacheBuilder.this.mapCacheBuilder.setTilingMode(MapTilingMode.GLOBAL);
                 if (globalSplitScale == null || globalSplitScale.size() == 0) {
                     initGlobalCacheScales();
                 }
                 scrollPane.setViewportView(globalSplitTable);
-                toolbarMenuAddScale.setToolbarMenuEnabled(false);
+                addScaleDropDown.setEnabled(false);
+//                toolbarMenuAddScale.setToolbarMenuEnabled(false);
                 buttonDelete.setEnabled(false);
-                toolbarMenuImport.setToolbarMenuEnabled(false);
+                importDropDown.setEnabled(false);
+//                toolbarMenuImport.setToolbarMenuEnabled(false);
             }
         }
     };
@@ -1884,7 +1915,7 @@ public class DialogMapCacheBuilder extends SmDialog {
             globalSplitScale = null;
             globalSplitTable = null;
             initGlobalCacheScales();
-            if (!toolbarMenuAddScale.isToolbarMenuEnabled()) {
+            if (!addScaleDropDown.isEnabled()) {
                 scrollPane.setViewportView(globalSplitTable);
             }
         }
@@ -2043,6 +2074,7 @@ public class DialogMapCacheBuilder extends SmDialog {
     };
 
     private void registEvents() {
+        removeEvents();
         this.jMenuItemAddScale.addActionListener(this.addScaleListener);
         this.jMenuItemDefaultScale.addActionListener(this.defaultScaleListener);
         this.jMenuItemImportCacheConfigs.addActionListener(this.inputCacheConfigFileListener);
@@ -2052,9 +2084,12 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.buttonSelectAll.addActionListener(this.selectAllScaleListener);
         this.buttonSelectInverse.addActionListener(this.selectScaleInverseListener);
         this.buttonDelete.addActionListener(this.deleteScaleListener);
-        this.toolbarMenuAddScale.addFunctionClickListener(this.addScaleToolbarJmenuListener);
-        this.toolbarMenuImport.addFunctionClickListener(this.inputCacheConfigFileToolbarJmenuListener);
-        this.toolbarMenuExport.addFunctionClickListener(this.exportCacheConfigFileToolbarJmenuListener);
+        this.addScaleDropDown.getDisplayButton().addActionListener(this.addScaleToolbarJmenuListener);
+        this.importDropDown.getDisplayButton().addActionListener(this.inputCacheConfigFileToolbarJmenuListener);
+        this.exportDropDown.getDisplayButton().addActionListener(this.exportCacheConfigFileToolbarJmenuListener);
+//        this.toolbarMenuAddScale.addFunctionClickListener(this.addScaleToolbarJmenuListener);
+//        this.toolbarMenuImport.addFunctionClickListener(this.inputCacheConfigFileToolbarJmenuListener);
+//        this.toolbarMenuExport.addFunctionClickListener(this.exportCacheConfigFileToolbarJmenuListener);
         this.localSplitTable.getModel().addTableModelListener(this.tableModelListener);
         this.comboBoxSplitMode.addItemListener(this.comboboxSplitModeItemListener);
         this.textFieldCacheName.getDocument().addDocumentListener(this.cacheNameTextChangeListener);
@@ -2093,9 +2128,12 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.buttonSelectAll.removeActionListener(this.selectAllScaleListener);
         this.buttonSelectInverse.removeActionListener(this.selectScaleInverseListener);
         this.buttonDelete.removeActionListener(this.deleteScaleListener);
-        this.toolbarMenuAddScale.removeFunctionClickListener(this.addScaleToolbarJmenuListener);
-        this.toolbarMenuImport.removeFunctionClickListener(this.inputCacheConfigFileToolbarJmenuListener);
-        this.toolbarMenuExport.removeFunctionClickListener(this.exportCacheConfigFileToolbarJmenuListener);
+        this.addScaleDropDown.getDisplayButton().removeActionListener(this.addScaleToolbarJmenuListener);
+        this.importDropDown.getDisplayButton().removeActionListener(this.inputCacheConfigFileToolbarJmenuListener);
+        this.exportDropDown.getDisplayButton().removeActionListener(this.exportCacheConfigFileToolbarJmenuListener);
+//        this.toolbarMenuAddScale.removeFunctionClickListener(this.addScaleToolbarJmenuListener);
+//        this.toolbarMenuImport.removeFunctionClickListener(this.inputCacheConfigFileToolbarJmenuListener);
+//        this.toolbarMenuExport.removeFunctionClickListener(this.exportCacheConfigFileToolbarJmenuListener);
         this.localSplitTable.getModel().removeTableModelListener(this.tableModelListener);
         this.comboBoxSplitMode.removeItemListener(this.comboboxSplitModeItemListener);
         this.textFieldCacheName.getDocument().removeDocumentListener(this.cacheNameTextChangeListener);

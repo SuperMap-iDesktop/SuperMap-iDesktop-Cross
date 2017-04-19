@@ -5,7 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.SMFormattedTextField;
-import com.supermap.desktop.ui.controls.ButtonColorSelector;
+import com.supermap.desktop.ui.controls.ComponentDropDown;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.MapColorModeUtilities;
 import com.supermap.mapping.Map;
@@ -39,7 +39,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
     private JTextField textFieldMapName; // 地图名称
     private SMFormattedTextField textFieldAngle; // 地图旋转角度
     private JComboBox<String> comboBoxColorMode; // 颜色模式
-    private ButtonColorSelector buttonBackgroundColor; // 背景颜色
+    private ComponentDropDown buttonBackgroundColor; // 背景颜色
     private SMFormattedTextField textFieldMinVisibleTextSize; // 文本最小尺寸
     private SMFormattedTextField textFieldMaxVisibleTextSize; // 文本最大尺寸
     private SMFormattedTextField textFieldMaxVisibleVertex; // 最大可见节点数
@@ -177,7 +177,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
         this.textFieldMapName.setEditable(false);
         this.textFieldAngle = new SMFormattedTextField();
         this.comboBoxColorMode = new JComboBox<String>();
-        this.buttonBackgroundColor = new ButtonColorSelector();
+        this.buttonBackgroundColor = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
         this.textFieldMinVisibleTextSize = new SMFormattedTextField();
         this.textFieldMaxVisibleTextSize = new SMFormattedTextField();
         this.textFieldMaxVisibleVertex = new SMFormattedTextField();
@@ -375,7 +375,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
         this.checkBoxIsTextAngleFixed.addItemListener(this.itemListener);
         this.checkBoxIsTextAntialias.addItemListener(this.itemListener);
         this.checkBoxIsTextOrientationFixed.addItemListener(this.itemListener);
-        this.buttonBackgroundColor.addPropertyChangeListener(ButtonColorSelector.PROPERTY_COLOR, this.propertyChangeListener);
+        this.buttonBackgroundColor.addPropertyChangeListener(ComponentDropDown.CHANGECOLOR, this.propertyChangeListener);
         this.buttonOverlapDisplayedOptions.addMouseListener(setMouseListener);
         this.jPopupMenu.addPropertyChangerListeners(changeListener);
     }
@@ -395,7 +395,7 @@ public class MapBasePropertyControl extends AbstractPropertyControl {
         this.checkBoxIsTextAngleFixed.removeItemListener(this.itemListener);
         this.checkBoxIsTextAntialias.removeItemListener(this.itemListener);
         this.checkBoxIsTextOrientationFixed.removeItemListener(this.itemListener);
-        this.buttonBackgroundColor.removePropertyChangeListener(ButtonColorSelector.PROPERTY_COLOR, this.propertyChangeListener);
+        this.buttonBackgroundColor.removePropertyChangeListener(ComponentDropDown.CHANGECOLOR, this.propertyChangeListener);
         this.buttonOverlapDisplayedOptions.removeMouseListener(setMouseListener);
         this.jPopupMenu.removePropertyChangerListeners(changeListener);
     }

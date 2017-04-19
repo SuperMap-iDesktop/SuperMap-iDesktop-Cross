@@ -11,7 +11,6 @@ import com.supermap.desktop.process.dataconversion.ReflectInfo;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterFilePanel;
 import com.supermap.desktop.process.parameter.ParameterPanels.ParameterTextFieldPanel;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterFile;
@@ -19,13 +18,11 @@ import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.utilities.FileUtilities;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -34,40 +31,39 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class MetaProcessImport extends MetaProcess {
 
-	private final static String OUTPUT_DATA = "ImportResult";
-	protected ImportSetting importSetting;
-	private CopyOnWriteArrayList<ReflectInfo> defaultImportParameters;
-	private CopyOnWriteArrayList<ReflectInfo> paramParameters;
-	private String importType = "";
-	private IParameterCreator parameterCreator;
-	private ImportSteppedListener importStepListener = new ImportSteppedListener() {
-		@Override
-		public void stepped(ImportSteppedEvent e) {
-			RunningEvent event = new RunningEvent(MetaProcessImport.this, e.getSubPercent(), "");
-			fireRunning(event);
+    private final static String OUTPUT_DATA = "ImportResult";
+    protected ImportSetting importSetting;
+    private CopyOnWriteArrayList<ReflectInfo> defaultImportParameters;
+    private CopyOnWriteArrayList<ReflectInfo> paramParameters;
+    private String importType = "";
+    private IParameterCreator parameterCreator;
+    private ImportSteppedListener importStepListener = new ImportSteppedListener() {
+        @Override
+        public void stepped(ImportSteppedEvent e) {
+	        RunningEvent event = new RunningEvent(MetaProcessImport.this, e.getSubPercent(), "");
+	        fireRunning(event);
 
-			if (event.isCancel()) {
-				e.setCancel(true);
-			}
-		}
-	};
-	private ParameterFile parameterFile;
-	private ParameterTextField datasetName;
-	private ActionListener fileChooseListener = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			SmFileChoose jFileChooser = com.supermap.desktop.process.dataconversion.FileType.createImportFileChooser(importType);
-			if (jFileChooser.showOpenDialog((Component) parameterCreator.getParameterFile().getParameterPanel().getPanel()) == JFileChooser.APPROVE_OPTION) {
-				File selectedFile = jFileChooser.getSelectedFile();
-				((ParameterFilePanel) parameterFile.getParameterPanel()).getFileChooserControl().setText(selectedFile.getAbsolutePath());
-				String fileName = selectedFile.getName();
-				String fileAlis = fileName.substring(0, fileName.lastIndexOf("."));
-				((ParameterTextFieldPanel) datasetName.getParameterPanel()).setText(fileAlis);
-				datasetName.setSelectedItem(fileAlis);
-				parameterFile.setSelectedItem(selectedFile.getAbsolutePath());
-			}
-		}
-	};
+	        if (event.isCancel()) {
+		        e.setCancel(true);
+	        }
+        }
+    };
+    private ParameterFile parameterFile;
+    private ParameterTextField datasetName;
+    private boolean isSelectingFile = false;
+    private PropertyChangeListener fileListener = new PropertyChangeListener() {
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            if (!isSelectingFile && evt.getNewValue() instanceof String) {
+                isSelectingFile = true;
+                String fileName = (String) evt.getNewValue();
+                String fileAlis = FileUtilities.getFileAlias(fileName);
+                ((ParameterTextFieldPanel) datasetName.getParameterPanel()).setText(fileAlis);
+                datasetName.setSelectedItem(fileAlis);
+                isSelectingFile = false;
+            }
+        }
+    };
 
 	public MetaProcessImport(ImportSetting importSetting, String importType) {
 		this.importSetting = importSetting;
@@ -89,16 +85,16 @@ public class MetaProcessImport extends MetaProcess {
 		updateParameters();
 	}
 
-	public void updateParameters() {
-		parameterFile = parameterCreator.getParameterFile();
-		datasetName = parameterCreator.getDatasetName();
-		if (null != parameterCreator.getParameterCombineParamSet()) {
-			parameters.setParameters(parameterFile, parameterCreator.getParameterCombineResultSet(), parameterCreator.getParameterCombineParamSet());
-		} else {
-			parameters.setParameters(parameterFile, parameterCreator.getParameterCombineResultSet());
-		}
-		((ParameterFilePanel) parameterFile.getParameterPanel()).addChooseFileListener(this.fileChooseListener);
-	}
+    public void updateParameters() {
+        parameterFile = parameterCreator.getParameterFile();
+        datasetName = parameterCreator.getDatasetName();
+        if (null != parameterCreator.getParameterCombineParamSet()) {
+            parameters.setParameters(parameterFile, parameterCreator.getParameterCombineResultSet(), parameterCreator.getParameterCombineParamSet());
+        } else {
+            parameters.setParameters(parameterFile, parameterCreator.getParameterCombineResultSet());
+        }
+        parameterFile.addPropertyListener(this.fileListener);
+    }
 
 	public void setImportSetting(ImportSetting importSetting) {
 		this.importSetting = importSetting;
@@ -117,44 +113,44 @@ public class MetaProcessImport extends MetaProcess {
 		return parameters.getPanel();
 	}
 
-	@Override
-	public String getTitle() {
-		if (importType.equalsIgnoreCase("GBDEM")) {
-			return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"), "ArcGIS DEM");
-		} else if (importType.equalsIgnoreCase("GRD_DEM")) {
-			return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"), ProcessProperties.getString("String_Grid") + "DEM");
-		}
-		return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"), importType);
-	}
+    @Override
+    public String getTitle() {
+        if (importType.equalsIgnoreCase("GBDEM")) {
+            return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"), "ArcGIS DEM");
+        } else if (importType.equalsIgnoreCase("GRD_DEM")) {
+            return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"), ProcessProperties.getString("String_Grid") + "DEM");
+        }
+        return MessageFormat.format(ProcessProperties.getString("String_ImportTitle"), importType);
+    }
 
-	@Override
-	public void run() {
-		fireRunning(new RunningEvent(this, 0, "start"));
-		DataImport dataImport = ImportSettingSetter.setParameter(importSetting, defaultImportParameters, paramParameters);
-		dataImport.addImportSteppedListener(this.importStepListener);
-		ImportResult result = dataImport.run();
-		ImportSetting[] succeedSettings = result.getSucceedSettings();
-		if (succeedSettings.length > 0) {
-			final Datasource datasource = succeedSettings[0].getTargetDatasource();
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					if (null != datasource) {
-						UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
-					}
-				}
-			});
-			Dataset dataset = datasource.getDatasets().get(succeedSettings[0].getTargetDatasetName());
-			this.outputs.getData(OUTPUT_DATA).setValue(dataset);
-			fireRunning(new RunningEvent(this, 100, "finished"));
-			setFinished(true);
-		} else {
-			fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
-			setFinished(true);
-		}
-		dataImport.removeImportSteppedListener(this.importStepListener);
-		((ParameterFilePanel) parameterFile.getParameterPanel()).removeChooseFileListener(this.fileChooseListener);
-	}
+    @Override
+    public void run() {
+        fireRunning(new RunningEvent(this, 0, "start"));
+        DataImport dataImport = ImportSettingSetter.setParameter(importSetting, defaultImportParameters, paramParameters);
+        dataImport.addImportSteppedListener(this.importStepListener);
+        ImportResult result = dataImport.run();
+        ImportSetting[] succeedSettings = result.getSucceedSettings();
+        if (succeedSettings.length > 0) {
+            final Datasource datasource = succeedSettings[0].getTargetDatasource();
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    if (null != datasource) {
+                        UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
+                    }
+                }
+            });
+            Dataset dataset = datasource.getDatasets().get(succeedSettings[0].getTargetDatasetName());
+            this.outputs.getData(OUTPUT_DATA).setValue(dataset);
+            fireRunning(new RunningEvent(this, 100, "finished"));
+            setFinished(true);
+        } else {
+            fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
+            setFinished(true);
+        }
+        dataImport.removeImportSteppedListener(this.importStepListener);
+        parameterFile.removePropertyListener(this.fileListener);
+    }
 
 	@Override
 	public String getKey() {
