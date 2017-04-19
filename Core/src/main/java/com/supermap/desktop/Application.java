@@ -56,6 +56,8 @@ public class Application {
 	private ArrayList<WorkFlowsChangedListener> workFlowsChangedListeners = new ArrayList<>();
 
 	private WorkFlowInitListener workFlowInitListener;
+	private static final String splitLine = "____________________";
+
 	/**
 	 * classVar1 documentation comment
 	 */
@@ -326,6 +328,17 @@ public class Application {
 
 	public void resetWorkFlows() {
 		String description = workspace.getDescription();
+		String sourceDescription = "";
+		//region 等一个接口
+		String[] split = description.split(splitLine);
+		if (split.length == 2) {
+			sourceDescription = split[0];
+			description = split[1];
+		} else {
+			description = "";
+		}
+		//endregion
+
 		Document document = null;
 		try {
 			document = XmlUtilities.stringToDocument(description);
@@ -334,6 +347,11 @@ public class Application {
 		}
 		if (StringUtilities.isNullOrEmpty(description) || document == null) {
 			String s = initWorkFlowXml();
+
+			//region 等一个接口
+			s = sourceDescription + splitLine + s;
+			//endregion
+
 			workspace.setDescription(s);
 			return;
 		} else {
@@ -359,6 +377,9 @@ public class Application {
 	private void addWorkFlowInWorkspace(IWorkFlow workFlow) {
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
 		String description = workspace.getDescription();
+
+		description = description.split(splitLine)[1];
+
 		if (StringUtilities.isNullOrEmpty(description)) {
 			description = initWorkFlowXml();
 			workspace.setDescription(description);
@@ -370,7 +391,13 @@ public class Application {
 		workFlowNode.setAttribute("name", workFlow.getName());
 		workFlowNode.setAttribute("value", workFlow.getMatrixXml());
 		workFlows.appendChild(workFlowNode);
-		workspace.setDescription(XmlUtilities.nodeToString(document, "UTF-8"));
+		String s = XmlUtilities.nodeToString(document, "UTF-8");
+
+		//region 等一个接口
+		s = workspace.getDescription().split(splitLine)[0] + splitLine + s;
+		//endregion
+
+		workspace.setDescription(s);
 	}
 
 	private String initWorkFlowXml() {
@@ -416,7 +443,13 @@ public class Application {
 				break;
 			}
 		}
-		workspace.setDescription(XmlUtilities.nodeToString(document, "UTF-8"));
+		String s = XmlUtilities.nodeToString(document, "UTF-8");
+
+		//region 等一个接口 菩罰世諳若多侄羯冥世殿僧僧死怯栗冥陀侄曳栗多罰道瑟知冥摩一侄所婆皤若顛朋皤沙諳老倒諳多朋侄婆實
+		s = workspace.getDescription().split(splitLine)[0] + splitLine + s;
+		//endregion
+
+		workspace.setDescription(s);
 	}
 
 	private void fireWorkFlowsChanged(WorkFlowChangedEvent workFlowChangedEvent) {
@@ -441,5 +474,13 @@ public class Application {
 
 	public void setWorkFlowInitListener(WorkFlowInitListener workFlowInitListener) {
 		this.workFlowInitListener = workFlowInitListener;
+	}
+
+	public void setWorkspaceDescribe(String description) {
+		workspace.setDescription(description + splitLine + workspace.getDescription().split(splitLine)[1]);
+	}
+
+	public String getWorkspaceDescribe() {
+		return workspace.getDescription().split(splitLine)[0];
 	}
 }
