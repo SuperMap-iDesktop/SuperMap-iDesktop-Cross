@@ -10,7 +10,7 @@ import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolSpinnerUtilties;
 import com.supermap.desktop.enums.TextStyleType;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.ColorSelectButton;
+import com.supermap.desktop.ui.controls.ComponentDropDown;
 import com.supermap.desktop.ui.controls.FontComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -59,9 +59,9 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
     private JLabel labelInclinationAngl;// 倾斜角度
     private JSpinner spinnerInclinationAngl;
     private JLabel labelFontColor;// 文本颜色
-    private ColorSelectButton buttonFontColorSelect;
+    private ComponentDropDown buttonFontColorSelect;
     private JLabel labelBGColor;// 背景颜色
-    private ColorSelectButton buttonBGColorSelect;
+    private ComponentDropDown buttonBGColorSelect;
     // 对齐方式名称和对齐方式值构成的HashMap
     private static HashMap<String, TextAlignment> hashMapTextAlignment = new HashMap<String, TextAlignment>();
 
@@ -438,8 +438,8 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         this.textFieldFontRotationAngl.addCaretListener(this.textfieldFontRotationAnglListener);
         this.textFieldFontItalicAngl.addCaretListener(this.textFieldFontItalicAnglListener);
         this.textfieldOutLineWidth.addCaretListener(this.textfieldOutLineWidthListener);
-        this.buttonFontColorSelect.addPropertyChangeListener("m_selectionColors", this.fontColorProperty);
-        this.buttonBGColorSelect.addPropertyChangeListener("m_selectionColors", this.backColorListener);
+        this.buttonFontColorSelect.addPropertyChangeListener(ComponentDropDown.CHANGECOLOR, this.fontColorProperty);
+        this.buttonBGColorSelect.addPropertyChangeListener(ComponentDropDown.CHANGECOLOR, this.backColorListener);
         this.checkBoxBGOpaque.addActionListener(this.checkboxListener);
         this.checkBoxBorder.addActionListener(this.checkboxListener);
         this.checkBoxFixedSize.addActionListener(this.checkboxListener);
@@ -495,9 +495,9 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
      * 初始化控件名称
      */
     private void setComponentName() {
-        ComponentUIUtilities.setName(this.comboBoxFontName,"TextBasicPanel_comboBoxFontName");
-        ComponentUIUtilities.setName(this.comboBoxFontSize,"TextBasicPanel_comboBoxFontSize");
-        ComponentUIUtilities.setName(this.checkBoxItalic,"TextBasicPanel_checkBoxItalic");
+        ComponentUIUtilities.setName(this.comboBoxFontName, "TextBasicPanel_comboBoxFontName");
+        ComponentUIUtilities.setName(this.comboBoxFontSize, "TextBasicPanel_comboBoxFontSize");
+        ComponentUIUtilities.setName(this.checkBoxItalic, "TextBasicPanel_checkBoxItalic");
     }
 
     private void initEffectPanel() {
@@ -754,10 +754,11 @@ public class TextBasicPanel extends JPanel implements ITextStyle {
         // 但是显示异常，故新建一个Color来规避此问题
         Color foreColor = new Color(this.textStyle.getForeColor().getRGB());
         Color backColor = new Color(this.textStyle.getBackColor().getRGB());
-        this.buttonFontColorSelect = new ColorSelectButton(foreColor);
+        this.buttonFontColorSelect = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
+        this.buttonFontColorSelect.setColor(foreColor);
         this.labelBGColor = new JLabel();
-        this.buttonBGColorSelect = new ColorSelectButton(backColor);
-        this.buttonBGColorSelect.setColor(this.textStyle.getBackColor());
+        this.buttonBGColorSelect = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
+        this.buttonBGColorSelect.setColor(backColor);
         this.labelStringAlignment = new JLabel();
         initComboBoxStringAlignMent();
         this.componentsMap = new HashMap<TextStyleType, JComponent>();
