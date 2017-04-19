@@ -7,6 +7,7 @@ import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.ToolBarJmenu.ToolbarMenu;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.DoubleUtilities;
@@ -17,9 +18,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.plaf.metal.MetalComboBoxIcon;
 import javax.swing.table.DefaultTableModel;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,12 +30,8 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.io.*;
-import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +66,7 @@ public class ScaleEnabledContainer extends SmDialog {
     private double[] scales;
     private MapBoundsPropertyControl control;
     private String[] title = {MapViewProperties.getString("String_Index"), MapViewProperties.getString("String_Scales")};
-    private DecimalFormat format = new DecimalFormat("#.############");
+    private ComponentDropDown addScale;
 
     private TableModelListener tableModelListener = new TableModelListener() {
 
@@ -84,6 +82,16 @@ public class ScaleEnabledContainer extends SmDialog {
             checkButtonState();
         }
     };
+    private ActionListener addScaleListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            try {
+                addScaleCaption();
+            } catch (InvalidScaleException e1) {
+                e1.printStackTrace();
+            }
+        }
+    };
 
     public ScaleEnabledContainer() {
         initComponents();
@@ -92,6 +100,14 @@ public class ScaleEnabledContainer extends SmDialog {
         checkButtonState();
         addFocusTraversalPolicyList();
         setModal(false);
+        this.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+                unRegistEvents();
+                dispose();
+            }
+        });
     }
 
     public void init(MapBoundsPropertyControl control, Map map) {
@@ -185,6 +201,7 @@ public class ScaleEnabledContainer extends SmDialog {
         this.buttonOk.addActionListener(this.panelButtonAction);
         this.buttonCancel.addActionListener(this.panelButtonAction);
         this.table.addMouseListener(this.mouseAdapter);
+        this.addScale.getDisplayButton().addActionListener(this.addScaleListener);
     }
 
     private void removeRepeatStr(List<String> scaleDisplays) {
@@ -266,6 +283,7 @@ public class ScaleEnabledContainer extends SmDialog {
         this.buttonOk.removeActionListener(this.panelButtonAction);
         this.buttonCancel.removeActionListener(this.panelButtonAction);
         this.table.removeMouseListener(this.mouseAdapter);
+        this.addScale.getDisplayButton().removeActionListener(this.addScaleListener);
     }
 
     protected void importXml(String string) {
@@ -450,6 +468,7 @@ public class ScaleEnabledContainer extends SmDialog {
         this.buttonDelete.setToolTipText(CommonProperties.getString("String_Delete"));
         this.buttonImport.setToolTipText(CommonProperties.getString("String_ToolBar_Import"));
         this.buttonExport.setToolTipText(CommonProperties.getString("String_ToolBar_Export"));
+        this.addScale.setToolTip(MapViewProperties.getString("MapCache_AddScale"));
     }
 
     private void initComponents() {
@@ -508,8 +527,10 @@ public class ScaleEnabledContainer extends SmDialog {
         this.buttonDelete = new JButton(CoreResources.getIcon(urlStr + "Image_ToolButton_Delete.png"));
         this.buttonImport = new JButton(CoreResources.getIcon(urlStr + "Image_ToolButton_Import.png"));
         this.buttonExport = new JButton(CoreResources.getIcon(urlStr + "Image_ToolButton_Export.png"));
-        AddScalePanel addScalePanel = new AddScalePanel();
-        this.toolbar.add(addScalePanel);
+        this.addScale = new ComponentDropDown(ComponentDropDown.IMAGE_TYPE);
+        this.addScale.setIcon(CoreResources.getIcon(urlStr + "Image_ToolButton_AddScale.png"));
+        this.addScale.setPopupMenu(new ToolBarPopuMenu());
+        this.toolbar.add(addScale);
         this.toolbar.addSeparator();
         this.toolbar.add(this.buttonSelectAll);
         this.toolbar.add(this.buttonInvertSelect);
@@ -526,10 +547,10 @@ public class ScaleEnabledContainer extends SmDialog {
             String scaleNext = table.getValueAt(selectRow + 1, 1).toString();
             String scaleNow = table.getValueAt(selectRow, 1).toString();
             if (scaleNext.contains(",")) {
-                scaleNext = scaleNext.replaceAll(",","");
+                scaleNext = scaleNext.replaceAll(",", "");
             }
             if (scaleNow.contains(",")) {
-                scaleNow = scaleNow.replaceAll(",","");
+                scaleNow = scaleNow.replaceAll(",", "");
             }
             double scaleNextD = Double.parseDouble(scaleNext.split(":")[1]);
             double scaleNowD = Double.parseDouble(scaleNow.split(":")[1]);
@@ -563,72 +584,47 @@ public class ScaleEnabledContainer extends SmDialog {
         }
     }
 
-    class AddScalePanel extends JPanel {
-        /**
-         *
-         */
-        private static final long serialVersionUID = 1L;
-        private JLabel labelAddScale;
-        private JLabel labelArraw;
-        private MouseAdapter mouseAdpter;
-
-        public AddScalePanel() {
-            initAddScalePanel();
-            registAddScalePanelEvents();
-        }
-
-        private void registAddScalePanelEvents() {
-
-            this.mouseAdpter = new MouseAdapter() {
-
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    setBackground(selectColor);
-                }
-
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    setBackground(ScaleEnabledContainer.this.getBackground());
-                }
-
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    if (e.getSource() == labelAddScale) {
-                        try {
-                            addScaleCaption();
-                        } catch (InvalidScaleException e1) {
-                            e1.printStackTrace();
-                        }
-                    } else {
-                        JPopupMenu popupMenuAddScale = new ToolBarPopuMenu();
-                        popupMenuAddScale.show(AddScalePanel.this, 0, getHeight());
-                    }
-                }
-
-            };
-            this.labelAddScale.addMouseListener(this.mouseAdpter);
-            this.labelArraw.addMouseListener(this.mouseAdpter);
-        }
-
-        private void initAddScalePanel() {
-            this.labelAddScale = new JLabel(CoreResources.getIcon(urlStr + "Image_ToolButton_AddScale.png"));
-            this.labelArraw = new JLabel(new MetalComboBoxIcon());
-            this.labelAddScale.setToolTipText(MapViewProperties.getString("String_AddScale"));
-            this.labelArraw.setToolTipText(MapViewProperties.getString("String_AddScale"));
-            this.setLayout(new GridBagLayout());
-            this.add(this.labelAddScale, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST));
-            this.add(this.labelArraw, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setIpad(2, 0));
-        }
-    }
 
     class ToolBarPopuMenu extends JPopupMenu {
         /**
          *
          */
         private static final long serialVersionUID = 1L;
-        private DataCell addScale;
-        private DataCell addDefaultScale;
-        private MouseAdapter mouseAdpter;
+        private JMenuItem addScale;
+        private JMenuItem addDefaultScale;
+        private ActionListener addScaleListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    addScaleCaption();
+                } catch (InvalidScaleException ex) {
+                    Application.getActiveApplication().getOutput().output(ex);
+                }
+                ToolBarPopuMenu.this.setVisible(false);
+            }
+        };
+        private ActionListener defaultScaleListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    if (scaleExist()) {
+                        table.setRowSelectionInterval(0, 0);
+                    } else {
+                        try {
+                            String scaleDisplay = new String(new ScaleModel(map.getScale()).getScaleCaption());
+                            scaleDisplays.add(scaleDisplay);
+                            getTable();
+                        } catch (InvalidScaleException ex) {
+                            Application.getActiveApplication().getOutput().output(ex);
+                        }
+                    }
+                } catch (InvalidScaleException ex) {
+                    Application.getActiveApplication().getOutput().output(ex);
+                }
+                checkButtonState();
+                ToolBarPopuMenu.this.setVisible(false);
+            }
+        };
 
         public ToolBarPopuMenu() {
             initToolBarComponents();
@@ -636,50 +632,29 @@ public class ScaleEnabledContainer extends SmDialog {
         }
 
         private void registToolBarPopuMenuEvents() {
-            this.mouseAdpter = new MouseAdapter() {
+            this.addScale.addActionListener(this.addScaleListener);
+            this.addDefaultScale.addActionListener(this.defaultScaleListener);
+            this.addPopupMenuListener(new PopupMenuListener() {
                 @Override
-                public void mouseEntered(MouseEvent e) {
-                    ((JPanel) e.getSource()).setBackground(selectColor);
+                public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+
                 }
 
                 @Override
-                public void mouseExited(MouseEvent e) {
-                    ((JPanel) e.getSource()).setBackground(ScaleEnabledContainer.this.getBackground());
+                public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                    removeToolBarPopuMenuEvents();
                 }
 
                 @Override
-                public void mouseReleased(MouseEvent e) {
-                    if (e.getSource() == addScale) {
-                        try {
-                            addScaleCaption();
-                        } catch (InvalidScaleException e1) {
-                            e1.printStackTrace();
-                        }
-                        ToolBarPopuMenu.this.setVisible(false);
-                    } else {
-                        try {
-                            if (scaleExist()) {
-                                table.setRowSelectionInterval(0, 0);
-                            } else {
-                                try {
-                                    String scaleDisplay = new String(new ScaleModel(map.getScale()).getScaleCaption());
-                                    scaleDisplays.add(scaleDisplay);
-                                    getTable();
-                                } catch (InvalidScaleException e1) {
-                                    e1.printStackTrace();
-                                }
-                            }
-                        } catch (InvalidScaleException e1) {
-                            e1.printStackTrace();
-                        }
-                        checkButtonState();
-                        ToolBarPopuMenu.this.setVisible(false);
-                    }
-                }
+                public void popupMenuCanceled(PopupMenuEvent e) {
 
-            };
-            this.addScale.addMouseListener(this.mouseAdpter);
-            this.addDefaultScale.addMouseListener(this.mouseAdpter);
+                }
+            });
+        }
+
+        private void removeToolBarPopuMenuEvents(){
+            this.addScale.removeActionListener(this.addScaleListener);
+            this.addDefaultScale.removeActionListener(this.defaultScaleListener);
         }
 
         protected boolean scaleExist() throws InvalidScaleException {
@@ -695,12 +670,10 @@ public class ScaleEnabledContainer extends SmDialog {
         }
 
         private void initToolBarComponents() {
-            this.addScale = new DataCell(MapViewProperties.getString("String_AddScale"), CoreResources.getIcon(urlStr
-                    + "Image_ToolButton_AddScale.png"));
-            this.addDefaultScale = new DataCell(MapViewProperties.getString("String_AddCurrentScale"), CoreResources.getIcon(urlStr + "Image_ToolButton_DefaultScale.png"));
-            this.setLayout(new GridBagLayout());
-            this.add(this.addScale, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST));
-            this.add(this.addDefaultScale, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST));
+            this.addScale = new JMenuItem(MapViewProperties.getString("String_AddScale"), CoreResources.getIcon(urlStr + "Image_ToolButton_AddScale.png"));
+            this.addDefaultScale = new JMenuItem(MapViewProperties.getString("String_AddCurrentScale"), CoreResources.getIcon(urlStr + "Image_ToolButton_DefaultScale.png"));
+            this.add(this.addScale);
+            this.add(this.addDefaultScale);
         }
 
     }

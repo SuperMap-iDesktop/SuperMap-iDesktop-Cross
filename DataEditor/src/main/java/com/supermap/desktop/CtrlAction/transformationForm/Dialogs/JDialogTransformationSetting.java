@@ -7,10 +7,7 @@ import com.supermap.desktop.Interface.IFormTransformation;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.dataeditor.DataEditorProperties;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.ColorSelectButton;
-import com.supermap.desktop.ui.controls.DialogResult;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.TransformationModeUtilities;
 
@@ -24,11 +21,11 @@ import java.awt.event.ActionListener;
  */
 public class JDialogTransformationSetting extends SmDialog {
 	private JLabel labelSelectedColor = new JLabel();
-	private ColorSelectButton buttonSelectedColor = new ColorSelectButton(Color.blue);
+	private ComponentDropDown buttonSelectedColor = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
 	private JLabel labelUnSelectedColor = new JLabel();
-	private ColorSelectButton buttonUnSelectedColor = new ColorSelectButton(Color.red);
+	private ComponentDropDown buttonUnSelectedColor = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
 	private JLabel labelUnUseColor = new JLabel();
-	private ColorSelectButton buttonUnUseColor = new ColorSelectButton(Color.GRAY);
+	private ComponentDropDown buttonUnUseColor = new ComponentDropDown(ComponentDropDown.COLOR_TYPE);
 
 	private JLabel labelTransformationMode = new JLabel();
 
@@ -80,6 +77,9 @@ public class JDialogTransformationSetting extends SmDialog {
 			}
 		});
 		comboBoxTransformationMode.setPreferredSize(new Dimension(250, 23));
+		buttonSelectedColor.setColor(Color.blue);
+		buttonUnSelectedColor.setColor(Color.red);
+		buttonUnUseColor.setColor(Color.gray);
 	}
 
 	private void initListener() {

@@ -9,6 +9,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -221,7 +222,9 @@ public class ImportParameterCreator implements IParameterCreator {
 
             ReflectInfo setWorldFilePath = new ReflectInfo();
             setWorldFilePath.methodName = "setWorldFilePath";
-            setWorldFilePath.parameter = new ParameterFile(CommonProperties.getString("String_WorldFile"));
+            ParameterFile worldFilePath = new ParameterFile(CommonProperties.getString("String_WorldFile"));
+            worldFilePath.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_tfw"), "tfw")),"WorldFile"));
+            setWorldFilePath.parameter = worldFilePath;
 
             result.add(importBandMode);
             result.add(pyramidBuiltInfo);
@@ -273,7 +276,10 @@ public class ImportParameterCreator implements IParameterCreator {
 
             ReflectInfo setWorldFilePath = new ReflectInfo();
             setWorldFilePath.methodName = "setWorldFilePath";
-            setWorldFilePath.parameter = new ParameterFile(CommonProperties.getString("String_WorldFile"));
+            ParameterFile worldFilePath = new ParameterFile(CommonProperties.getString("String_WorldFile"));
+            worldFilePath.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_tfw"), "tfw")),"WorldFile"));
+            setWorldFilePath.parameter = worldFilePath;
+
             result.add(pyramidBuiltInfo);
             result.add(setWorldFilePath);
             parameterCombineParamSet = new ParameterCombine();
@@ -294,7 +300,10 @@ public class ImportParameterCreator implements IParameterCreator {
         if (importSetting instanceof ImportSettingMAPGIS) {
             ReflectInfo setColorIndexFilePath = new ReflectInfo();
             setColorIndexFilePath.methodName = "setColorIndexFilePath";
-            setColorIndexFilePath.parameter = new ParameterFile(CommonProperties.getString("String_ColorIndexFile"));
+            ParameterFile colorIndex = new ParameterFile(CommonProperties.getString("String_ColorIndexFile"));
+            colorIndex.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_color"), "wat")),"ColorIndexFile"));
+            setColorIndexFilePath.parameter = colorIndex;
+
             result.add(setColorIndexFilePath);
             parameterCombineParamSet = new ParameterCombine();
             parameterCombineParamSet.setDescribe(ProcessProperties.getString("String_ParamSet"));
@@ -411,7 +420,7 @@ public class ImportParameterCreator implements IParameterCreator {
         ReflectInfo parameterFileInfo = new ReflectInfo();
         parameterFileInfo.methodName = "setSourceFilePath";
         parameterFile = new ParameterFile(ProcessProperties.getString("label_ChooseFile"));
-        parameterFile.setImportType(importType);
+        parameterFile.setFileChoose(FileType.createImportFileChooser(importType));
         parameterFileInfo.parameter = parameterFile;
         result.add(parameterFileInfo);
         return result;

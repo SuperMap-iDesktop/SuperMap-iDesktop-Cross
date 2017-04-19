@@ -73,7 +73,6 @@ public class ColorSelectButton extends JButton {
             popupMenu.setBorderPainted(false);
             popupMenu.add(colorSelectionPanel, BorderLayout.CENTER);
             colorSelectionPanel.setPreferredSize(new Dimension(170, 205));
-            int x = panelColorDisplay.getWidth() - 120;
             int y = panelColorDisplay.getHeight();
             popupMenu.show(panelColorDisplay, 0, y);
             colorSelectionPanel.addPropertyChangeListener("m_selectionColor", new PropertyChangeListener() {

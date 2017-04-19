@@ -5,6 +5,7 @@ import com.supermap.analyst.spatialanalyst.BufferEndType;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
@@ -204,6 +205,7 @@ public class PanelLineBufferAnalyst extends JPanel {
 		setPanelBasicLayout();
 		setPanelBasicLeftLayout();
 		setPanelBasicRightLayout();
+		setComponentName();
 	}
 
 	private void initResources() {
@@ -346,6 +348,11 @@ public class PanelLineBufferAnalyst extends JPanel {
 				.addComponent(this.panelResultData));
 		//@formatter:on
 
+	}
+
+	private void setComponentName(){
+		ComponentUIUtilities.setName(this.comboBoxUnit,"PanelLineBufferAnalyst_comboBoxUnit");
+		ComponentUIUtilities.setName(this.numericFieldComboBoxLeft,"PanelLineBufferAnalyst_numericFieldComboBoxLeft");
 	}
 
 	/**

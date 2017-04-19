@@ -4,9 +4,9 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
 import com.supermap.mapping.Layer;
 
-import javax.swing.table.AbstractTableModel;
 import java.util.Vector;
 
 
@@ -16,7 +16,7 @@ import java.util.Vector;
  * @author YuanR
  *         地图裁剪JTable@model
  */
-public class MapClipTableModel extends AbstractTableModel {
+public class MapClipTableModel extends SortableTableModel {
     public Vector layerInfo;
 
     public static final int COLUMN_INDEX_LAYERCAPTION = 0;
@@ -28,6 +28,7 @@ public class MapClipTableModel extends AbstractTableModel {
     public static final int COLUMNS_NUMBER = 6;
 
     public MapClipTableModel() {
+        super();
         this.layerInfo = new Vector();
     }
 
@@ -74,7 +75,10 @@ public class MapClipTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return this.layerInfo.size();
+        if (this.layerInfo != null) {
+            return this.layerInfo.size();
+        }
+        return 0;
     }
 
     @Override
@@ -89,6 +93,7 @@ public class MapClipTableModel extends AbstractTableModel {
      * @param columnIndex
      * @return
      */
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         if (columnIndex == COLUMN_INDEX_LAYERCAPTION) {
             return false;
@@ -125,14 +130,16 @@ public class MapClipTableModel extends AbstractTableModel {
      * @param col
      */
     public void setValueAt(Object value, int row, int col) {
-        ((Vector) layerInfo.get(row)).remove(col);
-        ((Vector) layerInfo.get(row)).add(col, value);
+        int realRow = getIndexRow(row)[0];
+        ((Vector) layerInfo.get(realRow)).remove(col);
+        ((Vector) layerInfo.get(realRow)).add(col, value);
         this.fireTableCellUpdated(row, col);
     }
 
     @Override
     public Object getValueAt(int row, int col) {
-        return ((Vector) this.layerInfo.get(row)).get(col);
+        int realRow = getIndexRow(row)[0];
+        return ((Vector) this.layerInfo.get(realRow)).get(col);
     }
 
     public Class getColumnClass(int col) {
@@ -143,11 +150,21 @@ public class MapClipTableModel extends AbstractTableModel {
         return this.layerInfo;
     }
 
+    public Object getLayerInfo(int rowIndex) {
+        int realRow = getIndexRow(rowIndex)[0];
+        return this.layerInfo.get(realRow);
+    }
     public void addRow(Object object) {
         this.layerInfo.add(object);
+        super.addIndexRow(this.layerInfo.size() - 1);
+        fireTableDataChanged();
     }
 
     public void removeRow(int rowIndex) {
-        this.layerInfo.remove(rowIndex);
+        int realRow = getIndexRow(rowIndex)[0];
+        this.layerInfo.remove(realRow);
+        super.removeRow(rowIndex);
     }
+
+
 }
