@@ -27,241 +27,246 @@ import java.text.MessageFormat;
  * 叠加分析
  */
 public class MetaProcessOverlayAnalyst extends MetaProcess {
-    private final static String INPUT_DATA = "InputData";
-    private final static String OVERLAY_DATA = "OverlayData";
-    private final static String OUTPUT_DATA = "OverlayResult";
+	private final static String INPUT_DATA = "InputData";
+	private final static String OVERLAY_DATA = "OverlayData";
+	private final static String OUTPUT_DATA = "OverlayResult";
 
-    private OverlayAnalystType analystType;
-    private ParameterDatasource parameterSourceDatasource = new ParameterDatasource();
-    private ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
-    private ParameterDatasource parameterOverlayDatasource = new ParameterDatasource();
-    private ParameterSingleDataset parameterOverlayDataset = new ParameterSingleDataset(DatasetType.REGION);
-    private ParameterDatasource parameterResultDatasource = new ParameterDatasource();
-    private ParameterTextField parameterSaveDataset = new ParameterTextField();
-    private ParameterFieldSetDialog parameterFieldSetDialog = new ParameterFieldSetDialog();
-    private ParameterTextField parameterTolerance = new ParameterTextField();
-    private ParameterLabel parameterUnit = new ParameterLabel();
+	private OverlayAnalystType analystType;
+	private ParameterDatasource parameterSourceDatasource = new ParameterDatasource();
+	private ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
+	private ParameterDatasource parameterOverlayDatasource = new ParameterDatasource();
+	private ParameterSingleDataset parameterOverlayDataset = new ParameterSingleDataset(DatasetType.REGION);
+	private ParameterDatasource parameterResultDatasource = new ParameterDatasource();
+	private ParameterTextField parameterSaveDataset = new ParameterTextField();
+	private ParameterFieldSetDialog parameterFieldSetDialog = new ParameterFieldSetDialog();
+	private ParameterTextField parameterTolerance = new ParameterTextField();
+	private ParameterLabel parameterUnit = new ParameterLabel();
 //	private ParameterCheckBox parameterCheckBoxIsCompareResult = new ParameterCheckBox();
 
-    private SteppedListener steppedListener = new SteppedListener() {
-        @Override
-        public void stepped(SteppedEvent steppedEvent) {
-            fireRunning(new RunningEvent(MetaProcessOverlayAnalyst.this, steppedEvent.getPercent(), steppedEvent.getMessage()));
-        }
-    };
+	private SteppedListener steppedListener = new SteppedListener() {
+		@Override
+		public void stepped(SteppedEvent steppedEvent) {
+			RunningEvent event = new RunningEvent(MetaProcessOverlayAnalyst.this, steppedEvent.getPercent(), steppedEvent.getMessage());
+			fireRunning(event);
 
-    public MetaProcessOverlayAnalyst(OverlayAnalystType analystType) {
-        this.analystType = analystType;
-        initParameters();
-        initParameterLayout();
-        initParameterConstraint();
-        initParameterStates();
-    }
+			if (event.isCancel()) {
+				steppedEvent.setCancel(true);
+			}
+		}
+	};
 
-    private void initParameters() {
-        this.inputs.addData(INPUT_DATA, DatasetTypes.VECTOR);
-        this.inputs.addData(OVERLAY_DATA, DatasetTypes.VECTOR);
-        this.outputs.addData(OUTPUT_DATA, DatasetTypes.VECTOR);
-        parameterSourceDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
-        parameterOverlayDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
-        parameterResultDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
-        parameterSaveDataset.setDescribe(CommonProperties.getString(CommonProperties.Label_Dataset));
-        parameterTolerance.setDescribe(CommonProperties.getString("String_Label_Tolerance"));
-        parameterUnit.setDescribe(CommonProperties.getString("String_DistanceUnit_Meter"));//单位和数据集有关系
+	public MetaProcessOverlayAnalyst(OverlayAnalystType analystType) {
+		this.analystType = analystType;
+		initParameters();
+		initParameterLayout();
+		initParameterConstraint();
+		initParameterStates();
+	}
+
+	private void initParameters() {
+		this.inputs.addData(INPUT_DATA, DatasetTypes.VECTOR);
+		this.inputs.addData(OVERLAY_DATA, DatasetTypes.VECTOR);
+		this.outputs.addData(OUTPUT_DATA, DatasetTypes.VECTOR);
+		parameterSourceDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
+		parameterOverlayDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
+		parameterResultDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
+		parameterSaveDataset.setDescribe(CommonProperties.getString(CommonProperties.Label_Dataset));
+		parameterTolerance.setDescribe(CommonProperties.getString("String_Label_Tolerance"));
+		parameterUnit.setDescribe(CommonProperties.getString("String_DistanceUnit_Meter"));//单位和数据集有关系
 //		parameterCheckBoxIsCompareResult.setDescribe(CommonProperties.getString("String_CheckBox_ResultComparison"));
-    }
+	}
 
-    private void initParameterLayout() {
-        parameters = new DefaultParameters();
-        ParameterCombine parameterCombineSource = new ParameterCombine();
-        parameterCombineSource.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
-        parameterCombineSource.addParameters(parameterSourceDatasource, parameterSourceDataset);
+	private void initParameterLayout() {
+		parameters = new DefaultParameters();
+		ParameterCombine parameterCombineSource = new ParameterCombine();
+		parameterCombineSource.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
+		parameterCombineSource.addParameters(parameterSourceDatasource, parameterSourceDataset);
 
-        ParameterCombine parameterCombineResult = new ParameterCombine();
-        parameterCombineResult.setDescribe(CommonProperties.getString("String_GroupBox_OverlayDataset"));
-        parameterCombineResult.addParameters(parameterOverlayDatasource, parameterOverlayDataset);
+		ParameterCombine parameterCombineResult = new ParameterCombine();
+		parameterCombineResult.setDescribe(CommonProperties.getString("String_GroupBox_OverlayDataset"));
+		parameterCombineResult.addParameters(parameterOverlayDatasource, parameterOverlayDataset);
 
-        ParameterCombine parameterCombineResultSet = new ParameterCombine();
-        parameterCombineResultSet.setDescribe(CommonProperties.getString("String_ResultSet"));
-        ParameterCombine parameterCombineParent = new ParameterCombine(ParameterCombine.HORIZONTAL);
-        parameterCombineParent.addParameters(
-                new ParameterCombine().addParameters(parameterSaveDataset, parameterTolerance),
-                new ParameterCombine().addParameters(parameterFieldSetDialog, parameterUnit));
-        parameterCombineParent.setWeightIndex(0);
-        parameterCombineResultSet.addParameters(parameterResultDatasource, parameterCombineParent
+		ParameterCombine parameterCombineResultSet = new ParameterCombine();
+		parameterCombineResultSet.setDescribe(CommonProperties.getString("String_ResultSet"));
+		ParameterCombine parameterCombineParent = new ParameterCombine(ParameterCombine.HORIZONTAL);
+		parameterCombineParent.addParameters(
+				new ParameterCombine().addParameters(parameterSaveDataset, parameterTolerance),
+				new ParameterCombine().addParameters(parameterFieldSetDialog, parameterUnit));
+		parameterCombineParent.setWeightIndex(0);
+		parameterCombineResultSet.addParameters(parameterResultDatasource, parameterCombineParent
 //				, parameterCheckBoxIsCompareResult);
-        );
-        parameters.setParameters(parameterCombineSource, parameterCombineResult, parameterCombineResultSet);
+		);
+		parameters.setParameters(parameterCombineSource, parameterCombineResult, parameterCombineResultSet);
 
-    }
+	}
 
-    private void initParameterConstraint() {
-        DatasourceConstraint.getInstance().constrained(parameterSourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-        DatasourceConstraint.getInstance().constrained(parameterOverlayDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-        DatasourceConstraint.getInstance().constrained(parameterResultDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+	private void initParameterConstraint() {
+		DatasourceConstraint.getInstance().constrained(parameterSourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(parameterOverlayDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(parameterResultDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 
-        EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
-        equalDatasourceConstraint.constrained(parameterSourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-        equalDatasourceConstraint.constrained(parameterSourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
+		equalDatasourceConstraint.constrained(parameterSourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(parameterSourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
-        EqualDatasourceConstraint equalDatasourceConstraint1 = new EqualDatasourceConstraint();
-        equalDatasourceConstraint1.constrained(parameterOverlayDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-        equalDatasourceConstraint1.constrained(parameterOverlayDataset, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		EqualDatasourceConstraint equalDatasourceConstraint1 = new EqualDatasourceConstraint();
+		equalDatasourceConstraint1.constrained(parameterOverlayDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint1.constrained(parameterOverlayDataset, ParameterDatasource.DATASOURCE_FIELD_NAME);
 
-        EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
-        equalDatasetConstraint.constrained(parameterSourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
-        equalDatasetConstraint.constrained(parameterFieldSetDialog, ParameterFieldSetDialog.SOURCE_DATASET_FIELD_NAME);
+		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
+		equalDatasetConstraint.constrained(parameterSourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		equalDatasetConstraint.constrained(parameterFieldSetDialog, ParameterFieldSetDialog.SOURCE_DATASET_FIELD_NAME);
 
-        EqualDatasetConstraint equalDatasetConstraint1 = new EqualDatasetConstraint();
-        equalDatasetConstraint1.constrained(parameterOverlayDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
-        equalDatasetConstraint.constrained(parameterFieldSetDialog, ParameterFieldSetDialog.RESULT_DATASET_FIELD_NAME);
-    }
+		EqualDatasetConstraint equalDatasetConstraint1 = new EqualDatasetConstraint();
+		equalDatasetConstraint1.constrained(parameterOverlayDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		equalDatasetConstraint.constrained(parameterFieldSetDialog, ParameterFieldSetDialog.RESULT_DATASET_FIELD_NAME);
+	}
 
-    private void initParameterStates() {
-        parameterSaveDataset.setSelectedItem("OverlayAnalystDataset");
-        parameterTolerance.setSelectedItem("0");
-    }
+	private void initParameterStates() {
+		parameterSaveDataset.setSelectedItem("OverlayAnalystDataset");
+		parameterTolerance.setSelectedItem("0");
+	}
 
 
-    @Override
-    public String getTitle() {
-        return analystType.toString();
-    }
+	@Override
+	public String getTitle() {
+		return analystType.toString();
+	}
 
-    @Override
-    public IParameterPanel getComponent() {
-        return parameters.getPanel();
-    }
+	@Override
+	public IParameterPanel getComponent() {
+		return parameters.getPanel();
+	}
 
-    @Override
-    public void run() {
-        fireRunning(new RunningEvent(this, 0, "start"));
-        ParameterOverlayAnalystInfo info = new ParameterOverlayAnalystInfo();
-        if (inputs.getData(INPUT_DATA) != null && inputs.getData(INPUT_DATA).getValue() instanceof DatasetVector) {
-            info.sourceDataset = (DatasetVector) inputs.getData(INPUT_DATA).getValue();
-            info.sourceDatatsource = info.sourceDataset.getDatasource();
-        } else {
-            info.sourceDatatsource = (Datasource) parameterSourceDatasource.getSelectedItem();
-            info.sourceDataset = (DatasetVector) parameterSourceDataset.getSelectedItem();
-        }
+	@Override
+	public void run() {
+		fireRunning(new RunningEvent(this, 0, "start"));
+		ParameterOverlayAnalystInfo info = new ParameterOverlayAnalystInfo();
+		if (inputs.getData(INPUT_DATA) != null && inputs.getData(INPUT_DATA).getValue() instanceof DatasetVector) {
+			info.sourceDataset = (DatasetVector) inputs.getData(INPUT_DATA).getValue();
+			info.sourceDatatsource = info.sourceDataset.getDatasource();
+		} else {
+			info.sourceDatatsource = (Datasource) parameterSourceDatasource.getSelectedItem();
+			info.sourceDataset = (DatasetVector) parameterSourceDataset.getSelectedItem();
+		}
 
-        if (inputs.getData(OVERLAY_DATA) != null && inputs.getData(OVERLAY_DATA).getValue() instanceof DatasetVector) {
-            info.overlayAnalystDataset = (DatasetVector) inputs.getData(OVERLAY_DATA).getValue();
-            info.overlayAnalystDatasource = info.overlayAnalystDataset.getDatasource();
-        } else {
-            info.overlayAnalystDatasource = (Datasource) parameterOverlayDatasource.getSelectedItem();
-            info.overlayAnalystDataset = (DatasetVector) parameterOverlayDataset.getSelectedItem();
-        }
-        info.targetDatasource = (Datasource) parameterResultDatasource.getSelectedItem();
-        info.targetDataset = (String) parameterSaveDataset.getSelectedItem();
-        OverlayAnalystParameter overlayAnalystParameter = new OverlayAnalystParameter();
-        if (parameterFieldSetDialog.getSourceFieldNames() != null) {
-            overlayAnalystParameter.setSourceRetainedFields(parameterFieldSetDialog.getSourceFieldNames());
-            overlayAnalystParameter.setOperationRetainedFields(parameterFieldSetDialog.getResultFieldNames());
-        }
-        overlayAnalystParameter.setTolerance(DoubleUtilities.stringToValue(((String) parameterTolerance.getSelectedItem())));
-        info.analystParameter = overlayAnalystParameter;
+		if (inputs.getData(OVERLAY_DATA) != null && inputs.getData(OVERLAY_DATA).getValue() instanceof DatasetVector) {
+			info.overlayAnalystDataset = (DatasetVector) inputs.getData(OVERLAY_DATA).getValue();
+			info.overlayAnalystDatasource = info.overlayAnalystDataset.getDatasource();
+		} else {
+			info.overlayAnalystDatasource = (Datasource) parameterOverlayDatasource.getSelectedItem();
+			info.overlayAnalystDataset = (DatasetVector) parameterOverlayDataset.getSelectedItem();
+		}
+		info.targetDatasource = (Datasource) parameterResultDatasource.getSelectedItem();
+		info.targetDataset = (String) parameterSaveDataset.getSelectedItem();
+		OverlayAnalystParameter overlayAnalystParameter = new OverlayAnalystParameter();
+		if (parameterFieldSetDialog.getSourceFieldNames() != null) {
+			overlayAnalystParameter.setSourceRetainedFields(parameterFieldSetDialog.getSourceFieldNames());
+			overlayAnalystParameter.setOperationRetainedFields(parameterFieldSetDialog.getResultFieldNames());
+		}
+		overlayAnalystParameter.setTolerance(DoubleUtilities.stringToValue(((String) parameterTolerance.getSelectedItem())));
+		info.analystParameter = overlayAnalystParameter;
 
-        if (null == info.sourceDataset || null == info.overlayAnalystDataset
-                || null == info.targetDataset) {
-            return;
-        }
-        if (!isSameProjection(info.sourceDataset.getPrjCoordSys(), info.overlayAnalystDataset.getPrjCoordSys())) {
-            Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_PrjCoordSys_Different") + "\n" + ControlsProperties.getString("String_Parameters"));
-            Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_OverlayAnalyst_Failed"), info.sourceDataset.getName() + "@" + info.sourceDataset.getDatasource().getAlias()
-                    , info.overlayAnalystDataset.getName() + "@" + info.overlayAnalystDataset.getDatasource().getAlias(), analystType.toString()));
-            return;
-        }
-        OverlayAnalyst.addSteppedListener(this.steppedListener);
-        DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
-        datasetVectorInfo.setType(info.sourceDataset.getType());
-        datasetVectorInfo.setEncodeType(info.sourceDataset.getEncodeType());
-        // 名称合法时可以设置名称
-        datasetVectorInfo.setName(info.targetDatasource.getDatasets().getAvailableDatasetName(info.targetDataset));
-        DatasetVector targetDataset = info.targetDatasource.getDatasets().create(datasetVectorInfo);
-        targetDataset.setPrjCoordSys(info.sourceDataset.getPrjCoordSys());
+		if (null == info.sourceDataset || null == info.overlayAnalystDataset
+				|| null == info.targetDataset) {
+			return;
+		}
+		if (!isSameProjection(info.sourceDataset.getPrjCoordSys(), info.overlayAnalystDataset.getPrjCoordSys())) {
+			Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_PrjCoordSys_Different") + "\n" + ControlsProperties.getString("String_Parameters"));
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_OverlayAnalyst_Failed"), info.sourceDataset.getName() + "@" + info.sourceDataset.getDatasource().getAlias()
+					, info.overlayAnalystDataset.getName() + "@" + info.overlayAnalystDataset.getDatasource().getAlias(), analystType.toString()));
+			return;
+		}
+		OverlayAnalyst.addSteppedListener(this.steppedListener);
+		DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
+		datasetVectorInfo.setType(info.sourceDataset.getType());
+		datasetVectorInfo.setEncodeType(info.sourceDataset.getEncodeType());
+		// 名称合法时可以设置名称
+		datasetVectorInfo.setName(info.targetDatasource.getDatasets().getAvailableDatasetName(info.targetDataset));
+		DatasetVector targetDataset = info.targetDatasource.getDatasets().create(datasetVectorInfo);
+		targetDataset.setPrjCoordSys(info.sourceDataset.getPrjCoordSys());
 
-        switch (analystType) {
-            case CLIP:
-                OverlayAnalyst.clip(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
-                break;
-            case ERASE:
-                OverlayAnalyst.erase(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
-                break;
-            case IDENTITY:
-                OverlayAnalyst.identity(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
-                break;
-            case INTERSECT:
-                OverlayAnalyst.intersect(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
-                break;
-            case UNION:
-                OverlayAnalyst.union(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
-                break;
-            case XOR:
-                OverlayAnalyst.xOR(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
-                break;
-            case UPDATE:
-                OverlayAnalyst.update(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
-                break;
-            default:
-                break;
-        }
-        OverlayAnalyst.removeSteppedListener(this.steppedListener);
-        fireRunning(new RunningEvent(this, 100, "finished"));
-        setFinished(true);
-        this.outputs.getData(OUTPUT_DATA).setValue(targetDataset);
-    }
+		switch (analystType) {
+			case CLIP:
+				OverlayAnalyst.clip(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
+				break;
+			case ERASE:
+				OverlayAnalyst.erase(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
+				break;
+			case IDENTITY:
+				OverlayAnalyst.identity(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
+				break;
+			case INTERSECT:
+				OverlayAnalyst.intersect(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
+				break;
+			case UNION:
+				OverlayAnalyst.union(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
+				break;
+			case XOR:
+				OverlayAnalyst.xOR(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
+				break;
+			case UPDATE:
+				OverlayAnalyst.update(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
+				break;
+			default:
+				break;
+		}
+		OverlayAnalyst.removeSteppedListener(this.steppedListener);
+		fireRunning(new RunningEvent(this, 100, "finished"));
+		setFinished(true);
+		this.outputs.getData(OUTPUT_DATA).setValue(targetDataset);
+	}
 
-    @Override
-    public String getKey() {
-        String key = "";
-        switch (analystType) {
-            case CLIP:
-                key = MetaKeys.OVERLAY_ANALYST_CLIP;
-                break;
-            case UNION:
-                key = MetaKeys.OVERLAY_ANALYST_UNION;
-                break;
-            case ERASE:
-                key = MetaKeys.OVERLAY_ANALYST_ERASE;
-                break;
-            case IDENTITY:
-                key = MetaKeys.OVERLAY_ANALYST_IDENTITY;
-                break;
-            case INTERSECT:
-                key = MetaKeys.OVERLAY_ANALYST_INTERSECT;
-                break;
-            case UPDATE:
-                key = MetaKeys.OVERLAY_ANALYST_UPDATE;
-                break;
-            case XOR:
-                key = MetaKeys.OVERLAY_ANALYST_XOR;
-                break;
+	@Override
+	public String getKey() {
+		String key = "";
+		switch (analystType) {
+			case CLIP:
+				key = MetaKeys.OVERLAY_ANALYST_CLIP;
+				break;
+			case UNION:
+				key = MetaKeys.OVERLAY_ANALYST_UNION;
+				break;
+			case ERASE:
+				key = MetaKeys.OVERLAY_ANALYST_ERASE;
+				break;
+			case IDENTITY:
+				key = MetaKeys.OVERLAY_ANALYST_IDENTITY;
+				break;
+			case INTERSECT:
+				key = MetaKeys.OVERLAY_ANALYST_INTERSECT;
+				break;
+			case UPDATE:
+				key = MetaKeys.OVERLAY_ANALYST_UPDATE;
+				break;
+			case XOR:
+				key = MetaKeys.OVERLAY_ANALYST_XOR;
+				break;
 
-        }
-        return key;
-    }
+		}
+		return key;
+	}
 
-    private boolean isSameProjection(PrjCoordSys prjCoordSys, PrjCoordSys prjCoordSys1) {
-        if (prjCoordSys.getType() != prjCoordSys1.getType()) {
-            return false;
-        }
-        if (prjCoordSys.getGeoCoordSys() == prjCoordSys1.getGeoCoordSys()) {
-            return true;
-        }
-        if (prjCoordSys.getGeoCoordSys() == null || prjCoordSys1.getGeoCoordSys() == null) {
-            return false;
-        }
-        if (prjCoordSys.getGeoCoordSys().getType() != prjCoordSys1.getGeoCoordSys().getType()) {
-            return false;
-        }
-        return true;
-    }
+	private boolean isSameProjection(PrjCoordSys prjCoordSys, PrjCoordSys prjCoordSys1) {
+		if (prjCoordSys.getType() != prjCoordSys1.getType()) {
+			return false;
+		}
+		if (prjCoordSys.getGeoCoordSys() == prjCoordSys1.getGeoCoordSys()) {
+			return true;
+		}
+		if (prjCoordSys.getGeoCoordSys() == null || prjCoordSys1.getGeoCoordSys() == null) {
+			return false;
+		}
+		if (prjCoordSys.getGeoCoordSys().getType() != prjCoordSys1.getGeoCoordSys().getType()) {
+			return false;
+		}
+		return true;
+	}
 
-    @Override
-    public Icon getIcon() {
-        return getIconByPath("/processresources/Tree_Node3.png");
-    }
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Tree_Node3.png");
+	}
 
 
 }

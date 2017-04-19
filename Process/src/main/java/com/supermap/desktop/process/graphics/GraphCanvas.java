@@ -136,13 +136,16 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		addKeyListener(this);
 
 		setRequestFocusEnabled(true);
+		loadCanvasActions();
+	}
 
-		installCanvasEventHandler(Selection.class, this.selection);
-		installCanvasEventHandler(GraphDragAction.class, this.dragged);
-		installCanvasEventHandler(CanvasTranslation.class, this.translation);
-		installCanvasEventHandler(GraphCreator.class, this.creator);
-		installCanvasEventHandler(GraphConnector.class, this.connector);
-		installCanvasEventHandler(GraphRemoving.class, this.removing);
+	private void loadCanvasActions() {
+		installCanvasAction(Selection.class, this.selection);
+		installCanvasAction(GraphDragAction.class, this.dragged);
+		installCanvasAction(CanvasTranslation.class, this.translation);
+		installCanvasAction(GraphCreator.class, this.creator);
+		installCanvasAction(GraphConnector.class, this.connector);
+		installCanvasAction(GraphRemoving.class, this.removing);
 
 		this.actionsManager.addMutexAction(GraphDragAction.class, Selection.class);
 		this.actionsManager.addMutexAction(GraphDragAction.class, GraphCreator.class);
@@ -167,26 +170,22 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		this.creator.create(graph);
 	}
 
-	public void installCanvasEventHandler(Class c, CanvasAction action) {
+	public void installCanvasAction(Class c, CanvasAction action) {
 		this.actionsManager.installAction(c, action);
 	}
 
-	public void installCanvasEventHandler(CanvasAction handler) {
+	public void installCanvasAction(CanvasAction handler) {
 		if (handler == null) {
 			return;
 		}
 
 		Class c = handler.getClass();
-		installCanvasEventHandler(c, handler);
+		installCanvasAction(c, handler);
 	}
 
 	public CanvasAction getAction(Class c) {
 		return this.actionsManager.getAction(c);
 	}
-
-//	public void setActionEnabled(Class c, boolean enabled) {
-//		this.actionsManager.setActionEnabled(c, enabled);
-//	}
 
 	public CoordinateTransform getCoordinateTransform() {
 		return coordinateTransform;

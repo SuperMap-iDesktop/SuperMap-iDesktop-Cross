@@ -14,6 +14,7 @@ public class RunningEvent extends EventObject {
 	private String message;
 	private int remainTime; // milliseconds
 	private int totalTime; // milliseconds
+	private boolean isCancel = false;
 
 	public RunningEvent(IProcess process) {
 		this(process, 0, "", 0, 0);
@@ -31,6 +32,10 @@ public class RunningEvent extends EventObject {
 		this.totalTime = totalTime;
 	}
 
+	public IProcess getProcess() {
+		return process;
+	}
+
 	public int getProgress() {
 		return progress;
 	}
@@ -45,5 +50,13 @@ public class RunningEvent extends EventObject {
 
 	public int getTotalTime() {
 		return totalTime;
+	}
+
+	public boolean isCancel() {
+		return isCancel;
+	}
+
+	public void setCancel(boolean cancel) {
+		isCancel = cancel;
 	}
 }
