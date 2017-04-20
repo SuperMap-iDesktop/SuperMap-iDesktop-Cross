@@ -40,7 +40,12 @@ public class MetaProcessImport extends MetaProcess {
     private ImportSteppedListener importStepListener = new ImportSteppedListener() {
         @Override
         public void stepped(ImportSteppedEvent e) {
-            fireRunning(new RunningEvent(MetaProcessImport.this, e.getSubPercent(), ""));
+	        RunningEvent event = new RunningEvent(MetaProcessImport.this, e.getSubPercent(), "");
+	        fireRunning(event);
+
+	        if (event.isCancel()) {
+		        e.setCancel(true);
+	        }
         }
     };
     private ParameterFile parameterFile;
@@ -60,25 +65,25 @@ public class MetaProcessImport extends MetaProcess {
         }
     };
 
-    public MetaProcessImport(ImportSetting importSetting, String importType) {
-        this.importSetting = importSetting;
-        this.importType = importType;
-        initParameters();
-    }
+	public MetaProcessImport(ImportSetting importSetting, String importType) {
+		this.importSetting = importSetting;
+		this.importType = importType;
+		initParameters();
+	}
 
-    public MetaProcessImport() {
-        parameters = new DefaultParameters();
-        this.outputs.addData(OUTPUT_DATA, DatasetTypes.DATASET);
-    }
+	public MetaProcessImport() {
+		parameters = new DefaultParameters();
+		this.outputs.addData(OUTPUT_DATA, DatasetTypes.DATASET);
+	}
 
-    public void initParameters() {
-        parameters = new DefaultParameters();
-        this.outputs.addData(OUTPUT_DATA, DatasetTypes.DATASET);
-        parameterCreator = new ImportParameterCreator();
-        setDefaultImportParameters(parameterCreator.createDefault(importSetting, this.importType));
-        setParamParameters(parameterCreator.create(importSetting));
-        updateParameters();
-    }
+	public void initParameters() {
+		parameters = new DefaultParameters();
+		this.outputs.addData(OUTPUT_DATA, DatasetTypes.DATASET);
+		parameterCreator = new ImportParameterCreator();
+		setDefaultImportParameters(parameterCreator.createDefault(importSetting, this.importType));
+		setParamParameters(parameterCreator.create(importSetting));
+		updateParameters();
+	}
 
     public void updateParameters() {
         parameterFile = parameterCreator.getParameterFile();
@@ -91,22 +96,22 @@ public class MetaProcessImport extends MetaProcess {
         parameterFile.addPropertyListener(this.fileListener);
     }
 
-    public void setImportSetting(ImportSetting importSetting) {
-        this.importSetting = importSetting;
-    }
+	public void setImportSetting(ImportSetting importSetting) {
+		this.importSetting = importSetting;
+	}
 
-    public void setDefaultImportParameters(CopyOnWriteArrayList<ReflectInfo> defaultImportParameters) {
-        this.defaultImportParameters = defaultImportParameters;
-    }
+	public void setDefaultImportParameters(CopyOnWriteArrayList<ReflectInfo> defaultImportParameters) {
+		this.defaultImportParameters = defaultImportParameters;
+	}
 
-    public void setParamParameters(CopyOnWriteArrayList<ReflectInfo> paramParameters) {
-        this.paramParameters = paramParameters;
-    }
+	public void setParamParameters(CopyOnWriteArrayList<ReflectInfo> paramParameters) {
+		this.paramParameters = paramParameters;
+	}
 
-    @Override
-    public IParameterPanel getComponent() {
-        return parameters.getPanel();
-    }
+	@Override
+	public IParameterPanel getComponent() {
+		return parameters.getPanel();
+	}
 
     @Override
     public String getTitle() {
@@ -147,13 +152,13 @@ public class MetaProcessImport extends MetaProcess {
         parameterFile.removePropertyListener(this.fileListener);
     }
 
-    @Override
-    public String getKey() {
-        return MetaKeys.IMPORT + importType;
-    }
+	@Override
+	public String getKey() {
+		return MetaKeys.IMPORT + importType;
+	}
 
-    @Override
-    public Icon getIcon() {
-        return getIconByPath("/processresources/Tree_Node3.png");
-    }
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Tree_Node3.png");
+	}
 }
