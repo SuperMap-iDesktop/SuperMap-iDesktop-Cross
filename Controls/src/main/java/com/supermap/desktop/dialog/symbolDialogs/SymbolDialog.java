@@ -19,6 +19,8 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
+import net.sf.image4j.codec.bmp.BMPDecoder;
+import net.sf.image4j.codec.ico.ICODecoder;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -36,6 +38,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
 /**
  * 符号面板基类
@@ -439,44 +442,53 @@ public abstract class SymbolDialog extends SmDialog {
         SmFileChoose fileChooser = createFileChoose();
         if (fileChooser.showDefaultDialog() == JFileChooser.APPROVE_OPTION && null != fileChooser.getSelectedFile() && fileChooser.getSelectedFile().exists()) {
             File[] files = fileChooser.getSelectFiles();
-            for (int i = 0; i < files.length; i++) {
-                importIcon(files[i]);
-            }
-        }
-    }
+            for (File file : files) {
+                try {
+                    String fileName = file.getName();
+                    fileName = fileName.substring(0, fileName.indexOf("."));
+                    if (file.getPath().endsWith("ico") || file.getPath().endsWith("ICO")) {
+                        ArrayList<BufferedImage> images = (ArrayList<BufferedImage>) ICODecoder.read(file);
+                        for (int i = 0; i < images.size(); i++) {
+                            importIcon(images.get(i), file, fileName);
+                        }
+                    } else if (file.getPath().endsWith("bmp") || file.getPath().endsWith("BMP")) {
+                        importIcon(BMPDecoder.read(file), file, fileName);
+                    } else {
+                        FileInputStream stream = new FileInputStream(file);
+                        importIcon(ImageIO.read(stream), file, fileName);
+                    }
 
-    private void importIcon(File file) {
-        try {
-            FileInputStream stream = new FileInputStream(file);
-            BufferedImage image = ImageIO.read(stream);
-            int height = image.getHeight();
-            int width = image.getWidth();
-            if (height > 512 || width > 512) {
-                SmOptionPane optionPane = new SmOptionPane();
-                optionPane.showConfirmDialog(MessageFormat.format(CommonProperties.getString("String_IconWrongInfo"), file.getAbsoluteFile()));
-                return;
-            } else if (height != width) {
-                SmOptionPane optionPane = new SmOptionPane();
-                if (optionPane.showConfirmDialogYesNo(MessageFormat.format(CommonProperties.getString("String_SaveHandWScal"), file.getAbsoluteFile())) == JOptionPane.OK_OPTION) {
-                    saveIcon(file, height, width);
-                } else {
-                    int newWidth = height > width ? width : height;
-                    saveIcon(file, newWidth, newWidth);
+                } catch (Exception ex) {
+                    Application.getActiveApplication().getOutput().output(ex);
                 }
-            } else {
-                saveIcon(file, height, width);
             }
-        } catch (Exception ex) {
-            Application.getActiveApplication().getOutput().output(ex);
         }
-
     }
 
-    private void saveIcon(File file, int height, int width) {
-        String fileName = file.getName();
-        fileName = fileName.substring(0, fileName.indexOf("."));
+    private void importIcon(BufferedImage image, File file, String fileName) {
+        int height = image.getHeight();
+        int width = image.getWidth();
+        if (height > 512 || width > 512) {
+            SmOptionPane optionPane = new SmOptionPane();
+            optionPane.showConfirmDialog(MessageFormat.format(CommonProperties.getString("String_IconWrongInfo"), file.getAbsoluteFile()));
+            return;
+        } else if (height != width) {
+            SmOptionPane optionPane = new SmOptionPane();
+            if (optionPane.showConfirmDialogYesNo(MessageFormat.format(CommonProperties.getString("String_SaveHandWScal"), file.getAbsoluteFile())) == JOptionPane.OK_OPTION) {
+                saveIcon(image, fileName, height, width);
+            } else {
+                int newWidth = height > width ? width : height;
+                saveIcon(image, fileName, newWidth, newWidth);
+            }
+        } else {
+            saveIcon(image, fileName, height, width);
+        }
+    }
+
+
+    private void saveIcon(BufferedImage image, String fileName, int height, int width) {
         Rectangle2D bounds = new Rectangle2D(new Point2D(height / 2, width / 2), height, width);
-        GeoPicture geoPicture = new GeoPicture(file.getAbsolutePath(), bounds, 0);
+        GeoPicture geoPicture = new GeoPicture(image, bounds, 0);
         final SymbolMarker marker = new SymbolMarker();
         marker.setName(fileName);
         marker.fromGeometry(geoPicture, bounds);
@@ -486,7 +498,7 @@ public abstract class SymbolDialog extends SmDialog {
             currentResources.getMarkerLibrary().add(marker, currentSymbolGroup);
         }
         panelSymbols.setSymbolGroup(currentResources, currentSymbolGroup);
-        Application.getActiveApplication().setResourcesInfo(currentResources,currentSymbolGroup);
+        Application.getActiveApplication().setResourcesInfo(currentResources, currentSymbolGroup);
 //        //setSymbolGroup() method use updateUI(),So use SwingUtilities to add a new thread,
 //        //that we can make the panel be selected.
         SwingUtilities.invokeLater(new Runnable() {
