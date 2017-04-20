@@ -113,7 +113,7 @@ public abstract class JPanelSymbols extends JPanel {
         SymbolUtilties.addSymbolChangedListener(symbolChangedListener);
     }
 
-    private void setSelectedSymbolPanel(SymbolPanel symbolPanel) {
+    public void setSelectedSymbolPanel(SymbolPanel symbolPanel) {
         if (symbolPanel == lastSelectedPanel || symbolPanel == null) {
             return;
         }
@@ -161,7 +161,7 @@ public abstract class JPanelSymbols extends JPanel {
         }
     }
 
-    private void fireSymbolSelectedChanged(Symbol symbol) {
+    public void fireSymbolSelectedChanged(Symbol symbol) {
         if (symbolSelectedChangedListeners != null) {
             for (SymbolSelectedChangedListener symbolSelectedChangedListener : symbolSelectedChangedListeners) {
                 symbolSelectedChangedListener.SymbolSelectedChangedEvent(symbol);
@@ -207,7 +207,7 @@ public abstract class JPanelSymbols extends JPanel {
      * Added by xie 2017-3-17,this method used for set select panel by symbol id;
      * @param symbolId
      */
-    public void setSelectedPanel(int symbolId) {
+    private void setSelectedPanel(int symbolId) {
         boolean isFind = false;
         for (int i = 0; i < this.getComponentCount(); i++) {
             if (((SymbolPanel) this.getComponent(i)).getSymbolID() == symbolId) {

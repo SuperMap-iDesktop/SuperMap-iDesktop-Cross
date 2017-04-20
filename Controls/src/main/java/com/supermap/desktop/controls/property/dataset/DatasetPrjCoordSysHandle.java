@@ -1,6 +1,13 @@
 package com.supermap.desktop.controls.property.dataset;
 
-import com.supermap.data.*;
+import com.supermap.data.CoordSysTransMethod;
+import com.supermap.data.CoordSysTransParameter;
+import com.supermap.data.CoordSysTranslator;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.SteppedEvent;
+import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.property.PrjCoordSysHandle;
@@ -24,6 +31,11 @@ public class DatasetPrjCoordSysHandle extends PrjCoordSysHandle {
 	public void change(PrjCoordSys targetPrj) {
 		this.prj = targetPrj;
 		this.dataset.setPrjCoordSys(this.prj);
+	}
+
+	@Override
+	public PrjCoordSys getPrj() {
+		return dataset.getPrjCoordSys();
 	}
 
 	@Override
