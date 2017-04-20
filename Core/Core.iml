@@ -202,5 +202,6 @@
     </orderEntry>
     <orderEntry type="library" name="Maven: org.mongodb:mongo-java-driver:3.0.4" level="project" />
     <orderEntry type="library" name="Maven: org.mongodb:bson:3.0.4" level="project" />
+    <orderEntry type="library" name="Maven: org.jclarion:image4j:0.7" level="project" />
   </component>
 </module>
