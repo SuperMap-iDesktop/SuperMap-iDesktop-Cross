@@ -63,7 +63,6 @@ public class PanelGroupBoxViewBounds extends JPanel {
     //自定义范围
     private JButton customBoundsButton;
 
-    private ComponentDropDown customDropDown;
     private JPopupMenuBounds popupMenuCustomBounds;
 
     private SmDialog dialog;
@@ -114,6 +113,9 @@ public class PanelGroupBoxViewBounds extends JPanel {
             } else if (e.getSource().equals(pasteButton)) {
                 // 粘贴
                 pasteParameter();
+            } else if (e.getSource().equals(customBoundsButton)) {
+                Component c = (Component) e.getSource();
+                popupMenuCustomBounds.show(c, 0, c.getHeight());
             }
         }
     };
@@ -260,11 +262,11 @@ public class PanelGroupBoxViewBounds extends JPanel {
         this.mapViewBoundsButton = new JButton("WholeMapBoundsButton");
         this.currentViewBoundsButton = new JButton("ViewMapBoundsButton");
 
-        this.customBoundsButton = new JButton();
+        this.customBoundsButton = new ComponentDropDown(ComponentDropDown.TEXT_TYPE).new RightArrowButton(ControlsProperties.getString("String_CustomBounds"));
         // 初始化自定义范围下拉列表对象
         this.popupMenuCustomBounds = new JPopupMenuBounds(dialog, JPopupMenuBounds.CUSTOM_BOUNDS, Rectangle2D.getEMPTY());
-        this.customDropDown = new ComponentDropDown(ComponentDropDown.TEXT_TYPE);
-        this.customDropDown.setPopupMenu(popupMenuCustomBounds);
+//        this.customDropDown = new ComponentDropDown(ComponentDropDown.TEXT_TYPE);
+//        this.customDropDown.setPopupMenu(popupMenuCustomBounds);
         // 通过字符串列表，控制popupMenuCustomBounds显示的项
         ArrayList arrayList = new ArrayList();
         arrayList.add(MapViewProperties.getString("String_Button_SelectObject"));
@@ -283,7 +285,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
         this.mapViewBoundsButton.setText(ControlsProperties.getString("String_MapView"));
         this.currentViewBoundsButton.setText(ControlsProperties.getString("String_CurrentView"));
-        this.customDropDown.setText(ControlsProperties.getString("String_CustomBounds"));
+//        this.customDropDown.setText(ControlsProperties.getString("String_CustomBounds"));
         this.copyButton.setText(CoreProperties.getString("String_CopySymbolOrGroup"));
         this.pasteButton.setText(CoreProperties.getString("String_PasteSymbolOrGroup"));
 
@@ -302,20 +304,20 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
         this.mainPanel.setBorder(BorderFactory.createTitledBorder(borderName));
         this.mainPanel.setLayout(new GridBagLayout());
-        this.mainPanel.add(this.labelCurrentViewLeft, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 5, 10).setWeight(0, 0));
+        this.mainPanel.add(this.labelCurrentViewLeft, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10).setWeight(0, 0));
         this.mainPanel.add(this.textFieldCurrentViewLeft, new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(3, 0));
-        this.mainPanel.add(this.mapViewBoundsButton, new GridBagConstraintsHelper(4, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 5).setWeight(2, 0));
-        this.mainPanel.add(this.labelCurrentViewTop, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 5, 10).setWeight(0, 0));
+        this.mainPanel.add(this.mapViewBoundsButton, new GridBagConstraintsHelper(4, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 5).setWeight(0, 0));
+        this.mainPanel.add(this.labelCurrentViewTop, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10).setWeight(0, 0));
         this.mainPanel.add(this.textFieldCurrentViewTop, new GridBagConstraintsHelper(1, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(3, 0));
-        this.mainPanel.add(this.currentViewBoundsButton, new GridBagConstraintsHelper(4, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 5).setWeight(2, 0));
-        this.mainPanel.add(this.labelCurrentViewRight, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 5, 10).setWeight(0, 0));
+        this.mainPanel.add(this.currentViewBoundsButton, new GridBagConstraintsHelper(4, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 5).setWeight(0, 0));
+        this.mainPanel.add(this.labelCurrentViewRight, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10).setWeight(0, 0));
         this.mainPanel.add(this.textFieldCurrentViewRight, new GridBagConstraintsHelper(1, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(3, 0));
-        this.mainPanel.add(this.customBoundsButton, new GridBagConstraintsHelper(4, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 5).setWeight(2, 0));
-        this.mainPanel.add(this.labelCurrentViewBottom, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 5, 10).setWeight(0, 0));
+        this.mainPanel.add(this.customBoundsButton, new GridBagConstraintsHelper(4, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 5).setWeight(0, 0));
+        this.mainPanel.add(this.labelCurrentViewBottom, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10).setWeight(0, 0));
         this.mainPanel.add(this.textFieldCurrentViewBottom, new GridBagConstraintsHelper(1, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(3, 0));
-        this.mainPanel.add(this.copyButton, new GridBagConstraintsHelper(4, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 5).setWeight(2, 0));
+        this.mainPanel.add(this.copyButton, new GridBagConstraintsHelper(4, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 5).setWeight(0, 0));
         this.mainPanel.add(new JPanel(), new GridBagConstraintsHelper(0, 5, 4, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(4, 0));
-        this.mainPanel.add(this.pasteButton, new GridBagConstraintsHelper(4, 5, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 5).setWeight(2, 0));
+        this.mainPanel.add(this.pasteButton, new GridBagConstraintsHelper(4, 5, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 5).setWeight(0, 0));
         this.mainPanel.add(new JPanel(), new GridBagConstraintsHelper(0, 6, 6, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 //  GroupLayout viewPanelLayout = new GroupLayout(this.mainPanel);
 //        viewPanelLayout.setAutoCreateContainerGaps(true);
@@ -363,8 +365,6 @@ public class PanelGroupBoxViewBounds extends JPanel {
 //                .addGap(5, 5, Short.MAX_VALUE));
 //
 //        // @formatter:on
-        this.customBoundsButton.setLayout(new GridBagLayout());
-        this.customBoundsButton.add(customDropDown, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER));
     }
 
     private void registEvents() {
@@ -373,7 +373,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
         this.currentViewBoundsButton.addActionListener(actionButtonListener);
         this.copyButton.addActionListener(actionButtonListener);
         this.pasteButton.addActionListener(actionButtonListener);
-//        this.customBoundsButton.addActionListener(actionButtonListener);
+        this.customBoundsButton.addActionListener(actionButtonListener);
         registTextFieldEvents();
         this.popupMenuCustomBounds.addPropertyChangeListeners(boundsPropertyChangeListener);
     }
@@ -383,7 +383,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
         this.currentViewBoundsButton.removeActionListener(actionButtonListener);
         this.copyButton.removeActionListener(actionButtonListener);
         this.pasteButton.removeActionListener(actionButtonListener);
-//        this.customBoundsButton.removeActionListener(actionButtonListener);
+        this.customBoundsButton.removeActionListener(actionButtonListener);
         removeTextFieldEvents();
         this.popupMenuCustomBounds.removePropertyChangeListener(boundsPropertyChangeListener);
     }
@@ -771,4 +771,5 @@ public class PanelGroupBoxViewBounds extends JPanel {
             this.selectObjectListener.selectObjectListener();
         }
     }
+
 }
