@@ -283,7 +283,7 @@ public class BindHandler {
 					for (int k = 0; k < targetLaysersSize; k++) {
 						Layer sourceLayer = sourceLayers.get(i);
 						Layer targetLayer = targetLayers.get(k);
-						if (sourceLayer.getDataset().equals(targetLayer.getDataset())) {
+						if (sourceLayer.getDataset().equals(targetLayer.getDataset()) && targetLayer.getSelection() != null) {
 							sourceLayer.setSelection(targetLayer.getSelection());
 						}
 					}

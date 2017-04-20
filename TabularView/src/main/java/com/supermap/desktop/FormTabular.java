@@ -29,6 +29,7 @@ import com.supermap.desktop.utilties.TabularStatisticUtilties;
 import com.supermap.desktop.utilties.TabularTableModel;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ListSelectionEvent;
@@ -803,17 +804,19 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		return rowHeader;
 	}
 
-	public class RowHeaderRenderer extends JLabel implements ListCellRenderer {
+	public class RowHeaderRenderer extends JButton implements ListCellRenderer {
 		JTable table;
-
 		RowHeaderRenderer(JTable table) {
+			// TODO: 2017/4/20 UGDJ-565
 			this.table = table;
 			JTableHeader header = table.getTableHeader();
 			setOpaque(true);
 			setHorizontalAlignment(CENTER);
-			setBorder(UIManager.getBorder("TableHeader.cellBorder"));
-			setForeground(header.getForeground());
-			setBackground(header.getBackground());
+//			setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+			setFocusPainted(false);
+			setBackground(Color.gray);
+			setContentAreaFilled(false);
+			setBorder(new LineBorder(Color.LIGHT_GRAY));
 			setFont(header.getFont());
 		}
 
