@@ -9,6 +9,8 @@ import com.supermap.desktop.dialog.symbolDialogs.ISymbolApply;
 import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.*;
 import com.supermap.desktop.dialog.symbolDialogs.SymbolDialog;
 import com.supermap.desktop.enums.SymbolMarkerType;
+import com.supermap.desktop.event.ResourcesChangedEvent;
+import com.supermap.desktop.event.ResourcesChangedListener;
 import com.supermap.desktop.mapeditor.MapEditorProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -74,6 +76,14 @@ public class CADStyleTitlePanel extends JPanel {
             workSpaceChanged(workspaceOpenedEvent.getWorkspace());
         }
     };
+    private ResourcesChangedListener resourcesChangeListener = new ResourcesChangedListener() {
+        @Override
+        public void resourcesChanged(ResourcesChangedEvent e) {
+            if (e.getSymbolGroup().getCount() > 0 && e.getSymbolGroup().get(0).getType().equals(SymbolType.MARKER)) {
+                panelSymbols.setSymbolGroup(e.getNewResources(), e.getSymbolGroup());
+            }
+        }
+    };
 
     public CADStyleTitlePanel(CADStyleContainer parent, int styleType) {
         this.parent = parent;
@@ -110,6 +120,7 @@ public class CADStyleTitlePanel extends JPanel {
                 }
             };
             this.panelSymbols.addSymbolSelectedChangedListener(listener);
+            Application.getActiveApplication().addResourcesChangedListener(this.resourcesChangeListener);
             listenerMap.put(panelSymbols, listener);
         }
     }
@@ -370,5 +381,6 @@ public class CADStyleTitlePanel extends JPanel {
         if (null != listenerMap.get(panelSymbols)) {
             panelSymbols.removeSymbolSelectedChangedListener(listenerMap.get(panelSymbols));
         }
+        Application.getActiveApplication().removeResourcesChangedListener(this.resourcesChangeListener);
     }
 }
