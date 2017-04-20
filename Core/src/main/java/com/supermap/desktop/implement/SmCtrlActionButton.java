@@ -32,6 +32,7 @@ public class SmCtrlActionButton extends JButton implements IBaseItem {
 		} else {
 			this.setText(xmlCommand.getLabel());
 		}
+		this.setName(xmlCommand.getLabel());
 		this.setMinimumSize(preferredSize);
 		this.setMaximumSize(preferredSize);
 		this.setPreferredSize(preferredSize);

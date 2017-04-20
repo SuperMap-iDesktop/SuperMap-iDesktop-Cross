@@ -20,119 +20,124 @@ import javax.swing.*;
  * Created by xie on 2017/3/7.
  */
 public class MetaProcessISORegion extends MetaProcess {
-    private final static String INPUT_DATA = "InputData";
-    private final static String OUTPUT_DATA = "ExtractResult";
+	private final static String INPUT_DATA = "InputData";
+	private final static String OUTPUT_DATA = "ExtractResult";
 
-    private ParameterDatasource sourceDatasource;
-    private ParameterSingleDataset dataset;
-    private ParameterSaveDataset targetDataset;
-    private ParameterTextField maxGrid;
-    private ParameterTextField minGrid;
-    private ParameterTextField maxISORegion;
-    private ParameterTextField minISORegion;
-    private ParameterTextField isoLine;
-    private ParameterTextField datumValue;
-    private ParameterTextField interval;
-    private ParameterTextField resampleTolerance;
-    private ParameterComboBox smoothMethod;
-    private ParameterTextField smoothNess;
-    private SteppedListener stepListener = new SteppedListener() {
-        @Override
-        public void stepped(SteppedEvent steppedEvent) {
-            fireRunning(new RunningEvent(MetaProcessISORegion.this, steppedEvent.getPercent(), AbstractParameter.PROPERTY_VALE));
-        }
-    };
+	private ParameterDatasource sourceDatasource;
+	private ParameterSingleDataset dataset;
+	private ParameterSaveDataset targetDataset;
+	private ParameterTextField maxGrid;
+	private ParameterTextField minGrid;
+	private ParameterTextField maxISORegion;
+	private ParameterTextField minISORegion;
+	private ParameterTextField isoLine;
+	private ParameterTextField datumValue;
+	private ParameterTextField interval;
+	private ParameterTextField resampleTolerance;
+	private ParameterComboBox smoothMethod;
+	private ParameterTextField smoothNess;
+	private SteppedListener stepListener = new SteppedListener() {
+		@Override
+		public void stepped(SteppedEvent steppedEvent) {
+			RunningEvent event = new RunningEvent(MetaProcessISORegion.this, steppedEvent.getPercent(), AbstractParameter.PROPERTY_VALE);
+			fireRunning(event);
 
-    public MetaProcessISORegion() {
-        this.inputs.addData(INPUT_DATA, DatasetTypes.GRID);
-        this.outputs.addData(OUTPUT_DATA, DatasetTypes.REGION);
-        parameters = new DefaultParameters();
-        sourceDatasource = new ParameterDatasource();
-        sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-        dataset = new ParameterSingleDataset(DatasetType.GRID);
+			if (event.isCancel()) {
+				steppedEvent.setCancel(true);
+			}
+		}
+	};
 
-        targetDataset = new ParameterSaveDataset();
-        targetDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-        targetDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
-        targetDataset.setSelectedItem("ISORegion");
-        maxGrid = new ParameterTextField(CommonProperties.getString("String_MAXGrid"));
-        minGrid = new ParameterTextField(CommonProperties.getString("String_MINGrid"));
-        maxISORegion = new ParameterTextField(CommonProperties.getString("String_MAXISORegion"));
-        minISORegion = new ParameterTextField(CommonProperties.getString("String_MINISORegion"));
-        isoLine = new ParameterTextField(CommonProperties.getString("String_ISOData"));
-        if (null != dataset.getSelectedItem() && dataset.getSelectedItem() instanceof DatasetGrid) {
-            maxGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMaxValue());
-            minGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMinValue());
-        }
-        datumValue = new ParameterTextField(CommonProperties.getString("String_DatumValue"));
-        interval = new ParameterTextField(CommonProperties.getString("String_Interval"));
-        resampleTolerance = new ParameterTextField(CommonProperties.getString("String_ResampleTolerance"));
-        ParameterDataNode selectedNode = new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_NONE"), SmoothMethod.NONE);
-        smoothMethod = new ParameterComboBox().setDescribe(CommonProperties.getString("String_SmoothMethod"));
-        smoothMethod.setItems(selectedNode,
-                new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
-                new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH));
-        smoothMethod.setSelectedItem(selectedNode);
-        smoothNess = new ParameterTextField(CommonProperties.getString("String_SmoothNess"));
+	public MetaProcessISORegion() {
+		this.inputs.addData(INPUT_DATA, DatasetTypes.GRID);
+		this.outputs.addData(OUTPUT_DATA, DatasetTypes.REGION);
+		parameters = new DefaultParameters();
+		sourceDatasource = new ParameterDatasource();
+		sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
+		dataset = new ParameterSingleDataset(DatasetType.GRID);
 
-        ParameterCombine sourceData = new ParameterCombine();
-        sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
-        sourceData.addParameters(sourceDatasource, dataset);
-        ParameterCombine targetData = new ParameterCombine();
-        targetData.setDescribe(CommonProperties.getString("String_GroupBox_TargetData"));
-        targetData.addParameters(targetDataset);
-        ParameterCombine resultInfo = new ParameterCombine();
-        resultInfo.setDescribe(CommonProperties.getString("String_ResultInfo"));
-        resultInfo.addParameters(maxGrid, minGrid, maxISORegion, minISORegion, isoLine);
-        ParameterCombine paramSet = new ParameterCombine();
-        paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
-        paramSet.addParameters(datumValue, interval, resampleTolerance, smoothMethod, smoothNess);
+		targetDataset = new ParameterSaveDataset();
+		targetDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
+		targetDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
+		targetDataset.setSelectedItem("ISORegion");
+		maxGrid = new ParameterTextField(CommonProperties.getString("String_MAXGrid"));
+		minGrid = new ParameterTextField(CommonProperties.getString("String_MINGrid"));
+		maxISORegion = new ParameterTextField(CommonProperties.getString("String_MAXISORegion"));
+		minISORegion = new ParameterTextField(CommonProperties.getString("String_MINISORegion"));
+		isoLine = new ParameterTextField(CommonProperties.getString("String_ISOData"));
+		if (null != dataset.getSelectedItem() && dataset.getSelectedItem() instanceof DatasetGrid) {
+			maxGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMaxValue());
+			minGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMinValue());
+		}
+		datumValue = new ParameterTextField(CommonProperties.getString("String_DatumValue"));
+		interval = new ParameterTextField(CommonProperties.getString("String_Interval"));
+		resampleTolerance = new ParameterTextField(CommonProperties.getString("String_ResampleTolerance"));
+		ParameterDataNode selectedNode = new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_NONE"), SmoothMethod.NONE);
+		smoothMethod = new ParameterComboBox().setDescribe(CommonProperties.getString("String_SmoothMethod"));
+		smoothMethod.setItems(selectedNode,
+				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
+				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH));
+		smoothMethod.setSelectedItem(selectedNode);
+		smoothNess = new ParameterTextField(CommonProperties.getString("String_SmoothNess"));
 
-        parameters.setParameters(sourceData, targetData, resultInfo, paramSet);
+		ParameterCombine sourceData = new ParameterCombine();
+		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
+		sourceData.addParameters(sourceDatasource, dataset);
+		ParameterCombine targetData = new ParameterCombine();
+		targetData.setDescribe(CommonProperties.getString("String_GroupBox_TargetData"));
+		targetData.addParameters(targetDataset);
+		ParameterCombine resultInfo = new ParameterCombine();
+		resultInfo.setDescribe(CommonProperties.getString("String_ResultInfo"));
+		resultInfo.addParameters(maxGrid, minGrid, maxISORegion, minISORegion, isoLine);
+		ParameterCombine paramSet = new ParameterCombine();
+		paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
+		paramSet.addParameters(datumValue, interval, resampleTolerance, smoothMethod, smoothNess);
 
-        DatasourceConstraint.getInstance().constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-    }
+		parameters.setParameters(sourceData, targetData, resultInfo, paramSet);
 
-    @Override
-    public String getTitle() {
-        return CommonProperties.getString("String_SurfaceISORegion");
-    }
+		DatasourceConstraint.getInstance().constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+	}
 
-    @Override
-    public void run() {
-        SurfaceExtractParameter surfaceExtractParameter = new SurfaceExtractParameter();
-        surfaceExtractParameter.setDatumValue(Double.valueOf(datumValue.getSelectedItem().toString()));
-        surfaceExtractParameter.setInterval(Double.valueOf(interval.getSelectedItem().toString()));
-        surfaceExtractParameter.setResampleTolerance(Double.valueOf(resampleTolerance.getSelectedItem().toString()));
-        surfaceExtractParameter.setSmoothMethod((SmoothMethod) ((ParameterDataNode) smoothMethod.getSelectedItem()).getData());
-        surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem().toString()));
-        DatasetGrid src = null;
-        if (this.inputs.getData(INPUT_DATA).getValue() != null) {
-            src = (DatasetGrid) this.inputs.getData(INPUT_DATA).getValue();
-        } else {
-            src = (DatasetGrid) dataset.getSelectedItem();
-        }
+	@Override
+	public String getTitle() {
+		return CommonProperties.getString("String_SurfaceISORegion");
+	}
 
-        SurfaceAnalyst.addSteppedListener(this.stepListener);
-        DatasetVector result = SurfaceAnalyst.extractIsoregion(surfaceExtractParameter, src, targetDataset.getResultDatasource(), targetDataset.getDatasetName(), null);
-        SurfaceAnalyst.removeSteppedListener(this.stepListener);
-        this.outputs.getData(OUTPUT_DATA).setValue(result);
-        fireRunning(new RunningEvent(MetaProcessISORegion.this, 100, "finished"));
-        setFinished(true);
-    }
+	@Override
+	public void run() {
+		SurfaceExtractParameter surfaceExtractParameter = new SurfaceExtractParameter();
+		surfaceExtractParameter.setDatumValue(Double.valueOf(datumValue.getSelectedItem().toString()));
+		surfaceExtractParameter.setInterval(Double.valueOf(interval.getSelectedItem().toString()));
+		surfaceExtractParameter.setResampleTolerance(Double.valueOf(resampleTolerance.getSelectedItem().toString()));
+		surfaceExtractParameter.setSmoothMethod((SmoothMethod) ((ParameterDataNode) smoothMethod.getSelectedItem()).getData());
+		surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem().toString()));
+		DatasetGrid src = null;
+		if (this.inputs.getData(INPUT_DATA).getValue() != null) {
+			src = (DatasetGrid) this.inputs.getData(INPUT_DATA).getValue();
+		} else {
+			src = (DatasetGrid) dataset.getSelectedItem();
+		}
 
-    @Override
-    public String getKey() {
-        return MetaKeys.ISOREGION;
-    }
+		SurfaceAnalyst.addSteppedListener(this.stepListener);
+		DatasetVector result = SurfaceAnalyst.extractIsoregion(surfaceExtractParameter, src, targetDataset.getResultDatasource(), targetDataset.getDatasetName(), null);
+		SurfaceAnalyst.removeSteppedListener(this.stepListener);
+		this.outputs.getData(OUTPUT_DATA).setValue(result);
+		fireRunning(new RunningEvent(MetaProcessISORegion.this, 100, "finished"));
+		setFinished(true);
+	}
 
-    @Override
-    public IParameterPanel getComponent() {
-        return parameters.getPanel();
-    }
+	@Override
+	public String getKey() {
+		return MetaKeys.ISOREGION;
+	}
 
-    @Override
-    public Icon getIcon() {
-        return getIconByPath("/processresources/Tree_Node3.png");
-    }
+	@Override
+	public IParameterPanel getComponent() {
+		return parameters.getPanel();
+	}
+
+	@Override
+	public Icon getIcon() {
+		return getIconByPath("/processresources/Tree_Node3.png");
+	}
 }

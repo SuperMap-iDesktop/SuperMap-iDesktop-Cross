@@ -34,8 +34,7 @@ public class ProcessTree extends JTree {
 	private void init() {
 		initComponents();
 		new TreeDropAndDragHandler(DataFlavor.stringFlavor).bindSource(this);
-
-		JTreeUIUtilities.expandTree(this, true);
+		JTreeUIUtilities.expandTree(this);
 		this.setCellRenderer(new DefaultTreeCellRenderer() {
 			@Override
 			public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {

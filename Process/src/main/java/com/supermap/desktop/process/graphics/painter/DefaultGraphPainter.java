@@ -200,7 +200,7 @@ public class DefaultGraphPainter implements IGraphPainter {
 	protected void paintProcessGraph(Graphics graphics, ProcessGraph processGraph) {
 		paintRectangleGraph(graphics, processGraph);
 
-		Font font = new Font("宋体", Font.PLAIN, 24);
+		Font font = new Font("宋体", Font.PLAIN, 20);
 		graphics.setFont(font);
 		graphics.setColor(Color.darkGray);
 

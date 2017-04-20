@@ -4,9 +4,11 @@ import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
 import com.supermap.analyst.spatialanalyst.TerrainInterpolateType;
-import com.supermap.data.*;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.SteppedEvent;
+import com.supermap.data.SteppedListener;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
@@ -18,10 +20,8 @@ import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilities.FieldTypeUtilities;
 
 import javax.swing.*;
-import java.util.ArrayList;
 
 /**
  * Created by xie on 2017/3/10.
@@ -47,7 +47,12 @@ public class MetaProcessISOPoint extends MetaProcess {
 	private SteppedListener stepListener = new SteppedListener() {
 		@Override
 		public void stepped(SteppedEvent steppedEvent) {
-			fireRunning(new RunningEvent(MetaProcessISOPoint.this, steppedEvent.getPercent(), AbstractParameter.PROPERTY_VALE));
+			RunningEvent event = new RunningEvent(MetaProcessISOPoint.this, steppedEvent.getPercent(), AbstractParameter.PROPERTY_VALE);
+			fireRunning(event);
+
+			if (event.isCancel()) {
+				steppedEvent.setCancel(true);
+			}
 		}
 	};
 
@@ -108,7 +113,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
-		sourceData.addParameters(sourceDatasource, sourceDataset,fields);
+		sourceData.addParameters(sourceDatasource, sourceDataset, fields);
 		ParameterCombine resultData = new ParameterCombine();
 		resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
 		resultData.addParameters(targetDataset, maxISOLine, minISOLine, isoLine, terrainInterpolateType);
@@ -117,7 +122,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 		paramSet.addParameters(resolution, datumValue, interval,
 				resampleTolerance, smoothMethod, smoothNess);
 
-		this.parameters.setParameters(sourceData,resultData,paramSet);
+		this.parameters.setParameters(sourceData, resultData, paramSet);
 	}
 
 	@Override

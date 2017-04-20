@@ -208,13 +208,6 @@ public class CanvasActionsManager implements CanvasAction, CanvasActionProcessLi
 		return this.actions.get(c);
 	}
 
-//	public void setActionEnabled(Class c, boolean enabled) {
-//		CanvasAction action = getAction(c);
-//		if (action != null) {
-//			action.setEnabled(enabled);
-//		}
-//	}
-
 	public Class[] getActionKeys() {
 		if (this.actions.size() > 0) {
 			Class[] keys = new Class[this.actions.size()];

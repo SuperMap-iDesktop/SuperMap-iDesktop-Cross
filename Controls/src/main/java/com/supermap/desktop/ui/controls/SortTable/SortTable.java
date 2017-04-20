@@ -17,11 +17,34 @@ public class SortTable extends SmTable {
 		sortButtonRenderer = new SortButtonRenderer();
 		headerListener = new HeaderListener();
 		headerListener.setRenderer(sortButtonRenderer);
-
-		JTableHeader header = this.getTableHeader();
+		JTableHeader header = super.getTableHeader();
 		headerListener.setHeader(header);
 		header.addMouseListener(headerListener);
 
+	}
+
+	public void setSortButtonRenderer(SortButtonRenderer sortButtonRenderer) {
+		this.sortButtonRenderer = sortButtonRenderer;
+		if (this.headerListener == null) {
+			return;
+		}
+		this.headerListener.setRenderer(sortButtonRenderer);
+		TableColumnModel model = this.getColumnModel();
+		int n = model.getColumnCount();
+		for (int i = 0; i < n; i++) {
+			model.getColumn(i).setHeaderRenderer(sortButtonRenderer);
+		}
+	}
+
+	@Override
+	public void setTableHeader(JTableHeader tableHeader) {
+		super.setTableHeader(tableHeader);
+		if (this.headerListener == null) {
+			return;
+		}
+		this.getTableHeader().removeMouseListener(this.headerListener);
+		this.headerListener.setHeader(tableHeader);
+		this.getTableHeader().addMouseListener(headerListener);
 	}
 
 	@Override

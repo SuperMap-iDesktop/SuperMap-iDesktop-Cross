@@ -50,7 +50,6 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
 
     public SmButtonDropdown(IForm formClass, XMLCommand xmlCommand, JComponent parent) {
         super.setToolTipText(xmlCommand.getTooltip());
-
         displayButton = new ControlButton(this);
         displayButton.setPreferredSize(new Dimension(31, 31));
         this.setPreferredSize(new Dimension(51, 31));
@@ -65,10 +64,9 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
             displayButton.setText(xmlCommand.getLabel());
         }
         displayButton.setToolTipText(xmlCommand.getLabel());
-
+        this.setName(xmlCommand.getLabel());
         arrowButton = new ControlButton(this);
         arrowButton.setIcon(new InnerMetaComboBoxIcon());
-
         displayButton.addMouseListener(popupMenuMouseListener);
         arrowButton.addMouseListener(popupMenuMouseListener);
         Insets insets = arrowButton.getMargin();

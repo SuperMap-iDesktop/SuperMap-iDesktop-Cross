@@ -4,9 +4,7 @@ import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
 import com.supermap.data.*;
-import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
-import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
@@ -43,7 +41,12 @@ public class MetaProcessISOLine extends MetaProcess {
 	private SteppedListener stepListener = new SteppedListener() {
 		@Override
 		public void stepped(SteppedEvent steppedEvent) {
-			fireRunning(new RunningEvent(MetaProcessISOLine.this, steppedEvent.getPercent(), AbstractParameter.PROPERTY_VALE));
+			RunningEvent event = new RunningEvent(MetaProcessISOLine.this, steppedEvent.getPercent(), AbstractParameter.PROPERTY_VALE);
+			fireRunning(event);
+
+			if (event.isCancel()) {
+				steppedEvent.setCancel(true);
+			}
 		}
 	};
 
@@ -108,7 +111,7 @@ public class MetaProcessISOLine extends MetaProcess {
 		ParameterCombine paramSet = new ParameterCombine();
 		paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
 		paramSet.addParameters(datumValue, interval, resampleTolerance, smoothMethod, smoothNess);
-		this.parameters.setParameters(sourceData,targetData,resultInfo,paramSet);
+		this.parameters.setParameters(sourceData, targetData, resultInfo, paramSet);
 	}
 
 

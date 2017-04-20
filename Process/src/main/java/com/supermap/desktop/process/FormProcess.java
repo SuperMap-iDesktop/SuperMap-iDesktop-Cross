@@ -2,9 +2,11 @@ package com.supermap.desktop.process;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormProcess;
 import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.dialog.JDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.FormActivatedListener;
 import com.supermap.desktop.event.FormClosedEvent;
@@ -35,6 +37,7 @@ import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.Dockbar;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -223,6 +226,8 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 	@Override
 	public boolean save() {
 		int index = -1;
+		String text = getText();
+
 		ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
 		for (IWorkFlow workFlow : workFlows) {
 			if (workFlow.getName().equals(this.getText())) {
@@ -233,11 +238,33 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		}
 
 		if (index == -1) {
-			Application.getActiveApplication().addWorkFlow(getWorkFlow());
+			saveAs(true);
 		} else {
 			Application.getActiveApplication().addWorkFlow(index, getWorkFlow());
 		}
 		isNeedSave = false;
+		return true;
+	}
+
+	public boolean saveAs(boolean isNewWindow) {
+		JDialogFormSaveAs dialogSaveAs = new JDialogFormSaveAs();
+
+		dialogSaveAs.setDescribeText(ProcessProperties.getString("String_NewWorkFlowName"));
+		dialogSaveAs.setCurrentFormName(getText());
+		for (IWorkFlow workFlow : Application.getActiveApplication().getWorkFlows()) {
+			dialogSaveAs.addExistNames(workFlow.getName());
+		}
+		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+		for (int i = 0; i < formManager.getCount(); i++) {
+			if (formManager.get(i) instanceof FormProcess && formManager.get(i) != this) {
+				dialogSaveAs.addExistNames(formManager.get(i).getText());
+			}
+		}
+		dialogSaveAs.setTitle(ProcessProperties.getString("String_SaveWorkFLow"));
+		if (dialogSaveAs.showDialog() == DialogResult.OK) {
+			this.setText(dialogSaveAs.getCurrentFormName());
+			Application.getActiveApplication().addWorkFlow(getWorkFlow());
+		}
 		return true;
 	}
 
@@ -269,11 +296,6 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 
 	@Override
 	public boolean saveFormInfos() {
-		return false;
-	}
-
-	@Override
-	public boolean saveAs(boolean isNewWindow) {
 		return false;
 	}
 
@@ -415,7 +437,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 							getCanvas().repaint();
 						}
 					} catch (Exception e) {
-						Application.getActiveApplication().getOutput().output(e);
+						// ignore 当然是原谅ta啦
 					}
 				}
 			}
