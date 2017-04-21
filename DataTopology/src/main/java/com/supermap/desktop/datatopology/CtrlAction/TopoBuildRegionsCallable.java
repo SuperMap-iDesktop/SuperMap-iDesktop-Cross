@@ -8,6 +8,7 @@ import com.supermap.desktop.datatopology.DataTopologyProperties;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 import com.supermap.desktop.ui.UICommonToolkit;
 
+import javax.swing.*;
 import java.text.MessageFormat;
 import java.util.concurrent.CancellationException;
 
@@ -47,7 +48,12 @@ public class TopoBuildRegionsCallable extends UpdateProgressCallable {
 			if (null != resultDataset) {
 				info = MessageFormat.format(DataTopologyProperties.getString("String_TopoRegionSucceed"), targetDatasetName,
 						String.valueOf(resultDataset.getRecordCount()), time);
-				UICommonToolkit.refreshSelectedDatasetNode(resultDataset);
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						UICommonToolkit.refreshSelectedDatasetNode(resultDataset);
+					}
+				});
 			} else {
 				info = "failed";
 			}
