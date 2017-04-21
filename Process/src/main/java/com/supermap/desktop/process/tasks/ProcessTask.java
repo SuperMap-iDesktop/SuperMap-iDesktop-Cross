@@ -121,9 +121,6 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 		progressBar.setDrawString(true);
 		labelMessage = new JLabel("...");
 		labelRemaintime = new JLabel("...");
-//		buttonRun = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_run_now.png"));
-//		buttonRun.setToolTipText(CommonProperties.getString(CommonProperties.Run));
-//		buttonRun.setContentAreaFilled(false);
 		this.buttonRun = new ButtonExecutor(this.run, this.cancelRunable);
 		buttonRemove = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_delete_now.png"));
 		buttonRemove.setToolTipText(CommonProperties.getString(CommonProperties.Delete));
@@ -179,13 +176,11 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 	@Override
 	public void registEvents() {
 		removeEvents();
-//		this.buttonRun.addActionListener(this.buttonRunActionListener);
 		this.buttonRemove.addActionListener(this.removeListener);
 	}
 
 	@Override
 	public void removeEvents() {
-//		this.buttonRun.removeActionListener(this.buttonRunActionListener);
 		this.buttonRemove.removeActionListener(this.removeListener);
 	}
 
@@ -205,6 +200,9 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 						if (result) {
 							buttonRun.setProcedure(ButtonExecutor.COMPLETED);
 						} else {
+							progressBar.setProgress(0);
+							labelMessage.setText("...");
+							labelRemaintime.setText("...");
 							buttonRun.setProcedure(ButtonExecutor.READY);
 						}
 					}
@@ -233,12 +231,9 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 	public void setCancel(boolean isCancel) {
 		if (isCancel) {
 			this.buttonRun.setProcedure(ButtonExecutor.CANCELLED);
+			this.labelMessage.setText(CommonProperties.getString(CommonProperties.BeingCanceled));
 		}
 	}
-
-//	private void stop() {
-//		setCancel(!isCancel);
-//	}
 
 	@Override
 	public void updateProgress(final int percent, final String remainTime, final String message) throws CancellationException {
@@ -255,10 +250,6 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 				progressBar.setProgress(percent);
 				labelRemaintime.setText(MessageFormat.format(ControlsProperties.getString("String_RemainTime"), remainTime));
 				labelMessage.setText(message);
-				if (percent >= 100) {
-//					buttonRun.setIcon(ControlsResources.getIcon("/controlsresources/ToolBar/Image_finish_now.png"));
-//                    buttonRun.removeActionListener(cancelListener);
-				}
 			}
 		});
 	}
