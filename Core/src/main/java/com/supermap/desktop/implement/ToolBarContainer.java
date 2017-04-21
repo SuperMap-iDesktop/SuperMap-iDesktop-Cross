@@ -72,15 +72,14 @@ public class ToolBarContainer extends Container {
 			}
 			((SmToolbar) comp).setRowIndex(this.getIndex());
 		}
-		if (!lists.contains(this)) {
-			lists.add(this);
-			Application.getActiveApplication().getMainFrame().getToolbarManager().update();
-		}
 		super.add(comp, index);
 		this.validate();
 		this.repaint();
 		if (comp instanceof SmToolbar) {
 			((SmToolbar) comp).reAddComponents();
+		}
+		if (getComponentCount() == 1) {
+			Application.getActiveApplication().getMainFrame().getToolbarManager().update();
 		}
 		return comp;
 	}
