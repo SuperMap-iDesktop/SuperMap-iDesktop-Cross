@@ -1,6 +1,7 @@
 package com.supermap.desktop.ui.controls;
 
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.implement.InnerMetaComboBoxIcon;
 import com.supermap.desktop.implement.SmButtonDropdown;
 import com.supermap.desktop.implement.SmPopupMenu;
@@ -157,5 +158,23 @@ public class ComponentDropDown extends SmButtonDropdown {
 
     public void setText(String text) {
         this.displayButton.setText(text);
+    }
+
+    public class RightArrowButton extends JButton {
+        public RightArrowButton(String text) {
+            initRightArrowButton(text);
+        }
+
+        private void initRightArrowButton(String text) {
+            JLabel labelText = new JLabel(text);
+            JLabel labelImage = new JLabel(new InnerMetaComboBoxIcon());
+            JPanel panel = new JPanel();
+            this.setLayout(new GridBagLayout());
+            panel.setLayout(new GridBagLayout());
+            this.add(labelText, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(1, 10, 1, 2).setIpad(0, 5));
+            this.add(labelImage, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5).setIpad(0, 5));
+            this.add(panel, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setAnchor(GridBagConstraints.WEST));
+            this.setBorder(BorderFactory.createDashedBorder(this.getBackground()));
+        }
     }
 }

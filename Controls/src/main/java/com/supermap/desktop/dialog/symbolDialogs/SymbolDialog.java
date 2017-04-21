@@ -3,8 +3,10 @@ package com.supermap.desktop.dialog.symbolDialogs;
 import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.JPanelSymbols;
+import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.SymbolPanel;
 import com.supermap.desktop.dialog.symbolDialogs.JpanelSymbols.SymbolPanelPoint;
 import com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolFactory;
 import com.supermap.desktop.dialog.symbolDialogs.symbolTrees.SymbolGroupTree;
@@ -17,6 +19,8 @@ import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.LogUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
+import net.sf.image4j.codec.bmp.BMPDecoder;
+import net.sf.image4j.codec.ico.ICODecoder;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -31,8 +35,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 
 /**
  * 符号面板基类
@@ -398,7 +404,7 @@ public abstract class SymbolDialog extends SmDialog {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_DELETE) {
-
+//                    currentResources.getMarkerLibrary().remove(panelSymbols.getCurrentSymbolId());
                 } else if (e.getKeyChar() == '\b') {
                     textFieldSearch.setText("");
                 } else if (e.getKeyChar() != '\uFFFF') {
@@ -410,14 +416,14 @@ public abstract class SymbolDialog extends SmDialog {
         });
     }
 
-    private void importIconAsSymbolMarker() {
+    private SmFileChoose createFileChoose() {
         if (!SmFileChoose.isModuleExist("ImportImageFile")) {
             String fileFilters = SmFileChoose.bulidFileFilters(
                     SmFileChoose.createFileFilter(CommonProperties.getString("String_AllFilter"), "png", "jpg", "jpeg", "bmp", "ico"),
                     SmFileChoose.createFileFilter(CommonProperties.getString("String_ImageFilter"), "png", "jpg", "jpeg", "bmp"),
                     SmFileChoose.createFileFilter(CommonProperties.getString("String_IconFilter"), "ico"));
             SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-                    ControlsProperties.getString("String_ImportGridSymbol"), "ImportImageFile", "OpenOne");
+                    ControlsProperties.getString("String_ImportGridSymbol"), "ImportImageFile", "OpenMany");
         }
         SmFileChoose fileChooser = new SmFileChoose("ImportImageFile");
         if (LastFileFilter != null) {
@@ -429,52 +435,77 @@ public abstract class SymbolDialog extends SmDialog {
                 }
             }
         }
+        return fileChooser;
+    }
 
-        int state = fileChooser.showDefaultDialog();
-        if (state == JFileChooser.APPROVE_OPTION && null != fileChooser.getSelectedFile() && fileChooser.getSelectedFile().exists()) {
-            try {
-                String filePath = fileChooser.getSelectedFile().getPath();
-                FileInputStream stream = new FileInputStream(fileChooser.getSelectedFile());
-                BufferedImage image = ImageIO.read(stream);
-                int height = image.getHeight();
-                int width = image.getWidth();
-                if (height > 512 || width > 512) {
-                    SmOptionPane optionPane = new SmOptionPane();
-                    optionPane.showConfirmDialog(MessageFormat.format(CommonProperties.getString("String_IconWrongInfo"), filePath));
-                    return;
-                } else if (height != width) {
-                    SmOptionPane optionPane = new SmOptionPane();
-                    if (optionPane.showConfirmDialogYesNo(MessageFormat.format(CommonProperties.getString("String_SaveHandWScal"), filePath)) == JOptionPane.OK_OPTION) {
-                        saveIcon(fileChooser, height, width);
+    private void importIconAsSymbolMarker() {
+        SmFileChoose fileChooser = createFileChoose();
+        if (fileChooser.showDefaultDialog() == JFileChooser.APPROVE_OPTION && null != fileChooser.getSelectedFile() && fileChooser.getSelectedFile().exists()) {
+            File[] files = fileChooser.getSelectFiles();
+            for (File file : files) {
+                try {
+                    String fileName = file.getName();
+                    fileName = fileName.substring(0, fileName.indexOf("."));
+                    if (file.getPath().endsWith("ico") || file.getPath().endsWith("ICO")) {
+                        ArrayList<BufferedImage> images = (ArrayList<BufferedImage>) ICODecoder.read(file);
+                        for (int i = 0; i < images.size(); i++) {
+                            importIcon(images.get(i), file, fileName);
+                        }
+                    } else if (file.getPath().endsWith("bmp") || file.getPath().endsWith("BMP")) {
+                        importIcon(BMPDecoder.read(file), file, fileName);
                     } else {
-                        int newWidth = height > width ? width : height;
-                        saveIcon(fileChooser, newWidth, newWidth);
+                        FileInputStream stream = new FileInputStream(file);
+                        importIcon(ImageIO.read(stream), file, fileName);
                     }
-                } else {
-                    saveIcon(fileChooser, height, width);
+
+                } catch (Exception ex) {
+                    Application.getActiveApplication().getOutput().output(ex);
                 }
-            } catch (Exception ex) {
-                Application.getActiveApplication().getOutput().output(ex);
             }
         }
     }
 
-    private void saveIcon(SmFileChoose fileChooser, int height, int width) {
-        String fileName = fileChooser.getFileName();
-        fileName = fileName.substring(0, fileName.indexOf("."));
+    private void importIcon(BufferedImage image, File file, String fileName) {
+        int height = image.getHeight();
+        int width = image.getWidth();
+        if (height > 512 || width > 512) {
+            SmOptionPane optionPane = new SmOptionPane();
+            optionPane.showConfirmDialog(MessageFormat.format(CommonProperties.getString("String_IconWrongInfo"), file.getAbsoluteFile()));
+            return;
+        } else if (height != width) {
+            SmOptionPane optionPane = new SmOptionPane();
+            if (optionPane.showConfirmDialogYesNo(MessageFormat.format(CommonProperties.getString("String_SaveHandWScal"), file.getAbsoluteFile())) == JOptionPane.OK_OPTION) {
+                saveIcon(image, fileName, height, width);
+            } else {
+                int newWidth = height > width ? width : height;
+                saveIcon(image, fileName, newWidth, newWidth);
+            }
+        } else {
+            saveIcon(image, fileName, height, width);
+        }
+    }
+
+
+    private void saveIcon(BufferedImage image, String fileName, int height, int width) {
         Rectangle2D bounds = new Rectangle2D(new Point2D(height / 2, width / 2), height, width);
-        GeoPicture geoPicture = new GeoPicture(fileChooser.getFilePath(), bounds, 0);
-        SymbolMarker marker = new SymbolMarker();
+        GeoPicture geoPicture = new GeoPicture(image, bounds, 0);
+        final SymbolMarker marker = new SymbolMarker();
         marker.setName(fileName);
         marker.fromGeometry(geoPicture, bounds);
-        final int symbolId = currentResources.getMarkerLibrary().add(marker);
+        if (null == currentSymbolGroup.getParent()) {
+            currentResources.getMarkerLibrary().add(marker);
+        } else {
+            currentResources.getMarkerLibrary().add(marker, currentSymbolGroup);
+        }
         panelSymbols.setSymbolGroup(currentResources, currentSymbolGroup);
+        Application.getActiveApplication().setResourcesInfo(currentResources, currentSymbolGroup);
 //        //setSymbolGroup() method use updateUI(),So use SwingUtilities to add a new thread,
 //        //that we can make the panel be selected.
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                panelSymbols.setSelectedPanel(symbolId);
+                panelSymbols.setSelectedSymbolPanel((SymbolPanel) panelSymbols.getComponent(panelSymbols.getComponentCount() - 1));
+                ToolbarUIUtilities.updataToolbarsState();
             }
         });
     }

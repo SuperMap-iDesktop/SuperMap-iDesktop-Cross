@@ -39,6 +39,7 @@ public class CommonProperties extends Properties {
 	public static final String Add = "String_Add";
 	public static final String Pause = "String_Pause";
 	public static final String Run = "String_Run";
+	public static final String ReRun = "String_ReRun";
 	public static final String Delete = "String_Delete";
 	public static final String Modify = "String_Modify";
 	public static final String True = "String_True";
