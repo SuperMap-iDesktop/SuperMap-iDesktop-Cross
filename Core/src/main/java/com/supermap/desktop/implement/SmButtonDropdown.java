@@ -51,10 +51,10 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
     public SmButtonDropdown(IForm formClass, XMLCommand xmlCommand, JComponent parent) {
         super.setToolTipText(xmlCommand.getTooltip());
         displayButton = new ControlButton(this);
-        displayButton.setPreferredSize(new Dimension(31, 31));
-        this.setPreferredSize(new Dimension(51, 31));
-        this.setMaximumSize(new Dimension(51, 31));
-        this.setMinimumSize(new Dimension(51, 31));
+        displayButton.setPreferredSize(new Dimension(28, 28));
+        this.setPreferredSize(new Dimension(48, 28));
+        this.setMaximumSize(new Dimension(48, 28));
+        this.setMinimumSize(new Dimension(48, 28));
         String[] pathPrams = new String[]{PathUtilities.getRootPathName(), xmlCommand.getImageFile()};
         String path = PathUtilities.combinePath(pathPrams, false);
         File file = new File(path);
