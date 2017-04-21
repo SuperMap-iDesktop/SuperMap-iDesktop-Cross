@@ -1,10 +1,13 @@
 package com.supermap.desktop.ui.mdi;
 
+import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.mdi.util.MdiResource;
 
-import java.awt.Component;
-
-import javax.swing.ImageIcon;
+import javax.swing.*;
+import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 public class MdiPage {
 
@@ -16,10 +19,22 @@ public class MdiPage {
 	private MdiGroup group;
 	private Component c;
 
+	private ArrayList<PropertyChangeListener> propertyChangeListeners = new ArrayList<>();
+
+	public static final String TITLE_PROPERTY = "TITLE_PROPERTY";
+
 	private MdiPage(Component c, String title, boolean isClosable, boolean isFloatable) {
 		this.c = c;
 		this.title = title;
 		this.icon = MdiResource.getIcon(MdiResource.FILE);
+		c.addPropertyChangeListener(FormBaseChild.TITLE_PROPERTY, new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				String oldValue = MdiPage.this.title;
+				MdiPage.this.title = (String) evt.getNewValue();
+				firePropertyChangedListener(new PropertyChangeEvent(this, TITLE_PROPERTY, oldValue, MdiPage.this.title));
+			}
+		});
 	}
 
 	public static MdiPage createMdiPage(Component c) {
@@ -105,5 +120,15 @@ public class MdiPage {
 	@Override
 	public String toString() {
 		return getTitle();
+	}
+
+	public void addPropertyListener(PropertyChangeListener propertyChangeListener) {
+		propertyChangeListeners.add(propertyChangeListener);
+	}
+
+	private void firePropertyChangedListener(PropertyChangeEvent propertyChangeEvent) {
+		for (PropertyChangeListener propertyChangeListener : propertyChangeListeners) {
+			propertyChangeListener.propertyChange(propertyChangeEvent);
+		}
 	}
 }

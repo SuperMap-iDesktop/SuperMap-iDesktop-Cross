@@ -68,7 +68,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	private TabularTableModel tabularTableModel;
 	private transient Recordset recordset;
 	private JTable jTableTabular;
-	private String title = "";
 	private JScrollPane jScrollPaneChildWindow;
 	private JPopupMenu FormSuperTabularContextMenu;
 	public static final Color COLOR_SYSTEM_SELECTED = new Color(185, 214, 244);
@@ -372,10 +371,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		FormSuperTabularContextMenu.show((Component) e.getSource(), e.getX(), e.getY());
 	}
 
-	@Override
-	public String getText() {
-		return this.title;
-	}
 
 	@Override
 	public WindowType getWindowType() {

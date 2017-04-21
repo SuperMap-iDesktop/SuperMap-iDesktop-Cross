@@ -57,6 +57,15 @@ public class TextFeature extends AbstractMdiFeature {
 		this.width = SwingUtilities2.stringWidth(getGroup(), getGroup().getFontMetrics(getGroup().getFont()), this.text);
 	}
 
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+//		repaint();
+	}
+
 	public static TextFeature instance(String text, MdiGroup group, IMdiFeature parent) {
 		if (group != null && parent != null) {
 			return new TextFeature(text, group, parent);

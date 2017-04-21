@@ -56,7 +56,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class FormProcess extends FormBaseChild implements IFormProcess {
 	private ScrollGraphCanvas graphCanvas = new ScrollGraphCanvas();
-	private String title;
 	private boolean isNeedSave = true;
 	private boolean isAutoAddOutPut = true;
 	private transient DropTarget dropTargeted;
@@ -208,15 +207,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 	}
 
 	//region ignore
-	@Override
-	public String getText() {
-		return title;
-	}
 
-	@Override
-	public void setText(String text) {
-		this.title = text;
-	}
 
 	@Override
 	public WindowType getWindowType() {
