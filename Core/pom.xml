@@ -7,9 +7,6 @@
         <groupId>com.supermap.idesktop.cross</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
-    <properties>
-        <basedir>F:\TestJava\SuperMap-iDesktop-Cross\Core</basedir>
-    </properties>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>Core</artifactId>
