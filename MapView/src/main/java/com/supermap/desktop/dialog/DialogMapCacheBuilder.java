@@ -18,13 +18,9 @@ import com.supermap.desktop.ui.controls.ChooseTable.MultipleCheckboxItem;
 import com.supermap.desktop.ui.controls.ChooseTable.MultipleCheckboxTableHeaderCellRenderer;
 import com.supermap.desktop.ui.controls.ChooseTable.MultipleCheckboxTableRenderer;
 import com.supermap.desktop.ui.controls.ChooseTable.SmChooseTable;
-import com.supermap.desktop.ui.controls.ComponentDropDown;
-import com.supermap.desktop.ui.controls.FileChooserControl;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
-import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
-import com.supermap.desktop.ui.controls.ToolBarJmenu.ToolbarJmenuListener;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
@@ -111,7 +107,7 @@ public class DialogMapCacheBuilder extends SmDialog {
     private WarningOrHelpProvider warningProviderCacheNameIllegal;
     private WarningOrHelpProvider warningProviderCachePathIllegal;
     private JTextField textFieldCacheName;
-    private FileChooserControl fileChooserControlFileCache;
+    private JFileChooserControl fileChooserControlFileCache;
 
     // Parameter setting  Control
     private PanelGroupBoxViewBounds panelCacheRange;
@@ -274,7 +270,14 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.warningProviderCacheNameIllegal = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_WarningCacheNameIsEmpty"), true);
         this.warningProviderCachePathIllegal = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_WarningCachePathIsEmpty"), true);
         this.textFieldCacheName = new JTextField();
-        this.fileChooserControlFileCache = new FileChooserControl();
+        this.fileChooserControlFileCache = new JFileChooserControl();
+        String moduleName = "ChooseCacheDirectories";
+        if (!SmFileChoose.isModuleExist(moduleName)) {
+            SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
+                    moduleName, "GetDirectories");
+        }
+        SmFileChoose fileChoose = new SmFileChoose(moduleName);
+        fileChooserControlFileCache.setFileChooser(fileChoose);
 
         this.labelImageType = new JLabel();
         this.labelPixel = new JLabel();
@@ -670,20 +673,20 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.textFieldCacheName.setText(this.mapCacheBuilder.getMap().getName());
         String moduleName = "ChooseCacheDirectories";
         if (!SmFileChoose.isModuleExist(moduleName)) {
-            this.fileChooserControlFileCache.getEditor().setText(System.getProperty("user.dir"));
+            this.fileChooserControlFileCache.setPath(System.getProperty("user.dir"));
         } else {
             SmFileChoose fileChoose = new SmFileChoose(moduleName);
             if (SystemPropertyUtilities.isWindows()) {
                 if (!fileChoose.getModuleLastPath().substring(fileChoose.getModuleLastPath().length() - 1).equals("\\")) {
-                    this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath() + "\\");
+                    this.fileChooserControlFileCache.setPath(fileChoose.getModuleLastPath() + "\\");
                 } else {
-                    this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath());
+                    this.fileChooserControlFileCache.setPath(fileChoose.getModuleLastPath());
                 }
             } else {
                 if (!fileChoose.getModuleLastPath().substring(fileChoose.getModuleLastPath().length() - 1).equals("/")) {
-                    this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath() + "/");
+                    this.fileChooserControlFileCache.setPath(fileChoose.getModuleLastPath() + "/");
                 } else {
-                    this.fileChooserControlFileCache.getEditor().setText(fileChoose.getModuleLastPath());
+                    this.fileChooserControlFileCache.setPath(fileChoose.getModuleLastPath());
                 }
             }
         }
@@ -1000,12 +1003,12 @@ public class DialogMapCacheBuilder extends SmDialog {
 
     private boolean isRightCachePath() {
         boolean result = true;
-        if (this.fileChooserControlFileCache.getEditor().getText().isEmpty()) {
+        if (this.fileChooserControlFileCache.getPath().isEmpty()) {
             result = false;
             this.warningProviderCachePathIllegal.showWarning();
             return result;
         } else {
-            File file = new File(this.fileChooserControlFileCache.getEditor().getText());
+            File file = new File(this.fileChooserControlFileCache.getPath());
             if (!file.exists() && !file.isDirectory()) {
                 result = false;
                 this.warningProviderCachePathIllegal.showWarning(MapViewProperties.getString("MapCache_WarningCachePathIsNotExits"));
@@ -1115,7 +1118,7 @@ public class DialogMapCacheBuilder extends SmDialog {
             this.mapCacheBuilder.setOutputScaleCaptions(this.scaleNames);
             this.mapCacheBuilder.setVersion(MapCacheVersion.VERSION_50);
             this.mapCacheBuilder.setCacheName(this.textFieldCacheName.getText());
-            this.mapCacheBuilder.setOutputFolder(this.fileChooserControlFileCache.getEditor().getText());
+            this.mapCacheBuilder.setOutputFolder(this.fileChooserControlFileCache.getPath());
             this.mapCacheBuilder.setBounds(this.cacheRangeBounds);
             if (this.mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
                 this.mapCacheBuilder.setIndexBounds(this.indexRangeBounds);
@@ -1159,7 +1162,7 @@ public class DialogMapCacheBuilder extends SmDialog {
 
     private boolean isCacheFolderSave() {
         boolean result = true;
-        File file = new File(this.fileChooserControlFileCache.getEditor().getText() + this.textFieldCacheName.getText());
+        File file = new File(this.fileChooserControlFileCache.getPath() + this.textFieldCacheName.getText());
         if (file.exists() || file.isDirectory()) {
             SmOptionPane smOptionPane = new SmOptionPane();
             smOptionPane.showErrorDialog("\"" + this.textFieldCacheName.getText() + "\"" + MapViewProperties.getString("MapCache_FileIsExitWarning"));
@@ -1208,10 +1211,10 @@ public class DialogMapCacheBuilder extends SmDialog {
             String time = String.valueOf((endTime - startTime) / 1000.0);
             if (result) {
                 Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateSuccessed"));
-                if (!this.fileChooserControlFileCache.getEditor().getText().substring(this.fileChooserControlFileCache.getEditor().getText().length() - 1).equals("\\")) {
-                    Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + this.fileChooserControlFileCache.getEditor().getText() + "\\" + this.textFieldCacheName.getText());
+                if (!this.fileChooserControlFileCache.getPath().substring(this.fileChooserControlFileCache.getPath().length() - 1).equals("\\")) {
+                    Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + this.fileChooserControlFileCache.getPath() + "\\" + this.textFieldCacheName.getText());
                 } else {
-                    Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + this.fileChooserControlFileCache.getEditor().getText() + this.textFieldCacheName.getText());
+                    Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + this.fileChooserControlFileCache.getPath() + this.textFieldCacheName.getText());
                 }
             } else {
                 Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateFailed"));
@@ -1529,7 +1532,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                 }
                 labelConfigValue.setText(fileName);
                 textFieldCacheName.setText(mapCacheBuilder.getCacheName());
-                fileChooserControlFileCache.getEditor().setText(mapCacheBuilder.getOutputFolder());
+                fileChooserControlFileCache.setPath(mapCacheBuilder.getOutputFolder());
                 cacheRangeBounds = mapCacheBuilder.getBounds();
                 initCacheRangeTextField();
                 initIndexRangeTextField();
@@ -1656,6 +1659,7 @@ public class DialogMapCacheBuilder extends SmDialog {
                         selectionModel.addSelectionInterval(index, index);
                     }
                 }
+
             } catch (Exception ex) {
                 Application.getActiveApplication().getOutput().output(ex);
             }
@@ -1666,6 +1670,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             int selectedRowsIndex[] = localSplitTable.getSelectedRows();
+
             int tableCount = localSplitTable.getRowCount();
             List<Double> removeInfo = new ArrayList<Double>();
             localSplitTable.clearSelection();
@@ -1676,21 +1681,23 @@ public class DialogMapCacheBuilder extends SmDialog {
                     }
                 }
             }
-            currentMapCacheScale.removeAll(removeInfo);
-            double addScaleAfter[] = new double[currentMapCacheScale.size()];
-            for (int i = 0; i < addScaleAfter.length; i++) {
-                addScaleAfter[i] = currentMapCacheScale.get(i);
-            }
-            DDLExportTableModel model = (DDLExportTableModel) localSplitTable.getModel();
-            model.removeRows(selectedRowsIndex);
-            localSplitTable.refreshContents(getNewLocalSplitTableValue(addScaleAfter));
-            addMoreScale();
-            if (selectedRowsIndex != null) {
-                int deleteAfaterSelectedRowIndex = selectedRowsIndex[0];
-                if (deleteAfaterSelectedRowIndex + 1 == localSplitTable.getRowCount() && localSplitTable.getRowCount() > 1) {
-                    localSplitTable.setRowSelectionInterval(deleteAfaterSelectedRowIndex - 1, deleteAfaterSelectedRowIndex - 1);
-                } else {
-                    localSplitTable.setRowSelectionInterval(deleteAfaterSelectedRowIndex, deleteAfaterSelectedRowIndex);
+            if (removeInfo.size()>0) {
+                currentMapCacheScale.removeAll(removeInfo);
+                double addScaleAfter[] = new double[currentMapCacheScale.size()];
+                for (int i = 0; i < addScaleAfter.length; i++) {
+                    addScaleAfter[i] = currentMapCacheScale.get(i);
+                }
+                DDLExportTableModel model = (DDLExportTableModel) localSplitTable.getModel();
+                model.removeRows(selectedRowsIndex);
+                localSplitTable.refreshContents(getNewLocalSplitTableValue(addScaleAfter));
+                addMoreScale();
+                if (selectedRowsIndex != null) {
+                    int deleteAfaterSelectedRowIndex = selectedRowsIndex[0];
+                    if (deleteAfaterSelectedRowIndex + 1 == localSplitTable.getRowCount() && localSplitTable.getRowCount() > 1) {
+                        localSplitTable.setRowSelectionInterval(deleteAfaterSelectedRowIndex - 1, deleteAfaterSelectedRowIndex - 1);
+                    } else {
+                        localSplitTable.setRowSelectionInterval(deleteAfaterSelectedRowIndex, deleteAfaterSelectedRowIndex);
+                    }
                 }
             }
         }
@@ -1775,55 +1782,50 @@ public class DialogMapCacheBuilder extends SmDialog {
     };
 
     private DocumentListener cacheNameTextChangeListener = new DocumentListener() {
+        private void modifyPath() {
+            String directories = fileChooserControlFileCache.getPath();
+            if (!directories.endsWith(File.separator)) {
+                directories += File.separator;
+                fileChooserControlFileCache.setPath(directories);
+            }
+        }
+
+
         @Override
         public void insertUpdate(DocumentEvent e) {
+            modifyPath();
             isCanRun();
         }
 
         @Override
         public void removeUpdate(DocumentEvent e) {
+            modifyPath();
             isCanRun();
         }
 
         @Override
         public void changedUpdate(DocumentEvent e) {
+            modifyPath();
             isCanRun();
         }
     };
 
-    private ActionListener chooseCacheFilePathListener = new ActionListener() {
+    private FileChooserButtonListener chooseCacheFilePathListener = new FileChooserButtonListener() {
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void buttonClicked() {
             String moduleName = "ChooseCacheDirectories";
             if (!SmFileChoose.isModuleExist(moduleName)) {
                 SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
                         moduleName, "GetDirectories");
             }
             SmFileChoose fileChoose = new SmFileChoose(moduleName);
-            int state = fileChoose.showDefaultDialog();
-            if (state == JFileChooser.APPROVE_OPTION) {
-                String directories = fileChoose.getFilePath();
-                if (!directories.endsWith(File.separator)) {
-                    directories += File.separator;
-                }
-                fileChooserControlFileCache.getEditor().setText(directories);
-            }
+            fileChooserControlFileCache.setFileChooser(fileChoose);
         }
     };
 
-    private DocumentListener chooseCacheFilePathTextChangeListener = new DocumentListener() {
+    private FileChooserPathChangedListener chooseCacheFilePathTextChangeListener = new FileChooserPathChangedListener() {
         @Override
-        public void insertUpdate(DocumentEvent e) {
-            isCanRun();
-        }
-
-        @Override
-        public void removeUpdate(DocumentEvent e) {
-            isCanRun();
-        }
-
-        @Override
-        public void changedUpdate(DocumentEvent e) {
+        public void pathChanged() {
             isCanRun();
         }
     };
@@ -2093,8 +2095,8 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.localSplitTable.getModel().addTableModelListener(this.tableModelListener);
         this.comboBoxSplitMode.addItemListener(this.comboboxSplitModeItemListener);
         this.textFieldCacheName.getDocument().addDocumentListener(this.cacheNameTextChangeListener);
-        this.fileChooserControlFileCache.getButton().addActionListener(this.chooseCacheFilePathListener);
-        this.fileChooserControlFileCache.getEditor().getDocument().addDocumentListener(this.chooseCacheFilePathTextChangeListener);
+//        this.fileChooserControlFileCache.addButtonListener(this.chooseCacheFilePathListener);
+        this.fileChooserControlFileCache.addFileChangedListener(this.chooseCacheFilePathTextChangeListener);
         this.comboBoxImageType.addItemListener(this.comboboxImageTypeListener);
         this.comboBoxPixel.addItemListener(this.comboboxImagePixelListener);
         this.comboBoxSaveType.addItemListener(this.saveTypeListener);
@@ -2137,8 +2139,8 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.localSplitTable.getModel().removeTableModelListener(this.tableModelListener);
         this.comboBoxSplitMode.removeItemListener(this.comboboxSplitModeItemListener);
         this.textFieldCacheName.getDocument().removeDocumentListener(this.cacheNameTextChangeListener);
-        this.fileChooserControlFileCache.getButton().removeActionListener(this.chooseCacheFilePathListener);
-        this.fileChooserControlFileCache.getEditor().getDocument().removeDocumentListener(this.chooseCacheFilePathTextChangeListener);
+//        this.fileChooserControlFileCache.removeButtonListener(this.chooseCacheFilePathListener);
+        this.fileChooserControlFileCache.removePathChangedListener(this.chooseCacheFilePathTextChangeListener);
         this.comboBoxImageType.removeItemListener(this.comboboxImageTypeListener);
         this.comboBoxSaveType.removeItemListener(this.saveTypeListener);
         this.comboBoxPixel.removeItemListener(this.comboboxImagePixelListener);

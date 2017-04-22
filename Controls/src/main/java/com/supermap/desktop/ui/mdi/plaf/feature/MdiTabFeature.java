@@ -9,6 +9,8 @@ import com.supermap.desktop.ui.mdi.util.MdiResource;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,6 +45,21 @@ class MdiTabFeature extends AbstractMdiFeature {
 			this.heightNormal = Math.max(this.heightNormal, this.features.get(i).getHeight());
 		}
 		this.heightNormal += MdiTabUIProperties.INSETS.top + MdiTabUIProperties.INSETS.bottom;
+		initListener();
+	}
+
+	private void initListener() {
+		this.page.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getPropertyName().equals(MdiPage.TITLE_PROPERTY)) {
+					features.remove(textFeature);
+					textFeature = TextFeature.instance(page.getTitle(), getGroup(), MdiTabFeature.this);
+					features.add(textFeature);
+					repaint();
+				}
+			}
+		});
 	}
 
 	public MdiPage getPage() {

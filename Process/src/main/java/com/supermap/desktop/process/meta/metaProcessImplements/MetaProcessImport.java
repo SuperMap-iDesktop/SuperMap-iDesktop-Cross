@@ -149,7 +149,6 @@ public class MetaProcessImport extends MetaProcess {
             setFinished(true);
         }
         dataImport.removeImportSteppedListener(this.importStepListener);
-        parameterFile.removePropertyListener(this.fileListener);
     }
 
 	@Override

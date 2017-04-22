@@ -145,7 +145,6 @@ public class ToolbarManager implements IToolbarManager {
 	}
 
 	public void saveChange() {
-		// FIXME: 2016/6/21
 		if (this.toolbarsContainer != null && this.toolbarsContainer.getComponentCount() > 0) {
 			List<ToolBarContainer> containerS = ToolBarContainer.getContainerS();
 			for (ToolBarContainer toolBarContainer : containerS) {
@@ -207,7 +206,6 @@ public class ToolbarManager implements IToolbarManager {
 	}
 
 	private void reLayoutToolBarContainer() {
-		int beforeCount = this.toolbarsContainer.getComponentCount();
 		this.toolbarsContainer.removeAll();
 		this.toolbarsContainer.setLayout(new GridBagLayout());
 		List<ToolBarContainer> containerS = ToolBarContainer.getContainerS();
@@ -215,7 +213,7 @@ public class ToolbarManager implements IToolbarManager {
 			this.toolbarsContainer.add(toolBarContainer, new GridBagConstraintsHelper(0, toolBarContainer.getIndex(), 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH));
 		}
 
-		if (beforeCount != this.toolbarsContainer.getComponentCount() && toolbarsContainer.getParent() != null) {
+		if (toolbarsContainer.getParent() != null) {
 			toolbarsContainer.getParent().validate();
 			toolbarsContainer.getParent().repaint();
 		} else {

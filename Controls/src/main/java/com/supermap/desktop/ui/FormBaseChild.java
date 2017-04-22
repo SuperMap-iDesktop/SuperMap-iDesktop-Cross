@@ -4,26 +4,33 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMain;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.*;
+import com.supermap.desktop.event.FormActivatedEvent;
+import com.supermap.desktop.event.FormActivatedListener;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosedListener;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormClosingListener;
+import com.supermap.desktop.event.FormDeactivatedEvent;
+import com.supermap.desktop.event.FormDeactivatedListener;
+import com.supermap.desktop.event.FormEventHelper;
+import com.supermap.desktop.event.FormShownEvent;
+import com.supermap.desktop.event.FormShownListener;
 import com.supermap.desktop.implement.SmStatusbar;
-import com.supermap.desktop.ui.controls.DockbarManager;
 import com.supermap.desktop.ui.mdi.MdiGroup;
 
 import javax.swing.*;
-import javax.swing.event.EventListenerList;
 import java.awt.*;
 
 public abstract class FormBaseChild extends JPanel implements IForm {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 	private SmStatusbar statusbar;
 
 	private FormEventHelper eventHelper = new FormEventHelper();
-	private String title;
+	protected String title;
 	private Icon icon;
+
+	public static final String TITLE_PROPERTY = "TITLE_PROPERTY";
 
 	public FormBaseChild(String title, Icon icon, Component component) {
 		setLayout(new BorderLayout());
@@ -39,7 +46,9 @@ public abstract class FormBaseChild extends JPanel implements IForm {
 
 	@Override
 	public void setText(String text) {
+		String oldValue = this.title;
 		this.title = text;
+		firePropertyChange(TITLE_PROPERTY, oldValue, title);
 	}
 
 	public Icon getIcon() {
