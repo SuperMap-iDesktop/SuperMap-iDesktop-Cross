@@ -7,6 +7,9 @@
         <groupId>com.supermap.idesktop.cross</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+    <properties>
+        <basedir>F:\TestJava\SuperMap-iDesktop-Cross\Core</basedir>
+    </properties>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>Core</artifactId>
@@ -85,6 +88,11 @@
             <groupId>com.l2fprod</groupId>
             <artifactId>skinlf</artifactId>
             <version>6.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclarion</groupId>
+            <artifactId>image4j</artifactId>
+            <version>0.7</version>
         </dependency>
         <!--组件依赖-->
         <dependency>
