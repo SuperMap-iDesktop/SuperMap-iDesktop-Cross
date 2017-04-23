@@ -91,8 +91,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 	}
 
 	private void initParameters() {
-		this.inputs.addData(INPUT_DATA, DatasetTypes.POINT);
-		this.outputs.addData(OUTPUT_DATA, DatasetTypes.LINE);
+
 		this.parameters = new DefaultParameters();
 		this.sourceDatasource = new ParameterDatasource();
 		this.sourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.POINT3D);
@@ -123,6 +122,8 @@ public class MetaProcessISOPoint extends MetaProcess {
 				resampleTolerance, smoothMethod, smoothNess);
 
 		this.parameters.setParameters(sourceData, resultData, paramSet);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.POINT, sourceData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, resultData);
 	}
 
 	@Override
@@ -141,8 +142,8 @@ public class MetaProcessISOPoint extends MetaProcess {
 		SurfaceAnalyst.addSteppedListener(this.stepListener);
 
 		DatasetVector src = null;
-		if (this.inputs.getData(INPUT_DATA).getValue() != null) {
-			src = (DatasetVector) this.inputs.getData(INPUT_DATA).getValue();
+		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
+			src = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 		} else {
 			src = (DatasetVector) sourceDataset.getSelectedItem();
 		}

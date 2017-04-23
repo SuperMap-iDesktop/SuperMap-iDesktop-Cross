@@ -73,12 +73,11 @@ public class MetaProcessImport extends MetaProcess {
 
 	public MetaProcessImport() {
 		parameters = new DefaultParameters();
-		this.outputs.addData(OUTPUT_DATA, DatasetTypes.DATASET);
 	}
 
 	public void initParameters() {
 		parameters = new DefaultParameters();
-		this.outputs.addData(OUTPUT_DATA, DatasetTypes.DATASET);
+
 		parameterCreator = new ImportParameterCreator();
 		setDefaultImportParameters(parameterCreator.createDefault(importSetting, this.importType));
 		setParamParameters(parameterCreator.create(importSetting));
@@ -93,7 +92,8 @@ public class MetaProcessImport extends MetaProcess {
         } else {
             parameters.setParameters(parameterFile, parameterCreator.getParameterCombineResultSet());
         }
-        parameterFile.addPropertyListener(this.fileListener);
+	    this.getParameters().addOutputParameters(OUTPUT_DATA, DatasetTypes.DATASET, parameterCreator.getParameterCombineResultSet());
+	    parameterFile.addPropertyListener(this.fileListener);
     }
 
 	public void setImportSetting(ImportSetting importSetting) {
@@ -141,8 +141,8 @@ public class MetaProcessImport extends MetaProcess {
                 }
             });
             Dataset dataset = datasource.getDatasets().get(succeedSettings[0].getTargetDatasetName());
-            this.outputs.getData(OUTPUT_DATA).setValue(dataset);
-            fireRunning(new RunningEvent(this, 100, "finished"));
+	        this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
+	        fireRunning(new RunningEvent(this, 100, "finished"));
             setFinished(true);
         } else {
             fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));

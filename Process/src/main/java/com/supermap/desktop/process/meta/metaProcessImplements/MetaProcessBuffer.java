@@ -3,12 +3,7 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 import com.supermap.analyst.spatialanalyst.BufferAnalyst;
 import com.supermap.analyst.spatialanalyst.BufferAnalystParameter;
 import com.supermap.analyst.spatialanalyst.BufferRadiusUnit;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.Datasource;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
@@ -16,14 +11,7 @@ import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
-import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameter.implement.ParameterEnum;
-import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.util.EnumParser;
@@ -72,8 +60,7 @@ public class MetaProcessBuffer extends MetaProcess {
 	}
 
 	private void initParameters() {
-		this.inputs.addData(INPUT_SOURCE_DATASET, DatasetTypes.SIMPLE_VECTOR);
-		this.outputs.addData(OUTPUT_DATASET, DatasetTypes.SIMPLE_VECTOR);
+
 		String[] parameterDataNodes = new String[]{CommonProperties.getString("String_DistanceUnit_Kilometer"),
 				CommonProperties.getString("String_DistanceUnit_Meter"),
 				CommonProperties.getString("String_DistanceUnit_Decimeter"),
@@ -112,6 +99,9 @@ public class MetaProcessBuffer extends MetaProcess {
 				parameterCombineParameter,
 				parameterCombineResult
 		);
+
+		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.SIMPLE_VECTOR, parameterCombineSourceData);
+		this.parameters.addOutputParameters(OUTPUT_DATASET, DatasetTypes.SIMPLE_VECTOR, parameterCombineResult);
 	}
 
 	private void initComponentState() {
@@ -143,9 +133,9 @@ public class MetaProcessBuffer extends MetaProcess {
 		fireRunning(new RunningEvent(this, 0, "start"));
 		// fixme 数据集来源
 		DatasetVector datasetVector = null;
-		if (this.inputs.getData(INPUT_SOURCE_DATASET) != null
-				&& this.inputs.getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
-			datasetVector = (DatasetVector) this.inputs.getData(INPUT_SOURCE_DATASET).getValue();
+		if (this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET) != null
+				&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
+			datasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
 		} else {
 			datasetVector = (DatasetVector) dataset.getSelectedItem();
 		}
@@ -174,7 +164,7 @@ public class MetaProcessBuffer extends MetaProcess {
 		BufferAnalyst.createBuffer(datasetVector, result, parameter, isUnion, isAttributeRetained);
 		BufferAnalyst.removeSteppedListener(this.steppedListener);
 
-		this.outputs.getData(OUTPUT_DATASET).setValue(result);
+		this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
 
 		fireRunning(new RunningEvent(this, 100, "finished"));
 		setFinished(true);

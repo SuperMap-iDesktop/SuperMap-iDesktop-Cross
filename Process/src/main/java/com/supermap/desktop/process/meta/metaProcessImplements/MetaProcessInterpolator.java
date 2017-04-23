@@ -66,8 +66,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 	};
 
 	public MetaProcessInterpolator(InterpolationAlgorithmType interpolationAlgorithmType) {
-		this.inputs.addData(INPUT_DATA, DatasetTypes.VECTOR);
-		this.outputs.addData(OUTPUT_DATA, DatasetTypes.GRID);
+
 		this.interpolationAlgorithmType = interpolationAlgorithmType;
 		parameters = new DefaultParameters();
 		parameterDatasource = new ParameterDatasource();
@@ -182,7 +181,8 @@ public class MetaProcessInterpolator extends MetaProcess {
 			otherParam.setDescribe(ProcessProperties.getString("String_InterpolationAnalyst_OtherParameters"));
 			otherParam.addParameters(parameterPower);
 			parameters.setParameters(sourceData, targetData, bounds, modeSet, otherParam);
-
+			this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, sourceData);
+			this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, targetData);
 		} else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.RBF)) {
 			ParameterCombine sourceData = new ParameterCombine(ParameterCombine.HORIZONTAL);
 			sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
@@ -203,7 +203,8 @@ public class MetaProcessInterpolator extends MetaProcess {
 			otherParam.setDescribe(ProcessProperties.getString("String_InterpolationAnalyst_OtherParameters"));
 			otherParam.addParameters(parameterTension, parameterSmooth);
 			parameters.setParameters(sourceData, targetData, bounds, modeSet, otherParam);
-
+			this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, sourceData);
+			this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, targetData);
 		} else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.KRIGING)
 				|| interpolationAlgorithmType.equals(InterpolationAlgorithmType.SimpleKRIGING)
 				|| interpolationAlgorithmType.equals(InterpolationAlgorithmType.UniversalKRIGING)) {
@@ -227,7 +228,10 @@ public class MetaProcessInterpolator extends MetaProcess {
 			otherParam.addParameters(new ParameterCombine().addParameters(parameterVariogramMode, parameterAngle, parameterMean)
 					, new ParameterCombine().addParameters(parameterStill, parameterRange, parameterNugget));
 			parameters.setParameters(sourceData, targetData, bounds, modeSet, otherParam);
+			this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, sourceData);
+			this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, targetData);
 		}
+
 
 		initParameterConstraint();
 	}
@@ -300,8 +304,8 @@ public class MetaProcessInterpolator extends MetaProcess {
 		Interpolator.addSteppedListener(this.stepLitener);
 
 		DatasetVector datasetVector = null;
-		if (this.inputs.getData(INPUT_DATA).getValue() != null) {
-			datasetVector = (DatasetVector) this.inputs.getData(INPUT_DATA).getValue();
+		if (this.parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
+			datasetVector = (DatasetVector) this.parameters.getInputs().getData(INPUT_DATA).getValue();
 		} else {
 			datasetVector = (DatasetVector) this.parameterDataset.getSelectedItem();
 		}
@@ -313,7 +317,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 				targetDatasource, datasetName,
 				(PixelFormat) ((ParameterDataNode) parameterPixelType.getSelectedItem()).getData());
 		Interpolator.removeSteppedListener(this.stepLitener);
-		this.outputs.getData(OUTPUT_DATA).setValue(dataset);
+		this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(dataset);
 		fireRunning(new RunningEvent(this, 100, "finished"));
 		setFinished(true);
 	}
