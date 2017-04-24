@@ -14,7 +14,7 @@ public class InputData implements IDataDescription, IValueProvider {
 	private String tips;
 	private Type dataType;
 	private IValueProvider valueProvider;
-	private ArrayList<IParameter> parameters;
+	private ArrayList<IParameter> parameters = new ArrayList<>();
 
 	public InputData(String name, Type dataType) {
 		this(name, null, dataType);
