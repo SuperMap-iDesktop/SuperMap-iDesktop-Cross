@@ -1,15 +1,15 @@
 package com.supermap.desktop.CtrlAction.Map.MapClip;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
-import com.supermap.desktop.ui.controls.SortTable.BlankIcon;
-import com.supermap.desktop.ui.controls.SortTable.SortButtonRenderer;
-import com.supermap.desktop.ui.controls.SortTable.SortTable;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
@@ -18,6 +18,7 @@ import com.supermap.ui.MapControl;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -32,7 +33,7 @@ import static com.supermap.desktop.CtrlAction.Map.MapClip.MapClipTableModel.*;
  * @author YuanR
  *         2017.3.28
  */
-public class MapClipJTable extends SortTable {
+public class MapClipJTable extends JTable {
 
 	private TableColumn layerCaption;
 	private TableColumn aimDatasourceColumn;
@@ -48,21 +49,21 @@ public class MapClipJTable extends SortTable {
 		return mapClipTableModel;
 	}
 
-    public MapClipJTable() {
-        super();
-        initComponents();
-        initLayerInfo();
-    }
+	public MapClipJTable() {
+		super();
+		initComponents();
+		initLayerInfo();
+	}
 
 	/**
 	 * 初始化JTable控件
 	 */
 	private void initComponents() {
 		//设置标题行不能移动
-		this.getTableHeader().setReorderingAllowed(false);
 		this.setRowHeight(23);
 		mapClipTableModel = new MapClipTableModel();
 		this.setModel(mapClipTableModel);
+		this.setAutoCreateRowSorter(true);
 
 		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
 		this.isCanUseDatasources = new ArrayList<>();
@@ -117,11 +118,11 @@ public class MapClipJTable extends SortTable {
 			@Override
 			public String getToolTipText(MouseEvent event) {
 				point = event.getPoint();
-				column = this.columnAtPoint(point);
+				int viewColumn = this.columnAtPoint(point);
+				column = columnModel.getColumn(viewColumn).getModelIndex();
 				String toolTipText = super.getToolTipText(event);
 				if (column == COLUMN_INDEX_CLIPTYPE
 						|| column == COLUMN_INDEX_ERASE
-						|| column == COLUMN_INDEX_EXACTCLIP
 						&& toolTipText == null) {
 					return "";
 				}
@@ -150,8 +151,10 @@ public class MapClipJTable extends SortTable {
 			}
 		};
 		this.setTableHeader(jTableHeader);
-
-		this.setSortButtonRenderer(new ClipTypeColumnCellRenderer());
+		this.getTableHeader().setReorderingAllowed(false);
+		//基于当前默认的排序表头添加help icon
+		JTableHeader tableHeader = this.getTableHeader();
+		tableHeader.setDefaultRenderer(new ColumnHeadRenderer(tableHeader.getDefaultRenderer()));
 		ImageAndTextTableHeaderCell eraseTip = new ImageAndTextTableHeaderCell(MapViewProperties.getString("String_MapClip_Erase"), ControlsResources.getIcon("/controlsresources/Icon_Warning.png"));
 		eraseTip.setToolTipText(""); //  用来激活表头显示的tip，并且只能为空字符串，如果非空则会覆盖掉tip
 		this.eraseColumn.setCellRenderer(new MapClipCellRender());
@@ -201,10 +204,7 @@ public class MapClipJTable extends SortTable {
 
 			String clipType = MapViewProperties.getString("String_MapClip_In");
 			String erase = MapViewProperties.getString("String_MapClip_No");
-			String exactClip = MapViewProperties.getString("String_MapClip_No");
-			if (dataset instanceof DatasetVector) {
-				exactClip = MapViewProperties.getString("String_MapClip_Yes");
-			}
+			String exactClip = MapViewProperties.getString("String_MapClip_Yes");
 			this.mapClipTableModel.addRowLayerInfo(layerCaption, targetDatasource, targetDatasetName, clipType, erase, exactClip);
 		}
 		if (this.mapClipTableModel.getRowCount() >= 1) {
@@ -221,7 +221,7 @@ public class MapClipJTable extends SortTable {
 			return false;
 		}
 		//table中未被占用
-		Vector layerInfos = mapClipTableModel.getLayerInfo();
+		Vector layerInfos = mapClipTableModel.getDataVector();
 		for (Object layerInfo : layerInfos) {
 			Datasource datasource = (Datasource) ((Vector) layerInfo).get(COLUMN_INDEX_AIMDATASOURCE);
 			String targetDatasetName = (String) ((Vector) layerInfo).get(COLUMN_INDEX_AIMDATASET);
@@ -239,7 +239,7 @@ public class MapClipJTable extends SortTable {
 		if (datasource == null || dataset == null) {
 			return usedNames.toArray(new String[usedNames.size()]);
 		}
-		Vector layerInfos = mapClipTableModel.getLayerInfo();
+		Vector layerInfos = mapClipTableModel.getDataVector();
 		for (Object layerInfo : layerInfos) {
 			Datasource targetDatasource = (Datasource) ((Vector) layerInfo).get(COLUMN_INDEX_AIMDATASOURCE);
 			String targetDatasetName = (String) ((Vector) layerInfo).get(COLUMN_INDEX_AIMDATASET);
@@ -301,31 +301,41 @@ public class MapClipJTable extends SortTable {
 		}
 	}
 
-	private class ClipTypeColumnCellRenderer extends SortButtonRenderer {
+	private class ColumnHeadRenderer implements TableCellRenderer {
+		private TableCellRenderer delegate;
+
+		public ColumnHeadRenderer(TableCellRenderer delegate) {
+			this.delegate = delegate;
+		}
+
 		@Override
-		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-			Component component = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-			if (component instanceof JButton) {
-				if (column == COLUMN_INDEX_CLIPTYPE
-						|| column == COLUMN_INDEX_ERASE
-						|| column == COLUMN_INDEX_EXACTCLIP) {
-					if (!((JButton) component).getModel().isPressed()) {
-						((JButton) component).setIcon(ControlsResources.getIcon("/controlsresources/Icon_Help.png"));
-					}
-				} else {
-					((JButton) component).setIcon(new BlankIcon());
+		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocused, int row, int column) {
+			Component comp = delegate.getTableCellRendererComponent(table, value, isSelected, hasFocused, row, column);
+			if (comp instanceof JLabel) {
+				JLabel label = (JLabel) comp;
+				int realColumn = columnModel.getColumn(column).getModelIndex();
+				if (realColumn == COLUMN_INDEX_CLIPTYPE) {
+					label.setIcon(ControlsResources.getIcon("/controlsresources/Icon_Help.png"));
+				}
+				if (realColumn == COLUMN_INDEX_ERASE) {
+					label.setIcon(ControlsResources.getIcon("/controlsresources/Icon_Warning.png"));
 				}
 			}
-			return component;
+
+			return comp;
 		}
+
 	}
 
 	class MapClipCellRender extends DefaultTableCellRenderer {
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			int columnReal = table.convertColumnIndexToModel(column);
+			int rowReal = table.convertRowIndexToModel(row);
+
 			Component tableCellRendererComponent = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			//不可编辑单元格置灰
-			if (table.getModel() != null && !table.getModel().isCellEditable(row, column)) {
+			if (table.getModel() != null && !table.getModel().isCellEditable(rowReal, columnReal)) {
 				Color non_editableColor = UIManager.getColor("Table.shadow");
 				tableCellRendererComponent.setForeground(non_editableColor);
 			} else {

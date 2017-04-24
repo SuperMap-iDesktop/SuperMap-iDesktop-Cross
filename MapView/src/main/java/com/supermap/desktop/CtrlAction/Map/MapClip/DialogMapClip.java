@@ -80,7 +80,7 @@ public class DialogMapClip extends SmDialog {
 	 * @return
 	 */
 	private void initResultVectorInfo() {
-		this.layerJTableInfo = this.mapClipJTable.getMapClipTableModel().getLayerInfo();
+		this.layerJTableInfo = this.mapClipJTable.getMapClipTableModel().getDataVector();
 		if (this.layerJTableInfo != null) {
 			try {
 				Vector tempVector = new Vector();
@@ -217,7 +217,7 @@ public class DialogMapClip extends SmDialog {
 					selectedDeletedInfo = mapClipAddLayersDialog.getResultAddLayers();
 					MapClipTableModel mapClipTableModel = (MapClipTableModel) mapClipJTable.getModel();
 					for (int i = 0; i < selectedDeletedInfo.size(); i++) {
-						mapClipTableModel.addRow(selectedDeletedInfo.get(i));
+						mapClipTableModel.addRow((Vector) selectedDeletedInfo.get(i));
 						deletedInfo.remove(selectedDeletedInfo.get(i));
 					}
 					mapClipJTable.updateUI();
@@ -228,22 +228,19 @@ public class DialogMapClip extends SmDialog {
 				if (deletedInfo == null) {
 					deletedInfo = new Vector(6);
 				}
-				int selectedRowsIndex[] = mapClipJTable.getSelectedRows();
-				if (selectedRowsIndex != null && selectedRowsIndex.length >= 1) {
-					mapClipJTable.clearSelection();
-					for (int i = 0; i < selectedRowsIndex.length; i++) {
-						Vector e1 = ((Vector) mapClipJTable.getMapClipTableModel().getLayerInfo(selectedRowsIndex[i] - i));
-						deletedInfo.add(e1);
-						MapClipTableModel mapClipTableModel = (MapClipTableModel) mapClipJTable.getModel();
-						mapClipTableModel.removeRow(selectedRowsIndex[i] - i);
-					}
-					mapClipJTable.updateUI();
-					if (mapClipJTable.getRowCount() == selectedRowsIndex[0] && mapClipJTable.getRowCount() >= 1) {
-						mapClipJTable.setRowSelectionInterval(selectedRowsIndex[0] - 1, selectedRowsIndex[0] - 1);
-					} else if (mapClipJTable.getRowCount() > 0) {
-						mapClipJTable.setRowSelectionInterval(selectedRowsIndex[0], selectedRowsIndex[0]);
-					}
-					isCanRun();
+				int[] selectedRowsIndex = mapClipJTable.getSelectedRows();
+				for (int i = selectedRowsIndex.length - 1; i >= 0; i--) {
+					MapClipTableModel mapClipTableModel = (MapClipTableModel) mapClipJTable.getModel();
+					int rowIndex = mapClipJTable.convertRowIndexToModel(selectedRowsIndex[i]);
+					Vector e1 = ((Vector) mapClipJTable.getMapClipTableModel().getDataVector().get(rowIndex));
+					deletedInfo.add(e1);
+					mapClipTableModel.removeRow(rowIndex);
+				}
+				isCanRun();
+				if (mapClipJTable.getRowCount() == selectedRowsIndex[0] && mapClipJTable.getRowCount() >= 1) {
+					mapClipJTable.setRowSelectionInterval(selectedRowsIndex[0] - 1, selectedRowsIndex[0] - 1);
+				} else if (mapClipJTable.getRowCount() > 0) {
+					mapClipJTable.setRowSelectionInterval(selectedRowsIndex[0], selectedRowsIndex[0]);
 				}
 			}
 		}
@@ -260,9 +257,15 @@ public class DialogMapClip extends SmDialog {
 		@Override
 		public void tableChanged(TableModelEvent e) {
 			isCanRun();
+			if (mapClipJTable.getModel().getRowCount() <= 0) return;
 			if (e.getColumn() == COLUMN_INDEX_AIMDATASOURCE) {
 				// 当数据源改变，重新设置文件名称
-				int[] selectedRow = mapClipJTable.getSelectedRows();
+				int[] selectedRows = mapClipJTable.getSelectedRows();
+				int selectedRow[] = new int[selectedRows.length];
+				for (int i = 0; i < selectedRows.length; i++) {
+					selectedRow[i] = mapClipJTable.convertRowIndexToModel(selectedRows[i]);
+				}
+
 				for (int i = 0; i < selectedRow.length; i++) {
 					Datasource tempDatasource = (Datasource) mapClipJTable.getModel().getValueAt(selectedRow[i], COLUMN_INDEX_AIMDATASOURCE);
 					String tempDatasetName = ((String) mapClipJTable.getModel().getValueAt(selectedRow[i], COLUMN_INDEX_AIMDATASET));
@@ -293,14 +296,17 @@ public class DialogMapClip extends SmDialog {
 					else if (!mapClipJTable.isUsableDatasetName(tempDatasetName, tempDatasource, dataset)) {
 						tempDatasetName = mapClipJTable.getUsableDatasetName(tempDatasetName, tempDatasource, dataset);
 					}
-					mapClipJTable.setValueAt(tempDatasetName, selectedRow[i], COLUMN_INDEX_AIMDATASET);
+					mapClipJTable.getModel().setValueAt(tempDatasetName, selectedRow[i], COLUMN_INDEX_AIMDATASET);
 				}
 			}
+			int selectedRowView = mapClipJTable.getSelectedRow();
+			if (selectedRowView < 0) return;
+			int selectedRow = mapClipJTable.convertRowIndexToModel(selectedRowView);
 			if (e.getColumn() == COLUMN_INDEX_AIMDATASET) {
 				//此时手动修改了结果数据集名称
-				Datasource tempDatasource = (Datasource) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_AIMDATASOURCE);
-				String tempDatasetName = (String) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_AIMDATASET);
-				Layer layer = (Layer) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_LAYERCAPTION);
+				Datasource tempDatasource = (Datasource) mapClipJTable.getModel().getValueAt(selectedRow, COLUMN_INDEX_AIMDATASOURCE);
+				String tempDatasetName = (String) mapClipJTable.getModel().getValueAt(selectedRow, COLUMN_INDEX_AIMDATASET);
+				Layer layer = (Layer) mapClipJTable.getModel().getValueAt(selectedRow, COLUMN_INDEX_LAYERCAPTION);
 				Dataset dataset = layer.getDataset();
 				Boolean isFormatedName = false;
 				if (StringUtilities.isNullOrEmpty(tempDatasetName)) {
@@ -350,7 +356,6 @@ public class DialogMapClip extends SmDialog {
 						for (int i = 0; i < array.size(); i++) {
 							int row = array.get(i);
 							mapClipJTable.getModel().setValueAt(tempDatasetName, row, COLUMN_INDEX_AIMDATASET);
-							mapClipJTable.getModel().setValueAt(tempDatasource, row, COLUMN_INDEX_AIMDATASOURCE);
 						}
 					} finally {
 						mapClipJTable.getModel().addTableModelListener(tableModelListener);
@@ -359,12 +364,12 @@ public class DialogMapClip extends SmDialog {
 
 			}
 			if (e.getColumn() == COLUMN_INDEX_CLIPTYPE) {
-				String clipType = (String) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_CLIPTYPE);
-				Layer layer = (Layer) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_LAYERCAPTION);
+				String clipType = (String) mapClipJTable.getModel().getValueAt(selectedRow, COLUMN_INDEX_CLIPTYPE);
+				Layer layer = (Layer) mapClipJTable.getModel().getValueAt(selectedRow, COLUMN_INDEX_LAYERCAPTION);
 				Dataset dataset = layer.getDataset();
 				ArrayList<Integer> array = new ArrayList<>();
 				for (int i = 0; i < mapClipJTable.getModel().getRowCount(); i++) {
-					if (i == mapClipJTable.getSelectedRow()) {
+					if (i == selectedRow) {
 						continue;
 					}
 					Layer tempLayer = (Layer) mapClipJTable.getModel().getValueAt(i, COLUMN_INDEX_LAYERCAPTION);
@@ -384,12 +389,12 @@ public class DialogMapClip extends SmDialog {
 				}
 			}
 			if (e.getColumn() == COLUMN_INDEX_ERASE) {
-				String isEarse = (String) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_ERASE);
-				Layer layer = (Layer) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_LAYERCAPTION);
+				String isEarse = (String) mapClipJTable.getModel().getValueAt(selectedRow, COLUMN_INDEX_ERASE);
+				Layer layer = (Layer) mapClipJTable.getModel().getValueAt(selectedRow, COLUMN_INDEX_LAYERCAPTION);
 				Dataset dataset = layer.getDataset();
 				ArrayList<Integer> array = new ArrayList<>();
 				for (int i = 0; i < mapClipJTable.getModel().getRowCount(); i++) {
-					if (i == mapClipJTable.getSelectedRow()) {
+					if (i == selectedRow) {
 						continue;
 					}
 					Layer tempLayer = (Layer) mapClipJTable.getModel().getValueAt(i, COLUMN_INDEX_LAYERCAPTION);
@@ -409,12 +414,12 @@ public class DialogMapClip extends SmDialog {
 				}
 			}
 			if (e.getColumn() == COLUMN_INDEX_EXACTCLIP) {
-				String isExactClip = (String) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_EXACTCLIP);
-				Layer layer = (Layer) mapClipJTable.getModel().getValueAt(mapClipJTable.getSelectedRow(), COLUMN_INDEX_LAYERCAPTION);
+				String isExactClip = (String) mapClipJTable.getModel().getValueAt(selectedRow, COLUMN_INDEX_EXACTCLIP);
+				Layer layer = (Layer) mapClipJTable.getModel().getValueAt(selectedRow, COLUMN_INDEX_LAYERCAPTION);
 				Dataset dataset = layer.getDataset();
 				ArrayList<Integer> array = new ArrayList<>();
 				for (int i = 0; i < mapClipJTable.getModel().getRowCount(); i++) {
-					if (i == mapClipJTable.getSelectedRow()) {
+					if (i == selectedRow) {
 						continue;
 					}
 					Layer tempLayer = (Layer) mapClipJTable.getModel().getValueAt(i, COLUMN_INDEX_LAYERCAPTION);

@@ -4,9 +4,9 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.ui.controls.SortTable.SortableTableModel;
 import com.supermap.mapping.Layer;
 
+import javax.swing.table.DefaultTableModel;
 import java.util.Vector;
 
 
@@ -16,9 +16,7 @@ import java.util.Vector;
  * @author YuanR
  *         地图裁剪JTable@model
  */
-public class MapClipTableModel extends SortableTableModel {
-    public Vector layerInfo;
-
+public class MapClipTableModel extends DefaultTableModel {
     public static final int COLUMN_INDEX_LAYERCAPTION = 0;
     public static final int COLUMN_INDEX_AIMDATASOURCE = 1;
     public static final int COLUMN_INDEX_AIMDATASET = 2;
@@ -29,7 +27,6 @@ public class MapClipTableModel extends SortableTableModel {
 
     public MapClipTableModel() {
         super();
-        this.layerInfo = new Vector();
     }
 
     /**
@@ -51,7 +48,7 @@ public class MapClipTableModel extends SortableTableModel {
         v.add(COLUMN_INDEX_CLIPTYPE, clipType);
         v.add(COLUMN_INDEX_ERASE, erase);
         v.add(COLUMN_INDEX_EXACTCLIP, exactClip);
-        this.layerInfo.add(v);
+        super.addRow(v);
     }
 
 
@@ -71,14 +68,6 @@ public class MapClipTableModel extends SortableTableModel {
             return MapViewProperties.getString("String_MapClip_AcurrentClip");
         }
         return "";
-    }
-
-    @Override
-    public int getRowCount() {
-        if (this.layerInfo != null) {
-            return this.layerInfo.size();
-        }
-        return 0;
     }
 
     @Override
@@ -121,50 +110,5 @@ public class MapClipTableModel extends SortableTableModel {
         }
         return true;
     }
-
-    /**
-     * 使修改的内容生效
-     *
-     * @param value
-     * @param row
-     * @param col
-     */
-    public void setValueAt(Object value, int row, int col) {
-        int realRow = getIndexRow(row)[0];
-        ((Vector) layerInfo.get(realRow)).remove(col);
-        ((Vector) layerInfo.get(realRow)).add(col, value);
-        this.fireTableCellUpdated(row, col);
-    }
-
-    @Override
-    public Object getValueAt(int row, int col) {
-        int realRow = getIndexRow(row)[0];
-        return ((Vector) this.layerInfo.get(realRow)).get(col);
-    }
-
-    public Class getColumnClass(int col) {
-        return getValueAt(0, col).getClass();
-    }
-
-    public Vector getLayerInfo() {
-        return this.layerInfo;
-    }
-
-    public Object getLayerInfo(int rowIndex) {
-        int realRow = getIndexRow(rowIndex)[0];
-        return this.layerInfo.get(realRow);
-    }
-    public void addRow(Object object) {
-        this.layerInfo.add(object);
-        super.addIndexRow(this.layerInfo.size() - 1);
-        fireTableDataChanged();
-    }
-
-    public void removeRow(int rowIndex) {
-        int realRow = getIndexRow(rowIndex)[0];
-        this.layerInfo.remove(realRow);
-        super.removeRow(rowIndex);
-    }
-
 
 }
