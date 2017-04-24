@@ -41,6 +41,11 @@ public class DefaultParameters implements IParameters {
 				for (IParameter parameter : parameters) {
 					if (ArrayUtilities.isArrayContains(DefaultParameters.this.parameters, parameter)) {
 						// TODO: 2017/4/23 展示形式未定
+						// 需要考虑与图联动，不同类型parameter都需要支持选择。
+						// 在未连接时是否需要列出选择项
+						// ① 使用parameterSwitch动态替换输入和选择项
+						// ② 未连接时只显示输入，连接后只显示选择项
+						//
 
 					}
 				}

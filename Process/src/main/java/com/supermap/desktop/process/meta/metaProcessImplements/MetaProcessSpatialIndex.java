@@ -16,6 +16,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
 import javax.swing.*;
@@ -42,7 +43,7 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 				new ParameterDataNode(SpatialIndexTypeUtilities.toString(SpatialIndexType.QTREE), SpatialIndexType.QTREE),
 		};
 		datasource = new ParameterDatasource();
-		dataset = new ParameterSingleDataset();
+		dataset = new ParameterSingleDataset(DatasetTypeUtilities.getDatasetTypeVector());
 		datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameterComboBox = new ParameterComboBox(ControlsProperties.getString("String_LabelSpatialIndexType"));
 		parameterComboBox.setItems(parameterDataNodes);
