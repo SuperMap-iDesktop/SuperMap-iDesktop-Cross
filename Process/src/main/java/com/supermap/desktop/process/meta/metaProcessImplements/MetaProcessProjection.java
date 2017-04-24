@@ -29,8 +29,7 @@ public class MetaProcessProjection extends MetaProcess {
 	private ParameterEnum parameterComboBox;
 
 	public MetaProcessProjection() {
-		this.inputs.addData(INPUT_DATA, DatasetTypes.DATASET);
-		this.outputs.addData(OUTPUT_DATA, DatasetTypes.DATASET);
+
 		parameters = new DefaultParameters();
 		datasource = new ParameterDatasource();
 		dataset = new ParameterSingleDataset();
@@ -54,6 +53,8 @@ public class MetaProcessProjection extends MetaProcess {
 		parameterComboBox = new ParameterEnum(new EnumParser(GeoCoordSysType.class, parameterDataNodes, ch)).setDescribe(CoreProperties.getString("String_ProjectionInfo"));
 		parameterComboBox.setSelectedItem("GCS_WGS_1984");
 		parameters.setParameters(datasource, dataset, parameterComboBox);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.DATASET, datasource, dataset);
+		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.DATASET, dataset);
 	}
 
 	@Override
@@ -64,8 +65,8 @@ public class MetaProcessProjection extends MetaProcess {
 	@Override
 	public void run() {
 		Dataset src = null;
-		if (this.inputs.getData(INPUT_DATA).getValue() instanceof Dataset) {
-			src = (Dataset) this.inputs.getData(INPUT_DATA).getValue();
+		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof Dataset) {
+			src = (Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 		} else {
 			src = (Dataset) this.dataset.getSelectedItem();
 		}
@@ -77,7 +78,7 @@ public class MetaProcessProjection extends MetaProcess {
 		src.setPrjCoordSys(prjCoordSys);
 		fireRunning(new RunningEvent(this, 100, "set geoCoorSys finished"));
 		setFinished(true);
-		this.outputs.getData(OUTPUT_DATA).setValue(src);
+		this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
 	}
 
 	@Override

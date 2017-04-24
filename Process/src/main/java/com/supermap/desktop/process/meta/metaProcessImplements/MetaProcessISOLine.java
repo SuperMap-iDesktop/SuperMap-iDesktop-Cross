@@ -82,8 +82,7 @@ public class MetaProcessISOLine extends MetaProcess {
 	}
 
 	private void initParameters() {
-		this.inputs.addData(INPUT_DATA, DatasetTypes.GRID);
-		this.outputs.addData(OUTPUT_DATA, DatasetTypes.LINE);
+
 		this.parameters = new DefaultParameters();
 		this.sourceDatasource = new ParameterDatasource();
 		this.dataset = new ParameterSingleDataset(DatasetType.GRID);
@@ -112,6 +111,8 @@ public class MetaProcessISOLine extends MetaProcess {
 		paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
 		paramSet.addParameters(datumValue, interval, resampleTolerance, smoothMethod, smoothNess);
 		this.parameters.setParameters(sourceData, targetData, resultInfo, paramSet);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, targetData);
 	}
 
 
@@ -131,14 +132,14 @@ public class MetaProcessISOLine extends MetaProcess {
 		SurfaceAnalyst.addSteppedListener(this.stepListener);
 
 		DatasetGrid src = null;
-		if (this.inputs.getData(INPUT_DATA).getValue() != null) {
-			src = (DatasetGrid) this.inputs.getData(INPUT_DATA).getValue();
+		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
+			src = (DatasetGrid) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 		} else {
 			src = (DatasetGrid) dataset.getSelectedItem();
 		}
 		DatasetVector result = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, saveDataset.getResultDatasource(), saveDataset.getDatasetName());
 		SurfaceAnalyst.removeSteppedListener(this.stepListener);
-		this.outputs.getData(OUTPUT_DATA).setValue(result);
+		this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
 		fireRunning(new RunningEvent(MetaProcessISOLine.this, 100, "finished"));
 		setFinished(true);
 	}

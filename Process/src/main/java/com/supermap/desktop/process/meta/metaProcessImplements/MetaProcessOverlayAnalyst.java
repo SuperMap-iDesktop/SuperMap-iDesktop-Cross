@@ -64,15 +64,14 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	}
 
 	private void initParameters() {
-		this.inputs.addData(INPUT_DATA, DatasetTypes.VECTOR);
-		this.inputs.addData(OVERLAY_DATA, DatasetTypes.VECTOR);
-		this.outputs.addData(OUTPUT_DATA, DatasetTypes.VECTOR);
+
 		parameterSourceDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
 		parameterOverlayDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
 		parameterResultDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
 		parameterSaveDataset.setDescribe(CommonProperties.getString(CommonProperties.Label_Dataset));
 		parameterTolerance.setDescribe(CommonProperties.getString("String_Label_Tolerance"));
 		parameterUnit.setDescribe(CommonProperties.getString("String_DistanceUnit_Meter"));//单位和数据集有关系
+
 //		parameterCheckBoxIsCompareResult.setDescribe(CommonProperties.getString("String_CheckBox_ResultComparison"));
 	}
 
@@ -97,6 +96,9 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 //				, parameterCheckBoxIsCompareResult);
 		);
 		parameters.setParameters(parameterCombineSource, parameterCombineResult, parameterCombineResultSet);
+		this.getParameters().addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, parameterCombineSource);
+		this.getParameters().addInputParameters(OVERLAY_DATA, DatasetTypes.VECTOR, parameterCombineResult);
+		this.getParameters().addOutputParameters(OUTPUT_DATA, DatasetTypes.VECTOR, parameterCombineResult);
 
 	}
 
@@ -142,16 +144,16 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	public void run() {
 		fireRunning(new RunningEvent(this, 0, "start"));
 		ParameterOverlayAnalystInfo info = new ParameterOverlayAnalystInfo();
-		if (inputs.getData(INPUT_DATA) != null && inputs.getData(INPUT_DATA).getValue() instanceof DatasetVector) {
-			info.sourceDataset = (DatasetVector) inputs.getData(INPUT_DATA).getValue();
+		if (parameters.getInputs().getData(INPUT_DATA) != null && parameters.getInputs().getData(INPUT_DATA).getValue() instanceof DatasetVector) {
+			info.sourceDataset = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
 			info.sourceDatatsource = info.sourceDataset.getDatasource();
 		} else {
 			info.sourceDatatsource = (Datasource) parameterSourceDatasource.getSelectedItem();
 			info.sourceDataset = (DatasetVector) parameterSourceDataset.getSelectedItem();
 		}
 
-		if (inputs.getData(OVERLAY_DATA) != null && inputs.getData(OVERLAY_DATA).getValue() instanceof DatasetVector) {
-			info.overlayAnalystDataset = (DatasetVector) inputs.getData(OVERLAY_DATA).getValue();
+		if (parameters.getInputs().getData(OVERLAY_DATA) != null && parameters.getInputs().getData(OVERLAY_DATA).getValue() instanceof DatasetVector) {
+			info.overlayAnalystDataset = (DatasetVector) parameters.getInputs().getData(OVERLAY_DATA).getValue();
 			info.overlayAnalystDatasource = info.overlayAnalystDataset.getDatasource();
 		} else {
 			info.overlayAnalystDatasource = (Datasource) parameterOverlayDatasource.getSelectedItem();
@@ -214,7 +216,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		OverlayAnalyst.removeSteppedListener(this.steppedListener);
 		fireRunning(new RunningEvent(this, 100, "finished"));
 		setFinished(true);
-		this.outputs.getData(OUTPUT_DATA).setValue(targetDataset);
+		this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(targetDataset);
 	}
 
 	@Override

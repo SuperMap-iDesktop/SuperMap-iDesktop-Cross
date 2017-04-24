@@ -1,6 +1,10 @@
 package com.supermap.desktop.process.parameter.interfaces.datas;
 
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by highsad on 2017/4/5.
@@ -10,6 +14,7 @@ public class InputData implements IDataDescription, IValueProvider {
 	private String tips;
 	private Type dataType;
 	private IValueProvider valueProvider;
+	private ArrayList<IParameter> parameters = new ArrayList<>();
 
 	public InputData(String name, Type dataType) {
 		this(name, null, dataType);
@@ -57,5 +62,19 @@ public class InputData implements IDataDescription, IValueProvider {
 	@Override
 	public Object getValue() {
 		return this.valueProvider == null ? null : this.valueProvider.getValue();
+	}
+
+	public void removeParameters(IParameter... parameters) {
+		for (IParameter parameter : parameters) {
+			this.parameters.remove(parameter);
+		}
+	}
+
+	public void addParameters(IParameter... parameters) {
+		Collections.addAll(this.parameters, parameters);
+	}
+
+	public ArrayList<IParameter> getParameters() {
+		return parameters;
 	}
 }

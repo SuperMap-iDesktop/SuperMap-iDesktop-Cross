@@ -34,6 +34,7 @@ import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
 import com.supermap.desktop.process.graphics.storage.IGraphConnection;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
+import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -56,7 +57,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class FormProcess extends FormBaseChild implements IFormProcess {
 	private ScrollGraphCanvas graphCanvas = new ScrollGraphCanvas();
-	private String title;
 	private boolean isNeedSave = true;
 	private boolean isAutoAddOutPut = true;
 	private transient DropTarget dropTargeted;
@@ -208,15 +208,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 	}
 
 	//region ignore
-	@Override
-	public String getText() {
-		return title;
-	}
 
-	@Override
-	public void setText(String text) {
-		this.title = text;
-	}
 
 	@Override
 	public WindowType getWindowType() {
@@ -427,7 +419,11 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 					try {
 						Object transferData = transferable.getTransferData(currentDataFlavor);
 						if (transferData instanceof String) {
-							ProcessGraph graph = new ProcessGraph(getCanvas(), WorkflowParser.getMetaProcess((String) transferData));
+							MetaProcess metaProcess = WorkflowParser.getMetaProcess((String) transferData);
+							if (metaProcess == null) {
+								continue;
+							}
+							ProcessGraph graph = new ProcessGraph(getCanvas(), metaProcess);
 							Point location = dtde.getLocation();
 							location = new Point(location.x - graph.getWidth() / 2, location.y - graph.getHeight() / 2);
 							Point inverse = getCanvas().getCoordinateTransform().inverse(location);

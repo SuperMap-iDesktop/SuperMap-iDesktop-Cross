@@ -9,8 +9,6 @@ import java.awt.geom.GeneralPath;
 
 /**
  * 与 IGraph 相互独立，IGraph 的交互逻辑不直接影响 AbstractLine，AbstractLine 的交互逻辑也不直接影响 IGraph
- * 如何处理绘制时候的线与图形交点？
- * 如何处理绑定的 PointProvider 值发生改变的刷新？
  * Created by highsad on 2017/3/22.
  */
 public abstract class AbstractLine {

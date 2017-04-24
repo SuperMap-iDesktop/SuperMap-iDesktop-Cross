@@ -15,8 +15,6 @@ public abstract class AbstractProcess implements IProcess {
 
 
 	private EventListenerList listenerList = new EventListenerList();
-	protected Inputs inputs = new Inputs(this);
-	protected Outputs outputs = new Outputs(this);
 	protected IProcessGroup parent;
 
 	@Override
@@ -30,13 +28,13 @@ public abstract class AbstractProcess implements IProcess {
 
 	@Override
 	public Inputs getInputs() {
-		return this.inputs;
+		return this.getParameters().getInputs();
 	}
 
 
 	@Override
 	public Outputs getOutputs() {
-		return this.outputs;
+		return this.getParameters().getOutputs();
 	}
 
 	@Override

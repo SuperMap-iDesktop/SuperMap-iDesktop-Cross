@@ -31,8 +31,7 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 	private ParameterComboBox parameterComboBox;
 
 	public MetaProcessSpatialIndex() {
-		this.inputs.addData(INPUT_DATA, DatasetTypes.VECTOR);
-		this.outputs.addData(OUTPUT_DATA, DatasetTypes.VECTOR);
+
 		parameters = new DefaultParameters();
 		ParameterDataNode[] parameterDataNodes = new ParameterDataNode[]{
 				// fixme 支持的索引类型和数据源类型相关，目前只把所有的索引类型添加进去，未处理不支持的情况
@@ -48,6 +47,8 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 		parameterComboBox = new ParameterComboBox(ControlsProperties.getString("String_LabelSpatialIndexType"));
 		parameterComboBox.setItems(parameterDataNodes);
 		parameters.setParameters(datasource, dataset, parameterComboBox);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, datasource, dataset);
+		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.VECTOR, dataset);
 	}
 
 	@Override
@@ -58,8 +59,8 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 	@Override
 	public void run() {
 		DatasetVector src = null;
-		if (this.inputs.getData(INPUT_DATA).getValue() instanceof DatasetVector) {
-			src = (DatasetVector) this.inputs.getData(INPUT_DATA).getValue();
+		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof DatasetVector) {
+			src = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 		} else {
 			src = (DatasetVector) this.dataset.getSelectedItem();
 		}
@@ -68,7 +69,7 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 		src.buildSpatialIndex(spatialIndexType);
 		fireRunning(new RunningEvent(this, 100, "build spatial index finished"));
 		setFinished(true);
-		this.outputs.getData(OUTPUT_DATA).setValue(src);
+		this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
 	}
 
 	@Override

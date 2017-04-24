@@ -168,12 +168,9 @@ public class ComponentDropDown extends SmButtonDropdown {
         private void initRightArrowButton(String text) {
             JLabel labelText = new JLabel(text);
             JLabel labelImage = new JLabel(new InnerMetaComboBoxIcon());
-            JPanel panel = new JPanel();
             this.setLayout(new GridBagLayout());
-            panel.setLayout(new GridBagLayout());
             this.add(labelText, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(1, 10, 1, 2).setIpad(0, 5));
             this.add(labelImage, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5).setIpad(0, 5));
-            this.add(panel, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setAnchor(GridBagConstraints.WEST));
             this.setBorder(BorderFactory.createDashedBorder(this.getBackground()));
         }
     }

@@ -1,6 +1,6 @@
 package com.supermap.desktop.process.parameter.interfaces.datas;
 
-import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -11,15 +11,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by highsad on 2017/3/22.
  */
 public class Outputs {
-	private IProcess process;
+	private IParameters parameters;
 	private ConcurrentHashMap<String, OutputData> datas = new ConcurrentHashMap<>();
 
-	public Outputs(IProcess process) {
-		this.process = process;
+	public Outputs(IParameters parameters) {
+		this.parameters = parameters;
 	}
 
-	public IProcess getProcess() {
-		return this.process;
+	public IParameters getParameters() {
+		return this.parameters;
 	}
 
 	public OutputData getData(String name) {

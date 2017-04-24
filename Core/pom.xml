@@ -86,6 +86,11 @@
             <artifactId>skinlf</artifactId>
             <version>6.7</version>
         </dependency>
+        <dependency>
+            <groupId>org.jclarion</groupId>
+            <artifactId>image4j</artifactId>
+            <version>0.7</version>
+        </dependency>
         <!--组件依赖-->
         <dependency>
             <groupId>${objects.groupId}</groupId>

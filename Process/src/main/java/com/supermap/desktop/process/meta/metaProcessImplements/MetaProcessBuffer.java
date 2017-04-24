@@ -40,7 +40,6 @@ public class MetaProcessBuffer extends MetaProcess {
 		public void stepped(SteppedEvent steppedEvent) {
 			RunningEvent event = new RunningEvent(MetaProcessBuffer.this, steppedEvent.getPercent(), steppedEvent.getMessage());
 			fireRunning(event);
-
 			if (event.isCancel()) {
 				steppedEvent.setCancel(true);
 			}
@@ -61,8 +60,7 @@ public class MetaProcessBuffer extends MetaProcess {
 	}
 
 	private void initParameters() {
-		this.inputs.addData(INPUT_SOURCE_DATASET, DatasetTypes.SIMPLE_VECTOR);
-		this.outputs.addData(OUTPUT_DATASET, DatasetTypes.SIMPLE_VECTOR);
+
 		String[] parameterDataNodes = new String[]{CommonProperties.getString("String_DistanceUnit_Kilometer"),
 				CommonProperties.getString("String_DistanceUnit_Meter"),
 				CommonProperties.getString("String_DistanceUnit_Decimeter"),
@@ -101,6 +99,9 @@ public class MetaProcessBuffer extends MetaProcess {
 				parameterCombineParameter,
 				parameterCombineResult
 		);
+
+		this.parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.SIMPLE_VECTOR, parameterCombineSourceData);
+		this.parameters.addOutputParameters(OUTPUT_DATASET, DatasetTypes.SIMPLE_VECTOR, parameterCombineResult);
 	}
 
 	private void initComponentState() {
@@ -132,9 +133,9 @@ public class MetaProcessBuffer extends MetaProcess {
 		fireRunning(new RunningEvent(this, 0, "start"));
 		// fixme 数据集来源
 		DatasetVector datasetVector = null;
-		if (this.inputs.getData(INPUT_SOURCE_DATASET) != null
-				&& this.inputs.getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
-			datasetVector = (DatasetVector) this.inputs.getData(INPUT_SOURCE_DATASET).getValue();
+		if (this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET) != null
+				&& this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
+			datasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_SOURCE_DATASET).getValue();
 		} else {
 			datasetVector = (DatasetVector) dataset.getSelectedItem();
 		}
@@ -163,7 +164,7 @@ public class MetaProcessBuffer extends MetaProcess {
 		BufferAnalyst.createBuffer(datasetVector, result, parameter, isUnion, isAttributeRetained);
 		BufferAnalyst.removeSteppedListener(this.steppedListener);
 
-		this.outputs.getData(OUTPUT_DATASET).setValue(result);
+		this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
 
 		fireRunning(new RunningEvent(this, 100, "finished"));
 		setFinished(true);

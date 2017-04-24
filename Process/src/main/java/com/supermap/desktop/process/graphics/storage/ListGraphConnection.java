@@ -4,6 +4,7 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.GraphRelationLine;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -54,6 +55,11 @@ public class ListGraphConnection implements IGraphConnection {
 				line.clear();
 			}
 		}
+	}
+
+	@Override
+	public void removeConnectLine(GraphRelationLine line) {
+
 	}
 
 	@Override
@@ -126,5 +132,10 @@ public class ListGraphConnection implements IGraphConnection {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public GraphRelationLine find(Point point) {
+		return null;
 	}
 }

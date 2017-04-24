@@ -49,8 +49,7 @@ public class MetaProcessISORegion extends MetaProcess {
 	};
 
 	public MetaProcessISORegion() {
-		this.inputs.addData(INPUT_DATA, DatasetTypes.GRID);
-		this.outputs.addData(OUTPUT_DATA, DatasetTypes.REGION);
+
 		parameters = new DefaultParameters();
 		sourceDatasource = new ParameterDatasource();
 		sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
@@ -94,7 +93,8 @@ public class MetaProcessISORegion extends MetaProcess {
 		paramSet.addParameters(datumValue, interval, resampleTolerance, smoothMethod, smoothNess);
 
 		parameters.setParameters(sourceData, targetData, resultInfo, paramSet);
-
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
+		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.REGION, targetData);
 		DatasourceConstraint.getInstance().constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 	}
 
@@ -112,8 +112,8 @@ public class MetaProcessISORegion extends MetaProcess {
 		surfaceExtractParameter.setSmoothMethod((SmoothMethod) ((ParameterDataNode) smoothMethod.getSelectedItem()).getData());
 		surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem().toString()));
 		DatasetGrid src = null;
-		if (this.inputs.getData(INPUT_DATA).getValue() != null) {
-			src = (DatasetGrid) this.inputs.getData(INPUT_DATA).getValue();
+		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
+			src = (DatasetGrid) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 		} else {
 			src = (DatasetGrid) dataset.getSelectedItem();
 		}
@@ -121,7 +121,7 @@ public class MetaProcessISORegion extends MetaProcess {
 		SurfaceAnalyst.addSteppedListener(this.stepListener);
 		DatasetVector result = SurfaceAnalyst.extractIsoregion(surfaceExtractParameter, src, targetDataset.getResultDatasource(), targetDataset.getDatasetName(), null);
 		SurfaceAnalyst.removeSteppedListener(this.stepListener);
-		this.outputs.getData(OUTPUT_DATA).setValue(result);
+		this.getOutputs().getData(OUTPUT_DATA).setValue(result);
 		fireRunning(new RunningEvent(MetaProcessISORegion.this, 100, "finished"));
 		setFinished(true);
 	}

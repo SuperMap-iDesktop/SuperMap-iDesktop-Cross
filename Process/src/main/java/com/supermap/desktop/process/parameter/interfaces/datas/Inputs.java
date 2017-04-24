@@ -1,6 +1,8 @@
 package com.supermap.desktop.process.parameter.interfaces.datas;
 
-import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.parameter.events.ValueProviderBindEvent;
+import com.supermap.desktop.process.parameter.events.ValueProviderBindListener;
+import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -11,15 +13,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by highsad on 2017/3/1.
  */
 public class Inputs {
-	private IProcess process;
+	private IParameters parameters;// // TODO: 2017/4/23  necessary?
 	private ConcurrentHashMap<String, InputData> datas = new ConcurrentHashMap<>();
+	private ArrayList<ValueProviderBindListener> valueProviderBindListeners = new ArrayList<>();
 
-	public Inputs(IProcess process) {
-		this.process = process;
+	public Inputs(IParameters parameters) {
+		this.parameters = parameters;
 	}
 
-	public IProcess getProcess() {
-		return this.process;
+	public IParameters getParameters() {
+		return this.parameters;
 	}
 
 	public InputData getData(String name) {
@@ -85,7 +88,22 @@ public class Inputs {
 	public void bind(String name, IValueProvider valueProvider) {
 		if (this.datas.containsKey(name)) {
 			this.datas.get(name).bind(valueProvider);
+			fireValueProviderBind(new ValueProviderBindEvent(this.datas.get(name)));
 		}
+	}
+
+	private void fireValueProviderBind(ValueProviderBindEvent event) {
+		for (ValueProviderBindListener valueProviderBindListener : valueProviderBindListeners) {
+			valueProviderBindListener.valueBind(event);
+		}
+	}
+
+	public void addValueProviderBindListener(ValueProviderBindListener valueProviderBindListener) {
+		valueProviderBindListeners.add(valueProviderBindListener);
+	}
+
+	public void removeValueProviderBindListener(ValueProviderBindListener valueProviderBindListener) {
+		valueProviderBindListeners.remove(valueProviderBindListener);
 	}
 
 	public String getBindedInput(IValueProvider valueProvider) {

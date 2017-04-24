@@ -119,7 +119,6 @@ public class ScrollGraphCanvas extends JPanel {
 	}
 
 	private class GraphCanvasListener extends ComponentAdapter implements CanvasTransformListener, GraphCreatedListener, AncestorListener {
-
 		@Override
 		public void graphCreated(GraphCreatedEvent e) {
 
@@ -162,13 +161,13 @@ public class ScrollGraphCanvas extends JPanel {
 		public void ancestorAdded(AncestorEvent event) {
 
 			// 初始化的时候先做个偏移，以使得进度条滑块居中
-			Rectangle visibleRect = canvas.getVisibleCanvasRect();
 			canvas.getCoordinateTransform().translate(canvas.getWidth() / 2, canvas.getHeight() / 2);
+			canvas.repaint();
 		}
 
 		@Override
 		public void ancestorRemoved(AncestorEvent event) {
-
+			canvas.getCoordinateTransform().translate(-canvas.getWidth() / 2, -canvas.getHeight() / 2);
 		}
 
 		@Override

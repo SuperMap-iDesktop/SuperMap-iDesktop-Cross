@@ -2,11 +2,18 @@ package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.parameter.ParameterPanels.EmptyParameterPanel;
+import com.supermap.desktop.process.parameter.events.ValueProviderBindEvent;
+import com.supermap.desktop.process.parameter.events.ValueProviderBindListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
+import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
+import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.utilities.ArrayUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,9 +28,24 @@ public class DefaultParameters implements IParameters {
 	protected JPanel panel;
 	private ArrayList<ParameterClassBundleNode> packages = new ArrayList<>();
 	protected EmptyParameterPanel parameterPanel = new EmptyParameterPanel();
+	private Inputs inputs = new Inputs(this);
+	private Outputs outputs = new Outputs(this);
 
 	public DefaultParameters() {
 		packages.add(new ParameterClassBundleNode("com.supermap.desktop.process.parameter.ParameterPanels", "SuperMap.Desktop.Process"));
+		inputs.addValueProviderBindListener(new ValueProviderBindListener() {
+			@Override
+			public void valueBind(ValueProviderBindEvent event) {
+				InputData inputData = event.getInputData();
+				ArrayList<IParameter> parameters = inputData.getParameters();
+				for (IParameter parameter : parameters) {
+					if (ArrayUtilities.isArrayContains(DefaultParameters.this.parameters, parameter)) {
+						// TODO: 2017/4/23 展示形式未定
+
+					}
+				}
+			}
+		});
 	}
 
 	@Override
@@ -103,4 +125,24 @@ public class DefaultParameters implements IParameters {
 		return null;
 	}
 
+	@Override
+	public void addInputParameters(String name, Type type, IParameter... parameters) {
+		inputs.addData(name, type);
+		inputs.getData(name).addParameters(parameters);
+	}
+
+	@Override
+	public void addOutputParameters(String name, Type type, IParameter... parameters) {
+		outputs.addData(name, type);
+	}
+
+	@Override
+	public Inputs getInputs() {
+		return inputs;
+	}
+
+	@Override
+	public Outputs getOutputs() {
+		return outputs;
+	}
 }
