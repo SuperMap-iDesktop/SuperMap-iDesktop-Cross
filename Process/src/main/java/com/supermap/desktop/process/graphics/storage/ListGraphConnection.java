@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.graphics.storage;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.connection.GraphRelationLine;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
@@ -59,7 +60,12 @@ public class ListGraphConnection implements IGraphConnection {
 
 	@Override
 	public void removeConnectLine(GraphRelationLine line) {
+		if (line == null) {
+			return;
+		}
 
+		this.lines.remove(line);
+		line.clear();
 	}
 
 	@Override
@@ -136,6 +142,19 @@ public class ListGraphConnection implements IGraphConnection {
 
 	@Override
 	public GraphRelationLine find(Point point) {
-		return null;
+		GraphRelationLine result = null;
+		Point inverse = this.canvas.getCoordinateTransform().inverse(point);
+
+		for (int i = 0; i < this.lines.size(); i++) {
+			GraphRelationLine line = this.lines.get(i);
+			Point start = line.getStartPoint();
+			Point end = line.getEndPoint();
+			Boolean isPointOnLine = GraphicsUtil.lineContainsPoint(start.x, start.y, end.x, end.y, inverse.x, inverse.y, 4);
+			if (isPointOnLine) {
+				result = line;
+				break;
+			}
+		}
+		return result;
 	}
 }

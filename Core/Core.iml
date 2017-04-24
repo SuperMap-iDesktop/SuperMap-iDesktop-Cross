@@ -29,6 +29,7 @@
     <orderEntry type="library" name="Maven: commons-lang:commons-lang:2.6" level="project" />
     <orderEntry type="library" name="Maven: com.jgoodies:looks:2.2.2" level="project" />
     <orderEntry type="library" name="Maven: com.l2fprod:skinlf:6.7" level="project" />
+    <orderEntry type="library" name="Maven: org.jclarion:image4j:0.7" level="project" />
     <orderEntry type="module-library">
       <library name="Maven: com.supermap:com.supermap.analyst.addressmatching:9.0.0">
         <CLASSES>
@@ -202,6 +203,5 @@
     </orderEntry>
     <orderEntry type="library" name="Maven: org.mongodb:mongo-java-driver:3.0.4" level="project" />
     <orderEntry type="library" name="Maven: org.mongodb:bson:3.0.4" level="project" />
-    <orderEntry type="library" name="Maven: org.jclarion:image4j:0.7" level="project" />
   </component>
 </module>

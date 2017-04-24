@@ -61,6 +61,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 	private GraphDragAction dragged = new GraphDragAction(this);
 	public GraphConnector connector = new GraphConnector(this);
 	public GraphRemoving removing = new GraphRemoving(this);
+	public LineInteraction lineInteraction = new LineInteraction(this);
 
 	private ArrayList<GraphSelectChangedListener> selectChangedListeners = new ArrayList<>();
 
@@ -146,6 +147,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		installCanvasAction(GraphCreator.class, this.creator);
 		installCanvasAction(GraphConnector.class, this.connector);
 		installCanvasAction(GraphRemoving.class, this.removing);
+		installCanvasAction(LineInteraction.class, this.lineInteraction);
 
 		this.actionsManager.addMutexAction(GraphDragAction.class, Selection.class);
 		this.actionsManager.addMutexAction(GraphDragAction.class, GraphCreator.class);
@@ -305,6 +307,7 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		paintGraphs(graphics2D);
 		this.connector.preview(graphics2D);
 		this.selection.paintSelected(graphics2D);
+		this.lineInteraction.paint(graphics2D);
 		graphics2D.setTransform(origin);
 
 		this.creator.paint(graphics2D);
