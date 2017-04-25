@@ -41,7 +41,7 @@ import java.util.ArrayList;
  * 5. hot 元素（MouseMoved）
  * 优先级：创建 - 拖拽/连接 - 选择 - hot
  */
-public class GraphCanvas extends JComponent implements MouseListener, MouseMotionListener, MouseWheelListener, ComponentListener, KeyListener {
+public class GraphCanvas extends JComponent {
 	public final static Color DEFAULT_BACKGROUNDCOLOR = new Color(11579568);
 	public final static Color DEFAULT_CANVAS_COLOR = new Color(255, 255, 255);
 	public final static Color GRID_MINOR_COLOR = new Color(15461355);
@@ -130,11 +130,11 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 
 	public GraphCanvas() {
 		setLayout(null);
-		addMouseListener(this);
-		addMouseMotionListener(this);
-		addMouseWheelListener(this);
-		addComponentListener(this);
-		addKeyListener(this);
+		addMouseListener(new CanvasMouseListener());
+		addMouseMotionListener(new CanvasMouseMotionListener());
+		addMouseWheelListener(new CanvasMouseWheelListener());
+		addComponentListener(new CanvasComponentListener());
+		addKeyListener(new CanvasKeyListener());
 
 		setRequestFocusEnabled(true);
 		loadCanvasActions();
@@ -314,10 +314,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		this.selection.paint(graphics2D);
 	}
 
-	private int getScale(int i) {
-		return i * 100;
-	}
-
 	/**
 	 * 绘制背景
 	 *
@@ -397,11 +393,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		return new Point(panelX, panelY);
 	}
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		this.actionsManager.mouseClicked(e);
-	}
-
 	public IGraph[] findGraphs(Point point) {
 		return this.graphStorage.findGraphs(point);
 	}
@@ -416,40 +407,24 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		return this.graphStorage.findIntersetctedGraphs(canvasRect.x, canvasRect.y, canvasRect.width, canvasRect.height);
 	}
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		if (SwingUtilities.isLeftMouseButton(e)) {
-			if (!hasFocus() && isRequestFocusEnabled()) {
-				requestFocus();
-			}
+	public void entireView() {
+		if (this.graphStorage.getCount() > 0) {
+			Rectangle visibleCanvasBounds = getVisibleCanvasRect();
+			double visibleW = visibleCanvasBounds.getWidth();
+			double visibleH = visibleCanvasBounds.getHeight();
+			Rectangle bounds = this.graphStorage.getBounds();
+
+			double scaleW = (visibleW / bounds.width - 1) * 100;
+			double scaleH = (visibleH / bounds.height - 1) * 100;
+			this.coordinateTransform.scale(Math.min(scaleH, scaleW) - this.coordinateTransform.getScaleValue());
+//			this.coordinateTransform.translate(visibleCanvasBounds.x - bounds.x, visibleCanvasBounds.y - bounds.y);
+			visibleCanvasBounds = getVisibleCanvasRect();
+			this.coordinateTransform.translate(visibleCanvasBounds.getCenterX() - bounds.getCenterX(), visibleCanvasBounds.getCenterY() - bounds.getCenterY());
+//			this.coordinateTransform.translateXTo(bounds.getX());
+//			this.coordinateTransform.translateYTo(bounds.getY());
+
+			repaint();
 		}
-
-		this.actionsManager.mousePressed(e);
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		this.actionsManager.mouseReleased(e);
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		this.actionsManager.mouseEntered(e);
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		this.actionsManager.mouseExited(e);
-	}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		this.actionsManager.mouseDragged(e);
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		this.actionsManager.mouseMoved(e);
 	}
 
 	private void repaint(IGraph graph, Point point) {
@@ -465,11 +440,6 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		}
 	}
 
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		this.actionsManager.mouseWheelMoved(e);
-	}
-
 	public void addGraphSelectChangedListener(GraphSelectChangedListener listener) {
 		if (!this.selectChangedListeners.contains(listener)) {
 			this.selectChangedListeners.add(listener);
@@ -482,30 +452,10 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		}
 	}
 
-	protected void fireGraphSelectChanged(GraphSelectedChangedEvent e) {
+	private void fireGraphSelectChanged(GraphSelectedChangedEvent e) {
 		for (int i = 0; i < this.selectChangedListeners.size(); i++) {
 			this.selectChangedListeners.get(i).graphSelectChanged(e);
 		}
-	}
-
-	@Override
-	public void componentResized(ComponentEvent e) {
-		repaint();
-	}
-
-	@Override
-	public void componentMoved(ComponentEvent e) {
-
-	}
-
-	@Override
-	public void componentShown(ComponentEvent e) {
-
-	}
-
-	@Override
-	public void componentHidden(ComponentEvent e) {
-
 	}
 
 	public void addGraphCreatedListener(GraphCreatedListener listener) {
@@ -544,18 +494,97 @@ public class GraphCanvas extends JComponent implements MouseListener, MouseMotio
 		}
 	}
 
-	@Override
-	public void keyTyped(KeyEvent e) {
-		this.actionsManager.keyTyped(e);
+	private class CanvasMouseListener implements MouseListener {
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			GraphCanvas.this.actionsManager.mouseClicked(e);
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			if (SwingUtilities.isLeftMouseButton(e)) {
+				if (!hasFocus() && isRequestFocusEnabled()) {
+					requestFocus();
+				}
+			}
+
+			GraphCanvas.this.actionsManager.mousePressed(e);
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			GraphCanvas.this.actionsManager.mouseReleased(e);
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			GraphCanvas.this.actionsManager.mouseEntered(e);
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			GraphCanvas.this.actionsManager.mouseExited(e);
+		}
 	}
 
-	@Override
-	public void keyPressed(KeyEvent e) {
-		this.actionsManager.keyPressed(e);
+	private class CanvasMouseMotionListener implements MouseMotionListener {
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			GraphCanvas.this.actionsManager.mouseDragged(e);
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+			GraphCanvas.this.actionsManager.mouseMoved(e);
+		}
 	}
 
-	@Override
-	public void keyReleased(KeyEvent e) {
-		this.actionsManager.keyReleased(e);
+	private class CanvasMouseWheelListener implements MouseWheelListener {
+		@Override
+		public void mouseWheelMoved(MouseWheelEvent e) {
+			GraphCanvas.this.actionsManager.mouseWheelMoved(e);
+		}
 	}
+
+	private class CanvasComponentListener implements ComponentListener {
+
+		@Override
+		public void componentResized(ComponentEvent e) {
+			repaint();
+		}
+
+		@Override
+		public void componentMoved(ComponentEvent e) {
+
+		}
+
+		@Override
+		public void componentShown(ComponentEvent e) {
+
+		}
+
+		@Override
+		public void componentHidden(ComponentEvent e) {
+
+		}
+	}
+
+	private class CanvasKeyListener implements KeyListener {
+		@Override
+		public void keyTyped(KeyEvent e) {
+			GraphCanvas.this.actionsManager.keyTyped(e);
+		}
+
+		@Override
+		public void keyPressed(KeyEvent e) {
+			GraphCanvas.this.actionsManager.keyPressed(e);
+		}
+
+		@Override
+		public void keyReleased(KeyEvent e) {
+			GraphCanvas.this.actionsManager.keyReleased(e);
+		}
+	}
+
 }
