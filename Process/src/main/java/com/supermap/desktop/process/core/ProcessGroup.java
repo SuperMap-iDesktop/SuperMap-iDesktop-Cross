@@ -1,6 +1,5 @@
 package com.supermap.desktop.process.core;
 
-import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.events.RunningListener;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -9,7 +8,6 @@ import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 import com.supermap.desktop.utilities.FileUtilities;
 
-import javax.swing.*;
 import java.util.ArrayList;
 
 /**
@@ -142,11 +140,6 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 	@Override
 	public void run() {
 
-	}
-
-	@Override
-	public Icon getIcon() {
-		return path == null ? null : new ImageIcon(ProcessResources.getResourceURL(path));
 	}
 
 	@Override
