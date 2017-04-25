@@ -4,6 +4,19 @@ import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.DatasetTypeProperties;
 
+import static com.supermap.data.DatasetType.CAD;
+import static com.supermap.data.DatasetType.LINE;
+import static com.supermap.data.DatasetType.LINE3D;
+import static com.supermap.data.DatasetType.LINEM;
+import static com.supermap.data.DatasetType.NETWORK;
+import static com.supermap.data.DatasetType.NETWORK3D;
+import static com.supermap.data.DatasetType.POINT;
+import static com.supermap.data.DatasetType.POINT3D;
+import static com.supermap.data.DatasetType.REGION;
+import static com.supermap.data.DatasetType.REGION3D;
+import static com.supermap.data.DatasetType.TABULAR;
+import static com.supermap.data.DatasetType.TEXT;
+
 public class DatasetTypeUtilities {
 	private DatasetTypeUtilities() {
 		// 工具类不提供构造函数
@@ -41,7 +54,7 @@ public class DatasetTypeUtilities {
 				result = DatasetTypeProperties.getString(DatasetTypeProperties.ParametricLine);
 			} else if (datasetType == DatasetType.PARAMETRICREGION) {
 				result = DatasetTypeProperties.getString(DatasetTypeProperties.ParametricRegion);
-			} else if (datasetType == DatasetType.POINT) {
+			} else if (datasetType == POINT) {
 				result = DatasetTypeProperties.getString(DatasetTypeProperties.Point);
 			} else if (datasetType == DatasetType.POINT3D) {
 				result = DatasetTypeProperties.getString(DatasetTypeProperties.Point3D);
@@ -73,7 +86,7 @@ public class DatasetTypeUtilities {
 	}
 
 	public static DatasetType valueOf(String text) {
-		DatasetType result = DatasetType.POINT;
+		DatasetType result = POINT;
 
 		try {
 			if (text.equalsIgnoreCase(DatasetTypeProperties.getString(DatasetTypeProperties.CAD))) {
@@ -105,7 +118,7 @@ public class DatasetTypeUtilities {
 			} else if (text.equalsIgnoreCase(DatasetTypeProperties.getString(DatasetTypeProperties.ParametricRegion))) {
 				result = DatasetType.PARAMETRICREGION;
 			} else if (text.equalsIgnoreCase(DatasetTypeProperties.getString(DatasetTypeProperties.Point))) {
-				result = DatasetType.POINT;
+				result = POINT;
 			} else if (text.equalsIgnoreCase(DatasetTypeProperties.getString(DatasetTypeProperties.Point3D))) {
 				result = DatasetType.POINT3D;
 			} else if (text.equalsIgnoreCase(DatasetTypeProperties.getString(DatasetTypeProperties.Region))) {
@@ -131,5 +144,11 @@ public class DatasetTypeUtilities {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 		return result;
+	}
+
+	public static DatasetType[] getDatasetTypeVector() {
+		return new DatasetType[]{
+				POINT, LINE, REGION, POINT3D, LINE3D, REGION3D, LINEM, TABULAR, NETWORK, NETWORK3D, CAD, TEXT
+		};
 	}
 }

@@ -5,7 +5,18 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.dataconversion.MetaProcessImportFactory;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.meta.metaProcessImplements.*;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessBuffer;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessHeatMap;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISOLine;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISOPoint;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISORegion;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessInterpolator;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessKernelDensity;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessOverlayAnalyst;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessProjection;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSpatialIndex;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSqlQuery;
+import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessCentralElement;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
@@ -187,6 +198,24 @@ public class WorkflowParser {
             result = new MetaProcessOverlayAnalyst(OverlayAnalystType.XOR);
         } else if (MetaKeys.SQL_QUERY.equals(key)) {
             result = new MetaProcessSqlQuery();
+        } else if (MetaKeys.CentralElement.equals(key)) {
+	        result = new MetaProcessCentralElement();
+        } else if (MetaKeys.MeanCenter.equals(key)) {
+
+        } else if (MetaKeys.MedianCenter.equals(key)) {
+
+        } else if (MetaKeys.Directional.equals(key)) {
+
+        } else if (MetaKeys.autoCorrelation.equals(key)) {
+
+        } else if (MetaKeys.highOrLowClustering.equals(key)) {
+
+        } else if (MetaKeys.clusterOutlierAnalyst.equals(key)) {
+
+        } else if (MetaKeys.hotSpotAnalyst.equals(key)) {
+
+        } else if (MetaKeys.geographicWeightedRegression.equals(key)) {
+
         } else if (key.contains(MetaKeys.IMPORT)) {
             String importType = key.replace(MetaKeys.IMPORT, "");
             result = MetaProcessImportFactory.createMetaProcessImport(importType);
