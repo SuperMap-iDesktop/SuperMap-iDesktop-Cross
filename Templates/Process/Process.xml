@@ -16,59 +16,59 @@
                     <process key="ImportGBDEM" name=".DEM"/>
                     <process key="ImportDBF" name=".DBF"/>
                 </process>
-				<process name="MapInfo交换格式">
+                <process name="MapInfo交换格式">
                     <process key="ImportTAB" name=".TAB"/>
                     <process key="ImportMIF" name=".MIF"/>
                     <process key="ImportWOR" name=".WOR"/>
                 </process>
-				<process name="MapGIS交换格式">
+                <process name="MapGIS交换格式">
                     <process key="ImportWAT" name=".WAT"/>
                     <process key="ImportWAN" name=".WAN"/>
                     <process key="ImportWAL" name=".WAL"/>
-					<process key="ImportWAP" name=".WAP"/>	
+                    <process key="ImportWAP" name=".WAP"/>
                 </process>
-				<process name="Microsoft交换格式">
+                <process name="Microsoft交换格式">
                     <process key="ImportCSV" name=".CSV"/>
                 </process>
-				<process name="影像位图文件">
+                <process name="影像位图文件">
                     <process key="ImportSIT" name=".SIT"/>
-					<process key="ImportIMG" name=".IMG"/>
-					<process key="ImportTIF" name=".TIF"/>
-					<process key="ImportTIFF" name=".TIFF"/>
-					<process key="ImportBMP" name=".BMP"/>
-					<process key="ImportPNG" name=".PNG"/>
-					<process key="ImportGIF" name=".GIF"/>
-					<process key="ImportJPG" name=".JPG"/>
-					<process key="ImportJPEG" name=".JPEG"/>
-					<process key="ImportJP2" name=".JP2"/>
-					<process key="ImportJPK" name=".JPK"/>
-					<process key="ImportSID" name=".SID"/>
-					<process key="ImportECW" name=".ECW"/>
+                    <process key="ImportIMG" name=".IMG"/>
+                    <process key="ImportTIF" name=".TIF"/>
+                    <process key="ImportTIFF" name=".TIFF"/>
+                    <process key="ImportBMP" name=".BMP"/>
+                    <process key="ImportPNG" name=".PNG"/>
+                    <process key="ImportGIF" name=".GIF"/>
+                    <process key="ImportJPG" name=".JPG"/>
+                    <process key="ImportJPEG" name=".JPEG"/>
+                    <process key="ImportJP2" name=".JP2"/>
+                    <process key="ImportJPK" name=".JPK"/>
+                    <process key="ImportSID" name=".SID"/>
+                    <process key="ImportECW" name=".ECW"/>
                 </process>
-				<process name="三维模型文件">
+                <process name="三维模型文件">
                     <process key="ImportOSGB" name=".OSGB"/>
-					<process key="Import3DS" name=".3DS"/>
-					<process key="ImportX" name=".X"/>
-					<process key="ImportDXF" name=".DXF"/>
+                    <process key="Import3DS" name=".3DS"/>
+                    <process key="ImportX" name=".X"/>
+                    <process key="ImportDXF" name=".DXF"/>
                 </process>
-				<process name="谷歌KML交换格式">
+                <process name="谷歌KML交换格式">
                     <process key="ImportKML" name=".KML"/>
-					<process key="ImportKMZ" name=".KMZ"/>
+                    <process key="ImportKMZ" name=".KMZ"/>
                 </process>
-				<process name="栅格文件">
+                <process name="栅格文件">
                     <process key="ImportGRD_DEM" name=".DEM"/>
-					<process key="ImportBIL" name=".BIL"/>
-					<process key="ImportRAW" name=".RAW"/>
-					<process key="ImportBSQ" name=".BSQ"/>
-					<process key="ImportBIP" name=".BIP"/>
-					<process key="ImportB" name=".B"/>
+                    <process key="ImportBIL" name=".BIL"/>
+                    <process key="ImportRAW" name=".RAW"/>
+                    <process key="ImportBSQ" name=".BSQ"/>
+                    <process key="ImportBIP" name=".BIP"/>
+                    <process key="ImportB" name=".B"/>
                 </process>
-				<process name="LIDAR文件">
+                <process name="LIDAR文件">
                     <process key="ImportLIDAR" name=".TXT"/>
                 </process>
-				<process name="中国标准矢量格式">
+                <process name="中国标准矢量格式">
                     <process key="ImportDGN" name=".DGN"/>
-					<process key="ImportVCT" name=".VCT"/>
+                    <process key="ImportVCT" name=".VCT"/>
                 </process>
             </process>
             <process key="Projection" name="投影转换"/>
@@ -94,6 +94,25 @@
                 <process key="ISOLine" name="提取等值线"/>
                 <process key="ISOPoint" name="点数据提取等值线"/>
                 <process key="ISORegion" name="提取等值面"/>
+            </process>
+            <process name="空间统计分析">
+                <process name="度量地理分布">//SpatialMeasure
+                    <process key="CentralElement" name="中心要素"/>
+                    <process key="MeanCenter" name="平均中心"/>
+                    <process key="MedianCenter" name="中位数中心"/>
+                    <process key="Directional" name="方向分布"/>
+                </process>
+                <process name="模型分析">//AnalyzingPatterns
+                    <process key="autoCorrelation" name="空间自相关"/>
+                    <process key="highOrLowClustering" name="高低值聚类"/>
+                </process>
+                <process name="聚类分布">//ClusteringDistributions
+                    <process key="clusterOutlierAnalyst" name="聚类和异常值分析"/>
+                    <process key="hotSpotAnalyst" name="热点分析"/>
+                </process>
+                <process name="空间关系建模">//SpatialRelModeling
+                    <process key="geographicWeightedRegression" name="地理加权回归分析"/>
+                </process>
             </process>
         </process>
         <process name="Online" iconPath="/processresources/Process/online.png">
