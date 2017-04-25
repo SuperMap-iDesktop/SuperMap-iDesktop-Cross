@@ -19,8 +19,6 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
-import javax.swing.*;
-
 /**
  * @author XiaJT
  */
@@ -86,10 +84,5 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 	@Override
 	public String getTitle() {
 		return ProcessProperties.getString("String_RebuildSpatialIndex");
-	}
-
-	@Override
-	public Icon getIcon() {
-		return getIconByPath("/processresources/Tree_Node3.png");
 	}
 }

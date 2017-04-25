@@ -6,8 +6,6 @@ import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 
-import javax.swing.*;
-
 /**
  * Created by highsad on 2017/1/5.
  */
@@ -28,8 +26,6 @@ public interface IProcess {
 	IParameters getParameters();
 
 	void run();
-
-	Icon getIcon();
 
 	void addRunningListener(RunningListener listener);
 

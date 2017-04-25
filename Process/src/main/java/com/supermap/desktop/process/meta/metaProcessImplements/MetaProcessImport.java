@@ -2,7 +2,11 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
-import com.supermap.data.conversion.*;
+import com.supermap.data.conversion.DataImport;
+import com.supermap.data.conversion.ImportResult;
+import com.supermap.data.conversion.ImportSetting;
+import com.supermap.data.conversion.ImportSteppedEvent;
+import com.supermap.data.conversion.ImportSteppedListener;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.IParameterCreator;
 import com.supermap.desktop.process.dataconversion.ImportParameterCreator;
@@ -156,8 +160,4 @@ public class MetaProcessImport extends MetaProcess {
 		return MetaKeys.IMPORT + importType;
 	}
 
-	@Override
-	public Icon getIcon() {
-		return getIconByPath("/processresources/Tree_Node3.png");
-	}
 }

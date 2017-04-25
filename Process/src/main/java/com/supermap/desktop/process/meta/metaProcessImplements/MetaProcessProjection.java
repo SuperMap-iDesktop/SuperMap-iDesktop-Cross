@@ -1,6 +1,11 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.GeoCoordSys;
+import com.supermap.data.GeoCoordSysType;
+import com.supermap.data.GeoSpatialRefType;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.PrjCoordSysType;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
@@ -15,8 +20,6 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
-
-import javax.swing.*;
 
 /**
  * @author XiaJT
@@ -94,10 +97,5 @@ public class MetaProcessProjection extends MetaProcess {
 	@Override
 	public String getTitle() {
 		return ProcessProperties.getString("String_Projection");
-	}
-
-	@Override
-	public Icon getIcon() {
-		return getIconByPath("/processresources/Tree_Node3.png");
 	}
 }
