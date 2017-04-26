@@ -16,6 +16,7 @@ public class ParameterType {
 	public static final String DATASOURCES = "Datasources";
 	public static final String DATASET = "Dataset";
 	public static final String DATASETS = "Datasets";
+	public static final String DATASETTYPE = "DatasetType";
 	public static final String FILES = "Files";
 	public static final String FILE = "File";
 	public static final String USER_DEFINE = "UserDefine";
