@@ -10,7 +10,7 @@ import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
@@ -25,7 +25,7 @@ import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 public class MetaProcessSpatialIndex extends MetaProcess {
 	private final static String INPUT_DATA = "InputData";
 	private final static String OUTPUT_DATA = "output";
-	private ParameterDatasource datasource;
+	private ParameterDatasourceConstrained datasource;
 	private ParameterSingleDataset dataset;
 	private ParameterComboBox parameterComboBox;
 
@@ -40,7 +40,7 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 				new ParameterDataNode(SpatialIndexTypeUtilities.toString(SpatialIndexType.TILE), SpatialIndexType.TILE),
 				new ParameterDataNode(SpatialIndexTypeUtilities.toString(SpatialIndexType.QTREE), SpatialIndexType.QTREE),
 		};
-		datasource = new ParameterDatasource();
+		datasource = new ParameterDatasourceConstrained();
 		dataset = new ParameterSingleDataset(DatasetTypeUtilities.getDatasetTypeVector());
 		datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameterComboBox = new ParameterComboBox(ControlsProperties.getString("String_LabelSpatialIndexType"));

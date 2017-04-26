@@ -9,22 +9,13 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.AbstractParameter;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
@@ -36,7 +27,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 	private final static String INPUT_DATA = "InputData";
 	private final static String OUTPUT_DATA = "ExtractResult";
 
-	private ParameterDatasource sourceDatasource;
+	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
 	private ParameterFieldComboBox fields;
 	private ParameterSaveDataset targetDataset;
@@ -73,7 +64,6 @@ public class MetaProcessISOPoint extends MetaProcess {
 		equalDatasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
-		DatasourceConstraint.getInstance().constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 
 		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
 		equalDatasetConstraint.constrained(sourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
@@ -99,7 +89,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 	private void initParameters() {
 
 		this.parameters = new DefaultParameters();
-		this.sourceDatasource = new ParameterDatasource();
+		this.sourceDatasource = new ParameterDatasourceConstrained();
 		this.sourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.POINT3D);
 		this.fields = new ParameterFieldComboBox();
 		this.fields.setDescribe(CommonProperties.getString("String_FieldsName"));

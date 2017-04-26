@@ -2,29 +2,16 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.analyst.spatialanalyst.OverlayAnalyst;
 import com.supermap.analyst.spatialanalyst.OverlayAnalystParameter;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.Datasource;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameter.implement.ParameterFieldSetDialog;
-import com.supermap.desktop.process.parameter.implement.ParameterLabel;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
@@ -43,11 +30,11 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	private final static String OUTPUT_DATA = "OverlayResult";
 
 	private OverlayAnalystType analystType;
-	private ParameterDatasource parameterSourceDatasource = new ParameterDatasource();
+	private ParameterDatasourceConstrained parameterSourceDatasource = new ParameterDatasourceConstrained();
 	private ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
-	private ParameterDatasource parameterOverlayDatasource = new ParameterDatasource();
+	private ParameterDatasourceConstrained parameterOverlayDatasource = new ParameterDatasourceConstrained();
 	private ParameterSingleDataset parameterOverlayDataset = new ParameterSingleDataset(DatasetType.REGION);
-	private ParameterDatasource parameterResultDatasource = new ParameterDatasource();
+	private ParameterDatasourceConstrained parameterResultDatasource = new ParameterDatasourceConstrained();
 	private ParameterTextField parameterSaveDataset = new ParameterTextField();
 	private ParameterFieldSetDialog parameterFieldSetDialog = new ParameterFieldSetDialog();
 	private ParameterTextField parameterTolerance = new ParameterTextField();
@@ -114,10 +101,6 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	}
 
 	private void initParameterConstraint() {
-		DatasourceConstraint.getInstance().constrained(parameterSourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		DatasourceConstraint.getInstance().constrained(parameterOverlayDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		DatasourceConstraint.getInstance().constrained(parameterResultDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(parameterSourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(parameterSourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);

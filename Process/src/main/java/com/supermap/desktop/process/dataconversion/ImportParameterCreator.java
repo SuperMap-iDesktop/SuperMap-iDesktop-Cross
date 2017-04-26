@@ -413,7 +413,6 @@ public class ImportParameterCreator implements IParameterCreator {
 		ReflectInfo ReflectInfoImportMode = new ReflectInfo();
 		ReflectInfoImportMode.methodName = "setImportMode";
 		parameterImportMode = new ParameterEnum(new EnumParser(ImportMode.class, ReflectInfoImportModelValue, importModel)).setDescribe(ProcessProperties.getString("Label_ImportMode"));
-		parameterImportMode.setSelectedItem(ImportMode.NONE);
 		ReflectInfoImportMode.parameter = parameterImportMode;
 		result.add(ReflectInfoImportMode);
 		parameterCombineResultSet = new ParameterCombine();
@@ -461,8 +460,6 @@ public class ImportParameterCreator implements IParameterCreator {
 					parameterCombineDatasetIndex
 			);
 		} else if (importSetting instanceof ImportSettingWOR) {
-			//fixme 有必要吗？
-			initComboboxEncodeType(false);
 			result.clear();
 			parameterCombineResultSet = new ParameterCombine();
 			parameterCombineResultSet.setDescribe(CommonProperties.getString("String_ResultSet"));
@@ -483,14 +480,13 @@ public class ImportParameterCreator implements IParameterCreator {
 			parameterCombineResultSet = new ParameterCombine();
 			parameterCombineResultSet.setDescribe(CommonProperties.getString("String_ResultSet"));
 			parameterCombineResultSet.addParameters(
-					new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(parameterDatasource, parameterDataset),
-					new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(parameterDatasetTypeEnum, parameterImportMode)
+					new ParameterCombine(ParameterCombine.VERTICAL).addParameters(parameterDatasource, parameterDataset),
+					new ParameterCombine(ParameterCombine.VERTICAL).addParameters(parameterDatasetTypeEnum, parameterImportMode)
 			);
 		} else if (importSetting instanceof ImportSettingTAB || importSetting instanceof ImportSettingMIF
 				|| importSetting instanceof ImportSettingDWG || importSetting instanceof ImportSettingDXF
 				|| importSetting instanceof ImportSettingKML || importSetting instanceof ImportSettingKMZ
 				|| importSetting instanceof ImportSettingMAPGIS || importSetting instanceof ImportSettingDGN) {
-			initComboboxEncodeType(false);
 			parameterDatasetTypeEnum = createDatasetTypeEnum(importSetting);
 			ReflectInfo reflectInfoDatasetType = new ReflectInfo();
 			reflectInfoDatasetType.methodName = "setImportingAsCAD";
@@ -508,7 +504,18 @@ public class ImportParameterCreator implements IParameterCreator {
 				importSetting instanceof ImportSettingIMG || importSetting instanceof ImportSettingTIF ||
 				importSetting instanceof ImportSettingGIF || importSetting instanceof ImportSettingMrSID
 				|| importSetting instanceof ImportSettingECW) {
-		} /*else if (importSetting instanceof ImportSettingSIT || importSetting instanceof ImportSettingGRD ||
+			parameterDatasetTypeEnum = createDatasetTypeEnum(importSetting);
+			ReflectInfo reflectInfoDatasetType = new ReflectInfo();
+			reflectInfoDatasetType.methodName = "setImportingAsGrid";
+			reflectInfoDatasetType.parameter = parameterDatasetTypeEnum;
+			parameterCombineResultSet = new ParameterCombine();
+			parameterCombineResultSet.setDescribe(CommonProperties.getString("String_ResultSet"));
+			parameterCombineResultSet.addParameters(
+					parameterCombineSaveResult,
+					parameterCombineSecond,
+					parameterDatasetTypeEnum
+			);
+		} else if (importSetting instanceof ImportSettingSIT || importSetting instanceof ImportSettingGRD ||
 				importSetting instanceof ImportSettingGBDEM || importSetting instanceof ImportSettingUSGSDEM ||
 				importSetting instanceof ImportSettingSHP || importSetting instanceof ImportSettingE00 ||
 				importSetting instanceof ImportSettingDBF || importSetting instanceof ImportSettingBIL ||
@@ -517,7 +524,7 @@ public class ImportParameterCreator implements IParameterCreator {
 				importSetting instanceof ImportSettingRAW || importSetting instanceof ImportSettingGJB ||
 				importSetting instanceof ImportSettingTEMSVector || importSetting instanceof ImportSettingTEMSBuildingVector
 				|| importSetting instanceof ImportSettingFileGDBVector) {
-			this.comboBoxDatasetType = new DatasetTypeComboBox();
+			/*this.comboBoxDatasetType = new DatasetTypeComboBox();
 			if (importSetting instanceof ImportSettingGRD || importSetting instanceof ImportSettingGBDEM
 					|| importSetting instanceof ImportSettingUSGSDEM) {
 				this.comboBoxEncodeType.setModel(new DefaultComboBoxModel(new String[]{DataConversionProperties.getString("string_comboboxitem_nullcoding"), "SGL", "LZW"}));
@@ -545,8 +552,8 @@ public class ImportParameterCreator implements IParameterCreator {
 				this.checkBoxFieldIndex.setVisible(false);
 				this.checkBoxSpatialIndex.setVisible(false);
 			}
-			setDefaultSize();
-		} else if (importSetting instanceof ImportSettingLIDAR) {
+			setDefaultSize();*/
+		} /*else if (importSetting instanceof ImportSettingLIDAR) {
 			initComboboxEncodeType(false);
 			setDefaultImportSettingEncode();
 			this.comboBoxDatasetType = new DatasetTypeComboBox(new String[]{DataConversionProperties.getString("String_datasetType2D"), DataConversionProperties.getString("String_datasetType3D")});
@@ -645,8 +652,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			parser.parse();
 			result = new ParameterEnum(parser);
 			result.setSelectedItem(EncodeType.NONE);
-		}
-		if (importSetting instanceof ImportSettingGRD
+		} else if (importSetting instanceof ImportSettingGRD
 				|| importSetting instanceof ImportSettingGBDEM || importSetting instanceof ImportSettingUSGSDEM) {
 			parser.setEnumNames(new String[]{"NONE", "SGL", "LZW"});
 			parser.setChName(new String[]{CommonProperties.getString("String_EncodeType_None"), "SGL", "LZW"});
@@ -654,8 +660,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			parser.parse();
 			result = new ParameterEnum(parser);
 			result.setSelectedItem(EncodeType.NONE);
-		}
-		if (importSetting instanceof ImportSettingJPG || importSetting instanceof ImportSettingJP2 ||
+		} else if (importSetting instanceof ImportSettingJPG ||
 				importSetting instanceof ImportSettingPNG || importSetting instanceof ImportSettingBMP ||
 				importSetting instanceof ImportSettingIMG || importSetting instanceof ImportSettingTIF ||
 				importSetting instanceof ImportSettingGIF || importSetting instanceof ImportSettingMrSID
@@ -666,14 +671,20 @@ public class ImportParameterCreator implements IParameterCreator {
 			parser.parse();
 			result = new ParameterEnum(parser);
 			result.setSelectedItem(EncodeType.DCT);
-		}
-		if (importSetting instanceof ImportSettingECW) {
+		} else if (importSetting instanceof ImportSettingECW) {
 			parser.setEnumNames(new String[]{"NONE"});
 			parser.setChName(new String[]{CommonProperties.getString("String_EncodeType_None")});
 			parser.setEnumClass(EncodeType.class);
 			parser.parse();
 			result = new ParameterEnum(parser);
 			result.setSelectedItem(EncodeType.NONE);
+		} else if (importSetting instanceof ImportSettingJP2) {
+			parser.setChName(new String[]{CommonProperties.getString("String_EncodeType_None"), "DCT", "SGL", "PNG", "LZW"});
+			parser.setEnumNames(new String[]{"NONE", "DCT", "SGL", "PNG", "LZW"});
+			parser.setEnumClass(EncodeType.class);
+			parser.parse();
+			result = new ParameterEnum(parser);
+			result.setSelectedItem(EncodeType.DCT);
 		}
 		return result;
 	}
