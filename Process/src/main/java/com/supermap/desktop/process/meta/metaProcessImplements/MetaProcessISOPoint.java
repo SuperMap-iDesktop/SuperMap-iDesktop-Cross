@@ -16,12 +16,18 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.implement.AbstractParameter;
+import com.supermap.desktop.process.parameter.implement.DefaultParameters;
+import com.supermap.desktop.process.parameter.implement.ParameterCombine;
+import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
+import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
-
-import javax.swing.*;
 
 /**
  * Created by xie on 2017/3/10.
@@ -164,8 +170,4 @@ public class MetaProcessISOPoint extends MetaProcess {
 		return parameters.getPanel();
 	}
 
-	@Override
-	public Icon getIcon() {
-		return getIconByPath("/processresources/Tree_Node3.png");
-	}
 }
