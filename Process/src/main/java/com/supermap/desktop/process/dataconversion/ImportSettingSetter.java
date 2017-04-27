@@ -1,9 +1,13 @@
 package com.supermap.desktop.process.dataconversion;
 
+import com.supermap.data.DatasetType;
 import com.supermap.data.Point3D;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasetType;
+import com.supermap.desktop.process.parameter.implement.ParameterEnum;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
 import java.lang.reflect.Method;
@@ -26,13 +30,42 @@ public class ImportSettingSetter {
             Class importSettingClass = importSetting.getClass();
             int basicSize = basicInfos.size();
             for (int i = 0; i < basicSize; i++) {
-                if (basicInfos.get(i).parameter instanceof ISelectionParameter) {
+	            //// FIXME: 2017/4/27 空间索引和字段索引参数不是importSetting的，methodName为空
+	            if (basicInfos.get(i).methodName == null) continue;
+	            if (basicInfos.get(i).parameter instanceof ParameterDatasetType) {
+		            Object datasetType = ((ParameterDatasetType) basicInfos.get(i).parameter).getSelectedItem();
+		            boolean methodValue = false;
+		            if (datasetType instanceof DatasetType) {
+			            if (datasetType.equals(DatasetType.CAD)) {
+				            methodValue = true;
+			            }
+			            if (datasetType.equals(DatasetType.GRID)) {
+				            methodValue = true;
+			            }
+		            } else {
+			            String type = datasetType.toString();
+			            if (type.equals(ProcessProperties.getString("String_datasetType3D"))) {
+				            methodValue = true;
+			            }
+			            if (type.equals(ProcessProperties.getString("String_DatasetType_CAD"))) {
+				            methodValue = true;
+			            }
+			            if (type.equals(ProcessProperties.getString("string_comboboxitem_grid"))) {
+				            methodValue = true;
+			            }
+		            }
+		            Method method = importSettingClass.getMethod(basicInfos.get(i).methodName, boolean.class);
+		            invokeMethod(method, importSetting, methodValue);
+	            } else if (basicInfos.get(i).parameter instanceof ParameterEnum) {
+		            Method method = importSettingClass.getMethod(basicInfos.get(i).methodName, ((ParameterEnum) basicInfos.get(i).parameter).getSelectedData().getClass());
+		            invokeMethod(method, importSetting, ((ParameterEnum) basicInfos.get(i).parameter).getSelectedData());
+	            } else if (basicInfos.get(i).parameter instanceof ISelectionParameter) {
                     if (basicInfos.get(i).parameter instanceof ParameterCheckBox) {
                         Method method = importSettingClass.getMethod(basicInfos.get(i).methodName, boolean.class);
-                        method.invoke(importSetting, "true".equals(((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem()) ? true : false);
+	                    invokeMethod(method, importSetting, "true".equals(((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem()) ? true : false);
                     } else if (null != ((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem()) {
                         Method method = importSettingClass.getMethod(basicInfos.get(i).methodName, ((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem().getClass());
-                        method.invoke(importSetting, ((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem());
+	                    invokeMethod(method, importSetting, ((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem());
                     }
                 }
             }
@@ -70,11 +103,21 @@ public class ImportSettingSetter {
                 Exception e)
 
         {
-            Application.getActiveApplication().getOutput().output(e);
+	        e.printStackTrace();
+	        Application.getActiveApplication().getOutput().output(e);
         }
 
         DataImport dataImport = new DataImport();
         dataImport.getImportSettings().add(importSetting);
         return dataImport;
     }
+
+	public static void invokeMethod(Method method, Object object, Object... args) {
+		try {
+			method.invoke(object, args);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 }
