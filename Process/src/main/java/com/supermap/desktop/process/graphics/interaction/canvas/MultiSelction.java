@@ -28,7 +28,6 @@ public class MultiSelction extends Selection {
 	private Point selectionStart = Selection.UNKOWN_POINT;
 	private Rectangle dirtyRegion = new Rectangle(0, 0, 0, 0);
 	private Rectangle selectionRegion = new Rectangle(0, 0, 0, 0);
-//	private java.util.List<SelectedDecorator> decorators = new ArrayList();
 
 	public MultiSelction(GraphCanvas canvas) {
 		super(canvas);

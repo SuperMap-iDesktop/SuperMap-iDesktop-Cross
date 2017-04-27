@@ -73,13 +73,14 @@ public class GraphDragAction extends CanvasActionAdapter {
 
 			for (int i = 0, size = this.draggedGraphs.length; i < size; i++) {
 				IGraph dragged = this.draggedGraphs[i];
-				int desX = dragged.getLocation().x + offsetX;
-				int desY = dragged.getLocation().y + offsetY;
-				Rectangle desRect = new Rectangle(desX, desY, dragged.getWidth(), dragged.getHeight());
-				if (this.canvas.getCanvasRect().contains(desRect)) {
-					this.canvas.modifyGraphBounds(dragged, desX, desY, dragged.getWidth(), dragged.getHeight());
+				int originX = dragged.getLocation().x;
+				int originY = dragged.getLocation().y;
+				this.canvas.modifyGraphBounds(dragged, originX + offsetX, originY + offsetY, dragged.getWidth(), dragged.getHeight());
 
+				Rectangle desRect = dragged.getTotalBounds();
+				if (this.canvas.getCanvasRect().contains(desRect)) {
 					Rectangle refreshRect;
+
 					if (GraphicsUtil.isRegionValid(this.dirtys[i])) {
 						refreshRect = this.dirtys[i].union(desRect);
 					} else {
@@ -87,9 +88,11 @@ public class GraphDragAction extends CanvasActionAdapter {
 					}
 					this.dirtys[i] = desRect;
 					this.dragStart = dragEnd;
-					refreshRect.grow(3, 3);
 					refreshRect = this.canvas.getCoordinateTransform().transform(refreshRect);
+					refreshRect.grow(2, 2);
 					this.canvas.repaint(refreshRect);
+				} else {
+					this.canvas.modifyGraphBounds(dragged, originX, originY, dragged.getWidth(), dragged.getHeight());
 				}
 			}
 		}

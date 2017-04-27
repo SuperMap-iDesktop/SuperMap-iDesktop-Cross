@@ -14,7 +14,7 @@ import com.supermap.desktop.process.graphics.connection.GraphRelationLine;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
-import com.supermap.desktop.process.graphics.storage.IGraphConnection;
+import com.supermap.desktop.process.graphics.storage.IConnectionManager;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.tasks.TasksManagerContainer;
@@ -63,7 +63,7 @@ public class CtrlActionRun extends CtrlAction {
         FormProcess formProcess = (FormProcess) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
         GraphCanvas canvas = formProcess.getCanvas();
         IGraphStorage graphStorage = canvas.getGraphStorage();
-        IGraphConnection graphConnection = canvas.getConnection();
+        IConnectionManager graphConnection = canvas.getConnection();
         IGraph[] graphs = graphStorage.getGraphs();
         for (IGraph graph : graphs) {
             if (graph instanceof ProcessGraph) {
