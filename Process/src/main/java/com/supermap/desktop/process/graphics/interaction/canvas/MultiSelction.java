@@ -6,18 +6,19 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
-import com.supermap.desktop.process.graphics.graphs.decorator.AbstractDecorator;
-import com.supermap.desktop.process.graphics.graphs.decorator.SelectedDecorator;
+import com.supermap.desktop.process.graphics.graphs.decorators.IDecorator;
+import com.supermap.desktop.process.graphics.graphs.decorators.SelectedDecorator;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 /**
  * Created by highsad on 2017/3/2.
  */
 public class MultiSelction extends Selection {
+	private final static String DECORATOR_KEY = MultiSelction.class.getName();
+
 	private final static Color DEFAULT_REGION_COLOR = GraphicsUtil.transparentColor(Color.decode("#63B8FF"), 60);
 	private final static Color DEFAULT_BORDER_COLOR = Color.LIGHT_GRAY;
 
@@ -27,7 +28,7 @@ public class MultiSelction extends Selection {
 	private Point selectionStart = Selection.UNKOWN_POINT;
 	private Rectangle dirtyRegion = new Rectangle(0, 0, 0, 0);
 	private Rectangle selectionRegion = new Rectangle(0, 0, 0, 0);
-	private java.util.List<SelectedDecorator> decorators = new ArrayList();
+//	private java.util.List<SelectedDecorator> decorators = new ArrayList();
 
 	public MultiSelction(GraphCanvas canvas) {
 		super(canvas);
@@ -60,13 +61,6 @@ public class MultiSelction extends Selection {
 	@Override
 	public boolean isSelecting() {
 		return this.selectionStart != Selection.UNKOWN_POINT;
-	}
-
-	@Override
-	public void paintSelected(Graphics graphics) {
-		for (int i = 0; i < this.decorators.size(); i++) {
-			getCanvas().getPainterFactory().getPainter(this.decorators.get(i), graphics).paint();
-		}
 	}
 
 	@Override
@@ -112,6 +106,7 @@ public class MultiSelction extends Selection {
 					IGraph[] selected = getCanvas().findContainedGraphs(x, y, width, height);
 					selectItems(selected);
 				} else {
+					cleanDecorators();
 					this.selectedItems.clear();
 				}
 			} else {
@@ -179,10 +174,11 @@ public class MultiSelction extends Selection {
 	}
 
 	private void cleanDecorators() {
-		for (int i = this.decorators.size() - 1; i >= 0; i--) {
-			Rectangle dirtyRect = this.decorators.get(i).getBounds();
-			this.decorators.get(i).undecorate();
-			this.decorators.remove(i);
+		for (IGraph graph :
+				this.selectedItems) {
+			IDecorator decorator = graph.getDecorator(DECORATOR_KEY);
+			Rectangle dirtyRect = decorator.getBounds();
+			graph.removeDecorator(DECORATOR_KEY);
 			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(dirtyRect));
 		}
 	}
@@ -211,25 +207,21 @@ public class MultiSelction extends Selection {
 			// do nothing if the specified graph is the only graph which has been selected.
 			// otherwise,clean this selected items, and then select this specified graph and also fire graph selected events.
 			if (!this.selectedItems.contains(graph) || this.selectedItems.size() != 1) {
-				this.selectedItems.clear();
-				this.selectedItems.add(graph);
 				cleanDecorators();
+				this.selectedItems.clear();
 
-				SelectedDecorator decorator = new SelectedDecorator(getCanvas());
-				decorator.decorate(((AbstractGraph) graph));
-				this.decorators.add(decorator);
+				this.selectedItems.add(graph);
+				graph.addDecorator(DECORATOR_KEY, new SelectedDecorator(getCanvas()));
 				fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
+
+				getCanvas().repaint(getCanvas().getCoordinateTransform().transform(graph.getDecorator(DECORATOR_KEY).getBounds()));
 			}
 		} else {
 			if (this.selectedItems.size() > 0) {
-				this.selectedItems.clear();
 				cleanDecorators();
+				this.selectedItems.clear();
 				fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
 			}
-		}
-
-		for (int i = 0; i < this.decorators.size(); i++) {
-			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(this.decorators.get(i).getBounds()));
 		}
 	}
 
@@ -247,36 +239,27 @@ public class MultiSelction extends Selection {
 			for (int i = 0; i < graphs.length; i++) {
 				if (graphs[i] != null) {
 					this.selectedItems.add(graphs[i]);
-					SelectedDecorator decorator = new SelectedDecorator(getCanvas());
-					decorator.decorate(((AbstractGraph) graphs[i]));
-					this.decorators.add(decorator);
+					graphs[i].addDecorator(DECORATOR_KEY, new SelectedDecorator(getCanvas()));
 				}
 			}
 			fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
 		} else {
 			if (this.selectedItems.size() > 0) {
-				this.selectedItems.clear();
 				cleanDecorators();
+				this.selectedItems.clear();
 				fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
 			}
 		}
 
-		for (int i = 0; i < this.decorators.size(); i++) {
-			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(this.decorators.get(i).getBounds()));
+		for (int i = 0, size = this.selectedItems.size(); i < size; i++) {
+			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(this.selectedItems.get(i).getDecorator(DECORATOR_KEY).getBounds()));
 		}
 	}
 
 	@Override
 	public void deselectItem(IGraph graph) {
 		super.deselectItem(graph);
-		for (int i = 0; i < this.decorators.size(); i++) {
-			AbstractDecorator decorator = this.decorators.get(i);
-			if (decorator.getGraph() == graph) {
-				decorator.undecorate();
-				this.decorators.remove(decorator);
-				break;
-			}
-		}
+		graph.removeDecorator(DECORATOR_KEY);
 	}
 
 	@Override
@@ -287,4 +270,6 @@ public class MultiSelction extends Selection {
 		for (int i = 0; i < graphs.length; i++)
 			deselectItem(graphs[i]);
 	}
+
+
 }

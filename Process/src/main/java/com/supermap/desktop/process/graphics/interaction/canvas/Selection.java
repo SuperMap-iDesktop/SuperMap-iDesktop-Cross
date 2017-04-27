@@ -88,8 +88,6 @@ public abstract class Selection extends CanvasActionAdapter {
 		}
 	}
 
-	public abstract void paintSelected(Graphics graphics);
-
 	public abstract void paint(Graphics graphics);
 
 	@Override

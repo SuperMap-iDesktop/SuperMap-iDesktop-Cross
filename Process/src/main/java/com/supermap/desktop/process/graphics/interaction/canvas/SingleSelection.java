@@ -19,11 +19,6 @@ public class SingleSelection extends Selection {
 	}
 
 	@Override
-	public void paintSelected(Graphics graphics) {
-
-	}
-
-	@Override
 	public void mouseClicked(MouseEvent e) {
 		super.mouseClicked(e);
 	}

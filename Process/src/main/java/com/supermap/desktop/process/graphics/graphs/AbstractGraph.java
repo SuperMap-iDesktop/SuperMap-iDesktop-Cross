@@ -4,12 +4,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Plugin;
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedEvent;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
+import com.supermap.desktop.process.graphics.graphs.decorators.IDecorator;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.lang.reflect.Constructor;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by highsad on 2017/1/20.
@@ -17,6 +23,7 @@ import java.lang.reflect.Constructor;
 public abstract class AbstractGraph implements IGraph {
 	private GraphCanvas canvas;
 	protected Shape shape;
+	private ConcurrentHashMap<String, IDecorator> decorators = new ConcurrentHashMap<>();
 	private EventListenerList listenerList = new EventListenerList();
 
 	private AbstractGraph() {
@@ -40,6 +47,24 @@ public abstract class AbstractGraph implements IGraph {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public Rectangle getTotalBounds() {
+		Rectangle totalBounds = getBounds();
+		if (!GraphicsUtil.isRegionValid(totalBounds)) {
+			return null;
+		}
+
+		for (int i = 0, size = this.decorators.size(); i < size; i++) {
+			IDecorator decorator = this.decorators.get(i);
+			Rectangle decoratorBounds = decorator.getBounds();
+
+			if (GraphicsUtil.isRegionValid(decoratorBounds)) {
+				totalBounds = totalBounds.union(decoratorBounds);
+			}
+		}
+		return totalBounds;
 	}
 
 	@Override
@@ -111,7 +136,17 @@ public abstract class AbstractGraph implements IGraph {
 
 	@Override
 	public boolean contains(Point point) {
-		return this.shape.contains(point);
+		boolean result = this.shape.contains(point);
+
+		if (!result) {
+			for (int i = 0, size = this.decorators.size(); i < size; i++) {
+				result = this.decorators.get(i).contains(point);
+				if (result) {
+					break;
+				}
+			}
+		}
+		return result;
 	}
 
 	@Override
@@ -121,6 +156,68 @@ public abstract class AbstractGraph implements IGraph {
 
 	public GraphCanvas getCanvas() {
 		return this.canvas;
+	}
+
+	@Override
+	public IDecorator[] getDecorators() {
+		Set<Map.Entry<String, IDecorator>> entrySet = this.decorators.entrySet();
+		IDecorator[] result = new IDecorator[entrySet.size()];
+		entrySet.toArray(result);
+		return result;
+	}
+
+	@Override
+	public int getDecoratorSize() {
+		return this.decorators.size();
+	}
+
+	@Override
+	public IDecorator getDecorator(String key) {
+		return this.decorators.get(key);
+	}
+
+	@Override
+	public void addDecorator(String key, IDecorator decorator) {
+		if (StringUtilities.isNullOrEmpty(key) || decorator == null) {
+			return;
+		}
+
+		this.decorators.put(key, decorator);
+		decorator.decorate(this);
+	}
+
+	@Override
+	public void removeDecorator(String key) {
+		if (this.decorators.containsKey(key)) {
+			this.decorators.get(key).undecorate();
+			this.decorators.remove(key);
+		}
+	}
+
+	@Override
+	public void removeDecorator(IDecorator decorator) {
+		if (decorator == null) {
+			return;
+		}
+
+		for (String key :
+				this.decorators.keySet()) {
+			if (this.decorators.get(key) == decorator) {
+				this.decorators.remove(key);
+				break;
+			}
+		}
+		decorator.undecorate();
+	}
+
+	@Override
+	public boolean isDecoratedBy(String key) {
+		return this.decorators.containsKey(key);
+	}
+
+	@Override
+	public boolean isDecoratedBy(IDecorator decorator) {
+		return decorator != null && this.decorators.contains(decorator);
 	}
 
 	@Override
@@ -160,6 +257,18 @@ public abstract class AbstractGraph implements IGraph {
 		formXmlHook(xml);
 		return this;
 	}
+
+	@Override
+	public void paint(Graphics g) {
+		onPaint(g);
+
+		for (String key :
+				this.decorators.keySet()) {
+			this.decorators.get(key).paint(g);
+		}
+	}
+
+	protected abstract void onPaint(Graphics g);
 
 	protected void formXmlHook(JSONObject xml) {
 

@@ -1,7 +1,6 @@
-package com.supermap.desktop.process.graphics.graphs.decorator;
+package com.supermap.desktop.process.graphics.graphs.decorators;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import java.awt.*;
 
@@ -11,6 +10,11 @@ import java.awt.*;
 public class PreviewDecorator extends AbstractDecorator {
 
 	public PreviewDecorator(GraphCanvas canvas) {
-		super(canvas, null);
+		super(canvas);
+	}
+
+	@Override
+	protected void onPaint(Graphics g) {
+
 	}
 }

@@ -14,8 +14,6 @@ import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.process.graphics.interaction.canvas.*;
 import com.supermap.desktop.process.graphics.interaction.graph.DefaultGraphEventHanderFactory;
 import com.supermap.desktop.process.graphics.interaction.graph.IGraphEventHandlerFactory;
-import com.supermap.desktop.process.graphics.painter.DefaultGraphPainterFactory;
-import com.supermap.desktop.process.graphics.painter.IGraphPainterFactory;
 import com.supermap.desktop.process.graphics.storage.IGraphConnection;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.graphics.storage.ListGraphConnection;
@@ -50,7 +48,6 @@ public class GraphCanvas extends JComponent {
 	private Rectangle canvasRect = new Rectangle(-2000, -2000, 4000, 4000);
 	private IGraphStorage graphStorage = new ListGraphs(); // 画布元素的存储结构
 	private CoordinateTransform coordinateTransform = new CoordinateTransform(this); // 用以在画布平移、缩放等操作过后进行坐标转换
-	private IGraphPainterFactory painterFactory = new DefaultGraphPainterFactory(this); // 元素绘制的可扩展类
 	private IGraphEventHandlerFactory graphHandlerFactory = new DefaultGraphEventHanderFactory(); // 在某具体元素上进行的可扩展交互类
 	private CanvasActionsManager actionsManager = new CanvasActionsManager(this);
 	private IGraphConnection connection = new ListGraphConnection(this);
@@ -205,14 +202,6 @@ public class GraphCanvas extends JComponent {
 		this.graphStorage = graphStorage;
 	}
 
-	public IGraphPainterFactory getPainterFactory() {
-		return painterFactory;
-	}
-
-	public void setPainterFactory(IGraphPainterFactory painterFactory) {
-		this.painterFactory = painterFactory;
-	}
-
 	public void setSelectedDecorator(IGraph selectedDecorator) {
 
 	}
@@ -306,7 +295,6 @@ public class GraphCanvas extends JComponent {
 		paintLines(graphics2D);
 		paintGraphs(graphics2D);
 		this.connector.preview(graphics2D);
-		this.selection.paintSelected(graphics2D);
 		this.lineInteraction.paint(graphics2D);
 		graphics2D.setTransform(origin);
 
@@ -338,8 +326,7 @@ public class GraphCanvas extends JComponent {
 	private void paintGraphs(Graphics2D g) {
 		IGraph[] graphs = this.graphStorage.getGraphs();
 		for (int i = 0; i < graphs.length; i++) {
-			IGraph graph = graphs[i];
-			this.painterFactory.getPainter(graph, g).paint();
+			graphs[i].paint(g);
 		}
 	}
 

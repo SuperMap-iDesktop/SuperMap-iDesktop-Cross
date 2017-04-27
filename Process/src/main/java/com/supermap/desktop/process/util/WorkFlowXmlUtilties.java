@@ -4,7 +4,6 @@ import com.supermap.desktop.process.core.DirectConnect;
 import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
-import com.supermap.desktop.process.graphics.graphs.LineGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
@@ -137,7 +136,7 @@ public class WorkFlowXmlUtilties {
 		CopyOnWriteArrayList allNodes = matrix.getAllNodes();
 		ArrayList<IGraph> arrayList = new ArrayList<>();
 		for (Object allNode : allNodes) {
-			if (allNode instanceof IGraph && !(allNode instanceof LineGraph)) {
+			if (allNode instanceof IGraph) {
 				Element graph = document.createElement("graph");
 				graph.setAttribute("value", ((IGraph) allNode).toXml());
 				graph.setAttribute("ID", String.valueOf(arrayList.size()));
@@ -148,10 +147,10 @@ public class WorkFlowXmlUtilties {
 		Element connections = document.createElement("connections");
 		nodeMatrix.appendChild(connections);
 		for (Object allNode : allNodes) {
-			if (allNode instanceof IGraph && !(allNode instanceof LineGraph)) {
+			if (allNode instanceof IGraph) {
 				CopyOnWriteArrayList nextNodes = matrix.getNextNodes(allNode);
 				for (Object node : nextNodes) {
-					if (node instanceof IGraph && !(node instanceof LineGraph)) {
+					if (node instanceof IGraph) {
 						Element connect = document.createElement("connect");
 						connect.setAttribute("startId", String.valueOf(arrayList.indexOf(allNode)));
 						connect.setAttribute("endId", String.valueOf(arrayList.indexOf(node)));
