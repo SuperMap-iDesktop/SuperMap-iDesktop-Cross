@@ -24,6 +24,7 @@ public class ParameterCombine extends AbstractParameter {
 	private ArrayList<ParameterCombineBuildPanelListener> parameterCombineBuildPanelListeners = new ArrayList<>();
 	private String combineType = VERTICAL;
 	private int weightIndex = -1;
+	private boolean rebuildEveryTime;
 
 	public ParameterCombine() {
 
@@ -124,5 +125,13 @@ public class ParameterCombine extends AbstractParameter {
 		if (!parameterCombineBuildPanelListeners.contains(parameterCombineBuildPanelListener)) {
 			parameterCombineBuildPanelListeners.add(parameterCombineBuildPanelListener);
 		}
+	}
+
+	public boolean isRebuildEveryTime() {
+		return rebuildEveryTime;
+	}
+
+	public void setRebuildEveryTime(boolean rebuildEveryTime) {
+		this.rebuildEveryTime = rebuildEveryTime;
 	}
 }

@@ -434,6 +434,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 						}
 					} catch (Exception e) {
 						// ignore 当然是原谅ta啦
+						Application.getActiveApplication().getOutput().output(e);
 					}
 				}
 			}

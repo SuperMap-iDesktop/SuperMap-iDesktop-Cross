@@ -4,6 +4,8 @@ import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 
+import java.util.ArrayList;
+
 /**
  * Created by highsad on 2017/1/5.
  */
@@ -11,7 +13,9 @@ public interface IParameters {
 
 	void setParameters(IParameter... iParameters);
 
-	IParameter[] getParameters();
+	void addParameters(IParameter... iParameters);
+
+	ArrayList<IParameter> getParameters();
 
 	IParameter getParameter(String key);
 

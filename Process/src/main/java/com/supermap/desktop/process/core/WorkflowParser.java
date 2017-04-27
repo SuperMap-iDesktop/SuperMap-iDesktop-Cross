@@ -16,7 +16,16 @@ import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessOverla
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessProjection;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSpatialIndex;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSqlQuery;
+import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessAutoCorrelation;
 import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessCentralElement;
+import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessClusterOutlierAnalyst;
+import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessDirectional;
+import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessGeographicWeightedRegression;
+import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessHighOrLowClustering;
+import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessHotSpotAnalyst;
+import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessMeanCenter;
+import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessMedianCenter;
+import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessOptimizedHotSpotAnalyst;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
@@ -201,21 +210,23 @@ public class WorkflowParser {
         } else if (MetaKeys.CentralElement.equals(key)) {
 	        result = new MetaProcessCentralElement();
         } else if (MetaKeys.MeanCenter.equals(key)) {
-
+	        result = new MetaProcessMeanCenter();
         } else if (MetaKeys.MedianCenter.equals(key)) {
-
+	        result = new MetaProcessMedianCenter();
         } else if (MetaKeys.Directional.equals(key)) {
-
+	        result = new MetaProcessDirectional();
         } else if (MetaKeys.autoCorrelation.equals(key)) {
-
+	        return new MetaProcessAutoCorrelation();
         } else if (MetaKeys.highOrLowClustering.equals(key)) {
-
+	        result = new MetaProcessHighOrLowClustering();
         } else if (MetaKeys.clusterOutlierAnalyst.equals(key)) {
-
+	        result = new MetaProcessClusterOutlierAnalyst();
         } else if (MetaKeys.hotSpotAnalyst.equals(key)) {
-
+	        result = new MetaProcessHotSpotAnalyst();
         } else if (MetaKeys.geographicWeightedRegression.equals(key)) {
-
+	        result = new MetaProcessGeographicWeightedRegression();
+        } else if (MetaKeys.optimizedHotSpotAnalyst.equals(key)) {
+	        result = new MetaProcessOptimizedHotSpotAnalyst();
         } else if (key.contains(MetaKeys.IMPORT)) {
             String importType = key.replace(MetaKeys.IMPORT, "");
             result = MetaProcessImportFactory.createMetaProcessImport(importType);

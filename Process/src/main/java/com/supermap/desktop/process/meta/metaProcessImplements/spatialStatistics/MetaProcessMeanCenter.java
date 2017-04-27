@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics;
 
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 
@@ -9,7 +10,7 @@ import com.supermap.desktop.process.meta.MetaProcess;
 public class MetaProcessMeanCenter extends MetaProcess {
 	@Override
 	public String getTitle() {
-		return null;
+		return ProcessProperties.getString("String_MeanCenter");
 	}
 
 
