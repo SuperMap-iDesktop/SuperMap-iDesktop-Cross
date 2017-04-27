@@ -41,9 +41,12 @@ public class ParameterComboBoxPanel extends SwingPanel implements IParameterPane
 		}
 		if (this.parameterComboBox.getSelectedItem() != null) {
 			comboBox.setSelectedItem(this.parameterComboBox.getSelectedItem());
+		} else {
+			((ParameterComboBox) parameterComboBox).setSelectedItem(comboBox.getSelectedItem());
 		}
 		initListeners(this.parameterComboBox);
 		label.setText(this.parameterComboBox.getDescribe());
+		label.setToolTipText(this.parameterComboBox.getDescribe());
 		comboBox.setRenderer(new ParameterComboBoxCellRender());
 
 		initLayout();

@@ -13,18 +13,18 @@ import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.utilities.ArrayUtilities;
 
 import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @author XiaJT
  */
 public class DefaultParameters implements IParameters {
-	protected IParameter[] parameters;
+	protected ArrayList<IParameter> parameters = new ArrayList<>();
 	protected JPanel panel;
 	private ArrayList<ParameterClassBundleNode> packages = new ArrayList<>();
 	protected EmptyParameterPanel parameterPanel = new EmptyParameterPanel();
@@ -39,7 +39,7 @@ public class DefaultParameters implements IParameters {
 				InputData inputData = event.getInputData();
 				ArrayList<IParameter> parameters = inputData.getParameters();
 				for (IParameter parameter : parameters) {
-					if (ArrayUtilities.isArrayContains(DefaultParameters.this.parameters, parameter)) {
+					if (parameters.contains(parameter)) {
 						// TODO: 2017/4/23 展示形式未定
 						// 需要考虑与图联动，不同类型parameter都需要支持选择。
 						// 在未连接时是否需要列出选择项
@@ -55,7 +55,7 @@ public class DefaultParameters implements IParameters {
 
 	@Override
 	public void setParameters(IParameter... iParameters) {
-		if (this.parameters != null && this.parameters.length > 0) {
+		if (this.parameters != null && this.parameters.size() > 0) {
 			for (IParameter parameter : parameters) {
 				parameter.dispose();
 				parameter.setParameters(null);
@@ -65,17 +65,29 @@ public class DefaultParameters implements IParameters {
 			panel.removeAll();
 		}
 		panel = null;
-		this.parameters = iParameters;
-		if (this.parameters != null && this.parameters.length > 0) {
+		Collections.addAll(parameters, iParameters);
+		if (this.parameters != null && this.parameters.size() > 0) {
 			for (IParameter parameter : parameters) {
 				parameter.setParameters(this);
 			}
 		}
 	}
 
+	@Override
+	public void addParameters(IParameter... iParameters) {
+		Collections.addAll(parameters, iParameters);
+		for (IParameter iParameter : iParameters) {
+			iParameter.setParameters(this);
+		}
+		if (panel != null) {
+			panel.removeAll();
+		}
+		panel = null;
+	}
+
 
 	@Override
-	public IParameter[] getParameters() {
+	public ArrayList<IParameter> getParameters() {
 		return parameters;
 	}
 
@@ -91,15 +103,15 @@ public class DefaultParameters implements IParameters {
 
 	@Override
 	public IParameter getParameter(int index) {
-		if (index >= 0 && index < parameters.length) {
-			return parameters[index];
+		if (index >= 0 && index < parameters.size()) {
+			return parameters.get(index);
 		}
 		return null;
 	}
 
 	@Override
 	public int size() {
-		return parameters.length;
+		return parameters.size();
 	}
 
 	@Override
@@ -107,10 +119,10 @@ public class DefaultParameters implements IParameters {
 		if (panel == null) {
 			panel = new JPanel();
 			panel.setLayout(new GridBagLayout());
-			for (int i = 0; i < parameters.length; i++) {
-				panel.add((JPanel) parameters[i].getParameterPanel().getPanel(), new GridBagConstraintsHelper(0, i, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
+			for (int i = 0; i < parameters.size(); i++) {
+				panel.add((JPanel) parameters.get(i).getParameterPanel().getPanel(), new GridBagConstraintsHelper(0, i, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 0, 10));
 			}
-			panel.add(new JPanel(), new GridBagConstraintsHelper(0, parameters.length, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
+			panel.add(new JPanel(), new GridBagConstraintsHelper(0, parameters.size(), 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH));
 		}
 		parameterPanel.setPanel(panel);
 		return parameterPanel;

@@ -39,7 +39,11 @@ public class ParameterSwitchPanel extends SwingPanel {
 	@Override
 	public Object getPanel() {
 		panel.setLayout(new GridBagLayout());
-		panel.add((JPanel) parameter.getCurrentParameter().getParameterPanel().getPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
+		if (parameter.getCurrentParameter() != null) {
+			panel.add((JPanel) parameter.getCurrentParameter().getParameterPanel().getPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
+		} else {
+			panel.add(new JPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setInsets(-5, 0, 0, 0));
+		}
 		return panel;
 	}
 
