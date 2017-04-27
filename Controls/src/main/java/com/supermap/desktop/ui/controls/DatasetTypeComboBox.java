@@ -4,10 +4,13 @@ import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlDefaultValues;
+import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,6 +34,7 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 	private transient DatasetType[] supportedDatasetTypes;
 	//是否含有“所有数据类型”这一项，默认不含
 	private boolean isAllShown = false;
+	private boolean isSimpleDatasetShown = false;
 
 	// 为了保证顺序，不能遍历
 	public static final DatasetType[] ALL_DATASET_TYPE = new DatasetType[]{
@@ -134,7 +138,12 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 			}
 			this.setModel(new DefaultComboBoxModel<>(result));
 			this.setBorder(BorderFactory.createEtchedBorder(1));
-
+			if (isSimpleDatasetShown) {
+				String fileParentPath = "/controlsresources/WorkspaceManager/Dataset/Image_SimpleDataset_Normal.png";
+				URL url = ControlsResources.getResourceURL(fileParentPath);
+				ImageIcon simpleDatasetIcon = new ImageIcon(url);
+				this.addItem(new DataCell(simpleDatasetIcon, ControlsProperties.getString("string_comboboxitem_sample")));
+			}
 			ListCellRenderer<Object> renderer = new CommonListCellRenderer();
 			setRenderer(renderer);
 		}
@@ -158,6 +167,16 @@ public class DatasetTypeComboBox extends JComboBox<DataCell> {
 	 */
 	public void setAllShown(boolean isAllShown) {
 		this.isAllShown = isAllShown;
+		inits();
+	}
+
+	/**
+	 * 设置是否显示 “简答数据集”选项
+	 *
+	 * @param isSimpleDatasetShown true-显示/ false-不显示
+	 */
+	public void setSimpleDatasetShown(boolean isSimpleDatasetShown) {
+		this.isSimpleDatasetShown = isSimpleDatasetShown;
 		inits();
 	}
 

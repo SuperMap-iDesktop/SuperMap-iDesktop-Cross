@@ -12,7 +12,7 @@
                     <process key="ImportSHP" name=".SHP"/>
                     <process key="ImportGRD" name=".GRD"/>
                     <process key="ImportTXT" name=".TXT"/>
-                    <process key="ImportEOO" name=".EOO"/>
+                    <process key="ImportE00" name=".E00"/>
                     <process key="ImportGBDEM" name=".DEM"/>
                     <process key="ImportDBF" name=".DBF"/>
                 </process>

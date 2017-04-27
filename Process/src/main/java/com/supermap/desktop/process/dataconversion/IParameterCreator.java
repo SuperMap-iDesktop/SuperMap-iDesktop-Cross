@@ -31,6 +31,6 @@ public interface IParameterCreator<T> {
 
     ParameterFile getParameterFile();
 
-    ParameterTextField getDatasetName();
+	ParameterTextField getParameterDataset();
 
 }

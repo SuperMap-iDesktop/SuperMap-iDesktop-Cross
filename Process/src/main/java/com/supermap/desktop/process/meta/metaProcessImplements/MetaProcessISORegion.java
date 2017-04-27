@@ -3,24 +3,12 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
-import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
+import com.supermap.data.*;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.AbstractParameter;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
@@ -32,7 +20,7 @@ public class MetaProcessISORegion extends MetaProcess {
 	private final static String INPUT_DATA = "InputData";
 	private final static String OUTPUT_DATA = "ExtractResult";
 
-	private ParameterDatasource sourceDatasource;
+	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset dataset;
 	private ParameterSaveDataset targetDataset;
 	private ParameterTextField maxGrid;
@@ -60,7 +48,7 @@ public class MetaProcessISORegion extends MetaProcess {
 	public MetaProcessISORegion() {
 
 		parameters = new DefaultParameters();
-		sourceDatasource = new ParameterDatasource();
+		sourceDatasource = new ParameterDatasourceConstrained();
 		sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		dataset = new ParameterSingleDataset(DatasetType.GRID);
 
@@ -104,7 +92,6 @@ public class MetaProcessISORegion extends MetaProcess {
 		parameters.setParameters(sourceData, targetData, resultInfo, paramSet);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.REGION, targetData);
-		DatasourceConstraint.getInstance().constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 	}
 
 	@Override

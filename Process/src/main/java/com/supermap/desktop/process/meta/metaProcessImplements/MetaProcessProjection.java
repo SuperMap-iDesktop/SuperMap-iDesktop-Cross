@@ -1,17 +1,12 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.GeoCoordSys;
-import com.supermap.data.GeoCoordSysType;
-import com.supermap.data.GeoSpatialRefType;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.data.PrjCoordSysType;
+import com.supermap.data.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
 import com.supermap.desktop.process.parameter.implement.ParameterEnum;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -27,14 +22,14 @@ import com.supermap.desktop.properties.CoreProperties;
 public class MetaProcessProjection extends MetaProcess {
 	private final static String INPUT_DATA = "InputData";
 	private final static String OUTPUT_DATA = "output";
-	private ParameterDatasource datasource;
+	private ParameterDatasourceConstrained datasource;
 	private ParameterSingleDataset dataset;
 	private ParameterEnum parameterComboBox;
 
 	public MetaProcessProjection() {
 
 		parameters = new DefaultParameters();
-		datasource = new ParameterDatasource();
+		datasource = new ParameterDatasourceConstrained();
 		dataset = new ParameterSingleDataset();
 		datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 
@@ -74,7 +69,7 @@ public class MetaProcessProjection extends MetaProcess {
 			src = (Dataset) this.dataset.getSelectedItem();
 		}
 		fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
-		GeoCoordSysType geoCoordSysType = (GeoCoordSysType) parameterComboBox.getSelectedItem();
+		GeoCoordSysType geoCoordSysType = (GeoCoordSysType) parameterComboBox.getSelectedData();
 		GeoCoordSys geoCoordSys = new GeoCoordSys(geoCoordSysType, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
 		PrjCoordSys prjCoordSys = new PrjCoordSys(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE);
 		prjCoordSys.setGeoCoordSys(geoCoordSys);

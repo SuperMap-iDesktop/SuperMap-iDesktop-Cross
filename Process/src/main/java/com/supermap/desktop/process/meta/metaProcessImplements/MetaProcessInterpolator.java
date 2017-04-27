@@ -1,23 +1,7 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.analyst.spatialanalyst.InterpolationAlgorithmType;
-import com.supermap.analyst.spatialanalyst.InterpolationIDWParameter;
-import com.supermap.analyst.spatialanalyst.InterpolationKrigingParameter;
-import com.supermap.analyst.spatialanalyst.InterpolationParameter;
-import com.supermap.analyst.spatialanalyst.InterpolationRBFParameter;
-import com.supermap.analyst.spatialanalyst.Interpolator;
-import com.supermap.analyst.spatialanalyst.SearchMode;
-import com.supermap.analyst.spatialanalyst.VariogramMode;
-import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasets;
-import com.supermap.data.Datasource;
-import com.supermap.data.FieldInfo;
-import com.supermap.data.PixelFormat;
-import com.supermap.data.Rectangle2D;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.analyst.spatialanalyst.*;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
@@ -29,15 +13,7 @@ import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.ParameterSearchModeInfo;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterSearchMode;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
@@ -50,7 +26,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 	private final static String INPUT_DATA = "InputData";
 	private final static String OUTPUT_DATA = "InterpolateResult";
 
-	private ParameterDatasource parameterDatasource;
+	private ParameterDatasourceConstrained parameterDatasource;
 	private ParameterSingleDataset parameterDataset;
 	private ParameterFieldComboBox parameterInterpolatorFields;
 	private ParameterTextField parameterScaling;
@@ -91,7 +67,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 
 		this.interpolationAlgorithmType = interpolationAlgorithmType;
 		parameters = new DefaultParameters();
-		parameterDatasource = new ParameterDatasource();
+		parameterDatasource = new ParameterDatasourceConstrained();
 		parameterDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		Datasource currentDatasource = null;
 		if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0) {
@@ -263,7 +239,6 @@ public class MetaProcessInterpolator extends MetaProcess {
 		equalDatasourceConstraint.constrained(parameterDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(parameterDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
-		DatasourceConstraint.getInstance().constrained(parameterDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(parameterResultDatasetName, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 
 		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();

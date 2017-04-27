@@ -5,7 +5,6 @@ import com.supermap.data.Datasources;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
-import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
@@ -69,7 +68,7 @@ public class ParameterDatasourcePanel extends SwingPanel {
 		parameterDatasource.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (!isSelectingItem && evt.getPropertyName().equals(AbstractParameter.PROPERTY_VALE)) {
+				if (!isSelectingItem && evt.getPropertyName().equals(ParameterDatasource.DATASOURCE_FIELD_NAME)) {
 					isSelectingItem = true;
 					datasourceComboBox.setSelectedItem(evt.getNewValue());
 					isSelectingItem = false;

@@ -42,8 +42,8 @@ public class ParameterEnum extends AbstractParameter implements ISelectionParame
         }
         if (value instanceof ParameterDataNode) {
             Object oldValue = this.value;
-            this.value = ((ParameterDataNode) value).getData();
-            firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, this.value));
+	        this.value = value;
+	        firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, this.value));
         }
     }
 
@@ -51,6 +51,13 @@ public class ParameterEnum extends AbstractParameter implements ISelectionParame
     public Object getSelectedItem() {
         return value;
     }
+
+	public Object getSelectedData() {
+		if (value != null && value instanceof ParameterDataNode) {
+			return ((ParameterDataNode) value).getData();
+		}
+		return value;
+	}
 
     public EnumParser getEnumParser() {
         return parser;

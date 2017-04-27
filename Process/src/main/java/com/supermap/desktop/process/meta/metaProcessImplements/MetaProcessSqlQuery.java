@@ -1,11 +1,6 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.CursorType;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasource;
-import com.supermap.data.QueryParameter;
-import com.supermap.data.Recordset;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
@@ -14,12 +9,7 @@ import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstrai
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
@@ -35,7 +25,7 @@ import java.util.ArrayList;
 public class MetaProcessSqlQuery extends MetaProcess {
 	private final static String INPUT_DATA = "InputData";
 	private final static String OUTPUT_DATA = "QueryResult";
-	private ParameterDatasource datasource;
+	private ParameterDatasourceConstrained datasource;
 	private ParameterSingleDataset dataset;
 	private ParameterTextArea parameterAttributeFilter;
 	private ParameterTextArea parameterResultFields;
@@ -52,7 +42,7 @@ public class MetaProcessSqlQuery extends MetaProcess {
 
 	private void initMetaInfo() {
 
-		datasource = new ParameterDatasource();
+		datasource = new ParameterDatasourceConstrained();
 		this.datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameters = new DefaultParameters();
 		this.dataset = new ParameterSingleDataset(datasetTypes);
@@ -83,7 +73,6 @@ public class MetaProcessSqlQuery extends MetaProcess {
 	}
 
 	private void initParameterConstraint() {
-		DatasourceConstraint.getInstance().constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(parameterSaveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 

@@ -90,8 +90,8 @@ public class MetaProcessImport extends MetaProcess {
 
     public void updateParameters() {
         parameterFile = parameterCreator.getParameterFile();
-        datasetName = parameterCreator.getDatasetName();
-        if (null != parameterCreator.getParameterCombineParamSet()) {
+	    datasetName = parameterCreator.getParameterDataset();
+	    if (null != parameterCreator.getParameterCombineParamSet()) {
             parameters.setParameters(parameterFile, parameterCreator.getParameterCombineResultSet(), parameterCreator.getParameterCombineParamSet());
         } else {
             parameters.setParameters(parameterFile, parameterCreator.getParameterCombineResultSet());
