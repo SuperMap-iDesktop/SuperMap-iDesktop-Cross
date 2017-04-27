@@ -11,10 +11,12 @@ import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.mapping.Layer;
 
+import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreePath;
+import java.awt.*;
 
 /**
  * 通用UI工具类
@@ -308,5 +310,17 @@ public class UICommonToolkit {
 			smOptionPane = new SmOptionPane();
 		}
 		return smOptionPane;
+	}
+
+	public static void setComponentEnabled(JComponent component, Boolean isEnabled) {
+		if (component == null) return;
+		component.setEnabled(isEnabled);
+		Component[] components = component.getComponents();
+
+		for (int i = 0; i < components.length; i++) {
+			if (components[i] instanceof JComponent) {
+				setComponentEnabled((JComponent) components[i], isEnabled);
+			}
+		}
 	}
 }

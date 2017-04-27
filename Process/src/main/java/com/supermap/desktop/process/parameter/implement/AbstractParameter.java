@@ -2,11 +2,7 @@ package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
-import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
-import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
-import com.supermap.desktop.process.parameter.events.ParameterValueLegalEvent;
-import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
-import com.supermap.desktop.process.parameter.events.ParameterValueSelectedEvent;
+import com.supermap.desktop.process.parameter.events.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
@@ -29,6 +25,8 @@ public abstract class AbstractParameter implements IParameter {
 
 	public static final String DO_NOT_CARE = new String("Don't Care");
 	public static final String NO = new String("NO");
+
+	public boolean isEnabled = true;
 
 	private List<PropertyChangeListener> propertyChangeListeners = new ArrayList<>();
 	private List<ParameterValueLegalListener> parameterValueLegalListeners = new ArrayList<>();
@@ -179,5 +177,15 @@ public abstract class AbstractParameter implements IParameter {
 			}
 		}
 		throw new Exception(ProcessProperties.getString("String_FieldDontExist"));
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		isEnabled = enabled;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return this.isEnabled;
 	}
 }

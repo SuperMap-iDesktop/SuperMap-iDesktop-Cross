@@ -13,6 +13,10 @@ import java.util.ArrayList;
 public interface IParameter extends IAbstractParameter {
 	String getType();
 
+	boolean isEnabled();
+
+	void setEnabled(boolean enabled);
+
 
 	void addValueLegalListener(ParameterValueLegalListener parameterValueLegalListener);
 
