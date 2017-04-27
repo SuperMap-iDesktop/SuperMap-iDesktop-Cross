@@ -3,6 +3,7 @@ package com.supermap.desktop.process.graphics.graphs;
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
+import com.supermap.desktop.process.graphics.graphs.decorators.IDecorator;
 
 import java.awt.*;
 
@@ -17,7 +18,25 @@ public interface IGraph {
 
 	GraphCanvas getCanvas();
 
+	IDecorator[] getDecorators();
+
+	int getDecoratorSize();
+
+	IDecorator getDecorator(String key);
+
+	void addDecorator(String key, IDecorator decorator);
+
+	void removeDecorator(IDecorator decorator);
+
+	void removeDecorator(String key);
+
+	boolean isDecoratedBy(IDecorator decorator);
+
+	boolean isDecoratedBy(String key);
+
 	Rectangle getBounds();
+
+	Rectangle getTotalBounds();
 
 	Point getLocation();
 
@@ -40,4 +59,6 @@ public interface IGraph {
 	String toXml();
 
 	IGraph formXml(JSONObject xml);
+
+	void paint(Graphics g);
 }

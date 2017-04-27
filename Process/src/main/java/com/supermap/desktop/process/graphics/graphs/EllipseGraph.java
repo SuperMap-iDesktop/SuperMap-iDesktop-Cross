@@ -36,6 +36,12 @@ public class EllipseGraph extends AbstractGraph {
 	}
 
 	@Override
+	protected void onPaint(Graphics g) {
+		g.setColor(new Color(254, 244, 236));
+		((Graphics2D) g).fill(this.shape);
+	}
+
+	@Override
 	protected void toXmlHook(JSONObject jsonObject) {
 		jsonObject.put("shape", getShape().getX() + "," + getShape().getY() + "," + getShape().getWidth() + "," + getShape().getHeight());
 	}

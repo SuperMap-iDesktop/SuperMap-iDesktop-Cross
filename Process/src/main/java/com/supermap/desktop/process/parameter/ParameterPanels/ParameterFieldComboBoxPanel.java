@@ -19,6 +19,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * @author XiaJT
@@ -33,6 +35,23 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 	public ParameterFieldComboBoxPanel(IParameter parameter) {
 		super(parameter);
 		this.parameterFieldComboBox = (ParameterFieldComboBox) parameter;
+		parameterFieldComboBox.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getPropertyName().equals(ParameterFieldComboBox.DATASET_FIELD_NAME)) {
+
+					DatasetVector newValue = (DatasetVector) evt.getNewValue();
+					if (newValue != null) {
+						resetComboBoxItems(newValue);
+					} else {
+						isSelectingItem = true;
+						comboBox.removeAllItems();
+						parameterFieldComboBox.setSelectedItem(null);
+						isSelectingItem = false;
+					}
+				}
+			}
+		});
 		initComponentState();
 		initLayout();
 		initComponentListener();
@@ -139,14 +158,12 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 					if (JComboBoxUIUtilities.getItemIndex(comboBox, parameterFieldComboBox.getSelectedItem()) != -1) {
 						comboBox.setSelectedItem(parameterFieldComboBox.getSelectedItem());
 					} else {
-						isSelectingItem = false;
 						try {
 							comboBox.setSelectedIndex(0);
+							parameterFieldComboBox.setSelectedItem(comboBox.getSelectedItem());
 						} catch (Exception e) {
-							isSelectingItem = true;
 							Application.getActiveApplication().getOutput().output(e);
 						}
-						isSelectingItem = true;
 					}
 				}
 			} else {

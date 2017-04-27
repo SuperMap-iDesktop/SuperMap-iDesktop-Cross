@@ -38,4 +38,9 @@ public class MetaKeys {
 	public static final String clusterOutlierAnalyst = "clusterOutlierAnalyst";
 	public static final String hotSpotAnalyst = "hotSpotAnalyst";
 	public static final String geographicWeightedRegression = "geographicWeightedRegression";
+	public static final String incrementalAutoCorrelation = "incrementalAutoCorrelation";
+
+	public static final String optimizedHotSpotAnalyst = "optimizedHotSpotAnalyst";
+
+
 }

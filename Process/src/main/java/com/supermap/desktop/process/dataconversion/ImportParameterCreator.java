@@ -22,6 +22,7 @@ public class ImportParameterCreator implements IParameterCreator {
 
 	private ParameterCombine parameterCombineResultSet;
 	private ParameterCombine parameterCombineParamSet;
+	private ParameterCombine parameterCombineModelSet;
 	private ParameterFile parameterFile;
 	private ParameterDatasourceConstrained parameterDatasource;
 	private ParameterTextField parameterDataset;
@@ -68,7 +69,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			ReflectInfo setImportingByLayer = new ReflectInfo();
 			setImportingByLayer.methodName = "setImportingByLayer";
 			ParameterCheckBox parameterImportingByLayer = new ParameterCheckBox(CommonProperties.getString("String_MergeLayer"));
-			parameterImportingByLayer.setSelectedItem(((ImportSettingDGN) importSetting).isImportingByLayer() ? "true" : "false");
+			parameterImportingByLayer.setSelectedItem(((ImportSettingDGN) importSetting).isImportingByLayer() ? "false" : "true");
 			setImportingByLayer.parameter = parameterImportingByLayer;
 
 			result.add(importCellAsPoint);
@@ -204,7 +205,9 @@ public class ImportParameterCreator implements IParameterCreator {
 		if (importSetting instanceof ImportSettingSIT) {
 			ReflectInfo password = new ReflectInfo();
 			password.methodName = "setPassword";
-			password.parameter = new ParameterTextField(CoreProperties.getString("String_FormLogin_Password"));
+			ParameterTextField parameterTextField = new ParameterTextField(CoreProperties.getString("String_FormLogin_Password"));
+			parameterTextField.setSelectedItem(((ImportSettingSIT)importSetting).getPassword());
+			password.parameter = parameterTextField;
 			result.add(password);
 			parameterCombineParamSet = new ParameterCombine();
 			parameterCombineParamSet.setDescribe(ProcessProperties.getString("String_ParamSet"));
@@ -228,7 +231,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			ReflectInfo setWorldFilePath = new ReflectInfo();
 			setWorldFilePath.methodName = "setWorldFilePath";
 			ParameterFile worldFilePath = new ParameterFile(CommonProperties.getString("String_WorldFile"));
-			worldFilePath.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_tfw"), "tfw")), "WorldFile"));
+			worldFilePath.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_tfw"), "tfw")),"WorldFile"));
 			setWorldFilePath.parameter = worldFilePath;
 
 			result.add(importBandMode);
@@ -265,7 +268,8 @@ public class ImportParameterCreator implements IParameterCreator {
 			ParameterEnum parameterBandMode = new ParameterEnum(new EnumParser(MultiBandImportMode.class, new String[]{"SINGLEBAND", "MULTIBAND", "COMPOSITE"},
 					new String[]{CommonProperties.getString("String_MultiBand_SingleBand"), CommonProperties.getString("String_MultiBand_MultiBand"),
 							CommonProperties.getString("String_MultiBand_Composite")}));
-			parameterBandMode.setSelectedItem(MultiBandImportMode.MULTIBAND);
+			parameterBandMode.setDescribe(ProcessProperties.getString("String_BandImportMode"));
+			parameterBandMode.setSelectedItem(MultiBandImportMode.COMPOSITE);
 			importBandMode.parameter = parameterBandMode;
 			result.add(importBandMode);
 			parameterCombineParamSet = new ParameterCombine();
@@ -282,7 +286,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			ReflectInfo setWorldFilePath = new ReflectInfo();
 			setWorldFilePath.methodName = "setWorldFilePath";
 			ParameterFile worldFilePath = new ParameterFile(CommonProperties.getString("String_WorldFile"));
-			worldFilePath.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_tfw"), "tfw")), "WorldFile"));
+			worldFilePath.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_tfw"), "tfw")),"WorldFile"));
 			setWorldFilePath.parameter = worldFilePath;
 
 			result.add(pyramidBuiltInfo);
@@ -295,7 +299,14 @@ public class ImportParameterCreator implements IParameterCreator {
 		if (importSetting instanceof ImportSettingKML || importSetting instanceof ImportSettingKMZ) {
 			ReflectInfo setUnvisibleObjectIgnored = new ReflectInfo();
 			setUnvisibleObjectIgnored.methodName = "setUnvisibleObjectIgnored";
-			setUnvisibleObjectIgnored.parameter = new ParameterCheckBox(CommonProperties.getString("String_ImportUnvisibleObject"));
+			ParameterCheckBox parameterImportUnvisibleObject = new ParameterCheckBox(CommonProperties.getString("String_ImportUnvisibleObject"));
+			if(importSetting instanceof ImportSettingKML){
+				parameterImportUnvisibleObject.setSelectedItem(((ImportSettingKML) importSetting).isUnvisibleObjectIgnored()?"false":"true");
+				setUnvisibleObjectIgnored.parameter = parameterImportUnvisibleObject;
+			}else{
+				parameterImportUnvisibleObject.setSelectedItem(((ImportSettingKMZ) importSetting).isUnvisibleObjectIgnored()?"false":"true");
+				setUnvisibleObjectIgnored.parameter = parameterImportUnvisibleObject;
+			}
 			result.add(setUnvisibleObjectIgnored);
 			parameterCombineParamSet = new ParameterCombine();
 			parameterCombineParamSet.setDescribe(ProcessProperties.getString("String_ParamSet"));
@@ -306,7 +317,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			ReflectInfo setColorIndexFilePath = new ReflectInfo();
 			setColorIndexFilePath.methodName = "setColorIndexFilePath";
 			ParameterFile colorIndex = new ParameterFile(CommonProperties.getString("String_ColorIndexFile"));
-			colorIndex.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_color"), "wat")), "ColorIndexFile"));
+			colorIndex.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_color"), "wat")),"ColorIndexFile"));
 			setColorIndexFilePath.parameter = colorIndex;
 
 			result.add(setColorIndexFilePath);
@@ -356,15 +367,16 @@ public class ImportParameterCreator implements IParameterCreator {
 			result.add(setX);
 			result.add(setY);
 			result.add(setZ);
+			parameterCombineModelSet = new ParameterCombine();
+			parameterCombineModelSet.setDescribe(ProcessProperties.getString("String_modelPoint"));
+			parameterCombineModelSet.addParameters(setX.parameter, setY.parameter, setZ.parameter);
 			parameterCombineParamSet = new ParameterCombine();
 			parameterCombineParamSet.setDescribe(ProcessProperties.getString("String_ParamSet"));
-			parameterCombineParamSet.setCombineType(ParameterCombine.HORIZONTAL);
-			parameterCombineParamSet.addParameters(setX.parameter, setY.parameter, setZ.parameter);
+			parameterCombineParamSet.addParameters(parameterCombineModelSet);
 			return result;
 		}
 		return null;
 	}
-
 	public ParameterTextField getParameterDataset() {
 		return parameterDataset;
 	}
