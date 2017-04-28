@@ -1,7 +1,6 @@
 package com.supermap.desktop.process.dataconversion;
 
-import com.supermap.desktop.process.parameter.implement.ParameterFile;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -32,5 +31,13 @@ public interface IParameterCreator<T> {
     ParameterFile getParameterFile();
 
 	ParameterTextField getParameterDataset();
+
+	ParameterButton getParameterButton();
+
+	ParameterTextArea getParameterTextArea();
+
+	ParameterFile getParameterChooseFile();
+
+	ParameterRadioButton getParameterSetRadioButton();
 
 }
