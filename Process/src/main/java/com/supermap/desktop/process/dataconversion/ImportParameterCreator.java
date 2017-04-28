@@ -12,7 +12,6 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
-
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -24,6 +23,10 @@ public class ImportParameterCreator implements IParameterCreator {
 	private ParameterCombine parameterCombineParamSet;
 	private ParameterCombine parameterCombineModelSet;
 	private ParameterFile parameterFile;
+	private ParameterFile parameterChooseFile;
+	private ParameterButton parameterButton;
+	private ParameterTextArea parameterTextArea;
+	private ParameterRadioButton parameterRadioButton;
 	private ParameterDatasourceConstrained parameterDatasource;
 	private ParameterTextField parameterDataset;
 	private ParameterEnum parameterEncodeType;
@@ -206,7 +209,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			ReflectInfo password = new ReflectInfo();
 			password.methodName = "setPassword";
 			ParameterTextField parameterTextField = new ParameterTextField(CoreProperties.getString("String_FormLogin_Password"));
-			parameterTextField.setSelectedItem(((ImportSettingSIT)importSetting).getPassword());
+			parameterTextField.setSelectedItem(((ImportSettingSIT) importSetting).getPassword());
 			password.parameter = parameterTextField;
 			result.add(password);
 			parameterCombineParamSet = new ParameterCombine();
@@ -231,7 +234,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			ReflectInfo setWorldFilePath = new ReflectInfo();
 			setWorldFilePath.methodName = "setWorldFilePath";
 			ParameterFile worldFilePath = new ParameterFile(CommonProperties.getString("String_WorldFile"));
-			worldFilePath.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_tfw"), "tfw")),"WorldFile"));
+			worldFilePath.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_tfw"), "tfw")), "WorldFile"));
 			setWorldFilePath.parameter = worldFilePath;
 
 			result.add(importBandMode);
@@ -286,7 +289,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			ReflectInfo setWorldFilePath = new ReflectInfo();
 			setWorldFilePath.methodName = "setWorldFilePath";
 			ParameterFile worldFilePath = new ParameterFile(CommonProperties.getString("String_WorldFile"));
-			worldFilePath.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_tfw"), "tfw")),"WorldFile"));
+			worldFilePath.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_tfw"), "tfw")), "WorldFile"));
 			setWorldFilePath.parameter = worldFilePath;
 
 			result.add(pyramidBuiltInfo);
@@ -300,11 +303,11 @@ public class ImportParameterCreator implements IParameterCreator {
 			ReflectInfo setUnvisibleObjectIgnored = new ReflectInfo();
 			setUnvisibleObjectIgnored.methodName = "setUnvisibleObjectIgnored";
 			ParameterCheckBox parameterImportUnvisibleObject = new ParameterCheckBox(CommonProperties.getString("String_ImportUnvisibleObject"));
-			if(importSetting instanceof ImportSettingKML){
-				parameterImportUnvisibleObject.setSelectedItem(((ImportSettingKML) importSetting).isUnvisibleObjectIgnored()?"false":"true");
+			if (importSetting instanceof ImportSettingKML) {
+				parameterImportUnvisibleObject.setSelectedItem(((ImportSettingKML) importSetting).isUnvisibleObjectIgnored() ? "false" : "true");
 				setUnvisibleObjectIgnored.parameter = parameterImportUnvisibleObject;
-			}else{
-				parameterImportUnvisibleObject.setSelectedItem(((ImportSettingKMZ) importSetting).isUnvisibleObjectIgnored()?"false":"true");
+			} else {
+				parameterImportUnvisibleObject.setSelectedItem(((ImportSettingKMZ) importSetting).isUnvisibleObjectIgnored() ? "false" : "true");
 				setUnvisibleObjectIgnored.parameter = parameterImportUnvisibleObject;
 			}
 			result.add(setUnvisibleObjectIgnored);
@@ -317,7 +320,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			ReflectInfo setColorIndexFilePath = new ReflectInfo();
 			setColorIndexFilePath.methodName = "setColorIndexFilePath";
 			ParameterFile colorIndex = new ParameterFile(CommonProperties.getString("String_ColorIndexFile"));
-			colorIndex.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_color"), "wat")),"ColorIndexFile"));
+			colorIndex.setFileChoose(FileType.createFileChooser(SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(ProcessProperties.getString("string_filetype_color"), "wat")), "ColorIndexFile"));
 			setColorIndexFilePath.parameter = colorIndex;
 
 			result.add(setColorIndexFilePath);
@@ -370,13 +373,55 @@ public class ImportParameterCreator implements IParameterCreator {
 			parameterCombineModelSet = new ParameterCombine();
 			parameterCombineModelSet.setDescribe(ProcessProperties.getString("String_modelPoint"));
 			parameterCombineModelSet.addParameters(setX.parameter, setY.parameter, setZ.parameter);
+			ReflectInfo setPrjCoordSys = new ReflectInfo();
+			setPrjCoordSys.methodName = "setTargetPrjCoordSys";
+			parameterRadioButton = new ParameterRadioButton();
+			parameterRadioButton.setLayout(ParameterRadioButton.VATICAL);
+			ParameterDataNode[] parameterDataNodes = {new ParameterDataNode(ProcessProperties.getString("String_setProject"), true), new ParameterDataNode(ProcessProperties.getString("String_importProjectFile"), false)};
+			parameterRadioButton.setItems(parameterDataNodes);
+			parameterRadioButton.setSelectedItem(parameterDataNodes[0]);
+			setPrjCoordSys.parameter = parameterRadioButton;
+			result.add(setPrjCoordSys);
+			ReflectInfo chooseFile = new ReflectInfo();
+			chooseFile.methodName = "";
+			String moduleName = "ImportPrjFileFromProcess";
+			if (!SmFileChoose.isModuleExist(moduleName)) {
+				String fileFilters = SmFileChoose.bulidFileFilters(
+						SmFileChoose.createFileFilter(ProcessProperties.getString("String_ImportPrjFiles"), "prj", "xml"),
+						SmFileChoose.createFileFilter(ProcessProperties.getString("String_ImportPrjFileShape"), "prj"),
+						SmFileChoose.createFileFilter(ProcessProperties.getString("String_ImportPrjFileXml"), "xml"));
+				SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
+						ProcessProperties.getString("string_importPrjFile"), moduleName, "OpenMany");
+			}
+
+			SmFileChoose fileChooser = new SmFileChoose(moduleName);
+			parameterChooseFile = new ParameterFile();
+			parameterChooseFile.setFileChoose(fileChooser);
+			parameterChooseFile.setEnabled(false);
+			chooseFile.parameter = parameterChooseFile;
+			result.add(chooseFile);
+			ReflectInfo selectButton = new ReflectInfo();
+			selectButton.methodName = "";
+			parameterButton = new ParameterButton(ProcessProperties.getString("String_setButton"));
+			parameterButton.setEnabled(true);
+			selectButton.parameter = parameterButton;
+			result.add(selectButton);
+			ReflectInfo textArea = new ReflectInfo();
+			textArea.methodName = "";
+			parameterTextArea = new ParameterTextArea();
+			textArea.parameter = parameterTextArea;
+			result.add(textArea);
 			parameterCombineParamSet = new ParameterCombine();
+			ParameterCombine parameterCombineProjectSet = new ParameterCombine();
+			parameterCombineProjectSet.setDescribe(ProcessProperties.getString("String_setProject"));
 			parameterCombineParamSet.setDescribe(ProcessProperties.getString("String_ParamSet"));
-			parameterCombineParamSet.addParameters(parameterCombineModelSet);
+			parameterCombineParamSet.addParameters(parameterCombineModelSet, parameterCombineProjectSet.addParameters(
+					new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(parameterRadioButton, new ParameterCombine().addParameters(parameterButton, parameterChooseFile)), parameterTextArea));
 			return result;
 		}
 		return null;
 	}
+
 	public ParameterTextField getParameterDataset() {
 		return parameterDataset;
 	}
@@ -620,6 +665,23 @@ public class ImportParameterCreator implements IParameterCreator {
 	@Override
 	public ParameterFile getParameterFile() {
 		return parameterFile;
+	}
+
+	public ParameterFile getParameterChooseFile() {
+		return parameterChooseFile;
+	}
+
+	public ParameterButton getParameterButton() {
+		return parameterButton;
+	}
+
+	@Override
+	public ParameterTextArea getParameterTextArea() {
+		return parameterTextArea;
+	}
+
+	public ParameterRadioButton getParameterSetRadioButton() {
+		return parameterRadioButton;
 	}
 
 	@Override
