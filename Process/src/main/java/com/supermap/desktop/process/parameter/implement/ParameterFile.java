@@ -35,11 +35,6 @@ public class ParameterFile extends AbstractParameter implements ISelectionParame
     public void setSelectedItem(Object value) {
         String oldValue = this.selectedPath;
         this.selectedPath = (String) value;
-//		if (value instanceof File) {
-//			selectedFile = (File) value;
-//		} else if (value instanceof String && new File((String) value).exists()) {
-//			selectedFile = new File((String) value);
-//		}
         firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, selectedPath));
     }
 

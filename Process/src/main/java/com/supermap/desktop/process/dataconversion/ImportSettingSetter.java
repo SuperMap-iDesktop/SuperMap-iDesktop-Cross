@@ -1,13 +1,12 @@
 package com.supermap.desktop.process.dataconversion;
 
+import com.supermap.data.Charset;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Point3D;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasetType;
-import com.supermap.desktop.process.parameter.implement.ParameterEnum;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
 import java.lang.reflect.Method;
@@ -25,15 +24,36 @@ public class ImportSettingSetter {
     private ImportSettingSetter() {
     }
 
-    public static DataImport setParameter(ImportSetting importSetting, CopyOnWriteArrayList<ReflectInfo> basicInfos, CopyOnWriteArrayList<ReflectInfo> otherInfo) {
-        try {
-            Class importSettingClass = importSetting.getClass();
-            int basicSize = basicInfos.size();
-            for (int i = 0; i < basicSize; i++) {
+	public static DataImport setParameter(ImportSetting importSetting,
+	                                      CopyOnWriteArrayList<ReflectInfo> sourceInfo,
+	                                      CopyOnWriteArrayList<ReflectInfo> resultInfo,
+	                                      CopyOnWriteArrayList<ReflectInfo> otherInfo) {
+		if (sourceInfo == null || importSetting == null) {
+			return null;
+		}
+		Class importSettingClass = importSetting.getClass();
+		for (int i = 0; i < sourceInfo.size(); i++) {
+			if (sourceInfo.get(i).methodName == null) continue;
+			try {
+				if (sourceInfo.get(i).parameter instanceof ParameterFile) {
+					Method method = importSettingClass.getMethod(sourceInfo.get(i).methodName, String.class);
+					method.invoke(importSetting, ((ParameterFile) sourceInfo.get(i).parameter).getSelectedItem());
+				} else if (sourceInfo.get(i).parameter instanceof ParameterCharset) {
+					Method method = importSettingClass.getMethod(sourceInfo.get(i).methodName, Charset.class);
+					method.invoke(importSetting, ((ParameterCharset) sourceInfo.get(i).parameter).getSelectedData());
+				}
+			} catch (Exception e) {
+				continue;
+			}
+
+		}
+		try {
+			int basicSize = resultInfo.size();
+			for (int i = 0; i < basicSize; i++) {
 	            //// FIXME: 2017/4/27 空间索引和字段索引参数不是importSetting的，methodName为空
-	            if (basicInfos.get(i).methodName == null) continue;
-	            if (basicInfos.get(i).parameter instanceof ParameterDatasetType) {
-		            Object datasetType = ((ParameterDatasetType) basicInfos.get(i).parameter).getSelectedItem();
+	            if (resultInfo.get(i).methodName == null) continue;
+	            if (resultInfo.get(i).parameter instanceof ParameterDatasetType) {
+		            Object datasetType = ((ParameterDatasetType) resultInfo.get(i).parameter).getSelectedItem();
 		            boolean methodValue = false;
 		            if (datasetType instanceof DatasetType) {
 			            if (datasetType.equals(DatasetType.CAD)) {
@@ -54,18 +74,18 @@ public class ImportSettingSetter {
 				            methodValue = true;
 			            }
 		            }
-		            Method method = importSettingClass.getMethod(basicInfos.get(i).methodName, boolean.class);
+		            Method method = importSettingClass.getMethod(resultInfo.get(i).methodName, boolean.class);
 		            invokeMethod(method, importSetting, methodValue);
-	            } else if (basicInfos.get(i).parameter instanceof ParameterEnum) {
-		            Method method = importSettingClass.getMethod(basicInfos.get(i).methodName, ((ParameterEnum) basicInfos.get(i).parameter).getSelectedData().getClass());
-		            invokeMethod(method, importSetting, ((ParameterEnum) basicInfos.get(i).parameter).getSelectedData());
-	            } else if (basicInfos.get(i).parameter instanceof ISelectionParameter) {
-                    if (basicInfos.get(i).parameter instanceof ParameterCheckBox) {
-                        Method method = importSettingClass.getMethod(basicInfos.get(i).methodName, boolean.class);
-	                    invokeMethod(method, importSetting, "true".equals(((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem()) ? true : false);
-                    } else if (null != ((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem()) {
-                        Method method = importSettingClass.getMethod(basicInfos.get(i).methodName, ((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem().getClass());
-	                    invokeMethod(method, importSetting, ((ISelectionParameter) basicInfos.get(i).parameter).getSelectedItem());
+	            } else if (resultInfo.get(i).parameter instanceof ParameterEnum) {
+		            Method method = importSettingClass.getMethod(resultInfo.get(i).methodName, ((ParameterEnum) resultInfo.get(i).parameter).getSelectedData().getClass());
+		            invokeMethod(method, importSetting, ((ParameterEnum) resultInfo.get(i).parameter).getSelectedData());
+	            } else if (resultInfo.get(i).parameter instanceof ISelectionParameter) {
+		            if (resultInfo.get(i).parameter instanceof ParameterCheckBox) {
+			            Method method = importSettingClass.getMethod(resultInfo.get(i).methodName, boolean.class);
+			            invokeMethod(method, importSetting, "true".equals(((ISelectionParameter) resultInfo.get(i).parameter).getSelectedItem()) ? true : false);
+		            } else if (null != ((ISelectionParameter) resultInfo.get(i).parameter).getSelectedItem()) {
+			            Method method = importSettingClass.getMethod(resultInfo.get(i).methodName, ((ISelectionParameter) resultInfo.get(i).parameter).getSelectedItem().getClass());
+			            invokeMethod(method, importSetting, ((ISelectionParameter) resultInfo.get(i).parameter).getSelectedItem());
                     }
                 }
             }

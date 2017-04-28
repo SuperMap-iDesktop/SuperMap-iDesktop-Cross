@@ -57,9 +57,12 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (!isSelectingItem && evt.getPropertyName().equals(AbstractParameter.PROPERTY_VALE)) {
-					isSelectingItem = true;
-					ParameterTextFieldPanel.this.parameterTextField.setSelectedItem(evt.getNewValue());
-					isSelectingItem = false;
+					try {
+						isSelectingItem = true;
+						ParameterTextFieldPanel.this.textField.setText(evt.getNewValue() == null ? null : evt.getNewValue().toString());
+					} finally {
+						isSelectingItem = false;
+					}
 				}
 			}
 		});

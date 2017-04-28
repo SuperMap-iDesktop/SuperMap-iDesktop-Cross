@@ -1,12 +1,9 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
+import com.supermap.data.Charset;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
-import com.supermap.data.conversion.DataImport;
-import com.supermap.data.conversion.ImportResult;
-import com.supermap.data.conversion.ImportSetting;
-import com.supermap.data.conversion.ImportSteppedEvent;
-import com.supermap.data.conversion.ImportSteppedListener;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.IParameterCreator;
 import com.supermap.desktop.process.dataconversion.ImportParameterCreator;
@@ -15,8 +12,8 @@ import com.supermap.desktop.process.dataconversion.ReflectInfo;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterTextFieldPanel;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
+import com.supermap.desktop.process.parameter.implement.ParameterCharset;
 import com.supermap.desktop.process.parameter.implement.ParameterFile;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -27,6 +24,7 @@ import com.supermap.desktop.utilities.FileUtilities;
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -37,8 +35,9 @@ public class MetaProcessImport extends MetaProcess {
 
     private final static String OUTPUT_DATA = "ImportResult";
     protected ImportSetting importSetting;
-    private CopyOnWriteArrayList<ReflectInfo> defaultImportParameters;
-    private CopyOnWriteArrayList<ReflectInfo> paramParameters;
+	private CopyOnWriteArrayList<ReflectInfo> sourceImportParameters;
+	private CopyOnWriteArrayList<ReflectInfo> resultImportParameters;
+	private CopyOnWriteArrayList<ReflectInfo> paramParameters;
     private String importType = "";
     private IParameterCreator parameterCreator;
     private ImportSteppedListener importStepListener = new ImportSteppedListener() {
@@ -54,17 +53,34 @@ public class MetaProcessImport extends MetaProcess {
     };
     private ParameterFile parameterFile;
     private ParameterTextField datasetName;
+	private ParameterCharset parameterCharset;
+
     private boolean isSelectingFile = false;
     private PropertyChangeListener fileListener = new PropertyChangeListener() {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if (!isSelectingFile && evt.getNewValue() instanceof String) {
-                isSelectingFile = true;
-                String fileName = (String) evt.getNewValue();
-                String fileAlis = FileUtilities.getFileAlias(fileName);
-                ((ParameterTextFieldPanel) datasetName.getParameterPanel()).setText(fileAlis);
-                datasetName.setSelectedItem(fileAlis);
-                isSelectingFile = false;
+	            try {
+		            isSelectingFile = true;
+		            String fileName = (String) evt.getNewValue();
+		            //set dataset name
+		            String fileAlis = FileUtilities.getFileAlias(fileName);
+		            //文件选择器编辑过程中会不断响应，所以未修改到正确的路径时不变。JFileChooserControl是否需要一个编辑提交listener
+		            if (fileAlis != null) {
+			            datasetName.setSelectedItem(fileAlis);
+		            }
+		            //set charset
+		            if (importSetting instanceof ImportSettingTAB || importSetting instanceof ImportSettingMIF) {
+			            if (fileName != null && new File(fileName).exists()) {
+				            importSetting.setSourceFilePath(fileName);
+				            Charset charset = importSetting.getSourceFileCharset();
+				            parameterCharset.setSelectedItem(charset);
+			            }
+		            }
+
+	            } finally {
+		            isSelectingFile = false;
+	            }
             }
         }
     };
@@ -83,7 +99,8 @@ public class MetaProcessImport extends MetaProcess {
 		parameters = new DefaultParameters();
 
 		parameterCreator = new ImportParameterCreator();
-		setDefaultImportParameters(parameterCreator.createDefault(importSetting, this.importType));
+		setResultImportParameters(parameterCreator.createResult(importSetting, this.importType));
+		setSourceImportParameters(parameterCreator.createSourceInfo(importSetting, this.importType));
 		setParamParameters(parameterCreator.create(importSetting));
 		updateParameters();
 	}
@@ -91,11 +108,16 @@ public class MetaProcessImport extends MetaProcess {
     public void updateParameters() {
         parameterFile = parameterCreator.getParameterFile();
 	    datasetName = parameterCreator.getParameterDataset();
+	    parameterCharset = parameterCreator.getParameterCharset();
+	    if (null != parameterCreator.getParameterCombineSourceInfoSet()) {
+		    parameters.addParameters(parameterCreator.getParameterCombineSourceInfoSet());
+	    }
+	    if (null != parameterCreator.getParameterCombineResultSet()) {
+		    parameters.addParameters(parameterCreator.getParameterCombineResultSet());
+	    }
 	    if (null != parameterCreator.getParameterCombineParamSet()) {
-            parameters.setParameters(parameterFile, parameterCreator.getParameterCombineResultSet(), parameterCreator.getParameterCombineParamSet());
-        } else {
-            parameters.setParameters(parameterFile, parameterCreator.getParameterCombineResultSet());
-        }
+	    }
+	    parameters.addParameters(parameterCreator.getParameterCombineParamSet());
 	    this.getParameters().addOutputParameters(OUTPUT_DATA, DatasetTypes.DATASET, parameterCreator.getParameterCombineResultSet());
 	    parameterFile.addPropertyListener(this.fileListener);
     }
@@ -104,8 +126,12 @@ public class MetaProcessImport extends MetaProcess {
 		this.importSetting = importSetting;
 	}
 
-	public void setDefaultImportParameters(CopyOnWriteArrayList<ReflectInfo> defaultImportParameters) {
-		this.defaultImportParameters = defaultImportParameters;
+	public void setResultImportParameters(CopyOnWriteArrayList<ReflectInfo> resultImportParameters) {
+		this.resultImportParameters = resultImportParameters;
+	}
+
+	public void setSourceImportParameters(CopyOnWriteArrayList<ReflectInfo> sourceImportParameters) {
+		this.sourceImportParameters = sourceImportParameters;
 	}
 
 	public void setParamParameters(CopyOnWriteArrayList<ReflectInfo> paramParameters) {
@@ -130,8 +156,8 @@ public class MetaProcessImport extends MetaProcess {
     @Override
     public void run() {
         fireRunning(new RunningEvent(this, 0, "start"));
-        DataImport dataImport = ImportSettingSetter.setParameter(importSetting, defaultImportParameters, paramParameters);
-        dataImport.addImportSteppedListener(this.importStepListener);
+	    DataImport dataImport = ImportSettingSetter.setParameter(importSetting, sourceImportParameters, resultImportParameters, paramParameters);
+	    dataImport.addImportSteppedListener(this.importStepListener);
         ImportResult result = dataImport.run();
         ImportSetting[] succeedSettings = result.getSucceedSettings();
         if (succeedSettings.length > 0) {

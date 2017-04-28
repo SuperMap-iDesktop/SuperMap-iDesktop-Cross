@@ -6,17 +6,14 @@ import com.supermap.desktop.process.parameter.implement.ParameterFile;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
-import com.supermap.desktop.ui.controls.FileChooserControl;
+import com.supermap.desktop.ui.controls.FileChooserPathChangedListener;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.ui.controls.JFileChooserControl;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.util.Objects;
 
 /**
@@ -25,17 +22,17 @@ import java.util.Objects;
 @ParameterPanelDescribe(parameterPanelType = ParameterType.FILE)
 public class ParameterFilePanel extends SwingPanel {
     private ParameterFile parameterFile;
-    private FileChooserControl fileChooserControl = new FileChooserControl();
+    private JFileChooserControl fileChooserControl = new JFileChooserControl();
     private boolean isSelectingFile = false;
     private JLabel label = new JLabel();
 
     public ParameterFilePanel(IParameter parameterFile) {
         super(parameterFile);
         this.parameterFile = (ParameterFile) parameterFile;
-        // todo fileChooseControl不好用，需要重构
         if (this.parameterFile.getSelectedItem() != null) {
-            fileChooserControl.setText(this.parameterFile.getSelectedItem().toString());
+            fileChooserControl.setPath(this.parameterFile.getSelectedItem().toString());
         }
+        fileChooserControl.setFileChooser(this.parameterFile.getFileChoose());
         label.setText(this.parameterFile.getDescribe());
 	    label.setToolTipText(this.parameterFile.getDescribe());
 	    initListener();
@@ -43,24 +40,30 @@ public class ParameterFilePanel extends SwingPanel {
     }
 
     private void initListener() {
-        this.fileChooserControl.getButton().addActionListener(new ActionListener() {
+        this.fileChooserControl.addFileChangedListener(new FileChooserPathChangedListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                SmFileChoose fileChoose = parameterFile.getFileChoose();
-                if (!isSelectingFile && fileChoose.showOpenDialog(((Component) ParameterFilePanel.this.getPanel())) == JFileChooser.APPROVE_OPTION) {
-                    isSelectingFile = true;
-                    File selectedFile = fileChoose.getSelectedFile();
-                    fileChooserControl.setText(selectedFile.getAbsolutePath());
-                    parameterFile.setSelectedItem(selectedFile.getAbsolutePath());
-                    isSelectingFile = false;
+            public void pathChanged() {
+                if (!isSelectingFile) {
+                    try {
+                        isSelectingFile = true;
+                        parameterFile.setSelectedItem(fileChooserControl.getPath());
+                    } finally {
+                        isSelectingFile = false;
+                    }
                 }
             }
         });
+
         parameterFile.addPropertyListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 if (!isSelectingFile && Objects.equals(evt.getPropertyName(), AbstractParameter.PROPERTY_VALE)) {
-                    fileChooserControl.setText(evt.getNewValue().toString());
+                    try {
+                        isSelectingFile = true;
+                        fileChooserControl.setPath(evt.getNewValue().toString());
+                    } finally {
+                        isSelectingFile = false;
+                    }
                 }
             }
         });

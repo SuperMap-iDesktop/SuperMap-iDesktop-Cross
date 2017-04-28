@@ -20,10 +20,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class ImportParameterCreator implements IParameterCreator {
 
+	private ParameterCombine parameterCombineSourceInfoSet;
 	private ParameterCombine parameterCombineResultSet;
 	private ParameterCombine parameterCombineParamSet;
 	private ParameterCombine parameterCombineModelSet;
 	private ParameterFile parameterFile;
+	private ParameterCharset parameterCharset;
 	private ParameterDatasourceConstrained parameterDatasource;
 	private ParameterTextField parameterDataset;
 	private ParameterEnum parameterEncodeType;
@@ -381,29 +383,68 @@ public class ImportParameterCreator implements IParameterCreator {
 		return parameterDataset;
 	}
 
-	@Override
-	public CopyOnWriteArrayList<ReflectInfo> createDefault(Object o, final String importType) {
+	public ParameterCharset getParameterCharset() {
+		return parameterCharset;
+	}
 
-		CopyOnWriteArrayList<ReflectInfo> result = new CopyOnWriteArrayList<>();
+	@Override
+	public CopyOnWriteArrayList<ReflectInfo> createSourceInfo(Object o, final String importType) {
+		CopyOnWriteArrayList<ReflectInfo> sourceInfo = new CopyOnWriteArrayList<>();
 		ImportSetting importSetting = null;
 		if (o instanceof ImportSetting) {
 			importSetting = (ImportSetting) o;
 		}
-		if (importSetting == null) return result;
+		if (importSetting == null) return sourceInfo;
+		ReflectInfo reflectInfoFilePath = new ReflectInfo();
+		reflectInfoFilePath.methodName = "setSourceFilePath";
+		parameterFile = new ParameterFile(ProcessProperties.getString("label_ChooseFile"));
+		parameterFile.setFileChoose(FileType.createImportFileChooser(importType));
+		reflectInfoFilePath.parameter = parameterFile;
+		ReflectInfo reflectInfoCharset = new ReflectInfo();
+		reflectInfoCharset.methodName = "setSourceFileCharset";
+		parameterCharset = new ParameterCharset();
+		reflectInfoCharset.parameter = parameterCharset;
+
+		boolean hasCharsetParameter = true;
+		if (importSetting instanceof ImportSettingDXF || importSetting instanceof ImportSettingDWG
+//		fixme		|| importSetting instanceof ImportSettingGPX
+				) {
+			hasCharsetParameter = false;
+		}
+		sourceInfo.add(reflectInfoFilePath);
+		parameterCombineSourceInfoSet = new ParameterCombine();
+		parameterCombineSourceInfoSet.setDescribe(ProcessProperties.getString("String_ImportSettingPanel_SourceFileInfo"));
+		parameterCombineSourceInfoSet.addParameters(parameterFile);
+		if (hasCharsetParameter) {
+			sourceInfo.add(reflectInfoCharset);
+			parameterCombineSourceInfoSet.addParameters(parameterCharset);
+		}
+
+		return sourceInfo;
+	}
+
+	@Override
+	public CopyOnWriteArrayList<ReflectInfo> createResult(Object o, final String importType) {
+		CopyOnWriteArrayList<ReflectInfo> resultInfo = new CopyOnWriteArrayList<>();
+		ImportSetting importSetting = null;
+		if (o instanceof ImportSetting) {
+			importSetting = (ImportSetting) o;
+		}
+		if (importSetting == null) return resultInfo;
 		//Target dataset reflect info
 		ReflectInfo targetDatasource = new ReflectInfo();
 		targetDatasource.methodName = "setTargetDatasource";
 		parameterDatasource = new ParameterDatasourceConstrained();
 		parameterDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
 		targetDatasource.parameter = parameterDatasource;
-		result.add(targetDatasource);
+		resultInfo.add(targetDatasource);
 
 		final ReflectInfo targetDatasetName = new ReflectInfo();
 		targetDatasetName.methodName = "setTargetDatasetName";
 		parameterDataset = new ParameterTextField(CommonProperties.getString(CommonProperties.Label_Dataset));
 		parameterDataset.setSelectedItem(importSetting.getTargetDatasetName());
 		targetDatasetName.parameter = parameterDataset;
-		result.add(targetDatasetName);
+		resultInfo.add(targetDatasetName);
 
 		//EncodeType reflect info
 		parameterEncodeType = createEnumParser(importSetting);
@@ -412,7 +453,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			reflectInfoEncodeType.methodName = "setTargetEncodeType";
 			reflectInfoEncodeType.parameter = parameterEncodeType;
 			parameterEncodeType.setDescribe(ProcessProperties.getString("label_encodingType"));
-			result.add(reflectInfoEncodeType);
+			resultInfo.add(reflectInfoEncodeType);
 		}
 
 		//ImportMode reflect info
@@ -428,7 +469,7 @@ public class ImportParameterCreator implements IParameterCreator {
 		parameterImportMode = new ParameterEnum(new EnumParser(ImportMode.class, ReflectInfoImportModelValue, importModel)).setDescribe(ProcessProperties.getString("Label_ImportMode"));
 		parameterImportMode.setSelectedItem(ProcessProperties.getString("String_FormImport_None"));
 		reflectInfoImportMode.parameter = parameterImportMode;
-		result.add(reflectInfoImportMode);
+		resultInfo.add(reflectInfoImportMode);
 		parameterCombineResultSet = new ParameterCombine();
 		parameterCombineResultSet.setDescribe(CommonProperties.getString("String_ResultSet"));
 		ParameterCombine parameterCombineSecond = parameterEncodeType != null ? new ParameterCombine(ParameterCombine.VERTICAL).addParameters(parameterEncodeType, parameterImportMode) : new ParameterCombine().addParameters(parameterImportMode);
@@ -437,12 +478,6 @@ public class ImportParameterCreator implements IParameterCreator {
 				parameterCombineSaveResult,
 				parameterCombineSecond
 		);
-		//
-		ReflectInfo parameterFileInfo = new ReflectInfo();
-		parameterFileInfo.methodName = "setSourceFilePath";
-		parameterFile = new ParameterFile(ProcessProperties.getString("label_ChooseFile"));
-		parameterFile.setFileChoose(FileType.createImportFileChooser(importType));
-		parameterFileInfo.parameter = parameterFile;
 
 		//#region specifyResultParameter
 		//创建字段索引
@@ -462,11 +497,11 @@ public class ImportParameterCreator implements IParameterCreator {
 		//// FIXME: 2017/4/25 ImportSettingGPX是DataConversion下定义的，找不到依赖
 //        if (importSetting instanceof ImportSettingCSV || importSetting instanceof ImportSettingGPX) {
 		if (importSetting instanceof ImportSettingCSV) {
-			result.clear();
-			result.add(targetDatasource);
-			result.add(targetDatasetName);
-			result.add(reflectInfoFieldIndex);
-			result.add(reflectInfoSpatialIndex);
+			resultInfo.clear();
+			resultInfo.add(targetDatasource);
+			resultInfo.add(targetDatasetName);
+			resultInfo.add(reflectInfoFieldIndex);
+			resultInfo.add(reflectInfoSpatialIndex);
 			parameterCombineResultSet = new ParameterCombine();
 			parameterCombineResultSet.setDescribe(CommonProperties.getString("String_ResultSet"));
 			parameterCombineResultSet.addParameters(
@@ -474,10 +509,10 @@ public class ImportParameterCreator implements IParameterCreator {
 					parameterCombineDatasetIndex
 			);
 		} else if (importSetting instanceof ImportSettingWOR) {
-			result.clear();
-			result.add(targetDatasource);
-			result.add(reflectInfoEncodeType);
-			result.add(reflectInfoImportMode);
+			resultInfo.clear();
+			resultInfo.add(targetDatasource);
+			resultInfo.add(reflectInfoEncodeType);
+			resultInfo.add(reflectInfoImportMode);
 			parameterCombineResultSet = new ParameterCombine();
 			parameterCombineResultSet.setDescribe(CommonProperties.getString("String_ResultSet"));
 			parameterCombineResultSet.addParameters(
@@ -487,11 +522,11 @@ public class ImportParameterCreator implements IParameterCreator {
 		} else if (importSetting instanceof ImportSettingModel3DS || importSetting instanceof ImportSettingModelDXF
 				|| importSetting instanceof ImportSettingModelFBX || importSetting instanceof ImportSettingModelOSG
 				|| importSetting instanceof ImportSettingModelX) {
-			result.clear();
-			result.add(targetDatasetName);
-			result.add(targetDatasource);
-			result.add(reflectInfoDatasetType);
-			result.add(reflectInfoImportMode);
+			resultInfo.clear();
+			resultInfo.add(targetDatasetName);
+			resultInfo.add(targetDatasource);
+			resultInfo.add(reflectInfoDatasetType);
+			resultInfo.add(reflectInfoImportMode);
 			//数据集类型combobox
 			//// FIXME: 2017/4/25 comboBox形式，实际设置值为Boolean，需要单独解析
 			parameterDatasetTypeEnum = createDatasetTypeEnum(importSetting);
@@ -520,14 +555,14 @@ public class ImportParameterCreator implements IParameterCreator {
 					parameterDatasetTypeEnum,
 					parameterCombineDatasetIndex
 			);
-			result.clear();
-			result.add(targetDatasetName);
-			result.add(targetDatasource);
-			result.add(reflectInfoEncodeType);
-			result.add(reflectInfoImportMode);
-			result.add(reflectInfoDatasetType);
-			result.add(reflectInfoSpatialIndex);
-			result.add(reflectInfoFieldIndex);
+			resultInfo.clear();
+			resultInfo.add(targetDatasetName);
+			resultInfo.add(targetDatasource);
+			resultInfo.add(reflectInfoEncodeType);
+			resultInfo.add(reflectInfoImportMode);
+			resultInfo.add(reflectInfoDatasetType);
+			resultInfo.add(reflectInfoSpatialIndex);
+			resultInfo.add(reflectInfoFieldIndex);
 		} else if (importSetting instanceof ImportSettingJPG || importSetting instanceof ImportSettingJP2 ||
 				importSetting instanceof ImportSettingPNG || importSetting instanceof ImportSettingBMP ||
 				importSetting instanceof ImportSettingIMG || importSetting instanceof ImportSettingTIF ||
@@ -544,12 +579,12 @@ public class ImportParameterCreator implements IParameterCreator {
 					parameterCombineSecond,
 					parameterDatasetTypeEnum
 			);
-			result.clear();
-			result.add(targetDatasetName);
-			result.add(targetDatasource);
-			result.add(reflectInfoEncodeType);
-			result.add(reflectInfoImportMode);
-			result.add(reflectInfoDatasetType);
+			resultInfo.clear();
+			resultInfo.add(targetDatasetName);
+			resultInfo.add(targetDatasource);
+			resultInfo.add(reflectInfoEncodeType);
+			resultInfo.add(reflectInfoImportMode);
+			resultInfo.add(reflectInfoDatasetType);
 		} else if (importSetting instanceof ImportSettingSIT || importSetting instanceof ImportSettingGRD ||
 				importSetting instanceof ImportSettingGBDEM || importSetting instanceof ImportSettingUSGSDEM ||
 				importSetting instanceof ImportSettingSHP || importSetting instanceof ImportSettingE00 ||
@@ -565,19 +600,19 @@ public class ImportParameterCreator implements IParameterCreator {
 					parameterCombineSaveResult,
 					parameterCombineSecond
 			);
-			result.clear();
-			result.add(targetDatasetName);
-			result.add(targetDatasource);
-			result.add(reflectInfoEncodeType);
-			result.add(reflectInfoImportMode);
+			resultInfo.clear();
+			resultInfo.add(targetDatasetName);
+			resultInfo.add(targetDatasource);
+			resultInfo.add(reflectInfoEncodeType);
+			resultInfo.add(reflectInfoImportMode);
 			if (importSetting instanceof ImportSettingSHP) {
 				parameterCombineResultSet.addParameters(parameterCombineDatasetIndex);
 			} else if (importSetting instanceof ImportSettingE00 || importSetting instanceof ImportSettingGJB
 					|| importSetting instanceof ImportSettingTEMSVector || importSetting instanceof ImportSettingTEMSBuildingVector
 					|| importSetting instanceof ImportSettingFileGDBVector) {
 				parameterCombineResultSet.addParameters(parameterSpatialIndex);
-				result.add(reflectInfoSpatialIndex);
-				result.add(reflectInfoFieldIndex);
+				resultInfo.add(reflectInfoSpatialIndex);
+				resultInfo.add(reflectInfoFieldIndex);
 			}
 			if (importSetting instanceof ImportSettingGJB || importSetting instanceof ImportSettingTEMSVector
 					|| importSetting instanceof ImportSettingTEMSBuildingVector || importSetting instanceof ImportSettingFileGDBVector) {
@@ -602,20 +637,18 @@ public class ImportParameterCreator implements IParameterCreator {
 					parameterDatasetType,
 					parameterSpatialIndex
 			);
-			result.clear();
-			result.add(targetDatasetName);
-			result.add(targetDatasource);
-			result.add(reflectInfoEncodeType);
-			result.add(reflectInfoImportMode);
-			result.add(reflectInfoDatasetType);
-			result.add(reflectInfoSpatialIndex);
-			result.add(reflectInfoFieldIndex);
+			resultInfo.clear();
+			resultInfo.add(targetDatasetName);
+			resultInfo.add(targetDatasource);
+			resultInfo.add(reflectInfoEncodeType);
+			resultInfo.add(reflectInfoImportMode);
+			resultInfo.add(reflectInfoDatasetType);
+			resultInfo.add(reflectInfoSpatialIndex);
+			resultInfo.add(reflectInfoFieldIndex);
 		}
 		//#endregion
-		result.add(parameterFileInfo);
-		return result;
+		return resultInfo;
 	}
-
 
 	@Override
 	public ParameterFile getParameterFile() {
@@ -630,6 +663,10 @@ public class ImportParameterCreator implements IParameterCreator {
 	@Override
 	public IParameter getParameterCombineParamSet() {
 		return parameterCombineParamSet;
+	}
+
+	public ParameterCombine getParameterCombineSourceInfoSet() {
+		return parameterCombineSourceInfoSet;
 	}
 
 	private ParameterDatasetType createDatasetTypeEnum(ImportSetting importSetting) {

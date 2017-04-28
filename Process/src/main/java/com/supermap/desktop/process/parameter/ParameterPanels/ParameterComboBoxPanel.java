@@ -3,7 +3,6 @@ package com.supermap.desktop.process.parameter.ParameterPanels;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterComboBoxCellRender;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -65,7 +64,7 @@ public class ParameterComboBoxPanel extends SwingPanel implements IParameterPane
 		parameterComboBox.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				if (!isSelectingItem && evt.getPropertyName().equals(AbstractParameter.PROPERTY_VALE)) {
+				if (!isSelectingItem && evt.getPropertyName().equals(ParameterComboBox.comboBoxValue)) {
 					isSelectingItem = true;
 					ParameterComboBoxPanel.this.comboBox.setSelectedItem(evt.getNewValue());
 					isSelectingItem = false;

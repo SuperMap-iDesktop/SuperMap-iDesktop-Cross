@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.dataconversion;
 
+import com.supermap.desktop.process.parameter.implement.ParameterCharset;
 import com.supermap.desktop.process.parameter.implement.ParameterFile;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
@@ -19,18 +20,24 @@ public interface IParameterCreator<T> {
     CopyOnWriteArrayList<ReflectInfo> create(T t);
 
     /**
-     * Create basic import info parameter
+     * Create result info parameter
      *
      * @return
      */
-    CopyOnWriteArrayList<ReflectInfo> createDefault(T t, String type);
+    CopyOnWriteArrayList<ReflectInfo> createResult(T t, String type);
+
+	CopyOnWriteArrayList<ReflectInfo> createSourceInfo(T t, String type);
 
     IParameter getParameterCombineResultSet();
 
     IParameter getParameterCombineParamSet();
 
+	IParameter getParameterCombineSourceInfoSet();
+
     ParameterFile getParameterFile();
 
 	ParameterTextField getParameterDataset();
+
+	ParameterCharset getParameterCharset();
 
 }
