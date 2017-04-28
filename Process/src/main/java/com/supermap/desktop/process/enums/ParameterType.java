@@ -5,6 +5,7 @@ package com.supermap.desktop.process.enums;
  */
 public class ParameterType {
 	public static final String COMBO_BOX = "ComboBox";
+	public static final String BUTTON = "Button";
 	public static final String ENUM = "Enum";
 	public static final String TEXTFIELD = "TextField";
 	public static final String DOUBLE = "Double";

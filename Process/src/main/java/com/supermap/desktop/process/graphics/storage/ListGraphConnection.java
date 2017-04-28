@@ -11,7 +11,7 @@ import java.util.ArrayList;
 /**
  * Created by highsad on 2017/4/5.
  */
-public class ListGraphConnection implements IGraphConnection {
+public class ListGraphConnection implements IConnectionManager {
 	private GraphCanvas canvas;
 	private java.util.List<GraphRelationLine> lines = new ArrayList<>();
 

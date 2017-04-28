@@ -14,7 +14,7 @@ import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.process.graphics.interaction.canvas.*;
 import com.supermap.desktop.process.graphics.interaction.graph.DefaultGraphEventHanderFactory;
 import com.supermap.desktop.process.graphics.interaction.graph.IGraphEventHandlerFactory;
-import com.supermap.desktop.process.graphics.storage.IGraphConnection;
+import com.supermap.desktop.process.graphics.storage.IConnectionManager;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.graphics.storage.ListGraphConnection;
 import com.supermap.desktop.process.graphics.storage.ListGraphs;
@@ -50,7 +50,7 @@ public class GraphCanvas extends JComponent {
 	private CoordinateTransform coordinateTransform = new CoordinateTransform(this); // 用以在画布平移、缩放等操作过后进行坐标转换
 	private IGraphEventHandlerFactory graphHandlerFactory = new DefaultGraphEventHanderFactory(); // 在某具体元素上进行的可扩展交互类
 	private CanvasActionsManager actionsManager = new CanvasActionsManager(this);
-	private IGraphConnection connection = new ListGraphConnection(this);
+	private IConnectionManager connection = new ListGraphConnection(this);
 
 	private CanvasTranslation translation = new CanvasTranslation(this);
 	private GraphCreator creator = new GraphCreator(this);
@@ -222,7 +222,7 @@ public class GraphCanvas extends JComponent {
 		return this.actionsManager;
 	}
 
-	public IGraphConnection getConnection() {
+	public IConnectionManager getConnection() {
 		return this.connection;
 	}
 

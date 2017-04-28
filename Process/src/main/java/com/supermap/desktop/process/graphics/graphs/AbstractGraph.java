@@ -56,8 +56,9 @@ public abstract class AbstractGraph implements IGraph {
 			return null;
 		}
 
-		for (int i = 0, size = this.decorators.size(); i < size; i++) {
-			IDecorator decorator = this.decorators.get(i);
+		for (String key :
+				this.decorators.keySet()) {
+			IDecorator decorator = this.decorators.get(key);
 			Rectangle decoratorBounds = decorator.getBounds();
 
 			if (GraphicsUtil.isRegionValid(decoratorBounds)) {
@@ -139,8 +140,9 @@ public abstract class AbstractGraph implements IGraph {
 		boolean result = this.shape.contains(point);
 
 		if (!result) {
-			for (int i = 0, size = this.decorators.size(); i < size; i++) {
-				result = this.decorators.get(i).contains(point);
+			for (String key :
+					this.decorators.keySet()) {
+				result = this.decorators.get(key).contains(point);
 				if (result) {
 					break;
 				}

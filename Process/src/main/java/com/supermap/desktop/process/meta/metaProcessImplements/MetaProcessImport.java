@@ -3,6 +3,8 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 import com.supermap.data.Charset;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.conversion.*;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.IParameterCreator;
@@ -12,6 +14,9 @@ import com.supermap.desktop.process.dataconversion.ReflectInfo;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
+import com.supermap.desktop.process.parameter.ParameterDataNode;
+import com.supermap.desktop.process.parameter.ParameterPanels.ParameterTextFieldPanel;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterCharset;
 import com.supermap.desktop.process.parameter.implement.ParameterFile;
@@ -19,9 +24,13 @@ import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
 import com.supermap.desktop.utilities.FileUtilities;
-
+import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -35,9 +44,8 @@ public class MetaProcessImport extends MetaProcess {
 
     private final static String OUTPUT_DATA = "ImportResult";
     protected ImportSetting importSetting;
-	private CopyOnWriteArrayList<ReflectInfo> sourceImportParameters;
-	private CopyOnWriteArrayList<ReflectInfo> resultImportParameters;
-	private CopyOnWriteArrayList<ReflectInfo> paramParameters;
+    private CopyOnWriteArrayList<ReflectInfo> defaultImportParameters;
+    private CopyOnWriteArrayList<ReflectInfo> paramParameters;
     private String importType = "";
     private IParameterCreator parameterCreator;
     private ImportSteppedListener importStepListener = new ImportSteppedListener() {
@@ -85,6 +93,18 @@ public class MetaProcessImport extends MetaProcess {
         }
     };
 
+	public ActionListener actionListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			JDialogPrjCoordSysSettings dialogPrjCoordSysSettings = new JDialogPrjCoordSysSettings();
+			if (dialogPrjCoordSysSettings.showDialog() == DialogResult.OK) {
+				PrjCoordSys newPrjCoordSys = dialogPrjCoordSysSettings.getPrjCoordSys();
+				String prjCoorSysInfo = PrjCoordSysUtilities.getDescription(newPrjCoordSys);
+				parameterTextArea.setSelectedItem(prjCoorSysInfo);
+			}
+		}
+	};
+
 	public MetaProcessImport(ImportSetting importSetting, String importType) {
 		this.importSetting = importSetting;
 		this.importType = importType;
@@ -97,7 +117,6 @@ public class MetaProcessImport extends MetaProcess {
 
 	public void initParameters() {
 		parameters = new DefaultParameters();
-
 		parameterCreator = new ImportParameterCreator();
 		setResultImportParameters(parameterCreator.createResult(importSetting, this.importType));
 		setSourceImportParameters(parameterCreator.createSourceInfo(importSetting, this.importType));
@@ -120,6 +139,34 @@ public class MetaProcessImport extends MetaProcess {
 	    parameters.addParameters(parameterCreator.getParameterCombineParamSet());
 	    this.getParameters().addOutputParameters(OUTPUT_DATA, DatasetTypes.DATASET, parameterCreator.getParameterCombineResultSet());
 	    parameterFile.addPropertyListener(this.fileListener);
+
+	    if (importSetting instanceof ImportSettingModelOSG || importSetting instanceof ImportSettingModelX
+			    || importSetting instanceof ImportSettingModelDXF || importSetting instanceof ImportSettingModelFBX
+			    || importSetting instanceof ImportSettingModelFLT || importSetting instanceof ImportSettingModel3DS) {
+		    parameterButton = parameterCreator.getParameterButton();
+		    parameterButton.setActionListener(this.actionListener);
+		    parameterTextArea = parameterCreator.getParameterTextArea();
+		    parameterRadioButton = parameterCreator.getParameterSetRadioButton();
+		    parameterRadioButton.addPropertyListener(new PropertyChangeListener() {
+			    @Override
+			    public void propertyChange(PropertyChangeEvent evt) {
+				    if (!isSelectingChange) {
+					    isSelectingChange = true;
+					    ParameterDataNode node = (ParameterDataNode) evt.getNewValue();
+					    boolean select = (boolean) node.getData();
+					    if (select) {
+						    parameterButton.setEnabled(select);
+						    parameterChooseFile.setEnabled(!select);
+					    } else {
+						    parameterButton.setEnabled(select);
+						    parameterChooseFile.setEnabled(!select);
+					    }
+					    isSelectingChange = false;
+				    }
+			    }
+		    });
+		    parameterChooseFile = parameterCreator.getParameterChooseFile();
+	    }
     }
 
 	public void setImportSetting(ImportSetting importSetting) {

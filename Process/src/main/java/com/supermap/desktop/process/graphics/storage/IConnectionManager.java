@@ -9,7 +9,7 @@ import java.awt.*;
 /**
  * Created by highsad on 2017/4/5.
  */
-public interface IGraphConnection {
+public interface IConnectionManager {
 	GraphCanvas getCanvas();
 
 	GraphRelationLine[] getLines();
