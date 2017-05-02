@@ -135,8 +135,8 @@ public class MetaProcessImport extends MetaProcess {
 		    parameters.addParameters(parameterCreator.getParameterCombineResultSet());
 	    }
 	    if (null != parameterCreator.getParameterCombineParamSet()) {
+		    parameters.addParameters(parameterCreator.getParameterCombineParamSet());
 	    }
-	    parameters.addParameters(parameterCreator.getParameterCombineParamSet());
 	    this.getParameters().addOutputParameters(OUTPUT_DATA, DatasetTypes.DATASET, parameterCreator.getParameterCombineResultSet());
 	    parameterFile.addPropertyListener(this.fileListener);
 

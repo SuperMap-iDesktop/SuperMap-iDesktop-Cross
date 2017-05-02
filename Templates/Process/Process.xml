@@ -70,6 +70,12 @@
                     <process key="ImportDGN" name=".DGN"/>
                     <process key="ImportVCT" name=".VCT"/>
                 </process>
+                <process name="选择文件夹">
+                    <process key="ImportGJB" name="GJB文件夹"/>
+                    <process key="ImportTEMSVector" name="电信 Vector Line 文件夹"/>
+                    <process key="ImportTEMSBuildingVector" name="电信 Building Vector Region 文件夹"/>
+                    <process key="ImportFileGDBVector" name="File GeoDataBase Vector 文件夹"/>
+                </process>
             </process>
             <process key="Projection" name="投影转换"/>
             <process name="差值分析">
