@@ -1,9 +1,6 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.Charset;
-import com.supermap.data.Dataset;
-import com.supermap.data.Datasource;
-import com.supermap.data.PrjCoordSys;
+import com.supermap.data.*;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.IParameterCreator;
@@ -22,6 +19,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
 import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.PrjCoordSysUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -93,6 +91,32 @@ public class MetaProcessImport extends MetaProcess {
         }
     };
 
+	private PropertyChangeListener fileValueListener = new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (parameterChooseFile.getSelectedItem()!= null){
+				String filePath = parameterChooseFile.getSelectedItem().toString();
+
+			// 设置投影信息
+			if (!StringUtilities.isNullOrEmpty(filePath)) {
+				PrjCoordSys newPrjCoorSys = new PrjCoordSys();
+				String fileType = FileUtilities.getFileType(filePath);
+				boolean isPrjFile;
+				if (fileType.equalsIgnoreCase(".prj")) {
+					isPrjFile = newPrjCoorSys.fromFile(filePath, PrjFileType.ESRI);
+				} else {
+					isPrjFile = newPrjCoorSys.fromFile(filePath, PrjFileType.SUPERMAP);
+				}
+				if (isPrjFile) {
+					String prjCoorSysInfo = PrjCoordSysUtilities.getDescription(newPrjCoorSys);
+					parameterTextArea.setSelectedItem(prjCoorSysInfo);
+				}
+			  }
+			}
+		}
+	};
+
+
 	public ActionListener actionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -135,8 +159,8 @@ public class MetaProcessImport extends MetaProcess {
 		    parameters.addParameters(parameterCreator.getParameterCombineResultSet());
 	    }
 	    if (null != parameterCreator.getParameterCombineParamSet()) {
+		    parameters.addParameters(parameterCreator.getParameterCombineParamSet());
 	    }
-	    parameters.addParameters(parameterCreator.getParameterCombineParamSet());
 	    this.getParameters().addOutputParameters(OUTPUT_DATA, DatasetTypes.DATASET, parameterCreator.getParameterCombineResultSet());
 	    parameterFile.addPropertyListener(this.fileListener);
 
@@ -145,6 +169,8 @@ public class MetaProcessImport extends MetaProcess {
 			    || importSetting instanceof ImportSettingModelFLT || importSetting instanceof ImportSettingModel3DS) {
 		    parameterButton = parameterCreator.getParameterButton();
 		    parameterButton.setActionListener(this.actionListener);
+		    parameterChooseFile = parameterCreator.getParameterChooseFile();
+		    parameterChooseFile.addPropertyListener(this.fileValueListener);
 		    parameterTextArea = parameterCreator.getParameterTextArea();
 		    parameterRadioButton = parameterCreator.getParameterSetRadioButton();
 		    parameterRadioButton.addPropertyListener(new PropertyChangeListener() {
@@ -165,7 +191,6 @@ public class MetaProcessImport extends MetaProcess {
 				    }
 			    }
 		    });
-		    parameterChooseFile = parameterCreator.getParameterChooseFile();
 	    }
     }
 

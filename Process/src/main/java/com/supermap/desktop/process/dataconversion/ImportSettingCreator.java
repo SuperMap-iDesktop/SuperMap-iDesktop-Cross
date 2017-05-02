@@ -54,7 +54,7 @@ public class ImportSettingCreator implements IImportSettingCreator {
         } else {
             // o is an import file type
             try {
-                String type = o.toString().toUpperCase();
+                String type = o.toString();
                 if ("B".equalsIgnoreCase(type)) {
                     type = "BIL";
                 } else if ("DEM".equalsIgnoreCase(type)) {
@@ -81,7 +81,6 @@ public class ImportSettingCreator implements IImportSettingCreator {
                 Class importClass = Class.forName(importSetting + type);
                 result = (ImportSetting) importClass.newInstance();
             } catch (ClassNotFoundException e) {
-                Application.getActiveApplication().getOutput().output(e);
                 Application.getActiveApplication().getOutput().output(e);
             } catch (IllegalAccessException e) {
             } catch (InstantiationException e) {

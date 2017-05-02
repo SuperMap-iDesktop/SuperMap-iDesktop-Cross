@@ -33,6 +33,7 @@ public class ParameterFilePanel extends SwingPanel {
         if (this.parameterFile.getSelectedItem() != null) {
             fileChooserControl.setPath(this.parameterFile.getSelectedItem().toString());
         }
+	    fileChooserControl.setEnabled(((ParameterFile) parameterFile).isEnabled());
         fileChooserControl.setFileChooser(this.parameterFile.getFileChoose());
         label.setText(this.parameterFile.getDescribe());
 	    label.setToolTipText(this.parameterFile.getDescribe());
