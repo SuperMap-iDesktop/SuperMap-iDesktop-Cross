@@ -2,11 +2,9 @@ package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
-import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
 
 /**
  * Created by Administrator on 2017-04-26.
@@ -18,7 +16,6 @@ public class ParameterButton extends AbstractParameter implements ISelectionPara
 	private String describe;
 	private Object value;
 	private ActionListener actionListener;
-	private boolean enabled;
 
 	public ParameterButton(String describe) {
 		this.describe = describe;
@@ -60,16 +57,6 @@ public class ParameterButton extends AbstractParameter implements ISelectionPara
 
 	public void setActionListener(ActionListener actionListener) {
 		this.actionListener = actionListener;
-	}
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(Object value){
-		boolean oldValue = this.enabled;
-		this.enabled = (boolean) value;
-		firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, enabled));
 	}
 
 }

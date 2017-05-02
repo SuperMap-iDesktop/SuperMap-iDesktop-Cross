@@ -32,12 +32,6 @@ public class ParameterFile extends AbstractParameter implements ISelectionParame
 	}
 
 
-    @Override
-    public void setSelectedItem(Object value) {
-        String oldValue = this.selectedPath;
-        this.selectedPath = (String) value;
-        firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, selectedPath));
-    }
 	@Override
 	public void setSelectedItem(Object value) {
 		String oldValue = this.selectedPath;

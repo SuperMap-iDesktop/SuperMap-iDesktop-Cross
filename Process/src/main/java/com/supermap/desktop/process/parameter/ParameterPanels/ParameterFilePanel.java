@@ -9,7 +9,6 @@ import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.FileChooserPathChangedListener;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.JFileChooserControl;
-import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -65,7 +64,7 @@ public class ParameterFilePanel extends SwingPanel {
 	                    if (evt.getNewValue() instanceof Boolean) {
 		                    fileChooserControl.setEnabled((Boolean) evt.getNewValue());
 	                    } else {
-		                    fileChooserControl.setText(evt.getNewValue().toString());
+		                    fileChooserControl.setPath(evt.getNewValue().toString());
 	                    }
                     } finally {
                         isSelectingFile = false;

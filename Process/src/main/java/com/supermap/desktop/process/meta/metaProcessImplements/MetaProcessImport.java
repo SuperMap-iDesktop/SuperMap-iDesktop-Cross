@@ -5,7 +5,6 @@ import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.PrjCoordSys;
 import com.supermap.data.conversion.*;
-import com.supermap.data.conversion.*;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.IParameterCreator;
 import com.supermap.desktop.process.dataconversion.ImportParameterCreator;
@@ -15,12 +14,7 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.ParameterPanels.ParameterTextFieldPanel;
 import com.supermap.desktop.process.parameter.implement.*;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
-import com.supermap.desktop.process.parameter.implement.ParameterCharset;
-import com.supermap.desktop.process.parameter.implement.ParameterFile;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -28,6 +22,7 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
 import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.PrjCoordSysUtilities;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,9 +39,10 @@ public class MetaProcessImport extends MetaProcess {
 
     private final static String OUTPUT_DATA = "ImportResult";
     protected ImportSetting importSetting;
-    private CopyOnWriteArrayList<ReflectInfo> defaultImportParameters;
-    private CopyOnWriteArrayList<ReflectInfo> paramParameters;
-    private String importType = "";
+	private CopyOnWriteArrayList<ReflectInfo> sourceImportParameters;
+	private CopyOnWriteArrayList<ReflectInfo> resultImportParameters;
+	private CopyOnWriteArrayList<ReflectInfo> paramParameters;
+	private String importType = "";
     private IParameterCreator parameterCreator;
     private ImportSteppedListener importStepListener = new ImportSteppedListener() {
         @Override
@@ -60,10 +56,14 @@ public class MetaProcessImport extends MetaProcess {
         }
     };
     private ParameterFile parameterFile;
-    private ParameterTextField datasetName;
 	private ParameterCharset parameterCharset;
-
-    private boolean isSelectingFile = false;
+	private ParameterFile parameterChooseFile;
+	private ParameterButton parameterButton;
+	private ParameterTextArea parameterTextArea;
+	private ParameterRadioButton parameterRadioButton;
+	private ParameterTextField datasetName;
+	private boolean isSelectingChange = false;
+	private boolean isSelectingFile = false;
     private PropertyChangeListener fileListener = new PropertyChangeListener() {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {

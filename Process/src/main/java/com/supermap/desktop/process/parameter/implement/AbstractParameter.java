@@ -181,7 +181,9 @@ public abstract class AbstractParameter implements IParameter {
 
 	@Override
 	public void setEnabled(boolean enabled) {
-		isEnabled = enabled;
+		boolean oldValue = this.isEnabled;
+		this.isEnabled = enabled;
+		firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, enabled));
 	}
 
 	@Override
