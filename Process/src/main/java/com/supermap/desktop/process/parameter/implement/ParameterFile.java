@@ -16,7 +16,6 @@ public class ParameterFile extends AbstractParameter implements ISelectionParame
 	private String selectedPath;
 	private String describe;
 	private SmFileChoose fileChoose;
-	boolean enabled;
 
 	public ParameterFile(String describe) {
 		this.describe = describe;
@@ -70,14 +69,4 @@ public class ParameterFile extends AbstractParameter implements ISelectionParame
     public void setFileChoose(SmFileChoose fileChoose) {
         this.fileChoose = fileChoose;
     }
-
-	public boolean isEnabled() {
-		return enabled;
-	}
-
-	public void setEnabled(boolean enabled) {
-		boolean oldValue = this.enabled;
-		this.enabled = enabled;
-		firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, enabled));
-	}
 }
