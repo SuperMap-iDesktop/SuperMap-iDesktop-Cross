@@ -22,20 +22,54 @@ public class LineGraph extends AbstractGraph {
 		return (GeneralPath) getShape();
 	}
 
+	public int getPointCount() {
+		return this.points.size();
+	}
+
+	public Point getPoint(int index) {
+		return this.points.get(index);
+	}
+
 	public void addPoint(Point point) {
 		if (!this.points.contains(point)) {
 			this.points.add(point);
-			GeneralPath path = getPath();
+			refreshPath();
+		}
+	}
 
-			if (this.points.size() == 0) {
-				return;
-			}
+	public void setLastPoint(Point point) {
+		if (this.points.size() > 0) {
+			setPoint(this.points.size() - 1, point);
+		} else {
+			setPoint(0, point);
+		}
+	}
 
-			if (this.points.size() == 1) {
-				path.moveTo(point.getX(), point.getY());
-			} else {
-				path.lineTo(point.getX(), point.getY());
-			}
+	public void setFirstPoint(Point point) {
+		setPoint(0, point);
+	}
+
+	public void setPoint(int index, Point point) {
+		if (index >= 0 && index < this.points.size()) {
+			this.points.remove(index);
+			this.points.add(index, point);
+			refreshPath();
+		} else {
+			throw new IndexOutOfBoundsException();
+		}
+	}
+
+	private void refreshPath() {
+		GeneralPath path = getPath();
+		path.reset();
+
+		if (this.points.size() == 0) {
+			return;
+		}
+
+		path.moveTo(this.points.get(0).getX(), this.points.get(0).getY());
+		for (int i = 1, size = this.points.size(); i < size; i++) {
+			path.lineTo(this.points.get(i).getX(), this.points.get(i).getY());
 		}
 	}
 
@@ -71,5 +105,18 @@ public class LineGraph extends AbstractGraph {
 			graphics2D.draw(path);
 			graphics2D.setStroke(originStroke);
 		}
+	}
+
+	public static void main(String[] args) {
+		ArrayList<Integer> list = new ArrayList<>();
+		for (int i = 0; i < 10; i++) {
+			list.add(i);
+		}
+
+		System.out.println(list);
+		list.remove(3);
+		System.out.println(list);
+		list.add(3, 100);
+		System.out.println(list);
 	}
 }
