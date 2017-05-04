@@ -13,7 +13,7 @@ import java.beans.PropertyChangeListener;
 
 
 /**
- * Created by Administrator on 2017-04-26.
+ * Created by caolp on 2017-04-26.
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.BUTTON)
 public class ParameterButtonPanel extends SwingPanel implements IParameterPanel {
@@ -50,7 +50,7 @@ public class ParameterButtonPanel extends SwingPanel implements IParameterPanel 
 
 	private void initLayout() {
 		panel.setLayout(new GridBagLayout());
-		panel.add(jButton, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
+		panel.add(jButton, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 0, 0));
 		jButton.addActionListener(parameterButton.getActionListener());
 	}
 
