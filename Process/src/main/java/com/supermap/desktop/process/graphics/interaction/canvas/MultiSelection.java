@@ -16,8 +16,8 @@ import java.awt.event.MouseEvent;
 /**
  * Created by highsad on 2017/3/2.
  */
-public class MultiSelction extends Selection {
-	private final static String DECORATOR_KEY = MultiSelction.class.getName();
+public class MultiSelection extends Selection {
+	private final static String DECORATOR_KEY = MultiSelection.class.getName();
 
 	private final static Color DEFAULT_REGION_COLOR = GraphicsUtil.transparentColor(Color.decode("#63B8FF"), 60);
 	private final static Color DEFAULT_BORDER_COLOR = Color.LIGHT_GRAY;
@@ -29,7 +29,7 @@ public class MultiSelction extends Selection {
 	private Rectangle dirtyRegion = new Rectangle(0, 0, 0, 0);
 	private Rectangle selectionRegion = new Rectangle(0, 0, 0, 0);
 
-	public MultiSelction(GraphCanvas canvas) {
+	public MultiSelection(GraphCanvas canvas) {
 		super(canvas);
 	}
 

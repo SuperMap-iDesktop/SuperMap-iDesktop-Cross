@@ -5,8 +5,7 @@ import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.graphics.CanvasCursor;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
-import com.supermap.desktop.process.graphics.connection.DefaultLine;
-import com.supermap.desktop.process.graphics.connection.GraphRelationLine;
+import com.supermap.desktop.process.graphics.connection.GraphConnectionLine;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
@@ -33,7 +32,7 @@ public class GraphConnector extends CanvasActionAdapter {
 	private ProcessGraph endGraph = null;
 	private JPopupMenu inputsMenu = new JPopupMenu();
 
-	private GraphRelationLine selected;
+	private GraphConnectionLine selected;
 
 	public GraphConnector(GraphCanvas canvas) {
 		this.canvas = canvas;
