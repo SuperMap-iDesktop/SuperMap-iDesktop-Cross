@@ -18,7 +18,6 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
-import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Layers;
 import com.supermap.mapping.Map;
@@ -243,7 +242,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
             } else {
                 String tasksPath = nextStepPane.fileChooserControlTaskPath.getPath();
                 tasksPath = tasksPath.replaceAll("\\\\", "/");
-                String filePath = SystemPropertyUtilities.isWindows() ? "c:" : "/";
+                String filePath = System.getProperty("user.dir");
                 String sciPath = filePath + "/temp.sci";
                 setMapCacheBuilderValueBeforeRun();
                 boolean result = mapCacheBuilder.toConfigFile(sciPath);
