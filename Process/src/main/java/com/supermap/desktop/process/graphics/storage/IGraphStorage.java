@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics.storage;
 
+import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import java.awt.*;
@@ -8,6 +9,10 @@ import java.awt.*;
  * Created by highsad on 2017/3/2.
  */
 public interface IGraphStorage {
+	IConnectionManager getConnectionManager();
+
+	GraphCanvas getCanvas();
+
 	int getCount();
 
 	IGraph[] getGraphs();

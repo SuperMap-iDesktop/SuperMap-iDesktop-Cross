@@ -2,7 +2,6 @@ package com.supermap.desktop.process.graphics;
 
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
-import com.supermap.desktop.process.graphics.connection.GraphConnectionLine;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.events.GraphCreatingEvent;
@@ -16,7 +15,6 @@ import com.supermap.desktop.process.graphics.interaction.graph.DefaultGraphEvent
 import com.supermap.desktop.process.graphics.interaction.graph.IGraphEventHandlerFactory;
 import com.supermap.desktop.process.graphics.storage.IConnectionManager;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
-import com.supermap.desktop.process.graphics.storage.ListGraphConnection;
 import com.supermap.desktop.process.graphics.storage.ListGraphs;
 
 import javax.swing.*;
@@ -49,11 +47,10 @@ public class GraphCanvas extends JComponent {
 
 	private Rectangle canvasRect = new Rectangle(-2000, -2000, 4000, 4000);
 	private Map<String, IGraph> trackingGraphs = new ConcurrentHashMap<>();
-	private IGraphStorage graphStorage = new ListGraphs(); // 画布元素的存储结构
+	private IGraphStorage graphStorage = new ListGraphs(this); // 画布元素的存储结构
 	private CoordinateTransform coordinateTransform = new CoordinateTransform(this); // 用以在画布平移、缩放等操作过后进行坐标转换
 	private IGraphEventHandlerFactory graphHandlerFactory = new DefaultGraphEventHanderFactory(); // 在某具体元素上进行的可扩展交互类
 	private CanvasActionsManager actionsManager = new CanvasActionsManager(this);
-	private IConnectionManager connection = new ListGraphConnection(this);
 
 	private CanvasTranslation translation = new CanvasTranslation(this);
 	private GraphCreator creator = new GraphCreator(this);
@@ -240,7 +237,7 @@ public class GraphCanvas extends JComponent {
 	}
 
 	public IConnectionManager getConnection() {
-		return this.connection;
+		return this.graphStorage.getConnectionManager();
 	}
 
 	public void addGraphTransformed(IGraph graph) {
@@ -267,8 +264,6 @@ public class GraphCanvas extends JComponent {
 
 	public void removeGraph(IGraph graph) {
 		if (graph != null && this.graphStorage.contains(graph)) {
-			this.connection.removeConnection(graph);
-
 			if (this.selection.isSelected(graph)) {
 				this.selection.deselectItem(graph);
 			}
@@ -309,7 +304,6 @@ public class GraphCanvas extends JComponent {
 
 		AffineTransform origin = graphics2D.getTransform();
 		graphics2D.setTransform(this.coordinateTransform.getAffineTransform(origin));
-		paintLines(graphics2D);
 		paintGraphs(graphics2D);
 		paintTracking(graphics2D);
 		this.connector.preview(graphics2D);
@@ -352,13 +346,6 @@ public class GraphCanvas extends JComponent {
 		for (String key :
 				this.trackingGraphs.keySet()) {
 			this.trackingGraphs.get(key).paint(g);
-		}
-	}
-
-	private void paintLines(Graphics2D g) {
-		GraphConnectionLine[] lines = this.connection.getLines();
-		for (int i = 0, n = lines.length; i < n; i++) {
-			lines[i].paint(g);
 		}
 	}
 
