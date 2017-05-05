@@ -306,18 +306,18 @@ public class PanelGroupBoxViewBounds extends JPanel {
         this.mainPanel.setLayout(new GridBagLayout());
         this.mainPanel.add(this.labelCurrentViewLeft, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10).setWeight(0, 0));
         this.mainPanel.add(this.textFieldCurrentViewLeft, new GridBagConstraintsHelper(1, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(3, 0));
-        this.mainPanel.add(this.mapViewBoundsButton, new GridBagConstraintsHelper(4, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 5).setWeight(0, 0));
+        this.mainPanel.add(this.mapViewBoundsButton, new GridBagConstraintsHelper(4, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(0, 0));
         this.mainPanel.add(this.labelCurrentViewTop, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10).setWeight(0, 0));
         this.mainPanel.add(this.textFieldCurrentViewTop, new GridBagConstraintsHelper(1, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(3, 0));
-        this.mainPanel.add(this.currentViewBoundsButton, new GridBagConstraintsHelper(4, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 5).setWeight(0, 0));
+        this.mainPanel.add(this.currentViewBoundsButton, new GridBagConstraintsHelper(4, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(0, 0));
         this.mainPanel.add(this.labelCurrentViewRight, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10).setWeight(0, 0));
         this.mainPanel.add(this.textFieldCurrentViewRight, new GridBagConstraintsHelper(1, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(3, 0));
-        this.mainPanel.add(this.customBoundsButton, new GridBagConstraintsHelper(4, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 5).setWeight(0, 0));
+        this.mainPanel.add(this.customBoundsButton, new GridBagConstraintsHelper(4, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(0, 0));
         this.mainPanel.add(this.labelCurrentViewBottom, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10).setWeight(0, 0));
         this.mainPanel.add(this.textFieldCurrentViewBottom, new GridBagConstraintsHelper(1, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(3, 0));
-        this.mainPanel.add(this.copyButton, new GridBagConstraintsHelper(4, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 5).setWeight(0, 0));
+        this.mainPanel.add(this.copyButton, new GridBagConstraintsHelper(4, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(0, 0));
         this.mainPanel.add(new JPanel(), new GridBagConstraintsHelper(0, 5, 4, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(4, 0));
-        this.mainPanel.add(this.pasteButton, new GridBagConstraintsHelper(4, 5, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 5).setWeight(0, 0));
+        this.mainPanel.add(this.pasteButton, new GridBagConstraintsHelper(4, 5, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(0, 0));
         this.mainPanel.add(new JPanel(), new GridBagConstraintsHelper(0, 6, 6, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 //  GroupLayout viewPanelLayout = new GroupLayout(this.mainPanel);
 //        viewPanelLayout.setAutoCreateContainerGaps(true);
@@ -482,7 +482,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
     /**
      * 设置范围为给予的矩形框范围
      */
-    private void setAsRectangleBounds(Rectangle2D rectangleBounds) {
+    public void setAsRectangleBounds(Rectangle2D rectangleBounds) {
 
         this.textFieldCurrentViewLeft.getTextField().setText(DoubleUtilities.getFormatString(rectangleBounds.getLeft()));
         this.textFieldCurrentViewBottom.getTextField().setText(DoubleUtilities.getFormatString(rectangleBounds.getBottom()));
