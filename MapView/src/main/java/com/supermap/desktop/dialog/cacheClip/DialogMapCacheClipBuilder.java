@@ -259,7 +259,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
                     disposeInfo();
                     DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder();
                     dialogCacheBuilder.textFieldMapName.setText(this.mapCacheBuilder.getMap().getName());
-                    dialogCacheBuilder.fileChooserTaskPath.setPath(tasksPath + "/task/allTask.list");
+                    dialogCacheBuilder.fileChooserTaskPath.setPath(tasksPath + "/task");
                     dialogCacheBuilder.fileChooserWorkspacePath.setPath(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer());
                     dialogCacheBuilder.showDialog();
                 }

@@ -71,7 +71,7 @@ public class DialogCacheBuilder extends SmDialog {
         String moduleName = "ChooseTaskDirectories";
         if (!SmFileChoose.isModuleExist(moduleName)) {
             SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
-                    moduleName, "OpenOne");
+                    moduleName, "GetDirectories");
         }
 
         SmFileChoose fileChoose = new SmFileChoose(moduleName);
