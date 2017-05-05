@@ -50,23 +50,33 @@ public class ParameterRadioButtonPanel extends SwingPanel implements IParameterP
 				}
 			}
 		};
-		if (items.size() == 3) {
-			for (int i = 0; i < items.size(); i++) {
-				ParameterDataNode item = items.get(i);
-				JRadioButton jRadioButton = new MyRadioButton(item);
-				buttonGroup.add(jRadioButton);
-				jRadioButton.addActionListener(radioButtonSelectedListener);
-				panel.add(jRadioButton, new GridBagConstraintsHelper(i, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE));
-			}
-		} else {
+		if (!StringUtilities.isNullOrEmpty(parameterRadioButton.getLayout()) && parameterRadioButton.getLayout().equals(parameterRadioButton.VATICAL)) {
 			for (int i = 0; i < items.size(); i++) {
 				ParameterDataNode item = items.get(i);
 				MyRadioButton myRadioButton = new MyRadioButton(item);
 				buttonGroup.add(myRadioButton);
 				myRadioButton.addActionListener(radioButtonSelectedListener);
-				int x = i % 2;
-				int y = i / 2;
-				panel.add(myRadioButton, new GridBagConstraintsHelper(x, y, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE));
+				panel.add(myRadioButton, new GridBagConstraintsHelper(0, i, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+			}
+		} else {
+			if (items.size() == 3) {
+				for (int i = 0; i < items.size(); i++) {
+					ParameterDataNode item = items.get(i);
+					JRadioButton jRadioButton = new MyRadioButton(item);
+					buttonGroup.add(jRadioButton);
+					jRadioButton.addActionListener(radioButtonSelectedListener);
+					panel.add(jRadioButton, new GridBagConstraintsHelper(i, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE));
+				}
+			} else {
+				for (int i = 0; i < items.size(); i++) {
+					ParameterDataNode item = items.get(i);
+					MyRadioButton myRadioButton = new MyRadioButton(item);
+					buttonGroup.add(myRadioButton);
+					myRadioButton.addActionListener(radioButtonSelectedListener);
+					int x = i % 2;
+					int y = i / 2;
+					panel.add(myRadioButton, new GridBagConstraintsHelper(x, y, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.NONE));
+				}
 			}
 		}
 		setSelectedButton(parameterRadioButton.getSelectedItem());

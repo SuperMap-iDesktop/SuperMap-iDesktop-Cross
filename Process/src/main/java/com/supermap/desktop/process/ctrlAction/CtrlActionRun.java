@@ -10,11 +10,11 @@ import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.MatrixExecutor;
 import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.connection.GraphRelationLine;
+import com.supermap.desktop.process.graphics.connection.GraphConnectionLine;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
-import com.supermap.desktop.process.graphics.storage.IGraphConnection;
+import com.supermap.desktop.process.graphics.storage.IConnectionManager;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.tasks.TasksManagerContainer;
@@ -63,7 +63,7 @@ public class CtrlActionRun extends CtrlAction {
         FormProcess formProcess = (FormProcess) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
         GraphCanvas canvas = formProcess.getCanvas();
         IGraphStorage graphStorage = canvas.getGraphStorage();
-        IGraphConnection graphConnection = canvas.getConnection();
+        IConnectionManager graphConnection = canvas.getConnection();
         IGraph[] graphs = graphStorage.getGraphs();
         for (IGraph graph : graphs) {
             if (graph instanceof ProcessGraph) {
@@ -71,8 +71,8 @@ public class CtrlActionRun extends CtrlAction {
             }
         }
 
-        GraphRelationLine[] lines = graphConnection.getLines();
-        for (GraphRelationLine line : lines) {
+        GraphConnectionLine[] lines = graphConnection.getLines();
+        for (GraphConnectionLine line : lines) {
             if (line.getEndGraph() instanceof ProcessGraph) {
                 IProcess end = ((ProcessGraph) line.getEndGraph()).getProcess();
                 OutputGraph outputGraph = (OutputGraph) line.getStartGraph();

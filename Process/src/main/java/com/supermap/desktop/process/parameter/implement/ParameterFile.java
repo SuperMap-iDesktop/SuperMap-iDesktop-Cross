@@ -12,36 +12,36 @@ import java.beans.PropertyChangeEvent;
  */
 public class ParameterFile extends AbstractParameter implements ISelectionParameter {
 
-    @ParameterField(name = "value")
-    private String selectedPath;
-    private String describe;
-    private SmFileChoose fileChoose;
+	@ParameterField(name = "value")
+	private String selectedPath;
+	private String describe;
+	private SmFileChoose fileChoose;
 
-    public ParameterFile(String describe) {
-        this.describe = describe;
-    }
+	public ParameterFile(String describe) {
+		this.describe = describe;
+	}
 
-    public ParameterFile() {
-        this("");
-    }
+	public ParameterFile() {
+		this("");
+	}
 
-    @Override
-    public String getType() {
-        return ParameterType.FILE;
-    }
+	@Override
+	public String getType() {
+		return ParameterType.FILE;
+	}
 
 
-    @Override
-    public void setSelectedItem(Object value) {
-        String oldValue = this.selectedPath;
-        this.selectedPath = (String) value;
+	@Override
+	public void setSelectedItem(Object value) {
+		String oldValue = this.selectedPath;
+		this.selectedPath = (String) value;
 //		if (value instanceof File) {
 //			selectedFile = (File) value;
 //		} else if (value instanceof String && new File((String) value).exists()) {
 //			selectedFile = new File((String) value);
 //		}
-        firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, selectedPath));
-    }
+		firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, selectedPath));
+	}
 
     @Override
     public Object getSelectedItem() {
@@ -69,5 +69,4 @@ public class ParameterFile extends AbstractParameter implements ISelectionParame
     public void setFileChoose(SmFileChoose fileChoose) {
         this.fileChoose = fileChoose;
     }
-
 }

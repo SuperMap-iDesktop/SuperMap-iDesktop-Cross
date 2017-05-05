@@ -8,19 +8,8 @@ import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.FormActivatedListener;
-import com.supermap.desktop.event.FormClosedEvent;
-import com.supermap.desktop.event.FormClosedListener;
-import com.supermap.desktop.event.FormClosingEvent;
-import com.supermap.desktop.event.FormClosingListener;
-import com.supermap.desktop.event.FormDeactivatedListener;
-import com.supermap.desktop.event.FormShownEvent;
-import com.supermap.desktop.event.FormShownListener;
-import com.supermap.desktop.process.core.DirectConnect;
-import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.core.NodeMatrix;
-import com.supermap.desktop.process.core.Workflow;
-import com.supermap.desktop.process.core.WorkflowParser;
+import com.supermap.desktop.event.*;
+import com.supermap.desktop.process.core.*;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
@@ -32,7 +21,7 @@ import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
-import com.supermap.desktop.process.graphics.storage.IGraphConnection;
+import com.supermap.desktop.process.graphics.storage.IConnectionManager;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
@@ -93,7 +82,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 					graphCanvas.getCanvas().addGraph(graph);
 					graph.setCanvas(graphCanvas.getCanvas());
 				}
-				IGraphConnection connection = graphCanvas.getCanvas().getConnection();
+				IConnectionManager connection = graphCanvas.getCanvas().getConnection();
 				for (Object node : allStartNodes) {
 					IGraph graph = (IGraph) node;
 					CopyOnWriteArrayList nextNodes = matrix.getNextNodes(graph);
@@ -262,7 +251,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 
 	private Workflow getWorkFlow() {
 		NodeMatrix nodeMatrix = new NodeMatrix();
-		IGraphConnection connection = this.graphCanvas.getCanvas().getConnection();
+		IConnectionManager connection = this.graphCanvas.getCanvas().getConnection();
 		IGraphStorage graphStorage = this.graphCanvas.getCanvas().getGraphStorage();
 		IGraph[] graphs = graphStorage.getGraphs();
 		for (IGraph graph : graphs) {
@@ -434,6 +423,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 						}
 					} catch (Exception e) {
 						// ignore 当然是原谅ta啦
+						Application.getActiveApplication().getOutput().output(e);
 					}
 				}
 			}

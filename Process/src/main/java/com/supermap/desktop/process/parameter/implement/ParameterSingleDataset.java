@@ -25,6 +25,7 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 	private DatasetType[] datasetTypes;
 	@ParameterField(name = DATASOURCE_FIELD_NAME)
 	private Datasource datasource;
+	private String describe = CommonProperties.getString(CommonProperties.Label_Dataset);
 
 	public ParameterSingleDataset(DatasetType... datasetTypes) {
 		this.datasetTypes = datasetTypes;
@@ -55,10 +56,14 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 
     }
 
-    @Override
-    public String getDescribe() {
-        return CommonProperties.getString(CommonProperties.Label_Dataset);
-    }
+	public void setDescribe(String describe) {
+		this.describe = describe;
+	}
+
+	@Override
+	public String getDescribe() {
+		return describe;
+	}
 
 	public void setDatasource(Datasource datasource) {
 		firePropertyChangeListener(new PropertyChangeEvent(this, DATASOURCE_FIELD_NAME, this.datasource, datasource));
@@ -73,7 +78,7 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 		return datasetTypes;
 	}
 
-	public void setDatasetTypes(DatasetType[] datasetTypes) {
+	public void setDatasetTypes(DatasetType... datasetTypes) {
 		this.datasetTypes = datasetTypes;
 	}
 }

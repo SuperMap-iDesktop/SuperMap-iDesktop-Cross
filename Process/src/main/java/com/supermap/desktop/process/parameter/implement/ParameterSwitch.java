@@ -48,6 +48,9 @@ public class ParameterSwitch extends AbstractParameter {
 
 	public void switchParameter(IParameter parameter) {
 		IParameter oldValue = this.currentParameter;
+		if (parameter != null && parameter.getParameters() == null) {
+			parameter.setParameters(parameters);
+		}
 		currentParameter = parameter;
 		firePropertyChangeListener(new PropertyChangeEvent(this, CURRENT_PARAMETER, oldValue, currentParameter));
 	}
@@ -82,6 +85,9 @@ public class ParameterSwitch extends AbstractParameter {
 	@Override
 	public void setParameters(IParameters parameters) {
 		super.setParameters(parameters);
+		if (currentParameter != null && currentParameter.getParameters() == null) {
+			currentParameter.setParameters(parameters);
+		}
 		for (ParameterSwitchNode node : nodes) {
 			if (node.getParameter() != null) {
 				node.getParameter().setParameters(parameters);

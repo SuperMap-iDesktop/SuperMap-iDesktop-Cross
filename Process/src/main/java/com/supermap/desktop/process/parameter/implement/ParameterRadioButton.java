@@ -4,7 +4,6 @@ import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.ISingleSelectionParameter;
-
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +17,8 @@ public class ParameterRadioButton extends AbstractParameter implements ISingleSe
 	private ArrayList<ParameterDataNode> items = new ArrayList<>();
 	@ParameterField(name = "selectedItem")
 	private ParameterDataNode selectedItem;
+	public static final String VATICAL = "vertical";
+	private String layout;
 
 	@Override
 	public String getType() {
@@ -82,8 +83,17 @@ public class ParameterRadioButton extends AbstractParameter implements ISingleSe
 		return this;
 	}
 
+	public String getLayout() {
+		return layout;
+	}
+
+	public void setLayout(String layout) {
+		this.layout = layout;
+	}
+
 	@Override
 	public void dispose() {
 
 	}
+
 }

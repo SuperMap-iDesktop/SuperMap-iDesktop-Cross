@@ -4,6 +4,7 @@ import com.supermap.data.Datasource;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
+import com.supermap.desktop.properties.CommonProperties;
 
 import java.beans.PropertyChangeEvent;
 
@@ -16,7 +17,7 @@ public class ParameterDatasource extends AbstractParameter implements ISelection
 
 	@ParameterField(name = DATASOURCE_FIELD_NAME)
 	private Datasource datasource;
-    private String describe;
+	private String describe = CommonProperties.getString(CommonProperties.Label_Datasource);
 
     @Override
     public String getType() {

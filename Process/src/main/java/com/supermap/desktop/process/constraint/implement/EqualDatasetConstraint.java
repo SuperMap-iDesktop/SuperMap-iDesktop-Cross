@@ -2,6 +2,7 @@ package com.supermap.desktop.process.constraint.implement;
 
 import com.supermap.data.Dataset;
 import com.supermap.desktop.process.parameter.events.ParameterValueSelectedEvent;
+import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 
 import java.beans.PropertyChangeEvent;
@@ -15,7 +16,12 @@ public class EqualDatasetConstraint extends DefaultConstraint {
 
 	@Override
 	public Object isValueSelected(ParameterValueSelectedEvent event) {
-		return dataset;
+		for (ParameterNode parameterNode : parameterNodes) {
+			if (parameterNode.getParameter() == event.getParameter() && parameterNode.getName().equals(event.getFieldName())) {
+				return dataset;
+			}
+		}
+		return AbstractParameter.DO_NOT_CARE;
 	}
 
 	@Override

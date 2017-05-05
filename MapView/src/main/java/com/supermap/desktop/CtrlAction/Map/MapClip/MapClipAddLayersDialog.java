@@ -3,6 +3,7 @@ package com.supermap.desktop.CtrlAction.Map.MapClip;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.borderPanel.PanelButton;
@@ -219,10 +220,15 @@ public class MapClipAddLayersDialog extends SmDialog {
     private class MapClipLayerCaptionTableRender extends DefaultTableCellRenderer {
         public Component getTableCellRendererComponent(JTable table, Object value,
                                                        boolean isSelected, boolean hasFocus, int row, int column) {
-            super.getTableCellRendererComponent(table, value, isSelected, hasFocus,
-                    row, column);
-            this.setText(((Layer) value).getCaption());
-            return this;
+	        DataCell dataCell = new DataCell(value);
+	        dataCell.setToolTipText(((Layer) value).getCaption());
+	        if (isSelected) {
+		        dataCell.setBackground(table.getSelectionBackground());
+		        dataCell.setForeground(table.getSelectionForeground());
+	        } else {
+		        dataCell.setBackground(table.getBackground());
+	        }
+	        return dataCell;
         }
     }
 }

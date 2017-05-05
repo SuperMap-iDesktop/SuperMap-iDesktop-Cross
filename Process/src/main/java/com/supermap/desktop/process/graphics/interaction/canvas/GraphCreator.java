@@ -5,7 +5,7 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
-import com.supermap.desktop.process.graphics.graphs.decorator.PreviewDecorator;
+import com.supermap.desktop.process.graphics.graphs.decorators.PreviewDecorator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -104,8 +104,8 @@ public class GraphCreator extends CanvasActionAdapter {
 	}
 
 	public void paint(Graphics g) {
-		if (isCreating() && this.previewDecorator.isDecorating()) {
-			this.canvas.getPainterFactory().getPainter(this.previewDecorator, g).paint();
+		if (isCreating() && this.previewDecorator.getGraph() != null) {
+//			this.canvas.getPainterFactory().getPainter(this.previewDecorator, g).paint();
 		}
 	}
 

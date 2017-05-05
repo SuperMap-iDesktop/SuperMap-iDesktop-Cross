@@ -61,6 +61,12 @@ public class RectangleGraph extends AbstractGraph {
 	}
 
 	@Override
+	protected void onPaint(Graphics g) {
+		g.setColor(new Color(202, 221, 254));
+		((Graphics2D) g).fill(this.shape);
+	}
+
+	@Override
 	protected void formXmlHook(JSONObject xml) {
 		super.formXmlHook(xml);
 		String[] shapes = ((String) xml.get("shape")).split(",");

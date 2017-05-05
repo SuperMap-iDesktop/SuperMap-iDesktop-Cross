@@ -2,7 +2,7 @@ package com.supermap.desktop.process.graphics.storage;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
-import com.supermap.desktop.process.graphics.connection.GraphRelationLine;
+import com.supermap.desktop.process.graphics.connection.GraphConnectionLine;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import java.awt.*;
@@ -11,9 +11,9 @@ import java.util.ArrayList;
 /**
  * Created by highsad on 2017/4/5.
  */
-public class ListGraphConnection implements IGraphConnection {
+public class ListGraphConnection implements IConnectionManager {
 	private GraphCanvas canvas;
-	private java.util.List<GraphRelationLine> lines = new ArrayList<>();
+	private java.util.List<GraphConnectionLine> lines = new ArrayList<>();
 
 	public ListGraphConnection(GraphCanvas canvas) {
 		this.canvas = canvas;
@@ -25,8 +25,8 @@ public class ListGraphConnection implements IGraphConnection {
 	}
 
 	@Override
-	public GraphRelationLine[] getLines() {
-		return this.lines.toArray(new GraphRelationLine[this.lines.size()]);
+	public GraphConnectionLine[] getLines() {
+		return this.lines.toArray(new GraphConnectionLine[this.lines.size()]);
 	}
 
 	@Override
@@ -41,7 +41,7 @@ public class ListGraphConnection implements IGraphConnection {
 		}
 
 		if (start != null && end != null && start != end) {
-			GraphRelationLine line = new GraphRelationLine(this.canvas, start, end, message);
+			GraphConnectionLine line = new GraphConnectionLine(this.canvas, start, end, message);
 			this.lines.add(line);
 			line.repaint();
 		}
@@ -50,7 +50,7 @@ public class ListGraphConnection implements IGraphConnection {
 	@Override
 	public void removeConnection(IGraph graph) {
 		for (int i = this.lines.size() - 1; i >= 0; i--) {
-			GraphRelationLine line = this.lines.get(i);
+			GraphConnectionLine line = this.lines.get(i);
 			if (line.getStartGraph() == graph || line.getEndGraph() == graph) {
 				this.lines.remove(i);
 				line.clear();
@@ -59,7 +59,7 @@ public class ListGraphConnection implements IGraphConnection {
 	}
 
 	@Override
-	public void removeConnectLine(GraphRelationLine line) {
+	public void removeConnectLine(GraphConnectionLine line) {
 		if (line == null) {
 			return;
 		}
@@ -76,7 +76,7 @@ public class ListGraphConnection implements IGraphConnection {
 
 		ArrayList<IGraph> ret = new ArrayList<>();
 		for (int i = 0, size = this.lines.size(); i < size; i++) {
-			GraphRelationLine line = this.lines.get(i);
+			GraphConnectionLine line = this.lines.get(i);
 			if (line.getEndGraph() == end && line.getStartGraph() != null && !ret.contains(line.getStartGraph())) {
 				ret.add(line.getStartGraph());
 			}
@@ -92,7 +92,7 @@ public class ListGraphConnection implements IGraphConnection {
 
 		ArrayList<IGraph> ret = new ArrayList<>();
 		for (int i = 0, size = this.lines.size(); i < size; i++) {
-			GraphRelationLine line = this.lines.get(i);
+			GraphConnectionLine line = this.lines.get(i);
 			if (line.getStartGraph() == start && line.getEndGraph() != null && !ret.contains(line.getEndGraph())) {
 				ret.add(line.getEndGraph());
 			}
@@ -104,7 +104,7 @@ public class ListGraphConnection implements IGraphConnection {
 	public boolean isConnectedAsStart(IGraph start) {
 		boolean ret = false;
 		for (int i = 0, size = this.lines.size(); i < size; i++) {
-			GraphRelationLine line = this.lines.get(i);
+			GraphConnectionLine line = this.lines.get(i);
 			if (line.getStartGraph() == start && line.getEndGraph() != null) {
 				ret = true;
 				break;
@@ -117,7 +117,7 @@ public class ListGraphConnection implements IGraphConnection {
 	public boolean isConnectedAsEnd(IGraph end) {
 		boolean ret = false;
 		for (int i = 0, size = this.lines.size(); i < size; i++) {
-			GraphRelationLine line = this.lines.get(i);
+			GraphConnectionLine line = this.lines.get(i);
 			if (line.getEndGraph() == end && line.getStartGraph() != null) {
 				ret = true;
 				break;
@@ -130,7 +130,7 @@ public class ListGraphConnection implements IGraphConnection {
 	public boolean isConnected(IGraph graph1, IGraph graph2) {
 		boolean ret = false;
 		for (int i = 0, size = this.lines.size(); i < size; i++) {
-			GraphRelationLine line = this.lines.get(i);
+			GraphConnectionLine line = this.lines.get(i);
 			if ((line.getStartGraph() == graph1 && line.getEndGraph() == graph2)
 					|| (line.getStartGraph() == graph2 && line.getEndGraph() == graph1)) {
 				ret = true;
@@ -141,12 +141,12 @@ public class ListGraphConnection implements IGraphConnection {
 	}
 
 	@Override
-	public GraphRelationLine find(Point point) {
-		GraphRelationLine result = null;
+	public GraphConnectionLine find(Point point) {
+		GraphConnectionLine result = null;
 		Point inverse = this.canvas.getCoordinateTransform().inverse(point);
 
 		for (int i = 0; i < this.lines.size(); i++) {
-			GraphRelationLine line = this.lines.get(i);
+			GraphConnectionLine line = this.lines.get(i);
 			Point start = line.getStartPoint();
 			Point end = line.getEndPoint();
 			Boolean isPointOnLine = GraphicsUtil.lineContainsPoint(start.x, start.y, end.x, end.y, inverse.x, inverse.y, 4);

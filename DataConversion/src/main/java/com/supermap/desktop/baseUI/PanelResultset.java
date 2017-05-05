@@ -13,7 +13,6 @@ import com.supermap.desktop.dataconversion.DataConversionProperties;
 import com.supermap.desktop.iml.ImportInfo;
 import com.supermap.desktop.importUI.PanelImport;
 import com.supermap.desktop.importUI.PanelTransformForImage;
-import com.supermap.desktop.localUtilities.LocalFileUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.StateChangeEvent;
 import com.supermap.desktop.ui.StateChangeListener;
@@ -53,7 +52,7 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
     private JLabel labelImportMode;
     private JComboBox comboBoxImportMode;
     private JLabel labelDatasetType;
-    private DatasetTypeComboBox comboBoxDatasetType;
+    private JComboBox comboBoxDatasetType;
     private TristateCheckBox checkBoxFieldIndex;
     private TristateCheckBox checkBoxSpatialIndex;
     private ImportInfo importInfo;
@@ -137,7 +136,12 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
         @Override
         public void itemStateChanged(ItemEvent e) {
             if (e.getStateChange() == ItemEvent.SELECTED) {
-                String datasetType = comboBoxDatasetType.getSelectedDatasetTypeName();
+                String datasetType;
+                if (comboBoxDatasetType instanceof DatasetTypeComboBox) {
+                    datasetType = ((DatasetTypeComboBox) comboBoxDatasetType).getSelectedDatasetTypeName();
+                } else {
+                    datasetType = comboBoxDatasetType.getSelectedItem().toString();
+                }
                 if (null != panelImports) {
                     for (PanelImport tempPanelImport : panelImports) {
                         if (datasetType.equalsIgnoreCase(CommonProperties.getString("String_DatasetType_CAD"))) {
@@ -243,7 +247,12 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
     };
 
     private void resetImportModel() {
-        String newdatasetType = comboBoxDatasetType.getSelectedDatasetTypeName();
+        String newdatasetType;
+        if (comboBoxDatasetType instanceof DatasetTypeComboBox) {
+            newdatasetType = ((DatasetTypeComboBox) comboBoxDatasetType).getSelectedDatasetTypeName();
+        } else {
+            newdatasetType = comboBoxDatasetType.getSelectedItem().toString();
+        }
         if (newdatasetType.equalsIgnoreCase(DataConversionProperties.getString("string_comboboxitem_image"))) {
             if (owner.getTransform() instanceof PanelTransformForImage) {
                 ((PanelTransformForImage) owner.getTransform()).getComboBoxBandImportModel().setModel(new DefaultComboBoxModel(new String[]{DataConversionProperties.getString("string_singleBand"),
@@ -777,7 +786,9 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
         } else if (importSetting instanceof ImportSettingLIDAR) {
             initComboboxEncodeType(false);
             setDefaultImportSettingEncode();
-            this.comboBoxDatasetType = new DatasetTypeComboBox(new String[]{DataConversionProperties.getString("String_datasetType2D"), DataConversionProperties.getString("String_datasetType3D")});
+            this.comboBoxDatasetType = new JComboBox(new String[]{DataConversionProperties.getString("String_datasetType2D"), DataConversionProperties.getString("String_datasetType3D")});
+            this.comboBoxDatasetType.setEditable(true);
+            ((JTextField) this.comboBoxDatasetType.getEditor().getEditorComponent()).setEditable(false);
             initDefaultLayout();
             if (((ImportSettingLIDAR) importSetting).isImportingAs3D()) {
                 this.comboBoxDatasetType.setSelectedIndex(1);
@@ -811,7 +822,13 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
     private void initDatasetType() {
         if (null != panelImports && null != this.comboBoxDatasetType) {
             this.comboBoxDatasetType.setSelectedItem(selectedItem(DATASET_TYPE));
-            if (null == this.comboBoxDatasetType.getSelectedDatasetTypeName() && owner.getTransform() instanceof PanelTransformForImage) {
+            String newdatasetType;
+            if (comboBoxDatasetType instanceof DatasetTypeComboBox) {
+                newdatasetType = ((DatasetTypeComboBox) comboBoxDatasetType).getSelectedDatasetTypeName();
+            } else {
+                newdatasetType = comboBoxDatasetType.getSelectedItem().toString();
+            }
+            if (null == newdatasetType && owner.getTransform() instanceof PanelTransformForImage) {
                 //选择集不同且导入类型为img或者tiff时导入波段模式设置为多个单波段
                 setImgImportModel();
             }
@@ -962,7 +979,7 @@ public class PanelResultset extends JPanel implements IImportSettingResultset {
         return comboBoxImportMode;
     }
 
-    public DatasetTypeComboBox getComboBoxDatasetType() {
+    public JComboBox getComboBoxDatasetType() {
         return comboBoxDatasetType;
     }
 

@@ -105,7 +105,7 @@ public class MetaProcessBuffer extends MetaProcess {
 	private void initComponentState() {
 		parameterBufferRange.setSelectedItem(BufferRadiusUnit.Meter);
 		parameterTextFieldRadius.setSelectedItem("10");
-		parameterTextFieldSemicircleLineSegment.setSelectedItem("50");
+		parameterTextFieldSemicircleLineSegment.setSelectedItem("100");
 		if (Application.getActiveApplication().getActiveDatasources().length > 0) {
 			parameterSaveDataset.setResultDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
 		} else if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
