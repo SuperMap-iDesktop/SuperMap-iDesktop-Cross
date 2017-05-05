@@ -111,7 +111,7 @@ public abstract class AbstractGraph implements IGraph {
 	}
 
 	@Override
-	public void setLocation(Point point) {
+	public final void setLocation(Point point) {
 		Point oldLocation = getShape().getBounds().getLocation();
 
 		if (!oldLocation.equals(point)) {
@@ -123,7 +123,7 @@ public abstract class AbstractGraph implements IGraph {
 	protected abstract void applyLocation(Point point);
 
 	@Override
-	public void setSize(int width, int height) {
+	public final void setSize(int width, int height) {
 		int oldWidth = getShape().getBounds().width;
 		int oldHeight = getShape().getBounds().height;
 

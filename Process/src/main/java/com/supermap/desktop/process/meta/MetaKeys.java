@@ -8,6 +8,7 @@ public class MetaKeys {
 	public static final String BUFFER = "Buffer";
 	public static final String IMPORT = "Import";
 	public static final String PROJECTION = "Projection";
+	public static final String SET_PROJECTION = "SetProjection";
 	public static final String HEAT_MAP = "HeatMap";
 	public static final String KERNEL_DENSITY = "KernelDensity";
 	public static final String OVERLAY_ANALYST_CLIP = "OverlayAnalyst_CLIP";

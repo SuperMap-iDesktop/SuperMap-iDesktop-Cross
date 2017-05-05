@@ -1,28 +1,6 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetCreatedEvent;
-import com.supermap.data.DatasetCreatedListener;
-import com.supermap.data.DatasetDeletingAllEvent;
-import com.supermap.data.DatasetDeletingAllListener;
-import com.supermap.data.DatasetDeletingEvent;
-import com.supermap.data.DatasetDeletingListener;
-import com.supermap.data.DatasetType;
-import com.supermap.data.Datasource;
-import com.supermap.data.DatasourceClosingEvent;
-import com.supermap.data.DatasourceClosingListener;
-import com.supermap.data.DatasourceCreatedEvent;
-import com.supermap.data.DatasourceCreatedListener;
-import com.supermap.data.DatasourceOpenedEvent;
-import com.supermap.data.DatasourceOpenedListener;
-import com.supermap.data.Datasources;
-import com.supermap.data.Workspace;
-import com.supermap.data.WorkspaceClosedEvent;
-import com.supermap.data.WorkspaceClosedListener;
-import com.supermap.data.WorkspaceCreatedEvent;
-import com.supermap.data.WorkspaceCreatedListener;
-import com.supermap.data.WorkspaceOpenedEvent;
-import com.supermap.data.WorkspaceOpenedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
@@ -116,27 +94,39 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 	}
 
 	private void initComponents() {
+		Datasource datasource = null;
 		this.labelDataset = new JLabel();
+		this.datasetComboBox = new DatasetComboBox();
+		this.datasetTypes = parameterSingleDataset.getDatasetTypes();
+		this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
 		this.labelDataset.setText(parameterSingleDataset.getDescribe());
-
 		this.datasource = parameterSingleDataset.getDatasource();
-		if (datasource != null) {
+		if (this.datasource != null) {
 			this.datasetComboBox = new DatasetComboBox(datasource.getDatasets());
 			Object selectedItem = parameterSingleDataset.getSelectedItem();
 			if (selectedItem != null && selectedItem instanceof Dataset) {
 				datasetComboBox.setSelectedDataset((Dataset) selectedItem);
 			}
 		} else if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
-			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
-			setSelectedDatasource(datasource);
-			this.datasetComboBox = new DatasetComboBox(datasource.getDatasets());
+			if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0) {
+				datasource = Application.getActiveApplication().getActiveDatasources()[0];
+				if (Application.getActiveApplication().getActiveDatasets().length > 0) {
+					this.datasetComboBox = new DatasetComboBox(datasource.getDatasets());
+					this.datasetComboBox.setSelectedDataset(Application.getActiveApplication().getActiveDatasets()[0]);
+				} else {
+					this.datasetComboBox = new DatasetComboBox(datasource.getDatasets());
+				}
+			} else {
+				datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
+				this.datasetComboBox = new DatasetComboBox(datasource.getDatasets());
+			}
+			removeDatasourceListener(datasource);
+			addDatasourceListener(datasource);
 		} else {
 			this.datasetComboBox = new DatasetComboBox();
 		}
-		this.datasetTypes = parameterSingleDataset.getDatasetTypes();
-		this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
-		if (datasetComboBox.getSelectedItem() != parameterSingleDataset.getSelectedItem()) {
-			parameterSingleDataset.setSelectedItem(datasetComboBox.getSelectedItem());
+		if (datasetComboBox.getSelectedDataset() != parameterSingleDataset.getSelectedItem()) {
+			parameterSingleDataset.setSelectedItem(datasetComboBox.getSelectedDataset());
 		}
 	}
 

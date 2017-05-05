@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.graphics.storage;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.connection.GraphRelationLine;
+import com.supermap.desktop.process.graphics.connection.GraphConnectionLine;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import java.awt.*;
@@ -12,7 +12,7 @@ import java.awt.*;
 public interface IConnectionManager {
 	GraphCanvas getCanvas();
 
-	GraphRelationLine[] getLines();
+	GraphConnectionLine[] getLines();
 
 	void connect(IGraph start, IGraph end);
 
@@ -20,7 +20,7 @@ public interface IConnectionManager {
 
 	void removeConnection(IGraph graph);
 
-	void removeConnectLine(GraphRelationLine line);
+	void removeConnectLine(GraphConnectionLine line);
 
 	IGraph[] getPreGraphs(IGraph end);
 
@@ -32,5 +32,5 @@ public interface IConnectionManager {
 
 	boolean isConnected(IGraph graph1, IGraph graph2);
 
-	GraphRelationLine find(Point point);
+	GraphConnectionLine find(Point point);
 }

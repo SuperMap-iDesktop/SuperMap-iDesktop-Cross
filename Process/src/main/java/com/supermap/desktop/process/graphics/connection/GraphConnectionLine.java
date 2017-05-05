@@ -18,7 +18,7 @@ import java.awt.*;
 /**
  * Created by highsad on 2017/3/23.
  */
-public class GraphRelationLine extends AbstractLine implements GraphBoundsChangedListener {
+public class GraphConnectionLine extends LineGraph implements GraphBoundsChangedListener {
 	private IGraph start;
 	private IGraph end;
 	private String message;
@@ -27,11 +27,11 @@ public class GraphRelationLine extends AbstractLine implements GraphBoundsChange
 	private boolean isEditable = true;
 	private boolean isSelected = true;
 
-	public GraphRelationLine(GraphCanvas canvas, IGraph start, IGraph end) {
+	public GraphConnectionLine(GraphCanvas canvas, IGraph start, IGraph end) {
 		this(canvas, start, end, null);
 	}
 
-	public GraphRelationLine(GraphCanvas canvas, IGraph start, IGraph end, String message) {
+	public GraphConnectionLine(GraphCanvas canvas, IGraph start, IGraph end, String message) {
 		super(canvas);
 		setStartGraph(start);
 		setEndGraph(end);

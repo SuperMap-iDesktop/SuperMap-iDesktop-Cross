@@ -47,7 +47,7 @@ public abstract class AbstractDecorator implements IDecorator {
 	}
 
 	@Override
-	public void paint(Graphics g) {
+	public final void paint(Graphics g) {
 		if (this.decoratedGraph != null) {
 			onPaint(g);
 		}
