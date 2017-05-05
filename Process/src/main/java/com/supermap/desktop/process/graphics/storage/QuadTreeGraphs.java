@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics.storage;
 
+import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import java.awt.*;
@@ -8,6 +9,16 @@ import java.awt.*;
  * Created by highsad on 2017/3/2.
  */
 public class QuadTreeGraphs implements IGraphStorage {
+	@Override
+	public IConnectionManager getConnectionManager() {
+		return null;
+	}
+
+	@Override
+	public GraphCanvas getCanvas() {
+		return null;
+	}
+
 	@Override
 	public int getCount() {
 		return 0;

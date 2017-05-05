@@ -97,7 +97,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 								message = processGraph.getProcess().getInputs().getBindedInput(((OutputGraph) graph).getProcessData());
 							}
 
-							connection.connect(graph, (IGraph) nextNode, message);
+//							connection.connect(graph, (IGraph) nextNode, message);
 						}
 					}
 				}
