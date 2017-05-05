@@ -11,14 +11,14 @@ import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 import com.supermap.desktop.utilities.StringUtilities;
-import sun.swing.SwingUtilities2;
 
 import java.awt.*;
 
 /**
  * Created by highsad on 2017/3/23.
  */
-public class GraphConnectionLine extends LineGraph implements GraphBoundsChangedListener {
+public class ConnectionLineGraph extends LineGraph implements GraphBoundsChangedListener {
+	private IConnection connection;
 	private IGraph start;
 	private IGraph end;
 	private String message;
@@ -27,11 +27,11 @@ public class GraphConnectionLine extends LineGraph implements GraphBoundsChanged
 	private boolean isEditable = true;
 	private boolean isSelected = true;
 
-	public GraphConnectionLine(GraphCanvas canvas, IGraph start, IGraph end) {
+	public ConnectionLineGraph(GraphCanvas canvas, IGraph start, IGraph end) {
 		this(canvas, start, end, null);
 	}
 
-	public GraphConnectionLine(GraphCanvas canvas, IGraph start, IGraph end, String message) {
+	public ConnectionLineGraph(GraphCanvas canvas, IGraph start, IGraph end, String message) {
 		super(canvas);
 		setStartGraph(start);
 		setEndGraph(end);
@@ -54,16 +54,6 @@ public class GraphConnectionLine extends LineGraph implements GraphBoundsChanged
 		isSelected = selected;
 	}
 
-	@Override
-	public Point getStartPoint() {
-		return this.start != null ? getStartLocation() : null;
-	}
-
-	@Override
-	public Point getEndPoint() {
-		return this.end != null ? getEndLocation() : null;
-	}
-
 	public IGraph getStartGraph() {
 		return this.start;
 	}
@@ -76,10 +66,10 @@ public class GraphConnectionLine extends LineGraph implements GraphBoundsChanged
 		this.start = start;
 
 		if (this.start != null) {
-			setStartPoint(getStartLocation());
+//			setStartPoint(getStartLocation());
 			this.start.addGraphBoundsChangedListener(this);
 		} else {
-			setStartPoint(null);
+//			setStartPoint(null);
 		}
 	}
 
@@ -95,10 +85,10 @@ public class GraphConnectionLine extends LineGraph implements GraphBoundsChanged
 		this.end = end;
 
 		if (this.end != null) {
-			setEndPoint(getEndLocation());
+//			setEndPoint(getEndLocation());
 			this.end.addGraphBoundsChangedListener(this);
 		} else {
-			setStartPoint(null);
+//			setStartPoint(null);
 		}
 	}
 
@@ -118,8 +108,8 @@ public class GraphConnectionLine extends LineGraph implements GraphBoundsChanged
 
 	@Override
 	public void graghBoundsChanged(GraphBoundsChangedEvent e) {
-		setStartPoint(getStartLocation());
-		setEndPoint(getEndLocation());
+//		setStartPoint(getStartLocation());
+//		setEndPoint(getEndLocation());
 	}
 
 	private Point getEndLocation() {
@@ -145,42 +135,30 @@ public class GraphConnectionLine extends LineGraph implements GraphBoundsChanged
 	}
 
 	private Rectangle getTextBounds() {
-		if (!GraphicsUtil.isPointValid(getStartPoint()) || !GraphicsUtil.isPointValid(getEndPoint())) {
-			return null;
-		}
-
-		int textX = Math.min(getStartPoint().x, getEndPoint().x) + (Math.abs(getEndPoint().x - getStartPoint().x)) / 2;
-		int textY = Math.min(getStartPoint().y, getEndPoint().y) + (Math.abs(getEndPoint().y - getStartPoint().y)) / 2;
-		int textWidth = SwingUtilities2.stringWidth(getCanvas(), getCanvas().getFontMetrics(this.font), this.message);
-		int textHeight = GraphicsUtil.getFontHeight(getCanvas(), this.font);
-		return StringUtilities.isNullOrEmpty(this.message) ? null : new Rectangle(textX, textY, textWidth, textHeight);
+//		if (!GraphicsUtil.isPointValid(getStartPoint()) || !GraphicsUtil.isPointValid(getEndPoint())) {
+//			return null;
+//		}
+//
+//		int textX = Math.min(getStartPoint().x, getEndPoint().x) + (Math.abs(getEndPoint().x - getStartPoint().x)) / 2;
+//		int textY = Math.min(getStartPoint().y, getEndPoint().y) + (Math.abs(getEndPoint().y - getStartPoint().y)) / 2;
+//		int textWidth = SwingUtilities2.stringWidth(getCanvas(), getCanvas().getFontMetrics(this.font), this.message);
+//		int textHeight = GraphicsUtil.getFontHeight(getCanvas(), this.font);
+//		return StringUtilities.isNullOrEmpty(this.message) ? null : new Rectangle(textX, textY, textWidth, textHeight);
+		return null;
 	}
 
 	@Override
 	public void paint(Graphics graphics) {
-		super.paint(graphics);
-		Graphics2D graphics2D = (Graphics2D) graphics;
-		Point startP = getStartPoint();
-		Point endP = getEndPoint();
-
-		if (startP != null && endP != null && !StringUtilities.isNullOrEmpty(this.message)) {
-			graphics.setColor(this.textColor);
-			int textX = Math.min(getStartPoint().x, getEndPoint().x) + (Math.abs(getEndPoint().x - getStartPoint().x)) / 2;
-			int textY = Math.min(getStartPoint().y, getEndPoint().y) + (Math.abs(getEndPoint().y - getStartPoint().y)) / 2;
-			graphics2D.drawString(this.message, textX, textY);
-		}
-
-//		startP = getStartLocation();
-//		endP = getEndLocation();
-//		if (startP != null && endP != null && this.isSelected) {
-//			Rectangle startR = new Rectangle(startP.x - 3, startP.y - 3, 6, 6);
-//			Rectangle endR = new Rectangle(endP.x - 3, endP.y - 3, 6, 6);
-//			graphics.setColor(Color.WHITE);
-//			((Graphics2D) graphics).fill(startR);
-//			((Graphics2D) graphics).fill(endR);
-//			graphics.setColor(Color.BLACK);
-//			((Graphics2D) graphics).draw(startR);
-//			((Graphics2D) graphics).draw(endR);
+//		super.paint(graphics);
+//		Graphics2D graphics2D = (Graphics2D) graphics;
+//		Point startP = getStartPoint();
+//		Point endP = getEndPoint();
+//
+//		if (startP != null && endP != null && !StringUtilities.isNullOrEmpty(this.message)) {
+//			graphics.setColor(this.textColor);
+//			int textX = Math.min(getStartPoint().x, getEndPoint().x) + (Math.abs(getEndPoint().x - getStartPoint().x)) / 2;
+//			int textY = Math.min(getStartPoint().y, getEndPoint().y) + (Math.abs(getEndPoint().y - getStartPoint().y)) / 2;
+//			graphics2D.drawString(this.message, textX, textY);
 //		}
 	}
 }

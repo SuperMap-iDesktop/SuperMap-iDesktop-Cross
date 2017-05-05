@@ -2,6 +2,7 @@ package com.supermap.desktop.process.graphics.graphs;
 
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.connection.IConnectable;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -9,7 +10,7 @@ import java.awt.geom.Ellipse2D;
 /**
  * Created by highsad on 2017/1/19.
  */
-public class EllipseGraph extends AbstractGraph {
+public class EllipseGraph extends AbstractGraph implements IConnectable {
 
 	public EllipseGraph(GraphCanvas canvas) {
 		super(canvas, new Ellipse2D.Double(0, 0, 160, 60));
@@ -51,5 +52,10 @@ public class EllipseGraph extends AbstractGraph {
 		String shape = (String) xml.get("shape");
 		String[] split = shape.split(",");
 		this.shape = new Ellipse2D.Double(Double.valueOf(split[0]), Double.valueOf(split[1]), Double.valueOf(split[2]), Double.valueOf(split[3]));
+	}
+
+	@Override
+	public IGraph getConnector() {
+		return this;
 	}
 }

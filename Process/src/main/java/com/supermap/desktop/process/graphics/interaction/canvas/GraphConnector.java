@@ -4,9 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.graphics.CanvasCursor;
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.GraphicsUtil;
-import com.supermap.desktop.process.graphics.connection.GraphConnectionLine;
-import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
+import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
@@ -18,8 +16,6 @@ import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
 /**
@@ -27,12 +23,12 @@ import java.awt.event.MouseEvent;
  */
 public class GraphConnector extends CanvasActionAdapter {
 	private GraphCanvas canvas;
-	private DefaultLine previewLine;
+	//	private DefaultLine previewLine;
 	private OutputGraph startGraph = null;
 	private ProcessGraph endGraph = null;
 	private JPopupMenu inputsMenu = new JPopupMenu();
 
-	private GraphConnectionLine selected;
+	private ConnectionLineGraph selected;
 
 	public GraphConnector(GraphCanvas canvas) {
 		this.canvas = canvas;
@@ -57,14 +53,14 @@ public class GraphConnector extends CanvasActionAdapter {
 
 	public void connecting() {
 		CanvasCursor.setConnectingCursor(this.canvas);
-		this.previewLine = new DefaultLine(this.canvas);
+//		this.previewLine = new DefaultLine(this.canvas);
 		fireCanvasActionStart();
 	}
 
 	public void preview(Graphics g) {
-		if (this.previewLine != null) {
-			this.previewLine.paint(g);
-		}
+//		if (this.previewLine != null) {
+//			this.previewLine.paint(g);
+//		}
 	}
 
 	@Override
@@ -74,7 +70,7 @@ public class GraphConnector extends CanvasActionAdapter {
 
 			if (isStartValid(hit)) {
 				this.startGraph = (OutputGraph) hit;
-				this.previewLine.setStartPoint(hit.getCenter());
+//				this.previewLine.setStartPoint(hit.getCenter());
 			} else {
 				this.startGraph = null;
 			}
@@ -97,14 +93,14 @@ public class GraphConnector extends CanvasActionAdapter {
 						this.inputsMenu.add(item);
 						item.setEnabled(!datas[i].isBinded());
 
-						item.addActionListener(new ActionListener() {
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								inputs.bind(item.getText(), start.getProcessData());
-								canvas.getConnection().connect(start, end, item.getText());
-								inputsMenu.setVisible(false);
-							}
-						});
+//						item.addActionListener(new ActionListener() {
+//							@Override
+//							public void actionPerformed(ActionEvent e) {
+//								inputs.bind(item.getText(), start.getProcessData());
+//								canvas.getConnection().connect(start, end, item.getText());
+//								inputsMenu.setVisible(false);
+//							}
+//						});
 					}
 					this.inputsMenu.show(this.canvas, e.getX(), e.getY());
 				}
@@ -112,9 +108,9 @@ public class GraphConnector extends CanvasActionAdapter {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			this.previewLine.setStartPoint(null);
-			this.previewLine.setEndPoint(null);
-			this.previewLine.setStatus(DefaultLine.NORMAL);
+//			this.previewLine.setStartPoint(null);
+//			this.previewLine.setEndPoint(null);
+//			this.previewLine.setStatus(DefaultLine.NORMAL);
 			this.startGraph = null;
 			this.endGraph = null;
 		}
@@ -146,25 +142,25 @@ public class GraphConnector extends CanvasActionAdapter {
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e)) {
-			if (this.previewLine == null || this.previewLine.getStartPoint() == null) {
-				return;
-			}
+//			if (this.previewLine == null || this.previewLine.getStartPoint() == null) {
+//				return;
+//			}
 
 			IGraph hit = this.canvas.findGraph(e.getPoint());
 
 			if (hit == null) {
 				this.endGraph = null;
-				this.previewLine.setStatus(DefaultLine.NORMAL);
-				this.previewLine.setEndPoint(this.canvas.getCoordinateTransform().inverse(e.getPoint()));
+//				this.previewLine.setStatus(DefaultLine.NORMAL);
+//				this.previewLine.setEndPoint(this.canvas.getCoordinateTransform().inverse(e.getPoint()));
 			} else {
 				if (isEndValid(hit)) {
 					this.endGraph = (ProcessGraph) hit;
-					this.previewLine.setStatus(DefaultLine.PREPARING);
-					this.previewLine.setEndPoint(GraphicsUtil.chop(((AbstractGraph) this.endGraph).getShape(), this.startGraph.getCenter()));
+//					this.previewLine.setStatus(DefaultLine.PREPARING);
+//					this.previewLine.setEndPoint(GraphicsUtil.chop(((AbstractGraph) this.endGraph).getShape(), this.startGraph.getCenter()));
 				} else {
 					this.endGraph = null;
-					this.previewLine.setStatus(DefaultLine.INVALID);
-					this.previewLine.setEndPoint(this.canvas.getCoordinateTransform().inverse(e.getPoint()));
+//					this.previewLine.setStatus(DefaultLine.INVALID);
+//					this.previewLine.setEndPoint(this.canvas.getCoordinateTransform().inverse(e.getPoint()));
 				}
 			}
 		}
@@ -210,12 +206,12 @@ public class GraphConnector extends CanvasActionAdapter {
 	@Override
 	public void clean() {
 		try {
-			if (this.previewLine != null) {
-				this.previewLine.setStartPoint(null);
-				this.previewLine.setEndPoint(null);
-				this.previewLine.setStatus(DefaultLine.NORMAL);
-				this.previewLine = null;
-			}
+//			if (this.previewLine != null) {
+//				this.previewLine.setStartPoint(null);
+//				this.previewLine.setEndPoint(null);
+//				this.previewLine.setStatus(DefaultLine.NORMAL);
+//				this.previewLine = null;
+//			}
 			this.endGraph = null;
 			this.startGraph = null;
 		} catch (Exception e) {
@@ -232,6 +228,7 @@ public class GraphConnector extends CanvasActionAdapter {
 	}
 
 	private boolean isConnecting() {
-		return this.previewLine != null;
+//		return this.previewLine != null;
+		return false;
 	}
 }

@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.connection.GraphConnectionLine;
+import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 
@@ -15,7 +15,7 @@ import java.awt.event.MouseEvent;
  */
 public class LineInteraction extends CanvasActionAdapter {
 	private final static int BOX_WIDTH = 8;
-	private GraphConnectionLine selectedLine;
+	private ConnectionLineGraph selectedLine;
 	private Rectangle selectedBox1;
 	private Rectangle selectedBox2;
 	private GraphCanvas canvas;
@@ -27,8 +27,8 @@ public class LineInteraction extends CanvasActionAdapter {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e)) {
-			GraphConnectionLine line = this.canvas.getConnection().find(e.getPoint());
-			GraphConnectionLine preSelected = this.selectedLine;
+			ConnectionLineGraph line = this.canvas.getConnection().find(e.getPoint());
+			ConnectionLineGraph preSelected = this.selectedLine;
 
 			if (line != null) {
 				this.selectedLine = line;

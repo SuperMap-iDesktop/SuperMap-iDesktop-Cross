@@ -1,10 +1,9 @@
 package com.supermap.desktop.process.graphics.storage;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.connection.GraphConnectionLine;
+import com.supermap.desktop.process.graphics.connection.IConnectable;
+import com.supermap.desktop.process.graphics.connection.IConnection;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
-
-import java.awt.*;
 
 /**
  * Created by highsad on 2017/4/5.
@@ -12,15 +11,17 @@ import java.awt.*;
 public interface IConnectionManager {
 	GraphCanvas getCanvas();
 
-	GraphConnectionLine[] getLines();
+	IConnection[] getConnections();
 
-	void connect(IGraph start, IGraph end);
+	void connect(IConnectable start, IConnectable end);
 
-	void connect(IGraph start, IGraph end, String message);
+	void connect(IConnectable start, IConnectable end, String message);
 
-	void removeConnection(IGraph graph);
+	void removeConnection(IConnectable connectable);
 
-	void removeConnectLine(GraphConnectionLine line);
+	void removeConnection(IGraph connector);
+
+	void removeConnection(IConnection connection);
 
 	IGraph[] getPreGraphs(IGraph end);
 
@@ -30,7 +31,7 @@ public interface IConnectionManager {
 
 	boolean isConnectedAsEnd(IGraph end);
 
-	boolean isConnected(IGraph graph1, IGraph graph2);
+	boolean isConnected(IConnectable connectable1, IConnectable connectable2);
 
-	GraphConnectionLine find(Point point);
+	boolean isConnected(IGraph graph1, IGraph graph2);
 }

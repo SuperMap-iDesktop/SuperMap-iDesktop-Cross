@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.graphics.storage;
 
+import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import java.awt.*;
@@ -10,8 +11,24 @@ import java.util.Vector;
  * Created by highsad on 2017/3/2.
  */
 public class ListGraphs implements IGraphStorage {
+	private GraphCanvas canvas;
+	private IConnectionManager connection = new ListGraphConnection(this.canvas);
 	private Vector<IGraph> graphs = new Vector();
 	private Rectangle box = null;
+
+	public ListGraphs(GraphCanvas canvas) {
+		this.canvas = canvas;
+	}
+
+	@Override
+	public IConnectionManager getConnectionManager() {
+		return connection;
+	}
+
+	@Override
+	public GraphCanvas getCanvas() {
+		return this.canvas;
+	}
 
 	@Override
 	public int getCount() {
