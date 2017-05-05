@@ -522,7 +522,7 @@ public class DialogMapClip extends SmDialog {
 		initResources();
 		registEvents();
 		this.pack();
-		this.setSize(new Dimension(650, 450));
+		this.setSize(new Dimension(750, 450));
 		this.setLocationRelativeTo(null);
 		this.componentList.add(this.panelButton.getButtonOk());
 		this.componentList.add(this.panelButton.getButtonCancel());

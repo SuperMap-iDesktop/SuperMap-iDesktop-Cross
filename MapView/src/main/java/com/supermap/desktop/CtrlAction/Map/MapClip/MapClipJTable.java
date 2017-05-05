@@ -9,6 +9,7 @@ import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.CellRenders.TableDataCellRender;
+import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
@@ -35,7 +36,7 @@ import static com.supermap.desktop.CtrlAction.Map.MapClip.MapClipTableModel.*;
  */
 public class MapClipJTable extends JTable {
 
-	private TableColumn layerCaption;
+	private TableColumn layerCaptionColumn;
 	private TableColumn aimDatasourceColumn;
 	private TableColumn aimDatasetColumn;
 	private TableColumn clipTypeColumn;
@@ -86,7 +87,7 @@ public class MapClipJTable extends JTable {
 		String[] acurrent = {MapViewProperties.getString("String_MapClip_Yes"), MapViewProperties.getString("String_MapClip_No")};
 		JComboBox acurrentComboBox = new JComboBox(acurrent);
 
-		this.layerCaption = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_LAYERCAPTION));
+		this.layerCaptionColumn = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_LAYERCAPTION));
 		this.aimDatasetColumn = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_AIMDATASET));
 		this.aimDatasourceColumn = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_AIMDATASOURCE));
 		this.clipTypeColumn = this.getColumn(this.getModel().getColumnName(COLUMN_INDEX_CLIPTYPE));
@@ -108,7 +109,7 @@ public class MapClipJTable extends JTable {
 
 		//设置渲染器
 		this.aimDatasourceColumn.setCellRenderer(new TableDataCellRender());
-		this.layerCaption.setCellRenderer(new MapClipLayerCaptionTableRender());
+		this.layerCaptionColumn.setCellRenderer(new MapClipLayerCaptionTableRender());
 		this.aimDatasetColumn.setCellRenderer(new TargetDatasetTableRender());
 		//header 图片tip
 		JTableHeader jTableHeader = new JTableHeader(this.getColumnModel()) {
@@ -264,11 +265,15 @@ public class MapClipJTable extends JTable {
 	class MapClipLayerCaptionTableRender extends DefaultTableCellRenderer {
 		public Component getTableCellRendererComponent(JTable table, Object value,
 		                                               boolean isSelected, boolean hasFocus, int row, int column) {
-			super.getTableCellRendererComponent(table, value, isSelected, hasFocus,
-					row, column);
-			this.setText(((Layer) value).getCaption());
-			this.setToolTipText(((Layer) value).getCaption());
-			return this;
+			DataCell dataCell = new DataCell(value);
+			dataCell.setToolTipText(((Layer) value).getCaption());
+			if (isSelected) {
+				dataCell.setBackground(table.getSelectionBackground());
+				dataCell.setForeground(table.getSelectionForeground());
+			} else {
+				dataCell.setBackground(table.getBackground());
+			}
+			return dataCell;
 		}
 	}
 
