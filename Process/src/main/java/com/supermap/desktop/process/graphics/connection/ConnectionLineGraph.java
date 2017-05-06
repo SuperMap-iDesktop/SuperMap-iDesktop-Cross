@@ -1,41 +1,50 @@
 package com.supermap.desktop.process.graphics.connection;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedEvent;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
-import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
-import com.supermap.desktop.process.graphics.graphs.OutputGraph;
-import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
-import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
-import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
-import com.supermap.desktop.utilities.StringUtilities;
 
 import java.awt.*;
 
 /**
  * Created by highsad on 2017/3/23.
  */
-public class ConnectionLineGraph extends LineGraph implements GraphBoundsChangedListener {
+public class ConnectionLineGraph extends LineGraph {
 	private IConnection connection;
-	private IGraph start;
-	private IGraph end;
-	private String message;
 	private Font font = new Font("宋体", Font.PLAIN, 20);
 	private Color textColor = Color.BLACK;
 	private boolean isEditable = true;
 	private boolean isSelected = true;
 
-	public ConnectionLineGraph(GraphCanvas canvas, IGraph start, IGraph end) {
-		this(canvas, start, end, null);
+	private GraphBoundsChangedListener startGraphBoundsChangedListener = new GraphBoundsChangedListener() {
+		@Override
+		public void graghBoundsChanged(GraphBoundsChangedEvent e) {
+
+		}
+	};
+
+	private GraphBoundsChangedListener endGraphBoundsChangedListener = new GraphBoundsChangedListener() {
+		@Override
+		public void graghBoundsChanged(GraphBoundsChangedEvent e) {
+
+		}
+	};
+
+	public ConnectionLineGraph(GraphCanvas canvas, IConnection connection) {
+		super(canvas);
+		this.connection = connection;
+		IGraph startGraph = this.connection.getStartGraph();
+		IGraph endGraph = this.connection.getEndGraph();
+
+		if (startGraph != null && endGraph != null) {
+			startGraph.addGraphBoundsChangedListener(this.startGraphBoundsChangedListener);
+			endGraph.addGraphBoundsChangedListener(this.endGraphBoundsChangedListener);
+		}
 	}
 
-	public ConnectionLineGraph(GraphCanvas canvas, IGraph start, IGraph end, String message) {
-		super(canvas);
-		setStartGraph(start);
-		setEndGraph(end);
-		this.message = message;
+	public IConnection getConnection() {
+		return this.connection;
 	}
 
 	public boolean isEditable() {
@@ -54,97 +63,12 @@ public class ConnectionLineGraph extends LineGraph implements GraphBoundsChanged
 		isSelected = selected;
 	}
 
-	public IGraph getStartGraph() {
-		return this.start;
+	public void startGraphBoundsChanged(GraphBoundsChangedEvent e) {
+
 	}
 
-	public void setStartGraph(IGraph start) {
-		if (this.start != null) {
-			this.start.removeGraghBoundsChangedListener(this);
-		}
+	public void endGraphBoundsChanged(GraphBoundsChangedEvent e) {
 
-		this.start = start;
-
-		if (this.start != null) {
-//			setStartPoint(getStartLocation());
-			this.start.addGraphBoundsChangedListener(this);
-		} else {
-//			setStartPoint(null);
-		}
-	}
-
-	public IGraph getEndGraph() {
-		return this.end;
-	}
-
-	public void setEndGraph(IGraph end) {
-		if (this.end != null) {
-			this.end.removeGraghBoundsChangedListener(this);
-		}
-
-		this.end = end;
-
-		if (this.end != null) {
-//			setEndPoint(getEndLocation());
-			this.end.addGraphBoundsChangedListener(this);
-		} else {
-//			setStartPoint(null);
-		}
-	}
-
-	public void clear() {
-		if ((this.start instanceof OutputGraph) && (this.end instanceof ProcessGraph)) {
-			OutputData output = ((OutputGraph) this.start).getProcessData();
-			InputData[] inputs = ((ProcessGraph) this.end).getProcess().getInputs().getDatas();
-
-			for (int i = 0; i < inputs.length; i++) {
-				InputData input = inputs[i];
-				if (input.isBind(output)) {
-					input.unbind();
-				}
-			}
-		}
-	}
-
-	@Override
-	public void graghBoundsChanged(GraphBoundsChangedEvent e) {
-//		setStartPoint(getStartLocation());
-//		setEndPoint(getEndLocation());
-	}
-
-	private Point getEndLocation() {
-		if (this.start != null && this.end != null) {
-			return GraphicsUtil.chop(((AbstractGraph) this.end).getShape(), this.start.getCenter());
-		} else {
-			return null;
-		}
-	}
-
-	private Point getStartLocation() {
-		if (this.start != null && this.end != null) {
-			return GraphicsUtil.chop(((AbstractGraph) this.start).getShape(), this.end.getCenter());
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public Rectangle getBounds() {
-		Rectangle bounds = super.getBounds();
-		return StringUtilities.isNullOrEmpty(this.message) ? bounds : bounds.union(getTextBounds());
-	}
-
-	private Rectangle getTextBounds() {
-//		if (!GraphicsUtil.isPointValid(getStartPoint()) || !GraphicsUtil.isPointValid(getEndPoint())) {
-//			return null;
-//		}
-//
-//		int textX = Math.min(getStartPoint().x, getEndPoint().x) + (Math.abs(getEndPoint().x - getStartPoint().x)) / 2;
-//		int textY = Math.min(getStartPoint().y, getEndPoint().y) + (Math.abs(getEndPoint().y - getStartPoint().y)) / 2;
-//		int textWidth = SwingUtilities2.stringWidth(getCanvas(), getCanvas().getFontMetrics(this.font), this.message);
-//		int textHeight = GraphicsUtil.getFontHeight(getCanvas(), this.font);
-//		return StringUtilities.isNullOrEmpty(this.message) ? null : new Rectangle(textX, textY, textWidth, textHeight);
-		return null;
 	}
 
 	@Override
