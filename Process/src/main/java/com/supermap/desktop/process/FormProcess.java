@@ -14,6 +14,7 @@ import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
+import com.supermap.desktop.process.graphics.connection.IConnectable;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
@@ -97,7 +98,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 								message = processGraph.getProcess().getInputs().getBindedInput(((OutputGraph) graph).getProcessData());
 							}
 
-//							connection.connect(graph, (IGraph) nextNode, message);
+							connection.connect((IConnectable) graph, (IConnectable) nextNode, message);
 						}
 					}
 				}
