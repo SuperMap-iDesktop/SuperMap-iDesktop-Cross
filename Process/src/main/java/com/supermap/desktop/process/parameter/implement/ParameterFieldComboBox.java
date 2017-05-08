@@ -22,6 +22,15 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 
 	private String describe;
 
+	public ParameterFieldComboBox() {
+		super();
+	}
+
+	public ParameterFieldComboBox(String describe) {
+		super();
+		this.describe = describe;
+	}
+
 	@Override
 	public void setSelectedItem(Object item) {
 		if (item == null || item instanceof FieldInfo) {
