@@ -2,6 +2,7 @@ package com.supermap.desktop.process.graphics.connection;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
+import com.supermap.desktop.process.graphics.graphs.decorators.LineArrowDecorator;
 
 import java.awt.*;
 import java.awt.geom.GeneralPath;
@@ -11,11 +12,16 @@ import java.util.ArrayList;
  * Created by highsad on 2017/4/27.
  */
 public class LineGraph extends AbstractGraph {
+	private static String DECORATOR_KEY_LINE_ARROW = "DecoratorLineArrowKey";
+
 	private java.util.List<Point> points;
+	private LineArrowDecorator arrowDecorator;
 
 	public LineGraph(GraphCanvas canvas) {
 		super(canvas, new GeneralPath());
 		this.points = new ArrayList<>();
+		this.arrowDecorator = new LineArrowDecorator(getCanvas());
+		addDecorator(DECORATOR_KEY_LINE_ARROW, this.arrowDecorator);
 	}
 
 	private GeneralPath getPath() {

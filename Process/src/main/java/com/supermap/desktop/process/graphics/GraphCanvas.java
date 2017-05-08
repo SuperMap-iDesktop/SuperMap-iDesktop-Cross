@@ -306,7 +306,6 @@ public class GraphCanvas extends JComponent {
 		graphics2D.setTransform(this.coordinateTransform.getAffineTransform(origin));
 		paintGraphs(graphics2D);
 		paintTracking(graphics2D);
-		this.connector.preview(graphics2D);
 		this.lineInteraction.paint(graphics2D);
 		graphics2D.setTransform(origin);
 

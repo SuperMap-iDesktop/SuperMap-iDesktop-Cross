@@ -1,8 +1,10 @@
 package com.supermap.desktop.process.graphics.connection;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedEvent;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
+import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import java.awt.*;
@@ -12,22 +14,20 @@ import java.awt.*;
  */
 public class ConnectionLineGraph extends LineGraph {
 	private IConnection connection;
-	private Font font = new Font("宋体", Font.PLAIN, 20);
-	private Color textColor = Color.BLACK;
 	private boolean isEditable = true;
 	private boolean isSelected = true;
 
 	private GraphBoundsChangedListener startGraphBoundsChangedListener = new GraphBoundsChangedListener() {
 		@Override
 		public void graghBoundsChanged(GraphBoundsChangedEvent e) {
-
+			startGraphBoundsChanged(e);
 		}
 	};
 
 	private GraphBoundsChangedListener endGraphBoundsChangedListener = new GraphBoundsChangedListener() {
 		@Override
 		public void graghBoundsChanged(GraphBoundsChangedEvent e) {
-
+			endGraphBoundsChanged(e);
 		}
 	};
 
@@ -47,14 +47,6 @@ public class ConnectionLineGraph extends LineGraph {
 		return this.connection;
 	}
 
-	public boolean isEditable() {
-		return isEditable;
-	}
-
-	public void setEditable(boolean editable) {
-		isEditable = editable;
-	}
-
 	public boolean isSelected() {
 		return isSelected;
 	}
@@ -64,25 +56,24 @@ public class ConnectionLineGraph extends LineGraph {
 	}
 
 	public void startGraphBoundsChanged(GraphBoundsChangedEvent e) {
+		IGraph start = this.connection.getStartGraph();
+		IGraph end = this.connection.getEndGraph();
 
+		if (start instanceof AbstractGraph && end instanceof AbstractGraph && getPointCount() > 1) {
+			Point p = getPointCount() == 2 ? end.getCenter() : getPoint(1);
+			Point firstPoint = GraphicsUtil.chop(((AbstractGraph) start).getShape(), p);
+			setFirstPoint(firstPoint);
+		}
 	}
 
 	public void endGraphBoundsChanged(GraphBoundsChangedEvent e) {
+		IGraph start = this.connection.getStartGraph();
+		IGraph end = this.connection.getEndGraph();
 
-	}
-
-	@Override
-	public void paint(Graphics graphics) {
-//		super.paint(graphics);
-//		Graphics2D graphics2D = (Graphics2D) graphics;
-//		Point startP = getStartPoint();
-//		Point endP = getEndPoint();
-//
-//		if (startP != null && endP != null && !StringUtilities.isNullOrEmpty(this.message)) {
-//			graphics.setColor(this.textColor);
-//			int textX = Math.min(getStartPoint().x, getEndPoint().x) + (Math.abs(getEndPoint().x - getStartPoint().x)) / 2;
-//			int textY = Math.min(getStartPoint().y, getEndPoint().y) + (Math.abs(getEndPoint().y - getStartPoint().y)) / 2;
-//			graphics2D.drawString(this.message, textX, textY);
-//		}
+		if (start instanceof AbstractGraph && end instanceof AbstractGraph && getPointCount() > 1) {
+			Point p = getPointCount() == 2 ? start.getCenter() : getPoint(getPointCount() - 2);
+			Point lastPoint = GraphicsUtil.chop(((AbstractGraph) end).getShape(), p);
+			setLastPoint(lastPoint);
+		}
 	}
 }

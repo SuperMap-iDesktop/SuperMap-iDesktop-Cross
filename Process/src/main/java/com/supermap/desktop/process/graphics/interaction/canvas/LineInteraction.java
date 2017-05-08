@@ -2,8 +2,6 @@ package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
-import com.supermap.desktop.process.graphics.graphs.OutputGraph;
-import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -64,19 +62,19 @@ public class LineInteraction extends CanvasActionAdapter {
 	}
 
 	public void paint(Graphics g) {
-		if (this.selectedLine != null) {
-			Graphics2D graphics2D = (Graphics2D) g;
-
-			boolean canDelete = this.selectedLine.getStartGraph() instanceof OutputGraph && this.selectedLine.getEndGraph() instanceof ProcessGraph;
-			Color backColor = canDelete ? Color.WHITE : Color.MAGENTA;
-			graphics2D.setColor(backColor);
-			graphics2D.fill(this.selectedBox1);
-			graphics2D.fill(this.selectedBox2);
-
-			graphics2D.setColor(Color.BLACK);
-			graphics2D.draw(this.selectedBox1);
-			graphics2D.draw(this.selectedBox2);
-		}
+//		if (this.selectedLine != null) {
+//			Graphics2D graphics2D = (Graphics2D) g;
+//
+//			boolean canDelete = this.selectedLine.getStartGraph() instanceof OutputGraph && this.selectedLine.getEndGraph() instanceof ProcessGraph;
+//			Color backColor = canDelete ? Color.WHITE : Color.MAGENTA;
+//			graphics2D.setColor(backColor);
+//			graphics2D.fill(this.selectedBox1);
+//			graphics2D.fill(this.selectedBox2);
+//
+//			graphics2D.setColor(Color.BLACK);
+//			graphics2D.draw(this.selectedBox1);
+//			graphics2D.draw(this.selectedBox2);
+//		}
 	}
 
 	@Override
