@@ -48,7 +48,7 @@ public class ControlButton extends JButton {
         this.setOpaque(false);
         this.setBorder(emptyBorder);
         this.setContentAreaFilled(false);
-        this.setFocusPainted(true);
+        this.setFocusPainted(false);
         this.setRolloverEnabled(true);
 
         this.parentComponent = parent;
@@ -82,7 +82,6 @@ public class ControlButton extends JButton {
                 ((SmButtonDropdown) parentComponent).getArrowButton().repaint();
             }
         }
-        this.setFocusable(false);
     }
 
     private void setAbstractMouseEntered() {
@@ -100,7 +99,6 @@ public class ControlButton extends JButton {
                 ((SmButtonDropdown) parentComponent).getArrowButton().repaint();
             }
         }
-        this.setFocusable(true);
     }
 
     @Override

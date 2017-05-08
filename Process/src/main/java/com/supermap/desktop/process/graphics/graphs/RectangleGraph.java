@@ -2,6 +2,7 @@ package com.supermap.desktop.process.graphics.graphs;
 
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.connection.IConnectable;
 
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -9,7 +10,7 @@ import java.awt.geom.RoundRectangle2D;
 /**
  * Created by highsad on 2017/1/19.
  */
-public class RectangleGraph extends AbstractGraph {
+public class RectangleGraph extends AbstractGraph implements IConnectable {
 	private double arcWidth = 0d;
 	private double arcHeight = 0d;
 
@@ -71,5 +72,10 @@ public class RectangleGraph extends AbstractGraph {
 		super.formXmlHook(xml);
 		String[] shapes = ((String) xml.get("shape")).split(",");
 		shape = new RoundRectangle2D.Double(Double.valueOf(shapes[0]), Double.valueOf(shapes[1]), Double.valueOf(shapes[2]), Double.valueOf(shapes[3]), Double.valueOf(shapes[4]), Double.valueOf(shapes[5]));
+	}
+
+	@Override
+	public IGraph getConnector() {
+		return this;
 	}
 }
