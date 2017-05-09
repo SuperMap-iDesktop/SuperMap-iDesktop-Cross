@@ -94,7 +94,6 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 	}
 
 	private void initComponents() {
-		Datasource datasource = null;
 		this.labelDataset = new JLabel();
 		this.datasetComboBox = new DatasetComboBox();
 		this.datasetTypes = parameterSingleDataset.getDatasetTypes();
