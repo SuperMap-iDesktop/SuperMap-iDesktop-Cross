@@ -233,6 +233,10 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 					isSelectingItem = true;
 					parameterSingleDataset.setSelectedItem(datasetComboBox.getSelectedDataset());
 					isSelectingItem = false;
+				} else if (null == datasetComboBox.getSelectedDataset()) {
+					isSelectingItem = true;
+					parameterSingleDataset.setSelectedItem(datasetComboBox.getSelectedDataset());
+					isSelectingItem = false;
 				}
 			}
 		});

@@ -12,17 +12,18 @@ import java.awt.*;
 public class ListStatisticsTypeCellRender extends DefaultListCellRenderer {
 	@Override
 	public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-		JLabel result = new JLabel();
+		JLabel component = new JLabel();
 		if (value != null && value instanceof StatisticsType) {
-			result.setText(StatisticsTypeUtilities.getStatisticsTypeName((StatisticsType) value));
+			component.setText(StatisticsTypeUtilities.getStatisticsTypeName((StatisticsType) value));
 		}
+		component.setOpaque(true);
 		if (isSelected) {
-			result.setBackground(list.getSelectionBackground());
-			result.setForeground(list.getSelectionForeground());
+			component.setBackground(list.getSelectionBackground());
+			component.setForeground(list.getSelectionForeground());
 		} else {
-			result.setBackground(list.getBackground());
-			result.setForeground(list.getForeground());
+			component.setBackground(list.getBackground());
+			component.setForeground(list.getForeground());
 		}
-		return result;
+		return component;
 	}
 }

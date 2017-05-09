@@ -21,6 +21,7 @@ public class ParameterType {
 	public static final String FILES = "Files";
 	public static final String FILE = "File";
 	public static final String USER_DEFINE = "UserDefine";
+	public static final String STATISTICS_FIELD = "StatisticsField";
 	public static final String SAVE_DATASET = "SaveDataset";
 	public static final String COMBINE = "Combine";
 

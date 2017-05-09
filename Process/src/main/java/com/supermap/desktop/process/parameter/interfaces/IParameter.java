@@ -2,6 +2,7 @@ package com.supermap.desktop.process.parameter.interfaces;
 
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
+import com.supermap.desktop.process.parameter.events.UpdateValueListener;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 
 import java.beans.PropertyChangeListener;
@@ -31,6 +32,12 @@ public interface IParameter extends IAbstractParameter {
 	void removeFieldConstraintChangedListener(FieldConstraintChangedListener fieldConstraintChangedListener);
 
 	void fireFieldConstraintChanged(String fieldName);
+
+	void addUpdateValueListener(UpdateValueListener updateValueListener);
+
+	void removeUpdateValueListener(UpdateValueListener updateValueListener);
+
+	void fireUpdateValue(String fieldName);
 
 	ArrayList<String> getFieldNameList(Class<AbstractParameter> clazz);
 

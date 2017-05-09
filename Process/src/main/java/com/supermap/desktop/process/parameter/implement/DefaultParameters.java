@@ -33,6 +33,7 @@ public class DefaultParameters implements IParameters {
 
 	public DefaultParameters() {
 		packages.add(new ParameterClassBundleNode("com.supermap.desktop.process.parameter.ParameterPanels", "SuperMap.Desktop.Process"));
+
 		inputs.addValueProviderBindListener(new ValueProviderBindListener() {
 			@Override
 			public void valueBind(ValueProviderBindEvent event) {

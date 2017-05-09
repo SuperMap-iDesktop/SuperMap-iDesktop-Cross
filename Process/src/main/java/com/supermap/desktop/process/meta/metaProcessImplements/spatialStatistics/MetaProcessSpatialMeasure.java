@@ -1,18 +1,18 @@
 package com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics;
 
+import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
@@ -21,16 +21,18 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 	private static final String INPUT_SOURCE_DATASET = "SourceDataset";
 	protected ParameterDatasource datasource = new ParameterDatasource();
-	protected ParameterSingleDataset dataset = new ParameterSingleDataset(DatasetTypeUtilities.getDatasetTypeVector());
+	//空间度量用来计算的数据可以是点、线、面。
+	protected ParameterSaveDataset parameterSaveDataset;
+	protected String OUTPUT_DATASET = "SpatialMeasureResult";
+	protected ParameterSingleDataset dataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
 	protected SpatialMeasureMeasureParameter measureParameter = new SpatialMeasureMeasureParameter(getKey());
 
 
 	public MetaProcessSpatialMeasure() {
-		parameters = new DefaultParameters();
+		initHook();
 		initParameters();
 		initComponentState();
 		initParameterConstraint();
-		initHook();
 	}
 
 	protected void initHook() {
@@ -38,16 +40,25 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 	}
 
 	private void initParameters() {
-		ParameterCombine parameterCombine = new ParameterCombine();
-		parameterCombine.addParameters(datasource, dataset);
-		parameters.setParameters(parameterCombine, measureParameter);
-		parameterCombine.setDescribe(CommonProperties.getString("String_ColumnHeader_SourceData"));
-		parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.VECTOR, parameterCombine);
+		ParameterCombine parameterCombineSource = new ParameterCombine();
+		parameterCombineSource.addParameters(datasource, dataset);
+		parameterCombineSource.setDescribe(CommonProperties.getString("String_ColumnHeader_SourceData"));
+
+		parameterSaveDataset = new ParameterSaveDataset();
+		parameterSaveDataset.setDatasetName(OUTPUT_DATASET);
+		ParameterCombine parameterCombineResult = new ParameterCombine();
+		parameterCombineResult.addParameters(parameterSaveDataset);
+		parameterCombineResult.setDescribe(CommonProperties.getString("String_ResultSet"));
+
+		parameters.setParameters(parameterCombineSource, measureParameter, parameterCombineResult);
+		parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.VECTOR, parameterCombineSource);
+		parameters.addOutputParameters(OUTPUT_DATASET, DatasetTypes.VECTOR, parameterCombineResult);
 	}
 
 	private void initParameterConstraint() {
 		DatasourceConstraint.getInstance().constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		DatasourceConstraint.getInstance().constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(parameterSaveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
@@ -65,7 +76,6 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 			dataset.setSelectedItem(datasetVector);
 			measureParameter.setCurrentDataset(datasetVector);
 		}
-
 	}
 
 
@@ -80,7 +90,6 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 		}
 		try {
 			doWork(datasetVector);
-			// TODO: 2017/4/27 展现形式未定
 		} catch (Exception e) {
 			e.printStackTrace();
 			Application.getActiveApplication().getOutput().output(e);
