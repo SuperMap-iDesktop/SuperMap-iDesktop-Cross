@@ -46,6 +46,7 @@ public class ListGraphConnection implements IConnectionManager {
 		if (start != null && end != null && start != end) {
 			IConnection connection = new DefaultGraphConnection(start, end, message);
 			this.connections.add(connection);
+			fireConnectionAdded(new ConnectionAddedEvent(this, connection));
 		}
 	}
 
@@ -55,7 +56,13 @@ public class ListGraphConnection implements IConnectionManager {
 			IConnection connection = this.connections.get(i);
 
 			if (connection.getStart() == connectable || connection.getEnd() == connectable) {
-				this.connections.remove(i);
+				ConnectionRemovingEvent removingEvent = new ConnectionRemovingEvent(this, connection);
+				fireConnectionRemoving(removingEvent);
+
+				if (!removingEvent.isCancel()) {
+					this.connections.remove(i);
+					fireConnectionRemoved(new ConnectionRemovedEvent(this, connection));
+				}
 			}
 		}
 	}
@@ -66,7 +73,13 @@ public class ListGraphConnection implements IConnectionManager {
 			IConnection connection = this.connections.get(i);
 
 			if (connection.getStartGraph() == graph || connection.getEndGraph() == graph) {
-				this.connections.remove(i);
+				ConnectionRemovingEvent removingEvent = new ConnectionRemovingEvent(this, connection);
+				fireConnectionRemoving(removingEvent);
+
+				if (!removingEvent.isCancel()) {
+					this.connections.remove(i);
+					fireConnectionRemoved(new ConnectionRemovedEvent(this, connection));
+				}
 			}
 		}
 	}
@@ -77,7 +90,13 @@ public class ListGraphConnection implements IConnectionManager {
 			return;
 		}
 
-		this.connections.remove(connection);
+		ConnectionRemovingEvent removingEvent = new ConnectionRemovingEvent(this, connection);
+		fireConnectionRemoving(removingEvent);
+
+		if (!removingEvent.isCancel()) {
+			this.connections.remove(connection);
+			fireConnectionRemoved(new ConnectionRemovedEvent(this, connection));
+		}
 	}
 
 	@Override
@@ -206,7 +225,7 @@ public class ListGraphConnection implements IConnectionManager {
 		Object[] listeners = listenerList.getListenerList();
 
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == GraphCreatedListener.class) {
+			if (listeners[i] == ConnectionAddedListener.class) {
 				((ConnectionAddedListener) listeners[i + 1]).connectionAdded(e);
 			}
 		}
@@ -216,7 +235,7 @@ public class ListGraphConnection implements IConnectionManager {
 		Object[] listeners = listenerList.getListenerList();
 
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == GraphCreatedListener.class) {
+			if (listeners[i] == ConnectionRemovingListener.class) {
 				((ConnectionRemovingListener) listeners[i + 1]).connectionRemoving(e);
 			}
 		}
@@ -226,7 +245,7 @@ public class ListGraphConnection implements IConnectionManager {
 		Object[] listeners = listenerList.getListenerList();
 
 		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == GraphCreatedListener.class) {
+			if (listeners[i] == ConnectionRemovedListener.class) {
 				((ConnectionRemovedListener) listeners[i + 1]).connectionRemoved(e);
 			}
 		}

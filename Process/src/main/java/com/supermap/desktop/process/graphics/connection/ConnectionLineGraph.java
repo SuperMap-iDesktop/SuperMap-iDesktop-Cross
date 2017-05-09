@@ -38,6 +38,7 @@ public class ConnectionLineGraph extends LineGraph {
 		IGraph endGraph = this.connection.getEndGraph();
 
 		if (startGraph != null && endGraph != null) {
+			computeFirstAndLastPoints();
 			startGraph.addGraphBoundsChangedListener(this.startGraphBoundsChangedListener);
 			endGraph.addGraphBoundsChangedListener(this.endGraphBoundsChangedListener);
 		}
@@ -56,22 +57,23 @@ public class ConnectionLineGraph extends LineGraph {
 	}
 
 	public void startGraphBoundsChanged(GraphBoundsChangedEvent e) {
-		IGraph start = this.connection.getStartGraph();
-		IGraph end = this.connection.getEndGraph();
-
-		if (start instanceof AbstractGraph && end instanceof AbstractGraph && getPointCount() > 1) {
-			Point p = getPointCount() == 2 ? end.getCenter() : getPoint(1);
-			Point firstPoint = GraphicsUtil.chop(((AbstractGraph) start).getShape(), p);
-			setFirstPoint(firstPoint);
-		}
+		computeFirstAndLastPoints();
 	}
 
 	public void endGraphBoundsChanged(GraphBoundsChangedEvent e) {
+		computeFirstAndLastPoints();
+	}
+
+	private void computeFirstAndLastPoints() {
 		IGraph start = this.connection.getStartGraph();
 		IGraph end = this.connection.getEndGraph();
 
-		if (start instanceof AbstractGraph && end instanceof AbstractGraph && getPointCount() > 1) {
-			Point p = getPointCount() == 2 ? start.getCenter() : getPoint(getPointCount() - 2);
+		if (start != null && end != null) {
+			Point p = getPointCount() > 2 ? getPoint(1) : end.getCenter();
+			Point firstPoint = GraphicsUtil.chop(((AbstractGraph) start).getShape(), p);
+			setFirstPoint(firstPoint);
+
+			p = getPointCount() > 2 ? getPoint(getPointCount() - 1) : start.getCenter();
 			Point lastPoint = GraphicsUtil.chop(((AbstractGraph) end).getShape(), p);
 			setLastPoint(lastPoint);
 		}

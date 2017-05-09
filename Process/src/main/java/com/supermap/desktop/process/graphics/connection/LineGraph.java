@@ -44,15 +44,19 @@ public class LineGraph extends AbstractGraph {
 	}
 
 	public void setLastPoint(Point point) {
-		if (this.points.size() > 0) {
-			setPoint(this.points.size() - 1, point);
+		if (this.points.size() == 0 || this.points.size() == 1) {
+			addPoint(point);
 		} else {
-			setPoint(0, point);
+			setPoint(this.points.size() - 1, point);
 		}
 	}
 
 	public void setFirstPoint(Point point) {
-		setPoint(0, point);
+		if (this.points.size() == 0) {
+			addPoint(point);
+		} else {
+			setPoint(0, point);
+		}
 	}
 
 	public void setPoint(int index, Point point) {

@@ -7,7 +7,7 @@ import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.decorators.IDecorator;
-import com.supermap.desktop.process.graphics.graphs.decorators.SelectedDecorator;
+import com.supermap.desktop.process.graphics.graphs.decorators.SelectedDecoratorFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -210,7 +210,7 @@ public class MultiSelection extends Selection {
 				this.selectedItems.clear();
 
 				this.selectedItems.add(graph);
-				graph.addDecorator(DECORATOR_KEY, new SelectedDecorator(getCanvas()));
+				graph.addDecorator(DECORATOR_KEY, SelectedDecoratorFactory.createDecorator(graph));
 				fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
 
 				getCanvas().repaint(getCanvas().getCoordinateTransform().transform(graph.getDecorator(DECORATOR_KEY).getBounds()));
@@ -238,7 +238,7 @@ public class MultiSelection extends Selection {
 			for (int i = 0; i < graphs.length; i++) {
 				if (graphs[i] != null) {
 					this.selectedItems.add(graphs[i]);
-					graphs[i].addDecorator(DECORATOR_KEY, new SelectedDecorator(getCanvas()));
+					graphs[i].addDecorator(DECORATOR_KEY, SelectedDecoratorFactory.createDecorator(graphs[i]));
 				}
 			}
 			fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
