@@ -3,11 +3,11 @@ title: SuperMap iDesktop Cross 8C 产品介绍
 
 　　SuperMap iDesktop Cross 8C 是一款支持跨平台、全开源、可扩展的桌面GIS应用与开发平台系统，也是超图新一代的开源GIS桌面产品，可在Windows和Linux系统上运行，实现了GIS数据在跨平台环境下的展示。
 
-　　SuperMap iDesktop Cross 8C 是基于 SuperMap iObjects Java 8C、OSGI 等平台，通过 Java 语言开发的插件式、跨平台GIS应用软件，提供了数据管理、数据处理、数据分析、地图制图出图、二三维一体化浏览等功能，同时提供了灵活的开发框架和辅助控件，便于用户二次开发。SuperMap iDesktop Cross 8C的源代码分别开源在[OSChina](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross)和[CSDN](https://code.csdn.net/SuperMapDesktop/supermap-idesktop-cross/tree/master)两大平台上。
+　　SuperMap iDesktop Cross 8C 是基于 SuperMap iObjects Java 8C、OSGI 等平台，通过 Java 语言开发的插件式、跨平台GIS应用软件，提供了数据管理、数据处理、数据分析、地图制图出图、三维场景浏览（目前仅Windows平台支持）等功能，同时提供了灵活的开发框架和辅助控件，便于用户二次开发。SuperMap iDesktop Cross 8C的源代码分别开源在[OSChina](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross)和[CSDN](https://code.csdn.net/SuperMapDesktop/supermap-idesktop-cross/tree/master)两大平台上。
 
 ## 产品简介
 
-　　SuperMap iDesktop Cross 8C 是一套运行在桌面端的专业GIS软件，是基于 SuperMap iObjects Java 8C、Eclipse 和 OSGI 开发的跨平台 GIS 应用软件。SuperMap iDesktop Cross 8C 提供了适用于不同平台的版本，分为 Windows 和 Linux 两个版本，其中，Windows包括 32 位和 64 位两个版本，分别提供了绿色包和安装包，Linux 版本提供了 64 位的绿色包。
+　　SuperMap iDesktop Cross 8C 是一套运行在桌面端的专业GIS软件，是基于 SuperMap iObjects Java 8C 和 OSGI，使用 intellij idea 开发的跨平台 GIS 应用软件。SuperMap iDesktop Cross 8C 提供了适用于不同平台的版本，分为 Windows 和 Linux 两个版本，其中，Windows包括 32 位和 64 位两个版本，分别提供了绿色包和安装包，Linux 版本提供了 64 位的绿色包。
 
 　　SuperMap iDesktop Cross 8C 是一款免许可的应用软件，只要有 SuperMap iObjects Java 8C 的许可，即可使用 SuperMap iDesktop Cross 8C 提供的相应模块的功能。
 
@@ -32,9 +32,9 @@ title: SuperMap iDesktop Cross 8C 产品介绍
 
 　　SuperMap iDesktop Cross　8C 支持导入其他格式的数据，并将其他格式数据转为 SuperMap 可操作的数据格式，同时也可以将SuperMap格式的数据导出为其他数据格式。
 
--   **数据导入**：支持将其他格式的数据导入到应用程序中，包括多种矢量、栅格、模型数据格式，如\*.dwg、\*.e00、\*.shp、\*.gdb、\*.mif、\*.xlsx、\*.tif、\*.img、\*.dem 等。
+-   **数据导入**：支持将其他格式的数据导入到应用程序中，包括多种矢量、栅格、模型数据格式，如\*.dwg、\*.e00、\*.shp、\*.mif、\*.csv、\*.tif、\*.img、\*.dem 等。
 
--   **数据导出**：支持将数据集导出为兼容其他软件的数据格式，可导出为以下格式的数据\*.dwg、\*.e00、\*.shp、\*.gdb、\*.mif、\*.xlsx、\*.tif、\*.img、\*.sit、\*.3ds、\*.kml 等。
+-   **数据导出**：支持将数据集导出为兼容其他软件的数据格式，可导出为以下格式的数据\*.dwg、\*.e00、\*.shp、\*.mif、\*.csv、\*.tif、\*.img、\*.sit、\*.kml 等。
 
 ### 数据处理
 
@@ -76,7 +76,7 @@ title: SuperMap iDesktop Cross 8C 产品介绍
 
 -   基于 Java 组件采用 Java 语言开发，具有跨平台的特性，支持在 Windows 和 Linux 系统中运行。
 
--   采用稳健的 Eclipse 插件框架，实现了插件式桌面及源代码的开源。
+-   采用稳健的 Felix 插件框架，实现了插件式桌面及源代码的开源。
 
 -   遵循 OSGI 国际扩展标准，将应用程序分为多个模块单元，统一管理各模块单元及用户开发的模块单元之间的交叉依赖关系，实现GIS数据的展示。
 
@@ -84,10 +84,10 @@ title: SuperMap iDesktop Cross 8C 产品介绍
 
 ### 稳定、易用、高效、美观
 
--   基于Java语言，采用 Eclipse 框架，极大地提高了应用系统的通用性、高效性和稳定性。
+-   基于Java语言，采用 Felix 框架，极大地提高了应用系统的通用性、高效性和稳定性。
 
 -   使用 Swing 图形界面风格，利用 Swing 丰富、灵活的功能和模块化组件，来创建美观、易用的菜单和工具条界面。
 
 -   “功能就在您手边”的设计理念，提供了丰富的右键菜单和鼠标动作的响应功能，提高了软件的易用性。“所见即所得”的呈现方式，用户的操作会实时地应用，保证用户在第一时间看到操作的工作成果，方便设计和修改。
 
--   模板化的应用，供了多种图层风格模板、地图模板、专题图模板等，用户可通过自己设计模板及系统提供的模板，提高工作成果的重用性和工作效率。
+-   模板化的应用，支持将配置好的地图导出为 *.xml 文件，并能够通过导入地图模板文件打开地图，提高了工作成果的重用性和工作效率。
