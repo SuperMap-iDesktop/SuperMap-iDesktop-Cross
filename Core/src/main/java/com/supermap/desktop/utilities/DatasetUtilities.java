@@ -462,7 +462,7 @@ public class DatasetUtilities {
 				for (int i = 0; i < datasets.getCount(); i++) {
 					if (datasets.get(i) instanceof DatasetVector) {
 						datasetVector = (DatasetVector) datasets.get(i);
-						break;
+						return datasetVector ;
 					}
 				}
 			}
