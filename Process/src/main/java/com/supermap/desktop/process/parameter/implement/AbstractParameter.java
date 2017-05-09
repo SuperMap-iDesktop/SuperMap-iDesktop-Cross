@@ -31,6 +31,7 @@ public abstract class AbstractParameter implements IParameter {
 	private List<PropertyChangeListener> propertyChangeListeners = new ArrayList<>();
 	private List<ParameterValueLegalListener> parameterValueLegalListeners = new ArrayList<>();
 	private List<FieldConstraintChangedListener> fieldConstraintChangedListeners = new ArrayList<>();
+	private List<UpdateValueListener> updateValueListeners = new ArrayList<>();
 
 
 	@Override
@@ -92,6 +93,24 @@ public abstract class AbstractParameter implements IParameter {
 		}
 	}
 
+	@Override
+	public void addUpdateValueListener(UpdateValueListener updateValueListener) {
+		if (!updateValueListeners.contains(updateValueListener)) {
+			updateValueListeners.add(updateValueListener);
+		}
+	}
+
+	@Override
+	public void removeUpdateValueListener(UpdateValueListener updateValueListener) {
+		updateValueListeners.remove(updateValueListener);
+	}
+
+	@Override
+	public void fireUpdateValue(String fieldName) {
+		for (UpdateValueListener updateValueListener : updateValueListeners) {
+			updateValueListener.fireUpdateValue(new ParameterUpdateValueEvent(fieldName));
+		}
+	}
 	@Override
 	public ArrayList<String> getFieldNameList(Class<AbstractParameter> clazz) {
 		ArrayList<String> nameList = new ArrayList<>();

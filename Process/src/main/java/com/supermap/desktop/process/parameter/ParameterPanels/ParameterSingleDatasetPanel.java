@@ -94,15 +94,13 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 	}
 
 	private void initComponents() {
-		Datasource datasource = null;
 		this.labelDataset = new JLabel();
-		this.datasetComboBox = new DatasetComboBox();
 		this.datasetTypes = parameterSingleDataset.getDatasetTypes();
-		this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
 		this.labelDataset.setText(parameterSingleDataset.getDescribe());
 		this.datasource = parameterSingleDataset.getDatasource();
 		if (this.datasource != null) {
 			this.datasetComboBox = new DatasetComboBox(datasource.getDatasets());
+			this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
 			Object selectedItem = parameterSingleDataset.getSelectedItem();
 			if (selectedItem != null && selectedItem instanceof Dataset) {
 				datasetComboBox.setSelectedDataset((Dataset) selectedItem);
@@ -112,13 +110,16 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 				datasource = Application.getActiveApplication().getActiveDatasources()[0];
 				if (Application.getActiveApplication().getActiveDatasets().length > 0) {
 					this.datasetComboBox = new DatasetComboBox(datasource.getDatasets());
+					this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
 					this.datasetComboBox.setSelectedDataset(Application.getActiveApplication().getActiveDatasets()[0]);
 				} else {
 					this.datasetComboBox = new DatasetComboBox(datasource.getDatasets());
+					this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
 				}
 			} else {
 				datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
 				this.datasetComboBox = new DatasetComboBox(datasource.getDatasets());
+				this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
 			}
 			removeDatasourceListener(datasource);
 			addDatasourceListener(datasource);
@@ -230,6 +231,10 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				if (!isSelectingItem && e.getStateChange() == ItemEvent.SELECTED && null != datasetComboBox.getSelectedDataset()) {
+					isSelectingItem = true;
+					parameterSingleDataset.setSelectedItem(datasetComboBox.getSelectedDataset());
+					isSelectingItem = false;
+				} else if (null == datasetComboBox.getSelectedDataset()) {
 					isSelectingItem = true;
 					parameterSingleDataset.setSelectedItem(datasetComboBox.getSelectedDataset());
 					isSelectingItem = false;
