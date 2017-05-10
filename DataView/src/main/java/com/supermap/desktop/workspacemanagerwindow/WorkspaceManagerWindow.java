@@ -1,6 +1,44 @@
 package com.supermap.desktop.workspacemanagerwindow;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetImage;
+import com.supermap.data.Datasource;
+import com.supermap.data.DatasourceAliasModifiedEvent;
+import com.supermap.data.DatasourceAliasModifiedListener;
+import com.supermap.data.DatasourceClosingEvent;
+import com.supermap.data.DatasourceClosingListener;
+import com.supermap.data.DatasourceCreatedEvent;
+import com.supermap.data.DatasourceCreatedListener;
+import com.supermap.data.DatasourceOpenedEvent;
+import com.supermap.data.DatasourceOpenedListener;
+import com.supermap.data.Datasources;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.Layouts;
+import com.supermap.data.MapAddedEvent;
+import com.supermap.data.MapAddedListener;
+import com.supermap.data.MapClearedEvent;
+import com.supermap.data.MapClearedListener;
+import com.supermap.data.MapRenamedEvent;
+import com.supermap.data.MapRenamedListener;
+import com.supermap.data.Maps;
+import com.supermap.data.Resources;
+import com.supermap.data.SceneAddedEvent;
+import com.supermap.data.SceneAddedListener;
+import com.supermap.data.SceneClearedEvent;
+import com.supermap.data.SceneClearedListener;
+import com.supermap.data.SceneRenamedEvent;
+import com.supermap.data.SceneRenamedListener;
+import com.supermap.data.Scenes;
+import com.supermap.data.SymbolFillLibrary;
+import com.supermap.data.SymbolLineLibrary;
+import com.supermap.data.SymbolMarkerLibrary;
+import com.supermap.data.SymbolType;
+import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceClosingEvent;
+import com.supermap.data.WorkspaceClosingListener;
+import com.supermap.data.WorkspaceOpenedEvent;
+import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
@@ -27,11 +65,24 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import static com.supermap.desktop.Application.getActiveApplication;
 import static com.supermap.desktop.ui.UICommonToolkit.getWorkspaceManager;
-import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.*;
+import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_NAME;
+import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_NULL;
+import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_NUMBER;
+import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_PRJCOORDSYS;
+import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.COLUMN_TYPE;
+import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.DATAVIEW_ICON_ROOTPATH;
+import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.FIRST_LEVEL;
+import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.SECOND_LEVEL;
+import static com.supermap.desktop.workspacemanagerwindow.WorkspaceManagerWindowResources.THIRD_LEVEL;
 
 /**
  * @author YuanR 2016.12.28
@@ -448,6 +499,12 @@ public class WorkspaceManagerWindow extends FormBaseChild {
 					jPopupMenu_scene.show(jTable, e.getX(), e.getY());
 				} else if (selectedTreeNodeData.getType() == NodeDataType.LAYOUT_NAME) {//布局（暂无）
 					JPopupMenu jPopupMenu_layout = getWorkspaceManager().getLayoutPopupMenu();
+					jPopupMenu_layout.show(jTable, e.getX(), e.getY());
+				} else if (selectedTreeNodeData.getType() == NodeDataType.WORK_FLOWS) {
+					JPopupMenu jPopupMenu_layout = getWorkspaceManager().getWorkFlowsPopupMenu();
+					jPopupMenu_layout.show(jTable, e.getX(), e.getY());
+				} else if (selectedTreeNodeData.getType() == NodeDataType.WORK_FLOW) {
+					JPopupMenu jPopupMenu_layout = getWorkspaceManager().getWorkFlowPopupMenu();
 					jPopupMenu_layout.show(jTable, e.getX(), e.getY());
 				}
 			}

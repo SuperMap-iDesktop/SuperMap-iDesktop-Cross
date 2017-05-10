@@ -63,7 +63,7 @@ public class ProcessTree extends JTree {
 						return;
 					}
 					ProcessTreeNodeBean userObject = (ProcessTreeNodeBean) ((DefaultMutableTreeNode) lastSelectedPathComponent).getUserObject();
-					if (!StringUtilities.isNullOrEmpty(userObject.getKey())) {
+					if (!StringUtilities.isNullOrEmpty(userObject.getKey()) && Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof FormProcess) {
 						((FormProcess) Application.getActiveApplication().getActiveForm()).addProcess(WorkflowParser.getMetaProcess(userObject.getKey()));
 					}
 //					if (userObject instanceof IProcess && !(userObject instanceof IProcessGroup)) {
