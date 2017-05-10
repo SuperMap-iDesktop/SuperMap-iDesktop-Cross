@@ -42,11 +42,7 @@ public class ParameterDatasourcePanel extends SwingPanel {
 		initLayout();
 		initListener();
 		if (datasourceComboBox.getSelectedIndex() == -1 && datasourceComboBox.getItemCount() > 0) {
-			if(null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0){
-				datasourceComboBox.setSelectedItem(Application.getActiveApplication().getActiveDatasources()[0]);
-			}else{
-				datasourceComboBox.setSelectedIndex(0);
-			}
+			datasourceComboBox.setSelectedIndex(0);
 		}
 	}
 

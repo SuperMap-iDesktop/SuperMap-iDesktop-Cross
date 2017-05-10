@@ -17,6 +17,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
+import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,7 +31,7 @@ public class MetaProcessSetProjection extends MetaProcess {
 	private final static String INPUT_DATA = "InputData";
 	private final static String OUTPUT_DATA = "output";
 	private ParameterDatasourceConstrained datasource;
-	private ParameterSingleDataset dataset;
+	private ParameterSingleDataset parameterSingleDataset;
 	private ParameterTextField coordSysName;
 	private ParameterTextField coordUnit;
 	private ParameterTextArea textAreaCoordInfo;
@@ -49,10 +50,15 @@ public class MetaProcessSetProjection extends MetaProcess {
 
 	private void initParameters() {
 		datasource = new ParameterDatasourceConstrained();
-		dataset = new ParameterSingleDataset();
+		parameterSingleDataset = new ParameterSingleDataset();
+		Dataset defaultDataset = DatasetUtilities.getDefaultDataset();
+		if (defaultDataset != null) {
+			parameterSingleDataset.setSelectedItem(defaultDataset);
+			datasource.setSelectedItem(defaultDataset.getDatasource());
+		}
 		datasource.setDescribe(CommonProperties.getString("String_Label_Datasource"));
 		parameterCombineSourceData = new ParameterCombine();
-		parameterCombineSourceData.addParameters(datasource, dataset);
+		parameterCombineSourceData.addParameters(datasource, parameterSingleDataset);
 		parameterCombineSourceData.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
 		coordSysName = new ParameterTextField(ControlsProperties.getString("String_Message_CoordSysName"));
 		coordSysName.setEnabled(false);
@@ -65,12 +71,12 @@ public class MetaProcessSetProjection extends MetaProcess {
 		parameterCombineCoordInfo.setDescribe(ControlsProperties.getString("String_ProjectionInfoControl_LabelProjectionInfo"));
 		parameterCombineCoordInfo.addParameters(coordSysName, coordUnit, textAreaCoordInfo, new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(parameterButton));
 		this.parameters.setParameters(parameterCombineSourceData, parameterCombineCoordInfo);
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.DATASET, datasource, dataset);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.DATASET, dataset);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.DATASET, datasource, parameterSingleDataset);
+		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.DATASET, parameterSingleDataset);
 		//Add Constraint
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(parameterSingleDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
 	}
 
@@ -85,11 +91,24 @@ public class MetaProcessSetProjection extends MetaProcess {
 					prjCoordSys = Application.getActiveApplication().getActiveDatasets()[0].getPrjCoordSys();
 				} else {
 					dataSource = Application.getActiveApplication().getActiveDatasources()[0];
-					prjCoordSys = dataSource.getDatasets().get(0).getPrjCoordSys();
+					if(dataSource.getDatasets().getCount()>0){
+						prjCoordSys = dataSource.getDatasets().get(0).getPrjCoordSys();
+					}else{
+						dataSource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
+						if (dataSource.getDatasets().getCount()>0){
+							prjCoordSys = dataSource.getDatasets().get(0).getPrjCoordSys();
+						}else{
+							prjCoordSys = dataSource.getPrjCoordSys();
+						}
+					}
 				}
 			} else{
 				dataSource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
-				prjCoordSys = dataSource.getDatasets().get(0).getPrjCoordSys();
+				if(dataSource.getDatasets().getCount()>0){
+					prjCoordSys = dataSource.getDatasets().get(0).getPrjCoordSys();
+				}else{
+					prjCoordSys = dataSource.getPrjCoordSys();
+				}
 			}
 			if (null != prjCoordSys) {
 				coordSysName.setSelectedItem(prjCoordSys.getName());
@@ -120,7 +139,7 @@ public class MetaProcessSetProjection extends MetaProcess {
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			PrjCoordSys prjCoordSys1 = null;
-			if (dataset.getSelectedItem() != null && evt.getNewValue() instanceof Dataset) {
+			if (parameterSingleDataset.getSelectedItem() != null && evt.getNewValue() instanceof Dataset) {
 				prjCoordSys1 = ((Dataset) evt.getNewValue()).getPrjCoordSys();
 				coordSysName.setSelectedItem(prjCoordSys1.getName());
 				coordUnit.setSelectedItem(prjCoordSys1.getCoordUnit());
@@ -131,7 +150,7 @@ public class MetaProcessSetProjection extends MetaProcess {
 
 
 	private void registerEvents() {
-		this.dataset.addPropertyListener(this.propertyChangeListener);
+		this.parameterSingleDataset.addPropertyListener(this.propertyChangeListener);
 		this.parameterButton.setActionListener(this.actionListener);
 	}
 
@@ -162,7 +181,7 @@ public class MetaProcessSetProjection extends MetaProcess {
 		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof Dataset) {
 			src = (Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
 		} else {
-			src = (Dataset) this.dataset.getSelectedItem();
+			src = (Dataset) this.parameterSingleDataset.getSelectedItem();
 		}
 		fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
 		if (prj != null) {
