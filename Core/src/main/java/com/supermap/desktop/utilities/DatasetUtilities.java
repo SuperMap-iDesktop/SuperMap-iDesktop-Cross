@@ -1,13 +1,6 @@
 package com.supermap.desktop.utilities;
 
-import com.supermap.data.Dataset;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.Datasets;
-import com.supermap.data.Datasource;
-import com.supermap.data.PrjCoordSysType;
-import com.supermap.data.StatisticMode;
-import com.supermap.data.Tolerance;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
@@ -24,7 +17,6 @@ import com.supermap.realspace.Layer3DDataset;
 import com.supermap.realspace.Layer3Ds;
 import com.supermap.realspace.Scene;
 import com.supermap.realspace.TerrainLayers;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -462,7 +454,7 @@ public class DatasetUtilities {
 				for (int i = 0; i < datasets.getCount(); i++) {
 					if (datasets.get(i) instanceof DatasetVector) {
 						datasetVector = (DatasetVector) datasets.get(i);
-						break;
+						return datasetVector ;
 					}
 				}
 			}
@@ -470,4 +462,47 @@ public class DatasetUtilities {
 		return datasetVector;
 	}
 
+	public static DatasetGrid getDefaultDatasetGrid() {
+		DatasetGrid datasetGrid = null;
+		Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
+		for (Dataset activeDataset : activeDatasets) {
+			if (activeDataset instanceof DatasetGrid) {
+				datasetGrid = (DatasetGrid) activeDataset;
+				break;
+			}
+		}
+		if (datasetGrid == null) {
+			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
+			for (Datasource activeDatasource : activeDatasources) {
+				Datasets datasets = activeDatasource.getDatasets();
+				for (int i = 0; i < datasets.getCount(); i++) {
+					if (datasets.get(i) instanceof DatasetGrid) {
+						datasetGrid = (DatasetGrid) datasets.get(i);
+						return datasetGrid ;
+					}
+				}
+			}
+		}
+		return datasetGrid;
+	}
+
+	public static Dataset getDefaultDataset() {
+		Dataset dataset = null;
+		Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
+		if(activeDatasets.length > 0){
+			dataset = Application.getActiveApplication().getActiveDatasets()[0];
+			return dataset;
+		}
+		if(dataset == null){
+			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
+			if(activeDatasources.length == 0){
+				return dataset;
+			}
+			Datasets datasets = activeDatasources[0].getDatasets();
+			if(datasets.getCount() > 0 ){
+				dataset = datasets.get(0);
+			}
+		}
+		return dataset;
+	}
 }

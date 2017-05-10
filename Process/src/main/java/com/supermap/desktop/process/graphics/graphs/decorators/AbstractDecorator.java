@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.graphics.graphs.decorators;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import java.awt.*;
@@ -38,7 +39,20 @@ public abstract class AbstractDecorator implements IDecorator {
 
 	@Override
 	public boolean contains(Point point) {
-		return this.decoratedGraph != null && this.decoratedGraph.contains(point);
+		boolean isContain = true;
+
+		if (this.decoratedGraph == null) {
+			isContain = false;
+		} else {
+			Rectangle rect = this.decoratedGraph.getBounds();
+
+			if (GraphicsUtil.isRegionValid(rect)) {
+				isContain = rect.contains(point);
+			} else {
+				isContain = true;
+			}
+		}
+		return isContain;
 	}
 
 	@Override

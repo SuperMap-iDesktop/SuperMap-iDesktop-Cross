@@ -29,32 +29,37 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 
 	public ParameterSingleDataset(DatasetType... datasetTypes) {
 		this.datasetTypes = datasetTypes;
-    }
-    @Override
-    public void setSelectedItem(Object item) {
-        if (item instanceof Dataset) {
-            Dataset oldValue = this.selectedItem;
-            this.selectedItem = (Dataset) item;
-	        datasource = selectedItem.getDatasource();
-	        firePropertyChangeListener(new PropertyChangeEvent(this, DATASET_FIELD_NAME, oldValue, selectedItem));
-        }
-    }
+	}
 
-    @Override
-    public Object getSelectedItem() {
-        return selectedItem;
-    }
+	@Override
+	public void setSelectedItem(Object item) {
+		Dataset oldValue = null;
+		if (item == null) {
+			oldValue = this.selectedItem;
+			this.selectedItem = null;
+		} else if (item instanceof Dataset) {
+			oldValue = this.selectedItem;
+			this.selectedItem = (Dataset) item;
+			datasource = selectedItem.getDatasource();
+		}
+		firePropertyChangeListener(new PropertyChangeEvent(this, DATASET_FIELD_NAME, oldValue, selectedItem));
+	}
 
-    @Override
-    public String getType() {
-	    return ParameterType.SINGLE_DATASET;
-    }
+	@Override
+	public Object getSelectedItem() {
+		return selectedItem;
+	}
+
+	@Override
+	public String getType() {
+		return ParameterType.SINGLE_DATASET;
+	}
 
 
 	@Override
 	public void dispose() {
 
-    }
+	}
 
 	public void setDescribe(String describe) {
 		this.describe = describe;
