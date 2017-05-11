@@ -3,6 +3,10 @@ package com.supermap.desktop.process.ctrlAction;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.WorkspaceTree;
+
+import javax.swing.tree.TreePath;
 
 /**
  * @author XiaJT
@@ -14,7 +18,9 @@ public class CtrlActionProcessRename extends CtrlAction {
 
 	@Override
 	public void run() {
-		super.run();
+		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
+		TreePath treeSelectionPath = workspaceTree.getSelectionPath();
+		workspaceTree.startEditingAtPath(treeSelectionPath);
 	}
 
 	@Override

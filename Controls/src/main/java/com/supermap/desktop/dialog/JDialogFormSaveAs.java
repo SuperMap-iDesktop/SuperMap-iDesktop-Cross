@@ -23,7 +23,6 @@ public class JDialogFormSaveAs extends SmDialog {
 	private JLabel labelFormName = new JLabel();
 	private SmTextFieldLegit textFieldFormName = new SmTextFieldLegit();
 
-	private String name;
 	private SmButton buttonOk = new SmButton(CommonProperties.getString(CommonProperties.OK));
 	private SmButton buttonCancle = new SmButton(CommonProperties.getString(CommonProperties.Cancel));
 	private ArrayList<String> existNames = new ArrayList<>();
@@ -101,11 +100,23 @@ public class JDialogFormSaveAs extends SmDialog {
 	}
 
 	public void setCurrentFormName(String name) {
-		this.name = name;
 		textFieldFormName.setText(name);
 	}
 
 	public String getCurrentFormName() {
 		return textFieldFormName.getBackUpValue();
+	}
+
+	@Override
+	public DialogResult showDialog() {
+		if (!textFieldFormName.isLegitValue(textFieldFormName.getText())) {
+			int i = 1;
+			String name = textFieldFormName.getText();
+			while (!textFieldFormName.isLegitValue(name + "_" + i)) {
+				i++;
+			}
+			textFieldFormName.setText(name + "_" + i);
+		}
+		return super.showDialog();
 	}
 }

@@ -259,7 +259,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		return true;
 	}
 
-	public boolean saveAs(boolean isNewWindow) {
+	public boolean saveAs(boolean isNewWindow) {    
 		JDialogFormSaveAs dialogSaveAs = new JDialogFormSaveAs();
 
 		dialogSaveAs.setDescribeText(ProcessProperties.getString("String_NewWorkFlowName"));
@@ -281,7 +281,8 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		return true;
 	}
 
-	private Workflow getWorkFlow() {
+	@Override
+	public IWorkFlow getWorkFlow() {
 		NodeMatrix nodeMatrix = new NodeMatrix();
 		IConnectionManager connection = this.graphCanvas.getCanvas().getConnection();
 		IGraphStorage graphStorage = this.graphCanvas.getCanvas().getGraphStorage();
