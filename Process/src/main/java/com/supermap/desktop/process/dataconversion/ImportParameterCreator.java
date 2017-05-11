@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.dataconversion;
 
+import com.supermap.data.Dataset;
 import com.supermap.data.EncodeType;
 import com.supermap.data.conversion.*;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -11,6 +12,7 @@ import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -481,6 +483,10 @@ public class ImportParameterCreator implements IParameterCreator {
 		targetDatasource.methodName = "setTargetDatasource";
 		parameterDatasource = new ParameterDatasourceConstrained();
 		parameterDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
+		Dataset dataset = DatasetUtilities.getDefaultDataset();
+		if (dataset != null) {
+			parameterDatasource.setSelectedItem(dataset.getDatasource());
+		}
 		targetDatasource.parameter = parameterDatasource;
 		resultInfo.add(targetDatasource);
 

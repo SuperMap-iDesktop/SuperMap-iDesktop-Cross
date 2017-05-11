@@ -41,9 +41,6 @@ public class ParameterDatasourcePanel extends SwingPanel {
 		this.datasourceComboBox.setSelectedItem(this.parameterDatasource.getSelectedItem());
 		initLayout();
 		initListener();
-		if (datasourceComboBox.getSelectedIndex() == -1 && datasourceComboBox.getItemCount() > 0) {
-			datasourceComboBox.setSelectedIndex(0);
-		}
 	}
 
 	private void initLayout() {

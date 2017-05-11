@@ -13,6 +13,7 @@ import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.text.MessageFormat;
@@ -46,8 +47,10 @@ public class MetaProcessSqlQuery extends MetaProcess {
 		this.datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameters = new DefaultParameters();
 		this.dataset = new ParameterSingleDataset(datasetTypes);
-		if (null != Application.getActiveApplication().getActiveDatasets() && Application.getActiveApplication().getActiveDatasets().length > 0) {
-			this.dataset.setSelectedItem(Application.getActiveApplication().getActiveDatasets()[0]);
+		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
+		if (datasetVector != null) {
+			datasource.setSelectedItem(datasetVector.getDatasource());
+			dataset.setSelectedItem(datasetVector);
 		}
 		parameterResultFields = new ParameterTextArea(CommonProperties.getString("String_QueryField"));
 		parameterAttributeFilter = new ParameterTextArea(CommonProperties.getString("String_QueryCondition"));
