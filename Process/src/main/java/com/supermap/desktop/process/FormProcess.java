@@ -233,7 +233,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 
 	@Override
 	public WindowType getWindowType() {
-		return WindowType.UNKNOWN;
+		return WindowType.WORK_FLOW;
 	}
 
 	@Override
