@@ -19,6 +19,7 @@ import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
  * Created by xie on 2017/3/10.
@@ -91,6 +92,11 @@ public class MetaProcessISOPoint extends MetaProcess {
 		this.parameters = new DefaultParameters();
 		this.sourceDatasource = new ParameterDatasourceConstrained();
 		this.sourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.POINT3D);
+		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
+		if (datasetVector != null) {
+			sourceDatasource.setSelectedItem(datasetVector.getDatasource());
+			sourceDataset.setSelectedItem(datasetVector);
+		}
 		this.fields = new ParameterFieldComboBox();
 		this.fields.setDescribe(CommonProperties.getString("String_FieldsName"));
 		this.fields.setDataset((DatasetVector) sourceDataset.getSelectedItem());

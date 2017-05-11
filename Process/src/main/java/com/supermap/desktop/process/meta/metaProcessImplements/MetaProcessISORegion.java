@@ -12,6 +12,7 @@ import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
  * Created by xie on 2017/3/7.
@@ -51,7 +52,11 @@ public class MetaProcessISORegion extends MetaProcess {
 		sourceDatasource = new ParameterDatasourceConstrained();
 		sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		dataset = new ParameterSingleDataset(DatasetType.GRID);
-
+		DatasetGrid datasetGrid = DatasetUtilities.getDefaultDatasetGrid();
+		if (datasetGrid != null) {
+			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
+			dataset.setSelectedItem(datasetGrid);
+		}
 		targetDataset = new ParameterSaveDataset();
 		targetDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
 		targetDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
