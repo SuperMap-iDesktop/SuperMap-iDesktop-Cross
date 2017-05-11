@@ -440,17 +440,17 @@ public class DatasetUtilities {
 
 	public static DatasetVector getDefaultDatasetVector() {
 		DatasetVector datasetVector = null;
-		Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
-		for (Dataset activeDataset : activeDatasets) {
-			if (activeDataset instanceof DatasetVector) {
-				datasetVector = (DatasetVector) activeDataset;
-				break;
+		if(Application.getActiveApplication().getWorkspace().getDatasources().getCount()>0){
+			Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
+			for (Dataset activeDataset : activeDatasets) {
+				if (activeDataset instanceof DatasetVector) {
+					datasetVector = (DatasetVector) activeDataset;
+					return datasetVector ;
+				}
 			}
-		}
-		if (datasetVector == null) {
 			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
-			for (Datasource activeDatasource : activeDatasources) {
-				Datasets datasets = activeDatasource.getDatasets();
+			if(activeDatasources.length>0){
+				Datasets datasets = activeDatasources[0].getDatasets();
 				for (int i = 0; i < datasets.getCount(); i++) {
 					if (datasets.get(i) instanceof DatasetVector) {
 						datasetVector = (DatasetVector) datasets.get(i);
@@ -458,23 +458,31 @@ public class DatasetUtilities {
 					}
 				}
 			}
+			Datasets datasets = Application.getActiveApplication().getWorkspace().getDatasources().get(0).getDatasets();
+			for (int i = 0; i < datasets.getCount(); i++) {
+				if (datasets.get(i) instanceof DatasetVector) {
+					datasetVector = (DatasetVector) datasets.get(i);
+					break;
+				}
+			}
+			return datasetVector ;
 		}
 		return datasetVector;
 	}
 
 	public static DatasetGrid getDefaultDatasetGrid() {
 		DatasetGrid datasetGrid = null;
-		Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
-		for (Dataset activeDataset : activeDatasets) {
-			if (activeDataset instanceof DatasetGrid) {
-				datasetGrid = (DatasetGrid) activeDataset;
-				break;
+		if(Application.getActiveApplication().getWorkspace().getDatasources().getCount()>0){
+			Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
+			for (Dataset activeDataset : activeDatasets) {
+				if (activeDataset instanceof DatasetGrid) {
+					datasetGrid = (DatasetGrid) activeDataset;
+					return datasetGrid ;
+				}
 			}
-		}
-		if (datasetGrid == null) {
 			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
-			for (Datasource activeDatasource : activeDatasources) {
-				Datasets datasets = activeDatasource.getDatasets();
+			if(activeDatasources.length>0){
+				Datasets datasets = activeDatasources[0].getDatasets();
 				for (int i = 0; i < datasets.getCount(); i++) {
 					if (datasets.get(i) instanceof DatasetGrid) {
 						datasetGrid = (DatasetGrid) datasets.get(i);
@@ -482,26 +490,36 @@ public class DatasetUtilities {
 					}
 				}
 			}
+			Datasets datasets = Application.getActiveApplication().getWorkspace().getDatasources().get(0).getDatasets();
+			for (int i = 0; i < datasets.getCount(); i++) {
+				if (datasets.get(i) instanceof DatasetGrid) {
+					datasetGrid = (DatasetGrid) datasets.get(i);
+					break;
+				}
+			}
+			return datasetGrid ;
 		}
 		return datasetGrid;
 	}
 
 	public static Dataset getDefaultDataset() {
 		Dataset dataset = null;
-		Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
-		if(activeDatasets.length > 0){
-			dataset = Application.getActiveApplication().getActiveDatasets()[0];
-			return dataset;
-		}
-		if(dataset == null){
-			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
-			if(activeDatasources.length == 0){
+		if(Application.getActiveApplication().getWorkspace().getDatasources().getCount()>0){
+			Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
+			if(activeDatasets.length > 0){
+				dataset = Application.getActiveApplication().getActiveDatasets()[0];
 				return dataset;
 			}
-			Datasets datasets = activeDatasources[0].getDatasets();
-			if(datasets.getCount() > 0 ){
+			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
+			if(activeDatasources.length > 0 && activeDatasources[0].getDatasets().getCount()>0){
+				dataset = activeDatasources[0].getDatasets().get(0);
+				return dataset;
+			}
+			Datasets datasets = Application.getActiveApplication().getWorkspace().getDatasources().get(0).getDatasets();
+			if(datasets.getCount()>0){
 				dataset = datasets.get(0);
 			}
+			return dataset ;
 		}
 		return dataset;
 	}
