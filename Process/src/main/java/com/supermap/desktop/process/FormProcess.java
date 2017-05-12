@@ -214,6 +214,19 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		}
 	}
 
+	public ArrayList<OutputData> getAllOutPut() {
+		ArrayList<OutputData> outputDatas = new ArrayList<>();
+		IGraph[] graphs = getCanvas().getGraphStorage().getGraphs();
+		for (IGraph graph : graphs) {
+			if (graph instanceof OutputGraph) {
+				OutputData processData = ((OutputGraph) graph).getProcessData();
+				outputDatas.add(processData);
+			}
+		}
+		return outputDatas;
+	}
+
+
 	public static void main(String[] args) {
 		final JFrame frame = new JFrame();
 		frame.setSize(1000, 650);
