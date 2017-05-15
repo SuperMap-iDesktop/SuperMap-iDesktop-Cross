@@ -6,7 +6,6 @@ import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
@@ -26,7 +25,6 @@ public abstract class MetaProcessAnalyzingPatterns extends MetaProcess {
 
 
 	public MetaProcessAnalyzingPatterns() {
-		parameters = new DefaultParameters();
 		initParameters();
 		initComponentState();
 		initParameterConstraint();

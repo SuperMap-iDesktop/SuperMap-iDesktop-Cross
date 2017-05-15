@@ -27,9 +27,20 @@ public class StatisticsFieldTableModel extends DefaultTableModel {
 		return statisticsFieldInfos;
 	}
 
+	public void setStatisticsFieldInfos(ArrayList<StatisticsFieldInfo> statisticsFieldInfos) {
+		if (statisticsFieldInfos != null) {
+			this.statisticsFieldInfos = statisticsFieldInfos;
+		} else {
+			this.statisticsFieldInfos.clear();
+		}
+		fireTableDataChanged();
+	}
+
 	public StatisticsFieldTableModel(ArrayList<StatisticsFieldInfo> statisticsFieldInfos) {
 		super();
-		this.statisticsFieldInfos = statisticsFieldInfos;
+		if (statisticsFieldInfos != null) {
+			this.statisticsFieldInfos = statisticsFieldInfos;
+		}
 	}
 
 

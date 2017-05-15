@@ -17,6 +17,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.SpatialIndexTypeUtilities;
 
 /**
@@ -42,6 +43,11 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 		};
 		datasource = new ParameterDatasourceConstrained();
 		dataset = new ParameterSingleDataset(DatasetTypeUtilities.getDatasetTypeVector());
+		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
+		if (datasetVector != null) {
+			datasource.setSelectedItem(datasetVector.getDatasource());
+			dataset.setSelectedItem(datasetVector);
+		}
 		datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameterComboBox = new ParameterComboBox(ControlsProperties.getString("String_LabelSpatialIndexType"));
 		parameterComboBox.setItems(parameterDataNodes);

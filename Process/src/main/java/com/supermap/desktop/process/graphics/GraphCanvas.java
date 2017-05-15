@@ -291,10 +291,6 @@ public class GraphCanvas extends JComponent {
 		}
 	}
 
-	public void modifyGraphBounds(IGraph graph, int x, int y, int width, int height) {
-		this.graphStorage.modifyGraphBounds(graph, x, y, width, height);
-	}
-
 	@Override
 	protected void paintComponent(Graphics g) {
 		Graphics2D graphics2D = (Graphics2D) g;
@@ -306,7 +302,6 @@ public class GraphCanvas extends JComponent {
 		graphics2D.setTransform(this.coordinateTransform.getAffineTransform(origin));
 		paintGraphs(graphics2D);
 		paintTracking(graphics2D);
-		this.connector.preview(graphics2D);
 		this.lineInteraction.paint(graphics2D);
 		graphics2D.setTransform(origin);
 

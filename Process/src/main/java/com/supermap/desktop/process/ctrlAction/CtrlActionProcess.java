@@ -8,6 +8,7 @@ import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.process.FormProcess;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import java.util.ArrayList;
 
@@ -40,28 +41,14 @@ public class CtrlActionProcess extends CtrlAction {
 					names.add(formManager.get(i).getText());
 				}
 			}
-			formProcess.setText(getSingleTitle(ControlsProperties.getString("String_WorkFlows"), names));
-
+			formProcess.setText(StringUtilities.getUniqueName(ControlsProperties.getString("String_WorkFlows"), names));
 			Application.getActiveApplication().getMainFrame().getFormManager().add(formProcess);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
 
-	private String getSingleTitle(String currentName, ArrayList<String> names) {
-		return getSingleTitle(currentName, names, 0);
-	}
 
-	private String getSingleTitle(String currentName, ArrayList<String> names, int i) {
-		String currentNameTemp = currentName;
-		if (i != 0) {
-			currentNameTemp = currentName + "_" + i;
-		}
-		if (names.contains(currentNameTemp)) {
-			return getSingleTitle(currentName, names, ++i);
-		}
-		return currentNameTemp;
-	}
 
 	@Override
 	public boolean enable() {

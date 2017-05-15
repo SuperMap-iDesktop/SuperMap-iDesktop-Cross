@@ -5,4 +5,6 @@ package com.supermap.desktop.Interface;
  */
 public interface IFormProcess extends IForm {
 
+	IWorkFlow getWorkFlow();
+
 }

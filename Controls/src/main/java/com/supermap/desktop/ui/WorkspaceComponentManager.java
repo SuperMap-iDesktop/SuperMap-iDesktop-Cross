@@ -59,6 +59,8 @@ public class WorkspaceComponentManager extends JComponent {
 	private static final int DATASET_TYPE_IMAGECOLLECTIONITEM = 32;
 	private static final int DATASET_TYPE_GRIDCOLLECTIONITEM = 64;
 	private static final int DATASET_TYPE_TOPOLOGY = 128;
+	private JPopupMenu workFlowsPopupMenu;
+	private JPopupMenu workFlowPopupMenu;
 
 	public WorkspaceComponentManager() {
 
@@ -358,6 +360,14 @@ public class WorkspaceComponentManager extends JComponent {
 
 	private JPopupMenu datasetImageCollectionItemPopupMenu = null;
 
+	public JPopupMenu getWorkFlowsPopupMenu() {
+		return workFlowsPopupMenu;
+	}
+
+	public JPopupMenu getWorkFlowPopupMenu() {
+		return workFlowPopupMenu;
+	}
+
 	/**
 	 * 获取工作空间管理器中影像数据集集合子节点。
 	 *
@@ -398,6 +408,8 @@ public class WorkspaceComponentManager extends JComponent {
 				this.symbolLinePopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuSymbolLine");
 				this.symbolFillPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuSymbolFill");
 				this.datasetGroupPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop.UI.WorkspaceControlManager.ContextMenuDatasetGroup");
+				this.workFlowPopupMenu = (JPopupMenu) manager.get("Supermap.Desktop.UI.WorkspaceControlManager.ContextMenuWorkFlow");
+				this.workFlowsPopupMenu = (JPopupMenu) manager.get("Supermap.Desktop.UI.WorkspaceControlManager.ContextMenuWorkFlows");
 
 				this.isContextMenuBuilded = true;
 			}
@@ -677,6 +689,12 @@ public class WorkspaceComponentManager extends JComponent {
 					break;
 				} else if (type == NodeDataType.SCENE_NAME) {
 					popupMenu = this.scenePopupMenu;
+					break;
+				} else if (type == NodeDataType.WORK_FLOWS) {
+					popupMenu = this.workFlowsPopupMenu;
+					break;
+				} else if (type == NodeDataType.WORK_FLOW) {
+					popupMenu = this.workFlowPopupMenu;
 					break;
 				} else if (type == NodeDataType.RESOURCES) {
 					popupMenu = this.resourcesPopupMenu;

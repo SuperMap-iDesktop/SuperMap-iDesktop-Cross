@@ -16,6 +16,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
  * @author XiaJT
@@ -106,6 +107,11 @@ public class MetaProcessBuffer extends MetaProcess {
 		parameterBufferRange.setSelectedItem(BufferRadiusUnit.Meter);
 		parameterTextFieldRadius.setSelectedItem("10");
 		parameterTextFieldSemicircleLineSegment.setSelectedItem("100");
+		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
+		if (datasetVector != null) {
+			datasource.setSelectedItem(datasetVector.getDatasource());
+			dataset.setSelectedItem(datasetVector);
+		}
 		if (Application.getActiveApplication().getActiveDatasources().length > 0) {
 			parameterSaveDataset.setResultDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
 		} else if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {

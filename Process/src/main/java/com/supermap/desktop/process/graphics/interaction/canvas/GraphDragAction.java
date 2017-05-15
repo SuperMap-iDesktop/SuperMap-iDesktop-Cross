@@ -3,6 +3,7 @@ package com.supermap.desktop.process.graphics.interaction.canvas;
 import com.supermap.desktop.process.graphics.CanvasCursor;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
+import com.supermap.desktop.process.graphics.connection.LineGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import javax.swing.*;
@@ -73,9 +74,14 @@ public class GraphDragAction extends CanvasActionAdapter {
 
 			for (int i = 0, size = this.draggedGraphs.length; i < size; i++) {
 				IGraph dragged = this.draggedGraphs[i];
+
+				if (!isGraphDraggable(dragged)) {
+					continue;
+				}
+
 				int originX = dragged.getLocation().x;
 				int originY = dragged.getLocation().y;
-				this.canvas.modifyGraphBounds(dragged, originX + offsetX, originY + offsetY, dragged.getWidth(), dragged.getHeight());
+				dragged.setLocation(new Point(originX + offsetX, originY + offsetY));
 
 				Rectangle desRect = dragged.getTotalBounds();
 				if (this.canvas.getCanvasRect().contains(desRect)) {
@@ -90,11 +96,16 @@ public class GraphDragAction extends CanvasActionAdapter {
 					this.dragStart = dragEnd;
 					refreshRect = this.canvas.getCoordinateTransform().transform(refreshRect);
 					refreshRect.grow(2, 2);
-					this.canvas.repaint(refreshRect);
+//					this.canvas.repaint(refreshRect);
+					this.canvas.repaint();
 				} else {
-					this.canvas.modifyGraphBounds(dragged, originX, originY, dragged.getWidth(), dragged.getHeight());
+					dragged.setLocation(new Point(originX, originY));
 				}
 			}
 		}
+	}
+
+	private boolean isGraphDraggable(IGraph graph) {
+		return !(graph instanceof LineGraph);
 	}
 }

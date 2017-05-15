@@ -1,28 +1,58 @@
 package com.supermap.desktop.process.graphics.storage;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
+import com.supermap.desktop.process.graphics.connection.IConnection;
+import com.supermap.desktop.process.graphics.events.*;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by highsad on 2017/3/2.
  */
 public class ListGraphs implements IGraphStorage {
 	private GraphCanvas canvas;
-	private IConnectionManager connection = new ListGraphConnection(this.canvas);
+	private IConnectionManager connectionManager = new ListGraphConnection(this.canvas);
+	private Map<IConnection, IGraph> connectionMap = new ConcurrentHashMap<>();
 	private Vector<IGraph> graphs = new Vector();
 	private Rectangle box = null;
 
+	private ConnectionAddedListener connectionAddedListener = new ConnectionAddedListener() {
+		@Override
+		public void connectionAdded(ConnectionAddedEvent e) {
+			ListGraphs.this.connectionAdded(e);
+		}
+	};
+	private ConnectionRemovingListener connectionRemovingListener = new ConnectionRemovingListener() {
+		@Override
+		public void connectionRemoving(ConnectionRemovingEvent e) {
+			if (!e.isCancel()) {
+				ListGraphs.this.connectionRemoving(e);
+			}
+		}
+	};
+	private GraphBoundsChangedListener graphBoundsChangedListener = new GraphBoundsChangedListener() {
+		@Override
+		public void graghBoundsChanged(GraphBoundsChangedEvent e) {
+			ListGraphs.this.graphBoundsChanged(e);
+		}
+	};
+
 	public ListGraphs(GraphCanvas canvas) {
 		this.canvas = canvas;
+		this.connectionManager = new ListGraphConnection(this.canvas);
+		this.connectionManager.addConnectionAddedListener(this.connectionAddedListener);
+		this.connectionManager.addConnectionRemovingListener(this.connectionRemovingListener);
 	}
 
 	@Override
 	public IConnectionManager getConnectionManager() {
-		return connection;
+		return connectionManager;
 	}
 
 	@Override
@@ -143,13 +173,26 @@ public class ListGraphs implements IGraphStorage {
 		return this.box;
 	}
 
-	@Override
-	public void modifyGraphBounds(IGraph graph, int x, int y, int width, int height) {
-		if (this.graphs.contains(graph)) {
-			graph.setLocation(new Point(x, y));
-			graph.setSize(width, height);
-			computeBox();
+	private void connectionAdded(ConnectionAddedEvent e) {
+		IConnection connection = e.getConnection();
+		if (connection != null && connection.getStart() != null && connection.getEnd() != null) {
+			ConnectionLineGraph lineGraph = new ConnectionLineGraph(this.canvas, connection);
+			add(lineGraph);
+			this.connectionMap.put(connection, lineGraph);
 		}
+	}
+
+	private void connectionRemoving(ConnectionRemovingEvent e) {
+		IConnection connection = e.getConnection();
+		if (this.connectionMap.containsKey(connection)) {
+			IGraph graph = this.connectionMap.get(connection);
+			remove(graph);
+		}
+	}
+
+	private void graphBoundsChanged(GraphBoundsChangedEvent e) {
+		this.box = null;
+		computeBox();
 	}
 
 	private void computeBox() {

@@ -33,9 +33,11 @@ public class DefaultParameters implements IParameters {
 
 	public DefaultParameters() {
 		packages.add(new ParameterClassBundleNode("com.supermap.desktop.process.parameter.ParameterPanels", "SuperMap.Desktop.Process"));
+
 		inputs.addValueProviderBindListener(new ValueProviderBindListener() {
 			@Override
 			public void valueBind(ValueProviderBindEvent event) {
+				event.getType();
 				InputData inputData = event.getInputData();
 				ArrayList<IParameter> parameters = inputData.getParameters();
 				for (IParameter parameter : parameters) {
@@ -45,7 +47,6 @@ public class DefaultParameters implements IParameters {
 						// 在未连接时是否需要列出选择项
 						// ① 使用parameterSwitch动态替换输入和选择项
 						// ② 未连接时只显示输入，连接后只显示选择项
-						//
 
 					}
 				}

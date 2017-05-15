@@ -1,7 +1,10 @@
 package com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.StatisticsField;
 
 import com.supermap.analyst.spatialstatistics.StatisticsType;
-import com.supermap.data.*;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldInfos;
+import com.supermap.data.FieldType;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.CellRenders.ListStatisticsTypeCellRender;
@@ -25,8 +28,9 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.StatisticsField.StatisticsFieldTableModel.COLUMN_FIELDTYPE;
 import static com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.StatisticsField.StatisticsFieldTableModel.COLUMN_STATISTICSTYPE;
@@ -38,8 +42,7 @@ public class StatisticsFieldPanel extends JPanel {
 	private DatasetVector dataset;
 	private ArrayList<StatisticsFieldInfo> statisticsFieldInfoAll = new ArrayList<>();
 	private ArrayList<StatisticsFieldInfo> statisticsFieldInfoIncluded = new ArrayList<>();
-	private ArrayList<StatisticsFieldInfo> statisticsFieldInfoExcluded = new ArrayList<>();
-	private StatisticsFieldTableModel tableModel;
+	private StatisticsFieldTableModel tableModel = new StatisticsFieldTableModel(null);
 
 	//#region component
 	private JScrollPane scrollPane;
@@ -49,13 +52,55 @@ public class StatisticsFieldPanel extends JPanel {
 	private SmButton buttonSelectAll;
 	private SmButton buttonSelectInvert;
 	private SmButton buttonDel;
-	private SmButton buttonSetting;
+	private JLabel labelStatisticsType;
+	private JComboBox<StatisticsType> comboBoxStatisticsType;
+	private boolean isSelecting = true;
 	//#enregion component
 
 	public StatisticsFieldPanel(DatasetVector dataset) {
 		super();
 		this.dataset = dataset;
 		init();
+	}
+
+	public StatisticsType[] getStatisticsType() {
+		ArrayList<StatisticsType> statisticsTypes = new ArrayList<>();
+		if (tableModel != null) {
+			ArrayList<StatisticsFieldInfo> statisticsFieldInfos = tableModel.getStatisticsFieldInfos();
+			for (StatisticsFieldInfo statisticsFieldInfo : statisticsFieldInfos) {
+				statisticsTypes.add(statisticsFieldInfo.getStatisticsType());
+			}
+		}
+		return statisticsTypes.toArray(new StatisticsType[statisticsTypes.size()]);
+	}
+
+	public String[] getStatisticsFieldNames() {
+		ArrayList<String> fieldNames = new ArrayList<>();
+		if (tableModel != null) {
+			ArrayList<StatisticsFieldInfo> statisticsFieldInfos = tableModel.getStatisticsFieldInfos();
+			for (StatisticsFieldInfo statisticsFieldInfo : statisticsFieldInfos) {
+				fieldNames.add(statisticsFieldInfo.getFieldInfo().getName());
+			}
+		}
+		return fieldNames.toArray(new String[fieldNames.size()]);
+	}
+
+	public ArrayList<StatisticsFieldInfo> getStatisticsFieldInfos() {
+		if (tableModel != null) {
+			return tableModel.getStatisticsFieldInfos();
+		}
+		return null;
+	}
+
+	public DatasetVector getDataset() {
+		return dataset;
+	}
+
+	public void setDataset(DatasetVector dataset) {
+		this.dataset = dataset;
+		//initTableModel重新设置model会触发combobox重构，其中用到了选择行，是无效的值
+		this.table.clearSelection();
+		this.initTableModel();
 	}
 
 	private void init() {
@@ -71,38 +116,19 @@ public class StatisticsFieldPanel extends JPanel {
 		buttonSelectAll = new SmButton();
 		buttonSelectInvert = new SmButton();
 		buttonDel = new SmButton();
-		buttonSetting = new SmButton();
+		labelStatisticsType = new JLabel(CommonProperties.getString("String_StatisticType"));
+		comboBoxStatisticsType = new JComboBox<>();
+		comboBoxStatisticsType.setPreferredSize(new Dimension(150, 23));
+		comboBoxStatisticsType.setMaximumSize(new Dimension(150, 23));
+		comboBoxStatisticsType.setRenderer(new ListStatisticsTypeCellRender());
 		scrollPane = new JScrollPane();
 		table = new SmSortTable();
 		initTable();
 	}
 
 	private void initTable() {
-		if (dataset == null) {
-			return;
-		}
-		//初始化 属性--统计类型 信息
-		FieldInfos fieldInfos = dataset.getFieldInfos();
-		for (int i = 0; i < fieldInfos.getCount(); i++) {
-			FieldInfo fieldInfo = fieldInfos.get(i);
-			//只处理非系统字段，不包含二进制、日期型--参考.net来的
-			if (!fieldInfo.isSystemField() && fieldInfo.getType() != FieldType.DATETIME && fieldInfo.getType() != FieldType.LONGBINARY) {
-				boolean fieldInfoAddOnce = false;
-				ArrayList<StatisticsType> supportedStatisticsType = getSupportedStatisticsType(fieldInfo.getType());
-				for (StatisticsType statisticsType : supportedStatisticsType) {
-					StatisticsFieldInfo statisticsFieldInfo = new StatisticsFieldInfo(fieldInfo, statisticsType);
-					this.statisticsFieldInfoAll.add(statisticsFieldInfo);//添加所有合理的字段、统计组合
-					if (!fieldInfoAddOnce) {
-						this.statisticsFieldInfoIncluded.add(statisticsFieldInfo);//默认初始化表格只显示每个字段一次
-						fieldInfoAddOnce = true;
-					}
-				}
-			}
-		}
-		tableModel = new StatisticsFieldTableModel(statisticsFieldInfoIncluded);
 		scrollPane.setViewportView(table);
 		table.setModel(tableModel);
-
 		//table render
 		TableColumn column_statisticsType = table.getColumnModel().getColumn(COLUMN_STATISTICSTYPE);
 		DefaultCellEditor cellEditorStatisticsType = new StatisticsTypeCellEditor();
@@ -111,8 +137,38 @@ public class StatisticsFieldPanel extends JPanel {
 		column_statisticsType.setCellRenderer(statisticsTypeCellRenderer);
 		TableColumn column_fieldType = table.getColumnModel().getColumn(COLUMN_FIELDTYPE);
 		column_fieldType.setCellRenderer(fieldTypeCellRenderer);
+		initTableModel();
 	}
 
+	public void initTableModel() {
+		//初始化 属性--统计类型 信息
+		statisticsFieldInfoAll.clear();
+		statisticsFieldInfoIncluded.clear();
+		if (dataset != null) {
+			FieldInfos fieldInfos = dataset.getFieldInfos();
+			for (int i = 0; i < fieldInfos.getCount(); i++) {
+				FieldInfo fieldInfo = fieldInfos.get(i);
+				//只处理非系统字段，不包含二进制、日期型--参考.net来的
+				if (!fieldInfo.isSystemField() && fieldInfo.getType() != FieldType.DATETIME && fieldInfo.getType() != FieldType.LONGBINARY) {
+					boolean fieldInfoAddOnce = false;
+					ArrayList<StatisticsType> supportedStatisticsType = getSupportedStatisticsType(fieldInfo.getType());
+					for (StatisticsType statisticsType : supportedStatisticsType) {
+						StatisticsFieldInfo statisticsFieldInfo = new StatisticsFieldInfo(fieldInfo, statisticsType);
+						this.statisticsFieldInfoAll.add(statisticsFieldInfo);//添加所有合理的字段、统计组合
+						if (!fieldInfoAddOnce) {
+							this.statisticsFieldInfoIncluded.add(statisticsFieldInfo);//默认初始化表格只显示每个字段一次
+							fieldInfoAddOnce = true;
+						}
+					}
+				}
+			}
+		}
+		tableModel.setStatisticsFieldInfos(statisticsFieldInfoIncluded);
+		if (tableModel.getRowCount() > 0) {
+			table.setRowSelectionInterval(0, 0);
+			initStatisticsTypeComboBox();
+		}
+	}
 
 	/**
 	 * 获取字段类型所支持的统计方法
@@ -187,17 +243,19 @@ public class StatisticsFieldPanel extends JPanel {
 
 		@Override
 		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-			StatisticsFieldInfo statisticsFieldInfo = ((StatisticsFieldTableModel) table.getModel()).getRow(row);
+			int realRow = table.convertRowIndexToModel(row);
+			StatisticsFieldInfo statisticsFieldInfo = ((StatisticsFieldTableModel) table.getModel()).getRow(realRow);
 			ArrayList<StatisticsType> statisticsTypes = getStatisticsTypes(statisticsFieldInfo);
 			comboBox = (JComboBox) super.getTableCellEditorComponent(table, value, isSelected, row, column);
 			Object item = comboBox.getSelectedItem();
 			comboBox.setRenderer(new ListStatisticsTypeCellRender());
-			//// FIXME: 2017/5/4 此处可能需要屏蔽一些comboBox事件响应
 			comboBox.removeAllItems();
 			for (StatisticsType statisticsType : statisticsTypes) {
 				comboBox.addItem(statisticsType);
 			}
-			comboBox.setSelectedItem(item);
+			if (item != null) {
+				comboBox.setSelectedItem(item);
+			}
 			return comboBox;
 		}
 	}
@@ -207,7 +265,6 @@ public class StatisticsFieldPanel extends JPanel {
 		buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 		buttonSelectInvert.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
 		buttonDel.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
-		buttonSetting.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Setting.PNG"));
 	}
 
 	private void initLayout() {
@@ -226,7 +283,8 @@ public class StatisticsFieldPanel extends JPanel {
 		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
 		toolBar.add(buttonDel);
 		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
-		toolBar.add(buttonSetting);
+		toolBar.add(labelStatisticsType);
+		toolBar.add(comboBoxStatisticsType);
 	}
 
 	private void registerListener() {
@@ -243,7 +301,12 @@ public class StatisticsFieldPanel extends JPanel {
 						count++;
 					}
 					if (count != 0) {
-						table.setRowSelectionInterval(table.getRowCount() - count, table.getRowCount() - 1);
+						table.clearSelection();
+						for (int i = table.getRowCount() - count; i <= table.getRowCount() - 1; i++) {
+							int viewRow = table.convertRowIndexToView(i);
+							table.addRowSelectionInterval(viewRow, viewRow);
+						}
+//						table.setRowSelectionInterval(table.getRowCount() - count, table.getRowCount() - 1);
 						TableUtilities.scrollToLastSelectedRow(table);
 					}
 				}
@@ -268,7 +331,7 @@ public class StatisticsFieldPanel extends JPanel {
 				if (selectedModelRows.length == 0) {
 					return;
 				}
-				Arrays.sort(selectedModelRows);
+//				Arrays.sort(selectedModelRows);
 				for (int i = selectedModelRows.length - 1; i >= 0; i--) {
 					tableModel.removeRow(selectedModelRows[i]);
 				}
@@ -281,42 +344,74 @@ public class StatisticsFieldPanel extends JPanel {
 				}
 			}
 		});
-		buttonSetting.addActionListener(new ActionListener() {
+		comboBoxStatisticsType.addItemListener(new ItemListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				TableUtilities.stopEditing(table);
+			public void itemStateChanged(ItemEvent e) {
+				if (isSelecting && e.getStateChange() == ItemEvent.SELECTED) {
+					TableUtilities.stopEditing(table);
+					StatisticsType statisticsType = (StatisticsType) comboBoxStatisticsType.getSelectedItem();
+					int[] selectedModelRows = table.getSelectedModelRows();
+					for (int selectedModelRow : selectedModelRows) {
+						StatisticsFieldInfo statisticsFieldInfo = tableModel.getRow(selectedModelRow);
+						ArrayList<StatisticsType> statisticsTypes = getStatisticsTypes(statisticsFieldInfo);
+						if (statisticsTypes.contains(statisticsType)) {
+							tableModel.setValueAt(statisticsType, selectedModelRow, COLUMN_STATISTICSTYPE);
+						} else {
+							tableModel.setValueAt(statisticsTypes.get(0), selectedModelRow, COLUMN_STATISTICSTYPE);
+						}
+					}
+				}
 			}
 		});
+
 		table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				checkButtonState();
+				checkState();
 			}
 		});
 		tableModel.addTableModelListener(new TableModelListener() {
 			@Override
 			public void tableChanged(TableModelEvent e) {
 				if (e.getType() != TableModelEvent.DELETE) {
-					checkButtonState();
+					checkState();
 				}
 			}
 		});
 	}
 
-	private void checkButtonState() {
+	private void checkState() {
 		buttonSelectAll.setEnabled(table.getRowCount() > 0);
 		buttonSelectInvert.setEnabled(table.getRowCount() > 0);
 		buttonDel.setEnabled(table.getSelectedRowCount() > 0);
-		buttonSetting.setEnabled(table.getSelectedRowCount() > 0);
+		comboBoxStatisticsType.setEnabled(table.getSelectedRowCount() > 0);
+		initStatisticsTypeComboBox();
 	}
 
-	public StatisticsType[] getStatisticsType() {
-		return null;
+	private void initStatisticsTypeComboBox() {
+		isSelecting = false;
+		try {
+			this.comboBoxStatisticsType.removeAllItems();
+			int[] selectedModelRows = table.getSelectedModelRows();
+			if (selectedModelRows.length == 0) {
+				return;
+			}
+			StatisticsFieldInfo statisticsFieldInfoFirst = tableModel.getRow(selectedModelRows[0]);
+			ArrayList<StatisticsType> statisticsTypesFirst = getStatisticsTypes(statisticsFieldInfoFirst);
+			for (int selectedModelRow : selectedModelRows) {
+				StatisticsFieldInfo statisticsFieldInfo = tableModel.getRow(selectedModelRow);
+				ArrayList<StatisticsType> statisticsTypes = getStatisticsTypes(statisticsFieldInfo);
+				statisticsTypesFirst.retainAll(statisticsTypes);
+			}
+			for (StatisticsType statisticsType : statisticsTypesFirst) {
+				comboBoxStatisticsType.addItem(statisticsType);
+			}
+		} finally {
+			isSelecting = true;
+		}
+
 	}
 
-	public String[] getStatisticsFieldNames() {
-		return null;
-	}
 
 	private class JDialogAdd extends SmDialog {
 		private SmSortTable table;
@@ -442,7 +537,7 @@ public class StatisticsFieldPanel extends JPanel {
 		}
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		DatasourceConnectionInfo connectionInfo = new DatasourceConnectionInfo();
 		connectionInfo.setServer("C:\\Users\\hanyz\\Desktop\\test.udb");
 		connectionInfo.setEngineType(EngineType.UDB);
@@ -460,6 +555,5 @@ public class StatisticsFieldPanel extends JPanel {
 		StatisticsFieldPanel panel = new StatisticsFieldPanel(dataset);
 		jFrame.add(panel);
 		jFrame.setVisible(true);
-
-	}
+	}*/
 }

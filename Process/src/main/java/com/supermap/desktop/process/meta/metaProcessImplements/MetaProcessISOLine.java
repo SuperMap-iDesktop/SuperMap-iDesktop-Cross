@@ -14,6 +14,7 @@ import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
  * Created by xie on 2017/3/6.
@@ -83,6 +84,11 @@ public class MetaProcessISOLine extends MetaProcess {
 		this.parameters = new DefaultParameters();
 		this.sourceDatasource = new ParameterDatasourceConstrained();
 		this.dataset = new ParameterSingleDataset(DatasetType.GRID);
+		DatasetGrid datasetGrid = DatasetUtilities.getDefaultDatasetGrid();
+		if (datasetGrid != null) {
+			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
+			dataset.setSelectedItem(datasetGrid);
+		}
 		this.saveDataset = new ParameterSaveDataset();
 		this.maxGrid = new ParameterTextField(CommonProperties.getString("String_MAXGrid"));
 		this.minGrid = new ParameterTextField(CommonProperties.getString("String_MINGrid"));

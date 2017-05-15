@@ -16,6 +16,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
+import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
 
 import java.text.MessageFormat;
@@ -121,6 +122,14 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	private void initParameterStates() {
 		parameterSaveDataset.setSelectedItem("OverlayAnalystDataset");
 		parameterTolerance.setSelectedItem("0");
+		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
+		if (datasetVector != null) {
+			parameterSourceDatasource.setSelectedItem(datasetVector.getDatasource());
+			parameterSourceDataset.setSelectedItem(datasetVector);
+			parameterOverlayDatasource.setSelectedItem(datasetVector.getDatasource());
+			parameterOverlayDataset.setSelectedItem(datasetVector);
+			parameterResultDatasource.setSelectedItem(datasetVector.getDatasource());
+		}
 	}
 
 

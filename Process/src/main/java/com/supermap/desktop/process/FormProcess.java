@@ -2,18 +2,31 @@ package com.supermap.desktop.process;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormProcess;
 import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.*;
-import com.supermap.desktop.process.core.*;
+import com.supermap.desktop.event.FormActivatedListener;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosedListener;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormClosingListener;
+import com.supermap.desktop.event.FormDeactivatedListener;
+import com.supermap.desktop.event.FormShownEvent;
+import com.supermap.desktop.event.FormShownListener;
+import com.supermap.desktop.process.core.DirectConnect;
+import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.NodeMatrix;
+import com.supermap.desktop.process.core.Workflow;
+import com.supermap.desktop.process.core.WorkflowParser;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
+import com.supermap.desktop.process.graphics.connection.IConnectable;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
@@ -38,6 +51,8 @@ import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -49,6 +64,8 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 	private boolean isNeedSave = true;
 	private boolean isAutoAddOutPut = true;
 	private transient DropTarget dropTargeted;
+
+	private JPopupMenu processPopupMenu;
 
 	public FormProcess() {
 		this(ControlsProperties.getString("String_WorkFlows"));
@@ -97,7 +114,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 								message = processGraph.getProcess().getInputs().getBindedInput(((OutputGraph) graph).getProcessData());
 							}
 
-//							connection.connect(graph, (IGraph) nextNode, message);
+							connection.connect((IConnectable) graph, (IConnectable) nextNode, message);
 						}
 					}
 				}
@@ -110,6 +127,8 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 	}
 
 	private void init() {
+		IContextMenuManager manager = Application.getActiveApplication().getMainFrame().getContextMenuManager();
+		processPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop._FormProcess.FormContextMenu");
 		setLayout(new BorderLayout());
 		add(graphCanvas, BorderLayout.CENTER);
 		initListeners();
@@ -147,7 +166,20 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 			}
 		});
 
+		graphCanvas.getCanvas().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// todo 当前状态怎么取???
+				if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
+					showPopupMenu(e);
+				}
+			}
+		});
 		addDrag();
+	}
+
+	private void showPopupMenu(MouseEvent e) {
+		processPopupMenu.show((Component) e.getSource(), e.getX(), e.getY());
 	}
 
 	private void addOutPutGraph(ProcessGraph processGraph) {
@@ -182,6 +214,19 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		}
 	}
 
+	public ArrayList<OutputData> getAllOutPut() {
+		ArrayList<OutputData> outputDatas = new ArrayList<>();
+		IGraph[] graphs = getCanvas().getGraphStorage().getGraphs();
+		for (IGraph graph : graphs) {
+			if (graph instanceof OutputGraph) {
+				OutputData processData = ((OutputGraph) graph).getProcessData();
+				outputDatas.add(processData);
+			}
+		}
+		return outputDatas;
+	}
+
+
 	public static void main(String[] args) {
 		final JFrame frame = new JFrame();
 		frame.setSize(1000, 650);
@@ -201,7 +246,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 
 	@Override
 	public WindowType getWindowType() {
-		return WindowType.UNKNOWN;
+		return WindowType.WORK_FLOW;
 	}
 
 	@Override
@@ -227,7 +272,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		return true;
 	}
 
-	public boolean saveAs(boolean isNewWindow) {
+	public boolean saveAs(boolean isNewWindow) {    
 		JDialogFormSaveAs dialogSaveAs = new JDialogFormSaveAs();
 
 		dialogSaveAs.setDescribeText(ProcessProperties.getString("String_NewWorkFlowName"));
@@ -249,7 +294,8 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		return true;
 	}
 
-	private Workflow getWorkFlow() {
+	@Override
+	public IWorkFlow getWorkFlow() {
 		NodeMatrix nodeMatrix = new NodeMatrix();
 		IConnectionManager connection = this.graphCanvas.getCanvas().getConnection();
 		IGraphStorage graphStorage = this.graphCanvas.getCanvas().getGraphStorage();

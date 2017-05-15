@@ -4,8 +4,10 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.DefaultGraphConnection;
 import com.supermap.desktop.process.graphics.connection.IConnectable;
 import com.supermap.desktop.process.graphics.connection.IConnection;
+import com.supermap.desktop.process.graphics.events.*;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
+import javax.swing.event.EventListenerList;
 import java.util.ArrayList;
 
 /**
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 public class ListGraphConnection implements IConnectionManager {
 	private GraphCanvas canvas;
 	private java.util.List<IConnection> connections = new ArrayList<>();
+	private EventListenerList listenerList = new EventListenerList();
 
 	public ListGraphConnection(GraphCanvas canvas) {
 		this.canvas = canvas;
@@ -43,6 +46,7 @@ public class ListGraphConnection implements IConnectionManager {
 		if (start != null && end != null && start != end) {
 			IConnection connection = new DefaultGraphConnection(start, end, message);
 			this.connections.add(connection);
+			fireConnectionAdded(new ConnectionAddedEvent(this, connection));
 		}
 	}
 
@@ -52,7 +56,13 @@ public class ListGraphConnection implements IConnectionManager {
 			IConnection connection = this.connections.get(i);
 
 			if (connection.getStart() == connectable || connection.getEnd() == connectable) {
-				this.connections.remove(i);
+				ConnectionRemovingEvent removingEvent = new ConnectionRemovingEvent(this, connection);
+				fireConnectionRemoving(removingEvent);
+
+				if (!removingEvent.isCancel()) {
+					this.connections.remove(i);
+					fireConnectionRemoved(new ConnectionRemovedEvent(this, connection));
+				}
 			}
 		}
 	}
@@ -63,7 +73,13 @@ public class ListGraphConnection implements IConnectionManager {
 			IConnection connection = this.connections.get(i);
 
 			if (connection.getStartGraph() == graph || connection.getEndGraph() == graph) {
-				this.connections.remove(i);
+				ConnectionRemovingEvent removingEvent = new ConnectionRemovingEvent(this, connection);
+				fireConnectionRemoving(removingEvent);
+
+				if (!removingEvent.isCancel()) {
+					this.connections.remove(i);
+					fireConnectionRemoved(new ConnectionRemovedEvent(this, connection));
+				}
 			}
 		}
 	}
@@ -74,7 +90,13 @@ public class ListGraphConnection implements IConnectionManager {
 			return;
 		}
 
-		this.connections.remove(connection);
+		ConnectionRemovingEvent removingEvent = new ConnectionRemovingEvent(this, connection);
+		fireConnectionRemoving(removingEvent);
+
+		if (!removingEvent.isCancel()) {
+			this.connections.remove(connection);
+			fireConnectionRemoved(new ConnectionRemovedEvent(this, connection));
+		}
 	}
 
 	@Override
@@ -167,5 +189,65 @@ public class ListGraphConnection implements IConnectionManager {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public void addConnectionAddedListener(ConnectionAddedListener listener) {
+		this.listenerList.add(ConnectionAddedListener.class, listener);
+	}
+
+	@Override
+	public void removeConnectionAddedListener(ConnectionAddedListener listener) {
+		this.listenerList.remove(ConnectionAddedListener.class, listener);
+	}
+
+	@Override
+	public void addConnectionRemovingListener(ConnectionRemovingListener listener) {
+		this.listenerList.add(ConnectionRemovingListener.class, listener);
+	}
+
+	@Override
+	public void removeConnectionRemovingListener(ConnectionRemovingListener listener) {
+		this.listenerList.remove(ConnectionRemovingListener.class, listener);
+	}
+
+	@Override
+	public void addConnectionRemovedListener(ConnectionRemovedListener listener) {
+		this.listenerList.add(ConnectionRemovedListener.class, listener);
+	}
+
+	@Override
+	public void removeConnectionRemovedListener(ConnectionRemovedListener listener) {
+		this.listenerList.remove(ConnectionRemovedListener.class, listener);
+	}
+
+	protected void fireConnectionAdded(ConnectionAddedEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == ConnectionAddedListener.class) {
+				((ConnectionAddedListener) listeners[i + 1]).connectionAdded(e);
+			}
+		}
+	}
+
+	protected void fireConnectionRemoving(ConnectionRemovingEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == ConnectionRemovingListener.class) {
+				((ConnectionRemovingListener) listeners[i + 1]).connectionRemoving(e);
+			}
+		}
+	}
+
+	protected void fireConnectionRemoved(ConnectionRemovedEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == ConnectionRemovedListener.class) {
+				((ConnectionRemovedListener) listeners[i + 1]).connectionRemoved(e);
+			}
+		}
 	}
 }

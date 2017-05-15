@@ -4,10 +4,14 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.graphics.CanvasCursor;
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
+import com.supermap.desktop.process.graphics.GraphicsUtil;
+import com.supermap.desktop.process.graphics.connection.IConnectable;
+import com.supermap.desktop.process.graphics.connection.LineGraph;
+import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
+import com.supermap.desktop.process.graphics.graphs.decorators.LineErrorDecorator;
 import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
@@ -16,22 +20,27 @@ import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
 /**
  * Created by highsad on 2017/3/22.
  */
 public class GraphConnector extends CanvasActionAdapter {
+	private static String TRACKING_KEY_CONNECTOR = "GraphConnectorKey";
+	private static String DECORATOR_KEY_LINE_ERROR = "DecoratorLineErrorKey";
+
 	private GraphCanvas canvas;
-	//	private DefaultLine previewLine;
 	private OutputGraph startGraph = null;
 	private ProcessGraph endGraph = null;
 	private JPopupMenu inputsMenu = new JPopupMenu();
-
-	private ConnectionLineGraph selected;
+	private LineGraph preview;
+	private LineErrorDecorator errorDecorator;
 
 	public GraphConnector(GraphCanvas canvas) {
 		this.canvas = canvas;
+		this.errorDecorator = new LineErrorDecorator(this.canvas);
 
 		this.inputsMenu.addPopupMenuListener(new PopupMenuListener() {
 			@Override
@@ -53,14 +62,9 @@ public class GraphConnector extends CanvasActionAdapter {
 
 	public void connecting() {
 		CanvasCursor.setConnectingCursor(this.canvas);
-//		this.previewLine = new DefaultLine(this.canvas);
+		this.preview = new LineGraph(this.canvas);
+		this.canvas.addTrackingGraph(TRACKING_KEY_CONNECTOR, this.preview);
 		fireCanvasActionStart();
-	}
-
-	public void preview(Graphics g) {
-//		if (this.previewLine != null) {
-//			this.previewLine.paint(g);
-//		}
 	}
 
 	@Override
@@ -70,7 +74,6 @@ public class GraphConnector extends CanvasActionAdapter {
 
 			if (isStartValid(hit)) {
 				this.startGraph = (OutputGraph) hit;
-//				this.previewLine.setStartPoint(hit.getCenter());
 			} else {
 				this.startGraph = null;
 			}
@@ -84,7 +87,6 @@ public class GraphConnector extends CanvasActionAdapter {
 				if (this.startGraph != null && this.endGraph != null) {
 					Type type = this.startGraph.getProcessData().getType();
 					final OutputGraph start = this.startGraph;
-					final IGraph end = this.endGraph;
 					final Inputs inputs = this.endGraph.getProcess().getInputs();
 					InputData[] datas = inputs.getDatas(type);
 
@@ -93,14 +95,14 @@ public class GraphConnector extends CanvasActionAdapter {
 						this.inputsMenu.add(item);
 						item.setEnabled(!datas[i].isBinded());
 
-//						item.addActionListener(new ActionListener() {
-//							@Override
-//							public void actionPerformed(ActionEvent e) {
-//								inputs.bind(item.getText(), start.getProcessData());
-//								canvas.getConnection().connect(start, end, item.getText());
-//								inputsMenu.setVisible(false);
-//							}
-//						});
+						item.addActionListener(new ActionListener() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								inputs.bind(item.getText(), start.getProcessData());
+								canvas.getConnection().connect(GraphConnector.this.startGraph, GraphConnector.this.endGraph);
+								inputsMenu.setVisible(false);
+							}
+						});
 					}
 					this.inputsMenu.show(this.canvas, e.getX(), e.getY());
 				}
@@ -108,9 +110,8 @@ public class GraphConnector extends CanvasActionAdapter {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-//			this.previewLine.setStartPoint(null);
-//			this.previewLine.setEndPoint(null);
-//			this.previewLine.setStatus(DefaultLine.NORMAL);
+			this.canvas.removeTrackingGraph(TRACKING_KEY_CONNECTOR);
+			this.preview = null;
 			this.startGraph = null;
 			this.endGraph = null;
 		}
@@ -142,36 +143,63 @@ public class GraphConnector extends CanvasActionAdapter {
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (SwingUtilities.isLeftMouseButton(e)) {
-//			if (this.previewLine == null || this.previewLine.getStartPoint() == null) {
-//				return;
-//			}
+			if (this.preview == null || this.startGraph == null) {
+				return;
+			}
 
+			Point firstPoint = null;
+			Point lastPoint = null;
 			IGraph hit = this.canvas.findGraph(e.getPoint());
 
 			if (hit == null) {
 				this.endGraph = null;
-//				this.previewLine.setStatus(DefaultLine.NORMAL);
-//				this.previewLine.setEndPoint(this.canvas.getCoordinateTransform().inverse(e.getPoint()));
+				if (this.preview.isDecoratedBy(DECORATOR_KEY_LINE_ERROR)) {
+					this.preview.removeDecorator(DECORATOR_KEY_LINE_ERROR);
+				}
+
+				lastPoint = this.canvas.getCoordinateTransform().inverse(e.getPoint());
+				firstPoint = GraphicsUtil.chop(((AbstractGraph) this.startGraph).getShape(), lastPoint);
 			} else {
 				if (isEndValid(hit)) {
 					this.endGraph = (ProcessGraph) hit;
-//					this.previewLine.setStatus(DefaultLine.PREPARING);
-//					this.previewLine.setEndPoint(GraphicsUtil.chop(((AbstractGraph) this.endGraph).getShape(), this.startGraph.getCenter()));
+					if (this.preview.isDecoratedBy(DECORATOR_KEY_LINE_ERROR)) {
+						this.preview.removeDecorator(DECORATOR_KEY_LINE_ERROR);
+					}
+
+					firstPoint = GraphicsUtil.chop(((AbstractGraph) this.startGraph).getShape(), this.endGraph.getCenter());
+					lastPoint = GraphicsUtil.chop(((AbstractGraph) this.endGraph).getShape(), this.startGraph.getCenter());
 				} else {
 					this.endGraph = null;
-//					this.previewLine.setStatus(DefaultLine.INVALID);
-//					this.previewLine.setEndPoint(this.canvas.getCoordinateTransform().inverse(e.getPoint()));
+					lastPoint = this.canvas.getCoordinateTransform().inverse(e.getPoint());
+					firstPoint = GraphicsUtil.chop(((AbstractGraph) this.startGraph).getShape(), lastPoint);
+					this.preview.addDecorator(DECORATOR_KEY_LINE_ERROR, this.errorDecorator);
 				}
+			}
+
+			if (this.preview.getPointCount() > 0) {
+				this.preview.setPoint(0, firstPoint);
+			} else {
+				this.preview.addPoint(firstPoint);
+			}
+
+			if (this.preview.getPointCount() > 1) {
+				this.preview.setPoint(this.preview.getPointCount() - 1, lastPoint);
+			} else {
+				this.preview.addPoint(lastPoint);
 			}
 		}
 	}
 
 	private boolean isStartValid(IGraph graph) {
-		return graph instanceof OutputGraph;
+		return graph instanceof IConnectable && graph instanceof OutputGraph;
 	}
 
 	private boolean isEndValid(IGraph graph) {
 		boolean ret = false;
+
+		if (!(graph instanceof IConnectable)) {
+			return false;
+		}
 
 		if (this.startGraph == null) {
 			return false;
@@ -206,12 +234,10 @@ public class GraphConnector extends CanvasActionAdapter {
 	@Override
 	public void clean() {
 		try {
-//			if (this.previewLine != null) {
-//				this.previewLine.setStartPoint(null);
-//				this.previewLine.setEndPoint(null);
-//				this.previewLine.setStatus(DefaultLine.NORMAL);
-//				this.previewLine = null;
-//			}
+			if (this.preview != null) {
+				this.canvas.removeTrackingGraph(TRACKING_KEY_CONNECTOR);
+				this.preview = null;
+			}
 			this.endGraph = null;
 			this.startGraph = null;
 		} catch (Exception e) {
@@ -228,7 +254,6 @@ public class GraphConnector extends CanvasActionAdapter {
 	}
 
 	private boolean isConnecting() {
-//		return this.previewLine != null;
-		return false;
+		return this.preview != null;
 	}
 }

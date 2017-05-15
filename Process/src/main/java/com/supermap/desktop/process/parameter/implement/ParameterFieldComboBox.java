@@ -10,6 +10,7 @@ import java.beans.PropertyChangeEvent;
 
 /**
  * @author XiaJT
+ * fixme: 需要支持可以选择空，并能置为第一个选项；需要支持字段类型（如数值型）筛选；最好支持添加任意像，如果"0"
  */
 public class ParameterFieldComboBox extends AbstractParameter implements ISelectionParameter {
 
@@ -21,6 +22,15 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 	private FieldInfo fieldInfo;
 
 	private String describe;
+
+	public ParameterFieldComboBox() {
+		super();
+	}
+
+	public ParameterFieldComboBox(String describe) {
+		super();
+		this.describe = describe;
+	}
 
 	@Override
 	public void setSelectedItem(Object item) {

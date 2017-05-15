@@ -3,6 +3,9 @@ package com.supermap.desktop.process.graphics.storage;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.IConnectable;
 import com.supermap.desktop.process.graphics.connection.IConnection;
+import com.supermap.desktop.process.graphics.events.ConnectionAddedListener;
+import com.supermap.desktop.process.graphics.events.ConnectionRemovedListener;
+import com.supermap.desktop.process.graphics.events.ConnectionRemovingListener;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 /**
@@ -34,4 +37,16 @@ public interface IConnectionManager {
 	boolean isConnected(IConnectable connectable1, IConnectable connectable2);
 
 	boolean isConnected(IGraph graph1, IGraph graph2);
+
+	void addConnectionAddedListener(ConnectionAddedListener listener);
+
+	void removeConnectionAddedListener(ConnectionAddedListener listener);
+
+	void addConnectionRemovingListener(ConnectionRemovingListener listener);
+
+	void removeConnectionRemovingListener(ConnectionRemovingListener listener);
+
+	void addConnectionRemovedListener(ConnectionRemovedListener listener);
+
+	void removeConnectionRemovedListener(ConnectionRemovedListener listener);
 }
