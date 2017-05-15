@@ -721,6 +721,21 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
     }
 
+    public void setComponentsEnabled(boolean enabled) {
+        this.textFieldCurrentViewLeft.setEnable(enabled);
+        this.textFieldCurrentViewBottom.setEnable(enabled);
+        this.textFieldCurrentViewRight.setEnable(enabled);
+        this.textFieldCurrentViewTop.setEnable(enabled);
+        this.textFieldCurrentViewBottom.setEnabled(enabled);
+        this.textFieldCurrentViewRight.setEnabled(enabled);
+        this.textFieldCurrentViewTop.setEnabled(enabled);
+        this.copyButton.setEnabled(enabled);
+        this.currentViewBoundsButton.setEnabled(enabled);
+        this.customBoundsButton.setEnabled(enabled);
+        this.mapViewBoundsButton.setEnabled(enabled);
+        this.pasteButton.setEnabled(enabled);
+    }
+
     // 获得范围文本框
     public WaringTextField getTextFieldCurrentViewLeft() {
         return this.textFieldCurrentViewLeft;

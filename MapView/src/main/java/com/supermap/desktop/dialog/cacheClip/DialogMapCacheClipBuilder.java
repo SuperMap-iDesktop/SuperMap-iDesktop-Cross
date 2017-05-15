@@ -5,12 +5,11 @@ import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapCacheVersion;
 import com.supermap.data.processing.MapTilingMode;
 import com.supermap.data.processing.TileSize;
-import com.supermap.data.processing.cache.TaskBuilder;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
+import com.supermap.desktop.dialog.cacheClip.cache.TaskBuilder;
 import com.supermap.desktop.mapview.MapCache.CacheProgressCallable;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.ChooseTable.MultipleCheckboxItem;
@@ -31,6 +30,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -44,15 +44,16 @@ public class DialogMapCacheClipBuilder extends SmDialog {
     private boolean singleProcessClip;
     private boolean firstStepEnabled = true;
     private boolean nextStepEnabled = true;
+    private boolean resumeAble = false;
     private String tasksSize = "5";
     private MapCacheBuilder mapCacheBuilder;
-    private FirstStepPane firstStepPane;
+    public FirstStepPane firstStepPane;
     private NextStepPane nextStepPane;
     private Map currentMap;
     private JCheckBox checkBoxAutoClosed;
     private JCheckBox checkBoxShowProcessBar;
     private JButton buttonStep;
-    private JButton buttonOk;
+    public JButton buttonOk;
     private JButton buttonCancel;
 
     private ActionListener cancelListener = new ActionListener() {
@@ -65,9 +66,14 @@ public class DialogMapCacheClipBuilder extends SmDialog {
     private ActionListener buildListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            run();
+            if (resumeAble) {
+                resume();
+            } else {
+                run();
+            }
         }
     };
+
     private ActionListener stepListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -140,8 +146,10 @@ public class DialogMapCacheClipBuilder extends SmDialog {
     };
 
 
-    public DialogMapCacheClipBuilder(boolean singleProcessClip) {
+    public DialogMapCacheClipBuilder(boolean singleProcessClip, MapCacheBuilder mapCacheBuilder) {
         super();
+        this.mapCacheBuilder = mapCacheBuilder;
+        this.currentMap = this.mapCacheBuilder.getMap();
         this.singleProcessClip = singleProcessClip;
         init();
     }
@@ -206,14 +214,9 @@ public class DialogMapCacheClipBuilder extends SmDialog {
     }
 
     private void initComponents() {
-        Map map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
-        this.currentMap = new Map(Application.getActiveApplication().getWorkspace());
-        this.currentMap.fromXML(map.toXML());
-        this.mapCacheBuilder = new MapCacheBuilder();
-        this.mapCacheBuilder.setMap(this.currentMap);
         this.mapCacheBuilder.setBounds(this.currentMap.getBounds());
         this.mapCacheBuilder.setIndexBounds(this.currentMap.getBounds());
-        this.firstStepPane = new FirstStepPane(this.mapCacheBuilder);
+        this.firstStepPane = new FirstStepPane(this.mapCacheBuilder, this);
         this.nextStepPane = new NextStepPane(this, this.mapCacheBuilder, singleProcessClip);
         this.checkBoxAutoClosed = new JCheckBox();
         this.checkBoxShowProcessBar = new JCheckBox();
@@ -233,6 +236,47 @@ public class DialogMapCacheClipBuilder extends SmDialog {
             result = false;
         }
         return result;
+    }
+
+    private void resume() {
+        boolean result;
+        try {
+            long startTime = System.currentTimeMillis();
+            if (this.checkBoxShowProcessBar.isSelected()) {
+                FormProgress formProgress = new FormProgress();
+                formProgress.setTitle(MapViewProperties.getString("MapCache_On") + this.getTitle());
+                CacheProgressCallable cacheProgressCallable = new CacheProgressCallable(this.mapCacheBuilder, true);
+                formProgress.doWork(cacheProgressCallable);
+                result = cacheProgressCallable.getResult();
+            } else {
+                this.mapCacheBuilder.setFillMargin(true);
+                this.mapCacheBuilder.setIsAppending(true);
+                result = this.mapCacheBuilder.build();
+            }
+            long endTime = System.currentTimeMillis();
+            String time = String.valueOf((endTime - startTime) / 1000.0);
+            printResultInfo(result, time);
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+    }
+
+    private void printResultInfo(boolean result, String time) {
+        if (result) {
+            Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateSuccessed"));
+            if (!firstStepPane.fileChooserControlFileCache.getPath().substring(firstStepPane.fileChooserControlFileCache.getPath().length() - 1).equals("\\")) {
+                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + firstStepPane.fileChooserControlFileCache.getPath() + "\\" + firstStepPane.textFieldCacheName.getText());
+            } else {
+                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + firstStepPane.fileChooserControlFileCache.getPath() + firstStepPane.textFieldCacheName.getText());
+            }
+        } else {
+            Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateFailed"));
+        }
+        Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_Time") + time + " " + MapViewProperties.getString("MapCache_ShowTime"));
+        if (this.checkBoxAutoClosed.isSelected()) {
+            disposeInfo();
+            this.mapCacheBuilder.dispose();
+        }
     }
 
     private void run() {
@@ -257,10 +301,23 @@ public class DialogMapCacheClipBuilder extends SmDialog {
                     }
                     disposeInfo();
                     DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder();
-                    dialogCacheBuilder.textFieldMapName.setText(this.mapCacheBuilder.getMap().getName());
-                    dialogCacheBuilder.fileChooserTaskPath.setPath(tasksPath + "/task");
+                    dialogCacheBuilder.textFieldMapName.setText(this.currentMap.getName());
+                    tasksPath = tasksPath.replaceAll("/", "\\\\");
+                    dialogCacheBuilder.fileChooserTaskPath.setPath(tasksPath + "\\task");
                     dialogCacheBuilder.fileChooserWorkspacePath.setPath(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer());
                     dialogCacheBuilder.showDialog();
+                    //fixme Can't give the right message when task build finished
+//                    final String finalTasksPath = tasksPath;
+//                    SwingUtilities.invokeLater(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_TargetTaskPath"), finalTasksPath + "\\task"));
+//                        }
+//                    });
+                }
+                if (this.checkBoxAutoClosed.isSelected()) {
+                    disposeInfo();
+                    this.mapCacheBuilder.dispose();
                 }
             }
         } catch (Exception e) {
@@ -284,7 +341,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
         if (this.checkBoxShowProcessBar.isSelected()) {
             FormProgress formProgress = new FormProgress();
             formProgress.setTitle(MapViewProperties.getString("MapCache_On") + this.getTitle());
-            CacheProgressCallable cacheProgressCallable = new CacheProgressCallable(this.mapCacheBuilder);
+            CacheProgressCallable cacheProgressCallable = new CacheProgressCallable(this.mapCacheBuilder, resumeAble);
             formProgress.doWork(cacheProgressCallable);
             result = cacheProgressCallable.getResult();
         } else {
@@ -292,21 +349,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
         }
         long endTime = System.currentTimeMillis();
         String time = String.valueOf((endTime - startTime) / 1000.0);
-        if (result) {
-            Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateSuccessed"));
-            if (!firstStepPane.fileChooserControlFileCache.getPath().substring(firstStepPane.fileChooserControlFileCache.getPath().length() - 1).equals("\\")) {
-                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + firstStepPane.fileChooserControlFileCache.getPath() + "\\" + firstStepPane.textFieldCacheName.getText());
-            } else {
-                Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + firstStepPane.fileChooserControlFileCache.getPath() + firstStepPane.textFieldCacheName.getText());
-            }
-        } else {
-            Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateFailed"));
-        }
-        Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_Time") + time + " " + MapViewProperties.getString("MapCache_ShowTime"));
-        if (this.checkBoxAutoClosed.isSelected()) {
-            disposeInfo();
-            this.mapCacheBuilder.dispose();
-        }
+        printResultInfo(result, time);
     }
 
     private void disposeInfo() {
@@ -315,7 +358,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
         this.dispose();
     }
 
-    private void setMapCacheBuilderValueBeforeRun() {
+    public MapCacheBuilder setMapCacheBuilderValueBeforeRun() {
         try {
             double[] outputScalevalues;
             HashMap<Double, String> scaleNames = new HashMap<>();
@@ -346,6 +389,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
             this.mapCacheBuilder.setCacheName(firstStepPane.textFieldCacheName.getText());
             this.mapCacheBuilder.setOutputFolder(firstStepPane.fileChooserControlFileCache.getPath());
             this.mapCacheBuilder.setBounds(nextStepPane.cacheRangeBounds);
+            this.mapCacheBuilder.setIsDeleteLogFile(false);
             if (this.mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
                 this.mapCacheBuilder.setIndexBounds(nextStepPane.indexRangeBounds);
             }
@@ -399,7 +443,15 @@ public class DialogMapCacheClipBuilder extends SmDialog {
         } catch (Exception ex) {
             Application.getActiveApplication().getOutput().output(ex.toString());
         }
+        return mapCacheBuilder;
     }
 
+    public void setComponentsEnabled(boolean enabled) {
+        this.firstStepPane.setComponentsEnabled(enabled);
+        this.nextStepPane.setComponentsEnabled(enabled);
+    }
 
+    public void setResumeAble(boolean resumeAble) {
+        this.resumeAble = resumeAble;
+    }
 }

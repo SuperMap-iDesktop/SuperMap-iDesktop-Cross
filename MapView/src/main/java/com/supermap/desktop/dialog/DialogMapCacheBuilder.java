@@ -1201,7 +1201,7 @@ public class DialogMapCacheBuilder extends SmDialog {
             if (this.showProgressBar.isSelected()) {
                 FormProgress formProgress = new FormProgress();
                 formProgress.setTitle(MapViewProperties.getString("MapCache_On") + this.getTitle());
-                CacheProgressCallable cacheProgressCallable = new CacheProgressCallable(this.mapCacheBuilder);
+                CacheProgressCallable cacheProgressCallable = new CacheProgressCallable(this.mapCacheBuilder,false);
                 formProgress.doWork(cacheProgressCallable);
                 result = cacheProgressCallable.getResult();
             } else {
