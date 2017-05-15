@@ -7,7 +7,7 @@ title: SuperMap iDesktop Cross 8C 产品介绍
 
 ## 产品简介
 
-　　SuperMap iDesktop Cross 8C 是一套运行在桌面端的专业GIS软件，是基于 SuperMap iObjects Java 8C 和 OSGI，使用 intellij idea 开发的跨平台 GIS 应用软件。SuperMap iDesktop Cross 8C 提供了适用于不同平台的版本，分为 Windows 和 Linux 两个版本，其中，Windows包括 32 位和 64 位两个版本，分别提供了绿色包和安装包，Linux 版本提供了 64 位的绿色包。
+　　SuperMap iDesktop Cross 8C 是一套运行在桌面端的专业GIS软件，是基于 SuperMap iObjects Java 8C 组件，使用 OSGI 框架和 intellij idea 工具开发的跨平台 GIS 应用软件。SuperMap iDesktop Cross 8C 提供了适用于不同平台的版本，分为 Windows 和 Linux 两个版本，其中，Windows包括 32 位和 64 位两个版本，分别提供了绿色包和安装包，Linux 版本提供了 64 位的绿色包。
 
 　　SuperMap iDesktop Cross 8C 是一款免许可的应用软件，只要有 SuperMap iObjects Java 8C 的许可，即可使用 SuperMap iDesktop Cross 8C 提供的相应模块的功能。
 
@@ -90,4 +90,4 @@ title: SuperMap iDesktop Cross 8C 产品介绍
 
 -   “功能就在您手边”的设计理念，提供了丰富的右键菜单和鼠标动作的响应功能，提高了软件的易用性。“所见即所得”的呈现方式，用户的操作会实时地应用，保证用户在第一时间看到操作的工作成果，方便设计和修改。
 
--   模板化的应用，支持将配置好的地图导出为 *.xml 文件，并能够通过导入地图模板文件打开地图，提高了工作成果的重用性和工作效率。
+-   模板化的应用，支持将配置好的地图导出为模板文件，并通过使用地图模板提高工作成果的重用性和工作效率。
