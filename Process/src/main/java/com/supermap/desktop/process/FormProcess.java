@@ -38,6 +38,7 @@ import com.supermap.desktop.process.graphics.storage.IConnectionManager;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -214,16 +215,25 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		}
 	}
 
-	public ArrayList<OutputData> getAllOutPut() {
-		ArrayList<OutputData> outputDatas = new ArrayList<>();
+	/**
+	 * 获取可连接的输入节点
+	 *
+	 * @return
+	 */
+	public ArrayList<IGraph> getAllDataNode() {
+		ArrayList<IGraph> dataNodes = new ArrayList<>();
 		IGraph[] graphs = getCanvas().getGraphStorage().getGraphs();
 		for (IGraph graph : graphs) {
 			if (graph instanceof OutputGraph) {
-				OutputData processData = ((OutputGraph) graph).getProcessData();
-				outputDatas.add(processData);
+				dataNodes.add(graph);
 			}
 		}
-		return outputDatas;
+		return dataNodes;
+	}
+
+	public ArrayList<IGraph> getAllDataNode(Type type) {
+		ArrayList<IGraph> iGraphs = new ArrayList<>();
+		return iGraphs;
 	}
 
 

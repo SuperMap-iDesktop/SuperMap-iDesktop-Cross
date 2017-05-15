@@ -20,10 +20,15 @@ import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConst
 import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.implement.ParameterSwitch;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * @author XiaJT
@@ -68,8 +73,42 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 		parameterCombineSourceDataset.setDescribe(CommonProperties.getString("String_ColumnHeader_SourceData"));
 
 		ParameterCombine parameterSetting = new ParameterCombine();
-		parameterSetting.addParameters(parameterBandWidthType, parameterDistanceTolerance, parameterKernelType, parameterExplanatory,
-				parameterKernelFunction, parameterModelField, parameterNeighbors);
+
+		final ParameterSwitch parameterSwitch = new ParameterSwitch();
+		parameterSwitch.add("0", parameterDistanceTolerance);
+		parameterSwitch.add("1", parameterNeighbors);
+		parameterSwitch.switchParameter("1");
+
+		final ParameterSwitch parameterSwitchParent = new ParameterSwitch();
+		parameterSwitchParent.add("0", parameterSwitch);
+		parameterBandWidthType.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getPropertyName().equals(ParameterComboBox.comboBoxValue)) {
+					if (parameterBandWidthType.getSelectedData() == BandWidthType.AICC || parameterBandWidthType.getSelectedData() == BandWidthType.CV) {
+						parameterSwitchParent.switchParameter((IParameter) null);
+					} else {
+						parameterSwitchParent.switchParameter(parameterSwitch);
+					}
+				}
+			}
+		});
+		parameterKernelType.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getPropertyName().equals(ParameterComboBox.comboBoxValue)) {
+					if (parameterKernelType.getSelectedData() == KernelType.ADAPTIVE) {
+						parameterSwitch.switchParameter("1");
+					} else {
+						parameterSwitch.switchParameter("0");
+					}
+				}
+			}
+		});
+
+
+		parameterSetting.addParameters(parameterExplanatory, parameterKernelFunction, parameterModelField,
+				parameterBandWidthType, parameterKernelType, parameterSwitchParent);
 		parameterSetting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
 
 		ParameterCombine parameterResultSet = new ParameterCombine();
@@ -103,6 +142,8 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 		parameterDistanceTolerance.setSelectedItem("0.0");
 		parameterNeighbors.setSelectedItem("0");
 		parameterSaveDataset.setDatasetName(OUTPUT_DATASET);
+		parameterBandWidthType.setSelectedItem(parameterBandWidthType.getItemAt(1));
+
 	}
 
 	@Override
