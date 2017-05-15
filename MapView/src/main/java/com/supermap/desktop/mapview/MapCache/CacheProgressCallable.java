@@ -11,9 +11,10 @@ import java.util.concurrent.CancellationException;
 /**
  * Created by lixiaoyao on 2017/3/23.
  */
-public class CacheProgressCallable extends UpdateProgressCallable{
+public class CacheProgressCallable extends UpdateProgressCallable {
     private MapCacheBuilder mapCacheBuilder;
     private boolean result;
+    private boolean resumAble;
 
     private SteppedListener steppedListener = new SteppedListener() {
 
@@ -27,25 +28,33 @@ public class CacheProgressCallable extends UpdateProgressCallable{
         }
     };
 
-    public CacheProgressCallable(MapCacheBuilder mapCacheBuilder){
-        this.mapCacheBuilder=mapCacheBuilder;
+    public CacheProgressCallable(MapCacheBuilder mapCacheBuilder, boolean resumAble) {
+        this.mapCacheBuilder = mapCacheBuilder;
+        this.resumAble = resumAble;
     }
 
     @Override
     public Boolean call() throws Exception {
-        this.result=true;
+        this.result = true;
         try {
             this.mapCacheBuilder.addSteppedListener(this.steppedListener);
-            this.result=this.mapCacheBuilder.build();
-        }catch (Exception ex){
-            this.result=false;
+            if (resumAble) {
+                this.mapCacheBuilder.setFillMargin(true);
+                this.mapCacheBuilder.setIsAppending(true);
+                this.result = this.mapCacheBuilder.build();
+            } else {
+                this.result = this.mapCacheBuilder.build();
+            }
+
+        } catch (Exception ex) {
+            this.result = false;
             Application.getActiveApplication().getOutput().output(ex);
-        }finally {
+        } finally {
             return result;
         }
     }
 
-    public boolean getResult(){
+    public boolean getResult() {
         return this.result;
     }
 

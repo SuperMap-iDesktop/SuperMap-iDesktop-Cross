@@ -351,6 +351,19 @@ public class NextStepPane extends JPanel implements IState {
         }
     }
 
+    public void setComponentsEnabled(boolean enabled) {
+        this.panelCacheRange.setComponentsEnabled(enabled);
+        this.panelIndexRange.setComponentsEnabled(enabled);
+        this.comboBoxImageType.setEnabled(enabled);
+        this.comboBoxPixel.setEnabled(enabled);
+        this.smSpinnerImageCompressionRatio.setEnabled(enabled);
+        this.checkBoxFullFillCacheImage.setEnabled(enabled);
+        this.checkBoxBackgroundTransparency.setEnabled(enabled);
+        this.fileChooserControlTaskPath.setEnabled(enabled);
+        this.checkBoxClipOnThisComputer.setEnabled(enabled);
+        this.checkBoxMultiProcessClip.setEnabled(enabled);
+    }
+
     @Override
     public void addEnabledListener(EnabledListener enabledListener) {
         if (null == enabledListeners) {

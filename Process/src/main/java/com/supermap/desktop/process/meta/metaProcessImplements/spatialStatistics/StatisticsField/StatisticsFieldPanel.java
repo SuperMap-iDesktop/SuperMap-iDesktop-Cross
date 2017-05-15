@@ -347,8 +347,8 @@ public class StatisticsFieldPanel extends JPanel {
 		comboBoxStatisticsType.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				TableUtilities.stopEditing(table);
 				if (isSelecting && e.getStateChange() == ItemEvent.SELECTED) {
+					TableUtilities.stopEditing(table);
 					StatisticsType statisticsType = (StatisticsType) comboBoxStatisticsType.getSelectedItem();
 					int[] selectedModelRows = table.getSelectedModelRows();
 					for (int selectedModelRow : selectedModelRows) {

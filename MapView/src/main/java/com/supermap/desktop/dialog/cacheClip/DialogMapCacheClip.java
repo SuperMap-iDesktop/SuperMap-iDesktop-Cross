@@ -8,6 +8,8 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmDialog;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,10 +30,12 @@ public class DialogMapCacheClip extends SmDialog {
     private JButton buttonCancel;
     private CompTitledPane paneMultiProcessClip;
     private boolean isSingleProcess;
+    private boolean buildTask;
     private ActionListener okListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             isSingleProcess = singleProcessClip.isSelected();
+            buildTask = radioButtonNo.isSelected();
             dialogResult = DialogResult.OK;
             DialogMapCacheClip.this.dispose();
         }
@@ -40,6 +44,18 @@ public class DialogMapCacheClip extends SmDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             DialogMapCacheClip.this.dispose();
+        }
+    };
+    private ChangeListener changeListener = new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            if (e.getSource().equals(multiProcessClip) && multiProcessClip.isSelected()) {
+                radioButtonYes.setEnabled(true);
+                radioButtonNo.setEnabled(true);
+            } else if (e.getSource().equals(singleProcessClip) && singleProcessClip.isSelected()) {
+                radioButtonYes.setEnabled(false);
+                radioButtonNo.setEnabled(false);
+            }
         }
     };
 
@@ -62,6 +78,8 @@ public class DialogMapCacheClip extends SmDialog {
         removeEvents();
         this.buttonOk.addActionListener(this.okListener);
         this.buttonCancel.addActionListener(this.cancelListener);
+        this.singleProcessClip.addChangeListener(this.changeListener);
+        this.multiProcessClip.addChangeListener(this.changeListener);
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -73,6 +91,8 @@ public class DialogMapCacheClip extends SmDialog {
     private void removeEvents() {
         this.buttonOk.removeActionListener(this.okListener);
         this.buttonCancel.removeActionListener(this.cancelListener);
+        this.singleProcessClip.removeChangeListener(this.changeListener);
+        this.multiProcessClip.removeChangeListener(this.changeListener);
     }
 
     private void initComponents() {
@@ -89,6 +109,7 @@ public class DialogMapCacheClip extends SmDialog {
         this.radioButtonYes.setSelected(true);
         yesOrNoGroup.add(this.radioButtonYes);
         yesOrNoGroup.add(this.radioButtonNo);
+        this.radioButtonNo.setSelected(true);
         this.buttonOk = ComponentFactory.createButtonOK();
         this.buttonCancel = ComponentFactory.createButtonCancel();
         this.setSize(360, 230);
@@ -121,5 +142,9 @@ public class DialogMapCacheClip extends SmDialog {
 
     public boolean isSingleProcess() {
         return isSingleProcess;
+    }
+
+    public boolean isBuildTask() {
+        return buildTask;
     }
 }

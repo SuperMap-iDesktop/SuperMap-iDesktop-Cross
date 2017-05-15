@@ -161,17 +161,26 @@ public class ComponentDropDown extends SmButtonDropdown {
     }
 
     public class RightArrowButton extends JButton {
+        private JLabel labelText;
+        private JLabel labelImage;
         public RightArrowButton(String text) {
             initRightArrowButton(text);
         }
 
         private void initRightArrowButton(String text) {
-            JLabel labelText = new JLabel(text);
-            JLabel labelImage = new JLabel(new InnerMetaComboBoxIcon());
+            this.labelText= new JLabel(text);
+            this.labelImage = new JLabel(new InnerMetaComboBoxIcon());
             this.setLayout(new GridBagLayout());
             this.add(labelText, new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setInsets(1, 10, 1, 2).setIpad(0, 5));
             this.add(labelImage, new GridBagConstraintsHelper(1, 0, 1, 1).setFill(GridBagConstraints.BOTH).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setInsets(5).setIpad(0, 5));
             this.setBorder(BorderFactory.createDashedBorder(this.getBackground()));
+        }
+
+        @Override
+        public void setEnabled(boolean b) {
+            super.setEnabled(b);
+            this.labelImage.setEnabled(b);
+            this.labelText.setEnabled(b);
         }
     }
 }

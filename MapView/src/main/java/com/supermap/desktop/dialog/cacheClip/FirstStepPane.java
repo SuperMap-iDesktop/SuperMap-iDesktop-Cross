@@ -93,7 +93,7 @@ public class FirstStepPane extends JPanel implements IState {
     private JLabel labelVersion;
     private JLabel labelSplitMode;
     private JLabel labelConfig;
-    private JLabel labelConfigValue;
+    public JLabel labelConfigValue;
     private JComboBox comboboxVersion;
     private JComboBox comboBoxSplitMode;
     private JLabel labelCacheName;
@@ -128,6 +128,7 @@ public class FirstStepPane extends JPanel implements IState {
 
     public JFileChooserControl fileChooserControlFileCache;
     private Map currentMap;
+    private DialogMapCacheClipBuilder parent;
     private ActionListener addScaleListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -150,13 +151,13 @@ public class FirstStepPane extends JPanel implements IState {
     private ActionListener inputCacheConfigFileListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            inputCacheConfigFile();
+            inportCacheConfigFile();
         }
     };
     private ActionListener inputCacheConfigFileToolbarJmenuListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            inputCacheConfigFile();
+            inportCacheConfigFile();
         }
     };
     private ActionListener exportCacheConfigFileListener = new ActionListener() {
@@ -249,8 +250,9 @@ public class FirstStepPane extends JPanel implements IState {
         }
     };
 
-    public FirstStepPane(MapCacheBuilder mapCacheBuilder) {
+    public FirstStepPane(MapCacheBuilder mapCacheBuilder, DialogMapCacheClipBuilder parent) {
         super();
+        this.parent = parent;
         this.mapCacheBuilder = mapCacheBuilder;
         this.currentMap = mapCacheBuilder.getMap();
         init();
@@ -753,7 +755,7 @@ public class FirstStepPane extends JPanel implements IState {
         }
 
         SmFileChoose fileChoose = new SmFileChoose(moduleName);
-        fileChooserControlFileCache.setFileChooser(fileChoose);
+        this.fileChooserControlFileCache.setFileChooser(fileChoose);
         this.labelSaveType = new JLabel();
         this.labelUserName = new JLabel();
         this.labelUserPassword = new JLabel();
@@ -1151,6 +1153,7 @@ public class FirstStepPane extends JPanel implements IState {
                 if (oleFile.isFile() && oleFile.exists()) {
                     oleFile.delete();
                 }
+                this.mapCacheBuilder = parent.setMapCacheBuilderValueBeforeRun();
                 boolean result = mapCacheBuilder.toConfigFile(filePath);
                 if (result) {
                     Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_ToCacheConfigFileIsSuccessed") + filePath);
@@ -1163,7 +1166,7 @@ public class FirstStepPane extends JPanel implements IState {
         }
     }
 
-    private void inputCacheConfigFile() {
+    private void inportCacheConfigFile() {
         String moduleName = "InputCacheConfigFile";
         if (!SmFileChoose.isModuleExist(moduleName)) {
             String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci"));
@@ -1383,6 +1386,20 @@ public class FirstStepPane extends JPanel implements IState {
                 importDropDown.setEnabled(false);
             }
         }
+    }
+
+    public void setComponentsEnabled(boolean enabled) {
+        this.comboboxVersion.setEnabled(enabled);
+        this.comboBoxSplitMode.setEnabled(enabled);
+        this.textFieldCacheName.setEnabled(enabled);
+        this.fileChooserControlFileCache.setEnabled(enabled);
+        this.comboBoxSaveType.setEnabled(enabled);
+        this.comboBoxDatabaseName.setEnabled(enabled);
+        this.comboBoxMutiTenseVersion.setEnabled(enabled);
+        this.textFieldUserName.setEnabled(enabled);
+        this.textFieldUserPassword.setEnabled(enabled);
+        this.textFieldConfirmPassword.setEnabled(enabled);
+        this.textFieldServerName.setEnabled(enabled);
     }
 
     @Override

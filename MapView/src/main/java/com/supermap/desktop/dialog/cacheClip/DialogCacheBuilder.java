@@ -1,8 +1,10 @@
 package com.supermap.desktop.dialog.cacheClip;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
+import com.supermap.desktop.dialog.cacheClip.cache.CacheBuilder;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.JFileChooserControl;
@@ -10,9 +12,15 @@ import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.text.MessageFormat;
 
 /**
  * Created by xie on 2017/5/3.
@@ -34,6 +42,8 @@ public class DialogCacheBuilder extends SmDialog {
     private JButton buttonApply;
     public JFileChooserControl fileChooserCachePath;
     private JTextField textFieldTotalProcessCount;
+    private JLabel labelMergeSciCount;
+    private JTextField textFieldMergeSciCount;
     private JProgressBar progressBarTotal;
     private JScrollPane scrollPaneProgresses;
     private JButton buttonCreate;
@@ -41,6 +51,30 @@ public class DialogCacheBuilder extends SmDialog {
     private JButton buttonRefresh;
     private WarningOrHelpProvider helpProviderForTaskPath;
     private WarningOrHelpProvider helpProviderForProcessCount;
+    private WarningOrHelpProvider helpProviderForMergeSciCount;
+    //scipath for restore path of .sci file
+    private String sciPath;
+
+    private ActionListener closeListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            DialogCacheBuilder.this.dispose();
+        }
+    };
+    private ActionListener createListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            buildCache();
+        }
+    };
+    private ActionListener refreshListener = new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (!StringUtilities.isNullOrEmpty(sciPath)) {
+                updateTotalProgress(sciPath, false);
+            }
+        }
+    };
 
     public DialogCacheBuilder() {
         init();
@@ -79,9 +113,9 @@ public class DialogCacheBuilder extends SmDialog {
         this.fileChooserTaskPath.setFileChooser(fileChoose);
         this.fileChooserTaskPath.setPath(System.getProperty("user.dir"));
         String newModuleName = "ChooseWorkspaceDirectories";
-        if (!SmFileChoose.isModuleExist(moduleName)) {
+        if (!SmFileChoose.isModuleExist(newModuleName)) {
             SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
-                    moduleName, "OpenOne");
+                    newModuleName, "OpenOne");
         }
 
         SmFileChoose fileChooser = new SmFileChoose(newModuleName);
@@ -90,23 +124,33 @@ public class DialogCacheBuilder extends SmDialog {
         this.fileChooserWorkspacePath.setPath(System.getProperty("user.dir"));
         this.textFieldMapName = new JTextField();
         this.textFieldProcessCount = new JTextField();
+        this.textFieldProcessCount.setText("5");
         this.buttonApply = ComponentFactory.createButtonApply();
-        String moduleNameForCachePath = "ChooseWorkspaceDirectories";
+        String moduleNameForCachePath = "ChooseCacheDirectories";
         if (!SmFileChoose.isModuleExist(moduleNameForCachePath)) {
             SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
-                    moduleNameForCachePath, "OpenOne");
+                    moduleNameForCachePath, "GetDirectories");
         }
         SmFileChoose fileChooserForCachePath = new SmFileChoose(moduleNameForCachePath);
         this.fileChooserCachePath = new JFileChooserControl();
+        this.fileChooserCachePath.setPath(System.getProperty("user.dir") + "\\build");
         this.fileChooserCachePath.setFileChooser(fileChooserForCachePath);
         this.textFieldTotalProcessCount = new JTextField();
+        this.textFieldTotalProcessCount.setText("5");
+        this.textFieldTotalProcessCount.setEnabled(false);
         this.progressBarTotal = new JProgressBar();
+        this.progressBarTotal.setStringPainted(true);
+        this.progressBarTotal.setPreferredSize(new Dimension(100, 23));
+        this.labelMergeSciCount = new JLabel();
+        this.textFieldMergeSciCount = new JTextField();
+        this.textFieldMergeSciCount.setText("1");
         this.scrollPaneProgresses = new JScrollPane();
         this.buttonRefresh = new SmButton();
         this.buttonCreate = new SmButton();
         this.buttonClose = ComponentFactory.createButtonClose();
         this.helpProviderForTaskPath = new WarningOrHelpProvider(MapViewProperties.getString("String_SciFilePath"), false);
         this.helpProviderForProcessCount = new WarningOrHelpProvider(MapViewProperties.getString("String_HelpForProcessCount"), false);
+        this.helpProviderForMergeSciCount = new WarningOrHelpProvider(MapViewProperties.getString("String_HelpForMergeSciCount"), false);
     }
 
     private void initResources() {
@@ -119,6 +163,7 @@ public class DialogCacheBuilder extends SmDialog {
         this.labelTotalProcessCount.setText(MapViewProperties.getString("String_TotalProcessCount"));
         this.labelTotalProgress.setText(ControlsProperties.getString("String_ProgressControl_TotalProgress"));
         this.labelDetailProgressInfo.setText(MapViewProperties.getString("String_DetailProcessInfo"));
+        this.labelMergeSciCount.setText(MapViewProperties.getString("String_MergeSciCount"));
         this.buttonCreate.setText(MapViewProperties.getString("String_BatchAddColorTableOKButton"));
         this.buttonRefresh.setText(ControlsProperties.getString("String_Refresh"));
     }
@@ -129,19 +174,22 @@ public class DialogCacheBuilder extends SmDialog {
         panelClip.setBorder(BorderFactory.createTitledBorder(MapViewProperties.getString("String_MultiProcessClip")));
         panelClip.setLayout(new GridBagLayout());
         panelClip.add(this.labelTaskPath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
-        panelClip.add(this.helpProviderForTaskPath,new GridBagConstraintsHelper(1,0,1,1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5,0,5,10));
+        panelClip.add(this.helpProviderForTaskPath, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 0, 5, 10));
         panelClip.add(this.fileChooserTaskPath, new GridBagConstraintsHelper(2, 0, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
         panelClip.add(this.labelWorkspacePath, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
-        panelClip.add(this.fileChooserWorkspacePath, new GridBagConstraintsHelper(2, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
+        panelClip.add(this.fileChooserWorkspacePath, new GridBagConstraintsHelper(2, 1, 4, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
         panelClip.add(this.labelMapName, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
-        panelClip.add(this.textFieldMapName, new GridBagConstraintsHelper(2, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
+        panelClip.add(this.textFieldMapName, new GridBagConstraintsHelper(2, 2, 4, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
         panelClip.add(this.labelProcessCount, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
-        panelClip.add(this.helpProviderForProcessCount,new GridBagConstraintsHelper(1,3,1,1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0,0,5,10));
+        panelClip.add(this.helpProviderForProcessCount, new GridBagConstraintsHelper(1, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 10));
         panelClip.add(this.textFieldProcessCount, new GridBagConstraintsHelper(2, 3, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 5).setWeight(1, 0));
         panelClip.add(this.buttonApply, new GridBagConstraintsHelper(4, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 10));
         panelClip.add(this.labelCachePath, new GridBagConstraintsHelper(0, 4, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
-        panelClip.add(this.fileChooserCachePath, new GridBagConstraintsHelper(2, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
-        panelClip.add(new JPanel(), new GridBagConstraintsHelper(0, 5, 4, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+        panelClip.add(this.fileChooserCachePath, new GridBagConstraintsHelper(2, 4, 4, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
+        panelClip.add(this.labelMergeSciCount, new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
+        panelClip.add(this.helpProviderForMergeSciCount, new GridBagConstraintsHelper(1, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 10));
+        panelClip.add(this.textFieldMergeSciCount, new GridBagConstraintsHelper(2, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
+        panelClip.add(new JPanel(), new GridBagConstraintsHelper(0, 6, 5, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 
         JPanel panelClipProgress = new JPanel();
         panelClipProgress.setBorder(BorderFactory.createTitledBorder(MapViewProperties.getString("String_ClipBuilderProgress")));
@@ -164,6 +212,120 @@ public class DialogCacheBuilder extends SmDialog {
     }
 
     private void registEvents() {
+        removeEvents();
+        this.buttonCreate.addActionListener(this.createListener);
+        this.buttonClose.addActionListener(this.closeListener);
+        this.buttonRefresh.addActionListener(this.refreshListener);
+    }
 
+    private void removeEvents() {
+        this.buttonCreate.removeActionListener(this.createListener);
+        this.buttonClose.removeActionListener(this.closeListener);
+        this.buttonRefresh.removeActionListener(this.refreshListener);
+    }
+
+    private void buildCache() {
+        try {
+            String workspacePath = fileChooserWorkspacePath.getPath().replaceAll("\\\\", "/");
+            String mapName = textFieldMapName.getText();
+            sciPath = fileChooserTaskPath.getPath().replaceAll("\\\\", "/");
+            String cachePath = fileChooserCachePath.getPath().replaceAll("\\\\", "/");
+            String processCount = textFieldProcessCount.getText();
+            String mergeSciCount = textFieldMergeSciCount.getText();
+            final String[] params = {workspacePath, mapName, sciPath, cachePath, processCount, mergeSciCount};
+            updateTotalProgress(sciPath, true);
+            new Executor(params).start();
+        } catch (Exception ex) {
+            Application.getActiveApplication().getOutput().output(ex);
+        }
+    }
+
+    //Update total progress
+    private void updateTotalProgress(String sciPath, boolean sleep) {
+        final String finalSciPath = sciPath;
+        final boolean finalSleep = sleep;
+        Thread updateThread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    File sciPath = new File(finalSciPath);
+                    String[] sciFiles;
+                    if (sciPath.exists()) {
+                        sciFiles = sciPath.list(getFilter());
+                    } else {
+                        return;
+                    }
+                    if (null != sciFiles) {
+                        int sciLength = sciFiles.length;
+                        int buildSciLength = 0;
+                        while (buildSciLength != sciLength) {
+                            //Get success sci length
+                            buildSciLength = sciLength - sciPath.list(getFilter()).length;
+                            final int value = (int) ((buildSciLength + 0.0) / sciLength) * 100;
+                            progressBarTotal.setValue(value);
+                            //Sleep two minutes or not
+                            if (finalSleep) {
+                                Thread.sleep(300);
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    Application.getActiveApplication().getOutput().output(e);
+                }
+            }
+        };
+        updateThread.start();
+    }
+
+    private FilenameFilter getFilter() {
+        return new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.endsWith(".sci");
+            }
+        };
+    }
+
+    private void disposeInfo() {
+        removeEvents();
+        DialogCacheBuilder.this.dispose();
+    }
+
+    //Executor for cache build
+    class Executor extends Thread {
+        private volatile String[] params;
+
+        public Executor(String[] params) {
+            this.params = params;
+        }
+
+        @Override
+        public void run() {
+            try {
+                CacheBuilder.main(params);
+                boolean result = false;
+                File resultDir = new File(params[3]);
+                String resultPath = "";
+                if (resultDir.isDirectory()) {
+                    File[] files = resultDir.listFiles();
+                    for (int i = 0; i < files.length; i++) {
+                        if (files[i].getName().equals(params[1])) {
+                            resultPath = files[i].getAbsolutePath();
+                            result = true;
+                            break;
+                        }
+                    }
+                }
+                if (result) {
+                    Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), resultPath));
+                } else {
+                    Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MultiCacheFailed"));
+                }
+            } catch (Exception e) {
+                Application.getActiveApplication().getOutput().output(e);
+            } finally {
+                disposeInfo();
+            }
+        }
     }
 }

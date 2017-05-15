@@ -1,11 +1,13 @@
 package com.supermap.desktop.CtrlAction.Map;
 
 import com.supermap.data.Datasource;
+import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dialog.SmOptionPane;
+import com.supermap.desktop.dialog.cacheClip.DialogCacheBuilder;
 import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClip;
 import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClipBuilder;
 import com.supermap.desktop.implement.CtrlAction;
@@ -13,6 +15,7 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
 
 import java.util.ArrayList;
 
@@ -31,13 +34,24 @@ public class CtrlActionMapCacheBuilder extends CtrlAction {
 //        DialogResult result = dialogMapCacheBuilder.showDialog();
         DialogMapCacheClip dialogMapCacheClip = new DialogMapCacheClip();
         if (dialogMapCacheClip.showDialog() == DialogResult.OK) {
-            Datasource datasource = ((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].getDataset().getDatasource();
+            Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
             if (!datasource.isReadOnly()) {
                 SmOptionPane pane = new SmOptionPane();
                 pane.showConfirmDialog(MapViewProperties.getString("String_DatasourceOpenedNotReadOnly"));
                 return;
             }
-            new DialogMapCacheClipBuilder(dialogMapCacheClip.isSingleProcess()).showDialog();
+            Map map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
+            MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
+            Map newMap = new Map(Application.getActiveApplication().getWorkspace());
+            newMap.fromXML(map.toXML());
+            mapCacheBuilder.setMap(newMap);
+            if (dialogMapCacheClip.isBuildTask()) {
+                new DialogMapCacheClipBuilder(dialogMapCacheClip.isSingleProcess(), mapCacheBuilder).showDialog();
+            } else {
+                DialogCacheBuilder cacheBuilder = new DialogCacheBuilder();
+                cacheBuilder.textFieldMapName.setText(map.getName());
+                cacheBuilder.showDialog();
+            }
         }
     }
 
