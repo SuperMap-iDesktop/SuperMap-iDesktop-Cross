@@ -37,7 +37,6 @@ public class CacheBuilder {
             mergeTaskCount = Integer.valueOf(args[5]);
         }
 
-        //Write to memory
         ArrayList<String> allsciFiles = new ArrayList<String>();
         if (sciList.endsWith(".list")) {
             File tasksFile = new File(sciList);
@@ -58,20 +57,14 @@ public class CacheBuilder {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        //sci files
-        else if (sciList.contains("&")) {
+        } else if (sciList.contains("&")) {
             String[] sciFileArray = sciList.split("&");
             for (int i = 0; i < sciFileArray.length; i++) {
                 allsciFiles.add(sciFileArray[i]);
             }
-        }
-        //Single sci file
-        else if (sciList.endsWith(".sci")) {
+        } else if (sciList.endsWith(".sci")) {
             allsciFiles.add(sciList);
-        }
-        //Sci directory
-        else {
+        } else {
             File sciFile = new File(sciList);
             if (sciFile.isDirectory()) {
                 String[] sciFiles = sciFile.list(new FilenameFilter() {
@@ -188,59 +181,53 @@ public class CacheBuilder {
     }
 
     public void buildCache(String workspaceFile, String mapName, ArrayList<String> sciFiles, String targetRoot) {
-        try {
-            long start = System.currentTimeMillis();
-            LogWriter log = LogWriter.getInstance();
-            String pid = LogWriter.getPID();
 
-            Workspace wk = new Workspace();
-            WorkspaceConnectionInfo info = new WorkspaceConnectionInfo(workspaceFile);
-            wk.open(info);
-            Map map = new Map(wk);
-            map.open(mapName);
-            log.writelog(String.format("start sciCount:%d , PID:%s", sciFiles.size(), pid));
-            log.writelog(String.format("init PID:%s, cost(ms):%d", LogWriter.getPID(), System.currentTimeMillis() - start));
+        long start = System.currentTimeMillis();
+        LogWriter log = LogWriter.getInstance();
+        String pid = LogWriter.getPID();
 
-            for (String sciFile : sciFiles) {
-                long oneStart = System.currentTimeMillis();
-                File sci = new File(sciFile);
-                if (!sci.exists()) {
-                    log.writelog(String.format("sciFile: %s does not exist. Maybe has done at before running. ", sciFile));
-                    continue;
-                }
-                MapCacheBuilder builder = new MapCacheBuilder();
-                //Use sci's hashcode
-                builder.setMap(map);
-                builder.fromConfigFile(sciFile);
+        Workspace wk = new Workspace();
+        WorkspaceConnectionInfo info = new WorkspaceConnectionInfo(workspaceFile);
+        wk.open(info);
+        Map map = new Map(wk);
+        map.open(mapName);
+        log.writelog(String.format("start sciCount:%d , PID:%s", sciFiles.size(), pid));
+        log.writelog(String.format("init PID:%s, cost(ms):%d", LogWriter.getPID(), System.currentTimeMillis() - start));
 
-                ScaleModel scaleModel = new ScaleModel(builder.getOutputScales()[0]);
-                log.writelog(String.format("caption:%s", scaleModel.toString()));
-                builder.setOutputFolder(targetRoot);
-                builder.resumable(false);
-                boolean result = builder.buildWithoutConfigFile();
-                builder.dispose();
-
-                if (result) {
-                    //Move sci files to build directory
-                    File doneDir = new File(sci.getParentFile().getParent() + "/build");
-                    if (!doneDir.exists()) {
-                        doneDir.mkdir();
-                    }
-                    sci.renameTo(new File(doneDir, sci.getName()));
-                }
-
-                long end = System.currentTimeMillis();
-                log.writelog(String.format("%s %s done,PID:%s, cost(ms):%d, done", sciFile, String.valueOf(result), LogWriter.getPID(), end - oneStart));
-                log.flush();
+        for (String sciFile : sciFiles) {
+            long oneStart = System.currentTimeMillis();
+            File sci = new File(sciFile);
+            if (!sci.exists()) {
+                LogWriter.getInstance().writelog(String.format("sciFile: %s does not exist. Maybe has done at before running. ", sciFile));
+                continue;
             }
-            //todo print avg time
-            map.close();
-            map.dispose();
-            wk.close();
-            wk.dispose();
-        } catch (InvalidScaleException e) {
-            e.printStackTrace();
+            MapCacheBuilder builder = new MapCacheBuilder();
+            builder.setMap(map);
+            builder.fromConfigFile(sciFile);
+            builder.setOutputFolder(targetRoot);
+            builder.resumable(false);
+
+            boolean result = builder.buildWithoutConfigFile();
+            builder.dispose();
+
+            if (result) {
+                File doneDir = new File(sci.getParentFile().getParent() + "/build");
+                if (!doneDir.exists()) {
+                    doneDir.mkdir();
+                }
+                sci.renameTo(new File(doneDir, sci.getName()));
+            }
+
+            long end = System.currentTimeMillis();
+            log.writelog(String.format("%s %s done,PID:%s, cost(ms):%d, done", sciFile, String.valueOf(result), LogWriter.getPID(), end - oneStart));
+            log.flush();
         }
+
+        map.close();
+        map.dispose();
+        wk.close();
+        wk.dispose();
+
     }
 
 }
