@@ -54,6 +54,7 @@ public class DialogCacheBuilder extends SmDialog {
     private WarningOrHelpProvider helpProviderForMergeSciCount;
     //scipath for restore path of .sci file
     private String sciPath;
+    private int totalSciLength;
 
     private ActionListener closeListener = new ActionListener() {
         @Override
@@ -71,7 +72,19 @@ public class DialogCacheBuilder extends SmDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (!StringUtilities.isNullOrEmpty(sciPath)) {
-                updateTotalProgress(sciPath, false);
+                File sciFile = new File(sciPath);
+                String[] sciFiles = null;
+                if (sciFile.exists()) {
+                    sciFiles = sciFile.list(getFilter());
+                }
+                if (null != sciFiles) {
+                    totalSciLength = sciFiles.length;
+                    int buildSciLength = 0;
+                    //Get success sci length
+                    buildSciLength = totalSciLength - sciFile.list(getFilter()).length;
+                    final int value = (int) (((buildSciLength + 0.0) / totalSciLength) * 100);
+                    progressBarTotal.setValue(value);
+                }
             }
         }
     };
@@ -248,26 +261,10 @@ public class DialogCacheBuilder extends SmDialog {
             @Override
             public void run() {
                 try {
-                    File sciPath = new File(finalSciPath);
-                    String[] sciFiles;
-                    if (sciPath.exists()) {
-                        sciFiles = sciPath.list(getFilter());
-                    } else {
-                        return;
-                    }
-                    if (null != sciFiles) {
-                        int sciLength = sciFiles.length;
-                        int buildSciLength = 0;
-                        while (buildSciLength != sciLength) {
-                            //Get success sci length
-                            buildSciLength = sciLength - sciPath.list(getFilter()).length;
-                            final int value = (int) ((buildSciLength + 0.0) / sciLength) * 100;
-                            progressBarTotal.setValue(value);
-                            //Sleep two minutes or not
-                            if (finalSleep) {
-                                Thread.sleep(300);
-                            }
-                        }
+                    refresh(finalSciPath);
+                    //Sleep two minutes or not
+                    if (finalSleep) {
+                        Thread.sleep(6000);
                     }
                 } catch (Exception e) {
                     Application.getActiveApplication().getOutput().output(e);
@@ -275,6 +272,27 @@ public class DialogCacheBuilder extends SmDialog {
             }
         };
         updateThread.start();
+    }
+
+    private boolean refresh(String finalSciPath) {
+        File sciPath = new File(finalSciPath);
+        String[] sciFiles;
+        if (sciPath.exists()) {
+            sciFiles = sciPath.list(getFilter());
+        } else {
+            return true;
+        }
+        if (null != sciFiles) {
+            totalSciLength = sciFiles.length;
+            int buildSciLength = 0;
+            while (buildSciLength != totalSciLength) {
+                //Get success sci length
+                buildSciLength = totalSciLength - sciPath.list(getFilter()).length;
+                final int value = (int) (((buildSciLength + 0.0) / totalSciLength) * 100);
+                progressBarTotal.setValue(value);
+            }
+        }
+        return false;
     }
 
     private FilenameFilter getFilter() {

@@ -4,7 +4,7 @@ import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.dialog.DialogMapCacheBuilder;
+import com.supermap.desktop.dialog.cacheClip.DialogMapCacheBuilder;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.UICommonToolkit;

@@ -3,6 +3,8 @@ package com.supermap.desktop.dialog.cacheClip.cache;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
+import com.supermap.desktop.ScaleModel;
+import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.utilities.Convert;
 import com.supermap.mapping.Map;
 
@@ -35,9 +37,8 @@ public class CacheBuilder {
             mergeTaskCount = Integer.valueOf(args[5]);
         }
 
-        // 读到内存中，方便重复遍历
+        //Write to memory
         ArrayList<String> allsciFiles = new ArrayList<String>();
-        // 传入的是list文件
         if (sciList.endsWith(".list")) {
             File tasksFile = new File(sciList);
             String taskDir = tasksFile.getParent();
@@ -58,18 +59,18 @@ public class CacheBuilder {
                 e.printStackTrace();
             }
         }
-        // 传入的是多sci文件
+        //sci files
         else if (sciList.contains("&")) {
             String[] sciFileArray = sciList.split("&");
             for (int i = 0; i < sciFileArray.length; i++) {
                 allsciFiles.add(sciFileArray[i]);
             }
         }
-        // 传入的是单一sci文件
+        //Single sci file
         else if (sciList.endsWith(".sci")) {
             allsciFiles.add(sciList);
         }
-        // 传入的是包含sci的文件夹
+        //Sci directory
         else {
             File sciFile = new File(sciList);
             if (sciFile.isDirectory()) {
@@ -187,60 +188,59 @@ public class CacheBuilder {
     }
 
     public void buildCache(String workspaceFile, String mapName, ArrayList<String> sciFiles, String targetRoot) {
+        try {
+            long start = System.currentTimeMillis();
+            LogWriter log = LogWriter.getInstance();
+            String pid = LogWriter.getPID();
 
-        long start = System.currentTimeMillis();
-        LogWriter log = LogWriter.getInstance();
-        String pid = LogWriter.getPID();
+            Workspace wk = new Workspace();
+            WorkspaceConnectionInfo info = new WorkspaceConnectionInfo(workspaceFile);
+            wk.open(info);
+            Map map = new Map(wk);
+            map.open(mapName);
+            log.writelog(String.format("start sciCount:%d , PID:%s", sciFiles.size(), pid));
+            log.writelog(String.format("init PID:%s, cost(ms):%d", LogWriter.getPID(), System.currentTimeMillis() - start));
 
-        // sciFile 支持多个文件
-        Workspace wk = new Workspace();
-        WorkspaceConnectionInfo info = new WorkspaceConnectionInfo(workspaceFile);
-        wk.open(info);
-        Map map = new Map(wk);
-        map.open(mapName);
-        log.writelog(String.format("start sciCount:%d , PID:%s", sciFiles.size(), pid));
-        log.writelog(String.format("init PID:%s, cost(ms):%d", LogWriter.getPID(), System.currentTimeMillis() - start));
-
-        for (String sciFile : sciFiles) {
-            long oneStart = System.currentTimeMillis();
-            File sci = new File(sciFile);
-            if (!sci.exists()) {
-                LogWriter.getInstance().writelog(String.format("sciFile: %s does not exist. Maybe has done at before running. ", sciFile));
-                continue;
-            }
-            // 添加空白是的对齐，容易后续通过excel进行日志处理
-            MapCacheBuilder builder = new MapCacheBuilder();
-            // 把sci放后面，可以使用sci的HashCode
-            builder.setMap(map);
-            builder.fromConfigFile(sciFile);
-            builder.setOutputFolder(targetRoot);
-            // 不记录resumable信息
-            builder.resumable(false);
-
-            boolean result = builder.buildWithoutConfigFile();
-            builder.dispose();
-
-            if (result) {
-                // 将sci文件移到done目录下
-                File doneDir = new File(sci.getParentFile().getParent() + "/build");
-                if (!doneDir.exists()) {
-                    doneDir.mkdir();
+            for (String sciFile : sciFiles) {
+                long oneStart = System.currentTimeMillis();
+                File sci = new File(sciFile);
+                if (!sci.exists()) {
+                    log.writelog(String.format("sciFile: %s does not exist. Maybe has done at before running. ", sciFile));
+                    continue;
                 }
-                sci.renameTo(new File(doneDir, sci.getName()));
+                MapCacheBuilder builder = new MapCacheBuilder();
+                //Use sci's hashcode
+                builder.setMap(map);
+                builder.fromConfigFile(sciFile);
+
+                ScaleModel scaleModel = new ScaleModel(builder.getOutputScales()[0]);
+                log.writelog(String.format("caption:%s", scaleModel.toString()));
+                builder.setOutputFolder(targetRoot);
+                builder.resumable(false);
+                boolean result = builder.buildWithoutConfigFile();
+                builder.dispose();
+
+                if (result) {
+                    //Move sci files to build directory
+                    File doneDir = new File(sci.getParentFile().getParent() + "/build");
+                    if (!doneDir.exists()) {
+                        doneDir.mkdir();
+                    }
+                    sci.renameTo(new File(doneDir, sci.getName()));
+                }
+
+                long end = System.currentTimeMillis();
+                log.writelog(String.format("%s %s done,PID:%s, cost(ms):%d, done", sciFile, String.valueOf(result), LogWriter.getPID(), end - oneStart));
+                log.flush();
             }
-
-            long end = System.currentTimeMillis();
-            log.writelog(String.format("%s %s done,PID:%s, cost(ms):%d, done", sciFile, String.valueOf(result), LogWriter.getPID(), end - oneStart));
-            log.flush();
+            //todo print avg time
+            map.close();
+            map.dispose();
+            wk.close();
+            wk.dispose();
+        } catch (InvalidScaleException e) {
+            e.printStackTrace();
         }
-
-        // TODO: 是否需要考虑打印整个进程的平均耗时
-
-        map.close();
-        map.dispose();
-        wk.close();
-        wk.dispose();
-
     }
 
 }

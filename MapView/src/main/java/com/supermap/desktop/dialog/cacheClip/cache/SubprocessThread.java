@@ -20,10 +20,9 @@ class SubprocessThread extends Thread {
 	}
 	
 	/**
-	 * 判断是否超时，如果超时kill掉，默认超时时间为10分钟，超过10分钟Kill之
+	 * If timeout kill this process
 	 */
 	public void timeout(){
-		// 超时的时间设置
 		synchronized(this){
 			long cost = System.currentTimeMillis() - m_start;
 			if(m_start > 0 && cost > TimeOutMS){
@@ -53,8 +52,6 @@ class SubprocessThread extends Thread {
 				br1 = new BufferedReader(new InputStreamReader(is1, "GBK"));
 			}
 			String line1 = null;
-			
-			// 这里会自己等待读取到内容，不需要调用waitFor方法。
 			while ((line1 = br1.readLine()) != null) {
 				m_start = System.currentTimeMillis();
 				//log.writelog("PIDHASH:"+psHash +"," + line1);
