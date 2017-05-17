@@ -1,6 +1,13 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.FormProcess;
+import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.graphs.IGraph;
+import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
+import com.supermap.desktop.process.graphics.storage.IGraphStorage;
+import com.supermap.desktop.process.meta.MetaProcess;
+import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.ParameterPanels.EmptyParameterPanel;
 import com.supermap.desktop.process.parameter.events.ValueProviderBindEvent;
 import com.supermap.desktop.process.parameter.events.ValueProviderBindListener;
@@ -16,6 +23,8 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,32 +33,46 @@ import java.util.Collections;
  * @author XiaJT
  */
 public class DefaultParameters implements IParameters {
+	private MetaProcess metaProcess;
 	protected ArrayList<IParameter> parameters = new ArrayList<>();
 	protected JPanel panel;
 	private ArrayList<ParameterClassBundleNode> packages = new ArrayList<>();
 	protected EmptyParameterPanel parameterPanel = new EmptyParameterPanel();
+	private InputParametersManager inputParametersManager = new InputParametersManager(this);
 	private Inputs inputs = new Inputs(this);
 	private Outputs outputs = new Outputs(this);
 
-	public DefaultParameters() {
+	public DefaultParameters(final MetaProcess metaProcess) {
+		this.metaProcess = metaProcess;
 		packages.add(new ParameterClassBundleNode("com.supermap.desktop.process.parameter.ParameterPanels", "SuperMap.Desktop.Process"));
 
 		inputs.addValueProviderBindListener(new ValueProviderBindListener() {
 			@Override
 			public void valueBind(ValueProviderBindEvent event) {
-				event.getType();
+				int type = event.getType();
 				InputData inputData = event.getInputData();
-				ArrayList<IParameter> parameters = inputData.getParameters();
-				for (IParameter parameter : parameters) {
-					if (parameters.contains(parameter)) {
-						// TODO: 2017/4/23 展示形式未定
-						// 需要考虑与图联动，不同类型parameter都需要支持选择。
-						// 在未连接时是否需要列出选择项
-						// ① 使用parameterSwitch动态替换输入和选择项
-						// ② 未连接时只显示输入，连接后只显示选择项
-
+				if (type == ValueProviderBindEvent.BIND) {
+					inputParametersManager.bind(inputData);
+				}
+			}
+		});
+		inputParametersManager.addPropertyChangedListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				// 修改来源节点时图上联动
+				String propertyName = evt.getPropertyName();
+				IGraph graph = (IGraph) ((ParameterDataNode) evt.getOldValue()).getData();
+				IGraph newGraph = (IGraph) ((ParameterDataNode) evt.getNewValue()).getData();
+				GraphCanvas canvas = ((FormProcess) Application.getActiveApplication().getActiveForm()).getCanvas();
+				IGraphStorage graphStorage = canvas.getGraphStorage();
+				IGraph processGraph = null;
+				for (IGraph iGraph : graphStorage.getGraphs()) {
+					if (iGraph instanceof ProcessGraph && ((ProcessGraph) iGraph).getProcess() == metaProcess) {
+						processGraph = iGraph;
+						break;
 					}
 				}
+				// FIXME: 2017/5/16 所有节点都在，就差连接了！
 			}
 		});
 	}
@@ -147,6 +170,8 @@ public class DefaultParameters implements IParameters {
 	public void addInputParameters(String name, Type type, IParameter... parameters) {
 		inputs.addData(name, type);
 		inputs.getData(name).addParameters(parameters);
+		inputParametersManager.add(name, parameters);
+
 	}
 
 	@Override

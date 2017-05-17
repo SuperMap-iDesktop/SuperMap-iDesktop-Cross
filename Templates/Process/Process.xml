@@ -118,7 +118,7 @@
                 <process name="聚类分布">//ClusteringDistributions
                     <process key="clusterOutlierAnalyst" name="聚类和异常值分析"/>
                     <process key="hotSpotAnalyst" name="热点分析"/>
-                    <process key="optimizedHotSpotAnalyst" name="优化的热点分析"/>
+                    <!--<process key="optimizedHotSpotAnalyst" name="优化的热点分析"/>-->
                 </process>
                 <process name="空间关系建模">//SpatialRelModeling
                     <process key="geographicWeightedRegression" name="地理加权回归分析"/>

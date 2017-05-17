@@ -15,7 +15,15 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.implement.AbstractParameter;
+import com.supermap.desktop.process.parameter.implement.ParameterCombine;
+import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
+import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
+import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
@@ -89,7 +97,6 @@ public class MetaProcessISOPoint extends MetaProcess {
 
 	private void initParameters() {
 
-		this.parameters = new DefaultParameters();
 		this.sourceDatasource = new ParameterDatasourceConstrained();
 		this.sourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.POINT3D);
 		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();

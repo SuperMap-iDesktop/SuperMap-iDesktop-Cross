@@ -6,7 +6,6 @@ import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
@@ -46,7 +45,6 @@ public class MetaProcessHeatMap extends MetaProcess {
 	}
 
 	private void initMetaInfo() {
-		this.parameters = new DefaultParameters();
 		parameterHDFSPath = new ParameterHDFSPath();
 		parameterHDFSPath.setSelectedItem("hdfs://172.16.14.148:9000/data/newyork_taxi_2013-01_147k.csv");
 
