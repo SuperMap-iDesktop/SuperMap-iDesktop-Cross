@@ -92,7 +92,7 @@ public class MultiProcessManager {
                     arguments.add("-cp");
                     String projectPath = System.getProperty("user.dir");
                     projectPath = projectPath.replace("\\", "/");
-                    String jarPath = ".;" + projectPath + "/bin/com.supermap.data.jar;" + projectPath + "/bin/com.supermap.mapping.jar;" + projectPath + "/bin/com.supermap.tilestorage.jar;"+ projectPath + "/bin/com.supermap.data.processing.jar;" + projectPath + "/bundles/idesktop_bundles/MapView.jar";
+                    String jarPath = ".;" + projectPath + "/bin/com.supermap.data.jar;" + projectPath + "/bin/com.supermap.mapping.jar;" + projectPath + "/bin/com.supermap.tilestorage.jar;" + projectPath + "/bin/com.supermap.data.processing.jar;" + projectPath + "/bundles/idesktop_bundles/MapView.jar";
                     arguments.add(jarPath);
                     arguments.add(className);
                     if (event.getArgs().size() > 0) {
@@ -116,7 +116,9 @@ public class MultiProcessManager {
             for (int index = threaList.size() - 1; index > -1; index--) {
                 SubprocessThread t = threaList.get(index);
                 t.timeout();
+                //Destroy process when task executed
                 if (t.isExit) {
+                    t.m_ps.destroy();
                     threaList.remove(index);
                 }
             }

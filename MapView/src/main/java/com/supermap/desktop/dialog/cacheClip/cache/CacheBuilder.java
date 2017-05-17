@@ -1,10 +1,10 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
+import com.supermap.data.SteppedEvent;
+import com.supermap.data.SteppedListener;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
-import com.supermap.desktop.ScaleModel;
-import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.utilities.Convert;
 import com.supermap.mapping.Map;
 
@@ -99,9 +99,9 @@ public class CacheBuilder {
             return;
         }
 
-        if (processCount > 0) {
-            LogWriter.setWriteToFile(true);
-        }
+//        if (processCount > 0) {
+        LogWriter.setWriteToFile(true);
+//        }
 
         CacheBuilder cacheBuilder = new CacheBuilder();
         cacheBuilder.build(workspaceFile, mapName, allsciFiles, cacheRoot, processCount, mergeTaskCount);
@@ -182,7 +182,7 @@ public class CacheBuilder {
 
     public void buildCache(String workspaceFile, String mapName, ArrayList<String> sciFiles, String targetRoot) {
 
-        long start = System.currentTimeMillis();
+        final long start = System.currentTimeMillis();
         LogWriter log = LogWriter.getInstance();
         String pid = LogWriter.getPID();
 
@@ -206,6 +206,8 @@ public class CacheBuilder {
             builder.fromConfigFile(sciFile);
             builder.setOutputFolder(targetRoot);
             builder.resumable(false);
+            String scaleInfo = "1:" + String.valueOf((int) (1 / builder.getOutputScales()[0]));
+            final String finalScaleInfo = scaleInfo;
 
             boolean result = builder.buildWithoutConfigFile();
             builder.dispose();
