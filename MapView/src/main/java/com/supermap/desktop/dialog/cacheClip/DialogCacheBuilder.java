@@ -239,10 +239,10 @@ public class DialogCacheBuilder extends SmDialog {
 
     private void buildCache() {
         try {
-            String workspacePath = fileChooserWorkspacePath.getPath().replaceAll("\\\\", "/");
+            String workspacePath = fileChooserWorkspacePath.getPath();
             String mapName = textFieldMapName.getText();
-            sciPath = fileChooserTaskPath.getPath().replaceAll("\\\\", "/");
-            String cachePath = fileChooserCachePath.getPath().replaceAll("\\\\", "/");
+            sciPath = fileChooserTaskPath.getPath();
+            String cachePath = fileChooserCachePath.getPath();
             String processCount = textFieldProcessCount.getText();
             String mergeSciCount = textFieldMergeSciCount.getText();
             final String[] params = {workspacePath, mapName, sciPath, cachePath, processCount, mergeSciCount};

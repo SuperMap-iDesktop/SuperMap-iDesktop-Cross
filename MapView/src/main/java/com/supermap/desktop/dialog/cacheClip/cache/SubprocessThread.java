@@ -9,7 +9,7 @@ import java.util.ArrayList;
 class SubprocessThread extends Thread {
 	private  ArrayList<String> m_arguments;
 	private long m_start;
-	private Process m_ps;
+	public Process m_ps;
 	private InputStream is1;
 	public static long TimeOutMS = 15*60*1000;
 	public volatile boolean isExit = false;
