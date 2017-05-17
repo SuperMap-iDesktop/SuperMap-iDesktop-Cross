@@ -3,6 +3,8 @@ package com.supermap.desktop.dialog.cacheClip.cache;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
+import com.supermap.desktop.ScaleModel;
+import com.supermap.desktop.exception.InvalidScaleException;
 import com.supermap.desktop.utilities.Convert;
 import com.supermap.mapping.Map;
 
@@ -35,9 +37,7 @@ public class CacheBuilder {
             mergeTaskCount = Integer.valueOf(args[5]);
         }
 
-        // 读到内存中，方便重复遍历
         ArrayList<String> allsciFiles = new ArrayList<String>();
-        // 传入的是list文件
         if (sciList.endsWith(".list")) {
             File tasksFile = new File(sciList);
             String taskDir = tasksFile.getParent();
@@ -57,20 +57,14 @@ public class CacheBuilder {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        // 传入的是多sci文件
-        else if (sciList.contains("&")) {
+        } else if (sciList.contains("&")) {
             String[] sciFileArray = sciList.split("&");
             for (int i = 0; i < sciFileArray.length; i++) {
                 allsciFiles.add(sciFileArray[i]);
             }
-        }
-        // 传入的是单一sci文件
-        else if (sciList.endsWith(".sci")) {
+        } else if (sciList.endsWith(".sci")) {
             allsciFiles.add(sciList);
-        }
-        // 传入的是包含sci的文件夹
-        else {
+        } else {
             File sciFile = new File(sciList);
             if (sciFile.isDirectory()) {
                 String[] sciFiles = sciFile.list(new FilenameFilter() {
@@ -192,7 +186,6 @@ public class CacheBuilder {
         LogWriter log = LogWriter.getInstance();
         String pid = LogWriter.getPID();
 
-        // sciFile 支持多个文件
         Workspace wk = new Workspace();
         WorkspaceConnectionInfo info = new WorkspaceConnectionInfo(workspaceFile);
         wk.open(info);
@@ -208,20 +201,16 @@ public class CacheBuilder {
                 LogWriter.getInstance().writelog(String.format("sciFile: %s does not exist. Maybe has done at before running. ", sciFile));
                 continue;
             }
-            // 添加空白是的对齐，容易后续通过excel进行日志处理
             MapCacheBuilder builder = new MapCacheBuilder();
-            // 把sci放后面，可以使用sci的HashCode
             builder.setMap(map);
             builder.fromConfigFile(sciFile);
             builder.setOutputFolder(targetRoot);
-            // 不记录resumable信息
             builder.resumable(false);
 
             boolean result = builder.buildWithoutConfigFile();
             builder.dispose();
 
             if (result) {
-                // 将sci文件移到done目录下
                 File doneDir = new File(sci.getParentFile().getParent() + "/build");
                 if (!doneDir.exists()) {
                     doneDir.mkdir();
@@ -233,8 +222,6 @@ public class CacheBuilder {
             log.writelog(String.format("%s %s done,PID:%s, cost(ms):%d, done", sciFile, String.valueOf(result), LogWriter.getPID(), end - oneStart));
             log.flush();
         }
-
-        // TODO: 是否需要考虑打印整个进程的平均耗时
 
         map.close();
         map.dispose();

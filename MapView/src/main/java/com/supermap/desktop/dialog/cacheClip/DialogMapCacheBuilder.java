@@ -1,4 +1,4 @@
-package com.supermap.desktop.dialog;
+package com.supermap.desktop.dialog.cacheClip;
 
 import com.mongodb.Mongo;
 import com.mongodb.MongoClientURI;
@@ -8,6 +8,7 @@ import com.supermap.data.processing.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.ScaleModel;
+import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.mapview.MapCache.CacheProgressCallable;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.map.propertycontrols.PanelGroupBoxViewBounds;

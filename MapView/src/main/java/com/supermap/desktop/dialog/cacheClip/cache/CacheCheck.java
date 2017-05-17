@@ -19,7 +19,7 @@ import java.util.HashMap;
 public class CacheCheck {
 
     /**
-     * 检测缓存是否正确类
+     * Check result cache is right or not
      *
      * @param args
      */
@@ -71,11 +71,10 @@ public class CacheCheck {
         CacheCheck cacheCheck = new CacheCheck();
         cacheCheck.initalize(cacheRoot, sciNames, processcount, mergeTaskCount, error2udb, boundaryRegion);
 
-        // 当多任务合并一起完成后，需要再单一再执行剩余的任务
         if (processcount > 0 && mergeTaskCount > 1) {
             String tempPath = scipath;
             if (scipath.endsWith(".list")) {
-                // 这时传文件夹去列出剩余的文件再检查
+                //Check all task may forgot
                 File tempFile = new File(scipath);
                 tempPath = tempFile.getParent();
             }
@@ -485,8 +484,7 @@ public class CacheCheck {
     }
 
     public double getReolustion(double scale, PrjCoordSys prjCoordSys, double cacheDPI) {
-        double unitRatio = 0; // 单位：0.1mm/投影单位
-
+        double unitRatio = 0; //unit:0.1mm/(prj unit)
         if (prjCoordSys.getCoordUnit().equals(Unit.DEGREE)) {
             unitRatio = prjCoordSys.getGeoCoordSys().getGeoDatum()
                     .getGeoSpheroid().getAxis()
@@ -498,8 +496,8 @@ public class CacheCheck {
             unitRatio = (double) prjCoordSys.getCoordUnit().value();
         }
 
-        double resolution = 1 / (scale * cacheDPI / 254); // 单位:0.1mm/pixel
-        resolution = resolution / unitRatio; // 单位:投影单位/pixel
+        double resolution = 1 / (scale * cacheDPI / 254); //unit:0.1mm/pixel
+        resolution = resolution / unitRatio; //unit:(pry unit)/pixel
         return resolution;
     }
 
@@ -526,17 +524,14 @@ public class CacheCheck {
                     if (whiteStart == -1) {
                         whiteStart = w;
                     }
-                    // 当连续白色超过指定值时，记录并换行
                     else if ((w - whiteStart) > 128) {
                         whiteCount++;
                         break;
                     }
                 } else {
-                    // 当不是连续白色时重置
                     whiteStart = -1;
                 }
             }
-            // 超过指定行有连续白线时退出
             if (whiteCount > 10) {
                 return true;
             }
@@ -771,7 +766,7 @@ public class CacheCheck {
                     fieldInfo.put("errortype", errortype);
                     fieldInfo.put("errordesc", elements[0]);
 
-                    // 在数据集中创建对应块
+                    //Add recordset to dataset
                     Point2Ds points = new Point2Ds();
                     points.add(new Point2D(boundLeft, boundBottom));
                     points.add(new Point2D(boundLeft, boundTop));

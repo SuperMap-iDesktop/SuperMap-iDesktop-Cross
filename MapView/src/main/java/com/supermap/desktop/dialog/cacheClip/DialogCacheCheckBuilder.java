@@ -1,4 +1,4 @@
-package com.supermap.desktop.dialog;
+package com.supermap.desktop.dialog.cacheClip;
 
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
