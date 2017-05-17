@@ -122,5 +122,11 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 
 	public void addItem(ParameterDataNode parameterDataNode) {
 		items.add(parameterDataNode);
+		firePropertyChangeListener(new PropertyChangeEvent(this, comboBoxItems, null, null));
+	}
+
+	public void removeAllItems() {
+		items.clear();
+		firePropertyChangeListener(new PropertyChangeEvent(this, comboBoxItems, null, null));
 	}
 }

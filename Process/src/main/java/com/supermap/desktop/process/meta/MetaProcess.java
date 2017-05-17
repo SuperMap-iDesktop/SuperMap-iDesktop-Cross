@@ -16,7 +16,7 @@ import javax.swing.*;
  * Created by highsad on 2017/1/5.
  */
 public abstract class MetaProcess extends AbstractProcess {
-	protected IParameters parameters = new DefaultParameters();
+	protected IParameters parameters = new DefaultParameters(this);
 	protected boolean finished = false;
 
 	protected SteppedListener steppedListener = new SteppedListener() {

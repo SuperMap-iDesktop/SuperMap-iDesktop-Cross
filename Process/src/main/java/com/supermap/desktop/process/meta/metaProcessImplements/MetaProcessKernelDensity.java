@@ -5,7 +5,6 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -36,7 +35,6 @@ public class MetaProcessKernelDensity extends MetaProcess {
 	}
 
 	private void initMetaInfo() {
-		parameters = new DefaultParameters();
 		//TODO 封装数据管理调用控件，此处先用ParameterTextField控件替换
 		parameterHDFSPath = new ParameterHDFSPath();
 		parameterHDFSPath.setSelectedItem("hdfs://172.16.14.148:9000/data/newyork_taxi_2013-01_147k.csv");

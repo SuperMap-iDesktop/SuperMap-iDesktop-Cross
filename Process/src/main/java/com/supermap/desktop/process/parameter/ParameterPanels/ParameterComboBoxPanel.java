@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
+import com.supermap.desktop.controls.utilities.JComboBoxUIUtilities;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterComboBoxCellRender;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
@@ -67,6 +68,23 @@ public class ParameterComboBoxPanel extends SwingPanel implements IParameterPane
 				if (!isSelectingItem && evt.getPropertyName().equals(ParameterComboBox.comboBoxValue)) {
 					isSelectingItem = true;
 					ParameterComboBoxPanel.this.comboBox.setSelectedItem(evt.getNewValue());
+					isSelectingItem = false;
+				} else if (!isSelectingItem && evt.getPropertyName().equals(ParameterComboBox.comboBoxItems)) {
+					isSelectingItem = true;
+					Object selectedItem = ParameterComboBoxPanel.this.comboBox.getSelectedItem();
+					ParameterComboBoxPanel.this.comboBox.removeAllItems();
+					ArrayList<ParameterDataNode> items = ParameterComboBoxPanel.this.parameterComboBox.getItems();
+					if (items != null && items.size() > 0) {
+						for (ParameterDataNode item : items) {
+							ParameterComboBoxPanel.this.comboBox.addItem(item);
+						}
+					}
+					if (JComboBoxUIUtilities.getItemIndex(ParameterComboBoxPanel.this.comboBox, selectedItem) != -1) {
+						ParameterComboBoxPanel.this.comboBox.setSelectedItem(selectedItem);
+					} else {
+						ParameterComboBoxPanel.this.comboBox.setSelectedItem(null);
+					}
+					ParameterComboBoxPanel.this.parameterComboBox.setSelectedItem(ParameterComboBoxPanel.this.comboBox.getSelectedItem());
 					isSelectingItem = false;
 				}
 			}

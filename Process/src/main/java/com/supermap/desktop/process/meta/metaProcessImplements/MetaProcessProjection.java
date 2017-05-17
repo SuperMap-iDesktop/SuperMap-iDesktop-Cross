@@ -1,11 +1,15 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.GeoCoordSys;
+import com.supermap.data.GeoCoordSysType;
+import com.supermap.data.GeoSpatialRefType;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.PrjCoordSysType;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
 import com.supermap.desktop.process.parameter.implement.ParameterEnum;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
@@ -28,7 +32,6 @@ public class MetaProcessProjection extends MetaProcess {
 
 	public MetaProcessProjection() {
 
-		parameters = new DefaultParameters();
 		datasource = new ParameterDatasourceConstrained();
 		dataset = new ParameterSingleDataset();
 		datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));

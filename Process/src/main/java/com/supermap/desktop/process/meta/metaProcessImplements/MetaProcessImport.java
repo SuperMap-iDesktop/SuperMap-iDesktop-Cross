@@ -1,7 +1,23 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.*;
-import com.supermap.data.conversion.*;
+import com.supermap.data.Charset;
+import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.PrjFileType;
+import com.supermap.data.conversion.DataImport;
+import com.supermap.data.conversion.ImportResult;
+import com.supermap.data.conversion.ImportSetting;
+import com.supermap.data.conversion.ImportSettingMIF;
+import com.supermap.data.conversion.ImportSettingModel3DS;
+import com.supermap.data.conversion.ImportSettingModelDXF;
+import com.supermap.data.conversion.ImportSettingModelFBX;
+import com.supermap.data.conversion.ImportSettingModelFLT;
+import com.supermap.data.conversion.ImportSettingModelOSG;
+import com.supermap.data.conversion.ImportSettingModelX;
+import com.supermap.data.conversion.ImportSettingTAB;
+import com.supermap.data.conversion.ImportSteppedEvent;
+import com.supermap.data.conversion.ImportSteppedListener;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.IParameterCreator;
 import com.supermap.desktop.process.dataconversion.ImportParameterCreator;
@@ -11,7 +27,12 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.implement.ParameterButton;
+import com.supermap.desktop.process.parameter.implement.ParameterCharset;
+import com.supermap.desktop.process.parameter.implement.ParameterFile;
+import com.supermap.desktop.process.parameter.implement.ParameterRadioButton;
+import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
+import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -136,11 +157,9 @@ public class MetaProcessImport extends MetaProcess {
 	}
 
 	public MetaProcessImport() {
-		parameters = new DefaultParameters();
 	}
 
 	public void initParameters() {
-		parameters = new DefaultParameters();
 		parameterCreator = new ImportParameterCreator();
 		setResultImportParameters(parameterCreator.createResult(importSetting, this.importType));
 		setSourceImportParameters(parameterCreator.createSourceInfo(importSetting, this.importType));
