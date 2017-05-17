@@ -5,13 +5,18 @@ import com.supermap.analyst.spatialstatistics.EllipseSize;
 import com.supermap.analyst.spatialstatistics.MeasureParameter;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldType;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
-import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.implement.ParameterCombine;
+import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
+import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
+import com.supermap.desktop.process.parameter.implement.ParameterLabel;
+import com.supermap.desktop.process.parameter.implement.ParameterStatisticsField;
 import com.supermap.desktop.properties.CommonProperties;
 
 import static com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.ParameterPatternsParameter.DATASET_FIELD_NAME;
@@ -41,6 +46,11 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 
 
 	protected void initParameters() {
+		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
+		parameterGroupFieldComboBox.setFieldType(new FieldType[]{FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE, FieldType.TEXT, FieldType.DATETIME});
+		parameterSelfWeightFieldComboBox.setFieldType(fieldType);
+		parameterWeightFieldComboBox.setFieldType(fieldType);
+
 		this.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
 		parameterDistanceMethodComboBox.setDescribe(ProcessProperties.getString("String_DistanceMethod"));
 		parameterEllipseSizeComboBox.setDescribe(ProcessProperties.getString("String_EllipseSize"));

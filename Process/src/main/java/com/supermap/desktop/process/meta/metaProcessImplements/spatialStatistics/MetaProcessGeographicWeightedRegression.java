@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics;
 
 import com.supermap.analyst.spatialstatistics.BandWidthType;
+import com.supermap.analyst.spatialstatistics.GWRAnalystResult;
 import com.supermap.analyst.spatialstatistics.GWRParameter;
 import com.supermap.analyst.spatialstatistics.KernelFunction;
 import com.supermap.analyst.spatialstatistics.KernelType;
@@ -8,6 +9,8 @@ import com.supermap.analyst.spatialstatistics.SpatialRelModeling;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldType;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
@@ -57,6 +60,9 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 	}
 
 	private void initParameter() {
+		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
+		parameterExplanatory.setFieldType(fieldType);
+		parameterModelField.setFieldType(fieldType);
 		parameterBandWidthType.setItems(new ParameterDataNode(ProcessProperties.getString("String_BindWidthType_AICC"), BandWidthType.AICC),
 				new ParameterDataNode(ProcessProperties.getString("String_BindWidthType_BANDWIDTH"), BandWidthType.BANDWIDTH),
 				new ParameterDataNode(ProcessProperties.getString("String_BindWidthType_CV"), BandWidthType.CV));
@@ -170,9 +176,15 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 		gwrParameter.setModelFeild(((FieldInfo) parameterModelField.getSelectedItem()).getName());
 		gwrParameter.setNeighbors(Integer.valueOf((String) parameterNeighbors.getSelectedItem()));
 
-
-		SpatialRelModeling.geographicWeightedRegression(datasetVector, parameterSaveDataset.getResultDatasource(),
-				parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()), gwrParameter);
+		try {
+			SpatialRelModeling.addSteppedListener(steppedListener);
+			GWRAnalystResult gwrAnalystResult = SpatialRelModeling.geographicWeightedRegression(datasetVector, parameterSaveDataset.getResultDatasource(),
+					parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()), gwrParameter);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			SpatialRelModeling.removeSteppedListener(steppedListener);
+		}
 	}
 
 	@Override

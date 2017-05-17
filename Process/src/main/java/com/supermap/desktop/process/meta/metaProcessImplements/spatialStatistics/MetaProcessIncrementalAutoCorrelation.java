@@ -6,6 +6,7 @@ import com.supermap.analyst.spatialstatistics.IncrementalParameter;
 import com.supermap.analyst.spatialstatistics.IncrementalResult;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
@@ -123,8 +124,13 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 		incrementalParameter.setIncrementalNumber(Integer.valueOf((String) parameterTextFieldIncrementalNumber.getSelectedItem()));
 		incrementalParameter.setIncrementalDistance(Double.valueOf((String) parameterTextFieldIncrementalDistance.getSelectedItem()));
 		incrementalParameter.setDistanceMethod((DistanceMethod) ((ParameterDataNode) parameterDistanceMethod.getSelectedItem()).getData());
-		AnalyzingPatterns.addSteppedListener(steppedListener);
-		IncrementalResult[] incrementalResults = AnalyzingPatterns.incrementalAutoCorrelation(datasetVector, incrementalParameter);
-		AnalyzingPatterns.removeSteppedListener(steppedListener);
+		try {
+			AnalyzingPatterns.addSteppedListener(steppedListener);
+			IncrementalResult[] incrementalResults = AnalyzingPatterns.incrementalAutoCorrelation(datasetVector, incrementalParameter);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+		} finally {
+			AnalyzingPatterns.removeSteppedListener(steppedListener);
+		}
 	}
 }

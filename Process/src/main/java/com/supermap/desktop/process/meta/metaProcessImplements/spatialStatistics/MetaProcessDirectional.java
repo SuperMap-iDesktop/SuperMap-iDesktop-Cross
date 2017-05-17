@@ -2,6 +2,7 @@ package com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistic
 
 import com.supermap.analyst.spatialstatistics.SpatialMeasure;
 import com.supermap.data.DatasetVector;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.meta.MetaKeys;
 
@@ -20,16 +21,20 @@ public class MetaProcessDirectional extends MetaProcessSpatialMeasure {
 
 	@Override
 	protected void doWork(DatasetVector datasetVector) {
-		SpatialMeasure.addSteppedListener(steppedListener);
-
-		// 调用方向分布方法，并获取结果矢量数据集
-		DatasetVector result = SpatialMeasure.measureDirectional(
-				datasetVector,
-				parameterSaveDataset.getResultDatasource(),
-				parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()),
-				measureParameter.getMeasureParameter());
-		SpatialMeasure.removeSteppedListener(steppedListener);
-		this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
+		try {
+			SpatialMeasure.addSteppedListener(steppedListener);
+			// 调用方向分布方法，并获取结果矢量数据集
+			DatasetVector result = SpatialMeasure.measureDirectional(
+					datasetVector,
+					parameterSaveDataset.getResultDatasource(),
+					parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()),
+					measureParameter.getMeasureParameter());
+			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+		} finally {
+			SpatialMeasure.removeSteppedListener(steppedListener);
+		}
 	}
 
 	@Override

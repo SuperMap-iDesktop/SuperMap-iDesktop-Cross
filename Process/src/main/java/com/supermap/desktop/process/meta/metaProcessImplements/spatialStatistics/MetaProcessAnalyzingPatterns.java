@@ -80,7 +80,7 @@ public abstract class MetaProcessAnalyzingPatterns extends MetaProcess {
 			doWork(datasetVector);
 			// TODO: 2017/4/27 展现形式未定
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
 		}
 	}
 

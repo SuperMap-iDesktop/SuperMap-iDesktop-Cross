@@ -5,6 +5,7 @@ import com.supermap.analyst.spatialstatistics.AnalyzingPatternsResult;
 import com.supermap.analyst.spatialstatistics.DistanceMethod;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
@@ -86,9 +87,14 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 		} else {
 			datasetVector = (DatasetVector) parameterSingleDataset.getSelectedItem();
 		}
-		AnalyzingPatterns.addSteppedListener(steppedListener);
-		AnalyzingPatternsResult analyzingPatternsResult = AnalyzingPatterns.averageNearestNeighbor(datasetVector, Double.valueOf((String) parameterTextFieldArea.getSelectedItem()), (DistanceMethod) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData());
-		AnalyzingPatterns.removeSteppedListener(steppedListener);
+		try {
+			AnalyzingPatterns.addSteppedListener(steppedListener);
+			AnalyzingPatternsResult analyzingPatternsResult = AnalyzingPatterns.averageNearestNeighbor(datasetVector, Double.valueOf((String) parameterTextFieldArea.getSelectedItem()), (DistanceMethod) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData());
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+		} finally {
+			AnalyzingPatterns.removeSteppedListener(steppedListener);
+		}
 	}
 
 	@Override

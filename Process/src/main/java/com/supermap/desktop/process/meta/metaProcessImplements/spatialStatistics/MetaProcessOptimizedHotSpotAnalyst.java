@@ -6,6 +6,7 @@ import com.supermap.analyst.spatialstatistics.OptimizedParameter;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
@@ -144,11 +145,18 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 		optimizedParameter.setAssessmentFieldName(((FieldInfo) parameterFieldComboBox.getSelectedItem()).getName());
 		optimizedParameter.setAggregationMethod((AggregationMethod) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData());
 
-		ClusteringDistributions.addSteppedListener(steppedListener);
-		DatasetVector result = ClusteringDistributions.optimizedHotSpotAnalyst(datasetVector, parameterSaveDataset.getResultDatasource(),
-				parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()), optimizedParameter);
-		ClusteringDistributions.removeSteppedListener(steppedListener);
-		this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
+		try {
+
+			ClusteringDistributions.addSteppedListener(steppedListener);
+			DatasetVector result = ClusteringDistributions.optimizedHotSpotAnalyst(datasetVector, parameterSaveDataset.getResultDatasource(),
+					parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()), optimizedParameter);
+			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+		} finally {
+			ClusteringDistributions.removeSteppedListener(steppedListener);
+		}
+
 	}
 
 	@Override

@@ -59,8 +59,9 @@ public class ParameterPatternsParameter extends ParameterCombine {
 
 	private void initParameters() {
 
-		parameterAssessmentFieldComboBox.setFieldType(new FieldType[]{FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.DOUBLE});
-		parameterSelfWeightFieldComboBox.setFieldType(new FieldType[]{FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.DOUBLE});
+		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
+		parameterAssessmentFieldComboBox.setFieldType(fieldType);
+		parameterSelfWeightFieldComboBox.setFieldType(fieldType);
 		parameterAssessmentFieldComboBox.setDescribe(ProcessProperties.getString("String_AssessmentField"));
 		parameterComboBoxConceptModel.setDescribe(ProcessProperties.getString("String_ConceptModel"));
 		parameterDistanceMethod.setDescribe(ProcessProperties.getString("String_DistanceMethod"));
@@ -149,8 +150,8 @@ public class ParameterPatternsParameter extends ParameterCombine {
 	}
 
 	private void initParameterState() {
-		parameterTextFieldDistanceTolerance.setSelectedItem("0.0");
-		parameterTextFieldExponent.setSelectedItem("0.0");
+		parameterTextFieldDistanceTolerance.setSelectedItem("-1.0");
+		parameterTextFieldExponent.setSelectedItem("1.0");
 		parameterTextFieldKNeighbors.setSelectedItem("10");
 	}
 

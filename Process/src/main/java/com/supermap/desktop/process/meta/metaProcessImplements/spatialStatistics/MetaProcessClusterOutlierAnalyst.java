@@ -2,6 +2,7 @@ package com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistic
 
 import com.supermap.analyst.spatialstatistics.ClusteringDistributions;
 import com.supermap.data.DatasetVector;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.meta.MetaKeys;
@@ -42,9 +43,14 @@ public class MetaProcessClusterOutlierAnalyst extends MetaProcessAnalyzingPatter
 
 	@Override
 	protected void doWork(DatasetVector datasetVector) {
-		ClusteringDistributions.addSteppedListener(steppedListener);
-		DatasetVector result = ClusteringDistributions.clusterOutlierAnalyst(datasetVector, parameterSaveDataset.getResultDatasource(), parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()), parameterPatternsParameter.getPatternParameter());
-		ClusteringDistributions.removeSteppedListener(steppedListener);
-		this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
+		try {
+			ClusteringDistributions.addSteppedListener(steppedListener);
+			DatasetVector result = ClusteringDistributions.clusterOutlierAnalyst(datasetVector, parameterSaveDataset.getResultDatasource(), parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()), parameterPatternsParameter.getPatternParameter());
+			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+		} finally {
+			ClusteringDistributions.removeSteppedListener(steppedListener);
+		}
 	}
 }
