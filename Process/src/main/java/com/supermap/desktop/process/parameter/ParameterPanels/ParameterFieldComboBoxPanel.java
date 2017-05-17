@@ -3,6 +3,7 @@ package com.supermap.desktop.process.parameter.ParameterPanels;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldInfos;
+import com.supermap.data.FieldType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.JComboBoxUIUtilities;
 import com.supermap.desktop.process.enums.ParameterType;
@@ -14,6 +15,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.utilities.ArrayUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -116,6 +118,7 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 	private void resetComboBoxItems(DatasetVector dataset) {
 		isSelectingItem = true;
 		comboBox.removeAllItems();
+		FieldType[] fieldTypes = parameterFieldComboBox.getFieldTypes();
 		if (dataset != null) {
 			FieldInfos fieldInfos;
 			try {
@@ -126,7 +129,9 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 				//ignore
 			}
 			for (int i = 0; i < fieldInfos.getCount(); i++) {
-				if (parameterFieldComboBox.isValueLegal(ParameterFieldComboBox.FILED_INFO_FILED_NAME, fieldInfos.get(i))) {
+				FieldInfo fieldInfo = fieldInfos.get(i);
+				if ((fieldTypes == null || ArrayUtilities.isArrayContains(fieldTypes, fieldInfo.getType()))
+						&& parameterFieldComboBox.isValueLegal(ParameterFieldComboBox.FILED_INFO_FILED_NAME, fieldInfos.get(i))) {
 					comboBox.addItem(fieldInfos.get(i));
 				}
 			}

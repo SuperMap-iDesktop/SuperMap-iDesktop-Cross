@@ -20,7 +20,7 @@ public class MetaProcessHotSpotAnalyst extends MetaProcessAnalyzingPatterns {
 
 	@Override
 	protected void initHook() {
-		dataset.setDatasetTypes(DatasetType.REGION, DatasetType.POINT);
+		dataset.setDatasetTypes(DatasetType.REGION, DatasetType.POINT, DatasetType.LINE);
 		parameterSaveDataset = new ParameterSaveDataset();
 		parameterSaveDataset.setDatasetName("HotSpotResult");
 		ParameterCombine parameterCombine = new ParameterCombine();

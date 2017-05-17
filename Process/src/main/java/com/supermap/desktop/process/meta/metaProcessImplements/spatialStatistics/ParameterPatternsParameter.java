@@ -5,6 +5,7 @@ import com.supermap.analyst.spatialstatistics.DistanceMethod;
 import com.supermap.analyst.spatialstatistics.PatternsParameter;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldType;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.meta.MetaKeys;
@@ -57,6 +58,9 @@ public class ParameterPatternsParameter extends ParameterCombine {
 	}
 
 	private void initParameters() {
+
+		parameterAssessmentFieldComboBox.setFieldType(new FieldType[]{FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.DOUBLE});
+		parameterSelfWeightFieldComboBox.setFieldType(new FieldType[]{FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.DOUBLE});
 		parameterAssessmentFieldComboBox.setDescribe(ProcessProperties.getString("String_AssessmentField"));
 		parameterComboBoxConceptModel.setDescribe(ProcessProperties.getString("String_ConceptModel"));
 		parameterDistanceMethod.setDescribe(ProcessProperties.getString("String_DistanceMethod"));
