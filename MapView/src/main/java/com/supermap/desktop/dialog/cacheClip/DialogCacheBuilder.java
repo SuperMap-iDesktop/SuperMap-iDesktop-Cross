@@ -5,6 +5,7 @@ import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.cacheClip.cache.BuildCache;
+import com.supermap.desktop.dialog.cacheClip.cache.ProcessManager;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.JFileChooserControl;
@@ -331,6 +332,8 @@ public class DialogCacheBuilder extends SmDialog {
 	private void disposeInfo() {
 		removeEvents();
 		DialogCacheBuilder.this.dispose();
+		//Dispose instance of process manager
+		ProcessManager.getInstance().dispose();
 	}
 
 	//Executor for cache build
