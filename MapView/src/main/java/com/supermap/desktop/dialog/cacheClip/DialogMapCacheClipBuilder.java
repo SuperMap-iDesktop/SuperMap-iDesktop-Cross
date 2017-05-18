@@ -287,7 +287,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
                 String tasksPath = nextStepPane.fileChooserControlTaskPath.getPath();
                 tasksPath = tasksPath.replaceAll("\\\\", "/");
                 String filePath = System.getProperty("user.dir");
-                String sciPath = filePath + "/temp.sci";
+                String sciPath = filePath + "\\temp.sci";
                 setMapCacheBuilderValueBeforeRun();
                 boolean result = mapCacheBuilder.toConfigFile(sciPath);
                 if (result) {
@@ -306,7 +306,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
                     dialogCacheBuilder.fileChooserTaskPath.setPath(tasksPath + "\\task");
                     dialogCacheBuilder.fileChooserWorkspacePath.setPath(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer());
                     dialogCacheBuilder.showDialog();
-                    //fixme Can't give the right message when task build finished
+                    //fixme Can't get the right message when task build finished
 //                    final String finalTasksPath = tasksPath;
 //                    SwingUtilities.invokeLater(new Runnable() {
 //                        @Override

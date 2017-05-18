@@ -84,8 +84,8 @@ public class CacheBuilder {
                 sort(scaleArray);
                 for (Integer scale : scaleArray) {
                     for (String name : sciFiles) {
-                        if (name.contains(String.valueOf(scale)) && !allsciFiles.contains(sciList + "/" + name)) {
-                            allsciFiles.add(sciList + "/" + name);
+                        if (name.contains(String.valueOf(scale)) && !allsciFiles.contains(sciList + "\\" + name)) {
+                            allsciFiles.add(sciList + "\\" + name);
                         }
                     }
                 }

@@ -3,6 +3,7 @@ package com.supermap.desktop.dialog.cacheClip.cache;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
+import com.supermap.desktop.utilities.Convert;
 import com.supermap.mapping.Map;
 
 import java.io.File;
@@ -14,6 +15,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by xie on 2017/5/17.
  */
 public class BuildCache {
+	public static final int SCIPATH_INDEX = 0;
+	public static final int WORKSPACEPATH_INDEX = 1;
+	public static final int MAPNAME_INDEX = 2;
+	public static final int CACHEPATH_INDEX = 3;
+	public static final int PROCESSCOUNT_INDEX = 4;
+	public static final int MERGESCICOUNT_INDEX = 5;
 
 	private void startProcess(String[] params) {
 		ArrayList<String> arguments = new ArrayList<String>();
@@ -38,6 +45,8 @@ public class BuildCache {
 		if (0 == processCount) {
 			main(params);
 		} else {
+			//Write executing info to log
+			LogWriter.setWriteToFile(true);
 			for (int i = 0; i < processCount; i++) {
 				startProcess(params);
 			}
@@ -48,44 +57,50 @@ public class BuildCache {
 		if (args.length == 0) {
 			LogWriter.getInstance().writelog("need params");
 		} else {
-			String taskPath = args[0];
-			String workspacePath = args[1];
-			String mapName = args[2];
-			String cachePath = args[3];
 			BuildCache buildCache = new BuildCache();
-			buildCache.buildCache(taskPath, workspacePath, mapName, cachePath);
+			buildCache.buildCache(args);
 		}
 	}
 
-	public void buildCache(String taskPath, String workspacePath, String mapName, String cachePath) {
+	//Core executor for build cache
+	public void buildCache(String[] params) {
 		try {
+			String taskPath = params[SCIPATH_INDEX];
+			String workspacePath = params[WORKSPACEPATH_INDEX];
+			String mapName = params[MAPNAME_INDEX];
+			String cachePath = params[CACHEPATH_INDEX];
+			String mergeCount = "1";
+			if (params.length > MERGESCICOUNT_INDEX && !params[MERGESCICOUNT_INDEX].equals("0"))
+				mergeCount = params[MERGESCICOUNT_INDEX];
+			//Instance LogWriter
 			LogWriter log = LogWriter.getInstance();
 			int sciLength;
-			do {
-				File sciPath = new File(taskPath);
-
-				if (sciPath.exists()) {
+			WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(workspacePath);
+			Workspace workspace = new Workspace();
+			workspace.open(connectionInfo);
+			Map map = new Map(workspace);
+			map.open(mapName);
+			File sciPath = new File(taskPath);
+			if (sciPath.exists()) {
+				do {
 					long start = System.currentTimeMillis();
+					//Re calculate sci file length
 					String[] sciFileNames = sciPath.list(getFilter());
 					sciLength = sciFileNames.length;
-					WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(workspacePath);
-					Workspace workspace = new Workspace();
-					workspace.open(connectionInfo);
-					Map map = new Map(workspace);
-					map.open(mapName);
+
 					File doingDir = null;
 					if (sciLength > 0) {
 						File sci = new File(taskPath + "\\" + sciFileNames[0]);
-						doingDir = new File(sci.getParentFile().getParent() + "/doing");
+						doingDir = new File(sci.getParentFile().getParent() + "\\doing");
 						if (!doingDir.exists()) {
 							doingDir.mkdir();
 						}
 					}
 					CopyOnWriteArrayList<String> doingSciNames = new CopyOnWriteArrayList<>();
-					//Now give 5 sci files to every process if sciLength>5
-					int mergeSciCount = 1;
+					//Now give mergeSciCount sci files to every process if sciLength>mergeSciCount
+					int mergeSciCount = Integer.valueOf(mergeCount);
 					if (sciLength > mergeSciCount) {
-						//First step:Move 5 sci to doing directory
+						//First step:Move mergeSciCount sci to doing directory
 						for (int i = 0; i < mergeSciCount; i++) {
 							doingSci(taskPath + "\\" + sciFileNames[i], doingDir, doingSciNames);
 						}
@@ -105,18 +120,51 @@ public class BuildCache {
 							build(cachePath, log, start, map, sciName);
 						}
 					}
-					map.close();
-					map.dispose();
-					workspace.close();
-					workspace.dispose();
-				} else {
-					log.writelog("Task files does not exist");
-					break;
-				}
-			} while (sciLength != 0);
+
+				} while (sciLength != 0);
+				map.close();
+				map.dispose();
+				workspace.close();
+				workspace.dispose();
+			} else {
+				log.writelog("Task files does not exist");
+				return;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+	}
+
+	//Sort file by name
+	private static CopyOnWriteArrayList sort(String[] sciFiles, String taskPath) {
+		CopyOnWriteArrayList<String> allsciFiles = new CopyOnWriteArrayList<>();
+		// sort by name
+		ArrayList<Integer> scales = new ArrayList();
+		for (String name : sciFiles) {
+			String scale = name.substring(1, name.indexOf("_"));
+			Integer scaleInt = Convert.toInteger(scale);
+			if (!scales.contains(scaleInt))
+				scales.add(scaleInt);
+		}
+		Integer[] scaleArray = scales.toArray(new Integer[scales.size()]);
+		for (int i = 0; i < scaleArray.length; i++) {
+			for (int j = i + 1; j < scaleArray.length; j++) {
+				if (scaleArray[i] > scaleArray[j]) {
+					Integer temp = scaleArray[i];
+					scaleArray[i] = scaleArray[j];
+					scaleArray[j] = temp;
+				}
+			}
+		}
+		for (Integer scale : scaleArray) {
+			for (String name : sciFiles) {
+				if (name.contains(String.valueOf(scale)) && !allsciFiles.contains(taskPath + "\\" + name)) {
+					allsciFiles.add(taskPath + "\\" + name);
+				}
+			}
+		}
+		return allsciFiles;
 	}
 
 	private void doingSci(String sciFileName, File doingDir, CopyOnWriteArrayList<String> doingSciNames) {
@@ -124,7 +172,6 @@ public class BuildCache {
 		File sci = new File(sciName);
 		if (sci.exists() && null != doingDir) {
 			sci.renameTo(new File(doingDir, sci.getName()));
-
 			doingSciNames.add(doingDir.getAbsolutePath() + "\\" + sci.getName());
 		}
 	}
@@ -147,7 +194,7 @@ public class BuildCache {
 		builder.dispose();
 
 		if (result) {
-			File doneDir = new File(sci.getParentFile().getParent() + "/build");
+			File doneDir = new File(sci.getParentFile().getParent() + "\\build");
 			if (!doneDir.exists()) {
 				doneDir.mkdir();
 			}
