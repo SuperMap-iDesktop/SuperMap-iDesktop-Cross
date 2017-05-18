@@ -149,7 +149,6 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 		parameterNeighbors.setSelectedItem("0");
 		parameterSaveDataset.setDatasetName(OUTPUT_DATASET);
 		parameterBandWidthType.setSelectedItem(parameterBandWidthType.getItemAt(1));
-
 	}
 
 	@Override
@@ -168,14 +167,20 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 			datasetVector = (DatasetVector) parameterSingleDataset.getSelectedItem();
 		}
 		GWRParameter gwrParameter = new GWRParameter();
-		gwrParameter.setBandWidthType((BandWidthType) parameterBandWidthType.getSelectedData());
+		BandWidthType bandWidthType = (BandWidthType) parameterBandWidthType.getSelectedData();
+		gwrParameter.setBandWidthType(bandWidthType);
 		gwrParameter.setDistanceTolerance(Double.valueOf((String) parameterDistanceTolerance.getSelectedItem()));
 		gwrParameter.setExplanatoryFeilds(new String[]{((FieldInfo) parameterExplanatory.getSelectedItem()).getName()});
 		gwrParameter.setKernelFunction((KernelFunction) parameterKernelFunction.getSelectedData());
-		gwrParameter.setKernelType((KernelType) parameterKernelType.getSelectedData());
-		gwrParameter.setModelFeild(((FieldInfo) parameterModelField.getSelectedItem()).getName());
-		gwrParameter.setNeighbors(Integer.valueOf((String) parameterNeighbors.getSelectedItem()));
-
+		KernelType kernelType = (KernelType) parameterKernelType.getSelectedData();
+		gwrParameter.setKernelType(kernelType);
+		if (bandWidthType == BandWidthType.BANDWIDTH) {
+			if (kernelType == KernelType.ADAPTIVE) {
+				gwrParameter.setNeighbors(Integer.valueOf((String) parameterNeighbors.getSelectedItem()));
+			} else {
+				gwrParameter.setModelFeild(((FieldInfo) parameterModelField.getSelectedItem()).getName());
+			}
+		}
 		try {
 			SpatialRelModeling.addSteppedListener(steppedListener);
 			GWRAnalystResult gwrAnalystResult = SpatialRelModeling.geographicWeightedRegression(datasetVector, parameterSaveDataset.getResultDatasource(),
