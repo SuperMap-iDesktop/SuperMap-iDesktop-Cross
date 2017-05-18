@@ -1,7 +1,5 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
@@ -99,9 +97,9 @@ public class CacheBuilder {
             return;
         }
 
-//        if (processCount > 0) {
-        LogWriter.setWriteToFile(true);
-//        }
+        if (processCount > 0) {
+            LogWriter.setWriteToFile(true);
+        }
 
         CacheBuilder cacheBuilder = new CacheBuilder();
         cacheBuilder.build(workspaceFile, mapName, allsciFiles, cacheRoot, processCount, mergeTaskCount);
