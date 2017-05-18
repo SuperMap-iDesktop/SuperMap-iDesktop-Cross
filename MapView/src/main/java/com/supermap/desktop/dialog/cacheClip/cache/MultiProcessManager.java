@@ -44,7 +44,7 @@ public class MultiProcessManager {
     public MultiProcessManager(Object object, int count) {
         m_processCount = count;
         m_classObject = object;
-        m_timeout = 5 * 60 * 1000;
+        m_timeout = 10 * 60 * 1000;
     }
 
     public int getProcessCount() {
@@ -83,7 +83,6 @@ public class MultiProcessManager {
                 ProcessBuildEvent event = new ProcessBuildEvent(this);
                 fireProcessBuilding(event);
 
-                //System.out.println(event.getArgs());
 
                 if (event.getActive()) {
                     ArrayList<String> arguments = new ArrayList<String>();
@@ -91,8 +90,8 @@ public class MultiProcessManager {
                     //arguments.addAll(jvmArgs);
                     arguments.add("-cp");
                     String projectPath = System.getProperty("user.dir");
-                    projectPath = projectPath.replace("\\", "/");
-                    String jarPath = ".;" + projectPath + "/bin/com.supermap.data.jar;" + projectPath + "/bin/com.supermap.mapping.jar;" + projectPath + "/bin/com.supermap.tilestorage.jar;" + projectPath + "/bin/com.supermap.data.processing.jar;" + projectPath + "/bundles/idesktop_bundles/MapView.jar";
+                    projectPath = projectPath.replace("/", "\\");
+                    String jarPath = ".;" + projectPath + "\\bin\\com.supermap.data.jar;" + projectPath + "\\bin\\com.supermap.mapping.jar;" + projectPath + "\\bin\\com.supermap.tilestorage.jar;" + projectPath + "\\bin\\com.supermap.data.processing.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
                     arguments.add(jarPath);
                     arguments.add(className);
                     if (event.getArgs().size() > 0) {
@@ -118,7 +117,6 @@ public class MultiProcessManager {
                 t.timeout();
                 //Destroy process when task executed
                 if (t.isExit) {
-                    t.m_ps.destroy();
                     threaList.remove(index);
                 }
             }
