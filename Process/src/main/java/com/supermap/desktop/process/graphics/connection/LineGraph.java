@@ -36,6 +36,10 @@ public class LineGraph extends AbstractGraph {
 		return this.points.get(index);
 	}
 
+	public Point[] getPoints() {
+		return this.points.toArray(new Point[this.points.size()]);
+	}
+
 	public void addPoint(Point point) {
 		if (!this.points.contains(point)) {
 			this.points.add(point);
