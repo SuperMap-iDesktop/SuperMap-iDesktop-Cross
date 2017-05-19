@@ -21,10 +21,10 @@ import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
 import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
+import com.supermap.desktop.process.parameter.implement.ParameterNumber;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterSwitch;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
@@ -44,12 +44,12 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 	private ParameterSingleDataset parameterSingleDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
 
 	private ParameterComboBox parameterBandWidthType = new ParameterComboBox(ProcessProperties.getString("String_BandWidthType"));
-	private ParameterTextField parameterDistanceTolerance = new ParameterTextField(ProcessProperties.getString("String_BandWidthDistanceTolerance"));
+	private ParameterNumber parameterDistanceTolerance = new ParameterNumber(ProcessProperties.getString("String_BandWidthDistanceTolerance"));
 	private ParameterFieldComboBox parameterExplanatory = new ParameterFieldComboBox(ProcessProperties.getString("String_ExplanatoryFeilds"));
 	private ParameterComboBox parameterKernelFunction = new ParameterComboBox(ProcessProperties.getString("String_KernelFunction"));
 	private ParameterComboBox parameterKernelType = new ParameterComboBox(ProcessProperties.getString("String_KernelType"));
 	private ParameterFieldComboBox parameterModelField = new ParameterFieldComboBox(ProcessProperties.getString("String_ModelField"));
-	private ParameterTextField parameterNeighbors = new ParameterTextField(ProcessProperties.getString("String_Neighbors"));
+	private ParameterNumber parameterNeighbors = new ParameterNumber(ProcessProperties.getString("String_Neighbors"));
 
 	private ParameterSaveDataset parameterSaveDataset = new ParameterSaveDataset();
 
@@ -84,6 +84,10 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 		parameterSwitch.add("0", parameterDistanceTolerance);
 		parameterSwitch.add("1", parameterNeighbors);
 		parameterSwitch.switchParameter("1");
+
+		parameterDistanceTolerance.setMinValue(0.0);
+		parameterNeighbors.setMinValue(1);
+		parameterNeighbors.setMaxBit(0);
 
 		final ParameterSwitch parameterSwitchParent = new ParameterSwitch();
 		parameterSwitchParent.add("0", parameterSwitch);
@@ -146,7 +150,7 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 			parameterModelField.setDataset(defaultDatasetVector);
 		}
 		parameterDistanceTolerance.setSelectedItem("0.0");
-		parameterNeighbors.setSelectedItem("0");
+		parameterNeighbors.setSelectedItem("1");
 		parameterSaveDataset.setDatasetName(OUTPUT_DATASET);
 		parameterBandWidthType.setSelectedItem(parameterBandWidthType.getItemAt(1));
 	}
@@ -169,16 +173,16 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 		GWRParameter gwrParameter = new GWRParameter();
 		BandWidthType bandWidthType = (BandWidthType) parameterBandWidthType.getSelectedData();
 		gwrParameter.setBandWidthType(bandWidthType);
-		gwrParameter.setDistanceTolerance(Double.valueOf((String) parameterDistanceTolerance.getSelectedItem()));
 		gwrParameter.setExplanatoryFeilds(new String[]{((FieldInfo) parameterExplanatory.getSelectedItem()).getName()});
 		gwrParameter.setKernelFunction((KernelFunction) parameterKernelFunction.getSelectedData());
+		gwrParameter.setModelFeild(((FieldInfo) parameterModelField.getSelectedItem()).getName());
 		KernelType kernelType = (KernelType) parameterKernelType.getSelectedData();
 		gwrParameter.setKernelType(kernelType);
 		if (bandWidthType == BandWidthType.BANDWIDTH) {
 			if (kernelType == KernelType.ADAPTIVE) {
 				gwrParameter.setNeighbors(Integer.valueOf((String) parameterNeighbors.getSelectedItem()));
 			} else {
-				gwrParameter.setModelFeild(((FieldInfo) parameterModelField.getSelectedItem()).getName());
+				gwrParameter.setDistanceTolerance(Double.valueOf((String) parameterDistanceTolerance.getSelectedItem()));
 			}
 		}
 		try {
