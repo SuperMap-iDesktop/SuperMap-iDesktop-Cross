@@ -7,11 +7,8 @@ import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.cacheClip.cache.BuildCache;
 import com.supermap.desktop.dialog.cacheClip.cache.ProcessManager;
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
-import com.supermap.desktop.ui.controls.JFileChooserControl;
+import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
-import com.supermap.desktop.ui.controls.SmDialog;
-import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -56,6 +53,11 @@ public class DialogCacheBuilder extends SmDialog {
 	//scipath for restore path of .sci file
 	private String sciPath;
 	private int totalSciLength;
+	private int nowProcessCount;
+	private String[] params;
+	private BuildCache buildCache;
+	//Total sci file
+	private File sciFile;
 
 	private ActionListener closeListener = new ActionListener() {
 		@Override
@@ -89,6 +91,39 @@ public class DialogCacheBuilder extends SmDialog {
 			}
 		}
 	};
+	private ActionListener applyListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (null == params || null == buildCache) {
+				return;
+			}
+			try {
+				String newProcessStr = textFieldProcessCount.getText();
+				if (StringUtilities.isInteger(newProcessStr)) {
+					int newProcessCount = Integer.valueOf(newProcessStr);
+					if (newProcessCount > nowProcessCount) {
+						//Add new process
+						int newSize = newProcessCount - nowProcessCount;
+						for (int i = 0; i < newSize; i++) {
+							buildCache.addProcess(params);
+						}
+						nowProcessCount = newProcessCount;
+					} else if (newProcessCount < nowProcessCount) {
+						DialogStopProcess stopProcess = new DialogStopProcess();
+						if (stopProcess.showDialog() == DialogResult.OK && stopProcess.isStopRightNow()) {
+							//Stop all process and dispose
+							ProcessManager.getInstance().dispose();
+						} else {
+							return;
+						}
+					}
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		}
+	};
+
 
 	public DialogCacheBuilder() {
 		init();
@@ -229,12 +264,14 @@ public class DialogCacheBuilder extends SmDialog {
 		removeEvents();
 		this.buttonCreate.addActionListener(this.createListener);
 		this.buttonClose.addActionListener(this.closeListener);
+		this.buttonApply.addActionListener(this.applyListener);
 //		this.buttonRefresh.addActionListener(this.refreshListener);
 	}
 
 	private void removeEvents() {
 		this.buttonCreate.removeActionListener(this.createListener);
 		this.buttonClose.removeActionListener(this.closeListener);
+		this.buttonApply.removeActionListener(this.applyListener);
 //		this.buttonRefresh.removeActionListener(this.refreshListener);
 	}
 
@@ -245,14 +282,24 @@ public class DialogCacheBuilder extends SmDialog {
 			sciPath = fileChooserTaskPath.getPath();
 			String cachePath = fileChooserCachePath.getPath();
 			String processCount = textFieldProcessCount.getText();
+			if (StringUtilities.isInteger(processCount)) {
+				nowProcessCount = Integer.valueOf(processCount);
+			}
 			String mergeSciCount = textFieldMergeSciCount.getText();
-			final String[] params = {sciPath, workspacePath, mapName, cachePath, processCount, mergeSciCount};
+			params = new String[]{sciPath, workspacePath, mapName, cachePath, processCount, mergeSciCount};
 //            final String[] params = {workspacePath, mapName, sciPath, cachePath, processCount, mergeSciCount};
 			updateTotalProgress(params, true);
-			new Executor(params).start();
+			updateSingleProcess();
+			buildCache = new BuildCache();
+			buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
+	}
+
+	//Update single scale info process
+	private void updateSingleProcess() {
+
 	}
 
 	//Update total progress
@@ -309,6 +356,17 @@ public class DialogCacheBuilder extends SmDialog {
 					}
 				}
 				if (result) {
+					if (null != sciFile) {
+						File mapNameDir = new File(resultPath);
+						String targetDirectory = null;
+						if (mapNameDir.isDirectory() && mapNameDir.listFiles().length > 0) {
+							targetDirectory = mapNameDir.listFiles()[0].getAbsolutePath();
+						}
+						//Paste sciFile to the target directory
+						if (null != targetDirectory) {
+							sciFile.renameTo(new File(targetDirectory, sciFile.getName()));
+						}
+					}
 					Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), resultPath));
 				} else {
 					Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MultiCacheFailed"));
@@ -336,26 +394,7 @@ public class DialogCacheBuilder extends SmDialog {
 		ProcessManager.getInstance().dispose();
 	}
 
-	//Executor for cache build
-	class Executor extends Thread {
-		private volatile String[] params;
-
-		public Executor(String[] params) {
-			this.params = params;
-		}
-
-		@Override
-		public void run() {
-			try {
-//                CacheBuilder.main(params);
-				BuildCache buildCache = new BuildCache();
-				buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
-			} catch (Exception e) {
-				Application.getActiveApplication().getOutput().output(e);
-			}
-//			finally {
-//				disposeInfo();
-//			}
-		}
+	public void setSciFile(File sciFile) {
+		this.sciFile = sciFile;
 	}
 }

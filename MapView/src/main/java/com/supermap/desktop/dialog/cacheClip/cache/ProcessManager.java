@@ -4,6 +4,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by xie on 2017/5/17.
+ * ProcessManager class build for store SubprocessThread(Thread for create a process)
  */
 public class ProcessManager {
 	private CopyOnWriteArrayList<SubprocessThread> threadList;
@@ -24,6 +25,34 @@ public class ProcessManager {
 		if (null == this.threadList) {
 			this.threadList = new CopyOnWriteArrayList<>();
 		}
+		// Create a protect thread while some process destroyed unexpected(Create one/more process)
+		new Thread() {
+			@Override
+			public void run() {
+				try {
+					while (true) {
+						if (null == threadList) {
+							break;
+						}
+						for (SubprocessThread thread : threadList) {
+							thread.timeout();
+						}
+						sleep(SubprocessThread.TimeOutMS);
+						for (SubprocessThread thread : threadList) {
+							if (thread.isTimeOut()) {
+								SubprocessThread newThread = thread.clone();
+								thread.process.destroy();
+								threadList.remove(thread);
+								threadList.add(newThread);
+								newThread.start();
+							}
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}.start();
 	}
 
 	public void addProcess(SubprocessThread thread) {
@@ -33,9 +62,15 @@ public class ProcessManager {
 	}
 
 	public void dispose() {
-		for (int i = 0; i < threadList.size(); i++) {
-			threadList.get(i).process.destroy();
+		try {
+			for (int i = threadList.size() - 1; i >= 0; i--) {
+				threadList.get(i).process.destroy();
+				threadList.get(i).process = null;
+			}
+			threadList = null;
+			ProcessManager.this.finalize();
+		} catch (Throwable throwable) {
+			throwable.printStackTrace();
 		}
-		threadList = null;
 	}
 }
