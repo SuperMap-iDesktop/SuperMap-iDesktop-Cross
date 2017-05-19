@@ -63,7 +63,6 @@ public abstract class MetaProcessAnalyzingPatterns extends MetaProcess {
 			dataset.setSelectedItem(datasetVector);
 			parameterPatternsParameter.setCurrentDataset(datasetVector);
 		}
-
 	}
 
 
@@ -78,7 +77,6 @@ public abstract class MetaProcessAnalyzingPatterns extends MetaProcess {
 		}
 		try {
 			doWork(datasetVector);
-			// TODO: 2017/4/27 展现形式未定
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 		}

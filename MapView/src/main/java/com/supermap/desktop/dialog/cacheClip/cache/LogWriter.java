@@ -49,7 +49,6 @@ class LogWriter {
 				writer = new OutputStreamWriter(new FileOutputStream(logFile), "UTF-8");
 
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -66,7 +65,6 @@ class LogWriter {
 				} else
 					System.out.print(line);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -78,7 +76,6 @@ class LogWriter {
 				if (writer != null)
 					writer.flush();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -89,7 +86,6 @@ class LogWriter {
 			if (writer != null)
 				writer.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

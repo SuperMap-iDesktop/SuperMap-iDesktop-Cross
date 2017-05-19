@@ -7,41 +7,54 @@ import java.util.ArrayList;
 
 
 class SubprocessThread extends Thread {
-	private  ArrayList<String> arguments;
+	private ArrayList<String> arguments;
 	private long start;
 	public Process process;
 	private InputStream stream;
-	public static long TimeOutMS = 15*60*1000;
+	public static long TimeOutMS = 15 * 60 * 1000;
 	public volatile boolean isExit = false;
-	
-	public SubprocessThread( ArrayList<String> arguments ){
+	private boolean timeOut;
+
+	public SubprocessThread(ArrayList<String> arguments) {
 		this.arguments = arguments;
 		start = 0;
+		timeOut = false;
 	}
-	
+
+	public SubprocessThread clone() {
+		if (null != this.arguments) {
+			return new SubprocessThread(this.arguments);
+		}
+		return null;
+	}
+
 	/**
 	 * If timeout kill this process
 	 */
-	public void timeout(){
-		synchronized(this){
+	public void timeout() {
+		synchronized (this) {
 			long cost = System.currentTimeMillis() - start;
-			if(start > 0 && cost > TimeOutMS){
+			if (start > 0 && cost > TimeOutMS) {
 				int psHash = process.hashCode();
 				LogWriter log = LogWriter.getInstance();
 				log.writelog("time out and kill it, PIDHASH:" + psHash);
-				process.destroy();
-			}			
-		}		
-	}		
-	
+				timeOut = true;
+			}
+		}
+	}
+
+	public boolean isTimeOut() {
+		return timeOut;
+	}
+
 	@Override
-	 public void run() {
+	public void run() {
 		LogWriter log = LogWriter.getInstance();
-		try {			
+		try {
 			ProcessBuilder builder = new ProcessBuilder(arguments);
 			builder.redirectErrorStream(true);
 			process = builder.start();
-			
+
 			int psHash = process.hashCode();
 			stream = process.getInputStream();
 			String osName = System.getProperty("os.name").toLowerCase();
@@ -55,7 +68,7 @@ class SubprocessThread extends Thread {
 			while ((line1 = br1.readLine()) != null) {
 				start = System.currentTimeMillis();
 				//log.writelog("PIDHASH:"+psHash +"," + line1);
-				log.writelog(line1);	
+				log.writelog(line1);
 			}
 			log.flush();
 			stream.close();
@@ -63,6 +76,6 @@ class SubprocessThread extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    }
+	}
 
 }

@@ -17,11 +17,12 @@ import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterFile;
+import com.supermap.desktop.process.parameter.implement.ParameterNumber;
 import com.supermap.desktop.process.parameter.implement.ParameterSwitch;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -36,11 +37,11 @@ public class ParameterPatternsParameter extends ParameterCombine {
 
 	private ParameterComboBox parameterComboBoxConceptModel = new ParameterComboBox();
 	private ParameterComboBox parameterDistanceMethod = new ParameterComboBox();
-	private ParameterTextField parameterTextFieldDistanceTolerance = new ParameterTextField();
-	private ParameterTextField parameterTextFieldExponent = new ParameterTextField();
+	private ParameterNumber parameterTextFieldDistanceTolerance = new ParameterNumber();
+	private ParameterNumber parameterTextFieldExponent = new ParameterNumber();
 	private ParameterCheckBox parameterCheckBoxFDRAdjusted = new ParameterCheckBox();
 	private ParameterFile parameterFile = new ParameterFile();
-	private ParameterTextField parameterTextFieldKNeighbors = new ParameterTextField();
+	private ParameterNumber parameterTextFieldKNeighbors = new ParameterNumber();
 
 	private ParameterFieldComboBox parameterSelfWeightFieldComboBox = new ParameterFieldComboBox();
 
@@ -69,6 +70,31 @@ public class ParameterPatternsParameter extends ParameterCombine {
 		parameterTextFieldExponent.setDescribe(ProcessProperties.getString("String_Exponent"));
 		parameterCheckBoxFDRAdjusted.setDescribe(ProcessProperties.getString("String_FDRAdjusted"));
 		parameterFile.setDescribe(ProcessProperties.getString("String_SWMFilePath"));
+		parameterTextFieldKNeighbors.setMinValue(1);
+		parameterTextFieldKNeighbors.setMaxBit(0);
+
+		parameterTextFieldExponent.setMinValue(0.0);
+		parameterTextFieldDistanceTolerance.setSmTextFieldLegit(new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				try {
+					Double aDouble = Double.valueOf(textFieldValue);
+					if (aDouble < 0) {
+						if (aDouble != -1) {
+							return false;
+						}
+					}
+				} catch (Exception e) {
+					return false;
+				}
+				return true;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return backUpValue;
+			}
+		});
 
 		String moduleName = "swm";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
@@ -152,7 +178,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 	private void initParameterState() {
 		parameterTextFieldDistanceTolerance.setSelectedItem("-1.0");
 		parameterTextFieldExponent.setSelectedItem("1.0");
-		parameterTextFieldKNeighbors.setSelectedItem("10");
+		parameterTextFieldKNeighbors.setSelectedItem("1");
 	}
 
 	public void setCurrentDataset(DatasetVector currentDataset) {
