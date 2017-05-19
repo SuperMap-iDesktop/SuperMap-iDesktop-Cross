@@ -22,6 +22,11 @@ public class BuildCache {
 	public static final int PROCESSCOUNT_INDEX = 4;
 	public static final int MERGESCICOUNT_INDEX = 5;
 
+	//Add new process
+	public void addProcess(String[] params) {
+		startProcess(params);
+	}
+
 	private void startProcess(String[] params) {
 		ArrayList<String> arguments = new ArrayList<String>();
 		arguments.add("java");
@@ -41,6 +46,7 @@ public class BuildCache {
 		thread.start();
 	}
 
+	//Start process
 	public void startProcess(int processCount, String[] params) {
 		if (0 == processCount) {
 			main(params);
