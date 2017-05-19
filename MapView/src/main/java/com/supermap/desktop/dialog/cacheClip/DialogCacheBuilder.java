@@ -5,6 +5,7 @@ import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.cacheClip.cache.BuildCache;
+import com.supermap.desktop.dialog.cacheClip.cache.ProcessManager;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.JFileChooserControl;
@@ -48,7 +49,7 @@ public class DialogCacheBuilder extends SmDialog {
 	private JScrollPane scrollPaneProgresses;
 	private JButton buttonCreate;
 	private JButton buttonClose;
-	private JButton buttonRefresh;
+	//	private JButton buttonRefresh;
 	private WarningOrHelpProvider helpProviderForTaskPath;
 	private WarningOrHelpProvider helpProviderForProcessCount;
 	private WarningOrHelpProvider helpProviderForMergeSciCount;
@@ -153,12 +154,12 @@ public class DialogCacheBuilder extends SmDialog {
 		this.textFieldTotalProcessCount.setEnabled(false);
 		this.progressBarTotal = new JProgressBar();
 		this.progressBarTotal.setStringPainted(true);
-		this.progressBarTotal.setPreferredSize(new Dimension(100, 23));
+		this.progressBarTotal.setPreferredSize(new Dimension(200, 23));
 		this.labelMergeSciCount = new JLabel();
 		this.textFieldMergeSciCount = new JTextField();
 		this.textFieldMergeSciCount.setText("1");
 		this.scrollPaneProgresses = new JScrollPane();
-		this.buttonRefresh = new SmButton();
+//		this.buttonRefresh = new SmButton();
 		this.buttonCreate = new SmButton();
 		this.buttonClose = ComponentFactory.createButtonClose();
 		this.helpProviderForTaskPath = new WarningOrHelpProvider(MapViewProperties.getString("String_SciFilePath"), false);
@@ -178,7 +179,7 @@ public class DialogCacheBuilder extends SmDialog {
 		this.labelDetailProgressInfo.setText(MapViewProperties.getString("String_DetailProcessInfo"));
 		this.labelMergeSciCount.setText(MapViewProperties.getString("String_MergeSciCount"));
 		this.buttonCreate.setText(MapViewProperties.getString("String_BatchAddColorTableOKButton"));
-		this.buttonRefresh.setText(ControlsProperties.getString("String_Refresh"));
+//		this.buttonRefresh.setText(ControlsProperties.getString("String_Refresh"));
 	}
 
 
@@ -210,8 +211,8 @@ public class DialogCacheBuilder extends SmDialog {
 		panelClipProgress.add(this.labelTotalProcessCount, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
 		panelClipProgress.add(this.textFieldTotalProcessCount, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
 		panelClipProgress.add(this.labelTotalProgress, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
-		panelClipProgress.add(this.progressBarTotal, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
-		panelClipProgress.add(this.buttonRefresh, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 10));
+		panelClipProgress.add(this.progressBarTotal, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
+//		panelClipProgress.add(this.buttonRefresh, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 10));
 		panelClipProgress.add(this.labelDetailProgressInfo, new GridBagConstraintsHelper(0, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
 		panelClipProgress.add(this.scrollPaneProgresses, new GridBagConstraintsHelper(0, 3, 3, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(0, 10, 5, 10).setWeight(1, 1));
 
@@ -228,13 +229,13 @@ public class DialogCacheBuilder extends SmDialog {
 		removeEvents();
 		this.buttonCreate.addActionListener(this.createListener);
 		this.buttonClose.addActionListener(this.closeListener);
-		this.buttonRefresh.addActionListener(this.refreshListener);
+//		this.buttonRefresh.addActionListener(this.refreshListener);
 	}
 
 	private void removeEvents() {
 		this.buttonCreate.removeActionListener(this.createListener);
 		this.buttonClose.removeActionListener(this.closeListener);
-		this.buttonRefresh.removeActionListener(this.refreshListener);
+//		this.buttonRefresh.removeActionListener(this.refreshListener);
 	}
 
 	private void buildCache() {
@@ -244,8 +245,8 @@ public class DialogCacheBuilder extends SmDialog {
 			sciPath = fileChooserTaskPath.getPath();
 			String cachePath = fileChooserCachePath.getPath();
 			String processCount = textFieldProcessCount.getText();
-//			String mergeSciCount = textFieldMergeSciCount.getText();
-			final String[] params = {sciPath, workspacePath, mapName, cachePath, processCount};
+			String mergeSciCount = textFieldMergeSciCount.getText();
+			final String[] params = {sciPath, workspacePath, mapName, cachePath, processCount, mergeSciCount};
 //            final String[] params = {workspacePath, mapName, sciPath, cachePath, processCount, mergeSciCount};
 			updateTotalProgress(params, true);
 			new Executor(params).start();
@@ -255,13 +256,14 @@ public class DialogCacheBuilder extends SmDialog {
 	}
 
 	//Update total progress
-	private void updateTotalProgress(final String[] params, boolean sleep) {
-		final String finalSciPath = params[0];
+	private void updateTotalProgress(String[] params, boolean sleep) {
+		final String[] tempParams = params;
+		final String finalSciPath = tempParams[0];
 		final boolean finalSleep = sleep;
 		Thread updateThread = new Thread() {
 			@Override
 			public void run() {
-				refresh(params, finalSciPath, finalSleep);
+				refresh(tempParams, finalSciPath, finalSleep);
 			}
 		};
 		updateThread.start();
@@ -281,7 +283,11 @@ public class DialogCacheBuilder extends SmDialog {
 				int buildSciLength = 0;
 				while (buildSciLength != totalSciLength) {
 					//Get success sci length
-					buildSciLength = totalSciLength - sciPath.list(getFilter()).length;
+					String buildPath = sciPath.getParentFile().getPath() + "\\build";
+					File buildFile = new File(buildPath);
+					if (buildFile.exists()) {
+						buildSciLength = buildFile.list(getFilter()).length;
+					}
 					final int value = (int) (((buildSciLength + 0.0) / totalSciLength) * 100);
 					progressBarTotal.setValue(value);
 					//Sleep two minutes or not
@@ -290,12 +296,12 @@ public class DialogCacheBuilder extends SmDialog {
 					}
 				}
 				boolean result = false;
-				File resultDir = new File(params[3]);
+				File resultDir = new File(params[BuildCache.CACHEPATH_INDEX]);
 				String resultPath = "";
 				if (resultDir.isDirectory()) {
 					File[] files = resultDir.listFiles();
 					for (int i = 0; i < files.length; i++) {
-						if (files[i].getName().equals(params[2])) {
+						if (files[i].getName().equals(params[BuildCache.MAPNAME_INDEX])) {
 							resultPath = files[i].getAbsolutePath();
 							result = true;
 							break;
@@ -326,6 +332,8 @@ public class DialogCacheBuilder extends SmDialog {
 	private void disposeInfo() {
 		removeEvents();
 		DialogCacheBuilder.this.dispose();
+		//Dispose instance of process manager
+		ProcessManager.getInstance().dispose();
 	}
 
 	//Executor for cache build
@@ -341,7 +349,7 @@ public class DialogCacheBuilder extends SmDialog {
 			try {
 //                CacheBuilder.main(params);
 				BuildCache buildCache = new BuildCache();
-				buildCache.startProcess(Integer.valueOf(params[4]), params);
+				buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
 			} catch (Exception e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}

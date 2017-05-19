@@ -31,4 +31,11 @@ public class ProcessManager {
 			threadList.add(thread);
 		}
 	}
+
+	public void dispose() {
+		for (int i = 0; i < threadList.size(); i++) {
+			threadList.get(i).process.destroy();
+		}
+		threadList = null;
+	}
 }
