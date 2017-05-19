@@ -173,7 +173,6 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 		GWRParameter gwrParameter = new GWRParameter();
 		BandWidthType bandWidthType = (BandWidthType) parameterBandWidthType.getSelectedData();
 		gwrParameter.setBandWidthType(bandWidthType);
-		gwrParameter.setDistanceTolerance(Double.valueOf((String) parameterDistanceTolerance.getSelectedItem()));
 		gwrParameter.setExplanatoryFeilds(new String[]{((FieldInfo) parameterExplanatory.getSelectedItem()).getName()});
 		gwrParameter.setKernelFunction((KernelFunction) parameterKernelFunction.getSelectedData());
 		KernelType kernelType = (KernelType) parameterKernelType.getSelectedData();
@@ -182,7 +181,7 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 			if (kernelType == KernelType.ADAPTIVE) {
 				gwrParameter.setNeighbors(Integer.valueOf((String) parameterNeighbors.getSelectedItem()));
 			} else {
-				gwrParameter.setModelFeild(((FieldInfo) parameterModelField.getSelectedItem()).getName());
+				gwrParameter.setDistanceTolerance(Double.valueOf((String) parameterDistanceTolerance.getSelectedItem()));
 			}
 		}
 		try {
