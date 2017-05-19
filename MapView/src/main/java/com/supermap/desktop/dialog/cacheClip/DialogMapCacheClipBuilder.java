@@ -285,7 +285,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			} else {
 				String tasksPath = nextStepPane.fileChooserControlTaskPath.getPath();
 				tasksPath = tasksPath.replaceAll("\\\\", "/");
-				String filePath = System.getProperty("user.dir");
+				String filePath = firstStepPane.fileChooserControlFileCache.getPath();
 				String sciPath = filePath + "\\" + mapCacheBuilder.getCacheName() + ".sci";
 				setMapCacheBuilderValueBeforeRun();
 				boolean result = mapCacheBuilder.toConfigFile(sciPath);
