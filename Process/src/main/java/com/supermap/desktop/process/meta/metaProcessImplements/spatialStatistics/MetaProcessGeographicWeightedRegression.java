@@ -190,7 +190,7 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 			GWRAnalystResult gwrAnalystResult = SpatialRelModeling.geographicWeightedRegression(datasetVector, parameterSaveDataset.getResultDatasource(),
 					parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()), gwrParameter);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {
 			SpatialRelModeling.removeSteppedListener(steppedListener);
 		}
