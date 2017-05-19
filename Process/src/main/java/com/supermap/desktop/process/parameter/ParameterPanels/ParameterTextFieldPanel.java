@@ -1,6 +1,8 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
 import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.process.parameter.events.ParameterUpdateValueEvent;
+import com.supermap.desktop.process.parameter.events.UpdateValueListener;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
@@ -9,10 +11,9 @@ import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -24,7 +25,7 @@ import java.beans.PropertyChangeListener;
 public class ParameterTextFieldPanel extends SwingPanel implements IParameterPanel {
 	private ParameterTextField parameterTextField;
 	private JLabel label = new JLabel();
-	private JTextField textField = new JTextField();
+	private SmTextFieldLegit textField = new SmTextFieldLegit();
 	private boolean isSelectingItem = false;
 
 	public ParameterTextFieldPanel(IParameter parameterTextField) {
@@ -33,6 +34,9 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		label.setText(this.parameterTextField.getDescribe());
 		label.setToolTipText(this.parameterTextField.getDescribe());
 		textField.setText(String.valueOf(this.parameterTextField.getSelectedItem()));
+		if (((ParameterTextField) parameterTextField).getSmTextFieldLegit() != null) {
+			textField.setSmTextFieldLegit(((ParameterTextField) parameterTextField).getSmTextFieldLegit());
+		}
 		initLayout();
 		initListeners();
 	}
@@ -66,27 +70,12 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 				}
 			}
 		});
-		textField.getDocument().addDocumentListener(new DocumentListener() {
+		parameterTextField.addUpdateValueListener(new UpdateValueListener() {
 			@Override
-			public void insertUpdate(DocumentEvent e) {
-				textFieldValueChanged();
-			}
-
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				textFieldValueChanged();
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				textFieldValueChanged();
-			}
-
-			private void textFieldValueChanged() {
-				if (!isSelectingItem) {
+			public void fireUpdateValue(ParameterUpdateValueEvent event) {
+				if (event.getFieldName().equals(AbstractParameter.PROPERTY_VALE)) {
 					isSelectingItem = true;
-					String text = textField.getText() == null ? "" : textField.getText();
-					parameterTextField.setSelectedItem(text);
+					parameterTextField.setSelectedItem(ParameterTextFieldPanel.this.textField.getBackUpValue());
 					isSelectingItem = false;
 				}
 			}
