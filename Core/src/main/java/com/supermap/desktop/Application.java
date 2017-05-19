@@ -61,7 +61,6 @@ public class Application {
 	private ArrayList<WorkFlowsChangedListener> workFlowsChangedListeners = new ArrayList<>();
 
 	private WorkFlowInitListener workFlowInitListener;
-	private static final String splitLine = "____________________";
 	private Vector<ResourcesChangedListener> resourcesChangedListeners = new Vector<>();
 
 	/**
@@ -334,32 +333,19 @@ public class Application {
 	}
 
 	public void resetWorkFlows() {
-		String description = workspace.getDescription();
+		String desktopInfo = workspace.getDesktopInfo();
 		String sourceDescription = "";
-		//region 等一个接口
-		String[] split = description.split(splitLine);
-		if (split.length == 2) {
-			sourceDescription = split[0];
-			description = split[1];
-		} else {
-			description = "";
-		}
-		//endregion
 
 		Document document = null;
 		try {
-			document = XmlUtilities.stringToDocument(description);
+			document = XmlUtilities.stringToDocument(desktopInfo);
 		} catch (Exception e) {
 			// ignore
 		}
-		if (StringUtilities.isNullOrEmpty(description) || document == null) {
+		if (StringUtilities.isNullOrEmpty(desktopInfo) || document == null) {
 			String s = initWorkFlowXml();
 
-			//region 等一个接口
-			s = sourceDescription + splitLine + s;
-			//endregion
-
-			workspace.setDescription(s);
+			workspace.setDesktopInfo(s);
 			return;
 		} else {
 			Node root = document.getChildNodes().item(0);
@@ -383,19 +369,14 @@ public class Application {
 
 	private void addWorkFlowInWorkspace(IWorkFlow workFlow) {
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
-		String description = workspace.getDescription();
+		String desktopInfo = workspace.getDesktopInfo();
 
-		String[] split = description.split(splitLine);
 
-		if (split.length == 2) {
-			description = split[1];
+		if (StringUtilities.isNullOrEmpty(desktopInfo)) {
+			desktopInfo = initWorkFlowXml();
+			workspace.setDesktopInfo(desktopInfo);
 		}
-
-		if (StringUtilities.isNullOrEmpty(description)) {
-			description = initWorkFlowXml();
-			workspace.setDescription(description);
-		}
-		Document document = XmlUtilities.stringToDocument(description);
+		Document document = XmlUtilities.stringToDocument(desktopInfo);
 		Node root = document.getChildNodes().item(0);
 		Node workFlows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
 		Element workFlowNode = document.createElement("WorkFlow");
@@ -404,11 +385,7 @@ public class Application {
 		workFlows.appendChild(workFlowNode);
 		String s = XmlUtilities.nodeToString(document, "UTF-8");
 
-		//region 等一个接口
-		s = workspace.getDescription().split(splitLine)[0] + splitLine + s;
-		//endregion
-
-		workspace.setDescription(s);
+		workspace.setDesktopInfo(s);
 	}
 
 	private String initWorkFlowXml() {
@@ -443,9 +420,8 @@ public class Application {
 
 	private void removeWorkFlowFormWorkspace(IWorkFlow workFlow) {
 		Workspace workspace = Application.getActiveApplication().getWorkspace();
-		String description = workspace.getDescription();
-		description = description.split(splitLine)[1];
-		Document document = XmlUtilities.stringToDocument(description);
+		String desktopInfo = workspace.getDesktopInfo();
+		Document document = XmlUtilities.stringToDocument(desktopInfo);
 		Node root = document.getChildNodes().item(0);
 		Node workFlows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
 		Element[] workFlowsArray = XmlUtilities.getChildElementNodesByName(workFlows, "WorkFlow");
@@ -456,12 +432,7 @@ public class Application {
 			}
 		}
 		String s = XmlUtilities.nodeToString(document, "UTF-8");
-
-		//region 等一个接口 菩罰世諳若多侄羯冥世殿僧僧死怯栗冥陀侄曳栗多罰道瑟知冥摩一侄所婆皤若顛朋皤沙諳老倒諳多朋侄婆實
-		s = workspace.getDescription().split(splitLine)[0] + splitLine + s;
-		//endregion
-
-		workspace.setDescription(s);
+		workspace.setDesktopInfo(s);
 	}
 
 	private void fireWorkFlowsChanged(WorkFlowChangedEvent workFlowChangedEvent) {
@@ -486,14 +457,6 @@ public class Application {
 
 	public void setWorkFlowInitListener(WorkFlowInitListener workFlowInitListener) {
 		this.workFlowInitListener = workFlowInitListener;
-	}
-
-	public void setWorkspaceDescribe(String description) {
-		workspace.setDescription(description + splitLine + workspace.getDescription().split(splitLine)[1]);
-	}
-
-	public String getWorkspaceDescribe() {
-		return workspace.getDescription().split(splitLine)[0];
 	}
 
 	public void setResourcesInfo(Resources currentResources, SymbolGroup currentSymbolGroup) {
