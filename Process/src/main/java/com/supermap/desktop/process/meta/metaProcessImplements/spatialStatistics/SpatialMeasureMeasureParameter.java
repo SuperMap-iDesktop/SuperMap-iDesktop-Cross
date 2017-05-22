@@ -4,7 +4,6 @@ import com.supermap.analyst.spatialstatistics.DistanceMethod;
 import com.supermap.analyst.spatialstatistics.EllipseSize;
 import com.supermap.analyst.spatialstatistics.MeasureParameter;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldType;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
@@ -31,9 +30,9 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 
 	private ParameterComboBox parameterDistanceMethodComboBox = new ParameterComboBox();//距离计算方法类型。仅对中心要素有效。暂只支持欧式距离。
 	private ParameterComboBox parameterEllipseSizeComboBox = new ParameterComboBox();//椭圆大小类型,仅对方向分布有效。
-	private ParameterFieldComboBox parameterGroupFieldComboBox = new ParameterFieldComboBox();//分组字段,可以为数值型、时间型、文本型。
-	private ParameterFieldComboBox parameterSelfWeightFieldComboBox = new ParameterFieldComboBox();//设置自身权重字段的名称。仅数值字段有效。暂仅对中心要素有效。
-	private ParameterFieldComboBox parameterWeightFieldComboBox = new ParameterFieldComboBox();//权重字段的名称
+	private ParameterFieldComboBox parameterGroupFieldComboBox = new ParameterFieldComboBox().setShowNullValue(true);//分组字段,可以为数值型、时间型、文本型。
+	private ParameterFieldComboBox parameterSelfWeightFieldComboBox = new ParameterFieldComboBox().setShowNullValue(true);//设置自身权重字段的名称。仅数值字段有效。暂仅对中心要素有效。
+	private ParameterFieldComboBox parameterWeightFieldComboBox = new ParameterFieldComboBox().setShowNullValue(true);//权重字段的名称
 	private ParameterLabel parameterStatisticsTypesLabel = new ParameterLabel();//统计类型的集合
 	private ParameterStatisticsField parameterStatisticsTypesUserDefine = new ParameterStatisticsField();//统计类型的集合
 
@@ -112,9 +111,9 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 		if (metaKeys.equals(MetaKeys.Directional)) {
 			measureParameter.setEllipseSize((EllipseSize) parameterEllipseSizeComboBox.getSelectedData());
 		}
-		measureParameter.setGroupFieldName(((FieldInfo) parameterGroupFieldComboBox.getSelectedItem()).getName());
-		measureParameter.setSelfWeightFieldName(((FieldInfo) parameterSelfWeightFieldComboBox.getSelectedItem()).getName());
-		measureParameter.setWeightFieldName(((FieldInfo) parameterWeightFieldComboBox.getSelectedItem()).getName());
+		measureParameter.setGroupFieldName(parameterGroupFieldComboBox.getFieldName());
+		measureParameter.setSelfWeightFieldName(parameterSelfWeightFieldComboBox.getFieldName());
+		measureParameter.setWeightFieldName(parameterWeightFieldComboBox.getFieldName());
 		measureParameter.setStatisticsFieldNames(parameterStatisticsTypesUserDefine.getStatisticsFieldNames());
 		measureParameter.setStatisticsTypes(parameterStatisticsTypesUserDefine.getStatisticsType());
 		return measureParameter;
