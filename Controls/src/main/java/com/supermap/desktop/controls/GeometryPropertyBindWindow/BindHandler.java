@@ -274,15 +274,10 @@ public class BindHandler {
 			if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() &&
 					!map.equals(((IFormMap) formMap).getMapControl().getMap()) && includeSameLayer(((IFormMap) formMap).getMapControl().getMap(), map)) {
 				Map sourceMap = ((IFormMap) formMap).getMapControl().getMap();
-				Map targetMap = map;
-				Layers sourceLayers = sourceMap.getLayers();
-				Layers targetLayers = targetMap.getLayers();
-				int sourceLayesSize = sourceLayers.getCount();
-				int targetLaysersSize = targetLayers.getCount();
-				for (int i = 0; i < sourceLayesSize; i++) {
-					for (int k = 0; k < targetLaysersSize; k++) {
-						Layer sourceLayer = sourceLayers.get(i);
-						Layer targetLayer = targetLayers.get(k);
+				ArrayList<Layer> sourceLayers = MapUtilities.getLayers(sourceMap);
+				ArrayList<Layer> targetLayers = MapUtilities.getLayers(map);
+				for (Layer sourceLayer : sourceLayers) {
+					for (Layer targetLayer : targetLayers) {
 						if (sourceLayer.getDataset().equals(targetLayer.getDataset()) && targetLayer.getSelection() != null) {
 							sourceLayer.setSelection(targetLayer.getSelection());
 						}
@@ -294,14 +289,10 @@ public class BindHandler {
 
 	private boolean includeSameLayer(Map sourceMap, Map targetMap) {
 		boolean result = false;
-		Layers sourceLayers = sourceMap.getLayers();
-		Layers targetLayers = targetMap.getLayers();
-		int sourceLayesSize = sourceLayers.getCount();
-		int targetLaysersSize = targetLayers.getCount();
-		for (int i = 0; i < sourceLayesSize; i++) {
-			for (int k = 0; k < targetLaysersSize; k++) {
-				Layer sourceLayer = sourceLayers.get(i);
-				Layer targetLayer = targetLayers.get(k);
+		ArrayList<Layer> sourceLayers = MapUtilities.getLayers(sourceMap);
+		ArrayList<Layer> targetLayers = MapUtilities.getLayers(targetMap);
+		for (Layer sourceLayer : sourceLayers) {
+			for (Layer targetLayer : targetLayers) {
 				if (sourceLayer.getDataset().equals(targetLayer.getDataset())) {
 					result = true;
 					break;
