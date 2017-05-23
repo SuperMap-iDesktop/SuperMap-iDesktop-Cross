@@ -10,8 +10,10 @@ import java.awt.*;
  * Created by highsad on 2017/2/23.
  */
 public abstract class AbstractDecorator implements IDecorator {
+	private final static int DEFAULT_PRIORITY = 100;
 	private IGraph decoratedGraph;
 	private GraphCanvas canvas;
+	private int priority = DEFAULT_PRIORITY;
 
 	public AbstractDecorator(GraphCanvas canvas) {
 		this.canvas = canvas;
@@ -25,6 +27,16 @@ public abstract class AbstractDecorator implements IDecorator {
 	@Override
 	public IGraph getGraph() {
 		return this.decoratedGraph;
+	}
+
+	@Override
+	public int getPriority() {
+		return this.priority;
+	}
+
+	@Override
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 
 	@Override
