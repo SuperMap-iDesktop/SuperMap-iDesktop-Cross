@@ -137,7 +137,9 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 				FieldInfo fieldInfo = fieldInfos.get(i);
 				if ((fieldTypes == null || ArrayUtilities.isArrayContains(fieldTypes, fieldInfo.getType()))
 						&& parameterFieldComboBox.isValueLegal(ParameterFieldComboBox.FILED_INFO_FILED_NAME, fieldInfos.get(i))) {
-					comboBox.addItem(fieldInfos.get(i));
+					if (!fieldInfos.get(i).isSystemField() || parameterFieldComboBox.isShowSystemField()) {
+						comboBox.addItem(fieldInfos.get(i));
+					}
 				}
 			}
 			comboBox.setSelectedIndex(-1);

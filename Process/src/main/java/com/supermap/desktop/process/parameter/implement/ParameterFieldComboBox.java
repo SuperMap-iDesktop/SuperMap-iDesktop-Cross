@@ -25,7 +25,8 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 	private FieldType[] fieldTypes;
 
 	private String describe;
-	private boolean isShowNullValue;
+	private boolean isShowNullValue = false;
+	private boolean isShowSystemField = false;
 
 	public ParameterFieldComboBox() {
 		super();
@@ -80,6 +81,14 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 	public ParameterFieldComboBox setShowNullValue(boolean showNullValue) {
 		isShowNullValue = showNullValue;
 		return this;
+	}
+
+	public boolean isShowSystemField() {
+		return isShowSystemField;
+	}
+
+	public void setShowSystemField(boolean showSystemField) {
+		isShowSystemField = showSystemField;
 	}
 
 	public void setFieldType(FieldType[] fieldType) {
