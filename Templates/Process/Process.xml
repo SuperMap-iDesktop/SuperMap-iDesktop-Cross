@@ -102,7 +102,7 @@
                 <process key="ISOPoint" name="点数据提取等值线"/>
                 <process key="ISORegion" name="提取等值面"/>
             </process>
-            <process name="空间统计分析">
+            <process name="地统计分析">
                 <process name="度量地理分布">//SpatialMeasure
                     <process key="CentralElement" name="中心要素"/>
                     <process key="MeanCenter" name="平均中心"/>

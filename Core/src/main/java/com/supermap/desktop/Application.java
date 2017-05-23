@@ -338,7 +338,9 @@ public class Application {
 
 		Document document = null;
 		try {
-			document = XmlUtilities.stringToDocument(desktopInfo);
+			if (!StringUtilities.isNullOrEmpty(desktopInfo)) {
+				document = XmlUtilities.stringToDocument(desktopInfo);
+			}
 		} catch (Exception e) {
 			// ignore
 		}
