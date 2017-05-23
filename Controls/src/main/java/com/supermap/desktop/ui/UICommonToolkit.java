@@ -317,10 +317,23 @@ public class UICommonToolkit {
 		component.setEnabled(isEnabled);
 		Component[] components = component.getComponents();
 
-		for (int i = 0; i < components.length; i++) {
-			if (components[i] instanceof JComponent) {
-				setComponentEnabled((JComponent) components[i], isEnabled);
+		for (Component component1 : components) {
+			if (component1 instanceof JComponent) {
+				setComponentEnabled((JComponent) component1, isEnabled);
 			}
 		}
+	}
+
+	public static DefaultMutableTreeNode getWorkspaceTreeDatasourceNode(String datasourceAlias) {
+		DefaultMutableTreeNode datasourcesNode = getWorkspaceManager().getWorkspaceTree().getDatasourcesNode();
+		for (int i = 0; i < datasourcesNode.getChildCount(); i++) {
+			DefaultMutableTreeNode childNode = (DefaultMutableTreeNode) datasourcesNode.getChildAt(i);
+			Datasource datasource = (Datasource) ((TreeNodeData) childNode.getUserObject()).getData();
+			if (datasource.getAlias().equals(datasourceAlias)) {
+				return childNode;
+			}
+
+		}
+		return null;
 	}
 }

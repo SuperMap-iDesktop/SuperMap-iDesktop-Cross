@@ -63,7 +63,6 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 	@Override
 	public Component getTreeCellEditorComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
 
-		lastEditingPath = tree.getSelectionPath();
 		// 给相关父类成员赋值
 		setTree(tree);
 		lastRow = row;
@@ -81,6 +80,7 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 
 		// 计算路径
 		TreePath newPath = tree.getPathForRow(row);
+		lastEditingPath = newPath;
 
 		canEdit = lastPath != null && newPath != null && lastPath.equals(newPath);
 
@@ -129,8 +129,7 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 						message = MessageFormat.format(ControlsProperties.getString("String_RenameDatasourceFailed"), stringTextField);
 						Application.getActiveApplication().getOutput().output(message);
 					} else {
-						int dialogResult = UICommonToolkit.showConfirmDialog(ControlsProperties.getString("String_RenameDatasourceInfo"));
-						if (JOptionPane.OK_OPTION == dialogResult) {
+						if (datasource.getDatasets().getCount() <= 0 || JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(ControlsProperties.getString("String_RenameDatasourceInfo"))) {
 							message = MessageFormat.format(ControlsProperties.getString("String_RenameDatasourceSuccess"), datasource.getAlias(), stringTextField);
 							currentWorkspace.getDatasources().modifyAlias(datasource.getAlias(), stringTextField);
 							Application.getActiveApplication().getOutput().output(message);
