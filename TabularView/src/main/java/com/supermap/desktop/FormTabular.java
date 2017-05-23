@@ -70,10 +70,13 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	private JTable jTableTabular;
 	private JScrollPane jScrollPaneChildWindow;
 	private JPopupMenu FormSuperTabularContextMenu;
-	public static final Color COLOR_SYSTEM_SELECTED = new Color(185, 214, 244);
-	public static final Color COLOR_SYSTEM_NOT_SELECTED = new Color(230, 230, 230);
+	public static final Color COLOR_HEADER = new Color(225, 225, 225);
+	public static final Color COLOR_HEADER_SELECTED = new Color(175, 204, 234);
+	public static final Color COLOR_SYSTEM_SELECTED = new Color(190, 219, 249);
+	public static final Color COLOR_SYSTEM_NOT_SELECTED = new Color(246, 246, 246);
+	public static final Color FONT_COLOR_SYSTEM = new Color(109, 109, 109);
 	public static final Color COLOR_EDITABLE_SELECTED = new Color(196, 225, 255);
-	public static final Color COLOR_EDITABLE_NOT_SELECTED = new Color(247, 247, 247);
+	public static final Color COLOR_EDITABLE_NOT_SELECTED = new Color(255, 255, 255);
 	private static final Color COLOR_WORD_SELECTED = Color.BLACK;
 	private static final int PREFER_ROW_HEIGHT = 23;
 	private static final int PREFER_COLUMN_WIDTH = 100;
@@ -192,6 +195,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		super(title, icon, component);
 		this.title = title;
 		jTableTabular = new AbstractHandleTable();
+		jTableTabular.setGridColor(Color.lightGray);
 		TableCellRenderer numberRenderer = new TableCellRenderer() {
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -202,6 +206,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 				if (value != null) {
 					jLabel.setText(DoubleUtilities.getFormatString(Double.valueOf(String.valueOf(value))));
 				}
+				jLabel.setHorizontalAlignment(JLabel.CENTER);
 				return jLabel;
 			}
 		};
@@ -219,6 +224,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		ListModel listModel = new LeftTableHeaderListModel(jTableTabular);
 		//listModel.
 		rowHeader = new JList(listModel);
+		rowHeader.setBackground(this.getBackground());
 		rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
 		rowHeader.setFixedCellHeight(jTableTabular.getRowHeight());
 		rowHeader.setCellRenderer(new RowHeaderRenderer(jTableTabular));
@@ -226,6 +232,9 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		jScrollPaneChildWindow.setRowHeaderView(rowHeader);
 		//在jscrollPaneChildWindow左上角设置一个序号标签
 		JLabel scrollPaneUpperLeftLabel=new JLabel(TabularViewProperties.getString("String_TabularForm_Sequence"),SwingConstants.CENTER);
+		scrollPaneUpperLeftLabel.setOpaque(true);
+		scrollPaneUpperLeftLabel.setBackground(COLOR_HEADER);
+		scrollPaneUpperLeftLabel.setBorder(new LineBorder(Color.LIGHT_GRAY));
 		jScrollPaneChildWindow.setCorner(JScrollPane.UPPER_LEFT_CORNER,scrollPaneUpperLeftLabel);
 
 		add(jScrollPaneChildWindow, BorderLayout.CENTER);
@@ -443,6 +452,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 				} else {
 					component.setBackground(COLOR_SYSTEM_NOT_SELECTED);
 				}
+				component.setForeground(FONT_COLOR_SYSTEM);
 			} else {
 				if (isCellSelected(row, column)) {
 					component.setBackground(COLOR_EDITABLE_SELECTED);
@@ -588,7 +598,21 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		jTableTabular.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		((DefaultTableCellRenderer) jTableTabular.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
+		jTableTabular.getTableHeader().setDefaultRenderer(new DefaultTableCellRenderer(){
+			@Override
+			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+				JButton button = new JButton(value.toString());
+				button.setHorizontalAlignment(CENTER);
+				button.setBackground(isSelected?COLOR_HEADER_SELECTED:COLOR_HEADER);
+				button.setContentAreaFilled(false);
+				button.setFocusPainted(false);
+				button.setOpaque(true);
+				button.setBorder(new LineBorder(Color.LIGHT_GRAY));
+				button.setPreferredSize(new Dimension(button.getWidth(),PREFER_ROW_HEIGHT));
+				button.setMinimumSize(new Dimension(button.getWidth(),PREFER_ROW_HEIGHT));
+				return button;
+			}
+		});
 		// bool类型编辑器
 		JComboBox<String> booleanEditorControl = new JComboBox<>();
 		booleanEditorControl.addItem("");
@@ -805,12 +829,11 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 			// TODO: 2017/4/20 UGDJ-565
 			this.table = table;
 			JTableHeader header = table.getTableHeader();
-			setOpaque(true);
 			setHorizontalAlignment(CENTER);
-//			setBorder(UIManager.getBorder("TableHeader.cellBorder"));
-			setFocusPainted(false);
-			setBackground(Color.gray);
+			setBackground(hasFocus()?COLOR_HEADER_SELECTED:COLOR_HEADER);
 			setContentAreaFilled(false);
+			setFocusPainted(false);
+			setOpaque(true);
 			setBorder(new LineBorder(Color.LIGHT_GRAY));
 			setFont(header.getFont());
 		}

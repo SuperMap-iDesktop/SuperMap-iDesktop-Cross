@@ -356,4 +356,21 @@ public class FileUtilities {
 		return false;
 	}
 
+	public static String getFileValue(String filePath) {
+		if (StringUtilities.isNullOrEmpty(filePath) || !new File(filePath).exists()) {
+			return null;
+		}
+		StringBuilder stringBuffer = new StringBuilder();
+		byte[] b = new byte[8 * 1024];
+		try (
+				FileInputStream fileInputStream = new FileInputStream(filePath);
+		) {
+			while (fileInputStream.read(b) != -1) {
+				stringBuffer.append(new String(b));
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
+		return stringBuffer.toString();
+	}
 }

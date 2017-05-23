@@ -167,6 +167,14 @@ public class XmlUtilities {
 		transformer.transform(source, result);
 	}
 
+
+	/**
+	 * 将指定节点输出为UTF-8格式字符串。
+	 * Outputs the specified node in a UTF-8 format string.
+	 */
+	public static String nodeToString(Node node) {
+		return nodeToString(node, "UTF-8");
+	}
 	/**
 	 * 将指定节点输出为字符串形式。
 	 *
