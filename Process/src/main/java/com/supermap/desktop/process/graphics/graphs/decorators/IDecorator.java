@@ -12,7 +12,7 @@ public interface IDecorator {
 	GraphCanvas getCanvas();
 
 	/**
-	 * 获取 Decorator 的优先级。数值越小，优先级越高。
+	 * 获取 Decorator 的优先级。数值越小，显示优先级越高。
 	 * Get the priority of current decorator.
 	 * The smaller the number value,the higher the priority.
 	 *
