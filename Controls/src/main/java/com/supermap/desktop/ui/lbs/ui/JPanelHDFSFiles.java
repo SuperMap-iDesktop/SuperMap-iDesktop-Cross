@@ -14,6 +14,7 @@ import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
@@ -150,6 +151,7 @@ public class JPanelHDFSFiles extends JPanel {
         this.rowHeader.setFixedCellWidth(ROW_HEADER_WIDTH);
         this.rowHeader.setFixedCellHeight(table.getRowHeight());
         this.rowHeader.setCellRenderer(new RowHeaderRenderer(table));
+        this.rowHeader.setBackground(this.getBackground());
         this.scrollPaneFormLBSControl.setRowHeaderView(rowHeader);
         JLabel scrollPaneUpperLeftLabel = new JLabel(CommonProperties.getString("String_ColumnHeader_Index"), SwingConstants.CENTER);
         scrollPaneFormLBSControl.setCorner(JScrollPane.UPPER_LEFT_CORNER, scrollPaneUpperLeftLabel);
@@ -370,7 +372,7 @@ public class JPanelHDFSFiles extends JPanel {
             JTableHeader header = table.getTableHeader();
             setOpaque(true);
             setHorizontalAlignment(CENTER);
-            setBorder(UIManager.getBorder("TableHeader.cellBorder"));
+            setBorder(new LineBorder(Color.LIGHT_GRAY));
             setForeground(header.getForeground());
             setBackground(header.getBackground());
             setFont(header.getFont());
