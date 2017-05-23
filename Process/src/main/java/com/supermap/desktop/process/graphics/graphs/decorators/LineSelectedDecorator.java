@@ -72,13 +72,18 @@ public class LineSelectedDecorator extends AbstractDecorator {
 		}
 
 		Graphics2D graphics2D = (Graphics2D) g;
+		Stroke origin = graphics2D.getStroke();
 		BasicStroke stroke = new BasicStroke(1);
+		graphics2D.setStroke(stroke);
 
 		for (int i = 0; i < points.length; i++) {
-			Ellipse2D shape = new Ellipse2D.Double(points[i].getX(), points[i].getY(), NODE_WIDTH / 2, NODE_WIDTH / 2);
+			Ellipse2D shape = new Ellipse2D.Double(points[i].getX() - NODE_WIDTH / 2, points[i].getY() - NODE_WIDTH / 2, NODE_WIDTH, NODE_WIDTH);
+			graphics2D.setColor(Color.WHITE);
 			graphics2D.fill(shape);
+			graphics2D.setColor(Color.GRAY);
 			graphics2D.draw(shape);
 		}
+		graphics2D.setStroke(origin);
 	}
 
 	private LineGraph getDecoratedLine() {

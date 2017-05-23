@@ -9,10 +9,8 @@ import com.supermap.desktop.process.FormProcess;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.desktop.utilities.XmlUtilities;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import javax.swing.*;
 import java.io.File;
@@ -43,12 +41,7 @@ public class CtrlActionProcessExportForm extends CtrlAction {
 		if (fileChoose.showDefaultDialog() == JFileChooser.APPROVE_OPTION) {
 			String filePath = fileChoose.getFilePath();
 			if (!StringUtilities.isNullOrEmpty(filePath)) {
-				Document emptyDocument = XmlUtilities.getEmptyDocument();
-				Element workFlowNode = emptyDocument.createElement("WorkFlow");
-				workFlowNode.setAttribute("name", workflow.getName());
-				workFlowNode.setAttribute("value", workflow.getMatrixXml());
-				emptyDocument.appendChild(workFlowNode);
-				XmlUtilities.saveXml(filePath, emptyDocument, "UTF-8");
+				FileUtilities.writeToFile(filePath, workflow.getMatrixXml());
 			}
 		}
 	}

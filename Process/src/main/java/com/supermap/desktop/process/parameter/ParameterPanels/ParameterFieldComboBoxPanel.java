@@ -88,6 +88,8 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 				JLabel jLabel = new JLabel();
 				if (value != null) {
 					jLabel.setText(value.getCaption());
+				} else {
+					jLabel.setText(" ");
 				}
 				jLabel.setOpaque(true);
 				if (isSelected) {
@@ -128,11 +130,16 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 				return;
 				//ignore
 			}
+			if (parameterFieldComboBox.isShowNullValue()) {
+				comboBox.addItem(null);
+			}
 			for (int i = 0; i < fieldInfos.getCount(); i++) {
 				FieldInfo fieldInfo = fieldInfos.get(i);
 				if ((fieldTypes == null || ArrayUtilities.isArrayContains(fieldTypes, fieldInfo.getType()))
 						&& parameterFieldComboBox.isValueLegal(ParameterFieldComboBox.FILED_INFO_FILED_NAME, fieldInfos.get(i))) {
-					comboBox.addItem(fieldInfos.get(i));
+					if (!fieldInfos.get(i).isSystemField() || parameterFieldComboBox.isShowSystemField()) {
+						comboBox.addItem(fieldInfos.get(i));
+					}
 				}
 			}
 			comboBox.setSelectedIndex(-1);
