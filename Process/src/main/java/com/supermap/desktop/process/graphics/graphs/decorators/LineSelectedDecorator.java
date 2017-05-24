@@ -52,7 +52,7 @@ public class LineSelectedDecorator extends AbstractDecorator {
 		Point[] points = lineGraph.getPoints();
 
 		for (int i = 0; i < points.length; i++) {
-			Ellipse2D shape = new Ellipse2D.Double(points[i].getX(), points[i].getY(), NODE_WIDTH / 2, NODE_WIDTH / 2);
+			Ellipse2D shape = new Ellipse2D.Double(points[i].getX() - NODE_WIDTH / 2, points[i].getY() - NODE_WIDTH / 2, NODE_WIDTH, NODE_WIDTH);
 			bounds.union(shape.getBounds());
 		}
 		return bounds;

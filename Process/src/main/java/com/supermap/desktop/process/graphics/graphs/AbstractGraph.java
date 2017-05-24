@@ -13,8 +13,7 @@ import com.supermap.desktop.utilities.StringUtilities;
 import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.lang.reflect.Constructor;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -24,6 +23,7 @@ public abstract class AbstractGraph implements IGraph {
 	private GraphCanvas canvas;
 	protected Shape shape;
 	private ConcurrentHashMap<String, IDecorator> decorators = new ConcurrentHashMap<>();
+	private java.util.List<IDecorator> sortedDeorators = new ArrayList<>();
 	private EventListenerList listenerList = new EventListenerList();
 
 	private AbstractGraph() {
@@ -185,13 +185,23 @@ public abstract class AbstractGraph implements IGraph {
 		}
 
 		this.decorators.put(key, decorator);
+		if (!this.sortedDeorators.contains(decorator)) {
+			this.sortedDeorators.add(decorator);
+		}
 		decorator.decorate(this);
+		Collections.sort(this.sortedDeorators, new Comparator<IDecorator>() {
+			@Override
+			public int compare(IDecorator o1, IDecorator o2) {
+				return o1.getPriority() - o2.getPriority();
+			}
+		});
 	}
 
 	@Override
 	public void removeDecorator(String key) {
 		if (this.decorators.containsKey(key)) {
 			this.decorators.get(key).undecorate();
+			this.sortedDeorators.remove(this.decorators.get(key));
 			this.decorators.remove(key);
 		}
 	}
@@ -210,6 +220,7 @@ public abstract class AbstractGraph implements IGraph {
 			}
 		}
 		decorator.undecorate();
+		this.sortedDeorators.remove(decorator);
 	}
 
 	@Override
@@ -264,9 +275,8 @@ public abstract class AbstractGraph implements IGraph {
 	public void paint(Graphics g) {
 		onPaint(g);
 
-		for (String key :
-				this.decorators.keySet()) {
-			this.decorators.get(key).paint(g);
+		for (int i = this.sortedDeorators.size() - 1; i >= 0; i--) {
+			this.sortedDeorators.get(i).paint(g);
 		}
 	}
 
