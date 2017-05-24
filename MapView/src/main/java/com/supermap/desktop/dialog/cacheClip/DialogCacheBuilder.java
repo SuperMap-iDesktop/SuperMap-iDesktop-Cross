@@ -53,12 +53,14 @@ public class DialogCacheBuilder extends SmDialog {
 	private WarningOrHelpProvider helpProviderForMergeSciCount;
 	//scipath for restore path of .sci file
 	private String sciPath;
-	private int totalSciLength;
 	private int nowProcessCount;
 	private String[] params;
 	private BuildCache buildCache;
 	//Total sci file
 	private File sciFile;
+	private CopyOnWriteArrayList<JProgressBar> progressBars;
+	private CopyOnWriteArrayList<String> captions;
+	private CopyOnWriteArrayList<Integer> captionCount;
 
 	private ActionListener closeListener = new ActionListener() {
 		@Override
@@ -82,7 +84,7 @@ public class DialogCacheBuilder extends SmDialog {
 					sciFiles = sciFile.list(getFilter());
 				}
 				if (null != sciFiles) {
-					totalSciLength = sciFiles.length;
+					int totalSciLength = sciFiles.length;
 					int buildSciLength = 0;
 					//Get success sci length
 					buildSciLength = totalSciLength - sciFile.list(getFilter()).length;
@@ -144,6 +146,7 @@ public class DialogCacheBuilder extends SmDialog {
 	}
 
 	private void initComponents() {
+		this.progressBars = new CopyOnWriteArrayList<>();
 		this.labelTaskPath = new JLabel();
 		this.labelWorkspacePath = new JLabel();
 		this.labelMapName = new JLabel();
@@ -288,8 +291,22 @@ public class DialogCacheBuilder extends SmDialog {
 			String mergeSciCount = textFieldMergeSciCount.getText();
 			params = new String[]{sciPath, workspacePath, mapName, cachePath, processCount, mergeSciCount};
 //            final String[] params = {workspacePath, mapName, sciPath, cachePath, processCount, mergeSciCount};
-			updateTotalProgress(params, true);
-			updateSingleProcess();
+			int totalSciLength = 0;
+			String[] sciNames = null;
+			File sciFile = new File(sciPath);
+			if (sciFile.exists()) {
+				sciNames = sciFile.list(getFilter());
+			}
+			if (null != sciNames) {
+				totalSciLength = sciNames.length;
+				captionCount = new CopyOnWriteArrayList<>();
+				for (int i = 0; i < captions.size(); i++) {
+					captionCount.add(sciFile.list(getFilter(captions.get(i))).length);
+				}
+				updateTotalProgress(sciFile.getParentFile().getPath(), cachePath, totalSciLength);
+				updateSingleProcess(sciFile.getParentFile().getPath(), totalSciLength);
+			}
+
 			buildCache = new BuildCache();
 			buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
 		} catch (Exception ex) {
@@ -298,81 +315,90 @@ public class DialogCacheBuilder extends SmDialog {
 	}
 
 	//Update single scale info process
-	private void updateSingleProcess() {
-
+	private void updateSingleProcess(String parentPath, int totalSciLength) {
+		final int fianlTotalSciLength = totalSciLength;
+		final String finalParentPath = parentPath;
+		Thread updateSingleThread = new Thread() {
+			@Override
+			public void run() {
+				int buildSciLength = -1;
+				while (fianlTotalSciLength != buildSciLength) {
+					String buildPath = finalParentPath + "\\build";
+					File buildFile = new File(buildPath);
+					//Ensure that component,count array have sorted as we want;
+					if (null != buildFile && buildFile.exists()) {
+						buildSciLength = buildFile.list(getFilter()).length;
+						for (int i = 0; i < captions.size(); i++) {
+							int currentCount = buildFile.list(getFilter(captions.get(i))).length;
+							final int value = (int) (((currentCount + 0.0) / captionCount.get(i)) * 100);
+							progressBars.get(i).setValue(value);
+						}
+					}
+				}
+			}
+		};
+		updateSingleThread.start();
 	}
 
 	//Update total progress
-	private void updateTotalProgress(String[] params, boolean sleep) {
-		final String[] tempParams = params;
-		final String finalSciPath = tempParams[0];
-		final boolean finalSleep = sleep;
+	private void updateTotalProgress(String parentPath, String cachePath, int totalSciLength) {
+		final String finalCachePath = cachePath;
+		final String finalParentPath = parentPath;
+		final int finalTotalSciLength = totalSciLength;
 		Thread updateThread = new Thread() {
 			@Override
 			public void run() {
-				refresh(tempParams, finalSciPath, finalSleep);
+				refresh(finalCachePath, finalParentPath, finalTotalSciLength);
 			}
 		};
 		updateThread.start();
 	}
 
-	private void refresh(String[] params, String finalSciPath, boolean finalSleep) {
+	private void refresh(String cachePath, String parentPath, int totalSciLength) {
 		try {
-			File sciPath = new File(finalSciPath);
-			String[] sciFiles;
-			if (sciPath.exists()) {
-				sciFiles = sciPath.list(getFilter());
+			int buildSciLength = 0;
+			while (buildSciLength != totalSciLength) {
+				//Get success sci length
+				String buildPath = parentPath + "\\build";
+				File buildFile = new File(buildPath);
+				if (buildFile.exists()) {
+					buildSciLength = buildFile.list(getFilter()).length;
+				}
+				final int value = (int) (((buildSciLength + 0.0) / totalSciLength) * 100);
+				progressBarTotal.setValue(value);
+				//Sleep two seconds or not
+				Thread.sleep(6000);
+			}
+			boolean result = false;
+			File resultDir = new File(cachePath);
+			String resultPath = "";
+			if (resultDir.isDirectory()) {
+				File[] files = resultDir.listFiles();
+				for (int i = 0; i < files.length; i++) {
+					if (files[i].getName().equals(params[BuildCache.MAPNAME_INDEX])) {
+						resultPath = files[i].getAbsolutePath();
+						result = true;
+						break;
+					}
+				}
+			}
+			if (result) {
+				if (null != sciFile) {
+					File mapNameDir = new File(resultPath);
+					String targetDirectory = null;
+					if (mapNameDir.isDirectory() && mapNameDir.listFiles().length > 0) {
+						targetDirectory = mapNameDir.listFiles()[0].getAbsolutePath();
+					}
+					//Paste sciFile to the target directory
+					if (null != targetDirectory) {
+						sciFile.renameTo(new File(targetDirectory, sciFile.getName()));
+					}
+				}
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), resultPath));
 			} else {
-				return;
+				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MultiCacheFailed"));
 			}
-			if (null != sciFiles) {
-				totalSciLength = sciFiles.length;
-				int buildSciLength = 0;
-				while (buildSciLength != totalSciLength) {
-					//Get success sci length
-					String buildPath = sciPath.getParentFile().getPath() + "\\build";
-					File buildFile = new File(buildPath);
-					if (buildFile.exists()) {
-						buildSciLength = buildFile.list(getFilter()).length;
-					}
-					final int value = (int) (((buildSciLength + 0.0) / totalSciLength) * 100);
-					progressBarTotal.setValue(value);
-					//Sleep two minutes or not
-					if (finalSleep) {
-						Thread.sleep(6000);
-					}
-				}
-				boolean result = false;
-				File resultDir = new File(params[BuildCache.CACHEPATH_INDEX]);
-				String resultPath = "";
-				if (resultDir.isDirectory()) {
-					File[] files = resultDir.listFiles();
-					for (int i = 0; i < files.length; i++) {
-						if (files[i].getName().equals(params[BuildCache.MAPNAME_INDEX])) {
-							resultPath = files[i].getAbsolutePath();
-							result = true;
-							break;
-						}
-					}
-				}
-				if (result) {
-					if (null != sciFile) {
-						File mapNameDir = new File(resultPath);
-						String targetDirectory = null;
-						if (mapNameDir.isDirectory() && mapNameDir.listFiles().length > 0) {
-							targetDirectory = mapNameDir.listFiles()[0].getAbsolutePath();
-						}
-						//Paste sciFile to the target directory
-						if (null != targetDirectory) {
-							sciFile.renameTo(new File(targetDirectory, sciFile.getName()));
-						}
-					}
-					Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), resultPath));
-				} else {
-					Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MultiCacheFailed"));
-				}
-				disposeInfo();
-			}
+			disposeInfo();
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
@@ -383,6 +409,16 @@ public class DialogCacheBuilder extends SmDialog {
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.endsWith(".sci");
+			}
+		};
+	}
+
+	private FilenameFilter getFilter(String caption) {
+		final String tempCaption = caption;
+		return new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".sci") && name.contains(tempCaption);
 			}
 		};
 	}
@@ -398,15 +434,17 @@ public class DialogCacheBuilder extends SmDialog {
 		this.sciFile = sciFile;
 	}
 
-	public void setCaptions(CopyOnWriteArrayList<String> captions) {
-		CopyOnWriteArrayList<String> tempCaptions = captions;
+	public void setCaptions(CopyOnWriteArrayList<String> sourceCaptions) {
+		captions = sourceCaptions;
 		//Display scale info process
 		JPanel panelScaleProcess = new JPanel();
 		panelScaleProcess.setLayout(new GridBagLayout());
-		int scaleCount = tempCaptions.size();
+		int scaleCount = captions.size();
 		for (int i = 0; i < scaleCount; i++) {
-			JLabel labelProcess = new JLabel("1:" + tempCaptions.get(i));
+			JLabel labelProcess = new JLabel("1:" + captions.get(i));
 			JProgressBar process = new JProgressBar();
+			process.setStringPainted(true);
+			progressBars.add(process);
 			panelScaleProcess.add(labelProcess, new GridBagConstraintsHelper(0, i, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(i == 0 ? 10 : 0, 10, 5, 10));
 			panelScaleProcess.add(process, new GridBagConstraintsHelper(1, i, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(i == 0 ? 10 : 0, 0, 5, 10).setWeight(1, 0));
 		}
