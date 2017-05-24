@@ -12,6 +12,8 @@ public class GetAllValueList extends JList {
 	public GetAllValueList() {
 		super();
 		this.setModel(model);
+		setFixedCellWidth(80);
+		setFixedCellHeight(20);
 		this.setCellRenderer(new ListCellRenderer() {
 			@Override
 			public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
