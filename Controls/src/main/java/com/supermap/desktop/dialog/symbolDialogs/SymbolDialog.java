@@ -459,6 +459,7 @@ public abstract class SymbolDialog extends SmDialog {
 					}
 
 				} catch (Exception ex) {
+					ex.printStackTrace();
 					Application.getActiveApplication().getOutput().output(ex);
 				}
 			}

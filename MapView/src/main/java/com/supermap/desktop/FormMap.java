@@ -1,6 +1,24 @@
 package com.supermap.desktop;
 
-import com.supermap.data.*;
+import com.supermap.data.CoordSysTransMethod;
+import com.supermap.data.CoordSysTransParameter;
+import com.supermap.data.CoordSysTranslator;
+import com.supermap.data.CursorType;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.GeoText;
+import com.supermap.data.GeoText3D;
+import com.supermap.data.Geometry;
+import com.supermap.data.InternalHandle;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.PrjCoordSysType;
+import com.supermap.data.Recordset;
+import com.supermap.data.Rectangle2D;
+import com.supermap.data.TextStyle;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IProperty;
@@ -585,11 +603,8 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 	}
 
-	private Dimension newSize;
-
 	private void initComponents() {
-		this.mapControl = new MapControl();
-		this.mapControl.setWaitCursorEnabled(false);
+		this.mapControl = MapUtilities.getDefaultMapControl();
 		jScrollPaneChildWindow = new SmMapControlScrollPanel(mapControl);
 		this.layersTree = UICommonToolkit.getLayersManager().getLayersTree();
 		this.scaleBox = (SmComboBox) getStatusbar().getComponent(SCALE);

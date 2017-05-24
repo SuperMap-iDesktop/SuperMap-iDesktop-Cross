@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.text.MessageFormat;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by xie on 2017/5/3.
@@ -250,7 +251,6 @@ public class DialogCacheBuilder extends SmDialog {
 //		panelClipProgress.add(this.buttonRefresh, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 10));
 		panelClipProgress.add(this.labelDetailProgressInfo, new GridBagConstraintsHelper(0, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
 		panelClipProgress.add(this.scrollPaneProgresses, new GridBagConstraintsHelper(0, 3, 3, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(0, 10, 5, 10).setWeight(1, 1));
-
 		JPanel panelContent = (JPanel) this.getContentPane();
 		panelContent.setLayout(new GridBagLayout());
 		panelContent.add(panelClip, new GridBagConstraintsHelper(0, 0, 4, 4).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(5, 10, 5, 10).setWeight(1, 1));
@@ -396,5 +396,21 @@ public class DialogCacheBuilder extends SmDialog {
 
 	public void setSciFile(File sciFile) {
 		this.sciFile = sciFile;
+	}
+
+	public void setCaptions(CopyOnWriteArrayList<String> captions) {
+		CopyOnWriteArrayList<String> tempCaptions = captions;
+		//Display scale info process
+		JPanel panelScaleProcess = new JPanel();
+		panelScaleProcess.setLayout(new GridBagLayout());
+		int scaleCount = tempCaptions.size();
+		for (int i = 0; i < scaleCount; i++) {
+			JLabel labelProcess = new JLabel("1:" + tempCaptions.get(i));
+			JProgressBar process = new JProgressBar();
+			panelScaleProcess.add(labelProcess, new GridBagConstraintsHelper(0, i, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(i == 0 ? 10 : 0, 10, 5, 10));
+			panelScaleProcess.add(process, new GridBagConstraintsHelper(1, i, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(i == 0 ? 10 : 0, 0, 5, 10).setWeight(1, 0));
+		}
+		panelScaleProcess.add(new JPanel(), new GridBagConstraintsHelper(0, scaleCount, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+		this.scrollPaneProgresses.setViewportView(panelScaleProcess);
 	}
 }

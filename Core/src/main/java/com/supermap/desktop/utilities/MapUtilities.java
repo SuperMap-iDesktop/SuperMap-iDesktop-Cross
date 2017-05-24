@@ -1,23 +1,51 @@
 package com.supermap.desktop.utilities;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoStyle3D;
+import com.supermap.data.GeoText;
+import com.supermap.data.GeoText3D;
+import com.supermap.data.Geometry;
+import com.supermap.data.Geometry3D;
+import com.supermap.data.Point2D;
+import com.supermap.data.PrjCoordSys;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CoreProperties;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.LayerGroup;
+import com.supermap.mapping.LayerSettingVector;
+import com.supermap.mapping.Layers;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.ThemeLabel;
+import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static com.supermap.desktop.utilities.SnapSettingUtilities.getSnapSetting;
+
 public class MapUtilities {
+
+
 	private MapUtilities() {
 		// 工具类不提供构造函数
 	}
+
+	public static MapControl getDefaultMapControl() {
+		MapControl mapControl = new MapControl();
+		mapControl.setWaitCursorEnabled(false);
+		mapControl.setSnapSetting(getSnapSetting());
+		return mapControl;
+	}
+
 
 	/**
 	 * 获取MapControl
@@ -582,4 +610,6 @@ public class MapUtilities {
 		}
 		return geometry;
 	}
+
+
 }
