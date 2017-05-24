@@ -801,7 +801,6 @@ public class SQLExpressionDialog extends SmDialog {
 				//获取字段信息
 				//yuanR存疑：为什么filedDatasets是数据集数组？？因为当设置了关联属性表，其数据集数量会增加（1.12）
 				Object[] allValue = getListValue(filedDatasets);
-				listAllValue.removeAllElements();
 				if (allValue != null && allValue.length > 0) {
 					listAllValue.resetValue(allValue);
 //					textFieldGOTO.setEnabled(true);
@@ -823,37 +822,6 @@ public class SQLExpressionDialog extends SmDialog {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			buttonOperator_Click((JButton) e.getSource());
-		}
-	}
-
-	//获取唯一值，list-yuanR
-	class GetAllValueList extends JList {
-		public GetAllValueList() {
-			super(new DefaultListModel<String>());
-		}
-
-		public int getValueIndex(String value) {
-			int defaultValue = this.getSelectedIndex();
-			for (int i = 0; i < this.getModel().getSize(); i++) {
-				if (this.getModel().getElementAt(i).toString().startsWith(value)) {
-					return i;
-				}
-			}
-			return defaultValue;
-		}
-
-		public void removeAllElements() {
-			((DefaultListModel) this.getModel()).removeAllElements();
-		}
-
-		public void resetValue(Object[] allValue) {
-			this.removeAllElements();
-			if (allValue != null && allValue.length > 0) {
-				for (Object anAllValue : allValue) {
-					((DefaultListModel<Object>) this.getModel()).addElement(anAllValue);
-				}
-				this.setSelectedIndex(0);
-			}
 		}
 	}
 

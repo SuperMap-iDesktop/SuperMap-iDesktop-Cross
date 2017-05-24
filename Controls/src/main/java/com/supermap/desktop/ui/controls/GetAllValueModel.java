@@ -1,4 +1,4 @@
-package com.supermap.desktop.CtrlAction.SQLQuery;
+package com.supermap.desktop.ui.controls;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -7,15 +7,15 @@ import java.util.Collections;
 /**
  * @author XiaJT
  */
-public class MyListModel extends AbstractListModel {
+public class GetAllValueModel extends AbstractListModel {
 
 	private ArrayList<Object> datas = new ArrayList<>();
 
-	public MyListModel() {
+	public GetAllValueModel() {
 
 	}
 
-	public MyListModel(Object... datas) {
+	public GetAllValueModel(Object... datas) {
 		Collections.addAll(this.datas, datas);
 	}
 
