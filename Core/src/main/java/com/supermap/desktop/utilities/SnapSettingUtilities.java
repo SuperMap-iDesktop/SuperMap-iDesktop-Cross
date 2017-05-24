@@ -1,5 +1,6 @@
 package com.supermap.desktop.utilities;
 
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.mapping.SnapMode;
 import com.supermap.mapping.SnapSetting;
 import org.w3c.dom.Document;
@@ -25,11 +26,15 @@ public class SnapSettingUtilities {
 
 	public static void setSnapSetting(SnapSetting snapSetting) {
 		SnapSettingUtilities.snapSetting = snapSetting;
+		resetSnapSettingFile(snapSetting);
 	}
 
-	public static SnapSetting getDefaultSnapSetting() {
+	private static SnapSetting getDefaultSnapSetting() {
 		if (new File(PathUtilities.getFullPathName(SnapSettingXMLPath, false)).exists()) {
 			snapSetting = parseSnapSetting();
+		} else {
+			snapSetting = new SnapSetting();
+			resetSnapSettingFile(snapSetting);
 		}
 		return snapSetting;
 	}
@@ -184,7 +189,12 @@ public class SnapSettingUtilities {
 	 * @param snapSetting
 	 */
 	public static void resetSnapSettingFile(SnapSetting snapSetting) {
-		Document document = XmlUtilities.getDocument(PathUtilities.getFullPathName(SnapSettingXMLPath, false));
+		String pathName = PathUtilities.getFullPathName(SnapSettingXMLPath, false);
+		File file = new File(pathName);
+		if (!file.exists()) {
+			FileUtilities.writeToFile(pathName, CoreProperties.getString("String_SnapSetting"));
+		}
+		Document document = XmlUtilities.getDocument(pathName);
 		Element element = document.getDocumentElement();
 		NodeList nodeList = element.getChildNodes();
 		for (int i = 0; i < nodeList.getLength(); i++) {
@@ -193,7 +203,7 @@ public class SnapSettingUtilities {
 				resetSnapSettingNode(snapSetting, tempNode);
 			}
 		}
-		XmlUtilities.saveXml(PathUtilities.getFullPathName(SnapSettingXMLPath, false), document,
+		XmlUtilities.saveXml(pathName, document,
 				document.getXmlEncoding());
 	}
 
