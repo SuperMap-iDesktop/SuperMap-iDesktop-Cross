@@ -26,11 +26,18 @@ public class LineSelectedDecorator extends AbstractDecorator {
 
 	@Override
 	public boolean contains(Point point) {
+		boolean isContain = false;
 		LineGraph lineGraph = getDecoratedLine();
 		Point[] points = lineGraph.getPoints();
 
-
-		return super.contains(point);
+		for (int i = 0; i < points.length; i++) {
+			Ellipse2D shape = new Ellipse2D.Double(points[i].getX(), points[i].getY(), NODE_WIDTH / 2, NODE_WIDTH / 2);
+			isContain = shape.contains(point.getX(), point.getY());
+			if (isContain) {
+				break;
+			}
+		}
+		return isContain;
 	}
 
 	@Override
@@ -45,7 +52,7 @@ public class LineSelectedDecorator extends AbstractDecorator {
 		Point[] points = lineGraph.getPoints();
 
 		for (int i = 0; i < points.length; i++) {
-			Ellipse2D shape = new Ellipse2D.Double(points[i].getX(), points[i].getY(), NODE_WIDTH / 2, NODE_WIDTH / 2);
+			Ellipse2D shape = new Ellipse2D.Double(points[i].getX() - NODE_WIDTH / 2, points[i].getY() - NODE_WIDTH / 2, NODE_WIDTH, NODE_WIDTH);
 			bounds.union(shape.getBounds());
 		}
 		return bounds;
@@ -53,17 +60,30 @@ public class LineSelectedDecorator extends AbstractDecorator {
 
 	@Override
 	protected void onPaint(Graphics g) {
+		LineGraph lineGraph = getDecoratedLine();
 
-	}
-
-	private Rectangle getPointBounds(Point point) {
-		Rectangle bounds = null;
-
-		if (point != null) {
-			Ellipse2D shape = new Ellipse2D.Double(point.getX(), point.getY(), NODE_WIDTH / 2, NODE_WIDTH / 2);
-			bounds = shape.getBounds();
+		if (lineGraph == null) {
+			return;
 		}
-		return bounds;
+
+		Point[] points = lineGraph.getPoints();
+		if (points == null || points.length == 0) {
+			return;
+		}
+
+		Graphics2D graphics2D = (Graphics2D) g;
+		Stroke origin = graphics2D.getStroke();
+		BasicStroke stroke = new BasicStroke(1);
+		graphics2D.setStroke(stroke);
+
+		for (int i = 0; i < points.length; i++) {
+			Ellipse2D shape = new Ellipse2D.Double(points[i].getX() - NODE_WIDTH / 2, points[i].getY() - NODE_WIDTH / 2, NODE_WIDTH, NODE_WIDTH);
+			graphics2D.setColor(Color.WHITE);
+			graphics2D.fill(shape);
+			graphics2D.setColor(Color.GRAY);
+			graphics2D.draw(shape);
+		}
+		graphics2D.setStroke(origin);
 	}
 
 	private LineGraph getDecoratedLine() {

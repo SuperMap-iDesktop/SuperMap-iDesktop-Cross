@@ -178,7 +178,8 @@ public class MultiSelection extends Selection {
 			IDecorator decorator = graph.getDecorator(DECORATOR_KEY);
 			Rectangle dirtyRect = decorator.getBounds();
 			graph.removeDecorator(DECORATOR_KEY);
-			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(dirtyRect));
+//			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(dirtyRect));
+			getCanvas().repaint();
 		}
 	}
 

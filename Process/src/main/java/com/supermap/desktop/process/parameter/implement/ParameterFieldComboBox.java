@@ -11,7 +11,7 @@ import java.beans.PropertyChangeEvent;
 
 /**
  * @author XiaJT
- * fixme: 需要支持可以选择空，并能置为第一个选项；最好支持添加任意像，如果"0"
+ * 最好支持添加任意像，如果"0"
  */
 public class ParameterFieldComboBox extends AbstractParameter implements ISelectionParameter {
 
@@ -25,6 +25,8 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 	private FieldType[] fieldTypes;
 
 	private String describe;
+	private boolean isShowNullValue = false;
+	private boolean isShowSystemField = false;
 
 	public ParameterFieldComboBox() {
 		super();
@@ -47,6 +49,13 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 		return fieldInfo;
 	}
 
+	public String getFieldName() {
+		if (fieldInfo != null) {
+			return fieldInfo.getName();
+		}
+		return null;
+	}
+
 	@Override
 	public String getType() {
 		return ParameterType.FIELD_COMBO_BOX;
@@ -65,6 +74,22 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 		return dataset;
 	}
 
+	public boolean isShowNullValue() {
+		return isShowNullValue;
+	}
+
+	public ParameterFieldComboBox setShowNullValue(boolean showNullValue) {
+		isShowNullValue = showNullValue;
+		return this;
+	}
+
+	public boolean isShowSystemField() {
+		return isShowSystemField;
+	}
+
+	public void setShowSystemField(boolean showSystemField) {
+		isShowSystemField = showSystemField;
+	}
 
 	public void setFieldType(FieldType[] fieldType) {
 		this.fieldTypes = fieldType;

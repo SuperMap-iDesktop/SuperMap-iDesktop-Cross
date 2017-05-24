@@ -21,6 +21,7 @@ public class LineGraph extends AbstractGraph {
 		super(canvas, new GeneralPath());
 		this.points = new ArrayList<>();
 		this.arrowDecorator = new LineArrowDecorator(getCanvas());
+		this.arrowDecorator.setPriority(Integer.MAX_VALUE);
 		addDecorator(DECORATOR_KEY_LINE_ARROW, this.arrowDecorator);
 	}
 
@@ -30,6 +31,18 @@ public class LineGraph extends AbstractGraph {
 
 	public int getPointCount() {
 		return this.points.size();
+	}
+
+	@Override
+	public Rectangle getBounds() {
+		Rectangle bounds = super.getBounds();
+
+		if (bounds.width == 0 && bounds.height != 0) {
+			bounds = new Rectangle(bounds.x, bounds.y, 1, bounds.height);
+		} else if (bounds.width != 0 && bounds.height == 0) {
+			bounds = new Rectangle(bounds.x, bounds.y, bounds.width, 1);
+		}
+		return bounds;
 	}
 
 	public Point getPoint(int index) {
@@ -119,18 +132,5 @@ public class LineGraph extends AbstractGraph {
 			graphics2D.draw(path);
 			graphics2D.setStroke(originStroke);
 		}
-	}
-
-	public static void main(String[] args) {
-		ArrayList<Integer> list = new ArrayList<>();
-		for (int i = 0; i < 10; i++) {
-			list.add(i);
-		}
-
-		System.out.println(list);
-		list.remove(3);
-		System.out.println(list);
-		list.add(3, 100);
-		System.out.println(list);
 	}
 }

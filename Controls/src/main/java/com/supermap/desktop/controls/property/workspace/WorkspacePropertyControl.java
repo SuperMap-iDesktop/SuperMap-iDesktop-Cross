@@ -229,7 +229,7 @@ public class WorkspacePropertyControl extends AbstractPropertyControl {
 		this.textFieldFilePath.setText(workspace.getConnectionInfo().getServer());
 		this.textFieldVersion.setText(workspace.getConnectionInfo().getVersion().toString());
 		this.textFieldWorkspaceType.setText(workspace.getConnectionInfo().getType().toString());
-		this.textFieldDescription.setText(Application.getActiveApplication().getWorkspaceDescribe());
+		this.textFieldDescription.setText(workspace.getDescription());
 		if (workspace.getConnectionInfo().getType() == WorkspaceType.SXWU) {
 			this.buttonChangePassword.setEnabled(false);
 		} else {
@@ -279,7 +279,7 @@ public class WorkspacePropertyControl extends AbstractPropertyControl {
 
 	private void buttonApplyClick() {
 		try {
-			Application.getActiveApplication().setWorkspaceDescribe(description);
+			workspace.setDescription(description);
 		} catch (Exception e2) {
 			Application.getActiveApplication().getOutput().output(e2);
 		}
@@ -294,7 +294,7 @@ public class WorkspacePropertyControl extends AbstractPropertyControl {
 
 	private void reset() {
 		this.newPassword = this.workspace.getConnectionInfo().getPassword();
-		this.description = Application.getActiveApplication().getWorkspaceDescribe();
+		this.description = workspace.getDescription();
 		this.textFieldDescription.setText(this.description);
 		setButtonResetEnabledInEDT(false);
 		setButtonApplyEnabledInEDT(false);
@@ -322,7 +322,7 @@ public class WorkspacePropertyControl extends AbstractPropertyControl {
 
 	private boolean checkChange() {
 		try {
-			if (!Application.getActiveApplication().getWorkspaceDescribe().equals(this.description) || !this.workspace.getConnectionInfo().getPassword().equals(this.newPassword)) {
+			if (!workspace.getDescription().equals(this.description) || !this.workspace.getConnectionInfo().getPassword().equals(this.newPassword)) {
 				this.isChanged = true;
 			}
 		} catch (Exception e) {
