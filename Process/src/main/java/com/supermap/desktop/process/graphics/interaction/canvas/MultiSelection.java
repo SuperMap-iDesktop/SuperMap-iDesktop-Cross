@@ -105,7 +105,6 @@ public class MultiSelection extends Selection {
 					selectItems(selected);
 				} else {
 					cleanDecorators();
-					this.selectedItems.clear();
 				}
 			} else {
 
@@ -178,8 +177,9 @@ public class MultiSelection extends Selection {
 			Rectangle dirtyRect = decorator.getBounds();
 			graph.removeDecorator(DECORATOR_KEY);
 //			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(dirtyRect));
-			getCanvas().repaint();
 		}
+		this.selectedItems.clear();
+		getCanvas().repaint();
 	}
 
 	private void resetStatus() {
@@ -207,7 +207,6 @@ public class MultiSelection extends Selection {
 			// otherwise,clean this selected items, and then select this specified graph and also fire graph selected events.
 			if (!this.selectedItems.contains(graph) || this.selectedItems.size() != 1) {
 				cleanDecorators();
-				this.selectedItems.clear();
 
 				this.selectedItems.add(graph);
 				graph.addDecorator(DECORATOR_KEY, SelectedDecoratorFactory.createDecorator(graph));
@@ -218,7 +217,6 @@ public class MultiSelection extends Selection {
 		} else {
 			if (this.selectedItems.size() > 0) {
 				cleanDecorators();
-				this.selectedItems.clear();
 				fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
 			}
 		}
@@ -245,7 +243,6 @@ public class MultiSelection extends Selection {
 		} else {
 			if (this.selectedItems.size() > 0) {
 				cleanDecorators();
-				this.selectedItems.clear();
 				fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
 			}
 		}

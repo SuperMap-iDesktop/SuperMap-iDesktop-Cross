@@ -184,6 +184,10 @@ public abstract class AbstractGraph implements IGraph {
 			return;
 		}
 
+		if (this.decorators.containsKey(key)) {
+			return;
+		}
+
 		this.decorators.put(key, decorator);
 		if (!this.sortedDeorators.contains(decorator)) {
 			this.sortedDeorators.add(decorator);
