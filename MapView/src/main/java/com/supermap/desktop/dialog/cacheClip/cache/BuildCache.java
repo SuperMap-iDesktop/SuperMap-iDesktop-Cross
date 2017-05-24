@@ -3,7 +3,6 @@ package com.supermap.desktop.dialog.cacheClip.cache;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
-import com.supermap.desktop.utilities.Convert;
 import com.supermap.mapping.Map;
 
 import java.io.File;
@@ -35,6 +34,7 @@ public class BuildCache {
 		String projectPath = System.getProperty("user.dir");
 		projectPath = projectPath.replace("/", "\\");
 		String jarPath = ".;" + projectPath + "\\bin\\com.supermap.data.jar;" + projectPath + "\\bin\\com.supermap.mapping.jar;" + projectPath + "\\bin\\com.supermap.tilestorage.jar;" + projectPath + "\\bin\\com.supermap.data.processing.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
+//		String jarPath = ".;" + projectPath + "\\bundles\\require_bundles\\Core.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
 		arguments.add(jarPath);
 		arguments.add(getClass().getName());
 		for (int i = 0; i < params.length; i++) {
@@ -51,7 +51,7 @@ public class BuildCache {
 		if (0 == processCount) {
 			main(params);
 		} else {
-			//Write executing info to log
+			//(Write executing info to log)Write log info to console
 			LogWriter.setWriteToFile(true);
 			for (int i = 0; i < processCount; i++) {
 				startProcess(params);
@@ -90,7 +90,7 @@ public class BuildCache {
 			if (sciPath.exists()) {
 				do {
 					long start = System.currentTimeMillis();
-					//Re calculate sci file length
+					//Recalculate sci file length
 					String[] sciFileNames = sciPath.list(getFilter());
 					sciLength = sciFileNames.length;
 
@@ -142,36 +142,6 @@ public class BuildCache {
 
 	}
 
-	//Sort file by name
-	private static CopyOnWriteArrayList sort(String[] sciFiles, String taskPath) {
-		CopyOnWriteArrayList<String> allsciFiles = new CopyOnWriteArrayList<>();
-		// sort by name
-		ArrayList<Integer> scales = new ArrayList();
-		for (String name : sciFiles) {
-			String scale = name.substring(1, name.indexOf("_"));
-			Integer scaleInt = Convert.toInteger(scale);
-			if (!scales.contains(scaleInt))
-				scales.add(scaleInt);
-		}
-		Integer[] scaleArray = scales.toArray(new Integer[scales.size()]);
-		for (int i = 0; i < scaleArray.length; i++) {
-			for (int j = i + 1; j < scaleArray.length; j++) {
-				if (scaleArray[i] > scaleArray[j]) {
-					Integer temp = scaleArray[i];
-					scaleArray[i] = scaleArray[j];
-					scaleArray[j] = temp;
-				}
-			}
-		}
-		for (Integer scale : scaleArray) {
-			for (String name : sciFiles) {
-				if (name.contains(String.valueOf(scale)) && !allsciFiles.contains(taskPath + "\\" + name)) {
-					allsciFiles.add(taskPath + "\\" + name);
-				}
-			}
-		}
-		return allsciFiles;
-	}
 
 	private void doingSci(String sciFileName, File doingDir, CopyOnWriteArrayList<String> doingSciNames) {
 		String sciName = sciFileName;

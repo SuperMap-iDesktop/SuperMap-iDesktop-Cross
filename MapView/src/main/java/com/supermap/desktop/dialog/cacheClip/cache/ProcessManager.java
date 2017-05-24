@@ -37,9 +37,8 @@ public class ProcessManager {
 						for (SubprocessThread thread : threadList) {
 							thread.timeout();
 						}
-						sleep(SubprocessThread.TimeOutMS);
 						for (SubprocessThread thread : threadList) {
-							if (thread.isTimeOut()) {
+							if (!thread.isAlive() && null != thread.process) {
 								SubprocessThread newThread = thread.clone();
 								thread.process.destroy();
 								threadList.remove(thread);

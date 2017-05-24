@@ -29,12 +29,11 @@ class SubprocessThread extends Thread {
 	}
 
 	/**
-	 * If timeout kill this process
+	 * If thread is died, destroy this process
 	 */
 	public void timeout() {
 		synchronized (this) {
-			long cost = System.currentTimeMillis() - start;
-			if (start > 0 && cost > TimeOutMS) {
+			if (!SubprocessThread.this.isAlive()) {
 				int psHash = process.hashCode();
 				LogWriter log = LogWriter.getInstance();
 				log.writelog("time out and kill it, PIDHASH:" + psHash);
@@ -43,9 +42,6 @@ class SubprocessThread extends Thread {
 		}
 	}
 
-	public boolean isTimeOut() {
-		return timeOut;
-	}
 
 	@Override
 	public void run() {
