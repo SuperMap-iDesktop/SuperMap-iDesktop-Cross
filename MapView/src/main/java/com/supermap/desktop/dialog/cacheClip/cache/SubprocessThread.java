@@ -33,7 +33,7 @@ class SubprocessThread extends Thread {
 	 */
 	public void timeout() {
 		synchronized (this) {
-			if (!SubprocessThread.this.isAlive()) {
+			if (!SubprocessThread.this.isAlive() && null != process) {
 				int psHash = process.hashCode();
 				LogWriter log = LogWriter.getInstance();
 				log.writelog("time out and kill it, PIDHASH:" + psHash);

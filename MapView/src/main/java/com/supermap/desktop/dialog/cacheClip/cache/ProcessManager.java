@@ -34,18 +34,7 @@ public class ProcessManager {
 						if (null == threadList) {
 							break;
 						}
-						for (SubprocessThread thread : threadList) {
-							thread.timeout();
-						}
-						for (SubprocessThread thread : threadList) {
-							if (!thread.isAlive() && null != thread.process) {
-								SubprocessThread newThread = thread.clone();
-								thread.process.destroy();
-								threadList.remove(thread);
-								threadList.add(newThread);
-								newThread.start();
-							}
-						}
+						//Todo while process destroy unexpected create one/more
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

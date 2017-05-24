@@ -69,14 +69,13 @@ public class TaskBuilder {
 		scaleList.addAll(scales);
 		Collections.sort(scaleList);
 		for (int i = scaleList.size() - 1; i >= 0; i--) {
-			captions.add(allScaleCaptions.get(scaleList.get(i)));
+			captions.add(String.valueOf((int) (1 / scaleList.get(i))));
 		}
-		//Length of the max scale
-		int length = allScaleCaptions.get(scaleList.get(0)).length();
+		int length = 9;
 		for (double scale : scaleList) {
 			double tileResolution = writer.getTileResolustion(scale);
 			HashMap<Double, String> newScaleCaptions = new HashMap();
-			String caption = allScaleCaptions.get(scale);
+			String caption = String.valueOf((int) (1 / scale));
 			if (caption.length() < length) {
 				int addSize = length - caption.length();
 				for (int i = 0; i < addSize; i++) {

@@ -108,7 +108,7 @@ public class BuildCache {
 					if (sciLength > mergeSciCount) {
 						//First step:Move mergeSciCount sci to doing directory
 						for (int i = 0; i < mergeSciCount; i++) {
-							doingSci(taskPath + "\\" + sciFileNames[i], doingDir, doingSciNames);
+							doingSci(taskPath + "\\" + sciFileNames[sciLength-1-i], doingDir, doingSciNames);
 						}
 						//Second step:get sci file from doing dir and build cache
 						for (int i = 0; i < doingSciNames.size(); i++) {
@@ -117,7 +117,7 @@ public class BuildCache {
 						}
 					} else {
 						//First step:Move last sci file to doing directory
-						for (int i = 0; i < sciLength; i++) {
+						for (int i = sciLength-1; i >=0 ; i--) {
 							doingSci(taskPath + "\\" + sciFileNames[i], doingDir, doingSciNames);
 						}
 						//Second step:get sci file from doing dir and build cache
@@ -147,7 +147,11 @@ public class BuildCache {
 		String sciName = sciFileName;
 		File sci = new File(sciName);
 		if (sci.exists() && null != doingDir) {
-			sci.renameTo(new File(doingDir, sci.getName()));
+			boolean renameSuccess;
+			do {
+				//Multi process may failed to rename,so do it again
+				renameSuccess = sci.renameTo(new File(doingDir, sci.getName()));
+			} while (renameSuccess);
 			doingSciNames.add(doingDir.getAbsolutePath() + "\\" + sci.getName());
 		}
 	}
