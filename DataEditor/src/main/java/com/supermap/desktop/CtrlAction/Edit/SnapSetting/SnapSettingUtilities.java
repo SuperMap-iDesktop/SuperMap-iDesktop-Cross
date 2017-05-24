@@ -6,12 +6,20 @@ import com.supermap.desktop.utilities.XmlUtilities;
 import com.supermap.mapping.SnapMode;
 import com.supermap.mapping.SnapSetting;
 import com.supermap.ui.MapControl;
-import org.w3c.dom.*;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
@@ -329,79 +337,8 @@ public class SnapSettingUtilities {
         }
     }
 
-    /**
-     * 重置SnapSetting.xml文件
-     *
-     * @param snapSetting
-     */
-    public static void resetSnapSettingFile(SnapSetting snapSetting) {
-        Document document = getDocument(SNAPSETTING_PATH);
-        Element element = document.getDocumentElement();
-        NodeList nodeList = element.getChildNodes();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node tempNode = nodeList.item(i);
-            if ((tempNode != null && tempNode.getNodeType() == Node.ELEMENT_NODE) && "Node".equals(tempNode.getNodeName())) {
-                resetSnapSettingNode(snapSetting, tempNode);
-            }
-        }
-        XmlUtilities.saveXml(PathUtilities.getFullPathName(DataEditorProperties.getString(SNAPSETTING_PATH), false), document,
-                document.getXmlEncoding());
-    }
 
-    private static void resetSnapSettingNode(SnapSetting snapSetting, Node node) {
-        String elementName = node.getAttributes().getNamedItem("name").getNodeValue();
-        int id = -1;
-        String isSelect = "";
-        if (elementName.equals("Tolerance")) {
-            node.getAttributes().getNamedItem("value").setNodeValue(String.valueOf(snapSetting.getTolerance()));
-        } else if (elementName.equals("FixedAngle")) {
-            node.getAttributes().getNamedItem("value").setNodeValue(String.valueOf(snapSetting.getFixedAngle()));
-        } else if (elementName.equals("MaxSnappedCount")) {
-            node.getAttributes().getNamedItem("value").setNodeValue(String.valueOf(snapSetting.getMaxSnappedCount()));
-        } else if (elementName.equals("FixedLength")) {
-            node.getAttributes().getNamedItem("value").setNodeValue(String.valueOf(snapSetting.getFixedLength()));
-        } else if (elementName.equals("MinSnappedLength")) {
-            node.getAttributes().getNamedItem("value").setNodeValue(String.valueOf(snapSetting.getMinSnappedLength()));
-        } else if (elementName.equals("SnappedLineBroken")) {
-            node.getAttributes().getNamedItem("value").setNodeValue(String.valueOf(snapSetting.isSnappedLineBroken()).toLowerCase());
-        } else if (elementName.equals("PointOnEndPoint")) {
-            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.POINT_ON_ENDPOINT)).toLowerCase());
-            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.POINT_ON_ENDPOINT)));
-        } else if (elementName.equals("PointOnPoint")) {
-            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.POINT_ON_POINT)).toLowerCase());
-            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.POINT_ON_POINT)));
-        } else if (elementName.equals("PointOnLine")) {
-            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.POINT_ON_LINE)).toLowerCase());
-            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.POINT_ON_LINE)));
-        } else if (elementName.equals("PointOnMidPoint")) {
-            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.POINT_ON_MIDPOINT)).toLowerCase());
-            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.POINT_ON_MIDPOINT)));
-        } else if (elementName.equals("PointOnExtension")) {
-            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.POINT_ON_EXTENSION)).toLowerCase());
-            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.POINT_ON_EXTENSION)));
-        } else if (elementName.equals("LineWithFixedAngle")) {
-            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.LINE_WITH_FIXED_ANGLE)).toLowerCase());
-            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.LINE_WITH_FIXED_ANGLE)));
-        } else if (elementName.equals("LineWithFixedLength")) {
-            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.LINE_WITH_FIXED_LENGTH)).toLowerCase());
-            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.LINE_WITH_FIXED_LENGTH)));
-        } else if (elementName.equals("LineWithHorizontal")) {
-            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.LINE_WITH_HORIZONTAL)).toLowerCase());
-            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.LINE_WITH_HORIZONTAL)));
-        } else if (elementName.equals("LineWithVertical")) {
-            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.LINE_WITH_VERTICAL)).toLowerCase());
-            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.LINE_WITH_VERTICAL)));
-        } else if (elementName.equals("LineWithParallel")) {
-            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.LINE_WITH_PARALLEL)).toLowerCase());
-            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.LINE_WITH_PARALLEL)));
-        } else if (elementName.equals("LineWithPerpendicular")) {
-            node.getAttributes().getNamedItem("isSelected").setNodeValue(String.valueOf(snapSetting.get(SnapMode.LINE_WITH_PERPENDICULAR)).toLowerCase());
-            node.getAttributes().getNamedItem("index").setNodeValue(String.valueOf(snapSetting.indexOf(SnapMode.LINE_WITH_PERPENDICULAR)));
-        }
-    }
-
-
-    private static void appendNodes(Element root, Document document, SnapSetting snapSetting) {
+	private static void appendNodes(Element root, Document document, SnapSetting snapSetting) {
         Element tolerance = document.createElement("Node");
         tolerance.setAttribute("name", "Tolerance");
         tolerance.setAttribute("value", String.valueOf(snapSetting.getTolerance()));

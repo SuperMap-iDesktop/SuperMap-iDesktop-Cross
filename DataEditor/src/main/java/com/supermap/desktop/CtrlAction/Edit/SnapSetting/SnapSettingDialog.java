@@ -24,7 +24,13 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.text.DecimalFormat;
 
@@ -317,7 +323,7 @@ public class SnapSettingDialog extends SmDialog {
             if (!SnapSettingUtilities.isSnapSettingFileExists()) {
                 SnapSettingUtilities.createSnapSettingFile(mapControlSnapSetting);
             } else {
-                SnapSettingUtilities.resetSnapSettingFile(mapControlSnapSetting);
+//                SnapSettingUtilities.resetSnapSettingFile(mapControlSnapSetting);
             }
             mapControl.setSnapSetting(mapControlSnapSetting);
             SnapSettingUtilities.replaceSnapMode(mapControlSnapSetting, mapControl.getSnapSetting());
