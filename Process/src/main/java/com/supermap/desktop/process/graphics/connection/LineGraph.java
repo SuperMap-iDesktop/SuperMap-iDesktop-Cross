@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.graphics.connection;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.decorators.LineArrowDecorator;
 
@@ -112,6 +113,31 @@ public class LineGraph extends AbstractGraph {
 	@Override
 	protected void applyLocation(Point point) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean contains(Point point) {
+		boolean isContain = false;
+
+		for (int i = 0; i < this.points.size() - 1; i++) {
+			Point p1 = this.points.get(i);
+			Point p2 = this.points.get(i + 1);
+			isContain = GraphicsUtil.lineContainsPoint(p1.x, p1.y, p2.x, p2.y, point.x, point.y, 3);
+			if (isContain) {
+				break;
+			}
+		}
+
+		if (!isContain) {
+			for (String key :
+					this.decorators.keySet()) {
+				isContain = this.decorators.get(key).contains(point);
+				if (isContain) {
+					break;
+				}
+			}
+		}
+		return isContain;
 	}
 
 	@Override

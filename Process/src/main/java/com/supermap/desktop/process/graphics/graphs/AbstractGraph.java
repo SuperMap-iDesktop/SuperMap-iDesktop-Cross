@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractGraph implements IGraph {
 	private GraphCanvas canvas;
 	protected Shape shape;
-	private ConcurrentHashMap<String, IDecorator> decorators = new ConcurrentHashMap<>();
+	protected ConcurrentHashMap<String, IDecorator> decorators = new ConcurrentHashMap<>();
 	private java.util.List<IDecorator> sortedDeorators = new ArrayList<>();
 	private EventListenerList listenerList = new EventListenerList();
 
