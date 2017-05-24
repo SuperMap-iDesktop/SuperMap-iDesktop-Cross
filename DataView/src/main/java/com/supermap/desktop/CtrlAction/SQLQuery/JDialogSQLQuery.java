@@ -1,9 +1,21 @@
 package com.supermap.desktop.CtrlAction.SQLQuery;
 
-import com.supermap.data.*;
+import com.supermap.data.CursorType;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasource;
+import com.supermap.data.JoinItems;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
-import com.supermap.desktop.CtrlAction.SQLQuery.components.*;
+import com.supermap.desktop.CtrlAction.SQLQuery.components.FieldInfoTable;
+import com.supermap.desktop.CtrlAction.SQLQuery.components.ISQLBuildComponent;
+import com.supermap.desktop.CtrlAction.SQLQuery.components.PanelSaveSearchResult;
+import com.supermap.desktop.CtrlAction.SQLQuery.components.SQLTable;
+import com.supermap.desktop.CtrlAction.SQLQuery.components.SQLTextarea;
+import com.supermap.desktop.CtrlAction.SQLQuery.components.SQLTextfield;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
@@ -13,7 +25,13 @@ import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.GetAllValueList;
+import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.ui.controls.TreeNodeData;
+import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.ui.controls.button.SmButton;
 import com.supermap.desktop.ui.controls.dialogs.dialogJoinItems.JDialogJoinItems;
 import com.supermap.desktop.utilities.MapUtilities;
@@ -26,10 +44,34 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.tree.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -846,7 +888,7 @@ public class JDialogSQLQuery extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			Object[] allValue = tableFieldInfo.getAllValue();
-			listAllValue.removeAllElements();
+
 			if (allValue != null && allValue.length > 0) {
 				listAllValue.resetValue(allValue);
 				textFieldGOTO.setEnabled(true);
@@ -1359,35 +1401,7 @@ public class JDialogSQLQuery extends SmDialog {
 
 	// endregion
 
-	class GetAllValueList extends JList {
-		public GetAllValueList() {
-			super(new DefaultListModel<String>());
-		}
 
-		public int getValueIndex(String value) {
-			int defaultValue = this.getSelectedIndex();
-			for (int i = 0; i < this.getModel().getSize(); i++) {
-				if (this.getModel().getElementAt(i).toString().startsWith(value)) {
-					return i;
-				}
-			}
-			return defaultValue;
-		}
-
-		public void removeAllElements() {
-			((DefaultListModel) this.getModel()).removeAllElements();
-		}
-
-		public void resetValue(Object[] allValue) {
-			this.removeAllElements();
-			if (allValue != null && allValue.length > 0) {
-				for (Object anAllValue : allValue) {
-					((DefaultListModel<Object>) this.getModel()).addElement(anAllValue);
-				}
-				this.setSelectedIndex(0);
-			}
-		}
-	}
 
 	private void clear() {
 		clearScrollpaneallvalue();
