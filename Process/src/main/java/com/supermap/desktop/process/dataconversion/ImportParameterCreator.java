@@ -381,7 +381,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			setPrjCoordSys.methodName = "setTargetPrjCoordSys";
 			parameterRadioButton = new ParameterRadioButton();
 			parameterRadioButton.setLayout(ParameterRadioButton.VATICAL);
-			ParameterDataNode[] parameterDataNodes = {new ParameterDataNode(ProcessProperties.getString("String_setProject"), true), new ParameterDataNode(ProcessProperties.getString("String_importProjectFile"), false)};
+			ParameterDataNode[] parameterDataNodes = {new ParameterDataNode(ProcessProperties.getString("String_setProject"), true), new ParameterDataNode(ProcessProperties.getString("string_importPrjFile"), false)};
 			parameterRadioButton.setItems(parameterDataNodes);
 			parameterRadioButton.setSelectedItem(parameterDataNodes[0]);
 			setPrjCoordSys.parameter = parameterRadioButton;

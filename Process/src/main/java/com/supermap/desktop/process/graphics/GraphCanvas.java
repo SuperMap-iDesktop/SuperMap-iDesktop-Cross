@@ -56,7 +56,7 @@ public class GraphCanvas extends JComponent {
 	private GraphCreator creator = new GraphCreator(this);
 	private Selection selection = new MultiSelection(this);
 	private GraphDragAction dragged = new GraphDragAction(this);
-	public GraphConnector connector = new GraphConnector(this);
+	public GraphConnectAction connector = new GraphConnectAction(this);
 	public GraphRemoving removing = new GraphRemoving(this);
 	public LineInteraction lineInteraction = new LineInteraction(this);
 
@@ -142,25 +142,25 @@ public class GraphCanvas extends JComponent {
 		installCanvasAction(GraphDragAction.class, this.dragged);
 		installCanvasAction(CanvasTranslation.class, this.translation);
 		installCanvasAction(GraphCreator.class, this.creator);
-		installCanvasAction(GraphConnector.class, this.connector);
+		installCanvasAction(GraphConnectAction.class, this.connector);
 		installCanvasAction(GraphRemoving.class, this.removing);
 		installCanvasAction(LineInteraction.class, this.lineInteraction);
 
 		this.actionsManager.addMutexAction(GraphDragAction.class, Selection.class);
 		this.actionsManager.addMutexAction(GraphDragAction.class, GraphCreator.class);
-		this.actionsManager.addMutexAction(GraphDragAction.class, GraphConnector.class);
+		this.actionsManager.addMutexAction(GraphDragAction.class, GraphConnectAction.class);
 
 		this.actionsManager.addMutexAction(Selection.class, GraphDragAction.class);
 		this.actionsManager.addMutexAction(Selection.class, GraphCreator.class);
-		this.actionsManager.addMutexAction(Selection.class, GraphConnector.class);
+		this.actionsManager.addMutexAction(Selection.class, GraphConnectAction.class);
 
 		this.actionsManager.addMutexAction(GraphCreator.class, GraphDragAction.class);
 		this.actionsManager.addMutexAction(GraphCreator.class, Selection.class);
-		this.actionsManager.addMutexAction(GraphCreator.class, GraphConnector.class);
+		this.actionsManager.addMutexAction(GraphCreator.class, GraphConnectAction.class);
 
-		this.actionsManager.addMutexAction(GraphConnector.class, GraphDragAction.class);
-		this.actionsManager.addMutexAction(GraphConnector.class, Selection.class);
-		this.actionsManager.addMutexAction(GraphConnector.class, GraphCreator.class);
+		this.actionsManager.addMutexAction(GraphConnectAction.class, GraphDragAction.class);
+		this.actionsManager.addMutexAction(GraphConnectAction.class, Selection.class);
+		this.actionsManager.addMutexAction(GraphConnectAction.class, GraphCreator.class);
 
 		this.actionsManager.setPriority(CanvasAction.ActionType.MOUSE_PRESSED, GraphDragAction.class, 0);
 	}

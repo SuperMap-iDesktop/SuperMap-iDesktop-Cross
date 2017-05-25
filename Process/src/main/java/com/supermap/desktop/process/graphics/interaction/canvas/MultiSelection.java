@@ -4,7 +4,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
-import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.decorators.IDecorator;
 import com.supermap.desktop.process.graphics.graphs.decorators.SelectedDecoratorFactory;
@@ -79,8 +78,8 @@ public class MultiSelection extends Selection {
 		if (SwingUtilities.isLeftMouseButton(e)) {
 			Point canvasP = getCanvas().getCoordinateTransform().inverse(e.getPoint());
 			IGraph hit = getCanvas().findGraph(e.getPoint());
-			boolean isSelected = hit instanceof AbstractGraph ? ((AbstractGraph) hit).getShape().contains(canvasP) : hit != null;
-			if (isSelected) {
+
+			if (hit != null) {
 				selectItem(hit);
 			} else {
 				cleanDecorators();
@@ -106,7 +105,6 @@ public class MultiSelection extends Selection {
 					selectItems(selected);
 				} else {
 					cleanDecorators();
-					this.selectedItems.clear();
 				}
 			} else {
 
@@ -179,8 +177,9 @@ public class MultiSelection extends Selection {
 			Rectangle dirtyRect = decorator.getBounds();
 			graph.removeDecorator(DECORATOR_KEY);
 //			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(dirtyRect));
-			getCanvas().repaint();
 		}
+		this.selectedItems.clear();
+		getCanvas().repaint();
 	}
 
 	private void resetStatus() {
@@ -208,18 +207,16 @@ public class MultiSelection extends Selection {
 			// otherwise,clean this selected items, and then select this specified graph and also fire graph selected events.
 			if (!this.selectedItems.contains(graph) || this.selectedItems.size() != 1) {
 				cleanDecorators();
-				this.selectedItems.clear();
 
 				this.selectedItems.add(graph);
 				graph.addDecorator(DECORATOR_KEY, SelectedDecoratorFactory.createDecorator(graph));
 				fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
-
-				getCanvas().repaint(getCanvas().getCoordinateTransform().transform(graph.getDecorator(DECORATOR_KEY).getBounds()));
+				getCanvas().repaint();
+//				getCanvas().repaint(getCanvas().getCoordinateTransform().transform(graph.getDecorator(DECORATOR_KEY).getBounds()));
 			}
 		} else {
 			if (this.selectedItems.size() > 0) {
 				cleanDecorators();
-				this.selectedItems.clear();
 				fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
 			}
 		}
@@ -246,14 +243,14 @@ public class MultiSelection extends Selection {
 		} else {
 			if (this.selectedItems.size() > 0) {
 				cleanDecorators();
-				this.selectedItems.clear();
 				fireGraphSelectChanged(new GraphSelectedChangedEvent(getCanvas(), this));
 			}
 		}
 
-		for (int i = 0, size = this.selectedItems.size(); i < size; i++) {
-			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(this.selectedItems.get(i).getDecorator(DECORATOR_KEY).getBounds()));
-		}
+		getCanvas().repaint();
+//		for (int i = 0, size = this.selectedItems.size(); i < size; i++) {
+//			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(this.selectedItems.get(i).getDecorator(DECORATOR_KEY).getBounds()));
+//		}
 	}
 
 	@Override
