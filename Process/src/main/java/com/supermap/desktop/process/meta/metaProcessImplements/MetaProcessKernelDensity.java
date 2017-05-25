@@ -82,8 +82,8 @@ public class MetaProcessKernelDensity extends MetaProcess {
 				parameterHDFSPath,
 				parameterComboBoxAnalyseType,
 				parameterComboBoxMeshType,
-				parameterBounds,
 				parameterIndex,
+				parameterBounds,
 				parameterResolution,
 				parameterRadius);
 
