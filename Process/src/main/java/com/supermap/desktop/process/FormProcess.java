@@ -9,24 +9,14 @@ import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.FormActivatedListener;
-import com.supermap.desktop.event.FormClosedEvent;
-import com.supermap.desktop.event.FormClosedListener;
-import com.supermap.desktop.event.FormClosingEvent;
-import com.supermap.desktop.event.FormClosingListener;
-import com.supermap.desktop.event.FormDeactivatedListener;
-import com.supermap.desktop.event.FormShownEvent;
-import com.supermap.desktop.event.FormShownListener;
-import com.supermap.desktop.process.core.DirectConnect;
-import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.core.NodeMatrix;
-import com.supermap.desktop.process.core.Workflow;
-import com.supermap.desktop.process.core.WorkflowParser;
+import com.supermap.desktop.event.*;
+import com.supermap.desktop.process.core.*;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
 import com.supermap.desktop.process.graphics.connection.IConnectable;
+import com.supermap.desktop.process.graphics.connection.LineGraph;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
@@ -282,7 +272,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		return true;
 	}
 
-	public boolean saveAs(boolean isNewWindow) {    
+	public boolean saveAs(boolean isNewWindow) {
 		JDialogFormSaveAs dialogSaveAs = new JDialogFormSaveAs();
 
 		dialogSaveAs.setDescribeText(ProcessProperties.getString("String_NewWorkFlowName"));
@@ -307,14 +297,18 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 	@Override
 	public IWorkFlow getWorkFlow() {
 		NodeMatrix nodeMatrix = new NodeMatrix();
-		IConnectionManager connection = this.graphCanvas.getCanvas().getConnection();
+		IConnectionManager connectionManager = this.graphCanvas.getCanvas().getConnection();
 		IGraphStorage graphStorage = this.graphCanvas.getCanvas().getGraphStorage();
 		IGraph[] graphs = graphStorage.getGraphs();
 		for (IGraph graph : graphs) {
+			if (graph instanceof LineGraph) {
+				continue;
+			}
+
 			nodeMatrix.addNode(graph);
 		}
 		for (IGraph graph : graphs) {
-			IGraph[] nextGraphs = connection.getNextGraphs(graph);
+			IGraph[] nextGraphs = connectionManager.getNextGraphs(graph);
 			if (nextGraphs.length > 0) {
 				for (IGraph nextGraph : nextGraphs) {
 					nodeMatrix.addConstraint(graph, nextGraph, new DirectConnect());

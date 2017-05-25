@@ -64,9 +64,9 @@ public class GraphConnectAction extends CanvasActionAdapter {
 
 	public void connecting() {
 		CanvasCursor.setConnectingCursor(this.canvas);
-//		this.preview = new LineGraph(this.canvas);
+		this.preview = new LineGraph(this.canvas);
 		this.isConnecting = true;
-//		this.canvas.addTrackingGraph(TRACKING_KEY_CONNECTOR, this.preview);
+		this.canvas.addTrackingGraph(TRACKING_KEY_CONNECTOR, this.preview);
 		fireCanvasActionStart();
 	}
 
@@ -90,6 +90,7 @@ public class GraphConnectAction extends CanvasActionAdapter {
 				if (this.startGraph != null && this.endGraph != null) {
 					Type type = this.startGraph.getProcessData().getType();
 					final OutputGraph start = this.startGraph;
+					final ProcessGraph end = this.endGraph;
 					final Inputs inputs = this.endGraph.getProcess().getInputs();
 					InputData[] datas = inputs.getDatas(type);
 
@@ -101,9 +102,15 @@ public class GraphConnectAction extends CanvasActionAdapter {
 						item.addActionListener(new ActionListener() {
 							@Override
 							public void actionPerformed(ActionEvent e) {
-								inputs.bind(item.getText(), start.getProcessData());
-								canvas.getConnection().connect(GraphConnectAction.this.startGraph, GraphConnectAction.this.endGraph);
-								inputsMenu.setVisible(false);
+								try {
+									inputs.bind(item.getText(), start.getProcessData());
+									canvas.getConnection().connect(start, end, item.getText());
+									inputsMenu.setVisible(false);
+								} catch (Exception e1) {
+									Application.getActiveApplication().getOutput().output(e1);
+								} finally {
+									GraphConnectAction.this.canvas.repaint();
+								}
 							}
 						});
 					}
@@ -113,7 +120,8 @@ public class GraphConnectAction extends CanvasActionAdapter {
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
-			this.canvas.removeTrackingGraph(TRACKING_KEY_CONNECTOR);
+//			this.canvas.removeTrackingGraph(TRACKING_KEY_CONNECTOR);
+			this.preview.reset();
 			this.startGraph = null;
 			this.endGraph = null;
 		}
@@ -189,6 +197,7 @@ public class GraphConnectAction extends CanvasActionAdapter {
 			} else {
 				this.preview.addPoint(lastPoint);
 			}
+			this.canvas.repaint();
 		}
 	}
 
@@ -245,6 +254,7 @@ public class GraphConnectAction extends CanvasActionAdapter {
 		try {
 			if (this.preview != null) {
 				this.canvas.removeTrackingGraph(TRACKING_KEY_CONNECTOR);
+				this.preview.reset();
 				this.preview = null;
 			}
 			this.endGraph = null;
