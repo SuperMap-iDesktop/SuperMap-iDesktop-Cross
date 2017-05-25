@@ -22,12 +22,13 @@ import javax.swing.event.PopupMenuListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 /**
  * Created by highsad on 2017/3/22.
  */
-public class GraphConnector extends CanvasActionAdapter {
+public class GraphConnectAction extends CanvasActionAdapter {
 	private static String TRACKING_KEY_CONNECTOR = "GraphConnectorKey";
 	private static String DECORATOR_KEY_LINE_ERROR = "DecoratorLineErrorKey";
 
@@ -37,8 +38,9 @@ public class GraphConnector extends CanvasActionAdapter {
 	private JPopupMenu inputsMenu = new JPopupMenu();
 	private LineGraph preview;
 	private LineErrorDecorator errorDecorator;
+	private boolean isConnecting = false;
 
-	public GraphConnector(GraphCanvas canvas) {
+	public GraphConnectAction(GraphCanvas canvas) {
 		this.canvas = canvas;
 		this.errorDecorator = new LineErrorDecorator(this.canvas);
 
@@ -62,8 +64,9 @@ public class GraphConnector extends CanvasActionAdapter {
 
 	public void connecting() {
 		CanvasCursor.setConnectingCursor(this.canvas);
-		this.preview = new LineGraph(this.canvas);
-		this.canvas.addTrackingGraph(TRACKING_KEY_CONNECTOR, this.preview);
+//		this.preview = new LineGraph(this.canvas);
+		this.isConnecting = true;
+//		this.canvas.addTrackingGraph(TRACKING_KEY_CONNECTOR, this.preview);
 		fireCanvasActionStart();
 	}
 
@@ -99,7 +102,7 @@ public class GraphConnector extends CanvasActionAdapter {
 							@Override
 							public void actionPerformed(ActionEvent e) {
 								inputs.bind(item.getText(), start.getProcessData());
-								canvas.getConnection().connect(GraphConnector.this.startGraph, GraphConnector.this.endGraph);
+								canvas.getConnection().connect(GraphConnectAction.this.startGraph, GraphConnectAction.this.endGraph);
 								inputsMenu.setVisible(false);
 							}
 						});
@@ -111,7 +114,6 @@ public class GraphConnector extends CanvasActionAdapter {
 			Application.getActiveApplication().getOutput().output(ex);
 		} finally {
 			this.canvas.removeTrackingGraph(TRACKING_KEY_CONNECTOR);
-			this.preview = null;
 			this.startGraph = null;
 			this.endGraph = null;
 		}
@@ -232,6 +234,13 @@ public class GraphConnector extends CanvasActionAdapter {
 	}
 
 	@Override
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+			clean();
+		}
+	}
+
+	@Override
 	public void clean() {
 		try {
 			if (this.preview != null) {
@@ -240,6 +249,7 @@ public class GraphConnector extends CanvasActionAdapter {
 			}
 			this.endGraph = null;
 			this.startGraph = null;
+			this.isConnecting = false;
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -254,6 +264,6 @@ public class GraphConnector extends CanvasActionAdapter {
 	}
 
 	private boolean isConnecting() {
-		return this.preview != null;
+		return this.isConnecting;
 	}
 }
