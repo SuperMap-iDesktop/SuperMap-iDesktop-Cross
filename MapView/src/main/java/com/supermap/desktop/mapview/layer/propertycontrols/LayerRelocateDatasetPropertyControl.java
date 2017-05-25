@@ -1,7 +1,20 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
+import com.supermap.data.DatasourceClosedEvent;
+import com.supermap.data.DatasourceClosedListener;
+import com.supermap.data.DatasourceClosingEvent;
+import com.supermap.data.DatasourceClosingListener;
+import com.supermap.data.DatasourceCreatedEvent;
+import com.supermap.data.DatasourceCreatedListener;
+import com.supermap.data.DatasourceOpenedEvent;
+import com.supermap.data.DatasourceOpenedListener;
+import com.supermap.data.Datasources;
 import com.supermap.data.Enum;
+import com.supermap.data.WorkspaceClosingEvent;
+import com.supermap.data.WorkspaceClosingListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.DefaultValues;
 import com.supermap.desktop.controls.ControlsProperties;
@@ -37,7 +50,14 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 			Application.getActiveApplication().getWorkspace().getDatasources().removeClosingListener(datasourceClosingEvent);
 			Application.getActiveApplication().getWorkspace().getDatasources().removeClosedListener(datasourceClosedListener);
 			Application.getActiveApplication().getWorkspace().getDatasources().removeOpenedListener(datasourceOpenedListener);
+			Application.getActiveApplication().getWorkspace().getDatasources().removeCreatedListener(datasourceCreatedListener);
 			Application.getActiveApplication().getWorkspace().removeClosingListener(this);
+		}
+	};
+	private DatasourceCreatedListener datasourceCreatedListener = new DatasourceCreatedListener() {
+		@Override
+		public void datasourceCreated(DatasourceCreatedEvent datasourceCreatedEvent) {
+			resetComboboxs();
 		}
 	};
 
@@ -197,6 +217,7 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 		Application.getActiveApplication().getWorkspace().getDatasources().addClosingListener(datasourceClosingEvent);
 		Application.getActiveApplication().getWorkspace().getDatasources().addClosedListener(datasourceClosedListener);
 		Application.getActiveApplication().getWorkspace().getDatasources().addOpenedListener(datasourceOpenedListener);
+		Application.getActiveApplication().getWorkspace().getDatasources().addCreatedListener(datasourceCreatedListener);
 	}
 
 
@@ -207,6 +228,7 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 		Application.getActiveApplication().getWorkspace().getDatasources().removeClosingListener(datasourceClosingEvent);
 		Application.getActiveApplication().getWorkspace().getDatasources().removeClosedListener(datasourceClosedListener);
 		Application.getActiveApplication().getWorkspace().getDatasources().removeOpenedListener(datasourceOpenedListener);
+		Application.getActiveApplication().getWorkspace().getDatasources().removeCreatedListener(datasourceCreatedListener);
 	}
 
 	private void comboBoxDatasourceSelectedItemChanged(ItemEvent e) {

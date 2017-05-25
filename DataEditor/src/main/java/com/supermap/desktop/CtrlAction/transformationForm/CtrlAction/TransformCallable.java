@@ -114,7 +114,7 @@ public class TransformCallable extends UpdateProgressCallable {
 				}
 
 			} catch (Exception e) {
-				Application.getActiveApplication().getOutput().output(e);
+//				ignore
 			} finally {
 				finishedCount++;
 			}

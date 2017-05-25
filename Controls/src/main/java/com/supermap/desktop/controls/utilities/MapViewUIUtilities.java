@@ -206,10 +206,13 @@ public class MapViewUIUtilities {
 			for (Layer layer : layers) {
 				if (layer.isVisible() && layer.isSelectable()) {
 					DatasetVector dataset = (DatasetVector) layer.getDataset();
-					Recordset recordset = dataset.getRecordset(false, CursorType.STATIC);
-					layer.getSelection().fromRecordset(recordset);
-					count += dataset.getRecordCount();
-					recordset.dispose();
+					if (dataset != null) {
+						Recordset recordset = dataset.getRecordset(false, CursorType.STATIC);
+						layer.getSelection().fromRecordset(recordset);
+						count += dataset.getRecordCount();
+						recordset.dispose();
+					}
+
 				}
 			}
 			formMap.getMapControl().getMap().refresh();

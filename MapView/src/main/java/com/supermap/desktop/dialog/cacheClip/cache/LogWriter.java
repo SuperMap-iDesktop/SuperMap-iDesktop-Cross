@@ -27,7 +27,7 @@ class LogWriter {
 		return gInstance;
 	}
 
-	private LogWriter() {
+	public LogWriter() {
 		if (isWriteToFile()) {
 			if (logFile == null) {
 
