@@ -300,11 +300,13 @@ public class DialogCacheBuilder extends SmDialog {
 			if (null != sciNames) {
 				totalSciLength = sciNames.length;
 				captionCount = new CopyOnWriteArrayList<>();
-				for (int i = 0; i < captions.size(); i++) {
-					captionCount.add(sciFile.list(getFilter(captions.get(i))).length);
+				if (null != captions) {
+					for (int i = 0; i < captions.size(); i++) {
+						captionCount.add(sciFile.list(getFilter(captions.get(i))).length);
+					}
+					updateSingleProcess(sciFile.getParentFile().getPath(), totalSciLength);
 				}
 				updateTotalProgress(sciFile.getParentFile().getPath(), cachePath, totalSciLength);
-				updateSingleProcess(sciFile.getParentFile().getPath(), totalSciLength);
 			}
 
 			buildCache = new BuildCache();
@@ -425,6 +427,9 @@ public class DialogCacheBuilder extends SmDialog {
 
 	private void disposeInfo() {
 		removeEvents();
+		this.captions = null;
+		this.scrollPaneProgresses = null;
+		this.captionCount = null;
 		DialogCacheBuilder.this.dispose();
 		//Dispose instance of process manager
 		ProcessManager.getInstance().dispose();
