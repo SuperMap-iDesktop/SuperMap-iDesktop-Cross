@@ -14,7 +14,7 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 	private String describe;
 
 	@ParameterField(name = PROPERTY_VALE)
-	private String value;
+	private String value = "";
 
 	protected ISmTextFieldLegit smTextFieldLegit;
 
