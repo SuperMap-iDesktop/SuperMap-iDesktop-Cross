@@ -175,6 +175,10 @@ public class GraphCanvas extends JComponent {
 		}
 	}
 
+	public boolean isTrackingLayerContains(String key) {
+		return this.trackingGraphs.containsKey(key);
+	}
+
 	public void clearTrackingGraphs() {
 		this.trackingGraphs.clear();
 	}

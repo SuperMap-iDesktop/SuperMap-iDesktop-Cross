@@ -6,6 +6,7 @@ import com.supermap.desktop.process.graphics.events.GraphBoundsChangedEvent;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
+import com.supermap.desktop.process.graphics.graphs.decorators.LineMessageDecorator;
 
 import java.awt.*;
 
@@ -13,9 +14,12 @@ import java.awt.*;
  * Created by highsad on 2017/3/23.
  */
 public class ConnectionLineGraph extends LineGraph {
+	private final static String DECORATOR_KEY_LINE_MESSAGE = "DecoratorLineMessageKey";
 	private IConnection connection;
+	private LineMessageDecorator messageDecorator;
 	private boolean isEditable = true;
 	private boolean isSelected = true;
+
 
 	private GraphBoundsChangedListener startGraphBoundsChangedListener = new GraphBoundsChangedListener() {
 		@Override
@@ -36,6 +40,9 @@ public class ConnectionLineGraph extends LineGraph {
 		this.connection = connection;
 		IGraph startGraph = this.connection.getStartGraph();
 		IGraph endGraph = this.connection.getEndGraph();
+
+		this.messageDecorator = new LineMessageDecorator(getCanvas(), this.connection.getMessage());
+		addDecorator(DECORATOR_KEY_LINE_MESSAGE, this.messageDecorator);
 
 		if (startGraph != null && endGraph != null) {
 			computeFirstAndLastPoints();

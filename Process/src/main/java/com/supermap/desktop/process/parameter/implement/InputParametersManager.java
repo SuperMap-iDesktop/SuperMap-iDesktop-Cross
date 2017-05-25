@@ -66,23 +66,27 @@ public class InputParametersManager {
 	}
 
 	public void bind(InputData inputData) {
-		String name = inputData.getName();
-		isSelecting = true;
-		for (InputParameterDataNode inputParameterDataNode : list) {
-			if (inputParameterDataNode.getName().equals(name)) {
-				ParameterComboBox parameterComboBox = (ParameterComboBox) inputParameterDataNode.getParameterSwitch().getParameterByTag("1");
-				reloadParameterComboBox(parameterComboBox);
-				inputParameterDataNode.getParameterSwitch().switchParameter("1");
+		try {
+			String name = inputData.getName();
+			isSelecting = true;
+			for (InputParameterDataNode inputParameterDataNode : list) {
+				if (inputParameterDataNode.getName().equals(name)) {
+					ParameterComboBox parameterComboBox = (ParameterComboBox) inputParameterDataNode.getParameterSwitch().getParameterByTag("1");
+					reloadParameterComboBox(parameterComboBox);
+					inputParameterDataNode.getParameterSwitch().switchParameter("1");
 
-				for (int i = 0; i < parameterComboBox.getItemCount(); i++) {
-					if (parameterComboBox.getItemAt(i).getDescribe().equals(name)) {
-						parameterComboBox.setSelectedItem(parameterComboBox.getItemAt(i));
+					for (int i = 0; i < parameterComboBox.getItemCount(); i++) {
+						if (parameterComboBox.getItemAt(i).getDescribe().equals(name)) {
+							parameterComboBox.setSelectedItem(parameterComboBox.getItemAt(i));
+						}
 					}
+					break;
 				}
-				break;
 			}
+			isSelecting = false;
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
 		}
-		isSelecting = false;
 	}
 
 	private void reloadParameterComboBox(ParameterComboBox parameterComboBox) {
