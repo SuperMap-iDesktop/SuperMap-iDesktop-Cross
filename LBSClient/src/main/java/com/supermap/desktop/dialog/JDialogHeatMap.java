@@ -312,7 +312,7 @@ public class JDialogHeatMap extends SmDialog {
 		BuildCacheJobSetting setting = new BuildCacheJobSetting();
 
 		FileInputDataSetting input = new FileInputDataSetting();
-		input.filePath = textFieldFileInputPath.getText();
+		input.datasetName = textFieldFileInputPath.getText();
 
 		MongoDBOutputsetting output = new MongoDBOutputsetting();
 		output.cacheName = textFieldCacheName.getText();
