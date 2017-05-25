@@ -61,7 +61,7 @@ public class BuildCache {
 
 	public static void main(String[] args) {
 		if (args.length == 0) {
-			LogWriter.getInstance().writelog("need params");
+			System.out.println("need params");
 		} else {
 			BuildCache buildCache = new BuildCache();
 			buildCache.buildCache(args);
@@ -79,7 +79,7 @@ public class BuildCache {
 			if (params.length > MERGESCICOUNT_INDEX && !params[MERGESCICOUNT_INDEX].equals("0"))
 				mergeCount = params[MERGESCICOUNT_INDEX];
 			//Instance LogWriter
-			LogWriter log = LogWriter.getInstance();
+			LogWriter log = new LogWriter();
 			int sciLength;
 			WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(workspacePath);
 			Workspace workspace = new Workspace();
@@ -107,24 +107,23 @@ public class BuildCache {
 					int mergeSciCount = Integer.valueOf(mergeCount);
 					if (sciLength > mergeSciCount) {
 						//First step:Move mergeSciCount sci to doing directory
-						for (int i = 0; i < mergeSciCount; i++) {
-							doingSci(taskPath + "\\" + sciFileNames[sciLength-1-i], doingDir, doingSciNames);
+						int success = 0;
+						for (int i = 0; success < mergeSciCount; i++) {
+							if (doingSci(taskPath + "\\" + sciFileNames[sciLength - 1 - i], doingDir, doingSciNames)) {
+								success++;
+							}
 						}
-						//Second step:get sci file from doing dir and build cache
-						for (int i = 0; i < doingSciNames.size(); i++) {
-							String sciName = doingSciNames.get(i);
-							build(cachePath, log, start, map, sciName);
-						}
+
 					} else {
 						//First step:Move last sci file to doing directory
-						for (int i = sciLength-1; i >=0 ; i--) {
+						for (int i = sciLength - 1; i >= 0; i--) {
 							doingSci(taskPath + "\\" + sciFileNames[i], doingDir, doingSciNames);
 						}
-						//Second step:get sci file from doing dir and build cache
-						for (int i = 0; i < sciLength; i++) {
-							String sciName = doingSciNames.get(i);
-							build(cachePath, log, start, map, sciName);
-						}
+					}
+					//Second step:get sci file from doing dir and build cache
+					for (int i = 0; i < doingSciNames.size(); i++) {
+						String sciName = doingSciNames.get(i);
+						build(cachePath, log, start, map, sciName);
 					}
 
 				} while (sciLength != 0);
@@ -143,17 +142,14 @@ public class BuildCache {
 	}
 
 
-	private void doingSci(String sciFileName, File doingDir, CopyOnWriteArrayList<String> doingSciNames) {
+	private boolean doingSci(String sciFileName, File doingDir, CopyOnWriteArrayList<String> doingSciNames) {
 		String sciName = sciFileName;
 		File sci = new File(sciName);
-		if (sci.exists() && null != doingDir) {
-			boolean renameSuccess;
-			do {
-				//Multi process may failed to rename,so do it again
-				renameSuccess = sci.renameTo(new File(doingDir, sci.getName()));
-			} while (renameSuccess);
+		boolean renameSuccess = sci.renameTo(new File(doingDir, sci.getName()));
+		if (renameSuccess) {
 			doingSciNames.add(doingDir.getAbsolutePath() + "\\" + sci.getName());
 		}
+		return renameSuccess;
 	}
 
 	private void build(String cachePath, LogWriter log, long start, Map map, String sciName) {
@@ -161,7 +157,7 @@ public class BuildCache {
 		log.writelog(String.format("init PID:%s, cost(ms):%d", LogWriter.getPID(), System.currentTimeMillis() - start));
 		File sci = new File(sciName);
 		if (!sci.exists()) {
-			LogWriter.getInstance().writelog(String.format("sciFile: %s does not exist. Maybe has done at before running. ", sciName));
+			log.writelog(String.format("sciFile: %s does not exist. Maybe has done at before running. ", sciName));
 		}
 		long oneStart = System.currentTimeMillis();
 		MapCacheBuilder builder = new MapCacheBuilder();

@@ -15,7 +15,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by xie on 2017/5/16.
  */
 public class TaskBuilder {
-	public static CopyOnWriteArrayList<String> captions = new CopyOnWriteArrayList<>();
 
 	public static void main(String[] args) throws Exception {
 		if (args.length < 2) {
@@ -68,9 +67,6 @@ public class TaskBuilder {
 		ArrayList<Double> scaleList = new ArrayList<Double>();
 		scaleList.addAll(scales);
 		Collections.sort(scaleList);
-		for (int i = scaleList.size() - 1; i >= 0; i--) {
-			captions.add(String.valueOf((int) (1 / scaleList.get(i))));
-		}
 		int length = 9;
 		for (double scale : scaleList) {
 			double tileResolution = writer.getTileResolustion(scale);

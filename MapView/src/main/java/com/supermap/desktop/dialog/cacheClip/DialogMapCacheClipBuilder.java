@@ -286,7 +286,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				String tasksPath = nextStepPane.fileChooserControlTaskPath.getPath();
 				tasksPath = tasksPath.replaceAll("\\\\", "/");
 				String filePath = firstStepPane.fileChooserControlFileCache.getPath();
-				String sciPath = filePath + "\\" + mapCacheBuilder.getCacheName() + ".sci";
+				String sciPath = filePath + mapCacheBuilder.getCacheName() + ".sci";
 				setMapCacheBuilderValueBeforeRun();
 				boolean result = mapCacheBuilder.toConfigFile(sciPath);
 				if (result) {
@@ -296,13 +296,11 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					disposeInfo();
 					DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder();
-					if (null != TaskBuilder.captions) {
-						dialogCacheBuilder.setCaptions(TaskBuilder.captions);
-					}
 					dialogCacheBuilder.textFieldMapName.setText(this.currentMap.getName());
 					tasksPath = tasksPath.replaceAll("/", "\\\\");
 					File oldFile = new File(sciPath);
 					dialogCacheBuilder.setSciFile(oldFile);
+					dialogCacheBuilder.fileChooserTotalTaskPath.setPath(sciPath);
 					dialogCacheBuilder.fileChooserTaskPath.setPath(tasksPath + "\\task");
 					dialogCacheBuilder.fileChooserWorkspacePath.setPath(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer());
 					dialogCacheBuilder.showDialog();
@@ -321,6 +319,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			Application.getActiveApplication().getOutput().output(e);
 		}
 

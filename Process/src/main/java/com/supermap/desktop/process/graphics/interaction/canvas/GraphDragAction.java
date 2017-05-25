@@ -39,7 +39,7 @@ public class GraphDragAction extends CanvasActionAdapter {
 			// 鼠标位置根据 bounds 查询到的 graph
 			IGraph hitGraph = canvas.findGraph(e.getPoint());
 
-			if (hitGraph != null) {
+			if (hitGraph != null && !(hitGraph instanceof LineGraph)) {
 				this.dragStart = canvas.getCoordinateTransform().inverse(e.getPoint());
 
 				if (this.canvas.getSelection().isSelected(hitGraph)) {

@@ -13,12 +13,10 @@ class SubprocessThread extends Thread {
 	private InputStream stream;
 	public static long TimeOutMS = 15 * 60 * 1000;
 	public volatile boolean isExit = false;
-	private boolean timeOut;
 
 	public SubprocessThread(ArrayList<String> arguments) {
 		this.arguments = arguments;
 		start = 0;
-		timeOut = false;
 	}
 
 	public SubprocessThread clone() {
@@ -37,7 +35,6 @@ class SubprocessThread extends Thread {
 				int psHash = process.hashCode();
 				LogWriter log = LogWriter.getInstance();
 				log.writelog("time out and kill it, PIDHASH:" + psHash);
-				timeOut = true;
 			}
 		}
 	}

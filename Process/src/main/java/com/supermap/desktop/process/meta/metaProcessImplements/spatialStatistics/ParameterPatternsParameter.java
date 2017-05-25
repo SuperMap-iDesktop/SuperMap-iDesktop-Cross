@@ -69,7 +69,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 		parameterTextFieldDistanceTolerance.setDescribe(ProcessProperties.getString("String_DistanceTolerance"));
 		parameterTextFieldExponent.setDescribe(ProcessProperties.getString("String_Exponent"));
 		parameterCheckBoxFDRAdjusted.setDescribe(ProcessProperties.getString("String_FDRAdjusted"));
-		parameterFile.setDescribe(ProcessProperties.getString("String_SWMFilePath"));
+		parameterFile.setDescribe(ProcessProperties.getString("String_SWM"));
 		parameterTextFieldKNeighbors.setMinValue(1);
 		parameterTextFieldKNeighbors.setMaxBit(0);
 
@@ -96,10 +96,12 @@ public class ParameterPatternsParameter extends ParameterCombine {
 			}
 		});
 
-		String moduleName = "swm";
+		String moduleName = "swmb";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
-			String fileFilters = SmFileChoose.createFileFilter(ProcessProperties.getString("String_SWMFilePath"), "swm");
-			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"), ProcessProperties.getString("String_SWMFilePath"), moduleName, "OpenOne");
+			String fileFilters = SmFileChoose.bulidFileFilters(
+					SmFileChoose.createFileFilter(ProcessProperties.getString("String_SWMFilePath"), "swmb"));
+			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
+					ProcessProperties.getString("String_SWMFile"), moduleName, "OpenOne");
 		}
 		SmFileChoose fileChoose = new SmFileChoose(moduleName);
 		parameterFile.setFileChoose(fileChoose);

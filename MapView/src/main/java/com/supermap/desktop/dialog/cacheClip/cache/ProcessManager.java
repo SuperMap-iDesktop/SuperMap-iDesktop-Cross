@@ -9,6 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ProcessManager {
 	private CopyOnWriteArrayList<SubprocessThread> threadList;
 	private static volatile ProcessManager processManager;
+	private volatile ProtectThread protectThread;
 
 	public static ProcessManager getInstance() {
 		if (null == processManager) {
@@ -26,21 +27,8 @@ public class ProcessManager {
 			this.threadList = new CopyOnWriteArrayList<>();
 		}
 		// Create a protect thread while some process destroyed unexpected(Create one/more process)
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					while (true) {
-						if (null == threadList) {
-							break;
-						}
-						//Todo while process destroy unexpected create one/more
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}.start();
+		protectThread = new ProtectThread();
+		protectThread.start();
 	}
 
 	public void addProcess(SubprocessThread thread) {
@@ -55,10 +43,42 @@ public class ProcessManager {
 				threadList.get(i).process.destroy();
 				threadList.get(i).process = null;
 			}
-			threadList = null;
+			threadList.clear();
+			protectThread.exit = false;
 			ProcessManager.this.finalize();
 		} catch (Throwable throwable) {
 			throwable.printStackTrace();
 		}
 	}
+
+	class ProtectThread extends Thread {
+		public volatile boolean exit = true;
+
+		@Override
+		public void run() {
+			try {
+				while (exit) {
+					if (null == threadList) {
+						break;
+					}
+					//If process count <threadList.size() add one/more process
+//					String[] pids = ManagementFactory.getRuntimeMXBean().getName().split("@");
+
+//					if (pids.length + 1 < threadList.size()) {
+//						int newProcessLength = threadList.size() - pids.length;
+//						for (int i = 0; i < newProcessLength; i++) {
+//							if (null != threadList.get(0)) {
+//								SubprocessThread thread = threadList.get(0).clone();
+//								thread.start();
+//								threadList.add(thread);
+//							}
+//						}
+//					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 }
