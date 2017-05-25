@@ -200,7 +200,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 						if (result) {
 							buttonRun.setProcedure(ButtonExecutor.COMPLETED);
 						} else {
-							progressBar.setProgress(0);
+//							progressBar.setProgress(0);
 							labelMessage.setText("...");
 							labelRemaintime.setText("...");
 							buttonRun.setProcedure(ButtonExecutor.READY);
