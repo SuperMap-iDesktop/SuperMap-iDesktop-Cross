@@ -87,7 +87,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 			kenelDensityJobSetting.analyst.separator = parameterSeperator.getSelectedItem().toString();
 			kenelDensityJobSetting.analyst.resolution = parameterResolution.getSelectedItem().toString();
 			kenelDensityJobSetting.analyst.radius = parameterRadius.getSelectedItem().toString();
-			kenelDensityJobSetting.input.filePath = parameterHDFSPath.getSelectedItem().toString();
+			kenelDensityJobSetting.input.datasetName = parameterHDFSPath.getSelectedItem().toString();
 			CursorUtilities.setWaitCursor();
 			JobResultResponse response = service.query(kenelDensityJobSetting);
 			if (null != response) {

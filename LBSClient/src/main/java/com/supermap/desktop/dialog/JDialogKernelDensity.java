@@ -228,7 +228,7 @@ public class JDialogKernelDensity extends SmDialog {
 		kenelDensityJobSetting.analyst.separator = textFieldSeperator.getText();
 		kenelDensityJobSetting.analyst.resolution = textResolution.getText();
 		kenelDensityJobSetting.analyst.radius = textRadius.getText();
-		kenelDensityJobSetting.input.filePath = textInputURL.getText();
+		kenelDensityJobSetting.input.datasetName = textInputURL.getText();
 		IServerService service = new IServerServiceImpl();
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 		JobResultResponse response = service.query(kenelDensityJobSetting);

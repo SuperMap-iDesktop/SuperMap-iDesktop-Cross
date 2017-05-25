@@ -113,7 +113,7 @@ public class JDialogHeatMap extends SmDialog {
 	private void initComponents() {
 		this.labelCacheType = new JLabel();
 		this.comboBoxCacheType = new JComboBox();
-		this.comboBoxCacheType.addItem("Heatmap");
+		this.comboBoxCacheType.addItem("heatmap");
 		this.buttonInputBrowser = new JButton();
 		this.panelBounds = new JPanel();
 		this.labelBoundsLeft = new JLabel();
@@ -312,7 +312,7 @@ public class JDialogHeatMap extends SmDialog {
 		BuildCacheJobSetting setting = new BuildCacheJobSetting();
 
 		FileInputDataSetting input = new FileInputDataSetting();
-		input.filePath = textFieldFileInputPath.getText();
+		input.datasetName = textFieldFileInputPath.getText();
 
 		MongoDBOutputsetting output = new MongoDBOutputsetting();
 		output.cacheName = textFieldCacheName.getText();
@@ -326,7 +326,7 @@ public class JDialogHeatMap extends SmDialog {
 		drawing.imageType = (String) comboBoxCacheType.getSelectedItem();
 		drawing.bounds = bounds;
 		drawing.level = textFieldCacheLevel.getText();
-		drawing.xyIndex = textFieldXYIndex.getText();
+//		drawing.xyIndex = textFieldXYIndex.getText();
 		setting.input = input;
 		setting.output = output;
 		setting.drawing = drawing;
