@@ -189,6 +189,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 
 			@Override
 			protected Boolean doInBackground() throws Exception {
+				buttonRun.setProcedure(ButtonExecutor.RUNNING);
 				return callable.call();
 			}
 
