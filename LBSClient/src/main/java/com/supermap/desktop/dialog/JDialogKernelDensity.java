@@ -224,8 +224,9 @@ public class JDialogKernelDensity extends SmDialog {
 		KernelDensityJobSetting kenelDensityJobSetting = new KernelDensityJobSetting();
 		String queryInfo = textBoundsLeft.getText() + "," + textBoundsBottom.getText() + "," + textBoundsRight.getText() + "," + textBoundsTop.getText();
 		kenelDensityJobSetting.analyst.query = queryInfo;
-		kenelDensityJobSetting.analyst.geoidx = textFieldIndex.getText();
-		kenelDensityJobSetting.analyst.separator = textFieldSeperator.getText();
+		// 挂了
+//		kenelDensityJobSetting.analyst.geoidx = textFieldIndex.getText();
+//		kenelDensityJobSetting.analyst.separator = textFieldSeperator.getText();
 		kenelDensityJobSetting.analyst.resolution = textResolution.getText();
 		kenelDensityJobSetting.analyst.radius = textRadius.getText();
 		kenelDensityJobSetting.input.datasetName = textInputURL.getText();

@@ -2,9 +2,14 @@ package com.supermap.desktop.ui.lbs.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.lbs.params.*;
+import com.supermap.desktop.ui.lbs.Interface.IServerService;
+import com.supermap.desktop.ui.lbs.params.BuildCacheJobSetting;
+import com.supermap.desktop.ui.lbs.params.IServerLoginInfo;
+import com.supermap.desktop.ui.lbs.params.IServerResponse;
+import com.supermap.desktop.ui.lbs.params.JobResultResponse;
+import com.supermap.desktop.ui.lbs.params.KernelDensityJobSetting;
+import com.supermap.desktop.ui.lbs.params.Token;
 import org.apache.commons.compress.utils.Charsets;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.http.HttpEntity;
@@ -26,8 +31,8 @@ import java.nio.charset.Charset;
 public class IServerServiceImpl implements IServerService {
 
     private final String HTTP_STR = "http://";
-    private final String KERNELDENSITY_URL = "/iserver/services/processing/rest/v1/jobs/spatialanalyst/kernelDensity.json";
-    private final String BUILDCACHE_URL = "/iserver/services/processing/rest/v1/jobs/mapping/buildCache.json";
+	private final String KERNELDENSITY_URL = "/iserver/services/processing/rest/v1/jobs/spatialanalyst/density.json";
+	private final String BUILDCACHE_URL = "/iserver/services/processing/rest/v1/jobs/mapping/buildCache.json";
     private final String LOGIN_URL = "/iserver/services/security/login.json";
     private static final Charset UTF8 = Charsets.UTF_8;
     private static final String JSON_UTF8_CONTENT_TPYE = "application/json;;charset=" + UTF8.name();

@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.tasks;
 
 import com.supermap.desktop.controls.utilities.ControlsResources;
+import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
@@ -17,13 +18,13 @@ public class ButtonExecutor extends JButton implements MouseListener, MouseMotio
 	public final static int CANCELLED = 3;
 	public final static int COMPLETED = 4;
 
-	private final static Icon ICON_READY_NORMAL = ControlsResources.getIcon("/controlsresources/ToolBar/Image_run_now.png");
-	private final static Icon ICON_READY_HOT = ControlsResources.getIcon("/controlsresources/ToolBar/Image_Run.png");
-	private final static Icon ICON_RUN_NORMAL = ControlsResources.getIcon("/controlsresources/ToolBar/Image_stop_now.png");
-	private final static Icon ICON_RUN_HOT = ControlsResources.getIcon("/controlsresources/ToolBar/Image_Stop.png");
+	private final static Icon ICON_READY_NORMAL = ProcessResources.getIcon("/processresources/task/image_run.png");
+	private final static Icon ICON_READY_HOT = ProcessResources.getIcon("/processresources/task/image_run_hot.png");
+	private final static Icon ICON_RUN_NORMAL = ProcessResources.getIcon("/processresources/task/image_cancel.png");
+	private final static Icon ICON_RUN_HOT = ProcessResources.getIcon("/processresources/task/image_cancel_hot.png");
 	private final static Icon ICON_CANCELLED = ControlsResources.getIcon("/controlsresources/ToolBar/Image_stop_pressed.png");
-	private final static Icon ICON_COMPLETED_NOMAL = ControlsResources.getIcon("/controlsresources/ToolBar/Image_finish_now.png");
-	private final static Icon ICON_COMPLETED_HOT = ControlsResources.getIcon("/controlsresources/ToolBar/Image_Run.png");
+	private final static Icon ICON_COMPLETED_NOMAL = ProcessResources.getIcon("/processresources/task/image_finish.png");
+	private final static Icon ICON_COMPLETED_HOT = ProcessResources.getIcon("/processresources/task/image_run.png");
 
 	private final static String TIP_READY = CommonProperties.getString(CommonProperties.Run);
 	private final static String TIP_RUNNING = CommonProperties.getString(CommonProperties.Cancel);

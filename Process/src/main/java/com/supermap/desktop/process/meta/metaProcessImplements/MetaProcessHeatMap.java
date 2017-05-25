@@ -6,8 +6,10 @@ import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
+import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
+import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.tasks.ProcessTask;
@@ -28,8 +30,12 @@ import org.apache.http.impl.client.CloseableHttpClient;
  * 计算热度图
  */
 public class MetaProcessHeatMap extends MetaProcess {
+	private ParameterTextField parameterTextFieldUserName = new ParameterTextField();
+	private ParameterTextField parameterTextFieldPassword = new ParameterTextField();
 
 	private ParameterHDFSPath parameterHDFSPath;
+
+
 	private ParameterComboBox parameterCacheType;
 	private ParameterTextField parameterBounds;
 //	private ParameterTextField parameterXYIndex;
@@ -40,11 +46,19 @@ public class MetaProcessHeatMap extends MetaProcess {
 	private ParameterTextField parameterDatabase;
 	private ParameterTextField parameterVersion;
 
+	ParameterTextArea parameterTextAreaOutPut = new ParameterTextArea();
+
 	public MetaProcessHeatMap() {
 		initMetaInfo();
 	}
 
 	private void initMetaInfo() {
+
+		parameterTextFieldUserName.setSelectedItem("");
+		parameterTextFieldUserName.setDescribe(ProcessProperties.getString("String_UserName"));
+		parameterTextFieldPassword.setSelectedItem("");
+		parameterTextFieldPassword.setDescribe(ProcessProperties.getString("String_PassWord"));
+
 		parameterHDFSPath = new ParameterHDFSPath();
 		parameterHDFSPath.setSelectedItem("hdfs://172.16.14.148:9000/data/newyork_taxi_2013-01_147k.csv");
 
@@ -71,8 +85,14 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterDatabase.setSelectedItem("test");
 		parameterVersion = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Version"));
 		parameterVersion.setSelectedItem("V1");
-		this.parameters.setParameters(
-				parameterHDFSPath,
+
+		ParameterCombine parameterCombine = new ParameterCombine();
+		parameterCombine.setDescribe(ProcessProperties.getString("String_loginInfo"));
+		parameterCombine.addParameters(parameterTextFieldUserName, parameterTextFieldPassword);
+
+		ParameterCombine parameterCombineSetting = new ParameterCombine();
+		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_setParameter"));
+		parameterCombineSetting.addParameters(parameterHDFSPath,
 				parameterCacheType,
 				parameterBounds,
 //				parameterXYIndex,
@@ -81,7 +101,15 @@ public class MetaProcessHeatMap extends MetaProcess {
 				parameterDatabaseType,
 				parameterServiceAddress,
 				parameterDatabase,
-				parameterVersion
+				parameterVersion);
+
+		ParameterCombine parameterCombineResult = new ParameterCombine();
+		parameterCombineResult.setDescribe(ProcessProperties.getString("String_result"));
+		parameterCombineResult.addParameters(parameterTextAreaOutPut);
+		parameters.setParameters(
+				parameterCombine,
+				parameterCombineSetting,
+				parameterCombineResult
 		);
 	}
 
@@ -101,10 +129,10 @@ public class MetaProcessHeatMap extends MetaProcess {
 //		if (jDialogLogin.showDialog() != DialogResult.OK) {
 //			return;
 //		}
-		String username = "admin";
-		String password = "map123!@#";
+		String username = (String) parameterTextFieldUserName.getSelectedItem();
+		String password = (String) parameterTextFieldPassword.getSelectedItem();
 		IServerService service = new IServerServiceImpl();
-		IServerLoginInfo.ipAddr = "192.168.20.189";
+		IServerLoginInfo.ipAddr = "192.168.13.161";
 		IServerLoginInfo.port = "8090";
 		CloseableHttpClient client = service.login(username, password);
 		if (null != client) {
@@ -146,6 +174,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 //            outPuts.add(0, processData);
 			fireRunning(new RunningEvent(this, 100, "finished"));
 			setFinished(true);
+			CursorUtilities.setDefaultCursor();
 		}
 	}
 
