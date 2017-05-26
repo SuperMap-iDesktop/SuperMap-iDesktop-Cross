@@ -78,7 +78,7 @@
                 </process>
             </process>
             <process key="Projection" name="投影转换"/>
-			<process key="SetProjection" name="重设坐标系"/>
+            <process key="SetProjection" name="重设坐标系"/>
             <process name="插值分析">
                 <process key="Interpolator_IDW" name="距离反比权重"/>
                 <process key="Interpolator_RBF" name="样条"/>
@@ -126,8 +126,42 @@
             </process>
         </process>
         <process name="Online" iconPath="/processresources/Process/online.png">
+            <process name="空间叠加">
+                <process name="对象级叠加分析"/>
+                <process name="叠加分析"/>
+                <process name="属性更新"/>
+            </process>
+            <process name="位置查找">
+                <process name="查找相似位置"/>
+                <process name="对象级空间查询"/>
+                <process name="空间查询"/>
+            </process>
+            <process name="数据汇总">
+                <process name="格网聚合"/>
+                <process name="多边形聚合"/>
+                <process name="要素连接"/>
+                <process name="轨迹重构"/>
+                <process name="格网范围内汇总"/>
+                <process name="多边形范围内汇总"/>
+                <process name="属性汇总"/>
+            </process>
+            <process name="模式分析">
+                <process name="密度分析"/>
+                <process name="热点分析"/>
+                <process name="时空立方"/>
+            </process>
+            <process name="邻近分析">
+                <process name="缓冲区分析"/>
+            </process>
+            <process name="数据管理">
+                <process name="创建格网索引"/>
+                <process name="创建四叉树索引"/>
+            </process>
             <process key="HeatMap" name="计算热度图"/>
+            <process key="SimpleDensity" name="简单点密度分析"/>
             <process key="KernelDensity" name="核密度分析"/>
+            <process key="GridRegionAggregation" name="网格面聚合"/>
+            <process key="PolygonAggregation" name="多边形聚合"/>
         </process>
     </process>
 </root>
