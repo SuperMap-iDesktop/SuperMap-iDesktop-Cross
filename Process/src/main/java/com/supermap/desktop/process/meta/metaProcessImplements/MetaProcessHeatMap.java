@@ -6,25 +6,15 @@ import com.supermap.desktop.process.messageBus.NewMessageBus;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
-import com.supermap.desktop.process.parameter.implement.ParameterPassword;
-import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.TaskUtil;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
-import com.supermap.desktop.ui.lbs.params.BuildCacheDrawingSetting;
-import com.supermap.desktop.ui.lbs.params.BuildCacheJobSetting;
-import com.supermap.desktop.ui.lbs.params.FileInputDataSetting;
-import com.supermap.desktop.ui.lbs.params.IServerLoginInfo;
-import com.supermap.desktop.ui.lbs.params.JobResultResponse;
-import com.supermap.desktop.ui.lbs.params.MongoDBOutputsetting;
+import com.supermap.desktop.ui.lbs.params.*;
 import com.supermap.desktop.utilities.CursorUtilities;
 import org.apache.http.impl.client.CloseableHttpClient;
 
@@ -45,7 +35,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 
 	private ParameterComboBox parameterCacheType;
 	private ParameterTextField parameterBounds;
-//	private ParameterTextField parameterXYIndex;
+	//	private ParameterTextField parameterXYIndex;
 	private ParameterTextField parameterCacheLevel;
 	private ParameterTextField parameterCacheName;
 	private ParameterComboBox parameterDatabaseType;
@@ -119,7 +109,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 				parameterCombineSetting
 //				, parameterCombineResult
 		);
-		parameters.getOutputs().addData("HeatMapResult", Type.UNKOWN);
+		parameters.getOutputs().addData("HeatMapResult", BasicTypes.STRING);
 	}
 
 	@Override
