@@ -14,6 +14,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.TaskUtil;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
 import com.supermap.desktop.ui.lbs.params.IServerLoginInfo;
@@ -26,6 +27,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
  * Created by xie on 2017/2/10.
  */
 public class MetaProcessKernelDensity extends MetaProcess {
+
+	private ParameterTextField parameterTextFieldAddress = new ParameterTextField(CoreProperties.getString("String_Server"));
+	private ParameterTextField parameterTextFieldPort = new ParameterTextField(ProcessProperties.getString("String_port"));
+
 	private ParameterTextField parameterTextFieldUserName = new ParameterTextField();
 	private ParameterTextField parameterTextFieldPassword = new ParameterTextField();
 
@@ -53,7 +58,6 @@ public class MetaProcessKernelDensity extends MetaProcess {
 		parameterTextFieldPassword.setDescribe(ProcessProperties.getString("String_PassWord"));
 
 
-
 		parameterHDFSPath = new ParameterHDFSPath();
 		parameterHDFSPath.setSelectedItem("hdfs://172.16.14.148:9000/data/newyork_taxi_2013-01_147k.csv");
 		parameterComboBoxAnalyseType.setItems(new ParameterDataNode(ProcessProperties.getString("String_SimplePointDensity"), "0"),
@@ -74,7 +78,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
 		ParameterCombine parameterCombine = new ParameterCombine();
 		parameterCombine.setDescribe(ProcessProperties.getString("String_loginInfo"));
-		parameterCombine.addParameters(parameterTextFieldUserName, parameterTextFieldPassword);
+		parameterCombine.addParameters(parameterTextFieldAddress, parameterTextFieldPort, parameterTextFieldUserName, parameterTextFieldPassword);
 
 		ParameterCombine parameterCombineSetting = new ParameterCombine();
 		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_setParameter"));
@@ -112,8 +116,8 @@ public class MetaProcessKernelDensity extends MetaProcess {
 		String username = (String) parameterTextFieldUserName.getSelectedItem();
 		String password = (String) parameterTextFieldPassword.getSelectedItem();
 		IServerService service = new IServerServiceImpl();
-		IServerLoginInfo.ipAddr = "192.168.13.161";
-		IServerLoginInfo.port = "8090";
+		IServerLoginInfo.ipAddr = (String) parameterTextFieldAddress.getSelectedItem();
+		IServerLoginInfo.port = (String) parameterTextFieldPort.getSelectedItem();
 		CloseableHttpClient client = service.login(username, password);
 		if (null != client) {
 			IServerLoginInfo.client = client;

@@ -14,6 +14,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.TaskUtil;
+import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
 import com.supermap.desktop.ui.lbs.params.BuildCacheDrawingSetting;
@@ -35,6 +36,10 @@ public class MetaProcessHeatMap extends MetaProcess {
 
 	private ParameterHDFSPath parameterHDFSPath;
 
+
+	private ParameterTextField parameterTextFieldAddress = new ParameterTextField(CoreProperties.getString("String_Server"));
+
+	private ParameterTextField parameterTextFieldPort = new ParameterTextField(ProcessProperties.getString("String_port"));
 
 	private ParameterComboBox parameterCacheType;
 	private ParameterTextField parameterBounds;
@@ -88,7 +93,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 
 		ParameterCombine parameterCombine = new ParameterCombine();
 		parameterCombine.setDescribe(ProcessProperties.getString("String_loginInfo"));
-		parameterCombine.addParameters(parameterTextFieldUserName, parameterTextFieldPassword);
+		parameterCombine.addParameters(parameterTextFieldAddress, parameterTextFieldPort, parameterTextFieldUserName, parameterTextFieldPassword);
 
 		ParameterCombine parameterCombineSetting = new ParameterCombine();
 		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_setParameter"));
@@ -132,8 +137,8 @@ public class MetaProcessHeatMap extends MetaProcess {
 		String username = (String) parameterTextFieldUserName.getSelectedItem();
 		String password = (String) parameterTextFieldPassword.getSelectedItem();
 		IServerService service = new IServerServiceImpl();
-		IServerLoginInfo.ipAddr = "192.168.13.161";
-		IServerLoginInfo.port = "8090";
+		IServerLoginInfo.ipAddr = (String) parameterTextFieldAddress.getSelectedItem();
+		IServerLoginInfo.port = (String) parameterTextFieldPort.getSelectedItem();
 		CloseableHttpClient client = service.login(username, password);
 		if (null != client) {
 			IServerLoginInfo.client = client;
