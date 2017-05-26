@@ -11,7 +11,7 @@ import java.awt.*;
 /**
  * Created by highsad on 2017/2/28.
  */
-public class OutputGraph extends EllipseGraph {
+public class OutputGraph extends RectangleGraph {
 
 	private ProcessGraph processGraph;
 	private OutputData processData;
@@ -22,7 +22,7 @@ public class OutputGraph extends EllipseGraph {
 	}
 
 	public OutputGraph(GraphCanvas canvas, ProcessGraph processGraph, OutputData processData) {
-		super(canvas);
+		super(canvas, 0, 0);
 		this.processGraph = processGraph;
 		this.processData = processData;
 	}
@@ -40,12 +40,17 @@ public class OutputGraph extends EllipseGraph {
 	}
 
 	@Override
+	protected Color getBackColor() {
+		return new Color(123, 136, 189);
+	}
+
+	@Override
 	protected void onPaint(Graphics g) {
 		super.onPaint(g);
 
-		Font font = new Font("宋体", Font.PLAIN, 20);
+		Font font = new Font("宋体", Font.BOLD, 20);
 		g.setFont(font);
-		g.setColor(Color.darkGray);
+		g.setColor(Color.WHITE);
 
 		String text = getTitle();
 		int fontHeight = getCanvas().getFontMetrics(font).getHeight();

@@ -21,10 +21,15 @@ public class ProcessGraph extends RectangleGraph {
 	}
 
 	public ProcessGraph(GraphCanvas canvas, IProcess process) {
-		super(canvas);
+		super(canvas, 30, 30);
 		this.process = process;
 		if (getCanvas() != null) {
 		}
+	}
+
+	@Override
+	protected Color getBackColor() {
+		return new Color(39, 162, 223);
 	}
 
 	public IProcess getProcess() {
@@ -39,9 +44,9 @@ public class ProcessGraph extends RectangleGraph {
 	public void onPaint(Graphics g) {
 		super.onPaint(g);
 
-		Font font = new Font("宋体", Font.PLAIN, 20);
+		Font font = new Font("宋体", Font.BOLD, 20);
 		g.setFont(font);
-		g.setColor(Color.darkGray);
+		g.setColor(Color.WHITE);
 
 		String tilte = SwingUtilities2.clipStringIfNecessary(getCanvas(), getCanvas().getFontMetrics(font), getTitle(), getWidth());
 		int fontHeight = getCanvas().getFontMetrics(font).getHeight();
