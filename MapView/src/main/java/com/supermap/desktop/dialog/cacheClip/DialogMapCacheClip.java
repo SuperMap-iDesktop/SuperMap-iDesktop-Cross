@@ -35,7 +35,7 @@ public class DialogMapCacheClip extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			isSingleProcess = singleProcessClip.isSelected();
-			buildTask = radioButtonNo.isEnabled() && radioButtonNo.isSelected();
+			buildTask = singleProcessClip.isSelected() || (radioButtonNo.isEnabled() && radioButtonNo.isSelected());
 			dialogResult = DialogResult.OK;
 			DialogMapCacheClip.this.dispose();
 		}
