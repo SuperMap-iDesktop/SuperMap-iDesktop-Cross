@@ -9,9 +9,11 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
+import com.supermap.desktop.process.parameter.implement.ParameterPassword;
 import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.TaskUtil;
 import com.supermap.desktop.properties.CoreProperties;
@@ -32,7 +34,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 	private ParameterTextField parameterTextFieldPort = new ParameterTextField(ProcessProperties.getString("String_port"));
 
 	private ParameterTextField parameterTextFieldUserName = new ParameterTextField();
-	private ParameterTextField parameterTextFieldPassword = new ParameterTextField();
+	private ParameterPassword parameterTextFieldPassword = new ParameterPassword();
 
 	private ParameterHDFSPath parameterHDFSPath;
 	private ParameterComboBox parameterComboBoxAnalyseType = new ParameterComboBox(ProcessProperties.getString("String_AnalyseType"));
@@ -96,9 +98,10 @@ public class MetaProcessKernelDensity extends MetaProcess {
 		parameterCombineResult.addParameters(parameterTextAreaOutPut);
 		parameters.setParameters(
 				parameterCombine,
-				parameterCombineSetting,
-				parameterCombineResult
+				parameterCombineSetting
+//				,parameterCombineResult
 		);
+		parameters.getOutputs().addData("KernelDensityResult", Type.UNKOWN);
 	}
 
 	@Override
@@ -144,6 +147,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 //            processData.setData("Output");
 //            outPuts.add(0, processData);
 			fireRunning(new RunningEvent(this, 100, "finished"));
+			parameters.getOutputs().getData("KernelDensityResult").setValue("");// // TODO: 2017/5/26
 			setFinished(true);
 			CursorUtilities.setDefaultCursor();
 		}
