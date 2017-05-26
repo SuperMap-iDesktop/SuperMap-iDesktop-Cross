@@ -2,7 +2,11 @@ package com.supermap.desktop.process.messageBus;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
+import com.supermap.data.DatasourceConnectionInfo;
+import com.supermap.data.Datasources;
+import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormMap;
@@ -21,6 +25,7 @@ import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by xie on 2017/1/10.
@@ -94,13 +99,12 @@ public class NewMessageBus {
 						openIserverMap(iserverRestAddr, datasourceName, datasetName);
 					}
 				}
+			} else {
+				if (percent <= 99) {
+					task.updateProgress(new Random().nextInt(99), "", "");
+				}
+				Thread.sleep(100);
 			}
-//            }
-		} else {
-			if (percent <= 99) {
-				task.updateProgress(percent++, "", "");
-			}
-			Thread.sleep(100);
 		}
 	}
 
