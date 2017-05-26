@@ -43,7 +43,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 
 	private ParameterComboBox parameterCacheType;
 	private ParameterTextField parameterBounds;
-	private ParameterTextField parameterXYIndex;
+//	private ParameterTextField parameterXYIndex;
 	private ParameterTextField parameterCacheLevel;
 	private ParameterTextField parameterCacheName;
 	private ParameterComboBox parameterDatabaseType;
@@ -68,14 +68,14 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterHDFSPath.setSelectedItem("hdfs://172.16.14.148:9000/data/newyork_taxi_2013-01_147k.csv");
 
 		parameterCacheType = new ParameterComboBox(ProcessProperties.getString("String_CacheType"));
-		ParameterDataNode parameterDataNode1 = new ParameterDataNode("HeatMap", "HeatMap");
+		ParameterDataNode parameterDataNode1 = new ParameterDataNode("heatMap", "heatMap");
 		parameterCacheType.setItems(parameterDataNode1);
 		parameterCacheType.setSelectedItem(parameterDataNode1);
 		//流程图中不支持在地图中绘制范围，范围表示与iServer的表示相同
 		parameterBounds = new ParameterTextField().setDescribe(ProcessProperties.getString("String_CacheBounds"));
 		parameterBounds.setSelectedItem("-74.050,40.650,-73.850,40.850");
-		parameterXYIndex = new ParameterTextField().setDescribe(ProcessProperties.getString("String_XYIndex"));
-		parameterXYIndex.setSelectedItem("10,11");
+//		parameterXYIndex = new ParameterTextField().setDescribe(ProcessProperties.getString("String_XYIndex"));
+//		parameterXYIndex.setSelectedItem("10,11");
 		parameterCacheLevel = new ParameterTextField().setDescribe(ProcessProperties.getString("String_CacheLevel"));
 		parameterCacheLevel.setSelectedItem("1");
 		parameterCacheName = new ParameterTextField().setDescribe(ProcessProperties.getString("String_CacheName"));
@@ -100,7 +100,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterCombineSetting.addParameters(parameterHDFSPath,
 				parameterCacheType,
 				parameterBounds,
-				parameterXYIndex,
+//				parameterXYIndex,
 				parameterCacheLevel,
 				parameterCacheName,
 				parameterDatabaseType,
@@ -162,7 +162,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 			drawing.bounds = parameterBounds.getSelectedItem().toString();
 
 			drawing.level = parameterCacheLevel.getSelectedItem().toString();
-			drawing.xyIndex = parameterXYIndex.getSelectedItem().toString();
+//			drawing.xyIndex = parameterXYIndex.getSelectedItem().toString();
 			setting.input = input;
 			setting.output = output;
 			setting.drawing = drawing;

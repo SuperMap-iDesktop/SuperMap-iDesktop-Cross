@@ -189,6 +189,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 
 			@Override
 			protected Boolean doInBackground() throws Exception {
+				buttonRun.setProcedure(ButtonExecutor.RUNNING);
 				return callable.call();
 			}
 
@@ -200,7 +201,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 						if (result) {
 							buttonRun.setProcedure(ButtonExecutor.COMPLETED);
 						} else {
-							progressBar.setProgress(0);
+//							progressBar.setProgress(0);
 							labelMessage.setText("...");
 							labelRemaintime.setText("...");
 							buttonRun.setProcedure(ButtonExecutor.READY);
