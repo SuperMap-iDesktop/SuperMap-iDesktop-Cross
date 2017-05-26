@@ -9,9 +9,11 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
+import com.supermap.desktop.process.parameter.implement.ParameterPassword;
 import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.TaskUtil;
 import com.supermap.desktop.properties.CoreProperties;
@@ -32,7 +34,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
  */
 public class MetaProcessHeatMap extends MetaProcess {
 	private ParameterTextField parameterTextFieldUserName = new ParameterTextField();
-	private ParameterTextField parameterTextFieldPassword = new ParameterTextField();
+	private ParameterPassword parameterTextFieldPassword = new ParameterPassword();
 
 	private ParameterHDFSPath parameterHDFSPath;
 
@@ -58,14 +60,15 @@ public class MetaProcessHeatMap extends MetaProcess {
 	}
 
 	private void initMetaInfo() {
-
-		parameterTextFieldUserName.setSelectedItem("");
+		parameterTextFieldAddress.setSelectedItem("192.168.13.161");
+		parameterTextFieldPort.setSelectedItem("8090");
+		parameterTextFieldUserName.setSelectedItem("admin");
 		parameterTextFieldUserName.setDescribe(ProcessProperties.getString("String_UserName"));
-		parameterTextFieldPassword.setSelectedItem("");
+		parameterTextFieldPassword.setSelectedItem("iserver123.");
 		parameterTextFieldPassword.setDescribe(ProcessProperties.getString("String_PassWord"));
 
 		parameterHDFSPath = new ParameterHDFSPath();
-		parameterHDFSPath.setSelectedItem("hdfs://172.16.14.148:9000/data/newyork_taxi_2013-01_147k.csv");
+		parameterHDFSPath.setSelectedItem("newyork14_newyork_taxi_2013-01_14k");
 
 		parameterCacheType = new ParameterComboBox(ProcessProperties.getString("String_CacheType"));
 		ParameterDataNode parameterDataNode1 = new ParameterDataNode("heatMap", "heatMap");
@@ -85,7 +88,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterDatabaseType.setItems(parameterDataNode);
 		parameterDatabaseType.setSelectedItem(parameterDataNode);
 		parameterServiceAddress = new ParameterTextField().setDescribe(ProcessProperties.getString("String_ServiceAddress"));
-		parameterServiceAddress.setSelectedItem("192.168.15.245:27017");
+		parameterServiceAddress.setSelectedItem("192.168.13.161:27017");
 		parameterDatabase = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Database"));
 		parameterDatabase.setSelectedItem("test");
 		parameterVersion = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Version"));
@@ -113,9 +116,10 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterCombineResult.addParameters(parameterTextAreaOutPut);
 		parameters.setParameters(
 				parameterCombine,
-				parameterCombineSetting,
-				parameterCombineResult
+				parameterCombineSetting
+//				, parameterCombineResult
 		);
+		parameters.getOutputs().addData("HeatMapResult", Type.UNKOWN);
 	}
 
 	@Override
@@ -178,6 +182,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 //            processData.setData("Output");
 //            outPuts.add(0, processData);
 			fireRunning(new RunningEvent(this, 100, "finished"));
+			parameters.getOutputs().getData("HeatMapResult").setValue("");// // TODO: 2017/5/26
 			setFinished(true);
 			CursorUtilities.setDefaultCursor();
 		}
