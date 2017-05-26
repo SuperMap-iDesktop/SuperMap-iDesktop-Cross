@@ -115,6 +115,7 @@ public class SnapSettingDialog extends SmDialog {
 				checkBoxSnappedLineBroken.setSelected(snapSetting.isSnappedLineBroken());
 				isRecoverSnapParams = true;
 			}
+			mapControlSnapSetting = srcSnapSetting;
 		}
 	};
 	private ActionListener cancelListener = new ActionListener() {

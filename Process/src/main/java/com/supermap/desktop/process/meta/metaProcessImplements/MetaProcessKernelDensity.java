@@ -32,6 +32,9 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
 	private ParameterTextField parameterTextFieldAddress = new ParameterTextField(CoreProperties.getString("String_Server"));
 	private ParameterTextField parameterTextFieldPort = new ParameterTextField(ProcessProperties.getString("String_port"));
+	private ParameterTextField parameterTextFieldXIndex = new ParameterTextField(ProcessProperties.getString("String_XIndex"));
+	private ParameterTextField parameterTextFieldYIndex = new ParameterTextField(ProcessProperties.getString("String_YIndex"));
+	private ParameterTextField parameterTextFieldSeparator = new ParameterTextField(ProcessProperties.getString("String_Separator"));
 
 	private ParameterTextField parameterTextFieldUserName = new ParameterTextField();
 	private ParameterPassword parameterTextFieldPassword = new ParameterPassword();
@@ -52,7 +55,10 @@ public class MetaProcessKernelDensity extends MetaProcess {
 	}
 
 	private void initMetaInfo() {
-		//TODO 封装数据管理调用控件，此处先用ParameterTextField控件替换
+		parameterTextFieldXIndex.setSelectedItem("10");
+		parameterTextFieldYIndex.setSelectedItem("11");
+		parameterTextFieldSeparator.setSelectedItem(",");
+		parameterTextFieldSeparator.setEnabled(false);
 		parameterTextFieldAddress.setSelectedItem("192.168.13.161");
 		parameterTextFieldPort.setSelectedItem("8090");
 		parameterTextFieldUserName.setSelectedItem("admin");
@@ -62,7 +68,8 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
 
 		parameterHDFSPath = new ParameterHDFSPath();
-		parameterHDFSPath.setSelectedItem("newyork14_newyork_taxi_2013-01_14k");
+//		parameterHDFSPath.setSelectedItem("newyork14_newyork_taxi_2013-01_14k");
+		parameterHDFSPath.setSelectedItem("hdfs://192.168.12.201:9000/data/newyork_taxi_2013-01_14k.csv");
 		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_KernelDensity"), "1");
 		parameterComboBoxAnalyseType.setItems(new ParameterDataNode(ProcessProperties.getString("String_SimplePointDensity"), "0"),
 				parameterDataNode);
@@ -88,6 +95,9 @@ public class MetaProcessKernelDensity extends MetaProcess {
 		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_setParameter"));
 		parameterCombineSetting.addParameters(
 				parameterHDFSPath,
+				parameterTextFieldXIndex,
+				parameterTextFieldYIndex,
+				parameterTextFieldSeparator,
 				parameterComboBoxAnalyseType,
 				parameterComboBoxMeshType,
 				parameterIndex,
@@ -135,7 +145,10 @@ public class MetaProcessKernelDensity extends MetaProcess {
 			kenelDensityJobSetting.analyst.query = parameterBounds.getSelectedItem().toString();
 			kenelDensityJobSetting.analyst.resolution = parameterResolution.getSelectedItem().toString();
 			kenelDensityJobSetting.analyst.radius = parameterRadius.getSelectedItem().toString();
-			kenelDensityJobSetting.input.datasetName = parameterHDFSPath.getSelectedItem().toString();
+			kenelDensityJobSetting.input.filePath = parameterHDFSPath.getSelectedItem().toString();
+			kenelDensityJobSetting.input.xIndex = parameterTextFieldXIndex.getSelectedItem().toString();
+			kenelDensityJobSetting.input.yIndex = parameterTextFieldYIndex.getSelectedItem().toString();
+			kenelDensityJobSetting.input.separator = parameterTextFieldSeparator.getSelectedItem().toString();
 
 			CursorUtilities.setWaitCursor();
 			JobResultResponse response = service.query(kenelDensityJobSetting);

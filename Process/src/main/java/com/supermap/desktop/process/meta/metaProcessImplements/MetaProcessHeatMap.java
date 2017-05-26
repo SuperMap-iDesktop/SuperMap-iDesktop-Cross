@@ -28,6 +28,9 @@ public class MetaProcessHeatMap extends MetaProcess {
 
 	private ParameterHDFSPath parameterHDFSPath;
 
+	private ParameterTextField parameterTextFieldXIndex = new ParameterTextField(ProcessProperties.getString("String_XIndex"));
+	private ParameterTextField parameterTextFieldYIndex = new ParameterTextField(ProcessProperties.getString("String_YIndex"));
+	private ParameterTextField parameterTextFieldSeparator = new ParameterTextField(ProcessProperties.getString("String_Separator"));
 
 	private ParameterTextField parameterTextFieldAddress = new ParameterTextField(CoreProperties.getString("String_Server"));
 
@@ -50,6 +53,10 @@ public class MetaProcessHeatMap extends MetaProcess {
 	}
 
 	private void initMetaInfo() {
+		parameterTextFieldXIndex.setSelectedItem("10");
+		parameterTextFieldYIndex.setSelectedItem("11");
+		parameterTextFieldSeparator.setSelectedItem(",");
+		parameterTextFieldSeparator.setEnabled(false);
 		parameterTextFieldAddress.setSelectedItem("192.168.13.161");
 		parameterTextFieldPort.setSelectedItem("8090");
 		parameterTextFieldUserName.setSelectedItem("admin");
@@ -58,7 +65,8 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterTextFieldPassword.setDescribe(ProcessProperties.getString("String_PassWord"));
 
 		parameterHDFSPath = new ParameterHDFSPath();
-		parameterHDFSPath.setSelectedItem("newyork14_newyork_taxi_2013-01_14k");
+//		parameterHDFSPath.setSelectedItem("newyork14_newyork_taxi_2013-01_14k");
+		parameterHDFSPath.setSelectedItem("hdfs://192.168.12.201:9000/data/newyork_taxi_2013-01_14k.csv");
 
 		parameterCacheType = new ParameterComboBox(ProcessProperties.getString("String_CacheType"));
 		ParameterDataNode parameterDataNode1 = new ParameterDataNode("heatMap", "heatMap");
@@ -93,6 +101,9 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterCombineSetting.addParameters(parameterHDFSPath,
 				parameterCacheType,
 				parameterBounds,
+				parameterTextFieldXIndex,
+				parameterTextFieldYIndex,
+				parameterTextFieldSeparator,
 //				parameterXYIndex,
 				parameterCacheLevel,
 				parameterCacheName,
@@ -142,7 +153,10 @@ public class MetaProcessHeatMap extends MetaProcess {
 			BuildCacheJobSetting setting = new BuildCacheJobSetting();
 
 			FileInputDataSetting input = new FileInputDataSetting();
-			input.datasetName = parameterHDFSPath.getSelectedItem().toString();
+			input.filePath = parameterHDFSPath.getSelectedItem().toString();
+			input.xIndex = parameterTextFieldXIndex.getSelectedItem().toString();
+			input.yIndex = parameterTextFieldYIndex.getSelectedItem().toString();
+			input.separator = parameterTextFieldSeparator.getSelectedItem().toString();
 
 			MongoDBOutputsetting output = new MongoDBOutputsetting();
 			output.cacheName = parameterCacheName.getSelectedItem().toString();
