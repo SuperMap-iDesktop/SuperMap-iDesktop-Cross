@@ -53,18 +53,20 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
 	private void initMetaInfo() {
 		//TODO 封装数据管理调用控件，此处先用ParameterTextField控件替换
-
-		parameterTextFieldUserName.setSelectedItem("");
+		parameterTextFieldAddress.setSelectedItem("192.168.13.161");
+		parameterTextFieldPort.setSelectedItem("8090");
+		parameterTextFieldUserName.setSelectedItem("admin");
 		parameterTextFieldUserName.setDescribe(ProcessProperties.getString("String_UserName"));
-		parameterTextFieldPassword.setSelectedItem("");
+		parameterTextFieldPassword.setSelectedItem("iserver123.");
 		parameterTextFieldPassword.setDescribe(ProcessProperties.getString("String_PassWord"));
 
 
 		parameterHDFSPath = new ParameterHDFSPath();
-		parameterHDFSPath.setSelectedItem("hdfs://172.16.14.148:9000/data/newyork_taxi_2013-01_147k.csv");
+		parameterHDFSPath.setSelectedItem("newyork14_newyork_taxi_2013-01_14k");
+		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_KernelDensity"), "1");
 		parameterComboBoxAnalyseType.setItems(new ParameterDataNode(ProcessProperties.getString("String_SimplePointDensity"), "0"),
-				new ParameterDataNode(ProcessProperties.getString("String_KernelDensity"), "1"));
-
+				parameterDataNode);
+		parameterComboBoxAnalyseType.setSelectedItem(parameterDataNode);
 		parameterComboBoxMeshType.setItems(new ParameterDataNode(ProcessProperties.getString("String_QuadrilateralMesh"), "0"),
 				new ParameterDataNode(ProcessProperties.getString("String_HexagonalMesh"), "1"));
 

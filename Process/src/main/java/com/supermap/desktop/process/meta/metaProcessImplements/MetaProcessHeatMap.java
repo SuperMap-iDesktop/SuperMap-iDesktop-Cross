@@ -60,14 +60,15 @@ public class MetaProcessHeatMap extends MetaProcess {
 	}
 
 	private void initMetaInfo() {
-
-		parameterTextFieldUserName.setSelectedItem("");
+		parameterTextFieldAddress.setSelectedItem("192.168.13.161");
+		parameterTextFieldPort.setSelectedItem("8090");
+		parameterTextFieldUserName.setSelectedItem("admin");
 		parameterTextFieldUserName.setDescribe(ProcessProperties.getString("String_UserName"));
-		parameterTextFieldPassword.setSelectedItem("");
+		parameterTextFieldPassword.setSelectedItem("iserver123.");
 		parameterTextFieldPassword.setDescribe(ProcessProperties.getString("String_PassWord"));
 
 		parameterHDFSPath = new ParameterHDFSPath();
-		parameterHDFSPath.setSelectedItem("hdfs://172.16.14.148:9000/data/newyork_taxi_2013-01_147k.csv");
+		parameterHDFSPath.setSelectedItem("newyork14_newyork_taxi_2013-01_14k");
 
 		parameterCacheType = new ParameterComboBox(ProcessProperties.getString("String_CacheType"));
 		ParameterDataNode parameterDataNode1 = new ParameterDataNode("heatMap", "heatMap");
@@ -87,7 +88,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterDatabaseType.setItems(parameterDataNode);
 		parameterDatabaseType.setSelectedItem(parameterDataNode);
 		parameterServiceAddress = new ParameterTextField().setDescribe(ProcessProperties.getString("String_ServiceAddress"));
-		parameterServiceAddress.setSelectedItem("192.168.15.245:27017");
+		parameterServiceAddress.setSelectedItem("192.168.13.161:27017");
 		parameterDatabase = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Database"));
 		parameterDatabase.setSelectedItem("test");
 		parameterVersion = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Version"));
