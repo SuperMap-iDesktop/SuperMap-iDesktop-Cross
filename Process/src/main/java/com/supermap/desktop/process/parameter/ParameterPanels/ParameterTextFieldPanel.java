@@ -52,10 +52,6 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		}
 	}
 
-	public void setText(String text){
-		textField.setText(text);
-	}
-
 	private void initListeners() {
 		parameterTextField.addPropertyListener(new PropertyChangeListener() {
 			@Override

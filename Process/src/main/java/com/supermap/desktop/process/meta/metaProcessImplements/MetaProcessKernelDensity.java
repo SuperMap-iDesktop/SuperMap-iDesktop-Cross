@@ -9,6 +9,7 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterHDFSPath;
+import com.supermap.desktop.process.parameter.implement.ParameterPassword;
 import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -32,7 +33,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 	private ParameterTextField parameterTextFieldPort = new ParameterTextField(ProcessProperties.getString("String_port"));
 
 	private ParameterTextField parameterTextFieldUserName = new ParameterTextField();
-	private ParameterTextField parameterTextFieldPassword = new ParameterTextField();
+	private ParameterPassword parameterTextFieldPassword = new ParameterPassword();
 
 	private ParameterHDFSPath parameterHDFSPath;
 	private ParameterComboBox parameterComboBoxAnalyseType = new ParameterComboBox(ProcessProperties.getString("String_AnalyseType"));
