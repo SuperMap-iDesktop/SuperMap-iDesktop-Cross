@@ -30,6 +30,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -205,10 +206,17 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	}
 
 	private void initResources() {
-		this.setTitle(MapViewProperties.getString("MapCache_Title") + "(" + this.currentMap.getName() + ")");
+		if (singleProcessClip) {
+			this.setTitle(MessageFormat.format(MapViewProperties.getString("MapCache_Title"), this.currentMap.getName()));
+			this.buttonOk.setText(MapViewProperties.getString("String_BatchAddColorTableOKButton"));
+			this.checkBoxShowProcessBar.setVisible(false);
+		} else {
+			this.setTitle(MessageFormat.format(MapViewProperties.getString("MapCache_Title_TaskBuilder"), this.currentMap.getName()));
+			this.buttonOk.setText(MapViewProperties.getString("String_Title_Split"));
+			this.checkBoxShowProcessBar.setVisible(false);
+		}
 		this.checkBoxAutoClosed.setText(MapViewProperties.getString("MapCache_AutoCloseDailog"));
 		this.checkBoxShowProcessBar.setText(MapViewProperties.getString("MapCache_ShowProgressBar"));
-		this.buttonOk.setText(MapViewProperties.getString("String_BatchAddColorTableOKButton"));
 		this.buttonStep.setText(ControlsProperties.getString("String_NextWay"));
 	}
 

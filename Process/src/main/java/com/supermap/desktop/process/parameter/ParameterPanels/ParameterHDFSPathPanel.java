@@ -27,83 +27,84 @@ import java.beans.PropertyChangeListener;
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.HDFS_PATH)
 public class ParameterHDFSPathPanel extends SwingPanel {
-    private JLabel labelFileInputPath;
-    private JTextField textFieldFileInputPath;
-    private JButton buttonInputBrowser;
-    private ParameterHDFSPath parameterHDFSPath;
-    private boolean isSelectingItem = false;
+	private JLabel labelFileInputPath;
+	private JTextField textFieldFileInputPath;
+	private JButton buttonInputBrowser;
+	private ParameterHDFSPath parameterHDFSPath;
+	private boolean isSelectingItem = false;
 
 	public ParameterHDFSPathPanel(IParameter parameterHDFSPath) {
 		super(parameterHDFSPath);
 		this.parameterHDFSPath = (ParameterHDFSPath) parameterHDFSPath;
 		initParameterInfo();
-        initListener();
-    }
-    private void initParameterInfo() {
-        this.labelFileInputPath = new JLabel();
-        this.textFieldFileInputPath = new JTextField();
-        this.textFieldFileInputPath.setText((String) parameterHDFSPath.getSelectedItem());
-	    textFieldFileInputPath.setPreferredSize(new Dimension(200, 20));
-	    this.buttonInputBrowser = new JButton();
-        this.buttonInputBrowser.setText(ProcessProperties.getString("String_Browser"));
-        this.labelFileInputPath.setText(ProcessProperties.getString("String_FileInputPath"));
-        this.labelFileInputPath.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
-	    panel.setLayout(new GridBagLayout());
-	    panel.add(this.labelFileInputPath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
-	    panel.add(this.textFieldFileInputPath, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0).setWeight(1, 0));
-	    panel.add(this.buttonInputBrowser, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 0, 0));
-    }
+		initListener();
+	}
 
-    private void initListener() {
-        this.parameterHDFSPath.addPropertyListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent evt) {
-                if (!isSelectingItem && AbstractParameter.PROPERTY_VALE.equals(evt.getPropertyName())) {
-                    isSelectingItem = true;
-                    WebHDFS.resultURL = textFieldFileInputPath.getText();
-                    parameterHDFSPath.setSelectedItem(WebHDFS.getResultHDFSFilePath());
-                    isSelectingItem = false;
-                }
-            }
-        });
-        this.textFieldFileInputPath.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                changeHDFSPath();
-            }
+	private void initParameterInfo() {
+		this.labelFileInputPath = new JLabel();
+		this.textFieldFileInputPath = new JTextField();
+		this.textFieldFileInputPath.setText((String) parameterHDFSPath.getSelectedItem());
+		textFieldFileInputPath.setPreferredSize(new Dimension(200, 20));
+		this.buttonInputBrowser = new JButton();
+		this.buttonInputBrowser.setText(ProcessProperties.getString("String_Browser"));
+		this.labelFileInputPath.setText(ProcessProperties.getString("String_FileInputPath"));
+		this.labelFileInputPath.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
+		panel.setLayout(new GridBagLayout());
+		panel.add(this.labelFileInputPath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setWeight(0, 0));
+		panel.add(this.textFieldFileInputPath, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0).setWeight(1, 0));
+		panel.add(this.buttonInputBrowser, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 5, 0, 0));
+	}
 
-            private void changeHDFSPath() {
-                if (!isSelectingItem && !StringUtilities.isNullOrEmptyString(textFieldFileInputPath.getText())) {
-                    isSelectingItem = true;
-                    WebHDFS.resultURL = textFieldFileInputPath.getText();
-                    parameterHDFSPath.setSelectedItem(WebHDFS.getResultHDFSFilePath());
-                    isSelectingItem = false;
-                }
-            }
+	private void initListener() {
+		this.parameterHDFSPath.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (!isSelectingItem && AbstractParameter.PROPERTY_VALE.equals(evt.getPropertyName())) {
+					isSelectingItem = true;
+					WebHDFS.resultURL = textFieldFileInputPath.getText();
+					parameterHDFSPath.setSelectedItem(WebHDFS.getResultHDFSFilePath());
+					isSelectingItem = false;
+				}
+			}
+		});
+		this.textFieldFileInputPath.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				changeHDFSPath();
+			}
 
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                changeHDFSPath();
-            }
+			private void changeHDFSPath() {
+				if (!isSelectingItem && !StringUtilities.isNullOrEmptyString(textFieldFileInputPath.getText())) {
+					isSelectingItem = true;
+					WebHDFS.resultURL = textFieldFileInputPath.getText();
+					parameterHDFSPath.setSelectedItem(WebHDFS.getResultHDFSFilePath());
+					isSelectingItem = false;
+				}
+			}
 
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                changeHDFSPath();
-            }
-        });
-        this.buttonInputBrowser.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JDialogHDFSFiles hdfsFiles = new JDialogHDFSFiles();
-                if (!isSelectingItem && hdfsFiles.showDialog() == DialogResult.OK
-                        && !StringUtilities.isNullOrEmptyString(WebHDFS.getResultHDFSFilePath())) {
-                    isSelectingItem = true;
-                    WebHDFS.resultURL = textFieldFileInputPath.getText();
-                    parameterHDFSPath.setSelectedItem(WebHDFS.getResultHDFSFilePath());
-                    isSelectingItem = false;
-                }
-            }
-        });
-    }
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				changeHDFSPath();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				changeHDFSPath();
+			}
+		});
+		this.buttonInputBrowser.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JDialogHDFSFiles hdfsFiles = new JDialogHDFSFiles();
+				if (!isSelectingItem && hdfsFiles.showDialog() == DialogResult.OK
+						&& !StringUtilities.isNullOrEmptyString(WebHDFS.getResultHDFSFilePath())) {
+					isSelectingItem = true;
+					parameterHDFSPath.setSelectedItem(WebHDFS.getResultHDFSFilePath());
+					textFieldFileInputPath.setText(WebHDFS.getResultHDFSFilePath());
+					isSelectingItem = false;
+				}
+			}
+		});
+	}
 
 }
