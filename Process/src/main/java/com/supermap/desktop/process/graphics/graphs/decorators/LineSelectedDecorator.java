@@ -78,7 +78,7 @@ public class LineSelectedDecorator extends AbstractDecorator {
 
 		for (int i = 0; i < points.length; i++) {
 			Ellipse2D shape = new Ellipse2D.Double(points[i].getX() - NODE_WIDTH / 2, points[i].getY() - NODE_WIDTH / 2, NODE_WIDTH, NODE_WIDTH);
-			graphics2D.setColor(Color.WHITE);
+			graphics2D.setColor(new Color(217, 196, 76));
 			graphics2D.fill(shape);
 			graphics2D.setColor(Color.GRAY);
 			graphics2D.draw(shape);

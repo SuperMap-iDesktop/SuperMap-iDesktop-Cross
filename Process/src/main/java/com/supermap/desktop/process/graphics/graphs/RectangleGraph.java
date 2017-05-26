@@ -18,9 +18,17 @@ public class RectangleGraph extends AbstractGraph implements IConnectable {
 		super(canvas, new RoundRectangle2D.Double(0, 0, 150, 50, 15, 15));
 	}
 
+	public RectangleGraph(GraphCanvas canvas, double arcWidth, double arcHeight) {
+		super(canvas, new RoundRectangle2D.Double(0, 0, 150, 50, arcWidth, arcHeight));
+	}
+
 	@Override
 	public RoundRectangle2D getShape() {
 		return (RoundRectangle2D) super.shape;
+	}
+
+	protected Color getBackColor() {
+		return new Color(202, 221, 254);
 	}
 
 	public double getArcWidth() {
@@ -63,7 +71,7 @@ public class RectangleGraph extends AbstractGraph implements IConnectable {
 
 	@Override
 	protected void onPaint(Graphics g) {
-		g.setColor(new Color(202, 221, 254));
+		g.setColor(getBackColor());
 		((Graphics2D) g).fill(this.shape);
 	}
 
