@@ -5,9 +5,9 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 /**
- * Created by highsad on 2017/3/8.
+ * Created by highsad on 2017/5/27.
  */
-public class GraphCreatingEvent extends CancellationEvent {
+public class GraphRemovingEvent extends CancellationEvent {
 	private GraphCanvas canvas;
 	private IGraph graph;
 
@@ -17,8 +17,9 @@ public class GraphCreatingEvent extends CancellationEvent {
 	 * @param canvas The object on which the Event initially occurred.
 	 * @throws IllegalArgumentException if source is null.
 	 */
-	public GraphCreatingEvent(GraphCanvas canvas, IGraph graph) {
+	public GraphRemovingEvent(GraphCanvas canvas, IGraph graph) {
 		super(canvas, false);
+		this.canvas = canvas;
 		this.graph = graph;
 	}
 

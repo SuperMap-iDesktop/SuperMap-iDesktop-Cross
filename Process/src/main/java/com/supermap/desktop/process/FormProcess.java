@@ -9,19 +9,8 @@ import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.FormActivatedListener;
-import com.supermap.desktop.event.FormClosedEvent;
-import com.supermap.desktop.event.FormClosedListener;
-import com.supermap.desktop.event.FormClosingEvent;
-import com.supermap.desktop.event.FormClosingListener;
-import com.supermap.desktop.event.FormDeactivatedListener;
-import com.supermap.desktop.event.FormShownEvent;
-import com.supermap.desktop.event.FormShownListener;
-import com.supermap.desktop.process.core.DirectConnect;
-import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.core.NodeMatrix;
-import com.supermap.desktop.process.core.Workflow;
-import com.supermap.desktop.process.core.WorkflowParser;
+import com.supermap.desktop.event.*;
+import com.supermap.desktop.process.core.*;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
@@ -526,7 +515,6 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 							Point inverse = getCanvas().getCoordinateTransform().inverse(location);
 							graph.setLocation(inverse);
 							getCanvas().getGraphStorage().add(graph);
-							addOutPutGraph(graph);
 							getCanvas().repaint();
 						}
 					} catch (Exception e) {

@@ -40,6 +40,9 @@ public class GraphRemoveAction extends CanvasActionAdapter {
 					IConnectable end = ((ConnectionLineGraph) graph).getConnection().getEnd();
 
 					if (start.getConnector() instanceof OutputGraph && end.getConnector() instanceof ProcessGraph) {
+						if (this.canvas.getSelection().isSelected(graph)) {
+							this.canvas.getSelection().deselectItem(graph);
+						}
 						this.canvas.getGraphStorage().getConnectionManager().removeConnection(((ConnectionLineGraph) graph).getConnection());
 					} else {
 						continue;
@@ -47,11 +50,18 @@ public class GraphRemoveAction extends CanvasActionAdapter {
 				} else if (graph instanceof ProcessGraph) {
 					IGraph[] nextGraphs = this.canvas.getGraphStorage().getConnectionManager().getNextGraphs(graph);
 
+					this.canvas.getGraphStorage().getConnectionManager().removeConnection(graph);
+					if (this.canvas.getSelection().isSelected(graph)) {
+						this.canvas.getSelection().deselectItem(graph);
+					}
+					this.canvas.getGraphStorage().remove(graph);
+
 					if (nextGraphs != null && nextGraphs.length > 0) {
 						for (int j = 0; j < nextGraphs.length; j++) {
 							IGraph nextGraph = nextGraphs[j];
 							if (nextGraph instanceof OutputGraph) {
-
+								this.canvas.getGraphStorage().getConnectionManager().removeConnection(nextGraph);
+								this.canvas.getGraphStorage().remove(nextGraph);
 							}
 						}
 					}
@@ -59,6 +69,7 @@ public class GraphRemoveAction extends CanvasActionAdapter {
 					continue;
 				}
 			}
+			this.canvas.repaint();
 		}
 	}
 }
