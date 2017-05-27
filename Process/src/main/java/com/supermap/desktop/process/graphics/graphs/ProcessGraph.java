@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.WorkflowParser;
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.meta.MetaKeys;
+import com.supermap.desktop.process.meta.metaProcessImplements.EmptyMetaProcess;
 import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import sun.swing.SwingUtilities2;
 
 import java.awt.*;
@@ -64,13 +67,20 @@ public class ProcessGraph extends RectangleGraph {
 	protected void toXmlHook(JSONObject jsonObject) {
 		super.toXmlHook(jsonObject);
 		jsonObject.put("process", process.getKey());
+		if (process instanceof EmptyMetaProcess) {
+			jsonObject.put("title", process.getTitle());
+		}
 	}
 
 	@Override
 	protected void formXmlHook(JSONObject xml) {
 		super.formXmlHook(xml);
 		String key = (String) xml.get("process");
-		process = WorkflowParser.getMetaProcess(key);
+		if (key.equals(MetaKeys.Empty) && !StringUtilities.isNullOrEmpty((String) xml.get("title"))) {
+			process = new EmptyMetaProcess((String) xml.get("title"));
+		} else {
+			process = WorkflowParser.getMetaProcess(key);
+		}
 	}
 
 

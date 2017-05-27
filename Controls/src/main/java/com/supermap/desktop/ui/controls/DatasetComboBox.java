@@ -1,6 +1,14 @@
 package com.supermap.desktop.ui.controls;
 
 import com.supermap.data.Dataset;
+import com.supermap.data.DatasetCreatedEvent;
+import com.supermap.data.DatasetCreatedListener;
+import com.supermap.data.DatasetDeletedAllEvent;
+import com.supermap.data.DatasetDeletedAllListener;
+import com.supermap.data.DatasetDeletedEvent;
+import com.supermap.data.DatasetDeletedListener;
+import com.supermap.data.DatasetRenamedEvent;
+import com.supermap.data.DatasetRenamedListener;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasets;
 import com.supermap.desktop.Application;
@@ -9,6 +17,7 @@ import com.supermap.desktop.implement.DefaultComboBoxUI;
 import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
 
 import javax.swing.*;
+import java.awt.event.ItemEvent;
 
 /**
  * 数据集下拉列表控件
@@ -30,6 +39,36 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	private static final long serialVersionUID = 1L;
 	private transient DatasetType[] datasetTypes;
 	private transient Datasets datasets;
+	private boolean isFireItemListener = true;
+
+	private DatasetCreatedListener datasetCreatedListener = new DatasetCreatedListener() {
+		@Override
+		public void datasetCreated(DatasetCreatedEvent datasetCreatedEvent) {
+			checkDatasetComboBox();
+		}
+	};
+
+	private DatasetDeletedListener datasetDeletedListener = new DatasetDeletedListener() {
+		@Override
+		public void DatasetDeleted(DatasetDeletedEvent datasetDeletedEvent) {
+			checkDatasetComboBox();
+		}
+	};
+
+
+	private DatasetRenamedListener datasetRenamedListener = new DatasetRenamedListener() {
+		@Override
+		public void datasetRenamed(DatasetRenamedEvent datasetRenamedEvent) {
+			checkDatasetComboBox();
+		}
+	};
+
+	private DatasetDeletedAllListener datasetDeletedAllListener = new DatasetDeletedAllListener() {
+		@Override
+		public void datasetDeletedAll(DatasetDeletedAllEvent datasetDeletedAllEvent) {
+			checkDatasetComboBox();
+		}
+	};
 
 	/**
 	 * 覆盖原有的updateUI方法
@@ -56,7 +95,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	 */
 	public DatasetComboBox(Datasets datasets) {
 		super(initDatasetComboBoxItem(datasets));
-		this.datasets = datasets;
+		changeDatasets(datasets);
 		//设置渲染方式
 		this.setBorder(BorderFactory.createEtchedBorder(1));
 		setRenderer(new ListDataCellRender());
@@ -100,9 +139,62 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	 * @param datasets
 	 */
 	public void setDatasets(Datasets datasets) {
-		this.datasets = datasets;
+		changeDatasets(datasets);
 		updateItems();
 	}
+
+	@Override
+	protected void fireItemStateChanged(ItemEvent e) {
+		if (isFireItemListener) {
+			super.fireItemStateChanged(e);
+		}
+	}
+
+	/**
+	 * 数据集改变时需要检查一下
+	 */
+	private void checkDatasetComboBox() {
+		Dataset selectItem = getSelectedDataset();
+		isFireItemListener = false;
+		try {
+			updateItems();
+			this.setSelectedDataset(selectItem);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			isFireItemListener = true;
+		}
+	}
+
+	/**
+	 * datasets改变后事件需要移除和添加
+	 *
+	 * @param datasets
+	 */
+	private void changeDatasets(Datasets datasets) {
+		removeListener(this.datasets);
+		this.datasets = datasets;
+		addListeners(this.datasets);
+	}
+
+	private void removeListener(Datasets datasets) {
+		if (datasets != null) {
+			datasets.removeCreatedListener(datasetCreatedListener);
+			datasets.removeDeletedListener(datasetDeletedListener);
+			datasets.removeRenamedListener(datasetRenamedListener);
+			datasets.removeDeletedAllListener(datasetDeletedAllListener);
+		}
+	}
+
+	private void addListeners(Datasets datasets) {
+		if (datasets != null) {
+			datasets.addCreatedListener(datasetCreatedListener);
+			datasets.addDeletedListener(datasetDeletedListener);
+			datasets.addRenamedListener(datasetRenamedListener);
+			datasets.addDeletedAllListener(datasetDeletedAllListener);
+		}
+	}
+
 
 	/**
 	 * 设置支持的数据集类型

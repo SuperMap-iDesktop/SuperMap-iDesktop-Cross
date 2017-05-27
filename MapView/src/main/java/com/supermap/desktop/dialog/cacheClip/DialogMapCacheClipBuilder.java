@@ -80,55 +80,6 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			changePanel(buttonStep.getText().equals(ControlsProperties.getString("String_NextWay")));
 			getContentPane().repaint();
 		}
-
-		private void changePanel(boolean flag) {
-			buttonStep.setText(flag == true ? ControlsProperties.getString("String_LastWay") : ControlsProperties.getString("String_NextWay"));
-			getContentPane().remove(flag == true ? firstStepPane : nextStepPane);
-			getContentPane().add(flag == true ? nextStepPane : firstStepPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-			if (flag && firstStepPane.importCacheConfigs) {
-				nextStepPane.imagePixelChanged = false;
-				nextStepPane.comboBoxImageType.setSelectedItem(firstStepPane.mapCacheBuilder.getTileFormat().toString());
-				TileSize tempSize = firstStepPane.mapCacheBuilder.getTileSize();
-				if (tempSize == TileSize.SIZE64) {
-					nextStepPane.comboBoxPixel.setSelectedItem("64*64");
-				} else if (tempSize == TileSize.SIZE128) {
-					nextStepPane.comboBoxPixel.setSelectedItem("128*128");
-				} else if (tempSize == TileSize.SIZE256) {
-					nextStepPane.comboBoxPixel.setSelectedItem("256*256");
-				} else if (tempSize == TileSize.SIZE512) {
-					nextStepPane.comboBoxPixel.setSelectedItem("512*512");
-				} else if (tempSize == TileSize.SIZE1024) {
-					nextStepPane.comboBoxPixel.setSelectedItem("1024*1024");
-				}
-				nextStepPane.smSpinnerImageCompressionRatio.setValue(firstStepPane.mapCacheBuilder.getImageCompress());
-				Rectangle2D indexBounds = null;
-				if (mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
-					indexBounds = firstStepPane.mapCacheBuilder.getIndexBounds();
-				} else {
-					indexBounds = new Rectangle2D(-180, -90, 180, 90);
-				}
-				nextStepPane.panelCacheRange.setAsRectangleBounds(firstStepPane.mapCacheBuilder.getBounds());
-				nextStepPane.panelIndexRange.setAsRectangleBounds(indexBounds);
-				nextStepPane.checkBoxBackgroundTransparency.setSelected(firstStepPane.mapCacheBuilder.isTransparent());
-			} else if (!flag) {
-				firstStepPane.importCacheConfigs = false;
-				if (null != nextStepPane.selectedGeometryAndLayer && nextStepPane.selectedGeometryAndLayer.size() > 0) {
-					firstStepPane.checkBoxFilterSelectionObjectInLayer.setEnabled(true);
-				} else {
-					firstStepPane.checkBoxFilterSelectionObjectInLayer.setSelected(false);
-					firstStepPane.checkBoxFilterSelectionObjectInLayer.setEnabled(false);
-				}
-				if (nextStepPane.imagePixelChanged) {
-					firstStepPane.globalSplitScale = null;
-					firstStepPane.globalSplitTable = null;
-					firstStepPane.initGlobalCacheScales();
-					if (!firstStepPane.addScaleDropDown.isEnabled()) {
-						firstStepPane.scrollPane.setViewportView(firstStepPane.globalSplitTable);
-					}
-				}
-			}
-
-		}
 	};
 	private EnabledListener firstStepEnabledListener = new EnabledListener() {
 		@Override
@@ -244,7 +195,55 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		}
 		return result;
 	}
+	//Change panel
+	private void changePanel(boolean flag) {
+		buttonStep.setText(flag == true ? ControlsProperties.getString("String_LastWay") : ControlsProperties.getString("String_NextWay"));
+		getContentPane().remove(flag == true ? firstStepPane : nextStepPane);
+		getContentPane().add(flag == true ? nextStepPane : firstStepPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+		if (flag && firstStepPane.importCacheConfigs) {
+			nextStepPane.imagePixelChanged = false;
+			nextStepPane.comboBoxImageType.setSelectedItem(firstStepPane.mapCacheBuilder.getTileFormat().toString());
+			TileSize tempSize = firstStepPane.mapCacheBuilder.getTileSize();
+			if (tempSize == TileSize.SIZE64) {
+				nextStepPane.comboBoxPixel.setSelectedItem("64*64");
+			} else if (tempSize == TileSize.SIZE128) {
+				nextStepPane.comboBoxPixel.setSelectedItem("128*128");
+			} else if (tempSize == TileSize.SIZE256) {
+				nextStepPane.comboBoxPixel.setSelectedItem("256*256");
+			} else if (tempSize == TileSize.SIZE512) {
+				nextStepPane.comboBoxPixel.setSelectedItem("512*512");
+			} else if (tempSize == TileSize.SIZE1024) {
+				nextStepPane.comboBoxPixel.setSelectedItem("1024*1024");
+			}
+			nextStepPane.smSpinnerImageCompressionRatio.setValue(firstStepPane.mapCacheBuilder.getImageCompress());
+			Rectangle2D indexBounds = null;
+			if (mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
+				indexBounds = firstStepPane.mapCacheBuilder.getIndexBounds();
+			} else {
+				indexBounds = new Rectangle2D(-180, -90, 180, 90);
+			}
+			nextStepPane.panelCacheRange.setAsRectangleBounds(firstStepPane.mapCacheBuilder.getBounds());
+			nextStepPane.panelIndexRange.setAsRectangleBounds(indexBounds);
+			nextStepPane.checkBoxBackgroundTransparency.setSelected(firstStepPane.mapCacheBuilder.isTransparent());
+		} else if (!flag) {
+			firstStepPane.importCacheConfigs = false;
+			if (null != nextStepPane.selectedGeometryAndLayer && nextStepPane.selectedGeometryAndLayer.size() > 0) {
+				firstStepPane.checkBoxFilterSelectionObjectInLayer.setEnabled(true);
+			} else {
+				firstStepPane.checkBoxFilterSelectionObjectInLayer.setSelected(false);
+				firstStepPane.checkBoxFilterSelectionObjectInLayer.setEnabled(false);
+			}
+			if (nextStepPane.imagePixelChanged) {
+				firstStepPane.globalSplitScale = null;
+				firstStepPane.globalSplitTable = null;
+				firstStepPane.initGlobalCacheScales();
+				if (!firstStepPane.addScaleDropDown.isEnabled()) {
+					firstStepPane.scrollPane.setViewportView(firstStepPane.globalSplitTable);
+				}
+			}
+		}
 
+	}
 	private void resume() {
 		boolean result;
 		try {
@@ -335,7 +334,11 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 
 	private void singleProcessBuilder() {
 		if (!isCacheFolderSave()) {
-			disposeInfo();
+			if (buttonStep.getText().equals(ControlsProperties.getString("String_NextWay"))) {
+				changePanel(buttonStep.getText().equals(ControlsProperties.getString("String_NextWay")));
+			}
+			getContentPane().repaint();
+			firstStepPane.textFieldCacheName.requestFocus();
 			return;
 		}
 		setMapCacheBuilderValueBeforeRun();

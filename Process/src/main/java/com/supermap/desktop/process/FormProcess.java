@@ -9,8 +9,19 @@ import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.*;
-import com.supermap.desktop.process.core.*;
+import com.supermap.desktop.event.FormActivatedListener;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosedListener;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormClosingListener;
+import com.supermap.desktop.event.FormDeactivatedListener;
+import com.supermap.desktop.event.FormShownEvent;
+import com.supermap.desktop.event.FormShownListener;
+import com.supermap.desktop.process.core.DirectConnect;
+import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.NodeMatrix;
+import com.supermap.desktop.process.core.Workflow;
+import com.supermap.desktop.process.core.WorkflowParser;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
@@ -22,11 +33,11 @@ import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
-import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
 import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
 import com.supermap.desktop.process.graphics.storage.IConnectionManager;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.meta.MetaProcess;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessGroup;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.ui.FormBaseChild;
@@ -443,8 +454,55 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 	}
 
 	public void addProcess(IProcess process) {
-		RectangleGraph graph = new ProcessGraph(graphCanvas.getCanvas(), process);
-		graphCanvas.getCanvas().create(graph);
+		if (process instanceof MetaProcessGroup) {
+//			graph = new ProcessGroupGraph();
+			ArrayList<MetaProcess> addedMetaProcesses = new ArrayList<>();
+			MetaProcessGroup processGroup = (MetaProcessGroup) process;
+			int processCount = processGroup.getProcessCount();
+			if (processCount > 0) {
+				MetaProcess metaProcess = processGroup.getMetaProcess(0);
+				addSubProcess(processGroup, metaProcess, addedMetaProcesses, 0, 0);
+
+				int i = 0;
+				while (addedMetaProcesses.size() != processCount) {
+					for (; i < processCount; i++) {
+						if (!addedMetaProcesses.contains(processGroup.getMetaProcess(i))) {
+							addSubProcess(processGroup, processGroup.getMetaProcess(i), addedMetaProcesses, 0, 0);
+							break;
+						}
+					}
+				}
+			}
+		} else {
+			IGraph graph = new ProcessGraph(graphCanvas.getCanvas(), process);
+			graphCanvas.getCanvas().create(graph);
+		}
+	}
+
+	private IGraph addSubProcess(MetaProcessGroup processGroup, MetaProcess currentMetaProcess, ArrayList<MetaProcess> addedMetaProcesses, int level, int YLevel) {
+		IGraph graph = null;
+		if (!addedMetaProcesses.contains(currentMetaProcess)) {
+			graph = new ProcessGraph(graphCanvas.getCanvas(), currentMetaProcess);
+			graph.setLocation(new Point(getLocation().x + level * 100, getLocation().y + YLevel));
+			graphCanvas.getCanvas().create(graph);
+			addedMetaProcesses.add(currentMetaProcess);
+		} else {
+			IGraph[] graphs = getCanvas().getGraphStorage().getGraphs();
+			for (IGraph iGraph : graphs) {
+				if (iGraph instanceof ProcessGraph && ((ProcessGraph) iGraph).getProcess() == currentMetaProcess) {
+					graph = iGraph;
+					break;
+				}
+			}
+		}
+		ArrayList<MetaProcess> subMetaProcesses = processGroup.getSubMetaProcess(currentMetaProcess);
+		level++;
+		for (int i = 0; i < subMetaProcesses.size(); i++) {
+			MetaProcess subMetaProcess = subMetaProcesses.get(i);
+			IGraph subProcess = addSubProcess(processGroup, subMetaProcess, addedMetaProcesses, level, 200 * (i - subMetaProcesses.size() / 2));
+			getCanvas().getGraphStorage().getConnectionManager().connect(((ProcessGraph) graph), ((ProcessGraph) subProcess));
+		}
+		return graph;
 	}
 
 	private class FormProcessDropTargetAdapter extends DropTargetAdapter {
