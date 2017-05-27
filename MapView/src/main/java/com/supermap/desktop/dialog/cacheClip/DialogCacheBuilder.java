@@ -5,6 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
+import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.BuildCache;
 import com.supermap.desktop.dialog.cacheClip.cache.ProcessManager;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -12,6 +13,7 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
@@ -345,29 +347,62 @@ public class DialogCacheBuilder extends SmDialog {
 			String mergeSciCount = textFieldMergeSciCount.getText();
 			params = new String[]{sciPath, workspacePath, mapName, cachePath, processCount, mergeSciCount};
 //            final String[] params = {workspacePath, mapName, sciPath, cachePath, processCount, mergeSciCount};
-			int totalSciLength = 0;
-			String[] sciNames = null;
-			File sciFile = new File(sciPath);
-			if (sciFile.exists()) {
-				sciNames = sciFile.list(getFilter());
-			}
-			if (null != sciNames) {
-				totalSciLength = sciNames.length;
-				captionCount = new CopyOnWriteArrayList<>();
-				if (null != captions) {
-					for (int i = 0; i < captions.size(); i++) {
-						captionCount.add(sciFile.list(getFilter(captions.get(i))).length);
-					}
-					updateSingleProcess(sciFile.getParentFile().getPath(), totalSciLength);
-				}
-				updateTotalProgress(sciFile.getParentFile().getPath(), cachePath, totalSciLength);
-			}
 
-			buildCache = new BuildCache();
-			buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
+			if (!validateValue(sciPath, workspacePath, mapName, cachePath, processCount)) {
+				new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_ParamsException"));
+			} else {
+				doBuildCache(cachePath);
+			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
+	}
+
+	private void doBuildCache(String cachePath) {
+		int totalSciLength = 0;
+		String[] sciNames = null;
+		File sciFile = new File(sciPath);
+		if (sciFile.exists()) {
+			sciNames = sciFile.list(getFilter());
+		}
+		if (null != sciNames) {
+			totalSciLength = sciNames.length;
+			captionCount = new CopyOnWriteArrayList<>();
+			if (null != captions) {
+				for (int i = 0; i < captions.size(); i++) {
+					captionCount.add(sciFile.list(getFilter(captions.get(i))).length);
+				}
+				updateSingleProcess(sciFile.getParentFile().getPath(), totalSciLength);
+			}
+			updateTotalProgress(sciFile.getParentFile().getPath(), cachePath, totalSciLength);
+		}
+		buildCache = new BuildCache();
+		buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
+	}
+
+	private boolean validateValue(String sciPath, String workspacePath, String mapName, String cachePath, String processCount) {
+		boolean result = true;
+		File sciDirectory = new File(sciPath);
+		if (null == sciDirectory || !sciDirectory.isDirectory() || !hasSciFiles(sciDirectory)) {
+			result = false;
+		}
+		if (StringUtilities.isNullOrEmpty(workspacePath) || !FileUtilities.isFilePath(workspacePath) || !(workspacePath.endsWith("smwu") || workspacePath.endsWith("sxwu"))) {
+			result = false;
+		}
+		if (StringUtilities.isNullOrEmpty(mapName)) {
+			result = false;
+		}
+		if (StringUtilities.isNullOrEmpty(cachePath) || !FileUtilities.isFilePath(workspacePath)) {
+			result = false;
+		}
+		if (StringUtilities.isNullOrEmpty(processCount) || !StringUtilities.isInteger(processCount)) {
+			result = false;
+		}
+		return result;
+	}
+
+	private boolean hasSciFiles(File sciDirectory) {
+		return sciDirectory.list(getFilter()).length > 0 ? true : false;
 	}
 
 	//Update single scale info process
@@ -392,7 +427,7 @@ public class DialogCacheBuilder extends SmDialog {
 								progressBars.get(i).setValue(value);
 							}
 							//Sleep two seconds or not
-							Thread.sleep(6000);
+							Thread.sleep(1000);
 						}
 					}
 				} catch (Exception e) {
@@ -420,6 +455,7 @@ public class DialogCacheBuilder extends SmDialog {
 
 	private void refresh(String cachePath, String parentPath, int totalSciLength) {
 		try {
+			long startTime = System.currentTimeMillis();
 			int buildSciLength = 0;
 			while (buildSciLength != totalSciLength) {
 				//Get success sci length
@@ -447,6 +483,7 @@ public class DialogCacheBuilder extends SmDialog {
 				}
 			}
 			if (result) {
+				long endTime = System.currentTimeMillis();
 				if (null != sciFile) {
 					File mapNameDir = new File(resultPath);
 					String targetDirectory = null;
@@ -458,7 +495,22 @@ public class DialogCacheBuilder extends SmDialog {
 						sciFile.renameTo(new File(targetDirectory, sciFile.getName()));
 					}
 				}
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), resultPath));
+				long totalTime = endTime - startTime;
+				long hour = 0;
+				long minutes = 0;
+				long second = 0;
+				if (totalTime >= 3600000) {
+					hour = totalTime / 3600000;
+					minutes = (totalTime % 3600000) / 60000;
+					second = ((totalTime % 3600000) % 60000) / 1000;
+				}
+				if (totalTime >= 60000) {
+					minutes = totalTime / 60000;
+					second = (totalTime % 60000) / 1000;
+				} else {
+					second = totalTime / 1000;
+				}
+				Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), resultPath, hour, minutes, second));
 			} else {
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MultiCacheFailed"));
 			}
@@ -467,6 +519,7 @@ public class DialogCacheBuilder extends SmDialog {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 	}
+
 
 	private FilenameFilter getFilter() {
 		return new FilenameFilter() {

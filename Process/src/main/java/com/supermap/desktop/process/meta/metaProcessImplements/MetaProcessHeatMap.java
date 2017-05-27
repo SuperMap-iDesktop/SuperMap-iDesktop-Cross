@@ -8,7 +8,7 @@ import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.TaskUtil;
 import com.supermap.desktop.properties.CoreProperties;
@@ -120,7 +120,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 				parameterCombineSetting
 //				, parameterCombineResult
 		);
-		parameters.getOutputs().addData("HeatMapResult", Type.UNKOWN);
+		parameters.getOutputs().addData("HeatMapResult", BasicTypes.STRING);
 	}
 
 	@Override

@@ -163,6 +163,7 @@ public class BuildCache {
 		MapCacheBuilder builder = new MapCacheBuilder();
 		builder.setMap(map);
 		builder.fromConfigFile(sciName);
+
 		builder.setOutputFolder(cachePath);
 		builder.resumable(false);
 
