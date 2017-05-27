@@ -124,6 +124,19 @@
                     <process key="geographicWeightedRegression" name="地理加权回归分析"/>
                 </process>
             </process>
+            <process name="水文分析">
+                <process key="FillingPseudoDepressions" name="填充伪洼地"/>
+                <process key="CalculatedFlowDirection" name="计算流向"/>
+                <process key="ComputationalFlowLength" name="计算流长"/>
+                <process key="CalculatedWaterFlow" name="计算汇水量"/>
+                <process key="CatchmentPointCalculation" name="计算汇水点"/>
+                <process key="WatershedSegmentation" name="流域分割"/>
+                <process key="WatershedBasin" name="计算流域盆地"/>
+                <process key="ExtractingGridWaterSystem" name="计算栅格水系"/>
+                <process key="RiverClassification" name="河流分级"/>
+                <process key="DrainageVectorization" name="水系矢量化"/>
+                <process key="ConnectedDrainage" name="连接水系"/>
+            </process>
         </process>
         <process name="Online" iconPath="/processresources/Process/online.png">
             <process name="空间叠加">

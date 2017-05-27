@@ -31,6 +31,21 @@ public class MetaKeys {
 	public static final String ISOPOINT = "ISOPoint";
 	public static final String PROCESS_GROUP = "ProcessGroup";
 	public static final String SQL_QUERY = "SqlQuery";
+	public static final String HydrologicalAnalysis = "HydrologicalAnalysis";
+	public static final String Empty = "empty";
+
+	// 水文分析
+	public static final String FillingPseudoDepressions = "FillingPseudoDepressions";
+	public static final String CalculatedFlowDirection = "CalculatedFlowDirection";
+	public static final String ComputationalFlowLength = "ComputationalFlowLength";
+	public static final String CalculatedWaterFlow = "CalculatedWaterFlow";
+	public static final String CatchmentPointCalculation = "CatchmentPointCalculation";
+	public static final String WatershedSegmentation = "WatershedSegmentation";
+	public static final String WatershedBasin = "WatershedBasin";
+	public static final String ExtractingGridWaterSystem = "ExtractingGridWaterSystem";
+	public static final String RiverClassification = "RiverClassification";
+	public static final String DrainageVectorization = "DrainageVectorization";
+	public static final String ConnectedDrainage = "ConnectedDrainage";
 
 	// 空间统计分析
 	public static final String CentralElement = "CentralElement";
