@@ -25,6 +25,14 @@ public class Inputs {
 		return this.parameters;
 	}
 
+	public boolean isContains(String name) {
+		if (StringUtilities.isNullOrEmpty(name) || !this.datas.containsKey(name)) {
+			return false;
+		}
+
+		return this.datas.containsKey(name);
+	}
+
 	public InputData getData(String name) {
 		if (StringUtilities.isNullOrEmpty(name) || !this.datas.containsKey(name)) {
 			return null;

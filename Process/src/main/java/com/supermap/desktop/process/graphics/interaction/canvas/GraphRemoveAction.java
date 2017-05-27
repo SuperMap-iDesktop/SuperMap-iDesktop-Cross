@@ -1,6 +1,5 @@
 package com.supermap.desktop.process.graphics.interaction.canvas;
 
-import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
 import com.supermap.desktop.process.graphics.connection.IConnectable;
@@ -41,8 +40,6 @@ public class GraphRemoveAction extends CanvasActionAdapter {
 					IConnectable end = ((ConnectionLineGraph) graph).getConnection().getEnd();
 
 					if (start.getConnector() instanceof OutputGraph && end.getConnector() instanceof ProcessGraph) {
-						IProcess from = ((OutputGraph) start.getConnector()).getProcessGraph().getProcess();
-						IProcess to = ((ProcessGraph) end.getConnector()).getProcess();
 						this.canvas.getGraphStorage().getConnectionManager().removeConnection(((ConnectionLineGraph) graph).getConnection());
 					} else {
 						continue;
@@ -51,13 +48,17 @@ public class GraphRemoveAction extends CanvasActionAdapter {
 					IGraph[] nextGraphs = this.canvas.getGraphStorage().getConnectionManager().getNextGraphs(graph);
 
 					if (nextGraphs != null && nextGraphs.length > 0) {
+						for (int j = 0; j < nextGraphs.length; j++) {
+							IGraph nextGraph = nextGraphs[j];
+							if (nextGraph instanceof OutputGraph) {
 
+							}
+						}
 					}
 				} else if (graph instanceof OutputGraph) {
 					continue;
 				}
 			}
-			this.canvas.removeGraphs(this.canvas.getSelection().getSelectedItems());
 		}
 	}
 }

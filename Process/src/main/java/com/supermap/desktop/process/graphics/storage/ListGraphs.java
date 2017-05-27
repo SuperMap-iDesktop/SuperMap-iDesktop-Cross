@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ListGraphs implements IGraphStorage {
 	private GraphCanvas canvas;
-	private IConnectionManager connectionManager = new ListGraphConnection(this.canvas);
+	private IConnectionManager connectionManager = new ListConnectionManager(this.canvas);
 	private Map<IConnection, IGraph> connectionMap = new ConcurrentHashMap<>();
 	private Vector<IGraph> graphs = new Vector();
 	private Rectangle box = null;
@@ -45,7 +45,7 @@ public class ListGraphs implements IGraphStorage {
 
 	public ListGraphs(GraphCanvas canvas) {
 		this.canvas = canvas;
-		this.connectionManager = new ListGraphConnection(this.canvas);
+		this.connectionManager = new ListConnectionManager(this.canvas);
 		this.connectionManager.addConnectionAddedListener(this.connectionAddedListener);
 		this.connectionManager.addConnectionRemovingListener(this.connectionRemovingListener);
 	}
