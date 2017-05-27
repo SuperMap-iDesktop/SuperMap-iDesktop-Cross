@@ -57,8 +57,7 @@ public class GraphCanvas extends JComponent {
 	private Selection selection = new MultiSelection(this);
 	private GraphDragAction dragged = new GraphDragAction(this);
 	public GraphConnectAction connector = new GraphConnectAction(this);
-	public GraphRemoving removing = new GraphRemoving(this);
-	public LineInteraction lineInteraction = new LineInteraction(this);
+	public GraphRemoveAction removing = new GraphRemoveAction(this);
 
 	private ArrayList<GraphSelectChangedListener> selectChangedListeners = new ArrayList<>();
 
@@ -143,8 +142,7 @@ public class GraphCanvas extends JComponent {
 		installCanvasAction(CanvasTranslation.class, this.translation);
 		installCanvasAction(GraphCreator.class, this.creator);
 		installCanvasAction(GraphConnectAction.class, this.connector);
-		installCanvasAction(GraphRemoving.class, this.removing);
-		installCanvasAction(LineInteraction.class, this.lineInteraction);
+		installCanvasAction(GraphRemoveAction.class, this.removing);
 
 		this.actionsManager.addMutexAction(GraphDragAction.class, Selection.class);
 		this.actionsManager.addMutexAction(GraphDragAction.class, GraphCreator.class);
@@ -306,11 +304,8 @@ public class GraphCanvas extends JComponent {
 		graphics2D.setTransform(this.coordinateTransform.getAffineTransform(origin));
 		paintGraphs(graphics2D);
 		paintTracking(graphics2D);
-		this.lineInteraction.paint(graphics2D);
 		graphics2D.setTransform(origin);
-
-		this.creator.paint(graphics2D);
-		this.selection.paint(graphics2D);
+		this.selection.paint(g);
 	}
 
 	/**

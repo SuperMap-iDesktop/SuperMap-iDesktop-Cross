@@ -1,14 +1,6 @@
 package com.supermap.desktop.mapview.layer.propertycontrols;
 
 import com.supermap.data.Dataset;
-import com.supermap.data.DatasetCreatedEvent;
-import com.supermap.data.DatasetCreatedListener;
-import com.supermap.data.DatasetDeletedAllEvent;
-import com.supermap.data.DatasetDeletedAllListener;
-import com.supermap.data.DatasetDeletedEvent;
-import com.supermap.data.DatasetDeletedListener;
-import com.supermap.data.DatasetRenamedEvent;
-import com.supermap.data.DatasetRenamedListener;
 import com.supermap.data.DatasetType;
 import com.supermap.data.Datasource;
 import com.supermap.data.DatasourceClosedEvent;
@@ -92,34 +84,6 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 		@Override
 		public void datasourceOpened(DatasourceOpenedEvent datasourceOpenedEvent) {
 			resetComboboxs();
-		}
-	};
-
-	private DatasetCreatedListener datasetCreatedListener = new DatasetCreatedListener() {
-		@Override
-		public void datasetCreated(DatasetCreatedEvent datasetCreatedEvent) {
-
-		}
-	};
-
-	private DatasetDeletedListener datasetDeletedListener = new DatasetDeletedListener() {
-		@Override
-		public void DatasetDeleted(DatasetDeletedEvent datasetDeletedEvent) {
-
-		}
-	};
-
-	private DatasetRenamedListener datasetRenamedListener = new DatasetRenamedListener() {
-		@Override
-		public void datasetRenamed(DatasetRenamedEvent datasetRenamedEvent) {
-
-		}
-	};
-
-	private DatasetDeletedAllListener datasetDeletedAllListener = new DatasetDeletedAllListener() {
-		@Override
-		public void datasetDeletedAll(DatasetDeletedAllEvent datasetDeletedAllEvent) {
-
 		}
 	};
 
@@ -243,6 +207,10 @@ public class LayerRelocateDatasetPropertyControl extends AbstractLayerPropertyCo
 		}
 		comboBoxDatasource.addItemListener(comboBoxItemListener);
 		comboBoxDataset.addItemListener(comboBoxItemListener);
+	}
+
+	private void checkDatasetComboBox() {
+
 	}
 
 	@Override
