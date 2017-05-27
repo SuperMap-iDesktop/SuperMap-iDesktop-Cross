@@ -69,7 +69,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterHDFSPath.setSelectedItem("hdfs://192.168.12.201:9000/data/newyork_taxi_2013-01_14k.csv");
 
 		parameterCacheType = new ParameterComboBox(ProcessProperties.getString("String_CacheType"));
-		ParameterDataNode parameterDataNode1 = new ParameterDataNode("heatMap", "heatMap");
+		ParameterDataNode parameterDataNode1 = new ParameterDataNode("heatmap", "heatmap");
 		parameterCacheType.setItems(parameterDataNode1);
 		parameterCacheType.setSelectedItem(parameterDataNode1);
 		//流程图中不支持在地图中绘制范围，范围表示与iServer的表示相同

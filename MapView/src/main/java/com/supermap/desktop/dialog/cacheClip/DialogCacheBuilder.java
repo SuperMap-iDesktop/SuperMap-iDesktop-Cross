@@ -395,7 +395,7 @@ public class DialogCacheBuilder extends SmDialog {
 		if (StringUtilities.isNullOrEmpty(cachePath) || !FileUtilities.isFilePath(workspacePath)) {
 			result = false;
 		}
-		if (StringUtilities.isNullOrEmpty(processCount) || !StringUtilities.isInteger(processCount)) {
+		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) || processCount.equals("0"))) {
 			result = false;
 		}
 		return result;
@@ -482,19 +482,16 @@ public class DialogCacheBuilder extends SmDialog {
 					}
 				}
 			}
+			result = result && null == sciFile.list(getFilter());
 			if (result) {
 				long endTime = System.currentTimeMillis();
-				if (null != sciFile) {
-					File mapNameDir = new File(resultPath);
-					String targetDirectory = null;
-					if (mapNameDir.isDirectory() && mapNameDir.listFiles().length > 0) {
-						targetDirectory = mapNameDir.listFiles()[0].getAbsolutePath();
-					}
-					//Paste sciFile to the target directory
-					if (null != targetDirectory) {
-						sciFile.renameTo(new File(targetDirectory, sciFile.getName()));
-					}
+				File mapNameDir = new File(resultPath);
+				String targetDirectory = null;
+				if (mapNameDir.isDirectory() && mapNameDir.listFiles().length > 0) {
+					targetDirectory = mapNameDir.listFiles()[0].getAbsolutePath();
 				}
+				//Paste sciFile to the target directory
+				sciFile.renameTo(new File(targetDirectory, sciFile.getName()));
 				long totalTime = endTime - startTime;
 				long hour = 0;
 				long minutes = 0;
