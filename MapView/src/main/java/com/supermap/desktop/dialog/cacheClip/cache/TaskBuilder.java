@@ -71,7 +71,7 @@ public class TaskBuilder {
 			double tileResolution = writer.getTileResolustion(scale);
 			HashMap<Double, String> newScaleCaptions = new HashMap();
 			String tempCaption = String.valueOf((int) (1 / scale));
-			String caption = "";
+			String caption = allScaleCaptions.get(scale);
 			if (tempCaption.length() < length) {
 				int addSize = length - tempCaption.length();
 				for (int i = 0; i < addSize; i++) {

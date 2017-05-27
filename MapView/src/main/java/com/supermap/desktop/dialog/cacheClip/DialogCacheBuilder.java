@@ -482,7 +482,6 @@ public class DialogCacheBuilder extends SmDialog {
 					}
 				}
 			}
-			result = result && null == sciFile.list(getFilter());
 			if (result) {
 				long endTime = System.currentTimeMillis();
 				File mapNameDir = new File(resultPath);
