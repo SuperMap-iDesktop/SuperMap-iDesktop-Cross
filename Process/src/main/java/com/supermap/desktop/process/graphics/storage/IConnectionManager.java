@@ -20,6 +20,8 @@ public interface IConnectionManager {
 
 	void connect(IConnectable start, IConnectable end, String message);
 
+	void connect(IConnection connection);
+
 	void removeConnection(IConnectable connectable);
 
 	void removeConnection(IGraph connector);

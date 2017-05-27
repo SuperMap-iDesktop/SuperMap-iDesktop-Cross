@@ -1,6 +1,5 @@
 package com.supermap.desktop.process.graphics.interaction.canvas;
 
-import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
 import com.supermap.desktop.process.graphics.connection.IConnectable;
@@ -41,8 +40,9 @@ public class GraphRemoveAction extends CanvasActionAdapter {
 					IConnectable end = ((ConnectionLineGraph) graph).getConnection().getEnd();
 
 					if (start.getConnector() instanceof OutputGraph && end.getConnector() instanceof ProcessGraph) {
-						IProcess from = ((OutputGraph) start.getConnector()).getProcessGraph().getProcess();
-						IProcess to = ((ProcessGraph) end.getConnector()).getProcess();
+						if (this.canvas.getSelection().isSelected(graph)) {
+							this.canvas.getSelection().deselectItem(graph);
+						}
 						this.canvas.getGraphStorage().getConnectionManager().removeConnection(((ConnectionLineGraph) graph).getConnection());
 					} else {
 						continue;
@@ -50,14 +50,26 @@ public class GraphRemoveAction extends CanvasActionAdapter {
 				} else if (graph instanceof ProcessGraph) {
 					IGraph[] nextGraphs = this.canvas.getGraphStorage().getConnectionManager().getNextGraphs(graph);
 
-					if (nextGraphs != null && nextGraphs.length > 0) {
+					this.canvas.getGraphStorage().getConnectionManager().removeConnection(graph);
+					if (this.canvas.getSelection().isSelected(graph)) {
+						this.canvas.getSelection().deselectItem(graph);
+					}
+					this.canvas.getGraphStorage().remove(graph);
 
+					if (nextGraphs != null && nextGraphs.length > 0) {
+						for (int j = 0; j < nextGraphs.length; j++) {
+							IGraph nextGraph = nextGraphs[j];
+							if (nextGraph instanceof OutputGraph) {
+								this.canvas.getGraphStorage().getConnectionManager().removeConnection(nextGraph);
+								this.canvas.getGraphStorage().remove(nextGraph);
+							}
+						}
 					}
 				} else if (graph instanceof OutputGraph) {
 					continue;
 				}
 			}
-			this.canvas.removeGraphs(this.canvas.getSelection().getSelectedItems());
+			this.canvas.repaint();
 		}
 	}
 }

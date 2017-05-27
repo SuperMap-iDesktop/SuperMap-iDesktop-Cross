@@ -13,12 +13,12 @@ import java.util.ArrayList;
 /**
  * Created by highsad on 2017/4/5.
  */
-public class ListGraphConnection implements IConnectionManager {
+public class ListConnectionManager implements IConnectionManager {
 	private GraphCanvas canvas;
 	private java.util.List<IConnection> connections = new ArrayList<>();
 	private EventListenerList listenerList = new EventListenerList();
 
-	public ListGraphConnection(GraphCanvas canvas) {
+	public ListConnectionManager(GraphCanvas canvas) {
 		this.canvas = canvas;
 	}
 
@@ -51,6 +51,28 @@ public class ListGraphConnection implements IConnectionManager {
 	}
 
 	@Override
+	public void connect(IConnection connection) {
+		if (connection == null || connection.getStart() == null || connection.getEnd() == null) {
+			return;
+		}
+
+		if (connection.getStart() == connection.getEnd()) {
+			return;
+		}
+
+		if (isConnected(connection.getStart().getConnector(), connection.getEnd().getConnector())) {
+			return;
+		}
+
+		if (this.connections.contains(connection)) {
+			return;
+		}
+
+		this.connections.add(connection);
+		fireConnectionAdded(new ConnectionAddedEvent(this, connection));
+	}
+
+	@Override
 	public void removeConnection(IConnectable connectable) {
 		for (int i = this.connections.size() - 1; i >= 0; i--) {
 			IConnection connection = this.connections.get(i);
@@ -60,6 +82,7 @@ public class ListGraphConnection implements IConnectionManager {
 				fireConnectionRemoving(removingEvent);
 
 				if (!removingEvent.isCancel()) {
+					connection.disconnect();
 					this.connections.remove(i);
 					fireConnectionRemoved(new ConnectionRemovedEvent(this, connection));
 				}
@@ -77,6 +100,7 @@ public class ListGraphConnection implements IConnectionManager {
 				fireConnectionRemoving(removingEvent);
 
 				if (!removingEvent.isCancel()) {
+					connection.disconnect();
 					this.connections.remove(i);
 					fireConnectionRemoved(new ConnectionRemovedEvent(this, connection));
 				}
@@ -94,6 +118,7 @@ public class ListGraphConnection implements IConnectionManager {
 		fireConnectionRemoving(removingEvent);
 
 		if (!removingEvent.isCancel()) {
+			connection.disconnect();
 			this.connections.remove(connection);
 			fireConnectionRemoved(new ConnectionRemovedEvent(this, connection));
 		}

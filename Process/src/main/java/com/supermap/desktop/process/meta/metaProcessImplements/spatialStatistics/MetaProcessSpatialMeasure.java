@@ -75,6 +75,7 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 			datasource.setSelectedItem(datasetVector.getDatasource());
 			dataset.setSelectedItem(datasetVector);
 			measureParameter.setCurrentDataset(datasetVector);
+			parameterSaveDataset.setResultDatasource(datasetVector.getDatasource());
 		}
 	}
 

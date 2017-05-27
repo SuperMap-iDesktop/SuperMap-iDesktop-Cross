@@ -1,6 +1,10 @@
 package com.supermap.desktop.process.graphics.storage;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
+import com.supermap.desktop.process.graphics.events.GraphCreatingListener;
+import com.supermap.desktop.process.graphics.events.GraphRemovedListener;
+import com.supermap.desktop.process.graphics.events.GraphRemovingListener;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
 import java.awt.*;
@@ -56,4 +60,20 @@ public interface IGraphStorage {
 	Rectangle getBounds();
 
 	void clear();
+
+	void addGraphCreatingListener(GraphCreatingListener listener);
+
+	void removeGraphCreatingListener(GraphCreatingListener listener);
+
+	void addGraphCreatedListener(GraphCreatedListener listener);
+
+	void removeGraphCreatedListener(GraphCreatedListener listener);
+
+	void addGraphRemovingListener(GraphRemovingListener listener);
+
+	void removeGraphRemovingListener(GraphRemovingListener listener);
+
+	void addGraphRemovedListener(GraphRemovedListener listener);
+
+	void removeGraphRemovedListener(GraphRemovedListener listener);
 }
