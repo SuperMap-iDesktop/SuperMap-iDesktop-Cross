@@ -2,7 +2,7 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 
 /**
  * @author XiaJT
@@ -13,10 +13,10 @@ public class EmptyMetaProcess extends MetaProcess {
 
 	public EmptyMetaProcess(String title) {
 		this.title = title;
-		parameters.getInputs().addData("input1", Type.UNKOWN);
-		parameters.getInputs().addData("input2", Type.UNKOWN);
+		parameters.getInputs().addData("input", DatasetTypes.VECTOR);
+		parameters.getInputs().addData("input2", DatasetTypes.VECTOR);
 
-		parameters.getOutputs().addData("Output", Type.UNKOWN);
+		parameters.getOutputs().addData("Output", DatasetTypes.VECTOR);
 	}
 
 	@Override
