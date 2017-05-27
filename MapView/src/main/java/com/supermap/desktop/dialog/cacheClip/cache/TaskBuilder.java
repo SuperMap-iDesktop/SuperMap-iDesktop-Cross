@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Clip task 128*128
@@ -71,14 +70,16 @@ public class TaskBuilder {
 		for (double scale : scaleList) {
 			double tileResolution = writer.getTileResolustion(scale);
 			HashMap<Double, String> newScaleCaptions = new HashMap();
-			String caption = String.valueOf((int) (1 / scale));
-			if (caption.length() < length) {
-				int addSize = length - caption.length();
+			String tempCaption = String.valueOf((int) (1 / scale));
+			String caption = "";
+			if (tempCaption.length() < length) {
+				int addSize = length - tempCaption.length();
 				for (int i = 0; i < addSize; i++) {
-					caption = "0" + caption;
+					caption = "0" + tempCaption;
 				}
 			}
-			newScaleCaptions.put(scale, caption);
+			//Set caption for new sci file
+			newScaleCaptions.put(scale, allScaleCaptions.get(scale));
 			writer.setCacheScaleCaptions(newScaleCaptions);
 			String datasetName = "L" + caption + "_S" + Math.round(1 / scale);
 			DatasetVectorInfo datasetInfo = new DatasetVectorInfo(datasetName, DatasetType.REGION);

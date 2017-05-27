@@ -893,7 +893,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.globalSplitScale = this.mapCacheBuilder.globalLevelToScale(levels);
         double avaliableScale = -1;
         if (!this.mapCacheBuilder.getBounds().isEmpty() && this.mapCacheBuilder.getMap().getPrjCoordSys().getGeoCoordSys() != null) {
-            avaliableScale = GetAvaliableScale();
+            avaliableScale = getAvaliableScale();
         }
         double dValue = Double.MAX_VALUE;
         String avaliableLevel = "0";
@@ -952,7 +952,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         }
     }
 
-    private double GetAvaliableScale() {
+    private double getAvaliableScale() {
         try {
             double DPI = mapCacheBuilder.getMap().getDPI();
             double lp = DPI / 25.4;
