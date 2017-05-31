@@ -4,7 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.process.FormProcess;
+import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.core.DirectConnect;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.MatrixExecutor;
@@ -35,8 +35,8 @@ public class CtrlActionRun extends CtrlAction {
 	@Override
 	public void run() {
 		NodeMatrix nodeMatrix = new NodeMatrix();
-		FormProcess formProcess = (FormProcess) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
-		GraphCanvas canvas = formProcess.getCanvas();
+		FormWorkflow formWorkflow = (FormWorkflow) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
+		GraphCanvas canvas = formWorkflow.getCanvas();
 		IGraphStorage graphStorage = canvas.getGraphStorage();
 		IConnectionManager graphConnection = canvas.getConnection();
 		IGraph[] graphs = graphStorage.getGraphs();
@@ -75,6 +75,6 @@ public class CtrlActionRun extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		return Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm() instanceof FormProcess;
+		return Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm() instanceof FormWorkflow;
 	}
 }

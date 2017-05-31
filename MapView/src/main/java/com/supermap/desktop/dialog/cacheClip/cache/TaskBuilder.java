@@ -70,12 +70,11 @@ public class TaskBuilder {
 		for (double scale : scaleList) {
 			double tileResolution = writer.getTileResolustion(scale);
 			HashMap<Double, String> newScaleCaptions = new HashMap();
-			String tempCaption = String.valueOf((int) (1 / scale));
-			String caption = "";
-			if (tempCaption.length() < length) {
-				int addSize = length - tempCaption.length();
+			String caption = String.valueOf((int) (1 / scale));
+			if (caption.length() < length) {
+				int addSize = length - caption.length();
 				for (int i = 0; i < addSize; i++) {
-					caption = "0" + tempCaption;
+					caption = "0" + caption;
 				}
 			}
 			//Set caption for new sci file

@@ -4,7 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.process.FormProcess;
+import com.supermap.desktop.process.FormWorkflow;
 
 /**
  * Created by highsad on 2017/2/28.
@@ -17,8 +17,8 @@ public class CtrlActionConnect extends CtrlAction {
 	@Override
 	public void run() {
 		IForm form = Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
-		if (form instanceof FormProcess) {
-			((FormProcess) form).getCanvas().connector.connecting();
+		if (form instanceof FormWorkflow) {
+			((FormWorkflow) form).getCanvas().connector.connecting();
 		}
 	}
 }

@@ -22,7 +22,7 @@ public class OutputGraph extends RectangleGraph {
 	}
 
 	public OutputGraph(GraphCanvas canvas, ProcessGraph processGraph, OutputData processData) {
-		super(canvas, 0, 0);
+		super(canvas, 30, 30);
 		this.processGraph = processGraph;
 		this.processData = processData;
 	}

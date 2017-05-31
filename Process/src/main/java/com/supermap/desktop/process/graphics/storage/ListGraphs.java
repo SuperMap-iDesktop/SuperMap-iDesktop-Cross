@@ -15,9 +15,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by highsad on 2017/3/2.
  */
-public class ListGraphs implements IGraphStorage {
+public class ListGraphs extends AbstractGraphStorage {
 	private GraphCanvas canvas;
-	private IConnectionManager connectionManager = new ListGraphConnection(this.canvas);
+	private IConnectionManager connectionManager = new ListConnectionManager(this.canvas);
 	private Map<IConnection, IGraph> connectionMap = new ConcurrentHashMap<>();
 	private Vector<IGraph> graphs = new Vector();
 	private Rectangle box = null;
@@ -45,7 +45,7 @@ public class ListGraphs implements IGraphStorage {
 
 	public ListGraphs(GraphCanvas canvas) {
 		this.canvas = canvas;
-		this.connectionManager = new ListGraphConnection(this.canvas);
+		this.connectionManager = new ListConnectionManager(this.canvas);
 		this.connectionManager.addConnectionAddedListener(this.connectionAddedListener);
 		this.connectionManager.addConnectionRemovingListener(this.connectionRemovingListener);
 	}
@@ -92,21 +92,37 @@ public class ListGraphs implements IGraphStorage {
 
 	@Override
 	public void add(IGraph graph, Rectangle bounds) {
+		GraphCreatingEvent creatingEvent = new GraphCreatingEvent(this.canvas, graph);
+		fireGraphCreating(creatingEvent);
+
+		if (creatingEvent.isCancel()) {
+			return;
+		}
+
 		this.graphs.add(graph);
 		if (this.box == null) {
 			this.box = bounds;
 		} else {
 			this.box = this.box.union(bounds);
 		}
+		fireGraphCreated(new GraphCreatedEvent(this.canvas, graph));
 	}
 
 	@Override
 	public void remove(IGraph graph) {
+		GraphRemovingEvent removingEvent = new GraphRemovingEvent(this.canvas, graph);
+		fireGraphRemoving(removingEvent);
+
+		if (removingEvent.isCancel()) {
+			return;
+		}
+
 		int index = this.graphs.indexOf(graph);
 		if (index > -1) {
 			this.graphs.remove(graph);
 			computeBox();
 		}
+		fireGraphRemoved(new GraphRemovedEvent(this.canvas, graph));
 	}
 
 	@Override

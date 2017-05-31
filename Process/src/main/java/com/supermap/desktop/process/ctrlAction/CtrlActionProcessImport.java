@@ -6,7 +6,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.process.FormProcess;
+import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.properties.CommonProperties;
@@ -52,7 +52,7 @@ public class CtrlActionProcessImport extends CtrlAction {
 
 				IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 				for (int i = 0; i < formManager.getCount(); i++) {
-					if (formManager.get(i) instanceof FormProcess) {
+					if (formManager.get(i) instanceof FormWorkflow) {
 						names.add(formManager.get(i).getText());
 					}
 				}

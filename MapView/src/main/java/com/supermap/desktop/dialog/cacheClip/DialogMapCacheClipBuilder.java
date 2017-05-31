@@ -195,6 +195,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		}
 		return result;
 	}
+
 	//Change panel
 	private void changePanel(boolean flag) {
 		buttonStep.setText(flag == true ? ControlsProperties.getString("String_LastWay") : ControlsProperties.getString("String_NextWay"));
@@ -244,6 +245,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		}
 
 	}
+
 	private void resume() {
 		boolean result;
 		try {
@@ -293,6 +295,9 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				String tasksPath = nextStepPane.fileChooserControlTaskPath.getPath();
 				tasksPath = tasksPath.replaceAll("\\\\", "/");
 				String filePath = firstStepPane.fileChooserControlFileCache.getPath();
+				if (!filePath.endsWith("\\")) {
+					filePath += "\\";
+				}
 				String sciPath = filePath + mapCacheBuilder.getCacheName() + ".sci";
 				setMapCacheBuilderValueBeforeRun();
 				boolean result = mapCacheBuilder.toConfigFile(sciPath);

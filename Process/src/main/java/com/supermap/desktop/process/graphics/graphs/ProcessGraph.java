@@ -24,7 +24,7 @@ public class ProcessGraph extends RectangleGraph {
 	}
 
 	public ProcessGraph(GraphCanvas canvas, IProcess process) {
-		super(canvas, 30, 30);
+		super(canvas, 0, 0);
 		this.process = process;
 		if (getCanvas() != null) {
 		}

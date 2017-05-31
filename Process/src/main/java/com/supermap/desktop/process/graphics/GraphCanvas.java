@@ -2,10 +2,7 @@ package com.supermap.desktop.process.graphics;
 
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
-import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
-import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
-import com.supermap.desktop.process.graphics.events.GraphCreatingEvent;
-import com.supermap.desktop.process.graphics.events.GraphCreatingListener;
+import com.supermap.desktop.process.graphics.events.*;
 import com.supermap.desktop.process.graphics.graphs.EllipseGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
@@ -132,6 +129,12 @@ public class GraphCanvas extends JComponent {
 		addComponentListener(new CanvasComponentListener());
 		addKeyListener(new CanvasKeyListener());
 
+		GraphsHandleListener graphsHandleListener = new GraphsHandleListener();
+		this.graphStorage.addGraphCreatingListener(graphsHandleListener);
+		this.graphStorage.addGraphCreatedListener(graphsHandleListener);
+		this.graphStorage.addGraphRemovingListener(graphsHandleListener);
+		this.graphStorage.addGraphRemovedListener(graphsHandleListener);
+
 		setRequestFocusEnabled(true);
 		loadCanvasActions();
 	}
@@ -245,43 +248,22 @@ public class GraphCanvas extends JComponent {
 	public void addGraphTransformed(IGraph graph) {
 		if (graph != null && !this.graphStorage.contains(graph)) {
 			this.coordinateTransform.inverseTranslate(graph);
-
-			if (this.canvasRect.contains(graph.getBounds())) {
-				fireGraphCreating(new GraphCreatingEvent(this, graph));
-				this.graphStorage.add(graph);
-				fireGraphCreated(new GraphCreatedEvent(this, graph));
-			}
+			addGraph(graph);
 		}
 	}
 
 	public void addGraph(IGraph graph) {
 		if (graph != null && !this.graphStorage.contains(graph)) {
 			if (this.canvasRect.contains(graph.getBounds())) {
-				fireGraphCreating(new GraphCreatingEvent(this, graph));
 				this.graphStorage.add(graph);
-				fireGraphCreated(new GraphCreatedEvent(this, graph));
 			}
 		}
 	}
 
 	public void removeGraph(IGraph graph) {
 		if (graph != null && this.graphStorage.contains(graph)) {
-			if (this.selection.isSelected(graph)) {
-				this.selection.deselectItem(graph);
-			}
 			this.graphStorage.remove(graph);
 		}
-		repaint();
-	}
-
-	public void removeGraphs(IGraph[] graphs) {
-		if (graphs != null && graphs.length > 0) {
-			this.selection.deselectItems(graphs);
-			for (int i = 0; i < graphs.length; i++) {
-				removeGraph(graphs[i]);
-			}
-		}
-		repaint();
 	}
 
 	public IGraph findGraph(Point screenPoint) {
@@ -451,38 +433,59 @@ public class GraphCanvas extends JComponent {
 		}
 	}
 
-	public void addGraphCreatedListener(GraphCreatedListener listener) {
-		this.listenerList.add(GraphCreatedListener.class, listener);
-	}
-
-	public void removeGraphCreatedListener(GraphCreatedListener listener) {
-		this.listenerList.remove(GraphCreatedListener.class, listener);
-	}
-
 	public void addGraphCreatingListener(GraphCreatingListener listener) {
-		this.listenerList.add(GraphCreatingListener.class, listener);
+		this.graphStorage.addGraphCreatingListener(listener);
 	}
 
 	public void removeGraphCreatingListener(GraphCreatingListener listener) {
-		this.listenerList.remove(GraphCreatingListener.class, listener);
+		this.graphStorage.removeGraphCreatingListener(listener);
 	}
 
-	private void fireGraphCreated(GraphCreatedEvent e) {
-		Object[] listeners = listenerList.getListenerList();
+	public void addGraphCreatedListener(GraphCreatedListener listener) {
+		this.graphStorage.addGraphCreatedListener(listener);
+	}
 
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == GraphCreatedListener.class) {
-				((GraphCreatedListener) listeners[i + 1]).graphCreated(e);
-			}
+	public void removeGraphCreatedListener(GraphCreatedListener listener) {
+		this.graphStorage.removeGraphCreatedListener(listener);
+	}
+
+	public void addGraphRemovingListener(GraphRemovingListener listener) {
+		this.graphStorage.addGraphRemovingListener(listener);
+	}
+
+	public void removeGraphRemovingListener(GraphRemovingListener listener) {
+		this.graphStorage.removeGraphRemovingListener(listener);
+	}
+
+	public void addGraphRemovedListener(GraphRemovedListener listener) {
+		this.graphStorage.addGraphRemovedListener(listener);
+	}
+
+	public void removeGraphRemovedListener(GraphRemovedListener listener) {
+		this.graphStorage.removeGraphRemovedListener(listener);
+	}
+
+	private class GraphsHandleListener implements GraphCreatingListener, GraphCreatedListener, GraphRemovingListener, GraphRemovedListener {
+
+		@Override
+		public void graphCreated(GraphCreatedEvent e) {
+
 		}
-	}
 
-	private void fireGraphCreating(GraphCreatingEvent e) {
-		Object[] listeners = listenerList.getListenerList();
+		@Override
+		public void graphCreating(GraphCreatingEvent e) {
 
-		for (int i = listeners.length - 2; i >= 0; i -= 2) {
-			if (listeners[i] == GraphCreatingListener.class) {
-				((GraphCreatingListener) listeners[i + 1]).graphCreating(e);
+		}
+
+		@Override
+		public void graphRemoved(GraphRemovedEvent e) {
+
+		}
+
+		@Override
+		public void graphRemoving(GraphRemovingEvent e) {
+			if (GraphCanvas.this.selection.isSelected(e.getGraph())) {
+				GraphCanvas.this.selection.deselectItem(e.getGraph());
 			}
 		}
 	}

@@ -9,19 +9,8 @@ import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.FormActivatedListener;
-import com.supermap.desktop.event.FormClosedEvent;
-import com.supermap.desktop.event.FormClosedListener;
-import com.supermap.desktop.event.FormClosingEvent;
-import com.supermap.desktop.event.FormClosingListener;
-import com.supermap.desktop.event.FormDeactivatedListener;
-import com.supermap.desktop.event.FormShownEvent;
-import com.supermap.desktop.event.FormShownListener;
-import com.supermap.desktop.process.core.DirectConnect;
-import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.core.NodeMatrix;
-import com.supermap.desktop.process.core.Workflow;
-import com.supermap.desktop.process.core.WorkflowParser;
+import com.supermap.desktop.event.*;
+import com.supermap.desktop.process.core.*;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
@@ -61,7 +50,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Created by highsad on 2017/1/6.
  */
-public class FormProcess extends FormBaseChild implements IFormProcess {
+public class FormWorkflow extends FormBaseChild implements IFormProcess {
 	private ScrollGraphCanvas graphCanvas = new ScrollGraphCanvas();
 	private boolean isNeedSave = true;
 	private boolean isAutoAddOutPut = true;
@@ -69,12 +58,12 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 
 	private JPopupMenu processPopupMenu;
 
-	public FormProcess() {
+	public FormWorkflow() {
 		this(ControlsProperties.getString("String_WorkFlows"));
 	}
 
 
-	public FormProcess(String name) {
+	public FormWorkflow(String name) {
 		super(name, null, null);
 		if (StringUtilities.isNullOrEmpty(name)) {
 			name = ControlsProperties.getString("String_WorkFlows");
@@ -83,7 +72,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		init();
 	}
 
-	public FormProcess(IWorkFlow workflow) {
+	public FormWorkflow(IWorkFlow workflow) {
 		super(workflow.getName(), null, null);
 		init();
 		this.setText(workflow.getName());
@@ -242,7 +231,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		final JFrame frame = new JFrame();
 		frame.setSize(1000, 650);
 		frame.getContentPane().setLayout(new BorderLayout());
-		frame.getContentPane().add(new FormProcess(), BorderLayout.CENTER);
+		frame.getContentPane().add(new FormWorkflow(), BorderLayout.CENTER);
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -293,7 +282,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		}
 		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 		for (int i = 0; i < formManager.getCount(); i++) {
-			if (formManager.get(i) instanceof FormProcess && formManager.get(i) != this) {
+			if (formManager.get(i) instanceof FormWorkflow && formManager.get(i) != this) {
 				dialogSaveAs.addExistNames(formManager.get(i).getText());
 			}
 		}
@@ -508,7 +497,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 	private class FormProcessDropTargetAdapter extends DropTargetAdapter {
 		@Override
 		public void drop(DropTargetDropEvent dtde) {
-			FormProcess.this.grabFocus();
+			FormWorkflow.this.grabFocus();
 			Transferable transferable = dtde.getTransferable();
 			DataFlavor[] currentDataFlavors = dtde.getCurrentDataFlavors();
 			for (DataFlavor currentDataFlavor : currentDataFlavors) {
@@ -526,7 +515,6 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 							Point inverse = getCanvas().getCoordinateTransform().inverse(location);
 							graph.setLocation(inverse);
 							getCanvas().getGraphStorage().add(graph);
-							addOutPutGraph(graph);
 							getCanvas().repaint();
 						}
 					} catch (Exception e) {

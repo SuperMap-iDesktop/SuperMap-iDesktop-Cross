@@ -8,7 +8,7 @@ import java.awt.*;
 /**
  * Created by highsad on 2017/3/2.
  */
-public class QuadTreeGraphs implements IGraphStorage {
+public class QuadTreeGraphs extends AbstractGraphStorage {
 	@Override
 	public IConnectionManager getConnectionManager() {
 		return null;

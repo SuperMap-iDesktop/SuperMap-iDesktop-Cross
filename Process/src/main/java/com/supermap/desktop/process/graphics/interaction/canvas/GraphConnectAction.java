@@ -6,6 +6,7 @@ import com.supermap.desktop.process.graphics.CanvasCursor;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.connection.IConnectable;
+import com.supermap.desktop.process.graphics.connection.IOGraphConnection;
 import com.supermap.desktop.process.graphics.connection.LineGraph;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
@@ -88,10 +89,10 @@ public class GraphConnectAction extends CanvasActionAdapter {
 		try {
 			if (SwingUtilities.isLeftMouseButton(e)) {
 				if (this.startGraph != null && this.endGraph != null) {
-					Type type = this.startGraph.getProcessData().getType();
-					final OutputGraph start = this.startGraph;
-					final ProcessGraph end = this.endGraph;
-					final Inputs inputs = this.endGraph.getProcess().getInputs();
+					final OutputGraph startGraph = this.startGraph;
+					final ProcessGraph endGraph = this.endGraph;
+					Type type = startGraph.getProcessData().getType();
+					final Inputs inputs = endGraph.getProcess().getInputs();
 					InputData[] datas = inputs.getDatas(type);
 
 					for (int i = 0; i < datas.length; i++) {
@@ -103,8 +104,8 @@ public class GraphConnectAction extends CanvasActionAdapter {
 							@Override
 							public void actionPerformed(ActionEvent e) {
 								try {
-									inputs.bind(item.getText(), start.getProcessData());
-									canvas.getConnection().connect(start, end, item.getText());
+									IOGraphConnection connection = new IOGraphConnection(startGraph, endGraph, item.getText());
+									canvas.getConnection().connect(connection);
 									inputsMenu.setVisible(false);
 								} catch (Exception e1) {
 									Application.getActiveApplication().getOutput().output(e1);

@@ -67,22 +67,22 @@ public class ProcessActivator implements BundleActivator {
 	}
 
 	private IFormProcess showProcess(String newWindowName) {
-		FormProcess formProcess = null;
+		FormWorkflow formWorkflow = null;
 		CursorUtilities.setWaitCursor();
 		ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
 		for (IWorkFlow workFlow : workFlows) {
 			if (workFlow.getName().equals(newWindowName)) {
-				formProcess = new FormProcess(workFlow);
+				formWorkflow = new FormWorkflow(workFlow);
 				break;
 			}
 		}
-		if (formProcess == null) {
-			formProcess = new FormProcess(newWindowName);
+		if (formWorkflow == null) {
+			formWorkflow = new FormWorkflow(newWindowName);
 		}
 		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
-		formManager.showChildForm(formProcess);
+		formManager.showChildForm(formWorkflow);
 		CursorUtilities.setDefaultCursor();
-		return formProcess;
+		return formWorkflow;
 	}
 
 	/*

@@ -21,6 +21,11 @@ public class DefaultGraphConnection implements IConnection {
 	}
 
 	@Override
+	public void disconnect() {
+
+	}
+
+	@Override
 	public IGraph getStartGraph() {
 		return this.start == null ? null : this.start.getConnector();
 	}
@@ -31,11 +36,6 @@ public class DefaultGraphConnection implements IConnection {
 	}
 
 	@Override
-	public void setStart(IConnectable start) {
-		this.start = start;
-	}
-
-	@Override
 	public IGraph getEndGraph() {
 		return this.end == null ? null : this.end.getConnector();
 	}
@@ -43,11 +43,6 @@ public class DefaultGraphConnection implements IConnection {
 	@Override
 	public IConnectable getEnd() {
 		return this.end;
-	}
-
-	@Override
-	public void setEnd(IConnectable end) {
-		this.end = end;
 	}
 
 	@Override

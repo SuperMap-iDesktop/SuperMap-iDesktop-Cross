@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.FormProcess;
+import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
@@ -63,7 +63,7 @@ public class DefaultParameters implements IParameters {
 				String propertyName = evt.getPropertyName();
 				IGraph graph = (IGraph) ((ParameterDataNode) evt.getOldValue()).getData();
 				IGraph newGraph = (IGraph) ((ParameterDataNode) evt.getNewValue()).getData();
-				GraphCanvas canvas = ((FormProcess) Application.getActiveApplication().getActiveForm()).getCanvas();
+				GraphCanvas canvas = ((FormWorkflow) Application.getActiveApplication().getActiveForm()).getCanvas();
 				IGraphStorage graphStorage = canvas.getGraphStorage();
 				IGraph processGraph = null;
 				for (IGraph iGraph : graphStorage.getGraphs()) {
