@@ -48,14 +48,19 @@ public class BuildCache {
 
 	//Start process
 	public void startProcess(int processCount, String[] params) {
-		if (0 == processCount) {
-			main(params);
-		} else {
-			//(Write executing info to log)Write log info to console
-			LogWriter.setWriteToFile(true);
-			for (int i = 0; i < processCount; i++) {
-				startProcess(params);
+		try {
+			if (0 == processCount) {
+				main(params);
+			} else {
+				//(Write executing info to log)Write log info to console
+				LogWriter.setWriteToFile(true);
+				for (int i = 0; i < processCount; i++) {
+					startProcess(params);
+					Thread.sleep(2000);
+				}
 			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -79,6 +84,7 @@ public class BuildCache {
 			if (params.length > MERGESCICOUNT_INDEX && !params[MERGESCICOUNT_INDEX].equals("0"))
 				mergeCount = params[MERGESCICOUNT_INDEX];
 			//Instance LogWriter
+			LogWriter.setWriteToFile(true);
 			LogWriter log = new LogWriter();
 			int sciLength;
 			WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(workspacePath);
