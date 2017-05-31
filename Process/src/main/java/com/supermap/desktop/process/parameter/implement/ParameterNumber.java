@@ -31,7 +31,9 @@ public class ParameterNumber extends ParameterTextField {
 					if (isMaxValueEnable && aDouble > maxValue) {
 						return false;
 					}
-					if (bit >= 0) {
+					if (bit == 0) {
+						Integer integer = Integer.valueOf(textFieldValue);
+					} else if (bit > 0) {
 						int bitCount = 0;
 						String[] split = textFieldValue.split("\\.");
 						if (split.length == 2) {

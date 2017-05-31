@@ -148,8 +148,9 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 			parameterSingleDataset.setSelectedItem(defaultDatasetVector);
 			parameterExplanatory.setDataset(defaultDatasetVector);
 			parameterModelField.setDataset(defaultDatasetVector);
+			parameterSaveDataset.setResultDatasource(defaultDatasetVector.getDatasource());
 		}
-		parameterDistanceTolerance.setSelectedItem("0.0");
+		parameterDistanceTolerance.setSelectedItem("0.01");
 		parameterNeighbors.setSelectedItem("1");
 		parameterSaveDataset.setDatasetName(OUTPUT_DATASET);
 		parameterBandWidthType.setSelectedItem(parameterBandWidthType.getItemAt(1));

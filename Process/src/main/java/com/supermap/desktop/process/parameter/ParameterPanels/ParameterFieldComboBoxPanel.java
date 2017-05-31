@@ -72,7 +72,7 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 		comboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				if (!isSelectingItem && e.getStateChange() == ItemEvent.SELECTED) {
+				if (!isSelectingItem && (e.getStateChange() == ItemEvent.SELECTED || comboBox.getSelectedItem() == null)) {
 					isSelectingItem = true;
 					parameterFieldComboBox.setSelectedItem(comboBox.getSelectedItem());
 					isSelectingItem = false;

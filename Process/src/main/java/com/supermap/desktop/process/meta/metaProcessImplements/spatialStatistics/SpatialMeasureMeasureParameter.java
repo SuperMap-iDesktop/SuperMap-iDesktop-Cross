@@ -17,6 +17,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterLabel;
 import com.supermap.desktop.process.parameter.implement.ParameterStatisticsField;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import static com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.ParameterPatternsParameter.DATASET_FIELD_NAME;
 
@@ -111,9 +112,18 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 		if (metaKeys.equals(MetaKeys.Directional)) {
 			measureParameter.setEllipseSize((EllipseSize) parameterEllipseSizeComboBox.getSelectedData());
 		}
-		measureParameter.setGroupFieldName(parameterGroupFieldComboBox.getFieldName());
-		measureParameter.setSelfWeightFieldName(parameterSelfWeightFieldComboBox.getFieldName());
-		measureParameter.setWeightFieldName(parameterWeightFieldComboBox.getFieldName());
+		String groupFieldName = parameterGroupFieldComboBox.getFieldName();
+		if (!StringUtilities.isNullOrEmpty(groupFieldName)) {
+			measureParameter.setGroupFieldName(groupFieldName);
+		}
+		String selfWeightFieldName = parameterSelfWeightFieldComboBox.getFieldName();
+		if (!StringUtilities.isNullOrEmpty(selfWeightFieldName)) {
+			measureParameter.setSelfWeightFieldName(selfWeightFieldName);
+		}
+		String weightFieldName = parameterWeightFieldComboBox.getFieldName();
+		if (!StringUtilities.isNullOrEmpty(weightFieldName)) {
+			measureParameter.setWeightFieldName(weightFieldName);
+		}
 		measureParameter.setStatisticsFieldNames(parameterStatisticsTypesUserDefine.getStatisticsFieldNames());
 		measureParameter.setStatisticsTypes(parameterStatisticsTypesUserDefine.getStatisticsType());
 		return measureParameter;
