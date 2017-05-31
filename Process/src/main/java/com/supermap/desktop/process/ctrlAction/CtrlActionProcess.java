@@ -7,7 +7,7 @@ import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.process.FormProcess;
+import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class CtrlActionProcess extends CtrlAction {
 		try {
 			Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(processTreeClassName)).setVisible(true);
 			Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(ParameterManagerClassName)).setVisible(true);
-			FormProcess formProcess = new FormProcess();
+			FormWorkflow formWorkflow = new FormWorkflow();
 
 			ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
 			ArrayList<String> names = new ArrayList<>();
@@ -37,12 +37,12 @@ public class CtrlActionProcess extends CtrlAction {
 			}
 			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 			for (int i = 0; i < formManager.getCount(); i++) {
-				if (formManager.get(i) instanceof FormProcess) {
+				if (formManager.get(i) instanceof FormWorkflow) {
 					names.add(formManager.get(i).getText());
 				}
 			}
-			formProcess.setText(StringUtilities.getUniqueName(ControlsProperties.getString("String_WorkFlows"), names));
-			Application.getActiveApplication().getMainFrame().getFormManager().add(formProcess);
+			formWorkflow.setText(StringUtilities.getUniqueName(ControlsProperties.getString("String_WorkFlows"), names));
+			Application.getActiveApplication().getMainFrame().getFormManager().add(formWorkflow);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}

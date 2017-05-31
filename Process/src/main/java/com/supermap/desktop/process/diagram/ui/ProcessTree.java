@@ -3,7 +3,7 @@ package com.supermap.desktop.process.diagram.ui;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.drop.DropAndDragHandler;
 import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
-import com.supermap.desktop.process.FormProcess;
+import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.core.WorkflowParser;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -63,13 +63,13 @@ public class ProcessTree extends JTree {
 						return;
 					}
 					ProcessTreeNodeBean userObject = (ProcessTreeNodeBean) ((DefaultMutableTreeNode) lastSelectedPathComponent).getUserObject();
-					if (!StringUtilities.isNullOrEmpty(userObject.getKey()) && Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof FormProcess) {
-						((FormProcess) Application.getActiveApplication().getActiveForm()).addProcess(WorkflowParser.getMetaProcess(userObject.getKey()));
+					if (!StringUtilities.isNullOrEmpty(userObject.getKey()) && Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof FormWorkflow) {
+						((FormWorkflow) Application.getActiveApplication().getActiveForm()).addProcess(WorkflowParser.getMetaProcess(userObject.getKey()));
 					}
 //					if (userObject instanceof IProcess && !(userObject instanceof IProcessGroup)) {
-//						if (Application.getActiveApplication().getActiveForm() instanceof FormProcess) {
-//							((FormProcess) Application.getActiveApplication().getActiveForm()).addProcess(WorkflowParser.getMetaProcess(((IProcess) userObject).getKey()));
-////							((FormProcess) Application.getActiveApplication().getActiveForm()).addProcess((IProcess) userObject);
+//						if (Application.getActiveApplication().getActiveForm() instanceof FormWorkflow) {
+//							((FormWorkflow) Application.getActiveApplication().getActiveForm()).addProcess(WorkflowParser.getMetaProcess(((IProcess) userObject).getKey()));
+////							((FormWorkflow) Application.getActiveApplication().getActiveForm()).addProcess((IProcess) userObject);
 //						}
 //					}
 				}

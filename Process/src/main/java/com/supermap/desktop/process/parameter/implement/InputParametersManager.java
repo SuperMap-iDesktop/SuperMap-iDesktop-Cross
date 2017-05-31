@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.FormProcess;
+import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
@@ -91,7 +91,7 @@ public class InputParametersManager {
 
 	private void reloadParameterComboBox(ParameterComboBox parameterComboBox) {
 		parameterComboBox.removeAllItems();
-		FormProcess activeForm = (FormProcess) Application.getActiveApplication().getActiveForm();
+		FormWorkflow activeForm = (FormWorkflow) Application.getActiveApplication().getActiveForm();
 		ArrayList<IGraph> allDataNode = activeForm.getAllDataNode();
 		for (IGraph graph : allDataNode) {
 			parameterComboBox.addItem(new ParameterDataNode(((OutputGraph) graph).getName(), graph));

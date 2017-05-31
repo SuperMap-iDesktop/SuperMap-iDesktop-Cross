@@ -50,7 +50,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Created by highsad on 2017/1/6.
  */
-public class FormProcess extends FormBaseChild implements IFormProcess {
+public class FormWorkflow extends FormBaseChild implements IFormProcess {
 	private ScrollGraphCanvas graphCanvas = new ScrollGraphCanvas();
 	private boolean isNeedSave = true;
 	private boolean isAutoAddOutPut = true;
@@ -58,12 +58,12 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 
 	private JPopupMenu processPopupMenu;
 
-	public FormProcess() {
+	public FormWorkflow() {
 		this(ControlsProperties.getString("String_WorkFlows"));
 	}
 
 
-	public FormProcess(String name) {
+	public FormWorkflow(String name) {
 		super(name, null, null);
 		if (StringUtilities.isNullOrEmpty(name)) {
 			name = ControlsProperties.getString("String_WorkFlows");
@@ -72,7 +72,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		init();
 	}
 
-	public FormProcess(IWorkFlow workflow) {
+	public FormWorkflow(IWorkFlow workflow) {
 		super(workflow.getName(), null, null);
 		init();
 		this.setText(workflow.getName());
@@ -231,7 +231,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		final JFrame frame = new JFrame();
 		frame.setSize(1000, 650);
 		frame.getContentPane().setLayout(new BorderLayout());
-		frame.getContentPane().add(new FormProcess(), BorderLayout.CENTER);
+		frame.getContentPane().add(new FormWorkflow(), BorderLayout.CENTER);
 
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
@@ -282,7 +282,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 		}
 		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 		for (int i = 0; i < formManager.getCount(); i++) {
-			if (formManager.get(i) instanceof FormProcess && formManager.get(i) != this) {
+			if (formManager.get(i) instanceof FormWorkflow && formManager.get(i) != this) {
 				dialogSaveAs.addExistNames(formManager.get(i).getText());
 			}
 		}
@@ -497,7 +497,7 @@ public class FormProcess extends FormBaseChild implements IFormProcess {
 	private class FormProcessDropTargetAdapter extends DropTargetAdapter {
 		@Override
 		public void drop(DropTargetDropEvent dtde) {
-			FormProcess.this.grabFocus();
+			FormWorkflow.this.grabFocus();
 			Transferable transferable = dtde.getTransferable();
 			DataFlavor[] currentDataFlavors = dtde.getCurrentDataFlavors();
 			for (DataFlavor currentDataFlavor : currentDataFlavors) {

@@ -4,7 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.process.FormProcess;
+import com.supermap.desktop.process.FormWorkflow;
 
 /**
  * Created by highsad on 2017/4/25.
@@ -17,7 +17,7 @@ public class CtrlActionEntireView extends CtrlAction {
 
 	@Override
 	public void run() {
-		FormProcess formProcess = (FormProcess) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
-		formProcess.getCanvas().entireView();
+		FormWorkflow formWorkflow = (FormWorkflow) Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
+		formWorkflow.getCanvas().entireView();
 	}
 }

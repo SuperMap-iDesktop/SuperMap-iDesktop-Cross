@@ -30,8 +30,8 @@ public class ParameterManager extends JPanel {
 			@Override
 			public void activeFormChanged(ActiveFormChangedEvent e) {
 				IForm newActiveForm = e.getNewActiveForm();
-				if (newActiveForm instanceof FormProcess) {
-					IGraph[] selectedItems = ((FormProcess) newActiveForm).getCanvas().getSelection().getSelectedItems();
+				if (newActiveForm instanceof FormWorkflow) {
+					IGraph[] selectedItems = ((FormWorkflow) newActiveForm).getCanvas().getSelection().getSelectedItems();
 					for (IGraph selectedItem : selectedItems) {
 						if (selectedItem instanceof ProcessGraph) {
 							setProcess(((ProcessGraph) selectedItem).getProcess());

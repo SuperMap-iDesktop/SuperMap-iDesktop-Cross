@@ -5,7 +5,7 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.process.FormProcess;
+import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
@@ -26,7 +26,7 @@ public class CtrlActionProcessExportForm extends CtrlAction {
 	@Override
 	public void run() {
 		IWorkFlow workflow;
-		workflow = ((FormProcess) Application.getActiveApplication().getActiveForm()).getWorkFlow();
+		workflow = ((FormWorkflow) Application.getActiveApplication().getActiveForm()).getWorkFlow();
 		if (workflow == null) {
 			return;
 		}
