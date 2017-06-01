@@ -175,7 +175,7 @@ public class StatisticsFieldPanel extends JPanel {
 	 */
 	public static ArrayList<StatisticsType> getSupportedStatisticsType(FieldType type) {
 		ArrayList<StatisticsType> statisticsTypes = new ArrayList<>();
-		if (type == FieldType.CHAR || type == FieldType.TEXT || type == FieldType.WTEXT) {
+		if (type == FieldType.CHAR || type == FieldType.TEXT || type == FieldType.WTEXT || type == FieldType.BOOLEAN) {
 			statisticsTypes.add(StatisticsType.FIRST);
 			statisticsTypes.add(StatisticsType.LAST);
 		} else {
@@ -332,15 +332,14 @@ public class StatisticsFieldPanel extends JPanel {
 		buttonDel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int[] selectedModelRows = table.getSelectedModelRows();
-				if (selectedModelRows.length == 0) {
+				int[] selectedRows = table.getSelectedRows();
+				if(selectedRows.length < 1){
 					return;
 				}
-//				Arrays.sort(selectedModelRows);
-				for (int i = selectedModelRows.length - 1; i >= 0; i--) {
-					tableModel.removeRow(selectedModelRows[i]);
+				for (int i = selectedRows.length - 1; i >= 0; i--) {
+					tableModel.removeRow(table.convertRowIndexToModel(selectedRows[i]));
 				}
-				int row = selectedModelRows[0];
+				int row = selectedRows[0];
 				if (tableModel.getRowCount() <= row) {
 					row = tableModel.getRowCount() - 1;
 				}
@@ -349,10 +348,10 @@ public class StatisticsFieldPanel extends JPanel {
 				}
 			}
 		});
-		comboBoxStatisticsType.addItemListener(new ItemListener() {
+		comboBoxStatisticsType.addActionListener(new ActionListener() {
 			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (isSelecting && e.getStateChange() == ItemEvent.SELECTED) {
+			public void actionPerformed(ActionEvent e) {
+				if (isSelecting) {
 					TableUtilities.stopEditing(table);
 					StatisticsType statisticsType = (StatisticsType) comboBoxStatisticsType.getSelectedItem();
 					int[] selectedModelRows = table.getSelectedModelRows();
