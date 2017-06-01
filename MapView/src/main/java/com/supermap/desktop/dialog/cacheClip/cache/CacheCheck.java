@@ -55,8 +55,8 @@ public class CacheCheck {
         }
         if (error2udb) {
             File scifile = new File(sciNames.get(0));
-            String datasourcePath = scifile.getParentFile().getParent() + "/check/check.udb";
-            datasourcePath = datasourcePath.replaceAll("\\\\", "/");
+            String datasourcePath = scifile.getParentFile().getParent() + "\\check\\check.udb";
+            datasourcePath = datasourcePath.replaceAll("/", "\\\\");
             File datasourceFile = new File(datasourcePath);
             if (!datasourceFile.exists()) {
                 System.out.println(datasourcePath + " not exists!");

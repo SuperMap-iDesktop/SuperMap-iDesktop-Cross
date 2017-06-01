@@ -14,6 +14,8 @@ class LogWriter {
 	private OutputStreamWriter writer;
 	public static SimpleDateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 	private static LogWriter gInstance;
+	public static String BUILD_CACHE = "BuildCache";
+	public static String CHECK_CACEH = "CheckCache";
 	private static boolean writeToFile = false;
 
 	public static String getPID() {
@@ -22,12 +24,12 @@ class LogWriter {
 
 	public static LogWriter getInstance() {
 		if (gInstance == null) {
-			gInstance = new LogWriter();
+			gInstance = new LogWriter(BUILD_CACHE);
 		}
 		return gInstance;
 	}
 
-	public LogWriter() {
+	public LogWriter(String type) {
 		if (isWriteToFile()) {
 			if (logFile == null) {
 
@@ -38,7 +40,7 @@ class LogWriter {
 					file.mkdir();
 				}
 
-				String logName = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss").format(new Date()) + "_" + getPID() + ".log";
+				String logName = type + "_" + getPID() + ".log";
 				logFile = new File(logFolder + logName);
 			}
 
