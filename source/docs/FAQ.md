@@ -45,3 +45,25 @@ title: SuperMap iDesktop Cross 常见问题解答
 
 　　**答**：若Linux没有中文环境，则发布的地图名称建议改成英文名称；或在有中文环境的Linux系统中发布含中文名称的地图服务。
 
+**Q10:若centos5.7系统配置的 jre 版本早于1.7，无法启动 SuperMap iDesktop Cross，并且会报错，如下图所示，如何解决该问题呢？**
+
+  ![](img/jreError.png)
+
+　　**答**：Cross 桌面启动需要依赖于 jre 1.7及更新的环境，由于jre版本没有达到要求，所以Cross会启动失败，解决方案有以下两种：
+
+- 方案一：卸载本地安装的旧版本 jre 环境，安装1.7或更新的 jre，然后重新启动 Cross即可；
+- 方案二：Cross 产品包中带有jre 1.7的环境，启动桌面时会优先考虑本地配置的环境，因此会导致启动失败，若用户不想卸载本地的 jre 环境，可以修改 startup.sh 的脚本，将“export PATH=$SUPERMAP_ROOT:$LD_LIBRARY_PATH:$JRE_PATH:$PATH”中的$JRE_PATH:放到最前面，即：export PATH=$JRE_PATH:$SUPERMAP_ROOT:$LD_LIBRARY_PATH:$PATH。重新执行 startup.sh 文件即可启动Cross。
+
+　　**备注**：该问题在9D版本中已解决，不会出现jre环境过低无法启动的问题。
+
+**Q11:若启动桌面报“java.lang.UnsatisfiedLinkError: /opt/SuperMap_iDesktop_Cross_8.1.1_bin_linux64/bin/ libWrapjGeo.so: /usr/lib64/libstdc++.so.6: version `GLIBCXX_3.4.9' not found (required by ./bin/ libSuToolkit.so)”错误，参加如下解决方法：**
+
+　　**答**：将桌面包的 support 文件夹中的 “libstdc++.so.6”文件拷贝到组件的Bin目录下即可解决该问题。
+
+**Q12:在centos5.7系统中，用SecureCRT.exe纯终端控制工具启动桌面报如下错误，建议解决方案如下：**
+
+  ![](img/UIError.png)
+
+　　**答**：因为桌面依赖于组件，需要在图形化界面上进行启动和操作，建议换另一种远程控制工具vnc（用xmanager也可以，这两个工具都可以远程连接到UNIX或Linux并进行图形化操作，只是都需要进行相应配置）去连接虚拟机后，可以进行图形化操作，正常启动桌面。Vnc配置可以参见[centos 5.5如何配置vnc](http://www.jb51.net/LINUXjishu/44494.html)和[VNC的安装和配置](http://www.cnblogs.com/jyzhao/p/5615448.html)。
+
+　　**备注**：若在其他Linux操作系统中遇到该问题，可采用相同的解决方案。

@@ -1,13 +1,15 @@
 title: SuperMap iDesktop Cross 8C 产品介绍
 ---
 
-　　SuperMap iDesktop Cross 8C 是一款支持跨平台、全开源、可扩展的桌面GIS应用与开发平台系统，也是超图新一代的开源GIS桌面产品，可在Windows和Linux系统上运行，实现了GIS数据在跨平台环境下的展示。
+　　SuperMap iDesktop Cross 8C 是一款支持跨平台、全开源、可扩展的桌面GIS应用与开发平台系统，是国内首款可在 Linux 操作系统上运行的桌面 GIS 系统，也是超图新一代的开源GIS桌面产品，可在Windows和Linux系统上运行，实现了GIS数据在跨平台环境下的展示。
 
-　　SuperMap iDesktop Cross 8C 是基于 SuperMap iObjects Java 8C、OSGI 等平台，通过 Java 语言开发的插件式、跨平台GIS应用软件，提供了数据管理、数据处理、数据分析、地图制图出图、二三维一体化浏览等功能，同时提供了灵活的开发框架和辅助控件，便于用户二次开发。SuperMap iDesktop Cross 8C的源代码分别开源在[OSChina](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross)和[CSDN](https://code.csdn.net/SuperMapDesktop/supermap-idesktop-cross/tree/master)两大平台上。
+
 
 ## 产品简介
 
-　　SuperMap iDesktop Cross 8C 是一套运行在桌面端的专业GIS软件，是基于 SuperMap iObjects Java 8C、Eclipse 和 OSGI 开发的跨平台 GIS 应用软件。SuperMap iDesktop Cross 8C 提供了适用于不同平台的版本，分为 Windows 和 Linux 两个版本，其中，Windows包括 32 位和 64 位两个版本，分别提供了绿色包和安装包，Linux 版本提供了 64 位的绿色包。
+　　SuperMap iDesktop Cross 8C 是基于 SuperMap iObjects Java 8C、OSGI 等平台，通过 Java 语言开发的插件式、跨平台GIS应用软件，提供了数据管理、数据处理、数据分析、地图制图出图、二三维一体化浏览等功能，同时提供了灵活的开发框架和辅助控件，便于用户二次开发。SuperMap iDesktop Cross 8C的源代码分别开源在[OSChina](http://git.oschina.net/supermap/SuperMap-iDesktop-Cross)和[CSDN](https://code.csdn.net/SuperMapDesktop/supermap-idesktop-cross/tree/master)两大平台上。
+
+　　SuperMap iDesktop Cross 8C 提供了适用于不同平台的版本，分为 Windows 和 Linux 两个版本，其中，Windows包括 32 位和 64 位两个版本，分别提供了绿色包和安装包，Linux 版本提供了 64 位的绿色包。
 
 　　SuperMap iDesktop Cross 8C 是一款免许可的应用软件，只要有 SuperMap iObjects Java 8C 的许可，即可使用 SuperMap iDesktop Cross 8C 提供的相应模块的功能。
 
@@ -17,9 +19,9 @@ title: SuperMap iDesktop Cross 8C 产品介绍
 
 　　提供了工作空间管理、数据源管理、数据集管理功能；支持文件型、数据库型、Web型数据引擎；提供对空间数据及其属性的全面操作和处理，包括创建、编辑、管理、访问等功能。
 
--   **数据引擎**：支持打开不同数据引擎，如 Oracle、SQLPlus、DB2、MySQL 等数据库，其中，Linux 版本不支持 SQLPlus 数据引擎；同时支持打开Web地图数据，即谷歌地图、百度地图、超图云服务、天地图服务、OGC服务、REST服务、OpenStreetMap 等Web地图。
+-   **数据引擎**：支持打开不同数据引擎，如 Oracle、SQLPlus、DB2、MySQL 等数据库，其中，Linux 版本不支持 SQLPlus 数据引擎；同时支持打开Web地图数据，即百度地图、超图云服务、天地图服务、OGC服务、REST服务、OpenStreetMap 等Web地图。
 
--   **工作空间管理**：支持打开、保存、另存、关闭、删除工作空间，支持打开的工作空间有文件型、Oracle、SQLServer 三种类型，Linux 版本不支持打开 SQL Server 工作空间。
+-   **工作空间管理**：支持打开、保存、另存、关闭、删除工作空间，支持打开的工作空间有文件型、Oracle、SQLServer 三种类型，Linux 版本不支持打开 SQL Server 工作空间；异常退出桌面时支持自动恢复工作空间。
 
 -   **数据源管理**：支持打开文件型、数据库型、Web型数据源，同时支持新建文件型、数据库型和内存数据源。
 
@@ -38,14 +40,20 @@ title: SuperMap iDesktop Cross 8C 产品介绍
 
 ### 数据处理
 
-　　数据处理是GIS的基础功能，SuperMap iDesktop Cross 8C 目前提供的数据处理功能有：投影设置、数据编辑、SQL 查询、拓扑处理等。
+　　数据处理是GIS的基础功能，SuperMap iDesktop Cross 8C 目前提供的数据处理功能有：投影设置、数据配准、数据编辑、SQL 查询、拓扑处理等。
 -   **投影设置**：支持对矢量、栅格、模型等数据集进行投影转换。
+
+-   **数据配准**：支持对单个或多个数据集进行配准，根据参考数据对配准数据进行空间位置纠正和变换。
 
 -   **数据编辑**：提供了丰富、全面的对象绘制和对象编辑功能，便于对数据进行编辑调整。
 
 -   **空间索引**：支持对矢量数据创建空间索引，对栅格数据创建影像金字塔，以提高数据的浏览效率。
 
 -   **矢量数据处理**：提供丰富的矢量数据处理功能，如：数据融合、拓扑检查、拓扑处理、SQL 查询、属性更新等。
+
+-   **SQL查询**：SQL查询是指根据指定的 SQL 语句，从已有的数据中查询出满足特定条件的数据，同时还支持添加外部连接表字段信息构建 SQL 语句 。
+
+-   **空间查询**：通过几何对象之间的空间位置关系 ，查询出符合过滤条件的对象 。
 ![](img/Product3.png)
 
 ### 地图制图
@@ -62,13 +70,22 @@ title: SuperMap iDesktop Cross 8C 产品介绍
 
 -   **图层可见性**：支持对图层设置可见比例尺，控制图层在不同比例尺下显示，提供地图的美观性和显示效率。
 
--   **制作专题图**：支持矢量和栅格图层专题图的制作与修改，矢量图层支持单值、分段、标签、统计专题图类型，栅格图层支持单值和分段两种专题图。
+-   **制作专题图**：支持矢量和栅格图层专题图的制作与修改，矢量图层支持单值、分段、标签、统计、点密度、等级符号、自定义７种类型专题图，栅格图层支持单值和分段两种专题图。
+
+-   **颜色方案** ：根据专题图的适用性提供了丰富的颜色方案，提高了地图的美观性，同时支持颜色方案自定义 。
   ![](img/Product2.png)
 
 
 ### 数据分析
 
-　　数据分析模块提供了缓冲区分析功能，可根据指定的缓冲半径对点、线、面数据集进行缓冲区分析。
+-   **缓冲区分析**：可根据指定的距离，在点、线、面几何对象周围建立一定宽度的区域的分析方法。缓冲区分析在 GIS 空间分析中经常用到，且往往结合叠加分析来共同解决实际问题。缓冲区分析在农业、城市规划、生态保护、防洪抗灾、军事、地质、环境等诸多领域都有应用。
+
+-   **叠加分析**：通过对空间数据的加工或分析，提取用户需要的新的空间几何信息，例如裁剪、合并求 交、擦除等。叠加分析广泛应用于资源管理、城市建设评估、国土管理、农林牧业、统计等领域。
+
+### 发布服务
+
+　　支持发布 iServer 服务 ，可将工作空间中的数据资源发布到本地或远程服务器上，以 Web 形式实现资源共享 。
+
 
 ## 主要特色
 
@@ -76,7 +93,7 @@ title: SuperMap iDesktop Cross 8C 产品介绍
 
 -   基于 Java 组件采用 Java 语言开发，具有跨平台的特性，支持在 Windows 和 Linux 系统中运行。
 
--   采用稳健的 Eclipse 插件框架，实现了插件式桌面及源代码的开源。
+-   采用 OSGI 新的实现框架——Felix，易扩展、框架配置灵活，实现了插件式桌面及源代码的开源。
 
 -   遵循 OSGI 国际扩展标准，将应用程序分为多个模块单元，统一管理各模块单元及用户开发的模块单元之间的交叉依赖关系，实现GIS数据的展示。
 
