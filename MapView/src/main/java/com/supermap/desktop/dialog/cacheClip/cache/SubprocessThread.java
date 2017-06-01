@@ -8,20 +8,22 @@ import java.util.ArrayList;
 
 class SubprocessThread extends Thread {
 	private ArrayList<String> arguments;
-	private long start;
+	//	private long start;
 	public Process process;
 	private InputStream stream;
 	public static long TimeOutMS = 15 * 60 * 1000;
 	public volatile boolean isExit = false;
+	private String type = null;
 
-	public SubprocessThread(ArrayList<String> arguments) {
+	public SubprocessThread(ArrayList<String> arguments, String type) {
 		this.arguments = arguments;
-		start = 0;
+		this.type = type;
+//		start = 0;
 	}
 
 	public SubprocessThread clone() {
-		if (null != this.arguments) {
-			return new SubprocessThread(this.arguments);
+		if (null != this.arguments && null != this.type) {
+			return new SubprocessThread(this.arguments, this.type);
 		}
 		return null;
 	}
@@ -31,10 +33,9 @@ class SubprocessThread extends Thread {
 	 */
 	public void timeout() {
 		synchronized (this) {
-			if (!SubprocessThread.this.isAlive() && null != process) {
+			if (!SubprocessThread.this.isAlive() && null != this.process) {
 				int psHash = process.hashCode();
-				LogWriter log = LogWriter.getInstance();
-				log.writelog("time out and kill it, PIDHASH:" + psHash);
+				LogWriter.getInstance(this.type).writelog("time out and kill it, PIDHASH:" + psHash);
 			}
 		}
 	}
@@ -42,7 +43,6 @@ class SubprocessThread extends Thread {
 
 	@Override
 	public void run() {
-		LogWriter log = LogWriter.getInstance();
 		try {
 			ProcessBuilder builder = new ProcessBuilder(arguments);
 			builder.redirectErrorStream(true);
@@ -59,11 +59,10 @@ class SubprocessThread extends Thread {
 			}
 			String line1 = null;
 			while ((line1 = br1.readLine()) != null) {
-				start = System.currentTimeMillis();
+//				start = System.currentTimeMillis();
 				//log.writelog("PIDHASH:"+psHash +"," + line1);
-				log.writelog(line1);
+				LogWriter.getInstance(this.type).writelog(line1);
 			}
-			log.flush();
 			stream.close();
 			isExit = true;
 		} catch (Exception e) {

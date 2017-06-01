@@ -8,6 +8,7 @@ import com.supermap.tilestorage.TileContent;
 import com.supermap.tilestorage.TileStorageConnection;
 import com.supermap.tilestorage.TileStorageManager;
 import com.supermap.tilestorage.TileStorageType;
+import sun.rmi.runtime.Log;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -41,7 +42,7 @@ public class CheckCache {
 				main(params);
 			} else {
 				for (int i = 0; i < processCount; i++) {
-					CacheUtilities.startProcess(params, getClass().getName());
+					CacheUtilities.startProcess(params, getClass().getName(),LogWriter.CHECK_CACEH);
 					Thread.sleep(2000);
 				}
 			}
@@ -106,7 +107,6 @@ public class CheckCache {
 		File sciPath = new File(scipath);
 		if (sciPath.exists()) {
 			do {
-				long start = System.currentTimeMillis();
 				//Recalculate sci file length
 				String[] sciFileNames = sciPath.list(CacheUtilities.getFilter());
 				sciLength = sciFileNames.length;
@@ -161,8 +161,7 @@ public class CheckCache {
 	}
 
 	public void check(String cacheRoot, String sciFile) {
-		LogWriter.setWriteToFile(true);
-		LogWriter log = new LogWriter(LogWriter.CHECK_CACEH);
+		LogWriter log = LogWriter.getInstance(LogWriter.CHECK_CACEH);
 		File file = new File(sciFile);
 		if (!file.exists()) {
 			return;

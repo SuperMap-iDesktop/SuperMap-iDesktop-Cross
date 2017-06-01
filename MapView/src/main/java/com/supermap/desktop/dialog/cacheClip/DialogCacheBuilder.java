@@ -137,7 +137,28 @@ public class DialogCacheBuilder extends SmDialog {
 			}
 		}
 	};
-	private FileChooserPathChangedListener fileChangeListener;
+	private FileChooserPathChangedListener fileChangeListener = new FileChooserPathChangedListener() {
+		@Override
+		public void pathChanged() {
+			String sciFilePath = fileChooserTotalTaskPath.getPath();
+			if (!StringUtilities.isNullOrEmpty(sciFilePath)) {
+				CacheWriter writer = new CacheWriter();
+				boolean result = writer.FromConfigFile(sciFilePath);
+				if (result) {
+					HashMap<Double, String> allScaleCaptions = new HashMap<Double, String>(writer.getCacheScaleCaptions());
+					Set<Double> scales = allScaleCaptions.keySet();
+					ArrayList<Double> scaleList = new ArrayList<Double>();
+					scaleList.addAll(scales);
+					Collections.sort(scaleList);
+					CopyOnWriteArrayList<String> tempCaptions = new CopyOnWriteArrayList<>();
+					for (double scale : scaleList) {
+						tempCaptions.add(String.valueOf((int) (1 / scale)));
+					}
+					setCaptions(tempCaptions);
+				}
+			}
+		}
+	};
 
 
 	public DialogCacheBuilder() {
@@ -301,28 +322,6 @@ public class DialogCacheBuilder extends SmDialog {
 		this.buttonCreate.addActionListener(this.createListener);
 		this.buttonClose.addActionListener(this.closeListener);
 		this.buttonApply.addActionListener(this.applyListener);
-		this.fileChangeListener = new FileChooserPathChangedListener() {
-			@Override
-			public void pathChanged() {
-				String sciFilePath = fileChooserTotalTaskPath.getPath();
-				if (!StringUtilities.isNullOrEmpty(sciFilePath)) {
-					CacheWriter writer = new CacheWriter();
-					boolean result = writer.FromConfigFile(sciFilePath);
-					if (result) {
-						HashMap<Double, String> allScaleCaptions = new HashMap<Double, String>(writer.getCacheScaleCaptions());
-						Set<Double> scales = allScaleCaptions.keySet();
-						ArrayList<Double> scaleList = new ArrayList<Double>();
-						scaleList.addAll(scales);
-						Collections.sort(scaleList);
-						CopyOnWriteArrayList<String> tempCaptions = new CopyOnWriteArrayList<>();
-						for (double scale : scaleList) {
-							tempCaptions.add(String.valueOf((int) (1 / scale)));
-						}
-						setCaptions(tempCaptions);
-					}
-				}
-			}
-		};
 		this.fileChooserTotalTaskPath.addFileChangedListener(this.fileChangeListener);
 //		this.buttonRefresh.addActionListener(this.refreshListener);
 	}
@@ -331,6 +330,7 @@ public class DialogCacheBuilder extends SmDialog {
 		this.buttonCreate.removeActionListener(this.createListener);
 		this.buttonClose.removeActionListener(this.closeListener);
 		this.buttonApply.removeActionListener(this.applyListener);
+		this.fileChooserTotalTaskPath.removePathChangedListener(this.fileChangeListener);
 //		this.buttonRefresh.removeActionListener(this.refreshListener);
 	}
 

@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Created by xie on 2017/5/31.
  */
 public class CacheUtilities {
-	public static void startProcess(String[] params, String className) {
+	public static void startProcess(String[] params, String className,String cacheType) {
 		ArrayList<String> arguments = new ArrayList<String>();
 		arguments.add("java");
 		//arguments.addAll(jvmArgs);
@@ -23,7 +23,7 @@ public class CacheUtilities {
 			arguments.add(params[i]);
 		}
 		ProcessManager manager = ProcessManager.getInstance();
-		SubprocessThread thread = new SubprocessThread(arguments);
+		SubprocessThread thread = new SubprocessThread(arguments,cacheType);
 		manager.addProcess(thread);
 		thread.start();
 	}

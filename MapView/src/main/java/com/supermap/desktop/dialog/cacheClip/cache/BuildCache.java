@@ -22,7 +22,7 @@ public class BuildCache {
 
 	//Add new process
 	public void addProcess(String[] params) {
-		CacheUtilities.startProcess(params, getClass().getName());
+		CacheUtilities.startProcess(params, getClass().getName(),LogWriter.BUILD_CACHE);
 	}
 
 	//Start process
@@ -31,10 +31,9 @@ public class BuildCache {
 			if (0 == processCount) {
 				main(params);
 			} else {
-				//(Write executing info to log)Write log info to console
-				LogWriter.setWriteToFile(true);
+				//Write executing info to log
 				for (int i = 0; i < processCount; i++) {
-					CacheUtilities.startProcess(params, getClass().getName());
+					CacheUtilities.startProcess(params, getClass().getName(),LogWriter.BUILD_CACHE);
 					Thread.sleep(2000);
 				}
 			}
@@ -63,8 +62,7 @@ public class BuildCache {
 			if (params.length > MERGESCICOUNT_INDEX && !params[MERGESCICOUNT_INDEX].equals("0"))
 				mergeCount = params[MERGESCICOUNT_INDEX];
 			//Instance LogWriter
-			LogWriter.setWriteToFile(true);
-			LogWriter log = new LogWriter(LogWriter.BUILD_CACHE);
+			LogWriter log = LogWriter.getInstance(LogWriter.BUILD_CACHE);
 			int sciLength;
 			WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(workspacePath);
 			Workspace workspace = new Workspace();
@@ -165,7 +163,6 @@ public class BuildCache {
 
 		long end = System.currentTimeMillis();
 		log.writelog(String.format("%s %s done,PID:%s, cost(ms):%d, done", sciName, String.valueOf(result), LogWriter.getPID(), end - oneStart));
-		log.flush();
 	}
 
 }
