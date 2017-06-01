@@ -94,7 +94,7 @@ public class InputParametersManager {
 		FormWorkflow activeForm = (FormWorkflow) Application.getActiveApplication().getActiveForm();
 		ArrayList<IGraph> allDataNode = activeForm.getAllDataNode();
 		for (IGraph graph : allDataNode) {
-			parameterComboBox.addItem(new ParameterDataNode(((OutputGraph) graph).getName(), graph));
+			parameterComboBox.addItem(new ParameterDataNode(((OutputGraph) graph).getTitle(), graph));
 		}
 	}
 

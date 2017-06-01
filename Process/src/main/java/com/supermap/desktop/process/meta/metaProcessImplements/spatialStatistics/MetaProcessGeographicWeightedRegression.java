@@ -86,6 +86,7 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 		parameterSwitch.switchParameter("1");
 
 		parameterDistanceTolerance.setMinValue(0.0);
+		parameterDistanceTolerance.setIsIncludeMin(false);
 		parameterNeighbors.setMinValue(2);
 		parameterNeighbors.setMaxBit(0);
 
@@ -150,7 +151,7 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 			parameterModelField.setDataset(defaultDatasetVector);
 			parameterSaveDataset.setResultDatasource(defaultDatasetVector.getDatasource());
 		}
-		parameterDistanceTolerance.setSelectedItem("0.01");
+		parameterDistanceTolerance.setSelectedItem("");
 		parameterNeighbors.setSelectedItem("2");
 		parameterSaveDataset.setDatasetName(OUTPUT_DATASET);
 		parameterBandWidthType.setSelectedItem(parameterBandWidthType.getItemAt(1));
@@ -183,7 +184,11 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 			if (kernelType == KernelType.ADAPTIVE) {
 				gwrParameter.setNeighbors(Integer.valueOf((String) parameterNeighbors.getSelectedItem()));
 			} else {
-				gwrParameter.setDistanceTolerance(Double.valueOf((String) parameterDistanceTolerance.getSelectedItem()));
+				try {
+					gwrParameter.setDistanceTolerance(Double.valueOf((String) parameterDistanceTolerance.getSelectedItem()));
+				} catch (NumberFormatException e) {
+					Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_DistanceToleranceMustOverZero"));
+				}
 			}
 		}
 		try {
