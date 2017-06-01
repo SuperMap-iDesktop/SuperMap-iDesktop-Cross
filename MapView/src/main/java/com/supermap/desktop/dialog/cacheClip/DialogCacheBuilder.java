@@ -141,7 +141,7 @@ public class DialogCacheBuilder extends SmDialog {
 		@Override
 		public void pathChanged() {
 			String sciFilePath = fileChooserTotalTaskPath.getPath();
-			if (!StringUtilities.isNullOrEmpty(sciFilePath)) {
+			if (!StringUtilities.isNullOrEmpty(sciFilePath) && FileUtilities.isFilePath(sciFilePath) && hasSciFiles(new File(sciFilePath))) {
 				CacheWriter writer = new CacheWriter();
 				boolean result = writer.FromConfigFile(sciFilePath);
 				if (result) {
