@@ -1,19 +1,80 @@
 package com.supermap.desktop.process.dataconversion;
 
-import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
 import com.supermap.data.EncodeType;
-import com.supermap.data.conversion.*;
+import com.supermap.data.conversion.ImportMode;
+import com.supermap.data.conversion.ImportSetting;
+import com.supermap.data.conversion.ImportSettingBIL;
+import com.supermap.data.conversion.ImportSettingBIP;
+import com.supermap.data.conversion.ImportSettingBMP;
+import com.supermap.data.conversion.ImportSettingBSQ;
+import com.supermap.data.conversion.ImportSettingCSV;
+import com.supermap.data.conversion.ImportSettingDBF;
+import com.supermap.data.conversion.ImportSettingDGN;
+import com.supermap.data.conversion.ImportSettingDWG;
+import com.supermap.data.conversion.ImportSettingDXF;
+import com.supermap.data.conversion.ImportSettingE00;
+import com.supermap.data.conversion.ImportSettingECW;
+import com.supermap.data.conversion.ImportSettingFileGDBVector;
+import com.supermap.data.conversion.ImportSettingGBDEM;
+import com.supermap.data.conversion.ImportSettingGIF;
+import com.supermap.data.conversion.ImportSettingGJB;
+import com.supermap.data.conversion.ImportSettingGRD;
+import com.supermap.data.conversion.ImportSettingIMG;
+import com.supermap.data.conversion.ImportSettingJP2;
+import com.supermap.data.conversion.ImportSettingJPG;
+import com.supermap.data.conversion.ImportSettingKML;
+import com.supermap.data.conversion.ImportSettingKMZ;
+import com.supermap.data.conversion.ImportSettingLIDAR;
+import com.supermap.data.conversion.ImportSettingMAPGIS;
+import com.supermap.data.conversion.ImportSettingMIF;
+import com.supermap.data.conversion.ImportSettingModel3DS;
+import com.supermap.data.conversion.ImportSettingModelDXF;
+import com.supermap.data.conversion.ImportSettingModelFBX;
+import com.supermap.data.conversion.ImportSettingModelFLT;
+import com.supermap.data.conversion.ImportSettingModelOSG;
+import com.supermap.data.conversion.ImportSettingModelX;
+import com.supermap.data.conversion.ImportSettingMrSID;
+import com.supermap.data.conversion.ImportSettingPNG;
+import com.supermap.data.conversion.ImportSettingRAW;
+import com.supermap.data.conversion.ImportSettingSHP;
+import com.supermap.data.conversion.ImportSettingSIT;
+import com.supermap.data.conversion.ImportSettingTAB;
+import com.supermap.data.conversion.ImportSettingTEMSBuildingVector;
+import com.supermap.data.conversion.ImportSettingTEMSClutter;
+import com.supermap.data.conversion.ImportSettingTEMSVector;
+import com.supermap.data.conversion.ImportSettingTIF;
+import com.supermap.data.conversion.ImportSettingUSGSDEM;
+import com.supermap.data.conversion.ImportSettingVCT;
+import com.supermap.data.conversion.ImportSettingWOR;
+import com.supermap.data.conversion.MultiBandImportMode;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.events.ParameterValueLegalEvent;
+import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
+import com.supermap.desktop.process.parameter.events.ParameterValueSelectedEvent;
+import com.supermap.desktop.process.parameter.implement.AbstractParameter;
+import com.supermap.desktop.process.parameter.implement.ParameterButton;
+import com.supermap.desktop.process.parameter.implement.ParameterCharset;
+import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
+import com.supermap.desktop.process.parameter.implement.ParameterCombine;
+import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasetType;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.implement.ParameterEnum;
+import com.supermap.desktop.process.parameter.implement.ParameterFile;
+import com.supermap.desktop.process.parameter.implement.ParameterRadioButton;
+import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
+import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.EncodeTypeUtilities;
+
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -482,10 +543,38 @@ public class ImportParameterCreator implements IParameterCreator {
 		ReflectInfo targetDatasource = new ReflectInfo();
 		targetDatasource.methodName = "setTargetDatasource";
 		parameterDatasource = new ParameterDatasourceConstrained();
+		parameterDatasource.addValueLegalListener(new ParameterValueLegalListener() {
+			@Override
+			public boolean isValueLegal(ParameterValueLegalEvent event) {
+				if (event.getFieldName().equals(ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME)) {
+					Datasource datasource = (Datasource) event.getParameterValue();
+					if (datasource.isReadOnly()) {
+						return false;
+					}
+					return true;
+				}
+				return true;
+			}
+
+			@Override
+			public Object isValueSelected(ParameterValueSelectedEvent event) {
+				return AbstractParameter.DO_NOT_CARE;
+			}
+		});
 		parameterDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
-		Dataset dataset = DatasetUtilities.getDefaultDataset();
-		if (dataset != null) {
-			parameterDatasource.setSelectedItem(dataset.getDatasource());
+		Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
+		if (activeDatasources.length > 0) {
+			for (Datasource activeDatasource : activeDatasources) {
+				if (!activeDatasource.isReadOnly()) {
+					parameterDatasource.setSelectedItem(activeDatasource);
+					break;
+				}
+			}
+		} else if (Application.getActiveApplication().getActiveDatasets().length > 0) {
+			Datasource datasource = Application.getActiveApplication().getActiveDatasets()[0].getDatasource();
+			if (!datasource.isReadOnly()) {
+				parameterDatasource.setSelectedItem(datasource);
+			}
 		}
 		targetDatasource.parameter = parameterDatasource;
 		resultInfo.add(targetDatasource);

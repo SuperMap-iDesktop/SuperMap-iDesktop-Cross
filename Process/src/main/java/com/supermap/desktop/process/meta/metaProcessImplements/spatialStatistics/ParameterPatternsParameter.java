@@ -78,6 +78,9 @@ public class ParameterPatternsParameter extends ParameterCombine {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
 				try {
+					if (textFieldValue.endsWith(".")) {
+						return false;
+					}
 					Double aDouble = Double.valueOf(textFieldValue);
 					if (aDouble < 0) {
 						if (aDouble != -1) {

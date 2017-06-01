@@ -9,7 +9,6 @@ import com.supermap.data.DatasetVectorInfo;
 import com.supermap.data.Datasource;
 import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
@@ -121,11 +120,6 @@ public class MetaProcessBuffer extends MetaProcess {
 		if (datasetVector != null) {
 			datasource.setSelectedItem(datasetVector.getDatasource());
 			dataset.setSelectedItem(datasetVector);
-		}
-		if (Application.getActiveApplication().getActiveDatasources().length > 0) {
-			parameterSaveDataset.setResultDatasource(Application.getActiveApplication().getActiveDatasources()[0]);
-		} else if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
-			parameterSaveDataset.setResultDatasource(Application.getActiveApplication().getWorkspace().getDatasources().get(0));
 		}
 //		if (parameterSaveDataset.getResultDatasource() != null) {
 		parameterSaveDataset.setDatasetName("RoadBuffer");
