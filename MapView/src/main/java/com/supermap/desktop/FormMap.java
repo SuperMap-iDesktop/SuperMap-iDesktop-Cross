@@ -1303,6 +1303,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 					setSelectedGeometryProperty();
 				}
 			}
+			updataSelectNumber();
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
