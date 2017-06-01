@@ -24,6 +24,9 @@ public class ParameterNumber extends ParameterTextField {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
 				try {
+					if (textFieldValue.endsWith(".")) {
+						return false;
+					}
 					Double aDouble = Double.valueOf(textFieldValue);
 					if (isMinValueEnable && aDouble < minValue) {
 						return false;

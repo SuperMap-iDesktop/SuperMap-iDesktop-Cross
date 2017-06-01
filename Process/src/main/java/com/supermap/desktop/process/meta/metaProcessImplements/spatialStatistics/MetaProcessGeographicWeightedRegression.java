@@ -86,7 +86,7 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 		parameterSwitch.switchParameter("1");
 
 		parameterDistanceTolerance.setMinValue(0.0);
-		parameterNeighbors.setMinValue(1);
+		parameterNeighbors.setMinValue(2);
 		parameterNeighbors.setMaxBit(0);
 
 		final ParameterSwitch parameterSwitchParent = new ParameterSwitch();
@@ -151,7 +151,7 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 			parameterSaveDataset.setResultDatasource(defaultDatasetVector.getDatasource());
 		}
 		parameterDistanceTolerance.setSelectedItem("0.01");
-		parameterNeighbors.setSelectedItem("1");
+		parameterNeighbors.setSelectedItem("2");
 		parameterSaveDataset.setDatasetName(OUTPUT_DATASET);
 		parameterBandWidthType.setSelectedItem(parameterBandWidthType.getItemAt(1));
 	}
