@@ -75,7 +75,9 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 			this.addParameters(parameterEllipseSizeComboBox);
 		}
 		this.addParameters(parameterGroupFieldComboBox);
-		this.addParameters(parameterSelfWeightFieldComboBox);
+		if (metaKeys.equals(MetaKeys.CentralElement)) {
+			this.addParameters(parameterSelfWeightFieldComboBox);
+		}
 		this.addParameters(parameterWeightFieldComboBox);
 		this.addParameters(parameterStatisticsTypesLabel);
 		this.addParameters(parameterStatisticsTypesUserDefine);
