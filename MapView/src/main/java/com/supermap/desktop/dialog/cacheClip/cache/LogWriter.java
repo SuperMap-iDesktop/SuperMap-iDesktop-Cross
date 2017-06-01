@@ -14,43 +14,37 @@ class LogWriter {
 	private OutputStreamWriter writer;
 	public static SimpleDateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 	private static LogWriter gInstance;
-	private static boolean writeToFile = false;
+	public static String BUILD_CACHE = "BuildCache";
+	public static String CHECK_CACEH = "CheckCache";
 
 	public static String getPID() {
 		return ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
 	}
 
-	public static LogWriter getInstance() {
+	public static LogWriter getInstance(String type) {
 		if (gInstance == null) {
-			gInstance = new LogWriter();
+			gInstance = new LogWriter(type);
 		}
 		return gInstance;
 	}
 
-	public LogWriter() {
-		if (isWriteToFile()) {
-			if (logFile == null) {
-
-				String logFolder = ".\\temp_log\\";
-
-				File file = new File(logFolder);
-				if (!file.exists()) {
-					file.mkdir();
-				}
-
-				String logName = new SimpleDateFormat("yyyy-MM-dd_HH_mm_ss").format(new Date()) + "_" + getPID() + ".log";
-				logFile = new File(logFolder + logName);
+	private LogWriter(String type) {
+		if (logFile == null) {
+			String logFolder = ".\\temp_log\\";
+			File file = new File(logFolder);
+			if (!file.exists()) {
+				file.mkdir();
 			}
-
-			try {
-				if (!logFile.exists()) {
-					logFile.createNewFile();
-				}
-				writer = new OutputStreamWriter(new FileOutputStream(logFile), "UTF-8");
-
-			} catch (IOException e) {
-				e.printStackTrace();
+			String logName = type + "_" + getPID() + ".log";
+			logFile = new File(logFolder + logName);
+		}
+		try {
+			if (!logFile.exists()) {
+				logFile.createNewFile();
 			}
+			writer = new OutputStreamWriter(new FileOutputStream(logFile), "UTF-8");
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -62,6 +56,7 @@ class LogWriter {
 			try {
 				if (writer != null) {
 					writer.write(line);
+					writer.flush();
 				} else
 					System.out.print(line);
 			} catch (IOException e) {
@@ -88,13 +83,5 @@ class LogWriter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static boolean isWriteToFile() {
-		return writeToFile;
-	}
-
-	public static void setWriteToFile(boolean writeToFile) {
-		LogWriter.writeToFile = writeToFile;
 	}
 }
