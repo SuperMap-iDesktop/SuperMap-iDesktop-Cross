@@ -46,6 +46,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	private boolean nextStepEnabled = true;
 	private boolean resumeAble = false;
 	private String tasksSize = "5";
+	private String canudb = "1";
 	private MapCacheBuilder mapCacheBuilder;
 	public FirstStepPane firstStepPane;
 	private NextStepPane nextStepPane;
@@ -302,7 +303,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				setMapCacheBuilderValueBeforeRun();
 				boolean result = mapCacheBuilder.toConfigFile(sciPath);
 				if (result) {
-					String[] params = {sciPath, tasksPath, tasksSize};
+					String[] params = {sciPath, tasksPath, tasksSize, canudb};
 					this.buttonOk.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 					TaskBuilder.main(params);
 					this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));

@@ -383,7 +383,7 @@ public class DialogCacheBuilder extends SmDialog {
 	private boolean validateValue(String sciPath, String workspacePath, String mapName, String cachePath, String processCount) {
 		boolean result = true;
 		File sciDirectory = new File(sciPath);
-		if (null == sciDirectory || !sciDirectory.isDirectory() || !hasSciFiles(sciDirectory)) {
+		if (StringUtilities.isNullOrEmpty(sciPath) || !FileUtilities.isFilePath(sciPath) || !hasSciFiles(sciDirectory)) {
 			result = false;
 		}
 		if (StringUtilities.isNullOrEmpty(workspacePath) || !FileUtilities.isFilePath(workspacePath) || !(workspacePath.endsWith("smwu") || workspacePath.endsWith("sxwu"))) {
@@ -392,7 +392,7 @@ public class DialogCacheBuilder extends SmDialog {
 		if (StringUtilities.isNullOrEmpty(mapName)) {
 			result = false;
 		}
-		if (StringUtilities.isNullOrEmpty(cachePath) || !FileUtilities.isFilePath(workspacePath)) {
+		if (StringUtilities.isNullOrEmpty(cachePath) || !FileUtilities.isFilePath(cachePath)) {
 			result = false;
 		}
 		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) || processCount.equals("0"))) {

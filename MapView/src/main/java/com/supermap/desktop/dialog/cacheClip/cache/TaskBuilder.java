@@ -15,7 +15,14 @@ import java.util.Set;
  */
 public class TaskBuilder {
 
+	public final static int BundleSize = 128;
+
+	/**
+	 * @param args
+	 * @throws IOException
+	 */
 	public static void main(String[] args) throws Exception {
+		// TODO Auto-generated method stub
 		if (args.length < 2) {
 			System.out.println("input style: sciFile targetFolder listCount[option]");
 			return;
@@ -26,50 +33,75 @@ public class TaskBuilder {
 		if (args.length > 2) {
 			listCount = Integer.valueOf(args[2]);
 		}
+		//       0    1    2
+		// sci   生       生        不
+		// udb   不       生        生
+		int canudb = 0;
+		if (args.length > 3) {
+			canudb = Integer.valueOf(args[3]);
+		}
+
 		File fileSci = new File(sciFile);
 		if (!fileSci.exists()) {
 			System.out.println(sciFile + " not exist!");
 			return;
 		}
-		String datasourceName = "check";
-		String datasourcePath = args[1] + "/check/" + datasourceName + ".udb";
-		File datasourceFile = new File(datasourcePath);
-		if (datasourceFile.exists()) {
-			System.out.println(datasourcePath + " is exists!");
-			return;
-		} else {
-			datasourceFile.getParentFile().mkdirs();
+
+		Workspace workspace = null;
+		Datasource ds = null;
+
+		if (canudb > 0) {
+			String datasourceName = "check";
+			String datasourcePath = args[1] + "\\check\\" + datasourceName + ".udb";
+			File datasourceFile = new File(datasourcePath);
+			if (datasourceFile.exists()) {
+				System.out.println(datasourcePath + " is exists!");
+				return;
+			} else {
+				datasourceFile.getParentFile().mkdirs();
+			}
+			DatasourceConnectionInfo info = new DatasourceConnectionInfo();
+			info.setServer(datasourcePath);
+			info.setAlias(datasourceName);
+			info.setEngineType(EngineType.UDB);
+
+			workspace = new Workspace();
+			ds = workspace.getDatasources().create(info);
 		}
-		DatasourceConnectionInfo info = new DatasourceConnectionInfo();
-		info.setServer(datasourcePath);
-		info.setAlias(datasourceName);
-		info.setEngineType(EngineType.UDB);
-		Workspace workspace = new Workspace();
-		Datasource ds = workspace.getDatasources().create(info);
+
 		CacheWriter writer = new CacheWriter();
 		writer.FromConfigFile(sciFile);
+
+		// 创建任务目录
 		File file = new File(targetFolder);
 		if (!file.exists()) {
 			file.mkdir();
 		}
-		String name = targetFolder + "/allTask.list";
+
+		String name = targetFolder + "\\allTask.list";
 		File allTask = new File(name);
 		OutputStreamWriter taskListWriter = null;
+
 		if (!allTask.exists()) {
 			allTask.createNewFile();
 		}
 		taskListWriter = new OutputStreamWriter(new FileOutputStream(allTask), "UTF-8");
+
 		HashMap<Double, String> allScaleCaptions = new HashMap<Double, String>(writer.getCacheScaleCaptions());
+
 		Rectangle2D bounds = writer.getCacheBounds();
 		Rectangle2D indexBounds = writer.getIndexBounds();
+
 		Set<Double> scales = allScaleCaptions.keySet();
 		ArrayList<Double> scaleList = new ArrayList<Double>();
 		scaleList.addAll(scales);
+		// 对数组排序一下，由小到大
 		Collections.sort(scaleList);
 		int length = 9;
 		for (double scale : scaleList) {
 			double tileResolution = writer.getTileResolustion(scale);
-			HashMap<Double, String> newScaleCaptions = new HashMap();
+			HashMap<Double, String> newScaleCaptions = new HashMap<Double, String>();
+
 			String caption = String.valueOf((int) (1 / scale));
 			if (caption.length() < length) {
 				int addSize = length - caption.length();
@@ -80,33 +112,56 @@ public class TaskBuilder {
 			//Set caption for new sci file
 			newScaleCaptions.put(scale, allScaleCaptions.get(scale));
 			writer.setCacheScaleCaptions(newScaleCaptions);
-			String datasetName = "L" + caption + "_S" + Math.round(1 / scale);
-			DatasetVectorInfo datasetInfo = new DatasetVectorInfo(datasetName, DatasetType.REGION);
-			DatasetVector dataset = ds.getDatasets().create(datasetInfo);
-			FieldInfo fieldInfoGroup = new FieldInfo("tiletype", FieldType.INT32);
-			FieldInfo fieldInfoRow = new FieldInfo("tilerow", FieldType.INT32);
-			FieldInfo fieldInfoCol = new FieldInfo("tilecol", FieldType.INT32);
-			FieldInfo fieldInfotype = new FieldInfo("errortype", FieldType.INT32);
-			FieldInfo fieldInfodesc = new FieldInfo("errordesc", FieldType.TEXT);
-			dataset.getFieldInfos().add(fieldInfoGroup);
-			dataset.getFieldInfos().add(fieldInfoRow);
-			dataset.getFieldInfos().add(fieldInfoCol);
-			dataset.getFieldInfos().add(fieldInfotype);
-			dataset.getFieldInfos().add(fieldInfodesc);
-			Recordset recordset = dataset.getRecordset(false, CursorType.DYNAMIC);
-			Recordset.BatchEditor editor = recordset.getBatch();
-			editor.setMaxRecordCount(10);
-			editor.begin();
-			int startColumnIndex = (int) Math.floor(((bounds.getLeft() - indexBounds.getLeft()) / tileResolution));
-			int startRowIndex = (int) Math.floor(-((bounds.getTop() - indexBounds.getTop()) / tileResolution));
-			int endColumnIndex = (int) Math.floor(((bounds.getRight() - indexBounds.getLeft()) / tileResolution));
-			int endRowIndex = (int) Math.floor(-((bounds.getBottom() - indexBounds.getTop()) / tileResolution));
+
+			Recordset recordset = null;
+			Recordset.BatchEditor editor = null;
+			if (canudb > 0) {
+				// 创建数据集和字段
+				String datasetName = "L" + caption + "_S" + Math.round(1 / scale);
+				DatasetVectorInfo datasetInfo = new DatasetVectorInfo(datasetName, DatasetType.REGION);
+				DatasetVector dataset = ds.getDatasets().create(datasetInfo);
+
+				FieldInfo fieldInfoGroup = new FieldInfo("tiletype", FieldType.INT32);
+				FieldInfo fieldInfoRow = new FieldInfo("tilerow", FieldType.INT32);
+				FieldInfo fieldInfoCol = new FieldInfo("tilecol", FieldType.INT32);
+				FieldInfo fieldInfotype = new FieldInfo("errortype", FieldType.INT32);
+				FieldInfo fieldInfodesc = new FieldInfo("errordesc", FieldType.TEXT);
+				dataset.getFieldInfos().add(fieldInfoGroup);
+				dataset.getFieldInfos().add(fieldInfoRow);
+				dataset.getFieldInfos().add(fieldInfoCol);
+				dataset.getFieldInfos().add(fieldInfotype);
+				dataset.getFieldInfos().add(fieldInfodesc);
+
+				recordset = dataset.getRecordset(false, CursorType.DYNAMIC);
+				editor = recordset.getBatch();
+				editor.setMaxRecordCount(10);
+				editor.begin();
+			}
+
+			// 计算范围,0.004为一个像素
+			double left = (bounds.getLeft() - indexBounds.getLeft()) / tileResolution + 0.00000001;
+			int startColumnIndex = (int) Math.floor(left);
+			double top = -(bounds.getTop() - indexBounds.getTop()) / tileResolution + 0.00000001;
+			int startRowIndex = (int) Math.floor(top);
+			double right = (bounds.getRight() - indexBounds.getLeft()) / tileResolution + 0.00000001;
+			int endColumnIndex = (int) Math.floor(right);
+			if ((right - endColumnIndex) < 0.004) {
+				endColumnIndex--;
+			}
+			double bottom = -(bounds.getBottom() - indexBounds.getTop()) / tileResolution + 0.00000001;
+			int endRowIndex = (int) Math.floor(bottom);
+			if ((bottom - endRowIndex) < 0.004) {
+				endRowIndex--;
+			}
+
 			for (int row = startRowIndex; row <= endRowIndex; ) {
 				int bigRow = row / 128;
 				int currentRowEnd = Math.min(endRowIndex, (bigRow + 1) * 128 - 1);
+
 				for (int col = startColumnIndex; col <= endColumnIndex; ) {
 					int bigCol = col / 128;
 					int currentColEnd = Math.min(endColumnIndex, (bigCol + 1) * 128 - 1);
+
 					double boundLeft = indexBounds.getLeft() + col * tileResolution;
 					if (boundLeft < bounds.getLeft()) {
 						boundLeft = bounds.getLeft();
@@ -123,42 +178,70 @@ public class TaskBuilder {
 					if (boundBottom < bounds.getBottom()) {
 						boundBottom = bounds.getBottom();
 					}
-					Rectangle2D taskBounds = new Rectangle2D(boundLeft, boundBottom, boundRight, boundTop);
-					writer.setCacheBounds(taskBounds);
-					String newSciName = String.format("%s/L%s_R%d_C%d.sci", targetFolder, caption, bigRow, bigCol);
-					wirteOneSci(writer, newSciName, taskListWriter);
-					Point2Ds points = new Point2Ds();
-					points.add(new Point2D(boundLeft, boundBottom));
-					points.add(new Point2D(boundLeft, boundTop));
-					points.add(new Point2D(boundRight, boundTop));
-					points.add(new Point2D(boundRight, boundBottom));
-					GeoRegion region = new GeoRegion(points);
-					HashMap<String, Object> fieldInfo = new HashMap<String, Object>();
-					fieldInfo.put("tiletype", 1);
-					fieldInfo.put("tilerow", bigRow);
-					fieldInfo.put("tilecol", bigCol);
-					recordset.addNew(region, fieldInfo);
+
+					if (((boundRight - boundLeft) > 0.004) && (Math.abs((boundBottom - boundTop)) > 0.004)) {
+
+						if (canudb < 2) {
+							Rectangle2D taskBounds = new Rectangle2D(boundLeft, boundBottom, boundRight, boundTop);
+							writer.setCacheBounds(taskBounds);
+							// 修改是的cf的文件名称和sci文件名称相同
+							String newSciName = String.format("%s/L%s_R%d_C%d.sci", targetFolder, caption, bigRow, bigCol);
+							wirteOneSci(writer, newSciName, taskListWriter);
+						}
+
+						if (canudb > 0) {
+							// 在数据集中创建对应块
+							Point2Ds points = new Point2Ds();
+							points.add(new Point2D(boundLeft, boundBottom));
+							points.add(new Point2D(boundLeft, boundTop));
+							points.add(new Point2D(boundRight, boundTop));
+							points.add(new Point2D(boundRight, boundBottom));
+							GeoRegion region = new GeoRegion(points);
+							HashMap<String, Object> fieldInfo = new HashMap<String, Object>();
+							fieldInfo.put("tiletype", 1);
+							fieldInfo.put("tilerow", bigRow);
+							fieldInfo.put("tilecol", bigCol);
+
+							recordset.addNew(region, fieldInfo);
+						}
+					}
+
 					col = currentColEnd + 1;
 				}
 				row = currentRowEnd + 1;
 			}
-			editor.update();
-			recordset.close();
-			recordset.dispose();
+
+			if (canudb > 0) {
+				editor.update();
+
+				recordset.close();
+				recordset.dispose();
+			}
+
+			// 恢复scale信息,和Bounds
 			writer.setCacheScaleCaptions(allScaleCaptions);
 			writer.setCacheBounds(bounds);
+
 		}
 		taskListWriter.close();
-		ds.close();
-		workspace.close();
-		workspace.dispose();
-		splitList(name, listCount);
+
+		if (canudb > 0) {
+			ds.close();
+			workspace.close();
+			workspace.dispose();
+		}
+
+		if (canudb < 2) {
+			// 将allTask.list 切分成多个数据，使用简单的分法，等分
+			splitList(name, listCount);
+		}
 	}
 
 	public static void splitList(String allListFileName, int splitCount) throws Exception {
 		if (splitCount < 2) {
 			return;
 		}
+
 		File tasks = new File(allListFileName);
 		BufferedReader taskReader = new BufferedReader(new InputStreamReader(new FileInputStream(tasks), "UTF-8"));
 		ArrayList<String> lines = new ArrayList<String>();
@@ -167,10 +250,13 @@ public class TaskBuilder {
 			lines.add(line);
 		}
 		taskReader.close();
+
 		int oneFileCount = lines.size() / splitCount;
 		int j = 0;
 		String name = tasks.getParent() + "/" + tasks.getName().replaceAll(".list", "");
+
 		for (int i = 0; i < splitCount; i++) {
+			// 创建文件
 			File newOne = new File(name + "_" + i + ".list");
 			OutputStreamWriter newOneWriter = new OutputStreamWriter(new FileOutputStream(newOne), "UTF-8");
 			if (((lines.size() - j) * 1.0 / oneFileCount) < 2) {
@@ -183,12 +269,16 @@ public class TaskBuilder {
 			}
 			newOneWriter.close();
 		}
+
 	}
 
 	public static void wirteOneSci(CacheWriter writer, String sciName, OutputStreamWriter listWriter) throws Exception {
+
+		// 有时相交为empty，会生成sci失败，也就是没必要写清单文件了
 		boolean sciTrue = writer.ToConfigFile(sciName);
 		if (sciTrue) {
 			listWriter.write(new File(sciName).getName() + "\n");
 		}
+
 	}
 }
