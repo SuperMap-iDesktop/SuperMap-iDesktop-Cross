@@ -2,12 +2,28 @@ package com.supermap.desktop.process.graphics;
 
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
-import com.supermap.desktop.process.graphics.events.*;
+import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
+import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
+import com.supermap.desktop.process.graphics.events.GraphCreatingEvent;
+import com.supermap.desktop.process.graphics.events.GraphCreatingListener;
+import com.supermap.desktop.process.graphics.events.GraphRemovedEvent;
+import com.supermap.desktop.process.graphics.events.GraphRemovedListener;
+import com.supermap.desktop.process.graphics.events.GraphRemovingEvent;
+import com.supermap.desktop.process.graphics.events.GraphRemovingListener;
 import com.supermap.desktop.process.graphics.graphs.EllipseGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.graphs.RectangleGraph;
-import com.supermap.desktop.process.graphics.interaction.canvas.*;
+import com.supermap.desktop.process.graphics.interaction.canvas.CanvasAction;
+import com.supermap.desktop.process.graphics.interaction.canvas.CanvasActionsManager;
+import com.supermap.desktop.process.graphics.interaction.canvas.CanvasTranslation;
+import com.supermap.desktop.process.graphics.interaction.canvas.GraphConnectAction;
+import com.supermap.desktop.process.graphics.interaction.canvas.GraphCreator;
+import com.supermap.desktop.process.graphics.interaction.canvas.GraphDragAction;
+import com.supermap.desktop.process.graphics.interaction.canvas.GraphRemoveAction;
+import com.supermap.desktop.process.graphics.interaction.canvas.MultiSelection;
+import com.supermap.desktop.process.graphics.interaction.canvas.PopupMenuAction;
+import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
 import com.supermap.desktop.process.graphics.interaction.graph.DefaultGraphEventHanderFactory;
 import com.supermap.desktop.process.graphics.interaction.graph.IGraphEventHandlerFactory;
 import com.supermap.desktop.process.graphics.storage.IConnectionManager;
@@ -16,7 +32,17 @@ import com.supermap.desktop.process.graphics.storage.ListGraphs;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -55,6 +81,7 @@ public class GraphCanvas extends JComponent {
 	private GraphDragAction dragged = new GraphDragAction(this);
 	public GraphConnectAction connector = new GraphConnectAction(this);
 	public GraphRemoveAction removing = new GraphRemoveAction(this);
+	public PopupMenuAction popupMenu = new PopupMenuAction(this);
 
 	private ArrayList<GraphSelectChangedListener> selectChangedListeners = new ArrayList<>();
 
@@ -146,10 +173,13 @@ public class GraphCanvas extends JComponent {
 		installCanvasAction(GraphCreator.class, this.creator);
 		installCanvasAction(GraphConnectAction.class, this.connector);
 		installCanvasAction(GraphRemoveAction.class, this.removing);
+		installCanvasAction(PopupMenuAction.class, this.popupMenu);
+
 
 		this.actionsManager.addMutexAction(GraphDragAction.class, Selection.class);
 		this.actionsManager.addMutexAction(GraphDragAction.class, GraphCreator.class);
 		this.actionsManager.addMutexAction(GraphDragAction.class, GraphConnectAction.class);
+		this.actionsManager.addMutexAction(GraphDragAction.class, PopupMenuAction.class);
 
 		this.actionsManager.addMutexAction(Selection.class, GraphDragAction.class);
 		this.actionsManager.addMutexAction(Selection.class, GraphCreator.class);
@@ -158,10 +188,12 @@ public class GraphCanvas extends JComponent {
 		this.actionsManager.addMutexAction(GraphCreator.class, GraphDragAction.class);
 		this.actionsManager.addMutexAction(GraphCreator.class, Selection.class);
 		this.actionsManager.addMutexAction(GraphCreator.class, GraphConnectAction.class);
+		this.actionsManager.addMutexAction(GraphCreator.class, PopupMenuAction.class);
 
 		this.actionsManager.addMutexAction(GraphConnectAction.class, GraphDragAction.class);
 		this.actionsManager.addMutexAction(GraphConnectAction.class, Selection.class);
 		this.actionsManager.addMutexAction(GraphConnectAction.class, GraphCreator.class);
+		this.actionsManager.addMutexAction(GraphConnectAction.class, PopupMenuAction.class);
 
 		this.actionsManager.setPriority(CanvasAction.ActionType.MOUSE_PRESSED, GraphDragAction.class, 0);
 	}

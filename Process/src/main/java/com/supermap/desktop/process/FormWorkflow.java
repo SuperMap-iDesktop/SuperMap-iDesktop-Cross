@@ -2,15 +2,25 @@ package com.supermap.desktop.process;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.Interface.IContextMenuManager;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormProcess;
 import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.*;
-import com.supermap.desktop.process.core.*;
+import com.supermap.desktop.event.FormActivatedListener;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosedListener;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormClosingListener;
+import com.supermap.desktop.event.FormDeactivatedListener;
+import com.supermap.desktop.event.FormShownEvent;
+import com.supermap.desktop.event.FormShownListener;
+import com.supermap.desktop.process.core.DirectConnect;
+import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.NodeMatrix;
+import com.supermap.desktop.process.core.Workflow;
+import com.supermap.desktop.process.core.WorkflowParser;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
@@ -42,8 +52,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -56,7 +64,6 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 	private boolean isAutoAddOutPut = true;
 	private transient DropTarget dropTargeted;
 
-	private JPopupMenu processPopupMenu;
 
 	public FormWorkflow() {
 		this(ControlsProperties.getString("String_WorkFlows"));
@@ -118,8 +125,7 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 	}
 
 	private void init() {
-		IContextMenuManager manager = Application.getActiveApplication().getMainFrame().getContextMenuManager();
-		processPopupMenu = (JPopupMenu) manager.get("SuperMap.Desktop._FormProcess.FormContextMenu");
+
 		setLayout(new BorderLayout());
 		add(graphCanvas, BorderLayout.CENTER);
 		initListeners();
@@ -156,22 +162,9 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 				}
 			}
 		});
-
-		graphCanvas.getCanvas().addMouseListener(new MouseAdapter() {
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// todo 当前状态怎么取???
-				if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
-					showPopupMenu(e);
-				}
-			}
-		});
 		addDrag();
 	}
 
-	private void showPopupMenu(MouseEvent e) {
-		processPopupMenu.show((Component) e.getSource(), e.getX(), e.getY());
-	}
 
 	private void addOutPutGraph(ProcessGraph processGraph) {
 		IProcess process = processGraph.getProcess();
