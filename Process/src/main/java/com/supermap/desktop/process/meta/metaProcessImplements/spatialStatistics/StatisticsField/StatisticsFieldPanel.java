@@ -265,6 +265,11 @@ public class StatisticsFieldPanel extends JPanel {
 		buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 		buttonSelectInvert.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
 		buttonDel.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
+
+		buttonAdd.setToolTipText(CommonProperties.getString(CommonProperties.Add));
+		buttonSelectAll.setToolTipText(CommonProperties.getString(CommonProperties.selectAll));
+		buttonSelectInvert.setToolTipText(CommonProperties.getString(CommonProperties.selectInverse));
+		buttonDel.setToolTipText(CommonProperties.getString(CommonProperties.Delete));
 	}
 
 	private void initLayout() {
