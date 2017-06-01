@@ -161,6 +161,8 @@ public class CheckCache {
 	}
 
 	public void check(String cacheRoot, String sciFile) {
+		LogWriter.setWriteToFile(true);
+		LogWriter log = new LogWriter(LogWriter.CHECK_CACEH);
 		File file = new File(sciFile);
 		if (!file.exists()) {
 			return;
@@ -181,7 +183,7 @@ public class CheckCache {
 		if (cacheFile.getStorageType() == StorageType.MongoDB) {
 			String[] strInfo = cacheFile.getMongoConnectionInfo();
 			if (strInfo == null || strInfo.length < 3) {
-				LogWriter.getInstance().writelog("error: mongo connection info!");
+				log.writelog("error: mongo connection info!");
 				return;
 			}
 			String server = strInfo[0];
@@ -196,7 +198,7 @@ public class CheckCache {
 
 			manager = new TileStorageManager();
 			if (!manager.open(connection)) {
-				LogWriter.getInstance().writelog("error: mongo open failed!");
+				log.writelog("error: mongo open failed!");
 				return;
 			}
 		}
@@ -230,9 +232,9 @@ public class CheckCache {
 			if (cacheFile.getStorageType() == StorageType.Original) {
 
 			} else if (cacheFile.getStorageType() == StorageType.Compact) {
-				result = result && checkCompactCache(cacheRoot, caption, tileLeft, tileTop, tileRight, tileBottom, reolustion, cacheFile);
+				result = result && checkCompactCache(log,cacheRoot, caption, tileLeft, tileTop, tileRight, tileBottom, reolustion, cacheFile);
 			} else if (cacheFile.getStorageType() == StorageType.MongoDB) {
-				result = result && checkMongoCache(manager, Integer.valueOf(caption), tileLeft, tileTop, tileRight, tileBottom, reolustion, cacheFile);
+				result = result && checkMongoCache(log,manager, Integer.valueOf(caption), tileLeft, tileTop, tileRight, tileBottom, reolustion, cacheFile);
 			}
 
 			if (errorWriter != null) {
@@ -259,7 +261,7 @@ public class CheckCache {
 	}
 
 	//Check compact cache
-	public boolean checkCompactCache(String cacheRoot, String caption, int left, int top, int right, int bottom, double reolustion, CacheWriter cacheFile) {
+	public boolean checkCompactCache(LogWriter log,String cacheRoot, String caption, int left, int top, int right, int bottom, double reolustion, CacheWriter cacheFile) {
 
 		boolean isWithin = false;
 		if (boundaryCheck) {
@@ -293,13 +295,13 @@ public class CheckCache {
 
 				if (!cfFile.exists()) {
 					result = false;
-					LogWriter.getInstance().writelog("lost:" + cfPath);
+					log.writelog("lost:" + cfPath);
 					this.writError("lost," + reolustion + "," + bigRow + "," + bigCol + "," + sciFilePath);
 				} else {
 					CompactFile compactFile = new CompactFile();
 					if (compactFile.Open(cfPath, "") != 0) {
 						result = false;
-						LogWriter.getInstance().writelog("failure:" + cfPath);
+						log.writelog("failure:" + cfPath);
 						this.writError("failure," + reolustion + "," + bigRow + "," + bigCol + "," + sciFilePath);
 					} else {
 						byte[] data = null;
@@ -309,7 +311,7 @@ public class CheckCache {
 								data = compactFile.getAt(tempRow % 128, tempCol % 128);
 								if (data == null || data.length == 0) {
 									result = false;
-									LogWriter.getInstance().writelog("missing:" + caption + "," + tempRow + "," + tempCol + "," + sciFilePath);
+									log.writelog("missing:" + caption + "," + tempRow + "," + tempCol + "," + sciFilePath);
 									this.writError("missing," + reolustion + "," + tempRow + "," + tempCol + "," + sciFilePath);
 								} else if (data.length > 16) {
 									try {
@@ -320,7 +322,7 @@ public class CheckCache {
 											image = ImageIO.read(byteStream);
 										} catch (IOException e) {
 											result = false;
-											LogWriter.getInstance().writelog("error:" + caption + "," + tempRow + "," + tempCol + "," + sciFilePath);
+											log.writelog("error:" + caption + "," + tempRow + "," + tempCol + "," + sciFilePath);
 											this.writError("error," + reolustion + "," + tempRow + "," + tempCol + "," + sciFilePath);
 											byteStream.close();
 											continue;
@@ -347,13 +349,13 @@ public class CheckCache {
 										if (boundaryCheck) {
 											if (tileIsWithin && isBlockWhite(image)) {
 												result = false;
-												LogWriter.getInstance().writelog("white:" + caption + "," + tempRow + "," + tempCol + "," + sciFilePath);
+												log.writelog("white:" + caption + "," + tempRow + "," + tempCol + "," + sciFilePath);
 												this.writError("white," + reolustion + "," + tempRow + "," + tempCol + "," + sciFilePath);
 											}
 										} else {
 											if (isSolidWhite(image)) {
 												result = false;
-												LogWriter.getInstance().writelog("white:" + caption + "," + tempRow + "," + tempCol + "," + sciFilePath);
+												log.writelog("white:" + caption + "," + tempRow + "," + tempCol + "," + sciFilePath);
 												this.writError("white," + reolustion + "," + tempRow + "," + tempCol + "," + sciFilePath);
 											}
 										}
@@ -368,7 +370,7 @@ public class CheckCache {
 					}
 				}
 
-				LogWriter.getInstance().flush();
+				log.flush();
 
 				col = currentCol + 1;
 			}
@@ -397,7 +399,7 @@ public class CheckCache {
 	}
 
 	//Check mongo type cache
-	public boolean checkMongoCache(TileStorageManager manager, int level, int left, int top, int right, int bottom, double reolustion, CacheWriter cacheFile) {
+	public boolean checkMongoCache(LogWriter log,TileStorageManager manager, int level, int left, int top, int right, int bottom, double reolustion, CacheWriter cacheFile) {
 
 		boolean isWithin = false;
 		if (boundaryCheck) {
@@ -435,7 +437,7 @@ public class CheckCache {
 
 				if (data == null || data.length == 0) {
 					result = false;
-					LogWriter.getInstance().writelog("missing:" + level + "," + row + "," + col + "," + sciFilePath);
+					log.writelog("missing:" + level + "," + row + "," + col + "," + sciFilePath);
 					this.writError("missing," + reolustion + "," + row + "," + col + "," + sciFilePath);
 				} else if (data.length > 16) {
 					try {
@@ -446,7 +448,7 @@ public class CheckCache {
 							image = ImageIO.read(byteStream);
 						} catch (IOException e) {
 							result = false;
-							LogWriter.getInstance().writelog("error:" + level + "," + row + "," + col + "," + sciFilePath);
+							log.writelog("error:" + level + "," + row + "," + col + "," + sciFilePath);
 							this.writError("error," + reolustion + "," + row + "," + col + "," + sciFilePath);
 							byteStream.close();
 							continue;
@@ -473,13 +475,13 @@ public class CheckCache {
 						if (boundaryCheck) {
 							if (tileIsWithin && isBlockWhite(image)) {
 								result = false;
-								LogWriter.getInstance().writelog("white:" + level + "," + row + "," + col + "," + sciFilePath);
+								log.writelog("white:" + level + "," + row + "," + col + "," + sciFilePath);
 								this.writError("white," + reolustion + "," + row + "," + col + "," + sciFilePath);
 							}
 						} else {
 							if (isSolidWhite(image)) {
 								result = false;
-								LogWriter.getInstance().writelog("white:" + level + "," + row + "," + col + "," + sciFilePath);
+								log.writelog("white:" + level + "," + row + "," + col + "," + sciFilePath);
 								this.writError("white," + reolustion + "," + row + "," + col + "," + sciFilePath);
 							}
 						}

@@ -64,7 +64,7 @@ public class BuildCache {
 				mergeCount = params[MERGESCICOUNT_INDEX];
 			//Instance LogWriter
 			LogWriter.setWriteToFile(true);
-			LogWriter log = new LogWriter();
+			LogWriter log = new LogWriter(LogWriter.BUILD_CACHE);
 			int sciLength;
 			WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(workspacePath);
 			Workspace workspace = new Workspace();

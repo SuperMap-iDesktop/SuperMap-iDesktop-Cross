@@ -33,9 +33,9 @@ public class TaskBuilder {
 		if (args.length > 2) {
 			listCount = Integer.valueOf(args[2]);
 		}
-		//       0    1    2
-		// sci   生       生        不
-		// udb   不       生        生
+		// create     0    1    2
+		// sci        yes  yes  no
+		// udb        no   yes  yes
 		int canudb = 0;
 		if (args.length > 3) {
 			canudb = Integer.valueOf(args[3]);
@@ -72,7 +72,7 @@ public class TaskBuilder {
 		CacheWriter writer = new CacheWriter();
 		writer.FromConfigFile(sciFile);
 
-		// 创建任务目录
+		// Create task path
 		File file = new File(targetFolder);
 		if (!file.exists()) {
 			file.mkdir();
@@ -138,7 +138,7 @@ public class TaskBuilder {
 				editor.begin();
 			}
 
-			// 计算范围,0.004为一个像素
+			//Calculate a scope,0.004 as one pixel
 			double left = (bounds.getLeft() - indexBounds.getLeft()) / tileResolution + 0.00000001;
 			int startColumnIndex = (int) Math.floor(left);
 			double top = -(bounds.getTop() - indexBounds.getTop()) / tileResolution + 0.00000001;
@@ -184,13 +184,13 @@ public class TaskBuilder {
 						if (canudb < 2) {
 							Rectangle2D taskBounds = new Rectangle2D(boundLeft, boundBottom, boundRight, boundTop);
 							writer.setCacheBounds(taskBounds);
-							// 修改是的cf的文件名称和sci文件名称相同
+							// Reset cf file's name as same as sci file's name
 							String newSciName = String.format("%s/L%s_R%d_C%d.sci", targetFolder, caption, bigRow, bigCol);
 							wirteOneSci(writer, newSciName, taskListWriter);
 						}
 
 						if (canudb > 0) {
-							// 在数据集中创建对应块
+							// Create solid in dataset as needed
 							Point2Ds points = new Point2Ds();
 							points.add(new Point2D(boundLeft, boundBottom));
 							points.add(new Point2D(boundLeft, boundTop));
@@ -218,7 +218,7 @@ public class TaskBuilder {
 				recordset.dispose();
 			}
 
-			// 恢复scale信息,和Bounds
+			//Recovery scale info and bounds info
 			writer.setCacheScaleCaptions(allScaleCaptions);
 			writer.setCacheBounds(bounds);
 
@@ -232,7 +232,7 @@ public class TaskBuilder {
 		}
 
 		if (canudb < 2) {
-			// 将allTask.list 切分成多个数据，使用简单的分法，等分
+			// Ues the equal division method to split allTask.list to several sub list file
 			splitList(name, listCount);
 		}
 	}
@@ -256,7 +256,7 @@ public class TaskBuilder {
 		String name = tasks.getParent() + "/" + tasks.getName().replaceAll(".list", "");
 
 		for (int i = 0; i < splitCount; i++) {
-			// 创建文件
+			//Create .list file to record sci file
 			File newOne = new File(name + "_" + i + ".list");
 			OutputStreamWriter newOneWriter = new OutputStreamWriter(new FileOutputStream(newOne), "UTF-8");
 			if (((lines.size() - j) * 1.0 / oneFileCount) < 2) {
@@ -273,12 +273,10 @@ public class TaskBuilder {
 	}
 
 	public static void wirteOneSci(CacheWriter writer, String sciName, OutputStreamWriter listWriter) throws Exception {
-
-		// 有时相交为empty，会生成sci失败，也就是没必要写清单文件了
+		//Create if sci file exist
 		boolean sciTrue = writer.ToConfigFile(sciName);
 		if (sciTrue) {
 			listWriter.write(new File(sciName).getName() + "\n");
 		}
-
 	}
 }

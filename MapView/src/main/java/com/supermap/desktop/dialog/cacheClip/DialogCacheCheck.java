@@ -107,7 +107,7 @@ public class DialogCacheCheck extends SmDialog {
 		this.labelSciPath = new JLabel();
 		this.labelProcessCount = new JLabel();
 		this.labelMergeSciCount = new JLabel();
-		String moduleNameForCachePath = "ChooseCachePath";
+		String moduleNameForCachePath = "ChooseCachePathForCheck";
 		if (!SmFileChoose.isModuleExist(moduleNameForCachePath)) {
 			SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
 					moduleNameForCachePath, "GetDirectories");
@@ -116,7 +116,7 @@ public class DialogCacheCheck extends SmDialog {
 		this.fileChooseTotalSciPath = new JFileChooserControl();
 		this.fileChooseTotalSciPath.setFileChooser(fileChooserForCachePath);
 		this.fileChooseTotalSciPath.setPath(System.getProperty("user.dir"));
-		String moduleNameForCheckBounds = "ChooseCheckBoundsFile";
+		String moduleNameForCheckBounds = "ChooseCheckBoundsFileForCheck";
 		if (!SmFileChoose.isModuleExist(moduleNameForCheckBounds)) {
 			String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MapViewProperties.getString("String_FileType_GeoJson"), "geojson"));
 			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
@@ -126,7 +126,7 @@ public class DialogCacheCheck extends SmDialog {
 		this.fileChooseCheckBounds = new JFileChooserControl();
 		this.fileChooseCheckBounds.setFileChooser(fileChooserForCheckBounds);
 		this.fileChooseCheckBounds.setPath(System.getProperty("user.dir"));
-		String moduleNameForSciPath = "ChooseSciPath";
+		String moduleNameForSciPath = "ChooseSciPathForCheck";
 		if (!SmFileChoose.isModuleExist(moduleNameForSciPath)) {
 			SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
 					moduleNameForSciPath, "GetDirectories");
