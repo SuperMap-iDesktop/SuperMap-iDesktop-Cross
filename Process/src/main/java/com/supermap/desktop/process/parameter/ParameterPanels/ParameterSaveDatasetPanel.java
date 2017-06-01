@@ -130,7 +130,7 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
 		for (int i = 0; i < datasources.getCount(); i++) {
 			Datasource datasource = datasources.get(i);
-			if (parameterSaveDataset.isValueLegal(ParameterSaveDataset.DATASOURCE_FIELD_NAME, datasource)) {
+			if (!datasource.isReadOnly() && parameterSaveDataset.isValueLegal(ParameterSaveDataset.DATASOURCE_FIELD_NAME, datasource)) {
 				datasourceComboBox.addItem(datasource);
 			}
 		}

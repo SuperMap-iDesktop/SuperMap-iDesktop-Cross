@@ -295,7 +295,7 @@ public class TabularTableModel extends AbstractTableModel {
 				} else if (FieldType.BYTE == fieldType) {
 					recordset.setByte(columnName, Short.parseShort(String.valueOf(value)));
 				} else if (FieldType.DATETIME == fieldType) {
-					Date date = Convert.toDateTime(getValueAt(rowIndex, columnIndex));
+					Date date = Convert.toDateTime(aValue);
 					recordset.setFieldValue(columnName, date);
 				} else if (FieldType.INT16 == fieldType || FieldType.INT32 == fieldType || FieldType.INT64 == fieldType) {
 					int intValue = DoubleUtilities.intValue(DoubleUtilities.stringToValue(String.valueOf(value)));

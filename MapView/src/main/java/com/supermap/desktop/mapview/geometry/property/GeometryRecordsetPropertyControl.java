@@ -19,6 +19,7 @@ import com.supermap.desktop.event.TableCellValueChangeListener;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.Convert;
 import com.supermap.desktop.utilities.FieldTypeUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -307,7 +308,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 		private static final int FIELD_TYPE = 2;
 		private static final int IS_REQUIRED = 3;
 		private static final int FIELD_VALUE = 4;
-		private final static String DATE_STYLE = "yyyy-MM-dd HH:mm:ss";
+		private final static String DATE_STYLE = "yyyy/MM/dd hh:mm:ss";
 
 		private transient FieldInfos fieldInfos;
 		private boolean isCellValueChange = false;
@@ -492,17 +493,24 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 				} else if (columnIndex == IS_REQUIRED) {
 					return fieldDataInfo.isRequired();
 				} else if (columnIndex == FIELD_VALUE) {
+					if (fieldDataInfo.getType() == FieldType.DATETIME) {
+						SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_STYLE);
+						return dateFormat.format(fieldDataInfo.getFieldValue());
+					}
 					return fieldDataInfo.getFieldValue();
 				}
 			} else {
 				if (columnIndex == FIELD_NAME) {
 					return fieldDataInfo.getCaption();
 				} else if (columnIndex == getColumnCount() - 1) {
+					if (fieldDataInfo.getType() == FieldType.DATETIME) {
+						SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_STYLE);
+						return fieldDataInfo.getFieldValue() == null ? "" : dateFormat.format(fieldDataInfo.getFieldValue());
+					}
 					return fieldDataInfo.getFieldValue();
 				}
 
 			}
-			fireTableDataChanged();
 			return null;
 		}
 
@@ -558,9 +566,9 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 //					this.fieldDataInfos.get(rowIndex).setFieldValue(Byte.parseByte(aValue.toString()));
 
 				} else if (fieldType == FieldType.DATETIME) {
-					SimpleDateFormat dateformat = new SimpleDateFormat(DATE_STYLE);
-					if (null != dateformat.parse(aValue.toString())) {
-						fieldData.setFieldValue(dateformat.format(dateformat.parse(aValue.toString())));
+					Date date = Convert.toDateTime(aValue);
+					if (null != date) {
+						fieldData.setFieldValue(date);
 					}
 				} else if (fieldType == FieldType.CHAR || fieldType == FieldType.TEXT || fieldType == FieldType.WTEXT) {
 					fieldData.setFieldValue(aValue);
