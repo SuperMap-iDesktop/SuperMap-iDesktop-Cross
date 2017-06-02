@@ -13,6 +13,8 @@ public class ParameterNumber extends ParameterTextField {
 
 	private boolean isMinValueEnable = false;
 	private double minValue;
+	private boolean isIncludeMin = true;
+	private boolean isIncludeMax = true;
 
 	public ParameterNumber() {
 		this("");
@@ -28,10 +30,10 @@ public class ParameterNumber extends ParameterTextField {
 						return false;
 					}
 					Double aDouble = Double.valueOf(textFieldValue);
-					if (isMinValueEnable && aDouble < minValue) {
+					if (isMinValueEnable && (aDouble < minValue || (!isIncludeMin && aDouble == minValue))) {
 						return false;
 					}
-					if (isMaxValueEnable && aDouble > maxValue) {
+					if (isMaxValueEnable && (aDouble > maxValue || (!isIncludeMax && aDouble == maxValue))) {
 						return false;
 					}
 					if (bit == 0) {
@@ -73,4 +75,23 @@ public class ParameterNumber extends ParameterTextField {
 		this.bit = bit;
 	}
 
+	public void setIsIncludeMin(boolean isIncludeMin) {
+		this.isIncludeMin = isIncludeMin;
+	}
+
+	public boolean isIncludeMin() {
+		return isIncludeMin;
+	}
+
+	public void setIncludeMin(boolean includeMin) {
+		isIncludeMin = includeMin;
+	}
+
+	public boolean isIncludeMax() {
+		return isIncludeMax;
+	}
+
+	public void setIncludeMax(boolean includeMax) {
+		isIncludeMax = includeMax;
+	}
 }

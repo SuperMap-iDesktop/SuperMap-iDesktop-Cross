@@ -16,7 +16,7 @@ import java.util.List;
  * @author XiaJT
  */
 public class ParameterUtil {
-	public static final Dimension LABEL_DEFAULT_SIZE = new Dimension(80, 23);
+	public static final Dimension LABEL_DEFAULT_SIZE = new Dimension(90, 23);
 
 	public static Class getParameterPanel(String parameterType, ArrayList<ParameterClassBundleNode> packs) {
 		for (int i = packs.size() - 1; i >= 0; i--) {

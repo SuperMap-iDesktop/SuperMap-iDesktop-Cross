@@ -31,6 +31,7 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 		this.datasetTypes = datasetTypes;
 	}
 
+
 	@Override
 	public void setSelectedItem(Object item) {
 		Dataset oldValue = null;

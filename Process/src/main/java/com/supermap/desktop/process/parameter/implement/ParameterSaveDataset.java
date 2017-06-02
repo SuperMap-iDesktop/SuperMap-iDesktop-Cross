@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.data.Datasource;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
@@ -20,6 +21,24 @@ public class ParameterSaveDataset extends AbstractParameter implements ISelectio
 	private String datasetName;
 	private String datasourceDescribe;
 	private String datasetDescribe;
+
+
+	public ParameterSaveDataset() {
+		Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
+		if (activeDatasources.length > 0) {
+			for (Datasource activeDatasource : activeDatasources) {
+				if (!activeDatasource.isReadOnly()) {
+					resultDatasource = activeDatasource;
+					break;
+				}
+			}
+		} else if (Application.getActiveApplication().getActiveDatasets().length > 0) {
+			Datasource datasource = Application.getActiveApplication().getActiveDatasets()[0].getDatasource();
+			if (!datasource.isReadOnly()) {
+				resultDatasource = datasource;
+			}
+		}
+	}
 
 	@Override
 	public String getType() {

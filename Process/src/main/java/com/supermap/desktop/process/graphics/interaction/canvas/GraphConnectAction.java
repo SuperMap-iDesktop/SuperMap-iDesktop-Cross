@@ -93,7 +93,7 @@ public class GraphConnectAction extends CanvasActionAdapter {
 					final ProcessGraph endGraph = this.endGraph;
 					Type type = startGraph.getProcessData().getType();
 					final Inputs inputs = endGraph.getProcess().getInputs();
-					InputData[] datas = inputs.getDatas(type);
+					final InputData[] datas = inputs.getDatas(type);
 
 					for (int i = 0; i < datas.length; i++) {
 						final JMenuItem item = new JMenuItem(datas[i].getName());
@@ -104,6 +104,7 @@ public class GraphConnectAction extends CanvasActionAdapter {
 							@Override
 							public void actionPerformed(ActionEvent e) {
 								try {
+									inputs.bind(item.getText(), startGraph.getProcessData());
 									IOGraphConnection connection = new IOGraphConnection(startGraph, endGraph, item.getText());
 									canvas.getConnection().connect(connection);
 									inputsMenu.setVisible(false);
