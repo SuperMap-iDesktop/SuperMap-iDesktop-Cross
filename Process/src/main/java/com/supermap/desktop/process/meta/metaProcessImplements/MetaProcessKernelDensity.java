@@ -68,11 +68,9 @@ public class MetaProcessKernelDensity extends MetaProcess {
 
 
 		parameterHDFSPath = new ParameterHDFSPath();
-//		parameterHDFSPath.setSelectedItem("newyork14_newyork_taxi_2013-01_14k");
 		parameterHDFSPath.setSelectedItem("hdfs://192.168.12.201:9000/data/newyork_taxi_2013-01_14k.csv");
-		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_KernelDensity"), "1");
-		parameterComboBoxAnalyseType.setItems(new ParameterDataNode(ProcessProperties.getString("String_SimplePointDensity"), "0"),
-				parameterDataNode);
+		ParameterDataNode parameterDataNode = new ParameterDataNode(ProcessProperties.getString("String_KernelDensity"), "0");
+		parameterComboBoxAnalyseType.setItems(parameterDataNode);
 		parameterComboBoxAnalyseType.setSelectedItem(parameterDataNode);
 		parameterComboBoxMeshType.setItems(new ParameterDataNode(ProcessProperties.getString("String_QuadrilateralMesh"), "0"),
 				new ParameterDataNode(ProcessProperties.getString("String_HexagonalMesh"), "1"));

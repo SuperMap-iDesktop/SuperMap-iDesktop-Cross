@@ -12,7 +12,7 @@ class LogWriter {
 
 	private File logFile;
 	private OutputStreamWriter writer;
-	public static SimpleDateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+	public static SimpleDateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm");
 	private static LogWriter gInstance;
 	public static String BUILD_CACHE = "BuildCache";
 	public static String CHECK_CACEH = "CheckCache";
@@ -35,7 +35,7 @@ class LogWriter {
 			if (!file.exists()) {
 				file.mkdir();
 			}
-			String logName = type + "_" + getPID() + ".log";
+			String logName = dFormat.format(new Date()) + "_" + type + "_" + getPID() + ".log";
 			logFile = new File(logFolder + logName);
 		}
 		try {

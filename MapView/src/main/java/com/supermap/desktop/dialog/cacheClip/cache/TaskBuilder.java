@@ -95,7 +95,7 @@ public class TaskBuilder {
 		Set<Double> scales = allScaleCaptions.keySet();
 		ArrayList<Double> scaleList = new ArrayList<Double>();
 		scaleList.addAll(scales);
-		// 对数组排序一下，由小到大
+
 		Collections.sort(scaleList);
 		int length = 9;
 		for (double scale : scaleList) {
@@ -116,7 +116,7 @@ public class TaskBuilder {
 			Recordset recordset = null;
 			Recordset.BatchEditor editor = null;
 			if (canudb > 0) {
-				// 创建数据集和字段
+				//Create dataset and it's field
 				String datasetName = "L" + caption + "_S" + Math.round(1 / scale);
 				DatasetVectorInfo datasetInfo = new DatasetVectorInfo(datasetName, DatasetType.REGION);
 				DatasetVector dataset = ds.getDatasets().create(datasetInfo);
