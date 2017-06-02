@@ -1,8 +1,8 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.FormWorkflow;
-import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
@@ -13,6 +13,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @author XiaJT
@@ -32,7 +33,7 @@ public class InputParametersManager {
 		parameterSwitch.setParameters(parameters);
 		ParameterComboBox parameterComboBox = new ParameterComboBox();
 		parameterComboBox.setParameters(parameters);
-		parameterComboBox.setDescribe(ProcessProperties.getString("String_Source"));
+		parameterComboBox.setDescribe(name + ":");
 		parameterComboBox.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -41,6 +42,10 @@ public class InputParametersManager {
 				}
 			}
 		});
+		ParameterCombine combine = new ParameterCombine();
+		combine.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
+		combine.addParameters(parameterComboBox);
+		ArrayList<IParameter> sources = new ArrayList<>();
 		if (parameter.length == 1) {
 			parameterSwitch.add("0", parameter[0]);
 		} else {
@@ -49,7 +54,11 @@ public class InputParametersManager {
 			parameterCombine.addParameters(parameter);
 			parameterSwitch.add("0", parameterCombine);
 		}
-		parameterSwitch.add("1", parameterComboBox);
+		parameterSwitch.add("1", combine);
+		parameterSwitch.setParameters(parameters);
+
+		Collections.addAll(sources, parameter);
+		parameters.replace(sources, parameterSwitch);
 
 		InputParameterDataNode inputParameterDataNode = new InputParameterDataNode(name, parameterSwitch, parameter);
 		list.add(inputParameterDataNode);
@@ -71,7 +80,7 @@ public class InputParametersManager {
 			isSelecting = true;
 			for (InputParameterDataNode inputParameterDataNode : list) {
 				if (inputParameterDataNode.getName().equals(name)) {
-					ParameterComboBox parameterComboBox = (ParameterComboBox) inputParameterDataNode.getParameterSwitch().getParameterByTag("1");
+					ParameterComboBox parameterComboBox = (ParameterComboBox) ((ParameterCombine) inputParameterDataNode.getParameterSwitch().getParameterByTag("1")).getParameterList().get(0);
 					reloadParameterComboBox(parameterComboBox);
 					inputParameterDataNode.getParameterSwitch().switchParameter("1");
 
