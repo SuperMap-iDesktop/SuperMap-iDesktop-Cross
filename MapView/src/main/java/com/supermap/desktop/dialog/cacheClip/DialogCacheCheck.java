@@ -233,10 +233,16 @@ public class DialogCacheCheck extends SmDialog {
 				checkCache.startProcess(Integer.valueOf(processCount), params);
 				((JButton) e.getSource()).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 				dialogDispose();
+				//Ensure all sci files has been checked
+				File sciFile = new File(sciPath);
+				if (sciFile.exists()) {
+					while (0 != sciFile.listFiles().length) {
+
+					}
+				}
 				boolean cacheBuild = checkBoxCacheBuild.isSelected();
 				if (cacheBuild) {
 					File cacheFile = new File(cacheRoot);
-					File sciFile = new File(sciPath);
 					File sciBuildFile = sciFile.getParentFile();
 					File[] files = sciBuildFile.listFiles();
 					File errorFile = null;
