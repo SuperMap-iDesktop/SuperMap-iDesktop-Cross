@@ -850,12 +850,7 @@ public class GeometryRecordsetPropertyControl extends AbstractPropertyControl {
 					} else {
 						Object resultValue = this.getFieldValue();
 						if (this.getType() == FieldType.DATETIME) {
-							SimpleDateFormat dateFormat = new SimpleDateFormat(PropertyTableModel.DATE_STYLE);
-
-							if (this.getFieldValue() != null) {
-								resultValue = dateFormat.parse(String.valueOf(this.getFieldValue()));
-							}
-
+							resultValue = Convert.toDateTime(this.getFieldValue());
 						}
 						this.recordset.setFieldValue(this.getName(), resultValue);
 					}
