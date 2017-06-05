@@ -34,4 +34,6 @@ public interface IParameters {
 	Inputs getInputs();
 
 	Outputs getOutputs();
+
+	void replace(ArrayList<IParameter> sources, IParameter... results);
 }

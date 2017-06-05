@@ -173,6 +173,9 @@ public class WorkflowParser {
 
 	public static MetaProcess getMetaProcess(String key) {
 		MetaProcess result = null;
+		if (StringUtilities.isNullOrEmpty(key)) {
+			return null;
+		}
 		if (MetaKeys.BUFFER.equals(key)) {
 			result = new MetaProcessBuffer();
 		} else if (MetaKeys.HEAT_MAP.equals(key)) {

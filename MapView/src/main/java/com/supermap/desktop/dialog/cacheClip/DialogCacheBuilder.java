@@ -147,6 +147,7 @@ public class DialogCacheBuilder extends SmDialog {
 				CacheWriter writer = new CacheWriter();
 				boolean result = writer.FromConfigFile(sciFilePath);
 				if (result) {
+					sciFile = new File(sciFilePath);
 					HashMap<Double, String> allScaleCaptions = new HashMap<Double, String>(writer.getCacheScaleCaptions());
 					Set<Double> scales = allScaleCaptions.keySet();
 					ArrayList<Double> scaleList = new ArrayList<Double>();
@@ -154,7 +155,7 @@ public class DialogCacheBuilder extends SmDialog {
 					Collections.sort(scaleList);
 					CopyOnWriteArrayList<String> tempCaptions = new CopyOnWriteArrayList<>();
 					for (double scale : scaleList) {
-						tempCaptions.add(String.valueOf((int) (1 / scale)));
+						tempCaptions.add(String.valueOf(Math.round( 1 / scale)));
 					}
 					setCaptions(tempCaptions);
 				}
@@ -458,11 +459,15 @@ public class DialogCacheBuilder extends SmDialog {
 	private void refresh(String cachePath, String parentPath, int totalSciLength) {
 		try {
 			long startTime = System.currentTimeMillis();
+			String buildPath = parentPath + "\\build";
 			int buildSciLength = 0;
+			File buildFile = new File(buildPath);
+			if (buildFile.exists() && null != buildFile.list(getFilter())) {
+				buildSciLength = buildFile.list(getFilter()).length;
+			}
+			totalSciLength = totalSciLength + buildSciLength;
 			while (buildSciLength != totalSciLength) {
 				//Get success sci length
-				String buildPath = parentPath + "\\build";
-				File buildFile = new File(buildPath);
 				if (buildFile.exists()) {
 					buildSciLength = buildFile.list(getFilter()).length;
 				}
@@ -487,12 +492,8 @@ public class DialogCacheBuilder extends SmDialog {
 			if (result) {
 				long endTime = System.currentTimeMillis();
 				File mapNameDir = new File(resultPath);
-				String targetDirectory = null;
-				if (mapNameDir.isDirectory() && mapNameDir.listFiles().length > 0) {
-					targetDirectory = mapNameDir.listFiles()[0].getAbsolutePath();
-				}
 				//Paste sciFile to the target directory
-				sciFile.renameTo(new File(targetDirectory, sciFile.getName()));
+				sciFile.renameTo(new File(resultDir, sciFile.getName()));
 				long totalTime = endTime - startTime;
 				long hour = 0;
 				long minutes = 0;

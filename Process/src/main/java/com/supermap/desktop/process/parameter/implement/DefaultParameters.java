@@ -180,6 +180,22 @@ public class DefaultParameters implements IParameters {
 	}
 
 	@Override
+	public void replace(ArrayList<IParameter> sources, IParameter... results) {
+		int firstIndex = Integer.MAX_VALUE;
+		for (IParameter source : sources) {
+			int indexOf = parameters.indexOf(source);
+			if (indexOf != -1) {
+				firstIndex = Math.min(indexOf, firstIndex);
+			}
+			parameters.remove(source);
+		}
+		for (IParameter result : results) {
+			parameters.add(firstIndex, result);
+			firstIndex++;
+		}
+	}
+
+	@Override
 	public Inputs getInputs() {
 		return inputs;
 	}
