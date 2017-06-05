@@ -1242,7 +1242,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
                             }
                         });
                         // 重置分段方法下拉框
-                        isResetComboBox = true;
+//                        isResetComboBox = true;
                         return;
                     } else {
                         rangeMode = RangeMode.SQUAREROOT;
@@ -1273,7 +1273,7 @@ public class ThemeRangeContainer extends ThemeChangePanel {
                                 resetComboBoxRangeMode();
                             }
                         });
-                        isResetComboBox = true;
+//                        isResetComboBox = true;
                         return;
                     } else {
                         rangeMode = RangeMode.LOGARITHM;
