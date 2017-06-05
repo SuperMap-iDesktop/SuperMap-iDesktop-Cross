@@ -15,7 +15,7 @@ import java.util.Locale;
  * @author xie
  */
 public class Convert {
-    public static SimpleDateFormat resultFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss", Locale.US);
+    public static SimpleDateFormat resultFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss");
 
     public static String getDateStr(String str) {
         String success = "";
@@ -27,13 +27,14 @@ public class Convert {
 
     private static String getDateInfo(String str, String success) {
         SimpleDateFormat format;
-        String temp = ".";
+
         if (str.contains("-")) {
             str = str.replaceAll("-", ".");
         } else if (str.contains("/")) {
             str = str.replaceAll("/", ".");
         }
-        String[] dateStr = str.split("\\" + temp);
+        String[] dateStr = str.split("\\.");
+        String temp = ".";
         // 串格式为yyyy.MM.dd类型格式的字符串
         if (dateStr.length == 1 && dateStr[0].length() == 4) {
             format = new SimpleDateFormat("yyyy");
