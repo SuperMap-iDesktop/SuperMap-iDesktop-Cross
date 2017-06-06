@@ -139,6 +139,11 @@ class MdiTabFeature extends AbstractMdiFeature {
 	}
 
 	@Override
+	public boolean isContains(Point point) {
+		return !this.isHidden && super.isContains(point);
+	}
+
+	@Override
 	public void layouting() {
 
 		// 计算各 feature 的 X、Y
