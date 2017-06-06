@@ -53,7 +53,7 @@ public interface IFormTabular extends IForm {
 	/**
 	 * 添加选中项
 	 */
-	void addRows(List<Integer> tempRows);
+	void addRows(int... tempRows);
 
 	/**
 	 * 获取选中行的数目
@@ -121,8 +121,6 @@ public interface IFormTabular extends IForm {
 	 * @return
 	 */
 	int getSmId(int row);
-
-	int getRowBySmId(int smId);
 
 	ITabularEditHistoryManager getEditHistoryManager();
 
