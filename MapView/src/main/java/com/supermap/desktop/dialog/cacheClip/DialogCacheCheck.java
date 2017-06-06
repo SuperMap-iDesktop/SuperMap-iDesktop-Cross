@@ -226,7 +226,6 @@ public class DialogCacheCheck extends SmDialog {
 			String geoJsonFile = fileChooseCheckBounds.getPath();
 			String[] params = {cacheRoot, sciPath, mergeTaskCount, saveErrorData, geoJsonFile};
 
-//            CacheCheck.main(params);
 			if (validateValue(sciPath, mergeTaskCount, cacheRoot)) {
 				((JButton) e.getSource()).setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				CheckCache checkCache = new CheckCache();
