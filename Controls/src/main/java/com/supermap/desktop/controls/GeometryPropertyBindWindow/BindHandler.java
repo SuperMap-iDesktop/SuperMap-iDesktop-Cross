@@ -1,18 +1,6 @@
 package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 
-import com.supermap.data.CoordSysTransMethod;
-import com.supermap.data.CoordSysTransParameter;
-import com.supermap.data.CoordSysTranslator;
-import com.supermap.data.GeoCompound;
-import com.supermap.data.GeoLine;
-import com.supermap.data.GeoPoint;
-import com.supermap.data.GeoStyle;
-import com.supermap.data.Geometry;
-import com.supermap.data.Point2D;
-import com.supermap.data.Point2Ds;
-import com.supermap.data.Rectangle2D;
-import com.supermap.data.Size2D;
-import com.supermap.data.SymbolMarker;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
@@ -21,24 +9,13 @@ import com.supermap.desktop.event.FormClosingEvent;
 import com.supermap.desktop.event.FormClosingListener;
 import com.supermap.desktop.ui.FormManager;
 import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.mapping.Layer;
-import com.supermap.mapping.Layers;
-import com.supermap.mapping.Map;
-import com.supermap.mapping.MapDrawnEvent;
-import com.supermap.mapping.MapDrawnListener;
+import com.supermap.mapping.*;
 import com.supermap.ui.GeometrySelectChangedEvent;
 import com.supermap.ui.GeometrySelectChangedListener;
 import com.supermap.ui.MapControl;
 
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -403,7 +380,8 @@ public class BindHandler {
 		int layersCount = layers.getCount();
 		for (int i = 0; i < layersCount; i++) {
 			Layer tempLayer = layers.get(i);
-			if (tempLayer.getDataset().equals(formTabular.getRecordset().getDataset())) {
+			if (null != tempLayer.getDataset() && null != formTabular.getRecordset()
+					&& null != formTabular.getRecordset().getDataset() && tempLayer.getDataset().equals(formTabular.getRecordset().getDataset())) {
 				result = tempLayer;
 			}
 		}

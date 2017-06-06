@@ -980,39 +980,41 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	private String getExpressionValueMath(String expressionValue) {
 		try {
 			String fristField = comboBoxOperationField.getSelectedItem().toString();
-			String method = comboBoxMethod.getSelectedItem().toString();
-			//语法与数据库语法一致，Left(SMID,1)
-			if (method == "Left" || method == "Right") {
-				expressionValue = method + "(" + fristField + "," + textFieldX.getText() + ")";
-			} else if (method == "Mid") {
-				expressionValue = method + "(" + fristField + "," + textFieldX.getText() + "," + textFieldY.getText() + ")";
-			} else if (method == "UCase" || method == "LCase" || method == "Trim") {
-				expressionValue = method + "(" + fristField + ")";
-			} else if (method == "TrimEnd" || method == "TrimStart") {
-				expressionValue = method + "(" + method + "," + getCharArrayString(textFieldX.getText()) + ")";
-			} else if (method == "ObjectCenterX" || method == "ObjectCenterY" || method == "ObjectLeft" ||
-					method == "ObjectRight" || method == "ObjectTop" || method == "ObjectBottom" || method == "ObjectWidth" || method == "ObjectHeight") {
-				expressionValue = "Object." + method + "()";
-			} else if (method == "LRemove" || method == "RRemove") {
-				expressionValue = method + "(" + fristField + "," + textFieldX.getText() + ")";
-			} else if (method == "Replace") {
-				expressionValue = "Replace(" + fristField + ",\"" + textFieldX.getText() + "\",\"" + textFieldY.getText() + "\")";
-			} else if (method == "Parse") {
-				expressionValue = method + "(" + fristField + ",NumberStyles.HexNumber)";
-			} else if (method == "Abs" || method == "Sqrt" || method == "Ln" || method == "Int") {
-				expressionValue = method + "(" + fristField + ")";
-			} else if (method == "Log") {
-				expressionValue = method + "(" + fristField + "," + textFieldX.getText() + ")";
-			} else if (method == "AddDays" || method == "AddHours" || method == "AddMilliseconds" || method == "AddSeconds"
-					|| method == "AddMinutes" || method == "AddMonths" || method == "AddYears") {
-				expressionValue = fristField + "." + method + "(" + textFieldX.getText() + ")";
-			} else if (method == "DaysInMonth") {
-				expressionValue = "DateTime.DaysInMonth(" + fristField + ".Year," + fristField + ".Month)";
-			} else if (method == "Millisecond" || method == "Second" || method == "Minute" || method == "Hour" || method == "Day" ||
-					method == "Month" || method == "Year" || method == "Date" || method == "DayOfYear" || method == "DayOfWeek") {
-				expressionValue = fristField + "." + method;
-			} else if (method == "Now") {
-				expressionValue = "DateTime.Now";
+			if (null != comboBoxMethod.getSelectedItem()) {
+				String method = comboBoxMethod.getSelectedItem().toString();
+				//语法与数据库语法一致，Left(SMID,1)
+				if (method == "Left" || method == "Right") {
+					expressionValue = method + "(" + fristField + "," + textFieldX.getText() + ")";
+				} else if (method == "Mid") {
+					expressionValue = method + "(" + fristField + "," + textFieldX.getText() + "," + textFieldY.getText() + ")";
+				} else if (method == "UCase" || method == "LCase" || method == "Trim") {
+					expressionValue = method + "(" + fristField + ")";
+				} else if (method == "TrimEnd" || method == "TrimStart") {
+					expressionValue = method + "(" + method + "," + getCharArrayString(textFieldX.getText()) + ")";
+				} else if (method == "ObjectCenterX" || method == "ObjectCenterY" || method == "ObjectLeft" ||
+						method == "ObjectRight" || method == "ObjectTop" || method == "ObjectBottom" || method == "ObjectWidth" || method == "ObjectHeight") {
+					expressionValue = "Object." + method + "()";
+				} else if (method == "LRemove" || method == "RRemove") {
+					expressionValue = method + "(" + fristField + "," + textFieldX.getText() + ")";
+				} else if (method == "Replace") {
+					expressionValue = "Replace(" + fristField + ",\"" + textFieldX.getText() + "\",\"" + textFieldY.getText() + "\")";
+				} else if (method == "Parse") {
+					expressionValue = method + "(" + fristField + ",NumberStyles.HexNumber)";
+				} else if (method == "Abs" || method == "Sqrt" || method == "Ln" || method == "Int") {
+					expressionValue = method + "(" + fristField + ")";
+				} else if (method == "Log") {
+					expressionValue = method + "(" + fristField + "," + textFieldX.getText() + ")";
+				} else if (method == "AddDays" || method == "AddHours" || method == "AddMilliseconds" || method == "AddSeconds"
+						|| method == "AddMinutes" || method == "AddMonths" || method == "AddYears") {
+					expressionValue = fristField + "." + method + "(" + textFieldX.getText() + ")";
+				} else if (method == "DaysInMonth") {
+					expressionValue = "DateTime.DaysInMonth(" + fristField + ".Year," + fristField + ".Month)";
+				} else if (method == "Millisecond" || method == "Second" || method == "Minute" || method == "Hour" || method == "Day" ||
+						method == "Month" || method == "Year" || method == "Date" || method == "DayOfYear" || method == "DayOfWeek") {
+					expressionValue = fristField + "." + method;
+				} else if (method == "Now") {
+					expressionValue = "DateTime.Now";
+				}
 			}
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
