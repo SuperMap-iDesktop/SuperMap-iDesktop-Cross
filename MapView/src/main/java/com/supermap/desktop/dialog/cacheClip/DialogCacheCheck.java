@@ -235,10 +235,12 @@ public class DialogCacheCheck extends SmDialog {
 				dialogDispose();
 				//Ensure all sci files has been checked
 				File sciFile = new File(sciPath);
-				if (sciFile.exists()) {
-					while (0 != sciFile.listFiles().length) {
-
-					}
+				String checkingPath = sciFile.getParent() + "\\checking";
+				while(!FileUtilities.isDirEmpty(sciPath)){
+					Thread.sleep(2000);
+				}
+				while(!FileUtilities.isDirEmpty(checkingPath)){
+					Thread.sleep(2000);
 				}
 				boolean cacheBuild = checkBoxCacheBuild.isSelected();
 				if (cacheBuild) {
