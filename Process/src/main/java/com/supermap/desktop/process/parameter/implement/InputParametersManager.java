@@ -1,8 +1,14 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.FormWorkflow;
+import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
+import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
+import com.supermap.desktop.process.graphics.events.GraphRemovingEvent;
+import com.supermap.desktop.process.graphics.events.GraphRemovingListener;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
@@ -23,6 +29,7 @@ public class InputParametersManager {
 	private ArrayList<InputParameterDataNode> list = new ArrayList<>();
 	private boolean isSelecting = false;
 	private ArrayList<PropertyChangeListener> listeners = new ArrayList<>();
+	private boolean isDeleting = false;
 
 	public InputParametersManager(IParameters parameters) {
 		this.parameters = parameters;
@@ -31,17 +38,46 @@ public class InputParametersManager {
 	public void add(final String name, IParameter... parameter) {
 		ParameterSwitch parameterSwitch = new ParameterSwitch();
 		parameterSwitch.setParameters(parameters);
-		ParameterComboBox parameterComboBox = new ParameterComboBox();
+		final ParameterComboBox parameterComboBox = new ParameterComboBox();
 		parameterComboBox.setParameters(parameters);
 		parameterComboBox.setDescribe(name + ":");
 		parameterComboBox.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (!isSelecting && evt.getPropertyName().equals(ParameterComboBox.comboBoxValue)) {
-					firePropertyChangedListener(new PropertyChangeEvent(InputParametersManager.this, name, evt.getOldValue(), evt.getNewValue()));
+					Object newValue = evt.getNewValue();
+					if (isDeleting) {
+						newValue = null;
+					}
+					firePropertyChangedListener(new PropertyChangeEvent(InputParametersManager.this, name, evt.getOldValue(), newValue));
 				}
 			}
 		});
+		IForm activeForm = Application.getActiveApplication().getActiveForm();
+		if (activeForm instanceof FormWorkflow) {
+			GraphCanvas canvas = ((FormWorkflow) activeForm).getCanvas();
+			canvas.addGraphCreatedListener(new GraphCreatedListener() {
+				@Override
+				public void graphCreated(GraphCreatedEvent e) {
+					if (e.getGraph() instanceof OutputGraph) {// 不一定都是OutputGraph
+						parameterComboBox.addItem(new ParameterDataNode(((OutputGraph) e.getGraph()).getTitle(), e.getGraph()));
+					}
+				}
+			});
+			canvas.addGraphRemovingListener(new GraphRemovingListener() {
+				@Override
+				public void graphRemoving(GraphRemovingEvent e) {
+					isDeleting = true;
+					try {
+						parameterComboBox.removeItem(e.getGraph());
+					} catch (Exception e1) {
+						Application.getActiveApplication().getOutput().output(e1);
+					} finally {
+						isDeleting = false;
+					}
+				}
+			});
+		}
 		ParameterCombine combine = new ParameterCombine();
 		combine.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
 		combine.addParameters(parameterComboBox);
@@ -98,12 +134,22 @@ public class InputParametersManager {
 		}
 	}
 
+	public void unBind(InputData inputData) {
+		String name = inputData.getName();
+		for (InputParameterDataNode inputParameterDataNode : list) {
+			if (inputParameterDataNode.getName().equals(name)) {
+				inputParameterDataNode.getParameterSwitch().switchParameter("0");
+			}
+		}
+	}
+
 	private void reloadParameterComboBox(ParameterComboBox parameterComboBox) {
 		parameterComboBox.removeAllItems();
 		FormWorkflow activeForm = (FormWorkflow) Application.getActiveApplication().getActiveForm();
 		ArrayList<IGraph> allDataNode = activeForm.getAllDataNode();
 		for (IGraph graph : allDataNode) {
-			parameterComboBox.addItem(new ParameterDataNode(((OutputGraph) graph).getTitle(), graph));
+			if (((OutputGraph) graph).getProcessGraph().getProcess() != this.parameters.getProcess())
+				parameterComboBox.addItem(new ParameterDataNode(((OutputGraph) graph).getTitle(), graph));
 		}
 	}
 

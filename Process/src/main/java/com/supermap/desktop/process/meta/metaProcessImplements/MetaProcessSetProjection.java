@@ -77,7 +77,7 @@ public class MetaProcessSetProjection extends MetaProcess {
 		parameterCombineCoordInfo.setDescribe(ControlsProperties.getString("String_ProjectionInfoControl_LabelProjectionInfo"));
 		parameterCombineCoordInfo.addParameters(coordSysName, coordUnit, textAreaCoordInfo, new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(parameterButton));
 		this.parameters.setParameters(parameterCombineSourceData, parameterCombineCoordInfo);
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.DATASET, datasource, parameterSingleDataset);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.DATASET, parameterCombineSourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.DATASET, parameterSingleDataset);
 		//Add Constraint
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
@@ -92,27 +92,27 @@ public class MetaProcessSetProjection extends MetaProcess {
 		if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
 			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof Dataset) {
 				prjCoordSys = ((Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue()).getPrjCoordSys();
-			} else if(null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0){
+			} else if (null != Application.getActiveApplication().getActiveDatasources() && Application.getActiveApplication().getActiveDatasources().length > 0) {
 				if (Application.getActiveApplication().getActiveDatasets().length > 0) {
 					prjCoordSys = Application.getActiveApplication().getActiveDatasets()[0].getPrjCoordSys();
 				} else {
 					dataSource = Application.getActiveApplication().getActiveDatasources()[0];
-					if(dataSource.getDatasets().getCount()>0){
+					if (dataSource.getDatasets().getCount() > 0) {
 						prjCoordSys = dataSource.getDatasets().get(0).getPrjCoordSys();
-					}else{
+					} else {
 						dataSource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
-						if (dataSource.getDatasets().getCount()>0){
+						if (dataSource.getDatasets().getCount() > 0) {
 							prjCoordSys = dataSource.getDatasets().get(0).getPrjCoordSys();
-						}else{
+						} else {
 							prjCoordSys = dataSource.getPrjCoordSys();
 						}
 					}
 				}
-			} else{
+			} else {
 				dataSource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
-				if(dataSource.getDatasets().getCount()>0){
+				if (dataSource.getDatasets().getCount() > 0) {
 					prjCoordSys = dataSource.getDatasets().get(0).getPrjCoordSys();
-				}else{
+				} else {
 					prjCoordSys = dataSource.getPrjCoordSys();
 				}
 			}
@@ -165,6 +165,7 @@ public class MetaProcessSetProjection extends MetaProcess {
 	public IParameterPanel getComponent() {
 		return parameters.getPanel();
 	}
+
 	@Override
 	public IParameters getParameters() {
 		return parameters;
