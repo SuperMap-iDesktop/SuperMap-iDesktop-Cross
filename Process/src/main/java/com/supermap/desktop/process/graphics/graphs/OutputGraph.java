@@ -88,4 +88,5 @@ public class OutputGraph extends RectangleGraph {
 	public void setProcessData(OutputData processData) {
 		this.processData = processData;
 	}
+
 }

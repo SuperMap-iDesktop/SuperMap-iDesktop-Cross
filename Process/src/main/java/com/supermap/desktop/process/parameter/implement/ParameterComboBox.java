@@ -70,6 +70,7 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 
 	@Override
 	public void setSelectedItem(Object value) {
+
 		if (!(value instanceof ParameterDataNode)) {
 			for (ParameterDataNode item : items) {
 				if (item.getData() == value) {
@@ -78,7 +79,10 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 				}
 			}
 		}
-		if (value instanceof ParameterDataNode) {
+		if (value == this.value) {
+			return;
+		}
+		if (value == null || value instanceof ParameterDataNode) {
 			ParameterDataNode oldValue = this.value;
 			this.value = (ParameterDataNode) value;
 			firePropertyChangeListener(new PropertyChangeEvent(this, "comboBoxValue", oldValue, value));
@@ -128,5 +132,26 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 	public void removeAllItems() {
 		items.clear();
 		firePropertyChangeListener(new PropertyChangeEvent(this, comboBoxItems, null, null));
+	}
+
+	public void removeItem(Object item) {
+		if (item == null) {
+			return;
+		}
+		boolean isRemove = false;
+		if (items.contains(item)) {
+			items.remove(item);
+			isRemove = true;
+		} else {
+			for (int i = items.size() - 1; i >= 0; i--) {
+				if (items.get(i).getData() == item) {
+					items.remove(i);
+					isRemove = true;
+				}
+			}
+		}
+		if (isRemove) {
+			firePropertyChangeListener(new PropertyChangeEvent(this, comboBoxItems, null, null));
+		}
 	}
 }
