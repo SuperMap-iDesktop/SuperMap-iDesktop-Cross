@@ -1592,11 +1592,9 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				for (int i = 0; i < dataFlavors.length; i++) {
 					if (null != dataFlavors[i] && !dataFlavors[i].equals(DataFlavor.javaFileListFlavor) && null != transferable.getTransferData(dataFlavors[i])) {
 						Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
-						if (Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
-							IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
-							Map map = formMap.getMapControl().getMap();
-							MapViewUIUtilities.addDatasetsToMap(map, datasets, true);
-						}
+						IFormMap formMap = FormMap.this;
+						Map map = formMap.getMapControl().getMap();
+						MapViewUIUtilities.addDatasetsToMap(map, datasets, true);
 					}
 				}
 			} catch (Exception e) {
