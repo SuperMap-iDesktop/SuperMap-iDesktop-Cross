@@ -9,6 +9,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.channels.FileChannel;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Iterator;
 
 public class FileUtilities {
 
@@ -372,5 +377,48 @@ public class FileUtilities {
 			Application.getActiveApplication().getOutput().output(e);
 		}
 		return stringBuffer.toString();
+	}
+
+	/**
+	 * check whether the given dir is empty or not, especially for dir containing large mount of files
+	 * @param extPattern extPattern can be *.java and for than one extension we can use it like "*.{java,txt,exe}".
+	 *
+	 */
+	public static boolean isDirEmpty(String dirPath,String extPattern){
+		boolean isEmpty = false;
+		if(StringUtilities.isNullOrEmpty(dirPath)
+				|| !new File(dirPath).exists()
+				||!new File(dirPath).isDirectory()){
+			return false;
+		}
+		DirectoryStream<Path> ds = null;
+		try {
+			Path dir = Paths.get(dirPath);
+			if(StringUtilities.isNullOrEmpty(extPattern)){
+				ds = Files.newDirectoryStream(dir);
+			}
+			else{
+				ds = Files.newDirectoryStream(dir, extPattern);
+			}
+			Iterator files = ds.iterator();
+			if (!files.hasNext()) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (ds != null) {
+				try {
+					ds.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return isEmpty;
+	}
+
+	public static boolean isDirEmpty(String dirPath){
+		return isDirEmpty(dirPath,null);
 	}
 }

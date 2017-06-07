@@ -2,8 +2,11 @@ package com.supermap.desktop.dialog.cacheClip.cache;
 
 import com.supermap.data.*;
 import com.supermap.data.processing.CacheWriter;
+import com.supermap.desktop.dialog.SmOptionPane;
+import com.supermap.desktop.mapview.MapViewProperties;
 
 import java.io.*;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -21,11 +24,11 @@ public class TaskBuilder {
 	 * @param args
 	 * @throws IOException
 	 */
-	public static void main(String[] args) throws Exception {
+	public static boolean buildTask(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		if (args.length < 2) {
 			System.out.println("input style: sciFile targetFolder listCount[option]");
-			return;
+			return false;
 		}
 		String sciFile = args[0];
 		String targetFolder = args[1] + "/task";
@@ -44,7 +47,7 @@ public class TaskBuilder {
 		File fileSci = new File(sciFile);
 		if (!fileSci.exists()) {
 			System.out.println(sciFile + " not exist!");
-			return;
+			return false;
 		}
 
 		Workspace workspace = null;
@@ -53,10 +56,12 @@ public class TaskBuilder {
 		if (canudb > 0) {
 			String datasourceName = "check";
 			String datasourcePath = args[1] + "\\check\\" + datasourceName + ".udb";
+			datasourcePath = datasourcePath.replaceAll("/", "\\\\");
 			File datasourceFile = new File(datasourcePath);
 			if (datasourceFile.exists()) {
-				System.out.println(datasourcePath + " is exists!");
-				return;
+				SmOptionPane smOptionPane = new SmOptionPane();
+				smOptionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Message_UDBExist"), datasourcePath));
+				return false;
 			} else {
 				datasourceFile.getParentFile().mkdirs();
 			}
@@ -235,6 +240,7 @@ public class TaskBuilder {
 			// Ues the equal division method to split allTask.list to several sub list file
 			splitList(name, listCount);
 		}
+		return true;
 	}
 
 	public static void splitList(String allListFileName, int splitCount) throws Exception {
