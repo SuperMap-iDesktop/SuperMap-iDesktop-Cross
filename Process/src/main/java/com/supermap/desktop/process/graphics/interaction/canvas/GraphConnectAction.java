@@ -105,9 +105,9 @@ public class GraphConnectAction extends CanvasActionAdapter {
 							@Override
 							public void actionPerformed(ActionEvent e) {
 								try {
-									inputs.bind(item.getText(), startGraph.getProcessData());
 									IOGraphConnection connection = new IOGraphConnection(startGraph, endGraph, item.getText());
 									canvas.getConnection().connect(connection);
+									inputs.bind(item.getText(), startGraph.getProcessData());
 									inputsMenu.setVisible(false);
 								} catch (Exception e1) {
 									Application.getActiveApplication().getOutput().output(e1);

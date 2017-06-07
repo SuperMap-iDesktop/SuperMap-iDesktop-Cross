@@ -35,12 +35,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by xie on 2017/4/26.
  * Main dialog for setting  map cache
  */
 public class DialogMapCacheClipBuilder extends SmDialog {
+	private static final int INDEX_MONGOTYPE = 2;
 	private boolean singleProcessClip;
 	private boolean firstStepEnabled = true;
 	private boolean nextStepEnabled = true;
@@ -301,6 +303,13 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				}
 				String sciPath = filePath + mapCacheBuilder.getCacheName() + ".sci";
 				setMapCacheBuilderValueBeforeRun();
+				//SaveType==MongoType,build some cache for creating a database
+				if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
+					BuildMongoCacheThread thread = new BuildMongoCacheThread(this.mapCacheBuilder);
+					thread.start();
+					TimeUnit.SECONDS.sleep(1);
+					thread.setExist(false);
+				}
 				boolean result = mapCacheBuilder.toConfigFile(sciPath);
 				if (result) {
 					String[] params = {sciPath, tasksPath, tasksSize, canudb};
@@ -321,14 +330,6 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					dialogCacheBuilder.fileChooserTaskPath.setPath(tasksPath + "\\task");
 					dialogCacheBuilder.fileChooserWorkspacePath.setPath(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer());
 					dialogCacheBuilder.showDialog();
-					//fixme Can't get the right message when task build finished
-//                    final String finalTasksPath = tasksPath;
-//                    SwingUtilities.invokeLater(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_TargetTaskPath"), finalTasksPath + "\\task"));
-//                        }
-//                    });
 				}
 				if (this.checkBoxAutoClosed.isSelected()) {
 					disposeInfo();
@@ -473,5 +474,27 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 
 	public void setResumeAble(boolean resumeAble) {
 		this.resumeAble = resumeAble;
+	}
+
+
+	class BuildMongoCacheThread extends Thread {
+		volatile boolean exist = true;
+		private MapCacheBuilder mapCacheBuilder;
+
+		public BuildMongoCacheThread(MapCacheBuilder mapCacheBuilder) {
+			this.mapCacheBuilder = mapCacheBuilder;
+		}
+
+		@Override
+		public void run() {
+			this.mapCacheBuilder.buildWithoutConfigFile();
+			while (!exist) {
+				return;
+			}
+		}
+
+		public void setExist(boolean exist) {
+			this.exist = exist;
+		}
 	}
 }

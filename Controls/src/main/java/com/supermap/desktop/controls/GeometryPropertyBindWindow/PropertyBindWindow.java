@@ -10,81 +10,84 @@ import com.supermap.mapping.Selection;
 
 public class PropertyBindWindow implements IPropertyBindWindow {
 
-    private IBindWindow bindWindow;
-    private IBindProperty bindProperty;
-    private IFormMap formMap;
-    // 是否要选中属性表中的某些行
-    private PropertySelectChangeListener selectRowsChangeListener;
-    private MapSelectionChangeListener selectionChangeListener;
+	private IBindWindow bindWindow;
+	private IBindProperty bindProperty;
+	private IFormMap formMap;
+	// 是否要选中属性表中的某些行
+	private PropertySelectChangeListener selectRowsChangeListener;
+	private MapSelectionChangeListener selectionChangeListener;
 
-    public PropertyBindWindow() {
-        // 只需要初始化一次
-        this.selectRowsChangeListener = new PropertySelectChangeListener() {
+	public PropertyBindWindow() {
+		// 只需要初始化一次
+		this.selectRowsChangeListener = new PropertySelectChangeListener() {
 
-            @Override
-            public void selectChanged(int[] selectRows, Dataset dataset) {
-                IFormTabular currentTabuler = null;
-                IForm form = Application.getActiveApplication().getActiveForm();
-                if (null != form && form instanceof IFormTabular) {
-                    currentTabuler = (IFormTabular) form;
-                }
-	            if (null != dataset && bindWindow.getActiveLayer() != null && !bindWindow.getActiveLayer().isDisposed() && dataset.equals(bindWindow.getActiveLayer().getDataset()) && !bindWindow.getTabular().equals(currentTabuler)) {
-		            bindWindow.refreshFormTabular(selectRows);
-                } else if (null == dataset) {
-                    bindWindow.refreshFormTabular(selectRows);
-                }
-            }
-        };
-        this.selectionChangeListener = new MapSelectionChangeListener() {
+			@Override
+			public void selectChanged(int[] selectRows, Dataset dataset) {
+				if (null != dataset) {
+					if (bindWindow.getActiveLayers() != null) {
+						for (int i = 0; i < bindWindow.getActiveLayers().length; i++) {
+							if (!bindWindow.getActiveLayers()[i].isDisposed() && dataset.equals(bindWindow.getActiveLayers()[i].getDataset())) {
+								bindWindow.refreshFormTabular(selectRows);
+							}
+						}
 
-            @Override
-            public void selectionChanged(Selection selection, Layer layer) {
-                bindProperty.refreshMap(selection, layer);
-            }
-        };
-    }
+					}
+				} else if (null == dataset) {
+					bindWindow.refreshFormTabular(selectRows);
+				}
+			}
+		};
+		this.selectionChangeListener = new MapSelectionChangeListener() {
 
-    @Override
-    public void registEvents() {
-        removeEvents();
-        bindProperty.addPropertySelectChangeListener(selectRowsChangeListener);
-        bindWindow.addMapSelectionChangeListener(selectionChangeListener);
-    }
-    @Override
-    public void removeEvents() {
-        if (null != formMap.getMapControl()) {
-            bindProperty.removePropertySelectChangeListener(selectRowsChangeListener);
-            bindWindow.removeMapSelectionChangeListener(selectionChangeListener);
-        }
-    }
+			@Override
+			public void selectionChanged(Selection selection, Layer layer) {
+				bindProperty.refreshMap(selection, layer);
+			}
+		};
+	}
 
-    @Override
-    public IBindWindow getBindWindow() {
-        return bindWindow;
-    }
+	@Override
+	public void registEvents() {
+		removeEvents();
+		bindProperty.addPropertySelectChangeListener(selectRowsChangeListener);
+		bindWindow.addMapSelectionChangeListener(selectionChangeListener);
+	}
 
-    @Override
-    public void setBindWindow(IBindWindow bindWindow, Layer layer) {
-        this.bindWindow = bindWindow;
-        this.bindWindow.setActiveLayer(layer);
-    }
+	@Override
+	public void removeEvents() {
+		if (null != formMap.getMapControl()) {
+			bindProperty.removePropertySelectChangeListener(selectRowsChangeListener);
+			bindWindow.removeMapSelectionChangeListener(selectionChangeListener);
+		}
+	}
 
-    @Override
-    public IBindProperty getBindProperty() {
-        return bindProperty;
-    }
+	@Override
+	public IBindWindow getBindWindow() {
+		return bindWindow;
+	}
 
-    @Override
-    public void setBindProperty(IBindProperty bindProperty) {
-        this.bindProperty = bindProperty;
-    }
+	@Override
+	public void setBindWindow(IBindWindow bindWindow, Layer... layers) {
+		this.bindWindow = bindWindow;
+		this.bindWindow.setActiveLayers(layers);
+	}
 
-    public IFormMap getFormMap() {
-        return formMap;
-    }
+	@Override
+	public IBindProperty getBindProperty() {
+		return bindProperty;
+	}
 
-    public void setFormMap(IFormMap formMap) {
-        this.formMap = formMap;
-    }
+	@Override
+	public void setBindProperty(IBindProperty bindProperty) {
+		this.bindProperty = bindProperty;
+	}
+
+	public IFormMap getFormMap() {
+		return formMap;
+	}
+
+	public void setFormMap(IFormMap formMap) {
+		this.formMap = formMap;
+	}
 
 }

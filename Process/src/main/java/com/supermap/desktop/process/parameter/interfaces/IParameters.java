@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.interfaces;
 
+import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
@@ -36,4 +37,6 @@ public interface IParameters {
 	Outputs getOutputs();
 
 	void replace(ArrayList<IParameter> sources, IParameter... results);
+
+	IProcess getProcess();
 }

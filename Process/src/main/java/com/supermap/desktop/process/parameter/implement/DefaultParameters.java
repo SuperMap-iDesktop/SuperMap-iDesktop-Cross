@@ -2,11 +2,13 @@ package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.FormWorkflow;
+import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.connection.IConnection;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
+import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
-import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.ParameterPanels.EmptyParameterPanel;
 import com.supermap.desktop.process.parameter.events.ValueProviderBindEvent;
@@ -33,7 +35,7 @@ import java.util.Collections;
  * @author XiaJT
  */
 public class DefaultParameters implements IParameters {
-	private MetaProcess metaProcess;
+	private IProcess process;
 	protected ArrayList<IParameter> parameters = new ArrayList<>();
 	protected JPanel panel;
 	private ArrayList<ParameterClassBundleNode> packages = new ArrayList<>();
@@ -42,8 +44,8 @@ public class DefaultParameters implements IParameters {
 	private Inputs inputs = new Inputs(this);
 	private Outputs outputs = new Outputs(this);
 
-	public DefaultParameters(final MetaProcess metaProcess) {
-		this.metaProcess = metaProcess;
+	public DefaultParameters(IProcess process) {
+		this.process = process;
 		packages.add(new ParameterClassBundleNode("com.supermap.desktop.process.parameter.ParameterPanels", "SuperMap.Desktop.Process"));
 
 		inputs.addValueProviderBindListener(new ValueProviderBindListener() {
@@ -52,27 +54,44 @@ public class DefaultParameters implements IParameters {
 				int type = event.getType();
 				InputData inputData = event.getInputData();
 				if (type == ValueProviderBindEvent.BIND) {
-					inputParametersManager.bind(inputData);
+					inputParametersManager.bind(inputData.getName());
+				} else {
+					inputParametersManager.unBind(inputData.getName());
 				}
 			}
 		});
 		inputParametersManager.addPropertyChangedListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				// 修改来源节点时图上联动
-				String propertyName = evt.getPropertyName();
-				IGraph graph = (IGraph) ((ParameterDataNode) evt.getOldValue()).getData();
-				IGraph newGraph = (IGraph) ((ParameterDataNode) evt.getNewValue()).getData();
-				GraphCanvas canvas = ((FormWorkflow) Application.getActiveApplication().getActiveForm()).getCanvas();
-				IGraphStorage graphStorage = canvas.getGraphStorage();
-				IGraph processGraph = null;
-				for (IGraph iGraph : graphStorage.getGraphs()) {
-					if (iGraph instanceof ProcessGraph && ((ProcessGraph) iGraph).getProcess() == metaProcess) {
-						processGraph = iGraph;
-						break;
+				if (evt.getNewValue() == null) {
+					// 约束解除！
+					inputs.getData(evt.getPropertyName()).unbind();
+				} else {
+					// 修改来源节点时图上联动
+					String propertyName = evt.getPropertyName();
+					IGraph graph = (IGraph) ((ParameterDataNode) evt.getOldValue()).getData();
+					IGraph newGraph = (IGraph) ((ParameterDataNode) evt.getNewValue()).getData();
+					GraphCanvas canvas = ((FormWorkflow) Application.getActiveApplication().getActiveForm()).getCanvas();
+					IGraphStorage graphStorage = canvas.getGraphStorage();
+					IGraph processGraph = null;
+					for (IGraph iGraph : graphStorage.getGraphs()) {
+						if (iGraph instanceof ProcessGraph && ((ProcessGraph) iGraph).getProcess() == DefaultParameters.this.process) {
+							processGraph = iGraph;
+							break;
+						}
 					}
+					IConnection[] connections = canvas.getConnection().getConnections();
+					for (IConnection connection : connections) {
+						if (connection.getStart() == graph && connection.getEnd() == processGraph) {
+							inputParametersManager.unBind(connection);
+							canvas.getConnection().removeConnection(connection);
+							break;
+						}
+					}
+					canvas.getConnection().connect((OutputGraph) newGraph, (ProcessGraph) processGraph, propertyName);
+					inputs.bind(propertyName, ((OutputGraph) newGraph).getProcessData());
+					canvas.repaint();
 				}
-				// FIXME: 2017/5/16 所有节点都在，就差连接了！
 			}
 		});
 	}
@@ -171,7 +190,6 @@ public class DefaultParameters implements IParameters {
 		inputs.addData(name, type);
 		inputs.getData(name).addParameters(parameters);
 		inputParametersManager.add(name, parameters);
-
 	}
 
 	@Override
@@ -189,10 +207,17 @@ public class DefaultParameters implements IParameters {
 			}
 			parameters.remove(source);
 		}
-		for (IParameter result : results) {
-			parameters.add(firstIndex, result);
-			firstIndex++;
+		if (firstIndex != Integer.MAX_VALUE) {
+			for (IParameter result : results) {
+				parameters.add(firstIndex, result);
+				firstIndex++;
+			}
 		}
+	}
+
+	@Override
+	public IProcess getProcess() {
+		return process;
 	}
 
 	@Override

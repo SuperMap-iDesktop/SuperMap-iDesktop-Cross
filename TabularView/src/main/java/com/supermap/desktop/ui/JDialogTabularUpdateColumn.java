@@ -1532,7 +1532,13 @@ public class JDialogTabularUpdateColumn extends SmDialog {
 	}
 
 	private void refreshTabular() {
-		tabular.getjTableTabular().repaint(); // 重新查询会导致sql查询后的数据集更新列后查询条件丢失
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				TableUtilities.stopEditing(tabular.getjTableTabular());
+				tabular.getjTableTabular().repaint(); // 重新查询会导致sql查询后的数据集更新列后查询条件丢失
+			}
+		});
 
 	}
 

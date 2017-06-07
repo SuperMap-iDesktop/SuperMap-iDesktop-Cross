@@ -8,6 +8,8 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
@@ -115,25 +117,29 @@ public class MetaProcessISORegion extends MetaProcess {
 
 	@Override
 	public void run() {
-		SurfaceExtractParameter surfaceExtractParameter = new SurfaceExtractParameter();
-		surfaceExtractParameter.setDatumValue(Double.valueOf(datumValue.getSelectedItem().toString()));
-		surfaceExtractParameter.setInterval(Double.valueOf(interval.getSelectedItem().toString()));
-		surfaceExtractParameter.setResampleTolerance(Double.valueOf(resampleTolerance.getSelectedItem().toString()));
-		surfaceExtractParameter.setSmoothMethod((SmoothMethod) ((ParameterDataNode) smoothMethod.getSelectedItem()).getData());
-		surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem().toString()));
-		DatasetGrid src = null;
-		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
-			src = (DatasetGrid) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
-		} else {
-			src = (DatasetGrid) dataset.getSelectedItem();
-		}
+		try {
+			SurfaceExtractParameter surfaceExtractParameter = new SurfaceExtractParameter();
+			surfaceExtractParameter.setDatumValue(Double.valueOf(datumValue.getSelectedItem().toString()));
+			surfaceExtractParameter.setInterval(Double.valueOf(interval.getSelectedItem().toString()));
+			surfaceExtractParameter.setResampleTolerance(Double.valueOf(resampleTolerance.getSelectedItem().toString()));
+			surfaceExtractParameter.setSmoothMethod((SmoothMethod) ((ParameterDataNode) smoothMethod.getSelectedItem()).getData());
+			surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem().toString()));
+			DatasetGrid src = null;
+			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
+				src = (DatasetGrid) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
+			} else {
+				src = (DatasetGrid) dataset.getSelectedItem();
+			}
 
-		SurfaceAnalyst.addSteppedListener(this.stepListener);
-		DatasetVector result = SurfaceAnalyst.extractIsoregion(surfaceExtractParameter, src, targetDataset.getResultDatasource(), targetDataset.getDatasetName(), null);
-		SurfaceAnalyst.removeSteppedListener(this.stepListener);
-		this.getOutputs().getData(OUTPUT_DATA).setValue(result);
-		fireRunning(new RunningEvent(MetaProcessISORegion.this, 100, "finished"));
-		setFinished(true);
+			SurfaceAnalyst.addSteppedListener(this.stepListener);
+			DatasetVector result = SurfaceAnalyst.extractIsoregion(surfaceExtractParameter, src, targetDataset.getResultDatasource(), targetDataset.getDatasetName(), null);
+			SurfaceAnalyst.removeSteppedListener(this.stepListener);
+			this.getOutputs().getData(OUTPUT_DATA).setValue(result);
+			fireRunning(new RunningEvent(MetaProcessISORegion.this, 100, "finished"));
+			setFinished(true);
+		}catch (Exception e){
+			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+		}
 	}
 
 	@Override

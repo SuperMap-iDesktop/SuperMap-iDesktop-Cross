@@ -18,7 +18,7 @@ public class BindWindow implements IBindWindow {
 
 	private boolean selectionHasChanged = false;
 
-	private Layer layer;
+	private Layer[] layers;
 	private MouseAdapter tabularTableListener;
 	private KeyAdapter tabularTableKeyListener;
 	private MouseMotionAdapter listMouseMotionListener;
@@ -77,16 +77,18 @@ public class BindWindow implements IBindWindow {
 		int[] selectRows = tabularTable.getSelectedRows();
 		int[] idRows = new int[selectRows.length];
 		for (int i = 0; i < selectRows.length; i++) {
-			idRows[i] = (int) this.formTabular.getSmId(selectRows[i]);
+			idRows[i] = this.formTabular.getSmId(selectRows[i]);
 		}
-		if (!layer.isDiposed() && null != this.layer.getDataset()) {
-			DatasetVector datasetVector = (DatasetVector) this.layer.getDataset();
-			Recordset recordset = datasetVector.query(idRows, CursorType.STATIC);
-			Selection selection = new Selection();
-			selection.fromRecordset(recordset);
-			fireSelectionChanged(selection, layer);
-			selection.clear();
-			recordset.dispose();
+		for (int i = 0; i < layers.length; i++) {
+			if (!layers[i].isDisposed() && null != this.layers[i].getDataset()) {
+				DatasetVector datasetVector = (DatasetVector) this.layers[i].getDataset();
+				Recordset recordset = datasetVector.query(idRows, CursorType.STATIC);
+				Selection selection = new Selection();
+				selection.fromRecordset(recordset);
+				fireSelectionChanged(selection, layers[i]);
+				selection.clear();
+				recordset.dispose();
+			}
 		}
 	}
 
@@ -135,7 +137,7 @@ public class BindWindow implements IBindWindow {
 	@Override
 	public void dispose() {
 		removeEvents();
-		this.layer = null;
+		this.layers = null;
 		this.formTabular = null;
 		this.listMouseListener = null;
 		this.listMouseMotionListener = null;
@@ -175,8 +177,8 @@ public class BindWindow implements IBindWindow {
 	}
 
 	@Override
-	public void setActiveLayer(Layer layer) {
-		this.layer = layer;
+	public void setActiveLayers(Layer... layers) {
+		this.layers = layers;
 	}
 
 	@Override
@@ -185,8 +187,8 @@ public class BindWindow implements IBindWindow {
 	}
 
 	@Override
-	public Layer getActiveLayer() {
-		return this.layer;
+	public Layer[] getActiveLayers() {
+		return this.layers;
 	}
 
 }

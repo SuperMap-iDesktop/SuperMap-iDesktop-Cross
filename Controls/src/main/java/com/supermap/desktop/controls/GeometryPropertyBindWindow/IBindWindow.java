@@ -17,45 +17,45 @@ public interface IBindWindow {
 	 * 
 	 * @return
 	 */
-	public boolean isSelectionHasChanged();
+	 boolean isSelectionHasChanged();
 
 	/**
 	 * 设置当前活动的图层
 	 * 
 	 * @param layer
 	 */
-	public void setActiveLayer(Layer layer);
+	 void setActiveLayers(Layer... layer);
 
 	/**
 	 * 获取当前活动的图层
 	 *
      * @param
      */
-	public Layer getActiveLayer();
+	 Layer[] getActiveLayers();
 
 	/**
 	 * 刷新属性表
 	 */
-	public void refreshFormTabular(int[] addRows);
+	 void refreshFormTabular(int[] addRows);
 
 	/**
 	 * 移除事件
 	 */
-	public void removeEvents();
+	 void removeEvents();
 
 	/**
 	 * 销毁类，释放资源
 	 */
-	public void dispose();
+	 void dispose();
 
-	public void addMapSelectionChangeListener(MapSelectionChangeListener l);
+	 void addMapSelectionChangeListener(MapSelectionChangeListener l);
 
-	public void removeMapSelectionChangeListener(MapSelectionChangeListener l);
+	 void removeMapSelectionChangeListener(MapSelectionChangeListener l);
 
-    public void fireSelectionChanged(Selection selection, Layer layer);
+     void fireSelectionChanged(Selection selection, Layer layer);
 
 	/**
 	 * 获取属性表
 	 */
-	public IFormTabular getTabular();
+	 IFormTabular getTabular();
 }

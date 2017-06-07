@@ -128,6 +128,9 @@ public class Inputs {
 	public void unbind(String name) {
 		if (this.datas.containsKey(name)) {
 			this.datas.get(name).unbind();
+			ValueProviderBindEvent event = new ValueProviderBindEvent(this.datas.get(name));
+			event.setType(ValueProviderBindEvent.UNBIND);
+			fireValueProviderBind(event);
 		}
 	}
 }
