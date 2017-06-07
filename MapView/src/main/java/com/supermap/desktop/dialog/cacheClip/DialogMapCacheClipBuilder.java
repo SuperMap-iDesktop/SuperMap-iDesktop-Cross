@@ -308,6 +308,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					BuildMongoCacheThread thread = new BuildMongoCacheThread(this.mapCacheBuilder);
 					thread.start();
 					TimeUnit.SECONDS.sleep(1);
+					thread.setExist(false);
 				}
 				boolean result = mapCacheBuilder.toConfigFile(sciPath);
 				if (result) {
