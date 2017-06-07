@@ -3,25 +3,20 @@ package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 import com.supermap.data.CursorType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Recordset;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
 
 import javax.swing.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.event.*;
 import java.util.Vector;
 
 public class BindWindow implements IBindWindow {
 	private IFormTabular formTabular;
 
-	private boolean selectionHasChanged;
+	private boolean selectionHasChanged = false;
 
 	private Layer layer;
 	private MouseAdapter tabularTableListener;
@@ -97,14 +92,33 @@ public class BindWindow implements IBindWindow {
 
 	@Override
 	public void refreshFormTabular(int[] addRows) {
-		List<Integer> tempRows = new ArrayList<Integer>();
+		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+		for (int i = 0; i < formManager.getCount(); i++) {
+			if (this.formTabular.hashCode() == formManager.get(i).hashCode()) {
+				this.formTabular = (IFormTabular) formManager.get(i);
+			}
+		}
+		int[] tempRows = new int[addRows.length];
 		for (int i = 0; i < addRows.length; i++) {
-			tempRows.add(this.formTabular.getRowBySmId(addRows[i]));
+			tempRows[i] = getRowBySmId(addRows[i]);
 		}
 		if (this.formTabular.getRowCount() > 0) {
 			this.formTabular.addRows(tempRows);
 		}
 	}
+
+	private int getRowBySmId(int addRow) {
+		int selectRow = -1;
+		int rowCount = this.formTabular.getjTableTabular().getRowCount();
+		for (int i = 0; i < rowCount; i++) {
+			if (addRow == this.formTabular.getjTableTabular().getValueAt(i, 0)) {
+				selectRow = i;
+			}
+		}
+
+		return selectRow;
+	}
+
 
 	public boolean isSelectionHasChanged() {
 		return selectionHasChanged;

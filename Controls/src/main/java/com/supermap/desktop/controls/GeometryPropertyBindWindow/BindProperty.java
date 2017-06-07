@@ -15,9 +15,7 @@ import com.supermap.mapping.Map;
 import com.supermap.mapping.MapDrawingEvent;
 import com.supermap.mapping.MapDrawingListener;
 import com.supermap.mapping.Selection;
-import com.supermap.ui.GeometrySelectChangedEvent;
-import com.supermap.ui.GeometrySelectChangedListener;
-import com.supermap.ui.MapControl;
+import com.supermap.ui.*;
 
 import java.util.Vector;
 

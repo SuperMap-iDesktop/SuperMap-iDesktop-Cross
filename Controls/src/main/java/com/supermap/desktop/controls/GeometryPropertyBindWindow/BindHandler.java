@@ -133,9 +133,9 @@ public class BindHandler {
 		int size = formTabularList.size();
 		int[] selectRows = formTabular.getjTableTabular().getSelectedRows();
 		int rowSize = selectRows.length;
-		List<Integer> tempRows = new ArrayList();
+		int[] tempRows = new int[rowSize];
 		for (int i = 0; i < rowSize; i++) {
-			tempRows.add(selectRows[i]);
+			tempRows[i] = selectRows[i];
 		}
 		for (int i = 0; i < size; i++) {
 			IFormTabular tempFormTabular = (IFormTabular) formTabularList.get(i);
