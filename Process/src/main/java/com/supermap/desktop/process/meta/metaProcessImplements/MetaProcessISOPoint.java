@@ -8,6 +8,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
@@ -124,10 +125,10 @@ public class MetaProcessISOPoint extends MetaProcess {
 		sourceData.addParameters(sourceDatasource, sourceDataset, fields);
 		ParameterCombine resultData = new ParameterCombine();
 		resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
-		resultData.addParameters(targetDataset, maxISOLine, minISOLine, isoLine);
+		resultData.addParameters(targetDataset, maxISOLine, minISOLine, isoLine, terrainInterpolateType);
 		ParameterCombine paramSet = new ParameterCombine();
 		paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
-		paramSet.addParameters(terrainInterpolateType,resolution, datumValue, interval,
+		paramSet.addParameters(resolution, datumValue, interval,
 				resampleTolerance, smoothMethod, smoothNess);
 
 		this.parameters.setParameters(sourceData, resultData, paramSet);
@@ -142,25 +143,29 @@ public class MetaProcessISOPoint extends MetaProcess {
 
 	@Override
 	public void run() {
-		SurfaceExtractParameter surfaceExtractParameter = new SurfaceExtractParameter();
-		surfaceExtractParameter.setDatumValue(Double.valueOf(datumValue.getSelectedItem().toString()));
-		surfaceExtractParameter.setInterval(Double.valueOf(interval.getSelectedItem().toString()));
-		surfaceExtractParameter.setResampleTolerance(Double.valueOf(resampleTolerance.getSelectedItem().toString()));
-		surfaceExtractParameter.setSmoothMethod((SmoothMethod) ((ParameterDataNode) smoothMethod.getSelectedItem()).getData());
-		surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem().toString()));
-		SurfaceAnalyst.addSteppedListener(this.stepListener);
+		try {
+			SurfaceExtractParameter surfaceExtractParameter = new SurfaceExtractParameter();
+			surfaceExtractParameter.setDatumValue(Double.valueOf(datumValue.getSelectedItem().toString()));
+			surfaceExtractParameter.setInterval(Double.valueOf(interval.getSelectedItem().toString()));
+			surfaceExtractParameter.setResampleTolerance(Double.valueOf(resampleTolerance.getSelectedItem().toString()));
+			surfaceExtractParameter.setSmoothMethod((SmoothMethod) ((ParameterDataNode) smoothMethod.getSelectedItem()).getData());
+			surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem().toString()));
+			SurfaceAnalyst.addSteppedListener(this.stepListener);
 
-		DatasetVector src = null;
-		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
-			src = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
-		} else {
-			src = (DatasetVector) sourceDataset.getSelectedItem();
-		}
-		SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, ((ParameterDataNode) fields.getSelectedItem()).getDescribe(), ((TerrainInterpolateType) ((ParameterDataNode) terrainInterpolateType.getSelectedItem()).getData()), (Double) resolution.getSelectedItem(), null);
-		SurfaceAnalyst.removeSteppedListener(this.stepListener);
+			DatasetVector src = null;
+			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
+				src = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
+			} else {
+				src = (DatasetVector) sourceDataset.getSelectedItem();
+			}
+			SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, ((ParameterDataNode) fields.getSelectedItem()).getDescribe(), ((TerrainInterpolateType) ((ParameterDataNode) terrainInterpolateType.getSelectedItem()).getData()), (Double) resolution.getSelectedItem(), null);
+			SurfaceAnalyst.removeSteppedListener(this.stepListener);
 //		this.outputs.getData(OUTPUT_DATA).setValue();
-		fireRunning(new RunningEvent(MetaProcessISOPoint.this, 100, "finished"));
-		setFinished(true);
+			fireRunning(new RunningEvent(MetaProcessISOPoint.this, 100, "finished"));
+			setFinished(true);
+		}catch (Exception e){
+			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+		}
 	}
 
 	@Override
