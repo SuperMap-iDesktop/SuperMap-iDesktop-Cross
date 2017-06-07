@@ -54,6 +54,7 @@ public class GraphConnectAction extends CanvasActionAdapter {
 			@Override
 			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 				inputsMenu.removeAll();
+				GraphConnectAction.this.canvas.repaint();
 			}
 
 			@Override
@@ -110,12 +111,11 @@ public class GraphConnectAction extends CanvasActionAdapter {
 									inputsMenu.setVisible(false);
 								} catch (Exception e1) {
 									Application.getActiveApplication().getOutput().output(e1);
-								} finally {
-									GraphConnectAction.this.canvas.repaint();
 								}
 							}
 						});
 					}
+
 					this.inputsMenu.show(this.canvas, e.getX(), e.getY());
 				}
 			}
