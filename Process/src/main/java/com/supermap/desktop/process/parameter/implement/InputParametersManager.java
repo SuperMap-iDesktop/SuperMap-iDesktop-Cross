@@ -63,7 +63,7 @@ public class InputParametersManager {
 				@Override
 				public void graphCreated(GraphCreatedEvent e) {
 					if (e.getGraph() instanceof OutputGraph && ((OutputGraph) e.getGraph()).getProcessGraph().getProcess() != parameters.getProcess()) {// 不一定都是OutputGraph
-						parameterComboBox.addItem(new ParameterDataNode(((OutputGraph) e.getGraph()).getTitle(), e.getGraph()));
+						parameterComboBox.addItem(new ParameterDataNode(((OutputGraph) e.getGraph()).getProcessGraph().getTitle() + "_" + ((OutputGraph) e.getGraph()).getTitle(), e.getGraph()));
 					}
 				}
 			});
@@ -179,7 +179,7 @@ public class InputParametersManager {
 		ArrayList<IGraph> allDataNode = activeForm.getAllDataNode();
 		for (IGraph graph : allDataNode) {
 			if (((OutputGraph) graph).getProcessGraph().getProcess() != this.parameters.getProcess())
-				parameterComboBox.addItem(new ParameterDataNode(((OutputGraph) graph).getTitle(), graph));
+				parameterComboBox.addItem(new ParameterDataNode(((OutputGraph) graph).getProcessGraph().getTitle() + "_" + ((OutputGraph) graph).getTitle(), graph));
 		}
 	}
 
