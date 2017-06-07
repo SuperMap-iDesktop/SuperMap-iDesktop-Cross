@@ -487,8 +487,9 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 
 		@Override
 		public void run() {
-			while (exist) {
-				this.mapCacheBuilder.buildWithoutConfigFile();
+			this.mapCacheBuilder.buildWithoutConfigFile();
+			while (!exist) {
+				return;
 			}
 		}
 
