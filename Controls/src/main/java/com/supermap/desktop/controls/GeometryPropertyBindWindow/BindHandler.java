@@ -360,12 +360,12 @@ public class BindHandler {
 			IFormMap formMap = (IFormMap) formMapList.get(i);
 			for (int j = 0; j < formTabularSize; j++) {
 				IFormTabular formTabular = (IFormTabular) formTabularList.get(j);
-				Layer layer = containsLayer(formMap, formTabular);
-				if (null != layer) {
+				Layer[] layers = containsLayer(formMap, formTabular);
+				if (null != layers) {
 					PropertyBindWindow propertyBindWindow = new PropertyBindWindow();
 					propertyBindWindow.setFormMap(formMap);
 					propertyBindWindow.setBindProperty(new BindProperty(formMap.getMapControl()));
-					propertyBindWindow.setBindWindow(new BindWindow(formTabular), layer);
+					propertyBindWindow.setBindWindow(new BindWindow(formTabular), layers);
 					propertyBindWindow.registEvents();
 					propertyBindWindows.add(propertyBindWindow);
 				}
@@ -374,18 +374,18 @@ public class BindHandler {
 
 	}
 
-	private Layer containsLayer(IFormMap formMap, IFormTabular formTabular) {
-		Layer result = null;
+	private Layer[] containsLayer(IFormMap formMap, IFormTabular formTabular) {
+		ArrayList<Layer> resultArray = new ArrayList<>();
 		Layers layers = formMap.getMapControl().getMap().getLayers();
 		int layersCount = layers.getCount();
 		for (int i = 0; i < layersCount; i++) {
 			Layer tempLayer = layers.get(i);
 			if (null != tempLayer.getDataset() && null != formTabular.getRecordset()
 					&& null != formTabular.getRecordset().getDataset() && tempLayer.getDataset().equals(formTabular.getRecordset().getDataset())) {
-				result = tempLayer;
+				resultArray.add(tempLayer);
 			}
 		}
-		return result;
+		return resultArray.toArray(new Layer[resultArray.size()]);
 	}
 
 	public void removeFormMapsAndFormTabularsBind() {

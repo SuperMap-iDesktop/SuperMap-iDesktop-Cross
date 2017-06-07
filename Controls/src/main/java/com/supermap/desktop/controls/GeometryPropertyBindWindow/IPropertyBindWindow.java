@@ -10,7 +10,7 @@ public interface IPropertyBindWindow {
 
     IBindWindow getBindWindow();
 
-    void setBindWindow(IBindWindow bindWindow, Layer activeLayer);
+    void setBindWindow(IBindWindow bindWindow, Layer... activeLayers);
 
     IBindProperty getBindProperty();
 
