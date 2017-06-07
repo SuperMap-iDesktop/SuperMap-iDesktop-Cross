@@ -15,6 +15,7 @@ import com.supermap.desktop.spatialanalyst.SpatialAnalystProperties;
 import com.supermap.desktop.ui.FieldsSetDialog;
 import com.supermap.desktop.ui.SMFormattedTextField;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.WorkspaceComponentManager;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
@@ -451,7 +452,7 @@ public class OverlayAnalystDialog extends SmDialog {
 
 	private void initPanelTargetLayout() {
 		this.panelTarget.setLayout(new GridBagLayout());
-		this.textFieldTargetDataset.setPreferredSize(new Dimension(200,23));
+		this.textFieldTargetDataset.setPreferredSize(new Dimension(200, 23));
 		this.panelTarget.add(this.labelTargetDatasource, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));
 		this.panelTarget.add(this.comboboxTargetDatasource, new GridBagConstraintsHelper(1, 0, 4, 1).setAnchor(GridBagConstraints.WEST).setInsets(5, 0, 5, 10).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1));
 		this.panelTarget.add(this.labelTargetDataset, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setInsets(0, 5, 5, 10).setFill(GridBagConstraints.NONE).setWeight(0, 0));

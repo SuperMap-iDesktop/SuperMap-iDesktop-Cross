@@ -496,7 +496,7 @@ public class WorkspaceComponentManager extends JComponent {
 	/**
 	 * 设置选中节点的属性信息
 	 */
-	private void setSelectedDataProperty() {
+	public void setSelectedDataProperty() {
 		TreePath selectedPath = this.workspaceTree.getSelectionPath();
 
 		if (selectedPath != null && selectedPath.getLastPathComponent() instanceof DefaultMutableTreeNode) {

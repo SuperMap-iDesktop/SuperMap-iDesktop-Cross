@@ -231,11 +231,11 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 		//设置每行数据的序号（第几个数据）
 		jScrollPaneChildWindow.setRowHeaderView(rowHeader);
 		//在jscrollPaneChildWindow左上角设置一个序号标签
-		JLabel scrollPaneUpperLeftLabel=new JLabel(TabularViewProperties.getString("String_TabularForm_Sequence"),SwingConstants.CENTER);
+		JLabel scrollPaneUpperLeftLabel = new JLabel(TabularViewProperties.getString("String_TabularForm_Sequence"), SwingConstants.CENTER);
 		scrollPaneUpperLeftLabel.setOpaque(true);
 		scrollPaneUpperLeftLabel.setBackground(COLOR_HEADER);
 		scrollPaneUpperLeftLabel.setBorder(new LineBorder(Color.LIGHT_GRAY));
-		jScrollPaneChildWindow.setCorner(JScrollPane.UPPER_LEFT_CORNER,scrollPaneUpperLeftLabel);
+		jScrollPaneChildWindow.setCorner(JScrollPane.UPPER_LEFT_CORNER, scrollPaneUpperLeftLabel);
 
 		add(jScrollPaneChildWindow, BorderLayout.CENTER);
 		if (Application.getActiveApplication().getMainFrame() != null) {
@@ -598,18 +598,18 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 		jTableTabular.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		jTableTabular.getTableHeader().setDefaultRenderer(new DefaultTableCellRenderer(){
+		jTableTabular.getTableHeader().setDefaultRenderer(new DefaultTableCellRenderer() {
 			@Override
 			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 				JButton button = new JButton(value.toString());
 				button.setHorizontalAlignment(CENTER);
-				button.setBackground(isSelected?COLOR_HEADER_SELECTED:COLOR_HEADER);
+				button.setBackground(isSelected ? COLOR_HEADER_SELECTED : COLOR_HEADER);
 				button.setContentAreaFilled(false);
 				button.setFocusPainted(false);
 				button.setOpaque(true);
 				button.setBorder(new LineBorder(Color.LIGHT_GRAY));
-				button.setPreferredSize(new Dimension(button.getWidth(),PREFER_ROW_HEIGHT));
-				button.setMinimumSize(new Dimension(button.getWidth(),PREFER_ROW_HEIGHT));
+				button.setPreferredSize(new Dimension(button.getWidth(), PREFER_ROW_HEIGHT));
+				button.setMinimumSize(new Dimension(button.getWidth(), PREFER_ROW_HEIGHT));
 				return button;
 			}
 		});
@@ -717,18 +717,18 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	@Override
-	public void addRows(List<Integer> addRows) {
+	public void addRows(int... addRows) {
 		this.jTableTabular.clearSelection();
-		if (addRows.size() == 0) {
+		if (addRows.length == 0) {
 			return;
 		}
-		for (int i = 0; i < addRows.size(); i++) {
-			if (addRows.get(i) != -1 && addRows.get(i) < jTableTabular.getRowCount()) {
-				this.jTableTabular.addRowSelectionInterval(addRows.get(i), addRows.get(i));
+		for (int i = 0; i < addRows.length; i++) {
+			if (addRows[i] != -1 && addRows[i] < jTableTabular.getRowCount()) {
+				this.jTableTabular.addRowSelectionInterval(addRows[i], addRows[i]);
 			}
 			setSelectedColumn(0, jTableTabular.getColumnCount() - 1);
 		}
-		sureRowVisible(addRows.get(0));
+		sureRowVisible(addRows[0]);
 		TabularStatisticUtilties.updateSatusbars(FormTabular.this);
 	}
 
@@ -825,12 +825,13 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 
 	public class RowHeaderRenderer extends JButton implements ListCellRenderer {
 		JTable table;
+
 		RowHeaderRenderer(JTable table) {
 			// TODO: 2017/4/20 UGDJ-565
 			this.table = table;
 			JTableHeader header = table.getTableHeader();
 			setHorizontalAlignment(CENTER);
-			setBackground(hasFocus()?COLOR_HEADER_SELECTED:COLOR_HEADER);
+			setBackground(hasFocus() ? COLOR_HEADER_SELECTED : COLOR_HEADER);
 			setContentAreaFilled(false);
 			setFocusPainted(false);
 			setOpaque(true);
@@ -962,11 +963,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 				jTableTabular.addRowSelectionInterval(row, row);
 			}
 		}
-	}
-
-	@Override
-	public int getRowBySmId(int smId) {
-		return tabularTableModel.getRowBySmId(smId);
 	}
 
 	@Override
