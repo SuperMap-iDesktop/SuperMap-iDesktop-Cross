@@ -502,8 +502,7 @@ public class DialogCacheBuilder extends SmDialog {
 					hour = totalTime / 3600000;
 					minutes = (totalTime % 3600000) / 60000;
 					second = ((totalTime % 3600000) % 60000) / 1000;
-				}
-				if (totalTime >= 60000) {
+				}else if (totalTime >= 60000) {
 					minutes = totalTime / 60000;
 					second = (totalTime % 60000) / 1000;
 				} else {
