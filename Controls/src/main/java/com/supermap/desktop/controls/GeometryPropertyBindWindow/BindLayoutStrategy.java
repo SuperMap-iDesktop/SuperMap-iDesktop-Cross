@@ -1,5 +1,7 @@
 package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 
+import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.ui.FormManager;
 import com.supermap.desktop.ui.mdi.IMdiContainer;
 import com.supermap.desktop.ui.mdi.MdiGroup;
@@ -9,10 +11,8 @@ import com.supermap.desktop.ui.mdi.layout.ILayoutStrategy;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by xie on 2016/12/22.
@@ -104,6 +104,26 @@ public class BindLayoutStrategy implements ILayoutStrategy {
 
 		removeGroup(group.getUserObject(), group);
 		return true;
+	}
+
+	@Override
+	public MdiGroup dispatchGroup(MdiPage page) {
+		MdiGroup dispatched = null;
+
+		if (page.getComponent() instanceof IFormMap) {
+			if (this.mapGroups.contains(this.container.getSelectedGroup())) {
+				dispatched = this.container.getSelectedGroup();
+			} else {
+				dispatched = this.mapGroups.size() > 0 ? this.mapGroups.get(0) : this.container.createGroup(MAPS);
+			}
+		} else if (page.getComponent() instanceof IFormTabular) {
+			if (this.tabularGroups.contains(this.container.getSelectedGroup())) {
+				dispatched = this.container.getSelectedGroup();
+			} else {
+				dispatched = this.tabularGroups.size() > 0 ? this.tabularGroups.get(0) : this.container.createGroup(TABULARS);
+			}
+		}
+		return dispatched;
 	}
 
 	private void removeGroup(Object type, MdiGroup group) {
