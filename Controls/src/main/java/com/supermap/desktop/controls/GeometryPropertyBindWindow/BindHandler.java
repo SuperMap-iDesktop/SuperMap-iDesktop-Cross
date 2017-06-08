@@ -8,6 +8,7 @@ import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.desktop.event.FormClosingEvent;
 import com.supermap.desktop.event.FormClosingListener;
 import com.supermap.desktop.ui.FormManager;
+import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.mapping.*;
 import com.supermap.ui.GeometrySelectChangedEvent;
@@ -42,7 +43,7 @@ public class BindHandler {
 		public void mouseExited(MouseEvent e) {
 			int size = formMapList.size();
 			for (int j = 0; j < size; j++) {
-				IForm formMap = (IForm) formMapList.get(j);
+				IForm formMap = formMapList.get(j);
 				Map map;
 				if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl()) {
 					map = ((IFormMap) formMap).getMapControl().getMap();
@@ -152,7 +153,7 @@ public class BindHandler {
 //		sourceMap.refreshTrackingLayer();
 		Point2Ds points = new Point2Ds();
 		for (int j = 0; j < size; j++) {
-			IForm formMap = (IForm) formMapList.get(j);
+			IForm formMap = formMapList.get(j);
 			Map map;
 			if (formMap instanceof IFormMap && null != ((IFormMap) formMap).getMapControl() && !e.getSource().equals(((IFormMap) formMap).getMapControl())) {
 				map = ((IFormMap) formMap).getMapControl().getMap();
@@ -234,7 +235,7 @@ public class BindHandler {
 				double scale = formMap.getMapControl().getMap().getScale();
 
 				// 中心点如果不同或者比例尺不同，则重设中心点和比例尺
-				if (!center.equals(activeCenter) || Double.compare(activeScale, scale) != 0) {
+				if (!center.equals(activeCenter) || !DoubleUtilities.equals(activeScale, scale, 8)) {
 					unregister(formMap);
 					formMap.getMapControl().getMap().setCenter(activeCenter);
 					formMap.getMapControl().getMap().setScale(activeScale);
@@ -365,7 +366,7 @@ public class BindHandler {
 					PropertyBindWindow propertyBindWindow = new PropertyBindWindow();
 					propertyBindWindow.setFormMap(formMap);
 					propertyBindWindow.setBindProperty(new BindProperty(formMap.getMapControl()));
-					propertyBindWindow.setBindWindow(new BindWindow(formTabular), layers);
+					propertyBindWindow.setBindWindow(new BindWindow(formTabular), formMap.getMapControl());
 					propertyBindWindow.registEvents();
 					propertyBindWindows.add(propertyBindWindow);
 				}

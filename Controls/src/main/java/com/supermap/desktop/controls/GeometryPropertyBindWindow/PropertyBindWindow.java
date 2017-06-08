@@ -5,8 +5,10 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
+import com.supermap.desktop.utilities.MapControlUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
+import com.supermap.ui.MapControl;
 
 public class PropertyBindWindow implements IPropertyBindWindow {
 
@@ -24,9 +26,9 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 			@Override
 			public void selectChanged(int[] selectRows, Dataset dataset) {
 				if (null != dataset) {
-					if (bindWindow.getActiveLayers() != null) {
-						for (int i = 0; i < bindWindow.getActiveLayers().length; i++) {
-							if (!bindWindow.getActiveLayers()[i].isDisposed() && dataset.equals(bindWindow.getActiveLayers()[i].getDataset())) {
+					if (bindWindow.getMapControl() != null) {
+						for (int i = 0; i < bindWindow.getMapControl().getMap().getLayers().getCount(); i++) {
+							if (!bindWindow.getMapControl().getMap().getLayers().get(i).isDisposed() && dataset.equals(bindWindow.getMapControl().getMap().getLayers().get(i).getDataset())) {
 								bindWindow.refreshFormTabular(selectRows);
 							}
 						}
@@ -67,9 +69,9 @@ public class PropertyBindWindow implements IPropertyBindWindow {
 	}
 
 	@Override
-	public void setBindWindow(IBindWindow bindWindow, Layer... layers) {
+	public void setBindWindow(IBindWindow bindWindow, MapControl mapControl) {
 		this.bindWindow = bindWindow;
-		this.bindWindow.setActiveLayers(layers);
+		this.bindWindow.setMapControl(mapControl);
 	}
 
 	@Override

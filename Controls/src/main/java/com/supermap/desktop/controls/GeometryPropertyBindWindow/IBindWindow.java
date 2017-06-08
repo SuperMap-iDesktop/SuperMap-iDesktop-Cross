@@ -3,6 +3,7 @@ package com.supermap.desktop.controls.GeometryPropertyBindWindow;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Selection;
+import com.supermap.ui.MapControl;
 
 /**
  * 关联窗口接口
@@ -22,16 +23,16 @@ public interface IBindWindow {
 	/**
 	 * 设置当前活动的图层
 	 * 
-	 * @param layer
+	 * @param mapcontrol
 	 */
-	 void setActiveLayers(Layer... layer);
+	 void setMapControl(MapControl mapcontrol);
 
 	/**
 	 * 获取当前活动的图层
 	 *
      * @param
      */
-	 Layer[] getActiveLayers();
+	 MapControl getMapControl();
 
 	/**
 	 * 刷新属性表
