@@ -365,7 +365,7 @@ public class BindHandler {
 					PropertyBindWindow propertyBindWindow = new PropertyBindWindow();
 					propertyBindWindow.setFormMap(formMap);
 					propertyBindWindow.setBindProperty(new BindProperty(formMap.getMapControl()));
-					propertyBindWindow.setBindWindow(new BindWindow(formTabular), layers);
+					propertyBindWindow.setBindWindow(new BindWindow(formTabular), formMap.getMapControl());
 					propertyBindWindow.registEvents();
 					propertyBindWindows.add(propertyBindWindow);
 				}
