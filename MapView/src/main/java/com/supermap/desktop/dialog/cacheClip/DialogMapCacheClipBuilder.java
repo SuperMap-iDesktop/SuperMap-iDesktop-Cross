@@ -9,6 +9,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
+import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.dialog.cacheClip.cache.TaskBuilder;
 import com.supermap.desktop.mapview.MapCache.CacheProgressCallable;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -32,7 +33,10 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.TimerTask;
 
 /**
  * Created by xie on 2017/4/26.
@@ -293,12 +297,9 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				singleProcessBuilder();
 			} else {
 				String tasksPath = nextStepPane.fileChooserControlTaskPath.getPath();
-				tasksPath = tasksPath.replaceAll("\\\\", "/");
 				String filePath = firstStepPane.fileChooserControlFileCache.getPath();
-				if (!filePath.endsWith("\\")) {
-					filePath += "\\";
-				}
-				String sciPath = filePath + mapCacheBuilder.getCacheName() + ".sci";
+				tasksPath = CacheUtilities.replacePath(tasksPath);
+				String sciPath = CacheUtilities.replacePath(filePath, mapCacheBuilder.getCacheName() + ".sci");
 				setMapCacheBuilderValueBeforeRun();
 				//SaveType==MongoType,build some cache for creating a database
 				if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
@@ -317,7 +318,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 							timer.cancel();
 						}
 					};
-					long delay = 20*1000;
+					long delay = 20 * 1000;
 					timer.schedule(task, delay);
 				}
 				boolean result = mapCacheBuilder.toConfigFile(sciPath);
@@ -333,11 +334,11 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					disposeInfo();
 					DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder();
 					dialogCacheBuilder.textFieldMapName.setText(this.currentMap.getName());
-					tasksPath = tasksPath.replaceAll("/", "\\\\");
+					String targetTaskPath = CacheUtilities.replacePath(tasksPath,"task");
 					File oldFile = new File(sciPath);
 					dialogCacheBuilder.setSciFile(oldFile);
 					dialogCacheBuilder.fileChooserTotalTaskPath.setPath(sciPath);
-					dialogCacheBuilder.fileChooserTaskPath.setPath(tasksPath + "\\task");
+					dialogCacheBuilder.fileChooserTaskPath.setPath(targetTaskPath);
 					dialogCacheBuilder.fileChooserWorkspacePath.setPath(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer());
 					dialogCacheBuilder.showDialog();
 				}

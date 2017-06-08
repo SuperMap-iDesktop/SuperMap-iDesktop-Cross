@@ -1,5 +1,7 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -8,7 +10,41 @@ import java.util.ArrayList;
  * Created by xie on 2017/5/31.
  */
 public class CacheUtilities {
-	public static void startProcess(String[] params, String className,String cacheType) {
+
+	/**
+	 * Replace path
+	 *
+	 * @param sourceStr
+	 * @return
+	 */
+	public static String replacePath(String sourceStr) {
+		if (SystemPropertyUtilities.isWindows()) {
+			sourceStr = sourceStr.replaceAll("/", "\\\\");
+		} else if (SystemPropertyUtilities.isLinux()) {
+			sourceStr = sourceStr.replaceAll("\\\\", "/");
+		}
+		return sourceStr;
+	}
+
+	public static String replacePath(String sourceStr, String name) {
+		String targetStr = "";
+		sourceStr = replacePath(sourceStr);
+		if (SystemPropertyUtilities.isWindows() && !sourceStr.endsWith("\\")) {
+			sourceStr += "\\";
+		} else if (SystemPropertyUtilities.isLinux() && !sourceStr.endsWith("/")) {
+			sourceStr += "/";
+		}
+		return sourceStr + name;
+	}
+
+	/**
+	 * Start a new process
+	 *
+	 * @param params
+	 * @param className
+	 * @param cacheType
+	 */
+	public static void startProcess(String[] params, String className, String cacheType) {
 		ArrayList<String> arguments = new ArrayList<String>();
 		arguments.add("java");
 		//arguments.addAll(jvmArgs);
@@ -23,7 +59,7 @@ public class CacheUtilities {
 			arguments.add(params[i]);
 		}
 		ProcessManager manager = ProcessManager.getInstance();
-		SubprocessThread thread = new SubprocessThread(arguments,cacheType);
+		SubprocessThread thread = new SubprocessThread(arguments, cacheType);
 		manager.addProcess(thread);
 		thread.start();
 	}

@@ -7,6 +7,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.BuildCache;
+import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.dialog.cacheClip.cache.ProcessManager;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
@@ -340,9 +341,12 @@ public class DialogCacheBuilder extends SmDialog {
 	private void buildCache() {
 		try {
 			String workspacePath = fileChooserWorkspacePath.getPath();
+			workspacePath = CacheUtilities.replacePath(workspacePath);
 			String mapName = textFieldMapName.getText();
 			sciPath = fileChooserTaskPath.getPath();
+			sciPath = CacheUtilities.replacePath(sciPath);
 			String cachePath = fileChooserCachePath.getPath();
+			cachePath = CacheUtilities.replacePath(cachePath);
 			String processCount = textFieldProcessCount.getText();
 			if (StringUtilities.isInteger(processCount)) {
 				nowProcessCount = Integer.valueOf(processCount);
@@ -368,6 +372,7 @@ public class DialogCacheBuilder extends SmDialog {
 		if (sciFile.exists()) {
 			sciNames = sciFile.list(getFilter());
 		}
+
 		if (null != sciNames) {
 			totalSciLength = sciNames.length;
 			captionCount = new CopyOnWriteArrayList<>();
@@ -419,7 +424,7 @@ public class DialogCacheBuilder extends SmDialog {
 				try {
 					int buildSciLength = -1;
 					while (fianlTotalSciLength != buildSciLength) {
-						String buildPath = finalParentPath + "\\build";
+						String buildPath = CacheUtilities.replacePath(finalParentPath,"build");
 						File buildFile = new File(buildPath);
 						//Ensure that component,count array have sorted as we want;
 						if (null != buildFile && buildFile.exists()) {
@@ -459,7 +464,7 @@ public class DialogCacheBuilder extends SmDialog {
 	private void refresh(String cachePath, String parentPath, int totalSciLength) {
 		try {
 			long startTime = System.currentTimeMillis();
-			String buildPath = parentPath + "\\build";
+			String buildPath = CacheUtilities.replacePath(parentPath,"build");
 			int buildSciLength = 0;
 			File buildFile = new File(buildPath);
 			if (buildFile.exists() && null != buildFile.list(getFilter())) {
@@ -491,9 +496,8 @@ public class DialogCacheBuilder extends SmDialog {
 			}
 			if (result) {
 				long endTime = System.currentTimeMillis();
-				File mapNameDir = new File(resultPath);
 				//Paste sciFile to the target directory
-				sciFile.renameTo(new File(resultDir, sciFile.getName()));
+				sciFile.renameTo(new File(resultPath, sciFile.getName()));
 				long totalTime = endTime - startTime;
 				long hour = 0;
 				long minutes = 0;
