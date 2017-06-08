@@ -67,6 +67,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 		parameterComboBoxConceptModel.setDescribe(ProcessProperties.getString("String_ConceptModel"));
 		parameterDistanceMethod.setDescribe(ProcessProperties.getString("String_DistanceMethod"));
 		parameterTextFieldDistanceTolerance.setDescribe(ProcessProperties.getString("String_DistanceTolerance"));
+		parameterTextFieldDistanceTolerance.setToolTip(ProcessProperties.getString("String_DistanceTolerance") + " {-1, [0, +∞) }");
 		parameterTextFieldExponent.setDescribe(ProcessProperties.getString("String_Exponent"));
 		parameterCheckBoxFDRAdjusted.setDescribe(ProcessProperties.getString("String_FDRAdjusted"));
 		parameterFile.setDescribe(ProcessProperties.getString("String_SWM"));

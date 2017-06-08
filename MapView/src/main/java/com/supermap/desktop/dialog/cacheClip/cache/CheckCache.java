@@ -4,11 +4,11 @@ import com.supermap.data.*;
 import com.supermap.data.processing.CacheWriter;
 import com.supermap.data.processing.CompactFile;
 import com.supermap.data.processing.StorageType;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.tilestorage.TileContent;
 import com.supermap.tilestorage.TileStorageConnection;
 import com.supermap.tilestorage.TileStorageManager;
 import com.supermap.tilestorage.TileStorageType;
-import sun.rmi.runtime.Log;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -31,10 +31,10 @@ public class CheckCache {
 	private BufferedWriter errorWriter = null;
 	private int sciLength;
 	private static final int INDEX_CACHEROOT = 0;
-	private static final int INDEX_SCIPATH=1;
-	private static final int INDEX_MERGETASKCOUNT=2;
-	private static final int INDEX_ERROR2UDB=3;
-	private static final int INDEX_BOUNDARYREGION=4;
+	private static final int INDEX_SCIPATH = 1;
+	private static final int INDEX_MERGETASKCOUNT = 2;
+	private static final int INDEX_ERROR2UDB = 3;
+	private static final int INDEX_BOUNDARYREGION = 4;
 
 	public void startProcess(int processCount, String[] params) {
 		try {
@@ -42,7 +42,7 @@ public class CheckCache {
 				main(params);
 			} else {
 				for (int i = 0; i < processCount; i++) {
-					CacheUtilities.startProcess(params, getClass().getName(),LogWriter.CHECK_CACEH);
+					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.CHECK_CACEH);
 					Thread.sleep(2000);
 				}
 			}
@@ -89,8 +89,8 @@ public class CheckCache {
 		}
 		if (this.error2udb) {
 			File scifile = new File(sciNames.get(0));
-			String datasourcePath = scifile.getParentFile().getParent() + "\\check\\check.udb";
-			datasourcePath = datasourcePath.replaceAll("/", "\\\\");
+			String checkPath = CacheUtilities.replacePath(scifile.getParentFile().getParent(), "check");
+			String datasourcePath = CacheUtilities.replacePath(checkPath, "check.udb");
 			File datasourceFile = new File(datasourcePath);
 			if (!datasourceFile.exists()) {
 				System.out.println(datasourcePath + " not exists!");
@@ -113,9 +113,9 @@ public class CheckCache {
 				String parentPath = null;
 				File checkingDir = null;
 				if (sciLength > 0) {
-					File sci = new File(scipath + "\\" + sciFileNames[0]);
+					File sci = new File(CacheUtilities.replacePath(scipath, sciFileNames[0]));
 					parentPath = sci.getParentFile().getParent();
-					checkingDir = new File(sci.getParentFile().getParent() + "\\checking");
+					checkingDir = new File(CacheUtilities.replacePath(sci.getParentFile().getParent(), "checking"));
 					if (!checkingDir.exists()) {
 						checkingDir.mkdir();
 					}
@@ -127,7 +127,7 @@ public class CheckCache {
 					//First step:Move mergeSciCount sci to doing directory
 					int success = 0;
 					for (int i = 0; success < mergeSciCount; i++) {
-						if (checkingSci(scipath + "\\" + sciFileNames[sciLength - 1 - i], checkingDir, doingSciNames)) {
+						if (checkingSci(CacheUtilities.replacePath(scipath, sciFileNames[sciLength - 1 - i]), checkingDir, doingSciNames)) {
 							success++;
 						}
 					}
@@ -135,7 +135,7 @@ public class CheckCache {
 				} else {
 					//First step:Move last sci file to doing directory
 					for (int i = sciLength - 1; i >= 0; i--) {
-						checkingSci(scipath + "\\" + sciFileNames[i], checkingDir, doingSciNames);
+						checkingSci(CacheUtilities.replacePath(scipath, sciFileNames[i]), checkingDir, doingSciNames);
 					}
 				}
 				//Second step:get sci file from doing dir and build cache
@@ -155,7 +155,7 @@ public class CheckCache {
 		File sci = new File(sciName);
 		boolean renameSuccess = sci.renameTo(new File(doingDir, sci.getName()));
 		if (renameSuccess) {
-			doingSciNames.add(doingDir.getAbsolutePath() + "\\" + sci.getName());
+			doingSciNames.add(CacheUtilities.replacePath(doingDir.getAbsolutePath(), sci.getName()));
 		}
 		return renameSuccess;
 	}
@@ -172,8 +172,11 @@ public class CheckCache {
 //		cacheFile.open(sciFile);
 		CacheWriter cacheFile = new CacheWriter();
 		cacheFile.FromConfigFile(sciFile);
-
-		cacheRoot = cacheRoot + "\\" +
+		String pathSeparator = "\\";
+		if (SystemPropertyUtilities.isLinux()) {
+			pathSeparator = "/";
+		}
+		cacheRoot = cacheRoot + pathSeparator +
 				cacheFile.parseTileFormat() + "_" +
 				cacheFile.getTileSize().value() + "_" +
 				cacheFile.getHashCode();
@@ -207,7 +210,7 @@ public class CheckCache {
 			String caption = cacheFile.getCacheScaleCaptions().get(scale);
 			String errFileName = file.getName().replaceAll(".sci", "");
 			errFileName += "(L" + caption + "_S" + Math.round(1 / scale) + ").err";
-			errorFileName = file.getParentFile().getParent() + "\\temp\\" + errFileName;
+			errorFileName = file.getParentFile().getParent() + pathSeparator + "temp" + pathSeparator + errFileName;
 
 			double reolustion = getResolution(scale, cacheFile.getPrjCoordSys(), cacheFile.getDPI());
 
@@ -231,9 +234,9 @@ public class CheckCache {
 			if (cacheFile.getStorageType() == StorageType.Original) {
 
 			} else if (cacheFile.getStorageType() == StorageType.Compact) {
-				result = result && checkCompactCache(log,cacheRoot, caption, tileLeft, tileTop, tileRight, tileBottom, reolustion, cacheFile);
+				result = result && checkCompactCache(log, cacheRoot, caption, tileLeft, tileTop, tileRight, tileBottom, reolustion, cacheFile);
 			} else if (cacheFile.getStorageType() == StorageType.MongoDB) {
-				result = result && checkMongoCache(log,manager, Integer.valueOf(caption), tileLeft, tileTop, tileRight, tileBottom, reolustion, cacheFile);
+				result = result && checkMongoCache(log, manager, Integer.valueOf(caption), tileLeft, tileTop, tileRight, tileBottom, reolustion, cacheFile);
 			}
 
 			if (errorWriter != null) {
@@ -248,9 +251,9 @@ public class CheckCache {
 		}
 
 		File filesci = new File(sciFile);
-		String checkDir = (filesci.getParentFile().getParent() + "\\checked");
+		String checkDir = (CacheUtilities.replacePath(filesci.getParentFile().getParent(), "checked"));
 		if (!result) {
-			checkDir = (filesci.getParentFile().getParent() + "\\error");
+			checkDir = (CacheUtilities.replacePath(filesci.getParentFile().getParent(), "error"));
 		}
 		filesci.renameTo(new File(checkDir, filesci.getName()));
 
@@ -260,7 +263,7 @@ public class CheckCache {
 	}
 
 	//Check compact cache
-	public boolean checkCompactCache(LogWriter log,String cacheRoot, String caption, int left, int top, int right, int bottom, double reolustion, CacheWriter cacheFile) {
+	public boolean checkCompactCache(LogWriter log, String cacheRoot, String caption, int left, int top, int right, int bottom, double reolustion, CacheWriter cacheFile) {
 
 		boolean isWithin = false;
 		if (boundaryCheck) {
@@ -287,7 +290,12 @@ public class CheckCache {
 				int bigCol = col / 128;
 				int currentCol = Math.min(right, (bigCol + 1) * 128 - 1);
 
-				String cfPath = cacheRoot + "\\" + caption + "\\" + bigRow + "\\" + bigCol + ".cf";
+				String cfPath = "";
+				if (SystemPropertyUtilities.isWindows()) {
+					cfPath = cacheRoot + "\\" + caption + "\\" + bigRow + "\\" + bigCol + ".cf";
+				} else {
+					cfPath = cacheRoot + "/" + caption + "/" + bigRow + "/" + bigCol + ".cf";
+				}
 				File cfFile = new File(cfPath);
 
 				//long starttime = System.nanoTime();
@@ -398,7 +406,7 @@ public class CheckCache {
 	}
 
 	//Check mongo type cache
-	public boolean checkMongoCache(LogWriter log,TileStorageManager manager, int level, int left, int top, int right, int bottom, double reolustion, CacheWriter cacheFile) {
+	public boolean checkMongoCache(LogWriter log, TileStorageManager manager, int level, int left, int top, int right, int bottom, double reolustion, CacheWriter cacheFile) {
 
 		boolean isWithin = false;
 		if (boundaryCheck) {
@@ -587,7 +595,7 @@ public class CheckCache {
 
 				String line;
 				while ((line = taskReader.readLine()) != null) {
-					sciNames.add(taskDir + "\\" + line);
+					sciNames.add(CacheUtilities.replacePath(taskDir, line));
 				}
 				taskReader.close();
 			} catch (UnsupportedEncodingException e) {
@@ -598,7 +606,7 @@ public class CheckCache {
 				e.printStackTrace();
 			}
 
-			checkDir = tasksFile.getParentFile().getParent() + "\\checked";
+			checkDir = CacheUtilities.replacePath(tasksFile.getParentFile().getParent(), "checked");
 		} else if (scipath.contains("&")) {
 			String[] sciFileArray = scipath.split("&");
 			for (String onesci : sciFileArray) {
@@ -607,13 +615,13 @@ public class CheckCache {
 
 			if (sciNames.size() > 0) {
 				File sciFile = new File(sciNames.get(0));
-				checkDir = sciFile.getParentFile().getParent() + "\\checked";
+				checkDir = CacheUtilities.replacePath(sciFile.getParentFile().getParent(), "checked");
 			}
 		} else if (scipath.endsWith(".sci")) {
 			sciNames.add(scipath);
 
 			File sciFile = new File(scipath);
-			checkDir = sciFile.getParentFile().getParent() + "\\checked";
+			checkDir = CacheUtilities.replacePath(sciFile.getParentFile().getParent(), "checked");
 		} else {
 			File sciFile = new File(scipath);
 			if (sciFile.isDirectory()) {
@@ -624,10 +632,10 @@ public class CheckCache {
 					}
 				});
 				for (String name : sciFiles) {
-					sciNames.add(scipath + "\\" + name);
+					sciNames.add(CacheUtilities.replacePath(scipath, name));
 				}
 
-				checkDir = sciFile.getParent() + "\\checked";
+				checkDir = CacheUtilities.replacePath(sciFile.getParent(), "checked");
 			}
 		}
 
@@ -635,7 +643,7 @@ public class CheckCache {
 		if (!scicheck.exists()) {
 			scicheck.mkdir();
 		}
-		File scierror = new File(scicheck.getParent() + "\\error");
+		File scierror = new File(CacheUtilities.replacePath(scicheck.getParent(), "error"));
 		if (!scierror.exists()) {
 			scierror.mkdir();
 		}
@@ -644,7 +652,7 @@ public class CheckCache {
 	}
 
 	private void error2Udb(double anchorLeft, double anchorTop, int tileSize, String parentName) {
-		String tempPath = parentName + "\\temp\\";
+		String tempPath = CacheUtilities.replacePath(parentName, "temp");
 		File tempFile = new File(tempPath);
 		if (!tempFile.exists()) {
 			return;
@@ -660,8 +668,8 @@ public class CheckCache {
 			System.out.println("no error file!");
 			return;
 		}
-
-		String udbPath = parentName + "\\udb\\cache.udb";
+		String checkPath = CacheUtilities.replacePath(parentName, "check");
+		String udbPath = CacheUtilities.replacePath(checkPath, "check.udb");
 		tempFile = new File(udbPath);
 		if (!tempFile.exists()) {
 			System.out.println("not found cache.udb file!");

@@ -156,7 +156,7 @@ public class DialogCacheBuilder extends SmDialog {
 					Collections.sort(scaleList);
 					CopyOnWriteArrayList<String> tempCaptions = new CopyOnWriteArrayList<>();
 					for (double scale : scaleList) {
-						tempCaptions.add(String.valueOf(Math.round( 1 / scale)));
+						tempCaptions.add(String.valueOf(Math.round(1 / scale)));
 					}
 					setCaptions(tempCaptions);
 				}
@@ -239,7 +239,7 @@ public class DialogCacheBuilder extends SmDialog {
 		}
 		SmFileChoose fileChooserForCachePath = new SmFileChoose(moduleNameForCachePath);
 		this.fileChooserCachePath = new JFileChooserControl();
-		this.fileChooserCachePath.setPath(System.getProperty("user.dir") + "\\build");
+		this.fileChooserCachePath.setPath(CacheUtilities.replacePath(System.getProperty("user.dir"), "build"));
 		this.fileChooserCachePath.setFileChooser(fileChooserForCachePath);
 		this.textFieldTotalProcessCount = new JTextField();
 		this.textFieldTotalProcessCount.setText("5");
@@ -424,7 +424,7 @@ public class DialogCacheBuilder extends SmDialog {
 				try {
 					int buildSciLength = -1;
 					while (fianlTotalSciLength != buildSciLength) {
-						String buildPath = CacheUtilities.replacePath(finalParentPath,"build");
+						String buildPath = CacheUtilities.replacePath(finalParentPath, "build");
 						File buildFile = new File(buildPath);
 						//Ensure that component,count array have sorted as we want;
 						if (null != buildFile && buildFile.exists()) {
@@ -464,7 +464,7 @@ public class DialogCacheBuilder extends SmDialog {
 	private void refresh(String cachePath, String parentPath, int totalSciLength) {
 		try {
 			long startTime = System.currentTimeMillis();
-			String buildPath = CacheUtilities.replacePath(parentPath,"build");
+			String buildPath = CacheUtilities.replacePath(parentPath, "build");
 			int buildSciLength = 0;
 			File buildFile = new File(buildPath);
 			if (buildFile.exists() && null != buildFile.list(getFilter())) {
@@ -506,7 +506,7 @@ public class DialogCacheBuilder extends SmDialog {
 					hour = totalTime / 3600000;
 					minutes = (totalTime % 3600000) / 60000;
 					second = ((totalTime % 3600000) % 60000) / 1000;
-				}else if (totalTime >= 60000) {
+				} else if (totalTime >= 60000) {
 					minutes = totalTime / 60000;
 					second = (totalTime % 60000) / 1000;
 				} else {

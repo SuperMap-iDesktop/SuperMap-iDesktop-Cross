@@ -1,7 +1,5 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
-import com.supermap.desktop.utilities.SystemPropertyUtilities;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -18,20 +16,19 @@ public class CacheUtilities {
 	 * @return
 	 */
 	public static String replacePath(String sourceStr) {
-		if (SystemPropertyUtilities.isWindows()) {
+		if (isWindows()) {
 			sourceStr = sourceStr.replaceAll("/", "\\\\");
-		} else if (SystemPropertyUtilities.isLinux()) {
+		} else if (isLinux()) {
 			sourceStr = sourceStr.replaceAll("\\\\", "/");
 		}
 		return sourceStr;
 	}
 
 	public static String replacePath(String sourceStr, String name) {
-		String targetStr = "";
 		sourceStr = replacePath(sourceStr);
-		if (SystemPropertyUtilities.isWindows() && !sourceStr.endsWith("\\")) {
+		if (isWindows() && !sourceStr.endsWith("\\")) {
 			sourceStr += "\\";
-		} else if (SystemPropertyUtilities.isLinux() && !sourceStr.endsWith("/")) {
+		} else if (isLinux() && !sourceStr.endsWith("/")) {
 			sourceStr += "/";
 		}
 		return sourceStr + name;
@@ -49,9 +46,15 @@ public class CacheUtilities {
 		arguments.add("java");
 		//arguments.addAll(jvmArgs);
 		arguments.add("-cp");
-		String projectPath = System.getProperty("user.dir");
-		projectPath = projectPath.replace("/", "\\");
-		String jarPath = ".;" + projectPath + "\\bin\\com.supermap.data.jar;" + projectPath + "\\bin\\com.supermap.mapping.jar;" + projectPath + "\\bin\\com.supermap.tilestorage.jar;" + projectPath + "\\bin\\com.supermap.data.processing.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
+		String projectPath = replacePath(System.getProperty("user.dir"));
+
+//		String jarPath = ".;" + projectPath + "\\bin\\com.supermap.data.jar;" + projectPath + "\\bin\\com.supermap.mapping.jar;" + projectPath + "\\bin\\com.supermap.tilestorage.jar;" + projectPath + "\\bin\\com.supermap.data.processing.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
+		String jarPath = "";
+		if (isWindows()){
+			jarPath = ".;" + projectPath + "\\bin\\com.supermap.data.jar;" + projectPath + "\\bin\\com.supermap.mapping.jar;" + projectPath + "\\bin\\com.supermap.tilestorage.jar;" + projectPath + "\\bin\\com.supermap.data.processing.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
+		}else{
+			jarPath = ".;" + projectPath + "/bin/com.supermap.data.jar;" + projectPath + "/bin/com.supermap.mapping.jar;" + projectPath + "/bin/com.supermap.tilestorage.jar;" + projectPath + "/bin/com.supermap.data.processing.jar;" + projectPath + "/bundles/idesktop_bundles/MapView.jar";
+		}
 //		String jarPath = ".;" + projectPath + "\\bundles\\require_bundles\\Core.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
 		arguments.add(jarPath);
 		arguments.add(className);
@@ -62,6 +65,25 @@ public class CacheUtilities {
 		SubprocessThread thread = new SubprocessThread(arguments, cacheType);
 		manager.addProcess(thread);
 		thread.start();
+	}
+
+	private static boolean isWindows() {
+		boolean isWindows = false;
+		String system = System.getProperties().getProperty("os.name");
+		if (system.startsWith("Windows")) {
+			isWindows = true;
+		}
+		return isWindows;
+	}
+
+	/**
+	 * 判断是否是linux系统，暂时认为不是windows就是linux
+	 * 避免增加平台时修改“!SystemPropertyUtilities.isWindows()”这样的调用
+	 *
+	 * @return
+	 */
+	private static boolean isLinux() {
+		return !isWindows();
 	}
 
 
