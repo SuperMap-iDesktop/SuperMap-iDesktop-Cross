@@ -1114,6 +1114,15 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		return this.currentTextRotationAngle;
 	}
 
+	@Override
+	public void refresh() {
+		if (this.mapControl != null && this.mapControl.getMap() != null) {
+			this.mapControl.getMap().refresh();
+			initCenter();
+			initScaleComboBox();
+		}
+	}
+
 	private void createdefaultTextStyle() {
 		TextStyle textStyle = new TextStyle();
 		String fonts[] = GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
