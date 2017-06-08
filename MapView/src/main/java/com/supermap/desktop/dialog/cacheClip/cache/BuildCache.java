@@ -6,7 +6,6 @@ import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.mapping.Map;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -22,7 +21,7 @@ public class BuildCache {
 
 	//Add new process
 	public void addProcess(String[] params) {
-		CacheUtilities.startProcess(params, getClass().getName(),LogWriter.BUILD_CACHE);
+		CacheUtilities.startProcess(params, getClass().getName(), LogWriter.BUILD_CACHE);
 	}
 
 	//Start process
@@ -33,7 +32,7 @@ public class BuildCache {
 			} else {
 				//Write executing info to log
 				for (int i = 0; i < processCount; i++) {
-					CacheUtilities.startProcess(params, getClass().getName(),LogWriter.BUILD_CACHE);
+					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.BUILD_CACHE);
 					Thread.sleep(2000);
 				}
 			}
@@ -79,8 +78,8 @@ public class BuildCache {
 
 					File doingDir = null;
 					if (sciLength > 0) {
-						File sci = new File(taskPath + "\\" + sciFileNames[0]);
-						doingDir = new File(sci.getParentFile().getParent() + "\\doing");
+						File sci = new File(CacheUtilities.replacePath(taskPath, sciFileNames[0]));
+						doingDir = new File(CacheUtilities.replacePath(sci.getParentFile().getParent(), "doing"));
 						if (!doingDir.exists()) {
 							doingDir.mkdir();
 						}
@@ -92,7 +91,7 @@ public class BuildCache {
 						//First step:Move mergeSciCount sci to doing directory
 						int success = 0;
 						for (int i = 0; success < mergeSciCount; i++) {
-							if (doingSci(taskPath + "\\" + sciFileNames[sciLength - 1 - i], doingDir, doingSciNames)) {
+							if (doingSci(CacheUtilities.replacePath(taskPath, sciFileNames[sciLength - 1 - i]), doingDir, doingSciNames)) {
 								success++;
 							}
 						}
@@ -100,7 +99,7 @@ public class BuildCache {
 					} else {
 						//First step:Move last sci file to doing directory
 						for (int i = sciLength - 1; i >= 0; i--) {
-							doingSci(taskPath + "\\" + sciFileNames[i], doingDir, doingSciNames);
+							doingSci(CacheUtilities.replacePath(taskPath, sciFileNames[i]), doingDir, doingSciNames);
 						}
 					}
 					//Second step:get sci file from doing dir and build cache
@@ -130,7 +129,7 @@ public class BuildCache {
 		File sci = new File(sciName);
 		boolean renameSuccess = sci.renameTo(new File(doingDir, sci.getName()));
 		if (renameSuccess) {
-			doingSciNames.add(doingDir.getAbsolutePath() + "\\" + sci.getName());
+			doingSciNames.add(CacheUtilities.replacePath(doingDir.getAbsolutePath(), sci.getName()));
 		}
 		return renameSuccess;
 	}
@@ -154,7 +153,7 @@ public class BuildCache {
 		builder.dispose();
 
 		if (result) {
-			File doneDir = new File(sci.getParentFile().getParent() + "\\build");
+			File doneDir = new File(CacheUtilities.replacePath(sci.getParentFile().getParent(), "build"));
 			if (!doneDir.exists()) {
 				doneDir.mkdir();
 			}
