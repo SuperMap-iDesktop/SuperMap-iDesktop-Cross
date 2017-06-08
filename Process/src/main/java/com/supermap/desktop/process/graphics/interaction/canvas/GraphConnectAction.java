@@ -54,6 +54,7 @@ public class GraphConnectAction extends CanvasActionAdapter {
 			@Override
 			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 				inputsMenu.removeAll();
+				GraphConnectAction.this.canvas.repaint();
 			}
 
 			@Override
@@ -104,18 +105,17 @@ public class GraphConnectAction extends CanvasActionAdapter {
 							@Override
 							public void actionPerformed(ActionEvent e) {
 								try {
-									inputs.bind(item.getText(), startGraph.getProcessData());
 									IOGraphConnection connection = new IOGraphConnection(startGraph, endGraph, item.getText());
 									canvas.getConnection().connect(connection);
+									inputs.bind(item.getText(), startGraph.getProcessData());
 									inputsMenu.setVisible(false);
 								} catch (Exception e1) {
 									Application.getActiveApplication().getOutput().output(e1);
-								} finally {
-									GraphConnectAction.this.canvas.repaint();
 								}
 							}
 						});
 					}
+
 					this.inputsMenu.show(this.canvas, e.getX(), e.getY());
 				}
 			}

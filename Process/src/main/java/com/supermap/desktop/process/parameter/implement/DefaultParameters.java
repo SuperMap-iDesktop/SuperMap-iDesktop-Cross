@@ -4,7 +4,9 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.connection.IConnection;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
+import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
@@ -52,9 +54,9 @@ public class DefaultParameters implements IParameters {
 				int type = event.getType();
 				InputData inputData = event.getInputData();
 				if (type == ValueProviderBindEvent.BIND) {
-					inputParametersManager.bind(inputData);
+					inputParametersManager.bind(inputData.getName());
 				} else {
-					inputParametersManager.unBind(inputData);
+					inputParametersManager.unBind(inputData.getName());
 				}
 			}
 		});
@@ -78,7 +80,17 @@ public class DefaultParameters implements IParameters {
 							break;
 						}
 					}
-					// FIXME: 2017/5/16 所有节点都在，就差连接了！
+					IConnection[] connections = canvas.getConnection().getConnections();
+					for (IConnection connection : connections) {
+						if (connection.getStart() == graph && connection.getEnd() == processGraph) {
+							inputParametersManager.unBind(connection);
+							canvas.getConnection().removeConnection(connection);
+							break;
+						}
+					}
+					canvas.getConnection().connect((OutputGraph) newGraph, (ProcessGraph) processGraph, propertyName);
+					inputs.bind(propertyName, ((OutputGraph) newGraph).getProcessData());
+					canvas.repaint();
 				}
 			}
 		});
