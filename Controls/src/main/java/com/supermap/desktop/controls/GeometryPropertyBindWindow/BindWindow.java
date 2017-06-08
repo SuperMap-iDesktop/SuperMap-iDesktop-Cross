@@ -7,7 +7,9 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormTabular;
 import com.supermap.mapping.Layer;
+import com.supermap.mapping.Layers;
 import com.supermap.mapping.Selection;
+import com.supermap.ui.MapControl;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -18,7 +20,7 @@ public class BindWindow implements IBindWindow {
 
 	private boolean selectionHasChanged = false;
 
-	private Layer[] layers;
+	private MapControl mapcontrol;
 	private MouseAdapter tabularTableListener;
 	private KeyAdapter tabularTableKeyListener;
 	private MouseMotionAdapter listMouseMotionListener;
@@ -79,13 +81,14 @@ public class BindWindow implements IBindWindow {
 		for (int i = 0; i < selectRows.length; i++) {
 			idRows[i] = this.formTabular.getSmId(selectRows[i]);
 		}
-		for (int i = 0; i < layers.length; i++) {
-			if (!layers[i].isDisposed() && null != this.layers[i].getDataset()) {
-				DatasetVector datasetVector = (DatasetVector) this.layers[i].getDataset();
+		Layers layers=this.mapcontrol.getMap().getLayers();
+		for (int i = 0; i < layers.getCount(); i++) {
+			if (!layers.get(i).isDisposed() && null != layers.get(i).getDataset()) {
+				DatasetVector datasetVector = (DatasetVector) layers.get(i).getDataset();
 				Recordset recordset = datasetVector.query(idRows, CursorType.STATIC);
 				Selection selection = new Selection();
 				selection.fromRecordset(recordset);
-				fireSelectionChanged(selection, layers[i]);
+				fireSelectionChanged(selection, layers.get(i));
 				selection.clear();
 				recordset.dispose();
 			}
@@ -137,7 +140,7 @@ public class BindWindow implements IBindWindow {
 	@Override
 	public void dispose() {
 		removeEvents();
-		this.layers = null;
+		this.mapcontrol = null;
 		this.formTabular = null;
 		this.listMouseListener = null;
 		this.listMouseMotionListener = null;
@@ -177,8 +180,8 @@ public class BindWindow implements IBindWindow {
 	}
 
 	@Override
-	public void setActiveLayers(Layer... layers) {
-		this.layers = layers;
+	public void setMapControl(MapControl mapcontrol) {
+		this.mapcontrol = mapcontrol;
 	}
 
 	@Override
@@ -187,8 +190,8 @@ public class BindWindow implements IBindWindow {
 	}
 
 	@Override
-	public Layer[] getActiveLayers() {
-		return this.layers;
+	public MapControl getMapControl() {
+		return this.mapcontrol;
 	}
 
 }

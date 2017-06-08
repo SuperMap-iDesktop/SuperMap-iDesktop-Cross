@@ -32,10 +32,7 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 
 /**
  * Created by xie on 2017/4/26.
@@ -305,10 +302,23 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				setMapCacheBuilderValueBeforeRun();
 				//SaveType==MongoType,build some cache for creating a database
 				if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
-					BuildMongoCacheThread thread = new BuildMongoCacheThread(this.mapCacheBuilder);
+					final Thread thread = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							mapCacheBuilder.buildWithoutConfigFile();
+						}
+					});
 					thread.start();
-					TimeUnit.SECONDS.sleep(1);
-					thread.setExist(false);
+					final java.util.Timer timer = new java.util.Timer();
+					TimerTask task = new TimerTask() {
+						@Override
+						public void run() {
+							thread.interrupt();
+							timer.cancel();
+						}
+					};
+					long delay = 20*1000;
+					timer.schedule(task, delay);
 				}
 				boolean result = mapCacheBuilder.toConfigFile(sciPath);
 				if (result) {
@@ -476,25 +486,4 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		this.resumeAble = resumeAble;
 	}
 
-
-	class BuildMongoCacheThread extends Thread {
-		volatile boolean exist = true;
-		private MapCacheBuilder mapCacheBuilder;
-
-		public BuildMongoCacheThread(MapCacheBuilder mapCacheBuilder) {
-			this.mapCacheBuilder = mapCacheBuilder;
-		}
-
-		@Override
-		public void run() {
-			this.mapCacheBuilder.buildWithoutConfigFile();
-			while (!exist) {
-				return;
-			}
-		}
-
-		public void setExist(boolean exist) {
-			this.exist = exist;
-		}
-	}
 }
