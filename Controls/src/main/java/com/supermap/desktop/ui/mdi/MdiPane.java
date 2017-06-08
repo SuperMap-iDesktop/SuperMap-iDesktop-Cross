@@ -1,18 +1,7 @@
 package com.supermap.desktop.ui.mdi;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.ui.mdi.events.PageActivatedEvent;
-import com.supermap.desktop.ui.mdi.events.PageActivatedListener;
-import com.supermap.desktop.ui.mdi.events.PageActivatingEvent;
-import com.supermap.desktop.ui.mdi.events.PageActivatingListener;
-import com.supermap.desktop.ui.mdi.events.PageAddedEvent;
-import com.supermap.desktop.ui.mdi.events.PageAddedListener;
-import com.supermap.desktop.ui.mdi.events.PageAddingEvent;
-import com.supermap.desktop.ui.mdi.events.PageAddingListener;
-import com.supermap.desktop.ui.mdi.events.PageClosedEvent;
-import com.supermap.desktop.ui.mdi.events.PageClosedListener;
-import com.supermap.desktop.ui.mdi.events.PageClosingEvent;
-import com.supermap.desktop.ui.mdi.events.PageClosingListener;
+import com.supermap.desktop.ui.mdi.events.*;
 import com.supermap.desktop.ui.mdi.layout.FlowLayoutStrategy;
 import com.supermap.desktop.ui.mdi.layout.ILayoutStrategy;
 import com.supermap.desktop.ui.mdi.plaf.MdiGroupUtilities;
@@ -210,7 +199,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	 * @return
 	 */
 	public MdiGroup addPage(MdiPage page) {
-		MdiGroup group = this.groups.size() > 0 ? this.selectedGroup : createGroup();
+		MdiGroup group = this.strategy.dispatchGroup(page);
 
 		if (group != null) {
 			group.addPage(page);
@@ -225,7 +214,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 	 * @param pageIndex
 	 */
 	public void addPage(MdiPage page, int pageIndex) {
-		MdiGroup group = this.groups.size() > 0 ? this.selectedGroup : createGroup();
+		MdiGroup group = this.strategy.dispatchGroup(page);
 
 		if (group != null) {
 			group.addPage(page, pageIndex);

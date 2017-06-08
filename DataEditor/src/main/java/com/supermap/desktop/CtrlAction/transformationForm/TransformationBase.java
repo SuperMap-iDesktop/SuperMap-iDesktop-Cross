@@ -60,9 +60,11 @@ public abstract class TransformationBase implements IFormMap {
 		setComponentName();
 		initDrag();
 	}
+
 	public void setComponentName() {
 		ComponentUIUtilities.setName(this.mapControl, "TransformationBase_mapControl");
 	}
+
 	@Override
 	public String getText() {
 		return getMapControl().getMap().getName();
@@ -443,20 +445,29 @@ public abstract class TransformationBase implements IFormMap {
 
 	// 文本默认风格设置 2017.1.13 李逍遥 part3  共计part9
 	@Override
-	public void setDefaultTextStyle(TextStyle tempTextStyle){
+	public void setDefaultTextStyle(TextStyle tempTextStyle) {
 
 	}
+
 	@Override
-	public TextStyle getDefaultTextStyle(){
+	public TextStyle getDefaultTextStyle() {
 		return null;
 	}
 
 	@Override
-	public void setDefaultTextRotationAngle(double tempRotationAngle){
+	public void setDefaultTextRotationAngle(double tempRotationAngle) {
 
 	}
+
 	@Override
-	public double getDefaultTextRotationAngle(){
+	public double getDefaultTextRotationAngle() {
 		return 0;
+	}
+
+	@Override
+	public void refresh() {
+		if (this.mapControl != null && this.mapControl.getMap() != null) {
+			this.mapControl.getMap().refresh();
+		}
 	}
 }

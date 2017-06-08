@@ -2,13 +2,10 @@ package com.supermap.desktop.ui.mdi.layout;
 
 import com.supermap.desktop.ui.mdi.IMdiContainer;
 import com.supermap.desktop.ui.mdi.MdiGroup;
+import com.supermap.desktop.ui.mdi.MdiPage;
 import com.supermap.desktop.ui.mdi.MdiPane;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicSplitPaneDivider;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +28,11 @@ public abstract class SplitLayoutStrategy implements ILayoutStrategy {
 	@Override
 	public IMdiContainer getContainer() {
 		return this.container;
+	}
+
+	@Override
+	public MdiGroup dispatchGroup(MdiPage page) {
+		return this.container.getGroupCount() > 0 ? this.container.getSelectedGroup() : this.container.createGroup();
 	}
 
 	@Override

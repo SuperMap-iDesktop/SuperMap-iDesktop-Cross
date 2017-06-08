@@ -239,7 +239,7 @@ public class BindHandler {
 					unregister(formMap);
 					formMap.getMapControl().getMap().setCenter(activeCenter);
 					formMap.getMapControl().getMap().setScale(activeScale);
-					formMap.getMapControl().getMap().refresh();
+					formMap.refresh();
 					register(formMap);
 				}
 			}

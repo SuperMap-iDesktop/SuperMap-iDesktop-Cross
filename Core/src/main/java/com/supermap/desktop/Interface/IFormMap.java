@@ -12,7 +12,7 @@ public interface IFormMap extends IForm {
 
 	/**
 	 * 获取地图窗口中的 MapControl 控件。
-	 * 
+	 *
 	 * @return
 	 */
 	MapControl getMapControl();
@@ -20,7 +20,7 @@ public interface IFormMap extends IForm {
 
 	/**
 	 * 获取或设置地图窗口中所激活的图层（即选中图层）的数组。
-	 * 
+	 *
 	 * @return
 	 */
 	Layer[] getActiveLayers();
@@ -33,6 +33,7 @@ public interface IFormMap extends IForm {
 
 	/**
 	 * 删除图层时从当前选中图层中移除
+	 *
 	 * @param datasets
 	 */
 	void removeActiveLayersByDatasets(Dataset... datasets);
@@ -40,7 +41,7 @@ public interface IFormMap extends IForm {
 	void dontShowPopupMenu();
 
 	void showPopupMenu();
-	
+
 	int getIsShowPopupMenu();
 
 	void updataSelectNumber();
@@ -58,9 +59,14 @@ public interface IFormMap extends IForm {
 	// 文本默认风格设置 2017.1.13 李逍遥 part1   共计part9
 	void setDefaultTextStyle(TextStyle tempTextStyle);
 
-	 TextStyle getDefaultTextStyle();
+	TextStyle getDefaultTextStyle();
 
 	void setDefaultTextRotationAngle(double tempRotationAngle);
 
 	double getDefaultTextRotationAngle();
+
+	/**
+	 * 刷新地图，以及与地图相关的需要刷新的内容
+	 */
+	void refresh();
 }
