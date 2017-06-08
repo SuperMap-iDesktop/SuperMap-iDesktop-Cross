@@ -307,8 +307,8 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
 					BuildMongoCacheThread thread = new BuildMongoCacheThread(this.mapCacheBuilder);
 					thread.start();
-					TimeUnit.SECONDS.sleep(1);
-					thread.setExist(false);
+					TimeUnit.SECONDS.sleep(20);
+					thread.interrupt();
 				}
 				boolean result = mapCacheBuilder.toConfigFile(sciPath);
 				if (result) {
@@ -488,9 +488,6 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		@Override
 		public void run() {
 			this.mapCacheBuilder.buildWithoutConfigFile();
-			while (!exist) {
-				return;
-			}
 		}
 
 		public void setExist(boolean exist) {
