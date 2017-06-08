@@ -23,10 +23,10 @@ import java.beans.PropertyChangeListener;
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.TEXTFIELD)
 public class ParameterTextFieldPanel extends SwingPanel implements IParameterPanel {
-	private ParameterTextField parameterTextField;
-	private JLabel label = new JLabel();
-	private SmTextFieldLegit textField = new SmTextFieldLegit();
-	private boolean isSelectingItem = false;
+	protected ParameterTextField parameterTextField;
+	protected JLabel label = new JLabel();
+	protected SmTextFieldLegit textField = new SmTextFieldLegit();
+	protected boolean isSelectingItem = false;
 
 	public ParameterTextFieldPanel(IParameter parameterTextField) {
 		super(parameterTextField);
