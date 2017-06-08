@@ -37,4 +37,5 @@ public class ParameterType {
 	public static final String SWITCH = "Switch";// new 一个
 	public static final String COMBO_BOX_SWITCH = "ComboBoxSwitch";
 	public static final String PASSWORD = "password";
+	public static final String NUMBER = "number";
 }

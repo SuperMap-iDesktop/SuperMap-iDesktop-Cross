@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.implement;
 
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 
 /**
@@ -22,6 +23,7 @@ public class ParameterNumber extends ParameterTextField {
 
 	public ParameterNumber(String describe) {
 		super(describe);
+		setDescribe(describe);
 		smTextFieldLegit = new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
@@ -61,6 +63,17 @@ public class ParameterNumber extends ParameterTextField {
 		};
 	}
 
+
+	private String getRangeDescribe() {
+		StringBuilder stringBuffer = new StringBuilder();
+		stringBuffer.append(isIncludeMin() && isMinValueEnable ? "[" : "(");
+		stringBuffer.append(isMinValueEnable ? String.valueOf(minValue) : "-∞");
+		stringBuffer.append(", ");
+		stringBuffer.append(isMaxValueEnable ? String.valueOf(maxValue) : "+∞");
+		stringBuffer.append(isIncludeMax() && isMaxValueEnable ? "]" : ")");
+		return stringBuffer.toString();
+	}
+
 	public void setMaxValue(double maxValue) {
 		isMaxValueEnable = true;
 		this.maxValue = maxValue;
@@ -93,5 +106,14 @@ public class ParameterNumber extends ParameterTextField {
 
 	public void setIncludeMax(boolean includeMax) {
 		isIncludeMax = includeMax;
+	}
+
+	@Override
+	public String getType() {
+		return ParameterType.NUMBER;
+	}
+
+	public String getToolTip() {
+		return getDescribe() + getRangeDescribe();
 	}
 }
