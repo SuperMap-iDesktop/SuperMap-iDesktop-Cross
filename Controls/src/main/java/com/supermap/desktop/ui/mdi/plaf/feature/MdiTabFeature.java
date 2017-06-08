@@ -49,14 +49,13 @@ class MdiTabFeature extends AbstractMdiFeature {
 	}
 
 	private void initListener() {
-		this.page.addPropertyListener(new PropertyChangeListener() {
+		this.page.addPropertyChangeListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (evt.getPropertyName().equals(MdiPage.TITLE_PROPERTY)) {
-					features.remove(textFeature);
-					textFeature = TextFeature.instance(page.getTitle(), getGroup(), MdiTabFeature.this);
-					features.add(textFeature);
-					repaint();
+					((TextFeature) textFeature).setText(page.getTitle());
+					getParent().layout();
+					getParent().repaint();
 				}
 			}
 		});
