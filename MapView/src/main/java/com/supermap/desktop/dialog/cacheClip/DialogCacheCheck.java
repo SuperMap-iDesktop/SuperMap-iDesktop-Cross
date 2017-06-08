@@ -224,6 +224,9 @@ public class DialogCacheCheck extends SmDialog {
 
 			String saveErrorData = checkBoxSaveErrorData.isSelected() ? "true" : "false";
 			String geoJsonFile = fileChooseCheckBounds.getPath();
+			cacheRoot = CacheUtilities.replacePath(cacheRoot);
+			sciPath = CacheUtilities.replacePath(sciPath);
+			geoJsonFile = CacheUtilities.replacePath(geoJsonFile);
 			String[] params = {cacheRoot, sciPath, mergeTaskCount, saveErrorData, geoJsonFile};
 
 			if (validateValue(sciPath, mergeTaskCount, cacheRoot)) {
@@ -234,11 +237,11 @@ public class DialogCacheCheck extends SmDialog {
 				dialogDispose();
 				//Ensure all sci files has been checked
 				File sciFile = new File(sciPath);
-				String checkingPath = sciFile.getParent() + "\\checking";
-				while(!FileUtilities.isDirEmpty(sciPath)){
+				String checkingPath = CacheUtilities.replacePath(sciFile.getParent(), "checking");
+				while (!FileUtilities.isDirEmpty(sciPath)) {
 					Thread.sleep(2000);
 				}
-				while(!FileUtilities.isDirEmpty(checkingPath)){
+				while (!FileUtilities.isDirEmpty(checkingPath)) {
 					Thread.sleep(2000);
 				}
 				boolean cacheBuild = checkBoxCacheBuild.isSelected();

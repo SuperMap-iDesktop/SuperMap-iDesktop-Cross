@@ -31,7 +31,7 @@ public class TaskBuilder {
 			return false;
 		}
 		String sciFile = args[0];
-		String targetFolder = args[1] + "/task";
+		String targetFolder = CacheUtilities.replacePath(args[1], "task");
 		int listCount = 1;
 		if (args.length > 2) {
 			listCount = Integer.valueOf(args[2]);
@@ -55,8 +55,8 @@ public class TaskBuilder {
 
 		if (canudb > 0) {
 			String datasourceName = "check";
-			String datasourcePath = args[1] + "\\check\\" + datasourceName + ".udb";
-			datasourcePath = datasourcePath.replaceAll("/", "\\\\");
+			String checkPath = CacheUtilities.replacePath(args[1], "check");
+			String datasourcePath = CacheUtilities.replacePath(checkPath, datasourceName + ".udb");
 			File datasourceFile = new File(datasourcePath);
 			if (datasourceFile.exists()) {
 				SmOptionPane smOptionPane = new SmOptionPane();
@@ -83,7 +83,8 @@ public class TaskBuilder {
 			file.mkdir();
 		}
 
-		String name = targetFolder + "\\allTask.list";
+		String name = CacheUtilities.replacePath(targetFolder, "allTask.list");
+
 		File allTask = new File(name);
 		OutputStreamWriter taskListWriter = null;
 
