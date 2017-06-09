@@ -78,6 +78,7 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
         this.componentList.add(this.panelButton.getButtonOk());
         this.componentList.add(this.panelButton.getButtonCancel());
         this.setFocusTraversalPolicy(policy);
+	    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     private void initComponents() {
@@ -404,7 +405,8 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
     private ActionListener runListener=new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            run();
+	        panelOutPutRangeSetting.dispose();
+	        run();
         }
     };
 

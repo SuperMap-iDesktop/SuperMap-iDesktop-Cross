@@ -246,6 +246,7 @@ public class DialogMapCacheBuilder extends SmDialog {
         this.componentList.add(this.textFieldUserPassword);
         this.componentList.add(this.textFieldConfirmPassword);
         this.setFocusTraversalPolicy(policy);
+	    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     private void initComponents() {

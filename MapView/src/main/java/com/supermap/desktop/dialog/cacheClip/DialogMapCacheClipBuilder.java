@@ -111,6 +111,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		this.currentMap = this.mapCacheBuilder.getMap();
 		this.singleProcessClip = singleProcessClip;
 		init();
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
 	private void init() {

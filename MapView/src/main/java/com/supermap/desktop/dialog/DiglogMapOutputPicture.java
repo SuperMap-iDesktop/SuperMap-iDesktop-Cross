@@ -120,6 +120,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 		this.pack();
 		this.setSize(new Dimension(680, this.getPreferredSize().height));
 		this.setLocationRelativeTo(null);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
 	/**
