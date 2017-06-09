@@ -69,6 +69,8 @@ public class MdiTabsFeature extends AbstractMdiFeature {
 
 	@Override
 	protected void validating() {
+
+		// clear 重做是因为该 feature 没有关联 page 的增删，这样实现最为简单可以同步增删状态
 		this.features.clear();
 		for (int i = 0; i < getGroup().getPageCount(); i++) {
 			IMdiFeature feature = MdiTabFeature.instance(getGroup(), getGroup().getPageAt(i), this);

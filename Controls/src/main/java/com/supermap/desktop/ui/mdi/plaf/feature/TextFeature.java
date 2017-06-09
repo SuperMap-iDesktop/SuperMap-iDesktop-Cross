@@ -20,10 +20,8 @@ public class TextFeature extends AbstractMdiFeature {
 
 	public TextFeature(String text, MdiGroup group, IMdiFeature parent) {
 		super(group, parent);
-		this.text = text == null ? "" : text;
-		this.height = MdiGroupUtilities.getFontHeight(group);
-		this.width = SwingUtilities2.stringWidth(group, group.getFontMetrics(group.getFont()), this.text);
-		this.fontDescent = group.getFontMetrics(group.getFont()).getDescent();
+		setText(text == null ? "Null" : text);
+		validating();
 	}
 
 	@Override
@@ -55,6 +53,7 @@ public class TextFeature extends AbstractMdiFeature {
 	public void validating() {
 		this.height = MdiGroupUtilities.getFontHeight(getGroup());
 		this.width = SwingUtilities2.stringWidth(getGroup(), getGroup().getFontMetrics(getGroup().getFont()), this.text);
+		this.fontDescent = getGroup().getFontMetrics(getGroup().getFont()).getDescent();
 	}
 
 	public String getText() {
@@ -63,7 +62,6 @@ public class TextFeature extends AbstractMdiFeature {
 
 	public void setText(String text) {
 		this.text = text;
-//		repaint();
 	}
 
 	public static TextFeature instance(String text, MdiGroup group, IMdiFeature parent) {

@@ -79,6 +79,8 @@ public interface IMdiFeature extends MouseListener, MouseMotionListener, KeyList
 
 	boolean isContains(Point point);
 
+	void repaint();
+
 	/**
 	 * 验证基础属性，宽、高等，这些基础属性会影响布局属性（X、Y），在调用 layout 之前建议先调用 validate
 	 */

@@ -1,13 +1,13 @@
 package com.supermap.desktop.ui.mdi;
 
-import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.mdi.util.MdiResource;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 
 public class MdiPage {
 
@@ -19,22 +19,14 @@ public class MdiPage {
 	private MdiGroup group;
 	private Component c;
 
-	private ArrayList<PropertyChangeListener> propertyChangeListeners = new ArrayList<>();
+	private EventListenerList propertyChangeListeners = new EventListenerList();
 
 	public static final String TITLE_PROPERTY = "TITLE_PROPERTY";
 
 	private MdiPage(Component c, String title, boolean isClosable, boolean isFloatable) {
 		this.c = c;
-		this.title = title;
+		setTitle(title);
 		this.icon = MdiResource.getIcon(MdiResource.FILE);
-		c.addPropertyChangeListener(FormBaseChild.TITLE_PROPERTY, new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				String oldValue = MdiPage.this.title;
-				MdiPage.this.title = (String) evt.getNewValue();
-				firePropertyChangedListener(new PropertyChangeEvent(this, TITLE_PROPERTY, oldValue, MdiPage.this.title));
-			}
-		});
 	}
 
 	public static MdiPage createMdiPage(Component c) {
@@ -58,7 +50,11 @@ public class MdiPage {
 	}
 
 	public void setTitle(String title) {
-		this.title = title;
+		if (!StringUtilities.stringEquals(this.title, title, false)) {
+			String oldValue = MdiPage.this.title;
+			this.title = title;
+			firePropertyChangedListener(new PropertyChangeEvent(this, TITLE_PROPERTY, oldValue, MdiPage.this.title));
+		}
 	}
 
 	public ImageIcon getIcon() {
@@ -73,7 +69,7 @@ public class MdiPage {
 		if (this.group != null) {
 			this.group.close(this);
 		}
- 	}
+	}
 
 	public boolean isClosed() {
 		return this.group == null || !this.group.isContain(this);
@@ -122,13 +118,21 @@ public class MdiPage {
 		return getTitle();
 	}
 
-	public void addPropertyListener(PropertyChangeListener propertyChangeListener) {
-		propertyChangeListeners.add(propertyChangeListener);
+	public void addPropertyChangeListener(PropertyChangeListener propertyChangeListener) {
+		this.propertyChangeListeners.add(PropertyChangeListener.class, propertyChangeListener);
+	}
+
+	public void removePropertyChangeListener(PropertyChangeListener propertyChangeListener) {
+		this.propertyChangeListeners.remove(PropertyChangeListener.class, propertyChangeListener);
 	}
 
 	private void firePropertyChangedListener(PropertyChangeEvent propertyChangeEvent) {
-		for (PropertyChangeListener propertyChangeListener : propertyChangeListeners) {
-			propertyChangeListener.propertyChange(propertyChangeEvent);
+		Object[] listeners = this.propertyChangeListeners.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == PropertyChangeListener.class) {
+				((PropertyChangeListener) listeners[i + 1]).propertyChange(propertyChangeEvent);
+			}
 		}
 	}
 }
