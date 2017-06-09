@@ -892,6 +892,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
+				panelGroupBoxViewBounds.dispose();
 				boolean isSuccess = false;
 				// 获得是否背景透明化参数信息
 				isBackTransparent = backTransparent.isSelected();
@@ -900,8 +901,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 				CursorUtilities.setWaitCursor(mainPanel);
 				String resultMessage;
 				// 将地图输出为图片之前，新建一个地图，对当前地图不会产生影响
-				Map copyMap = new Map();
-				copyMap = map;
+				Map copyMap = map;
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_OutputImage_AvoidAndFlowEnabled"));
 				//  设置是否在出图的时候关掉地图的自动避让效果。
 				copyMap.setDisableAutoAvoidEffect(true);

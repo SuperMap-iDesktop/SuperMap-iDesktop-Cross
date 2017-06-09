@@ -47,6 +47,7 @@ import com.supermap.desktop.ui.controls.progress.FormProgress;
 import com.supermap.desktop.utilities.Convert;
 import com.supermap.desktop.utilities.CoreResources;
 import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.mapping.Layer;
@@ -618,9 +619,10 @@ public class DialogMapCacheBuilder extends SmDialog {
     }
 
     private void initPanelRangeParameter() {
-        this.panelCacheRange = new PanelGroupBoxViewBounds(this, MapViewProperties.getString("MapCache_CacheRange"), this.currentMap);
-        this.panelIndexRange = new PanelGroupBoxViewBounds(this, MapViewProperties.getString("MapCache_IndexRange"), this.currentMap);
-        GroupLayout groupLayoutImageSave = new GroupLayout(this.panelRangeParameter);
+	    Map activeMap = MapUtilities.getActiveMap();
+	    this.panelCacheRange = new PanelGroupBoxViewBounds(this, MapViewProperties.getString("MapCache_CacheRange"), activeMap);
+	    this.panelIndexRange = new PanelGroupBoxViewBounds(this, MapViewProperties.getString("MapCache_IndexRange"), activeMap);
+	    GroupLayout groupLayoutImageSave = new GroupLayout(this.panelRangeParameter);
         groupLayoutImageSave.setHorizontalGroup(groupLayoutImageSave.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addComponent(this.panelCacheRange)
                 .addComponent(this.panelIndexRange)
@@ -1221,7 +1223,9 @@ public class DialogMapCacheBuilder extends SmDialog {
             if (!isCacheFolderSave()) {
                 return;
             }
-            setMapCacheBuilderValueBeforeRun();
+	        panelCacheRange.dispose();
+	        panelIndexRange.dispose();
+	        setMapCacheBuilderValueBeforeRun();
             TileStorageConnection tileStorageConnection = null;
             if (this.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_Compact")) && !this.textFieldUserPassword.getText().isEmpty()) {
                 this.mapCacheBuilder.setPassword(this.textFieldUserPassword.getText());

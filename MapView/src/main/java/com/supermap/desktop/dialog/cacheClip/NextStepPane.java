@@ -17,6 +17,7 @@ import com.supermap.desktop.ui.controls.JFileChooserControl;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
+import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
@@ -327,8 +328,9 @@ public class NextStepPane extends JPanel implements IState {
 	private void initComponents() {
 		this.enabledListeners = new Vector<>();
 		this.panelMultiProcess = new JPanel();
-		this.panelCacheRange = new PanelGroupBoxViewBounds(parent, MapViewProperties.getString("MapCache_CacheRange"), this.currentMap);
-		this.panelIndexRange = new PanelGroupBoxViewBounds(parent, MapViewProperties.getString("MapCache_IndexRange"), this.currentMap);
+		Map activeMap = MapUtilities.getActiveMap();
+		this.panelCacheRange = new PanelGroupBoxViewBounds(parent, MapViewProperties.getString("MapCache_CacheRange"), activeMap);
+		this.panelIndexRange = new PanelGroupBoxViewBounds(parent, MapViewProperties.getString("MapCache_IndexRange"), activeMap);
 		this.cacheRangeBounds = this.mapCacheBuilder.getBounds();
 		if (null != cacheRangeBounds) {
 			validCacheRangeBounds = true;

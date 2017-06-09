@@ -298,6 +298,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 
 	private void run() {
 		try {
+			nextStepPane.dispose();
 			if (singleProcessClip) {
 				singleProcessBuilder();
 			} else {
@@ -389,11 +390,16 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		printResultInfo(result, time);
 	}
 
+	@Override
+	public void dispose() {
+		disposeInfo();
+		super.dispose();
+	}
+
 	private void disposeInfo() {
 		this.firstStepPane.removeEvents();
 		this.nextStepPane.removeEvents();
 		nextStepPane.dispose();
-		this.dispose();
 	}
 
 	public MapCacheBuilder setMapCacheBuilderValueBeforeRun() {
