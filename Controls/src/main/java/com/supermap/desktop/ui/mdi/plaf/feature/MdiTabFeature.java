@@ -54,6 +54,7 @@ class MdiTabFeature extends AbstractMdiFeature {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (evt.getPropertyName().equals(MdiPage.TITLE_PROPERTY)) {
 					((TextFeature) textFeature).setText(page.getTitle());
+					getParent().validate();
 					getParent().layout();
 					getParent().repaint();
 				}

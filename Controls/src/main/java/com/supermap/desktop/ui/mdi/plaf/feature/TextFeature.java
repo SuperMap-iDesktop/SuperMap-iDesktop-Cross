@@ -61,7 +61,6 @@ public class TextFeature extends AbstractMdiFeature {
 
 	public void setText(String text) {
 		this.text = text;
-		validating();
 	}
 
 	public static TextFeature instance(String text, MdiGroup group, IMdiFeature parent) {
