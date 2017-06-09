@@ -22,8 +22,6 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 
 import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -420,5 +418,10 @@ public class NextStepPane extends JPanel implements IState {
 		for (EnabledListener listener : listeners) {
 			listener.setEnabled(new EnabledEvent(enabled));
 		}
+	}
+
+	public void dispose() {
+		panelCacheRange.dispose();
+		panelIndexRange.dispose();
 	}
 }
