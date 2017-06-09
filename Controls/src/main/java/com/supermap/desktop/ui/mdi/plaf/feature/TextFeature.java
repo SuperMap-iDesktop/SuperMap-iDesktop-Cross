@@ -21,6 +21,7 @@ public class TextFeature extends AbstractMdiFeature {
 	public TextFeature(String text, MdiGroup group, IMdiFeature parent) {
 		super(group, parent);
 		setText(text == null ? "Null" : text);
+		validating();
 	}
 
 	@Override
