@@ -8,11 +8,11 @@ import javax.swing.table.TableModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-@Deprecated
 /**
  *  废弃
  * @see     com.supermap.desktop.ui.controls.SortTable.SmSortTable
  */
+@Deprecated
 public class SortTable extends SmTable {
 
 	private SortButtonRenderer sortButtonRenderer;
