@@ -225,19 +225,28 @@ public class BindHandler {
 			return;
 		}
 
+		PrjCoordSys activePrj = activeFormMap.getMapControl().getMap().getPrjCoordSys();
 		Point2D activeCenter = activeFormMap.getMapControl().getMap().getCenter();
 		double activeScale = activeFormMap.getMapControl().getMap().getScale();
+
 		for (int i = 0; i < this.formMapList.size(); i++) {
 			IFormMap formMap = (IFormMap) this.formMapList.get(i);
 
 			if (null != formMap.getMapControl() && activeForm != formMap) {
+
+				// 如果投影系统不同，则需要对相关数据进行转换
+				Point2Ds translated = new Point2Ds();
+				translated.add(activeCenter.clone());
+				CoordSysTranslator.convert(translated, activePrj, formMap.getMapControl().getMap().getPrjCoordSys(),
+						new CoordSysTransParameter(), CoordSysTransMethod.MTH_GEOCENTRIC_TRANSLATION);
+
 				Point2D center = formMap.getMapControl().getMap().getCenter();
 				double scale = formMap.getMapControl().getMap().getScale();
 
 				// 中心点如果不同或者比例尺不同，则重设中心点和比例尺
-				if (!center.equals(activeCenter) || !DoubleUtilities.equals(activeScale, scale, 8)) {
+				if (!center.equals(translated.getItem(0)) || !DoubleUtilities.equals(activeScale, scale, 8)) {
 					unregister(formMap);
-					formMap.getMapControl().getMap().setCenter(activeCenter);
+					formMap.getMapControl().getMap().setCenter(translated.getItem(0));
 					formMap.getMapControl().getMap().setScale(activeScale);
 					formMap.refresh();
 					register(formMap);
