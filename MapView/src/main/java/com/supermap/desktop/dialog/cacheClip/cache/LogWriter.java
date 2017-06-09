@@ -31,6 +31,9 @@ class LogWriter {
 	private LogWriter(String type) {
 		if (logFile == null) {
 			String logFolder = ".\\temp_log\\";
+			if (CacheUtilities.isLinux()) {
+				logFolder = "./temp_log/";
+			}
 			File file = new File(logFolder);
 			if (!file.exists()) {
 				file.mkdir();
