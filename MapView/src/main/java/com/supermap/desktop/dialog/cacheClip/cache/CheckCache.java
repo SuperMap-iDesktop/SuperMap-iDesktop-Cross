@@ -4,7 +4,6 @@ import com.supermap.data.*;
 import com.supermap.data.processing.CacheWriter;
 import com.supermap.data.processing.CompactFile;
 import com.supermap.data.processing.StorageType;
-import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.tilestorage.TileContent;
 import com.supermap.tilestorage.TileStorageConnection;
 import com.supermap.tilestorage.TileStorageManager;
@@ -173,7 +172,7 @@ public class CheckCache {
 		CacheWriter cacheFile = new CacheWriter();
 		cacheFile.FromConfigFile(sciFile);
 		String pathSeparator = "\\";
-		if (SystemPropertyUtilities.isLinux()) {
+		if (CacheUtilities.isLinux()) {
 			pathSeparator = "/";
 		}
 		cacheRoot = cacheRoot + pathSeparator +
@@ -291,7 +290,7 @@ public class CheckCache {
 				int currentCol = Math.min(right, (bigCol + 1) * 128 - 1);
 
 				String cfPath = "";
-				if (SystemPropertyUtilities.isWindows()) {
+				if (CacheUtilities.isWindows()) {
 					cfPath = cacheRoot + "\\" + caption + "\\" + bigRow + "\\" + bigCol + ".cf";
 				} else {
 					cfPath = cacheRoot + "/" + caption + "/" + bigRow + "/" + bigCol + ".cf";

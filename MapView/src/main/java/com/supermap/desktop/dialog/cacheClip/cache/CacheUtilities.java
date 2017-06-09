@@ -67,7 +67,7 @@ public class CacheUtilities {
 		thread.start();
 	}
 
-	private static boolean isWindows() {
+	public static boolean isWindows() {
 		boolean isWindows = false;
 		String system = System.getProperties().getProperty("os.name");
 		if (system.startsWith("Windows")) {
@@ -82,7 +82,7 @@ public class CacheUtilities {
 	 *
 	 * @return
 	 */
-	private static boolean isLinux() {
+	public static boolean isLinux() {
 		return !isWindows();
 	}
 
