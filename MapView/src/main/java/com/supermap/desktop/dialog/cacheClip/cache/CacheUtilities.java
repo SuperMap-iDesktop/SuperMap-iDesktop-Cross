@@ -67,7 +67,7 @@ public class CacheUtilities {
 		thread.start();
 	}
 
-	private static boolean isWindows() {
+	public static boolean isWindows() {
 		boolean isWindows = false;
 		String system = System.getProperties().getProperty("os.name");
 		if (system.startsWith("Windows")) {
@@ -77,12 +77,12 @@ public class CacheUtilities {
 	}
 
 	/**
-	 * ÅĞ¶ÏÊÇ·ñÊÇlinuxÏµÍ³£¬ÔİÊ±ÈÏÎª²»ÊÇwindows¾ÍÊÇlinux
-	 * ±ÜÃâÔö¼ÓÆ½Ì¨Ê±ĞŞ¸Ä¡°!SystemPropertyUtilities.isWindows()¡±ÕâÑùµÄµ÷ÓÃ
+	 * åˆ¤æ–­æ˜¯å¦æ˜¯linuxç³»ç»Ÿï¼Œæš‚æ—¶è®¤ä¸ºä¸æ˜¯windowså°±æ˜¯linux
+	 * é¿å…å¢åŠ å¹³å°æ—¶ä¿®æ”¹â€œ!SystemPropertyUtilities.isWindows()â€è¿™æ ·çš„è°ƒç”¨
 	 *
 	 * @return
 	 */
-	private static boolean isLinux() {
+	public static boolean isLinux() {
 		return !isWindows();
 	}
 

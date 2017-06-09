@@ -1,7 +1,31 @@
 package com.supermap.desktop;
 
-import com.supermap.data.*;
-import com.supermap.desktop.CtrlAction.transformationForm.*;
+import com.supermap.data.CoordSysTranslator;
+import com.supermap.data.Dataset;
+import com.supermap.data.Datasource;
+import com.supermap.data.GeoCompound;
+import com.supermap.data.GeoLine;
+import com.supermap.data.GeoPoint;
+import com.supermap.data.GeoStyle;
+import com.supermap.data.GeoText;
+import com.supermap.data.Geometry;
+import com.supermap.data.Point2D;
+import com.supermap.data.Point2Ds;
+import com.supermap.data.PrjCoordSysType;
+import com.supermap.data.Rectangle2D;
+import com.supermap.data.Size2D;
+import com.supermap.data.SymbolMarker;
+import com.supermap.data.TextAlignment;
+import com.supermap.data.TextPart;
+import com.supermap.data.TextStyle;
+import com.supermap.data.Transformation;
+import com.supermap.data.TransformationError;
+import com.supermap.data.TransformationMode;
+import com.supermap.desktop.CtrlAction.transformationForm.FormTransformationTableModel;
+import com.supermap.desktop.CtrlAction.transformationForm.TransformationBase;
+import com.supermap.desktop.CtrlAction.transformationForm.TransformationReference;
+import com.supermap.desktop.CtrlAction.transformationForm.TransformationTarget;
+import com.supermap.desktop.CtrlAction.transformationForm.TransformationUtilties;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationAddObjectBean;
 import com.supermap.desktop.CtrlAction.transformationForm.beans.TransformationTableDataBean;
 import com.supermap.desktop.Interface.IContextMenuManager;
@@ -24,9 +48,18 @@ import com.supermap.desktop.ui.controls.SortTable.SmSortTable;
 import com.supermap.desktop.utilities.DoubleUtilities;
 import com.supermap.desktop.utilities.MapControlUtilities;
 import com.supermap.desktop.utilities.TableUtilities;
-import com.supermap.mapping.*;
+import com.supermap.mapping.Layer;
+import com.supermap.mapping.Map;
+import com.supermap.mapping.SnapSetting;
+import com.supermap.mapping.SnappedElement;
+import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.Action;
-import com.supermap.ui.*;
+import com.supermap.ui.ActionChangedEvent;
+import com.supermap.ui.ActionChangedListener;
+import com.supermap.ui.MapControl;
+import com.supermap.ui.TrackMode;
+import com.supermap.ui.TrackedEvent;
+import com.supermap.ui.TrackedListener;
 import org.w3c.dom.Document;
 
 import javax.swing.*;
@@ -37,13 +70,31 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.event.MouseWheelEvent;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.supermap.mapping.SnapMode.*;
+import static com.supermap.mapping.SnapMode.LINE_WITH_FIXED_ANGLE;
+import static com.supermap.mapping.SnapMode.LINE_WITH_FIXED_LENGTH;
+import static com.supermap.mapping.SnapMode.LINE_WITH_HORIZONTAL;
+import static com.supermap.mapping.SnapMode.LINE_WITH_PARALLEL;
+import static com.supermap.mapping.SnapMode.LINE_WITH_PERPENDICULAR;
+import static com.supermap.mapping.SnapMode.LINE_WITH_VERTICAL;
+import static com.supermap.mapping.SnapMode.POINT_ON_ENDPOINT;
+import static com.supermap.mapping.SnapMode.POINT_ON_EXTENSION;
+import static com.supermap.mapping.SnapMode.POINT_ON_LINE;
+import static com.supermap.mapping.SnapMode.POINT_ON_MIDPOINT;
+import static com.supermap.mapping.SnapMode.POINT_ON_POINT;
 
 /**
  * @author XiaJT
@@ -779,6 +830,11 @@ public class FormTransformation extends FormBaseChild implements IFormTransforma
 	@Override
 	public double getDefaultTextRotationAngle(){
 		return 0;
+	}
+
+	@Override
+	public void refresh() {
+
 	}
 
 	@Override

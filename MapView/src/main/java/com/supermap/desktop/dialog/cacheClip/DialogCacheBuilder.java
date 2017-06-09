@@ -239,7 +239,12 @@ public class DialogCacheBuilder extends SmDialog {
 		}
 		SmFileChoose fileChooserForCachePath = new SmFileChoose(moduleNameForCachePath);
 		this.fileChooserCachePath = new JFileChooserControl();
-		this.fileChooserCachePath.setPath(CacheUtilities.replacePath(System.getProperty("user.dir"), "build"));
+		String cachePath = CacheUtilities.replacePath(System.getProperty("user.dir"), "build");
+		File cacheStoreDirectory = new File(cachePath);
+		if (!cacheStoreDirectory.exists()) {
+			cacheStoreDirectory.mkdir();
+		}
+		this.fileChooserCachePath.setPath(cachePath);
 		this.fileChooserCachePath.setFileChooser(fileChooserForCachePath);
 		this.textFieldTotalProcessCount = new JTextField();
 		this.textFieldTotalProcessCount.setText("5");
