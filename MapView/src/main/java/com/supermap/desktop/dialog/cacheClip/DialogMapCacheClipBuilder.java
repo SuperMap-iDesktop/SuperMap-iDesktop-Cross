@@ -1,6 +1,10 @@
 package com.supermap.desktop.dialog.cacheClip;
 
-import com.supermap.data.*;
+import com.supermap.data.GeoRegion;
+import com.supermap.data.Geometrist;
+import com.supermap.data.Geometry;
+import com.supermap.data.GeometryType;
+import com.supermap.data.Rectangle2D;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapCacheVersion;
 import com.supermap.data.processing.MapTilingMode;
@@ -387,6 +391,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	private void disposeInfo() {
 		this.firstStepPane.removeEvents();
 		this.nextStepPane.removeEvents();
+		nextStepPane.dispose();
 		this.dispose();
 	}
 
