@@ -77,8 +77,8 @@ public class CacheUtilities {
 	}
 
 	/**
-	 * ÅĞ¶ÏÊÇ·ñÊÇlinuxÏµÍ³£¬ÔİÊ±ÈÏÎª²»ÊÇwindows¾ÍÊÇlinux
-	 * ±ÜÃâÔö¼ÓÆ½Ì¨Ê±ĞŞ¸Ä¡°!SystemPropertyUtilities.isWindows()¡±ÕâÑùµÄµ÷ÓÃ
+	 * åˆ¤æ–­æ˜¯å¦æ˜¯linuxç³»ç»Ÿï¼Œæš‚æ—¶è®¤ä¸ºä¸æ˜¯windowså°±æ˜¯linux
+	 * é¿å…å¢åŠ å¹³å°æ—¶ä¿®æ”¹â€œ!SystemPropertyUtilities.isWindows()â€è¿™æ ·çš„è°ƒç”¨
 	 *
 	 * @return
 	 */
