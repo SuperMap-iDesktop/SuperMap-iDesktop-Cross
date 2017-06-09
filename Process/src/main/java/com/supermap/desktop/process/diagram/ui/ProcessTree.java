@@ -1,11 +1,10 @@
 package com.supermap.desktop.process.diagram.ui;
 
-import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.drop.DropAndDragHandler;
 import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
-import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.core.WorkflowParser;
-import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.process.ctrlAction.SmDialogProcess;
+import com.supermap.desktop.process.meta.MetaProcess;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -58,20 +57,21 @@ public class ProcessTree extends JTree {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
+					// 原来是双击添加到地图中，暂时改为双击后弹出窗口，方案决定后再修改
 					Object lastSelectedPathComponent = getLastSelectedPathComponent();
-					if (lastSelectedPathComponent == null) {
-						return;
-					}
-					ProcessTreeNodeBean userObject = (ProcessTreeNodeBean) ((DefaultMutableTreeNode) lastSelectedPathComponent).getUserObject();
-					if (!StringUtilities.isNullOrEmpty(userObject.getKey()) && Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof FormWorkflow) {
-						((FormWorkflow) Application.getActiveApplication().getActiveForm()).addProcess(WorkflowParser.getMetaProcess(userObject.getKey()));
-					}
-//					if (userObject instanceof IProcess && !(userObject instanceof IProcessGroup)) {
-//						if (Application.getActiveApplication().getActiveForm() instanceof FormWorkflow) {
-//							((FormWorkflow) Application.getActiveApplication().getActiveForm()).addProcess(WorkflowParser.getMetaProcess(((IProcess) userObject).getKey()));
-////							((FormWorkflow) Application.getActiveApplication().getActiveForm()).addProcess((IProcess) userObject);
-//						}
+//					if (lastSelectedPathComponent == null) {
+//						return;
 //					}
+					ProcessTreeNodeBean userObject = (ProcessTreeNodeBean) ((DefaultMutableTreeNode) lastSelectedPathComponent).getUserObject();
+//					if (!StringUtilities.isNullOrEmpty(userObject.getKey()) && Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof FormWorkflow) {
+//						((FormWorkflow) Application.getActiveApplication().getActiveForm()).addProcess(WorkflowParser.getMetaProcess(userObject.getKey()));
+//					}
+
+					MetaProcess metaProcess = WorkflowParser.getMetaProcess(userObject.getKey());
+					if (metaProcess != null) {
+						SmDialogProcess smDialogProcess = new SmDialogProcess(metaProcess);
+						smDialogProcess.showDialog();
+					}
 				}
 			}
 		});
