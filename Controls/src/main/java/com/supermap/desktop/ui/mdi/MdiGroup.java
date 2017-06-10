@@ -241,14 +241,23 @@ public class MdiGroup extends JComponent {
 			this.pages.get(i).getComponent().setVisible(this.pages.get(i) == activePage);
 		}
 
-		if (!this.activePage.getComponent().hasFocus()) {
-			this.activePage.getComponent().requestFocus();
-		}
+		invokeFocus();
 		this.eventsHelper.firePageActivated(new PageActivatedEvent(this, activePage, oldActivePage));
 
 		// 更改状态重绘
 		revalidate();
 		repaint();
+	}
+
+	/**
+	 * 点击表头等激活一个页面，需要处理内容部分的焦点
+	 */
+	public void invokeFocus() {
+		if (this.activePage != null
+				&& this.activePage.getComponent() != null
+				&& !this.activePage.getComponent().hasFocus()) {
+			this.activePage.getComponent().requestFocus();
+		}
 	}
 
 	public void activePage(Component component) {

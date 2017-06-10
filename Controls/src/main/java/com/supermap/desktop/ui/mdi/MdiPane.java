@@ -446,6 +446,7 @@ public class MdiPane extends JPanel implements IMdiContainer, Accessible {
 			MdiPane.this.eventsHelper.firePageActivating(new PageActivatingEvent(group, newSelectedPage, oldSelectedPage));
 			MdiPane.this.selectedGroup = group;
 			MdiPane.this.selectedPage = newSelectedPage;
+			MdiPane.this.selectedGroup.invokeFocus();
 			MdiPane.this.eventsHelper.firePageActivated(new PageActivatedEvent(group, newSelectedPage, oldSelectedPage));
 			repaint();
 		}
