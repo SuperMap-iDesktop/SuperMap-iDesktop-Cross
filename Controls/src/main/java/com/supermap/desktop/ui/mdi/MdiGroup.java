@@ -1,18 +1,17 @@
 package com.supermap.desktop.ui.mdi;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.ui.mdi.action.*;
 import com.supermap.desktop.ui.mdi.events.*;
 import com.supermap.desktop.ui.mdi.exception.MdiActionModeException;
 import com.supermap.desktop.ui.mdi.exception.NullParameterException;
-import com.supermap.desktop.ui.mdi.action.*;
 import com.supermap.desktop.ui.mdi.exception.UnknownPageException;
 import com.supermap.desktop.ui.mdi.plaf.MdiGroupUI;
 
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.*;
 
 // @formatter:off
 /**
@@ -240,6 +239,10 @@ public class MdiGroup extends JComponent {
 		// activePage 可见，其余不可见
 		for (int i = 0; i < this.pages.size(); i++) {
 			this.pages.get(i).getComponent().setVisible(this.pages.get(i) == activePage);
+		}
+
+		if (!this.activePage.getComponent().hasFocus()) {
+			this.activePage.getComponent().requestFocus();
 		}
 		this.eventsHelper.firePageActivated(new PageActivatedEvent(this, activePage, oldActivePage));
 
