@@ -256,7 +256,7 @@ public class MdiGroup extends JComponent {
 		if (this.activePage != null
 				&& this.activePage.getComponent() != null
 				&& !this.activePage.getComponent().hasFocus()) {
-			this.activePage.getComponent().requestFocus();
+			this.activePage.getComponent().requestFocusInWindow();
 		}
 	}
 
