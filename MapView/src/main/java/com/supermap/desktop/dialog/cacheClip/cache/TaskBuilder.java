@@ -116,14 +116,15 @@ public class TaskBuilder {
 				}
 			}
 			//Set caption for new sci file
-			newScaleCaptions.put(scale, allScaleCaptions.get(scale));
+			String datasetCaption = allScaleCaptions.get(scale);
+			newScaleCaptions.put(scale, datasetCaption);
 			writer.setCacheScaleCaptions(newScaleCaptions);
 
 			Recordset recordset = null;
 			Recordset.BatchEditor editor = null;
 			if (canudb > 0) {
 				//Create dataset and it's field
-				String datasetName = "L" + caption + "_S" + Math.round(1 / scale);
+				String datasetName = "L" + datasetCaption + "_S" + Math.round(1 / scale);
 				DatasetVectorInfo datasetInfo = new DatasetVectorInfo(datasetName, DatasetType.REGION);
 				DatasetVector dataset = ds.getDatasets().create(datasetInfo);
 
