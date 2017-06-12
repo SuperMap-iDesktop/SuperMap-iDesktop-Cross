@@ -1,5 +1,6 @@
 package com.supermap.desktop.dialog.cacheClip;
 
+import com.supermap.data.processing.CacheWriter;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
@@ -22,6 +23,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by xie on 2017/5/10.
@@ -230,11 +232,31 @@ public class DialogCacheCheck extends SmDialog {
 			String[] params = {cacheRoot, sciPath, mergeTaskCount, saveErrorData, geoJsonFile};
 
 			if (validateValue(sciPath, mergeTaskCount, cacheRoot)) {
+				String parentPath = null;
+				double anchorLeft = -1;
+				double anchorTop = -1;
+				int tileSize = -1;
+				if (checkBoxSaveErrorData.isSelected()) {
+					ArrayList<String> sciNames = CheckCache.getSciFileList(sciPath);
+					File scifile = new File(sciNames.get(0));
+					parentPath = scifile.getParentFile().getParent();
+					String checkPath = CacheUtilities.replacePath(parentPath, "check");
+					String datasourcePath = CacheUtilities.replacePath(checkPath, "check.udb");
+					File datasourceFile = new File(datasourcePath);
+					if (!datasourceFile.exists()) {
+						System.out.println(datasourcePath + " not exists!");
+						return;
+					}
+					CacheWriter writer = new CacheWriter();
+					writer.FromConfigFile(sciNames.get(0));
+					anchorLeft = writer.getIndexBounds().getLeft();
+					anchorTop = writer.getIndexBounds().getTop();
+					tileSize = writer.getTileSize().value();
+				}
 				((JButton) e.getSource()).setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				CheckCache checkCache = new CheckCache();
 				checkCache.startProcess(Integer.valueOf(processCount), params);
 				((JButton) e.getSource()).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-				dialogDispose();
 				//Ensure all sci files has been checked
 				File sciFile = new File(sciPath);
 				String checkingPath = CacheUtilities.replacePath(sciFile.getParent(), "checking");
@@ -244,6 +266,11 @@ public class DialogCacheCheck extends SmDialog {
 				while (!FileUtilities.isDirEmpty(checkingPath)) {
 					Thread.sleep(2000);
 				}
+
+				if (null != parentPath && checkBoxSaveErrorData.isSelected()) {
+					checkCache.error2Udb(anchorLeft, anchorTop, tileSize, parentPath);
+				}
+				dialogDispose();
 				boolean cacheBuild = checkBoxCacheBuild.isSelected();
 				if (cacheBuild) {
 					File cacheFile = new File(cacheRoot);
@@ -256,7 +283,7 @@ public class DialogCacheCheck extends SmDialog {
 							break;
 						}
 					}
-					if (null != errorFile && errorFile.listFiles().length > 0) {
+					if (null != errorFile && errorFile.listFiles().length > 0 && tileSize != -1) {
 						DialogCacheBuilder cacheBuilder = new DialogCacheBuilder();
 						cacheBuilder.fileChooserTaskPath.setPath(errorFile.getAbsolutePath());
 						cacheBuilder.textFieldMapName.setText(cacheFile.getName());
@@ -264,7 +291,6 @@ public class DialogCacheCheck extends SmDialog {
 					} else {
 						Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_CacheCheckSuccess"));
 					}
-
 				}
 			} else {
 				new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_ParamsException"));

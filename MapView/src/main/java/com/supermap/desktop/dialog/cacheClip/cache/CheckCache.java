@@ -86,30 +86,31 @@ public class CheckCache {
 			System.out.println("sci file not found!");
 			return;
 		}
-		if (this.error2udb) {
-			File scifile = new File(sciNames.get(0));
-			String checkPath = CacheUtilities.replacePath(scifile.getParentFile().getParent(), "check");
-			String datasourcePath = CacheUtilities.replacePath(checkPath, "check.udb");
-			File datasourceFile = new File(datasourcePath);
-			if (!datasourceFile.exists()) {
-				System.out.println(datasourcePath + " not exists!");
-				return;
-			}
-		}
+//		if (this.error2udb) {
+//			File scifile = new File(sciNames.get(0));
+//			String checkPath = CacheUtilities.replacePath(scifile.getParentFile().getParent(), "check");
+//			String datasourcePath = CacheUtilities.replacePath(checkPath, "check.udb");
+//			File datasourceFile = new File(datasourcePath);
+//			if (!datasourceFile.exists()) {
+//				System.out.println(datasourcePath + " not exists!");
+//				return;
+//			}
+//		}
 		this.boundaryCheck = boundaryRegion != null;
 		CacheWriter writer = new CacheWriter();
 		writer.FromConfigFile(sciNames.get(0));
-		double anchorLeft = writer.getIndexBounds().getLeft();
-		double anchorTop = writer.getIndexBounds().getTop();
-		int tileSize = writer.getTileSize().value();
+//		double anchorLeft = writer.getIndexBounds().getLeft();
+//		double anchorTop = writer.getIndexBounds().getTop();
+//		int tileSize = writer.getTileSize().value();
 		//Get sci files from sci directory
 		File sciPath = new File(scipath);
+		String parentPath = null;
 		if (sciPath.exists()) {
 			do {
 				//Recalculate sci file length
 				String[] sciFileNames = sciPath.list(CacheUtilities.getFilter());
 				sciLength = sciFileNames.length;
-				String parentPath = null;
+
 				File checkingDir = null;
 				if (sciLength > 0) {
 					File sci = new File(CacheUtilities.replacePath(scipath, sciFileNames[0]));
@@ -142,10 +143,10 @@ public class CheckCache {
 					String sciName = doingSciNames.get(i);
 					check(cacheRoot, sciName);
 				}
-				if (this.error2udb && null != parentPath) {
-					this.error2Udb(anchorLeft, anchorTop, tileSize, parentPath);
-				}
 			} while (sciLength != 0);
+//			if (this.error2udb && null != parentPath) {
+//				this.error2Udb(anchorLeft, anchorTop, tileSize, parentPath);
+//			}
 		}
 	}
 
@@ -650,7 +651,7 @@ public class CheckCache {
 		return sciNames;
 	}
 
-	private void error2Udb(double anchorLeft, double anchorTop, int tileSize, String parentName) {
+	public void error2Udb(double anchorLeft, double anchorTop, int tileSize, String parentName) {
 		String tempPath = CacheUtilities.replacePath(parentName, "temp");
 		File tempFile = new File(tempPath);
 		if (!tempFile.exists()) {
@@ -676,7 +677,7 @@ public class CheckCache {
 		}
 		DatasourceConnectionInfo info = new DatasourceConnectionInfo();
 		info.setServer(udbPath);
-		info.setAlias("cache");
+		info.setAlias("check");
 		info.setEngineType(EngineType.UDB);
 
 		Workspace workspace = new Workspace();
@@ -696,7 +697,7 @@ public class CheckCache {
 			ArrayList<String> addLines = new ArrayList<String>();
 			ArrayList<String> modifyLines = new ArrayList<String>();
 
-			File file = new File(tempPath + name);
+			File file = new File(CacheUtilities.replacePath(tempPath, name));
 			try {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
 
