@@ -127,7 +127,9 @@ public class DialogCacheBuilder extends SmDialog {
 						DialogStopProcess stopProcess = new DialogStopProcess();
 						if (stopProcess.showDialog() == DialogResult.OK && stopProcess.isStopRightNow()) {
 							//Stop all process and dispose
-							ProcessManager.getInstance().dispose();
+//							ProcessManager.getInstance().dispose();
+							ProcessManager.getInstance().removeProcess(newProcessCount);
+
 						} else {
 							return;
 						}
@@ -434,10 +436,12 @@ public class DialogCacheBuilder extends SmDialog {
 						//Ensure that component,count array have sorted as we want;
 						if (null != buildFile && buildFile.exists()) {
 							buildSciLength = buildFile.list(getFilter()).length;
-							for (int i = 0; i < captions.size(); i++) {
-								int currentCount = buildFile.list(getFilter(captions.get(i))).length;
-								final int value = (int) (((currentCount + 0.0) / captionCount.get(i)) * 100);
-								progressBars.get(i).setValue(value);
+							if (null != captions) {
+								for (int i = 0; i < captions.size(); i++) {
+									int currentCount = buildFile.list(getFilter(captions.get(i))).length;
+									final int value = (int) (((currentCount + 0.0) / captionCount.get(i)) * 100);
+									progressBars.get(i).setValue(value);
+								}
 							}
 							//Sleep two seconds or not
 							Thread.sleep(1000);
@@ -486,6 +490,7 @@ public class DialogCacheBuilder extends SmDialog {
 				//Sleep two seconds or not
 				Thread.sleep(6000);
 			}
+
 			boolean result = false;
 			File resultDir = new File(cachePath);
 			String resultPath = "";

@@ -37,11 +37,21 @@ public class ProcessManager {
 		}
 	}
 
+	public void removeProcess(int newProcessCount){
+		try {
+			for (int i = threadList.size() - 1; i >= newProcessCount; i--) {
+				threadList.get(i).process.destroy();
+				threadList.remove(threadList.get(i));
+			}
+		} catch (Throwable throwable) {
+			throwable.printStackTrace();
+		}
+	}
+
 	public void dispose() {
 		try {
 			for (int i = threadList.size() - 1; i >= 0; i--) {
 				threadList.get(i).process.destroy();
-				threadList.get(i).process = null;
 			}
 			threadList.clear();
 			protectThread.exit = false;
