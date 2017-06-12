@@ -16,6 +16,7 @@ import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
+import com.supermap.mapping.TrackingLayer;
 import com.supermap.ui.MapControl;
 
 import javax.swing.*;
@@ -26,12 +27,21 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
-import static com.supermap.desktop.controls.ControlDefaultValues.*;
+import static com.supermap.desktop.controls.ControlDefaultValues.getCopyCurrentMapboundsBottom;
+import static com.supermap.desktop.controls.ControlDefaultValues.getCopyCurrentMapboundsLeft;
+import static com.supermap.desktop.controls.ControlDefaultValues.getCopyCurrentMapboundsRight;
+import static com.supermap.desktop.controls.ControlDefaultValues.getCopyCurrentMapboundsTop;
 
 /**
  * @author YuanR
@@ -93,6 +103,7 @@ public class PanelGroupBoxViewBounds extends JPanel {
 
     private String borderName = ControlsProperties.getString("String_MapOutputBounds");
 
+	private static final String TRACKING_LAYER_NAME = "PanelGroupBoxViewBounds";
 
     /**
      * 按钮事件枢纽站
@@ -134,13 +145,35 @@ public class PanelGroupBoxViewBounds extends JPanel {
                 setAsRectangleBounds(popupMenuCustomBounds.getRectangle2D());
                 //  处理进行了选择对象操作，从而获取选择的对象及对象所在的图层
                 fireListener();
+	            highLightSelectedObject();
             }
         }
     };
 
+	private void highLightSelectedObject() {
+		removeHighLightSelectedObjects();
+		java.util.Map<Layer, java.util.List<Geometry>> selectedGeometryAndLayer = popupMenuCustomBounds.getSelectedGeometryAndLayer();
+		Collection<List<Geometry>> values = selectedGeometryAndLayer.values();
+		for (List<Geometry> geometries : values) {
+			for (Geometry geometry : geometries) {
+				Geometry heightGeometry = MapUtilities.getHeightGeometry(geometry);
+				map.getTrackingLayer().add(heightGeometry, TRACKING_LAYER_NAME);
+			}
+		}
+	}
 
-    private CaretListener textFieldLeftCaretListener = new CaretListener() {
-        @Override
+	private void removeHighLightSelectedObjects() {
+		TrackingLayer trackingLayer = map.getTrackingLayer();
+		for (int count = trackingLayer.getCount() - 1; count >= 0; count--) {
+			if (trackingLayer.getTag(count).equals(TRACKING_LAYER_NAME)) {
+				trackingLayer.remove(count);
+			}
+		}
+	}
+
+
+	private CaretListener textFieldLeftCaretListener = new CaretListener() {
+		@Override
         public void caretUpdate(CaretEvent e) {
             textFieldLValueChange();
         }
@@ -218,14 +251,6 @@ public class PanelGroupBoxViewBounds extends JPanel {
         super();
         this.dialog = smDialog;
         init();
-    }
-
-    public PanelGroupBoxViewBounds(SmDialog smDialog, String borderName) {
-        super();
-        this.dialog = smDialog;
-        this.borderName = borderName;
-        init();
-
     }
 
     public PanelGroupBoxViewBounds(SmDialog smDialog, String borderName, Map inputMap) {
@@ -319,52 +344,6 @@ public class PanelGroupBoxViewBounds extends JPanel {
         this.mainPanel.add(new JPanel(), new GridBagConstraintsHelper(0, 5, 4, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setWeight(4, 0));
         this.mainPanel.add(this.pasteButton, new GridBagConstraintsHelper(4, 5, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(0, 0));
         this.mainPanel.add(new JPanel(), new GridBagConstraintsHelper(0, 6, 6, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-//  GroupLayout viewPanelLayout = new GroupLayout(this.mainPanel);
-//        viewPanelLayout.setAutoCreateContainerGaps(true);
-//        viewPanelLayout.setAutoCreateGaps(true);
-//        this.mainPanel.setLayout(viewPanelLayout);
-//
-//        // @formatter:off
-//        viewPanelLayout.setHorizontalGroup(viewPanelLayout.createSequentialGroup()
-//                .addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-//                        .addComponent(this.labelCurrentViewLeft, GroupLayout.PREFERRED_SIZE, DEFAULT_LABELSIZE, DEFAULT_LABELSIZE)
-//                        .addComponent(this.labelCurrentViewTop, GroupLayout.PREFERRED_SIZE, DEFAULT_LABELSIZE, DEFAULT_LABELSIZE)
-//                        .addComponent(this.labelCurrentViewRight, GroupLayout.PREFERRED_SIZE, DEFAULT_LABELSIZE, DEFAULT_LABELSIZE)
-//                        .addComponent(this.labelCurrentViewBottom, GroupLayout.PREFERRED_SIZE, DEFAULT_LABELSIZE, DEFAULT_LABELSIZE))
-//                .addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-//                        .addComponent(this.textFieldCurrentViewLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-//                        .addComponent(this.textFieldCurrentViewTop, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-//                        .addComponent(this.textFieldCurrentViewRight, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-//                        .addComponent(this.textFieldCurrentViewBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-//                .addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-//                        .addComponent(this.mapViewBoundsButton, DEFAULT_BUTTONSIZE, DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)
-//                        .addComponent(this.currentViewBoundsButton, DEFAULT_BUTTONSIZE, DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)
-//                        .addComponent(this.customBoundsButton, DEFAULT_BUTTONSIZE, DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)
-//                        .addComponent(this.copyButton, DEFAULT_BUTTONSIZE, DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)
-//                        .addComponent(this.pasteButton, DEFAULT_BUTTONSIZE, DEFAULT_BUTTONSIZE, GroupLayout.PREFERRED_SIZE)));
-//
-//        viewPanelLayout.setVerticalGroup(viewPanelLayout.createSequentialGroup()
-//                .addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-//                        .addComponent(this.labelCurrentViewLeft)
-//                        .addComponent(this.textFieldCurrentViewLeft, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-//                        .addComponent(this.mapViewBoundsButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-//                .addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-//                        .addComponent(this.labelCurrentViewBottom)
-//                        .addComponent(this.textFieldCurrentViewBottom, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-//                        .addComponent(this.currentViewBoundsButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-//                .addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-//                        .addComponent(this.labelCurrentViewRight)
-//                        .addComponent(this.textFieldCurrentViewRight, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-//                        .addComponent(this.customBoundsButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-//                .addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-//                        .addComponent(this.labelCurrentViewTop)
-//                        .addComponent(this.textFieldCurrentViewTop, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-//                        .addComponent(this.copyButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-//                .addGroup(viewPanelLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
-//                        .addComponent(this.pasteButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-//                .addGap(5, 5, Short.MAX_VALUE));
-//
-//        // @formatter:on
     }
 
     private void registEvents() {
@@ -726,9 +705,6 @@ public class PanelGroupBoxViewBounds extends JPanel {
         this.textFieldCurrentViewBottom.setEnable(enabled);
         this.textFieldCurrentViewRight.setEnable(enabled);
         this.textFieldCurrentViewTop.setEnable(enabled);
-        this.textFieldCurrentViewBottom.setEnabled(enabled);
-        this.textFieldCurrentViewRight.setEnabled(enabled);
-        this.textFieldCurrentViewTop.setEnabled(enabled);
         this.copyButton.setEnabled(enabled);
         this.currentViewBoundsButton.setEnabled(enabled);
         this.customBoundsButton.setEnabled(enabled);
@@ -787,4 +763,12 @@ public class PanelGroupBoxViewBounds extends JPanel {
         }
     }
 
+	public void setMap(Map map) {
+		this.map = map;
+	}
+
+	public void dispose() {
+		removeHighLightSelectedObjects();
+		map.refreshTrackingLayer();
+	}
 }

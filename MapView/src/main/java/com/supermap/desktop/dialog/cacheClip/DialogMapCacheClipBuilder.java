@@ -1,6 +1,10 @@
 package com.supermap.desktop.dialog.cacheClip;
 
-import com.supermap.data.*;
+import com.supermap.data.GeoRegion;
+import com.supermap.data.Geometrist;
+import com.supermap.data.Geometry;
+import com.supermap.data.GeometryType;
+import com.supermap.data.Rectangle2D;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapCacheVersion;
 import com.supermap.data.processing.MapTilingMode;
@@ -107,6 +111,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		this.currentMap = this.mapCacheBuilder.getMap();
 		this.singleProcessClip = singleProcessClip;
 		init();
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
 	private void init() {
@@ -293,6 +298,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 
 	private void run() {
 		try {
+			nextStepPane.dispose();
 			if (singleProcessClip) {
 				singleProcessBuilder();
 			} else {
@@ -384,10 +390,16 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		printResultInfo(result, time);
 	}
 
+	@Override
+	public void dispose() {
+		disposeInfo();
+		super.dispose();
+	}
+
 	private void disposeInfo() {
 		this.firstStepPane.removeEvents();
 		this.nextStepPane.removeEvents();
-		this.dispose();
+		nextStepPane.dispose();
 	}
 
 	public MapCacheBuilder setMapCacheBuilderValueBeforeRun() {

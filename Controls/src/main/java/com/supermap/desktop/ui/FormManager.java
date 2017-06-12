@@ -2,11 +2,7 @@ package com.supermap.desktop.ui;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IFormLayout;
-import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.DialogSaveChildForms;
 import com.supermap.desktop.enums.WindowType;
@@ -14,17 +10,10 @@ import com.supermap.desktop.event.*;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.mdi.MdiPage;
 import com.supermap.desktop.ui.mdi.MdiPane;
-import com.supermap.desktop.ui.mdi.events.Operation;
-import com.supermap.desktop.ui.mdi.events.PageActivatedEvent;
-import com.supermap.desktop.ui.mdi.events.PageActivatedListener;
-import com.supermap.desktop.ui.mdi.events.PageAddedEvent;
-import com.supermap.desktop.ui.mdi.events.PageAddedListener;
-import com.supermap.desktop.ui.mdi.events.PageClosedEvent;
-import com.supermap.desktop.ui.mdi.events.PageClosedListener;
-import com.supermap.desktop.ui.mdi.events.PageClosingEvent;
-import com.supermap.desktop.ui.mdi.events.PageClosingListener;
+import com.supermap.desktop.ui.mdi.events.*;
 
-import javax.swing.event.EventListenerList;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -156,7 +145,15 @@ public class FormManager extends MdiPane implements IFormManager {
 	public void add(IForm form, int index) {
 		try {
 			if (form instanceof FormBaseChild) {
-				MdiPage page = MdiPage.createMdiPage((FormBaseChild) form, ((FormBaseChild) form).getText(), true, false);
+				final MdiPage page = MdiPage.createMdiPage((FormBaseChild) form, form.getText(), true, false);
+				((FormBaseChild) form).addPropertyChangeListener(FormBaseChild.TITLE_PROPERTY, new PropertyChangeListener() {
+					@Override
+					public void propertyChange(PropertyChangeEvent evt) {
+						if (evt.getNewValue() != null) {
+							page.setTitle(evt.getNewValue().toString());
+						}
+					}
+				});
 				addPage(page, index);
 			} else {
 				Application.getActiveApplication().getOutput().output("error.");

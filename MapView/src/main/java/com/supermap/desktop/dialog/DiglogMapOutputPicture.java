@@ -10,10 +10,18 @@ import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.map.propertycontrols.PanelGroupBoxViewBounds;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.*;
+import com.supermap.desktop.ui.controls.FileChooserButtonListener;
+import com.supermap.desktop.ui.controls.FileChooserPathChangedListener;
+import com.supermap.desktop.ui.controls.JFileChooserControl;
+import com.supermap.desktop.ui.controls.SmDialog;
+import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.ui.controls.TextFields.WaringTextField;
 import com.supermap.desktop.ui.controls.borderPanel.PanelButton;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 import com.supermap.mapping.ImageType;
 import com.supermap.mapping.Map;
 
@@ -112,6 +120,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 		this.pack();
 		this.setSize(new Dimension(680, this.getPreferredSize().height));
 		this.setLocationRelativeTo(null);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 	}
 
 	/**
@@ -123,6 +132,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 		this.mainPanel = new JPanel();
 		this.outputSetPanel = new JPanel();
 		this.panelGroupBoxViewBounds = new PanelGroupBoxViewBounds(this);
+		this.panelGroupBoxViewBounds.setMap(map);
 
 		this.waringTextFieldLeft = panelGroupBoxViewBounds.getTextFieldCurrentViewLeft();
 		this.waringTextFieldTop = panelGroupBoxViewBounds.getTextFieldCurrentViewTop();
@@ -882,6 +892,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			try {
+				panelGroupBoxViewBounds.dispose();
 				boolean isSuccess = false;
 				// 获得是否背景透明化参数信息
 				isBackTransparent = backTransparent.isSelected();
@@ -890,8 +901,7 @@ public class DiglogMapOutputPicture extends SmDialog {
 				CursorUtilities.setWaitCursor(mainPanel);
 				String resultMessage;
 				// 将地图输出为图片之前，新建一个地图，对当前地图不会产生影响
-				Map copyMap = new Map();
-				copyMap = map;
+				Map copyMap = map;
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_OutputImage_AvoidAndFlowEnabled"));
 				//  设置是否在出图的时候关掉地图的自动避让效果。
 				copyMap.setDisableAutoAvoidEffect(true);
@@ -956,4 +966,10 @@ public class DiglogMapOutputPicture extends SmDialog {
 //			}
 		}
 	};
+
+	@Override
+	public void dispose() {
+		panelGroupBoxViewBounds.dispose();
+		super.dispose();
+	}
 }

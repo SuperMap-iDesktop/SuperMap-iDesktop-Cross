@@ -62,6 +62,7 @@ public abstract class AbstractMdiFeature implements IMdiFeature {
 	@Override
 	public abstract int getWidth();
 
+	@Override
 	public void repaint() {
 		getGroup().repaint(getX(), getY(), getWidth(), getHeight());
 	}

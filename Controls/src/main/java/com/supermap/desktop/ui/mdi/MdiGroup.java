@@ -1,18 +1,17 @@
 package com.supermap.desktop.ui.mdi;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.ui.mdi.action.*;
 import com.supermap.desktop.ui.mdi.events.*;
 import com.supermap.desktop.ui.mdi.exception.MdiActionModeException;
 import com.supermap.desktop.ui.mdi.exception.NullParameterException;
-import com.supermap.desktop.ui.mdi.action.*;
 import com.supermap.desktop.ui.mdi.exception.UnknownPageException;
 import com.supermap.desktop.ui.mdi.plaf.MdiGroupUI;
 
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.swing.*;
 
 // @formatter:off
 /**
@@ -241,11 +240,24 @@ public class MdiGroup extends JComponent {
 		for (int i = 0; i < this.pages.size(); i++) {
 			this.pages.get(i).getComponent().setVisible(this.pages.get(i) == activePage);
 		}
+
+		invokeFocus();
 		this.eventsHelper.firePageActivated(new PageActivatedEvent(this, activePage, oldActivePage));
 
 		// 更改状态重绘
 		revalidate();
 		repaint();
+	}
+
+	/**
+	 * 点击表头等激活一个页面，需要处理内容部分的焦点
+	 */
+	public void invokeFocus() {
+		if (this.activePage != null
+				&& this.activePage.getComponent() != null
+				&& !this.activePage.getComponent().hasFocus()) {
+			this.activePage.getComponent().requestFocusInWindow();
+		}
 	}
 
 	public void activePage(Component component) {

@@ -78,6 +78,7 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
         this.componentList.add(this.panelButton.getButtonOk());
         this.componentList.add(this.panelButton.getButtonCancel());
         this.setFocusTraversalPolicy(policy);
+	    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     }
 
     private void initComponents() {
@@ -98,8 +99,8 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
         this.warningProviderDataSet = new WarningOrHelpProvider(MapViewProperties.getString("String_OutputImageDataset_DatasetNameIsInvalid"), true);
         this.warningProviderResolution = new WarningOrHelpProvider(MapViewProperties.getString("String_OutputImageDataset_ResoltionIsNotEmpty"), true);
 
-        this.panelOutPutRangeSetting = new PanelGroupBoxViewBounds(this, MapViewProperties.getString("String_OutputImageDataset_OutPutRange"));
-        this.outRangeWaringTextFieldLeft = this.panelOutPutRangeSetting.getTextFieldCurrentViewLeft();
+	    this.panelOutPutRangeSetting = new PanelGroupBoxViewBounds(this, MapViewProperties.getString("String_OutputImageDataset_OutPutRange"), map);
+	    this.outRangeWaringTextFieldLeft = this.panelOutPutRangeSetting.getTextFieldCurrentViewLeft();
         this.outRangeWaringTextFieldTop = this.panelOutPutRangeSetting.getTextFieldCurrentViewTop();
         this.outRangeWaringTextFieldRight = this.panelOutPutRangeSetting.getTextFieldCurrentViewRight();
         this.outRangeWaringTextFieldBottom = this.panelOutPutRangeSetting.getTextFieldCurrentViewBottom();
@@ -404,7 +405,8 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
     private ActionListener runListener=new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-            run();
+	        panelOutPutRangeSetting.dispose();
+	        run();
         }
     };
 
@@ -421,4 +423,10 @@ public class DiglogMapOutputToImageDataSet extends SmDialog {
             isCanRun();
         }
     };
+
+	@Override
+	public void dispose() {
+		panelOutPutRangeSetting.dispose();
+		super.dispose();
+	}
 }

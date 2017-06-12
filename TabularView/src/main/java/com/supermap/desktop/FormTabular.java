@@ -1,15 +1,7 @@
 package com.supermap.desktop;
 
-import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldType;
-import com.supermap.data.QueryParameter;
-import com.supermap.data.Recordset;
-import com.supermap.data.StatisticMode;
-import com.supermap.desktop.Interface.IContextMenuManager;
-import com.supermap.desktop.Interface.IFormTabular;
-import com.supermap.desktop.Interface.IProperty;
-import com.supermap.desktop.Interface.IPropertyManager;
-import com.supermap.desktop.Interface.ITabularEditHistoryManager;
+import com.supermap.data.*;
+import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.editHistory.TabularEditHistoryManager;
@@ -39,17 +31,10 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.sql.Time;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 public class FormTabular extends FormBaseChild implements IFormTabular {
 
@@ -253,8 +238,59 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 //				}
 //			}
 //		});
+		invokeFocus();
 		initStatusbars();
 		registerEvents();
+	}
+
+	/**
+	 * 鼠标点击列头、滚动条等区域，希望窗口可以获得焦点
+	 */
+	private void invokeFocus() {
+		this.jTableTabular.getTableHeader().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (!hasFocus()) {
+					requestFocusInWindow();
+				}
+			}
+		});
+
+		this.jScrollPaneChildWindow.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				if (!hasFocus()) {
+					requestFocusInWindow();
+				}
+			}
+		});
+
+		if (this.jScrollPaneChildWindow.getVerticalScrollBar() != null) {
+			JScrollBar vertical = this.jScrollPaneChildWindow.getVerticalScrollBar();
+			vertical.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					if (!hasFocus()) {
+						requestFocusInWindow();
+					}
+				}
+			});
+
+			if (vertical.getComponentCount() > 0) {
+				for (int i = 0; i < vertical.getComponentCount(); i++) {
+					Component c = vertical.getComponent(i);
+					c.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseReleased(MouseEvent e) {
+							if (!hasFocus()) {
+								requestFocusInWindow();
+							}
+						}
+					});
+				}
+			}
+		}
+
 	}
 
 	private void registerEvents() {
