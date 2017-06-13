@@ -13,6 +13,11 @@ public abstract class DefaultParameterPanel implements IParameterPanel, FieldCon
 		parameter.addFieldConstraintChangedListener(this);
 	}
 
+	/**
+	 * 字段值改变时会触发此事件
+	 *
+	 * @param event
+	 */
 	@Override
 	public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
 

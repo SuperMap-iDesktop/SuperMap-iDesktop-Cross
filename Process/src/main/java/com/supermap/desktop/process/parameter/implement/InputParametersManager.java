@@ -175,7 +175,11 @@ public class InputParametersManager {
 
 	private void reloadParameterComboBox(ParameterComboBox parameterComboBox) {
 		parameterComboBox.removeAllItems();
-		FormWorkflow activeForm = (FormWorkflow) Application.getActiveApplication().getActiveForm();
+		IForm form = Application.getActiveApplication().getActiveForm();
+		if (!(form instanceof FormWorkflow)) {
+			return;
+		}
+		FormWorkflow activeForm = (FormWorkflow) form;
 		ArrayList<IGraph> allDataNode = activeForm.getAllDataNode();
 		for (IGraph graph : allDataNode) {
 			if (((OutputGraph) graph).getProcessGraph().getProcess() != this.parameters.getProcess())
