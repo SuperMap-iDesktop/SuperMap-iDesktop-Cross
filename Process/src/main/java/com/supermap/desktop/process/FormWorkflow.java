@@ -245,8 +245,6 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 	@Override
 	public boolean save() {
 		int index = -1;
-		String text = getText();
-
 		ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
 		for (IWorkFlow workFlow : workFlows) {
 			if (workFlow.getName().equals(this.getText())) {
