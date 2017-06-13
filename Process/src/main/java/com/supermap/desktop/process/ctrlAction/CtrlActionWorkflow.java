@@ -15,11 +15,11 @@ import java.util.ArrayList;
 /**
  * @author XiaJT
  */
-public class CtrlActionProcess extends CtrlAction {
+public class CtrlActionWorkflow extends CtrlAction {
 	private static final String processTreeClassName = "com.supermap.desktop.process.core.ProcessManager";
 	private static final String ParameterManagerClassName = "com.supermap.desktop.process.ParameterManager";
 
-	public CtrlActionProcess(IBaseItem caller, IForm formClass) {
+	public CtrlActionWorkflow(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 
