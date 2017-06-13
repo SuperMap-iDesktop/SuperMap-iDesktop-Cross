@@ -10,6 +10,7 @@ import java.util.Date;
 
 class LogWriter {
 
+	private static File logDirectory;
 	private File logFile;
 	private OutputStreamWriter writer;
 	public static SimpleDateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm");
@@ -34,9 +35,9 @@ class LogWriter {
 			if (CacheUtilities.isLinux()) {
 				logFolder = "./temp_log/";
 			}
-			File file = new File(logFolder);
-			if (!file.exists()) {
-				file.mkdir();
+			logDirectory = new File(logFolder);
+			if (!logDirectory.exists()) {
+				logDirectory.mkdir();
 			}
 			String logName = dFormat.format(new Date()) + "_" + type + "_" + getPID() + ".log";
 			logFile = new File(logFolder + logName);
@@ -51,6 +52,15 @@ class LogWriter {
 		}
 	}
 
+
+	public static void removeAllLogs() {
+		if (null != logDirectory && logDirectory.exists() && logDirectory.isDirectory()) {
+			File[] logFiles = logDirectory.listFiles();
+			for (int i = 0; i < logFiles.length; i++) {
+				logFiles[i].delete();
+			}
+		}
+	}
 
 	public void writelog(String line) {
 		synchronized (this) {

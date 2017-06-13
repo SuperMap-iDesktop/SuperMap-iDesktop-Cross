@@ -1,10 +1,6 @@
 package com.supermap.desktop.dialog.cacheClip;
 
-import com.supermap.data.GeoRegion;
-import com.supermap.data.Geometrist;
-import com.supermap.data.Geometry;
-import com.supermap.data.GeometryType;
-import com.supermap.data.Rectangle2D;
+import com.supermap.data.*;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapCacheVersion;
 import com.supermap.data.processing.MapTilingMode;
@@ -337,19 +333,20 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 						return;
 					}
 					this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-					disposeInfo();
+					dispose();
 					DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder();
 					dialogCacheBuilder.textFieldMapName.setText(this.currentMap.getName());
-					String targetTaskPath = CacheUtilities.replacePath(tasksPath,"task");
+					String targetTaskPath = CacheUtilities.replacePath(tasksPath, "task");
 					File oldFile = new File(sciPath);
 					dialogCacheBuilder.setSciFile(oldFile);
 					dialogCacheBuilder.fileChooserTotalTaskPath.setPath(sciPath);
 					dialogCacheBuilder.fileChooserTaskPath.setPath(targetTaskPath);
 					dialogCacheBuilder.fileChooserWorkspacePath.setPath(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer());
+					dialogCacheBuilder.fileChooserCachePath.setPath(filePath);
 					dialogCacheBuilder.showDialog();
 				}
 				if (this.checkBoxAutoClosed.isSelected()) {
-					disposeInfo();
+					dispose();
 					this.mapCacheBuilder.dispose();
 				}
 			}
@@ -399,7 +396,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	private void disposeInfo() {
 		this.firstStepPane.removeEvents();
 		this.nextStepPane.removeEvents();
-		nextStepPane.dispose();
+		this.nextStepPane.dispose();
 	}
 
 	public MapCacheBuilder setMapCacheBuilderValueBeforeRun() {

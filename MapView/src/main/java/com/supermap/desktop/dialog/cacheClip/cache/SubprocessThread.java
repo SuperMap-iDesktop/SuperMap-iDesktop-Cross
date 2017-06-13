@@ -47,24 +47,23 @@ class SubprocessThread extends Thread {
 			ProcessBuilder builder = new ProcessBuilder(arguments);
 			builder.redirectErrorStream(true);
 			process = builder.start();
-
-			int psHash = process.hashCode();
-			stream = process.getInputStream();
-			String osName = System.getProperty("os.name").toLowerCase();
-			BufferedReader br1;
-			if (osName.startsWith("linux")) {
-				br1 = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-			} else {
-				br1 = new BufferedReader(new InputStreamReader(stream, "GBK"));
-			}
-			String line1 = null;
-			while ((line1 = br1.readLine()) != null) {
-//				start = System.currentTimeMillis();
-				//log.writelog("PIDHASH:"+psHash +"," + line1);
-				LogWriter.getInstance(this.type).writelog(line1);
-			}
-			stream.close();
-			isExit = true;
+//			int psHash = process.hashCode();
+//			stream = process.getInputStream();
+//			String osName = System.getProperty("os.name").toLowerCase();
+//			BufferedReader br1;
+//			if (osName.startsWith("linux")) {
+//				br1 = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+//			} else {
+//				br1 = new BufferedReader(new InputStreamReader(stream, "GBK"));
+//			}
+//			String line1 = null;
+//			while ((line1 = br1.readLine()) != null) {
+////				start = System.currentTimeMillis();
+//				//log.writelog("PIDHASH:"+psHash +"," + line1);
+//				LogWriter.getInstance(this.type).writelog(line1);
+//			}
+//			stream.close();
+//			isExit = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

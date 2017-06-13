@@ -30,7 +30,7 @@ public class BuildCache {
 			if (0 == processCount) {
 				main(params);
 			} else {
-				//Write executing info to log
+				LogWriter.removeAllLogs();
 				for (int i = 0; i < processCount; i++) {
 					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.BUILD_CACHE);
 					Thread.sleep(2000);

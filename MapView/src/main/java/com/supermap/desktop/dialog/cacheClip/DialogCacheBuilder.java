@@ -65,7 +65,8 @@ public class DialogCacheBuilder extends SmDialog {
 	private WarningOrHelpProvider helpProviderForMergeSciCount;
 	//scipath for restore path of .sci file
 	private String sciPath;
-	private int nowProcessCount;
+	private String doingPath;
+
 	private String[] params;
 	private BuildCache buildCache;
 	//Total sci file
@@ -116,21 +117,24 @@ public class DialogCacheBuilder extends SmDialog {
 				String newProcessStr = textFieldProcessCount.getText();
 				if (StringUtilities.isInteger(newProcessStr)) {
 					int newProcessCount = Integer.valueOf(newProcessStr);
+					String logFolder = ".\\temp_log\\";
+					if (CacheUtilities.isLinux()) {
+						logFolder = "./temp_log/";
+					}
+					int nowProcessCount = -1;
+					File logDirectory = new File(logFolder);
+					if (logDirectory.exists() && logDirectory.isDirectory()) {
+						nowProcessCount = logDirectory.listFiles().length;
+					}
+
 					if (newProcessCount > nowProcessCount) {
 						//Add new process
 						int newSize = newProcessCount - nowProcessCount;
 						for (int i = 0; i < newSize; i++) {
 							buildCache.addProcess(params);
 						}
-						nowProcessCount = newProcessCount;
 					} else if (newProcessCount < nowProcessCount) {
-						DialogStopProcess stopProcess = new DialogStopProcess();
-						if (stopProcess.showDialog() == DialogResult.OK && stopProcess.isStopRightNow()) {
-							//Stop all process and dispose
-							ProcessManager.getInstance().dispose();
-						} else {
-							return;
-						}
+						ProcessManager.getInstance().removeProcess(params, newProcessCount, sciPath);
 					}
 				}
 			} catch (Exception ex) {
@@ -353,9 +357,6 @@ public class DialogCacheBuilder extends SmDialog {
 			String cachePath = fileChooserCachePath.getPath();
 			cachePath = CacheUtilities.replacePath(cachePath);
 			String processCount = textFieldProcessCount.getText();
-			if (StringUtilities.isInteger(processCount)) {
-				nowProcessCount = Integer.valueOf(processCount);
-			}
 			String mergeSciCount = textFieldMergeSciCount.getText();
 			params = new String[]{sciPath, workspacePath, mapName, cachePath, processCount, mergeSciCount};
 //            final String[] params = {workspacePath, mapName, sciPath, cachePath, processCount, mergeSciCount};
@@ -434,10 +435,12 @@ public class DialogCacheBuilder extends SmDialog {
 						//Ensure that component,count array have sorted as we want;
 						if (null != buildFile && buildFile.exists()) {
 							buildSciLength = buildFile.list(getFilter()).length;
-							for (int i = 0; i < captions.size(); i++) {
-								int currentCount = buildFile.list(getFilter(captions.get(i))).length;
-								final int value = (int) (((currentCount + 0.0) / captionCount.get(i)) * 100);
-								progressBars.get(i).setValue(value);
+							if (null != captions) {
+								for (int i = 0; i < captions.size(); i++) {
+									int currentCount = buildFile.list(getFilter(captions.get(i))).length;
+									final int value = (int) (((currentCount + 0.0) / captionCount.get(i)) * 100);
+									progressBars.get(i).setValue(value);
+								}
 							}
 							//Sleep two seconds or not
 							Thread.sleep(1000);
@@ -486,6 +489,7 @@ public class DialogCacheBuilder extends SmDialog {
 				//Sleep two seconds or not
 				Thread.sleep(6000);
 			}
+
 			boolean result = false;
 			File resultDir = new File(cachePath);
 			String resultPath = "";

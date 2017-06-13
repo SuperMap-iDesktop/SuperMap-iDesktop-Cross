@@ -1,9 +1,12 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
+import com.supermap.desktop.utilities.StringUtilities;
+
+import java.io.*;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by xie on 2017/5/31.
@@ -34,6 +37,43 @@ public class CacheUtilities {
 		}
 		return sourceStr + name;
 	}
+	// 获取当前系统的所有的PidName
+	public static Set<String> getCurrOsAllPidNameSet() throws Exception {
+		Set<String> pidNameSet = new HashSet<>();
+		InputStream is = null;
+		InputStreamReader ir = null;
+		BufferedReader br = null;
+		String line = null;
+		String[] array = (String[]) null;
+		try {
+			Process p = Runtime.getRuntime().exec("TASKLIST /NH /FO CSV");
+			is = p.getInputStream();
+			ir = new InputStreamReader(is);
+			br = new BufferedReader(ir);
+			while ((line = br.readLine()) != null) {
+				array = line.split(",");
+				line = array[0].replaceAll("\"", "");
+				line = line.replaceAll(".exe", "");
+				line = line.replaceAll(".exe".toUpperCase(), "");
+				if (!StringUtilities.isNullOrEmpty(line)) {
+					pidNameSet.add(line);
+				}
+			}
+		} catch (IOException localIOException) {
+			throw new Exception("获取系统所有进程名出错！");
+		} finally {
+			if (br != null) {
+				br.close();
+			}
+			if (ir != null) {
+				ir.close();
+			}
+			if (is != null) {
+				is.close();
+			}
+		}
+		return pidNameSet;
+	}
 
 	/**
 	 * Start a new process
@@ -63,7 +103,7 @@ public class CacheUtilities {
 			}
 			ProcessManager manager = ProcessManager.getInstance();
 			SubprocessThread thread = new SubprocessThread(arguments, cacheType);
-			manager.addProcess(thread);
+			manager.addProcess(thread,cacheType);
 			thread.start();
 		} catch (Exception e) {
 			e.printStackTrace();
