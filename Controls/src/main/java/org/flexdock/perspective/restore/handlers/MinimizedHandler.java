@@ -18,12 +18,12 @@
  */
 package org.flexdock.perspective.restore.handlers;
 
-import java.util.Map;
-
 import org.flexdock.docking.Dockable;
 import org.flexdock.docking.DockingManager;
 import org.flexdock.docking.state.DockingState;
 import org.flexdock.util.DockingUtility;
+
+import java.util.Map;
 
 /**
  * Created on 2005-05-12
@@ -40,7 +40,7 @@ public class MinimizedHandler implements RestorationHandler {
         }
 
         DockingManager.getMinimizeManager().preview(dockable, true);
-        DockingManager.setMinimized(dockable, true, dockingState.getMinimizedConstraint());
+//        DockingManager.setMinimized(dockable, true, dockingState.getMinimizedConstraint());
 
         return DockingUtility.isMinimized(dockable);
     }
