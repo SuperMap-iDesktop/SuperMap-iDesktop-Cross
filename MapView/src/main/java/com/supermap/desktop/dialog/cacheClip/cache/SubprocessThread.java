@@ -47,7 +47,6 @@ class SubprocessThread extends Thread {
 			ProcessBuilder builder = new ProcessBuilder(arguments);
 			builder.redirectErrorStream(true);
 			process = builder.start();
-
 //			int psHash = process.hashCode();
 //			stream = process.getInputStream();
 //			String osName = System.getProperty("os.name").toLowerCase();

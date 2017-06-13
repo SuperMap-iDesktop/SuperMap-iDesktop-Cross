@@ -547,12 +547,12 @@ public class DataExportDialog extends SmDialog implements IPanelModel {
             }
             for (int j = 0; j < size; j++) {
                 FileType fileType = fileTypes[j];
-                if (!fileType.equals(FileType.GEOJSON)) {
+//                if (!fileType.equals(FileType.GEOJSON)) {
                     String datasetName = CommonUtilities.getDatasetName(fileType.toString());
                     if (!StringUtilities.isNullOrEmpty(datasetName)) {
                         this.steppedComboBox.addItem(datasetName);
                     }
-                }
+//                }
             }
             Dimension d = this.steppedComboBox.getPreferredSize();
             this.steppedComboBox.setPreferredSize(new Dimension(d.width, d.height));

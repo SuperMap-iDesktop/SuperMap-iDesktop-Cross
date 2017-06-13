@@ -1,5 +1,9 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
+import com.supermap.desktop.dialog.SmOptionPane;
+import com.supermap.desktop.mapview.MapViewProperties;
+
+import java.io.File;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -31,21 +35,47 @@ public class ProcessManager {
 		protectThread.start();
 	}
 
-	public void addProcess(SubprocessThread thread) {
+	public void addProcess(SubprocessThread thread, String cacheType) {
 		synchronized (new Object()) {
 			threadList.add(thread);
 		}
 	}
 
-	public void removeProcess(int newProcessCount){
+	/**
+	 * @param params
+	 * @param newProcessCount
+	 * @param sciPath
+	 */
+	public void removeProcess(String[] params, int newProcessCount, String sciPath) {
 		try {
-			for (int i = threadList.size() - 1; i >= newProcessCount; i--) {
+			LogWriter.removeAllLogs();
+			for (int i = threadList.size() - 1; i >= 0; i--) {
 				threadList.get(i).process.destroy();
-				threadList.remove(threadList.get(i));
 			}
+			threadList.clear();
+			File taskFiles = new File(sciPath);
+			String doingPath = null;
+			if (taskFiles.exists()) {
+				doingPath = CacheUtilities.replacePath(taskFiles.getParentFile().getAbsolutePath(), "doing");
+			}
+			File doingDirectory = new File(doingPath);
+			if (doingDirectory.exists()) {
+				File[] doingScis = doingDirectory.listFiles();
+				for (int i = 0; i < doingScis.length; i++) {
+					doingScis[i].renameTo(new File(taskFiles, doingScis[i].getName()));
+				}
+			}
+			BuildCache buildCache = new BuildCache();
+			buildCache.startProcess(newProcessCount, params);
+			SmOptionPane optionPane = new SmOptionPane();
+			optionPane.showConfirmDialog(MapViewProperties.getString("String_ProcessStoped"));
 		} catch (Throwable throwable) {
 			throwable.printStackTrace();
 		}
+	}
+
+	public CopyOnWriteArrayList<SubprocessThread> getThreadList() {
+		return threadList;
 	}
 
 	public void dispose() {
@@ -73,18 +103,7 @@ public class ProcessManager {
 					}
 
 					//If process count <threadList.size() add one/more process
-//					String[] pids = ManagementFactory.getRuntimeMXBean().getName().split("@");
 
-//					if (pids.length + 1 < threadList.size()) {
-//						int newProcessLength = threadList.size() - pids.length;
-//						for (int i = 0; i < newProcessLength; i++) {
-//							if (null != threadList.get(0)) {
-//								SubprocessThread thread = threadList.get(0).clone();
-//								thread.start();
-//								threadList.add(thread);
-//							}
-//						}
-//					}
 				}
 			} catch (Exception e) {
 				e.printStackTrace();

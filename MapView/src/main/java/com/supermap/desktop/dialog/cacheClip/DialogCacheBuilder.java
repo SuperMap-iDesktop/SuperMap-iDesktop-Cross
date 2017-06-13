@@ -65,7 +65,8 @@ public class DialogCacheBuilder extends SmDialog {
 	private WarningOrHelpProvider helpProviderForMergeSciCount;
 	//scipath for restore path of .sci file
 	private String sciPath;
-	private int nowProcessCount;
+	private String doingPath;
+
 	private String[] params;
 	private BuildCache buildCache;
 	//Total sci file
@@ -116,23 +117,24 @@ public class DialogCacheBuilder extends SmDialog {
 				String newProcessStr = textFieldProcessCount.getText();
 				if (StringUtilities.isInteger(newProcessStr)) {
 					int newProcessCount = Integer.valueOf(newProcessStr);
+					String logFolder = ".\\temp_log\\";
+					if (CacheUtilities.isLinux()) {
+						logFolder = "./temp_log/";
+					}
+					int nowProcessCount = -1;
+					File logDirectory = new File(logFolder);
+					if (logDirectory.exists() && logDirectory.isDirectory()) {
+						nowProcessCount = logDirectory.listFiles().length;
+					}
+
 					if (newProcessCount > nowProcessCount) {
 						//Add new process
 						int newSize = newProcessCount - nowProcessCount;
 						for (int i = 0; i < newSize; i++) {
 							buildCache.addProcess(params);
 						}
-						nowProcessCount = newProcessCount;
 					} else if (newProcessCount < nowProcessCount) {
-						DialogStopProcess stopProcess = new DialogStopProcess();
-						if (stopProcess.showDialog() == DialogResult.OK && stopProcess.isStopRightNow()) {
-							//Stop all process and dispose
-//							ProcessManager.getInstance().dispose();
-							ProcessManager.getInstance().removeProcess(newProcessCount);
-
-						} else {
-							return;
-						}
+						ProcessManager.getInstance().removeProcess(params, newProcessCount, sciPath);
 					}
 				}
 			} catch (Exception ex) {
@@ -355,9 +357,6 @@ public class DialogCacheBuilder extends SmDialog {
 			String cachePath = fileChooserCachePath.getPath();
 			cachePath = CacheUtilities.replacePath(cachePath);
 			String processCount = textFieldProcessCount.getText();
-			if (StringUtilities.isInteger(processCount)) {
-				nowProcessCount = Integer.valueOf(processCount);
-			}
 			String mergeSciCount = textFieldMergeSciCount.getText();
 			params = new String[]{sciPath, workspacePath, mapName, cachePath, processCount, mergeSciCount};
 //            final String[] params = {workspacePath, mapName, sciPath, cachePath, processCount, mergeSciCount};
