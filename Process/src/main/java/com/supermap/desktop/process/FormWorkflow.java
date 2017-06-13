@@ -8,8 +8,19 @@ import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.JDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.*;
-import com.supermap.desktop.process.core.*;
+import com.supermap.desktop.event.FormActivatedListener;
+import com.supermap.desktop.event.FormClosedEvent;
+import com.supermap.desktop.event.FormClosedListener;
+import com.supermap.desktop.event.FormClosingEvent;
+import com.supermap.desktop.event.FormClosingListener;
+import com.supermap.desktop.event.FormDeactivatedListener;
+import com.supermap.desktop.event.FormShownEvent;
+import com.supermap.desktop.event.FormShownListener;
+import com.supermap.desktop.process.core.DirectConnect;
+import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.NodeMatrix;
+import com.supermap.desktop.process.core.Workflow;
+import com.supermap.desktop.process.core.WorkflowParser;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
@@ -18,9 +29,14 @@ import com.supermap.desktop.process.graphics.connection.IConnectable;
 import com.supermap.desktop.process.graphics.connection.LineGraph;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
+import com.supermap.desktop.process.graphics.events.GraphRemovingEvent;
+import com.supermap.desktop.process.graphics.events.GraphRemovingListener;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
+import com.supermap.desktop.process.graphics.interaction.canvas.CanvasActionProcessEvent;
+import com.supermap.desktop.process.graphics.interaction.canvas.CanvasActionProcessListener;
+import com.supermap.desktop.process.graphics.interaction.canvas.GraphDragAction;
 import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
 import com.supermap.desktop.process.graphics.storage.IConnectionManager;
 import com.supermap.desktop.process.graphics.storage.IGraphStorage;
@@ -73,6 +89,7 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 		init();
 		this.setText(workflow.getName());
 		initFormWorkFlow(workflow);
+		isNeedSave = false;
 	}
 
 	protected void initFormWorkFlow(IWorkFlow workflow) {
@@ -142,12 +159,27 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 		graphCanvas.getCanvas().addGraphCreatedListener(new GraphCreatedListener() {
 			@Override
 			public void graphCreated(GraphCreatedEvent e) {
+				isNeedSave = true;
 				if (!isAutoAddOutPut) {
 					return;
 				}
 				if (e.getGraph() instanceof ProcessGraph) {
 					ProcessGraph processGraph = (ProcessGraph) e.getGraph();
 					addOutPutGraph(processGraph);
+				}
+			}
+		});
+		graphCanvas.getCanvas().getGraphStorage().addGraphRemovingListener(new GraphRemovingListener() {
+			@Override
+			public void graphRemoving(GraphRemovingEvent e) {
+				isNeedSave = true;
+			}
+		});
+		graphCanvas.getCanvas().getActionsManager().addCanvasActionProcessListener(new CanvasActionProcessListener() {
+			@Override
+			public void canvasActionProcess(CanvasActionProcessEvent e) {
+				if (e.getAction() instanceof GraphDragAction && e.getStatus() == CanvasActionProcessEvent.START) {
+					isNeedSave = true;
 				}
 			}
 		});
@@ -233,6 +265,7 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 
 	@Override
 	public boolean save() {
+		boolean result = false;
 		int index = -1;
 		ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
 		for (IWorkFlow workFlow : workFlows) {
@@ -244,15 +277,17 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 		}
 
 		if (index == -1) {
-			saveAs(true);
+			result = saveAs(true);
 		} else {
 			Application.getActiveApplication().addWorkFlow(index, getWorkFlow());
+			result = true;
 		}
-		isNeedSave = false;
-		return true;
+		isNeedSave = !result;
+		return result;
 	}
 
 	public boolean saveAs(boolean isNewWindow) {
+		boolean result = false;
 		JDialogFormSaveAs dialogSaveAs = new JDialogFormSaveAs();
 
 		dialogSaveAs.setDescription(ProcessProperties.getString("String_NewWorkFlowName"));
@@ -270,8 +305,10 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 		if (dialogSaveAs.showDialog() == DialogResult.OK) {
 			this.setText(dialogSaveAs.getCurrentFormName());
 			Application.getActiveApplication().addWorkFlow(getWorkFlow());
+			result = true;
 		}
-		return true;
+		isNeedSave = !result;
+		return result;
 	}
 
 	@Override
@@ -317,7 +354,7 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 
 	@Override
 	public void setNeedSave(boolean needSave) {
-
+		isNeedSave = needSave;
 	}
 
 	@Override
@@ -342,6 +379,9 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 
 	@Override
 	public void formClosing(FormClosingEvent e) {
+		if (!isNeedSave()) {
+			return;
+		}
 		String message = String.format(ControlsProperties.getString("String_SaveProcessPrompt"), getText());
 		int result = GlobalParameters.isShowFormClosingInfo() ? UICommonToolkit.showConfirmDialogWithCancel(message) : JOptionPane.NO_OPTION;
 		if (result == JOptionPane.YES_OPTION) {

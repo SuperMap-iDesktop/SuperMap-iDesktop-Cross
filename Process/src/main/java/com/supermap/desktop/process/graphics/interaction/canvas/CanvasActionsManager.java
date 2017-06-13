@@ -2,10 +2,16 @@ package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
 
+import javax.swing.event.EventListenerList;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -17,6 +23,8 @@ public class CanvasActionsManager implements CanvasAction, CanvasActionProcessLi
 	private ConcurrentHashMap<Class, List<Class>> mutex = new ConcurrentHashMap<>();
 
 	private List<CanvasAction> lockedActions = new ArrayList<>();
+
+	private EventListenerList listenerList = new EventListenerList();
 
 	/**
 	 * 管理所已安装的 CanvasAction 的优先级。数值越小，优先级越高。
@@ -239,12 +247,12 @@ public class CanvasActionsManager implements CanvasAction, CanvasActionProcessLi
 
 	@Override
 	public void addCanvasActionProcessListener(CanvasActionProcessListener listener) {
-		throw new UnsupportedOperationException();
+		this.listenerList.add(CanvasActionProcessListener.class, listener);
 	}
 
 	@Override
 	public void removeCanvasActionProcessListener(CanvasActionProcessListener listener) {
-		throw new UnsupportedOperationException();
+		this.listenerList.remove(CanvasActionProcessListener.class, listener);
 	}
 
 	@Override
@@ -378,6 +386,8 @@ public class CanvasActionsManager implements CanvasAction, CanvasActionProcessLi
 
 	@Override
 	public void canvasActionProcess(CanvasActionProcessEvent e) {
+		fireCanvasActionProcess(e);
+
 		CanvasAction action = e.getAction();
 		Class key = getKey(action);
 
@@ -414,5 +424,15 @@ public class CanvasActionsManager implements CanvasAction, CanvasActionProcessLi
 			}
 		}
 		return result;
+	}
+
+	private void fireCanvasActionProcess(CanvasActionProcessEvent e) {
+		Object[] listeners = listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == CanvasActionProcessListener.class) {
+				((CanvasActionProcessListener) listeners[i + 1]).canvasActionProcess(e);
+			}
+		}
 	}
 }
