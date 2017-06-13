@@ -7,6 +7,8 @@ import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 
+import java.beans.PropertyChangeEvent;
+
 /**
  * @author XiaJT
  * 最好支持添加任意像，如果"0"
@@ -98,5 +100,10 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 		return fieldTypes;
 	}
 
+	public void setDataset(DatasetVector dataset) {
+		DatasetVector oldValue = this.dataset;
+		this.dataset = dataset;
+		firePropertyChangeListener(new PropertyChangeEvent(this, DATASET_FIELD_NAME, oldValue, this.dataset));
+	}
 
 }
