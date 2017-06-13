@@ -301,7 +301,7 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 				dialogSaveAs.addExistNames(formManager.get(i).getText());
 			}
 		}
-		dialogSaveAs.setTitle(ProcessProperties.getString("String_SaveWorkFLow"));
+		dialogSaveAs.setTitle(ProcessProperties.getString("Sting_SaveAsWorkFlow"));
 		if (dialogSaveAs.showDialog() == DialogResult.OK) {
 			this.setText(dialogSaveAs.getCurrentFormName());
 			Application.getActiveApplication().addWorkFlow(getWorkFlow());

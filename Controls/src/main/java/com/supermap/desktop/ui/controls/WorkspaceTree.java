@@ -1007,7 +1007,9 @@ public class WorkspaceTree extends JTree implements IDisposable {
 				IWorkFlow[] workFlows = workFlowChangedEvent.getWorkFlows();
 				if (workFlowChangedEvent.getType() == WorkFlowChangedEvent.ADD) {
 					for (IWorkFlow workFlow : workFlows) {
-						treeModelTemp.insertNodeInto(new DefaultMutableTreeNode(new TreeNodeData(workFlow, NodeDataType.WORK_FLOW)), treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
+						DefaultMutableTreeNode child = new DefaultMutableTreeNode(new TreeNodeData(workFlow, NodeDataType.WORK_FLOW));
+						treeModelTemp.insertNodeInto(child, treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
+						JTreeUIUtilities.locateNode(WorkspaceTree.this, child);
 					}
 				} else if (workFlowChangedEvent.getType() == WorkFlowChangedEvent.DELETE) {
 					for (int i = treeNodeWorkFlow.getChildCount() - 1; i >= 0; i--) {
