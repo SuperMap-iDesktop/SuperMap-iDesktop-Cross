@@ -1,7 +1,15 @@
 package com.supermap.desktop;
 
-import com.supermap.data.*;
-import com.supermap.desktop.Interface.*;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldType;
+import com.supermap.data.QueryParameter;
+import com.supermap.data.Recordset;
+import com.supermap.data.StatisticMode;
+import com.supermap.desktop.Interface.IContextMenuManager;
+import com.supermap.desktop.Interface.IFormTabular;
+import com.supermap.desktop.Interface.IProperty;
+import com.supermap.desktop.Interface.IPropertyManager;
+import com.supermap.desktop.Interface.ITabularEditHistoryManager;
 import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.editHistory.TabularEditHistoryManager;
@@ -31,7 +39,13 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Time;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
@@ -240,6 +254,7 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 //		});
 		invokeFocus();
 		initStatusbars();
+		addRedoListener();
 		registerEvents();
 	}
 
@@ -294,23 +309,6 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 	}
 
 	private void registerEvents() {
-		// api上说这个方法已过时
-		this.jTableTabular.registerKeyboardAction(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (canUndo()) {
-					undo();
-				}
-			}
-		}, KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK, false), JComponent.WHEN_FOCUSED);
-		this.jTableTabular.registerKeyboardAction(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (canRedo()) {
-					redo();
-				}
-			}
-		}, KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK, false), JComponent.WHEN_FOCUSED);
 		this.jTableTabular.addMouseListener(mouseAdapter);
 		this.jTableTabular.getTableHeader().addMouseListener(mouseAdapter);
 		this.jTableTabular.addKeyListener(keyListener);
@@ -342,6 +340,26 @@ public class FormTabular extends FormBaseChild implements IFormTabular {
 				}
 			}
 		});
+	}
+
+	private void addRedoListener() {
+		// api上说这个方法已过时
+		this.jTableTabular.registerKeyboardAction(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (canUndo()) {
+					undo();
+				}
+			}
+		}, KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK, false), JComponent.WHEN_FOCUSED);
+		this.jTableTabular.registerKeyboardAction(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (canRedo()) {
+					redo();
+				}
+			}
+		}, KeyStroke.getKeyStroke(KeyEvent.VK_Y, KeyEvent.CTRL_DOWN_MASK, false), JComponent.WHEN_FOCUSED);
 	}
 
 	@Override
