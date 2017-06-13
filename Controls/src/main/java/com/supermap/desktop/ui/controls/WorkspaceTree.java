@@ -118,6 +118,7 @@ import com.supermap.desktop.utilities.ArrayUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.LayoutUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.WorkFlowUtilities;
 import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 import javax.swing.*;
@@ -1611,6 +1612,15 @@ public class WorkspaceTree extends JTree implements IDisposable {
 					}
 					if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(message)) {
 						DatasetUtilities.deleteDataset(datasets);
+					}
+				} else if (data instanceof IWorkFlow) {
+					ArrayList<IWorkFlow> workflows = new ArrayList<>();
+					for (TreePath treePath : WorkspaceTree.this.getSelectionPaths()) {
+						DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+						TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
+						IWorkFlow workflow = (IWorkFlow) selectedNodeData.getData();
+						workflows.add(workflow);
+						WorkFlowUtilities.deleteProcess(workflows);
 					}
 				} else {
 					NodeDataType type = currentNodeData.getType();

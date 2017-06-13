@@ -1,12 +1,17 @@
 package com.supermap.desktop.process.ctrlAction;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IWorkFlow;
-import com.supermap.desktop.dialog.JDialogFormSaveAs;
+import com.supermap.desktop.dialog.SmDialogFormSaveAs;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.ProcessProperties;
+import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -21,10 +26,35 @@ public class CtrlActionTreeWorkFlowSaveAs extends CtrlAction {
 
 	@Override
 	public void run() {
-		String name = ((IWorkFlow) ((TreeNodeData) ((DefaultMutableTreeNode) UICommonToolkit.getWorkspaceManager().getWorkspaceTree().getLastSelectedPathComponent()).getUserObject()).getData()).getName();
-		JDialogFormSaveAs jDialogFormSaveAs = new JDialogFormSaveAs();
-		jDialogFormSaveAs.setTitle(ProcessProperties.getString("Sting_SaveAsWorkFlow"));
-		// TODO: 2017/6/13  
+		IWorkFlow currentWorkFlow = (IWorkFlow) ((TreeNodeData) ((DefaultMutableTreeNode) UICommonToolkit.getWorkspaceManager().getWorkspaceTree().getLastSelectedPathComponent()).getUserObject()).getData();
+
+		SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
+		dialogSaveAs.setDescription(ProcessProperties.getString("String_NewWorkFlowName"));
+		dialogSaveAs.setCurrentFormName(currentWorkFlow.getName());
+		for (IWorkFlow workFlow : Application.getActiveApplication().getWorkFlows()) {
+			dialogSaveAs.addExistNames(workFlow.getName());
+		}
+		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+
+		IForm currentForm = null;
+		for (int i = 0; i < formManager.getCount(); i++) {
+			if (formManager.get(i) instanceof FormWorkflow) {
+				String title = formManager.get(i).getText();
+				dialogSaveAs.addExistNames(title);
+				if (title.equals(currentWorkFlow.getName())) {
+					currentForm = formManager.get(i);
+				}
+			}
+		}
+		dialogSaveAs.setTitle(ProcessProperties.getString("Sting_SaveAsWorkFlow"));
+		if (dialogSaveAs.showDialog() == DialogResult.OK) {
+			if (currentForm != null) {
+				currentForm.setText(dialogSaveAs.getCurrentFormName());
+			}
+			Workflow workflow = new Workflow(dialogSaveAs.getCurrentFormName());
+			workflow.setMatrixXml(currentWorkFlow.getMatrixXml());
+			Application.getActiveApplication().addWorkFlow(workflow);
+		}
 	}
 
 	@Override
