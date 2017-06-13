@@ -1,8 +1,13 @@
 package com.supermap.desktop.process.parameter.implement;
 
-import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.FieldInfo;
+import com.supermap.data.FieldType;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
+import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.IMultiSelectionParameter;
+
+import java.beans.PropertyChangeEvent;
 
 /**
  * @author XiaJT
@@ -11,7 +16,18 @@ public class ParameterFieldGroup extends AbstractParameter implements IMultiSele
 	public static final String FIELD_DATASET = "dataset";
 
 	@ParameterField(name = FIELD_DATASET)
-	private Dataset dataset;
+	private DatasetVector dataset;
+	private String describe;
+	private FieldType[] fieldType;
+	private FieldInfo[] selectedFields;
+
+	public ParameterFieldGroup() {
+
+	}
+
+	public ParameterFieldGroup(String describe) {
+		this.describe = describe;
+	}
 
 	@Override
 	public void setSelectedItem(Object item) {
@@ -20,24 +36,42 @@ public class ParameterFieldGroup extends AbstractParameter implements IMultiSele
 
 	@Override
 	public Object getSelectedItem() {
-		return null;
+		throw new UnsupportedOperationException("See GetSelectedFieldInfos");
 	}
 
 	@Override
 	public String getType() {
-		return null;
+		return ParameterType.FIELD_GROUP;
 	}
 
 	@Override
 	public String getDescribe() {
-		return null;
+		return describe;
 	}
 
-	public Dataset getDataset() {
+	public DatasetVector getDataset() {
 		return dataset;
 	}
 
-	public void setDataset(Dataset dataset) {
+	public void setDataset(DatasetVector dataset) {
+		DatasetVector oldValue = this.dataset;
 		this.dataset = dataset;
+		firePropertyChangeListener(new PropertyChangeEvent(this, FIELD_DATASET, oldValue, dataset));
+	}
+
+	public void setFieldType(FieldType[] fieldType) {
+		this.fieldType = fieldType;
+	}
+
+	public FieldType[] getFieldType() {
+		return fieldType;
+	}
+
+	public void setSelectedFields(FieldInfo[] fieldInfos) {
+		this.selectedFields = fieldInfos;
+	}
+
+	public FieldInfo[] getSelectedFields() {
+		return selectedFields;
 	}
 }

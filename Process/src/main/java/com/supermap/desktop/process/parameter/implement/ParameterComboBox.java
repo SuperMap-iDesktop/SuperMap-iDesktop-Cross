@@ -3,6 +3,7 @@ package com.supermap.desktop.process.parameter.implement;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
+import com.supermap.desktop.process.parameter.interfaces.IConGetter;
 import com.supermap.desktop.process.parameter.interfaces.ISingleSelectionParameter;
 
 import java.beans.PropertyChangeEvent;
@@ -25,6 +26,8 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 	public static final String comboBoxValue = "comboBoxValue";
 	@ParameterField(name = comboBoxValue)
 	private ParameterDataNode value;
+
+	private IConGetter iConGetter;
 
 	public ParameterComboBox() {
 		this("");
@@ -153,5 +156,13 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 		if (isRemove) {
 			firePropertyChangeListener(new PropertyChangeEvent(this, comboBoxItems, null, null));
 		}
+	}
+
+	public IConGetter getIConGetter() {
+		return iConGetter;
+	}
+
+	public void setIConGetter(IConGetter iConGetter) {
+		this.iConGetter = iConGetter;
 	}
 }

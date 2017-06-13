@@ -17,6 +17,7 @@ public class SmDialogProcess extends SmDialog {
 
 	public SmDialogProcess(MetaProcess metaProcess) {
 		this.metaProcess = metaProcess;
+		this.setTitle(metaProcess.getTitle());
 		JPanel panel = (JPanel) metaProcess.getComponent().getPanel();
 		ProcessTask task = TaskUtil.getTask(metaProcess);
 
@@ -30,8 +31,9 @@ public class SmDialogProcess extends SmDialog {
 				task.getComponent(i).setVisible(false);
 			}
 		}
-		this.setSize(new Dimension(300, 800));
 		this.pack();
+		this.setMinimumSize(new Dimension(300, 0));
+//		this.setPreferredSize(new Dimension(getWidth() + 200, getHeight()));
 		this.setLocationRelativeTo(null);
 	}
 }

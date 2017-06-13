@@ -91,7 +91,7 @@ public class JDialogFormSaveAs extends SmDialog {
 
 	}
 
-	public void setDescribeText(String text) {
+	public void setDescription(String text) {
 		labelFormName.setText(text);
 	}
 

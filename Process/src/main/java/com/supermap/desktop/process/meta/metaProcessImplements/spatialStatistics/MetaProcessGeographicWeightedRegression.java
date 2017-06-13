@@ -21,6 +21,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
 import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
+import com.supermap.desktop.process.parameter.implement.ParameterFieldGroup;
 import com.supermap.desktop.process.parameter.implement.ParameterNumber;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
@@ -45,7 +46,7 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 
 	private ParameterComboBox parameterBandWidthType = new ParameterComboBox(ProcessProperties.getString("String_BandWidthType"));
 	private ParameterNumber parameterDistanceTolerance = new ParameterNumber(ProcessProperties.getString("String_BandWidthDistanceTolerance"));
-	private ParameterFieldComboBox parameterExplanatory = new ParameterFieldComboBox(ProcessProperties.getString("String_ExplanatoryFeilds"));
+	private ParameterFieldGroup parameterExplanatory = new ParameterFieldGroup(ProcessProperties.getString("String_ExplanatoryFields"));
 	private ParameterComboBox parameterKernelFunction = new ParameterComboBox(ProcessProperties.getString("String_KernelFunction"));
 	private ParameterComboBox parameterKernelType = new ParameterComboBox(ProcessProperties.getString("String_KernelType"));
 	private ParameterFieldComboBox parameterModelField = new ParameterFieldComboBox(ProcessProperties.getString("String_ModelField"));
@@ -138,7 +139,7 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 
 		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
 		equalDatasetConstraint.constrained(parameterSingleDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
-		equalDatasetConstraint.constrained(parameterExplanatory, ParameterFieldComboBox.DATASET_FIELD_NAME);
+		equalDatasetConstraint.constrained(parameterExplanatory, ParameterFieldGroup.FIELD_DATASET);
 		equalDatasetConstraint.constrained(parameterModelField, ParameterFieldComboBox.DATASET_FIELD_NAME);
 	}
 
@@ -174,7 +175,16 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 		GWRParameter gwrParameter = new GWRParameter();
 		BandWidthType bandWidthType = (BandWidthType) parameterBandWidthType.getSelectedData();
 		gwrParameter.setBandWidthType(bandWidthType);
-		gwrParameter.setExplanatoryFeilds(new String[]{((FieldInfo) parameterExplanatory.getSelectedItem()).getName()});
+
+		FieldInfo[] selectedFields = parameterExplanatory.getSelectedFields();
+		if (selectedFields != null) {
+			String[] explanatoryFields = new String[selectedFields.length];
+			for (int i = 0; i < selectedFields.length; i++) {
+				explanatoryFields[i] = selectedFields[i].getName();
+			}
+			gwrParameter.setExplanatoryFeilds(explanatoryFields);
+		}
+
 		gwrParameter.setKernelFunction((KernelFunction) parameterKernelFunction.getSelectedData());
 		gwrParameter.setModelFeild(((FieldInfo) parameterModelField.getSelectedItem()).getName());
 		KernelType kernelType = (KernelType) parameterKernelType.getSelectedData();

@@ -4,6 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.FormWorkflow;
+import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
 import com.supermap.desktop.process.graphics.connection.IConnection;
@@ -15,9 +16,11 @@ import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
+import com.supermap.desktop.process.parameter.interfaces.IConGetter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 
+import javax.swing.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -41,6 +44,14 @@ public class InputParametersManager {
 		ParameterSwitch parameterSwitch = new ParameterSwitch();
 		parameterSwitch.setParameters(parameters);
 		final ParameterComboBox parameterComboBox = new ParameterComboBox();
+		parameterComboBox.setIConGetter(new IConGetter() {
+			private Icon icon = ProcessResources.getIcon("/processresources/ProcessOutputIcon.png");
+
+			@Override
+			public Icon getICon(ParameterDataNode parameterDataNode) {
+				return icon;
+			}
+		});
 		parameterComboBox.setParameters(parameters);
 		parameterComboBox.setDescribe(name + ":");
 		reloadParameterComboBox(parameterComboBox);
@@ -175,7 +186,11 @@ public class InputParametersManager {
 
 	private void reloadParameterComboBox(ParameterComboBox parameterComboBox) {
 		parameterComboBox.removeAllItems();
-		FormWorkflow activeForm = (FormWorkflow) Application.getActiveApplication().getActiveForm();
+		IForm form = Application.getActiveApplication().getActiveForm();
+		if (!(form instanceof FormWorkflow)) {
+			return;
+		}
+		FormWorkflow activeForm = (FormWorkflow) form;
 		ArrayList<IGraph> allDataNode = activeForm.getAllDataNode();
 		for (IGraph graph : allDataNode) {
 			if (((OutputGraph) graph).getProcessGraph().getProcess() != this.parameters.getProcess())
