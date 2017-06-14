@@ -20,6 +20,7 @@ public abstract class XMLCommandBase extends _XMLTag {
 	private boolean visible = true;
 	private String label = "";
 	private String customProperty = "";
+	private String platform = "All";
 
 	protected XMLCommandType commandType = XMLCommandType.BUTTON;
 
@@ -77,8 +78,15 @@ public abstract class XMLCommandBase extends _XMLTag {
 			// do nothing
 		}
 
+		try {
+			this.platform = element.getAttribute(g_AttributionPlatform);
+		} catch (Exception e) {
+			// ignore
+		}
+
 		return true;
 	}
+
 
 	public PluginInfo getPluginInfo() {
 		return this.pluginInfo;
@@ -154,6 +162,13 @@ public abstract class XMLCommandBase extends _XMLTag {
 		return null;
 	}
 
+	public String getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(String platform) {
+		this.platform = platform;
+	}
 	public void remove() {
 		// do nothing
 	}
@@ -289,4 +304,6 @@ public abstract class XMLCommandBase extends _XMLTag {
 			}
 		}
 	}
+
+
 }

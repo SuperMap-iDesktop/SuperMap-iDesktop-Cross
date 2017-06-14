@@ -1,7 +1,5 @@
 package com.supermap.desktop;
 
-import com.supermap.desktop.utilities.SystemPropertyUtilities;
-
 public class _XMLTag {
 
 	public static final String g_ScriptCodeFlag = "![CDATA[";
@@ -107,6 +105,7 @@ public class _XMLTag {
 	public static final String g_AttributionMenuStrip = "menuStrip";
 	public static final String g_AttributionUpDownStyle = "upDownStyle";
 	public static final String g_AttributionRatio = "ratio";
+	public static final String g_AttributionPlatform = "platform";
 
 	public static final String g_ValueFalse = "false";
 	public static final String g_ValueTrue = "true";
@@ -202,11 +201,7 @@ public class _XMLTag {
 
 	public static String getG_strWorkEnvironment() {
 		if (_XMLTag.g_strWorkEnvironment == null) {
-			if (SystemPropertyUtilities.isWindows()) {
-				_XMLTag.g_strWorkEnvironment = "Default";
-			} else {
-				_XMLTag.g_strWorkEnvironment = "Linux";
-			}
+			_XMLTag.g_strWorkEnvironment = "Default";
 		}
 		return _XMLTag.g_strWorkEnvironment;
 
