@@ -20,10 +20,11 @@ public class SmDialogProcess extends SmDialog {
 		this.setTitle(metaProcess.getTitle());
 		JPanel panel = (JPanel) metaProcess.getComponent().getPanel();
 		ProcessTask task = TaskUtil.getTask(metaProcess);
-
+		JScrollPane scrollPane = new JScrollPane(panel);
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		this.setLayout(new GridBagLayout());
-		this.add(panel, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 0).setFill(GridBagConstraints.BOTH));
-		this.add(new JPanel(), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setFill(GridBagConstraintsHelper.BOTH));
+		this.add(scrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
+//		this.add(new JPanel(), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setFill(GridBagConstraintsHelper.BOTH));
 		this.add(task, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setFill(GridBagConstraintsHelper.HORIZONTAL));
 		int count = task.getComponentCount();
 		for (int i = 0; i < count; i++) {
@@ -32,7 +33,7 @@ public class SmDialogProcess extends SmDialog {
 			}
 		}
 		this.pack();
-		this.setMinimumSize(new Dimension(300, 0));
+		this.setMinimumSize(new Dimension(400, 600));
 //		this.setPreferredSize(new Dimension(getWidth() + 200, getHeight()));
 		this.setLocationRelativeTo(null);
 	}

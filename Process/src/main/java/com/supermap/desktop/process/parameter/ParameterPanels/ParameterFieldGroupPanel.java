@@ -174,6 +174,7 @@ public class ParameterFieldGroupPanel extends SwingPanel {
 		public void setValueAt(Object aValue, int row, int column) {
 			if (column == 0) {
 				tableDatas.get(row).isSelected = (boolean) aValue;
+				fireTableCellUpdated(row, column);
 			}
 		}
 
