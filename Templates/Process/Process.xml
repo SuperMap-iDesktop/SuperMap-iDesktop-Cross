@@ -139,37 +139,37 @@
             </process>
         </process>
         <process name="Online" iconPath="/processresources/Process/online.png">
-            <process name="空间叠加">
-                <process key="ObjectLevelOverlayAnalysis" name="对象级叠加分析"/>
-                <process key="OverlayAnalysis" name="叠加分析"/>
-                <process key="AttributeUpdate" name="属性更新"/>
-            </process>
-            <process name="位置查找">
-                <process key="FindSimilarPositions" name="查找相似位置"/>
-                <process key="ObjectLevelSpatialQuery" name="对象级空间查询"/>
-                <process key="SpatialQuery" name="空间查询"/>
-            </process>
-            <process name="数据汇总">
-                <process key="GridAggregation" name="格网聚合"/>
-                <process key="AggregatePolygons" name="多边形聚合"/>
-                <process key="FactorConnection" name="要素连接"/>
-                <process key="TrajectoryReconstruction" name="轨迹重构"/>
-                <process key="GridRangeSummary" name="格网范围内汇总"/>
-                <process key="PolygonRangeSummary" name="多边形范围内汇总"/>
-                <process key="AttributeSummarization" name="属性汇总"/>
-            </process>
-            <process name="模式分析">
-                <process key="DensityAnalysis" name="密度分析"/>
-                <process key="HotspotAnalysis" name="热点分析"/>
-                <process key="SpaceTimeCube" name="时空立方"/>
-            </process>
-            <process name="邻近分析">
-                <process key="BufferAnalysis" name="缓冲区分析"/>
-            </process>
-            <process name="数据管理">
-                <process key="CreateGridIndex" name="创建格网索引"/>
-                <process key="CreatingFourTreeIndex" name="创建四叉树索引"/>
-            </process>
+            <!--  <process name="空间叠加">
+                  <process key="ObjectLevelOverlayAnalysis" name="对象级叠加分析"/>
+                  <process key="OverlayAnalysis" name="叠加分析"/>
+                  <process key="AttributeUpdate" name="属性更新"/>
+              </process>
+              <process name="位置查找">
+                  <process key="FindSimilarPositions" name="查找相似位置"/>
+                  <process key="ObjectLevelSpatialQuery" name="对象级空间查询"/>
+                  <process key="SpatialQuery" name="空间查询"/>
+              </process>
+              <process name="数据汇总">
+                  <process key="GridAggregation" name="格网聚合"/>
+                  <process key="AggregatePolygons" name="多边形聚合"/>
+                  <process key="FactorConnection" name="要素连接"/>
+                  <process key="TrajectoryReconstruction" name="轨迹重构"/>
+                  <process key="GridRangeSummary" name="格网范围内汇总"/>
+                  <process key="PolygonRangeSummary" name="多边形范围内汇总"/>
+                  <process key="AttributeSummarization" name="属性汇总"/>
+              </process>
+              <process name="模式分析">
+                  <process key="DensityAnalysis" name="密度分析"/>
+                  <process key="HotspotAnalysis" name="热点分析"/>
+                  <process key="SpaceTimeCube" name="时空立方"/>
+              </process>
+              <process name="邻近分析">
+                  <process key="BufferAnalysis" name="缓冲区分析"/>
+              </process>
+              <process name="数据管理">
+                  <process key="CreateGridIndex" name="创建格网索引"/>
+                  <process key="CreatingFourTreeIndex" name="创建四叉树索引"/>
+              </process>-->
             <process key="HeatMap" name="计算热度图"/>
             <process key="SimpleDensity" name="简单点密度分析"/>
             <process key="KernelDensity" name="核密度分析"/>

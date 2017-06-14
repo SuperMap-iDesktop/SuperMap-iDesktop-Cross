@@ -10,7 +10,6 @@ import java.util.Date;
 
 class LogWriter {
 
-	private static File logDirectory;
 	private File logFile;
 	private OutputStreamWriter writer;
 	public static SimpleDateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd_HH_mm");
@@ -29,18 +28,23 @@ class LogWriter {
 		return gInstance;
 	}
 
+	private static File getLogDirectory() {
+		String logFolder = ".\\temp_log\\";
+		if (CacheUtilities.isLinux()) {
+			logFolder = "./temp_log/";
+		}
+		File logDirectory = new File(logFolder);
+		if (!logDirectory.exists()) {
+			logDirectory.mkdir();
+		}
+		return logDirectory;
+	}
+
 	private LogWriter(String type) {
 		if (logFile == null) {
-			String logFolder = ".\\temp_log\\";
-			if (CacheUtilities.isLinux()) {
-				logFolder = "./temp_log/";
-			}
-			logDirectory = new File(logFolder);
-			if (!logDirectory.exists()) {
-				logDirectory.mkdir();
-			}
+			File logFolder = getLogDirectory();
 			String logName = dFormat.format(new Date()) + "_" + type + "_" + getPID() + ".log";
-			logFile = new File(logFolder + logName);
+			logFile = new File(CacheUtilities.replacePath(logFolder.getAbsolutePath(), logName));
 		}
 		try {
 			if (!logFile.exists()) {
@@ -54,6 +58,7 @@ class LogWriter {
 
 
 	public static void removeAllLogs() {
+		File logDirectory = getLogDirectory();
 		if (null != logDirectory && logDirectory.exists() && logDirectory.isDirectory()) {
 			File[] logFiles = logDirectory.listFiles();
 			for (int i = 0; i < logFiles.length; i++) {

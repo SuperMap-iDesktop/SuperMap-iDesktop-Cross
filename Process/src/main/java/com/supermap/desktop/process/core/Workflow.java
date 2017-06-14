@@ -24,10 +24,11 @@ public class Workflow implements IWorkflow {
 		return name;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name;
+		setMatrix(getMatrix()); // 把名字改了
 	}
-
 	public NodeMatrix getMatrix() {
 		return WorkFlowXmlUtilties.stringToNodeMatrix(matrixXml);
 	}

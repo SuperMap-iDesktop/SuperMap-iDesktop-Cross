@@ -25,6 +25,6 @@ public class CtrlActionProcessRename extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		return super.enable();
+		return UICommonToolkit.getWorkspaceManager().getWorkspaceTree().getSelectionCount() == 1;
 	}
 }

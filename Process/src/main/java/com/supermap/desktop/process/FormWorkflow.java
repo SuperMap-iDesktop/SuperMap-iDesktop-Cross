@@ -6,7 +6,7 @@ import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormWorkflow;
 import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.ControlsProperties;
-import com.supermap.desktop.dialog.JDialogFormSaveAs;
+import com.supermap.desktop.dialog.SmDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.*;
 import com.supermap.desktop.process.core.*;
@@ -266,7 +266,24 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		}
 
 		if (index == -1) {
-			result = saveAs(true);
+			SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
+			dialogSaveAs.setDescription(ProcessProperties.getString("String_NewWorkFlowName"));
+			dialogSaveAs.setCurrentFormName(getText());
+			for (IWorkFlow workFlow : Application.getActiveApplication().getWorkFlows()) {
+				dialogSaveAs.addExistNames(workFlow.getName());
+			}
+			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+			for (int i = 0; i < formManager.getCount(); i++) {
+				if (formManager.get(i) instanceof FormWorkflow && formManager.get(i) != this) {
+					dialogSaveAs.addExistNames(formManager.get(i).getText());
+				}
+			}
+			dialogSaveAs.setTitle(ProcessProperties.getString("String_SaveWorkFLow"));
+			if (dialogSaveAs.showDialog() == DialogResult.OK) {
+				this.setText(dialogSaveAs.getCurrentFormName());
+				Application.getActiveApplication().addWorkFlow(getWorkFlow());
+				result = true;
+			}
 		} else {
 			Application.getActiveApplication().addWorkFlow(index, getWorkflow());
 			result = true;
@@ -277,8 +294,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 	public boolean saveAs(boolean isNewWindow) {
 		boolean result = false;
-		JDialogFormSaveAs dialogSaveAs = new JDialogFormSaveAs();
-
+		SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
 		dialogSaveAs.setDescription(ProcessProperties.getString("String_NewWorkFlowName"));
 		dialogSaveAs.setCurrentFormName(getText());
 		for (IWorkflow workFlow : Application.getActiveApplication().getWorkFlows()) {
@@ -286,11 +302,11 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		}
 		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 		for (int i = 0; i < formManager.getCount(); i++) {
-			if (formManager.get(i) instanceof FormWorkflow && formManager.get(i) != this) {
+			if (formManager.get(i) instanceof FormWorkflow) {
 				dialogSaveAs.addExistNames(formManager.get(i).getText());
 			}
 		}
-		dialogSaveAs.setTitle(ProcessProperties.getString("String_SaveWorkFLow"));
+		dialogSaveAs.setTitle(ProcessProperties.getString("Sting_SaveAsWorkFlow"));
 		if (dialogSaveAs.showDialog() == DialogResult.OK) {
 			this.setText(dialogSaveAs.getCurrentFormName());
 			Application.getActiveApplication().addWorkFlow(getWorkflow());

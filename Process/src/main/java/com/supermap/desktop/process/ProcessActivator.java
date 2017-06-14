@@ -67,6 +67,15 @@ public class ProcessActivator implements BundleActivator {
 	}
 
 	private IFormWorkflow showProcess(String newWindowName) {
+		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+		for (int i = 0; i < formManager.getCount(); i++) {
+			if (formManager.get(i).getWindowType() == WindowType.WORK_FLOW && formManager.get(i).getText().equals(newWindowName)) {
+				if (formManager.getActiveForm() != formManager.get(i)) {
+					formManager.setActiveForm(formManager.get(i));
+				}
+				return null;
+			}
+		}
 		FormWorkflow formWorkflow = null;
 		CursorUtilities.setWaitCursor();
 		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
@@ -79,7 +88,6 @@ public class ProcessActivator implements BundleActivator {
 		if (formWorkflow == null) {
 			formWorkflow = new FormWorkflow(newWindowName);
 		}
-		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 		formManager.showChildForm(formWorkflow);
 		CursorUtilities.setDefaultCursor();
 		return formWorkflow;

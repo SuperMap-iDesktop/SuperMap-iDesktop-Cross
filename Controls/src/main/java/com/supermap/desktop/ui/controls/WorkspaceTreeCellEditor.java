@@ -8,13 +8,16 @@ import com.supermap.desktop.Interface.IFormLayout;
 import com.supermap.desktop.Interface.IFormManager;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormScene;
+import com.supermap.desktop.Interface.IWorkFlow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.SceneUIUtilities;
+import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.LayoutUtilities;
 import com.supermap.desktop.utilities.MapUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.WorkFlowUtilities;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -221,12 +224,31 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 							Application.getActiveApplication().getOutput().output(message);
 						}
 
+					} else if (type == NodeDataType.WORK_FLOW) {
+						IWorkFlow currentWorkFlow = (IWorkFlow) data;
+						String currentWorkFlowName = currentWorkFlow.getName();
+						if (currentWorkFlowName.equals(stringTextField)) {
+							// 点错了
+						} else if (!WorkFlowUtilities.isWorkFlowNameExist(stringTextField)) {
+							IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+							for (int i = 0; i < formManager.getCount(); i++) {
+								if (formManager.get(i).getWindowType() == WindowType.WORK_FLOW && formManager.get(i).getText().equals(currentWorkFlowName)) {
+									formManager.get(i).setText(stringTextField);
+								}
+							}
+							currentWorkFlow.setName(stringTextField);
+							String message = MessageFormat.format(ControlsProperties.getString("String_RenameWorkFLowSuccess"), currentWorkFlowName, stringTextField);
+							Application.getActiveApplication().getOutput().output(message);
+						} else {
+							String message = MessageFormat.format(ControlsProperties.getString("String_RenameWorkFLowFailed"), stringTextField);
+							Application.getActiveApplication().getOutput().output(message);
+						}
 					} else {
 						cancelCellEditing();
 					}
 				}
 			}
-		} catch (RuntimeException e) {
+		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			cancelCellEditing();
@@ -259,6 +281,8 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 		return realEditor.getCellEditorValue();
 	}
 
+	private boolean isKeyPressedHappened = false;
+
 	/**
 	 * This is invoked if a <code>TreeCellEditor</code> is not supplied in the constructor. It returns a <code>TextField</code> editor.
 	 *
@@ -273,7 +297,7 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 		defaultTextField.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				abstraDefaultTextFieldLisenter(e);
+				defaultTextFieldListener(e);
 			}
 
 			@Override
@@ -288,7 +312,7 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 
 			@Override
 			public void focusLost(FocusEvent e) {
-				abstractDefaultTextFieldLisenter();
+				abstractDefaultTextFieldListener();
 			}
 
 			@Override
@@ -308,15 +332,20 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 		return editor;
 	}
 
-	private void abstraDefaultTextFieldLisenter(KeyEvent e) {
+	private void defaultTextFieldListener(KeyEvent e) {
 		int keyCode = e.getKeyChar();
 		if (keyCode == KeyEvent.VK_ENTER) {
+			isKeyPressedHappened = true;
 			stopEditing();
 		}
 	}
 
-	private void abstractDefaultTextFieldLisenter() {
-		stopEditing();
+	private void abstractDefaultTextFieldListener() {
+		if (isKeyPressedHappened) {
+			isKeyPressedHappened = false;
+		} else {
+			stopEditing();
+		}
 	}
 
 	/**

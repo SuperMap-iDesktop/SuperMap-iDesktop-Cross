@@ -27,7 +27,12 @@ import com.supermap.desktop.event.WorkFlowsChangedListener;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.progress.FormProgressTotal;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.ArrayUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.LayoutUtilities;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.WorkFlowUtilities;
+import com.supermap.desktop.utilities.WorkspaceUtilities;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
@@ -900,7 +905,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 			public void workFlowsChanged(WorkFlowChangedEvent workFlowChangedEvent) {
 				IWorkflow[] workFlows = workFlowChangedEvent.getWorkFlows();
 				if (workFlowChangedEvent.getType() == WorkFlowChangedEvent.ADD) {
-					for (IWorkflow workFlow : workFlows) {
+					for (IWorkFlow workFlow : workFlows) {
 						treeModelTemp.insertNodeInto(new DefaultMutableTreeNode(new TreeNodeData(workFlow, NodeDataType.WORK_FLOW)), treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
 					}
 				} else if (workFlowChangedEvent.getType() == WorkFlowChangedEvent.DELETE) {
@@ -1503,6 +1508,15 @@ public class WorkspaceTree extends JTree implements IDisposable {
 					}
 					if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(message)) {
 						DatasetUtilities.deleteDataset(datasets);
+					}
+				} else if (data instanceof IWorkFlow) {
+					ArrayList<IWorkFlow> workflows = new ArrayList<>();
+					for (TreePath treePath : WorkspaceTree.this.getSelectionPaths()) {
+						DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
+						TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
+						IWorkFlow workflow = (IWorkFlow) selectedNodeData.getData();
+						workflows.add(workflow);
+						WorkFlowUtilities.deleteProcess(workflows);
 					}
 				} else {
 					NodeDataType type = currentNodeData.getType();
