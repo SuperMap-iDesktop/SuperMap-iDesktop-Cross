@@ -3,8 +3,8 @@ package com.supermap.desktop.process;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IFormProcess;
-import com.supermap.desktop.Interface.IWorkFlow;
+import com.supermap.desktop.Interface.IFormWorkflow;
+import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.NewWindowEvent;
 import com.supermap.desktop.event.NewWindowListener;
@@ -43,7 +43,7 @@ public class ProcessActivator implements BundleActivator {
 		Application.getActiveApplication().getPluginManager().addPlugin("SuperMap.Desktop.Process", bundleContext.getBundle());
 		Application.getActiveApplication().setWorkFlowInitListener(new WorkFlowInitListener() {
 			@Override
-			public IWorkFlow init(Element element) {
+			public IWorkflow init(Element element) {
 				String name = element.getAttribute("name");
 				Workflow workflow = new Workflow(name);
 				workflow.setMatrixXml(element.getAttribute("value"));
@@ -61,16 +61,16 @@ public class ProcessActivator implements BundleActivator {
 	private void newWindowEvent(NewWindowEvent evt) {
 		WindowType type = evt.getNewWindowType();
 		if (type == WindowType.WORK_FLOW) {
-			IFormProcess formProcess = showProcess(evt.getNewWindowName());
+			IFormWorkflow formProcess = showProcess(evt.getNewWindowName());
 			evt.setNewWindow(formProcess);
 		}
 	}
 
-	private IFormProcess showProcess(String newWindowName) {
+	private IFormWorkflow showProcess(String newWindowName) {
 		FormWorkflow formWorkflow = null;
 		CursorUtilities.setWaitCursor();
-		ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
-		for (IWorkFlow workFlow : workFlows) {
+		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
+		for (IWorkflow workFlow : workFlows) {
 			if (workFlow.getName().equals(newWindowName)) {
 				formWorkflow = new FormWorkflow(workFlow);
 				break;

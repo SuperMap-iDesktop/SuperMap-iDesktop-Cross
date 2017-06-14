@@ -3,7 +3,7 @@ package com.supermap.desktop.process.ctrlAction;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IWorkFlow;
+import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.ProcessProperties;
@@ -25,8 +25,8 @@ public class CtrlActionProcessExportForm extends CtrlAction {
 
 	@Override
 	public void run() {
-		IWorkFlow workflow;
-		workflow = ((FormWorkflow) Application.getActiveApplication().getActiveForm()).getWorkFlow();
+		IWorkflow workflow;
+		workflow = ((FormWorkflow) Application.getActiveApplication().getActiveForm()).getWorkflow();
 		if (workflow == null) {
 			return;
 		}

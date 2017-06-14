@@ -2,7 +2,7 @@ package com.supermap.desktop.process.ctrlAction;
 
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IWorkFlow;
+import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.properties.CommonProperties;
@@ -26,9 +26,9 @@ public class CtrlActionProcessExportTree extends CtrlAction {
 
 	@Override
 	public void run() {
-		IWorkFlow workflow;
+		IWorkflow workflow;
 		DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) UICommonToolkit.getWorkspaceManager().getWorkspaceTree().getLastSelectedPathComponent();
-		workflow = (IWorkFlow) ((TreeNodeData) treeNode.getUserObject()).getData();
+		workflow = (IWorkflow) ((TreeNodeData) treeNode.getUserObject()).getData();
 		if (workflow == null) {
 			return;
 		}

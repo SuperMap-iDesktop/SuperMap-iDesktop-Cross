@@ -3,7 +3,7 @@ package com.supermap.desktop.Interface;
 /**
  * @author XiaJT
  */
-public interface IWorkFlow {
+public interface IWorkflow {
 	String getName();
 
 	String getMatrixXml();
