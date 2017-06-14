@@ -174,10 +174,9 @@ public class MultiSelection extends Selection {
 		for (IGraph graph :
 				this.selectedItems) {
 			IDecorator decorator = graph.getDecorator(DECORATOR_KEY);
-			Rectangle dirtyRect = decorator.getBounds();
 			graph.removeDecorator(DECORATOR_KEY);
-//			getCanvas().repaint(getCanvas().getCoordinateTransform().transform(dirtyRect));
 		}
+
 		this.selectedItems.clear();
 		getCanvas().repaint();
 	}
@@ -230,7 +229,6 @@ public class MultiSelection extends Selection {
 	 */
 	private void selectItems(IGraph[] graphs) {
 		if (graphs != null & graphs.length > 0) {
-			this.selectedItems.clear();
 			cleanDecorators();
 
 			for (int i = 0; i < graphs.length; i++) {
