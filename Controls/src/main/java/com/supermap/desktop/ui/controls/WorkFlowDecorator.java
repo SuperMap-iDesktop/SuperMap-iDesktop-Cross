@@ -1,6 +1,6 @@
 package com.supermap.desktop.ui.controls;
 
-import com.supermap.desktop.Interface.IWorkFlow;
+import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.controls.utilities.WorkspaceTreeManagerUIUtilities;
 
@@ -15,7 +15,7 @@ public class WorkFlowDecorator implements TreeNodeDecorator {
 	@Override
 	public void decorate(JLabel label, TreeNodeData data) {
 		if (data.getType().equals(NodeDataType.WORK_FLOW)) {
-			label.setText(((IWorkFlow) data.getData()).getName());
+			label.setText(((IWorkflow) data.getData()).getName());
 			ImageIcon icon = (ImageIcon) label.getIcon();
 			BufferedImage bufferedImage = new BufferedImage(IMAGEICON_WIDTH, IMAGEICON_HEIGHT, BufferedImage.TYPE_INT_ARGB);
 			Graphics graphics = bufferedImage.getGraphics();

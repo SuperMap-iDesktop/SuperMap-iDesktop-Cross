@@ -3,7 +3,7 @@ package com.supermap.desktop.utilities;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IWorkFlow;
+import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.properties.CoreProperties;
 
@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * @author XiaJT
  */
 public class WorkFlowUtilities {
-	public static void deleteProcess(ArrayList<IWorkFlow> workflows) {
+	public static void deleteProcess(ArrayList<IWorkflow> workflows) {
 		try {
 			String message = CoreProperties.getString("String_ProcessDelete_Confirm");
 			if (workflows.size() == 1) {
@@ -23,7 +23,7 @@ public class WorkFlowUtilities {
 				message = message + "\r\n" + String.format(CoreProperties.getString("String_ProcessDelete_Confirm_Multi"), workflows.size());
 			}
 			if (JOptionPaneUtilities.showConfirmDialog(message) == JOptionPane.OK_OPTION) {
-				for (IWorkFlow workflow : workflows) {
+				for (IWorkflow workflow : workflows) {
 					IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 					for (int count = formManager.getCount() - 1; count >= 0; count--) {
 						IForm form = formManager.get(count);
@@ -41,8 +41,8 @@ public class WorkFlowUtilities {
 	}
 
 	public static boolean isWorkFlowNameExist(String workFlowName) {
-		ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
-		for (IWorkFlow workFlow : workFlows) {
+		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
+		for (IWorkflow workFlow : workFlows) {
 			if (workFlow.getName().equals(workFlowName)) {
 				return true;
 			}

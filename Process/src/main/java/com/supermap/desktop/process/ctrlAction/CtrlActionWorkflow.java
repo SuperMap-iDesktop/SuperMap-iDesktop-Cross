@@ -4,7 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IWorkFlow;
+import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.process.FormWorkflow;
@@ -30,9 +30,9 @@ public class CtrlActionWorkflow extends CtrlAction {
 			Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(ParameterManagerClassName)).setVisible(true);
 			FormWorkflow formWorkflow = new FormWorkflow();
 
-			ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
+			ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
 			ArrayList<String> names = new ArrayList<>();
-			for (IWorkFlow workFlow : workFlows) {
+			for (IWorkflow workFlow : workFlows) {
 				names.add(workFlow.getName());
 			}
 			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();

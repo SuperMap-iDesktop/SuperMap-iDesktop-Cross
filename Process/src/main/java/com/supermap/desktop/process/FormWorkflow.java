@@ -3,24 +3,13 @@ package com.supermap.desktop.process;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IFormProcess;
-import com.supermap.desktop.Interface.IWorkFlow;
+import com.supermap.desktop.Interface.IFormWorkflow;
+import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.dialog.SmDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.FormActivatedListener;
-import com.supermap.desktop.event.FormClosedEvent;
-import com.supermap.desktop.event.FormClosedListener;
-import com.supermap.desktop.event.FormClosingEvent;
-import com.supermap.desktop.event.FormClosingListener;
-import com.supermap.desktop.event.FormDeactivatedListener;
-import com.supermap.desktop.event.FormShownEvent;
-import com.supermap.desktop.event.FormShownListener;
-import com.supermap.desktop.process.core.DirectConnect;
-import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.core.NodeMatrix;
-import com.supermap.desktop.process.core.Workflow;
-import com.supermap.desktop.process.core.WorkflowParser;
+import com.supermap.desktop.event.*;
+import com.supermap.desktop.process.core.*;
 import com.supermap.desktop.process.events.GraphSelectChangedListener;
 import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
@@ -63,7 +52,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * Created by highsad on 2017/1/6.
  */
-public class FormWorkflow extends FormBaseChild implements IFormProcess {
+public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	private ScrollGraphCanvas graphCanvas = new ScrollGraphCanvas();
 	private boolean isNeedSave = true;
 	private boolean isAutoAddOutPut = true;
@@ -84,7 +73,7 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 		init();
 	}
 
-	public FormWorkflow(IWorkFlow workflow) {
+	public FormWorkflow(IWorkflow workflow) {
 		super(workflow.getName(), null, null);
 		init();
 		this.setText(workflow.getName());
@@ -92,7 +81,7 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 		isNeedSave = false;
 	}
 
-	protected void initFormWorkFlow(IWorkFlow workflow) {
+	protected void initFormWorkFlow(IWorkflow workflow) {
 		if (workflow instanceof Workflow) {
 			isAutoAddOutPut = false;
 			try {
@@ -267,8 +256,8 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 	public boolean save() {
 		boolean result = false;
 		int index = -1;
-		ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
-		for (IWorkFlow workFlow : workFlows) {
+		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
+		for (IWorkflow workFlow : workFlows) {
 			if (workFlow.getName().equals(this.getText())) {
 				index = workFlows.indexOf(workFlow);
 				Application.getActiveApplication().removeWorkFlow(workFlow);
@@ -280,7 +269,7 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 			SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
 			dialogSaveAs.setDescription(ProcessProperties.getString("String_NewWorkFlowName"));
 			dialogSaveAs.setCurrentFormName(getText());
-			for (IWorkFlow workFlow : Application.getActiveApplication().getWorkFlows()) {
+			for (IWorkflow workFlow : Application.getActiveApplication().getWorkFlows()) {
 				dialogSaveAs.addExistNames(workFlow.getName());
 			}
 			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
@@ -292,11 +281,11 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 			dialogSaveAs.setTitle(ProcessProperties.getString("String_SaveWorkFLow"));
 			if (dialogSaveAs.showDialog() == DialogResult.OK) {
 				this.setText(dialogSaveAs.getCurrentFormName());
-				Application.getActiveApplication().addWorkFlow(getWorkFlow());
+				Application.getActiveApplication().addWorkFlow(getWorkflow());
 				result = true;
 			}
 		} else {
-			Application.getActiveApplication().addWorkFlow(index, getWorkFlow());
+			Application.getActiveApplication().addWorkFlow(index, getWorkflow());
 			result = true;
 		}
 		isNeedSave = !result;
@@ -308,7 +297,7 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 		SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
 		dialogSaveAs.setDescription(ProcessProperties.getString("String_NewWorkFlowName"));
 		dialogSaveAs.setCurrentFormName(getText());
-		for (IWorkFlow workFlow : Application.getActiveApplication().getWorkFlows()) {
+		for (IWorkflow workFlow : Application.getActiveApplication().getWorkFlows()) {
 			dialogSaveAs.addExistNames(workFlow.getName());
 		}
 		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
@@ -320,7 +309,7 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 		dialogSaveAs.setTitle(ProcessProperties.getString("Sting_SaveAsWorkFlow"));
 		if (dialogSaveAs.showDialog() == DialogResult.OK) {
 			this.setText(dialogSaveAs.getCurrentFormName());
-			Application.getActiveApplication().addWorkFlow(getWorkFlow());
+			Application.getActiveApplication().addWorkFlow(getWorkflow());
 			result = true;
 		}
 		isNeedSave = !result;
@@ -328,7 +317,7 @@ public class FormWorkflow extends FormBaseChild implements IFormProcess {
 	}
 
 	@Override
-	public IWorkFlow getWorkFlow() {
+	public IWorkflow getWorkflow() {
 		NodeMatrix nodeMatrix = new NodeMatrix();
 		IConnectionManager connectionManager = this.graphCanvas.getCanvas().getConnection();
 		IGraphStorage graphStorage = this.graphCanvas.getCanvas().getGraphStorage();

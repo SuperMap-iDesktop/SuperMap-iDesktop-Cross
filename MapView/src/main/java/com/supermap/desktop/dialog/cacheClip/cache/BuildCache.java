@@ -91,7 +91,7 @@ public class BuildCache {
 						//First step:Move mergeSciCount sci to doing directory
 						int success = 0;
 						for (int i = 0; success < mergeSciCount; i++) {
-							if (doingSci(CacheUtilities.replacePath(taskPath, sciFileNames[sciLength - 1 - i]), doingDir, doingSciNames)) {
+							if (doingSci(log, CacheUtilities.replacePath(taskPath, sciFileNames[sciLength - 1 - i]), doingDir, doingSciNames)) {
 								success++;
 							}
 						}
@@ -99,9 +99,10 @@ public class BuildCache {
 					} else {
 						//First step:Move last sci file to doing directory
 						for (int i = sciLength - 1; i >= 0; i--) {
-							doingSci(CacheUtilities.replacePath(taskPath, sciFileNames[i]), doingDir, doingSciNames);
+							doingSci(log, CacheUtilities.replacePath(taskPath, sciFileNames[i]), doingDir, doingSciNames);
 						}
 					}
+					log.writelog("\n");
 					//Second step:get sci file from doing dir and build cache
 					for (int i = 0; i < doingSciNames.size(); i++) {
 						String sciName = doingSciNames.get(i);
@@ -124,11 +125,12 @@ public class BuildCache {
 	}
 
 
-	private boolean doingSci(String sciFileName, File doingDir, CopyOnWriteArrayList<String> doingSciNames) {
+	private boolean doingSci(LogWriter log, String sciFileName, File doingDir, CopyOnWriteArrayList<String> doingSciNames) {
 		String sciName = sciFileName;
 		File sci = new File(sciName);
 		boolean renameSuccess = sci.renameTo(new File(doingDir, sci.getName()));
 		if (renameSuccess) {
+			log.writelog("doing:" + sci.getName());
 			doingSciNames.add(CacheUtilities.replacePath(doingDir.getAbsolutePath(), sci.getName()));
 		}
 		return renameSuccess;
