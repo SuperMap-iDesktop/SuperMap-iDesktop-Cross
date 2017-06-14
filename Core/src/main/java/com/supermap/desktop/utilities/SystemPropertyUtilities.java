@@ -40,7 +40,10 @@ public class SystemPropertyUtilities {
 		if (StringUtilities.isNullOrEmpty(platform) || platform.equalsIgnoreCase("all")) {
 			return true;
 		}
-		if (isWindows() == platform.equalsIgnoreCase("windows")) {
+		if (isWindows() && platform.equalsIgnoreCase("windows")) {
+			return true;
+		}
+		if (isLinux() && platform.equalsIgnoreCase("linux")) {
 			return true;
 		}
 		return false;
