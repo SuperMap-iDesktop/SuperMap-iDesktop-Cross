@@ -50,6 +50,6 @@ public class CtrlActionProcessExportTree extends CtrlAction {
 
 	@Override
 	public boolean enable() {
-		return true;
+		return UICommonToolkit.getWorkspaceManager().getWorkspaceTree().getSelectionCount() == 1;
 	}
 }

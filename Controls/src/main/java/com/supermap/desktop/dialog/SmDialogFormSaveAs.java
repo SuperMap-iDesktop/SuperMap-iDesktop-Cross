@@ -19,7 +19,7 @@ import java.util.Collections;
 /**
  * @author XiaJT
  */
-public class JDialogFormSaveAs extends SmDialog {
+public class SmDialogFormSaveAs extends SmDialog {
 	private JLabel labelFormName = new JLabel();
 	private SmTextFieldLegit textFieldFormName = new SmTextFieldLegit();
 
@@ -27,12 +27,13 @@ public class JDialogFormSaveAs extends SmDialog {
 	private SmButton buttonCancle = new SmButton(CommonProperties.getString(CommonProperties.Cancel));
 	private ArrayList<String> existNames = new ArrayList<>();
 
-	public JDialogFormSaveAs() {
+	public SmDialogFormSaveAs() {
 		initComponents();
 		initLayout();
 		initListener();
 		initResources();
 		initComponentState();
+		this.getRootPane().setDefaultButton(buttonOk);
 	}
 
 	private void initComponents() {
@@ -41,12 +42,14 @@ public class JDialogFormSaveAs extends SmDialog {
 		textFieldFormName.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
-				return !StringUtilities.isNullOrEmpty(textFieldValue) && !existNames.contains(textFieldValue);
+				boolean isLegit = !StringUtilities.isNullOrEmpty(textFieldValue) && !existNames.contains(textFieldValue);
+				buttonOk.setEnabled(isLegit);
+				return isLegit;
 			}
 
 			@Override
 			public String getLegitValue(String currentValue, String backUpValue) {
-				return backUpValue;
+				return currentValue;
 			}
 		});
 	}
