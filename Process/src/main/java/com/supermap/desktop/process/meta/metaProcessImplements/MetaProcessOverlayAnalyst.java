@@ -44,7 +44,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 
 	private OverlayAnalystType analystType;
 	private ParameterDatasourceConstrained parameterSourceDatasource = new ParameterDatasourceConstrained();
-	private ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
+	private ParameterSingleDataset parameterSourceDataset = new ParameterSingleDataset();
 	private ParameterDatasourceConstrained parameterOverlayDatasource = new ParameterDatasourceConstrained();
 	private ParameterSingleDataset parameterOverlayDataset = new ParameterSingleDataset(DatasetType.REGION);
 	private ParameterDatasourceConstrained parameterResultDatasource = new ParameterDatasourceConstrained();
@@ -131,8 +131,14 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	}
 
 	private void initParameterStates() {
-		parameterSaveDataset.setSelectedItem("OverlayAnalystDataset");
+		String resultName = this.analystType.defaultResultName();
+		parameterSaveDataset.setSelectedItem(resultName);
 		parameterTolerance.setSelectedItem("0");
+		if(this.analystType == OverlayAnalystType.UNION || this.analystType == OverlayAnalystType.XOR || this.analystType == OverlayAnalystType.UPDATE){
+			parameterSourceDataset.setDatasetTypes(DatasetType.REGION);
+		}else{
+			parameterSourceDataset.setDatasetTypes(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
+		}
 		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
 		if (datasetVector != null) {
 			parameterSourceDatasource.setSelectedItem(datasetVector.getDatasource());
