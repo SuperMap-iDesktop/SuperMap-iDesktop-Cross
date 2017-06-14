@@ -35,4 +35,14 @@ public class SystemPropertyUtilities {
 	public static double getSystemSizeRate() {
 		return Toolkit.getDefaultToolkit().getScreenResolution() / DEFAULT_SCREEN_RESOLUTION;
 	}
+
+	public static boolean isSupportPlatform(String platform) {
+		if (StringUtilities.isNullOrEmpty(platform) || platform.equalsIgnoreCase("all")) {
+			return true;
+		}
+		if (isWindows() == platform.equalsIgnoreCase("windows")) {
+			return true;
+		}
+		return false;
+	}
 }

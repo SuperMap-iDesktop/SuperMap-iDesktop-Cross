@@ -9,6 +9,7 @@ import com.supermap.desktop.ui.XMLMenu;
 import com.supermap.desktop.ui.XMLMenuButton;
 import com.supermap.desktop.ui.XMLMenuButtonDropdown;
 import com.supermap.desktop.ui.XMLMenuGroup;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -242,7 +243,9 @@ public class SmPopupMenu extends JPopupMenu implements IPopupMenu {
 	private void loadMenu() {
 		for (int i = 0; i < this.xmlMenu.groups().size(); i++) {
 			XMLMenuGroup group = this.xmlMenu.groups().get(i);
-			loadMenuGroup(group, this);
+			if (SystemPropertyUtilities.isSupportPlatform(group.getPlatform())) {
+				loadMenuGroup(group, this);
+			}
 		}
 
 		// 删除分割线
@@ -257,10 +260,12 @@ public class SmPopupMenu extends JPopupMenu implements IPopupMenu {
 				for (int indexTemp = 0; indexTemp < group.items().size(); indexTemp++) {
 					XMLCommand xmlCommand = group.items().get(indexTemp);
 
-					if (xmlCommand instanceof XMLMenuButtonDropdown) {
-						loadMenuItemButtonDropdown((XMLMenuButtonDropdown) xmlCommand, parent);
-					} else if (xmlCommand instanceof XMLMenuButton) {
-						loadMenuItemButton((XMLMenuButton) xmlCommand, parent);
+					if (SystemPropertyUtilities.isSupportPlatform(xmlCommand.getPlatform())) {
+						if (xmlCommand instanceof XMLMenuButtonDropdown) {
+							loadMenuItemButtonDropdown((XMLMenuButtonDropdown) xmlCommand, parent);
+						} else if (xmlCommand instanceof XMLMenuButton) {
+							loadMenuItemButton((XMLMenuButton) xmlCommand, parent);
+						}
 					}
 				}
 

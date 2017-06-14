@@ -16,6 +16,7 @@ import com.supermap.desktop.ui.XMLTextbox;
 import com.supermap.desktop.ui.XMLToolbar;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -384,20 +385,23 @@ public class SmToolbar extends JToolBar implements IToolbar {
 			for (int index = 0; index < this.xmlToolbar.items().size(); index++) {
 				XMLCommand xmlItem = xmlToolbar.items().get(index);
 				IBaseItem item = null;
-				if (xmlItem instanceof XMLButton) {
-					item = new SmCtrlActionButton(null, xmlItem, this);
-				} else if (xmlItem instanceof XMLButtonDropdown) {
-					item = new SmButtonDropdown(null, xmlItem, this);
-				} else if (xmlItem instanceof XMLLabel) {
-					item = new SmLabel(null, xmlItem, this);
-				} else if (xmlItem instanceof XMLTextbox) {
-					item = new SmTextField(null, xmlItem, this);
-				} else if (xmlItem instanceof XMLComboBox) {
-					item = new SmComboBox(null, xmlItem, this);
-				} else if (xmlItem instanceof XMLSeparator) {
-					item = new SmSeparator(null, xmlItem, this);
-				} else if (xmlItem instanceof XMLCheckBox) {
-					item = new SmCheckBox(null, xmlItem, this);
+				if (SystemPropertyUtilities.isSupportPlatform(xmlItem.getPlatform())) {
+
+					if (xmlItem instanceof XMLButton) {
+						item = new SmCtrlActionButton(null, xmlItem, this);
+					} else if (xmlItem instanceof XMLButtonDropdown) {
+						item = new SmButtonDropdown(null, xmlItem, this);
+					} else if (xmlItem instanceof XMLLabel) {
+						item = new SmLabel(null, xmlItem, this);
+					} else if (xmlItem instanceof XMLTextbox) {
+						item = new SmTextField(null, xmlItem, this);
+					} else if (xmlItem instanceof XMLComboBox) {
+						item = new SmComboBox(null, xmlItem, this);
+					} else if (xmlItem instanceof XMLSeparator) {
+						item = new SmSeparator(null, xmlItem, this);
+					} else if (xmlItem instanceof XMLCheckBox) {
+						item = new SmCheckBox(null, xmlItem, this);
+					}
 				}
 
 				if (item != null) {
