@@ -124,7 +124,12 @@ public class DialogCacheBuilder extends SmDialog {
 					int nowProcessCount = -1;
 					File logDirectory = new File(logFolder);
 					if (logDirectory.exists() && logDirectory.isDirectory()) {
-						nowProcessCount = logDirectory.listFiles().length;
+						nowProcessCount = logDirectory.list(new FilenameFilter() {
+							@Override
+							public boolean accept(File dir, String name) {
+								return name.contains("BuildCache");
+							}
+						}).length;
 					}
 
 					if (newProcessCount > nowProcessCount) {
@@ -133,6 +138,9 @@ public class DialogCacheBuilder extends SmDialog {
 						for (int i = 0; i < newSize; i++) {
 							buildCache.addProcess(params);
 						}
+						SmOptionPane optionPane = new SmOptionPane();
+						optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessAdded"), String.valueOf(newProcessCount)));
+
 					} else if (newProcessCount < nowProcessCount) {
 						ProcessManager.getInstance().removeProcess(params, newProcessCount, sciPath);
 					}
