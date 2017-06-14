@@ -2,7 +2,7 @@ package com.supermap.desktop.process.ctrlAction;
 
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.Interface.IWorkFlow;
+import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.process.core.Workflow;
@@ -27,7 +27,7 @@ public class CtrlActionProcessDelete extends CtrlAction {
 	@Override
 	public void run() {
 		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
-		ArrayList<IWorkFlow> workflows = new ArrayList<>();
+		ArrayList<IWorkflow> workflows = new ArrayList<>();
 		for (TreePath treePath : workspaceTree.getSelectionPaths()) {
 			DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
 			TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();

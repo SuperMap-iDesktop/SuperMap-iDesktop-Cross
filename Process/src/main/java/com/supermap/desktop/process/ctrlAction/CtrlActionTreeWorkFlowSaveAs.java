@@ -4,7 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IWorkFlow;
+import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.dialog.SmDialogFormSaveAs;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.process.FormWorkflow;
@@ -26,12 +26,12 @@ public class CtrlActionTreeWorkFlowSaveAs extends CtrlAction {
 
 	@Override
 	public void run() {
-		IWorkFlow currentWorkFlow = (IWorkFlow) ((TreeNodeData) ((DefaultMutableTreeNode) UICommonToolkit.getWorkspaceManager().getWorkspaceTree().getLastSelectedPathComponent()).getUserObject()).getData();
+		IWorkflow currentWorkFlow = (IWorkflow) ((TreeNodeData) ((DefaultMutableTreeNode) UICommonToolkit.getWorkspaceManager().getWorkspaceTree().getLastSelectedPathComponent()).getUserObject()).getData();
 
 		SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
 		dialogSaveAs.setDescription(ProcessProperties.getString("String_NewWorkFlowName"));
 		dialogSaveAs.setCurrentFormName(currentWorkFlow.getName());
-		for (IWorkFlow workFlow : Application.getActiveApplication().getWorkFlows()) {
+		for (IWorkflow workFlow : Application.getActiveApplication().getWorkFlows()) {
 			dialogSaveAs.addExistNames(workFlow.getName());
 		}
 		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();

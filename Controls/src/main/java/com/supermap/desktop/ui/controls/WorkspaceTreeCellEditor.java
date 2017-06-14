@@ -4,20 +4,12 @@ import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.Interface.IFormLayout;
-import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IFormMap;
-import com.supermap.desktop.Interface.IFormScene;
-import com.supermap.desktop.Interface.IWorkFlow;
+import com.supermap.desktop.Interface.*;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.ui.UICommonToolkit;
-import com.supermap.desktop.utilities.DatasetUtilities;
-import com.supermap.desktop.utilities.LayoutUtilities;
-import com.supermap.desktop.utilities.MapUtilities;
-import com.supermap.desktop.utilities.StringUtilities;
-import com.supermap.desktop.utilities.WorkFlowUtilities;
+import com.supermap.desktop.utilities.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -225,7 +217,7 @@ class WorkspaceTreeCellEditor extends DefaultTreeCellEditor {
 						}
 
 					} else if (type == NodeDataType.WORK_FLOW) {
-						IWorkFlow currentWorkFlow = (IWorkFlow) data;
+						IWorkflow currentWorkFlow = (IWorkflow) data;
 						String currentWorkFlowName = currentWorkFlow.getName();
 						if (currentWorkFlowName.equals(stringTextField)) {
 							// 点错了

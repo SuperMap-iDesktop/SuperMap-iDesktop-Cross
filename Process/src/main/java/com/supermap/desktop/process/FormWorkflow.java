@@ -269,7 +269,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			SmDialogFormSaveAs dialogSaveAs = new SmDialogFormSaveAs();
 			dialogSaveAs.setDescription(ProcessProperties.getString("String_NewWorkFlowName"));
 			dialogSaveAs.setCurrentFormName(getText());
-			for (IWorkFlow workFlow : Application.getActiveApplication().getWorkFlows()) {
+			for (IWorkflow workFlow : Application.getActiveApplication().getWorkFlows()) {
 				dialogSaveAs.addExistNames(workFlow.getName());
 			}
 			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
@@ -281,7 +281,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			dialogSaveAs.setTitle(ProcessProperties.getString("String_SaveWorkFLow"));
 			if (dialogSaveAs.showDialog() == DialogResult.OK) {
 				this.setText(dialogSaveAs.getCurrentFormName());
-				Application.getActiveApplication().addWorkFlow(getWorkFlow());
+				Application.getActiveApplication().addWorkFlow(getWorkflow());
 				result = true;
 			}
 		} else {
