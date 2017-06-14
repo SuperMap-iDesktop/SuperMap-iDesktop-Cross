@@ -108,7 +108,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		parameters.setParameters(parameterCombineSource, parameterCombineResult, parameterCombineResultSet);
 		this.getParameters().addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, parameterCombineSource);
 		this.getParameters().addInputParameters(OVERLAY_DATA, DatasetTypes.VECTOR, parameterCombineResult);
-		this.getParameters().addOutputParameters(OUTPUT_DATA, DatasetTypes.VECTOR, parameterCombineResult);
+		this.getParameters().addOutputParameters(OUTPUT_DATA, DatasetTypes.VECTOR, parameterCombineResultSet);
 
 	}
 
@@ -119,7 +119,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 
 		EqualDatasourceConstraint equalDatasourceConstraint1 = new EqualDatasourceConstraint();
 		equalDatasourceConstraint1.constrained(parameterOverlayDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalDatasourceConstraint1.constrained(parameterOverlayDataset, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint1.constrained(parameterOverlayDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
 		EqualDatasetConstraint equalDatasetConstraint = new EqualDatasetConstraint();
 		equalDatasetConstraint.constrained(parameterSourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);

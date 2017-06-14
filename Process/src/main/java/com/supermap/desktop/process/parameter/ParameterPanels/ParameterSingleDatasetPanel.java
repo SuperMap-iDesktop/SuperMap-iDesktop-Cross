@@ -107,6 +107,7 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 			}
 		}else {
 			this.datasetComboBox = new DatasetComboBox();
+			this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
 		}
 	}
 
