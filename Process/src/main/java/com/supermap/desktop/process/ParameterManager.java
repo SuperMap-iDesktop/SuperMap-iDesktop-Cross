@@ -53,6 +53,8 @@ public class ParameterManager extends JPanel {
 			JComponent component = (JComponent) process.getComponent().getPanel();
 			mainPanel.add(component, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
 			mainPanel.add(new JPanel(), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setFill(GridBagConstraintsHelper.BOTH));
+		} else {
+			this.titledBorder.setTitle("");
 		}
 		mainPanel.revalidate();
 		mainPanel.repaint();

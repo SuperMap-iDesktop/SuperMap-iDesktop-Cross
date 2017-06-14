@@ -47,7 +47,7 @@ public class ProcessGraph extends RectangleGraph {
 	public void onPaint(Graphics g) {
 		super.onPaint(g);
 
-		Font font = new Font("宋体", Font.BOLD, 20);
+		Font font = new Font("宋体", Font.BOLD, 16);
 		g.setFont(font);
 		g.setColor(Color.WHITE);
 
