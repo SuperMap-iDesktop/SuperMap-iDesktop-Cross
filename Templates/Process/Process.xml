@@ -82,9 +82,9 @@
             <process name="插值分析">
                 <process key="Interpolator_IDW" name="距离反比权重"/>
                 <process key="Interpolator_RBF" name="样条"/>
-                <process key="Interpolator_UniversalKRIGING" name="普通克吕金"/>
+                <process key="Interpolator_KRIGING" name="普通克吕金"/>
                 <process key="Interpolator_SimpleKRIGING" name="简单克吕金"/>
-                <process key="Interpolator_KRIGING" name="泛克吕金"/>
+                <process key="Interpolator_UniversalKRIGING" name="泛克吕金"/>
             </process>
             <process name="叠加分析">
                 <process key="OverlayAnalyst_CLIP" name="裁剪"/>

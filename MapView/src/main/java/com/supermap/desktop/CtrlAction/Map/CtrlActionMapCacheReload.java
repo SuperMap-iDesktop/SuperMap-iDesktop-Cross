@@ -1,11 +1,10 @@
 package com.supermap.desktop.CtrlAction.Map;
 
-import com.supermap.data.Workspace;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClipBuilder;
 import com.supermap.desktop.implement.CtrlAction;
@@ -13,7 +12,6 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.FileUtilities;
-import com.supermap.mapping.Map;
 
 import javax.swing.*;
 import java.io.File;
@@ -60,24 +58,22 @@ public class CtrlActionMapCacheReload extends CtrlAction {
 			}
 			String filePath = smFileChoose.getFilePath();
 			if (FileUtilities.isFilePath(filePath)) {
-				Workspace wk = Application.getActiveApplication().getWorkspace();
+//				Workspace wk = Application.getActiveApplication().getWorkspace();
 //				Map map = new Map(wk);
 				MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 				mapCacheBuilder.fromConfigFile(filePath);
 //				map.open(mapCacheBuilder.getCacheName());
-				Map newMap = new Map(wk);
-				newMap.fromXML(((FormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().toXML());
-				mapCacheBuilder.setMap(newMap);
-				FormMap activeForm = (FormMap) Application.getActiveApplication().getActiveForm();
-				mapCacheBuilder.setMap(activeForm.getMapControl().getMap());
-//				mapCacheBuilder.setOutputFolder("F:\\tmp\\21续传\\compact");
+//				Map newMap = new Map(wk);
+//				newMap.fromXML(map.toXML());
+//				mapCacheBuilder.setMap(newMap);
+				mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
 				DialogMapCacheClipBuilder mapCacheClipBuilder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.ReloadProcessClip, mapCacheBuilder);
 				mapCacheClipBuilder.setComponentsEnabled(false);
 				mapCacheClipBuilder.buttonOk.setEnabled(true);
-				mapCacheClipBuilder.firstStepPane.fileChooserControlFileCache.setPath(filePath.substring(0, filePath.indexOf(mapCacheBuilder.getCacheName())));
 				mapCacheClipBuilder.firstStepPane.labelConfigValue.setText(mapCacheBuilder.getCacheName());
 				mapCacheClipBuilder.setResumeAble(true);
 				mapCacheClipBuilder.firstStepPane.resetComponentsInfo();
+				mapCacheClipBuilder.firstStepPane.fileChooserControlFileCache.setPath(filePath.substring(0, filePath.lastIndexOf(mapCacheBuilder.getCacheName())));
 				mapCacheClipBuilder.showDialog();
 			}
 		}

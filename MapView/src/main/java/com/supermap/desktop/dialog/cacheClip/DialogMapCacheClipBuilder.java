@@ -349,7 +349,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 						return;
 					}
 					this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-					Application.getActiveApplication().getOutput().output(MapViewProperties.getString(""));
+//					Application.getActiveApplication().getOutput().output(MapViewProperties.getString(""));
 					dispose();
 					DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder();
 					dialogCacheBuilder.textFieldMapName.setText(this.mapCacheBuilder.getCacheName());

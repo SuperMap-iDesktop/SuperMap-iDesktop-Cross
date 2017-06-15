@@ -1,6 +1,5 @@
 package com.supermap.desktop.dialog.cacheClip;
 
-import com.supermap.data.processing.CacheWriter;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
@@ -33,10 +32,10 @@ public class DialogCacheUpdate extends SmDialog {
 			if (!StringUtilities.isNullOrEmpty(mapCacheBuilder.getCacheName())) {
 				dispose();
 				DialogMapCacheClipBuilder builder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.UpdateProcessClip, mapCacheBuilder);
-				builder.firstStepPane.fileChooserControlFileCache.setPath(selectSciPath.substring(0, selectSciPath.indexOf(mapCacheBuilder.getCacheName())));
 				builder.firstStepPane.textFieldCacheName.setText(mapCacheBuilder.getCacheName());
 				builder.firstStepPane.labelConfigValue.setText(mapCacheBuilder.getCacheName());
 				builder.firstStepPane.resetComponentsInfo();
+				builder.firstStepPane.fileChooserControlFileCache.setPath(selectSciPath.substring(0, selectSciPath.lastIndexOf(mapCacheBuilder.getCacheName())));
 				builder.showDialog();
 
 			}
