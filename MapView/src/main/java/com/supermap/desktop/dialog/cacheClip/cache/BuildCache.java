@@ -27,10 +27,10 @@ public class BuildCache {
 	//Start process
 	public void startProcess(int processCount, String[] params) {
 		try {
+			LogWriter.removeAllLogs();
 			if (0 == processCount) {
 				main(params);
 			} else {
-				LogWriter.removeAllLogs();
 				for (int i = 0; i < processCount; i++) {
 					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.BUILD_CACHE);
 					Thread.sleep(2000);
@@ -102,7 +102,6 @@ public class BuildCache {
 							doingSci(log, CacheUtilities.replacePath(taskPath, sciFileNames[i]), doingDir, doingSciNames);
 						}
 					}
-					log.writelog("\n");
 					//Second step:get sci file from doing dir and build cache
 					for (int i = 0; i < doingSciNames.size(); i++) {
 						String sciName = doingSciNames.get(i);
@@ -160,6 +159,12 @@ public class BuildCache {
 				doneDir.mkdir();
 			}
 			sci.renameTo(new File(doneDir, sci.getName()));
+		} else {
+			File failDir = new File(CacheUtilities.replacePath(sci.getParentFile().getParent(), "failed"));
+			if (!failDir.exists()) {
+				failDir.mkdir();
+			}
+			sci.renameTo(new File(failDir, sci.getName()));
 		}
 
 		long end = System.currentTimeMillis();

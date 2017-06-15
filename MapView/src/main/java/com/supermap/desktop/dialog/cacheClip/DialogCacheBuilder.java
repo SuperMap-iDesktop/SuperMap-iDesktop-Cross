@@ -41,7 +41,7 @@ public class DialogCacheBuilder extends SmDialog {
 	private JLabel labelMapName;
 	private JLabel labelProcessCount;
 	private JLabel labelCachePath;
-	private JLabel labelTotalProcessCount;
+	//	private JLabel labelTotalProcessCount;
 	private JLabel labelTotalProgress;
 	private JLabel labelDetailProgressInfo;
 	public JFileChooserControl fileChooserTotalTaskPath;
@@ -51,14 +51,13 @@ public class DialogCacheBuilder extends SmDialog {
 	private JTextField textFieldProcessCount;
 	private JButton buttonApply;
 	public JFileChooserControl fileChooserCachePath;
-	private JTextField textFieldTotalProcessCount;
 	private JLabel labelMergeSciCount;
 	private JTextField textFieldMergeSciCount;
 	private JProgressBar progressBarTotal;
 	private JScrollPane scrollPaneProgresses;
 	private JButton buttonCreate;
 	private JButton buttonClose;
-	//	private JButton buttonRefresh;
+	private JButton buttonRefresh;
 	private WarningOrHelpProvider helpProviderForTaskPath;
 	private WarningOrHelpProvider helpProviderForTotalTaskPath;
 	private WarningOrHelpProvider helpProviderForProcessCount;
@@ -84,6 +83,8 @@ public class DialogCacheBuilder extends SmDialog {
 	private ActionListener createListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			buttonCreate.setEnabled(false);
+			buttonClose.setEnabled(false);
 			buildCache();
 		}
 	};
@@ -201,7 +202,7 @@ public class DialogCacheBuilder extends SmDialog {
 		this.labelWorkspacePath = new JLabel();
 		this.labelMapName = new JLabel();
 		this.labelCachePath = new JLabel();
-		this.labelTotalProcessCount = new JLabel();
+//		this.labelTotalProcessCount = new JLabel();
 		this.labelProcessCount = new JLabel();
 		this.labelTotalProgress = new JLabel();
 		this.labelDetailProgressInfo = new JLabel();
@@ -258,9 +259,9 @@ public class DialogCacheBuilder extends SmDialog {
 		}
 		this.fileChooserCachePath.setPath(cachePath);
 		this.fileChooserCachePath.setFileChooser(fileChooserForCachePath);
-		this.textFieldTotalProcessCount = new JTextField();
-		this.textFieldTotalProcessCount.setText("5");
-		this.textFieldTotalProcessCount.setEnabled(false);
+//		this.textFieldTotalProcessCount = new JTextField();
+//		this.textFieldTotalProcessCount.setText("5");
+//		this.textFieldTotalProcessCount.setEnabled(false);
 		this.progressBarTotal = new JProgressBar();
 		this.progressBarTotal.setStringPainted(true);
 		this.progressBarTotal.setPreferredSize(new Dimension(200, 23));
@@ -268,7 +269,7 @@ public class DialogCacheBuilder extends SmDialog {
 		this.textFieldMergeSciCount = new JTextField();
 		this.textFieldMergeSciCount.setText("1");
 		this.scrollPaneProgresses = new JScrollPane();
-//		this.buttonRefresh = new SmButton();
+		this.buttonRefresh = new SmButton();
 		this.buttonCreate = new SmButton();
 		this.buttonClose = ComponentFactory.createButtonClose();
 		this.helpProviderForTotalTaskPath = new WarningOrHelpProvider(MapViewProperties.getString("String_TotalSciFile"), false);
@@ -285,12 +286,12 @@ public class DialogCacheBuilder extends SmDialog {
 		this.labelMapName.setText(MapViewProperties.getString("String_Label_MapName"));
 		this.labelProcessCount.setText(MapViewProperties.getString("String_ProcessCount"));
 		this.labelCachePath.setText(MapViewProperties.getString("String_CachePath"));
-		this.labelTotalProcessCount.setText(MapViewProperties.getString("String_TotalProcessCount"));
+//		this.labelTotalProcessCount.setText(MapViewProperties.getString("String_TotalProcessCount"));
 		this.labelTotalProgress.setText(ControlsProperties.getString("String_ProgressControl_TotalProgress"));
 		this.labelDetailProgressInfo.setText(MapViewProperties.getString("String_DetailProcessInfo"));
 		this.labelMergeSciCount.setText(MapViewProperties.getString("String_MergeSciCount"));
 		this.buttonCreate.setText(MapViewProperties.getString("String_BatchAddColorTableOKButton"));
-//		this.buttonRefresh.setText(ControlsProperties.getString("String_Refresh"));
+		this.buttonRefresh.setText(ControlsProperties.getString("String_Refresh"));
 	}
 
 
@@ -323,11 +324,11 @@ public class DialogCacheBuilder extends SmDialog {
 		JPanel panelClipProgress = new JPanel();
 		panelClipProgress.setBorder(BorderFactory.createTitledBorder(MapViewProperties.getString("String_ClipBuilderProgress")));
 		panelClipProgress.setLayout(new GridBagLayout());
-		panelClipProgress.add(this.labelTotalProcessCount, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
-		panelClipProgress.add(this.textFieldTotalProcessCount, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
-		panelClipProgress.add(this.labelTotalProgress, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
-		panelClipProgress.add(this.progressBarTotal, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
-//		panelClipProgress.add(this.buttonRefresh, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 10));
+//		panelClipProgress.add(this.labelTotalProcessCount, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
+//		panelClipProgress.add(this.textFieldTotalProcessCount, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
+		panelClipProgress.add(this.labelTotalProgress, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
+		panelClipProgress.add(this.progressBarTotal, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
+		panelClipProgress.add(this.buttonRefresh, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 10));
 		panelClipProgress.add(this.labelDetailProgressInfo, new GridBagConstraintsHelper(0, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
 		panelClipProgress.add(this.scrollPaneProgresses, new GridBagConstraintsHelper(0, 3, 3, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(0, 10, 5, 10).setWeight(1, 1));
 		JPanel panelContent = (JPanel) this.getContentPane();
@@ -344,7 +345,7 @@ public class DialogCacheBuilder extends SmDialog {
 		this.buttonClose.addActionListener(this.closeListener);
 		this.buttonApply.addActionListener(this.applyListener);
 		this.fileChooserTotalTaskPath.addFileChangedListener(this.fileChangeListener);
-//		this.buttonRefresh.addActionListener(this.refreshListener);
+		this.buttonRefresh.addActionListener(this.refreshListener);
 	}
 
 	private void removeEvents() {
@@ -352,7 +353,7 @@ public class DialogCacheBuilder extends SmDialog {
 		this.buttonClose.removeActionListener(this.closeListener);
 		this.buttonApply.removeActionListener(this.applyListener);
 		this.fileChooserTotalTaskPath.removePathChangedListener(this.fileChangeListener);
-//		this.buttonRefresh.removeActionListener(this.refreshListener);
+		this.buttonRefresh.removeActionListener(this.refreshListener);
 	}
 
 	private void buildCache() {
@@ -481,10 +482,15 @@ public class DialogCacheBuilder extends SmDialog {
 		try {
 			long startTime = System.currentTimeMillis();
 			String buildPath = CacheUtilities.replacePath(parentPath, "build");
+			String failedPath = CacheUtilities.replacePath(parentPath, "failed");
 			int buildSciLength = 0;
 			File buildFile = new File(buildPath);
 			if (buildFile.exists() && null != buildFile.list(getFilter())) {
 				buildSciLength = buildFile.list(getFilter()).length;
+			}
+			File failedFile = new File(failedPath);
+			if (failedFile.exists() && null != failedFile.list(getFilter())) {
+				buildSciLength += failedFile.list(getFilter()).length;
 			}
 			totalSciLength = totalSciLength + buildSciLength;
 			while (buildSciLength != totalSciLength) {
@@ -492,10 +498,13 @@ public class DialogCacheBuilder extends SmDialog {
 				if (buildFile.exists()) {
 					buildSciLength = buildFile.list(getFilter()).length;
 				}
+				if (failedFile.exists()) {
+					buildSciLength += failedFile.list(getFilter()).length;
+				}
 				final int value = (int) (((buildSciLength + 0.0) / totalSciLength) * 100);
 				progressBarTotal.setValue(value);
-				//Sleep two seconds or not
-				Thread.sleep(6000);
+				//Sleep 1 minute
+				Thread.sleep(60000);
 			}
 
 			boolean result = false;

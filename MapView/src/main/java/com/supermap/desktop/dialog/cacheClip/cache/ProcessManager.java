@@ -49,10 +49,10 @@ public class ProcessManager {
 	 */
 	public void removeProcess(String[] params, int newProcessCount, String sciPath) {
 		try {
-			LogWriter.removeAllLogs();
 			for (int i = threadList.size() - 1; i >= 0; i--) {
 				threadList.get(i).process.destroy();
 			}
+			LogWriter.removeAllLogs();
 			threadList.clear();
 			File taskFiles = new File(sciPath);
 			String doingPath = null;

@@ -46,7 +46,8 @@ public class CtrlActionMapCacheBuilder extends CtrlAction {
 			newMap.fromXML(map.toXML());
 			mapCacheBuilder.setMap(newMap);
 			if (dialogMapCacheClip.isBuildTask()) {
-				new DialogMapCacheClipBuilder(dialogMapCacheClip.isSingleProcess(), mapCacheBuilder).showDialog();
+				int cmdType = dialogMapCacheClip.isSingleProcess() ? DialogMapCacheClipBuilder.SingleProcessClip : DialogMapCacheClipBuilder.MultiProcessClip;
+				new DialogMapCacheClipBuilder(cmdType, mapCacheBuilder).showDialog();
 			} else {
 				DialogCacheBuilder cacheBuilder = new DialogCacheBuilder();
 				cacheBuilder.textFieldMapName.setText(map.getName());
