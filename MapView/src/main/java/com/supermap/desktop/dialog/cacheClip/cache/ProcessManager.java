@@ -52,7 +52,7 @@ public class ProcessManager {
 			for (int i = threadList.size() - 1; i >= 0; i--) {
 				threadList.get(i).process.destroy();
 			}
-			LogWriter.removeAllLogs();
+			Thread.sleep(10 * 1000);
 			threadList.clear();
 			File taskFiles = new File(sciPath);
 			String doingPath = null;
@@ -70,7 +70,7 @@ public class ProcessManager {
 				int mergeSciCount = Integer.valueOf(params[BuildCache.MERGESCICOUNT_INDEX]);
 				undoScis = getUndoScis(logDirectory, mergeSciCount);
 			}
-
+			LogWriter.removeAllLogs();
 			File doingDirectory = new File(doingPath);
 			if (doingDirectory.exists()) {
 				File[] doingScis = doingDirectory.listFiles();
