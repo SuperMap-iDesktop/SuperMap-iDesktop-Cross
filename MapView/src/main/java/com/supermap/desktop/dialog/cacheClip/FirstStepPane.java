@@ -10,6 +10,7 @@ import com.supermap.data.processing.MapTilingMode;
 import com.supermap.data.processing.StorageType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.ScaleModel;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
@@ -427,9 +428,19 @@ public class FirstStepPane extends JPanel implements IState {
 		this.comboBoxSaveType.addItem(MapViewProperties.getString("MapCache_SaveType_Origin"));
 		this.comboBoxSaveType.addItem(MapViewProperties.getString("MapCache_SaveType_MongoDB"));
 		this.comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_Origin"));
-		if (cmdType != DialogMapCacheClipBuilder.ReloadProcessClip && cmdType != DialogMapCacheClipBuilder.UpdateProcessClip) {
-			initPanelImageSaveOutputDisplay(MapViewProperties.getString("MapCache_SaveType_Origin"));
+		StorageType storageType = this.mapCacheBuilder.getStorageType();
+		String storageStr = null;
+		if (storageType == StorageType.Original) {
+			storageStr = MapViewProperties.getString("MapCache_SaveType_Origin");
+		} else if (storageType == StorageType.Compact) {
+			storageStr = MapViewProperties.getString("MapCache_SaveType_Compact");
+		} else if (storageType == StorageType.MongoDB) {
+			storageStr = MapViewProperties.getString("MapCache_SaveType_MongoDB");
+		} else {
+			storageStr = MapViewProperties.getString("MapCache_SaveType_GeoPackage");
 		}
+		initPanelImageSaveOutputDisplay(storageStr);
+
 		this.comboboxVersion.addItem(MapViewProperties.getString("MapCache_ComboboxVersionItem"));
 		this.comboBoxSplitMode.addItem(MapViewProperties.getString("MapCache_ComboboxSplitModeLocalSplit"));
 		this.comboBoxSplitMode.addItem(MapViewProperties.getString("MapCache_ComboboxSplitModeGlobalSplit"));
@@ -1039,7 +1050,11 @@ public class FirstStepPane extends JPanel implements IState {
 	private void addScale() {
 		int insertIndex = this.localSplitTable.getRowCount();
 		if (this.localSplitTable.getRowCount() == 1) {
-			this.currentMapCacheScale.add(this.originMapCacheScale[0]);
+			if (this.originMapCacheScale.length > 0) {
+				this.currentMapCacheScale.add(this.originMapCacheScale[0]);
+			} else {
+				this.currentMapCacheScale.add(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().getScale());
+			}
 		} else {
 			double insertScale = 0;
 			int selectedRowsIndex[] = this.localSplitTable.getSelectedRows();
