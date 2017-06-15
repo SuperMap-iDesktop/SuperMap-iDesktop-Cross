@@ -310,7 +310,6 @@ public class NextStepPane extends JPanel implements IState {
 		this.checkBoxFullFillCacheImage.setEnabled(false);
 		this.mapCacheBuilder.setTileFormat(TileFormat.JPG);
 		this.mapCacheBuilder.setTileSize(TileSize.SIZE256);
-		this.mapCacheBuilder.setStorageType(StorageType.Original);
 	}
 
 	public void resetComponentsInfo() {
