@@ -21,6 +21,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
 import com.supermap.desktop.process.parameter.implement.ParameterEnum;
+import com.supermap.desktop.process.parameter.implement.ParameterNumber;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
@@ -41,7 +42,7 @@ public class MetaProcessBuffer extends MetaProcess {
 	private ParameterSingleDataset dataset;
 	private ParameterEnum parameterBufferRange;
 	private ParameterTextField parameterTextFieldRadius;
-	private ParameterTextField parameterTextFieldSemicircleLineSegment;
+	private ParameterNumber parameterTextFieldSemicircleLineSegment;
 	private ParameterCheckBox parameterUnionBuffer;
 	private ParameterCheckBox parameterRetainAttribute;
 	private ParameterSaveDataset parameterSaveDataset;
@@ -71,6 +72,8 @@ public class MetaProcessBuffer extends MetaProcess {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+
+
 	}
 
 	private void initParameters() {
@@ -93,7 +96,10 @@ public class MetaProcessBuffer extends MetaProcess {
 		parameterTextFieldRadius = new ParameterTextField(ProcessProperties.getString("Label_Radius"));
 		parameterUnionBuffer = new ParameterCheckBox(ProcessProperties.getString("String_UnionBufferItem"));
 		parameterRetainAttribute = new ParameterCheckBox(ProcessProperties.getString("String_RetainAttribute"));
-		parameterTextFieldSemicircleLineSegment = new ParameterTextField(ProcessProperties.getString("Label_SemicircleLineSegment"));
+		parameterTextFieldSemicircleLineSegment = new ParameterNumber(ProcessProperties.getString("Label_SemicircleLineSegment"));
+		parameterTextFieldSemicircleLineSegment.setMaxBit(0);
+		parameterTextFieldSemicircleLineSegment.setMinValue(4);
+		parameterTextFieldSemicircleLineSegment.setMaxValue(200);
 		parameterSaveDataset = new ParameterSaveDataset();
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();
 		parameterCombineSourceData.addParameters(datasource, dataset);
