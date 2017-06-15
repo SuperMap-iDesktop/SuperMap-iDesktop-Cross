@@ -438,8 +438,10 @@ public class MapUtilities {
 				for (String mapName : mapNames) {
 					IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
 					for (int i = formManager.getCount() - 1; i >= 0; i--) {
-						if (formManager.get(i).getWindowType() == WindowType.MAP && formManager.get(i).getText().equals(mapName)) {
-							formManager.close(formManager.get(i));
+						IForm form = formManager.get(i);
+						if (form.getWindowType() == WindowType.MAP && form.getText().equals(mapName)) {
+							form.setNeedSave(false);
+							formManager.close(form);
 						}
 					}
 					Application.getActiveApplication().getWorkspace().getMaps().remove(mapName);

@@ -6,6 +6,7 @@ import com.supermap.desktop.Interface.IMenu;
 import com.supermap.desktop.WorkEnvironment;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.implement.SmMenu;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -95,22 +96,23 @@ public class FrameMenuManager implements IFrameMenuManager {
 			ArrayList<XMLMenu> xmlMenus = workEnvironment.getPluginInfos().getFrameMenus().getMenus();
 			for (int i = 0; i < xmlMenus.size(); i++) {
 				XMLMenu xmlMenu = xmlMenus.get(i);
-				SmMenu menu = new SmMenu(xmlMenu);
-
-				// 判断一下如果关联的ControlClass为空，就添加到主菜单列表中，否则关联到子窗口菜单列表
-				if ("".equals(xmlMenu.getFormClassName())) {
-					this.listMenus.add(menu);
-					this.frameMenuBar.add(menu);
-				} else {
-					WindowType windowType = getWindowType(xmlMenu.getFormClassName());
-					ArrayList<IMenu> childMenus = null;
-					if (this.childFrameMenus.containsKey(windowType)) {
-						childMenus = this.childFrameMenus.get(windowType);
+				if (SystemPropertyUtilities.isSupportPlatform(xmlMenu.getPlatform())) {
+					SmMenu menu = new SmMenu(xmlMenu);
+					// 判断一下如果关联的ControlClass为空，就添加到主菜单列表中，否则关联到子窗口菜单列表
+					if ("".equals(xmlMenu.getFormClassName())) {
+						this.listMenus.add(menu);
+						this.frameMenuBar.add(menu);
 					} else {
-						childMenus = new ArrayList<IMenu>();
-						this.childFrameMenus.put(windowType, childMenus);
+						WindowType windowType = getWindowType(xmlMenu.getFormClassName());
+						ArrayList<IMenu> childMenus = null;
+						if (this.childFrameMenus.containsKey(windowType)) {
+							childMenus = this.childFrameMenus.get(windowType);
+						} else {
+							childMenus = new ArrayList<IMenu>();
+							this.childFrameMenus.put(windowType, childMenus);
+						}
+						childMenus.add(menu);
 					}
-					childMenus.add(menu);
 				}
 			}
 		} catch (Exception ex) {
@@ -121,7 +123,7 @@ public class FrameMenuManager implements IFrameMenuManager {
 
 	public boolean loadChildMenu(WindowType windowType) {
 		boolean result = false;
-		try {			
+		try {
 			ArrayList<IMenu> childMenus = this.childFrameMenus.get(windowType);
 			if (childMenus != null) {
 				for (int i = 0; i < childMenus.size(); i++) {

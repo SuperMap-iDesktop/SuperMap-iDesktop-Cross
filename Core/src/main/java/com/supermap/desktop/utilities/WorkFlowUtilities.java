@@ -28,6 +28,7 @@ public class WorkFlowUtilities {
 					for (int count = formManager.getCount() - 1; count >= 0; count--) {
 						IForm form = formManager.get(count);
 						if (form.getWindowType() == WindowType.WORK_FLOW && form.getText().equals(workflow.getName())) {
+							form.setNeedSave(false);
 							formManager.close(form);
 							break;
 						}

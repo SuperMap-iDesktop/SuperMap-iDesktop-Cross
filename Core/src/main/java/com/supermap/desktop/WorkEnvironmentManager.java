@@ -29,30 +29,29 @@ public class WorkEnvironmentManager {
 			String workEnvironmentPath = PathUtilities.getFullPathName(_XMLTag.g_FolderWorkEnvironment, true);
 			File file = new File(workEnvironmentPath);
 			File[] files = file.listFiles();
-			for (int i = 0; i < files.length; i++) {
+			for (File file1 : files) {
 				// 遍历所有目录
 				List<String> plugins = new ArrayList<String>();
 
-				if (files[i].isDirectory()) {
-					String[] pathPrams = new String[] { workEnvironmentPath, files[i].getName() };
+				if (file1.isDirectory()) {
+					String[] pathPrams = new String[]{workEnvironmentPath, file1.getName()};
 					String workEnvironmentPathTemp = PathUtilities.combinePath(pathPrams, true);
 
-					File[] childFiles = files[i].listFiles();
-					for (int j = 0; j < childFiles.length; j++) {
+					File[] childFiles = file1.listFiles();
+					for (File childFile : childFiles) {
 						// 读取配置文件字符串也用XML的接口去读，同时也要有我们的命名空间
-						pathPrams = new String[] { workEnvironmentPathTemp, childFiles[j].getName() };
+						pathPrams = new String[]{workEnvironmentPathTemp, childFile.getName()};
 						String configFile = PathUtilities.combinePath(pathPrams, false);
 						Element pluginElement = XmlUtilities.getRootNode(configFile);
 						if (pluginElement != null) {
 							PluginInfo pluginInfo = new PluginInfo(pluginElement);
-							if (pluginInfo.getBundleName().indexOf("SuperMap.Desktop.LBSClient") != -1)
-							{
+							if (pluginInfo.getBundleName().indexOf("SuperMap.Desktop.LBSClient") != -1) {
 								int n = 0;
 								int m = n;
 							}
 							if (pluginInfo.IsValid()
 									&& (pluginInfo.getBundleName().indexOf("SuperMap.Desktop.Frame") != -1 || pluginInfo.getBundleName().indexOf(
-											"SuperMap.Desktop.DataView") != -1)) {
+									"SuperMap.Desktop.DataView") != -1)) {
 								// // 判断一下工作环境中是否含有必要的插件的配置信息
 								plugins.add(pluginInfo.getBundleName());
 							}
@@ -60,7 +59,7 @@ public class WorkEnvironmentManager {
 					}
 
 					if (plugins.size() >= 2) {
-						WorkEnvironment item = new WorkEnvironment(files[i].getName());
+						WorkEnvironment item = new WorkEnvironment(file1.getName());
 						this.workEnvironments.add(item);
 
 						if (item.getName().toLowerCase().equalsIgnoreCase(_XMLTag.getG_strWorkEnvironment())) {
