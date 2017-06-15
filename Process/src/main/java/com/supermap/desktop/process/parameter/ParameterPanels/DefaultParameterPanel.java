@@ -9,7 +9,10 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
  * @author XiaJT
  */
 public abstract class DefaultParameterPanel implements IParameterPanel, FieldConstraintChangedListener {
+	protected IParameter parameter;
+
 	DefaultParameterPanel(IParameter parameter) {
+		this.parameter = parameter;
 		parameter.addFieldConstraintChangedListener(this);
 	}
 
