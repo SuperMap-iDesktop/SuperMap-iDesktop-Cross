@@ -328,7 +328,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					dispose();
 					DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder();
-					dialogCacheBuilder.textFieldMapName.setText(this.currentMap.getName());
+					dialogCacheBuilder.textFieldMapName.setText(this.mapCacheBuilder.getCacheName());
 					String targetTaskPath = CacheUtilities.replacePath(tasksPath, "task");
 					File oldFile = new File(sciPath);
 					dialogCacheBuilder.setSciFile(oldFile);
