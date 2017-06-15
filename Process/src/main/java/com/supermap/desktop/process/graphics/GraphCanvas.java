@@ -1,7 +1,8 @@
 package com.supermap.desktop.process.graphics;
 
-import com.supermap.desktop.process.events.GraphSelectChangedListener;
-import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
+import com.supermap.desktop.process.core.Workflow;
+import com.supermap.desktop.process.graphics.events.GraphSelectChangedListener;
+import com.supermap.desktop.process.graphics.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.events.GraphCreatingEvent;
@@ -146,6 +147,10 @@ public class GraphCanvas extends JComponent {
 				frame.setVisible(true);
 			}
 		});
+	}
+
+	public GraphCanvas(Workflow workflow) {
+
 	}
 
 	public GraphCanvas() {

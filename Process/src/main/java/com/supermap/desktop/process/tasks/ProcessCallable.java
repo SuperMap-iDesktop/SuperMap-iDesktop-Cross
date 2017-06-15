@@ -33,13 +33,13 @@ public class ProcessCallable extends UpdateProgressCallable {
 	@Override
 	public Boolean call() {
 		try {
-			process.addRunningListener(this.runningListener);
-			process.run();
+			this.process.addRunningListener(this.runningListener);
+			this.process.run();
 
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
-			process.removeRunningListener(this.runningListener);
+			this.process.removeRunningListener(this.runningListener);
 		}
 		return false;
 	}

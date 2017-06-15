@@ -10,8 +10,8 @@ import com.supermap.desktop.dialog.SmDialogFormSaveAs;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.*;
 import com.supermap.desktop.process.core.*;
-import com.supermap.desktop.process.events.GraphSelectChangedListener;
-import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
+import com.supermap.desktop.process.graphics.events.GraphSelectChangedListener;
+import com.supermap.desktop.process.graphics.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
 import com.supermap.desktop.process.graphics.connection.IConnectable;
@@ -33,6 +33,7 @@ import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessGroup;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
+import com.supermap.desktop.process.tasks.TasksManager;
 import com.supermap.desktop.ui.FormBaseChild;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
@@ -53,7 +54,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * Created by highsad on 2017/1/6.
  */
 public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
-	private ScrollGraphCanvas graphCanvas = new ScrollGraphCanvas();
+	private Workflow workflow;
+	private TasksManager tasksManager;
+	private GraphCanvas canvas;
 	private boolean isNeedSave = true;
 	private boolean isAutoAddOutPut = true;
 	private transient DropTarget dropTargeted;
@@ -70,18 +73,24 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			name = ControlsProperties.getString("String_WorkFlows");
 		}
 		this.title = name;
-		init();
+		this.canvas = new GraphCanvas();
+		initializeComponents();
 	}
 
 	public FormWorkflow(IWorkflow workflow) {
 		super(workflow.getName(), null, null);
-		init();
+
+		this.workflow = (Workflow) workflow;
+		this.canvas = new GraphCanvas(this.workflow);
+		this.tasksManager = new TasksManager(this.workflow);
+
+		initializeComponents();
+		initFormWorkflow(workflow);
 		this.setText(workflow.getName());
-		initFormWorkFlow(workflow);
 		isNeedSave = false;
 	}
 
-	protected void initFormWorkFlow(IWorkflow workflow) {
+	protected void initFormWorkflow(IWorkflow workflow) {
 		if (workflow instanceof Workflow) {
 			isAutoAddOutPut = false;
 			try {
@@ -89,10 +98,10 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 				CopyOnWriteArrayList allStartNodes = matrix.getAllNodes();
 				for (Object node : allStartNodes) {
 					IGraph graph = (IGraph) node;
-					graphCanvas.getCanvas().addGraph(graph);
-					graph.setCanvas(graphCanvas.getCanvas());
+					this.canvas.addGraph(graph);
+					graph.setCanvas(this.canvas);
 				}
-				IConnectionManager connection = graphCanvas.getCanvas().getConnection();
+				IConnectionManager connection = this.canvas.getConnection();
 				for (Object node : allStartNodes) {
 					IGraph graph = (IGraph) node;
 					CopyOnWriteArrayList nextNodes = matrix.getNextNodes(graph);
@@ -119,15 +128,15 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		}
 	}
 
-	private void init() {
-
+	private void initializeComponents() {
 		setLayout(new BorderLayout());
-		add(graphCanvas, BorderLayout.CENTER);
+		ScrollGraphCanvas scrollCanvas = new ScrollGraphCanvas(this.canvas);
+		add(scrollCanvas, BorderLayout.CENTER);
 		initListeners();
 	}
 
 	private void initListeners() {
-		graphCanvas.getCanvas().getSelection().addGraphSelectChangedListener(new GraphSelectChangedListener() {
+		this.canvas.getSelection().addGraphSelectChangedListener(new GraphSelectChangedListener() {
 
 			@Override
 			public void graphSelectChanged(GraphSelectedChangedEvent e) {
@@ -145,7 +154,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			}
 		});
 
-		graphCanvas.getCanvas().addGraphCreatedListener(new GraphCreatedListener() {
+		this.canvas.addGraphCreatedListener(new GraphCreatedListener() {
 			@Override
 			public void graphCreated(GraphCreatedEvent e) {
 				isNeedSave = true;
@@ -158,13 +167,13 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 				}
 			}
 		});
-		graphCanvas.getCanvas().getGraphStorage().addGraphRemovingListener(new GraphRemovingListener() {
+		this.canvas.getGraphStorage().addGraphRemovingListener(new GraphRemovingListener() {
 			@Override
 			public void graphRemoving(GraphRemovingEvent e) {
 				isNeedSave = true;
 			}
 		});
-		graphCanvas.getCanvas().getActionsManager().addCanvasActionProcessListener(new CanvasActionProcessListener() {
+		this.canvas.getActionsManager().addCanvasActionProcessListener(new CanvasActionProcessListener() {
 			@Override
 			public void canvasActionProcess(CanvasActionProcessEvent e) {
 				if (e.getAction() instanceof GraphDragAction && e.getStatus() == CanvasActionProcessEvent.START) {
@@ -186,9 +195,9 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		int totalHeight = gap * (length - 1);
 
 		for (int i = 0; i < length; i++) {
-			dataGraphs[i] = new OutputGraph(graphCanvas.getCanvas(), processGraph, outputs[i]);
-			graphCanvas.getCanvas().addGraph(dataGraphs[i]);
-			graphCanvas.getCanvas().getConnection().connect(processGraph, dataGraphs[i]);
+			dataGraphs[i] = new OutputGraph(this.canvas, processGraph, outputs[i]);
+			this.canvas.addGraph(dataGraphs[i]);
+			this.canvas.getConnection().connect(processGraph, dataGraphs[i]);
 			totalHeight += dataGraphs[i].getHeight();
 		}
 
@@ -199,7 +208,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			//						System.out.println(dataGraphs[i].getHeight());
 			locationY += dataGraphs[i].getHeight() + gap;
 		}
-		graphCanvas.getCanvas().repaint();
+		this.canvas.repaint();
 	}
 
 	private void addDrag() {
@@ -319,8 +328,8 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	@Override
 	public IWorkflow getWorkflow() {
 		NodeMatrix nodeMatrix = new NodeMatrix();
-		IConnectionManager connectionManager = this.graphCanvas.getCanvas().getConnection();
-		IGraphStorage graphStorage = this.graphCanvas.getCanvas().getGraphStorage();
+		IConnectionManager connectionManager = this.canvas.getConnection();
+		IGraphStorage graphStorage = this.canvas.getGraphStorage();
 		IGraph[] graphs = graphStorage.getGraphs();
 		for (IGraph graph : graphs) {
 			if (graph instanceof LineGraph) {
@@ -464,7 +473,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	}
 
 	public GraphCanvas getCanvas() {
-		return this.graphCanvas.getCanvas();
+		return this.canvas;
 	}
 
 	public void addProcess(IProcess process) {
@@ -488,17 +497,17 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 				}
 			}
 		} else {
-			IGraph graph = new ProcessGraph(graphCanvas.getCanvas(), process);
-			graphCanvas.getCanvas().create(graph);
+			IGraph graph = new ProcessGraph(this.canvas, process);
+			this.canvas.create(graph);
 		}
 	}
 
 	private IGraph addSubProcess(MetaProcessGroup processGroup, MetaProcess currentMetaProcess, ArrayList<MetaProcess> addedMetaProcesses, int level, int YLevel) {
 		IGraph graph = null;
 		if (!addedMetaProcesses.contains(currentMetaProcess)) {
-			graph = new ProcessGraph(graphCanvas.getCanvas(), currentMetaProcess);
+			graph = new ProcessGraph(this.canvas, currentMetaProcess);
 			graph.setLocation(new Point(getLocation().x + level * 100, getLocation().y + YLevel));
-			graphCanvas.getCanvas().create(graph);
+			this.canvas.create(graph);
 			addedMetaProcesses.add(currentMetaProcess);
 		} else {
 			IGraph[] graphs = getCanvas().getGraphStorage().getGraphs();
