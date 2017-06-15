@@ -1268,6 +1268,7 @@ public class FirstStepPane extends JPanel implements IState {
 			if (mapCacheBuilder.fromConfigFile(filePath)) {
 				importCacheConfigs = true;
 				resetComponentsInfo();
+				fileChooserControlFileCache.setPath(mapCacheBuilder.getOutputFolder());
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FromCacheConfigFileIsSuccessed") + filePath);
 			} else {
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FromCacheConfigFileIsFailed"));
@@ -1293,7 +1294,6 @@ public class FirstStepPane extends JPanel implements IState {
 		}
 		labelConfigValue.setText(this.mapCacheBuilder.getCacheName());
 		textFieldCacheName.setText(mapCacheBuilder.getCacheName());
-		fileChooserControlFileCache.setPath(mapCacheBuilder.getOutputFolder());
 		if (mapCacheBuilder.getStorageType() == StorageType.Compact) {
 			comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_Compact"));
 			textFieldUserPassword.setText(mapCacheBuilder.getPassword());
@@ -1305,12 +1305,14 @@ public class FirstStepPane extends JPanel implements IState {
 			CacheWriter cacheFile = new CacheWriter();
 			cacheFile.FromConfigFile(CacheUtilities.replacePath(fileChooserControlFileCache.getPath(), mapCacheBuilder.getCacheName() + ".sci"));
 			String[] mongoInfo = cacheFile.getMongoConnectionInfo();
-			textFieldServerName.setText(mongoInfo[0]);
-			comboBoxDatabaseName.setSelectedItem(mongoInfo[1]);
-			textFieldUserName.setText(mongoInfo[2]);
-			if (mongoInfo.length == 4) {
-				textFieldUserPassword.setText(mongoInfo[3]);
-				textFieldConfirmPassword.setText(mongoInfo[3]);
+			if (null != mongoInfo) {
+				textFieldServerName.setText(mongoInfo[0]);
+				comboBoxDatabaseName.setSelectedItem(mongoInfo[1]);
+				textFieldUserName.setText(mongoInfo[2]);
+				if (mongoInfo.length == 4) {
+					textFieldUserPassword.setText(mongoInfo[3]);
+					textFieldConfirmPassword.setText(mongoInfo[3]);
+				}
 			}
 		} else if (mapCacheBuilder.getStorageType() == StorageType.GPKG) {
 			comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_GeoPackage"));

@@ -34,8 +34,8 @@ public class DialogCacheUpdate extends SmDialog {
 				DialogMapCacheClipBuilder builder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.UpdateProcessClip, mapCacheBuilder);
 				builder.firstStepPane.textFieldCacheName.setText(mapCacheBuilder.getCacheName());
 				builder.firstStepPane.labelConfigValue.setText(mapCacheBuilder.getCacheName());
-				builder.firstStepPane.resetComponentsInfo();
 				builder.firstStepPane.fileChooserControlFileCache.setPath(selectSciPath.substring(0, selectSciPath.lastIndexOf(mapCacheBuilder.getCacheName())));
+				builder.firstStepPane.resetComponentsInfo();
 				builder.showDialog();
 
 			}

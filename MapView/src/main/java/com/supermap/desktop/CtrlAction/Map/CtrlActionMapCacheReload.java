@@ -72,8 +72,8 @@ public class CtrlActionMapCacheReload extends CtrlAction {
 				mapCacheClipBuilder.buttonOk.setEnabled(true);
 				mapCacheClipBuilder.firstStepPane.labelConfigValue.setText(mapCacheBuilder.getCacheName());
 				mapCacheClipBuilder.setResumeAble(true);
-				mapCacheClipBuilder.firstStepPane.resetComponentsInfo();
 				mapCacheClipBuilder.firstStepPane.fileChooserControlFileCache.setPath(filePath.substring(0, filePath.lastIndexOf(mapCacheBuilder.getCacheName())));
+				mapCacheClipBuilder.firstStepPane.resetComponentsInfo();
 				mapCacheClipBuilder.showDialog();
 			}
 		}
