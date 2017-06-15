@@ -2,7 +2,10 @@ package com.supermap.desktop.dialog.cacheClip;
 
 import com.supermap.data.Geometry;
 import com.supermap.data.Rectangle2D;
-import com.supermap.data.processing.*;
+import com.supermap.data.processing.MapCacheBuilder;
+import com.supermap.data.processing.MapTilingMode;
+import com.supermap.data.processing.TileFormat;
+import com.supermap.data.processing.TileSize;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.map.propertycontrols.PanelGroupBoxViewBounds;
@@ -273,7 +276,7 @@ public class NextStepPane extends JPanel implements IState {
 		panelImageParam.add(this.checkBoxBackgroundTransparency, new GridBagConstraintsHelper(0, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
 		panelImageParam.add(this.checkBoxFullFillCacheImage, new GridBagConstraintsHelper(0, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 10, 5, 10));
 		panelImageParam.add(new JPanel(), new GridBagConstraintsHelper(0, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		if (cmdType != DialogMapCacheClipBuilder.SingleProcessClip) {
+		if (cmdType != DialogMapCacheClipBuilder.SingleProcessClip && cmdType != DialogMapCacheClipBuilder.ReloadProcessClip) {
 			JPanel innerPanel = new JPanel();
 			innerPanel.setLayout(new GridBagLayout());
 			innerPanel.add(this.labelTaskStorePath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));

@@ -154,13 +154,13 @@ public class FirstStepPane extends JPanel implements IState {
 	private ActionListener inputCacheConfigFileListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			inportCacheConfigFile();
+			importCacheConfigFile();
 		}
 	};
 	private ActionListener inputCacheConfigFileToolbarJmenuListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			inportCacheConfigFile();
+			importCacheConfigFile();
 		}
 	};
 	private ActionListener exportCacheConfigFileListener = new ActionListener() {
@@ -1238,7 +1238,7 @@ public class FirstStepPane extends JPanel implements IState {
 		}
 	}
 
-	private void inportCacheConfigFile() {
+	private void importCacheConfigFile() {
 		String moduleName = "InputCacheConfigFile";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci"));
@@ -1278,6 +1278,7 @@ public class FirstStepPane extends JPanel implements IState {
 		}
 		labelConfigValue.setText(this.mapCacheBuilder.getCacheName());
 		textFieldCacheName.setText(mapCacheBuilder.getCacheName());
+		fileChooserControlFileCache.setPath(mapCacheBuilder.getOutputFolder());
 		if (mapCacheBuilder.getStorageType() == StorageType.Compact) {
 			comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_Compact"));
 			textFieldUserPassword.setText(mapCacheBuilder.getPassword());
