@@ -1,5 +1,8 @@
 package com.supermap.desktop.process.graphics.interaction.canvas;
 
+import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.graphs.IGraph;
+
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 
@@ -8,6 +11,11 @@ import java.awt.event.MouseWheelEvent;
  * Created by highsad on 2017/3/3.
  */
 public class GraphEventDispatcher extends CanvasActionAdapter {
+	private GraphCanvas canvas;
+
+	public GraphEventDispatcher(GraphCanvas canvas) {
+		this.canvas = canvas;
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -41,7 +49,10 @@ public class GraphEventDispatcher extends CanvasActionAdapter {
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		super.mouseMoved(e);
+		IGraph graph = this.canvas.findGraph(e.getPoint());
+		if (graph!=null) {
+
+		}
 	}
 
 	@Override

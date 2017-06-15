@@ -15,11 +15,11 @@ public class RectangleGraph extends AbstractGraph implements IConnectable {
 	private double arcHeight = 0d;
 
 	public RectangleGraph(GraphCanvas canvas) {
-		super(canvas, new RoundRectangle2D.Double(0, 0, 150, 50, 15, 15));
+		super(canvas, new RoundRectangle2D.Double(0, 0, 120, 40, 12, 12));
 	}
 
 	public RectangleGraph(GraphCanvas canvas, double arcWidth, double arcHeight) {
-		super(canvas, new RoundRectangle2D.Double(0, 0, 150, 50, arcWidth, arcHeight));
+		super(canvas, new RoundRectangle2D.Double(0, 0, 120, 40, arcWidth, arcHeight));
 	}
 
 	@Override

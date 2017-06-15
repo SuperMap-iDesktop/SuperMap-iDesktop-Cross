@@ -6,6 +6,7 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IStatusbar;
 import com.supermap.desktop.ui.XMLCommand;
 import com.supermap.desktop.ui.XMLStatusbar;
+import com.supermap.desktop.utilities.SystemPropertyUtilities;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -94,9 +95,11 @@ public class SmStatusbar extends JToolBar implements IStatusbar {
 			for (int i = 0; i < this.xmlStatusbar.items().size(); i++) {
 				XMLCommand xmlCommand = this.xmlStatusbar.items().get(i);
 				xmlCommand.setCtrlAction(null);
-				item = SmComponentFactory.create(xmlCommand, this);
-				if (item != null) {
-					this.items.add(item);
+				if (SystemPropertyUtilities.isSupportPlatform(xmlCommand.getPlatform())) {
+					item = SmComponentFactory.create(xmlCommand, this);
+					if (item != null) {
+						this.items.add(item);
+					}
 				}
 			}
 		} catch (Exception e) {

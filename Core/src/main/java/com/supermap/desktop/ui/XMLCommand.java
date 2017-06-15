@@ -284,6 +284,7 @@ public class XMLCommand extends XMLCommandBase implements Comparator<XMLCommand>
 			result.setShortCutKeys(this.getShortCutKeys());
 			result.setDescription(this.getDescription());
 			result.setCustomProperty(this.getCustomProperty());
+			result.setPlatform(getPlatform());
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

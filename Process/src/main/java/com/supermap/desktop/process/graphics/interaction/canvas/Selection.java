@@ -70,6 +70,21 @@ public abstract class Selection extends CanvasActionAdapter {
 		return this.selectedItems.contains(item);
 	}
 
+	public boolean isContain(Point canvasPoint) {
+		boolean isContain = false;
+
+		if (this.selectedItems != null) {
+			for (int i = 0, size = this.selectedItems.size(); i < size; i++) {
+				IGraph graph = this.selectedItems.get(i);
+				if (graph.contains(canvasPoint)) {
+					isContain = true;
+					break;
+				}
+			}
+		}
+		return isContain;
+	}
+
 	public void addGraphSelectChangedListener(GraphSelectChangedListener listener) {
 		this.list.add(GraphSelectChangedListener.class, listener);
 	}

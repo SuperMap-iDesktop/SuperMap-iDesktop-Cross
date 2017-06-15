@@ -4,7 +4,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
-import com.supermap.desktop.Interface.IWorkFlow;
+import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.ProcessProperties;
@@ -45,8 +45,8 @@ public class CtrlActionProcessImport extends CtrlAction {
 				String name = root.getAttributes().getNamedItem("name").getNodeValue();
 
 				ArrayList<String> names = new ArrayList<>();
-				ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
-				for (IWorkFlow workFlow : workFlows) {
+				ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
+				for (IWorkflow workFlow : workFlows) {
 					names.add(workFlow.getName());
 				}
 

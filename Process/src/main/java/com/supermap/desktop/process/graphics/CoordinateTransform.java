@@ -190,6 +190,7 @@ public class CoordinateTransform {
 
 	/**
 	 * Inverse transforms the specified <code>src<code/>.
+	 * Screen Point to Canvas Point.
 	 *
 	 * @param src
 	 * @return

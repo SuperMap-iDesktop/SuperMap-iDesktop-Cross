@@ -101,7 +101,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.Interface.IFormTabular;
-import com.supermap.desktop.Interface.IWorkFlow;
+import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.DatasourceOpenFileUtilties;
 import com.supermap.desktop.controls.utilities.JTreeUIUtilities;
@@ -886,7 +886,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		}
 		addScene();
 
-		ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
+		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
 		TreeNodeData WorkFlowNode = new TreeNodeData(workFlows, NodeDataType.WORK_FLOWS);
 		treeNodeWorkFlow = new DefaultMutableTreeNode(WorkFlowNode);
 		if (isWorkFlowNodeVisible) {
@@ -1005,17 +1005,15 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		workFlowsChangedListener = new WorkFlowsChangedListener() {
 			@Override
 			public void workFlowsChanged(WorkFlowChangedEvent workFlowChangedEvent) {
-				IWorkFlow[] workFlows = workFlowChangedEvent.getWorkFlows();
+				IWorkflow[] workFlows = workFlowChangedEvent.getWorkFlows();
 				if (workFlowChangedEvent.getType() == WorkFlowChangedEvent.ADD) {
-					for (IWorkFlow workFlow : workFlows) {
-						DefaultMutableTreeNode child = new DefaultMutableTreeNode(new TreeNodeData(workFlow, NodeDataType.WORK_FLOW));
-						treeModelTemp.insertNodeInto(child, treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
-						JTreeUIUtilities.locateNode(WorkspaceTree.this, child);
+					for (IWorkflow workFlow : workFlows) {
+						treeModelTemp.insertNodeInto(new DefaultMutableTreeNode(new TreeNodeData(workFlow, NodeDataType.WORK_FLOW)), treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
 					}
 				} else if (workFlowChangedEvent.getType() == WorkFlowChangedEvent.DELETE) {
 					for (int i = treeNodeWorkFlow.getChildCount() - 1; i >= 0; i--) {
 						DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeNodeWorkFlow.getChildAt(i);
-						IWorkFlow workFlow = (IWorkFlow) ((TreeNodeData) node.getUserObject()).getData();
+						IWorkflow workFlow = (IWorkflow) ((TreeNodeData) node.getUserObject()).getData();
 						if (ArrayUtilities.isArrayContains(workFlows, workFlow)) {
 							treeModelTemp.removeNodeFromParent(node);
 						}
@@ -1024,7 +1022,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 					for (int i = treeNodeWorkFlow.getChildCount() - 1; i >= 0; i--) {
 						treeModelTemp.removeNodeFromParent((MutableTreeNode) treeNodeWorkFlow.getChildAt(i));
 					}
-					for (IWorkFlow workFlow : workFlows) {
+					for (IWorkflow workFlow : workFlows) {
 						treeModelTemp.insertNodeInto(new DefaultMutableTreeNode(new TreeNodeData(workFlow, NodeDataType.WORK_FLOW)), treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
 					}
 				}
@@ -1529,8 +1527,8 @@ public class WorkspaceTree extends JTree implements IDisposable {
 	}
 
 	private void addWorkFlow() {
-		ArrayList<IWorkFlow> workFlows = Application.getActiveApplication().getWorkFlows();
-		for (IWorkFlow workFlow : workFlows) {
+		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
+		for (IWorkflow workFlow : workFlows) {
 			TreeNodeData treeNodeData = new TreeNodeData(workFlow, NodeDataType.WORK_FLOW);
 			treeNodeWorkFlow.add(new DefaultMutableTreeNode(treeNodeData));
 		}
@@ -1613,15 +1611,15 @@ public class WorkspaceTree extends JTree implements IDisposable {
 					if (JOptionPane.OK_OPTION == UICommonToolkit.showConfirmDialog(message)) {
 						DatasetUtilities.deleteDataset(datasets);
 					}
-				} else if (data instanceof IWorkFlow) {
-					ArrayList<IWorkFlow> workflows = new ArrayList<>();
+				} else if (data instanceof IWorkflow) {
+					ArrayList<IWorkflow> workflows = new ArrayList<>();
 					for (TreePath treePath : WorkspaceTree.this.getSelectionPaths()) {
 						DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) treePath.getLastPathComponent();
 						TreeNodeData selectedNodeData = (TreeNodeData) treeNode.getUserObject();
-						IWorkFlow workflow = (IWorkFlow) selectedNodeData.getData();
+						IWorkflow workflow = (IWorkflow) selectedNodeData.getData();
 						workflows.add(workflow);
-						WorkFlowUtilities.deleteProcess(workflows);
 					}
+					WorkFlowUtilities.deleteProcess(workflows);
 				} else {
 					NodeDataType type = currentNodeData.getType();
 					if (type.equals(NodeDataType.LAYOUT_NAME)) {

@@ -19,6 +19,7 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IConGetter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 
 import javax.swing.*;
 import java.beans.PropertyChangeEvent;
@@ -54,7 +55,7 @@ public class InputParametersManager {
 		});
 		parameterComboBox.setParameters(parameters);
 		parameterComboBox.setDescribe(name + ":");
-		reloadParameterComboBox(parameterComboBox);
+		reloadParameterComboBox(parameterComboBox, parameters.getInputs().getData(name).getType());
 		parameterComboBox.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -73,7 +74,8 @@ public class InputParametersManager {
 			canvas.addGraphCreatedListener(new GraphCreatedListener() {
 				@Override
 				public void graphCreated(GraphCreatedEvent e) {
-					if (e.getGraph() instanceof OutputGraph && ((OutputGraph) e.getGraph()).getProcessGraph().getProcess() != parameters.getProcess()) {// 不一定都是OutputGraph
+					if (e.getGraph() instanceof OutputGraph && ((OutputGraph) e.getGraph()).getProcessGraph().getProcess() != parameters.getProcess()
+							&& parameters.getInputs().getData(name).getType().contains(((OutputGraph) e.getGraph()).getProcessData().getType())) {// 不一定都是OutputGraph
 						parameterComboBox.addItem(new ParameterDataNode(((OutputGraph) e.getGraph()).getProcessGraph().getTitle() + "_" + ((OutputGraph) e.getGraph()).getTitle(), e.getGraph()));
 					}
 				}
@@ -184,14 +186,14 @@ public class InputParametersManager {
 		}
 	}
 
-	private void reloadParameterComboBox(ParameterComboBox parameterComboBox) {
+	private void reloadParameterComboBox(ParameterComboBox parameterComboBox, Type type) {
 		parameterComboBox.removeAllItems();
 		IForm form = Application.getActiveApplication().getActiveForm();
 		if (!(form instanceof FormWorkflow)) {
 			return;
 		}
 		FormWorkflow activeForm = (FormWorkflow) form;
-		ArrayList<IGraph> allDataNode = activeForm.getAllDataNode();
+		ArrayList<IGraph> allDataNode = activeForm.getAllDataNode(type);
 		for (IGraph graph : allDataNode) {
 			if (((OutputGraph) graph).getProcessGraph().getProcess() != this.parameters.getProcess())
 				parameterComboBox.addItem(new ParameterDataNode(((OutputGraph) graph).getProcessGraph().getTitle() + "_" + ((OutputGraph) graph).getTitle(), graph));
