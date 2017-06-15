@@ -4,6 +4,7 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
+import com.supermap.desktop.process.parameter.events.PanelPropertyChangedListener;
 import com.supermap.desktop.process.parameter.events.ParameterUpdateValueEvent;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalEvent;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
@@ -38,6 +39,24 @@ public abstract class AbstractParameter implements IParameter {
 	private EventListenerList listenerList = new EventListenerList();
 	private List<UpdateValueListener> updateValueListeners = new ArrayList<>();
 
+	@Override
+	public void addPanelPropertyChangedListener(PanelPropertyChangedListener panelPropertyChangedListener) {
+		listenerList.add(PanelPropertyChangedListener.class, panelPropertyChangedListener);
+	}
+
+	@Override
+	public void removePanelPropertyChangedListener(PanelPropertyChangedListener panelPropertyChangedListener) {
+		listenerList.remove(PanelPropertyChangedListener.class, panelPropertyChangedListener);
+	}
+
+	private void firePanelPropertyChangedListener(PropertyChangeEvent propertyChangeEvent) {
+		Object[] listenerList = this.listenerList.getListenerList();
+		for (int i = listenerList.length - 2; i >= 0; i -= 2) {
+			if (listenerList[i] == PanelPropertyChangedListener.class) {
+				((PanelPropertyChangedListener) listenerList[i + 1]).propertyChanged(propertyChangeEvent);
+			}
+		}
+	}
 
 	@Override
 	public void addPropertyListener(PropertyChangeListener propertyChangeListener) {
@@ -219,9 +238,12 @@ public abstract class AbstractParameter implements IParameter {
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		if (enabled == this.isEnabled()) {
+			return;
+		}
 		boolean oldValue = this.isEnabled;
 		this.isEnabled = enabled;
-		firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, enabled));
+		firePanelPropertyChangedListener(new PropertyChangeEvent(this, PanelPropertyChangedListener.ENABLE, oldValue, enabled));
 	}
 
 	@Override

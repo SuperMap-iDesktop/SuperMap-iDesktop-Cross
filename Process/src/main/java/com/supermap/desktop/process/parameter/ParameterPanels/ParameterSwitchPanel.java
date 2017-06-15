@@ -44,7 +44,7 @@ public class ParameterSwitchPanel extends SwingPanel {
 		} else {
 			panel.add(new JPanel(), new GridBagConstraintsHelper(0, 0, 1, 1).setFill(GridBagConstraints.HORIZONTAL).setWeight(1, 1).setInsets(-5, 0, 0, 0));
 		}
-		return panel;
+		return super.getPanel();
 	}
 
 }

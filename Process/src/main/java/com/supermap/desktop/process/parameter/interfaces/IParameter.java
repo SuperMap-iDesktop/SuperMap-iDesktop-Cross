@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.parameter.interfaces;
 
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
+import com.supermap.desktop.process.parameter.events.PanelPropertyChangedListener;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
 import com.supermap.desktop.process.parameter.events.UpdateValueListener;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
@@ -48,6 +49,10 @@ public interface IParameter extends IAbstractParameter {
 	 * @return
 	 */
 	IParameterPanel getParameterPanel();
+
+	void addPanelPropertyChangedListener(PanelPropertyChangedListener panelPropertyChangedListener);
+
+	void removePanelPropertyChangedListener(PanelPropertyChangedListener panelPropertyChangedListener);
 
 	void addPropertyListener(PropertyChangeListener propertyChangeListener);
 
