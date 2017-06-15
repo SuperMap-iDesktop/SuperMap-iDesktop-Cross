@@ -1,9 +1,6 @@
 package com.supermap.desktop.dialog.cacheClip;
 
-import com.supermap.data.GeoRegion;
-import com.supermap.data.Geometrist;
-import com.supermap.data.Geometry;
-import com.supermap.data.GeometryType;
+import com.supermap.data.*;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapCacheVersion;
 import com.supermap.data.processing.MapTilingMode;
@@ -300,28 +297,25 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				String sciPath = CacheUtilities.replacePath(filePath, mapCacheBuilder.getCacheName() + ".sci");
 				setMapCacheBuilderValueBeforeRun();
 				//SaveType==MongoType,build some cache for creating a database
-				if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
-					final Thread thread = new Thread(new Runnable() {
-						@Override
-						public void run() {
-							mapCacheBuilder.buildWithoutConfigFile();
-						}
-					});
-					thread.start();
-					final java.util.Timer timer = new java.util.Timer();
-					TimerTask task = new TimerTask() {
-						@Override
-						public void run() {
-							thread.interrupt();
-							timer.cancel();
-						}
-					};
-					long delay = 20 * 1000;
-					timer.schedule(task, delay);
-				}
 				boolean result = true;
 				if (cmdType != UpdateProcessClip) {
 					result = mapCacheBuilder.toConfigFile(sciPath);
+				}
+				if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
+					SteppedListener steppedListener = new SteppedListener() {
+						@Override
+						public void stepped(SteppedEvent steppedEvent) {
+							try {
+								Thread.sleep(20 * 1000);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							steppedEvent.setCancel(true);
+						}
+					};
+					mapCacheBuilder.addSteppedListener(steppedListener);
+					mapCacheBuilder.buildWithoutConfigFile();
+					mapCacheBuilder.removeSteppedListener(steppedListener);
 				}
 				if (result) {
 					String[] params = {sciPath, tasksPath, tasksSize, canudb};
