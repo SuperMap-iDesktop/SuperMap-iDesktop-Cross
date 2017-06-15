@@ -2,7 +2,13 @@ package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
-import com.supermap.desktop.process.parameter.events.*;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
+import com.supermap.desktop.process.parameter.events.ParameterUpdateValueEvent;
+import com.supermap.desktop.process.parameter.events.ParameterValueLegalEvent;
+import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
+import com.supermap.desktop.process.parameter.events.ParameterValueSelectedEvent;
+import com.supermap.desktop.process.parameter.events.UpdateValueListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
@@ -111,6 +117,7 @@ public abstract class AbstractParameter implements IParameter {
 			updateValueListener.fireUpdateValue(new ParameterUpdateValueEvent(fieldName));
 		}
 	}
+
 	@Override
 	public ArrayList<String> getFieldNameList(Class<AbstractParameter> clazz) {
 		ArrayList<String> nameList = new ArrayList<>();

@@ -2,15 +2,10 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.analyst.spatialanalyst.OverlayAnalyst;
 import com.supermap.analyst.spatialanalyst.OverlayAnalystParameter;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.DatasetVectorInfo;
-import com.supermap.data.Datasource;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
@@ -18,20 +13,15 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.implement.ParameterFieldSetDialog;
-import com.supermap.desktop.process.parameter.implement.ParameterLabel;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
-
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 
 /**
@@ -67,12 +57,23 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		}
 	};
 
+	public PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (parameterSourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
+				parameterTolerance.setSelectedItem(DatasetUtilities.getDefaultTolerance((DatasetVector) evt.getNewValue()).getNodeSnap());
+				parameterUnit.setSelectedItem(LengthUnit.convertForm(((DatasetVector) evt.getNewValue()).getPrjCoordSys().getCoordUnit()));
+			}
+		}
+	};
+
 	public MetaProcessOverlayAnalyst(OverlayAnalystType analystType) {
 		this.analystType = analystType;
 		initParameters();
 		initParameterLayout();
 		initParameterConstraint();
 		initParameterStates();
+		registerEvents();
 	}
 
 	private void initParameters() {
@@ -82,7 +83,6 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		parameterResultDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
 		parameterSaveDataset.setDescribe(CommonProperties.getString(CommonProperties.Label_Dataset));
 		parameterTolerance.setDescribe(CommonProperties.getString("String_Label_Tolerance"));
-		parameterUnit.setDescribe(CommonProperties.getString("String_DistanceUnit_Meter"));//单位和数据集有关系
 
 //		parameterCheckBoxIsCompareResult.setDescribe(CommonProperties.getString("String_CheckBox_ResultComparison"));
 	}
@@ -128,16 +128,15 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 
 		EqualDatasetConstraint equalDatasetConstraint1 = new EqualDatasetConstraint();
 		equalDatasetConstraint1.constrained(parameterOverlayDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
-		equalDatasetConstraint.constrained(parameterFieldSetDialog, ParameterFieldSetDialog.RESULT_DATASET_FIELD_NAME);
+		equalDatasetConstraint1.constrained(parameterFieldSetDialog, ParameterFieldSetDialog.RESULT_DATASET_FIELD_NAME);
 	}
 
 	private void initParameterStates() {
 		String resultName = this.analystType.defaultResultName();
 		parameterSaveDataset.setSelectedItem(resultName);
-		parameterTolerance.setSelectedItem("0");
-		if(this.analystType == OverlayAnalystType.UNION || this.analystType == OverlayAnalystType.XOR || this.analystType == OverlayAnalystType.UPDATE){
+		if (this.analystType == OverlayAnalystType.UNION || this.analystType == OverlayAnalystType.XOR || this.analystType == OverlayAnalystType.UPDATE) {
 			parameterSourceDataset.setDatasetTypes(DatasetType.REGION);
-		}else{
+		} else {
 			parameterSourceDataset.setDatasetTypes(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
 		}
 		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
@@ -147,9 +146,29 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 			parameterOverlayDatasource.setSelectedItem(datasetVector.getDatasource());
 			parameterOverlayDataset.setSelectedItem(datasetVector);
 			parameterResultDatasource.setSelectedItem(datasetVector.getDatasource());
+			if ((this.analystType == OverlayAnalystType.UNION || this.analystType == OverlayAnalystType.XOR || this.analystType == OverlayAnalystType.UPDATE) && datasetVector.getType() == DatasetType.REGION) {
+				parameterTolerance.setSelectedItem(DatasetUtilities.getDefaultTolerance(datasetVector).getNodeSnap());
+				parameterUnit.setDescribe(LengthUnit.convertForm(datasetVector.getPrjCoordSys().getCoordUnit()).toString());
+			}
+			if (this.analystType == OverlayAnalystType.CLIP || this.analystType == OverlayAnalystType.ERASE || this.analystType == OverlayAnalystType.INTERSECT || this.analystType == OverlayAnalystType.IDENTITY) {
+				parameterTolerance.setSelectedItem(DatasetUtilities.getDefaultTolerance(datasetVector).getNodeSnap());
+				parameterUnit.setDescribe(LengthUnit.convertForm(datasetVector.getPrjCoordSys().getCoordUnit()).toString());
+			}
+
+		} else {
+			parameterTolerance.setSelectedItem("");
+			parameterUnit.setDescribe("");
+		}
+		if (this.analystType == OverlayAnalystType.CLIP || this.analystType == OverlayAnalystType.ERASE || this.analystType == OverlayAnalystType.UPDATE) {
+			parameterFieldSetDialog.setEnabled(false);
+		} else {
+			parameterFieldSetDialog.setEnabled(true);
 		}
 	}
 
+	private void registerEvents() {
+		this.parameterSourceDataset.addPropertyListener(this.propertyChangeListener);
+	}
 
 	@Override
 	public String getTitle() {
