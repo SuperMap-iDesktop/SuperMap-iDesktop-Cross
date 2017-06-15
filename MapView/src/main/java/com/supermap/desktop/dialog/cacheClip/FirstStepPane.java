@@ -11,6 +11,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.ScaleModel;
 import com.supermap.desktop.dialog.SmOptionPane;
+import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ChooseTable.MultipleCheckboxItem;
@@ -57,6 +58,7 @@ import java.util.Vector;
  */
 public class FirstStepPane extends JPanel implements IState {
 
+	private int cmdType;
 	private final String urlStr = "/coreresources/ToolBar/";
 	public MapCacheBuilder mapCacheBuilder;
 	public HashMap<Double, String> globalSplitScale;
@@ -183,6 +185,7 @@ public class FirstStepPane extends JPanel implements IState {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			importXml();
+			checkButtonState();
 		}
 	};
 	private ActionListener selectAllScaleListener = new ActionListener() {
@@ -250,11 +253,12 @@ public class FirstStepPane extends JPanel implements IState {
 		}
 	};
 
-	public FirstStepPane(MapCacheBuilder mapCacheBuilder, DialogMapCacheClipBuilder parent) {
+	public FirstStepPane(MapCacheBuilder mapCacheBuilder, DialogMapCacheClipBuilder parent, int cmdType) {
 		super();
 		this.parent = parent;
 		this.mapCacheBuilder = mapCacheBuilder;
 		this.currentMap = mapCacheBuilder.getMap();
+		this.cmdType = cmdType;
 		init();
 	}
 
@@ -307,6 +311,10 @@ public class FirstStepPane extends JPanel implements IState {
 		initBasicSettingPanelValue();
 		initResources();
 		registEvents();
+		if (cmdType == DialogMapCacheClipBuilder.ReloadProcessClip
+				|| cmdType == DialogMapCacheClipBuilder.UpdateProcessClip) {
+			resetComponentsInfo();
+		}
 		enabled();
 	}
 
@@ -374,7 +382,37 @@ public class FirstStepPane extends JPanel implements IState {
 		layout.setAutoCreateContainerGaps(true);
 		layout.setAutoCreateGaps(true);
 		this.setLayout(layout);
+		initComponentsState();
+	}
 
+	private void initComponentsState() {
+		if (cmdType == DialogMapCacheClipBuilder.UpdateProcessClip) {
+			this.labelVersion.setEnabled(false);
+			this.comboboxVersion.setEnabled(false);
+			this.labelSplitMode.setEnabled(false);
+			this.comboBoxSplitMode.setEnabled(false);
+			this.labelCacheName.setEnabled(false);
+			this.textFieldCacheName.setEnabled(false);
+			this.labelCachePath.setEnabled(false);
+			this.fileChooserControlFileCache.setEnabled(false);
+			this.labelSaveType.setEnabled(false);
+			this.comboBoxSaveType.setEnabled(false);
+			this.labelUserPassword.setEnabled(false);
+			this.labelConfirmPassword.setEnabled(false);
+		} else {
+			this.labelVersion.setEnabled(true);
+			this.comboboxVersion.setEnabled(true);
+			this.labelSplitMode.setEnabled(true);
+			this.comboBoxSplitMode.setEnabled(true);
+			this.labelCacheName.setEnabled(true);
+			this.textFieldCacheName.setEnabled(true);
+			this.labelCachePath.setEnabled(true);
+			this.fileChooserControlFileCache.setEnabled(true);
+			this.labelSaveType.setEnabled(true);
+			this.comboBoxSaveType.setEnabled(true);
+			this.labelUserName.setEnabled(true);
+			this.labelConfirmPassword.setEnabled(true);
+		}
 	}
 
 	private void initBasicSettingPanelValue() {
@@ -387,12 +425,15 @@ public class FirstStepPane extends JPanel implements IState {
 		this.comboBoxSplitMode.addItem(MapViewProperties.getString("MapCache_ComboboxSplitModeLocalSplit"));
 		this.comboBoxSplitMode.addItem(MapViewProperties.getString("MapCache_ComboboxSplitModeGlobalSplit"));
 		this.comboBoxSplitMode.setEnabled(false);
-		if (this.currentMap.getPrjCoordSys() != null && this.currentMap.getPrjCoordSys().getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE
+		if (null != this.currentMap && this.currentMap.getPrjCoordSys() != null && this.currentMap.getPrjCoordSys().getType() == PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE
 				&& this.currentMap.getPrjCoordSys().getGeoCoordSys() != null && this.currentMap.getPrjCoordSys().getGeoCoordSys().getType() == GeoCoordSysType.GCS_WGS_1984
 				&& this.currentMap.getPrjCoordSys().getGeoCoordSys().getGeoSpatialRefType() == GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE) {
 			this.comboBoxSplitMode.setEnabled(true);
+			this.textFieldCacheName.setText(this.currentMap.getName());
+		} else {
+			this.comboBoxSplitMode.setEnabled(false);
+			this.textFieldCacheName.setText(this.mapCacheBuilder.getCacheName());
 		}
-		this.textFieldCacheName.setText(this.mapCacheBuilder.getMap().getName());
 		String moduleName = "ChooseCacheDirectories";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			this.fileChooserControlFileCache.setPath(System.getProperty("user.dir"));
@@ -779,10 +820,14 @@ public class FirstStepPane extends JPanel implements IState {
 	}
 
 	private void initGlobalValue() {
-		this.mapCacheBuilder.setMap(this.currentMap);
 		this.scientificNotation.setGroupingUsed(false);
-		this.originMapCacheScale = this.mapCacheBuilder.getDefultOutputScales();
+		if (cmdType == DialogMapCacheClipBuilder.UpdateProcessClip || cmdType == DialogMapCacheClipBuilder.ReloadProcessClip) {
+			this.originMapCacheScale = this.mapCacheBuilder.getOutputScales();
+		} else {
+			this.originMapCacheScale = this.mapCacheBuilder.getDefultOutputScales();
+		}
 		setLocalSplitTableValue(this.originMapCacheScale);
+//		setLocalSplitTableValue(this.mapCacheBuilder.getOutputScaleCaptions());
 		this.currentMapCacheScale = new ArrayList<>();
 		for (int i = 0; i < this.originMapCacheScale.length; i++) {
 			this.currentMapCacheScale.add(this.originMapCacheScale[i]);
@@ -879,10 +924,8 @@ public class FirstStepPane extends JPanel implements IState {
 			levels[i] = i;
 		}
 		this.globalSplitScale = this.mapCacheBuilder.globalLevelToScale(levels);
-		double avaliableScale = -1;
-		if (!this.mapCacheBuilder.getBounds().isEmpty() && this.mapCacheBuilder.getMap().getPrjCoordSys().getGeoCoordSys() != null) {
-			avaliableScale = getAvaliableScale();
-		}
+		double avaliableScale = getAvaliableScale();
+
 		double dValue = Double.MAX_VALUE;
 		String avaliableLevel = "0";
 		if (avaliableScale != -1) {
@@ -943,25 +986,44 @@ public class FirstStepPane extends JPanel implements IState {
 
 	private double getAvaliableScale() {
 		try {
-			double DPI = mapCacheBuilder.getMap().getDPI();
+			if (null != this.currentMap) {
+				return getScale(this.currentMap);
+			} else {
+				Workspace wk = Application.getActiveApplication().getWorkspace();
+				Map map = new Map();
+				map.setName(this.mapCacheBuilder.getCacheName());
+				map.open(mapCacheBuilder.getCacheName());
+				Map newMap = new Map(wk);
+				newMap.fromXML(map.toXML());
+				return getScale(newMap);
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+			return 1.0;
+		}
+	}
+
+	private double getScale(Map map) {
+		double dScale = 0;
+		if (null != map && null != map.getPrjCoordSys().getGeoCoordSys()) {
+			double DPI = map.getDPI();
 			double lp = DPI / 25.4;
 			Integer tileSize = Convert.toInteger(mapCacheBuilder.getTileSize().value());
 			double dLPSide = tileSize / lp * 10;
-			Unit mapUnit = mapCacheBuilder.getMap().getCoordUnit();
-			Rectangle2D rcFinalBounds = mapCacheBuilder.getMap().getBounds();
+			Unit mapUnit = map.getCoordUnit();
+			Rectangle2D rcFinalBounds = mapCacheBuilder.getBounds();
 			double dLPMPCoordRatio = dLPSide / rcFinalBounds.getWidth();
-			double dScale = 0;
-			double axis = mapCacheBuilder.getMap().getPrjCoordSys().getGeoCoordSys().getGeoDatum().getGeoSpheroid().getAxis();
+
+			double axis = map.getPrjCoordSys().getGeoCoordSys().getGeoDatum().getGeoSpheroid().getAxis();
 			if (mapUnit == Unit.DEGREE) {
 				dScale = dLPMPCoordRatio / (axis * 10000 * Math.PI / 180);
 			} else {
 				dScale = dLPMPCoordRatio / (Convert.toDouble(mapUnit));
 			}
-			return 1.0 / dScale;
-		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
-			return 1.0;
+		} else {
+			dScale = 1;
 		}
+		return 1.0 / dScale;
 	}
 
 	//Add new scale
@@ -1179,39 +1241,43 @@ public class FirstStepPane extends JPanel implements IState {
 		String filePath = "";
 		if (state == JFileChooser.APPROVE_OPTION) {
 			filePath = smFileChoose.getFilePath();
-			String fileName = filePath.substring(filePath.lastIndexOf("\\") + 1);
 			if (mapCacheBuilder.fromConfigFile(filePath)) {
 				importCacheConfigs = true;
-				HashMap<Double, String> scalesAndNames = mapCacheBuilder.getOutputScaleCaptions();
-				if (mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
-					comboBoxSplitMode.setSelectedItem(MapViewProperties.getString("MapCache_ComboboxSplitModeLocalSplit"));
-					DDLExportTableModel model = (DDLExportTableModel) localSplitTable.getModel();
-					model.removeRows(0, model.getRowCount());
-					setLocalSplitTableValue(scalesAndNames);
-				} else {
-					comboBoxSplitMode.setSelectedItem(MapViewProperties.getString("MapCache_ComboboxSplitModeGlobalSplit"));
-					for (String scaleName : scalesAndNames.values()) {
-						MultipleCheckboxItem multipleCheckboxItem = (MultipleCheckboxItem) FirstStepPane.this.globalSplitTable.getValueAt(Integer.valueOf(scaleName), COLUMN_INDEX);
-						multipleCheckboxItem.setSelected(true);
-						FirstStepPane.this.globalSplitTable.setValueAt(multipleCheckboxItem, Integer.valueOf(scaleName), COLUMN_INDEX);
-					}
-				}
-				labelConfigValue.setText(fileName);
-				textFieldCacheName.setText(mapCacheBuilder.getCacheName());
-				fileChooserControlFileCache.setPath(mapCacheBuilder.getOutputFolder());
-				if (mapCacheBuilder.getStorageType() == StorageType.Compact) {
-					comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_Compact"));
-				} else if (mapCacheBuilder.getStorageType() == StorageType.Original) {
-					comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_Origin"));
-				} else if (mapCacheBuilder.getStorageType() == StorageType.MongoDB) {
-					comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_MongoDB"));
-				} else if (mapCacheBuilder.getStorageType() == StorageType.GPKG) {
-					comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_GeoPackage"));
-				}
+				resetComponentsInfo();
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FromCacheConfigFileIsSuccessed") + filePath);
 			} else {
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FromCacheConfigFileIsFailed"));
 			}
+			checkButtonState();
+		}
+	}
+
+	private void resetComponentsInfo() {
+		HashMap<Double, String> scalesAndNames = mapCacheBuilder.getOutputScaleCaptions();
+		if (mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
+			comboBoxSplitMode.setSelectedItem(MapViewProperties.getString("MapCache_ComboboxSplitModeLocalSplit"));
+			DDLExportTableModel model = (DDLExportTableModel) localSplitTable.getModel();
+			model.removeRows(0, model.getRowCount());
+			setLocalSplitTableValue(scalesAndNames);
+		} else {
+			comboBoxSplitMode.setSelectedItem(MapViewProperties.getString("MapCache_ComboboxSplitModeGlobalSplit"));
+			for (String scaleName : scalesAndNames.values()) {
+				MultipleCheckboxItem multipleCheckboxItem = (MultipleCheckboxItem) FirstStepPane.this.globalSplitTable.getValueAt(Integer.valueOf(scaleName), COLUMN_INDEX);
+				multipleCheckboxItem.setSelected(true);
+				FirstStepPane.this.globalSplitTable.setValueAt(multipleCheckboxItem, Integer.valueOf(scaleName), COLUMN_INDEX);
+			}
+		}
+		labelConfigValue.setText(this.mapCacheBuilder.getCacheName());
+		textFieldCacheName.setText(mapCacheBuilder.getCacheName());
+		fileChooserControlFileCache.setPath(CacheUtilities.replacePath(mapCacheBuilder.getOutputFolder()));
+		if (mapCacheBuilder.getStorageType() == StorageType.Compact) {
+			comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_Compact"));
+		} else if (mapCacheBuilder.getStorageType() == StorageType.Original) {
+			comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_Origin"));
+		} else if (mapCacheBuilder.getStorageType() == StorageType.MongoDB) {
+			comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_MongoDB"));
+		} else if (mapCacheBuilder.getStorageType() == StorageType.GPKG) {
+			comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_GeoPackage"));
 		}
 	}
 

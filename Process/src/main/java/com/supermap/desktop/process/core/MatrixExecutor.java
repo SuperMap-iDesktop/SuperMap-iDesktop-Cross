@@ -18,8 +18,6 @@ public class MatrixExecutor {
 	private Timer timer;
 	private List<IProcess> waiting = new CopyOnWriteArrayList<>();
 	private List<IProcess> ready = new CopyOnWriteArrayList<>();
-//	private List<IProcess> running = new CopyOnWriteArrayList<>();
-//	private List<IProcess> done = new CopyOnWriteArrayList<>();
 
 	public MatrixExecutor(NodeMatrix matrix) {
 		this.matrix = matrix;

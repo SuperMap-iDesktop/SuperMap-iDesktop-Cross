@@ -61,7 +61,7 @@ class LogWriter {
 		File logDirectory = getLogDirectory();
 		if (null != logDirectory && logDirectory.exists() && logDirectory.isDirectory()) {
 			File[] logFiles = logDirectory.listFiles();
-			for (int i = 0; i < logFiles.length; i++) {
+			for (int i = logFiles.length - 1; i > 0; i--) {
 				logFiles[i].delete();
 			}
 		}

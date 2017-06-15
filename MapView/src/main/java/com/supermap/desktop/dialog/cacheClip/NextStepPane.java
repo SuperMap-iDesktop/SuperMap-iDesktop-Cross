@@ -2,10 +2,7 @@ package com.supermap.desktop.dialog.cacheClip;
 
 import com.supermap.data.Geometry;
 import com.supermap.data.Rectangle2D;
-import com.supermap.data.processing.MapCacheBuilder;
-import com.supermap.data.processing.StorageType;
-import com.supermap.data.processing.TileFormat;
-import com.supermap.data.processing.TileSize;
+import com.supermap.data.processing.*;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.mapview.map.propertycontrols.PanelGroupBoxViewBounds;
@@ -40,7 +37,7 @@ public class NextStepPane extends JPanel implements IState {
 	private boolean validCacheRangeBounds;
 	private boolean validIndexRangeBounds;
 	public MapCacheBuilder mapCacheBuilder;
-	private boolean singleProcessClip;
+	private int cmdType;
 	public java.util.Map<Layer, java.util.List<Geometry>> selectedGeometryAndLayer;
 	public Rectangle2D selectGeometryRectangle;
 	private Vector<EnabledListener> enabledListeners;
@@ -57,7 +54,6 @@ public class NextStepPane extends JPanel implements IState {
 	private WaringTextField indexRangeWaringTextFieldTop;
 	private WaringTextField indexRangeWaringTextFieldRight;
 	private WaringTextField indexRangeWaringTextFieldBottom;
-	private Map currentMap;
 	private JLabel labelImageType;
 	private JLabel labelPixel;
 	private JLabel labelImageCompressionRatio;
@@ -167,12 +163,12 @@ public class NextStepPane extends JPanel implements IState {
 		return result;
 	}
 
-	public NextStepPane(DialogMapCacheClipBuilder parent, MapCacheBuilder mapCacheBuilder, boolean singleProcessClip) {
+	public NextStepPane(DialogMapCacheClipBuilder parent, MapCacheBuilder mapCacheBuilder, int cmdType) {
 		super();
 		this.parent = parent;
 		this.mapCacheBuilder = mapCacheBuilder;
-		this.currentMap = this.mapCacheBuilder.getMap();
-		this.singleProcessClip = singleProcessClip;
+//		this.currentMap = this.mapCacheBuilder.getMap();
+		this.cmdType = cmdType;
 		init();
 	}
 
@@ -182,6 +178,10 @@ public class NextStepPane extends JPanel implements IState {
 		initPanelImageState();
 		initLayout();
 		registEvents();
+		if (this.cmdType == DialogMapCacheClipBuilder.ReloadProcessClip
+				|| this.cmdType == DialogMapCacheClipBuilder.UpdateProcessClip) {
+			resetComponentsInfo();
+		}
 	}
 
 	private ItemListener comboboxImageTypeListener = new ItemListener() {
@@ -273,7 +273,7 @@ public class NextStepPane extends JPanel implements IState {
 		panelImageParam.add(this.checkBoxBackgroundTransparency, new GridBagConstraintsHelper(0, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
 		panelImageParam.add(this.checkBoxFullFillCacheImage, new GridBagConstraintsHelper(0, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 10, 5, 10));
 		panelImageParam.add(new JPanel(), new GridBagConstraintsHelper(0, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		if (!singleProcessClip) {
+		if (cmdType != DialogMapCacheClipBuilder.SingleProcessClip) {
 			JPanel innerPanel = new JPanel();
 			innerPanel.setLayout(new GridBagLayout());
 			innerPanel.add(this.labelTaskStorePath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
@@ -313,6 +313,34 @@ public class NextStepPane extends JPanel implements IState {
 		this.mapCacheBuilder.setStorageType(StorageType.Original);
 	}
 
+	public void resetComponentsInfo() {
+		this.imagePixelChanged = false;
+		this.comboBoxImageType.setSelectedItem(this.mapCacheBuilder.getTileFormat().toString());
+		TileSize tempSize = this.mapCacheBuilder.getTileSize();
+		if (tempSize == TileSize.SIZE64) {
+			this.comboBoxPixel.setSelectedItem("64*64");
+		} else if (tempSize == TileSize.SIZE128) {
+			this.comboBoxPixel.setSelectedItem("128*128");
+		} else if (tempSize == TileSize.SIZE256) {
+			this.comboBoxPixel.setSelectedItem("256*256");
+		} else if (tempSize == TileSize.SIZE512) {
+			this.comboBoxPixel.setSelectedItem("512*512");
+		} else if (tempSize == TileSize.SIZE1024) {
+			this.comboBoxPixel.setSelectedItem("1024*1024");
+		}
+		this.smSpinnerImageCompressionRatio.setValue(this.mapCacheBuilder.getImageCompress());
+		Rectangle2D indexBounds = null;
+		if (mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
+			indexBounds = this.mapCacheBuilder.getIndexBounds();
+		} else {
+			indexBounds = new Rectangle2D(-180, -90, 180, 90);
+		}
+		this.panelCacheRange.setAsRectangleBounds(this.mapCacheBuilder.getBounds());
+		this.panelIndexRange.setAsRectangleBounds(indexBounds);
+		this.checkBoxBackgroundTransparency.setSelected(this.mapCacheBuilder.isTransparent());
+
+	}
+
 	private void initResources() {
 		this.labelImageType.setText(MapViewProperties.getString("MapCache_ImageType"));
 		this.labelPixel.setText(MapViewProperties.getString("MapCache_Pixel"));
@@ -334,10 +362,12 @@ public class NextStepPane extends JPanel implements IState {
 		this.cacheRangeBounds = this.mapCacheBuilder.getBounds();
 		if (null != cacheRangeBounds) {
 			validCacheRangeBounds = true;
+			this.panelCacheRange.setAsRectangleBounds(cacheRangeBounds);
 		}
 		this.indexRangeBounds = this.mapCacheBuilder.getIndexBounds();
 		if (null != indexRangeBounds) {
 			validIndexRangeBounds = true;
+			this.panelIndexRange.setAsRectangleBounds(indexRangeBounds);
 		}
 		this.labelImageType = new JLabel();
 		this.labelPixel = new JLabel();
@@ -372,6 +402,23 @@ public class NextStepPane extends JPanel implements IState {
 		this.indexRangeWaringTextFieldRight = this.panelIndexRange.getTextFieldCurrentViewRight();
 		this.indexRangeWaringTextFieldBottom = this.panelIndexRange.getTextFieldCurrentViewBottom();
 		this.checkBoxClipOnThisComputer.setSelected(true);
+		initComponentsStates();
+	}
+
+	private void initComponentsStates() {
+		if (cmdType == DialogMapCacheClipBuilder.UpdateProcessClip) {
+			this.panelIndexRange.setComponentsEnabled(false);
+			this.labelImageType.setEnabled(false);
+			this.comboBoxImageType.setEnabled(false);
+			this.labelPixel.setEnabled(false);
+			this.comboBoxPixel.setEnabled(false);
+		} else {
+			this.panelIndexRange.setComponentsEnabled(true);
+			this.labelImageType.setEnabled(true);
+			this.comboBoxImageType.setEnabled(true);
+			this.labelPixel.setEnabled(true);
+			this.comboBoxPixel.setEnabled(true);
+		}
 	}
 
 	private void isSelectedGeometry() {

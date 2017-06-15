@@ -1,7 +1,7 @@
 package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.events.GraphSelectedChangedEvent;
+import com.supermap.desktop.process.graphics.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
