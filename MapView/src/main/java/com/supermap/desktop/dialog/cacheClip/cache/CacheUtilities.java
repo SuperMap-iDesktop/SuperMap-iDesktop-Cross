@@ -3,7 +3,7 @@ package com.supermap.desktop.dialog.cacheClip.cache;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.io.*;
-import java.net.URISyntaxException;
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,6 +37,7 @@ public class CacheUtilities {
 		}
 		return sourceStr + name;
 	}
+
 	// 获取当前系统的所有的PidName
 	public static Set<String> getCurrOsAllPidNameSet() throws Exception {
 		Set<String> pidNameSet = new HashSet<>();
@@ -84,16 +85,15 @@ public class CacheUtilities {
 	 */
 	public static void startProcess(String[] params, String className, String cacheType) {
 		try {
-			ArrayList<String> arguments = new ArrayList<String>();
+			ArrayList<String> arguments = new ArrayList<>();
 			arguments.add("java");
-			//arguments.addAll(jvmArgs);
 			arguments.add("-cp");
 			String projectPath = replacePath(System.getProperty("user.dir"));
 			String jarPath = "";
 			if (isWindows()) {
-				jarPath = ".;" + projectPath + "\\bin\\com.supermap.data.jar;" + projectPath + "\\bin\\com.supermap.mapping.jar;" + projectPath + "\\bin\\com.supermap.tilestorage.jar;" + projectPath + "\\bin\\com.supermap.data.processing.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
+				jarPath = ".;"  + projectPath + "\\bin\\com.supermap.data.jar;" + projectPath + "\\bin\\com.supermap.mapping.jar;" + projectPath + "\\bin\\com.supermap.tilestorage.jar;" + projectPath + "\\bin\\com.supermap.data.processing.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
 			} else {
-				jarPath = projectPath + "/bin/com.supermap.data.jar:" + projectPath + "/bin/com.supermap.mapping.jar:" + projectPath + "/bin/com.supermap.tilestorage.jar:" + projectPath + "/bin/com.supermap.data.processing.jar:" + projectPath + "/bundles/idesktop_bundles/MapView.jar: ";
+				jarPath =  projectPath + "/bin/com.supermap.data.jar:" + projectPath + "/bin/com.supermap.mapping.jar:" + projectPath + "/bin/com.supermap.tilestorage.jar:" + projectPath + "/bin/com.supermap.data.processing.jar:" + projectPath + "/bundles/idesktop_bundles/MapView.jar: ";
 			}
 //		String jarPath = ".;" + projectPath + "\\bundles\\require_bundles\\Core.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
 			arguments.add(jarPath);
@@ -103,7 +103,7 @@ public class CacheUtilities {
 			}
 			ProcessManager manager = ProcessManager.getInstance();
 			SubprocessThread thread = new SubprocessThread(arguments, cacheType);
-			manager.addProcess(thread,cacheType);
+			manager.addProcess(thread, cacheType);
 			thread.start();
 		} catch (Exception e) {
 			e.printStackTrace();

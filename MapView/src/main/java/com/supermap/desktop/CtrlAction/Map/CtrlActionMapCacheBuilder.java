@@ -49,7 +49,7 @@ public class CtrlActionMapCacheBuilder extends CtrlAction {
 				int cmdType = dialogMapCacheClip.isSingleProcess() ? DialogMapCacheClipBuilder.SingleProcessClip : DialogMapCacheClipBuilder.MultiProcessClip;
 				new DialogMapCacheClipBuilder(cmdType, mapCacheBuilder).showDialog();
 			} else {
-				DialogCacheBuilder cacheBuilder = new DialogCacheBuilder();
+				DialogCacheBuilder cacheBuilder = new DialogCacheBuilder(DialogMapCacheClipBuilder.MultiProcessClip);
 				cacheBuilder.textFieldMapName.setText(map.getName());
 				cacheBuilder.showDialog();
 			}
