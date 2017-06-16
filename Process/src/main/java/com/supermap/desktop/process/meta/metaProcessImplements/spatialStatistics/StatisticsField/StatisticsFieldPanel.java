@@ -28,8 +28,6 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 import static com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.StatisticsField.StatisticsFieldTableModel.COLUMN_FIELDTYPE;
@@ -119,6 +117,7 @@ public class StatisticsFieldPanel extends JPanel {
 		labelStatisticsType = new JLabel(CommonProperties.getString("String_StatisticType"));
 		comboBoxStatisticsType = new JComboBox<>();
 		comboBoxStatisticsType.setPreferredSize(new Dimension(150, 23));
+		comboBoxStatisticsType.setMinimumSize(new Dimension(150, 23));
 		comboBoxStatisticsType.setMaximumSize(new Dimension(150, 23));
 		comboBoxStatisticsType.setRenderer(new ListStatisticsTypeCellRender());
 		scrollPane = new JScrollPane();
@@ -281,15 +280,17 @@ public class StatisticsFieldPanel extends JPanel {
 
 	private void initToolbar() {
 		toolBar.setFloatable(false);
-		toolBar.add(buttonAdd);
-		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
-		toolBar.add(buttonSelectAll);
-		toolBar.add(buttonSelectInvert);
-		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
-		toolBar.add(buttonDel);
-		toolBar.add(ToolbarUIUtilities.getVerticalSeparator());
-		toolBar.add(labelStatisticsType);
-		toolBar.add(comboBoxStatisticsType);
+		toolBar.setLayout(new GridBagLayout());
+		toolBar.add(buttonAdd, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(ToolbarUIUtilities.getVerticalSeparator(), new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(buttonSelectAll, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(buttonSelectInvert, new GridBagConstraintsHelper(3, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(ToolbarUIUtilities.getVerticalSeparator(), new GridBagConstraintsHelper(4, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(buttonDel, new GridBagConstraintsHelper(5, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(ToolbarUIUtilities.getVerticalSeparator(), new GridBagConstraintsHelper(6, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(labelStatisticsType, new GridBagConstraintsHelper(7, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(comboBoxStatisticsType, new GridBagConstraintsHelper(8, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+
 	}
 
 	private void registerListener() {
@@ -409,6 +410,9 @@ public class StatisticsFieldPanel extends JPanel {
 			}
 			for (StatisticsType statisticsType : statisticsTypesFirst) {
 				comboBoxStatisticsType.addItem(statisticsType);
+			}
+			if (selectedModelRows.length == 1) {
+				comboBoxStatisticsType.setSelectedItem(table.getValueAt(selectedModelRows[0], COLUMN_STATISTICSTYPE));
 			}
 		} finally {
 			isSelecting = true;

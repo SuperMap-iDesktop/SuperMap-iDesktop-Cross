@@ -2,7 +2,13 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.analyst.spatialanalyst.OverlayAnalyst;
 import com.supermap.analyst.spatialanalyst.OverlayAnalystParameter;
-import com.supermap.data.*;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.DatasetVectorInfo;
+import com.supermap.data.Datasource;
+import com.supermap.data.PrjCoordSys;
+import com.supermap.data.SteppedEvent;
+import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.enums.LengthUnit;
@@ -13,13 +19,20 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterOverlayAnalystInfo;
-import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.implement.ParameterCombine;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
+import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.implement.ParameterFieldSetDialog;
+import com.supermap.desktop.process.parameter.implement.ParameterLabel;
+import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
@@ -200,6 +213,12 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 				info.overlayAnalystDatasource = (Datasource) parameterOverlayDatasource.getSelectedItem();
 				info.overlayAnalystDataset = (DatasetVector) parameterOverlayDataset.getSelectedItem();
 			}
+
+			if (info.sourceDataset == info.overlayAnalystDataset) {
+				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_SameDataSet_error"));
+				return;
+			}
+
 			info.targetDatasource = (Datasource) parameterResultDatasource.getSelectedItem();
 			info.targetDataset = (String) parameterSaveDataset.getSelectedItem();
 			OverlayAnalystParameter overlayAnalystParameter = new OverlayAnalystParameter();
@@ -259,7 +278,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 			setFinished(true);
 			this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(targetDataset);
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_SameDataSet_error"));
+			Application.getActiveApplication().getOutput().output(e);
 		}
 	}
 
