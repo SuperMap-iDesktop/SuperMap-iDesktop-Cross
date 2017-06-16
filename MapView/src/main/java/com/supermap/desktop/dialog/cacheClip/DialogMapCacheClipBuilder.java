@@ -30,12 +30,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.TimerTask;
 
 /**
  * Created by xie on 2017/4/26.
@@ -247,6 +247,29 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	private void resume() {
 		boolean result;
 		try {
+			String outputPath = this.mapCacheBuilder.getOutputFolder();
+			File fileParent = new File(CacheUtilities.replacePath(outputPath, this.mapCacheBuilder.getCacheName()));
+			boolean hasLogFile = false;
+			if (fileParent.isDirectory()) {
+				String[] resumFile = fileParent.list(new FilenameFilter() {
+
+					public boolean accept(File dir, String name) {
+						return name.equalsIgnoreCase("resumable.log");
+					}
+				});
+				if (null != resumFile && resumFile.length > 0) {
+					hasLogFile = true;
+				}
+			}
+			if (!hasLogFile) {
+				SmOptionPane pane = new SmOptionPane();
+				pane.showConfirmDialog(MapViewProperties.getString("String_Error_LogNotExist"));
+				buttonOk.setEnabled(false);
+				return;
+			} else {
+				buttonOk.setEnabled(true);
+			}
+			this.mapCacheBuilder.setOutputFolder(outputPath);
 			long startTime = System.currentTimeMillis();
 			if (this.checkBoxShowProcessBar.isSelected()) {
 				FormProgress formProgress = new FormProgress();
@@ -256,7 +279,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				result = cacheProgressCallable.getResult();
 			} else {
 				this.mapCacheBuilder.setFillMargin(true);
-				this.mapCacheBuilder.setIsAppending(true);
+//				this.mapCacheBuilder.setIsAppending(true);
 				result = this.mapCacheBuilder.build();
 			}
 			long endTime = System.currentTimeMillis();
@@ -326,7 +349,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 						return;
 					}
 					this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-					Application.getActiveApplication().getOutput().output(MapViewProperties.getString(""));
+//					Application.getActiveApplication().getOutput().output(MapViewProperties.getString(""));
 					dispose();
 					DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder();
 					dialogCacheBuilder.textFieldMapName.setText(this.mapCacheBuilder.getCacheName());
