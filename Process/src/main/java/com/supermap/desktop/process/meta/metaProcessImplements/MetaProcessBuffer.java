@@ -44,7 +44,8 @@ public class MetaProcessBuffer extends MetaProcess {
 	private ParameterDatasourceConstrained datasource;
 	private ParameterSingleDataset dataset;
 	private ParameterEnum parameterBufferRange;
-	private ParameterTextField parameterTextFieldRadius;
+	private ParameterTextField parameterTextFieldLeftRadius;
+	private ParameterTextField parameterTextFieldRightRadius;
 	private ParameterNumber parameterTextFieldSemicircleLineSegment;
 	private ParameterCheckBox parameterUnionBuffer;
 	private ParameterCheckBox parameterRetainAttribute;
@@ -104,7 +105,8 @@ public class MetaProcessBuffer extends MetaProcess {
 		dataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
 		datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameterBufferRange = new ParameterEnum(new EnumParser(BufferRadiusUnit.class, values, parameterDataNodes)).setDescribe(ProcessProperties.getString("Label_BufferRadius"));
-		parameterTextFieldRadius = new ParameterTextField(ProcessProperties.getString("Label_Radius"));
+		parameterTextFieldLeftRadius = new ParameterTextField(ProcessProperties.getString("Label_Radius"));
+		parameterTextFieldRightRadius = new ParameterTextField(ProcessProperties.getString("String_rightRadius"));
 		parameterUnionBuffer = new ParameterCheckBox(ProcessProperties.getString("String_UnionBufferItem"));
 		parameterRetainAttribute = new ParameterCheckBox(ProcessProperties.getString("String_RetainAttribute"));
 		parameterTextFieldSemicircleLineSegment = new ParameterNumber(ProcessProperties.getString("Label_SemicircleLineSegment"));
@@ -118,7 +120,7 @@ public class MetaProcessBuffer extends MetaProcess {
 
 		ParameterCombine parameterCombineParameter = new ParameterCombine();
 		parameterCombineParameter.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		parameterCombineParameter.addParameters(parameterBufferRange, parameterTextFieldRadius, parameterUnionBuffer
+		parameterCombineParameter.addParameters(parameterBufferRange, parameterTextFieldLeftRadius, parameterUnionBuffer
 				, parameterRetainAttribute, parameterTextFieldSemicircleLineSegment);
 
 		ParameterCombine parameterCombineResult = new ParameterCombine();
@@ -137,7 +139,7 @@ public class MetaProcessBuffer extends MetaProcess {
 
 	private void initComponentState() {
 		parameterBufferRange.setSelectedItem(BufferRadiusUnit.Meter);
-		parameterTextFieldRadius.setSelectedItem("10");
+		parameterTextFieldLeftRadius.setSelectedItem("10");
 		parameterTextFieldSemicircleLineSegment.setSelectedItem("100");
 		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
 		if (datasetVector != null) {
@@ -172,7 +174,7 @@ public class MetaProcessBuffer extends MetaProcess {
 		}
 
 		BufferRadiusUnit radiusUnit = (BufferRadiusUnit) parameterBufferRange.getSelectedData();
-		int radius = Integer.valueOf((String) parameterTextFieldRadius.getSelectedItem());
+		int radius = Integer.valueOf((String) parameterTextFieldLeftRadius.getSelectedItem());
 		boolean isUnion = "true".equalsIgnoreCase((String) parameterUnionBuffer.getSelectedItem());
 		boolean isAttributeRetained = "true".equalsIgnoreCase((String) parameterRetainAttribute.getSelectedItem());
 		int semicircleLineSegment = Integer.valueOf(((String) parameterTextFieldSemicircleLineSegment.getSelectedItem()));
