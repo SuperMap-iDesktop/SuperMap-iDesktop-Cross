@@ -1,8 +1,6 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 
@@ -21,10 +19,27 @@ class SubprocessThread extends Thread {
 //		start = 0;
 	}
 
+
+	public void setArguments(ArrayList<String> arguments) {
+		this.arguments = arguments;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	public SubprocessThread clone() {
-		if (null != this.arguments && null != this.type) {
-			return new SubprocessThread(this.arguments, this.type);
+		try {
+			SubprocessThread newThread = (SubprocessThread) super.clone();
+			if (null != this.arguments && null != this.type) {
+				newThread.setArguments(arguments);
+				newThread.setType(type);
+				return newThread;
+			}
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
 		}
+
 		return null;
 	}
 

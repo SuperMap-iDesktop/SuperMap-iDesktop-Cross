@@ -151,6 +151,7 @@ public class BuildCache {
 		builder.fromConfigFile(sciName);
 		if (isAppending) {
 			builder.setIsAppending(isAppending);
+			builder.setHashCodeEnabled(true);
 		}
 		builder.setOutputFolder(cachePath);
 		builder.setCacheName(builder.getCacheName());

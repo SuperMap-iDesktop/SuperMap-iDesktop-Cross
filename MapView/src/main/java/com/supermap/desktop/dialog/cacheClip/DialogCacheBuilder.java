@@ -75,6 +75,7 @@ public class DialogCacheBuilder extends SmDialog {
 	private CopyOnWriteArrayList<JProgressBar> progressBars;
 	private CopyOnWriteArrayList<String> captions;
 	private CopyOnWriteArrayList<Integer> captionCount;
+	private Thread totalUpdateThread;
 
 	private ActionListener closeListener = new ActionListener() {
 		@Override
@@ -111,6 +112,12 @@ public class DialogCacheBuilder extends SmDialog {
 				}
 				int value = (int) (((buildSciLength + 0.0) / totalSciLength) * 100);
 				progressBarTotal.setValue(value);
+				if (value == 100) {
+					totalUpdateThread.interrupt();
+					String cachePath = fileChooserCachePath.getPath();
+					cachePath = CacheUtilities.replacePath(cachePath);
+					getResult(cachePath, startTime);
+				}
 			}
 		}
 	};
@@ -478,13 +485,13 @@ public class DialogCacheBuilder extends SmDialog {
 		final String finalCachePath = cachePath;
 		final String finalParentPath = parentPath;
 		final int finalTotalSciLength = totalSciLength;
-		Thread updateThread = new Thread() {
+		totalUpdateThread = new Thread() {
 			@Override
 			public void run() {
 				refresh(finalCachePath, finalParentPath, finalTotalSciLength);
 			}
 		};
-		updateThread.start();
+		totalUpdateThread.start();
 	}
 
 	private void refresh(String cachePath, String parentPath, int totalSciLength) {

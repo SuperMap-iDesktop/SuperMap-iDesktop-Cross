@@ -174,7 +174,6 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		if (this.cmdType == SingleProcessClip || this.cmdType == ReloadProcessClip) {
 			this.setTitle(MessageFormat.format(MapViewProperties.getString("MapCache_Title"), mapName));
 			this.buttonOk.setText(MapViewProperties.getString("String_BatchAddColorTableOKButton"));
-			this.checkBoxShowProcessBar.setVisible(false);
 		} else if (this.cmdType == MultiProcessClip) {
 			this.setTitle(MessageFormat.format(MapViewProperties.getString("MapCache_Title_TaskBuilder"), mapName));
 			this.buttonOk.setText(MapViewProperties.getString("String_Title_Split"));
@@ -303,7 +302,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		}
 		Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_Time") + time + " " + MapViewProperties.getString("MapCache_ShowTime"));
 		if (this.checkBoxAutoClosed.isSelected()) {
-			disposeInfo();
+			dispose();
 			this.mapCacheBuilder.dispose();
 		}
 	}
