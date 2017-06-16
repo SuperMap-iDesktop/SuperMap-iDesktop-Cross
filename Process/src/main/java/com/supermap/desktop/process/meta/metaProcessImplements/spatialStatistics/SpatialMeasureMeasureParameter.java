@@ -65,6 +65,7 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 				new ParameterDataNode(ProcessProperties.getString("String_EllipseSize_SINGLE"), EllipseSize.SINGLE),
 				new ParameterDataNode(ProcessProperties.getString("String_EllipseSize_TWICE"), EllipseSize.TWICE),
 				new ParameterDataNode(ProcessProperties.getString("String_EllipseSize_TRIPLE"), EllipseSize.TRIPLE));
+		parameterStatisticsTypesUserDefine.setEnabled(currentDataset != null);
 	}
 
 	private void initLayout() {
@@ -104,6 +105,7 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 		parameterSelfWeightFieldComboBox.setDataset(currentDataset);
 		parameterWeightFieldComboBox.setDataset(currentDataset);
 		parameterStatisticsTypesUserDefine.setDataset(currentDataset);
+		parameterStatisticsTypesUserDefine.setEnabled(currentDataset != null);
 	}
 
 	public MeasureParameter getMeasureParameter() {
