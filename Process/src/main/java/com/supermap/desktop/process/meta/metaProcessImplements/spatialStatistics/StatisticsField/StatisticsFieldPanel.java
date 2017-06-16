@@ -106,6 +106,7 @@ public class StatisticsFieldPanel extends JPanel {
 		initResource();
 		initLayout();
 		registerListener();
+		checkState();
 	}
 
 	private void initComponent() {
@@ -290,7 +291,6 @@ public class StatisticsFieldPanel extends JPanel {
 		toolBar.add(ToolbarUIUtilities.getVerticalSeparator(), new GridBagConstraintsHelper(6, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
 		toolBar.add(labelStatisticsType, new GridBagConstraintsHelper(7, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
 		toolBar.add(comboBoxStatisticsType, new GridBagConstraintsHelper(8, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
-
 	}
 
 	private void registerListener() {
@@ -458,6 +458,7 @@ public class StatisticsFieldPanel extends JPanel {
 			scrollPane = new JScrollPane();
 			table = new SmSortTable();
 			this.initTable();
+			this.checkState();
 		}
 
 		private void initTable() {
@@ -475,6 +476,10 @@ public class StatisticsFieldPanel extends JPanel {
 			column_statisticsType.setCellRenderer(statisticsTypeCellRenderer);
 			TableColumn column_fieldType = this.table.getColumnModel().getColumn(COLUMN_FIELDTYPE);
 			column_fieldType.setCellRenderer(fieldTypeCellRenderer);
+		}
+		private void checkState() {
+			this.buttonSelectAll.setEnabled(table.getRowCount() > 0);
+			this.buttonSelectInvert.setEnabled(table.getRowCount() > 0);
 		}
 
 		private ArrayList<StatisticsFieldInfo> subtract(ArrayList<StatisticsFieldInfo> all, ArrayList<StatisticsFieldInfo> shown) {

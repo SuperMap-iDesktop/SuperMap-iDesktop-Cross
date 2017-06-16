@@ -66,6 +66,7 @@ public class DialogCacheBuilder extends SmDialog {
 	private String sciPath;
 	private int totalSciLength;
 	private long startTime;
+	private int cmdType;
 
 	private String[] params;
 	private BuildCache buildCache;
@@ -74,6 +75,7 @@ public class DialogCacheBuilder extends SmDialog {
 	private CopyOnWriteArrayList<JProgressBar> progressBars;
 	private CopyOnWriteArrayList<String> captions;
 	private CopyOnWriteArrayList<Integer> captionCount;
+	private Thread totalUpdateThread;
 
 	private ActionListener closeListener = new ActionListener() {
 		@Override
@@ -110,6 +112,12 @@ public class DialogCacheBuilder extends SmDialog {
 				}
 				int value = (int) (((buildSciLength + 0.0) / totalSciLength) * 100);
 				progressBarTotal.setValue(value);
+				if (value == 100) {
+					totalUpdateThread.interrupt();
+					String cachePath = fileChooserCachePath.getPath();
+					cachePath = CacheUtilities.replacePath(cachePath);
+					getResult(cachePath, startTime);
+				}
 			}
 		}
 	};
@@ -183,7 +191,8 @@ public class DialogCacheBuilder extends SmDialog {
 	};
 
 
-	public DialogCacheBuilder() {
+	public DialogCacheBuilder(int cmdType) {
+		this.cmdType = cmdType;
 		init();
 	}
 
@@ -372,7 +381,8 @@ public class DialogCacheBuilder extends SmDialog {
 			cachePath = CacheUtilities.replacePath(cachePath);
 			String processCount = textFieldProcessCount.getText();
 			String mergeSciCount = textFieldMergeSciCount.getText();
-			params = new String[]{sciPath, workspacePath, mapName, cachePath, processCount, mergeSciCount};
+			boolean isAppending = this.cmdType == DialogMapCacheClipBuilder.UpdateProcessClip;
+			params = new String[]{sciPath, workspacePath, mapName, cachePath, processCount, mergeSciCount, String.valueOf(isAppending)};
 //            final String[] params = {workspacePath, mapName, sciPath, cachePath, processCount, mergeSciCount};
 
 			if (!validateValue(sciPath, workspacePath, mapName, cachePath, processCount)) {
@@ -475,13 +485,13 @@ public class DialogCacheBuilder extends SmDialog {
 		final String finalCachePath = cachePath;
 		final String finalParentPath = parentPath;
 		final int finalTotalSciLength = totalSciLength;
-		Thread updateThread = new Thread() {
+		totalUpdateThread = new Thread() {
 			@Override
 			public void run() {
 				refresh(finalCachePath, finalParentPath, finalTotalSciLength);
 			}
 		};
-		updateThread.start();
+		totalUpdateThread.start();
 	}
 
 	private void refresh(String cachePath, String parentPath, int totalSciLength) {

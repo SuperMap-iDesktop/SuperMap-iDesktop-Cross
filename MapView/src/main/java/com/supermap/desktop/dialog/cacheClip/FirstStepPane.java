@@ -1266,9 +1266,10 @@ public class FirstStepPane extends JPanel implements IState {
 		if (state == JFileChooser.APPROVE_OPTION) {
 			filePath = smFileChoose.getFilePath();
 			if (mapCacheBuilder.fromConfigFile(filePath)) {
+				File file = new File(filePath);
 				importCacheConfigs = true;
 				resetComponentsInfo();
-				fileChooserControlFileCache.setPath(mapCacheBuilder.getOutputFolder());
+				fileChooserControlFileCache.setPath(file.getParent());
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FromCacheConfigFileIsSuccessed") + filePath);
 			} else {
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FromCacheConfigFileIsFailed"));
