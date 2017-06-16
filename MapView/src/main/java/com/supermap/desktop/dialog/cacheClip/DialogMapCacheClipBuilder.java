@@ -317,13 +317,24 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				String tasksPath = nextStepPane.fileChooserControlTaskPath.getPath();
 				String filePath = firstStepPane.fileChooserControlFileCache.getPath();
 				tasksPath = CacheUtilities.replacePath(tasksPath);
-				String sciPath = CacheUtilities.replacePath(filePath, mapCacheBuilder.getCacheName() + ".sci");
+				String sciPath = "";
+				if (cmdType == UpdateProcessClip) {
+					sciPath = CacheUtilities.replacePath(filePath, mapCacheBuilder.getCacheName() + ".sci");
+				} else {
+					sciPath = CacheUtilities.replacePath(filePath, mapCacheBuilder.getCacheName());
+					File sciDirectory = new File(sciPath);
+					if (!sciDirectory.exists()) {
+						sciDirectory.mkdir();
+					}
+					sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + ".sci");
+				}
 				setMapCacheBuilderValueBeforeRun();
 				//SaveType==MongoType,build some cache for creating a database
 				boolean result = true;
 				if (cmdType != UpdateProcessClip) {
 					result = mapCacheBuilder.toConfigFile(sciPath);
 				}
+				this.buttonOk.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
 					SteppedListener steppedListener = new SteppedListener() {
 						@Override
@@ -342,7 +353,6 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				}
 				if (result) {
 					String[] params = {sciPath, tasksPath, tasksSize, canudb};
-					this.buttonOk.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 					boolean buildTaskResult = TaskBuilder.buildTask(params);
 					if (!buildTaskResult) {
 						this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -351,7 +361,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 //					Application.getActiveApplication().getOutput().output(MapViewProperties.getString(""));
 					dispose();
-					DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder();
+					DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder(cmdType);
 					dialogCacheBuilder.textFieldMapName.setText(this.mapCacheBuilder.getCacheName());
 					String targetTaskPath = CacheUtilities.replacePath(tasksPath, "task");
 					File oldFile = new File(sciPath);

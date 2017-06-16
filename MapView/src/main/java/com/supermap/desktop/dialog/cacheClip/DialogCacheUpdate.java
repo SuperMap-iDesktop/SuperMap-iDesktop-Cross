@@ -37,7 +37,6 @@ public class DialogCacheUpdate extends SmDialog {
 				builder.firstStepPane.fileChooserControlFileCache.setPath(selectSciPath.substring(0, selectSciPath.lastIndexOf(mapCacheBuilder.getCacheName())));
 				builder.firstStepPane.resetComponentsInfo();
 				builder.showDialog();
-
 			}
 		}
 	};
