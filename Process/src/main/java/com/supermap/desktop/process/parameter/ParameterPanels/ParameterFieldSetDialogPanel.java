@@ -25,6 +25,7 @@ public class ParameterFieldSetDialogPanel extends SwingPanel {
 	public ParameterFieldSetDialogPanel(IParameter parameter) {
 		super(parameter);
 		parameterFieldSetDialog = ((ParameterFieldSetDialog) parameter);
+		button.setEnabled(parameterFieldSetDialog.isEnabled());
 		initComponents();
 		initLayout();
 	}
@@ -36,7 +37,7 @@ public class ParameterFieldSetDialogPanel extends SwingPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// fixme 有bug，初始化问题，没接口，直接每次重新初始化
-				FieldsSetDialog fieldsSetDialog = new FieldsSetDialog(parameterFieldSetDialog.getSourceDataset(), parameterFieldSetDialog.getSourceDataset());
+				FieldsSetDialog fieldsSetDialog = new FieldsSetDialog(parameterFieldSetDialog.getSourceDataset(), parameterFieldSetDialog.getResultDataset());
 				if (fieldsSetDialog.showDialog() == DialogResult.OK) {
 					parameterFieldSetDialog.setSourceFieldNames(fieldsSetDialog.getSourceFields());
 					parameterFieldSetDialog.setResultFieldNames(fieldsSetDialog.getOverlayAnalystFields());

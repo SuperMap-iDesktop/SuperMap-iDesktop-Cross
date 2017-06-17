@@ -1,9 +1,6 @@
 package com.supermap.desktop.dialog.cacheClip;
 
-import com.supermap.data.GeoRegion;
-import com.supermap.data.Geometrist;
-import com.supermap.data.Geometry;
-import com.supermap.data.GeometryType;
+import com.supermap.data.*;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapCacheVersion;
 import com.supermap.data.processing.MapTilingMode;
@@ -33,12 +30,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.TimerTask;
 
 /**
  * Created by xie on 2017/4/26.
@@ -177,7 +174,6 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		if (this.cmdType == SingleProcessClip || this.cmdType == ReloadProcessClip) {
 			this.setTitle(MessageFormat.format(MapViewProperties.getString("MapCache_Title"), mapName));
 			this.buttonOk.setText(MapViewProperties.getString("String_BatchAddColorTableOKButton"));
-			this.checkBoxShowProcessBar.setVisible(false);
 		} else if (this.cmdType == MultiProcessClip) {
 			this.setTitle(MessageFormat.format(MapViewProperties.getString("MapCache_Title_TaskBuilder"), mapName));
 			this.buttonOk.setText(MapViewProperties.getString("String_Title_Split"));
@@ -250,6 +246,29 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	private void resume() {
 		boolean result;
 		try {
+			String outputPath = this.mapCacheBuilder.getOutputFolder();
+			File fileParent = new File(CacheUtilities.replacePath(outputPath, this.mapCacheBuilder.getCacheName()));
+			boolean hasLogFile = false;
+			if (fileParent.isDirectory()) {
+				String[] resumFile = fileParent.list(new FilenameFilter() {
+
+					public boolean accept(File dir, String name) {
+						return name.equalsIgnoreCase("resumable.log");
+					}
+				});
+				if (null != resumFile && resumFile.length > 0) {
+					hasLogFile = true;
+				}
+			}
+			if (!hasLogFile) {
+				SmOptionPane pane = new SmOptionPane();
+				pane.showConfirmDialog(MapViewProperties.getString("String_Error_LogNotExist"));
+				buttonOk.setEnabled(false);
+				return;
+			} else {
+				buttonOk.setEnabled(true);
+			}
+			this.mapCacheBuilder.setOutputFolder(outputPath);
 			long startTime = System.currentTimeMillis();
 			if (this.checkBoxShowProcessBar.isSelected()) {
 				FormProgress formProgress = new FormProgress();
@@ -259,7 +278,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				result = cacheProgressCallable.getResult();
 			} else {
 				this.mapCacheBuilder.setFillMargin(true);
-				this.mapCacheBuilder.setIsAppending(true);
+//				this.mapCacheBuilder.setIsAppending(true);
 				result = this.mapCacheBuilder.build();
 			}
 			long endTime = System.currentTimeMillis();
@@ -283,7 +302,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		}
 		Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_Time") + time + " " + MapViewProperties.getString("MapCache_ShowTime"));
 		if (this.checkBoxAutoClosed.isSelected()) {
-			disposeInfo();
+			dispose();
 			this.mapCacheBuilder.dispose();
 		}
 	}
@@ -297,44 +316,52 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				String tasksPath = nextStepPane.fileChooserControlTaskPath.getPath();
 				String filePath = firstStepPane.fileChooserControlFileCache.getPath();
 				tasksPath = CacheUtilities.replacePath(tasksPath);
-				String sciPath = CacheUtilities.replacePath(filePath, mapCacheBuilder.getCacheName() + ".sci");
+				String sciPath = "";
+				if (cmdType == UpdateProcessClip) {
+					sciPath = CacheUtilities.replacePath(filePath, mapCacheBuilder.getCacheName() + ".sci");
+				} else {
+					sciPath = CacheUtilities.replacePath(filePath, mapCacheBuilder.getCacheName());
+					File sciDirectory = new File(sciPath);
+					if (!sciDirectory.exists()) {
+						sciDirectory.mkdir();
+					}
+					sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + ".sci");
+				}
 				setMapCacheBuilderValueBeforeRun();
 				//SaveType==MongoType,build some cache for creating a database
-				if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
-					final Thread thread = new Thread(new Runnable() {
-						@Override
-						public void run() {
-							mapCacheBuilder.buildWithoutConfigFile();
-						}
-					});
-					thread.start();
-					final java.util.Timer timer = new java.util.Timer();
-					TimerTask task = new TimerTask() {
-						@Override
-						public void run() {
-							thread.interrupt();
-							timer.cancel();
-						}
-					};
-					long delay = 20 * 1000;
-					timer.schedule(task, delay);
-				}
 				boolean result = true;
 				if (cmdType != UpdateProcessClip) {
 					result = mapCacheBuilder.toConfigFile(sciPath);
 				}
+				this.buttonOk.setCursor(new Cursor(Cursor.WAIT_CURSOR));
+				if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
+					SteppedListener steppedListener = new SteppedListener() {
+						@Override
+						public void stepped(SteppedEvent steppedEvent) {
+							try {
+								Thread.sleep(20 * 1000);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							steppedEvent.setCancel(true);
+						}
+					};
+					mapCacheBuilder.addSteppedListener(steppedListener);
+					mapCacheBuilder.buildWithoutConfigFile();
+					mapCacheBuilder.removeSteppedListener(steppedListener);
+				}
 				if (result) {
 					String[] params = {sciPath, tasksPath, tasksSize, canudb};
-					this.buttonOk.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 					boolean buildTaskResult = TaskBuilder.buildTask(params);
 					if (!buildTaskResult) {
 						this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 						return;
 					}
 					this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+//					Application.getActiveApplication().getOutput().output(MapViewProperties.getString(""));
 					dispose();
-					DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder();
-					dialogCacheBuilder.textFieldMapName.setText(this.currentMap.getName());
+					DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder(cmdType);
+					dialogCacheBuilder.textFieldMapName.setText(this.mapCacheBuilder.getCacheName());
 					String targetTaskPath = CacheUtilities.replacePath(tasksPath, "task");
 					File oldFile = new File(sciPath);
 					dialogCacheBuilder.setSciFile(oldFile);

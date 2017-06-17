@@ -51,8 +51,9 @@ public class ParameterManager extends JPanel {
 		if (process != null && process.getComponent().getPanel() instanceof Component) {
 			this.titledBorder.setTitle(process.getTitle());
 			JComponent component = (JComponent) process.getComponent().getPanel();
-			mainPanel.add(component, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
-			mainPanel.add(new JPanel(), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setFill(GridBagConstraintsHelper.BOTH));
+			JScrollPane jScrollPane = new JScrollPane(component);
+			jScrollPane.setBorder(BorderFactory.createEmptyBorder());
+			mainPanel.add(jScrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
 		} else {
 			this.titledBorder.setTitle("");
 		}

@@ -284,7 +284,7 @@ public class DialogCacheCheck extends SmDialog {
 						}
 					}
 					if (null != errorFile && errorFile.listFiles().length > 0 && tileSize != -1) {
-						DialogCacheBuilder cacheBuilder = new DialogCacheBuilder();
+						DialogCacheBuilder cacheBuilder = new DialogCacheBuilder(DialogMapCacheClipBuilder.MultiProcessClip);
 						cacheBuilder.fileChooserTaskPath.setPath(errorFile.getAbsolutePath());
 						cacheBuilder.textFieldMapName.setText(cacheFile.getName());
 						cacheBuilder.showDialog();

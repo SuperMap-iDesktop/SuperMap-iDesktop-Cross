@@ -11,6 +11,7 @@ import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.enums.LengthUnit;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
@@ -32,6 +33,8 @@ import com.supermap.desktop.ui.enums.OverlayAnalystType;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DoubleUtilities;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.MessageFormat;
 
 /**
@@ -67,12 +70,23 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		}
 	};
 
+	public PropertyChangeListener propertyChangeListener = new PropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (parameterSourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
+				parameterTolerance.setSelectedItem(DatasetUtilities.getDefaultTolerance((DatasetVector) evt.getNewValue()).getNodeSnap());
+				parameterUnit.setSelectedItem(LengthUnit.convertForm(((DatasetVector) evt.getNewValue()).getPrjCoordSys().getCoordUnit()));
+			}
+		}
+	};
+
 	public MetaProcessOverlayAnalyst(OverlayAnalystType analystType) {
 		this.analystType = analystType;
 		initParameters();
 		initParameterLayout();
 		initParameterConstraint();
 		initParameterStates();
+		registerEvents();
 	}
 
 	private void initParameters() {
@@ -82,7 +96,6 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		parameterResultDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));
 		parameterSaveDataset.setDescribe(CommonProperties.getString(CommonProperties.Label_Dataset));
 		parameterTolerance.setDescribe(CommonProperties.getString("String_Label_Tolerance"));
-		parameterUnit.setDescribe(CommonProperties.getString("String_DistanceUnit_Meter"));//单位和数据集有关系
 
 //		parameterCheckBoxIsCompareResult.setDescribe(CommonProperties.getString("String_CheckBox_ResultComparison"));
 	}
@@ -128,13 +141,12 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 
 		EqualDatasetConstraint equalDatasetConstraint1 = new EqualDatasetConstraint();
 		equalDatasetConstraint1.constrained(parameterOverlayDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
-		equalDatasetConstraint.constrained(parameterFieldSetDialog, ParameterFieldSetDialog.RESULT_DATASET_FIELD_NAME);
+		equalDatasetConstraint1.constrained(parameterFieldSetDialog, ParameterFieldSetDialog.RESULT_DATASET_FIELD_NAME);
 	}
 
 	private void initParameterStates() {
 		String resultName = this.analystType.defaultResultName();
 		parameterSaveDataset.setSelectedItem(resultName);
-		parameterTolerance.setSelectedItem("0");
 		if (this.analystType == OverlayAnalystType.UNION || this.analystType == OverlayAnalystType.XOR || this.analystType == OverlayAnalystType.UPDATE) {
 			parameterSourceDataset.setDatasetTypes(DatasetType.REGION);
 		} else {
@@ -147,9 +159,29 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 			parameterOverlayDatasource.setSelectedItem(datasetVector.getDatasource());
 			parameterOverlayDataset.setSelectedItem(datasetVector);
 			parameterResultDatasource.setSelectedItem(datasetVector.getDatasource());
+			if ((this.analystType == OverlayAnalystType.UNION || this.analystType == OverlayAnalystType.XOR || this.analystType == OverlayAnalystType.UPDATE) && datasetVector.getType() == DatasetType.REGION) {
+				parameterTolerance.setSelectedItem(DatasetUtilities.getDefaultTolerance(datasetVector).getNodeSnap());
+				parameterUnit.setDescribe(LengthUnit.convertForm(datasetVector.getPrjCoordSys().getCoordUnit()).toString());
+			}
+			if (this.analystType == OverlayAnalystType.CLIP || this.analystType == OverlayAnalystType.ERASE || this.analystType == OverlayAnalystType.INTERSECT || this.analystType == OverlayAnalystType.IDENTITY) {
+				parameterTolerance.setSelectedItem(DatasetUtilities.getDefaultTolerance(datasetVector).getNodeSnap());
+				parameterUnit.setDescribe(LengthUnit.convertForm(datasetVector.getPrjCoordSys().getCoordUnit()).toString());
+			}
+
+		} else {
+			parameterTolerance.setSelectedItem("");
+			parameterUnit.setDescribe("");
+		}
+		if (this.analystType == OverlayAnalystType.CLIP || this.analystType == OverlayAnalystType.ERASE || this.analystType == OverlayAnalystType.UPDATE) {
+			parameterFieldSetDialog.setEnabled(false);
+		} else {
+			parameterFieldSetDialog.setEnabled(true);
 		}
 	}
 
+	private void registerEvents() {
+		this.parameterSourceDataset.addPropertyListener(this.propertyChangeListener);
+	}
 
 	@Override
 	public String getTitle() {
@@ -183,6 +215,12 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 				info.overlayAnalystDatasource = (Datasource) parameterOverlayDatasource.getSelectedItem();
 				info.overlayAnalystDataset = (DatasetVector) parameterOverlayDataset.getSelectedItem();
 			}
+
+			if (info.sourceDataset == info.overlayAnalystDataset) {
+				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_SameDataSet_error"));
+				return;
+			}
+
 			info.targetDatasource = (Datasource) parameterResultDatasource.getSelectedItem();
 			info.targetDataset = (String) parameterSaveDataset.getSelectedItem();
 			OverlayAnalystParameter overlayAnalystParameter = new OverlayAnalystParameter();

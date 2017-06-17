@@ -39,7 +39,7 @@ public class PopupMenuAction extends CanvasActionAdapter {
 		if (e.getButton() == MouseEvent.BUTTON3 && e.getClickCount() == 1) {
 			JPopupMenu menu = null;
 
-			if (this.canvas.getSelection().isContain(this.canvas.getCoordinateTransform().inverse(e.getPoint()))) {
+			if (this.canvas.getSelection().size() > 0) {
 				if (this.canvas.getSelection().size() == 1) {
 					IGraph graph = this.canvas.getSelection().getItem(0);
 

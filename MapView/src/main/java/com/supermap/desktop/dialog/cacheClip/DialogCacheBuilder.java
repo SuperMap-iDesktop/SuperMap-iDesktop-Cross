@@ -64,7 +64,9 @@ public class DialogCacheBuilder extends SmDialog {
 	private WarningOrHelpProvider helpProviderForMergeSciCount;
 	//scipath for restore path of .sci file
 	private String sciPath;
-	private String doingPath;
+	private int totalSciLength;
+	private long startTime;
+	private int cmdType;
 
 	private String[] params;
 	private BuildCache buildCache;
@@ -73,6 +75,7 @@ public class DialogCacheBuilder extends SmDialog {
 	private CopyOnWriteArrayList<JProgressBar> progressBars;
 	private CopyOnWriteArrayList<String> captions;
 	private CopyOnWriteArrayList<Integer> captionCount;
+	private Thread totalUpdateThread;
 
 	private ActionListener closeListener = new ActionListener() {
 		@Override
@@ -91,19 +94,29 @@ public class DialogCacheBuilder extends SmDialog {
 	private ActionListener refreshListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (!StringUtilities.isNullOrEmpty(sciPath)) {
-				File sciFile = new File(sciPath);
-				String[] sciFiles = null;
+			String taskPath = fileChooserTaskPath.getPath();
+			if (!StringUtilities.isNullOrEmpty(taskPath)) {
+				File sciFile = new File(taskPath);
+				int buildSciLength = 0;
 				if (sciFile.exists()) {
-					sciFiles = sciFile.list(getFilter());
+					String buildPath = CacheUtilities.replacePath(sciFile.getParent(), "build");
+					String failedPath = CacheUtilities.replacePath(sciFile.getParent(), "failed");
+					File buildFile = new File(buildPath);
+					File failedFile = new File(failedPath);
+					if (buildFile.exists()) {
+						buildSciLength = buildFile.list(getFilter()).length;
+					}
+					if (failedFile.exists()) {
+						buildSciLength += failedFile.list(getFilter()).length;
+					}
 				}
-				if (null != sciFiles) {
-					int totalSciLength = sciFiles.length;
-					int buildSciLength = 0;
-					//Get success sci length
-					buildSciLength = totalSciLength - sciFile.list(getFilter()).length;
-					final int value = (int) (((buildSciLength + 0.0) / totalSciLength) * 100);
-					progressBarTotal.setValue(value);
+				int value = (int) (((buildSciLength + 0.0) / totalSciLength) * 100);
+				progressBarTotal.setValue(value);
+				if (value == 100) {
+					totalUpdateThread.interrupt();
+					String cachePath = fileChooserCachePath.getPath();
+					cachePath = CacheUtilities.replacePath(cachePath);
+					getResult(cachePath, startTime);
 				}
 			}
 		}
@@ -178,7 +191,8 @@ public class DialogCacheBuilder extends SmDialog {
 	};
 
 
-	public DialogCacheBuilder() {
+	public DialogCacheBuilder(int cmdType) {
+		this.cmdType = cmdType;
 		init();
 	}
 
@@ -327,8 +341,8 @@ public class DialogCacheBuilder extends SmDialog {
 //		panelClipProgress.add(this.labelTotalProcessCount, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
 //		panelClipProgress.add(this.textFieldTotalProcessCount, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
 		panelClipProgress.add(this.labelTotalProgress, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
-		panelClipProgress.add(this.progressBarTotal, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
-		panelClipProgress.add(this.buttonRefresh, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 10));
+		panelClipProgress.add(this.progressBarTotal, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
+		panelClipProgress.add(this.buttonRefresh, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 10));
 		panelClipProgress.add(this.labelDetailProgressInfo, new GridBagConstraintsHelper(0, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
 		panelClipProgress.add(this.scrollPaneProgresses, new GridBagConstraintsHelper(0, 3, 3, 5).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(0, 10, 5, 10).setWeight(1, 1));
 		JPanel panelContent = (JPanel) this.getContentPane();
@@ -367,10 +381,13 @@ public class DialogCacheBuilder extends SmDialog {
 			cachePath = CacheUtilities.replacePath(cachePath);
 			String processCount = textFieldProcessCount.getText();
 			String mergeSciCount = textFieldMergeSciCount.getText();
-			params = new String[]{sciPath, workspacePath, mapName, cachePath, processCount, mergeSciCount};
+			boolean isAppending = this.cmdType == DialogMapCacheClipBuilder.UpdateProcessClip;
+			params = new String[]{sciPath, workspacePath, mapName, cachePath, processCount, mergeSciCount, String.valueOf(isAppending)};
 //            final String[] params = {workspacePath, mapName, sciPath, cachePath, processCount, mergeSciCount};
 
 			if (!validateValue(sciPath, workspacePath, mapName, cachePath, processCount)) {
+				buttonCreate.setEnabled(true);
+				buttonClose.setEnabled(true);
 				new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_ParamsException"));
 			} else {
 				doBuildCache(cachePath);
@@ -381,7 +398,6 @@ public class DialogCacheBuilder extends SmDialog {
 	}
 
 	private void doBuildCache(String cachePath) {
-		int totalSciLength = 0;
 		String[] sciNames = null;
 		File sciFile = new File(sciPath);
 		if (sciFile.exists()) {
@@ -395,9 +411,9 @@ public class DialogCacheBuilder extends SmDialog {
 				for (int i = 0; i < captions.size(); i++) {
 					captionCount.add(sciFile.list(getFilter(captions.get(i))).length);
 				}
-				updateSingleProcess(sciFile.getParentFile().getPath(), totalSciLength);
+				updateSingleProcess(sciFile.getParent(), totalSciLength);
 			}
-			updateTotalProgress(sciFile.getParentFile().getPath(), cachePath, totalSciLength);
+			updateTotalProgress(sciFile.getParent(), cachePath, totalSciLength);
 		}
 		buildCache = new BuildCache();
 		buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
@@ -451,8 +467,8 @@ public class DialogCacheBuilder extends SmDialog {
 									progressBars.get(i).setValue(value);
 								}
 							}
-							//Sleep two seconds or not
-							Thread.sleep(1000);
+							//Sleep 10 seconds or not
+							Thread.sleep(10000);
 						}
 					}
 				} catch (Exception e) {
@@ -469,18 +485,18 @@ public class DialogCacheBuilder extends SmDialog {
 		final String finalCachePath = cachePath;
 		final String finalParentPath = parentPath;
 		final int finalTotalSciLength = totalSciLength;
-		Thread updateThread = new Thread() {
+		totalUpdateThread = new Thread() {
 			@Override
 			public void run() {
 				refresh(finalCachePath, finalParentPath, finalTotalSciLength);
 			}
 		};
-		updateThread.start();
+		totalUpdateThread.start();
 	}
 
 	private void refresh(String cachePath, String parentPath, int totalSciLength) {
 		try {
-			long startTime = System.currentTimeMillis();
+			startTime = System.currentTimeMillis();
 			String buildPath = CacheUtilities.replacePath(parentPath, "build");
 			String failedPath = CacheUtilities.replacePath(parentPath, "failed");
 			int buildSciLength = 0;
@@ -504,45 +520,11 @@ public class DialogCacheBuilder extends SmDialog {
 				final int value = (int) (((buildSciLength + 0.0) / totalSciLength) * 100);
 				progressBarTotal.setValue(value);
 				//Sleep 1 minute
-				Thread.sleep(60000);
-			}
-
-			boolean result = false;
-			File resultDir = new File(cachePath);
-			String resultPath = "";
-			if (resultDir.isDirectory()) {
-				File[] files = resultDir.listFiles();
-				for (int i = 0; i < files.length; i++) {
-					if (files[i].getName().equals(params[BuildCache.MAPNAME_INDEX])) {
-						resultPath = files[i].getAbsolutePath();
-						result = true;
-						break;
-					}
+				if (100 != value) {
+					Thread.sleep(60000);
 				}
 			}
-			if (result) {
-				long endTime = System.currentTimeMillis();
-				//Paste sciFile to the target directory
-				sciFile.renameTo(new File(resultPath, sciFile.getName()));
-				long totalTime = endTime - startTime;
-				long hour = 0;
-				long minutes = 0;
-				long second = 0;
-				if (totalTime >= 3600000) {
-					hour = totalTime / 3600000;
-					minutes = (totalTime % 3600000) / 60000;
-					second = ((totalTime % 3600000) % 60000) / 1000;
-				} else if (totalTime >= 60000) {
-					minutes = totalTime / 60000;
-					second = (totalTime % 60000) / 1000;
-				} else {
-					second = totalTime / 1000;
-				}
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), resultPath, hour, minutes, second));
-			} else {
-				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MultiCacheFailed"));
-			}
-			disposeInfo();
+			getResult(cachePath, startTime);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		}
@@ -600,5 +582,45 @@ public class DialogCacheBuilder extends SmDialog {
 		panelScaleProcess.add(new JPanel(), new GridBagConstraintsHelper(0, scaleCount, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		this.scrollPaneProgresses.setViewportView(panelScaleProcess);
 		this.repaint();
+	}
+
+	public void getResult(String cachePath, long startTime) {
+		boolean result = false;
+		File resultDir = new File(cachePath);
+		String resultPath = "";
+		if (resultDir.isDirectory()) {
+			File[] files = resultDir.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].getName().equals(params[BuildCache.MAPNAME_INDEX])) {
+					resultPath = files[i].getAbsolutePath();
+					result = true;
+					break;
+				}
+			}
+		}
+		if (result) {
+			buttonClose.setEnabled(true);
+			long endTime = System.currentTimeMillis();
+			//Paste sciFile to the target directory
+			sciFile.renameTo(new File(resultPath, sciFile.getName()));
+			long totalTime = endTime - startTime;
+			long hour = 0;
+			long minutes = 0;
+			long second = 0;
+			if (totalTime >= 3600000) {
+				hour = totalTime / 3600000;
+				minutes = (totalTime % 3600000) / 60000;
+				second = ((totalTime % 3600000) % 60000) / 1000;
+			} else if (totalTime >= 60000) {
+				minutes = totalTime / 60000;
+				second = (totalTime % 60000) / 1000;
+			} else {
+				second = totalTime / 1000;
+			}
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), resultPath, hour, minutes, second));
+		} else {
+			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MultiCacheFailed"));
+		}
+		disposeInfo();
 	}
 }

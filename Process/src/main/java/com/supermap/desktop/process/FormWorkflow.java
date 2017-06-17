@@ -25,7 +25,12 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
 import com.supermap.desktop.process.graphics.connection.IConnectable;
 import com.supermap.desktop.process.graphics.connection.LineGraph;
-import com.supermap.desktop.process.graphics.events.*;
+import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
+import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
+import com.supermap.desktop.process.graphics.events.GraphRemovingEvent;
+import com.supermap.desktop.process.graphics.events.GraphRemovingListener;
+import com.supermap.desktop.process.graphics.events.GraphSelectChangedListener;
+import com.supermap.desktop.process.graphics.events.GraphSelectedChangedEvent;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
@@ -87,8 +92,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		super(workflow.getName(), null, null);
 
 		this.workflow = (Workflow) workflow;
-		this.canvas = new GraphCanvas(this.workflow);
-		this.tasksManager = new TasksManager(this.workflow);
+		this.canvas = new GraphCanvas();
 
 		initializeComponents();
 		initFormWorkflow(workflow);

@@ -21,6 +21,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
 import com.supermap.desktop.process.parameter.implement.ParameterEnum;
+import com.supermap.desktop.process.parameter.implement.ParameterNumber;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
@@ -29,6 +30,9 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * @author XiaJT
@@ -40,8 +44,9 @@ public class MetaProcessBuffer extends MetaProcess {
 	private ParameterDatasourceConstrained datasource;
 	private ParameterSingleDataset dataset;
 	private ParameterEnum parameterBufferRange;
-	private ParameterTextField parameterTextFieldRadius;
-	private ParameterTextField parameterTextFieldSemicircleLineSegment;
+	private ParameterTextField parameterTextFieldLeftRadius;
+	private ParameterTextField parameterTextFieldRightRadius;
+	private ParameterNumber parameterTextFieldSemicircleLineSegment;
 	private ParameterCheckBox parameterUnionBuffer;
 	private ParameterCheckBox parameterRetainAttribute;
 	private ParameterSaveDataset parameterSaveDataset;
@@ -59,6 +64,16 @@ public class MetaProcessBuffer extends MetaProcess {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
 		equalDatasourceConstraint.constrained(datasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
 		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+
+		parameterUnionBuffer.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getPropertyName().equals(ParameterCheckBox.PARAMETER_CHECK_BOX_VALUE)) {
+					parameterRetainAttribute.setEnabled(!(boolean) evt.getNewValue());
+				}
+			}
+		});
+
 	}
 
 	private void initParameters() {
@@ -78,10 +93,14 @@ public class MetaProcessBuffer extends MetaProcess {
 		dataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
 		datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameterBufferRange = new ParameterEnum(new EnumParser(BufferRadiusUnit.class, values, parameterDataNodes)).setDescribe(ProcessProperties.getString("Label_BufferRadius"));
-		parameterTextFieldRadius = new ParameterTextField(ProcessProperties.getString("Label_Radius"));
+		parameterTextFieldLeftRadius = new ParameterTextField(ProcessProperties.getString("Label_Radius"));
+		parameterTextFieldRightRadius = new ParameterTextField(ProcessProperties.getString("String_rightRadius"));
 		parameterUnionBuffer = new ParameterCheckBox(ProcessProperties.getString("String_UnionBufferItem"));
 		parameterRetainAttribute = new ParameterCheckBox(ProcessProperties.getString("String_RetainAttribute"));
-		parameterTextFieldSemicircleLineSegment = new ParameterTextField(ProcessProperties.getString("Label_SemicircleLineSegment"));
+		parameterTextFieldSemicircleLineSegment = new ParameterNumber(ProcessProperties.getString("Label_SemicircleLineSegment"));
+		parameterTextFieldSemicircleLineSegment.setMaxBit(0);
+		parameterTextFieldSemicircleLineSegment.setMinValue(4);
+		parameterTextFieldSemicircleLineSegment.setMaxValue(200);
 		parameterSaveDataset = new ParameterSaveDataset();
 		ParameterCombine parameterCombineSourceData = new ParameterCombine();
 		parameterCombineSourceData.addParameters(datasource, dataset);
@@ -89,7 +108,7 @@ public class MetaProcessBuffer extends MetaProcess {
 
 		ParameterCombine parameterCombineParameter = new ParameterCombine();
 		parameterCombineParameter.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		parameterCombineParameter.addParameters(parameterBufferRange, parameterTextFieldRadius, parameterUnionBuffer
+		parameterCombineParameter.addParameters(parameterBufferRange, parameterTextFieldLeftRadius, parameterUnionBuffer
 				, parameterRetainAttribute, parameterTextFieldSemicircleLineSegment);
 
 		ParameterCombine parameterCombineResult = new ParameterCombine();
@@ -108,7 +127,7 @@ public class MetaProcessBuffer extends MetaProcess {
 
 	private void initComponentState() {
 		parameterBufferRange.setSelectedItem(BufferRadiusUnit.Meter);
-		parameterTextFieldRadius.setSelectedItem("10");
+		parameterTextFieldLeftRadius.setSelectedItem("10");
 		parameterTextFieldSemicircleLineSegment.setSelectedItem("100");
 		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
 		if (datasetVector != null) {
@@ -145,7 +164,7 @@ public class MetaProcessBuffer extends MetaProcess {
 		}
 
 		BufferRadiusUnit radiusUnit = (BufferRadiusUnit) parameterBufferRange.getSelectedData();
-		int radius = Integer.valueOf((String) parameterTextFieldRadius.getSelectedItem());
+		int radius = Integer.valueOf((String) parameterTextFieldLeftRadius.getSelectedItem());
 		boolean isUnion = "true".equalsIgnoreCase((String) parameterUnionBuffer.getSelectedItem());
 		boolean isAttributeRetained = "true".equalsIgnoreCase((String) parameterRetainAttribute.getSelectedItem());
 		int semicircleLineSegment = Integer.valueOf(((String) parameterTextFieldSemicircleLineSegment.getSelectedItem()));

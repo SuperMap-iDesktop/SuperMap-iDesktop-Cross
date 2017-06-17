@@ -18,6 +18,7 @@ public class BuildCache {
 	public static final int CACHEPATH_INDEX = 3;
 	public static final int PROCESSCOUNT_INDEX = 4;
 	public static final int MERGESCICOUNT_INDEX = 5;
+	public static final int ISAPPENDING_INDEX = 6;
 
 	//Add new process
 	public void addProcess(String[] params) {
@@ -60,6 +61,8 @@ public class BuildCache {
 			String mergeCount = "1";
 			if (params.length > MERGESCICOUNT_INDEX && !params[MERGESCICOUNT_INDEX].equals("0"))
 				mergeCount = params[MERGESCICOUNT_INDEX];
+			String isAppendingStr = params[ISAPPENDING_INDEX];
+			boolean isAppending = Boolean.valueOf(isAppendingStr);
 			//Instance LogWriter
 			LogWriter log = LogWriter.getInstance(LogWriter.BUILD_CACHE);
 			int sciLength;
@@ -105,7 +108,7 @@ public class BuildCache {
 					//Second step:get sci file from doing dir and build cache
 					for (int i = 0; i < doingSciNames.size(); i++) {
 						String sciName = doingSciNames.get(i);
-						build(cachePath, log, start, map, sciName);
+						build(cachePath, log, start, map, sciName, isAppending);
 					}
 
 				} while (sciLength != 0);
@@ -135,7 +138,7 @@ public class BuildCache {
 		return renameSuccess;
 	}
 
-	private void build(String cachePath, LogWriter log, long start, Map map, String sciName) {
+	private void build(String cachePath, LogWriter log, long start, Map map, String sciName, boolean isAppending) {
 		log.writelog(String.format("start sciName:%s , PID:%s", sciName, LogWriter.getPID()));
 		log.writelog(String.format("init PID:%s, cost(ms):%d", LogWriter.getPID(), System.currentTimeMillis() - start));
 		File sci = new File(sciName);
@@ -146,9 +149,13 @@ public class BuildCache {
 		MapCacheBuilder builder = new MapCacheBuilder();
 		builder.setMap(map);
 		builder.fromConfigFile(sciName);
-
+		if (isAppending) {
+			builder.setIsAppending(isAppending);
+			builder.setHashCodeEnabled(true);
+		}
 		builder.setOutputFolder(cachePath);
-		builder.resumable(false);
+		builder.setCacheName(builder.getCacheName());
+//		builder.resumable(false);
 
 		boolean result = builder.buildWithoutConfigFile();
 		builder.dispose();

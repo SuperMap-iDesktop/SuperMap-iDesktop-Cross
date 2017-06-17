@@ -2,11 +2,19 @@ package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
-import com.supermap.desktop.process.parameter.events.*;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
+import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
+import com.supermap.desktop.process.parameter.events.PanelPropertyChangedListener;
+import com.supermap.desktop.process.parameter.events.ParameterUpdateValueEvent;
+import com.supermap.desktop.process.parameter.events.ParameterValueLegalEvent;
+import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
+import com.supermap.desktop.process.parameter.events.ParameterValueSelectedEvent;
+import com.supermap.desktop.process.parameter.events.UpdateValueListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 
+import javax.swing.event.EventListenerList;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Field;
@@ -28,68 +36,106 @@ public abstract class AbstractParameter implements IParameter {
 
 	public boolean isEnabled = true;
 
-	private List<PropertyChangeListener> propertyChangeListeners = new ArrayList<>();
-	private List<ParameterValueLegalListener> parameterValueLegalListeners = new ArrayList<>();
-	private List<FieldConstraintChangedListener> fieldConstraintChangedListeners = new ArrayList<>();
+	private EventListenerList listenerList = new EventListenerList();
 	private List<UpdateValueListener> updateValueListeners = new ArrayList<>();
 
+	@Override
+	public void addPanelPropertyChangedListener(PanelPropertyChangedListener panelPropertyChangedListener) {
+		listenerList.add(PanelPropertyChangedListener.class, panelPropertyChangedListener);
+	}
 
 	@Override
-	public void addPropertyListener(PropertyChangeListener propertyChangeListener) {
-		if (!propertyChangeListeners.contains(propertyChangeListener)) {
-			propertyChangeListeners.add(propertyChangeListener);
+	public void removePanelPropertyChangedListener(PanelPropertyChangedListener panelPropertyChangedListener) {
+		listenerList.remove(PanelPropertyChangedListener.class, panelPropertyChangedListener);
+	}
+
+	private void firePanelPropertyChangedListener(PropertyChangeEvent propertyChangeEvent) {
+		Object[] listenerList = this.listenerList.getListenerList();
+		for (int i = listenerList.length - 2; i >= 0; i -= 2) {
+			if (listenerList[i] == PanelPropertyChangedListener.class) {
+				((PanelPropertyChangedListener) listenerList[i + 1]).propertyChanged(propertyChangeEvent);
+			}
 		}
 	}
 
 	@Override
+	public void addPropertyListener(PropertyChangeListener propertyChangeListener) {
+		listenerList.add(PropertyChangeListener.class, propertyChangeListener);
+	}
+
+	@Override
 	public void removePropertyListener(PropertyChangeListener propertyChangeListener) {
-		propertyChangeListeners.remove(propertyChangeListener);
+		listenerList.remove(PropertyChangeListener.class, propertyChangeListener);
 	}
 
 	public void firePropertyChangeListener(PropertyChangeEvent propertyChangeEvent) {
-		for (int i = propertyChangeListeners.size() - 1; i >= 0; i--) {
-			propertyChangeListeners.get(i).propertyChange(propertyChangeEvent);
+		Object[] listenerList = this.listenerList.getListenerList();
+		for (int i = listenerList.length - 2; i >= 0; i -= 2) {
+			if (listenerList[i] == PropertyChangeListener.class) {
+				((PropertyChangeListener) listenerList[i + 1]).propertyChange(propertyChangeEvent);
+			}
 		}
 	}
 
 	@Override
 	public void addValueLegalListener(ParameterValueLegalListener parameterValueLegalListener) {
-		if (!parameterValueLegalListeners.contains(parameterValueLegalListener)) {
-			parameterValueLegalListeners.add(parameterValueLegalListener);
-		}
+		listenerList.add(ParameterValueLegalListener.class, parameterValueLegalListener);
 	}
 
 	@Override
 	public void removeValueLegalListener(ParameterValueLegalListener parameterValueLegalListener) {
-		parameterValueLegalListeners.remove(parameterValueLegalListener);
+		listenerList.remove(ParameterValueLegalListener.class, parameterValueLegalListener);
 	}
 
 	@Override
 	public boolean isValueLegal(String fieldName, Object value) {
-		for (ParameterValueLegalListener parameterValueLegalListener : parameterValueLegalListeners) {
-			if (!parameterValueLegalListener.isValueLegal(new ParameterValueLegalEvent(this, fieldName, value))) {
-				return false;
+		ParameterValueLegalEvent event = new ParameterValueLegalEvent(this, fieldName, value);
+
+		Object[] listenerList = this.listenerList.getListenerList();
+		for (int i = listenerList.length - 2; i >= 0; i -= 2) {
+			if (listenerList[i] == ParameterValueLegalListener.class) {
+				if (!((ParameterValueLegalListener) listenerList[i + 1]).isValueLegal(event)) {
+					return false;
+				}
 			}
 		}
 		return true;
 	}
 
+	public Object isValueSelected(String fieldName, Object value) {
+		ParameterValueSelectedEvent valueSelectedEvent = new ParameterValueSelectedEvent(this, fieldName, value);
+
+		Object[] listenerList = this.listenerList.getListenerList();
+		for (int i = listenerList.length - 2; i >= 0; i -= 2) {
+			if (listenerList[i] == ParameterValueLegalListener.class) {
+				Object valueSelected = ((ParameterValueLegalListener) listenerList[i + 1]).isValueSelected(valueSelectedEvent);
+				if (valueSelected != DO_NOT_CARE) {
+					return valueSelected;
+				}
+			}
+		}
+		return DO_NOT_CARE;
+	}
+
 	@Override
 	public void addFieldConstraintChangedListener(FieldConstraintChangedListener fieldConstraintChangedListener) {
-		if (!fieldConstraintChangedListeners.contains(fieldConstraintChangedListener)) {
-			fieldConstraintChangedListeners.add(fieldConstraintChangedListener);
-		}
+		listenerList.add(FieldConstraintChangedListener.class, fieldConstraintChangedListener);
 	}
 
 	@Override
 	public void removeFieldConstraintChangedListener(FieldConstraintChangedListener fieldConstraintChangedListener) {
-		fieldConstraintChangedListeners.remove(fieldConstraintChangedListener);
+		listenerList.remove(FieldConstraintChangedListener.class, fieldConstraintChangedListener);
 	}
 
 	@Override
 	public void fireFieldConstraintChanged(String fieldName) {
-		for (FieldConstraintChangedListener fieldConstraintChangedListener : fieldConstraintChangedListeners) {
-			fieldConstraintChangedListener.fieldConstraintChanged(new FieldConstraintChangedEvent(fieldName, this));
+		FieldConstraintChangedEvent fieldConstraintChangedEvent = new FieldConstraintChangedEvent(fieldName, this);
+
+		Object[] listenerList = this.listenerList.getListenerList();
+		for (int i = listenerList.length - 2; i >= 0; i -= 2) {
+			if (listenerList[i] == FieldConstraintChangedListener.class) {
+				((FieldConstraintChangedListener) listenerList[i + 1]).fieldConstraintChanged(fieldConstraintChangedEvent);
+			}
 		}
 	}
 
@@ -111,6 +157,7 @@ public abstract class AbstractParameter implements IParameter {
 			updateValueListener.fireUpdateValue(new ParameterUpdateValueEvent(fieldName));
 		}
 	}
+
 	@Override
 	public ArrayList<String> getFieldNameList(Class<AbstractParameter> clazz) {
 		ArrayList<String> nameList = new ArrayList<>();
@@ -142,15 +189,6 @@ public abstract class AbstractParameter implements IParameter {
 		this.parameters = parameters;
 	}
 
-	public Object isValueSelected(String fieldName, Object value) {
-		for (ParameterValueLegalListener parameterValueLegalListener : parameterValueLegalListeners) {
-			Object valueSelected = parameterValueLegalListener.isValueSelected(new ParameterValueSelectedEvent(this, fieldName, value));
-			if (valueSelected != DO_NOT_CARE) {
-				return valueSelected;
-			}
-		}
-		return DO_NOT_CARE;
-	}
 
 	@Override
 	public void dispose() {
@@ -200,9 +238,12 @@ public abstract class AbstractParameter implements IParameter {
 
 	@Override
 	public void setEnabled(boolean enabled) {
+		if (enabled == this.isEnabled()) {
+			return;
+		}
 		boolean oldValue = this.isEnabled;
 		this.isEnabled = enabled;
-		firePropertyChangeListener(new PropertyChangeEvent(this, AbstractParameter.PROPERTY_VALE, oldValue, enabled));
+		firePanelPropertyChangedListener(new PropertyChangeEvent(this, PanelPropertyChangedListener.ENABLE, oldValue, enabled));
 	}
 
 	@Override

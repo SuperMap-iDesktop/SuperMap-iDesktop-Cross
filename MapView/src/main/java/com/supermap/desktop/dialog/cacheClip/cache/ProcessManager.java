@@ -6,6 +6,7 @@ import com.supermap.desktop.mapview.MapViewProperties;
 import java.io.*;
 import java.text.MessageFormat;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by xie on 2017/5/17.
@@ -52,7 +53,7 @@ public class ProcessManager {
 			for (int i = threadList.size() - 1; i >= 0; i--) {
 				threadList.get(i).process.destroy();
 			}
-			LogWriter.removeAllLogs();
+			Thread.sleep(10 * 1000);
 			threadList.clear();
 			File taskFiles = new File(sciPath);
 			String doingPath = null;
@@ -70,7 +71,7 @@ public class ProcessManager {
 				int mergeSciCount = Integer.valueOf(params[BuildCache.MERGESCICOUNT_INDEX]);
 				undoScis = getUndoScis(logDirectory, mergeSciCount);
 			}
-
+			LogWriter.removeAllLogs();
 			File doingDirectory = new File(doingPath);
 			if (doingDirectory.exists()) {
 				File[] doingScis = doingDirectory.listFiles();
@@ -149,17 +150,33 @@ public class ProcessManager {
 
 		@Override
 		public void run() {
-			try {
-				while (exit) {
-					if (null == threadList) {
-						break;
-					}
-
-					//If process count <threadList.size() add one/more process
-
+			while (exit) {
+				if (null == threadList) {
+					break;
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+				//If process count <threadList.size() add one/more process
+				while (true) {
+					int exist = 0;
+					for (int i = 0; i < threadList.size(); i++) {
+						try {
+							SubprocessThread tempThread = threadList.get(i);
+							if (1 == tempThread.process.exitValue()) {
+								SubprocessThread newProcess = tempThread.clone();
+								newProcess.start();
+								threadList.remove(i);
+								threadList.add(i, newProcess);
+							}
+						} catch (IllegalThreadStateException e) {
+//							e.printStackTrace();
+//							exist++;
+						}
+					}
+					try {
+						TimeUnit.SECONDS.sleep(30);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}

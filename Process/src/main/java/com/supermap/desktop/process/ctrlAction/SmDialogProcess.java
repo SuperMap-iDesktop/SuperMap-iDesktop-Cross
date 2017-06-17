@@ -32,8 +32,9 @@ public class SmDialogProcess extends SmDialog {
 				task.getComponent(i).setVisible(false);
 			}
 		}
-		this.pack();
+//		this.pack();
 		this.setMinimumSize(new Dimension(400, 600));
+		this.setPreferredSize(new Dimension(400, 600));
 //		this.setPreferredSize(new Dimension(getWidth() + 200, getHeight()));
 		this.setLocationRelativeTo(null);
 	}

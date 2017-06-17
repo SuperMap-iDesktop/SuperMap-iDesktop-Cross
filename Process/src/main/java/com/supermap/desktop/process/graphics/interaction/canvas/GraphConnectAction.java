@@ -124,6 +124,7 @@ public class GraphConnectAction extends CanvasActionAdapter {
 		} finally {
 //			this.canvas.removeTrackingGraph(TRACKING_KEY_CONNECTOR);
 			this.preview.reset();
+			canvas.repaint();
 			this.startGraph = null;
 			this.endGraph = null;
 		}

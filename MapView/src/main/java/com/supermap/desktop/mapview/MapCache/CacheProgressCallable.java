@@ -6,6 +6,7 @@ import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.progress.Interface.UpdateProgressCallable;
 
+import java.io.File;
 import java.util.concurrent.CancellationException;
 
 /**
@@ -40,7 +41,7 @@ public class CacheProgressCallable extends UpdateProgressCallable {
             this.mapCacheBuilder.addSteppedListener(this.steppedListener);
             if (resumAble) {
                 this.mapCacheBuilder.setFillMargin(true);
-                this.mapCacheBuilder.setIsAppending(true);
+//                this.mapCacheBuilder.setIsAppending(true);
                 this.result = this.mapCacheBuilder.build();
             } else {
                 this.result = this.mapCacheBuilder.build();

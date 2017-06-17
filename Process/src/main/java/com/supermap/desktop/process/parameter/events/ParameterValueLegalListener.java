@@ -1,9 +1,11 @@
 package com.supermap.desktop.process.parameter.events;
 
+import java.util.EventListener;
+
 /**
  * @author XiaJT
  */
-public interface ParameterValueLegalListener {
+public interface ParameterValueLegalListener extends EventListener {
 	/**
 	 * 当前值是否可选
 	 *

@@ -4,11 +4,13 @@ import com.mongodb.Mongo;
 import com.mongodb.MongoClientURI;
 import com.mongodb.ServerAddress;
 import com.supermap.data.*;
+import com.supermap.data.processing.CacheWriter;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapTilingMode;
 import com.supermap.data.processing.StorageType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.ScaleModel;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
@@ -153,13 +155,13 @@ public class FirstStepPane extends JPanel implements IState {
 	private ActionListener inputCacheConfigFileListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			inportCacheConfigFile();
+			importCacheConfigFile();
 		}
 	};
 	private ActionListener inputCacheConfigFileToolbarJmenuListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			inportCacheConfigFile();
+			importCacheConfigFile();
 		}
 	};
 	private ActionListener exportCacheConfigFileListener = new ActionListener() {
@@ -311,10 +313,6 @@ public class FirstStepPane extends JPanel implements IState {
 		initBasicSettingPanelValue();
 		initResources();
 		registEvents();
-		if (cmdType == DialogMapCacheClipBuilder.ReloadProcessClip
-				|| cmdType == DialogMapCacheClipBuilder.UpdateProcessClip) {
-			resetComponentsInfo();
-		}
 		enabled();
 	}
 
@@ -399,6 +397,11 @@ public class FirstStepPane extends JPanel implements IState {
 			this.comboBoxSaveType.setEnabled(false);
 			this.labelUserPassword.setEnabled(false);
 			this.labelConfirmPassword.setEnabled(false);
+			this.labelUserName.setEnabled(false);
+			this.labelServerName.setEnabled(false);
+			this.textFieldServerName.setEnabled(false);
+			this.labelDatabaseName.setEnabled(false);
+			this.comboBoxDatabaseName.setEnabled(false);
 		} else {
 			this.labelVersion.setEnabled(true);
 			this.comboboxVersion.setEnabled(true);
@@ -410,8 +413,13 @@ public class FirstStepPane extends JPanel implements IState {
 			this.fileChooserControlFileCache.setEnabled(true);
 			this.labelSaveType.setEnabled(true);
 			this.comboBoxSaveType.setEnabled(true);
-			this.labelUserName.setEnabled(true);
+			this.labelUserPassword.setEnabled(true);
 			this.labelConfirmPassword.setEnabled(true);
+			this.labelUserName.setEnabled(true);
+			this.labelServerName.setEnabled(true);
+			this.textFieldServerName.setEnabled(true);
+			this.labelDatabaseName.setEnabled(true);
+			this.comboBoxDatabaseName.setEnabled(true);
 		}
 	}
 
@@ -420,7 +428,19 @@ public class FirstStepPane extends JPanel implements IState {
 		this.comboBoxSaveType.addItem(MapViewProperties.getString("MapCache_SaveType_Origin"));
 		this.comboBoxSaveType.addItem(MapViewProperties.getString("MapCache_SaveType_MongoDB"));
 		this.comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_Origin"));
-		initPanelImageSaveOutputDisplay(MapViewProperties.getString("MapCache_SaveType_Origin"));
+		StorageType storageType = this.mapCacheBuilder.getStorageType();
+		String storageStr = null;
+		if (storageType == StorageType.Original) {
+			storageStr = MapViewProperties.getString("MapCache_SaveType_Origin");
+		} else if (storageType == StorageType.Compact) {
+			storageStr = MapViewProperties.getString("MapCache_SaveType_Compact");
+		} else if (storageType == StorageType.MongoDB) {
+			storageStr = MapViewProperties.getString("MapCache_SaveType_MongoDB");
+		} else {
+			storageStr = MapViewProperties.getString("MapCache_SaveType_GeoPackage");
+		}
+		initPanelImageSaveOutputDisplay(storageStr);
+
 		this.comboboxVersion.addItem(MapViewProperties.getString("MapCache_ComboboxVersionItem"));
 		this.comboBoxSplitMode.addItem(MapViewProperties.getString("MapCache_ComboboxSplitModeLocalSplit"));
 		this.comboBoxSplitMode.addItem(MapViewProperties.getString("MapCache_ComboboxSplitModeGlobalSplit"));
@@ -790,7 +810,7 @@ public class FirstStepPane extends JPanel implements IState {
 		this.warningProviderCachePathIllegal = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_WarningCachePathIsEmpty"), true);
 		this.textFieldCacheName = new JTextField();
 		this.fileChooserControlFileCache = new JFileChooserControl();
-		String moduleName = "ChooseCacheDirectories";
+		String moduleName = "ChooseCacheClipDirectories";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
 					moduleName, "GetDirectories");
@@ -1030,7 +1050,11 @@ public class FirstStepPane extends JPanel implements IState {
 	private void addScale() {
 		int insertIndex = this.localSplitTable.getRowCount();
 		if (this.localSplitTable.getRowCount() == 1) {
-			this.currentMapCacheScale.add(this.originMapCacheScale[0]);
+			if (this.originMapCacheScale.length > 0) {
+				this.currentMapCacheScale.add(this.originMapCacheScale[0]);
+			} else {
+				this.currentMapCacheScale.add(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().getScale());
+			}
 		} else {
 			double insertScale = 0;
 			int selectedRowsIndex[] = this.localSplitTable.getSelectedRows();
@@ -1229,7 +1253,7 @@ public class FirstStepPane extends JPanel implements IState {
 		}
 	}
 
-	private void inportCacheConfigFile() {
+	private void importCacheConfigFile() {
 		String moduleName = "InputCacheConfigFile";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci"));
@@ -1242,8 +1266,10 @@ public class FirstStepPane extends JPanel implements IState {
 		if (state == JFileChooser.APPROVE_OPTION) {
 			filePath = smFileChoose.getFilePath();
 			if (mapCacheBuilder.fromConfigFile(filePath)) {
+				File file = new File(filePath);
 				importCacheConfigs = true;
 				resetComponentsInfo();
+				fileChooserControlFileCache.setPath(file.getParent());
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FromCacheConfigFileIsSuccessed") + filePath);
 			} else {
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FromCacheConfigFileIsFailed"));
@@ -1252,7 +1278,7 @@ public class FirstStepPane extends JPanel implements IState {
 		}
 	}
 
-	private void resetComponentsInfo() {
+	public void resetComponentsInfo() {
 		HashMap<Double, String> scalesAndNames = mapCacheBuilder.getOutputScaleCaptions();
 		if (mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
 			comboBoxSplitMode.setSelectedItem(MapViewProperties.getString("MapCache_ComboboxSplitModeLocalSplit"));
@@ -1269,13 +1295,26 @@ public class FirstStepPane extends JPanel implements IState {
 		}
 		labelConfigValue.setText(this.mapCacheBuilder.getCacheName());
 		textFieldCacheName.setText(mapCacheBuilder.getCacheName());
-		fileChooserControlFileCache.setPath(CacheUtilities.replacePath(mapCacheBuilder.getOutputFolder()));
 		if (mapCacheBuilder.getStorageType() == StorageType.Compact) {
 			comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_Compact"));
+			textFieldUserPassword.setText(mapCacheBuilder.getPassword());
+			textFieldConfirmPassword.setText(mapCacheBuilder.getPassword());
 		} else if (mapCacheBuilder.getStorageType() == StorageType.Original) {
 			comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_Origin"));
 		} else if (mapCacheBuilder.getStorageType() == StorageType.MongoDB) {
 			comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_MongoDB"));
+			CacheWriter cacheFile = new CacheWriter();
+			cacheFile.FromConfigFile(CacheUtilities.replacePath(fileChooserControlFileCache.getPath(), mapCacheBuilder.getCacheName() + ".sci"));
+			String[] mongoInfo = cacheFile.getMongoConnectionInfo();
+			if (null != mongoInfo) {
+				textFieldServerName.setText(mongoInfo[0]);
+				comboBoxDatabaseName.setSelectedItem(mongoInfo[1]);
+				textFieldUserName.setText(mongoInfo[2]);
+				if (mongoInfo.length == 4) {
+					textFieldUserPassword.setText(mongoInfo[3]);
+					textFieldConfirmPassword.setText(mongoInfo[3]);
+				}
+			}
 		} else if (mapCacheBuilder.getStorageType() == StorageType.GPKG) {
 			comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_GeoPackage"));
 		}
