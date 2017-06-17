@@ -218,7 +218,7 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 
 			if (info.sourceDataset == info.overlayAnalystDataset) {
 				Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_SameDataSet_error"));
-				return;
+				return false;
 			}
 
 			info.targetDatasource = (Datasource) parameterResultDatasource.getSelectedItem();

@@ -50,6 +50,7 @@ import com.supermap.data.conversion.ImportSettingVCT;
 import com.supermap.data.conversion.ImportSettingWOR;
 import com.supermap.data.conversion.ImportSteppedEvent;
 import com.supermap.data.conversion.ImportSteppedListener;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.IParameterCreator;
 import com.supermap.desktop.process.dataconversion.ImportParameterCreator;
@@ -315,7 +316,7 @@ public class MetaProcessImport extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
+	public boolean execute() {
 		boolean isSuccessful = false;
 		DataImport dataImport = ImportSettingSetter.setParameter(importSetting, sourceImportParameters, resultImportParameters, paramParameters);
 
@@ -343,7 +344,7 @@ public class MetaProcessImport extends MetaProcess {
 			}
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
-		}finally {
+		} finally {
 			dataImport.removeImportSteppedListener(this.importStepListener);
 		}
 

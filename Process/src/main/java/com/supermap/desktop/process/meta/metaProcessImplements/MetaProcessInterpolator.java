@@ -17,6 +17,7 @@ import com.supermap.data.PixelFormat;
 import com.supermap.data.Rectangle2D;
 import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
