@@ -292,54 +292,62 @@ public class MetaProcessInterpolator extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
-		fireRunning(new RunningEvent(this, 0, "start"));
-		InterpolationParameter interpolationParameter = null;
-		if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.IDW)) {
-			interpolationParameter = new InterpolationIDWParameter();
-			setInterpolationParameter(interpolationParameter);
-			((InterpolationIDWParameter) interpolationParameter).setPower(Integer.valueOf(parameterPower.getSelectedItem().toString()));
-		} else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.RBF)) {
-			interpolationParameter = new InterpolationRBFParameter();
-			setInterpolationParameter(interpolationParameter);
-			((InterpolationRBFParameter) interpolationParameter).setTension(Double.valueOf(parameterTension.getSelectedItem().toString()));
-			((InterpolationRBFParameter) interpolationParameter).setSmooth(Double.valueOf(parameterSmooth.getSelectedItem().toString()));
-		} else {
-			if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.KRIGING)) {
-				interpolationParameter = new InterpolationKrigingParameter(InterpolationAlgorithmType.KRIGING);
-			} else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.SimpleKRIGING)) {
-				interpolationParameter = new InterpolationKrigingParameter(InterpolationAlgorithmType.SimpleKRIGING);
-			} else {
-				interpolationParameter = new InterpolationKrigingParameter(InterpolationAlgorithmType.UniversalKRIGING);
-			}
-			setInterpolationParameter(interpolationParameter);
-			((InterpolationKrigingParameter) interpolationParameter).setVariogramMode((VariogramMode) ((ParameterDataNode) parameterVariogramMode.getSelectedItem()).getData());
-			((InterpolationKrigingParameter) interpolationParameter).setSill(Double.valueOf(parameterStill.getSelectedItem().toString()));
-			((InterpolationKrigingParameter) interpolationParameter).setAngle(Double.valueOf(parameterAngle.getSelectedItem().toString()));
-			((InterpolationKrigingParameter) interpolationParameter).setRange(Double.valueOf(parameterRange.getSelectedItem().toString()));
-			if (interpolationParameter.equals(InterpolationAlgorithmType.SimpleKRIGING))
-				((InterpolationKrigingParameter) interpolationParameter).setMean(Double.valueOf(parameterMean.getSelectedItem().toString()));
-			((InterpolationKrigingParameter) interpolationParameter).setNugget(Double.valueOf(parameterNugget.getSelectedItem().toString()));
-		}
-		Interpolator.addSteppedListener(this.stepLitener);
+	public boolean execute() {
+		boolean isSuccessful = false;
 
-		DatasetVector datasetVector = null;
-		if (this.parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
-			datasetVector = (DatasetVector) this.parameters.getInputs().getData(INPUT_DATA).getValue();
-		} else {
-			datasetVector = (DatasetVector) this.parameterDataset.getSelectedItem();
+		try {
+			fireRunning(new RunningEvent(this, 0, "start"));
+			InterpolationParameter interpolationParameter = null;
+			if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.IDW)) {
+				interpolationParameter = new InterpolationIDWParameter();
+				setInterpolationParameter(interpolationParameter);
+				((InterpolationIDWParameter) interpolationParameter).setPower(Integer.valueOf(parameterPower.getSelectedItem().toString()));
+			} else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.RBF)) {
+				interpolationParameter = new InterpolationRBFParameter();
+				setInterpolationParameter(interpolationParameter);
+				((InterpolationRBFParameter) interpolationParameter).setTension(Double.valueOf(parameterTension.getSelectedItem().toString()));
+				((InterpolationRBFParameter) interpolationParameter).setSmooth(Double.valueOf(parameterSmooth.getSelectedItem().toString()));
+			} else {
+				if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.KRIGING)) {
+					interpolationParameter = new InterpolationKrigingParameter(InterpolationAlgorithmType.KRIGING);
+				} else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.SimpleKRIGING)) {
+					interpolationParameter = new InterpolationKrigingParameter(InterpolationAlgorithmType.SimpleKRIGING);
+				} else {
+					interpolationParameter = new InterpolationKrigingParameter(InterpolationAlgorithmType.UniversalKRIGING);
+				}
+				setInterpolationParameter(interpolationParameter);
+				((InterpolationKrigingParameter) interpolationParameter).setVariogramMode((VariogramMode) ((ParameterDataNode) parameterVariogramMode.getSelectedItem()).getData());
+				((InterpolationKrigingParameter) interpolationParameter).setSill(Double.valueOf(parameterStill.getSelectedItem().toString()));
+				((InterpolationKrigingParameter) interpolationParameter).setAngle(Double.valueOf(parameterAngle.getSelectedItem().toString()));
+				((InterpolationKrigingParameter) interpolationParameter).setRange(Double.valueOf(parameterRange.getSelectedItem().toString()));
+				if (interpolationParameter.equals(InterpolationAlgorithmType.SimpleKRIGING))
+					((InterpolationKrigingParameter) interpolationParameter).setMean(Double.valueOf(parameterMean.getSelectedItem().toString()));
+				((InterpolationKrigingParameter) interpolationParameter).setNugget(Double.valueOf(parameterNugget.getSelectedItem().toString()));
+			}
+			Interpolator.addSteppedListener(this.stepLitener);
+
+			DatasetVector datasetVector = null;
+			if (this.parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
+				datasetVector = (DatasetVector) this.parameters.getInputs().getData(INPUT_DATA).getValue();
+			} else {
+				datasetVector = (DatasetVector) this.parameterDataset.getSelectedItem();
+			}
+			Datasource targetDatasource = parameterResultDatasetName.getResultDatasource();
+			String datasetName = parameterResultDatasetName.getDatasetName();
+			datasetName = targetDatasource.getDatasets().getAvailableDatasetName(datasetName);
+			DatasetGrid dataset = Interpolator.interpolate(interpolationParameter, datasetVector,
+					((FieldInfo) parameterInterpolatorFields.getSelectedItem()).getName(), Double.valueOf(parameterScaling.getSelectedItem().toString()),
+					targetDatasource, datasetName,
+					(PixelFormat) ((ParameterDataNode) parameterPixelType.getSelectedItem()).getData());
+			this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(dataset);
+			isSuccessful = dataset != null;
+			fireRunning(new RunningEvent(this, 100, "finished"));
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			Interpolator.removeSteppedListener(this.stepLitener);
 		}
-		Datasource targetDatasource = parameterResultDatasetName.getResultDatasource();
-		String datasetName = parameterResultDatasetName.getDatasetName();
-		datasetName = targetDatasource.getDatasets().getAvailableDatasetName(datasetName);
-		DatasetGrid dataset = Interpolator.interpolate(interpolationParameter, datasetVector,
-				((FieldInfo) parameterInterpolatorFields.getSelectedItem()).getName(), Double.valueOf(parameterScaling.getSelectedItem().toString()),
-				targetDatasource, datasetName,
-				(PixelFormat) ((ParameterDataNode) parameterPixelType.getSelectedItem()).getData());
-		Interpolator.removeSteppedListener(this.stepLitener);
-		this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(dataset);
-		fireRunning(new RunningEvent(this, 100, "finished"));
-		setFinished(true);
+		return isSuccessful;
 	}
 
 	@Override

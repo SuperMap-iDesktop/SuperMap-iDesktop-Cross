@@ -32,6 +32,7 @@ import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.graphics.storage.ListGraphs;
 
 import javax.swing.*;
+import javax.swing.event.EventListenerList;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -83,8 +84,6 @@ public class GraphCanvas extends JComponent {
 	public GraphConnectAction connector = new GraphConnectAction(this);
 	public GraphRemoveAction removing = new GraphRemoveAction(this);
 	public PopupMenuAction popupMenu = new PopupMenuAction(this);
-
-	private ArrayList<GraphSelectChangedListener> selectChangedListeners = new ArrayList<>();
 
 	public static void main(String[] args) {
 		final JFrame frame = new JFrame();
@@ -449,24 +448,6 @@ public class GraphCanvas extends JComponent {
 			graph.setLocation(location);
 			repaint(dirtyRect);
 			repaint(graph.getBounds());
-		}
-	}
-
-	public void addGraphSelectChangedListener(GraphSelectChangedListener listener) {
-		if (!this.selectChangedListeners.contains(listener)) {
-			this.selectChangedListeners.add(listener);
-		}
-	}
-
-	public void removeGraphSelectChangedListener(GraphSelectChangedListener listener) {
-		if (this.selectChangedListeners.contains(listener)) {
-			this.selectChangedListeners.remove(listener);
-		}
-	}
-
-	private void fireGraphSelectChanged(GraphSelectedChangedEvent e) {
-		for (int i = 0; i < this.selectChangedListeners.size(); i++) {
-			this.selectChangedListeners.get(i).graphSelectChanged(e);
 		}
 	}
 

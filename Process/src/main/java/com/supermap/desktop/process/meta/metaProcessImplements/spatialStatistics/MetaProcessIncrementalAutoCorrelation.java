@@ -108,7 +108,9 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
+	public boolean execute() {
+		boolean isSuccessful = false;
+
 		DatasetVector datasetVector;
 		Object value = parameters.getInputs().getData(INPUT_SOURCE_DATASET).getValue();
 		if (value != null && value instanceof DatasetVector) {
@@ -127,10 +129,12 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 		try {
 			AnalyzingPatterns.addSteppedListener(steppedListener);
 			IncrementalResult[] incrementalResults = AnalyzingPatterns.incrementalAutoCorrelation(datasetVector, incrementalParameter);
+			isSuccessful = incrementalResults != null && incrementalResults.length > 0;
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {
 			AnalyzingPatterns.removeSteppedListener(steppedListener);
 		}
+		return isSuccessful;
 	}
 }

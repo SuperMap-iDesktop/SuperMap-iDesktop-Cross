@@ -135,9 +135,9 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 		String resultName = this.analystType.defaultResultName();
 		parameterSaveDataset.setSelectedItem(resultName);
 		parameterTolerance.setSelectedItem("0");
-		if(this.analystType == OverlayAnalystType.UNION || this.analystType == OverlayAnalystType.XOR || this.analystType == OverlayAnalystType.UPDATE){
+		if (this.analystType == OverlayAnalystType.UNION || this.analystType == OverlayAnalystType.XOR || this.analystType == OverlayAnalystType.UPDATE) {
 			parameterSourceDataset.setDatasetTypes(DatasetType.REGION);
-		}else{
+		} else {
 			parameterSourceDataset.setDatasetTypes(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
 		}
 		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
@@ -162,7 +162,9 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
+	public boolean execute() {
+		boolean isSuccessful = false;
+
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			ParameterOverlayAnalystInfo info = new ParameterOverlayAnalystInfo();
@@ -193,13 +195,13 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 
 			if (null == info.sourceDataset || null == info.overlayAnalystDataset
 					|| null == info.targetDataset) {
-				return;
+				return false;
 			}
 			if (!isSameProjection(info.sourceDataset.getPrjCoordSys(), info.overlayAnalystDataset.getPrjCoordSys())) {
 				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_PrjCoordSys_Different") + "\n" + ControlsProperties.getString("String_Parameters"));
 				Application.getActiveApplication().getOutput().output(MessageFormat.format(ControlsProperties.getString("String_OverlayAnalyst_Failed"), info.sourceDataset.getName() + "@" + info.sourceDataset.getDatasource().getAlias()
 						, info.overlayAnalystDataset.getName() + "@" + info.overlayAnalystDataset.getDatasource().getAlias(), analystType.toString()));
-				return;
+				return false;
 			}
 			OverlayAnalyst.addSteppedListener(this.steppedListener);
 			DatasetVectorInfo datasetVectorInfo = new DatasetVectorInfo();
@@ -212,36 +214,37 @@ public class MetaProcessOverlayAnalyst extends MetaProcess {
 
 			switch (analystType) {
 				case CLIP:
-					OverlayAnalyst.clip(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
+					isSuccessful = OverlayAnalyst.clip(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
 					break;
 				case ERASE:
-					OverlayAnalyst.erase(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
+					isSuccessful = OverlayAnalyst.erase(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
 					break;
 				case IDENTITY:
-					OverlayAnalyst.identity(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
+					isSuccessful = OverlayAnalyst.identity(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
 					break;
 				case INTERSECT:
-					OverlayAnalyst.intersect(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
+					isSuccessful = OverlayAnalyst.intersect(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
 					break;
 				case UNION:
-					OverlayAnalyst.union(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
+					isSuccessful = OverlayAnalyst.union(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
 					break;
 				case XOR:
-					OverlayAnalyst.xOR(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
+					isSuccessful = OverlayAnalyst.xOR(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
 					break;
 				case UPDATE:
-					OverlayAnalyst.update(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
+					isSuccessful = OverlayAnalyst.update(info.sourceDataset, info.overlayAnalystDataset, targetDataset, info.analystParameter);
 					break;
 				default:
 					break;
 			}
-			OverlayAnalyst.removeSteppedListener(this.steppedListener);
 			fireRunning(new RunningEvent(this, 100, "finished"));
-			setFinished(true);
 			this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(targetDataset);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_SameDataSet_error"));
+		} finally {
+			OverlayAnalyst.removeSteppedListener(this.steppedListener);
 		}
+		return isSuccessful;
 	}
 
 	@Override

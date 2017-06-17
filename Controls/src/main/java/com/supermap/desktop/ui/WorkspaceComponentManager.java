@@ -5,6 +5,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.property.WorkspaceTreeDataPropertyFactory;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.controls.utilities.SymbolDialogFactory;

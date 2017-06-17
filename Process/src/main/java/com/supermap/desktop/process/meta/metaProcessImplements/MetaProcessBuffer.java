@@ -46,18 +46,6 @@ public class MetaProcessBuffer extends MetaProcess {
 	private ParameterCheckBox parameterRetainAttribute;
 	private ParameterSaveDataset parameterSaveDataset;
 
-	private SteppedListener steppedListener = new SteppedListener() {
-		@Override
-		public void stepped(SteppedEvent steppedEvent) {
-			RunningEvent event = new RunningEvent(MetaProcessBuffer.this, steppedEvent.getPercent(), steppedEvent.getMessage());
-			fireRunning(event);
-			if (event.isCancel()) {
-				steppedEvent.setCancel(true);
-			}
-		}
-	};
-//    private Vector<ProcessData> processDatas;
-
 	public MetaProcessBuffer() {
 		initParameters();
 		initComponentState();
@@ -143,7 +131,9 @@ public class MetaProcessBuffer extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
+	public boolean execute() {
+		boolean isSuccessful = false;
+
 		fireRunning(new RunningEvent(this, 0, "start"));
 		// fixme 数据集来源
 		DatasetVector datasetVector = null;
@@ -175,13 +165,13 @@ public class MetaProcessBuffer extends MetaProcess {
 		parameter.setSemicircleLineSegment(semicircleLineSegment);
 
 		BufferAnalyst.addSteppedListener(this.steppedListener);
-		BufferAnalyst.createBuffer(datasetVector, result, parameter, isUnion, isAttributeRetained);
+		isSuccessful = BufferAnalyst.createBuffer(datasetVector, result, parameter, isUnion, isAttributeRetained);
 		BufferAnalyst.removeSteppedListener(this.steppedListener);
 
 		this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
 
 		fireRunning(new RunningEvent(this, 100, "finished"));
-		setFinished(true);
+		return isSuccessful;
 	}
 
 	@Override

@@ -13,6 +13,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
  */
 public class MetaProcessHighOrLowClustering extends MetaProcessAnalyzingPatterns {
 	private ParameterTextArea parameterResult;
+
 	@Override
 	public String getTitle() {
 		return ProcessProperties.getString("String_highOrLowClustering");
@@ -28,7 +29,7 @@ public class MetaProcessHighOrLowClustering extends MetaProcessAnalyzingPatterns
 	}
 
 	@Override
-	protected void doWork(DatasetVector datasetVector) {
+	protected boolean doWork(DatasetVector datasetVector) {
 		AnalyzingPatternsResult analyzingPatternsResult = AnalyzingPatterns.highOrLowClustering(datasetVector, parameterPatternsParameter.getPatternParameter());
 		String result = "";
 		result += ProcessProperties.getString("String_GeneralG") + " " + analyzingPatternsResult.getIndex() + "\n";
@@ -37,6 +38,7 @@ public class MetaProcessHighOrLowClustering extends MetaProcessAnalyzingPatterns
 		result += ProcessProperties.getString("String_ZScor") + " " + analyzingPatternsResult.getZScore() + "\n";
 		result += ProcessProperties.getString("String_PValue") + " " + analyzingPatternsResult.getPValue() + "\n";
 		parameterResult.setSelectedItem(result);
+		return analyzingPatternsResult != null;
 	}
 
 	@Override

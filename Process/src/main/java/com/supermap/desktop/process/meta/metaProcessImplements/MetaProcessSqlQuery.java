@@ -104,44 +104,52 @@ public class MetaProcessSqlQuery extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
-		fireRunning(new RunningEvent(this, 0, "start"));
-		DatasetVector currentDatasetVector = null;
-		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof DatasetVector) {
-			currentDatasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
-		} else {
-			currentDatasetVector = (DatasetVector) dataset.getSelectedItem();
-		}
+	public boolean execute() {
+		boolean isSuccessful = false;
 
-		if (null != currentDatasetVector) {
-			// 构建查询语句
-			QueryParameter queryParameter = new QueryParameter();
-			queryParameter.setCursorType(CursorType.DYNAMIC);
-			queryParameter.setHasGeometry(true);
-
-			// 查询字段
-			String queryFields = (String) parameterResultFields.getSelectedItem();
-			String[] queryFieldNames = getQueryFieldNames(queryFields);
-			queryParameter.setResultFields(queryFieldNames);
-			// 查询条件
-			queryParameter.setAttributeFilter((String) parameterAttributeFilter.getSelectedItem());
-			preProcessSQLQuery(queryParameter);
-			queryParameter.setSpatialQueryObject(currentDatasetVector);
-			Recordset resultRecord = currentDatasetVector.query(queryParameter);
-			if (resultRecord != null && resultRecord.getRecordCount() > 0) {
-				if (StringUtilities.isNullOrEmpty(queryFields)) {
-					resultRecord.dispose();
-					resultRecord = null;
-				}
-
-				fireRunning(new RunningEvent(this, 100, "finished"));
-				setFinished(true);
-				// 保存查询结果
-				DatasetVector datasetVector = saveQueryResult(resultRecord);
-				this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(datasetVector);
+		try {
+			fireRunning(new RunningEvent(this, 0, "start"));
+			DatasetVector currentDatasetVector = null;
+			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof DatasetVector) {
+				currentDatasetVector = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
+			} else {
+				currentDatasetVector = (DatasetVector) dataset.getSelectedItem();
 			}
-		}
 
+			if (null != currentDatasetVector) {
+				// 构建查询语句
+				QueryParameter queryParameter = new QueryParameter();
+				queryParameter.setCursorType(CursorType.DYNAMIC);
+				queryParameter.setHasGeometry(true);
+
+				// 查询字段
+				String queryFields = (String) parameterResultFields.getSelectedItem();
+				String[] queryFieldNames = getQueryFieldNames(queryFields);
+				queryParameter.setResultFields(queryFieldNames);
+				// 查询条件
+				queryParameter.setAttributeFilter((String) parameterAttributeFilter.getSelectedItem());
+				preProcessSQLQuery(queryParameter);
+				queryParameter.setSpatialQueryObject(currentDatasetVector);
+				Recordset resultRecord = currentDatasetVector.query(queryParameter);
+				if (resultRecord != null && resultRecord.getRecordCount() > 0) {
+					if (StringUtilities.isNullOrEmpty(queryFields)) {
+						resultRecord.dispose();
+						resultRecord = null;
+					}
+
+					fireRunning(new RunningEvent(this, 100, "finished"));
+					// 保存查询结果
+					DatasetVector datasetVector = saveQueryResult(resultRecord);
+					isSuccessful = true;
+					this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(datasetVector);
+				}
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+
+		}
+		return isSuccessful;
 	}
 
 	@Override

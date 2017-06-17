@@ -77,8 +77,8 @@ public class MetaProcessHydrologicalAnalysis extends MetaProcessGroup {
 	}
 
 	@Override
-	public void run() {
-
+	public boolean execute() {
+		return true;
 	}
 
 	@Override
