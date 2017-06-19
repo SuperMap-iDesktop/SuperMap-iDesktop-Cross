@@ -125,7 +125,7 @@ public class MetaProcessKernelDensity extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
+	public boolean execute() {
 		String username = (String) parameterTextFieldUserName.getSelectedItem();
 		String password = (String) parameterTextFieldPassword.getSelectedItem();
 		IServerService service = new IServerServiceImpl();
@@ -161,9 +161,9 @@ public class MetaProcessKernelDensity extends MetaProcess {
 //            outPuts.add(0, processData);
 			fireRunning(new RunningEvent(this, 100, "finished"));
 			parameters.getOutputs().getData("KernelDensityResult").setValue("");// // TODO: 2017/5/26
-			setFinished(true);
 			CursorUtilities.setDefaultCursor();
 		}
+		return true;
 	}
 
 	@Override

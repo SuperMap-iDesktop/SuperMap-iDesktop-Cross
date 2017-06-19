@@ -80,8 +80,10 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 
 
 	@Override
-	public void run() {
+	public boolean execute() {
+		boolean isSuccessful = false;
 		DatasetVector datasetVector;
+
 		if (parameters.getInputs().getData(INPUT_SOURCE_DATASET) != null &&
 				parameters.getInputs().getData(INPUT_SOURCE_DATASET).getValue() instanceof DatasetVector) {
 			datasetVector = (DatasetVector) parameters.getInputs().getData(INPUT_SOURCE_DATASET).getValue();
@@ -89,12 +91,13 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 			datasetVector = (DatasetVector) dataset.getSelectedItem();
 		}
 		try {
-			doWork(datasetVector);
+			isSuccessful = doWork(datasetVector);
 		} catch (Exception e) {
 			e.printStackTrace();
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 		}
+		return isSuccessful;
 	}
 
-	protected abstract void doWork(DatasetVector datasetVector);
+	protected abstract boolean doWork(DatasetVector datasetVector);
 }

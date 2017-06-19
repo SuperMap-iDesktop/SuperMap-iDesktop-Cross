@@ -164,7 +164,9 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 
 
 	@Override
-	public void run() {
+	public boolean execute() {
+		boolean isSuccessful = false;
+
 		DatasetVector datasetVector;
 		Object value = parameters.getInputs().getData(INPUT_SOURCE_DATASET).getValue();
 		if (value != null && value instanceof DatasetVector) {
@@ -204,11 +206,13 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 			SpatialRelModeling.addSteppedListener(steppedListener);
 			GWRAnalystResult gwrAnalystResult = SpatialRelModeling.geographicWeightedRegression(datasetVector, parameterSaveDataset.getResultDatasource(),
 					parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()), gwrParameter);
+			isSuccessful = gwrAnalystResult != null;
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {
 			SpatialRelModeling.removeSteppedListener(steppedListener);
 		}
+		return isSuccessful;
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import com.supermap.data.Datasource;
 import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.enums.WindowType;

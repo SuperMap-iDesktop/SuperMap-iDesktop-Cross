@@ -9,6 +9,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterStatisticsField
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
+import com.supermap.desktop.ui.UICommonToolkit;
 
 import java.awt.*;
 import java.beans.PropertyChangeEvent;

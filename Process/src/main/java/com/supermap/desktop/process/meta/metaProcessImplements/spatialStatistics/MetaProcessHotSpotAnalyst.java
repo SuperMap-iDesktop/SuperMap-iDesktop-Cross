@@ -43,15 +43,19 @@ public class MetaProcessHotSpotAnalyst extends MetaProcessAnalyzingPatterns {
 	}
 
 	@Override
-	protected void doWork(DatasetVector datasetVector) {
+	protected boolean doWork(DatasetVector datasetVector) {
+		boolean isSuccessful = false;
+
 		try {
 			ClusteringDistributions.addSteppedListener(steppedListener);
 			DatasetVector result = ClusteringDistributions.hotSpotAnalyst(datasetVector, parameterSaveDataset.getResultDatasource(), parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()), parameterPatternsParameter.getPatternParameter());
 			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
+			isSuccessful = result != null;
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {
 			ClusteringDistributions.removeSteppedListener(steppedListener);
 		}
+		return isSuccessful;
 	}
 }

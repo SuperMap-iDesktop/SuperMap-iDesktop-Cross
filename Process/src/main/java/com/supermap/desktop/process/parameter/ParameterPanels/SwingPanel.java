@@ -19,13 +19,17 @@ public class SwingPanel extends DefaultParameterPanel {
 		parameter.addPanelPropertyChangedListener(new PanelPropertyChangedListener() {
 			@Override
 			public void propertyChanged(PropertyChangeEvent propertyChangeEvent) {
-				if (propertyChangeEvent.getPropertyName().equals(PanelPropertyChangedListener.ENABLE)) {
-					UICommonToolkit.setComponentEnabled(panel, (Boolean) propertyChangeEvent.getNewValue());
-				}
+				panelPropertyChanged(propertyChangeEvent);
 			}
+
+
 		});
 	}
-
+	protected void panelPropertyChanged(PropertyChangeEvent propertyChangeEvent) {
+		if (propertyChangeEvent.getPropertyName().equals(PanelPropertyChangedListener.ENABLE)) {
+			UICommonToolkit.setComponentEnabled(panel, (Boolean) propertyChangeEvent.getNewValue());
+		}
+	}
 	@Override
 	public Object getPanel() {
 		if (isFirstGetPanel) {

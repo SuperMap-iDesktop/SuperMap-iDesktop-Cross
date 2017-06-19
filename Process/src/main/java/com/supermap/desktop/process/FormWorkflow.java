@@ -66,13 +66,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	private Workflow workflow;
+
 	private TasksManager tasksManager;
 	private GraphCanvas canvas;
 	private boolean isNeedSave = true;
 	private boolean isAutoAddOutPut = true;
 	private transient DropTarget dropTargeted;
-
-
 	public FormWorkflow() {
 		this(ControlsProperties.getString("String_WorkFlows"));
 	}
@@ -87,6 +86,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		this.canvas = new GraphCanvas();
 		initializeComponents();
 	}
+
 
 	public FormWorkflow(IWorkflow workflow) {
 		super(workflow.getName(), null, null);
@@ -136,6 +136,10 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 				isAutoAddOutPut = true;
 			}
 		}
+	}
+
+	public TasksManager getTasksManager() {
+		return tasksManager;
 	}
 
 	private void initializeComponents() {
@@ -252,21 +256,6 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			}
 		}
 		return iGraphs;
-	}
-
-
-	public static void main(String[] args) {
-		final JFrame frame = new JFrame();
-		frame.setSize(1000, 650);
-		frame.getContentPane().setLayout(new BorderLayout());
-		frame.getContentPane().add(new FormWorkflow(), BorderLayout.CENTER);
-
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				frame.setVisible(true);
-			}
-		});
 	}
 
 	//region ignore

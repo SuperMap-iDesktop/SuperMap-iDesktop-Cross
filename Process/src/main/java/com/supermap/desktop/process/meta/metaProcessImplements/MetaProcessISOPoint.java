@@ -4,10 +4,7 @@ import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
 import com.supermap.analyst.spatialanalyst.TerrainInterpolateType;
-import com.supermap.data.DatasetType;
-import com.supermap.data.DatasetVector;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
@@ -142,7 +139,9 @@ public class MetaProcessISOPoint extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
+	public boolean execute() {
+		boolean isSuccessful = false;
+
 		try {
 			SurfaceExtractParameter surfaceExtractParameter = new SurfaceExtractParameter();
 			surfaceExtractParameter.setDatumValue(Double.valueOf(datumValue.getSelectedItem().toString()));
@@ -158,14 +157,16 @@ public class MetaProcessISOPoint extends MetaProcess {
 			} else {
 				src = (DatasetVector) sourceDataset.getSelectedItem();
 			}
-			SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, ((ParameterDataNode) fields.getSelectedItem()).getDescribe(), ((TerrainInterpolateType) ((ParameterDataNode) terrainInterpolateType.getSelectedItem()).getData()), (Double) resolution.getSelectedItem(), null);
-			SurfaceAnalyst.removeSteppedListener(this.stepListener);
+			GeoLine[] lines = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, ((ParameterDataNode) fields.getSelectedItem()).getDescribe(), ((TerrainInterpolateType) ((ParameterDataNode) terrainInterpolateType.getSelectedItem()).getData()), (Double) resolution.getSelectedItem(), null);
+			isSuccessful = (lines != null && lines.length > 0);
 //		this.outputs.getData(OUTPUT_DATA).setValue();
 			fireRunning(new RunningEvent(MetaProcessISOPoint.this, 100, "finished"));
-			setFinished(true);
-		}catch (Exception e){
+		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+		} finally {
+			SurfaceAnalyst.removeSteppedListener(this.stepListener);
 		}
+		return isSuccessful;
 	}
 
 	@Override

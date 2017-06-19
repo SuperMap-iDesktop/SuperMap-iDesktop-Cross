@@ -82,7 +82,7 @@ public class Inputs {
 		ArrayList<InputData> result = new ArrayList<>();
 		for (String name : this.datas.keySet()) {
 			InputData data = this.datas.get(name);
-			if (data.getType().intersects(type)) {
+			if (data.getType().contains(type)) {
 				result.add(data);
 			}
 		}

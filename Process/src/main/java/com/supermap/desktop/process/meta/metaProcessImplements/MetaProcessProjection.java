@@ -6,6 +6,7 @@ import com.supermap.data.GeoCoordSysType;
 import com.supermap.data.GeoSpatialRefType;
 import com.supermap.data.PrjCoordSys;
 import com.supermap.data.PrjCoordSysType;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
@@ -64,22 +65,31 @@ public class MetaProcessProjection extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
-		Dataset src = null;
-		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof Dataset) {
-			src = (Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
-		} else {
-			src = (Dataset) this.dataset.getSelectedItem();
+	public boolean execute() {
+		boolean isSuccessful = false;
+
+		try {
+			Dataset src = null;
+			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof Dataset) {
+				src = (Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
+			} else {
+				src = (Dataset) this.dataset.getSelectedItem();
+			}
+			fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
+			GeoCoordSysType geoCoordSysType = (GeoCoordSysType) parameterComboBox.getSelectedData();
+			GeoCoordSys geoCoordSys = new GeoCoordSys(geoCoordSysType, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
+			PrjCoordSys prjCoordSys = new PrjCoordSys(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE);
+			prjCoordSys.setGeoCoordSys(geoCoordSys);
+			src.setPrjCoordSys(prjCoordSys);
+			fireRunning(new RunningEvent(this, 100, "set geoCoorSys finished"));
+			isSuccessful = true;
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+
 		}
-		fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
-		GeoCoordSysType geoCoordSysType = (GeoCoordSysType) parameterComboBox.getSelectedData();
-		GeoCoordSys geoCoordSys = new GeoCoordSys(geoCoordSysType, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
-		PrjCoordSys prjCoordSys = new PrjCoordSys(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE);
-		prjCoordSys.setGeoCoordSys(geoCoordSys);
-		src.setPrjCoordSys(prjCoordSys);
-		fireRunning(new RunningEvent(this, 100, "set geoCoorSys finished"));
-		setFinished(true);
-		this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
+		return isSuccessful;
 	}
 
 	@Override

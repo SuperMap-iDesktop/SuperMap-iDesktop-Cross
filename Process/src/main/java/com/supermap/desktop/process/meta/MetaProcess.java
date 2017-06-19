@@ -27,6 +27,7 @@ public abstract class MetaProcess extends AbstractProcess {
 
 			if (event.isCancel()) {
 				steppedEvent.setCancel(true);
+				cancel();
 			}
 		}
 	};
@@ -46,10 +47,6 @@ public abstract class MetaProcess extends AbstractProcess {
 	@Override
 	public IParameterPanel getComponent() {
 		return parameters.getPanel();
-	}
-
-	public void setFinished(boolean finished) {
-		this.finished = finished;
 	}
 
 	public boolean isFinished() {

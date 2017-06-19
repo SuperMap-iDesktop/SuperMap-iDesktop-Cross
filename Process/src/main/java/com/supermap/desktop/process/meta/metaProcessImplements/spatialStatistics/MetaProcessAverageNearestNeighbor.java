@@ -79,8 +79,10 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
+	public boolean execute() {
 		DatasetVector datasetVector;
+		boolean isSuccessful = false;
+
 		Object value = parameters.getInputs().getData(INPUT_SOURCE_DATASET).getValue();
 		if (value != null && value instanceof DatasetVector) {
 			datasetVector = (DatasetVector) value;
@@ -90,11 +92,14 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 		try {
 			AnalyzingPatterns.addSteppedListener(steppedListener);
 			AnalyzingPatternsResult analyzingPatternsResult = AnalyzingPatterns.averageNearestNeighbor(datasetVector, Double.valueOf((String) parameterTextFieldArea.getSelectedItem()), (DistanceMethod) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData());
+			isSuccessful = analyzingPatternsResult != null;
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {
 			AnalyzingPatterns.removeSteppedListener(steppedListener);
 		}
+
+		return isSuccessful;
 	}
 
 	@Override

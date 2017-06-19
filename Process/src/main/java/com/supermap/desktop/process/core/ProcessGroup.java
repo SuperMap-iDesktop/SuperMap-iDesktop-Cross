@@ -1,6 +1,8 @@
 package com.supermap.desktop.process.core;
 
+import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.RunningListener;
+import com.supermap.desktop.process.events.StatusChangeListener;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
@@ -116,6 +118,11 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 		return name;
 	}
 
+	@Override
+	public RunningStatus getStatus() {
+		return null;
+	}
+
 	//region 无用方法
 	@Override
 	public String getKey() {
@@ -143,12 +150,37 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 	}
 
 	@Override
+	public void cancel() {
+
+	}
+
+	@Override
+	public boolean isCancelled() {
+		return false;
+	}
+
+	@Override
+	public void reset() {
+
+	}
+
+	@Override
 	public void addRunningListener(RunningListener listener) {
 
 	}
 
 	@Override
 	public void removeRunningListener(RunningListener listener) {
+
+	}
+
+	@Override
+	public void addStatusChangeListener(StatusChangeListener listener) {
+
+	}
+
+	@Override
+	public void removeStatusChangeListener(StatusChangeListener listener) {
 
 	}
 

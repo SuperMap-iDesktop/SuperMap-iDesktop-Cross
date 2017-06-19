@@ -9,13 +9,13 @@ import com.supermap.desktop.progress.Interface.IUpdateProgress;
  */
 public interface IProcessTask extends IUpdateProgress {
 
-    /**
-     * get process
-     *
-     * @return
-     */
-    IProcess getProcess();
+	/**
+	 * get process
+	 *
+	 * @return
+	 */
+	IProcess getProcess();
 
-    void doWork();
+	void doWork();
 
 }
