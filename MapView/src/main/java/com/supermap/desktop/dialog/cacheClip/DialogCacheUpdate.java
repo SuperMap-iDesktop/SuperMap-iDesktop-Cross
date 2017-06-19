@@ -1,19 +1,21 @@
 package com.supermap.desktop.dialog.cacheClip;
 
 import com.supermap.data.processing.MapCacheBuilder;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.JFileChooserControl;
 import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * Created by xie on 2017/6/12.
@@ -27,14 +29,16 @@ public class DialogCacheUpdate extends SmDialog {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String selectSciPath = sciFileChooserControl.getPath();
-			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
-			mapCacheBuilder.fromConfigFile(selectSciPath);
-			if (!StringUtilities.isNullOrEmpty(mapCacheBuilder.getCacheName())) {
+			File sciFile = new File(selectSciPath);
+			if (sciFile.exists()) {
 				dispose();
+				MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
+				mapCacheBuilder.fromConfigFile(selectSciPath);
+
 				DialogMapCacheClipBuilder builder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.UpdateProcessClip, mapCacheBuilder);
 				builder.firstStepPane.textFieldCacheName.setText(mapCacheBuilder.getCacheName());
 				builder.firstStepPane.labelConfigValue.setText(mapCacheBuilder.getCacheName());
-				builder.firstStepPane.fileChooserControlFileCache.setPath(selectSciPath.substring(0, selectSciPath.lastIndexOf(mapCacheBuilder.getCacheName())));
+				builder.firstStepPane.fileChooserControlFileCache.setPath(sciFile.getParent());
 				builder.firstStepPane.resetComponentsInfo();
 				builder.showDialog();
 			}
