@@ -53,7 +53,7 @@ public class ProcessManager {
 			for (int i = threadList.size() - 1; i >= 0; i--) {
 				threadList.get(i).process.destroy();
 			}
-			Thread.sleep(10 * 1000);
+			Thread.sleep(2 * 1000);
 			threadList.clear();
 			File taskFiles = new File(sciPath);
 			String doingPath = null;
@@ -84,8 +84,6 @@ public class ProcessManager {
 			}
 			BuildCache buildCache = new BuildCache();
 			buildCache.startProcess(newProcessCount, params);
-			SmOptionPane optionPane = new SmOptionPane();
-			optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessStoped"), String.valueOf(newProcessCount)));
 		} catch (Throwable throwable) {
 			throwable.printStackTrace();
 		}

@@ -34,7 +34,7 @@ class SubprocessThread extends Thread {
 			if (null != this.arguments && null != this.type) {
 				newThread.setArguments(arguments);
 				newThread.setType(type);
-				return newThread;
+				return new SubprocessThread(arguments,type);
 			}
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
