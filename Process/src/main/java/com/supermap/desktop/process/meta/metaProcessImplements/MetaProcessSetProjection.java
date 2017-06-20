@@ -183,7 +183,7 @@ public class MetaProcessSetProjection extends MetaProcess {
 
 
 	@Override
-	public void run() {
+	public boolean execute() {
 		Dataset src = null;
 		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof Dataset) {
 			src = (Dataset) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
@@ -196,5 +196,6 @@ public class MetaProcessSetProjection extends MetaProcess {
 			String prjCoorSysInfo = PrjCoordSysUtilities.getDescription(prj);
 			textAreaCoordInfo.setSelectedItem(prjCoorSysInfo);
 		}
+		return true;
 	}
 }

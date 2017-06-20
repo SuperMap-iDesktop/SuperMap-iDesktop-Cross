@@ -50,6 +50,7 @@ import com.supermap.data.conversion.ImportSettingVCT;
 import com.supermap.data.conversion.ImportSettingWOR;
 import com.supermap.data.conversion.ImportSteppedEvent;
 import com.supermap.data.conversion.ImportSteppedListener;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.IParameterCreator;
 import com.supermap.desktop.process.dataconversion.ImportParameterCreator;
@@ -315,31 +316,39 @@ public class MetaProcessImport extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
-		fireRunning(new RunningEvent(this, 0, "start"));
+	public boolean execute() {
+		boolean isSuccessful = false;
 		DataImport dataImport = ImportSettingSetter.setParameter(importSetting, sourceImportParameters, resultImportParameters, paramParameters);
-		dataImport.addImportSteppedListener(this.importStepListener);
-		ImportResult result = dataImport.run();
-		ImportSetting[] succeedSettings = result.getSucceedSettings();
-		if (succeedSettings.length > 0) {
-			final Datasource datasource = succeedSettings[0].getTargetDatasource();
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					if (null != datasource) {
-						UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
+
+		try {
+			fireRunning(new RunningEvent(this, 0, "start"));
+			dataImport.addImportSteppedListener(this.importStepListener);
+			ImportResult result = dataImport.run();
+			ImportSetting[] succeedSettings = result.getSucceedSettings();
+			if (succeedSettings.length > 0) {
+				final Datasource datasource = succeedSettings[0].getTargetDatasource();
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						if (null != datasource) {
+							UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
+						}
 					}
-				}
-			});
-			Dataset dataset = datasource.getDatasets().get(succeedSettings[0].getTargetDatasetName());
-			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
-			fireRunning(new RunningEvent(this, 100, "finished"));
-			setFinished(true);
-		} else {
-			fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
-			setFinished(true);
+				});
+				Dataset dataset = datasource.getDatasets().get(succeedSettings[0].getTargetDatasetName());
+				this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(dataset);
+				isSuccessful = dataset != null;
+				fireRunning(new RunningEvent(this, 100, "finished"));
+			} else {
+				fireRunning(new RunningEvent(this, 100, ProcessProperties.getString("String_ImportFailed")));
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			dataImport.removeImportSteppedListener(this.importStepListener);
 		}
-		dataImport.removeImportSteppedListener(this.importStepListener);
+
+		return isSuccessful;
 	}
 
 	@Override

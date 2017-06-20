@@ -24,7 +24,7 @@ public class TaskBuilder {
 	 * @param args
 	 * @throws IOException
 	 */
-	public static boolean buildTask(String[] args) throws Exception {
+	public static boolean main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		if (args.length < 2) {
 			System.out.println("input style: sciFile targetFolder listCount[option]");

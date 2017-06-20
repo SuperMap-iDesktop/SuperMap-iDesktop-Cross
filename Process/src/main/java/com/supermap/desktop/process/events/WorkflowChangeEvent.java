@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.events;
 
+import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.Workflow;
 
 import java.util.EventObject;
@@ -16,7 +17,7 @@ public class WorkflowChangeEvent extends EventObject {
 
 	private int type = NOTHING;
 	private Workflow workflow;
-	private Process process;
+	private IProcess process;
 
 	/**
 	 * Constructs a prototypical Event.
@@ -24,7 +25,7 @@ public class WorkflowChangeEvent extends EventObject {
 	 * @param source The object on which the Event initially occurred.
 	 * @throws IllegalArgumentException if source is null.
 	 */
-	public WorkflowChangeEvent(Workflow source, int type, Process data) {
+	public WorkflowChangeEvent(Workflow source, int type, IProcess data) {
 		super(source);
 		this.workflow = source;
 		this.type = type;
@@ -35,7 +36,7 @@ public class WorkflowChangeEvent extends EventObject {
 		return type;
 	}
 
-	public Process getProcess() {
+	public IProcess getProcess() {
 		return process;
 	}
 

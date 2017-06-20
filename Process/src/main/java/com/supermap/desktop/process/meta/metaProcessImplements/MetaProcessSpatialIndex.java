@@ -2,6 +2,7 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 
 import com.supermap.data.DatasetVector;
 import com.supermap.data.SpatialIndexType;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -60,19 +61,27 @@ public class MetaProcessSpatialIndex extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
-		DatasetVector src = null;
-		if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof DatasetVector) {
-			src = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
-		} else {
-			src = (DatasetVector) this.dataset.getSelectedItem();
+	public boolean execute() {
+		boolean isSuccessful = false;
+
+		try {
+			DatasetVector src = null;
+			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() instanceof DatasetVector) {
+				src = (DatasetVector) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
+			} else {
+				src = (DatasetVector) this.dataset.getSelectedItem();
+			}
+			SpatialIndexType spatialIndexType = (SpatialIndexType) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData();
+			fireRunning(new RunningEvent(this, 0, "start build spatial index"));
+			isSuccessful = src.buildSpatialIndex(spatialIndexType);
+			fireRunning(new RunningEvent(this, 100, "build spatial index finished"));
+			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+
 		}
-		SpatialIndexType spatialIndexType = (SpatialIndexType) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData();
-		fireRunning(new RunningEvent(this, 0, "start build spatial index"));
-		src.buildSpatialIndex(spatialIndexType);
-		fireRunning(new RunningEvent(this, 100, "build spatial index finished"));
-		setFinished(true);
-		this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(src);
+		return isSuccessful;
 	}
 
 	@Override

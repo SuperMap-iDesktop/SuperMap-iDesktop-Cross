@@ -2,6 +2,7 @@ package com.supermap.desktop;
 
 import com.supermap.data.*;
 import com.supermap.desktop.Interface.*;
+import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.event.*;
 import com.supermap.desktop.implement.Output;
 import com.supermap.desktop.utilities.StringUtilities;

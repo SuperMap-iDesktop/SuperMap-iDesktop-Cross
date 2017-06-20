@@ -35,7 +35,7 @@ public class MetaProcessAutoCorrelation extends MetaProcessAnalyzingPatterns {
 	}
 
 
-	protected void doWork(DatasetVector datasetVector) {
+	protected boolean doWork(DatasetVector datasetVector) {
 		AnalyzingPatternsResult analyzingPatternsResult = AnalyzingPatterns.autoCorrelation(datasetVector, parameterPatternsParameter.getPatternParameter());
 		String result = "";
 		result += ProcessProperties.getString("String_Morans") + " " + analyzingPatternsResult.getIndex() + "\n";
@@ -44,6 +44,7 @@ public class MetaProcessAutoCorrelation extends MetaProcessAnalyzingPatterns {
 		result += ProcessProperties.getString("String_ZScor") + " " + analyzingPatternsResult.getZScore() + "\n";
 		result += ProcessProperties.getString("String_PValue") + " " + analyzingPatternsResult.getPValue() + "\n";
 		parameterResult.setSelectedItem(result);
+		return analyzingPatternsResult != null;
 	}
 
 	@Override

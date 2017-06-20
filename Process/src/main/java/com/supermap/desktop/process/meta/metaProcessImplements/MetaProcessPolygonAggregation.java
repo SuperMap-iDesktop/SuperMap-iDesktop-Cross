@@ -20,7 +20,8 @@ public class MetaProcessPolygonAggregation extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
+	public boolean execute() {
+		return true;
 	}
 
 	@Override

@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by xie on 2017/5/3.
@@ -129,7 +130,7 @@ public class DialogCacheBuilder extends SmDialog {
 			}
 			try {
 				String newProcessStr = textFieldProcessCount.getText();
-				if (StringUtilities.isInteger(newProcessStr)) {
+				if (StringUtilities.isInteger(newProcessStr) || newProcessStr.equals("0")) {
 					int newProcessCount = Integer.valueOf(newProcessStr);
 					String logFolder = ".\\temp_log\\";
 					if (CacheUtilities.isLinux()) {
@@ -454,21 +455,27 @@ public class DialogCacheBuilder extends SmDialog {
 			public void run() {
 				try {
 					int buildSciLength = -1;
+					int currentTotalCount = 0;
 					while (fianlTotalSciLength != buildSciLength) {
 						String buildPath = CacheUtilities.replacePath(finalParentPath, "build");
 						File buildFile = new File(buildPath);
 						//Ensure that component,count array have sorted as we want;
-						if (null != buildFile && buildFile.exists()) {
-							buildSciLength = buildFile.list(getFilter()).length;
+						if (buildFile.exists()) {
+							String failedPath = CacheUtilities.replacePath(finalParentPath, "failed");
+							File failedFile = new File(failedPath);
 							if (null != captions) {
 								for (int i = 0; i < captions.size(); i++) {
 									int currentCount = buildFile.list(getFilter(captions.get(i))).length;
+									if (failedFile.exists()) {
+										currentCount += failedFile.list(getFilter(captions.get(i))).length;
+									}
+									currentTotalCount += currentCount;
 									final int value = (int) (((currentCount + 0.0) / captionCount.get(i)) * 100);
 									progressBars.get(i).setValue(value);
 								}
 							}
-							//Sleep 10 seconds or not
-							Thread.sleep(10000);
+							//Sleep 1 hour,then refresh progressBars
+							TimeUnit.HOURS.sleep(1);
 						}
 					}
 				} catch (Exception e) {
@@ -495,39 +502,39 @@ public class DialogCacheBuilder extends SmDialog {
 	}
 
 	private void refresh(String cachePath, String parentPath, int totalSciLength) {
-		try {
-			startTime = System.currentTimeMillis();
-			String buildPath = CacheUtilities.replacePath(parentPath, "build");
-			String failedPath = CacheUtilities.replacePath(parentPath, "failed");
-			int buildSciLength = 0;
-			File buildFile = new File(buildPath);
-			if (buildFile.exists() && null != buildFile.list(getFilter())) {
+		startTime = System.currentTimeMillis();
+		String buildPath = CacheUtilities.replacePath(parentPath, "build");
+		String failedPath = CacheUtilities.replacePath(parentPath, "failed");
+		int buildSciLength = 0;
+		File buildFile = new File(buildPath);
+		if (buildFile.exists() && null != buildFile.list(getFilter())) {
+			buildSciLength = buildFile.list(getFilter()).length;
+		}
+		File failedFile = new File(failedPath);
+		if (failedFile.exists() && null != failedFile.list(getFilter())) {
+			buildSciLength += failedFile.list(getFilter()).length;
+		}
+		totalSciLength = totalSciLength + buildSciLength;
+		while (buildSciLength != totalSciLength) {
+			//Get success sci length
+			if (buildFile.exists()) {
 				buildSciLength = buildFile.list(getFilter()).length;
 			}
-			File failedFile = new File(failedPath);
-			if (failedFile.exists() && null != failedFile.list(getFilter())) {
+			if (failedFile.exists()) {
 				buildSciLength += failedFile.list(getFilter()).length;
 			}
-			totalSciLength = totalSciLength + buildSciLength;
-			while (buildSciLength != totalSciLength) {
-				//Get success sci length
-				if (buildFile.exists()) {
-					buildSciLength = buildFile.list(getFilter()).length;
-				}
-				if (failedFile.exists()) {
-					buildSciLength += failedFile.list(getFilter()).length;
-				}
-				final int value = (int) (((buildSciLength + 0.0) / totalSciLength) * 100);
-				progressBarTotal.setValue(value);
-				//Sleep 1 minute
-				if (100 != value) {
+			final int value = (int) (((buildSciLength + 0.0) / totalSciLength) * 100);
+			progressBarTotal.setValue(value);
+			//Sleep 1 minute
+			if (100 != value) {
+				try {
 					Thread.sleep(60000);
+				} catch (InterruptedException e) {
+					//Do nothing
 				}
 			}
-			getResult(cachePath, startTime);
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
 		}
+		getResult(cachePath, startTime);
 	}
 
 
@@ -584,7 +591,7 @@ public class DialogCacheBuilder extends SmDialog {
 		this.repaint();
 	}
 
-	public void getResult(String cachePath, long startTime) {
+	public synchronized void getResult(String cachePath, long startTime) {
 		boolean result = false;
 		File resultDir = new File(cachePath);
 		String resultPath = "";

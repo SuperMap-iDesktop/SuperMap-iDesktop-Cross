@@ -20,7 +20,9 @@ public class MetaProcessMeanCenter extends MetaProcessSpatialMeasure {
 	}
 
 	@Override
-	protected void doWork(DatasetVector datasetVector) {
+	protected boolean doWork(DatasetVector datasetVector) {
+		boolean isSuccessful = false;
+
 		try {
 			SpatialMeasure.addSteppedListener(steppedListener);
 			// 调用平均中心方法，并获取结果矢量数据集
@@ -30,11 +32,13 @@ public class MetaProcessMeanCenter extends MetaProcessSpatialMeasure {
 					parameterSaveDataset.getResultDatasource().getDatasets().getAvailableDatasetName(parameterSaveDataset.getDatasetName()),
 					measureParameter.getMeasureParameter());
 			this.getParameters().getOutputs().getData(OUTPUT_DATASET).setValue(result);
+			isSuccessful = result != null;
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {
 			SpatialMeasure.removeSteppedListener(steppedListener);
 		}
+		return isSuccessful;
 	}
 
 	@Override

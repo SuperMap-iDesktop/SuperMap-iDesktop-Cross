@@ -137,7 +137,9 @@ public class MetaProcessISOLine extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
+	public boolean execute() {
+		boolean isSuccessful = false;
+
 		try {
 			SurfaceExtractParameter surfaceExtractParameter = new SurfaceExtractParameter();
 			surfaceExtractParameter.setDatumValue(Double.valueOf(datumValue.getSelectedItem().toString()));
@@ -154,13 +156,15 @@ public class MetaProcessISOLine extends MetaProcess {
 				src = (DatasetGrid) dataset.getSelectedItem();
 			}
 			DatasetVector result = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, saveDataset.getResultDatasource(), saveDataset.getDatasetName());
-			SurfaceAnalyst.removeSteppedListener(this.stepListener);
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
+			isSuccessful = result != null;
 			fireRunning(new RunningEvent(MetaProcessISOLine.this, 100, "finished"));
-			setFinished(true);
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+		} finally {
+			SurfaceAnalyst.removeSteppedListener(this.stepListener);
 		}
+		return isSuccessful;
 	}
 
 	@Override

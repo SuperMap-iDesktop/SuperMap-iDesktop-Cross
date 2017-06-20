@@ -116,7 +116,9 @@ public class MetaProcessISORegion extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
+	public boolean execute() {
+		boolean isSuccessful = false;
+
 		try {
 			SurfaceExtractParameter surfaceExtractParameter = new SurfaceExtractParameter();
 			surfaceExtractParameter.setDatumValue(Double.valueOf(datumValue.getSelectedItem().toString()));
@@ -133,13 +135,15 @@ public class MetaProcessISORegion extends MetaProcess {
 
 			SurfaceAnalyst.addSteppedListener(this.stepListener);
 			DatasetVector result = SurfaceAnalyst.extractIsoregion(surfaceExtractParameter, src, targetDataset.getResultDatasource(), targetDataset.getDatasetName(), null);
-			SurfaceAnalyst.removeSteppedListener(this.stepListener);
 			this.getOutputs().getData(OUTPUT_DATA).setValue(result);
+			isSuccessful = result != null;
 			fireRunning(new RunningEvent(MetaProcessISORegion.this, 100, "finished"));
-			setFinished(true);
-		}catch (Exception e){
+		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+		} finally {
+			SurfaceAnalyst.removeSteppedListener(this.stepListener);
 		}
+		return isSuccessful;
 	}
 
 	@Override

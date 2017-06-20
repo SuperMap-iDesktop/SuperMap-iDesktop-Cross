@@ -134,7 +134,7 @@ public class MetaProcessHeatMap extends MetaProcess {
 	}
 
 	@Override
-	public void run() {
+	public boolean execute() {
 //		JDialogLogin jDialogLogin = new JDialogLogin();
 //		if (jDialogLogin.showDialog() != DialogResult.OK) {
 //			return;
@@ -187,9 +187,9 @@ public class MetaProcessHeatMap extends MetaProcess {
 //            outPuts.add(0, processData);
 			fireRunning(new RunningEvent(this, 100, "finished"));
 			parameters.getOutputs().getData("HeatMapResult").setValue("");// // TODO: 2017/5/26
-			setFinished(true);
 			CursorUtilities.setDefaultCursor();
 		}
+		return true;
 	}
 
 	@Override
