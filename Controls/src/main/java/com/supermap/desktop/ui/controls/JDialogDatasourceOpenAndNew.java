@@ -180,6 +180,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		DataCell googleMapsLabel = new DataCell(ControlsProperties.getString("String_GoogleMaps"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.GOOGLEMAPS))));
 		DataCell baiduMapsLabel = new DataCell(ControlsProperties.getString("String_BaiduMap"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.BAIDUMAPS))));
 		DataCell openStreetMapsLabel = new DataCell(ControlsProperties.getString("String_OpenStreetMaps"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.OPENSTREETMAPS))));
+		DataCell bigDataStore = new DataCell("BigDataStore", new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.DATASERVER))));
 
 		listModel.addElement(ogcLabel);
 		listModel.addElement(isLabel);
@@ -187,6 +188,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		listModel.addElement(googleMapsLabel);
 		listModel.addElement(baiduMapsLabel);
 		listModel.addElement(openStreetMapsLabel);
+		listModel.addElement(bigDataStore);
 		return listModel;
 	}
 
@@ -200,6 +202,7 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 		DataCell dmDataCell = new DataCell(ControlsProperties.getString("String_DM"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.DM))));
 		DataCell kingBaseDataCell = new DataCell(ControlsProperties.getString("String_KingBase"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.KINGBASE))));
 		DataCell mySqlDataCell = new DataCell(ControlsProperties.getString("String_MySQL"), new ImageIcon(ControlsResources.getResourceURL(DatasourceImageUtilties.getBigImageIconPath(EngineType.MYSQL))));
+
 		if (SystemPropertyUtilities.isWindows()) {
 			listModel.addElement(sqlDataCell);
 			listModel.addElement(oracleDataCell);
@@ -262,7 +265,6 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 
 	private JPanel setCaseOpenWeb(int index, EngineType engineType) {
 		engineTypeTemp = engineType;
-		JPanel result;
 		if (this.panelDatasourceInfoWeb == null) {
 			this.panelDatasourceInfoWeb = new JPanelDatasourceInfoWeb();
 		}
@@ -276,22 +278,23 @@ public class JDialogDatasourceOpenAndNew extends SmDialog {
 			case 2: // SuperMapCloud
 				engineTypeTemp = EngineType.SUPERMAPCLOUD;
 				break;
-//		case 3: // GoogleMaps
-//			engineTypeTemp = EngineType.GOOGLEMAPS;
-//			break;
-			case 3: // BaiduMap
+			case 3: // GoogleMaps
+				engineTypeTemp = EngineType.GOOGLEMAPS;
+				break;
+			case 4: // BaiduMap
 				engineTypeTemp = EngineType.BAIDUMAPS;
 				break;
-			case 4: // OpenStreetMaps
+			case 5: // OpenStreetMaps
 				engineTypeTemp = EngineType.OPENSTREETMAPS;
 				break;
+			case 6:
+				engineTypeTemp = EngineType.DATASERVER;
 			default:
 				break;
 		}
 
 		this.panelDatasourceInfoWeb.setDatasourceType(engineTypeTemp);
-		result = this.panelDatasourceInfoWeb;
-		return result;
+		return panelDatasourceInfoWeb;
 	}
 
 	private EngineType getEngineType(int index) {
