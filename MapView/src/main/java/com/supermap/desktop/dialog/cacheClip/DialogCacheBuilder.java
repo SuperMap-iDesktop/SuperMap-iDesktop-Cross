@@ -112,12 +112,11 @@ public class DialogCacheBuilder extends SmDialog {
 		public void actionPerformed(ActionEvent e) {
 			String taskPath = fileChooserTaskPath.getPath();
 			if (!StringUtilities.isNullOrEmpty(taskPath)) {
-				File sciFile = new File(taskPath);
-				int value = 0;
-				if (sciFile.exists()) {
-					refreshProgress(sciFile.getParent(), totalSciLength);
+				File taskFile = new File(taskPath);
+				if (taskFile.exists()) {
+					refreshProgress(taskFile.getParent(), totalSciLength);
 				}
-				if (value == 100) {
+				if (taskFinished(taskPath)) {
 					updateThread.interrupt();
 					String cachePath = fileChooserCachePath.getPath();
 					cachePath = CacheUtilities.replacePath(cachePath);
@@ -126,6 +125,15 @@ public class DialogCacheBuilder extends SmDialog {
 			}
 		}
 	};
+
+	private boolean taskFinished(String taskPath) {
+		File taskFile = new File(taskPath);
+		int finised = taskFile.list(getFilter()).length;
+		File doingFile = new File(CacheUtilities.replacePath(taskFile.getParent(), "doing"));
+		finised += doingFile.list().length;
+		return 0 == finised;
+	}
+
 	private ActionListener applyListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -386,22 +394,6 @@ public class DialogCacheBuilder extends SmDialog {
 			String workspacePath = fileChooserWorkspacePath.getPath();
 			workspacePath = CacheUtilities.replacePath(workspacePath);
 			String mapName = textFieldMapName.getText();
-			WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(workspacePath);
-			Workspace workspace = new Workspace();
-			workspace.open(connectionInfo);
-			boolean hasMap = false;
-			for (int i = 0; i < workspace.getMaps().getCount(); i++) {
-				if (mapName.equals(workspace.getMaps().get(i))) {
-					hasMap = true;
-					break;
-				}
-			}
-			if (!hasMap) {
-				SmOptionPane optionPane = new SmOptionPane();
-				optionPane.showConfirmDialog(MapViewProperties.getString("String_MapIsNotExist"));
-				buttonCreate.setEnabled(true);
-				return;
-			}
 			sciPath = fileChooserTaskPath.getPath();
 			sciPath = CacheUtilities.replacePath(sciPath);
 			String cachePath = fileChooserCachePath.getPath();
@@ -454,13 +446,14 @@ public class DialogCacheBuilder extends SmDialog {
 			captionCount = new CopyOnWriteArrayList<>();
 			if (null != captions) {
 				for (int i = 0; i < captions.size(); i++) {
-					captionCount.add(sciFile.list(getFilter(captions.get(i))).length);
-					if (null != buildFile.list(getFilter(captions.get(i)))) {
-						captionCount.add(buildFile.list(getFilter(captions.get(i))).length);
+					int captionSciSize = getSubSciCount(sciNames, captions.get(i));
+					if (null != buildNames) {
+						captionSciSize += getSubSciCount(buildNames, captions.get(i));
 					}
-					if (null != doingFile.list(getFilter(captions.get(i)))) {
-						captionCount.add(doingFile.list(getFilter(captions.get(i))).length);
+					if (null != doingNames) {
+						captionSciSize += getSubSciCount(buildNames, captions.get(i));
 					}
+					captionCount.add(captionSciSize);
 				}
 				updateProcesses(parentStr, cachePath, totalSciLength);
 			}
@@ -469,6 +462,16 @@ public class DialogCacheBuilder extends SmDialog {
 		}
 		buildCache = new BuildCache();
 		buildCache.startProcess(Integer.valueOf(params[BuildCache.PROCESSCOUNT_INDEX]), params);
+	}
+
+	private int getSubSciCount(String[] sciNames, String s) {
+		int result = 0;
+		for (int i = 0; i < sciNames.length; i++) {
+			if (sciNames[i].contains(s)) {
+				result++;
+			}
+		}
+		return result;
 	}
 
 	private boolean validateValue(String sciPath, String workspacePath, String mapName, String cachePath, String processCount) {
@@ -489,6 +492,21 @@ public class DialogCacheBuilder extends SmDialog {
 		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) || processCount.equals("0"))) {
 			result = false;
 		}
+		WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(workspacePath);
+		Workspace workspace = new Workspace();
+		workspace.open(connectionInfo);
+		boolean hasMap = false;
+		for (int i = 0; i < workspace.getMaps().getCount(); i++) {
+			if (mapName.equals(workspace.getMaps().get(i))) {
+				hasMap = true;
+				break;
+			}
+		}
+		if (!hasMap) {
+			SmOptionPane optionPane = new SmOptionPane();
+			optionPane.showConfirmDialog(MapViewProperties.getString("String_MapIsNotExist"));
+			buttonCreate.setEnabled(true);
+		}
 		return result;
 	}
 
@@ -506,11 +524,10 @@ public class DialogCacheBuilder extends SmDialog {
 			@Override
 			public void run() {
 				try {
-					int buildSciLength = 0;
 					startTime = System.currentTimeMillis();
 					while (true) {
-						int totalValue = refreshProgress(finalParentPath, finalTotalSciLength);
-						if (totalValue == finalTotalSciLength) {
+						refreshProgress(finalParentPath, finalTotalSciLength);
+						if (taskFinished(CacheUtilities.replacePath(finalParentPath, "task"))) {
 							break;
 						}
 						//Sleep 1 hour,then refresh progressBars
@@ -518,7 +535,7 @@ public class DialogCacheBuilder extends SmDialog {
 					}
 					getResult(finalCachePath, startTime);
 				} catch (Exception e) {
-					e.printStackTrace();
+//					e.printStackTrace();
 				}
 			}
 		};
@@ -526,7 +543,7 @@ public class DialogCacheBuilder extends SmDialog {
 
 	}
 
-	private int refreshProgress(String parentPath, int fianlTotalSciLength) {
+	private void refreshProgress(String parentPath, int fianlTotalSciLength) {
 		int totalPercent = 0;
 		int currentTotalCount = 0;
 		File buildFile = new File(CacheUtilities.replacePath(parentPath, "build"));
@@ -547,13 +564,14 @@ public class DialogCacheBuilder extends SmDialog {
 				for (int i = 0; i < captions.size(); i++) {
 					int currentCount = getSingleProcess(buildSciNames, failedSciNames, captions.get(i));
 					int value = (int) (((currentCount + 0.0) / captionCount.get(i)) * 100);
-					progressBars.get(i).setValue(value);
+					if (progressBars.get(i).getValue() != 100) {
+						progressBars.get(i).setValue(value);
+					}
 				}
 			}
 			totalPercent = (int) (((currentTotalCount + 0.0) / fianlTotalSciLength) * 100);
 			progressBarTotal.setValue(totalPercent);
 		}
-		return currentTotalCount;
 	}
 
 	private int getSingleProcess(String[] builedScis, String[] failedScis, String caption) {
