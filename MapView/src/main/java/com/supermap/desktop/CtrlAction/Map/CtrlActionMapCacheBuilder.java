@@ -6,11 +6,13 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.DialogCacheBuilder;
 import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClip;
 import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClipBuilder;
 import com.supermap.desktop.implement.CtrlAction;
+import com.supermap.desktop.implement.ToolbarUIUtilties;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.utilities.MapUtilities;
@@ -34,12 +36,14 @@ public class CtrlActionMapCacheBuilder extends CtrlAction {
 //        DialogResult result = dialogMapCacheBuilder.showDialog();
 		DialogMapCacheClip dialogMapCacheClip = new DialogMapCacheClip();
 		if (dialogMapCacheClip.showDialog() == DialogResult.OK) {
-			Datasource datasource = Application.getActiveApplication().getWorkspace().getDatasources().get(0);
+			Datasource datasource = ((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].getDataset().getDatasource();
 			if (!datasource.isReadOnly() && !dialogMapCacheClip.isSingleProcess()) {
 				SmOptionPane pane = new SmOptionPane();
 				pane.showConfirmDialog(MapViewProperties.getString("String_DatasourceOpenedNotReadOnly"));
 				return;
 			}
+			datasource.getWorkspace().save();
+			ToolbarUIUtilities.updataToolbarsState();
 			Map map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
 			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 			Map newMap = new Map(Application.getActiveApplication().getWorkspace());

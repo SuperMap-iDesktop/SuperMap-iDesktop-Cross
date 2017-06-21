@@ -1,10 +1,7 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
-import com.supermap.desktop.dialog.SmOptionPane;
-import com.supermap.desktop.mapview.MapViewProperties;
-
 import java.io.*;
-import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -43,6 +40,22 @@ public class ProcessManager {
 		}
 	}
 
+	public void removeAllProcess(String sciPath) {
+		dispose();
+		String doingPath = null;
+		File taskFiles = new File(sciPath);
+		if (taskFiles.exists()) {
+			doingPath = CacheUtilities.replacePath(taskFiles.getParentFile().getAbsolutePath(), "doing");
+		}
+		File doingDirectory = new File(doingPath);
+		if (doingDirectory.exists()) {
+			File[] doingScis = doingDirectory.listFiles();
+			for (int i = 0; i < doingScis.length; i++) {
+				doingScis[i].renameTo(new File(taskFiles, doingScis[i].getName()));
+			}
+		}
+	}
+
 	/**
 	 * @param params
 	 * @param newProcessCount
@@ -53,7 +66,7 @@ public class ProcessManager {
 			for (int i = threadList.size() - 1; i >= 0; i--) {
 				threadList.get(i).process.destroy();
 			}
-			Thread.sleep(10 * 1000);
+			Thread.sleep(2 * 1000);
 			threadList.clear();
 			File taskFiles = new File(sciPath);
 			String doingPath = null;
@@ -84,8 +97,6 @@ public class ProcessManager {
 			}
 			BuildCache buildCache = new BuildCache();
 			buildCache.startProcess(newProcessCount, params);
-			SmOptionPane optionPane = new SmOptionPane();
-			optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessStoped"), String.valueOf(newProcessCount)));
 		} catch (Throwable throwable) {
 			throwable.printStackTrace();
 		}
@@ -160,8 +171,10 @@ public class ProcessManager {
 					for (int i = 0; i < threadList.size(); i++) {
 						try {
 							SubprocessThread tempThread = threadList.get(i);
+							ArrayList arguments = tempThread.getArguments();
+							String type = tempThread.getType();
 							if (1 == tempThread.process.exitValue()) {
-								SubprocessThread newProcess = tempThread.clone();
+								SubprocessThread newProcess = new SubprocessThread(arguments, type);
 								newProcess.start();
 								threadList.remove(i);
 								threadList.add(i, newProcess);

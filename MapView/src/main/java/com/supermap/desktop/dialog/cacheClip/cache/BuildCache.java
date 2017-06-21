@@ -104,6 +104,7 @@ public class BuildCache {
 						for (int i = sciLength - 1; i >= 0; i--) {
 							doingSci(log, CacheUtilities.replacePath(taskPath, sciFileNames[i]), doingDir, doingSciNames);
 						}
+						log.writelog("");
 					}
 					//Second step:get sci file from doing dir and build cache
 					for (int i = 0; i < doingSciNames.size(); i++) {
@@ -149,15 +150,18 @@ public class BuildCache {
 		MapCacheBuilder builder = new MapCacheBuilder();
 		builder.setMap(map);
 		builder.fromConfigFile(sciName);
-		if (isAppending) {
-			builder.setIsAppending(isAppending);
-			builder.setHashCodeEnabled(true);
-		}
+
 		builder.setOutputFolder(cachePath);
 		builder.setCacheName(builder.getCacheName());
-//		builder.resumable(false);
+		builder.resumable(false);
 
-		boolean result = builder.buildWithoutConfigFile();
+		builder.setIsAppending(isAppending);
+		boolean result;
+		if (isAppending) {
+			result = builder.build();
+		} else {
+			result = builder.buildWithoutConfigFile();
+		}
 		builder.dispose();
 
 		if (result) {

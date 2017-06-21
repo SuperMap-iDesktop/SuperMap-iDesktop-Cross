@@ -96,6 +96,8 @@ public class DatasourceImageUtilties {
 			return fileParentPath + "Image_MySQL_24.png";
 		} else if (engineType == EngineType.OPENSTREETMAPS) {
 			return fileParentPath + "Image_OpenStreetMaps_24.png";
+		} else if (engineType == EngineType.DATASERVER) {
+			return fileParentPath + "Image_BigDataStore_24.png";
 		}
 		return "";
 	}

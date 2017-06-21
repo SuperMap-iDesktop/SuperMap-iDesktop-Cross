@@ -46,7 +46,6 @@ public class CacheProgressCallable extends UpdateProgressCallable {
             } else {
                 this.result = this.mapCacheBuilder.build();
             }
-
         } catch (Exception ex) {
             this.result = false;
             Application.getActiveApplication().getOutput().output(ex);

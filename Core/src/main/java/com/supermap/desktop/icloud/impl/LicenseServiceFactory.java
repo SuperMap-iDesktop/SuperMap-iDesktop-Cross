@@ -24,13 +24,10 @@ import java.util.Map;
  */
 public class LicenseServiceFactory {
     private static final String STR_SERVIE_URL = "http://www.supermapol.com/shiro-cas";
-    private static final String KEY_STORE_RESOURCE = "StartComKeystore";
-    private static final SSLContext SSLCONTEXT;
     private static final URL LICENSE_SERVICE_LOGIN;
     private static final Map<ProductType, String> APP_KEYS;
 
     static {
-        SSLCONTEXT = loadSSLContext(KEY_STORE_RESOURCE);
         try {
             LICENSE_SERVICE_LOGIN = new URL(STR_SERVIE_URL);
         } catch (MalformedURLException e) {
@@ -47,27 +44,12 @@ public class LicenseServiceFactory {
         APP_KEYS = Collections.unmodifiableMap(appKeys);
     }
 
-    private static SSLContext loadSSLContext(String resource) {
-
-        URL url = CoreResources.getResourceURL("/coreresources/StartComKeystore");
-        assert (url != null) : "load trust keystore failed";
-        try {
-            return SSLContexts.custom().loadTrustMaterial(url, null, new TrustSelfSignedStrategy()).build();
-        } catch (
-                Exception e)
-
-        {
-            throw new IllegalStateException("load key store " + resource + " failed.", e);
-        }
-
-    }
-
     public static CloseableHttpClient getClient(String username, String password) {
         CloseableHttpClient client = null;
         AuthenticatorImpl authenticator = new AuthenticatorImpl();
-        authenticator.setSsoHttpClientBuilder(HttpClients.custom().setSSLContext(SSLCONTEXT));
+        authenticator.setSsoHttpClientBuilder(HttpClients.custom());
         try {
-            client = authenticator.authenticate(new UsernamePassword(username, password), HttpClients.custom().setSSLContext(SSLCONTEXT), LICENSE_SERVICE_LOGIN);
+            client = authenticator.authenticate(new UsernamePassword(username, password), HttpClients.custom(), LICENSE_SERVICE_LOGIN);
         } catch (AuthenticationException e) {
             e.printStackTrace();
         }

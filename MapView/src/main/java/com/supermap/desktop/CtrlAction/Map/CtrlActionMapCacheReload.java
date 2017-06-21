@@ -11,7 +11,6 @@ import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
-import com.supermap.desktop.utilities.FileUtilities;
 
 import javax.swing.*;
 import java.io.File;
@@ -27,7 +26,7 @@ public class CtrlActionMapCacheReload extends CtrlAction {
 
 	@Override
 	public void run() {
-		String moduleName = "GetCacheConfigFile";
+		String moduleName = "GetCacheReloadConfigFile";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci");
 			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
@@ -56,23 +55,16 @@ public class CtrlActionMapCacheReload extends CtrlAction {
 				pane.showConfirmDialog(MapViewProperties.getString("String_Error_LogNotExist"));
 				return;
 			}
-			String filePath = smFileChoose.getFilePath();
-			if (FileUtilities.isFilePath(filePath)) {
-//				Workspace wk = Application.getActiveApplication().getWorkspace();
-//				Map map = new Map(wk);
+			if (file.exists()) {
 				MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
-				mapCacheBuilder.fromConfigFile(filePath);
-//				map.open(mapCacheBuilder.getCacheName());
-//				Map newMap = new Map(wk);
-//				newMap.fromXML(map.toXML());
-//				mapCacheBuilder.setMap(newMap);
-				mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
+				mapCacheBuilder.fromConfigFile(file.getPath());
+
 				DialogMapCacheClipBuilder mapCacheClipBuilder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.ReloadProcessClip, mapCacheBuilder);
 				mapCacheClipBuilder.setComponentsEnabled(false);
 				mapCacheClipBuilder.buttonOk.setEnabled(true);
 				mapCacheClipBuilder.firstStepPane.labelConfigValue.setText(mapCacheBuilder.getCacheName());
 				mapCacheClipBuilder.setResumeAble(true);
-				mapCacheClipBuilder.firstStepPane.fileChooserControlFileCache.setPath(filePath.substring(0, filePath.lastIndexOf(mapCacheBuilder.getCacheName())));
+				mapCacheClipBuilder.firstStepPane.fileChooserControlFileCache.setPath(file.getParent());
 				mapCacheClipBuilder.firstStepPane.resetComponentsInfo();
 				mapCacheClipBuilder.showDialog();
 			}

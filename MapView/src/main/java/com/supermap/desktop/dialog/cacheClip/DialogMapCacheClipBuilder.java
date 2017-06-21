@@ -5,6 +5,7 @@ import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapCacheVersion;
 import com.supermap.data.processing.MapTilingMode;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
@@ -327,6 +328,9 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					}
 					sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + ".sci");
 				}
+				if (cmdType == UpdateProcessClip) {
+					mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
+				}
 				setMapCacheBuilderValueBeforeRun();
 				//SaveType==MongoType,build some cache for creating a database
 				boolean result = true;
@@ -352,24 +356,26 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				}
 				if (result) {
 					String[] params = {sciPath, tasksPath, tasksSize, canudb};
-					boolean buildTaskResult = TaskBuilder.buildTask(params);
+					boolean buildTaskResult = TaskBuilder.main(params);
 					if (!buildTaskResult) {
 						this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 						return;
 					}
 					this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-//					Application.getActiveApplication().getOutput().output(MapViewProperties.getString(""));
 					dispose();
-					DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder(cmdType);
-					dialogCacheBuilder.textFieldMapName.setText(this.mapCacheBuilder.getCacheName());
-					String targetTaskPath = CacheUtilities.replacePath(tasksPath, "task");
-					File oldFile = new File(sciPath);
-					dialogCacheBuilder.setSciFile(oldFile);
-					dialogCacheBuilder.fileChooserTotalTaskPath.setPath(sciPath);
-					dialogCacheBuilder.fileChooserTaskPath.setPath(targetTaskPath);
-					dialogCacheBuilder.fileChooserWorkspacePath.setPath(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer());
-					dialogCacheBuilder.fileChooserCachePath.setPath(filePath);
-					dialogCacheBuilder.showDialog();
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_TargetTaskPath"), tasksPath));
+					if (nextStepPane.checkBoxClipOnThisComputer.isSelected()) {
+						DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder(cmdType);
+						dialogCacheBuilder.textFieldMapName.setText(this.mapCacheBuilder.getCacheName());
+						String targetTaskPath = CacheUtilities.replacePath(tasksPath, "task");
+						File oldFile = new File(sciPath);
+						dialogCacheBuilder.setSciFile(oldFile);
+						dialogCacheBuilder.fileChooserTotalTaskPath.setPath(sciPath);
+						dialogCacheBuilder.fileChooserTaskPath.setPath(targetTaskPath);
+						dialogCacheBuilder.fileChooserWorkspacePath.setPath(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer());
+						dialogCacheBuilder.fileChooserCachePath.setPath(filePath);
+						dialogCacheBuilder.showDialog();
+					}
 				}
 				if (this.checkBoxAutoClosed.isSelected()) {
 					dispose();
