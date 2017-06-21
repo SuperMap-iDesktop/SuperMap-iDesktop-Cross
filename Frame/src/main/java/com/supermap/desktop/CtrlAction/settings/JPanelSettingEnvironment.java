@@ -11,6 +11,9 @@ import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.FileChooserControl;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.SmFileChoose;
+import com.supermap.desktop.ui.controls.button.SmButton;
+import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
 
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
@@ -50,6 +53,10 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 	private JLabel labelFileCache;
 	private FileChooserControl fileChooserControlFileCache;
 
+	private JCheckBox checkBoxDump;
+	private JTextField textFieldDump;
+	private JButton buttonClearDump;
+	private JButton buttonOpenDumpDirectory;
 
 	private JPanel panelOutput;
 	private JCheckBox checkBoxOutputInfo;
@@ -64,6 +71,9 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 	private CUDACapability cudaCapability;
 	private OpenCLCapability openCLCapability;
 	private ItemListener itemListener;
+
+	private static final String dumpFilePath = "./Dumps/";
+
 
 	@Override
 	protected void initComponents() {
@@ -113,6 +123,11 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 		checkBoxGPUComputingEnabled = new JCheckBox();
 		labelFileCache = new JLabel();
 		fileChooserControlFileCache = new FileChooserControl();
+		checkBoxDump = new JCheckBox();
+		textFieldDump = new JTextField();
+		buttonClearDump = new SmButton(FrameProperties.getString("String_clearDirectory"));
+		buttonOpenDumpDirectory = new SmButton(FrameProperties.getString("String_ManageDirectory"));
+
 		panelOutput = new JPanel();
 		panelOutput.setBorder(BorderFactory.createTitledBorder(FrameProperties.getString("String_OutputLevel")));
 		checkBoxOutputInfo = new JCheckBox();
@@ -120,6 +135,9 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 		panelRuntimeSetting = new JPanel();
 		panelRuntimeSetting.setBorder(BorderFactory.createTitledBorder(FrameProperties.getString("String_CaptionRunSetting")));
 
+		textFieldDump.setText(dumpFilePath);
+		textFieldDump.setEditable(false);
+		checkBoxDump.setText(FrameProperties.getString("String_CreateDumpLog"));
 	}
 
 	@Override
@@ -159,9 +177,16 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 
 		panelRuntimeSetting.setLayout(new GridBagLayout());
 		panelRuntimeSetting.add(labelFileCache, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 0));
-		panelRuntimeSetting.add(fileChooserControlFileCache, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 0));
+		panelRuntimeSetting.add(fileChooserControlFileCache, new GridBagConstraintsHelper(1, 0, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 0));
 
-		panelRuntimeSetting.add(panelOutput, new GridBagConstraintsHelper(0, 1, 2, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 5, 0, 0));
+		panelRuntimeSetting.add(checkBoxDump, new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 0));
+		panelRuntimeSetting.add(textFieldDump, new GridBagConstraintsHelper(1, 1, 2, 1).setWeight(1, 0).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 5, 0, 0));
+
+		panelRuntimeSetting.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.CENTER));
+		panelRuntimeSetting.add(buttonClearDump, new GridBagConstraintsHelper(1, 2, 1, 1).setWeight(0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 0));
+		panelRuntimeSetting.add(buttonOpenDumpDirectory, new GridBagConstraintsHelper(2, 2, 1, 1).setWeight(1, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 5, 0, 0));
+
+		panelRuntimeSetting.add(panelOutput, new GridBagConstraintsHelper(0, 3, 3, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setInsets(5, 5, 0, 0));
 	}
 
 	@Override
@@ -280,6 +305,34 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 				changedValues.add(fileChooserControlFileCache);
 			}
 		});
+
+		checkBoxDump.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				changedValues.add(checkBoxDump);
+			}
+		});
+
+		buttonClearDump.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String fullPathName = PathUtilities.getFullPathName(dumpFilePath, true);
+				File file = new File(fullPathName);
+				if (file.exists() && file.isDirectory() && file.listFiles() != null) {
+					File[] files = file.listFiles();
+					for (File file1 : files) {
+						FileUtilities.delete(fullPathName);
+					}
+				}
+			}
+		});
+
+		buttonOpenDumpDirectory.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FileUtilities.openFileExplorer(PathUtilities.getFullPathName(dumpFilePath, true));
+			}
+		});
 	}
 
 	@Override
@@ -315,10 +368,6 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 	@Override
 	public void apply() {
 		for (Component changedValue : changedValues) {
-//			if (changedValue == smTextFieldLegitTitle) {
-//				GlobalParameters.setDesktopTitle(smTextFieldLegitTitle.getBackUpValue());
-//				Application.getActiveApplication().getMainFrame().setText(GlobalParameters.getDesktopTitle());
-//			} else
 			if (changedValue == spinnerOMPNumThreads) {
 				Environment.setOMPNumThreads(((Number) spinnerOMPNumThreads.getValue()).intValue());
 			} else if (changedValue == comboBoxAnalystMemorySize) {
@@ -343,6 +392,8 @@ public class JPanelSettingEnvironment extends BaseSettingPanel {
 				Environment.setSceneAntialias(checkBoxSceneAntialias.isSelected());
 			} else if (changedValue == checkBoxUseThousandPointDivision) {
 				GlobalParameters.setIsUseThousandPointDivision(checkBoxUseThousandPointDivision.isSelected());
+			} else if (changedValue == checkBoxDump) {
+				// TODO: 2017/6/21 UGDJ-623 组件不支持
 			}
 		}
 	}

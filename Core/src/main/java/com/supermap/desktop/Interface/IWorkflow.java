@@ -1,5 +1,7 @@
 package com.supermap.desktop.Interface;
 
+import com.supermap.desktop.event.WorkFlowsChangedListener;
+
 /**
  * @author XiaJT
  */
@@ -8,7 +10,7 @@ public interface IWorkflow {
 
 	void setName(String name);
 
-	String getMatrixXml();
+	String toXML();
 
-	void setMatrixXml(String matrixXml);
+	void fromXML(String xmlDescription);
 }

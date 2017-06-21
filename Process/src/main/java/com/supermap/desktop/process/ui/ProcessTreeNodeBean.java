@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.diagram.ui;
+package com.supermap.desktop.process.ui;
 
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.utilities.StringUtilities;

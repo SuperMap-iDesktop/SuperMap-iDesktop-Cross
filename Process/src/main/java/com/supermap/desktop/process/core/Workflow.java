@@ -1,27 +1,42 @@
 package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Interface.IWorkflow;
-import com.supermap.desktop.process.events.WorkflowChangeEvent;
-import com.supermap.desktop.process.events.WorkflowChangeListener;
-import com.supermap.desktop.process.util.WorkFlowXmlUtilties;
+import com.supermap.desktop.process.events.*;
 
 import javax.swing.event.EventListenerList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by xie on 2017/3/18.
  * WorkFLow应该只存描述字符串，而不是具体的对象。不然打开多个会导致多个窗体指向同一个对象。
  */
 public class Workflow implements IWorkflow {
-	private String name = "workFLow";
-	private String matrixXml;
+	private String name = "workflow";
+
+	private NodeMatrix<IProcess> processMatrix;
+	private List<IConnection> connections = new ArrayList<>();
 	private EventListenerList listenerList = new EventListenerList();
+
+	private MatrixEventHandler handler = new MatrixEventHandler();
 
 	public Workflow(String name) {
 		this.name = name;
+		this.processMatrix = new NodeMatrix<>();
+		registerEvents();
 	}
 
-	public void setMatrix(NodeMatrix matrix) {
-		this.matrixXml = WorkFlowXmlUtilties.parseToXml(matrix, name);
+	public void setMatrix(NodeMatrix<IProcess> matrix) {
+		this.processMatrix = matrix == null ? new NodeMatrix<IProcess>() : matrix;
+		registerEvents();
+	}
+
+	private void registerEvents() {
+		this.processMatrix.addMatrixNodeAddingListener(this.handler);
+		this.processMatrix.addMatrixNodeAddedListener(this.handler);
+		this.processMatrix.addMatrixNodeRemovingListener(this.handler);
+		this.processMatrix.addMatrixNodeRemovedListener(this.handler);
 	}
 
 	@Override
@@ -32,51 +47,54 @@ public class Workflow implements IWorkflow {
 	@Override
 	public void setName(String name) {
 		this.name = name;
-		setMatrix(getMatrix()); // 把名字改了
 	}
 
-	public NodeMatrix getMatrix() {
-		return WorkFlowXmlUtilties.stringToNodeMatrix(matrixXml);
-	}
-
-	public IProcess[] getNextProcesses(IProcess process) {
+	@Override
+	public String toXML() {
 		return null;
 	}
 
-	public IProcess[] getPreProcesses(IProcess process) {
-		return null;
+	@Override
+	public void fromXML(String xmlDescription) {
+
+	}
+
+	public void addProcess(IProcess process) {
+		this.processMatrix.addNode(process);
+	}
+
+	public void removeProcess(IProcess process) {
+		this.processMatrix.removeNode(process);
+	}
+
+	public Vector<IProcess> getToProcesses(IProcess process) {
+		return this.processMatrix.getToNodes(process);
+	}
+
+	public Vector<IProcess> getFromProcesses(IProcess process) {
+		return this.processMatrix.getFromNodes(process);
 	}
 
 	// 获取所有的游离节点
-	public IProcess[] getSingleProcesses(IProcess process) {
-		return null;
+	public Vector<IProcess> getFreeProcesses(IProcess process) {
+		return this.processMatrix.getFreeNodes();
 	}
 
 	// 获取所有的领头节点
-	public IProcess[] getLeaderProcesses(IProcess process) {
-		return null;
+	public Vector<IProcess> getLeadingProcesses(IProcess process) {
+		return this.processMatrix.getLeadingNodes();
 	}
 
-	public IProcess[] getProcesses() {
-		return null;
+	public Vector<IProcess> getProcesses() {
+		return this.processMatrix.getNodes();
 	}
 
 	public int getProcessCount() {
-		return 0;
+		return this.processMatrix.getCount();
 	}
 
-	public boolean isLeadProcess(IProcess process) {
-		return true;
-	}
-
-	@Override
-	public String getMatrixXml() {
-		return matrixXml;
-	}
-
-	@Override
-	public void setMatrixXml(String matrixXml) {
-		this.matrixXml = matrixXml;
+	public boolean isLeadingProcess(IProcess process) {
+		return this.processMatrix.isLeadingNode(process);
 	}
 
 	public void addWorkflowChangeListener(WorkflowChangeListener listener) {
@@ -94,6 +112,29 @@ public class Workflow implements IWorkflow {
 			if (listeners[i] == WorkflowChangeListener.class) {
 				((WorkflowChangeListener) listeners[i + 1]).workflowChange(e);
 			}
+		}
+	}
+
+	private class MatrixEventHandler implements MatrixNodeAddingListener<IProcess>, MatrixNodeAddedListener<IProcess>, MatrixNodeRemovingListener<IProcess>, MatrixNodeRemovedListener<IProcess> {
+
+		@Override
+		public void matrixNodeAdded(MatrixNodeAddedEvent<IProcess> e) {
+			fireWorkflowChange(new WorkflowChangeEvent(Workflow.this, WorkflowChangeEvent.ADDED, e.getNode()));
+		}
+
+		@Override
+		public void matrixNodeAdding(MatrixNodeAddingEvent<IProcess> e) {
+			fireWorkflowChange(new WorkflowChangeEvent(Workflow.this, WorkflowChangeEvent.ADDING, e.getNode()));
+		}
+
+		@Override
+		public void matrixNodeRemoved(MatrixNodeRemovedEvent<IProcess> e) {
+			fireWorkflowChange(new WorkflowChangeEvent(Workflow.this, WorkflowChangeEvent.REMOVED, e.getNode()));
+		}
+
+		@Override
+		public void matrixNodeRemoving(MatrixNodeRemovingEvent<IProcess> e) {
+			fireWorkflowChange(new WorkflowChangeEvent(Workflow.this, WorkflowChangeEvent.REMOVING, e.getNode()));
 		}
 	}
 }

@@ -106,12 +106,12 @@ public class BuildCache {
 						for (int i = sciLength - 1; i >= 0; i--) {
 							doingSci(log, CacheUtilities.replacePath(taskPath, sciFileNames[i]), doingDir, doingSciNames);
 						}
-						log.writelog("");
 					}
+					log.writelog(String.format("get doing sci, cost(ms):%d", System.currentTimeMillis() - start));
 					//Second step:get sci file from doing dir and build cache
 					for (int i = 0; i < doingSciNames.size(); i++) {
 						String sciName = doingSciNames.get(i);
-						build(cachePath, log, start, map, sciName, isAppending);
+						build(cachePath, log, map, sciName, isAppending);
 					}
 
 				} while (sciLength != 0);
@@ -141,9 +141,8 @@ public class BuildCache {
 		return renameSuccess;
 	}
 
-	private void build(String cachePath, LogWriter log, long start, Map map, String sciName, boolean isAppending) {
+	private void build(String cachePath, LogWriter log, Map map, String sciName, boolean isAppending) {
 		log.writelog(String.format("start sciName:%s , PID:%s", sciName, LogWriter.getPID()));
-		log.writelog(String.format("init PID:%s, cost(ms):%d", LogWriter.getPID(), System.currentTimeMillis() - start));
 		File sci = new File(sciName);
 		if (!sci.exists()) {
 			log.writelog(String.format("sciFile: %s does not exist. Maybe has done at before running. ", sciName));

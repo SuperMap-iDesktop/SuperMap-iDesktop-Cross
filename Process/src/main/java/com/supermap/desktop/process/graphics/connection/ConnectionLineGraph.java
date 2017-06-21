@@ -15,7 +15,7 @@ import java.awt.*;
  */
 public class ConnectionLineGraph extends LineGraph {
 	private final static String DECORATOR_KEY_LINE_MESSAGE = "DecoratorLineMessageKey";
-	private IConnection connection;
+	private IGraphConnection connection;
 	private LineMessageDecorator messageDecorator;
 	private boolean isEditable = true;
 	private boolean isSelected = true;
@@ -35,7 +35,7 @@ public class ConnectionLineGraph extends LineGraph {
 		}
 	};
 
-	public ConnectionLineGraph(GraphCanvas canvas, IConnection connection) {
+	public ConnectionLineGraph(GraphCanvas canvas, IGraphConnection connection) {
 		super(canvas);
 		this.connection = connection;
 		IGraph startGraph = this.connection.getStartGraph();
@@ -51,7 +51,7 @@ public class ConnectionLineGraph extends LineGraph {
 		}
 	}
 
-	public IConnection getConnection() {
+	public IGraphConnection getConnection() {
 		return this.connection;
 	}
 

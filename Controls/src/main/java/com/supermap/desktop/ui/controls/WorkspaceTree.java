@@ -109,7 +109,7 @@ import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.controls.utilities.SceneUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.enums.WindowType;
-import com.supermap.desktop.event.WorkFlowChangedEvent;
+import com.supermap.desktop.event.WorkFlowsChangedEvent;
 import com.supermap.desktop.event.WorkFlowsChangedListener;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
@@ -1004,13 +1004,13 @@ public class WorkspaceTree extends JTree implements IDisposable {
 		datasetCollectionOrderChangedListener = new WorkspaceTreeDatasetCollectionOrderChangedListener();
 		workFlowsChangedListener = new WorkFlowsChangedListener() {
 			@Override
-			public void workFlowsChanged(WorkFlowChangedEvent workFlowChangedEvent) {
+			public void workFlowsChanged(WorkFlowsChangedEvent workFlowChangedEvent) {
 				IWorkflow[] workFlows = workFlowChangedEvent.getWorkFlows();
-				if (workFlowChangedEvent.getType() == WorkFlowChangedEvent.ADD) {
+				if (workFlowChangedEvent.getType() == WorkFlowsChangedEvent.ADD) {
 					for (IWorkflow workFlow : workFlows) {
 						treeModelTemp.insertNodeInto(new DefaultMutableTreeNode(new TreeNodeData(workFlow, NodeDataType.WORK_FLOW)), treeNodeWorkFlow, treeNodeWorkFlow.getChildCount());
 					}
-				} else if (workFlowChangedEvent.getType() == WorkFlowChangedEvent.DELETE) {
+				} else if (workFlowChangedEvent.getType() == WorkFlowsChangedEvent.DELETE) {
 					for (int i = treeNodeWorkFlow.getChildCount() - 1; i >= 0; i--) {
 						DefaultMutableTreeNode node = (DefaultMutableTreeNode) treeNodeWorkFlow.getChildAt(i);
 						IWorkflow workFlow = (IWorkflow) ((TreeNodeData) node.getUserObject()).getData();
@@ -1018,7 +1018,7 @@ public class WorkspaceTree extends JTree implements IDisposable {
 							treeModelTemp.removeNodeFromParent(node);
 						}
 					}
-				} else if (workFlowChangedEvent.getType() == WorkFlowChangedEvent.RE_BUILD) {
+				} else if (workFlowChangedEvent.getType() == WorkFlowsChangedEvent.RE_BUILD) {
 					for (int i = treeNodeWorkFlow.getChildCount() - 1; i >= 0; i--) {
 						treeModelTemp.removeNodeFromParent((MutableTreeNode) treeNodeWorkFlow.getChildAt(i));
 					}

@@ -7,7 +7,7 @@ import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
-import com.supermap.desktop.process.graphics.connection.IConnection;
+import com.supermap.desktop.process.graphics.connection.IGraphConnection;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.events.GraphRemovingEvent;
@@ -89,7 +89,7 @@ public class InputParametersManager {
 						if (graph instanceof OutputGraph) {
 							parameterComboBox.removeItem(e.getGraph());
 						} else if (graph instanceof ConnectionLineGraph) {
-							IConnection connection = ((ConnectionLineGraph) graph).getConnection();
+							IGraphConnection connection = ((ConnectionLineGraph) graph).getConnection();
 							if (connection.getStart() instanceof OutputGraph && connection.getEnd() instanceof ProcessGraph
 									&& ((ProcessGraph) connection.getEnd()).getProcess() == parameters.getProcess()) {
 								unBind(connection);
@@ -125,7 +125,7 @@ public class InputParametersManager {
 		list.add(inputParameterDataNode);
 	}
 
-	public void unBind(IConnection connection) {
+	public void unBind(IGraphConnection connection) {
 		String name = connection.getMessage();
 		for (InputParameterDataNode inputParameterDataNode : list) {
 			if (inputParameterDataNode.getName().equals(name)) {

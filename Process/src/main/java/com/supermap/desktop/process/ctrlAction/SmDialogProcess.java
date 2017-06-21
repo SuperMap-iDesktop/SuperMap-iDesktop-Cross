@@ -24,7 +24,6 @@ public class SmDialogProcess extends SmDialog {
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		this.setLayout(new GridBagLayout());
 		this.add(scrollPane, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(1, 1).setFill(GridBagConstraints.BOTH));
-//		this.add(new JPanel(), new GridBagConstraintsHelper(0, 1, 1, 1).setWeight(1, 1).setFill(GridBagConstraintsHelper.BOTH));
 		this.add(task, new GridBagConstraintsHelper(0, 2, 1, 1).setWeight(1, 0).setFill(GridBagConstraintsHelper.HORIZONTAL));
 		int count = task.getComponentCount();
 		for (int i = 0; i < count; i++) {
@@ -35,7 +34,6 @@ public class SmDialogProcess extends SmDialog {
 //		this.pack();
 		this.setMinimumSize(new Dimension(400, 600));
 		this.setPreferredSize(new Dimension(400, 600));
-//		this.setPreferredSize(new Dimension(getWidth() + 200, getHeight()));
 		this.setLocationRelativeTo(null);
 	}
 }

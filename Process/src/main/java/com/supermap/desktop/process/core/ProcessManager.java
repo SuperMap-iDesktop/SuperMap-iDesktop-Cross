@@ -1,14 +1,13 @@
 package com.supermap.desktop.process.core;
 
-import com.supermap.desktop.process.diagram.ui.ProcessTree;
-import com.supermap.desktop.process.diagram.ui.ProcessTreeNode;
-import com.supermap.desktop.process.diagram.ui.ProcessTreeNodeBean;
 import com.supermap.desktop.process.loader.DefaultProcessLoader;
 import com.supermap.desktop.process.loader.IProcessLoader;
+import com.supermap.desktop.process.ui.ProcessTree;
+import com.supermap.desktop.process.ui.ProcessTreeNode;
+import com.supermap.desktop.process.ui.ProcessTreeNodeBean;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
-import org.jhotdraw.samples.draw.Main;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -26,23 +25,6 @@ public class ProcessManager extends JPanel {
 	private static final String PROCESS_FILE_PATH = "../Templates/Process/Process.xml";
 	public ProcessTree processTree;
 	public JScrollPane jScrollPane;
-
-	public static void main(String[] args) {
-		Main.main(args);
-//		final JFrame frame = new JFrame();
-//		frame.setSize(1000, 650);
-//
-//		DrawingPanel view = new DrawingPanel();
-//		frame.getContentPane().setLayout(new BorderLayout());
-//		frame.getContentPane().add(view, BorderLayout.CENTER);
-//
-//		SwingUtilities.invokeLater(new Runnable() {
-//			@Override
-//			public void run() {
-//				frame.setVisible(true);
-//			}
-//		});
-	}
 
 	private Vector<IProcessLoader> loaders = new Vector<>();
 	private Vector<IProcess> processes = new Vector<>();
