@@ -15,6 +15,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -129,7 +130,7 @@ public class TasksManager {
 	}
 
 	private void initialize() {
-		IProcess[] processes = this.workflow.getProcesses();
+		Vector<IProcess> processes = this.workflow.getProcesses();
 		for (IProcess process :
 				processes) {
 			if (this.workflow.isLeadProcess(process)) {
@@ -153,7 +154,7 @@ public class TasksManager {
 			this.scheduler.stop();
 		}
 
-		IProcess[] processes = this.workflow.getProcesses();
+		Vector<IProcess> processes = this.workflow.getProcesses();
 		for (IProcess process :
 				processes) {
 			process.reset();
@@ -210,10 +211,10 @@ public class TasksManager {
 		boolean isReady = true;
 
 		if (process != null) {
-			IProcess[] preProcesses = this.workflow.getPreProcesses(process);
+			Vector<IProcess> preProcesses = this.workflow.getFromProcesses(process);
 
-			for (int i = 0; i < preProcesses.length; i++) {
-				isReady = preProcesses[i].getStatus() == RunningStatus.COMPLETED;
+			for (int i = 0; i < preProcesses.size(); i++) {
+				isReady = preProcesses.get(i).getStatus() == RunningStatus.COMPLETED;
 				if (isReady == false) {
 					break;
 				}
@@ -242,13 +243,13 @@ public class TasksManager {
 			runningToCompleted(process);
 
 			// 再处理下级节点状态，检查下级节点是否所有前置节点都已执行完毕
-			IProcess[] nextProcesses = workflow.getNextProcesses(process);
+			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
 
-			for (int i = 0; i < nextProcesses.length; i++) {
+			for (int i = 0; i < nextProcesses.size(); i++) {
 
 				// 该节点的所有前置节点均已执行完成准备就绪，就将节点移动到 ready
-				if (isReady(nextProcesses[i])) {
-					waitingToReady(nextProcesses[i]);
+				if (isReady(nextProcesses.get(i))) {
+					waitingToReady(nextProcesses.get(i));
 				}
 			}
 		}
@@ -263,8 +264,8 @@ public class TasksManager {
 			runningToExceptionOccurred(process);
 
 			// 再把所有后续节点移动到异常队列
-			IProcess[] nextProcesses = workflow.getNextProcesses(process);
-			if (nextProcesses != null && nextProcesses.length > 0) {
+			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
+			if (nextProcesses != null && nextProcesses.size() > 0) {
 				for (IProcess nextProcess :
 						nextProcesses) {
 					if (!waiting.contains(nextProcess)) {
@@ -284,8 +285,8 @@ public class TasksManager {
 			runningToCancelled(process);
 
 			// 再把所有后续节点移动到取消队列
-			IProcess[] nextProcesses = workflow.getNextProcesses(process);
-			if (nextProcesses != null && nextProcesses.length > 0) {
+			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
+			if (nextProcesses != null && nextProcesses.size() > 0) {
 				for (IProcess nextProcess :
 						nextProcesses) {
 

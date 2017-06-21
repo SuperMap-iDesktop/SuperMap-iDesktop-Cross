@@ -31,8 +31,8 @@ import java.nio.charset.Charset;
 public class IServerServiceImpl implements IServerService {
 
     private final String HTTP_STR = "http://";
-	private final String KERNELDENSITY_URL = "/iserver/services/processing/rest/v1/jobs/spatialanalyst/density.json";
-	private final String BUILDCACHE_URL = "/iserver/services/processing/rest/v1/jobs/mapping/buildCache.json";
+	private final String KERNELDENSITY_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/density.json";
+	private final String BUILDCACHE_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/mapping/buildCache.json";
     private final String LOGIN_URL = "/iserver/services/security/login.json";
     private static final Charset UTF8 = Charsets.UTF_8;
     private static final String JSON_UTF8_CONTENT_TPYE = "application/json;;charset=" + UTF8.name();

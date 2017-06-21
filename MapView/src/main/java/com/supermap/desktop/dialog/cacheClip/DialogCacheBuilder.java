@@ -21,6 +21,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.text.MessageFormat;
@@ -82,14 +84,26 @@ public class DialogCacheBuilder extends SmDialog {
 	private ActionListener closeListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			DialogCacheBuilder.this.dispose();
+			shutdownMapClip(true);
 		}
 	};
+
+	private void shutdownMapClip(boolean isDispose) {
+		SmOptionPane optionPane = new SmOptionPane();
+		sciPath = fileChooserTaskPath.getPath();
+		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
+			ProcessManager.getInstance().removeAllProcess(sciPath);
+		}
+		if (isDispose) {
+			DialogCacheBuilder.this.dispose();
+		}
+		Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), sciPath));
+	}
+
 	private ActionListener createListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			buttonCreate.setEnabled(false);
-			buttonClose.setEnabled(false);
 			buildCache();
 		}
 	};
@@ -148,7 +162,7 @@ public class DialogCacheBuilder extends SmDialog {
 
 					} else if (newProcessCount < nowProcessCount) {
 						if (newProcessCount == 0) {
-							optionPane.showConfirmDialog(MapViewProperties.getString("String_Process_message_Warning"));
+							shutdownMapClip(false);
 						} else {
 							int newSize = nowProcessCount - newProcessCount;
 							if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Stop"), String.valueOf(newSize))) == JOptionPane.OK_OPTION)
@@ -262,16 +276,8 @@ public class DialogCacheBuilder extends SmDialog {
 		}
 		SmFileChoose fileChooserForCachePath = new SmFileChoose(moduleNameForCachePath);
 		this.fileChooserCachePath = new JFileChooserControl();
-		String cachePath = CacheUtilities.replacePath(System.getProperty("user.dir"), "build");
-		File cacheStoreDirectory = new File(cachePath);
-		if (!cacheStoreDirectory.exists()) {
-			cacheStoreDirectory.mkdir();
-		}
-		this.fileChooserCachePath.setPath(cachePath);
+		this.fileChooserCachePath.setPath(System.getProperty("user.dir"));
 		this.fileChooserCachePath.setFileChooser(fileChooserForCachePath);
-//		this.textFieldTotalProcessCount = new JTextField();
-//		this.textFieldTotalProcessCount.setText("5");
-//		this.textFieldTotalProcessCount.setEnabled(false);
 		this.progressBarTotal = new JProgressBar();
 		this.progressBarTotal.setStringPainted(true);
 		this.progressBarTotal.setPreferredSize(new Dimension(200, 23));
@@ -356,6 +362,13 @@ public class DialogCacheBuilder extends SmDialog {
 		this.buttonApply.addActionListener(this.applyListener);
 		this.fileChooserTotalTaskPath.addFileChangedListener(this.fileChangeListener);
 		this.buttonRefresh.addActionListener(this.refreshListener);
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				shutdownMapClip(true);
+			}
+		});
+
 	}
 
 	private void removeEvents() {
@@ -383,7 +396,6 @@ public class DialogCacheBuilder extends SmDialog {
 
 			if (!validateValue(sciPath, workspacePath, mapName, cachePath, processCount)) {
 				buttonCreate.setEnabled(true);
-				buttonClose.setEnabled(true);
 				new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_ParamsException"));
 			} else {
 				doBuildCache(cachePath);
@@ -611,8 +623,6 @@ public class DialogCacheBuilder extends SmDialog {
 		if (result) {
 			buttonClose.setEnabled(true);
 			long endTime = System.currentTimeMillis();
-//			//Paste sciFile to the target directory
-//			sciFile.renameTo(new File(resultPath, sciFile.getName()));
 			long totalTime = endTime - startTime;
 			long hour = 0;
 			long minutes = 0;

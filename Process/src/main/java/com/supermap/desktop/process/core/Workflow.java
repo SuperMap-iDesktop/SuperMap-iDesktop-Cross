@@ -3,25 +3,30 @@ package com.supermap.desktop.process.core;
 import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.process.events.WorkflowChangeEvent;
 import com.supermap.desktop.process.events.WorkflowChangeListener;
-import com.supermap.desktop.process.util.WorkFlowXmlUtilties;
 
 import javax.swing.event.EventListenerList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by xie on 2017/3/18.
  * WorkFLow应该只存描述字符串，而不是具体的对象。不然打开多个会导致多个窗体指向同一个对象。
  */
 public class Workflow implements IWorkflow {
-	private String name = "workFLow";
-	private String matrixXml;
+	private String name = "workflow";
+
+	private NodeMatrix<IProcess> processMatrix = new NodeMatrix<>();
+	private List<IConnection> connections = new ArrayList<>();
 	private EventListenerList listenerList = new EventListenerList();
 
 	public Workflow(String name) {
 		this.name = name;
+		this.processMatrix = new NodeMatrix<>();
 	}
 
 	public void setMatrix(NodeMatrix matrix) {
-		this.matrixXml = WorkFlowXmlUtilties.parseToXml(matrix, name);
+
 	}
 
 	@Override
@@ -32,33 +37,38 @@ public class Workflow implements IWorkflow {
 	@Override
 	public void setName(String name) {
 		this.name = name;
-		setMatrix(getMatrix()); // 把名字改了
 	}
 
-	public NodeMatrix getMatrix() {
-		return WorkFlowXmlUtilties.stringToNodeMatrix(matrixXml);
-	}
-
-	public IProcess[] getNextProcesses(IProcess process) {
+	@Override
+	public String toXML() {
 		return null;
 	}
 
-	public IProcess[] getPreProcesses(IProcess process) {
-		return null;
+	@Override
+	public void fromXML(String xmlDescription) {
+
+	}
+
+	public Vector<IProcess> getToProcesses(IProcess process) {
+		return this.processMatrix.getToNodes(process);
+	}
+
+	public Vector<IProcess> getFromProcesses(IProcess process) {
+		return this.processMatrix.getFromNodes(process);
 	}
 
 	// 获取所有的游离节点
-	public IProcess[] getSingleProcesses(IProcess process) {
-		return null;
+	public Vector<IProcess> getFreeProcesses(IProcess process) {
+		return this.processMatrix.getFreeNodes();
 	}
 
 	// 获取所有的领头节点
-	public IProcess[] getLeaderProcesses(IProcess process) {
-		return null;
+	public Vector<IProcess> getLeadingProcesses(IProcess process) {
+		return this.processMatrix.getLeadingNodes();
 	}
 
-	public IProcess[] getProcesses() {
-		return null;
+	public Vector<IProcess> getProcesses() {
+		return this.processMatrix.getNodes();
 	}
 
 	public int getProcessCount() {
@@ -67,16 +77,6 @@ public class Workflow implements IWorkflow {
 
 	public boolean isLeadProcess(IProcess process) {
 		return true;
-	}
-
-	@Override
-	public String getMatrixXml() {
-		return matrixXml;
-	}
-
-	@Override
-	public void setMatrixXml(String matrixXml) {
-		this.matrixXml = matrixXml;
 	}
 
 	public void addWorkflowChangeListener(WorkflowChangeListener listener) {

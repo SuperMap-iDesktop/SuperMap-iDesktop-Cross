@@ -32,7 +32,7 @@ public class WorkFlowXmlUtilties {
 
 //	private  Element createProcessesElemet() {
 //		Element processes = createProcesses();
-//		CopyOnWriteArrayList list = this.matrix.getAllNodes();
+//		CopyOnWriteArrayList list = this.matrix.getNodes();
 //		int nodeSize = list.size();
 //		for (int i = 0; i < nodeSize; i++) {
 //			Element process = createProcess();
@@ -69,7 +69,7 @@ public class WorkFlowXmlUtilties {
 //
 //	private Element createNodeElements() {
 //		Element nodes = createNodes();
-//		CopyOnWriteArrayList list = this.matrix.getAllNodes();
+//		CopyOnWriteArrayList list = this.matrix.getNodes();
 //		int nodeSize = list.size();
 //		for (int i = 0; i < nodeSize; i++) {
 //			Element node = createNode();
@@ -82,7 +82,7 @@ public class WorkFlowXmlUtilties {
 //			node.appendChild(process);
 //			if (null != list.get(i)) {
 //				try {
-//					CopyOnWriteArrayList preProcessList = this.matrix.getPreNodes(list.get(i));
+//					CopyOnWriteArrayList preProcessList = this.matrix.getFromNodes(list.get(i));
 //					int preProcessSize = preProcessList.size();
 //					for (int j = 0; j < preProcessSize; j++) {
 //						Element preProcess = createPreProcess();
@@ -93,7 +93,7 @@ public class WorkFlowXmlUtilties {
 //						}
 //						node.appendChild(preProcess);
 //					}
-//					CopyOnWriteArrayList nextProcessList = this.matrix.getNextNodes(list.get(i));
+//					CopyOnWriteArrayList nextProcessList = this.matrix.getToNodes(list.get(i));
 //					int nextProcessSize = nextProcessList.size();
 //					for (int j = 0; j < nextProcessSize; j++) {
 //						Element nextProcess = createNextProcess();
@@ -124,52 +124,52 @@ public class WorkFlowXmlUtilties {
 	}
 
 	public static String parseToXml(NodeMatrix matrix, String name) {
-		Document document = XmlUtilities.getEmptyDocument();
-		if (document == null) {
-			System.out.println("hehe");
-			return "";
-		}
-		Element nodeMatrix = XmlUtilities.createRoot(document, "WorkFlow");
-		nodeMatrix.setAttribute("name", name);
-		Element processes = document.createElement("graphs");
-		nodeMatrix.appendChild(processes);
-		CopyOnWriteArrayList allNodes = matrix.getAllNodes();
-		ArrayList<IGraph> arrayList = new ArrayList<>();
-		for (Object allNode : allNodes) {
-			if (allNode instanceof IGraph) {
-				Element graph = document.createElement("graph");
-				graph.setAttribute("value", ((IGraph) allNode).toXml());
-				graph.setAttribute("ID", String.valueOf(arrayList.size()));
-				arrayList.add((IGraph) allNode);
-				processes.appendChild(graph);
-			}
-		}
-		Element connections = document.createElement("connections");
-		nodeMatrix.appendChild(connections);
-		for (Object allNode : allNodes) {
-			if (allNode instanceof IGraph) {
-				CopyOnWriteArrayList nextNodes = matrix.getNextNodes(allNode);
-				for (Object node : nextNodes) {
-					if (node instanceof IGraph) {
-						Element connect = document.createElement("connect");
-						connect.setAttribute("startId", String.valueOf(arrayList.indexOf(allNode)));
-						connect.setAttribute("endId", String.valueOf(arrayList.indexOf(node)));
-						if (node instanceof ProcessGraph) {
-							Inputs inputs = ((ProcessGraph) node).getProcess().getInputs();
-							InputData[] datas = inputs.getDatas();
-							for (InputData data : datas) {
-								if (data.isBind(((OutputGraph) allNode).getProcessData())) {
-									connect.setAttribute("inputs", data.getName());
-								}
-							}
-						}
-						// TODO: 2017/4/8
-						connections.appendChild(connect);
-					}
-				}
-			}
-		}
-		return XmlUtilities.nodeToString(document, "UTF-8");
+//		Document document = XmlUtilities.getEmptyDocument();
+//		if (document == null) {
+//			System.out.println("hehe");
+//			return "";
+//		}
+//		Element nodeMatrix = XmlUtilities.createRoot(document, "WorkFlow");
+//		nodeMatrix.setAttribute("name", name);
+//		Element processes = document.createElement("graphs");
+//		nodeMatrix.appendChild(processes);
+//		CopyOnWriteArrayList allNodes = matrix.getNodes();
+//		ArrayList<IGraph> arrayList = new ArrayList<>();
+//		for (Object allNode : allNodes) {
+//			if (allNode instanceof IGraph) {
+//				Element graph = document.createElement("graph");
+//				graph.setAttribute("value", ((IGraph) allNode).toXml());
+//				graph.setAttribute("ID", String.valueOf(arrayList.size()));
+//				arrayList.add((IGraph) allNode);
+//				processes.appendChild(graph);
+//			}
+//		}
+//		Element connections = document.createElement("connections");
+//		nodeMatrix.appendChild(connections);
+//		for (Object allNode : allNodes) {
+//			if (allNode instanceof IGraph) {
+//				CopyOnWriteArrayList nextNodes = matrix.getToNodes(allNode);
+//				for (Object node : nextNodes) {
+//					if (node instanceof IGraph) {
+//						Element connect = document.createElement("connect");
+//						connect.setAttribute("startId", String.valueOf(arrayList.indexOf(allNode)));
+//						connect.setAttribute("endId", String.valueOf(arrayList.indexOf(node)));
+//						if (node instanceof ProcessGraph) {
+//							Inputs inputs = ((ProcessGraph) node).getProcess().getInputs();
+//							InputData[] datas = inputs.getDatas();
+//							for (InputData data : datas) {
+//								if (data.isBind(((OutputGraph) allNode).getProcessData())) {
+//									connect.setAttribute("inputs", data.getName());
+//								}
+//							}
+//						}
+//						connections.appendChild(connect);
+//					}
+//				}
+//			}
+//		}
+//		return XmlUtilities.nodeToString(document, "UTF-8");
+		return null;
 	}
 
 	public static NodeMatrix stringToNodeMatrix(String xml) {

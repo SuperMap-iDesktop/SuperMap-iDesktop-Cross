@@ -69,7 +69,7 @@ public class NextStepPane extends JPanel implements IState {
 	private JLabel labelTaskStorePath;
 	private WarningOrHelpProvider helpForTaskStorePath;
 	public JFileChooserControl fileChooserControlTaskPath;
-	private JCheckBox checkBoxClipOnThisComputer;
+	protected JCheckBox checkBoxClipOnThisComputer;
 	private JCheckBox checkBoxMultiProcessClip;
 	private JPanel panelMultiProcess;
 	private DialogMapCacheClipBuilder parent;

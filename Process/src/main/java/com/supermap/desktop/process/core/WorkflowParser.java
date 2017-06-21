@@ -49,6 +49,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -129,11 +130,19 @@ public class WorkflowParser {
 								//INodeConstriant now not exist in xml file,so add a new INodeConstriant
 //                                process.getInputs().followProcess(preProcess);
 								nodeMatrix.addConstraint(preProcess, process, new INodeConstraint() {
+									@Override
+									public void clear() {
+
+									}
 								});
 							}
 							if (null != process && null != nextProcess) {
 //                                nextProcess.getInputs().followProcess(process);
 								nodeMatrix.addConstraint(process, nextProcess, new INodeConstraint() {
+									@Override
+									public void clear() {
+
+									}
 								});
 							}
 						}
@@ -152,7 +161,7 @@ public class WorkflowParser {
 
 	private MetaProcess getMetaProcess(String key, NodeMatrix nodeMatrix) {
 		MetaProcess result = null;
-		CopyOnWriteArrayList metaProcesses = nodeMatrix.getAllNodes();
+		Vector metaProcesses = nodeMatrix.getNodes();
 		for (int i = 0; i < metaProcesses.size(); i++) {
 			if (metaProcesses.get(i) instanceof MetaProcess && key.equals(((MetaProcess) metaProcesses.get(i)).getKey())) {
 				result = (MetaProcess) metaProcesses.get(i);
