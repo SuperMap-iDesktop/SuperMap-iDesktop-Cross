@@ -5,7 +5,7 @@ import com.supermap.desktop.process.graphics.graphs.IGraph;
 /**
  * Created by highsad on 2017/5/5.
  */
-public class DefaultGraphConnection implements IConnection {
+public class DefaultGraphConnection implements IGraphConnection {
 	private IConnectable start;
 	private IConnectable end;
 	private String message;

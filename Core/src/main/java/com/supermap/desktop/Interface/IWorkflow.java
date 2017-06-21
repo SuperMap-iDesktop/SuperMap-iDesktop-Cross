@@ -8,7 +8,7 @@ public interface IWorkflow {
 
 	void setName(String name);
 
-	String getMatrixXml();
+	String toXML();
 
-	void setMatrixXml(String matrixXml);
+	void fromXML(String xmlDescription);
 }

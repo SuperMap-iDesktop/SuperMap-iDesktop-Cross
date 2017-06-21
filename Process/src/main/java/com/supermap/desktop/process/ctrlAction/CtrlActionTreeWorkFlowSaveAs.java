@@ -52,7 +52,7 @@ public class CtrlActionTreeWorkFlowSaveAs extends CtrlAction {
 				currentForm.setText(dialogSaveAs.getCurrentFormName());
 			}
 			Workflow workflow = new Workflow(dialogSaveAs.getCurrentFormName());
-			workflow.setMatrixXml(currentWorkFlow.getMatrixXml());
+			workflow.fromXML(currentWorkFlow.toXML());
 			Application.getActiveApplication().addWorkFlow(workflow);
 		}
 	}

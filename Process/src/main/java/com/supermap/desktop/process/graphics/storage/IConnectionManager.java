@@ -2,7 +2,7 @@ package com.supermap.desktop.process.graphics.storage;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.IConnectable;
-import com.supermap.desktop.process.graphics.connection.IConnection;
+import com.supermap.desktop.process.graphics.connection.IGraphConnection;
 import com.supermap.desktop.process.graphics.events.ConnectionAddedListener;
 import com.supermap.desktop.process.graphics.events.ConnectionRemovedListener;
 import com.supermap.desktop.process.graphics.events.ConnectionRemovingListener;
@@ -14,19 +14,19 @@ import com.supermap.desktop.process.graphics.graphs.IGraph;
 public interface IConnectionManager {
 	GraphCanvas getCanvas();
 
-	IConnection[] getConnections();
+	IGraphConnection[] getConnections();
 
 	void connect(IConnectable start, IConnectable end);
 
 	void connect(IConnectable start, IConnectable end, String message);
 
-	void connect(IConnection connection);
+	void connect(IGraphConnection connection);
 
 	void removeConnection(IConnectable connectable);
 
 	void removeConnection(IGraph connector);
 
-	void removeConnection(IConnection connection);
+	void removeConnection(IGraphConnection connection);
 
 	IGraph[] getPreGraphs(IGraph end);
 

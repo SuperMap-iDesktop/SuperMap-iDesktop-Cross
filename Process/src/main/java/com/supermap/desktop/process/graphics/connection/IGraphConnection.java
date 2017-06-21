@@ -5,7 +5,7 @@ import com.supermap.desktop.process.graphics.graphs.IGraph;
 /**
  * Created by highsad on 2017/5/4.
  */
-public interface IConnection {
+public interface IGraphConnection {
 
 	void disconnect();
 

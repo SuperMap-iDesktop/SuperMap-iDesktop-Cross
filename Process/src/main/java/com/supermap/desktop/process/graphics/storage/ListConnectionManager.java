@@ -3,7 +3,7 @@ package com.supermap.desktop.process.graphics.storage;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.DefaultGraphConnection;
 import com.supermap.desktop.process.graphics.connection.IConnectable;
-import com.supermap.desktop.process.graphics.connection.IConnection;
+import com.supermap.desktop.process.graphics.connection.IGraphConnection;
 import com.supermap.desktop.process.graphics.events.*;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
@@ -15,7 +15,7 @@ import java.util.ArrayList;
  */
 public class ListConnectionManager implements IConnectionManager {
 	private GraphCanvas canvas;
-	private java.util.List<IConnection> connections = new ArrayList<>();
+	private java.util.List<IGraphConnection> connections = new ArrayList<>();
 	private EventListenerList listenerList = new EventListenerList();
 
 	public ListConnectionManager(GraphCanvas canvas) {
@@ -28,8 +28,8 @@ public class ListConnectionManager implements IConnectionManager {
 	}
 
 	@Override
-	public IConnection[] getConnections() {
-		return this.connections.toArray(new IConnection[this.connections.size()]);
+	public IGraphConnection[] getConnections() {
+		return this.connections.toArray(new IGraphConnection[this.connections.size()]);
 	}
 
 	@Override
@@ -44,14 +44,14 @@ public class ListConnectionManager implements IConnectionManager {
 		}
 
 		if (start != null && end != null && start != end) {
-			IConnection connection = new DefaultGraphConnection(start, end, message);
+			IGraphConnection connection = new DefaultGraphConnection(start, end, message);
 			this.connections.add(connection);
 			fireConnectionAdded(new ConnectionAddedEvent(this, connection));
 		}
 	}
 
 	@Override
-	public void connect(IConnection connection) {
+	public void connect(IGraphConnection connection) {
 		if (connection == null || connection.getStart() == null || connection.getEnd() == null) {
 			return;
 		}
@@ -75,7 +75,7 @@ public class ListConnectionManager implements IConnectionManager {
 	@Override
 	public void removeConnection(IConnectable connectable) {
 		for (int i = this.connections.size() - 1; i >= 0; i--) {
-			IConnection connection = this.connections.get(i);
+			IGraphConnection connection = this.connections.get(i);
 
 			if (connection.getStart() == connectable || connection.getEnd() == connectable) {
 				ConnectionRemovingEvent removingEvent = new ConnectionRemovingEvent(this, connection);
@@ -93,7 +93,7 @@ public class ListConnectionManager implements IConnectionManager {
 	@Override
 	public void removeConnection(IGraph graph) {
 		for (int i = this.connections.size() - 1; i >= 0; i--) {
-			IConnection connection = this.connections.get(i);
+			IGraphConnection connection = this.connections.get(i);
 
 			if (connection.getStartGraph() == graph || connection.getEndGraph() == graph) {
 				ConnectionRemovingEvent removingEvent = new ConnectionRemovingEvent(this, connection);
@@ -109,7 +109,7 @@ public class ListConnectionManager implements IConnectionManager {
 	}
 
 	@Override
-	public void removeConnection(IConnection connection) {
+	public void removeConnection(IGraphConnection connection) {
 		if (connection == null) {
 			return;
 		}
@@ -132,7 +132,7 @@ public class ListConnectionManager implements IConnectionManager {
 
 		ArrayList<IGraph> ret = new ArrayList<>();
 		for (int i = 0, size = this.connections.size(); i < size; i++) {
-			IConnection connection = this.connections.get(i);
+			IGraphConnection connection = this.connections.get(i);
 
 			if (connection.getEndGraph() == end && connection.getStartGraph() != null
 					&& !ret.contains(connection.getStartGraph())) {
@@ -150,7 +150,7 @@ public class ListConnectionManager implements IConnectionManager {
 
 		ArrayList<IGraph> ret = new ArrayList<>();
 		for (int i = 0, size = this.connections.size(); i < size; i++) {
-			IConnection connection = this.connections.get(i);
+			IGraphConnection connection = this.connections.get(i);
 
 			if (connection.getStartGraph() == start && connection.getEndGraph() != null
 					&& !ret.contains(connection.getEndGraph())) {
@@ -164,7 +164,7 @@ public class ListConnectionManager implements IConnectionManager {
 	public boolean isConnectedAsStart(IGraph start) {
 		boolean ret = false;
 		for (int i = 0, size = this.connections.size(); i < size; i++) {
-			IConnection connection = this.connections.get(i);
+			IGraphConnection connection = this.connections.get(i);
 			if (connection.getStartGraph() == start && connection.getEndGraph() != null) {
 				ret = true;
 				break;
@@ -177,7 +177,7 @@ public class ListConnectionManager implements IConnectionManager {
 	public boolean isConnectedAsEnd(IGraph end) {
 		boolean ret = false;
 		for (int i = 0, size = this.connections.size(); i < size; i++) {
-			IConnection connection = this.connections.get(i);
+			IGraphConnection connection = this.connections.get(i);
 
 			if (connection.getEndGraph() == end && connection.getStartGraph() != null) {
 				ret = true;
@@ -191,7 +191,7 @@ public class ListConnectionManager implements IConnectionManager {
 	public boolean isConnected(IConnectable connectable1, IConnectable connectable2) {
 		boolean ret = false;
 		for (int i = 0, size = this.connections.size(); i < size; i++) {
-			IConnection connection = this.connections.get(i);
+			IGraphConnection connection = this.connections.get(i);
 
 			if ((connection.getStart() == connectable1 && connection.getEnd() == connectable2)
 					|| (connection.getStart() == connectable2 && connection.getEnd() == connectable1)) {
@@ -206,7 +206,7 @@ public class ListConnectionManager implements IConnectionManager {
 	public boolean isConnected(IGraph graph1, IGraph graph2) {
 		boolean ret = false;
 		for (int i = 0, size = this.connections.size(); i < size; i++) {
-			IConnection connection = this.connections.get(i);
+			IGraphConnection connection = this.connections.get(i);
 			if ((connection.getStartGraph() == graph1 && connection.getEndGraph() == graph2)
 					|| (connection.getStartGraph() == graph2 && connection.getEndGraph() == graph1)) {
 				ret = true;

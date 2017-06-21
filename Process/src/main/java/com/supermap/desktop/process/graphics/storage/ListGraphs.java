@@ -2,7 +2,7 @@ package com.supermap.desktop.process.graphics.storage;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
-import com.supermap.desktop.process.graphics.connection.IConnection;
+import com.supermap.desktop.process.graphics.connection.IGraphConnection;
 import com.supermap.desktop.process.graphics.events.*;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ListGraphs extends AbstractGraphStorage {
 	private GraphCanvas canvas;
 	private IConnectionManager connectionManager = new ListConnectionManager(this.canvas);
-	private Map<IConnection, IGraph> connectionMap = new ConcurrentHashMap<>();
+	private Map<IGraphConnection, IGraph> connectionMap = new ConcurrentHashMap<>();
 	private Vector<IGraph> graphs = new Vector();
 	private Rectangle box = null;
 
@@ -190,7 +190,7 @@ public class ListGraphs extends AbstractGraphStorage {
 	}
 
 	private void connectionAdded(ConnectionAddedEvent e) {
-		IConnection connection = e.getConnection();
+		IGraphConnection connection = e.getConnection();
 		if (connection != null && connection.getStart() != null && connection.getEnd() != null) {
 			ConnectionLineGraph lineGraph = new ConnectionLineGraph(this.canvas, connection);
 			add(lineGraph);
@@ -199,7 +199,7 @@ public class ListGraphs extends AbstractGraphStorage {
 	}
 
 	private void connectionRemoving(ConnectionRemovingEvent e) {
-		IConnection connection = e.getConnection();
+		IGraphConnection connection = e.getConnection();
 		if (this.connectionMap.containsKey(connection)) {
 			IGraph graph = this.connectionMap.get(connection);
 			remove(graph);

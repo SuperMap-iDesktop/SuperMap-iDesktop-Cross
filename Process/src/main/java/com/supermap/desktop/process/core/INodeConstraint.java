@@ -6,5 +6,5 @@ package com.supermap.desktop.process.core;
  * or more nodes)
  */
 public interface INodeConstraint {
-
+	void clear();
 }

@@ -1,6 +1,6 @@
 package com.supermap.desktop.process.graphics.events;
 
-import com.supermap.desktop.process.graphics.connection.IConnection;
+import com.supermap.desktop.process.graphics.connection.IGraphConnection;
 import com.supermap.desktop.process.graphics.storage.IConnectionManager;
 
 import java.util.EventObject;
@@ -10,7 +10,7 @@ import java.util.EventObject;
  */
 public class ConnectionRemovedEvent extends EventObject {
 	private IConnectionManager connectionManager;
-	private IConnection connection;
+	private IGraphConnection connection;
 
 	/**
 	 * Constructs a prototypical Event.
@@ -18,7 +18,7 @@ public class ConnectionRemovedEvent extends EventObject {
 	 * @param connectionManager The object on which the Event initially occurred.
 	 * @throws IllegalArgumentException if source is null.
 	 */
-	public ConnectionRemovedEvent(IConnectionManager connectionManager, IConnection connection) {
+	public ConnectionRemovedEvent(IConnectionManager connectionManager, IGraphConnection connection) {
 		super(connectionManager);
 		this.connectionManager = connectionManager;
 		this.connection = connection;
@@ -28,7 +28,7 @@ public class ConnectionRemovedEvent extends EventObject {
 		return connectionManager;
 	}
 
-	public IConnection getConnection() {
+	public IGraphConnection getConnection() {
 		return connection;
 	}
 }

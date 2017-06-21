@@ -5,4 +5,8 @@ package com.supermap.desktop.process.core;
  */
 public class DirectConnect implements INodeConstraint {
 
+	@Override
+	public void clear() {
+
+	}
 }

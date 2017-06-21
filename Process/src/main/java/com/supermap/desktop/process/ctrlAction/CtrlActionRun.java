@@ -10,7 +10,7 @@ import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.MatrixExecutor;
 import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.connection.IConnection;
+import com.supermap.desktop.process.graphics.connection.IGraphConnection;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
@@ -20,6 +20,7 @@ import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.tasks.TasksManagerContainer;
 import com.supermap.desktop.process.util.TaskUtil;
 
+import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -46,8 +47,8 @@ public class CtrlActionRun extends CtrlAction {
 			}
 		}
 
-		IConnection[] connections = graphConnection.getConnections();
-		for (IConnection connection : connections) {
+		IGraphConnection[] connections = graphConnection.getConnections();
+		for (IGraphConnection connection : connections) {
 			IGraph startGraph = connection.getStart().getConnector();
 			IGraph endGraph = connection.getEnd().getConnector();
 
@@ -60,7 +61,7 @@ public class CtrlActionRun extends CtrlAction {
 
 		TasksManagerContainer container = TaskUtil.getManagerContainer(true);
 		container.clear();
-		CopyOnWriteArrayList list = nodeMatrix.getAllNodes();
+		Vector list = nodeMatrix.getNodes();
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i) instanceof IProcess) {
 				ProcessTask task = TaskUtil.getTask((IProcess) list.get(i));

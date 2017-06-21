@@ -11,7 +11,7 @@ import com.supermap.desktop.utilities.StringUtilities;
 /**
  * Created by highsad on 2017/5/27.
  */
-public class IOGraphConnection implements IConnection {
+public class IOGraphConnection implements IGraphConnection {
 	private IConnectable start;
 	private IConnectable end;
 	private InputData input;
