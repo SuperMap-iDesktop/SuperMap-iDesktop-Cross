@@ -30,7 +30,7 @@ public class CtrlActionMapProperty extends CtrlAction {
 					break;
 				}
 			}
-			if (dockbarPropertyContainer != null && !dockbarPropertyContainer.isVisible()) {
+			if (dockbarPropertyContainer != null) {
 				dockbarPropertyContainer.setVisible(true);
 				dockbarPropertyContainer.active();
 			}
