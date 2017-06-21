@@ -362,18 +362,20 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 						return;
 					}
 					this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-//					Application.getActiveApplication().getOutput().output(MapViewProperties.getString(""));
 					dispose();
-					DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder(cmdType);
-					dialogCacheBuilder.textFieldMapName.setText(this.mapCacheBuilder.getCacheName());
-					String targetTaskPath = CacheUtilities.replacePath(tasksPath, "task");
-					File oldFile = new File(sciPath);
-					dialogCacheBuilder.setSciFile(oldFile);
-					dialogCacheBuilder.fileChooserTotalTaskPath.setPath(sciPath);
-					dialogCacheBuilder.fileChooserTaskPath.setPath(targetTaskPath);
-					dialogCacheBuilder.fileChooserWorkspacePath.setPath(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer());
-					dialogCacheBuilder.fileChooserCachePath.setPath(filePath);
-					dialogCacheBuilder.showDialog();
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_TargetTaskPath"), tasksPath));
+					if (nextStepPane.checkBoxClipOnThisComputer.isSelected()) {
+						DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder(cmdType);
+						dialogCacheBuilder.textFieldMapName.setText(this.mapCacheBuilder.getCacheName());
+						String targetTaskPath = CacheUtilities.replacePath(tasksPath, "task");
+						File oldFile = new File(sciPath);
+						dialogCacheBuilder.setSciFile(oldFile);
+						dialogCacheBuilder.fileChooserTotalTaskPath.setPath(sciPath);
+						dialogCacheBuilder.fileChooserTaskPath.setPath(targetTaskPath);
+						dialogCacheBuilder.fileChooserWorkspacePath.setPath(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer());
+						dialogCacheBuilder.fileChooserCachePath.setPath(filePath);
+						dialogCacheBuilder.showDialog();
+					}
 				}
 				if (this.checkBoxAutoClosed.isSelected()) {
 					dispose();
