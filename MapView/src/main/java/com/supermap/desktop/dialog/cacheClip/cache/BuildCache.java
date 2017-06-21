@@ -3,6 +3,8 @@ package com.supermap.desktop.dialog.cacheClip.cache;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
+import com.supermap.desktop.dialog.SmOptionPane;
+import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.mapping.Map;
 
 import java.io.File;
@@ -17,8 +19,8 @@ public class BuildCache {
 	public static final int MAPNAME_INDEX = 2;
 	public static final int CACHEPATH_INDEX = 3;
 	public static final int PROCESSCOUNT_INDEX = 4;
-	public static final int MERGESCICOUNT_INDEX = 5;
-	public static final int ISAPPENDING_INDEX = 6;
+//	public static final int MERGESCICOUNT_INDEX = 5;
+	public static final int ISAPPENDING_INDEX = 5;
 
 	//Add new process
 	public void addProcess(String[] params) {
@@ -58,9 +60,9 @@ public class BuildCache {
 			String workspacePath = params[WORKSPACEPATH_INDEX];
 			String mapName = params[MAPNAME_INDEX];
 			String cachePath = params[CACHEPATH_INDEX];
-			String mergeCount = "1";
-			if (params.length > MERGESCICOUNT_INDEX && !params[MERGESCICOUNT_INDEX].equals("0"))
-				mergeCount = params[MERGESCICOUNT_INDEX];
+//			String mergeCount = "1";
+//			if (params.length > MERGESCICOUNT_INDEX && !params[MERGESCICOUNT_INDEX].equals("0"))
+//				mergeCount = params[MERGESCICOUNT_INDEX];
 			String isAppendingStr = params[ISAPPENDING_INDEX];
 			boolean isAppending = Boolean.valueOf(isAppendingStr);
 			//Instance LogWriter
@@ -89,7 +91,7 @@ public class BuildCache {
 					}
 					CopyOnWriteArrayList<String> doingSciNames = new CopyOnWriteArrayList<>();
 					//Now give mergeSciCount sci files to every process if sciLength>mergeSciCount
-					int mergeSciCount = Integer.valueOf(mergeCount);
+					int mergeSciCount = 3;
 					if (sciLength > mergeSciCount) {
 						//First step:Move mergeSciCount sci to doing directory
 						int success = 0;
