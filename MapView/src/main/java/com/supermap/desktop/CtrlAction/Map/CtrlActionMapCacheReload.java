@@ -26,7 +26,7 @@ public class CtrlActionMapCacheReload extends CtrlAction {
 
 	@Override
 	public void run() {
-		String moduleName = "GetCacheConfigFile";
+		String moduleName = "GetCacheReloadConfigFile";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci");
 			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
@@ -56,14 +56,8 @@ public class CtrlActionMapCacheReload extends CtrlAction {
 				return;
 			}
 			if (file.exists()) {
-//				Workspace wk = Application.getActiveApplication().getWorkspace();
-//				Map map = new Map(wk);
 				MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 				mapCacheBuilder.fromConfigFile(file.getPath());
-//				map.open(mapCacheBuilder.getCacheName());
-//				Map newMap = new Map(wk);
-//				newMap.fromXML(map.toXML());
-//				mapCacheBuilder.setMap(newMap);
 
 				DialogMapCacheClipBuilder mapCacheClipBuilder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.ReloadProcessClip, mapCacheBuilder);
 				mapCacheClipBuilder.setComponentsEnabled(false);

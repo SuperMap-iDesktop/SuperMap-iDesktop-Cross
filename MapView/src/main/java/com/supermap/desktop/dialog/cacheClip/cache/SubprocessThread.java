@@ -19,6 +19,13 @@ class SubprocessThread extends Thread {
 //		start = 0;
 	}
 
+	public ArrayList<String> getArguments() {
+		return arguments;
+	}
+
+	public String getType() {
+		return type;
+	}
 
 	public void setArguments(ArrayList<String> arguments) {
 		this.arguments = arguments;
@@ -26,21 +33,6 @@ class SubprocessThread extends Thread {
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public SubprocessThread clone() {
-		try {
-			SubprocessThread newThread = (SubprocessThread) super.clone();
-			if (null != this.arguments && null != this.type) {
-				newThread.setArguments(arguments);
-				newThread.setType(type);
-				return new SubprocessThread(arguments,type);
-			}
-		} catch (CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-
-		return null;
 	}
 
 	/**
