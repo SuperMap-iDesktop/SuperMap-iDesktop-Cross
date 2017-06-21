@@ -1,5 +1,8 @@
 package com.supermap.desktop.process.core;
 
+import com.supermap.desktop.process.events.*;
+
+import javax.swing.event.EventListenerList;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -12,6 +15,7 @@ public class NodeMatrix<T extends Object> {
 
 	private Vector<T> nodes = new Vector();
 	private Vector<Map<T, INodeConstraint>> matrix = new Vector<>();
+	private EventListenerList listenerList = new EventListenerList();
 
 	public NodeMatrix() {
 
@@ -26,8 +30,14 @@ public class NodeMatrix<T extends Object> {
 		Objects.requireNonNull(node);
 
 		if (!this.nodes.contains(node)) {
-			this.nodes.add(node);
-			this.matrix.add(new ConcurrentHashMap<T, INodeConstraint>());
+			MatrixNodeAddingEvent<T> addingEvent = new MatrixNodeAddingEvent<T>(this, node, false);
+			fireMatrixNodeAdding(addingEvent);
+
+			if (!addingEvent.isCancel()) {
+				this.nodes.add(node);
+				this.matrix.add(new ConcurrentHashMap<T, INodeConstraint>());
+				fireMatrixNodeAdded(new MatrixNodeAddedEvent<T>(this, node));
+			}
 		}
 	}
 
@@ -57,8 +67,15 @@ public class NodeMatrix<T extends Object> {
 	 * @return If node remove success return true,
 	 * else return false;
 	 */
-	public synchronized void removeNode(T node) throws NodeException {
+	public synchronized void removeNode(T node) {
 		validateNode(node);
+
+		MatrixNodeRemovingEvent<T> removingEvent = new MatrixNodeRemovingEvent<>(this, node, false);
+		fireMatrixNodeRemoving(removingEvent);
+
+		if (removingEvent.isCancel()) {
+			return;
+		}
 
 		// remove values
 		int index = this.nodes.indexOf(node);
@@ -82,6 +99,7 @@ public class NodeMatrix<T extends Object> {
 		this.matrix.get(index).clear();
 		this.matrix.remove(index);
 		this.nodes.remove(index);
+		fireMatrixNodeRemoved(new MatrixNodeRemovedEvent<T>(this, node));
 	}
 
 	/**
@@ -102,6 +120,12 @@ public class NodeMatrix<T extends Object> {
 		return freeNodes;
 	}
 
+	/**
+	 * Returns <tt>true<tt/> if the specified node relates to any other node,<tt>false</tt> otherwise.
+	 *
+	 * @param node
+	 * @return
+	 */
 	public synchronized boolean isRelateToAnyone(T node) {
 		validateNode(node);
 
@@ -109,6 +133,12 @@ public class NodeMatrix<T extends Object> {
 		return this.matrix.get(index).size() > 0;
 	}
 
+	/**
+	 * Returns <tt>true<tt/> if the specified node is related from some other nodes,<tt>false</tt> otherwise.
+	 *
+	 * @param node
+	 * @return
+	 */
 	public synchronized boolean isRelatedFormSomeone(T node) {
 		validateNode(node);
 		boolean ret = false;
@@ -122,6 +152,13 @@ public class NodeMatrix<T extends Object> {
 		return ret;
 	}
 
+	/**
+	 * Returns <tt>true</tt> if the specified fromNode relates to the specified toNode,<tt>false</tt> otherwise.
+	 *
+	 * @param fromNode
+	 * @param toNode
+	 * @return
+	 */
 	public synchronized boolean isRelateTo(T fromNode, T toNode) {
 		validateNode(fromNode);
 		validateNode(toNode);
@@ -146,6 +183,15 @@ public class NodeMatrix<T extends Object> {
 	 */
 	public synchronized boolean isFreeNode(T node) {
 		return !isRelateToAnyone(node) && !isRelatedFormSomeone(node);
+	}
+
+	public synchronized boolean isLeadingNode(T node) {
+		return isLeadingNode(node, false);
+	}
+
+	public synchronized boolean isLeadingNode(T node, boolean exceptFreeNodes) {
+		validateNode(node);
+		return exceptFreeNodes ? !isRelatedFormSomeone(node) && isRelateToAnyone(node) : !isRelatedFormSomeone(node);
 	}
 
 	/**
@@ -291,9 +337,85 @@ public class NodeMatrix<T extends Object> {
 		return nodes;
 	}
 
+	public synchronized int getCount() {
+		return this.nodes.size();
+	}
+
 	private void clearConstraint(INodeConstraint constraint) {
 		if (constraint != null) {
 			constraint.clear();
+		}
+	}
+
+	public void addMatrixNodeAddingListener(MatrixNodeAddingListener<T> listener) {
+		this.listenerList.add(MatrixNodeAddingListener.class, listener);
+	}
+
+	private void removeMatrixNodeAddingListener(MatrixNodeAddingListener<T> listener) {
+		this.listenerList.remove(MatrixNodeAddingListener.class, listener);
+	}
+
+	public void addMatrixNodeAddedListener(MatrixNodeAddedListener<T> listener) {
+		this.listenerList.add(MatrixNodeAddedListener.class, listener);
+	}
+
+	public void removeMatrixNodeAddedListener(MatrixNodeAddedListener<T> listener) {
+		this.listenerList.remove(MatrixNodeAddedListener.class, listener);
+	}
+
+	public void addMatrixNodeRemovingListener(MatrixNodeRemovingListener<T> listener) {
+		this.listenerList.add(MatrixNodeRemovingListener.class, listener);
+	}
+
+	public void removeMatrixNodeRemovingListener(MatrixNodeRemovingListener<T> listener) {
+		this.listenerList.remove(MatrixNodeRemovingListener.class, listener);
+	}
+
+	public void addMatrixNodeRemovedListener(MatrixNodeRemovedListener<T> listener) {
+		this.listenerList.add(MatrixNodeRemovedListener.class, listener);
+	}
+
+	public void removeMatrixNodeRemovedListener(MatrixNodeRemovedListener<T> listener) {
+		this.listenerList.remove(MatrixNodeRemovedListener.class, listener);
+	}
+
+	protected void fireMatrixNodeAdding(MatrixNodeAddingEvent<T> e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i = i - 2) {
+			if (listeners[i] == MatrixNodeAddingListener.class) {
+				((MatrixNodeAddingListener<T>) listeners[i + 1]).matrixNodeAdding(e);
+			}
+		}
+	}
+
+	protected void fireMatrixNodeAdded(MatrixNodeAddedEvent<T> e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i = i - 2) {
+			if (listeners[i] == MatrixNodeAddedListener.class) {
+				((MatrixNodeAddedListener<T>) listeners[i + 1]).matrixNodeAdded(e);
+			}
+		}
+	}
+
+	protected void fireMatrixNodeRemoving(MatrixNodeRemovingEvent<T> e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i = i - 2) {
+			if (listeners[i] == MatrixNodeRemovingListener.class) {
+				((MatrixNodeRemovingListener<T>) listeners[i + 1]).matrixNodeRemoving(e);
+			}
+		}
+	}
+
+	protected void fireMatrixNodeRemoved(MatrixNodeRemovedEvent<T> e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i = i - 2) {
+			if (listeners[i] == MatrixNodeRemovedListener.class) {
+				((MatrixNodeRemovedListener<T>) listeners[i + 1]).matrixNodeRemoved(e);
+			}
 		}
 	}
 }

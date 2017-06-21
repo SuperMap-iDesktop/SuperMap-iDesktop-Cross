@@ -5,7 +5,7 @@ import com.supermap.desktop.Interface.IWorkflow;
 /**
  * @author XiaJT
  */
-public class WorkFlowChangedEvent {
+public class WorkFlowsChangedEvent {
 	private IWorkflow[] workFlows;
 	private int type;
 
@@ -14,7 +14,7 @@ public class WorkFlowChangedEvent {
 	public static final int MODIFIED = 3;
 	public static final int RE_BUILD = 4;
 
-	public WorkFlowChangedEvent(int type, IWorkflow... workFlows) {
+	public WorkFlowsChangedEvent(int type, IWorkflow... workFlows) {
 		this.workFlows = workFlows;
 		this.type = type;
 	}

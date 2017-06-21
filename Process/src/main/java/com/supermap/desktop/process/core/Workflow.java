@@ -1,8 +1,7 @@
 package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Interface.IWorkflow;
-import com.supermap.desktop.process.events.WorkflowChangeEvent;
-import com.supermap.desktop.process.events.WorkflowChangeListener;
+import com.supermap.desktop.process.events.*;
 
 import javax.swing.event.EventListenerList;
 import java.util.ArrayList;
@@ -16,17 +15,28 @@ import java.util.Vector;
 public class Workflow implements IWorkflow {
 	private String name = "workflow";
 
-	private NodeMatrix<IProcess> processMatrix = new NodeMatrix<>();
+	private NodeMatrix<IProcess> processMatrix;
 	private List<IConnection> connections = new ArrayList<>();
 	private EventListenerList listenerList = new EventListenerList();
+
+	private MatrixEventHandler handler = new MatrixEventHandler();
 
 	public Workflow(String name) {
 		this.name = name;
 		this.processMatrix = new NodeMatrix<>();
+		registerEvents();
 	}
 
-	public void setMatrix(NodeMatrix matrix) {
+	public void setMatrix(NodeMatrix<IProcess> matrix) {
+		this.processMatrix = matrix == null ? new NodeMatrix<IProcess>() : matrix;
+		registerEvents();
+	}
 
+	private void registerEvents() {
+		this.processMatrix.addMatrixNodeAddingListener(this.handler);
+		this.processMatrix.addMatrixNodeAddedListener(this.handler);
+		this.processMatrix.addMatrixNodeRemovingListener(this.handler);
+		this.processMatrix.addMatrixNodeRemovedListener(this.handler);
 	}
 
 	@Override
@@ -47,6 +57,14 @@ public class Workflow implements IWorkflow {
 	@Override
 	public void fromXML(String xmlDescription) {
 
+	}
+
+	public void addProcess(IProcess process) {
+		this.processMatrix.addNode(process);
+	}
+
+	public void removeProcess(IProcess process) {
+		this.processMatrix.removeNode(process);
 	}
 
 	public Vector<IProcess> getToProcesses(IProcess process) {
@@ -72,11 +90,11 @@ public class Workflow implements IWorkflow {
 	}
 
 	public int getProcessCount() {
-		return 0;
+		return this.processMatrix.getCount();
 	}
 
-	public boolean isLeadProcess(IProcess process) {
-		return true;
+	public boolean isLeadingProcess(IProcess process) {
+		return this.processMatrix.isLeadingNode(process);
 	}
 
 	public void addWorkflowChangeListener(WorkflowChangeListener listener) {
@@ -94,6 +112,29 @@ public class Workflow implements IWorkflow {
 			if (listeners[i] == WorkflowChangeListener.class) {
 				((WorkflowChangeListener) listeners[i + 1]).workflowChange(e);
 			}
+		}
+	}
+
+	private class MatrixEventHandler implements MatrixNodeAddingListener<IProcess>, MatrixNodeAddedListener<IProcess>, MatrixNodeRemovingListener<IProcess>, MatrixNodeRemovedListener<IProcess> {
+
+		@Override
+		public void matrixNodeAdded(MatrixNodeAddedEvent<IProcess> e) {
+			fireWorkflowChange(new WorkflowChangeEvent(Workflow.this, WorkflowChangeEvent.ADDED, e.getNode()));
+		}
+
+		@Override
+		public void matrixNodeAdding(MatrixNodeAddingEvent<IProcess> e) {
+			fireWorkflowChange(new WorkflowChangeEvent(Workflow.this, WorkflowChangeEvent.ADDING, e.getNode()));
+		}
+
+		@Override
+		public void matrixNodeRemoved(MatrixNodeRemovedEvent<IProcess> e) {
+			fireWorkflowChange(new WorkflowChangeEvent(Workflow.this, WorkflowChangeEvent.REMOVED, e.getNode()));
+		}
+
+		@Override
+		public void matrixNodeRemoving(MatrixNodeRemovingEvent<IProcess> e) {
+			fireWorkflowChange(new WorkflowChangeEvent(Workflow.this, WorkflowChangeEvent.REMOVING, e.getNode()));
 		}
 	}
 }
