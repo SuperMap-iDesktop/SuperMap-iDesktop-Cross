@@ -331,7 +331,7 @@ public class Application {
 				this.workFlows.add(fireWorkFlowInitListener(element));
 			}
 		}
-		fireWorkFlowsChanged(new WorkFlowChangedEvent(WorkFlowChangedEvent.RE_BUILD, workFlows.toArray(new IWorkflow[workFlows.size()])));
+		fireWorkFlowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.RE_BUILD, workFlows.toArray(new IWorkflow[workFlows.size()])));
 	}
 
 	private IWorkflow fireWorkFlowInitListener(Element element) {
@@ -376,12 +376,12 @@ public class Application {
 
 	private void addWorkFlowInTree(IWorkflow workFlow) {
 		this.workFlows.add(workFlow);
-		fireWorkFlowsChanged(new WorkFlowChangedEvent(WorkFlowChangedEvent.ADD, workFlow));
+		fireWorkFlowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.ADD, workFlow));
 	}
 
 	public void addWorkFlow(int index, IWorkflow workFlow) {
 		workFlows.add(index, workFlow);
-		fireWorkFlowsChanged(new WorkFlowChangedEvent(WorkFlowChangedEvent.ADD, workFlow));
+		fireWorkFlowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.ADD, workFlow));
 	}
 
 	public void removeWorkFlow(IWorkflow workFlow) {
@@ -391,7 +391,7 @@ public class Application {
 
 	private void removeWorkFlowFormTree(IWorkflow workFlow) {
 		this.workFlows.remove(workFlow);
-		fireWorkFlowsChanged(new WorkFlowChangedEvent(WorkFlowChangedEvent.DELETE, workFlow));
+		fireWorkFlowsChanged(new WorkFlowsChangedEvent(WorkFlowsChangedEvent.DELETE, workFlow));
 	}
 
 	private void removeWorkFlowFormWorkspace(IWorkflow workFlow) {
@@ -411,7 +411,7 @@ public class Application {
 		workspace.setDesktopInfo(s);
 	}
 
-	private void fireWorkFlowsChanged(WorkFlowChangedEvent workFlowChangedEvent) {
+	private void fireWorkFlowsChanged(WorkFlowsChangedEvent workFlowChangedEvent) {
 		for (WorkFlowsChangedListener workFlowsChangedListener : workFlowsChangedListeners) {
 			workFlowsChangedListener.workFlowsChanged(workFlowChangedEvent);
 		}

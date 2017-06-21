@@ -1,4 +1,4 @@
-package com.supermap.desktop.process.diagram.ui;
+package com.supermap.desktop.process.ui;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.Vector;

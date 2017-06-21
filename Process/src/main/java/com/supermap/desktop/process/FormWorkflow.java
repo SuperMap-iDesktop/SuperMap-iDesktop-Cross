@@ -72,6 +72,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	private boolean isNeedSave = true;
 	private boolean isAutoAddOutPut = true;
 	private transient DropTarget dropTargeted;
+
 	public FormWorkflow() {
 		this(ControlsProperties.getString("String_WorkFlows"));
 	}
@@ -93,6 +94,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 		this.workflow = (Workflow) workflow;
 		this.canvas = new GraphCanvas();
+		this.tasksManager = new TasksManager(this.workflow);
 
 		initializeComponents();
 		initFormWorkflow(workflow);

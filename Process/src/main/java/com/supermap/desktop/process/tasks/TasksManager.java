@@ -133,7 +133,7 @@ public class TasksManager {
 		Vector<IProcess> processes = this.workflow.getProcesses();
 		for (IProcess process :
 				processes) {
-			if (this.workflow.isLeadProcess(process)) {
+			if (this.workflow.isLeadingProcess(process)) {
 				this.ready.add(process);
 			} else {
 				this.waiting.add(process);

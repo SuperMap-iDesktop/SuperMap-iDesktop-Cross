@@ -7,4 +7,8 @@ public interface IConnection {
 	IProcess formProcess();
 
 	IProcess toProcess();
+
+	void disconnect();
+
+	String getMessage();
 }

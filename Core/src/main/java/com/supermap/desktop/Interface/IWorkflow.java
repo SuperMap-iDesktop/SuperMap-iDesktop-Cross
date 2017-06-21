@@ -1,5 +1,7 @@
 package com.supermap.desktop.Interface;
 
+import com.supermap.desktop.event.WorkFlowsChangedListener;
+
 /**
  * @author XiaJT
  */
