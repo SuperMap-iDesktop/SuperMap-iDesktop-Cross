@@ -34,6 +34,7 @@ import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.NodeDataType;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.RecentFileUtilties;
@@ -187,9 +188,15 @@ public class FormBase extends JFrame implements IFormMain {
 		String desktopCrossStartArgs = System.getProperty("DesktopCrossStartArgs");
 		JSONArray fileLists = (JSONArray) JSONArray.parse(desktopCrossStartArgs);
 		if (fileLists.size() != 0) {
-			for (int i = 0; i < fileLists.size(); i++) {
-				openStartupFile(fileLists.getString(0));
+			try {
+				CursorUtilities.setWaitCursor();
+				for (int i = 0; i < fileLists.size(); i++) {
+					openStartupFile(fileLists.getString(i));
+				}
+			} finally {
+				CursorUtilities.setDefaultCursor();
 			}
+
 		}
 	}
 
