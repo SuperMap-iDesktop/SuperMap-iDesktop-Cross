@@ -205,12 +205,17 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		this.checkBoxShowProcessBar.setSelected(true);
 	}
 
-	private boolean isCacheFolderSave() {
+	private boolean valiteCacheFolderSave() {
 		boolean result = true;
 		File file = new File(firstStepPane.fileChooserControlFileCache.getPath() + firstStepPane.textFieldCacheName.getText());
 		if (file.exists() || file.isDirectory()) {
 			SmOptionPane smOptionPane = new SmOptionPane();
 			smOptionPane.showErrorDialog("\"" + firstStepPane.textFieldCacheName.getText() + "\"" + MapViewProperties.getString("MapCache_FileIsExitWarning"));
+			if (buttonStep.getText().equals(ControlsProperties.getString("String_LastWay"))) {
+				changePanel(false);
+			}
+			getContentPane().repaint();
+			firstStepPane.textFieldCacheName.requestFocus();
 			result = false;
 		}
 		return result;
@@ -314,6 +319,9 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			if (cmdType == SingleProcessClip) {
 				singleProcessBuilder();
 			} else {
+				if (!valiteCacheFolderSave()) {
+					return;
+				}
 				String tasksPath = nextStepPane.fileChooserControlTaskPath.getPath();
 				String filePath = firstStepPane.fileChooserControlFileCache.getPath();
 				tasksPath = CacheUtilities.replacePath(tasksPath);
@@ -390,12 +398,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	}
 
 	private void singleProcessBuilder() {
-		if (!isCacheFolderSave()) {
-			if (buttonStep.getText().equals(ControlsProperties.getString("String_NextWay"))) {
-				changePanel(buttonStep.getText().equals(ControlsProperties.getString("String_NextWay")));
-			}
-			getContentPane().repaint();
-			firstStepPane.textFieldCacheName.requestFocus();
+		if (!valiteCacheFolderSave()) {
 			return;
 		}
 		setMapCacheBuilderValueBeforeRun();

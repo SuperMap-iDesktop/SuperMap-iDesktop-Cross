@@ -26,8 +26,8 @@ public class CtrlActionMapCacheUpdate extends CtrlAction {
 		String moduleName = "GetCacheUpdateConfigFile";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("MapCache_CacheConfigFile"), "sci");
-			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
-					MapViewProperties.getString("String_SaveAsFile"), moduleName, "OpenOne");
+			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
+					MapViewProperties.getString("String_OpenColorTable"), moduleName, "OpenOne");
 		}
 		SmFileChoose smFileChoose = new SmFileChoose(moduleName);
 		smFileChoose.setSelectedFile(new File(MapViewProperties.getString("MapCache_CacheConfigFileIsNotbrackets")));

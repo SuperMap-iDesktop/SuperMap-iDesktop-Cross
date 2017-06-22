@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class ProcessManager {
 	private CopyOnWriteArrayList<SubprocessThread> threadList;
 	private static volatile ProcessManager processManager;
-	private volatile ProtectThread protectThread;
+//	private volatile ProtectThread protectThread;
 
 	public static ProcessManager getInstance() {
 		if (null == processManager) {
@@ -30,8 +30,9 @@ public class ProcessManager {
 			this.threadList = new CopyOnWriteArrayList<>();
 		}
 		// Create a protect thread while some process destroyed unexpected(Create one/more process)
-		protectThread = new ProtectThread();
-		protectThread.start();
+//		protectThread = new ProtectThread();
+//		protectThread.setExit(true);
+//		protectThread.start();
 	}
 
 	public void addProcess(SubprocessThread thread, String cacheType) {
@@ -81,8 +82,8 @@ public class ProcessManager {
 			File logDirectory = new File(logFolder);
 			CopyOnWriteArrayList<String> undoScis = new CopyOnWriteArrayList<>();
 			if (logDirectory.exists() && logDirectory.isDirectory()) {
-				int mergeSciCount = Integer.valueOf(params[BuildCache.MERGESCICOUNT_INDEX]);
-				undoScis = getUndoScis(logDirectory, mergeSciCount);
+//				int mergeSciCount = Integer.valueOf(params[BuildCache.MERGESCICOUNT_INDEX]);
+				undoScis = getUndoScis(logDirectory, 3);
 			}
 			LogWriter.removeAllLogs();
 			File doingDirectory = new File(doingPath);
@@ -149,49 +150,54 @@ public class ProcessManager {
 				threadList.get(i).process.destroy();
 			}
 			threadList.clear();
-			protectThread.exit = false;
+//			protectThread.exit = false;
 			ProcessManager.this.finalize();
 		} catch (Throwable throwable) {
 			throwable.printStackTrace();
 		}
 	}
 
-	class ProtectThread extends Thread {
-		public volatile boolean exit = true;
-
-		@Override
-		public void run() {
-			while (exit) {
-				if (null == threadList) {
-					break;
-				}
-				//If process count <threadList.size() add one/more process
-				while (true) {
-					int exist = 0;
-					for (int i = 0; i < threadList.size(); i++) {
-						try {
-							SubprocessThread tempThread = threadList.get(i);
-							ArrayList arguments = tempThread.getArguments();
-							String type = tempThread.getType();
-							if (1 == tempThread.process.exitValue()) {
-								SubprocessThread newProcess = new SubprocessThread(arguments, type);
-								newProcess.start();
-								threadList.remove(i);
-								threadList.add(i, newProcess);
-							}
-						} catch (IllegalThreadStateException e) {
-//							e.printStackTrace();
-//							exist++;
-						}
-					}
-					try {
-						TimeUnit.SECONDS.sleep(30);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
+//	class ProtectThread extends Thread {
+//		public volatile boolean exit = true;
+//
+//		public boolean isExit() {
+//			return exit;
+//		}
+//
+//		public void setExit(boolean exit) {
+//			this.exit = exit;
+//		}
+//
+//		@Override
+//		public void run() {
+//			while (isExit()) {
+//				if (null == threadList) {
+//					break;
+//				}
+//				//If process count <threadList.size() add one/more process
+//				for (int i = 0; i < threadList.size(); i++) {
+//					try {
+//						SubprocessThread tempThread = threadList.get(i);
+//						ArrayList arguments = tempThread.getArguments();
+//						String type = tempThread.getType();
+//						if (1 == tempThread.process.exitValue()) {
+//							SubprocessThread newProcess = new SubprocessThread(arguments, type);
+//							newProcess.start();
+//							threadList.remove(i);
+//							threadList.add(i, newProcess);
+//						}
+//					} catch (IllegalThreadStateException e) {
+////							e.printStackTrace();
+////							exist++;
+//					}
+//				}
+//				try {
+//					TimeUnit.SECONDS.sleep(30);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}
+//	}
 
 }
