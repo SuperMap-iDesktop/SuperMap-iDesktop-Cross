@@ -382,7 +382,7 @@ public class NextStepPane extends JPanel implements IState {
 		this.labelTaskStorePath = new JLabel();
 		this.helpForTaskStorePath = new WarningOrHelpProvider(MapViewProperties.getString("String_HelpForTaskStorePath"), false);
 		this.fileChooserControlTaskPath = new JFileChooserControl();
-		String moduleName = "ChooseCacheClipDirectories";
+		String moduleName = "ChooseCacheTaskDirectories";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
 					moduleName, "GetDirectories");
@@ -390,7 +390,7 @@ public class NextStepPane extends JPanel implements IState {
 
 		SmFileChoose fileChoose = new SmFileChoose(moduleName);
 		this.fileChooserControlTaskPath.setFileChooser(fileChoose);
-		this.fileChooserControlTaskPath.setPath(System.getProperty("user.dir"));
+		this.fileChooserControlTaskPath.setPath(fileChoose.getModuleLastPath());
 		this.checkBoxClipOnThisComputer = new JCheckBox();
 		this.checkBoxMultiProcessClip = new JCheckBox();
 		this.checkBoxMultiProcessClip.setSelected(true);

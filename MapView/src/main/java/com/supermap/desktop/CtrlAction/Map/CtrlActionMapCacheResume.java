@@ -18,8 +18,8 @@ import java.io.FilenameFilter;
 /**
  * Created by xie on 2017/5/9.
  */
-public class CtrlActionMapCacheReload extends CtrlAction {
-	public CtrlActionMapCacheReload(IBaseItem caller, IForm formClass) {
+public class CtrlActionMapCacheResume extends CtrlAction {
+	public CtrlActionMapCacheResume(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 
