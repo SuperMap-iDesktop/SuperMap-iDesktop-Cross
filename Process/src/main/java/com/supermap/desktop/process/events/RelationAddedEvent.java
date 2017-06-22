@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.events;
 
+import com.supermap.desktop.process.core.IRelation;
 import com.supermap.desktop.process.core.NodeMatrix;
 
 import java.util.EventObject;
@@ -7,9 +8,9 @@ import java.util.EventObject;
 /**
  * Created by highsad on 2017/6/21.
  */
-public class MatrixNodeRemovedEvent<T extends Object> extends EventObject {
+public class RelationAddedEvent<T> extends EventObject {
 	private NodeMatrix<T> matrix;
-	private T node;
+	private IRelation<T> relation;
 
 	/**
 	 * Constructs a prototypical Event.
@@ -17,17 +18,17 @@ public class MatrixNodeRemovedEvent<T extends Object> extends EventObject {
 	 * @param matrix The object on which the Event initially occurred.
 	 * @throws IllegalArgumentException if source is null.
 	 */
-	public MatrixNodeRemovedEvent(NodeMatrix<T> matrix, T removedNode) {
+	public RelationAddedEvent(NodeMatrix<T> matrix, IRelation<T> relation) {
 		super(matrix);
 		this.matrix = matrix;
-		this.node = removedNode;
+		this.relation = relation;
 	}
 
 	public NodeMatrix<T> getMatrix() {
-		return matrix;
+		return this.matrix;
 	}
 
-	public T getNode() {
-		return node;
+	public IRelation<T> getRelation() {
+		return this.relation;
 	}
 }

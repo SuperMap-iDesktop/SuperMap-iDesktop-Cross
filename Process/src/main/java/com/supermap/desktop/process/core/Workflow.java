@@ -16,7 +16,7 @@ public class Workflow implements IWorkflow {
 	private String name = "workflow";
 
 	private NodeMatrix<IProcess> processMatrix;
-	private List<IConnection> connections = new ArrayList<>();
+	private List<IRelation> relations = new ArrayList<>();
 	private EventListenerList listenerList = new EventListenerList();
 
 	private MatrixEventHandler handler = new MatrixEventHandler();
