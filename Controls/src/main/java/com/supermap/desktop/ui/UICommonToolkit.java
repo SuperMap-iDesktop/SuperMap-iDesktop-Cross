@@ -77,11 +77,12 @@ public class UICommonToolkit {
 			if (null != selectedNodeData && selectedNodeData.getData() instanceof Datasource) {
 				Datasource datasource = (Datasource) selectedNodeData.getData();
 				if (datasource.getAlias().equals(datasourceName)) {
-					workspaceTree.refreshNode(childDatasourceTreeNode);
+//					workspaceTree.refreshNode(childDatasourceTreeNode);
 					UICommonToolkit.getWorkspaceManager().getWorkspaceTree().setSelectionPath(path);
 					UICommonToolkit.getWorkspaceManager().getWorkspaceTree().expandPath(path);
 					// 设置选中的数据源在可见范围内
 					workspaceTree.scrollPathToVisible(path);
+					return;
 				}
 			}
 		}

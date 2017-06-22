@@ -34,12 +34,12 @@ public class DialogCacheCheck extends SmDialog {
 	private JLabel labelCheckBounds;
 	private JLabel labelSciPath;
 	private JLabel labelProcessCount;
-	private JLabel labelMergeSciCount;
+	//	private JLabel labelMergeSciCount;
 	private JFileChooserControl fileChooseTotalSciPath;
 	private JFileChooserControl fileChooseCheckBounds;
 	private JFileChooserControl fileChooseSciPath;
 	private JTextField textFieldProcessCount;
-	private JTextField textFieldMergeSciCount;
+	//	private JTextField textFieldMergeSciCount;
 	private JRadioButton radioButtonSingleCheck;
 	private JRadioButton radioButtonMultiCheck;
 	private JCheckBox checkBoxSaveErrorData;
@@ -86,7 +86,7 @@ public class DialogCacheCheck extends SmDialog {
 		this.componentList.add(this.fileChooseCheckBounds);
 		this.componentList.add(this.fileChooseSciPath);
 		this.componentList.add(this.textFieldProcessCount);
-		this.componentList.add(this.textFieldMergeSciCount);
+//		this.componentList.add(this.textFieldMergeSciCount);
 		this.setFocusTraversalPolicy(this.policy);
 	}
 
@@ -108,7 +108,7 @@ public class DialogCacheCheck extends SmDialog {
 		this.labelCheckBounds = new JLabel();
 		this.labelSciPath = new JLabel();
 		this.labelProcessCount = new JLabel();
-		this.labelMergeSciCount = new JLabel();
+//		this.labelMergeSciCount = new JLabel();
 		String moduleNameForCachePath = "ChooseCachePathForCheck";
 		if (!SmFileChoose.isModuleExist(moduleNameForCachePath)) {
 			SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
@@ -138,7 +138,7 @@ public class DialogCacheCheck extends SmDialog {
 		this.fileChooseSciPath.setFileChooser(fileChooserForSciPath);
 		this.fileChooseSciPath.setPath(System.getProperty("user.dir"));
 		this.textFieldProcessCount = new JTextField();
-		this.textFieldMergeSciCount = new JTextField();
+//		this.textFieldMergeSciCount = new JTextField();
 		this.radioButtonSingleCheck = new JRadioButton();
 		this.radioButtonMultiCheck = new JRadioButton();
 		ButtonGroup group = new ButtonGroup();
@@ -160,9 +160,9 @@ public class DialogCacheCheck extends SmDialog {
 		this.labelCheckBounds.setText(MapViewProperties.getString("String_CheckBounds"));
 		this.labelSciPath.setText(MapViewProperties.getString("String_SciPath"));
 		this.labelProcessCount.setText(MapViewProperties.getString("String_NewProcessCount"));
-		this.labelMergeSciCount.setText(MapViewProperties.getString("String_MergeSciCount"));
+//		this.labelMergeSciCount.setText(MapViewProperties.getString("String_MergeSciCount"));
 		this.textFieldProcessCount.setText("3");
-		this.textFieldMergeSciCount.setText("1");
+//		this.textFieldMergeSciCount.setText("1");
 		this.radioButtonSingleCheck.setText(MapViewProperties.getString("String_CacheCheck_Single"));
 		this.radioButtonMultiCheck.setText(MapViewProperties.getString("String_CacheCheck_Multi"));
 		this.checkBoxSaveErrorData.setText(MapViewProperties.getString("String_SaveErrorData"));
@@ -179,8 +179,8 @@ public class DialogCacheCheck extends SmDialog {
 		panelMultiCheck.add(this.fileChooseSciPath, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
 		panelMultiCheck.add(this.labelProcessCount, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
 		panelMultiCheck.add(this.textFieldProcessCount, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
-		panelMultiCheck.add(this.labelMergeSciCount, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
-		panelMultiCheck.add(this.textFieldMergeSciCount, new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
+//		panelMultiCheck.add(this.labelMergeSciCount, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
+//		panelMultiCheck.add(this.textFieldMergeSciCount, new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
 		CompTitledPane compTitledPane = new CompTitledPane(this.radioButtonMultiCheck, panelMultiCheck);
 		JPanel panelButton = new JPanel();
 		panelButton.setLayout(new GridBagLayout());
@@ -222,16 +222,16 @@ public class DialogCacheCheck extends SmDialog {
 			String cacheRoot = fileChooseTotalSciPath.getPath();
 			String sciPath = fileChooseSciPath.getPath();
 			String processCount = textFieldProcessCount.getText();
-			String mergeTaskCount = textFieldMergeSciCount.getText();
+//			String mergeTaskCount = textFieldMergeSciCount.getText();
 
 			String saveErrorData = checkBoxSaveErrorData.isSelected() ? "true" : "false";
 			String geoJsonFile = fileChooseCheckBounds.getPath();
 			cacheRoot = CacheUtilities.replacePath(cacheRoot);
 			sciPath = CacheUtilities.replacePath(sciPath);
 			geoJsonFile = CacheUtilities.replacePath(geoJsonFile);
-			String[] params = {cacheRoot, sciPath, mergeTaskCount, saveErrorData, geoJsonFile};
+			String[] params = {cacheRoot, sciPath, saveErrorData, geoJsonFile};
 
-			if (validateValue(sciPath, mergeTaskCount, cacheRoot)) {
+			if (validateValue(sciPath, processCount, cacheRoot)) {
 				String parentPath = null;
 				double anchorLeft = -1;
 				double anchorTop = -1;

@@ -454,25 +454,6 @@ public class FirstStepPane extends JPanel implements IState {
 			this.comboBoxSplitMode.setEnabled(false);
 			this.textFieldCacheName.setText(this.mapCacheBuilder.getCacheName());
 		}
-		String moduleName = "ChooseCacheDirectories";
-		if (!SmFileChoose.isModuleExist(moduleName)) {
-			this.fileChooserControlFileCache.setPath(System.getProperty("user.dir"));
-		} else {
-			SmFileChoose fileChoose = new SmFileChoose(moduleName);
-			if (SystemPropertyUtilities.isWindows()) {
-				if (!fileChoose.getModuleLastPath().substring(fileChoose.getModuleLastPath().length() - 1).equals("\\")) {
-					this.fileChooserControlFileCache.setPath(fileChoose.getModuleLastPath() + "\\");
-				} else {
-					this.fileChooserControlFileCache.setPath(fileChoose.getModuleLastPath());
-				}
-			} else {
-				if (!fileChoose.getModuleLastPath().substring(fileChoose.getModuleLastPath().length() - 1).equals("/")) {
-					this.fileChooserControlFileCache.setPath(fileChoose.getModuleLastPath() + "/");
-				} else {
-					this.fileChooserControlFileCache.setPath(fileChoose.getModuleLastPath());
-				}
-			}
-		}
 		this.warningProviderCacheNameIllegal.hideWarning();
 		this.warningProviderCachePathIllegal.hideWarning();
 	}
@@ -818,6 +799,7 @@ public class FirstStepPane extends JPanel implements IState {
 
 		SmFileChoose fileChoose = new SmFileChoose(moduleName);
 		this.fileChooserControlFileCache.setFileChooser(fileChoose);
+		this.fileChooserControlFileCache.setPath(fileChoose.getModuleLastPath());
 		this.labelSaveType = new JLabel();
 		this.labelUserName = new JLabel();
 		this.labelUserPassword = new JLabel();
