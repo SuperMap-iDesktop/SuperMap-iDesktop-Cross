@@ -12,7 +12,6 @@ import com.supermap.desktop.dialog.cacheClip.cache.BuildCache;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.dialog.cacheClip.cache.ProcessManager;
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.button.SmButton;
@@ -86,18 +85,26 @@ public class DialogCacheBuilder extends SmDialog {
 	private ActionListener closeListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			shutdownMapClip();
+			if (hasTask()) {
+				shutdownMapClip(true);
+			} else {
+				DialogCacheBuilder.this.dispose();
+			}
 		}
 	};
 
-	private void shutdownMapClip() {
+	private void shutdownMapClip(boolean dispose) {
 		SmOptionPane optionPane = new SmOptionPane();
 		sciPath = fileChooserTaskPath.getPath();
 		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
 			ProcessManager.getInstance().removeAllProcess(sciPath);
+			if (dispose) {
+				DialogCacheBuilder.this.dispose();
+			}
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), sciPath));
+		} else {
+			return;
 		}
-		DialogCacheBuilder.this.dispose();
-		Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), sciPath));
 	}
 
 	private ActionListener createListener = new ActionListener() {
@@ -110,6 +117,9 @@ public class DialogCacheBuilder extends SmDialog {
 	private ActionListener refreshListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (!hasTask()) {
+				return;
+			}
 			String taskPath = fileChooserTaskPath.getPath();
 			if (!StringUtilities.isNullOrEmpty(taskPath)) {
 				File taskFile = new File(taskPath);
@@ -170,7 +180,7 @@ public class DialogCacheBuilder extends SmDialog {
 
 					} else if (newProcessCount < nowProcessCount) {
 						if (newProcessCount == 0) {
-							shutdownMapClip();
+							shutdownMapClip(false);
 						} else {
 							int newSize = nowProcessCount - newProcessCount;
 							if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Stop"), String.valueOf(newSize))) == JOptionPane.OK_OPTION)
@@ -267,7 +277,7 @@ public class DialogCacheBuilder extends SmDialog {
 		String modulenameForWorkspace = "ChooseWorkspaceFile";
 		if (!SmFileChoose.isModuleExist(modulenameForWorkspace)) {
 			String fileFilters = SmFileChoose.createFileFilter(MapViewProperties.getString("String_FileFilters_Workspace"), "smwu", "sxwu");
-			SmFileChoose.addNewNode(fileFilters, CommonProperties.getString("String_DefaultFilePath"),
+			SmFileChoose.addNewNode(fileFilters, System.getProperty("user.dir"),
 					MapViewProperties.getString("String_OpenWorkspace"), modulenameForWorkspace, "OpenOne");
 		}
 
@@ -375,10 +385,22 @@ public class DialogCacheBuilder extends SmDialog {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				shutdownMapClip();
+				if (hasTask()) {
+					setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+					shutdownMapClip(true);
+				}
 			}
 		});
 
+	}
+
+	private boolean hasTask() {
+		File taskFile = new File(fileChooserTaskPath.getPath());
+		File doingFile = null;
+		if (taskFile.exists()) {
+			doingFile = new File(CacheUtilities.replacePath(taskFile.getParent(), "doing"));
+		}
+		return null != doingFile && hasSciFiles(doingFile);
 	}
 
 	private void removeEvents() {
@@ -391,6 +413,7 @@ public class DialogCacheBuilder extends SmDialog {
 
 	private void buildCache() {
 		try {
+			String totalSciPath = fileChooserTotalTaskPath.getPath();
 			String workspacePath = fileChooserWorkspacePath.getPath();
 			workspacePath = CacheUtilities.replacePath(workspacePath);
 			String mapName = textFieldMapName.getText();
@@ -404,9 +427,8 @@ public class DialogCacheBuilder extends SmDialog {
 			params = new String[]{sciPath, workspacePath, mapName, cachePath, processCount, String.valueOf(isAppending)};
 //            final String[] params = {workspacePath, mapName, sciPath, cachePath, processCount, mergeSciCount};
 
-			if (!validateValue(sciPath, workspacePath, mapName, cachePath, processCount)) {
+			if (!validateValue(totalSciPath, sciPath, workspacePath, mapName, cachePath, processCount)) {
 				buttonCreate.setEnabled(true);
-				new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_ParamsException"));
 			} else {
 				doBuildCache(cachePath);
 			}
@@ -474,23 +496,34 @@ public class DialogCacheBuilder extends SmDialog {
 		return result;
 	}
 
-	private boolean validateValue(String sciPath, String workspacePath, String mapName, String cachePath, String processCount) {
+	private boolean validateValue(String totalSciPath, String sciPath, String workspacePath, String mapName, String cachePath, String processCount) {
 		boolean result = true;
-		File sciDirectory = new File(sciPath);
-		if (StringUtilities.isNullOrEmpty(sciPath) || !FileUtilities.isFilePath(sciPath) || !hasSciFiles(sciDirectory)) {
-			result = false;
+		SmOptionPane optionPane = new SmOptionPane();
+		if (StringUtilities.isNullOrEmpty(totalSciPath) || !new File(totalSciPath).exists() || !totalSciPath.endsWith("sci")) {
+			optionPane.showErrorDialog(MapViewProperties.getString("String_SciFileNotExist"));
+			return false;
 		}
-		if (StringUtilities.isNullOrEmpty(workspacePath) || !FileUtilities.isFilePath(workspacePath) || !(workspacePath.endsWith("smwu") || workspacePath.endsWith("sxwu"))) {
-			result = false;
+		File sciDirectory = new File(sciPath);
+		if (StringUtilities.isNullOrEmpty(sciPath) || !sciDirectory.exists() || !hasSciFiles(sciDirectory)) {
+			optionPane.showErrorDialog(MapViewProperties.getString("String_SciFileNotExist"));
+			return false;
+		}
+		if (StringUtilities.isNullOrEmpty(workspacePath) || !new File(workspacePath).exists() || !(workspacePath.endsWith("smwu") || workspacePath.endsWith("sxwu"))) {
+			optionPane.showErrorDialog(MapViewProperties.getString("String_WorkspaceNotExist"));
+			return false;
 		}
 		if (StringUtilities.isNullOrEmpty(mapName)) {
-			result = false;
+			optionPane.showErrorDialog(MapViewProperties.getString("String_MapNameIsNull"));
+			return false;
 		}
 		if (StringUtilities.isNullOrEmpty(cachePath) || !FileUtilities.isFilePath(cachePath)) {
-			result = false;
+			optionPane.showErrorDialog(MapViewProperties.getString("String_CachePathNotExist"));
+			return false;
 		}
 		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) || processCount.equals("0"))) {
-			result = false;
+			optionPane.showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
+			textFieldProcessCount.requestFocus();
+			return false;
 		}
 		WorkspaceConnectionInfo connectionInfo = new WorkspaceConnectionInfo(workspacePath);
 		Workspace workspace = new Workspace();
@@ -503,14 +536,17 @@ public class DialogCacheBuilder extends SmDialog {
 			}
 		}
 		if (!hasMap) {
-			SmOptionPane optionPane = new SmOptionPane();
 			optionPane.showConfirmDialog(MapViewProperties.getString("String_MapIsNotExist"));
-			buttonCreate.setEnabled(true);
+			textFieldMapName.requestFocus();
+			return false;
 		}
 		return result;
 	}
 
 	private boolean hasSciFiles(File sciDirectory) {
+		if (null == sciDirectory.list(getFilter())) {
+			return false;
+		}
 		return sciDirectory.list(getFilter()).length > 0 ? true : false;
 	}
 

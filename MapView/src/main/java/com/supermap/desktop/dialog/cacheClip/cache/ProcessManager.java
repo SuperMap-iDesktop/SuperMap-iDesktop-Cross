@@ -1,9 +1,7 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by xie on 2017/5/17.
@@ -42,18 +40,24 @@ public class ProcessManager {
 	}
 
 	public void removeAllProcess(String sciPath) {
-		dispose();
-		String doingPath = null;
-		File taskFiles = new File(sciPath);
-		if (taskFiles.exists()) {
-			doingPath = CacheUtilities.replacePath(taskFiles.getParentFile().getAbsolutePath(), "doing");
-		}
-		File doingDirectory = new File(doingPath);
-		if (doingDirectory.exists()) {
-			File[] doingScis = doingDirectory.listFiles();
-			for (int i = 0; i < doingScis.length; i++) {
-				doingScis[i].renameTo(new File(taskFiles, doingScis[i].getName()));
+		try {
+			dispose();
+			Thread.sleep(2000);
+			LogWriter.removeAllLogs();
+			String doingPath = null;
+			File taskFiles = new File(sciPath);
+			if (taskFiles.exists()) {
+				doingPath = CacheUtilities.replacePath(taskFiles.getParentFile().getAbsolutePath(), "doing");
 			}
+			File doingDirectory = new File(doingPath);
+			if (doingDirectory.exists()) {
+				File[] doingScis = doingDirectory.listFiles();
+				for (int i = 0; i < doingScis.length; i++) {
+					doingScis[i].renameTo(new File(taskFiles, doingScis[i].getName()));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
