@@ -1,5 +1,6 @@
 package com.supermap.desktop.ui;
 
+import com.alibaba.fastjson.JSONArray;
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasets;
 import com.supermap.data.Datasources;
@@ -21,8 +22,10 @@ import com.supermap.desktop.Interface.IPropertyManager;
 import com.supermap.desktop.Interface.IStatusbarManager;
 import com.supermap.desktop.Interface.IToolbarManager;
 import com.supermap.desktop.WorkEnvironment;
+import com.supermap.desktop.controls.utilities.DatasourceOpenFileUtilties;
 import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
+import com.supermap.desktop.controls.utilities.WorkspaceUIUtilities;
 import com.supermap.desktop.enums.WindowType;
 import com.supermap.desktop.event.FormLoadedListener;
 import com.supermap.desktop.ui.controls.Dockbar;
@@ -34,6 +37,7 @@ import com.supermap.desktop.ui.controls.WorkspaceTree;
 import com.supermap.desktop.utilities.DatasetUtilities;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.RecentFileUtilties;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.WorkspaceUtilities;
 import com.supermap.layout.MapLayout;
 import com.supermap.realspace.Scene;
@@ -162,6 +166,7 @@ public class FormBase extends JFrame implements IFormMain {
 				Application.getActiveApplication().setOutput((OutputFrame) outputDockbar.getInnerComponent());
 			}
 			ToolbarUIUtilities.updataToolbarsState();
+			openStartFile();
 
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
@@ -175,6 +180,27 @@ public class FormBase extends JFrame implements IFormMain {
 
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
+		}
+	}
+
+	private void openStartFile() {
+		String desktopCrossStartArgs = System.getProperty("DesktopCrossStartArgs");
+		JSONArray fileLists = (JSONArray) JSONArray.parse(desktopCrossStartArgs);
+		if (fileLists.size() != 0) {
+			for (int i = 0; i < fileLists.size(); i++) {
+				openStartupFile(fileLists.getString(0));
+			}
+		}
+	}
+
+	private void openStartupFile(String currentFilePath) {
+		if (!StringUtilities.isNullOrEmpty(currentFilePath)) {
+			String filePath = currentFilePath.toLowerCase();
+			if (filePath.endsWith("smwu") || filePath.endsWith("sxwu")) {
+				WorkspaceUIUtilities.openWorkspace(filePath);
+			} else {
+				DatasourceOpenFileUtilties.openDatasourceFile(new File(filePath), false);
+			}
 		}
 	}
 

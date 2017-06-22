@@ -1,8 +1,10 @@
 package com.supermap.desktop.iDesktop;
 
+import com.alibaba.fastjson.JSONArray;
 import org.apache.felix.main.Main;
 
 import javax.swing.*;
+import java.util.Collections;
 
 /**
  * Created by highsad on 2016/8/3.
@@ -20,7 +22,10 @@ public class Startup {
 //			if(UIManager.getLookAndFeel() instanceof MetalLookAndFeel){
 //				((MetalLookAndFeel)UIManager.getLookAndFeel()).setCurrentTheme(new OceanTheme());
 //			}
-			Main.main(args);
+			JSONArray jsonArray = new JSONArray();
+			Collections.addAll(jsonArray, args);
+			System.setProperty("DesktopCrossStartArgs", jsonArray.toJSONString());
+			Main.main(new String[0]);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
