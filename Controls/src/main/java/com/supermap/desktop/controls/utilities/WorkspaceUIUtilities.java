@@ -20,7 +20,9 @@ public class WorkspaceUIUtilities {
 	public static void openWorkspace(String filePath) {
 		if (filePath.endsWith("smwu") || filePath.endsWith("sxwu")) {
 			final WorkspaceConnectionInfo info = new WorkspaceConnectionInfo(filePath);
-			final OpenWorkspaceResult[] result = {com.supermap.desktop.utilities.WorkspaceUtilities.openWorkspace(info, true)};
+			final OpenWorkspaceResult[] result = {
+					com.supermap.desktop.utilities.WorkspaceUtilities.openWorkspace(info, true)
+			};
 			if (result[0] == OpenWorkspaceResult.SUCCESSED) {
 				if (Application.getActiveApplication().getMainFrame().getFormManager().getCount() > 0) {
 					LogUtilities.outPut(MessageFormat.format(CoreProperties.getString("String_CloseForms"), Application.getActiveApplication().getMainFrame().getFormManager().getCount()));

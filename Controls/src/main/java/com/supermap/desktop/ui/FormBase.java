@@ -167,11 +167,11 @@ public class FormBase extends JFrame implements IFormMain {
 				Application.getActiveApplication().setOutput((OutputFrame) outputDockbar.getInnerComponent());
 			}
 			ToolbarUIUtilities.updataToolbarsState();
-			openStartFile();
 
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
+					openStartFile();
 					fireFormLoadedEvent();
 					if (GlobalParameters.isWorkspaceRecovery()) {
 						WorkspaceRecovery.getInstance().run();

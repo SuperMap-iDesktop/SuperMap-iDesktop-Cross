@@ -22,6 +22,9 @@ public class Startup {
 //			if(UIManager.getLookAndFeel() instanceof MetalLookAndFeel){
 //				((MetalLookAndFeel)UIManager.getLookAndFeel()).setCurrentTheme(new OceanTheme());
 //			}
+			args = new String[]{
+					"C:\\Users\\Administrator\\Desktop\\2.smwu"
+			};
 			JSONArray jsonArray = new JSONArray();
 			Collections.addAll(jsonArray, args);
 			System.setProperty("DesktopCrossStartArgs", jsonArray.toJSONString());
