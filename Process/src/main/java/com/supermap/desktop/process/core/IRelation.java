@@ -5,6 +5,17 @@ package com.supermap.desktop.process.core;
  * Extensible interface if you want add you constraint(two
  * or more nodes)
  */
-public interface INodeConstraint {
+public interface IRelation<T> {
+	/**
+	 * how to relate.
+	 *
+	 * @param from
+	 * @param to
+	 */
+	void relate(T from, T to);
+
+	/**
+	 * clear relation
+	 */
 	void clear();
 }

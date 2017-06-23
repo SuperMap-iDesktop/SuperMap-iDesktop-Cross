@@ -21,7 +21,6 @@ import com.supermap.desktop.process.tasks.TasksManagerContainer;
 import com.supermap.desktop.process.util.TaskUtil;
 
 import java.util.Vector;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by highsad on 2017/2/28.
@@ -55,7 +54,7 @@ public class CtrlActionRun extends CtrlAction {
 			if (endGraph instanceof ProcessGraph && startGraph instanceof OutputGraph) {
 				IProcess end = ((ProcessGraph) connection.getEnd().getConnector()).getProcess();
 				IProcess start = ((OutputGraph) startGraph).getProcessGraph().getProcess();
-				nodeMatrix.addConstraint(start, end, new DirectConnect());
+				nodeMatrix.addRelation(start, end, DirectConnect.class);
 			}
 		}
 

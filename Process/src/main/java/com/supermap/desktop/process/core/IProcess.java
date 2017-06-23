@@ -29,7 +29,7 @@ public interface IProcess {
 
 	IParameters getParameters();
 
-	void run();
+	boolean run();
 
 	void cancel();
 

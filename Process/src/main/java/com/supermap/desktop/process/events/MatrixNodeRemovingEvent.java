@@ -7,16 +7,16 @@ import com.supermap.desktop.process.core.NodeMatrix;
  * Created by highsad on 2017/6/21.
  */
 public class MatrixNodeRemovingEvent<T extends Object> extends CancellationEvent {
-	private NodeMatrix matrix;
+	private NodeMatrix<T> matrix;
 	private T node;
 
-	public MatrixNodeRemovingEvent(NodeMatrix matrix, T removingNode, boolean isCancel) {
+	public MatrixNodeRemovingEvent(NodeMatrix<T> matrix, T removingNode, boolean isCancel) {
 		super(matrix, isCancel);
 		this.matrix = matrix;
 		this.node = removingNode;
 	}
 
-	public NodeMatrix getMatrix() {
+	public NodeMatrix<T> getMatrix() {
 		return matrix;
 	}
 

@@ -23,7 +23,6 @@ import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.core.WorkflowParser;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
-import com.supermap.desktop.process.graphics.connection.IConnectable;
 import com.supermap.desktop.process.graphics.connection.LineGraph;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
@@ -59,7 +58,6 @@ import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
 import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by highsad on 2017/1/6.
@@ -113,7 +111,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 //					this.canvas.addGraph(graph);
 //					graph.setCanvas(this.canvas);
 //				}
-//				IConnectionManager connection = this.canvas.getConnection();
+//				IRelationManager connection = this.canvas.getConnection();
 //				for (Object node : allStartNodes) {
 //					IGraph graph = (IGraph) node;
 //					CopyOnWriteArrayList nextNodes = matrix.getToNodes(graph);
@@ -349,7 +347,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			IGraph[] nextGraphs = connectionManager.getNextGraphs(graph);
 			if (nextGraphs.length > 0) {
 				for (IGraph nextGraph : nextGraphs) {
-					nodeMatrix.addConstraint(graph, nextGraph, new DirectConnect());
+					nodeMatrix.addRelation(graph, nextGraph, DirectConnect.class);
 				}
 			}
 		}
