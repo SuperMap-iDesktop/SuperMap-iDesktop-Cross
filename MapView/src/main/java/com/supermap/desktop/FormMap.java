@@ -471,6 +471,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 
 		initUneditableStatus();
 		initGloableSetting();
+		addDrag();
 	}
 
 
@@ -591,7 +592,6 @@ public class FormMap extends FormBaseChild implements IFormMap {
 			this.pointYField.addFocusListener(this.pointFocusListener);
 			this.pointYField.getDocument().addDocumentListener(this.pointDocumentListener);
 
-			addDrag();
 			this.layersTree.addTreeSelectionListener(this.layersTreeSelectionListener);
 
 			((JTextField) this.scaleBox.getEditor().getEditorComponent()).getDocument().addDocumentListener(scaleBoxListener);
@@ -607,7 +607,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 		this.pointYField.removeFocusListener(this.pointFocusListener);
 		this.pointXField.getDocument().removeDocumentListener(this.pointDocumentListener);
 		this.pointYField.getDocument().removeDocumentListener(this.pointDocumentListener);
-		removeDrag();
+
 		if (this.mapControl != null) {
 			this.mapControl.removeKeyListener(this.mapKeyListener);
 			this.mapControl.removeGeometrySelectChangedListener(this.geometrySelectChangedListener);
@@ -934,6 +934,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 	@Override
 	public void clean() {
 		unRegisterEvents();
+		removeDrag();
 		if (this.mapControl != null && this.mapControl.getMap() != null && this.mapControl.getMap().getLayers() != null) {
 			this.mapControl.getMap().getLayers().removeLayerRemovedListener(layerRemovedListner);
 		}
@@ -1602,6 +1603,11 @@ public class FormMap extends FormBaseChild implements IFormMap {
 					if (null != dataFlavors[i] && !dataFlavors[i].equals(DataFlavor.javaFileListFlavor) && null != transferable.getTransferData(dataFlavors[i])) {
 						Dataset[] datasets = Application.getActiveApplication().getActiveDatasets();
 						IFormMap formMap = FormMap.this;
+
+						if (!formMap.isActivated()) {
+							Application.getActiveApplication().setActiveForm(formMap);
+						}
+
 						Map map = formMap.getMapControl().getMap();
 						MapViewUIUtilities.addDatasetsToMap(map, datasets, true);
 					}

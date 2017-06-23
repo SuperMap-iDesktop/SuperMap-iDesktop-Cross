@@ -6,6 +6,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.controls.utilities.MapViewUIUtilities;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
@@ -39,18 +40,11 @@ public class CtrlActionAddDataset extends CtrlAction {
 				datasetChooser.setSupportDatasetTypes(datasetTypes);
 				if (datasetChooser.showDialog() == DialogResult.OK) {
 					List<Dataset> datasetsToMap = datasetChooser.getSelectedDatasets();
-					Layer[] activeLayers = formMap.getActiveLayers();
+					Layer[] addedLayers = MapViewUIUtilities.addDatasetsToMap(formMap.getMapControl().getMap(), datasetsToMap.toArray(new Dataset[datasetsToMap.size()]), true);
 
-					if (activeLayers == null || activeLayers.length == 0) {
-						return;
+					if (addedLayers != null && addedLayers.length > 0) {
+						formMap.setActiveLayers(addedLayers);
 					}
-
-					Layer[] insertLayers = new Layer[datasetsToMap.size()];
-					for (int i = datasetsToMap.size() - 1; i >= 0; i--) {
-						insertLayers[i] = MapUtilities.addDatasetToMap(formMap.getMapControl().getMap(), datasetsToMap.get(i), true);
-					}
-
-					formMap.setActiveLayers(insertLayers);
 				}
 			}
 		} catch (Exception ex) {

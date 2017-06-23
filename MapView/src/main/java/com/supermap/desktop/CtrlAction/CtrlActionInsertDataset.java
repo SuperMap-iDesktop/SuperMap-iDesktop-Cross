@@ -46,12 +46,12 @@ public class CtrlActionInsertDataset extends CtrlAction {
 					}
 
 					int activeIndex = formMap.getMapControl().getMap().getLayers().indexOf(activeLayers[0].getName());
-					Layer[] insertLayers = new Layer[datasetsToMap.size()];
-					for (int i = datasetsToMap.size() - 1; i >= 0; i--) {
-						insertLayers[i] = MapUtilities.insertDatasetToMap(formMap.getMapControl().getMap(), datasetsToMap.get(i), activeIndex);
-					}
+					Layer[] insertLayers = MapViewUIUtilities.insertDatasetsToMap(formMap.getMapControl().getMap(),
+							datasetsToMap.toArray(new Dataset[datasetsToMap.size()]), activeIndex);
 
-					formMap.setActiveLayers(insertLayers);
+					if (insertLayers != null && insertLayers.length > 0) {
+						formMap.setActiveLayers(insertLayers);
+					}
 				}
 			}
 		} catch (Exception ex) {
