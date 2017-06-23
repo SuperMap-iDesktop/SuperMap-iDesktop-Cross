@@ -204,12 +204,12 @@ public class DatasourceOpenFileUtilties {
 
 				File udbLowerFile = new File(udbLowerFilePath);
 				if (udbLowerFile.exists()) {
-					isMustReadOnlyOpen = !udbLowerFile.canWrite();
+					isMustReadOnlyOpen = !file.canWrite() || !udbLowerFile.canWrite();
 					file = udbLowerFile;
 				} else {
 					File udbUpperFile = new File(udbUpperFilePath);
 					if (udbUpperFile.exists()) {
-						isMustReadOnlyOpen = !udbUpperFile.canWrite();
+						isMustReadOnlyOpen = !file.canWrite() || !udbUpperFile.canWrite();
 						file = udbUpperFile;
 					}
 				}
