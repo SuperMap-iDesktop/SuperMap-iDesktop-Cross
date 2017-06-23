@@ -393,6 +393,53 @@ public class MapUtilities {
 		return layer;
 	}
 
+	/**
+	 * 添加指定数据集到地图中
+	 *
+	 * @param map
+	 * @param dataset
+	 * @param index
+	 * @return
+	 */
+	public static Layer insertDatasetToMap(Map map, Dataset dataset, int index) {
+		Layer layer = null;
+
+		try {
+			if (dataset != null && index >= 0 && map.getLayers().getCount() >= index) {
+				layer = map.getLayers().insert(index, dataset);
+				if (layer == null || layer.isDisposed()) {
+					Application.getActiveApplication().getOutput()
+							.output(String.format(CoreProperties.getString("String_DatasetOpenFaild"), dataset.getName()));
+				} else {
+					if (dataset.getType() == DatasetType.REGION || dataset.getType() == DatasetType.REGION3D
+							|| dataset.getType() == DatasetType.PARAMETRICREGION) {
+						LayerSettingVector setting = (LayerSettingVector) layer.getAdditionalSetting();
+						setting.getStyle().setFillForeColor(GeoStyleUtilities.getFillColor());
+						setting.getStyle().setLineColor(GeoStyleUtilities.getLineColor());
+					} else if (dataset.getType() == DatasetType.LINE || dataset.getType() == DatasetType.NETWORK || dataset.getType() == DatasetType.NETWORK3D
+							|| dataset.getType() == DatasetType.PARAMETRICLINE || dataset.getType() == DatasetType.LINEM
+							|| dataset.getType() == DatasetType.LINE3D) {
+						LayerSettingVector setting = (LayerSettingVector) layer.getAdditionalSetting();
+						setting.getStyle().setLineColor(GeoStyleUtilities.getLineColor());
+						if (dataset.getType() == DatasetType.NETWORK || dataset.getType() == DatasetType.NETWORK3D) {
+							map.getLayers().add(((DatasetVector) dataset).getChildDataset(), true);
+						}
+					} else if (dataset.getType() == DatasetType.POINT || dataset.getType() == DatasetType.POINT3D) {
+						LayerSettingVector setting = (LayerSettingVector) layer.getAdditionalSetting();
+						setting.getStyle().setLineColor(GeoStyleUtilities.getLineColor());
+					}
+					if (layer.getSelection() != null) {
+						layer.getSelection().setDefaultStyleEnabled(true);
+					}
+				}
+			}
+		} catch (Exception ex) {
+			Application.getActiveApplication().getOutput().output(ex);
+		}
+
+		return layer;
+	}
+
 	// 直接添加到LayerGroup中在对网络数据集操作时子数据集图层没有移动
 	// /**
 	// * 添加指定数据集到地图中
