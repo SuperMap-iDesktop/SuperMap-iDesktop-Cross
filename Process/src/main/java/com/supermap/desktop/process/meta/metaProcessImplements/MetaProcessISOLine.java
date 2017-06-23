@@ -83,10 +83,17 @@ public class MetaProcessISOLine extends MetaProcess {
 	}
 
 	private void initParametersState() {
+		Dataset defaultDatasetGrid = DatasetUtilities.getDefaultDatasetGrid();
+		if (defaultDatasetGrid != null) {
+			sourceDatasource.setSelectedItem(defaultDatasetGrid.getDatasource());
+			dataset.setSelectedItem(defaultDatasetGrid);
+			saveDataset.setResultDatasource(defaultDatasetGrid.getDatasource());
+			saveDataset.setSelectedItem(defaultDatasetGrid.getDatasource().getDatasets().getAvailableDatasetName("ISOLine"));
+		}
+
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		this.saveDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
 		this.saveDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
-		this.saveDataset.setSelectedItem("ISOLine");
 		if (null != dataset.getSelectedItem() && dataset.getSelectedItem() instanceof DatasetGrid) {
 			maxGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMaxValue());
 			minGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMinValue());
