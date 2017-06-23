@@ -24,14 +24,16 @@ public abstract class AbstractProcess implements IProcess {
 	public abstract IParameters getParameters();
 
 	@Override
-	public synchronized final void run() {
+	public synchronized final boolean run() {
+		boolean isSuccessful = false;
+
 		try {
 			if (this.status != RunningStatus.NORMAL) {
-				return;
+				return false;
 			}
 
 			setStatus(RunningStatus.RUNNING);
-			boolean isSuccessful = execute();
+			isSuccessful = execute();
 
 			if (isSuccessful) {
 				setStatus(RunningStatus.COMPLETED);
@@ -41,6 +43,7 @@ public abstract class AbstractProcess implements IProcess {
 		} catch (Exception e) {
 			setStatus(RunningStatus.EXCEPTION);
 		}
+		return isSuccessful;
 	}
 
 	@Override

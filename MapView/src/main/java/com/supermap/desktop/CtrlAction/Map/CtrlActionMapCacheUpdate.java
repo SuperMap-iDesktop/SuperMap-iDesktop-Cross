@@ -3,7 +3,6 @@ package com.supermap.desktop.CtrlAction.Map;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.dialog.cacheClip.DialogCacheUpdate;
 import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClipBuilder;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapview.MapViewProperties;

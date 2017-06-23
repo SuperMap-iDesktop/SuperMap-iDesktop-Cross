@@ -50,7 +50,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by xie on 2017/3/21.
@@ -129,21 +128,11 @@ public class WorkflowParser {
 								//TODO
 								//INodeConstriant now not exist in xml file,so add a new INodeConstriant
 //                                process.getInputs().followProcess(preProcess);
-								nodeMatrix.addConstraint(preProcess, process, new INodeConstraint() {
-									@Override
-									public void clear() {
-
-									}
-								});
+								nodeMatrix.addRelation(preProcess, process, IRelation.class);
 							}
 							if (null != process && null != nextProcess) {
 //                                nextProcess.getInputs().followProcess(process);
-								nodeMatrix.addConstraint(process, nextProcess, new INodeConstraint() {
-									@Override
-									public void clear() {
-
-									}
-								});
+								nodeMatrix.addRelation(process, nextProcess, IRelation.class);
 							}
 						}
 					}

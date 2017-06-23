@@ -8,7 +8,7 @@ import java.util.EventObject;
  * Created by highsad on 2017/6/21.
  */
 public class MatrixNodeAddedEvent<T extends Object> extends EventObject {
-	private NodeMatrix matrix;
+	private NodeMatrix<T> matrix;
 	private T node;
 
 	/**
@@ -17,13 +17,13 @@ public class MatrixNodeAddedEvent<T extends Object> extends EventObject {
 	 * @param matrix The object on which the Event initially occurred.
 	 * @throws IllegalArgumentException if source is null.
 	 */
-	public MatrixNodeAddedEvent(NodeMatrix matrix, T addedNode) {
+	public MatrixNodeAddedEvent(NodeMatrix<T> matrix, T addedNode) {
 		super(matrix);
 		this.matrix = matrix;
 		this.node = addedNode;
 	}
 
-	public NodeMatrix getMatrix() {
+	public NodeMatrix<T> getMatrix() {
 		return matrix;
 	}
 

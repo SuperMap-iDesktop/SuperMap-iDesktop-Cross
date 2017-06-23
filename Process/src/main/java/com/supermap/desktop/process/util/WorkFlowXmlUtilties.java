@@ -6,17 +6,13 @@ import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
-import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
-import com.supermap.desktop.process.parameter.interfaces.datas.Inputs;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author XiaJT
@@ -200,7 +196,7 @@ public class WorkFlowXmlUtilties {
 			} catch (Exception e) {
 				System.out.println(e);
 			}
-			nodeMatrix.addConstraint(map.get(startId), map.get(endId), new DirectConnect());
+			nodeMatrix.addRelation(map.get(startId), map.get(endId), DirectConnect.class);
 		}
 		return nodeMatrix;
 	}
