@@ -1,10 +1,12 @@
 package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.enums.ParameterType;
+import com.supermap.desktop.process.parameter.events.PanelPropertyChangedListener;
 import com.supermap.desktop.process.parameter.events.ParameterCombineBuildPanelListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -133,5 +135,18 @@ public class ParameterCombine extends AbstractParameter {
 
 	public void setRebuildEveryTime(boolean rebuildEveryTime) {
 		this.rebuildEveryTime = rebuildEveryTime;
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		boolean oldValue = this.isEnabled;
+		if (enabled != this.isEnabled) {
+			this.isEnabled = enabled;
+		}
+		for (IParameter parameter : parameterList) {
+			parameter.setEnabled(this.isEnabled);
+		}
+
+		firePanelPropertyChangedListener(new PropertyChangeEvent(this, PanelPropertyChangedListener.ENABLE, oldValue, isEnabled));
 	}
 }

@@ -24,6 +24,7 @@ import java.beans.PropertyChangeListener;
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.TEXTFIELD)
 public class ParameterTextFieldPanel extends SwingPanel implements IParameterPanel {
+	private ISmTextFieldLegit smTextFieldLegit;
 	protected ParameterTextField parameterTextField;
 	protected JLabel label = new JLabel();
 	protected SmTextFieldLegit textField = new SmTextFieldLegit();
@@ -35,7 +36,7 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		label.setText(this.parameterTextField.getDescribe());
 		label.setToolTipText(this.parameterTextField.getDescribe());
 		textField.setText(String.valueOf(this.parameterTextField.getSelectedItem()));
-		final ISmTextFieldLegit smTextFieldLegit = ((ParameterTextField) parameterTextField).getSmTextFieldLegit();
+		this.smTextFieldLegit = ((ParameterTextField) parameterTextField).getSmTextFieldLegit();
 		textField.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override
 			public boolean isTextFieldValueLegit(String textFieldValue) {
@@ -53,9 +54,6 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 				return currentValue;
 			}
 		});
-		if (smTextFieldLegit != null) {
-			textField.setSmTextFieldLegit(smTextFieldLegit);
-		}
 		initLayout();
 		initListeners();
 	}

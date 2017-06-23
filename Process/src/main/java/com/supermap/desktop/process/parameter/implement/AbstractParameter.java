@@ -49,7 +49,7 @@ public abstract class AbstractParameter implements IParameter {
 		listenerList.remove(PanelPropertyChangedListener.class, panelPropertyChangedListener);
 	}
 
-	private void firePanelPropertyChangedListener(PropertyChangeEvent propertyChangeEvent) {
+	protected void firePanelPropertyChangedListener(PropertyChangeEvent propertyChangeEvent) {
 		Object[] listenerList = this.listenerList.getListenerList();
 		for (int i = listenerList.length - 2; i >= 0; i -= 2) {
 			if (listenerList[i] == PanelPropertyChangedListener.class) {
