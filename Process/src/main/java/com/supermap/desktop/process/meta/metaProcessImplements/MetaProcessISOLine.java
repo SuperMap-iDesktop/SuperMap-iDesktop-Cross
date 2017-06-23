@@ -10,7 +10,6 @@ import com.supermap.data.DatasetVector;
 import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
 import com.supermap.desktop.process.events.RunningEvent;
@@ -125,12 +124,14 @@ public class MetaProcessISOLine extends MetaProcess {
 
 		this.resampleTolerance = new ParameterNumber(CommonProperties.getString("String_ResampleTolerance"));
 		resampleTolerance.setMinValue(0);
-		resampleTolerance.setIsIncludeMin(false);
+		resampleTolerance.setSelectedItem(0);
+		resampleTolerance.setIsIncludeMin(true);
 		this.smoothMethod = new ParameterComboBox().setDescribe(CommonProperties.getString("String_SmoothMethod"));
 		this.smoothNess = new ParameterNumber(CommonProperties.getString("String_SmoothNess"));
 		smoothNess.setMinValue(2);
 		smoothNess.setMaxValue(5);
 		smoothNess.setMaxBit(0);
+		this.smoothNess.setSelectedItem("2");
 
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
@@ -236,7 +237,7 @@ public class MetaProcessISOLine extends MetaProcess {
 			isSuccessful = result != null;
 			fireRunning(new RunningEvent(MetaProcessISOLine.this, 100, "finished"));
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {
 			SurfaceAnalyst.removeSteppedListener(this.stepListener);
 		}
