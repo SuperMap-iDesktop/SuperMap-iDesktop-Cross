@@ -915,7 +915,7 @@ public class FormMap extends FormBaseChild implements IFormMap {
 				}
 			}
 
-//			this.layersTree.setSelectionPaths(paths.toArray(new TreePath[paths.size()]));
+			this.layersTree.setSelectionPaths(paths.toArray(new TreePath[paths.size()]));
 		} else {
 			this.layersTree.clearSelection();
 			this.activeLayersList.clear();
