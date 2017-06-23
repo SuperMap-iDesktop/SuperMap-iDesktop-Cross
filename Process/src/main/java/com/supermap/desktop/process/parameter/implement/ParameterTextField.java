@@ -40,7 +40,6 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 
 	@Override
 	public Object getSelectedItem() {
-		fireUpdateValue(PROPERTY_VALE);
 		return value;
 	}
 

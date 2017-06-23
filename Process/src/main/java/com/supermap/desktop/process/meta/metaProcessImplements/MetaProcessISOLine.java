@@ -3,6 +3,7 @@ package com.supermap.desktop.process.meta.metaProcessImplements;
 import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
+import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
@@ -21,6 +22,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
+import com.supermap.desktop.process.parameter.implement.ParameterNumber;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.implement.ParameterTextField;
@@ -28,6 +30,10 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.DoubleUtilities;
+
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 /**
  * Created by xie on 2017/3/6.
@@ -45,11 +51,11 @@ public class MetaProcessISOLine extends MetaProcess {
 	private ParameterTextField maxISOLine;
 	private ParameterTextField minISOLine;
 	private ParameterTextField isoLine;
-	private ParameterTextField datumValue;
-	private ParameterTextField interval;
-	private ParameterTextField resampleTolerance;
+	private ParameterNumber datumValue;
+	private ParameterNumber interval;
+	private ParameterNumber resampleTolerance;
 	private ParameterComboBox smoothMethod;
-	private ParameterTextField smoothNess;
+	private ParameterNumber smoothNess;
 	private SteppedListener stepListener = new SteppedListener() {
 		@Override
 		public void stepped(SteppedEvent steppedEvent) {
@@ -66,6 +72,7 @@ public class MetaProcessISOLine extends MetaProcess {
 		initParameters();
 		initParameterConstraint();
 		initParametersState();
+		initParametersListener();
 	}
 
 	private void initParameterConstraint() {
@@ -90,6 +97,8 @@ public class MetaProcessISOLine extends MetaProcess {
 				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
 				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH));
 		this.smoothMethod.setSelectedItem(selectedNode);
+		this.smoothNess.setEnabled(false);
+		reloadValue();
 	}
 
 	private void initParameters() {
@@ -107,11 +116,21 @@ public class MetaProcessISOLine extends MetaProcess {
 		this.maxISOLine = new ParameterTextField(CommonProperties.getString("String_MAXISOLine"));
 		this.minISOLine = new ParameterTextField(CommonProperties.getString("String_MINISOLine"));
 		this.isoLine = new ParameterTextField(CommonProperties.getString("String_ISOData"));
-		this.datumValue = new ParameterTextField(CommonProperties.getString("String_DatumValue"));
-		this.interval = new ParameterTextField(CommonProperties.getString("String_Interval"));
-		this.resampleTolerance = new ParameterTextField(CommonProperties.getString("String_ResampleTolerance"));
+		this.datumValue = new ParameterNumber(CommonProperties.getString("String_DatumValue"));
+		datumValue.setSelectedItem("0");
+		this.interval = new ParameterNumber(CommonProperties.getString("String_Interval"));
+		interval.setMinValue(0);
+		interval.setIsIncludeMin(false);
+		interval.setSelectedItem("100");
+
+		this.resampleTolerance = new ParameterNumber(CommonProperties.getString("String_ResampleTolerance"));
+		resampleTolerance.setMinValue(0);
+		resampleTolerance.setIsIncludeMin(false);
 		this.smoothMethod = new ParameterComboBox().setDescribe(CommonProperties.getString("String_SmoothMethod"));
-		this.smoothNess = new ParameterTextField(CommonProperties.getString("String_SmoothNess"));
+		this.smoothNess = new ParameterNumber(CommonProperties.getString("String_SmoothNess"));
+		smoothNess.setMinValue(2);
+		smoothNess.setMaxValue(5);
+		smoothNess.setMaxBit(0);
 
 		ParameterCombine sourceData = new ParameterCombine();
 		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
@@ -122,12 +141,69 @@ public class MetaProcessISOLine extends MetaProcess {
 		ParameterCombine resultInfo = new ParameterCombine();
 		resultInfo.setDescribe(CommonProperties.getString("String_ResultInfo"));
 		resultInfo.addParameters(maxGrid, minGrid, maxISOLine, minISOLine, isoLine);
+		resultInfo.setEnabled(false);
+
 		ParameterCombine paramSet = new ParameterCombine();
 		paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
 		paramSet.addParameters(datumValue, interval, resampleTolerance, smoothMethod, smoothNess);
-		this.parameters.setParameters(sourceData, targetData, resultInfo, paramSet);
+		this.parameters.setParameters(sourceData, paramSet, resultInfo, targetData);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, targetData);
+	}
+
+	private void initParametersListener() {
+		smoothMethod.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getPropertyName().equals(ParameterComboBox.comboBoxValue)) {
+					smoothNess.setEnabled(smoothMethod.getSelectedIndex() != 0);
+				}
+			}
+		});
+
+		dataset.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getPropertyName().equals(ParameterSingleDataset.DATASET_FIELD_NAME)) {
+					reloadValue();
+				}
+			}
+		});
+		datumValue.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getPropertyName().equals(ParameterTextField.PROPERTY_VALE)) {
+					reloadValue();
+				}
+			}
+		});
+		interval.addPropertyListener(new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				if (evt.getPropertyName().equals(ParameterTextField.PROPERTY_VALE)) {
+					reloadValue();
+				}
+			}
+		});
+	}
+
+	private void reloadValue() {
+		Dataset datasetGrid = dataset.getSelectedDataset();
+		if (dataset != null && datasetGrid instanceof DatasetGrid) {
+			int maxValue = (int) ((DatasetGrid) datasetGrid).getMaxValue();
+			int minValue = (int) ((DatasetGrid) datasetGrid).getMinValue();
+			maxGrid.setSelectedItem(DoubleUtilities.getFormatString(maxValue));
+			minGrid.setSelectedItem(DoubleUtilities.getFormatString(minValue));
+			double baseValue = Double.valueOf((String) datumValue.getSelectedItem());
+			double lineDistance = Double.valueOf((String) interval.getSelectedItem());
+			double dRemain = baseValue % lineDistance;
+			double maxIsoValue = (int) ((maxValue - dRemain) / lineDistance) * lineDistance + dRemain;
+			double minIsoValue = (int) ((minValue - dRemain) / lineDistance + 1) * lineDistance + dRemain;
+			int isoCount = (int) ((maxValue - minValue) / lineDistance) + 1;
+			maxISOLine.setSelectedItem(DoubleUtilities.getFormatString(maxIsoValue));
+			minISOLine.setSelectedItem(DoubleUtilities.getFormatString(minIsoValue));
+			isoLine.setSelectedItem(String.valueOf(isoCount));
+		}
 	}
 
 
