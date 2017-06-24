@@ -39,7 +39,7 @@ public class ProcessManager {
 		}
 	}
 
-	public void removeAllProcess(String sciPath) {
+	public void removeAllProcess(String sciPath, String path) {
 		try {
 			dispose();
 			Thread.sleep(2000);
@@ -47,7 +47,7 @@ public class ProcessManager {
 			String doingPath = null;
 			File taskFiles = new File(sciPath);
 			if (taskFiles.exists()) {
-				doingPath = CacheUtilities.replacePath(taskFiles.getParentFile().getAbsolutePath(), "doing");
+				doingPath = CacheUtilities.replacePath(taskFiles.getParent(), path);
 			}
 			File doingDirectory = new File(doingPath);
 			if (doingDirectory.exists()) {

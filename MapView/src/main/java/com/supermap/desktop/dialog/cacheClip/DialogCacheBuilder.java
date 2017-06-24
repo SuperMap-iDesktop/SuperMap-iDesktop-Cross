@@ -97,7 +97,7 @@ public class DialogCacheBuilder extends SmDialog {
 		SmOptionPane optionPane = new SmOptionPane();
 		sciPath = fileChooserTaskPath.getPath();
 		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
-			ProcessManager.getInstance().removeAllProcess(sciPath);
+			ProcessManager.getInstance().removeAllProcess(sciPath,"doing");
 			if (dispose) {
 				DialogCacheBuilder.this.dispose();
 			}
@@ -521,7 +521,7 @@ public class DialogCacheBuilder extends SmDialog {
 			optionPane.showErrorDialog(MapViewProperties.getString("String_CachePathNotExist"));
 			return false;
 		}
-		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) || processCount.equals("0"))) {
+		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount))) {
 			optionPane.showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
 			textFieldProcessCount.requestFocus();
 			return false;
@@ -568,8 +568,7 @@ public class DialogCacheBuilder extends SmDialog {
 							break;
 						}
 						//Sleep 1 hour,then refresh progressBars
-//						TimeUnit.HOURS.sleep(1);
-						TimeUnit.SECONDS.sleep(2);
+						TimeUnit.HOURS.sleep(1);
 					}
 					getResult(finalCachePath, startTime);
 				} catch (Exception e) {

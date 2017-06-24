@@ -37,6 +37,14 @@ public class CheckCache {
 
 	public void startProcess(int processCount, String[] params) {
 		try {
+//			if (0 == processCount) {
+//				main(params);
+//			} else {
+//				for (int i = 0; i < processCount; i++) {
+//					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.CHECK_CACEH);
+//					Thread.sleep(2000);
+//				}
+//			}
 			if (processCount > 0) {
 				for (int i = 0; i < processCount; i++) {
 					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.CHECK_CACEH);

@@ -7,6 +7,7 @@ import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.dialog.cacheClip.cache.CheckCache;
+import com.supermap.desktop.dialog.cacheClip.cache.ProcessManager;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -23,7 +24,10 @@ import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 /**
@@ -52,9 +56,37 @@ public class DialogCacheCheck extends SmDialog {
 	private ActionListener cancelListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			DialogCacheCheck.this.dispose();
+			if (hasTask()) {
+				shutdownMapCheck(true);
+			} else {
+				DialogCacheCheck.this.dispose();
+			}
 		}
 	};
+
+	private boolean hasTask() {
+		File taskFile = new File(fileChooseSciPath.getPath());
+		File doingFile = null;
+		if (taskFile.exists()) {
+			doingFile = new File(CacheUtilities.replacePath(taskFile.getParent(), "doing"));
+		}
+		return null != doingFile && hasSciFiles(doingFile);
+	}
+
+	private void shutdownMapCheck(boolean dispose) {
+		SmOptionPane optionPane = new SmOptionPane();
+		String sciPath = fileChooseSciPath.getPath();
+		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
+			ProcessManager.getInstance().removeAllProcess(sciPath, "checking");
+			if (dispose) {
+				DialogCacheCheck.this.dispose();
+			}
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), sciPath));
+		} else {
+			return;
+		}
+	}
+
 	private ActionListener checkListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -68,7 +100,7 @@ public class DialogCacheCheck extends SmDialog {
 //				textFieldProcessCount.setText("0");
 //				textFieldProcessCount.setEnabled(false);
 //			} else {
-				textFieldProcessCount.setEnabled(true);
+			textFieldProcessCount.setEnabled(true);
 //			}
 		}
 	};
@@ -98,6 +130,15 @@ public class DialogCacheCheck extends SmDialog {
 		this.buttonCancel.addActionListener(this.cancelListener);
 		this.buttonOK.addActionListener(this.checkListener);
 //		this.radioButtonSingleCheck.addChangeListener(singleCheckListener);
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				if (hasTask()) {
+					setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+					shutdownMapCheck(true);
+				}
+			}
+		});
 	}
 
 	private void removeEvents() {
@@ -207,21 +248,29 @@ public class DialogCacheCheck extends SmDialog {
 
 	private boolean validateValue(String sciPath, String processCount, String cachePath) {
 		boolean result = true;
+		SmOptionPane optionPane = new SmOptionPane();
 		File sciDirectory = new File(sciPath);
 		if (StringUtilities.isNullOrEmpty(sciPath) || !FileUtilities.isFilePath(sciPath) || !hasSciFiles(sciDirectory)) {
-			result = false;
+			optionPane.showConfirmDialog(MapViewProperties.getString("String_CachePathError"));
+			return false;
 		}
-		if (StringUtilities.isNullOrEmpty(cachePath) || !FileUtilities.isFilePath(cachePath)) {
-			result = false;
+		if (StringUtilities.isNullOrEmpty(cachePath) || !new File(cachePath).exists() || !hasSciFiles(new File(cachePath))) {
+			optionPane.showConfirmDialog(MapViewProperties.getString("String_CheckPathError"));
+			return false;
 		}
 		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) || processCount.equals("0"))) {
-			result = false;
+			optionPane.showConfirmDialog(MapViewProperties.getString("String_CheckProcessCountError"));
+			return false;
 		}
 		return result;
 	}
 
 	private boolean hasSciFiles(File sciDirectory) {
-		return sciDirectory.list(CacheUtilities.getFilter()).length > 0 ? true : false;
+		int size = 0;
+		if (null != sciDirectory.list(CacheUtilities.getFilter())) {
+			size = sciDirectory.list(CacheUtilities.getFilter()).length;
+		}
+		return size > 0 ? true : false;
 	}
 
 	private void run(ActionEvent e) {
@@ -299,9 +348,10 @@ public class DialogCacheCheck extends SmDialog {
 						Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_CacheCheckSuccess"));
 					}
 				}
-			} else {
-				new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_ParamsException"));
 			}
+//			else {
+//				new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_ParamsException"));
+//			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			Application.getActiveApplication().getOutput().output(ex);
