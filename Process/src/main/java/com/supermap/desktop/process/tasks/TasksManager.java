@@ -39,7 +39,7 @@ public class TasksManager {
 
 	private Timer scheduler;
 	private Workflow workflow;
-	private Map<IProcess, ProcessTask> tasksMap = new ConcurrentHashMap<>();
+	private Map<IProcess, ProcessWorker> tasksMap = new ConcurrentHashMap<>();
 
 	private List<IProcess> waiting = new ArrayList<>();
 	private List<IProcess> ready = new ArrayList<>();
@@ -82,17 +82,17 @@ public class TasksManager {
 
 	private void processAdded(IProcess process) {
 		if (!this.tasksMap.containsKey(process)) {
-			ProcessTask task = new ProcessTask(process);
+			ProcessWorker worker = new ProcessWorker(process);
 			process.addStatusChangeListener(this.processStatusChangeListener);
-			this.tasksMap.put(process, task);
+			this.tasksMap.put(process, worker);
 		}
 	}
 
 	private void processRemoved(IProcess process) {
 		if (this.tasksMap.containsKey(process)) {
-			ProcessTask task = this.tasksMap.get(process);
+			ProcessWorker worker = this.tasksMap.get(process);
 			process.removeStatusChangeListener(this.processStatusChangeListener);
-			this.tasksMap.remove(task.getProcess());
+			this.tasksMap.remove(worker.getProcess());
 		}
 	}
 
