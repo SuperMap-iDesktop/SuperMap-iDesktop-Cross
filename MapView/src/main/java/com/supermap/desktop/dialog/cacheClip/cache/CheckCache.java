@@ -31,15 +31,21 @@ public class CheckCache {
 	private int sciLength;
 	private static final int INDEX_CACHEROOT = 0;
 	private static final int INDEX_SCIPATH = 1;
-//	private static final int INDEX_MERGETASKCOUNT = 2;
+	//	private static final int INDEX_MERGETASKCOUNT = 2;
 	private static final int INDEX_ERROR2UDB = 3;
 	private static final int INDEX_BOUNDARYREGION = 4;
 
 	public void startProcess(int processCount, String[] params) {
 		try {
-			if (processCount == 0) {
-				main(params);
-			} else {
+//			if (0 == processCount) {
+//				main(params);
+//			} else {
+//				for (int i = 0; i < processCount; i++) {
+//					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.CHECK_CACEH);
+//					Thread.sleep(2000);
+//				}
+//			}
+			if (processCount > 0) {
 				for (int i = 0; i < processCount; i++) {
 					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.CHECK_CACEH);
 					Thread.sleep(2000);
