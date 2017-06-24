@@ -358,7 +358,10 @@ public class NextStepPane extends JPanel implements IState {
 	private void initComponents() {
 		this.enabledListeners = new Vector<>();
 		this.panelMultiProcess = new JPanel();
-		Map activeMap = MapUtilities.getActiveMap();
+		Map activeMap = this.mapCacheBuilder.getMap();
+		if (null == activeMap) {
+			activeMap = MapUtilities.getActiveMap();
+		}
 		this.panelCacheRange = new PanelGroupBoxViewBounds(parent, MapViewProperties.getString("MapCache_CacheRange"), activeMap);
 		this.panelIndexRange = new PanelGroupBoxViewBounds(parent, MapViewProperties.getString("MapCache_IndexRange"), activeMap);
 		this.cacheRangeBounds = this.mapCacheBuilder.getBounds();
