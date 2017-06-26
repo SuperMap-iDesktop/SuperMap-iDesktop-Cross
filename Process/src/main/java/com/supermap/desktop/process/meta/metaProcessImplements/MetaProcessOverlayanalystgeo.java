@@ -52,13 +52,13 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 
 	private void initComponents() {
 		parameterSourceDatasource = new ParameterBigDatasourceDatasource();
-		parameterSourceDatasource.setDescribe(CommonProperties.getString("String_ColumnHeader_SourceDatasource"));
+		parameterSourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameterSourceDataset = new ParameterSingleDataset();
-		parameterSourceDataset.setDescribe(CommonProperties.getString("String_ColumnHeader_SourceDataset"));
+		parameterSourceDataset.setDescribe(CommonProperties.getString("String_Label_SourceDataset"));
 		parameterOverlayDatasource = new ParameterBigDatasourceDatasource();
 		parameterOverlayDatasource.setDescribe(ProcessProperties.getString("String_overlayDatasource"));
 		parameterOverlayDataset = new ParameterSingleDataset();
-		parameterOverlayDataset.setDescribe(ProcessProperties.getString("String_overlayDatasource"));
+		parameterOverlayDataset.setDescribe(ProcessProperties.getString("String_overlayDataset"));
 
 		parameterOverlayTypeComboBox = new ParameterComboBox(ControlsProperties.getString("String_OverlayAnalystType"));
 		parameterOverlayTypeComboBox.setItems(
