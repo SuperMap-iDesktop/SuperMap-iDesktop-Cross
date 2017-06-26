@@ -10,6 +10,7 @@ import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
+import com.supermap.desktop.dialog.cacheClip.cache.LogWriter;
 import com.supermap.desktop.dialog.cacheClip.cache.TaskBuilder;
 import com.supermap.desktop.mapview.MapCache.CacheProgressCallable;
 import com.supermap.desktop.mapview.MapViewProperties;
@@ -390,16 +391,10 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					dispose();
 					Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_TargetTaskPath"), tasksPath));
 					if (nextStepPane.checkBoxClipOnThisComputer.isSelected()) {
-						DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder(cmdType);
-						dialogCacheBuilder.textFieldMapName.setText(this.mapCacheBuilder.getCacheName());
 						String targetTaskPath = CacheUtilities.replacePath(tasksPath, "task");
-						File oldFile = new File(sciPath);
-						dialogCacheBuilder.setSciFile(oldFile);
-						dialogCacheBuilder.fileChooserTotalTaskPath.setPath(sciPath);
-						dialogCacheBuilder.fileChooserTaskPath.setPath(targetTaskPath);
-						dialogCacheBuilder.fileChooserWorkspacePath.setPath(Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer());
-						dialogCacheBuilder.fileChooserCachePath.setPath(filePath);
-						dialogCacheBuilder.showDialog();
+						String[] tempParams = {cmdType == UpdateProcessClip ? "Update" : "Multi", sciPath, targetTaskPath,
+								Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), this.mapCacheBuilder.getCacheName(), filePath};
+						CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
 					}
 				}
 				if (this.checkBoxAutoClosed.isSelected()) {

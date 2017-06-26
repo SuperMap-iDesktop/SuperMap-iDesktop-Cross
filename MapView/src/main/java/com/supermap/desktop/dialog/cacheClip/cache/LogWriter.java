@@ -8,7 +8,7 @@ import java.lang.management.ManagementFactory;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-class LogWriter {
+public class LogWriter {
 
 	private File logFile;
 	private OutputStreamWriter writer;
