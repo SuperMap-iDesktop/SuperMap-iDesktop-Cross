@@ -2,6 +2,7 @@ package com.supermap.desktop.process.tasks;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Created by highsad on 2017/6/22.
@@ -9,6 +10,7 @@ import java.util.List;
 public abstract class Worker<V extends Object> extends SwingWorker<Boolean, V> {
 	private IWorkerView<V> view;
 	private String title;
+	protected volatile boolean isCancelled = false;
 
 	public Worker() {
 
@@ -28,7 +30,13 @@ public abstract class Worker<V extends Object> extends SwingWorker<Boolean, V> {
 
 	@Override
 	protected final Boolean doInBackground() {
-		return doWork();
+		try {
+			return doWork();
+		} finally {
+			if (isCancelled) {
+				cancel(false);
+			}
+		}
 	}
 
 	protected abstract boolean doWork();
@@ -42,6 +50,10 @@ public abstract class Worker<V extends Object> extends SwingWorker<Boolean, V> {
 		if (chunks != null && chunks.size() > 0) {
 			this.view.update(chunks.get(0));
 		}
+	}
+
+	public void cancel() {
+		this.isCancelled = true;
 	}
 
 	@Override

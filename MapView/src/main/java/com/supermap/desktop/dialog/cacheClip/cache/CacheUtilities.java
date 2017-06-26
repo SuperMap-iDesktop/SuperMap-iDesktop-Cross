@@ -105,9 +105,8 @@ public class CacheUtilities {
 				int cmdType = dialogMapCacheClip.isSingleProcess() ? DialogMapCacheClipBuilder.SingleProcessClip : DialogMapCacheClipBuilder.MultiProcessClip;
 				new DialogMapCacheClipBuilder(cmdType, mapCacheBuilder).showDialog();
 			} else {
-				DialogCacheBuilder cacheBuilder = new DialogCacheBuilder(DialogMapCacheClipBuilder.MultiProcessClip);
-				cacheBuilder.textFieldMapName.setText(map.getName());
-				cacheBuilder.showDialog();
+				String[] params = {"Multi", "null", "null", "null", map.getName(), "null"};
+				startProcess(params, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
 			}
 		}
 	}
@@ -128,9 +127,9 @@ public class CacheUtilities {
 			String projectPath = replacePath(System.getProperty("user.dir"));
 			String jarPath = "";
 			if (isWindows()) {
-				jarPath = ".;" + projectPath + "\\bin\\com.supermap.data.jar;" + projectPath + "\\bin\\com.supermap.mapping.jar;" + projectPath + "\\bin\\com.supermap.tilestorage.jar;" + projectPath + "\\bin\\com.supermap.data.processing.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
+				jarPath = ".;" + projectPath + "\\bin\\com.supermap.data.jar;" + projectPath + "\\bin\\com.supermap.mapping.jar;" + projectPath + "\\bin\\com.supermap.tilestorage.jar;" + projectPath + "\\bin\\com.supermap.data.processing.jar;" + projectPath + "\\bundles\\require_bundles\\Core.jar;" + projectPath + "\\bundles\\require_bundles\\Controls.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
 			} else {
-				jarPath = projectPath + "/bin/com.supermap.data.jar:" + projectPath + "/bin/com.supermap.mapping.jar:" + projectPath + "/bin/com.supermap.tilestorage.jar:" + projectPath + "/bin/com.supermap.data.processing.jar:" + projectPath + "/bundles/idesktop_bundles/MapView.jar: ";
+				jarPath = projectPath + "/bin/com.supermap.data.jar:" + projectPath + "/bin/com.supermap.mapping.jar:" + projectPath + "/bin/com.supermap.tilestorage.jar:" + projectPath + "/bin/com.supermap.data.processing.jar:" + projectPath + "/bundles/require_bundles/Core.jar:" + projectPath + "/bundles/require_bundles/Controls.jar:" + projectPath + "/bundles/idesktop_bundles/MapView.jar: ";
 			}
 //		String jarPath = ".;" + projectPath + "\\bundles\\require_bundles\\Core.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
 			arguments.add(jarPath);
@@ -140,7 +139,7 @@ public class CacheUtilities {
 			}
 			ProcessManager manager = ProcessManager.getInstance();
 			SubprocessThread thread = new SubprocessThread(arguments, cacheType);
-			manager.addProcess(thread, cacheType);
+			manager.addProcess(thread);
 			thread.start();
 		} catch (Exception e) {
 			e.printStackTrace();

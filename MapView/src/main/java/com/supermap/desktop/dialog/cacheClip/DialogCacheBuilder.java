@@ -3,7 +3,6 @@ package com.supermap.desktop.dialog.cacheClip;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
@@ -97,11 +96,11 @@ public class DialogCacheBuilder extends SmDialog {
 		SmOptionPane optionPane = new SmOptionPane();
 		sciPath = fileChooserTaskPath.getPath();
 		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
-			ProcessManager.getInstance().removeAllProcess(sciPath,"doing");
+			ProcessManager.getInstance().removeAllProcess(sciPath, "doing");
 			if (dispose) {
 				DialogCacheBuilder.this.dispose();
 			}
-			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), sciPath));
+			new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), sciPath));
 		} else {
 			return;
 		}
@@ -434,7 +433,7 @@ public class DialogCacheBuilder extends SmDialog {
 				doBuildCache(cachePath);
 			}
 		} catch (Exception ex) {
-			Application.getActiveApplication().getOutput().output(ex);
+			new SmOptionPane().showConfirmDialog(ex.getMessage());
 		}
 	}
 
@@ -521,7 +520,7 @@ public class DialogCacheBuilder extends SmDialog {
 			optionPane.showErrorDialog(MapViewProperties.getString("String_CachePathNotExist"));
 			return false;
 		}
-		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount))) {
+		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) || "0".equals(processCount))) {
 			optionPane.showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
 			textFieldProcessCount.requestFocus();
 			return false;
@@ -658,10 +657,6 @@ public class DialogCacheBuilder extends SmDialog {
 		ProcessManager.getInstance().dispose();
 	}
 
-	public void setSciFile(File sciFile) {
-		this.sciFile = sciFile;
-	}
-
 	public void setCaptions(CopyOnWriteArrayList<String> sourceCaptions) {
 		captions = sourceCaptions;
 		//Display scale info process
@@ -716,26 +711,53 @@ public class DialogCacheBuilder extends SmDialog {
 
 			File failedFile = new File(CacheUtilities.replacePath(sciFile.getParent(), "failed"));
 			if (failedFile.exists()) {
-				Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), failedFile.list().length, failedFile.getPath()));
+				new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), failedFile.list().length, failedFile.getPath()));
 			}
-			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), resultPath, hour, minutes, second));
+			new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), resultPath, hour, minutes, second));
 		} else {
-			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_MultiCacheFailed"));
+			new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_MultiCacheFailed"));
 		}
 		disposeInfo();
 	}
 
 	public static void main(String[] args) {
+		if (args.length > 1) {
+			String totalSciLength = args[1];
+			String taskPath = args[2];
+			String workspacePath = args[3];
+			String mapName = args[4];
+			String cachePath = args[5];
+			DialogCacheBuilder dialogMapCacheBuilder = getDialog(args[0]);
+			if (!"null".equals(mapName)) {
+				dialogMapCacheBuilder.textFieldMapName.setText(mapName);
+			}
+			if (!"null".equals(totalSciLength)) {
+				dialogMapCacheBuilder.fileChooserTotalTaskPath.setPath(totalSciLength);
+			}
+			if (!"null".equals(taskPath)) {
+				dialogMapCacheBuilder.fileChooserTaskPath.setPath(taskPath);
+			}
+			if (!"null".equals(workspacePath)) {
+				dialogMapCacheBuilder.fileChooserWorkspacePath.setPath(workspacePath);
+			}
+			if (!"null".equals(cachePath)) {
+				dialogMapCacheBuilder.fileChooserCachePath.setPath(cachePath);
+			}
+			dialogMapCacheBuilder.showDialog();
+		} else {
+			getDialog(args[0]).showDialog();
+		}
+	}
+
+	private static DialogCacheBuilder getDialog(String operationType) {
+		DialogCacheBuilder dialogCacheBuilder = null;
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			String oparationType = args[0];
-			int tempCmdType = oparationType.equals("Multi") ? DialogMapCacheClipBuilder.MultiProcessClip : DialogMapCacheClipBuilder.UpdateProcessClip;
-//			params = new String[]{sciPath, workspacePath, mapName, cachePath, processCount, String.valueOf(isAppending)};
-			DialogCacheBuilder dialogCacheBuilder = new DialogCacheBuilder(tempCmdType);
-			dialogCacheBuilder.showDialog();
+			int tempCmdType = operationType.equals("Multi") ? DialogMapCacheClipBuilder.MultiProcessClip : DialogMapCacheClipBuilder.UpdateProcessClip;
+			dialogCacheBuilder = new DialogCacheBuilder(tempCmdType);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		return dialogCacheBuilder;
 	}
 }

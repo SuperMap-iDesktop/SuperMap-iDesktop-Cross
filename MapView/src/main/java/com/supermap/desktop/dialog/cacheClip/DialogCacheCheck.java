@@ -1,7 +1,6 @@
 package com.supermap.desktop.dialog.cacheClip;
 
 import com.supermap.data.processing.CacheWriter;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
@@ -81,7 +80,7 @@ public class DialogCacheCheck extends SmDialog {
 			if (dispose) {
 				DialogCacheCheck.this.dispose();
 			}
-			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), sciPath));
+			new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), sciPath));
 		} else {
 			return;
 		}
@@ -106,7 +105,6 @@ public class DialogCacheCheck extends SmDialog {
 	};
 
 	public DialogCacheCheck() {
-		super();
 		init();
 	}
 
@@ -345,16 +343,13 @@ public class DialogCacheCheck extends SmDialog {
 						cacheBuilder.textFieldMapName.setText(cacheFile.getName());
 						cacheBuilder.showDialog();
 					} else {
-						Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_CacheCheckSuccess"));
+						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_CacheCheckSuccess"));
 					}
 				}
 			}
-//			else {
-//				new SmOptionPane().showConfirmDialog(MapViewProperties.getString("String_ParamsException"));
-//			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			Application.getActiveApplication().getOutput().output(ex);
+			new SmOptionPane().showConfirmDialog(ex.getMessage());
 		}
 	}
 

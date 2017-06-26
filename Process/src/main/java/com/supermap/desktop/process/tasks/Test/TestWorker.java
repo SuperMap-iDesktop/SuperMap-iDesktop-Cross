@@ -13,21 +13,23 @@ import java.awt.event.ActionListener;
 public class TestWorker extends Worker<SingleProgress> {
 	@Override
 	protected boolean doWork() {
-
-		for (int i = 0; i < 100; i++) {
-			try {
-				if (isCancelled()) {
+		try {
+			for (int i = 0; i < 100; i++) {
+				if (isCancelled) {
 					Thread.sleep(5000);
 					break;
 				}
 
-				Thread.sleep(10000);
-				SingleProgress singleProgress = new SingleProgress(i, String.valueOf(i), String.valueOf((100 - i) * 2));
+				Thread.sleep(1000);
+				SingleProgress singleProgress = new SingleProgress(i, String.valueOf(i), String.valueOf((100 - i) * 1));
 				update(singleProgress);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			System.out.println("final");
 		}
+
 
 		return true;
 	}
