@@ -32,7 +32,6 @@ public class CtrlActionMapCacheResume extends CtrlAction {
 					MapViewProperties.getString("String_OpenColorTable"), moduleName, "OpenOne");
 		}
 		SmFileChoose smFileChoose = new SmFileChoose(moduleName);
-		smFileChoose.setSelectedFile(new File(MapViewProperties.getString("MapCache_CacheConfigFileIsNotbrackets")));
 		int state = smFileChoose.showDefaultDialog();
 		if (state == JFileChooser.APPROVE_OPTION) {
 			File file = smFileChoose.getSelectedFile();
