@@ -1,6 +1,6 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
-import java.io.*;
+import java.io.File;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -79,25 +79,25 @@ public class ProcessManager {
 				doingPath = CacheUtilities.replacePath(taskFiles.getParentFile().getAbsolutePath(), "doing");
 			}
 
-			String logFolder = ".\\temp_log\\";
-			if (CacheUtilities.isLinux()) {
-				logFolder = "./temp_log/";
-			}
-			File logDirectory = new File(logFolder);
-			CopyOnWriteArrayList<String> undoScis = new CopyOnWriteArrayList<>();
-			if (logDirectory.exists() && logDirectory.isDirectory()) {
-//				int mergeSciCount = Integer.valueOf(params[BuildCache.MERGESCICOUNT_INDEX]);
-				undoScis = getUndoScis(logDirectory, 3);
-			}
+//			String logFolder = ".\\temp_log\\";
+//			if (CacheUtilities.isLinux()) {
+//				logFolder = "./temp_log/";
+//			}
+//			File logDirectory = new File(logFolder);
+//			CopyOnWriteArrayList<String> undoScis = new CopyOnWriteArrayList<>();
+//			if (logDirectory.exists() && logDirectory.isDirectory()) {
+////				int mergeSciCount = Integer.valueOf(params[BuildCache.MERGESCICOUNT_INDEX]);
+//				undoScis = getUndoScis(logDirectory, 3);
+//			}
 			LogWriter.removeAllLogs();
 			File doingDirectory = new File(doingPath);
 			if (doingDirectory.exists()) {
 				File[] doingScis = doingDirectory.listFiles();
 				for (int i = 0; i < doingScis.length; i++) {
-					for (int j = 0; j < undoScis.size(); j++) {
-						if (undoScis.get(j).contains(doingScis[i].getName()))
-							doingScis[i].renameTo(new File(taskFiles, doingScis[i].getName()));
-					}
+//					for (int j = 0; j < undoScis.size(); j++) {
+//						if (undoScis.get(j).contains(doingScis[i].getName()))
+					doingScis[i].renameTo(new File(taskFiles, doingScis[i].getName()));
+//					}
 				}
 			}
 			BuildCache buildCache = new BuildCache();
@@ -107,46 +107,42 @@ public class ProcessManager {
 		}
 	}
 
-	private CopyOnWriteArrayList<String> getUndoScis(File logDirectory, int mergeCount) throws IOException {
-		CopyOnWriteArrayList<String> result = new CopyOnWriteArrayList<>();
-		try {
-			File[] logfiles = logDirectory.listFiles();
-			for (int i = 0; i < logfiles.length; i++) {
-				CopyOnWriteArrayList<String> doingSci = new CopyOnWriteArrayList<>();
-				if (logfiles[i].getName().contains(LogWriter.BUILD_CACHE)) {
-					InputStream stream = new FileInputStream(logfiles[i]);
-					String osName = System.getProperty("os.name").toLowerCase();
-					BufferedReader bufferedReader;
-					if (osName.startsWith("linux")) {
-						bufferedReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
-					} else {
-						bufferedReader = new BufferedReader(new InputStreamReader(stream, "GBK"));
-					}
-					String line = null;
-					while ((line = bufferedReader.readLine()) != null) {
-						if (line.contains("doing:")) {
-							String sciName = line.substring(line.indexOf("doing:"), line.length());
-							doingSci.add(sciName);
-						}
-					}
-					stream.close();
-					bufferedReader.close();
-				}
-				if (doingSci.size() > 0) {
-					for (int j = doingSci.size() - 1; j > doingSci.size() - 1 - mergeCount; j--) {
-						result.add(doingSci.get(j));
-					}
-				}
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
-
-	public CopyOnWriteArrayList<SubprocessThread> getThreadList() {
-		return threadList;
-	}
+//	private CopyOnWriteArrayList<String> getUndoScis(File logDirectory, int mergeCount) throws IOException {
+//		CopyOnWriteArrayList<String> result = new CopyOnWriteArrayList<>();
+//		try {
+//			File[] logfiles = logDirectory.listFiles();
+//			for (int i = 0; i < logfiles.length; i++) {
+//				CopyOnWriteArrayList<String> doingSci = new CopyOnWriteArrayList<>();
+//				if (logfiles[i].getName().contains(LogWriter.BUILD_CACHE)) {
+//					InputStream stream = new FileInputStream(logfiles[i]);
+//					String osName = System.getProperty("os.name").toLowerCase();
+//					BufferedReader bufferedReader;
+//					if (osName.startsWith("linux")) {
+//						bufferedReader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+//					} else {
+//						bufferedReader = new BufferedReader(new InputStreamReader(stream, "GBK"));
+//					}
+//					String line = null;
+//					while ((line = bufferedReader.readLine()) != null) {
+//						if (line.contains("doing:")) {
+//							String sciName = line.substring(line.indexOf("doing:"), line.length());
+//							doingSci.add(sciName);
+//						}
+//					}
+//					stream.close();
+//					bufferedReader.close();
+//				}
+//				if (doingSci.size() > 0) {
+//					for (int j = doingSci.size() - 1; j > doingSci.size() - 1 - mergeCount; j--) {
+//						result.add(doingSci.get(j));
+//					}
+//				}
+//			}
+//		} catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//		return result;
+//	}
 
 	public void dispose() {
 		try {

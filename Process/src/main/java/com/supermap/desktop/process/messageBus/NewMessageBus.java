@@ -2,11 +2,7 @@ package com.supermap.desktop.process.messageBus;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.supermap.data.Dataset;
-import com.supermap.data.Datasource;
-import com.supermap.data.DatasourceConnectionInfo;
-import com.supermap.data.Datasources;
-import com.supermap.data.EngineType;
+import com.supermap.data.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.CommonToolkit;
 import com.supermap.desktop.Interface.IFormMap;
@@ -16,14 +12,12 @@ import com.supermap.desktop.progress.Interface.IUpdateProgress;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
-import com.supermap.desktop.ui.lbs.params.IResponse;
-import com.supermap.desktop.ui.lbs.params.IServerInfo;
-import com.supermap.desktop.ui.lbs.params.JobItemResultResponse;
-import com.supermap.desktop.ui.lbs.params.JobResultResponse;
+import com.supermap.desktop.ui.lbs.params.*;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Map;
 
 import javax.swing.*;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -61,11 +55,10 @@ public class NewMessageBus {
 		if (!StringUtilities.isNullOrEmpty(queryInfo)) {
 			result = JSON.parseObject(queryInfo, JobItemResultResponse.class);
 		}
-//        if (null != result && "FINISHED".equals(result.state.runState)) {
 		if (null != result) {
 			if (null != result.setting.serviceInfo && null != result.setting.serviceInfo.targetServiceInfos) {
 				task.updateProgress(100, "", "");
-				// 获取iserver服务发布地址,并打开到地图，如果存在已经打开的地图则将iserver服务上的地图打开到当前地图
+				//获取iserver服务发布地址,并打开到地图，如果存在已经打开的地图则将iserver服务上的地图打开到当前地图
 				ArrayList<IServerInfo> mapsList = result.setting.serviceInfo.targetServiceInfos;
 				String serviceAddress = "";
 				int size = mapsList.size();
@@ -78,13 +71,20 @@ public class NewMessageBus {
 					//获取查询iserver的结果
 					stop = true;
 					String datasourceName = "";
-					if (serviceAddress.contains("map-kernelDensity")) {
-						datasourceName = serviceAddress.substring(serviceAddress.indexOf("map-kernelDensity")).replace("/rest", "");
-					} else if (serviceAddress.contains("mongodb")) {
-						datasourceName = serviceAddress.substring(serviceAddress.indexOf("mongodb")).replace("/rest", "");
+					try {
+						Class<BigDataType> bigDataTypeClass = BigDataType.class;
+						Field[] fields = bigDataTypeClass.getFields();
+						for (Field field : fields) {
+							BigDataType bigDataType = (BigDataType) field.get(bigDataTypeClass);
+							if (serviceAddress.contains(bigDataType.getMessage())) {
+								datasourceName = bigDataType.getResultName() + serviceAddress.substring(serviceAddress.indexOf(bigDataType.getMessage()) + bigDataType.getMessage().length()).replace("/rest", "");
+								break;
+							}
+						}
+					} catch (Exception e) {
+						Application.getActiveApplication().getOutput().output(e);
 					}
 					serviceAddress = serviceAddress + "/maps";
-
 					String mapsInfo = serverService.query(serviceAddress);
 					if (!StringUtilities.isNullOrEmpty(mapsInfo)) {
 						ArrayList<JSONObject> mapsResult = JSON.parseObject(mapsInfo, ArrayList.class);
@@ -95,8 +95,11 @@ public class NewMessageBus {
 							JSONObject object = mapsResult.get(i);
 							iserverRestAddr = (String) object.get("path");
 							datasetName = (String) object.get("name");
+							if (i > 0) {
+								datasourceName += "_" + i;
+							}
+							openIserverMap(iserverRestAddr, datasourceName, datasetName);
 						}
-						openIserverMap(iserverRestAddr, datasourceName, datasetName);
 					}
 				}
 			} else {
@@ -117,38 +120,28 @@ public class NewMessageBus {
 		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
 		if (null != datasources) {
 			final Datasource datasource = datasources.open(connectionInfo);
-			Dataset dataset = null;
-			if (null == datasource.getDatasets().get(datasetName)) {
-				return;
-			} else {
-				dataset = datasource.getDatasets().get(datasetName);
-			}
 			if (null == datasource) {
 				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_OpenDatasourceFaild"));
 			} else {
-				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_OpenDatasourceSuccessful"));
-				final Dataset finalDataset = dataset;
-				SwingUtilities.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
-//                        if (null != Application.getActiveApplication().getActiveForm() && Application.getActiveApplication().getActiveForm() instanceof IFormMap) {
-//                            //添加到当前地图中
-//                            Map currentMap = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
-//                            MapUtilities.addDatasetToMap(currentMap, finalDataset, true);
-//                        } else {
-						//打开新的地图
-						IFormMap newMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, datasetName + "@" + datasource.getAlias());
-						Map map = newMap.getMapControl().getMap();
-						map.getLayers().add(finalDataset, true);
-						map.refresh();
-						UICommonToolkit.getLayersManager().getLayersTree().reload();
-//                        }
-					}
-				});
-
+				if (null == datasource.getDatasets().get(datasetName)) {
+					return;
+				} else {
+					Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_OpenDatasourceSuccessful"));
+					final Dataset finalDataset = datasource.getDatasets().get(datasetName);
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
+							//打开新的地图
+							IFormMap newMap = (IFormMap) CommonToolkit.FormWrap.fireNewWindowEvent(WindowType.MAP, datasetName + "@" + datasource.getAlias());
+							Map map = newMap.getMapControl().getMap();
+							map.getLayers().add(finalDataset, true);
+							map.refresh();
+							UICommonToolkit.getLayersManager().getLayersTree().reload();
+						}
+					});
+				}
 			}
-
 		}
 	}
 }

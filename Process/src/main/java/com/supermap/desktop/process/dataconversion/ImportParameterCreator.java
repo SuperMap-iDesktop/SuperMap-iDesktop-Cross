@@ -55,7 +55,6 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalEvent;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
 import com.supermap.desktop.process.parameter.events.ParameterValueSelectedEvent;
-import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterButton;
 import com.supermap.desktop.process.parameter.implement.ParameterCharset;
 import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
@@ -558,7 +557,7 @@ public class ImportParameterCreator implements IParameterCreator {
 
 			@Override
 			public Object isValueSelected(ParameterValueSelectedEvent event) {
-				return AbstractParameter.DO_NOT_CARE;
+				return ParameterValueLegalListener.DO_NOT_CARE;
 			}
 		});
 		parameterDatasource.setDescribe(CommonProperties.getString(CommonProperties.Label_Datasource));

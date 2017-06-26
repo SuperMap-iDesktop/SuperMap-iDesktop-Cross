@@ -292,15 +292,13 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 //				this.mapCacheBuilder.setIsAppending(true);
 				result = this.mapCacheBuilder.build();
 			}
-			long endTime = System.currentTimeMillis();
-			String time = String.valueOf((endTime - startTime) / 1000.0);
-			printResultInfo(result, time);
+			printResultInfo(result, System.currentTimeMillis() - startTime);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}
 	}
 
-	private void printResultInfo(boolean result, String time) {
+	private void printResultInfo(boolean result, long totalTime) {
 		if (result) {
 			Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateSuccessed"));
 			if (!firstStepPane.fileChooserControlFileCache.getPath().substring(firstStepPane.fileChooserControlFileCache.getPath().length() - 1).equals("\\")) {
@@ -311,7 +309,20 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		} else {
 			Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateFailed"));
 		}
-		Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_Time") + time + " " + MapViewProperties.getString("MapCache_ShowTime"));
+		long hour = 0;
+		long minutes = 0;
+		long second = 0;
+		if (totalTime >= 3600000) {
+			hour = totalTime / 3600000;
+			minutes = (totalTime % 3600000) / 60000;
+			second = ((totalTime % 3600000) % 60000) / 1000;
+		} else if (totalTime >= 60000) {
+			minutes = totalTime / 60000;
+			second = (totalTime % 60000) / 1000;
+		} else {
+			second = totalTime / 1000;
+		}
+		Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("MapCache_Time"), hour, minutes, second));
 		if (this.checkBoxAutoClosed.isSelected()) {
 			dispose();
 			this.mapCacheBuilder.dispose();
@@ -423,9 +434,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		} else {
 			result = this.mapCacheBuilder.build();
 		}
-		long endTime = System.currentTimeMillis();
-		String time = String.valueOf((endTime - startTime) / 1000.0);
-		printResultInfo(result, time);
+		printResultInfo(result, System.currentTimeMillis() - startTime);
 	}
 
 	@Override
