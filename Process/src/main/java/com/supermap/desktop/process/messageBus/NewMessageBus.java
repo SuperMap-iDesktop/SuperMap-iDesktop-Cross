@@ -17,6 +17,7 @@ import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Map;
 
 import javax.swing.*;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -70,17 +71,20 @@ public class NewMessageBus {
 					//获取查询iserver的结果
 					stop = true;
 					String datasourceName = "";
-					if (serviceAddress.contains(BigDataType.KernelDensity.toString())) {
-						datasourceName = "KernelDensity" + serviceAddress.substring(serviceAddress.indexOf(BigDataType.KernelDensity.toString()) + BigDataType.KernelDensity.toString().length()).replace("/rest", "");
-					} else if (serviceAddress.contains(BigDataType.Heatmap.toString())) {
-						datasourceName = "Heatmap" + serviceAddress.substring(serviceAddress.indexOf(BigDataType.Heatmap.toString()) + BigDataType.Heatmap.toString().length()).replace("/rest", "");
-					} else if (serviceAddress.contains(BigDataType.GridRegionAggregation.toString())) {
-						datasourceName = "GridRegionAggregation" + serviceAddress.substring(serviceAddress.indexOf(BigDataType.GridRegionAggregation.toString()) + BigDataType.GridRegionAggregation.toString().length()).replace("/rest", "");
-					}else if (serviceAddress.contains(BigDataType.OverlayAnalystGeo.toString())) {
-						datasourceName = "OverlayAnalystGeo" + serviceAddress.substring(serviceAddress.indexOf(BigDataType.OverlayAnalystGeo.toString()) + BigDataType.OverlayAnalystGeo.toString().length()).replace("/rest", "");
+					try {
+						Class<BigDataType> bigDataTypeClass = BigDataType.class;
+						Field[] fields = bigDataTypeClass.getFields();
+						for (Field field : fields) {
+							BigDataType bigDataType = (BigDataType) field.get(bigDataTypeClass);
+							if (serviceAddress.contains(bigDataType.getMessage())) {
+								datasourceName = bigDataType.getResultName() + serviceAddress.substring(serviceAddress.indexOf(bigDataType.getMessage()) + bigDataType.getMessage().length()).replace("/rest", "");
+								break;
+							}
+						}
+					} catch (Exception e) {
+						Application.getActiveApplication().getOutput().output(e);
 					}
 					serviceAddress = serviceAddress + "/maps";
-
 					String mapsInfo = serverService.query(serviceAddress);
 					if (!StringUtilities.isNullOrEmpty(mapsInfo)) {
 						ArrayList<JSONObject> mapsResult = JSON.parseObject(mapsInfo, ArrayList.class);
