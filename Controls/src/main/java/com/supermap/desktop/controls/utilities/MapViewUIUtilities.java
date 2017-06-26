@@ -28,8 +28,10 @@ import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 import com.supermap.ui.Action;
 
+import java.lang.reflect.Array;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class MapViewUIUtilities {
 
@@ -48,9 +50,11 @@ public class MapViewUIUtilities {
 	 * @param datasets
 	 * @param addToHead
 	 */
-	public static void addDatasetsToMap(Map map, Dataset[] datasets, boolean addToHead) {
+	public static Layer[] addDatasetsToMap(Map map, Dataset[] datasets, boolean addToHead) {
+		Vector<Layer> layers = new Vector<>();
+
 		if (datasets == null || datasets.length == 0) {
-			return;
+			return null;
 		}
 
 		// 预处理较大的栅格或者影像数据集，创建影像金字塔
@@ -81,7 +85,7 @@ public class MapViewUIUtilities {
 		// 添加到地图
 		for (Dataset dataset : datasets) {
 			if (dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
-				MapUtilities.addDatasetToMap(map, dataset, addToHead);
+				layers.add(MapUtilities.addDatasetToMap(map, dataset, addToHead));
 			}
 		}
 		MapUtilities.setDynamic(datasets, map);
@@ -89,6 +93,60 @@ public class MapViewUIUtilities {
 		Application.getActiveApplication().resetActiveForm();
 		map.refresh();
 		UICommonToolkit.getLayersManager().setMap(map);
+		return layers.toArray(new Layer[layers.size()]);
+	}
+
+	/**
+	 * 将数据集添加到指定的地图
+	 *
+	 * @param map
+	 * @param datasets
+	 * @param index
+	 */
+	public static Layer[] insertDatasetsToMap(Map map, Dataset[] datasets, int index) {
+		Vector<Layer> layers = new Vector<>();
+
+		if (datasets == null || datasets.length == 0 || index < 0) {
+			return null;
+		}
+
+		// 预处理较大的栅格或者影像数据集，创建影像金字塔
+		ArrayList<Dataset> needCreateImagePyramid = new ArrayList<Dataset>();
+		boolean isUsedAsDefault = false; // 是否将当前选择作为后续的默认设置，不再提示
+		JDialogConfirm dialogConfirm = new JDialogConfirm();
+
+		for (Dataset dataset : datasets) {
+			if (ImagePyramidUtilities.isNeedBuildPyramid(dataset)) {
+				dialogConfirm.setMessage(MessageFormat.format(ControlsProperties.getString("String_IsBuildPyramid"), dataset.getName()));
+				if (!isUsedAsDefault) {
+					dialogConfirm.showDialog();
+					isUsedAsDefault = dialogConfirm.isUsedAsDefault();
+				}
+
+				if (dialogConfirm.getDialogResult() == DialogResult.OK) {
+					needCreateImagePyramid.add(dataset);
+				}
+			}
+		}
+
+		if (!needCreateImagePyramid.isEmpty()) {
+			FormProgressTotal formProgressTotal = new FormProgressTotal(ControlsProperties.getString("String_Form_BuildDatasetPyramid"));
+			formProgressTotal.doWork(new CreateImagePyramidCallable(needCreateImagePyramid.toArray(new Dataset[needCreateImagePyramid.size()])));
+		}
+
+		SortUIUtilities.sortList(datasets);
+		// 添加到地图
+		for (Dataset dataset : datasets) {
+			if (dataset.getType() != DatasetType.TABULAR && dataset.getType() != DatasetType.TOPOLOGY) {
+				layers.add(MapUtilities.insertDatasetToMap(map, dataset, index));
+			}
+		}
+		MapUtilities.setDynamic(datasets, map);
+		// 更新地图属性面板
+		Application.getActiveApplication().resetActiveForm();
+		map.refresh();
+		UICommonToolkit.getLayersManager().setMap(map);
+		return layers.toArray(new Layer[layers.size()]);
 	}
 
 	/**

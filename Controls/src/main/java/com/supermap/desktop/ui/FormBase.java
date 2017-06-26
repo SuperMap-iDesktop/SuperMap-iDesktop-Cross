@@ -187,7 +187,7 @@ public class FormBase extends JFrame implements IFormMain {
 	private void openStartFile() {
 		String desktopCrossStartArgs = System.getProperty("DesktopCrossStartArgs");
 		JSONArray fileLists = (JSONArray) JSONArray.parse(desktopCrossStartArgs);
-		if (fileLists.size() != 0) {
+		if (fileLists != null && fileLists.size() != 0) {
 			try {
 				CursorUtilities.setWaitCursor();
 				for (int i = 0; i < fileLists.size(); i++) {

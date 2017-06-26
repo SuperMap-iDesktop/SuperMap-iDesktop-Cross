@@ -1,12 +1,20 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
-import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.data.Datasource;
+import com.supermap.data.processing.MapCacheBuilder;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
+import com.supermap.desktop.dialog.SmOptionPane;
+import com.supermap.desktop.dialog.cacheClip.DialogCacheBuilder;
+import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClip;
+import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClipBuilder;
+import com.supermap.desktop.mapview.MapViewProperties;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.mapping.Map;
 
-import java.io.*;
-import java.lang.management.ManagementFactory;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by xie on 2017/5/31.
@@ -38,43 +46,72 @@ public class CacheUtilities {
 		return sourceStr + name;
 	}
 
-	// 获取当前系统的所有的PidName
-	public static Set<String> getCurrOsAllPidNameSet() throws Exception {
-		Set<String> pidNameSet = new HashSet<>();
-		InputStream is = null;
-		InputStreamReader ir = null;
-		BufferedReader br = null;
-		String line = null;
-		String[] array = (String[]) null;
-		try {
-			Process p = Runtime.getRuntime().exec("TASKLIST /NH /FO CSV");
-			is = p.getInputStream();
-			ir = new InputStreamReader(is);
-			br = new BufferedReader(ir);
-			while ((line = br.readLine()) != null) {
-				array = line.split(",");
-				line = array[0].replaceAll("\"", "");
-				line = line.replaceAll(".exe", "");
-				line = line.replaceAll(".exe".toUpperCase(), "");
-				if (!StringUtilities.isNullOrEmpty(line)) {
-					pidNameSet.add(line);
-				}
+//	// 获取当前系统的所有的PidName
+//	public static Set<String> getCurrOsAllPidNameSet() throws Exception {
+//		Set<String> pidNameSet = new HashSet<>();
+//		InputStream is = null;
+//		InputStreamReader ir = null;
+//		BufferedReader br = null;
+//		String line = null;
+//		String[] array = (String[]) null;
+//		try {
+//			Process p = Runtime.getRuntime().exec("TASKLIST /NH /FO CSV");
+//			is = p.getInputStream();
+//			ir = new InputStreamReader(is);
+//			br = new BufferedReader(ir);
+//			while ((line = br.readLine()) != null) {
+//				array = line.split(",");
+//				line = array[0].replaceAll("\"", "");
+//				line = line.replaceAll(".exe", "");
+//				line = line.replaceAll(".exe".toUpperCase(), "");
+//				if (!StringUtilities.isNullOrEmpty(line)) {
+//					pidNameSet.add(line);
+//				}
+//			}
+//		} catch (IOException localIOException) {
+//			throw new Exception("获取系统所有进程名出错！");
+//		} finally {
+//			if (br != null) {
+//				br.close();
+//			}
+//			if (ir != null) {
+//				ir.close();
+//			}
+//			if (is != null) {
+//				is.close();
+//			}
+//		}
+//		return pidNameSet;
+//	}
+
+	public static void startMapClip(Map map) {
+		DialogMapCacheClip dialogMapCacheClip = new DialogMapCacheClip();
+		if (dialogMapCacheClip.showDialog() == DialogResult.OK) {
+			Datasource datasource = map.getLayers().get(0).getDataset().getDatasource();
+//			Datasource datasource = ((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].getDataset().getDatasource();
+			if (!datasource.isReadOnly() && !dialogMapCacheClip.isSingleProcess()) {
+				SmOptionPane pane = new SmOptionPane();
+				pane.showConfirmDialog(MapViewProperties.getString("String_DatasourceOpenedNotReadOnly"));
+				return;
 			}
-		} catch (IOException localIOException) {
-			throw new Exception("获取系统所有进程名出错！");
-		} finally {
-			if (br != null) {
-				br.close();
-			}
-			if (ir != null) {
-				ir.close();
-			}
-			if (is != null) {
-				is.close();
+			datasource.getWorkspace().save();
+			ToolbarUIUtilities.updataToolbarsState();
+//			Map map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
+			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
+			Map newMap = new Map(Application.getActiveApplication().getWorkspace());
+			newMap.fromXML(map.toXML());
+			mapCacheBuilder.setMap(newMap);
+			if (dialogMapCacheClip.isBuildTask()) {
+				int cmdType = dialogMapCacheClip.isSingleProcess() ? DialogMapCacheClipBuilder.SingleProcessClip : DialogMapCacheClipBuilder.MultiProcessClip;
+				new DialogMapCacheClipBuilder(cmdType, mapCacheBuilder).showDialog();
+			} else {
+				DialogCacheBuilder cacheBuilder = new DialogCacheBuilder(DialogMapCacheClipBuilder.MultiProcessClip);
+				cacheBuilder.textFieldMapName.setText(map.getName());
+				cacheBuilder.showDialog();
 			}
 		}
-		return pidNameSet;
 	}
+
 
 	/**
 	 * Start a new process
@@ -91,9 +128,9 @@ public class CacheUtilities {
 			String projectPath = replacePath(System.getProperty("user.dir"));
 			String jarPath = "";
 			if (isWindows()) {
-				jarPath = ".;"  + projectPath + "\\bin\\com.supermap.data.jar;" + projectPath + "\\bin\\com.supermap.mapping.jar;" + projectPath + "\\bin\\com.supermap.tilestorage.jar;" + projectPath + "\\bin\\com.supermap.data.processing.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
+				jarPath = ".;" + projectPath + "\\bin\\com.supermap.data.jar;" + projectPath + "\\bin\\com.supermap.mapping.jar;" + projectPath + "\\bin\\com.supermap.tilestorage.jar;" + projectPath + "\\bin\\com.supermap.data.processing.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
 			} else {
-				jarPath =  projectPath + "/bin/com.supermap.data.jar:" + projectPath + "/bin/com.supermap.mapping.jar:" + projectPath + "/bin/com.supermap.tilestorage.jar:" + projectPath + "/bin/com.supermap.data.processing.jar:" + projectPath + "/bundles/idesktop_bundles/MapView.jar: ";
+				jarPath = projectPath + "/bin/com.supermap.data.jar:" + projectPath + "/bin/com.supermap.mapping.jar:" + projectPath + "/bin/com.supermap.tilestorage.jar:" + projectPath + "/bin/com.supermap.data.processing.jar:" + projectPath + "/bundles/idesktop_bundles/MapView.jar: ";
 			}
 //		String jarPath = ".;" + projectPath + "\\bundles\\require_bundles\\Core.jar;" + projectPath + "\\bundles\\idesktop_bundles\\MapView.jar";
 			arguments.add(jarPath);

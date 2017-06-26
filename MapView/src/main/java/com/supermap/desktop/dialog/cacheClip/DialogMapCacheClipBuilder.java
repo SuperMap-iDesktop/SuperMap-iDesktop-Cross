@@ -207,7 +207,10 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 
 	private boolean valiteCacheFolderSave() {
 		boolean result = true;
-		File file = new File(firstStepPane.fileChooserControlFileCache.getPath() + firstStepPane.textFieldCacheName.getText());
+		if (cmdType == UpdateProcessClip) {
+			return result;
+		}
+		File file = new File(CacheUtilities.replacePath(firstStepPane.fileChooserControlFileCache.getPath(), firstStepPane.textFieldCacheName.getText()));
 		if (file.exists() || file.isDirectory()) {
 			SmOptionPane smOptionPane = new SmOptionPane();
 			smOptionPane.showErrorDialog("\"" + firstStepPane.textFieldCacheName.getText() + "\"" + MapViewProperties.getString("MapCache_FileIsExitWarning"));
@@ -217,6 +220,8 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			getContentPane().repaint();
 			firstStepPane.textFieldCacheName.requestFocus();
 			result = false;
+		} else {
+			file.mkdir();
 		}
 		return result;
 	}
@@ -324,11 +329,12 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				}
 				String tasksPath = nextStepPane.fileChooserControlTaskPath.getPath();
 				String filePath = firstStepPane.fileChooserControlFileCache.getPath();
-				tasksPath = CacheUtilities.replacePath(tasksPath);
 				String sciPath = "";
 				if (cmdType == UpdateProcessClip) {
+					tasksPath = CacheUtilities.replacePath(tasksPath, "update");
 					sciPath = CacheUtilities.replacePath(filePath, mapCacheBuilder.getCacheName() + ".sci");
 				} else {
+					tasksPath = CacheUtilities.replacePath(tasksPath);
 					sciPath = CacheUtilities.replacePath(filePath, mapCacheBuilder.getCacheName());
 					File sciDirectory = new File(sciPath);
 					if (!sciDirectory.exists()) {
