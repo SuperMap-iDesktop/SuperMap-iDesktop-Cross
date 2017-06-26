@@ -6,7 +6,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.JComboBoxUIUtilities;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
-import com.supermap.desktop.process.parameter.implement.AbstractParameter;
+import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
 import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -138,8 +138,8 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 		for (int i = 0; i < datasourceComboBox.getItemCount(); i++) {
 			Datasource datasource = datasourceComboBox.getItemAt(0);
 			Object valueSelected = parameterSaveDataset.isValueSelected(ParameterSaveDataset.DATASOURCE_FIELD_NAME, datasource);
-			if (valueSelected != AbstractParameter.NO) {
-				if (valueSelected == AbstractParameter.DO_NOT_CARE) {
+			if (valueSelected != ParameterValueLegalListener.NO) {
+				if (valueSelected == ParameterValueLegalListener.DO_NOT_CARE) {
 					break;
 				} else if (valueSelected instanceof Datasource) {
 					datasourceComboBox.setSelectedItem(valueSelected);

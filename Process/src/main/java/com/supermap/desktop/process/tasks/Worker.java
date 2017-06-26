@@ -10,16 +10,20 @@ public abstract class Worker<V extends Object> extends SwingWorker<Boolean, V> {
 	private IWorkerView<V> view;
 	private String title;
 
-	public Worker(IWorkerView<V> view) {
+	public Worker() {
+
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setView(IWorkerView<V> view) {
 		if (view == null) {
 			throw new NullPointerException();
 		}
 
 		this.view = view;
-	}
-
-	public String getTitle() {
-		return title;
 	}
 
 	@Override
@@ -42,6 +46,6 @@ public abstract class Worker<V extends Object> extends SwingWorker<Boolean, V> {
 
 	@Override
 	protected void done() {
-		this.view.close();
+		this.view.done();
 	}
 }

@@ -8,7 +8,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.JComboBoxUIUtilities;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
-import com.supermap.desktop.process.parameter.implement.AbstractParameter;
+import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
 import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -148,7 +148,7 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 				// Ask if the parameters are satisfied with the current option
 				for (int i = 0; i < comboBox.getItemCount(); i++) {
 					Object valueSelected = parameterFieldComboBox.isValueSelected(ParameterFieldComboBox.FILED_INFO_FILED_NAME, fieldInfos.get(i));
-					if (valueSelected == AbstractParameter.DO_NOT_CARE) {
+					if (valueSelected == ParameterValueLegalListener.DO_NOT_CARE) {
 						break;
 					} else if (valueSelected instanceof FieldInfo) {
 						if (JComboBoxUIUtilities.getItemIndex(comboBox, valueSelected) != -1) {

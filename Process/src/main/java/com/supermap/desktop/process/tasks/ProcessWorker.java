@@ -14,13 +14,16 @@ public class ProcessWorker extends Worker<SingleProgress> {
 	private IProcess process;
 	private RunningHandler runningHandler = new RunningHandler();
 
-	public ProcessWorker(IProcess process, IWorkerView<SingleProgress> view) {
-		super(view);
+	public ProcessWorker(IProcess process) {
 		if (process == null) {
 			throw new NullPointerException();
 		}
 		this.process = process;
 		this.process.addRunningListener(this.runningHandler);
+	}
+
+	public IProcess getProcess() {
+		return this.process;
 	}
 
 	@Override

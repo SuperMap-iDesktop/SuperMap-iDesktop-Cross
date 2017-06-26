@@ -3,6 +3,7 @@ package com.supermap.desktop.ui.lbs.Interface;
 import com.supermap.desktop.ui.lbs.params.BuildCacheJobSetting;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
 import com.supermap.desktop.ui.lbs.params.KernelDensityJobSetting;
+import com.supermap.desktop.ui.lbs.params.OverlayAnalystGeoJobSetting;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
@@ -36,6 +37,14 @@ public interface IServerService {
      */
     JobResultResponse query(BuildCacheJobSetting buildCacheJobSetting);
 
+	/**
+	 * 生成子（点聚合）任务
+	 *
+	 * @param jsonBody
+	 * @return
+	 */
+	JobResultResponse queryResult(String jsonBody);
+
     /**
      * 查询JSON结果
      *
@@ -44,5 +53,6 @@ public interface IServerService {
      */
     String query(String url);
 
+	JobResultResponse query(OverlayAnalystGeoJobSetting overlayAnalystGeoJobSetting);
 }
 

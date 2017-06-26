@@ -17,6 +17,7 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 	private static final Color DEFAULT_FOREGROUNDCOLOR = new Color(39, 162, 223);
 	private static final Color CACEL_FOREGROUNDCOLOR = new Color(190, 190, 190);
 
+	private Worker<SingleProgress> worker;
 	private RoundProgressBar progressBar;
 	private JLabel labelTitle;
 	private JLabel labelMessage;
@@ -26,7 +27,7 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 	private Runnable run = new Runnable() {
 		@Override
 		public void run() {
-			getWorker().execute();
+			worker.execute();
 		}
 	};
 
@@ -40,7 +41,7 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 	public SingleProgressPanel() {
 		initializeComponents();
 		initializeLayout();
-		this.labelTitle.setText(getWorker().getTitle());
+		this.labelTitle.setText(this.worker.getTitle());
 	}
 
 	private void initializeComponents() {
@@ -93,13 +94,13 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 	}
 
 	@Override
-	public Worker getWorker() {
-		return null;
+	public void execute(Worker<SingleProgress> worker) {
+		this.worker = worker;
+		this.worker.execute();
 	}
 
-	@Override
 	public boolean cancel() {
-		return getWorker().cancel(false);
+		return this.worker.cancel(false);
 	}
 
 	@Override
@@ -110,7 +111,7 @@ public class SingleProgressPanel extends JPanel implements IWorkerView<SinglePro
 	}
 
 	@Override
-	public void close() {
-//		this.buttonRun.
+	public void done() {
+		// this.button
 	}
 }
