@@ -173,6 +173,7 @@
             <process key="HeatMap" name="计算热度图"/>
             <process key="SimpleDensity" name="简单点密度分析"/>
             <process key="KernelDensity" name="核密度分析"/>
+            <process key="overlayanalystgeo" name="单对象叠加"/>
             <!--<process key="GridRegionAggregation" name="网格面聚合"/>
             <process key="PolygonAggregation" name="多边形聚合"/>-->
         </process>

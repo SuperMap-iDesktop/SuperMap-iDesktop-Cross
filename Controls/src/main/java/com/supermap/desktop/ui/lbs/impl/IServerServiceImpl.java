@@ -9,6 +9,7 @@ import com.supermap.desktop.ui.lbs.params.IServerLoginInfo;
 import com.supermap.desktop.ui.lbs.params.IServerResponse;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
 import com.supermap.desktop.ui.lbs.params.KernelDensityJobSetting;
+import com.supermap.desktop.ui.lbs.params.OverlayAnalystGeoJobSetting;
 import com.supermap.desktop.ui.lbs.params.Token;
 import org.apache.commons.compress.utils.Charsets;
 import org.apache.commons.compress.utils.IOUtils;
@@ -31,8 +32,10 @@ import java.nio.charset.Charset;
 public class IServerServiceImpl implements IServerService {
 
     private final String HTTP_STR = "http://";
-	private final String KERNELDENSITY_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/density.json";
-	private final String BUILDCACHE_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/mapping/buildCache.json";
+	private static final String KERNELDENSITY_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/density.json";
+	private static final String BUILDCACHE_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/mapping/buildCache.json";
+	private static final String OVERLAYANALYSTGEO_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/overlayanalystgeo.json";
+
     private final String LOGIN_URL = "/iserver/services/security/login.json";
     private static final Charset UTF8 = Charsets.UTF_8;
     private static final String JSON_UTF8_CONTENT_TPYE = "application/json;;charset=" + UTF8.name();
@@ -71,20 +74,25 @@ public class IServerServiceImpl implements IServerService {
     public JobResultResponse query(BuildCacheJobSetting buildCacheJobSetting) {
         String url = HTTP_STR + IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + BUILDCACHE_URL;
         String jsonBody = JSON.toJSONString(buildCacheJobSetting);
-        JobResultResponse result = returnJobResult(url, jsonBody);
-        return result;
+	    return returnJobResult(url, jsonBody);
     }
 
     @Override
     public JobResultResponse query(KernelDensityJobSetting kernelDensityJobSetting) {
         String url = HTTP_STR +IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + KERNELDENSITY_URL;
         String jsonBody = JSON.toJSONString(kernelDensityJobSetting);
-        JobResultResponse result = returnJobResult(url, jsonBody);
-        return result;
+	    return returnJobResult(url, jsonBody);
     }
 
-    private JobResultResponse returnJobResult(String url, String jsonBody) {
-        JobResultResponse result = null;
+	@Override
+	public JobResultResponse query(OverlayAnalystGeoJobSetting overlayAnalystGeoJobSetting) {
+		String url = HTTP_STR + IServerLoginInfo.ipAddr + ":" + IServerLoginInfo.port + OVERLAYANALYSTGEO_URL;
+		String jsonBody = JSON.toJSONString(overlayAnalystGeoJobSetting);
+		return returnJobResult(url, jsonBody);
+	}
+
+	private JobResultResponse returnJobResult(String url, String jsonBody) {
+		JobResultResponse result = null;
         try {
             HttpPost post = new HttpPost(url);
             StringEntity body = new StringEntity(jsonBody, UTF8);
