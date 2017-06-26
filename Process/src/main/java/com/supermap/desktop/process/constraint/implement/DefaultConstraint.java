@@ -4,7 +4,6 @@ import com.supermap.desktop.process.constraint.interfaces.IConstraint;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalEvent;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
 import com.supermap.desktop.process.parameter.events.ParameterValueSelectedEvent;
-import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 
 import java.util.ArrayList;
@@ -23,7 +22,7 @@ public class DefaultConstraint implements IConstraint, ParameterValueLegalListen
 
 	@Override
 	public Object isValueSelected(ParameterValueSelectedEvent event) {
-		return AbstractParameter.DO_NOT_CARE;
+		return ParameterValueLegalListener.DO_NOT_CARE;
 	}
 
 	protected boolean isValueLegalHook(ParameterValueLegalEvent event) {

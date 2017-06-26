@@ -16,6 +16,7 @@ import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISOReg
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessInterpolator;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessKernelDensity;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessOverlayAnalyst;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessOverlayanalystgeo;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessPolygonAggregation;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessProjection;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSetProjection;
@@ -248,6 +249,8 @@ public class WorkflowParser {
 			result = new MetaProcessIncrementalAutoCorrelation();
 		} else if (MetaKeys.AverageNearestNeighbor.equals(key)) {
 			result = new MetaProcessAverageNearestNeighbor();
+		} else if (MetaKeys.OVERLAYANALYSTGEO.equals("overlayanalystgeo")) {
+			result = new MetaProcessOverlayanalystgeo();
 		} else if (key.contains(MetaKeys.IMPORT)) {
 			String importType = key.replace(MetaKeys.IMPORT, "");
 			result = MetaProcessImportFactory.createMetaProcessImport(importType);

@@ -31,8 +31,6 @@ public abstract class AbstractParameter implements IParameter {
 	public static final String PROPERTY_VALE = "value";
 	protected IParameters parameters;
 
-	public static final String DO_NOT_CARE = new String("Don't Care");
-	public static final String NO = new String("NO");
 
 	public boolean isEnabled = true;
 
@@ -109,12 +107,12 @@ public abstract class AbstractParameter implements IParameter {
 		for (int i = listenerList.length - 2; i >= 0; i -= 2) {
 			if (listenerList[i] == ParameterValueLegalListener.class) {
 				Object valueSelected = ((ParameterValueLegalListener) listenerList[i + 1]).isValueSelected(valueSelectedEvent);
-				if (valueSelected != DO_NOT_CARE) {
+				if (valueSelected != ParameterValueLegalListener.DO_NOT_CARE) {
 					return valueSelected;
 				}
 			}
 		}
-		return DO_NOT_CARE;
+		return ParameterValueLegalListener.DO_NOT_CARE;
 	}
 
 	@Override
