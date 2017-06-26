@@ -33,12 +33,8 @@ public class ParameterDatasourcePanel extends SwingPanel {
 		super(parameterDatasource);
 		this.parameterDatasource = ((ParameterDatasource) parameterDatasource);
 		this.label.setText(this.parameterDatasource.getDescribe());
-		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
-		for (int i = 0; i < datasources.getCount(); i++) {
-			datasourceComboBox.addItem(datasources.get(i));
-		}
 		datasourceComboBox.setRenderer(new ListDataCellRender());
-		this.datasourceComboBox.setSelectedItem(this.parameterDatasource.getSelectedItem());
+		initComboBoxItems();
 		initLayout();
 		initListener();
 	}
@@ -77,26 +73,30 @@ public class ParameterDatasourcePanel extends SwingPanel {
 	@Override
 	public void fieldConstraintChanged(FieldConstraintChangedEvent event) {
 		if (event.getFieldName().equals(ParameterDatasource.DATASOURCE_FIELD_NAME)) {
-			isSelectingItem = true;
-			datasourceComboBox.removeAllItems();
-			Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
-			for (int i = 0; i < datasources.getCount(); i++) {
-				Datasource datasource = datasources.get(i);
-				if (ParameterDatasourcePanel.this.parameterDatasource.isValueLegal(ParameterDatasource.DATASOURCE_FIELD_NAME, datasource)) {
-					datasourceComboBox.addItem(datasource);
-				}
-			}
-			Object selectedItem = ParameterDatasourcePanel.this.parameterDatasource.getSelectedItem();
-			if (selectedItem != null) {
-				datasourceComboBox.setSelectedItem(selectedItem);
-			}
-			if (datasourceComboBox.getSelectedIndex() == -1 && datasourceComboBox.getItemCount() > 0) {
-				datasourceComboBox.setSelectedIndex(0);
-			}
-			if (selectedItem != datasourceComboBox.getSelectedItem()) {
-				ParameterDatasourcePanel.this.parameterDatasource.setSelectedItem(datasourceComboBox.getSelectedItem());
-			}
-			isSelectingItem = false;
+			initComboBoxItems();
 		}
+	}
+
+	private void initComboBoxItems() {
+		isSelectingItem = true;
+		datasourceComboBox.removeAllItems();
+		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+		for (int i = 0; i < datasources.getCount(); i++) {
+			Datasource datasource = datasources.get(i);
+			if (ParameterDatasourcePanel.this.parameterDatasource.isValueLegal(ParameterDatasource.DATASOURCE_FIELD_NAME, datasource)) {
+				datasourceComboBox.addItem(datasource);
+			}
+		}
+		Object selectedItem = ParameterDatasourcePanel.this.parameterDatasource.getSelectedItem();
+		if (selectedItem != null) {
+			datasourceComboBox.setSelectedItem(selectedItem);
+		}
+		if (datasourceComboBox.getSelectedIndex() == -1 && datasourceComboBox.getItemCount() > 0) {
+			datasourceComboBox.setSelectedIndex(0);
+		}
+		if (selectedItem != datasourceComboBox.getSelectedItem()) {
+			ParameterDatasourcePanel.this.parameterDatasource.setSelectedItem(datasourceComboBox.getSelectedItem());
+		}
+		isSelectingItem = false;
 	}
 }
