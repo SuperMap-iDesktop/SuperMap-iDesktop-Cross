@@ -37,6 +37,14 @@ public interface IServerService {
      */
     JobResultResponse query(BuildCacheJobSetting buildCacheJobSetting);
 
+	/**
+	 * 生成子（点聚合）任务
+	 *
+	 * @param jsonBody
+	 * @return
+	 */
+	JobResultResponse queryResult(String jsonBody);
+
     /**
      * 查询JSON结果
      *

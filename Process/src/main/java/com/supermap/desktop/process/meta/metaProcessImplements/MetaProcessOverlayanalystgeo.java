@@ -133,10 +133,11 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 			parameters.getOutputs().getData("OverlayResult").setValue("");// TODO: 2017/6/26 也许没结果,but
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
+			return false;
 		} finally {
 			CursorUtilities.setDefaultCursor();
 		}
-		return false;
+		return true;
 	}
 
 	@Override

@@ -18,10 +18,10 @@ public class ParameterIServerLogin extends ParameterCombine {
 
 	public ParameterIServerLogin() {
 		super();
-		parameterTextFieldAddress.setSelectedItem("192.168.13.161");
+		parameterTextFieldAddress.setSelectedItem("192.168.15.245");
 		parameterTextFieldPort.setSelectedItem("8090");
 		parameterTextFieldUserName.setSelectedItem("admin");
-		parameterTextFieldPassword.setSelectedItem("iserver123.");
+		parameterTextFieldPassword.setSelectedItem("map123!@#");
 		this.addParameters(parameterTextFieldAddress, parameterTextFieldPort, parameterTextFieldUserName, parameterTextFieldPassword);
 		this.setDescribe(ProcessProperties.getString("String_loginInfo"));
 	}

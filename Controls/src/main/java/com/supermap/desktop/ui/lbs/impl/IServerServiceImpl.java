@@ -35,6 +35,7 @@ public class IServerServiceImpl implements IServerService {
 	private static final String KERNELDENSITY_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/density.json";
 	private static final String BUILDCACHE_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/mapping/buildCache.json";
 	private static final String OVERLAYANALYSTGEO_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/overlayanalystgeo.json";
+	private static final String GRIDREGIONAGGREGATION_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/aggregatePoints.json";
 
     private final String LOGIN_URL = "/iserver/services/security/login.json";
     private static final Charset UTF8 = Charsets.UTF_8;
@@ -88,6 +89,12 @@ public class IServerServiceImpl implements IServerService {
 	public JobResultResponse query(OverlayAnalystGeoJobSetting overlayAnalystGeoJobSetting) {
 		String url = HTTP_STR + IServerLoginInfo.ipAddr + ":" + IServerLoginInfo.port + OVERLAYANALYSTGEO_URL;
 		String jsonBody = JSON.toJSONString(overlayAnalystGeoJobSetting);
+		return returnJobResult(url, jsonBody);
+	}
+
+	@Override
+	public JobResultResponse queryResult(String jsonBody){
+		String url = HTTP_STR + IServerLoginInfo.ipAddr + ":" + IServerLoginInfo.port + GRIDREGIONAGGREGATION_URL;
 		return returnJobResult(url, jsonBody);
 	}
 
