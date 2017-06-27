@@ -1,6 +1,16 @@
 package com.supermap.desktop.utilities;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetGrid;
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasets;
+import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
+import com.supermap.data.EngineType;
+import com.supermap.data.PrjCoordSysType;
+import com.supermap.data.StatisticMode;
+import com.supermap.data.Tolerance;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormManager;
@@ -17,6 +27,7 @@ import com.supermap.realspace.Layer3DDataset;
 import com.supermap.realspace.Layer3Ds;
 import com.supermap.realspace.Scene;
 import com.supermap.realspace.TerrainLayers;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -502,25 +513,51 @@ public class DatasetUtilities {
 		return datasetGrid;
 	}
 
+	public static Dataset getDefaultBigDataStoreDataset() {
+		if (Application.getActiveApplication().getWorkspace().getDatasources().getCount() > 0) {
+			Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
+			if (activeDatasets != null) {
+				for (Dataset activeDataset : activeDatasets) {
+					if (activeDataset.getDatasource().getEngineType() == EngineType.DATASERVER && !activeDataset.getDatasource().isReadOnly()) {
+						return activeDataset;
+					}
+				}
+			}
+			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
+			if (activeDatasources != null) {
+				for (Datasource activeDatasource : activeDatasources) {
+					if (activeDatasource.getEngineType() == EngineType.DATASERVER && activeDatasource.getDatasets().getCount() > 0 && !activeDatasource.isReadOnly()) {
+						return activeDatasource.getDatasets().get(0);
+					}
+				}
+			}
+
+			Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+			for (int i = 0; i < datasources.getCount(); i++) {
+				Datasource datasource = datasources.get(i);
+				if (datasource.getEngineType() == EngineType.DATASERVER && datasource.getDatasets().getCount() > 0 && !datasource.isReadOnly()) {
+					return datasource.getDatasets().get(0);
+				}
+			}
+		}
+		return null;
+	}
+
 	public static Dataset getDefaultDataset() {
-		Dataset dataset = null;
 		if(Application.getActiveApplication().getWorkspace().getDatasources().getCount()>0){
 			Dataset[] activeDatasets = Application.getActiveApplication().getActiveDatasets();
 			if(activeDatasets.length > 0){
-				dataset = Application.getActiveApplication().getActiveDatasets()[0];
-				return dataset;
+				return Application.getActiveApplication().getActiveDatasets()[0];
 			}
 			Datasource[] activeDatasources = Application.getActiveApplication().getActiveDatasources();
 			if(activeDatasources.length > 0 && activeDatasources[0].getDatasets().getCount()>0){
-				dataset = activeDatasources[0].getDatasets().get(0);
-				return dataset;
+				return activeDatasources[0].getDatasets().get(0);
 			}
 			Datasets datasets = Application.getActiveApplication().getWorkspace().getDatasources().get(0).getDatasets();
 			if(datasets.getCount()>0){
-				dataset = datasets.get(0);
+				return datasets.get(0);
 			}
-			return dataset ;
 		}
-		return dataset;
+		return null;
 	}
 }

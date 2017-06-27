@@ -25,6 +25,7 @@ import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
 import com.supermap.desktop.ui.lbs.params.OverlayAnalystGeoJobSetting;
 import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
  * 单对象叠加
@@ -88,7 +89,15 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 	}
 
 	private void initComponentState() {
+		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
+		if (defaultBigDataStoreDataset != null) {
+			parameterSourceDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
+			parameterSourceDataset.setSelectedItem(defaultBigDataStoreDataset);
 
+			parameterOverlayDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
+			parameterOverlayDataset.setSelectedItem(defaultBigDataStoreDataset);
+
+		}
 	}
 
 	private void initConstraint() {
