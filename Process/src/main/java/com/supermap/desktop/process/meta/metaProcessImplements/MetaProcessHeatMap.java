@@ -120,11 +120,11 @@ public class MetaProcessHeatMap extends MetaProcess {
 
 			CommonSettingCombine cacheName = new CommonSettingCombine("cacheName",parameterCacheName.getSelectedItem().toString());
 			CommonSettingCombine cacheType = new CommonSettingCombine("cacheType",(String) parameterDatabaseType.getSelectedData());
-			CommonSettingCombine serverAddresses = new CommonSettingCombine("serverAddresses",parameterServiceAddress.getSelectedItem().toString());
+			CommonSettingCombine serverAdresses = new CommonSettingCombine("serverAdresses",parameterServiceAddress.getSelectedItem().toString());
 			CommonSettingCombine database = new CommonSettingCombine("database",parameterDatabase.getSelectedItem().toString());
 			CommonSettingCombine version = new CommonSettingCombine("version",parameterVersion.getSelectedItem().toString());
 			CommonSettingCombine output = new CommonSettingCombine("output", "");
-			output.add(cacheName,cacheType,serverAddresses,database,version);
+			output.add(cacheName,cacheType,serverAdresses,database,version);
 
 			CommonSettingCombine imageType = new CommonSettingCombine("imageType",(String) parameterCacheType.getSelectedData());
 			CommonSettingCombine bounds = new CommonSettingCombine("bounds",parameterBounds.getSelectedItem().toString());
@@ -134,7 +134,9 @@ public class MetaProcessHeatMap extends MetaProcess {
 
 			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
 			commonSettingCombine.add(input,output,drawing);
-			JobResultResponse response = service.queryResult(MetaKeys.HEAT_MAP,commonSettingCombine.getFinalJSon());
+			String finalJSon = commonSettingCombine.getFinalJSon();
+			finalJSon = finalJSon.replaceAll("\"" + parameterServiceAddress.getSelectedItem().toString() + "\"", "[\"" + parameterServiceAddress.getSelectedItem().toString() + "\"]");
+			JobResultResponse response = service.queryResult(MetaKeys.HEAT_MAP, finalJSon);
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				ProcessTask task = TaskUtil.getTask(this);
