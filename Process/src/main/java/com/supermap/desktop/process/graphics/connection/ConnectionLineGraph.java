@@ -42,7 +42,7 @@ public class ConnectionLineGraph extends LineGraph {
 		IGraph endGraph = this.connection.getEndGraph();
 
 		this.messageDecorator = new LineMessageDecorator(getCanvas(), this.connection.getMessage());
-		addDecorator(DECORATOR_KEY_LINE_MESSAGE, this.messageDecorator);
+//		addDecorator(DECORATOR_KEY_LINE_MESSAGE, this.messageDecorator);
 
 		if (startGraph != null && endGraph != null) {
 			computeFirstAndLastPoints();
