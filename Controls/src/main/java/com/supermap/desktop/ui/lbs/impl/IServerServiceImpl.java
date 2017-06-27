@@ -4,12 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
-import com.supermap.desktop.ui.lbs.params.BuildCacheJobSetting;
 import com.supermap.desktop.ui.lbs.params.IServerLoginInfo;
 import com.supermap.desktop.ui.lbs.params.IServerResponse;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
-import com.supermap.desktop.ui.lbs.params.KernelDensityJobSetting;
-import com.supermap.desktop.ui.lbs.params.OverlayAnalystGeoJobSetting;
 import com.supermap.desktop.ui.lbs.params.Token;
 import org.apache.commons.compress.utils.Charsets;
 import org.apache.commons.compress.utils.IOUtils;
@@ -36,6 +33,7 @@ public class IServerServiceImpl implements IServerService {
 	private static final String BUILDCACHE_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/mapping/buildCache.json";
 	private static final String OVERLAYANALYSTGEO_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/overlayanalystgeo.json";
 	private static final String GRIDREGIONAGGREGATION_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/aggregatePoints.json";
+	private static final String SINGLEQUERY_URL = "/iserver/services/spatialprocessing/rest/v1/jobs/spatialanalyst/query.json";
 
     private final String LOGIN_URL = "/iserver/services/security/login.json";
     private static final Charset UTF8 = Charsets.UTF_8;
@@ -72,29 +70,20 @@ public class IServerServiceImpl implements IServerService {
         return result;
     }
 
-    public JobResultResponse query(BuildCacheJobSetting buildCacheJobSetting) {
-        String url = HTTP_STR + IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + BUILDCACHE_URL;
-        String jsonBody = JSON.toJSONString(buildCacheJobSetting);
-	    return returnJobResult(url, jsonBody);
-    }
-
-    @Override
-    public JobResultResponse query(KernelDensityJobSetting kernelDensityJobSetting) {
-        String url = HTTP_STR +IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + KERNELDENSITY_URL;
-        String jsonBody = JSON.toJSONString(kernelDensityJobSetting);
-	    return returnJobResult(url, jsonBody);
-    }
-
 	@Override
-	public JobResultResponse query(OverlayAnalystGeoJobSetting overlayAnalystGeoJobSetting) {
-		String url = HTTP_STR + IServerLoginInfo.ipAddr + ":" + IServerLoginInfo.port + OVERLAYANALYSTGEO_URL;
-		String jsonBody = JSON.toJSONString(overlayAnalystGeoJobSetting);
-		return returnJobResult(url, jsonBody);
-	}
-
-	@Override
-	public JobResultResponse queryResult(String jsonBody){
-		String url = HTTP_STR + IServerLoginInfo.ipAddr + ":" + IServerLoginInfo.port + GRIDREGIONAGGREGATION_URL;
+	public JobResultResponse queryResult(String type,  String jsonBody){
+		String url = null;
+		if(type.contains("HeatMap")){
+			url = HTTP_STR + IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + BUILDCACHE_URL;
+		}else if(type.contains("Density")){
+			url = HTTP_STR +IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + KERNELDENSITY_URL;
+		}else if(type.contains("Aggregation")){
+			url = HTTP_STR +IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + GRIDREGIONAGGREGATION_URL;
+		}else if(type.contains("overlayanalystgeo")){
+			url = HTTP_STR +IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + OVERLAYANALYSTGEO_URL;
+		}else if(type.contains("singleQuery")){
+			url = HTTP_STR +IServerLoginInfo.ipAddr +":"+IServerLoginInfo.port + SINGLEQUERY_URL;
+		}
 		return returnJobResult(url, jsonBody);
 	}
 
