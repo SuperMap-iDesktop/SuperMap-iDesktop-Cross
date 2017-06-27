@@ -12,6 +12,7 @@ import com.supermap.desktop.process.graphics.events.GraphRemovingListener;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
+import com.supermap.desktop.process.graphics.storage.IConnectionManager;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 
@@ -36,9 +37,8 @@ public class InputParametersManager {
 	public void add(final String name, final IParameter... parameter) {
 		ParameterSwitch parameterSwitch = new ParameterSwitch();
 		parameterSwitch.setParameters(parameters);
-		final ParameterInputComboBox parameterComboBox = new ParameterInputComboBox(parameters.getInputs().getData(name).getType());
+		final ParameterInputComboBox parameterComboBox = new ParameterInputComboBox(parameters.getInputs().getData(name).getType(), name);
 		parameterComboBox.setParameters(parameters);
-		parameterComboBox.setDescribe(name + ":");
 		parameterComboBox.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -116,25 +116,20 @@ public class InputParametersManager {
 			isSelecting = true;
 			for (InputParameterDataNode inputParameterDataNode : list) {
 				if (inputParameterDataNode.getName().equals(name)) {
-					ParameterComboBox parameterComboBox = (ParameterComboBox) ((ParameterCombine) inputParameterDataNode.getParameterSwitch().getParameterByTag("1")).getParameterList().get(0);
+					ParameterInputComboBox parameterComboBox = (ParameterInputComboBox) ((ParameterCombine) inputParameterDataNode.getParameterSwitch().getParameterByTag("1")).getParameterList().get(0);
 					inputParameterDataNode.getParameterSwitch().switchParameter("1");
-					boolean isSelected = false;
-					for (int i = 0; i < parameterComboBox.getItemCount(); i++) {
-						OutputGraph outputGraph = (OutputGraph) parameterComboBox.getItemAt(i).getData();
-						GraphCanvas canvas = outputGraph.getCanvas();
-						IGraph[] nextGraphs = canvas.getConnection().getNextGraphs(outputGraph);
-						for (IGraph nextGraph : nextGraphs) {
-							if (nextGraph instanceof ProcessGraph && ((ProcessGraph) nextGraph).getProcess() == parameters.getProcess()) {
-								parameterComboBox.setSelectedItem(parameterComboBox.getItemAt(i));
-								isSelected = true;
+					if (Application.getActiveApplication().getActiveForm() != null && Application.getActiveApplication().getActiveForm() instanceof FormWorkflow) {
+						GraphCanvas canvas = ((FormWorkflow) Application.getActiveApplication().getActiveForm()).getCanvas();
+						IConnectionManager connection = canvas.getConnection();
+						IGraphConnection[] connections = connection.getConnections();
+						for (IGraphConnection iGraphConnection : connections) {
+							if (iGraphConnection.getEndGraph() instanceof ProcessGraph && ((ProcessGraph) iGraphConnection.getEndGraph()).getProcess() == parameterComboBox.getParameters().getProcess()
+									&& iGraphConnection.getMessage().equals(parameterComboBox.getInputDataName())) {
+								parameterComboBox.setSelectedGraph(iGraphConnection.getStartGraph());
 								break;
 							}
 						}
-						if (isSelected) {
-							break;
-						}
 					}
-					break;
 				}
 			}
 			isSelecting = false;

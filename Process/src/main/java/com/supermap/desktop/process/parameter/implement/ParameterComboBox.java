@@ -25,7 +25,7 @@ public class ParameterComboBox extends AbstractParameter implements ISingleSelec
 
 	public static final String comboBoxValue = "comboBoxValue";
 	@ParameterField(name = comboBoxValue)
-	private ParameterDataNode value;
+	protected ParameterDataNode value;
 
 	private IConGetter iConGetter;
 

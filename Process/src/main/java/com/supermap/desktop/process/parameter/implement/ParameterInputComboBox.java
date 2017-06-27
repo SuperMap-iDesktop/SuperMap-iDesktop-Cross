@@ -5,12 +5,14 @@ import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.graphics.GraphCanvas;
+import com.supermap.desktop.process.graphics.connection.IGraphConnection;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.events.GraphRemovingEvent;
 import com.supermap.desktop.process.graphics.events.GraphRemovingListener;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
+import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IConGetter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -26,11 +28,14 @@ public class ParameterInputComboBox extends ParameterComboBox {
 	private Type type;
 	private boolean isLoadedItems = false;
 	private boolean isDeleting = false;
+	private String inputDataName;
 
 
-	public ParameterInputComboBox(Type type) {
+	public ParameterInputComboBox(Type type, String inputDataName) {
 		super();
 		this.type = type;
+		this.inputDataName = inputDataName;
+		this.setDescribe(inputDataName + ":");
 		setIConGetter(new IConGetter() {
 			private Icon icon = ProcessResources.getIcon("/processresources/ProcessOutputIcon.png");
 
@@ -47,6 +52,7 @@ public class ParameterInputComboBox extends ParameterComboBox {
 			isLoadedItems = true;
 			loadItems();
 			initListener();
+			initSelectedItem();
 		}
 		return super.getParameterPanel();
 	}
@@ -59,7 +65,7 @@ public class ParameterInputComboBox extends ParameterComboBox {
 				@Override
 				public void graphCreated(GraphCreatedEvent e) {
 					if (e.getGraph() instanceof OutputGraph && ((OutputGraph) e.getGraph()).getProcessGraph().getProcess() != parameters.getProcess()
-							&& type.contains(((OutputGraph) e.getGraph()).getProcessData().getType())) {// 不一定都是OutputGraph
+							&& type.intersects(((OutputGraph) e.getGraph()).getProcessData().getType())) {// 不一定都是OutputGraph
 						addItem(new ParameterDataNode(((OutputGraph) e.getGraph()).getProcessGraph().getTitle() + "_" + ((OutputGraph) e.getGraph()).getTitle(), e.getGraph()));
 					}
 				}
@@ -96,7 +102,62 @@ public class ParameterInputComboBox extends ParameterComboBox {
 		}
 	}
 
+	private void initSelectedItem() {
+		IForm activeForm = Application.getActiveApplication().getActiveForm();
+		if (activeForm != null && activeForm instanceof FormWorkflow) {
+			IGraph currentGraph = getCurrentGraph();
+			if (currentGraph != null) {
+				GraphCanvas canvas = ((FormWorkflow) activeForm).getCanvas();
+				IGraphConnection[] connections = canvas.getConnection().getConnections();
+				for (IGraphConnection connection : connections) {
+					boolean isSelected = false;
+					if (connection.getEndGraph() == currentGraph && connection.getMessage().equals(inputDataName)) {
+						ArrayList<ParameterDataNode> items = getItems();
+						for (ParameterDataNode item : items) {
+							if (item.getData() == connection.getStartGraph()) {
+								this.value = item;
+								isSelected = true;
+								break;
+							}
+						}
+					}
+					if (isSelected) {
+						break;
+					}
+				}
+			}
+		}
+
+	}
+
+	public void setSelectedGraph(IGraph startGraph) {
+		ArrayList<ParameterDataNode> items = getItems();
+		for (ParameterDataNode item : items) {
+			if (item.getData() == startGraph) {
+				this.setSelectedItem(item);
+			}
+		}
+	}
+
+	private IGraph getCurrentGraph() {
+		IForm activeForm = Application.getActiveApplication().getActiveForm();
+		if (activeForm != null && activeForm instanceof FormWorkflow) {
+			IGraph[] graphs = ((FormWorkflow) activeForm).getCanvas().getGraphStorage().getGraphs();
+			for (IGraph graph : graphs) {
+				if (graph instanceof ProcessGraph && ((ProcessGraph) graph).getProcess() == parameters.getProcess()) {
+					return graph;
+				}
+			}
+		}
+		return null;
+	}
+
+
 	public boolean isDeleting() {
 		return isDeleting;
+	}
+
+	public String getInputDataName() {
+		return inputDataName;
 	}
 }
