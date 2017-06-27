@@ -9,13 +9,11 @@ import com.supermap.desktop.process.events.StatusChangeListener;
 import com.supermap.desktop.process.events.WorkflowChangeEvent;
 import com.supermap.desktop.process.events.WorkflowChangeListener;
 
-import javax.swing.*;
+import javax.swing.Timer;
+import javax.swing.event.EventListenerList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -27,26 +25,36 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by highsad on 2017/6/14.
  */
 public class TasksManager {
-	private final static int NORMAL = 0;
-	private final static int RUNNING = 1;
-	private final static int COMPLETED = 2;
-	private final static int INTERRUPTED = 3;
+	private final static int WORKFLOW_STATE_NORMAL = 0;
+	private final static int WORKFLOW_STATE_RUNNING = 1;
+	private final static int WORKFLOW_STATE_COMPLETED = 2;
+	private final static int WORKFLOW_STATE_INTERRUPTED = 3;
+
+	public final static int WORKER_STATE_RUNNING = 1;
+	public final static int WORKER_STATE_READY = 2;
+	public final static int WORKER_STATE_WAITING = 3;
+	public final static int WORKER_STATE_COMPLETED = 4;
+	public final static int WORKER_STATE_CANCELLED = 5;
+	public final static int WORKER_STATE_EXCEPTION = 6;
 
 	private final Lock lock = new ReentrantLock();
-	private volatile int status = NORMAL;
+	private volatile int status = WORKFLOW_STATE_NORMAL;
 
 //	private IWorkflowExecutor executor;
 
 	private Timer scheduler;
 	private Workflow workflow;
-	private Map<IProcess, ProcessWorker> tasksMap = new ConcurrentHashMap<>();
+	private Map<IProcess, ProcessWorker> workersMap = new ConcurrentHashMap<>();
 
-	private List<IProcess> waiting = new ArrayList<>();
-	private List<IProcess> ready = new ArrayList<>();
-	private List<IProcess> running = new ArrayList<>();
-	private List<IProcess> completed = new ArrayList<>();
-	private List<IProcess> cancelled = new ArrayList<>();
-	private List<IProcess> exceptionOccurred = new ArrayList<>();
+	private Vector<IProcess> waiting = new Vector<>();
+	private Vector<IProcess> ready = new Vector<>();
+	private Vector<IProcess> running = new Vector<>();
+	private Vector<IProcess> completed = new Vector<>();
+	private Vector<IProcess> cancelled = new Vector<>();
+	private Vector<IProcess> exception = new Vector<>();
+	private Map<Integer, Vector<IProcess>> workerQueueMaps = new HashMap<>();
+
+	private EventListenerList listenerList = new EventListenerList();
 
 	private ProcessStatusChangeListener processStatusChangeListener = new ProcessStatusChangeListener();
 
@@ -63,6 +71,14 @@ public class TasksManager {
 
 	public TasksManager(Workflow workflow) {
 		this.workflow = workflow;
+
+		this.workerQueueMaps.put(WORKER_STATE_WAITING, this.waiting);
+		this.workerQueueMaps.put(WORKER_STATE_READY, this.ready);
+		this.workerQueueMaps.put(WORKER_STATE_RUNNING, this.running);
+		this.workerQueueMaps.put(WORKER_STATE_COMPLETED, this.completed);
+		this.workerQueueMaps.put(WORKER_STATE_CANCELLED, this.cancelled);
+		this.workerQueueMaps.put(WORKER_STATE_EXCEPTION, this.exception);
+
 		this.scheduler = new Timer(500, new SchedulerActionListener());
 //		this.executor = new DefaultWorkflowExecutor();
 		this.workflow.addWorkflowChangeListener(this.workflowChangeListener);
@@ -70,6 +86,20 @@ public class TasksManager {
 
 	public int getStatus() {
 		return status;
+	}
+
+	public Vector<ProcessWorker> getProcessWorkers(int workerState) {
+		if (!this.workerQueueMaps.containsKey(workerState)) {
+			return null;
+		}
+
+		Vector<ProcessWorker> workers = new Vector<>();
+		Vector<IProcess> processes = this.workerQueueMaps.get(workerState);
+
+		for (int i = 0; i < processes.size(); i++) {
+			workers.add(this.workersMap.get(processes.get(i)));
+		}
+		return workers;
 	}
 
 //	public IWorkflowExecutor getExecutor() {
@@ -81,28 +111,28 @@ public class TasksManager {
 //	}
 
 	private void processAdded(IProcess process) {
-		if (!this.tasksMap.containsKey(process)) {
+		if (!this.workersMap.containsKey(process)) {
 			ProcessWorker worker = new ProcessWorker(process);
 			process.addStatusChangeListener(this.processStatusChangeListener);
-			this.tasksMap.put(process, worker);
+			this.workersMap.put(process, worker);
 		}
 	}
 
 	private void processRemoved(IProcess process) {
-		if (this.tasksMap.containsKey(process)) {
-			ProcessWorker worker = this.tasksMap.get(process);
+		if (this.workersMap.containsKey(process)) {
+			ProcessWorker worker = this.workersMap.get(process);
 			process.removeStatusChangeListener(this.processStatusChangeListener);
-			this.tasksMap.remove(worker.getProcess());
+			this.workersMap.remove(worker.getProcess());
 		}
 	}
 
 	public boolean execute() {
 		try {
-			if (this.status != NORMAL) {
+			if (this.status != WORKFLOW_STATE_NORMAL) {
 				return false;
 			}
 
-			this.status = RUNNING;
+			this.status = WORKFLOW_STATE_RUNNING;
 
 			initialize();
 //			this.workflow.setEdiitable(false);
@@ -147,8 +177,8 @@ public class TasksManager {
 		this.running.clear();
 		this.completed.clear();
 		this.cancelled.clear();
-		this.exceptionOccurred.clear();
-		this.status = TasksManager.NORMAL;
+		this.exception.clear();
+		this.status = TasksManager.WORKFLOW_STATE_NORMAL;
 
 		if (this.scheduler.isRunning()) {
 			this.scheduler.stop();
@@ -164,30 +194,37 @@ public class TasksManager {
 	private void waitingToReady(IProcess process) {
 
 		// 只有 waiting 才可以移动到 ready
-		moveProcess(process, waiting, ready);
+		moveProcess(process, WORKER_STATE_WAITING, WORKER_STATE_READY);
 	}
 
 	private void readyToRunning(IProcess process) {
 
 		// 只有 ready 才可以移动到 running
-		moveProcess(process, ready, running);
+		moveProcess(process, WORKER_STATE_READY, WORKER_STATE_RUNNING);
 	}
 
 	private void runningToCompleted(IProcess process) {
 
 		// 只有 running 才可以移动到 completed
-		moveProcess(process, running, completed);
+		moveProcess(process, WORKER_STATE_RUNNING, WORKER_STATE_COMPLETED);
 	}
 
 	private void runningToCancelled(IProcess process) {
-		moveProcess(process, running, cancelled);
+		moveProcess(process, WORKER_STATE_RUNNING, WORKER_STATE_CANCELLED);
 	}
 
 	private void runningToExceptionOccurred(IProcess process) {
-		moveProcess(process, running, exceptionOccurred);
+		moveProcess(process, WORKER_STATE_RUNNING, WORKER_STATE_EXCEPTION);
 	}
 
-	private void moveProcess(IProcess process, List<IProcess> source, List<IProcess> destination) {
+	private void moveProcess(IProcess process, int oldState, int newState) {
+		if (!this.workerQueueMaps.containsKey(oldState) || !this.workerQueueMaps.containsKey(newState)) {
+			return;
+		}
+
+		List<IProcess> source = this.workerQueueMaps.get(oldState);
+		List<IProcess> destination = this.workerQueueMaps.get(newState);
+
 		if (process != null && source != null && destination != null) {
 			synchronized (source) {
 				if (!source.contains(process)) {
@@ -204,6 +241,8 @@ public class TasksManager {
 
 				destination.add(process);
 			}
+
+			fireWorkerStateChange(new WorkerStateChangedEvent(this, this.workersMap.get(process), oldState, newState));
 		}
 	}
 
@@ -274,7 +313,7 @@ public class TasksManager {
 						throw new UnsupportedOperationException();
 					}
 
-					moveProcess(nextProcess, waiting, exceptionOccurred);
+					moveProcess(nextProcess, WORKER_STATE_WAITING, WORKER_STATE_EXCEPTION);
 				}
 			}
 		}
@@ -295,8 +334,26 @@ public class TasksManager {
 						throw new UnsupportedOperationException();
 					}
 
-					moveProcess(nextProcess, waiting, cancelled);
+					moveProcess(nextProcess, WORKER_STATE_WAITING, WORKER_STATE_CANCELLED);
 				}
+			}
+		}
+	}
+
+	public void addWorkerStateChangeListener(WorkerStateChangedListener listener) {
+		this.listenerList.add(WorkerStateChangedListener.class, listener);
+	}
+
+	public void removeWorkerStateChangeListener(WorkerStateChangedListener listener) {
+		this.listenerList.remove(WorkerStateChangedListener.class, listener);
+	}
+
+	protected void fireWorkerStateChange(WorkerStateChangedEvent e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == WorkerStateChangedListener.class) {
+				((WorkerStateChangedListener) listeners[i + 1]).workerStateChanged(e);
 			}
 		}
 	}
@@ -310,7 +367,7 @@ public class TasksManager {
 				if (ready.size() > 0) {
 					for (int i = ready.size() - 1; i >= 0; i--) {
 						IProcess process = ready.get(i);
-						tasksMap.get(process).doWork();
+						workersMap.get(process).doWork();
 					}
 				}
 
@@ -319,9 +376,9 @@ public class TasksManager {
 					scheduler.stop();
 
 					if (workflow.getProcessCount() == completed.size()) {
-						status = TasksManager.COMPLETED;
+						status = TasksManager.WORKFLOW_STATE_COMPLETED;
 					} else {
-						status = TasksManager.INTERRUPTED;
+						status = TasksManager.WORKFLOW_STATE_INTERRUPTED;
 					}
 				}
 			} catch (Exception ex) {

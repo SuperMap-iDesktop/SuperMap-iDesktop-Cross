@@ -65,7 +65,7 @@ public class CtrlActionRun extends CtrlAction {
 			if (list.get(i) instanceof IProcess) {
 				ProcessTask task = TaskUtil.getTask((IProcess) list.get(i));
 				task.setCancel(false);
-				container.addItem(task);
+//				container.addItem(task);
 			}
 		}
 
