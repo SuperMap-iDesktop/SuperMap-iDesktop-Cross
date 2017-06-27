@@ -23,6 +23,10 @@ import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.core.WorkflowParser;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
+import com.supermap.desktop.process.graphics.connection.DefaultGraphConnection;
+import com.supermap.desktop.process.graphics.connection.IConnectable;
+import com.supermap.desktop.process.graphics.connection.IGraphConnection;
+import com.supermap.desktop.process.graphics.connection.IOGraphConnection;
 import com.supermap.desktop.process.graphics.connection.LineGraph;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
@@ -58,6 +62,7 @@ import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by highsad on 2017/1/6.
@@ -92,7 +97,6 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 		this.workflow = (Workflow) workflow;
 		this.canvas = new GraphCanvas();
-		this.tasksManager = new TasksManager(this.workflow);
 
 		initializeComponents();
 		initFormWorkflow(workflow);
@@ -101,41 +105,45 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	}
 
 	protected void initFormWorkflow(IWorkflow workflow) {
-//		if (workflow instanceof Workflow) {
-//			isAutoAddOutPut = false;
-//			try {
-//				NodeMatrix matrix = ((Workflow) workflow).getMatrix();
-//				CopyOnWriteArrayList allStartNodes = matrix.getNodes();
-//				for (Object node : allStartNodes) {
-//					IGraph graph = (IGraph) node;
-//					this.canvas.addGraph(graph);
-//					graph.setCanvas(this.canvas);
-//				}
-//				IRelationManager connection = this.canvas.getConnection();
-//				for (Object node : allStartNodes) {
-//					IGraph graph = (IGraph) node;
-//					CopyOnWriteArrayList nextNodes = matrix.getToNodes(graph);
-//					if (nextNodes != null) {
-//						for (Object nextNode : nextNodes) {
-//							if (nextNode instanceof OutputGraph) {
-//								((OutputGraph) nextNode).setProcessGraph(((ProcessGraph) node));
-//							}
-//							String message = null;
-//							if (nextNode instanceof ProcessGraph) {
-//								ProcessGraph processGraph = (ProcessGraph) nextNode;
-//								message = processGraph.getProcess().getInputs().getBindedInput(((OutputGraph) graph).getProcessData());
-//							}
-//
-//							connection.connect((IConnectable) graph, (IConnectable) nextNode, message);
-//						}
-//					}
-//				}
-//			} catch (Exception e) {
-//				Application.getActiveApplication().getOutput().output(e);
-//			} finally {
-//				isAutoAddOutPut = true;
-//			}
-//		}
+		if (workflow instanceof Workflow) {
+			isAutoAddOutPut = false;
+			try {
+				NodeMatrix matrix = ((Workflow) workflow).getMatrix();
+				CopyOnWriteArrayList allStartNodes = matrix.getAllNodes();
+				for (Object node : allStartNodes) {
+					IGraph graph = (IGraph) node;
+					this.canvas.addGraph(graph);
+					graph.setCanvas(this.canvas);
+				}
+				IConnectionManager connection = this.canvas.getConnection();
+				for (Object node : allStartNodes) {
+					IGraph graph = (IGraph) node;
+					CopyOnWriteArrayList nextNodes = matrix.getNextNodes(graph);
+					if (nextNodes != null) {
+						for (Object nextNode : nextNodes) {
+							IGraphConnection graphConnection = null;
+
+							if (nextNode instanceof OutputGraph) {
+								((OutputGraph) nextNode).setProcessGraph(((ProcessGraph) node));
+								graphConnection = new DefaultGraphConnection((IConnectable) graph, (IConnectable) nextNode);
+							}
+							String message = null;
+							if (nextNode instanceof ProcessGraph) {
+								ProcessGraph processGraph = (ProcessGraph) nextNode;
+								message = processGraph.getProcess().getInputs().getBindedInput(((OutputGraph) graph).getProcessData());
+								graphConnection = new IOGraphConnection((IConnectable) graph, (IConnectable) nextNode, message);
+							}
+
+							connection.connect(graphConnection);
+						}
+					}
+				}
+			} catch (Exception e) {
+				Application.getActiveApplication().getOutput().output(e);
+			} finally {
+				isAutoAddOutPut = true;
+			}
+		}
 	}
 
 	public TasksManager getTasksManager() {
@@ -251,7 +259,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		ArrayList<IGraph> iGraphs = new ArrayList<>();
 		IGraph[] graphs = getCanvas().getGraphStorage().getGraphs();
 		for (IGraph graph : graphs) {
-			if (graph instanceof OutputGraph && type.contains(((OutputGraph) graph).getProcessData().getType())) {
+			if (graph instanceof OutputGraph && type.intersects(((OutputGraph) graph).getProcessData().getType())) {
 				iGraphs.add(graph);
 			}
 		}
@@ -347,7 +355,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			IGraph[] nextGraphs = connectionManager.getNextGraphs(graph);
 			if (nextGraphs.length > 0) {
 				for (IGraph nextGraph : nextGraphs) {
-					nodeMatrix.addRelation(graph, nextGraph, DirectConnect.class);
+					nodeMatrix.addConstraint(graph, nextGraph, new DirectConnect());
 				}
 			}
 		}

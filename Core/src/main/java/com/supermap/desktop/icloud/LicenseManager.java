@@ -36,7 +36,24 @@ import java.util.Iterator;
  */
 public class LicenseManager {
     private static final String LIC_DIRCTORY = "../Configuration";
-//    private static final String ONLINE_LICENSEFILE = ONLINE_DIRCTORY + ComputerUtilities.getComputerName() + "_8C.lic";
+	//    private static final String ONLINE_LICENSEFILE = ONLINE_DIRCTORY + ComputerUtilities.getComputerName() + "_8C.lic";
+	private static com.supermap.data.ProductType productType;
+	private static final com.supermap.data.ProductType[] supportProductTypes = new com.supermap.data.ProductType[]{
+			com.supermap.data.ProductType.IOBJECTS_CORE_DEVELOP,
+			com.supermap.data.ProductType.IDESKTOP_ADVANCED,
+			com.supermap.data.ProductType.IDESKTOP_STANDARD,
+			com.supermap.data.ProductType.IDESKTOP_PROFESSIONAL,
+			com.supermap.data.ProductType.IDESKTOP_CHART,
+			com.supermap.data.ProductType.IDESKTOP_TOPOLOGY,
+			com.supermap.data.ProductType.IDESKTOP_TRAFFICNETWORK,
+			com.supermap.data.ProductType.IDESKTOP_FACILITYNETWORK,
+			com.supermap.data.ProductType.IDESKTOP_SPATIAL,
+			com.supermap.data.ProductType.IDESKTOP_CHART,
+			com.supermap.data.ProductType.IDESKTOP_GEOPROCESSER,
+			com.supermap.data.ProductType.IDESKTOP_REALSPACE_SPATIALANALYST,
+			com.supermap.data.ProductType.IDESKTOP_TRAFFICANALYST,
+			com.supermap.data.ProductType.IDESKTOP_REALSPACE_EFFECT
+	};
 
 
 
@@ -66,13 +83,13 @@ public class LicenseManager {
     public static boolean valiteTrialLicense() {
         boolean result = false;
         ArrayList<com.supermap.data.ProductType> trialLicense = Toolkit.getTrialProducts();
-        License var2 = new License();
-        Iterator var3 = trialLicense.iterator();
+	    License license = new License();
+	    Iterator var3 = trialLicense.iterator();
 
         while (var3.hasNext()) {
             com.supermap.data.ProductType var4 = (com.supermap.data.ProductType) var3.next();
-            int var1 = var2.connect(var4);
-            if (var1 == 0) {
+	        int var1 = license.connect(var4);
+	        if (var1 == 0) {
                 result = true;
                 break;
             }
@@ -156,18 +173,20 @@ public class LicenseManager {
      * @return
      */
     public static boolean valiteLicense() {
-        boolean valitedLicense = false;
         License license = new License();
-        /**
-         * JAVA开发版本中用到了许可类型，只用全部满足时才为true
-         */
-        int valite = license.connect(com.supermap.data.ProductType.IOBJECTS_CORE_DEVELOP);
-        if (valite == 0) {
-            valitedLicense = true;
-        }
-        return valitedLicense;
+	    for (com.supermap.data.ProductType supportProductType : supportProductTypes) {
+		    int valite = license.connect(supportProductType);
+		    if (valite == 0) {
+			    productType = supportProductType;
+			    return true;
+		    }
+	    }
+	    return false;
     }
 
+	public static com.supermap.data.ProductType getProductType() {
+		return productType;
+	}
 
     /**
      * 申请试用许可,许可可用将生成本地文件来存储试用许可以便启动桌面
@@ -350,4 +369,6 @@ public class LicenseManager {
         }
         return licenseId;
     }
+
+
 }

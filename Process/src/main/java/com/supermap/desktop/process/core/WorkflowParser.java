@@ -21,6 +21,7 @@ import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessPolygo
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessProjection;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSetProjection;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSimpleDensity;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSingleQuery;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSpatialIndex;
 import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSqlQuery;
 import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessAutoCorrelation;
@@ -51,6 +52,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by xie on 2017/3/21.
@@ -129,11 +131,13 @@ public class WorkflowParser {
 								//TODO
 								//INodeConstriant now not exist in xml file,so add a new INodeConstriant
 //                                process.getInputs().followProcess(preProcess);
-								nodeMatrix.addRelation(preProcess, process, IRelation.class);
+								nodeMatrix.addConstraint(preProcess, process, new INodeConstraint() {
+								});
 							}
 							if (null != process && null != nextProcess) {
 //                                nextProcess.getInputs().followProcess(process);
-								nodeMatrix.addRelation(process, nextProcess, IRelation.class);
+								nodeMatrix.addConstraint(process, nextProcess, new INodeConstraint() {
+								});
 							}
 						}
 					}
@@ -151,7 +155,7 @@ public class WorkflowParser {
 
 	private MetaProcess getMetaProcess(String key, NodeMatrix nodeMatrix) {
 		MetaProcess result = null;
-		Vector metaProcesses = nodeMatrix.getNodes();
+		CopyOnWriteArrayList metaProcesses = nodeMatrix.getAllNodes();
 		for (int i = 0; i < metaProcesses.size(); i++) {
 			if (metaProcesses.get(i) instanceof MetaProcess && key.equals(((MetaProcess) metaProcesses.get(i)).getKey())) {
 				result = (MetaProcess) metaProcesses.get(i);
@@ -249,8 +253,10 @@ public class WorkflowParser {
 			result = new MetaProcessIncrementalAutoCorrelation();
 		} else if (MetaKeys.AverageNearestNeighbor.equals(key)) {
 			result = new MetaProcessAverageNearestNeighbor();
-		} else if (MetaKeys.OVERLAYANALYSTGEO.equals("overlayanalystgeo")) {
+		} else if (MetaKeys.OVERLAYANALYSTGEO.equals(key)) {
 			result = new MetaProcessOverlayanalystgeo();
+		} else if (MetaKeys.SINGLE_QUERY.equals(key)) {
+			result = new MetaProcessSingleQuery();
 		} else if (key.contains(MetaKeys.IMPORT)) {
 			String importType = key.replace(MetaKeys.IMPORT, "");
 			result = MetaProcessImportFactory.createMetaProcessImport(importType);

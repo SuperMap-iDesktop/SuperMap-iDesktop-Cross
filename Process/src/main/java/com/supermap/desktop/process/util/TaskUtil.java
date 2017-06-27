@@ -7,6 +7,7 @@ import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.NodeException;
 import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.meta.MetaProcess;
+import com.supermap.desktop.process.tasks.ProcessCallable;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.tasks.TaskStore;
 import com.supermap.desktop.process.tasks.TasksManagerContainer;
@@ -69,6 +70,53 @@ public class TaskUtil {
         return fileManagerContainer;
     }
 
+    /**
+     * Use ExecutorService to manage all task thread,
+     * If task's prev tasks execute finished,execute task;
+     *
+     * @param nodeMatrix
+     * @return
+     */
+    public static void excuteTasks(final NodeMatrix nodeMatrix) {
+        final CopyOnWriteArrayList<Object> processes = nodeMatrix.getAllNodes();
+        ExecutorService eService = Executors.newCachedThreadPool();
+        final Lock lock = new ReentrantLock();
+        int size = processes.size();
+        for (int i = 0; i < size; i++) {
+            if (processes.get(i) instanceof IProcess) {
+                final IProcess nowProcess = ((IProcess) processes.get(i));
+                Thread thread = new Thread() {
+                    @Override
+                    public void run() {
+                        lock.lock();
+                        CopyOnWriteArrayList<Object> preNodes = null;
+                        try {
+                            preNodes = nodeMatrix.getPreNodes(nowProcess);
+                        } catch (NodeException e) {
+                            Application.getActiveApplication().getOutput().output(e);
+                        }
+                        boolean allPreTasksFinished = true;
+                        int preNodesSize = preNodes.size();
+                        if (preNodesSize > 0) {
+                            for (int j = 0; j < preNodesSize; j++) {
+                                if (((MetaProcess) preNodes.get(j)).isFinished()) {
+                                    allPreTasksFinished = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (allPreTasksFinished || preNodes.size() == 0) {
+                            TaskStore.getTask(nowProcess).doWork();
+                        }
+                        lock.unlock();
+                    }
+                };
+                eService.execute(thread);
+            }
+        }
+        eService.shutdown();
+    }
+
     public static ProcessTask getTask(IProcess process) {
         ProcessTask task;
         if (null != TaskStore.getTask(process)) {
@@ -81,7 +129,7 @@ public class TaskUtil {
     }
 
     public static void executeMatrix(NodeMatrix matrix) {
-        List startNodes = matrix.getLeadingNodes();
+        List startNodes = matrix.getAllStartNodes();
 
         if (startNodes.size() > 0) {
 

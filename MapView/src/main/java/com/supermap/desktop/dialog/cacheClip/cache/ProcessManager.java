@@ -33,7 +33,7 @@ public class ProcessManager {
 //		protectThread.start();
 	}
 
-	public void addProcess(SubprocessThread thread, String cacheType) {
+	public void addProcess(SubprocessThread thread) {
 		synchronized (new Object()) {
 			threadList.add(thread);
 		}

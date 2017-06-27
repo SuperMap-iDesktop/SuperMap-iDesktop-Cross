@@ -13,8 +13,8 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.TaskUtil;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
+import com.supermap.desktop.ui.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
-import com.supermap.desktop.ui.lbs.params.KernelDensityJobSetting;
 import com.supermap.desktop.utilities.CursorUtilities;
 
 /**
@@ -103,18 +103,27 @@ public class MetaProcessSimpleDensity extends MetaProcess {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
 			//简单核密度分析功能实现
-			KernelDensityJobSetting kenelDensityJobSetting = new KernelDensityJobSetting();
-			kenelDensityJobSetting.analyst.method = (String) parameterComboBoxAnalyseType.getSelectedData();
-			kenelDensityJobSetting.analyst.meshType = (String) parameterComboBoxMeshType.getSelectedData();
-			kenelDensityJobSetting.analyst.fields = (String) parameterIndex.getSelectedItem();
-			kenelDensityJobSetting.analyst.query = parameterBounds.getSelectedItem().toString();
-			kenelDensityJobSetting.analyst.resolution = parameterResolution.getSelectedItem().toString();
-			kenelDensityJobSetting.analyst.radius = parameterRadius.getSelectedItem().toString();
-			kenelDensityJobSetting.input.filePath = parameterHDFSPath.getSelectedItem().toString();
-			kenelDensityJobSetting.input.xIndex = parameterTextFieldXIndex.getSelectedItem().toString();
-			kenelDensityJobSetting.input.yIndex = parameterTextFieldYIndex.getSelectedItem().toString();
-			kenelDensityJobSetting.input.separator = parameterTextFieldSeparator.getSelectedItem().toString();
-			JobResultResponse response = service.query(kenelDensityJobSetting);
+			CommonSettingCombine filePath = new CommonSettingCombine("filePath",parameterHDFSPath.getSelectedItem().toString());
+			CommonSettingCombine xIndex = new CommonSettingCombine("xIndex",parameterTextFieldXIndex.getSelectedItem().toString());
+			CommonSettingCombine yIndex = new CommonSettingCombine("yIndex",parameterTextFieldYIndex.getSelectedItem().toString());
+			CommonSettingCombine separator = new CommonSettingCombine("separator",parameterTextFieldSeparator.getSelectedItem().toString());
+			CommonSettingCombine input = new CommonSettingCombine("input", "");
+			input.add(filePath,xIndex,yIndex,separator);
+
+
+			CommonSettingCombine method = new CommonSettingCombine("method",(String) parameterComboBoxAnalyseType.getSelectedData());
+			CommonSettingCombine meshType = new CommonSettingCombine("meshType",(String) parameterComboBoxMeshType.getSelectedData());
+			CommonSettingCombine fields = new CommonSettingCombine("fields",(String) parameterIndex.getSelectedItem());
+			CommonSettingCombine query = new CommonSettingCombine("query",parameterBounds.getSelectedItem().toString());
+			CommonSettingCombine resolution = new CommonSettingCombine("resolution",parameterResolution.getSelectedItem().toString());
+			CommonSettingCombine radius = new CommonSettingCombine("radius",parameterRadius.getSelectedItem().toString());
+
+			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
+			analyst.add(query,resolution,radius,method,meshType,fields);
+
+			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
+			commonSettingCombine.add(input,analyst);
+			JobResultResponse response = service.queryResult(MetaKeys.SIMPLE_DENSITY,commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				CursorUtilities.setDefaultCursor();

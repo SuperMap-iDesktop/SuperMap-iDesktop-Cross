@@ -65,4 +65,5 @@ public class MetaKeys {
 	public static final String SIMPLE_DENSITY = "SimpleDensity";
 	public static final String KERNEL_DENSITY = "KernelDensity";
 	public static final String OVERLAYANALYSTGEO = "overlayanalystgeo";
+	public static final String SINGLE_QUERY = "singleQuery";
 }

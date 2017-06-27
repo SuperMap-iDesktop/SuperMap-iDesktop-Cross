@@ -5,6 +5,7 @@ import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.IGraphConnection;
+import com.supermap.desktop.process.graphics.connection.IOGraphConnection;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
@@ -88,7 +89,7 @@ public class DefaultParameters implements IParameters {
 							break;
 						}
 					}
-					canvas.getConnection().connect((OutputGraph) newGraph, (ProcessGraph) processGraph, propertyName);
+					canvas.getConnection().connect(new IOGraphConnection((OutputGraph) newGraph, (ProcessGraph) processGraph, propertyName));
 					inputs.bind(propertyName, ((OutputGraph) newGraph).getProcessData());
 					canvas.repaint();
 				}

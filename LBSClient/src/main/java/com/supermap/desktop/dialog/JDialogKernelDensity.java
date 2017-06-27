@@ -14,8 +14,8 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
 import com.supermap.desktop.ui.lbs.impl.WebHDFS;
+import com.supermap.desktop.ui.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
-import com.supermap.desktop.ui.lbs.params.KernelDensityJobSetting;
 import com.supermap.desktop.ui.lbs.ui.JDialogHDFSFiles;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.ui.Action;
@@ -221,18 +221,27 @@ public class JDialogKernelDensity extends SmDialog {
 	}
 
 	private void queryInfo() {
-		KernelDensityJobSetting kenelDensityJobSetting = new KernelDensityJobSetting();
-		String queryInfo = textBoundsLeft.getText() + "," + textBoundsBottom.getText() + "," + textBoundsRight.getText() + "," + textBoundsTop.getText();
-		kenelDensityJobSetting.analyst.query = queryInfo;
-		// 挂了
-//		kenelDensityJobSetting.analyst.geoidx = textFieldIndex.getText();
-//		kenelDensityJobSetting.analyst.separator = textFieldSeperator.getText();
-		kenelDensityJobSetting.analyst.resolution = textResolution.getText();
-		kenelDensityJobSetting.analyst.radius = textRadius.getText();
-		kenelDensityJobSetting.input.datasetName = textInputURL.getText();
 		IServerService service = new IServerServiceImpl();
+		CommonSettingCombine filePath = new CommonSettingCombine("filePath",textInputURL.getText());
+//		CommonSettingCombine xIndex = new CommonSettingCombine("xIndex",parameterTextFieldXIndex.getSelectedItem().toString());
+//		CommonSettingCombine yIndex = new CommonSettingCombine("yIndex",parameterTextFieldYIndex.getSelectedItem().toString());
+		CommonSettingCombine separator = new CommonSettingCombine("separator",textFieldSeperator.getText());
+		CommonSettingCombine input = new CommonSettingCombine("input", "");
+//		input.add(filePath,xIndex,yIndex,separator);
+
+//		CommonSettingCombine method = new CommonSettingCombine("method",(String) parameterComboBoxAnalyseType.getSelectedData());
+//		CommonSettingCombine meshType = new CommonSettingCombine("meshType",(String) parameterComboBoxMeshType.getSelectedData());
+		CommonSettingCombine fields = new CommonSettingCombine("fields", textFieldIndex.getText());
+		CommonSettingCombine query = new CommonSettingCombine("query",textBoundsLeft.getText() + "," + textBoundsBottom.getText() + "," + textBoundsRight.getText() + "," + textBoundsTop.getText());
+		CommonSettingCombine resolution = new CommonSettingCombine("resolution",textResolution.getText());
+		CommonSettingCombine radius = new CommonSettingCombine("radius",textRadius.getText());
+		CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
+//		analyst.add(query,resolution,radius,method,meshType,fields);
+
+		CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
+		commonSettingCombine.add(input,analyst);
+		JobResultResponse response = service.queryResult("KernelDensity",commonSettingCombine.getFinalJSon());
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		JobResultResponse response = service.query(kenelDensityJobSetting);
 		if (null != response) {
 			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			NewMessageBus.producer(response);

@@ -28,7 +28,7 @@ public class MatrixExecutor {
 			}
 		});
 
-		List starts = this.matrix.getLeadingNodes();
+		List starts = this.matrix.getAllStartNodes();
 		if (starts.size() > 0) {
 			for (Object o : starts) {
 				if (o instanceof IProcess) {
@@ -37,7 +37,7 @@ public class MatrixExecutor {
 			}
 		}
 
-		starts = this.matrix.getFreeNodes();
+		starts = this.matrix.getSingleNodes();
 		if (starts.size() > 0) {
 			for (Object o : starts) {
 				if (o instanceof IProcess) {
@@ -47,7 +47,7 @@ public class MatrixExecutor {
 		}
 
 		for (IProcess process : ready) {
-			List next = this.matrix.getToNodes(process);
+			List next = this.matrix.getNextNodes(process);
 			for (Object o : next) {
 				if (o instanceof IProcess) {
 					this.waiting.add((IProcess) o);
@@ -75,7 +75,7 @@ public class MatrixExecutor {
 
 			IProcess[] waitingArr = waiting.toArray(new IProcess[waiting.size()]);
 			for (IProcess process : waitingArr) {
-				List pre = this.matrix.getFromNodes(process);
+				List pre = this.matrix.getPreNodes(process);
 				boolean isReady = true;
 
 				for (Object o : pre) {
@@ -95,7 +95,7 @@ public class MatrixExecutor {
 					this.waiting.remove(process);
 					this.ready.add(process);
 					runProcess(process);
-					List next = this.matrix.getToNodes(process);
+					List next = this.matrix.getNextNodes(process);
 					for (Object o : next) {
 						if (o instanceof IProcess) {
 							this.waiting.add((IProcess) o);

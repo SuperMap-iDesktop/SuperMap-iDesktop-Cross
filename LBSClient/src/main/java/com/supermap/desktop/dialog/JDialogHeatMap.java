@@ -13,11 +13,8 @@ import com.supermap.desktop.ui.controls.TextFields.DefaultValueTextField;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
 import com.supermap.desktop.ui.lbs.impl.WebHDFS;
-import com.supermap.desktop.ui.lbs.params.BuildCacheDrawingSetting;
-import com.supermap.desktop.ui.lbs.params.BuildCacheJobSetting;
-import com.supermap.desktop.ui.lbs.params.FileInputDataSetting;
+import com.supermap.desktop.ui.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
-import com.supermap.desktop.ui.lbs.params.MongoDBOutputsetting;
 import com.supermap.desktop.ui.lbs.ui.JDialogHDFSFiles;
 import com.supermap.ui.Action;
 import com.supermap.ui.MapControl;
@@ -309,29 +306,31 @@ public class JDialogHeatMap extends SmDialog {
 
 	private void qureyInfo() {
 		IServerService service = new IServerServiceImpl();
-		BuildCacheJobSetting setting = new BuildCacheJobSetting();
+		CommonSettingCombine filePath = new CommonSettingCombine("filePath",textFieldFileInputPath.getText());
+//		CommonSettingCombine xIndex = new CommonSettingCombine("xIndex",parameterTextFieldXIndex.getSelectedItem().toString());
+//		CommonSettingCombine yIndex = new CommonSettingCombine("yIndex",parameterTextFieldYIndex.getSelectedItem().toString());
+//		CommonSettingCombine separator = new CommonSettingCombine("separator",parameterTextFieldSeparator.getSelectedItem().toString());
+		CommonSettingCombine input = new CommonSettingCombine("input", "");
+//		input.add(filePath,xIndex,yIndex,separator);
 
-		FileInputDataSetting input = new FileInputDataSetting();
-		input.datasetName = textFieldFileInputPath.getText();
+		CommonSettingCombine cacheName = new CommonSettingCombine("cacheName",textFieldCacheName.getText());
+		CommonSettingCombine cacheType = new CommonSettingCombine("cacheType",(String) comboBoxDatabaseType.getSelectedItem());
+		CommonSettingCombine serverAddresses = new CommonSettingCombine("serverAddresses",textFieldServiceAddress.getText());
+		CommonSettingCombine database = new CommonSettingCombine("database",textFieldDatabase.getText());
+		CommonSettingCombine version = new CommonSettingCombine("version",textFieldVersion.getText());
+		CommonSettingCombine output = new CommonSettingCombine("output", "");
+		output.add(cacheName,cacheType,serverAddresses,database,version);
 
-		MongoDBOutputsetting output = new MongoDBOutputsetting();
-		output.cacheName = textFieldCacheName.getText();
-		output.cacheType = (String) comboBoxDatabaseType.getSelectedItem();
-		output.serverAdresses[0] = textFieldServiceAddress.getText();
-		output.database = textFieldDatabase.getText();
-		output.version = textFieldVersion.getText();
+		CommonSettingCombine imageType = new CommonSettingCombine("imageType",(String) comboBoxCacheType.getSelectedItem());
+		CommonSettingCombine bounds = new CommonSettingCombine("bounds",textBoundsLeft.getText() + "," + textBoundsBottom.getText() + "," + textBoundsRight.getText() + "," + textBoundsTop.getText());
+		CommonSettingCombine level = new CommonSettingCombine("level",textFieldCacheLevel.getText());
+		CommonSettingCombine drawing = new CommonSettingCombine("drawing", "");
+		drawing.add(imageType,bounds,level);
 
-		BuildCacheDrawingSetting drawing = new BuildCacheDrawingSetting();
-		String bounds = textBoundsLeft.getText() + "," + textBoundsBottom.getText() + "," + textBoundsRight.getText() + "," + textBoundsTop.getText();
-		drawing.imageType = (String) comboBoxCacheType.getSelectedItem();
-		drawing.bounds = bounds;
-		drawing.level = textFieldCacheLevel.getText();
-//		drawing.xyIndex = textFieldXYIndex.getText();
-		setting.input = input;
-		setting.output = output;
-		setting.drawing = drawing;
+		CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
+		commonSettingCombine.add(input,output,drawing);
+		JobResultResponse response = service.queryResult("HeatMap",commonSettingCombine.getFinalJSon());
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		JobResultResponse response = service.query(setting);
 		if (null != response) {
 			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			NewMessageBus.producer(response);
