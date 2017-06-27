@@ -383,7 +383,7 @@ public class Application {
 		Node workFlows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
 		Element workFlowNode = document.createElement("WorkFlow");
 		workFlowNode.setAttribute("name", workFlow.getName());
-		workFlowNode.setAttribute("value", workFlow.toXML());
+		workFlowNode.setAttribute("value", workFlow.getMatrixXml());
 		workFlows.appendChild(workFlowNode);
 		String s = XmlUtilities.nodeToString(document, "UTF-8");
 

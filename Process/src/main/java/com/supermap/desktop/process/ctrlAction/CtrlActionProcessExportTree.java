@@ -43,7 +43,7 @@ public class CtrlActionProcessExportTree extends CtrlAction {
 		if (fileChoose.showDefaultDialog() == JFileChooser.APPROVE_OPTION) {
 			String filePath = fileChoose.getFilePath();
 			if (!StringUtilities.isNullOrEmpty(filePath)) {
-				FileUtilities.writeToFile(filePath, workflow.toXML());
+				FileUtilities.writeToFile(filePath, workflow.getMatrixXml());
 			}
 		}
 	}

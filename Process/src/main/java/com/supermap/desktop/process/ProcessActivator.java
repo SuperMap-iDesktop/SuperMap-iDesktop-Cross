@@ -46,7 +46,7 @@ public class ProcessActivator implements BundleActivator {
 			public IWorkflow init(Element element) {
 				String name = element.getAttribute("name");
 				Workflow workflow = new Workflow(name);
-				workflow.fromXML(element.getAttribute("value"));
+				workflow.setMatrixXml(element.getAttribute("value"));
 				return workflow;
 			}
 		});

@@ -59,7 +59,7 @@ public class CtrlActionProcessImport extends CtrlAction {
 				name = StringUtilities.getUniqueName(name, names);
 				Workflow workflow = new Workflow(name);
 
-				workflow.fromXML(XmlUtilities.nodeToString(document));
+				workflow.setMatrixXml(XmlUtilities.nodeToString(document));
 				FormWorkflow formWorkflow = new FormWorkflow(workflow);
 				formWorkflow.setNeedSave(true);
 				Application.getActiveApplication().getMainFrame().getFormManager().add(formWorkflow);
