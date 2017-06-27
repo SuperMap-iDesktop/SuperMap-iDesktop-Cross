@@ -21,8 +21,8 @@ public class CommonSettingCombine {
 		}
 	}
 
-	public String getJson() {
-		StringBuffer stringBuffer = new StringBuffer();
+	private String getJson() {
+		StringBuilder stringBuffer = new StringBuilder();
 		stringBuffer.append("\"");
 		stringBuffer.append(name);
 		stringBuffer.append("\":");
@@ -31,7 +31,7 @@ public class CommonSettingCombine {
 	}
 
 	private String getJsonValue() {
-		StringBuffer stringBuffer = new StringBuffer();
+		StringBuilder stringBuffer = new StringBuilder();
 
 		if (values.size() <= 0) {
 			stringBuffer.append("\"");

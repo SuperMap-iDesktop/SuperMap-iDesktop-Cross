@@ -18,6 +18,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
+import com.supermap.desktop.ui.lbs.params.CommonSettingCombine;
 
 /**
  * @author XiaJT
@@ -110,6 +111,8 @@ public class MetaProcessSingleQuery extends MetaProcess {
 		Dataset sourceDataset = parameterSourceDataset.getSelectedDataset();
 		Dataset queryDataset = parameterQueryDataset.getSelectedDataset();
 		String queryType = (String) parameterQueryTypeComboBox.getSelectedData();
+		CommonSettingCombine query = new CommonSettingCombine("query", "");
+//		new CommonSettingCombine("input", );
 
 		return false;
 	}
