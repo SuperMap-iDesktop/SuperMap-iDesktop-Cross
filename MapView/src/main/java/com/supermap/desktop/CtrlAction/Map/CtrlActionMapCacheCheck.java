@@ -3,23 +3,25 @@ package com.supermap.desktop.CtrlAction.Map;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.dialog.cacheClip.DialogCacheCheck;
+import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
+import com.supermap.desktop.dialog.cacheClip.cache.LogWriter;
 import com.supermap.desktop.implement.CtrlAction;
 
 /**
  * Created by xie on 2017/5/11.
  */
 public class CtrlActionMapCacheCheck extends CtrlAction {
-    public CtrlActionMapCacheCheck(IBaseItem caller, IForm formClass) {
-        super(caller, formClass);
-    }
+	public CtrlActionMapCacheCheck(IBaseItem caller, IForm formClass) {
+		super(caller, formClass);
+	}
 
-    @Override
-    public void run() {
-        new DialogCacheCheck().showDialog();
-    }
+	@Override
+	public void run() {
+		CacheUtilities.startProcess(new String[]{}, DialogCacheCheck.class.getName(), LogWriter.CHECK_CACEH);
+	}
 
-    @Override
-    public boolean enable() {
-        return true;
-    }
+	@Override
+	public boolean enable() {
+		return true;
+	}
 }

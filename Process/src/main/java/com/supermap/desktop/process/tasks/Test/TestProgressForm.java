@@ -50,7 +50,7 @@ public class TestProgressForm extends JDialog implements IWorkerView<SingleProgr
 			public void actionPerformed(ActionEvent e) {
 				buttonCancel.setText("取消中...");
 				buttonCancel.setEnabled(false);
-				worker.cancel(true);
+				worker.cancel();
 			}
 		});
 	}
