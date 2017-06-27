@@ -139,7 +139,7 @@ public class MetaProcessSingleQuery extends MetaProcess {
 			CommonSettingCombine query = new CommonSettingCombine("query", "");
 			query.add(input, analyst);
 			CursorUtilities.setWaitCursor();
-			JobResultResponse response = service.queryResult(query.getFinalJSon());
+			JobResultResponse response = service.queryResult(MetaKeys.SINGLE_QUERY,query.getFinalJSon());
 			if (null != response) {
 				ProcessTask task = TaskUtil.getTask(this);
 				NewMessageBus messageBus = new NewMessageBus(response, task);

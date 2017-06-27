@@ -111,30 +111,30 @@ public class MetaProcessHeatMap extends MetaProcess {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
 			//热度图分析功能
-			BuildCacheJobSetting setting = new BuildCacheJobSetting();
+			CommonSettingCombine filePath = new CommonSettingCombine("filePath",parameterHDFSPath.getSelectedItem().toString());
+			CommonSettingCombine xIndex = new CommonSettingCombine("xIndex",parameterTextFieldXIndex.getSelectedItem().toString());
+			CommonSettingCombine yIndex = new CommonSettingCombine("yIndex",parameterTextFieldYIndex.getSelectedItem().toString());
+			CommonSettingCombine separator = new CommonSettingCombine("separator",parameterTextFieldSeparator.getSelectedItem().toString());
+			CommonSettingCombine input = new CommonSettingCombine("input", "");
+			input.add(filePath,xIndex,yIndex,separator);
 
-			FileInputDataSetting input = new FileInputDataSetting();
-			input.filePath = parameterHDFSPath.getSelectedItem().toString();
-			input.xIndex = parameterTextFieldXIndex.getSelectedItem().toString();
-			input.yIndex = parameterTextFieldYIndex.getSelectedItem().toString();
-			input.separator = parameterTextFieldSeparator.getSelectedItem().toString();
+			CommonSettingCombine cacheName = new CommonSettingCombine("cacheName",parameterCacheName.getSelectedItem().toString());
+			CommonSettingCombine cacheType = new CommonSettingCombine("cacheType",(String) parameterDatabaseType.getSelectedData());
+			CommonSettingCombine serverAddresses = new CommonSettingCombine("serverAddresses",parameterServiceAddress.getSelectedItem().toString());
+			CommonSettingCombine database = new CommonSettingCombine("database",parameterDatabase.getSelectedItem().toString());
+			CommonSettingCombine version = new CommonSettingCombine("version",parameterVersion.getSelectedItem().toString());
+			CommonSettingCombine output = new CommonSettingCombine("output", "");
+			output.add(cacheName,cacheType,serverAddresses,database,version);
 
-			MongoDBOutputsetting output = new MongoDBOutputsetting();
-			output.cacheName = parameterCacheName.getSelectedItem().toString();
-			output.cacheType = (String) parameterDatabaseType.getSelectedData();
-			output.serverAdresses[0] = parameterServiceAddress.getSelectedItem().toString();
-			output.database = parameterDatabase.getSelectedItem().toString();
-			output.version = parameterVersion.getSelectedItem().toString();
+			CommonSettingCombine imageType = new CommonSettingCombine("imageType",(String) parameterCacheType.getSelectedData());
+			CommonSettingCombine bounds = new CommonSettingCombine("bounds",parameterBounds.getSelectedItem().toString());
+			CommonSettingCombine level = new CommonSettingCombine("level",parameterCacheLevel.getSelectedItem().toString());
+			CommonSettingCombine drawing = new CommonSettingCombine("drawing", "");
+			drawing.add(imageType,bounds,level);
 
-			BuildCacheDrawingSetting drawing = new BuildCacheDrawingSetting();
-			drawing.imageType = (String) parameterCacheType.getSelectedData();
-			drawing.bounds = parameterBounds.getSelectedItem().toString();
-
-			drawing.level = parameterCacheLevel.getSelectedItem().toString();
-			setting.input = input;
-			setting.output = output;
-			setting.drawing = drawing;
-			JobResultResponse response = service.query(setting);
+			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
+			commonSettingCombine.add(input,output,drawing);
+			JobResultResponse response = service.queryResult(MetaKeys.HEAT_MAP,commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				ProcessTask task = TaskUtil.getTask(this);
