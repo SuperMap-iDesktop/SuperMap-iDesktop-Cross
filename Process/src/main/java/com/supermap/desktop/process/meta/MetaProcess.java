@@ -4,6 +4,7 @@ import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.AbstractProcess;
+import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
@@ -50,6 +51,6 @@ public abstract class MetaProcess extends AbstractProcess {
 	}
 
 	public boolean isFinished() {
-		return finished;
+		return this.getStatus() == RunningStatus.COMPLETED;
 	}
 }
