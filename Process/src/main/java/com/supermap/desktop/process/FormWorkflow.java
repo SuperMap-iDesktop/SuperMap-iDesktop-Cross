@@ -23,7 +23,11 @@ import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.core.WorkflowParser;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
-import com.supermap.desktop.process.graphics.connection.*;
+import com.supermap.desktop.process.graphics.connection.DefaultGraphConnection;
+import com.supermap.desktop.process.graphics.connection.IConnectable;
+import com.supermap.desktop.process.graphics.connection.IGraphConnection;
+import com.supermap.desktop.process.graphics.connection.IOGraphConnection;
+import com.supermap.desktop.process.graphics.connection.LineGraph;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.events.GraphRemovingEvent;
@@ -255,7 +259,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		ArrayList<IGraph> iGraphs = new ArrayList<>();
 		IGraph[] graphs = getCanvas().getGraphStorage().getGraphs();
 		for (IGraph graph : graphs) {
-			if (graph instanceof OutputGraph && type.contains(((OutputGraph) graph).getProcessData().getType())) {
+			if (graph instanceof OutputGraph && type.intersects(((OutputGraph) graph).getProcessData().getType())) {
 				iGraphs.add(graph);
 			}
 		}
