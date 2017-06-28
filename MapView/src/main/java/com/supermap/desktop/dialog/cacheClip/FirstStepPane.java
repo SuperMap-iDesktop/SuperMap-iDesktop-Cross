@@ -286,6 +286,7 @@ public class FirstStepPane extends JPanel implements IState {
 			if (StringUtilities.isNullOrEmpty(textFieldServerName.getText())) {
 				textFieldServerName.setText(MapViewProperties.getString("MapCache_MongoDB_DefaultServerName"));
 			}
+			mongoDBConnectSate = isDBValidate();
 			updateDBNames();
 			fireEnabled(enabled());
 		}
@@ -571,6 +572,7 @@ public class FirstStepPane extends JPanel implements IState {
 				this.comboBoxMutiTenseVersion.setVisible(false);
 				this.mapCacheBuilder.setStorageType(StorageType.MongoDB);
 			}
+			mongoDBConnectSate = isDBValidate();
 			updateDBNames();
 		}
 	}
@@ -579,6 +581,10 @@ public class FirstStepPane extends JPanel implements IState {
 	 * 检查链接是否可用
  	 */
 	private void updateDBNames() {
+		if(!mongoDBConnectSate){
+			this.comboBoxDatabaseName.removeAllItems();
+			return;//如果IP都不对就直接返回，不然输一个字符获取一次列表，IP不对的情况下会很慢的
+		}
 		String serverName = textFieldServerName.getText();
 		String userName = textFieldUserName.getText();
 		String password = new String(textFieldUserPassword.getPassword());
@@ -589,7 +595,14 @@ public class FirstStepPane extends JPanel implements IState {
 			//先尝试非验证模式--用户名密码为空
 			String[] names = Toolkit.GetMongoDBNames(serverName, "", "");
 			databaseNames.addAll(Arrays.asList(names));
+			//非验证模式直接置灰账号输入--根据组件mongo2.6测试报告，非验证模式下输入密码没有必要
+			this.textFieldUserName.setText(null);
+			this.textFieldUserPassword.setText(null);
+			this.textFieldUserName.setEnabled(false);
+			this.textFieldUserPassword.setEnabled(false);
 		}catch (Exception e){
+			this.textFieldUserName.setEnabled(true);
+			this.textFieldUserPassword.setEnabled(true);
 			//再尝试验证模式--输入用户名密码
 			try {
 				databaseNames.clear();
@@ -602,7 +615,6 @@ public class FirstStepPane extends JPanel implements IState {
 
 		if(databaseNames.size() ==0){
 			//认证模式下，输入正确的用户名密码，得到列表之后选择，然后再修改为普通用户，此时不希望刚才的选择被清除掉。
-			//非认证模式下，得不到新列表也不用刷新combobox了。
 			this.comboBoxDatabaseName.removeAllItems();
 			if(dbName != null){
 				this.comboBoxDatabaseName.setSelectedItem(dbName);
@@ -769,14 +781,13 @@ public class FirstStepPane extends JPanel implements IState {
 
 	//Validate username and user password is empty
 	private boolean isEmptyUserNameAndUserPassword() {
-		//用户名密码应该始终可用，注释掉
-		/*boolean result = true;
+		boolean result = true;
 		if (this.textFieldUserName.isVisible() && this.textFieldUserName.isEnabled() && this.textFieldUserPassword.isVisible() && this.textFieldUserPassword.isEnabled()) {
 			if (this.textFieldUserName.getText().isEmpty() || this.textFieldUserPassword.getText().isEmpty()) {
 				result = false;
 			}
-		}*/
-		return true;
+		}
+		return result;
 	}
 
 	//Validate password is same
