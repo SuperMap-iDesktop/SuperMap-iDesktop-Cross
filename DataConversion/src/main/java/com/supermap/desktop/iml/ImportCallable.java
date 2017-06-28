@@ -1,7 +1,18 @@
 package com.supermap.desktop.iml;
 
-import com.supermap.data.*;
-import com.supermap.data.conversion.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetVector;
+import com.supermap.data.Datasources;
+import com.supermap.data.FieldInfo;
+import com.supermap.data.SpatialIndexType;
+import com.supermap.data.conversion.DataImport;
+import com.supermap.data.conversion.FileType;
+import com.supermap.data.conversion.ImportMode;
+import com.supermap.data.conversion.ImportResult;
+import com.supermap.data.conversion.ImportSetting;
+import com.supermap.data.conversion.ImportSettingWOR;
+import com.supermap.data.conversion.ImportSteppedEvent;
+import com.supermap.data.conversion.ImportSteppedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.UserDefineType.ImportSettingGPX;
 import com.supermap.desktop.UserDefineType.UserDefineImportResult;
@@ -20,7 +31,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CancellationException;
 
 /**
@@ -45,10 +60,8 @@ public class ImportCallable extends UpdateProgressCallable {
         final HashMap<String, Integer> map = new HashMap<String, Integer>();
         Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
         for (int i = 0; i < datasources.getCount(); i++) {
-            map.put(datasources.get(i).getAlias(), 0);
+	        map.put(datasources.get(i).getAlias(), 0);
         }
-        // 不用了先置空回收对象
-        datasources = null;
         try {
             for (int i = 0; i < fileInfos.size(); i++) {
                 DataImport dataImport = new DataImport();

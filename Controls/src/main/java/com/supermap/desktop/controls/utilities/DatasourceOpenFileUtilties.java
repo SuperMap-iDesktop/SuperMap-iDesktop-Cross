@@ -275,7 +275,7 @@ public class DatasourceOpenFileUtilties {
 					CursorUtilities.setDefaultCursor();
 				}
 				if (resultDatasource != null) {
-					UICommonToolkit.refreshSelectedDatasourceNode(resultDatasource.getAlias());
+					UICommonToolkit.selectedDatasourceNode(resultDatasource.getAlias());
 					RecentFileUtilties.addDatasourceToRecentFile(resultDatasource);
 					return resultDatasource;
 				} else if (!StringUtilities.isNullOrEmpty(errorMessage)) {
@@ -333,7 +333,7 @@ public class DatasourceOpenFileUtilties {
 									}
 								}
 								if (datasource != null) {
-									UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
+									UICommonToolkit.selectedDatasourceNode(datasource.getAlias());
 									RecentFileUtilties.addDatasourceToRecentFile(datasource);
 								}
 								return result;
