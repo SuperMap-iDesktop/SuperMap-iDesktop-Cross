@@ -59,7 +59,7 @@ public class CtrlActionRun extends CtrlAction {
 		}
 
 		TasksManagerContainer container = TaskUtil.getManagerContainer(true);
-		container.clear();
+//		container.clear();
 		Vector list = nodeMatrix.getNodes();
 		for (int i = 0; i < list.size(); i++) {
 			if (list.get(i) instanceof IProcess) {

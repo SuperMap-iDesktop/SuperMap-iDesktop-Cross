@@ -102,6 +102,15 @@ public class TasksManager {
 		return workers;
 	}
 
+	public final static int[] getWorkerStates() {
+		return new int[]{WORKER_STATE_CANCELLED,
+				WORKER_STATE_COMPLETED,
+				WORKER_STATE_EXCEPTION,
+				WORKER_STATE_READY,
+				WORKER_STATE_RUNNING,
+				WORKER_STATE_WAITING};
+	}
+
 //	public IWorkflowExecutor getExecutor() {
 //		return executor;
 //	}

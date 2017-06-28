@@ -1,20 +1,17 @@
 package com.supermap.desktop.process.tasks;
 
-import com.sun.org.apache.bcel.internal.generic.RET;
-
 import javax.swing.*;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.GroupLayout.Group;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TasksManagerContainer extends JPanel implements WorkerStateChangedListener {
+/**
+ * Created by highsad on 2017/6/28.
+ */
+public class TasksManagerPanel extends JPanel implements WorkerStateChangedListener {
 
 	/**
 	 *
@@ -38,7 +35,7 @@ public class TasksManagerContainer extends JPanel implements WorkerStateChangedL
 
 	private Map<ProcessWorker, SingleProgressPanel> map = new ConcurrentHashMap<>();
 
-	public TasksManagerContainer() {
+	public TasksManagerPanel() {
 		initializeComponents();
 		initializeResources();
 		validatePanelsTitle();
@@ -102,7 +99,7 @@ public class TasksManagerContainer extends JPanel implements WorkerStateChangedL
 		groupLayout.setAutoCreateGaps(true);
 		setLayout(groupLayout);
 
-		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(Alignment.LEADING)
+		groupLayout.setHorizontalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addComponent(this.panelRunning, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 				.addComponent(this.panelReady, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 				.addComponent(this.panelWaiting, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -247,4 +244,3 @@ public class TasksManagerContainer extends JPanel implements WorkerStateChangedL
 		moveWorker(worker, e.getOldState(), e.getNewState());
 	}
 }
-
