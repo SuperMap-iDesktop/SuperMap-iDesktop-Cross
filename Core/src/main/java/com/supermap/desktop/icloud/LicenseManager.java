@@ -37,13 +37,12 @@ import java.util.Iterator;
 public class LicenseManager {
     private static final String LIC_DIRCTORY = "../Configuration";
 	//    private static final String ONLINE_LICENSEFILE = ONLINE_DIRCTORY + ComputerUtilities.getComputerName() + "_8C.lic";
-	private static com.supermap.data.ProductType productType;
 	private static final com.supermap.data.ProductType[] supportProductTypes = new com.supermap.data.ProductType[]{
 			com.supermap.data.ProductType.IOBJECTS_CORE_DEVELOP,
+			com.supermap.data.ProductType.IDESKTOP_PROFESSIONAL,
 			com.supermap.data.ProductType.IDESKTOP_ADVANCED,
 			com.supermap.data.ProductType.IDESKTOP_STANDARD,
-			com.supermap.data.ProductType.IDESKTOP_PROFESSIONAL,
-			com.supermap.data.ProductType.IDESKTOP_CHART,
+
 			com.supermap.data.ProductType.IDESKTOP_TOPOLOGY,
 			com.supermap.data.ProductType.IDESKTOP_TRAFFICNETWORK,
 			com.supermap.data.ProductType.IDESKTOP_FACILITYNETWORK,
@@ -54,7 +53,6 @@ public class LicenseManager {
 			com.supermap.data.ProductType.IDESKTOP_TRAFFICANALYST,
 			com.supermap.data.ProductType.IDESKTOP_REALSPACE_EFFECT
 	};
-
 
 
     /**
@@ -173,20 +171,15 @@ public class LicenseManager {
      * @return
      */
     public static boolean valiteLicense() {
-        License license = new License();
+	    boolean result = false;
+	    License license = new License();
 	    for (com.supermap.data.ProductType supportProductType : supportProductTypes) {
-		    int valite = license.connect(supportProductType);
-		    if (valite == 0) {
-			    productType = supportProductType;
-			    return true;
+		    if (license.connect(supportProductType) == 0) {
+			    result = true;
 		    }
 	    }
-	    return false;
+	    return result;
     }
-
-	public static com.supermap.data.ProductType getProductType() {
-		return productType;
-	}
 
     /**
      * 申请试用许可,许可可用将生成本地文件来存储试用许可以便启动桌面
