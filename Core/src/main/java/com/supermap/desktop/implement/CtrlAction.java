@@ -34,8 +34,15 @@ public abstract class CtrlAction implements ICtrlAction {
 		this.formClass = form;
 	}
 
+
 	@Override
-	public void run() {
+	public final void doRun() {
+
+		run();
+	}
+
+	protected void run() {
+
 	}
 
 	@Override

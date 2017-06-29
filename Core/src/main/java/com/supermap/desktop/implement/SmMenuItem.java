@@ -76,7 +76,7 @@ public class SmMenuItem extends JCheckBoxMenuItem implements IBaseItem {
         try {
             if (this.getCtrlAction() != null) {
                 this.getCtrlAction().setCaller(this);
-                this.getCtrlAction().run();
+	            this.getCtrlAction().doRun();
             } else {
                 Application.getActiveApplication().getOutput().output("CtrlAction Unimplemented!");
                 JOptionPaneUtilities.showMessageDialog(this.xmlCommand.getCtrlActionClass() + " Unimplemented!");
