@@ -19,6 +19,7 @@ import com.supermap.desktop.utilities.ArrayUtilities;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
@@ -74,6 +75,7 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 			public void itemStateChanged(ItemEvent e) {
 				if (!isSelectingItem && (e.getStateChange() == ItemEvent.SELECTED || comboBox.getSelectedItem() == null)) {
 					isSelectingItem = true;
+					comboBox.setSelectedItem(((FieldInfo) comboBox.getSelectedItem()).getCaption());
 					parameterFieldComboBox.setSelectedItem(comboBox.getSelectedItem());
 					isSelectingItem = false;
 				}
@@ -82,12 +84,15 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 	}
 
 	private void initComponentState() {
+
+		comboBox.setEditable(parameterFieldComboBox.isEditable());
 		comboBox.setRenderer(new ListCellRenderer<FieldInfo>() {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends FieldInfo> list, FieldInfo value, int index, boolean isSelected, boolean cellHasFocus) {
 				JLabel jLabel = new JLabel();
 				if (value != null) {
 					jLabel.setText(value.getCaption());
+					comboBox.getEditor().setItem(value.getCaption());
 				} else {
 					jLabel.setText(" ");
 				}

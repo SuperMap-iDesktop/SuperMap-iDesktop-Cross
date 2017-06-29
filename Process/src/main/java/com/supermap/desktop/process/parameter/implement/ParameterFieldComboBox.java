@@ -27,6 +27,7 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 	private String describe;
 	private boolean isShowNullValue = false;
 	private boolean isShowSystemField = false;
+	private boolean isEditable = false;
 
 	public ParameterFieldComboBox() {
 		super();
@@ -104,6 +105,13 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 		DatasetVector oldValue = this.dataset;
 		this.dataset = dataset;
 		firePropertyChangeListener(new PropertyChangeEvent(this, DATASET_FIELD_NAME, oldValue, this.dataset));
+	}
+	public boolean isEditable() {
+		return this.isEditable;
+	}
+
+	public void setEditable(boolean isEditable) {
+		this.isEditable = isEditable;
 	}
 
 }
