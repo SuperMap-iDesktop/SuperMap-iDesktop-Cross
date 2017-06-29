@@ -37,8 +37,7 @@ import java.util.Iterator;
 public class LicenseManager {
     private static final String LIC_DIRCTORY = "../Configuration";
 	//    private static final String ONLINE_LICENSEFILE = ONLINE_DIRCTORY + ComputerUtilities.getComputerName() + "_8C.lic";
-	private static final com.supermap.data.ProductType[] supportProductTypes = new com.supermap.data.ProductType[]{
-			com.supermap.data.ProductType.IOBJECTS_CORE_DEVELOP,
+	private static final com.supermap.data.ProductType[] desktopProductTypes = new com.supermap.data.ProductType[]{
 			com.supermap.data.ProductType.IDESKTOP_PROFESSIONAL,
 			com.supermap.data.ProductType.IDESKTOP_ADVANCED,
 			com.supermap.data.ProductType.IDESKTOP_STANDARD,
@@ -171,9 +170,13 @@ public class LicenseManager {
      * @return
      */
     public static boolean valiteLicense() {
-	    boolean result = false;
 	    License license = new License();
-	    for (com.supermap.data.ProductType supportProductType : supportProductTypes) {
+	    int connect = license.connect(com.supermap.data.ProductType.IOBJECTS_CORE_DEVELOP);
+	    if (connect == 0) {
+		    return true;
+	    }
+	    boolean result = false;
+	    for (com.supermap.data.ProductType supportProductType : desktopProductTypes) {
 		    if (license.connect(supportProductType) == 0) {
 			    result = true;
 		    }
