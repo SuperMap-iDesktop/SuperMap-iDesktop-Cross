@@ -1,16 +1,23 @@
 package com.supermap.desktop.ui.controls;
 
+import com.supermap.data.DatasetType;
+import com.supermap.data.DatasetVectorInfo;
 import com.supermap.data.Datasource;
 import com.supermap.data.DatasourceConnectionInfo;
 import com.supermap.data.Datasources;
 import com.supermap.data.EngineType;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
+import com.supermap.desktop.utilities.XmlUtilities;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -287,6 +294,9 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 				Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_OpenDatasourceSuccessful"));
 				connFlag = LOAD_DATASOURCE_SUCCESSFUL;
 				UICommonToolkit.refreshSelectedDatasourceNode(datasourceName);
+				if (engineType == EngineType.DATASERVER) {
+					openBigDataStorePG(datasource);
+				}
 			}
 		} catch (Exception ex) {
 			connFlag = LOAD_DATASOURCE_EXCEPTION;
@@ -294,6 +304,45 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 			Application.getActiveApplication().getOutput().output(ControlsProperties.getString("String_OpenDatasetDatasourceFaild"));
 		}
 		return connFlag;
+	}
+
+	private void openBigDataStorePG(Datasource datasource) {
+		if (datasource != null) {
+			Workspace workspace = null;
+			if (datasource.getDatasets().getCount() <= 0) {
+				datasource.getDatasets().create(new DatasetVectorInfo("new_point", DatasetType.POINT));
+				workspace = new Workspace();
+				DatasourceConnectionInfo datasourceConnectionInfo = new DatasourceConnectionInfo();
+				datasourceConnectionInfo.setEngineType(EngineType.DATASERVER);
+				datasourceConnectionInfo.setServer(datasource.getConnectionInfo().getServer());
+				datasourceConnectionInfo.setAlias("datasource");
+				datasource = workspace.getDatasources().open(datasourceConnectionInfo);
+			}
+			String description = datasource.getDatasets().get(0).getDescription();
+			Document rootNode = XmlUtilities.stringToDocument(description);
+			Node datasourceNode = rootNode.getChildNodes().item(0);
+			String server = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:Server").getChildNodes().item(0).getNodeValue();
+			String driver = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:Driver").getChildNodes().item(0).getNodeValue();
+			String database = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:Database").getChildNodes().item(0).getNodeValue();
+			String user = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:User").getChildNodes().item(0).getNodeValue();
+			String password = XmlUtilities.getChildElementNodeByName(datasourceNode, "sml:Password").getChildNodes().item(0).getNodeValue();
+
+			DatasourceConnectionInfo datasourceConnectionInfo = new DatasourceConnectionInfo();
+			datasourceConnectionInfo.setEngineType(EngineType.POSTGRESQL);
+			datasourceConnectionInfo.setDriver(server);
+			datasourceConnectionInfo.setUser(user);
+			datasourceConnectionInfo.setPassword(password);
+			datasourceConnectionInfo.setDatabase(database);
+			datasourceConnectionInfo.setAlias(DatasourceUtilities.getAvailableDatasourceAlias((datasource.getAlias() + "_PG"), 0));
+			Application.getActiveApplication().getWorkspace().getDatasources().open(datasourceConnectionInfo);
+
+			if (workspace != null) {
+				workspace.getDatasources().get(0).getDatasets().delete(0);
+				workspace.getDatasources().close(0);
+				workspace.close();
+				workspace.dispose();
+			}
+		}
 	}
 
 	private void initResources() {
