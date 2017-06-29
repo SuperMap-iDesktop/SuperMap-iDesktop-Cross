@@ -15,9 +15,9 @@ import java.awt.*;
  */
 public class ConnectionLineGraph extends LineGraph {
 	private final static String DECORATOR_KEY_LINE_MESSAGE = "DecoratorLineMessageKey";
-	private IGraphConnection connection;
+	private IGraph from;
+	private IGraph to;
 	private LineMessageDecorator messageDecorator;
-	private boolean isEditable = true;
 	private boolean isSelected = true;
 
 
@@ -35,24 +35,32 @@ public class ConnectionLineGraph extends LineGraph {
 		}
 	};
 
-	public ConnectionLineGraph(GraphCanvas canvas, IGraphConnection connection) {
-		super(canvas);
-		this.connection = connection;
-		IGraph startGraph = this.connection.getStartGraph();
-		IGraph endGraph = this.connection.getEndGraph();
+	public ConnectionLineGraph(GraphCanvas canvas, IGraph from, IGraph to) {
+		this(canvas, from, to, null);
+	}
 
-		this.messageDecorator = new LineMessageDecorator(getCanvas(), this.connection.getMessage());
+
+	public ConnectionLineGraph(GraphCanvas canvas, IGraph from, IGraph to, String message) {
+		super(canvas);
+		this.from = from;
+		this.to = to;
+
+		this.messageDecorator = new LineMessageDecorator(getCanvas(), message);
 		addDecorator(DECORATOR_KEY_LINE_MESSAGE, this.messageDecorator);
 
-		if (startGraph != null && endGraph != null) {
+		if (this.from != null && this.to != null) {
 			computeFirstAndLastPoints();
-			startGraph.addGraphBoundsChangedListener(this.startGraphBoundsChangedListener);
-			endGraph.addGraphBoundsChangedListener(this.endGraphBoundsChangedListener);
+			this.from.addGraphBoundsChangedListener(this.startGraphBoundsChangedListener);
+			this.to.addGraphBoundsChangedListener(this.endGraphBoundsChangedListener);
 		}
 	}
 
-	public IGraphConnection getConnection() {
-		return this.connection;
+	public IGraph getFrom() {
+		return this.from;
+	}
+
+	public IGraph getTo() {
+		return this.to;
 	}
 
 	public boolean isSelected() {
@@ -72,16 +80,13 @@ public class ConnectionLineGraph extends LineGraph {
 	}
 
 	private void computeFirstAndLastPoints() {
-		IGraph start = this.connection.getStartGraph();
-		IGraph end = this.connection.getEndGraph();
-
-		if (start != null && end != null) {
-			Point p = getPointCount() > 2 ? getPoint(1) : end.getCenter();
-			Point firstPoint = GraphicsUtil.chop(((AbstractGraph) start).getShape(), p);
+		if (this.from != null && this.to != null) {
+			Point p = getPointCount() > 2 ? getPoint(1) : this.to.getCenter();
+			Point firstPoint = GraphicsUtil.chop(((AbstractGraph) this.from).getShape(), p);
 			setFirstPoint(firstPoint);
 
-			p = getPointCount() > 2 ? getPoint(getPointCount() - 1) : start.getCenter();
-			Point lastPoint = GraphicsUtil.chop(((AbstractGraph) end).getShape(), p);
+			p = getPointCount() > 2 ? getPoint(getPointCount() - 1) : this.from.getCenter();
+			Point lastPoint = GraphicsUtil.chop(((AbstractGraph) this.to).getShape(), p);
 			setLastPoint(lastPoint);
 		}
 	}

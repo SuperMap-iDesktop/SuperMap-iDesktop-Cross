@@ -35,19 +35,14 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 
 	private Map<ProcessWorker, SingleProgressPanel> map = new ConcurrentHashMap<>();
 
-	public TasksManagerPanel() {
-		initializeComponents();
-		initializeResources();
-		validatePanelsTitle();
-		validatePanelsVisible();
-	}
-
-	public void setTasksManager(TasksManager tasksManager) {
-		if (this.tasksManager != null) {
-			unloadTasksManager();
+	public TasksManagerPanel(TasksManager tasksManager) {
+		if (tasksManager == null) {
+			throw new NullPointerException();
 		}
 
 		this.tasksManager = tasksManager;
+		initializeComponents();
+		initializeResources();
 		loadTasksManager();
 	}
 
@@ -60,7 +55,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		}
 	}
 
-	private void unloadTasksManager() {
+	public void clear() {
 		clearPanels();
 		validatePanelsVisible();
 		this.tasksManager.removeWorkerStateChangeListener(this);

@@ -6,7 +6,17 @@ package com.supermap.desktop.process.core;
 public class DirectConnect implements IRelation {
 
 	@Override
-	public void relate(Object from, Object to) {
+	public Object getForm() {
+		return null;
+	}
+
+	@Override
+	public Object getTo() {
+		return null;
+	}
+
+	@Override
+	public void relate() {
 
 	}
 

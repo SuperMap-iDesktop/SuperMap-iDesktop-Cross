@@ -58,6 +58,9 @@ import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by highsad on 2017/1/6.
@@ -65,6 +68,7 @@ import java.util.ArrayList;
 public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	private Workflow workflow;
 
+	private Map<IProcess, Rectangle> boundsMap = new HashMap<>();
 	private TasksManager tasksManager;
 	private GraphCanvas canvas;
 	private boolean isNeedSave = true;
@@ -479,58 +483,6 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 	public GraphCanvas getCanvas() {
 		return this.canvas;
-	}
-
-	public void addProcess(IProcess process) {
-		if (process instanceof MetaProcessGroup) {
-//			graph = new ProcessGroupGraph();
-			ArrayList<MetaProcess> addedMetaProcesses = new ArrayList<>();
-			MetaProcessGroup processGroup = (MetaProcessGroup) process;
-			int processCount = processGroup.getProcessCount();
-			if (processCount > 0) {
-				MetaProcess metaProcess = processGroup.getMetaProcess(0);
-				addSubProcess(processGroup, metaProcess, addedMetaProcesses, 0, 0);
-
-				int i = 0;
-				while (addedMetaProcesses.size() != processCount) {
-					for (; i < processCount; i++) {
-						if (!addedMetaProcesses.contains(processGroup.getMetaProcess(i))) {
-							addSubProcess(processGroup, processGroup.getMetaProcess(i), addedMetaProcesses, 0, 0);
-							break;
-						}
-					}
-				}
-			}
-		} else {
-			IGraph graph = new ProcessGraph(this.canvas, process);
-			this.canvas.create(graph);
-		}
-	}
-
-	private IGraph addSubProcess(MetaProcessGroup processGroup, MetaProcess currentMetaProcess, ArrayList<MetaProcess> addedMetaProcesses, int level, int YLevel) {
-		IGraph graph = null;
-		if (!addedMetaProcesses.contains(currentMetaProcess)) {
-			graph = new ProcessGraph(this.canvas, currentMetaProcess);
-			graph.setLocation(new Point(getLocation().x + level * 100, getLocation().y + YLevel));
-			this.canvas.create(graph);
-			addedMetaProcesses.add(currentMetaProcess);
-		} else {
-			IGraph[] graphs = getCanvas().getGraphStorage().getGraphs();
-			for (IGraph iGraph : graphs) {
-				if (iGraph instanceof ProcessGraph && ((ProcessGraph) iGraph).getProcess() == currentMetaProcess) {
-					graph = iGraph;
-					break;
-				}
-			}
-		}
-		ArrayList<MetaProcess> subMetaProcesses = processGroup.getSubMetaProcess(currentMetaProcess);
-		level++;
-		for (int i = 0; i < subMetaProcesses.size(); i++) {
-			MetaProcess subMetaProcess = subMetaProcesses.get(i);
-			IGraph subProcess = addSubProcess(processGroup, subMetaProcess, addedMetaProcesses, level, 200 * (i - subMetaProcesses.size() / 2));
-			getCanvas().getGraphStorage().getConnectionManager().connect(((ProcessGraph) graph), ((ProcessGraph) subProcess));
-		}
-		return graph;
 	}
 
 	private class FormProcessDropTargetAdapter extends DropTargetAdapter {

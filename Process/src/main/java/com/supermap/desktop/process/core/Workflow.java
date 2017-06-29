@@ -16,7 +16,7 @@ public class Workflow implements IWorkflow {
 	private String name = "workflow";
 
 	private NodeMatrix<IProcess> processMatrix;
-	private List<IRelation> relations = new ArrayList<>();
+
 	private EventListenerList listenerList = new EventListenerList();
 
 	private MatrixEventHandler handler = new MatrixEventHandler();
@@ -57,6 +57,10 @@ public class Workflow implements IWorkflow {
 	@Override
 	public void fromXML(String xmlDescription) {
 
+	}
+
+	public Vector<IRelation<IProcess>> getRelations() {
+		return this.processMatrix.getRelations();
 	}
 
 	public void addProcess(IProcess process) {
@@ -103,6 +107,30 @@ public class Workflow implements IWorkflow {
 
 	public void removeWorkflowChangeListener(WorkflowChangeListener listener) {
 		this.listenerList.remove(WorkflowChangeListener.class, listener);
+	}
+
+	public void addRelationAddedListener(RelationAddedListener<IProcess> listener) {
+		this.processMatrix.addRelationAddedListener(listener);
+	}
+
+	public void removeRelationAddedListener(RelationAddedListener<IProcess> listener) {
+		this.processMatrix.removeRelationAddedListener(listener);
+	}
+
+	public void addRelationRemovingListener(RelationRemovingListener<IProcess> listener) {
+		this.processMatrix.addRelationRemovingListener(listener);
+	}
+
+	public void removeRelationRemovingListener(RelationRemovingListener<IProcess> listener) {
+		this.processMatrix.addRelationRemovingListener(listener);
+	}
+
+	public void addRelationRemovedListener(RelationRemovedListener<IProcess> listener) {
+		this.processMatrix.addRelationRemovedListener(listener);
+	}
+
+	public void removeRelationRemovedListener(RelationRemovedListener<IProcess> listener) {
+		this.processMatrix.removeRelationRemovedListener(listener);
 	}
 
 	protected void fireWorkflowChange(WorkflowChangeEvent e) {

@@ -359,8 +359,8 @@ public class NodeMatrix<T extends Object> {
 		return nodes;
 	}
 
-	public synchronized Vector<IRelation> getRelations() {
-		Vector<IRelation> relations = new Vector<>();
+	public synchronized Vector<IRelation<T>> getRelations() {
+		Vector<IRelation<T>> relations = new Vector<>();
 
 		for (int i = 0, size = this.matrix.size(); i < size; i++) {
 			relations.addAll(this.matrix.get(i).values());

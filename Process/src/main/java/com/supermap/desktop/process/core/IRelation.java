@@ -6,13 +6,15 @@ package com.supermap.desktop.process.core;
  * or more nodes)
  */
 public interface IRelation<T> {
+
+	T getForm();
+
+	T getTo();
+
 	/**
 	 * how to relate.
-	 *
-	 * @param from
-	 * @param to
 	 */
-	void relate(T from, T to);
+	void relate();
 
 	/**
 	 * clear relation
