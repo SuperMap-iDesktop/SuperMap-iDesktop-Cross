@@ -4,11 +4,7 @@ import com.supermap.data.CoordSysTransMethod;
 import com.supermap.data.CoordSysTransParameter;
 import com.supermap.data.CoordSysTranslator;
 import com.supermap.data.Dataset;
-import com.supermap.data.GeoCoordSys;
-import com.supermap.data.GeoCoordSysType;
-import com.supermap.data.GeoSpatialRefType;
 import com.supermap.data.PrjCoordSys;
-import com.supermap.data.PrjCoordSysType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
@@ -17,22 +13,24 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
+import com.supermap.desktop.process.parameter.implement.ParameterButton;
 import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.implement.ParameterEnum;
 import com.supermap.desktop.process.parameter.implement.ParameterNumber;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
-import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoordSysTransMethodProperties;
-import com.supermap.desktop.properties.CoreProperties;
+import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -42,9 +40,13 @@ import java.beans.PropertyChangeListener;
 public class MetaProcessProjection extends MetaProcess {
 	private final static String INPUT_DATA = "InputData";
 	private final static String OUTPUT_DATA = "output";
+
+	private PrjCoordSys prjCoordSys;
 	private ParameterDatasourceConstrained parameterDatasource;
 	private ParameterSingleDataset parameterDataset;
-	private ParameterEnum projectionSettingComboBox;
+
+	private ParameterButton parameterProjection = new ParameterButton(ProcessProperties.getString("String_chooseProjection"));
+
 	private ParameterComboBox parameterMode = new ParameterComboBox(ControlsProperties.getString("String_TransMethod"));
 	private ParameterNumber parameterScaleDifference = new ParameterNumber(ControlsProperties.getString("String_ScaleDifference"));
 	private ParameterNumber parameterTextFieldAngleX = new ParameterNumber("X:");
@@ -68,23 +70,6 @@ public class MetaProcessProjection extends MetaProcess {
 		parameterDataset = new ParameterSingleDataset();
 		parameterDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 
-		String[] parameterDataNodes = new String[]{
-				// fixme 随便加了几个投影
-				GeoCoordSysType.GCS_ADINDAN.name(),
-				GeoCoordSysType.GCS_WGS_1984.name(),
-				GeoCoordSysType.GCS_AGD_1966.name(),
-				GeoCoordSysType.GCS_AGD_1984.name(),
-				GeoCoordSysType.GCS_AIRY_MOD.name(),
-				GeoCoordSysType.GCS_ARC_1960.name(),
-				GeoCoordSysType.GCS_AIN_EL_ABD_1970.name(),
-				GeoCoordSysType.GCS_ANTIGUA_ISLAND_1943.name(),
-				GeoCoordSysType.GCS_CAPE.name(),
-				GeoCoordSysType.GCS_BESSEL_1841.name()
-		};
-		String[] ch = new String[]{"GCS_ADINDAN", "GCS_WGS_1984", "GCS_AGD_1966", "GCS_AGD_1984", "GCS_AIRY_MOD", "GCS_ARC_1960", "GCS_AIN_EL_ABD_1970",
-				"GCS_ANTIGUA_ISLAND_1943", "GCS_CAPE", "GCS_BESSEL_1841"};
-		projectionSettingComboBox = new ParameterEnum(new EnumParser(GeoCoordSysType.class, parameterDataNodes, ch)).setDescribe(CoreProperties.getString("String_ProjectionInfo"));
-		projectionSettingComboBox.setSelectedItem("GCS_WGS_1984");
 
 		ParameterCombine parameterCombineSource = new ParameterCombine();
 		parameterCombineSource.setDescribe(SOURCE_PANEL_DESCRIPTION);
@@ -98,11 +83,12 @@ public class MetaProcessProjection extends MetaProcess {
 				new ParameterDataNode(CoordSysTransMethodProperties.getString(CoordSysTransMethodProperties.CoordinateFrame), CoordSysTransMethod.MTH_COORDINATE_FRAME),
 				new ParameterDataNode(CoordSysTransMethodProperties.getString(CoordSysTransMethodProperties.BursaWolf), CoordSysTransMethod.MTH_BURSA_WOLF)
 		);
-
-
 		ParameterCombine parameterCombineSetting = new ParameterCombine();
 		parameterCombineSetting.setDescribe(SETTING_PANEL_DESCRIPTION);
-		parameterCombineSetting.addParameters(projectionSettingComboBox, parameterMode, parameterScaleDifference);
+		ParameterCombine parameterCombine = new ParameterCombine(ParameterCombine.HORIZONTAL);
+		parameterCombine.addParameters(parameterMode, parameterProjection);
+		parameterCombine.setWeightIndex(0);
+		parameterCombineSetting.addParameters(parameterCombine, parameterScaleDifference);
 
 		ParameterCombine parameterCombineRotation = new ParameterCombine();
 		parameterCombineRotation.setDescribe(ControlsProperties.getString("String_Rotation"));
@@ -113,7 +99,7 @@ public class MetaProcessProjection extends MetaProcess {
 		parameterOffset.addParameters(parameterTextFieldOffsetX, parameterTextFieldOffsetY, parameterTextFieldOffsetZ);
 
 		parameters.setParameters(parameterCombineSource, parameterCombineSetting, parameterCombineRotation, parameterOffset);
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.DATASET, parameterDatasource, parameterDataset);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.DATASET, parameterCombineSource);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.DATASET, parameterDataset);
 	}
 
@@ -157,6 +143,15 @@ public class MetaProcessProjection extends MetaProcess {
 				}
 			}
 		});
+		parameterProjection.setActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JDialogPrjCoordSysSettings jDialogPrjCoordSysSettings = new JDialogPrjCoordSysSettings();
+				if (jDialogPrjCoordSysSettings.showDialog() == DialogResult.OK) {
+					prjCoordSys = jDialogPrjCoordSysSettings.getPrjCoordSys();
+				}
+			}
+		});
 	}
 
 	@Override
@@ -176,10 +171,6 @@ public class MetaProcessProjection extends MetaProcess {
 				src = (Dataset) this.parameterDataset.getSelectedItem();
 			}
 			fireRunning(new RunningEvent(this, 0, "Start set geoCoorSys"));
-			GeoCoordSysType geoCoordSysType = (GeoCoordSysType) projectionSettingComboBox.getSelectedData();
-			GeoCoordSys geoCoordSys = new GeoCoordSys(geoCoordSysType, GeoSpatialRefType.SPATIALREF_EARTH_LONGITUDE_LATITUDE);
-			PrjCoordSys prjCoordSys = new PrjCoordSys(PrjCoordSysType.PCS_EARTH_LONGITUDE_LATITUDE);
-			prjCoordSys.setGeoCoordSys(geoCoordSys);
 
 			CoordSysTransMethod method = (CoordSysTransMethod) parameterMode.getSelectedData();
 
