@@ -7,14 +7,9 @@ package com.supermap.desktop.process.core;
  */
 public interface IRelation<T> {
 
-	T getForm();
+	T getFrom();
 
 	T getTo();
-
-	/**
-	 * how to relate.
-	 */
-	void relate();
 
 	/**
 	 * clear relation

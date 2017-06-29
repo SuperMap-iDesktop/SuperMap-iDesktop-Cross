@@ -80,6 +80,10 @@ public class Outputs {
 		return result;
 	}
 
+	public boolean isContains(String name) {
+		return this.datas.containsKey(name);
+	}
+
 	public int getCount() {
 		return this.datas.size();
 	}

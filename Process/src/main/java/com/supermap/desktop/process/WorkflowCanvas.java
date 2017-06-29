@@ -1,23 +1,20 @@
 package com.supermap.desktop.process;
 
-import com.supermap.desktop.event.WorkFlowsChangedEvent;
-import com.supermap.desktop.event.WorkFlowsChangedListener;
-import com.supermap.desktop.implement.Output;
+import com.supermap.desktop.process.core.DataMatch;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.IRelation;
 import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.events.*;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
-import com.supermap.desktop.process.graphics.connection.DefaultGraphConnection;
-import com.supermap.desktop.process.graphics.connection.LineGraph;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedEvent;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
+import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
-import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.util.Map;
 import java.util.Vector;
@@ -28,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class WorkflowCanvas extends GraphCanvas
 		implements WorkflowChangeListener, RelationAddedListener<IProcess>,
-		RelationRemovedListener<IProcess>, GraphBoundsChangedListener {
+		RelationRemovingListener<IProcess>, GraphBoundsChangedListener {
 	private Workflow workflow;
 	private Map<Object, Point> locationMap;
 
@@ -55,7 +52,7 @@ public class WorkflowCanvas extends GraphCanvas
 
 		this.workflow.addWorkflowChangeListener(this);
 		this.workflow.addRelationAddedListener(this);
-		this.workflow.addRelationRemovedListener(this);
+		this.workflow.addRelationRemovingListener(this);
 	}
 
 	private void loadProcesses(Vector<IProcess> processes) {
@@ -143,6 +140,19 @@ public class WorkflowCanvas extends GraphCanvas
 		for (int i = 0; i < relations.size(); i++) {
 			IRelation<IProcess> relation = relations.get(i);
 
+			if (relation instanceof DataMatch) {
+				DataMatch dataMatch = (DataMatch) relation;
+				IGraph fromGraph = this.outputMap.get(dataMatch.getFromOutputData());
+				IGraph toGraph = this.processMap.get(dataMatch.getTo());
+
+				ConnectionLineGraph connectionLineGraph = new ConnectionLineGraph(this, fromGraph, toGraph);
+
+				// 添加到 map
+				this.relationMap.put(relation, connectionLineGraph);
+
+				// 添加到画布
+				addGraph(connectionLineGraph);
+			}
 		}
 	}
 
@@ -159,12 +169,16 @@ public class WorkflowCanvas extends GraphCanvas
 
 	@Override
 	public void relationAdded(RelationAddedEvent<IProcess> e) {
+		if (e.getRelation() instanceof DataMatch) {
 
+		}
 	}
 
 	@Override
-	public void relationRemoved(RelationRemovedEvent<IProcess> e) {
+	public void relaitonRemoving(RelationRemovingEvent<IProcess> e) {
+		if (e.getRelation() instanceof DataMatch) {
 
+		}
 	}
 
 	@Override
