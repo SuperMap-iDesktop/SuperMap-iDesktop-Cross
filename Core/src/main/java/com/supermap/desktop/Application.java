@@ -334,7 +334,6 @@ public class Application {
 
 	public void resetWorkFlows() {
 		String desktopInfo = workspace.getDesktopInfo();
-		String sourceDescription = "";
 
 		Document document = null;
 		try {
@@ -381,6 +380,10 @@ public class Application {
 		Document document = XmlUtilities.stringToDocument(desktopInfo);
 		Node root = document.getChildNodes().item(0);
 		Node workFlows = XmlUtilities.getChildElementNodeByName(root, "WorkFlows");
+		if (workFlows == null) {
+			workFlows = document.createElement("WorkFlows");
+			root.appendChild(workFlows);
+		}
 		Element workFlowNode = document.createElement("WorkFlow");
 		workFlowNode.setAttribute("name", workFlow.getName());
 		workFlowNode.setAttribute("value", workFlow.getMatrixXml());

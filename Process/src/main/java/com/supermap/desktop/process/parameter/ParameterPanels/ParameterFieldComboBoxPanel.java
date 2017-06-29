@@ -19,7 +19,6 @@ import com.supermap.desktop.utilities.ArrayUtilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
@@ -75,7 +74,9 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 			public void itemStateChanged(ItemEvent e) {
 				if (!isSelectingItem && (e.getStateChange() == ItemEvent.SELECTED || comboBox.getSelectedItem() == null)) {
 					isSelectingItem = true;
-					comboBox.setSelectedItem(((FieldInfo) comboBox.getSelectedItem()).getCaption());
+					if (comboBox.getSelectedItem() instanceof FieldInfo) {
+						comboBox.setSelectedItem(((FieldInfo) comboBox.getSelectedItem()).getCaption());
+					}
 					parameterFieldComboBox.setSelectedItem(comboBox.getSelectedItem());
 					isSelectingItem = false;
 				}
@@ -92,7 +93,7 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 				JLabel jLabel = new JLabel();
 				if (value != null) {
 					jLabel.setText(value.getCaption());
-					comboBox.getEditor().setItem(value.getCaption());
+//					comboBox.getEditor().setItem(value.getCaption());
 				} else {
 					jLabel.setText(" ");
 				}
@@ -172,16 +173,7 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 				if (comboBox.getSelectedItem() == null) {
 					// 如果没有满意的选项则与当前已设置的值保持一致
 					// If there is no satisfactory option, it is consistent with the current set value
-					if (JComboBoxUIUtilities.getItemIndex(comboBox, parameterFieldComboBox.getSelectedItem()) != -1) {
-						comboBox.setSelectedItem(parameterFieldComboBox.getSelectedItem());
-					} else {
-						try {
-							comboBox.setSelectedIndex(0);
-							parameterFieldComboBox.setSelectedItem(comboBox.getSelectedItem());
-						} catch (Exception e) {
-							Application.getActiveApplication().getOutput().output(e);
-						}
-					}
+					comboBox.setSelectedItem(parameterFieldComboBox.getSelectedItem());
 				}
 			} else {
 				parameterFieldComboBox.setSelectedItem(null);
