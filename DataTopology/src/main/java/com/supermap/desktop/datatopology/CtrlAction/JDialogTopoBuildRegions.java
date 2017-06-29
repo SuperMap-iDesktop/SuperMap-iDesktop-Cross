@@ -155,7 +155,7 @@ public class JDialogTopoBuildRegions extends SmDialog {
 			Datasource currentDatasource = null;
 			if (lineDataset != null && !lineDataset.getDatasource().isReadOnly()) {
 				currentDatasource = lineDataset.getDatasource();
-			} else if (null != datasourceList && null != datasourceList.get(0)) {
+			} else if ( datasourceList.size()>0 && null != datasourceList.get(0)) {
 				currentDatasource = datasourceList.get(0);
 			}
 			Datasource[] datasourceArray = new Datasource[datasourceList.size()];
