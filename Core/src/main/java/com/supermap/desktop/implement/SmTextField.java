@@ -67,7 +67,7 @@ public class SmTextField extends JTextField implements IBaseItem {
 		try {
 			if (this.getCtrlAction() != null) {
 				this.getCtrlAction().setCaller(this);
-				this.getCtrlAction().run();
+				this.getCtrlAction().doRun();
 			} else {
 				// DO NOTHING
 			}

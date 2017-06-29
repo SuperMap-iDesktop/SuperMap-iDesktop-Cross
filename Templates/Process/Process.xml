@@ -77,8 +77,11 @@
                     <process key="ImportFileGDBVector" name="File GeoDataBase Vector 文件夹"/>
                 </process>
             </process>
-            <process key="Projection" name="投影转换"/>
-            <process key="SetProjection" name="重设坐标系"/>
+            <process name="投影设置">
+                <process key="SetProjection" name="重设坐标系"/>
+                <process key="Projection" name="投影转换"/>
+                <!--<process key="UserDefineProjection" name="自定义投影"/>-->
+            </process>
             <process name="插值分析">
                 <process key="Interpolator_IDW" name="距离反比权重"/>
                 <process key="Interpolator_RBF" name="样条"/>

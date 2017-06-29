@@ -10,6 +10,7 @@ import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
 
@@ -17,6 +18,11 @@ import javax.swing.*;
  * Created by highsad on 2017/1/5.
  */
 public abstract class MetaProcess extends AbstractProcess {
+
+	protected static final String SOURCE_PANEL_DESCRIPTION = CommonProperties.getString("String_GroupBox_SourceData");
+	protected static final String SETTING_PANEL_DESCRIPTION = CommonProperties.getString("String_FormEdgeCount_Text");
+	protected static final String RESULT_PANEL_DESCRIPTION = CommonProperties.getString("String_GroupBox_ResultData");
+
 	protected IParameters parameters = new DefaultParameters(this);
 	protected boolean finished = false;
 
