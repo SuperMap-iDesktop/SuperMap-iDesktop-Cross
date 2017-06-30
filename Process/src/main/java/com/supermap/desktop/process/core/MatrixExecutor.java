@@ -33,6 +33,7 @@ public class MatrixExecutor {
 		if (starts.size() > 0) {
 			for (Object o : starts) {
 				if (o instanceof IProcess) {
+					((IProcess) o).reset();
 					this.ready.add((IProcess) o);
 				}
 			}
@@ -42,6 +43,7 @@ public class MatrixExecutor {
 		if (starts.size() > 0) {
 			for (Object o : starts) {
 				if (o instanceof IProcess) {
+					((IProcess) o).reset();
 					this.ready.add((IProcess) o);
 				}
 			}
@@ -51,6 +53,7 @@ public class MatrixExecutor {
 			List next = this.matrix.getNextNodes(process);
 			for (Object o : next) {
 				if (o instanceof IProcess) {
+					((IProcess) o).reset();
 					this.waiting.add((IProcess) o);
 				}
 			}
