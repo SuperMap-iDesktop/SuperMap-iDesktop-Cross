@@ -94,11 +94,11 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 	public FormWorkflow(IWorkflow workflow) {
 		super(workflow.getName(), null, null);
-
 		this.workflow = (Workflow) workflow;
 		this.canvas = new GraphCanvas();
 
 		initializeComponents();
+		Application.getActiveApplication().getMainFrame().getFormManager().add(this);
 		initFormWorkflow(workflow);
 		this.setText(workflow.getName());
 		isNeedSave = false;

@@ -80,7 +80,6 @@ public abstract class MetaProcessISO extends MetaProcess {
 		} else {
 			saveDataset.setSelectedItem(getDefaultResultName());
 		}
-
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		this.saveDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
 		this.saveDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
@@ -103,11 +102,6 @@ public abstract class MetaProcessISO extends MetaProcess {
 
 		this.sourceDatasource = new ParameterDatasourceConstrained();
 		this.dataset = new ParameterSingleDataset(DatasetType.GRID);
-		DatasetGrid datasetGrid = DatasetUtilities.getDefaultDatasetGrid();
-		if (datasetGrid != null) {
-			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
-			dataset.setSelectedItem(datasetGrid);
-		}
 		this.saveDataset = new ParameterSaveDataset();
 		this.maxGrid = new ParameterTextField(CommonProperties.getString("String_MAXGrid"));
 		this.minGrid = new ParameterTextField(CommonProperties.getString("String_MINGrid"));
