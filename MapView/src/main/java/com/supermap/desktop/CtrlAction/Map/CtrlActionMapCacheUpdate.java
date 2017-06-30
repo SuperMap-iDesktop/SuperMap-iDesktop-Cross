@@ -1,12 +1,13 @@
 package com.supermap.desktop.CtrlAction.Map;
 
 import com.supermap.data.processing.MapCacheBuilder;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClipBuilder;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 
 import javax.swing.*;
@@ -35,12 +36,13 @@ public class CtrlActionMapCacheUpdate extends CtrlAction {
 			if (sciFile.exists()) {
 				MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 				mapCacheBuilder.fromConfigFile(sciFile.getPath());
-
-				DialogMapCacheClipBuilder builder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.UpdateProcessClip, mapCacheBuilder);
+				mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
+				DialogMapCacheClipBuilder builder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.SingleUpdateProcessClip, mapCacheBuilder);
 				builder.firstStepPane.textFieldCacheName.setText(mapCacheBuilder.getCacheName());
 				builder.firstStepPane.labelConfigValue.setText(mapCacheBuilder.getCacheName());
-				builder.firstStepPane.fileChooserControlFileCache.setPath(sciFile.getParent());
+				builder.firstStepPane.fileChooserControlFileCache.setPath(sciFile.getParentFile().getParent());
 				builder.firstStepPane.resetComponentsInfo();
+				builder.setComponentsEnabled(false);
 				builder.showDialog();
 			}
 		}
