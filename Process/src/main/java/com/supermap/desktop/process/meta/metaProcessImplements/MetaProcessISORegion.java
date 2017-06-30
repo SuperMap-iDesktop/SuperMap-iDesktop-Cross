@@ -19,6 +19,11 @@ public class MetaProcessISORegion extends MetaProcessISO {
 	}
 
 	@Override
+	protected String getDefaultResultName() {
+		return "ISORegion";
+	}
+
+	@Override
 	public String getTitle() {
 		return CommonProperties.getString("String_SurfaceISORegion");
 	}

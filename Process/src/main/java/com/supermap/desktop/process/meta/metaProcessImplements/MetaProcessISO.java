@@ -78,7 +78,7 @@ public abstract class MetaProcessISO extends MetaProcess {
 			saveDataset.setResultDatasource(defaultDatasetGrid.getDatasource());
 			saveDataset.setSelectedItem(defaultDatasetGrid.getDatasource().getDatasets().getAvailableDatasetName("ISOResult"));
 		} else {
-			saveDataset.setSelectedItem("ISOResult");
+			saveDataset.setSelectedItem(getDefaultResultName());
 		}
 
 		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
@@ -96,6 +96,8 @@ public abstract class MetaProcessISO extends MetaProcess {
 		this.smoothNess.setEnabled(false);
 		reloadValue();
 	}
+
+	protected abstract String getDefaultResultName();
 
 	private void initParameters() {
 

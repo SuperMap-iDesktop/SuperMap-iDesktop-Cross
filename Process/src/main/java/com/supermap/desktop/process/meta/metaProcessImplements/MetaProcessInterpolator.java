@@ -8,10 +8,12 @@ import com.supermap.analyst.spatialanalyst.InterpolationRBFParameter;
 import com.supermap.analyst.spatialanalyst.Interpolator;
 import com.supermap.analyst.spatialanalyst.SearchMode;
 import com.supermap.analyst.spatialanalyst.VariogramMode;
+import com.supermap.data.Dataset;
 import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
+import com.supermap.data.FieldInfos;
 import com.supermap.data.PixelFormat;
 import com.supermap.data.Rectangle2D;
 import com.supermap.data.SteppedEvent;
@@ -223,26 +225,33 @@ public class MetaProcessInterpolator extends MetaProcess {
 	}
 
 	private void initParameterStates() {
-		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
+		Dataset datasetVector = DatasetUtilities.getDefaultDataset(DatasetType.POINT);
 		if (datasetVector != null) {
 			parameterDatasource.setSelectedItem(datasetVector.getDatasource());
 			parameterDataset.setSelectedItem(datasetVector);
-			if (datasetVector.getType() == DatasetType.POINT) {
-				Rectangle2D bounds = datasetVector.getBounds();
-				parameterBoundsLeft.setSelectedItem(bounds.getLeft());
-				parameterBoundsTop.setSelectedItem(bounds.getTop());
-				parameterBoundsRight.setSelectedItem(bounds.getRight());
-				parameterBoundsBottom.setSelectedItem(bounds.getBottom());
-				Double x = bounds.getWidth() / 500;
-				Double y = bounds.getHeight() / 500;
-				Double resolution = x > y ? y : x;
-				parameterResulotion.setSelectedItem(resolution);
-				if (resolution != 0) {
-					int rows = (int) Math.abs(bounds.getHeight() / resolution);
-					int columns = (int) Math.abs(bounds.getWidth() / resolution);
-					parameterRow.setSelectedItem(rows);
-					parameterColumn.setSelectedItem(columns);
+			parameterInterpolatorFields.setDataset(((DatasetVector) datasetVector));
+			FieldInfos fieldInfos = ((DatasetVector) datasetVector).getFieldInfos();
+			for (int i = 0; i < fieldInfos.getCount(); i++) {
+				if (!fieldInfos.get(i).isSystemField()) {
+					parameterInterpolatorFields.setSelectedItem(fieldInfos.get(i).getCaption());
+					break;
 				}
+			}
+
+			Rectangle2D bounds = datasetVector.getBounds();
+			parameterBoundsLeft.setSelectedItem(bounds.getLeft());
+			parameterBoundsTop.setSelectedItem(bounds.getTop());
+			parameterBoundsRight.setSelectedItem(bounds.getRight());
+			parameterBoundsBottom.setSelectedItem(bounds.getBottom());
+			Double x = bounds.getWidth() / 500;
+			Double y = bounds.getHeight() / 500;
+			Double resolution = x > y ? y : x;
+			parameterResulotion.setSelectedItem(resolution);
+			if (resolution != 0) {
+				int rows = (int) Math.abs(bounds.getHeight() / resolution);
+				int columns = (int) Math.abs(bounds.getWidth() / resolution);
+				parameterRow.setSelectedItem(rows);
+				parameterColumn.setSelectedItem(columns);
 			}
 		}
 	}

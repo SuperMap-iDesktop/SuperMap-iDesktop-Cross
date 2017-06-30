@@ -19,6 +19,11 @@ public class MetaProcessISOLine extends MetaProcessISO {
 	public MetaProcessISOLine() {
 	}
 
+	@Override
+	protected String getDefaultResultName() {
+		return "ISOLine";
+	}
+
 
 	@Override
 	public String getTitle() {
