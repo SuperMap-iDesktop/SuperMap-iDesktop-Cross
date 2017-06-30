@@ -24,12 +24,21 @@ import java.util.ArrayList;
  * @author XiaJT
  */
 public class CtrlActionProcessImport extends CtrlAction {
+	private static final String processTreeClassName = "com.supermap.desktop.process.core.ProcessManager";
+	private static final String ParameterManagerClassName = "com.supermap.desktop.process.ParameterManager";
+
 	public CtrlActionProcessImport(IBaseItem caller, IForm formClass) {
 		super(caller, formClass);
 	}
 
 	@Override
 	public void run() {
+		try {
+			Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(processTreeClassName)).setVisible(true);
+			Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(ParameterManagerClassName)).setVisible(true);
+		} catch (Exception e) {
+			// ignore
+		}
 		String moduleName = "CtrlActionProcessImport";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			SmFileChoose.addNewNode(SmFileChoose.createFileFilter(ProcessProperties.getString("String_ProcessFile"), "xml"),

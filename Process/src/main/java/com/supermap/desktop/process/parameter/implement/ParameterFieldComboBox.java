@@ -11,7 +11,6 @@ import java.beans.PropertyChangeEvent;
 
 /**
  * @author XiaJT
- * 最好支持添加任意像，如果"0"
  */
 public class ParameterFieldComboBox extends AbstractParameter implements ISelectionParameter {
 
@@ -43,7 +42,7 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 		if (item == null) {
 			fieldName = "";
 		} else if (item instanceof FieldInfo) {
-			fieldName = ((FieldInfo) item).getName();
+			fieldName = ((FieldInfo) item).getCaption();
 		} else {
 			fieldName = item.toString();
 		}

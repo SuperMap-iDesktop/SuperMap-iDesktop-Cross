@@ -93,7 +93,6 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 				JLabel jLabel = new JLabel();
 				if (value != null) {
 					jLabel.setText(value.getCaption());
-//					comboBox.getEditor().setItem(value.getCaption());
 				} else {
 					jLabel.setText(" ");
 				}
@@ -168,12 +167,24 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 							isSelectingItem = true;
 						}
 						break;
+					} else if (valueSelected == ParameterValueLegalListener.NO) {
+						// 注意条件
 					}
 				}
 				if (comboBox.getSelectedItem() == null) {
 					// 如果没有满意的选项则与当前已设置的值保持一致
 					// If there is no satisfactory option, it is consistent with the current set value
-					comboBox.setSelectedItem(parameterFieldComboBox.getSelectedItem());
+
+					String fieldName = parameterFieldComboBox.getFieldName();
+					for (int i = 0; i < comboBox.getItemCount(); i++) {
+						if (comboBox.getItemAt(i).getCaption().equals(fieldName)) {
+							comboBox.setSelectedItem(fieldName);
+							break;
+						}
+					}
+					if (comboBox.getSelectedItem() == null) {
+						parameterFieldComboBox.setSelectedItem("");
+					}
 				}
 			} else {
 				parameterFieldComboBox.setSelectedItem(null);
