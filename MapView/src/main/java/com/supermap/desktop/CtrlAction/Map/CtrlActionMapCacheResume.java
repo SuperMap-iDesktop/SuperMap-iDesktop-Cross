@@ -57,7 +57,7 @@ public class CtrlActionMapCacheResume extends CtrlAction {
 				MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 				mapCacheBuilder.fromConfigFile(file.getPath());
 				mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
-				DialogMapCacheClipBuilder mapCacheClipBuilder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.ReloadProcessClip, mapCacheBuilder);
+				DialogMapCacheClipBuilder mapCacheClipBuilder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.ResumeProcessClip, mapCacheBuilder);
 				mapCacheClipBuilder.setComponentsEnabled(false);
 				mapCacheClipBuilder.buttonOk.setEnabled(true);
 				mapCacheClipBuilder.firstStepPane.labelConfigValue.setText(mapCacheBuilder.getCacheName());

@@ -49,7 +49,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	public static final int SingleProcessClip = 0;
 	public static final int MultiProcessClip = 1;
 	public static final int UpdateProcessClip = 2;
-	public static final int ReloadProcessClip = 3;
+	public static final int ResumeProcessClip = 3;
 	private boolean firstStepEnabled = true;
 	private boolean nextStepEnabled = true;
 	private boolean resumeAble = false;
@@ -173,7 +173,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		} else {
 			mapName = this.mapCacheBuilder.getCacheName();
 		}
-		if (this.cmdType == SingleProcessClip || this.cmdType == ReloadProcessClip) {
+		if (this.cmdType == SingleProcessClip || this.cmdType == ResumeProcessClip) {
 			this.setTitle(MessageFormat.format(MapViewProperties.getString("MapCache_Title"), mapName));
 			this.buttonOk.setText(MapViewProperties.getString("String_BatchAddColorTableOKButton"));
 		} else if (this.cmdType == MultiProcessClip) {
