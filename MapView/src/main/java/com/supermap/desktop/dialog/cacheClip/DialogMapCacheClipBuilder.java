@@ -392,8 +392,12 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_TargetTaskPath"), tasksPath));
 					if (nextStepPane.checkBoxClipOnThisComputer.isSelected()) {
 						String targetTaskPath = CacheUtilities.replacePath(tasksPath, "task");
+						String mapName = this.mapCacheBuilder.getCacheName();
+						if (null != this.mapCacheBuilder.getMap()) {
+							mapName = this.mapCacheBuilder.getMap().getName();
+						}
 						String[] tempParams = {cmdType == MultiUpdateProcessClip ? "Update" : "Multi", sciPath, targetTaskPath,
-								Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), this.mapCacheBuilder.getCacheName(), filePath};
+								Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), mapName, filePath};
 						CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
 					}
 				}
@@ -413,12 +417,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		if (!valiteCacheFolderSave()) {
 			return;
 		}
-		if (cmdType == SingleProcessClip) {
-			setMapCacheBuilderValueBeforeRun();
-		} else {
-			this.mapCacheBuilder.setOutputFolder(firstStepPane.fileChooserControlFileCache.getPath());
-			this.mapCacheBuilder.setCacheName(firstStepPane.textFieldCacheName.getText());
-		}
+		setMapCacheBuilderValueBeforeRun();
 		boolean result;
 		long startTime = System.currentTimeMillis();
 		Date currentTime = new Date();
