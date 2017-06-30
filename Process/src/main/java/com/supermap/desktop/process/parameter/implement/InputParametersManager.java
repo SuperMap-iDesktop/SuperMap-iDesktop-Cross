@@ -52,6 +52,7 @@ public class InputParametersManager {
 			}
 		});
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
+
 		if (activeForm instanceof FormWorkflow) {
 			GraphCanvas canvas = ((FormWorkflow) activeForm).getCanvas();
 			canvas.addGraphRemovingListener(new GraphRemovingListener() {

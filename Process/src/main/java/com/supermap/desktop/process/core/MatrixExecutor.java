@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.tasks.TaskStore;
 
@@ -86,6 +87,9 @@ public class MatrixExecutor {
 								this.ready.remove(p);
 							}
 						} else {
+							if (((MetaProcess) o).getStatus() == RunningStatus.EXCEPTION || ((MetaProcess) o).getStatus() == RunningStatus.CANCELLED) {
+								timer.stop();
+							}
 							isReady = false;
 						}
 					}
@@ -93,7 +97,9 @@ public class MatrixExecutor {
 
 				if (isReady) {
 					this.waiting.remove(process);
-					this.ready.add(process);
+					if (!this.ready.contains(process)) {
+						this.ready.add(process);
+					}
 					runProcess(process);
 					List next = this.matrix.getNextNodes(process);
 					for (Object o : next) {
