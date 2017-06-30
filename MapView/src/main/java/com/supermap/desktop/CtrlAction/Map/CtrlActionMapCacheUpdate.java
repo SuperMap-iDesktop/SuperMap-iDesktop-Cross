@@ -36,13 +36,11 @@ public class CtrlActionMapCacheUpdate extends CtrlAction {
 			if (sciFile.exists()) {
 				MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 				mapCacheBuilder.fromConfigFile(sciFile.getPath());
-				mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
 				DialogMapCacheClipBuilder builder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.SingleUpdateProcessClip, mapCacheBuilder);
 				builder.firstStepPane.textFieldCacheName.setText(mapCacheBuilder.getCacheName());
 				builder.firstStepPane.labelConfigValue.setText(mapCacheBuilder.getCacheName());
 				builder.firstStepPane.fileChooserControlFileCache.setPath(sciFile.getParentFile().getParent());
 				builder.firstStepPane.resetComponentsInfo();
-				builder.setComponentsEnabled(false);
 				builder.showDialog();
 			}
 		}
