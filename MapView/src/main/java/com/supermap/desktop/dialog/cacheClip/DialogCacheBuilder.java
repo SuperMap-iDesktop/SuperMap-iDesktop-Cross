@@ -423,7 +423,7 @@ public class DialogCacheBuilder extends SmDialog {
 			cachePath = CacheUtilities.replacePath(cachePath);
 			String processCount = textFieldProcessCount.getText();
 //			String mergeSciCount = textFieldMergeSciCount.getText();
-			boolean isAppending = this.cmdType == DialogMapCacheClipBuilder.UpdateProcessClip;
+			boolean isAppending = this.cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip;
 			params = new String[]{sciPath, workspacePath, mapName, cachePath, processCount, String.valueOf(isAppending)};
 //            final String[] params = {workspacePath, mapName, sciPath, cachePath, processCount, mergeSciCount};
 
@@ -753,7 +753,7 @@ public class DialogCacheBuilder extends SmDialog {
 		DialogCacheBuilder dialogCacheBuilder = null;
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			int tempCmdType = operationType.equals("Multi") ? DialogMapCacheClipBuilder.MultiProcessClip : DialogMapCacheClipBuilder.UpdateProcessClip;
+			int tempCmdType = operationType.equals("Multi") ? DialogMapCacheClipBuilder.MultiProcessClip : DialogMapCacheClipBuilder.MultiUpdateProcessClip;
 			dialogCacheBuilder = new DialogCacheBuilder(tempCmdType);
 		} catch (Exception e) {
 			e.printStackTrace();

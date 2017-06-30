@@ -48,11 +48,11 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	private int cmdType;
 	public static final int SingleProcessClip = 0;
 	public static final int MultiProcessClip = 1;
-	public static final int UpdateProcessClip = 2;
-	public static final int ResumeProcessClip = 3;
+	public static final int SingleUpdateProcessClip = 2;
+	public static final int MultiUpdateProcessClip = 3;
+	public static final int ResumeProcessClip = 4;
 	private boolean firstStepEnabled = true;
 	private boolean nextStepEnabled = true;
-	private boolean resumeAble = false;
 	private String tasksSize = "5";
 	private String canudb = "1";
 	private MapCacheBuilder mapCacheBuilder;
@@ -75,7 +75,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	private ActionListener buildListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (resumeAble) {
+			if (cmdType == ResumeProcessClip) {
 				resume();
 			} else {
 				run();
@@ -173,14 +173,14 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		} else {
 			mapName = this.mapCacheBuilder.getCacheName();
 		}
-		if (this.cmdType == SingleProcessClip || this.cmdType == ResumeProcessClip) {
+		if (this.cmdType == SingleProcessClip || this.cmdType == ResumeProcessClip || this.cmdType == SingleUpdateProcessClip) {
 			this.setTitle(MessageFormat.format(MapViewProperties.getString("MapCache_Title"), mapName));
 			this.buttonOk.setText(MapViewProperties.getString("String_BatchAddColorTableOKButton"));
 		} else if (this.cmdType == MultiProcessClip) {
 			this.setTitle(MessageFormat.format(MapViewProperties.getString("MapCache_Title_TaskBuilder"), mapName));
 			this.buttonOk.setText(MapViewProperties.getString("String_Title_Split"));
 			this.checkBoxShowProcessBar.setVisible(false);
-		} else if (this.cmdType == UpdateProcessClip) {
+		} else if (this.cmdType == MultiUpdateProcessClip) {
 			this.setTitle(MessageFormat.format(MapViewProperties.getString("MapCache_Title_TaskBuilder"), mapName));
 			this.buttonOk.setText(MapViewProperties.getString("String_Title_Split"));
 			this.checkBoxShowProcessBar.setVisible(false);
@@ -208,7 +208,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 
 	private boolean valiteCacheFolderSave() {
 		boolean result = true;
-		if (cmdType == UpdateProcessClip) {
+		if (cmdType == MultiUpdateProcessClip || cmdType == SingleUpdateProcessClip) {
 			return result;
 		}
 		File file = new File(CacheUtilities.replacePath(firstStepPane.fileChooserControlFileCache.getPath(), firstStepPane.textFieldCacheName.getText()));
@@ -285,7 +285,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			if (this.checkBoxShowProcessBar.isSelected()) {
 				FormProgress formProgress = new FormProgress();
 				formProgress.setTitle(MapViewProperties.getString("MapCache_On") + this.getTitle());
-				CacheProgressCallable cacheProgressCallable = new CacheProgressCallable(this.mapCacheBuilder, true);
+				CacheProgressCallable cacheProgressCallable = new CacheProgressCallable(this.mapCacheBuilder, false);
 				formProgress.doWork(cacheProgressCallable);
 				result = cacheProgressCallable.getResult();
 			} else {
@@ -333,7 +333,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 	private void run() {
 		try {
 			nextStepPane.dispose();
-			if (cmdType == SingleProcessClip) {
+			if (cmdType == SingleProcessClip || cmdType == SingleUpdateProcessClip) {
 				singleProcessBuilder();
 			} else {
 				if (!valiteCacheFolderSave()) {
@@ -342,7 +342,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				String tasksPath = nextStepPane.fileChooserControlTaskPath.getPath();
 				String filePath = firstStepPane.fileChooserControlFileCache.getPath();
 				String sciPath = "";
-				if (cmdType == UpdateProcessClip) {
+				if (cmdType == MultiUpdateProcessClip) {
 					tasksPath = CacheUtilities.replacePath(tasksPath, "update");
 					sciPath = CacheUtilities.replacePath(filePath, mapCacheBuilder.getCacheName() + ".sci");
 				} else {
@@ -354,13 +354,13 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					}
 					sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + ".sci");
 				}
-				if (cmdType == UpdateProcessClip) {
+				if (cmdType == MultiUpdateProcessClip) {
 					mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
 				}
 				setMapCacheBuilderValueBeforeRun();
 				//SaveType==MongoType,build some cache for creating a database
 				boolean result = true;
-				if (cmdType != UpdateProcessClip) {
+				if (cmdType != MultiUpdateProcessClip) {
 					result = mapCacheBuilder.toConfigFile(sciPath);
 				}
 				this.buttonOk.setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -392,7 +392,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_TargetTaskPath"), tasksPath));
 					if (nextStepPane.checkBoxClipOnThisComputer.isSelected()) {
 						String targetTaskPath = CacheUtilities.replacePath(tasksPath, "task");
-						String[] tempParams = {cmdType == UpdateProcessClip ? "Update" : "Multi", sciPath, targetTaskPath,
+						String[] tempParams = {cmdType == MultiUpdateProcessClip ? "Update" : "Multi", sciPath, targetTaskPath,
 								Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), this.mapCacheBuilder.getCacheName(), filePath};
 						CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
 					}
@@ -413,7 +413,12 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		if (!valiteCacheFolderSave()) {
 			return;
 		}
-		setMapCacheBuilderValueBeforeRun();
+		if (cmdType == SingleProcessClip) {
+			setMapCacheBuilderValueBeforeRun();
+		} else {
+			this.mapCacheBuilder.setOutputFolder(firstStepPane.fileChooserControlFileCache.getPath());
+			this.mapCacheBuilder.setCacheName(firstStepPane.textFieldCacheName.getText());
+		}
 		boolean result;
 		long startTime = System.currentTimeMillis();
 		Date currentTime = new Date();
@@ -423,10 +428,11 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		if (this.checkBoxShowProcessBar.isSelected()) {
 			FormProgress formProgress = new FormProgress();
 			formProgress.setTitle(MapViewProperties.getString("MapCache_On") + this.getTitle());
-			CacheProgressCallable cacheProgressCallable = new CacheProgressCallable(this.mapCacheBuilder, resumeAble);
+			CacheProgressCallable cacheProgressCallable = new CacheProgressCallable(this.mapCacheBuilder, cmdType == SingleUpdateProcessClip);
 			formProgress.doWork(cacheProgressCallable);
 			result = cacheProgressCallable.getResult();
 		} else {
+			this.mapCacheBuilder.setIsAppending(cmdType == SingleUpdateProcessClip);
 			result = this.mapCacheBuilder.build();
 		}
 		printResultInfo(result, System.currentTimeMillis() - startTime);
@@ -536,9 +542,4 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		this.firstStepPane.setComponentsEnabled(enabled);
 		this.nextStepPane.setComponentsEnabled(enabled);
 	}
-
-	public void setResumeAble(boolean resumeAble) {
-		this.resumeAble = resumeAble;
-	}
-
 }

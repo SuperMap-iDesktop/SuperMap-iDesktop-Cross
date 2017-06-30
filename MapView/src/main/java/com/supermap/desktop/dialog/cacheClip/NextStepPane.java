@@ -182,7 +182,7 @@ public class NextStepPane extends JPanel implements IState {
 		initLayout();
 		registEvents();
 		if (this.cmdType == DialogMapCacheClipBuilder.ResumeProcessClip
-				|| this.cmdType == DialogMapCacheClipBuilder.UpdateProcessClip) {
+				|| this.cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip) {
 			resetComponentsInfo();
 		}
 	}
@@ -276,7 +276,8 @@ public class NextStepPane extends JPanel implements IState {
 		panelImageParam.add(this.checkBoxBackgroundTransparency, new GridBagConstraintsHelper(0, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
 		panelImageParam.add(this.checkBoxFullFillCacheImage, new GridBagConstraintsHelper(0, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 10, 5, 10));
 		panelImageParam.add(new JPanel(), new GridBagConstraintsHelper(0, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		if (cmdType != DialogMapCacheClipBuilder.SingleProcessClip && cmdType != DialogMapCacheClipBuilder.ResumeProcessClip) {
+		if (cmdType != DialogMapCacheClipBuilder.SingleProcessClip && cmdType != DialogMapCacheClipBuilder.ResumeProcessClip
+				&& cmdType != DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
 			JPanel innerPanel = new JPanel();
 			innerPanel.setLayout(new GridBagLayout());
 			innerPanel.add(this.labelTaskStorePath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
@@ -411,7 +412,7 @@ public class NextStepPane extends JPanel implements IState {
 	}
 
 	private void initComponentsStates() {
-		if (cmdType == DialogMapCacheClipBuilder.UpdateProcessClip) {
+		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip) {
 			this.panelIndexRange.setComponentsEnabled(false);
 			this.labelImageType.setEnabled(false);
 			this.comboBoxImageType.setEnabled(false);

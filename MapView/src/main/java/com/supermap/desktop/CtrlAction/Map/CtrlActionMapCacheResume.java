@@ -61,7 +61,6 @@ public class CtrlActionMapCacheResume extends CtrlAction {
 				mapCacheClipBuilder.setComponentsEnabled(false);
 				mapCacheClipBuilder.buttonOk.setEnabled(true);
 				mapCacheClipBuilder.firstStepPane.labelConfigValue.setText(mapCacheBuilder.getCacheName());
-				mapCacheClipBuilder.setResumeAble(true);
 				mapCacheClipBuilder.firstStepPane.fileChooserControlFileCache.setPath(file.getParent());
 				mapCacheClipBuilder.firstStepPane.resetComponentsInfo();
 				mapCacheClipBuilder.showDialog();

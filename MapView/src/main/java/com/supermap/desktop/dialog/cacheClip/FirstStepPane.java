@@ -386,47 +386,6 @@ public class FirstStepPane extends JPanel implements IState {
 		layout.setAutoCreateContainerGaps(true);
 		layout.setAutoCreateGaps(true);
 		this.setLayout(layout);
-		initComponentsState();
-	}
-
-	private void initComponentsState() {
-		if (cmdType == DialogMapCacheClipBuilder.UpdateProcessClip) {
-			this.labelVersion.setEnabled(false);
-			this.comboboxVersion.setEnabled(false);
-			this.labelSplitMode.setEnabled(false);
-			this.comboBoxSplitMode.setEnabled(false);
-			this.labelCacheName.setEnabled(false);
-			this.textFieldCacheName.setEnabled(false);
-			this.labelCachePath.setEnabled(false);
-			this.fileChooserControlFileCache.setEnabled(false);
-			this.labelSaveType.setEnabled(false);
-			this.comboBoxSaveType.setEnabled(false);
-			this.labelUserPassword.setEnabled(false);
-			this.labelConfirmPassword.setEnabled(false);
-			this.labelUserName.setEnabled(false);
-			this.labelServerName.setEnabled(false);
-			this.textFieldServerName.setEnabled(false);
-			this.labelDatabaseName.setEnabled(false);
-			this.comboBoxDatabaseName.setEnabled(false);
-		} else {
-			this.labelVersion.setEnabled(true);
-			this.comboboxVersion.setEnabled(true);
-			this.labelSplitMode.setEnabled(true);
-			this.comboBoxSplitMode.setEnabled(true);
-			this.labelCacheName.setEnabled(true);
-			this.textFieldCacheName.setEnabled(true);
-			this.labelCachePath.setEnabled(true);
-			this.fileChooserControlFileCache.setEnabled(true);
-			this.labelSaveType.setEnabled(true);
-			this.comboBoxSaveType.setEnabled(true);
-			this.labelUserPassword.setEnabled(true);
-			this.labelConfirmPassword.setEnabled(true);
-			this.labelUserName.setEnabled(true);
-			this.labelServerName.setEnabled(true);
-			this.textFieldServerName.setEnabled(true);
-			this.labelDatabaseName.setEnabled(true);
-			this.comboBoxDatabaseName.setEnabled(true);
-		}
 	}
 
 	private void initBasicSettingPanelValue() {
@@ -557,7 +516,9 @@ public class FirstStepPane extends JPanel implements IState {
 			this.labelDatabaseName.setVisible(true);
 			this.comboBoxDatabaseName.setVisible(true);
 			this.comboBoxDatabaseName.removeAllItems();
-			if (cmdType == DialogMapCacheClipBuilder.ResumeProcessClip) {
+			if (cmdType == DialogMapCacheClipBuilder.ResumeProcessClip
+					|| cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip
+					|| cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip) {
 				this.labelUserName.setVisible(false);
 				this.textFieldUserName.setVisible(false);
 				this.labelUserPassword.setVisible(false);
@@ -917,7 +878,7 @@ public class FirstStepPane extends JPanel implements IState {
 
 	private void initGlobalValue() {
 		this.scientificNotation.setGroupingUsed(false);
-		if (cmdType == DialogMapCacheClipBuilder.UpdateProcessClip || cmdType == DialogMapCacheClipBuilder.ResumeProcessClip) {
+		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip || cmdType == DialogMapCacheClipBuilder.ResumeProcessClip) {
 			this.originMapCacheScale = this.mapCacheBuilder.getOutputScales();
 		} else {
 			this.originMapCacheScale = this.mapCacheBuilder.getDefultOutputScales();
