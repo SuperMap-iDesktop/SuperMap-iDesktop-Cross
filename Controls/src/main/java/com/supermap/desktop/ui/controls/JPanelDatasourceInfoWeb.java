@@ -13,6 +13,7 @@ import com.supermap.desktop.controls.utilities.ComponentUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.TextFields.DefaultValueTextField;
 import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.desktop.utilities.XmlUtilities;
@@ -40,7 +41,7 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 	private JLabel jLabelPassword;
 	private JLabel jLabelDatasourceAlias;
 	private JLabel jLabelOpenType;
-	private JTextField jTextFieldServerAddress;
+	private DefaultValueTextField jTextFieldServerAddress;
 	private JComboBox<String> jComboBoxServerType;
 	private JTextField jTextFieldUserName;
 	private JPasswordField jTextFieldPassword;
@@ -65,7 +66,7 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 		jLabelPassword = new JLabel("Password:");
 		jLabelDatasourceAlias = new JLabel("DatasourceAlias:");
 		jLabelOpenType = new JLabel("OpenType:");
-		jTextFieldServerAddress = new JTextField("DatabaseName");
+		jTextFieldServerAddress = new DefaultValueTextField();
 		jComboBoxServerType = new JComboBox<String>();
 		jComboBoxServerType.setEditable(true);
 		jTextFieldUserName = new JTextField();
@@ -169,6 +170,7 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 				this.jComboBoxServerType.addItem(ControlsProperties.getString("String_OGCWMTS"));
 				this.jComboBoxServerType.setSelectedIndex(0);
 				this.jTextFieldServerAddress.setText("");
+				jTextFieldServerAddress.setDefaulWarningText("");
 				this.jLabelPassword.setText(ControlsProperties.getString("String_Label_UserPassword"));
 				this.jTextFieldServerAddress.setEnabled(true);
 				this.jComboBoxServerType.setEnabled(true);
@@ -177,6 +179,7 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 				this.jTextFieldDatasourceAlias.setEnabled(true);
 				this.jTextFieldDatasourceAlias.setText(ControlsProperties.getString("String_OGCWMS"));
 			} else if (engineType == EngineType.ISERVERREST) {
+				jTextFieldServerAddress.setDefaulWarningText("");
 				this.jComboBoxServerType.removeAllItems();
 				this.jTextFieldDatasourceAlias.setText(ControlsProperties.getString("String_iServerRest"));
 				this.jTextFieldPassword.setEnabled(false);
@@ -187,6 +190,7 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 				this.jTextFieldServerAddress.setText("");
 				this.jLabelPassword.setText(CoreProperties.getString("String_Label_Key"));
 			} else if (engineType == EngineType.SUPERMAPCLOUD) {
+				jTextFieldServerAddress.setDefaulWarningText("");
 				this.jComboBoxServerType.removeAllItems();
 				this.jTextFieldServerAddress.setText(ControlsProperties.getString("String_SuperMapCloudServer"));
 				this.jTextFieldDatasourceAlias.setText(ControlsProperties.getString("String_SuperMapCloud"));
@@ -209,6 +213,8 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 //                this.jLabelPassword.setText(CoreProperties.getString("String_Label_Key"));
 //            }
 				if (engineType == EngineType.GOOGLEMAPS) {
+					jTextFieldServerAddress.setDefaulWarningText("");
+
 					this.jComboBoxServerType.removeAllItems();
 					this.jTextFieldServerAddress.setText(ControlsProperties.getString("String_GoogleMapsServer"));
 					this.jTextFieldDatasourceAlias.setText(ControlsProperties.getString("String_GoogleMaps"));
@@ -219,6 +225,7 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 					this.jTextFieldPassword.setEnabled(true);
 					this.jLabelPassword.setText(CoreProperties.getString("String_Label_Key"));
 				} else if (engineType == EngineType.BAIDUMAPS) {
+					jTextFieldServerAddress.setDefaulWarningText("");
 					this.jComboBoxServerType.removeAllItems();
 					this.jTextFieldServerAddress.setText(ControlsProperties.getString("String_BaiduMapServer"));
 					this.jTextFieldDatasourceAlias.setText(ControlsProperties.getString("String_BaiduMap"));
@@ -229,6 +236,7 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 					this.jTextFieldDatasourceAlias.setEnabled(true);
 					this.jLabelPassword.setText(CoreProperties.getString("String_Label_Key"));
 				} else if (engineType == EngineType.OPENSTREETMAPS) {
+					jTextFieldServerAddress.setDefaulWarningText("");
 					this.jComboBoxServerType.removeAllItems();
 					this.jTextFieldServerAddress.setText(ControlsProperties.getString("String_OpenStreetMapsServer"));
 					this.jTextFieldDatasourceAlias.setText(ControlsProperties.getString("String_OpenStreetMaps"));
@@ -239,8 +247,9 @@ public class JPanelDatasourceInfoWeb extends JPanel {
 					this.jTextFieldDatasourceAlias.setEnabled(true);
 //					this.jLabelPassword.setText(CoreProperties.getString("String_Label_Key"));
 				} else if (engineType == EngineType.DATASERVER) {
+					jTextFieldServerAddress.setText(null);
+					jTextFieldServerAddress.setDefaulWarningText("{ip}:{port}");
 					this.jComboBoxServerType.removeAllItems();
-					this.jTextFieldServerAddress.setText("");
 					this.jTextFieldDatasourceAlias.setText("BigDataStore");
 					this.jComboBoxServerType.setEnabled(false);
 					this.jTextFieldServerAddress.setEnabled(true);
