@@ -4,6 +4,8 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedEvent;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
+import com.supermap.desktop.process.graphics.events.GraphRemovedEvent;
+import com.supermap.desktop.process.graphics.events.GraphRemovedListener;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.decorators.LineMessageDecorator;
@@ -35,6 +37,13 @@ public class ConnectionLineGraph extends LineGraph {
 		}
 	};
 
+	private GraphRemovedListener graphRemovedListener = new GraphRemovedListener() {
+		@Override
+		public void graphRemoved(GraphRemovedEvent e) {
+			connectedGraphRemoved(e);
+		}
+	};
+
 	public ConnectionLineGraph(GraphCanvas canvas, IGraph from, IGraph to) {
 		this(canvas, from, to, null);
 	}
@@ -52,6 +61,10 @@ public class ConnectionLineGraph extends LineGraph {
 			computeFirstAndLastPoints();
 			this.from.addGraphBoundsChangedListener(this.startGraphBoundsChangedListener);
 			this.to.addGraphBoundsChangedListener(this.endGraphBoundsChangedListener);
+		}
+
+		if (canvas != null) {
+			canvas.addGraphRemovedListener(this.graphRemovedListener);
 		}
 	}
 
@@ -71,12 +84,28 @@ public class ConnectionLineGraph extends LineGraph {
 		isSelected = selected;
 	}
 
-	public void startGraphBoundsChanged(GraphBoundsChangedEvent e) {
+	private void startGraphBoundsChanged(GraphBoundsChangedEvent e) {
 		computeFirstAndLastPoints();
 	}
 
-	public void endGraphBoundsChanged(GraphBoundsChangedEvent e) {
+	private void endGraphBoundsChanged(GraphBoundsChangedEvent e) {
 		computeFirstAndLastPoints();
+	}
+
+	private void connectedGraphRemoved(GraphRemovedEvent e) {
+		if (e.getGraph() == this.from || e.getGraph() == this.to) {
+			getCanvas().removeGraph(this);
+		}
+
+		// 如果删除了自己，就清理资源
+		if (e.getGraph() == this) {
+			this.from.removeGraghBoundsChangedListener(this.startGraphBoundsChangedListener);
+			this.to.removeGraghBoundsChangedListener(this.endGraphBoundsChangedListener);
+			getCanvas().removeGraphRemovedListener(this.graphRemovedListener);
+
+			this.from = null;
+			this.to = null;
+		}
 	}
 
 	private void computeFirstAndLastPoints() {

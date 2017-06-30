@@ -1,5 +1,6 @@
 package com.supermap.desktop.process;
 
+import com.sun.xml.internal.bind.v2.runtime.Location;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IFormManager;
@@ -68,9 +69,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	private Workflow workflow;
 
-	private Map<IProcess, Rectangle> boundsMap = new HashMap<>();
+	private Map<IProcess, Location> locationMap = new HashMap<>();
 	private TasksManager tasksManager;
-	private GraphCanvas canvas;
+	private WorkflowCanvas canvas;
 	private boolean isNeedSave = true;
 	private boolean isAutoAddOutPut = true;
 	private transient DropTarget dropTargeted;
@@ -86,7 +87,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			name = ControlsProperties.getString("String_WorkFlows");
 		}
 		this.title = name;
-		this.canvas = new GraphCanvas();
+//		this.canvas = new WorkflowCanvas();
 		initializeComponents();
 	}
 
@@ -95,7 +96,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		super(workflow.getName(), null, null);
 
 		this.workflow = (Workflow) workflow;
-		this.canvas = new GraphCanvas();
+		this.canvas = new WorkflowCanvas(this.workflow);
 		this.tasksManager = new TasksManager(this.workflow);
 
 		initializeComponents();

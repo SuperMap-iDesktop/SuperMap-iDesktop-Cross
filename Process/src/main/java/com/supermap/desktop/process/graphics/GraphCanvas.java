@@ -185,10 +185,6 @@ public class GraphCanvas extends JComponent {
 		return this.actionsManager;
 	}
 
-	public IConnectionManager getConnection() {
-		return this.graphStorage.getConnectionManager();
-	}
-
 	public void addGraphTransformed(IGraph graph) {
 		if (graph != null && !this.graphStorage.contains(graph)) {
 			this.coordinateTransform.inverseTranslate(graph);

@@ -17,24 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ListGraphs extends AbstractGraphStorage {
 	private GraphCanvas canvas;
-	private Map<IGraphConnection, IGraph> connectionMap = new ConcurrentHashMap<>();
 	private Vector<IGraph> graphs = new Vector();
 	private Rectangle box = null;
 
-	private ConnectionAddedListener connectionAddedListener = new ConnectionAddedListener() {
-		@Override
-		public void connectionAdded(ConnectionAddedEvent e) {
-			ListGraphs.this.connectionAdded(e);
-		}
-	};
-	private ConnectionRemovingListener connectionRemovingListener = new ConnectionRemovingListener() {
-		@Override
-		public void connectionRemoving(ConnectionRemovingEvent e) {
-			if (!e.isCancel()) {
-				ListGraphs.this.connectionRemoving(e);
-			}
-		}
-	};
 	private GraphBoundsChangedListener graphBoundsChangedListener = new GraphBoundsChangedListener() {
 		@Override
 		public void graghBoundsChanged(GraphBoundsChangedEvent e) {
@@ -178,23 +163,6 @@ public class ListGraphs extends AbstractGraphStorage {
 	@Override
 	public Rectangle getBounds() {
 		return this.box;
-	}
-
-	private void connectionAdded(ConnectionAddedEvent e) {
-		IGraphConnection connection = e.getConnection();
-		if (connection != null && connection.getStart() != null && connection.getEnd() != null) {
-			ConnectionLineGraph lineGraph = new ConnectionLineGraph(this.canvas, connection);
-			add(lineGraph);
-			this.connectionMap.put(connection, lineGraph);
-		}
-	}
-
-	private void connectionRemoving(ConnectionRemovingEvent e) {
-		IGraphConnection connection = e.getConnection();
-		if (this.connectionMap.containsKey(connection)) {
-			IGraph graph = this.connectionMap.get(connection);
-			remove(graph);
-		}
 	}
 
 	private void graphBoundsChanged(GraphBoundsChangedEvent e) {

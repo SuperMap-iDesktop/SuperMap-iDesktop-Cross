@@ -9,10 +9,13 @@ import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedEvent;
 import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
+import com.supermap.desktop.process.graphics.events.GraphRemovingEvent;
+import com.supermap.desktop.process.graphics.events.GraphRemovingListener;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
+import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 
 import javax.xml.crypto.Data;
 import java.awt.*;
@@ -24,8 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by highsad on 2017/6/29.
  */
 public class WorkflowCanvas extends GraphCanvas
-		implements WorkflowChangeListener, RelationAddedListener<IProcess>,
-		RelationRemovingListener<IProcess>, GraphBoundsChangedListener {
+		implements GraphBoundsChangedListener, GraphRemovingListener, RelationRemovingListener<IProcess> {
 	private Workflow workflow;
 	private Map<Object, Point> locationMap;
 
@@ -50,9 +52,7 @@ public class WorkflowCanvas extends GraphCanvas
 			loadRelations(this.workflow.getRelations());
 		}
 
-		this.workflow.addWorkflowChangeListener(this);
-		this.workflow.addRelationAddedListener(this);
-		this.workflow.addRelationRemovingListener(this);
+		addGraphRemovingListener(this);
 	}
 
 	private void loadProcesses(Vector<IProcess> processes) {
@@ -157,36 +157,71 @@ public class WorkflowCanvas extends GraphCanvas
 	}
 
 	@Override
-	public void workflowChange(WorkflowChangeEvent e) {
-		if (e.getType() == WorkflowChangeEvent.ADDED) {
-
-		} else if (e.getType() == WorkflowChangeEvent.REMOVING) {
-
-		} else if (e.getType() == WorkflowChangeEvent.REMOVED) {
-
-		}
-	}
-
-	@Override
-	public void relationAdded(RelationAddedEvent<IProcess> e) {
-		if (e.getRelation() instanceof DataMatch) {
-
-		}
-	}
-
-	@Override
-	public void relaitonRemoving(RelationRemovingEvent<IProcess> e) {
-		if (e.getRelation() instanceof DataMatch) {
-
-		}
-	}
-
-	@Override
 	public void graghBoundsChanged(GraphBoundsChangedEvent e) {
 		if (!(e.getGraph() instanceof ProcessGraph) && !(e.getGraph() instanceof OutputGraph)) {
 			return;
 		}
 
 		this.locationMap.put(e.getGraph(), e.getNewLocation());
+	}
+
+	@Override
+	public void graphRemoving(GraphRemovingEvent e) {
+		if (e.getGraph() instanceof ProcessGraph) {
+			ProcessGraph processGraph = (ProcessGraph) e.getGraph();
+			IProcess process = processGraph.getProcess();
+
+			// 删除所有的输出节点
+			OutputData[] outputs = process.getOutputs().getDatas();
+			if (outputs != null && outputs.length > 0) {
+				for (int i = 0; i < outputs.length; i++) {
+					OutputGraph outputGraph = this.outputMap.get(outputs[i]);
+
+					// 删除图上输出节点
+					removeGraph(outputGraph);
+
+					// 从 map 中移除
+					this.outputMap.remove(outputs[i]);
+				}
+			}
+
+			this.processMap.remove(process);
+			this.workflow.removeProcess(process);
+
+		} else if (e.getGraph() instanceof OutputGraph) {
+
+		} else if (e.getGraph() instanceof ConnectionLineGraph) {
+			ConnectionLineGraph connection = (ConnectionLineGraph) e.getGraph();
+
+			if (connection.getFrom() instanceof ProcessGraph && connection.getTo() instanceof OutputGraph) {
+				e.setCancel(true);
+			} else {
+				IRelation<IProcess> relation = null;
+
+				for (IRelation<IProcess> key : this.relationMap.keySet()) {
+					if (this.relationMap.get(key) == connection) {
+						relation = key;
+						break;
+					}
+				}
+
+				this.workflow.removeRelation(relation);
+			}
+		}
+	}
+
+	@Override
+	public void relaitonRemoving(RelationRemovingEvent<IProcess> e) {
+		if (this.relationMap.containsKey(e.getRelation())) {
+			ConnectionLineGraph connection = this.relationMap.get(e.getRelation());
+
+			if (getGraphStorage().contains(connection)) {
+				removeGraph(connection);
+			}
+
+			if (this.relationMap.containsKey(e.getRelation())) {
+				this.relationMap.remove(e.getRelation());
+			}
+		}
 	}
 }

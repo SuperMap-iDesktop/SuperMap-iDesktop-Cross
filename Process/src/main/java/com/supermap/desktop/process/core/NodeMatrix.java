@@ -2,6 +2,7 @@ package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.events.*;
+import com.supermap.desktop.ui.mdi.exception.NullParameterException;
 
 import javax.swing.event.EventListenerList;
 import java.util.*;
@@ -290,26 +291,26 @@ public class NodeMatrix<T extends Object> {
 	 * @param relationClass
 	 */
 	public synchronized <V extends IRelation<T>> void addRelation(T fromNode, T toNode, Class<V> relationClass) {
-		validateNode(fromNode);
-		validateNode(toNode);
-
-		if (relationClass == null) {
-			throw new IllegalArgumentException("Relation can not be null.");
-		}
-
-		try {
-			IRelation<T> relation = relationClass.newInstance();
-			if (relation == null) {
-				throw new UnknownError();
-			}
-
-			removeRelation(fromNode, toNode);
-			relation.relate(fromNode, toNode);
-			this.matrix.get(this.nodes.indexOf(fromNode)).put(toNode, relation);
-			fireRelationAdded(new RelationAddedEvent<T>(this, relation));
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
-		}
+//		validateNode(fromNode);
+//		validateNode(toNode);
+//
+//		if (relationClass == null) {
+//			throw new IllegalArgumentException("Relation can not be null.");
+//		}
+//
+//		try {
+//			IRelation<T> relation = relationClass.newInstance();
+//			if (relation == null) {
+//				throw new UnknownError();
+//			}
+//
+//			removeRelation(fromNode, toNode);
+//			relation.relate(fromNode, toNode);
+//			this.matrix.get(this.nodes.indexOf(fromNode)).put(toNode, relation);
+//			fireRelationAdded(new RelationAddedEvent<T>(this, relation));
+//		} catch (Exception e) {
+//			Application.getActiveApplication().getOutput().output(e);
+//		}
 	}
 
 	/**
@@ -322,7 +323,7 @@ public class NodeMatrix<T extends Object> {
 		validateNode(fromNode);
 		validateNode(toNode);
 
-		Map<T, IRelation<T>> relations = matrix.get(this.nodes.indexOf(fromNode));
+		Map<T, IRelation<T>> relations = this.matrix.get(this.nodes.indexOf(fromNode));
 		if (relations.containsKey(toNode)) {
 			IRelation<T> relation = relations.get(toNode);
 
@@ -331,6 +332,43 @@ public class NodeMatrix<T extends Object> {
 			relations.remove(toNode);
 			fireRelationRemoved(new RelationRemovedEvent<T>(this, fromNode, toNode));
 		}
+	}
+
+	public synchronized void removeRelation(IRelation<T> relation) {
+		if (relation == null) {
+			return;
+		}
+
+		if (containsRelation(relation)) {
+			T from = relation.getFrom();
+			T to = relation.getTo();
+
+			Map<T, IRelation<T>> relaionts = this.matrix.get(this.nodes.indexOf(from));
+			fireRelationRemoving(new RelationRemovingEvent<T>(this, relation));
+			clearRelation(relation);
+			relaionts.remove(to);
+			fireRelationRemoved(new RelationRemovedEvent<T>(this, from, to));
+		}
+	}
+
+	public synchronized boolean containsRelation(IRelation<T> relation) {
+		if (relation == null) {
+			return false;
+		}
+
+		if (!this.nodes.contains(relation.getFrom()) || !this.nodes.contains(relation.getTo())) {
+			return false;
+		}
+
+		T from = relation.getFrom();
+		T to = relation.getTo();
+
+		Map<T, IRelation<T>> relations = this.matrix.get(this.nodes.indexOf(from));
+		if (relations.get(to) != relation) {
+			return false;
+		}
+
+		return relations.containsValue(relation);
 	}
 
 	public synchronized IRelation<T> getRelation(T fromNode, T toNode) {

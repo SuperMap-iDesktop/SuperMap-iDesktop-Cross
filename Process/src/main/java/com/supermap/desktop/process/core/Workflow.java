@@ -71,6 +71,18 @@ public class Workflow implements IWorkflow {
 		this.processMatrix.removeNode(process);
 	}
 
+	public void removeRelation(IProcess from, IProcess to) {
+		this.processMatrix.removeRelation(from, to);
+	}
+
+	public void removeRelation(IRelation<IProcess> relation) {
+		this.processMatrix.removeRelation(relation);
+	}
+
+	public boolean containsRelation(IRelation<IProcess> relation) {
+		return this.processMatrix.containsRelation(relation);
+	}
+
 	public Vector<IProcess> getToProcesses(IProcess process) {
 		return this.processMatrix.getToNodes(process);
 	}

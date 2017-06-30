@@ -16,11 +16,6 @@ public class DirectConnect implements IRelation {
 	}
 
 	@Override
-	public void relate() {
-
-	}
-
-	@Override
 	public void clear() {
 
 	}
