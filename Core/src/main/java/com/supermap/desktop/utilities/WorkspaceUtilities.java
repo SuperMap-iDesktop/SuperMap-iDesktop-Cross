@@ -373,6 +373,7 @@ public class WorkspaceUtilities {
 	public static Workspace copyWorkspace(Workspace workspace, Workspace copyWorkspace) {
 		copyWorkspace.setCaption(workspace.getCaption());
 		copyWorkspace.setDescription(workspace.getDescription());
+		copyWorkspace.setDesktopInfo(workspace.getDesktopInfo());
 
 		RepeatDatasourceDeal repeatDatasourceDeal = new RepeatDatasourceDeal(workspace.getDatasources(), copyWorkspace.getDatasources());
 		java.util.List<Datasource> datasourceBOnly = repeatDatasourceDeal.getDatasourceBOnly();

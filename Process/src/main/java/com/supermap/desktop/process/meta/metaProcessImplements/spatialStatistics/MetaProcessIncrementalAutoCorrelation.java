@@ -5,7 +5,6 @@ import com.supermap.analyst.spatialstatistics.DistanceMethod;
 import com.supermap.analyst.spatialstatistics.IncrementalParameter;
 import com.supermap.analyst.spatialstatistics.IncrementalResult;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
@@ -120,7 +119,7 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 		}
 
 		IncrementalParameter incrementalParameter = new IncrementalParameter();
-		incrementalParameter.setAssessmentFieldName(((FieldInfo) parameterFieldComboBox.getSelectedItem()).getName());
+		incrementalParameter.setAssessmentFieldName(parameterFieldComboBox.getFieldName());
 		incrementalParameter.setStandardization(Boolean.valueOf((String) parameterCheckBox.getSelectedItem()));
 		incrementalParameter.setBeginDistance(Double.valueOf((String) parameterTextFieldBeginDistance.getSelectedItem()));
 		incrementalParameter.setIncrementalNumber(Integer.valueOf((String) parameterTextFieldIncrementalNumber.getSelectedItem()));

@@ -5,7 +5,6 @@ import com.supermap.analyst.spatialstatistics.ClusteringDistributions;
 import com.supermap.analyst.spatialstatistics.OptimizedParameter;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
@@ -142,7 +141,7 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 		OptimizedParameter optimizedParameter = new OptimizedParameter();
 		optimizedParameter.setAggregatingPolygons((DatasetVector) parameterSingleDatasetAggregating.getSelectedItem());
 		optimizedParameter.setBoundingPolygons((DatasetVector) parameterSingleDatasetBounding.getSelectedItem());
-		optimizedParameter.setAssessmentFieldName(((FieldInfo) parameterFieldComboBox.getSelectedItem()).getName());
+		optimizedParameter.setAssessmentFieldName(parameterFieldComboBox.getFieldName());
 		optimizedParameter.setAggregationMethod((AggregationMethod) ((ParameterDataNode) parameterComboBox.getSelectedItem()).getData());
 
 		try {

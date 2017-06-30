@@ -14,8 +14,8 @@ import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
 import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
 import com.supermap.desktop.ui.lbs.impl.WebHDFS;
+import com.supermap.desktop.ui.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
-import com.supermap.desktop.ui.lbs.params.KernelDensityJobSetting;
 import com.supermap.desktop.ui.lbs.ui.JDialogHDFSFiles;
 import com.supermap.desktop.utilities.CursorUtilities;
 import com.supermap.ui.Action;
@@ -75,6 +75,17 @@ public class JDialogKernelDensity extends SmDialog {
 	private JTextField textInputURL;
 	private JButton buttonInputBrowser;
 
+	private JLabel labelXIndex;
+	private JTextField textFieldXIndex;
+	private JLabel labelYIndex;
+	private JTextField textFieldYIndex;
+	private JLabel labelSeparator;
+	private JTextField textFieldSeparator;
+	private JLabel analystMethod;
+	private JComboBox comboBoxMethod;
+	private JLabel gridType;
+	private JComboBox comboBoxType;
+
 	private JLabel labelResolution;
 	private JTextField textResolution;
 	private JLabel labelRadius;
@@ -93,13 +104,9 @@ public class JDialogKernelDensity extends SmDialog {
 
 	private JLabel labelOutputURL;
 	private JTextField textOutputURL;
-//    private JButton buttonOutputBrowser;
 
 	private JLabel labelIndex;
 	private JTextField textFieldIndex;
-
-	private JLabel labelSeperator;
-	private JTextField textFieldSeperator;
 
 	private JButton buttonOK;
 	private JButton buttonCancel;
@@ -131,8 +138,20 @@ public class JDialogKernelDensity extends SmDialog {
 		}
 		this.labelIndex = new JLabel();
 		this.textFieldIndex = new JTextField("10");
-		this.labelSeperator = new JLabel();
-		this.textFieldSeperator = new JTextField(",");
+		this.labelXIndex =new JLabel();
+		this.textFieldXIndex = new JTextField("10");
+		this.labelYIndex =new JLabel();
+		this.textFieldYIndex= new JTextField("11");
+		this.labelSeparator = new JLabel();
+		this.textFieldSeparator = new JTextField(",");
+		this.analystMethod = new JLabel();
+		this.comboBoxMethod = new JComboBox();
+		this.comboBoxMethod.addItem(LBSClientProperties.getString("String_SimpleDensity"));
+		this.comboBoxMethod.addItem(LBSClientProperties.getString("String_KernelDensityAnalyst"));
+		this.gridType = new JLabel();
+		this.comboBoxType= new JComboBox();
+		this.comboBoxType.addItem(LBSClientProperties.getString("String_QuadrilateralMesh"));
+		this.comboBoxType.addItem(LBSClientProperties.getString("String_HexagonalMesh"));
 		this.labelOutputURL = new JLabel();
 		this.textOutputURL = new JTextField("/opt/supermap_iserver_811_14511_9_linux64_deploy/webapps/iserver/processingResultData/KernelDensity");
 		this.textOutputURL.setEnabled(false);
@@ -143,7 +162,7 @@ public class JDialogKernelDensity extends SmDialog {
 		this.getRootPane().setDefaultButton(this.buttonOK);
 
 		initContentPane();
-		setSize(560, 410);
+		setSize(429,572);
 		setLocationRelativeTo(null);
 
 		registerEvents();
@@ -156,7 +175,11 @@ public class JDialogKernelDensity extends SmDialog {
 		this.buttonDrawBounds.setText(LBSClientProperties.getString("String_DrawBounds"));
 		this.buttonDrawBounds.setToolTipText(LBSClientProperties.getString("String_DrawBounds"));
 		this.labelIndex.setText(LBSClientProperties.getString("String_Index"));
-		this.labelSeperator.setText(LBSClientProperties.getString("String_Seperator"));
+		this.labelSeparator.setText(LBSClientProperties.getString("String_Seperator"));
+		this.labelXIndex.setText(LBSClientProperties.getString("String_XIndex"));
+		this.labelYIndex.setText(LBSClientProperties.getString("String_YIndex"));
+		this.analystMethod.setText(LBSClientProperties.getString("String_AnalyseType"));
+		this.gridType.setText(LBSClientProperties.getString("String_MeshType"));
 		this.labelOutputURL.setText(LBSClientProperties.getString("String_OutputURL"));
 		this.labelBoundsLeft.setText(LBSClientProperties.getString("String_Left"));
 		this.labelBoundsBottom.setText(LBSClientProperties.getString("String_Bottom"));
@@ -180,16 +203,24 @@ public class JDialogKernelDensity extends SmDialog {
 		this.add(this.textInputURL, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 0).setWeight(1, 0));
 		this.add(this.buttonInputBrowser, new GridBagConstraintsHelper(3, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 5, 0, 10));
 		this.add(this.panelBounds, new GridBagConstraintsHelper(0, 1, 4, 4).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setInsets(10, 10, 0, 10).setWeight(1, 0));
-		this.add(this.labelIndex, new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
-		this.add(this.textFieldIndex, new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
-		this.add(this.labelSeperator, new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
-		this.add(this.textFieldSeperator, new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
-		this.add(this.labelResolution, new GridBagConstraintsHelper(0, 7, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
-		this.add(this.textResolution, new GridBagConstraintsHelper(1, 7, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
-		this.add(this.labelRadius, new GridBagConstraintsHelper(0, 8, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
-		this.add(this.textRadius, new GridBagConstraintsHelper(1, 8, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
-		this.add(new JPanel(), new GridBagConstraintsHelper(0, 9, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
-		this.add(panelButton, new GridBagConstraintsHelper(0, 10, 4, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+		this.add(this.labelXIndex, new GridBagConstraintsHelper(0, 5, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+		this.add(this.textFieldXIndex, new GridBagConstraintsHelper(1, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+		this.add(this.labelYIndex, new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+		this.add(this.textFieldYIndex, new GridBagConstraintsHelper(1, 6, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+		this.add(this.labelSeparator, new GridBagConstraintsHelper(0, 7, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+		this.add(this.textFieldSeparator, new GridBagConstraintsHelper(1, 7, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+		this.add(this.analystMethod, new GridBagConstraintsHelper(0, 8, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+		this.add(this.comboBoxMethod, new GridBagConstraintsHelper(1, 8, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+		this.add(this.gridType, new GridBagConstraintsHelper(0, 9, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+		this.add(this.comboBoxType, new GridBagConstraintsHelper(1, 9, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+		this.add(this.labelIndex, new GridBagConstraintsHelper(0, 10, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+		this.add(this.textFieldIndex, new GridBagConstraintsHelper(1, 10, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+		this.add(this.labelResolution, new GridBagConstraintsHelper(0, 11, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+		this.add(this.textResolution, new GridBagConstraintsHelper(1, 11, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+		this.add(this.labelRadius, new GridBagConstraintsHelper(0, 12, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
+		this.add(this.textRadius, new GridBagConstraintsHelper(1, 12, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 5, 0, 10).setWeight(1, 0));
+		this.add(new JPanel(), new GridBagConstraintsHelper(0, 13, 4, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(0, 1));
+		this.add(panelButton, new GridBagConstraintsHelper(0, 14, 4, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 
 		this.panelBounds.setLayout(new GridBagLayout());
 		this.panelBounds.add(this.labelBoundsLeft, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 10, 0, 0).setWeight(0, 0));
@@ -221,18 +252,27 @@ public class JDialogKernelDensity extends SmDialog {
 	}
 
 	private void queryInfo() {
-		KernelDensityJobSetting kenelDensityJobSetting = new KernelDensityJobSetting();
-		String queryInfo = textBoundsLeft.getText() + "," + textBoundsBottom.getText() + "," + textBoundsRight.getText() + "," + textBoundsTop.getText();
-		kenelDensityJobSetting.analyst.query = queryInfo;
-		// 挂了
-//		kenelDensityJobSetting.analyst.geoidx = textFieldIndex.getText();
-//		kenelDensityJobSetting.analyst.separator = textFieldSeperator.getText();
-		kenelDensityJobSetting.analyst.resolution = textResolution.getText();
-		kenelDensityJobSetting.analyst.radius = textRadius.getText();
-		kenelDensityJobSetting.input.datasetName = textInputURL.getText();
 		IServerService service = new IServerServiceImpl();
+		CommonSettingCombine filePath = new CommonSettingCombine("filePath",textInputURL.getText());
+		CommonSettingCombine xIndex = new CommonSettingCombine("xIndex",textFieldXIndex.getText());
+		CommonSettingCombine yIndex = new CommonSettingCombine("yIndex",textFieldYIndex.getText());
+		CommonSettingCombine separator = new CommonSettingCombine("separator",textFieldSeparator.getText());
+		CommonSettingCombine input = new CommonSettingCombine("input", "");
+		input.add(filePath,xIndex,yIndex,separator);
+
+		CommonSettingCombine method = new CommonSettingCombine("method",(String) comboBoxMethod.getSelectedItem());
+		CommonSettingCombine meshType = new CommonSettingCombine("meshType",(String) comboBoxType.getSelectedItem());
+		CommonSettingCombine fields = new CommonSettingCombine("fields", textFieldIndex.getText());
+		CommonSettingCombine query = new CommonSettingCombine("query",textBoundsLeft.getText() + "," + textBoundsBottom.getText() + "," + textBoundsRight.getText() + "," + textBoundsTop.getText());
+		CommonSettingCombine resolution = new CommonSettingCombine("resolution",textResolution.getText());
+		CommonSettingCombine radius = new CommonSettingCombine("radius",textRadius.getText());
+		CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
+		analyst.add(query,resolution,radius,method,meshType,fields);
+
+		CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
+		commonSettingCombine.add(input,analyst);
+		JobResultResponse response = service.queryResult("KernelDensity",commonSettingCombine.getFinalJSon());
 		this.setCursor(new Cursor(Cursor.WAIT_CURSOR));
-		JobResultResponse response = service.query(kenelDensityJobSetting);
 		if (null != response) {
 			this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			NewMessageBus.producer(response);
@@ -284,7 +324,7 @@ public class JDialogKernelDensity extends SmDialog {
 				WebHDFS.getHDFSOutputDirectry() + "kerneldensity" + System.currentTimeMillis() + ".grd",
 				String.format("%s,%s,%s,%s", this.textBoundsLeft.getText(), this.textBoundsBottom.getText(), this.textBoundsRight.getText(), this.textBoundsTop.getText()),
 				this.textFieldIndex.getText(),
-				this.textFieldSeperator.getText(),
+				this.textFieldSeparator.getText(),
 				this.textResolution.getText(),
 				this.textRadius.getText());
 

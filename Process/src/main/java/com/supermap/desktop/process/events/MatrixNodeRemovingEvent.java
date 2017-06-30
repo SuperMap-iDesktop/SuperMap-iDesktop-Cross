@@ -7,20 +7,23 @@ import com.supermap.desktop.process.core.NodeMatrix;
  * Created by highsad on 2017/6/21.
  */
 public class MatrixNodeRemovingEvent<T extends Object> extends CancellationEvent {
-	private NodeMatrix<T> matrix;
-	private T node;
-
-	public MatrixNodeRemovingEvent(NodeMatrix<T> matrix, T removingNode, boolean isCancel) {
-		super(matrix, isCancel);
-		this.matrix = matrix;
-		this.node = removingNode;
+	public MatrixNodeRemovingEvent(Object source, boolean isCancel) {
+		super(source, isCancel);
 	}
-
-	public NodeMatrix<T> getMatrix() {
-		return matrix;
-	}
-
-	public T getNode() {
-		return node;
-	}
+//	private NodeMatrix<T> matrix;
+//	private T node;
+//
+//	public MatrixNodeRemovingEvent(NodeMatrix<T> matrix, T removingNode, boolean isCancel) {
+//		super(matrix, isCancel);
+//		this.matrix = matrix;
+//		this.node = removingNode;
+//	}
+//
+//	public NodeMatrix<T> getMatrix() {
+//		return matrix;
+//	}
+//
+//	public T getNode() {
+//		return node;
+//	}
 }

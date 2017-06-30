@@ -65,7 +65,7 @@ public class TasksManager {
 		this.workflow = workflow;
 		this.scheduler = new Timer(500, new SchedulerActionListener());
 //		this.executor = new DefaultWorkflowExecutor();
-		this.workflow.addWorkflowChangeListener(this.workflowChangeListener);
+//		this.workflow.addWorkflowChangeListener(this.workflowChangeListener);
 	}
 
 	public int getStatus() {
@@ -130,35 +130,35 @@ public class TasksManager {
 	}
 
 	private void initialize() {
-		Vector<IProcess> processes = this.workflow.getProcesses();
-		for (IProcess process :
-				processes) {
-			if (this.workflow.isLeadingProcess(process)) {
-				this.ready.add(process);
-			} else {
-				this.waiting.add(process);
-			}
-		}
+//		Vector<IProcess> processes = this.workflow.getProcesses();
+//		for (IProcess process :
+//				processes) {
+//			if (this.workflow.isLeadingProcess(process)) {
+//				this.ready.add(process);
+//			} else {
+//				this.waiting.add(process);
+//			}
+//		}
 	}
 
 	private synchronized void reset() {
-		this.waiting.clear();
-		this.ready.clear();
-		this.running.clear();
-		this.completed.clear();
-		this.cancelled.clear();
-		this.exceptionOccurred.clear();
-		this.status = TasksManager.NORMAL;
-
-		if (this.scheduler.isRunning()) {
-			this.scheduler.stop();
-		}
-
-		Vector<IProcess> processes = this.workflow.getProcesses();
-		for (IProcess process :
-				processes) {
-			process.reset();
-		}
+//		this.waiting.clear();
+//		this.ready.clear();
+//		this.running.clear();
+//		this.completed.clear();
+//		this.cancelled.clear();
+//		this.exceptionOccurred.clear();
+//		this.status = TasksManager.NORMAL;
+//
+//		if (this.scheduler.isRunning()) {
+//			this.scheduler.stop();
+//		}
+//
+//		Vector<IProcess> processes = this.workflow.getProcesses();
+//		for (IProcess process :
+//				processes) {
+//			process.reset();
+//		}
 	}
 
 	private void waitingToReady(IProcess process) {
@@ -208,19 +208,20 @@ public class TasksManager {
 	}
 
 	private boolean isReady(IProcess process) {
-		boolean isReady = true;
-
-		if (process != null) {
-			Vector<IProcess> preProcesses = this.workflow.getFromProcesses(process);
-
-			for (int i = 0; i < preProcesses.size(); i++) {
-				isReady = preProcesses.get(i).getStatus() == RunningStatus.COMPLETED;
-				if (isReady == false) {
-					break;
-				}
-			}
-		}
-		return isReady;
+//		boolean isReady = true;
+//
+//		if (process != null) {
+//			Vector<IProcess> preProcesses = this.workflow.getFromProcesses(process);
+//
+//			for (int i = 0; i < preProcesses.size(); i++) {
+//				isReady = preProcesses.get(i).getStatus() == RunningStatus.COMPLETED;
+//				if (isReady == false) {
+//					break;
+//				}
+//			}
+//		}
+//		return isReady;
+		return true;
 	}
 
 	private class ProcessStatusChangeListener implements StatusChangeListener {
@@ -239,19 +240,19 @@ public class TasksManager {
 		}
 
 		private void handleCompleted(IProcess process) {
-			// 先处理自身状态
-			runningToCompleted(process);
-
-			// 再处理下级节点状态，检查下级节点是否所有前置节点都已执行完毕
-			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
-
-			for (int i = 0; i < nextProcesses.size(); i++) {
-
-				// 该节点的所有前置节点均已执行完成准备就绪，就将节点移动到 ready
-				if (isReady(nextProcesses.get(i))) {
-					waitingToReady(nextProcesses.get(i));
-				}
-			}
+//			// 先处理自身状态
+//			runningToCompleted(process);
+//
+//			// 再处理下级节点状态，检查下级节点是否所有前置节点都已执行完毕
+//			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
+//
+//			for (int i = 0; i < nextProcesses.size(); i++) {
+//
+//				// 该节点的所有前置节点均已执行完成准备就绪，就将节点移动到 ready
+//				if (isReady(nextProcesses.get(i))) {
+//					waitingToReady(nextProcesses.get(i));
+//				}
+//			}
 		}
 
 		private void handleRunning(IProcess process) {
@@ -259,45 +260,45 @@ public class TasksManager {
 		}
 
 		private void handleException(IProcess process) {
-
-			// 先把自己移动到异常队列
-			runningToExceptionOccurred(process);
-
-			// 再把所有后续节点移动到异常队列
-			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
-			if (nextProcesses != null && nextProcesses.size() > 0) {
-				for (IProcess nextProcess :
-						nextProcesses) {
-					if (!waiting.contains(nextProcess)) {
-
-						// 如果后续节点不在 waiting 队列中，则抛一个异常
-						throw new UnsupportedOperationException();
-					}
-
-					moveProcess(nextProcess, waiting, exceptionOccurred);
-				}
-			}
+//
+//			// 先把自己移动到异常队列
+//			runningToExceptionOccurred(process);
+//
+//			// 再把所有后续节点移动到异常队列
+//			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
+//			if (nextProcesses != null && nextProcesses.size() > 0) {
+//				for (IProcess nextProcess :
+//						nextProcesses) {
+//					if (!waiting.contains(nextProcess)) {
+//
+//						// 如果后续节点不在 waiting 队列中，则抛一个异常
+//						throw new UnsupportedOperationException();
+//					}
+//
+//					moveProcess(nextProcess, waiting, exceptionOccurred);
+//				}
+//			}
 		}
 
 		private void handleCancelled(IProcess process) {
-
-			// 先把自己移动到取消队列
-			runningToCancelled(process);
-
-			// 再把所有后续节点移动到取消队列
-			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
-			if (nextProcesses != null && nextProcesses.size() > 0) {
-				for (IProcess nextProcess :
-						nextProcesses) {
-
-					// throw an exception if any followed process is not contained in waiting list.
-					if (!waiting.contains(nextProcess)) {
-						throw new UnsupportedOperationException();
-					}
-
-					moveProcess(nextProcess, waiting, cancelled);
-				}
-			}
+//
+//			// 先把自己移动到取消队列
+//			runningToCancelled(process);
+//
+//			// 再把所有后续节点移动到取消队列
+//			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
+//			if (nextProcesses != null && nextProcesses.size() > 0) {
+//				for (IProcess nextProcess :
+//						nextProcesses) {
+//
+//					// throw an exception if any followed process is not contained in waiting list.
+//					if (!waiting.contains(nextProcess)) {
+//						throw new UnsupportedOperationException();
+//					}
+//
+//					moveProcess(nextProcess, waiting, cancelled);
+//				}
+//			}
 		}
 	}
 
@@ -305,31 +306,31 @@ public class TasksManager {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			try {
-				lock.lock();
-				if (ready.size() > 0) {
-					for (int i = ready.size() - 1; i >= 0; i--) {
-						IProcess process = ready.get(i);
-						tasksMap.get(process).doWork();
-					}
-				}
-
-				// 当等待队列、就绪队列、运行队列均已经清空，则停止任务调度，并输出日志
-				if (waiting.size() == 0 && ready.size() == 0 && running.size() == 0) {
-					scheduler.stop();
-
-					if (workflow.getProcessCount() == completed.size()) {
-						status = TasksManager.COMPLETED;
-					} else {
-						status = TasksManager.INTERRUPTED;
-					}
-				}
-			} catch (Exception ex) {
-				Application.getActiveApplication().getOutput().output(ex);
-			} finally {
-				lock.unlock();
-			}
-
+//			try {
+//				lock.lock();
+//				if (ready.size() > 0) {
+//					for (int i = ready.size() - 1; i >= 0; i--) {
+//						IProcess process = ready.get(i);
+//						tasksMap.get(process).doWork();
+//					}
+//				}
+//
+//				// 当等待队列、就绪队列、运行队列均已经清空，则停止任务调度，并输出日志
+//				if (waiting.size() == 0 && ready.size() == 0 && running.size() == 0) {
+//					scheduler.stop();
+//
+//					if (workflow.getProcessCount() == completed.size()) {
+//						status = TasksManager.COMPLETED;
+//					} else {
+//						status = TasksManager.INTERRUPTED;
+//					}
+//				}
+//			} catch (Exception ex) {
+//				Application.getActiveApplication().getOutput().output(ex);
+//			} finally {
+//				lock.unlock();
+//			}
+//
 
 		}
 	}

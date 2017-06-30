@@ -4,7 +4,6 @@ import com.supermap.analyst.spatialstatistics.ConceptualizationModel;
 import com.supermap.analyst.spatialstatistics.DistanceMethod;
 import com.supermap.analyst.spatialstatistics.PatternsParameter;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.FieldInfo;
 import com.supermap.data.FieldType;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
@@ -210,7 +209,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 
 	public PatternsParameter getPatternParameter() {
 		PatternsParameter patternsParameter = new PatternsParameter();
-		patternsParameter.setAssessmentFieldName(((FieldInfo) parameterAssessmentFieldComboBox.getSelectedItem()).getName());
+		patternsParameter.setAssessmentFieldName(parameterAssessmentFieldComboBox.getFieldName());
 		ConceptualizationModel conceptualizationModel = (ConceptualizationModel) ((ParameterDataNode) parameterComboBoxConceptModel.getSelectedItem()).getData();
 		patternsParameter.setConceptModel(conceptualizationModel);
 		patternsParameter.setDistanceMethod((DistanceMethod) ((ParameterDataNode) parameterDistanceMethod.getSelectedItem()).getData());
@@ -229,7 +228,7 @@ public class ParameterPatternsParameter extends ParameterCombine {
 			patternsParameter.setFDRAdjusted(Boolean.valueOf((String) parameterCheckBoxFDRAdjusted.getSelectedItem()));
 		}
 		if (metaKeys.equals(MetaKeys.hotSpotAnalyst)) {
-			patternsParameter.setSelfWeightFieldName(((FieldInfo) parameterSelfWeightFieldComboBox.getSelectedItem()).getName());
+			patternsParameter.setSelfWeightFieldName(parameterSelfWeightFieldComboBox.getFieldName());
 		} else {
 			patternsParameter.setStandardization(Boolean.valueOf((String) parameterCheckBoxStandardization.getSelectedItem()));
 		}

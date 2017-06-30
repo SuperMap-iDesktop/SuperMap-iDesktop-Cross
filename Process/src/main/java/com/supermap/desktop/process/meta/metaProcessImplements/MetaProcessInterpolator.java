@@ -12,7 +12,6 @@ import com.supermap.data.DatasetGrid;
 import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
 import com.supermap.data.Datasource;
-import com.supermap.data.FieldInfo;
 import com.supermap.data.PixelFormat;
 import com.supermap.data.Rectangle2D;
 import com.supermap.data.SteppedEvent;
@@ -41,6 +40,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.properties.PixelFormatProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
+
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -98,13 +98,13 @@ public class MetaProcessInterpolator extends MetaProcess {
 				parameterBoundsTop.setSelectedItem(bounds.getTop());
 				parameterBoundsRight.setSelectedItem(bounds.getRight());
 				parameterBoundsBottom.setSelectedItem(bounds.getBottom());
-				Double x = bounds.getWidth()/500;
-				Double y = bounds.getHeight()/500;
-				Double resolution = x>y?y:x;
+				Double x = bounds.getWidth() / 500;
+				Double y = bounds.getHeight() / 500;
+				Double resolution = x > y ? y : x;
 				parameterResulotion.setSelectedItem(resolution);
-				if(resolution != 0){
-					int rows = (int) Math.abs(bounds.getHeight()/resolution);
-					int columns = (int) Math.abs(bounds.getWidth()/resolution);
+				if (resolution != 0) {
+					int rows = (int) Math.abs(bounds.getHeight() / resolution);
+					int columns = (int) Math.abs(bounds.getWidth() / resolution);
 					parameterRow.setSelectedItem(rows);
 					parameterColumn.setSelectedItem(columns);
 				}
@@ -130,7 +130,11 @@ public class MetaProcessInterpolator extends MetaProcess {
 		parameterScaling.setSelectedItem("1");
 		ParameterCombine sourceCombine = new ParameterCombine();
 		sourceCombine.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
-		sourceCombine.addParameters(parameterDatasource,parameterDataset,parameterInterpolatorFields,parameterScaling);
+		sourceCombine.addParameters(parameterDatasource, parameterDataset);
+
+		ParameterCombine parameterField = new ParameterCombine();
+		parameterField.setDescribe(SETTING_PANEL_DESCRIPTION);
+		parameterField.addParameters(parameterInterpolatorFields, parameterScaling);
 
 		parameterResultDatasetName = new ParameterSaveDataset();
 		parameterResultDatasetName.setDatasetName("Interpolator");
@@ -150,7 +154,7 @@ public class MetaProcessInterpolator extends MetaProcess {
 		parameterRow = new ParameterTextField().setDescribe(CommonProperties.getString("String_Row"));
 		ParameterCombine targetCombine = new ParameterCombine();
 		targetCombine.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
-		targetCombine.addParameters(parameterResultDatasetName, parameterResulotion,parameterPixelType, parameterRow, parameterColumn);
+		targetCombine.addParameters(parameterResultDatasetName, parameterResulotion, parameterPixelType, parameterRow, parameterColumn);
 
 		parameterBoundsLeft = new ParameterTextField().setDescribe(ControlsProperties.getString("String_LabelLeft"));
 		parameterBoundsTop = new ParameterTextField().setDescribe(ControlsProperties.getString("String_LabelTop"));
@@ -208,34 +212,34 @@ public class MetaProcessInterpolator extends MetaProcess {
 				|| interpolationAlgorithmType.equals(InterpolationAlgorithmType.SimpleKRIGING)) {
 			otherParamCombine.addParameters(new ParameterCombine().addParameters(parameterVariogramMode, parameterAngle, parameterMean)
 					, new ParameterCombine().addParameters(parameterStill, parameterRange, parameterNugget));
-		}else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.UniversalKRIGING)) {
+		} else if (interpolationAlgorithmType.equals(InterpolationAlgorithmType.UniversalKRIGING)) {
 			otherParamCombine.addParameters(new ParameterCombine().addParameters(parameterVariogramMode, parameterAngle, parameterSteps)
 					, new ParameterCombine().addParameters(parameterStill, parameterRange, parameterNugget));
 		}
 
-		parameters.setParameters(sourceCombine, targetCombine, boundsCombine, modeSetCombine, otherParamCombine);
+		parameters.setParameters(sourceCombine, parameterField, targetCombine, boundsCombine, modeSetCombine, otherParamCombine);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, sourceCombine);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, targetCombine);
 	}
 
-	private void initParameterStates(){
+	private void initParameterStates() {
 		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
 		if (datasetVector != null) {
 			parameterDatasource.setSelectedItem(datasetVector.getDatasource());
 			parameterDataset.setSelectedItem(datasetVector);
-			if(datasetVector.getType() == DatasetType.POINT){
+			if (datasetVector.getType() == DatasetType.POINT) {
 				Rectangle2D bounds = datasetVector.getBounds();
 				parameterBoundsLeft.setSelectedItem(bounds.getLeft());
 				parameterBoundsTop.setSelectedItem(bounds.getTop());
 				parameterBoundsRight.setSelectedItem(bounds.getRight());
 				parameterBoundsBottom.setSelectedItem(bounds.getBottom());
-				Double x = bounds.getWidth()/500;
-				Double y = bounds.getHeight()/500;
-				Double resolution = x>y?y:x;
+				Double x = bounds.getWidth() / 500;
+				Double y = bounds.getHeight() / 500;
+				Double resolution = x > y ? y : x;
 				parameterResulotion.setSelectedItem(resolution);
-				if(resolution != 0){
-					int rows = (int) Math.abs(bounds.getHeight()/resolution);
-					int columns = (int) Math.abs(bounds.getWidth()/resolution);
+				if (resolution != 0) {
+					int rows = (int) Math.abs(bounds.getHeight() / resolution);
+					int columns = (int) Math.abs(bounds.getWidth() / resolution);
 					parameterRow.setSelectedItem(rows);
 					parameterColumn.setSelectedItem(columns);
 				}
@@ -324,14 +328,14 @@ public class MetaProcessInterpolator extends MetaProcess {
 			String datasetName = parameterResultDatasetName.getDatasetName();
 			datasetName = targetDatasource.getDatasets().getAvailableDatasetName(datasetName);
 			DatasetGrid dataset = Interpolator.interpolate(interpolationParameter, datasetVector,
-					((FieldInfo) parameterInterpolatorFields.getSelectedItem()).getName(), Double.valueOf(parameterScaling.getSelectedItem().toString()),
+					parameterInterpolatorFields.getFieldName(), Double.valueOf(parameterScaling.getSelectedItem().toString()),
 					targetDatasource, datasetName,
 					(PixelFormat) ((ParameterDataNode) parameterPixelType.getSelectedItem()).getData());
 			this.parameters.getOutputs().getData(OUTPUT_DATA).setValue(dataset);
 			isSuccessful = dataset != null;
 			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(e);
+			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {
 			Interpolator.removeSteppedListener(this.stepLitener);
 		}

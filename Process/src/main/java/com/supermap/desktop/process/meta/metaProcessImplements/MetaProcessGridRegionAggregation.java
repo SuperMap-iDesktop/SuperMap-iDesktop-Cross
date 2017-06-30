@@ -13,7 +13,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.TaskUtil;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
-import com.supermap.desktop.ui.lbs.params.BigDataParameterSetting;
+import com.supermap.desktop.ui.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
 import com.supermap.desktop.utilities.CursorUtilities;
 
@@ -96,27 +96,25 @@ public class MetaProcessGridRegionAggregation extends MetaProcess {
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
-			BigDataParameterSetting bigDataParameterSetting = new BigDataParameterSetting();
-			bigDataParameterSetting.filePath = parameterHDFSPath.getSelectedItem().toString();
-			bigDataParameterSetting.xIndex = parameterTextFieldXIndex.getSelectedItem().toString();
-			bigDataParameterSetting.yIndex = parameterTextFieldYIndex.getSelectedItem().toString();
-			bigDataParameterSetting.separator = parameterTextFieldSeparator.getSelectedItem().toString();
-			bigDataParameterSetting.input = "{\"filePath\":" + "\"" + bigDataParameterSetting.filePath + "\","
-					+ "\"xIndex\":" + "\"" + bigDataParameterSetting.xIndex + "\","
-					+ "\"yIndex\":" + "\"" + bigDataParameterSetting.yIndex + "\","
-					+ "\"separator\":" + "\"" + bigDataParameterSetting.separator + "\"}";
-			bigDataParameterSetting.fields = parameterWeightIndex.getSelectedItem().toString();
-			bigDataParameterSetting.statisticModes = parameterStaticModel.getSelectedItem().toString();
-			bigDataParameterSetting.query = parameterBounds.getSelectedItem().toString();
-			bigDataParameterSetting.resolution = parameterResolution.getSelectedItem().toString();
-			bigDataParameterSetting.meshType = parameterMeshType.getSelectedData().toString();
-			bigDataParameterSetting.analyst = "{\"fields\":" + "\"" + bigDataParameterSetting.fields + "\","
-					+ "\"statisticModes\":" + "\"" + bigDataParameterSetting.statisticModes + "\","
-					+ "\"query\":" + "\"" + bigDataParameterSetting.query + "\","
-					+ "\"resolution\":" + "\"" + bigDataParameterSetting.resolution + "\","
-					+ "\"meshType\":" + "\"" + bigDataParameterSetting.meshType + "\"}";
-			bigDataParameterSetting.type = parameterAggregationType.getSelectedData().toString();
-			JobResultResponse response = service.queryResult("{\"input\":" + bigDataParameterSetting.input + ",\"analyst\":" + bigDataParameterSetting.analyst + ",\"type\":\"" + bigDataParameterSetting.type + "\"}");
+			CommonSettingCombine filePath = new CommonSettingCombine("filePath",parameterHDFSPath.getSelectedItem().toString());
+			CommonSettingCombine xIndex = new CommonSettingCombine("xIndex",parameterTextFieldXIndex.getSelectedItem().toString());
+			CommonSettingCombine yIndex = new CommonSettingCombine("yIndex",parameterTextFieldYIndex.getSelectedItem().toString());
+			CommonSettingCombine separator = new CommonSettingCombine("separator",parameterTextFieldSeparator.getSelectedItem().toString());
+			CommonSettingCombine input = new CommonSettingCombine("input", "");
+			input.add(filePath,xIndex,yIndex,separator);
+
+			CommonSettingCombine fields = new CommonSettingCombine("fields",parameterWeightIndex.getSelectedItem().toString());
+			CommonSettingCombine statisticModes = new CommonSettingCombine("statisticModes",parameterStaticModel.getSelectedItem().toString());
+			CommonSettingCombine query = new CommonSettingCombine("query",parameterBounds.getSelectedItem().toString());
+			CommonSettingCombine resolution = new CommonSettingCombine("resolution",parameterResolution.getSelectedItem().toString());
+			CommonSettingCombine meshType = new CommonSettingCombine("meshType",parameterMeshType.getSelectedData().toString());
+			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
+			analyst.add(fields,statisticModes,query,resolution,meshType);
+
+			CommonSettingCombine type = new CommonSettingCombine("type",parameterAggregationType.getSelectedData().toString());
+			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
+			commonSettingCombine.add(input,analyst,type);
+			JobResultResponse response = service.queryResult(MetaKeys.GRIDREGION_AGGREGATION,commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				ProcessTask task = TaskUtil.getTask(this);

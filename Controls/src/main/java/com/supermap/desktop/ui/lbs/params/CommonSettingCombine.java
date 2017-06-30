@@ -50,25 +50,9 @@ public class CommonSettingCombine {
 			stringBuffer.append("}");
 		}
 		return stringBuffer.toString();
-
 	}
 
 	public String getFinalJSon() {
 		return getJsonValue();
-	}
-
-	public static void main(String[] args) {
-		CommonSettingCombine input = new CommonSettingCombine("input", "");
-		CommonSettingCombine datasource = new CommonSettingCombine("datasetSource", "samples_zone_zone");
-		input.add(datasource);
-
-		CommonSettingCombine analyst = new CommonSettingCombine("a nalyst", "");
-		CommonSettingCombine datasetOverlay = new CommonSettingCombine("datasetOverlay", "aaa_test_zone");
-		CommonSettingCombine mode = new CommonSettingCombine("mode", "identity");
-		analyst.add(datasetOverlay, mode);
-
-		CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
-		commonSettingCombine.add(input, analyst);
-		System.out.println(commonSettingCombine.getFinalJSon());
 	}
 }

@@ -22,9 +22,10 @@ import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.TaskUtil;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
+import com.supermap.desktop.ui.lbs.params.CommonSettingCombine;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
-import com.supermap.desktop.ui.lbs.params.OverlayAnalystGeoJobSetting;
 import com.supermap.desktop.utilities.CursorUtilities;
+import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
  * 单对象叠加
@@ -88,7 +89,15 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 	}
 
 	private void initComponentState() {
+		Dataset defaultBigDataStoreDataset = DatasetUtilities.getDefaultBigDataStoreDataset();
+		if (defaultBigDataStoreDataset != null) {
+			parameterSourceDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
+			parameterSourceDataset.setSelectedItem(defaultBigDataStoreDataset);
 
+			parameterOverlayDatasource.setSelectedItem(defaultBigDataStoreDataset.getDatasource());
+			parameterOverlayDataset.setSelectedItem(defaultBigDataStoreDataset);
+
+		}
 	}
 
 	private void initConstraint() {
@@ -113,16 +122,23 @@ public class MetaProcessOverlayanalystgeo extends MetaProcess {
 	@Override
 	public boolean execute() {
 		try {
+			fireRunning(new RunningEvent(this, 0, "start"));
 			IServerService service = parameterIServerLogin.login();
 			Dataset sourceDataset = parameterSourceDataset.getSelectedDataset();
 			Dataset overlayDataset = parameterOverlayDataset.getSelectedDataset();
 			String overlayType = (String) parameterOverlayTypeComboBox.getSelectedData();
-			OverlayAnalystGeoJobSetting overlayAnalystGeoJobSetting = new OverlayAnalystGeoJobSetting();
-			overlayAnalystGeoJobSetting.input.datasetSource = sourceDataset.getName();
-			overlayAnalystGeoJobSetting.analyst.datasetOverlay = overlayDataset.getName();
-			overlayAnalystGeoJobSetting.analyst.mode = overlayType;
-			fireRunning(new RunningEvent(this, 0, "start"));
-			JobResultResponse response = service.query(overlayAnalystGeoJobSetting);
+			CommonSettingCombine datasetSource = new CommonSettingCombine("datasetSource",sourceDataset.getName());
+			CommonSettingCombine input = new CommonSettingCombine("input", "");
+			input.add(datasetSource);
+
+			CommonSettingCombine datasetOverlay = new CommonSettingCombine("datasetOverlay",overlayDataset.getName());
+			CommonSettingCombine mode = new CommonSettingCombine("mode",overlayType);
+			CommonSettingCombine analyst = new CommonSettingCombine("analyst", "");
+			analyst.add(datasetOverlay,mode);
+
+			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
+			commonSettingCombine.add(input,analyst);
+			JobResultResponse response = service.queryResult(MetaKeys.OVERLAYANALYSTGEO,commonSettingCombine.getFinalJSon());
 			CursorUtilities.setWaitCursor();
 			if (null != response) {
 				ProcessTask task = TaskUtil.getTask(this);
