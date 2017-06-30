@@ -77,6 +77,10 @@
                     <process key="ImportFileGDBVector" name="File GeoDataBase Vector 文件夹"/>
                 </process>
             </process>
+            <process name="数据导出">
+                <process key="ExportGrid" name="导出栅格数据集"/>
+                <process key="ExportVector" name="导出矢量数据集"/>
+            </process>
             <process name="投影设置">
                 <process key="SetProjection" name="重设坐标系"/>
                 <process key="Projection" name="投影转换"/>

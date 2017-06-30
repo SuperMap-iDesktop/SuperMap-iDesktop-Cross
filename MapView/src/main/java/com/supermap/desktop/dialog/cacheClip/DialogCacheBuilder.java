@@ -100,7 +100,7 @@ public class DialogCacheBuilder extends SmDialog {
 			if (dispose) {
 				DialogCacheBuilder.this.dispose();
 			}
-			new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), sciPath));
+			optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), sciPath));
 		} else {
 			return;
 		}

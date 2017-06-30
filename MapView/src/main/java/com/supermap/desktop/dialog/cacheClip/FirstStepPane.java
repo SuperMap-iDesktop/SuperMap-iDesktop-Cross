@@ -25,7 +25,10 @@ import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.Convert;
+import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -554,11 +557,18 @@ public class FirstStepPane extends JPanel implements IState {
 			this.labelDatabaseName.setVisible(true);
 			this.comboBoxDatabaseName.setVisible(true);
 			this.comboBoxDatabaseName.removeAllItems();
-			this.labelUserName.setVisible(true);
-			this.textFieldUserName.setVisible(true);
-			this.textFieldUserName.setText("");
-			this.textFieldUserPassword.setEnabled(true);
-			this.textFieldUserPassword.setText("");
+			if (cmdType == DialogMapCacheClipBuilder.ResumeProcessClip) {
+				this.labelUserName.setVisible(false);
+				this.textFieldUserName.setVisible(false);
+				this.labelUserPassword.setVisible(false);
+				this.textFieldUserPassword.setVisible(false);
+			} else {
+				this.labelUserName.setVisible(true);
+				this.textFieldUserName.setVisible(true);
+				this.textFieldUserName.setText("");
+				this.textFieldUserPassword.setEnabled(true);
+				this.textFieldUserPassword.setText("");
+			}
 			this.labelConfirmPassword.setVisible(false);
 			this.warningProviderPasswordNotSame.setVisible(false);
 			this.textFieldConfirmPassword.setVisible(false);
@@ -579,16 +589,16 @@ public class FirstStepPane extends JPanel implements IState {
 
 	/**
 	 * 检查链接是否可用
- 	 */
+	 */
 	private void updateDBNames() {
-		if(!mongoDBConnectSate){
+		if (!mongoDBConnectSate) {
 			this.comboBoxDatabaseName.removeAllItems();
 			return;//如果IP都不对就直接返回，不然输一个字符获取一次列表，IP不对的情况下会很慢的
 		}
 		String serverName = textFieldServerName.getText();
 		String userName = textFieldUserName.getText();
 		String password = new String(textFieldUserPassword.getPassword());
-		String dbName = comboBoxDatabaseName.getSelectedItem()==null?null:comboBoxDatabaseName.getSelectedItem().toString();
+		String dbName = comboBoxDatabaseName.getSelectedItem() == null ? null : comboBoxDatabaseName.getSelectedItem().toString();
 		//重置database comboBox
 		java.util.List<String> databaseNames = new ArrayList<>();
 		try {
@@ -600,7 +610,7 @@ public class FirstStepPane extends JPanel implements IState {
 			this.textFieldUserPassword.setText(null);
 			this.textFieldUserName.setEnabled(false);
 			this.textFieldUserPassword.setEnabled(false);
-		}catch (Exception e){
+		} catch (Exception e) {
 			this.textFieldUserName.setEnabled(true);
 			this.textFieldUserPassword.setEnabled(true);
 			//再尝试验证模式--输入用户名密码
@@ -608,18 +618,18 @@ public class FirstStepPane extends JPanel implements IState {
 				databaseNames.clear();
 				String[] names = Toolkit.GetMongoDBNames(serverName, userName, password);
 				databaseNames.addAll(Arrays.asList(names));
-			}catch (Exception e1){
+			} catch (Exception e1) {
 
 			}
 		}
 
-		if(databaseNames.size() ==0){
+		if (databaseNames.size() == 0) {
 			//认证模式下，输入正确的用户名密码，得到列表之后选择，然后再修改为普通用户，此时不希望刚才的选择被清除掉。
 			this.comboBoxDatabaseName.removeAllItems();
-			if(dbName != null){
+			if (dbName != null) {
 				this.comboBoxDatabaseName.setSelectedItem(dbName);
 			}
-		}else {
+		} else {
 			//修改了ip、账号等信息，是的获取到了数据库列表。判断列表是否完全一致，一致就不更新combox了，避免因修改账号导致选择被清除。
 			boolean isDBNamesSame = true;
 			if (this.comboBoxDatabaseName.getItemCount() != databaseNames.size()) {
@@ -646,13 +656,12 @@ public class FirstStepPane extends JPanel implements IState {
 	 * 简单测试连接是否正常。后面组件应该要提供数据库连接test,针对验证和非验证模式，对输入账号的要求不同。
 	 * fixme 关注 http://192.168.115.2:8090/browse/UGDC-2617
 	 */
-	private boolean isDBValidate(){
+	private boolean isDBValidate() {
 		String address = "";
 		Integer port = DEFAULT_PORT;
-		if(StringUtilities.isNullOrEmpty(this.textFieldServerName.getText())){
+		if (StringUtilities.isNullOrEmpty(this.textFieldServerName.getText())) {
 			return false;
-		}
-		else {
+		} else {
 			if (this.textFieldServerName.getText().indexOf(COLON) != -1) {
 				String[] temp = this.textFieldServerName.getText().split(COLON);
 				if (!temp[0].isEmpty() && !temp[1].isEmpty() && temp[1].matches("[0-9]+")) {
@@ -672,6 +681,7 @@ public class FirstStepPane extends JPanel implements IState {
 		}
 		return true;
 	}
+
 	private void connectMongoDB(String address, Integer port) {
 		try {
 			ServerAddress serverAddress = new ServerAddress(address, port);
@@ -691,13 +701,13 @@ public class FirstStepPane extends JPanel implements IState {
 				//先尝试验证模式--输入用户名密码
 				String[] names = Toolkit.GetMongoDBNames(textFieldServerName.getText(), textFieldUserName.getText(), textFieldUserPassword.getPassword().toString());
 				databaseNames.addAll(Arrays.asList(names));
-			}catch (Exception e){
+			} catch (Exception e) {
 				//再尝试非验证模式--用户名密码为空，否则抛异常
 				try {
 					databaseNames.clear();
 					String[] names = Toolkit.GetMongoDBNames(textFieldServerName.getText(), "", "");
 					databaseNames.addAll(Arrays.asList(names));
-				}catch (Exception e1){
+				} catch (Exception e1) {
 
 				}
 			}
@@ -907,7 +917,7 @@ public class FirstStepPane extends JPanel implements IState {
 
 	private void initGlobalValue() {
 		this.scientificNotation.setGroupingUsed(false);
-		if (cmdType == DialogMapCacheClipBuilder.UpdateProcessClip || cmdType == DialogMapCacheClipBuilder.ReloadProcessClip) {
+		if (cmdType == DialogMapCacheClipBuilder.UpdateProcessClip || cmdType == DialogMapCacheClipBuilder.ResumeProcessClip) {
 			this.originMapCacheScale = this.mapCacheBuilder.getOutputScales();
 		} else {
 			this.originMapCacheScale = this.mapCacheBuilder.getDefultOutputScales();
