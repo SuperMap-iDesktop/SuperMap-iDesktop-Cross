@@ -44,7 +44,6 @@ public class MetaProcessExportGrid extends MetaProcessAbstractExport {
 
 	protected void initParameters() {
 		super.initParameters();
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, chooseDataset);
 
 		this.chooseDataset.setSupportTypes(DatasetTypeUtilities.getDatasetTypeGrid());
 		String module = "ExportGrid_OutPutDirectories";
@@ -81,6 +80,7 @@ public class MetaProcessExportGrid extends MetaProcessAbstractExport {
 		this.gridCombine.addParameters(this.compressionRatio, this.prjFile, this.checkBoxTFW,
 				this.password, this.confirmPassword);
 		this.parameters.setParameters(this.basicCombine, this.gridCombine);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, chooseDataset);
 	}
 
 	protected void addDataset() {

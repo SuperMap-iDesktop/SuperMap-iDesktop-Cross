@@ -23,7 +23,7 @@ import java.text.MessageFormat;
  */
 public class MetaProcessAbstractExport extends MetaProcess {
 	protected final static String INPUT_DATA = "SourceDataset";
-	protected final static String OUTPUT_DATA = "result_Export";
+	protected final static String OUTPUT_DATA = "ExportResult";
 	protected ParameterDatasetChooser chooseDataset;
 	protected ParameterComboBox supportType;
 	protected ParameterTextField targetName;

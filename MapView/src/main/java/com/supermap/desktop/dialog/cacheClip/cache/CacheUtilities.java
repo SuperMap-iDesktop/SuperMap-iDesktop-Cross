@@ -89,15 +89,18 @@ public class CacheUtilities {
 	public static void startMapClip(Map map) {
 		DialogMapCacheClip dialogMapCacheClip = new DialogMapCacheClip();
 		if (dialogMapCacheClip.showDialog() == DialogResult.OK) {
-			Datasource datasource = map.getLayers().get(0).getDataset().getDatasource();
+			if (null != map.getLayers().get(0).getDataset()) {
+				//没有提供数据源,只是拆分任务的情况
+				Datasource datasource = map.getLayers().get(0).getDataset().getDatasource();
 //			Datasource datasource = ((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].getDataset().getDatasource();
-			if (!datasource.isReadOnly() && !dialogMapCacheClip.isSingleProcess()) {
-				SmOptionPane pane = new SmOptionPane();
-				pane.showConfirmDialog(MapViewProperties.getString("String_DatasourceOpenedNotReadOnly"));
-				return;
+				if (!datasource.isReadOnly() && !dialogMapCacheClip.isSingleProcess()) {
+					SmOptionPane pane = new SmOptionPane();
+					pane.showConfirmDialog(MapViewProperties.getString("String_DatasourceOpenedNotReadOnly"));
+					return;
+				}
+				datasource.getWorkspace().save();
+				ToolbarUIUtilities.updataToolbarsState();
 			}
-			datasource.getWorkspace().save();
-			ToolbarUIUtilities.updataToolbarsState();
 //			Map map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
 			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
 			Map newMap = new Map(Application.getActiveApplication().getWorkspace());

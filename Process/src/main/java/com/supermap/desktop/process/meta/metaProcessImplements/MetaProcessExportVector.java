@@ -60,7 +60,6 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 
 	protected void initParameters() {
 		super.initParameters();
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, chooseDataset);
 		this.chooseDataset.setSupportTypes(DatasetTypeUtilities.getDatasetTypeVector());
 		String module = "ExportVector_OutPutDirectories";
 		if (!SmFileChoose.isModuleExist(module)) {
@@ -95,6 +94,7 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 		this.vectorCombine.addParameters(this.externalData, this.externalRecord, this.charset
 				, this.cadVersion, this.expression, emptyCombine);
 		this.parameters.setParameters(this.basicCombine, this.vectorCombine);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, chooseDataset);
 	}
 
 	protected void addDataset() {
