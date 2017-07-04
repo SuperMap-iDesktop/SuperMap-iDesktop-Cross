@@ -417,6 +417,9 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		if (!valiteCacheFolderSave()) {
 			return;
 		}
+		if (null == mapCacheBuilder.getMap()) {
+			mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
+		}
 		setMapCacheBuilderValueBeforeRun();
 		boolean result;
 		long startTime = System.currentTimeMillis();

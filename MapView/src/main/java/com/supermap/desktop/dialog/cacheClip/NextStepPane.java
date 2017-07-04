@@ -412,7 +412,8 @@ public class NextStepPane extends JPanel implements IState {
 	}
 
 	private void initComponentsStates() {
-		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip) {
+		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip
+				|| cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
 			this.panelIndexRange.setComponentsEnabled(false);
 			this.labelImageType.setEnabled(false);
 			this.comboBoxImageType.setEnabled(false);
