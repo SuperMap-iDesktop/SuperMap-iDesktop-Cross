@@ -119,13 +119,13 @@
                 <process name="模型分析">//AnalyzingPatterns
                     <process key="autoCorrelation" name="空间自相关"/>
                     <process key="highOrLowClustering" name="高低值聚类"/>
-                    <!--<process key="incrementalAutoCorrelation" name="增量空间自相关"/>-->
-                    <!--<process key="averageNearestNeighbor" name="平均最邻近统计"/>-->
+                    <process key="incrementalAutoCorrelation" name="增量空间自相关"/>
+                    <process key="averageNearestNeighbor" name="平均最邻近统计"/>
                 </process>
                 <process name="聚类分布">//ClusteringDistributions
                     <process key="clusterOutlierAnalyst" name="聚类和异常值分析"/>
                     <process key="hotSpotAnalyst" name="热点分析"/>
-                    <!--<process key="optimizedHotSpotAnalyst" name="优化的热点分析"/>-->
+                    <process key="optimizedHotSpotAnalyst" name="优化的热点分析"/>
                 </process>
                 <process name="空间关系建模">//SpatialRelModeling
                     <process key="geographicWeightedRegression" name="地理加权回归分析"/>
