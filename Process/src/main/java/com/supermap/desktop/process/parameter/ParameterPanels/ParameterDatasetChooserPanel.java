@@ -101,24 +101,24 @@ public class ParameterDatasetChooserPanel extends SwingPanel implements IParamet
 		this.textFieldDatasetName.getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-
+				setDataset();
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-
+				setDataset();
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-
+				setDataset();
 			}
 
 			private void setDataset() {
 				if (!isSelectingItem) {
 					isSelectingItem = true;
 					String datasetName = textFieldDatasetName.getText();
-					if (dataset.getName().equals(datasetName)) {
+					if (null != dataset && dataset.getName().equals(datasetName)) {
 						datasetChooser.setSelectedItem(dataset);
 					} else if (!StringUtilities.isNullOrEmpty(datasetName)) {
 						Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();

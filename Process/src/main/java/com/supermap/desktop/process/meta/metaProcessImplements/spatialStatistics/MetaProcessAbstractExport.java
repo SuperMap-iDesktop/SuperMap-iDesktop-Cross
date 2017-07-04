@@ -9,6 +9,7 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 
@@ -21,7 +22,8 @@ import java.text.MessageFormat;
  * Created by xie on 2017/6/29.
  */
 public class MetaProcessAbstractExport extends MetaProcess {
-	protected final static String INPUT_DATA = "InputData";
+	protected final static String INPUT_DATA = "SourceDataset";
+	protected final static String OUTPUT_DATA = "result_Export";
 	protected ParameterDatasetChooser chooseDataset;
 	protected ParameterComboBox supportType;
 	protected ParameterTextField targetName;
@@ -82,6 +84,8 @@ public class MetaProcessAbstractExport extends MetaProcess {
 		this.basicCombine.setDescribe(CommonProperties.getString("String_ResultSet"));
 		this.basicCombine.addParameters(this.chooseDataset, this.supportType, this.targetName, this.exportPath, this.cover);
 		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, chooseDataset);
+		//输出为文件路径，没有控件能对应
+		this.parameters.addOutputParameters(OUTPUT_DATA, BasicTypes.STRING, null);
 	}
 
 	protected void addDataset() {
