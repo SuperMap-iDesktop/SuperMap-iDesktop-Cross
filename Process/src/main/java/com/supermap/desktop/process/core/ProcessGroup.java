@@ -145,8 +145,8 @@ public class ProcessGroup implements IProcessGroup, IProcess {
 	}
 
 	@Override
-	public void run() {
-
+	public boolean run() {
+		return false;
 	}
 
 	@Override

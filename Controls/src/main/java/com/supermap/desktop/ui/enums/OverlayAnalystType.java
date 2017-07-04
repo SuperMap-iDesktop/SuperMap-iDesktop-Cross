@@ -27,16 +27,16 @@ public enum OverlayAnalystType {
                 result = "EraseResult";
                 break;
             case IDENTITY:
-                result = "IntersectResult";
-                break;
-            case INTERSECT:
                 result = "IdentityResult";
                 break;
+            case INTERSECT:
+                result = "IntersectResult";
+                break;
             case UPDATE:
-                result = "XORResult";
+                result = "UpdateResult";
                 break;
             case XOR:
-                result = "UpdateResult";
+                result = "XORResult";
                 break;
             default:
                 break;

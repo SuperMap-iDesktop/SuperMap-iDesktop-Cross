@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.messageBus.NewMessageBus;
@@ -11,34 +12,22 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.BasicTypes;
 import com.supermap.desktop.process.tasks.ProcessTask;
 import com.supermap.desktop.process.util.TaskUtil;
-import com.supermap.desktop.properties.CoreProperties;
 import com.supermap.desktop.ui.lbs.Interface.IServerService;
-import com.supermap.desktop.ui.lbs.impl.IServerServiceImpl;
 import com.supermap.desktop.ui.lbs.params.*;
 import com.supermap.desktop.utilities.CursorUtilities;
-import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
  * Created by xie on 2017/2/10.
  * 计算热度图
  */
 public class MetaProcessHeatMap extends MetaProcess {
-	private ParameterTextField parameterTextFieldUserName = new ParameterTextField();
-	private ParameterPassword parameterTextFieldPassword = new ParameterPassword();
-
+	private ParameterIServerLogin parameterIServerLogin = new ParameterIServerLogin();
 	private ParameterHDFSPath parameterHDFSPath;
-
 	private ParameterTextField parameterTextFieldXIndex = new ParameterTextField(ProcessProperties.getString("String_XIndex"));
 	private ParameterTextField parameterTextFieldYIndex = new ParameterTextField(ProcessProperties.getString("String_YIndex"));
 	private ParameterTextField parameterTextFieldSeparator = new ParameterTextField(ProcessProperties.getString("String_Separator"));
-
-	private ParameterTextField parameterTextFieldAddress = new ParameterTextField(CoreProperties.getString("String_Server"));
-
-	private ParameterTextField parameterTextFieldPort = new ParameterTextField(ProcessProperties.getString("String_port"));
-
 	private ParameterComboBox parameterCacheType;
 	private ParameterTextField parameterBounds;
-	//	private ParameterTextField parameterXYIndex;
 	private ParameterTextField parameterCacheLevel;
 	private ParameterTextField parameterCacheName;
 	private ParameterComboBox parameterDatabaseType;
@@ -57,17 +46,8 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterTextFieldYIndex.setSelectedItem("11");
 		parameterTextFieldSeparator.setSelectedItem(",");
 		parameterTextFieldSeparator.setEnabled(false);
-		parameterTextFieldAddress.setSelectedItem("192.168.13.161");
-		parameterTextFieldPort.setSelectedItem("8090");
-		parameterTextFieldUserName.setSelectedItem("admin");
-		parameterTextFieldUserName.setDescribe(ProcessProperties.getString("String_UserName"));
-		parameterTextFieldPassword.setSelectedItem("iserver123.");
-		parameterTextFieldPassword.setDescribe(ProcessProperties.getString("String_PassWord"));
-
 		parameterHDFSPath = new ParameterHDFSPath();
-//		parameterHDFSPath.setSelectedItem("newyork14_newyork_taxi_2013-01_14k");
-		parameterHDFSPath.setSelectedItem("hdfs://192.168.12.201:9000/data/newyork_taxi_2013-01_14k.csv");
-
+		parameterHDFSPath.setSelectedItem("hdfs://192.168.20.189:9000/data/newyork_taxi_2013-01_14k.csv");
 		parameterCacheType = new ParameterComboBox(ProcessProperties.getString("String_CacheType"));
 		ParameterDataNode parameterDataNode1 = new ParameterDataNode("heatmap", "heatmap");
 		parameterCacheType.setItems(parameterDataNode1);
@@ -75,8 +55,6 @@ public class MetaProcessHeatMap extends MetaProcess {
 		//流程图中不支持在地图中绘制范围，范围表示与iServer的表示相同
 		parameterBounds = new ParameterTextField().setDescribe(ProcessProperties.getString("String_CacheBounds"));
 		parameterBounds.setSelectedItem("-74.050,40.650,-73.850,40.850");
-//		parameterXYIndex = new ParameterTextField().setDescribe(ProcessProperties.getString("String_XYIndex"));
-//		parameterXYIndex.setSelectedItem("10,11");
 		parameterCacheLevel = new ParameterTextField().setDescribe(ProcessProperties.getString("String_CacheLevel"));
 		parameterCacheLevel.setSelectedItem("1");
 		parameterCacheName = new ParameterTextField().setDescribe(ProcessProperties.getString("String_CacheName"));
@@ -92,10 +70,6 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterVersion = new ParameterTextField().setDescribe(ProcessProperties.getString("String_Version"));
 		parameterVersion.setSelectedItem("V1");
 
-		ParameterCombine parameterCombine = new ParameterCombine();
-		parameterCombine.setDescribe(ProcessProperties.getString("String_loginInfo"));
-		parameterCombine.addParameters(parameterTextFieldAddress, parameterTextFieldPort, parameterTextFieldUserName, parameterTextFieldPassword);
-
 		ParameterCombine parameterCombineSetting = new ParameterCombine();
 		parameterCombineSetting.setDescribe(ProcessProperties.getString("String_setParameter"));
 		parameterCombineSetting.addParameters(parameterHDFSPath,
@@ -104,7 +78,6 @@ public class MetaProcessHeatMap extends MetaProcess {
 				parameterTextFieldXIndex,
 				parameterTextFieldYIndex,
 				parameterTextFieldSeparator,
-//				parameterXYIndex,
 				parameterCacheLevel,
 				parameterCacheName,
 				parameterDatabaseType,
@@ -116,9 +89,8 @@ public class MetaProcessHeatMap extends MetaProcess {
 		parameterCombineResult.setDescribe(ProcessProperties.getString("String_result"));
 		parameterCombineResult.addParameters(parameterTextAreaOutPut);
 		parameters.setParameters(
-				parameterCombine,
+				parameterIServerLogin,
 				parameterCombineSetting
-//				, parameterCombineResult
 		);
 		parameters.getOutputs().addData("HeatMapResult", BasicTypes.STRING);
 	}
@@ -135,59 +107,48 @@ public class MetaProcessHeatMap extends MetaProcess {
 
 	@Override
 	public boolean execute() {
-//		JDialogLogin jDialogLogin = new JDialogLogin();
-//		if (jDialogLogin.showDialog() != DialogResult.OK) {
-//			return;
-//		}
-		String username = (String) parameterTextFieldUserName.getSelectedItem();
-		String password = (String) parameterTextFieldPassword.getSelectedItem();
-		IServerService service = new IServerServiceImpl();
-		IServerLoginInfo.ipAddr = (String) parameterTextFieldAddress.getSelectedItem();
-		IServerLoginInfo.port = (String) parameterTextFieldPort.getSelectedItem();
-		CloseableHttpClient client = service.login(username, password);
-		if (null != client) {
-			IServerLoginInfo.client = client;
-
+		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
+			IServerService service = parameterIServerLogin.login();
 			//热度图分析功能
-			BuildCacheJobSetting setting = new BuildCacheJobSetting();
+			CommonSettingCombine filePath = new CommonSettingCombine("filePath",parameterHDFSPath.getSelectedItem().toString());
+			CommonSettingCombine xIndex = new CommonSettingCombine("xIndex",parameterTextFieldXIndex.getSelectedItem().toString());
+			CommonSettingCombine yIndex = new CommonSettingCombine("yIndex",parameterTextFieldYIndex.getSelectedItem().toString());
+			CommonSettingCombine separator = new CommonSettingCombine("separator",parameterTextFieldSeparator.getSelectedItem().toString());
+			CommonSettingCombine input = new CommonSettingCombine("input", "");
+			input.add(filePath,xIndex,yIndex,separator);
 
-			FileInputDataSetting input = new FileInputDataSetting();
-			input.filePath = parameterHDFSPath.getSelectedItem().toString();
-			input.xIndex = parameterTextFieldXIndex.getSelectedItem().toString();
-			input.yIndex = parameterTextFieldYIndex.getSelectedItem().toString();
-			input.separator = parameterTextFieldSeparator.getSelectedItem().toString();
+			CommonSettingCombine cacheName = new CommonSettingCombine("cacheName",parameterCacheName.getSelectedItem().toString());
+			CommonSettingCombine cacheType = new CommonSettingCombine("cacheType",(String) parameterDatabaseType.getSelectedData());
+			CommonSettingCombine serverAdresses = new CommonSettingCombine("serverAdresses",parameterServiceAddress.getSelectedItem().toString());
+			CommonSettingCombine database = new CommonSettingCombine("database",parameterDatabase.getSelectedItem().toString());
+			CommonSettingCombine version = new CommonSettingCombine("version",parameterVersion.getSelectedItem().toString());
+			CommonSettingCombine output = new CommonSettingCombine("output", "");
+			output.add(cacheName,cacheType,serverAdresses,database,version);
 
-			MongoDBOutputsetting output = new MongoDBOutputsetting();
-			output.cacheName = parameterCacheName.getSelectedItem().toString();
-			output.cacheType = ((ParameterDataNode) parameterDatabaseType.getSelectedItem()).getData().toString();
-			output.serverAdresses[0] = parameterServiceAddress.getSelectedItem().toString();
-			output.database = parameterDatabase.getSelectedItem().toString();
-			output.version = parameterVersion.getSelectedItem().toString();
+			CommonSettingCombine imageType = new CommonSettingCombine("imageType",(String) parameterCacheType.getSelectedData());
+			CommonSettingCombine bounds = new CommonSettingCombine("bounds",parameterBounds.getSelectedItem().toString());
+			CommonSettingCombine level = new CommonSettingCombine("level",parameterCacheLevel.getSelectedItem().toString());
+			CommonSettingCombine drawing = new CommonSettingCombine("drawing", "");
+			drawing.add(imageType,bounds,level);
 
-			BuildCacheDrawingSetting drawing = new BuildCacheDrawingSetting();
-			drawing.imageType = ((ParameterDataNode) parameterCacheType.getSelectedItem()).getData().toString();
-			drawing.bounds = parameterBounds.getSelectedItem().toString();
-
-			drawing.level = parameterCacheLevel.getSelectedItem().toString();
-//			drawing.xyIndex = parameterXYIndex.getSelectedItem().toString();
-			setting.input = input;
-			setting.output = output;
-			setting.drawing = drawing;
+			CommonSettingCombine commonSettingCombine = new CommonSettingCombine("", "");
+			commonSettingCombine.add(input,output,drawing);
+			String finalJSon = commonSettingCombine.getFinalJSon();
+			finalJSon = finalJSon.replaceAll("\"" + parameterServiceAddress.getSelectedItem().toString() + "\"", "[\"" + parameterServiceAddress.getSelectedItem().toString() + "\"]");
+			JobResultResponse response = service.queryResult(MetaKeys.HEAT_MAP, finalJSon);
 			CursorUtilities.setWaitCursor();
-			JobResultResponse response = service.query(setting);
 			if (null != response) {
-				CursorUtilities.setDefaultCursor();
 				ProcessTask task = TaskUtil.getTask(this);
 				NewMessageBus messageBus = new NewMessageBus(response, task);
 				messageBus.run();
 			}
-//            ProcessData processData = new ProcessData();
-//            processData.setData("Output");
-//            outPuts.add(0, processData);
 			fireRunning(new RunningEvent(this, 100, "finished"));
-			parameters.getOutputs().getData("HeatMapResult").setValue("");// // TODO: 2017/5/26
+			parameters.getOutputs().getData("HeatMapResult").setValue("");
 			CursorUtilities.setDefaultCursor();
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e.getMessage());
+			return false;
 		}
 		return true;
 	}

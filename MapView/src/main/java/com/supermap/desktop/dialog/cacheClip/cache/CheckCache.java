@@ -31,15 +31,21 @@ public class CheckCache {
 	private int sciLength;
 	private static final int INDEX_CACHEROOT = 0;
 	private static final int INDEX_SCIPATH = 1;
-	private static final int INDEX_MERGETASKCOUNT = 2;
+	//	private static final int INDEX_MERGETASKCOUNT = 2;
 	private static final int INDEX_ERROR2UDB = 3;
 	private static final int INDEX_BOUNDARYREGION = 4;
 
 	public void startProcess(int processCount, String[] params) {
 		try {
-			if (processCount == 0) {
-				main(params);
-			} else {
+//			if (0 == processCount) {
+//				main(params);
+//			} else {
+//				for (int i = 0; i < processCount; i++) {
+//					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.CHECK_CACEH);
+//					Thread.sleep(2000);
+//				}
+//			}
+			if (processCount > 0) {
 				for (int i = 0; i < processCount; i++) {
 					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.CHECK_CACEH);
 					Thread.sleep(2000);
@@ -69,10 +75,10 @@ public class CheckCache {
 	private void checkCache(String[] params) {
 		String cacheRoot = params[INDEX_CACHEROOT];
 		String scipath = params[INDEX_SCIPATH];
-		int mergeTaskCount = 0;
-		if (params.length > 2) {
-			mergeTaskCount = Integer.valueOf(params[INDEX_MERGETASKCOUNT]);
-		}
+//		int mergeTaskCount = 0;
+//		if (params.length > 2) {
+//			mergeTaskCount = Integer.valueOf(params[INDEX_MERGETASKCOUNT]);
+//		}
 		if (params.length > 3) {
 			this.error2udb = Boolean.valueOf(params[INDEX_ERROR2UDB]);
 		}
@@ -122,7 +128,7 @@ public class CheckCache {
 				}
 				CopyOnWriteArrayList<String> doingSciNames = new CopyOnWriteArrayList<>();
 				//Now give mergeSciCount sci files to every process if sciLength>mergeSciCount
-				int mergeSciCount = Integer.valueOf(mergeTaskCount);
+				int mergeSciCount = 3;
 				if (sciLength > mergeSciCount) {
 					//First step:Move mergeSciCount sci to doing directory
 					int success = 0;

@@ -57,6 +57,7 @@ public class ParameterComboBoxPanel extends SwingPanel implements IParameterPane
 	private void initLayout() {
 		label.setPreferredSize(ParameterUtil.LABEL_DEFAULT_SIZE);
 		comboBox.setPreferredSize(new Dimension(20, 23));
+		comboBox.setEnabled(parameterComboBox.isEnabled());
 		panel.setLayout(new GridBagLayout());
 		panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
 		panel.add(comboBox, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));

@@ -51,6 +51,10 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 		return selectedItem;
 	}
 
+	public Dataset getSelectedDataset() {
+		return selectedItem;
+	}
+
 	@Override
 	public String getType() {
 		return ParameterType.SINGLE_DATASET;

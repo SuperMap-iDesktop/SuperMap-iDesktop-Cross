@@ -11,6 +11,7 @@ import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
+import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
 
 import javax.swing.*;
@@ -23,21 +24,37 @@ import java.beans.PropertyChangeListener;
  */
 @ParameterPanelDescribe(parameterPanelType = ParameterType.TEXTFIELD)
 public class ParameterTextFieldPanel extends SwingPanel implements IParameterPanel {
+	private ISmTextFieldLegit smTextFieldLegit;
 	protected ParameterTextField parameterTextField;
 	protected JLabel label = new JLabel();
 	protected SmTextFieldLegit textField = new SmTextFieldLegit();
 	protected boolean isSelectingItem = false;
 
-	public ParameterTextFieldPanel(IParameter parameterTextField) {
+	public ParameterTextFieldPanel(final IParameter parameterTextField) {
 		super(parameterTextField);
 		this.parameterTextField = (ParameterTextField) parameterTextField;
 		label.setText(this.parameterTextField.getDescribe());
 		label.setToolTipText(this.parameterTextField.getDescribe());
 		label.setVisible(this.parameterTextField.isDescriptionVisible());
 		textField.setText(String.valueOf(this.parameterTextField.getSelectedItem()));
-		if (((ParameterTextField) parameterTextField).getSmTextFieldLegit() != null) {
-			textField.setSmTextFieldLegit(((ParameterTextField) parameterTextField).getSmTextFieldLegit());
-		}
+		this.smTextFieldLegit = ((ParameterTextField) parameterTextField).getSmTextFieldLegit();
+		textField.setSmTextFieldLegit(new ISmTextFieldLegit() {
+			@Override
+			public boolean isTextFieldValueLegit(String textFieldValue) {
+				if (smTextFieldLegit == null || smTextFieldLegit.isTextFieldValueLegit(textFieldValue)) {
+					isSelectingItem = true;
+					((ParameterTextField) parameterTextField).setSelectedItem(textFieldValue);
+					isSelectingItem = false;
+					return true;
+				}
+				return false;
+			}
+
+			@Override
+			public String getLegitValue(String currentValue, String backUpValue) {
+				return currentValue;
+			}
+		});
 		initLayout();
 		initListeners();
 	}

@@ -11,7 +11,6 @@ import java.beans.PropertyChangeEvent;
 
 /**
  * @author XiaJT
- * 最好支持添加任意像，如果"0"
  */
 public class ParameterFieldComboBox extends AbstractParameter implements ISelectionParameter {
 
@@ -20,13 +19,14 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 	private DatasetVector dataset;
 	public static final String FILED_INFO_FILED_NAME = "FILED_INFO_FILED_NAME";
 	@ParameterField(name = FILED_INFO_FILED_NAME)
-	private FieldInfo fieldInfo;
+	private String fieldName;
 
 	private FieldType[] fieldTypes;
 
 	private String describe;
 	private boolean isShowNullValue = false;
 	private boolean isShowSystemField = false;
+	private boolean isEditable = true;
 
 	public ParameterFieldComboBox() {
 		super();
@@ -39,21 +39,22 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 
 	@Override
 	public void setSelectedItem(Object item) {
-		if (item == null || item instanceof FieldInfo) {
-			fieldInfo = ((FieldInfo) item);
+		if (item == null) {
+			fieldName = "";
+		} else if (item instanceof FieldInfo) {
+			fieldName = ((FieldInfo) item).getCaption();
+		} else {
+			fieldName = item.toString();
 		}
 	}
 
 	@Override
 	public Object getSelectedItem() {
-		return fieldInfo;
+		return getFieldName();
 	}
 
 	public String getFieldName() {
-		if (fieldInfo != null) {
-			return fieldInfo.getName();
-		}
-		return null;
+		return fieldName;
 	}
 
 	@Override
@@ -104,6 +105,13 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 		DatasetVector oldValue = this.dataset;
 		this.dataset = dataset;
 		firePropertyChangeListener(new PropertyChangeEvent(this, DATASET_FIELD_NAME, oldValue, this.dataset));
+	}
+	public boolean isEditable() {
+		return this.isEditable;
+	}
+
+	public void setEditable(boolean isEditable) {
+		this.isEditable = isEditable;
 	}
 
 }

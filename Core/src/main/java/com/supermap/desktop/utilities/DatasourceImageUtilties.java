@@ -40,6 +40,7 @@ public class DatasourceImageUtilties {
 		datasourceImage.put(EngineType.GOOGLEMAPS, fileParentPath + "Datasource_Google.png");
 		datasourceImage.put(EngineType.OPENSTREETMAPS, fileParentPath + "Datasource_OSM.png");
 		datasourceImage.put(EngineType.MEMORY, fileParentPath + "Image_Memory.png");
+		datasourceImage.put(EngineType.DATASERVER, fileParentPath + "Datasource_BigDataStore.png");
 		datasourceImage.put(null, fileParentPath + "Image_Datasources_Normal.png");
 	}
 
@@ -96,6 +97,8 @@ public class DatasourceImageUtilties {
 			return fileParentPath + "Image_MySQL_24.png";
 		} else if (engineType == EngineType.OPENSTREETMAPS) {
 			return fileParentPath + "Image_OpenStreetMaps_24.png";
+		} else if (engineType == EngineType.DATASERVER) {
+			return fileParentPath + "Image_BigDataStore_24.png";
 		}
 		return "";
 	}

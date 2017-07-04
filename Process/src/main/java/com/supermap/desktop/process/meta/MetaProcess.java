@@ -4,11 +4,13 @@ import com.supermap.data.SteppedEvent;
 import com.supermap.data.SteppedListener;
 import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.core.AbstractProcess;
+import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.DefaultParameters;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.properties.CommonProperties;
 
 import javax.swing.*;
 
@@ -16,6 +18,11 @@ import javax.swing.*;
  * Created by highsad on 2017/1/5.
  */
 public abstract class MetaProcess extends AbstractProcess {
+
+	protected static final String SOURCE_PANEL_DESCRIPTION = CommonProperties.getString("String_GroupBox_SourceData");
+	protected static final String SETTING_PANEL_DESCRIPTION = CommonProperties.getString("String_FormEdgeCount_Text");
+	protected static final String RESULT_PANEL_DESCRIPTION = CommonProperties.getString("String_GroupBox_ResultData");
+
 	protected IParameters parameters = new DefaultParameters(this);
 	protected boolean finished = false;
 
@@ -50,6 +57,6 @@ public abstract class MetaProcess extends AbstractProcess {
 	}
 
 	public boolean isFinished() {
-		return finished;
+		return this.getStatus() == RunningStatus.COMPLETED;
 	}
 }

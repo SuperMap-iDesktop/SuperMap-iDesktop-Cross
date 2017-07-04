@@ -21,6 +21,8 @@ import java.util.ArrayList;
  * Created by highsad on 2016/12/19.
  */
 public class ProcessActivator implements BundleActivator {
+	private static final String processTreeClassName = "com.supermap.desktop.process.core.ProcessManager";
+	private static final String ParameterManagerClassName = "com.supermap.desktop.process.ParameterManager";
 
 	private static BundleContext CONTEXT;
 
@@ -67,29 +69,39 @@ public class ProcessActivator implements BundleActivator {
 	}
 
 	private IFormWorkflow showProcess(String newWindowName) {
-		IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
-		for (int i = 0; i < formManager.getCount(); i++) {
-			if (formManager.get(i).getWindowType() == WindowType.WORK_FLOW && formManager.get(i).getText().equals(newWindowName)) {
-				if (formManager.getActiveForm() != formManager.get(i)) {
-					formManager.setActiveForm(formManager.get(i));
-				}
-				return null;
-			}
-		}
 		FormWorkflow formWorkflow = null;
-		CursorUtilities.setWaitCursor();
-		ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
-		for (IWorkflow workFlow : workFlows) {
-			if (workFlow.getName().equals(newWindowName)) {
-				formWorkflow = new FormWorkflow(workFlow);
-				break;
+
+		try {
+			IFormManager formManager = Application.getActiveApplication().getMainFrame().getFormManager();
+			for (int i = 0; i < formManager.getCount(); i++) {
+				if (formManager.get(i).getWindowType() == WindowType.WORK_FLOW && formManager.get(i).getText().equals(newWindowName)) {
+					if (formManager.getActiveForm() != formManager.get(i)) {
+						formManager.setActiveForm(formManager.get(i));
+					}
+					return null;
+				}
 			}
+
+			CursorUtilities.setWaitCursor();
+			ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
+			for (IWorkflow workFlow : workFlows) {
+				if (workFlow.getName().equals(newWindowName)) {
+					formWorkflow = new FormWorkflow(workFlow);
+					break;
+				}
+			}
+			if (formWorkflow == null) {
+				formWorkflow = new FormWorkflow(newWindowName);
+			}
+			formManager.showChildForm(formWorkflow);
+			Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(processTreeClassName)).setVisible(true);
+			Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(ParameterManagerClassName)).setVisible(true);
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			CursorUtilities.setDefaultCursor();
 		}
-		if (formWorkflow == null) {
-			formWorkflow = new FormWorkflow(newWindowName);
-		}
-		formManager.showChildForm(formWorkflow);
-		CursorUtilities.setDefaultCursor();
+
 		return formWorkflow;
 	}
 

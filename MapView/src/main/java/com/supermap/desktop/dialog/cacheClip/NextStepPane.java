@@ -69,7 +69,7 @@ public class NextStepPane extends JPanel implements IState {
 	private JLabel labelTaskStorePath;
 	private WarningOrHelpProvider helpForTaskStorePath;
 	public JFileChooserControl fileChooserControlTaskPath;
-	private JCheckBox checkBoxClipOnThisComputer;
+	protected JCheckBox checkBoxClipOnThisComputer;
 	private JCheckBox checkBoxMultiProcessClip;
 	private JPanel panelMultiProcess;
 	private DialogMapCacheClipBuilder parent;
@@ -181,8 +181,8 @@ public class NextStepPane extends JPanel implements IState {
 		initPanelImageState();
 		initLayout();
 		registEvents();
-		if (this.cmdType == DialogMapCacheClipBuilder.ReloadProcessClip
-				|| this.cmdType == DialogMapCacheClipBuilder.UpdateProcessClip) {
+		if (this.cmdType == DialogMapCacheClipBuilder.ResumeProcessClip
+				|| this.cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip) {
 			resetComponentsInfo();
 		}
 	}
@@ -276,7 +276,8 @@ public class NextStepPane extends JPanel implements IState {
 		panelImageParam.add(this.checkBoxBackgroundTransparency, new GridBagConstraintsHelper(0, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
 		panelImageParam.add(this.checkBoxFullFillCacheImage, new GridBagConstraintsHelper(0, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 10, 5, 10));
 		panelImageParam.add(new JPanel(), new GridBagConstraintsHelper(0, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		if (cmdType != DialogMapCacheClipBuilder.SingleProcessClip && cmdType != DialogMapCacheClipBuilder.ReloadProcessClip) {
+		if (cmdType != DialogMapCacheClipBuilder.SingleProcessClip && cmdType != DialogMapCacheClipBuilder.ResumeProcessClip
+				&& cmdType != DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
 			JPanel innerPanel = new JPanel();
 			innerPanel.setLayout(new GridBagLayout());
 			innerPanel.add(this.labelTaskStorePath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
@@ -358,7 +359,10 @@ public class NextStepPane extends JPanel implements IState {
 	private void initComponents() {
 		this.enabledListeners = new Vector<>();
 		this.panelMultiProcess = new JPanel();
-		Map activeMap = MapUtilities.getActiveMap();
+		Map activeMap = this.mapCacheBuilder.getMap();
+		if (null == activeMap) {
+			activeMap = MapUtilities.getActiveMap();
+		}
 		this.panelCacheRange = new PanelGroupBoxViewBounds(parent, MapViewProperties.getString("MapCache_CacheRange"), activeMap);
 		this.panelIndexRange = new PanelGroupBoxViewBounds(parent, MapViewProperties.getString("MapCache_IndexRange"), activeMap);
 		this.cacheRangeBounds = this.mapCacheBuilder.getBounds();
@@ -382,7 +386,7 @@ public class NextStepPane extends JPanel implements IState {
 		this.labelTaskStorePath = new JLabel();
 		this.helpForTaskStorePath = new WarningOrHelpProvider(MapViewProperties.getString("String_HelpForTaskStorePath"), false);
 		this.fileChooserControlTaskPath = new JFileChooserControl();
-		String moduleName = "ChooseCacheClipDirectories";
+		String moduleName = "ChooseCacheTaskDirectories";
 		if (!SmFileChoose.isModuleExist(moduleName)) {
 			SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
 					moduleName, "GetDirectories");
@@ -390,7 +394,7 @@ public class NextStepPane extends JPanel implements IState {
 
 		SmFileChoose fileChoose = new SmFileChoose(moduleName);
 		this.fileChooserControlTaskPath.setFileChooser(fileChoose);
-		this.fileChooserControlTaskPath.setPath(System.getProperty("user.dir"));
+		this.fileChooserControlTaskPath.setPath(fileChoose.getModuleLastPath());
 		this.checkBoxClipOnThisComputer = new JCheckBox();
 		this.checkBoxMultiProcessClip = new JCheckBox();
 		this.checkBoxMultiProcessClip.setSelected(true);
@@ -408,7 +412,8 @@ public class NextStepPane extends JPanel implements IState {
 	}
 
 	private void initComponentsStates() {
-		if (cmdType == DialogMapCacheClipBuilder.UpdateProcessClip) {
+		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip
+				|| cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
 			this.panelIndexRange.setComponentsEnabled(false);
 			this.labelImageType.setEnabled(false);
 			this.comboBoxImageType.setEnabled(false);

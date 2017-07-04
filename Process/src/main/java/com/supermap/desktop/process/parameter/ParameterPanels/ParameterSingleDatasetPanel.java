@@ -1,10 +1,33 @@
 package com.supermap.desktop.process.parameter.ParameterPanels;
 
-import com.supermap.data.*;
+import com.supermap.data.Dataset;
+import com.supermap.data.DatasetCreatedEvent;
+import com.supermap.data.DatasetCreatedListener;
+import com.supermap.data.DatasetDeletingAllEvent;
+import com.supermap.data.DatasetDeletingAllListener;
+import com.supermap.data.DatasetDeletingEvent;
+import com.supermap.data.DatasetDeletingListener;
+import com.supermap.data.DatasetType;
+import com.supermap.data.Datasource;
+import com.supermap.data.DatasourceClosingEvent;
+import com.supermap.data.DatasourceClosingListener;
+import com.supermap.data.DatasourceCreatedEvent;
+import com.supermap.data.DatasourceCreatedListener;
+import com.supermap.data.DatasourceOpenedEvent;
+import com.supermap.data.DatasourceOpenedListener;
+import com.supermap.data.Datasources;
+import com.supermap.data.Workspace;
+import com.supermap.data.WorkspaceClosedEvent;
+import com.supermap.data.WorkspaceClosedListener;
+import com.supermap.data.WorkspaceCreatedEvent;
+import com.supermap.data.WorkspaceCreatedListener;
+import com.supermap.data.WorkspaceOpenedEvent;
+import com.supermap.data.WorkspaceOpenedListener;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
+import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
 import com.supermap.desktop.process.parameter.implement.AbstractParameter;
 import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
@@ -244,9 +267,9 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 					for (int i = 0; i < datasources1.getCount(); i++) {
 						if (parameterSingleDataset.isValueLegal(ParameterSingleDataset.DATASOURCE_FIELD_NAME, datasources1.get(i))) {
 							Object valueSelected = parameterSingleDataset.isValueSelected(ParameterSingleDataset.DATASOURCE_FIELD_NAME, datasources1.get(i));
-							if (valueSelected == AbstractParameter.DO_NOT_CARE) {
+							if (valueSelected == ParameterValueLegalListener.DO_NOT_CARE) {
 								setSelectedDatasource(datasources1.get(i));
-							} else if (valueSelected != AbstractParameter.NO) {
+							} else if (valueSelected != ParameterValueLegalListener.NO) {
 								setSelectedDatasource((Datasource) valueSelected);
 							} else {
 								continue;

@@ -6,7 +6,22 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.MetaProcessImportFactory;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.meta.metaProcessImplements.*;
+import com.supermap.desktop.process.meta.metaProcessImplements.EmptyMetaProcess;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessBuffer;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessGridRegionAggregation;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessHeatMap;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISOLine;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISOPoint;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISORegion;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessInterpolator;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessKernelDensity;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessOverlayAnalyst;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessPolygonAggregation;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessProjection;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSetProjection;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSimpleDensity;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSpatialIndex;
+import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSqlQuery;
 import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessAutoCorrelation;
 import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessAverageNearestNeighbor;
 import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessCentralElement;
@@ -34,6 +49,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -235,6 +251,10 @@ public class WorkflowParser {
 			result = new MetaProcessIncrementalAutoCorrelation();
 		} else if (MetaKeys.AverageNearestNeighbor.equals(key)) {
 			result = new MetaProcessAverageNearestNeighbor();
+		} else if (MetaKeys.OVERLAYANALYSTGEO.equals(key)) {
+			result = new MetaProcessOverlayanalystgeo();
+		} else if (MetaKeys.SINGLE_QUERY.equals(key)) {
+			result = new MetaProcessSingleQuery();
 		} else if (key.contains(MetaKeys.IMPORT)) {
 			String importType = key.replace(MetaKeys.IMPORT, "");
 			result = MetaProcessImportFactory.createMetaProcessImport(importType);
@@ -253,9 +273,14 @@ public class WorkflowParser {
             result = new MetaProcessThiessenPolygon();
         }else if (MetaKeys.COMPUTRDISTANCE.equals(key)) {
             result = new MetaProcessComputeDistance();
+        } else if (MetaKeys.EXPORTGRID.equals(key)) {
+            result = new MetaProcessExportGrid();
+        } else if (MetaKeys.EXPORTVECTOR.equals(key)) {
+            result = new MetaProcessExportVector();
         } else {
             result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
         }
+
 
 		return result;
 	}

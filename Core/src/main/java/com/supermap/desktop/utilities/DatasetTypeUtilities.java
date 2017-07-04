@@ -4,18 +4,7 @@ import com.supermap.data.DatasetType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.properties.DatasetTypeProperties;
 
-import static com.supermap.data.DatasetType.CAD;
-import static com.supermap.data.DatasetType.LINE;
-import static com.supermap.data.DatasetType.LINE3D;
-import static com.supermap.data.DatasetType.LINEM;
-import static com.supermap.data.DatasetType.NETWORK;
-import static com.supermap.data.DatasetType.NETWORK3D;
-import static com.supermap.data.DatasetType.POINT;
-import static com.supermap.data.DatasetType.POINT3D;
-import static com.supermap.data.DatasetType.REGION;
-import static com.supermap.data.DatasetType.REGION3D;
-import static com.supermap.data.DatasetType.TABULAR;
-import static com.supermap.data.DatasetType.TEXT;
+import static com.supermap.data.DatasetType.*;
 
 public class DatasetTypeUtilities {
 	private DatasetTypeUtilities() {
@@ -149,6 +138,12 @@ public class DatasetTypeUtilities {
 	public static DatasetType[] getDatasetTypeVector() {
 		return new DatasetType[]{
 				POINT, LINE, REGION, POINT3D, LINE3D, REGION3D, LINEM, TABULAR, NETWORK, NETWORK3D, CAD, TEXT
+		};
+	}
+
+	public static DatasetType[] getDatasetTypeGrid() {
+		return new DatasetType[]{
+				GRID, GRIDCOLLECTION, IMAGE, VOLUME, WCS, WMS
 		};
 	}
 }

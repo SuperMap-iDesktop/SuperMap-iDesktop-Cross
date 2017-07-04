@@ -61,6 +61,19 @@ public class UICommonToolkit {
 	}
 
 	/**
+	 * 刷新数据源节点
+	 * @param datasourceName
+	 */
+	public static void selectedDatasourceNode(String datasourceName) {
+		DefaultMutableTreeNode workspaceTreeDatasourceNode = getWorkspaceTreeDatasourceNode(datasourceName);
+		if (workspaceTreeDatasourceNode != null) {
+			TreePath path = new TreePath(workspaceTreeDatasourceNode.getPath());
+			UICommonToolkit.getWorkspaceManager().getWorkspaceTree().setSelectionPath(path);
+			UICommonToolkit.getWorkspaceManager().getWorkspaceTree().expandPath(path);
+		}
+	}
+
+	/**
 	 * 刷新指定的数据源
 	 *
 	 * @return
@@ -82,6 +95,7 @@ public class UICommonToolkit {
 					UICommonToolkit.getWorkspaceManager().getWorkspaceTree().expandPath(path);
 					// 设置选中的数据源在可见范围内
 					workspaceTree.scrollPathToVisible(path);
+					return;
 				}
 			}
 		}

@@ -77,8 +77,15 @@
                     <process key="ImportFileGDBVector" name="File GeoDataBase Vector 文件夹"/>
                 </process>
             </process>
-            <process key="Projection" name="投影转换"/>
-            <process key="SetProjection" name="重设坐标系"/>
+            <process name="数据导出">
+                <process key="ExportGrid" name="导出栅格数据集"/>
+                <process key="ExportVector" name="导出矢量数据集"/>
+            </process>
+            <process name="投影设置">
+                <process key="SetProjection" name="重设坐标系"/>
+                <process key="Projection" name="投影转换"/>
+                <!--<process key="UserDefineProjection" name="自定义投影"/>-->
+            </process>
             <process name="插值分析">
                 <process key="Interpolator_IDW" name="距离反比权重"/>
                 <process key="Interpolator_RBF" name="样条"/>
@@ -125,13 +132,13 @@
                 <process name="模型分析">//AnalyzingPatterns
                     <process key="autoCorrelation" name="空间自相关"/>
                     <process key="highOrLowClustering" name="高低值聚类"/>
-                    <!--<process key="incrementalAutoCorrelation" name="增量空间自相关"/>-->
-                    <!--<process key="averageNearestNeighbor" name="平均最邻近统计"/>-->
+                    <process key="incrementalAutoCorrelation" name="增量空间自相关"/>
+                    <process key="averageNearestNeighbor" name="平均最邻近统计"/>
                 </process>
                 <process name="聚类分布">//ClusteringDistributions
                     <process key="clusterOutlierAnalyst" name="聚类和异常值分析"/>
                     <process key="hotSpotAnalyst" name="热点分析"/>
-                    <!--<process key="optimizedHotSpotAnalyst" name="优化的热点分析"/>-->
+                    <process key="optimizedHotSpotAnalyst" name="优化的热点分析"/>
                 </process>
                 <process name="空间关系建模">//SpatialRelModeling
                     <process key="geographicWeightedRegression" name="地理加权回归分析"/>
@@ -186,8 +193,11 @@
             <process key="HeatMap" name="计算热度图"/>
             <process key="SimpleDensity" name="简单点密度分析"/>
             <process key="KernelDensity" name="核密度分析"/>
-            <!--<process key="GridRegionAggregation" name="网格面聚合"/>
-            <process key="PolygonAggregation" name="多边形聚合"/>-->
+            <process key="overlayanalystgeo" name="单对象叠加分析"/>
+            <process key="singleQuery" name="单对象查询"/>
+            <process key="GridRegionAggregation" name="网格面聚合分析"/>
+            <process key="PolygonAggregation" name="多边形聚合分析"/>
+
         </process>
     </process>
 </root>

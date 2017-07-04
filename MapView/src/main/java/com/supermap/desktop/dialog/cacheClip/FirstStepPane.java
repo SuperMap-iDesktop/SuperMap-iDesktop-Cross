@@ -4,6 +4,7 @@ import com.mongodb.Mongo;
 import com.mongodb.MongoClientURI;
 import com.mongodb.ServerAddress;
 import com.supermap.data.*;
+import com.supermap.data.Toolkit;
 import com.supermap.data.processing.CacheWriter;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapTilingMode;
@@ -24,7 +25,10 @@ import com.supermap.desktop.ui.controls.*;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 import com.supermap.desktop.ui.controls.mutiTable.DDLExportTableModel;
 import com.supermap.desktop.ui.controls.mutiTable.component.MutiTable;
-import com.supermap.desktop.utilities.*;
+import com.supermap.desktop.utilities.Convert;
+import com.supermap.desktop.utilities.CoreResources;
+import com.supermap.desktop.utilities.DoubleUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 import com.supermap.mapping.Map;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -49,10 +53,8 @@ import java.net.Socket;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Created by xie on 2017/4/26.
@@ -241,16 +243,19 @@ public class FirstStepPane extends JPanel implements IState {
 	private DocumentListener passwordChangeListener = new DocumentListener() {
 		@Override
 		public void insertUpdate(DocumentEvent e) {
+			updateDBNames();
 			fireEnabled(enabled());
 		}
 
 		@Override
 		public void removeUpdate(DocumentEvent e) {
+			updateDBNames();
 			fireEnabled(enabled());
 		}
 
 		@Override
 		public void changedUpdate(DocumentEvent e) {
+			updateDBNames();
 			fireEnabled(enabled());
 		}
 	};
@@ -274,9 +279,6 @@ public class FirstStepPane extends JPanel implements IState {
 	private FocusListener serverNameFocusListener = new FocusAdapter() {
 		@Override
 		public void focusGained(FocusEvent e) {
-			if (textFieldServerName.getText().equals(MapViewProperties.getString("MapCache_MongoDB_DefaultServerName"))) {
-				textFieldServerName.setText("");
-			}
 			textFieldServerNameGetFocus = true;
 			fireEnabled(enabled());
 		}
@@ -284,7 +286,11 @@ public class FirstStepPane extends JPanel implements IState {
 		@Override
 		public void focusLost(FocusEvent e) {
 			textFieldServerNameGetFocus = false;
-			connectMongoDBPretreatment();
+			if (StringUtilities.isNullOrEmpty(textFieldServerName.getText())) {
+				textFieldServerName.setText(MapViewProperties.getString("MapCache_MongoDB_DefaultServerName"));
+			}
+			mongoDBConnectSate = isDBValidate();
+			updateDBNames();
 			fireEnabled(enabled());
 		}
 	};
@@ -384,7 +390,7 @@ public class FirstStepPane extends JPanel implements IState {
 	}
 
 	private void initComponentsState() {
-		if (cmdType == DialogMapCacheClipBuilder.UpdateProcessClip) {
+		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip || cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
 			this.labelVersion.setEnabled(false);
 			this.comboboxVersion.setEnabled(false);
 			this.labelSplitMode.setEnabled(false);
@@ -453,25 +459,6 @@ public class FirstStepPane extends JPanel implements IState {
 		} else {
 			this.comboBoxSplitMode.setEnabled(false);
 			this.textFieldCacheName.setText(this.mapCacheBuilder.getCacheName());
-		}
-		String moduleName = "ChooseCacheDirectories";
-		if (!SmFileChoose.isModuleExist(moduleName)) {
-			this.fileChooserControlFileCache.setPath(System.getProperty("user.dir"));
-		} else {
-			SmFileChoose fileChoose = new SmFileChoose(moduleName);
-			if (SystemPropertyUtilities.isWindows()) {
-				if (!fileChoose.getModuleLastPath().substring(fileChoose.getModuleLastPath().length() - 1).equals("\\")) {
-					this.fileChooserControlFileCache.setPath(fileChoose.getModuleLastPath() + "\\");
-				} else {
-					this.fileChooserControlFileCache.setPath(fileChoose.getModuleLastPath());
-				}
-			} else {
-				if (!fileChoose.getModuleLastPath().substring(fileChoose.getModuleLastPath().length() - 1).equals("/")) {
-					this.fileChooserControlFileCache.setPath(fileChoose.getModuleLastPath() + "/");
-				} else {
-					this.fileChooserControlFileCache.setPath(fileChoose.getModuleLastPath());
-				}
-			}
 		}
 		this.warningProviderCacheNameIllegal.hideWarning();
 		this.warningProviderCachePathIllegal.hideWarning();
@@ -570,11 +557,20 @@ public class FirstStepPane extends JPanel implements IState {
 			this.labelDatabaseName.setVisible(true);
 			this.comboBoxDatabaseName.setVisible(true);
 			this.comboBoxDatabaseName.removeAllItems();
-			this.labelUserName.setVisible(true);
-			this.textFieldUserName.setVisible(true);
-			this.textFieldUserName.setText("");
-			this.textFieldUserPassword.setEnabled(true);
-			this.textFieldUserPassword.setText("");
+			if (cmdType == DialogMapCacheClipBuilder.ResumeProcessClip
+					|| cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip
+					|| cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip) {
+				this.labelUserName.setVisible(false);
+				this.textFieldUserName.setVisible(false);
+				this.labelUserPassword.setVisible(false);
+				this.textFieldUserPassword.setVisible(false);
+			} else {
+				this.labelUserName.setVisible(true);
+				this.textFieldUserName.setVisible(true);
+				this.textFieldUserName.setText("");
+				this.textFieldUserPassword.setEnabled(true);
+				this.textFieldUserPassword.setText("");
+			}
 			this.labelConfirmPassword.setVisible(false);
 			this.warningProviderPasswordNotSame.setVisible(false);
 			this.textFieldConfirmPassword.setVisible(false);
@@ -588,37 +584,104 @@ public class FirstStepPane extends JPanel implements IState {
 				this.comboBoxMutiTenseVersion.setVisible(false);
 				this.mapCacheBuilder.setStorageType(StorageType.MongoDB);
 			}
-			connectMongoDBPretreatment();
+			mongoDBConnectSate = isDBValidate();
+			updateDBNames();
 		}
 	}
 
-	// 非认证模式下连接mongodb，并读取数据库列表进行显示
-	private void connectMongoDBPretreatment() {
-		if (!this.textFieldServerName.getText().isEmpty()) {
+	/**
+	 * 检查链接是否可用
+	 */
+	private void updateDBNames() {
+		if (!mongoDBConnectSate) {
+			this.comboBoxDatabaseName.removeAllItems();
+			return;//如果IP都不对就直接返回，不然输一个字符获取一次列表，IP不对的情况下会很慢的
+		}
+		String serverName = textFieldServerName.getText();
+		String userName = textFieldUserName.getText();
+		String password = new String(textFieldUserPassword.getPassword());
+		String dbName = comboBoxDatabaseName.getSelectedItem() == null ? null : comboBoxDatabaseName.getSelectedItem().toString();
+		//重置database comboBox
+		java.util.List<String> databaseNames = new ArrayList<>();
+		try {
+			//先尝试非验证模式--用户名密码为空
+			String[] names = Toolkit.GetMongoDBNames(serverName, "", "");
+			databaseNames.addAll(Arrays.asList(names));
+			//非验证模式直接置灰账号输入--根据组件mongo2.6测试报告，非验证模式下输入密码没有必要
+			this.textFieldUserName.setText(null);
+			this.textFieldUserPassword.setText(null);
+			this.textFieldUserName.setEnabled(false);
+			this.textFieldUserPassword.setEnabled(false);
+		} catch (Exception e) {
+			this.textFieldUserName.setEnabled(true);
+			this.textFieldUserPassword.setEnabled(true);
+			//再尝试验证模式--输入用户名密码
 			try {
-				String address = "";
-				Integer port = DEFAULT_PORT;
-				if (this.textFieldServerName.getText().indexOf(COLON) != -1) {
-					String[] temp = this.textFieldServerName.getText().split(COLON);
-					if (!temp[0].isEmpty() && !temp[1].isEmpty() && temp[1].matches("[0-9]+")) {
-						address = temp[0];
-						port = Integer.valueOf(temp[1]);
-					} else {
-						this.comboBoxDatabaseName.removeAllItems();
-						return;
-					}
-				} else {
-					address = this.textFieldServerName.getText();
-				}
-				connectMongoDB(address, port);
-			} catch (Exception ex) {
-				this.comboBoxDatabaseName.removeAllItems();
-				return;
+				databaseNames.clear();
+				String[] names = Toolkit.GetMongoDBNames(serverName, userName, password);
+				databaseNames.addAll(Arrays.asList(names));
+			} catch (Exception e1) {
+
+			}
+		}
+
+		if (databaseNames.size() == 0) {
+			//认证模式下，输入正确的用户名密码，得到列表之后选择，然后再修改为普通用户，此时不希望刚才的选择被清除掉。
+			this.comboBoxDatabaseName.removeAllItems();
+			if (dbName != null) {
+				this.comboBoxDatabaseName.setSelectedItem(dbName);
 			}
 		} else {
-			connectMongoDB(DEFAULT_ADDRESS, DEFAULT_PORT);
-			this.textFieldServerName.setText(MapViewProperties.getString("MapCache_MongoDB_DefaultServerName"));
+			//修改了ip、账号等信息，是的获取到了数据库列表。判断列表是否完全一致，一致就不更新combox了，避免因修改账号导致选择被清除。
+			boolean isDBNamesSame = true;
+			if (this.comboBoxDatabaseName.getItemCount() != databaseNames.size()) {
+				isDBNamesSame = false;
+			} else {
+				for (int i = 0; i < this.comboBoxDatabaseName.getItemCount(); i++) {
+					if (!databaseNames.contains(this.comboBoxDatabaseName.getItemAt(i).toString())) {
+						isDBNamesSame = false;
+						break;
+					}
+				}
+			}
+			if (!isDBNamesSame) {
+				this.comboBoxDatabaseName.removeAllItems();
+				for (int i = 0; i < databaseNames.size(); i++) {
+					this.comboBoxDatabaseName.addItem(databaseNames.get(i));
+				}
+			}
 		}
+
+	}
+
+	/**
+	 * 简单测试连接是否正常。后面组件应该要提供数据库连接test,针对验证和非验证模式，对输入账号的要求不同。
+	 * fixme 关注 http://192.168.115.2:8090/browse/UGDC-2617
+	 */
+	private boolean isDBValidate() {
+		String address = "";
+		Integer port = DEFAULT_PORT;
+		if (StringUtilities.isNullOrEmpty(this.textFieldServerName.getText())) {
+			return false;
+		} else {
+			if (this.textFieldServerName.getText().indexOf(COLON) != -1) {
+				String[] temp = this.textFieldServerName.getText().split(COLON);
+				if (!temp[0].isEmpty() && !temp[1].isEmpty() && temp[1].matches("[0-9]+")) {
+					address = temp[0];
+					port = Integer.valueOf(temp[1]);
+				}
+			} else {
+				address = this.textFieldServerName.getText();
+			}
+			try {
+				ServerAddress serverAddress = new ServerAddress(address, port);
+				Socket socket = new Socket();
+				socket.connect(serverAddress.getSocketAddress(), 300);
+			} catch (Exception e) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private void connectMongoDB(String address, Integer port) {
@@ -635,7 +698,21 @@ public class FirstStepPane extends JPanel implements IState {
 		this.mongo = holder.connect(new MongoClientURI("mongodb://" + address));
 		try {
 			this.comboBoxDatabaseName.removeAllItems();
-			java.util.List<String> databaseNames = mongo.getDatabaseNames();
+			java.util.List<String> databaseNames = new ArrayList<>();
+			try {
+				//先尝试验证模式--输入用户名密码
+				String[] names = Toolkit.GetMongoDBNames(textFieldServerName.getText(), textFieldUserName.getText(), textFieldUserPassword.getPassword().toString());
+				databaseNames.addAll(Arrays.asList(names));
+			} catch (Exception e) {
+				//再尝试非验证模式--用户名密码为空，否则抛异常
+				try {
+					databaseNames.clear();
+					String[] names = Toolkit.GetMongoDBNames(textFieldServerName.getText(), "", "");
+					databaseNames.addAll(Arrays.asList(names));
+				} catch (Exception e1) {
+
+				}
+			}
 			this.mongoDBConnectSate = true;
 			for (int i = 0; i < databaseNames.size(); i++) {
 				this.comboBoxDatabaseName.addItem(databaseNames.get(i));
@@ -704,7 +781,7 @@ public class FirstStepPane extends JPanel implements IState {
 
 		} else if (this.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_MongoDB")) || this.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_MongoDBMuti"))) {
 			if (this.comboBoxSaveType.getSelectedItem().toString().equals(MapViewProperties.getString("MapCache_SaveType_MongoDB"))) {
-				if (textFieldServerNameGetFocus || !this.mongoDBConnectSate || this.comboBoxDatabaseName.getEditor().getItem().toString().isEmpty()) {
+				if (textFieldServerNameGetFocus || !this.isDBValidate() || this.comboBoxDatabaseName.getEditor().getItem().toString().isEmpty()) {
 					result = false;
 				}
 			} else {
@@ -818,6 +895,7 @@ public class FirstStepPane extends JPanel implements IState {
 
 		SmFileChoose fileChoose = new SmFileChoose(moduleName);
 		this.fileChooserControlFileCache.setFileChooser(fileChoose);
+		this.fileChooserControlFileCache.setPath(fileChoose.getModuleLastPath());
 		this.labelSaveType = new JLabel();
 		this.labelUserName = new JLabel();
 		this.labelUserPassword = new JLabel();
@@ -841,7 +919,7 @@ public class FirstStepPane extends JPanel implements IState {
 
 	private void initGlobalValue() {
 		this.scientificNotation.setGroupingUsed(false);
-		if (cmdType == DialogMapCacheClipBuilder.UpdateProcessClip || cmdType == DialogMapCacheClipBuilder.ReloadProcessClip) {
+		if (cmdType == DialogMapCacheClipBuilder.MultiUpdateProcessClip || cmdType == DialogMapCacheClipBuilder.ResumeProcessClip) {
 			this.originMapCacheScale = this.mapCacheBuilder.getOutputScales();
 		} else {
 			this.originMapCacheScale = this.mapCacheBuilder.getDefultOutputScales();

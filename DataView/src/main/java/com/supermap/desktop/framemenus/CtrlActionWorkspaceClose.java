@@ -17,6 +17,7 @@ public class CtrlActionWorkspaceClose extends CtrlAction {
 	public void run() {
 		try {
 			WorkspaceUtilities.closeWorkspace();
+			Application.getActiveApplication().getWorkspace().setDescription("");
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

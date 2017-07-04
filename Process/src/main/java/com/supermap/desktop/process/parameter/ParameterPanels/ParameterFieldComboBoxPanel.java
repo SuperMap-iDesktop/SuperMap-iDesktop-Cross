@@ -8,7 +8,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.utilities.JComboBoxUIUtilities;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
-import com.supermap.desktop.process.parameter.implement.AbstractParameter;
+import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
 import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
@@ -73,6 +73,9 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 			public void itemStateChanged(ItemEvent e) {
 				if (!isSelectingItem && (e.getStateChange() == ItemEvent.SELECTED || comboBox.getSelectedItem() == null)) {
 					isSelectingItem = true;
+					if (comboBox.getSelectedItem() instanceof FieldInfo) {
+						comboBox.setSelectedItem(((FieldInfo) comboBox.getSelectedItem()).getCaption());
+					}
 					parameterFieldComboBox.setSelectedItem(comboBox.getSelectedItem());
 					isSelectingItem = false;
 				}
@@ -81,6 +84,8 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 	}
 
 	private void initComponentState() {
+
+		comboBox.setEditable(parameterFieldComboBox.isEditable());
 		comboBox.setRenderer(new ListCellRenderer<FieldInfo>() {
 			@Override
 			public Component getListCellRendererComponent(JList<? extends FieldInfo> list, FieldInfo value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -147,7 +152,7 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 				// Ask if the parameters are satisfied with the current option
 				for (int i = 0; i < comboBox.getItemCount(); i++) {
 					Object valueSelected = parameterFieldComboBox.isValueSelected(ParameterFieldComboBox.FILED_INFO_FILED_NAME, fieldInfos.get(i));
-					if (valueSelected == AbstractParameter.DO_NOT_CARE) {
+					if (valueSelected == ParameterValueLegalListener.DO_NOT_CARE) {
 						break;
 					} else if (valueSelected instanceof FieldInfo) {
 						if (JComboBoxUIUtilities.getItemIndex(comboBox, valueSelected) != -1) {
@@ -161,20 +166,23 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 							isSelectingItem = true;
 						}
 						break;
+					} else if (valueSelected == ParameterValueLegalListener.NO) {
+						// 注意条件
 					}
 				}
 				if (comboBox.getSelectedItem() == null) {
 					// 如果没有满意的选项则与当前已设置的值保持一致
 					// If there is no satisfactory option, it is consistent with the current set value
-					if (JComboBoxUIUtilities.getItemIndex(comboBox, parameterFieldComboBox.getSelectedItem()) != -1) {
-						comboBox.setSelectedItem(parameterFieldComboBox.getSelectedItem());
-					} else {
-						try {
-							comboBox.setSelectedIndex(0);
-							parameterFieldComboBox.setSelectedItem(comboBox.getSelectedItem());
-						} catch (Exception e) {
-							Application.getActiveApplication().getOutput().output(e);
+
+					String fieldName = parameterFieldComboBox.getFieldName();
+					for (int i = 0; i < comboBox.getItemCount(); i++) {
+						if (comboBox.getItemAt(i).getCaption().equals(fieldName)) {
+							comboBox.setSelectedItem(fieldName);
+							break;
 						}
+					}
+					if (comboBox.getSelectedItem() == null) {
+						parameterFieldComboBox.setSelectedItem("");
 					}
 				}
 			} else {

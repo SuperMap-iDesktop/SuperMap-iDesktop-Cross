@@ -23,7 +23,10 @@ import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.core.WorkflowParser;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
+import com.supermap.desktop.process.graphics.connection.DefaultGraphConnection;
 import com.supermap.desktop.process.graphics.connection.IConnectable;
+import com.supermap.desktop.process.graphics.connection.IGraphConnection;
+import com.supermap.desktop.process.graphics.connection.IOGraphConnection;
 import com.supermap.desktop.process.graphics.connection.LineGraph;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
@@ -72,6 +75,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	private boolean isNeedSave = true;
 	private boolean isAutoAddOutPut = true;
 	private transient DropTarget dropTargeted;
+
 	public FormWorkflow() {
 		this(ControlsProperties.getString("String_WorkFlows"));
 	}
@@ -90,11 +94,11 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 	public FormWorkflow(IWorkflow workflow) {
 		super(workflow.getName(), null, null);
-
 		this.workflow = (Workflow) workflow;
 		this.canvas = new GraphCanvas();
 
 		initializeComponents();
+		Application.getActiveApplication().getMainFrame().getFormManager().add(this);
 		initFormWorkflow(workflow);
 		this.setText(workflow.getName());
 		isNeedSave = false;
@@ -117,16 +121,20 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 					CopyOnWriteArrayList nextNodes = matrix.getNextNodes(graph);
 					if (nextNodes != null) {
 						for (Object nextNode : nextNodes) {
+							IGraphConnection graphConnection = null;
+
 							if (nextNode instanceof OutputGraph) {
 								((OutputGraph) nextNode).setProcessGraph(((ProcessGraph) node));
+								graphConnection = new DefaultGraphConnection((IConnectable) graph, (IConnectable) nextNode);
 							}
 							String message = null;
 							if (nextNode instanceof ProcessGraph) {
 								ProcessGraph processGraph = (ProcessGraph) nextNode;
 								message = processGraph.getProcess().getInputs().getBindedInput(((OutputGraph) graph).getProcessData());
+								graphConnection = new IOGraphConnection((IConnectable) graph, (IConnectable) nextNode, message);
 							}
 
-							connection.connect((IConnectable) graph, (IConnectable) nextNode, message);
+							connection.connect(graphConnection);
 						}
 					}
 				}
@@ -251,7 +259,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		ArrayList<IGraph> iGraphs = new ArrayList<>();
 		IGraph[] graphs = getCanvas().getGraphStorage().getGraphs();
 		for (IGraph graph : graphs) {
-			if (graph instanceof OutputGraph && type.contains(((OutputGraph) graph).getProcessData().getType())) {
+			if (graph instanceof OutputGraph && type.intersects(((OutputGraph) graph).getProcessData().getType())) {
 				iGraphs.add(graph);
 			}
 		}

@@ -13,6 +13,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 public class FileUtilities {
@@ -381,23 +382,22 @@ public class FileUtilities {
 
 	/**
 	 * check whether the given dir is empty or not, especially for dir containing large mount of files
-	 * @param extPattern extPattern can be *.java and for than one extension we can use it like "*.{java,txt,exe}".
 	 *
+	 * @param extPattern extPattern can be *.java and for than one extension we can use it like "*.{java,txt,exe}".
 	 */
-	public static boolean isDirEmpty(String dirPath,String extPattern){
+	public static boolean isDirEmpty(String dirPath, String extPattern) {
 		boolean isEmpty = false;
-		if(StringUtilities.isNullOrEmpty(dirPath)
+		if (StringUtilities.isNullOrEmpty(dirPath)
 				|| !new File(dirPath).exists()
-				||!new File(dirPath).isDirectory()){
+				|| !new File(dirPath).isDirectory()) {
 			return false;
 		}
 		DirectoryStream<Path> ds = null;
 		try {
 			Path dir = Paths.get(dirPath);
-			if(StringUtilities.isNullOrEmpty(extPattern)){
+			if (StringUtilities.isNullOrEmpty(extPattern)) {
 				ds = Files.newDirectoryStream(dir);
-			}
-			else{
+			} else {
 				ds = Files.newDirectoryStream(dir, extPattern);
 			}
 			Iterator files = ds.iterator();
@@ -418,7 +418,28 @@ public class FileUtilities {
 		return isEmpty;
 	}
 
-	public static boolean isDirEmpty(String dirPath){
-		return isDirEmpty(dirPath,null);
+	public static boolean isDirEmpty(String dirPath) {
+		return isDirEmpty(dirPath, null);
+	}
+
+	public static boolean openFileExplorer(String path) {
+		boolean result = true;
+		File file = new File(path);
+		if (file.exists()) {
+			if (SystemPropertyUtilities.isWindows()) {
+				try {
+					Runtime.getRuntime().exec("explorer.exe /select, " + file.getPath());
+				} catch (IOException e) {
+					result = false;
+				}
+			} else {
+				result = false;
+				Application.getActiveApplication().getOutput()
+						.output(MessageFormat.format(CoreProperties.getString("String_LinuxOpenInDirectory"), file.getPath()));
+			}
+		} else {
+			result = false;
+		}
+		return result;
 	}
 }

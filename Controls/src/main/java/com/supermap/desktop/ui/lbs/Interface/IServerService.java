@@ -1,8 +1,6 @@
 package com.supermap.desktop.ui.lbs.Interface;
 
-import com.supermap.desktop.ui.lbs.params.BuildCacheJobSetting;
 import com.supermap.desktop.ui.lbs.params.JobResultResponse;
-import com.supermap.desktop.ui.lbs.params.KernelDensityJobSetting;
 import org.apache.http.impl.client.CloseableHttpClient;
 
 /**
@@ -19,22 +17,14 @@ public interface IServerService {
      */
     CloseableHttpClient login(String userName, String passWord);
 
-    /**
-     * 生成子（核密度分析）任务
-     *
-     * @param kernelDensityJobSetting 核密度分析参数
-     * @return
-     */
-    
-    JobResultResponse query(KernelDensityJobSetting kernelDensityJobSetting);
-
-    /**
-     * 生成子（热度图）任务
-     *
-     * @param buildCacheJobSetting
-     * @return
-     */
-    JobResultResponse query(BuildCacheJobSetting buildCacheJobSetting);
+	/**
+	 * 根据类型查询结果
+	 *
+	 * @param type
+	 * @param jsonBody
+	 * @return
+	 */
+	JobResultResponse queryResult(String type, String jsonBody);
 
     /**
      * 查询JSON结果

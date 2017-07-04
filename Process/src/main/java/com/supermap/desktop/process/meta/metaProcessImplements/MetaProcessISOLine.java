@@ -1,133 +1,27 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.analyst.spatialanalyst.SurfaceAnalyst;
 import com.supermap.analyst.spatialanalyst.SurfaceExtractParameter;
 import com.supermap.data.DatasetGrid;
-import com.supermap.data.DatasetType;
 import com.supermap.data.DatasetVector;
-import com.supermap.data.SteppedEvent;
-import com.supermap.data.SteppedListener;
-import com.supermap.desktop.Application;
-import com.supermap.desktop.process.ProcessProperties;
-import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
-import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
-import com.supermap.desktop.process.events.RunningEvent;
+import com.supermap.data.Datasource;
 import com.supermap.desktop.process.meta.MetaKeys;
-import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.AbstractParameter;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
-import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
  * Created by xie on 2017/3/6.
  */
-public class MetaProcessISOLine extends MetaProcess {
-	private final static String INPUT_DATA = "InputData";
-	private final static String OUTPUT_DATA = "ExtractResult";
+public class MetaProcessISOLine extends MetaProcessISO {
 
-	private ParameterDatasourceConstrained sourceDatasource;
-	private ParameterSingleDataset dataset;
 
-	private ParameterSaveDataset saveDataset;
-	private ParameterTextField maxGrid;
-	private ParameterTextField minGrid;
-	private ParameterTextField maxISOLine;
-	private ParameterTextField minISOLine;
-	private ParameterTextField isoLine;
-	private ParameterTextField datumValue;
-	private ParameterTextField interval;
-	private ParameterTextField resampleTolerance;
-	private ParameterComboBox smoothMethod;
-	private ParameterTextField smoothNess;
-	private SteppedListener stepListener = new SteppedListener() {
-		@Override
-		public void stepped(SteppedEvent steppedEvent) {
-			RunningEvent event = new RunningEvent(MetaProcessISOLine.this, steppedEvent.getPercent(), AbstractParameter.PROPERTY_VALE);
-			fireRunning(event);
-
-			if (event.isCancel()) {
-				steppedEvent.setCancel(true);
-			}
-		}
-	};
 
 	public MetaProcessISOLine() {
-		initParameters();
-		initParameterConstraint();
-		initParametersState();
 	}
 
-	private void initParameterConstraint() {
-		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
-		equalDatasourceConstraint.constrained(sourceDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		equalDatasourceConstraint.constrained(dataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
-
-		DatasourceConstraint.getInstance().constrained(saveDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
-	}
-
-	private void initParametersState() {
-		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-		this.saveDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-		this.saveDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
-		this.saveDataset.setSelectedItem("ISOLine");
-		if (null != dataset.getSelectedItem() && dataset.getSelectedItem() instanceof DatasetGrid) {
-			maxGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMaxValue());
-			minGrid.setSelectedItem(((DatasetGrid) dataset.getSelectedItem()).getMinValue());
-		}
-		ParameterDataNode selectedNode = new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_NONE"), SmoothMethod.NONE);
-		this.smoothMethod.setItems(selectedNode,
-				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_BSLine"), SmoothMethod.BSPLINE),
-				new ParameterDataNode(CommonProperties.getString("String_SmoothMothod_POLISH"), SmoothMethod.POLISH));
-		this.smoothMethod.setSelectedItem(selectedNode);
-	}
-
-	private void initParameters() {
-
-		this.sourceDatasource = new ParameterDatasourceConstrained();
-		this.dataset = new ParameterSingleDataset(DatasetType.GRID);
-		DatasetGrid datasetGrid = DatasetUtilities.getDefaultDatasetGrid();
-		if (datasetGrid != null) {
-			sourceDatasource.setSelectedItem(datasetGrid.getDatasource());
-			dataset.setSelectedItem(datasetGrid);
-		}
-		this.saveDataset = new ParameterSaveDataset();
-		this.maxGrid = new ParameterTextField(CommonProperties.getString("String_MAXGrid"));
-		this.minGrid = new ParameterTextField(CommonProperties.getString("String_MINGrid"));
-		this.maxISOLine = new ParameterTextField(CommonProperties.getString("String_MAXISOLine"));
-		this.minISOLine = new ParameterTextField(CommonProperties.getString("String_MINISOLine"));
-		this.isoLine = new ParameterTextField(CommonProperties.getString("String_ISOData"));
-		this.datumValue = new ParameterTextField(CommonProperties.getString("String_DatumValue"));
-		this.interval = new ParameterTextField(CommonProperties.getString("String_Interval"));
-		this.resampleTolerance = new ParameterTextField(CommonProperties.getString("String_ResampleTolerance"));
-		this.smoothMethod = new ParameterComboBox().setDescribe(CommonProperties.getString("String_SmoothMethod"));
-		this.smoothNess = new ParameterTextField(CommonProperties.getString("String_SmoothNess"));
-
-		ParameterCombine sourceData = new ParameterCombine();
-		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
-		sourceData.addParameters(sourceDatasource, dataset);
-		ParameterCombine targetData = new ParameterCombine();
-		targetData.setDescribe(CommonProperties.getString("String_GroupBox_TargetData"));
-		targetData.addParameters(saveDataset);
-		ParameterCombine resultInfo = new ParameterCombine();
-		resultInfo.setDescribe(CommonProperties.getString("String_ResultInfo"));
-		resultInfo.addParameters(maxGrid, minGrid, maxISOLine, minISOLine, isoLine);
-		ParameterCombine paramSet = new ParameterCombine();
-		paramSet.setDescribe(CommonProperties.getString("String_FormEdgeCount_Text"));
-		paramSet.addParameters(datumValue, interval, resampleTolerance, smoothMethod, smoothNess);
-		this.parameters.setParameters(sourceData, targetData, resultInfo, paramSet);
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, sourceData);
-		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.LINE, targetData);
+	@Override
+	protected String getDefaultResultName() {
+		return "ISOLine";
 	}
 
 
@@ -136,36 +30,11 @@ public class MetaProcessISOLine extends MetaProcess {
 		return CommonProperties.getString("String_SurfaceISOLine");
 	}
 
-	@Override
-	public boolean execute() {
-		boolean isSuccessful = false;
 
-		try {
-			SurfaceExtractParameter surfaceExtractParameter = new SurfaceExtractParameter();
-			surfaceExtractParameter.setDatumValue(Double.valueOf(datumValue.getSelectedItem().toString()));
-			surfaceExtractParameter.setInterval(Double.valueOf(interval.getSelectedItem().toString()));
-			surfaceExtractParameter.setResampleTolerance(Double.valueOf(resampleTolerance.getSelectedItem().toString()));
-			surfaceExtractParameter.setSmoothMethod((SmoothMethod) ((ParameterDataNode) smoothMethod.getSelectedItem()).getData());
-			surfaceExtractParameter.setSmoothness(Integer.valueOf(smoothNess.getSelectedItem().toString()));
-			SurfaceAnalyst.addSteppedListener(this.stepListener);
-
-			DatasetGrid src = null;
-			if (this.getParameters().getInputs().getData(INPUT_DATA).getValue() != null) {
-				src = (DatasetGrid) this.getParameters().getInputs().getData(INPUT_DATA).getValue();
-			} else {
-				src = (DatasetGrid) dataset.getSelectedItem();
-			}
-			DatasetVector result = SurfaceAnalyst.extractIsoline(surfaceExtractParameter, src, saveDataset.getResultDatasource(), saveDataset.getDatasetName());
-			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);
-			isSuccessful = result != null;
-			fireRunning(new RunningEvent(MetaProcessISOLine.this, 100, "finished"));
-		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
-		} finally {
-			SurfaceAnalyst.removeSteppedListener(this.stepListener);
-		}
-		return isSuccessful;
+	public DatasetVector subExecute(SurfaceExtractParameter surfaceExtractParameter, DatasetGrid dataset, Datasource datasource, String datasetName) {
+		return SurfaceAnalyst.extractIsoline(surfaceExtractParameter, dataset, datasource, datasetName);
 	}
+
 
 	@Override
 	public String getKey() {

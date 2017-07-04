@@ -188,7 +188,7 @@ public class MetaProcessGeographicWeightedRegression extends MetaProcess {
 		}
 
 		gwrParameter.setKernelFunction((KernelFunction) parameterKernelFunction.getSelectedData());
-		gwrParameter.setModelFeild(((FieldInfo) parameterModelField.getSelectedItem()).getName());
+		gwrParameter.setModelFeild(parameterModelField.getFieldName());
 		KernelType kernelType = (KernelType) parameterKernelType.getSelectedData();
 		gwrParameter.setKernelType(kernelType);
 		if (bandWidthType == BandWidthType.BANDWIDTH) {

@@ -204,13 +204,13 @@ public class DatasourceOpenFileUtilties {
 
 				File udbLowerFile = new File(udbLowerFilePath);
 				if (udbLowerFile.exists()) {
-					isMustReadOnlyOpen = !udbLowerFile.canWrite();
+					isMustReadOnlyOpen = !file.canWrite() || !udbLowerFile.canWrite();
 					file = udbLowerFile;
 				} else {
 					File udbUpperFile = new File(udbUpperFilePath);
 					if (udbUpperFile.exists()) {
-						isMustReadOnlyOpen = new File(udbUpperFilePath).canWrite();
-						file = udbLowerFile;
+						isMustReadOnlyOpen = !file.canWrite() || !udbUpperFile.canWrite();
+						file = udbUpperFile;
 					}
 				}
 
@@ -275,7 +275,7 @@ public class DatasourceOpenFileUtilties {
 					CursorUtilities.setDefaultCursor();
 				}
 				if (resultDatasource != null) {
-					UICommonToolkit.refreshSelectedDatasourceNode(resultDatasource.getAlias());
+					UICommonToolkit.selectedDatasourceNode(resultDatasource.getAlias());
 					RecentFileUtilties.addDatasourceToRecentFile(resultDatasource);
 					return resultDatasource;
 				} else if (!StringUtilities.isNullOrEmpty(errorMessage)) {
@@ -333,7 +333,7 @@ public class DatasourceOpenFileUtilties {
 									}
 								}
 								if (datasource != null) {
-									UICommonToolkit.refreshSelectedDatasourceNode(datasource.getAlias());
+									UICommonToolkit.selectedDatasourceNode(datasource.getAlias());
 									RecentFileUtilties.addDatasourceToRecentFile(datasource);
 								}
 								return result;

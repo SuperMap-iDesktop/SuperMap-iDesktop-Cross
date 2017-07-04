@@ -10,7 +10,7 @@ import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.core.MatrixExecutor;
 import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.connection.IConnection;
+import com.supermap.desktop.process.graphics.connection.IGraphConnection;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
@@ -46,8 +46,8 @@ public class CtrlActionRun extends CtrlAction {
 			}
 		}
 
-		IConnection[] connections = graphConnection.getConnections();
-		for (IConnection connection : connections) {
+		IGraphConnection[] connections = graphConnection.getConnections();
+		for (IGraphConnection connection : connections) {
 			IGraph startGraph = connection.getStart().getConnector();
 			IGraph endGraph = connection.getEnd().getConnector();
 

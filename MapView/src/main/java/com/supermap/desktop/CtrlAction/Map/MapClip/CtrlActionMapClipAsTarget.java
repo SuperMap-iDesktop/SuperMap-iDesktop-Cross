@@ -39,7 +39,20 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 	@Override
 	public void run() {
 		super.run();
-		setAction();
+		MapControl mapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
+		boolean hasSelection = false;
+		ArrayList<Layer> layers = MapUtilities.getLayers(mapControl.getMap());
+		for (Layer layer : layers) {
+			if(layer.getSelection() != null && layer.getSelection().getCount() > 0 && layer.getDataset() != null && layer.getDataset().getType() == DatasetType.REGION){
+				hasSelection = true;
+				break;
+			}
+		}
+		if(hasSelection){
+			abstractActiveMapcontrol(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl());
+		}else{
+			setAction();
+		}
 	}
 
 	@Override
@@ -156,6 +169,7 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 					}
 				}
 			}
+			recordset.dispose();
 		}
 		if (isChanged) {
 			geoRegion = geoClipRegion;

@@ -98,10 +98,6 @@ public class ParameterNumber extends ParameterTextField {
 		return isIncludeMin;
 	}
 
-	public void setIncludeMin(boolean includeMin) {
-		isIncludeMin = includeMin;
-	}
-
 	public boolean isIncludeMax() {
 		return isIncludeMax;
 	}

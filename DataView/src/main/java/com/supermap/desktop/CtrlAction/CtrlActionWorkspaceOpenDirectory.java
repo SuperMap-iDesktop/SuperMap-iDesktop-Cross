@@ -4,12 +4,8 @@ import com.supermap.data.WorkspaceType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.implement.CtrlAction;
-import com.supermap.desktop.utilities.SystemPropertyUtilities;
-
-import java.io.File;
-import java.text.MessageFormat;
+import com.supermap.desktop.utilities.FileUtilities;
 
 public class CtrlActionWorkspaceOpenDirectory extends CtrlAction {
 
@@ -21,15 +17,7 @@ public class CtrlActionWorkspaceOpenDirectory extends CtrlAction {
 	public void run() {
 		try {
 			String path = Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer();
-			File file = new File(path);
-			if (file.exists()) {
-				if (SystemPropertyUtilities.isWindows()) {
-					Runtime.getRuntime().exec("explorer.exe /select, " + path);
-				} else {
-					Application.getActiveApplication().getOutput()
-							.output(MessageFormat.format(DataViewProperties.getString("String_LinuxOpenInDirectory"), path));
-				}
-			}
+			FileUtilities.openFileExplorer(path);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

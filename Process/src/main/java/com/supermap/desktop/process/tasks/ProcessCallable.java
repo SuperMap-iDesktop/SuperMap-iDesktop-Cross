@@ -34,6 +34,7 @@ public class ProcessCallable extends UpdateProgressCallable {
 	public Boolean call() {
 		try {
 			this.process.addRunningListener(this.runningListener);
+			process.reset();
 			this.process.run();
 
 		} catch (Exception e) {

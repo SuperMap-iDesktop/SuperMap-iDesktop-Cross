@@ -1,6 +1,7 @@
 package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.tasks.TaskStore;
 
@@ -32,6 +33,7 @@ public class MatrixExecutor {
 		if (starts.size() > 0) {
 			for (Object o : starts) {
 				if (o instanceof IProcess) {
+					((IProcess) o).reset();
 					this.ready.add((IProcess) o);
 				}
 			}
@@ -41,6 +43,7 @@ public class MatrixExecutor {
 		if (starts.size() > 0) {
 			for (Object o : starts) {
 				if (o instanceof IProcess) {
+					((IProcess) o).reset();
 					this.ready.add((IProcess) o);
 				}
 			}
@@ -50,6 +53,7 @@ public class MatrixExecutor {
 			List next = this.matrix.getNextNodes(process);
 			for (Object o : next) {
 				if (o instanceof IProcess) {
+					((IProcess) o).reset();
 					this.waiting.add((IProcess) o);
 				}
 			}
@@ -86,6 +90,9 @@ public class MatrixExecutor {
 								this.ready.remove(p);
 							}
 						} else {
+							if (((MetaProcess) o).getStatus() == RunningStatus.EXCEPTION || ((MetaProcess) o).getStatus() == RunningStatus.CANCELLED) {
+								timer.stop();
+							}
 							isReady = false;
 						}
 					}
@@ -93,7 +100,9 @@ public class MatrixExecutor {
 
 				if (isReady) {
 					this.waiting.remove(process);
-					this.ready.add(process);
+					if (!this.ready.contains(process)) {
+						this.ready.add(process);
+					}
 					runProcess(process);
 					List next = this.matrix.getNextNodes(process);
 					for (Object o : next) {

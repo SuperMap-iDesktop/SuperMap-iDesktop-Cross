@@ -5,17 +5,14 @@ import com.supermap.data.EngineType;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
-import com.supermap.desktop.dataview.DataViewProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.TreeNodeData;
 import com.supermap.desktop.ui.controls.WorkspaceTree;
-import com.supermap.desktop.utilities.SystemPropertyUtilities;
+import com.supermap.desktop.utilities.FileUtilities;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-import java.io.File;
-import java.text.MessageFormat;
 
 public class CtrlActionDatasourceOpenDirectory extends CtrlAction {
 
@@ -33,15 +30,7 @@ public class CtrlActionDatasourceOpenDirectory extends CtrlAction {
 			Datasource datasource = (Datasource) data.getData();
 
 			String path = datasource.getConnectionInfo().getServer();
-			File file = new File(path);
-			if (file.exists()) {
-				if (SystemPropertyUtilities.isWindows()) {
-					Runtime.getRuntime().exec("explorer.exe /select, " + file.getPath());
-				} else {
-					Application.getActiveApplication().getOutput()
-							.output(MessageFormat.format(DataViewProperties.getString("String_LinuxOpenInDirectory"), file.getPath()));
-				}
-			}
+			FileUtilities.openFileExplorer(path);
 		} catch (Exception ex) {
 			Application.getActiveApplication().getOutput().output(ex);
 		}

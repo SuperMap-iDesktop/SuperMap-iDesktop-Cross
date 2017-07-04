@@ -9,9 +9,9 @@ public class MetaKeys {
 	public static final String IMPORT = "Import";
 	public static final String PROJECTION = "Projection";
 	public static final String SET_PROJECTION = "SetProjection";
-	public static final String HEAT_MAP = "HeatMap";
-	public static final String SIMPLE_DENSITY = "SimpleDensity";
-	public static final String KERNEL_DENSITY = "KernelDensity";
+	public static final String EXPORTGRID = "ExportGrid";
+	public static final String EXPORTVECTOR = "ExportVector";
+
 	public static final String GRIDREGION_AGGREGATION = "GridRegionAggregation";
 	public static final String POLYGON_AGGREGATION = "PolygonAggregation";
 	public static final String OVERLAY_ANALYST_CLIP = "OverlayAnalyst_CLIP";
@@ -67,4 +67,14 @@ public class MetaKeys {
 	public static final String incrementalAutoCorrelation = "incrementalAutoCorrelation";
 	public static final String AverageNearestNeighbor = "averageNearestNeighbor";
 	public static final String optimizedHotSpotAnalyst = "optimizedHotSpotAnalyst";
+
+
+	// 大数据
+	public static final String HEAT_MAP = "HeatMap";
+	public static final String SIMPLE_DENSITY = "SimpleDensity";
+	public static final String KERNEL_DENSITY = "KernelDensity";
+	public static final String OVERLAYANALYSTGEO = "overlayanalystgeo";
+	public static final String SINGLE_QUERY = "singleQuery";
+
+	public static final String USER_DEFINE_PROJECTION = "UserDefineProjection";
 }

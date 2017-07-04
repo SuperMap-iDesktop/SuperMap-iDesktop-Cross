@@ -125,6 +125,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 		buttonRemove = new JButton(ControlsResources.getIcon("/controlsresources/ToolBar/Image_delete_now.png"));
 		buttonRemove.setToolTipText(CommonProperties.getString(CommonProperties.Delete));
 		buttonRemove.setContentAreaFilled(false);
+		buttonRemove.setVisible(false);
 		ComponentUIUtilities.setName(labelTitle, "ProcessTask_labelTitle");
 		ComponentUIUtilities.setName(progressBar, "ProcessTask_progressBar");
 		ComponentUIUtilities.setName(labelMessage, "ProcessTask_labelMessage");
