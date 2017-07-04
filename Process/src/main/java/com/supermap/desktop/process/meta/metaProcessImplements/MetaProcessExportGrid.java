@@ -7,6 +7,7 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessAbstractExport;
 import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 
@@ -43,6 +44,8 @@ public class MetaProcessExportGrid extends MetaProcessAbstractExport {
 
 	protected void initParameters() {
 		super.initParameters();
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, chooseDataset);
+
 		this.chooseDataset.setSupportTypes(DatasetTypeUtilities.getDatasetTypeGrid());
 		String module = "ExportGrid_OutPutDirectories";
 		if (!SmFileChoose.isModuleExist(module)) {

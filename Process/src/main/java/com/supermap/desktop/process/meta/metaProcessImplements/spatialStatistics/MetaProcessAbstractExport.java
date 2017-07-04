@@ -83,7 +83,6 @@ public class MetaProcessAbstractExport extends MetaProcess {
 		this.basicCombine = new ParameterCombine();
 		this.basicCombine.setDescribe(CommonProperties.getString("String_ResultSet"));
 		this.basicCombine.addParameters(this.chooseDataset, this.supportType, this.targetName, this.exportPath, this.cover);
-		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.GRID, chooseDataset);
 		//输出为文件路径，没有控件能对应
 		this.parameters.addOutputParameters(OUTPUT_DATA, BasicTypes.STRING, null);
 	}
