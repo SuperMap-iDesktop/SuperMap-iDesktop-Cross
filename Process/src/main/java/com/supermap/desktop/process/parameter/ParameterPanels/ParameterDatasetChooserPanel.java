@@ -34,7 +34,6 @@ public class ParameterDatasetChooserPanel extends SwingPanel implements IParamet
 	private JTextField textFieldDatasetName;
 	private JButton buttonChooseDataset;
 	private boolean isSelectingItem = false;
-	private Dataset dataset;
 
 	public ParameterDatasetChooserPanel(IParameter datasetChooser) {
 		super(datasetChooser);
@@ -91,7 +90,7 @@ public class ParameterDatasetChooserPanel extends SwingPanel implements IParamet
 					tempDatasetChooser.setSupportDatasetTypes(datasetChooser.getSupportTypes());
 					tempDatasetChooser.setSelectionModel(ListSelectionModel.SINGLE_SELECTION);
 					if (tempDatasetChooser.showDialog() == DialogResult.OK) {
-						dataset = tempDatasetChooser.getSelectedDatasets().get(0);
+						datasetChooser.setSelectedItem(tempDatasetChooser.getSelectedDatasets().get(0));
 						textFieldDatasetName.setText(tempDatasetChooser.getSelectedDatasets().get(0).getName());
 					}
 					isSelectingItem = false;
@@ -118,9 +117,7 @@ public class ParameterDatasetChooserPanel extends SwingPanel implements IParamet
 				if (!isSelectingItem) {
 					isSelectingItem = true;
 					String datasetName = textFieldDatasetName.getText();
-					if (null != dataset && dataset.getName().equals(datasetName)) {
-						datasetChooser.setSelectedItem(dataset);
-					} else if (!StringUtilities.isNullOrEmpty(datasetName)) {
+					if (!StringUtilities.isNullOrEmpty(datasetName)) {
 						Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
 						for (int i = 0; i < datasources.getCount(); i++) {
 							Datasource tempDatasource = datasources.get(i);
