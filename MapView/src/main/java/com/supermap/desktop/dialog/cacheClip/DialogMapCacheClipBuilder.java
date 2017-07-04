@@ -204,6 +204,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		this.buttonCancel = ComponentFactory.createButtonCancel();
 		this.checkBoxAutoClosed.setSelected(true);
 		this.checkBoxShowProcessBar.setSelected(true);
+		this.buttonOk.setVisible(false);
 	}
 
 	private boolean valiteCacheFolderSave() {
@@ -229,6 +230,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 
 	//Change panel
 	private void changePanel(boolean flag) {
+		buttonOk.setVisible(flag);
 		buttonStep.setText(flag == true ? ControlsProperties.getString("String_LastWay") : ControlsProperties.getString("String_NextWay"));
 		getContentPane().remove(flag == true ? firstStepPane : nextStepPane);
 		getContentPane().add(flag == true ? nextStepPane : firstStepPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));

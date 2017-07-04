@@ -9,6 +9,7 @@ import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessAbstractExport;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.implement.*;
+import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 
@@ -93,6 +94,7 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 		this.vectorCombine.addParameters(this.externalData, this.externalRecord, this.charset
 				, this.cadVersion, this.expression, emptyCombine);
 		this.parameters.setParameters(this.basicCombine, this.vectorCombine);
+		this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR, chooseDataset);
 	}
 
 	protected void addDataset() {
