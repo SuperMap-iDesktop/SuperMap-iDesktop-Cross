@@ -69,7 +69,6 @@ public class GraphCanvas extends JComponent {
 	private CanvasTranslation translation = new CanvasTranslation(this);
 	private Selection selection = new MultiSelection(this);
 	private GraphDragAction dragged = new GraphDragAction(this);
-	public GraphConnectAction connector = new GraphConnectAction(this);
 	public GraphRemoveAction removing = new GraphRemoveAction(this);
 	public PopupMenuAction popupMenu = new PopupMenuAction(this);
 
@@ -95,21 +94,14 @@ public class GraphCanvas extends JComponent {
 		installCanvasAction(Selection.class, this.selection);
 		installCanvasAction(GraphDragAction.class, this.dragged);
 		installCanvasAction(CanvasTranslation.class, this.translation);
-		installCanvasAction(GraphConnectAction.class, this.connector);
 		installCanvasAction(GraphRemoveAction.class, this.removing);
 		installCanvasAction(PopupMenuAction.class, this.popupMenu);
 
 
 		this.actionsManager.addMutexAction(GraphDragAction.class, Selection.class);
-		this.actionsManager.addMutexAction(GraphDragAction.class, GraphConnectAction.class);
 		this.actionsManager.addMutexAction(GraphDragAction.class, PopupMenuAction.class);
 
 		this.actionsManager.addMutexAction(Selection.class, GraphDragAction.class);
-		this.actionsManager.addMutexAction(Selection.class, GraphConnectAction.class);
-
-		this.actionsManager.addMutexAction(GraphConnectAction.class, GraphDragAction.class);
-		this.actionsManager.addMutexAction(GraphConnectAction.class, Selection.class);
-		this.actionsManager.addMutexAction(GraphConnectAction.class, PopupMenuAction.class);
 
 		this.actionsManager.setPriority(CanvasAction.ActionType.MOUSE_PRESSED, GraphDragAction.class, 0);
 	}

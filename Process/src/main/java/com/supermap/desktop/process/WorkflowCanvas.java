@@ -1,24 +1,28 @@
 package com.supermap.desktop.process;
 
-import com.supermap.desktop.process.core.DataMatch;
-import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.core.IRelation;
-import com.supermap.desktop.process.core.Workflow;
+import com.supermap.desktop.Application;
+import com.supermap.desktop.process.core.*;
 import com.supermap.desktop.process.events.*;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
-import com.supermap.desktop.process.graphics.events.GraphBoundsChangedEvent;
-import com.supermap.desktop.process.graphics.events.GraphBoundsChangedListener;
-import com.supermap.desktop.process.graphics.events.GraphRemovingEvent;
-import com.supermap.desktop.process.graphics.events.GraphRemovingListener;
+import com.supermap.desktop.process.graphics.events.*;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
+import com.supermap.desktop.process.graphics.interaction.canvas.GraphConnectAction;
+import com.supermap.desktop.process.graphics.interaction.canvas.GraphDragAction;
+import com.supermap.desktop.process.graphics.interaction.canvas.PopupMenuAction;
+import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
+import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 
 import javax.xml.crypto.Data;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DropTargetAdapter;
+import java.awt.dnd.DropTargetDropEvent;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,13 +31,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by highsad on 2017/6/29.
  */
 public class WorkflowCanvas extends GraphCanvas
-		implements GraphBoundsChangedListener, GraphRemovingListener, RelationRemovingListener<IProcess> {
+		implements GraphBoundsChangedListener, GraphRemovingListener,
+		RelationAddedListener<IProcess>, RelationRemovingListener<IProcess> {
 	private Workflow workflow;
 	private Map<Object, Point> locationMap;
 
 	private Map<IProcess, ProcessGraph> processMap = new ConcurrentHashMap<>();
 	private Map<OutputData, OutputGraph> outputMap = new ConcurrentHashMap<>();
 	private Map<IRelation<IProcess>, ConnectionLineGraph> relationMap = new ConcurrentHashMap<>();
+
+	private GraphConnectAction connector = new GraphConnectAction(this);
 
 	public WorkflowCanvas(Workflow workflow) {
 		this(workflow, new ConcurrentHashMap<Object, Point>());
@@ -48,11 +55,21 @@ public class WorkflowCanvas extends GraphCanvas
 		this.workflow = workflow;
 
 		if (this.workflow.getProcessCount() > 0) {
+			this.locationMap = locationMap;
 			loadProcesses(this.workflow.getProcesses());
 			loadRelations(this.workflow.getRelations());
 		}
 
 		addGraphRemovingListener(this);
+
+		installCanvasAction(GraphConnectAction.class, this.connector);
+
+		getActionsManager().addMutexAction(GraphDragAction.class, GraphConnectAction.class);
+		getActionsManager().addMutexAction(Selection.class, GraphConnectAction.class);
+
+		getActionsManager().addMutexAction(GraphConnectAction.class, GraphDragAction.class);
+		getActionsManager().addMutexAction(GraphConnectAction.class, Selection.class);
+		getActionsManager().addMutexAction(GraphConnectAction.class, PopupMenuAction.class);
 	}
 
 	private void loadProcesses(Vector<IProcess> processes) {
@@ -156,6 +173,10 @@ public class WorkflowCanvas extends GraphCanvas
 		}
 	}
 
+	public Workflow getWorkflow() {
+		return workflow;
+	}
+
 	@Override
 	public void graghBoundsChanged(GraphBoundsChangedEvent e) {
 		if (!(e.getGraph() instanceof ProcessGraph) && !(e.getGraph() instanceof OutputGraph)) {
@@ -222,6 +243,55 @@ public class WorkflowCanvas extends GraphCanvas
 			if (this.relationMap.containsKey(e.getRelation())) {
 				this.relationMap.remove(e.getRelation());
 			}
+		}
+	}
+
+	@Override
+	public void relationAdded(RelationAddedEvent<IProcess> e) {
+		if (e.getRelation() instanceof DataMatch) {
+			DataMatch dataMatch = (DataMatch) e.getRelation();
+			IGraph fromGraph = this.outputMap.get(dataMatch.getFromOutputData());
+			IGraph toGraph = this.processMap.get(dataMatch.getTo());
+
+			ConnectionLineGraph connectionLineGraph = new ConnectionLineGraph(this, fromGraph, toGraph);
+
+			// 添加到 map
+			this.relationMap.put(dataMatch, connectionLineGraph);
+
+			// 添加到画布
+			addGraph(connectionLineGraph);
+		}
+	}
+
+	private class ProcessDropTargetAdapter extends DropTargetAdapter {
+		@Override
+		public void drop(DropTargetDropEvent dtde) {
+//			FormWorkflow.this.grabFocus();
+//			Transferable transferable = dtde.getTransferable();
+//			DataFlavor[] currentDataFlavors = dtde.getCurrentDataFlavors();
+//			for (DataFlavor currentDataFlavor : currentDataFlavors) {
+//				if (currentDataFlavor != null) {
+//					try {
+//						Object transferData = transferable.getTransferData(currentDataFlavor);
+//						if (transferData instanceof String) {
+//							MetaProcess metaProcess = WorkflowParser.getMetaProcess((String) transferData);
+//							if (metaProcess == null) {
+//								continue;
+//							}
+//							ProcessGraph graph = new ProcessGraph(getCanvas(), metaProcess);
+//							Point location = dtde.getLocation();
+//							location = new Point(location.x - graph.getWidth() / 2, location.y - graph.getHeight() / 2);
+//							Point inverse = getCanvas().getCoordinateTransform().inverse(location);
+//							graph.setLocation(inverse);
+//							getCanvas().getGraphStorage().add(graph);
+//							getCanvas().repaint();
+//						}
+//					} catch (Exception e) {
+//						// ignore 当然是原谅ta啦
+//						Application.getActiveApplication().getOutput().output(e);
+//					}
+//				}
+//			}
 		}
 	}
 }

@@ -283,34 +283,27 @@ public class NodeMatrix<T extends Object> {
 		return endNodes;
 	}
 
+
 	/**
-	 * Add relation between two nodes
+	 * Add relation.
 	 *
-	 * @param fromNode
-	 * @param toNode
-	 * @param relationClass
+	 * @param relation
 	 */
-	public synchronized <V extends IRelation<T>> void addRelation(T fromNode, T toNode, Class<V> relationClass) {
-//		validateNode(fromNode);
-//		validateNode(toNode);
-//
-//		if (relationClass == null) {
-//			throw new IllegalArgumentException("Relation can not be null.");
-//		}
-//
-//		try {
-//			IRelation<T> relation = relationClass.newInstance();
-//			if (relation == null) {
-//				throw new UnknownError();
-//			}
-//
-//			removeRelation(fromNode, toNode);
-//			relation.relate(fromNode, toNode);
-//			this.matrix.get(this.nodes.indexOf(fromNode)).put(toNode, relation);
-//			fireRelationAdded(new RelationAddedEvent<T>(this, relation));
-//		} catch (Exception e) {
-//			Application.getActiveApplication().getOutput().output(e);
-//		}
+	public synchronized void addRelation(IRelation<T> relation) {
+		validateNode(relation.getFrom());
+		validateNode(relation.getTo());
+
+		if (relation == null) {
+			throw new IllegalArgumentException("Relation can not be null.");
+		}
+
+		try {
+			removeRelation(relation.getFrom(), relation.getTo());
+			this.matrix.get(this.nodes.indexOf(relation.getFrom())).put(relation.getTo(), relation);
+			fireRelationAdded(new RelationAddedEvent<T>(this, relation));
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		}
 	}
 
 	/**
