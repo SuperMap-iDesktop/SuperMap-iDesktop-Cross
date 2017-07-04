@@ -38,10 +38,10 @@ public class MetaProcessISOPoint extends MetaProcess {
 	private ParameterTextField minISOLine;
 	private ParameterTextField isoLine;
 	private ParameterComboBox terrainInterpolateType;
-	private ParameterTextField resolution;
-	private ParameterTextField datumValue;
-	private ParameterTextField interval;
-	private ParameterTextField resampleTolerance;
+	private ParameterNumber resolution;
+	private ParameterNumber datumValue;
+	private ParameterNumber interval;
+	private ParameterNumber resampleTolerance;
 	private ParameterComboBox smoothMethod;
 	private ParameterNumber smoothNess;
 	private boolean isSelectChanged = false;
@@ -201,12 +201,20 @@ public class MetaProcessISOPoint extends MetaProcess {
 		this.minISOLine = new ParameterTextField(CommonProperties.getString("String_MINISOLine"));
 		this.isoLine = new ParameterTextField(CommonProperties.getString("String_ISOData"));
 		this.terrainInterpolateType = new ParameterComboBox(CommonProperties.getString("String_InterpolateType"));
-		this.resolution = new ParameterTextField(ProcessProperties.getString("String_Resolution"));
-		this.datumValue = new ParameterTextField(CommonProperties.getString("String_DatumValue"));
+		this.resolution = new ParameterNumber(ProcessProperties.getString("String_Resolution"));
+		resolution.setMinValue(0);
+		resolution.setIsIncludeMin(false);
+		this.datumValue = new ParameterNumber(CommonProperties.getString("String_DatumValue"));
 		this.datumValue.setSelectedItem("0");
-		this.interval = new ParameterTextField(CommonProperties.getString("String_Interval"));
-		this.resampleTolerance = new ParameterTextField(CommonProperties.getString("String_ResampleTolerance"));
+		datumValue.setMinValue(0);
+		datumValue.setIsIncludeMin(true);
+		this.interval = new ParameterNumber(CommonProperties.getString("String_Interval"));
+		interval.setMinValue(0);
+		interval.setIsIncludeMin(false);
+		this.resampleTolerance = new ParameterNumber(CommonProperties.getString("String_ResampleTolerance"));
 		this.resampleTolerance.setSelectedItem("0");
+		resampleTolerance.setMinValue(0);
+		resampleTolerance.setIsIncludeMin(true);
 		this.smoothMethod = new ParameterComboBox().setDescribe(CommonProperties.getString("String_SmoothMethod"));
 		this.smoothNess = new ParameterNumber(CommonProperties.getString("String_SmoothNess"));
 		smoothNess.setMinValue(2);
@@ -312,7 +320,7 @@ public class MetaProcessISOPoint extends MetaProcess {
 			isSuccessful = (lines != null && lines.length > 0);
 			fireRunning(new RunningEvent(MetaProcessISOPoint.this, 100, "finished"));
 		} catch (Exception e) {
-			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
+			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {
 			SurfaceAnalyst.removeSteppedListener(this.stepListener);
 		}
