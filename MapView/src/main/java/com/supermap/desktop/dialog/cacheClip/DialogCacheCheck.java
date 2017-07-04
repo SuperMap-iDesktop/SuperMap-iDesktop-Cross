@@ -1,18 +1,21 @@
 package com.supermap.desktop.dialog.cacheClip;
 
 import com.supermap.data.processing.CacheWriter;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
+import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.dialog.cacheClip.cache.CheckCache;
+import com.supermap.desktop.dialog.cacheClip.cache.LogWriter;
 import com.supermap.desktop.dialog.cacheClip.cache.ProcessManager;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.JFileChooserControl;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
-import com.supermap.desktop.ui.controls.SmDialog;
 import com.supermap.desktop.ui.controls.SmFileChoose;
 import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -33,7 +36,7 @@ import java.util.ArrayList;
  * Created by xie on 2017/5/10.
  * Dialog for checking cache
  */
-public class DialogCacheCheck extends SmDialog {
+public class DialogCacheCheck extends JFrame {
 	private JLabel labelTotalSciPath;
 	private JLabel labelCheckBounds;
 	private JLabel labelSciPath;
@@ -113,14 +116,6 @@ public class DialogCacheCheck extends SmDialog {
 		initResources();
 		initLayout();
 		registEvents();
-		this.componentList.add(this.buttonOK);
-		this.componentList.add(this.buttonCancel);
-		this.componentList.add(this.fileChooseTotalSciPath);
-		this.componentList.add(this.fileChooseCheckBounds);
-		this.componentList.add(this.fileChooseSciPath);
-		this.componentList.add(this.textFieldProcessCount);
-//		this.componentList.add(this.textFieldMergeSciCount);
-		this.setFocusTraversalPolicy(this.policy);
 	}
 
 	private void registEvents() {
@@ -134,6 +129,8 @@ public class DialogCacheCheck extends SmDialog {
 				if (hasTask()) {
 					setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 					shutdownMapCheck(true);
+				} else {
+					DialogCacheCheck.this.dispose();
 				}
 			}
 		});
@@ -200,6 +197,7 @@ public class DialogCacheCheck extends SmDialog {
 	}
 
 	private void initResources() {
+		this.setIconImages(CacheUtilities.getIconImages());
 		this.labelTotalSciPath.setText(MapViewProperties.getString("String_TotalSciPath"));
 		this.labelCheckBounds.setText(MapViewProperties.getString("String_CheckBounds"));
 		this.labelSciPath.setText(MapViewProperties.getString("String_SciPath"));
@@ -338,10 +336,17 @@ public class DialogCacheCheck extends SmDialog {
 						}
 					}
 					if (null != errorFile && errorFile.listFiles().length > 0 && tileSize != -1) {
-						DialogCacheBuilder cacheBuilder = new DialogCacheBuilder(DialogMapCacheClipBuilder.MultiProcessClip);
-						cacheBuilder.fileChooserTaskPath.setPath(errorFile.getAbsolutePath());
-						cacheBuilder.textFieldMapName.setText(cacheFile.getName());
-						cacheBuilder.showDialog();
+//						DialogCacheBuilder cacheBuilder = new DialogCacheBuilder(DialogMapCacheClipBuilder.MultiProcessClip);
+//						cacheBuilder.fileChooserTaskPath.setPath(errorFile.getAbsolutePath());
+//						cacheBuilder.textFieldMapName.setText(cacheFile.getName());
+//						cacheBuilder.showDialog();
+						String mapName = cacheFile.getName();
+						if (null != Application.getActiveApplication().getActiveForm()) {
+							mapName = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().getName();
+						}
+						String[] tempParams = {"Multi", "null", errorFile.getAbsolutePath(), "null", mapName, "null"};
+						CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
+
 					} else {
 						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_CacheCheckSuccess"));
 					}
@@ -361,7 +366,7 @@ public class DialogCacheCheck extends SmDialog {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			DialogCacheCheck dialogCacheCheck = new DialogCacheCheck();
-			dialogCacheCheck.showDialog();
+			dialogCacheCheck.setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

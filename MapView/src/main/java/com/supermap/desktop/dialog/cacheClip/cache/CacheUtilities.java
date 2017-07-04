@@ -10,8 +10,10 @@ import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClip;
 import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClipBuilder;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.utilities.PathUtilities;
 import com.supermap.mapping.Map;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -111,6 +113,28 @@ public class CacheUtilities {
 		}
 	}
 
+	/**
+	 * 获取Cross图标
+	 *
+	 * @return
+	 */
+	public static ArrayList getIconImages() {
+		String path = PathUtilities.getRootPathName();
+		String[] paths = new String[2];
+		paths[0] = path;
+		paths[1] = "../Resources/Frame";
+		path = PathUtilities.combinePath(paths, true);
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		ArrayList<Image> images = new ArrayList<>();
+		images.add(toolkit.createImage(path + "iDesktop_Cross_16.png"));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_24.png"));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_32.png"));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_64.png"));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_128.png"));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_256.png"));
+		images.add(toolkit.createImage(path + "iDesktop Cross.ico"));
+		return images;
+	}
 
 	/**
 	 * Start a new process
@@ -122,7 +146,8 @@ public class CacheUtilities {
 	public static void startProcess(String[] params, String className, String cacheType) {
 		try {
 			ArrayList<String> arguments = new ArrayList<>();
-			arguments.add("java");
+			String javaexeHome = CacheUtilities.replacePath(System.getProperty("java.home"), "bin") + File.separator + "java.exe";
+			arguments.add(javaexeHome);
 			arguments.add("-cp");
 			String projectPath = replacePath(System.getProperty("user.dir"));
 			String jarPath = "";
@@ -138,6 +163,7 @@ public class CacheUtilities {
 				arguments.add(params[i]);
 			}
 			ProcessManager manager = ProcessManager.getInstance();
+
 			SubprocessThread thread = new SubprocessThread(arguments, cacheType);
 			manager.addProcess(thread);
 			thread.start();

@@ -2,6 +2,8 @@ package com.supermap.desktop.process.parameter.ParameterPanels;
 
 import com.supermap.data.Dataset;
 import com.supermap.data.Datasource;
+import com.supermap.data.Datasources;
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasetChooser;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
@@ -13,8 +15,11 @@ import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.datasetChoose.DatasetChooser;
 import com.supermap.desktop.utilities.DatasourceUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +34,7 @@ public class ParameterDatasetChooserPanel extends SwingPanel implements IParamet
 	private JTextField textFieldDatasetName;
 	private JButton buttonChooseDataset;
 	private boolean isSelectingItem = false;
+	private Dataset dataset;
 
 	public ParameterDatasetChooserPanel(IParameter datasetChooser) {
 		super(datasetChooser);
@@ -85,8 +91,43 @@ public class ParameterDatasetChooserPanel extends SwingPanel implements IParamet
 					tempDatasetChooser.setSupportDatasetTypes(datasetChooser.getSupportTypes());
 					tempDatasetChooser.setSelectionModel(ListSelectionModel.SINGLE_SELECTION);
 					if (tempDatasetChooser.showDialog() == DialogResult.OK) {
-						datasetChooser.setSelectedItem(tempDatasetChooser.getSelectedDatasets().get(0));
+						dataset = tempDatasetChooser.getSelectedDatasets().get(0);
 						textFieldDatasetName.setText(tempDatasetChooser.getSelectedDatasets().get(0).getName());
+					}
+					isSelectingItem = false;
+				}
+			}
+		});
+		this.textFieldDatasetName.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+
+			}
+
+			private void setDataset() {
+				if (!isSelectingItem) {
+					isSelectingItem = true;
+					String datasetName = textFieldDatasetName.getText();
+					if (dataset.getName().equals(datasetName)) {
+						datasetChooser.setSelectedItem(dataset);
+					} else if (!StringUtilities.isNullOrEmpty(datasetName)) {
+						Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+						for (int i = 0; i < datasources.getCount(); i++) {
+							Datasource tempDatasource = datasources.get(i);
+							if (null != DatasourceUtilities.getDataset(datasetName, tempDatasource)) {
+								datasetChooser.setSelectedItem(DatasourceUtilities.getDataset(datasetName, tempDatasource));
+							}
+						}
 					}
 					isSelectingItem = false;
 				}
