@@ -57,7 +57,6 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 		initComponentState();
 		initLayout();
 		initComponentListener();
-
 	}
 
 	private void initLayout() {
@@ -186,4 +185,9 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 		}
 		isSelectingItem = false;
 	}
+
+    @Override
+    protected void descriptionVisibleChanged(boolean newValue) {
+        label.setVisible(newValue);
+    }
 }

@@ -102,6 +102,19 @@
                 <process key="ISOPoint" name="点数据提取等值线"/>
                 <process key="ISORegion" name="提取等值面"/>
             </process>
+            <process name="矢栅转换">
+                <process key="GridToVector" name="栅格矢量化"/>
+                <process key="ThinRaster" name="栅格细化"/>
+                <process key="VectorToGrid" name="矢量栅格化"/>
+            </process>
+            <process name="DEM构建">
+                <process key="DEMBuild" name="DEM构建"/>
+                <process key="DEMLake" name="DEM挖湖"/>
+            </process>
+            <process name="邻近分析">
+                <process key="ThiessenPolygon" name="泰森多边形"/>
+                <process key="ComputeDistance" name="距离计算"/>
+            </process>
             <process name="地统计分析">
                 <process name="度量地理分布">//SpatialMeasure
                     <process key="CentralElement" name="中心要素"/>

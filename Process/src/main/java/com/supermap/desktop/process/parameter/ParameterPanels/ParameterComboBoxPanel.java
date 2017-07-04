@@ -47,6 +47,7 @@ public class ParameterComboBoxPanel extends SwingPanel implements IParameterPane
 		initListeners(this.parameterComboBox);
 		label.setText(this.parameterComboBox.getDescribe());
 		label.setToolTipText(this.parameterComboBox.getDescribe());
+        label.setVisible(parameterComboBox.isDescriptionVisible());
 		comboBox.setRenderer(new ParameterComboBoxCellRender(this.parameterComboBox.getIConGetter()));
 
 		initLayout();
@@ -101,5 +102,8 @@ public class ParameterComboBoxPanel extends SwingPanel implements IParameterPane
 		});
 	}
 
-
+    @Override
+    protected void descriptionVisibleChanged(boolean newValue) {
+        label.setVisible(newValue);
+    }
 }

@@ -15,7 +15,7 @@ public class ListDataCellRender extends DefaultListCellRenderer {
 	public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 		Component result;
 		if (value == null) {
-			result = new JLabel();
+			result = new JLabel(" ");
 			((JLabel) result).setOpaque(true);
 		} else {
 			result = new DataCell(value);

@@ -15,7 +15,8 @@ public class ParameterRadioButton extends AbstractParameter implements ISingleSe
 	private String describe;
 	@ParameterField(name = "items")
 	private ArrayList<ParameterDataNode> items = new ArrayList<>();
-	@ParameterField(name = "selectedItem")
+    public static final String RADIO_BUTTON_VALUE = "selectedItem";
+    @ParameterField(name = RADIO_BUTTON_VALUE)
 	private ParameterDataNode selectedItem;
 	public static final String VATICAL = "vertical";
 	private String layout;
@@ -25,13 +26,12 @@ public class ParameterRadioButton extends AbstractParameter implements ISingleSe
 		return ParameterType.RADIO_BUTTON;
 	}
 
-
 	@Override
 	public void setSelectedItem(Object value) {
 		if (value instanceof ParameterDataNode) {
 			ParameterDataNode oldValue = this.selectedItem;
 			this.selectedItem = (ParameterDataNode) value;
-			firePropertyChangeListener(new PropertyChangeEvent(this, "selectedItem", oldValue, value));
+			firePropertyChangeListener(new PropertyChangeEvent(this, RADIO_BUTTON_VALUE, oldValue, value));
 		}
 	}
 

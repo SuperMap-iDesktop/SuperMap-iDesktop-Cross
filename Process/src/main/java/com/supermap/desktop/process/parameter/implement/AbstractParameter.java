@@ -38,8 +38,9 @@ public abstract class AbstractParameter implements IParameter {
 
 	private EventListenerList listenerList = new EventListenerList();
 	private List<UpdateValueListener> updateValueListeners = new ArrayList<>();
+    private boolean isDescriptionVisible = true;
 
-	@Override
+    @Override
 	public void addPanelPropertyChangedListener(PanelPropertyChangedListener panelPropertyChangedListener) {
 		listenerList.add(PanelPropertyChangedListener.class, panelPropertyChangedListener);
 	}
@@ -250,4 +251,24 @@ public abstract class AbstractParameter implements IParameter {
 	public boolean isEnabled() {
 		return this.isEnabled;
 	}
+
+    @Override
+    public boolean isDescriptionVisible() {
+        return isDescriptionVisible;
+    }
+
+    @Override
+    public void setDescriptionVisible(boolean isDescriptionVisible) {
+        if (this.isDescriptionVisible == isDescriptionVisible) {
+            return;
+        }
+        boolean oldValue = this.isDescriptionVisible;
+        this.isDescriptionVisible = isDescriptionVisible;
+        firePanelPropertyChangedListener(new PropertyChangeEvent(this,PanelPropertyChangedListener.DESCRIPTION_VISIBLE,oldValue,isDescriptionVisible));
+    }
+
+    @Override
+    public String getDescribe() {
+        return null;
+    }
 }

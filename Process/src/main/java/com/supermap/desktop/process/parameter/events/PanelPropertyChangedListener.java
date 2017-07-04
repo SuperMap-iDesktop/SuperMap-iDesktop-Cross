@@ -8,6 +8,7 @@ import java.util.EventListener;
  */
 public interface PanelPropertyChangedListener extends EventListener {
 	String ENABLE = "ENABLE";
+    String DESCRIPTION_VISIBLE = "DESCRIPTION_VISIBLE";
 
-	void propertyChanged(PropertyChangeEvent propertyChangeEvent);
+    void propertyChanged(PropertyChangeEvent propertyChangeEvent);
 }

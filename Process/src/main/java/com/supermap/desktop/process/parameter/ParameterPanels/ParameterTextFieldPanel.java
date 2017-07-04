@@ -33,6 +33,7 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		this.parameterTextField = (ParameterTextField) parameterTextField;
 		label.setText(this.parameterTextField.getDescribe());
 		label.setToolTipText(this.parameterTextField.getDescribe());
+		label.setVisible(this.parameterTextField.isDescriptionVisible());
 		textField.setText(String.valueOf(this.parameterTextField.getSelectedItem()));
 		if (((ParameterTextField) parameterTextField).getSmTextFieldLegit() != null) {
 			textField.setSmTextFieldLegit(((ParameterTextField) parameterTextField).getSmTextFieldLegit());
@@ -47,9 +48,6 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		panel.setLayout(new GridBagLayout());
 		panel.add(label, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1));
 		panel.add(textField, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 5, 0, 0));
-		if (!parameterTextField.isEnabled()) {
-			UICommonToolkit.setComponentEnabled(panel, parameterTextField.isEnabled());
-		}
 	}
 
 	private void initListeners() {
@@ -78,4 +76,8 @@ public class ParameterTextFieldPanel extends SwingPanel implements IParameterPan
 		});
 	}
 
+    @Override
+    protected void descriptionVisibleChanged(boolean newValue) {
+        label.setVisible(newValue);
+    }
 }
