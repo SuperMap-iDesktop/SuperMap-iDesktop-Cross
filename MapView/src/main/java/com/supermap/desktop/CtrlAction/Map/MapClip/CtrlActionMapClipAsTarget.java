@@ -6,6 +6,7 @@ import com.supermap.desktop.FormMap;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
+import com.supermap.desktop.core.recordset.RecordsetSet;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapview.map.propertycontrols.MapActionSelectTargetInfoPanel;
 import com.supermap.desktop.utilities.MapUtilities;
@@ -43,21 +44,21 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 		boolean hasSelection = false;
 		ArrayList<Layer> layers = MapUtilities.getLayers(mapControl.getMap());
 		for (Layer layer : layers) {
-			if(layer.getSelection() != null && layer.getSelection().getCount() > 0 && layer.getDataset() != null && layer.getDataset().getType() == DatasetType.REGION){
+			if (layer.getSelection() != null && layer.getSelection().getCount() > 0 && layer.getDataset() != null && layer.getDataset().getType() == DatasetType.REGION) {
 				hasSelection = true;
 				break;
 			}
 		}
-		if(hasSelection){
+		if (hasSelection) {
 			abstractActiveMapcontrol(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl());
-		}else{
+		} else {
 			setAction();
 		}
 	}
 
 	@Override
 	public boolean enable() {
-		boolean result=true;
+		boolean result = true;
 		MapControl activeMapControl = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl();
 		ArrayList<Layer> arrayList;
 		arrayList = MapUtilities.getLayers(activeMapControl.getMap(), true);
@@ -66,21 +67,21 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 			HashMap<Dataset, Layer> layerMap = new HashMap<>();
 			for (int i = 0; i < arrayList.size(); i++) {
 				if (arrayList.get(i).getDataset() != null) {
-					result= true;
+					result = true;
 					break;
 				}
 			}
 		}
 
-		Datasources datasources= Application.getActiveApplication().getWorkspace().getDatasources();
-		ArrayList<Datasource> isCanUseDatasources=new ArrayList<>();
-		for (int i=0;i<datasources.getCount();i++){
-			if (!datasources.get(i).isReadOnly()){
+		Datasources datasources = Application.getActiveApplication().getWorkspace().getDatasources();
+		ArrayList<Datasource> isCanUseDatasources = new ArrayList<>();
+		for (int i = 0; i < datasources.getCount(); i++) {
+			if (!datasources.get(i).isReadOnly()) {
 				isCanUseDatasources.add(datasources.get(i));
 			}
 		}
-		if (isCanUseDatasources==null || isCanUseDatasources.size()==0){
-			result=false;
+		if (isCanUseDatasources == null || isCanUseDatasources.size() == 0) {
+			result = false;
 		}
 		return result;
 	}
@@ -136,6 +137,8 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 
 	private void abstractActiveMapcontrol(final MapControl activeMapControl) {
 		boolean isChanged = false;
+		boolean isMutiObjectClip = true;
+		int layerChangeID = 0; // 从一个图层选择对象的图层id
 		GeoRegion geoClipRegion = new GeoRegion();
 		Layers layers = activeMapControl.getMap().getLayers();
 		for (int i = 0; i < layers.getCount(); i++) {
@@ -163,6 +166,15 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 					geoRegionTemp = getCompoundGeoRegion((GeoCompound) geometry);
 				}
 				if (geoRegionTemp != null && geoRegionTemp.getPartCount() > 0) {
+					// 判断选择的对象是否跨图层
+					if (isChanged) {
+						if (layerChangeID != i) {
+							isMutiObjectClip = false;
+						}
+					} else {
+						layerChangeID = i;
+					}
+
 					for (int j = 0; j < geoRegionTemp.getPartCount(); j++) {
 						geoClipRegion.addPart(geoRegionTemp.getPart(j).clone());
 						isChanged = true;
@@ -174,8 +186,20 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 		if (isChanged) {
 			geoRegion = geoClipRegion;
 			// 当获得GeoRegion后，弹出地图裁剪对话框
-			DialogMapClip dialogMapClip = new DialogMapClip(geoRegion);
-			dialogMapClip.showDialog();
+			if (!isMutiObjectClip || geoRegion.getPartCount() <= 1) {  //选择的对象如果跨图层或者选择对象的个数小于1，则不支持多对象拆分裁剪操作
+				DialogMapClip dialogMapClip = new DialogMapClip(geoRegion);
+				dialogMapClip.showDialog();
+			} else {
+				Layer layer = layers.get(layerChangeID);
+				Recordset recordset = layer.getSelection().toRecordset();
+				FieldInfos fieldInfos = recordset.getFieldInfos();
+				String fieldCaptions[] = new String[fieldInfos.getCount()];
+				for (int i = 0; i < fieldInfos.getCount(); i++) {
+					fieldCaptions[i] = fieldInfos.get(i).getCaption();
+				}
+				DialogMapClip dialogMapClip = new DialogMapClip(geoRegion, true, fieldCaptions, recordset);
+				dialogMapClip.showDialog();
+			}
 		}
 	}
 
