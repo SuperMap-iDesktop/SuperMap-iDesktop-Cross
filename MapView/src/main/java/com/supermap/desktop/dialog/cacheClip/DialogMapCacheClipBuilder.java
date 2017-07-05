@@ -1,6 +1,5 @@
 package com.supermap.desktop.dialog.cacheClip;
 
-import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.data.*;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapCacheVersion;
@@ -360,7 +359,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				if (cmdType == MultiUpdateProcessClip) {
 					mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
 				}
-				if (null != mapCacheBuilder.getMap().getVisibleScales()) {
+				if (null != mapCacheBuilder.getMap().getVisibleScales() && 0 != mapCacheBuilder.getMap().getVisibleScales().length) {
 					if (firstStepPane.addScaleDropDown.isEnabled()) {
 						if (this.mapCacheBuilder.getMap().getVisibleScales().length < firstStepPane.currentMapCacheScale.size()) {
 							new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WariningForTaskBuilder"));

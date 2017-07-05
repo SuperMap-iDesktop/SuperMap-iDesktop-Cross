@@ -9,8 +9,6 @@ class SubprocessThread extends Thread {
 	//	private long start;
 	public Process process;
 	private InputStream stream;
-	public static long TimeOutMS = 15 * 60 * 1000;
-	public volatile boolean isExit = false;
 	private String type = null;
 
 	public SubprocessThread(ArrayList<String> arguments, String type) {

@@ -619,11 +619,11 @@ public class FirstStepPane extends JPanel implements IState {
 			//非验证模式直接置灰账号输入--根据组件mongo2.6测试报告，非验证模式下输入密码没有必要
 			this.textFieldUserName.setText(null);
 			this.textFieldUserPassword.setText(null);
-			this.textFieldUserName.setEnabled(false);
-			this.textFieldUserPassword.setEnabled(false);
+//			this.textFieldUserName.setEnabled(false);
+//			this.textFieldUserPassword.setEnabled(false);
 		} catch (Exception e) {
-			this.textFieldUserName.setEnabled(true);
-			this.textFieldUserPassword.setEnabled(true);
+//			this.textFieldUserName.setEnabled(true);
+//			this.textFieldUserPassword.setEnabled(true);
 			//再尝试验证模式--输入用户名密码
 			try {
 				databaseNames.clear();
@@ -766,7 +766,7 @@ public class FirstStepPane extends JPanel implements IState {
 	};
 
 	private boolean enabled() {
-		return isRightCacheName() && isRightCachePath() && isAllRightSaveTypeSetting() && isEmptyUserNameAndUserPassword();
+		return isRightCacheName() && isRightCachePath() && isAllRightSaveTypeSetting();
 	}
 
 	//Validate cache name is right
@@ -913,7 +913,7 @@ public class FirstStepPane extends JPanel implements IState {
 		this.labelDatabaseName = new JLabel();
 		this.labelMutiTenseVersion = new JLabel();
 		this.helpProvider = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_ServeNameHelp"), false);
-		this.helpProviderForDatabaseName = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_DatabaseNameHelp"),false);
+		this.helpProviderForDatabaseName = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_DatabaseNameHelp"), false);
 		this.warningProviderPasswordNotSame = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_PasswordIsNotSame"), true);
 		this.checkBoxFilterSelectionObjectInLayer = new JCheckBox();
 		this.checkBoxFilterSelectionObjectInLayer.setEnabled(false);
