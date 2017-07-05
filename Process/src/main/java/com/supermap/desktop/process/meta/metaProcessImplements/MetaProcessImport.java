@@ -1,56 +1,9 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
-import com.supermap.data.Charset;
-import com.supermap.data.Dataset;
-import com.supermap.data.Datasource;
-import com.supermap.data.PrjCoordSys;
-import com.supermap.data.PrjFileType;
-import com.supermap.data.conversion.DataImport;
-import com.supermap.data.conversion.ImportResult;
-import com.supermap.data.conversion.ImportSetting;
-import com.supermap.data.conversion.ImportSettingBIL;
-import com.supermap.data.conversion.ImportSettingBIP;
-import com.supermap.data.conversion.ImportSettingBMP;
-import com.supermap.data.conversion.ImportSettingBSQ;
-import com.supermap.data.conversion.ImportSettingCSV;
-import com.supermap.data.conversion.ImportSettingDBF;
-import com.supermap.data.conversion.ImportSettingDGN;
-import com.supermap.data.conversion.ImportSettingDWG;
-import com.supermap.data.conversion.ImportSettingDXF;
-import com.supermap.data.conversion.ImportSettingE00;
-import com.supermap.data.conversion.ImportSettingECW;
-import com.supermap.data.conversion.ImportSettingFileGDBVector;
-import com.supermap.data.conversion.ImportSettingGBDEM;
-import com.supermap.data.conversion.ImportSettingGIF;
-import com.supermap.data.conversion.ImportSettingGJB;
-import com.supermap.data.conversion.ImportSettingGRD;
-import com.supermap.data.conversion.ImportSettingIMG;
-import com.supermap.data.conversion.ImportSettingJP2;
-import com.supermap.data.conversion.ImportSettingJPG;
-import com.supermap.data.conversion.ImportSettingKML;
-import com.supermap.data.conversion.ImportSettingKMZ;
-import com.supermap.data.conversion.ImportSettingMAPGIS;
-import com.supermap.data.conversion.ImportSettingMIF;
-import com.supermap.data.conversion.ImportSettingModel3DS;
-import com.supermap.data.conversion.ImportSettingModelDXF;
-import com.supermap.data.conversion.ImportSettingModelFBX;
-import com.supermap.data.conversion.ImportSettingModelFLT;
-import com.supermap.data.conversion.ImportSettingModelOSG;
-import com.supermap.data.conversion.ImportSettingModelX;
-import com.supermap.data.conversion.ImportSettingMrSID;
-import com.supermap.data.conversion.ImportSettingPNG;
-import com.supermap.data.conversion.ImportSettingRAW;
-import com.supermap.data.conversion.ImportSettingSHP;
-import com.supermap.data.conversion.ImportSettingSIT;
-import com.supermap.data.conversion.ImportSettingTAB;
-import com.supermap.data.conversion.ImportSettingTEMSBuildingVector;
-import com.supermap.data.conversion.ImportSettingTEMSVector;
-import com.supermap.data.conversion.ImportSettingTIF;
-import com.supermap.data.conversion.ImportSettingVCT;
-import com.supermap.data.conversion.ImportSettingWOR;
-import com.supermap.data.conversion.ImportSteppedEvent;
-import com.supermap.data.conversion.ImportSteppedListener;
+import com.supermap.data.*;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.controls.utilities.DatasetUIUtilities;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.IParameterCreator;
 import com.supermap.desktop.process.dataconversion.ImportParameterCreator;
@@ -60,17 +13,13 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.ParameterButton;
-import com.supermap.desktop.process.parameter.implement.ParameterCharset;
-import com.supermap.desktop.process.parameter.implement.ParameterFile;
-import com.supermap.desktop.process.parameter.implement.ParameterRadioButton;
-import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.ui.UICommonToolkit;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.prjcoordsys.JDialogPrjCoordSysSettings;
+import com.supermap.desktop.utilities.DatasourceUtilities;
 import com.supermap.desktop.utilities.FileUtilities;
 import com.supermap.desktop.utilities.PrjCoordSysUtilities;
 import com.supermap.desktop.utilities.StringUtilities;
@@ -82,6 +31,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -318,8 +268,25 @@ public class MetaProcessImport extends MetaProcess {
 	@Override
 	public boolean execute() {
 		boolean isSuccessful = false;
-		DataImport dataImport = ImportSettingSetter.setParameter(importSetting, sourceImportParameters, resultImportParameters, paramParameters);
+		String datasetName = importSetting.getTargetDatasetName();
+		Dataset dataset = DatasourceUtilities.getDataset(datasetName, importSetting.getTargetDatasource());
+		if (importSetting.getImportMode().equals(ImportMode.OVERWRITE) && dataset != null) {
+			ArrayList<Dataset> datasets = new ArrayList<>();
+			datasets.add(dataset);
+			java.util.List<Dataset> closedDatasets = DatasetUIUtilities.sureDatasetClosed(datasets);
+			if (closedDatasets.size() > 0) {
+				isSuccessful = doImport();
+			}
+		} else {
+			isSuccessful = doImport();
+		}
 
+		return isSuccessful;
+	}
+
+	private boolean doImport() {
+		boolean isSuccessful = false;
+		DataImport dataImport = ImportSettingSetter.setParameter(importSetting, sourceImportParameters, resultImportParameters, paramParameters);
 		try {
 			fireRunning(new RunningEvent(this, 0, "start"));
 			dataImport.addImportSteppedListener(this.importStepListener);
@@ -347,7 +314,6 @@ public class MetaProcessImport extends MetaProcess {
 		} finally {
 			dataImport.removeImportSteppedListener(this.importStepListener);
 		}
-
 		return isSuccessful;
 	}
 

@@ -14,7 +14,6 @@ import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.ScaleModel;
 import com.supermap.desktop.dialog.SmOptionPane;
-import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.ChooseTable.MultipleCheckboxItem;
@@ -116,6 +115,7 @@ public class FirstStepPane extends JPanel implements IState {
 	private JLabel labelDatabaseName;
 	private JLabel labelMutiTenseVersion;
 	private WarningOrHelpProvider helpProvider;
+	private WarningOrHelpProvider helpProviderForDatabaseName;
 	private WarningOrHelpProvider warningProviderPasswordNotSame;
 	public JCheckBox checkBoxFilterSelectionObjectInLayer;
 	public JComboBox comboBoxSaveType;
@@ -125,6 +125,7 @@ public class FirstStepPane extends JPanel implements IState {
 	public JPasswordField textFieldUserPassword;
 	private JPasswordField textFieldConfirmPassword;
 	public JTextField textFieldServerName;
+	private String sciPath;
 
 	private double originMapCacheScale[];
 	public ArrayList<Double> currentMapCacheScale;
@@ -350,6 +351,7 @@ public class FirstStepPane extends JPanel implements IState {
 		storeType.add(this.helpProvider, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 0));
 		storeType.add(this.textFieldServerName, new GridBagConstraintsHelper(2, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
 		storeType.add(this.labelDatabaseName, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
+		storeType.add(this.helpProviderForDatabaseName, new GridBagConstraintsHelper(1, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 0, 5, 0));
 		storeType.add(this.comboBoxDatabaseName, new GridBagConstraintsHelper(2, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
 		storeType.add(this.labelUserName, new GridBagConstraintsHelper(0, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
 		storeType.add(this.textFieldUserName, new GridBagConstraintsHelper(2, 3, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
@@ -521,6 +523,7 @@ public class FirstStepPane extends JPanel implements IState {
 			this.helpProvider.setVisible(false);
 			this.textFieldServerName.setVisible(false);
 			this.labelDatabaseName.setVisible(false);
+			this.helpProviderForDatabaseName.setVisible(false);
 			this.comboBoxDatabaseName.setVisible(false);
 			this.labelUserName.setVisible(false);
 			this.textFieldUserName.setVisible(false);
@@ -555,6 +558,7 @@ public class FirstStepPane extends JPanel implements IState {
 			this.textFieldServerName.setVisible(true);
 			this.textFieldServerName.setText(MapViewProperties.getString("MapCache_MongoDB_DefaultServerName"));
 			this.labelDatabaseName.setVisible(true);
+			this.helpProviderForDatabaseName.setVisible(true);
 			this.comboBoxDatabaseName.setVisible(true);
 			this.comboBoxDatabaseName.removeAllItems();
 			if (cmdType == DialogMapCacheClipBuilder.ResumeProcessClip
@@ -593,6 +597,11 @@ public class FirstStepPane extends JPanel implements IState {
 	 * 检查链接是否可用
 	 */
 	private void updateDBNames() {
+		if ((cmdType == DialogMapCacheClipBuilder.ResumeProcessClip
+				|| cmdType == DialogMapCacheClipBuilder.SingleUpdateProcessClip)
+				&& null != comboBoxDatabaseName.getSelectedItem()) {
+			return;
+		}
 		if (!mongoDBConnectSate) {
 			this.comboBoxDatabaseName.removeAllItems();
 			return;//如果IP都不对就直接返回，不然输一个字符获取一次列表，IP不对的情况下会很慢的
@@ -610,11 +619,11 @@ public class FirstStepPane extends JPanel implements IState {
 			//非验证模式直接置灰账号输入--根据组件mongo2.6测试报告，非验证模式下输入密码没有必要
 			this.textFieldUserName.setText(null);
 			this.textFieldUserPassword.setText(null);
-			this.textFieldUserName.setEnabled(false);
-			this.textFieldUserPassword.setEnabled(false);
+//			this.textFieldUserName.setEnabled(false);
+//			this.textFieldUserPassword.setEnabled(false);
 		} catch (Exception e) {
-			this.textFieldUserName.setEnabled(true);
-			this.textFieldUserPassword.setEnabled(true);
+//			this.textFieldUserName.setEnabled(true);
+//			this.textFieldUserPassword.setEnabled(true);
 			//再尝试验证模式--输入用户名密码
 			try {
 				databaseNames.clear();
@@ -757,7 +766,7 @@ public class FirstStepPane extends JPanel implements IState {
 	};
 
 	private boolean enabled() {
-		return isRightCacheName() && isRightCachePath() && isAllRightSaveTypeSetting() && isEmptyUserNameAndUserPassword();
+		return isRightCacheName() && isRightCachePath() && isAllRightSaveTypeSetting();
 	}
 
 	//Validate cache name is right
@@ -904,6 +913,7 @@ public class FirstStepPane extends JPanel implements IState {
 		this.labelDatabaseName = new JLabel();
 		this.labelMutiTenseVersion = new JLabel();
 		this.helpProvider = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_ServeNameHelp"), false);
+		this.helpProviderForDatabaseName = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_DatabaseNameHelp"), false);
 		this.warningProviderPasswordNotSame = new WarningOrHelpProvider(MapViewProperties.getString("MapCache_PasswordIsNotSame"), true);
 		this.checkBoxFilterSelectionObjectInLayer = new JCheckBox();
 		this.checkBoxFilterSelectionObjectInLayer.setEnabled(false);
@@ -1382,11 +1392,12 @@ public class FirstStepPane extends JPanel implements IState {
 		} else if (mapCacheBuilder.getStorageType() == StorageType.MongoDB) {
 			comboBoxSaveType.setSelectedItem(MapViewProperties.getString("MapCache_SaveType_MongoDB"));
 			CacheWriter cacheFile = new CacheWriter();
-			cacheFile.FromConfigFile(CacheUtilities.replacePath(fileChooserControlFileCache.getPath(), mapCacheBuilder.getCacheName() + ".sci"));
+			cacheFile.FromConfigFile(sciPath);
 			String[] mongoInfo = cacheFile.getMongoConnectionInfo();
 			if (null != mongoInfo) {
 				textFieldServerName.setText(mongoInfo[0]);
-				comboBoxDatabaseName.setSelectedItem(mongoInfo[1]);
+				comboBoxDatabaseName.removeAllItems();
+				comboBoxDatabaseName.addItem(mongoInfo[1]);
 				textFieldUserName.setText(mongoInfo[2]);
 				if (mongoInfo.length == 4) {
 					textFieldUserPassword.setText(mongoInfo[3]);
@@ -1602,6 +1613,14 @@ public class FirstStepPane extends JPanel implements IState {
 			this.enabledListeners.remove(enabledListener);
 		}
 
+	}
+
+	public String getSciPath() {
+		return sciPath;
+	}
+
+	public void setSciPath(String sciPath) {
+		this.sciPath = sciPath;
 	}
 
 	private void fireEnabled(boolean enabled) {
