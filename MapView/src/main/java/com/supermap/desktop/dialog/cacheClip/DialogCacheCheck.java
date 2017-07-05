@@ -5,7 +5,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
-import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.dialog.cacheClip.cache.CheckCache;
@@ -322,7 +321,6 @@ public class DialogCacheCheck extends JFrame {
 				if (null != parentPath && checkBoxSaveErrorData.isSelected()) {
 					checkCache.error2Udb(anchorLeft, anchorTop, tileSize, parentPath);
 				}
-				dialogDispose();
 				boolean cacheBuild = checkBoxCacheBuild.isSelected();
 				if (cacheBuild) {
 					File cacheFile = new File(cacheRoot);
@@ -340,21 +338,18 @@ public class DialogCacheCheck extends JFrame {
 //						cacheBuilder.fileChooserTaskPath.setPath(errorFile.getAbsolutePath());
 //						cacheBuilder.textFieldMapName.setText(cacheFile.getName());
 //						cacheBuilder.showDialog();
-						String mapName = cacheFile.getName();
-						if (null != Application.getActiveApplication().getActiveForm()) {
-							mapName = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().getName();
-						}
-						String[] tempParams = {"Multi", "null", errorFile.getAbsolutePath(), "null", mapName, "null"};
+						String[] tempParams = {"Multi", "null", errorFile.getAbsolutePath(), "null", cacheFile.getName(), "null"};
 						CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
-
 					} else {
 						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_CacheCheckSuccess"));
 					}
 				}
+				dialogDispose();
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			new SmOptionPane().showConfirmDialog(ex.getMessage());
+			if (null != ex.getMessage()) {
+				new SmOptionPane().showConfirmDialog(ex.getMessage());
+			}
 		}
 	}
 

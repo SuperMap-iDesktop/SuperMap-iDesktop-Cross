@@ -83,7 +83,8 @@ public class FileType {
 			fileChoose = new SmFileChoose("DataImportFrame_ImportDirectories");
 			fileChoose.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		} else {
-			if (!SmFileChoose.isModuleExist("MetaProcessImport" + importType)) {
+			String importModule = "MetaProcessImport";
+			if (!SmFileChoose.isModuleExist(importModule)) {
 				if ("MapGIS".equalsIgnoreCase(importType)) {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(descriptionNew[4], "wat", "wan", "wal", "wap"));
 				} else if ("BIL".equalsIgnoreCase(importType)) {
@@ -94,9 +95,9 @@ public class FileType {
 					fileFilter = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MessageFormat.format(ProcessProperties.getString("String_ImportFileType"), importType, importType.toLowerCase()), importType.toLowerCase()));
 				}
 				SmFileChoose.addNewNode(fileFilter, CommonProperties.getString("String_DefaultFilePath"),
-						ProcessProperties.getString("String_FileType"), "MetaProcessImport" + importType, "OpenOne");
+						ProcessProperties.getString("String_FileType"), importModule, "OpenOne");
 			}
-			fileChoose = new SmFileChoose("MetaProcessImport" + importType);
+			fileChoose = new SmFileChoose(importModule);
 			if (LastFileFilter != null) {
 				// 设置过滤器为当前选中
 				for (int i = 0; i < fileChoose.getChoosableFileFilters().length; i++) {

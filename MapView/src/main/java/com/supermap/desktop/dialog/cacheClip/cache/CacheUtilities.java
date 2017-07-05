@@ -165,6 +165,7 @@ public class CacheUtilities {
 			for (int i = 0; i < params.length; i++) {
 				arguments.add(params[i]);
 			}
+
 			ProcessManager manager = ProcessManager.getInstance();
 
 			SubprocessThread thread = new SubprocessThread(arguments, cacheType);

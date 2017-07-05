@@ -1,5 +1,6 @@
 package com.supermap.desktop.dialog.cacheClip;
 
+import com.supermap.analyst.spatialanalyst.SmoothMethod;
 import com.supermap.data.*;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapCacheVersion;
@@ -358,6 +359,33 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				}
 				if (cmdType == MultiUpdateProcessClip) {
 					mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
+				}
+				if (null != mapCacheBuilder.getMap().getVisibleScales()) {
+					if (firstStepPane.addScaleDropDown.isEnabled()) {
+						if (this.mapCacheBuilder.getMap().getVisibleScales().length < firstStepPane.currentMapCacheScale.size()) {
+							new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WariningForTaskBuilder"));
+							return;
+						} else {
+							int count = 0;
+							for (int i = 0; i < this.mapCacheBuilder.getMap().getVisibleScales().length; i++) {
+								for (int j = 0; j < firstStepPane.currentMapCacheScale.size(); j++) {
+									if (Double.compare(this.mapCacheBuilder.getMap().getVisibleScales()[i], firstStepPane.currentMapCacheScale.get(j)) == 0) {
+										count++;
+										break;
+									}
+								}
+							}
+							if (count != firstStepPane.currentMapCacheScale.size()) {
+								new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WariningForTaskBuilder"));
+								return;
+							}
+						}
+
+					} else {
+						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WariningForTaskBuilder"));
+						return;
+					}
+
 				}
 				setMapCacheBuilderValueBeforeRun();
 				//SaveType==MongoType,build some cache for creating a database
