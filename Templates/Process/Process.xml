@@ -109,14 +109,14 @@
                 <process key="ISOPoint" name="点数据提取等值线"/>
                 <process key="ISORegion" name="提取等值面"/>
             </process>
-            <process name="地统计分析">
+            <process name="空间统计分析">
                 <process name="度量地理分布">//SpatialMeasure
                     <process key="CentralElement" name="中心要素"/>
                     <process key="MeanCenter" name="平均中心"/>
                     <process key="MedianCenter" name="中位数中心"/>
                     <process key="Directional" name="方向分布"/>
                 </process>
-                <process name="模型分析">//AnalyzingPatterns
+                <process name="分析模式">//AnalyzingPatterns
                     <process key="autoCorrelation" name="空间自相关"/>
                     <process key="highOrLowClustering" name="高低值聚类"/>
                     <process key="incrementalAutoCorrelation" name="增量空间自相关"/>
