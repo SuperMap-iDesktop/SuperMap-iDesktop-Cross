@@ -15,9 +15,7 @@ import com.supermap.desktop.process.graphics.interaction.canvas.PopupMenuAction;
 import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
-import com.supermap.desktop.process.parameter.interfaces.datas.Outputs;
 
-import javax.xml.crypto.Data;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -31,10 +29,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by highsad on 2017/6/29.
  */
 public class WorkflowCanvas extends GraphCanvas
-		implements GraphBoundsChangedListener, GraphRemovingListener,
+		implements GraphRemovingListener,
 		RelationAddedListener<IProcess>, RelationRemovingListener<IProcess> {
 	private Workflow workflow;
-	private Map<Object, Point> locationMap;
 
 	private Map<IProcess, ProcessGraph> processMap = new ConcurrentHashMap<>();
 	private Map<OutputData, OutputGraph> outputMap = new ConcurrentHashMap<>();
@@ -43,24 +40,9 @@ public class WorkflowCanvas extends GraphCanvas
 	private GraphConnectAction connector = new GraphConnectAction(this);
 
 	public WorkflowCanvas(Workflow workflow) {
-		this(workflow, new ConcurrentHashMap<Object, Point>());
-	}
-
-
-	public WorkflowCanvas(Workflow workflow, Map<Object, Point> locationMap) {
-		if (workflow == null) {
-			throw new NullPointerException();
-		}
-
-		this.workflow = workflow;
-
-		if (this.workflow.getProcessCount() > 0) {
-			this.locationMap = locationMap;
-			loadProcesses(this.workflow.getProcesses());
-			loadRelations(this.workflow.getRelations());
-		}
-
+		loadWorkflow(workflow);
 		addGraphRemovingListener(this);
+		new ProcessDropTargetHandler();
 
 		installCanvasAction(GraphConnectAction.class, this.connector);
 
@@ -72,11 +54,21 @@ public class WorkflowCanvas extends GraphCanvas
 		getActionsManager().addMutexAction(GraphConnectAction.class, PopupMenuAction.class);
 	}
 
-	private void loadProcesses(Vector<IProcess> processes) {
-		if (this.locationMap == null) {
-			return;
+	private void loadWorkflow(Workflow workflow) {
+		if (workflow == null) {
+			throw new NullPointerException();
 		}
 
+		this.workflow = workflow;
+
+		if (this.workflow.getProcessCount() > 0) {
+			loadProcesses(this.workflow.getProcesses());
+			loadRelations(this.workflow.getRelations());
+		}
+
+	}
+
+	private void loadProcesses(Vector<IProcess> processes) {
 		for (int i = 0; i < processes.size(); i++) {
 			initProcessGraph(processes.get(i));
 		}
@@ -87,14 +79,12 @@ public class WorkflowCanvas extends GraphCanvas
 			return null;
 		}
 
+		return addProcess(process, new Point(0, 0));
+	}
+
+	private ProcessGraph addProcess(IProcess process, Point location) {
 		ProcessGraph processGraph = null;
 
-		// 初始化位置信息
-		if (!this.locationMap.containsKey(process)) {
-			this.locationMap.put(process, new Point(0, 0));
-		}
-
-		Point location = this.locationMap.get(process);
 		if (!this.processMap.containsKey(process)) {
 			processGraph = new ProcessGraph(this, process);
 
@@ -107,33 +97,52 @@ public class WorkflowCanvas extends GraphCanvas
 			// 添加到画布
 			addGraph(processGraph);
 
-			processGraph.addGraphBoundsChangedListener(this);
+//			processGraph.addGraphBoundsChangedListener(this);
 
 			OutputData[] outputs = process.getOutputs().getDatas();
-			for (int i = 0; i < outputs.length; i++) {
-				OutputGraph outputGraph = initOutputGraph(process, outputs[i]);
 
-				// 添加连接线
+			int vgap = 20;
+			int length = outputs.length;
+			OutputGraph[] dataGraphs = new OutputGraph[length];
+			int totalHeight = vgap * (length - 1);
+
+			for (int i = 0; i < length; i++) {
+				dataGraphs[i] = new OutputGraph(this, processGraph, outputs[i]);
+				totalHeight += dataGraphs[i].getHeight();
+			}
+
+			int locationX = processGraph.getLocation().x + processGraph.getWidth() * 3 / 2;
+			int locationY = processGraph.getLocation().y + (processGraph.getHeight() - totalHeight) / 2;
+
+			for (int i = 0; i < outputs.length; i++) {
+				Point point = new Point(locationX, locationY);
+				OutputGraph outputGraph = addOutputGraph(outputs[i], point);
+				locationY += dataGraphs[i].getHeight() + vgap;
+
+				// 添加 Process 和 output 之间的连接线
 				addGraph(new ConnectionLineGraph(this, processGraph, outputGraph));
 			}
 		}
 		return processGraph;
 	}
 
-	private OutputGraph initOutputGraph(IProcess process, OutputData outputData) {
-		if (process == null || outputData == null || !this.processMap.containsKey(process)) {
+	private OutputGraph initOutputGraph(OutputData outputData) {
+		if (outputData == null || outputData.getProcess() == null || !this.processMap.containsKey(outputData.getProcess())) {
+			return null;
+		}
+
+		return addOutputGraph(outputData, new Point(0, 0));
+	}
+
+	private OutputGraph addOutputGraph(OutputData outputData, Point location) {
+		if (outputData == null || outputData.getProcess() == null || !this.processMap.containsKey(outputData.getProcess())) {
 			return null;
 		}
 
 		OutputGraph outputGraph = null;
 
-		if (!this.locationMap.containsKey(outputData)) {
-			this.locationMap.put(outputData, new Point(0, 0));
-		}
-
-		Point location = this.locationMap.get(outputData);
 		if (!this.outputMap.containsKey(outputData)) {
-			outputGraph = new OutputGraph(this, this.processMap.get(process), outputData);
+			outputGraph = new OutputGraph(this, this.processMap.get(outputData.getProcess()), outputData);
 
 			// 添加到 map
 			this.outputMap.put(outputData, outputGraph);
@@ -144,7 +153,7 @@ public class WorkflowCanvas extends GraphCanvas
 			// 添加到画布
 			addGraph(outputGraph);
 
-			outputGraph.addGraphBoundsChangedListener(this);
+//			outputGraph.addGraphBoundsChangedListener(this);
 		}
 		return outputGraph;
 	}
@@ -173,18 +182,30 @@ public class WorkflowCanvas extends GraphCanvas
 		}
 	}
 
+	public void loadUIConfig(WorkflowUIConfig config) {
+		if (config == null) {
+			return;
+		}
+
+		for (IProcess process :
+				this.processMap.keySet()) {
+
+			OutputData[] outputs = process.getOutputs().getDatas();
+		}
+	}
+
 	public Workflow getWorkflow() {
 		return workflow;
 	}
 
-	@Override
-	public void graghBoundsChanged(GraphBoundsChangedEvent e) {
-		if (!(e.getGraph() instanceof ProcessGraph) && !(e.getGraph() instanceof OutputGraph)) {
-			return;
-		}
-
-		this.locationMap.put(e.getGraph(), e.getNewLocation());
-	}
+//	@Override
+//	public void graghBoundsChanged(GraphBoundsChangedEvent e) {
+//		if (!(e.getGraph() instanceof ProcessGraph) && !(e.getGraph() instanceof OutputGraph)) {
+//			return;
+//		}
+//
+//		this.locationMap.put(e.getGraph(), e.getNewLocation());
+//	}
 
 	@Override
 	public void graphRemoving(GraphRemovingEvent e) {
@@ -263,35 +284,34 @@ public class WorkflowCanvas extends GraphCanvas
 		}
 	}
 
-	private class ProcessDropTargetAdapter extends DropTargetAdapter {
+	private class ProcessDropTargetHandler extends DropTargetAdapter {
 		@Override
 		public void drop(DropTargetDropEvent dtde) {
-//			FormWorkflow.this.grabFocus();
-//			Transferable transferable = dtde.getTransferable();
-//			DataFlavor[] currentDataFlavors = dtde.getCurrentDataFlavors();
-//			for (DataFlavor currentDataFlavor : currentDataFlavors) {
-//				if (currentDataFlavor != null) {
-//					try {
-//						Object transferData = transferable.getTransferData(currentDataFlavor);
-//						if (transferData instanceof String) {
-//							MetaProcess metaProcess = WorkflowParser.getMetaProcess((String) transferData);
-//							if (metaProcess == null) {
-//								continue;
-//							}
-//							ProcessGraph graph = new ProcessGraph(getCanvas(), metaProcess);
-//							Point location = dtde.getLocation();
-//							location = new Point(location.x - graph.getWidth() / 2, location.y - graph.getHeight() / 2);
-//							Point inverse = getCanvas().getCoordinateTransform().inverse(location);
-//							graph.setLocation(inverse);
-//							getCanvas().getGraphStorage().add(graph);
-//							getCanvas().repaint();
-//						}
-//					} catch (Exception e) {
-//						// ignore 当然是原谅ta啦
-//						Application.getActiveApplication().getOutput().output(e);
-//					}
-//				}
-//			}
+			WorkflowCanvas.this.grabFocus();
+			Transferable transferable = dtde.getTransferable();
+			DataFlavor[] currentDataFlavors = dtde.getCurrentDataFlavors();
+			for (DataFlavor currentDataFlavor : currentDataFlavors) {
+				if (currentDataFlavor != null) {
+					try {
+						Object transferData = transferable.getTransferData(currentDataFlavor);
+						if (transferData instanceof String) {
+							MetaProcess metaProcess = WorkflowParser.getMetaProcess((String) transferData);
+							if (metaProcess == null) {
+								continue;
+							}
+
+							ProcessGraph graph = new ProcessGraph(WorkflowCanvas.this, metaProcess);
+							Point screenLocation = new Point(dtde.getLocation().x - graph.getWidth() / 2, dtde.getLocation().y - graph.getHeight() / 2);
+							Point canvasLocation = WorkflowCanvas.this.getCoordinateTransform().inverse(screenLocation);
+							addProcess(metaProcess, canvasLocation);
+							WorkflowCanvas.this.repaint();
+						}
+					} catch (Exception e) {
+						// ignore 当然是原谅ta啦
+						Application.getActiveApplication().getOutput().output(e);
+					}
+				}
+			}
 		}
 	}
 }

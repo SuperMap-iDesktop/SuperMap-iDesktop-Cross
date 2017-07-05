@@ -41,14 +41,12 @@ public class DefaultParameters implements IParameters {
 	private ArrayList<ParameterClassBundleNode> packages = new ArrayList<>();
 	protected EmptyParameterPanel parameterPanel = new EmptyParameterPanel();
 	private InputParametersManager inputParametersManager = new InputParametersManager(this);
-	private Inputs inputs = new Inputs(this);
-	private Outputs outputs = new Outputs(this);
 
 	public DefaultParameters(IProcess process) {
 		this.process = process;
 		packages.add(new ParameterClassBundleNode("com.supermap.desktop.process.parameter.ParameterPanels", "SuperMap.Desktop.Process"));
 
-		inputs.addValueProviderBindListener(new ValueProviderBindListener() {
+		this.process.getInputs().addValueProviderBindListener(new ValueProviderBindListener() {
 			@Override
 			public void valueBind(ValueProviderBindEvent event) {
 				int type = event.getType();
@@ -65,7 +63,7 @@ public class DefaultParameters implements IParameters {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (evt.getNewValue() == null) {
 					// 约束解除！
-					inputs.getData(evt.getPropertyName()).unbind();
+					DefaultParameters.this.getInputs().getData(evt.getPropertyName()).unbind();
 				} else {
 					// 修改来源节点时图上联动
 					String propertyName = evt.getPropertyName();
@@ -89,7 +87,7 @@ public class DefaultParameters implements IParameters {
 						}
 					}
 					canvas.getConnection().connect((OutputGraph) newGraph, (ProcessGraph) processGraph, propertyName);
-					inputs.bind(propertyName, ((OutputGraph) newGraph).getProcessData());
+					DefaultParameters.this.getInputs().bind(propertyName, ((OutputGraph) newGraph).getProcessData());
 					canvas.repaint();
 				}
 			}
@@ -187,14 +185,14 @@ public class DefaultParameters implements IParameters {
 
 	@Override
 	public void addInputParameters(String name, Type type, IParameter... parameters) {
-		inputs.addData(name, type);
-		inputs.getData(name).addParameters(parameters);
+		this.process.getInputs().addData(name, type);
+		this.process.getInputs().getData(name).addParameters(parameters);
 		inputParametersManager.add(name, parameters);
 	}
 
 	@Override
 	public void addOutputParameters(String name, Type type, IParameter... parameters) {
-		outputs.addData(name, type);
+		this.process.getOutputs().addData(name, type);
 	}
 
 	@Override
@@ -222,11 +220,11 @@ public class DefaultParameters implements IParameters {
 
 	@Override
 	public Inputs getInputs() {
-		return inputs;
+		return this.process.getInputs();
 	}
 
 	@Override
 	public Outputs getOutputs() {
-		return outputs;
+		return this.process.getOutputs();
 	}
 }

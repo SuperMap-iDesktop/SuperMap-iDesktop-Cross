@@ -224,7 +224,6 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		int locationY = processGraph.getLocation().y + (processGraph.getHeight() - totalHeight) / 2;
 		for (int i = 0; i < length; i++) {
 			dataGraphs[i].setLocation(new Point(locationX, locationY));
-			//						System.out.println(dataGraphs[i].getHeight());
 			locationY += dataGraphs[i].getHeight() + gap;
 		}
 		this.canvas.repaint();

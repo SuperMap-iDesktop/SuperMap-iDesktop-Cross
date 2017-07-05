@@ -130,11 +130,11 @@ public class WorkflowParser {
 								//TODO
 								//INodeConstriant now not exist in xml file,so add a new INodeConstriant
 //                                process.getInputs().followProcess(preProcess);
-								nodeMatrix.addRelation(preProcess, process, IRelation.class);
+//								nodeMatrix.addRelation(preProcess, process, IRelation.class);
 							}
 							if (null != process && null != nextProcess) {
 //                                nextProcess.getInputs().followProcess(process);
-								nodeMatrix.addRelation(process, nextProcess, IRelation.class);
+//								nodeMatrix.addRelation(process, nextProcess, IRelation.class);
 							}
 						}
 					}

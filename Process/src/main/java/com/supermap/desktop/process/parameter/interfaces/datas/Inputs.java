@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.parameter.interfaces.datas;
 
+import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.parameter.events.ValueProviderBindEvent;
 import com.supermap.desktop.process.parameter.events.ValueProviderBindListener;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
@@ -13,16 +14,16 @@ import java.util.concurrent.ConcurrentHashMap;
  * Created by highsad on 2017/3/1.
  */
 public class Inputs {
-	private IParameters parameters;// // TODO: 2017/4/23  necessary?
+	private IProcess process;
 	private ConcurrentHashMap<String, InputData> datas = new ConcurrentHashMap<>();
 	private ArrayList<ValueProviderBindListener> valueProviderBindListeners = new ArrayList<>();
 
-	public Inputs(IParameters parameters) {
-		this.parameters = parameters;
+	public Inputs(IProcess process) {
+		this.process = process;
 	}
 
 	public IParameters getParameters() {
-		return this.parameters;
+		return this.process.getParameters();
 	}
 
 	public boolean isContains(String name) {
