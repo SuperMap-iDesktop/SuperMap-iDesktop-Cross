@@ -100,47 +100,8 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		this.tasksManager = new TasksManager(this.workflow);
 
 		initializeComponents();
-		initFormWorkflow(workflow);
 		this.setText(workflow.getName());
 		isNeedSave = false;
-	}
-
-	protected void initFormWorkflow(IWorkflow workflow) {
-//		if (workflow instanceof Workflow) {
-//			isAutoAddOutPut = false;
-//			try {
-//				NodeMatrix matrix = ((Workflow) workflow).getMatrix();
-//				CopyOnWriteArrayList allStartNodes = matrix.getNodes();
-//				for (Object node : allStartNodes) {
-//					IGraph graph = (IGraph) node;
-//					this.canvas.addGraph(graph);
-//					graph.setCanvas(this.canvas);
-//				}
-//				IRelationManager connection = this.canvas.getConnection();
-//				for (Object node : allStartNodes) {
-//					IGraph graph = (IGraph) node;
-//					CopyOnWriteArrayList nextNodes = matrix.getToNodes(graph);
-//					if (nextNodes != null) {
-//						for (Object nextNode : nextNodes) {
-//							if (nextNode instanceof OutputGraph) {
-//								((OutputGraph) nextNode).setProcessGraph(((ProcessGraph) node));
-//							}
-//							String message = null;
-//							if (nextNode instanceof ProcessGraph) {
-//								ProcessGraph processGraph = (ProcessGraph) nextNode;
-//								message = processGraph.getProcess().getInputs().getBindedInput(((OutputGraph) graph).getProcessData());
-//							}
-//
-//							connection.connect((IConnectable) graph, (IConnectable) nextNode, message);
-//						}
-//					}
-//				}
-//			} catch (Exception e) {
-//				Application.getActiveApplication().getOutput().output(e);
-//			} finally {
-//				isAutoAddOutPut = true;
-//			}
-//		}
 	}
 
 	public TasksManager getTasksManager() {
@@ -173,19 +134,6 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			}
 		});
 
-		this.canvas.addGraphCreatedListener(new GraphCreatedListener() {
-			@Override
-			public void graphCreated(GraphCreatedEvent e) {
-				isNeedSave = true;
-				if (!isAutoAddOutPut) {
-					return;
-				}
-				if (e.getGraph() instanceof ProcessGraph) {
-					ProcessGraph processGraph = (ProcessGraph) e.getGraph();
-					addOutPutGraph(processGraph);
-				}
-			}
-		});
 		this.canvas.getGraphStorage().addGraphRemovingListener(new GraphRemovingListener() {
 			@Override
 			public void graphRemoving(GraphRemovingEvent e) {
@@ -200,56 +148,8 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 				}
 			}
 		});
-		addDrag();
 	}
 
-
-	private void addOutPutGraph(ProcessGraph processGraph) {
-		IProcess process = processGraph.getProcess();
-
-		int gap = 20;
-		OutputData[] outputs = process.getOutputs().getDatas();
-		int length = outputs.length;
-		OutputGraph[] dataGraphs = new OutputGraph[length];
-		int totalHeight = gap * (length - 1);
-
-		for (int i = 0; i < length; i++) {
-			dataGraphs[i] = new OutputGraph(this.canvas, processGraph, outputs[i]);
-			this.canvas.addGraph(dataGraphs[i]);
-			this.canvas.getConnection().connect(processGraph, dataGraphs[i]);
-			totalHeight += dataGraphs[i].getHeight();
-		}
-
-		int locationX = processGraph.getLocation().x + processGraph.getWidth() * 3 / 2;
-		int locationY = processGraph.getLocation().y + (processGraph.getHeight() - totalHeight) / 2;
-		for (int i = 0; i < length; i++) {
-			dataGraphs[i].setLocation(new Point(locationX, locationY));
-			locationY += dataGraphs[i].getHeight() + gap;
-		}
-		this.canvas.repaint();
-	}
-
-	private void addDrag() {
-		if (dropTargeted == null) {
-			dropTargeted = new DropTarget(this, new FormProcessDropTargetAdapter());
-		}
-	}
-
-	/**
-	 * 获取可连接的输入节点
-	 *
-	 * @return
-	 */
-	public ArrayList<IGraph> getAllDataNode() {
-		ArrayList<IGraph> dataNodes = new ArrayList<>();
-		IGraph[] graphs = getCanvas().getGraphStorage().getGraphs();
-		for (IGraph graph : graphs) {
-			if (graph instanceof OutputGraph) {
-				dataNodes.add(graph);
-			}
-		}
-		return dataNodes;
-	}
 
 	public ArrayList<IGraph> getAllDataNode(Type type) {
 		ArrayList<IGraph> iGraphs = new ArrayList<>();
@@ -336,28 +236,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 	@Override
 	public IWorkflow getWorkflow() {
-		NodeMatrix nodeMatrix = new NodeMatrix();
-		IConnectionManager connectionManager = this.canvas.getConnection();
-		IGraphStorage graphStorage = this.canvas.getGraphStorage();
-		IGraph[] graphs = graphStorage.getGraphs();
-		for (IGraph graph : graphs) {
-			if (graph instanceof LineGraph) {
-				continue;
-			}
-
-			nodeMatrix.addNode(graph);
-		}
-		for (IGraph graph : graphs) {
-			IGraph[] nextGraphs = connectionManager.getNextGraphs(graph);
-			if (nextGraphs.length > 0) {
-				for (IGraph nextGraph : nextGraphs) {
-					nodeMatrix.addRelation(graph, nextGraph, DirectConnect.class);
-				}
-			}
-		}
-		Workflow workflow = new Workflow(getText());
-		workflow.setMatrix(nodeMatrix);
-		return workflow;
+		return this.workflow;
 	}
 
 	@Override

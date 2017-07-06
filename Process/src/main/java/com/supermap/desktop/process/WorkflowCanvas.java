@@ -189,8 +189,23 @@ public class WorkflowCanvas extends GraphCanvas
 
 		for (IProcess process :
 				this.processMap.keySet()) {
+			WorkflowUIConfig.ProcessLocationConfig processLocConf = config.getProcessConfig(process.getKey());
+			IGraph processGraph = this.processMap.get(process);
+
+			if (processLocConf.getLocation() == null) {
+				continue;
+			}
+			processGraph.setLocation(processLocConf.getLocation());
 
 			OutputData[] outputs = process.getOutputs().getDatas();
+			for (int i = 0; i < outputs.length; i++) {
+				OutputData output = outputs[i];
+				IGraph outputGraph = this.outputMap.get(output.getName());
+
+				if (processLocConf.getOutputLocation(output.getName()) != null) {
+					outputGraph.setLocation(processLocConf.getOutputLocation(output.getName()));
+				}
+			}
 		}
 	}
 
