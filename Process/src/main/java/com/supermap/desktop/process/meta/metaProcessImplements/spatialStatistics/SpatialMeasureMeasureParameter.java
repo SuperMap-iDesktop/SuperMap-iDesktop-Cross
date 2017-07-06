@@ -72,10 +72,10 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 		if (metaKeys.equals(MetaKeys.CentralElement)) {
 			this.addParameters(parameterDistanceMethodComboBox);
 		}
-		if (metaKeys.equals(MetaKeys.Directional)) {
-			this.addParameters(parameterEllipseSizeComboBox);
-		}
-		this.addParameters(parameterGroupFieldComboBox);
+        if (metaKeys.equals(MetaKeys.Directional) || metaKeys.equals(MetaKeys.StandardDistance)) {
+            this.addParameters(parameterEllipseSizeComboBox);
+        }
+        this.addParameters(parameterGroupFieldComboBox);
 		if (metaKeys.equals(MetaKeys.CentralElement)) {
 			this.addParameters(parameterSelfWeightFieldComboBox);
 		}
@@ -113,7 +113,7 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 		if (metaKeys.equals(MetaKeys.CentralElement)) {
 			measureParameter.setDistanceMethod((DistanceMethod) parameterDistanceMethodComboBox.getSelectedData());
 		}
-		if (metaKeys.equals(MetaKeys.Directional)) {
+		if (metaKeys.equals(MetaKeys.Directional) || metaKeys.equals(MetaKeys.StandardDistance)) {
 			measureParameter.setEllipseSize((EllipseSize) parameterEllipseSizeComboBox.getSelectedData());
 		}
 		String groupFieldName = parameterGroupFieldComboBox.getFieldName();
