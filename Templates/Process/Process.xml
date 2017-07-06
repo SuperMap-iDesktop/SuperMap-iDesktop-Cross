@@ -115,6 +115,7 @@
                     <process key="MeanCenter" name="平均中心"/>
                     <process key="MedianCenter" name="中位数中心"/>
                     <process key="Directional" name="方向分布"/>
+                    <process key="LinearDirectionalMean" name="线性方向平均值"/>
                 </process>
                 <process name="分析模式">//AnalyzingPatterns
                     <process key="autoCorrelation" name="空间自相关"/>

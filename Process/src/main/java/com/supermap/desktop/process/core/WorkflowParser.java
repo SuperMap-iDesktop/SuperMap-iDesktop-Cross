@@ -23,7 +23,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -209,6 +208,8 @@ public class WorkflowParser {
 			result = new MetaProcessMedianCenter();
 		} else if (MetaKeys.Directional.equals(key)) {
 			result = new MetaProcessDirectional();
+		} else if (MetaKeys.LinearDirectionalMean.equals(key)) {
+			result = new MetaProcessLinearDirectionalMean();
 		} else if (MetaKeys.autoCorrelation.equals(key)) {
 			return new MetaProcessAutoCorrelation();
 		} else if (MetaKeys.highOrLowClustering.equals(key)) {
