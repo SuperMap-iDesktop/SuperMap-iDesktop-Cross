@@ -19,6 +19,9 @@ public interface IParameter extends IAbstractParameter {
 
 	void setEnabled(boolean enabled);
 
+    void setDescriptionVisible(boolean isDescripitionVisiable);
+
+    boolean isDescriptionVisible();
 
 	void addValueLegalListener(ParameterValueLegalListener parameterValueLegalListener);
 
@@ -62,7 +65,8 @@ public interface IParameter extends IAbstractParameter {
 
 	void setParameters(IParameters parameters);
 
-	String getDescribe();
+
+    String getDescribe();
 
 	IParameters getParameters();
 

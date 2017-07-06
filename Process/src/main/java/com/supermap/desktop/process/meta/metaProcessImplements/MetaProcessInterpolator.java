@@ -149,8 +149,8 @@ public class MetaProcessInterpolator extends MetaProcess {
 				new ParameterDataNode(PixelFormatProperties.getString("String_UBit1"), PixelFormat.UBIT1),
 				new ParameterDataNode(PixelFormatProperties.getString("String_Bit16"), PixelFormat.UBIT16),
 				selectedItem,
-				new ParameterDataNode(CommonProperties.getString("String_PixelSingle"), PixelFormat.SINGLE),
-				new ParameterDataNode(CommonProperties.getString("String_PixelDouble"), PixelFormat.DOUBLE));
+				new ParameterDataNode(ProcessProperties.getString("String_PixelSingle"), PixelFormat.SINGLE),
+				new ParameterDataNode(ProcessProperties.getString("String_PixelDouble"), PixelFormat.DOUBLE));
 		parameterPixelType.setSelectedItem(selectedItem);
 		parameterColumn = new ParameterTextField().setDescribe(CommonProperties.getString("String_Column"));
 		parameterRow = new ParameterTextField().setDescribe(CommonProperties.getString("String_Row"));

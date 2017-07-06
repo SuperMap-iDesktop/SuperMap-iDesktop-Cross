@@ -23,6 +23,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -210,6 +211,8 @@ public class WorkflowParser {
 			result = new MetaProcessDirectional();
 		} else if (MetaKeys.LinearDirectionalMean.equals(key)) {
 			result = new MetaProcessLinearDirectionalMean();
+		} else if (MetaKeys.StandardDistance.equals(key)) {
+			result = new MetaProcessStandardDistance();
 		} else if (MetaKeys.autoCorrelation.equals(key)) {
 			return new MetaProcessAutoCorrelation();
 		} else if (MetaKeys.highOrLowClustering.equals(key)) {
@@ -233,13 +236,29 @@ public class WorkflowParser {
 		} else if (key.contains(MetaKeys.IMPORT)) {
 			String importType = key.replace(MetaKeys.IMPORT, "");
 			result = MetaProcessImportFactory.createMetaProcessImport(importType);
-		} else if (MetaKeys.EXPORTGRID.equals(key)) {
-			result = new MetaProcessExportGrid();
-		} else if (MetaKeys.EXPORTVECTOR.equals(key)) {
-			result = new MetaProcessExportVector();
-		} else {
-			result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
-		}
+		} else if (MetaKeys.DEMLAKE.equals(key)) {
+            result = new MetaProcessDEMLake();
+        } else if (MetaKeys.DEMBUILD.equals(key)) {
+            result = new MetaProcessDEMBuild();
+        }else if (MetaKeys.GRIDTOVECTOR.equals(key)) {
+            result = new MetaProcessRasterToVector();
+        }else if (MetaKeys.VECTORTOGRID.equals(key)) {
+		    //TODO
+//            result = new MetaProcessDEMBuild();
+        }else if (MetaKeys.THINRASTER.equals(key)) {
+//            result = new MetaProcessDEMBuild();
+        } else if (MetaKeys.THIESSENPOLYGON.equals(key)) {
+            result = new MetaProcessThiessenPolygon();
+        }else if (MetaKeys.COMPUTRDISTANCE.equals(key)) {
+            result = new MetaProcessComputeDistance();
+        } else if (MetaKeys.EXPORTGRID.equals(key)) {
+            result = new MetaProcessExportGrid();
+        } else if (MetaKeys.EXPORTVECTOR.equals(key)) {
+            result = new MetaProcessExportVector();
+        } else {
+            result = new EmptyMetaProcess(ProcessProperties.getString("String_" + key));
+        }
+
 
 		return result;
 	}

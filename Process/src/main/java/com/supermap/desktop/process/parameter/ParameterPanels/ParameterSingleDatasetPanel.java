@@ -34,6 +34,8 @@ import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
+import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
+import com.supermap.desktop.ui.controls.DataCell;
 import com.supermap.desktop.ui.controls.DatasetComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
@@ -123,15 +125,16 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 		this.datasource = parameterSingleDataset.getDatasource();
 		if(this.datasource != null){
 			this.datasetComboBox = new DatasetComboBox(this.datasource.getDatasets());
-			this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
-			Object selectedItem = parameterSingleDataset.getSelectedItem();
-			if (selectedItem != null && selectedItem instanceof Dataset) {
-				datasetComboBox.setSelectedDataset((Dataset) selectedItem);
-			}
-		}else {
+            Object selectedItem = parameterSingleDataset.getSelectedItem();
+            if (selectedItem != null && selectedItem instanceof Dataset) {
+                datasetComboBox.setSelectedDataset((Dataset) selectedItem);
+            }
+        }else {
 			this.datasetComboBox = new DatasetComboBox();
-			this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
+
 		}
+        this.datasetComboBox.setShowNullValue(parameterSingleDataset.isShowNullValue());
+        this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
 	}
 
 	private void setSelectedDatasource(Datasource datasource) {

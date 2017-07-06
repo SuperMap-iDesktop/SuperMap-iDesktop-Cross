@@ -91,4 +91,15 @@ public class ParameterSingleDataset extends AbstractParameter implements ISelect
 	public void setDatasetTypes(DatasetType... datasetTypes) {
 		this.datasetTypes = datasetTypes;
 	}
+
+    private boolean isShowNullValue = false;
+
+    public ParameterSingleDataset setShowNullValue(boolean isShowNullValue) {
+        this.isShowNullValue = isShowNullValue;
+        return this;
+    }
+
+    public boolean isShowNullValue() {
+        return isShowNullValue;
+    }
 }
