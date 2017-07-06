@@ -5,7 +5,6 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
-import com.supermap.desktop.controls.utilities.ControlsResources;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
 import com.supermap.desktop.dialog.cacheClip.cache.CheckCache;
@@ -59,7 +58,7 @@ public class DialogCacheCheck extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (hasTask()) {
-				shutdownMapCheck(true);
+				shutdownMapCheck();
 			} else {
 				DialogCacheCheck.this.dispose();
 			}
@@ -75,15 +74,14 @@ public class DialogCacheCheck extends JFrame {
 		return null != doingFile && hasSciFiles(doingFile);
 	}
 
-	private void shutdownMapCheck(boolean dispose) {
+	private void shutdownMapCheck() {
 		SmOptionPane optionPane = new SmOptionPane();
 		String sciPath = fileChooseSciPath.getPath();
 		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
 			ProcessManager.getInstance().removeAllProcess(sciPath, "checking");
-			if (dispose) {
-				DialogCacheCheck.this.dispose();
-			}
-			new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), sciPath));
+			new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessCheckFinished"), sciPath));
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			DialogCacheCheck.this.dispose();
 		} else {
 			return;
 		}
@@ -127,8 +125,8 @@ public class DialogCacheCheck extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				if (hasTask()) {
-					setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-					shutdownMapCheck(true);
+					setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+					shutdownMapCheck();
 				} else {
 					DialogCacheCheck.this.dispose();
 				}
@@ -194,6 +192,7 @@ public class DialogCacheCheck extends JFrame {
 		this.helpProviderForSciPath = new WarningOrHelpProvider(MapViewProperties.getString("String_TipForFinishedSciPath"), false);
 		this.setSize(520, 280);
 		this.setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	private void initResources() {
@@ -322,7 +321,6 @@ public class DialogCacheCheck extends JFrame {
 				if (null != parentPath && checkBoxSaveErrorData.isSelected()) {
 					checkCache.error2Udb(anchorLeft, anchorTop, tileSize, parentPath);
 				}
-				dialogDispose();
 				boolean cacheBuild = checkBoxCacheBuild.isSelected();
 				if (cacheBuild) {
 					File cacheFile = new File(cacheRoot);
@@ -340,21 +338,18 @@ public class DialogCacheCheck extends JFrame {
 //						cacheBuilder.fileChooserTaskPath.setPath(errorFile.getAbsolutePath());
 //						cacheBuilder.textFieldMapName.setText(cacheFile.getName());
 //						cacheBuilder.showDialog();
-						String mapName = cacheFile.getName();
-						if (null != Application.getActiveApplication().getActiveForm()) {
-							mapName = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap().getName();
-						}
-						String[] tempParams = {"Multi", "null", errorFile.getAbsolutePath(), "null", mapName, "null"};
+						String[] tempParams = {"Multi", "null", errorFile.getAbsolutePath(), "null", cacheFile.getName(), "null"};
 						CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
-
 					} else {
 						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_CacheCheckSuccess"));
 					}
 				}
+				dialogDispose();
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			new SmOptionPane().showConfirmDialog(ex.getMessage());
+			if (null != ex.getMessage()) {
+				new SmOptionPane().showConfirmDialog(ex.getMessage());
+			}
 		}
 	}
 

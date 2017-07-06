@@ -130,7 +130,7 @@
                     <process key="Directional" name="方向分布"/>
                     <process key="StandardDistance" name="标准距离"/>
                 </process>
-                <process name="模型分析">//AnalyzingPatterns
+                <process name="分析模式">//AnalyzingPatterns
                     <process key="autoCorrelation" name="空间自相关"/>
                     <process key="highOrLowClustering" name="高低值聚类"/>
                     <process key="incrementalAutoCorrelation" name="增量空间自相关"/>

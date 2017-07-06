@@ -3,8 +3,6 @@ package com.supermap.desktop.dialog.cacheClip.cache;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
-import com.supermap.desktop.dialog.SmOptionPane;
-import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.mapping.Map;
 
 import java.io.File;
@@ -19,7 +17,7 @@ public class BuildCache {
 	public static final int MAPNAME_INDEX = 2;
 	public static final int CACHEPATH_INDEX = 3;
 	public static final int PROCESSCOUNT_INDEX = 4;
-//	public static final int MERGESCICOUNT_INDEX = 5;
+	//	public static final int MERGESCICOUNT_INDEX = 5;
 	public static final int ISAPPENDING_INDEX = 5;
 
 	//Add new process
@@ -31,13 +29,9 @@ public class BuildCache {
 	public void startProcess(int processCount, String[] params) {
 		try {
 			LogWriter.removeAllLogs();
-			if (0 == processCount) {
-				main(params);
-			} else {
-				for (int i = 0; i < processCount; i++) {
-					CacheUtilities.startProcess(params, getClass().getName(), LogWriter.BUILD_CACHE);
-					Thread.sleep(2000);
-				}
+			for (int i = 0; i < processCount; i++) {
+				CacheUtilities.startProcess(params, getClass().getName(), LogWriter.BUILD_CACHE);
+				Thread.sleep(2000);
 			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();

@@ -16,6 +16,7 @@ import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.utilities.ArrayUtilities;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -176,13 +177,19 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 
 					String fieldName = parameterFieldComboBox.getFieldName();
 					for (int i = 0; i < comboBox.getItemCount(); i++) {
-					    //添加comboBox.getItemAt(i)!=null以防止getCaption()抛异常
-                        if (comboBox.getItemAt(i) != null && comboBox.getItemAt(i).getCaption().equals(fieldName)) {
-                            comboBox.setSelectedItem(fieldName);
-                            break;
-                        }
-                    }
-					if (comboBox.getSelectedItem() == null) {
+						if (comboBox.getItemAt(i) == null) {
+							if (StringUtilities.isNullOrEmpty(fieldName)) {
+								comboBox.setSelectedIndex(i);
+								break;
+							}
+							continue;
+						}
+						if (comboBox.getItemAt(i).getCaption().equals(fieldName)) {
+							comboBox.setSelectedItem(fieldName);
+							break;
+						}
+					}
+					if (comboBox.getSelectedIndex() == -1) {
 						parameterFieldComboBox.setSelectedItem("");
 					}
 				}

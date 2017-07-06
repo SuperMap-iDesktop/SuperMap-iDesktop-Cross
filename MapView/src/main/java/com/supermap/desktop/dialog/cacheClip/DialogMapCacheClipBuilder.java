@@ -204,6 +204,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 		this.buttonCancel = ComponentFactory.createButtonCancel();
 		this.checkBoxAutoClosed.setSelected(true);
 		this.checkBoxShowProcessBar.setSelected(true);
+		this.buttonOk.setVisible(false);
 	}
 
 	private boolean valiteCacheFolderSave() {
@@ -229,6 +230,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 
 	//Change panel
 	private void changePanel(boolean flag) {
+		buttonOk.setVisible(flag);
 		buttonStep.setText(flag == true ? ControlsProperties.getString("String_LastWay") : ControlsProperties.getString("String_NextWay"));
 		getContentPane().remove(flag == true ? firstStepPane : nextStepPane);
 		getContentPane().add(flag == true ? nextStepPane : firstStepPane, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.CENTER).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
@@ -356,6 +358,33 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				}
 				if (cmdType == MultiUpdateProcessClip) {
 					mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
+				}
+				if (null != mapCacheBuilder.getMap().getVisibleScales() && 0 != mapCacheBuilder.getMap().getVisibleScales().length) {
+					if (firstStepPane.addScaleDropDown.isEnabled()) {
+						if (this.mapCacheBuilder.getMap().getVisibleScales().length < firstStepPane.currentMapCacheScale.size()) {
+							new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WariningForTaskBuilder"));
+							return;
+						} else {
+							int count = 0;
+							for (int i = 0; i < this.mapCacheBuilder.getMap().getVisibleScales().length; i++) {
+								for (int j = 0; j < firstStepPane.currentMapCacheScale.size(); j++) {
+									if (Double.compare(this.mapCacheBuilder.getMap().getVisibleScales()[i], firstStepPane.currentMapCacheScale.get(j)) == 0) {
+										count++;
+										break;
+									}
+								}
+							}
+							if (count != firstStepPane.currentMapCacheScale.size()) {
+								new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WariningForTaskBuilder"));
+								return;
+							}
+						}
+
+					} else {
+						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WariningForTaskBuilder"));
+						return;
+					}
+
 				}
 				setMapCacheBuilderValueBeforeRun();
 				//SaveType==MongoType,build some cache for creating a database
