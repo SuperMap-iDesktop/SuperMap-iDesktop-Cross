@@ -1,5 +1,7 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
+import com.supermap.desktop.dialog.SmOptionPane;
+
 import java.io.File;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +45,7 @@ public class ProcessManager {
 	public void removeAllProcess(String sciPath, String path) {
 		try {
 			dispose();
-			LogWriter.removeAllLogs();
+//			LogWriter.removeAllLogs();
 			String doingPath = null;
 			File taskFiles = new File(sciPath);
 			if (taskFiles.exists()) {
@@ -146,9 +148,13 @@ public class ProcessManager {
 
 	public void dispose() {
 		try {
-			for (int i = threadList.size() - 1; i >= 0; i--) {
-				threadList.get(i).process.destroy();
-				TimeUnit.SECONDS.sleep(2);
+			if (threadList.size() == 1) {
+				threadList.get(0).process.destroy();
+			} else {
+				for (int i = threadList.size() - 1; i >= 0; i--) {
+					threadList.get(i).process.destroy();
+					TimeUnit.SECONDS.sleep(2);
+				}
 			}
 			threadList.clear();
 //			protectThread.exit = false;

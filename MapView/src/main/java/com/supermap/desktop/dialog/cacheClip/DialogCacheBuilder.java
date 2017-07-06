@@ -90,7 +90,7 @@ public class DialogCacheBuilder extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (hasTask()) {
-				shutdownMapClip(true);
+				shutdownMapClip();
 			} else {
 				ProcessManager.getInstance().removeAllProcess(sciPath, "doing");
 				DialogCacheBuilder.this.dispose();
@@ -98,15 +98,14 @@ public class DialogCacheBuilder extends JFrame {
 		}
 	};
 
-	private void shutdownMapClip(boolean dispose) {
+	private void shutdownMapClip() {
 
 		sciPath = fileChooserTaskPath.getPath();
 		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
 			ProcessManager.getInstance().removeAllProcess(sciPath, "doing");
-			if (dispose) {
-				DialogCacheBuilder.this.dispose();
-			}
 			optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), sciPath));
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			DialogCacheBuilder.this.dispose();
 		} else {
 			return;
 		}
@@ -162,14 +161,18 @@ public class DialogCacheBuilder extends JFrame {
 			}
 			try {
 				String newProcessStr = textFieldProcessCount.getText();
-				if (StringUtilities.isInteger(newProcessStr) || newProcessStr.equals("0")) {
+				if (StringUtilities.isInteger(newProcessStr) && Integer.valueOf(newProcessStr) < 0) {
+					optionPane.showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
+					return;
+				}
+				if (StringUtilities.isInteger(newProcessStr) || "0".equals(newProcessStr)) {
 					SmOptionPane optionPane = new SmOptionPane();
 					int newProcessCount = Integer.valueOf(newProcessStr);
 					String logFolder = ".\\temp_log\\";
 					if (CacheUtilities.isLinux()) {
 						logFolder = "./temp_log/";
 					}
-					int nowProcessCount = -1;
+					int nowProcessCount = 0;
 					File logDirectory = new File(logFolder);
 					if (logDirectory.exists() && logDirectory.isDirectory()) {
 						nowProcessCount = logDirectory.list(new FilenameFilter() {
@@ -190,7 +193,7 @@ public class DialogCacheBuilder extends JFrame {
 
 					} else if (newProcessCount < nowProcessCount) {
 						if (newProcessCount == 0) {
-							shutdownMapClip(false);
+							shutdownMapClip();
 						} else {
 							int newSize = nowProcessCount - newProcessCount;
 							if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Stop"), String.valueOf(newSize))) == JOptionPane.OK_OPTION)
@@ -319,6 +322,7 @@ public class DialogCacheBuilder extends JFrame {
 		this.helpProviderForTaskPath = new WarningOrHelpProvider(MapViewProperties.getString("String_SciFilePath"), false);
 		this.helpProviderForProcessCount = new WarningOrHelpProvider(MapViewProperties.getString("String_HelpForProcessCount"), false);
 //		this.helpProviderForMergeSciCount = new WarningOrHelpProvider(MapViewProperties.getString("String_HelpForMergeSciCount"), false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	private void initResources() {
@@ -394,8 +398,8 @@ public class DialogCacheBuilder extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				if (hasTask()) {
-					setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-					shutdownMapClip(true);
+					setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+					shutdownMapClip();
 				} else {
 					DialogCacheBuilder.this.dispose();
 				}
@@ -443,7 +447,9 @@ public class DialogCacheBuilder extends JFrame {
 				doBuildCache(cachePath);
 			}
 		} catch (Exception ex) {
-			new SmOptionPane().showConfirmDialog(ex.getMessage());
+			if (null != ex.getMessage()) {
+				new SmOptionPane().showConfirmDialog(ex.getMessage());
+			}
 		}
 	}
 
@@ -451,6 +457,7 @@ public class DialogCacheBuilder extends JFrame {
 		String[] sciNames = null;
 		String[] buildNames = null;
 		String[] doingNames = null;
+		String[] failedNames = null;
 		File sciFile = new File(sciPath);
 		if (sciFile.exists()) {
 			sciNames = sciFile.list(getFilter());
@@ -458,12 +465,15 @@ public class DialogCacheBuilder extends JFrame {
 		String parentStr = sciFile.getParent();
 		File buildFile = new File(CacheUtilities.replacePath(parentStr, "build"));
 		File doingFile = new File(CacheUtilities.replacePath(parentStr, "doing"));
-
+		File failedFile = new File(CacheUtilities.replacePath(parentStr, "failed"));
 		if (buildFile.exists()) {
 			buildNames = buildFile.list(getFilter());
 		}
 		if (doingFile.exists()) {
 			doingNames = doingFile.list(getFilter());
+		}
+		if (failedFile.exists()) {
+			failedNames = failedFile.list(getFilter());
 		}
 		if (null != sciNames) {
 			totalSciLength = sciNames.length;
@@ -474,6 +484,9 @@ public class DialogCacheBuilder extends JFrame {
 		if (null != doingNames) {
 			totalSciLength += doingNames.length;
 		}
+		if (null != failedNames) {
+			totalSciLength += failedNames.length;
+		}
 		if (totalSciLength > 0) {
 			captionCount = new CopyOnWriteArrayList<>();
 			if (null != captions) {
@@ -483,7 +496,10 @@ public class DialogCacheBuilder extends JFrame {
 						captionSciSize += getSubSciCount(buildNames, captions.get(i));
 					}
 					if (null != doingNames) {
-						captionSciSize += getSubSciCount(buildNames, captions.get(i));
+						captionSciSize += getSubSciCount(doingNames, captions.get(i));
+					}
+					if (null != failedNames) {
+						captionSciSize += getSubSciCount(failedNames, captions.get(i));
 					}
 					captionCount.add(captionSciSize);
 				}
@@ -529,7 +545,7 @@ public class DialogCacheBuilder extends JFrame {
 			optionPane.showErrorDialog(MapViewProperties.getString("String_CachePathNotExist"));
 			return false;
 		}
-		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) || "0".equals(processCount))) {
+		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) && Integer.valueOf(processCount) > 0)) {
 			optionPane.showErrorDialog(MapViewProperties.getString("String_ProcessCountError"));
 			textFieldProcessCount.requestFocus();
 			return false;
@@ -576,8 +592,12 @@ public class DialogCacheBuilder extends JFrame {
 						if (taskFinished(CacheUtilities.replacePath(finalParentPath, "task"))) {
 							break;
 						}
-						//Sleep 1 hour,then refresh progressBars
-						TimeUnit.HOURS.sleep(1);
+						//Sleep,then refresh progressBars
+						if (finalTotalSciLength > 1000) {
+							TimeUnit.MINUTES.sleep(15);
+						} else {
+							TimeUnit.MINUTES.sleep(10);
+						}
 					}
 					getResult(finalCachePath, startTime);
 				} catch (Exception e) {

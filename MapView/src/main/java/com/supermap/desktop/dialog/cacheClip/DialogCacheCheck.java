@@ -58,7 +58,7 @@ public class DialogCacheCheck extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (hasTask()) {
-				shutdownMapCheck(true);
+				shutdownMapCheck();
 			} else {
 				DialogCacheCheck.this.dispose();
 			}
@@ -74,15 +74,14 @@ public class DialogCacheCheck extends JFrame {
 		return null != doingFile && hasSciFiles(doingFile);
 	}
 
-	private void shutdownMapCheck(boolean dispose) {
+	private void shutdownMapCheck() {
 		SmOptionPane optionPane = new SmOptionPane();
 		String sciPath = fileChooseSciPath.getPath();
 		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
 			ProcessManager.getInstance().removeAllProcess(sciPath, "checking");
-			if (dispose) {
-				DialogCacheCheck.this.dispose();
-			}
-			new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), sciPath));
+			new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessCheckFinished"), sciPath));
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			DialogCacheCheck.this.dispose();
 		} else {
 			return;
 		}
@@ -126,8 +125,8 @@ public class DialogCacheCheck extends JFrame {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				if (hasTask()) {
-					setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-					shutdownMapCheck(true);
+					setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+					shutdownMapCheck();
 				} else {
 					DialogCacheCheck.this.dispose();
 				}
@@ -193,6 +192,7 @@ public class DialogCacheCheck extends JFrame {
 		this.helpProviderForSciPath = new WarningOrHelpProvider(MapViewProperties.getString("String_TipForFinishedSciPath"), false);
 		this.setSize(520, 280);
 		this.setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	private void initResources() {
