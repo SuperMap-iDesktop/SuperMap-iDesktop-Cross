@@ -94,6 +94,7 @@ public class DialogCacheBuilder extends JFrame {
 			} else {
 				ProcessManager.getInstance().removeAllProcess(sciPath, "doing");
 				DialogCacheBuilder.this.dispose();
+				System.exit(1);
 			}
 		}
 	};
@@ -104,8 +105,8 @@ public class DialogCacheBuilder extends JFrame {
 		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
 			ProcessManager.getInstance().removeAllProcess(sciPath, "doing");
 			optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), sciPath));
-			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			DialogCacheBuilder.this.dispose();
+			System.exit(1);
 		} else {
 			return;
 		}
@@ -322,7 +323,6 @@ public class DialogCacheBuilder extends JFrame {
 		this.helpProviderForTaskPath = new WarningOrHelpProvider(MapViewProperties.getString("String_SciFilePath"), false);
 		this.helpProviderForProcessCount = new WarningOrHelpProvider(MapViewProperties.getString("String_HelpForProcessCount"), false);
 //		this.helpProviderForMergeSciCount = new WarningOrHelpProvider(MapViewProperties.getString("String_HelpForMergeSciCount"), false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	private void initResources() {
@@ -402,6 +402,7 @@ public class DialogCacheBuilder extends JFrame {
 					shutdownMapClip();
 				} else {
 					DialogCacheBuilder.this.dispose();
+					System.exit(1);
 				}
 			}
 		});
@@ -602,6 +603,7 @@ public class DialogCacheBuilder extends JFrame {
 					getResult(finalCachePath, startTime);
 				} catch (Exception e) {
 //					e.printStackTrace();
+
 				}
 			}
 		};
@@ -614,43 +616,45 @@ public class DialogCacheBuilder extends JFrame {
 		int currentTotalCount = 0;
 		File buildFile = new File(CacheUtilities.replacePath(parentPath, "build"));
 		//Ensure that component,count array have sorted as we want;
-		if (buildFile.exists()) {
-			File failedFile = new File(CacheUtilities.replacePath(parentPath, "failed"));
-			String[] buildSciNames = null;
-			String[] failedSciNames = null;
-			if (null != buildFile.list(getFilter())) {
-				buildSciNames = buildFile.list();
-				currentTotalCount = buildSciNames.length;
-			}
-			if (failedFile.exists() && null != failedFile.list(getFilter())) {
-				failedSciNames = failedFile.list();
-				currentTotalCount += failedSciNames.length;
-			}
-			if (null != captions) {
-				for (int i = 0; i < captions.size(); i++) {
-					int currentCount = getSingleProcess(buildSciNames, failedSciNames, captions.get(i));
-					int value = (int) (((currentCount + 0.0) / captionCount.get(i)) * 100);
-					if (progressBars.get(i).getValue() != 100) {
-						progressBars.get(i).setValue(value);
-					}
+		File failedFile = new File(CacheUtilities.replacePath(parentPath, "failed"));
+		String[] buildSciNames = null;
+		String[] failedSciNames = null;
+		if (buildFile.exists() && null != buildFile.list(getFilter())) {
+			buildSciNames = buildFile.list();
+			currentTotalCount = buildSciNames.length;
+		}
+		if (failedFile.exists() && null != failedFile.list(getFilter())) {
+			failedSciNames = failedFile.list();
+			currentTotalCount += failedSciNames.length;
+		}
+		if (null != captions) {
+			for (int i = 0; i < captions.size(); i++) {
+				int currentCount = getSingleProcess(buildSciNames, failedSciNames, captions.get(i));
+				int value = (int) (((currentCount + 0.0) / captionCount.get(i)) * 100);
+				if (progressBars.get(i).getValue() != 100) {
+					progressBars.get(i).setValue(value);
 				}
 			}
-			totalPercent = (int) (((currentTotalCount + 0.0) / fianlTotalSciLength) * 100);
-			progressBarTotal.setValue(totalPercent);
 		}
+		totalPercent = (int) (((currentTotalCount + 0.0) / fianlTotalSciLength) * 100);
+		progressBarTotal.setValue(totalPercent);
 	}
 
 	private int getSingleProcess(String[] builedScis, String[] failedScis, String caption) {
 		int currentCount = 0;
-		for (int i = 0; i < builedScis.length; i++) {
-			if (builedScis[i].contains(caption)) {
-				currentCount++;
+		if (null != builedScis) {
+			for (int i = 0; i < builedScis.length; i++) {
+				if (builedScis[i].contains(caption)) {
+					currentCount++;
+				}
 			}
 		}
 		if (null != failedScis) {
-			for (int i = 0; i < failedScis.length; i++) {
-				if (failedScis[i].contains(caption)) {
-					currentCount++;
+			if (null != failedScis) {
+				for (int i = 0; i < failedScis.length; i++) {
+					if (failedScis[i].contains(caption)) {
+						currentCount++;
+					}
 				}
 			}
 		}
@@ -667,24 +671,15 @@ public class DialogCacheBuilder extends JFrame {
 		};
 	}
 
-	private FilenameFilter getFilter(String caption) {
-		final String tempCaption = caption;
-		return new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".sci") && name.contains(tempCaption);
-			}
-		};
-	}
-
 	private void disposeInfo() {
 		removeEvents();
 		this.captions = null;
 		this.scrollPaneProgresses = null;
 		this.captionCount = null;
-		DialogCacheBuilder.this.dispose();
 		//Dispose instance of process manager
-		ProcessManager.getInstance().dispose();
+//		ProcessManager.getInstance().dispose();
+		DialogCacheBuilder.this.dispose();
+		System.exit(1);
 	}
 
 	public void setCaptions(CopyOnWriteArrayList<String> sourceCaptions) {
@@ -722,7 +717,6 @@ public class DialogCacheBuilder extends JFrame {
 			}
 		}
 		if (result) {
-			buttonClose.setEnabled(true);
 			long endTime = System.currentTimeMillis();
 			long totalTime = endTime - startTime;
 			long hour = 0;

@@ -1,9 +1,7 @@
 package com.supermap.desktop.dialog.cacheClip;
 
 import com.supermap.data.processing.CacheWriter;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
@@ -82,6 +80,7 @@ public class DialogCacheCheck extends JFrame {
 			new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessCheckFinished"), sciPath));
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			DialogCacheCheck.this.dispose();
+			System.exit(1);
 		} else {
 			return;
 		}
@@ -129,6 +128,7 @@ public class DialogCacheCheck extends JFrame {
 					shutdownMapCheck();
 				} else {
 					DialogCacheCheck.this.dispose();
+					System.exit(1);
 				}
 			}
 		});
@@ -354,7 +354,9 @@ public class DialogCacheCheck extends JFrame {
 	}
 
 	private void dialogDispose() {
+		removeEvents();
 		DialogCacheCheck.this.dispose();
+		System.exit(1);
 	}
 
 	public static void main(String[] args) {
