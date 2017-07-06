@@ -176,11 +176,12 @@ public class ParameterFieldComboBoxPanel extends SwingPanel implements IParamete
 
 					String fieldName = parameterFieldComboBox.getFieldName();
 					for (int i = 0; i < comboBox.getItemCount(); i++) {
-						if (comboBox.getItemAt(i).getCaption().equals(fieldName)) {
-							comboBox.setSelectedItem(fieldName);
-							break;
-						}
-					}
+					    //添加comboBox.getItemAt(i)!=null以防止getCaption()抛异常
+                        if (comboBox.getItemAt(i) != null && comboBox.getItemAt(i).getCaption().equals(fieldName)) {
+                            comboBox.setSelectedItem(fieldName);
+                            break;
+                        }
+                    }
 					if (comboBox.getSelectedItem() == null) {
 						parameterFieldComboBox.setSelectedItem("");
 					}

@@ -11,6 +11,7 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
+import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
@@ -80,7 +81,7 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 		}
 		parameterTextFieldBeginDistance.setSelectedItem("0.0");
 		parameterTextFieldIncrementalDistance.setSelectedItem("0.0");
-		parameterTextFieldIncrementalNumber.setSelectedItem("0");
+		parameterTextFieldIncrementalNumber.setSelectedItem("10");
 	}
 
 	private void initParameterConstraint() {
@@ -126,9 +127,11 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 		incrementalParameter.setIncrementalDistance(Double.valueOf((String) parameterTextFieldIncrementalDistance.getSelectedItem()));
 		incrementalParameter.setDistanceMethod((DistanceMethod) ((ParameterDataNode) parameterDistanceMethod.getSelectedItem()).getData());
 		try {
+            fireRunning(new RunningEvent(this, 0, "start"));
 			AnalyzingPatterns.addSteppedListener(steppedListener);
 			IncrementalResult[] incrementalResults = AnalyzingPatterns.incrementalAutoCorrelation(datasetVector, incrementalParameter);
 			isSuccessful = incrementalResults != null && incrementalResults.length > 0;
+            fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {

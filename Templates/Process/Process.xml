@@ -128,6 +128,7 @@
                     <process key="MeanCenter" name="平均中心"/>
                     <process key="MedianCenter" name="中位数中心"/>
                     <process key="Directional" name="方向分布"/>
+                    <process key="StandardDistance" name="标准距离"/>
                 </process>
                 <process name="模型分析">//AnalyzingPatterns
                     <process key="autoCorrelation" name="空间自相关"/>

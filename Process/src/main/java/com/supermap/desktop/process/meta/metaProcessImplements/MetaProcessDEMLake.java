@@ -17,12 +17,6 @@ import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetType
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -87,7 +81,7 @@ public class MetaProcessDEMLake extends MetaProcess {
         }
 
         FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
-        heightFieldComboBox = new ParameterFieldComboBox(ProcessProperties.getString("String_BuildLake_LakeField"));
+        heightFieldComboBox = new ParameterFieldComboBox(ProcessProperties.getString("String_Label_HeightField"));
         heightFieldComboBox.setFieldType(fieldType);
         heightFieldComboBox.setDataset((DatasetVector) lakeDataset.getSelectedItem());
 

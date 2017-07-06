@@ -15,7 +15,7 @@ import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilities.DatasetUtilities;
+import com.supermap.desktop.utilities.*;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -26,14 +26,15 @@ import java.beans.PropertyChangeListener;
 public class MetaProcessDEMBuild extends MetaProcess{
     private ParameterDatasourceConstrained sourceDatasources;
     private ParameterSingleDataset sourceDataset;
-    private ParameterFieldComboBox comboBoxSourceField;
 
     //region参数设置
     // 基本设置
     private ParameterComboBox comboBoxInterpolateType;//插值类型
+    private ParameterFieldComboBox comboBoxSourceField;
     private ParameterComboBox comboBoxTerrainStatisticType;//重复点处理
     private ParameterTextField textFieldResampleTolerance;//重采样距离
     private ParameterTextField textFieldZFactor;//高程缩放系数
+    private ParameterFieldComboBox comboBoxLakeField;
     private ParameterCheckBox checkBox;//平坦区域
 
     //结果数据
@@ -44,13 +45,13 @@ public class MetaProcessDEMBuild extends MetaProcess{
     private ParameterTextField textFieldRowCount;//行数
     private ParameterTextField textFieldColumnCount;//列数
     private ParameterTextField textFieldSizeOf;//估计大小（MB）
+
     // endregion
 
     //region其他设置
     //湖数据
     private ParameterDatasourceConstrained lakeDatasource;
     private ParameterSingleDataset lakeDataset;
-    private ParameterFieldComboBox comboBoxLakeField;
     //范围数据
     private ParameterDatasourceConstrained clipDatasource;
     private ParameterSingleDataset clipDataset;
@@ -62,7 +63,7 @@ public class MetaProcessDEMBuild extends MetaProcess{
     private static final String LAKE_DATA = "LakeData";
     private static final String CLIP_DATA = "ClipData";
     private static final String ERASE_DATA = "EraseData";
-    private static final String OUTPUT_DATA = "ResultData";
+    private static final String OUTPUT_DATA = "DEMBuildResult";
 
     /*重采样距离需要源数据集为线类型且插值方法为TIN，因此设置两个开关*/
     private boolean isDatasetLine = false;//判定源数据集是否为线类型
@@ -80,45 +81,17 @@ public class MetaProcessDEMBuild extends MetaProcess{
         sourceDatasources.setDescribe(CommonProperties.getString("String_SourceDatasource"));
         sourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE);
         sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
-        comboBoxSourceField = new ParameterFieldComboBox(ProcessProperties.getString("String_BuildLake_LakeField"));
         ParameterCombine sourceData = new ParameterCombine();
         sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
-        sourceData.addParameters(sourceDatasources, sourceDataset, comboBoxSourceField);
-
-        comboBoxInterpolateType = new ParameterComboBox().setDescribe(CommonProperties.getString("String_InterpolateType"));
-        comboBoxTerrainStatisticType = new ParameterComboBox().setDescribe(CommonProperties.getString("String_Label_TerrainStatisticType"));
-        textFieldResampleTolerance = new ParameterTextField(ProcessProperties.getString("String_Resample_Tolerance"));
-        textFieldZFactor = new ParameterTextField(ProcessProperties.getString("String_Label_ZFactor"));
-        checkBox = new ParameterCheckBox(ProcessProperties.getString("String_ProcessFlatArea"));
-        ParameterCombine baseSetting = new ParameterCombine();
-        baseSetting.setDescribe(ProcessProperties.getString("String_GroupBox_ParameterSetting_Base"));
-        baseSetting.addParameters(comboBoxInterpolateType, comboBoxTerrainStatisticType, textFieldResampleTolerance, textFieldZFactor, checkBox);
-
-        resultDataset = new ParameterSaveDataset();
-        this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
-        this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
-        ParameterCombine resultData = new ParameterCombine();
-        resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
-        resultData.addParameters(resultDataset);
-
-        comboBoxEncodeType = new ParameterComboBox().setDescribe(ProcessProperties.getString("label_encodingType"));
-        comboBoxPixelFormat = new ParameterComboBox().setDescribe(CommonProperties.getString("String_PixelType"));
-        textFieldCellSize = new ParameterTextField(ProcessProperties.getString("String_Resolution"));
-        textFieldRowCount = new ParameterTextField(CommonProperties.getString("String_Row"));
-        textFieldColumnCount = new ParameterTextField(CommonProperties.getString("String_Column"));
-        textFieldSizeOf = new ParameterTextField(ProcessProperties.getString("String_Label_SizeOf"));
-        ParameterCombine resultSetting = new ParameterCombine();
-        resultSetting.setDescribe(CommonProperties.getString("String_GroupBox_ResultSetting"));
-        resultSetting.addParameters(comboBoxEncodeType, comboBoxPixelFormat, textFieldCellSize, textFieldRowCount, textFieldColumnCount, textFieldSizeOf);
+        sourceData.addParameters(sourceDatasources, sourceDataset);
 
         lakeDatasource = new ParameterDatasourceConstrained();
         lakeDatasource.setDescribe(CommonProperties.getString("String_LakeDatasource"));
         lakeDataset = new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
         lakeDataset.setDescribe(CommonProperties.getString("String_LakeDataset"));
-        comboBoxLakeField = new ParameterFieldComboBox(ProcessProperties.getString("String_BuildLake_LakeField"));
         ParameterCombine lakeData = new ParameterCombine();
         lakeData.setDescribe(CommonProperties.getString("String_GroupBox_LakeData"));
-        lakeData.addParameters(lakeDatasource, lakeDataset, comboBoxLakeField);
+        lakeData.addParameters(lakeDatasource, lakeDataset);
 
         clipDatasource = new ParameterDatasourceConstrained();
         clipDatasource.setDescribe(ProcessProperties.getString("String_Label_ClipDatasource"));
@@ -136,12 +109,40 @@ public class MetaProcessDEMBuild extends MetaProcess{
         eraseData.setDescribe(ProcessProperties.getString("String_GroupBox_EraseData"));
         eraseData.addParameters(eraseDatasource, eraseDataset);
 
-        this.parameters.setParameters(sourceData, baseSetting, resultData, resultSetting, lakeData, clipData, eraseData);
+        comboBoxSourceField = new ParameterFieldComboBox(ProcessProperties.getString("String_Label_HeightField"));
+        comboBoxLakeField = new ParameterFieldComboBox(ProcessProperties.getString("String_Label_LakeHeightField"));
+        comboBoxInterpolateType = new ParameterComboBox().setDescribe(CommonProperties.getString("String_InterpolateType"));
+        comboBoxTerrainStatisticType = new ParameterComboBox().setDescribe(CommonProperties.getString("String_Label_TerrainStatisticType"));
+        textFieldResampleTolerance = new ParameterTextField(ProcessProperties.getString("String_Resample_Tolerance"));
+        textFieldZFactor = new ParameterTextField(ProcessProperties.getString("String_Label_ZFactor"));
+        checkBox = new ParameterCheckBox(ProcessProperties.getString("String_ProcessFlatArea"));
+        ParameterCombine baseSetting = new ParameterCombine();
+        baseSetting.setDescribe(ProcessProperties.getString("String_GroupBox_ParameterSetting_Base"));
+        baseSetting.addParameters(comboBoxSourceField, comboBoxInterpolateType, comboBoxTerrainStatisticType, textFieldResampleTolerance, textFieldZFactor, checkBox, comboBoxLakeField);
+
+        comboBoxEncodeType = new ParameterComboBox().setDescribe(ProcessProperties.getString("label_encodingType"));
+        comboBoxPixelFormat = new ParameterComboBox().setDescribe(CommonProperties.getString("String_PixelType"));
+        textFieldCellSize = new ParameterTextField(ProcessProperties.getString("String_Resolution"));
+        textFieldRowCount = new ParameterTextField(CommonProperties.getString("String_Row"));
+        textFieldColumnCount = new ParameterTextField(CommonProperties.getString("String_Column"));
+        textFieldSizeOf = new ParameterTextField(ProcessProperties.getString("String_Label_SizeOf"));
+        ParameterCombine resultSetting = new ParameterCombine();
+        resultSetting.setDescribe(CommonProperties.getString("String_GroupBox_ResultSetting"));
+        resultSetting.addParameters(comboBoxEncodeType, comboBoxPixelFormat, textFieldCellSize, textFieldRowCount, textFieldColumnCount, textFieldSizeOf);
+
+        resultDataset = new ParameterSaveDataset();
+        this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
+        this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
+        ParameterCombine resultData = new ParameterCombine();
+        resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
+        resultData.addParameters(resultDataset);
+
+        this.parameters.setParameters(sourceData, lakeData, clipData, eraseData, baseSetting, resultSetting, resultData);
         this.parameters.addInputParameters(INPUT_DATA, DatasetTypes.VECTOR,sourceData);
         this.parameters.addInputParameters(LAKE_DATA, DatasetTypes.VECTOR,lakeData);
         this.parameters.addInputParameters(CLIP_DATA, DatasetTypes.VECTOR,clipData);
         this.parameters.addInputParameters(ERASE_DATA, DatasetTypes.VECTOR,eraseData);
-        this.parameters.addInputParameters(OUTPUT_DATA, DatasetTypes.GRID,resultData);
+        this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID,resultData);
     }
 
     private void initParametersState() {
@@ -154,16 +155,16 @@ public class MetaProcessDEMBuild extends MetaProcess{
         }
         comboBoxSourceField.setFieldType(fieldType);
 
-        comboBoxInterpolateType.setItems(new ParameterDataNode(CommonProperties.getString("String_TerrainInterpolateType_TIN"), TerrainInterpolateType.TIN),
-                new ParameterDataNode(CommonProperties.getString("String_TerrainInterpolateType_Kriging"), TerrainInterpolateType.KRIGING),
-                new ParameterDataNode(CommonProperties.getString("String_TerrainInterpolateType_IDW"), TerrainInterpolateType.IDW)
+        comboBoxInterpolateType.setItems(new ParameterDataNode(TerrainInterpolateTypeUtilities.toString(TerrainInterpolateType.TIN), TerrainInterpolateType.TIN),
+                new ParameterDataNode(TerrainInterpolateTypeUtilities.toString(TerrainInterpolateType.KRIGING), TerrainInterpolateType.KRIGING),
+                new ParameterDataNode(TerrainInterpolateTypeUtilities.toString(TerrainInterpolateType.IDW), TerrainInterpolateType.IDW)
         );
-        comboBoxTerrainStatisticType.setItems(new ParameterDataNode(ProcessProperties.getString("String_TerrainStatisticType_Unique"), TerrainStatisticType.UNIQUE),
-                new ParameterDataNode(ProcessProperties.getString("String_TerrainStatisticType_Majority"), TerrainStatisticType.MAJORITY),
-                new ParameterDataNode(CommonProperties.getString("String_StatisticsType_MAX"), TerrainStatisticType.MAX),
-                new ParameterDataNode(CommonProperties.getString("String_StatisticsType_MEAN"), TerrainStatisticType.MEAN),
-                new ParameterDataNode(CommonProperties.getString("String_StatisticsType_MEDIAN"), TerrainStatisticType.MEDIAN),
-                new ParameterDataNode(CommonProperties.getString("String_StatisticsType_MIN"), TerrainStatisticType.MIN)
+        comboBoxTerrainStatisticType.setItems(new ParameterDataNode(TerrainStatisticTypeUtilities.toString(TerrainStatisticType.UNIQUE), TerrainStatisticType.UNIQUE),
+                new ParameterDataNode(TerrainStatisticTypeUtilities.toString(TerrainStatisticType.MAJORITY), TerrainStatisticType.MAJORITY),
+                new ParameterDataNode(TerrainStatisticTypeUtilities.toString(TerrainStatisticType.MAX), TerrainStatisticType.MAX),
+                new ParameterDataNode(TerrainStatisticTypeUtilities.toString(TerrainStatisticType.MEAN), TerrainStatisticType.MEAN),
+                new ParameterDataNode(TerrainStatisticTypeUtilities.toString(TerrainStatisticType.MEDIAN), TerrainStatisticType.MEDIAN),
+                new ParameterDataNode(TerrainStatisticTypeUtilities.toString(TerrainStatisticType.MIN), TerrainStatisticType.MIN)
         );
         textFieldResampleTolerance.setEnabled(false);
         textFieldResampleTolerance.setSelectedItem("0");
@@ -171,21 +172,20 @@ public class MetaProcessDEMBuild extends MetaProcess{
 
         resultDataset.setSelectedItem("DatasetDEM");
 
-        comboBoxEncodeType.setItems(new ParameterDataNode(CommonProperties.getString("String_EncodeType_None"), EncodeType.NONE),
-                new ParameterDataNode(CommonProperties.getString("String_EncodeType_SGL"), EncodeType.SGL),
-                new ParameterDataNode(CommonProperties.getString("String_EncodeType_LZW"), EncodeType.LZW)
+        comboBoxEncodeType.setItems(new ParameterDataNode(EncodeTypeUtilities.toString(EncodeType.NONE), EncodeType.NONE),
+                new ParameterDataNode(EncodeTypeUtilities.toString(EncodeType.SGL), EncodeType.SGL),
+                new ParameterDataNode(EncodeTypeUtilities.toString(EncodeType.LZW), EncodeType.LZW)
         );
-        comboBoxPixelFormat.setItems(new ParameterDataNode(CommonProperties.getString("String_PixelSingle"), PixelFormat.SINGLE),
-                new ParameterDataNode(CommonProperties.getString("String_PixelDouble"), PixelFormat.DOUBLE),
-                new ParameterDataNode(CommonProperties.getString("String_PixelBit8"), PixelFormat.BIT8),
-                new ParameterDataNode(CommonProperties.getString("String_PixelBit16"), PixelFormat.BIT16),
-                new ParameterDataNode(CommonProperties.getString("String_PixelBit32"), PixelFormat.BIT32),
-                new ParameterDataNode(CommonProperties.getString("String_PixelBit64"), PixelFormat.BIT64),
-                new ParameterDataNode(CommonProperties.getString("String_PixelUBit1"), PixelFormat.UBIT1),
-                new ParameterDataNode(CommonProperties.getString("String_PixelUBit4"), PixelFormat.UBIT4),
-                new ParameterDataNode(CommonProperties.getString("String_PixelUBit8"), PixelFormat.UBIT8),
-                new ParameterDataNode(CommonProperties.getString("String_PixelUBit16"), PixelFormat.UBIT16),
-                new ParameterDataNode(CommonProperties.getString("String_PixelUBit32"), PixelFormat.UBIT32)
+        comboBoxPixelFormat.setItems(new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.SINGLE), PixelFormat.SINGLE),
+                new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.DOUBLE), PixelFormat.DOUBLE),
+                new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT8), PixelFormat.BIT8),
+                new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT16), PixelFormat.BIT16),
+                new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT32), PixelFormat.BIT32),
+                new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT1), PixelFormat.UBIT1),
+                new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT4), PixelFormat.UBIT4),
+                new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT8), PixelFormat.UBIT8),
+                new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT16), PixelFormat.UBIT16),
+                new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT32), PixelFormat.UBIT32)
         );
         textFieldRowCount.setEnabled(false);
         textFieldColumnCount.setEnabled(false);
@@ -302,34 +302,64 @@ public class MetaProcessDEMBuild extends MetaProcess{
             fireRunning(new RunningEvent(this, 0, "start"));
 
             TerrainBuilderParameter terrainBuilderParameter = new TerrainBuilderParameter();
-            if (clipDataset.getSelectedItem() != null) {
-                terrainBuilderParameter.setClipDataset((DatasetVector) clipDataset.getSelectedItem());
+
+            DatasetVector src = null;
+            if (parameters.getInputs().getData(INPUT_DATA).getValue() != null) {
+                src = (DatasetVector) parameters.getInputs().getData(INPUT_DATA).getValue();
+            } else {
+                src = (DatasetVector) sourceDataset.getSelectedItem();
             }
-            if (eraseDataset.getSelectedItem() != null && eraseDataset.isEnabled()) {
-                terrainBuilderParameter.setEraseDataset((DatasetVector) eraseDataset.getSelectedItem());
+            if (src.getType() == DatasetType.POINT) {
+                terrainBuilderParameter.setPointDatasets(new DatasetVector[]{src});
+                terrainBuilderParameter.setPointAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
+            } else if (src.getType() == DatasetType.LINE) {
+                terrainBuilderParameter.setLineDatasets(new DatasetVector[]{src});
+                terrainBuilderParameter.setLineAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
             }
-            if (lakeDataset.getSelectedItem() != null) {
-                terrainBuilderParameter.setLakeDataset((DatasetVector) lakeDataset.getSelectedItem());
+
+            DatasetVector srcLake=null;
+            if (parameters.getInputs().getData(LAKE_DATA).getValue() != null) {
+                srcLake = (DatasetVector) parameters.getInputs().getData(LAKE_DATA).getValue();
+            } else {
+                srcLake = (DatasetVector) lakeDataset.getSelectedItem();
+            }
+            if (srcLake != null) {
+                terrainBuilderParameter.setLakeDataset(srcLake);
                 terrainBuilderParameter.setLakeAltitudeFiled(comboBoxLakeField.getSelectedItem().toString());
             }
-            if (sourceDataset.getSelectedItem() != null) {
-                DatasetVector datasetVector = (DatasetVector) sourceDataset.getSelectedItem();
-                if (datasetVector.getType()==DatasetType.POINT) {
-                    terrainBuilderParameter.setPointDatasets(new DatasetVector[]{datasetVector});
-                    terrainBuilderParameter.setPointAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
-                } else if (datasetVector.getType() == DatasetType.LINE) {
-                    terrainBuilderParameter.setLineDatasets(new DatasetVector[]{datasetVector});
-                    terrainBuilderParameter.setLineAltitudeFileds(new String[]{comboBoxSourceField.getSelectedItem().toString()});
+
+            DatasetVector srcClip=null;
+            if (parameters.getInputs().getData(CLIP_DATA).getValue() != null) {
+                srcClip = (DatasetVector) parameters.getInputs().getData(CLIP_DATA).getValue();
+            } else {
+                srcClip = (DatasetVector) clipDataset.getSelectedItem();
+            }
+            if (srcClip != null) {
+                terrainBuilderParameter.setClipDataset(srcClip);
+            }
+
+            if (eraseDataset.isEnabled()) {
+                DatasetVector srcErase=null;
+                if (parameters.getInputs().getData(ERASE_DATA).getValue() != null) {
+                    srcErase = (DatasetVector) parameters.getInputs().getData(ERASE_DATA).getValue();
+                } else {
+                    srcErase = (DatasetVector) eraseDataset.getSelectedItem();
+                }
+                if (srcErase != null) {
+                    terrainBuilderParameter.setEraseDataset(srcErase);
                 }
             }
+
             terrainBuilderParameter.setEncodeType((EncodeType) comboBoxEncodeType.getSelectedData());
             terrainBuilderParameter.setInterpolateType((TerrainInterpolateType) comboBoxInterpolateType.getSelectedData());
             terrainBuilderParameter.setPixelFormat((PixelFormat) comboBoxPixelFormat.getSelectedData());
             terrainBuilderParameter.setProcessFlatArea(Boolean.parseBoolean(checkBox.getSelectedItem().toString()));
             terrainBuilderParameter.setStatisticType((TerrainStatisticType)comboBoxTerrainStatisticType.getSelectedData());
             terrainBuilderParameter.setZFactor(Double.valueOf(textFieldZFactor.getSelectedItem().toString()));
-            terrainBuilderParameter.setResampleLen(Double.valueOf(textFieldResampleTolerance.getSelectedItem().toString()));
             terrainBuilderParameter.setCellSize(Double.valueOf(textFieldCellSize.getSelectedItem().toString()));
+            if (textFieldResampleTolerance.isEnabled()) {
+                terrainBuilderParameter.setResampleLen(Double.valueOf(textFieldResampleTolerance.getSelectedItem().toString()));
+            }
 
             String datasetName = resultDataset.getDatasetName();
             datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
@@ -342,7 +372,6 @@ public class MetaProcessDEMBuild extends MetaProcess{
 
             fireRunning(new RunningEvent(this, 100, "finished"));
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
         } finally{
             TerrainBuilder.removeSteppedListener(steppedListener);

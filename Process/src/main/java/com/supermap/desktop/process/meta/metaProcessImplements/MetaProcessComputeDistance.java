@@ -1,11 +1,12 @@
 package com.supermap.desktop.process.meta.metaProcessImplements;
 
+import com.supermap.data.DatasetType;
 import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.properties.CommonProperties;
 
 /**
  * Created by Chen on 2017/7/3 0003.
@@ -14,6 +15,15 @@ public class MetaProcessComputeDistance extends MetaProcess {
 
     private ParameterDatasourceConstrained sourceDatasource;
     private ParameterSingleDataset sourceDataset;
+    private ParameterDatasourceConstrained proximityDatasource;
+    private ParameterSingleDataset proximityDataset;
+    private ParameterComboBox comboBox;
+    private ParameterLabel label;
+    private ParameterCheckBox checkBoxMin;
+    private ParameterCheckBox checkBoxMax;
+    private ParameterTextField textFieldMin;
+    private ParameterTextField textFieldMax;
+    private ParameterSaveDataset resultDataset;
 
     public MetaProcessComputeDistance() {
         initParameters();
@@ -23,7 +33,22 @@ public class MetaProcessComputeDistance extends MetaProcess {
     }
 
     private void initParameters() {
+        sourceDatasource = new ParameterDatasourceConstrained();
+        sourceDatasource.setDescribe(CommonProperties.getString("String_Label_Datasource"));
+        sourceDataset = new ParameterSingleDataset(DatasetType.POINT);
+        sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
 
+        proximityDatasource = new ParameterDatasourceConstrained();
+        proximityDatasource.setDescribe(CommonProperties.getString("String_Label_Datasource"));
+        proximityDataset = new ParameterSingleDataset(DatasetType.POINT);
+        proximityDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
+
+        comboBox = new ParameterComboBox(ProcessProperties.getString("String_Label_ComputeMethod"));
+        label = new ParameterLabel();
+        label.setDescribe(ProcessProperties.getString("String_Label_SearchRangeSetting"));
+        checkBoxMax = new ParameterCheckBox(ProcessProperties.getString("String_Label_MaxDistance"));
+        checkBoxMin = new ParameterCheckBox(ProcessProperties.getString("String_Label_MinDistance"));
+        //TODO
     }
 
     private void initParameterConstraint() {

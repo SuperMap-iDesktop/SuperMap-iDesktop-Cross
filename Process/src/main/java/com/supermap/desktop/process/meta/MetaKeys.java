@@ -59,6 +59,7 @@ public class MetaKeys {
 	public static final String MeanCenter = "MeanCenter";
 	public static final String MedianCenter = "MedianCenter";
 	public static final String Directional = "Directional";
+	public static final String StandardDistance = "StandardDistance";
 	public static final String autoCorrelation = "autoCorrelation";
 	public static final String highOrLowClustering = "highOrLowClustering";
 	public static final String clusterOutlierAnalyst = "clusterOutlierAnalyst";

@@ -6,34 +6,8 @@ import com.supermap.desktop.process.ProcessProperties;
 import com.supermap.desktop.process.dataconversion.MetaProcessImportFactory;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.meta.metaProcessImplements.EmptyMetaProcess;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessBuffer;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessGridRegionAggregation;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessHeatMap;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISOLine;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISOPoint;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessISORegion;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessInterpolator;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessKernelDensity;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessOverlayAnalyst;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessPolygonAggregation;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessProjection;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSetProjection;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSimpleDensity;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSpatialIndex;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessSqlQuery;
-import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessAutoCorrelation;
-import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessAverageNearestNeighbor;
-import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessCentralElement;
-import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessClusterOutlierAnalyst;
-import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessDirectional;
-import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessGeographicWeightedRegression;
-import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessHighOrLowClustering;
-import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessHotSpotAnalyst;
-import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessIncrementalAutoCorrelation;
-import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessMeanCenter;
-import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessMedianCenter;
-import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.MetaProcessOptimizedHotSpotAnalyst;
+import com.supermap.desktop.process.meta.metaProcessImplements.*;
+import com.supermap.desktop.process.meta.metaProcessImplements.spatialStatistics.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
 import com.supermap.desktop.ui.enums.OverlayAnalystType;
@@ -235,6 +209,8 @@ public class WorkflowParser {
 			result = new MetaProcessMedianCenter();
 		} else if (MetaKeys.Directional.equals(key)) {
 			result = new MetaProcessDirectional();
+		} else if (MetaKeys.StandardDistance.equals(key)) {
+			result = new MetaProcessStandardDistance();
 		} else if (MetaKeys.autoCorrelation.equals(key)) {
 			return new MetaProcessAutoCorrelation();
 		} else if (MetaKeys.highOrLowClustering.equals(key)) {
