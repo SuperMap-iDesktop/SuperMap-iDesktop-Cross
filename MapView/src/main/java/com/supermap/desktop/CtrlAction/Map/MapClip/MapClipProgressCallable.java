@@ -28,6 +28,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 	private Vector VectorInfo;
 	private Dataset resultDataset;
 	private Map resultMap;
+	private String appendCaptions[]; // 多对象拆分的结果名称标识
 
 	ArrayList<Dataset> datasetsArrayList;
 
@@ -83,6 +84,12 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 		this.resultMap = saveMap;
 	}
 
+	public MapClipProgressCallable(Vector vector, Map saveMap, String appendCaptions[]) {
+		this.VectorInfo = vector;
+		this.resultMap = saveMap;
+		this.appendCaptions = appendCaptions;
+	}
+
 	@Override
 	public Boolean call() throws Exception {
 		try {
@@ -92,88 +99,121 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 
 			long startTime = System.currentTimeMillis();
 			this.datasetsArrayList = new ArrayList<>();//结果数据集集合，用于取消删除回退
-			ArrayList<Dataset> datasetsClipped = new ArrayList<>();//裁剪过的数据集集合，避免一个数据集多次裁剪
 
 			IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+			// 目前，选择的用于裁剪的对象都被合并为一个大的georegion（选择对象裁剪），因此需要针对选择对象裁剪的拆分裁剪，提取单个小对象
+			GeoRegion bigRegion = (GeoRegion) ((Vector) (this.VectorInfo.get(0))).get(COLUMN_INDEX_USERREGION);
+			GeoRegion allRegions[];
+			if (this.appendCaptions != null) {
+				allRegions = new GeoRegion[bigRegion.getPartCount()];
+				for (int i = 0; i < bigRegion.getPartCount(); i++) {
+					GeoRegion tempRegion = new GeoRegion(bigRegion.getPart(i));
+					allRegions[i] = tempRegion.clone();
+				}
+			} else {
+				allRegions = new GeoRegion[1];
+				allRegions[0] = bigRegion;
+			}
+			String origionSaveMapName = "";
+			Map origionMap = null;
+			if (this.resultMap != null) {
+				origionSaveMapName = this.resultMap.getName();
+				origionMap = new Map(formMap.getMapControl().getMap().getWorkspace());
+				origionMap.fromXML(this.resultMap.toXML());
+			}
 
 			Thread.currentThread().sleep(1000);
-			for (int i = 0; i < this.VectorInfo.size(); i++) {
-				try {
-					Dataset dataset = (Dataset) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_SOURCEDATASET);
-					if (percentListener != null && percentListener.isCancel) {
-						this.resultMap = null;
-						if (datasetsArrayList != null && datasetsArrayList.size() > 0) {
-							for (int j = 0; j < datasetsArrayList.size(); j++) {
-								Datasets datasets = datasetsArrayList.get(j).getDatasource().getDatasets();
-								datasets.delete(datasetsArrayList.get(j).getName());
-							}
-							datasetsArrayList = null;
-						}
-						break;
-					}
-					if (percentListener == null) {
-						percentListener = new PercentListener(i, this.VectorInfo.size(), dataset.getName());
-						RasterClip.addSteppedListener(percentListener);
-						VectorClip.addSteppedListener(percentListener);
-					} else {
-						percentListener.i = i;
-						percentListener.datasetName = dataset.getName();
-					}
-					String targetDatasetName;
-					Layer layer = (Layer) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_LAYER);
-					Dataset sourceDataset = (Dataset) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_SOURCEDATASET);
-					PrjCoordSys prjCoordSys = sourceDataset.getPrjCoordSys();
-					GeoRegion userRegion = (GeoRegion) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_USERREGION);
-					//组件：根据源投影坐标系与目标投影坐标系对几何对象进行投影转换，结果将直接改变源几何对象。
-					GeoRegion copyRegion = new GeoRegion(userRegion);
-					if (formMap.getMapControl().getMap().isDynamicProjection() &&
-							!sourceDataset.getPrjCoordSys().equals(formMap.getMapControl().getMap().getPrjCoordSys())) {
-						CoordSysTranslator.convert(copyRegion,
-								formMap.getMapControl().getMap().getPrjCoordSys(),
-								sourceDataset.getPrjCoordSys(),
-								formMap.getMapControl().getMap().getDynamicPrjTransParameter(),
-								formMap.getMapControl().getMap().getDynamicPrjTransMethond());
-					}
-					boolean isClipInRegion = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISCLIPINREGION);
-					boolean isEraseSource = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE);
-					boolean isExactClip = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE);
-					Datasource targetDatasource = (Datasource) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETSOURCE);
-					targetDatasetName = (String) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETNAME);
 
-					if (!datasetsClipped.contains(sourceDataset)) {
-						if (targetDatasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
-							targetDatasetName = DatasetUtilities.getAvailableDatasetName(targetDatasource, targetDatasetName, null);
-						}
-						if (sourceDataset instanceof DatasetVector) {
-							this.resultDataset = VectorClip.clipDatasetVector((DatasetVector) sourceDataset, copyRegion, isClipInRegion,
-									isEraseSource, targetDatasource, targetDatasetName);
-						} else {
-							this.resultDataset = RasterClip.clip(sourceDataset, copyRegion, isClipInRegion,
-									isExactClip, targetDatasource, targetDatasetName);
-						}
-						if (resultDataset != null) {
-							datasetsClipped.add(sourceDataset);
-						}
-						this.resultDataset.setPrjCoordSys(prjCoordSys);
-					} else {
-						if (this.resultMap != null) {
-							MapUtilities.findLayerByName(this.resultMap, layer.getName()).setDataset(targetDatasource.getDatasets().get(targetDatasetName));
-						}
-						this.resultDataset = null;
+			for (int t = 0; t < allRegions.length; t++) {
+				if (this.resultMap != null && this.appendCaptions != null) {
+					if (t != 0) {
+						this.resultMap = new Map(formMap.getMapControl().getMap().getWorkspace());
+						this.resultMap.fromXML(origionMap.toXML());
 					}
-					sourceDataset.setPrjCoordSys(prjCoordSys);
-					if (this.resultDataset != null) {
-						datasetsArrayList.add(this.resultDataset);
-						if (this.resultMap != null) {
-							MapUtilities.findLayerByName(this.resultMap, layer.getName()).setDataset(this.resultDataset);
-						}
-					}
-				} catch (Exception e) {
-					continue;
+					this.resultMap.setName(origionSaveMapName + "_" + this.appendCaptions[t]);
 				}
-			}
-			if (this.resultMap != null) {
-				formMap.getMapControl().getMap().getWorkspace().getMaps().add(this.resultMap.getName(), this.resultMap.toXML());
+				ArrayList<Dataset> datasetsClipped = new ArrayList<>();//裁剪过的数据集集合，避免一个数据集多次裁剪
+				for (int i = 0; i < this.VectorInfo.size(); i++) {
+					try {
+						Dataset dataset = (Dataset) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_SOURCEDATASET);
+						if (percentListener != null && percentListener.isCancel) {
+							this.resultMap = null;
+							if (datasetsArrayList != null && datasetsArrayList.size() > 0) {
+								for (int j = 0; j < datasetsArrayList.size(); j++) {
+									Datasets datasets = datasetsArrayList.get(j).getDatasource().getDatasets();
+									datasets.delete(datasetsArrayList.get(j).getName());
+								}
+								datasetsArrayList = null;
+							}
+							break;
+						}
+						if (percentListener == null) {
+							percentListener = new PercentListener(i, this.VectorInfo.size() * allRegions.length, dataset.getName());
+							RasterClip.addSteppedListener(percentListener);
+							VectorClip.addSteppedListener(percentListener);
+						} else {
+							percentListener.i = t * this.VectorInfo.size() + i + 1;
+							percentListener.datasetName = dataset.getName();
+						}
+						String targetDatasetName;
+						Layer layer = (Layer) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_LAYER);
+						Dataset sourceDataset = (Dataset) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_SOURCEDATASET);
+						PrjCoordSys prjCoordSys = sourceDataset.getPrjCoordSys();
+						//GeoRegion userRegion = (GeoRegion) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_USERREGION);
+						//组件：根据源投影坐标系与目标投影坐标系对几何对象进行投影转换，结果将直接改变源几何对象。
+						//GeoRegion copyRegion= new GeoRegion(allRegions[t]);
+						GeoRegion copyRegion = new GeoRegion(allRegions[t]);
+						if (formMap.getMapControl().getMap().isDynamicProjection() &&
+								!sourceDataset.getPrjCoordSys().equals(formMap.getMapControl().getMap().getPrjCoordSys())) {
+							CoordSysTranslator.convert(copyRegion,
+									formMap.getMapControl().getMap().getPrjCoordSys(),
+									sourceDataset.getPrjCoordSys(),
+									formMap.getMapControl().getMap().getDynamicPrjTransParameter(),
+									formMap.getMapControl().getMap().getDynamicPrjTransMethond());
+						}
+						boolean isClipInRegion = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISCLIPINREGION);
+						boolean isEraseSource = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE);
+						boolean isExactClip = (Boolean) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_ISEXACTCLIPorISERASESOURCE);
+						Datasource targetDatasource = (Datasource) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETSOURCE);
+						targetDatasetName = (String) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETNAME);
+						if (this.appendCaptions != null) {
+							targetDatasetName = targetDatasetName + "_" + this.appendCaptions[t];
+						}
+						if (!datasetsClipped.contains(sourceDataset)) {
+							if (!targetDatasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {
+								targetDatasetName = DatasetUtilities.getAvailableDatasetName(targetDatasource, targetDatasetName, null);
+							}
+							if (sourceDataset instanceof DatasetVector) {
+								this.resultDataset = VectorClip.clipDatasetVector((DatasetVector) sourceDataset, copyRegion, isClipInRegion,
+										isEraseSource, targetDatasource, targetDatasetName);
+							} else {
+								this.resultDataset = RasterClip.clip(sourceDataset, copyRegion, isClipInRegion,
+										isExactClip, targetDatasource, targetDatasetName);
+							}
+							if (resultDataset != null) {
+								datasetsClipped.add(sourceDataset);
+							}
+							this.resultDataset.setPrjCoordSys(prjCoordSys);
+						} else {
+							if (this.resultMap != null) {
+								MapUtilities.findLayerByName(this.resultMap, layer.getName()).setDataset(targetDatasource.getDatasets().get(targetDatasetName));
+							}
+							this.resultDataset = null;
+						}
+						sourceDataset.setPrjCoordSys(prjCoordSys);
+						if (this.resultDataset != null) {
+							datasetsArrayList.add(this.resultDataset);
+							if (this.resultMap != null) {
+								MapUtilities.findLayerByName(this.resultMap, layer.getName()).setDataset(this.resultDataset);
+							}
+						}
+					} catch (Exception e) {
+						continue;
+					}
+				}
+				if (this.resultMap != null) {
+					formMap.getMapControl().getMap().getWorkspace().getMaps().add(this.resultMap.getName(), this.resultMap.toXML());
+				}
 			}
 			long endTime = System.currentTimeMillis();
 			String time = String.valueOf((endTime - startTime) / 1000.0);
