@@ -209,6 +209,8 @@ public class WorkflowParser {
 			result = new MetaProcessMedianCenter();
 		} else if (MetaKeys.Directional.equals(key)) {
 			result = new MetaProcessDirectional();
+		} else if (MetaKeys.LinearDirectionalMean.equals(key)) {
+			result = new MetaProcessLinearDirectionalMean();
 		} else if (MetaKeys.StandardDistance.equals(key)) {
 			result = new MetaProcessStandardDistance();
 		} else if (MetaKeys.autoCorrelation.equals(key)) {
