@@ -38,7 +38,7 @@ public class CtrlActionWorkspaceManagerMapCacheBuilder extends CtrlAction {
 			if (map.open(mapName)) {
 //                DialogMapCacheBuilder dialogMapCacheBuilder = new DialogMapCacheBuilder((JFrame) Application.getActiveApplication().getMainFrame(), true, map);
 //                DialogResult result = dialogMapCacheBuilder.showDialog();
-				CacheUtilities.startMapClip(map);
+//				CacheUtilities.startMapClip(map);
 			} else {
 				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_OpenMapFailed"));
 			}

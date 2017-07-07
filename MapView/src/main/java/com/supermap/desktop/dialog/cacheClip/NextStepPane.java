@@ -68,10 +68,10 @@ public class NextStepPane extends JPanel implements IState {
 
 	private JLabel labelTaskStorePath;
 	private WarningOrHelpProvider helpForTaskStorePath;
-	public JFileChooserControl fileChooserControlTaskPath;
+//	public JFileChooserControl fileChooserControlTaskPath;
 	protected JCheckBox checkBoxClipOnThisComputer;
 	private JCheckBox checkBoxMultiProcessClip;
-	private JPanel panelMultiProcess;
+//	private JPanel panelMultiProcess;
 	private DialogMapCacheClipBuilder parent;
 
 	private SelectObjectListener selectObjectListener = new SelectObjectListener() {
@@ -276,22 +276,22 @@ public class NextStepPane extends JPanel implements IState {
 		panelImageParam.add(this.checkBoxBackgroundTransparency, new GridBagConstraintsHelper(0, 3, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
 		panelImageParam.add(this.checkBoxFullFillCacheImage, new GridBagConstraintsHelper(0, 4, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 10, 5, 10));
 		panelImageParam.add(new JPanel(), new GridBagConstraintsHelper(0, 5, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		if (cmdType != DialogMapCacheClipBuilder.SingleProcessClip && cmdType != DialogMapCacheClipBuilder.ResumeProcessClip
-				&& cmdType != DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
-			JPanel innerPanel = new JPanel();
-			innerPanel.setLayout(new GridBagLayout());
-			innerPanel.add(this.labelTaskStorePath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
-			innerPanel.add(this.helpForTaskStorePath, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 0, 5, 0));
-			innerPanel.add(this.fileChooserControlTaskPath, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
-			innerPanel.add(this.checkBoxClipOnThisComputer, new GridBagConstraintsHelper(0, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
-			innerPanel.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-			panelMultiProcess = new CompTitledPane(this.checkBoxMultiProcessClip, innerPanel);
-		}
+//		if (cmdType != DialogMapCacheClipBuilder.SingleProcessClip && cmdType != DialogMapCacheClipBuilder.ResumeProcessClip
+//				&& cmdType != DialogMapCacheClipBuilder.SingleUpdateProcessClip) {
+//			JPanel innerPanel = new JPanel();
+//			innerPanel.setLayout(new GridBagLayout());
+//			innerPanel.add(this.labelTaskStorePath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
+//			innerPanel.add(this.helpForTaskStorePath, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 0, 5, 0));
+//			innerPanel.add(this.fileChooserControlTaskPath, new GridBagConstraintsHelper(2, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
+//			innerPanel.add(this.checkBoxClipOnThisComputer, new GridBagConstraintsHelper(0, 1, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
+//			innerPanel.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+//			panelMultiProcess = new CompTitledPane(this.checkBoxMultiProcessClip, innerPanel);
+//		}
 		this.setLayout(new GridBagLayout());
 		this.add(this.panelCacheRange, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 10, 5, 5).setWeight(1, 0));
 		this.add(this.panelIndexRange, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 0, 5, 10).setWeight(1, 0));
 		this.add(panelImageParam, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 10, 5, 5).setWeight(1, 0));
-		this.add(this.panelMultiProcess, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
+//		this.add(this.panelMultiProcess, new GridBagConstraintsHelper(1, 1, 1, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
 		this.add(new JPanel(), new GridBagConstraintsHelper(0, 2, 2, 1).setAnchor(GridBagConstraints.NORTH).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
 		this.panelCacheRange.setPreferredSize(new Dimension(400, 300));
 	}
@@ -358,7 +358,7 @@ public class NextStepPane extends JPanel implements IState {
 
 	private void initComponents() {
 		this.enabledListeners = new Vector<>();
-		this.panelMultiProcess = new JPanel();
+//		this.panelMultiProcess = new JPanel();
 		Map activeMap = this.mapCacheBuilder.getMap();
 		if (null == activeMap) {
 			activeMap = MapUtilities.getActiveMap();
@@ -385,16 +385,16 @@ public class NextStepPane extends JPanel implements IState {
 		this.checkBoxBackgroundTransparency = new JCheckBox();
 		this.labelTaskStorePath = new JLabel();
 		this.helpForTaskStorePath = new WarningOrHelpProvider(MapViewProperties.getString("String_HelpForTaskStorePath"), false);
-		this.fileChooserControlTaskPath = new JFileChooserControl();
-		String moduleName = "ChooseCacheTaskDirectories";
-		if (!SmFileChoose.isModuleExist(moduleName)) {
-			SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
-					moduleName, "GetDirectories");
-		}
-
-		SmFileChoose fileChoose = new SmFileChoose(moduleName);
-		this.fileChooserControlTaskPath.setFileChooser(fileChoose);
-		this.fileChooserControlTaskPath.setPath(fileChoose.getModuleLastPath());
+//		this.fileChooserControlTaskPath = new JFileChooserControl();
+//		String moduleName = "ChooseCacheTaskDirectories";
+//		if (!SmFileChoose.isModuleExist(moduleName)) {
+//			SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
+//					moduleName, "GetDirectories");
+//		}
+//
+//		SmFileChoose fileChoose = new SmFileChoose(moduleName);
+//		this.fileChooserControlTaskPath.setFileChooser(fileChoose);
+//		this.fileChooserControlTaskPath.setPath(fileChoose.getModuleLastPath());
 		this.checkBoxClipOnThisComputer = new JCheckBox();
 		this.checkBoxMultiProcessClip = new JCheckBox();
 		this.checkBoxMultiProcessClip.setSelected(true);
@@ -447,7 +447,7 @@ public class NextStepPane extends JPanel implements IState {
 		this.smSpinnerImageCompressionRatio.setEnabled(enabled);
 		this.checkBoxFullFillCacheImage.setEnabled(enabled);
 		this.checkBoxBackgroundTransparency.setEnabled(enabled);
-		this.fileChooserControlTaskPath.setEnabled(enabled);
+//		this.fileChooserControlTaskPath.setEnabled(enabled);
 		this.checkBoxClipOnThisComputer.setEnabled(enabled);
 		this.checkBoxMultiProcessClip.setEnabled(enabled);
 	}
