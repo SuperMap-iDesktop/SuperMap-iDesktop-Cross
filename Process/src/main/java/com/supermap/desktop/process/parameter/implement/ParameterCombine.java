@@ -82,6 +82,7 @@ public class ParameterCombine extends AbstractParameter {
 	private void buildPanel() {
 		firePanelRebuildListener();
 	}
+
 	@Override
 	public String getDescribe() {
 		return describe;
@@ -111,11 +112,11 @@ public class ParameterCombine extends AbstractParameter {
 		return parameterList;
 	}
 
-    public void setCombineType(String combineType) {
-        this.combineType = combineType;
-    }
+	public void setCombineType(String combineType) {
+		this.combineType = combineType;
+	}
 
-    public String getCombineType() {
+	public String getCombineType() {
 		return combineType;
 	}
 

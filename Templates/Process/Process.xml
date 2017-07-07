@@ -122,7 +122,7 @@
                 <process key="ThiessenPolygon" name="泰森多边形"/>
                 <process key="ComputeDistance" name="距离计算"/>
             </process>
-            <process name="地统计分析">
+            <process name="空间统计分析">
                 <process name="度量地理分布">//SpatialMeasure
                     <process key="CentralElement" name="中心要素"/>
                     <process key="MeanCenter" name="平均中心"/>
@@ -135,7 +135,7 @@
                     <process key="autoCorrelation" name="空间自相关"/>
                     <process key="highOrLowClustering" name="高低值聚类"/>
                     <process key="incrementalAutoCorrelation" name="增量空间自相关"/>
-                    <process key="averageNearestNeighbor" name="平均最邻近统计"/>
+                    <process key="averageNearestNeighbor" name="平均最近邻"/>
                 </process>
                 <process name="聚类分布">//ClusteringDistributions
                     <process key="clusterOutlierAnalyst" name="聚类和异常值分析"/>

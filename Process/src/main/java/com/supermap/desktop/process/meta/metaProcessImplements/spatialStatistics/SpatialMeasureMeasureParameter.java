@@ -66,6 +66,9 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 		parameterStatisticsTypesUserDefine.setEnabled(currentDataset != null);
 	}
 
+	/**
+	 * 参数设置面板布局设计，不同的功能需要的参数不同，还需做调整-yuanR
+	 */
 	private void initLayout() {
 		if (metaKeys.equals(MetaKeys.CentralElement)) {
 			this.addParameters(parameterDistanceMethodComboBox);
@@ -76,14 +79,13 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 		if (metaKeys.equals(MetaKeys.LinearDirectionalMean)) {
 			this.addParameters(parameterIgnoreDirectionCheckBox);
 		}
-		this.addParameters(parameterGroupFieldComboBox);
-        if (metaKeys.equals(MetaKeys.Directional) || metaKeys.equals(MetaKeys.StandardDistance)) {
-            this.addParameters(parameterEllipseSizeComboBox);
-        }
-        this.addParameters(parameterGroupFieldComboBox);
+		if (metaKeys.equals(MetaKeys.Directional) || metaKeys.equals(MetaKeys.StandardDistance)) {
+			this.addParameters(parameterEllipseSizeComboBox);
+		}
 		if (metaKeys.equals(MetaKeys.CentralElement)) {
 			this.addParameters(parameterSelfWeightFieldComboBox);
 		}
+		this.addParameters(parameterGroupFieldComboBox);
 		this.addParameters(parameterWeightFieldComboBox);
 		this.addParameters(parameterStatisticsTypesLabel);
 		this.addParameters(parameterStatisticsTypesUserDefine);
