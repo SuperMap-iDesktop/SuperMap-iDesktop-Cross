@@ -51,8 +51,8 @@ public class MetaProcessAverageNearestNeighbor extends MetaProcess {
 		parameterCombineSetting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
 		// 结果展示
 		ParameterCombine parameterCombineResult = new ParameterCombine();
-		parameterCombineResult.addParameters(parameterResult);
 		parameterCombineResult.setDescribe(ProcessProperties.getString("String_result"));
+		parameterCombineResult.addParameters(parameterResult);
 
 		parameters.addParameters(parameterCombine, parameterCombineSetting);
 		parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.VECTOR, parameterCombine);
