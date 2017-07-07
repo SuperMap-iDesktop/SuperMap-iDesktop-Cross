@@ -10,6 +10,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
 
 /**
  * @author XiaJT
+ * 空间自相关分析
  */
 public class MetaProcessAutoCorrelation extends MetaProcessAnalyzingPatterns {
 
