@@ -15,21 +15,17 @@ import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
+import java.text.DecimalFormat;
+
 /**
  * @author XiaJT
+ *         增量空间自相关
  */
 public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 	// TODO: 2017/4/27
@@ -42,6 +38,8 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 	private ParameterTextField parameterTextFieldIncrementalDistance = new ParameterTextField();
 	private ParameterTextField parameterTextFieldIncrementalNumber = new ParameterTextField();
 	private ParameterComboBox parameterDistanceMethod = new ParameterComboBox();
+	// 添加展示结果的textArea--yuanR
+	private ParameterTextArea parameterResult = new ParameterTextArea();
 
 	public MetaProcessIncrementalAutoCorrelation() {
 		initParameters();
@@ -58,18 +56,23 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 		parameterTextFieldIncrementalDistance.setDescribe(ProcessProperties.getString("String_IncrementalDistance"));
 		parameterTextFieldIncrementalNumber.setDescribe(ProcessProperties.getString("String_IncrementalNumber"));
 		parameterDistanceMethod.setDescribe(ProcessProperties.getString("String_DistanceMethod"));
-
+		// 数据源
 		ParameterCombine parameterCombine = new ParameterCombine();
 		parameterCombine.addParameters(datasource, dataset);
 		parameterCombine.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
-
+		// 参数设置
 		ParameterCombine parameterCombineSetting = new ParameterCombine();
 		parameterCombineSetting.addParameters(parameterFieldComboBox, parameterCheckBox, parameterTextFieldBeginDistance,
 				parameterTextFieldIncrementalDistance, parameterTextFieldIncrementalNumber, parameterDistanceMethod);
 		parameterCombineSetting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
+		// 结果展示
+		ParameterCombine parameterCombineResult = new ParameterCombine();
+		parameterCombineResult.addParameters(parameterResult);
+		parameterCombineResult.setDescribe(ProcessProperties.getString("String_result"));
 
 		parameters.setParameters(parameterCombine, parameterCombineSetting);
 		parameters.addInputParameters(INPUT_SOURCE_DATASET, DatasetTypes.VECTOR, parameterCombine);
+		parameters.addParameters(parameterCombineResult);
 	}
 
 	private void initParameterState() {
@@ -127,11 +130,42 @@ public class MetaProcessIncrementalAutoCorrelation extends MetaProcess {
 		incrementalParameter.setIncrementalDistance(Double.valueOf((String) parameterTextFieldIncrementalDistance.getSelectedItem()));
 		incrementalParameter.setDistanceMethod((DistanceMethod) ((ParameterDataNode) parameterDistanceMethod.getSelectedItem()).getData());
 		try {
-            fireRunning(new RunningEvent(this, 0, "start"));
+			fireRunning(new RunningEvent(this, 0, "start"));
 			AnalyzingPatterns.addSteppedListener(steppedListener);
 			IncrementalResult[] incrementalResults = AnalyzingPatterns.incrementalAutoCorrelation(datasetVector, incrementalParameter);
 			isSuccessful = incrementalResults != null && incrementalResults.length > 0;
-            fireRunning(new RunningEvent(this, 100, "finished"));
+			// 当分析过程无误时，对分析结果进行输出-yuanR
+			if (isSuccessful) {
+				DecimalFormat dcmFmtDistance = new DecimalFormat("0.00");
+				DecimalFormat dcmFmtOthers = new DecimalFormat("0.000000");
+				// 记录每条记录的z值和增量距离
+				double z = 0.0;
+				double distance = 0.0;
+
+				String result = "";
+				result += ProcessProperties.getString("String_IncrementalDistance") + "    "
+						+ ProcessProperties.getString("String_Morans") + "       "
+						+ ProcessProperties.getString("String_Expectation") + "       "
+						+ ProcessProperties.getString("String_Variance") + "        "
+						+ ProcessProperties.getString("String_ZScor") + "        "
+						+ ProcessProperties.getString("String_PValue") + "\n";
+				for (int i = 0; i < incrementalResults.length; i++) {
+					// 在循环输出值的时候，筛选出最大峰值
+					result += dcmFmtDistance.format(incrementalResults[i].getDistance()) + "     "
+							+ dcmFmtOthers.format(incrementalResults[i].getIndex()) + "     "
+							+ dcmFmtOthers.format(incrementalResults[i].getExpectation()) + "     "
+							+ dcmFmtOthers.format(incrementalResults[i].getVariance()) + "     "
+							+ dcmFmtOthers.format(incrementalResults[i].getZScore()) + "     "
+							+ dcmFmtOthers.format(incrementalResults[i].getPValue()) + "\n";
+					if (incrementalResults[i].getZScore() > z) {
+						z = incrementalResults[i].getZScore();
+						distance = incrementalResults[i].getDistance();
+					}
+				}
+				result += ProcessProperties.getString("String_Max_Peak") + dcmFmtDistance.format(distance) + "," + dcmFmtOthers.format(z) + "\n";
+				parameterResult.setSelectedItem(result);
+			}
+			fireRunning(new RunningEvent(this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e.getMessage());
 		} finally {
