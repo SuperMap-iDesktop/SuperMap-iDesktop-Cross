@@ -112,6 +112,8 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 
 		this.datasetComboBox.setShowNullValue(parameterSingleDataset.isShowNullValue());
 		this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
+		// 设置数据集可编辑,存疑：是否有必要设置为可编辑-yuanR 2017.7.10
+//		this.datasetComboBox.setEditable(true);
 	}
 
 	private void setSelectedDatasource(Datasource datasource) {
@@ -210,6 +212,7 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 				}
 			}
 		});
+
 		this.datasetComboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -224,6 +227,7 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 				}
 			}
 		});
+
 		this.parameterSingleDataset.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -264,6 +268,5 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 		parameterSingleDataset.setSelectedItem(null);
 		datasetComboBox.setDatasets(null);
 	}
-
 
 }
