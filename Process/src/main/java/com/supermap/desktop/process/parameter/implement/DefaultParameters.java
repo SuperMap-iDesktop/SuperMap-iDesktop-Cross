@@ -46,18 +46,6 @@ public class DefaultParameters implements IParameters {
 		this.process = process;
 		packages.add(new ParameterClassBundleNode("com.supermap.desktop.process.parameter.ParameterPanels", "SuperMap.Desktop.Process"));
 
-		this.process.getInputs().addValueProviderBindListener(new ValueProviderBindListener() {
-			@Override
-			public void valueBind(ValueProviderBindEvent event) {
-				int type = event.getType();
-				InputData inputData = event.getInputData();
-				if (type == ValueProviderBindEvent.BIND) {
-					inputParametersManager.bind(inputData.getName());
-				} else {
-					inputParametersManager.unBind(inputData.getName());
-				}
-			}
-		});
 		inputParametersManager.addPropertyChangedListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {

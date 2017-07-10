@@ -3,8 +3,14 @@ package com.supermap.desktop.process.parameter.implement;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.controls.ControlsProperties;
+import com.supermap.desktop.event.WorkFlowsChangedEvent;
+import com.supermap.desktop.event.WorkFlowsChangedListener;
 import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.ProcessResources;
+import com.supermap.desktop.process.WorkflowCanvas;
+import com.supermap.desktop.process.core.DataMatch;
+import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.events.*;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
 import com.supermap.desktop.process.graphics.connection.IGraphConnection;
@@ -19,6 +25,8 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IConGetter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.IParameters;
+import com.supermap.desktop.process.parameter.interfaces.datas.InputData;
+import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 
 import javax.swing.*;
@@ -32,10 +40,10 @@ import java.util.Collections;
  */
 public class InputParametersManager {
 	private IParameters parameters;
-	private ArrayList<InputParameterDataNode> list = new ArrayList<>();
 	private boolean isSelecting = false;
-	private ArrayList<PropertyChangeListener> listeners = new ArrayList<>();
 	private boolean isDeleting = false;
+	private ArrayList<InputParameterDataNode> list = new ArrayList<>();
+	private ArrayList<PropertyChangeListener> listeners = new ArrayList<>();
 
 	public InputParametersManager(IParameters parameters) {
 		this.parameters = parameters;
@@ -56,53 +64,16 @@ public class InputParametersManager {
 		parameterComboBox.setParameters(parameters);
 		parameterComboBox.setDescribe(name + ":");
 		reloadParameterComboBox(parameterComboBox, parameters.getInputs().getData(name).getType());
-		parameterComboBox.addPropertyListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				if (!isSelecting && evt.getPropertyName().equals(ParameterComboBox.comboBoxValue)) {
-					Object newValue = evt.getNewValue();
-					if (isDeleting) {
-						newValue = null;
-					}
-					firePropertyChangedListener(new PropertyChangeEvent(InputParametersManager.this, name, evt.getOldValue(), newValue));
-				}
-			}
-		});
+		parameterComboBox.addPropertyListener(new ParameterComboBoxPropertyChangeListener(name));
+
 		IForm activeForm = Application.getActiveApplication().getActiveForm();
 		if (activeForm instanceof FormWorkflow) {
-			GraphCanvas canvas = ((FormWorkflow) activeForm).getCanvas();
-			canvas.addGraphCreatedListener(new GraphCreatedListener() {
-				@Override
-				public void graphCreated(GraphCreatedEvent e) {
-					if (e.getGraph() instanceof OutputGraph && ((OutputGraph) e.getGraph()).getProcessGraph().getProcess() != parameters.getProcess()
-							&& parameters.getInputs().getData(name).getType().contains(((OutputGraph) e.getGraph()).getProcessData().getType())) {// 不一定都是OutputGraph
-						parameterComboBox.addItem(new ParameterDataNode(((OutputGraph) e.getGraph()).getProcessGraph().getTitle() + "_" + ((OutputGraph) e.getGraph()).getTitle(), e.getGraph()));
-					}
-				}
-			});
-			canvas.addGraphRemovingListener(new GraphRemovingListener() {
-				@Override
-				public void graphRemoving(GraphRemovingEvent e) {
-					isDeleting = true;
-					try {
-						IGraph graph = e.getGraph();
-						if (graph instanceof OutputGraph) {
-							parameterComboBox.removeItem(e.getGraph());
-						} else if (graph instanceof ConnectionLineGraph) {
-							IGraphConnection connection = ((ConnectionLineGraph) graph).getConnection();
-							if (connection.getStart() instanceof OutputGraph && connection.getEnd() instanceof ProcessGraph
-									&& ((ProcessGraph) connection.getEnd()).getProcess() == parameters.getProcess()) {
-								unBind(connection);
-							}
-						}
-					} catch (Exception e1) {
-						Application.getActiveApplication().getOutput().output(e1);
-					} finally {
-						isDeleting = false;
-					}
-				}
-			});
+			WorkflowCanvas canvas = ((FormWorkflow) activeForm).getCanvas();
+			canvas.getWorkflow().addWorkflowChangeListener(new WorkflowChangeHandler(name, parameterComboBox));
+			canvas.getWorkflow().addRelationAddedListener(new RelationAddedHandler());
+			canvas.getWorkflow().addRelationRemovingListener(new RelationRemovingHandler());
 		}
+
 		ParameterCombine combine = new ParameterCombine();
 		combine.setDescribe(ControlsProperties.getString("String_GroupBox_SourceDataset"));
 		combine.addParameters(parameterComboBox);
@@ -125,17 +96,6 @@ public class InputParametersManager {
 		list.add(inputParameterDataNode);
 	}
 
-	public void unBind(IGraphConnection connection) {
-		String name = connection.getMessage();
-		for (InputParameterDataNode inputParameterDataNode : list) {
-			if (inputParameterDataNode.getName().equals(name)) {
-				inputParameterDataNode.getParameterSwitch().switchParameter("0");
-				parameters.getInputs().unbind(name);
-				break;
-			}
-		}
-	}
-
 	private void firePropertyChangedListener(PropertyChangeEvent propertyChangeEvent) {
 		for (PropertyChangeListener listener : listeners) {
 			listener.propertyChange(propertyChangeEvent);
@@ -146,37 +106,65 @@ public class InputParametersManager {
 		this.listeners.add(listener);
 	}
 
-	public void bind(String name) {
+	public void bind(InputData toInput, OutputData fromOutput) {
 		try {
 			isSelecting = true;
 			for (InputParameterDataNode inputParameterDataNode : list) {
-				if (inputParameterDataNode.getName().equals(name)) {
+				if (inputParameterDataNode.getName().equals(toInput.getName())) {
 					ParameterComboBox parameterComboBox = (ParameterComboBox) ((ParameterCombine) inputParameterDataNode.getParameterSwitch().getParameterByTag("1")).getParameterList().get(0);
 					inputParameterDataNode.getParameterSwitch().switchParameter("1");
-					boolean isSelected = false;
+
 					for (int i = 0; i < parameterComboBox.getItemCount(); i++) {
-						OutputGraph outputGraph = (OutputGraph) parameterComboBox.getItemAt(i).getData();
-						GraphCanvas canvas = outputGraph.getCanvas();
-						IGraph[] nextGraphs = canvas.getConnection().getNextGraphs(outputGraph);
-						for (IGraph nextGraph : nextGraphs) {
-							if (nextGraph instanceof ProcessGraph && ((ProcessGraph) nextGraph).getProcess() == parameters.getProcess()) {
-								parameterComboBox.setSelectedItem(parameterComboBox.getItemAt(i));
-								isSelected = true;
-								break;
-							}
-						}
-						if (isSelected) {
+						OutputData outputData = (OutputData) parameterComboBox.getItemAt(i).getData();
+						if (outputData == fromOutput) {
+							parameterComboBox.setSelectedItem(parameterComboBox.getItemAt(i));
 							break;
 						}
 					}
 					break;
 				}
 			}
-			isSelecting = false;
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			isSelecting = false;
 		}
 	}
+
+//	public void bind(String name) {
+//		try {
+//			isSelecting = true;
+//			for (InputParameterDataNode inputParameterDataNode : list) {
+//				if (inputParameterDataNode.getName().equals(name)) {
+//					ParameterComboBox parameterComboBox = (ParameterComboBox) ((ParameterCombine) inputParameterDataNode.getParameterSwitch().getParameterByTag("1")).getParameterList().get(0);
+//					inputParameterDataNode.getParameterSwitch().switchParameter("1");
+//					boolean isSelected = false;
+//
+//					for (int i = 0; i < parameterComboBox.getItemCount(); i++) {
+//						OutputData outputData = (OutputData) parameterComboBox.getItemAt(i).getData();
+//						OutputGraph outputGraph = (OutputGraph) parameterComboBox.getItemAt(i).getData();
+//						GraphCanvas canvas = outputGraph.getCanvas();
+//						IGraph[] nextGraphs = canvas.getConnection().getNextGraphs(outputGraph);
+//						for (IGraph nextGraph : nextGraphs) {
+//							if (nextGraph instanceof ProcessGraph && ((ProcessGraph) nextGraph).getProcess() == parameters.getProcess()) {
+//								parameterComboBox.setSelectedItem(parameterComboBox.getItemAt(i));
+//								isSelected = true;
+//								break;
+//							}
+//						}
+//
+//						if (isSelected) {
+//							break;
+//						}
+//					}
+//					break;
+//				}
+//			}
+//			isSelecting = false;
+//		} catch (Exception e) {
+//			Application.getActiveApplication().getOutput().output(e);
+//		}
+//	}
 
 	public void unBind(String name) {
 		for (InputParameterDataNode inputParameterDataNode : list) {
@@ -233,6 +221,120 @@ public class InputParametersManager {
 
 		public void setParameterSwitch(ParameterSwitch parameterSwitch) {
 			this.parameterSwitch = parameterSwitch;
+		}
+	}
+
+	private class WorkflowChangeHandler implements WorkflowChangeListener {
+		private String name;
+		private ParameterComboBox comboBox;
+
+		public WorkflowChangeHandler(String name, ParameterComboBox comboBox) {
+			this.name = name;
+			this.comboBox = comboBox;
+		}
+
+		@Override
+		public void workflowChange(WorkflowChangeEvent e) {
+			if (e.getType() == WorkflowChangeEvent.ADDED) {
+				if (e.getProcess() != parameters.getProcess()) {
+					OutputData[] outputs = e.getProcess().getOutputs().getDatas();
+
+					for (int i = 0; i < outputs.length; i++) {
+						OutputData output = outputs[i];
+
+						if (parameters.getInputs().getData(name).getType().contains(output.getType())) {
+							this.comboBox.addItem(new ParameterDataNode(e.getProcess().getTitle() + "_" + output.getName(), output));
+						}
+					}
+				}
+			} else if (e.getType() == WorkflowChangeEvent.REMOVED) {
+				isDeleting = true;
+
+				try {
+					IProcess process = e.getProcess();
+					OutputData[] outputs = process.getOutputs().getDatas();
+
+					for (int i = 0; i < outputs.length; i++) {
+						this.comboBox.removeItem(outputs[i]);
+					}
+				} catch (Exception e1) {
+					Application.getActiveApplication().getOutput().output(e1);
+				} finally {
+					isDeleting = false;
+				}
+			}
+		}
+	}
+
+	private class RelationAddedHandler implements RelationAddedListener<IProcess> {
+
+		@Override
+		public void relationAdded(RelationAddedEvent<IProcess> e) {
+			if (e.getRelation().getTo() == parameters.getProcess() && e.getRelation() instanceof DataMatch) {
+				DataMatch dataMatch = (DataMatch) e.getRelation();
+				bind(dataMatch.getToInputData(), dataMatch.getFromOutputData());
+			}
+		}
+	}
+
+
+	private class RelationRemovingHandler implements RelationRemovingListener<IProcess> {
+
+		@Override
+		public void relaitonRemoving(RelationRemovingEvent<IProcess> e) {
+			if (e.getRelation().getTo() == parameters.getProcess() && e.getRelation() instanceof DataMatch) {
+				DataMatch dataMatch = (DataMatch) e.getRelation();
+				unBind(dataMatch.getToInputData().getName());
+			}
+		}
+	}
+
+	private class ParameterComboBoxPropertyChangeListener implements PropertyChangeListener {
+		private String name;
+
+		public ParameterComboBoxPropertyChangeListener(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (!isSelecting && evt.getPropertyName().equals(ParameterComboBox.comboBoxValue)) {
+				Object newValue = evt.getNewValue();
+				if (isDeleting) {
+					newValue = null;
+				}
+				firePropertyChangedListener(new PropertyChangeEvent(InputParametersManager.this, this.name, evt.getOldValue(), newValue));
+
+				if (evt.getNewValue() == null) {
+					// 约束解除！
+					DefaultParameters.this.getInputs().getData(evt.getPropertyName()).unbind();
+				} else {
+					// 修改来源节点时图上联动
+					String propertyName = evt.getPropertyName();
+					IGraph graph = (IGraph) ((ParameterDataNode) evt.getOldValue()).getData();
+					IGraph newGraph = (IGraph) ((ParameterDataNode) evt.getNewValue()).getData();
+					GraphCanvas canvas = ((FormWorkflow) Application.getActiveApplication().getActiveForm()).getCanvas();
+					IGraphStorage graphStorage = canvas.getGraphStorage();
+					IGraph processGraph = null;
+					for (IGraph iGraph : graphStorage.getGraphs()) {
+						if (iGraph instanceof ProcessGraph && ((ProcessGraph) iGraph).getProcess() == DefaultParameters.this.process) {
+							processGraph = iGraph;
+							break;
+						}
+					}
+					IGraphConnection[] connections = canvas.getConnection().getConnections();
+					for (IGraphConnection connection : connections) {
+						if (connection.getStart() == graph && connection.getEnd() == processGraph) {
+							inputParametersManager.unBind(connection);
+							canvas.getConnection().removeConnection(connection);
+							break;
+						}
+					}
+					canvas.getConnection().connect((OutputGraph) newGraph, (ProcessGraph) processGraph, propertyName);
+					DefaultParameters.this.getInputs().bind(propertyName, ((OutputGraph) newGraph).getProcessData());
+					canvas.repaint();
+				}
+			}
 		}
 	}
 }

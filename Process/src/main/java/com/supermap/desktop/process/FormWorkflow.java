@@ -360,7 +360,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		return false;
 	}
 
-	public GraphCanvas getCanvas() {
+	public WorkflowCanvas getCanvas() {
 		return this.canvas;
 	}
 
