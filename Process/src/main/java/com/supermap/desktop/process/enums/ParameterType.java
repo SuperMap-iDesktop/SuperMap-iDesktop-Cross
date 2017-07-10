@@ -24,6 +24,7 @@ public class ParameterType {
 	public static final String STATISTICS_FIELD = "StatisticsField";
 	public static final String SAVE_DATASET = "SaveDataset";
 	public static final String COMBINE = "Combine";
+	public static final String COLOR = "Color";
 
 	public static final String HDFS_PATH = "HDFSPath";
 
