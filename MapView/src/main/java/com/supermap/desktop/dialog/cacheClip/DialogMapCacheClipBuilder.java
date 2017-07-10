@@ -209,10 +209,15 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 
 	private boolean valiteCacheFolderSave() {
 		boolean result = true;
-		if (cmdType == MultiUpdateProcessClip || cmdType == SingleUpdateProcessClip) {
+		if (cmdType == MultiUpdateProcessClip || cmdType == SingleUpdateProcessClip
+				|| cmdType == ResumeProcessClip) {
 			return result;
 		}
-		File file = new File(CacheUtilities.replacePath(firstStepPane.fileChooserControlFileCache.getPath(), firstStepPane.textFieldCacheName.getText()));
+		String cachePath = CacheUtilities.replacePath(firstStepPane.fileChooserControlFileCache.getPath(), "Cache");
+		if (!new File(cachePath).exists()) {
+			new File(cachePath).mkdir();
+		}
+		File file = new File(CacheUtilities.replacePath(cachePath, firstStepPane.textFieldCacheName.getText()));
 		if (file.exists() || file.isDirectory()) {
 			SmOptionPane smOptionPane = new SmOptionPane();
 			smOptionPane.showErrorDialog("\"" + firstStepPane.textFieldCacheName.getText() + "\"" + MapViewProperties.getString("MapCache_FileIsExitWarning"));
@@ -341,15 +346,17 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				if (!valiteCacheFolderSave()) {
 					return;
 				}
-				String tasksPath = nextStepPane.fileChooserControlTaskPath.getPath();
-				String filePath = firstStepPane.fileChooserControlFileCache.getPath();
+//				String tasksPath = nextStepPane.fileChooserControlTaskPath.getPath();
+				String cachePath = firstStepPane.fileChooserControlFileCache.getPath();
+
 				String sciPath = "";
 				if (cmdType == MultiUpdateProcessClip) {
-					tasksPath = CacheUtilities.replacePath(tasksPath, "update");
-					sciPath = CacheUtilities.replacePath(filePath, mapCacheBuilder.getCacheName() + ".sci");
+					//todo 多进程更新功能后续处理
+//					tasksPath = CacheUtilities.replacePath(tasksPath, "update");
+					sciPath = CacheUtilities.replacePath(cachePath, mapCacheBuilder.getCacheName() + ".sci");
 				} else {
-					tasksPath = CacheUtilities.replacePath(tasksPath);
-					sciPath = CacheUtilities.replacePath(filePath, mapCacheBuilder.getCacheName());
+					cachePath = CacheUtilities.replacePath(cachePath, "Cache");
+					sciPath = CacheUtilities.replacePath(cachePath, mapCacheBuilder.getCacheName());
 					File sciDirectory = new File(sciPath);
 					if (!sciDirectory.exists()) {
 						sciDirectory.mkdir();
@@ -360,6 +367,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
 				}
 				if (null != mapCacheBuilder.getMap().getVisibleScales() && 0 != mapCacheBuilder.getMap().getVisibleScales().length) {
+					//地图存在固定比例从时的处理方式
 					if (firstStepPane.addScaleDropDown.isEnabled()) {
 						if (this.mapCacheBuilder.getMap().getVisibleScales().length < firstStepPane.currentMapCacheScale.size()) {
 							new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WariningForTaskBuilder"));
@@ -410,7 +418,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					mapCacheBuilder.removeSteppedListener(steppedListener);
 				}
 				if (result) {
-					String[] params = {sciPath, tasksPath, tasksSize, canudb};
+					String[] params = {sciPath, CacheUtilities.replacePath(cachePath, "CacheTask"), tasksSize, canudb};
 					boolean buildTaskResult = TaskBuilder.main(params);
 					if (!buildTaskResult) {
 						this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -418,15 +426,13 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					}
 					this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					dispose();
-					Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_TargetTaskPath"), tasksPath));
+					Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_TargetCachePath"), cachePath));
 					if (nextStepPane.checkBoxClipOnThisComputer.isSelected()) {
-						String targetTaskPath = CacheUtilities.replacePath(tasksPath, "task");
 						String mapName = this.mapCacheBuilder.getCacheName();
 						if (null != this.mapCacheBuilder.getMap()) {
 							mapName = this.mapCacheBuilder.getMap().getName();
 						}
-						String[] tempParams = {cmdType == MultiUpdateProcessClip ? "Update" : "Multi", sciPath, targetTaskPath,
-								Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), mapName, filePath};
+						String[] tempParams = {cmdType == MultiUpdateProcessClip ? "Update" : "Multi", Application.getActiveApplication().getWorkspace().getConnectionInfo().getServer(), mapName, cachePath};
 						CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
 					}
 				}
@@ -510,7 +516,11 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 			this.mapCacheBuilder.setOutputScaleCaptions(scaleNames);
 			this.mapCacheBuilder.setVersion(MapCacheVersion.VERSION_50);
 			this.mapCacheBuilder.setCacheName(firstStepPane.textFieldCacheName.getText());
-			this.mapCacheBuilder.setOutputFolder(firstStepPane.fileChooserControlFileCache.getPath());
+			if (cmdType != SingleUpdateProcessClip) {
+				this.mapCacheBuilder.setOutputFolder(CacheUtilities.replacePath(firstStepPane.fileChooserControlFileCache.getPath(), "Cache"));
+			} else {
+				this.mapCacheBuilder.setOutputFolder(firstStepPane.fileChooserControlFileCache.getPath());
+			}
 			this.mapCacheBuilder.setBounds(nextStepPane.cacheRangeBounds);
 			this.mapCacheBuilder.setIsDeleteLogFile(false);
 			if (this.mapCacheBuilder.getTilingMode() == MapTilingMode.LOCAL) {
