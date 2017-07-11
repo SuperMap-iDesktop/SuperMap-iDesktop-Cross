@@ -308,14 +308,10 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 
 	private void printResultInfo(boolean result, long totalTime) {
 		if (result) {
-			Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateSuccessed"));
-			if (!firstStepPane.fileChooserControlFileCache.getPath().substring(firstStepPane.fileChooserControlFileCache.getPath().length() - 1).equals("\\")) {
-				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + firstStepPane.fileChooserControlFileCache.getPath() + "\\" + firstStepPane.textFieldCacheName.getText());
-			} else {
-				Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_FloderIs") + " " + firstStepPane.fileChooserControlFileCache.getPath() + firstStepPane.textFieldCacheName.getText());
-			}
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("MapCache_StartCreateSuccessed"), this.mapCacheBuilder.getMap().getName()));
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("MapCache_FloderIs"), this.mapCacheBuilder.getOutputFolder()));
 		} else {
-			Application.getActiveApplication().getOutput().output("\"" + this.mapCacheBuilder.getMap().getName() + "\"" + MapViewProperties.getString("MapCache_StartCreateFailed"));
+			Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("MapCache_StartCreateFailed"), this.mapCacheBuilder.getMap().getName()));
 		}
 		long hour = 0;
 		long minutes = 0;
