@@ -112,6 +112,7 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 
 		this.datasetComboBox.setShowNullValue(parameterSingleDataset.isShowNullValue());
 		this.datasetComboBox.setSupportedDatasetTypes(datasetTypes);
+
 	}
 
 	private void setSelectedDatasource(Datasource datasource) {
@@ -210,6 +211,7 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 				}
 			}
 		});
+
 		this.datasetComboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -224,6 +226,7 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 				}
 			}
 		});
+
 		this.parameterSingleDataset.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -264,6 +267,5 @@ public class ParameterSingleDatasetPanel extends SwingPanel implements IParamete
 		parameterSingleDataset.setSelectedItem(null);
 		datasetComboBox.setDatasets(null);
 	}
-
 
 }
