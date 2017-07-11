@@ -168,37 +168,37 @@ public class WorkFlowXmlUtilties {
 		return null;
 	}
 
-	public static NodeMatrix stringToNodeMatrix(String xml) {
-		Document document = XmlUtilities.stringToDocument(xml);
-		NodeMatrix nodeMatrix = new NodeMatrix();
-		Node root = document.getChildNodes().item(0);
-		Node graphs = XmlUtilities.getChildElementNodeByName(root, "graphs");
-		Element[] graphArrays = XmlUtilities.getChildElementNodesByName(graphs, "graph");
-		HashMap<String, IGraph> map = new HashMap<>();
-		for (Element graph : graphArrays) {
-			String id = graph.getAttribute("ID");
-			IGraph iGraph = AbstractGraph.formXmlFile(graph.getAttribute("value"));
-			map.put(id, iGraph);
-			nodeMatrix.addNode(iGraph);
-		}
-		Node connections = XmlUtilities.getChildElementNodeByName(root, "connections");
-		Element[] connects = XmlUtilities.getChildElementNodesByName(connections, "connect");
-		for (Element connect : connects) {
-			String startId = connect.getAttribute("startId");
-			String endId = connect.getAttribute("endId");
-			try {
-				String inputs = connect.getAttribute("inputs");
-				if (!StringUtilities.isNullOrEmpty(inputs)) {
-					((ProcessGraph) map.get(endId)).getProcess().getInputs().bind(inputs, ((OutputGraph) map.get(startId)).getProcessData());
-				} else {
-					((OutputGraph) map.get(endId)).setProcessData(((ProcessGraph) map.get(startId)).getProcess().getOutputs().getData(((OutputGraph) map.get(endId)).getName()));
-				}
-			} catch (Exception e) {
-				System.out.println(e);
-			}
-			nodeMatrix.addRelation(map.get(startId), map.get(endId), DirectConnect.class);
-		}
-		return nodeMatrix;
-	}
+//	public static NodeMatrix stringToNodeMatrix(String xml) {
+//		Document document = XmlUtilities.stringToDocument(xml);
+//		NodeMatrix nodeMatrix = new NodeMatrix();
+//		Node root = document.getChildNodes().item(0);
+//		Node graphs = XmlUtilities.getChildElementNodeByName(root, "graphs");
+//		Element[] graphArrays = XmlUtilities.getChildElementNodesByName(graphs, "graph");
+//		HashMap<String, IGraph> map = new HashMap<>();
+//		for (Element graph : graphArrays) {
+//			String id = graph.getAttribute("ID");
+//			IGraph iGraph = AbstractGraph.formXmlFile(graph.getAttribute("value"));
+//			map.put(id, iGraph);
+//			nodeMatrix.addNode(iGraph);
+//		}
+//		Node connections = XmlUtilities.getChildElementNodeByName(root, "connections");
+//		Element[] connects = XmlUtilities.getChildElementNodesByName(connections, "connect");
+//		for (Element connect : connects) {
+//			String startId = connect.getAttribute("startId");
+//			String endId = connect.getAttribute("endId");
+//			try {
+//				String inputs = connect.getAttribute("inputs");
+//				if (!StringUtilities.isNullOrEmpty(inputs)) {
+//					((ProcessGraph) map.get(endId)).getProcess().getInputs().bind(inputs, ((OutputGraph) map.get(startId)).getProcessData());
+//				} else {
+//					((OutputGraph) map.get(endId)).setProcessData(((ProcessGraph) map.get(startId)).getProcess().getOutputs().getData(((OutputGraph) map.get(endId)).getName()));
+//				}
+//			} catch (Exception e) {
+//				System.out.println(e);
+//			}
+//			nodeMatrix.addRelation(map.get(startId), map.get(endId), DirectConnect.class);
+//		}
+//		return nodeMatrix;
+//	}
 
 }

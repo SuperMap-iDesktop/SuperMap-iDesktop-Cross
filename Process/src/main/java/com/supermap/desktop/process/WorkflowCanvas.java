@@ -19,6 +19,7 @@ import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class WorkflowCanvas extends GraphCanvas
 	public WorkflowCanvas(Workflow workflow) {
 		loadWorkflow(workflow);
 		addGraphRemovingListener(this);
-		new ProcessDropTargetHandler();
+		new DropTarget(this, new ProcessDropTargetHandler());
 
 		installCanvasAction(GraphConnectAction.class, this.connector);
 
@@ -52,6 +53,10 @@ public class WorkflowCanvas extends GraphCanvas
 		getActionsManager().addMutexAction(GraphConnectAction.class, GraphDragAction.class);
 		getActionsManager().addMutexAction(GraphConnectAction.class, Selection.class);
 		getActionsManager().addMutexAction(GraphConnectAction.class, PopupMenuAction.class);
+	}
+
+	public GraphConnectAction getConnector() {
+		return this.connector;
 	}
 
 	private void loadWorkflow(Workflow workflow) {

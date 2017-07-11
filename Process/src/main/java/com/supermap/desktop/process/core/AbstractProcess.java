@@ -19,6 +19,8 @@ public abstract class AbstractProcess implements IProcess {
 	private volatile RunningStatus status = RunningStatus.NORMAL;
 	private EventListenerList listenerList = new EventListenerList();
 	protected IProcessGroup parent;
+	private Inputs inputs = new Inputs(this);
+	private Outputs outputs = new Outputs(this);
 
 	@Override
 	public abstract IParameters getParameters();
@@ -90,13 +92,13 @@ public abstract class AbstractProcess implements IProcess {
 
 	@Override
 	public Inputs getInputs() {
-		return this.getParameters().getInputs();
+		return this.inputs;
 	}
 
 
 	@Override
 	public Outputs getOutputs() {
-		return this.getParameters().getOutputs();
+		return this.outputs;
 	}
 
 	@Override

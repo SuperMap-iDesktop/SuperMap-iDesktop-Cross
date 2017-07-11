@@ -10,6 +10,7 @@ import com.supermap.desktop.process.ProcessResources;
 import com.supermap.desktop.process.WorkflowCanvas;
 import com.supermap.desktop.process.core.DataMatch;
 import com.supermap.desktop.process.core.IProcess;
+import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.events.*;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
@@ -21,6 +22,7 @@ import com.supermap.desktop.process.graphics.events.GraphRemovingListener;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
+import com.supermap.desktop.process.graphics.storage.IGraphStorage;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.interfaces.IConGetter;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
@@ -303,36 +305,24 @@ public class InputParametersManager {
 				if (isDeleting) {
 					newValue = null;
 				}
-				firePropertyChangedListener(new PropertyChangeEvent(InputParametersManager.this, this.name, evt.getOldValue(), newValue));
+//				firePropertyChangedListener(new PropertyChangeEvent(InputParametersManager.this, this.name, evt.getOldValue(), newValue));
 
-				if (evt.getNewValue() == null) {
+				if (!(Application.getActiveApplication().getActiveForm() instanceof FormWorkflow)) {
+					return;
+				}
+
+				Workflow workflow = (Workflow) ((FormWorkflow) Application.getActiveApplication().getActiveForm()).getWorkflow();
+				OutputData oldValue = (OutputData) evt.getOldValue();
+
+				if (newValue == null) {
+
 					// 约束解除！
-					DefaultParameters.this.getInputs().getData(evt.getPropertyName()).unbind();
+					workflow.removeRelation(oldValue.getProcess(), InputParametersManager.this.parameters.getProcess());
 				} else {
-					// 修改来源节点时图上联动
-					String propertyName = evt.getPropertyName();
-					IGraph graph = (IGraph) ((ParameterDataNode) evt.getOldValue()).getData();
-					IGraph newGraph = (IGraph) ((ParameterDataNode) evt.getNewValue()).getData();
-					GraphCanvas canvas = ((FormWorkflow) Application.getActiveApplication().getActiveForm()).getCanvas();
-					IGraphStorage graphStorage = canvas.getGraphStorage();
-					IGraph processGraph = null;
-					for (IGraph iGraph : graphStorage.getGraphs()) {
-						if (iGraph instanceof ProcessGraph && ((ProcessGraph) iGraph).getProcess() == DefaultParameters.this.process) {
-							processGraph = iGraph;
-							break;
-						}
-					}
-					IGraphConnection[] connections = canvas.getConnection().getConnections();
-					for (IGraphConnection connection : connections) {
-						if (connection.getStart() == graph && connection.getEnd() == processGraph) {
-							inputParametersManager.unBind(connection);
-							canvas.getConnection().removeConnection(connection);
-							break;
-						}
-					}
-					canvas.getConnection().connect((OutputGraph) newGraph, (ProcessGraph) processGraph, propertyName);
-					DefaultParameters.this.getInputs().bind(propertyName, ((OutputGraph) newGraph).getProcessData());
-					canvas.repaint();
+					OutputData newOutput = (OutputData) newValue;
+					DataMatch newRelation = new DataMatch(newOutput.getProcess(), InputParametersManager.this.parameters.getProcess(),
+							newOutput.getName(), this.name);
+					workflow.addRelation(newRelation);
 				}
 			}
 		}

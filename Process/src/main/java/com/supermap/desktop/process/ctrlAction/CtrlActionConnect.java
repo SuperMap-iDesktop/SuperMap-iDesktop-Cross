@@ -18,7 +18,7 @@ public class CtrlActionConnect extends CtrlAction {
 	public void run() {
 		IForm form = Application.getActiveApplication().getMainFrame().getFormManager().getActiveForm();
 		if (form instanceof FormWorkflow) {
-			((FormWorkflow) form).getCanvas().connector.connecting();
+			((FormWorkflow) form).getCanvas().getConnector().connecting();
 		}
 	}
 }
