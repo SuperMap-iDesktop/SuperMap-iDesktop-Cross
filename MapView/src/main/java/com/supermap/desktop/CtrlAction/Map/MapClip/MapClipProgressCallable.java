@@ -29,6 +29,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 	private Dataset resultDataset;
 	private Map resultMap;
 	private String appendCaptions[]; // 多对象拆分的结果名称标识
+	ArrayList<GeoRegion> selectedGeoregions= new ArrayList<>();
 
 	ArrayList<Dataset> datasetsArrayList;
 
@@ -84,10 +85,11 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 		this.resultMap = saveMap;
 	}
 
-	public MapClipProgressCallable(Vector vector, Map saveMap, String appendCaptions[]) {
+	public MapClipProgressCallable(Vector vector, Map saveMap, String appendCaptions[],ArrayList<GeoRegion> selectedGeoregions) {
 		this.VectorInfo = vector;
 		this.resultMap = saveMap;
 		this.appendCaptions = appendCaptions;
+		this.selectedGeoregions=selectedGeoregions;
 	}
 
 	@Override
@@ -104,10 +106,10 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 			// 目前，选择的用于裁剪的对象都被合并为一个大的georegion（选择对象裁剪），因此需要针对选择对象裁剪的拆分裁剪，提取单个小对象
 			GeoRegion bigRegion = (GeoRegion) ((Vector) (this.VectorInfo.get(0))).get(COLUMN_INDEX_USERREGION);
 			GeoRegion allRegions[];
-			if (this.appendCaptions != null) {
-				allRegions = new GeoRegion[bigRegion.getPartCount()];
-				for (int i = 0; i < bigRegion.getPartCount(); i++) {
-					GeoRegion tempRegion = new GeoRegion(bigRegion.getPart(i));
+			if (this.selectedGeoregions != null) {
+				allRegions = new GeoRegion[this.selectedGeoregions.size()];
+				for (int i = 0; i < this.selectedGeoregions.size(); i++) {
+					GeoRegion tempRegion = new GeoRegion(this.selectedGeoregions.get(i));
 					allRegions[i] = tempRegion.clone();
 				}
 			} else {
@@ -131,6 +133,9 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 						this.resultMap.fromXML(origionMap.toXML());
 					}
 					this.resultMap.setName(origionSaveMapName + "_" + this.appendCaptions[t]);
+					if (!MapUtilities.checkAvailableMapName(this.resultMap.getName(),"")){
+						this.resultMap.setName(MapUtilities.getAvailableMapName(this.resultMap.getName()+"_1",false));
+					}
 				}
 				ArrayList<Dataset> datasetsClipped = new ArrayList<>();//裁剪过的数据集集合，避免一个数据集多次裁剪
 				for (int i = 0; i < this.VectorInfo.size(); i++) {

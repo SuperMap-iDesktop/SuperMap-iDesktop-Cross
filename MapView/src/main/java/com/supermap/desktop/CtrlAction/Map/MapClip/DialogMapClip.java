@@ -80,7 +80,7 @@ public class DialogMapClip extends SmDialog {
 
 	private boolean isMutiObjectClip = false;
 	private Recordset selectedRecordset;
-
+	ArrayList<GeoRegion> selectedGeoregions= new ArrayList<>();
 	/**
 	 * 对JTable中model数据进行处理,得到适用于裁剪接口的数据
 	 *
@@ -498,12 +498,16 @@ public class DialogMapClip extends SmDialog {
 					String selectedCaptionFieldName = mapClipMultiObjectSplitPanel.getCurrentSelectedFieldCaption();
 					String appendCaptions[] = new String[selectedRecordset.getRecordCount()];
 					for (int i = 0; i < appendCaptions.length; i++) {
-						appendCaptions[i] = selectedRecordset.getFieldValue(selectedCaptionFieldName).toString();
-						appendCaptions[i] = appendCaptions[i].replace('.', '_');
+						if (StringUtilities.isNullOrEmpty(selectedRecordset.getFieldValue(selectedCaptionFieldName).toString())){
+							appendCaptions[i]="_1";
+						}else{
+							appendCaptions[i] = selectedRecordset.getFieldValue(selectedCaptionFieldName).toString();
+							appendCaptions[i] = appendCaptions[i].replace('.', '_');
+						}
 						selectedRecordset.moveNext();
 					}
 					selectedRecordset.dispose();
-					mapClipProgressCallable = new MapClipProgressCallable(resultInfo, resultMap, appendCaptions);
+					mapClipProgressCallable = new MapClipProgressCallable(resultInfo, resultMap, appendCaptions,selectedGeoregions);
 				} else {
 					mapClipProgressCallable = new MapClipProgressCallable(resultInfo, resultMap);
 				}
@@ -549,26 +553,15 @@ public class DialogMapClip extends SmDialog {
 	public DialogMapClip(GeoRegion region) {
 		super();
 		commonPartCode(region);
-//		this.geoRegion = region;
-//		initComponent();
-//		initLayout();
-//		initResources();
-//		registEvents();
-//		this.pack();
-//		this.setSize(new Dimension(750, 450));
-//		this.setLocationRelativeTo(null);
-//		this.componentList.add(this.panelButton.getButtonOk());
-//		this.componentList.add(this.panelButton.getButtonCancel());
-//		this.setFocusTraversalPolicy(policy);
-//		isCanRun();
 	}
 
-	public DialogMapClip(GeoRegion region, boolean isMutiObjectClip, String fieldCaptions[], Recordset recordset) {
+	public DialogMapClip(GeoRegion region, boolean isMutiObjectClip, String fieldCaptions[], Recordset recordset,ArrayList<GeoRegion> selectedGeoregions) {
 		super();
 		this.isMutiObjectClip = isMutiObjectClip;
 		this.selectedRecordset = recordset;
 		commonPartCode(region);
 		this.mapClipMultiObjectSplitPanel.setFieldCaption(fieldCaptions);
+		this.selectedGeoregions=selectedGeoregions;
 	}
 
 	private void commonPartCode(GeoRegion region) {
@@ -583,6 +576,7 @@ public class DialogMapClip extends SmDialog {
 		this.componentList.add(this.panelButton.getButtonOk());
 		this.componentList.add(this.panelButton.getButtonCancel());
 		this.setFocusTraversalPolicy(policy);
+		this.mapClipMultiObjectSplitPanel.setToolTipText(MapViewProperties.getString("String_MapClip_MutiObjectClipTip"));
 		isCanRun();
 	}
 
