@@ -9,7 +9,7 @@ import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
-import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 
 import javax.swing.*;
@@ -25,7 +25,7 @@ import java.beans.PropertyChangeListener;
 @ParameterPanelDescribe(parameterPanelType = ParameterType.DATASOURCE)
 public class ParameterDatasourcePanel extends SwingPanel {
 	private JLabel label = new JLabel();
-	private JComboBox<Datasource> datasourceComboBox = new JComboBox<>();
+	private DatasourceComboBox datasourceComboBox = new DatasourceComboBox();
 	private ParameterDatasource parameterDatasource;
 	private boolean isSelectingItem;
 
@@ -33,7 +33,6 @@ public class ParameterDatasourcePanel extends SwingPanel {
 		super(parameterDatasource);
 		this.parameterDatasource = ((ParameterDatasource) parameterDatasource);
 		this.label.setText(this.parameterDatasource.getDescribe());
-		datasourceComboBox.setRenderer(new ListDataCellRender());
 		initComboBoxItems();
 		initLayout();
 		initListener();

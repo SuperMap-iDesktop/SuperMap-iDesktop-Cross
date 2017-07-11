@@ -395,13 +395,12 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 
 				}
 				setMapCacheBuilderValueBeforeRun();
-				//SaveType==MongoType,build some cache for creating a database
 				boolean result = true;
-				if (cmdType != MultiUpdateProcessClip) {
-					result = mapCacheBuilder.toConfigFile(sciPath);
-				}
+				//SaveType==MongoType,build some cache for creating a database
 				this.buttonOk.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
+					//Mongo类型单独处理,此接口无法返回正确的sci
+					//result = mapCacheBuilder.createMongoDB();
 					SteppedListener steppedListener = new SteppedListener() {
 						@Override
 						public void stepped(SteppedEvent steppedEvent) {
@@ -414,8 +413,10 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 						}
 					};
 					mapCacheBuilder.addSteppedListener(steppedListener);
-					mapCacheBuilder.buildWithoutConfigFile();
+					mapCacheBuilder.build();
 					mapCacheBuilder.removeSteppedListener(steppedListener);
+				} else if (cmdType != MultiUpdateProcessClip) {
+					result = mapCacheBuilder.toConfigFile(sciPath);
 				}
 				if (result) {
 					String[] params = {sciPath, CacheUtilities.replacePath(cachePath, "CacheTask"), tasksSize, canudb};

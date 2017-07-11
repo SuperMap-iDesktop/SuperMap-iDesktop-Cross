@@ -18,6 +18,7 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
  * Created by hanyz on 2017/5/2.
+ * 度量地理分布 父类
  */
 public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 	private static final String INPUT_SOURCE_DATASET = "SourceDataset";
@@ -41,7 +42,7 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 
 	/**
 	 * 根据不同的功能给予相应的DatasetComboBox
-	 * 例如线性方向平均值只能处理线类型数据集-yuanR
+	 * 例如：线性方向平均值只能处理线类型数据集-yuanR
 	 */
 	private void initDatasetComboBox() {
 		if (getKey().equals(MetaKeys.LinearDirectionalMean)) {

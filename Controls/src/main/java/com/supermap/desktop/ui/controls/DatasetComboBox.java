@@ -56,7 +56,6 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 		}
 	};
 
-
 	private DatasetRenamedListener datasetRenamedListener = new DatasetRenamedListener() {
 		@Override
 		public void datasetRenamed(DatasetRenamedEvent datasetRenamedEvent) {
