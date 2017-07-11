@@ -7,6 +7,10 @@ import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.Interface.IForm;
 import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.core.recordset.RecordsetSet;
+import com.supermap.desktop.geometry.Abstract.IGeometry;
+import com.supermap.desktop.geometry.Abstract.ILineFeature;
+import com.supermap.desktop.geometry.Abstract.IRegionFeature;
+import com.supermap.desktop.geometry.Implements.DGeometryFactory;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.mapview.map.propertycontrols.MapActionSelectTargetInfoPanel;
 import com.supermap.desktop.utilities.MapUtilities;
@@ -138,18 +142,36 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 	private void abstractActiveMapcontrol(final MapControl activeMapControl) {
 		boolean isChanged = false;
 		boolean isMutiObjectClip = true;
-		int layerChangeID = 0; // 从一个图层选择对象的图层id
+		int layerChangeID = -1; // 从一个图层选择对象的图层id
 		GeoRegion geoClipRegion = new GeoRegion();
-		Layers layers = activeMapControl.getMap().getLayers();
-		for (int i = 0; i < layers.getCount(); i++) {
+		ArrayList<Layer> layers = MapUtilities.getLayers(activeMapControl.getMap(), true);
+		ArrayList<GeoRegion> selectedGeoregions = new ArrayList<>();
+		for (int i = 0; i < layers.size(); i++) {
 			Layer layer = layers.get(i);
-			if (!layer.isSelectable()) {
+			if (layer.getDataset() == null || !layer.isSelectable()) {
 				continue;
 			}
 			Recordset recordset = layer.getSelection().toRecordset();
 			for (int k = 0; k < recordset.getRecordCount(); k++, recordset.moveNext()) {
 				Geometry geometry = recordset.getGeometry();
 				GeoRegion geoRegionTemp = null;
+
+				if (layer.getDataset().getType() == DatasetType.CAD) {
+					Geometry oldGeo = geometry;
+					IGeometry dGeometry = DGeometryFactory.create(geometry);
+					if (dGeometry instanceof ILineFeature) {
+						geometry = ((ILineFeature) dGeometry).convertToLine(120);
+					} else if (dGeometry instanceof IRegionFeature) {
+						geometry = ((IRegionFeature) dGeometry).convertToRegion(120);
+					} else {
+						geometry = null;
+					}
+					if (geometry != null) {
+						if (geometry != oldGeo) {
+							oldGeo.dispose();// 转换前的几何对象应该及时释放掉。
+						}
+					}
+				}
 
 				if (geometry instanceof GeoPie) { // 扇面几何对象类
 					// 将扇面几何对象转换为面几何对象
@@ -168,12 +190,14 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 				if (geoRegionTemp != null && geoRegionTemp.getPartCount() > 0) {
 					// 判断选择的对象是否跨图层
 					if (isChanged) {
-						if (layerChangeID != i) {
+						if (layerChangeID != i && layerChangeID != -1) {
 							isMutiObjectClip = false;
 						}
 					} else {
 						layerChangeID = i;
 					}
+
+					selectedGeoregions.add(geoRegionTemp.clone());
 
 					for (int j = 0; j < geoRegionTemp.getPartCount(); j++) {
 						geoClipRegion.addPart(geoRegionTemp.getPart(j).clone());
@@ -197,7 +221,7 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 				for (int i = 0; i < fieldInfos.getCount(); i++) {
 					fieldCaptions[i] = fieldInfos.get(i).getCaption();
 				}
-				DialogMapClip dialogMapClip = new DialogMapClip(geoRegion, true, fieldCaptions, recordset);
+				DialogMapClip dialogMapClip = new DialogMapClip(geoRegion, true, fieldCaptions, recordset,selectedGeoregions);
 				dialogMapClip.showDialog();
 			}
 		}
