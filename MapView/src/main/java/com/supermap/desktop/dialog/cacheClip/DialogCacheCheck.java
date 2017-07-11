@@ -316,7 +316,7 @@ public class DialogCacheCheck extends JFrame {
 				boolean cacheBuild = checkBoxCacheBuild.isSelected();
 				if (cacheBuild) {
 					File cacheFile = new File(cacheRoot);
-					File errorFile = new File(CacheUtilities.replacePath(cacheTaskPath, "Task"));
+					File errorFile = new File(CacheUtilities.replacePath(cacheTaskPath, "failed"));
 					//有错误则重新切图
 					if (null != errorFile && errorFile.list(CacheUtilities.getFilter()).length > 0 && tileSize != -1) {
 						String[] tempParams = {"Multi", "null", cacheFile.getName(), cachePath};
