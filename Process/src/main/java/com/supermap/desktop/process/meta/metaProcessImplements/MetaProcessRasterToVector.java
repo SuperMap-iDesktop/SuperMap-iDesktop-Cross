@@ -217,7 +217,11 @@ public class MetaProcessRasterToVector extends MetaProcess {
 
 			String datasetName = resultDataset.getDatasetName();
 			datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
-			analystParameter.setSourceDataset(sourceDataset.getSelectedDataset());
+			if (parameters.getInputs().getData(INPUT_DATA).getValue()!=null){
+				analystParameter.setSourceDataset((Dataset) parameters.getInputs().getData(INPUT_DATA).getValue());
+			}else {
+				analystParameter.setSourceDataset(sourceDataset.getSelectedDataset());
+			}
 			analystParameter.setTargetDatasource(resultDataset.getResultDatasource());
 			analystParameter.setTargetDatasetName(datasetName);
 			analystParameter.setTargetDatasetType((DatasetType) comboBoxType.getSelectedData());
