@@ -52,6 +52,10 @@ public class DialogMapClip extends SmDialog {
 	private MapClipSaveMapPanel mapClipSaveMapPanel;
 	private CompTitledPane saveMapcompTitledPane;
 
+	private MapClipMultiObjectSplitPanel mapClipMultiObjectSplitPanel;
+	private CompTitledPane mapClipMutiObjectPanel;
+
+
 	private PanelButton panelButton;
 
 	private Vector layerJTableInfo; //  从JTable中拿到的vector
@@ -74,6 +78,9 @@ public class DialogMapClip extends SmDialog {
 	public static final int COLUMN_INDEX_TARGETDATASETNAME = 5;
 	public static final int COLUMN_LAYER = 6;
 
+	private boolean isMutiObjectClip = false;
+	private Recordset selectedRecordset;
+	ArrayList<GeoRegion> selectedGeoregions= new ArrayList<>();
 	/**
 	 * 对JTable中model数据进行处理,得到适用于裁剪接口的数据
 	 *
@@ -485,8 +492,25 @@ public class DialogMapClip extends SmDialog {
 			if (resultInfo != null && resultInfo.size() > 0) {
 				FormProgressTotal formProgress = new FormProgressTotal();
 				formProgress.setTitle(MapViewProperties.getString("String_MapClip_MapClip"));
-				//获得要保存的地图名称
-				mapClipProgressCallable = new MapClipProgressCallable(resultInfo, resultMap);
+
+				if (!StringUtilities.isNullOrEmpty(mapClipMultiObjectSplitPanel.getCurrentSelectedFieldCaption())) {
+					selectedRecordset.moveFirst();
+					String selectedCaptionFieldName = mapClipMultiObjectSplitPanel.getCurrentSelectedFieldCaption();
+					String appendCaptions[] = new String[selectedRecordset.getRecordCount()];
+					for (int i = 0; i < appendCaptions.length; i++) {
+						if (StringUtilities.isNullOrEmpty(selectedRecordset.getFieldValue(selectedCaptionFieldName).toString())){
+							appendCaptions[i]="_1";
+						}else{
+							appendCaptions[i] = selectedRecordset.getFieldValue(selectedCaptionFieldName).toString();
+							appendCaptions[i] = appendCaptions[i].replace('.', '_');
+						}
+						selectedRecordset.moveNext();
+					}
+					selectedRecordset.dispose();
+					mapClipProgressCallable = new MapClipProgressCallable(resultInfo, resultMap, appendCaptions,selectedGeoregions);
+				} else {
+					mapClipProgressCallable = new MapClipProgressCallable(resultInfo, resultMap);
+				}
 				formProgress.doWork(mapClipProgressCallable);
 				// 获得采集后的数据集，添加到地图
 				DialogMapClip.this.dispose();
@@ -528,6 +552,19 @@ public class DialogMapClip extends SmDialog {
 
 	public DialogMapClip(GeoRegion region) {
 		super();
+		commonPartCode(region);
+	}
+
+	public DialogMapClip(GeoRegion region, boolean isMutiObjectClip, String fieldCaptions[], Recordset recordset,ArrayList<GeoRegion> selectedGeoregions) {
+		super();
+		this.isMutiObjectClip = isMutiObjectClip;
+		this.selectedRecordset = recordset;
+		commonPartCode(region);
+		this.mapClipMultiObjectSplitPanel.setFieldCaption(fieldCaptions);
+		this.selectedGeoregions=selectedGeoregions;
+	}
+
+	private void commonPartCode(GeoRegion region) {
 		this.geoRegion = region;
 		initComponent();
 		initLayout();
@@ -539,6 +576,7 @@ public class DialogMapClip extends SmDialog {
 		this.componentList.add(this.panelButton.getButtonOk());
 		this.componentList.add(this.panelButton.getButtonCancel());
 		this.setFocusTraversalPolicy(policy);
+		this.mapClipMultiObjectSplitPanel.setToolTipText(MapViewProperties.getString("String_MapClip_MutiObjectClipTip"));
 		isCanRun();
 	}
 
@@ -551,6 +589,9 @@ public class DialogMapClip extends SmDialog {
 		// 地图裁剪保存地图面板
 		this.mapClipSaveMapPanel = new MapClipSaveMapPanel();
 		this.saveMapcompTitledPane = mapClipSaveMapPanel.getCompTitledPane();
+		// 多对象拆分裁剪面板
+		this.mapClipMultiObjectSplitPanel = new MapClipMultiObjectSplitPanel(this.isMutiObjectClip);
+		this.mapClipMutiObjectPanel = this.mapClipMultiObjectSplitPanel.getCompTitledPane();
 		// 确定取消按钮面板
 		this.panelButton = new PanelButton();
 
@@ -585,6 +626,7 @@ public class DialogMapClip extends SmDialog {
 				.addComponent(this.toolBar)
 				.addComponent(this.scrollPane)
 				.addGroup(panelLayout.createSequentialGroup()
+						.addComponent(this.mapClipMutiObjectPanel)
 						.addComponent(saveMapcompTitledPane)
 				)
 				.addComponent(this.panelButton));
@@ -592,6 +634,7 @@ public class DialogMapClip extends SmDialog {
 				.addComponent(this.toolBar, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(this.scrollPane)
 				.addGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+						.addComponent(this.mapClipMutiObjectPanel)
 						.addComponent(saveMapcompTitledPane)
 				)
 				.addComponent(this.panelButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));

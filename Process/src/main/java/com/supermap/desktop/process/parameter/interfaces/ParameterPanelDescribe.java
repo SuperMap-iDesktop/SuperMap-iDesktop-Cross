@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 public @interface ParameterPanelDescribe {
 	String parameterPanelType();
 
-	String describe() default "";
+    String describe() default "";
 }

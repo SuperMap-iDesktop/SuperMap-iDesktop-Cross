@@ -25,7 +25,7 @@ public class MetaProcessCentralElement extends MetaProcessSpatialMeasure {
 
 		try {
 			SpatialMeasure.addSteppedListener(steppedListener);
-// 调用中心要素方法，并获取结果矢量数据集
+			// 调用中心要素方法，并获取结果矢量数据集
 			DatasetVector result = SpatialMeasure.measureCentralElement(
 					datasetVector,
 					parameterSaveDataset.getResultDatasource(),

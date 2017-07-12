@@ -1,14 +1,17 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
+import com.supermap.desktop.dialog.SmOptionPane;
+
 import java.io.File;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by xie on 2017/5/17.
  * ProcessManager class build for store SubprocessThread(Thread for create a process)
  */
 public class ProcessManager {
-	private CopyOnWriteArrayList<SubprocessThread> threadList;
+	private static CopyOnWriteArrayList<SubprocessThread> threadList;
 	private static volatile ProcessManager processManager;
 //	private volatile ProtectThread protectThread;
 
@@ -39,13 +42,12 @@ public class ProcessManager {
 		}
 	}
 
-	public void removeAllProcess(String sciPath, String path) {
+	public void removeAllProcess(String taskPath, String path) {
 		try {
 			dispose();
-			Thread.sleep(2000);
-			LogWriter.removeAllLogs();
+//			LogWriter.removeAllLogs();
 			String doingPath = null;
-			File taskFiles = new File(sciPath);
+			File taskFiles = new File(taskPath);
 			if (taskFiles.exists()) {
 				doingPath = CacheUtilities.replacePath(taskFiles.getParent(), path);
 			}
@@ -146,8 +148,13 @@ public class ProcessManager {
 
 	public void dispose() {
 		try {
-			for (int i = threadList.size() - 1; i >= 0; i--) {
-				threadList.get(i).process.destroy();
+			if (threadList.size() == 1) {
+				threadList.get(0).process.destroy();
+			} else {
+				for (int i = threadList.size() - 1; i >= 0; i--) {
+					threadList.get(i).process.destroy();
+					TimeUnit.SECONDS.sleep(2);
+				}
 			}
 			threadList.clear();
 //			protectThread.exit = false;

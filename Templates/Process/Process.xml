@@ -109,18 +109,33 @@
                 <process key="ISOPoint" name="点数据提取等值线"/>
                 <process key="ISORegion" name="提取等值面"/>
             </process>
-            <process name="地统计分析">
+            <process name="矢栅转换">
+                <process key="GridToVector" name="栅格矢量化"/>
+                <process key="ThinRaster" name="栅格细化"/>
+                <process key="VectorToGrid" name="矢量栅格化"/>
+            </process>
+            <process name="DEM构建">
+                <process key="DEMBuild" name="DEM构建"/>
+                <process key="DEMLake" name="DEM挖湖"/>
+            </process>
+            <process name="邻近分析">
+                <process key="ThiessenPolygon" name="泰森多边形"/>
+                <process key="ComputeDistance" name="距离计算"/>
+            </process>
+            <process name="空间统计分析">
                 <process name="度量地理分布">//SpatialMeasure
                     <process key="CentralElement" name="中心要素"/>
                     <process key="MeanCenter" name="平均中心"/>
                     <process key="MedianCenter" name="中位数中心"/>
                     <process key="Directional" name="方向分布"/>
+                    <process key="LinearDirectionalMean" name="线性方向平均值"/>
+                    <process key="StandardDistance" name="标准距离"/>
                 </process>
-                <process name="模型分析">//AnalyzingPatterns
+                <process name="分析模式">//AnalyzingPatterns
                     <process key="autoCorrelation" name="空间自相关"/>
                     <process key="highOrLowClustering" name="高低值聚类"/>
                     <process key="incrementalAutoCorrelation" name="增量空间自相关"/>
-                    <process key="averageNearestNeighbor" name="平均最邻近统计"/>
+                    <process key="averageNearestNeighbor" name="平均最近邻"/>
                 </process>
                 <process name="聚类分布">//ClusteringDistributions
                     <process key="clusterOutlierAnalyst" name="聚类和异常值分析"/>

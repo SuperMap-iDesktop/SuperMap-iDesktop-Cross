@@ -120,7 +120,6 @@ public class CheckCache {
 				File checkingDir = null;
 				if (sciLength > 0) {
 					File sci = new File(CacheUtilities.replacePath(scipath, sciFileNames[0]));
-					parentPath = sci.getParentFile().getParent();
 					checkingDir = new File(CacheUtilities.replacePath(sci.getParentFile().getParent(), "checking"));
 					if (!checkingDir.exists()) {
 						checkingDir.mkdir();
@@ -259,7 +258,7 @@ public class CheckCache {
 		File filesci = new File(sciFile);
 		String checkDir = (CacheUtilities.replacePath(filesci.getParentFile().getParent(), "checked"));
 		if (!result) {
-			checkDir = (CacheUtilities.replacePath(filesci.getParentFile().getParent(), "error"));
+			checkDir = (CacheUtilities.replacePath(filesci.getParentFile().getParent(), "failed"));
 		}
 		filesci.renameTo(new File(checkDir, filesci.getName()));
 
@@ -649,7 +648,7 @@ public class CheckCache {
 		if (!scicheck.exists()) {
 			scicheck.mkdir();
 		}
-		File scierror = new File(CacheUtilities.replacePath(scicheck.getParent(), "error"));
+		File scierror = new File(CacheUtilities.replacePath(scicheck.getParent(), "failed"));
 		if (!scierror.exists()) {
 			scierror.mkdir();
 		}

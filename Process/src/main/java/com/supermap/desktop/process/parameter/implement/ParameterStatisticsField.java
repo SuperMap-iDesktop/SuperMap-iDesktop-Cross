@@ -50,7 +50,7 @@ public class ParameterStatisticsField extends AbstractParameter {
 		ArrayList<String> fieldNames = new ArrayList<>();
 		if (statisticsFieldInfos != null) {
 			for (StatisticsFieldInfo statisticsFieldInfo : statisticsFieldInfos) {
-				fieldNames.add(statisticsFieldInfo.getFieldInfo().getName());
+				fieldNames.add(statisticsFieldInfo.getFieldName());
 			}
 		}
 		return fieldNames.toArray(new String[fieldNames.size()]);

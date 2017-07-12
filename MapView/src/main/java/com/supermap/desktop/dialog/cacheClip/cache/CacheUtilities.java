@@ -1,17 +1,23 @@
 package com.supermap.desktop.dialog.cacheClip.cache;
 
 import com.supermap.data.Datasource;
-import com.supermap.data.processing.MapCacheBuilder;
+import com.supermap.data.Workspace;
 import com.supermap.desktop.Application;
+import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.dialog.SmOptionPane;
-import com.supermap.desktop.dialog.cacheClip.DialogCacheBuilder;
-import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClip;
-import com.supermap.desktop.dialog.cacheClip.DialogMapCacheClipBuilder;
 import com.supermap.desktop.mapview.MapViewProperties;
-import com.supermap.desktop.ui.controls.DialogResult;
+import com.supermap.desktop.ui.UICommonToolkit;
+import com.supermap.desktop.ui.controls.NodeDataType;
+import com.supermap.desktop.ui.controls.TreeNodeData;
+import com.supermap.desktop.ui.controls.WorkspaceTree;
+import com.supermap.desktop.utilities.MapUtilities;
+import com.supermap.desktop.utilities.PathUtilities;
+import com.supermap.mapping.Layer;
 import com.supermap.mapping.Map;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+import java.awt.*;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
@@ -44,6 +50,38 @@ public class CacheUtilities {
 			sourceStr += "/";
 		}
 		return sourceStr + name;
+	}
+
+	public static boolean selectedMapIsEnabled(){
+		boolean enable = false;
+		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
+		if (workspaceTree.getSelectionCount() == 1) {
+			DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) workspaceTree.getSelectionPath().getLastPathComponent();
+			TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
+			if (selectedNodeData != null && selectedNodeData.getType() == NodeDataType.MAP_NAME) {
+				enable = true;
+			}
+		}
+		return enable;
+	}
+	/**
+	 * get selected workspcace map
+	 * @return
+	 */
+	public static Map getWorkspaceSelectedMap() {
+		Map result = null;
+		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
+		DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) workspaceTree.getSelectionPath().getLastPathComponent();
+		TreeNodeData selectedNodeData = (TreeNodeData) selectedNode.getUserObject();
+		String mapName = (String) selectedNodeData.getData();
+		Workspace workspace = Application.getActiveApplication().getWorkspace();
+		Map map = new Map(workspace);
+		if (map.open(mapName)) {
+			result = map;
+		} else {
+			Application.getActiveApplication().getOutput().output(MapViewProperties.getString("MapCache_OpenMapFailed"));
+		}
+		return result;
 	}
 
 //	// 获取当前系统的所有的PidName
@@ -84,33 +122,57 @@ public class CacheUtilities {
 //		return pidNameSet;
 //	}
 
-	public static void startMapClip(Map map) {
-		DialogMapCacheClip dialogMapCacheClip = new DialogMapCacheClip();
-		if (dialogMapCacheClip.showDialog() == DialogResult.OK) {
+	public static boolean volatileDatasource(Map map) {
+		boolean result = true;
+		if (null != map.getLayers().get(0).getDataset()) {
+			//没有提供数据源,只是拆分任务的情况
 			Datasource datasource = map.getLayers().get(0).getDataset().getDatasource();
-//			Datasource datasource = ((IFormMap) Application.getActiveApplication().getActiveForm()).getActiveLayers()[0].getDataset().getDatasource();
-			if (!datasource.isReadOnly() && !dialogMapCacheClip.isSingleProcess()) {
+			if (!datasource.isReadOnly()) {
 				SmOptionPane pane = new SmOptionPane();
 				pane.showConfirmDialog(MapViewProperties.getString("String_DatasourceOpenedNotReadOnly"));
-				return;
+				result = false;
 			}
 			datasource.getWorkspace().save();
 			ToolbarUIUtilities.updataToolbarsState();
-//			Map map = ((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap();
-			MapCacheBuilder mapCacheBuilder = new MapCacheBuilder();
-			Map newMap = new Map(Application.getActiveApplication().getWorkspace());
-			newMap.fromXML(map.toXML());
-			mapCacheBuilder.setMap(newMap);
-			if (dialogMapCacheClip.isBuildTask()) {
-				int cmdType = dialogMapCacheClip.isSingleProcess() ? DialogMapCacheClipBuilder.SingleProcessClip : DialogMapCacheClipBuilder.MultiProcessClip;
-				new DialogMapCacheClipBuilder(cmdType, mapCacheBuilder).showDialog();
-			} else {
-				String[] params = {"Multi", "null", "null", "null", map.getName(), "null"};
-				startProcess(params, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
-			}
 		}
+		return result;
 	}
 
+
+	public static boolean isEnabled() {
+		boolean result = false;
+		IFormMap formMap = (IFormMap) Application.getActiveApplication().getActiveForm();
+		if (formMap != null) {
+			ArrayList<Layer> arrayList = MapUtilities.getLayers(formMap.getMapControl().getMap(), true);
+			if (arrayList.size() > 0) {
+				result = true;
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 获取Cross图标
+	 *
+	 * @return
+	 */
+	public static ArrayList getIconImages() {
+		String path = PathUtilities.getRootPathName();
+		String[] paths = new String[2];
+		paths[0] = path;
+		paths[1] = "../Resources/Frame";
+		path = PathUtilities.combinePath(paths, true);
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		ArrayList<Image> images = new ArrayList<>();
+		images.add(toolkit.createImage(path + "iDesktop_Cross_16.png"));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_24.png"));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_32.png"));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_64.png"));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_128.png"));
+		images.add(toolkit.createImage(path + "iDesktop_Cross_256.png"));
+		images.add(toolkit.createImage(path + "iDesktop Cross.ico"));
+		return images;
+	}
 
 	/**
 	 * Start a new process
@@ -122,7 +184,8 @@ public class CacheUtilities {
 	public static void startProcess(String[] params, String className, String cacheType) {
 		try {
 			ArrayList<String> arguments = new ArrayList<>();
-			arguments.add("java");
+			String javaexeHome = CacheUtilities.replacePath(System.getProperty("java.home"), "bin") + File.separator + "java.exe";
+			arguments.add(javaexeHome);
 			arguments.add("-cp");
 			String projectPath = replacePath(System.getProperty("user.dir"));
 			String jarPath = "";
@@ -135,9 +198,11 @@ public class CacheUtilities {
 			arguments.add(jarPath);
 			arguments.add(className);
 			for (int i = 0; i < params.length; i++) {
-				arguments.add(params[i]);
+				String param = params[i].endsWith("\\") ? params[i].substring(0, params[i].length() - 1) : params[i];
+				arguments.add("\"" + param + "\"");
 			}
 			ProcessManager manager = ProcessManager.getInstance();
+
 			SubprocessThread thread = new SubprocessThread(arguments, cacheType);
 			manager.addProcess(thread);
 			thread.start();

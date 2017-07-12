@@ -100,14 +100,6 @@ public class ScaleEnabledContainer extends SmDialog {
         checkButtonState();
         addFocusTraversalPolicyList();
         setModal(false);
-        this.addWindowListener(new WindowAdapter() {
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-                unRegistEvents();
-                dispose();
-            }
-        });
     }
 
     public void init(MapBoundsPropertyControl control, Map map) {

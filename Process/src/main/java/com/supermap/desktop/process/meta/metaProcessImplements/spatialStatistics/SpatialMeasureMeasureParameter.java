@@ -11,11 +11,7 @@ import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedEvent;
 import com.supermap.desktop.process.parameter.events.FieldConstraintChangedListener;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterLabel;
-import com.supermap.desktop.process.parameter.implement.ParameterStatisticsField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.utilities.StringUtilities;
 
@@ -31,6 +27,7 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 
 	private ParameterComboBox parameterDistanceMethodComboBox = new ParameterComboBox();//距离计算方法类型。仅对中心要素有效。暂只支持欧式距离。
 	private ParameterComboBox parameterEllipseSizeComboBox = new ParameterComboBox();//椭圆大小类型,仅对方向分布有效。
+	private ParameterCheckBox parameterIgnoreDirectionCheckBox = new ParameterCheckBox();//是否忽略起点和终点的方向,仅对线性方向平均值有效。
 	private ParameterFieldComboBox parameterGroupFieldComboBox = new ParameterFieldComboBox().setShowNullValue(true);//分组字段,可以为数值型、时间型、文本型。
 	private ParameterFieldComboBox parameterSelfWeightFieldComboBox = new ParameterFieldComboBox().setShowNullValue(true);//设置自身权重字段的名称。仅数值字段有效。暂仅对中心要素有效。
 	private ParameterFieldComboBox parameterWeightFieldComboBox = new ParameterFieldComboBox().setShowNullValue(true);//权重字段的名称
@@ -54,6 +51,7 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 		this.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
 		parameterDistanceMethodComboBox.setDescribe(ProcessProperties.getString("String_DistanceMethod"));
 		parameterEllipseSizeComboBox.setDescribe(ProcessProperties.getString("String_EllipseSize"));
+		parameterIgnoreDirectionCheckBox.setDescribe(ProcessProperties.getString("String_IsIgnoreDirection"));
 		//// FIXME: 2017/5/2 字段类型限制；可以为空
 		parameterGroupFieldComboBox.setDescribe(ProcessProperties.getString("String_GroupField"));
 		parameterSelfWeightFieldComboBox.setDescribe(ProcessProperties.getString("String_SelfWeightField"));
@@ -75,10 +73,16 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 		if (metaKeys.equals(MetaKeys.Directional)) {
 			this.addParameters(parameterEllipseSizeComboBox);
 		}
-		this.addParameters(parameterGroupFieldComboBox);
+		if (metaKeys.equals(MetaKeys.LinearDirectionalMean)) {
+			this.addParameters(parameterIgnoreDirectionCheckBox);
+		}
+		if (metaKeys.equals(MetaKeys.Directional) || metaKeys.equals(MetaKeys.StandardDistance)) {
+			this.addParameters(parameterEllipseSizeComboBox);
+		}
 		if (metaKeys.equals(MetaKeys.CentralElement)) {
 			this.addParameters(parameterSelfWeightFieldComboBox);
 		}
+		this.addParameters(parameterGroupFieldComboBox);
 		this.addParameters(parameterWeightFieldComboBox);
 		this.addParameters(parameterStatisticsTypesLabel);
 		this.addParameters(parameterStatisticsTypesUserDefine);
@@ -113,8 +117,12 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 		if (metaKeys.equals(MetaKeys.CentralElement)) {
 			measureParameter.setDistanceMethod((DistanceMethod) parameterDistanceMethodComboBox.getSelectedData());
 		}
-		if (metaKeys.equals(MetaKeys.Directional)) {
+		if (metaKeys.equals(MetaKeys.Directional) || metaKeys.equals(MetaKeys.StandardDistance)) {
 			measureParameter.setEllipseSize((EllipseSize) parameterEllipseSizeComboBox.getSelectedData());
+		}
+		if (metaKeys.equals(MetaKeys.LinearDirectionalMean)) {
+			boolean isIgnoreDirection = "true".equalsIgnoreCase((String) parameterIgnoreDirectionCheckBox.getSelectedItem());
+			measureParameter.setOrientation(isIgnoreDirection);
 		}
 		String groupFieldName = parameterGroupFieldComboBox.getFieldName();
 		if (!StringUtilities.isNullOrEmpty(groupFieldName)) {

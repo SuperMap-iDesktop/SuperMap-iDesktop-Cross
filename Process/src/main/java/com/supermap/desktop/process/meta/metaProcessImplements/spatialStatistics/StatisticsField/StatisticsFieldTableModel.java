@@ -21,6 +21,7 @@ public class StatisticsFieldTableModel extends DefaultTableModel {
 	public static final int COLUMN_FIELDNAME = 0;
 	public static final int COLUMN_FIELDTYPE = 1;
 	public static final int COLUMN_STATISTICSTYPE = 2;
+	private boolean isColumnFieldTypeEditable = false;
 	private boolean isColumnStatisticsTypeEditable = true;
 
 	public ArrayList<StatisticsFieldInfo> getStatisticsFieldInfos() {
@@ -82,16 +83,20 @@ public class StatisticsFieldTableModel extends DefaultTableModel {
 		if (column == COLUMN_STATISTICSTYPE) {
 			return isColumnStatisticsTypeEditable;
 		}
+		// 最后一行可修改
+		if (row == statisticsFieldInfos.size() - 1) {
+			return isColumnFieldTypeEditable;
+		}
 		return false;
 	}
 
 	@Override
 	public Object getValueAt(int row, int column) {
 		if (column == COLUMN_FIELDNAME) {
-			return statisticsFieldInfos.get(row).getFieldInfo().getName();
+			return statisticsFieldInfos.get(row).getFieldName();
 		}
 		if (column == COLUMN_FIELDTYPE) {
-			return statisticsFieldInfos.get(row).getFieldInfo().getType();
+			return statisticsFieldInfos.get(row).getFieldType();
 		}
 		if (column == COLUMN_STATISTICSTYPE) {
 			return statisticsFieldInfos.get(row).getStatisticsType();
@@ -101,6 +106,14 @@ public class StatisticsFieldTableModel extends DefaultTableModel {
 
 	@Override
 	public void setValueAt(Object aValue, int row, int column) {
+		if (column == COLUMN_FIELDNAME) {
+			statisticsFieldInfos.get(row).setFieldName((String) aValue);
+			fireTableCellUpdated(row, column);
+		}
+		if (column == COLUMN_FIELDTYPE) {
+			statisticsFieldInfos.get(row).setFieldType((FieldType) aValue);
+			fireTableCellUpdated(row, column);
+		}
 		if (column == COLUMN_STATISTICSTYPE) {
 			statisticsFieldInfos.get(row).setStatisticsType((StatisticsType) aValue);
 			fireTableCellUpdated(row, column);
@@ -119,6 +132,14 @@ public class StatisticsFieldTableModel extends DefaultTableModel {
 			return StatisticsType.class;
 		}
 		return super.getColumnClass(columnIndex);
+	}
+
+	public boolean isColumnFieldTypeEditable() {
+		return isColumnFieldTypeEditable;
+	}
+
+	public void setColumnFieldTypeEditable(boolean columnFieldTypeEditable) {
+		isColumnFieldTypeEditable = columnFieldTypeEditable;
 	}
 
 	public boolean isColumnStatisticsTypeEditable() {

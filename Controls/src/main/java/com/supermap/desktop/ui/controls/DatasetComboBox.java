@@ -40,6 +40,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	private transient DatasetType[] datasetTypes;
 	private transient Datasets datasets;
 	private boolean isFireItemListener = true;
+    private boolean isShowNullValue = false;
 
 	private DatasetCreatedListener datasetCreatedListener = new DatasetCreatedListener() {
 		@Override
@@ -54,7 +55,6 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 			checkDatasetComboBox();
 		}
 	};
-
 
 	private DatasetRenamedListener datasetRenamedListener = new DatasetRenamedListener() {
 		@Override
@@ -121,7 +121,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 	 */
 	public void setSelectedDataset(Dataset dataset) {
 		int selectIndex = -1;
-		if (dataset != null) {
+        if (dataset != null) {
 			for (int i = 0; i < getItemCount(); i++) {
 				Dataset ComboBoxDataset = getItemAt(i);
 				if (ComboBoxDataset == dataset) {
@@ -214,6 +214,9 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 			this.removeAllItems();
 			if (this.datasets != null) {
 				try {
+                    if (isShowNullValue) {
+                        this.addItem(null);//添加首项为空
+                    }
 					for (int i = 0; i < this.datasets.getCount(); i++) {
 						Dataset dataset = this.datasets.get(i);
 						DatasetType type = dataset.getType();
@@ -223,6 +226,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 							this.addItem(dataset);
 						}
 					}
+					this.setSelectedIndex(-1);
 				} catch (Exception ex) {
 					return;
 				}
@@ -357,7 +361,6 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 		removeDataset(currentDataset.getName());
 	}
 
-
 	/**
 	 * 通过item次序获得数据集
 	 *
@@ -396,4 +399,12 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 		}
 		return false;
 	}
+
+    public boolean isShowNullValue() {
+        return isShowNullValue;
+    }
+
+    public void setShowNullValue(boolean showNullValue) {
+        isShowNullValue = showNullValue;
+    }
 }

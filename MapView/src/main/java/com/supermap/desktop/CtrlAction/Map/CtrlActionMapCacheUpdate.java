@@ -39,6 +39,7 @@ public class CtrlActionMapCacheUpdate extends CtrlAction {
 				DialogMapCacheClipBuilder builder = new DialogMapCacheClipBuilder(DialogMapCacheClipBuilder.SingleUpdateProcessClip, mapCacheBuilder);
 				builder.firstStepPane.textFieldCacheName.setText(mapCacheBuilder.getCacheName());
 				builder.firstStepPane.labelConfigValue.setText(mapCacheBuilder.getCacheName());
+				builder.firstStepPane.setSciPath(sciFile.getPath());
 				builder.firstStepPane.fileChooserControlFileCache.setPath(sciFile.getParentFile().getParent());
 				builder.firstStepPane.resetComponentsInfo();
 				builder.showDialog();

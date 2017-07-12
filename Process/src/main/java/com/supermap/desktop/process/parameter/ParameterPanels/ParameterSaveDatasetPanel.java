@@ -13,7 +13,7 @@ import com.supermap.desktop.process.parameter.interfaces.IParameterPanel;
 import com.supermap.desktop.process.parameter.interfaces.ParameterPanelDescribe;
 import com.supermap.desktop.process.util.ParameterUtil;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.ui.controls.CellRenders.ListDataCellRender;
+import com.supermap.desktop.ui.controls.DatasourceComboBox;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 import com.supermap.desktop.ui.controls.TextFields.SmTextFieldLegit;
@@ -31,7 +31,7 @@ import java.awt.event.ItemListener;
 public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterPanel {
 	private ParameterSaveDataset parameterSaveDataset;
 	private JLabel labelDatasource;
-	private JComboBox<Datasource> datasourceComboBox;
+	private DatasourceComboBox datasourceComboBox;
 	private JLabel labelDataset;
 	private SmTextFieldLegit textFieldDataset;
 	private boolean isSelectingItem = false;
@@ -52,8 +52,7 @@ public class ParameterSaveDatasetPanel extends SwingPanel implements IParameterP
 		this.parameterSaveDataset = (ParameterSaveDataset) parameterSaveDataset;
 		labelDatasource = new JLabel(CommonProperties.getString(CommonProperties.Label_Datasource));
 		labelDataset = new JLabel(CommonProperties.getString(CommonProperties.Label_Dataset));
-		datasourceComboBox = new JComboBox<>();
-		datasourceComboBox.setRenderer(new ListDataCellRender());
+		datasourceComboBox = new DatasourceComboBox();
 		textFieldDataset = new SmTextFieldLegit();
 		textFieldDataset.setSmTextFieldLegit(new ISmTextFieldLegit() {
 			@Override

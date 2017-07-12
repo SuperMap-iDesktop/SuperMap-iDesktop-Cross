@@ -2,52 +2,7 @@ package com.supermap.desktop.process.dataconversion;
 
 import com.supermap.data.Datasource;
 import com.supermap.data.EncodeType;
-import com.supermap.data.conversion.ImportMode;
-import com.supermap.data.conversion.ImportSetting;
-import com.supermap.data.conversion.ImportSettingBIL;
-import com.supermap.data.conversion.ImportSettingBIP;
-import com.supermap.data.conversion.ImportSettingBMP;
-import com.supermap.data.conversion.ImportSettingBSQ;
-import com.supermap.data.conversion.ImportSettingCSV;
-import com.supermap.data.conversion.ImportSettingDBF;
-import com.supermap.data.conversion.ImportSettingDGN;
-import com.supermap.data.conversion.ImportSettingDWG;
-import com.supermap.data.conversion.ImportSettingDXF;
-import com.supermap.data.conversion.ImportSettingE00;
-import com.supermap.data.conversion.ImportSettingECW;
-import com.supermap.data.conversion.ImportSettingFileGDBVector;
-import com.supermap.data.conversion.ImportSettingGBDEM;
-import com.supermap.data.conversion.ImportSettingGIF;
-import com.supermap.data.conversion.ImportSettingGJB;
-import com.supermap.data.conversion.ImportSettingGRD;
-import com.supermap.data.conversion.ImportSettingIMG;
-import com.supermap.data.conversion.ImportSettingJP2;
-import com.supermap.data.conversion.ImportSettingJPG;
-import com.supermap.data.conversion.ImportSettingKML;
-import com.supermap.data.conversion.ImportSettingKMZ;
-import com.supermap.data.conversion.ImportSettingLIDAR;
-import com.supermap.data.conversion.ImportSettingMAPGIS;
-import com.supermap.data.conversion.ImportSettingMIF;
-import com.supermap.data.conversion.ImportSettingModel3DS;
-import com.supermap.data.conversion.ImportSettingModelDXF;
-import com.supermap.data.conversion.ImportSettingModelFBX;
-import com.supermap.data.conversion.ImportSettingModelFLT;
-import com.supermap.data.conversion.ImportSettingModelOSG;
-import com.supermap.data.conversion.ImportSettingModelX;
-import com.supermap.data.conversion.ImportSettingMrSID;
-import com.supermap.data.conversion.ImportSettingPNG;
-import com.supermap.data.conversion.ImportSettingRAW;
-import com.supermap.data.conversion.ImportSettingSHP;
-import com.supermap.data.conversion.ImportSettingSIT;
-import com.supermap.data.conversion.ImportSettingTAB;
-import com.supermap.data.conversion.ImportSettingTEMSBuildingVector;
-import com.supermap.data.conversion.ImportSettingTEMSClutter;
-import com.supermap.data.conversion.ImportSettingTEMSVector;
-import com.supermap.data.conversion.ImportSettingTIF;
-import com.supermap.data.conversion.ImportSettingUSGSDEM;
-import com.supermap.data.conversion.ImportSettingVCT;
-import com.supermap.data.conversion.ImportSettingWOR;
-import com.supermap.data.conversion.MultiBandImportMode;
+import com.supermap.data.conversion.*;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.process.ProcessProperties;
@@ -55,18 +10,7 @@ import com.supermap.desktop.process.parameter.ParameterDataNode;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalEvent;
 import com.supermap.desktop.process.parameter.events.ParameterValueLegalListener;
 import com.supermap.desktop.process.parameter.events.ParameterValueSelectedEvent;
-import com.supermap.desktop.process.parameter.implement.ParameterButton;
-import com.supermap.desktop.process.parameter.implement.ParameterCharset;
-import com.supermap.desktop.process.parameter.implement.ParameterCheckBox;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasetType;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasourceConstrained;
-import com.supermap.desktop.process.parameter.implement.ParameterEnum;
-import com.supermap.desktop.process.parameter.implement.ParameterFile;
-import com.supermap.desktop.process.parameter.implement.ParameterRadioButton;
-import com.supermap.desktop.process.parameter.implement.ParameterTextArea;
-import com.supermap.desktop.process.parameter.implement.ParameterTextField;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.IParameter;
 import com.supermap.desktop.process.util.EnumParser;
 import com.supermap.desktop.properties.CommonProperties;
@@ -654,10 +598,7 @@ public class ImportParameterCreator implements IParameterCreator {
 			resultInfo.add(reflectInfoImportMode);
 			parameterCombineResultSet = new ParameterCombine();
 			parameterCombineResultSet.setDescribe(CommonProperties.getString("String_ResultSet"));
-			parameterCombineResultSet.addParameters(
-					new ParameterCombine(ParameterCombine.HORIZONTAL).addParameters(parameterDatasource, parameterEncodeType),
-					parameterImportMode
-			);
+			parameterCombineResultSet.addParameters(parameterDatasource, parameterEncodeType, parameterImportMode);
 		} else if (importSetting instanceof ImportSettingModel3DS || importSetting instanceof ImportSettingModelDXF
 				|| importSetting instanceof ImportSettingModelFBX || importSetting instanceof ImportSettingModelOSG
 				|| importSetting instanceof ImportSettingModelX) {
