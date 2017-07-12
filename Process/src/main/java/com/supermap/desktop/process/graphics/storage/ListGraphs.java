@@ -18,6 +18,8 @@ public class ListGraphs extends AbstractGraphStorage {
 	private Vector<IGraph> graphs = new Vector();
 	private Rectangle box = null;
 
+	private Vector<IGraph> removing = new Vector<>();
+
 	private GraphBoundsChangedListener graphBoundsChangedListener = new GraphBoundsChangedListener() {
 		@Override
 		public void graghBoundsChanged(GraphBoundsChangedEvent e) {
@@ -84,19 +86,37 @@ public class ListGraphs extends AbstractGraphStorage {
 
 	@Override
 	public void remove(IGraph graph) {
-		GraphRemovingEvent removingEvent = new GraphRemovingEvent(this.canvas, graph);
-		fireGraphRemoving(removingEvent);
-
-		if (removingEvent.isCancel()) {
+		if (graph == null) {
 			return;
 		}
 
-		int index = this.graphs.indexOf(graph);
-		if (index > -1) {
-			this.graphs.remove(graph);
-			computeBox();
+		if (!this.graphs.contains(graph)) {
+			return;
 		}
-		fireGraphRemoved(new GraphRemovedEvent(this.canvas, graph));
+
+		// 正在执行删除的 graph，不做多次删除
+		if (this.removing.contains(graph)) {
+			return;
+		}
+
+		try {
+			this.removing.add(graph);
+			GraphRemovingEvent removingEvent = new GraphRemovingEvent(this.canvas, graph);
+			fireGraphRemoving(removingEvent);
+
+			if (removingEvent.isCancel()) {
+				return;
+			}
+
+			int index = this.graphs.indexOf(graph);
+			if (index > -1) {
+				this.graphs.remove(graph);
+				computeBox();
+			}
+			fireGraphRemoved(new GraphRemovedEvent(this.canvas, graph));
+		} finally {
+			this.removing.remove(graph);
+		}
 	}
 
 	@Override

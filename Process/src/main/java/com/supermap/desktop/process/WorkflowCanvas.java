@@ -37,12 +37,15 @@ public class WorkflowCanvas extends GraphCanvas
 	private Map<IProcess, ProcessGraph> processMap = new ConcurrentHashMap<>();
 	private Map<OutputData, OutputGraph> outputMap = new ConcurrentHashMap<>();
 	private Map<IRelation<IProcess>, ConnectionLineGraph> relationMap = new ConcurrentHashMap<>();
+	private Map<OutputData, ConnectionLineGraph> outputLinesMap = new ConcurrentHashMap<>();
 
 	private GraphConnectAction connector = new GraphConnectAction(this);
 
 	public WorkflowCanvas(Workflow workflow) {
 		loadWorkflow(workflow);
 		addGraphRemovingListener(this);
+		this.workflow.addRelationAddedListener(this);
+		this.workflow.addRelationRemovingListener(this);
 		new DropTarget(this, new ProcessDropTargetHandler());
 
 		installCanvasAction(GraphConnectAction.class, this.connector);
@@ -125,7 +128,9 @@ public class WorkflowCanvas extends GraphCanvas
 				locationY += dataGraphs[i].getHeight() + vgap;
 
 				// 添加 Process 和 output 之间的连接线
-				addGraph(new ConnectionLineGraph(this, processGraph, outputGraph));
+				ConnectionLineGraph lineGraph = new ConnectionLineGraph(this, processGraph, outputGraph);
+				this.outputLinesMap.put(outputs[i], lineGraph);
+				addGraph(lineGraph);
 			}
 		}
 		return processGraph;
@@ -233,29 +238,44 @@ public class WorkflowCanvas extends GraphCanvas
 			ProcessGraph processGraph = (ProcessGraph) e.getGraph();
 			IProcess process = processGraph.getProcess();
 
+			// 移除 Process
+			this.processMap.remove(process);
+			this.workflow.removeProcess(process);
+
 			// 删除所有的输出节点
 			OutputData[] outputs = process.getOutputs().getDatas();
 			if (outputs != null && outputs.length > 0) {
 				for (int i = 0; i < outputs.length; i++) {
-					OutputGraph outputGraph = this.outputMap.get(outputs[i]);
 
 					// 删除图上输出节点
+					OutputGraph outputGraph = this.outputMap.get(outputs[i]);
 					removeGraph(outputGraph);
 
-					// 从 map 中移除
-					this.outputMap.remove(outputs[i]);
+					// 删除 Process 和 output 之间的连线，并从 map 中移除
+					ConnectionLineGraph lineGraph = this.outputLinesMap.get(outputs[i]);
+					removeGraph(lineGraph);
+					this.outputLinesMap.remove(outputs[i]);
 				}
 			}
 
-			this.processMap.remove(process);
-			this.workflow.removeProcess(process);
-
 		} else if (e.getGraph() instanceof OutputGraph) {
+			ProcessGraph processGraph = ((OutputGraph) e.getGraph()).getProcessGraph();
+			IProcess process = processGraph.getProcess();
 
+			if (this.workflow.contains(process)) {
+				e.setCancel(true);
+			} else {
+				if (this.outputLinesMap.containsKey(e.getGraph())) {
+					this.outputLinesMap.remove(((OutputGraph) e.getGraph()).getProcessData());
+				}
+			}
 		} else if (e.getGraph() instanceof ConnectionLineGraph) {
 			ConnectionLineGraph connection = (ConnectionLineGraph) e.getGraph();
 
-			if (connection.getFrom() instanceof ProcessGraph && connection.getTo() instanceof OutputGraph) {
+			if (connection.getFrom() instanceof ProcessGraph
+					&& connection.getTo() instanceof OutputGraph
+					&& getGraphStorage().contains(connection.getFrom())
+					&& getGraphStorage().contains(connection.getTo())) {
 				e.setCancel(true);
 			} else {
 				IRelation<IProcess> relation = null;
@@ -267,7 +287,15 @@ public class WorkflowCanvas extends GraphCanvas
 					}
 				}
 
-				this.workflow.removeRelation(relation);
+				if (relation != null && this.workflow.containsRelation(relation)) {
+					this.workflow.removeRelationRemovingListener(this);
+					this.workflow.removeRelation(relation);
+					this.workflow.addRelationRemovingListener(this);
+				}
+
+				if (relation != null && this.relationMap.containsKey(relation)) {
+					this.relationMap.remove(relation);
+				}
 			}
 		}
 	}
@@ -278,7 +306,9 @@ public class WorkflowCanvas extends GraphCanvas
 			ConnectionLineGraph connection = this.relationMap.get(e.getRelation());
 
 			if (getGraphStorage().contains(connection)) {
+				removeGraphRemovingListener(this);
 				removeGraph(connection);
+				addGraphRemovingListener(this);
 			}
 
 			if (this.relationMap.containsKey(e.getRelation())) {
@@ -323,11 +353,13 @@ public class WorkflowCanvas extends GraphCanvas
 							ProcessGraph graph = new ProcessGraph(WorkflowCanvas.this, metaProcess);
 							Point screenLocation = new Point(dtde.getLocation().x - graph.getWidth() / 2, dtde.getLocation().y - graph.getHeight() / 2);
 							Point canvasLocation = WorkflowCanvas.this.getCoordinateTransform().inverse(screenLocation);
+
+							// 添加到 Workflow
+							WorkflowCanvas.this.getWorkflow().addProcess(metaProcess);
 							addProcess(metaProcess, canvasLocation);
 							WorkflowCanvas.this.repaint();
 						}
 					} catch (Exception e) {
-						// ignore 当然是原谅ta啦
 						Application.getActiveApplication().getOutput().output(e);
 					}
 				}

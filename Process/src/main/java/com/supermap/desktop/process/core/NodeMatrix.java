@@ -68,6 +68,7 @@ public class NodeMatrix<T extends Object> {
 
 			if (map.containsKey(node)) {
 				clearRelation(map.get(node));
+				removeRelation(map.get(node));
 				map.remove(node);
 			}
 		}
@@ -76,6 +77,7 @@ public class NodeMatrix<T extends Object> {
 		for (Map.Entry<T, IRelation<T>> entry :
 				relations.entrySet()) {
 			clearRelation(entry.getValue());
+			removeRelation(entry.getValue());
 		}
 
 		// remove node
@@ -283,6 +285,10 @@ public class NodeMatrix<T extends Object> {
 		return endNodes;
 	}
 
+
+	public synchronized boolean contains(T node) {
+		return this.nodes.contains(node);
+	}
 
 	/**
 	 * Add relation.
