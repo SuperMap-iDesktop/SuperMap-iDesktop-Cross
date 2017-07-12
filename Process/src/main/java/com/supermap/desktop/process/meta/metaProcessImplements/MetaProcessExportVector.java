@@ -89,7 +89,7 @@ public class MetaProcessExportVector extends MetaProcessAbstractExport {
 		this.sqlExpression.setAnchor(GridBagConstraints.EAST);
 
 		ParameterCombine emptyCombine = new ParameterCombine(ParameterCombine.HORIZONTAL);
-		emptyCombine.addParameters(new ParameterLabel(), new ParameterLabel(), new ParameterLabel(), this.sqlExpression);
+		emptyCombine.addParameters(new ParameterLabel(), new ParameterLabel(), this.sqlExpression);
 
 		this.vectorCombine.addParameters(this.externalData, this.externalRecord, this.charset
 				, this.cadVersion, this.expression, emptyCombine);

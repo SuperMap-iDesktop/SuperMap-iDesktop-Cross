@@ -13,9 +13,10 @@ public class ListFieldTypeCellRender extends DefaultListCellRenderer {
 	@Override
 	public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 		JLabel result = new JLabel();
-		if (value == null && value instanceof FieldType) {
+		if (value != null && value instanceof FieldType) {
 			result.setText(FieldTypeUtilities.getFieldTypeName((FieldType) value));
 		}
+		result.setOpaque(true);
 		if (isSelected) {
 			result.setBackground(list.getSelectionBackground());
 			result.setForeground(list.getSelectionForeground());

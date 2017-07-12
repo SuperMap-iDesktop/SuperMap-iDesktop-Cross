@@ -66,9 +66,6 @@ public class SpatialMeasureMeasureParameter extends ParameterCombine {
 		parameterStatisticsTypesUserDefine.setEnabled(currentDataset != null);
 	}
 
-	/**
-	 * 参数设置面板布局设计，不同的功能需要的参数不同，还需做调整-yuanR
-	 */
 	private void initLayout() {
 		if (metaKeys.equals(MetaKeys.CentralElement)) {
 			this.addParameters(parameterDistanceMethodComboBox);
