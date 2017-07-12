@@ -20,6 +20,14 @@ public class DesktopUserExperienceInfo implements UserExperienceBean {
 	private FunctionInfo functionInfo;
 	private LicenseInfo licenseInfo;
 
+	public DesktopUserExperienceInfo(FunctionInfo functionInfo) {
+		this.functionInfo = functionInfo;
+	}
+
+	public DesktopUserExperienceInfo(LicenseInfo userLicenseInfo) {
+		licenseInfo = userLicenseInfo;
+	}
+
 	@Override
 	public String getJson() {
 		JSONObject jsonObject = new JSONObject();

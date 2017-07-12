@@ -14,12 +14,15 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
  * @author XiaJT
  */
 public class UserExperienceManager {
+
+	private static final Object lock = new Object();
 
 	private static UserExperienceManager userExperienceManager;
 	private DesktopRuntimeListener desktopRuntimeListener = new DesktopRuntimeListener() {
@@ -33,20 +36,25 @@ public class UserExperienceManager {
 	private static final String executingFileName = "ExecutingFunctionInfo";
 	private static final String defaultFileType = ".txt";
 
-	private static final String userExperienceFullFileDirectory = userExperienceDirectory + "finished" + File.separator;
+	private static final String userExperienceExecutedFileDirectory = userExperienceDirectory + "finished" + File.separator;
+	private static final String executedFileName = "ExecutedFunctionInfo";
 
-	private FileLocker executingFunctionFile;
-	private ArrayList<File> fulledFiles = new ArrayList<>();
+	private File executingFile = new File(userExperienceDirectory + executingFileName + defaultFileType);
+
+	private FileLocker executedFunctionFile;
+	private ArrayList<FileLocker> executedFiles = new ArrayList<>();
 
 	private ArrayList<FunctionInfoCtrlAction> runningCtrlAction = new ArrayList<>();
+
+	private static final long maxFileSize = 8 * 1024 * 1024 * 10;
+
 
 	private Timer timer;
 
 	private UserExperienceManager() {
 		postExistFiles();
-		executingFunctionFile = getDefaultFile();
-		if (executingFunctionFile != null) {
-			// TODO: 2017/7/11 添加本次启动记录
+		executedFunctionFile = getDefaultFile();
+		if (executedFunctionFile != null) {
 			initializeLicenseInfo();
 			initializeLogsSendTimer();
 		}
@@ -54,7 +62,7 @@ public class UserExperienceManager {
 
 
 	private void postExistFiles() {
-		File parentFile = new File(userExperienceDirectory);
+		File parentFile = new File(userExperienceExecutedFileDirectory);
 		if (parentFile.exists()) {
 			if (!GlobalParameters.isLaunchUserExperiencePlan()) {
 				return;
@@ -62,7 +70,16 @@ public class UserExperienceManager {
 			File[] listFiles = parentFile.listFiles();
 			if (listFiles != null) {
 				for (File file : listFiles) {
-					// TODO: 2017/7/11  doPost
+					FileLocker fileLocker = new FileLocker(file);
+					try {
+						if (fileLocker.tryLock()) {
+							doPost(fileLocker);
+						}
+					} catch (Exception e) {
+						// ignore
+					} finally {
+						fileLocker.release();
+					}
 				}
 			}
 		} else {
@@ -70,15 +87,38 @@ public class UserExperienceManager {
 		}
 	}
 
+	private boolean doPost(FileLocker fileLocker) {
+		boolean result;
+		synchronized (lock) {
+			result = PostUserExperienceUtilties.postFile(fileLocker);
+		}
+		return result;
+
+	}
+
 	private FileLocker getDefaultFile() {
+		if (!executingFile.exists()) {
+			if (!executingFile.getParentFile().exists()) {
+				executingFile.getParentFile().mkdirs();
+			}
+			try {
+				executingFile.createNewFile();
+			} catch (IOException e) {
+				Application.getActiveApplication().getOutput().output(e);
+			}
+		}
 		int i = 0;
 		while (true) {
-			File file = new File(userExperienceDirectory + executingFileName + (i == 0 ? "" : "_" + i) + defaultFileType);
+			File file = new File(userExperienceExecutedFileDirectory + executedFileName + (i == 0 ? "" : "_" + i) + defaultFileType);
 			try {
 				if (file.exists()) {
 					FileLocker fileLocker = new FileLocker(file);
-					if (fileLocker.tryLock() && fileLocker.getRandomAccessFile().length() == 0) {
-						return fileLocker;
+					if (fileLocker.tryLock()) {
+						if (fileLocker.getRandomAccessFile().length() == 0) {
+							return fileLocker;
+						} else {
+							fileLocker.release();
+						}
 					}
 				} else {
 					if (file.createNewFile()) {
@@ -97,8 +137,10 @@ public class UserExperienceManager {
 	}
 
 	private void initializeLicenseInfo() {
-		LicenseInfo userLicenseInfo = new LicenseInfo(LicenseManager.getCurrentLicenseType());
-
+		if (GlobalParameters.isLaunchUserExperiencePlan()) {
+			LicenseInfo userLicenseInfo = new LicenseInfo(LicenseManager.getCurrentLicenseType());
+			addDoneJson(new DesktopUserExperienceInfo(userLicenseInfo).getJson());
+		}
 	}
 
 	private void initializeLogsSendTimer() {
@@ -114,13 +156,20 @@ public class UserExperienceManager {
 	}
 
 	public void start() {
-		if (executingFunctionFile != null) {
+		if (executedFunctionFile != null) {
 			DesktopRuntimeManager.getInstance().addRuntimeStateListener(desktopRuntimeListener);
 		}
 	}
 
 	private void doPost() {
-		// todo 发送数据到服务器
+		for (FileLocker executedFile : executedFiles) {
+			doPost(executedFile);
+			executedFile.release();
+			executedFile.getLockFile().delete();
+		}
+		synchronized (lock) {
+			doPost(executedFunctionFile);
+		}
 	}
 
 	public void stop() {
@@ -153,7 +202,7 @@ public class UserExperienceManager {
 				// 暂不支持取消
 				break;
 			case DesktopRuntimeEvent.EXCEPTION:
-				addDoneJson(new FunctionInfoCtrlAction(event).getJson());
+				addDoneJson(new DesktopUserExperienceInfo(new FunctionInfoCtrlAction(event)).getJson());
 				break;
 			case DesktopRuntimeEvent.STOP:
 				ctrlActionFinished(event);
@@ -169,6 +218,7 @@ public class UserExperienceManager {
 	private void ctrlActionFinished(DesktopRuntimeEvent event) {
 		for (FunctionInfoCtrlAction functionInfoCtrlAction : runningCtrlAction) {
 			if (functionInfoCtrlAction.getCtrlAction() == event.getCurrentObject()) {
+				runningCtrlAction.remove(functionInfoCtrlAction);
 				String json = functionInfoCtrlAction.getJson();
 				functionInfoCtrlAction.finished();
 				removeDoingJson(json);
@@ -179,15 +229,58 @@ public class UserExperienceManager {
 	}
 
 	private void addDoneJson(String json) {
-		// TODO: 2017/7/12
+		synchronized (lock) {
+			try {
+				executedFunctionFile.getRandomAccessFile().writeChars(json + "\\r\\n");
+				if (executedFunctionFile.getRandomAccessFile().length() > maxFileSize) {
+					executedFiles.add(executedFunctionFile);
+				}
+				executedFunctionFile = getDefaultFile();
+			} catch (IOException e) {
+				Application.getActiveApplication().getOutput().output(e);
+			}
+		}
 	}
 
 	private void addDoingString(String json) {
-		// TODO: 2017/7/12  加到doing文件中
+		FileLocker fileLocker = new FileLocker(executingFile);
+		try {
+			while (fileLocker.tryLock()) {
+				Thread.sleep(1000);
+			}
+			fileLocker.getRandomAccessFile().seek(fileLocker.getRandomAccessFile().length() - 1);
+			fileLocker.getRandomAccessFile().writeChars(json + "\\r\\n");
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			fileLocker.release();
+		}
 	}
 
+
 	private void removeDoingJson(String json) {
-// TODO: 2017/7/12
+		FileLocker fileLocker = new FileLocker(executingFile);
+		try {
+			while (fileLocker.tryLock()) {
+				Thread.sleep(1000);
+			}
+			fileLocker.getRandomAccessFile().seek(0);
+			ArrayList<String> currentRows = new ArrayList<>();
+			while (fileLocker.getRandomAccessFile().length() != fileLocker.getRandomAccessFile().getFilePointer()) {
+				String e = fileLocker.getRandomAccessFile().readLine();
+				if (!e.equals(json)) {
+					currentRows.add(e);
+				}
+			}
+			fileLocker.getRandomAccessFile().setLength(0);
+			for (String currentRow : currentRows) {
+				fileLocker.getRandomAccessFile().writeChars(currentRow);
+			}
+		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
+		} finally {
+			fileLocker.release();
+		}
 	}
 
 	public static UserExperienceManager getInstance() {
