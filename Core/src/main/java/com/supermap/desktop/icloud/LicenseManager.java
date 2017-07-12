@@ -42,20 +42,21 @@ public class LicenseManager {
 			com.supermap.data.ProductType.IDESKTOP_ADVANCED,
 			com.supermap.data.ProductType.IDESKTOP_STANDARD,
 
-			com.supermap.data.ProductType.IDESKTOP_TOPOLOGY,
-			com.supermap.data.ProductType.IDESKTOP_TRAFFICNETWORK,
-			com.supermap.data.ProductType.IDESKTOP_FACILITYNETWORK,
-			com.supermap.data.ProductType.IDESKTOP_SPATIAL,
-			com.supermap.data.ProductType.IDESKTOP_CHART,
-			com.supermap.data.ProductType.IDESKTOP_GEOPROCESSER,
-			com.supermap.data.ProductType.IDESKTOP_REALSPACE_SPATIALANALYST,
-			com.supermap.data.ProductType.IDESKTOP_TRAFFICANALYST,
-			com.supermap.data.ProductType.IDESKTOP_REALSPACE_EFFECT
+//			com.supermap.data.ProductType.IDESKTOP_TOPOLOGY,
+//			com.supermap.data.ProductType.IDESKTOP_TRAFFICNETWORK,
+//			com.supermap.data.ProductType.IDESKTOP_FACILITYNETWORK,
+//			com.supermap.data.ProductType.IDESKTOP_SPATIAL,
+//			com.supermap.data.ProductType.IDESKTOP_CHART,
+//			com.supermap.data.ProductType.IDESKTOP_GEOPROCESSER,
+//			com.supermap.data.ProductType.IDESKTOP_REALSPACE_SPATIALANALYST,
+//			com.supermap.data.ProductType.IDESKTOP_TRAFFICANALYST,
+//			com.supermap.data.ProductType.IDESKTOP_REALSPACE_EFFECT
 	};
+	private static com.supermap.data.ProductType currentLicenseType;
 
 
-    /**
-     * 获取指定相对路径的绝对路径
+	/**
+	 * 获取指定相对路径的绝对路径
      *
      * @param pathName
      * @return
@@ -173,19 +174,26 @@ public class LicenseManager {
 	    License license = new License();
 	    int connect = license.connect(com.supermap.data.ProductType.IOBJECTS_CORE_DEVELOP);
 	    if (connect == 0) {
+		    currentLicenseType = com.supermap.data.ProductType.IOBJECTS_CORE_DEVELOP;
 		    return true;
 	    }
 	    boolean result = false;
 	    for (com.supermap.data.ProductType supportProductType : desktopProductTypes) {
 		    if (license.connect(supportProductType) == 0) {
+			    currentLicenseType = supportProductType;
 			    result = true;
+			    break;
 		    }
 	    }
 	    return result;
     }
 
-    /**
-     * 申请试用许可,许可可用将生成本地文件来存储试用许可以便启动桌面
+	public static com.supermap.data.ProductType getCurrentLicenseType() {
+		return currentLicenseType;
+	}
+
+	/**
+	 * 申请试用许可,许可可用将生成本地文件来存储试用许可以便启动桌面
      *
      * @param licenseService
      * @return
