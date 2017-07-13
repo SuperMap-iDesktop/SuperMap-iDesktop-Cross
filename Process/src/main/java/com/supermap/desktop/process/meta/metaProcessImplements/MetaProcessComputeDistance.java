@@ -217,7 +217,6 @@ public class MetaProcessComputeDistance extends MetaProcess {
             } else {
                 recordsetReference = srcReference.getRecordset(false, CursorType.STATIC);
             }
-//            recordsetReference.dispose();
 
             String datasetName = resultDataset.getDatasetName();
             datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
@@ -226,10 +225,13 @@ public class MetaProcessComputeDistance extends MetaProcess {
             double max = textNumMax.isEnabled() ? (double)textNumMax.getSelectedItem() : -1;
 
             if (comboBoxComputeMethod.getSelectedData() == MIN_DISTANCE) {
-                ProximityAnalyst.computeMinDistance(recordsetSource, recordsetReference, min, max, resultDataset.getResultDatasource(), datasetName);
+                isSuccessful = ProximityAnalyst.computeMinDistance(recordsetSource, recordsetReference, min, max, resultDataset.getResultDatasource(), datasetName);
             } else {
-                ProximityAnalyst.computeRangeDistance(recordsetSource, recordsetReference, min, max, resultDataset.getResultDatasource(), datasetName);
+                isSuccessful = ProximityAnalyst.computeRangeDistance(recordsetSource, recordsetReference, min, max, resultDataset.getResultDatasource(), datasetName);
             }
+            recordsetSource.dispose();
+            recordsetReference.dispose();
+
             fireRunning(new RunningEvent(this, 100, "finished"));
         } catch (Exception e) {
             Application.getActiveApplication().getOutput().output(e);
