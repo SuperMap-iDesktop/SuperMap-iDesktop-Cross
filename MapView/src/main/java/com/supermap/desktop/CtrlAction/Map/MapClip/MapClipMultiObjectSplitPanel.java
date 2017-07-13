@@ -3,6 +3,7 @@ package com.supermap.desktop.CtrlAction.Map.MapClip;
 import com.supermap.desktop.implement.SmComboBox;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
+import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -16,6 +17,7 @@ public class MapClipMultiObjectSplitPanel extends JPanel {
 	private JCheckBox multiObjectSplitCheckBox;
 	private JLabel resultCaptionLabel;
 	private JComboBox fieldCaptionCombobox;
+	private WarningOrHelpProvider warningOrHelpProvider;
 
 	public MapClipMultiObjectSplitPanel(boolean isEnabled) {
 		initComponent();
@@ -31,6 +33,7 @@ public class MapClipMultiObjectSplitPanel extends JPanel {
 		this.resultCaptionLabel = new JLabel("ResultCaption");
 		this.fieldCaptionCombobox = new JComboBox();
 		this.compTitledPane = new CompTitledPane(this.multiObjectSplitCheckBox, this);
+		this.warningOrHelpProvider = new WarningOrHelpProvider(MapViewProperties.getString("String_MapClip_MutiObjectClipTip"), false);
 	}
 
 	private void initLayout() {
@@ -41,9 +44,11 @@ public class MapClipMultiObjectSplitPanel extends JPanel {
 
 		groupLayout.setHorizontalGroup(groupLayout.createSequentialGroup()
 				.addComponent(this.resultCaptionLabel)
+				.addComponent(this.warningOrHelpProvider)
 				.addComponent(this.fieldCaptionCombobox));
 		groupLayout.setVerticalGroup(groupLayout.createParallelGroup(GroupLayout.Alignment.CENTER)
 				.addComponent(this.resultCaptionLabel)
+				.addComponent(this.warningOrHelpProvider)
 				.addComponent(this.fieldCaptionCombobox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE));
 	}
 

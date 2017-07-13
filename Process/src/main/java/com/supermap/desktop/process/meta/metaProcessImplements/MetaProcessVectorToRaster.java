@@ -28,21 +28,23 @@ import java.beans.PropertyChangeListener;
 public class MetaProcessVectorToRaster extends MetaProcess {
 
 	private final static String SOURCE_DATA = "SourceData";
-	//private final static String BOUNDARY_DATA = "BoundaryData";
+	private final static String BOUNDARY_DATA = "BoundaryData";
 	private final static String OUTPUT_DATA = "ExtractResult";
 
+	//  输入数据
 	private ParameterDatasourceConstrained sourceDatasource;
 	private ParameterSingleDataset sourceDataset;
 	private ParameterCombine sourceData;
-
-	private ParameterFieldComboBox comboBoxValueField;
-	private ParameterDatasource boundaryDatasource;
+	//  边界数据
+	private ParameterDatasourceConstrained boundaryDatasource;
 	private ParameterSingleDataset boundaryDataset;
-	//private ParameterCheckBox comboBoxDatasetIsCanBoundary;
+	private ParameterCombine boundaryData;
+	// 参数设置
+	private ParameterFieldComboBox comboBoxValueField;
 	private ParameterComboBox comboBoxPixelFormat;
 	private ParameterNumber textCellSize;
 	private ParameterCombine parameterSetting;
-
+	// 结果数据
 	private ParameterSaveDataset resultDataset;
 	private ParameterCombine resultData;
 
@@ -54,41 +56,47 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 	}
 
 	private void initParameters() {
-		sourceDatasource = new ParameterDatasourceConstrained();
-		sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
-		sourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
-		sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
+		this.sourceDatasource = new ParameterDatasourceConstrained();
+		this.sourceDatasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
+		this.sourceDataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
+		this.sourceDataset.setDescribe(CommonProperties.getString("String_Label_Dataset"));
 
-		resultDataset = new ParameterSaveDataset();
+		this.boundaryDatasource = new ParameterDatasourceConstrained();
+		this.boundaryDatasource.setDescribe(CommonProperties.getString("String_BoundaryData"));
+		this.boundaryDataset=new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
+		this.boundaryDataset.setDescribe(CommonProperties.getString("String_BoundaryDataset"));
+
+		this.resultDataset = new ParameterSaveDataset();
 		this.resultDataset.setDatasourceDescribe(CommonProperties.getString("String_TargetDatasource"));
 		this.resultDataset.setDatasetDescribe(CommonProperties.getString("String_TargetDataset"));
 
-		comboBoxValueField = new ParameterFieldComboBox(CommonProperties.getString("String_m_labelGridValueFieldText"));
-		boundaryDatasource = new ParameterDatasource();
-		boundaryDatasource.setDescribe(CommonProperties.getString("String_BoundaryDatasource"));
-		boundaryDataset = new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
-		boundaryDataset.setDescribe(CommonProperties.getString("String_BoundaryDataset"));
-		//comboBoxDatasetIsCanBoundary = new ParameterCheckBox(CommonProperties.getString("String_SelectedDatasetIsCanBoundary"));
-		comboBoxPixelFormat = new ParameterComboBox(CommonProperties.getString("String_PixelType"));
-		textCellSize = new ParameterNumber(CommonProperties.getString("String_Resolution"));
+		this.comboBoxValueField = new ParameterFieldComboBox(CommonProperties.getString("String_m_labelGridValueFieldText"));
+		this.boundaryDataset = new ParameterSingleDataset(DatasetType.REGION).setShowNullValue(true);
+		this.boundaryDataset.setDescribe(CommonProperties.getString("String_BoundaryDataset"));
+		this.comboBoxPixelFormat = new ParameterComboBox(CommonProperties.getString("String_PixelType"));
+		this.textCellSize = new ParameterNumber(CommonProperties.getString("String_Resolution"));
 
-		sourceData = new ParameterCombine();
-		sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
-		sourceData.addParameters(sourceDatasource, sourceDataset);
+		this.sourceData = new ParameterCombine();
+		this.sourceData.setDescribe(CommonProperties.getString("String_GroupBox_SourceData"));
+		this.sourceData.addParameters(this.sourceDatasource, this.sourceDataset);
 
-		resultData = new ParameterCombine();
-		resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
-		resultData.addParameters(resultDataset);
+		this.boundaryData =new ParameterCombine();
+		this.boundaryData.setDescribe(CommonProperties.getString("String_BoundaryData"));
+		this.boundaryData.addParameters(this.boundaryDatasource,this.boundaryDataset);
 
-		parameterSetting = new ParameterCombine();
-		parameterSetting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
-		parameterSetting.addParameters(comboBoxValueField, boundaryDatasource, boundaryDataset, comboBoxPixelFormat, textCellSize);
+		this.parameterSetting = new ParameterCombine();
+		this.parameterSetting.setDescribe(CommonProperties.getString("String_GroupBox_ParamSetting"));
+		this.parameterSetting.addParameters(this.comboBoxValueField,this.comboBoxPixelFormat, this.textCellSize);
 
-		this.parameters.setParameters(sourceData, parameterSetting, resultData);
+		this.resultData = new ParameterCombine();
+		this.resultData.setDescribe(CommonProperties.getString("String_GroupBox_ResultData"));
+		this.resultData.addParameters(this.resultDataset);
+
+		this.parameters.setParameters(this.sourceData,this.boundaryData, this.parameterSetting, this.resultData);
 		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.POINT, sourceData);
 		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.LINE, sourceData);
 		this.parameters.addInputParameters(SOURCE_DATA, DatasetTypes.REGION, sourceData);
-		//this.parameters.addInputParameters(BOUNDARY_DATA, DatasetTypes.REGION, b);
+		this.parameters.addInputParameters(BOUNDARY_DATA, DatasetTypes.REGION, boundaryData);
 		this.parameters.addOutputParameters(OUTPUT_DATA, DatasetTypes.GRID, resultData);
 
 	}
@@ -97,20 +105,15 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 		FieldType[] fieldType = {FieldType.INT16, FieldType.INT32, FieldType.INT64, FieldType.SINGLE, FieldType.DOUBLE};
 		DatasetVector datasetVector = DatasetUtilities.getDefaultDatasetVector();
 		if (datasetVector != null) {
-			sourceDatasource.setSelectedItem(datasetVector.getDatasource());
-			sourceDataset.setDatasource(datasetVector.getDatasource());
-			boundaryDataset.setDatasource(datasetVector.getDatasource());
+			this.sourceDatasource.setSelectedItem(datasetVector.getDatasource());
+			this.sourceDataset.setDatasource(datasetVector.getDatasource());
+			this.boundaryDatasource.setSelectedItem(datasetVector.getDatasource());
+			this.boundaryDataset.setDatasource(datasetVector.getDatasource());
 		}
 
-		DatasetVector datasetVector1 = DatasetUtilities.getDefaultDatasetVector();
-		if (datasetVector1 != null) {
-			boundaryDatasource.setSelectedItem(datasetVector1.getDatasource());
-			boundaryDataset.setDatasource(datasetVector1.getDatasource());
-		}
+		this.comboBoxValueField.setFieldType(fieldType);
 
-		comboBoxValueField.setFieldType(fieldType);
-
-		comboBoxPixelFormat.setItems(new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.SINGLE), PixelFormat.SINGLE),
+		this.comboBoxPixelFormat.setItems(new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.SINGLE), PixelFormat.SINGLE),
 				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.DOUBLE), PixelFormat.DOUBLE),
 				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT8), PixelFormat.BIT8),
 				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT16), PixelFormat.BIT16),
@@ -122,31 +125,31 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT16), PixelFormat.UBIT16),
 				new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.UBIT32), PixelFormat.UBIT32)
 		);
-		textCellSize.setSelectedItem("1");
-		textCellSize.setMinValue(0);
-		textCellSize.setIsIncludeMin(false);
-		comboBoxPixelFormat.setSelectedItem(new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT32), PixelFormat.BIT32));
-		resultDataset.setSelectedItem("ConversionGridResult");
+		this.textCellSize.setSelectedItem("1");
+		this.textCellSize.setMinValue(0);
+		this.textCellSize.setIsIncludeMin(false);
+		this.comboBoxPixelFormat.setSelectedItem(new ParameterDataNode(PixelFormatUtilities.toString(PixelFormat.BIT32), PixelFormat.BIT32));
+		this.resultDataset.setSelectedItem("ConversionGridResult");
 	}
 
 	private void initParameterConstrint() {
 		EqualDatasourceConstraint equalDatasourceConstraint = new EqualDatasourceConstraint();
-		equalDatasourceConstraint.constrained(sourceDatasource, ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
-		equalDatasourceConstraint.constrained(sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.sourceDatasource, ParameterDatasourceConstrained.DATASOURCE_FIELD_NAME);
+		equalDatasourceConstraint.constrained(this.sourceDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 
-		DatasourceConstraint.getInstance().constrained(resultDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
+		DatasourceConstraint.getInstance().constrained(this.resultDataset, ParameterSaveDataset.DATASOURCE_FIELD_NAME);
 
 		EqualDatasetConstraint constraintSourceDataset = new EqualDatasetConstraint();
-		constraintSourceDataset.constrained(sourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
-		constraintSourceDataset.constrained(comboBoxValueField, ParameterFieldComboBox.DATASET_FIELD_NAME);
+		constraintSourceDataset.constrained(this.sourceDataset, ParameterSingleDataset.DATASET_FIELD_NAME);
+		constraintSourceDataset.constrained(this.comboBoxValueField, ParameterFieldComboBox.DATASET_FIELD_NAME);
 
 		EqualDatasourceConstraint constraintClip = new EqualDatasourceConstraint();
-		constraintClip.constrained(boundaryDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
-		constraintClip.constrained(boundaryDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
+		constraintClip.constrained(this.boundaryDatasource, ParameterDatasource.DATASOURCE_FIELD_NAME);
+		constraintClip.constrained(this.boundaryDataset, ParameterSingleDataset.DATASOURCE_FIELD_NAME);
 	}
 
 	private void registerListener() {
-		sourceDataset.addPropertyListener(new PropertyChangeListener() {
+		this.sourceDataset.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				if (sourceDataset.getSelectedItem() != null && evt.getNewValue() instanceof DatasetVector) {
@@ -161,7 +164,7 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 			}
 		});
 
-		comboBoxValueField.addPropertyListener(new PropertyChangeListener() {
+		this.comboBoxValueField.addPropertyListener(new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 
@@ -191,30 +194,29 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 			fireRunning(new RunningEvent(this, 0, "start"));
 
 			ConversionAnalystParameter conversionParameter = new ConversionAnalystParameter();
-			String datasetName = resultDataset.getDatasetName();
-			datasetName = resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
+			String datasetName = this.resultDataset.getDatasetName();
+			datasetName = this.resultDataset.getResultDatasource().getDatasets().getAvailableDatasetName(datasetName);
 
 			if (parameters.getInputs().getData(SOURCE_DATA).getValue() != null) {
 				conversionParameter.setSourceDataset((Dataset) parameters.getInputs().getData(SOURCE_DATA).getValue());
 			} else {
-				conversionParameter.setSourceDataset(sourceDataset.getSelectedDataset());
+				conversionParameter.setSourceDataset(this.sourceDataset.getSelectedDataset());
 			}
 
-			//'conversionParameter.setSourceDataset(sourceDataset.getSelectedDataset());
-			conversionParameter.setTargetDatasource(resultDataset.getResultDatasource());
+			conversionParameter.setTargetDatasource(this.resultDataset.getResultDatasource());
 			conversionParameter.setTargetDatasetName(datasetName);
-			conversionParameter.setPixelFormat((PixelFormat) comboBoxPixelFormat.getSelectedData());
-			conversionParameter.setValueFieldName((String) comboBoxValueField.getSelectedItem());
+			conversionParameter.setPixelFormat((PixelFormat) this.comboBoxPixelFormat.getSelectedData());
+			conversionParameter.setValueFieldName((String) this.comboBoxValueField.getSelectedItem());
 			conversionParameter.setCellSize(Double.valueOf(this.textCellSize.getSelectedItem().toString()));
-//			DatasetVector dataset = null;
-//			if (parameters.getInputs().getData(BOUNDARY_DATA).getValue() != null) {
-//				dataset = (DatasetVector) parameters.getInputs().getData(BOUNDARY_DATA).getValue();
-//			} else {
-//				dataset = (DatasetVector) this.boundaryDataset.getSelectedDataset();
-//			}
-			if (this.boundaryDataset.getSelectedDataset() != null) {
-				DatasetVector dataset=(DatasetVector) this.boundaryDataset.getSelectedDataset();
-				Recordset recordset = dataset.getRecordset(false, CursorType.DYNAMIC);
+
+			DatasetVector srcBoundary = null;
+			if (parameters.getInputs().getData(BOUNDARY_DATA).getValue() != null) {
+				srcBoundary = (DatasetVector) parameters.getInputs().getData(BOUNDARY_DATA).getValue();
+			} else {
+				srcBoundary = (DatasetVector) this.boundaryDataset.getSelectedDataset();
+			}
+			if (srcBoundary != null) {
+				Recordset recordset = srcBoundary.getRecordset(false, CursorType.DYNAMIC);
 				GeoRegion geoRegion = null;
 				recordset.moveFirst();
 				while (!recordset.isEOF()) {
@@ -228,7 +230,6 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 					}
 					recordset.moveNext();
 				}
-
 				conversionParameter.setClipRegion(geoRegion);
 			}
 
@@ -244,7 +245,6 @@ public class MetaProcessVectorToRaster extends MetaProcess {
 		} finally {
 			ConversionAnalyst.removeSteppedListener(steppedListener);
 		}
-
 		return isSuccessful;
 	}
 
