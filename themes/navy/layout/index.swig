@@ -12,7 +12,7 @@
 			</a>
 		</li>
 		<li>
-			<a title="" target="_blank" href="http://www.supermap.com/cn/xhtml/SuperMap-iObjects-8C.html">
+			<a title="" target="_blank" href="https://www.supermap.com/xhtml/SuperMap-iObjects-8C-2017.html">
 				<img width="1920" height="482" alt="" style="background: url(/SuperMap-iDesktop-Cross/img/banner3.png) no-repeat center;" src="/SuperMap-iDesktop-Cross/img/alpha.png">
 			</a>
 		</li>
