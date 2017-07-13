@@ -7,6 +7,7 @@ import com.supermap.data.FieldInfos;
 import com.supermap.data.FieldType;
 import com.supermap.desktop.controls.utilities.ToolbarUIUtilities;
 import com.supermap.desktop.properties.CommonProperties;
+import com.supermap.desktop.ui.controls.CellRenders.ListFieldTypeCellRender;
 import com.supermap.desktop.ui.controls.CellRenders.ListStatisticsTypeCellRender;
 import com.supermap.desktop.ui.controls.DialogResult;
 import com.supermap.desktop.ui.controls.GridBagConstraintsHelper;
@@ -35,6 +36,8 @@ import static com.supermap.desktop.process.meta.metaProcessImplements.spatialSta
 
 /**
  * Created by hanyz on 2017/5/3.
+ * <p>
+ * 保留统计字段可手动添加-yuanR 2017.7.12
  */
 public class StatisticsFieldPanel extends JPanel {
 	private DatasetVector dataset;
@@ -46,7 +49,8 @@ public class StatisticsFieldPanel extends JPanel {
 	private JScrollPane scrollPane;
 	private SmSortTable table;
 	private JToolBar toolBar;
-	private SmButton buttonAdd;
+	private SmButton buttonScreening;
+	private SmButton buttonAddNew;
 	private SmButton buttonSelectAll;
 	private SmButton buttonSelectInvert;
 	private SmButton buttonDel;
@@ -77,7 +81,7 @@ public class StatisticsFieldPanel extends JPanel {
 		if (tableModel != null) {
 			ArrayList<StatisticsFieldInfo> statisticsFieldInfos = tableModel.getStatisticsFieldInfos();
 			for (StatisticsFieldInfo statisticsFieldInfo : statisticsFieldInfos) {
-				fieldNames.add(statisticsFieldInfo.getFieldInfo().getName());
+				fieldNames.add(statisticsFieldInfo.getFieldName());
 			}
 		}
 		return fieldNames.toArray(new String[fieldNames.size()]);
@@ -111,7 +115,8 @@ public class StatisticsFieldPanel extends JPanel {
 
 	private void initComponent() {
 		toolBar = new JToolBar();
-		buttonAdd = new SmButton();
+		buttonScreening = new SmButton();
+		buttonAddNew = new SmButton();
 		buttonSelectAll = new SmButton();
 		buttonSelectInvert = new SmButton();
 		buttonDel = new SmButton();
@@ -129,14 +134,21 @@ public class StatisticsFieldPanel extends JPanel {
 	private void initTable() {
 		scrollPane.setViewportView(table);
 		table.setModel(tableModel);
-		//table render
+
+		// 统计类型
 		TableColumn column_statisticsType = table.getColumnModel().getColumn(COLUMN_STATISTICSTYPE);
 		DefaultCellEditor cellEditorStatisticsType = new StatisticsTypeCellEditor();
 		cellEditorStatisticsType.setClickCountToStart(2);
 		column_statisticsType.setCellEditor(cellEditorStatisticsType);
 		column_statisticsType.setCellRenderer(statisticsTypeCellRenderer);
+
+		// 数据类型
 		TableColumn column_fieldType = table.getColumnModel().getColumn(COLUMN_FIELDTYPE);
+		DefaultCellEditor cellEditorFieldType = new FiledTypeCellEditor();
+		cellEditorFieldType.setClickCountToStart(2);
+		column_fieldType.setCellEditor(cellEditorFieldType);
 		column_fieldType.setCellRenderer(fieldTypeCellRenderer);
+
 		initTableModel();
 	}
 
@@ -153,7 +165,7 @@ public class StatisticsFieldPanel extends JPanel {
 					boolean fieldInfoAddOnce = false;
 					ArrayList<StatisticsType> supportedStatisticsType = getSupportedStatisticsType(fieldInfo.getType());
 					for (StatisticsType statisticsType : supportedStatisticsType) {
-						StatisticsFieldInfo statisticsFieldInfo = new StatisticsFieldInfo(fieldInfo, statisticsType);
+						StatisticsFieldInfo statisticsFieldInfo = new StatisticsFieldInfo(fieldInfo.getName(), fieldInfo.getType(), statisticsType);
 						this.statisticsFieldInfoAll.add(statisticsFieldInfo);//添加所有合理的字段、统计组合
 						if (!fieldInfoAddOnce) {
 							this.statisticsFieldInfoIncluded.add(statisticsFieldInfo);//默认初始化表格只显示每个字段一次
@@ -194,11 +206,11 @@ public class StatisticsFieldPanel extends JPanel {
 	 * 获取字段类型所支持的统计方法，排除表格中已经添加的方法
 	 */
 	private ArrayList<StatisticsType> getStatisticsTypes(StatisticsFieldInfo statisticsFieldInfo) {
-		ArrayList<StatisticsType> statisticsTypes = getSupportedStatisticsType(statisticsFieldInfo.getFieldInfo().getType());
+		ArrayList<StatisticsType> statisticsTypes = getSupportedStatisticsType(statisticsFieldInfo.getFieldType());
 		ArrayList<StatisticsFieldInfo> statisticsFieldInfos = ((StatisticsFieldTableModel) table.getModel()).getStatisticsFieldInfos();
 		for (StatisticsFieldInfo statisticsFieldInfo1 : statisticsFieldInfos) {
 			if (statisticsFieldInfo1 != statisticsFieldInfo
-					&& statisticsFieldInfo1.getFieldInfo().getName().equals(statisticsFieldInfo.getFieldInfo().getName())) {
+					&& statisticsFieldInfo1.getFieldName().equals(statisticsFieldInfo.getFieldName())) {
 				statisticsTypes.remove(statisticsTypes.indexOf(statisticsFieldInfo1.getStatisticsType()));
 			}
 		}
@@ -226,6 +238,46 @@ public class StatisticsFieldPanel extends JPanel {
 		}
 	};
 
+	// 添加到Table中的数据类型选择ComboBox-yuanR
+	private class FiledTypeCellEditor extends DefaultCellEditor {
+		JComboBox comboBox;
+
+		public FiledTypeCellEditor() {
+			super(new JComboBox());
+		}
+
+		@Override
+		public Object getCellEditorValue() {
+			if (comboBox != null) {
+				return comboBox.getSelectedItem();
+			}
+			return null;
+		}
+
+		@Override
+		public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+			ArrayList<FieldType> fieldTypes = new ArrayList<>();
+			fieldTypes.add(FieldType.BYTE);
+			fieldTypes.add(FieldType.INT16);
+			fieldTypes.add(FieldType.INT32);
+			fieldTypes.add(FieldType.INT64);
+			fieldTypes.add(FieldType.SINGLE);
+			fieldTypes.add(FieldType.DOUBLE);
+			fieldTypes.add(FieldType.TEXT);
+			fieldTypes.add(FieldType.CHAR);
+			fieldTypes.add(FieldType.WTEXT);
+			fieldTypes.add(FieldType.JSONB);
+			comboBox = (JComboBox) super.getTableCellEditorComponent(table, value, isSelected, row, column);
+			comboBox.removeAllItems();
+			for (FieldType fieldType : fieldTypes) {
+				comboBox.addItem(fieldType);
+			}
+			comboBox.setRenderer(new ListFieldTypeCellRender());
+			return comboBox;
+		}
+	}
+
+	// 添加到Table中的统计类型选择ComboBox
 	private class StatisticsTypeCellEditor extends DefaultCellEditor {
 		JComboBox comboBox;
 
@@ -261,12 +313,14 @@ public class StatisticsFieldPanel extends JPanel {
 	}
 
 	private void initResource() {
-		buttonAdd.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_AddItem.png"));
+		buttonScreening.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_Screening.png"));
+		buttonAddNew.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_AddItem.png"));
 		buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
 		buttonSelectInvert.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectInverse.png"));
 		buttonDel.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_Delete.png"));
 
-		buttonAdd.setToolTipText(CommonProperties.getString(CommonProperties.Add));
+		buttonScreening.setToolTipText(CommonProperties.getString(CommonProperties.fieldScreening));
+		buttonAddNew.setToolTipText(CommonProperties.getString(CommonProperties.AddNew));
 		buttonSelectAll.setToolTipText(CommonProperties.getString(CommonProperties.selectAll));
 		buttonSelectInvert.setToolTipText(CommonProperties.getString(CommonProperties.selectInverse));
 		buttonDel.setToolTipText(CommonProperties.getString(CommonProperties.Delete));
@@ -282,19 +336,20 @@ public class StatisticsFieldPanel extends JPanel {
 	private void initToolbar() {
 		toolBar.setFloatable(false);
 		toolBar.setLayout(new GridBagLayout());
-		toolBar.add(buttonAdd, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
-		toolBar.add(ToolbarUIUtilities.getVerticalSeparator(), new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
-		toolBar.add(buttonSelectAll, new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
-		toolBar.add(buttonSelectInvert, new GridBagConstraintsHelper(3, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
-		toolBar.add(ToolbarUIUtilities.getVerticalSeparator(), new GridBagConstraintsHelper(4, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
-		toolBar.add(buttonDel, new GridBagConstraintsHelper(5, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
-		toolBar.add(ToolbarUIUtilities.getVerticalSeparator(), new GridBagConstraintsHelper(6, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
-		toolBar.add(labelStatisticsType, new GridBagConstraintsHelper(7, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
-		toolBar.add(comboBoxStatisticsType, new GridBagConstraintsHelper(8, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		toolBar.add(buttonScreening, new GridBagConstraintsHelper(0, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(buttonAddNew, new GridBagConstraintsHelper(1, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(ToolbarUIUtilities.getVerticalSeparator(), new GridBagConstraintsHelper(2, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(buttonSelectAll, new GridBagConstraintsHelper(3, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(buttonSelectInvert, new GridBagConstraintsHelper(4, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(ToolbarUIUtilities.getVerticalSeparator(), new GridBagConstraintsHelper(5, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(buttonDel, new GridBagConstraintsHelper(6, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(ToolbarUIUtilities.getVerticalSeparator(), new GridBagConstraintsHelper(7, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(labelStatisticsType, new GridBagConstraintsHelper(8, 0, 1, 1).setWeight(0, 1).setAnchor(GridBagConstraints.CENTER));
+		toolBar.add(comboBoxStatisticsType, new GridBagConstraintsHelper(9, 0, 1, 1).setWeight(1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 	}
 
 	private void registerListener() {
-		buttonAdd.addActionListener(new ActionListener() {
+		buttonScreening.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				TableUtilities.stopEditing(table);
@@ -318,6 +373,15 @@ public class StatisticsFieldPanel extends JPanel {
 				}
 			}
 		});
+
+		buttonAddNew.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tableModel.addRow(new StatisticsFieldInfo("NewField", FieldType.TEXT, StatisticsType.FIRST));
+				// 当手动添加了新条目，才设置最后一行可编辑-yuanR 2017.7.12
+				tableModel.setColumnFieldTypeEditable(true);
+			}
+		});
 		buttonSelectAll.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -334,7 +398,7 @@ public class StatisticsFieldPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int[] selectedRows = table.getSelectedRows();
-				if(selectedRows.length < 1){
+				if (selectedRows.length < 1) {
 					return;
 				}
 				for (int i = selectedRows.length - 1; i >= 0; i--) {
@@ -448,7 +512,7 @@ public class StatisticsFieldPanel extends JPanel {
 
 		private void initComponent() {
 			toolBar = new JToolBar();
-			buttonAdd = new SmButton();
+			buttonScreening = new SmButton();
 			buttonSelectAll = new SmButton();
 			buttonSelectInvert = new SmButton();
 			buttonSelectAll.setIcon(CoreResources.getIcon("/coreresources/ToolBar/Image_ToolButton_SelectAll.png"));
@@ -469,6 +533,7 @@ public class StatisticsFieldPanel extends JPanel {
 			this.scrollPane.setViewportView(table);
 			this.table.setModel(this.tableModel);
 
+
 			//table render
 			TableColumn column_statisticsType = this.table.getColumnModel().getColumn(COLUMN_STATISTICSTYPE);
 			DefaultCellEditor cellEditorStatisticsType = new StatisticsTypeCellEditor();
@@ -477,6 +542,7 @@ public class StatisticsFieldPanel extends JPanel {
 			TableColumn column_fieldType = this.table.getColumnModel().getColumn(COLUMN_FIELDTYPE);
 			column_fieldType.setCellRenderer(fieldTypeCellRenderer);
 		}
+
 		private void checkState() {
 			this.buttonSelectAll.setEnabled(table.getRowCount() > 0);
 			this.buttonSelectInvert.setEnabled(table.getRowCount() > 0);

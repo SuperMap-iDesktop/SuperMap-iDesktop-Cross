@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bnd-LastModified: 1499848020013
+Build-Jdk: 1.7.0_80
+Built-By: Administrator
+Bundle-Activator: com.supermap.desktop.userExperience.UserExperienceActi
+ vator
+Bundle-ManifestVersion: 2
+Bundle-Name: UserExperience
+Bundle-SymbolicName: com.supermap.idesktop.cross.UserExperience
+Bundle-Version: 1.0.0.qualifier
+Created-By: Apache Maven Bundle Plugin
+Embed-Dependency: *;scope=compile|system
+Embed-Directory: lib
+Embed-Transitive: true
+Import-Package: org.osgi.framework;version="[1.8,2)",org.osgi.util.track
+ er;version="[1.5,2)"
+Require-Bundle: com.supermap.idesktop.cross.Core,com.supermap.idesktop.c
+ ross.Controls
+Tool: Bnd-3.2.0.201605172007

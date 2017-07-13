@@ -1,6 +1,9 @@
 package com.supermap.desktop.dialog.cacheClip;
 
-import com.supermap.data.*;
+import com.supermap.data.GeoRegion;
+import com.supermap.data.Geometrist;
+import com.supermap.data.Geometry;
+import com.supermap.data.GeometryType;
 import com.supermap.data.processing.MapCacheBuilder;
 import com.supermap.data.processing.MapCacheVersion;
 import com.supermap.data.processing.MapTilingMode;
@@ -357,7 +360,11 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					if (!sciDirectory.exists()) {
 						sciDirectory.mkdir();
 					}
-					sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + ".sci");
+					if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
+						sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + "_mongo.sci");
+					} else {
+						sciPath = CacheUtilities.replacePath(sciPath, mapCacheBuilder.getCacheName() + ".sci");
+					}
 				}
 				if (cmdType == MultiUpdateProcessClip) {
 					mapCacheBuilder.setMap(((IFormMap) Application.getActiveApplication().getActiveForm()).getMapControl().getMap());
@@ -395,22 +402,22 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				//SaveType==MongoType,build some cache for creating a database
 				this.buttonOk.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
-					//Mongo类型单独处理,此接口无法返回正确的sci
-					//result = mapCacheBuilder.createMongoDB();
-					SteppedListener steppedListener = new SteppedListener() {
-						@Override
-						public void stepped(SteppedEvent steppedEvent) {
-							try {
-								Thread.sleep(20 * 1000);
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							}
-							steppedEvent.setCancel(true);
-						}
-					};
-					mapCacheBuilder.addSteppedListener(steppedListener);
-					mapCacheBuilder.build();
-					mapCacheBuilder.removeSteppedListener(steppedListener);
+					//Mongo类型单独处理,调用组件接口返回正确的sci
+					result = mapCacheBuilder.createMongoDB();
+//					SteppedListener steppedListener = new SteppedListener() {
+//						@Override
+//						public void stepped(SteppedEvent steppedEvent) {
+//							try {
+//								Thread.sleep(20 * 1000);
+//							} catch (InterruptedException e) {
+//								e.printStackTrace();
+//							}
+//							steppedEvent.setCancel(true);
+//						}
+//					};
+//					mapCacheBuilder.addSteppedListener(steppedListener);
+//					mapCacheBuilder.build();
+//					mapCacheBuilder.removeSteppedListener(steppedListener);
 				} else if (cmdType != MultiUpdateProcessClip) {
 					result = mapCacheBuilder.toConfigFile(sciPath);
 				}

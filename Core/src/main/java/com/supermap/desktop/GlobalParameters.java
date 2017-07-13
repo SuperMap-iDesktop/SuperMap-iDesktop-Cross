@@ -1109,6 +1109,26 @@ public class GlobalParameters {
 		GlobalParameters.isUseThousandPointDivision = isShowDataInNewWindow;
 	}
 
+
+	private static boolean launchUserExperiencePlan = true;
+
+	private static void initLaunchUserExperiencePlan() {
+		String value = getValue("_startup_edit", "launchUserExperiencePlan");
+		if (value != null) {
+			boolean result = Boolean.valueOf(value);
+			setLaunchUserExperiencePlan(result);
+		}
+	}
+
+	public static boolean isLaunchUserExperiencePlan() {
+		// TODO: 2017/7/7 用户体验计划
+		return launchUserExperiencePlan;
+	}
+
+	public static void setLaunchUserExperiencePlan(boolean isLaunchUserExperiencePlan) {
+		launchUserExperiencePlan = isLaunchUserExperiencePlan;
+	}
+
 	//endregion
 
 	public static void save() {
@@ -1183,6 +1203,7 @@ public class GlobalParameters {
 			Element edit = emptyDocument.createElement("edit");
 			edit.setAttribute("positiveselect", String.valueOf(positiveSelect));
 			edit.setAttribute("useThousandPointDivision", String.valueOf(isUseThousandPointDivision));
+			edit.setAttribute("launchUserExperiencePlan", String.valueOf(launchUserExperiencePlan));
 			startup.appendChild(edit);
 
 			Element tabular = emptyDocument.createElement("tabular");
@@ -1209,5 +1230,6 @@ public class GlobalParameters {
 	public static void removeGlobalParametersChangedListener(GlobalParametersChangedListener globalParametersChangedListener) {
 		globalParametersChangedListeners.remove(globalParametersChangedListener);
 	}
+
 
 }
