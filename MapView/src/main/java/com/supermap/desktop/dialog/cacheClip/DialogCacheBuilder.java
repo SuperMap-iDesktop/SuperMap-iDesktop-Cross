@@ -357,7 +357,9 @@ public class DialogCacheBuilder extends JFrame {
 	}
 
 	private boolean hasTask() {
-		File taskFile = new File(CacheUtilities.replacePath(fileChooserCachePath.getPath(), "task"));
+		String cacheTask = CacheUtilities.replacePath(fileChooserCachePath.getPath(), "CacheTask");
+		cacheTask = CacheUtilities.replacePath(cacheTask, "task");
+		File taskFile = new File(cacheTask);
 		File doingFile = null;
 		if (taskFile.exists()) {
 			doingFile = new File(CacheUtilities.replacePath(taskFile.getParent(), "doing"));
