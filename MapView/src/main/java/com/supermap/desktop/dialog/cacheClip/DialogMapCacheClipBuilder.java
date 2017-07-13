@@ -373,7 +373,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					//地图存在固定比例从时的处理方式
 					if (firstStepPane.addScaleDropDown.isEnabled()) {
 						if (this.mapCacheBuilder.getMap().getVisibleScales().length < firstStepPane.currentMapCacheScale.size()) {
-							new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WariningForTaskBuilder"));
+							new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WarningForTaskBuilder"));
 							return;
 						} else {
 							int count = 0;
@@ -386,13 +386,13 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 								}
 							}
 							if (count != firstStepPane.currentMapCacheScale.size()) {
-								new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WariningForTaskBuilder"));
+								new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WarningForTaskBuilder"));
 								return;
 							}
 						}
 
 					} else {
-						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WariningForTaskBuilder"));
+						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_WarningForTaskBuilder"));
 						return;
 					}
 
@@ -404,20 +404,6 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 				if (firstStepPane.comboBoxSaveType.getSelectedIndex() == INDEX_MONGOTYPE) {
 					//Mongo类型单独处理,调用组件接口返回正确的sci
 					result = mapCacheBuilder.createMongoDB();
-//					SteppedListener steppedListener = new SteppedListener() {
-//						@Override
-//						public void stepped(SteppedEvent steppedEvent) {
-//							try {
-//								Thread.sleep(20 * 1000);
-//							} catch (InterruptedException e) {
-//								e.printStackTrace();
-//							}
-//							steppedEvent.setCancel(true);
-//						}
-//					};
-//					mapCacheBuilder.addSteppedListener(steppedListener);
-//					mapCacheBuilder.build();
-//					mapCacheBuilder.removeSteppedListener(steppedListener);
 				} else if (cmdType != MultiUpdateProcessClip) {
 					result = mapCacheBuilder.toConfigFile(sciPath);
 				}
@@ -431,6 +417,7 @@ public class DialogMapCacheClipBuilder extends SmDialog {
 					this.buttonOk.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 					dispose();
 					Application.getActiveApplication().getOutput().output(MessageFormat.format(MapViewProperties.getString("String_TargetCachePath"), cachePath));
+					Application.getActiveApplication().getOutput().output(MapViewProperties.getString("String_StartBuildCache"));
 					if (nextStepPane.checkBoxClipOnThisComputer.isSelected()) {
 						String mapName = this.mapCacheBuilder.getCacheName();
 						if (null != this.mapCacheBuilder.getMap()) {

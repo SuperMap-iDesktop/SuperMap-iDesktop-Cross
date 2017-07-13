@@ -11,9 +11,9 @@ import java.nio.channels.FileLock;
  */
 public class FileLocker implements Closeable {
 
-	private File lockFile;
-	private RandomAccessFile randomAccessFile;
-	private FileLock fileLock;
+	protected File lockFile;
+	protected RandomAccessFile randomAccessFile;
+	protected FileLock fileLock;
 
 	public FileLocker(File lockFile) {
 		this.lockFile = lockFile;
