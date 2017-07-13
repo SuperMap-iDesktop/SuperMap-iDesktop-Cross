@@ -135,7 +135,7 @@ public class MetaProcessBuffer extends MetaProcess {
 			dataset.setSelectedItem(datasetVector);
 		}
 //		if (parameterSaveDataset.getResultDatasource() != null) {
-		parameterSaveDataset.setDatasetName("RoadBuffer");
+		parameterSaveDataset.setDatasetName("result_buffer");
 //		}
 	}
 

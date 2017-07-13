@@ -122,7 +122,7 @@ public class MetaProcessRasterToVector extends MetaProcess {
             sourceDataset.setDatasource(datasetGrid.getDatasource());
         }
 
-        resultDataset.setSelectedItem("VectorizeResult");
+        resultDataset.setSelectedItem("result_vectorize");
         comboBoxType.setItems(new ParameterDataNode(CommonProperties.getString("String_Item_Point"), DatasetType.POINT),
                 new ParameterDataNode(CommonProperties.getString("String_Item_Line"), DatasetType.LINE),
                 new ParameterDataNode(CommonProperties.getString("String_Item_Region"), DatasetType.REGION));

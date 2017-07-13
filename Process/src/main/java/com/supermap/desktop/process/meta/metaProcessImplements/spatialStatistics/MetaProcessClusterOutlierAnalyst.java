@@ -22,7 +22,7 @@ public class MetaProcessClusterOutlierAnalyst extends MetaProcessAnalyzingPatter
 	@Override
 	protected void initHook() {
 		parameterSaveDataset = new ParameterSaveDataset();
-		parameterSaveDataset.setDatasetName("ClusterOutlierResult");
+		parameterSaveDataset.setDatasetName("result_clusterOutlier");
 		ParameterCombine parameterCombine = new ParameterCombine();
 		parameterCombine.addParameters(parameterSaveDataset);
 		parameterCombine.setDescribe(CommonProperties.getString("String_ResultSet"));
