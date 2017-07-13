@@ -576,7 +576,7 @@ public class DialogMapClip extends SmDialog {
 		this.componentList.add(this.panelButton.getButtonOk());
 		this.componentList.add(this.panelButton.getButtonCancel());
 		this.setFocusTraversalPolicy(policy);
-		this.mapClipMultiObjectSplitPanel.setToolTipText(MapViewProperties.getString("String_MapClip_MutiObjectClipTip"));
+		//this.mapClipMultiObjectSplitPanel.setToolTipText(MapViewProperties.getString("String_MapClip_MutiObjectClipTip"));
 		isCanRun();
 	}
 

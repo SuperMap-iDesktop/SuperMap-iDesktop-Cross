@@ -442,4 +442,20 @@ public class FileUtilities {
 		}
 		return result;
 	}
+
+	public static File createFile(File file) {
+		File result = null;
+		if (!file.getParentFile().exists()) {
+			if (file.mkdirs()) {
+				try {
+					if (file.createNewFile()) {
+						result = file;
+					}
+				} catch (IOException e) {
+					Application.getActiveApplication().getOutput().output(e);
+				}
+			}
+		}
+		return result;
+	}
 }

@@ -276,4 +276,9 @@ public class SmButtonDropdown extends JComponent implements IBaseItem {
         }
         super.removeMouseListener(l);
     }
+
+	@Override
+	public String getText() {
+		return xmlCommand.getLabel();
+	}
 }

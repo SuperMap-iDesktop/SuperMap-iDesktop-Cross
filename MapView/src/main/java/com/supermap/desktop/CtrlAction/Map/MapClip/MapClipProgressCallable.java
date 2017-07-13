@@ -182,7 +182,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 						Datasource targetDatasource = (Datasource) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETSOURCE);
 						targetDatasetName = (String) ((Vector) (this.VectorInfo.get(i))).get(COLUMN_INDEX_TARGETDATASETNAME);
 						if (this.appendCaptions != null) {
-							targetDatasetName = targetDatasetName + "_" + this.appendCaptions[t];
+							targetDatasetName = sourceDataset.getName() + "_" + this.appendCaptions[t];
 						}
 						if (!datasetsClipped.contains(sourceDataset)) {
 							if (!targetDatasource.getDatasets().isAvailableDatasetName(targetDatasetName)) {

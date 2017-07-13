@@ -245,7 +245,7 @@ public class WorkflowParser {
         }else if (MetaKeys.VECTORTOGRID.equals(key)) {
 			result = new MetaProcessVectorToRaster();
         }else if (MetaKeys.THINRASTER.equals(key)) {
-//            result = new MetaProcessDEMBuild();
+            result = new MetaProcessThinRaster();
         } else if (MetaKeys.THIESSENPOLYGON.equals(key)) {
             result = new MetaProcessThiessenPolygon();
         }else if (MetaKeys.COMPUTRDISTANCE.equals(key)) {

@@ -41,4 +41,6 @@ public interface IBaseItem {
 	ICtrlAction getCtrlAction();
 
 	void setCtrlAction(ICtrlAction ctrlAction);
+
+	String getText();
 }

@@ -98,4 +98,9 @@ public class SmComboBox extends JComboBox implements IBaseItem {
 	public void setCtrlAction(ICtrlAction ctrlAction) {
 		this.xmlCommand.setCtrlAction(ctrlAction);
 	}
+
+	@Override
+	public String getText() {
+		return xmlCommand.getLabel();
+	}
 }
