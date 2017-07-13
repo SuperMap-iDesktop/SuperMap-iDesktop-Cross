@@ -130,6 +130,7 @@ public class MetaProcessThinRaster extends MetaProcess{
 				src = sourceDataset.getSelectedDataset();
 			}
 			ConversionAnalyst.addSteppedListener(steppedListener);
+
 			Dataset result = ConversionAnalyst.thinRaster(src, Math.round( Double.valueOf(this.textFieldNoValue.getSelectedItem().toString())), Double.valueOf(this.textFieldNoValueTolerance.getSelectedItem().toString()), this.resultDataset.getResultDatasource(), datasetName);
 
 			this.getParameters().getOutputs().getData(OUTPUT_DATA).setValue(result);

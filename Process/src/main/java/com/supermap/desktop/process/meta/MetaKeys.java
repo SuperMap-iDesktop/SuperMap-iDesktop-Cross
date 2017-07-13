@@ -33,7 +33,7 @@ public class MetaKeys {
 	public static final String DEMLAKE = "DEMLake";
     public static final String VECTORTOGRID = "VectorToGrid";
     public static final String GRIDTOVECTOR = "GridToVector";
-    public static final String COMPUTRDISTANCE = "ComputeDistance";
+    public static final String COMPUTEDISTANCE = "ComputeDistance";
     public static final String THIESSENPOLYGON = "ThiessenPolygon";
     public static final String THINRASTER = "ThinRaster";
     public static final String PROCESS_GROUP = "ProcessGroup";

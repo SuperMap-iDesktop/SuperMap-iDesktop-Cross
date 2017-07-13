@@ -9,6 +9,7 @@ import com.supermap.desktop.icloud.LicenseManager;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.utilities.FileLocker;
 import com.supermap.desktop.utilities.FileUtilities;
+import com.supermap.desktop.utilities.ThreadUtilties;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -27,8 +28,13 @@ public class UserExperienceManager {
 	private static UserExperienceManager userExperienceManager;
 	private DesktopRuntimeListener desktopRuntimeListener = new DesktopRuntimeListener() {
 		@Override
-		public void stateChanged(DesktopRuntimeEvent event) {
-			desktopStateChanged(event);
+		public void stateChanged(final DesktopRuntimeEvent event) {
+			ThreadUtilties.execute(new Runnable() {
+				@Override
+				public void run() {
+					desktopStateChanged(event);
+				}
+			});
 		}
 	};
 
@@ -229,11 +235,11 @@ public class UserExperienceManager {
 	private void addDoneJson(String json) {
 		synchronized (lock) {
 			try {
-				executedFunctionFile.getRandomAccessFile().writeChars(json + "\\r\\n");
+				executedFunctionFile.getRandomAccessFile().write((json + System.getProperty("line.separator")).getBytes());
 				if (executedFunctionFile.getRandomAccessFile().length() > maxFileSize) {
 					executedFiles.add(executedFunctionFile);
+					executedFunctionFile = getDefaultFile();
 				}
-				executedFunctionFile = getDefaultFile();
 			} catch (IOException e) {
 				Application.getActiveApplication().getOutput().output(e);
 			}
@@ -249,7 +255,7 @@ public class UserExperienceManager {
 			if (fileLocker.getRandomAccessFile().length() > 0) {
 				fileLocker.getRandomAccessFile().seek(fileLocker.getRandomAccessFile().length() - 1);
 			}
-			fileLocker.getRandomAccessFile().writeChars(json + "\\r\\n");
+			fileLocker.getRandomAccessFile().write((json + System.getProperty("line.separator")).getBytes());
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {
@@ -264,18 +270,14 @@ public class UserExperienceManager {
 			while (!fileLocker.tryLock()) {
 				Thread.sleep(1000);
 			}
+
 			fileLocker.getRandomAccessFile().seek(0);
-			ArrayList<String> currentRows = new ArrayList<>();
-			while (fileLocker.getRandomAccessFile().length() != fileLocker.getRandomAccessFile().getFilePointer()) {
-				String e = fileLocker.getRandomAccessFile().readLine();
-				if (!e.equals(json)) {
-					currentRows.add(e);
-				}
-			}
+			byte[] bytes = new byte[(int) fileLocker.getRandomAccessFile().length()];
+			fileLocker.getRandomAccessFile().read(bytes);
+			String currentRows = new String(bytes, "UTF-8");
+			currentRows = currentRows.replace(json + System.getProperty("line.separator"), "");
 			fileLocker.getRandomAccessFile().setLength(0);
-			for (String currentRow : currentRows) {
-				fileLocker.getRandomAccessFile().writeChars(currentRow);
-			}
+			fileLocker.getRandomAccessFile().write(currentRows.getBytes());
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
 		} finally {

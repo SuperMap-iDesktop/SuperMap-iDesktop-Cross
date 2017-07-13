@@ -226,7 +226,7 @@ public class DatasetComboBox extends JComboBox<Dataset> {
 							this.addItem(dataset);
 						}
 					}
-					this.setSelectedIndex(-1);
+					this.setSelectedIndex(0);
 				} catch (Exception ex) {
 					return;
 				}

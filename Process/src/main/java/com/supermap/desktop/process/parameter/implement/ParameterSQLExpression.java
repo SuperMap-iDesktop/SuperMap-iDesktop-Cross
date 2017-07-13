@@ -15,13 +15,14 @@ public class ParameterSQLExpression extends AbstractParameter implements ISelect
 	@ParameterField(name = "value")
 	private String expression;
 	private String describe;
-	private Dataset selectDataset;
-	private int anchor;
+    private int anchor;
+    public static final String DATASET_FIELD_NAME = "Dataset";
+    @ParameterField(name = DATASET_FIELD_NAME)
+    private Dataset selectDataset;
 
-	public ParameterSQLExpression() {
-		this("");
-	}
-
+    public ParameterSQLExpression() {
+        this("");
+    }
 
 	public ParameterSQLExpression(String describe) {
 		this.describe = describe;
@@ -40,7 +41,9 @@ public class ParameterSQLExpression extends AbstractParameter implements ISelect
 	}
 
 	public void setSelectDataset(Dataset selectDataset) {
-		this.selectDataset = selectDataset;
+        Dataset oldValue = this.selectDataset;
+        this.selectDataset = selectDataset;
+        firePropertyChangeListener(new PropertyChangeEvent(this, DATASET_FIELD_NAME, oldValue, this.selectDataset));
 	}
 
 	@Override

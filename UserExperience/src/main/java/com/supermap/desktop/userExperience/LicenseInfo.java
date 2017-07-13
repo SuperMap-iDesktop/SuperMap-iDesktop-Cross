@@ -21,8 +21,8 @@ public class LicenseInfo implements UserExperienceBean {
 		JSONArray array = new JSONArray();
 		for (ProductType productType : currentLicenseType) {
 			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("LicenseMode", currentLicenseType == null ? CoreProperties.getString("String_onlineLicense") : CoreProperties.getString("String_localLicense"));
-			jsonObject.put("LicenseName", currentLicenseType == null ? "" : productType.name());
+			jsonObject.put("LicenseMode", productType == null ? CoreProperties.getString("String_onlineLicense") : CoreProperties.getString("String_localLicense"));
+			jsonObject.put("LicenseName", productType == null ? "" : productType.name());
 			array.add(jsonObject.toJSONString());
 		}
 		JSONObject jsonObject = new JSONObject();
