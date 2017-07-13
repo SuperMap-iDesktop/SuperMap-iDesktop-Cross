@@ -1110,7 +1110,7 @@ public class GlobalParameters {
 	}
 
 
-	private static boolean launchUserExperiencePlan = true;
+	private static boolean launchUserExperiencePlan = false;
 
 	private static void initLaunchUserExperiencePlan() {
 		String value = getValue("_startup_edit", "launchUserExperiencePlan");
