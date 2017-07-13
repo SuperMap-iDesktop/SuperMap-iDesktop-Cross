@@ -147,7 +147,6 @@ public class MetaProcessRasterToVector extends MetaProcess {
 		textFieldGridValueTolerance.setIsIncludeMin(true);
 		gridDatasetSetting.setEnabled(sourceDataset.getSelectedItem() instanceof DatasetGrid);
 
-		//comboBoxBackColor.setSelectedItem(Color.white);
 		textFieldColorTolerance.setSelectedItem("0");
 		textFieldColorTolerance.setMinValue(0);
 		textFieldColorTolerance.setMaxValue(255);
@@ -174,6 +173,8 @@ public class MetaProcessRasterToVector extends MetaProcess {
 				textFieldGridValueTolerance.setEnabled(false);
 				if (sourceDataset.getSelectedItem() instanceof DatasetGrid){
 					textFieldNoValue.setSelectedItem(((DatasetGrid) sourceDataset.getSelectedItem()).getNoValue());
+				}else if (sourceDataset.getSelectedItem() instanceof DatasetImage){
+					textFieldNoValue.setSelectedItem("16777215");
 				}
 			}
 		});
@@ -267,7 +268,6 @@ public class MetaProcessRasterToVector extends MetaProcess {
 			fireRunning(new RunningEvent(MetaProcessRasterToVector.this, 100, "finished"));
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(ProcessProperties.getString("String_Params_error"));
-			Application.getActiveApplication().getOutput().output(e);
 		} finally {
 			ConversionAnalyst.removeSteppedListener(steppedListener);
 		}
