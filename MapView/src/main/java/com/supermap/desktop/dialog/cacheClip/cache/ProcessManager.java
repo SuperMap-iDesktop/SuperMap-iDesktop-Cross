@@ -42,12 +42,12 @@ public class ProcessManager {
 		}
 	}
 
-	public void removeAllProcess(String sciPath, String path) {
+	public void removeAllProcess(String taskPath, String path) {
 		try {
 			dispose();
 //			LogWriter.removeAllLogs();
 			String doingPath = null;
-			File taskFiles = new File(sciPath);
+			File taskFiles = new File(taskPath);
 			if (taskFiles.exists()) {
 				doingPath = CacheUtilities.replacePath(taskFiles.getParent(), path);
 			}

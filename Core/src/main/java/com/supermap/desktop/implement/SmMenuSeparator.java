@@ -66,4 +66,8 @@ public class SmMenuSeparator extends JSeparator implements IBaseItem {
 
 	}
 
+	@Override
+	public String getText() {
+		return "";
+	}
 }

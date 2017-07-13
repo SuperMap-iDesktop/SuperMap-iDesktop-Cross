@@ -1,9 +1,7 @@
 package com.supermap.desktop.dialog.cacheClip;
 
 import com.supermap.data.processing.CacheWriter;
-import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
-import com.supermap.desktop.Interface.IFormMap;
 import com.supermap.desktop.controls.utilities.ComponentFactory;
 import com.supermap.desktop.dialog.SmOptionPane;
 import com.supermap.desktop.dialog.cacheClip.cache.CacheUtilities;
@@ -36,14 +34,16 @@ import java.util.ArrayList;
  * Dialog for checking cache
  */
 public class DialogCacheCheck extends JFrame {
-	private JLabel labelTotalSciPath;
+	private JLabel labelCachePath;
+	//	private JLabel labelTotalSciPath;
 	private JLabel labelCheckBounds;
-	private JLabel labelSciPath;
+	//	private JLabel labelSciPath;
 	private JLabel labelProcessCount;
 	//	private JLabel labelMergeSciCount;
-	private JFileChooserControl fileChooseTotalSciPath;
+//	private JFileChooserControl fileChooseTotalSciPath;
+	private JFileChooserControl fileChooseCachePath;
 	private JFileChooserControl fileChooseCheckBounds;
-	private JFileChooserControl fileChooseSciPath;
+	//	private JFileChooserControl fileChooseSciPath;
 	private JTextField textFieldProcessCount;
 	//	private JTextField textFieldMergeSciCount;
 //	private JRadioButton radioButtonSingleCheck;
@@ -66,22 +66,25 @@ public class DialogCacheCheck extends JFrame {
 	};
 
 	private boolean hasTask() {
-		File taskFile = new File(fileChooseSciPath.getPath());
+		String taskPath = CacheUtilities.replacePath(fileChooseCachePath.getPath(), "CacheTask");
+		File taskFile = new File(taskPath, "build");
 		File doingFile = null;
 		if (taskFile.exists()) {
-			doingFile = new File(CacheUtilities.replacePath(taskFile.getParent(), "doing"));
+			doingFile = new File(CacheUtilities.replacePath(taskPath, "doing"));
 		}
 		return null != doingFile && hasSciFiles(doingFile);
 	}
 
 	private void shutdownMapCheck() {
 		SmOptionPane optionPane = new SmOptionPane();
-		String sciPath = fileChooseSciPath.getPath();
+		String taskPath = CacheUtilities.replacePath(fileChooseCachePath.getPath(), "CacheTask");
+		taskPath = CacheUtilities.replacePath(taskPath, "build");
 		if (optionPane.showConfirmDialogYesNo(MapViewProperties.getString("String_FinishClipTaskOrNot")) == JOptionPane.OK_OPTION) {
-			ProcessManager.getInstance().removeAllProcess(sciPath, "checking");
-			new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessCheckFinished"), sciPath));
+			ProcessManager.getInstance().removeAllProcess(taskPath, "doing");
+			new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessCheckFinished"), taskPath));
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			DialogCacheCheck.this.dispose();
+			System.exit(1);
 		} else {
 			return;
 		}
@@ -129,6 +132,7 @@ public class DialogCacheCheck extends JFrame {
 					shutdownMapCheck();
 				} else {
 					DialogCacheCheck.this.dispose();
+					System.exit(1);
 				}
 			}
 		});
@@ -141,9 +145,10 @@ public class DialogCacheCheck extends JFrame {
 	}
 
 	private void initComponents() {
-		this.labelTotalSciPath = new JLabel();
+//		this.labelTotalSciPath = new JLabel();
+		this.labelCachePath = new JLabel();
 		this.labelCheckBounds = new JLabel();
-		this.labelSciPath = new JLabel();
+//		this.labelSciPath = new JLabel();
 		this.labelProcessCount = new JLabel();
 //		this.labelMergeSciCount = new JLabel();
 		String moduleNameForCachePath = "ChooseCachePathForCheck";
@@ -152,9 +157,8 @@ public class DialogCacheCheck extends JFrame {
 					moduleNameForCachePath, "GetDirectories");
 		}
 		SmFileChoose fileChooserForCachePath = new SmFileChoose(moduleNameForCachePath);
-		this.fileChooseTotalSciPath = new JFileChooserControl();
-		this.fileChooseTotalSciPath.setFileChooser(fileChooserForCachePath);
-		this.fileChooseTotalSciPath.setPath(System.getProperty("user.dir"));
+		this.fileChooseCachePath = new JFileChooserControl();
+		this.fileChooseCachePath.setFileChooser(fileChooserForCachePath);
 		String moduleNameForCheckBounds = "ChooseCheckBoundsFileForCheck";
 		if (!SmFileChoose.isModuleExist(moduleNameForCheckBounds)) {
 			String fileFilters = SmFileChoose.bulidFileFilters(SmFileChoose.createFileFilter(MapViewProperties.getString("String_FileType_GeoJson"), "geojson"));
@@ -164,23 +168,8 @@ public class DialogCacheCheck extends JFrame {
 		SmFileChoose fileChooserForCheckBounds = new SmFileChoose(moduleNameForCheckBounds);
 		this.fileChooseCheckBounds = new JFileChooserControl();
 		this.fileChooseCheckBounds.setFileChooser(fileChooserForCheckBounds);
-//		this.fileChooseCheckBounds.setPath(System.getProperty("user.dir"));
-		String moduleNameForSciPath = "ChooseSciPathForCheck";
-		if (!SmFileChoose.isModuleExist(moduleNameForSciPath)) {
-			SmFileChoose.addNewNode("", System.getProperty("user.dir"), GlobalParameters.getDesktopTitle(),
-					moduleNameForSciPath, "GetDirectories");
-		}
-		SmFileChoose fileChooserForSciPath = new SmFileChoose(moduleNameForSciPath);
-		this.fileChooseSciPath = new JFileChooserControl();
-		this.fileChooseSciPath.setFileChooser(fileChooserForSciPath);
-		this.fileChooseSciPath.setPath(System.getProperty("user.dir"));
 		this.textFieldProcessCount = new JTextField();
-//		this.textFieldMergeSciCount = new JTextField();
-//		this.radioButtonSingleCheck = new JRadioButton();
 		this.radioButtonMultiCheck = new JRadioButton();
-//		ButtonGroup group = new ButtonGroup();
-//		group.add(radioButtonSingleCheck);
-//		group.add(radioButtonMultiCheck);
 		this.radioButtonMultiCheck.setSelected(true);
 		this.checkBoxSaveErrorData = new JCheckBox();
 		this.checkBoxSaveErrorData.setSelected(true);
@@ -190,16 +179,15 @@ public class DialogCacheCheck extends JFrame {
 		this.buttonCancel = ComponentFactory.createButtonCancel();
 		this.helpProviderForTotalSciPath = new WarningOrHelpProvider(MapViewProperties.getString("String_TipForCachePath"), false);
 		this.helpProviderForSciPath = new WarningOrHelpProvider(MapViewProperties.getString("String_TipForFinishedSciPath"), false);
-		this.setSize(520, 280);
+		this.setSize(520, 240);
 		this.setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	private void initResources() {
 		this.setIconImages(CacheUtilities.getIconImages());
-		this.labelTotalSciPath.setText(MapViewProperties.getString("String_TotalSciPath"));
+		this.labelCachePath.setText(MapViewProperties.getString("MapCache_LabelCachePath"));
 		this.labelCheckBounds.setText(MapViewProperties.getString("String_CheckBounds"));
-		this.labelSciPath.setText(MapViewProperties.getString("String_SciPath"));
 		this.labelProcessCount.setText(MapViewProperties.getString("String_NewProcessCount"));
 //		this.labelMergeSciCount.setText(MapViewProperties.getString("String_MergeSciCount"));
 		this.textFieldProcessCount.setText("3");
@@ -216,11 +204,8 @@ public class DialogCacheCheck extends JFrame {
 		panelContent.setLayout(new GridBagLayout());
 		JPanel panelMultiCheck = new JPanel();
 		panelMultiCheck.setLayout(new GridBagLayout());
-		panelMultiCheck.add(this.labelSciPath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 10, 5, 10));
-		panelMultiCheck.add(this.helpProviderForSciPath, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(5, 0, 5, 10));
-		panelMultiCheck.add(this.fileChooseSciPath, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(5, 0, 5, 10).setWeight(1, 0));
-		panelMultiCheck.add(this.labelProcessCount, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
-		panelMultiCheck.add(this.textFieldProcessCount, new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
+		panelMultiCheck.add(this.labelProcessCount, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
+		panelMultiCheck.add(this.textFieldProcessCount, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
 //		panelMultiCheck.add(this.labelMergeSciCount, new GridBagConstraintsHelper(0, 2, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 5, 10));
 //		panelMultiCheck.add(this.textFieldMergeSciCount, new GridBagConstraintsHelper(1, 2, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
 		CompTitledPane compTitledPane = new CompTitledPane(this.radioButtonMultiCheck, panelMultiCheck);
@@ -228,29 +213,24 @@ public class DialogCacheCheck extends JFrame {
 		panelButton.setLayout(new GridBagLayout());
 		panelButton.add(this.buttonOK, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(0, 0, 10, 5));
 		panelButton.add(this.buttonCancel, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0).setInsets(0, 0, 10, 10));
-		panelContent.add(this.labelTotalSciPath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(15, 20, 5, 10));
-		panelContent.add(this.helpProviderForTotalSciPath, new GridBagConstraintsHelper(1, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(15, 0, 5, 10));
-		panelContent.add(this.fileChooseTotalSciPath, new GridBagConstraintsHelper(2, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(15, 0, 5, 10).setWeight(1, 0));
-		panelContent.add(this.labelCheckBounds, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 20, 5, 10));
-		panelContent.add(this.fileChooseCheckBounds, new GridBagConstraintsHelper(2, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
+		panelContent.add(this.labelCachePath, new GridBagConstraintsHelper(0, 0, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(10, 20, 5, 0));
+		panelContent.add(this.fileChooseCachePath, new GridBagConstraintsHelper(1, 0, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(10, 0, 5, 10).setWeight(1, 0));
+		panelContent.add(this.labelCheckBounds, new GridBagConstraintsHelper(0, 1, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 20, 5, 0));
+		panelContent.add(this.fileChooseCheckBounds, new GridBagConstraintsHelper(1, 1, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 0, 5, 10).setWeight(1, 0));
 //		panelContent.add(this.radioButtonSingleCheck, new GridBagConstraintsHelper(0, 2, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 20, 0, 10));
-		panelContent.add(compTitledPane, new GridBagConstraintsHelper(0, 2, 4, 3).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 10, 5, 10).setWeight(3, 0));
-		panelContent.add(this.checkBoxSaveErrorData, new GridBagConstraintsHelper(0, 6, 2, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 20, 0, 10));
+		panelContent.add(compTitledPane, new GridBagConstraintsHelper(0, 2, 3, 3).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.HORIZONTAL).setInsets(0, 10, 5, 10).setWeight(3, 0));
+		panelContent.add(this.checkBoxSaveErrorData, new GridBagConstraintsHelper(0, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 20, 0, 10));
 		panelContent.add(this.checkBoxCacheBuild, new GridBagConstraintsHelper(2, 6, 1, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE).setInsets(0, 10, 0, 10));
-		panelContent.add(new JPanel(), new GridBagConstraintsHelper(0, 7, 4, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
-		this.add(panelButton, new GridBagConstraintsHelper(0, 8, 4, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
+		panelContent.add(new JPanel(), new GridBagConstraintsHelper(0, 7, 3, 1).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.BOTH).setWeight(1, 1));
+		this.add(panelButton, new GridBagConstraintsHelper(0, 8, 3, 1).setAnchor(GridBagConstraints.EAST).setWeight(0, 0));
 	}
 
-	private boolean validateValue(String sciPath, String processCount, String cachePath) {
+	private boolean validateValue(String sciPath, String processCount) {
 		boolean result = true;
 		SmOptionPane optionPane = new SmOptionPane();
 		File sciDirectory = new File(sciPath);
 		if (StringUtilities.isNullOrEmpty(sciPath) || !FileUtilities.isFilePath(sciPath) || !hasSciFiles(sciDirectory)) {
 			optionPane.showConfirmDialog(MapViewProperties.getString("String_CachePathError"));
-			return false;
-		}
-		if (StringUtilities.isNullOrEmpty(cachePath) || !new File(cachePath).exists() || !hasSciFiles(new File(cachePath))) {
-			optionPane.showConfirmDialog(MapViewProperties.getString("String_CheckPathError"));
 			return false;
 		}
 		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) || processCount.equals("0"))) {
@@ -270,25 +250,37 @@ public class DialogCacheCheck extends JFrame {
 
 	private void run(ActionEvent e) {
 		try {
-			String cacheRoot = fileChooseTotalSciPath.getPath();
-			String sciPath = fileChooseSciPath.getPath();
+			String cachePath = fileChooseCachePath.getPath();
+			File cache = new File(cachePath);
+			String cacheRoot = null;
+			if (cache.exists()) {
+				File[] files = cache.listFiles();
+				for (int i = 0; i < files.length; i++) {
+					if (!files[i].getName().contains("CacheTask")) {
+						cacheRoot = files[i].getAbsolutePath();
+						break;
+					}
+				}
+			}
+			if (null == cacheRoot) {
+				new SmOptionPane().showErrorDialog("String_CachePathNotExist");
+				return;
+			}
 			String processCount = textFieldProcessCount.getText();
-//			String mergeTaskCount = textFieldMergeSciCount.getText();
-
 			String saveErrorData = checkBoxSaveErrorData.isSelected() ? "true" : "false";
 			String geoJsonFile = fileChooseCheckBounds.getPath();
-			cacheRoot = CacheUtilities.replacePath(cacheRoot);
-			sciPath = CacheUtilities.replacePath(sciPath);
+			String cacheTaskPath = CacheUtilities.replacePath(cachePath, "CacheTask");
+			String taskPath = CacheUtilities.replacePath(cacheTaskPath, "build");
 			geoJsonFile = CacheUtilities.replacePath(geoJsonFile);
-			String[] params = {cacheRoot, sciPath, saveErrorData, geoJsonFile};
+			String[] params = {cacheRoot, taskPath, saveErrorData, geoJsonFile};
 
-			if (validateValue(sciPath, processCount, cacheRoot)) {
+			if (validateValue(taskPath, processCount)) {
 				String parentPath = null;
 				double anchorLeft = -1;
 				double anchorTop = -1;
 				int tileSize = -1;
 				if (checkBoxSaveErrorData.isSelected()) {
-					ArrayList<String> sciNames = CheckCache.getSciFileList(sciPath);
+					ArrayList<String> sciNames = CheckCache.getSciFileList(taskPath);
 					File scifile = new File(sciNames.get(0));
 					parentPath = scifile.getParentFile().getParent();
 					String checkPath = CacheUtilities.replacePath(parentPath, "check");
@@ -309,9 +301,9 @@ public class DialogCacheCheck extends JFrame {
 				checkCache.startProcess(Integer.valueOf(processCount), params);
 				((JButton) e.getSource()).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 				//Ensure all sci files has been checked
-				File sciFile = new File(sciPath);
-				String checkingPath = CacheUtilities.replacePath(sciFile.getParent(), "checking");
-				while (!FileUtilities.isDirEmpty(sciPath)) {
+				File sciFile = new File(taskPath);
+				String checkingPath = CacheUtilities.replacePath(sciFile.getParent(), "doing");
+				while (!FileUtilities.isDirEmpty(taskPath)) {
 					Thread.sleep(2000);
 				}
 				while (!FileUtilities.isDirEmpty(checkingPath)) {
@@ -324,21 +316,10 @@ public class DialogCacheCheck extends JFrame {
 				boolean cacheBuild = checkBoxCacheBuild.isSelected();
 				if (cacheBuild) {
 					File cacheFile = new File(cacheRoot);
-					File sciBuildFile = sciFile.getParentFile();
-					File[] files = sciBuildFile.listFiles();
-					File errorFile = null;
-					for (int i = 0; i < files.length; i++) {
-						if (files[i].getName().equals("error")) {
-							errorFile = files[i];
-							break;
-						}
-					}
-					if (null != errorFile && errorFile.listFiles().length > 0 && tileSize != -1) {
-//						DialogCacheBuilder cacheBuilder = new DialogCacheBuilder(DialogMapCacheClipBuilder.MultiProcessClip);
-//						cacheBuilder.fileChooserTaskPath.setPath(errorFile.getAbsolutePath());
-//						cacheBuilder.textFieldMapName.setText(cacheFile.getName());
-//						cacheBuilder.showDialog();
-						String[] tempParams = {"Multi", "null", errorFile.getAbsolutePath(), "null", cacheFile.getName(), "null"};
+					File errorFile = new File(CacheUtilities.replacePath(cacheTaskPath, "failed"));
+					//有错误则重新切图
+					if (null != errorFile && errorFile.list(CacheUtilities.getFilter()).length > 0 && tileSize != -1) {
+						String[] tempParams = {"Multi", "null", cacheFile.getName(), cachePath};
 						CacheUtilities.startProcess(tempParams, DialogCacheBuilder.class.getName(), LogWriter.BUILD_CACHE);
 					} else {
 						new SmOptionPane().showErrorDialog(MapViewProperties.getString("String_CacheCheckSuccess"));
@@ -354,7 +335,9 @@ public class DialogCacheCheck extends JFrame {
 	}
 
 	private void dialogDispose() {
+		removeEvents();
 		DialogCacheCheck.this.dispose();
+		System.exit(1);
 	}
 
 	public static void main(String[] args) {

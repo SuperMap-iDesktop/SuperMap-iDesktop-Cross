@@ -53,6 +53,10 @@ public class FileLocker implements Closeable {
 		return randomAccessFile;
 	}
 
+	public File getLockFile() {
+		return lockFile;
+	}
+
 	@Override
 	public void close() throws IOException {
 		release();

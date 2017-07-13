@@ -13,15 +13,9 @@ import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstrai
 import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.ParameterDataNode;
-import com.supermap.desktop.process.parameter.implement.ParameterCombine;
-import com.supermap.desktop.process.parameter.implement.ParameterComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
-import com.supermap.desktop.process.parameter.implement.ParameterFieldComboBox;
-import com.supermap.desktop.process.parameter.implement.ParameterSaveDataset;
-import com.supermap.desktop.process.parameter.implement.ParameterSingleDataset;
+import com.supermap.desktop.process.parameter.implement.*;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.DatasetTypes;
 import com.supermap.desktop.properties.CommonProperties;
-import com.supermap.desktop.utilities.DatasetTypeUtilities;
 import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
@@ -34,10 +28,12 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 	private ParameterSingleDataset parameterSingleDataset = new ParameterSingleDataset(DatasetType.REGION, DatasetType.POINT);
 
 	private ParameterDatasource parameterDatasourceBounding = new ParameterDatasource();
-	private ParameterSingleDataset parameterSingleDatasetBounding = new ParameterSingleDataset(DatasetTypeUtilities.getDatasetTypeVector());
+	// 事件点发生区域的边界面数据集，必须为面数据集
+	private ParameterSingleDataset parameterSingleDatasetBounding = new ParameterSingleDataset(DatasetType.REGION);
 
 	private ParameterDatasource parameterDatasourceAggregating = new ParameterDatasource();
-	private ParameterSingleDataset parameterSingleDatasetAggregating = new ParameterSingleDataset(DatasetTypeUtilities.getDatasetTypeVector());
+	// 聚合事件点以获得事件计数的面数据集，必须为面数据集。
+	private ParameterSingleDataset parameterSingleDatasetAggregating = new ParameterSingleDataset(DatasetType.REGION);
 
 	private ParameterFieldComboBox parameterFieldComboBox = new ParameterFieldComboBox();
 
@@ -74,6 +70,12 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 		parameterCombine.addParameters(parameterDatasourceAggregating);
 		parameterCombine.addParameters(parameterSingleDatasetAggregating);
 		parameterCombine.addParameters(parameterComboBox);
+
+		// 设置数据源和数据集的所属名称
+		parameterDatasourceBounding.setDescribe(ProcessProperties.getString("String_BoundingPolygons_Datasource"));
+		parameterSingleDatasetBounding.setDescribe(ProcessProperties.getString("String_BoundingPolygons_Dataset"));
+		parameterDatasourceAggregating.setDescribe(ProcessProperties.getString("String_AggregatingPolygons_Datasource"));
+		parameterSingleDatasetAggregating.setDescribe(ProcessProperties.getString("String_AggregatingPolygons_Dataset"));
 
 		ParameterCombine parameterCombineResult = new ParameterCombine();
 		parameterCombineResult.addParameters(parameterSaveDataset);

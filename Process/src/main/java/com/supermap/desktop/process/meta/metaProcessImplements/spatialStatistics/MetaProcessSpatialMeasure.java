@@ -6,6 +6,7 @@ import com.supermap.desktop.Application;
 import com.supermap.desktop.process.constraint.implement.DatasourceConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasetConstraint;
 import com.supermap.desktop.process.constraint.implement.EqualDatasourceConstraint;
+import com.supermap.desktop.process.meta.MetaKeys;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.parameter.implement.ParameterCombine;
 import com.supermap.desktop.process.parameter.implement.ParameterDatasource;
@@ -17,19 +18,19 @@ import com.supermap.desktop.utilities.DatasetUtilities;
 
 /**
  * Created by hanyz on 2017/5/2.
+ * 度量地理分布 父类
  */
 public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 	private static final String INPUT_SOURCE_DATASET = "SourceDataset";
 	protected ParameterDatasource datasource = new ParameterDatasource();
-	//空间度量用来计算的数据可以是点、线、面。
 	protected ParameterSaveDataset parameterSaveDataset;
 	protected String OUTPUT_DATASET = "SpatialMeasureResult";
-	protected ParameterSingleDataset dataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
+	protected ParameterSingleDataset dataset;
 	protected SpatialMeasureMeasureParameter measureParameter = new SpatialMeasureMeasureParameter(getKey());
-
 
 	public MetaProcessSpatialMeasure() {
 		initHook();
+		initDatasetComboBox();
 		initParameters();
 		initComponentState();
 		initParameterConstraint();
@@ -37,6 +38,18 @@ public abstract class MetaProcessSpatialMeasure extends MetaProcess {
 
 	protected void initHook() {
 
+	}
+
+	/**
+	 * 根据不同的功能给予相应的DatasetComboBox
+	 * 例如：线性方向平均值只能处理线类型数据集-yuanR
+	 */
+	private void initDatasetComboBox() {
+		if (getKey().equals(MetaKeys.LinearDirectionalMean)) {
+			dataset = new ParameterSingleDataset(DatasetType.LINE);
+		} else {
+			dataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
+		}
 	}
 
 	private void initParameters() {

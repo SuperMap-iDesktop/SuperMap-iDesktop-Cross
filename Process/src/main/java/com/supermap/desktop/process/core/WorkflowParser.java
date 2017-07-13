@@ -208,6 +208,8 @@ public class WorkflowParser {
 			result = new MetaProcessMedianCenter();
 		} else if (MetaKeys.Directional.equals(key)) {
 			result = new MetaProcessDirectional();
+		} else if (MetaKeys.LinearDirectionalMean.equals(key)) {
+			result = new MetaProcessLinearDirectionalMean();
 		} else if (MetaKeys.StandardDistance.equals(key)) {
 			result = new MetaProcessStandardDistance();
 		} else if (MetaKeys.autoCorrelation.equals(key)) {
@@ -240,10 +242,9 @@ public class WorkflowParser {
         }else if (MetaKeys.GRIDTOVECTOR.equals(key)) {
             result = new MetaProcessRasterToVector();
         }else if (MetaKeys.VECTORTOGRID.equals(key)) {
-		    //TODO
-//            result = new MetaProcessDEMBuild();
+			result = new MetaProcessVectorToRaster();
         }else if (MetaKeys.THINRASTER.equals(key)) {
-//            result = new MetaProcessDEMBuild();
+            result = new MetaProcessThinRaster();
         } else if (MetaKeys.THIESSENPOLYGON.equals(key)) {
             result = new MetaProcessThiessenPolygon();
         }else if (MetaKeys.COMPUTEDISTANCE.equals(key)) {

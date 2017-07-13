@@ -47,6 +47,8 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 	private SmTextFieldLegit smTextFieldMapDelay;
 	private JLabel labelMapDelayUnit;
 
+	private JCheckBox checkBoxUserExperience;
+
 
 //	/**
 //	 * 自动保存工作空间暂时关闭
@@ -125,6 +127,9 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 				}
 			}
 		};
+
+		checkBoxUserExperience = new JCheckBox();
+		checkBoxUserExperience.setText(FrameProperties.getString("String_JoinUserExperience"));
 	}
 
 	@Override
@@ -159,7 +164,9 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		this.add(smTextFieldMapDelay, new GridBagConstraintsHelper(1, 9, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 		this.add(labelMapDelayUnit, new GridBagConstraintsHelper(2, 9, 1, 1).setWeight(0, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 
-		this.add(new JPanel(), new GridBagConstraintsHelper(0, 10, 3, 1).setWeight(1, 1).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+		this.add(checkBoxUserExperience, new GridBagConstraintsHelper(0, 10, 3, 1).setWeight(1, 0).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
+
+		this.add(new JPanel(), new GridBagConstraintsHelper(0, 11, 3, 1).setWeight(1, 1).setInsets(5, 0, 0, 0).setAnchor(GridBagConstraints.WEST).setFill(GridBagConstraints.NONE));
 	}
 
 	@Override
@@ -253,6 +260,7 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		checkBoxWorkspaceCloseNotify.addItemListener(itemListener);
 		checkBoxCloseMemoryDatasourceNotify.addItemListener(itemListener);
 		checkBoxIsAutoCloseEmptyMap.addItemListener(itemListener);
+		checkBoxUserExperience.addItemListener(itemListener);
 //		checkBoxIsBindQueryWhileClickHead.addItemListener(itemListener);
 //		checkBoxAutoSaveWorkspace.addItemListener(itemListener);
 //		checkBoxSymbolLibraryRecovery.addItemListener(itemListener);
@@ -308,6 +316,7 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 		smTextFieldLegitAutoSaveTime.setEditable(GlobalParameters.isWorkspaceRecovery());
 		smTextFieldLegitSymbolSaveTime.setText(String.valueOf(GlobalParameters.getSymbolSaveTime()));
 		smTextFieldLegitSymbolSaveTime.setEditable(GlobalParameters.isWorkspaceRecovery());
+		checkBoxUserExperience.setSelected(GlobalParameters.isLaunchUserExperiencePlan());
 //		checkBoxSymbolLibraryRecovery.setEnabled(checkBoxWorkspaceRecovery.isSelected());
 //		smTextFieldLegitSymbolSaveTime.setEnabled(checkBoxWorkspaceRecovery.isSelected());
 	}
@@ -362,6 +371,8 @@ public class JPanelSettingCommon extends BaseSettingPanel {
 				int saveTime = Integer.valueOf(smTextFieldLegitSymbolSaveTime.getBackUpValue());
 				GlobalParameters.setSymbolSaveTime(saveTime);
 				WorkspaceTempSave.getInstance().setSymbolSaveTime(oldValue, saveTime);
+			} else if (component == checkBoxUserExperience) {
+				GlobalParameters.setLaunchUserExperiencePlan(checkBoxUserExperience.isSelected());
 			}
 //			else if (component == checkBoxSymbolLibraryRecovery) {
 //				GlobalParameters.setIsSaveSymbol(checkBoxSymbolLibraryRecovery.isSelected());

@@ -19,36 +19,36 @@ public class ParameterDatasource extends AbstractParameter implements ISelection
 	private Datasource datasource;
 	private String describe = CommonProperties.getString(CommonProperties.Label_Datasource);
 
-    @Override
-    public String getType() {
-        return ParameterType.DATASOURCE;
-    }
+	@Override
+	public String getType() {
+		return ParameterType.DATASOURCE;
+	}
 
-    @Override
-    public void setSelectedItem(Object value) {
-        if (value instanceof Datasource) {
-            Datasource oldValue = this.datasource;
-            datasource = (Datasource) value;
-	        firePropertyChangeListener(new PropertyChangeEvent(this, DATASOURCE_FIELD_NAME, oldValue, datasource));
-        }
-    }
+	@Override
+	public void setSelectedItem(Object value) {
+		if (value instanceof Datasource) {
+			Datasource oldValue = this.datasource;
+			datasource = (Datasource) value;
+			firePropertyChangeListener(new PropertyChangeEvent(this, DATASOURCE_FIELD_NAME, oldValue, datasource));
+		}
+	}
 
 
 	@Override
-    public Object getSelectedItem() {
-        return datasource;
-    }
+	public Object getSelectedItem() {
+		return datasource;
+	}
 
-    public String getDescribe() {
-        return describe;
-    }
+	public String getDescribe() {
+		return describe;
+	}
 
-    public void setDescribe(String describe) {
-        this.describe = describe;
-    }
+	public void setDescribe(String describe) {
+		this.describe = describe;
+	}
 
-    @Override
-    public void dispose() {
+	@Override
+	public void dispose() {
 
-    }
+	}
 }
