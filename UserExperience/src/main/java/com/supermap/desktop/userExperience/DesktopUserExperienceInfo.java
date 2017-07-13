@@ -33,8 +33,8 @@ public class DesktopUserExperienceInfo implements UserExperienceBean {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("Culture", culture);
 		jsonObject.put("DesktopVersion", "9D");
-		jsonObject.put("FunctionInfoCtrlAction", functionInfo == null ? null : functionInfo.getJson());
-		jsonObject.put("LicenseInfo", licenseInfo == null ? null : licenseInfo.getJson());
+		jsonObject.put("FunctionInfoCtrlAction", functionInfo);
+		jsonObject.put("LicenseInfo", licenseInfo);
 		jsonObject.put("OptionSystem", optionSystem);
 		jsonObject.put("PlatForm", platForm);
 		jsonObject.put("ProductName", "SuperMap iDesktop Cross 9D");

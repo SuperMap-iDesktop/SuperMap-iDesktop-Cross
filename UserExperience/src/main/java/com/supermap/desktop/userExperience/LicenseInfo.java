@@ -23,10 +23,10 @@ public class LicenseInfo implements UserExperienceBean {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("LicenseMode", productType == null ? CoreProperties.getString("String_onlineLicense") : CoreProperties.getString("String_localLicense"));
 			jsonObject.put("LicenseName", productType == null ? "" : productType.name());
-			array.add(jsonObject.toJSONString());
+			array.add(jsonObject);
 		}
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("LicenseInfos", array.toJSONString());
+		jsonObject.put("LicenseInfos", array);
 		return jsonObject.toJSONString();
 	}
 }

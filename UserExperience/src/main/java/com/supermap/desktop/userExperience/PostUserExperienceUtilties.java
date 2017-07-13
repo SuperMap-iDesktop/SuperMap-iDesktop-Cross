@@ -1,5 +1,6 @@
 package com.supermap.desktop.userExperience;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.utilities.FileLocker;
@@ -42,7 +43,7 @@ public class PostUserExperienceUtilties {
 					for (String line : lines) {
 						line = line.replace("{IP}", ip);
 						line = line.replace("{MACADDRESS}", macAddress);
-						array.add(line);
+						array.add(JSON.parseObject(line));
 						if (array.size() == 50) {
 							StringEntity stringEntity = new StringEntity(array.toJSONString(), ContentType.APPLICATION_JSON);
 							httpPost.setEntity(stringEntity);
@@ -54,6 +55,9 @@ public class PostUserExperienceUtilties {
 						StringEntity stringEntity = new StringEntity(array.toJSONString(), ContentType.APPLICATION_JSON);
 						httpPost.setEntity(stringEntity);
 						CloseableHttpResponse response = httpClient.execute(httpPost);
+						if (response.getStatusLine().getStatusCode() == 200) {
+							// success
+						}
 					}
 				}
 			} catch (IOException e) {

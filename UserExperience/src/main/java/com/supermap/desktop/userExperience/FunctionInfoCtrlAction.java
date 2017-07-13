@@ -126,7 +126,7 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean 
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("Caption", caption);
 		jsonObject.put("CtrlActionName", ctrlActionName);
-		jsonObject.put("ExecuteDateTime", new Date(executeDateTime));
+		jsonObject.put("ExecuteDateTime", new Date(executeDateTime).toString());
 		jsonObject.put("FunctionGrade0", functionGrade0);
 		jsonObject.put("FunctionGrade1", functionGrade1);
 		jsonObject.put("FunctionGrade2", functionGrade2);

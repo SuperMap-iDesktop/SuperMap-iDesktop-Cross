@@ -27,7 +27,7 @@ public class UserExperienceBaseInfo implements UserExperienceBean {
 		jsonObject.put("IP", IP);
 		jsonObject.put("MACADDRESS", MACADDRESS);
 		jsonObject.put("ProductID", productID);
-		jsonObject.put("ProductInfo", desktopUserExperienceInfo.getJson());
+		jsonObject.put("ProductInfo", desktopUserExperienceInfo);
 		jsonObject.put("ThreadID", ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
 		return jsonObject.toJSONString();
 	}
