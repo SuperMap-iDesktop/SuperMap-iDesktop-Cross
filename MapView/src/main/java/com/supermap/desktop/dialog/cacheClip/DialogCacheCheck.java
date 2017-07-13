@@ -229,6 +229,14 @@ public class DialogCacheCheck extends JFrame {
 		boolean result = true;
 		SmOptionPane optionPane = new SmOptionPane();
 		File sciDirectory = new File(sciPath);
+		File doingDirectory = new File(CacheUtilities.replacePath(sciDirectory.getParent(), "checking"));
+		if (doingDirectory.exists() && hasSciFiles(doingDirectory)
+				&& optionPane.showConfirmDialog(MapViewProperties.getString("String_WarningForChecking")) == JOptionPane.OK_OPTION) {
+			File[] doingSci = doingDirectory.listFiles();
+			for (int i = 0; i < doingSci.length; i++) {
+				doingSci[i].renameTo(new File(sciDirectory, doingSci[i].getName()));
+			}
+		}
 		if (StringUtilities.isNullOrEmpty(sciPath) || !FileUtilities.isFilePath(sciPath) || !hasSciFiles(sciDirectory)) {
 			optionPane.showConfirmDialog(MapViewProperties.getString("String_CachePathError"));
 			return false;
@@ -298,6 +306,7 @@ public class DialogCacheCheck extends JFrame {
 				}
 				((JButton) e.getSource()).setCursor(new Cursor(Cursor.WAIT_CURSOR));
 				CheckCache checkCache = new CheckCache();
+//				checkCache.main(params);
 				checkCache.startProcess(Integer.valueOf(processCount), params);
 				((JButton) e.getSource()).setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 				//Ensure all sci files has been checked

@@ -16,6 +16,7 @@ public class LogWriter {
 	private static LogWriter gInstance;
 	public static String BUILD_CACHE = "BuildCache";
 	public static String CHECK_CACEH = "CheckCache";
+	public static String UNDO_CACHE = "UndoCache";
 
 	public static String getPID() {
 		return ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
@@ -79,6 +80,8 @@ public class LogWriter {
 					System.out.print(line);
 			} catch (IOException e) {
 				e.printStackTrace();
+			} finally {
+
 			}
 		}
 	}
@@ -94,10 +97,9 @@ public class LogWriter {
 		}
 	}
 
-	public void closs() {
+	public void close() {
 		try {
-			if (writer != null)
-				writer.close();
+			writer.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -27,7 +27,6 @@ import java.beans.PropertyChangeListener;
 public class MetaProcessDEMLake extends MetaProcess {
     private final static String DEM_DATA = "DEMData";
     private final static String LAKE_DATA = "LakeData";
-    private final int MIN_HEIGHT_VALUE = -9999;
 
     private ParameterDatasourceConstrained DEMDatasource;
     private ParameterSingleDataset DEMDataset;
@@ -35,7 +34,7 @@ public class MetaProcessDEMLake extends MetaProcess {
     private ParameterSingleDataset lakeDataset;
     private ParameterRadioButton fieldOrValue;
     private ParameterFieldComboBox heightFieldComboBox;
-    private ParameterTextField heightValue;
+    private ParameterNumber heightValue;
 
 
 
@@ -74,7 +73,7 @@ public class MetaProcessDEMLake extends MetaProcess {
         lakeDatasource.setDescribe(CommonProperties.getString("String_LakeDatasource"));
         lakeDataset=new ParameterSingleDataset(DatasetType.REGION);
         lakeDataset.setDescribe(CommonProperties.getString("String_LakeDataset"));
-        DatasetVector datasetRegion = DatasetUtilities.getDefaultDatasetVector();
+        Dataset datasetRegion = DatasetUtilities.getDefaultDataset(DatasetType.REGION);
         if (datasetRegion != null) {
             lakeDatasource.setSelectedItem(datasetRegion.getDatasource());
             lakeDataset.setSelectedItem(datasetRegion);
@@ -85,8 +84,9 @@ public class MetaProcessDEMLake extends MetaProcess {
         heightFieldComboBox.setFieldType(fieldType);
         heightFieldComboBox.setDataset((DatasetVector) lakeDataset.getSelectedItem());
 
-        heightValue = new ParameterTextField(ProcessProperties.getString("String_BuildLake_Elevation"));
-        heightValue.setSelectedItem(MIN_HEIGHT_VALUE);
+        heightValue = new ParameterNumber(ProcessProperties.getString("String_BuildLake_Elevation"));
+        heightValue.setSelectedItem(-9999);
+
         heightValue.setEnabled(false);
 
         fieldOrValue = new ParameterRadioButton();

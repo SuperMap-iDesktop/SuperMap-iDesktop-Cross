@@ -18,25 +18,25 @@ public enum OverlayAnalystType {
         String result = "";
         switch (this) {
             case CLIP:
-                result = "ClipResult";
+                result = "result_clip";
                 break;
             case UNION:
-                result = "UnionResult";
+                result = "result_union";
                 break;
             case ERASE:
-                result = "EraseResult";
+                result = "result_erase";
                 break;
             case IDENTITY:
-                result = "IdentityResult";
+                result = "result_identity";
                 break;
             case INTERSECT:
-                result = "IntersectResult";
+                result = "result_intersect";
                 break;
             case UPDATE:
-                result = "UpdateResult";
+                result = "result_update";
                 break;
             case XOR:
-                result = "XORResult";
+                result = "result_XOR";
                 break;
             default:
                 break;

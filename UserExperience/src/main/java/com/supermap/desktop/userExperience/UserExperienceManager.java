@@ -167,9 +167,7 @@ public class UserExperienceManager {
 			executedFile.release();
 			executedFile.getLockFile().delete();
 		}
-		synchronized (lock) {
-			doPost(executedFunctionFile);
-		}
+		doPost(executedFunctionFile);
 	}
 
 	public void stop() {

@@ -23,7 +23,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -248,7 +247,7 @@ public class WorkflowParser {
             result = new MetaProcessThinRaster();
         } else if (MetaKeys.THIESSENPOLYGON.equals(key)) {
             result = new MetaProcessThiessenPolygon();
-        }else if (MetaKeys.COMPUTRDISTANCE.equals(key)) {
+        }else if (MetaKeys.COMPUTEDISTANCE.equals(key)) {
             result = new MetaProcessComputeDistance();
         } else if (MetaKeys.EXPORTGRID.equals(key)) {
             result = new MetaProcessExportGrid();

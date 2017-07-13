@@ -3,6 +3,7 @@ package com.supermap.desktop.dialog.cacheClip.cache;
 import com.supermap.data.Workspace;
 import com.supermap.data.WorkspaceConnectionInfo;
 import com.supermap.data.processing.MapCacheBuilder;
+import com.supermap.desktop.utilities.FileLocker;
 import com.supermap.mapping.Map;
 
 import java.io.File;
@@ -67,25 +68,33 @@ public class BuildCache {
 			workspace.open(connectionInfo);
 			Map map = new Map(workspace);
 			map.open(mapName);
-			File sciPath = new File(taskPath);
-			if (sciPath.exists()) {
+			File taskFiles = new File(taskPath);
+			if (taskFiles.exists()) {
+				File doingDir = new File(CacheUtilities.replacePath(taskFiles.getParent(), "doing"));
+				if (!doingDir.exists()) {
+					doingDir.mkdir();
+				} else {
+					File[] doingFailedSci = doingDir.listFiles();
+					for (File doingSci : doingFailedSci) {
+						//文件加了锁说明文件正在被用于切图任务
+						FileLocker locker = new FileLocker(doingSci);
+						if (locker.tryLock()) {
+							//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将改任务移到task目录下,重新切图
+							locker.release();
+							doingSci.renameTo(new File(taskFiles, doingSci.getName()));
+						}
+					}
+				}
 				do {
 					long start = System.currentTimeMillis();
 					//Recalculate sci file length
-					String[] sciFileNames = sciPath.list(CacheUtilities.getFilter());
+					String[] sciFileNames = taskFiles.list(CacheUtilities.getFilter());
 					sciLength = sciFileNames.length;
 
-					File doingDir = null;
-					if (sciLength > 0) {
-						File sci = new File(CacheUtilities.replacePath(taskPath, sciFileNames[0]));
-						doingDir = new File(CacheUtilities.replacePath(sci.getParentFile().getParent(), "doing"));
-						if (!doingDir.exists()) {
-							doingDir.mkdir();
-						}
-					}
 					CopyOnWriteArrayList<String> doingSciNames = new CopyOnWriteArrayList<>();
 					//Now give mergeSciCount sci files to every process if sciLength>mergeSciCount
 					int mergeSciCount = 3;
+
 					if (sciLength > mergeSciCount) {
 						//First step:Move mergeSciCount sci to doing directory
 						int success = 0;
@@ -109,6 +118,7 @@ public class BuildCache {
 					}
 
 				} while (sciLength != 0);
+				log.close();
 				map.close();
 				map.dispose();
 				workspace.close();
@@ -136,8 +146,13 @@ public class BuildCache {
 	}
 
 	private void build(String cachePath, LogWriter log, Map map, String sciName, boolean isAppending) {
-		log.writelog(String.format("start sciName:%s , PID:%s", sciName, LogWriter.getPID()));
 		File sci = new File(sciName);
+		if (!sci.exists()) {
+			return;
+		}
+
+
+		log.writelog(String.format("start sciName:%s , PID:%s", sciName, LogWriter.getPID()));
 		if (!sci.exists()) {
 			log.writelog(String.format("sciFile: %s does not exist. Maybe has done at before running. ", sciName));
 		}
@@ -151,14 +166,18 @@ public class BuildCache {
 		builder.resumable(false);
 
 		builder.setIsAppending(isAppending);
-		boolean result;
-		if (isAppending) {
-			result = builder.build();
-		} else {
-			result = builder.buildWithoutConfigFile();
+		boolean result = false;
+		FileLocker locker = new FileLocker(sci);
+		if (locker.tryLock()) {
+			if (isAppending) {
+				result = builder.build();
+			} else {
+				result = builder.buildWithoutConfigFile();
+			}
+			locker.release();
+			//释放锁
 		}
 		builder.dispose();
-
 		if (result) {
 			File doneDir = new File(CacheUtilities.replacePath(sci.getParentFile().getParent(), "build"));
 			if (!doneDir.exists()) {
@@ -176,5 +195,4 @@ public class BuildCache {
 		long end = System.currentTimeMillis();
 		log.writelog(String.format("%s %s done,PID:%s, cost(ms):%d, done", sciName, String.valueOf(result), LogWriter.getPID(), end - oneStart));
 	}
-
 }

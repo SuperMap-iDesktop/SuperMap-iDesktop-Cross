@@ -52,7 +52,7 @@ public class CacheUtilities {
 		return sourceStr + name;
 	}
 
-	public static boolean selectedMapIsEnabled(){
+	public static boolean selectedMapIsEnabled() {
 		boolean enable = false;
 		WorkspaceTree workspaceTree = UICommonToolkit.getWorkspaceManager().getWorkspaceTree();
 		if (workspaceTree.getSelectionCount() == 1) {
@@ -64,8 +64,10 @@ public class CacheUtilities {
 		}
 		return enable;
 	}
+
 	/**
 	 * get selected workspcace map
+	 *
 	 * @return
 	 */
 	public static Map getWorkspaceSelectedMap() {
@@ -184,7 +186,12 @@ public class CacheUtilities {
 	public static void startProcess(String[] params, String className, String cacheType) {
 		try {
 			ArrayList<String> arguments = new ArrayList<>();
-			String javaexeHome = CacheUtilities.replacePath(System.getProperty("java.home"), "bin") + File.separator + "java.exe";
+			String javaexeHome = null;
+			if (isWindows()) {
+				javaexeHome = CacheUtilities.replacePath(System.getProperty("java.home"), "bin") + File.separator + "java.exe";
+			} else {
+				javaexeHome = CacheUtilities.replacePath(System.getProperty("java.home"), "bin") + File.separator + "java";
+			}
 			arguments.add(javaexeHome);
 			arguments.add("-cp");
 			String projectPath = replacePath(System.getProperty("user.dir"));
@@ -198,8 +205,12 @@ public class CacheUtilities {
 			arguments.add(jarPath);
 			arguments.add(className);
 			for (int i = 0; i < params.length; i++) {
-				String param = params[i].endsWith("\\") ? params[i].substring(0, params[i].length() - 1) : params[i];
-				arguments.add("\"" + param + "\"");
+				String param = params[i].endsWith(File.separator) ? params[i].substring(0, params[i].length() - 1) : params[i];
+				if (isWindows()) {
+					arguments.add("\"" + param + "\"");
+				} else {
+					arguments.add(param);
+				}
 			}
 			ProcessManager manager = ProcessManager.getInstance();
 
@@ -209,6 +220,7 @@ public class CacheUtilities {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	public static boolean isWindows() {

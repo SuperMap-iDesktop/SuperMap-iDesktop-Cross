@@ -89,6 +89,7 @@ public class ParameterTextAreaPanel extends SwingPanel implements IParameterPane
         this.label = new JLabel();
 	    if (!StringUtilities.isNullOrEmpty(parameterTextArea.getDescribe()))
 		    this.label.setText(parameterTextArea.getDescribe());
+		    this.label.setToolTipText(parameterTextArea.getDescribe());
 	    this.textArea = new JTextArea();
 	    if (!parameterTextArea.isEnabled()) {
 	    	this.textArea.setEnabled(parameterTextArea.isEnabled());
