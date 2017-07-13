@@ -4,10 +4,8 @@ import com.supermap.data.*;
 import com.supermap.data.processing.CacheWriter;
 import com.supermap.data.processing.CompactFile;
 import com.supermap.data.processing.StorageType;
-import com.supermap.tilestorage.TileContent;
-import com.supermap.tilestorage.TileStorageConnection;
-import com.supermap.tilestorage.TileStorageManager;
-import com.supermap.tilestorage.TileStorageType;
+import com.supermap.desktop.utilities.FileLocker;
+import com.supermap.tilestorage.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -110,21 +108,27 @@ public class CheckCache {
 //		int tileSize = writer.getTileSize().value();
 		//Get sci files from sci directory
 		File sciPath = new File(scipath);
-		String parentPath = null;
 		if (sciPath.exists()) {
+			File checkingDir = new File(CacheUtilities.replacePath(sciPath.getParent(), "checking"));
+			if (!checkingDir.exists()) {
+				checkingDir.mkdir();
+			} else {
+				File[] checkingScis = checkingDir.listFiles();
+				for (File checkingSci : checkingScis) {
+					FileLocker locker = new FileLocker(checkingSci);
+					//文件加了锁说明文件正在被用于检查任务
+					if (locker.tryLock()) {
+						//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将改任务移到build目录下,重新检查
+						locker.release();
+						checkingSci.renameTo(new File(sciPath, checkingSci.getName()));
+					}
+				}
+			}
 			do {
 				//Recalculate sci file length
 				String[] sciFileNames = sciPath.list(CacheUtilities.getFilter());
 				sciLength = sciFileNames.length;
 
-				File checkingDir = null;
-				if (sciLength > 0) {
-					File sci = new File(CacheUtilities.replacePath(scipath, sciFileNames[0]));
-					checkingDir = new File(CacheUtilities.replacePath(sci.getParentFile().getParent(), "checking"));
-					if (!checkingDir.exists()) {
-						checkingDir.mkdir();
-					}
-				}
 				CopyOnWriteArrayList<String> doingSciNames = new CopyOnWriteArrayList<>();
 				//Now give mergeSciCount sci files to every process if sciLength>mergeSciCount
 				int mergeSciCount = 3;
@@ -152,6 +156,8 @@ public class CheckCache {
 //			if (this.error2udb && null != parentPath) {
 //				this.error2Udb(anchorLeft, anchorTop, tileSize, parentPath);
 //			}
+		} else {
+			LogWriter.getInstance(LogWriter.CHECK_CACEH).writelog("Build files does not exist");
 		}
 	}
 
@@ -164,28 +170,24 @@ public class CheckCache {
 		}
 		return renameSuccess;
 	}
-
 	public void check(String cacheRoot, String sciFile) {
-		LogWriter log = LogWriter.getInstance(LogWriter.CHECK_CACEH);
+
 		File file = new File(sciFile);
 		if (!file.exists()) {
 			return;
 		}
+
+		LogWriter log = LogWriter.getInstance(LogWriter.CHECK_CACEH);
 		sciFilePath = file.getName();
 		errorWriter = null;
-//		MapCacheFile cacheFile = new MapCacheFile();
-//		cacheFile.open(sciFile);
+
 		CacheWriter cacheFile = new CacheWriter();
 		cacheFile.FromConfigFile(sciFile);
-		String pathSeparator = "\\";
-		if (CacheUtilities.isLinux()) {
-			pathSeparator = "/";
-		}
-		cacheRoot = cacheRoot + pathSeparator +
+		cacheRoot = cacheRoot + File.separator +
 				cacheFile.parseTileFormat() + "_" +
 				cacheFile.getTileSize().value() + "_" +
 				cacheFile.getHashCode();
-
+		double[] resolutionsMongo = null;
 		TileStorageManager manager = null;
 		if (cacheFile.getStorageType() == StorageType.MongoDB) {
 			String[] strInfo = cacheFile.getMongoConnectionInfo();
@@ -208,67 +210,93 @@ public class CheckCache {
 				log.writelog("error: mongo open failed!");
 				return;
 			}
+			TileStorageInfo infoMongo = manager.getInfo();
+			resolutionsMongo = infoMongo.getResolutions();
 		}
+		FileLocker locker = new FileLocker(file);
+		//文件锁添加成功则执行检查任务
+		if (locker.tryLock()) {
+			boolean result = true;
+			for(Double scale : cacheFile.getCacheScaleCaptions().keySet()){
+				String caption = cacheFile.getCacheScaleCaptions().get(scale);
+				String errFileName = file.getName().replaceAll(".sci", "");
+				errFileName += "(L" + caption + "_S" + Math.round(1 / scale) + ").err";
+				errorFileName = file.getParentFile().getParent() + File.separator + "temp" + File.separator + errFileName;
 
-		boolean result = true;
-		for (Double scale : cacheFile.getCacheScaleCaptions().keySet()) {
-			String caption = cacheFile.getCacheScaleCaptions().get(scale);
-			String errFileName = file.getName().replaceAll(".sci", "");
-			errFileName += "(L" + caption + "_S" + Math.round(1 / scale) + ").err";
-			errorFileName = file.getParentFile().getParent() + pathSeparator + "temp" + pathSeparator + errFileName;
+				double reolustion = getResolution(scale, cacheFile.getPrjCoordSys(), cacheFile.getDPI());
 
-			double reolustion = getResolution(scale, cacheFile.getPrjCoordSys(), cacheFile.getDPI());
+				double left = ((cacheFile.getCacheBounds().getLeft() - cacheFile.getIndexBounds().getLeft()) / reolustion) / cacheFile.getTileSize().value();
+				double top = ((cacheFile.getIndexBounds().getTop() - cacheFile.getCacheBounds().getTop()) / reolustion) / cacheFile.getTileSize().value();
+				double right = ((cacheFile.getCacheBounds().getRight() - cacheFile.getIndexBounds().getLeft()) / reolustion) / cacheFile.getTileSize().value();
+				double bottom = ((cacheFile.getIndexBounds().getTop() - cacheFile.getCacheBounds().getBottom()) / reolustion) / cacheFile.getTileSize().value();
 
-			double left = ((cacheFile.getCacheBounds().getLeft() - cacheFile.getIndexBounds().getLeft()) / reolustion) / cacheFile.getTileSize().value();
-			double top = ((cacheFile.getIndexBounds().getTop() - cacheFile.getCacheBounds().getTop()) / reolustion) / cacheFile.getTileSize().value();
-			double right = ((cacheFile.getCacheBounds().getRight() - cacheFile.getIndexBounds().getLeft()) / reolustion) / cacheFile.getTileSize().value();
-			double bottom = ((cacheFile.getIndexBounds().getTop() - cacheFile.getCacheBounds().getBottom()) / reolustion) / cacheFile.getTileSize().value();
+				int tileLeft = (int)left;
+				int tileTop = (int)top;
 
-			int tileLeft = (int) left;
-			int tileTop = (int) top;
-
-			int tileRight = (int) right;
-			if ((right - tileRight) < 0.0001) {
-				tileRight--;
-			}
-			int tileBottom = (int) bottom;
-			if ((bottom - tileBottom) < 0.0001) {
-				tileBottom--;
-			}
-
-			if (cacheFile.getStorageType() == StorageType.Original) {
-
-			} else if (cacheFile.getStorageType() == StorageType.Compact) {
-				result = result && checkCompactCache(log, cacheRoot, caption, tileLeft, tileTop, tileRight, tileBottom, reolustion, cacheFile);
-			} else if (cacheFile.getStorageType() == StorageType.MongoDB) {
-				result = result && checkMongoCache(log, manager, Integer.valueOf(caption), tileLeft, tileTop, tileRight, tileBottom, reolustion, cacheFile);
-			}
-
-			if (errorWriter != null) {
-				try {
-					errorWriter.flush();
-					errorWriter.close();
-				} catch (IOException e) {
-					e.printStackTrace();
+				int tileRight = (int)right;
+				if((right - tileRight) < 0.0001){
+					tileRight--;
 				}
-				errorWriter = null;
+				int tileBottom = (int)bottom;
+				if((bottom - tileBottom) < 0.0001){
+					tileBottom--;
+				}
+
+				if (cacheFile.getStorageType() == StorageType.Original) {
+
+				} else if (cacheFile.getStorageType() == StorageType.Compact) {
+					result = result && checkCompactCache(log, cacheRoot, caption, tileLeft, tileTop, tileRight, tileBottom, reolustion, cacheFile);
+				} else if (cacheFile.getStorageType() == StorageType.MongoDB) {
+					int level = 1;
+					double resolutonone = resolutionsMongo[0];
+					double min = Math.abs(resolutonone - reolustion);
+					for(int i = 0; i < resolutionsMongo.length; i++){
+						if(Math.abs(resolutionsMongo[i] - reolustion) < min){
+							resolutonone = resolutionsMongo[i];
+							min = resolutionsMongo[i] - reolustion;
+							level = i + 1;
+						}
+					}
+					if(level > 0) {
+						result = result && checkMongoCache(log, manager, Integer.valueOf(caption), tileLeft, tileTop, tileRight, tileBottom, reolustion, cacheFile);
+					}
+				}
+				if (errorWriter != null) {
+					try {
+						errorWriter.flush();
+						errorWriter.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					errorWriter = null;
+				}
+			}
+			//检查完成后,释放文件锁
+			locker.release();
+			if (result) {
+				File doneDir = new File(CacheUtilities.replacePath(file.getParentFile().getParent(), "checked"));
+				if (!doneDir.exists()) {
+					doneDir.mkdir();
+				}
+				file.renameTo(new File(doneDir, file.getName()));
+			} else {
+				File failDir = new File(CacheUtilities.replacePath(file.getParentFile().getParent(), "failed"));
+				if (!failDir.exists()) {
+					failDir.mkdir();
+				}
+				file.renameTo(new File(failDir, file.getName()));
+			}
+
+			if (manager != null)
+
+			{
+				manager.close();
 			}
 		}
 
-		File filesci = new File(sciFile);
-		String checkDir = (CacheUtilities.replacePath(filesci.getParentFile().getParent(), "checked"));
-		if (!result) {
-			checkDir = (CacheUtilities.replacePath(filesci.getParentFile().getParent(), "failed"));
-		}
-		filesci.renameTo(new File(checkDir, filesci.getName()));
-
-		if (manager != null) {
-			manager.close();
-		}
 	}
 
-	//Check compact cache
-	public boolean checkCompactCache(LogWriter log, String cacheRoot, String caption, int left, int top, int right, int bottom, double reolustion, CacheWriter cacheFile) {
+	public boolean checkCompactCache(LogWriter log,String cacheRoot, String caption, int left, int top, int right, int bottom, double reolustion, CacheWriter cacheFile) {
 
 		boolean isWithin = false;
 		if (boundaryCheck) {
@@ -295,12 +323,7 @@ public class CheckCache {
 				int bigCol = col / 128;
 				int currentCol = Math.min(right, (bigCol + 1) * 128 - 1);
 
-				String cfPath = "";
-				if (CacheUtilities.isWindows()) {
-					cfPath = cacheRoot + "\\" + caption + "\\" + bigRow + "\\" + bigCol + ".cf";
-				} else {
-					cfPath = cacheRoot + "/" + caption + "/" + bigRow + "/" + bigCol + ".cf";
-				}
+				String cfPath = cacheRoot + "/" + caption + "/" + bigRow + "/" + bigCol + ".cf";
 				File cfFile = new File(cfPath);
 
 				//long starttime = System.nanoTime();
@@ -391,6 +414,106 @@ public class CheckCache {
 		return result;
 	}
 
+	public boolean checkMongoCache(LogWriter log,TileStorageManager manager, int level, int left, int top, int right, int bottom, double reolustion, CacheWriter cacheFile){
+
+		boolean isWithin = false;
+		if(boundaryCheck){
+			Rectangle2D cacheBounds = cacheFile.getCacheBounds();
+			Point2Ds points = new Point2Ds();
+			points.add(new Point2D(cacheBounds.getLeft(), cacheBounds.getBottom()));
+			points.add(new Point2D(cacheBounds.getLeft(), cacheBounds.getTop()));
+			points.add(new Point2D(cacheBounds.getRight(), cacheBounds.getTop()));
+			points.add(new Point2D(cacheBounds.getRight(), cacheBounds.getBottom()));
+			GeoRegion region = new GeoRegion(points);
+
+			isWithin = Geometrist.isWithin(region, boundaryRegion);
+		}
+		double anchorLeft = cacheFile.getIndexBounds().getLeft();
+		double anchorTop = cacheFile.getIndexBounds().getTop();
+		int tileSize = cacheFile.getTileSize().value();
+
+		boolean result = true;
+		byte[] data = null;
+		TileContent content = null;
+		for(int row = top; row <= bottom; row++){
+			for(int col = left; col <= right; col++){
+				TileContentInfo info = new TileContentInfo(level,row,col,cacheFile.getVersionSetting());
+				content = manager.loadTile(info);
+				//content = manager.loadTile(level - 1, row, col);
+				data = null;
+				if (content != null) {
+					data = content.getData();
+					String key = content.getKey();
+					content.dispose();
+					if(!key.isEmpty()){
+						continue;
+					}
+				}
+
+				if(data == null || data.length == 0){
+					result = false;
+					log.writelog("missing:" + level +","+ row +","+ col +","+ sciFilePath);
+					this.writError("missing," + reolustion +","+ row +","+ col +","+ sciFilePath);
+				}
+				else if(data.length > 16){
+					try {
+						ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
+						//MemoryCacheImageInputStream tileStream = new MemoryCacheImageInputStream(byteStream);
+						BufferedImage image = null;
+						try {
+							image = ImageIO.read(byteStream);
+						} catch (IOException e) {
+							result = false;
+							log.writelog("error:" + level +","+ row +","+ col +","+ sciFilePath);
+							this.writError("error," + reolustion +","+ row +","+ col +","+ sciFilePath);
+							byteStream.close();
+							continue;
+						}
+
+						boolean tileIsWithin = isWithin;
+						if(boundaryCheck && !isWithin){
+
+							double boundLeft = anchorLeft + reolustion * col * tileSize;
+							double boundRight = boundLeft + reolustion * tileSize;
+							double boundTop = anchorTop - reolustion * row * tileSize;
+							double boundBottom = boundTop - reolustion * tileSize;
+
+							Point2Ds points = new Point2Ds();
+							points.add(new Point2D(boundLeft, boundBottom));
+							points.add(new Point2D(boundLeft, boundTop));
+							points.add(new Point2D(boundRight, boundTop));
+							points.add(new Point2D(boundRight, boundBottom));
+							GeoRegion tileRegion = new GeoRegion(points);
+
+							tileIsWithin = Geometrist.isWithin(tileRegion, boundaryRegion);
+						}
+
+						if(boundaryCheck){
+							if(tileIsWithin && isBlockWhite(image)){
+								result = false;
+								log.writelog("white:" + level +","+ row +","+ col +","+ sciFilePath);
+								this.writError("white," + reolustion +","+ row +","+ col +","+ sciFilePath);
+							}
+						}
+						else{
+							if(isSolidWhite(image)){
+								result = false;
+								log.writelog("white:" + level +","+ row +","+ col +","+ sciFilePath);
+								this.writError("white," + reolustion +","+ row +","+ col +","+ sciFilePath);
+							}
+						}
+
+						byteStream.close();
+					} catch (IOException e) {}
+				}
+				else{
+					//System.out.println(row + " " + col);
+				}
+			}
+		}
+		return result;
+	}
+
 	//Get resolution of scale
 	public double getResolution(double scale, PrjCoordSys prjCoordSys, double cacheDPI) {
 		double unitRatio = 0; //unit:0.1mm/(prj unit)
@@ -409,106 +532,6 @@ public class CheckCache {
 		resolution = resolution / unitRatio; //unit:(pry unit)/pixel
 		return resolution;
 	}
-
-	//Check mongo type cache
-	public boolean checkMongoCache(LogWriter log, TileStorageManager manager, int level, int left, int top, int right, int bottom, double reolustion, CacheWriter cacheFile) {
-
-		boolean isWithin = false;
-		if (boundaryCheck) {
-			Rectangle2D cacheBounds = cacheFile.getCacheBounds();
-			Point2Ds points = new Point2Ds();
-			points.add(new Point2D(cacheBounds.getLeft(), cacheBounds.getBottom()));
-			points.add(new Point2D(cacheBounds.getLeft(), cacheBounds.getTop()));
-			points.add(new Point2D(cacheBounds.getRight(), cacheBounds.getTop()));
-			points.add(new Point2D(cacheBounds.getRight(), cacheBounds.getBottom()));
-			GeoRegion region = new GeoRegion(points);
-
-			isWithin = Geometrist.isWithin(region, boundaryRegion);
-		}
-		double anchorLeft = cacheFile.getIndexBounds().getLeft();
-		double anchorTop = cacheFile.getIndexBounds().getTop();
-		int tileSize = cacheFile.getTileSize().value();
-
-		boolean result = true;
-		byte[] data = null;
-		TileContent content = null;
-		for (int row = top; row <= bottom; row++) {
-			for (int col = left; col <= right; col++) {
-				//TileContentInfo info = new TileContentInfo(level,row,col,"");
-				//content = manager.loadTile(info);
-				content = manager.loadTile(level - 1, row, col);
-				data = null;
-				if (content != null) {
-					data = content.getData();
-					String key = content.getKey();
-					content.dispose();
-					if (!key.isEmpty()) {
-						continue;
-					}
-				}
-
-				if (data == null || data.length == 0) {
-					result = false;
-					log.writelog("missing:" + level + "," + row + "," + col + "," + sciFilePath);
-					this.writError("missing," + reolustion + "," + row + "," + col + "," + sciFilePath);
-				} else if (data.length > 16) {
-					try {
-						ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
-						//MemoryCacheImageInputStream tileStream = new MemoryCacheImageInputStream(byteStream);
-						BufferedImage image = null;
-						try {
-							image = ImageIO.read(byteStream);
-						} catch (IOException e) {
-							result = false;
-							log.writelog("error:" + level + "," + row + "," + col + "," + sciFilePath);
-							this.writError("error," + reolustion + "," + row + "," + col + "," + sciFilePath);
-							byteStream.close();
-							continue;
-						}
-
-						boolean tileIsWithin = isWithin;
-						if (boundaryCheck && !isWithin) {
-
-							double boundLeft = anchorLeft + reolustion * col * tileSize;
-							double boundRight = boundLeft + reolustion * tileSize;
-							double boundTop = anchorTop - reolustion * row * tileSize;
-							double boundBottom = boundTop - reolustion * tileSize;
-
-							Point2Ds points = new Point2Ds();
-							points.add(new Point2D(boundLeft, boundBottom));
-							points.add(new Point2D(boundLeft, boundTop));
-							points.add(new Point2D(boundRight, boundTop));
-							points.add(new Point2D(boundRight, boundBottom));
-							GeoRegion tileRegion = new GeoRegion(points);
-
-							tileIsWithin = Geometrist.isWithin(tileRegion, boundaryRegion);
-						}
-
-						if (boundaryCheck) {
-							if (tileIsWithin && isBlockWhite(image)) {
-								result = false;
-								log.writelog("white:" + level + "," + row + "," + col + "," + sciFilePath);
-								this.writError("white," + reolustion + "," + row + "," + col + "," + sciFilePath);
-							}
-						} else {
-							if (isSolidWhite(image)) {
-								result = false;
-								log.writelog("white:" + level + "," + row + "," + col + "," + sciFilePath);
-								this.writError("white," + reolustion + "," + row + "," + col + "," + sciFilePath);
-							}
-						}
-
-						byteStream.close();
-					} catch (IOException e) {
-					}
-				} else {
-					//System.out.println(row + " " + col);
-				}
-			}
-		}
-		return result;
-	}
-
 
 	public boolean isSolidWhite(BufferedImage image) {
 		byte[] data = ((DataBufferByte) image.getData().getDataBuffer()).getData();

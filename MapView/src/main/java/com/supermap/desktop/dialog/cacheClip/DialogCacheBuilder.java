@@ -59,6 +59,7 @@ public class DialogCacheBuilder extends JFrame {
 	private JButton buttonRefresh;
 	private WarningOrHelpProvider helpProviderForProcessCount;
 	//scipath for restore path of .sci file
+	private File sciFile;
 	private String taskPath;
 	private int totalSciLength;
 	private long startTime;
@@ -67,7 +68,6 @@ public class DialogCacheBuilder extends JFrame {
 	private String[] params;
 	private BuildCache buildCache;
 	//Total sci file
-	private File sciFile;
 	private CopyOnWriteArrayList<JProgressBar> progressBars;
 	private CopyOnWriteArrayList<String> captions;
 	private CopyOnWriteArrayList<Integer> captionCount;
@@ -199,29 +199,34 @@ public class DialogCacheBuilder extends JFrame {
 	private FileChooserPathChangedListener fileChangeListener = new FileChooserPathChangedListener() {
 		@Override
 		public void pathChanged() {
-			String sciFilePath = getCacheSci();
-			if (null != sciFilePath) {
-				MapCacheBuilder builder = new MapCacheBuilder();
-				boolean result = builder.fromConfigFile(sciFilePath);
-				if (result) {
-					sciFile = new File(sciFilePath);
-					HashMap<Double, String> allScaleCaptions = new HashMap<>(builder.getOutputScaleCaptions());
-					if (StringUtilities.isNullOrEmpty(textFieldMapName.getText())) {
-						textFieldMapName.setText(builder.getCacheName());
-					}
-					Set<Double> scales = allScaleCaptions.keySet();
-					ArrayList<Double> scaleList = new ArrayList<>();
-					scaleList.addAll(scales);
-					Collections.sort(scaleList);
-					CopyOnWriteArrayList<String> tempCaptions = new CopyOnWriteArrayList<>();
-					for (double scale : scaleList) {
-						tempCaptions.add(String.valueOf(Math.round(1 / scale)));
-					}
-					setCaptions(tempCaptions);
-				}
-			}
+			resetPathInfo();
 		}
 	};
+
+	private void resetPathInfo() {
+		String sciFilePath = getCacheSci();
+		if (null != sciFilePath) {
+			MapCacheBuilder builder = new MapCacheBuilder();
+			boolean result = builder.fromConfigFile(sciFilePath);
+			if (result) {
+				progressBarTotal.setValue(0);
+				sciFile = new File(sciFilePath);
+				HashMap<Double, String> allScaleCaptions = new HashMap<>(builder.getOutputScaleCaptions());
+				if (StringUtilities.isNullOrEmpty(textFieldMapName.getText())) {
+					textFieldMapName.setText(builder.getCacheName());
+				}
+				Set<Double> scales = allScaleCaptions.keySet();
+				ArrayList<Double> scaleList = new ArrayList<>();
+				scaleList.addAll(scales);
+				Collections.sort(scaleList);
+				CopyOnWriteArrayList<String> tempCaptions = new CopyOnWriteArrayList<>();
+				for (double scale : scaleList) {
+					tempCaptions.add(String.valueOf(Math.round(1 / scale)));
+				}
+				setCaptions(tempCaptions);
+			}
+		}
+	}
 
 	public DialogCacheBuilder(int cmdType) {
 		this.cmdType = cmdType;
@@ -233,6 +238,7 @@ public class DialogCacheBuilder extends JFrame {
 		initResources();
 		initLayout();
 		registEvents();
+		resetPathInfo();
 		Dimension dimension = new Dimension(723, 365);
 		this.setSize(dimension);
 		this.setLocationRelativeTo(null);
@@ -485,7 +491,23 @@ public class DialogCacheBuilder extends JFrame {
 
 	private boolean validateValue(String taskPath, String workspacePath, String mapName, String cachePath, String processCount) {
 		boolean result = true;
-		File sciDirectory = new File(taskPath);
+		File taskDirectory = new File(taskPath);
+		File failedDirectory = new File(CacheUtilities.replacePath(taskDirectory.getParent(), "failed"));
+		File doingDirectory = new File(CacheUtilities.replacePath(taskDirectory.getParent(), "doing"));
+		if (doingDirectory.exists() && hasSciFiles(doingDirectory)
+				&& optionPane.showConfirmDialog(MapViewProperties.getString("String_WarningForDoing")) == JOptionPane.OK_OPTION) {
+			File[] doingSci = doingDirectory.listFiles();
+			for (int i = 0; i < doingSci.length; i++) {
+				doingSci[i].renameTo(new File(taskDirectory, doingSci[i].getName()));
+			}
+		}
+		if (failedDirectory.exists() && hasSciFiles(failedDirectory)
+				&& optionPane.showConfirmDialog(MapViewProperties.getString("String_WarningForFailed")) == JOptionPane.OK_OPTION) {
+			File[] failedSci = failedDirectory.listFiles();
+			for (int i = 0; i < failedSci.length; i++) {
+				failedSci[i].renameTo(new File(taskDirectory, failedSci[i].getName()));
+			}
+		}
 		if (StringUtilities.isNullOrEmpty(workspacePath) || !new File(workspacePath).exists() || !(workspacePath.endsWith("smwu") || workspacePath.endsWith("sxwu"))) {
 			optionPane.showErrorDialog(MapViewProperties.getString("String_WorkspaceNotExist"));
 			return false;
@@ -495,7 +517,7 @@ public class DialogCacheBuilder extends JFrame {
 			return false;
 		}
 		if (StringUtilities.isNullOrEmpty(cachePath) || !FileUtilities.isFilePath(cachePath) ||
-				StringUtilities.isNullOrEmpty(taskPath) || !sciDirectory.exists() || !hasSciFiles(sciDirectory)) {
+				StringUtilities.isNullOrEmpty(taskPath) || !taskDirectory.exists() || !hasSciFiles(taskDirectory)) {
 			optionPane.showErrorDialog(MapViewProperties.getString("String_CachePathNotExist"));
 			return false;
 		}
@@ -579,7 +601,7 @@ public class DialogCacheBuilder extends JFrame {
 			failedSciNames = failedFile.list();
 			currentTotalCount += failedSciNames.length;
 		}
-		if (null != captions) {
+		if (null != captions && null != captionCount) {
 			for (int i = 0; i < captions.size(); i++) {
 				int currentCount = getSingleProcess(buildSciNames, failedSciNames, captions.get(i));
 				int value = (int) (((currentCount + 0.0) / captionCount.get(i)) * 100);
@@ -683,9 +705,18 @@ public class DialogCacheBuilder extends JFrame {
 				second = totalTime / 1000;
 			}
 
-			File failedFile = new File(CacheUtilities.replacePath(sciFile.getParent(), "failed"));
-			if (failedFile.exists()) {
-				new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), failedFile.list().length, failedFile.getPath()));
+			File failedFile = new File(CacheUtilities.replacePath(CacheUtilities.replacePath(cachePath, "CacheTask"), "failed"));
+			File taskFile = new File(CacheUtilities.replacePath(CacheUtilities.replacePath(cachePath, "CacheTask"), "task"));
+			if (failedFile.exists() && null != failedFile.list() && failedFile.list().length > 0) {
+				if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Failed"), failedFile.list().length, failedFile.getPath())) == JOptionPane.OK_OPTION) {
+					buttonCreate.setEnabled(true);
+					resetPathInfo();
+					File[] failedSci = failedFile.listFiles();
+					for (int i = 0; i < failedSci.length; i++) {
+						failedSci[i].renameTo(new File(taskFile, failedSci[i].getName()));
+					}
+					return;
+				}
 			}
 			new SmOptionPane().showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_MultiCacheSuccess"), resultPath, hour, minutes, second));
 		} else {
