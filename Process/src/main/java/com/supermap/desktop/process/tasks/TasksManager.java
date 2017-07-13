@@ -124,14 +124,23 @@ public class TasksManager {
 			ProcessWorker worker = new ProcessWorker(process);
 			process.addStatusChangeListener(this.processStatusChangeListener);
 			this.workersMap.put(process, worker);
+			this.waiting.add(process);
+			fireWorkersChanged(new WorkersChangedEvent(this, this.workersMap.get(process), WorkersChangedEvent.ADD));
 		}
 	}
 
+	/**
+	 * @param process
+	 */
 	private void processRemoved(IProcess process) {
 		if (this.workersMap.containsKey(process)) {
 			ProcessWorker worker = this.workersMap.get(process);
 			process.removeStatusChangeListener(this.processStatusChangeListener);
-			this.workersMap.remove(worker.getProcess());
+			this.workersMap.remove(process);
+			fireWorkersChanged(new WorkersChangedEvent(this, worker, WorkersChangedEvent.REMOVE));
+
+			// 执行过程中禁止删除节点，也就是说只有在前期构建工作流的时候可以，此时只有 waiting 队列
+			this.waiting.remove(process);
 		}
 	}
 
@@ -145,12 +154,13 @@ public class TasksManager {
 
 			initialize();
 //			this.workflow.setEdiitable(false);
-			if (this.ready != null) {
+			if (this.ready == null) {
 				return false;
 			}
 
 			// 正在运行的时候禁止添加、删除节点，禁止调整连接关系和状态
 			if (!this.scheduler.isRunning()) {
+				this.workflow.setEditable(false);
 				this.scheduler.start();
 			}
 		} catch (Exception e) {
@@ -158,6 +168,10 @@ public class TasksManager {
 		}
 
 		return true;
+	}
+
+	public boolean isExecuting() {
+		return this.status == WORKER_STATE_RUNNING;
 	}
 
 	public void cancel() {
@@ -181,6 +195,7 @@ public class TasksManager {
 	}
 
 	private synchronized void reset() {
+		this.workflow.setEditable(true);
 		this.waiting.clear();
 		this.ready.clear();
 		this.running.clear();
@@ -197,6 +212,8 @@ public class TasksManager {
 		for (IProcess process :
 				processes) {
 			process.reset();
+			this.waiting.add(process);
+//			fireWorkerStateChange(new WorkerStateChangedEvent(this, this.workersMap.get(process), -1, WORKER_STATE_WAITING));
 		}
 	}
 
@@ -367,6 +384,24 @@ public class TasksManager {
 		}
 	}
 
+	public void addWorkersChangedListener(WorkersChangedListener listener) {
+		this.listenerList.add(WorkersChangedListener.class, listener);
+	}
+
+	public void removeWorkersChangedListener(WorkersChangedListener listener) {
+		this.listenerList.remove(WorkersChangedListener.class, listener);
+	}
+
+	protected void fireWorkersChanged(WorkersChangedEvent e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == WorkersChangedListener.class) {
+				((WorkersChangedListener) listeners[i + 1]).workersChanged(e);
+			}
+		}
+	}
+
 	private class SchedulerActionListener implements ActionListener {
 
 		@Override
@@ -383,6 +418,7 @@ public class TasksManager {
 				// 当等待队列、就绪队列、运行队列均已经清空，则停止任务调度，并输出日志
 				if (waiting.size() == 0 && ready.size() == 0 && running.size() == 0) {
 					scheduler.stop();
+					workflow.setEditable(true);
 
 					if (workflow.getProcessCount() == completed.size()) {
 						status = TasksManager.WORKFLOW_STATE_COMPLETED;

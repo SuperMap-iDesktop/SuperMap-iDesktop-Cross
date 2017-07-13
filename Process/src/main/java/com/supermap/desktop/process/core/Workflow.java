@@ -14,11 +14,9 @@ import java.util.Vector;
  */
 public class Workflow implements IWorkflow {
 	private String name = "workflow";
-
+	private boolean isEditable = true;
 	private NodeMatrix<IProcess> processMatrix;
-
 	private EventListenerList listenerList = new EventListenerList();
-
 	private MatrixEventHandler handler = new MatrixEventHandler();
 
 	public Workflow(String name) {
@@ -47,6 +45,14 @@ public class Workflow implements IWorkflow {
 	@Override
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public boolean isEditable() {
+		return isEditable;
+	}
+
+	public void setEditable(boolean editable) {
+		isEditable = editable;
 	}
 
 	@Override

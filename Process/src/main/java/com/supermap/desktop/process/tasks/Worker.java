@@ -47,6 +47,10 @@ public abstract class Worker<V extends Object> extends SwingWorker<Boolean, V> {
 
 	@Override
 	protected final void process(List<V> chunks) {
+		if (this.view == null) {
+			return;
+		}
+
 		if (chunks != null && chunks.size() > 0) {
 			this.view.update(chunks.get(0));
 		}

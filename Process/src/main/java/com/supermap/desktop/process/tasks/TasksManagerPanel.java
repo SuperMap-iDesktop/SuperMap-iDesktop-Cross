@@ -136,6 +136,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 			}
 
 			SingleProgressPanel progressPanel = new SingleProgressPanel(worker);
+			worker.setView(progressPanel);
 			this.map.put(worker, progressPanel);
 			panel.add(progressPanel);
 		}
@@ -167,8 +168,12 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 	}
 
 	private void validatePanelsVisible() {
+		this.panelWaiting.setVisible(this.panelWaiting.getComponentCount() > 0);
+		this.panelRunning.setVisible(this.panelRunning.getComponentCount() > 0);
+		this.panelReady.setVisible(this.panelReady.getComponentCount() > 0);
+		this.panelCompleted.setVisible(this.panelCompleted.getComponentCount() > 0);
 		this.panelCancelled.setVisible(this.panelCancelled.getComponentCount() > 0);
-		this.panelException.setVisible(this.panelCancelled.getComponentCount() > 0);
+		this.panelException.setVisible(this.panelException.getComponentCount() > 0);
 	}
 
 
@@ -204,8 +209,13 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		JPanel oldContainer = getPanel(oldState);
 		JPanel newContainer = getPanel(newState);
 
-		oldContainer.remove(progressPanel);
-		newContainer.add(progressPanel);
+		if (oldContainer != null) {
+			oldContainer.remove(progressPanel);
+		}
+
+		if (newContainer != null) {
+			newContainer.add(progressPanel);
+		}
 
 		validatePanelsTitle();
 		validatePanelsVisible();
