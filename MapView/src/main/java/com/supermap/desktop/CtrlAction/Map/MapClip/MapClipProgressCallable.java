@@ -232,6 +232,7 @@ public class MapClipProgressCallable extends UpdateProgressCallable {
 			RasterClip.removeSteppedListener(percentListener);
 		}
 		return this.createMapClip;
+
 	}
 
 }

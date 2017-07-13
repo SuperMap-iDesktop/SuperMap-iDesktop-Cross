@@ -599,6 +599,7 @@ public class GlobalParameters {
 		initMaxVisibleVertex();
 		initEdit();
 		initTabular();
+		initLaunchUserExperiencePlan();
 		// TODO: 2016/3/29 新增节点在此初始化
 	}
 
@@ -1110,7 +1111,7 @@ public class GlobalParameters {
 	}
 
 
-	private static boolean launchUserExperiencePlan = false;
+	private static boolean launchUserExperiencePlan = true;
 
 	private static void initLaunchUserExperiencePlan() {
 		String value = getValue("_startup_edit", "launchUserExperiencePlan");
@@ -1122,7 +1123,7 @@ public class GlobalParameters {
 
 	public static boolean isLaunchUserExperiencePlan() {
 		// TODO: 2017/7/7 用户体验计划
-		return launchUserExperiencePlan;
+		return false;
 	}
 
 	public static void setLaunchUserExperiencePlan(boolean isLaunchUserExperiencePlan) {
