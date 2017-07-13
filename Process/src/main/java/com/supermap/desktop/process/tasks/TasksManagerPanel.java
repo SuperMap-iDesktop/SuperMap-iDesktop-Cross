@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by highsad on 2017/6/28.
  */
-public class TasksManagerPanel extends JPanel implements WorkerStateChangedListener {
+public class TasksManagerPanel extends JPanel implements WorkerStateChangedListener, WorkersChangedListener {
 
 	/**
 	 *
@@ -142,6 +142,10 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		}
 	}
 
+	private void addNewWorker(JPanel panel, ProcessWorker worker) {
+
+	}
+
 	private void clearPanels() {
 		this.panelCancelled.removeAll();
 		this.panelException.removeAll();
@@ -247,5 +251,24 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		}
 
 		moveWorker(worker, e.getOldState(), e.getNewState());
+	}
+
+	@Override
+	public void workersChanged(WorkersChangedEvent e) {
+		if (e.getManager() != this.tasksManager) {
+			return;
+		}
+
+		ProcessWorker worker = e.getProcessWorker();
+
+		if (e.getOperation() == WorkersChangedEvent.ADD) {
+			if (this.map.containsKey(worker)) {
+				return;
+			}
+
+
+		} else if (e.getOperation() == WorkersChangedEvent.REMOVE) {
+
+		}
 	}
 }
