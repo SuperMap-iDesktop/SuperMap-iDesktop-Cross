@@ -245,10 +245,12 @@ public class UserExperienceManager {
 	private void addDoingString(String json) {
 		FileLocker fileLocker = new FileLocker(executingFile);
 		try {
-			while (fileLocker.tryLock()) {
+			while (!fileLocker.tryLock()) {
 				Thread.sleep(1000);
 			}
-			fileLocker.getRandomAccessFile().seek(fileLocker.getRandomAccessFile().length() - 1);
+			if (fileLocker.getRandomAccessFile().length() > 0) {
+				fileLocker.getRandomAccessFile().seek(fileLocker.getRandomAccessFile().length() - 1);
+			}
 			fileLocker.getRandomAccessFile().writeChars(json + "\\r\\n");
 		} catch (Exception e) {
 			Application.getActiveApplication().getOutput().output(e);
@@ -261,7 +263,7 @@ public class UserExperienceManager {
 	private void removeDoingJson(String json) {
 		FileLocker fileLocker = new FileLocker(executingFile);
 		try {
-			while (fileLocker.tryLock()) {
+			while (!fileLocker.tryLock()) {
 				Thread.sleep(1000);
 			}
 			fileLocker.getRandomAccessFile().seek(0);
