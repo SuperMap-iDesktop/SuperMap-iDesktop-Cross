@@ -586,7 +586,7 @@ public class DatasetUtilities {
 			for (int i = 0; i < datasources.getCount(); i++) {
 				Datasource datasource = datasources.get(i);
 				Datasets datasets = datasource.getDatasets();
-				for (int j = 0; i < datasets.getCount(); i++) {
+				for (int j = 0; j < datasets.getCount(); j++) {
 					if (ArrayUtilities.isArrayContains(datasetTypes, datasets.get(j).getType())) {
 						return datasets.get(j);
 					}

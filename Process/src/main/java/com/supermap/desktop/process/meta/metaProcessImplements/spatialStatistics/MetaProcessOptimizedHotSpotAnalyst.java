@@ -48,7 +48,7 @@ public class MetaProcessOptimizedHotSpotAnalyst extends MetaProcess {
 	}
 
 	private void initParameters() {
-		parameterSaveDataset.setDatasetName("OptimizedHotSpotResult");
+		parameterSaveDataset.setDatasetName("result_optimizedHotSpot");
 
 		parameterComboBox.addItem(new ParameterDataNode("AggregationPolygons", AggregationMethod.AGGREGATIONPOLYGONS));
 		parameterComboBox.addItem(new ParameterDataNode("NetworkPolygons", AggregationMethod.NETWORKPOLYGONS));

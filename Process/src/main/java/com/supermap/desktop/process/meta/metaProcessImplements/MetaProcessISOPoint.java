@@ -290,8 +290,6 @@ public class MetaProcessISOPoint extends MetaProcess {
 		});
 	}
 
-	;
-
 	@Override
 	public String getTitle() {
 		return CommonProperties.getString("String_SurfaceISOPoint");
