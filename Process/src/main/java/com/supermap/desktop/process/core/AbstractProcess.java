@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.core;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
@@ -43,6 +44,7 @@ public abstract class AbstractProcess implements IProcess {
 				setStatus(RunningStatus.EXCEPTION);
 			}
 		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
 			setStatus(RunningStatus.EXCEPTION);
 		}
 		return isSuccessful;

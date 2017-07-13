@@ -52,6 +52,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 			validatePanelsTitle();
 			validatePanelsVisible();
 			this.tasksManager.addWorkerStateChangeListener(this);
+			this.tasksManager.addWorkersChangedListener(this);
 		}
 	}
 
@@ -59,6 +60,7 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		clearPanels();
 		validatePanelsVisible();
 		this.tasksManager.removeWorkerStateChangeListener(this);
+		this.tasksManager.removeWorkersChangedListener(this);
 		this.tasksManager = null;
 	}
 
@@ -130,20 +132,32 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		}
 
 		for (int i = 0, size = workers.size(); i < size; i++) {
-			ProcessWorker worker = workers.get(i);
-			if (this.map.containsKey(worker)) {
-				throw new UnsupportedOperationException();
-			}
-
-			SingleProgressPanel progressPanel = new SingleProgressPanel(worker);
-			worker.setView(progressPanel);
-			this.map.put(worker, progressPanel);
-			panel.add(progressPanel);
+			addNewWorker(panel, workers.get(i));
 		}
 	}
 
 	private void addNewWorker(JPanel panel, ProcessWorker worker) {
+		if (this.map.containsKey(worker)) {
+			return;
+		}
 
+		SingleProgressPanel progressPanel = new SingleProgressPanel(worker);
+		worker.setView(progressPanel);
+		this.map.put(worker, progressPanel);
+		panel.add(progressPanel);
+	}
+
+	private void removeWorker(ProcessWorker worker) {
+		if (!this.map.containsKey(worker)) {
+			return;
+		}
+
+		this.panelCancelled.remove(this.map.get(worker));
+		this.panelCompleted.remove(this.map.get(worker));
+		this.panelException.remove(this.map.get(worker));
+		this.panelReady.remove(this.map.get(worker));
+		this.panelRunning.remove(this.map.get(worker));
+		this.panelWaiting.remove(this.map.get(worker));
 	}
 
 	private void clearPanels() {
@@ -262,13 +276,11 @@ public class TasksManagerPanel extends JPanel implements WorkerStateChangedListe
 		ProcessWorker worker = e.getProcessWorker();
 
 		if (e.getOperation() == WorkersChangedEvent.ADD) {
-			if (this.map.containsKey(worker)) {
-				return;
-			}
-
-
+			addNewWorker(this.panelWaiting, worker);
 		} else if (e.getOperation() == WorkersChangedEvent.REMOVE) {
-
+			removeWorker(worker);
 		}
+		validatePanelsTitle();
+		validatePanelsVisible();
 	}
 }

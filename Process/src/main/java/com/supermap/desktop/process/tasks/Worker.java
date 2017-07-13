@@ -9,16 +9,13 @@ import java.util.concurrent.ExecutionException;
  */
 public abstract class Worker<V extends Object> extends SwingWorker<Boolean, V> {
 	private IWorkerView<V> view;
-	private String title;
 	protected volatile boolean isCancelled = false;
 
 	public Worker() {
 
 	}
 
-	public String getTitle() {
-		return title;
-	}
+	public abstract String getTitle();
 
 	public void setView(IWorkerView<V> view) {
 		if (view == null) {
@@ -52,7 +49,7 @@ public abstract class Worker<V extends Object> extends SwingWorker<Boolean, V> {
 		}
 
 		if (chunks != null && chunks.size() > 0) {
-			this.view.update(chunks.get(0));
+			this.view.update(chunks.get(chunks.size() - 1));
 		}
 	}
 

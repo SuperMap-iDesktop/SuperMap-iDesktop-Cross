@@ -187,9 +187,7 @@ public class TasksManager {
 		for (IProcess process :
 				processes) {
 			if (this.workflow.isLeadingProcess(process)) {
-				this.ready.add(process);
-			} else {
-				this.waiting.add(process);
+				moveProcess(process, WORKER_STATE_WAITING, WORKER_STATE_READY);
 			}
 		}
 	}
@@ -279,7 +277,7 @@ public class TasksManager {
 			Vector<IProcess> preProcesses = this.workflow.getFromProcesses(process);
 
 			for (int i = 0; i < preProcesses.size(); i++) {
-				isReady = preProcesses.get(i).getStatus() == RunningStatus.COMPLETED;
+				isReady = (preProcesses.get(i).getStatus() != RunningStatus.COMPLETED);
 				if (isReady == false) {
 					break;
 				}
