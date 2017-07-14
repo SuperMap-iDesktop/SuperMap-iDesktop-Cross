@@ -69,7 +69,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	private Workflow workflow;
 
-	private Map<IProcess, Location> locationMap = new HashMap<>();
 	private TasksManager tasksManager;
 	private WorkflowCanvas canvas;
 	private boolean isNeedSave = true;
