@@ -73,18 +73,19 @@ public class BuildCache {
 				File doingDir = new File(CacheUtilities.replacePath(taskFiles.getParent(), "doing"));
 				if (!doingDir.exists()) {
 					doingDir.mkdir();
-				} else {
-					File[] doingFailedSci = doingDir.listFiles();
-					for (File doingSci : doingFailedSci) {
-						//文件加了锁说明文件正在被用于切图任务
-						FileLocker locker = new FileLocker(doingSci);
-						if (locker.tryLock()) {
-							//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将改任务移到task目录下,重新切图
-							locker.release();
-							doingSci.renameTo(new File(taskFiles, doingSci.getName()));
-						}
-					}
 				}
+//				else {
+//					File[] doingFailedSci = doingDir.listFiles();
+//					for (File doingSci : doingFailedSci) {
+//						//文件加了锁说明文件正在被用于切图任务
+//						FileLocker locker = new FileLocker(doingSci);
+//						if (locker.tryLock()) {
+//							//文件未加锁则判断该文件为上一次任务执行失败时遗留的任务,则将改任务移到task目录下,重新切图
+//							locker.release();
+//							doingSci.renameTo(new File(taskFiles, doingSci.getName()));
+//						}
+//					}
+//				}
 				do {
 					long start = System.currentTimeMillis();
 					//Recalculate sci file length
