@@ -1,5 +1,6 @@
 package com.supermap.desktop.userExperience;
 
+import com.alibaba.fastjson.JSONAware;
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.Interface.IBaseItem;
 import com.supermap.desktop.event.DesktopRuntimeEvent;
@@ -20,7 +21,7 @@ import java.util.Date;
 /**
  * @author XiaJT
  */
-public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean {
+public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean, JSONAware {
 
 	private String caption;
 	private String ctrlActionName;
@@ -149,5 +150,10 @@ public class FunctionInfoCtrlAction implements FunctionInfo, UserExperienceBean 
 
 	public CtrlAction getCtrlAction() {
 		return ctrlAction;
+	}
+
+	@Override
+	public String toJSONString() {
+		return getJson();
 	}
 }

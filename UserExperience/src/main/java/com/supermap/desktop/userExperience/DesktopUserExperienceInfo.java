@@ -1,5 +1,6 @@
 package com.supermap.desktop.userExperience;
 
+import com.alibaba.fastjson.JSONAware;
 import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.interfaces.UserExperienceBean;
 import com.supermap.desktop.properties.CoreProperties;
@@ -10,7 +11,7 @@ import java.util.Locale;
 /**
  * @author XiaJT
  */
-public class DesktopUserExperienceInfo implements UserExperienceBean {
+public class DesktopUserExperienceInfo implements UserExperienceBean, JSONAware {
 
 	private static final String culture = Locale.getDefault().getDisplayLanguage();
 	private static final String optionSystem = System.getProperties().getProperty("os.name");
@@ -60,5 +61,10 @@ public class DesktopUserExperienceInfo implements UserExperienceBean {
 
 	public void setLicenseInfo(LicenseInfo licenseInfo) {
 		this.licenseInfo = licenseInfo;
+	}
+
+	@Override
+	public String toJSONString() {
+		return getJson();
 	}
 }
