@@ -12,6 +12,11 @@ import java.awt.event.ActionListener;
  */
 public class TestWorker extends Worker<SingleProgress> {
 	@Override
+	public String getTitle() {
+		return null;
+	}
+
+	@Override
 	protected boolean doWork() {
 		try {
 			for (int i = 0; i < 100; i++) {

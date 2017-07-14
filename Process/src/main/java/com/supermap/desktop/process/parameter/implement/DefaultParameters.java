@@ -5,7 +5,6 @@ import com.supermap.desktop.process.FormWorkflow;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.connection.IGraphConnection;
-import com.supermap.desktop.process.graphics.connection.IOGraphConnection;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
 import com.supermap.desktop.process.graphics.graphs.ProcessGraph;
@@ -42,59 +41,45 @@ public class DefaultParameters implements IParameters {
 	private ArrayList<ParameterClassBundleNode> packages = new ArrayList<>();
 	protected EmptyParameterPanel parameterPanel = new EmptyParameterPanel();
 	private InputParametersManager inputParametersManager = new InputParametersManager(this);
-	private Inputs inputs = new Inputs(this);
-	private Outputs outputs = new Outputs(this);
 
 	public DefaultParameters(IProcess process) {
 		this.process = process;
 		packages.add(new ParameterClassBundleNode("com.supermap.desktop.process.parameter.ParameterPanels", "SuperMap.Desktop.Process"));
 
-		inputs.addValueProviderBindListener(new ValueProviderBindListener() {
-			@Override
-			public void valueBind(ValueProviderBindEvent event) {
-				int type = event.getType();
-				InputData inputData = event.getInputData();
-				if (type == ValueProviderBindEvent.BIND) {
-					inputParametersManager.bind(inputData.getName());
-				} else {
-					inputParametersManager.unBind(inputData.getName());
-				}
-			}
-		});
-		inputParametersManager.addPropertyChangedListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				if (evt.getNewValue() == null) {
-					// 约束解除！
-					inputs.getData(evt.getPropertyName()).unbind();
-				} else {
-					// 修改来源节点时图上联动
-					String propertyName = evt.getPropertyName();
-					IGraph graph = (IGraph) ((ParameterDataNode) evt.getOldValue()).getData();
-					IGraph newGraph = (IGraph) ((ParameterDataNode) evt.getNewValue()).getData();
-					GraphCanvas canvas = ((FormWorkflow) Application.getActiveApplication().getActiveForm()).getCanvas();
-					IGraphStorage graphStorage = canvas.getGraphStorage();
-					IGraph processGraph = null;
-					for (IGraph iGraph : graphStorage.getGraphs()) {
-						if (iGraph instanceof ProcessGraph && ((ProcessGraph) iGraph).getProcess() == DefaultParameters.this.process) {
-							processGraph = iGraph;
-							break;
-						}
-					}
-					IGraphConnection[] connections = canvas.getConnection().getConnections();
-					for (IGraphConnection connection : connections) {
-						if (connection.getStart() == graph && connection.getEnd() == processGraph) {
-							inputParametersManager.unBind(connection);
-							canvas.getConnection().removeConnection(connection);
-							break;
-						}
-					}
-					canvas.getConnection().connect(new IOGraphConnection((OutputGraph) newGraph, (ProcessGraph) processGraph, propertyName));
-					inputs.bind(propertyName, ((OutputGraph) newGraph).getProcessData());
-					canvas.repaint();
-				}
-			}
-		});
+//		inputParametersManager.addPropertyChangedListener(new PropertyChangeListener() {
+//			@Override
+//			public void propertyChange(PropertyChangeEvent evt) {
+//				if (evt.getNewValue() == null) {
+//					// 约束解除！
+//					DefaultParameters.this.getInputs().getData(evt.getPropertyName()).unbind();
+//				} else {
+//					// 修改来源节点时图上联动
+//					String propertyName = evt.getPropertyName();
+//					IGraph graph = (IGraph) ((ParameterDataNode) evt.getOldValue()).getData();
+//					IGraph newGraph = (IGraph) ((ParameterDataNode) evt.getNewValue()).getData();
+//					GraphCanvas canvas = ((FormWorkflow) Application.getActiveApplication().getActiveForm()).getCanvas();
+//					IGraphStorage graphStorage = canvas.getGraphStorage();
+//					IGraph processGraph = null;
+//					for (IGraph iGraph : graphStorage.getGraphs()) {
+//						if (iGraph instanceof ProcessGraph && ((ProcessGraph) iGraph).getProcess() == DefaultParameters.this.process) {
+//							processGraph = iGraph;
+//							break;
+//						}
+//					}
+//					IGraphConnection[] connections = canvas.getConnection().getConnections();
+//					for (IGraphConnection connection : connections) {
+//						if (connection.getStart() == graph && connection.getEnd() == processGraph) {
+//							inputParametersManager.unBind(connection);
+//							canvas.getConnection().removeConnection(connection);
+//							break;
+//						}
+//					}
+//					canvas.getConnection().connect((OutputGraph) newGraph, (ProcessGraph) processGraph, propertyName);
+//					DefaultParameters.this.getInputs().bind(propertyName, ((OutputGraph) newGraph).getProcessData());
+//					canvas.repaint();
+//				}
+//			}
+//		});
 	}
 
 	@Override
@@ -188,14 +173,14 @@ public class DefaultParameters implements IParameters {
 
 	@Override
 	public void addInputParameters(String name, Type type, IParameter... parameters) {
-		inputs.addData(name, type);
-		inputs.getData(name).addParameters(parameters);
+		this.process.getInputs().addData(name, type);
+		this.process.getInputs().getData(name).addParameters(parameters);
 		inputParametersManager.add(name, parameters);
 	}
 
 	@Override
 	public void addOutputParameters(String name, Type type, IParameter... parameters) {
-		outputs.addData(name, type);
+		this.process.getOutputs().addData(name, type);
 	}
 
 	@Override
@@ -223,11 +208,11 @@ public class DefaultParameters implements IParameters {
 
 	@Override
 	public Inputs getInputs() {
-		return inputs;
+		return this.process.getInputs();
 	}
 
 	@Override
 	public Outputs getOutputs() {
-		return outputs;
+		return this.process.getOutputs();
 	}
 }

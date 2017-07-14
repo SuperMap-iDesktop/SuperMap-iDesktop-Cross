@@ -8,6 +8,7 @@ import com.supermap.desktop.Interface.IWorkflow;
 import com.supermap.desktop.controls.ControlsProperties;
 import com.supermap.desktop.implement.CtrlAction;
 import com.supermap.desktop.process.FormWorkflow;
+import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.utilities.StringUtilities;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class CtrlActionWorkflow extends CtrlAction {
 		try {
 			Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(processTreeClassName)).setVisible(true);
 			Application.getActiveApplication().getMainFrame().getDockbarManager().get(Class.forName(ParameterManagerClassName)).setVisible(true);
-			FormWorkflow formWorkflow = new FormWorkflow();
+			FormWorkflow formWorkflow = new FormWorkflow(new Workflow("Workflow"));
 
 			ArrayList<IWorkflow> workFlows = Application.getActiveApplication().getWorkFlows();
 			ArrayList<String> names = new ArrayList<>();
@@ -47,7 +48,6 @@ public class CtrlActionWorkflow extends CtrlAction {
 			e.printStackTrace();
 		}
 	}
-
 
 
 	@Override
