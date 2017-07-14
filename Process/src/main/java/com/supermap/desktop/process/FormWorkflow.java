@@ -73,8 +73,6 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	private TasksManager tasksManager;
 	private WorkflowCanvas canvas;
 	private boolean isNeedSave = true;
-	private boolean isAutoAddOutPut = true;
-	private transient DropTarget dropTargeted;
 
 	public FormWorkflow() {
 		this(ControlsProperties.getString("String_WorkFlows"));
@@ -364,36 +362,4 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		return this.canvas;
 	}
 
-	private class FormProcessDropTargetAdapter extends DropTargetAdapter {
-		@Override
-		public void drop(DropTargetDropEvent dtde) {
-			FormWorkflow.this.grabFocus();
-			Transferable transferable = dtde.getTransferable();
-			DataFlavor[] currentDataFlavors = dtde.getCurrentDataFlavors();
-			for (DataFlavor currentDataFlavor : currentDataFlavors) {
-				if (currentDataFlavor != null) {
-					try {
-						Object transferData = transferable.getTransferData(currentDataFlavor);
-						if (transferData instanceof String) {
-							MetaProcess metaProcess = WorkflowParser.getMetaProcess((String) transferData);
-							if (metaProcess == null) {
-								continue;
-							}
-							ProcessGraph graph = new ProcessGraph(getCanvas(), metaProcess);
-							Point location = dtde.getLocation();
-							location = new Point(location.x - graph.getWidth() / 2, location.y - graph.getHeight() / 2);
-							Point inverse = getCanvas().getCoordinateTransform().inverse(location);
-							graph.setLocation(inverse);
-							getCanvas().getGraphStorage().add(graph);
-							getCanvas().repaint();
-						}
-					} catch (Exception e) {
-						// ignore 当然是原谅ta啦
-						Application.getActiveApplication().getOutput().output(e);
-					}
-				}
-			}
-		}
-	}
-	//endregion
 }
