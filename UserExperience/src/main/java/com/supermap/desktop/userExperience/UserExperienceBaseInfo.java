@@ -26,7 +26,7 @@ public class UserExperienceBaseInfo implements UserExperienceBean, JSONAware {
 		// TODO: 2017/7/11
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("IP", IP);
-		jsonObject.put("MACADDRESS", MACADDRESS);
+		jsonObject.put("MACAddress", MACADDRESS);
 		jsonObject.put("ProductID", productID);
 		jsonObject.put("ProductInfo", desktopUserExperienceInfo);
 		jsonObject.put("ThreadID", ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);

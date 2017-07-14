@@ -79,10 +79,12 @@ public class UserExperienceManager {
 					FileLocker fileLocker = new FileLocker(file);
 					try {
 						if (fileLocker.tryLock()) {
-							doPost(fileLocker);
+							boolean result = doPost(fileLocker);
 							fileLocker.release();
 							File lockFile = fileLocker.getLockFile();
-							lockFile.delete();
+							if (result) {
+								lockFile.delete();
+							}
 						}
 					} catch (Exception e) {
 						fileLocker.release();
