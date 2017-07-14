@@ -199,7 +199,7 @@ public class MapClipJTable extends JTable {
 			String origionalDatasetName = resultLayer.get(i).getDataset().getName();
 			String targetDatasetName = this.datasetsName.get(origionalDatasetName);
 			if (targetDatasetName == null) {
-				targetDatasetName = getUsableDatasetName(resultLayer.get(i).getDataset().getName(), dataset.getDatasource(), dataset);
+				targetDatasetName = getUsableDatasetName(resultLayer.get(i).getDataset().getName(), targetDatasource, dataset);
 				this.datasetsName.put(origionalDatasetName, targetDatasetName);
 			}
 

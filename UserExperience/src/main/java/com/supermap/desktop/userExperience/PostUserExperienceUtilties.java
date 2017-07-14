@@ -1,7 +1,7 @@
 package com.supermap.desktop.userExperience;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.utilities.FileLocker;
 import com.supermap.desktop.utilities.NetworkUtilties;
@@ -24,6 +24,7 @@ public class PostUserExperienceUtilties {
 
 
 	public static boolean postFile(FileLocker fileLocker) {
+		boolean result = true;
 		if (NetworkUtilties.ping(postLogsIP)) {
 			CloseableHttpClient httpClient = HttpClients.createDefault();
 			try {
@@ -39,24 +40,39 @@ public class PostUserExperienceUtilties {
 					randomAccessFile.read(bytes);
 					String value = new String(bytes, "UTF-8");
 					String[] lines = value.split(System.getProperty("line.separator"));
+					int count = 0;
 					JSONArray array = new JSONArray();
+					StringBuilder stringBuilder = new StringBuilder();
 					for (String line : lines) {
 						line = line.replace("{IP}", ip);
 						line = line.replace("{MACADDRESS}", macAddress);
-						array.add(JSON.parseObject(line));
-						if (array.size() == 50) {
-							StringEntity stringEntity = new StringEntity(array.toJSONString(), ContentType.APPLICATION_JSON);
+						array.add(JSONObject.parseObject(line));
+						if (count == 0) {
+							stringBuilder.append("[");
+						} else {
+							stringBuilder.append(",");
+						}
+						stringBuilder.append(line);
+
+						count++;
+						if (count == 49) {
+							stringBuilder.append("]");
+							StringEntity stringEntity = new StringEntity(stringBuilder.toString(), ContentType.APPLICATION_JSON);
 							httpPost.setEntity(stringEntity);
 							CloseableHttpResponse response = httpClient.execute(httpPost);
-							array.clear();
+							count = 0;
+							if (response.getStatusLine().getStatusCode() != 200) {
+								result = false;
+							}
 						}
 					}
-					if (array.size() != 0) {
-						StringEntity stringEntity = new StringEntity(array.toJSONString(), ContentType.APPLICATION_JSON);
+					if (count != 0) {
+						stringBuilder.append("]");
+						StringEntity stringEntity = new StringEntity(stringBuilder.toString(), ContentType.APPLICATION_JSON);
 						httpPost.setEntity(stringEntity);
 						CloseableHttpResponse response = httpClient.execute(httpPost);
-						if (response.getStatusLine().getStatusCode() == 200) {
-							// success
+						if (response.getStatusLine().getStatusCode() != 200) {
+							result = false;
 						}
 					}
 				}
@@ -70,7 +86,7 @@ public class PostUserExperienceUtilties {
 					Application.getActiveApplication().getOutput().output(e);
 				}
 			}
-			return true;
+			return result;
 		}
 		return false;
 

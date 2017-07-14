@@ -238,7 +238,7 @@ public class DialogCacheCheck extends JFrame {
 			}
 		}
 		if (StringUtilities.isNullOrEmpty(sciPath) || !FileUtilities.isFilePath(sciPath) || !hasSciFiles(sciDirectory)) {
-			optionPane.showConfirmDialog(MapViewProperties.getString("String_CachePathError"));
+			optionPane.showConfirmDialog(MapViewProperties.getString("String_CachePathNotExist"));
 			return false;
 		}
 		if (StringUtilities.isNullOrEmpty(processCount) || !(StringUtilities.isInteger(processCount) || processCount.equals("0"))) {

@@ -79,10 +79,12 @@ public class UserExperienceManager {
 					FileLocker fileLocker = new FileLocker(file);
 					try {
 						if (fileLocker.tryLock()) {
-							doPost(fileLocker);
+							boolean result = doPost(fileLocker);
 							fileLocker.release();
 							File lockFile = fileLocker.getLockFile();
-							lockFile.delete();
+							if (result) {
+								lockFile.delete();
+							}
 						}
 					} catch (Exception e) {
 						fileLocker.release();
@@ -169,10 +171,16 @@ public class UserExperienceManager {
 	}
 
 	private void doPost() {
-		for (FileLocker executedFile : executedFiles) {
-			doPost(executedFile);
-			executedFile.release();
-			executedFile.getLockFile().delete();
+		for (final FileLocker executedFile : executedFiles) {
+			ThreadUtilties.execute(new Runnable() {
+				@Override
+				public void run() {
+					doPost(executedFile);
+					executedFile.release();
+					executedFile.getLockFile().delete();
+				}
+			});
+
 		}
 		doPost(executedFunctionFile);
 	}
