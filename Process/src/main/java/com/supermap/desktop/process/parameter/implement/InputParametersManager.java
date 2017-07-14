@@ -133,41 +133,6 @@ public class InputParametersManager {
 		}
 	}
 
-//	public void bind(String name) {
-//		try {
-//			isSelecting = true;
-//			for (InputParameterDataNode inputParameterDataNode : list) {
-//				if (inputParameterDataNode.getName().equals(name)) {
-//					ParameterComboBox parameterComboBox = (ParameterComboBox) ((ParameterCombine) inputParameterDataNode.getParameterSwitch().getParameterByTag("1")).getParameterList().get(0);
-//					inputParameterDataNode.getParameterSwitch().switchParameter("1");
-//					boolean isSelected = false;
-//
-//					for (int i = 0; i < parameterComboBox.getItemCount(); i++) {
-//						OutputData outputData = (OutputData) parameterComboBox.getItemAt(i).getData();
-//						OutputGraph outputGraph = (OutputGraph) parameterComboBox.getItemAt(i).getData();
-//						GraphCanvas canvas = outputGraph.getCanvas();
-//						IGraph[] nextGraphs = canvas.getConnection().getNextGraphs(outputGraph);
-//						for (IGraph nextGraph : nextGraphs) {
-//							if (nextGraph instanceof ProcessGraph && ((ProcessGraph) nextGraph).getProcess() == parameters.getProcess()) {
-//								parameterComboBox.setSelectedItem(parameterComboBox.getItemAt(i));
-//								isSelected = true;
-//								break;
-//							}
-//						}
-//
-//						if (isSelected) {
-//							break;
-//						}
-//					}
-//					break;
-//				}
-//			}
-//			isSelecting = false;
-//		} catch (Exception e) {
-//			Application.getActiveApplication().getOutput().output(e);
-//		}
-//	}
-
 	public void unBind(String name) {
 		for (InputParameterDataNode inputParameterDataNode : list) {
 			if (inputParameterDataNode.getName().equals(name)) {
