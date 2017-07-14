@@ -171,10 +171,16 @@ public class UserExperienceManager {
 	}
 
 	private void doPost() {
-		for (FileLocker executedFile : executedFiles) {
-			doPost(executedFile);
-			executedFile.release();
-			executedFile.getLockFile().delete();
+		for (final FileLocker executedFile : executedFiles) {
+			ThreadUtilties.execute(new Runnable() {
+				@Override
+				public void run() {
+					doPost(executedFile);
+					executedFile.release();
+					executedFile.getLockFile().delete();
+				}
+			});
+
 		}
 		doPost(executedFunctionFile);
 	}
