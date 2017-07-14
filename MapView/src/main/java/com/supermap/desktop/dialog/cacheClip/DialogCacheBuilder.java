@@ -82,7 +82,7 @@ public class DialogCacheBuilder extends JFrame {
 			} else {
 				ProcessManager.getInstance().removeAllProcess(taskPath, "doing");
 				DialogCacheBuilder.this.dispose();
-				System.exit(1);
+//				System.exit(1);
 			}
 		}
 	};
@@ -94,7 +94,7 @@ public class DialogCacheBuilder extends JFrame {
 			ProcessManager.getInstance().removeAllProcess(taskPath, "doing");
 			optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_ProcessClipFinished"), taskPath));
 			DialogCacheBuilder.this.dispose();
-			System.exit(1);
+//			System.exit(1);
 		} else {
 			return;
 		}
@@ -186,8 +186,11 @@ public class DialogCacheBuilder extends JFrame {
 							shutdownMapClip();
 						} else {
 							int newSize = nowProcessCount - newProcessCount;
-							if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Stop"), String.valueOf(newSize))) == JOptionPane.OK_OPTION)
+							if (optionPane.showConfirmDialog(MessageFormat.format(MapViewProperties.getString("String_Process_message_Stop"), String.valueOf(newSize))) == JOptionPane.OK_OPTION) {
 								ProcessManager.getInstance().removeProcess(params, newProcessCount, taskPath);
+							} else {
+								textFieldProcessCount.setText(String.valueOf(nowProcessCount));
+							}
 						}
 					}
 				}
@@ -349,7 +352,7 @@ public class DialogCacheBuilder extends JFrame {
 					shutdownMapClip();
 				} else {
 					DialogCacheBuilder.this.dispose();
-					System.exit(1);
+//					System.exit(1);
 				}
 			}
 		});
@@ -653,7 +656,7 @@ public class DialogCacheBuilder extends JFrame {
 		this.scrollPaneProgresses = null;
 		this.captionCount = null;
 		DialogCacheBuilder.this.dispose();
-		System.exit(1);
+//		System.exit(1);
 	}
 
 	public void setCaptions(CopyOnWriteArrayList<String> sourceCaptions) {
