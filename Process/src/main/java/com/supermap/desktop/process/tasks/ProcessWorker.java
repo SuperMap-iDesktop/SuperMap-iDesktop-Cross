@@ -28,6 +28,11 @@ public class ProcessWorker extends Worker<SingleProgress> {
 	}
 
 	@Override
+	public String getTitle() {
+		return this.process == null ? "null" : this.process.getTitle();
+	}
+
+	@Override
 	protected boolean doWork() {
 		return process.run();
 	}

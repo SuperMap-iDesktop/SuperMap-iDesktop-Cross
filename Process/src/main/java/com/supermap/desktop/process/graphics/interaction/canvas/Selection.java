@@ -1,7 +1,6 @@
 package com.supermap.desktop.process.graphics.interaction.canvas;
 
-import com.supermap.desktop.process.graphics.events.GraphSelectChangedListener;
-import com.supermap.desktop.process.graphics.events.GraphSelectedChangedEvent;
+import com.supermap.desktop.process.graphics.events.*;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
@@ -12,7 +11,7 @@ import java.util.Vector;
 /**
  * Created by highsad on 2017/3/2.
  */
-public abstract class Selection extends CanvasActionAdapter {
+public abstract class Selection extends CanvasActionAdapter implements GraphRemovedListener {
 	public final static Point UNKOWN_POINT = new Point(Integer.MIN_VALUE, Integer.MIN_VALUE);
 
 	private GraphCanvas canvas;
@@ -108,5 +107,14 @@ public abstract class Selection extends CanvasActionAdapter {
 	@Override
 	public void clean() {
 		this.selectedItems.clear();
+	}
+
+	@Override
+	public void graphRemoved(GraphRemovedEvent e) {
+		if (e.getCanvas() != this.canvas || e.getGraph() == null) {
+			return;
+		}
+
+		deselectItem(e.getGraph());
 	}
 }

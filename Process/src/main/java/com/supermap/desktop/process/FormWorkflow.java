@@ -1,5 +1,6 @@
 package com.supermap.desktop.process;
 
+import com.sun.xml.internal.bind.v2.runtime.Location;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IFormManager;
@@ -23,10 +24,6 @@ import com.supermap.desktop.process.core.Workflow;
 import com.supermap.desktop.process.core.WorkflowParser;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
-import com.supermap.desktop.process.graphics.connection.DefaultGraphConnection;
-import com.supermap.desktop.process.graphics.connection.IConnectable;
-import com.supermap.desktop.process.graphics.connection.IGraphConnection;
-import com.supermap.desktop.process.graphics.connection.IOGraphConnection;
 import com.supermap.desktop.process.graphics.connection.LineGraph;
 import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
 import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
@@ -62,7 +59,9 @@ import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
 import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by highsad on 2017/1/6.
@@ -70,8 +69,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 	private Workflow workflow;
 
+	private Map<IProcess, Location> locationMap = new HashMap<>();
 	private TasksManager tasksManager;
-	private GraphCanvas canvas;
+	private WorkflowCanvas canvas;
 	private boolean isNeedSave = true;
 	private boolean isAutoAddOutPut = true;
 	private transient DropTarget dropTargeted;
@@ -87,63 +87,21 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			name = ControlsProperties.getString("String_WorkFlows");
 		}
 		this.title = name;
-		this.canvas = new GraphCanvas();
+//		this.canvas = new WorkflowCanvas();
 		initializeComponents();
 	}
 
 
 	public FormWorkflow(IWorkflow workflow) {
 		super(workflow.getName(), null, null);
+
 		this.workflow = (Workflow) workflow;
-		this.canvas = new GraphCanvas();
+		this.canvas = new WorkflowCanvas(this.workflow);
+		this.tasksManager = new TasksManager(this.workflow);
 
 		initializeComponents();
-		Application.getActiveApplication().getMainFrame().getFormManager().add(this);
-		initFormWorkflow(workflow);
 		this.setText(workflow.getName());
 		isNeedSave = false;
-	}
-
-	protected void initFormWorkflow(IWorkflow workflow) {
-		if (workflow instanceof Workflow) {
-			isAutoAddOutPut = false;
-			try {
-				NodeMatrix matrix = ((Workflow) workflow).getMatrix();
-				CopyOnWriteArrayList allStartNodes = matrix.getAllNodes();
-				for (Object node : allStartNodes) {
-					IGraph graph = (IGraph) node;
-					this.canvas.addGraph(graph);
-					graph.setCanvas(this.canvas);
-				}
-				IConnectionManager connection = this.canvas.getConnection();
-				for (Object node : allStartNodes) {
-					IGraph graph = (IGraph) node;
-					CopyOnWriteArrayList nextNodes = matrix.getNextNodes(graph);
-					if (nextNodes != null) {
-						for (Object nextNode : nextNodes) {
-							IGraphConnection graphConnection = null;
-
-							if (nextNode instanceof OutputGraph) {
-								((OutputGraph) nextNode).setProcessGraph(((ProcessGraph) node));
-								graphConnection = new DefaultGraphConnection((IConnectable) graph, (IConnectable) nextNode);
-							}
-							String message = null;
-							if (nextNode instanceof ProcessGraph) {
-								ProcessGraph processGraph = (ProcessGraph) nextNode;
-								message = processGraph.getProcess().getInputs().getBindedInput(((OutputGraph) graph).getProcessData());
-								graphConnection = new IOGraphConnection((IConnectable) graph, (IConnectable) nextNode, message);
-							}
-
-							connection.connect(graphConnection);
-						}
-					}
-				}
-			} catch (Exception e) {
-				Application.getActiveApplication().getOutput().output(e);
-			} finally {
-				isAutoAddOutPut = true;
-			}
-		}
 	}
 
 	public TasksManager getTasksManager() {
@@ -176,19 +134,6 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 			}
 		});
 
-		this.canvas.addGraphCreatedListener(new GraphCreatedListener() {
-			@Override
-			public void graphCreated(GraphCreatedEvent e) {
-				isNeedSave = true;
-				if (!isAutoAddOutPut) {
-					return;
-				}
-				if (e.getGraph() instanceof ProcessGraph) {
-					ProcessGraph processGraph = (ProcessGraph) e.getGraph();
-					addOutPutGraph(processGraph);
-				}
-			}
-		});
 		this.canvas.getGraphStorage().addGraphRemovingListener(new GraphRemovingListener() {
 			@Override
 			public void graphRemoving(GraphRemovingEvent e) {
@@ -203,63 +148,14 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 				}
 			}
 		});
-		addDrag();
 	}
 
-
-	private void addOutPutGraph(ProcessGraph processGraph) {
-		IProcess process = processGraph.getProcess();
-
-		int gap = 20;
-		OutputData[] outputs = process.getOutputs().getDatas();
-		int length = outputs.length;
-		OutputGraph[] dataGraphs = new OutputGraph[length];
-		int totalHeight = gap * (length - 1);
-
-		for (int i = 0; i < length; i++) {
-			dataGraphs[i] = new OutputGraph(this.canvas, processGraph, outputs[i]);
-			this.canvas.addGraph(dataGraphs[i]);
-			this.canvas.getConnection().connect(processGraph, dataGraphs[i]);
-			totalHeight += dataGraphs[i].getHeight();
-		}
-
-		int locationX = processGraph.getLocation().x + processGraph.getWidth() * 3 / 2;
-		int locationY = processGraph.getLocation().y + (processGraph.getHeight() - totalHeight) / 2;
-		for (int i = 0; i < length; i++) {
-			dataGraphs[i].setLocation(new Point(locationX, locationY));
-			//						System.out.println(dataGraphs[i].getHeight());
-			locationY += dataGraphs[i].getHeight() + gap;
-		}
-		this.canvas.repaint();
-	}
-
-	private void addDrag() {
-		if (dropTargeted == null) {
-			dropTargeted = new DropTarget(this, new FormProcessDropTargetAdapter());
-		}
-	}
-
-	/**
-	 * 获取可连接的输入节点
-	 *
-	 * @return
-	 */
-	public ArrayList<IGraph> getAllDataNode() {
-		ArrayList<IGraph> dataNodes = new ArrayList<>();
-		IGraph[] graphs = getCanvas().getGraphStorage().getGraphs();
-		for (IGraph graph : graphs) {
-			if (graph instanceof OutputGraph) {
-				dataNodes.add(graph);
-			}
-		}
-		return dataNodes;
-	}
 
 	public ArrayList<IGraph> getAllDataNode(Type type) {
 		ArrayList<IGraph> iGraphs = new ArrayList<>();
 		IGraph[] graphs = getCanvas().getGraphStorage().getGraphs();
 		for (IGraph graph : graphs) {
-			if (graph instanceof OutputGraph && type.intersects(((OutputGraph) graph).getProcessData().getType())) {
+			if (graph instanceof OutputGraph && type.contains(((OutputGraph) graph).getProcessData().getType())) {
 				iGraphs.add(graph);
 			}
 		}
@@ -340,28 +236,7 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 
 	@Override
 	public IWorkflow getWorkflow() {
-		NodeMatrix nodeMatrix = new NodeMatrix();
-		IConnectionManager connectionManager = this.canvas.getConnection();
-		IGraphStorage graphStorage = this.canvas.getGraphStorage();
-		IGraph[] graphs = graphStorage.getGraphs();
-		for (IGraph graph : graphs) {
-			if (graph instanceof LineGraph) {
-				continue;
-			}
-
-			nodeMatrix.addNode(graph);
-		}
-		for (IGraph graph : graphs) {
-			IGraph[] nextGraphs = connectionManager.getNextGraphs(graph);
-			if (nextGraphs.length > 0) {
-				for (IGraph nextGraph : nextGraphs) {
-					nodeMatrix.addConstraint(graph, nextGraph, new DirectConnect());
-				}
-			}
-		}
-		Workflow workflow = new Workflow(getText());
-		workflow.setMatrix(nodeMatrix);
-		return workflow;
+		return this.workflow;
 	}
 
 	@Override
@@ -485,60 +360,8 @@ public class FormWorkflow extends FormBaseChild implements IFormWorkflow {
 		return false;
 	}
 
-	public GraphCanvas getCanvas() {
+	public WorkflowCanvas getCanvas() {
 		return this.canvas;
-	}
-
-	public void addProcess(IProcess process) {
-		if (process instanceof MetaProcessGroup) {
-//			graph = new ProcessGroupGraph();
-			ArrayList<MetaProcess> addedMetaProcesses = new ArrayList<>();
-			MetaProcessGroup processGroup = (MetaProcessGroup) process;
-			int processCount = processGroup.getProcessCount();
-			if (processCount > 0) {
-				MetaProcess metaProcess = processGroup.getMetaProcess(0);
-				addSubProcess(processGroup, metaProcess, addedMetaProcesses, 0, 0);
-
-				int i = 0;
-				while (addedMetaProcesses.size() != processCount) {
-					for (; i < processCount; i++) {
-						if (!addedMetaProcesses.contains(processGroup.getMetaProcess(i))) {
-							addSubProcess(processGroup, processGroup.getMetaProcess(i), addedMetaProcesses, 0, 0);
-							break;
-						}
-					}
-				}
-			}
-		} else {
-			IGraph graph = new ProcessGraph(this.canvas, process);
-			this.canvas.create(graph);
-		}
-	}
-
-	private IGraph addSubProcess(MetaProcessGroup processGroup, MetaProcess currentMetaProcess, ArrayList<MetaProcess> addedMetaProcesses, int level, int YLevel) {
-		IGraph graph = null;
-		if (!addedMetaProcesses.contains(currentMetaProcess)) {
-			graph = new ProcessGraph(this.canvas, currentMetaProcess);
-			graph.setLocation(new Point(getLocation().x + level * 100, getLocation().y + YLevel));
-			this.canvas.create(graph);
-			addedMetaProcesses.add(currentMetaProcess);
-		} else {
-			IGraph[] graphs = getCanvas().getGraphStorage().getGraphs();
-			for (IGraph iGraph : graphs) {
-				if (iGraph instanceof ProcessGraph && ((ProcessGraph) iGraph).getProcess() == currentMetaProcess) {
-					graph = iGraph;
-					break;
-				}
-			}
-		}
-		ArrayList<MetaProcess> subMetaProcesses = processGroup.getSubMetaProcess(currentMetaProcess);
-		level++;
-		for (int i = 0; i < subMetaProcesses.size(); i++) {
-			MetaProcess subMetaProcess = subMetaProcesses.get(i);
-			IGraph subProcess = addSubProcess(processGroup, subMetaProcess, addedMetaProcesses, level, 200 * (i - subMetaProcesses.size() / 2));
-			getCanvas().getGraphStorage().getConnectionManager().connect(((ProcessGraph) graph), ((ProcessGraph) subProcess));
-		}
-		return graph;
 	}
 
 	private class FormProcessDropTargetAdapter extends DropTargetAdapter {

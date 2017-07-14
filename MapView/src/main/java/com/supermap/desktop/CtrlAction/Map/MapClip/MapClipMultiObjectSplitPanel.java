@@ -4,6 +4,7 @@ import com.supermap.desktop.implement.SmComboBox;
 import com.supermap.desktop.mapview.MapViewProperties;
 import com.supermap.desktop.ui.controls.ComponentBorderPanel.CompTitledPane;
 import com.supermap.desktop.ui.controls.ProviderLabel.WarningOrHelpProvider;
+import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -18,6 +19,7 @@ public class MapClipMultiObjectSplitPanel extends JPanel {
 	private JLabel resultCaptionLabel;
 	private JComboBox fieldCaptionCombobox;
 	private WarningOrHelpProvider warningOrHelpProvider;
+	private String fieldCaptions[][];
 
 	public MapClipMultiObjectSplitPanel(boolean isEnabled) {
 		initComponent();
@@ -80,17 +82,20 @@ public class MapClipMultiObjectSplitPanel extends JPanel {
 		}
 	}
 
-	public void setFieldCaption(String fieldCaptions[]) {
+	public void setFieldCaption(String fieldCaptions[][]) {
 		if (this.multiObjectSplitCheckBox.isEnabled()) {
 			for (int i = 0; i < fieldCaptions.length; i++) {
-				this.fieldCaptionCombobox.addItem(fieldCaptions[i]);
+				if (!StringUtilities.isNullOrEmpty(fieldCaptions[i][0])) {
+					this.fieldCaptionCombobox.addItem(fieldCaptions[i][0]);
+				}
 			}
 		}
+		this.fieldCaptions=fieldCaptions;
 	}
 
-	public String getCurrentSelectedFieldCaption() {
+	public String getCurrentSelectedFieldName() {
 		if (this.multiObjectSplitCheckBox.isEnabled() && this.multiObjectSplitCheckBox.isSelected()) {
-			return this.fieldCaptionCombobox.getSelectedItem().toString();
+			return this.fieldCaptions[this.fieldCaptionCombobox.getSelectedIndex()][1];
 		} else {
 			return "";
 		}

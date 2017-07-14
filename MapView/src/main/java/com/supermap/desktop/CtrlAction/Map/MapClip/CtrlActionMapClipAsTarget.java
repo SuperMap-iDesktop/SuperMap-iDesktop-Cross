@@ -48,7 +48,7 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 		boolean hasSelection = false;
 		ArrayList<Layer> layers = MapUtilities.getLayers(mapControl.getMap());
 		for (Layer layer : layers) {
-			if (layer.getSelection() != null && layer.getSelection().getCount() > 0 && layer.getDataset() != null && layer.getDataset().getType() == DatasetType.REGION) {
+			if (layer.getSelection() != null && layer.getSelection().getCount() > 0 && layer.getDataset() != null && (layer.getDataset().getType() == DatasetType.REGION || layer.getDataset().getType() == DatasetType.CAD)) {
 				hasSelection = true;
 				break;
 			}
@@ -159,12 +159,11 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 				if (layer.getDataset().getType() == DatasetType.CAD) {
 					Geometry oldGeo = geometry;
 					IGeometry dGeometry = DGeometryFactory.create(geometry);
-					if (dGeometry instanceof ILineFeature) {
-						geometry = ((ILineFeature) dGeometry).convertToLine(120);
-					} else if (dGeometry instanceof IRegionFeature) {
+					if (dGeometry instanceof IRegionFeature) {
 						geometry = ((IRegionFeature) dGeometry).convertToRegion(120);
 					} else {
-						geometry = null;
+						isChanged = false;
+						break;
 					}
 					if (geometry != null) {
 						if (geometry != oldGeo) {
@@ -176,7 +175,7 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 				if (geometry instanceof GeoPie) { // 扇面几何对象类
 					// 将扇面几何对象转换为面几何对象
 					//参数为：等分扇面几何对象对应的椭圆弧的段数
-					geoRegionTemp = ((GeoPie) geometry).convertToRegion(SEGMENTCOUNT);
+					geoRegionTemp =((GeoPie) geometry).convertToRegion(SEGMENTCOUNT);
 				} else if (geometry instanceof GeoRegion) { // 面几何对象类
 					geoRegionTemp = (GeoRegion) geometry;
 				} else if (geometry instanceof GeoEllipse) { // 椭圆几何对象类
@@ -208,20 +207,31 @@ public class CtrlActionMapClipAsTarget extends CtrlAction {
 			recordset.dispose();
 		}
 		if (isChanged) {
-			geoRegion = geoClipRegion;
+			geoRegion =geoClipRegion;
 			// 当获得GeoRegion后，弹出地图裁剪对话框
-			if (!isMutiObjectClip || geoRegion.getPartCount() <= 1) {  //选择的对象如果跨图层或者选择对象的个数小于1，则不支持多对象拆分裁剪操作
+			if (!isMutiObjectClip || selectedGeoregions.size() <= 1) {  //选择的对象如果跨图层或者选择对象的个数小于1，则不支持多对象拆分裁剪操作
 				DialogMapClip dialogMapClip = new DialogMapClip(geoRegion);
 				dialogMapClip.showDialog();
 			} else {
 				Layer layer = layers.get(layerChangeID);
 				Recordset recordset = layer.getSelection().toRecordset();
 				FieldInfos fieldInfos = recordset.getFieldInfos();
-				String fieldCaptions[] = new String[fieldInfos.getCount()];
+				int t=0;
 				for (int i = 0; i < fieldInfos.getCount(); i++) {
-					fieldCaptions[i] = fieldInfos.get(i).getCaption();
+					if (fieldInfos.get(i).getType() != FieldType.DATETIME && fieldInfos.get(i).getType() != FieldType.LONGBINARY) {
+						t=t+1;
+					}
 				}
-				DialogMapClip dialogMapClip = new DialogMapClip(geoRegion, true, fieldCaptions, recordset,selectedGeoregions);
+				String fieldCaptions[][] = new String[t][2];
+				t=0;
+				for (int i = 0; i < fieldInfos.getCount(); i++) {
+					if (fieldInfos.get(i).getType() != FieldType.DATETIME && fieldInfos.get(i).getType() != FieldType.LONGBINARY) {
+						fieldCaptions[t][0] = fieldInfos.get(i).getCaption();
+						fieldCaptions[t][1]=fieldInfos.get(i).getName();
+						t=t+1;
+					}
+				}
+				DialogMapClip dialogMapClip = new DialogMapClip(geoRegion, true, fieldCaptions, recordset, selectedGeoregions);
 				dialogMapClip.showDialog();
 			}
 		}

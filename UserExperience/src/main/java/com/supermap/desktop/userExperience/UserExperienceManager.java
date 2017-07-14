@@ -79,11 +79,14 @@ public class UserExperienceManager {
 					FileLocker fileLocker = new FileLocker(file);
 					try {
 						if (fileLocker.tryLock()) {
-							doPost(fileLocker);
+							boolean result = doPost(fileLocker);
+							fileLocker.release();
+							File lockFile = fileLocker.getLockFile();
+							if (result) {
+								lockFile.delete();
+							}
 						}
 					} catch (Exception e) {
-						// ignore
-					} finally {
 						fileLocker.release();
 					}
 				}
@@ -145,7 +148,7 @@ public class UserExperienceManager {
 	private void initializeLicenseInfo() {
 		if (GlobalParameters.isLaunchUserExperiencePlan()) {
 			LicenseInfo userLicenseInfo = new LicenseInfo(LicenseManager.getCurrentLicenseType());
-			addDoneJson(new DesktopUserExperienceInfo(userLicenseInfo).getJson());
+			addDoneJson(new UserExperienceBaseInfo(new DesktopUserExperienceInfo(userLicenseInfo)).getJson());
 		}
 	}
 
@@ -206,7 +209,7 @@ public class UserExperienceManager {
 				// 暂不支持取消
 				break;
 			case DesktopRuntimeEvent.EXCEPTION:
-				addDoneJson(new DesktopUserExperienceInfo(new FunctionInfoCtrlAction(event)).getJson());
+				addDoneJson(new UserExperienceBaseInfo(new DesktopUserExperienceInfo(new FunctionInfoCtrlAction(event))).getJson());
 				break;
 			case DesktopRuntimeEvent.STOP:
 				ctrlActionFinished(event);
@@ -226,7 +229,7 @@ public class UserExperienceManager {
 				String json = functionInfoCtrlAction.getJson();
 				functionInfoCtrlAction.finished();
 				removeDoingJson(json);
-				addDoneJson(functionInfoCtrlAction.getJson());
+				addDoneJson(new UserExperienceBaseInfo(new DesktopUserExperienceInfo(functionInfoCtrlAction)).getJson());
 				break;
 			}
 		}

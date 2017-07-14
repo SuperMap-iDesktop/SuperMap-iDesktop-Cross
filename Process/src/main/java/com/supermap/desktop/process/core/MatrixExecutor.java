@@ -1,7 +1,6 @@
 package com.supermap.desktop.process.core;
 
 import com.supermap.desktop.Application;
-import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.meta.MetaProcess;
 import com.supermap.desktop.process.tasks.TaskStore;
 
@@ -29,31 +28,28 @@ public class MatrixExecutor {
 			}
 		});
 
-		List starts = this.matrix.getAllStartNodes();
+		List starts = this.matrix.getLeadingNodes();
 		if (starts.size() > 0) {
 			for (Object o : starts) {
 				if (o instanceof IProcess) {
-					((IProcess) o).reset();
 					this.ready.add((IProcess) o);
 				}
 			}
 		}
 
-		starts = this.matrix.getSingleNodes();
+		starts = this.matrix.getFreeNodes();
 		if (starts.size() > 0) {
 			for (Object o : starts) {
 				if (o instanceof IProcess) {
-					((IProcess) o).reset();
 					this.ready.add((IProcess) o);
 				}
 			}
 		}
 
 		for (IProcess process : ready) {
-			List next = this.matrix.getNextNodes(process);
+			List next = this.matrix.getToNodes(process);
 			for (Object o : next) {
 				if (o instanceof IProcess) {
-					((IProcess) o).reset();
 					this.waiting.add((IProcess) o);
 				}
 			}
@@ -79,7 +75,7 @@ public class MatrixExecutor {
 
 			IProcess[] waitingArr = waiting.toArray(new IProcess[waiting.size()]);
 			for (IProcess process : waitingArr) {
-				List pre = this.matrix.getPreNodes(process);
+				List pre = this.matrix.getFromNodes(process);
 				boolean isReady = true;
 
 				for (Object o : pre) {
@@ -90,9 +86,6 @@ public class MatrixExecutor {
 								this.ready.remove(p);
 							}
 						} else {
-							if (((MetaProcess) o).getStatus() == RunningStatus.EXCEPTION || ((MetaProcess) o).getStatus() == RunningStatus.CANCELLED) {
-								timer.stop();
-							}
 							isReady = false;
 						}
 					}
@@ -100,11 +93,9 @@ public class MatrixExecutor {
 
 				if (isReady) {
 					this.waiting.remove(process);
-					if (!this.ready.contains(process)) {
-						this.ready.add(process);
-					}
+					this.ready.add(process);
 					runProcess(process);
-					List next = this.matrix.getNextNodes(process);
+					List next = this.matrix.getToNodes(process);
 					for (Object o : next) {
 						if (o instanceof IProcess) {
 							this.waiting.add((IProcess) o);

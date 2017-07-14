@@ -9,13 +9,11 @@ import com.supermap.desktop.process.events.StatusChangeListener;
 import com.supermap.desktop.process.events.WorkflowChangeEvent;
 import com.supermap.desktop.process.events.WorkflowChangeListener;
 
-import javax.swing.*;
+import javax.swing.Timer;
+import javax.swing.event.EventListenerList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -27,26 +25,36 @@ import java.util.concurrent.locks.ReentrantLock;
  * Created by highsad on 2017/6/14.
  */
 public class TasksManager {
-	private final static int NORMAL = 0;
-	private final static int RUNNING = 1;
-	private final static int COMPLETED = 2;
-	private final static int INTERRUPTED = 3;
+	private final static int WORKFLOW_STATE_NORMAL = 0;
+	private final static int WORKFLOW_STATE_RUNNING = 1;
+	private final static int WORKFLOW_STATE_COMPLETED = 2;
+	private final static int WORKFLOW_STATE_INTERRUPTED = 3;
+
+	public final static int WORKER_STATE_RUNNING = 1;
+	public final static int WORKER_STATE_READY = 2;
+	public final static int WORKER_STATE_WAITING = 3;
+	public final static int WORKER_STATE_COMPLETED = 4;
+	public final static int WORKER_STATE_CANCELLED = 5;
+	public final static int WORKER_STATE_EXCEPTION = 6;
 
 	private final Lock lock = new ReentrantLock();
-	private volatile int status = NORMAL;
+	private volatile int status = WORKFLOW_STATE_NORMAL;
 
 //	private IWorkflowExecutor executor;
 
 	private Timer scheduler;
 	private Workflow workflow;
-	private Map<IProcess, ProcessWorker> tasksMap = new ConcurrentHashMap<>();
+	private Map<IProcess, ProcessWorker> workersMap = new ConcurrentHashMap<>();
 
-	private List<IProcess> waiting = new ArrayList<>();
-	private List<IProcess> ready = new ArrayList<>();
-	private List<IProcess> running = new ArrayList<>();
-	private List<IProcess> completed = new ArrayList<>();
-	private List<IProcess> cancelled = new ArrayList<>();
-	private List<IProcess> exceptionOccurred = new ArrayList<>();
+	private Vector<IProcess> waiting = new Vector<>();
+	private Vector<IProcess> ready = new Vector<>();
+	private Vector<IProcess> running = new Vector<>();
+	private Vector<IProcess> completed = new Vector<>();
+	private Vector<IProcess> cancelled = new Vector<>();
+	private Vector<IProcess> exception = new Vector<>();
+	private Map<Integer, Vector<IProcess>> workerQueueMaps = new HashMap<>();
+
+	private EventListenerList listenerList = new EventListenerList();
 
 	private ProcessStatusChangeListener processStatusChangeListener = new ProcessStatusChangeListener();
 
@@ -63,13 +71,44 @@ public class TasksManager {
 
 	public TasksManager(Workflow workflow) {
 		this.workflow = workflow;
+
+		this.workerQueueMaps.put(WORKER_STATE_WAITING, this.waiting);
+		this.workerQueueMaps.put(WORKER_STATE_READY, this.ready);
+		this.workerQueueMaps.put(WORKER_STATE_RUNNING, this.running);
+		this.workerQueueMaps.put(WORKER_STATE_COMPLETED, this.completed);
+		this.workerQueueMaps.put(WORKER_STATE_CANCELLED, this.cancelled);
+		this.workerQueueMaps.put(WORKER_STATE_EXCEPTION, this.exception);
+
 		this.scheduler = new Timer(500, new SchedulerActionListener());
 //		this.executor = new DefaultWorkflowExecutor();
-//		this.workflow.addWorkflowChangeListener(this.workflowChangeListener);
+		this.workflow.addWorkflowChangeListener(this.workflowChangeListener);
 	}
 
 	public int getStatus() {
 		return status;
+	}
+
+	public Vector<ProcessWorker> getProcessWorkers(int workerState) {
+		if (!this.workerQueueMaps.containsKey(workerState)) {
+			return null;
+		}
+
+		Vector<ProcessWorker> workers = new Vector<>();
+		Vector<IProcess> processes = this.workerQueueMaps.get(workerState);
+
+		for (int i = 0; i < processes.size(); i++) {
+			workers.add(this.workersMap.get(processes.get(i)));
+		}
+		return workers;
+	}
+
+	public final static int[] getWorkerStates() {
+		return new int[]{WORKER_STATE_CANCELLED,
+				WORKER_STATE_COMPLETED,
+				WORKER_STATE_EXCEPTION,
+				WORKER_STATE_READY,
+				WORKER_STATE_RUNNING,
+				WORKER_STATE_WAITING};
 	}
 
 //	public IWorkflowExecutor getExecutor() {
@@ -81,37 +120,47 @@ public class TasksManager {
 //	}
 
 	private void processAdded(IProcess process) {
-		if (!this.tasksMap.containsKey(process)) {
+		if (!this.workersMap.containsKey(process)) {
 			ProcessWorker worker = new ProcessWorker(process);
 			process.addStatusChangeListener(this.processStatusChangeListener);
-			this.tasksMap.put(process, worker);
+			this.workersMap.put(process, worker);
+			this.waiting.add(process);
+			fireWorkersChanged(new WorkersChangedEvent(this, this.workersMap.get(process), WorkersChangedEvent.ADD));
 		}
 	}
 
+	/**
+	 * @param process
+	 */
 	private void processRemoved(IProcess process) {
-		if (this.tasksMap.containsKey(process)) {
-			ProcessWorker worker = this.tasksMap.get(process);
+		if (this.workersMap.containsKey(process)) {
+			ProcessWorker worker = this.workersMap.get(process);
 			process.removeStatusChangeListener(this.processStatusChangeListener);
-			this.tasksMap.remove(worker.getProcess());
+			this.workersMap.remove(process);
+			fireWorkersChanged(new WorkersChangedEvent(this, worker, WorkersChangedEvent.REMOVE));
+
+			// 执行过程中禁止删除节点，也就是说只有在前期构建工作流的时候可以，此时只有 waiting 队列
+			this.waiting.remove(process);
 		}
 	}
 
 	public boolean execute() {
 		try {
-			if (this.status != NORMAL) {
+			if (this.status != WORKFLOW_STATE_NORMAL) {
 				return false;
 			}
 
-			this.status = RUNNING;
+			this.status = WORKFLOW_STATE_RUNNING;
 
 			initialize();
 //			this.workflow.setEdiitable(false);
-			if (this.ready != null) {
+			if (this.ready == null) {
 				return false;
 			}
 
 			// 正在运行的时候禁止添加、删除节点，禁止调整连接关系和状态
 			if (!this.scheduler.isRunning()) {
+				this.workflow.setEditable(false);
 				this.scheduler.start();
 			}
 		} catch (Exception e) {
@@ -119,6 +168,10 @@ public class TasksManager {
 		}
 
 		return true;
+	}
+
+	public boolean isExecuting() {
+		return this.status == WORKER_STATE_RUNNING;
 	}
 
 	public void cancel() {
@@ -130,64 +183,72 @@ public class TasksManager {
 	}
 
 	private void initialize() {
-//		Vector<IProcess> processes = this.workflow.getProcesses();
-//		for (IProcess process :
-//				processes) {
-//			if (this.workflow.isLeadingProcess(process)) {
-//				this.ready.add(process);
-//			} else {
-//				this.waiting.add(process);
-//			}
-//		}
+		Vector<IProcess> processes = this.workflow.getProcesses();
+		for (IProcess process :
+				processes) {
+			if (this.workflow.isLeadingProcess(process)) {
+				moveProcess(process, WORKER_STATE_WAITING, WORKER_STATE_READY);
+			}
+		}
 	}
 
 	private synchronized void reset() {
-//		this.waiting.clear();
-//		this.ready.clear();
-//		this.running.clear();
-//		this.completed.clear();
-//		this.cancelled.clear();
-//		this.exceptionOccurred.clear();
-//		this.status = TasksManager.NORMAL;
-//
-//		if (this.scheduler.isRunning()) {
-//			this.scheduler.stop();
-//		}
-//
-//		Vector<IProcess> processes = this.workflow.getProcesses();
-//		for (IProcess process :
-//				processes) {
-//			process.reset();
-//		}
+		this.workflow.setEditable(true);
+		this.waiting.clear();
+		this.ready.clear();
+		this.running.clear();
+		this.completed.clear();
+		this.cancelled.clear();
+		this.exception.clear();
+		this.status = TasksManager.WORKFLOW_STATE_NORMAL;
+
+		if (this.scheduler.isRunning()) {
+			this.scheduler.stop();
+		}
+
+		Vector<IProcess> processes = this.workflow.getProcesses();
+		for (IProcess process :
+				processes) {
+			process.reset();
+			this.waiting.add(process);
+//			fireWorkerStateChange(new WorkerStateChangedEvent(this, this.workersMap.get(process), -1, WORKER_STATE_WAITING));
+		}
 	}
 
 	private void waitingToReady(IProcess process) {
 
 		// 只有 waiting 才可以移动到 ready
-		moveProcess(process, waiting, ready);
+		moveProcess(process, WORKER_STATE_WAITING, WORKER_STATE_READY);
 	}
 
 	private void readyToRunning(IProcess process) {
 
 		// 只有 ready 才可以移动到 running
-		moveProcess(process, ready, running);
+		moveProcess(process, WORKER_STATE_READY, WORKER_STATE_RUNNING);
 	}
 
 	private void runningToCompleted(IProcess process) {
 
 		// 只有 running 才可以移动到 completed
-		moveProcess(process, running, completed);
+		moveProcess(process, WORKER_STATE_RUNNING, WORKER_STATE_COMPLETED);
 	}
 
 	private void runningToCancelled(IProcess process) {
-		moveProcess(process, running, cancelled);
+		moveProcess(process, WORKER_STATE_RUNNING, WORKER_STATE_CANCELLED);
 	}
 
 	private void runningToExceptionOccurred(IProcess process) {
-		moveProcess(process, running, exceptionOccurred);
+		moveProcess(process, WORKER_STATE_RUNNING, WORKER_STATE_EXCEPTION);
 	}
 
-	private void moveProcess(IProcess process, List<IProcess> source, List<IProcess> destination) {
+	private void moveProcess(IProcess process, int oldState, int newState) {
+		if (!this.workerQueueMaps.containsKey(oldState) || !this.workerQueueMaps.containsKey(newState)) {
+			return;
+		}
+
+		List<IProcess> source = this.workerQueueMaps.get(oldState);
+		List<IProcess> destination = this.workerQueueMaps.get(newState);
+
 		if (process != null && source != null && destination != null) {
 			synchronized (source) {
 				if (!source.contains(process)) {
@@ -204,24 +265,25 @@ public class TasksManager {
 
 				destination.add(process);
 			}
+
+			fireWorkerStateChange(new WorkerStateChangedEvent(this, this.workersMap.get(process), oldState, newState));
 		}
 	}
 
 	private boolean isReady(IProcess process) {
-//		boolean isReady = true;
-//
-//		if (process != null) {
-//			Vector<IProcess> preProcesses = this.workflow.getFromProcesses(process);
-//
-//			for (int i = 0; i < preProcesses.size(); i++) {
-//				isReady = preProcesses.get(i).getStatus() == RunningStatus.COMPLETED;
-//				if (isReady == false) {
-//					break;
-//				}
-//			}
-//		}
-//		return isReady;
-		return true;
+		boolean isReady = true;
+
+		if (process != null) {
+			Vector<IProcess> preProcesses = this.workflow.getFromProcesses(process);
+
+			for (int i = 0; i < preProcesses.size(); i++) {
+				isReady = (preProcesses.get(i).getStatus() != RunningStatus.COMPLETED);
+				if (isReady == false) {
+					break;
+				}
+			}
+		}
+		return isReady;
 	}
 
 	private class ProcessStatusChangeListener implements StatusChangeListener {
@@ -240,19 +302,19 @@ public class TasksManager {
 		}
 
 		private void handleCompleted(IProcess process) {
-//			// 先处理自身状态
-//			runningToCompleted(process);
-//
-//			// 再处理下级节点状态，检查下级节点是否所有前置节点都已执行完毕
-//			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
-//
-//			for (int i = 0; i < nextProcesses.size(); i++) {
-//
-//				// 该节点的所有前置节点均已执行完成准备就绪，就将节点移动到 ready
-//				if (isReady(nextProcesses.get(i))) {
-//					waitingToReady(nextProcesses.get(i));
-//				}
-//			}
+			// 先处理自身状态
+			runningToCompleted(process);
+
+			// 再处理下级节点状态，检查下级节点是否所有前置节点都已执行完毕
+			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
+
+			for (int i = 0; i < nextProcesses.size(); i++) {
+
+				// 该节点的所有前置节点均已执行完成准备就绪，就将节点移动到 ready
+				if (isReady(nextProcesses.get(i))) {
+					waitingToReady(nextProcesses.get(i));
+				}
+			}
 		}
 
 		private void handleRunning(IProcess process) {
@@ -260,45 +322,81 @@ public class TasksManager {
 		}
 
 		private void handleException(IProcess process) {
-//
-//			// 先把自己移动到异常队列
-//			runningToExceptionOccurred(process);
-//
-//			// 再把所有后续节点移动到异常队列
-//			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
-//			if (nextProcesses != null && nextProcesses.size() > 0) {
-//				for (IProcess nextProcess :
-//						nextProcesses) {
-//					if (!waiting.contains(nextProcess)) {
-//
-//						// 如果后续节点不在 waiting 队列中，则抛一个异常
-//						throw new UnsupportedOperationException();
-//					}
-//
-//					moveProcess(nextProcess, waiting, exceptionOccurred);
-//				}
-//			}
+
+			// 先把自己移动到异常队列
+			runningToExceptionOccurred(process);
+
+			// 再把所有后续节点移动到异常队列
+			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
+			if (nextProcesses != null && nextProcesses.size() > 0) {
+				for (IProcess nextProcess :
+						nextProcesses) {
+					if (!waiting.contains(nextProcess)) {
+
+						// 如果后续节点不在 waiting 队列中，则抛一个异常
+						throw new UnsupportedOperationException();
+					}
+
+					moveProcess(nextProcess, WORKER_STATE_WAITING, WORKER_STATE_EXCEPTION);
+				}
+			}
 		}
 
 		private void handleCancelled(IProcess process) {
-//
-//			// 先把自己移动到取消队列
-//			runningToCancelled(process);
-//
-//			// 再把所有后续节点移动到取消队列
-//			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
-//			if (nextProcesses != null && nextProcesses.size() > 0) {
-//				for (IProcess nextProcess :
-//						nextProcesses) {
-//
-//					// throw an exception if any followed process is not contained in waiting list.
-//					if (!waiting.contains(nextProcess)) {
-//						throw new UnsupportedOperationException();
-//					}
-//
-//					moveProcess(nextProcess, waiting, cancelled);
-//				}
-//			}
+
+			// 先把自己移动到取消队列
+			runningToCancelled(process);
+
+			// 再把所有后续节点移动到取消队列
+			Vector<IProcess> nextProcesses = workflow.getToProcesses(process);
+			if (nextProcesses != null && nextProcesses.size() > 0) {
+				for (IProcess nextProcess :
+						nextProcesses) {
+
+					// throw an exception if any followed process is not contained in waiting list.
+					if (!waiting.contains(nextProcess)) {
+						throw new UnsupportedOperationException();
+					}
+
+					moveProcess(nextProcess, WORKER_STATE_WAITING, WORKER_STATE_CANCELLED);
+				}
+			}
+		}
+	}
+
+	public void addWorkerStateChangeListener(WorkerStateChangedListener listener) {
+		this.listenerList.add(WorkerStateChangedListener.class, listener);
+	}
+
+	public void removeWorkerStateChangeListener(WorkerStateChangedListener listener) {
+		this.listenerList.remove(WorkerStateChangedListener.class, listener);
+	}
+
+	protected void fireWorkerStateChange(WorkerStateChangedEvent e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == WorkerStateChangedListener.class) {
+				((WorkerStateChangedListener) listeners[i + 1]).workerStateChanged(e);
+			}
+		}
+	}
+
+	public void addWorkersChangedListener(WorkersChangedListener listener) {
+		this.listenerList.add(WorkersChangedListener.class, listener);
+	}
+
+	public void removeWorkersChangedListener(WorkersChangedListener listener) {
+		this.listenerList.remove(WorkersChangedListener.class, listener);
+	}
+
+	protected void fireWorkersChanged(WorkersChangedEvent e) {
+		Object[] listeners = this.listenerList.getListenerList();
+
+		for (int i = listeners.length - 2; i >= 0; i -= 2) {
+			if (listeners[i] == WorkersChangedListener.class) {
+				((WorkersChangedListener) listeners[i + 1]).workersChanged(e);
+			}
 		}
 	}
 
@@ -306,31 +404,32 @@ public class TasksManager {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-//			try {
-//				lock.lock();
-//				if (ready.size() > 0) {
-//					for (int i = ready.size() - 1; i >= 0; i--) {
-//						IProcess process = ready.get(i);
-//						tasksMap.get(process).doWork();
-//					}
-//				}
-//
-//				// 当等待队列、就绪队列、运行队列均已经清空，则停止任务调度，并输出日志
-//				if (waiting.size() == 0 && ready.size() == 0 && running.size() == 0) {
-//					scheduler.stop();
-//
-//					if (workflow.getProcessCount() == completed.size()) {
-//						status = TasksManager.COMPLETED;
-//					} else {
-//						status = TasksManager.INTERRUPTED;
-//					}
-//				}
-//			} catch (Exception ex) {
-//				Application.getActiveApplication().getOutput().output(ex);
-//			} finally {
-//				lock.unlock();
-//			}
-//
+			try {
+				lock.lock();
+				if (ready.size() > 0) {
+					for (int i = ready.size() - 1; i >= 0; i--) {
+						IProcess process = ready.get(i);
+						workersMap.get(process).doWork();
+					}
+				}
+
+				// 当等待队列、就绪队列、运行队列均已经清空，则停止任务调度，并输出日志
+				if (waiting.size() == 0 && ready.size() == 0 && running.size() == 0) {
+					scheduler.stop();
+					workflow.setEditable(true);
+
+					if (workflow.getProcessCount() == completed.size()) {
+						status = TasksManager.WORKFLOW_STATE_COMPLETED;
+					} else {
+						status = TasksManager.WORKFLOW_STATE_INTERRUPTED;
+					}
+				}
+			} catch (Exception ex) {
+				Application.getActiveApplication().getOutput().output(ex);
+			} finally {
+				lock.unlock();
+			}
+
 
 		}
 	}
