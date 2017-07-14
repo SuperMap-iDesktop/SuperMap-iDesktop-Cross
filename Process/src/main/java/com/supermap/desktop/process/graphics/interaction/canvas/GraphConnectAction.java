@@ -1,13 +1,13 @@
 package com.supermap.desktop.process.graphics.interaction.canvas;
 
 import com.supermap.desktop.Application;
+import com.supermap.desktop.process.WorkflowCanvas;
+import com.supermap.desktop.process.core.DataMatch;
 import com.supermap.desktop.process.core.IProcess;
 import com.supermap.desktop.process.graphics.CanvasCursor;
 import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.GraphicsUtil;
-import com.supermap.desktop.process.graphics.connection.IConnectable;
-import com.supermap.desktop.process.graphics.connection.IOGraphConnection;
-import com.supermap.desktop.process.graphics.connection.LineGraph;
+import com.supermap.desktop.process.graphics.connection.*;
 import com.supermap.desktop.process.graphics.graphs.AbstractGraph;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 import com.supermap.desktop.process.graphics.graphs.OutputGraph;
@@ -33,7 +33,7 @@ public class GraphConnectAction extends CanvasActionAdapter {
 	private static String TRACKING_KEY_CONNECTOR = "GraphConnectorKey";
 	private static String DECORATOR_KEY_LINE_ERROR = "DecoratorLineErrorKey";
 
-	private GraphCanvas canvas;
+	private WorkflowCanvas canvas;
 	private OutputGraph startGraph = null;
 	private ProcessGraph endGraph = null;
 	private JPopupMenu inputsMenu = new JPopupMenu();
@@ -41,14 +41,13 @@ public class GraphConnectAction extends CanvasActionAdapter {
 	private LineErrorDecorator errorDecorator;
 	private boolean isConnecting = false;
 
-	public GraphConnectAction(GraphCanvas canvas) {
+	public GraphConnectAction(WorkflowCanvas canvas) {
 		this.canvas = canvas;
 		this.errorDecorator = new LineErrorDecorator(this.canvas);
 
 		this.inputsMenu.addPopupMenuListener(new PopupMenuListener() {
 			@Override
 			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-
 			}
 
 			@Override
@@ -92,6 +91,7 @@ public class GraphConnectAction extends CanvasActionAdapter {
 				if (this.startGraph != null && this.endGraph != null) {
 					final OutputGraph startGraph = this.startGraph;
 					final ProcessGraph endGraph = this.endGraph;
+
 					Type type = startGraph.getProcessData().getType();
 					final Inputs inputs = endGraph.getProcess().getInputs();
 					final InputData[] datas = inputs.getDatas(type);
@@ -105,9 +105,8 @@ public class GraphConnectAction extends CanvasActionAdapter {
 							@Override
 							public void actionPerformed(ActionEvent e) {
 								try {
-									IOGraphConnection connection = new IOGraphConnection(startGraph, endGraph, item.getText());
-									canvas.getConnection().connect(connection);
-									inputs.bind(item.getText(), startGraph.getProcessData());
+									DataMatch relation = new DataMatch(startGraph.getProcessGraph().getProcess(), endGraph.getProcess(), startGraph.getName(), item.getText());
+									canvas.getWorkflow().addRelation(relation);
 									inputsMenu.setVisible(false);
 								} catch (Exception e1) {
 									Application.getActiveApplication().getOutput().output(e1);
@@ -160,8 +159,8 @@ public class GraphConnectAction extends CanvasActionAdapter {
 				return;
 			}
 
-			Point firstPoint = null;
-			Point lastPoint = null;
+			Point firstPoint;
+			Point lastPoint;
 			IGraph hit = this.canvas.findGraph(e.getPoint());
 
 			if (hit == null) {
@@ -224,9 +223,9 @@ public class GraphConnectAction extends CanvasActionAdapter {
 		}
 
 		// If the specified graph  has already been connected to this startGraph, return false.
-		if (this.canvas.getConnection().isConnected(this.startGraph, graph)) {
-			return false;
-		}
+//		if (this.canvas.getConnection().isConnected(this.startGraph, graph)) {
+//			return false;
+//		}
 
 		if (!(graph instanceof ProcessGraph)) {
 			return false;
@@ -241,6 +240,24 @@ public class GraphConnectAction extends CanvasActionAdapter {
 		Inputs inputs = process.getInputs();
 		if (inputs.getDatas(this.startGraph.getProcessData().getType()).length > 0) {
 			ret = true;
+		}
+		return ret;
+	}
+
+	private boolean isConnected(IGraph from, IGraph to) {
+		boolean ret = false;
+
+		IGraph[] graphs = this.canvas.getGraphStorage().getGraphs();
+		for (int i = 0; i < graphs.length; i++) {
+			if (graphs[i] instanceof ConnectionLineGraph) {
+				ConnectionLineGraph connection = (ConnectionLineGraph) graphs[i];
+
+				if ((connection.getFrom() == from && connection.getTo() == to)
+						|| (connection.getFrom() == to && connection.getTo() == from)) {
+					ret = true;
+					break;
+				}
+			}
 		}
 		return ret;
 	}

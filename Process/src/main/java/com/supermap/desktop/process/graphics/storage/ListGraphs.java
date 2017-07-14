@@ -1,8 +1,6 @@
 package com.supermap.desktop.process.graphics.storage;
 
 import com.supermap.desktop.process.graphics.GraphCanvas;
-import com.supermap.desktop.process.graphics.connection.ConnectionLineGraph;
-import com.supermap.desktop.process.graphics.connection.IGraphConnection;
 import com.supermap.desktop.process.graphics.events.*;
 import com.supermap.desktop.process.graphics.graphs.IGraph;
 
@@ -17,25 +15,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ListGraphs extends AbstractGraphStorage {
 	private GraphCanvas canvas;
-	private IConnectionManager connectionManager = new ListConnectionManager(this.canvas);
-	private Map<IGraphConnection, IGraph> connectionMap = new ConcurrentHashMap<>();
 	private Vector<IGraph> graphs = new Vector();
 	private Rectangle box = null;
 
-	private ConnectionAddedListener connectionAddedListener = new ConnectionAddedListener() {
-		@Override
-		public void connectionAdded(ConnectionAddedEvent e) {
-			ListGraphs.this.connectionAdded(e);
-		}
-	};
-	private ConnectionRemovingListener connectionRemovingListener = new ConnectionRemovingListener() {
-		@Override
-		public void connectionRemoving(ConnectionRemovingEvent e) {
-			if (!e.isCancel()) {
-				ListGraphs.this.connectionRemoving(e);
-			}
-		}
-	};
+	private Vector<IGraph> removing = new Vector<>();
+
 	private GraphBoundsChangedListener graphBoundsChangedListener = new GraphBoundsChangedListener() {
 		@Override
 		public void graghBoundsChanged(GraphBoundsChangedEvent e) {
@@ -45,14 +29,6 @@ public class ListGraphs extends AbstractGraphStorage {
 
 	public ListGraphs(GraphCanvas canvas) {
 		this.canvas = canvas;
-		this.connectionManager = new ListConnectionManager(this.canvas);
-		this.connectionManager.addConnectionAddedListener(this.connectionAddedListener);
-		this.connectionManager.addConnectionRemovingListener(this.connectionRemovingListener);
-	}
-
-	@Override
-	public IConnectionManager getConnectionManager() {
-		return connectionManager;
 	}
 
 	@Override
@@ -110,19 +86,37 @@ public class ListGraphs extends AbstractGraphStorage {
 
 	@Override
 	public void remove(IGraph graph) {
-		GraphRemovingEvent removingEvent = new GraphRemovingEvent(this.canvas, graph);
-		fireGraphRemoving(removingEvent);
-
-		if (removingEvent.isCancel()) {
+		if (graph == null) {
 			return;
 		}
 
-		int index = this.graphs.indexOf(graph);
-		if (index > -1) {
-			this.graphs.remove(graph);
-			computeBox();
+		if (!this.graphs.contains(graph)) {
+			return;
 		}
-		fireGraphRemoved(new GraphRemovedEvent(this.canvas, graph));
+
+		// 正在执行删除的 graph，不做多次删除
+		if (this.removing.contains(graph)) {
+			return;
+		}
+
+		try {
+			this.removing.add(graph);
+			GraphRemovingEvent removingEvent = new GraphRemovingEvent(this.canvas, graph);
+			fireGraphRemoving(removingEvent);
+
+			if (removingEvent.isCancel()) {
+				return;
+			}
+
+			int index = this.graphs.indexOf(graph);
+			if (index > -1) {
+				this.graphs.remove(graph);
+				computeBox();
+			}
+			fireGraphRemoved(new GraphRemovedEvent(this.canvas, graph));
+		} finally {
+			this.removing.remove(graph);
+		}
 	}
 
 	@Override
@@ -187,23 +181,6 @@ public class ListGraphs extends AbstractGraphStorage {
 	@Override
 	public Rectangle getBounds() {
 		return this.box;
-	}
-
-	private void connectionAdded(ConnectionAddedEvent e) {
-		IGraphConnection connection = e.getConnection();
-		if (connection != null && connection.getStart() != null && connection.getEnd() != null) {
-			ConnectionLineGraph lineGraph = new ConnectionLineGraph(this.canvas, connection);
-			add(lineGraph);
-			this.connectionMap.put(connection, lineGraph);
-		}
-	}
-
-	private void connectionRemoving(ConnectionRemovingEvent e) {
-		IGraphConnection connection = e.getConnection();
-		if (this.connectionMap.containsKey(connection)) {
-			IGraph graph = this.connectionMap.get(connection);
-			remove(graph);
-		}
 	}
 
 	private void graphBoundsChanged(GraphBoundsChangedEvent e) {

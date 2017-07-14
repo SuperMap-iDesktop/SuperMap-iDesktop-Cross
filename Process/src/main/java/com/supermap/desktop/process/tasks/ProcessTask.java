@@ -90,7 +90,7 @@ public class ProcessTask extends JPanel implements IProcessTask, IContentModel {
 	private void removeTask() {
 		if (ProcessTask.this.getParent() instanceof TasksManagerContainer) {
 			TasksManagerContainer container = (TasksManagerContainer) ProcessTask.this.getParent();
-			container.removeItem(ProcessTask.this);
+//			container.removeItem(ProcessTask.this);
 			removeEvents();
 		}
 	}

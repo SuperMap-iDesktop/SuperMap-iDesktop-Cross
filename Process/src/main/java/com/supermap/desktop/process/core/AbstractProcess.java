@@ -1,5 +1,6 @@
 package com.supermap.desktop.process.core;
 
+import com.supermap.desktop.Application;
 import com.supermap.desktop.process.enums.RunningStatus;
 import com.supermap.desktop.process.events.RunningEvent;
 import com.supermap.desktop.process.events.RunningListener;
@@ -19,6 +20,8 @@ public abstract class AbstractProcess implements IProcess {
 	private volatile RunningStatus status = RunningStatus.NORMAL;
 	private EventListenerList listenerList = new EventListenerList();
 	protected IProcessGroup parent;
+	private Inputs inputs = new Inputs(this);
+	private Outputs outputs = new Outputs(this);
 
 	@Override
 	public abstract IParameters getParameters();
@@ -41,6 +44,7 @@ public abstract class AbstractProcess implements IProcess {
 				setStatus(RunningStatus.EXCEPTION);
 			}
 		} catch (Exception e) {
+			Application.getActiveApplication().getOutput().output(e);
 			setStatus(RunningStatus.EXCEPTION);
 		}
 		return isSuccessful;
@@ -90,13 +94,13 @@ public abstract class AbstractProcess implements IProcess {
 
 	@Override
 	public Inputs getInputs() {
-		return this.getParameters().getInputs();
+		return this.inputs;
 	}
 
 
 	@Override
 	public Outputs getOutputs() {
-		return this.getParameters().getOutputs();
+		return this.outputs;
 	}
 
 	@Override

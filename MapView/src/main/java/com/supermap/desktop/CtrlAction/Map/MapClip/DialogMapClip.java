@@ -493,13 +493,17 @@ public class DialogMapClip extends SmDialog {
 				FormProgressTotal formProgress = new FormProgressTotal();
 				formProgress.setTitle(MapViewProperties.getString("String_MapClip_MapClip"));
 
-				if (!StringUtilities.isNullOrEmpty(mapClipMultiObjectSplitPanel.getCurrentSelectedFieldCaption())) {
+				if (!StringUtilities.isNullOrEmpty(mapClipMultiObjectSplitPanel.getCurrentSelectedFieldName())) {
 					selectedRecordset.moveFirst();
-					String selectedCaptionFieldName = mapClipMultiObjectSplitPanel.getCurrentSelectedFieldCaption();
+					String selectedCaptionFieldName = mapClipMultiObjectSplitPanel.getCurrentSelectedFieldName();
 					String appendCaptions[] = new String[selectedRecordset.getRecordCount()];
+					FieldInfos fieldInfos=selectedRecordset.getFieldInfos();
+					for (int i = 0; i < fieldInfos.getCount(); i++) {
+						System.out.println(fieldInfos.get(i).getCaption());
+					}
 					for (int i = 0; i < appendCaptions.length; i++) {
-						if (StringUtilities.isNullOrEmpty(selectedRecordset.getFieldValue(selectedCaptionFieldName).toString())){
-							appendCaptions[i]="_1";
+						if (selectedRecordset.getFieldValue(selectedCaptionFieldName)==null ||StringUtilities.isNullOrEmpty(selectedRecordset.getFieldValue(selectedCaptionFieldName).toString())){
+							appendCaptions[i]="1";
 						}else{
 							appendCaptions[i] = selectedRecordset.getFieldValue(selectedCaptionFieldName).toString();
 							appendCaptions[i] = appendCaptions[i].replace('.', '_');
@@ -555,7 +559,7 @@ public class DialogMapClip extends SmDialog {
 		commonPartCode(region);
 	}
 
-	public DialogMapClip(GeoRegion region, boolean isMutiObjectClip, String fieldCaptions[], Recordset recordset,ArrayList<GeoRegion> selectedGeoregions) {
+	public DialogMapClip(GeoRegion region, boolean isMutiObjectClip, String fieldCaptions[][], Recordset recordset,ArrayList<GeoRegion> selectedGeoregions) {
 		super();
 		this.isMutiObjectClip = isMutiObjectClip;
 		this.selectedRecordset = recordset;

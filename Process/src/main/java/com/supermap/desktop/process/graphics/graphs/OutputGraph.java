@@ -82,7 +82,7 @@ public class OutputGraph extends RectangleGraph {
 	}
 
 	public String getName() {
-		return name;
+		return this.processData.getName();
 	}
 
 	public void setProcessData(OutputData processData) {
