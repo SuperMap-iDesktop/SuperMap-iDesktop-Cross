@@ -1,6 +1,5 @@
 package com.supermap.desktop.process;
 
-import com.sun.xml.internal.bind.v2.runtime.Location;
 import com.supermap.desktop.Application;
 import com.supermap.desktop.GlobalParameters;
 import com.supermap.desktop.Interface.IFormManager;
@@ -17,16 +16,8 @@ import com.supermap.desktop.event.FormClosingListener;
 import com.supermap.desktop.event.FormDeactivatedListener;
 import com.supermap.desktop.event.FormShownEvent;
 import com.supermap.desktop.event.FormShownListener;
-import com.supermap.desktop.process.core.DirectConnect;
-import com.supermap.desktop.process.core.IProcess;
-import com.supermap.desktop.process.core.NodeMatrix;
 import com.supermap.desktop.process.core.Workflow;
-import com.supermap.desktop.process.core.WorkflowParser;
-import com.supermap.desktop.process.graphics.GraphCanvas;
 import com.supermap.desktop.process.graphics.ScrollGraphCanvas;
-import com.supermap.desktop.process.graphics.connection.LineGraph;
-import com.supermap.desktop.process.graphics.events.GraphCreatedEvent;
-import com.supermap.desktop.process.graphics.events.GraphCreatedListener;
 import com.supermap.desktop.process.graphics.events.GraphRemovingEvent;
 import com.supermap.desktop.process.graphics.events.GraphRemovingListener;
 import com.supermap.desktop.process.graphics.events.GraphSelectChangedListener;
@@ -38,11 +29,6 @@ import com.supermap.desktop.process.graphics.interaction.canvas.CanvasActionProc
 import com.supermap.desktop.process.graphics.interaction.canvas.CanvasActionProcessListener;
 import com.supermap.desktop.process.graphics.interaction.canvas.GraphDragAction;
 import com.supermap.desktop.process.graphics.interaction.canvas.Selection;
-import com.supermap.desktop.process.graphics.storage.IConnectionManager;
-import com.supermap.desktop.process.graphics.storage.IGraphStorage;
-import com.supermap.desktop.process.meta.MetaProcess;
-import com.supermap.desktop.process.meta.metaProcessImplements.MetaProcessGroup;
-import com.supermap.desktop.process.parameter.interfaces.datas.OutputData;
 import com.supermap.desktop.process.parameter.interfaces.datas.types.Type;
 import com.supermap.desktop.process.tasks.TasksManager;
 import com.supermap.desktop.ui.FormBaseChild;
@@ -53,15 +39,7 @@ import com.supermap.desktop.utilities.StringUtilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetAdapter;
-import java.awt.dnd.DropTargetDropEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by highsad on 2017/1/6.
