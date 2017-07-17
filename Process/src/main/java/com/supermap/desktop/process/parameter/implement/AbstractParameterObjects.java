@@ -2,8 +2,6 @@ package com.supermap.desktop.process.parameter.implement;
 
 import com.supermap.desktop.process.parameter.interfaces.IParameterObjects;
 
-import java.util.Objects;
-
 /**
  * Created by yuanR on 2017/7/14
  * 参数管理对象
@@ -19,22 +17,28 @@ public class AbstractParameterObjects implements IParameterObjects {
 	private Boolean valueBoolean = null;
 
 	@Override
-	public void setParameterObject(Objects value) {
+	public void setParameterObject(Object value) {
+		this.valueObject = value;
+	}
+
+	@Override
+	public void setParameterObject(Number value) {
+		this.valueObject = value;
+	}
+
+	@Override
+	public void setParameterObject(String value) {
+		this.valueObject = value;
+	}
+
+	@Override
+	public void setParameterObject(Boolean value) {
+		this.valueObject = value;
 	}
 
 	@Override
 	public Object getParameterObject() {
-		if (valueNumber != null) {
-			return this.valueNumber;
-		} else if (valueString != null) {
-			return this.valueString;
-		} else if (valueBoolean != null) {
-			return this.valueBoolean;
-		} else if (valueObject != null) {
-			return this.valueObject;
-		} else {
-			return null;
-		}
+		return this.valueObject;
 	}
 
 	@Override
@@ -57,28 +61,14 @@ public class AbstractParameterObjects implements IParameterObjects {
 		this.isRequisite = isRequisite;
 	}
 
-	public AbstractParameterObjects(String name, Object valueObject, Boolean isRequisite) {
+	/**
+	 * 默认构造函数
+	 *
+	 * @param name
+	 * @param isRequisite
+	 */
+	public AbstractParameterObjects(String name, Boolean isRequisite) {
 		this.name = name;
-		this.valueObject = valueObject;
 		this.isRequisite = isRequisite;
 	}
-
-	public AbstractParameterObjects(String name, Number valueNumber, Boolean isRequisite) {
-		this.name = name;
-		this.valueNumber = valueNumber;
-		this.isRequisite = isRequisite;
-	}
-
-	public AbstractParameterObjects(String name, String valueString, Boolean isRequisite) {
-		this.name = name;
-		this.valueString = valueString;
-		this.isRequisite = isRequisite;
-	}
-
-	public AbstractParameterObjects(String name, Boolean valueBoolean, Boolean isRequisite) {
-		this.name = name;
-		this.valueBoolean = valueBoolean;
-		this.isRequisite = isRequisite;
-	}
-
 }

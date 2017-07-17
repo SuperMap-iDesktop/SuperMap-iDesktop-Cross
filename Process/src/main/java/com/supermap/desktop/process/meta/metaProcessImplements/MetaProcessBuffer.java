@@ -42,11 +42,11 @@ public class MetaProcessBuffer extends MetaProcess {
 	private ParameterSaveDataset parameterSaveDataset;
 
 	// 参数定义
-	private AbstractParameterObjects radiusUnit;
-	private AbstractParameterObjects radius;
-	private AbstractParameterObjects isUnion;
-	private AbstractParameterObjects isAttributeRetained;
-	private AbstractParameterObjects semicircleLineSegment;
+	private AbstractParameterObjects radiusUnit = new AbstractParameterObjects(ControlsProperties.getString("String_Message_CoordUnit"), true);
+	private AbstractParameterObjects radius = new AbstractParameterObjects(CommonProperties.getString("String_Length"), true);
+	private AbstractParameterObjects isUnion = new AbstractParameterObjects(ControlsProperties.getString("String_Message_CoordUnit"), true);
+	private AbstractParameterObjects isAttributeRetained = new AbstractParameterObjects(ControlsProperties.getString("String_Message_CoordUnit"), true);
+	private AbstractParameterObjects semicircleLineSegment = new AbstractParameterObjects(ControlsProperties.getString("String_Message_CoordUnit"), true);
 
 	public MetaProcessBuffer() {
 		initParameters();
@@ -90,11 +90,11 @@ public class MetaProcessBuffer extends MetaProcess {
 		dataset = new ParameterSingleDataset(DatasetType.POINT, DatasetType.LINE, DatasetType.REGION);
 		datasource.setDescribe(CommonProperties.getString("String_SourceDatasource"));
 		parameterBufferRange = new ParameterEnum(new EnumParser(BufferRadiusUnit.class, values, parameterDataNodes)).setDescribe(ProcessProperties.getString("Label_BufferRadius"));
-		parameterTextFieldLeftRadius = new ParameterTextField(ProcessProperties.getString("Label_Radius"));
-		parameterTextFieldRightRadius = new ParameterTextField(ProcessProperties.getString("String_rightRadius"));
+		parameterTextFieldLeftRadius = new ParameterTextField(radius, ProcessProperties.getString("Label_Radius"));
+//		parameterTextFieldRightRadius = new ParameterTextField(ProcessProperties.getString("String_rightRadius"));
 		parameterUnionBuffer = new ParameterCheckBox(ProcessProperties.getString("String_UnionBufferItem"));
 		parameterRetainAttribute = new ParameterCheckBox(ProcessProperties.getString("String_RetainAttribute"));
-		parameterTextFieldSemicircleLineSegment = new ParameterNumber(ProcessProperties.getString("Label_SemicircleLineSegment"));
+		parameterTextFieldSemicircleLineSegment = new ParameterNumber(semicircleLineSegment,ProcessProperties.getString("Label_SemicircleLineSegment"));
 		parameterTextFieldSemicircleLineSegment.setMaxBit(0);
 		parameterTextFieldSemicircleLineSegment.setMinValue(4);
 		parameterTextFieldSemicircleLineSegment.setMaxValue(200);
@@ -166,11 +166,11 @@ public class MetaProcessBuffer extends MetaProcess {
 		boolean isAttributeRetainedObject = "true".equalsIgnoreCase((String) parameterRetainAttribute.getSelectedItem());
 		int semicircleLineSegmentObject = Integer.valueOf(((String) parameterTextFieldSemicircleLineSegment.getSelectedItem()));
 
-		radiusUnit = new AbstractParameterObjects(ControlsProperties.getString("String_Message_CoordUnit"), parameterBufferRange.getSelectedData(), true);
-		radius = new AbstractParameterObjects(CommonProperties.getString("String_Length"), radiusObject, true);
-		isUnion = new AbstractParameterObjects(ControlsProperties.getString("String_Message_CoordUnit"), isUnionObject, true);
-		isAttributeRetained = new AbstractParameterObjects(ControlsProperties.getString("String_Message_CoordUnit"), isAttributeRetainedObject, true);
-		semicircleLineSegment = new AbstractParameterObjects(ControlsProperties.getString("String_Message_CoordUnit"), semicircleLineSegmentObject, true);
+		radiusUnit.setParameterObject(parameterBufferRange.getSelectedData());
+		radius.setParameterObject(radiusObject);
+		isUnion.setParameterObject(isUnionObject);
+		isAttributeRetained.setParameterObject(isAttributeRetainedObject);
+		semicircleLineSegment.setParameterObject(semicircleLineSegmentObject);
 
 		Datasource resultDatasource = parameterSaveDataset.getResultDatasource();
 		String resultName = parameterSaveDataset.getDatasetName();

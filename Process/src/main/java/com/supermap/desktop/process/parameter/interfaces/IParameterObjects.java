@@ -2,8 +2,6 @@ package com.supermap.desktop.process.parameter.interfaces;
 
 import com.supermap.desktop.process.parameter.interfaces.datas.Irequisite;
 
-import java.util.Objects;
-
 /**
  * Created by yuanR on 2017/7/14  .
  * 参数对象接口，负责参数管理
@@ -17,6 +15,12 @@ public interface IParameterObjects extends Irequisite {
 
 	Object getParameterObject();
 
-	void setParameterObject(Objects value);
+	void setParameterObject(Object value);
+
+	void setParameterObject(Number value);
+
+	void setParameterObject(String value);
+
+	void setParameterObject(Boolean value);
 
 }

@@ -3,15 +3,18 @@ package com.supermap.desktop.process.parameter.implement;
 import com.supermap.desktop.process.constraint.annotation.ParameterField;
 import com.supermap.desktop.process.enums.ParameterType;
 import com.supermap.desktop.process.parameter.interfaces.ISelectionParameter;
+import com.supermap.desktop.properties.CommonProperties;
 import com.supermap.desktop.ui.controls.TextFields.ISmTextFieldLegit;
 
 import java.beans.PropertyChangeEvent;
+import java.text.MessageFormat;
 
 /**
  * @author XiaJT
  */
 public class ParameterTextField extends AbstractParameter implements ISelectionParameter {
 	private String describe;
+	private Boolean isRequisite = false;
 
 	@ParameterField(name = PROPERTY_VALE)
 	private String value = "";
@@ -24,6 +27,25 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 
 	public ParameterTextField(String describe) {
 		this.describe = describe;
+	}
+
+	/**
+	 * 拿参数对象构建控件
+	 * yuanR
+	 *
+	 * @param abstractParameterObjects
+	 * @param describe
+	 */
+	public ParameterTextField(AbstractParameterObjects abstractParameterObjects, String describe) {
+		if (abstractParameterObjects != null) {
+			this.isRequisite = abstractParameterObjects.isRequisite();
+		}
+		if (isRequisite) {
+			// 当参数为必填参数时，设置其描述文字时，添加必填标记-yuanR 2017.7.17
+			this.describe = MessageFormat.format(CommonProperties.getString("String_IsRequiredLable"), describe);
+		} else {
+			this.describe = describe;
+		}
 	}
 
 	@Override
@@ -47,8 +69,19 @@ public class ParameterTextField extends AbstractParameter implements ISelectionP
 		return describe;
 	}
 
+	/**
+	 * yuanR 2017.7.17
+	 * @param describe
+	 * @return
+	 */
 	public ParameterTextField setDescribe(String describe) {
-		this.describe = describe;
+		if (isRequisite) {
+			// 当参数为必填参数时，设置其描述为必填样式-yuanR 2017.7.17
+			this.describe = MessageFormat.format(CommonProperties.getString("String_IsRequiredLable"), describe);
+//			this.describe = describe + CommonProperties.getString("String_IsRequiredLable");
+		} else {
+			this.describe = describe;
+		}
 		return this;
 	}
 
