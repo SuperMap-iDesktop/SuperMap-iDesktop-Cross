@@ -41,7 +41,7 @@ public class MetaProcessBuffer extends MetaProcess {
 	private ParameterCheckBox parameterRetainAttribute;
 	private ParameterSaveDataset parameterSaveDataset;
 
-	// 参数定义
+	// 参数定义 yuanR
 	private AbstractParameterObjects radiusUnit = new AbstractParameterObjects(ControlsProperties.getString("String_Message_CoordUnit"), true);
 	private AbstractParameterObjects radius = new AbstractParameterObjects(CommonProperties.getString("String_Length"), true);
 	private AbstractParameterObjects isUnion = new AbstractParameterObjects(ControlsProperties.getString("String_Message_CoordUnit"), true);

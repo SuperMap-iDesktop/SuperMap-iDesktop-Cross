@@ -10,11 +10,10 @@ public class AbstractParameterObjects implements IParameterObjects {
 	private String name = "";
 	private Boolean isRequisite = true;
 
-
 	private Object valueObject = null;
-	private Number valueNumber = null;
-	private String valueString = null;
-	private Boolean valueBoolean = null;
+//	private Number valueNumber = null;
+//	private String valueString = null;
+//	private Boolean valueBoolean = null;
 
 	@Override
 	public void setParameterObject(Object value) {
