@@ -26,7 +26,7 @@ public class ParameterFieldComboBox extends AbstractParameter implements ISelect
 	private String describe;
 	private boolean isShowNullValue = false;
 	private boolean isShowSystemField = false;
-	private boolean isEditable = true;
+	private boolean isEditable = false;
 
 	public ParameterFieldComboBox() {
 		super();
