@@ -34,8 +34,8 @@ public class DesktopUserExperienceInfo implements UserExperienceBean, JSONAware 
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("Culture", culture);
 		jsonObject.put("DesktopVersion", "9D");
-		jsonObject.put("FunctionInfoCtrlAction", functionInfo);
-		jsonObject.put("LicenseInfo", licenseInfo);
+		jsonObject.put("FunctionInfo", functionInfo == null ? "null" : functionInfo);
+		jsonObject.put("LicenseInfo", licenseInfo == null ? "null" : licenseInfo);
 		jsonObject.put("OptionSystem", optionSystem);
 		jsonObject.put("PlatForm", platForm);
 		jsonObject.put("ProductName", "SuperMap iDesktop Cross 9D");
