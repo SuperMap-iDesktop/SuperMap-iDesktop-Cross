@@ -20,11 +20,20 @@ public class ParameterNumber extends ParameterTextField {
 	private String toolTip;
 
 	public ParameterNumber() {
-		this("");
+		this(null, "");
 	}
 
 	public ParameterNumber(String describe) {
-		super(describe);
+		this(null, describe);
+	}
+
+	/**
+	 * 修改默认构造函数，拿参数管理类进行构建yuanR 2017.7.17
+	 * @param abstractParameterObjects
+	 * @param describe
+	 */
+	public ParameterNumber(AbstractParameterObjects abstractParameterObjects, String describe) {
+		super(abstractParameterObjects, describe);
 		setDescribe(describe);
 		smTextFieldLegit = new ISmTextFieldLegit() {
 			@Override
